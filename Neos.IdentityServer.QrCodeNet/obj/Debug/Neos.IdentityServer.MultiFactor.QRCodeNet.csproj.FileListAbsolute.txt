@@ -1,9 +1,0 @@
-C:\Projects\Neos.IdentityServer.MFA\Neos.IdentityServer.QrCodeNet\bin\Debug\Neos.IdentityServer.Multifactor.QrCodeNet.dll
-C:\Projects\Neos.IdentityServer.MFA\Neos.IdentityServer.QrCodeNet\bin\Debug\Neos.IdentityServer.Multifactor.QrCodeNet.pdb
-C:\Projects\Neos.IdentityServer.MFA\Neos.IdentityServer.QrCodeNet\obj\Debug\GeneratedInternalTypeHelper.g.cs
-C:\Projects\Neos.IdentityServer.MFA\Neos.IdentityServer.QrCodeNet\obj\Debug\Neos.IdentityServer.Multifactor.QrCodeNet_MarkupCompile.cache
-C:\Projects\Neos.IdentityServer.MFA\Neos.IdentityServer.QrCodeNet\obj\Debug\Neos.IdentityServer.Multifactor.QrCodeNet_MarkupCompile.lref
-C:\Projects\Neos.IdentityServer.MFA\Neos.IdentityServer.QrCodeNet\obj\Debug\themes\Generic.baml
-C:\Projects\Neos.IdentityServer.MFA\Neos.IdentityServer.QrCodeNet\obj\Debug\Neos.IdentityServer.Multifactor.QrCodeNet.g.resources
-C:\Projects\Neos.IdentityServer.MFA\Neos.IdentityServer.QrCodeNet\obj\Debug\Neos.IdentityServer.Multifactor.QrCodeNet.dll
-C:\Projects\Neos.IdentityServer.MFA\Neos.IdentityServer.QrCodeNet\obj\Debug\Neos.IdentityServer.Multifactor.QrCodeNet.pdb

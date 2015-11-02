@@ -1,4 +1,0 @@
-C:\Projects\Neos.IdentityServer.Common\obj\Debug\Neos.IdentityServer.MultifactorEx.Common.csprojResolveAssemblyReference.cache
-C:\Projects\Neos.IdentityServer.Common\obj\Debug\Neos.IdentityServer.MultiFactor.Resources.mail_strings.resources
-C:\Projects\Neos.IdentityServer.Common\obj\Debug\Neos.IdentityServer.MultiFactor.Resources.mail_strings.fr.resources
-C:\Projects\Neos.IdentityServer.Common\obj\Debug\Neos.IdentityServer.MultifactorEx.Common.csproj.GenerateResource.Cache
