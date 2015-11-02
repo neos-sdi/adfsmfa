@@ -1,0 +1,12 @@
+C:\Projects\Neos.IdentityServer.MultiFactor\obj\Debug\Neos.IdentityServer.MultiFactorEx.csprojResolveAssemblyReference.cache
+C:\Projects\Neos.IdentityServer.MultiFactor\obj\Debug\Neos.IdentityServer.MultiFactor.Resources.html_strings.resources
+C:\Projects\Neos.IdentityServer.MultiFactor\obj\Debug\Neos.IdentityServer.MultiFactor.Resources.errors_strings.resources
+C:\Projects\Neos.IdentityServer.MultiFactor\obj\Debug\Neos.IdentityServer.MultiFactor.Resources.infos_strings.resources
+C:\Projects\Neos.IdentityServer.MultiFactor\obj\Debug\Neos.IdentityServer.MultiFactor.Resources.title_strings.resources
+C:\Projects\Neos.IdentityServer.MultiFactor\obj\Debug\Neos.IdentityServer.MultiFactor.Resources.valid_strings.resources
+C:\Projects\Neos.IdentityServer.MultiFactor\obj\Debug\Neos.IdentityServer.MultiFactor.Resources.errors_strings.fr.resources
+C:\Projects\Neos.IdentityServer.MultiFactor\obj\Debug\Neos.IdentityServer.MultiFactor.Resources.html_strings.fr.resources
+C:\Projects\Neos.IdentityServer.MultiFactor\obj\Debug\Neos.IdentityServer.MultiFactor.Resources.infos_strings.fr.resources
+C:\Projects\Neos.IdentityServer.MultiFactor\obj\Debug\Neos.IdentityServer.MultiFactor.Resources.title_strings.fr.resources
+C:\Projects\Neos.IdentityServer.MultiFactor\obj\Debug\Neos.IdentityServer.MultiFactor.Resources.valid_strings.fr.resources
+C:\Projects\Neos.IdentityServer.MultiFactor\obj\Debug\Neos.IdentityServer.MultiFactorEx.csproj.GenerateResource.Cache

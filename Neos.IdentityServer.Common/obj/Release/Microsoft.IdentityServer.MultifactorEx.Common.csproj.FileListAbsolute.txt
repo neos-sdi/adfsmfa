@@ -1,0 +1,9 @@
+C:\Projects\Microsoft.IdentityServer.Common\bin\Release\Microsoft.IdentityServer.MultiFactorEx.Common.dll
+C:\Projects\Microsoft.IdentityServer.Common\bin\Release\Microsoft.IdentityServer.MultiFactorEx.Common.pdb
+C:\Projects\Microsoft.IdentityServer.Common\bin\Release\fr\Microsoft.IdentityServer.MultiFactorEx.Common.resources.dll
+C:\Projects\Microsoft.IdentityServer.Common\obj\Release\Microsoft.IdentityServer.MultiFactorEx.Resources.mail_strings.resources
+C:\Projects\Microsoft.IdentityServer.Common\obj\Release\Microsoft.IdentityServer.MultiFactorEx.Resources.mail_strings.fr.resources
+C:\Projects\Microsoft.IdentityServer.Common\obj\Release\Microsoft.IdentityServer.MultifactorEx.Common.csproj.GenerateResource.Cache
+C:\Projects\Microsoft.IdentityServer.Common\obj\Release\fr\Microsoft.IdentityServer.MultiFactorEx.Common.resources.dll
+C:\Projects\Microsoft.IdentityServer.Common\obj\Release\Microsoft.IdentityServer.MultiFactorEx.Common.dll
+C:\Projects\Microsoft.IdentityServer.Common\obj\Release\Microsoft.IdentityServer.MultiFactorEx.Common.pdb

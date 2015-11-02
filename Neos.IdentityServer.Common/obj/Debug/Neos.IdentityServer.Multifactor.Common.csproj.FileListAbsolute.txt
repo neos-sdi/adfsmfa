@@ -1,0 +1,13 @@
+C:\Projects\Neos.IdentityServer.Common\bin\Debug\Neos.IdentityServer.MultiFactor.Common.dll
+C:\Projects\Neos.IdentityServer.Common\bin\Debug\Neos.IdentityServer.MultiFactor.Common.pdb
+C:\Projects\Neos.IdentityServer.Common\bin\Debug\fr\Neos.IdentityServer.MultiFactor.Common.resources.dll
+C:\Projects\Neos.IdentityServer.Common\obj\Debug\Neos.IdentityServer.MultiFactor.Resources.mail_strings.resources
+C:\Projects\Neos.IdentityServer.Common\obj\Debug\Neos.IdentityServer.MultiFactor.Resources.mail_strings.fr.resources
+C:\Projects\Neos.IdentityServer.Common\obj\Debug\Neos.IdentityServer.Multifactor.Common.csproj.GenerateResource.Cache
+C:\Projects\Neos.IdentityServer.Common\obj\Debug\fr\Neos.IdentityServer.MultiFactor.Common.resources.dll
+C:\Projects\Neos.IdentityServer.Common\obj\Debug\Neos.IdentityServer.MultiFactor.Common.dll
+C:\Projects\Neos.IdentityServer.Common\obj\Debug\Neos.IdentityServer.MultiFactor.Common.pdb
+C:\Projects\Neos.IdentityServer.MFA\Neos.IdentityServer.Common\bin\Debug\Neos.IdentityServer.MultiFactor.Common.dll
+C:\Projects\Neos.IdentityServer.MFA\Neos.IdentityServer.Common\bin\Debug\Neos.IdentityServer.MultiFactor.Common.pdb
+C:\Projects\Neos.IdentityServer.MFA\Neos.IdentityServer.Common\obj\Debug\Neos.IdentityServer.MultiFactor.Common.dll
+C:\Projects\Neos.IdentityServer.MFA\Neos.IdentityServer.Common\obj\Debug\Neos.IdentityServer.MultiFactor.Common.pdb
