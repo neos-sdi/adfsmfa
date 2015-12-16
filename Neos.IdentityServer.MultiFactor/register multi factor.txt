@@ -37,7 +37,7 @@ net stop adfssrv
 net start adfssrv
 
 # Register ADFS Authentication Provider 
-$typeName = "Neos.IdentityServer.MultiFactor.AuthenticationProvider, Neos.IdentityServer.MultiFactorEx, Version=1.0.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2"
+$typeName = "Neos.IdentityServer.MultiFactor.AuthenticationProvider, Neos.IdentityServer.MultiFactor, Version=1.0.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2"
 Register-AdfsAuthenticationProvider -TypeName $typeName -Name "MultiFactorAuthenticationProvider" -Verbose -ConfigurationFilePath ".\configdata.xml"
 net stop adfssrv
 net start adfssrv
