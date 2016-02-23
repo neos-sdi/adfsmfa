@@ -118,13 +118,15 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ErrorAuthenticating" xml:space="preserve">
-    <value>Erreur durant le processus d'identification ! \r{0}</value>
+    <value>Erreur durant le processus d'identification ! 
+{0}</value>
   </data>
   <data name="ErrorEmailException" xml:space="preserve">
     <value>Format d'email incorrect !</value>
   </data>
   <data name="ErrorInvalidEmail" xml:space="preserve">
-    <value>Erreur format d'email incorrect : \r{0}</value>
+    <value>Erreur format d'email incorrect : 
+{0}</value>
   </data>
   <data name="ErrorInvalidIdentificationRestart" xml:space="preserve">
     <value>Identification incorrecte, redémarrez votre session.</value>
@@ -133,16 +135,19 @@
     <value>Operation annulée, mot de passe incorrect !</value>
   </data>
   <data name="ErrorLoadingConfigurationFile" xml:space="preserve">
-    <value>Erreur au chargement du fichier de configuration : \r{0}</value>
+    <value>Erreur au chargement du fichier de configuration : 
+{0}</value>
   </data>
   <data name="ErrorLoadingConfigurationFileNotFound" xml:space="preserve">
     <value>Erreur au chargement du fichier de configuration : Non trouvé !</value>
   </data>
   <data name="ErrorLoadingUserRegistration" xml:space="preserve">
-    <value>Erreur au chargement du profil utilisateur ! \r[0}</value>
+    <value>Erreur au chargement du profil utilisateur ! 
+{0}</value>
   </data>
   <data name="ErrorSendingToastInformation" xml:space="preserve">
-    <value>Erreur lors de l'envoi de la notification Toast : \r{0}</value>
+    <value>Erreur lors de l'envoi de la notification Toast : 
+{0}</value>
   </data>
   <data name="ErrorValidationTimeWindowElapsed" xml:space="preserve">
     <value>Fenêtre de validation épuisée.</value>

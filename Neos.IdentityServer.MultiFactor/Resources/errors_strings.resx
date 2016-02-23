@@ -118,13 +118,15 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ErrorAuthenticating" xml:space="preserve">
-    <value>Error on authentication process ! \r{0}</value>
+    <value>Error on authentication process ! 
+{0}</value>
   </data>
   <data name="ErrorEmailException" xml:space="preserve">
     <value>Email invalid format !</value>
   </data>
   <data name="ErrorInvalidEmail" xml:space="preserve">
-    <value>Error invalid email format : \r{0}</value>
+    <value>Error invalid email format : 
+{0}</value>
   </data>
   <data name="ErrorInvalidIdentificationRestart" xml:space="preserve">
     <value>Invalid identification, please restart your session.</value>
@@ -133,16 +135,19 @@
     <value>Operation canceled, password invalid !</value>
   </data>
   <data name="ErrorLoadingConfigurationFile" xml:space="preserve">
-    <value>Error loading Configuration File : \r{0}</value>
+    <value>Error loading Configuration File : 
+{0}</value>
   </data>
   <data name="ErrorLoadingConfigurationFileNotFound" xml:space="preserve">
     <value>Error loading Configuration File : Not Found !</value>
   </data>
   <data name="ErrorLoadingUserRegistration" xml:space="preserve">
-    <value>Error loading User Registration ! \r[0}</value>
+    <value>Error loading User Registration ! 
+{0}</value>
   </data>
   <data name="ErrorSendingToastInformation" xml:space="preserve">
-    <value>Error sending toast notification : \r{0}</value>
+    <value>Error sending toast notification : 
+{0}</value>
   </data>
   <data name="ErrorValidationTimeWindowElapsed" xml:space="preserve">
     <value>Window validation time elapsed.</value>
