@@ -34,18 +34,21 @@ namespace Neos.IdentityServer.MultiFactor
         private byte[] _hmac;
         private int _offset;
         private int _oneTimePassword;
+        private DateTime _datetime;
         private HashMode _mode = HashMode.SHA1;
 
+        public static int TOTPDuration = 30;
 
         /// <summary>
         /// Constructor
         /// </summary>
         public OneTimePasswordGenerator(HashMode mode = HashMode.SHA1)
         {
+            RequestedDatetime = DateTime.UtcNow;
             _mode = mode;
             var timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromMilliseconds(500);
-            timer.Tick += (s, e) => SecondsToGo = 30 - Convert.ToInt32(GetUnixTimestamp() % 30);
+            timer.Tick += (s, e) => SecondsToGo = TOTPDuration - Convert.ToInt32(GetUnixTimestamp(RequestedDatetime) % TOTPDuration);
             timer.IsEnabled = true;
         }
 
@@ -54,10 +57,11 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public OneTimePasswordGenerator(byte[] asecret, string aid, HashMode mode = HashMode.SHA1)
         {
+            RequestedDatetime = DateTime.UtcNow;
             _mode = mode;
             var timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromMilliseconds(500);
-            timer.Tick += (s, e) => SecondsToGo = 30 - Convert.ToInt32(GetUnixTimestamp() % 30);
+            timer.Tick += (s, e) => SecondsToGo = TOTPDuration - Convert.ToInt32(GetUnixTimestamp(RequestedDatetime) % TOTPDuration);
             timer.IsEnabled = true;
 
             Secret = asecret;
@@ -69,11 +73,29 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public OneTimePasswordGenerator(string ssecret, string aid, HashMode mode = HashMode.SHA1)
         {
+            RequestedDatetime = DateTime.UtcNow;
             byte[] asecret = Base32.GetBytesFromString(ssecret);
             _mode = mode;
             var timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromMilliseconds(500);
-            timer.Tick += (s, e) => SecondsToGo = 30 - Convert.ToInt32(GetUnixTimestamp() % 30);
+            timer.Tick += (s, e) => SecondsToGo = TOTPDuration - Convert.ToInt32(GetUnixTimestamp(RequestedDatetime) % TOTPDuration);
+            timer.IsEnabled = true;
+
+            Secret = asecret;
+            Identity = aid;
+        }
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public OneTimePasswordGenerator(string ssecret, string aid, DateTime datetime, HashMode mode = HashMode.SHA1)
+        {
+            RequestedDatetime = datetime;
+            byte[] asecret = Base32.GetBytesFromString(ssecret);
+            _mode = mode;
+            var timer = new DispatcherTimer();
+            timer.Interval = TimeSpan.FromMilliseconds(500);
+            timer.Tick += (s, e) => SecondsToGo = TOTPDuration - Convert.ToInt32(GetUnixTimestamp(RequestedDatetime) % TOTPDuration);
             timer.IsEnabled = true;
 
             Secret = asecret;
@@ -88,9 +110,9 @@ namespace Neos.IdentityServer.MultiFactor
             get { return _secondsToGo; }
             private set 
             { 
-                _secondsToGo = value; 
-                if (SecondsToGo == 30) 
-                    ComputeOneTimePassword(); 
+                _secondsToGo = value;
+                if (SecondsToGo == TOTPDuration)
+                    ComputeOneTimePassword(RequestedDatetime); 
             }
         }
         
@@ -163,6 +185,15 @@ namespace Neos.IdentityServer.MultiFactor
         }
 
         /// <summary>
+        /// RequestedDatetime property implmentation
+        /// </summary>
+        public DateTime RequestedDatetime
+        {
+            get { return _datetime; }
+            private set { _datetime = value; }
+        }
+
+        /// <summary>
         /// Hmac property implementation
         /// </summary>
         public byte[] Hmac
@@ -216,10 +247,10 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// ComputeOneTimePassword method implmentation
         /// </summary>
-        public void ComputeOneTimePassword()
+        public void ComputeOneTimePassword(DateTime date)
         {
             // https://tools.ietf.org/html/rfc4226
-            Timestamp = Convert.ToInt64(GetUnixTimestamp() / 30);
+            Timestamp = Convert.ToInt64(GetUnixTimestamp(date) / TOTPDuration);
             var data = BitConverter.GetBytes(Timestamp).Reverse().ToArray();
             switch (_mode)
             {
@@ -243,9 +274,9 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// GetUnixTimestamp method implementation
         /// </summary>
-        private static Int64 GetUnixTimestamp()
+        private static Int64 GetUnixTimestamp(DateTime date)
         {
-            return Convert.ToInt64(Math.Round((DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds));
+            return Convert.ToInt64(Math.Round((date - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds));
         }
     }
 

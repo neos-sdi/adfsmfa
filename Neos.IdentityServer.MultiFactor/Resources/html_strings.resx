@@ -213,4 +213,10 @@
   <data name="HtmUIMLabelOTP" xml:space="preserve">
     <value>access code for single use : </value>
   </data>
+  <data name="HtmlREGResetQR" xml:space="preserve">
+    <value>Reinitialize your key</value>
+  </data>
+  <data name="HtmlSecretKeyChanged" xml:space="preserve">
+    <value>Your secret key has changed !</value>
+  </data>
 </root>

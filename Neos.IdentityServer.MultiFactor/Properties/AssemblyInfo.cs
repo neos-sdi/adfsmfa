@@ -6,13 +6,12 @@ using System.Resources;
 // Les informations générales relatives à un assembly dépendent de 
 // l'ensemble d'attributs suivant. Changez les valeurs de ces attributs pour modifier les informations
 // associées à un assembly.
-[assembly: AssemblyTitle("Microsoft.IdentityServer.MultiFactor")]
+[assembly: AssemblyTitle("Neos.IdentityServer.MultiFactor")]
 [assembly: AssemblyDescription("Multi factor implementation for TOPT")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Neos-Sdi")]
 [assembly: AssemblyProduct("Microsoft.IdentityServer.MultiFactor")]
-[assembly: AssemblyCopyright("Copyright Neos-Sdi ©  2015")]
-[assembly: AssemblyTrademark("Franck Musson")]
+[assembly: AssemblyCopyright("Copyright Neos-Sdi ©  2016")]
 [assembly: AssemblyCulture("")]
 
 // L'affectation de la valeur false à ComVisible rend les types invisibles dans cet assembly 
@@ -34,5 +33,5 @@ using System.Resources;
 // en utilisant '*', comme indiqué ci-dessous :
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.1")]
+[assembly: AssemblyFileVersion("1.0.1.0")]
 [assembly: NeutralResourcesLanguageAttribute("")]

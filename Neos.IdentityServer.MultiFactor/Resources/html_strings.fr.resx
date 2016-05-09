@@ -213,4 +213,10 @@
   <data name="HtmUIMLabelOTP" xml:space="preserve">
     <value>Code d'accès à usage unique :</value>
   </data>
+  <data name="HtmlREGResetQR" xml:space="preserve">
+    <value>Réinitialiser votre clé </value>
+  </data>
+  <data name="HtmlSecretKeyChanged" xml:space="preserve">
+    <value>Attention ! Votre clé secréte a été modifiée !</value>
+  </data>
 </root>

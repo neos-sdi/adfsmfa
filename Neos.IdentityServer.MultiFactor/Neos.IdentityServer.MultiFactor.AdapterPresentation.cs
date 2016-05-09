@@ -188,6 +188,11 @@ namespace Neos.IdentityServer.MultiFactor
                     {
                         result += "<div class=\"fieldMargin smallText\"><label for=\"\"></label>" + html_strings.HtmlREGLabelAppKey+ "</div>";
                         result += "<input id=\"secretkey\" name=\"secretkey\" type=\"text\" readonly=\"true\" placeholder=\"Secret Key\" class=\"text fullWidth\" style=\"background-color: #C0C0C0\" value=\"" + Provider.UserRegistration.DisplayKey + "\"/><br/>";
+                        result += "<a class=\"actionLink\" href=\"#\" id=\"resetkey\" name=\"resetkey\" onclick=\"return ResetKey(loginForm)\"; style=\"cursor: pointer;\">" + html_strings.HtmlREGResetQR + "</a>";
+                        if (Provider.SecretKeyAsChanged)
+                        {
+                            result += "<div class=\"fieldMargin error smallText\"><label id=\"secretkeychanged\" for=\"\" >" + html_strings.HtmlSecretKeyChanged + "</label></div>";
+                        }
                         result += "<a class=\"actionLink\" href=\"#\" id=\"qrcode\" name=\"qrcode\" onclick=\"return ShowQR(loginForm)\"; style=\"cursor: pointer;\">" + html_strings.HtmlREGShowQR +"</a><br/>";
                         result += "<input id=\"lnk\" type=\"hidden\" name=\"lnk\" value=\"0\"/>";
                     }
@@ -600,6 +605,17 @@ namespace Neos.IdentityServer.MultiFactor
                     result += "   if (lnk)" + "\r\n";
                     result += "   {" + "\r\n";
                     result += "      lnk.value = 1;" + "\r\n";
+                    result += "   }" + "\r\n";
+                    result += "   frm.submit();" + "\r\n";
+                    result += "   return true;" + "\r\n";
+                    result += "}" + "\r\n";
+
+                    result += "function ResetKey(frm)" + "\r\n";
+                    result += "{"+ "\r\n";
+                    result += "   var lnk = document.getElementById('lnk');" + "\r\n";
+                    result += "   if (lnk)" + "\r\n";
+                    result += "   {" + "\r\n";
+                    result += "      lnk.value = 2;" + "\r\n";
                     result += "   }" + "\r\n";
                     result += "   frm.submit();" + "\r\n";
                     result += "   return true;" + "\r\n";

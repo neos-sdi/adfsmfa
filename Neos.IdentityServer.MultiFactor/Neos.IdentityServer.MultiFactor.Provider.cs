@@ -190,6 +190,7 @@ namespace Neos.IdentityServer.MultiFactor
             switch (ui)
             {
                 case ProviderPageMode.Identification:
+                    SecretKeyAsChanged = false;
                     try
                     {
                         string pin = proofData.Properties["pin"].ToString();
@@ -206,8 +207,9 @@ namespace Neos.IdentityServer.MultiFactor
                                     UIM = ProviderPageMode.locking;
                                     return new AdapterPresentation(this, errors_strings.ErrorValidationTimeWindowElapsed, true);
                                 }
-                                string originalPin = GetPin(notif, UserRegistration);
-                                if (Convert.ToInt32(pin) == Convert.ToInt32(originalPin))
+                                if (CheckPin(pin, notif, UserRegistration))
+                              //  string originalPin = GetPin(notif, UserRegistration);
+                              //  if (Convert.ToInt32(pin) == Convert.ToInt32(originalPin))
                                 {
                                     if (!suitetooptions)
                                     {
@@ -296,12 +298,20 @@ namespace Neos.IdentityServer.MultiFactor
                             else
                                 result = new AdapterPresentation(this);
                         }
-                        else
+                        else if (xlnk2 == 1)
                         {
                             UIM = ProviderPageMode.ShowQRCode;
                             QRString = secretkey;
                             QRSource = 1;
                             result = new AdapterPresentation(this);
+                        }
+                        else if (xlnk2 == 2)
+                        {
+                            UserRegistration.SecretKey = RemoteAdminService.GetNewSecretKey(Config);
+                            RemoteAdminService.SetUserRegistration(UserRegistration, Config);
+                            UIM = ProviderPageMode.Registration;
+                            SecretKeyAsChanged = true;
+                            result = new AdapterPresentation(this, infos_strings.InfosConfigurationModified);
                         }
                     }
                     catch (Exception ex)
@@ -312,6 +322,7 @@ namespace Neos.IdentityServer.MultiFactor
                     break;
 
                 case ProviderPageMode.ChangePassword:
+                    SecretKeyAsChanged = false;
                     if (_config.CustomUpdatePassword)
                     {
                         try
@@ -364,12 +375,14 @@ namespace Neos.IdentityServer.MultiFactor
                     }
                     break;
                 case ProviderPageMode.Bypass:
+                    SecretKeyAsChanged = false;
                     System.Security.Claims.Claim claimx1 = new System.Security.Claims.Claim("http://schemas.microsoft.com/ws/2008/06/identity/claims/authenticationmethod", "http://schemas.microsoft.com/ws/2012/12/authmethod/otp");
                     System.Security.Claims.Claim claimx2 = new System.Security.Claims.Claim("http://schemas.microsoft.com/ws/2015/02/identity/claims/otpmode", "bypass");
                     System.Security.Claims.Claim claimx3 = new System.Security.Claims.Claim("http://schemas.microsoft.com/ws/2015/02/identity/claims/otpduration", "0");
                     claims = new System.Security.Claims.Claim[] { claimx1, claimx2, claimx3 };
                     break;
                 case ProviderPageMode.SelectOptions:
+                    SecretKeyAsChanged = false;
                     try
                     {
                         int lnk = Convert.ToInt32(proofData.Properties["lnk"].ToString());
@@ -400,6 +413,7 @@ namespace Neos.IdentityServer.MultiFactor
                     }
                     break;
                 case ProviderPageMode.ChooseMethod:
+                    SecretKeyAsChanged = false;
                     try
                     {
                         UserRegistration.PreferredMethod = RegistrationPreferredMethod.ApplicationCode;
@@ -454,6 +468,7 @@ namespace Neos.IdentityServer.MultiFactor
                     }
                     break;
                 case ProviderPageMode.ShowQRCode:
+                    SecretKeyAsChanged = false;
                     if (QRSource==1)
                         UIM = ProviderPageMode.Registration;
                     else
@@ -493,7 +508,66 @@ namespace Neos.IdentityServer.MultiFactor
         }
 
         /// <summary>
-        /// GetPin method implmentation
+        /// CheckPin method inplementation
+        /// </summary>
+        private bool CheckPin(string pin, Notification notif, Registration userreg)
+        {
+            if (notif.OTP > 0)
+            {
+                string generatedpin = notif.OTP.ToString("D");  // eg : transmitted by email
+                return  (Convert.ToInt32(pin) == Convert.ToInt32(generatedpin));
+            }
+            else
+            {
+                if (Config.TOTPShadows <= 0)
+                {
+                    DateTime tcall = DateTime.UtcNow;
+                    OneTimePasswordGenerator gen = new OneTimePasswordGenerator(userreg.SecretKey, userreg.UPN, tcall, Config.Algorithm);  // eg : TOTP code
+                    gen.ComputeOneTimePassword(tcall);
+                    string generatedpin = gen.OneTimePassword.ToString("D");
+                    return (Convert.ToInt32(pin) == Convert.ToInt32(generatedpin));
+                }
+                else
+                {   // Current TOTP
+                    DateTime call = DateTime.UtcNow;
+                    OneTimePasswordGenerator currentgen = new OneTimePasswordGenerator(userreg.SecretKey, userreg.UPN, call, Config.Algorithm);  // eg : TOTP code
+                    currentgen.ComputeOneTimePassword(call);
+                    string currentpin = currentgen.OneTimePassword.ToString("D");
+                    if (Convert.ToInt32(pin) == Convert.ToInt32(currentpin))
+                    {
+                        return true;
+                    }
+                    // TOTP with Shadow (current - x latest)
+                    for (int i = 1; i <= Config.TOTPShadows; i++ )
+                    {
+                        DateTime tcall = call.AddSeconds(-(i * OneTimePasswordGenerator.TOTPDuration));
+                        OneTimePasswordGenerator gen = new OneTimePasswordGenerator(userreg.SecretKey, userreg.UPN, tcall, Config.Algorithm);  // eg : TOTP code
+                        gen.ComputeOneTimePassword(tcall);
+                        string generatedpin = gen.OneTimePassword.ToString("D");
+                        if (Convert.ToInt32(pin) == Convert.ToInt32(generatedpin))
+                        {
+                            return true;
+                        }
+                    }
+                    // TOTP with Shadow (current + x latest)
+                    for (int i = 1; i <= Config.TOTPShadows; i++)
+                    {
+                        DateTime tcall = call.AddSeconds(i * OneTimePasswordGenerator.TOTPDuration);
+                        OneTimePasswordGenerator gen = new OneTimePasswordGenerator(userreg.SecretKey, userreg.UPN, tcall, Config.Algorithm);  // eg : TOTP code
+                        gen.ComputeOneTimePassword(tcall);
+                        string generatedpin = gen.OneTimePassword.ToString("D");
+                        if (Convert.ToInt32(pin) == Convert.ToInt32(generatedpin))
+                        {
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+            }
+        }
+
+        /// <summary>
+        /// GetPin method implmentation (Obsolete)
         /// </summary>
         private string GetPin(Notification notif, Registration userreg)
         {
@@ -501,8 +575,8 @@ namespace Neos.IdentityServer.MultiFactor
                 return notif.OTP.ToString("D");  // eg : transmitted by email
             else
             {
-                OneTimePasswordGenerator gen = new OneTimePasswordGenerator(userreg.SecretKey, userreg.UPN, Config.Algorithm);  // eg : TOTP code
-                gen.ComputeOneTimePassword();
+                OneTimePasswordGenerator gen = new OneTimePasswordGenerator(userreg.SecretKey, userreg.UPN, DateTime.UtcNow, Config.Algorithm);  // eg : TOTP code
+                gen.ComputeOneTimePassword(DateTime.UtcNow);
                 return gen.OneTimePassword.ToString("D");
             }
         }
@@ -608,6 +682,15 @@ namespace Neos.IdentityServer.MultiFactor
         { 
             get; 
             set; 
+        }
+
+        /// <summary>
+        /// SecretKeyAsChanged property implementation
+        /// </summary>
+        public bool SecretKeyAsChanged
+        {
+            get;
+            set;
         }
         #endregion
     }

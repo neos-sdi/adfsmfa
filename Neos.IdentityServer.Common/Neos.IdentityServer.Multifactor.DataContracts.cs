@@ -47,6 +47,13 @@ namespace Neos.IdentityServer.MultiFactor
             set;
         }
 
+        [XmlAttribute("TOTPShadows")]
+        public int TOTPShadows
+        {
+            get;
+            set;
+        }
+
         [XmlAttribute("SMSEnabled")]
         public bool SMSEnabled
         {

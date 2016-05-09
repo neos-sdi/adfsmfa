@@ -117,14 +117,14 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Format" xml:space="preserve">
+    <value>Format de N° de téléphone invalide</value>
+  </data>
   <data name="ValidConfirmNewPassError" xml:space="preserve">
     <value>Confirmez votre nouveau mot passe</value>
   </data>
   <data name="ValidIncorrectEmail" xml:space="preserve">
-    <value>Email not correctly formatted</value>
-  </data>
-  <data name="ValidIncorrectPhoneNumber" xml:space="preserve">
-    <value>Phone number not correctly formatted</value>
+    <value>Format d'email incorrect</value>
   </data>
   <data name="ValidNewPassError" xml:space="preserve">
     <value>Validation du nouveau mot de passe invalide</value>
