@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<MFAConfig DeliveryWindow="300" SMSEnabled="false" AppsEnabled="true" Algorithm="SHA1" Issuer="your company" UseActiveDirectory="true" CustomUpdatePassword="true" KeyGenerator="ClientSecret128">
+<MFAConfig DeliveryWindow="300" TOTPShadows="2" SMSEnabled="false" AppsEnabled="true" Algorithm="SHA1" Issuer="your company" UseActiveDirectory="true" CustomUpdatePassword="true" KeyGenerator="ClientSecret128">
 	<Hosts>
     <SQLServer ConnectionString="your sql server connction string" />
     <!--
