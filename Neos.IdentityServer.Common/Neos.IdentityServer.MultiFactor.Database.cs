@@ -107,7 +107,7 @@ namespace Neos.IdentityServer.MultiFactor
                 notif.OTP = GetRandomOTP();
             else
                 notif.OTP = -1;
-            notif.CreationDate = DateTime.Now.ToUniversalTime();
+            notif.CreationDate = DateTime.Now;
             notif.ValidityDate = notif.CreationDate.AddSeconds(_deliverywindow);
             notif.CheckDate = null;
             if (HasNotification(notif.RegistrationID))
@@ -124,7 +124,7 @@ namespace Neos.IdentityServer.MultiFactor
         {
             Notification notif = new Notification();
             notif.RegistrationID = registrationid;
-            notif.CheckDate = DateTime.Now.ToUniversalTime();
+            notif.CheckDate = DateTime.Now;
             return DoCheckNotification(notif);
         }
         #endregion

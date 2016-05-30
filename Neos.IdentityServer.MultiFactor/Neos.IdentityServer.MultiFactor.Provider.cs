@@ -202,14 +202,12 @@ namespace Neos.IdentityServer.MultiFactor
                             Notification notif = RemoteAdminService.CheckNotification(UserRegistration, Config);
                             if (notif != null)
                             {
-                                if (notif.CheckDate.Value > notif.ValidityDate)
+                                if (notif.CheckDate.Value.ToUniversalTime() > notif.ValidityDate.ToUniversalTime())  // Always check with Universal Time
                                 {
                                     UIM = ProviderPageMode.locking;
                                     return new AdapterPresentation(this, errors_strings.ErrorValidationTimeWindowElapsed, true);
                                 }
                                 if (CheckPin(pin, notif, UserRegistration))
-                              //  string originalPin = GetPin(notif, UserRegistration);
-                              //  if (Convert.ToInt32(pin) == Convert.ToInt32(originalPin))
                                 {
                                     if (!suitetooptions)
                                     {
@@ -227,7 +225,7 @@ namespace Neos.IdentityServer.MultiFactor
                                                 claim1 = new System.Security.Claims.Claim("http://schemas.microsoft.com/ws/2015/02/identity/claims/otpmode", "appcode");
                                                 break;
                                         }
-                                        TimeSpan duration = notif.CheckDate.Value.Subtract(notif.CreationDate);
+                                        TimeSpan duration = notif.CheckDate.Value.Subtract(notif.CreationDate);  // We Want only the difference no need UTC
                                         System.Security.Claims.Claim claim2 = new System.Security.Claims.Claim("http://schemas.microsoft.com/ws/2015/02/identity/claims/otpduration", duration.ToString());
                                         claims = new System.Security.Claims.Claim[] { claim0, claim1, claim2 };
                                     }
