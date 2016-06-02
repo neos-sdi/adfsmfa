@@ -12,6 +12,7 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                               //
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
+#define softemail
 using Neos.IdentityServer.MultiFactor.QrEncoding;
 using Neos.IdentityServer.MultiFactor.QrEncoding.Windows.Render;
 using Neos.IdentityServer.MultiFactor.Resources;
@@ -146,6 +147,8 @@ namespace Neos.IdentityServer.MultiFactor
                      using (StreamReader reader = new StreamReader(stm))
                      {
                          _config = (MFAConfig)xmlserializer.Deserialize(stm);
+                         if ((!_config.AppsEnabled) && (!_config.MailEnabled) && (!_config.SMSEnabled))
+                             _config.MailEnabled = true;  // always let an active option eg : email in this case
                      }
                  }
                  catch (Exception EX)
@@ -264,23 +267,29 @@ namespace Neos.IdentityServer.MultiFactor
                 case ProviderPageMode.Registration:
                     try
                     {
-                        string email = proofData.Properties["email"].ToString();
+                        string email = null;
                         string secretkey = null;
                         string phone = null;
                         int xlnk2 = 0;
+
+                        if (Config.MailEnabled)
+                        {
+                            email = proofData.Properties["email"].ToString();
+                            ValidateEmail(email);
+                            UserRegistration.MailAddress = email;
+                        }
                         if ((Config.AppsEnabled) && (!string.IsNullOrEmpty(UserRegistration.DisplayKey)))
                         {
                             secretkey = proofData.Properties["secretkey"].ToString();
                             xlnk2 = Convert.ToInt32(proofData.Properties["lnk"].ToString());
                         }
                         if (Config.SMSEnabled)
+                        {
                             phone = proofData.Properties["phone"].ToString();
-                        int  select = Convert.ToInt32(proofData.Properties["selectopt"].ToString());
-                        ValidateEmail(email);
-                        UserRegistration.MailAddress = email;
-                        // UserRegistration.SecretKey = secretkey; // Read-Only
-                        if (Config.SMSEnabled)
                             UserRegistration.PhoneNumber = phone;
+                        }
+                        int select = Convert.ToInt32(proofData.Properties["selectopt"].ToString());
+
                         UserRegistration.PreferredMethod = (RegistrationPreferredMethod)select;
                         UIM = ProviderPageMode.SelectOptions;
 
@@ -421,29 +430,72 @@ namespace Neos.IdentityServer.MultiFactor
                         switch (optsel)
                         {
                             case 0:
-                                UserRegistration.PreferredMethod = RegistrationPreferredMethod.ApplicationCode;
-                                UIM = ProviderPageMode.Identification;
-                                result = new AdapterPresentation(this);
-                                if (dorem)
-                                    RemoteAdminService.SetUserRegistration(UserRegistration, Config);
-                                break;
-                            case 1:
-                                UserRegistration.PreferredMethod = RegistrationPreferredMethod.Phone;
-                                UIM = ProviderPageMode.Identification;
-                                result = new AdapterPresentation(this);
-                                if (dorem)
-                                    RemoteAdminService.SetUserRegistration(UserRegistration, Config);
-                                break;
-                            case 2:
-                                UserRegistration.PreferredMethod = RegistrationPreferredMethod.Email;
-                                string aname = proofData.Properties["stmail"].ToString();
-                                string idom = Utilities.StripEmailDomain(UserRegistration.MailAddress);
-                                if ((aname.ToLower() + idom.ToLower()).Equals(UserRegistration.MailAddress.ToLower()))
+                                if (Config.AppsEnabled)
                                 {
+                                    UserRegistration.PreferredMethod = RegistrationPreferredMethod.ApplicationCode;
                                     UIM = ProviderPageMode.Identification;
                                     result = new AdapterPresentation(this);
                                     if (dorem)
                                         RemoteAdminService.SetUserRegistration(UserRegistration, Config);
+                                }
+                                else
+                                {
+                                    UserRegistration.PreferredMethod = RegistrationPreferredMethod.Choose;
+                                    UIM = ProviderPageMode.locking;
+                                    result = new AdapterPresentation(this, errors_strings.ErrorInvalidIdentificationRestart, true);
+                                }
+                                break;
+                            case 1:
+                                if (Config.SMSEnabled)
+                                {
+                                    UserRegistration.PreferredMethod = RegistrationPreferredMethod.Phone;
+                                    UIM = ProviderPageMode.Identification;
+                                    result = new AdapterPresentation(this);
+                                    if (dorem)
+                                        RemoteAdminService.SetUserRegistration(UserRegistration, Config);
+                                }
+                                else
+                                {
+                                    UserRegistration.PreferredMethod = RegistrationPreferredMethod.Choose;
+                                    UIM = ProviderPageMode.locking;
+                                    result = new AdapterPresentation(this, errors_strings.ErrorInvalidIdentificationRestart, true);
+                                }
+                                break;
+                            case 2:
+                                if (Config.MailEnabled)
+                                {
+                                    UserRegistration.PreferredMethod = RegistrationPreferredMethod.Email;
+                                    string aname = proofData.Properties["stmail"].ToString();
+#if softemail
+                                    // the email is not registered, but registration has been made, so we force to register the email. this is a little security hole, but at this point the user is authenticated. then we log an alert in the EventLog
+                                    if (string.IsNullOrEmpty(UserRegistration.MailAddress))
+                                    {
+                                        UserRegistration.MailAddress = aname;
+                                        dorem = true;
+                                        EventLog.WriteEntry(EventLogSource, string.Format(errors_strings.ErrorRegistrationEmptyEmail, UserRegistration.UPN, UserRegistration.MailAddress), EventLogEntryType.Error, 9999);
+                                        UIM = ProviderPageMode.Identification;
+                                        result = new AdapterPresentation(this);
+                                        if (dorem)
+                                            RemoteAdminService.SetUserRegistration(UserRegistration, Config);
+                                    }
+                                    else
+#endif
+                                    {
+                                        string idom = Utilities.StripEmailDomain(UserRegistration.MailAddress);
+                                        if ((aname.ToLower() + idom.ToLower()).Equals(UserRegistration.MailAddress.ToLower()))
+                                        {
+                                            UIM = ProviderPageMode.Identification;
+                                            result = new AdapterPresentation(this);
+                                            if (dorem)
+                                                RemoteAdminService.SetUserRegistration(UserRegistration, Config);
+                                        }
+                                        else
+                                        {
+                                            UserRegistration.PreferredMethod = RegistrationPreferredMethod.Choose;
+                                            UIM = ProviderPageMode.locking;
+                                            result = new AdapterPresentation(this, errors_strings.ErrorInvalidIdentificationRestart, true);
+                                        }
+                                    }
                                 }
                                 else
                                 {

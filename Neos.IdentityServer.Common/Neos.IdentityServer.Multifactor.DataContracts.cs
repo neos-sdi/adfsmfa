@@ -54,6 +54,13 @@ namespace Neos.IdentityServer.MultiFactor
             set;
         }
 
+        [XmlAttribute("MailEnabled")]
+        public bool MailEnabled
+        {
+            get;
+            set;
+        }
+
         [XmlAttribute("SMSEnabled")]
         public bool SMSEnabled
         {

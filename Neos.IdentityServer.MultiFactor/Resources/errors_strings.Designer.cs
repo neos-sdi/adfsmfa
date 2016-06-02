@@ -137,6 +137,15 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Warning ! the user {0} has choosen to connect via a procedure with an untrusted email address : {1}. This email must be set in the standard registration procedure, this is not the case. Perhaps that the email validation option was not active when the user has registered. This is not a normal condition ! Please, investigate, it&apos;s maybe a legitim connection..
+        /// </summary>
+        internal static string ErrorRegistrationEmptyEmail {
+            get {
+                return ResourceManager.GetString("ErrorRegistrationEmptyEmail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Error sending toast notification : 
         ///{0}.
         /// </summary>

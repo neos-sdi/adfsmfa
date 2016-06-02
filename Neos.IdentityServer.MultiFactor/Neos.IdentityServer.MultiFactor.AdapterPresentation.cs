@@ -122,7 +122,8 @@ namespace Neos.IdentityServer.MultiFactor
                                     result += "<div class=\"fieldMargin smallText\"><label for=\"\"></label>" + html_strings.HtmlUIMUseApp + "</div><br/>";
                                 break;
                             case RegistrationPreferredMethod.Email:
-                                result += "<div class=\"fieldMargin smallText\"><label for=\"\"></label>" + html_strings.HtlmUIMUseEmail + "</div><br/>";
+                                if (Provider.Config.MailEnabled)
+                                    result += "<div class=\"fieldMargin smallText\"><label for=\"\"></label>" + html_strings.HtlmUIMUseEmail + "</div><br/>";
                                 break;
 
                             case RegistrationPreferredMethod.Phone:
@@ -151,7 +152,8 @@ namespace Neos.IdentityServer.MultiFactor
                                 result += "<div class=\"fieldMargin smallText\"><label for=\"\"></label>" + html_strings.HtmlUIMUseApp + "</div><br/>";
                             break;
                         case RegistrationPreferredMethod.Email:
-                            result += "<div class=\"fieldMargin smallText\"><label for=\"\"></label>" + html_strings.HtlmUIMUseEmail + "</div><br/>";
+                            if (Provider.Config.MailEnabled)
+                                result += "<div class=\"fieldMargin smallText\"><label for=\"\"></label>" + html_strings.HtlmUIMUseEmail + "</div><br/>";
                             break;
 
                         case RegistrationPreferredMethod.Phone:
@@ -182,8 +184,11 @@ namespace Neos.IdentityServer.MultiFactor
 
                     result += "<form method=\"post\" id=\"loginForm\" autocomplete=\"off\" onsubmit=\"return ValidateRegistrationEmail(this)\">";
                     result += "<div id=\"error\" class=\"fieldMargin error smallText\"><label id=\"errorText\" name=\"errorText\" for=\"\"></label></div>";
-                    result += "<div class=\"fieldMargin smallText\"><label for=\"\"></label>" + html_strings.HtmlREGLabelMail + "</div>";
-                    result += "<input id=\"email\" name=\"email\" type=\"text\" placeholder=\"Personal Email Address\" class=\"text fullWidth\" value=\"" + Provider.UserRegistration.MailAddress + "\"/><br/><br/>";
+                    if (Provider.Config.MailEnabled)
+                    {
+                        result += "<div class=\"fieldMargin smallText\"><label for=\"\"></label>" + html_strings.HtmlREGLabelMail + "</div>";
+                        result += "<input id=\"email\" name=\"email\" type=\"text\" placeholder=\"Personal Email Address\" class=\"text fullWidth\" value=\"" + Provider.UserRegistration.MailAddress + "\"/><br/><br/>";
+                    }
                     if ((Provider.Config.AppsEnabled) && (!string.IsNullOrEmpty(Provider.UserRegistration.DisplayKey)))
                     {
                         result += "<div class=\"fieldMargin smallText\"><label for=\"\"></label>" + html_strings.HtmlREGLabelAppKey+ "</div>";
@@ -206,35 +211,50 @@ namespace Neos.IdentityServer.MultiFactor
                     if (Provider.UserRegistration.PreferredMethod==RegistrationPreferredMethod.Choose)
                     {
                         result += "<option value=\"0\" selected=\"true\">" + html_strings.HtmlREGOptionChooseBest + "</option>";
+
                         if (Provider.Config.AppsEnabled)
                             result += "<option value=\"1\" >" + html_strings.HtmlREGOptionTOTP + "</option>";
-                        result += "<option value=\"2\" >" + html_strings.HtmlREGOptionEmail + "</option>";
+
+                        if (Provider.Config.MailEnabled)
+                            result += "<option value=\"2\" >" + html_strings.HtmlREGOptionEmail + "</option>";
+
                         if (Provider.Config.SMSEnabled)
                             result += "<option value=\"3\" >" + html_strings.HtmlREGOptionPhone + "</option>";
                     }
                     else if (Provider.UserRegistration.PreferredMethod==RegistrationPreferredMethod.ApplicationCode)
                     {
                         result += "<option value=\"0\" >" + html_strings.HtmlREGOptionChooseBest + "</option>";
+
                         result += "<option value=\"1\" selected=\"true\">" + html_strings.HtmlREGOptionTOTP + "</option>";
-                        result += "<option value=\"2\" >" + html_strings.HtmlREGOptionEmail + "</option>";
+
+                        if (Provider.Config.MailEnabled)
+                            result += "<option value=\"2\" >" + html_strings.HtmlREGOptionEmail + "</option>";
+
                         if (Provider.Config.SMSEnabled)
                             result += "<option value=\"3\" >" + html_strings.HtmlREGOptionPhone + "</option>";
                     }
                     else if (Provider.UserRegistration.PreferredMethod==RegistrationPreferredMethod.Email)
                     {
                         result += "<option value=\"0\" >" + html_strings.HtmlREGOptionChooseBest + "</option>";
+
                         if (Provider.Config.AppsEnabled)
                             result += "<option value=\"1\" >" + html_strings.HtmlREGOptionTOTP + "</option>";
+                        
                         result += "<option value=\"2\" selected=\"true\">" + html_strings.HtmlREGOptionEmail + "</option>";
+
                         if (Provider.Config.SMSEnabled)
                             result += "<option value=\"3\" >" + html_strings.HtmlREGOptionPhone + "</option>";
                     }
                     else if (Provider.UserRegistration.PreferredMethod == RegistrationPreferredMethod.Phone)
                     {
                         result += "<option value=\"0\" >" + html_strings.HtmlREGOptionChooseBest + "</option>";
+
                         if (Provider.Config.AppsEnabled)
                             result += "<option value=\"1\" >" + html_strings.HtmlREGOptionTOTP + "</option>";
-                        result += "<option value=\"2\" >" + html_strings.HtmlREGOptionEmail + "</option>";
+
+                        if (Provider.Config.MailEnabled)
+                            result += "<option value=\"2\" >" + html_strings.HtmlREGOptionEmail + "</option>";
+
                         result += "<option value=\"3\" selected=\"true\">" + html_strings.HtmlREGOptionPhone + "</option>";
                     }
                     result += "</select><br/><br/><br/>";
@@ -332,7 +352,8 @@ namespace Neos.IdentityServer.MultiFactor
                     result += "<form method=\"post\" id=\"loginForm\" autocomplete=\"off\" title=\"Aidez-nos à protéger votre compte\" >";
                     result += "<div id=\"error\" class=\"fieldMargin error smallText\"><label id=\"errorText\" name=\"errorText\" for=\"\"></label></div>";
                     bool notcoda = false;
-                    if (!string.IsNullOrEmpty(Provider.UserRegistration.DisplayKey) && (Provider.Config.AppsEnabled))
+                   // if (!string.IsNullOrEmpty(Provider.UserRegistration.DisplayKey) && (Provider.Config.AppsEnabled))
+                    if (Provider.Config.AppsEnabled)
                     {
                         result += "<input id=\"opt1\" name=\"opt\" type=\"radio\" value=\"0\" checked=\"checked\" onchange=\"ChooseMethodChanged()\" /> " + html_strings.HtmlCHOOSEOptionTOTP + "<br /><br/>";
                     }
@@ -340,6 +361,7 @@ namespace Neos.IdentityServer.MultiFactor
                         notcoda = true;
                     bool notphone = false;
                     if (!string.IsNullOrEmpty(Provider.UserRegistration.PhoneNumber) && (Provider.Config.SMSEnabled))
+                   // if (Provider.Config.SMSEnabled)
                     {
                         if (notcoda)
                             result += "<input id=\"opt2\" name=\"opt\" type=\"radio\" value=\"1\" checked=\"checked\" onchange=\"ChooseMethodChanged()\"/> "+ html_strings.HtmlCHOOSEOptionSMS + " " + Utilities.StripPhoneNumer(Provider.UserRegistration.PhoneNumber) + "<br/><br/>";
@@ -348,7 +370,8 @@ namespace Neos.IdentityServer.MultiFactor
                     }
                     else
                         notphone = true;
-                    if (!string.IsNullOrEmpty(Provider.UserRegistration.MailAddress))
+                  //  if (!string.IsNullOrEmpty(Provider.UserRegistration.MailAddress) && (Provider.Config.MailEnabled))
+                    if (Provider.Config.MailEnabled)
                     {
                         if ((notphone) && (notcoda))
                             result += "<input id=\"opt3\" name=\"opt\" type=\"radio\" value=\"2\" checked=\"checked\" onchange=\"ChooseMethodChanged()\"/> " + html_strings.HtmlCHOOSEOptionEmail + " " + Utilities.StripEmailAddress(Provider.UserRegistration.MailAddress) + "<br /><br />";
