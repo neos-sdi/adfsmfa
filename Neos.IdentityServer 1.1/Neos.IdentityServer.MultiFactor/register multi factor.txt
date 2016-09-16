@@ -1,0 +1,71 @@
+Set-location "C:\Temp\MFA"
+
+[System.Reflection.Assembly]::Load("System.EnterpriseServices, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")
+$publish = New-Object System.EnterpriseServices.Internal.Publish
+
+# Stop ADFS Service
+net stop adfssrv
+
+# Install Identiy Server assemblies
+$publish.GacRemove("C:\Temp\MFA\Neos.IdentityServer.MultiFactor.dll")
+$publish.GacRemove("C:\Temp\MFA\fr\Neos.IdentityServer.MultiFactor.Resources.dll")
+$publish.GacRemove("C:\Temp\MFA\es\Neos.IdentityServer.MultiFactor.Resources.dll")
+$publish.GacRemove("C:\Temp\MFA\Neos.IdentityServer.MultiFactor.Common.dll")
+$publish.GacRemove("C:\Temp\MFA\Neos.IdentityServer.MultiFactor.QRCodeNet.dll")
+
+$publish.GacInstall("C:\Temp\MFA\Neos.IdentityServer.MultiFactor.dll")
+$publish.GacInstall("C:\Temp\MFA\fr\Neos.IdentityServer.MultiFactor.Resources.dll")
+$publish.GacInstall("C:\Temp\MFA\es\Neos.IdentityServer.MultiFactor.Resources.dll")
+$publish.GacInstall("C:\Temp\MFA\Neos.IdentityServer.MultiFactor.Common.dll")
+$publish.GacInstall("C:\Temp\MFA\Neos.IdentityServer.MultiFactor.QRCodeNet.dll")
+
+# Install External OTP Provider (Sample And Azure MFA) assemblies
+$publish.GacRemove("C:\Temp\MFA\Neos.IdentityServer.Multifactor.SMS.Sample.dll")
+$publish.GacRemove("C:\Temp\MFA\Neos.IdentityServer.Multifactor.SMS.Azure.dll")
+$publish.GacRemove("C:\Temp\MFA\fr\Neos.IdentityServer.Multifactor.SMS.Azure.Resources.dll")
+$publish.GacRemove("C:\Temp\MFA\es\Neos.IdentityServer.Multifactor.SMS.Azure.Resources.dll")
+$publish.GacRemove("C:\Temp\MFA\libphonenumber_csharp_portable.dll")
+
+$publish.GacInstall("C:\Temp\MFA\Neos.IdentityServer.Multifactor.SMS.Sample.dll")
+$publish.GacInstall("C:\Temp\MFA\Neos.IdentityServer.Multifactor.SMS.Azure.dll")
+$publish.GacInstall("C:\Temp\MFA\fr\Neos.IdentityServer.Multifactor.SMS.Azure.Resources.dll")
+$publish.GacInstall("C:\Temp\MFA\es\Neos.IdentityServer.Multifactor.SMS.Azure.Resources.dll")
+$publish.GacInstall("C:\Temp\MFA\libphonenumber_csharp_portable.dll")
+
+# Start ADFS Service
+net start adfssrv
+
+# Unregister and register 
+net start adfssrv
+UnRegister-AdfsAuthenticationProvider -Name "MultifactorAuthenticationProvider" -Confirm:$false
+$typeName = "Neos.IdentityServer.MultiFactor.AuthenticationProvider, Neos.IdentityServer.MultiFactor, Version=1.1.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2"
+Register-AdfsAuthenticationProvider -TypeName $typeName -Name "MultiFactorAuthenticationProvider" -Verbose -ConfigurationFilePath ".\configdata.xml" 
+net stop adfssrv
+net start adfssrv
+
+# Unregister ADFS Authentication Provider 
+net start adfssrv
+UnRegister-AdfsAuthenticationProvider -Name "MultifactorAuthenticationProvider" -Confirm:$false
+net stop adfssrv
+net start adfssrv
+
+# Change ADFS Authentication Provider Configuration Data (After modifying configdata.xml)
+Import-AdfsAuthenticationProviderConfigurationData -Name "MultiFactorAuthenticationProvider" -FilePath ".\configdata.xml" 
+net stop adfssrv
+net start adfssrv
+
+
+# Additional Rules for active clients (outlook, WCF, WebApi, ADAL)
+Get-AdfsAdditionalAuthenticationRule
+
+$rp = Get-AdfsRelyingPartyTrust –Name "Microsoft Office 365 Identity Platform"
+$MfaClaimRule = 'c:[Type == "http://schemas.microsoft.com/ws/2012/01/insidecorporatenetwork", Value == "false"] && d:[Type == "http://schemas.microsoft.com/2012/01/requestcontext/claims/x-ms-endpoint-absolute-path", Value =~ "(/adfs/ls)|(/adfs/oauth2)"] => issue(Type = "http://schemas.microsoft.com/ws/2008/06/identity/claims/authenticationmethod", Value = "http://schemas.microsoft.com/claims/multipleauthn");'
+Set-AdfsRelyingPartyTrust –TargetRelyingParty $rp –AdditionalAuthenticationRules $MfaClaimRule
+
+$rest = Get-AdfsRelyingPartyTrust –Name "services.redhooksoftware.fr.rest"
+$MfaClaimRule = 'c:[Type == "http://schemas.microsoft.com/ws/2012/01/insidecorporatenetwork", Value == "false"] && d:[Type == "http://schemas.microsoft.com/2012/01/requestcontext/claims/x-ms-endpoint-absolute-path", Value =~ "(/adfs/ls)|(/adfs/oauth2)"] => issue(Type = "http://schemas.microsoft.com/ws/2008/06/identity/claims/authenticationmethod", Value = "http://schemas.microsoft.com/claims/multipleauthn");'
+Set-AdfsRelyingPartyTrust –TargetRelyingParty $rest –AdditionalAuthenticationRules $MfaClaimRule
+
+$soap = Get-AdfsRelyingPartyTrust –Name "services.redhooksoftware.fr"
+$MfaClaimRule = 'c:[Type == "http://schemas.microsoft.com/ws/2012/01/insidecorporatenetwork", Value == "false"] && d:[Type == "http://schemas.microsoft.com/2012/01/requestcontext/claims/x-ms-endpoint-absolute-path", Value =~ "(/adfs/ls)|(/adfs/oauth2)"] => issue(Type = "http://schemas.microsoft.com/ws/2008/06/identity/claims/authenticationmethod", Value = "http://schemas.microsoft.com/claims/multipleauthn");'
+Set-AdfsRelyingPartyTrust –TargetRelyingParty $soap –AdditionalAuthenticationRules $MfaClaimRule
