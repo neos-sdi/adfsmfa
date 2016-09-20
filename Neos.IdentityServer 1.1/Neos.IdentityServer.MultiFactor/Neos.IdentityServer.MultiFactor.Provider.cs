@@ -642,6 +642,8 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         private void ValidateEmail(string email)
         {
+            if (string.IsNullOrEmpty(email))
+                return;
             try
             {
                 var addr = new System.Net.Mail.MailAddress(email);

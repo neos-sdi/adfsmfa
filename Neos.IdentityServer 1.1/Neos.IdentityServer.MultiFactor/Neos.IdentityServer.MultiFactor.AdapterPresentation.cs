@@ -185,8 +185,14 @@ namespace Neos.IdentityServer.MultiFactor
                         result += "<div class=\"fieldMargin smallText\"><label for=\"\"></label>" + html_strings.HtmlREGLabelMail + "</div>";
                         result += "<input id=\"email\" name=\"email\" type=\"text\" placeholder=\"Personal Email Address\" class=\"text fullWidth\" value=\"" + Provider.UserRegistration.MailAddress + "\"/><br/><br/>";
                     }
-                    if ((Provider.Config.AppsEnabled) && (!string.IsNullOrEmpty(Provider.UserRegistration.DisplayKey)))
+                    if (Provider.Config.AppsEnabled) 
                     {
+                        if (string.IsNullOrEmpty(Provider.UserRegistration.DisplayKey))
+                        {
+                            Provider.UserRegistration.SecretKey = RemoteAdminService.GetNewSecretKey(Provider.Config);
+                            Provider.SecretKeyAsChanged = true;
+                        }
+
                         result += "<div class=\"fieldMargin smallText\"><label for=\"\"></label>" + html_strings.HtmlREGLabelAppKey+ "</div>";
                         result += "<input id=\"secretkey\" name=\"secretkey\" type=\"text\" readonly=\"true\" placeholder=\"Secret Key\" class=\"text fullWidth\" style=\"background-color: #C0C0C0\" value=\"" + Provider.UserRegistration.DisplayKey + "\"/><br/>";
                         result += "<a class=\"actionLink\" href=\"#\" id=\"resetkey\" name=\"resetkey\" onclick=\"return ResetKey(loginForm)\"; style=\"cursor: pointer;\">" + html_strings.HtmlREGResetQR + "</a>";
@@ -257,14 +263,14 @@ namespace Neos.IdentityServer.MultiFactor
                     result += "<input id=\"context\" type=\"hidden\" name=\"Context\" value=\"%Context%\"/>";
                     result += "<input id=\"authMethod\" type=\"hidden\" name=\"AuthMethod\" value=\"%AuthMethod%\"/>";
                     result += "<input id=\"uimode\" type=\"hidden\" name=\"UIMode\" value=\"" + Provider.UIM.ToString() + "\"/>";
-                    result += "<input id=\"btnclicked\" type=\"hidden\" name=\"btnclicked\" value=\"1\" />";
+                    result += "<input id=\"btnclicked\" type=\"hidden\" name=\"btnclicked\" value=\"0\" />";
                     result += "<table><tr>";
                     result += "<td>";
                     result += "<input id=\"saveButton\" type=\"submit\" class=\"submit\" name=\"continue\" value=\""+ html_strings.HtmlPWDSave +"\" onclick=\"fnbtnclicked(1)\" />";
                     result += "</td>";
                     result += "<td style=\"width: 15px\" />";
                     result += "<td>";
-                    result += "<input id=\"saveButton\" type=\"submit\" class=\"submit\" name=\"cancel\" value=\"" + html_strings.HtmlPWDCancel + "\" onclick=\"fnbtnclicked(2)\"/>";
+                    result += "<input id=\"cancelButton\" type=\"submit\" class=\"submit\" name=\"cancel\" value=\"" + html_strings.HtmlPWDCancel + "\" onclick=\"fnbtnclicked(2)\" />";
                     result += "</td>";
                     result += "</tr></table>";
 
@@ -299,11 +305,11 @@ namespace Neos.IdentityServer.MultiFactor
                         result += "<input id=\"btnclicked\" type=\"hidden\" name=\"btnclicked\" value=\"1\" />";
                         result += "<table><tr>";
                         result += "<td>";
-                        result += "<input id=\"saveButton\" type=\"submit\" class=\"submit\" name=\"continue\" value=\"" + html_strings.HtmlPWDSave + "\" onclick=\"fnbtnclicked(1)\" />";
+                        result += "<input id=\"saveButton\" type=\"submit\" class=\"submit\" name=\"continue\" value=\"" + html_strings.HtmlPWDSave + "\" onClick=\"fnbtnclicked(1)\" />";
                         result += "</td>";
                         result += "<td style=\"width: 15px\" />";
                         result += "<td>";
-                        result += "<input id=\"saveButton\" type=\"submit\" class=\"submit\" name=\"cancel\" value=\"" + html_strings.HtmlPWDCancel + "\" onclick=\"fnbtnclicked(2)\"/>";
+                        result += "<input id=\"cancelButton\" type=\"submit\" class=\"submit\" name=\"cancel\" value=\"" + html_strings.HtmlPWDCancel + "\" onClick=\"fnbtnclicked(2)\"/>";
                         result += "</td>";
                         result += "</tr></table>";
                         result += "</form>";
@@ -356,8 +362,8 @@ namespace Neos.IdentityServer.MultiFactor
                     else
                         notcoda = true;
                     bool notphone = false;
-                    if (!string.IsNullOrEmpty(Provider.UserRegistration.PhoneNumber) && (Provider.Config.SMSEnabled))
-                   // if (Provider.Config.SMSEnabled)
+                   // if (!string.IsNullOrEmpty(Provider.UserRegistration.PhoneNumber) && (Provider.Config.SMSEnabled))
+                    if (Provider.Config.SMSEnabled)
                     {
                         if (notcoda)
                             result += "<input id=\"opt2\" name=\"opt\" type=\"radio\" value=\"1\" checked=\"checked\" onchange=\"ChooseMethodChanged()\"/> "+ html_strings.HtmlCHOOSEOptionSMS + " " + Utilities.StripPhoneNumer(Provider.UserRegistration.PhoneNumber) + "<br/><br/>";
@@ -444,7 +450,7 @@ namespace Neos.IdentityServer.MultiFactor
                     break;
 
                 case ProviderPageMode.Identification:
-                    result += "<script type=\"text/javascript\">" + "\r\n";
+                    result += "<script type='text/javascript'>" + "\r\n";
                     result += "//<![CDATA[" + "\r\n";
 
                     result += "function SetLinkTitle(frm, data)" + "\r\n";
@@ -463,7 +469,7 @@ namespace Neos.IdentityServer.MultiFactor
                     break;
                     
                 case ProviderPageMode.SelectOptions:
-                    result += "<script type=\"text/javascript\">" + "\r\n";
+                    result += "<script type='text/javascript'>" + "\r\n";
                     result += "//<![CDATA[" + "\r\n";
 
                     result += "function SetLinkTitle(frm, data)" + "\r\n";
@@ -491,7 +497,7 @@ namespace Neos.IdentityServer.MultiFactor
                 case ProviderPageMode.ChangePassword:
                     if (Provider.Config.CustomUpdatePassword)
                     {
-                        result += "<script type=\"text/javascript\">" + "\r\n";
+                        result += "<script type='text/javascript'>" + "\r\n";
                         result += "//<![CDATA[" + "\r\n";
 
                         result += "function ValidChangePwd(frm)"+ "\r\n";
@@ -559,7 +565,7 @@ namespace Neos.IdentityServer.MultiFactor
                     string phous = @"/^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/";
 
 
-                    result += "<script type=\"text/javascript\">" + "\r\n";
+                    result += "<script type='text/javascript'>" + "\r\n";
                     result += "//<![CDATA[" + "\r\n";
 
                     result += "function ValidateRegistrationEmail(frm)" + "\r\n";
@@ -571,7 +577,7 @@ namespace Neos.IdentityServer.MultiFactor
                     result += "   var email = document.getElementById('email');" + "\r\n";
                     result += "   var phone = document.getElementById('phone');" + "\r\n";
                     result += "   var err = document.getElementById('errorText');" + "\r\n"; 
-                    result += "   if (email)" + "\r\n"; 
+                    result += "   if ((email) && (email.value!==''))"+ "\r\n"; 
                     result += "   {" + "\r\n";
                     result += "      if (!email.value.match(mailformat))" + "\r\n";
                     result += "      {" + "\r\n";
@@ -579,7 +585,7 @@ namespace Neos.IdentityServer.MultiFactor
                     result += "         return false;" + "\r\n";
                     result += "      }" + "\r\n";
                     result += "   }" + "\r\n";
-                    result += "   if (phone)" + "\r\n"; 
+                    result += "   if ((phone) && (phone.value!==''))" + "\r\n"; 
                     result += "   {" + "\r\n";
                     result += "      if (!phone.value.match(phoneformat) && !phone.value.match(phoneformat10) && !phone.value.match(phoneformatus) )" + "\r\n";
                     result += "      {" + "\r\n";
@@ -615,6 +621,7 @@ namespace Neos.IdentityServer.MultiFactor
                     result += "{"+ "\r\n";
                     result += "   var lnk = document.getElementById('btnclicked');" + "\r\n";
                     result += "   lnk.value = id;" + "\r\n";
+                    result += "   return true;" + "\r\n";
                     result += "}" + "\r\n";
                     result += "\r\n";
 
@@ -656,7 +663,7 @@ namespace Neos.IdentityServer.MultiFactor
                     result += "</script>" + "\r\n";
                     break;
                 case ProviderPageMode.ChooseMethod:
-                    result += "<script type=\"text/javascript\">" + "\r\n";
+                    result += "<script type='text/javascript'>" + "\r\n";
                     result += "//<![CDATA[" + "\r\n";
                     result += "function ChangeChooseMethodTitle()"+ "\r\n";
                     result += "{"+ "\r\n";
@@ -699,7 +706,7 @@ namespace Neos.IdentityServer.MultiFactor
                     result += "</script>" + "\r\n";
                     break;
                 case ProviderPageMode.Bypass:
-                    result += "<script type=\"text/javascript\">" + "\r\n";
+                    result += "<script type='text/javascript'>" + "\r\n";
                     result += "//<![CDATA[" + "\r\n";
                     result += "function OnAutoPost()" + "\r\n";
                     result += "{"+ "\r\n";

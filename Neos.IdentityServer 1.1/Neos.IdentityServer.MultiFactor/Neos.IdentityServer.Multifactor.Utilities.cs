@@ -278,10 +278,17 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         internal static string StripPhoneNumer(string phone)
         {
-            if (string.IsNullOrEmpty(phone))
+            try
+            {
+                if (string.IsNullOrEmpty(phone))
+                    return "* ** ** ** **";
+                else
+                    return "* ** ** ** " + phone.Substring(phone.Length - 2, 2);
+            }
+            catch
+            {
                 return "* ** ** ** **";
-            else
-                return "* ** ** ** " + phone.Substring(phone.Length - 2, 2);
+            }
         }
 
         /// <summary>
@@ -289,10 +296,17 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         internal static string StripEmailAddress(string email)
         {
-            if (string.IsNullOrEmpty(email))
+            try
+            {
+                if (string.IsNullOrEmpty(email))
+                    return string.Empty;
+                else
+                    return email.Remove(2, email.IndexOf('@') - 2).Insert(2, "*********");
+            }
+            catch
+            {
                 return string.Empty;
-            else
-                return email.Remove(2, email.IndexOf('@') - 2).Insert(2, "*********");
+            }
         }
 
         /// <summary>
@@ -300,10 +314,18 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         internal static string StripEmailDomain(string email)
         {
-            if (string.IsNullOrEmpty(email))
+            try
+            {
+
+                if (string.IsNullOrEmpty(email))
+                    return string.Empty;
+                else
+                    return email.Substring(email.IndexOf("@", 0));
+            }
+            catch
+            {
                 return string.Empty;
-            else
-                return email.Substring(email.IndexOf("@", 0));
+            }
         }
 
         /// <summary>

@@ -114,8 +114,12 @@ namespace Neos.IdentityServer.MultiFactor
                             DirEntry.Properties[_host.keyAttribute].Value = reg.SecretKey;
                             if (!string.IsNullOrEmpty(reg.MailAddress))
                                 DirEntry.Properties[_host.mailAttribute].Value = reg.MailAddress;
+                            else
+                                DirEntry.Properties[_host.mailAttribute].Clear();
                             if (!string.IsNullOrEmpty(reg.PhoneNumber))
                                 DirEntry.Properties[_host.phoneAttribute].Value = reg.PhoneNumber;
+                            else
+                                DirEntry.Properties[_host.phoneAttribute].Clear();
                             DirEntry.Properties[_host.methodAttribute].Value = ((int)reg.PreferredMethod).ToString();
                             DirEntry.CommitChanges();
                         };
