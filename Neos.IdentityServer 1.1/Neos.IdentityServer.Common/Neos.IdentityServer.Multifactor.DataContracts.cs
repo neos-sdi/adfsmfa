@@ -22,7 +22,15 @@ namespace Neos.IdentityServer.MultiFactor
     [XmlRoot("MFAConfig")]
     public class MFAConfig
     {
-        KeyGeneratorMode _fgen = KeyGeneratorMode.ClientSecret512;
+        private KeyGeneratorMode _fgen = KeyGeneratorMode.ClientSecret512;
+        private bool _isdirty = false;
+
+        [XmlIgnore]
+        public bool IsDirty
+        {
+            get { return _isdirty; }
+            set { _isdirty = value; }
+        }
 
         [XmlElement("Hosts")]
         public Hosts Hosts

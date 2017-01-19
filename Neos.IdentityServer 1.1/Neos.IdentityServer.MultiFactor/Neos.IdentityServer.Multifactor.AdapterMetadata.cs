@@ -1,5 +1,4 @@
-﻿using Microsoft.IdentityServer.Web.Authentication.External;
-//******************************************************************************************************************************************************************************************//
+﻿//******************************************************************************************************************************************************************************************//
 // Copyright (c) 2015 Neos-Sdi (http://www.neos-sdi.com)                                                                                                                                    //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
@@ -14,6 +13,7 @@
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
 using System.Collections.Generic;
+using Microsoft.IdentityServer.Web.Authentication.External;
 
 namespace Neos.IdentityServer.MultiFactor
 {
@@ -49,7 +49,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public int[] AvailableLcids
         {
-            get { return new int[] { 1033, 1036 }; }
+            get { return new int[] { 1033, 1034, 1036 }; }
         }
 
         /// <summary>
@@ -60,9 +60,9 @@ namespace Neos.IdentityServer.MultiFactor
             get
             {
                 Dictionary<int, string> result = new Dictionary<int, string>();
-                result.Add(1036, "Connexion avec un code OTP");
                 result.Add(1033, "Connect with an OTP code");
-
+                result.Add(1034, "Conexión con un código EDT");
+                result.Add(1036, "Connexion avec un code OTP");
                 return result;
             }
         }
@@ -75,8 +75,9 @@ namespace Neos.IdentityServer.MultiFactor
             get
             {
                 Dictionary<int, string> result = new Dictionary<int, string>();
-                result.Add(1036, "Connexion avec un code OTP");
                 result.Add(1033, "Connect with an OTP code");
+                result.Add(1034, "Conexión con un código EDT");
+                result.Add(1036, "Connexion avec un code OTP");
                 return result;
             }
         }
@@ -86,7 +87,12 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public string[] IdentityClaims
         {
-            get { return new string[] { "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn" }; }
+            get { return new string[] { "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn", 
+                                        "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name",
+                                        "http://schemas.microsoft.com/ws/2008/06/identity/claims/windowsaccountname",
+	                                    "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress",
+	                                    "http://schemas.microsoft.com/ws/2008/06/identity/claims/primarysid"
+            }; }
         }
 
         /// <summary>

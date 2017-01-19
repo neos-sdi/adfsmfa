@@ -1,6 +1,4 @@
-﻿using Microsoft.IdentityServer.Web.Authentication.External;
-using Neos.IdentityServer.MultiFactor.Resources;
-//******************************************************************************************************************************************************************************************//
+﻿//******************************************************************************************************************************************************************************************//
 // Copyright (c) 2015 Neos-Sdi (http://www.neos-sdi.com)                                                                                                                                    //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
@@ -15,6 +13,9 @@ using Neos.IdentityServer.MultiFactor.Resources;
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
 using System;
+using Microsoft.IdentityServer.Web.Authentication.External;
+using Neos.IdentityServer.MultiFactor.Resources;
+
 
 namespace Neos.IdentityServer.MultiFactor
 {
@@ -189,7 +190,7 @@ namespace Neos.IdentityServer.MultiFactor
                     {
                         if (string.IsNullOrEmpty(Provider.UserRegistration.DisplayKey))
                         {
-                            Provider.UserRegistration.SecretKey = RemoteAdminService.GetNewSecretKey(Provider.Config);
+                            Provider.UserRegistration.SecretKey = KeyGenerator.GetNewSecretKey(Provider.Config);
                             Provider.SecretKeyAsChanged = true;
                         }
 

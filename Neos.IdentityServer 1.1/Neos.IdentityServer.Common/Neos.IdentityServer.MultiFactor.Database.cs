@@ -19,7 +19,7 @@ using System.ServiceModel;
 
 namespace Neos.IdentityServer.MultiFactor
 {
-    public class AdminService : IAdminService
+    public class SQLAdminService : IAdminService
     {
         string _connectionstring;
         int _deliverywindow = 300;
@@ -27,7 +27,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// AdminService constructor
         /// </summary>
-        public AdminService(SQLServerHost host, int deliverywindow)
+        public SQLAdminService(SQLServerHost host, int deliverywindow)
         {
             _connectionstring = host.ConnectionString;
             _deliverywindow = deliverywindow;

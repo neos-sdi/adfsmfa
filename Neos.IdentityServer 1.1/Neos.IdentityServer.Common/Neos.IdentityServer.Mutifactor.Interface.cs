@@ -19,7 +19,7 @@ using System.ServiceModel;
 
 namespace Neos.IdentityServer.MultiFactor
 {
-    [ServiceContract]
+    [ServiceContract(Namespace="http://adfsmfa.neos-sdi.com/identityserver/adminservice")]
     public interface IAdminService
     {
         [OperationContract]
@@ -35,14 +35,14 @@ namespace Neos.IdentityServer.MultiFactor
         Notification CheckNotification(string registrationid);
     }
 
-    [ServiceContract]
+    [ServiceContract(Namespace = "http://adfsmfa.neos-sdi.com/identityserver/externalotpprovider")]
     public interface IExternalOTPProvider
     {
         [OperationContract]
         int GetUserCodeWithExternalSystem(string upn, string phonenumber, string email, ExternalOTPProvider externalsys, CultureInfo culture);
     }
 
-    [DataContract]
+    [DataContract, Serializable]
     public enum RegistrationPreferredMethod
     {
         [EnumMember]
@@ -55,7 +55,7 @@ namespace Neos.IdentityServer.MultiFactor
         Phone = 3
     }
 
-    [DataContract]
+    [DataContract, Serializable]
     public enum HashMode
     {
         [EnumMember]
@@ -68,7 +68,7 @@ namespace Neos.IdentityServer.MultiFactor
         SHA512 = 3
     }
 
-    [DataContract]
+    [DataContract, Serializable]
     public enum KeyGeneratorMode
     {
         [EnumMember]
@@ -86,7 +86,7 @@ namespace Neos.IdentityServer.MultiFactor
     }
 
 
-    [DataContract]
+    [DataContract, Serializable]
     public class Registration
     {
         private string _mail;
@@ -178,10 +178,9 @@ namespace Neos.IdentityServer.MultiFactor
             get;
             set;
         }
-
     }
 
-    [DataContract]
+    [DataContract, Serializable]
     public class Notification
     {
         [DataMember]

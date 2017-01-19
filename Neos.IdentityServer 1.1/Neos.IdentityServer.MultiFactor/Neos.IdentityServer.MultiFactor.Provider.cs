@@ -96,7 +96,7 @@ namespace Neos.IdentityServer.MultiFactor
                     {
                         if (string.IsNullOrEmpty(UserRegistration.DisplayKey))
                         {
-                            UserRegistration.SecretKey = RemoteAdminService.GetNewSecretKey(Config);
+                            UserRegistration.SecretKey = KeyGenerator.GetNewSecretKey(Config);
                             UIM = ProviderPageMode.Registration;
                         }
                         else if (UserRegistration.PreferredMethod == RegistrationPreferredMethod.Choose)
@@ -315,7 +315,7 @@ namespace Neos.IdentityServer.MultiFactor
                         }
                         else if (xlnk2 == 2)
                         {
-                            UserRegistration.SecretKey = RemoteAdminService.GetNewSecretKey(Config);
+                            UserRegistration.SecretKey = KeyGenerator.GetNewSecretKey(Config);
                             RemoteAdminService.SetUserRegistration(UserRegistration, Config);
                             UIM = ProviderPageMode.Registration;
                             SecretKeyAsChanged = true;
@@ -673,15 +673,17 @@ namespace Neos.IdentityServer.MultiFactor
         public string GetQRCodeString()
         {
             string result = string.Empty;
-            string Content = string.Format("otpauth://totp/{0}:{1}?secret={2}&Issuer={0}&Algorithm={3}", this.Config.Issuer, this.UserRegistration.UPN, this.QRString, this.Config.Algorithm);
-            var encoder = new QrEncoder(ErrorCorrectionLevel.H);
+            string Content = string.Format("otpauth://totp/{0}:{1}?secret={2}&issuer={0}&algorithm={3}", this.Config.Issuer, this.UserRegistration.UPN, this.QRString, this.Config.Algorithm);
+           // var encoder = new QrEncoder(ErrorCorrectionLevel.H);
+            var encoder = new QrEncoder(ErrorCorrectionLevel.L);
             QrCode qr;
             if (!encoder.TryEncode(Content, out qr))
                 return string.Empty;
             BitMatrix matrix = qr.Matrix;
             using (MemoryStream ms = new MemoryStream())
             {
-                var render = new GraphicsRenderer(new FixedModuleSize(4, QuietZoneModules.Four));
+               // var render = new GraphicsRenderer(new FixedModuleSize(4, QuietZoneModules.Four));
+                var render = new GraphicsRenderer(new FixedModuleSize(3, QuietZoneModules.Zero));
                 render.WriteToStream(matrix, ImageFormat.Png, ms);
                 ms.Position = 0;
                 result = ConvertToBase64(ms);

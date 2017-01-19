@@ -1,4 +1,4 @@
-﻿using Neos.IdentityServer.MultiFactor.Resources;
+﻿
 //******************************************************************************************************************************************************************************************//
 // Copyright (c) 2015 Neos-Sdi (http://www.neos-sdi.com)                                                                                                                                    //                        
 //                                                                                                                                                                                          //
@@ -17,6 +17,7 @@ using System;
 using System.Net;
 using System.Net.Mail;
 using System.Text;
+using Neos.IdentityServer.MultiFactor.Resources;
 
 namespace Neos.IdentityServer.MultiFactor
 {
@@ -38,13 +39,13 @@ namespace Neos.IdentityServer.MultiFactor
         {
             if (cfg.UseActiveDirectory)
             {
-                ADAdminService client = new ADAdminService(cfg.Hosts.ActiveDirectoryHost, cfg.DeliveryWindow);
+                ADDSAdminService client = new ADDSAdminService(cfg.Hosts.ActiveDirectoryHost, cfg.DeliveryWindow);
                 return client.GetUserRegistration(upn);
 
             }
             else
             {
-                AdminService client = new AdminService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow);
+                SQLAdminService client = new SQLAdminService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow);
                 return client.GetUserRegistration(upn);
             }
         }
@@ -54,59 +55,19 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         internal static void SetUserRegistration(Registration registration, MFAConfig cfg)
         {
-            EnsureSecretKey(registration, cfg);
+            KeyGenerator.EnsureSecretKey(registration, cfg);
             if (cfg.UseActiveDirectory)
             {
-                ADAdminService client = new ADAdminService(cfg.Hosts.ActiveDirectoryHost, cfg.DeliveryWindow);
+                ADDSAdminService client = new ADDSAdminService(cfg.Hosts.ActiveDirectoryHost, cfg.DeliveryWindow);
                 client.SetUserRegistration(registration);
             }
             else
             {
-                AdminService client = new AdminService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow);
+                SQLAdminService client = new SQLAdminService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow);
                 client.SetUserRegistration(registration);
             }
         }
 
-        /// <summary>
-        /// EnsureSecretKey method iplementation
-        /// </summary>
-        internal static void EnsureSecretKey(Registration registration, MFAConfig cfg)
-        {
-            if (string.IsNullOrEmpty(registration.SecretKey))
-            {
-                registration.SecretKey = GetNewSecretKey(cfg);
-            }
-        }
-
-        /// <summary>
-        /// GetNewSecretKey method implmentation
-        /// </summary>
-        internal static string GetNewSecretKey(MFAConfig cfg)
-        {
-            RandomNumberGenerator cryptoRandomDataGenerator = new RNGCryptoServiceProvider();
-            byte[] buffer = null;
-            switch (cfg.KeyGenerator)
-            {
-                case KeyGeneratorMode.ClientSecret128:
-                    buffer = new byte[16];
-                    cryptoRandomDataGenerator.GetBytes(buffer);
-                    return Convert.ToBase64String(buffer);
-                case KeyGeneratorMode.ClientSecret256:
-                    buffer = new byte[32];
-                    cryptoRandomDataGenerator.GetBytes(buffer);
-                    return Convert.ToBase64String(buffer);
-                case KeyGeneratorMode.ClientSecret384:
-                    buffer = new byte[48];
-                    cryptoRandomDataGenerator.GetBytes(buffer);
-                    return Convert.ToBase64String(buffer);
-                case KeyGeneratorMode.ClientSecret512:
-                    buffer = new byte[64];
-                    cryptoRandomDataGenerator.GetBytes(buffer);
-                    return Convert.ToBase64String(buffer);
-                default:
-                    return Guid.NewGuid().ToString("D");
-            }
-        }
         /// <summary>
         /// SetNotification method implmentation
         /// </summary>
@@ -114,12 +75,12 @@ namespace Neos.IdentityServer.MultiFactor
         {
             if (config.UseActiveDirectory)
             {
-                ADAdminService client = new ADAdminService(config.Hosts.ActiveDirectoryHost, config.DeliveryWindow);
+                ADDSAdminService client = new ADDSAdminService(config.Hosts.ActiveDirectoryHost, config.DeliveryWindow);
                 return client.SetNotification(registration, config, otp);
             }
             else
             {
-                AdminService client = new AdminService(config.Hosts.SQLServerHost, config.DeliveryWindow);
+                SQLAdminService client = new SQLAdminService(config.Hosts.SQLServerHost, config.DeliveryWindow);
                 return client.SetNotification(registration, config, otp);
             }
         }
@@ -131,12 +92,12 @@ namespace Neos.IdentityServer.MultiFactor
         {
             if (cfg.UseActiveDirectory)
             {
-                ADAdminService client = new ADAdminService(cfg.Hosts.ActiveDirectoryHost, cfg.DeliveryWindow);
+                ADDSAdminService client = new ADDSAdminService(cfg.Hosts.ActiveDirectoryHost, cfg.DeliveryWindow);
                 return client.CheckNotification(registration.ID);
             }
             else
             {
-                AdminService client = new AdminService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow);
+                SQLAdminService client = new SQLAdminService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow);
                 return client.CheckNotification(registration.ID);
             }
         }

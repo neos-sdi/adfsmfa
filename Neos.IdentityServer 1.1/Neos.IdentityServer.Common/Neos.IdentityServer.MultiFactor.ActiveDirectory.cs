@@ -18,7 +18,7 @@ using System.Text;
 
 namespace Neos.IdentityServer.MultiFactor
 {
-    public class ADAdminService : IAdminService
+    public class ADDSAdminService : IAdminService
     {
         ADDSHost _host;
         int _deliverywindow = 300;
@@ -26,7 +26,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// AdminService constructor
         /// </summary>
-        public ADAdminService(ADDSHost host, int deliverywindow)
+        public ADDSAdminService(ADDSHost host, int deliverywindow)
         {
             _host = host;
             _deliverywindow = deliverywindow;

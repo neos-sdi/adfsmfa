@@ -367,4 +367,51 @@ namespace Neos.IdentityServer.MultiFactor
         }
 
     }
+
+    /// <summary>
+    /// KeyGenerator static class
+    /// </summary>
+    public static class KeyGenerator
+    {
+        /// <summary>
+        /// EnsureSecretKey method iplementation
+        /// </summary>
+        public static void EnsureSecretKey(Registration registration, MFAConfig cfg)
+        {
+            if (string.IsNullOrEmpty(registration.SecretKey))
+            {
+                registration.SecretKey = GetNewSecretKey(cfg);
+            }
+        }
+
+        /// <summary>
+        /// GetNewSecretKey method implmentation
+        /// </summary>
+        public static string GetNewSecretKey(MFAConfig cfg)
+        {
+            RandomNumberGenerator cryptoRandomDataGenerator = new RNGCryptoServiceProvider();
+            byte[] buffer = null;
+            switch (cfg.KeyGenerator)
+            {
+                case KeyGeneratorMode.ClientSecret128:
+                    buffer = new byte[16];
+                    cryptoRandomDataGenerator.GetBytes(buffer);
+                    return Convert.ToBase64String(buffer);
+                case KeyGeneratorMode.ClientSecret256:
+                    buffer = new byte[32];
+                    cryptoRandomDataGenerator.GetBytes(buffer);
+                    return Convert.ToBase64String(buffer);
+                case KeyGeneratorMode.ClientSecret384:
+                    buffer = new byte[48];
+                    cryptoRandomDataGenerator.GetBytes(buffer);
+                    return Convert.ToBase64String(buffer);
+                case KeyGeneratorMode.ClientSecret512:
+                    buffer = new byte[64];
+                    cryptoRandomDataGenerator.GetBytes(buffer);
+                    return Convert.ToBase64String(buffer);
+                default:
+                    return Guid.NewGuid().ToString("D");
+            }
+        }
+    }
 }

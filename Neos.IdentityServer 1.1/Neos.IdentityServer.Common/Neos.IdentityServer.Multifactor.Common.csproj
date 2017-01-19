@@ -69,7 +69,6 @@
   <ItemGroup>
     <Compile Include="Neos.IdentityServer.MultiFactor.Certificates.cs" />
     <None Include="Neos.IdentityServer.pfx" />
-    <None Include="tempsignature.snk" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\" />
