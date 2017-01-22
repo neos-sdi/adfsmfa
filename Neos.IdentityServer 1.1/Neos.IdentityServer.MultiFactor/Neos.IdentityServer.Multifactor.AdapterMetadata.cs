@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2015 Neos-Sdi (http://www.neos-sdi.com)                                                                                                                                    //                        
+// Copyright (c) 2017 Neos-Sdi (http://www.neos-sdi.com)                                                                                                                                    //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -87,12 +87,30 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public string[] IdentityClaims
         {
+#if multiclaims 
+
+         /// <summary> 
+         /// Returns an array indicating the type of claim that that the adapter uses to identify the user being authenticated. 
+         /// Note that although the property is an array, only the first element is currently used. 
+         /// MUST BE ONE OF THE FOLLOWING 
+         /// "http://schemas.microsoft.com/ws/2008/06/identity/claims/windowsaccountname" 
+         /// "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn" 
+         /// "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress" 
+         /// "http://schemas.microsoft.com/ws/2008/06/identity/claims/primarysid" 
+         ///
+         /// Very Strange ! this code don't work when registering via powershell the extension 
+         /// ADMIN0021: Invalid authentication provider data. You can only specify a maximum of one identity claim. 
+         /// However, it is possible to return a table of claims ...
+         /// </summary> 
             get { return new string[] { "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn", 
                                         "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name",
                                         "http://schemas.microsoft.com/ws/2008/06/identity/claims/windowsaccountname",
 	                                    "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress",
 	                                    "http://schemas.microsoft.com/ws/2008/06/identity/claims/primarysid"
-            }; }
+            }; } 
+#else
+            get { return new string[] { "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn" }; }
+#endif
         }
 
         /// <summary>
