@@ -293,7 +293,7 @@ namespace Neos.IdentityServer.MultiFactor
                         result += "}" + "\r\n";
                         result += "</script>" + "\r\n";
 
-                        result += "<form method=\"post\" id=\"loginForm\" autocomplete=\"off\" title=\"modification vos identifaints de connexion\" onsubmit=\"return ValidChangePwd(this)\" >";
+                        result += "<form method=\"post\" id=\"loginForm\" autocomplete=\"off\" onsubmit=\"return ValidChangePwd(this)\" >";
                         result += "<div id=\"error\" class=\"fieldMargin error smallText\"><label id=\"errorText\" name=\"errorText\" for=\"\"></label></div>";
                         result += "<div class=\"fieldMargin smallText\"><label for=\"\"></label>" + html_strings.HtmlPWDLabelActual + "</div>";
                         result += "<input id=\"oldpwd\" name=\"oldpwd\" type=\"password\" placeholder=\"Current Password\" class=\"text fullWidth\"/><br/><br/>";
@@ -324,7 +324,7 @@ namespace Neos.IdentityServer.MultiFactor
                         else
                             result += "<p class=\"error\">" + _message + "</p><br/>";
                     }
-                    result += "<form method=\"post\" id=\"loginForm\" autocomplete=\"off\" title=\"Configurer mes options\" >";
+                    result += "<form method=\"post\" id=\"loginForm\" autocomplete=\"off\" >";
                     result += "<div id=\"error\" class=\"fieldMargin error smallText\"><label id=\"errorText\" name=\"errorText\" for=\"\"></label></div>";
                     result += "<a class=\"actionLink\" href=\"#\" id=\"chgopt\" name=\"chgopt\" onclick=\"return SetLinkTitle(loginForm, '1')\"; style=\"cursor: pointer;\">" + html_strings.HtmlChangeConfiguration + "</a>";
                     if (!Provider.Config.CustomUpdatePassword)
@@ -396,7 +396,7 @@ namespace Neos.IdentityServer.MultiFactor
                     result += "   window.attachEvent('onload', OnAutoPost);" + "\r\n";
                     result += "}" + "\r\n";
                     result += "</script>" + "\r\n";
-                    result += "<form method=\"post\" id=\"loginForm\" autocomplete=\"off\" title=\"Redirecting\" >";
+                    result += "<form method=\"post\" id=\"loginForm\" autocomplete=\"off\" >";
                     result += "<input id=\"context\" type=\"hidden\" name=\"Context\" value=\"%Context%\"/>";
                     result += "<input id=\"authMethod\" type=\"hidden\" name=\"AuthMethod\" value=\"%AuthMethod%\"/>";
                     result += "</form>";

@@ -29,10 +29,6 @@ using System.Xml.Serialization;
 namespace Neos.IdentityServer.MultiFactor
 {
     /// <summary>
-    /// ProviderPageMode enum
-    /// </summary>
-
-    /// <summary>
     /// AuthenticationProvider class
     /// </summary>
     public class AuthenticationProvider : IAuthenticationAdapter
@@ -103,13 +99,13 @@ namespace Neos.IdentityServer.MultiFactor
                             usercontext.UIMode = ProviderPageMode.ChooseMethod;
                         else
                             usercontext.UIMode = ProviderPageMode.Identification;
+                        return true;
                     }
                     else
                     {
                         usercontext.UIMode = ProviderPageMode.Bypass;
-                        return false;
+                        return true; // Can be refused in version 2.0, administrators can require MFA or deny access
                     }
-                    return usercontext.Enabled;
                 }
                 else
                 {

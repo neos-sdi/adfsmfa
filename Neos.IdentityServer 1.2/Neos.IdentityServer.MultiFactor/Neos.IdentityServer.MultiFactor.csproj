@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Neos.IdentityServer.MultiFactor</RootNamespace>
     <AssemblyName>Neos.IdentityServer.MultiFactor</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -69,15 +69,30 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>errors_strings.resx</DependentUpon>
     </Compile>
+    <Compile Include="Resources\errors_strings.fr.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>errors_strings.fr.resx</DependentUpon>
+    </Compile>
     <Compile Include="Resources\html_strings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>html_strings.resx</DependentUpon>
     </Compile>
+    <Compile Include="Resources\html_strings.fr.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>html_strings.fr.resx</DependentUpon>
+    </Compile>
     <Compile Include="Resources\infos_strings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>infos_strings.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\infos_strings.fr.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>infos_strings.fr.resx</DependentUpon>
     </Compile>
     <Compile Include="Resources\mail_strings.Designer.cs">
       <AutoGen>True</AutoGen>

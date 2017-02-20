@@ -1,5 +1,4 @@
-﻿using Microsoft.IdentityServer.Web.Authentication.External;
-//******************************************************************************************************************************************************************************************//
+﻿//******************************************************************************************************************************************************************************************//
 // Copyright (c) 2017 Neos-Sdi (http://www.neos-sdi.com)                                                                                                                                    //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
@@ -18,6 +17,7 @@ using System.Globalization;
 using System.Runtime.Serialization;
 using System.ServiceModel;
 using System.Xml.Serialization;
+using Microsoft.IdentityServer.Web.Authentication.External;
 
 namespace Neos.IdentityServer.MultiFactor
 {
