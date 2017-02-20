@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<MFAConfig DeliveryWindow="300" TOTPShadows="2" MailEnabled="true" SMSEnabled="false" AppsEnabled="true" Algorithm="SHA1" Issuer="your company" UseActiveDirectory="true" CustomUpdatePassword="true" KeyGenerator="ClientSecret512">
+	<Hosts>
+		<SQLServer ConnectionString="your sql server connction string" />
+		<!--
+			<SQLServer ConnectionString="Password=tou password;Persist Security Info=True;User ID=youruser;Initial Catalog=yourdatabase;Data Source=yoursqlserver" />
+		-->
+		<ActiveDirectory/>
+		<!--
+		<ActiveDirectory
+		DomainAddress="ldap://dc=yourdomain, dc=com"                    // optional syntax for your domain - default ADFS domain/relationships
+		Account="your account allowed to read and write your ADDS"      // optional - default ADFS account
+		Password="your account password"                                // optional - if account specified
+		keyattribute="your secret key"                                  // optional - datatype string - default "msDS-cloudExtensionAttribute10"
+		mailattribute="your mail attribute"                             // optional - datatype string - default "msDS-cloudExtensionAttribute11"
+		phoneattribute="your mobile attibute"                           // optional - datatype string - default "msDS-cloudExtensionAttribute12"
+		methodattribute="UI Method attibute"                            // optional - datatype int as string - default "msDS-cloudExtensionAttribute13"
+		notifcreatedateattribute="key creation date attribute"          // optional - datatype date as string UTC - default "msDS-cloudExtensionAttribute14"
+		notifvaliditydateattribute="TOTP validity date attibute"        // optional - datatype date as string UTC - default "msDS-cloudExtensionAttribute15"
+		notifcheckdateattribute"TOTP check date attibute"               // optional - datatype date as string UTC - default "msDS-cloudExtensionAttribute16"
+		totpattribute="totp code attibute"                              // optional - datatype int as string - default "msDS-cloudExtensionAttribute17"  - ou used for mail validation
+      		enabledattribute="enabled attibute"                             // optional - datatype bool - default "msDS-cloudExtensionAttribute18" 
+		/> -->
+	</Hosts>
+	<SendMail Company="your company description" from="youremail@youcompany" username="youraccount" password="yourpassword" host="youmailserver" port="587" useSSL="true" />
+	<!--
+	<ExternalOTPProvider Company="your company description" DefaultCountryCode="FR" Sha1Salt="yoursalt" FullQualifiedImplementation="your assembly and classtype eg : 'Neos.IdentityServer.Multifactor.SMS.SMSCall, Neos.IdentityServer.Multifactor.SMS.Azure, Version=1.2.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2'" >
+		<Parameters>
+			<![CDATA[LICENSE_KEY = "YOUR_LICENCE_KEY", GROUP_KEY = "YOUR_GROUP_KEY", CERT_THUMBPRINT = "YOUR_CERT_THUMBPRINT"]]>
+		</Parameters>
+	</ExternalOTPProvider>
+	-->
+</MFAConfig>
