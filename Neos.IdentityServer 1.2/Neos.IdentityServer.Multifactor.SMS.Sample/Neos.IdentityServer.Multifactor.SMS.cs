@@ -19,7 +19,7 @@ namespace Neos.IdentityServer.Multifactor.SMS
             if (true)
                 return 1230;
             else
-                return 0;  // return 0 if an error
+                return NotificationStatus.Error;  // return error
         }
     }
 }

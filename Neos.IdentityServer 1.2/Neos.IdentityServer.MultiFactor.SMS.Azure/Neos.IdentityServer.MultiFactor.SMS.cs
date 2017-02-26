@@ -38,7 +38,7 @@ namespace Neos.IdentityServer.Multifactor.SMS
             string extension = string.Empty;
 
             PhoneNumberUtil phoneUtil = PhoneNumberUtil.GetInstance();
-            PhoneNumber NumberProto = phoneUtil.Parse(NumberStr, externalsys.DefaultCountryCode);
+            PhoneNumber NumberProto = phoneUtil.Parse(NumberStr, culture.TwoLetterISOLanguageName.ToUpper());
             CountryCode = NumberProto.CountryCode;
             NationalNumber = NumberProto.NationalNumber;
             if (NumberProto.HasExtension)
@@ -53,16 +53,28 @@ namespace Neos.IdentityServer.Multifactor.SMS
             Params.Extension = extension;
             Params.ApplicationName = "IdentityServer";
             Params.Sha1Salt = externalsys.Sha1Salt;
-            Params.SmsText = string.Format(azure_strings.SMSMessage, externalsys.Company);
-            Params.Mode = PhoneFactor.MODE_SMS_ONE_WAY_OTP;
+
+            if (externalsys.IsTwoWay)
+            {
+                Params.SmsText = string.Format(azure_strings.SMSTwoWayMessage, externalsys.Company);
+                Params.Mode = PhoneFactor.MODE_SMS_TWO_WAY_OTP;
+            }
+            else
+            {
+                Params.SmsText = string.Format(azure_strings.SMSMessage, externalsys.Company);
+                Params.Mode = PhoneFactor.MODE_SMS_ONE_WAY_OTP;
+            }
+
             int callStatus;
             int errorId;
             string otp = string.Empty;
-
-            if (PhoneFactor.Authenticate(Params, out otp, out callStatus, out errorId))
-                return Convert.ToInt32(otp);
+            if (PhoneFactor.Authenticate(Params, out otp, out callStatus, out errorId, externalsys.Timeout))
+                if (externalsys.IsTwoWay)
+                    return NotificationStatus.Bypass;
+                else
+                    return Convert.ToInt32(otp);
             else
-                return 0;
+                return NotificationStatus.Error;
         }
     }
 }

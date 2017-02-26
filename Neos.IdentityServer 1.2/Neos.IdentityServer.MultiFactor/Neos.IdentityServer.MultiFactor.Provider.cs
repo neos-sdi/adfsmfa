@@ -66,7 +66,24 @@ namespace Neos.IdentityServer.MultiFactor
             try
             {
                 AuthenticationContext usercontext = new AuthenticationContext(context);
-                SendNotification(usercontext);
+                if (usercontext.UIMode == ProviderPageMode.Identification)
+                {
+                    switch (usercontext.PreferredMethod)
+                    {
+                        case RegistrationPreferredMethod.ApplicationCode:
+                            usercontext.UIMode = ProviderPageMode.Identification;
+                            SendNotification(usercontext);
+                            break;
+                        case RegistrationPreferredMethod.Email:
+                            usercontext.UIMode = ProviderPageMode.RequestingCode;
+                            SendNotification(usercontext);
+                            break;
+                        case RegistrationPreferredMethod.Phone:
+                            usercontext.UIMode = ProviderPageMode.RequestingCode;
+                            SendNotification(usercontext);
+                            break;
+                     }
+                }
                 return new AdapterPresentation(this, context);
             }
             catch (Exception ex)
@@ -98,13 +115,15 @@ namespace Neos.IdentityServer.MultiFactor
                         else if (usercontext.PreferredMethod == RegistrationPreferredMethod.Choose)
                             usercontext.UIMode = ProviderPageMode.ChooseMethod;
                         else
+                        {
                             usercontext.UIMode = ProviderPageMode.Identification;
+                        }
                         return true;
                     }
                     else
                     {
                         usercontext.UIMode = ProviderPageMode.Bypass;
-                        return true; // Can be refused in version 2.0, administrators can require MFA or deny access
+                        return true;
                     }
                 }
                 else
@@ -359,8 +378,8 @@ namespace Neos.IdentityServer.MultiFactor
                             }
                             else
                             {
-                                usercontext.UIMode = ProviderPageMode.SelectOptions;
-                                result = new AdapterPresentation(this, context, errors_strings.ErrorInvalidPassword, true);
+                                usercontext.UIMode = ProviderPageMode.ChangePassword;
+                                result = new AdapterPresentation(this, context, errors_strings.ErrorInvalidPassword, false);
                             }
                         }
                         catch (Exception ex)
@@ -450,7 +469,7 @@ namespace Neos.IdentityServer.MultiFactor
                                 if (Config.SMSEnabled)
                                 {
                                     usercontext.PreferredMethod = RegistrationPreferredMethod.Phone;
-                                    usercontext.UIMode = ProviderPageMode.Identification;
+                                    usercontext.UIMode = ProviderPageMode.RequestingCode;
                                     SendNotification(usercontext);
                                     result = new AdapterPresentation(this, context);
                                     if (dorem)
@@ -475,7 +494,7 @@ namespace Neos.IdentityServer.MultiFactor
                                         usercontext.MailAddress = aname;
                                         dorem = true;
                                         EventLog.WriteEntry(EventLogSource, string.Format(errors_strings.ErrorRegistrationEmptyEmail, usercontext.UPN, usercontext.MailAddress), EventLogEntryType.Error, 9999);
-                                        usercontext.UIMode = ProviderPageMode.Identification;
+                                        usercontext.UIMode = ProviderPageMode.RequestingCode;
                                         SendNotification(usercontext);
                                         result = new AdapterPresentation(this, context);
                                         if (dorem)
@@ -487,7 +506,7 @@ namespace Neos.IdentityServer.MultiFactor
                                         string idom = Utilities.StripEmailDomain(usercontext.MailAddress);
                                         if ((aname.ToLower() + idom.ToLower()).Equals(usercontext.MailAddress.ToLower()))
                                         {
-                                            usercontext.UIMode = ProviderPageMode.Identification;
+                                            usercontext.UIMode = ProviderPageMode.RequestingCode;
                                             SendNotification(usercontext);
                                             result = new AdapterPresentation(this, context);
                                             if (dorem)
@@ -526,6 +545,43 @@ namespace Neos.IdentityServer.MultiFactor
                     usercontext.UIMode = ProviderPageMode.Registration;
                     result = new AdapterPresentation(this, context);
                     break;
+                case ProviderPageMode.RequestingCode:
+                     int rlnk = Convert.ToInt32(proofData.Properties["lnk"].ToString());
+                     if (rlnk==3)
+                     {
+                         usercontext.UIMode = ProviderPageMode.ChooseMethod;
+                         return new AdapterPresentation(this, context);
+                     }
+                     Notification chknotif = RemoteAdminService.CheckNotification((Registration)usercontext, Config);
+                     if (chknotif != null)
+                     {
+                         if (chknotif.OTP == NotificationStatus.Error)
+                         {
+                             usercontext.UIMode = ProviderPageMode.Locking;
+                             return new AdapterPresentation(this, context, errors_strings.ErrorSendingToastInformation, true);
+                         }
+                         else if (chknotif.OTP == NotificationStatus.RequestEmail)
+                             usercontext.UIMode = ProviderPageMode.RequestingCode;
+                         else if (chknotif.OTP == NotificationStatus.RequestSMS)
+                             usercontext.UIMode = ProviderPageMode.RequestingCode;
+                         else if (chknotif.OTP == NotificationStatus.Bypass)
+                             usercontext.UIMode = ProviderPageMode.Bypass;
+                         else
+                             usercontext.UIMode = ProviderPageMode.Identification;
+                         if (chknotif.CheckDate.Value.ToUniversalTime() > chknotif.ValidityDate.ToUniversalTime())  // Always check with Universal Time
+                         {
+                             usercontext.UIMode = ProviderPageMode.Locking;
+                             result = new AdapterPresentation(this, context, errors_strings.ErrorValidationTimeWindowElapsed, true);
+                         }
+                         else
+                             result = new AdapterPresentation(this, context);
+                     }
+                     else
+                     {
+                         usercontext.UIMode = ProviderPageMode.Locking;
+                         result = new AdapterPresentation(this, context, errors_strings.ErrorSendingToastInformation, true);
+                     }
+                    break;
             }
             return result;
         }
@@ -537,39 +593,51 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         private void SendNotification(AuthenticationContext usercontext)
         {
-            if (usercontext.UIMode == ProviderPageMode.Identification)
+            if (usercontext.UIMode == ProviderPageMode.RequestingCode)
             {
-                Task tsk = new Task(() => internalSendNotification(usercontext));
+                Task tsk = new Task(() => internalSendNotification(usercontext, Config), TaskCreationOptions.LongRunning);
                 tsk.Start();
             }
+            else if (usercontext.UIMode == ProviderPageMode.Identification)
+                RemoteAdminService.SetNotification((Registration)usercontext, Config, NotificationStatus.Totp);
+            return;
         }
 
         /// <summary>
         /// internalSendNotification method implementation
         /// </summary>
-        private void internalSendNotification(AuthenticationContext usercontext)
+        private void internalSendNotification(AuthenticationContext usercontext, MFAConfig cfg) 
         {
             try
             {
-                int otpres = 0;
+                int otpres = NotificationStatus.Error;
+                Notification ntf = null;
                 switch (usercontext.PreferredMethod)
                 {
                     case RegistrationPreferredMethod.Email:
+                        RemoteAdminService.SetNotification((Registration)usercontext, Config, NotificationStatus.RequestEmail); 
                         otpres = Utilities.GetEmailOTP((Registration)usercontext, Config.SendMail);
-                        break;
-                    case RegistrationPreferredMethod.ApplicationCode:
-                        otpres = -1;
+                        ntf = RemoteAdminService.CheckNotification((Registration)usercontext, cfg);
+                        if (ntf.OTP==NotificationStatus.RequestEmail)
+                           RemoteAdminService.SetNotification((Registration)usercontext, Config, otpres);
+                        if (otpres == NotificationStatus.Error)
+                            EventLog.WriteEntry(EventLogSource, errors_strings.ErrorSendingToastInformation, EventLogEntryType.Error, 800);
                         break;
                     case RegistrationPreferredMethod.Phone:
-                        otpres = Utilities.GetPhoneOTP((Registration)usercontext, Config.ExternalOTPProvider);
+                        RemoteAdminService.SetNotification((Registration)usercontext, Config, NotificationStatus.RequestSMS); 
+                        otpres = Utilities.GetPhoneOTP((Registration)usercontext, Config);
+                        ntf = RemoteAdminService.CheckNotification((Registration)usercontext, cfg);
+                        if (ntf.OTP == NotificationStatus.RequestSMS)
+                            RemoteAdminService.SetNotification((Registration)usercontext, Config, otpres);
+                        if (otpres == NotificationStatus.Error)
+                           EventLog.WriteEntry(EventLogSource, errors_strings.ErrorSendingToastInformation, EventLogEntryType.Error, 800);
                         break;
                 }
-                RemoteAdminService.SetNotification((Registration)usercontext, Config, otpres);
             }
             catch (Exception ex)
             {
-                EventLog.WriteEntry(EventLogSource, string.Format(errors_strings.ErrorSendingToastInformation, ex.Message+"\r\n"+ex.StackTrace), EventLogEntryType.Error, 800);
-                // do not throw the exception, no more information sent 
+                RemoteAdminService.SetNotification((Registration)usercontext, Config, NotificationStatus.Error);
+                EventLog.WriteEntry(EventLogSource, errors_strings.ErrorSendingToastInformation +"\r\n"+ ex.Message + "\r\n"+ex.StackTrace, EventLogEntryType.Error, 800);
             }
         }
 
@@ -578,14 +646,14 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         private bool CheckPin(string pin, Notification notif, AuthenticationContext usercontext)
         {
-            if (notif.OTP == 0)
+            if (notif.OTP == NotificationStatus.Error)
                 return false;
-            if (notif.OTP > 0)
+            else if (notif.OTP > NotificationStatus.Error)
             {
                 string generatedpin = notif.OTP.ToString("D");  // eg : transmitted by email or by External System (SMS)
-                return  (Convert.ToInt32(pin) == Convert.ToInt32(generatedpin));
+                return (Convert.ToInt32(pin) == Convert.ToInt32(generatedpin));
             }
-            else  // Using a TOTP Application (Microsoft Authnetication, Google Authentication, etc...)
+            else if (notif.OTP == NotificationStatus.Totp)  // Using a TOTP Application (Microsoft Authnetication, Google Authentication, etc...)
             {
                 if (Config.TOTPShadows <= 0)
                 {
@@ -606,7 +674,7 @@ namespace Neos.IdentityServer.MultiFactor
                         return true;
                     }
                     // TOTP with Shadow (current - x latest)
-                    for (int i = 1; i <= Config.TOTPShadows; i++ )
+                    for (int i = 1; i <= Config.TOTPShadows; i++)
                     {
                         DateTime tcall = call.AddSeconds(-(i * OneTimePasswordGenerator.TOTPDuration));
                         OneTimePasswordGenerator gen = new OneTimePasswordGenerator(usercontext.SecretKey, usercontext.UPN, tcall, Config.Algorithm);  // eg : TOTP code
@@ -632,22 +700,13 @@ namespace Neos.IdentityServer.MultiFactor
                     return false;
                 }
             }
+            else if (notif.OTP == NotificationStatus.Error)    // Active Request for code
+                return false;
+            else if (notif.OTP == NotificationStatus.Bypass)   // Magic - Validated by External ExternalOTPProvider
+                return true;
+            else
+                return false;
         }
-
-        /// <summary>
-        /// GetPin method implmentation (Obsolete)
-        /// </summary>
-  /*      private string GetPin(Notification notif, Registration userreg)
-        {
-            if (notif.OTP > 0)  // transmitted by email or by sms
-                return notif.OTP.ToString("D"); 
-            else // computed 
-            {
-                OneTimePasswordGenerator gen = new OneTimePasswordGenerator(userreg.SecretKey, userreg.UPN, DateTime.UtcNow, Config.Algorithm);  // eg : TOTP code
-                gen.ComputeOneTimePassword(DateTime.UtcNow);
-                return gen.OneTimePassword.ToString("D");
-            }
-        } */
 
         /// <summary>
         /// ValidateEmail method implementation

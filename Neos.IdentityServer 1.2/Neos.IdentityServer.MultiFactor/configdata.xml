@@ -24,7 +24,7 @@
 	</Hosts>
 	<SendMail Company="your company description" from="youremail@youcompany" username="youraccount" password="yourpassword" host="youmailserver" port="587" useSSL="true" />
 	<!--
-	<ExternalOTPProvider Company="your company description" DefaultCountryCode="FR" Sha1Salt="yoursalt" FullQualifiedImplementation="your assembly and classtype eg : 'Neos.IdentityServer.Multifactor.SMS.SMSCall, Neos.IdentityServer.Multifactor.SMS.Azure, Version=1.2.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2'" >
+	<ExternalOTPProvider Company="your company description" DefaultCountryCode="FR" IsTwoWay="false" Timeout="300" Sha1Salt="yoursalt" FullQualifiedImplementation="your assembly and classtype eg : 'Neos.IdentityServer.Multifactor.SMS.SMSCall, Neos.IdentityServer.Multifactor.SMS.Azure, Version=1.2.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2'" >
 		<Parameters>
 			<![CDATA[LICENSE_KEY = "YOUR_LICENCE_KEY", GROUP_KEY = "YOUR_GROUP_KEY", CERT_THUMBPRINT = "YOUR_CERT_THUMBPRINT"]]>
 		</Parameters>

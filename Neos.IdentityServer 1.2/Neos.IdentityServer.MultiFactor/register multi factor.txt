@@ -7,30 +7,30 @@ $publish = New-Object System.EnterpriseServices.Internal.Publish
 net stop adfssrv
 
 # Install Identiy Server assemblies
-$publish.GacRemove("C:\Temp\MFA\Neos.IdentityServer.MultiFactor.dll")
-$publish.GacRemove("C:\Temp\MFA\fr\Neos.IdentityServer.MultiFactor.Resources.dll")
-$publish.GacRemove("C:\Temp\MFA\es\Neos.IdentityServer.MultiFactor.Resources.dll")
-$publish.GacRemove("C:\Temp\MFA\Neos.IdentityServer.MultiFactor.Common.dll")
-$publish.GacRemove("C:\Temp\MFA\Neos.IdentityServer.MultiFactor.QRCodeNet.dll")
+$publish.GacRemove(".\Neos.IdentityServer.MultiFactor.dll")
+$publish.GacRemove(".\fr\Neos.IdentityServer.MultiFactor.Resources.dll")
+$publish.GacRemove(".\es\Neos.IdentityServer.MultiFactor.Resources.dll")
+$publish.GacRemove(".\Neos.IdentityServer.MultiFactor.Common.dll")
+$publish.GacRemove(".\Neos.IdentityServer.MultiFactor.QRCodeNet.dll")
 
-$publish.GacInstall("C:\Temp\MFA\Neos.IdentityServer.MultiFactor.dll")
-$publish.GacInstall("C:\Temp\MFA\fr\Neos.IdentityServer.MultiFactor.Resources.dll")
-$publish.GacInstall("C:\Temp\MFA\es\Neos.IdentityServer.MultiFactor.Resources.dll")
-$publish.GacInstall("C:\Temp\MFA\Neos.IdentityServer.MultiFactor.Common.dll")
-$publish.GacInstall("C:\Temp\MFA\Neos.IdentityServer.MultiFactor.QRCodeNet.dll")
+$publish.GacInstall(".\Neos.IdentityServer.MultiFactor.dll")
+$publish.GacInstall(".\fr\Neos.IdentityServer.MultiFactor.Resources.dll")
+$publish.GacInstall(".\es\Neos.IdentityServer.MultiFactor.Resources.dll")
+$publish.GacInstall(".\Neos.IdentityServer.MultiFactor.Common.dll")
+$publish.GacInstall(".\Neos.IdentityServer.MultiFactor.QRCodeNet.dll")
 
 # Install External OTP Provider (Sample And Azure MFA) assemblies
-$publish.GacRemove("C:\Temp\MFA\Neos.IdentityServer.Multifactor.SMS.Sample.dll")
-$publish.GacRemove("C:\Temp\MFA\Neos.IdentityServer.Multifactor.SMS.Azure.dll")
-$publish.GacRemove("C:\Temp\MFA\fr\Neos.IdentityServer.Multifactor.SMS.Azure.Resources.dll")
-$publish.GacRemove("C:\Temp\MFA\es\Neos.IdentityServer.Multifactor.SMS.Azure.Resources.dll")
-$publish.GacRemove("C:\Temp\MFA\libphonenumber_csharp_portable.dll")
+$publish.GacRemove(".\Neos.IdentityServer.Multifactor.SMS.Sample.dll")
+$publish.GacRemove(".\Neos.IdentityServer.Multifactor.SMS.Azure.dll")
+$publish.GacRemove(".\fr\Neos.IdentityServer.Multifactor.SMS.Azure.Resources.dll")
+$publish.GacRemove(".\es\Neos.IdentityServer.Multifactor.SMS.Azure.Resources.dll")
+$publish.GacRemove(".\libphonenumber_csharp_portable.dll")
 
-$publish.GacInstall("C:\Temp\MFA\Neos.IdentityServer.Multifactor.SMS.Sample.dll")
-$publish.GacInstall("C:\Temp\MFA\Neos.IdentityServer.Multifactor.SMS.Azure.dll")
-$publish.GacInstall("C:\Temp\MFA\fr\Neos.IdentityServer.Multifactor.SMS.Azure.Resources.dll")
-$publish.GacInstall("C:\Temp\MFA\es\Neos.IdentityServer.Multifactor.SMS.Azure.Resources.dll")
-$publish.GacInstall("C:\Temp\MFA\libphonenumber_csharp_portable.dll")
+$publish.GacInstall(".\Neos.IdentityServer.Multifactor.SMS.Sample.dll")
+$publish.GacInstall(".\Neos.IdentityServer.Multifactor.SMS.Azure.dll")
+$publish.GacInstall(".\fr\Neos.IdentityServer.Multifactor.SMS.Azure.Resources.dll")
+$publish.GacInstall(".\es\Neos.IdentityServer.Multifactor.SMS.Azure.Resources.dll")
+$publish.GacInstall(".\libphonenumber_csharp_portable.dll")
 
 # Start ADFS Service
 net start adfssrv

@@ -13,10 +13,10 @@
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
 using System;
+using System.ComponentModel;
 using System.Globalization;
 using System.Runtime.Serialization;
 using System.ServiceModel;
-using System.Xml.Serialization;
 using Microsoft.IdentityServer.Web.Authentication.External;
 
 namespace Neos.IdentityServer.MultiFactor
@@ -44,19 +44,36 @@ namespace Neos.IdentityServer.MultiFactor
         int GetUserCodeWithExternalSystem(string upn, string phonenumber, string email, ExternalOTPProvider externalsys, CultureInfo culture);
     }
 
+    public static class NotificationStatus
+    {
+        public const int Error = 0;
+        public const int Totp = -1;
+        public const int RequestEmail = -2;
+        public const int RequestSMS = -3;
+        public const int Bypass = -99;
+    }
+    
+    [DataContract, Serializable]
+    public enum RegistrationSecretKeyFormat
+    {
+        [EnumMember]
+        KEEP = 0,
+        [EnumMember]
+        RNG = 1,
+        [EnumMember]
+        RSA = 2
+    }
+
     [DataContract, Serializable]
     public enum RegistrationPreferredMethod
     {
-        [EnumMember(Value="0")]
+        [EnumMember]
         Choose = 0,
-
-        [EnumMember(Value = "1")]
+        [EnumMember]
         ApplicationCode = 1,
-
-        [EnumMember(Value = "2")]
+        [EnumMember]
         Email = 2,
-
-        [EnumMember(Value = "3")]
+        [EnumMember]
         Phone = 3
     }
 
@@ -250,9 +267,10 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// Constructor
         /// </summary>
-        public AuthenticationContext(IAuthenticationContext ctx, Registration reg):this(ctx)
+        public AuthenticationContext(IAuthenticationContext ctx, Registration reg)
+            : this(ctx)
         {
-            this.ID =  reg.ID;
+            this.ID = reg.ID;
             this.UPN = reg.UPN;
             this.MailAddress = reg.MailAddress;
             this.PhoneNumber = reg.PhoneNumber;
@@ -260,7 +278,7 @@ namespace Neos.IdentityServer.MultiFactor
             this.Enabled = reg.Enabled;
             this.SecretKey = reg.SecretKey;
             this.PreferredMethod = reg.PreferredMethod;
-        } 
+        }
 
         /// <summary>
         /// implicit operator AuthenticationContext -> Registration
@@ -473,6 +491,9 @@ namespace Neos.IdentityServer.MultiFactor
         }
     }
 
+    /// <summary>
+    /// ProviderPageMode
+    /// </summary>
     public enum ProviderPageMode
     {
         Locking = 0,
@@ -482,7 +503,8 @@ namespace Neos.IdentityServer.MultiFactor
         Registration = 4,
         SelectOptions = 5,
         ShowQRCode = 6,
-        Bypass = 7
+        Bypass = 7,
+        RequestingCode = 8
     }
 
 

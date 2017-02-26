@@ -376,7 +376,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// EnsureSecretKey method iplementation
         /// </summary>
-        public static void EnsureSecretKey(Registration registration, MFAConfig cfg)
+        public static void EnsureSecretKey(Registration registration, MFAConfig cfg) // ICI
         {
             if (string.IsNullOrEmpty(registration.SecretKey))
             {
@@ -387,7 +387,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// GetNewSecretKey method implmentation
         /// </summary>
-        public static string GetNewSecretKey(MFAConfig cfg, string upn)
+        public static string GetNewSecretKey(MFAConfig cfg, string upn, RegistrationSecretKeyFormat opt = RegistrationSecretKeyFormat.RNG)
         {
             // UPN for future use
             RandomNumberGenerator cryptoRandomDataGenerator = new RNGCryptoServiceProvider();

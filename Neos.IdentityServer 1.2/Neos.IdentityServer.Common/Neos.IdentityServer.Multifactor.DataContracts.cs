@@ -13,6 +13,8 @@
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
 using System;
+using System.Collections.Generic;
+using System.Globalization;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
@@ -24,6 +26,50 @@ namespace Neos.IdentityServer.MultiFactor
     {
         private KeyGeneratorMode _fgen = KeyGeneratorMode.ClientSecret512;
         private bool _isdirty = false;
+        private string _country;
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public MFAConfig()
+        {
+
+        }
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public MFAConfig(bool initializedefaults):this()
+        {
+            if (initializedefaults)
+            {
+                _isdirty = false;
+                DeliveryWindow = 300;
+                TOTPShadows = 2;
+                MailEnabled= true; 
+                SMSEnabled = true; 
+                AppsEnabled = true;
+                Algorithm = HashMode.SHA1; 
+                UseActiveDirectory = true; 
+                CustomUpdatePassword = true;
+                KeyGenerator = KeyGeneratorMode.ClientSecret512; 
+                DefaultCountryCode = "fr";
+                Hosts = new Hosts();
+                Hosts.ActiveDirectoryHost = new ADDSHost();
+                Hosts.SQLServerHost = new SQLServerHost();
+                Hosts.SQLServerHost.ConnectionString="Password=yourpassword;Persist Security Info=True;User ID=yoursqlusername;Initial Catalog=yourdatabasename;Data Source=yoursqlserver\\yourinstance";
+                Hosts.ADFSFarm = new ADFSFarmHost();
+                Hosts.ADFSFarm.IsInitialized = false;
+                SendMail = new SendMail();
+                SendMail.From="sender.email@contoso.com"; 
+                SendMail.UserName="user.name@contoso.com"; 
+                SendMail.Password ="yourpass" ;
+                SendMail.Host="smtp.office365.com";
+                SendMail.Port = 587; 
+                SendMail.UseSSL = true;
+                SendMail.Company="Contoso";
+            }
+        }
 
         [XmlIgnore]
         public bool IsDirty
@@ -122,6 +168,21 @@ namespace Neos.IdentityServer.MultiFactor
             get { return _fgen; }
             set { _fgen = value; }
         }
+
+        [XmlAttribute("DefaultCountryCode")]
+        public string DefaultCountryCode
+        {
+            get 
+            { 
+                if (string.IsNullOrEmpty(_country))
+                {
+                    CultureInfo culture = CultureInfo.InstalledUICulture;
+                    _country = culture.TwoLetterISOLanguageName;
+                }
+                return _country;
+            }
+            set { _country = value; }
+        }
     }
 
     /// <summary>
@@ -129,6 +190,12 @@ namespace Neos.IdentityServer.MultiFactor
     /// </summary>
     public class Hosts
     {
+        private ADFSFarmHost _host;
+        public Hosts()
+        {
+            _host = new ADFSFarmHost();
+        }
+
         [XmlElement("SQLServer")]
         public SQLServerHost SQLServerHost
         {
@@ -143,6 +210,12 @@ namespace Neos.IdentityServer.MultiFactor
             set;
         }
 
+        [XmlElement("ADFSFarm")]
+        public ADFSFarmHost ADFSFarm
+        {
+            get { return _host; }
+            set { _host = value; }
+        }
     }
 
     /// <summary>
@@ -167,11 +240,10 @@ namespace Neos.IdentityServer.MultiFactor
         string _mailattr = "msDS-cloudExtensionAttribute11";
         string _phoneattr = "msDS-cloudExtensionAttribute12";
         string _methodattr = "msDS-cloudExtensionAttribute13";
-
         string _notifCreateattr = "msDS-cloudExtensionAttribute14";
         string _notifValidityattr = "msDS-cloudExtensionAttribute15";
         string _notifcheckdateattribute = "msDS-cloudExtensionAttribute16";
-        string _TOTPpattr = "msDS-cloudExtensionAttribute17";
+        string _TOTPAttr = "msDS-cloudExtensionAttribute17";
         string _TOTPEnabled = "msDS-cloudExtensionAttribute18";
 
         [XmlAttribute("DomainAddress")]
@@ -247,8 +319,8 @@ namespace Neos.IdentityServer.MultiFactor
         [XmlAttribute("totpattribute")]
         public string totpAttribute
         {
-            get { return _TOTPpattr; }
-            set { _TOTPpattr = value; }
+            get { return _TOTPAttr; }
+            set { _TOTPAttr = value; }
         }
 
         [XmlAttribute("totpEnabledAttribute")]
@@ -257,15 +329,162 @@ namespace Neos.IdentityServer.MultiFactor
             get { return _TOTPEnabled; }
             set { _TOTPEnabled = value; }
         }
-
     }
+
+    #region ADFSServer Classes
+    public class ADFSFarmHost
+    {
+        private int _level = 1;
+        private bool _isinitialized = false;
+        private List<ADFSServerHost> _lst = new List<ADFSServerHost>();
+
+        /// <summary>
+        /// IsInitialized property
+        /// </summary>
+        [XmlAttribute("IsInitialized")]
+        public bool IsInitialized
+        {
+            get { return _isinitialized; }
+            set { _isinitialized = value; }
+        }
+
+        /// <summary>
+        /// BehaviorLevel property
+        /// </summary>
+        [XmlAttribute("CurrentFarmBehavior")]
+        public int CurrentFarmBehavior
+        {
+            get { return _level; }
+            set { _level = value; }
+        }
+
+        /// <summary>
+        /// BehaviorLevel property
+        /// </summary>
+        [XmlAttribute("FarmIdentifier")]
+        public string FarmIdentifier
+        {
+            get;
+            set;
+        }
+
+        [XmlElement("ADFSNode")]
+        public List<ADFSServerHost> Servers
+        {
+            get { return _lst; }
+            set { _lst = value; }
+        }
+    }
+
+    public class ADFSServerHost
+    {
+        /// <summary>
+        /// FQDN property
+        /// </summary>
+        [XmlAttribute("FQDN")]
+        public string FQDN
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// BehaviorLevel property
+        /// </summary>
+        [XmlAttribute("BehaviorLevel")]
+        public int BehaviorLevel
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// HeartbeatTmeStamp property
+        /// </summary>
+        [XmlAttribute("HeartbeatTmeStamp")]
+        public DateTime HeartbeatTmeStamp
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// NodeType property
+        /// </summary>
+        [XmlAttribute("NodeType")]
+        public string NodeType
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// CurrentVersion property
+        /// </summary>
+        [XmlAttribute("CurrentVersion")]
+        public string CurrentVersion
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// CurrentVersion property
+        /// </summary>
+        [XmlAttribute("ProductName")]
+        public string ProductName
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// InstallationType property
+        /// </summary>
+        [XmlAttribute("InstallationType")]
+        public string InstallationType
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// CurrentBuild property
+        /// </summary>
+        [XmlAttribute("CurrentBuild")]
+        public int CurrentBuild
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// CurrentMajorVersionNumber property
+        /// </summary>
+        [XmlAttribute("CurrentMajorVersionNumber")]
+        public int CurrentMajorVersionNumber
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// CurrentMinorVersionNumber property
+        /// </summary>
+        [XmlAttribute("CurrentMinorVersionNumber")]
+        public int CurrentMinorVersionNumber
+        {
+            get;
+            set;
+        }
+    }
+    #endregion
 
     /// <summary>
     /// SendMail contract
     /// </summary>
     public class SendMail
     {
-        private string _html = string.Empty;
         private string _comp = "your company description";
 
         [XmlAttribute("from")]
@@ -331,23 +550,17 @@ namespace Neos.IdentityServer.MultiFactor
     public class ExternalOTPProvider
     {
         private string _comp = "your company description";
-        private string _country;
         private string _class;
         private string _cdata;
         private string _sha1 = "0x123456789";
+        private bool   _istwoway = false;
+        private int _timeout = 300;
 
         [XmlAttribute("Company")]
         public string Company
         {
             get { return _comp; }
             set { _comp = value; }
-        }
-
-        [XmlAttribute("DefaultCountryCode")]
-        public string DefaultCountryCode
-        {
-            get { return _country; }
-            set { _country = value; }
         }
 
         [XmlAttribute("Sha1Salt")]
@@ -369,6 +582,20 @@ namespace Neos.IdentityServer.MultiFactor
         {
             get { return _cdata; }
             set { _cdata = value; }
+        }
+
+        [XmlAttribute("IsTwoWay")]
+        public bool IsTwoWay
+        {
+            get { return _istwoway; }
+            set { _istwoway = value; }
+        }
+
+        [XmlAttribute("Timeout")]
+        public int Timeout
+        {
+            get { return _timeout; }
+            set { _timeout = value; }
         }
     }
 
@@ -468,5 +695,4 @@ namespace Neos.IdentityServer.MultiFactor
             return Value;
         }
    }
-
 }

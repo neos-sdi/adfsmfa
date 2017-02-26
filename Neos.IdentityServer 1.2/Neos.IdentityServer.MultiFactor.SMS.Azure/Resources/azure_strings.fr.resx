@@ -120,4 +120,7 @@
   <data name="SMSMessage" xml:space="preserve">
     <value>Utiliser &lt;$otp$&gt; comme code de sécurité du compte {0}</value>
   </data>
+  <data name="SMSTwoWayMessage" xml:space="preserve">
+    <value>Vous devez retourner ce code &lt;$otp$&gt; pour la sécurité du compte {0}</value>
+  </data>
 </root>

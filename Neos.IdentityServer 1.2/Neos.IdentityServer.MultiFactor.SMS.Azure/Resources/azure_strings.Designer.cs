@@ -61,11 +61,20 @@ namespace Neos.IdentityServer.MultiFactor.SMS.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Use &lt;$otp$&gt; as the security code of the account {0}.
+        ///   Recherche une chaîne localisée semblable à Use &lt;$otp$&gt; as the security code fr the account {0}.
         /// </summary>
         internal static string SMSMessage {
             get {
                 return ResourceManager.GetString("SMSMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à You must send back this code &lt;$otp$&gt; as security code for the account {0}.
+        /// </summary>
+        internal static string SMSTwoWayMessage {
+            get {
+                return ResourceManager.GetString("SMSTwoWayMessage", resourceCulture);
             }
         }
     }

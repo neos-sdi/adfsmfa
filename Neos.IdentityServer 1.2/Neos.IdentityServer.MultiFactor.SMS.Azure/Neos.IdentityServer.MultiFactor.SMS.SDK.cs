@@ -108,33 +108,33 @@ namespace Neos.IdentityServer.Multifactor.SMS
         /// <summary>
         /// Authenticate method implmentation
         /// </summary>
-        public static bool Authenticate(PhoneFactorParams pfAuthParams, out string otp, out int callStatus, out int errorId)
+        public static bool Authenticate(PhoneFactorParams pfAuthParams, out string otp, out int callStatus, out int errorId, int timeout = 300)
         {
-            return InternalAuthenticate(pfAuthParams, false, out otp, out callStatus, out errorId);
+            return InternalAuthenticate(pfAuthParams, false, out otp, out callStatus, out errorId, timeout);
         }
 
         /// <summary>
         /// Authenticate method implementation overload
         /// </summary>
-        public static bool Authenticate(PhoneFactorParams pfAuthParams, out int callStatus, out int errorId)
+        public static bool Authenticate(PhoneFactorParams pfAuthParams, out int callStatus, out int errorId, int timeout = 300)
         {
-            return InternalAuthenticate(pfAuthParams, false, out callStatus, out errorId);
+            return InternalAuthenticate(pfAuthParams, false, out callStatus, out errorId,timeout);
         }
 
 
         /// <summary>
         /// InternalAuthenticate method implementation
         /// </summary>
-        private static bool InternalAuthenticate(PhoneFactorParams pfAuthParams, bool asynchronous, out int call_status, out int error_id)
+        private static bool InternalAuthenticate(PhoneFactorParams pfAuthParams, bool asynchronous, out int call_status, out int error_id, int timeout = 300)
         {
             string otp = "";
-            return InternalAuthenticate(pfAuthParams, asynchronous, out otp, out call_status, out error_id);
+            return InternalAuthenticate(pfAuthParams, asynchronous, out otp, out call_status, out error_id, timeout);
         }
 
         /// <summary>
         /// InternalAuthenticate method implementation 
         /// </summary>
-        private static bool InternalAuthenticate(PhoneFactorParams pfAuthParams, bool asynchronous, out string otp, out int call_status, out int error_id)
+        private static bool InternalAuthenticate(PhoneFactorParams pfAuthParams, bool asynchronous, out string otp, out int call_status, out int error_id, int timeout = 300)
         {
             if (pfAuthParams.CountryCode.Length == 0) 
                 pfAuthParams.CountryCode = "1";
@@ -153,7 +153,7 @@ namespace Neos.IdentityServer.Multifactor.SMS
             string auth_message = CreateMessage(pfAuthParams, asynchronous);
 
             int tries = 1;
-            if (mMutex.WaitOne())
+            if (mMutex.WaitOne(timeout*1000))
             {
                 try 
                 { 
@@ -175,7 +175,7 @@ namespace Neos.IdentityServer.Multifactor.SMS
                 }
                 else
                 {
-                    if (mMutex.WaitOne())
+                    if (mMutex.WaitOne(timeout*1000))
                     {
                         try
                         {

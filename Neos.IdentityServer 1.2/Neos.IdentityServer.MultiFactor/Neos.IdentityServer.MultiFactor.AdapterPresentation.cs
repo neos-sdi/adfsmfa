@@ -170,6 +170,232 @@ namespace Neos.IdentityServer.MultiFactor
                     result += "<a class=\"actionLink\" href=\"#\" id=\"nocode\" name=\"nocode\" onclick=\"return SetLinkTitle(loginForm, '3')\"; style=\"cursor: pointer;\">" + html_strings.HtmlUIMNoCode + "</a>";
                     result += "</form>";
                     break;
+                case ProviderPageMode.RequestingCode:  // Async call for code (sms, email)
+                    result += "<script type=\"text/javascript\">" + "\r\n";
+                    result += "if (window.addEventListener)" + "\r\n";
+                    result += "{" + "\r\n";
+                    result += "   window.addEventListener('load', OnAutoRefreshPost, false);" + "\r\n";
+                    result += "}" + "\r\n";
+                    result += "else if (window.attachEvent)" + "\r\n";
+                    result += "{" + "\r\n";
+                    result += "   window.attachEvent('onload', OnAutoRefreshPost);" + "\r\n";
+                    result += "}" + "\r\n";
+                    result += "</script>" + "\r\n";
+
+                    result += "<form method=\"post\" id=\"refreshForm\" autocomplete=\"off\" \">";
+
+
+                    result += "<div id=\"cookiePullWaitingWheel\" \">";
+                    result += "<style>";
+                    result += "#floatingCirclesG {";
+                    result += "position: relative;";
+                    result += "width: 125px;";
+                    result += "height: 125px;";
+                    result += "margin: auto;";
+                    result += "transform: scale(0.4);";
+                    result += "-o-transform: scale(0.4);";
+                    result += "-ms-transform: scale(0.4);";
+                    result += "-webkit-transform: scale(0.4);";
+                    result += "-moz-transform: scale(0.4);";
+                    result += "}";
+
+                    result += ".f_circleG {";
+                    result += "position: absolute;";
+                    result += "height: 22px;"; 
+                    result += "width: 22px;";
+                    result += "border-radius: 12px;";
+                    result += "-o-border-radius: 12px;";
+                    result += "-ms-border-radius: 12px;";
+                    result += "-webkit-border-radius: 12px;";
+                    result += "-moz-border-radius: 12px;";
+                    result += "animation-name: f_fadeG;";
+                    result += "-o-animation-name: f_fadeG;";
+                    result += "-ms-animation-name: f_fadeG;";
+                    result += "-webkit-animation-name: f_fadeG;";
+                    result += "-moz-animation-name: f_fadeG;";
+                    result += "animation-duration: 1.2s;";
+                    result += "-o-animation-duration: 1.2s;";
+                    result += "-ms-animation-duration: 1.2s;";
+                    result += "-webkit-animation-duration: 1.2s;";
+                    result += "-moz-animation-duration: 1.2s;";
+                    result += "animation-iteration-count: infinite;";
+                    result += "-o-animation-iteration-count: infinite;";
+                    result += "-ms-animation-iteration-count: infinite;";
+                    result += "-webkit-animation-iteration-count: infinite;";
+                    result += "-moz-animation-iteration-count: infinite;";
+                    result += "animation-direction: normal;";
+                    result += "-o-animation-direction: normal;";
+                    result += "-ms-animation-direction: normal;";
+                    result += "-webkit-animation-direction: normal;";
+                    result += "-moz-animation-direction: normal;";
+                    result += "}";
+
+                    result += "#frotateG_01 {";
+                    result += "left: 0;";
+                    result += "top: 51px;";
+                    result += "animation-delay: 0.45s;";
+                    result += "-o-animation-delay: 0.45s;";
+                    result += "-ms-animation-delay: 0.45s;";
+                    result += "-webkit-animation-delay: 0.45s;";
+                    result += "-moz-animation-delay: 0.45s;";
+                    result += "}";
+
+                    result += "#frotateG_02 {";
+                    result += "left: 15px;";
+                    result += "top: 15px;";
+                    result += "animation-delay: 0.6s;";
+                    result += "-o-animation-delay: 0.6s;";
+                    result += "-ms-animation-delay: 0.6s;";
+                    result += "-webkit-animation-delay: 0.6s;";
+                    result += "-moz-animation-delay: 0.6s;";
+                    result += "}";
+
+                    result += "#frotateG_03 {";
+                    result += "left: 51px;";
+                    result += "top: 0;";
+                    result += "animation-delay: 0.75s;";
+                    result += "-o-animation-delay: 0.75s;";
+                    result += "-ms-animation-delay: 0.75s;";
+                    result += "-webkit-animation-delay: 0.75s;";
+                    result += "-moz-animation-delay: 0.75s;";
+                    result += "}";
+
+                    result += "#frotateG_04 {";
+                    result += "right: 15px;";
+                    result += "top: 15px;";
+                    result += "animation-delay: 0.9s;";
+                    result += "-o-animation-delay: 0.9s;";
+                    result += "-ms-animation-delay: 0.9s;";
+                    result += "-webkit-animation-delay: 0.9s;";
+                    result += "-moz-animation-delay: 0.9s;";
+                    result += "}";
+
+                    result += "#frotateG_05 {";
+                    result += "right: 0;";
+                    result += "top: 51px;";
+                    result += "animation-delay: 1.05s;";
+                    result += "-o-animation-delay: 1.05s;";
+                    result += "-ms-animation-delay: 1.05s;";
+                    result += "-webkit-animation-delay: 1.05s;";
+                    result += "-moz-animation-delay: 1.05s;";
+                    result += "}";
+
+                    result += "#frotateG_06 {";
+                    result += "right: 15px;";
+                    result += "bottom: 15px;";
+                    result += "animation-delay: 1.2s;";
+                    result += "-o-animation-delay: 1.2s;";
+                    result += "-ms-animation-delay: 1.2s;";
+                    result += "-webkit-animation-delay: 1.2s;";
+                    result += "-moz-animation-delay: 1.2s;";
+                    result += "}";
+
+                    result += "#frotateG_07 {";
+                    result += "left: 51px;";
+                    result += "bottom: 0;";
+                    result += "animation-delay: 1.35s;";
+                    result += "-o-animation-delay: 1.35s;";
+                    result += "-ms-animation-delay: 1.35s;";
+                    result += "-webkit-animation-delay: 1.35s;";
+                    result += "-moz-animation-delay: 1.35s;";
+                    result += "}";
+
+                    result += "#frotateG_08 {";
+                    result += "left: 15px;";
+                    result += "bottom: 15px;";
+                    result += "animation-delay: 1.5s;";
+                    result += "-o-animation-delay: 1.5s;";
+                    result += "-ms-animation-delay: 1.5s;";
+                    result += "-webkit-animation-delay: 1.5s;";
+                    result += "-moz-animation-delay: 1.5s;";
+                    result += "}";
+
+                    result += "@keyframes f_fadeG {";
+                    result += "0% {";
+                    result += "background-color: rgb(47,146,212);";
+                    result += "}";
+
+                    result += "100% {";
+                    result += "background-color: rgb(255,255,255);";
+                    result += "}";
+                    result += "}";
+
+                    result += "@-o-keyframes f_fadeG {";
+                    result += "0% {";
+                    result += "background-color: rgb(47,146,212);";
+                    result += "}";
+
+                    result += "100% {";
+                    result += "background-color: rgb(255,255,255);";
+                    result += "}";
+                    result += "}";
+
+                    result += "@-ms-keyframes f_fadeG {";
+                    result += "0% {";
+                    result += "background-color: rgb(47,146,212);";
+                    result += "}";
+
+                    result += "100% {";
+                    result += "background-color: rgb(255,255,255);";
+                    result += "}";
+                    result += "}";
+
+                    result += "@-webkit-keyframes f_fadeG {";
+                    result += "0% {";
+                    result += "background-color: rgb(47,146,212);";
+                    result += "}";
+
+                    result += "100% {";
+                    result += "background-color: rgb(255,255,255);";
+                    result += "}";
+                    result += "}";
+
+                    result += "@-moz-keyframes f_fadeG {";
+                    result += "0% {";
+                    result += "background-color: rgb(47,146,212);";
+                    result += "}";
+
+                    result += "100% {";
+                    result += "background-color: rgb(255,255,255);";
+                    result += "}";
+                    result += "}";
+                    result += "</style>";
+
+                    result += "<div id=\"floatingCirclesG\"\">";
+                    result += "<div class=\"f_circleG\" id=\"frotateG_01\"></div>";
+                    result += "<div class=\"f_circleG\" id=\"frotateG_02\"></div>";
+                    result += "<div class=\"f_circleG\" id=\"frotateG_03\"></div>";
+                    result += "<div class=\"f_circleG\" id=\"frotateG_04\"></div>";
+                    result += "<div class=\"f_circleG\" id=\"frotateG_05\"></div>";
+                    result += "<div class=\"f_circleG\" id=\"frotateG_06\"></div>";
+                    result += "<div class=\"f_circleG\" id=\"frotateG_07\"></div>";
+                    result += "<div class=\"f_circleG\" id=\"frotateG_08\"></div>";
+                    result += "</div>";
+                    result += "</div>";
+
+                 //   result += "<div class=\"fieldMargin smallText\"><label for=\"\"></label>" + html_strings.HtmUIMLabelOTP + "</div>";
+                    switch (usercontext.PreferredMethod)
+                    {
+                        case RegistrationPreferredMethod.ApplicationCode:
+                            if (Provider.Config.AppsEnabled)
+                                result += "<div class=\"fieldMargin smallText\"><label for=\"\"></label>" + html_strings.HtmlUIMUseApp + "</div><br/>";
+                            break;
+                        case RegistrationPreferredMethod.Email:
+                            if (Provider.Config.MailEnabled)
+                                result += "<div class=\"fieldMargin smallText\"><label for=\"\"></label>" + html_strings.HtlmUIMUseEmail + "</div><br/>";
+                            break;
+
+                        case RegistrationPreferredMethod.Phone:
+                            if (Provider.Config.SMSEnabled)
+                                result += "<div class=\"fieldMargin smallText\"><label for=\"\"></label>" + html_strings.HtmlUIMUsePhone + "</div><br/>";
+                            break;
+                    }
+                    result += "<input id=\"context\" type=\"hidden\" name=\"Context\" value=\"%Context%\"/>";
+                    result += "<input id=\"authMethod\" type=\"hidden\" name=\"AuthMethod\" value=\"%AuthMethod%\"/>";
+                    result += "<input id=\"lnk\" type=\"hidden\" name=\"lnk\" value=\"0\"/>";
+                    result += "<a class=\"actionLink\" href=\"#\" id=\"nocode\" name=\"nocode\" onclick=\"return SetLinkTitle(refreshForm, '3')\"; style=\"cursor: pointer;\">" + html_strings.HtmlUIMNoCode + "</a>";
+                    result += "</form>";
+                    break;
                 case ProviderPageMode.Registration: // OTP Registration
                     result += "<script type=\"text/javascript\">" + "\r\n";
                     result += "if (window.addEventListener)" + "\r\n";
@@ -350,7 +576,7 @@ namespace Neos.IdentityServer.MultiFactor
                     result += "}" + "\r\n";
                     result += "</script>" + "\r\n";
 
-                    result += "<form method=\"post\" id=\"loginForm\" autocomplete=\"off\" title=\"Aidez-nos à protéger votre compte\" >";
+                    result += "<form method=\"post\" id=\"loginForm\" autocomplete=\"off\" onsubmit=\"return ValidateEmail(this)\" >";
                     result += "<div id=\"error\" class=\"fieldMargin error smallText\"><label id=\"errorText\" name=\"errorText\" for=\"\"></label></div>";
                     bool notcoda = false;
                     if (Provider.Config.AppsEnabled)
@@ -396,7 +622,7 @@ namespace Neos.IdentityServer.MultiFactor
                     result += "   window.attachEvent('onload', OnAutoPost);" + "\r\n";
                     result += "}" + "\r\n";
                     result += "</script>" + "\r\n";
-                    result += "<form method=\"post\" id=\"loginForm\" autocomplete=\"off\" >";
+                    result += "<form method=\"post\" id=\"loginForm\" autocomplete=\"off\" title=\"Redirecting\" >";
                     result += "<input id=\"context\" type=\"hidden\" name=\"Context\" value=\"%Context%\"/>";
                     result += "<input id=\"authMethod\" type=\"hidden\" name=\"AuthMethod\" value=\"%AuthMethod%\"/>";
                     result += "</form>";
@@ -685,6 +911,27 @@ namespace Neos.IdentityServer.MultiFactor
                     result += "}" + "\r\n";
                     result += "\r\n";
 
+                    result += "function ValidateEmail(frm)" + "\r\n";
+                    result += "{"+ "\r\n";
+                    result += "   var data = document.getElementById('opt3');" + "\r\n"; 
+                    result += "   var email = document.getElementById('stmail');" + "\r\n";
+                    result += "   var err = document.getElementById('errorText');" + "\r\n"; 
+                    result += "   if (data.checked)" + "\r\n"; 
+                    result += "   {" + "\r\n";
+                    result += "         if ((email) && (email.value!==''))"+ "\r\n"; 
+                    result += "         {" + "\r\n";
+                    result += "             return true;" + "\r\n";
+                    result += "         }" + "\r\n";
+                    result += "         else" + "\r\n"; 
+                    result += "         {" + "\r\n";
+                    result += "             err.innerHTML = \"" + valid_strings.ValidIncorrectEmail + "\";" + "\r\n";
+                    result += "             return false;" + "\r\n";
+                    result += "         }" + "\r\n";
+                    result += "   }" + "\r\n";
+                    result += "   return true;" + "\r\n";
+                    result += "}" + "\r\n";
+                    result += "\r\n";
+
                     result += "function ShowQR(frm)" + "\r\n";
                     result += "{"+ "\r\n";
                     result += "   var lnk = document.getElementById('lnk');" + "\r\n";
@@ -711,7 +958,32 @@ namespace Neos.IdentityServer.MultiFactor
                     result += "\r\n";
                     result += "//]]>" + "\r\n";
                     result += "</script>" + "\r\n";
+                    break;
+                case ProviderPageMode.RequestingCode:
+                    result += "<script type='text/javascript'>" + "\r\n";
+                    result += "//<![CDATA[" + "\r\n";
 
+                    result += "function OnAutoRefreshPost()" + "\r\n";
+                    result += "{" + "\r\n";
+                    result += "   setTimeout(function() { document.getElementById(\"refreshForm\").submit() }, 3000)" + "\r\n";
+                    result += "   return true;" + "\r\n";
+                    result += "}" + "\r\n";
+                    result += "\r\n";
+                    result += "\r\n";
+
+                    result += "function SetLinkTitle(frm, data)" + "\r\n";
+                    result += "{" + "\r\n";
+                    result += "   var lnk = document.getElementById('lnk');" + "\r\n";
+                    result += "   if (lnk)" + "\r\n";
+                    result += "   {" + "\r\n";
+                    result += "      lnk.value = data;" + "\r\n";
+                    result += "   }" + "\r\n";
+                    result += "   frm.submit();" + "\r\n";
+                    result += "   return true;" + "\r\n";
+                    result += "}" + "\r\n";
+
+                    result += "//]]>" + "\r\n";
+                    result += "</script>" + "\r\n";
                     break;
                 default: 
                     break;

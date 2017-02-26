@@ -25,6 +25,8 @@ namespace Neos.IdentityServer.MultiFactor
     using System.Reflection;
     using System.Security.Cryptography;
     using System.ServiceModel.Channels;
+    using System.Diagnostics;
+    using System.Threading;
 
 
 	/// <summary>
@@ -129,7 +131,7 @@ namespace Neos.IdentityServer.MultiFactor
         internal static int GetRandomOTP()
         {
             Random random = new Random();
-            return random.Next(0, 1000000);
+            return random.Next(1, 1000000);
         }
 
         /// <summary>
@@ -146,21 +148,21 @@ namespace Neos.IdentityServer.MultiFactor
         /// GetPhoneOTP()
         /// </summary>
         /// <returns></returns>
-        public static int GetPhoneOTP(Registration reg, ExternalOTPProvider sms)
+        public static int GetPhoneOTP(Registration reg, MFAConfig config)
         {
+            if (config.ExternalOTPProvider == null)
+                return NotificationStatus.Error;
             if (reg.PreferredMethod == RegistrationPreferredMethod.Phone)
             {
-                int result = -1;
                 if (_wrapper == null)
-                    _wrapper = LoadSMSwrapper(sms.FullQualifiedImplementation);
+                   _wrapper = LoadSMSwrapper(config.ExternalOTPProvider.FullQualifiedImplementation);
                 if (_wrapper != null)
-                {
-                    result = _wrapper.GetUserCodeWithExternalSystem(reg.UPN, reg.PhoneNumber, reg.MailAddress, sms, html_strings.Culture);
-                }
-                return result;
+                   return _wrapper.GetUserCodeWithExternalSystem(reg.UPN, reg.PhoneNumber, reg.MailAddress, config.ExternalOTPProvider, html_strings.Culture);
+                else
+                    return NotificationStatus.Error;
             }
             else
-                return -1;
+                return NotificationStatus.Error;
         }
 
         /// <summary>
@@ -169,16 +171,15 @@ namespace Neos.IdentityServer.MultiFactor
         private static IExternalOTPProvider LoadSMSwrapper(string AssemblyFulldescription)
         {
             Assembly assembly = Assembly.Load(ParseAssembly(AssemblyFulldescription));
-
             Type _typetoload = assembly.GetType(ParseType(AssemblyFulldescription));
-            IExternalOTPProvider _wrapper = null;
+            IExternalOTPProvider wrapper = null;
             if (_typetoload.IsClass && !_typetoload.IsAbstract && _typetoload.GetInterface("IExternalOTPProvider") != null)
             {
                 object o = Activator.CreateInstance(_typetoload);
                 if (o != null)
-                    _wrapper = o as IExternalOTPProvider;
+                    wrapper = o as IExternalOTPProvider;
             }
-            return _wrapper;
+            return wrapper;
         }
 
         /// <summary>
