@@ -1,0 +1,221 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{602E2A57-36AF-4125-9A44-D893033339FF}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Neos.IdentityServer.Console</RootNamespace>
+    <AssemblyName>Neos.IdentityServer.Console</AssemblyName>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.ManagementConsole, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\MMC\v3.0\Microsoft.ManagementConsole.dll</HintPath>
+      <Private>True</Private>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="System" />
+    <Reference Include="System.Configuration.Install" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.DirectoryServices" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.Management.Automation, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Windows\Microsoft.NET\assembly\GAC_MSIL\System.Management.Automation\v4.0_3.0.0.0__31bf3856ad364e35\System.Management.Automation.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Controls\Neos.IdentityServer.Console.UserCommonPropsControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\Neos.IdentityServer.Console.UserCommonPropsControl.Designer.cs">
+      <DependentUpon>Neos.IdentityServer.Console.UserCommonPropsControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Neos.IdentityServer.Console.UserKeysControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\Neos.IdentityServer.Console.UserKeysControl.Designer.cs">
+      <DependentUpon>Neos.IdentityServer.Console.UserKeysControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Neos.IdentityServer.Console.UserPropsControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\Neos.IdentityServer.Console.UserPropsControl.Designer.cs">
+      <DependentUpon>Neos.IdentityServer.Console.UserPropsControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Neos.IdentityServer.Comsole.ServiceViewControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\Neos.IdentityServer.Comsole.ServiceViewControl.Designer.cs">
+      <DependentUpon>Neos.IdentityServer.Comsole.ServiceViewControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Neos.IdentityServer.Console.RootViewControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\Neos.IdentityServer.Console.RootViewControl.Designer.cs">
+      <DependentUpon>Neos.IdentityServer.Console.RootViewControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Neos.IdentityServer.Console.StatusViewControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\Neos.IdentityServer.Console.StatusViewControl.Designer.cs">
+      <DependentUpon>Neos.IdentityServer.Console.StatusViewControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Neos.IdentityServer.Console.UsersViewControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\Neos.IdentityServer.Console.UsersViewControl.Designer.cs">
+      <DependentUpon>Neos.IdentityServer.Console.UsersViewControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Neos.IdentityService.Console.ParametersViewControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\Neos.IdentityService.Console.ParametersViewControl.Designer.cs">
+      <DependentUpon>Neos.IdentityService.Console.ParametersViewControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Neos.IdentityServer.Console.Snapin.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Neos.IdentityServer.Console.Snapin.resx</DependentUpon>
+    </Compile>
+    <Compile Include="PropertyPages\Neos.IdentityServer.Console.UserPropertyPages.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ScopeNodes\Neos.IdentityServer.Console.Nodes.cs" />
+    <Compile Include="Forms\Neos.IdentityServer.Console.UserFilterWizard.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Neos.IdentityServer.Console.UserFilterWizard.Designer.cs">
+      <DependentUpon>Neos.IdentityServer.Console.UserFilterWizard.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Neos.IdentityServer.Console.Installer.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Neos.IdentityServer.Console.Installer.Designer.cs">
+      <DependentUpon>Neos.IdentityServer.Console.Installer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Neos.IdentityServer.Console.Snapin.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Views\Neos.IdentityServer.Console.ParametersFormView.cs" />
+    <Compile Include="Views\Neos.IdentityServer.Console.RootFormView.cs" />
+    <Compile Include="Views\Neos.IdentityServer.Console.ServiceFormView.cs" />
+    <Compile Include="Views\Neos.IdentityServer.Console.StatusFormView.cs" />
+    <Compile Include="Views\Neos.IdentityServer.Console.UsersFormView.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Controls\Neos.IdentityServer.Console.UserCommonPropsControl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.UserCommonPropsControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Neos.IdentityServer.Console.UserKeysControl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.UserKeysControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Neos.IdentityServer.Console.UserPropsControl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.UserPropsControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Comsole.ServiceViewControl.resx">
+      <DependentUpon>Neos.IdentityServer.Comsole.ServiceViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.RootViewControl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.RootViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.StatusViewControl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.StatusViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.UserFilterWizard.resx">
+      <DependentUpon>Neos.IdentityServer.Console.UserFilterWizard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.UsersViewControl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.UsersViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityService.Console.ParametersViewControl.resx">
+      <DependentUpon>Neos.IdentityService.Console.ParametersViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Neos.IdentityServer.Console.Snapin.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Neos.IdentityServer.Console.Snapin.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Neos.IdentityServer.Common.Admin\Neos.IdentityServer.MultiFactor.Administration.csproj">
+      <Project>{bb08dc85-4e6e-4220-a0fc-01bfb6c468f6}</Project>
+      <Name>Neos.IdentityServer.MultiFactor.Administration</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Neos.IdentityServer.Common\Neos.IdentityServer.MultiFactor.Common.csproj">
+      <Project>{15b3e0d2-6217-493a-a690-158c497f5318}</Project>
+      <Name>Neos.IdentityServer.MultiFactor.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Neos.IdentityServer.QrCodeNet\Neos.IdentityServer.MultiFactor.QRCodeNet.csproj">
+      <Project>{AA3FD0C4-5577-4327-8486-AA4F5903DB9B}</Project>
+      <Name>Neos.IdentityServer.MultiFactor.QRCodeNet</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\DataSources\Neos.IdentityServer.MultiFactor.Admin.MMCRegistrationList.datasource" />
+    <None Include="Properties\DataSources\Neos.IdentityServer.MultiFactor.Admin.UsersFilterFieldList.datasource" />
+    <None Include="Properties\DataSources\Neos.IdentityServer.MultiFactor.Admin.UsersFilterOperatorList.datasource" />
+    <None Include="Properties\DataSources\Neos.IdentityServer.MultiFactor.Admin.UsersPreferredMethodList.datasource" />
+    <None Include="Resources\dsuiext_4126.ico" />
+    <None Include="SnapMMC\MFA.msc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\dsuiext_4129.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\folder16.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\folder32.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\user_off16.bmp" />
+    <Content Include="Resources\user_off32.bmp" />
+    <Content Include="Resources\user_on16.bmp" />
+    <Content Include="Resources\user_on32.bmp" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>
+</PostBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

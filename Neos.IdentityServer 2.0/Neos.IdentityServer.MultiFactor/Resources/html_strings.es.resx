@@ -1,0 +1,244 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="HtmlChangeConfiguration" xml:space="preserve">
+    <value>Cambiar mis opciones de configuración</value>
+  </data>
+  <data name="HtmlChangePassword" xml:space="preserve">
+    <value>Cambiar mi contraseña</value>
+  </data>
+  <data name="HtmlCHOOSEOptionEmail" xml:space="preserve">
+    <value>Por correo electrónico a</value>
+  </data>
+  <data name="HtmlCHOOSEOptionEmailWarning" xml:space="preserve">
+    <value>Para confirmar como bien tu dirección de correo electrónico, complete la parte oculta y haga clic en "Enviar código" para recibir tu código.</value>
+  </data>
+  <data name="HtmlCHOOSEOptionNone" xml:space="preserve">
+    <value>No tengo ninguna de esta información</value>
+  </data>
+  <data name="HtmlCHOOSEOptionRemember" xml:space="preserve">
+    <value>Recordar mi selección</value>
+  </data>
+  <data name="HtmlCHOOSEOptionSendCode" xml:space="preserve">
+    <value>Enviar el código</value>
+  </data>
+  <data name="HtmlCHOOSEOptionSMS" xml:space="preserve">
+    <value>Enviar un SMS a</value>
+  </data>
+  <data name="HtmlCHOOSEOptionTOTP" xml:space="preserve">
+    <value>Utilice una aplicación (TOTP)</value>
+  </data>
+  <data name="HtmlErrorRestartSession" xml:space="preserve">
+    <value>Identificación imposible, por favor reinicie su sesión de</value>
+  </data>
+  <data name="HtmlLabelWRQRCode" xml:space="preserve">
+    <value>Escanear el código QR con la aplicación TOTP como Microsoft Authenticator, Google Authenticator para registrar su cuenta</value>
+  </data>
+  <data name="HtmlPWDCancel" xml:space="preserve">
+    <value>Cancelar</value>
+  </data>
+  <data name="HtmlPWDLabelActual" xml:space="preserve">
+    <value>Contraseña actual :</value>
+  </data>
+  <data name="HtmlPWDLabelNew" xml:space="preserve">
+    <value>Nueva contraseña:</value>
+  </data>
+  <data name="HtmlPWDLabelNewConfirmation" xml:space="preserve">
+    <value>Confirmación de nueva contraseña :</value>
+  </data>
+  <data name="HtmlPWDSave" xml:space="preserve">
+    <value>Guardar</value>
+  </data>
+  <data name="HtmlREGAccessMethod" xml:space="preserve">
+    <value>Método de acceso por defecto :</value>
+  </data>
+  <data name="HtmlREGLabelAppKey" xml:space="preserve">
+    <value>Tecla de aplicación :</value>
+  </data>
+  <data name="HtmlREGLabelMail" xml:space="preserve">
+    <value>Dirección de correo electrónico personal:</value>
+  </data>
+  <data name="HtmlREGLabelPhoneNumber" xml:space="preserve">
+    <value>Número de teléfono móvil :</value>
+  </data>
+  <data name="HtmlREGOptionChooseBest" xml:space="preserve">
+    <value>Me deja elegir la mejor opción</value>
+  </data>
+  <data name="HtmlREGOptionEmail" xml:space="preserve">
+    <value>Enviar un correo electrónico a una dirección personal</value>
+  </data>
+  <data name="HtmlREGOptionPhone" xml:space="preserve">
+    <value>Enviar una notificación en tu teléfono móvil</value>
+  </data>
+  <data name="HtmlREGOptionTOTP" xml:space="preserve">
+    <value>Utilice una aplicación (TOTP)</value>
+  </data>
+  <data name="HtmlREGShowQR" xml:space="preserve">
+    <value>Ver código de QR</value>
+  </data>
+  <data name="HtmlUIMAccessOptions" xml:space="preserve">
+    <value>acceder a mis opciones después de la autenticación</value>
+  </data>
+  <data name="HtmlUIMConnexion" xml:space="preserve">
+    <value>Conexión</value>
+  </data>
+  <data name="HtmlUIMNoCode" xml:space="preserve">
+    <value>No tengo un código</value>
+  </data>
+  <data name="HtmlUIMUseApp" xml:space="preserve">
+    <value>Utilice la autenticación de la aplicación</value>
+  </data>
+  <data name="HtmlUIMUseEmail" xml:space="preserve">
+    <value>Compruebe su cuenta de correo electrónico</value>
+  </data>
+  <data name="HtmlUIMUsePhone" xml:space="preserve">
+    <value>Ver mensajes instantáneos en tu móvil</value>
+  </data>
+  <data name="HtmUIMLabelOTP" xml:space="preserve">
+    <value>Código de acceso de un solo uso :</value>
+  </data>
+  <data name="HtmlREGResetQR" xml:space="preserve">
+    <value>Restablecer su clave</value>
+  </data>
+  <data name="HtmlSecretKeyChanged" xml:space="preserve">
+    <value>Atención! Su clave secreta ha sido cambiado !</value>
+  </data>
+  <data name="HtlmUIMUseEmail" xml:space="preserve">
+    <value>Compruebe su cuenta de correo electrónico</value>
+    <comment>Microsoft Bing translate</comment>
+  </data>
+  <data name="HtmlINSRequest" xml:space="preserve">
+    <value>Enviar la solicitud de inscripción</value>
+  </data>
+  <data name="HtmlINSWaitRequest" xml:space="preserve">
+    <value>El envío de su solicitud por correo electrónico a los administradores</value>
+  </data>
+  <data name="HtmlUIMOk" xml:space="preserve">
+    <value>Ok</value>
+  </data>
+  <data name="HtmlUIMDisableMFA" xml:space="preserve">
+    <value>Desactivar la autenticación de múltiples factores</value>
+  </data>
+  <data name="HtmlUIMGoToRegistration" xml:space="preserve">
+    <value>Cambiar mis opciones</value>
+  </data>
+  <data name="HtmlREGSendQR" xml:space="preserve">
+    <value>Enviar por correo electrónico</value>
+  </data>
+</root>
