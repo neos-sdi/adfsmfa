@@ -18,6 +18,7 @@
 #define softemail
 using Microsoft.IdentityServer.Web.Authentication.External;
 using System;
+using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -25,6 +26,7 @@ using System.Reflection;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace Neos.IdentityServer.MultiFactor
 {
@@ -88,20 +90,27 @@ namespace Neos.IdentityServer.MultiFactor
                         break;
                     case ProviderPageMode.Locking:  // Only for locking mode
                         if (usercontext.TargetUIMode == ProviderPageMode.DefinitiveError)
-                        {
                             result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorAccountNoAccess"), ProviderPageMode.DefinitiveError);
-                        }
+                        else if (Config.UserFeatures.HasFlag(UserFeaturesOptions.AdministrativeMode))
+                            result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorAccountNoAccess"), ProviderPageMode.DefinitiveError);
                         else if (Config.UserFeatures.HasFlag(UserFeaturesOptions.AllowDisabled) || Config.UserFeatures.HasFlag(UserFeaturesOptions.AllowUnRegistered))
                         {
-                            if (Config.UserFeatures.HasFlag(UserFeaturesOptions.AdministrativeMode))
-                                result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorAccountAdminAuthorized"), ProviderPageMode.Bypass);
-                            else
+                            if (Config.AdvertisingDays.OnFire) 
+                            {
                                 result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorAccountAuthorized"), ProviderPageMode.Bypass);
+                            }
+                            else
+                            {
+                                usercontext.UIMode = ProviderPageMode.Bypass;
+                                result = new AdapterPresentation(this, context);
+                            }
                         }
                         else
                             result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorAccountNotEnabled"), ProviderPageMode.DefinitiveError);
                         break;
                     default:
+                        if ((HookOptionParameter(request)) && (Config.UserFeatures.HasFlag(UserFeaturesOptions.AllowManageOptions)))
+                            usercontext.UIMode = ProviderPageMode.Registration;
                         result = new AdapterPresentation(this, context);
                         break;
                 }
@@ -146,18 +155,35 @@ namespace Neos.IdentityServer.MultiFactor
                     }
                     else // Not enabled
                     {
-                        if (Config.UserFeatures.HasFlag(UserFeaturesOptions.BypassDisabled))
+                        if (Config.UserFeatures.HasFlag(UserFeaturesOptions.AdministrativeMode))
+                            usercontext.UIMode = ProviderPageMode.Locking;
+                        else if (Config.UserFeatures.HasFlag(UserFeaturesOptions.BypassDisabled))
                             usercontext.UIMode = ProviderPageMode.Bypass;
-                        else if (Config.UserFeatures.HasFlag(UserFeaturesOptions.AllowDisabled))
+                        else if (Config.UserFeatures.HasFlag(UserFeaturesOptions.AllowManageOptions))
                         {
-                            if (Config.UserFeatures.HasFlag(UserFeaturesOptions.AllowProvideInformations))
+                            if (usercontext.KeyStatus == SecretKeyStatus.NoKey)
                             {
-                                usercontext.Enabled = true;
-                                usercontext.UIMode = ProviderPageMode.Locking;
+                                KeysManager.NewKey(usercontext.UPN);
+                                usercontext.KeyStatus = SecretKeyStatus.Success;
+                                usercontext.KeyChanged = true;
                             }
-                            else
-                                usercontext.UIMode = ProviderPageMode.Bypass;
+                            usercontext.Enabled = true;
+                            usercontext.UIMode = ProviderPageMode.Registration;
+                        } 
+                        else if (Config.UserFeatures.HasFlag(UserFeaturesOptions.AllowProvideInformations))
+                        {
+                            if (usercontext.KeyStatus == SecretKeyStatus.NoKey)
+                            {
+                                KeysManager.NewKey(usercontext.UPN);
+                                usercontext.KeyStatus = SecretKeyStatus.Success;
+                                usercontext.KeyChanged = true;
+                            }
+                            usercontext.Enabled = false;
+                            usercontext.UIMode = ProviderPageMode.Locking;
+                            usercontext.TargetUIMode = ProviderPageMode.None;
                         }
+                        else if (Config.UserFeatures.HasFlag(UserFeaturesOptions.AllowDisabled))
+                            usercontext.UIMode = ProviderPageMode.Bypass;
                         else
                         {
                             usercontext.TargetUIMode = ProviderPageMode.DefinitiveError;
@@ -170,22 +196,30 @@ namespace Neos.IdentityServer.MultiFactor
                 {
                     AuthenticationContext usercontext = new AuthenticationContext(context);
                     usercontext.UPN = upn;
-                    if (Config.UserFeatures.HasFlag(UserFeaturesOptions.BypassUnRegistered))
+                    if (Config.UserFeatures.HasFlag(UserFeaturesOptions.AdministrativeMode))
+                        usercontext.UIMode = ProviderPageMode.Locking;
+                    else if (Config.UserFeatures.HasFlag(UserFeaturesOptions.BypassUnRegistered))
                         usercontext.UIMode = ProviderPageMode.Bypass;
-                    else if (Config.UserFeatures.HasFlag(UserFeaturesOptions.AllowUnRegistered))
+                    else if (Config.UserFeatures.HasFlag(UserFeaturesOptions.AllowManageOptions))
                     {
-                        if (Config.UserFeatures.HasFlag(UserFeaturesOptions.AllowProvideInformations))
-                        {
-                            usercontext.Enabled = true;
-                            KeysManager.NewKey(usercontext.UPN);
-                            usercontext.KeyStatus = SecretKeyStatus.Success;
-                            usercontext.KeyChanged = true;
-                            usercontext.PreferredMethod = RegistrationPreferredMethod.Choose;
-                            usercontext.UIMode = ProviderPageMode.Locking;
-                        }
-                        else
-                            usercontext.UIMode = ProviderPageMode.Bypass;
+                        KeysManager.NewKey(usercontext.UPN);
+                        usercontext.KeyStatus = SecretKeyStatus.Success;
+                        usercontext.KeyChanged = true;
+                        usercontext.Enabled = true;
+                        usercontext.UIMode = ProviderPageMode.Registration;
+                    } 
+                    else if (Config.UserFeatures.HasFlag(UserFeaturesOptions.AllowProvideInformations))
+                    {
+                        KeysManager.NewKey(usercontext.UPN);
+                        usercontext.KeyStatus = SecretKeyStatus.Success;
+                        usercontext.KeyChanged = true;
+                        usercontext.PreferredMethod = RegistrationPreferredMethod.Choose;
+                        usercontext.Enabled = false;
+                        usercontext.UIMode = ProviderPageMode.Locking;
+                        usercontext.TargetUIMode = ProviderPageMode.None;
                     }
+                    else if (Config.UserFeatures.HasFlag(UserFeaturesOptions.AllowUnRegistered))
+                        usercontext.UIMode = ProviderPageMode.Bypass;
                     else
                     {
                         usercontext.TargetUIMode = ProviderPageMode.DefinitiveError;
@@ -611,19 +645,20 @@ namespace Neos.IdentityServer.MultiFactor
                         RepositoryService.SetUserRegistration((Registration)usercontext, Config);
                         Registration reg = RepositoryService.GetUserRegistration(usercontext.UPN, Config);
                         usercontext.Assign(reg);
-                        if (Config.UserFeatures.HasFlag(UserFeaturesOptions.AdministrativeMode))
+
+                        if (Config.UserFeatures.HasFlag(UserFeaturesOptions.AllowProvideInformations))
                         {
                             usercontext.UIMode = ProviderPageMode.InvitationRequest;
                             SendInscriptionToAdmins(usercontext, Resources);
-                            if (usercontext.TargetUIMode == ProviderPageMode.None)
-                                result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorAccountNoAccess"), ProviderPageMode.DefinitiveError);
+                            if (usercontext.TargetUIMode == ProviderPageMode.DefinitiveError)
+                                result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorAccountNotEnabled"), ProviderPageMode.DefinitiveError);
                             else if (usercontext.TargetUIMode == ProviderPageMode.Bypass)
                                 result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorAccountAuthorized"), ProviderPageMode.Bypass);
                         }
                         else
                         {
                             usercontext.UIMode = ProviderPageMode.Locking;
-                            if (Config.UserFeatures.HasFlag(UserFeaturesOptions.AllowDisabled))
+                            if ( Config.UserFeatures.HasFlag(UserFeaturesOptions.AllowDisabled) || Config.UserFeatures.HasFlag(UserFeaturesOptions.AllowUnRegistered) )
                                 result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorAccountAuthorized"), ProviderPageMode.Bypass);
                             else
                                 result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorAccountNotEnabled"), ProviderPageMode.DefinitiveError);
@@ -939,7 +974,6 @@ namespace Neos.IdentityServer.MultiFactor
             try
             {
                 int btnclicked = Convert.ToInt32(proofData.Properties["btnclicked"].ToString());
-               // ProviderPageMode lnk = (ProviderPageMode)Enum.Parse(typeof(ProviderPageMode), proofData.Properties["lnk"].ToString());
                 ProviderPageMode lnk = usercontext.TargetUIMode;
                 if (btnclicked == 1)
                 {
@@ -957,11 +991,17 @@ namespace Neos.IdentityServer.MultiFactor
                 }
                 else if (btnclicked == 2)
                 {
-                    if (Config.UserFeatures.HasFlag(UserFeaturesOptions.AdministrativeMode))
+                    if (Config.UserFeatures.HasFlag(UserFeaturesOptions.AllowProvideInformations))
+                    {
                         usercontext.UIMode = ProviderPageMode.Invitation;
-                    else
+                        result = new AdapterPresentation(this, context);
+                    }
+                    else if (Config.UserFeatures.HasFlag(UserFeaturesOptions.AllowManageOptions))
+                    {
                         usercontext.UIMode = ProviderPageMode.Registration;
-                    if (usercontext.TargetUIMode == ProviderPageMode.Bypass)
+                        result = new AdapterPresentation(this, context);
+                    }
+                    else if (usercontext.TargetUIMode == ProviderPageMode.Bypass)
                     {
                         if (Config.UserFeatures.HasFlag(UserFeaturesOptions.AdministrativeMode))
                             result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorAccountAdminAuthorized"), ProviderPageMode.Bypass);
@@ -992,6 +1032,9 @@ namespace Neos.IdentityServer.MultiFactor
             try
             {
                 int lnk = Convert.ToInt32(proofData.Properties["lnk"].ToString());
+                object opt = null;
+                bool options = proofData.Properties.TryGetValue("options", out opt);
+                usercontext.ShowOptions = options;
                 if (lnk == 3)
                 {
                     usercontext.UIMode = ProviderPageMode.ChooseMethod;
@@ -1010,7 +1053,12 @@ namespace Neos.IdentityServer.MultiFactor
                     else if (chknotif.OTP == NotificationStatus.RequestSMS)
                         usercontext.UIMode = ProviderPageMode.CodeRequest;
                     else if (chknotif.OTP == NotificationStatus.Bypass)
-                        usercontext.UIMode = ProviderPageMode.Bypass;
+                    {
+                        if (options)
+                            usercontext.UIMode = ProviderPageMode.SelectOptions;
+                        else
+                            usercontext.UIMode = ProviderPageMode.Bypass;
+                    }
                     else
                         usercontext.UIMode = ProviderPageMode.Identification;
                     if (chknotif.CheckDate.Value.ToUniversalTime() > chknotif.ValidityDate.ToUniversalTime())  // Always check with Universal Time
@@ -1059,20 +1107,15 @@ namespace Neos.IdentityServer.MultiFactor
                 }
                 else if (invnotif.OTP == NotificationStatus.Bypass)
                 {
-                    if (usercontext.TargetUIMode!=ProviderPageMode.None)
-                    {
-                        usercontext.UIMode = usercontext.TargetUIMode;
-                        result = new AdapterPresentation(this, context, usercontext.UIMessage);
-                    }
-                    else if (Config.UserFeatures.HasFlag(UserFeaturesOptions.AllowDisabled))
+                    if (Config.UserFeatures.HasFlag(UserFeaturesOptions.AllowDisabled) || Config.UserFeatures.HasFlag(UserFeaturesOptions.AllowUnRegistered))
                     {
                         usercontext.UIMode = ProviderPageMode.Locking;
-                        result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorAccountAuthorized"), ProviderPageMode.Bypass);
+                        result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorAccountAuthorized"), ProviderPageMode.Bypass, true);
                     }
                     else
                     {
                         usercontext.UIMode = ProviderPageMode.Locking;
-                        result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorAccountNotEnabled"), ProviderPageMode.DefinitiveError);
+                        result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorAccountNotEnabled"), ProviderPageMode.DefinitiveError, true);
                     }
                 }
                 else
@@ -1393,5 +1436,14 @@ namespace Neos.IdentityServer.MultiFactor
             }
         }
         #endregion
+
+        /// <summary>
+        /// HookOptionParameter method implementation
+        /// </summary>
+        private bool HookOptionParameter(System.Net.HttpListenerRequest request)
+        {
+            Uri uri = new Uri(request.Url.AbsoluteUri);
+            return uri.AbsoluteUri.Contains("mfaopts");
+        }
     }
 }

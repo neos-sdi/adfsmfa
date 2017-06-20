@@ -540,6 +540,25 @@ namespace Neos.IdentityServer.MultiFactor
         }
 
         [DataMember]
+        public bool ShowOptions
+        {
+            get
+            {
+                if (_context.Data.ContainsKey("_authctxhshowoptions") && _context.Data["_authctxhshowoptions"] != null)
+                    return (bool)_context.Data["_authctxhshowoptions"];
+                else
+                    return false;
+            }
+            set
+            {
+                if (_context.Data.ContainsKey("_authctxhshowoptions"))
+                    _context.Data["_authctxhshowoptions"] = value;
+                else
+                    _context.Data.Add("_authctxhshowoptions", value);
+            }
+        }
+
+        [DataMember]
         public DateTime CreationDate
         {
             get

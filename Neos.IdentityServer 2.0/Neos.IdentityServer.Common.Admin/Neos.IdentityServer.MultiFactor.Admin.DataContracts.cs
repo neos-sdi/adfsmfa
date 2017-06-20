@@ -435,9 +435,12 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     [Serializable]
     public enum MMCTemplateMode
     {
-        OpenMode = 0,
-        StrictMode = 1,
-        AdministrativeMode = 2
+        Free = 0,                        // (UserFeaturesOptions.BypassDisabled | UserFeaturesOptions.BypassUnRegistered | UserFeaturesOptions.AllowManageOptions | UserFeaturesOptions.AllowChangePassword);
+        Open = 1,                        // (UserFeaturesOptions.BypassDisabled | UserFeaturesOptions.AllowUnRegistered | UserFeaturesOptions.AllowManageOptions | UserFeaturesOptions.AllowChangePassword);
+        Default = 2,                     // (UserFeaturesOptions.AllowDisabled | UserFeaturesOptions.AllowUnRegistered | UserFeaturesOptions.AllowManageOptions | UserFeaturesOptions.AllowChangePassword);
+        Managed = 3,                     // (UserFeaturesOptions.BypassDisabled | UserFeaturesOptions.AllowUnRegistered | UserFeaturesOptions.AllowProvideInformations | UserFeaturesOptions.AllowChangePassword);
+        Strict = 4,                      // (UserFeaturesOptions.AllowProvideInformations);
+        Administrative = 5               // (UserFeaturesOptions.AdministrativeMode);   
     }
 
     [Serializable]
@@ -457,6 +460,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         public string DefaultCountryCode { get; set; }
         public string AdminContact { get; set; }
         public UserFeaturesOptions UserFeatures { get; set; }
+        public MFAConfigAdvertising AdvertisingDays { get; set; }
 
         /// <summary>
         /// Update method implmentation
@@ -480,6 +484,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             DefaultCountryCode = cfg.DefaultCountryCode;
             AdminContact = cfg.AdminContact;
             UserFeatures = cfg.UserFeatures;
+            AdvertisingDays = cfg.AdvertisingDays;
         }
 
         /// <summary>
@@ -504,6 +509,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             cfg.DefaultCountryCode = DefaultCountryCode;
             cfg.AdminContact = AdminContact;
             cfg.UserFeatures = UserFeatures;
+            cfg.AdvertisingDays = AdvertisingDays;
             ManagementAdminService.ADFSManager.WriteConfiguration(host);
             using (MailSlotClient mailslot = new MailSlotClient())
             {
@@ -520,14 +526,23 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             MFAConfig cfg = ManagementAdminService.ADFSManager.Config;
             switch (mode)
             {
-                case MMCTemplateMode.OpenMode:
-                    cfg.UserFeatures = (UserFeaturesOptions.BypassUnRegistered | UserFeaturesOptions.BypassDisabled | UserFeaturesOptions.AllowChangePassword | UserFeaturesOptions.AllowManageOptions);
+                case MMCTemplateMode.Free:
+                    cfg.UserFeatures = (UserFeaturesOptions.BypassDisabled | UserFeaturesOptions.BypassUnRegistered | UserFeaturesOptions.AllowManageOptions | UserFeaturesOptions.AllowChangePassword);
                     break;
-                case MMCTemplateMode.StrictMode:
-                    cfg.UserFeatures = (UserFeaturesOptions.AllowUnRegistered | UserFeaturesOptions.AllowDisabled | UserFeaturesOptions.AllowChangePassword | UserFeaturesOptions.AllowProvideInformations);
+                case MMCTemplateMode.Open:
+                    cfg.UserFeatures = (UserFeaturesOptions.BypassDisabled | UserFeaturesOptions.AllowUnRegistered | UserFeaturesOptions.AllowManageOptions | UserFeaturesOptions.AllowChangePassword);
                     break;
-                case MMCTemplateMode.AdministrativeMode:
-                    cfg.UserFeatures = UserFeaturesOptions.AdministrativeMode;
+                case MMCTemplateMode.Default:
+                    cfg.UserFeatures = (UserFeaturesOptions.AllowDisabled | UserFeaturesOptions.AllowUnRegistered | UserFeaturesOptions.AllowManageOptions | UserFeaturesOptions.AllowChangePassword);
+                    break;
+                case MMCTemplateMode.Managed:
+                    cfg.UserFeatures = (UserFeaturesOptions.AllowDisabled | UserFeaturesOptions.AllowUnRegistered | UserFeaturesOptions.AllowProvideInformations | UserFeaturesOptions.AllowChangePassword);
+                    break;
+                case MMCTemplateMode.Strict:
+                    cfg.UserFeatures = (UserFeaturesOptions.AllowProvideInformations);
+                    break;
+                case MMCTemplateMode.Administrative:
+                    cfg.UserFeatures = (UserFeaturesOptions.AdministrativeMode);
                     break;
             }
             ManagementAdminService.ADFSManager.WriteConfiguration(host);

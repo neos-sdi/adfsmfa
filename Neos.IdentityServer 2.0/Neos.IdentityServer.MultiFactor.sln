@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HookConfig", "HookConfig\HookConfig.csproj", "{4194EF8E-9AFA-4ABE-9547-2F95A70352DD}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Neos.IdentityServer.MultiFactor.Administration", "Neos.IdentityServer.Common.Admin\Neos.IdentityServer.MultiFactor.Administration.csproj", "{BB08DC85-4E6E-4220-A0FC-01BFB6C468F6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Neos.IdentityServer.Console", "Neos.IdentityServer.Console\Neos.IdentityServer.Console.csproj", "{602E2A57-36AF-4125-9A44-D893033339FF}"
@@ -23,10 +21,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Neos.IdentityServer.MultiFactor.SMS.Azure", "Neos.IdentityServer.MultiFactor.SMS.Azure\Neos.IdentityServer.MultiFactor.SMS.Azure.csproj", "{2E81E6EB-21C0-419E-A4CA-BC87332C5E3B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Neos.IdentityServer.MultiFactor.SMS.Sample", "Neos.IdentityServer.Multifactor.SMS.Sample\Neos.IdentityServer.MultiFactor.SMS.Sample.csproj", "{C773C4C7-4B95-4836-B770-66E9DD3F42F3}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sendmailslots", "Sendmailslots\Sendmailslots.csproj", "{17520E97-68E6-4699-9604-74EFA0B10149}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MailSlotManager", "MailSlotManager\MailSlotManager.csproj", "{5228402C-BA8D-4711-ACB3-F6FDD620AF8C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Neos.IdentityServer.MultiFactor.Notifications", "Neos.IdentityServer.MultiFactor.Notifications\Neos.IdentityServer.MultiFactor.Notifications.csproj", "{8A7BC531-D51B-4CD3-A904-3C96746CF847}"
 EndProject
@@ -54,18 +48,6 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{4194EF8E-9AFA-4ABE-9547-2F95A70352DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4194EF8E-9AFA-4ABE-9547-2F95A70352DD}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{4194EF8E-9AFA-4ABE-9547-2F95A70352DD}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{4194EF8E-9AFA-4ABE-9547-2F95A70352DD}.Debug|Win32.ActiveCfg = Debug|Any CPU
-		{4194EF8E-9AFA-4ABE-9547-2F95A70352DD}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{4194EF8E-9AFA-4ABE-9547-2F95A70352DD}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{4194EF8E-9AFA-4ABE-9547-2F95A70352DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4194EF8E-9AFA-4ABE-9547-2F95A70352DD}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{4194EF8E-9AFA-4ABE-9547-2F95A70352DD}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{4194EF8E-9AFA-4ABE-9547-2F95A70352DD}.Release|Win32.ActiveCfg = Release|Any CPU
-		{4194EF8E-9AFA-4ABE-9547-2F95A70352DD}.Release|x64.ActiveCfg = Release|Any CPU
-		{4194EF8E-9AFA-4ABE-9547-2F95A70352DD}.Release|x86.ActiveCfg = Release|Any CPU
 		{BB08DC85-4E6E-4220-A0FC-01BFB6C468F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{BB08DC85-4E6E-4220-A0FC-01BFB6C468F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BB08DC85-4E6E-4220-A0FC-01BFB6C468F6}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
@@ -178,30 +160,6 @@ Global
 		{C773C4C7-4B95-4836-B770-66E9DD3F42F3}.Release|Win32.ActiveCfg = Release|Any CPU
 		{C773C4C7-4B95-4836-B770-66E9DD3F42F3}.Release|x64.ActiveCfg = Release|Any CPU
 		{C773C4C7-4B95-4836-B770-66E9DD3F42F3}.Release|x86.ActiveCfg = Release|Any CPU
-		{17520E97-68E6-4699-9604-74EFA0B10149}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{17520E97-68E6-4699-9604-74EFA0B10149}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{17520E97-68E6-4699-9604-74EFA0B10149}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{17520E97-68E6-4699-9604-74EFA0B10149}.Debug|Win32.ActiveCfg = Debug|Any CPU
-		{17520E97-68E6-4699-9604-74EFA0B10149}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{17520E97-68E6-4699-9604-74EFA0B10149}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{17520E97-68E6-4699-9604-74EFA0B10149}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{17520E97-68E6-4699-9604-74EFA0B10149}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{17520E97-68E6-4699-9604-74EFA0B10149}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{17520E97-68E6-4699-9604-74EFA0B10149}.Release|Win32.ActiveCfg = Release|Any CPU
-		{17520E97-68E6-4699-9604-74EFA0B10149}.Release|x64.ActiveCfg = Release|Any CPU
-		{17520E97-68E6-4699-9604-74EFA0B10149}.Release|x86.ActiveCfg = Release|Any CPU
-		{5228402C-BA8D-4711-ACB3-F6FDD620AF8C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5228402C-BA8D-4711-ACB3-F6FDD620AF8C}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{5228402C-BA8D-4711-ACB3-F6FDD620AF8C}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{5228402C-BA8D-4711-ACB3-F6FDD620AF8C}.Debug|Win32.ActiveCfg = Debug|Any CPU
-		{5228402C-BA8D-4711-ACB3-F6FDD620AF8C}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{5228402C-BA8D-4711-ACB3-F6FDD620AF8C}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{5228402C-BA8D-4711-ACB3-F6FDD620AF8C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5228402C-BA8D-4711-ACB3-F6FDD620AF8C}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{5228402C-BA8D-4711-ACB3-F6FDD620AF8C}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{5228402C-BA8D-4711-ACB3-F6FDD620AF8C}.Release|Win32.ActiveCfg = Release|Any CPU
-		{5228402C-BA8D-4711-ACB3-F6FDD620AF8C}.Release|x64.ActiveCfg = Release|Any CPU
-		{5228402C-BA8D-4711-ACB3-F6FDD620AF8C}.Release|x86.ActiveCfg = Release|Any CPU
 		{8A7BC531-D51B-4CD3-A904-3C96746CF847}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{8A7BC531-D51B-4CD3-A904-3C96746CF847}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8A7BC531-D51B-4CD3-A904-3C96746CF847}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU

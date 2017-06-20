@@ -1623,7 +1623,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         }
     }
 
-    [Cmdlet(VerbsCommon.Set, "MFATemplate", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
+    [Cmdlet(VerbsCommon.Set, "MFAPolicyTemplate", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
     public sealed class SetMFATemplateMode : MFACmdlet
     {
         private PSTemplateMode _template;

@@ -121,14 +121,18 @@ namespace Neos.IdentityServer.MultiFactor.Administration
 
     public enum PSTemplateMode
     {
-        OpenMode = 0,
-        StrictMode = 1,
-        AdministrativeMode = 2
+        Free = 0,                        // (UserFeaturesOptions.BypassDisabled | UserFeaturesOptions.BypassUnRegistered | UserFeaturesOptions.AllowManageOptions | UserFeaturesOptions.AllowChangePassword);
+        Open = 1,                        // (UserFeaturesOptions.BypassDisabled | UserFeaturesOptions.AllowUnRegistered | UserFeaturesOptions.AllowManageOptions | UserFeaturesOptions.AllowChangePassword);
+        Default = 2,                     // (UserFeaturesOptions.AllowDisabled | UserFeaturesOptions.AllowUnRegistered | UserFeaturesOptions.AllowManageOptions | UserFeaturesOptions.AllowChangePassword);
+        Managed = 3,                     // (UserFeaturesOptions.BypassDisabled | UserFeaturesOptions.AllowUnRegistered | UserFeaturesOptions.AllowProvideInformations | UserFeaturesOptions.AllowChangePassword);
+        Strict = 4,                      // (UserFeaturesOptions.AllowProvideInformations);
+        Administrative = 5               // (UserFeaturesOptions.AdministrativeMode);   
     }
 
     #region PSConfig
     public class PSConfig
     {
+        
         public int RefreshScan { get; set; }
         public int DeliveryWindow { get; set; }
         public int TOTPShadows { get; set; }
@@ -142,12 +146,14 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         public string DefaultCountryCode { get; set; }
         public string AdminContact { get; set; }
         public UserFeaturesOptions UserFeatures { get; set; }
+        public MFAConfigAdvertising AdvertisingDays { get; set; }
 
         /// <summary>
         /// implicit conversion to PSConfig
         /// </summary>
         public static explicit operator PSConfig(MMCConfig config)
         {
+            
             if (config == null)
                 return null;
             else
@@ -166,6 +172,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 psconfig.TOTPShadows = config.TOTPShadows;
                 psconfig.UseActiveDirectory = config.UseActiveDirectory;
                 psconfig.UserFeatures = config.UserFeatures;
+                psconfig.AdvertisingDays = config.AdvertisingDays;
                 return psconfig;
             }
         }
@@ -194,6 +201,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 config.TOTPShadows = psconfig.TOTPShadows;
                 config.UseActiveDirectory = psconfig.UseActiveDirectory;
                 config.UserFeatures = psconfig.UserFeatures;
+                config.AdvertisingDays = psconfig.AdvertisingDays;
                 return config;
             }
         }

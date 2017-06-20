@@ -26,6 +26,7 @@ namespace Neos.IdentityServer.MultiFactor
     {
         private bool _isPermanentFailure;
         private bool _ismessage;
+        private bool _disableoptions;
         private AuthenticationProvider _provider;
         private AuthenticationContext _context;
         private ResourcesLocale _resmgr;
@@ -40,6 +41,7 @@ namespace Neos.IdentityServer.MultiFactor
             this._context = new AuthenticationContext(context);
             this._isPermanentFailure = (this._context.TargetUIMode == ProviderPageMode.DefinitiveError);
             this._ismessage = (this._context.TargetUIMode != ProviderPageMode.DefinitiveError);
+            this._disableoptions = false;
             this._resmgr = new ResourcesLocale(context.Lcid);
         }
 
@@ -53,13 +55,14 @@ namespace Neos.IdentityServer.MultiFactor
             this._context.UIMessage = message;
             this._isPermanentFailure = (this._context.TargetUIMode == ProviderPageMode.DefinitiveError);
             this._ismessage = (this._context.TargetUIMode != ProviderPageMode.DefinitiveError);
+            this._disableoptions = false;
             this._resmgr = new ResourcesLocale(context.Lcid);
         }
 
         /// <summary>
         /// Constructor overload implementation
         /// </summary>
-        public AdapterPresentation(AuthenticationProvider provider, IAuthenticationContext context, string message, ProviderPageMode suite)
+        public AdapterPresentation(AuthenticationProvider provider, IAuthenticationContext context, string message, ProviderPageMode suite, bool disableoptions = false)
         {
             this._provider = provider;
             this._context = new AuthenticationContext(context);
@@ -67,6 +70,7 @@ namespace Neos.IdentityServer.MultiFactor
             this._context.UIMessage = message;
             this._isPermanentFailure = (this._context.TargetUIMode == ProviderPageMode.DefinitiveError);
             this._ismessage = (this._context.TargetUIMode != ProviderPageMode.DefinitiveError);
+            this._disableoptions = disableoptions;
             this._resmgr = new ResourcesLocale(context.Lcid);
         }
         #endregion
@@ -260,7 +264,12 @@ namespace Neos.IdentityServer.MultiFactor
                     break;
             }
             if ((Provider.Config.UserFeatures.HasFlag(UserFeaturesOptions.AllowManageOptions)) || (Provider.Config.UserFeatures.HasFlag(UserFeaturesOptions.AllowChangePassword)))
-                result += "<input id=\"options\" type=\"checkbox\" name=\"Options\" /> " + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMAccessOptions") + "<br/><br/><br/>";
+            {
+                if (usercontext.ShowOptions)
+                    result += "<input id=\"options\" type=\"checkbox\" name=\"Options\" checked=\"true\" /> " + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMAccessOptions") + "<br/><br/><br/>";
+                else
+                    result += "<input id=\"options\" type=\"checkbox\" name=\"Options\" /> " + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMAccessOptions") + "<br/><br/><br/>";
+            }
             result += "<input id=\"context\" type=\"hidden\" name=\"Context\" value=\"%Context%\"/>";
             result += "<input id=\"authMethod\" type=\"hidden\" name=\"AuthMethod\" value=\"%AuthMethod%\"/>";
             result += "<input id=\"lnk\" type=\"hidden\" name=\"lnk\" value=\"0\"/>";
@@ -1218,7 +1227,8 @@ namespace Neos.IdentityServer.MultiFactor
             result += "</td>";
             result += "<td style=\"width: 15px\" />";
             result += "<td>";
-            if (Provider.Config.UserFeatures.HasFlag(UserFeaturesOptions.AllowProvideInformations) && (usercontext.TargetUIMode!=ProviderPageMode.DefinitiveError))
+            if (Provider.Config.UserFeatures.HasFlag(UserFeaturesOptions.AllowProvideInformations) && (!_disableoptions))
+           // if (Provider.Config.UserFeatures.HasFlag(UserFeaturesOptions.AllowProvideInformations) )
             {
                 result += "<input id=\"cancelButton\" type=\"submit\" class=\"submit\" name=\"cancel\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMGoToRegistration") + "\" onClick=\"fnbtnclicked(2)\"/>";
             }
@@ -1326,6 +1336,13 @@ namespace Neos.IdentityServer.MultiFactor
             result += "<input id=\"context\" type=\"hidden\" name=\"Context\" value=\"%Context%\"/>";
             result += "<input id=\"authMethod\" type=\"hidden\" name=\"AuthMethod\" value=\"%AuthMethod%\"/>";
             result += "<input id=\"lnk\" type=\"hidden\" name=\"lnk\" value=\"0\"/>";
+            if ((Provider.Config.UserFeatures.HasFlag(UserFeaturesOptions.AllowManageOptions)) || (Provider.Config.UserFeatures.HasFlag(UserFeaturesOptions.AllowChangePassword)))
+            {
+                if (usercontext.ShowOptions)
+                    result += "<input id=\"options\" type=\"checkbox\" name=\"Options\" checked=\"true\" /> " + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMAccessOptions") + "<br/><br/><br/>";
+                else
+                    result += "<input id=\"options\" type=\"checkbox\" name=\"Options\" /> " + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMAccessOptions") + "<br/><br/><br/>";
+            }
             result += "<a class=\"actionLink\" href=\"#\" id=\"nocode\" name=\"nocode\" onclick=\"return SetLinkTitle(refreshForm, '3')\"; style=\"cursor: pointer;\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMNoCode") + "</a>";
             result += "</form>";
             return result;

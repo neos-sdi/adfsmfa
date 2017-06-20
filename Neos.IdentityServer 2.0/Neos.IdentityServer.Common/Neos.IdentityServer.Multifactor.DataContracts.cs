@@ -41,6 +41,83 @@ namespace Neos.IdentityServer.MultiFactor
         AdministrativeMode = 128,
     }
 
+    public class MFAConfigAdvertising
+    {
+        private uint _firstDay = 1;
+        private uint _lastDay = 31;
+
+        /// <summary>
+        /// MFAConfigAdvertising constructor
+        /// </summary>
+        public MFAConfigAdvertising()
+        {
+        }
+
+        /// <summary>
+        /// MFAConfigAdvertising constructor
+        /// </summary>
+        public MFAConfigAdvertising(uint firstday, uint lastday)
+        {
+            this.FirstDay = firstday;
+            this.LastDay = lastday;
+        }
+
+        /// <summary>
+        /// FirstDay property
+        /// </summary>
+        public uint FirstDay
+        {
+            get { return _firstDay; }
+            set 
+            { _firstDay = value; }
+        }
+
+        /// <summary>
+        /// LastDay property
+        /// </summary>
+        public uint LastDay
+        {
+            get { return _lastDay; }
+            set { _lastDay = value; }
+        }
+
+        /// <summary>
+        /// Inverted property
+        /// </summary>
+        public bool OnFire
+        {
+            get 
+            {
+
+                bool res = true;
+                int DD = DateTime.Now.ToUniversalTime().Day;
+                if (FirstDay <= LastDay)
+                {
+                    res = ((DD >= FirstDay) && (DD <= LastDay));
+                }
+                else
+                {
+                    uint FD = LastDay;
+                    uint LD = FirstDay;
+                    res = !((DD >= FD) && (DD <= LD));
+                }
+                return res;
+            }
+        }
+
+        /// <summary>
+        /// CheckDataValue method
+        /// </summary>
+        private bool CheckDataValue(uint value)
+        {
+            if (value < 1)
+                return false;
+            else if (value > 31)
+                return false;
+            return true;
+        }
+    }
+
     [XmlRoot("MFAConfig")]
     public class MFAConfig
     {
@@ -54,7 +131,8 @@ namespace Neos.IdentityServer.MultiFactor
         private HashMode _algorithm = HashMode.SHA1; 
         private bool _useActiveDirectory = true; 
         private bool _customUpdatePassword = true;
-        private UserFeaturesOptions _userFeatures = (UserFeaturesOptions.AllowDisabled | UserFeaturesOptions.AllowUnRegistered | UserFeaturesOptions.AllowManageOptions| UserFeaturesOptions.AllowChangePassword);
+        private UserFeaturesOptions _userFeatures = (UserFeaturesOptions.BypassDisabled | UserFeaturesOptions.AllowUnRegistered | UserFeaturesOptions.AllowManageOptions | UserFeaturesOptions.AllowChangePassword);
+        private MFAConfigAdvertising _advertising = new MFAConfigAdvertising(1, 5);
         private string _issuer;
         private int _notifyscan = 3000;
 
@@ -92,7 +170,7 @@ namespace Neos.IdentityServer.MultiFactor
                 CustomUpdatePassword = true;
                 DefaultCountryCode = "fr";
                 AdminContact = "adminmfa@contoso.com";
-                UserFeatures = (UserFeaturesOptions.AllowDisabled | UserFeaturesOptions.AllowUnRegistered | UserFeaturesOptions.AllowProvideInformations | UserFeaturesOptions.AllowManageOptions | UserFeaturesOptions.AllowChangePassword);
+                UserFeatures = (UserFeaturesOptions.BypassDisabled | UserFeaturesOptions.AllowUnRegistered | UserFeaturesOptions.AllowManageOptions | UserFeaturesOptions.AllowChangePassword); 
 
                 KeysConfig.KeyGenerator = KeyGeneratorMode.ClientSecret512; 
                 KeysConfig.KeyFormat = RegistrationSecretKeyFormat.CFG;
@@ -138,7 +216,7 @@ namespace Neos.IdentityServer.MultiFactor
                 DefaultCountryCode = "fr";
             if (string.IsNullOrEmpty(AdminContact))
                 AdminContact = "adminmfa@contoso.com";
-             UserFeatures = (UserFeaturesOptions.AllowDisabled | UserFeaturesOptions.AllowUnRegistered | UserFeaturesOptions.AllowProvideInformations | UserFeaturesOptions.AllowManageOptions | UserFeaturesOptions.AllowChangePassword);
+            UserFeatures = (UserFeaturesOptions.BypassDisabled | UserFeaturesOptions.AllowUnRegistered | UserFeaturesOptions.AllowManageOptions | UserFeaturesOptions.AllowChangePassword); 
 
             if (string.IsNullOrEmpty(Hosts.SQLServerHost.ConnectionString))
                 Hosts.SQLServerHost.ConnectionString = "Password=yourpassword;Persist Security Info=True;User ID=yoursqlusername;Initial Catalog=yourdatabasename;Data Source=yoursqlserver\\yourinstance";
@@ -298,6 +376,12 @@ namespace Neos.IdentityServer.MultiFactor
             set { _userFeatures = value; }
         }
 
+        [XmlElement("ActivationAdvertising")]
+        public MFAConfigAdvertising AdvertisingDays
+        {
+            get { return _advertising; }
+            set { _advertising = value; }
+        }
         [XmlElement("Hosts")]
         public Hosts Hosts
         {
