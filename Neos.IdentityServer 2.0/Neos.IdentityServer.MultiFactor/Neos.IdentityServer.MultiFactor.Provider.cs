@@ -1055,9 +1055,9 @@ namespace Neos.IdentityServer.MultiFactor
                     else if (chknotif.OTP == NotificationStatus.Bypass)
                     {
                         if (options)
-                            usercontext.UIMode = ProviderPageMode.SelectOptions;
+                            usercontext.UIMode = ProviderPageMode.SelectOptions;  // Manage options, Access granted
                         else
-                            usercontext.UIMode = ProviderPageMode.Bypass;
+                            usercontext.UIMode = ProviderPageMode.Bypass; // Grant Access
                     }
                     else
                         usercontext.UIMode = ProviderPageMode.Identification;
@@ -1222,6 +1222,7 @@ namespace Neos.IdentityServer.MultiFactor
             {
                 int otpres = NotificationStatus.Error;
                 Notification ntf = null;
+                CheckUserProps(usercontext);
                 switch (usercontext.PreferredMethod)
                 {
                     case RegistrationPreferredMethod.Email:
@@ -1276,6 +1277,7 @@ namespace Neos.IdentityServer.MultiFactor
         {
             try
             {
+                CheckUserProps(usercontext);
                 string qrcode = KeysManager.EncodedKey(usercontext.UPN);
                 RepositoryService.SetNotification((Registration)usercontext, Config, NotificationStatus.RequestEmailForKey);
                 MailUtilities.SendKeyByEmail(usercontext.MailAddress, usercontext.UPN, qrcode, Config.SendMail, Config, Resources.Culture);
@@ -1288,6 +1290,36 @@ namespace Neos.IdentityServer.MultiFactor
             }
         }
 
+        /// <summary>
+        /// CheckUserProps method implementation
+        /// </summary>
+        private void CheckUserProps(AuthenticationContext usercontext)
+        {
+            if (!KeysManager.ValidateKey(usercontext.UPN))
+                throw new CryptographicException(string.Format("SECURTY ERROR : Invalid Key for User {0}", usercontext.UPN));
+            Registration reg = RepositoryService.GetUserRegistration(usercontext.UPN, Config);
+            if (reg==null)
+                throw new Exception(string.Format("SECURTY ERROR : Invalid user {0}", usercontext.UPN));
+            if (Config.MailEnabled)
+            {
+                if (string.IsNullOrEmpty(reg.MailAddress))
+                    throw new Exception(string.Format("SECURTY ERROR : Invalid user mail address {0}", usercontext.UPN));
+                if (string.IsNullOrEmpty(usercontext.MailAddress))
+                    throw new Exception(string.Format("SECURTY ERROR : Invalid user mail address {0}", usercontext.UPN));
+                if (!reg.MailAddress.ToLower().Equals(usercontext.MailAddress.ToLower()))
+                    throw new Exception(string.Format("SECURTY ERROR : Invalid user mail address {0}", usercontext.UPN));
+            }
+            if (Config.SMSEnabled)
+            {
+                if (string.IsNullOrEmpty(reg.PhoneNumber))
+                    throw new Exception(string.Format("SECURTY ERROR : Invalid user phone number {0}", usercontext.UPN));
+                if (string.IsNullOrEmpty(usercontext.PhoneNumber))
+                    throw new Exception(string.Format("SECURTY ERROR : Invalid user phone number {0}", usercontext.UPN));
+                if (!reg.PhoneNumber.ToLower().Equals(usercontext.PhoneNumber.ToLower()))
+                    throw new Exception(string.Format("SECURTY ERROR : Invalid user phone number {0}", usercontext.UPN));
+            }
+            return;
+        }
 
         /// <summary>
         /// CheckPin method inplementation

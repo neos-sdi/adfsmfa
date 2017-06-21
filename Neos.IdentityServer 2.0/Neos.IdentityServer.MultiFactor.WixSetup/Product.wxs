@@ -185,6 +185,7 @@
     <ComponentGroup Id="Neos.IdentityServer.MultiFactor.Cmdlets">
       <Component Id="GACDeployment50" Guid="E7173CAB-E43F-4A07-99F7-774EF9B76150" Win64="yes" Directory="PS" DiskId="1" >
         <File KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.Cmdlets.dll"  Name="Neos.IdentityServer.MultiFactor.Cmdlets.dll" Source="$(var.Neos.IdentityServer.MultiFactor.Cmdlets.TargetPath)" Vital="yes"/>
+        <File KeyPath="no" Id="Neos.IdentityServer.MultiFactor.Cmdlets.Help.xml"  Name="Neos.IdentityServer.MultiFactor.Cmdlets.dll-Help.xml" Source="$(var.Neos.IdentityServer.MultiFactor.Cmdlets.TargetDir)Neos.IdentityServer.MultiFactor.Cmdlets.dll-Help.xml" />
       </Component>
       <Component Id="GACDeployment51" Guid="E7173CAB-E43F-4A07-99F7-774EF9B76151" Win64="yes" Directory="PSES" DiskId="1"  >
         <File KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.Cmdlets.es.resources.dll"  Name="Neos.IdentityServer.MultiFactor.Cmdlets.resources.dll" Source="$(var.Neos.IdentityServer.MultiFactor.Cmdlets.TargetDir)es\Neos.IdentityServer.MultiFactor.Cmdlets.resources.dll" />
@@ -203,7 +204,6 @@
         <File KeyPath="no" Id="Neos.IdentityServer.Console.NativeResources.dll"  Name="Neos.IdentityServer.Console.NativeResources.dll" Source="$(var.Neos.IdentityServer.Console.NativeResources.TargetPath)" Vital="yes" />
       </Component>
     </ComponentGroup>
-
   </Fragment>
 
   <Fragment>

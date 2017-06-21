@@ -200,7 +200,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Error sending toast notification !.
+        ///   Recherche une chaîne localisée semblable à Error when sending identification request !.
         /// </summary>
         internal static string ErrorSendingToastInformation {
             get {

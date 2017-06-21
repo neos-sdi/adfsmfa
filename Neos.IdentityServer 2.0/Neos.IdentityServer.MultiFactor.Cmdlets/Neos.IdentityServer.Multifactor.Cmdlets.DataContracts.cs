@@ -23,6 +23,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     using System.Xml;
 
     #region PSRegistration class
+    /// <summary>
+    /// PSRegistrationList class
+    /// </summary>
     public class PSRegistrationList : List<PSRegistration>
     {
         /// <summary>
@@ -56,6 +59,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         }
     }
 
+    /// <summary>
+    /// PSRegistration class
+    /// </summary>
     public class PSRegistration
     {
         /// <summary>

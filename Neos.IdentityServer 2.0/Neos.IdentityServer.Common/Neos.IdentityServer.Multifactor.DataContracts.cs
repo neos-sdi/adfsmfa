@@ -132,7 +132,7 @@ namespace Neos.IdentityServer.MultiFactor
         private bool _useActiveDirectory = true; 
         private bool _customUpdatePassword = true;
         private UserFeaturesOptions _userFeatures = (UserFeaturesOptions.BypassDisabled | UserFeaturesOptions.AllowUnRegistered | UserFeaturesOptions.AllowManageOptions | UserFeaturesOptions.AllowChangePassword);
-        private MFAConfigAdvertising _advertising = new MFAConfigAdvertising(1, 5);
+        private MFAConfigAdvertising _advertising = new MFAConfigAdvertising(1, 31);
         private string _issuer;
         private int _notifyscan = 3000;
 
