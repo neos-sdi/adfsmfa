@@ -15,41 +15,102 @@
 // https://github.com/neos-sdi/adfsmfa                                                                                                                                                      //
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing;
+using System.Data;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using Microsoft.ManagementConsole;
+using Neos.IdentityServer.MultiFactor.Administration;
+using System.Threading;
+using Neos.IdentityServer.MultiFactor;
+using System.DirectoryServices;
 
-// Les informations générales relatives à un assembly dépendent de 
-// l'ensemble d'attributs suivant. Changez les valeurs de ces attributs pour modifier les informations
-// associées à un assembly.
-[assembly: AssemblyTitle("Neos.IdentityServer.Console")]
-[assembly: AssemblyDescription("MMC Console for MFA")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Neos-Sdi")]
-[assembly: AssemblyProduct("Neos.IdentityServer.Console")]
-[assembly: AssemblyCopyright("Copyright Neos-Sdi © 2017")]
-[assembly: AssemblyTrademark("Neos-Sdi")]
-[assembly: AssemblyCulture("")]
+namespace Neos.IdentityServer.Console
+{
+    public partial class GeneralViewControl : UserControl, IFormViewControl
+    {
+        private Control oldParent;
+        private GeneralFormView _frm = null;
 
-// L'affectation de la valeur false à ComVisible rend les types invisibles dans cet assembly 
-// aux composants COM.  Si vous devez accéder à un type dans cet assembly à partir de 
-// COM, affectez la valeur true à l'attribut ComVisible sur ce type.
-[assembly: ComVisible(false)]
+        public GeneralViewControl()
+        {
+            InitializeComponent();
+        }
 
-// Le GUID suivant est pour l'ID de la typelib si ce projet est exposé à COM
-[assembly: Guid("9db36380-88e0-4219-ac5f-3ed632814363")]
+        /// <summary>
+        /// Initialize method 
+        /// </summary>
+        public void Initialize(FormView view)
+        {
+            FormView = (GeneralFormView)view;
+            OnInitialize();
+        }
 
-// Les informations de version pour un assembly se composent des quatre valeurs suivantes :
-//
-//      Version principale
-//      Version secondaire 
-//      Numéro de build
-//      Révision
-//
-// Vous pouvez spécifier toutes les valeurs ou indiquer les numéros de build et de révision par défaut 
-// en utilisant '*', comme indiqué ci-dessous :
-// [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("2.0.0.0")]
-[assembly: AssemblyFileVersion("2.0.1.102")]
-[assembly: AssemblyInformationalVersion("2.0.0.0")]
+        /// <summary>
+        /// OnInitialize method
+        /// </summary>
+        protected virtual void OnInitialize()
+        {
+        }
 
+        #region Properties
+        /// <summary>
+        /// FormView property implementation
+        /// </summary>
+        protected GeneralFormView FormView
+        {
+            get { return _frm; }
+            private set { _frm = value; }
+        }
+
+        /// <summary>
+        /// SnapIn method implementation
+        /// </summary>
+        protected NamespaceSnapInBase SnapIn
+        {
+            get { return this.FormView.ScopeNode.SnapIn; }
+        }
+
+        /// <summary>
+        /// ScopeNode method implementation
+        /// </summary>
+        protected ServiceGeneralScopeNode ScopeNode
+        {
+            get { return this.FormView.ScopeNode as ServiceGeneralScopeNode; }
+        }
+
+        /// <summary>
+        /// OnParentChanged method override
+        /// </summary>
+        protected override void OnParentChanged(EventArgs e)
+        {
+            if (Parent != null)
+            {
+                if (!DesignMode)
+                    Size = Parent.ClientSize;
+                Parent.SizeChanged += Parent_SizeChanged;
+            }
+            if (oldParent != null)
+            {
+                oldParent.SizeChanged -= Parent_SizeChanged;
+            }
+            oldParent = Parent;
+            base.OnParentChanged(e);
+        }
+
+        /// <summary>
+        /// Parent_SizeChanged event
+        /// </summary>
+        private void Parent_SizeChanged(object sender, EventArgs e)
+        {
+            if (!DesignMode)
+                Size = Parent.ClientSize;
+        }
+        #endregion      
+    }
+}

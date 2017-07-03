@@ -28,8 +28,9 @@ using System.Windows;
 [assembly: ComVisible(false)]
 [assembly: Guid("46f0d5b0-3954-4f7e-94dc-4d2757f22441")]
 
-[assembly: AssemblyVersion("0.4.0.0")]
-[assembly: AssemblyFileVersion("0.4.1.2")]
+[assembly: AssemblyVersion("2.0.0.0")]
+[assembly: AssemblyFileVersion("2.0.1.102")]
+[assembly: AssemblyInformationalVersion("2.0.0.0")]
 
 [assembly: ThemeInfo(
     ResourceDictionaryLocation.None, //where theme specific resource dictionaries are located

@@ -127,13 +127,11 @@ namespace Neos.IdentityServer.MultiFactor
     public enum RegistrationSecretKeyFormat
     {
         [EnumMember]
-        CFG = 0,
+        RNG = 0,
         [EnumMember]
-        RNG = 1,
+        RSA = 1,
         [EnumMember]
-        RSA = 2,
-        [EnumMember]
-        CUSTOM = 3
+        CUSTOM = 2
     }
 
     [DataContract, Serializable]

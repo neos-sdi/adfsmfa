@@ -54,7 +54,7 @@ namespace Neos.IdentityServer.Console
         {
             this.ActionsPaneHelpItems.Clear();
             this.ActionsPaneItems.Clear();
-            this.EnabledStandardVerbs = StandardVerbs.Refresh;
+            this.EnabledStandardVerbs = StandardVerbs.None;
 
             base.OnExpand(status);
         }
@@ -69,12 +69,181 @@ namespace Neos.IdentityServer.Console
 
         public ServiceScopeNode(): base(true)
         {
-            this.DisplayName = "Service";
+            this.DisplayName = "Etat des services";
             this.LanguageIndependentName = "MFA Service";
 
             this.ActionsPaneHelpItems.Clear();
             this.ActionsPaneItems.Clear();
-            this.EnabledStandardVerbs = StandardVerbs.None;
+            this.EnabledStandardVerbs = StandardVerbs.Refresh;
+            this.HelpTopic = string.Empty;
+        }
+
+        /// <summary>
+        /// OnExpand method implementation
+        /// </summary>
+        protected override void OnExpand(AsyncStatus status)
+        {
+            this.ActionsPaneHelpItems.Clear();
+            this.ActionsPaneItems.Clear();
+            this.EnabledStandardVerbs = StandardVerbs.Refresh;
+
+            base.OnExpand(status);
+        }
+
+        /// <summary>
+        /// OnRefresh method implmentattion
+        /// </summary>
+        protected override void OnRefresh(AsyncStatus status)
+        {
+            base.OnRefresh(status);
+            if (this.serviceFormView != null)
+                this.serviceFormView.Refresh();
+        }
+
+    }
+
+    /// <summary>
+    /// ServiceStatusScopeNode class
+    /// </summary>
+    public class ServiceGeneralScopeNode : ScopeNode
+    {
+        internal GeneralFormView generalFormView;
+
+        /// <summary>
+        /// Constructor implementation
+        /// </summary>
+        public ServiceGeneralScopeNode(): base(true)
+        {
+            this.DisplayName = "Paramétres Généraux";
+            this.LanguageIndependentName = "MFA paramétres généraux";
+
+            this.ActionsPaneHelpItems.Clear();
+            this.ActionsPaneItems.Clear();
+            this.EnabledStandardVerbs = StandardVerbs.Refresh;
+            this.HelpTopic = string.Empty;
+        }
+
+        /// <summary>
+        /// OnExpand method implementation
+        /// </summary>
+        protected override void OnExpand(AsyncStatus status)
+        {
+            this.ActionsPaneHelpItems.Clear();
+            this.ActionsPaneItems.Clear();
+            this.EnabledStandardVerbs = StandardVerbs.Refresh;
+
+            base.OnExpand(status);
+        }
+    }
+
+    public class ServiceSQLScopeNode : ScopeNode
+    {
+        internal ServiceSQLFormView SQLFormView;
+
+        /// <summary>
+        /// Constructor implementation
+        /// </summary>
+        public ServiceSQLScopeNode(): base(true)
+        {
+            this.DisplayName = "Configuration SQL";
+            this.LanguageIndependentName = "MFA SQL Configuration";
+
+            this.ActionsPaneHelpItems.Clear();
+            this.ActionsPaneItems.Clear();
+            this.EnabledStandardVerbs = StandardVerbs.Refresh;
+            this.HelpTopic = string.Empty;
+        }
+
+        /// <summary>
+        /// OnExpand method implementation
+        /// </summary>
+        protected override void OnExpand(AsyncStatus status)
+        {
+            this.ActionsPaneHelpItems.Clear();
+            this.ActionsPaneItems.Clear();
+            this.EnabledStandardVerbs = StandardVerbs.Refresh;
+
+            base.OnExpand(status);
+        }
+    }
+
+    public class ServiceADDSScopeNode : ScopeNode
+    {
+        internal ServiceADDSFormView ADDSFormView;
+
+        /// <summary>
+        /// Constructor implementation
+        /// </summary>
+        public ServiceADDSScopeNode(): base(true)
+        {
+            this.DisplayName = "Configuration Active Directory";
+            this.LanguageIndependentName = "MFA Active Directory Configuration";
+
+            this.ActionsPaneHelpItems.Clear();
+            this.ActionsPaneItems.Clear();
+            this.EnabledStandardVerbs = StandardVerbs.Refresh;
+            this.HelpTopic = string.Empty;
+        }
+
+        /// <summary>
+        /// OnExpand method implementation
+        /// </summary>
+        protected override void OnExpand(AsyncStatus status)
+        {
+            this.ActionsPaneHelpItems.Clear();
+            this.ActionsPaneItems.Clear();
+            this.EnabledStandardVerbs = StandardVerbs.Refresh;
+
+            base.OnExpand(status);
+        }
+    }
+
+    public class ServiceSMTPScopeNode : ScopeNode
+    {
+        internal ServiceSMTPFormView SMTPFormView;
+
+        /// <summary>
+        /// Constructor implementation
+        /// </summary>
+        public ServiceSMTPScopeNode(): base(true)
+        {
+            this.DisplayName = "Configuration SMTP";
+            this.LanguageIndependentName = "MFA SMTP Configuration";
+
+            this.ActionsPaneHelpItems.Clear();
+            this.ActionsPaneItems.Clear();
+            this.EnabledStandardVerbs = StandardVerbs.Refresh;
+            this.HelpTopic = string.Empty;
+        }
+
+        /// <summary>
+        /// OnExpand method implementation
+        /// </summary>
+        protected override void OnExpand(AsyncStatus status)
+        {
+            this.ActionsPaneHelpItems.Clear();
+            this.ActionsPaneItems.Clear();
+            this.EnabledStandardVerbs = StandardVerbs.Refresh;
+
+            base.OnExpand(status);
+        }
+    }
+
+    public class ServicePhoneScopeNode : ScopeNode
+    {
+        internal ServiceSMSFormView SMSFormView;
+
+        /// <summary>
+        /// Constructor implementation
+        /// </summary>
+        public ServicePhoneScopeNode(): base(true)
+        {
+            this.DisplayName = "Configuration SMS";
+            this.LanguageIndependentName = "MFA SMS Configuration";
+
+            this.ActionsPaneHelpItems.Clear();
+            this.ActionsPaneItems.Clear();
+            this.EnabledStandardVerbs = StandardVerbs.Refresh;
             this.HelpTopic = string.Empty;
         }
 
@@ -94,50 +263,17 @@ namespace Neos.IdentityServer.Console
     /// <summary>
     /// ServiceStatusScopeNode class
     /// </summary>
-    public class ServiceStatusScopeNode : ScopeNode
+    public class ServiceSecurityScopeNode : ScopeNode
     {
-        internal StatusFormView statusFormView;
+        internal ServiceSecurityFormView SecurityFormView;
 
         /// <summary>
         /// Constructor implementation
         /// </summary>
-        public ServiceStatusScopeNode(): base(true)
+        public ServiceSecurityScopeNode(): base(true)
         {
-            this.DisplayName = "Statut";
-            this.LanguageIndependentName = "MFA Service Status";
-
-            this.ActionsPaneHelpItems.Clear();
-            this.ActionsPaneItems.Clear();
-            this.EnabledStandardVerbs = StandardVerbs.None;
-            this.HelpTopic = string.Empty;
-        }
-
-        /// <summary>
-        /// OnExpand method implementation
-        /// </summary>
-        protected override void OnExpand(AsyncStatus status)
-        {
-            this.ActionsPaneHelpItems.Clear();
-            this.ActionsPaneItems.Clear();
-            this.EnabledStandardVerbs = StandardVerbs.Refresh;
-
-            base.OnExpand(status);
-        }
-    }
-
-    /// <summary>
-    /// ServiceStatusScopeNode class
-    /// </summary>
-    public class ServicePropertiesScopeNode : ScopeNode
-    {
-        internal ParametersFormView parametersFormView;
-        /// <summary>
-        /// Constructor implementation
-        /// </summary>
-        public ServicePropertiesScopeNode(): base(true)
-        {
-            this.DisplayName = "Paramétres";
-            this.LanguageIndependentName = "MFA Service Parameters";
+            this.DisplayName = "Gestion de la sécurité";
+            this.LanguageIndependentName = "MFA paramétres de sécurité";
 
             this.ActionsPaneHelpItems.Clear();
             this.ActionsPaneItems.Clear();
@@ -175,8 +311,8 @@ namespace Neos.IdentityServer.Console
         /// </summary>
         public UsersScopeNode():base(true)
         {
-            this.DisplayName = "Utilisateurs";
-            this.LanguageIndependentName = "Users";
+            this.DisplayName = "Gestion des utilisateurs";
+            this.LanguageIndependentName = "MFA Users Management";
 
             AddUser = new Microsoft.ManagementConsole.Action("Ajouter un utilisateur", "Ajouter un utilisateur au système d'authentification MFA", -1, "AddUser");
             FilterUser = new Microsoft.ManagementConsole.Action("Filtrer les utilisateurs", "Filter la liste des utilisateur", -1, "FilterUser");

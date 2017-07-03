@@ -116,7 +116,10 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         public static void Initialize(PSHost host = null, bool loadconfig = false)
         {
             if (_manager == null)
+            {
                 _manager = new ADFSServiceManager();
+                _manager.Initialize();
+            }
             if (loadconfig)
             {
                 try
@@ -125,13 +128,11 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 }
                 catch (CmdletInvocationException cm)
                 {
-                    _manager = null;
                     EventLog.WriteEntry(EventLogSource, errors_strings.ErrorMFAUnAuthorized +"\r\r"+ cm.Message, EventLogEntryType.Error, 30901);
                     throw cm;
                 }
                 catch (Exception ex)
                 {
-                    _manager = null;
                     EventLog.WriteEntry(EventLogSource, string.Format(errors_strings.ErrorLoadingMFAConfiguration, ex.Message), EventLogEntryType.Error, 30900);
                     throw ex;
                 }

@@ -46,6 +46,7 @@
     <Reference Include="System" />
     <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Design" />
     <Reference Include="System.DirectoryServices" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Management" />
@@ -58,6 +59,9 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controls\Neos.IdentityServer.Comsole.Ctrls.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Controls\Neos.IdentityServer.Console.UserCommonPropsControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -82,17 +86,41 @@
     <Compile Include="Forms\Neos.IdentityServer.Comsole.ServiceViewControl.Designer.cs">
       <DependentUpon>Neos.IdentityServer.Comsole.ServiceViewControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\Neos.IdentityServer.Console.ADDSViewControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\Neos.IdentityServer.Console.ADDSViewControl.Designer.cs">
+      <DependentUpon>Neos.IdentityServer.Console.ADDSViewControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\Neos.IdentityServer.Console.RootViewControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Forms\Neos.IdentityServer.Console.RootViewControl.Designer.cs">
       <DependentUpon>Neos.IdentityServer.Console.RootViewControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\Neos.IdentityServer.Console.StatusViewControl.cs">
+    <Compile Include="Forms\Neos.IdentityServer.Console.GeneralViewControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Forms\Neos.IdentityServer.Console.StatusViewControl.Designer.cs">
-      <DependentUpon>Neos.IdentityServer.Console.StatusViewControl.cs</DependentUpon>
+    <Compile Include="Forms\Neos.IdentityServer.Console.GeneralViewControl.Designer.cs">
+      <DependentUpon>Neos.IdentityServer.Console.GeneralViewControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Neos.IdentityServer.Console.SMSViewControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\Neos.IdentityServer.Console.SMSViewControl.Designer.cs">
+      <DependentUpon>Neos.IdentityServer.Console.SMSViewControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Neos.IdentityServer.Console.SMTPViewControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\Neos.IdentityServer.Console.SMTPViewControl.Designer.cs">
+      <DependentUpon>Neos.IdentityServer.Console.SMTPViewControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Neos.IdentityServer.Console.SQLViewControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\Neos.IdentityServer.Console.SQLViewControl.Designer.cs">
+      <DependentUpon>Neos.IdentityServer.Console.SQLViewControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\Neos.IdentityServer.Console.UsersViewControl.cs">
       <SubType>UserControl</SubType>
@@ -100,11 +128,11 @@
     <Compile Include="Forms\Neos.IdentityServer.Console.UsersViewControl.Designer.cs">
       <DependentUpon>Neos.IdentityServer.Console.UsersViewControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\Neos.IdentityService.Console.ParametersViewControl.cs">
+    <Compile Include="Forms\Neos.IdentityService.Console.SecurityViewControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Forms\Neos.IdentityService.Console.ParametersViewControl.Designer.cs">
-      <DependentUpon>Neos.IdentityService.Console.ParametersViewControl.cs</DependentUpon>
+    <Compile Include="Forms\Neos.IdentityService.Console.SecurityViewControl.Designer.cs">
+      <DependentUpon>Neos.IdentityService.Console.SecurityViewControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Neos.IdentityServer.Console.Snapin.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -129,10 +157,14 @@
     </Compile>
     <Compile Include="Neos.IdentityServer.Console.Snapin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Views\Neos.IdentityServer.Console.ParametersFormView.cs" />
+    <Compile Include="Views\Neos.IdentityServer.Console.ADDSView.cs" />
+    <Compile Include="Views\Neos.IdentityServer.Console.SecurityFormView.cs" />
     <Compile Include="Views\Neos.IdentityServer.Console.RootFormView.cs" />
     <Compile Include="Views\Neos.IdentityServer.Console.ServiceFormView.cs" />
-    <Compile Include="Views\Neos.IdentityServer.Console.StatusFormView.cs" />
+    <Compile Include="Views\Neos.IdentityServer.Console.GeneralFormView.cs" />
+    <Compile Include="Views\Neos.IdentityServer.Console.SMSFormView.cs" />
+    <Compile Include="Views\Neos.IdentityServer.Console.SMTPFormView.cs" />
+    <Compile Include="Views\Neos.IdentityServer.Console.SQLFormView.cs" />
     <Compile Include="Views\Neos.IdentityServer.Console.UsersFormView.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -148,11 +180,23 @@
     <EmbeddedResource Include="Forms\Neos.IdentityServer.Comsole.ServiceViewControl.resx">
       <DependentUpon>Neos.IdentityServer.Comsole.ServiceViewControl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.ADDSViewControl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.ADDSViewControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.RootViewControl.resx">
       <DependentUpon>Neos.IdentityServer.Console.RootViewControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.StatusViewControl.resx">
-      <DependentUpon>Neos.IdentityServer.Console.StatusViewControl.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.GeneralViewControl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.GeneralViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SMSViewControl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SMSViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SMTPViewControl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SMTPViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SQLViewControl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SQLViewControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.UserFilterWizard.resx">
       <DependentUpon>Neos.IdentityServer.Console.UserFilterWizard.cs</DependentUpon>
@@ -160,8 +204,8 @@
     <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.UsersViewControl.resx">
       <DependentUpon>Neos.IdentityServer.Console.UsersViewControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Neos.IdentityService.Console.ParametersViewControl.resx">
-      <DependentUpon>Neos.IdentityService.Console.ParametersViewControl.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\Neos.IdentityService.Console.SecurityViewControl.resx">
+      <DependentUpon>Neos.IdentityService.Console.SecurityViewControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Neos.IdentityServer.Console.Snapin.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
@@ -177,6 +221,10 @@
     <ProjectReference Include="..\Neos.IdentityServer.Common\Neos.IdentityServer.MultiFactor.Common.csproj">
       <Project>{15b3e0d2-6217-493a-a690-158c497f5318}</Project>
       <Name>Neos.IdentityServer.MultiFactor.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Neos.IdentityServer.MultiFactor.Notifications\Neos.IdentityServer.MultiFactor.Notifications.csproj">
+      <Project>{8a7bc531-d51b-4cd3-a904-3c96746cf847}</Project>
+      <Name>Neos.IdentityServer.MultiFactor.Notifications</Name>
     </ProjectReference>
     <ProjectReference Include="..\Neos.IdentityServer.QrCodeNet\Neos.IdentityServer.MultiFactor.QRCodeNet.csproj">
       <Project>{AA3FD0C4-5577-4327-8486-AA4F5903DB9B}</Project>
@@ -206,10 +254,11 @@
     <Content Include="Resources\user_on16.bmp" />
     <Content Include="Resources\user_on32.bmp" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>
-</PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

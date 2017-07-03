@@ -15,41 +15,53 @@
 // https://github.com/neos-sdi/adfsmfa                                                                                                                                                      //
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Microsoft.ManagementConsole;
+using Neos.IdentityServer.MultiFactor;
+using Neos.IdentityServer.MultiFactor.Administration;
+using System.Diagnostics;
+using Microsoft.ManagementConsole.Advanced;
+using System.Windows.Forms;
+using System.Threading;
 
-// Les informations générales relatives à un assembly dépendent de 
-// l'ensemble d'attributs suivant. Changez les valeurs de ces attributs pour modifier les informations
-// associées à un assembly.
-[assembly: AssemblyTitle("Neos.IdentityServer.Console")]
-[assembly: AssemblyDescription("MMC Console for MFA")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Neos-Sdi")]
-[assembly: AssemblyProduct("Neos.IdentityServer.Console")]
-[assembly: AssemblyCopyright("Copyright Neos-Sdi © 2017")]
-[assembly: AssemblyTrademark("Neos-Sdi")]
-[assembly: AssemblyCulture("")]
+namespace Neos.IdentityServer.Console
+{
+    /// <summary>
+    /// ServiceSQLFormView Class
+    /// </summary>
+    public class ServiceSQLFormView : FormView
+    {
+        private ServiceSQLScopeNode sqlScopeNode = null;
+        private SQLViewControl usersControl = null;
 
-// L'affectation de la valeur false à ComVisible rend les types invisibles dans cet assembly 
-// aux composants COM.  Si vous devez accéder à un type dans cet assembly à partir de 
-// COM, affectez la valeur true à l'attribut ComVisible sur ce type.
-[assembly: ComVisible(false)]
+        /// <summary>
+        /// ServiceSecurityFormView constructor
+        /// </summary>
+        public ServiceSQLFormView()
+        {
 
-// Le GUID suivant est pour l'ID de la typelib si ce projet est exposé à COM
-[assembly: Guid("9db36380-88e0-4219-ac5f-3ed632814363")]
+        }
 
-// Les informations de version pour un assembly se composent des quatre valeurs suivantes :
-//
-//      Version principale
-//      Version secondaire 
-//      Numéro de build
-//      Révision
-//
-// Vous pouvez spécifier toutes les valeurs ou indiquer les numéros de build et de révision par défaut 
-// en utilisant '*', comme indiqué ci-dessous :
-// [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("2.0.0.0")]
-[assembly: AssemblyFileVersion("2.0.1.102")]
-[assembly: AssemblyInformationalVersion("2.0.0.0")]
+        /// <summary>
+        /// Initialize method override
+        /// </summary>
+        protected override void OnInitialize(AsyncStatus status)
+        {
+            usersControl = (SQLViewControl)this.Control;
+            sqlScopeNode = (ServiceSQLScopeNode)this.ScopeNode;
+            sqlScopeNode.SQLFormView = this;
 
+            ActionsPaneItems.Clear();
+            SelectionData.ActionsPaneItems.Clear();
+            SelectionData.ActionsPaneHelpItems.Clear();
+            SelectionData.EnabledStandardVerbs = (StandardVerbs.Delete | StandardVerbs.Properties);
+            ModeActionsPaneItems.Clear();
+
+            base.OnInitialize(status);
+        }
+    }
+}

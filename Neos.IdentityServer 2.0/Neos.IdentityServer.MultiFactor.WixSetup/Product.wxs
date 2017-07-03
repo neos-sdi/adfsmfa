@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-	<Product Id="a23dd485-5365-4d82-8309-1034940ee0e1" Name="Neos IdentityServer MultiFactor" Language="1033" Version="2.0.0.0" Manufacturer="Neos-SDI" UpgradeCode="a23dd485-5365-4d82-8309-1034940ef0f1" >
+	<Product Id="a23dd485-5365-4d82-8309-1034940ee0e1" Name="Neos MFA Provider for ADFS 2012 R2/2016" Language="1033" Version="2.0.0.0" Manufacturer="Neos-SDI" UpgradeCode="a23dd485-5365-4d82-8309-1034940ef0f1" >
 		<Package InstallerVersion="500" Compressed="yes" InstallScope="perMachine" InstallPrivileges="elevated" Platform="x64" Description="Multi-Factor Authentication for ADFS 3.0 / 2016" />
 
 		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
@@ -167,7 +167,7 @@
         <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.SMS.Azure.fr.resources.dll"  Name="Neos.IdentityServer.MultiFactor.SMS.Azure.resources.dll" Source="$(var.Neos.IdentityServer.MultiFactor.SMS.Azure.TargetDir)fr\Neos.IdentityServer.MultiFactor.SMS.Azure.resources.dll" />
       </Component>
       
-      <Component Id="GACDeployment34" Guid="E7173CAB-E43F-4A07-99F7-774EF9B76134" Win64="yes" Directory="AssemblyFolder" DiskId="1" >
+      <Component Id="GACDeployment34" Guid="E7173CAB-E43F-4A07-99F7-774EF9B76134" Win64="yes" Directory="AssemblyFolder" DiskId="1" Permanent="yes">
         <File Assembly=".net" KeyPath="yes" Id="libphonenumber_csharp_portable.dll"  Name="libphonenumber_csharp_portable.dll" Source="$(var.Neos.IdentityServer.MultiFactor.SMS.Azure.TargetDir)libphonenumber_csharp_portable.dll" />
       </Component>
     </ComponentGroup>

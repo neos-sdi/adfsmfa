@@ -26,6 +26,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Microsoft.ManagementConsole;
 using Neos.IdentityServer.MultiFactor.Administration;
+using Neos.IdentityServer.Console.Controls;
 using System.Threading;
 using Neos.IdentityServer.MultiFactor;
 using System.DirectoryServices;
@@ -54,11 +55,81 @@ namespace Neos.IdentityServer.Console
             OnInitialize();
         }
 
+
         /// <summary>
         /// OnInitialize method
         /// </summary>
         protected virtual void OnInitialize()
         {
+            this.SuspendLayout();
+            try
+            {
+                ADFSServiceManager mgr = ManagementAdminService.ADFSManager;
+                bool isconfigured = mgr.IsFarmConfigured();
+                bool isactive = mgr.IsMFAProviderEnabled(null);
+                this.tableLayoutPanel.Controls.Add(new ConfigurationControl(mgr.Config, isconfigured, isactive), 0, 1);
+                this.tableLayoutPanel.Controls.Add(new ConfigurationFooterControl(), 0, 2);
+
+                if (isconfigured)
+                {
+                    int i = 3;
+                    foreach (ADFSServerHost srv in ManagementAdminService.ADFSManager.ADFSFarm.Servers)
+                    {
+                        bool isok = ManagementAdminService.ADFSManager.IsRunning(srv.FQDN);
+                        this.tableLayoutPanel.Controls.Add(new ADFSServerControl(srv, isok), 0, i);
+                        i++;
+                    }
+                    this.tableLayoutPanel.Controls.Add(new ADFSServersFooterControl(), 0, i);
+                }
+            }
+            finally
+            {
+                this.ResumeLayout(true);
+            }
+        }
+
+        /// <summary>
+        /// RefreshData method implementation
+        /// </summary>
+        internal void RefreshData()
+        {
+            this.SuspendLayout();
+            try
+            {
+                for (int j = this.tableLayoutPanel.Controls.Count - 1; j >= 0; j--)
+                {
+                    Control ctrl = this.tableLayoutPanel.Controls[j];
+                    if (ctrl is ADFSServerControl)
+                        this.tableLayoutPanel.Controls.RemoveAt(j);
+                    else if (ctrl is ConfigurationControl)
+                        this.tableLayoutPanel.Controls.RemoveAt(j);
+                    else if (ctrl is ConfigurationFooterControl)
+                        this.tableLayoutPanel.Controls.RemoveAt(j);
+                    else if (ctrl is ADFSServersFooterControl)
+                        this.tableLayoutPanel.Controls.RemoveAt(j);
+                }
+                ADFSServiceManager mgr = ManagementAdminService.ADFSManager;
+                bool isconfigured = mgr.IsFarmConfigured();
+                bool isactive = mgr.IsMFAProviderEnabled(null);
+                this.tableLayoutPanel.Controls.Add(new ConfigurationControl(mgr.Config, isconfigured, isactive), 0, 1);
+                this.tableLayoutPanel.Controls.Add(new ConfigurationFooterControl(), 0, 2);
+
+                if (isconfigured)
+                {
+                    int i = 3;
+                    foreach (ADFSServerHost srv in ManagementAdminService.ADFSManager.ADFSFarm.Servers)
+                    {
+                        bool isok = ManagementAdminService.ADFSManager.IsRunning(srv.FQDN);
+                        this.tableLayoutPanel.Controls.Add(new ADFSServerControl(srv, isok), 0, i);
+                        i++;
+                    }
+                    this.tableLayoutPanel.Controls.Add(new ADFSServersFooterControl(), 0, i);
+                }
+            }
+            finally
+            {
+                this.ResumeLayout(true);
+            }
         }
 
         #region Properties
@@ -95,7 +166,10 @@ namespace Neos.IdentityServer.Console
             if (Parent != null)
             {
                 if (!DesignMode)
+                {
                     Size = Parent.ClientSize;
+                    tableLayoutPanel.Size = Size; 
+                }
                 Parent.SizeChanged += Parent_SizeChanged;
             }
             if (oldParent != null)

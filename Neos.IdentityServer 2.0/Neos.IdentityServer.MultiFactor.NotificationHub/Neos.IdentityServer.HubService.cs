@@ -131,12 +131,27 @@ namespace Neos.IdentityServer.MultiFactor
             try
             {
                 ADFSController = new ServiceController("adfssrv");
+                using (MailSlotClient mailslot = new MailSlotClient("MGT"))
+                {
+                    mailslot.Text = Environment.MachineName;
+                    mailslot.SendNotification(0x12);
+                }
                 if (ADFSController.Status != ServiceControllerStatus.Running)
                     ADFSController.Start();
                 ADFSController.WaitForStatus(ServiceControllerStatus.Running, new TimeSpan(0, 1, 0));
+                using (MailSlotClient mailslot = new MailSlotClient("MGT"))
+                {
+                    mailslot.Text = Environment.MachineName;
+                    mailslot.SendNotification(0x10);
+                }
             }
             catch (Exception e)
             {
+                using (MailSlotClient mailslot = new MailSlotClient("MGT"))
+                {
+                    mailslot.Text = Environment.MachineName;
+                    mailslot.SendNotification(0x19);
+                }
                 this.EventLog.WriteEntry("Error Starting ADFS Service \r"+e.Message, EventLogEntryType.Error, 2);
                 return;
             }
@@ -155,12 +170,27 @@ namespace Neos.IdentityServer.MultiFactor
             try
             {
                 ADFSController = new ServiceController("adfssrv");
+                using (MailSlotClient mailslot = new MailSlotClient("MGT"))
+                {
+                    mailslot.Text = Environment.MachineName;
+                    mailslot.SendNotification(0x12);
+                }
                 if (ADFSController.Status != ServiceControllerStatus.Stopped)
                     ADFSController.Stop();
                 ADFSController.WaitForStatus(ServiceControllerStatus.Stopped, new TimeSpan(0, 1, 0));
+                using (MailSlotClient mailslot = new MailSlotClient("MGT"))
+                {
+                    mailslot.Text = Environment.MachineName;
+                    mailslot.SendNotification(0x11);
+                }
             }
             catch (Exception e)
             {
+                using (MailSlotClient mailslot = new MailSlotClient("MGT"))
+                {
+                    mailslot.Text = Environment.MachineName;
+                    mailslot.SendNotification(0x19);
+                }
                 this.EventLog.WriteEntry("Error Stopping ADFS Service \r" + e.Message, EventLogEntryType.Error, 3);
                 return;
             }

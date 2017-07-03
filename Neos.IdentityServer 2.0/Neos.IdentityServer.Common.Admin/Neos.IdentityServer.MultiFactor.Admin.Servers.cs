@@ -66,14 +66,29 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             this.ServiceStatusChanged(this, ServicesStatus, "");
             ConfigurationStatus = ConfigOperationStatus.ConfigUnknown;
             this.ConfigurationStatusChanged(this, ConfigurationStatus);
-            _mailslotsrv = new MailSlotServer("MGT");
-            _mailslotsrv.MailSlotMessageArrived += MailSlotMessageArrived;
-            _mailslotsrv.AllowToSelf = true;
-            _mailslotsrv.Start();
         }
 
         /// <summary>
-        /// 
+        /// Initialize method implementation
+        /// </summary>
+        public void Initialize(bool dontthrow = false)
+        {
+            try
+            {
+                _mailslotsrv = new MailSlotServer("MGT");
+                _mailslotsrv.MailSlotMessageArrived += MailSlotMessageArrived;
+                _mailslotsrv.AllowToSelf = true;
+                _mailslotsrv.Start();
+            }
+            catch (Exception e)
+            {
+                if (!dontthrow)
+                    throw e;
+            }
+        }
+
+        /// <summary>
+        /// MailSlotMessageArrived method implmentation
         /// </summary>
         private void MailSlotMessageArrived(MailSlotServer maislotserver, MailSlotMessage message)
         {
@@ -86,6 +101,26 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 {
                     _mailslotsrv.AllowedMachines.Add(svr.MachineName);
                 }
+            }
+            else if (message.Operation == 0x10)
+            {
+                ServicesStatus = ServiceOperationStatus.OperationRunning;
+                this.ServiceStatusChanged(this, ServicesStatus, message.Text);
+            }
+            else if (message.Operation == 0x11)
+            {
+                ServicesStatus = ServiceOperationStatus.OperationStopped;
+                this.ServiceStatusChanged(this, ServicesStatus, message.Text);
+            }
+            else if (message.Operation == 0x12)
+            {
+                ServicesStatus = ServiceOperationStatus.OperationPending;
+                this.ServiceStatusChanged(this, ServicesStatus, message.Text);
+            }
+            else if (message.Operation == 0x19)
+            {
+                ServicesStatus = ServiceOperationStatus.OperationInError;
+                this.ServiceStatusChanged(this, ServicesStatus, message.Text);
             }
         }
 
@@ -244,6 +279,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             else
                 return ADFSFarm.IsInitialized;
         }
+
         /// <summary>
         /// IsRunning method iplementation
         /// </summary>
@@ -386,16 +422,31 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                     ADFSController = new ServiceController("adfssrv");
                 else
                     ADFSController = new ServiceController("adfssrv", servername);
+                using (MailSlotClient mailslot = new MailSlotClient("MGT"))
+                {
+                    mailslot.Text = servername;
+                    mailslot.SendNotification(0x12);
+                }
                 this.ServiceStatusChanged(this, ServiceOperationStatus.OperationPending, servername);
                 if (ADFSController.Status != ServiceControllerStatus.Running)
                     ADFSController.Start();
                 ADFSController.WaitForStatus(ServiceControllerStatus.Running, new TimeSpan(0, 1, 0));
                 this.ServiceStatusChanged(this, ServiceOperationStatus.OperationRunning, servername);
+                using (MailSlotClient mailslot = new MailSlotClient("MGT"))
+                {
+                    mailslot.Text = servername;
+                    mailslot.SendNotification(0x10);
+                }
                 return true;
             }
             catch (Exception)
             {
                 this.ServiceStatusChanged(this, ServiceOperationStatus.OperationInError, servername);
+                using (MailSlotClient mailslot = new MailSlotClient("MGT"))
+                {
+                    mailslot.Text = servername;
+                    mailslot.SendNotification(0x19);
+                }
                 return false;
             }
             finally
@@ -417,16 +468,31 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                     ADFSController = new ServiceController("adfssrv");
                 else
                     ADFSController = new ServiceController("adfssrv", servername);
+                using (MailSlotClient mailslot = new MailSlotClient("MGT"))
+                {
+                    mailslot.Text = servername;
+                    mailslot.SendNotification(0x12);
+                }
                 this.ServiceStatusChanged(this, ServiceOperationStatus.OperationPending, servername);
                 if (ADFSController.Status != ServiceControllerStatus.Stopped)
                     ADFSController.Stop();
                 ADFSController.WaitForStatus(ServiceControllerStatus.Stopped, new TimeSpan(0, 1, 0));
                 this.ServiceStatusChanged(this, ServiceOperationStatus.OperationStopped, servername);
+                using (MailSlotClient mailslot = new MailSlotClient("MGT"))
+                {
+                    mailslot.Text = servername;
+                    mailslot.SendNotification(0x11);
+                }
                 return true;
             }
             catch (Exception)
             {
                 this.ServiceStatusChanged(this, ServiceOperationStatus.OperationInError, servername);
+                using (MailSlotClient mailslot = new MailSlotClient("MGT"))
+                {
+                    mailslot.Text = servername;
+                    mailslot.SendNotification(0x19);
+                }
                 return false;
             }
             finally
@@ -453,7 +519,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             catch (CmdletInvocationException cm)
             {
                 this.ConfigurationStatusChanged(this, ConfigOperationStatus.ConfigInError, cm);
-                throw cm;
+                throw new CmdletInvocationException(errors_strings.ErrorMFAFarmNotInitialized, cm);
             }
             catch (Exception ex)
             {
@@ -582,7 +648,11 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         {
             Runspace SPRunSpace = null;
             PowerShell SPPowerShell = null;
-            string pth = backupfile;
+            string pth = string.Empty;
+            if (string.IsNullOrEmpty(backupfile))
+                pth = Path.GetTempPath() + "adfsmfa_backup_" + DateTime.UtcNow.ToString("yyyy-MM-dd HH-mm") + ".xml";
+            else
+                pth = backupfile;
             try
             {
                 RunspaceConfiguration SPRunConfig = RunspaceConfiguration.Create();
@@ -734,6 +804,51 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         }
 
         /// <summary>
+        /// internalIsConfigurationActive method implementation
+        /// </summary>
+        private bool internalIsConfigurationActive(PSHost Host)
+        {
+            Runspace SPRunSpace = null;
+            PowerShell SPPowerShell = null;
+            bool found = false;
+            try
+            {
+                RunspaceConfiguration SPRunConfig = RunspaceConfiguration.Create();
+                SPRunSpace = RunspaceFactory.CreateRunspace(SPRunConfig);
+
+                SPPowerShell = PowerShell.Create();
+                SPPowerShell.Runspace = SPRunSpace;
+                SPRunSpace.Open();
+
+                Pipeline pipeline = SPRunSpace.CreatePipeline();
+                Command exportcmd = new Command("(Get-AdfsGlobalAuthenticationPolicy).AdditionalAuthenticationProvider", true);
+                pipeline.Commands.Add(exportcmd);
+                Collection<PSObject> PSOutput = pipeline.Invoke();
+                try
+                {
+                    foreach (var result in PSOutput)
+                    {
+                        if (result.BaseObject.ToString().ToLower().Equals("multifactorauthenticationprovider"))
+                        {
+                            found = true;
+                            break;
+                        }
+                    }
+                }
+                catch (Exception)
+                {
+                    found = false;
+                }
+            }
+            finally
+            {
+                if (SPRunSpace != null)
+                    SPRunSpace.Close();
+            }
+            return found;
+        }
+
+        /// <summary>
         /// RegisterNewRSACertificate method implmentation
         /// </summary>
         public string RegisterNewRSACertificate(PSHost Host = null, int years = 5, bool restart = true)
@@ -805,49 +920,57 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <summary>
         /// RegisterMFAProvider method implmentation
         /// </summary>
-        public bool RegisterMFAProvider(PSHost Host, bool activate = true, bool restartfarm = true, bool upgrade = false, string filepath = null, RegistrationSecretKeyFormat Format = RegistrationSecretKeyFormat.RSA, int certduration = 5)
+        public bool RegisterMFAProvider(PSHost host, bool activate = true, bool restartfarm = true, bool upgrade = false, string filepath = null, RegistrationSecretKeyFormat format = RegistrationSecretKeyFormat.RNG, int certduration = 5)
         {
+            bool needregister = false;
             if (_config == null)
             {
                 EnsureLocalService();
                 try
                 {
-                    _config = ReadConfiguration(Host);
+                    _config = ReadConfiguration(host);
                 }
                 catch (CmdletInvocationException)
                 {
+                    needregister = true;
                     _config = null;
                 }
                 if ((_config == null) && (!upgrade))
                     _config = new MFAConfig(true);
             }
-            if (upgrade)
+            if ((_config != null) && (upgrade))
                 _config.UpgradeDefaults();
             else if ((!upgrade) && (IsFarmConfigured()))
                 return false;
              //   throw new Exception(errors_strings.ErrorMFAFarmAlreadyInitialized);
 
-            if ((upgrade) && (!string.IsNullOrEmpty(filepath)))
-                internalBackupConfiguration(Host, _config, filepath);
+            if ((_config != null) && (upgrade))
+                internalBackupConfiguration(host, _config, filepath);
             try
             {
-                bool mustwrite = false;
-                if (_config.KeysConfig.KeyFormat != Format)
+                if (_config.KeysConfig.KeyFormat != format)
                 {
-                    _config.KeysConfig.KeyFormat = Format;
-                    if (Format == RegistrationSecretKeyFormat.RNG)
-                        Config.KeysConfig.CertificateThumbprint = string.Empty;
+                    _config.KeysConfig.KeyFormat = format;
                     _config.IsDirty = true;
-                    mustwrite = true;
                 }
-                if ((Format==RegistrationSecretKeyFormat.RSA) && (string.IsNullOrEmpty(Config.KeysConfig.CertificateThumbprint)))
+                if ((format == RegistrationSecretKeyFormat.RSA) && (!Thumbprint.IsAllowed(Config.KeysConfig.CertificateThumbprint)))
                 {
-                    _config.KeysConfig.CertificateThumbprint = internalRegisterNewRSACertificate(Host, certduration);
+                    _config.KeysConfig.CertificateThumbprint = internalRegisterNewRSACertificate(host, certduration);
                     _config.IsDirty = true;
-                    mustwrite = true;
                 }
-                if (mustwrite)
-                    CFGUtilities.WriteConfiguration(Host, _config);
+                if (format == RegistrationSecretKeyFormat.CUSTOM) 
+                {
+                    _config.KeysConfig.CertificateValidity = certduration;
+                    _config.IsDirty = true;
+                }
+                if (_config.IsDirty)
+                {
+                    if (needregister)
+                        internalRegisterConfiguration(host);
+                    CFGUtilities.WriteConfiguration(host, _config);
+                }
+                else
+                    needregister = false;
             }
             finally
             {
@@ -855,21 +978,22 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             }
             if (upgrade)
             {
-                internalDeActivateConfiguration(Host);
-                internalUnRegisterConfiguration(Host);
-                internalRegisterConfiguration(Host);
-                internalActivateConfiguration(Host);
+                internalDeActivateConfiguration(host);
+                internalUnRegisterConfiguration(host);
+                internalRegisterConfiguration(host);
+                internalActivateConfiguration(host);
             }
             else
             {
-                internalRegisterConfiguration(Host);
+                if (!needregister)
+                    internalRegisterConfiguration(host);
                 if (activate)
-                    internalActivateConfiguration(Host);
+                    internalActivateConfiguration(host);
             }
-            InitFarmConfiguration(Host);
-            WriteConfiguration(Host);
+            InitFarmConfiguration(host);
+            WriteConfiguration(host);
             if (restartfarm)
-                RestartFarm(Host);
+                RestartFarm(host);
             return true;
         }
 
@@ -907,6 +1031,10 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             if (!_config.Hosts.ADFSFarm.IsInitialized)
                 throw new Exception(errors_strings.ErrorMFAFarmNotInitialized);
             internalActivateConfiguration(Host);
+            using (MailSlotClient mailslot = new MailSlotClient("MGT"))
+            {
+                mailslot.SendNotification(0xAA);
+            }
         }
 
         /// <summary>
@@ -920,6 +1048,23 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 _config = ReadConfiguration(Host);
             }
             internalDeActivateConfiguration(Host);
+            using (MailSlotClient mailslot = new MailSlotClient("MGT"))
+            {
+                mailslot.SendNotification(0xAA);
+            }
+        }
+
+        /// <summary>
+        /// IsMFAProviderEnabled method implmentation
+        /// </summary>
+        public bool IsMFAProviderEnabled(PSHost Host)
+        {
+            if (_config == null)
+            {
+                EnsureConfiguration(Host);
+                _config = ReadConfiguration(Host);
+            }
+            return internalIsConfigurationActive(Host);
         }
         #endregion
 

@@ -173,9 +173,9 @@ namespace Neos.IdentityServer.MultiFactor
                 UserFeatures = (UserFeaturesOptions.BypassDisabled | UserFeaturesOptions.AllowUnRegistered | UserFeaturesOptions.AllowManageOptions | UserFeaturesOptions.AllowChangePassword); 
 
                 KeysConfig.KeyGenerator = KeyGeneratorMode.ClientSecret512; 
-                KeysConfig.KeyFormat = RegistrationSecretKeyFormat.CFG;
+                KeysConfig.KeyFormat = RegistrationSecretKeyFormat.RNG;
                 KeysConfig.KeySize = KeySizeMode.KeySize1024;
-                KeysConfig.CertificateThumbprint = "** ‎your sha256 certificate thumbprint **";
+                KeysConfig.CertificateThumbprint = Thumbprint.Empty;
                 KeysConfig.ExternalKeyManager.FullQualifiedImplementation = "Neos.IdentityServer.Multifactor.Keys.CustomKeyManager, Neos.IdentityServer.Multifactor.Keys.Sample, Version=2.0.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2";
                 KeysConfig.ExternalKeyManager.Parameters.Data = "Persist Security Info=False;Integrated Security=SSPI;Initial Catalog=yourdatabase;Data Source=yourserverinstance";
 
@@ -183,7 +183,7 @@ namespace Neos.IdentityServer.MultiFactor
                 ExternalOTPProvider.FullQualifiedImplementation = "Neos.IdentityServer.Multifactor.SMS.SMSCall, Neos.IdentityServer.Multifactor.SMS.Azure, Version=2.0.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2";
                 ExternalOTPProvider.IsTwoWay = false;
                 ExternalOTPProvider.Sha1Salt = "0x1230456789ABCDEF";
-                ExternalOTPProvider.Parameters.Data = "LICENSE_KEY = AZURELICKEY, GROUP_KEY = 01234567891011121314151617181920, CERT_THUMBPRINT = ** ‎your azure mfa certificate thumbprint **";
+                ExternalOTPProvider.Parameters.Data = "LICENSE_KEY = AZURELICKEY, GROUP_KEY = 01234567891011121314151617181920, CERT_THUMBPRINT = "+Thumbprint.Demo;
 
                 Hosts.SQLServerHost.ConnectionString="Password=yourpassword;Persist Security Info=True;User ID=yoursqlusername;Initial Catalog=yourdatabasename;Data Source=yoursqlserver\\yourinstance";
 
@@ -241,8 +241,8 @@ namespace Neos.IdentityServer.MultiFactor
                 KeysConfig.KeyGenerator = KeyGeneratorMode.ClientSecret512;
                 KeysConfig.KeyFormat = RegistrationSecretKeyFormat.RNG;
                 KeysConfig.KeySize = KeySizeMode.KeySize1024;
-                if (string.IsNullOrEmpty(this.KeysConfig.CertificateThumbprint))
-                    KeysConfig.CertificateThumbprint = "** ‎your sha256 certificate thumbprint **";
+                if (!Thumbprint.IsValid(this.KeysConfig.CertificateThumbprint))
+                    KeysConfig.CertificateThumbprint = Thumbprint.Empty;
                 if (this.KeysConfig.ExternalKeyManager != null)
                 {
                     if (string.IsNullOrEmpty(this.KeysConfig.ExternalKeyManager.FullQualifiedImplementation))
@@ -260,7 +260,7 @@ namespace Neos.IdentityServer.MultiFactor
                 if (string.IsNullOrEmpty(this.ExternalOTPProvider.Sha1Salt))
                     this.ExternalOTPProvider.Sha1Salt = "0x1230456789ABCDEF";
                 if (this.ExternalOTPProvider.Parameters.Length==0)
-                    ExternalOTPProvider.Parameters.Data = "LICENSE_KEY = AZURELICKEY, GROUP_KEY = 0123456789 EXAMPLE 4151617181920, CERT_THUMBPRINT = ** ‎your azure mfa certificate thumbprint **";
+                    ExternalOTPProvider.Parameters.Data = "LICENSE_KEY = AZURELICKEY, GROUP_KEY = 0123456789 EXAMPLE 4151617181920, CERT_THUMBPRINT = "+Thumbprint.Demo;
             }
         }
 
@@ -443,7 +443,13 @@ namespace Neos.IdentityServer.MultiFactor
         public string CertificateThumbprint
         {
             get { return _thumbprint; }
-            set { _thumbprint = value; }
+            set 
+            {
+                if (Thumbprint.IsValid(value))
+                    _thumbprint = value;
+                else
+                    _thumbprint = Thumbprint.Null;
+            }
         }
 
         [XmlAttribute("CertificateValidity")]

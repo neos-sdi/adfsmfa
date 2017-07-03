@@ -1523,7 +1523,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         {
             try 
             {
-                if (ShouldProcess("Register-MFASystem"))
+                if (ShouldProcess("Register-MFASystem", "Changing Keyformat invalidate all users keys ! When choosing CUSTOM KeyFormat, additional steps are required (Set-MFAConfigkeys and New-MFASecretKeysDatabase)" ))
                 {
                     PSHost hh = GetHostForVerbose();
                     ADFSServiceManager svc = ManagementAdminService.ADFSManager;
@@ -1758,8 +1758,8 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         private SwitchParameter _restart = true;
 
         /// <summary>
-        /// <para>Duration for the new certificate (Years)</para>
         /// RSACertificateDuration property
+        /// <para type="description">Duration for the new certificate (Years)</para>
         /// </summary>
         [Parameter(ParameterSetName = "Data")]
         public int RSACertificateDuration
@@ -1769,7 +1769,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         }
 
         /// <summary>
-        /// <para>Restart Farm Services</para>
+        /// <para type="description">Restart Farm Services</para>
         /// RestartFarm property
         /// </summary>
         [Parameter(ParameterSetName = "Data")]
@@ -2858,7 +2858,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     ///   <para>MFASecretKeysDatabase -ServerName SQLServer\Instance -DatabaseName MFAKeysDatabase -UserName sqlaccount -Password pass</para>
     ///   <para>MFASecretKeysDatabase -ServerName SQLServer\Instance -DatabaseName MFAKeysDatabase -UserName Domain\ADFSaccount</para>
     ///   <para>MFASecretKeysDatabase -ServerName SQLServer\Instance -DatabaseName MFAKeysDatabase -UserName Domain\ADFSManagedAccount$</para>
-    ///   <para>(Get-MFAConfigKeys).KeyFormat must be equal to CUSTOM to be effective
+    ///   <para>(Get-MFAConfigKeys).KeyFormat must be equal to CUSTOM to be effective</para>
     ///   <para>Create a new database for MFA Secret Keys, grant rights to the specified account</para>
     /// </example>
     [Cmdlet(VerbsCommon.New, "MFASecretKeysDatabase", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]

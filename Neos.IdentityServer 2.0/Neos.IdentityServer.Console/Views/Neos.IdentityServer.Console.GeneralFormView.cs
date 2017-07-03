@@ -14,48 +14,37 @@ using System.Threading;
 namespace Neos.IdentityServer.Console
 {
     /// <summary>
-    /// ServiceFormView Class
+    /// StatusFormView Class
     /// </summary>
-    public class ServiceFormView : FormView
+    public class GeneralFormView: FormView
     {
-
-        private ServiceScopeNode serviceScopeNode = null;
-        private ServiceViewControl serviceControl = null;
+        private ServiceGeneralScopeNode statusScopeNode = null;
+        private GeneralViewControl usersControl = null;
 
         /// <summary>
         /// StatusFormView constructor
         /// </summary>
-        public ServiceFormView()
+        public GeneralFormView()
         {
 
         }
-
 
         /// <summary>
         /// Initialize method override
         /// </summary>
         protected override void OnInitialize(AsyncStatus status)
         {
-            serviceControl = (ServiceViewControl)this.Control;
-            serviceScopeNode = (ServiceScopeNode)this.ScopeNode;
-            serviceScopeNode.serviceFormView = this;
+            usersControl = (GeneralViewControl)this.Control;
+            statusScopeNode = (ServiceGeneralScopeNode)this.ScopeNode;
+            statusScopeNode.generalFormView = this;
 
             ActionsPaneItems.Clear();
             SelectionData.ActionsPaneItems.Clear();
             SelectionData.ActionsPaneHelpItems.Clear();
             SelectionData.EnabledStandardVerbs = (StandardVerbs.Delete | StandardVerbs.Properties);
-            ModeActionsPaneItems.Clear();
+            ModeActionsPaneItems.Clear(); 
 
             base.OnInitialize(status);
-        }
-
-        /// <summary>
-        /// Refresh() method implementation
-        /// </summary>
-        internal void Refresh()
-        {
-            if (serviceControl != null)
-                serviceControl.RefreshData();
         }
     }
 }

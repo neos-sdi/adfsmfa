@@ -35,8 +35,12 @@ namespace Neos.IdentityServer.Console
     public class ADFSSnapIn : SnapIn
     {
         private ScopeNode ServiceNode;
-        private ScopeNode ServiceStatusNode;
-        private ScopeNode ServicePropertiesNode;
+        private ScopeNode ServiceGeneralNode;
+        private ScopeNode ServiceSQLNode;
+        private ScopeNode ServiceADDSNode;
+        private ScopeNode ServiceSMTPNode;
+        private ScopeNode ServiceSMSNode;
+        private ScopeNode ServiceSecurityNode;
         private ScopeNode UsersNode;
 
         /// <summary>
@@ -62,23 +66,59 @@ namespace Neos.IdentityServer.Console
             this.ServiceNode.ViewDescriptions.Add(fvc);
             this.ServiceNode.ViewDescriptions.DefaultIndex = 0;
 
-            // Status Scope
-            this.ServiceStatusNode = new ServiceStatusScopeNode();
+            // General Scope
+            this.ServiceGeneralNode = new ServiceGeneralScopeNode();
             FormViewDescription fvs = new FormViewDescription();
-            fvs.DisplayName = "MFA Platform Status";
-            fvs.ControlType = typeof(StatusViewControl);
-            fvs.ViewType = typeof(StatusFormView);
-            this.ServiceStatusNode.ViewDescriptions.Add(fvs);
-            this.ServiceStatusNode.ViewDescriptions.DefaultIndex = 0;
+            fvs.DisplayName = "MFA Platform General Properties";
+            fvs.ControlType = typeof(GeneralViewControl);
+            fvs.ViewType = typeof(GeneralFormView);
+            this.ServiceGeneralNode.ViewDescriptions.Add(fvs);
+            this.ServiceGeneralNode.ViewDescriptions.DefaultIndex = 0;
+
+            // SQL Scope
+            this.ServiceSQLNode = new ServiceSQLScopeNode();
+            FormViewDescription fsql = new FormViewDescription();
+            fsql.DisplayName = "MFA Platform SQL Server Properties";
+            fsql.ControlType = typeof(SQLViewControl);
+            fsql.ViewType = typeof(ServiceSQLFormView);
+            this.ServiceSQLNode.ViewDescriptions.Add(fsql);
+            this.ServiceSQLNode.ViewDescriptions.DefaultIndex = 0;
+
+            // ADDS Scope
+            this.ServiceADDSNode = new ServiceADDSScopeNode();
+            FormViewDescription fadds = new FormViewDescription();
+            fadds.DisplayName = "MFA Platform Active Directory Properties";
+            fadds.ControlType = typeof(ADDSViewControl);
+            fadds.ViewType = typeof(ServiceADDSFormView);
+            this.ServiceADDSNode.ViewDescriptions.Add(fadds);
+            this.ServiceADDSNode.ViewDescriptions.DefaultIndex = 0;
+
+            // SMTP Scope
+            this.ServiceSMTPNode = new ServiceSMTPScopeNode();
+            FormViewDescription fsmtp = new FormViewDescription();
+            fsmtp.DisplayName = "MFA Platform SMTP Properties";
+            fsmtp.ControlType = typeof(SMTPViewControl);
+            fsmtp.ViewType = typeof(ServiceSMTPFormView);
+            this.ServiceSMTPNode.ViewDescriptions.Add(fsmtp);
+            this.ServiceSMTPNode.ViewDescriptions.DefaultIndex = 0;
+
+            // SMS Scope
+            this.ServiceSMSNode = new ServicePhoneScopeNode();
+            FormViewDescription fsms = new FormViewDescription();
+            fsms.DisplayName = "MFA Platform SMS Properties";
+            fsms.ControlType = typeof(SMSViewControl);
+            fsms.ViewType = typeof(ServiceSMSFormView);
+            this.ServiceSMSNode.ViewDescriptions.Add(fsms);
+            this.ServiceSMSNode.ViewDescriptions.DefaultIndex = 0;
 
             // Parameters Scope
-            this.ServicePropertiesNode = new ServicePropertiesScopeNode();
+            this.ServiceSecurityNode = new ServiceSecurityScopeNode();
             FormViewDescription fvp = new FormViewDescription();
-            fvp.DisplayName = "MFA Platform Properties";
-            fvp.ControlType = typeof(ParametersViewControl);
-            fvp.ViewType = typeof(ParametersFormView);
-            this.ServicePropertiesNode.ViewDescriptions.Add(fvp);
-            this.ServicePropertiesNode.ViewDescriptions.DefaultIndex = 0;
+            fvp.DisplayName = "MFA Platform Security Properties";
+            fvp.ControlType = typeof(ServiceSecurityViewControl);
+            fvp.ViewType = typeof(ServiceSecurityFormView);
+            this.ServiceSecurityNode.ViewDescriptions.Add(fvp);
+            this.ServiceSecurityNode.ViewDescriptions.DefaultIndex = 0;
 
             // Users Scope
             this.UsersNode = new UsersScopeNode();
@@ -90,9 +130,14 @@ namespace Neos.IdentityServer.Console
             this.UsersNode.ViewDescriptions.DefaultIndex = 0;
 
             this.RootNode.Children.Add(this.ServiceNode);
+
+            this.RootNode.Children.Add(this.ServiceGeneralNode);
+            this.RootNode.Children.Add(this.ServiceSQLNode);
+            this.RootNode.Children.Add(this.ServiceADDSNode);
+            this.RootNode.Children.Add(this.ServiceSMTPNode);
+            this.RootNode.Children.Add(this.ServiceSMSNode);
+            this.RootNode.Children.Add(this.ServiceSecurityNode);
             this.RootNode.Children.Add(this.UsersNode);
-            this.ServiceNode.Children.Add(this.ServiceStatusNode);
-            this.ServiceNode.Children.Add(this.ServicePropertiesNode);
 
             this.IsModified = true;
             this.SmallImages.Add(Neos_IdentityServer_Console_Snapin.folder16, Color.Black);

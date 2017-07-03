@@ -425,11 +425,11 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     public enum MMCSecretKeyFormat
     {
         [EnumMember]
-        RNG = 1,
+        RNG = 0,
         [EnumMember]
-        RSA = 2,
+        RSA = 1,
         [EnumMember]
-        CUSTOM = 3
+        CUSTOM = 2
     }
 
     [Serializable]
