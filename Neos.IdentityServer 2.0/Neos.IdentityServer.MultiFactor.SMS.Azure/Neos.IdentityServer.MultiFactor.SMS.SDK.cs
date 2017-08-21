@@ -78,6 +78,13 @@ namespace Neos.IdentityServer.Multifactor.SMS
         public const string MODE_SMS_TWO_WAY_OTP_PLUS_PIN = "sms_two_way_otp_plus_pin";
         public const string MODE_SMS_ONE_WAY_OTP = "sms_one_way_otp";
         public const string MODE_SMS_ONE_WAY_OTP_PLUS_PIN = "sms_one_way_otp_plus_pin";
+        public const string MODE_PHONE_APP_STANDARD = "phone_app_standard";
+
+        public const string NOTIFICATION_TYPE_APNS = "apns"; // iOS
+        public const string NOTIFICATION_TYPE_C2DM = "c2dm"; // Android
+        public const string NOTIFICATION_TYPE_GCM = "gcm";   // Android
+        public const string NOTIFICATION_TYPE_MPNS = "mpns"; // Windows
+        public const string NOTIFICATION_TYPE_BPS = "bps";   // Blackberry
 
         private static string LICENSE_KEY = "YOUR_LICENSE_KEY";
         private static string GROUP_KEY = "YOUR_GROUP_KEY";
@@ -146,9 +153,12 @@ namespace Neos.IdentityServer.Multifactor.SMS
             if (pfAuthParams.IpAddress.Length == 0) 
                 pfAuthParams.IpAddress = "255.255.255.255";
             pfAuthParams.Mode = pfAuthParams.Mode.ToLower();
-            if (pfAuthParams.Mode != MODE_SMS_TWO_WAY_OTP && pfAuthParams.Mode != MODE_SMS_TWO_WAY_OTP_PLUS_PIN  && pfAuthParams.Mode != MODE_SMS_ONE_WAY_OTP && pfAuthParams.Mode != MODE_SMS_ONE_WAY_OTP_PLUS_PIN)
-                pfAuthParams.Mode = MODE_SMS_ONE_WAY_OTP;
-
+            if (pfAuthParams.Mode != MODE_SMS_TWO_WAY_OTP && 
+                pfAuthParams.Mode != MODE_SMS_TWO_WAY_OTP_PLUS_PIN  && 
+                pfAuthParams.Mode != MODE_SMS_ONE_WAY_OTP &&
+                pfAuthParams.Mode != MODE_SMS_ONE_WAY_OTP_PLUS_PIN && 
+                pfAuthParams.Mode != MODE_PHONE_APP_STANDARD)
+                pfAuthParams.Mode = MODE_SMS_ONE_WAY_OTP; //  pfAuthParams.Mode = MODE_STANDARD;
             otp = "";
             call_status = 0;
             error_id = 0;
@@ -200,9 +210,10 @@ namespace Neos.IdentityServer.Multifactor.SMS
         /// </summary>
         private static string CreateMessage(PhoneFactorParams pfAuthParams, bool asynchronous)
         {
-            bool sms     = pfAuthParams.Mode == MODE_SMS_TWO_WAY_OTP || pfAuthParams.Mode == MODE_SMS_TWO_WAY_OTP_PLUS_PIN || pfAuthParams.Mode == MODE_SMS_ONE_WAY_OTP || pfAuthParams.Mode == MODE_SMS_ONE_WAY_OTP_PLUS_PIN;
-            bool two_way = pfAuthParams.Mode == MODE_SMS_TWO_WAY_OTP || pfAuthParams.Mode == MODE_SMS_TWO_WAY_OTP_PLUS_PIN;
-            bool otp     = pfAuthParams.Mode == MODE_SMS_TWO_WAY_OTP || pfAuthParams.Mode == MODE_SMS_ONE_WAY_OTP;
+            bool sms       = pfAuthParams.Mode == MODE_SMS_TWO_WAY_OTP || pfAuthParams.Mode == MODE_SMS_TWO_WAY_OTP_PLUS_PIN || pfAuthParams.Mode == MODE_SMS_ONE_WAY_OTP || pfAuthParams.Mode == MODE_SMS_ONE_WAY_OTP_PLUS_PIN;
+            bool two_way   = pfAuthParams.Mode == MODE_SMS_TWO_WAY_OTP || pfAuthParams.Mode == MODE_SMS_TWO_WAY_OTP_PLUS_PIN;
+            bool otp       = pfAuthParams.Mode == MODE_SMS_TWO_WAY_OTP || pfAuthParams.Mode == MODE_SMS_ONE_WAY_OTP;
+            bool phone_app = pfAuthParams.Mode == MODE_PHONE_APP_STANDARD;
 
             XmlDocument doc = new XmlDocument();
 
@@ -311,8 +322,88 @@ namespace Neos.IdentityServer.Multifactor.SMS
                 auth_request.AppendChild(sms_info);
                 pin_info.SetAttribute("pinMode", MODE_STANDARD);
             }
-            auth_request.AppendChild(pin_info);
 
+            else if (phone_app)
+            {
+                XmlElement phone_app_auth_info = doc.CreateElement("phoneAppAuthInfo");
+                phone_app_auth_info.SetAttribute("mode", "standard");
+                XmlElement device_tokens = doc.CreateElement("deviceTokens");
+                element = doc.CreateElement("deviceToken");
+                if (pfAuthParams.NotificationType.Length > 0)
+                {
+                    element.SetAttribute("notificationType", pfAuthParams.NotificationType);
+                }
+                element.InnerText = pfAuthParams.DeviceToken;
+                device_tokens.AppendChild(element);
+                phone_app_auth_info.AppendChild(device_tokens);
+                element = doc.CreateElement("phoneAppAccountName");
+                element.InnerText = pfAuthParams.AccountName;
+                phone_app_auth_info.AppendChild(element);
+                XmlElement phone_app_messages = doc.CreateElement("phoneAppMessages");
+                element = doc.CreateElement("message");
+                element.SetAttribute("type", "authenticateButton");
+                element.InnerText = "Authenticate";
+                phone_app_messages.AppendChild(element);
+                element = doc.CreateElement("message");
+                element.SetAttribute("type", "authenticationDenied");
+                element.InnerText = "PhoneFactor authentication denied.";
+                phone_app_messages.AppendChild(element);
+                element = doc.CreateElement("message");
+                element.SetAttribute("type", "authenticationSuccessful");
+                element.InnerText = "You have successfully authenticated using PhoneFactor.";
+                phone_app_messages.AppendChild(element);
+                element = doc.CreateElement("message");
+                element.SetAttribute("type", "cancelButton");
+                element.InnerText = "Cancel";
+                phone_app_messages.AppendChild(element);
+                element = doc.CreateElement("message");
+                element.SetAttribute("type", "closeButton");
+                element.InnerText = "Close";
+                phone_app_messages.AppendChild(element);
+                element = doc.CreateElement("message");
+                element.SetAttribute("type", "denyAndReportFraudButton");
+                element.InnerText = "Deny and Report Fraud";
+                phone_app_messages.AppendChild(element);
+                element = doc.CreateElement("message");
+                element.SetAttribute("type", "denyButton");
+                element.InnerText = "Deny";
+                phone_app_messages.AppendChild(element);
+                element = doc.CreateElement("message");
+                element.SetAttribute("type", "fraudConfirmationNoBlock");
+                element.InnerText = "Your company's fraud response team will be notified.";
+                phone_app_messages.AppendChild(element);
+                element = doc.CreateElement("message");
+                element.SetAttribute("type", "fraudConfirmationWithBlock");
+                element.InnerText = "Your account will be blocked preventing further authentications and the company's fraud response team will be notified.";
+                phone_app_messages.AppendChild(element);
+                element = doc.CreateElement("message");
+                element.SetAttribute("type", "fraudReportedNoBlock");
+                element.InnerText = "Fraud reported.";
+                phone_app_messages.AppendChild(element);
+                element = doc.CreateElement("message");
+                element.SetAttribute("type", "fraudReportedWithBlock");
+                element.InnerText = "Fraud reported and account blocked.";
+                phone_app_messages.AppendChild(element);
+                element = doc.CreateElement("message");
+                element.SetAttribute("type", "notification");
+                element.InnerText = "You have received a PhoneFactor authentication request.";
+                phone_app_messages.AppendChild(element);
+                element = doc.CreateElement("message");
+                element.SetAttribute("type", "reportFraudButton");
+                element.InnerText = "Report Fraud";
+                phone_app_messages.AppendChild(element);
+
+                if (pfAuthParams.Mode == MODE_PHONE_APP_STANDARD)
+                {
+                    element = doc.CreateElement("message");
+                    element.SetAttribute("type", "standard");
+                    element.InnerText = "Tap Authenticate to complete your authentication.";
+                    phone_app_messages.AppendChild(element);
+                }
+
+                phone_app_auth_info.AppendChild(phone_app_messages);
+            }
+            auth_request.AppendChild(pin_info);
             return doc.InnerXml;
         }
 

@@ -75,15 +75,6 @@ namespace Neos.IdentityServer.Console
             this.ServiceGeneralNode.ViewDescriptions.Add(fvs);
             this.ServiceGeneralNode.ViewDescriptions.DefaultIndex = 0;
 
-            // SQL Scope
-            this.ServiceSQLNode = new ServiceSQLScopeNode();
-            FormViewDescription fsql = new FormViewDescription();
-            fsql.DisplayName = "MFA Platform SQL Server Properties";
-            fsql.ControlType = typeof(SQLViewControl);
-            fsql.ViewType = typeof(ServiceSQLFormView);
-            this.ServiceSQLNode.ViewDescriptions.Add(fsql);
-            this.ServiceSQLNode.ViewDescriptions.DefaultIndex = 0;
-
             // ADDS Scope
             this.ServiceADDSNode = new ServiceADDSScopeNode();
             FormViewDescription fadds = new FormViewDescription();
@@ -92,6 +83,15 @@ namespace Neos.IdentityServer.Console
             fadds.ViewType = typeof(ServiceADDSFormView);
             this.ServiceADDSNode.ViewDescriptions.Add(fadds);
             this.ServiceADDSNode.ViewDescriptions.DefaultIndex = 0;
+
+            // SQL Scope
+            this.ServiceSQLNode = new ServiceSQLScopeNode();
+            FormViewDescription fsql = new FormViewDescription();
+            fsql.DisplayName = "MFA Platform SQL Server Properties";
+            fsql.ControlType = typeof(SQLViewControl);
+            fsql.ViewType = typeof(ServiceSQLFormView);
+            this.ServiceSQLNode.ViewDescriptions.Add(fsql);
+            this.ServiceSQLNode.ViewDescriptions.DefaultIndex = 0;
 
             // SMTP Scope
             this.ServiceSMTPNode = new ServiceSMTPScopeNode();
@@ -132,8 +132,8 @@ namespace Neos.IdentityServer.Console
             this.RootNode.Children.Add(this.ServiceNode);
 
             this.RootNode.Children.Add(this.ServiceGeneralNode);
-            this.RootNode.Children.Add(this.ServiceSQLNode);
             this.RootNode.Children.Add(this.ServiceADDSNode);
+            this.RootNode.Children.Add(this.ServiceSQLNode);
             this.RootNode.Children.Add(this.ServiceSMTPNode);
             this.RootNode.Children.Add(this.ServiceSMSNode);
             this.RootNode.Children.Add(this.ServiceSecurityNode);

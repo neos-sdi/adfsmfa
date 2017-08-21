@@ -61,6 +61,7 @@ namespace Neos.IdentityServer.Console
         /// </summary>
         protected virtual void OnInitialize()
         {
+            this.Cursor = Cursors.WaitCursor;
             this.SuspendLayout();
             try
             {
@@ -85,6 +86,7 @@ namespace Neos.IdentityServer.Console
             finally
             {
                 this.ResumeLayout(true);
+                this.Cursor = Cursors.Default;
             }
         }
 
@@ -93,6 +95,7 @@ namespace Neos.IdentityServer.Console
         /// </summary>
         internal void RefreshData()
         {
+            this.Cursor = Cursors.WaitCursor;
             this.SuspendLayout();
             try
             {
@@ -129,6 +132,7 @@ namespace Neos.IdentityServer.Console
             finally
             {
                 this.ResumeLayout(true);
+                this.Cursor = Cursors.Default;
             }
         }
 

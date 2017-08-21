@@ -267,7 +267,7 @@ namespace Neos.IdentityServer.MultiFactor
             notif.ID = reg.ID;
             notif.RegistrationID = reg.ID;
             notif.OTP = otp;
-            notif.CreationDate = DateTime.Now;
+            notif.CreationDate = DateTime.UtcNow;
             notif.ValidityDate = notif.CreationDate.AddSeconds(_deliverywindow);
             notif.CheckDate = null;
             DoUpdateNotification(notif);
@@ -282,7 +282,7 @@ namespace Neos.IdentityServer.MultiFactor
             Notification notif = new Notification();
             notif.ID = registrationid;
             notif.RegistrationID = registrationid;
-            notif.CheckDate = DateTime.Now;
+            notif.CheckDate = DateTime.UtcNow;
             return DoCheckNotification(notif);
         }
 
@@ -350,7 +350,7 @@ namespace Neos.IdentityServer.MultiFactor
                             ret.RegistrationID = ret.ID;
                             ret.CreationDate = Convert.ToDateTime(DirEntry.Properties[_host.notifcreatedateAttribute].Value);
                             ret.ValidityDate = Convert.ToDateTime(DirEntry.Properties[_host.notifvalidityAttribute].Value);
-                            ret.CheckDate = notif.CheckDate;
+                            ret.CheckDate = notif.CheckDate.Value;
                             ret.OTP = Convert.ToInt32(DirEntry.Properties[_host.totpAttribute].Value.ToString());
 
                             DirEntry.Properties[_host.notifcheckdateattribute].Value = notif.CheckDate.Value.ToString("u");

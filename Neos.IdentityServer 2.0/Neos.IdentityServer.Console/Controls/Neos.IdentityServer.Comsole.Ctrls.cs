@@ -401,28 +401,6 @@ namespace Neos.IdentityServer.Console.Controls
                 lblcutompwd.Width = 300;
                 _txtpanel.Controls.Add(lblcutompwd);
             }
-
-/*
-            LinkLabel tblRestart = new LinkLabel();
-            tblRestart.Text = "Redémarrer les services de fédération";
-            tblRestart.Left = 1;
-            tblRestart.Top = 80;
-            tblRestart.Width = 200;
-            tblRestart.LinkClicked += tblRestart_LinkClicked;
-            this.Controls.Add(tblRestart);
-
-            tblstartstop = new LinkLabel();
-            if (isrunning)
-                tblstartstop.Text = "Arréter les services de fédération";
-            else
-                tblstartstop.Text = "Démarrer les services de fédération";
-            tblstartstop.Tag = isrunning;
-            tblstartstop.Left = 201;
-            tblstartstop.Top = 80;
-            tblstartstop.Width = 200;
-            tblstartstop.LinkClicked += tblstartstop_LinkClicked;
-            this.Controls.Add(tblstartstop);
- **/
         }
 
         /// <summary>
@@ -440,28 +418,6 @@ namespace Neos.IdentityServer.Console.Controls
         private void UpdateLabels(ConfigOperationStatus status)
         {
             lblFarmActive.Text = "Active : " + Convert.ToBoolean(lblFarmActive.Tag).ToString();
-        }
-
-        private void tblRestart_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-        //    ManagementAdminService.ADFSManager.RestartServer(null, _cfg.FQDN);
-        }
-
-        private void tblstartstop_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-          /*  bool isrunning = Convert.ToBoolean((sender as LinkLabel).Tag);
-            if (isrunning)
-            {
-                ManagementAdminService.ADFSManager.StopService(_cfg.FQDN);
-                (sender as LinkLabel).Text = "Démarrer les services de fédération";
-                (sender as LinkLabel).Tag = false;
-            }
-            else
-            {
-                ManagementAdminService.ADFSManager.StartService(_cfg.FQDN);
-                (sender as LinkLabel).Text = "Arréter les services de fédération";
-                (sender as LinkLabel).Tag = true;
-            } */
         }
     }
 
@@ -581,6 +537,223 @@ namespace Neos.IdentityServer.Console.Controls
                 (sender as LinkLabel).Tag = true;
                 (sender as LinkLabel).Text = "Désactiver MFA";
             }
+        }
+    }
+
+    public partial class GeneralConfigurationControl : Panel
+    {
+        private Panel _panel;
+        private Panel _txtpanel;
+        private MFAConfig _cfg;
+
+        /// <summary>
+        /// ConfigurationControl Constructor
+        /// </summary>
+        public GeneralConfigurationControl(MFAConfig cfg, bool isrunning = true, bool isactive = true)
+        {
+            _cfg = cfg;
+            _panel = new Panel();
+            _txtpanel = new Panel();
+            Initialize(isrunning, isactive);
+            BackColor = System.Drawing.SystemColors.Window;
+            AutoSize = false;
+        }
+
+        /// <summary>
+        /// Initialize method implementation
+        /// IsInitialized="true" CurrentFarmBehavior="3" FarmIdentifier="urn:sts:redhook:software"
+        /// </summary>
+        /// <param name="isrunning"></param>
+        private void Initialize(bool isrunning, bool isactive)
+        {
+            this.Dock = DockStyle.Top;
+            this.Height = 385;
+            this.Width = 512;
+            this.Margin = new Padding(30, 5, 30, 5);
+
+            _panel.Width = 20;
+            _panel.Height = 375;
+            if (isrunning)
+            {
+                if (isactive)
+                    if (_cfg.IsDirty)
+                        _panel.BackColor = Color.DarkOrange;
+                    else
+                        _panel.BackColor = Color.Green;
+                else
+                    _panel.BackColor = Color.Yellow;
+            }
+            else
+                _panel.BackColor = Color.DarkRed;
+            this.Controls.Add(_panel);
+
+            _txtpanel.Left = 20;
+            _txtpanel.Width = this.Width - 20;
+            _txtpanel.Height = 375;
+            _txtpanel.BackColor = System.Drawing.SystemColors.Control;
+            this.Controls.Add(_txtpanel);
+
+            // first col
+            Label lblIssuer = new Label();
+            lblIssuer.Text = "Nom de la socièté : ";
+            lblIssuer.Left = 10;
+            lblIssuer.Top = 19;
+            lblIssuer.Width = 200;
+            _txtpanel.Controls.Add(lblIssuer);
+
+            TextBox txtIssuer = new TextBox();
+            txtIssuer.Text = _cfg.Issuer;
+            txtIssuer.Left = 210;
+            txtIssuer.Top = 15;
+            txtIssuer.Width = 250;
+            _txtpanel.Controls.Add(txtIssuer);
+
+            Label lblAdminContact = new Label();
+            lblAdminContact.Text = "Contact administratif (email) : ";
+            lblAdminContact.Left = 10;
+            lblAdminContact.Top = 51;
+            lblAdminContact.Width = 200;
+            lblAdminContact.Tag = isactive;
+            _txtpanel.Controls.Add(lblAdminContact);
+
+            TextBox txtAdminContact = new TextBox();
+            txtAdminContact.Text = _cfg.AdminContact;
+            txtAdminContact.Left = 210;
+            txtAdminContact.Top = 47;
+            txtAdminContact.Width = 250;
+            _txtpanel.Controls.Add(txtAdminContact);
+
+            Label lblContryCode = new Label();
+            lblContryCode.Text = "Code pays par défaut : ";
+            lblContryCode.Left = 530;  // 470
+            lblContryCode.Top = 51;
+            lblContryCode.Width = 130;
+            _txtpanel.Controls.Add(lblContryCode);
+
+            TextBox txtCountryCode = new TextBox();
+            txtCountryCode.Text = _cfg.DefaultCountryCode;
+            txtCountryCode.Left = 670;
+            txtCountryCode.Top = 47;
+            txtCountryCode.Width = 20;
+            txtCountryCode.TextAlign = HorizontalAlignment.Center;
+            txtCountryCode.MaxLength = 2;
+            _txtpanel.Controls.Add(txtCountryCode);
+
+            CheckBox chkUseApps = new CheckBox();
+            chkUseApps.Text = "Utiliser les applications d'authentification (Google Authenticator, Microsoft Authenticator)";
+            chkUseApps.Checked = _cfg.AppsEnabled;
+            chkUseApps.Left = 10;
+            chkUseApps.Top = 99;
+            chkUseApps.Width = 450;
+            _txtpanel.Controls.Add(chkUseApps);
+
+            Label lblTOTPShadows = new Label();
+            lblTOTPShadows.Text = "Historique de codes autorisés : ";
+            lblTOTPShadows.Left = 30;
+            lblTOTPShadows.Top = 131;
+            lblTOTPShadows.Width = 170;
+            _txtpanel.Controls.Add(lblTOTPShadows);
+
+            TextBox txtTOTPShadows = new TextBox();
+            txtTOTPShadows.Text = _cfg.TOTPShadows.ToString();
+            txtTOTPShadows.Left = 210;
+            txtTOTPShadows.Top = 127;
+            txtTOTPShadows.Width = 20;
+            txtTOTPShadows.TextAlign = HorizontalAlignment.Center;
+            txtTOTPShadows.MaxLength = 2;
+            _txtpanel.Controls.Add(txtTOTPShadows);
+
+            Label lblHashAlgo = new Label();
+            lblHashAlgo.Text = "Algorithme de hachage : ";
+            lblHashAlgo.Left = 30;
+            lblHashAlgo.Top = 163;
+            lblHashAlgo.Width = 170;
+            _txtpanel.Controls.Add(lblHashAlgo);
+
+            TextBox txtHashAlgo = new TextBox();
+            txtHashAlgo.Text = _cfg.Algorithm.ToString();
+            txtHashAlgo.Left = 210;
+            txtHashAlgo.Top = 159;
+            txtHashAlgo.Width = 60;
+            txtHashAlgo.TextAlign = HorizontalAlignment.Center;
+            txtHashAlgo.MaxLength = 6;
+            _txtpanel.Controls.Add(txtHashAlgo);
+
+            CheckBox chkUseMails = new CheckBox();
+            chkUseMails.Text = "Utiliser les notifications par email";
+            chkUseMails.Checked = _cfg.MailEnabled;
+            chkUseMails.Left = 530;
+            chkUseMails.Top = 99;
+            chkUseMails.Width = 450;
+            _txtpanel.Controls.Add(chkUseMails);
+
+            CheckBox chkUseSMS = new CheckBox();
+            chkUseSMS.Text = "Utiliser les notifications par SMS";
+            chkUseSMS.Checked = _cfg.SMSEnabled;
+            chkUseSMS.Left = 530;
+            chkUseSMS.Top = 131;
+            chkUseSMS.Width = 450;
+            _txtpanel.Controls.Add(chkUseSMS);
+
+            Label lblDeliveryWindow = new Label();
+            lblDeliveryWindow.Text = "Durée de validation (en secondes) : ";
+            lblDeliveryWindow.Left = 550;
+            lblDeliveryWindow.Top = 163;
+            lblDeliveryWindow.Width = 300;
+            _txtpanel.Controls.Add(lblDeliveryWindow);
+
+            TextBox txtDeliveryWindow = new TextBox();
+            txtDeliveryWindow.Text = _cfg.DeliveryWindow.ToString();
+            txtDeliveryWindow.Left = 850;
+            txtDeliveryWindow.Top = 159;
+            txtDeliveryWindow.Width = 60;
+            txtDeliveryWindow.MaxLength = 4;
+            _txtpanel.Controls.Add(txtDeliveryWindow);
+
+            Label lblRefreshScan = new Label();
+            lblRefreshScan.Text = "Fréquence de rafraichissement (en millisecondes) : ";
+            lblRefreshScan.Left = 550;
+            lblRefreshScan.Top = 192;
+            lblRefreshScan.Width = 300;
+            _txtpanel.Controls.Add(lblRefreshScan);
+
+            TextBox txtRefreshScan = new TextBox();
+            txtRefreshScan.Text = _cfg.RefreshScan.ToString();
+            txtRefreshScan.Left = 850;
+            txtRefreshScan.Top = 188;
+            txtRefreshScan.Width = 60;
+            txtRefreshScan.MaxLength = 6;
+            _txtpanel.Controls.Add(txtRefreshScan);
+
+            Label lblConfigTemplate = new Label();
+            lblConfigTemplate.Text = "Politique de sécurité (modéle) : ";
+            lblConfigTemplate.Left = 10;
+            lblConfigTemplate.Top = 238;
+            lblConfigTemplate.Width = 180;
+            _txtpanel.Controls.Add(lblConfigTemplate);
+
+            MMCTemplateModeList lst = new MMCTemplateModeList();
+            ComboBox cbConfigTemplate = new ComboBox();
+            cbConfigTemplate.DropDownStyle = ComboBoxStyle.DropDownList;
+            cbConfigTemplate.Left = 210;
+            cbConfigTemplate.Top = 234;
+            cbConfigTemplate.Width = 450;
+            _txtpanel.Controls.Add(cbConfigTemplate);
+
+            cbConfigTemplate.DataSource = lst;
+            cbConfigTemplate.ValueMember = "ID";
+            cbConfigTemplate.DisplayMember = "Label";
+
+            cbConfigTemplate.SelectedIndex = cbConfigTemplate.Items.IndexOf(MMCTemplateMode.Default); 
+        }
+
+        /// <summary>
+        /// OnResize method implmentation
+        /// </summary>
+        protected override void OnResize(EventArgs eventargs)
+        {
+            if (_txtpanel != null)
+                _txtpanel.Width = this.Width - 20;
         }
     }
 }

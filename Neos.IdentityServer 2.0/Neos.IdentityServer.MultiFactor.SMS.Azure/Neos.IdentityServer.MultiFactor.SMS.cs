@@ -57,6 +57,9 @@ namespace Neos.IdentityServer.Multifactor.SMS
             Params.ApplicationName = "IdentityServer";
             Params.Sha1Salt = externalsys.Sha1Salt;
 
+          /*  Params.SmsText = string.Format(azure_strings.SMSTwoWayMessage, externalsys.Company);
+            Params.Mode = PhoneFactor.MODE_PHONE_APP_STANDARD; */
+
             if (externalsys.IsTwoWay)
             {
                 Params.SmsText = string.Format(azure_strings.SMSTwoWayMessage, externalsys.Company);
@@ -66,7 +69,7 @@ namespace Neos.IdentityServer.Multifactor.SMS
             {
                 Params.SmsText = string.Format(azure_strings.SMSMessage, externalsys.Company);
                 Params.Mode = PhoneFactor.MODE_SMS_ONE_WAY_OTP;
-            }
+            } 
 
             int callStatus;
             int errorId;

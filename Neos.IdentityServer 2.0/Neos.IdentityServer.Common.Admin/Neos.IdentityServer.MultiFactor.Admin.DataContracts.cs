@@ -84,6 +84,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         public UsersFilterField ID { get; set; }
         public String Label { get; set; }
     }
+
     /// <summary>
     /// UsersFilterFieldList class implémentation
     /// </summary>
@@ -440,7 +441,34 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         Default = 2,                     // (UserFeaturesOptions.AllowDisabled | UserFeaturesOptions.AllowUnRegistered | UserFeaturesOptions.AllowManageOptions | UserFeaturesOptions.AllowChangePassword);
         Managed = 3,                     // (UserFeaturesOptions.BypassDisabled | UserFeaturesOptions.AllowUnRegistered | UserFeaturesOptions.AllowProvideInformations | UserFeaturesOptions.AllowChangePassword);
         Strict = 4,                      // (UserFeaturesOptions.AllowProvideInformations);
-        Administrative = 5               // (UserFeaturesOptions.AdministrativeMode);   
+        Administrative = 5,              // (UserFeaturesOptions.AdministrativeMode);
+        Custom = 6                       // Empty 
+    }
+
+    /// <summary>
+    /// MMCTemplateModeItem class
+    /// </summary>
+    public class MMCTemplateModeItem
+    {
+        public MMCTemplateMode ID { get; set; }
+        public String Label { get; set; }
+    }
+
+    /// <summary>
+    /// MMCTemplateModeList class implémentation
+    /// </summary>
+    public class MMCTemplateModeList : BindingList<MMCTemplateModeItem>
+    {
+        public MMCTemplateModeList()
+        {
+            this.Add(new MMCTemplateModeItem() { ID = MMCTemplateMode.Free, Label = "Free template" });
+            this.Add(new MMCTemplateModeItem() { ID = MMCTemplateMode.Open, Label = "Open template" });
+            this.Add(new MMCTemplateModeItem() { ID = MMCTemplateMode.Default, Label = "Default template" });
+            this.Add(new MMCTemplateModeItem() { ID = MMCTemplateMode.Managed, Label = "Managed template" });
+            this.Add(new MMCTemplateModeItem() { ID = MMCTemplateMode.Strict, Label = "Strict template" });
+            this.Add(new MMCTemplateModeItem() { ID = MMCTemplateMode.Administrative, Label = "Administrative template" });
+            this.Add(new MMCTemplateModeItem() { ID = MMCTemplateMode.Custom, Label = "Custom template" });
+        }
     }
 
     [Serializable]

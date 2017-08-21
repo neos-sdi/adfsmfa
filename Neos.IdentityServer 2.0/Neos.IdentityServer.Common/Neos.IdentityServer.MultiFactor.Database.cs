@@ -346,7 +346,7 @@ namespace Neos.IdentityServer.MultiFactor
             Notification notif = new Notification();
             notif.RegistrationID = reg.ID;
             notif.OTP = otp;
-            notif.CreationDate = DateTime.Now;
+            notif.CreationDate = DateTime.UtcNow;
             notif.ValidityDate = notif.CreationDate.AddSeconds(_deliverywindow);
             notif.CheckDate = null;
             if (HasNotification(notif.RegistrationID))
@@ -363,7 +363,7 @@ namespace Neos.IdentityServer.MultiFactor
         {
             Notification notif = new Notification();
             notif.RegistrationID = registrationid;
-            notif.CheckDate = DateTime.Now;
+            notif.CheckDate = DateTime.UtcNow;
             return DoCheckNotification(notif);
         }
         #endregion

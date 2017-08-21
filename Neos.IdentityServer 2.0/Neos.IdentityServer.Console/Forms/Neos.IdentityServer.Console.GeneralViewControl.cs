@@ -15,6 +15,31 @@
 // https://github.com/neos-sdi/adfsmfa                                                                                                                                                      //
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
+/*
+  Issuer="redhook" 
+  AdminContact="franck.musson@gmail.com" 
+  DefaultCountryCode="fr" 
+
+  UseActiveDirectory="true" 
+  CustomUpdatePassword="true" 
+
+  AppsEnabled="true" 
+    TOTPShadows="2" 
+    Algorithm="SHA1" 
+ 
+ 
+  MailEnabled="true" 
+  SMSEnabled="true" 
+    DeliveryWindow="300" 
+    RefreshScan="3000" 
+    
+  UserFeatures="BypassDisabled AllowUnRegistered AllowChangePassword AllowManageOptions"
+  <ActivationAdvertising>
+    <FirstDay>1</FirstDay>
+    <LastDay>31</LastDay>
+  </ActivationAdvertising>
+*/
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -26,6 +51,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Microsoft.ManagementConsole;
 using Neos.IdentityServer.MultiFactor.Administration;
+using Neos.IdentityServer.Console.Controls;
 using System.Threading;
 using Neos.IdentityServer.MultiFactor;
 using System.DirectoryServices;
@@ -56,6 +82,43 @@ namespace Neos.IdentityServer.Console
         /// </summary>
         protected virtual void OnInitialize()
         {
+            this.SuspendLayout();
+            try
+            {
+                ADFSServiceManager mgr = ManagementAdminService.ADFSManager;
+                bool isconfigured = mgr.IsFarmConfigured();
+                bool isactive = mgr.IsMFAProviderEnabled(null);
+                this.tableLayoutPanel.Controls.Add(new GeneralConfigurationControl(mgr.Config, isconfigured, isactive), 0, 1);
+            }
+            finally
+            {
+                this.ResumeLayout(true);
+            }
+        }
+
+        /// <summary>
+        /// RefreshData method implementation
+        /// </summary>
+        internal void RefreshData()
+        {
+            this.SuspendLayout();
+            try
+            {
+                for (int j = this.tableLayoutPanel.Controls.Count - 1; j >= 0; j--)
+                {
+                    Control ctrl = this.tableLayoutPanel.Controls[j];
+                    if (ctrl is GeneralConfigurationControl)
+                        this.tableLayoutPanel.Controls.RemoveAt(j);
+                }
+                ADFSServiceManager mgr = ManagementAdminService.ADFSManager;
+                bool isconfigured = mgr.IsFarmConfigured();
+                bool isactive = mgr.IsMFAProviderEnabled(null);
+                this.tableLayoutPanel.Controls.Add(new GeneralConfigurationControl(mgr.Config, isconfigured, isactive), 0, 1);
+            }
+            finally
+            {
+                this.ResumeLayout(true);
+            }
         }
 
         #region Properties
