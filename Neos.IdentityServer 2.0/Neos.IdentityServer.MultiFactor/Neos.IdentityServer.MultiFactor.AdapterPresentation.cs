@@ -1651,7 +1651,10 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         private string StripDisplayKey(string dkey)
         {
-            return dkey.Substring(0, 5) + " ... (truncated for security reasons) ...";
+            if ((dkey!=null) && (dkey.Length>128))
+                return dkey.Substring(0, 5) + " ... (truncated for security reasons) ...";
+            else
+                return dkey.Substring(0, 5) + " ... (invalid key) ...";
         }
     }
 }

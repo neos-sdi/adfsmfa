@@ -17,6 +17,7 @@
 //******************************************************************************************************************************************************************************************//
 using System;
 using System.DirectoryServices;
+using System.ServiceModel;
 using System.Text;
 
 namespace Neos.IdentityServer.MultiFactor
@@ -41,66 +42,74 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public Registration GetUserRegistration(string upn)
         {
-            Registration reg = null; 
-            using (DirectoryEntry rootdir = GetDirectoryEntry())
+            Registration reg = null;
+            try
             {
-                string qryldap = string.Empty;
-                qryldap = "(&(objectCategory=user)(objectClass=user)(userprincipalname=" + upn + ")(!(userAccountControl:1.2.840.113556.1.4.803:=2)))";
-               
-                using (DirectorySearcher dsusr = new DirectorySearcher(rootdir, qryldap))
+                using (DirectoryEntry rootdir = GetDirectoryEntry())
                 {
-                    dsusr.PropertiesToLoad.Clear();
-                    dsusr.PropertiesToLoad.Add("objectGUID");
-                    dsusr.PropertiesToLoad.Add("userPrincipalName");
-                    dsusr.PropertiesToLoad.Add("whenCreated");
-                    dsusr.PropertiesToLoad.Add(_host.mailAttribute);
-                    dsusr.PropertiesToLoad.Add(_host.phoneAttribute);
-                    dsusr.PropertiesToLoad.Add(_host.methodAttribute);
-                    dsusr.PropertiesToLoad.Add(_host.totpEnabledAttribute);
+                    string qryldap = string.Empty;
+                    qryldap = "(&(objectCategory=user)(objectClass=user)(userprincipalname=" + upn + ")(!(userAccountControl:1.2.840.113556.1.4.803:=2)))";
 
-                    SearchResult sr = dsusr.FindOne();
-                    if (sr != null)
+                    using (DirectorySearcher dsusr = new DirectorySearcher(rootdir, qryldap))
                     {
-                        reg = new Registration();
-                        using (DirectoryEntry DirEntry = GetDirectoryEntry(sr))
+                        dsusr.PropertiesToLoad.Clear();
+                        dsusr.PropertiesToLoad.Add("objectGUID");
+                        dsusr.PropertiesToLoad.Add("userPrincipalName");
+                        dsusr.PropertiesToLoad.Add("whenCreated");
+                        dsusr.PropertiesToLoad.Add(_host.mailAttribute);
+                        dsusr.PropertiesToLoad.Add(_host.phoneAttribute);
+                        dsusr.PropertiesToLoad.Add(_host.methodAttribute);
+                        dsusr.PropertiesToLoad.Add(_host.totpEnabledAttribute);
+
+                        SearchResult sr = dsusr.FindOne();
+                        if (sr != null)
                         {
-                            if (DirEntry.Properties["objectGUID"].Value != null)
+                            reg = new Registration();
+                            using (DirectoryEntry DirEntry = GetDirectoryEntry(sr))
                             {
-                                reg.ID = new Guid((byte[])DirEntry.Properties["objectGUID"].Value).ToString();
-                                reg.UPN = DirEntry.Properties["userPrincipalName"].Value.ToString();
-                                if (DirEntry.Properties["whenCreated"].Value != null)
-                                    reg.CreationDate = Convert.ToDateTime(DirEntry.Properties["whenCreated"].Value);
-                                if (DirEntry.Properties[_host.mailAttribute].Value != null)
+                                if (DirEntry.Properties["objectGUID"].Value != null)
                                 {
-                                    reg.MailAddress = DirEntry.Properties[_host.mailAttribute].Value.ToString();
-                                    reg.IsRegistered = true;
-                                }
-                                if (DirEntry.Properties[_host.phoneAttribute].Value != null)
-                                {
-                                    reg.PhoneNumber = DirEntry.Properties[_host.phoneAttribute].Value.ToString();
-                                    reg.IsRegistered = true;
-                                }
-                                if (DirEntry.Properties[_host.methodAttribute].Value != null)
-                                {
-                                    reg.PreferredMethod = (RegistrationPreferredMethod)Enum.Parse(typeof(RegistrationPreferredMethod), DirEntry.Properties[_host.methodAttribute].Value.ToString(), true);
-                                    if (reg.PreferredMethod != RegistrationPreferredMethod.Choose)
+                                    reg.ID = new Guid((byte[])DirEntry.Properties["objectGUID"].Value).ToString();
+                                    reg.UPN = DirEntry.Properties["userPrincipalName"].Value.ToString();
+                                    if (DirEntry.Properties["whenCreated"].Value != null)
+                                        reg.CreationDate = Convert.ToDateTime(DirEntry.Properties["whenCreated"].Value);
+                                    if (DirEntry.Properties[_host.mailAttribute].Value != null)
+                                    {
+                                        reg.MailAddress = DirEntry.Properties[_host.mailAttribute].Value.ToString();
                                         reg.IsRegistered = true;
+                                    }
+                                    if (DirEntry.Properties[_host.phoneAttribute].Value != null)
+                                    {
+                                        reg.PhoneNumber = DirEntry.Properties[_host.phoneAttribute].Value.ToString();
+                                        reg.IsRegistered = true;
+                                    }
+                                    if (DirEntry.Properties[_host.methodAttribute].Value != null)
+                                    {
+                                        reg.PreferredMethod = (RegistrationPreferredMethod)Enum.Parse(typeof(RegistrationPreferredMethod), DirEntry.Properties[_host.methodAttribute].Value.ToString(), true);
+                                        if (reg.PreferredMethod != RegistrationPreferredMethod.Choose)
+                                            reg.IsRegistered = true;
+                                    }
+                                    if (DirEntry.Properties[_host.totpEnabledAttribute].Value != null)
+                                    {
+                                        reg.Enabled = bool.Parse(DirEntry.Properties[_host.totpEnabledAttribute].Value.ToString());
+                                        reg.IsRegistered = true;
+                                    }
+                                    if (reg.IsRegistered)
+                                        return reg;
+                                    else
+                                        return null;
                                 }
-                                if (DirEntry.Properties[_host.totpEnabledAttribute].Value != null)
-                                {
-                                    reg.Enabled = bool.Parse(DirEntry.Properties[_host.totpEnabledAttribute].Value.ToString());
-                                    reg.IsRegistered = true;
-                                }
-                                if (reg.IsRegistered)
-                                    return reg;
                                 else
                                     return null;
-                            }
-                            else
-                                return null;
-                        };
+                            };
+                        }
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                Log.WriteEntry(ex.Message, System.Diagnostics.EventLogEntryType.Error, 5000);
+                throw new FaultException(ex.Message);
             }
             return null;
         }
@@ -110,46 +119,54 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public void SetUserRegistration(Registration reg)
         {
-            using (DirectoryEntry rootdir = GetDirectoryEntry())
+            try
             {
-                string qryldap = "(&(objectCategory=user)(objectClass=user)(userprincipalname=" + reg.UPN + ")(!(userAccountControl:1.2.840.113556.1.4.803:=2)))";
-
-                using (DirectorySearcher dsusr = new DirectorySearcher(rootdir, qryldap))
+                using (DirectoryEntry rootdir = GetDirectoryEntry())
                 {
-                    dsusr.PropertiesToLoad.Clear();
-                    dsusr.PropertiesToLoad.Add("userPrincipalName");
+                    string qryldap = "(&(objectCategory=user)(objectClass=user)(userprincipalname=" + reg.UPN + ")(!(userAccountControl:1.2.840.113556.1.4.803:=2)))";
 
-                    SearchResult sr = dsusr.FindOne();
-                    if (sr != null)
+                    using (DirectorySearcher dsusr = new DirectorySearcher(rootdir, qryldap))
                     {
-                        bool mustcommit = false;
-                        using (DirectoryEntry DirEntry = GetDirectoryEntry(sr))
-                        {
-                            if (!string.IsNullOrEmpty(reg.MailAddress))
-                            {
-                                DirEntry.Properties[_host.mailAttribute].Value = reg.MailAddress;
-                                mustcommit = true;
-                            }
-                            else
-                                DirEntry.Properties[_host.mailAttribute].Clear();
-                            if (!string.IsNullOrEmpty(reg.PhoneNumber))
-                            {
-                                DirEntry.Properties[_host.phoneAttribute].Value = reg.PhoneNumber;
-                                mustcommit = true;
-                            }
-                            else
-                                DirEntry.Properties[_host.phoneAttribute].Clear();
+                        dsusr.PropertiesToLoad.Clear();
+                        dsusr.PropertiesToLoad.Add("userPrincipalName");
 
-                            if (reg.Enabled)
-                                DirEntry.Properties[_host.totpEnabledAttribute].Value = true;
-                            else
-                                DirEntry.Properties[_host.totpEnabledAttribute].Value = false;
-                            if (mustcommit)
-                                DirEntry.Properties[_host.methodAttribute].Value = ((int)reg.PreferredMethod).ToString();
-                            DirEntry.CommitChanges();
-                        };
+                        SearchResult sr = dsusr.FindOne();
+                        if (sr != null)
+                        {
+                            bool mustcommit = false;
+                            using (DirectoryEntry DirEntry = GetDirectoryEntry(sr))
+                            {
+                                if (!string.IsNullOrEmpty(reg.MailAddress))
+                                {
+                                    DirEntry.Properties[_host.mailAttribute].Value = reg.MailAddress;
+                                    mustcommit = true;
+                                }
+                                else
+                                    DirEntry.Properties[_host.mailAttribute].Clear();
+                                if (!string.IsNullOrEmpty(reg.PhoneNumber))
+                                {
+                                    DirEntry.Properties[_host.phoneAttribute].Value = reg.PhoneNumber;
+                                    mustcommit = true;
+                                }
+                                else
+                                    DirEntry.Properties[_host.phoneAttribute].Clear();
+
+                                if (reg.Enabled)
+                                    DirEntry.Properties[_host.totpEnabledAttribute].Value = true;
+                                else
+                                    DirEntry.Properties[_host.totpEnabledAttribute].Value = false;
+                                if (mustcommit)
+                                    DirEntry.Properties[_host.methodAttribute].Value = ((int)reg.PreferredMethod).ToString();
+                                DirEntry.CommitChanges();
+                            };
+                        }
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                Log.WriteEntry(ex.Message, System.Diagnostics.EventLogEntryType.Error, 5000);
+                throw new FaultException(ex.Message);
             }
         }
 
@@ -159,33 +176,41 @@ namespace Neos.IdentityServer.MultiFactor
         public string GetUserKey(string upn)
         {
             string ret = string.Empty;
-            using (DirectoryEntry rootdir = GetDirectoryEntry())
+            try
             {
-                string qryldap = string.Empty;
-                qryldap = "(&(objectCategory=user)(objectClass=user)(userprincipalname=" + upn + ")(" + _host.keyAttribute + "=*)(!(userAccountControl:1.2.840.113556.1.4.803:=2)))";
-
-                using (DirectorySearcher dsusr = new DirectorySearcher(rootdir, qryldap))
+                using (DirectoryEntry rootdir = GetDirectoryEntry())
                 {
-                    dsusr.PropertiesToLoad.Clear();
-                    dsusr.PropertiesToLoad.Add("objectGUID");
-                    dsusr.PropertiesToLoad.Add("userPrincipalName");
-                    dsusr.PropertiesToLoad.Add(_host.keyAttribute);
+                    string qryldap = string.Empty;
+                    qryldap = "(&(objectCategory=user)(objectClass=user)(userprincipalname=" + upn + ")(" + _host.keyAttribute + "=*)(!(userAccountControl:1.2.840.113556.1.4.803:=2)))";
 
-                    SearchResult sr = dsusr.FindOne();
-                    if (sr != null)
+                    using (DirectorySearcher dsusr = new DirectorySearcher(rootdir, qryldap))
                     {
-                        using (DirectoryEntry DirEntry = GetDirectoryEntry(sr))
+                        dsusr.PropertiesToLoad.Clear();
+                        dsusr.PropertiesToLoad.Add("objectGUID");
+                        dsusr.PropertiesToLoad.Add("userPrincipalName");
+                        dsusr.PropertiesToLoad.Add(_host.keyAttribute);
+
+                        SearchResult sr = dsusr.FindOne();
+                        if (sr != null)
                         {
-                            if (DirEntry.Properties["objectGUID"].Value != null)
+                            using (DirectoryEntry DirEntry = GetDirectoryEntry(sr))
                             {
-                                if (DirEntry.Properties[_host.keyAttribute].Value != null)
-                                    ret = DirEntry.Properties[_host.keyAttribute].Value.ToString();
-                            }
-                            else
-                                return string.Empty;
-                        };
+                                if (DirEntry.Properties["objectGUID"].Value != null)
+                                {
+                                    if (DirEntry.Properties[_host.keyAttribute].Value != null)
+                                        ret = DirEntry.Properties[_host.keyAttribute].Value.ToString();
+                                }
+                                else
+                                    return string.Empty;
+                            };
+                        }
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                Log.WriteEntry(ex.Message, System.Diagnostics.EventLogEntryType.Error, 5000);
+                throw new FaultException(ex.Message);
             }
             return ret;
         }
@@ -196,27 +221,35 @@ namespace Neos.IdentityServer.MultiFactor
         public string NewUserKey(string upn, string secretkey)
         {
             string ret = string.Empty;
-            using (DirectoryEntry rootdir = GetDirectoryEntry())
+            try
             {
-                string qryldap = "(&(objectCategory=user)(objectClass=user)(userprincipalname=" + upn + ")(!(userAccountControl:1.2.840.113556.1.4.803:=2)))";
-
-                using (DirectorySearcher dsusr = new DirectorySearcher(rootdir, qryldap))
+                using (DirectoryEntry rootdir = GetDirectoryEntry())
                 {
-                    dsusr.PropertiesToLoad.Clear();
-                    dsusr.PropertiesToLoad.Add("userPrincipalName");
-                    dsusr.PropertiesToLoad.Add(_host.keyAttribute);
+                    string qryldap = "(&(objectCategory=user)(objectClass=user)(userprincipalname=" + upn + ")(!(userAccountControl:1.2.840.113556.1.4.803:=2)))";
 
-                    SearchResult sr = dsusr.FindOne();
-                    if (sr != null)
+                    using (DirectorySearcher dsusr = new DirectorySearcher(rootdir, qryldap))
                     {
-                        using (DirectoryEntry DirEntry = GetDirectoryEntry(sr))
+                        dsusr.PropertiesToLoad.Clear();
+                        dsusr.PropertiesToLoad.Add("userPrincipalName");
+                        dsusr.PropertiesToLoad.Add(_host.keyAttribute);
+
+                        SearchResult sr = dsusr.FindOne();
+                        if (sr != null)
                         {
-                            DirEntry.Properties[_host.keyAttribute].Value = secretkey;
-                            DirEntry.CommitChanges();
-                            ret = secretkey;
-                        };
+                            using (DirectoryEntry DirEntry = GetDirectoryEntry(sr))
+                            {
+                                DirEntry.Properties[_host.keyAttribute].Value = secretkey;
+                                DirEntry.CommitChanges();
+                                ret = secretkey;
+                            };
+                        }
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                Log.WriteEntry(ex.Message, System.Diagnostics.EventLogEntryType.Error, 5000);
+                throw new FaultException(ex.Message);
             }
             return ret;
         }
@@ -227,31 +260,39 @@ namespace Neos.IdentityServer.MultiFactor
         public bool RemoveUserKey(string upn)
         {
             bool ret = false;
-            using (DirectoryEntry rootdir = GetDirectoryEntry())
+            try
             {
-                string qryldap = "(&(objectCategory=user)(objectClass=user)(userprincipalname=" + upn + ")(!(userAccountControl:1.2.840.113556.1.4.803:=2)))";
-
-                using (DirectorySearcher dsusr = new DirectorySearcher(rootdir, qryldap))
+                using (DirectoryEntry rootdir = GetDirectoryEntry())
                 {
-                    dsusr.PropertiesToLoad.Clear();
-                    dsusr.PropertiesToLoad.Add("objectGUID");
-                    dsusr.PropertiesToLoad.Add("userPrincipalName");
-                    dsusr.PropertiesToLoad.Add(_host.keyAttribute);
+                    string qryldap = "(&(objectCategory=user)(objectClass=user)(userprincipalname=" + upn + ")(!(userAccountControl:1.2.840.113556.1.4.803:=2)))";
 
-                    SearchResult sr = dsusr.FindOne();
-                    if (sr != null)
+                    using (DirectorySearcher dsusr = new DirectorySearcher(rootdir, qryldap))
                     {
-                        using (DirectoryEntry DirEntry = GetDirectoryEntry(sr))
+                        dsusr.PropertiesToLoad.Clear();
+                        dsusr.PropertiesToLoad.Add("objectGUID");
+                        dsusr.PropertiesToLoad.Add("userPrincipalName");
+                        dsusr.PropertiesToLoad.Add(_host.keyAttribute);
+
+                        SearchResult sr = dsusr.FindOne();
+                        if (sr != null)
                         {
-                            if (DirEntry.Properties["objectGUID"].Value != null)
+                            using (DirectoryEntry DirEntry = GetDirectoryEntry(sr))
                             {
-                                DirEntry.Properties[_host.keyAttribute].Clear();
-                                DirEntry.CommitChanges();
-                                ret = true;
-                            }
-                        };
+                                if (DirEntry.Properties["objectGUID"].Value != null)
+                                {
+                                    DirEntry.Properties[_host.keyAttribute].Clear();
+                                    DirEntry.CommitChanges();
+                                    ret = true;
+                                }
+                            };
+                        }
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                Log.WriteEntry(ex.Message, System.Diagnostics.EventLogEntryType.Error, 5000);
+                throw new FaultException(ex.Message);
             }
             return ret;
         }
@@ -292,31 +333,39 @@ namespace Neos.IdentityServer.MultiFactor
         private bool DoUpdateNotification(Notification notif)
         {
             bool isok = false;
-            using (DirectoryEntry rootdir = GetDirectoryEntry())
+            try
             {
-                string qryldap = "(&(objectCategory=user)(objectClass=user)(objectGUID=" + GetBinaryStringFromGuidString(notif.RegistrationID) + ")(!(userAccountControl:1.2.840.113556.1.4.803:=2)))";
-
-                using (DirectorySearcher dsusr = new DirectorySearcher(rootdir, qryldap))
+                using (DirectoryEntry rootdir = GetDirectoryEntry())
                 {
-                    dsusr.PropertiesToLoad.Clear();
-                    dsusr.PropertiesToLoad.Add("objectGUID");
-                    dsusr.PropertiesToLoad.Add(_host.notifcreatedateAttribute);
-                    dsusr.PropertiesToLoad.Add(_host.notifvalidityAttribute);
-                    dsusr.PropertiesToLoad.Add(_host.totpAttribute);
+                    string qryldap = "(&(objectCategory=user)(objectClass=user)(objectGUID=" + GetBinaryStringFromGuidString(notif.RegistrationID) + ")(!(userAccountControl:1.2.840.113556.1.4.803:=2)))";
 
-                    SearchResult sr = dsusr.FindOne();
-                    if (sr != null)
+                    using (DirectorySearcher dsusr = new DirectorySearcher(rootdir, qryldap))
                     {
-                        isok = true;
-                        using (DirectoryEntry DirEntry = GetDirectoryEntry(sr))
+                        dsusr.PropertiesToLoad.Clear();
+                        dsusr.PropertiesToLoad.Add("objectGUID");
+                        dsusr.PropertiesToLoad.Add(_host.notifcreatedateAttribute);
+                        dsusr.PropertiesToLoad.Add(_host.notifvalidityAttribute);
+                        dsusr.PropertiesToLoad.Add(_host.totpAttribute);
+
+                        SearchResult sr = dsusr.FindOne();
+                        if (sr != null)
                         {
-                            DirEntry.Properties[_host.notifcreatedateAttribute].Value = notif.CreationDate.ToString("u");
-                            DirEntry.Properties[_host.notifvalidityAttribute].Value = notif.ValidityDate.ToString("u");
-                            DirEntry.Properties[_host.totpAttribute].Value = notif.OTP.ToString();
-                            DirEntry.CommitChanges();
-                        };
+                            isok = true;
+                            using (DirectoryEntry DirEntry = GetDirectoryEntry(sr))
+                            {
+                                DirEntry.Properties[_host.notifcreatedateAttribute].Value = notif.CreationDate.ToString("u");
+                                DirEntry.Properties[_host.notifvalidityAttribute].Value = notif.ValidityDate.ToString("u");
+                                DirEntry.Properties[_host.totpAttribute].Value = notif.OTP.ToString();
+                                DirEntry.CommitChanges();
+                            };
+                        }
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                Log.WriteEntry(ex.Message, System.Diagnostics.EventLogEntryType.Error, 5000);
+                throw new FaultException(ex.Message);
             }
             return isok;
         }
@@ -327,37 +376,45 @@ namespace Neos.IdentityServer.MultiFactor
         private Notification DoCheckNotification(Notification notif)
         {
             Notification ret = null;
-            using (DirectoryEntry rootdir = GetDirectoryEntry())
+            try
             {
-                string qryldap = "(&(objectCategory=user)(objectClass=user)(objectGUID=" + GetBinaryStringFromGuidString(notif.RegistrationID) + ")(!(userAccountControl:1.2.840.113556.1.4.803:=2)))";
-
-                using (DirectorySearcher dsusr = new DirectorySearcher(rootdir, qryldap))
+                using (DirectoryEntry rootdir = GetDirectoryEntry())
                 {
-                    dsusr.PropertiesToLoad.Clear();
-                    dsusr.PropertiesToLoad.Add("objectGUID");
-                    dsusr.PropertiesToLoad.Add(_host.notifcreatedateAttribute);
-                    dsusr.PropertiesToLoad.Add(_host.notifvalidityAttribute);
-                    dsusr.PropertiesToLoad.Add(_host.notifcheckdateattribute);
-                    dsusr.PropertiesToLoad.Add(_host.totpAttribute);
+                    string qryldap = "(&(objectCategory=user)(objectClass=user)(objectGUID=" + GetBinaryStringFromGuidString(notif.RegistrationID) + ")(!(userAccountControl:1.2.840.113556.1.4.803:=2)))";
 
-                    SearchResult sr = dsusr.FindOne();
-                    if (sr != null)
+                    using (DirectorySearcher dsusr = new DirectorySearcher(rootdir, qryldap))
                     {
-                        ret = new Notification();
-                        using (DirectoryEntry DirEntry = GetDirectoryEntry(sr))
-                        {
-                            ret.ID = new Guid((byte[])DirEntry.Properties["objectGUID"].Value).ToString();
-                            ret.RegistrationID = ret.ID;
-                            ret.CreationDate = Convert.ToDateTime(DirEntry.Properties[_host.notifcreatedateAttribute].Value);
-                            ret.ValidityDate = Convert.ToDateTime(DirEntry.Properties[_host.notifvalidityAttribute].Value);
-                            ret.CheckDate = notif.CheckDate.Value;
-                            ret.OTP = Convert.ToInt32(DirEntry.Properties[_host.totpAttribute].Value.ToString());
+                        dsusr.PropertiesToLoad.Clear();
+                        dsusr.PropertiesToLoad.Add("objectGUID");
+                        dsusr.PropertiesToLoad.Add(_host.notifcreatedateAttribute);
+                        dsusr.PropertiesToLoad.Add(_host.notifvalidityAttribute);
+                        dsusr.PropertiesToLoad.Add(_host.notifcheckdateattribute);
+                        dsusr.PropertiesToLoad.Add(_host.totpAttribute);
 
-                            DirEntry.Properties[_host.notifcheckdateattribute].Value = notif.CheckDate.Value.ToString("u");
-                            DirEntry.CommitChanges();
-                        };
+                        SearchResult sr = dsusr.FindOne();
+                        if (sr != null)
+                        {
+                            ret = new Notification();
+                            using (DirectoryEntry DirEntry = GetDirectoryEntry(sr))
+                            {
+                                ret.ID = new Guid((byte[])DirEntry.Properties["objectGUID"].Value).ToString();
+                                ret.RegistrationID = ret.ID;
+                                ret.CreationDate = Convert.ToDateTime(DirEntry.Properties[_host.notifcreatedateAttribute].Value);
+                                ret.ValidityDate = Convert.ToDateTime(DirEntry.Properties[_host.notifvalidityAttribute].Value);
+                                ret.CheckDate = notif.CheckDate.Value;
+                                ret.OTP = Convert.ToInt32(DirEntry.Properties[_host.totpAttribute].Value.ToString());
+
+                                DirEntry.Properties[_host.notifcheckdateattribute].Value = notif.CheckDate.Value.ToString("u");
+                                DirEntry.CommitChanges();
+                            };
+                        }
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                Log.WriteEntry(ex.Message, System.Diagnostics.EventLogEntryType.Error, 5000);
+                throw new FaultException(ex.Message);
             }
             return ret;
         }

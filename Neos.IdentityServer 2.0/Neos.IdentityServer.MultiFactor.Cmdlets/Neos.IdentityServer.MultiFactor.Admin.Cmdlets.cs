@@ -655,6 +655,8 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                             this.WriteObject(ret);
                             this.WriteVerbose(string.Format(infos_strings.InfosUserAdded, reg.UPN));
                         }
+                        else
+                            throw new Exception(string.Format(errors_strings.ErrorAddingUser, reg.UPN));
                     }
                     catch (Exception Ex)
                     {
@@ -760,7 +762,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                             prog.CurrentOperation = string.Format("\"{0}\" ", reg.UPN);
                             this.WriteProgress(prog);
                         }
-
+                        KeysManager.RemoveKey(reg.UPN);
                         intf.DeleteUserRegistration((MMCRegistration)reg);
                         this.WriteVerbose(string.Format(infos_strings.InfosUserDeleted, reg.UPN));
                     }

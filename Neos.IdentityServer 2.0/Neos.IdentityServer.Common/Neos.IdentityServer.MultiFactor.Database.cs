@@ -74,6 +74,7 @@ namespace Neos.IdentityServer.MultiFactor
             }
             catch (Exception ex)
             {
+                Log.WriteEntry(ex.Message, System.Diagnostics.EventLogEntryType.Error, 5000);
                 throw new FaultException(ex.Message);
             }
             finally
@@ -135,6 +136,7 @@ namespace Neos.IdentityServer.MultiFactor
             }
             catch (Exception ex)
             {
+                Log.WriteEntry(ex.Message, System.Diagnostics.EventLogEntryType.Error, 5000);
                 throw new FaultException(ex.Message);
             }
             finally
@@ -185,6 +187,7 @@ namespace Neos.IdentityServer.MultiFactor
             }
             catch (Exception ex)
             {
+                Log.WriteEntry(ex.Message, System.Diagnostics.EventLogEntryType.Error, 5000);
                 throw new FaultException(ex.Message);
             }
             finally
@@ -222,6 +225,7 @@ namespace Neos.IdentityServer.MultiFactor
             }
             catch (Exception ex)
             {
+                Log.WriteEntry(ex.Message, System.Diagnostics.EventLogEntryType.Error, 5000);
                 throw new FaultException(ex.Message);
             }
             finally
@@ -265,6 +269,7 @@ namespace Neos.IdentityServer.MultiFactor
             }
             catch (Exception ex)
             {
+                Log.WriteEntry(ex.Message, System.Diagnostics.EventLogEntryType.Error, 5000);
                 throw new FaultException(ex.Message);
             }
             finally
@@ -279,7 +284,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public string DoInsertUserKey(string upn, string secretkey)
         {
-            string request = "INSERT INTO REGISTRATIONS (UPN, SECRETKEY, METHOD, ENABLED) VALUES (@UPN, @SECRETKEY, @PHONENUMBER, 0, 1)";
+            string request = "INSERT INTO REGISTRATIONS (UPN, SECRETKEY, METHOD, ENABLED) VALUES (@UPN, @SECRETKEY, 0, 1)";
 
             SqlConnection con = new SqlConnection(_connectionstring);
             SqlCommand sql = new SqlCommand(request, con);
@@ -298,6 +303,7 @@ namespace Neos.IdentityServer.MultiFactor
             }
             catch (Exception ex)
             {
+                Log.WriteEntry(ex.Message, System.Diagnostics.EventLogEntryType.Error, 5000);
                 throw new FaultException(ex.Message);
             }
             finally
@@ -328,6 +334,7 @@ namespace Neos.IdentityServer.MultiFactor
             }
             catch (Exception ex)
             {
+                Log.WriteEntry(ex.Message, System.Diagnostics.EventLogEntryType.Error, 5000);
                 throw new FaultException(ex.Message);
             }
             finally
@@ -390,6 +397,7 @@ namespace Neos.IdentityServer.MultiFactor
             }
             catch (Exception ex)
             {
+                Log.WriteEntry(ex.Message, System.Diagnostics.EventLogEntryType.Error, 5000);
                 throw new FaultException(ex.Message);
             }
             finally
@@ -432,6 +440,7 @@ namespace Neos.IdentityServer.MultiFactor
             }
             catch (Exception ex)
             {
+                Log.WriteEntry(ex.Message, System.Diagnostics.EventLogEntryType.Error, 5000);
                 throw new FaultException(ex.Message);
             }
             finally
@@ -473,6 +482,7 @@ namespace Neos.IdentityServer.MultiFactor
             }
             catch (Exception ex)
             {
+                Log.WriteEntry(ex.Message, System.Diagnostics.EventLogEntryType.Error, 5000);
                 throw new FaultException(ex.Message);
             }
             finally
@@ -532,6 +542,7 @@ namespace Neos.IdentityServer.MultiFactor
                     }
                     catch (Exception ex)
                     {
+                        Log.WriteEntry(ex.Message, System.Diagnostics.EventLogEntryType.Error, 5000);
                         throw new FaultException(ex.Message);
                     }
                 }
@@ -540,6 +551,7 @@ namespace Neos.IdentityServer.MultiFactor
             }
             catch (Exception ex)
             {
+                Log.WriteEntry(ex.Message, System.Diagnostics.EventLogEntryType.Error, 5000);
                 throw new FaultException(ex.Message);
             }
             finally
@@ -569,6 +581,7 @@ namespace Neos.IdentityServer.MultiFactor
             }
             catch (Exception ex)
             {
+                Log.WriteEntry(ex.Message, System.Diagnostics.EventLogEntryType.Error, 5000);
                 throw new FaultException(ex.Message);
             }
             finally

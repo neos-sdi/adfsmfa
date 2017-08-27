@@ -180,6 +180,7 @@ namespace Neos.IdentityServer.Multifactor.Keys
             }
             catch (Exception ex)
             {
+                Log.WriteEntry(ex.Message, System.Diagnostics.EventLogEntryType.Error, 5000);
                 throw new Exception(ex.Message);
             }
             finally
@@ -233,6 +234,7 @@ namespace Neos.IdentityServer.Multifactor.Keys
             }
             catch (Exception ex)
             {
+                Log.WriteEntry(ex.Message, System.Diagnostics.EventLogEntryType.Error, 5000);
                 throw new Exception(ex.Message);
             }
             finally
@@ -268,6 +270,7 @@ namespace Neos.IdentityServer.Multifactor.Keys
             }
             catch (Exception ex)
             {
+                Log.WriteEntry(ex.Message, System.Diagnostics.EventLogEntryType.Error, 5000);
                 throw new Exception(ex.Message);
             }
             finally
@@ -304,6 +307,7 @@ namespace Neos.IdentityServer.Multifactor.Keys
             }
             catch (Exception ex)
             {
+                Log.WriteEntry(ex.Message, System.Diagnostics.EventLogEntryType.Error, 5000);
                 throw new Exception(ex.Message);
             }
             finally
@@ -341,6 +345,7 @@ namespace Neos.IdentityServer.Multifactor.Keys
             }
             catch (Exception ex)
             {
+                Log.WriteEntry(ex.Message, System.Diagnostics.EventLogEntryType.Error, 5000);
                 throw new Exception(ex.Message);
             }
             finally
@@ -377,6 +382,7 @@ namespace Neos.IdentityServer.Multifactor.Keys
             }
             catch (Exception ex)
             {
+                Log.WriteEntry(ex.Message, System.Diagnostics.EventLogEntryType.Error, 5000);
                 throw new Exception(ex.Message);
             }
             finally

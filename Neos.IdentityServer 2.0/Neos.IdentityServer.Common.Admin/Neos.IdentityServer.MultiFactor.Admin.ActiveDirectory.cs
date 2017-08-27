@@ -21,6 +21,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.DirectoryServices;
 using System.Linq;
+using System.ServiceModel;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -79,62 +80,74 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         public MMCRegistration GetUserRegistration(string upn)
         {
             MMCRegistration reg = null;
-            using (DirectoryEntry rootdir = GetDirectoryEntry())
+            try
             {
-                string qryldap = string.Empty;
-                qryldap = "(&(objectCategory=user)(objectClass=user)(userprincipalname=" + upn + ")(!(userAccountControl:1.2.840.113556.1.4.803:=2)))";
-
-                using (DirectorySearcher dsusr = new DirectorySearcher(rootdir, qryldap))
+                using (DirectoryEntry rootdir = GetDirectoryEntry())
                 {
-                    dsusr.PropertiesToLoad.Clear();
-                    dsusr.PropertiesToLoad.Add("objectGUID");
-                    dsusr.PropertiesToLoad.Add("userPrincipalName");
-                    dsusr.PropertiesToLoad.Add("whenCreated");
-                    dsusr.PropertiesToLoad.Add(_config.Hosts.ActiveDirectoryHost.mailAttribute);
-                    dsusr.PropertiesToLoad.Add(_config.Hosts.ActiveDirectoryHost.phoneAttribute);
-                    dsusr.PropertiesToLoad.Add(_config.Hosts.ActiveDirectoryHost.methodAttribute);
-                    dsusr.PropertiesToLoad.Add(_config.Hosts.ActiveDirectoryHost.totpEnabledAttribute);
+                    string qryldap = string.Empty;
+                    qryldap = "(&(objectCategory=user)(objectClass=user)(userprincipalname=" + upn + ")(!(userAccountControl:1.2.840.113556.1.4.803:=2)))";
 
-                    SearchResult sr = dsusr.FindOne();
-                    if (sr != null)
+                    using (DirectorySearcher dsusr = new DirectorySearcher(rootdir, qryldap))
                     {
-                        reg = new MMCRegistration();
-                        using (DirectoryEntry DirEntry = GetDirectoryEntry(sr))
+                        dsusr.PropertiesToLoad.Clear();
+                        dsusr.PropertiesToLoad.Add("objectGUID");
+                        dsusr.PropertiesToLoad.Add("userPrincipalName");
+                        dsusr.PropertiesToLoad.Add("whenCreated");
+                        dsusr.PropertiesToLoad.Add(_config.Hosts.ActiveDirectoryHost.mailAttribute);
+                        dsusr.PropertiesToLoad.Add(_config.Hosts.ActiveDirectoryHost.phoneAttribute);
+                        dsusr.PropertiesToLoad.Add(_config.Hosts.ActiveDirectoryHost.methodAttribute);
+                        dsusr.PropertiesToLoad.Add(_config.Hosts.ActiveDirectoryHost.totpEnabledAttribute);
+
+                        SearchResult sr = dsusr.FindOne();
+                        if (sr != null)
                         {
-                            if (DirEntry.Properties["objectGUID"].Value != null)
+                            reg = new MMCRegistration();
+                            using (DirectoryEntry DirEntry = GetDirectoryEntry(sr))
                             {
-                                reg.ID = new Guid((byte[])DirEntry.Properties["objectGUID"].Value).ToString();
-                                reg.UPN = DirEntry.Properties["userPrincipalName"].Value.ToString();
-                                if (DirEntry.Properties["whenCreated"].Value != null)
-                                    reg.CreationDate = Convert.ToDateTime(DirEntry.Properties["whenCreated"].Value);
-                                if (DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.mailAttribute].Value != null)
+                                if (DirEntry.Properties["objectGUID"].Value != null)
                                 {
-                                    reg.MailAddress = DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.mailAttribute].Value.ToString();
-                                    reg.IsRegistered = true;
+                                    reg.ID = new Guid((byte[])DirEntry.Properties["objectGUID"].Value).ToString();
+                                    reg.UPN = DirEntry.Properties["userPrincipalName"].Value.ToString();
+                                    if (DirEntry.Properties["whenCreated"].Value != null)
+                                        reg.CreationDate = Convert.ToDateTime(DirEntry.Properties["whenCreated"].Value);
+                                    if (DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.mailAttribute].Value != null)
+                                    {
+                                        reg.MailAddress = DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.mailAttribute].Value.ToString();
+                                        reg.IsRegistered = true;
+                                    }
+                                    if (DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.phoneAttribute].Value != null)
+                                    {
+                                        reg.PhoneNumber = DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.phoneAttribute].Value.ToString();
+                                        reg.IsRegistered = true;
+                                    }
+                                    if (DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.methodAttribute].Value != null)
+                                    {
+                                        reg.PreferredMethod = (RegistrationPreferredMethod)Enum.Parse(typeof(RegistrationPreferredMethod), DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.methodAttribute].Value.ToString(), true);
+                                        reg.IsRegistered = true;
+                                    }
+                                    if (DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.totpEnabledAttribute].Value != null)
+                                    {
+                                        reg.Enabled = bool.Parse(DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.totpEnabledAttribute].Value.ToString());
+                                        reg.IsRegistered = true;
+                                    }
+                                    if (reg.IsRegistered)
+                                        return reg;
+                                    else
+                                        return null;
                                 }
-                                if (DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.phoneAttribute].Value != null)
-                                {
-                                    reg.PhoneNumber = DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.phoneAttribute].Value.ToString();
-                                    reg.IsRegistered = true;
-                                }
-                                if (DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.methodAttribute].Value != null)
-                                {
-                                    reg.PreferredMethod = (RegistrationPreferredMethod)Enum.Parse(typeof(RegistrationPreferredMethod), DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.methodAttribute].Value.ToString(), true);
-                                    reg.IsRegistered = true;
-                                }
-                                if (DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.totpEnabledAttribute].Value != null)
-                                {
-                                    reg.Enabled = bool.Parse(DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.totpEnabledAttribute].Value.ToString());
-                                    reg.IsRegistered = true;
-                                }
-                            }
-                            else
-                                return null;
-                        };
+                                else
+                                    return null;
+                            };
+                        }
                     }
                 }
             }
-            return reg;
+            catch (Exception ex)
+            {
+                Log.WriteEntry(ex.Message, System.Diagnostics.EventLogEntryType.Error, 5000);
+                throw new FaultException(ex.Message);
+            }
+            return null;
         }
 
         /// <summary>
@@ -145,45 +158,53 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             if (!HasRegistration(reg.UPN))
                 throw new Exception("The user " + reg.UPN + " cannot be updated ! \r User not found !");
 
-            using (DirectoryEntry rootdir = GetDirectoryEntry())
+            try
             {
-                string qryldap = string.Empty;
-                qryldap = "(&(objectCategory=user)(objectClass=user)(userprincipalname=" + reg.UPN + ")(!(userAccountControl:1.2.840.113556.1.4.803:=2)))";
-
-                using (DirectorySearcher dsusr = new DirectorySearcher(rootdir, qryldap))
+                using (DirectoryEntry rootdir = GetDirectoryEntry())
                 {
-                    dsusr.PropertiesToLoad.Add("objectGUID");
-                    dsusr.PropertiesToLoad.Add("userPrincipalName");
-                    dsusr.PropertiesToLoad.Add("whenCreated");
-                    dsusr.PropertiesToLoad.Add(_config.Hosts.ActiveDirectoryHost.keyAttribute);
-                    dsusr.PropertiesToLoad.Add(_config.Hosts.ActiveDirectoryHost.mailAttribute);
-                    dsusr.PropertiesToLoad.Add(_config.Hosts.ActiveDirectoryHost.phoneAttribute);
-                    dsusr.PropertiesToLoad.Add(_config.Hosts.ActiveDirectoryHost.methodAttribute);
-                    dsusr.PropertiesToLoad.Add(_config.Hosts.ActiveDirectoryHost.totpEnabledAttribute);
+                    string qryldap = string.Empty;
+                    qryldap = "(&(objectCategory=user)(objectClass=user)(userprincipalname=" + reg.UPN + ")(!(userAccountControl:1.2.840.113556.1.4.803:=2)))";
 
-                    SearchResult sr = dsusr.FindOne();
-                    if (sr != null)
+                    using (DirectorySearcher dsusr = new DirectorySearcher(rootdir, qryldap))
                     {
-                        using (DirectoryEntry DirEntry = GetDirectoryEntry(sr))
+                        dsusr.PropertiesToLoad.Add("objectGUID");
+                        dsusr.PropertiesToLoad.Add("userPrincipalName");
+                        dsusr.PropertiesToLoad.Add("whenCreated");
+                        dsusr.PropertiesToLoad.Add(_config.Hosts.ActiveDirectoryHost.keyAttribute);
+                        dsusr.PropertiesToLoad.Add(_config.Hosts.ActiveDirectoryHost.mailAttribute);
+                        dsusr.PropertiesToLoad.Add(_config.Hosts.ActiveDirectoryHost.phoneAttribute);
+                        dsusr.PropertiesToLoad.Add(_config.Hosts.ActiveDirectoryHost.methodAttribute);
+                        dsusr.PropertiesToLoad.Add(_config.Hosts.ActiveDirectoryHost.totpEnabledAttribute);
+
+                        SearchResult sr = dsusr.FindOne();
+                        if (sr != null)
                         {
-                            DirEntry.Properties["userPrincipalName"].Value = reg.UPN;  
-                            if (!string.IsNullOrEmpty(reg.MailAddress))
-                                DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.mailAttribute].Value = reg.MailAddress;
-                            else
-                                DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.mailAttribute].Clear();
-                            if (!string.IsNullOrEmpty(reg.PhoneNumber))
-                                DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.phoneAttribute].Value = reg.PhoneNumber;
-                            else
-                                DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.phoneAttribute].Clear();
-                            if (reg.Enabled)
-                                DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.totpEnabledAttribute].Value = true;
-                            else
-                                DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.totpEnabledAttribute].Value = false;
-                            DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.methodAttribute].Value = ((int)reg.PreferredMethod).ToString();
-                            DirEntry.CommitChanges();
-                        };
+                            using (DirectoryEntry DirEntry = GetDirectoryEntry(sr))
+                            {
+                                DirEntry.Properties["userPrincipalName"].Value = reg.UPN;
+                                if (!string.IsNullOrEmpty(reg.MailAddress))
+                                    DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.mailAttribute].Value = reg.MailAddress;
+                                else
+                                    DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.mailAttribute].Clear();
+                                if (!string.IsNullOrEmpty(reg.PhoneNumber))
+                                    DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.phoneAttribute].Value = reg.PhoneNumber;
+                                else
+                                    DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.phoneAttribute].Clear();
+                                if (reg.Enabled)
+                                    DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.totpEnabledAttribute].Value = true;
+                                else
+                                    DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.totpEnabledAttribute].Value = false;
+                                DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.methodAttribute].Value = ((int)reg.PreferredMethod).ToString();
+                                DirEntry.CommitChanges();
+                            };
+                        }
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                Log.WriteEntry(ex.Message, System.Diagnostics.EventLogEntryType.Error, 5000);
+                throw new FaultException(ex.Message);
             }
         }
 
@@ -198,43 +219,51 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 return GetUserRegistration(reg.UPN);
             }
 
-            using (DirectoryEntry rootdir = GetDirectoryEntry())
+            try
             {
-                string qryldap = "(&(objectCategory=user)(objectClass=user)(userprincipalname=" + reg.UPN + ")(!(userAccountControl:1.2.840.113556.1.4.803:=2)))";
-
-                using (DirectorySearcher dsusr = new DirectorySearcher(rootdir, qryldap))
+                using (DirectoryEntry rootdir = GetDirectoryEntry())
                 {
-                    dsusr.PropertiesToLoad.Add("objectGUID");
-                    dsusr.PropertiesToLoad.Add("userPrincipalName");
-                    dsusr.PropertiesToLoad.Add("whenCreated");
-                    dsusr.PropertiesToLoad.Add(_config.Hosts.ActiveDirectoryHost.mailAttribute);
-                    dsusr.PropertiesToLoad.Add(_config.Hosts.ActiveDirectoryHost.phoneAttribute);
-                    dsusr.PropertiesToLoad.Add(_config.Hosts.ActiveDirectoryHost.methodAttribute);
-                    dsusr.PropertiesToLoad.Add(_config.Hosts.ActiveDirectoryHost.totpEnabledAttribute);
+                    string qryldap = "(&(objectCategory=user)(objectClass=user)(userprincipalname=" + reg.UPN + ")(!(userAccountControl:1.2.840.113556.1.4.803:=2)))";
 
-                    SearchResult sr = dsusr.FindOne();
-                    if (sr != null)
+                    using (DirectorySearcher dsusr = new DirectorySearcher(rootdir, qryldap))
                     {
-                        using (DirectoryEntry DirEntry = GetDirectoryEntry(sr))
+                        dsusr.PropertiesToLoad.Add("objectGUID");
+                        dsusr.PropertiesToLoad.Add("userPrincipalName");
+                        dsusr.PropertiesToLoad.Add("whenCreated");
+                        dsusr.PropertiesToLoad.Add(_config.Hosts.ActiveDirectoryHost.mailAttribute);
+                        dsusr.PropertiesToLoad.Add(_config.Hosts.ActiveDirectoryHost.phoneAttribute);
+                        dsusr.PropertiesToLoad.Add(_config.Hosts.ActiveDirectoryHost.methodAttribute);
+                        dsusr.PropertiesToLoad.Add(_config.Hosts.ActiveDirectoryHost.totpEnabledAttribute);
+
+                        SearchResult sr = dsusr.FindOne();
+                        if (sr != null)
                         {
-                            DirEntry.Properties["userPrincipalName"].Value = reg.UPN; // ICI Why
-                            if (!string.IsNullOrEmpty(reg.MailAddress))
-                                DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.mailAttribute].Value = reg.MailAddress;
-                            else
-                                DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.mailAttribute].Clear();
-                            if (!string.IsNullOrEmpty(reg.PhoneNumber))
-                                DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.phoneAttribute].Value = reg.PhoneNumber;
-                            else
-                                DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.phoneAttribute].Clear();
-                            if (reg.Enabled)
-                                DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.totpEnabledAttribute].Value = true;
-                            else
-                                DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.totpEnabledAttribute].Value = false;
-                            DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.methodAttribute].Value = ((int)reg.PreferredMethod).ToString();
-                            DirEntry.CommitChanges();
-                        };
+                            using (DirectoryEntry DirEntry = GetDirectoryEntry(sr))
+                            {
+                                DirEntry.Properties["userPrincipalName"].Value = reg.UPN; // ICI Why
+                                if (!string.IsNullOrEmpty(reg.MailAddress))
+                                    DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.mailAttribute].Value = reg.MailAddress;
+                                else
+                                    DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.mailAttribute].Clear();
+                                if (!string.IsNullOrEmpty(reg.PhoneNumber))
+                                    DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.phoneAttribute].Value = reg.PhoneNumber;
+                                else
+                                    DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.phoneAttribute].Clear();
+                                if (reg.Enabled)
+                                    DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.totpEnabledAttribute].Value = true;
+                                else
+                                    DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.totpEnabledAttribute].Value = false;
+                                DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.methodAttribute].Value = ((int)reg.PreferredMethod).ToString();
+                                DirEntry.CommitChanges();
+                            };
+                        }
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                Log.WriteEntry(ex.Message, System.Diagnostics.EventLogEntryType.Error, 5000);
+                throw new FaultException(ex.Message);
             }
             return GetUserRegistration(reg.UPN);
         }
@@ -247,38 +276,46 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             if (!HasRegistration(reg.UPN))
                 throw new Exception("The user " + reg.UPN + " cannot be deleted ! \r User not found !");
 
-            using (DirectoryEntry rootdir = GetDirectoryEntry())
+            try
             {
-                string qryldap = string.Empty;
-                qryldap = "(&(objectCategory=user)(objectClass=user)(userprincipalname=" + reg.UPN + ")(!(userAccountControl:1.2.840.113556.1.4.803:=2)))";
-
-                using (DirectorySearcher dsusr = new DirectorySearcher(rootdir, qryldap))
+                using (DirectoryEntry rootdir = GetDirectoryEntry())
                 {
-                    dsusr.PropertiesToLoad.Add("objectGUID");
-                    dsusr.PropertiesToLoad.Add("userPrincipalName");
-                    dsusr.PropertiesToLoad.Add("whenCreated");
-                    dsusr.PropertiesToLoad.Add(_config.Hosts.ActiveDirectoryHost.mailAttribute);
-                    dsusr.PropertiesToLoad.Add(_config.Hosts.ActiveDirectoryHost.phoneAttribute);
-                    dsusr.PropertiesToLoad.Add(_config.Hosts.ActiveDirectoryHost.methodAttribute);
-                    dsusr.PropertiesToLoad.Add(_config.Hosts.ActiveDirectoryHost.totpEnabledAttribute);
+                    string qryldap = string.Empty;
+                    qryldap = "(&(objectCategory=user)(objectClass=user)(userprincipalname=" + reg.UPN + ")(!(userAccountControl:1.2.840.113556.1.4.803:=2)))";
 
-                    SearchResult sr = dsusr.FindOne();
-                    if (sr != null)
+                    using (DirectorySearcher dsusr = new DirectorySearcher(rootdir, qryldap))
                     {
-                        using (DirectoryEntry DirEntry = GetDirectoryEntry(sr))
+                        dsusr.PropertiesToLoad.Add("objectGUID");
+                        dsusr.PropertiesToLoad.Add("userPrincipalName");
+                        dsusr.PropertiesToLoad.Add("whenCreated");
+                        dsusr.PropertiesToLoad.Add(_config.Hosts.ActiveDirectoryHost.mailAttribute);
+                        dsusr.PropertiesToLoad.Add(_config.Hosts.ActiveDirectoryHost.phoneAttribute);
+                        dsusr.PropertiesToLoad.Add(_config.Hosts.ActiveDirectoryHost.methodAttribute);
+                        dsusr.PropertiesToLoad.Add(_config.Hosts.ActiveDirectoryHost.totpEnabledAttribute);
+
+                        SearchResult sr = dsusr.FindOne();
+                        if (sr != null)
                         {
-                            DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.mailAttribute].Clear();
-                            DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.phoneAttribute].Clear();
-                            DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.totpEnabledAttribute].Clear();
-                            DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.methodAttribute].Clear();
-                            DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.notifcreatedateAttribute].Clear();
-                            DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.notifvalidityAttribute].Clear();
-                            DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.notifcheckdateattribute].Clear();
-                            DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.totpAttribute].Clear();
-                            DirEntry.CommitChanges();
-                        };
+                            using (DirectoryEntry DirEntry = GetDirectoryEntry(sr))
+                            {
+                                DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.mailAttribute].Clear();
+                                DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.phoneAttribute].Clear();
+                                DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.totpEnabledAttribute].Clear();
+                                DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.methodAttribute].Clear();
+                                DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.notifcreatedateAttribute].Clear();
+                                DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.notifvalidityAttribute].Clear();
+                                DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.notifcheckdateattribute].Clear();
+                                DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.totpAttribute].Clear();
+                                DirEntry.CommitChanges();
+                            };
+                        }
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                Log.WriteEntry(ex.Message, System.Diagnostics.EventLogEntryType.Error, 5000);
+                throw new FaultException(ex.Message);
             }
             return true;
         }
@@ -291,33 +328,41 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             if (!HasRegistration(reg.UPN))
                 throw new Exception("The user " + reg.UPN + " cannot be updated ! \r User not found !");
 
-            using (DirectoryEntry rootdir = GetDirectoryEntry())
+            try
             {
-                string qryldap = string.Empty;
-                qryldap = "(&(objectCategory=user)(objectClass=user)(userprincipalname=" + reg.UPN + ")(!(userAccountControl:1.2.840.113556.1.4.803:=2)))";
-
-                using (DirectorySearcher dsusr = new DirectorySearcher(rootdir, qryldap))
+                using (DirectoryEntry rootdir = GetDirectoryEntry())
                 {
-                    dsusr.PropertiesToLoad.Add("objectGUID");
-                    dsusr.PropertiesToLoad.Add("userPrincipalName");
-                    dsusr.PropertiesToLoad.Add("whenCreated");
-                    dsusr.PropertiesToLoad.Add(_config.Hosts.ActiveDirectoryHost.mailAttribute);
-                    dsusr.PropertiesToLoad.Add(_config.Hosts.ActiveDirectoryHost.phoneAttribute);
-                    dsusr.PropertiesToLoad.Add(_config.Hosts.ActiveDirectoryHost.methodAttribute);
-                    dsusr.PropertiesToLoad.Add(_config.Hosts.ActiveDirectoryHost.totpEnabledAttribute);
+                    string qryldap = string.Empty;
+                    qryldap = "(&(objectCategory=user)(objectClass=user)(userprincipalname=" + reg.UPN + ")(!(userAccountControl:1.2.840.113556.1.4.803:=2)))";
 
-                    SearchResult sr = dsusr.FindOne();
-                    if (sr != null)
+                    using (DirectorySearcher dsusr = new DirectorySearcher(rootdir, qryldap))
                     {
-                        using (DirectoryEntry DirEntry = GetDirectoryEntry(sr))
+                        dsusr.PropertiesToLoad.Add("objectGUID");
+                        dsusr.PropertiesToLoad.Add("userPrincipalName");
+                        dsusr.PropertiesToLoad.Add("whenCreated");
+                        dsusr.PropertiesToLoad.Add(_config.Hosts.ActiveDirectoryHost.mailAttribute);
+                        dsusr.PropertiesToLoad.Add(_config.Hosts.ActiveDirectoryHost.phoneAttribute);
+                        dsusr.PropertiesToLoad.Add(_config.Hosts.ActiveDirectoryHost.methodAttribute);
+                        dsusr.PropertiesToLoad.Add(_config.Hosts.ActiveDirectoryHost.totpEnabledAttribute);
+
+                        SearchResult sr = dsusr.FindOne();
+                        if (sr != null)
                         {
-                            DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.totpEnabledAttribute].Value = true;
-                            DirEntry.CommitChanges();
-                        };
+                            using (DirectoryEntry DirEntry = GetDirectoryEntry(sr))
+                            {
+                                DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.totpEnabledAttribute].Value = true;
+                                DirEntry.CommitChanges();
+                            };
+                        }
                     }
                 }
-           }
-           return GetUserRegistration(reg.UPN);
+            }
+            catch (Exception ex)
+            {
+                Log.WriteEntry(ex.Message, System.Diagnostics.EventLogEntryType.Error, 5000);
+                throw new FaultException(ex.Message);
+            }
+            return GetUserRegistration(reg.UPN);
         }
 
         /// <summary>
@@ -327,31 +372,39 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         {
             if (!HasRegistration(reg.UPN))
                 throw new Exception("The user " + reg.UPN + " cannot be updated ! \r User not found !");
-            using (DirectoryEntry rootdir = GetDirectoryEntry())
+            try
             {
-                string qryldap = string.Empty;
-                qryldap = "(&(objectCategory=user)(objectClass=user)(userprincipalname=" + reg.UPN + ")(!(userAccountControl:1.2.840.113556.1.4.803:=2)))";
-
-                using (DirectorySearcher dsusr = new DirectorySearcher(rootdir, qryldap))
+                using (DirectoryEntry rootdir = GetDirectoryEntry())
                 {
-                    dsusr.PropertiesToLoad.Add("objectGUID");
-                    dsusr.PropertiesToLoad.Add("userPrincipalName");
-                    dsusr.PropertiesToLoad.Add("whenCreated");
-                    dsusr.PropertiesToLoad.Add(_config.Hosts.ActiveDirectoryHost.mailAttribute);
-                    dsusr.PropertiesToLoad.Add(_config.Hosts.ActiveDirectoryHost.phoneAttribute);
-                    dsusr.PropertiesToLoad.Add(_config.Hosts.ActiveDirectoryHost.methodAttribute);
-                    dsusr.PropertiesToLoad.Add(_config.Hosts.ActiveDirectoryHost.totpEnabledAttribute);
+                    string qryldap = string.Empty;
+                    qryldap = "(&(objectCategory=user)(objectClass=user)(userprincipalname=" + reg.UPN + ")(!(userAccountControl:1.2.840.113556.1.4.803:=2)))";
 
-                    SearchResult sr = dsusr.FindOne();
-                    if (sr != null)
+                    using (DirectorySearcher dsusr = new DirectorySearcher(rootdir, qryldap))
                     {
-                        using (DirectoryEntry DirEntry = GetDirectoryEntry(sr))
+                        dsusr.PropertiesToLoad.Add("objectGUID");
+                        dsusr.PropertiesToLoad.Add("userPrincipalName");
+                        dsusr.PropertiesToLoad.Add("whenCreated");
+                        dsusr.PropertiesToLoad.Add(_config.Hosts.ActiveDirectoryHost.mailAttribute);
+                        dsusr.PropertiesToLoad.Add(_config.Hosts.ActiveDirectoryHost.phoneAttribute);
+                        dsusr.PropertiesToLoad.Add(_config.Hosts.ActiveDirectoryHost.methodAttribute);
+                        dsusr.PropertiesToLoad.Add(_config.Hosts.ActiveDirectoryHost.totpEnabledAttribute);
+
+                        SearchResult sr = dsusr.FindOne();
+                        if (sr != null)
                         {
-                            DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.totpEnabledAttribute].Value = false;
-                            DirEntry.CommitChanges();
-                        };
+                            using (DirectoryEntry DirEntry = GetDirectoryEntry(sr))
+                            {
+                                DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.totpEnabledAttribute].Value = false;
+                                DirEntry.CommitChanges();
+                            };
+                        }
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                Log.WriteEntry(ex.Message, System.Diagnostics.EventLogEntryType.Error, 5000);
+                throw new FaultException(ex.Message);
             }
             return GetUserRegistration(reg.UPN);
         }
@@ -438,83 +491,187 @@ namespace Neos.IdentityServer.MultiFactor.Administration
 
             
             MMCRegistrationList registrations = new MMCRegistrationList();
-            using (DirectoryEntry rootdir = GetDirectoryEntry())
+            try
             {
-                using (DirectorySearcher dsusr = new DirectorySearcher(rootdir, qryldap))
+                using (DirectoryEntry rootdir = GetDirectoryEntry())
                 {
-                    dsusr.PropertiesToLoad.Clear();
-                    dsusr.PropertiesToLoad.Add("objectGUID");
-                    dsusr.PropertiesToLoad.Add("userPrincipalName");
-                    dsusr.PropertiesToLoad.Add("whenCreated");
-                    dsusr.PropertiesToLoad.Add(_config.Hosts.ActiveDirectoryHost.mailAttribute);
-                    dsusr.PropertiesToLoad.Add(_config.Hosts.ActiveDirectoryHost.phoneAttribute);
-                    dsusr.PropertiesToLoad.Add(_config.Hosts.ActiveDirectoryHost.methodAttribute);
-                    dsusr.PropertiesToLoad.Add(_config.Hosts.ActiveDirectoryHost.totpEnabledAttribute);
-                    dsusr.SizeLimit = maxrows;
+                    using (DirectorySearcher dsusr = new DirectorySearcher(rootdir, qryldap))
+                    {
+                        dsusr.PropertiesToLoad.Clear();
+                        dsusr.PropertiesToLoad.Add("objectGUID");
+                        dsusr.PropertiesToLoad.Add("userPrincipalName");
+                        dsusr.PropertiesToLoad.Add("whenCreated");
+                        dsusr.PropertiesToLoad.Add(_config.Hosts.ActiveDirectoryHost.mailAttribute);
+                        dsusr.PropertiesToLoad.Add(_config.Hosts.ActiveDirectoryHost.phoneAttribute);
+                        dsusr.PropertiesToLoad.Add(_config.Hosts.ActiveDirectoryHost.methodAttribute);
+                        dsusr.PropertiesToLoad.Add(_config.Hosts.ActiveDirectoryHost.totpEnabledAttribute);
+                        dsusr.SizeLimit = maxrows;
 
-                    switch (order.Column)
-                    {
-                        case UsersOrderField.UserName:
-                            dsusr.Sort.PropertyName = "userPrincipalName";
-                            break;
-                        case UsersOrderField.Email:
-                            dsusr.Sort.PropertyName = _config.Hosts.ActiveDirectoryHost.mailAttribute;
-                            break;
-                        case UsersOrderField.Phone:
-                            dsusr.Sort.PropertyName = _config.Hosts.ActiveDirectoryHost.phoneAttribute;
-                            break;
-                        case UsersOrderField.CreationDate:
-                            dsusr.Sort.PropertyName = "whenCreated";
-                            break;
-                        default:
-                            dsusr.Sort.PropertyName = "objectGUID";
-                            break;
-                    }
-                    dsusr.Sort.Direction = order.Direction;
-
-                    DirectoryVirtualListView lstv = null;
-                    DirectoryVirtualListViewContext ctx = new DirectoryVirtualListViewContext();
-                    int virtualListCount = int.MaxValue;
-                    if (paging.isActive)
-                    {
-                        int pg = paging.PageSize;
-                        int of = (((paging.CurrentPage - 1) * paging.PageSize)+1);
-                        lstv = new DirectoryVirtualListView(0, pg-1, of, ctx);
-                        dsusr.VirtualListView = lstv;
-                        virtualListCount = pg;
-                    
-                    }
-                    SearchResultCollection src = dsusr.FindAll();
-                    if (src != null)
-                    {
-                        if ((!paging.IsRecurse) && (src.Count==1) && (paging.isActive))
+                        switch (order.Column)
                         {
-                            UsersPagingObject xpaging = new UsersPagingObject();
-                            xpaging.PageSize = paging.PageSize;
-                            xpaging.CurrentPage = paging.CurrentPage-1;
-                            xpaging.IsRecurse = true;
-                            if (xpaging.CurrentPage > 0)
+                            case UsersOrderField.UserName:
+                                dsusr.Sort.PropertyName = "userPrincipalName";
+                                break;
+                            case UsersOrderField.Email:
+                                dsusr.Sort.PropertyName = _config.Hosts.ActiveDirectoryHost.mailAttribute;
+                                break;
+                            case UsersOrderField.Phone:
+                                dsusr.Sort.PropertyName = _config.Hosts.ActiveDirectoryHost.phoneAttribute;
+                                break;
+                            case UsersOrderField.CreationDate:
+                                dsusr.Sort.PropertyName = "whenCreated";
+                                break;
+                            default:
+                                dsusr.Sort.PropertyName = "objectGUID";
+                                break;
+                        }
+                        dsusr.Sort.Direction = order.Direction;
+
+                        DirectoryVirtualListView lstv = null;
+                        DirectoryVirtualListViewContext ctx = new DirectoryVirtualListViewContext();
+                        int virtualListCount = int.MaxValue;
+                        if (paging.isActive)
+                        {
+                            int pg = paging.PageSize;
+                            int of = (((paging.CurrentPage - 1) * paging.PageSize) + 1);
+                            lstv = new DirectoryVirtualListView(0, pg - 1, of, ctx);
+                            dsusr.VirtualListView = lstv;
+                            virtualListCount = pg;
+
+                        }
+                        SearchResultCollection src = dsusr.FindAll();
+                        if (src != null)
+                        {
+                            if ((!paging.IsRecurse) && (src.Count == 1) && (paging.isActive))
                             {
-                                MMCRegistrationList verif = GetUserRegistrations(filter, order, xpaging, maxrows);
-                                foreach (MMCRegistration reg in verif)
+                                UsersPagingObject xpaging = new UsersPagingObject();
+                                xpaging.PageSize = paging.PageSize;
+                                xpaging.CurrentPage = paging.CurrentPage - 1;
+                                xpaging.IsRecurse = true;
+                                if (xpaging.CurrentPage > 0)
                                 {
-                                    using (DirectoryEntry DirEntry = GetDirectoryEntry(src[0]))
+                                    MMCRegistrationList verif = GetUserRegistrations(filter, order, xpaging, maxrows);
+                                    foreach (MMCRegistration reg in verif)
                                     {
-                                        string theID = new Guid((byte[])DirEntry.Properties["objectGUID"].Value).ToString();
-                                        if (reg.ID == theID)
+                                        using (DirectoryEntry DirEntry = GetDirectoryEntry(src[0]))
                                         {
-                                            return registrations; // empty
+                                            string theID = new Guid((byte[])DirEntry.Properties["objectGUID"].Value).ToString();
+                                            if (reg.ID == theID)
+                                            {
+                                                return registrations; // empty
+                                            }
                                         }
                                     }
                                 }
                             }
-                        }
-                        int i = 0;
-                        foreach (SearchResult sr in src)
-                        {
-                            if (i < virtualListCount)
+                            int i = 0;
+                            foreach (SearchResult sr in src)
                             {
-                                i++;
+                                if (i < virtualListCount)
+                                {
+                                    i++;
+                                    MMCRegistration reg = new MMCRegistration();
+                                    using (DirectoryEntry DirEntry = GetDirectoryEntry(sr))
+                                    {
+                                        if (DirEntry.Properties["objectGUID"].Value != null)
+                                        {
+                                            reg.ID = new Guid((byte[])DirEntry.Properties["objectGUID"].Value).ToString();
+                                            reg.UPN = DirEntry.Properties["userPrincipalName"].Value.ToString();
+                                            if (DirEntry.Properties["whenCreated"].Value != null)
+                                                reg.CreationDate = Convert.ToDateTime(DirEntry.Properties["whenCreated"].Value);
+                                            if (DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.mailAttribute].Value != null)
+                                            {
+                                                reg.MailAddress = DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.mailAttribute].Value.ToString();
+                                                reg.IsRegistered = true;
+                                            }
+                                            if (DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.phoneAttribute].Value != null)
+                                            {
+                                                reg.PhoneNumber = DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.phoneAttribute].Value.ToString();
+                                                reg.IsRegistered = true;
+                                            }
+                                            if (DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.methodAttribute].Value != null)
+                                            {
+                                                reg.PreferredMethod = (RegistrationPreferredMethod)Enum.Parse(typeof(RegistrationPreferredMethod), DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.methodAttribute].Value.ToString(), true);
+                                                if (reg.PreferredMethod != RegistrationPreferredMethod.Choose)
+                                                    reg.IsRegistered = true;
+                                            }
+                                            if (DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.totpEnabledAttribute].Value != null)
+                                            {
+                                                reg.Enabled = bool.Parse(DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.totpEnabledAttribute].Value.ToString());
+                                                reg.IsRegistered = true;
+                                            }
+                                            if (reg.IsRegistered)
+                                                registrations.Add(reg);
+                                        }
+                                    };
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.WriteEntry(ex.Message, System.Diagnostics.EventLogEntryType.Error, 5000);
+                throw new FaultException(ex.Message);
+            }
+            return registrations;
+        }
+
+        /// <summary>
+        /// GetAllUserRegistrations method implementation
+        /// </summary>
+        public MMCRegistrationList GetAllUserRegistrations(UsersOrderObject order, int maxrows = 20000, bool enabledonly = false)
+        {
+            MMCRegistrationList registrations = new MMCRegistrationList();
+
+            try
+            {
+                using (DirectoryEntry rootdir = GetDirectoryEntry())
+                {
+                    string qryldap = "(&(objectCategory=user)(objectClass=user)(userprincipalname=*)";
+                    if (enabledonly)
+                        qryldap += "(" + _config.Hosts.ActiveDirectoryHost.totpEnabledAttribute + "=" + true.ToString() + ")";
+                    qryldap += "(!(userAccountControl:1.2.840.113556.1.4.803:=2))";
+                    qryldap += ")";
+
+                    using (DirectorySearcher dsusr = new DirectorySearcher(rootdir, qryldap))
+                    {
+                        dsusr.PropertiesToLoad.Clear();
+                        dsusr.PropertiesToLoad.Add("objectGUID");
+                        dsusr.PropertiesToLoad.Add("userPrincipalName");
+                        dsusr.PropertiesToLoad.Add("whenCreated");
+                        dsusr.PropertiesToLoad.Add(_config.Hosts.ActiveDirectoryHost.mailAttribute);
+                        dsusr.PropertiesToLoad.Add(_config.Hosts.ActiveDirectoryHost.phoneAttribute);
+                        dsusr.PropertiesToLoad.Add(_config.Hosts.ActiveDirectoryHost.methodAttribute);
+                        dsusr.PropertiesToLoad.Add(_config.Hosts.ActiveDirectoryHost.totpEnabledAttribute);
+                        dsusr.SizeLimit = maxrows;
+
+                        switch (order.Column)
+                        {
+                            case UsersOrderField.UserName:
+                                dsusr.Sort.PropertyName = "userPrincipalName";
+                                break;
+                            case UsersOrderField.Email:
+                                dsusr.Sort.PropertyName = _config.Hosts.ActiveDirectoryHost.mailAttribute;
+                                break;
+                            case UsersOrderField.Phone:
+                                dsusr.Sort.PropertyName = _config.Hosts.ActiveDirectoryHost.phoneAttribute;
+                                break;
+                            case UsersOrderField.CreationDate:
+                                dsusr.Sort.PropertyName = "whenCreated";
+                                break;
+                            default:
+                                dsusr.Sort.PropertyName = "objectGUID";
+                                break;
+                        }
+                        dsusr.Sort.Direction = order.Direction;
+
+                        SearchResultCollection src = dsusr.FindAll();
+                        if (src != null)
+                        {
+                            foreach (SearchResult sr in src)
+                            {
                                 MMCRegistration reg = new MMCRegistration();
                                 using (DirectoryEntry DirEntry = GetDirectoryEntry(sr))
                                 {
@@ -537,7 +694,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                                         if (DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.methodAttribute].Value != null)
                                         {
                                             reg.PreferredMethod = (RegistrationPreferredMethod)Enum.Parse(typeof(RegistrationPreferredMethod), DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.methodAttribute].Value.ToString(), true);
-                                            if (reg.PreferredMethod!=RegistrationPreferredMethod.Choose)
+                                            if (reg.PreferredMethod != RegistrationPreferredMethod.Choose)
                                                 reg.IsRegistered = true;
                                         }
                                         if (DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.totpEnabledAttribute].Value != null)
@@ -554,97 +711,10 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                     }
                 }
             }
-            return registrations;
-        }
-
-        /// <summary>
-        /// GetAllUserRegistrations method implementation
-        /// </summary>
-        public MMCRegistrationList GetAllUserRegistrations(UsersOrderObject order, int maxrows = 20000, bool enabledonly = false)
-        {
-            MMCRegistrationList registrations = new MMCRegistrationList();
-            using (DirectoryEntry rootdir = GetDirectoryEntry())
+            catch (Exception ex)
             {
-                string qryldap = "(&(objectCategory=user)(objectClass=user)(userprincipalname=*)"; 
-                if (enabledonly)
-                    qryldap += "(" + _config.Hosts.ActiveDirectoryHost.totpEnabledAttribute + "=" + true.ToString() + ")";
-                qryldap += "(!(userAccountControl:1.2.840.113556.1.4.803:=2))";
-                qryldap += ")";
-
-                using (DirectorySearcher dsusr = new DirectorySearcher(rootdir, qryldap))
-                {
-                    dsusr.PropertiesToLoad.Clear();
-                    dsusr.PropertiesToLoad.Add("objectGUID");
-                    dsusr.PropertiesToLoad.Add("userPrincipalName");
-                    dsusr.PropertiesToLoad.Add("whenCreated");
-                    dsusr.PropertiesToLoad.Add(_config.Hosts.ActiveDirectoryHost.mailAttribute);
-                    dsusr.PropertiesToLoad.Add(_config.Hosts.ActiveDirectoryHost.phoneAttribute);
-                    dsusr.PropertiesToLoad.Add(_config.Hosts.ActiveDirectoryHost.methodAttribute);
-                    dsusr.PropertiesToLoad.Add(_config.Hosts.ActiveDirectoryHost.totpEnabledAttribute);
-                    dsusr.SizeLimit = maxrows;
-
-                    switch (order.Column)
-                    {
-                        case UsersOrderField.UserName:
-                            dsusr.Sort.PropertyName = "userPrincipalName";
-                            break;
-                        case UsersOrderField.Email:
-                            dsusr.Sort.PropertyName = _config.Hosts.ActiveDirectoryHost.mailAttribute;
-                            break;
-                        case UsersOrderField.Phone:
-                            dsusr.Sort.PropertyName = _config.Hosts.ActiveDirectoryHost.phoneAttribute;
-                            break;
-                        case UsersOrderField.CreationDate:
-                            dsusr.Sort.PropertyName = "whenCreated";
-                            break;
-                        default:
-                            dsusr.Sort.PropertyName = "objectGUID";
-                            break;
-                    }
-                    dsusr.Sort.Direction = order.Direction;
-
-                    SearchResultCollection src = dsusr.FindAll();
-                    if (src != null)
-                    {
-                        foreach (SearchResult sr in src)
-                        {
-                            MMCRegistration reg = new MMCRegistration();
-                            using (DirectoryEntry DirEntry = GetDirectoryEntry(sr))
-                            {
-                                if (DirEntry.Properties["objectGUID"].Value != null)
-                                {
-                                    reg.ID = new Guid((byte[])DirEntry.Properties["objectGUID"].Value).ToString();
-                                    reg.UPN = DirEntry.Properties["userPrincipalName"].Value.ToString();
-                                    if (DirEntry.Properties["whenCreated"].Value != null)
-                                        reg.CreationDate = Convert.ToDateTime(DirEntry.Properties["whenCreated"].Value);
-                                    if (DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.mailAttribute].Value != null)
-                                    {
-                                        reg.MailAddress = DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.mailAttribute].Value.ToString();
-                                        reg.IsRegistered = true;
-                                    }
-                                    if (DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.phoneAttribute].Value != null)
-                                    {
-                                        reg.PhoneNumber = DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.phoneAttribute].Value.ToString();
-                                        reg.IsRegistered = true;
-                                    }
-                                    if (DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.methodAttribute].Value != null)
-                                    {
-                                        reg.PreferredMethod = (RegistrationPreferredMethod)Enum.Parse(typeof(RegistrationPreferredMethod), DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.methodAttribute].Value.ToString(), true);
-                                        if (reg.PreferredMethod != RegistrationPreferredMethod.Choose)
-                                            reg.IsRegistered = true;
-                                    }
-                                    if (DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.totpEnabledAttribute].Value != null)
-                                    {
-                                        reg.Enabled = bool.Parse(DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.totpEnabledAttribute].Value.ToString());
-                                        reg.IsRegistered = true;
-                                    }
-                                    if (reg.IsRegistered)
-                                        registrations.Add(reg);
-                                }
-                            };
-                        }
-                    }
-                }
+                Log.WriteEntry(ex.Message, System.Diagnostics.EventLogEntryType.Error, 5000);
+                throw new FaultException(ex.Message);
             }
             return registrations;
         }
@@ -731,44 +801,52 @@ namespace Neos.IdentityServer.MultiFactor.Administration
 
             int count = 0;
             MMCRegistrationList registrations = new MMCRegistrationList();
-            using (DirectoryEntry rootdir = GetDirectoryEntry())
+            try
             {
-                using (DirectorySearcher dsusr = new DirectorySearcher(rootdir, qryldap))
+                using (DirectoryEntry rootdir = GetDirectoryEntry())
                 {
-                    dsusr.PropertiesToLoad.Clear();
-                    dsusr.PropertiesToLoad.Add("objectGUID");
-                    // filtrer IsRegistered
-                    SearchResultCollection src = dsusr.FindAll();
-                    if (src != null)
+                    using (DirectorySearcher dsusr = new DirectorySearcher(rootdir, qryldap))
                     {
-                        foreach (SearchResult sr in src)
+                        dsusr.PropertiesToLoad.Clear();
+                        dsusr.PropertiesToLoad.Add("objectGUID");
+                        // filtrer IsRegistered
+                        SearchResultCollection src = dsusr.FindAll();
+                        if (src != null)
                         {
-                            MMCRegistration reg = new MMCRegistration();
-                            using (DirectoryEntry DirEntry = GetDirectoryEntry(sr))
+                            foreach (SearchResult sr in src)
                             {
-                                bool IsRegistered = false;
-                                if (DirEntry.Properties["objectGUID"].Value != null)
+                                MMCRegistration reg = new MMCRegistration();
+                                using (DirectoryEntry DirEntry = GetDirectoryEntry(sr))
                                 {
-                                    if (DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.mailAttribute].Value != null)
-                                        IsRegistered = true;
-                                    if (DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.phoneAttribute].Value != null)
-                                        IsRegistered = true; 
-                                    if (DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.methodAttribute].Value != null)
+                                    bool IsRegistered = false;
+                                    if (DirEntry.Properties["objectGUID"].Value != null)
                                     {
-                                        RegistrationPreferredMethod PreferredMethod = (RegistrationPreferredMethod)Enum.Parse(typeof(RegistrationPreferredMethod), DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.methodAttribute].Value.ToString(), true);
-                                        if (PreferredMethod != RegistrationPreferredMethod.Choose)
+                                        if (DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.mailAttribute].Value != null)
                                             IsRegistered = true;
+                                        if (DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.phoneAttribute].Value != null)
+                                            IsRegistered = true;
+                                        if (DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.methodAttribute].Value != null)
+                                        {
+                                            RegistrationPreferredMethod PreferredMethod = (RegistrationPreferredMethod)Enum.Parse(typeof(RegistrationPreferredMethod), DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.methodAttribute].Value.ToString(), true);
+                                            if (PreferredMethod != RegistrationPreferredMethod.Choose)
+                                                IsRegistered = true;
+                                        }
+                                        if (DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.totpEnabledAttribute].Value != null)
+                                            IsRegistered = true;
+                                        if (IsRegistered)
+                                            count++;
                                     }
-                                    if (DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.totpEnabledAttribute].Value != null)
-                                        IsRegistered = true;
-                                    if (IsRegistered)
-                                        count++;
-                                }
-                            };
+                                };
+                            }
+                            return count;
                         }
-                        return count;
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                Log.WriteEntry(ex.Message, System.Diagnostics.EventLogEntryType.Error, 5000);
+                throw new FaultException(ex.Message);
             }
             return -1;
         }
@@ -778,39 +856,47 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// </summary>
         private bool HasRegistration(string upn)
         {
-            using (DirectoryEntry rootdir = GetDirectoryEntry())
+            try
             {
-                string qryldap = "(&(objectCategory=user)(objectClass=user)(userprincipalname=" + upn + ")(!(userAccountControl:1.2.840.113556.1.4.803:=2)))";
-
-                using (DirectorySearcher dsusr = new DirectorySearcher(rootdir, qryldap))
+                using (DirectoryEntry rootdir = GetDirectoryEntry())
                 {
-                    dsusr.PropertiesToLoad.Add("objectGUID");
-                    dsusr.PropertiesToLoad.Add("userPrincipalName");
-                    dsusr.PropertiesToLoad.Add("whenCreated");
-                    dsusr.PropertiesToLoad.Add(_config.Hosts.ActiveDirectoryHost.mailAttribute);
-                    dsusr.PropertiesToLoad.Add(_config.Hosts.ActiveDirectoryHost.phoneAttribute);
-                    dsusr.PropertiesToLoad.Add(_config.Hosts.ActiveDirectoryHost.methodAttribute);
-                    dsusr.PropertiesToLoad.Add(_config.Hosts.ActiveDirectoryHost.totpEnabledAttribute);
+                    string qryldap = "(&(objectCategory=user)(objectClass=user)(userprincipalname=" + upn + ")(!(userAccountControl:1.2.840.113556.1.4.803:=2)))";
 
-                    SearchResult sr = dsusr.FindOne();
-                    if (sr == null)
-                        return false;
-                    using (DirectoryEntry DirEntry = GetDirectoryEntry(sr))
+                    using (DirectorySearcher dsusr = new DirectorySearcher(rootdir, qryldap))
                     {
-                        if (DirEntry.Properties["objectGUID"].Value != null)
+                        dsusr.PropertiesToLoad.Add("objectGUID");
+                        dsusr.PropertiesToLoad.Add("userPrincipalName");
+                        dsusr.PropertiesToLoad.Add("whenCreated");
+                        dsusr.PropertiesToLoad.Add(_config.Hosts.ActiveDirectoryHost.mailAttribute);
+                        dsusr.PropertiesToLoad.Add(_config.Hosts.ActiveDirectoryHost.phoneAttribute);
+                        dsusr.PropertiesToLoad.Add(_config.Hosts.ActiveDirectoryHost.methodAttribute);
+                        dsusr.PropertiesToLoad.Add(_config.Hosts.ActiveDirectoryHost.totpEnabledAttribute);
+
+                        SearchResult sr = dsusr.FindOne();
+                        if (sr == null)
+                            return false;
+                        using (DirectoryEntry DirEntry = GetDirectoryEntry(sr))
                         {
-                            if (DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.mailAttribute].Value != null)
-                                return true;
-                            if (DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.phoneAttribute].Value != null)
-                                return true;
-                            if (DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.methodAttribute].Value != null)
-                                return true;
-                            if (DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.totpEnabledAttribute].Value != null)
-                                return true;
+                            if (DirEntry.Properties["objectGUID"].Value != null)
+                            {
+                                if (DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.mailAttribute].Value != null)
+                                    return true;
+                                if (DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.phoneAttribute].Value != null)
+                                    return true;
+                                if (DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.methodAttribute].Value != null)
+                                    return true;
+                                if (DirEntry.Properties[_config.Hosts.ActiveDirectoryHost.totpEnabledAttribute].Value != null)
+                                    return true;
+                            }
+                            return false;
                         }
-                        return false;
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                Log.WriteEntry(ex.Message, System.Diagnostics.EventLogEntryType.Error, 5000);
+                throw new FaultException(ex.Message);
             }
         }
     }

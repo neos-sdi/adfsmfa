@@ -270,6 +270,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             MMCRegistrationList lst = new MMCRegistrationList();
             foreach(MMCRegistration reg in registrations)
             {
+                KeysManager.NewKey(reg.UPN);
                 MMCRegistration ret = svc.AddUserRegistration(reg);
                 lst.Add(ret);
             }
@@ -294,6 +295,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 bool ret = svc.DeleteUserRegistration(reg);
                 if (!ret)
                     _ret = false;
+                KeysManager.RemoveKey(reg.UPN);
             }
             return _ret;
         }

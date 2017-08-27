@@ -38,9 +38,9 @@ namespace Neos.IdentityServer.MultiFactor
             Trace.TraceInformation("EventLog Start");
             ((ISupportInitialize)this.EventLog).BeginInit();
             if (!EventLog.SourceExists("ADFS MFA Notification Hub"))
-            {
                 EventLog.CreateEventSource("ADFS MFA Notification Hub", "Application");
-            }
+            if (!EventLog.SourceExists("ADFS MFA Service"))
+                EventLog.CreateEventSource("ADFS MFA Service", "Application");
             ((ISupportInitialize)this.EventLog).EndInit();
             Trace.TraceInformation("EventLog End Init");
             this.EventLog.Source = "ADFS MFA Notification Hub";
