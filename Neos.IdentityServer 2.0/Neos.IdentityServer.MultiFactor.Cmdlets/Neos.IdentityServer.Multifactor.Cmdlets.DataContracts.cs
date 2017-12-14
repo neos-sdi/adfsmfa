@@ -36,12 +36,12 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <summary>
         /// explicit conversion to PSRegistrationList
         /// </summary>
-        public static explicit operator PSRegistrationList(MMCRegistrationList registrations)
+        public static explicit operator PSRegistrationList(RegistrationList registrations)
         {
             if (registrations == null)
                 return null;
             PSRegistrationList lst = new PSRegistrationList();
-            foreach (MMCRegistration reg in registrations)
+            foreach (Registration reg in registrations)
             {
                 lst.Add((PSRegistration)reg);
             }
@@ -51,14 +51,14 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <summary>
         /// explicit conversion from PSRegistrationList
         /// </summary>
-        public static explicit operator MMCRegistrationList(PSRegistrationList registrations)
+        public static explicit operator RegistrationList(PSRegistrationList registrations)
         {
             if (registrations == null)
                 return null;
-            MMCRegistrationList lst = new MMCRegistrationList();
+            RegistrationList lst = new RegistrationList();
             foreach (PSRegistration reg in registrations)
             {
-                lst.Add((MMCRegistration)reg);
+                lst.Add((Registration)reg);
             }
             return lst;
         }
@@ -113,13 +113,13 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <summary>
         /// <para type="description">Preferred MFA method : Choose, Code, email, Phone, Face (for future use).</para>
         /// </summary>
-        public RegistrationPreferredMethod PreferredMethod { get; set; }
+        public PreferredMethod PreferredMethod { get; set; }
         internal bool IsApplied { get; set; }
 
         /// <summary>
         /// implicit conversion to PSRegistration
         /// </summary>
-        public static explicit operator PSRegistration(MMCRegistration registration)
+        public static explicit operator PSRegistration(Registration registration)
         {
             if (registration == null)
                 return null;
@@ -142,13 +142,13 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <summary>
         /// implicit conversion from PSRegistration
         /// </summary>
-        public static explicit operator MMCRegistration(PSRegistration psnode)
+        public static explicit operator Registration(PSRegistration psnode)
         {
             if (psnode == null)
                 return null;
             else
             {
-                MMCRegistration registration = new MMCRegistration();
+                Registration registration = new Registration();
                 registration.ID = psnode.ID;
                 registration.UPN = psnode.UPN;
                 registration.MailAddress = psnode.MailAddress;
@@ -288,12 +288,12 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <summary>
         /// <para type="description">Policy attributes for warnings to users.</para>
         /// </summary>
-        public MFAConfigAdvertising AdvertisingDays { get; set; }
+        public ConfigAdvertising AdvertisingDays { get; set; }
 
         /// <summary>
         /// implicit conversion to PSConfig
         /// </summary>
-        public static explicit operator PSConfig(MMCConfig config)
+        public static explicit operator PSConfig(FlatConfig config)
         {
             
             if (config == null)
@@ -322,13 +322,13 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <summary>
         /// implicit conversion from PSConfig
         /// </summary>
-        public static explicit operator MMCConfig(PSConfig psconfig)
+        public static explicit operator FlatConfig(PSConfig psconfig)
         {
             if (psconfig == null)
                 return null;
             else
             {
-                MMCConfig config = new MMCConfig();
+                FlatConfig config = new FlatConfig();
                 config.AdminContact = psconfig.AdminContact;
                 config.Algorithm = psconfig.Algorithm;
                 config.AppsEnabled = psconfig.AppsEnabled;
@@ -370,7 +370,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <summary>
         /// implicit conversion to PSConfig
         /// </summary>
-        public static explicit operator PSConfigSQL(MMCConfigSQL sqlconfig)
+        public static explicit operator PSConfigSQL(FlatConfigSQL sqlconfig)
         {
             if (sqlconfig == null)
                 return null;
@@ -385,13 +385,13 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <summary>
         /// implicit conversion from PSConfig
         /// </summary>
-        public static explicit operator MMCConfigSQL(PSConfigSQL psconfig)
+        public static explicit operator FlatConfigSQL(PSConfigSQL psconfig)
         {
             if (psconfig == null)
                 return null;
             else
             {
-                MMCConfigSQL config = new MMCConfigSQL();
+                FlatConfigSQL config = new FlatConfigSQL();
                 config.IsDirty = true;
                 config.ConnectionString = psconfig.ConnectionString;
                 return config;
@@ -475,7 +475,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <summary>
         /// implicit conversion to PSConfig
         /// </summary>
-        public static explicit operator PSConfigADDS(MMCConfigADDS addsconfig)
+        public static explicit operator PSConfigADDS(FlatConfigADDS addsconfig)
         {
             if (addsconfig == null)
                 return null;
@@ -501,13 +501,13 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <summary>
         /// implicit conversion from PSConfig
         /// </summary>
-        public static explicit operator MMCConfigADDS(PSConfigADDS psconfig)
+        public static explicit operator FlatConfigADDS(PSConfigADDS psconfig)
         {
             if (psconfig == null)
                 return null;
             else
             {
-                MMCConfigADDS config = new MMCConfigADDS();
+                FlatConfigADDS config = new FlatConfigADDS();
                 config.IsDirty = true;
                 config.Account = psconfig.Account;
                 config.Password = psconfig.Password;
@@ -602,7 +602,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <summary>
         /// explicit conversion to PSConfigMail
         /// </summary>
-        public static explicit operator PSConfigMail(MMCConfigMail mails)
+        public static explicit operator PSConfigMail(FlatConfigMail mails)
         {
             if (mails == null)
                 return null;
@@ -617,17 +617,17 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 psconfig.UseSSL = mails.UseSSL;
                 psconfig.Company = mails.Company;
                 psconfig.MailOTP.Templates.Clear();
-                foreach (MMCConfigMailFileName itm in mails.MailOTPContent)
+                foreach (FlatConfigMailFileName itm in mails.MailOTPContent)
                 {
                     psconfig.MailOTP.Templates.Add((PSConfigMailFileName)itm);
                 }
                 psconfig.MailInscription.Templates.Clear();
-                foreach (MMCConfigMailFileName itm in mails.MailAdminContent)
+                foreach (FlatConfigMailFileName itm in mails.MailAdminContent)
                 {
                     psconfig.MailInscription.Templates.Add((PSConfigMailFileName)itm);
                 }
                 psconfig.MailSecureKey.Templates.Clear();
-                foreach (MMCConfigMailFileName itm in mails.MailKeyContent)
+                foreach (FlatConfigMailFileName itm in mails.MailKeyContent)
                 {
                     psconfig.MailSecureKey.Templates.Add((PSConfigMailFileName)itm);
                 }
@@ -638,13 +638,13 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <summary>
         /// explicit conversion from PSConfigMail
         /// </summary>
-        public static explicit operator MMCConfigMail(PSConfigMail mails)
+        public static explicit operator FlatConfigMail(PSConfigMail mails)
         {
             if (mails == null)
                 return null;
             else
             {
-                MMCConfigMail psconfig = new MMCConfigMail();
+                FlatConfigMail psconfig = new FlatConfigMail();
                 psconfig.IsDirty = true;
                 psconfig.From = mails.From;
                 psconfig.UserName = mails.UserName;
@@ -656,17 +656,17 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 psconfig.MailOTPContent.Clear();
                 foreach (PSConfigMailFileName itm in mails.MailOTP.Templates)
                 {
-                    psconfig.MailOTPContent.Add((MMCConfigMailFileName)itm);
+                    psconfig.MailOTPContent.Add((FlatConfigMailFileName)itm);
                 }
                 psconfig.MailAdminContent.Clear();
                 foreach (PSConfigMailFileName itm in mails.MailInscription.Templates)
                 {
-                    psconfig.MailAdminContent.Add((MMCConfigMailFileName)itm);
+                    psconfig.MailAdminContent.Add((FlatConfigMailFileName)itm);
                 }
                 psconfig.MailKeyContent.Clear();
                 foreach (PSConfigMailFileName itm in mails.MailSecureKey.Templates)
                 {
-                    psconfig.MailKeyContent.Add((MMCConfigMailFileName)itm);
+                    psconfig.MailKeyContent.Add((FlatConfigMailFileName)itm);
                 }
                 return psconfig;
             }
@@ -708,7 +708,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <summary>
         /// explicit operator 
         /// </summary>
-        public static explicit operator PSConfigMailFileName(MMCConfigMailFileName file)
+        public static explicit operator PSConfigMailFileName(FlatConfigMailFileName file)
         {
             if (file == null)
                 return null;
@@ -719,12 +719,12 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <summary>
         /// explicit operator 
         /// </summary>
-        public static explicit operator MMCConfigMailFileName(PSConfigMailFileName file)
+        public static explicit operator FlatConfigMailFileName(PSConfigMailFileName file)
         {
             if (file == null)
                 return null;
             else
-                return new MMCConfigMailFileName(file.LCID, file.FileName, file.Enabled);
+                return new FlatConfigMailFileName(file.LCID, file.FileName, file.Enabled);
         }
     }
 
@@ -825,7 +825,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <para type="description">Changing the key format, invalidate all the users secret keys previously used.</para>
         /// <para type="description">RSA and RSA Custom are using Certificates. Custom RSA must Use Specific database to the keys and certs, one for each user, see New-MFASecretKeysDatabase cmdlet.</para>
         /// </summary>
-        public RegistrationSecretKeyFormat KeyFormat { get; set; }
+        public SecretKeyFormat KeyFormat { get; set; }
 
         /// <summary>
         /// <para type="description">Certificate Thumbprint when using KeyFormat==RSA. the certificate is deployed on all ADFS servers in Crypting Certificates store</para>
@@ -854,7 +854,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <summary>
         /// explicit operator from MMCKeysConfig
         /// </summary>
-        public static explicit operator PSKeysConfig(MMCKeysConfig mgr)
+        public static explicit operator PSKeysConfig(FlatKeysConfig mgr)
         {
             if (mgr == null)
                 return null;
@@ -874,20 +874,20 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <summary>
         /// explicit operator from MMCKeysConfig
         /// </summary>
-        public static explicit operator MMCKeysConfig(PSKeysConfig mgr)
+        public static explicit operator FlatKeysConfig(PSKeysConfig mgr)
         {
             if (mgr == null)
                 return null;
             else
             {
-                MMCKeysConfig target = new MMCKeysConfig();
+                FlatKeysConfig target = new FlatKeysConfig();
                 target.IsDirty = true;
                 target.CertificateThumbprint = mgr.CertificateThumbprint;
                 target.CertificateValidity = mgr.CertificateValidity;
                 target.KeyFormat = mgr.KeyFormat;
                 target.KeyGenerator = mgr.KeyGenerator;
                 target.KeySize = mgr.KeySize;
-                target.ExternalKeyManager = (MMCExternalKeyManager)mgr.ExternalKeyManager;
+                target.ExternalKeyManager = (FlatExternalKeyManager)mgr.ExternalKeyManager;
                 return target;
             }
         }
@@ -914,7 +914,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <summary>
         /// explicit operator 
         /// </summary>
-        public static explicit operator PSExternalKeyManager(MMCExternalKeyManager mgr)
+        public static explicit operator PSExternalKeyManager(FlatExternalKeyManager mgr)
         {
             if (mgr == null)
                 return null;
@@ -930,13 +930,13 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <summary>
         /// explicit operator 
         /// </summary>
-        public static explicit operator MMCExternalKeyManager(PSExternalKeyManager mgr)
+        public static explicit operator FlatExternalKeyManager(PSExternalKeyManager mgr)
         {
             if (mgr == null)
                 return null;
             else
             {
-                MMCExternalKeyManager ret = new MMCExternalKeyManager();
+                FlatExternalKeyManager ret = new FlatExternalKeyManager();
                 ret.FullQualifiedImplementation = mgr.FullQualifiedImplementation;
                 ret.Parameters = mgr.Parameters;
                 return ret;
@@ -987,7 +987,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <summary>
         /// explicit operator from MMCKeysConfig
         /// </summary>
-        public static explicit operator PSExternalOTPProvider(MMCExternalOTPProvider otp)
+        public static explicit operator PSExternalOTPProvider(FlatExternalOTPProvider otp)
         {
             if (otp == null)
                 return null;
@@ -1007,13 +1007,13 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <summary>
         /// explicit operator from MMCKeysConfig
         /// </summary>
-        public static explicit operator MMCExternalOTPProvider(PSExternalOTPProvider otp)
+        public static explicit operator FlatExternalOTPProvider(PSExternalOTPProvider otp)
         {
             if (otp == null)
                 return null;
             else
             {
-                MMCExternalOTPProvider target = new MMCExternalOTPProvider();
+                FlatExternalOTPProvider target = new FlatExternalOTPProvider();
                 target.IsDirty = true;
                 target.Company = otp.Company;
                 target.FullQualifiedImplementation = otp.FullQualifiedImplementation;

@@ -240,4 +240,7 @@
   <data name="HtmlREGSendQR" xml:space="preserve">
     <value>Envoyer par email</value>
   </data>
+  <data name="HtmlUIMGotoInscription" xml:space="preserve">
+    <value>Demande d'inscription</value>
+  </data>
 </root>

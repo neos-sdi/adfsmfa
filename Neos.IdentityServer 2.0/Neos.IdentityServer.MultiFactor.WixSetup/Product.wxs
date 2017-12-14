@@ -16,7 +16,10 @@
 			<ComponentGroupRef Id="Neos.IdentityServer.MultiFactor.Notifications" />
       <Feature Id="MMCFeature" Title="adfsmfa MMC Console" Description="Neos Identity Service MMC Console" InstallDefault="local" TypicalDefault="install" Level="1" >
         <ComponentGroupRef Id="Neos.IdentityServer.Console" />
-        <ComponentGroupRef Id="Neos.IdentityServer.ShortCuts" /> 
+        <ComponentGroupRef Id="Neos.IdentityServer.ShortCuts" />
+        <ComponentRef Id="MFADIR"/>
+        <ComponentRef Id="MFAFR"/>
+        <ComponentRef Id="MFAES"/>
       </Feature>
     </Feature>
   
@@ -76,6 +79,16 @@
           <Component Id="MFADIR" Guid="E7173CAB-E43F-4A07-99F0-774EF9B76199" SharedDllRefCount="no" KeyPath="yes" NeverOverwrite="no" Permanent="no" Transitive="no" Win64="yes" >
             <CreateFolder/>
           </Component>
+          <Directory Id="MFAFR" Name="fr">
+            <Component Id="MFAFR" Guid="E7173CAB-E43F-4A07-99F0-774EF9B76198" SharedDllRefCount="no" KeyPath="yes" NeverOverwrite="no" Permanent="no" Transitive="no" Win64="yes" >
+              <CreateFolder/>
+            </Component>
+          </Directory>
+          <Directory Id="MFAES" Name="es" >
+            <Component Id="MFAES" Guid="E7173CAB-E43F-4A07-99F0-774EF9B76197" SharedDllRefCount="no" KeyPath="yes" NeverOverwrite="no" Permanent="no" Transitive="no" Win64="yes">
+              <CreateFolder/>
+            </Component>
+          </Directory>
         </Directory>
         <Directory Id="WPS" Name="WindowsPowerShell">
           <Directory Id="MODS" Name="Modules">
@@ -110,7 +123,13 @@
       </Component>
       <Component Id="GACDeployment02" Guid="E7173CAB-E43F-4A07-99F7-774EF9B76102" Win64="yes" Directory="LOCALEFR" DiskId="1" >
         <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.fr.resources.dll"  Name="Neos.IdentityServer.MultiFactor.resources.dll" Source="$(var.Neos.IdentityServer.MultiFactor.TargetDir)fr\Neos.IdentityServer.MultiFactor.resources.dll" />
-      </Component> 
+      </Component>
+      <Component Id="GACDeployment03" Guid="E7173CAB-E43F-4A07-99F7-774EF9B76103" Win64="yes" Directory="AssemblyFolder" DiskId="1" >
+        <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.DataTypes.dll"  Name="Neos.IdentityServer.MultiFactor.DataTypes.dll" Source="$(var.Neos.IdentityServer.MultiFactor.DataTypes.TargetPath)" Vital="yes" />
+      </Component>
+      <Component Id="GACDeployment04" Guid="E7173CAB-E43F-4A07-99F7-774EF9B76104" Win64="yes" Directory="AssemblyFolder" DiskId="1" >
+        <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.Data.dll"  Name="Neos.IdentityServer.MultiFactor.Data.dll" Source="$(var.Neos.IdentityServer.MultiFactor.Data.TargetPath)" Vital="yes" />
+      </Component>
       <Component Id="GACDeployment10" Guid="E7173CAB-E43F-4A07-99F7-774EF9B76110" Win64="yes" Directory="AssemblyFolder" DiskId="1" >
         <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.Common.dll"  Name="Neos.IdentityServer.MultiFactor.Common.dll" Source="$(var.Neos.IdentityServer.MultiFactor.Common.TargetPath)" Vital="yes" />
       </Component>
@@ -203,6 +222,12 @@
         <File KeyPath="no" Id="mfa.msc"  Name="mfa.msc" Source="$(var.Neos.IdentityServer.Console.ProjectDir)SnapMMC\mfa.msc" Vital="yes" />
         <File KeyPath="no" Id="Neos.IdentityServer.Console.NativeResources.dll"  Name="Neos.IdentityServer.Console.NativeResources.dll" Source="$(var.Neos.IdentityServer.Console.NativeResources.TargetPath)" Vital="yes" />
       </Component>
+      <Component Id="GACDeployment61" Guid="E7173CAB-E43F-4A07-99F7-774EF9B76161" Win64="yes" Directory="MFAFR" DiskId="1" >
+        <File KeyPath="yes" Id="Neos.IdentityServer.Console.fr.resources.dll"  Name="Neos.IdentityServer.Console.resources.dll" Source="$(var.Neos.IdentityServer.Console.TargetDir)fr\Neos.IdentityServer.Console.resources.dll" />
+      </Component>
+      <Component Id="GACDeployment62" Guid="E7173CAB-E43F-4A07-99F7-774EF9B76162" Win64="yes" Directory="MFAES" DiskId="1" >
+        <File KeyPath="yes" Id="Neos.IdentityServer.Console.es.resources.dll"  Name="Neos.IdentityServer.Console.resources.dll" Source="$(var.Neos.IdentityServer.Console.TargetDir)es\Neos.IdentityServer.Console.resources.dll" />
+      </Component>
     </ComponentGroup>
   </Fragment>
 
@@ -226,5 +251,4 @@
       </Component>
     </ComponentGroup>
   </Fragment> 
-
 </Wix>

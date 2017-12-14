@@ -33,16 +33,16 @@ namespace Neos.IdentityServer.MultiFactor
 
         public MFANOTIFHUB()
         {
-            Trace.TraceInformation("InitializeComponent");
+            Trace.TraceInformation("MFANOTIFHUB:InitializeComponent");
             InitializeComponent();
-            Trace.TraceInformation("EventLog Start");
+            Trace.TraceInformation("MFANOTIFHUB:EventLog Start");
             ((ISupportInitialize)this.EventLog).BeginInit();
             if (!EventLog.SourceExists("ADFS MFA Notification Hub"))
                 EventLog.CreateEventSource("ADFS MFA Notification Hub", "Application");
             if (!EventLog.SourceExists("ADFS MFA Service"))
                 EventLog.CreateEventSource("ADFS MFA Service", "Application");
             ((ISupportInitialize)this.EventLog).EndInit();
-            Trace.TraceInformation("EventLog End Init");
+            Trace.TraceInformation("MFANOTIFHUB:EventLog End Init");
             this.EventLog.Source = "ADFS MFA Notification Hub";
             this.EventLog.Log = "Application"; 
         }
@@ -101,10 +101,10 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         protected override void OnStart(string[] args)
         {
-            Trace.WriteLine("Start MailSlot Manager " + _mailslotsmgr.ApplicationName);
+            Trace.WriteLine("MFANOTIFHUB:Start MailSlot Manager " + _mailslotsmgr.ApplicationName);
             _mailslotsmgr.Start();
             _mailslotsmgr.MailSlotSystemMessageArrived += MailSlotSystemMessageArrived;
-            Trace.WriteLine("Start ADFS Service");
+            Trace.WriteLine("MFANOTIFHUB:Start ADFS Service");
             StartADFSService();
             this.EventLog.WriteEntry("Le service a démarré avec succès.",  EventLogEntryType.Information, 0); 
         }
@@ -114,10 +114,10 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         protected override void OnStop()
         {
-            Trace.WriteLine("Stop ADFS Service");
+            Trace.WriteLine("MFANOTIFHUB:Stop ADFS Service");
             StopADFSService();
             _mailslotsmgr.MailSlotSystemMessageArrived -= MailSlotSystemMessageArrived;
-            Trace.WriteLine("Stop MailSlot Manager " + _mailslotsmgr.ApplicationName);
+            Trace.WriteLine("MFANOTIFHUB:Stop MailSlot Manager " + _mailslotsmgr.ApplicationName);
             _mailslotsmgr.Stop();
             this.EventLog.WriteEntry("Le service s'est arrêté avec succès.",  EventLogEntryType.Information, 1);
         }

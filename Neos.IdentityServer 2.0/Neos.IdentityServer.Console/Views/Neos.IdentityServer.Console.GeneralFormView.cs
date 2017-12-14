@@ -1,4 +1,21 @@
-﻿using System;
+﻿//******************************************************************************************************************************************************************************************//
+// Copyright (c) 2017 Neos-Sdi (http://www.neos-sdi.com)                                                                                                                                    //                        
+//                                                                                                                                                                                          //
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
+// to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
+// and to permit persons to whom the Software is furnished to do so, subject to the following conditions:                                                                                   //
+//                                                                                                                                                                                          //
+// The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.                                                           //
+//                                                                                                                                                                                          //
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,                                      //
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,                            //
+// WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                               //
+//                                                                                                                                                                                          //
+// https://adfsmfa.codeplex.com                                                                                                                                                             //
+// https://github.com/neos-sdi/adfsmfa                                                                                                                                                      //
+//                                                                                                                                                                                          //
+//******************************************************************************************************************************************************************************************//
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,7 +36,7 @@ namespace Neos.IdentityServer.Console
     public class GeneralFormView: FormView
     {
         private ServiceGeneralScopeNode statusScopeNode = null;
-        private GeneralViewControl usersControl = null;
+        private GeneralViewControl generalControl = null;
 
         /// <summary>
         /// StatusFormView constructor
@@ -34,7 +51,7 @@ namespace Neos.IdentityServer.Console
         /// </summary>
         protected override void OnInitialize(AsyncStatus status)
         {
-            usersControl = (GeneralViewControl)this.Control;
+            generalControl = (GeneralViewControl)this.Control;
             statusScopeNode = (ServiceGeneralScopeNode)this.ScopeNode;
             statusScopeNode.generalFormView = this;
 
@@ -42,9 +59,35 @@ namespace Neos.IdentityServer.Console
             SelectionData.ActionsPaneItems.Clear();
             SelectionData.ActionsPaneHelpItems.Clear();
             SelectionData.EnabledStandardVerbs = (StandardVerbs.Delete | StandardVerbs.Properties);
-            ModeActionsPaneItems.Clear(); 
-
+            ModeActionsPaneItems.Clear();
             base.OnInitialize(status);
+        }
+
+        /// <summary>
+        /// Refresh() method implementation
+        /// </summary>
+        internal void Refresh()
+        {
+            if (generalControl != null)
+                generalControl.RefreshData();
+        }
+
+        /// <summary>
+        /// DoCancel() method implementation
+        /// </summary>
+        internal void DoCancel()
+        {
+            if (generalControl != null)
+                generalControl.CancelData();
+        }
+
+        /// <summary>
+        /// DoSave() method implmentation
+        /// </summary>
+        internal void DoSave()
+        {
+            if (generalControl != null)
+                generalControl.SaveData();
         }
     }
 }

@@ -29,6 +29,8 @@ using Neos.IdentityServer.MultiFactor.Administration;
 using System.Threading;
 using Neos.IdentityServer.MultiFactor;
 using System.DirectoryServices;
+using Neos.IdentityServer.Console.Controls;
+using Microsoft.ManagementConsole.Advanced;
 
 namespace Neos.IdentityServer.Console
 {
@@ -56,6 +58,15 @@ namespace Neos.IdentityServer.Console
         /// </summary>
         protected virtual void OnInitialize()
         {
+            this.SuspendLayout();
+            try
+            {
+                this.tableLayoutPanel.Controls.Add(new SQLConfigurationControl(this, this.SnapIn), 0, 1);
+            }
+            finally
+            {
+                this.ResumeLayout(true);
+            }
         }
 
         #region Properties
@@ -112,5 +123,92 @@ namespace Neos.IdentityServer.Console
                 Size = Parent.ClientSize;
         }
         #endregion      
+
+        /// <summary>
+        /// RefreshData method implementation
+        /// </summary>
+        internal void RefreshData()
+        {
+            ComponentResourceManager resources = new ComponentResourceManager(typeof(SQLViewControl));
+            this.label1.Text = resources.GetString("label1.Text");
+            this.label2.Text = resources.GetString("label2.Text");
+            this.label3.Text = resources.GetString("label3.Text");
+
+            this.SuspendLayout();
+            this.Cursor = Cursors.WaitCursor;
+            try
+            {
+                for (int j = this.tableLayoutPanel.Controls.Count - 1; j >= 0; j--)
+                {
+                    Control ctrl = this.tableLayoutPanel.Controls[j];
+                    if (ctrl is SQLConfigurationControl)
+                        this.tableLayoutPanel.Controls.RemoveAt(j);
+                }
+                this.tableLayoutPanel.Controls.Add(new SQLConfigurationControl(this, this.SnapIn), 0, 1);
+            }
+            finally
+            {
+                this.Cursor = Cursors.Default;
+                this.ResumeLayout();
+            }
+        }
+
+        /// <summary>
+        /// CancelData method implementation
+        /// </summary>
+        internal void CancelData()
+        {
+            try
+            {
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
+                ComponentResourceManager resources = new ComponentResourceManager(typeof(SQLViewControl));
+                messageBoxParameters.Text = resources.GetString("SQLVALIDSAVE");
+                messageBoxParameters.Buttons = MessageBoxButtons.YesNo;
+                messageBoxParameters.Icon = MessageBoxIcon.Question;
+                if (this.SnapIn.Console.ShowDialog(messageBoxParameters) == DialogResult.Yes)
+                {
+                    ManagementService.ADFSManager.ReadConfiguration(null);
+                    RefreshData();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
+                messageBoxParameters.Text = ex.Message;
+                messageBoxParameters.Buttons = MessageBoxButtons.OK;
+                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                this.SnapIn.Console.ShowDialog(messageBoxParameters);
+            }
+        }
+
+        /// <summary>
+        /// SaveData method implementation
+        /// </summary>
+        internal void SaveData()
+        {
+            //  if (this.ValidateChildren())
+            {
+                this.Cursor = Cursors.WaitCursor;
+                try
+                {
+                    ManagementService.ADFSManager.WriteConfiguration(null);
+                }
+                catch (Exception ex)
+                {
+                    this.Cursor = Cursors.Default;
+                    MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
+                    messageBoxParameters.Text = ex.Message;
+                    messageBoxParameters.Buttons = MessageBoxButtons.OK;
+                    messageBoxParameters.Icon = MessageBoxIcon.Error;
+                    this.SnapIn.Console.ShowDialog(messageBoxParameters);
+                }
+                finally
+                {
+                    RefreshData();
+                    this.Cursor = Cursors.Default;
+                }
+            }
+        }
+  
     }
 }

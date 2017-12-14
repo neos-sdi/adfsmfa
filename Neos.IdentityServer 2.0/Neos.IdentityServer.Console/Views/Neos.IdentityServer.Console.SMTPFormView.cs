@@ -36,7 +36,7 @@ namespace Neos.IdentityServer.Console
     public class ServiceSMTPFormView : FormView
     {
         private ServiceSMTPScopeNode smtpScopeNode = null;
-        private SMTPViewControl usersControl = null;
+        private SMTPViewControl SMTPControl = null;
 
         /// <summary>
         /// ServiceSecurityFormView constructor
@@ -51,7 +51,7 @@ namespace Neos.IdentityServer.Console
         /// </summary>
         protected override void OnInitialize(AsyncStatus status)
         {
-            usersControl = (SMTPViewControl)this.Control;
+            SMTPControl = (SMTPViewControl)this.Control;
             smtpScopeNode = (ServiceSMTPScopeNode)this.ScopeNode;
             smtpScopeNode.SMTPFormView = this;
 
@@ -63,5 +63,33 @@ namespace Neos.IdentityServer.Console
 
             base.OnInitialize(status);
         }
+
+        /// <summary>
+        /// Refresh() method implementation
+        /// </summary>
+        internal void Refresh()
+        {
+            if (SMTPControl != null)
+                SMTPControl.RefreshData();
+        }
+
+        /// <summary>
+        /// DoCancel() method implementation
+        /// </summary>
+        internal void DoCancel()
+        {
+            if (SMTPControl != null)
+                SMTPControl.CancelData();
+        }
+
+        /// <summary>
+        /// DoSave() method implmentation
+        /// </summary>
+        internal void DoSave()
+        {
+            if (SMTPControl != null)
+                SMTPControl.SaveData();
+        }
+
     }
 }

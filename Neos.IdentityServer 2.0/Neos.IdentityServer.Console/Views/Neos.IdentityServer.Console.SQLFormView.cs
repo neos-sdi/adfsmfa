@@ -36,7 +36,7 @@ namespace Neos.IdentityServer.Console
     public class ServiceSQLFormView : FormView
     {
         private ServiceSQLScopeNode sqlScopeNode = null;
-        private SQLViewControl usersControl = null;
+        private SQLViewControl sqlcontrol = null;
 
         /// <summary>
         /// ServiceSecurityFormView constructor
@@ -51,7 +51,7 @@ namespace Neos.IdentityServer.Console
         /// </summary>
         protected override void OnInitialize(AsyncStatus status)
         {
-            usersControl = (SQLViewControl)this.Control;
+            sqlcontrol = (SQLViewControl)this.Control;
             sqlScopeNode = (ServiceSQLScopeNode)this.ScopeNode;
             sqlScopeNode.SQLFormView = this;
 
@@ -62,6 +62,33 @@ namespace Neos.IdentityServer.Console
             ModeActionsPaneItems.Clear();
 
             base.OnInitialize(status);
+        }
+
+        /// <summary>
+        /// Refresh() method implementation
+        /// </summary>
+        internal void Refresh()
+        {
+            if (sqlcontrol != null)
+                sqlcontrol.RefreshData();
+        }
+
+        /// <summary>
+        /// DoCancel() method implementation
+        /// </summary>
+        internal void DoCancel()
+        {
+            if (sqlcontrol != null)
+                sqlcontrol.CancelData();
+        }
+
+        /// <summary>
+        /// DoSave() method implmentation
+        /// </summary>
+        internal void DoSave()
+        {
+            if (sqlcontrol != null)
+                sqlcontrol.SaveData();
         }
     }
 }

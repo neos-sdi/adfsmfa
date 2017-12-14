@@ -25,11 +25,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Microsoft.ManagementConsole;
-using Neos.IdentityServer.MultiFactor.Administration;
 using Neos.IdentityServer.Console.Controls;
 using System.Threading;
 using Neos.IdentityServer.MultiFactor;
 using System.DirectoryServices;
+using Neos.IdentityServer.MultiFactor.Administration;
 
 namespace Neos.IdentityServer.Console
 {
@@ -55,7 +55,6 @@ namespace Neos.IdentityServer.Console
             OnInitialize();
         }
 
-
         /// <summary>
         /// OnInitialize method
         /// </summary>
@@ -65,22 +64,18 @@ namespace Neos.IdentityServer.Console
             this.SuspendLayout();
             try
             {
-                ADFSServiceManager mgr = ManagementAdminService.ADFSManager;
-                bool isconfigured = mgr.IsFarmConfigured();
-                bool isactive = mgr.IsMFAProviderEnabled(null);
-                this.tableLayoutPanel.Controls.Add(new ConfigurationControl(mgr.Config, isconfigured, isactive), 0, 1);
-                this.tableLayoutPanel.Controls.Add(new ConfigurationFooterControl(), 0, 2);
+                this.tableLayoutPanel.Controls.Add(new ConfigurationControl(), 0, 1);
 
+                bool isconfigured = ManagementService.ADFSManager.IsFarmConfigured();
                 if (isconfigured)
                 {
                     int i = 3;
-                    foreach (ADFSServerHost srv in ManagementAdminService.ADFSManager.ADFSFarm.Servers)
+                    foreach (ADFSServerHost srv in ManagementService.ADFSManager.ADFSFarm.Servers)
                     {
-                        bool isok = ManagementAdminService.ADFSManager.IsRunning(srv.FQDN);
+                        bool isok = ManagementService.ADFSManager.IsRunning(srv.FQDN);
                         this.tableLayoutPanel.Controls.Add(new ADFSServerControl(srv, isok), 0, i);
                         i++;
                     }
-                    this.tableLayoutPanel.Controls.Add(new ADFSServersFooterControl(), 0, i);
                 }
             }
             finally
@@ -96,6 +91,12 @@ namespace Neos.IdentityServer.Console
         internal void RefreshData()
         {
             this.Cursor = Cursors.WaitCursor;
+            ComponentResourceManager resources = new ComponentResourceManager(typeof(ServiceViewControl));
+            this.label1.Text = resources.GetString("label1.Text");
+            this.label2.Text = resources.GetString("label2.Text");
+            this.label3.Text = resources.GetString("label3.Text");
+            this.label4.Text = resources.GetString("label4.Text");
+
             this.SuspendLayout();
             try
             {
@@ -106,27 +107,20 @@ namespace Neos.IdentityServer.Console
                         this.tableLayoutPanel.Controls.RemoveAt(j);
                     else if (ctrl is ConfigurationControl)
                         this.tableLayoutPanel.Controls.RemoveAt(j);
-                    else if (ctrl is ConfigurationFooterControl)
-                        this.tableLayoutPanel.Controls.RemoveAt(j);
-                    else if (ctrl is ADFSServersFooterControl)
-                        this.tableLayoutPanel.Controls.RemoveAt(j);
                 }
-                ADFSServiceManager mgr = ManagementAdminService.ADFSManager;
-                bool isconfigured = mgr.IsFarmConfigured();
-                bool isactive = mgr.IsMFAProviderEnabled(null);
-                this.tableLayoutPanel.Controls.Add(new ConfigurationControl(mgr.Config, isconfigured, isactive), 0, 1);
-                this.tableLayoutPanel.Controls.Add(new ConfigurationFooterControl(), 0, 2);
 
+                this.tableLayoutPanel.Controls.Add(new ConfigurationControl(), 0, 1);
+
+                bool isconfigured = ManagementService.ADFSManager.IsFarmConfigured();
                 if (isconfigured)
                 {
                     int i = 3;
-                    foreach (ADFSServerHost srv in ManagementAdminService.ADFSManager.ADFSFarm.Servers)
+                    foreach (ADFSServerHost srv in ManagementService.ADFSManager.ADFSFarm.Servers)
                     {
-                        bool isok = ManagementAdminService.ADFSManager.IsRunning(srv.FQDN);
+                        bool isok = ManagementService.ADFSManager.IsRunning(srv.FQDN);
                         this.tableLayoutPanel.Controls.Add(new ADFSServerControl(srv, isok), 0, i);
                         i++;
                     }
-                    this.tableLayoutPanel.Controls.Add(new ADFSServersFooterControl(), 0, i);
                 }
             }
             finally

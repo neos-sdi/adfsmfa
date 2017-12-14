@@ -27,7 +27,7 @@ using System.Globalization;
 
 namespace Neos.IdentityServer.Multifactor.SMS
 {
-    public class SMSCall: IExternalOTPProvider
+    public class SMSCall: IExternalOTPProvider, IExternalOTPProvider2
     {
         /// <summary>
         /// GetUserCodeWithExternalSystem method implementation for Azure MFA 
@@ -57,9 +57,6 @@ namespace Neos.IdentityServer.Multifactor.SMS
             Params.ApplicationName = "IdentityServer";
             Params.Sha1Salt = externalsys.Sha1Salt;
 
-          /*  Params.SmsText = string.Format(azure_strings.SMSTwoWayMessage, externalsys.Company);
-            Params.Mode = PhoneFactor.MODE_PHONE_APP_STANDARD; */
-
             if (externalsys.IsTwoWay)
             {
                 Params.SmsText = string.Format(azure_strings.SMSTwoWayMessage, externalsys.Company);
@@ -76,11 +73,71 @@ namespace Neos.IdentityServer.Multifactor.SMS
             string otp = string.Empty;
             if (PhoneFactor.Authenticate(Params, out otp, out callStatus, out errorId, externalsys.Timeout))
                 if (externalsys.IsTwoWay)
-                    return NotificationStatus.Bypass;
+                    return (int)NotificationStatus.ResponseSMSReply;
                 else
                     return Convert.ToInt32(otp);
             else
+                return (int)NotificationStatus.Error;
+        }
+
+        /// <summary>
+        /// GetCodeWithExternalSystem method implmentation
+        /// </summary>
+        public NotificationStatus GetCodeWithExternalSystem(Registration reg, ExternalOTPProvider externalsys, CultureInfo culture, out int otp)
+        {
+            azure_strings.Culture = culture;
+            String NumberStr = reg.PhoneNumber;
+            int CountryCode = 0;
+            ulong NationalNumber = 0;
+            string extension = string.Empty;
+
+            PhoneNumberUtil phoneUtil = PhoneNumberUtil.GetInstance();
+            PhoneNumber NumberProto = phoneUtil.Parse(NumberStr, culture.TwoLetterISOLanguageName.ToUpper());
+            CountryCode = NumberProto.CountryCode;
+            NationalNumber = NumberProto.NationalNumber;
+            if (NumberProto.HasExtension)
+                extension = NumberProto.Extension;
+
+            PhoneFactor.Initialize(externalsys);
+            PhoneFactorParams Params = new PhoneFactorParams();
+            Params.Username = reg.UPN;
+
+            Params.CountryCode = CountryCode.ToString();
+            Params.Phone = NationalNumber.ToString();
+            Params.Extension = extension;
+            Params.ApplicationName = "IdentityServer";
+            Params.Sha1Salt = externalsys.Sha1Salt;
+
+            if (externalsys.IsTwoWay)
+            {
+                Params.SmsText = string.Format(azure_strings.SMSTwoWayMessage, externalsys.Company);
+                Params.Mode = PhoneFactor.MODE_SMS_TWO_WAY_OTP;
+            }
+            else
+            {
+                Params.SmsText = string.Format(azure_strings.SMSMessage, externalsys.Company);
+                Params.Mode = PhoneFactor.MODE_SMS_ONE_WAY_OTP;
+            }
+
+            int callStatus;
+            int errorId;
+            string xotp = string.Empty;
+            if (PhoneFactor.Authenticate(Params, out xotp, out callStatus, out errorId, externalsys.Timeout))
+                if (externalsys.IsTwoWay)
+                {
+                    otp = Convert.ToInt32(NotificationStatus.ResponseSMSReply);
+                    return NotificationStatus.ResponseSMSReply;
+                }
+                else
+                {
+                    otp = Convert.ToInt32(xotp);
+                    return NotificationStatus.ResponseSMSOTP;
+                }
+            else
+            {
+                otp = 0;
                 return NotificationStatus.Error;
+            }
         }
     }
 }

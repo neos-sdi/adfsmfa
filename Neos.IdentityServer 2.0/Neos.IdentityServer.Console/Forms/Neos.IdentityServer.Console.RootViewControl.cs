@@ -62,6 +62,16 @@ namespace Neos.IdentityServer.Console
         {
         }
 
+        /// <summary>
+        /// RefreshData method
+        /// </summary>
+        internal void RefreshData()
+        {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(RootViewControl));
+            this.GlobalViewlabel.Text = resources.GetString("GlobalViewlabel.Text");
+            this.GlobalViewLabelText.Text = resources.GetString("GlobalViewLabelText.Text");
+        }
+
         #region Properties
         /// <summary>
         /// FormView property implementation

@@ -16,111 +16,346 @@
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
 using System;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.DirectoryServices.AccountManagement;
 using System.Drawing.Imaging;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Management.Automation;
+using System.Management.Automation.Host;
+using System.Management.Automation.Runspaces;
 using System.Net;
 using System.Net.Mail;
+using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 using System.Windows.Threading;
 using System.Xml.Serialization;
-using Neos.IdentityServer.MultiFactor;
 using Neos.IdentityServer.MultiFactor.QrEncoding;
 using Neos.IdentityServer.MultiFactor.QrEncoding.Windows.Render;
 using Neos.IdentityServer.MultiFactor.Resources;
-using System.Management.Automation.Host;
-using System.Management.Automation.Runspaces;
-using System.Management.Automation;
-using System.Collections.ObjectModel;
-using System.Reflection;
+using Neos.IdentityServer.MultiFactor.Data;
+using Microsoft.Win32;
+
 
 namespace Neos.IdentityServer.MultiFactor
 {
     /// <summary>
     /// RepositoryService class implementation
     /// </summary>
-    public static class RepositoryService
+    internal static class RuntimeRepository
     {
         private static MailSlotServer _mailslotserver;
 
         /// <summary>
+        /// MailslotServer property implementation
+        /// </summary>
+        internal static MailSlotServer MailslotServer
+        {
+            get
+            {
+                if (_mailslotserver == null)
+                {
+                    _mailslotserver = new MailSlotServer("MFA");
+                }
+                return _mailslotserver;
+            }
+        }
+
+        #region Registrations 
+        /// <summary>
+        /// KeyDataEvent method implementation
+        /// </summary>
+        internal static void KeyDataEvent(string user, KeysDataManagerEventKind kind)
+        {
+            switch (kind)
+            {
+                case KeysDataManagerEventKind.add:
+                    KeysManager.NewKey(user);
+                    break;
+                case KeysDataManagerEventKind.Get:
+                    KeysManager.ReadKey(user);
+                    break;
+                case KeysDataManagerEventKind.Remove:
+                    KeysManager.RemoveKey(user);
+                    break;
+            }
+        }
+
+        /// <summary>
         /// GetUserRegistration method implementation
         /// </summary>
-        public static Registration GetUserRegistration(string upn, MFAConfig cfg)
+        internal static Registration GetUserRegistration(MFAConfig cfg, string upn)
         {
-            Registration res = null;
+            DataRepositoryService client = null;
             if (cfg.UseActiveDirectory)
-            {
-                ADDSAdminService client = new ADDSAdminService(cfg.Hosts.ActiveDirectoryHost, cfg.DeliveryWindow);
-                res = client.GetUserRegistration(upn);
-            }
+                client = new ADDSDataRepositoryService(cfg.Hosts.ActiveDirectoryHost, cfg.DeliveryWindow);
             else
-            {
-                SQLAdminService client = new SQLAdminService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow);
-                res = client.GetUserRegistration(upn);
-            }
-            return res;
+                client = new SQLDataRepositoryService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow);
+            client.OnKeyDataEvent += KeyDataEvent;
+            return client.GetUserRegistration(upn);
         }
 
         /// <summary>
         /// SetUserRegistration method implementation
         /// </summary>
-        public static void SetUserRegistration(Registration registration, MFAConfig cfg)
+        internal static Registration SetUserRegistration(MFAConfig cfg, Registration registration, bool resetkey = false)
         {
+            DataRepositoryService client = null;
             if (cfg.UseActiveDirectory)
-            {
-                ADDSAdminService client = new ADDSAdminService(cfg.Hosts.ActiveDirectoryHost, cfg.DeliveryWindow);
-                client.SetUserRegistration(registration);
-            }
+                client = new ADDSDataRepositoryService(cfg.Hosts.ActiveDirectoryHost, cfg.DeliveryWindow);
             else
+                client = new SQLDataRepositoryService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow);
+            client.OnKeyDataEvent += KeyDataEvent;
+            return client.SetUserRegistration(registration); ;
+        }
+
+        /// <summary>
+        /// AddUserRegistration method implementation
+        /// </summary>
+        internal static Registration AddUserRegistration(MFAConfig cfg, Registration reg, bool addkey = true)
+        {
+            DataRepositoryService client = null;
+            if (cfg.UseActiveDirectory)
+                client = new ADDSDataRepositoryService(cfg.Hosts.ActiveDirectoryHost, cfg.DeliveryWindow);
+            else
+                client = new SQLDataRepositoryService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow);
+            client.OnKeyDataEvent += KeyDataEvent;
+            return client.AddUserRegistration(reg);
+        }
+
+        /// <summary>
+        /// DeleteUserRegistration method implementation
+        /// </summary>
+        internal static bool DeleteUserRegistration(MFAConfig cfg, Registration reg, bool dropkey = true)
+        {
+            DataRepositoryService client = null;
+            if (cfg.UseActiveDirectory)
+                client = new ADDSDataRepositoryService(cfg.Hosts.ActiveDirectoryHost, cfg.DeliveryWindow);
+            else
+                client = new SQLDataRepositoryService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow);
+            client.OnKeyDataEvent += KeyDataEvent;
+            return client.DeleteUserRegistration(reg, dropkey);
+        }
+
+        /// <summary>
+        /// EnableUserRegistration method implementation
+        /// </summary>
+        internal static Registration EnableUserRegistration(MFAConfig cfg, Registration reg)
+        {
+            DataRepositoryService client = null;
+            if (cfg.UseActiveDirectory)
+                client = new ADDSDataRepositoryService(cfg.Hosts.ActiveDirectoryHost, cfg.DeliveryWindow);
+            else
+                client = new SQLDataRepositoryService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow);
+            client.OnKeyDataEvent += KeyDataEvent;
+            return client.EnableUserRegistration(reg);
+        }
+
+        /// <summary>
+        /// DisableUserRegistration method implementation
+        /// </summary>
+        internal static Registration DisableUserRegistration(MFAConfig cfg, Registration reg)
+        {
+            DataRepositoryService client = null;
+            if (cfg.UseActiveDirectory)
+                client = new ADDSDataRepositoryService(cfg.Hosts.ActiveDirectoryHost, cfg.DeliveryWindow);
+            else
+                client = new SQLDataRepositoryService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow);
+            client.OnKeyDataEvent += KeyDataEvent;
+            return client.DisableUserRegistration(reg);
+        }
+
+        /// <summary>
+        /// GetUserRegistrations method implementation
+        /// </summary>
+        internal static RegistrationList GetUserRegistrations(MFAConfig cfg, DataFilterObject filter, DataOrderObject order, DataPagingObject paging, int maxrows = 20000)
+        {
+            DataRepositoryService client = null;
+            if (cfg.UseActiveDirectory)
+                client = new ADDSDataRepositoryService(cfg.Hosts.ActiveDirectoryHost, cfg.DeliveryWindow);
+            else
+                client = new SQLDataRepositoryService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow);
+            client.OnKeyDataEvent += KeyDataEvent;
+            return client.GetUserRegistrations(filter, order, paging, maxrows);
+        }
+
+        /// <summary>
+        /// GetAllUserRegistrations method implementation
+        /// </summary>
+        internal static RegistrationList GetAllUserRegistrations(MFAConfig cfg, DataOrderObject order, int maxrows = 20000, bool enabledonly = false)
+        {
+            DataRepositoryService client = null;
+            if (cfg.UseActiveDirectory)
+                client = new ADDSDataRepositoryService(cfg.Hosts.ActiveDirectoryHost, cfg.DeliveryWindow);
+            else
+                client = new SQLDataRepositoryService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow);
+            client.OnKeyDataEvent += KeyDataEvent;
+            return client.GetAllUserRegistrations(order, maxrows, enabledonly);
+        }
+
+        /// <summary>
+        /// GetUserRegistrationsCount method implementation
+        /// </summary>
+        internal static int GetUserRegistrationsCount(MFAConfig cfg, DataFilterObject filter)
+        {
+            DataRepositoryService client = null;
+            if (cfg.UseActiveDirectory)
+                client = new ADDSDataRepositoryService(cfg.Hosts.ActiveDirectoryHost, cfg.DeliveryWindow);
+            else
+                client = new SQLDataRepositoryService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow);
+            client.OnKeyDataEvent += KeyDataEvent;
+            return client.GetUserRegistrationsCount(filter);
+        }
+
+        /// <summary>
+        /// ImportUsers method implementation
+        /// </summary>
+        internal static void ImportADDSUsers(MFAConfig cfg, string ldappath, bool enable)
+        {
+            string filename = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles)+"\\MFA\\adimport_"+DateTime.UtcNow.ToFileTimeUtc().ToString()+".log";
+            TraceListener listen = InitializeTrace(filename);
+            try
             {
-                SQLAdminService client = new SQLAdminService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow);
-                client.SetUserRegistration(registration);
+                Trace.WriteLine("");
+                Trace.WriteLine(string.Format("Importing for AD : {0}", ldappath));
+                Trace.Indent();
+                Trace.WriteLine("Querying users from AD");
+                DataRepositoryService client = new ADDSDataRepositoryService(cfg.Hosts.ActiveDirectoryHost, cfg.DeliveryWindow);
+                RegistrationList lst = client.GetImportUserRegistrations(ldappath, enable);
+                Trace.WriteLine(string.Format("Querying return {0} users from AD", lst.Count.ToString()));
+                DataRepositoryService client2 = null;
+                if (cfg.UseActiveDirectory)
+                {
+                    Trace.WriteLine("");
+                    Trace.WriteLine("Importing ADDS Mode");
+                    Trace.Indent();
+                    client2 = new ADDSDataRepositoryService(cfg.Hosts.ActiveDirectoryHost, cfg.DeliveryWindow);
+                }
+                else
+                {
+                    Trace.WriteLine("");
+                    Trace.WriteLine("Importing SQL Mode");
+                    Trace.Indent();
+                    client2 = new SQLDataRepositoryService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow);
+                }
+                client2.OnKeyDataEvent += KeyDataEvent;
+                foreach (Registration reg in lst)
+                {
+                    
+                    if (enable)
+                        reg.Enabled = true;
+                    if (!client2.HasRegistration(reg.UPN))
+                    {
+                        Trace.TraceInformation(string.Format("Importing user {0} from AD", reg.UPN));
+                        client2.AddUserRegistration(reg);
+                        Trace.TraceInformation(string.Format("User {0} Imported in MFA", reg.UPN));
+                    }
+                    else
+                        Trace.TraceWarning(string.Format("User {0} always exists in MFA, import canceled", reg.UPN));
+                }
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError(string.Format("Error importing from AD \r\r {0}",ex.Message));
+            }
+            finally
+            {
+                Trace.Unindent();
+                FinalizeTrace(listen);
             }
         }
 
         /// <summary>
+        /// InitializeTrace method implementation
+        /// </summary>
+        private static TraceListener InitializeTrace(string filename)
+        {
+            DefaultTraceListener listen = new DefaultTraceListener();
+            listen.Name = "MFATrace";
+            Trace.Listeners.Add(listen);
+            listen.TraceOutputOptions = TraceOptions.DateTime;
+            listen.LogFileName = filename;
+            return listen;
+        }
+
+        /// <summary>
+        /// FinalizeTrace method implmentation
+        /// </summary>
+        private static void FinalizeTrace(TraceListener listen)
+        {
+            Trace.Flush();
+            Trace.Close();
+            listen.Close();
+            Trace.Listeners.Remove("MFATrace");
+        }
+
+
+        /// <summary>
+        /// CheckRepositoryAttribute method implementation
+        /// </summary>
+        internal static bool CheckRepositoryAttribute(MFAConfig cfg, string attributename, int choice = 0)
+        {
+            DataRepositoryService client = null;
+            switch (choice)
+            {
+                case 1:
+                    client = new ADDSDataRepositoryService(cfg.Hosts.ActiveDirectoryHost, cfg.DeliveryWindow);
+                    return client.CheckRepositoryAttribute(attributename);
+                case 2:
+                    client = new SQLDataRepositoryService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow);
+                    return client.CheckRepositoryAttribute(attributename);
+                default:
+                    if (cfg.UseActiveDirectory)
+                    {
+                        client = new ADDSDataRepositoryService(cfg.Hosts.ActiveDirectoryHost, cfg.DeliveryWindow);
+                        return client.CheckRepositoryAttribute(attributename);
+                    }
+                    else
+                    {
+                        client = new SQLDataRepositoryService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow);
+                        return client.CheckRepositoryAttribute(attributename);
+                    }
+            }
+        }
+        #endregion
+
+        #region Notifications
+        /// <summary>
         /// SetNotification method implmentation
         /// </summary>
-        public static Notification SetNotification(Registration registration, MFAConfig config, int otp)
+        internal static Notification SetNotification(MFAConfig cfg, Registration registration, int otp)
         {
-            if (config.UseActiveDirectory)
-            {
-                ADDSAdminService client = new ADDSAdminService(config.Hosts.ActiveDirectoryHost, config.DeliveryWindow);
-                return client.SetNotification(registration, config, otp);
-            }
+            DataRepositoryService client = null;
+            if (cfg.UseActiveDirectory)
+                client = new ADDSDataRepositoryService(cfg.Hosts.ActiveDirectoryHost, cfg.DeliveryWindow);
             else
-            {
-                SQLAdminService client = new SQLAdminService(config.Hosts.SQLServerHost, config.DeliveryWindow);
-                return client.SetNotification(registration, config, otp);
-            }
+                client = new SQLDataRepositoryService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow);
+            client.OnKeyDataEvent += KeyDataEvent;
+            return client.SetNotification(registration, otp);
         }
 
         /// <summary>
         /// CheckNotification method implementation
         /// </summary>
-        public static Notification CheckNotification(Registration registration, MFAConfig cfg)
+        internal static Notification CheckNotification(MFAConfig cfg, Registration registration)
         {
+            DataRepositoryService client = null;
             if (cfg.UseActiveDirectory)
-            {
-                ADDSAdminService client = new ADDSAdminService(cfg.Hosts.ActiveDirectoryHost, cfg.DeliveryWindow);
-                return client.CheckNotification(registration.ID);
-            }
+                client = new ADDSDataRepositoryService(cfg.Hosts.ActiveDirectoryHost, cfg.DeliveryWindow);
             else
-            {
-                SQLAdminService client = new SQLAdminService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow);
-                return client.CheckNotification(registration.ID);
-            }
+                client = new SQLDataRepositoryService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow);
+            client.OnKeyDataEvent += KeyDataEvent;
+            return client.CheckNotification(registration);
         }
+        #endregion
 
         /// <summary>
         /// ChangePassword method implmentation
         /// </summary>
-        public static void ChangePassword(string username, string oldpassword, string newpassword)
+        internal static void ChangePassword(string username, string oldpassword, string newpassword)
         {
             using (var ctx = new PrincipalContext(ContextType.Domain))
             {
@@ -131,103 +366,46 @@ namespace Neos.IdentityServer.MultiFactor
             }
         }
 
+        #region Keys management
         /// <summary>
         /// GetUserKey method implementation
         /// </summary>
-        public static string GetUserKey(string upn, MFAConfig cfg)
+        internal static string GetUserKey(MFAConfig config, string upn)
         {
-            if (cfg.UseActiveDirectory)
-            {
-                ADDSAdminService client = new ADDSAdminService(cfg.Hosts.ActiveDirectoryHost, cfg.DeliveryWindow);
-                return client.GetUserKey(upn);
-            }
-            else
-            {
-                SQLAdminService client = new SQLAdminService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow);
-                return client.GetUserKey(upn);
-            }
+            return KeysManager.ReadKey(upn);
+        }
+
+        /// <summary>
+        /// GetEncodedUserKey method implementation
+        /// </summary>
+        internal static string GetEncodedUserKey(MFAConfig config, string upn)
+        {
+            return KeysManager.EncodedKey(upn);
         }
 
         /// <summary>
         /// NewUserKey method implementation
         /// </summary>
-        public static string NewUserKey(string upn, string secretkey, MFAConfig cfg)
+        internal static string NewUserKey(MFAConfig config, string upn)
         {
-            if (cfg.UseActiveDirectory)
-            {
-                ADDSAdminService client = new ADDSAdminService(cfg.Hosts.ActiveDirectoryHost, cfg.DeliveryWindow);
-                return client.NewUserKey(upn, secretkey);
-            }
-            else
-            {
-                SQLAdminService client = new SQLAdminService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow);
-                return client.NewUserKey(upn, secretkey);
-            }
+            return KeysManager.NewKey(upn);
         }
 
         /// <summary>
         /// RemoveUserKey method implmentation
         /// </summary>
-        public static bool RemoveUserKey(string upn, MFAConfig cfg)
+        internal static bool RemoveUserKey(MFAConfig config, string upn)
         {
-            if (cfg.UseActiveDirectory)
-            {
-                ADDSAdminService client = new ADDSAdminService(cfg.Hosts.ActiveDirectoryHost, cfg.DeliveryWindow);
-                return client.RemoveUserKey(upn);
-            }
-            else
-            {
-                SQLAdminService client = new SQLAdminService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow);
-                return client.RemoveUserKey(upn);
-            }
+            return KeysManager.RemoveKey(upn);
         }
-
-        /// <summary>
-        /// MailslotServer property implementation
-        /// </summary>
-        public static MailSlotServer MailslotServer
-        {
-            get
-            {
-                if (_mailslotserver == null)
-                {
-                    _mailslotserver = new MailSlotServer("MFA");
-                }
-                return RepositoryService._mailslotserver;
-            }
-        }
-    }       
-
-    /// <summary>
-    /// Log class
-    /// </summary>
-    public static class Log
-    {
-        private const string EventLogSource = "ADFS MFA Service";
-        private const string EventLogGroup = "Application";
-
-        /// <summary>
-        /// Log constructor
-        /// </summary>
-        static Log()
-        {
-            if (!EventLog.SourceExists(Log.EventLogSource))
-                EventLog.CreateEventSource(Log.EventLogSource, Log.EventLogGroup);
-        }
-
-        /// <summary>
-        /// WriteEntry method implementation
-        /// </summary>
-        public static void WriteEntry(string message, EventLogEntryType type, int eventID)
-        {
-            EventLog.WriteEntry(EventLogSource, message, type, eventID);
-        }
-    }
+        #endregion 
+   
+    }    
 
     /// <summary>
     /// OTPGenerator static class
     /// </summary>
-    public partial class OTPGenerator
+    internal partial class OTPGenerator
     {
         private int _secondsToGo;
         private string _identity;
@@ -531,28 +709,29 @@ namespace Neos.IdentityServer.MultiFactor
     }
 
     /// <summary>
-    /// KeyGenerator static class
+    /// KeysManager static class
     /// </summary>
-    public static class KeysManager
+    internal static class KeysManager
     {
         private static ISecretKeyManager _manager;
 
         /// <summary>
         /// Initialize method implementation
         /// </summary>
-        public static void Initialize(MFAConfig cfg)
+        internal static void Initialize(MFAConfig cfg)
         {
+            Trace.TraceInformation("KeysManager.Initialize()");   
             switch (cfg.KeysConfig.KeyFormat)
             {
-                case RegistrationSecretKeyFormat.RNG:
+                case SecretKeyFormat.RNG:
                     _manager = new RNGKeyManager();
                     _manager.Initialize(cfg);
                     break;
-                case RegistrationSecretKeyFormat.RSA:
+                case SecretKeyFormat.RSA:
                     _manager = new RSAKeyManager();
                     _manager.Initialize(cfg);
                     break;
-                case RegistrationSecretKeyFormat.CUSTOM:
+                case SecretKeyFormat.CUSTOM:
                     _manager = Utilities.LoadExternalKeyManagerWrapper(cfg.KeysConfig.ExternalKeyManager.FullQualifiedImplementation);
                     if (_manager==null)
                         throw new NotImplementedException("CUSTOM SecretKeyManager not found !");
@@ -566,7 +745,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// EnsureKey method iplementation
         /// </summary>
-        public static void EnsureKey(string upn) 
+        internal static void EnsureKey(string upn) 
         {
             string key = ReadKey(upn);
             if (string.IsNullOrEmpty(key))
@@ -578,7 +757,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// NewKey method implmentation
         /// </summary>
-        public static string NewKey(string upn)
+        internal static string NewKey(string upn)
         {
             return _manager.NewKey(upn);
         }
@@ -586,7 +765,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// ReadKey method implementation
         /// </summary>
-        public static string ReadKey(string upn)
+        internal static string ReadKey(string upn)
         {
             return _manager.ReadKey(upn);
         }
@@ -594,7 +773,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// EncodedKey method implementation
         /// </summary>
-        public static string EncodedKey(string upn)
+        internal static string EncodedKey(string upn)
         {
             return _manager.EncodedKey(upn);
         }
@@ -602,7 +781,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// ProbeKey method implementation
         /// </summary>
-        public static string ProbeKey(string upn)
+        internal static string ProbeKey(string upn)
         {
             return _manager.ProbeKey(upn);
         }
@@ -610,7 +789,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// RemoveKey method implementation
         /// </summary>
-        public static bool RemoveKey(string upn)
+        internal static bool RemoveKey(string upn)
         {
             return _manager.RemoveKey(upn);
         }
@@ -618,7 +797,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// CheckKey method implmentation
         /// </summary>
-        public static bool ValidateKey(string upn)
+        internal static bool ValidateKey(string upn)
         {
             return _manager.ValidateKey(upn);
         }
@@ -626,7 +805,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// StripKeyPrefix method implementation
         /// </summary>
-        public static string StripKeyPrefix(string key)
+        internal static string StripKeyPrefix(string key)
         {
             return _manager.StripKeyPrefix(key);
         }
@@ -634,7 +813,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// AddKeyPrefix method implementation
         /// </summary>
-        public static string AddKeyPrefix(string key)
+        internal static string AddKeyPrefix(string key)
         {
             return _manager.AddKeyPrefix(key);
         }
@@ -642,21 +821,39 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// HasKeyPrefix method implementation
         /// </summary>
-        public static bool HasKeyPrefix(string key)
+        internal static bool HasKeyPrefix(string key)
         {
             return _manager.HasKeyPrefix(key);
         }
+
+        /// <summary>
+        /// GetDataManager 
+        /// </summary>
+       /* internal static IKeysDataManager GetDataManager()
+        {
+            return _datamanager;
+        } */
     }
 
     /// <summary>
     /// RNGKeyManager class
     /// </summary>
-    public class RNGKeyManager: ISecretKeyManager
+    public class RNGKeyManager : ISecretKeyManager
     {
         private KeyGeneratorMode _mode = KeyGeneratorMode.ClientSecret512;
         private KeySizeMode _ksize = KeySizeMode.KeySize1024;
         private MFAConfig _config = null;
+        private KeysRepositoryService _repos = null;
         private int MAX_PROBE_LEN = 128;
+
+        /// <summary>
+        /// RNGKeyManager constructor
+        /// limit creation by KeyManager
+        /// </summary>
+        internal RNGKeyManager()
+        {
+            Trace.TraceInformation("RNGKeyManager()");
+        }
 
         /// <summary>
         /// Initialize method implementation
@@ -666,6 +863,18 @@ namespace Neos.IdentityServer.MultiFactor
             _config = config;
             _mode = config.KeysConfig.KeyGenerator;
             _ksize = config.KeysConfig.KeySize;
+            if (_config.UseActiveDirectory)
+                _repos = new ADDSKeysRepositoryService(_config);
+            else
+                _repos = new SQLKeysRepositoryService(_config);
+        }
+
+        /// <summary>
+        /// KeysStorage method implementation
+        /// </summary>
+        public KeysRepositoryService KeysStorage
+        {
+            get { return _repos; }
         }
 
         /// <summary>
@@ -715,7 +924,7 @@ namespace Neos.IdentityServer.MultiFactor
                     crypted = AddKeyPrefix(Convert.ToBase64String(buffer));
                     break;
             }
-            RepositoryService.NewUserKey(lupn, crypted, _config);
+            KeysStorage.NewUserKey(lupn, crypted);
             return crypted;
         }
 
@@ -744,7 +953,7 @@ namespace Neos.IdentityServer.MultiFactor
             if (string.IsNullOrEmpty(upn))
                 return null;
             string lupn = upn.ToLower();
-            return RepositoryService.GetUserKey(lupn, _config);
+            return KeysStorage.GetUserKey(lupn);
         }
 
         /// <summary>
@@ -789,7 +998,7 @@ namespace Neos.IdentityServer.MultiFactor
             if (string.IsNullOrEmpty(upn))
                 return false;
             string lupn = upn.ToLower();
-            return RepositoryService.RemoveUserKey(lupn, _config);
+            return KeysStorage.RemoveUserKey(lupn);
         }
         
         /// <summary>
@@ -836,7 +1045,17 @@ namespace Neos.IdentityServer.MultiFactor
         private MFAConfig _config = null;
         private static Encryption _cryptoRSADataProvider = null;
         private KeySizeMode _ksize = KeySizeMode.KeySize1024;
+        private KeysRepositoryService _repos = null;
         private int MAX_PROBE_LEN = 0;
+
+        /// <summary>
+        /// RSAKeyManager constructor
+        /// limit creation by KeyManager
+        /// </summary>
+        internal RSAKeyManager()
+        {
+            Trace.TraceInformation("RSAKeyManager()");   
+        }
 
         /// <summary>
         /// Initialize method implementation
@@ -846,6 +1065,10 @@ namespace Neos.IdentityServer.MultiFactor
             _config = config;
             _certificatethumbprint = config.KeysConfig.CertificateThumbprint;
             _ksize = config.KeysConfig.KeySize;
+            if (_config.UseActiveDirectory)
+                _repos = new ADDSKeysRepositoryService(_config);
+            else
+                _repos = new SQLKeysRepositoryService(_config);
             switch (_ksize)
             {
                 case KeySizeMode.KeySize512:
@@ -861,6 +1084,14 @@ namespace Neos.IdentityServer.MultiFactor
                     MAX_PROBE_LEN = 128;
                     break;
             }
+        }
+
+        /// <summary>
+        /// KeysStorage method implementation
+        /// </summary>
+        public KeysRepositoryService KeysStorage
+        {
+            get { return _repos; }
         }
 
         /// <summary>
@@ -883,7 +1114,7 @@ namespace Neos.IdentityServer.MultiFactor
             if (_cryptoRSADataProvider == null)
                 _cryptoRSADataProvider = new Encryption(_certificatethumbprint);
             string crypted = AddKeyPrefix(_cryptoRSADataProvider.Encrypt(lupn));
-            RepositoryService.NewUserKey(lupn, crypted, _config);
+            KeysStorage.NewUserKey(lupn, crypted);
             return crypted;
         }
 
@@ -921,7 +1152,7 @@ namespace Neos.IdentityServer.MultiFactor
             if (string.IsNullOrEmpty(upn))
                 return null;
             string lupn = upn.ToLower();
-            return RepositoryService.GetUserKey(lupn, _config);
+            return KeysStorage.GetUserKey(lupn);
         }
 
         /// <summary>
@@ -962,7 +1193,7 @@ namespace Neos.IdentityServer.MultiFactor
             if (string.IsNullOrEmpty(upn))
                 return false;
             string lupn = upn.ToLower();
-            return RepositoryService.RemoveUserKey(lupn, _config);
+            return KeysStorage.RemoveUserKey(lupn);
         }
         
         /// <summary>
@@ -1352,13 +1583,14 @@ namespace Neos.IdentityServer.MultiFactor
     /// <summary>
     /// XmlConfigSerializer class
     /// </summary>
-    public class XmlConfigSerializer : XmlSerializer
+    internal class XmlConfigSerializer : XmlSerializer
     {
         public XmlConfigSerializer(Type type): base(type)
         {
             this.UnknownAttribute += OnUnknownAttribute;
             this.UnknownElement += OnUnknownElement;
             this.UnknownNode += OnUnknownNode;
+            this.UnreferencedObject += OnUnreferencedObject;
         }
 
         /// <summary>
@@ -1384,17 +1616,25 @@ namespace Neos.IdentityServer.MultiFactor
         {
             Log.WriteEntry("Xml Serialization error : Unknow Attibute : "+e.Attr.Name+" at Position (" + e.LineNumber.ToString() + ", " + e.LinePosition.ToString() + ")", EventLogEntryType.Warning, 702);
         }
+
+        /// <summary>
+        /// OnUnreferencedObject method implementation
+        /// </summary>
+        private void OnUnreferencedObject(object sender, UnreferencedObjectEventArgs e)
+        {
+            Log.WriteEntry("Xml Serialization error : Unknow Object : " + e.UnreferencedId + " of Type (" + e.UnreferencedObject.GetType().ToString() + ")", EventLogEntryType.Warning, 703);
+        }
     }
 
     /// <summary>
     /// CFGUtilities class
     /// </summary>
-    public static class CFGUtilities
+    internal static class CFGUtilities
     {
         /// <summary>
         /// internalReadConfiguration method implementation
         /// </summary>
-        public static MFAConfig ReadConfiguration(PSHost Host = null)
+        internal static MFAConfig ReadConfiguration(PSHost Host = null)
         {
             MFAConfig config = null;
             Runspace SPRunSpace = null;
@@ -1431,7 +1671,7 @@ namespace Neos.IdentityServer.MultiFactor
                 using (StreamReader reader = new StreamReader(stm))
                 {
                     config = (MFAConfig)xmlserializer.Deserialize(stm);
-                    KeysManager.Initialize(config);
+                    KeysManager.Initialize(config); // Important
                 }
             }
             finally
@@ -1445,7 +1685,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// internalWriteConfiguration method implementation
         /// </summary>
-        public static MFAConfig WriteConfiguration(PSHost Host, MFAConfig config)
+        internal static MFAConfig WriteConfiguration(PSHost Host, MFAConfig config)
         {
             Runspace SPRunSpace = null;
             PowerShell SPPowerShell = null;
@@ -1459,7 +1699,6 @@ namespace Neos.IdentityServer.MultiFactor
                 {
                     xmlserializer.Serialize(stm, config);
                 }
-
                 try
                 {
                     RunspaceConfiguration SPRunConfig = RunspaceConfiguration.Create();
@@ -1496,7 +1735,7 @@ namespace Neos.IdentityServer.MultiFactor
     /// <summary>
     /// Utilities class
     /// </summary>
-    public static class Utilities
+    internal static class Utilities
     {
         private static IExternalOTPProvider _wrapper = null;
 
@@ -1506,51 +1745,76 @@ namespace Neos.IdentityServer.MultiFactor
         internal static int GetRandomOTP()
         {
             Random random = new Random();
-            return random.Next(1, 1000000);
+            return random.Next(1, 999999);
         }
 
         /// <summary>
         /// GetEmailOTP method implmentation
         /// </summary>
-        public static int GetEmailOTP(Registration reg, SendMail mail, CultureInfo culture)
+        internal static int GetEmailOTP(AuthenticationContext ctx, SendMail mail, CultureInfo culture)
         {
+            Registration reg = (Registration)ctx;
             int otpres = GetRandomOTP();
             MailUtilities.SendOTPByEmail(reg.MailAddress, reg.UPN, otpres.ToString("D"), mail, culture);
+            ctx.Notification = NotificationStatus.ResponseEmail;
             return otpres;
         }
 
         /// <summary>
-        /// GetPhoneOTP()
+        /// GetExternalOTP method implementation
         /// </summary>
         /// <returns></returns>
-        public static int GetPhoneOTP(Registration reg, MFAConfig config, CultureInfo culture)
+        internal static int GetExternalOTP(AuthenticationContext ctx, MFAConfig config, CultureInfo culture)
         {
+            Registration reg = (Registration)ctx;
             if (config.ExternalOTPProvider == null)
-                return NotificationStatus.Error;
-            if (reg.PreferredMethod == RegistrationPreferredMethod.Phone)
+                return (int)NotificationStatus.Error;
+            if (reg.PreferredMethod == PreferredMethod.Phone)
             {
                 if (_wrapper == null)
-                   _wrapper = LoadSMSWrapper(config.ExternalOTPProvider.FullQualifiedImplementation);
+                   _wrapper = LoadExternalWrapper(config.ExternalOTPProvider.FullQualifiedImplementation);
                 if (_wrapper != null)
-                   return _wrapper.GetUserCodeWithExternalSystem(reg.UPN, reg.PhoneNumber, reg.MailAddress, config.ExternalOTPProvider, culture);
+                {
+                    if (_wrapper is IExternalOTPProvider2)
+                    {
+                        int otp = 0;
+                        ctx.Notification = (_wrapper as IExternalOTPProvider2).GetCodeWithExternalSystem(reg, config.ExternalOTPProvider, culture, out otp);
+                        return otp;
+                    }
+                    else
+                    {
+                        int res = _wrapper.GetUserCodeWithExternalSystem(reg.UPN, reg.PhoneNumber, reg.MailAddress, config.ExternalOTPProvider, culture);
+                        if (config.ExternalOTPProvider.IsTwoWay)
+                            ctx.Notification = (NotificationStatus)res;
+                        else if (res > (int)NotificationStatus.Error)
+                            ctx.Notification = NotificationStatus.ResponseSMSOTP;
+                        return res;
+                    }
+                }
                 else
-                    return NotificationStatus.Error;
+                    return (int)NotificationStatus.Error;
             }
             else
-                return NotificationStatus.Error;
+                return (int)NotificationStatus.Error;
         }
 
         /// <summary>
         /// LoadSMSwrapper method implmentation
         /// </summary>
-        public static IExternalOTPProvider LoadSMSWrapper(string AssemblyFulldescription)
+        internal static IExternalOTPProvider LoadExternalWrapper(string AssemblyFulldescription)
         {
             Assembly assembly = Assembly.Load(ParseAssembly(AssemblyFulldescription));
             Type _typetoload = assembly.GetType(ParseType(AssemblyFulldescription));
             IExternalOTPProvider wrapper = null;
-            if (_typetoload.IsClass && !_typetoload.IsAbstract && _typetoload.GetInterface("IExternalOTPProvider") != null)
+            if (_typetoload.IsClass && !_typetoload.IsAbstract && _typetoload.GetInterface("IExternalOTPProvider2") != null)
             {
-                object o = Activator.CreateInstance(_typetoload);
+                object o = Activator.CreateInstance(_typetoload, true); // Allow Calling internal Constructors
+                if (o != null)
+                    wrapper = o as IExternalOTPProvider;
+            }
+            else if (_typetoload.IsClass && !_typetoload.IsAbstract && _typetoload.GetInterface("IExternalOTPProvider") != null)
+            {
+                object o = Activator.CreateInstance(_typetoload, true); // Allow Calling internal Constructors
                 if (o != null)
                     wrapper = o as IExternalOTPProvider;
             }
@@ -1560,14 +1824,14 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// LoadExternalKeyManagerWrapper method implmentation
         /// </summary>
-        public static ISecretKeyManager LoadExternalKeyManagerWrapper(string AssemblyFulldescription)
+        internal static ISecretKeyManager LoadExternalKeyManagerWrapper(string AssemblyFulldescription)
         {
             Assembly assembly = Assembly.Load(ParseAssembly(AssemblyFulldescription));
             Type _typetoload = assembly.GetType(ParseType(AssemblyFulldescription));
             ISecretKeyManager wrapper = null;
             if (_typetoload.IsClass && !_typetoload.IsAbstract && _typetoload.GetInterface("ISecretKeyManager") != null)
             {
-                object o = Activator.CreateInstance(_typetoload);
+                object o = Activator.CreateInstance(_typetoload, true); // Allow Calling internal Constructors
                 if (o != null)
                     wrapper = o as ISecretKeyManager;
             }
@@ -1592,4 +1856,101 @@ namespace Neos.IdentityServer.MultiFactor
             return type[0];
         }
     }
+
+    /// <summary>
+    /// Log class
+    /// </summary>
+    public static class Log
+    {
+        private const string EventLogSource = "ADFS MFA Service";
+        private const string EventLogGroup = "Application";
+
+        /// <summary>
+        /// Log constructor
+        /// </summary>
+        static Log()
+        {
+            if (!EventLog.SourceExists(Log.EventLogSource))
+                EventLog.CreateEventSource(Log.EventLogSource, Log.EventLogGroup);
+        }
+
+        /// <summary>
+        /// WriteEntry method implementation
+        /// </summary>
+        public static void WriteEntry(string message, EventLogEntryType type, int eventID)
+        {
+            EventLog.WriteEntry(EventLogSource, message, type, eventID);
+        }
+    }
+
+    #region ADFS Version
+    internal class RegistryVersion
+    {
+        private string _currentVersion;
+        private string _productName;
+        private string _installationType;
+        private int _currentBuild;
+        private int _currentMajorVersionNumber;
+        private int _currentMinorVersionNumber;
+
+        internal RegistryVersion()
+        {
+            RegistryKey rk = Registry.LocalMachine.OpenSubKey("Software\\Microsoft\\Windows NT\\CurrentVersion");
+
+            _currentVersion = Convert.ToString(rk.GetValue("CurrentVersion"));
+            _productName = Convert.ToString(rk.GetValue("ProductName"));
+            _installationType = Convert.ToString(rk.GetValue("InstallationType"));
+            _currentBuild = Convert.ToInt32(rk.GetValue("CurrentBuild"));
+            _currentMajorVersionNumber = Convert.ToInt32(rk.GetValue("CurrentMajorVersionNumber"));
+            _currentMinorVersionNumber = Convert.ToInt32(rk.GetValue("CurrentMinorVersionNumber"));
+        }
+
+        public string CurrentVersion
+        {
+            get { return _currentVersion; }
+            set { _currentVersion = value; }
+        }
+
+        public string ProductName
+        {
+            get { return _productName; }
+            set { _productName = value; }
+        }
+
+        public string InstallationType
+        {
+            get { return _installationType; }
+            set { _installationType = value; }
+        }
+
+        public int CurrentBuild
+        {
+            get { return _currentBuild; }
+            set { _currentBuild = value; }
+        }
+
+        public int CurrentMajorVersionNumber
+        {
+            get { return _currentMajorVersionNumber; }
+            set { _currentMajorVersionNumber = value; }
+        }
+
+        public int CurrentMinorVersionNumber
+        {
+            get { return _currentMinorVersionNumber; }
+            set { _currentMinorVersionNumber = value; }
+        }
+
+        public bool IsWindows2016
+        {
+            get { return (this.CurrentMajorVersionNumber == 10); }
+        }
+
+        public bool IsWindows2012R2
+        {
+            get { return (this.CurrentMajorVersionNumber != 10); }
+        }
+
+    }
+    #endregion
 }

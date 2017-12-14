@@ -22,6 +22,7 @@ namespace Neos.IdentityServer.MultiFactor
 {
     public class AuthenticationAdapterMetadata : IAuthenticationAdapterMetadata
     {
+        private static RegistryVersion _registry = new RegistryVersion();
 
         /// <summary>
         /// AuthenticationAdapterMetadata constructor
@@ -44,7 +45,31 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public string[] AuthenticationMethods
         {
-            get { return new string[] { "http://schemas.microsoft.com/ws/2012/12/authmethod/otp" }; }  // Only PIN Code
+            get 
+            {
+                if (_registry.IsWindows2016)
+                {
+                    return new string[] 
+                    { 
+                                      "http://schemas.microsoft.com/ws/2012/12/authmethod/none",
+                                      "http://schemas.microsoft.com/ws/2012/12/authmethod/otp", 
+                                      "http://schemas.microsoft.com/ws/2012/12/authmethod/email",
+                                      "http://schemas.microsoft.com/ws/2012/12/authmethod/sms",
+                                      "http://schemas.microsoft.com/ws/2012/12/authmethod/smsotp",      
+                                      "http://schemas.microsoft.com/ws/2012/12/authmethod/smsreply",
+                                      "http://schemas.microsoft.com/ws/2012/12/authmethod/phoneapplication",
+                                      "http://schemas.microsoft.com/ws/2012/12/authmethod/phoneconfirmation",
+                                      "http://schemas.microsoft.com/ws/2012/12/authmethod/voicebiometrics",
+                                      "http://schemas.microsoft.com/ws/2012/12/authmethod/kba",
+                                      "http://schemas.microsoft.com/ws/2012/12/authmethod/windowshello",
+                                      "http://schemas.microsoft.com/ws/2012/12/authmethod/fido"
+                    };
+                }
+                else
+                {
+                    return new string[] {"http://schemas.microsoft.com/ws/2012/12/authmethod/otp" };
+                }
+            } 
         }
 
         /// <summary>
@@ -63,10 +88,10 @@ namespace Neos.IdentityServer.MultiFactor
             get
             {
                 Dictionary<int, string> result = new Dictionary<int, string>();
-                result.Add(1033, "Multi-Factor Authentication");
-                result.Add(1034, "Multi-Factor Authentication");
-                result.Add(1036, "Multi-Factor Authentication");
-                result.Add(3082, "Multi-Factor Authentication");
+                result.Add(1033, "Neos Multi-Factor Authentication");
+                result.Add(1034, "Neos Multi-Factor Authentication");
+                result.Add(1036, "Neos Multi-Factor Authentication");
+                result.Add(3082, "Neos Multi-Factor Authentication");
                 return result;
             }
         }
@@ -79,10 +104,10 @@ namespace Neos.IdentityServer.MultiFactor
             get
             {
                 Dictionary<int, string> result = new Dictionary<int, string>();
-                result.Add(1033, "Multi-Factor Authentication");
-                result.Add(1034, "Multi-Factor Authentication");
-                result.Add(1036, "Multi-Factor Authentication");
-                result.Add(3082, "Multi-Factor Authentication");
+                result.Add(1033, "Neos Multi-Factor Authentication");
+                result.Add(1034, "Neos Multi-Factor Authentication");
+                result.Add(1036, "Neos Multi-Factor Authentication");
+                result.Add(3082, "Neos Multi-Factor Authentication");
                 return result;
             }
         }
@@ -92,30 +117,26 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public string[] IdentityClaims
         {
-#if multiclaims 
-
-         /// <summary> 
-         /// Returns an array indicating the type of claim that that the adapter uses to identify the user being authenticated. 
-         /// Note that although the property is an array, only the first element is currently used. 
-         /// MUST BE ONE OF THE FOLLOWING 
-         /// "http://schemas.microsoft.com/ws/2008/06/identity/claims/windowsaccountname" 
-         /// "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn" 
-         /// "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress" 
-         /// "http://schemas.microsoft.com/ws/2008/06/identity/claims/primarysid" 
-         ///
-         /// Very Strange ! this code don't work when registering via powershell the extension 
-         /// ADMIN0021: Invalid authentication provider data. You can only specify a maximum of one identity claim. 
-         /// However, it is possible to return a table of claims ...
-         /// </summary> 
-            get { return new string[] { "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn", 
-                                        "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name",
-                                        "http://schemas.microsoft.com/ws/2008/06/identity/claims/windowsaccountname",
-	                                    "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress",
-	                                    "http://schemas.microsoft.com/ws/2008/06/identity/claims/primarysid"
-            }; } 
-#else
+         // <summary> 
+         // Returns an array indicating the type of claim that that the adapter uses to identify the user being authenticated. 
+         // Note that although the property is an array, only the first element is currently used. 
+         // MUST BE ONE OF THE FOLLOWING 
+         // "http://schemas.microsoft.com/ws/2008/06/identity/claims/windowsaccountname" 
+         // "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn" 
+         // "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress" 
+         // "http://schemas.microsoft.com/ws/2008/06/identity/claims/primarysid" 
+         //
+         // Very Strange ! this code don't work when registering via powershell the extension 
+         // ADMIN0021: Invalid authentication provider data. You can only specify a maximum of one identity claim. 
+         // However, it is possible to return a table of claims ...
+         // </summary> 
+         //   get { return new string[] { "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn", 
+         //                               "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name",
+         //                               "http://schemas.microsoft.com/ws/2008/06/identity/claims/windowsaccountname",
+	     //                               "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress",
+	     //                               "http://schemas.microsoft.com/ws/2008/06/identity/claims/primarysid"
+         //   }; } 
             get { return new string[] { "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn" }; }
-#endif
         }
 
         /// <summary>

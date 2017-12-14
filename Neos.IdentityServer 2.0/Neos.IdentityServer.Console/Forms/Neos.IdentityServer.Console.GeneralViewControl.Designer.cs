@@ -46,10 +46,10 @@
             // 
             // panelGlobal
             // 
+            resources.ApplyResources(this.panelGlobal, "panelGlobal");
             this.panelGlobal.Controls.Add(this.label3);
             this.panelGlobal.Controls.Add(this.label2);
             this.panelGlobal.Controls.Add(this.label1);
-            resources.ApplyResources(this.panelGlobal, "panelGlobal");
             this.panelGlobal.Name = "panelGlobal";
             // 
             // label3

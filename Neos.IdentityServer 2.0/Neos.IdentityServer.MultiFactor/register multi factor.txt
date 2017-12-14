@@ -1,0 +1,15 @@
+
+# Additional Rules for active clients (outlook, WCF, WebApi, ADAL)
+Get-AdfsAdditionalAuthenticationRule
+
+$rp = Get-AdfsRelyingPartyTrust –Name "Microsoft Office 365 Identity Platform"
+$MfaClaimRule = 'c:[Type == "http://schemas.microsoft.com/ws/2012/01/insidecorporatenetwork", Value == "false"] && d:[Type == "http://schemas.microsoft.com/2012/01/requestcontext/claims/x-ms-endpoint-absolute-path", Value =~ "(/adfs/ls)|(/adfs/oauth2)"] => issue(Type = "http://schemas.microsoft.com/ws/2008/06/identity/claims/authenticationmethod", Value = "http://schemas.microsoft.com/claims/multipleauthn");'
+Set-AdfsRelyingPartyTrust –TargetRelyingParty $rp –AdditionalAuthenticationRules $MfaClaimRule
+
+$rest = Get-AdfsRelyingPartyTrust –Name "services.redhooksoftware.fr.rest"
+$MfaClaimRule = 'c:[Type == "http://schemas.microsoft.com/ws/2012/01/insidecorporatenetwork", Value == "false"] && d:[Type == "http://schemas.microsoft.com/2012/01/requestcontext/claims/x-ms-endpoint-absolute-path", Value =~ "(/adfs/ls)|(/adfs/oauth2)"] => issue(Type = "http://schemas.microsoft.com/ws/2008/06/identity/claims/authenticationmethod", Value = "http://schemas.microsoft.com/claims/multipleauthn");'
+Set-AdfsRelyingPartyTrust –TargetRelyingParty $rest –AdditionalAuthenticationRules $MfaClaimRule
+
+$soap = Get-AdfsRelyingPartyTrust –Name "services.redhooksoftware.fr"
+$MfaClaimRule = 'c:[Type == "http://schemas.microsoft.com/ws/2012/01/insidecorporatenetwork", Value == "false"] && d:[Type == "http://schemas.microsoft.com/2012/01/requestcontext/claims/x-ms-endpoint-absolute-path", Value =~ "(/adfs/ls)|(/adfs/oauth2)"] => issue(Type = "http://schemas.microsoft.com/ws/2008/06/identity/claims/authenticationmethod", Value = "http://schemas.microsoft.com/claims/multipleauthn");'
+Set-AdfsRelyingPartyTrust –TargetRelyingParty $soap –AdditionalAuthenticationRules $MfaClaimRule

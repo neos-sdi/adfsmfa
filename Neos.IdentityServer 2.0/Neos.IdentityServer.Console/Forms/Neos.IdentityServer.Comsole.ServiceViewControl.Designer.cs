@@ -43,19 +43,19 @@
             // 
             // tableLayoutPanel
             // 
-            this.tableLayoutPanel.BackColor = System.Drawing.SystemColors.Window;
             resources.ApplyResources(this.tableLayoutPanel, "tableLayoutPanel");
+            this.tableLayoutPanel.BackColor = System.Drawing.SystemColors.Window;
             this.tableLayoutPanel.Controls.Add(this.panelConfig, 0, 0);
             this.tableLayoutPanel.Controls.Add(this.panelServers, 0, 2);
             this.tableLayoutPanel.Name = "tableLayoutPanel";
             // 
             // panelConfig
             // 
+            resources.ApplyResources(this.panelConfig, "panelConfig");
             this.panelConfig.BackColor = System.Drawing.SystemColors.Window;
             this.panelConfig.Controls.Add(this.label3);
             this.panelConfig.Controls.Add(this.label2);
             this.panelConfig.Controls.Add(this.label1);
-            resources.ApplyResources(this.panelConfig, "panelConfig");
             this.panelConfig.Name = "panelConfig";
             // 
             // label3
@@ -75,9 +75,9 @@
             // 
             // panelServers
             // 
+            resources.ApplyResources(this.panelServers, "panelServers");
             this.panelServers.BackColor = System.Drawing.SystemColors.Window;
             this.panelServers.Controls.Add(this.label4);
-            resources.ApplyResources(this.panelServers, "panelServers");
             this.panelServers.Name = "panelServers";
             // 
             // label4

@@ -1,4 +1,21 @@
-﻿using System;
+﻿//******************************************************************************************************************************************************************************************//
+// Copyright (c) 2017 Neos-Sdi (http://www.neos-sdi.com)                                                                                                                                    //                        
+//                                                                                                                                                                                          //
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
+// to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
+// and to permit persons to whom the Software is furnished to do so, subject to the following conditions:                                                                                   //
+//                                                                                                                                                                                          //
+// The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.                                                           //
+//                                                                                                                                                                                          //
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,                                      //
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,                            //
+// WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                               //
+//                                                                                                                                                                                          //
+// https://adfsmfa.codeplex.com                                                                                                                                                             //
+// https://github.com/neos-sdi/adfsmfa                                                                                                                                                      //
+//                                                                                                                                                                                          //
+//******************************************************************************************************************************************************************************************//
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,6 +27,7 @@ using System.Diagnostics;
 using Microsoft.ManagementConsole.Advanced;
 using System.Windows.Forms;
 using System.Threading;
+using res = Neos.IdentityServer.Console.Resources.Neos_IdentityServer_Console_UsersFormView;
 
 namespace Neos.IdentityServer.Console
 {
@@ -46,16 +64,6 @@ namespace Neos.IdentityServer.Console
             usersControl = (UsersListView)this.Control;
             usersScopeNode = (UsersScopeNode)this.ScopeNode;
             usersScopeNode.usersFormView = this;
-
-          /*  UsersListControl.DataSelectionChanged += OnDataSelectionChanged;
-            UsersListControl.DataEditionActivated += OnDataEditionActivated;
-
-            ActionsPaneItems.Clear();
-            SelectionData.ActionsPaneItems.Clear();
-            SelectionData.ActionsPaneHelpItems.Clear();
-            SelectionData.EnabledStandardVerbs = (StandardVerbs.Delete | StandardVerbs.Properties);
-            ModeActionsPaneItems.Clear(); */
-
             base.OnInitialize(status);
         }
 
@@ -69,7 +77,8 @@ namespace Neos.IdentityServer.Console
             ActionsPaneItems.Clear();
             SelectionData.ActionsPaneItems.Clear();
             SelectionData.ActionsPaneHelpItems.Clear();
-            SelectionData.EnabledStandardVerbs = (StandardVerbs.Delete | StandardVerbs.Properties);
+            SelectionData.EnabledStandardVerbs = (StandardVerbs.Delete);
+            SelectionData.ActionsPaneItems.Add(new Microsoft.ManagementConsole.Action(res.USERSFRMPROPERTIES, res.USERSFRMPROPERTIESDESC, -1, "PropertyUser"));
             ModeActionsPaneItems.Clear();
         }
 
@@ -108,7 +117,7 @@ namespace Neos.IdentityServer.Console
                         else
                         {
                             UpdateActionPanelItems(e.Selection);
-                            SelectionData.DisplayName = "Sélection multiple";
+                            SelectionData.DisplayName = res.USERSFRMSLECTMULTIPLE;
                         }
                     }
                 }
@@ -124,18 +133,18 @@ namespace Neos.IdentityServer.Console
         /// </summary>
         private void OnDataEditionActivated(object sender, SelectionDataEventArgs e)
         {
-            this.SelectionData.ShowPropertySheet("Editing Users");
+            this.SelectionData.ShowPropertySheet(res.USERSFRMPROPERTIES+" : "+SelectionData.DisplayName);
         }
 
 
         /// <summary>
         /// UpdateActionPanelItems method implmentation
         /// </summary>
-        internal void UpdateActionPanelItems(MMCRegistrationList lst)
+        internal void UpdateActionPanelItems(RegistrationList lst)
         {
             Nullable<bool> enb = null;
             SelectionData.ActionsPaneItems.Clear();
-            foreach (MMCRegistration reg in lst)
+            foreach (Registration reg in lst)
             {
                 if (!enb.HasValue)
                     enb = reg.Enabled;
@@ -145,11 +154,28 @@ namespace Neos.IdentityServer.Console
             if (enb.HasValue)
             {
                 if (!enb.Value)
-                    SelectionData.ActionsPaneItems.Add(new Microsoft.ManagementConsole.Action("Activer", "Activer MFA pour l'utilisateur sélectionné.", -1, "EnableUser"));
+                    SelectionData.ActionsPaneItems.Add(new Microsoft.ManagementConsole.Action(res.USERSFRMACTIVATE, res.USERSFRMACTIVATEDESC, -1, "EnableUser"));
                 else
-                    SelectionData.ActionsPaneItems.Add(new Microsoft.ManagementConsole.Action("Désactiver", "Désactiver MFA pour l'utilisateur sélectionné.", -1, "DisableUser"));
+                    SelectionData.ActionsPaneItems.Add(new Microsoft.ManagementConsole.Action(res.USERSFRMDEACTIVATE, res.USERSFRMDEACTIVATEDESC, -1, "DisableUser"));
+                SelectionData.ActionsPaneItems.Add(new Microsoft.ManagementConsole.ActionSeparator());
             }
+            SelectionData.ActionsPaneItems.Add(new Microsoft.ManagementConsole.Action(res.USERSFRMPROPERTIES, res.USERSFRMPROPERTIESDESC, -1, "PropertyUser"));
         }
+
+        /// <summary>
+        /// EnableDisableAction method implmentation
+        /// </summary>
+        internal void EnableDisableAction(bool value)
+        {
+            SelectionData.ActionsPaneItems.Clear();
+            if (!value)
+                SelectionData.ActionsPaneItems.Add(new Microsoft.ManagementConsole.Action(res.USERSFRMACTIVATE, res.USERSFRMACTIVATEDESC, -1, "EnableUser"));
+            else
+                SelectionData.ActionsPaneItems.Add(new Microsoft.ManagementConsole.Action(res.USERSFRMDEACTIVATE, res.USERSFRMDEACTIVATEDESC, -1, "DisableUser"));
+            SelectionData.ActionsPaneItems.Add(new Microsoft.ManagementConsole.ActionSeparator());
+            SelectionData.ActionsPaneItems.Add(new Microsoft.ManagementConsole.Action(res.USERSFRMPROPERTIES, res.USERSFRMPROPERTIESDESC, -1, "PropertyUser"));
+        }
+
 
         /// <summary>
         /// Refresh method implmentation
@@ -162,6 +188,27 @@ namespace Neos.IdentityServer.Console
                 try
                 {
                     UsersListControl.RefreshData(refreshgrid, clearselection);
+                    foreach (ActionsPaneItem itm in this.SelectionData.ActionsPaneItems)
+                    {
+                        if (itm is Microsoft.ManagementConsole.Action)
+                        {
+                            if ((string)((Microsoft.ManagementConsole.Action)itm).Tag == "EnableUser")
+                            {
+                                ((Microsoft.ManagementConsole.Action)itm).DisplayName = res.USERSFRMACTIVATE;
+                                ((Microsoft.ManagementConsole.Action)itm).Description = res.USERSFRMACTIVATEDESC;
+                            }
+                            else if ((string)((Microsoft.ManagementConsole.Action)itm).Tag == "DisableUser")
+                            {
+                                ((Microsoft.ManagementConsole.Action)itm).DisplayName = res.USERSFRMDEACTIVATE;
+                                ((Microsoft.ManagementConsole.Action)itm).Description = res.USERSFRMDEACTIVATEDESC;
+                            }
+                            else if ((string)((Microsoft.ManagementConsole.Action)itm).Tag == "PropertyUser")
+                            {
+                                ((Microsoft.ManagementConsole.Action)itm).DisplayName = res.USERSFRMPROPERTIES;
+                                ((Microsoft.ManagementConsole.Action)itm).Description = res.USERSFRMPROPERTIESDESC;
+                            }
+                        }
+                    }
                 }
                 finally
                 {
@@ -175,10 +222,10 @@ namespace Neos.IdentityServer.Console
         /// </summary>
         internal void SetUserStoreData(object obj)
         {
-            MMCRegistrationList reg = null;
-            if (obj is MMCRegistrationList)
+            RegistrationList reg = null;
+            if (obj is RegistrationList)
             {
-                reg = (MMCRegistrationList)obj;
+                reg = (RegistrationList)obj;
                 if (UsersListControl != null)
                 {
                     this.SelectionData.BeginUpdates();
@@ -199,10 +246,10 @@ namespace Neos.IdentityServer.Console
         /// </summary>
         internal void AddUserStoreData(object obj)
         {
-            MMCRegistrationList reg = null;
-            if (obj is MMCRegistrationList)
+            RegistrationList reg = null;
+            if (obj is RegistrationList)
             {
-                reg = (MMCRegistrationList)obj;
+                reg = (RegistrationList)obj;
                 if (UsersListControl != null)
                 {
                     this.SelectionData.BeginUpdates();
@@ -224,10 +271,10 @@ namespace Neos.IdentityServer.Console
         internal bool DeleteUserStoreData(object obj)
         {
             bool ret = false;
-            MMCRegistrationList reg = null;
-            if (obj is MMCRegistrationList)
+            RegistrationList reg = null;
+            if (obj is RegistrationList)
             {
-                reg = (MMCRegistrationList)obj;
+                reg = (RegistrationList)obj;
                 if (UsersListControl != null)
                 {
                     this.SelectionData.BeginUpdates();
@@ -249,10 +296,10 @@ namespace Neos.IdentityServer.Console
         /// </summary>
         private void EnableUserStoreData(object obj, bool enabled)
         {
-            MMCRegistrationList reg = null;
-            if (obj is MMCRegistrationList)
+            RegistrationList reg = null;
+            if (obj is RegistrationList)
             {
-                reg = (MMCRegistrationList)obj;
+                reg = (RegistrationList)obj;
                 if (UsersListControl != null)
                 {
                     this.SelectionData.BeginUpdates();
@@ -271,19 +318,6 @@ namespace Neos.IdentityServer.Console
             }
         }
 
-
-        /// <summary>
-        /// EnableDisableAction method implmentation
-        /// </summary>
-        internal void EnableDisableAction(bool value)
-        {
-            SelectionData.ActionsPaneItems.Clear();
-            if (!value)
-                SelectionData.ActionsPaneItems.Add(new Microsoft.ManagementConsole.Action("Activer", "Activer MFA pour l'utilisateur sélectionné.", -1, "EnableUser"));
-            else
-                SelectionData.ActionsPaneItems.Add(new Microsoft.ManagementConsole.Action("Désactiver", "Désactiver MFA pour l'utilisateur sélectionné.", -1, "DisableUser"));
-        }
-
         /// <summary>
         /// Handle the selected action.
         /// </summary>
@@ -296,14 +330,19 @@ namespace Neos.IdentityServer.Console
                 {
                     case "EnableUser":
                         {
-                            MMCRegistrationList reg = (MMCRegistrationList)SelectionData.SelectionObject;
+                            RegistrationList reg = (RegistrationList)SelectionData.SelectionObject;
                             EnableUserStoreData(reg, true);
                             break;
                         }
                     case "DisableUser":
                         {
-                            MMCRegistrationList reg = (MMCRegistrationList)SelectionData.SelectionObject;
+                            RegistrationList reg = (RegistrationList)SelectionData.SelectionObject;
                             EnableUserStoreData(reg, false);
+                            break;
+                        }
+                    case "PropertyUser":
+                        {
+                            this.SelectionData.ShowPropertySheet(res.USERSFRMPROPERTIES + " : " + SelectionData.DisplayName);
                             break;
                         }
                 }
@@ -325,13 +364,13 @@ namespace Neos.IdentityServer.Console
             messageBoxParameters.Buttons = MessageBoxButtons.YesNo;
             messageBoxParameters.DefaultButton = MessageBoxDefaultButton.Button1;
             messageBoxParameters.Icon = MessageBoxIcon.Question;
-            messageBoxParameters.Text = "Voulez vous vraiment supprimer cet élément ?"; 
+            messageBoxParameters.Text = res.USERSFRMCONFIRMDELETE; 
 
             if (this.SnapIn.Console.ShowDialog(messageBoxParameters) == DialogResult.Yes) 
             {
-                MMCRegistrationList reg = (MMCRegistrationList)SelectionData.SelectionObject;
-                bool res = DeleteUserStoreData(reg);
-                if (res)
+                RegistrationList reg = (RegistrationList)SelectionData.SelectionObject;
+                bool xres = DeleteUserStoreData(reg);
+                if (xres)
                 {
                     status.Complete("ok", true);
                 }
@@ -355,7 +394,7 @@ namespace Neos.IdentityServer.Console
         {
             Random rand = new Random();
             int i = rand.Next();
-            MMCRegistrationList registrations = (MMCRegistrationList)SelectionData.SelectionObject;
+            RegistrationList registrations = (RegistrationList)SelectionData.SelectionObject;
             if (registrations.Count > 1)
                 propertyPageCollection.Add(new UserPropertyPage(this, typeof(UserCommonPropertiesControl), i));
             else

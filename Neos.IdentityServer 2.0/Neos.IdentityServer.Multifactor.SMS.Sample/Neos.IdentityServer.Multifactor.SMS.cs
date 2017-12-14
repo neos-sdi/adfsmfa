@@ -25,10 +25,10 @@ using System.Globalization;
 
 namespace Neos.IdentityServer.Multifactor.SMS
 {
-    public class SMSCall : IExternalOTPProvider
+    public class SMSCall : IExternalOTPProvider, IExternalOTPProvider2
     {
         /// <summary>
-        /// GetUserCodeByPhone basic demo 
+        /// GetUserCodeWithExternalSystem demo method
         /// </summary>
         public int GetUserCodeWithExternalSystem(string upn, string phonenumber, string email, ExternalOTPProvider externalsys, CultureInfo culture)
         {
@@ -36,7 +36,24 @@ namespace Neos.IdentityServer.Multifactor.SMS
             if (true)
                 return 1230;
             else
-                return NotificationStatus.Error;  // return error
+                return (int)NotificationStatus.Error;  // return error
+        }
+
+        /// <summary>
+        /// GetCodeWithExternalSystem demo method
+        /// </summary>
+        public NotificationStatus GetCodeWithExternalSystem(Registration reg, ExternalOTPProvider externalsys, CultureInfo culture, out int otp)
+        {
+            if (externalsys.IsTwoWay)
+            {
+                otp = Convert.ToInt32(NotificationStatus.ResponseSMSReply);
+                return NotificationStatus.ResponseSMSReply;
+            }
+            else
+            {
+                otp = Convert.ToInt32("1230");
+                return NotificationStatus.ResponseSMSOTP;
+            }
         }
     }
 }

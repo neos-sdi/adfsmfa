@@ -48,7 +48,7 @@ namespace Neos.IdentityServer.Console
         /// </summary>
         private void UserCommonPropertiesControl_Load(object sender, EventArgs e)
         {
-            MethodSource.DataSource = new UsersPreferredMethodList(false);
+            MethodSource.DataSource = new MMCPreferredMethodList(false);
         }
 
 
@@ -65,12 +65,12 @@ namespace Neos.IdentityServer.Console
         /// <summary>
         /// GetUserControlData method implmentation
         /// </summary>
-        public MMCRegistrationList GetUserControlData(MMCRegistrationList lst)
+        public RegistrationList GetUserControlData(RegistrationList lst)
         {
-            foreach (MMCRegistration obj in lst)
+            foreach (Registration obj in lst)
             {
-                ((MMCRegistration)obj).Enabled = this.cbEnabled.Checked;
-                ((MMCRegistration)obj).PreferredMethod = (RegistrationPreferredMethod)((int)this.CBMethod.SelectedValue);
+                ((Registration)obj).Enabled = this.cbEnabled.Checked;
+                ((Registration)obj).PreferredMethod = (PreferredMethod)((int)this.CBMethod.SelectedValue);
             }
             return lst;
         }
@@ -78,20 +78,20 @@ namespace Neos.IdentityServer.Console
         /// <summary>
         /// SetUserControlData method implementation
         /// </summary>
-        public void SetUserControlData(MMCRegistrationList lst, bool disablesync)
+        public void SetUserControlData(RegistrationList lst, bool disablesync)
         {
             SyncDisabled = disablesync;
             try
             {
                 bool isset = false;
                 this.listUsers.Items.Clear();
-                foreach (MMCRegistration obj in lst)
+                foreach (Registration obj in lst)
                 {
-                    this.listUsers.Items.Add(((MMCRegistration)obj).UPN);
+                    this.listUsers.Items.Add(((Registration)obj).UPN);
                     if (!isset)
                     {
-                        this.cbEnabled.Checked = ((MMCRegistration)obj).Enabled;
-                        this.CBMethod.SelectedValue = (UsersPreferredMethod)(((MMCRegistration)obj).PreferredMethod);
+                        this.cbEnabled.Checked = ((Registration)obj).Enabled;
+                        this.CBMethod.SelectedValue = (PreferredMethod)(((Registration)obj).PreferredMethod);
                         isset = true;
                     }
                 }
@@ -127,10 +127,10 @@ namespace Neos.IdentityServer.Console
         /// </summary>
         private void BTNReinit_Click(object sender, EventArgs e)
         {
-            MMCRegistrationList lst = userPropertyPage.GetSharedUserData();
-            foreach (MMCRegistration reg in lst)
+            RegistrationList lst = userPropertyPage.GetSharedUserData();
+            foreach (Registration reg in lst)
             {
-                KeysManager.NewKey(reg.UPN);
+                MMCService.NewUserKey(reg.UPN);
             }
             if (!SyncDisabled)
                 userPropertyPage.SyncSharedUserData(this, true);
@@ -146,11 +146,11 @@ namespace Neos.IdentityServer.Console
             try
             {
                 this.Cursor = Cursors.WaitCursor;
-                MMCRegistrationList lst = userPropertyPage.GetSharedUserData();
-                foreach (MMCRegistration reg in lst)
+                RegistrationList lst = userPropertyPage.GetSharedUserData();
+                foreach (Registration reg in lst)
                 {
-                    string secret = KeysManager.EncodedKey(reg.UPN);
-                    ManagementAdminService.SendKeyByEmail(reg.MailAddress, reg.UPN, secret);
+                    string secret = MMCService.GetEncodedUserKey(reg.UPN);
+                    MMCService.SendKeyByEmail(reg.MailAddress, reg.UPN, secret);
                 }
             }
             finally

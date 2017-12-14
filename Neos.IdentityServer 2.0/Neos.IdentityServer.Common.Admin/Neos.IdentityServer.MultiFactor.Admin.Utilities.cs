@@ -16,55 +16,56 @@
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
 using System;
-using System.Drawing.Imaging;
-using System.IO;
-using System.Net;
-using System.Net.Mail;
-using System.Text;
-using System.Text.RegularExpressions;
-using Neos.IdentityServer.MultiFactor.Administration.Resources;
-using Neos.IdentityServer.MultiFactor.QrEncoding;
-using Neos.IdentityServer.MultiFactor.QrEncoding.Windows.Render;
 using System.Diagnostics;
-using System.Threading;
-using System.DirectoryServices.AccountManagement;
 using System.Globalization;
-using System.Security.Principal;
-using System.Management.Automation.Host;
 using System.Management.Automation;
-
+using System.Management.Automation.Host;
+using System.Security.Principal;
+using System.Text.RegularExpressions;
+using Neos.IdentityServer.MultiFactor;
+using Neos.IdentityServer.MultiFactor.Administration.Resources;
+using System.Runtime.CompilerServices;
 
 
 namespace Neos.IdentityServer.MultiFactor.Administration
 {
-    #region RemoteAdminService
+    #region ManagementService
     /// <summary>
-    /// RemoteAdminService Class
+    /// ManagementService class 
     /// </summary>
-    public static class ManagementAdminService
+    internal static class ManagementService
     {
         private static ADFSServiceManager _manager = null;
 
-        private static UsersFilterObject _filter = new UsersFilterObject();
-        private static UsersPagingObject _paging = new UsersPagingObject();
-        private static UsersOrderObject _order = new UsersOrderObject();
+        private static DataFilterObject _filter = new DataFilterObject();
+        private static DataPagingObject _paging = new DataPagingObject();
+        private static DataOrderObject _order = new DataOrderObject();
 
-        private static string EventLogSource = "ADFS MFA Administration"; 
+        private static string EventLogSource = "ADFS MFA Administration";
         private static string EventLogGroup = "Application";
 
         /// <summary>
-        /// RemoteAdminService static constructor
+        /// ManagementService static constructor
         /// </summary>
-        static ManagementAdminService()
+        static ManagementService()
         {
             if (!EventLog.SourceExists(EventLogSource))
-                EventLog.CreateEventSource(ManagementAdminService.EventLogSource, ManagementAdminService.EventLogGroup);
+                EventLog.CreateEventSource(ManagementService.EventLogSource, ManagementService.EventLogGroup);
+        }
+
+        /// <summary>
+        /// EnsureService() method implmentation
+        /// </summary>
+        internal static void EnsureService()
+        {
+          //  if (_manager == null)
+                Initialize(null, true);
         }
 
         /// <summary>
         /// Filter Property
         /// </summary>
-        public static UsersFilterObject Filter
+        internal static DataFilterObject Filter
         {
             get { return _filter; }
             set { _filter = value;  }
@@ -73,7 +74,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <summary>
         /// Paging Property
         /// </summary>
-        public static UsersPagingObject Paging
+        internal static DataPagingObject Paging
         {
             get { return _paging; }
         }
@@ -81,15 +82,14 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <summary>
         /// Order property
         /// </summary>
-        public static UsersOrderObject Order
+        internal static DataOrderObject Order
         {
             get { return _order; }
         }
-
         /// <summary>
         /// ADFSManager property
         /// </summary>
-        public static ADFSServiceManager ADFSManager
+        internal static ADFSServiceManager ADFSManager
         {
             get { return _manager; }
         }
@@ -97,7 +97,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <summary>
         /// Config property
         /// </summary>
-        public static MFAConfig Config
+        internal static MFAConfig Config
         {
             get { return _manager.Config; }
         }
@@ -105,7 +105,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <summary>
         /// Initialize method 
         /// </summary>
-        public static void Initialize(bool loadconfig = false)
+        internal static void Initialize(bool loadconfig = false)
         {
             Initialize(null, loadconfig);
         }
@@ -113,7 +113,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <summary>
         /// Initialize method implementation
         /// </summary>
-        public static void Initialize(PSHost host = null, bool loadconfig = false)
+        internal static void Initialize(PSHost host = null, bool loadconfig = false)
         {
             if (_manager == null)
             {
@@ -128,7 +128,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 }
                 catch (CmdletInvocationException cm)
                 {
-                    EventLog.WriteEntry(EventLogSource, errors_strings.ErrorMFAUnAuthorized +"\r\r"+ cm.Message, EventLogEntryType.Error, 30901);
+                    EventLog.WriteEntry(EventLogSource, errors_strings.ErrorMFAUnAuthorized + "\r\r" + cm.Message, EventLogEntryType.Error, 30901);
                     throw cm;
                 }
                 catch (Exception ex)
@@ -138,252 +138,122 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 }
             }
         }
-
-        #region Utilities method
         /// <summary>
-        /// IsValidEmail method implementation
+        /// CheckRepositoryAttribute method implementation
         /// </summary>
-        public static bool IsValidEmail(string email)
-        {
-            try
-            {
-                var addr = new System.Net.Mail.MailAddress(email);
-                return addr.Address == email;
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
-        /// <summary>
-        /// IsValidPhone method implmentation
-        /// </summary>
-        public static bool IsValidPhone(string phonenumber)
-        {
-            string pho   = @"^\+(?:[0-9] ?){6,14}[0-9]$";
-            string pho10 = @"^\d{10}$";
-            string phous = @"^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$";
-
-            if (string.IsNullOrEmpty(phonenumber))
-                return false;
-            Regex rgx1 = new Regex(pho);
-            bool match1 = rgx1.IsMatch(phonenumber);
-            Regex rgx2 = new Regex(pho10);
-            bool match2 = rgx2.IsMatch(phonenumber);
-            Regex rgx3 = new Regex(phous);
-            bool match3 = rgx3.IsMatch(phonenumber);
-            return (match1) || (match2) || (match3);
-        }
-
-        /// <summary>
-        /// GetQRCodeValue method implementation
-        /// </summary>
-        public static string GetQRCodeValue(string upn, string secret)
-        {
-            return QRUtilities.GetQRCodeValue(upn, secret, Config);
-        }
-
-        /// <summary>
-        /// SendKeyByEmail method implementation
-        /// </summary>
-        public static void SendKeyByEmail(string email, string upn, string key)
-        {
-            MailUtilities.SendKeyByEmail(email, upn, key, Config.SendMail, Config, CultureInfo.CurrentUICulture);
-        }
-        #endregion
-
-        #region Data Operations
-        /// <summary>
-        /// EnsureService() method implmentation
-        /// </summary>
-        internal static void EnsureService()
-        {
-         //   SetCultureInfo();
-            if (_manager == null)
-                Initialize(null, true);
-        }
-
-        /// <summary>
-        /// GetService() method implmentation
-        /// </summary>
-        public static IAdministrationService GetService()
+        internal static bool CheckRepositoryAttribute(string attributename, int choice = 0)
         {
             EnsureService();
-            if (!Config.UseActiveDirectory)
-                return new SQLAdminService(Config);
-            else
-                return new ADDSAdminService(Config);
+            return RuntimeRepository.CheckRepositoryAttribute(Config, attributename, choice);
         }
 
         /// <summary>
-        /// GetUser method implementation
+        /// GetUserRegistration method implementation
         /// </summary>
-        internal static MMCRegistrationList GetUser(MMCRegistrationList registrations)
+        internal static Registration GetUserRegistration(string upn)
         {
             EnsureService();
-            IAdministrationService svc = null;
-            if (!Config.UseActiveDirectory)
-               svc = new SQLAdminService(Config);
-            else
-               svc = new ADDSAdminService(Config);
-
-            MMCRegistrationList lst = new MMCRegistrationList();
-            foreach(MMCRegistration reg in registrations)
-            {
-                MMCRegistration ret = svc.GetUserRegistration(reg.UPN);
-                lst.Add(ret);
-            }
-            return lst;
+            return RuntimeRepository.GetUserRegistration(Config, upn);
         }
 
         /// <summary>
-        /// SetUser method implementation
+        /// SetUserRegistration method implementation
         /// </summary>
-        public static void SetUser(MMCRegistrationList registrations)
+        internal static Registration SetUserRegistration(Registration reg, bool resetkey = false)
         {
             EnsureService();
-            IAdministrationService svc = null;
-            if (!Config.UseActiveDirectory)
-                svc = new SQLAdminService(Config);
-            else
-                svc = new ADDSAdminService(Config);
-
-            foreach (MMCRegistration reg in registrations)
-            {
-                svc.SetUserRegistration(reg);
-            }
+            return RuntimeRepository.SetUserRegistration(Config, reg, resetkey);
         }
 
         /// <summary>
-        /// AddUser method implmentation
+        /// AddUserRegistration method implementation
         /// </summary>
-        public static MMCRegistrationList AddUser(MMCRegistrationList registrations)
+        internal static Registration AddUserRegistration(Registration reg, bool addkey = true)
         {
             EnsureService();
-            IAdministrationService svc = null;
-            if (!Config.UseActiveDirectory)
-                svc = new SQLAdminService(Config);
-            else
-                svc = new ADDSAdminService(Config);
-
-            MMCRegistrationList lst = new MMCRegistrationList();
-            foreach(MMCRegistration reg in registrations)
-            {
-                KeysManager.NewKey(reg.UPN);
-                MMCRegistration ret = svc.AddUserRegistration(reg);
-                lst.Add(ret);
-            }
-            return lst;
+            return RuntimeRepository.AddUserRegistration(Config, reg, addkey);
         }
 
         /// <summary>
-        /// DeleteUser method implmentation
+        /// DeleteUserRegistration method implementation
         /// </summary>
-        public static bool DeleteUser(MMCRegistrationList registrations)
+        internal static bool DeleteUserRegistration(Registration reg, bool dropkey = true)
         {
             EnsureService();
-            bool _ret = true;
-            IAdministrationService svc = null;
-            if (!Config.UseActiveDirectory)
-                svc = new SQLAdminService(Config);
-            else
-                svc = new ADDSAdminService(Config);
-
-            foreach(MMCRegistration reg in registrations)
-            {
-                bool ret = svc.DeleteUserRegistration(reg);
-                if (!ret)
-                    _ret = false;
-                KeysManager.RemoveKey(reg.UPN);
-            }
-            return _ret;
+            return RuntimeRepository.DeleteUserRegistration(Config, reg, dropkey);
         }
 
         /// <summary>
-        /// EnableUser method implmentation
+        /// EnableUserRegistration method implementation
         /// </summary>
-        public static MMCRegistrationList EnableUser(MMCRegistrationList registrations)
+        internal static Registration EnableUserRegistration(Registration reg)
         {
             EnsureService();
-            IAdministrationService svc = null;
-            if (!Config.UseActiveDirectory)
-                svc = new SQLAdminService(Config);
-            else
-                svc = new ADDSAdminService(Config);
-
-            MMCRegistrationList lst = new MMCRegistrationList();
-            foreach(MMCRegistration reg in registrations)
-            {
-                lst.Add(svc.EnableUserRegistration(reg));
-            }
-            return lst;
+            return RuntimeRepository.EnableUserRegistration(Config, reg);
         }
 
         /// <summary>
-        /// DisableUser method implmentation 
+        /// DisableUserRegistration method implementation
         /// </summary>
-        public static MMCRegistrationList DisableUser(MMCRegistrationList registrations)
+        internal static Registration DisableUserRegistration(Registration reg)
         {
             EnsureService();
-            IAdministrationService svc = null;
-            if (!Config.UseActiveDirectory)
-                svc = new SQLAdminService(Config);
-            else
-                svc = new ADDSAdminService(Config);
-
-            MMCRegistrationList lst = new MMCRegistrationList();
-            foreach(MMCRegistration reg in registrations)
-            {
-                MMCRegistration res = svc.DisableUserRegistration(reg);
-                lst.Add(res);
-            }
-            return lst;
+            return RuntimeRepository.DisableUserRegistration(Config, reg);
         }
 
         /// <summary>
-        /// GetUsers method implementation
+        /// GetUserRegistrations method implementation
         /// </summary>
-        public static MMCRegistrationList GetUsers(int maxrows = 20000)
+        internal static RegistrationList GetUserRegistrations(DataFilterObject filter, DataOrderObject order, DataPagingObject paging, int maxrows = 20000)
         {
             EnsureService();
-            IAdministrationService svc = null;
-            if (!Config.UseActiveDirectory)
-                svc = new SQLAdminService(Config);
-            else
-                svc = new ADDSAdminService(Config);
-            return svc.GetUserRegistrations(Filter, Order, Paging, maxrows);
+            return RuntimeRepository.GetUserRegistrations(Config, filter, order, paging, maxrows);
         }
 
         /// <summary>
-        /// GetAllUsers method implementation
+        /// GetAllUserRegistrations method implementation
         /// </summary>
-        public static MMCRegistrationList GetAllUsers(bool enabledonly = false)
+        internal static RegistrationList GetAllUserRegistrations(DataOrderObject order, int maxrows = 20000, bool enabledonly = false)
         {
             EnsureService();
-            IAdministrationService svc = null;
-            if (!Config.UseActiveDirectory)
-                svc = new SQLAdminService(Config);
-            else
-                svc = new ADDSAdminService(Config);
-            return svc.GetAllUserRegistrations(Order, int.MaxValue, enabledonly);
+            return RuntimeRepository.GetAllUserRegistrations(Config, order, maxrows, enabledonly);
         }
 
         /// <summary>
-        /// GetUsers method implementation
+        /// GetUserRegistrationsCount method implementation
         /// </summary>
-        public static int GetUsersCount(int maxrows = 20000)
+        internal static int GetUserRegistrationsCount(DataFilterObject filter)
         {
             EnsureService();
-            IAdministrationService svc = null;
-            if (!Config.UseActiveDirectory)
-                svc = new SQLAdminService(Config);
-            else
-                svc = new ADDSAdminService(Config);
-            return svc.GetUserRegistrationsCount(Filter);
+            return RuntimeRepository.GetUserRegistrationsCount(Config, filter);
         }
-        #endregion
 
+        /// <summary>
+        /// GetEncodedUserKey method implmentation
+        /// </summary>
+        internal static string GetEncodedUserKey(string upn)
+        {
+            EnsureService();
+            return RuntimeRepository.GetEncodedUserKey(Config, upn);
+        }
+
+        /// <summary>
+        /// GetEncodedUserKey method implmentation
+        /// </summary>
+        internal static string NewUserKey(string upn)
+        {
+            EnsureService();
+            return RuntimeRepository.NewUserKey(Config, upn);
+        }
+
+        /// <summary>
+        /// ImportUsers method implementation
+        /// </summary>
+        internal static void ImportADDSUsers(string ldappath, bool enable)
+        {
+            EnsureService();
+            RuntimeRepository.ImportADDSUsers(Config, ldappath, enable);
+        }
     }
 
     public static class ADFSManagementRights
@@ -410,3 +280,4 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     }
     #endregion
 }
+

@@ -35,8 +35,8 @@ namespace Neos.IdentityServer.Console
     /// </summary>
     public class ServiceSMSFormView : FormView
     {
-        private ServicePhoneScopeNode sqlScopeNode = null;
-        private SMSViewControl usersControl = null;
+        private ServicePhoneScopeNode smsScopeNode = null;
+        private SMSViewControl SMSControl = null;
 
         /// <summary>
         /// ServiceSMSFormView constructor
@@ -51,9 +51,9 @@ namespace Neos.IdentityServer.Console
         /// </summary>
         protected override void OnInitialize(AsyncStatus status)
         {
-            usersControl = (SMSViewControl)this.Control;
-            sqlScopeNode = (ServicePhoneScopeNode)this.ScopeNode;
-            sqlScopeNode.SMSFormView = this;
+            SMSControl = (SMSViewControl)this.Control;
+            smsScopeNode = (ServicePhoneScopeNode)this.ScopeNode;
+            smsScopeNode.SMSFormView = this;
 
             ActionsPaneItems.Clear();
             SelectionData.ActionsPaneItems.Clear();
@@ -62,6 +62,33 @@ namespace Neos.IdentityServer.Console
             ModeActionsPaneItems.Clear();
 
             base.OnInitialize(status);
+        }
+
+        /// <summary>
+        /// Refresh() method implementation
+        /// </summary>
+        internal void Refresh()
+        {
+            if (SMSControl != null)
+                SMSControl.RefreshData();
+        }
+
+        /// <summary>
+        /// DoCancel() method implementation
+        /// </summary>
+        internal void DoCancel()
+        {
+            if (SMSControl != null)
+                SMSControl.CancelData();
+        }
+
+        /// <summary>
+        /// DoSave() method implmentation
+        /// </summary>
+        internal void DoSave()
+        {
+            if (SMSControl != null)
+                SMSControl.SaveData();
         }
     }
 }

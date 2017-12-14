@@ -117,4 +117,199 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="&gt;&gt;groupBoxKey.Name" xml:space="preserve">
+    <value>groupBoxKey</value>
+  </data>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="qrCodeGraphic.MinimumSize" type="System.Drawing.Size, System.Drawing">
+    <value>400, 400</value>
+  </data>
+  <data name="qrCodeGraphic.Size" type="System.Drawing.Size, System.Drawing">
+    <value>400, 400</value>
+  </data>
+  <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
+    <value>6, 13</value>
+  </data>
+  <data name="&gt;&gt;$this.Name" xml:space="preserve">
+    <value>UserPropertiesKeysControl</value>
+  </data>
+  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="DisplayKey.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="DisplayKey.Multiline" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="groupBoxKey.Size" type="System.Drawing.Size, System.Drawing">
+    <value>456, 176</value>
+  </data>
+  <data name="qrCodeGraphic.Location" type="System.Drawing.Point, System.Drawing">
+    <value>17, 26</value>
+  </data>
+  <data name="groupBoxKey.Location" type="System.Drawing.Point, System.Drawing">
+    <value>13, 433</value>
+  </data>
+  <data name="&gt;&gt;$this.Type" xml:space="preserve">
+    <value>System.Windows.Forms.UserControl, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;groupBoxKey.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;EmailPrompt.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="EmailPrompt.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="&gt;&gt;DisplayKey.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="clearkeyBtn.Size" type="System.Drawing.Size, System.Drawing">
+    <value>102, 23</value>
+  </data>
+  <data name="EmailPrompt.Size" type="System.Drawing.Size, System.Drawing">
+    <value>92, 13</value>
+  </data>
+  <data name="&gt;&gt;BTNSendByMail.Name" xml:space="preserve">
+    <value>BTNSendByMail</value>
+  </data>
+  <data name="&gt;&gt;BTNSendByMail.Parent" xml:space="preserve">
+    <value>groupBoxKey</value>
+  </data>
+  <data name="clearkeyBtn.Text" xml:space="preserve">
+    <value>Clear Key</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="qrCodeGraphic.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>0, 0, 0, 0</value>
+  </data>
+  <data name="&gt;&gt;groupBoxKey.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="newkeyBtn.Size" type="System.Drawing.Size, System.Drawing">
+    <value>102, 23</value>
+  </data>
+  <data name="&gt;&gt;EmailPrompt.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="newkeyBtn.Text" xml:space="preserve">
+    <value>New Key</value>
+  </data>
+  <data name="&gt;&gt;qrCodeGraphic.Name" xml:space="preserve">
+    <value>qrCodeGraphic</value>
+  </data>
+  <data name="groupBoxKey.TabIndex" type="System.Int32, mscorlib">
+    <value>7</value>
+  </data>
+  <data name="BTNSendByMail.Size" type="System.Drawing.Size, System.Drawing">
+    <value>162, 23</value>
+  </data>
+  <data name="EmailPrompt.Location" type="System.Drawing.Point, System.Drawing">
+    <value>19, 3</value>
+  </data>
+  <data name="&gt;&gt;DisplayKey.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="BTNSendByMail.Text" xml:space="preserve">
+    <value>Send the key by email</value>
+  </data>
+  <data name="&gt;&gt;newkeyBtn.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="&gt;&gt;EmailPrompt.Name" xml:space="preserve">
+    <value>EmailPrompt</value>
+  </data>
+  <data name="clearkeyBtn.Location" type="System.Drawing.Point, System.Drawing">
+    <value>19, 142</value>
+  </data>
+  <data name="&gt;&gt;newkeyBtn.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="BTNSendByMail.TabIndex" type="System.Int32, mscorlib">
+    <value>4</value>
+  </data>
+  <data name="&gt;&gt;BTNSendByMail.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;clearkeyBtn.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="BTNSendByMail.Location" type="System.Drawing.Point, System.Drawing">
+    <value>271, 142</value>
+  </data>
+  <data name="&gt;&gt;DisplayKey.Parent" xml:space="preserve">
+    <value>groupBoxKey</value>
+  </data>
+  <data name="DisplayKey.Location" type="System.Drawing.Point, System.Drawing">
+    <value>19, 28</value>
+  </data>
+  <data name="&gt;&gt;clearkeyBtn.Parent" xml:space="preserve">
+    <value>groupBoxKey</value>
+  </data>
+  <data name="&gt;&gt;qrCodeGraphic.Type" xml:space="preserve">
+    <value>Neos.IdentityServer.MultiFactor.QrEncoding.Windows.Forms.QrCodeGraphicControl, Neos.IdentityServer.Multifactor.QrCodeNet, Version=2.0.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2</value>
+  </data>
+  <data name="qrCodeGraphic.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="groupBoxKey.Text" xml:space="preserve">
+    <value>Secret Key</value>
+  </data>
+  <data name="&gt;&gt;groupBoxKey.Type" xml:space="preserve">
+    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;qrCodeGraphic.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;clearkeyBtn.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="qrCodeGraphic.MaximumSize" type="System.Drawing.Size, System.Drawing">
+    <value>800, 800</value>
+  </data>
+  <data name="&gt;&gt;newkeyBtn.Parent" xml:space="preserve">
+    <value>groupBoxKey</value>
+  </data>
+  <data name="&gt;&gt;EmailPrompt.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="newkeyBtn.TabIndex" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <data name="&gt;&gt;BTNSendByMail.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;DisplayKey.Name" xml:space="preserve">
+    <value>DisplayKey</value>
+  </data>
+  <data name="&gt;&gt;clearkeyBtn.Name" xml:space="preserve">
+    <value>clearkeyBtn</value>
+  </data>
+  <data name="newkeyBtn.Location" type="System.Drawing.Point, System.Drawing">
+    <value>145, 142</value>
+  </data>
+  <data name="EmailPrompt.Text" xml:space="preserve">
+    <value>Email address: {0}</value>
+  </data>
+  <data name="DisplayKey.Size" type="System.Drawing.Size, System.Drawing">
+    <value>415, 98</value>
+  </data>
+  <data name="EmailPrompt.TabIndex" type="System.Int32, mscorlib">
+    <value>8</value>
+  </data>
+  <data name="clearkeyBtn.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="$this.Size" type="System.Drawing.Size, System.Drawing">
+    <value>489, 626</value>
+  </data>
+  <data name="&gt;&gt;newkeyBtn.Name" xml:space="preserve">
+    <value>newkeyBtn</value>
+  </data>
+  <data name="&gt;&gt;qrCodeGraphic.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
 </root>

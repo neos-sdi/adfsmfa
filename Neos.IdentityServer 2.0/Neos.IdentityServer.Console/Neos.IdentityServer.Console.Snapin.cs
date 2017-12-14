@@ -24,6 +24,12 @@ using System.Diagnostics;
 using System.Drawing;
 using Microsoft.ManagementConsole.Advanced;
 using System.Windows.Forms;
+using Neos.IdentityServer.MultiFactor;
+using System.Runtime.Serialization;
+using System.Threading;
+using System.Globalization;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.IO;
 
 namespace Neos.IdentityServer.Console
 {
@@ -48,100 +54,6 @@ namespace Neos.IdentityServer.Console
         /// </summary>
         public ADFSSnapIn()
         {
-            // Root Node
-            this.RootNode = new RootScopeNode();
-            FormViewDescription fvr = new FormViewDescription();
-            fvr.DisplayName = "MFA Platform";
-            fvr.ControlType = typeof(RootViewControl);
-            fvr.ViewType = typeof(RootFormView);
-            this.RootNode.ViewDescriptions.Add(fvr);
-            this.RootNode.ViewDescriptions.DefaultIndex = 0;
-
-            // Service Node
-            this.ServiceNode = new ServiceScopeNode();
-            FormViewDescription fvc = new FormViewDescription();
-            fvc.DisplayName = "MFA Platform Service";
-            fvc.ControlType = typeof(ServiceViewControl);
-            fvc.ViewType = typeof(ServiceFormView);
-            this.ServiceNode.ViewDescriptions.Add(fvc);
-            this.ServiceNode.ViewDescriptions.DefaultIndex = 0;
-
-            // General Scope
-            this.ServiceGeneralNode = new ServiceGeneralScopeNode();
-            FormViewDescription fvs = new FormViewDescription();
-            fvs.DisplayName = "MFA Platform General Properties";
-            fvs.ControlType = typeof(GeneralViewControl);
-            fvs.ViewType = typeof(GeneralFormView);
-            this.ServiceGeneralNode.ViewDescriptions.Add(fvs);
-            this.ServiceGeneralNode.ViewDescriptions.DefaultIndex = 0;
-
-            // ADDS Scope
-            this.ServiceADDSNode = new ServiceADDSScopeNode();
-            FormViewDescription fadds = new FormViewDescription();
-            fadds.DisplayName = "MFA Platform Active Directory Properties";
-            fadds.ControlType = typeof(ADDSViewControl);
-            fadds.ViewType = typeof(ServiceADDSFormView);
-            this.ServiceADDSNode.ViewDescriptions.Add(fadds);
-            this.ServiceADDSNode.ViewDescriptions.DefaultIndex = 0;
-
-            // SQL Scope
-            this.ServiceSQLNode = new ServiceSQLScopeNode();
-            FormViewDescription fsql = new FormViewDescription();
-            fsql.DisplayName = "MFA Platform SQL Server Properties";
-            fsql.ControlType = typeof(SQLViewControl);
-            fsql.ViewType = typeof(ServiceSQLFormView);
-            this.ServiceSQLNode.ViewDescriptions.Add(fsql);
-            this.ServiceSQLNode.ViewDescriptions.DefaultIndex = 0;
-
-            // SMTP Scope
-            this.ServiceSMTPNode = new ServiceSMTPScopeNode();
-            FormViewDescription fsmtp = new FormViewDescription();
-            fsmtp.DisplayName = "MFA Platform SMTP Properties";
-            fsmtp.ControlType = typeof(SMTPViewControl);
-            fsmtp.ViewType = typeof(ServiceSMTPFormView);
-            this.ServiceSMTPNode.ViewDescriptions.Add(fsmtp);
-            this.ServiceSMTPNode.ViewDescriptions.DefaultIndex = 0;
-
-            // SMS Scope
-            this.ServiceSMSNode = new ServicePhoneScopeNode();
-            FormViewDescription fsms = new FormViewDescription();
-            fsms.DisplayName = "MFA Platform SMS Properties";
-            fsms.ControlType = typeof(SMSViewControl);
-            fsms.ViewType = typeof(ServiceSMSFormView);
-            this.ServiceSMSNode.ViewDescriptions.Add(fsms);
-            this.ServiceSMSNode.ViewDescriptions.DefaultIndex = 0;
-
-            // Parameters Scope
-            this.ServiceSecurityNode = new ServiceSecurityScopeNode();
-            FormViewDescription fvp = new FormViewDescription();
-            fvp.DisplayName = "MFA Platform Security Properties";
-            fvp.ControlType = typeof(ServiceSecurityViewControl);
-            fvp.ViewType = typeof(ServiceSecurityFormView);
-            this.ServiceSecurityNode.ViewDescriptions.Add(fvp);
-            this.ServiceSecurityNode.ViewDescriptions.DefaultIndex = 0;
-
-            // Users Scope
-            this.UsersNode = new UsersScopeNode();
-            FormViewDescription fvu = new FormViewDescription();
-            fvu.DisplayName = "MFA Platform Users";
-            fvu.ControlType = typeof(UsersListView);
-            fvu.ViewType = typeof(UsersFormView);
-            this.UsersNode.ViewDescriptions.Add(fvu);
-            this.UsersNode.ViewDescriptions.DefaultIndex = 0;
-
-            this.RootNode.Children.Add(this.ServiceNode);
-
-            this.RootNode.Children.Add(this.ServiceGeneralNode);
-            this.RootNode.Children.Add(this.ServiceADDSNode);
-            this.RootNode.Children.Add(this.ServiceSQLNode);
-            this.RootNode.Children.Add(this.ServiceSMTPNode);
-            this.RootNode.Children.Add(this.ServiceSMSNode);
-            this.RootNode.Children.Add(this.ServiceSecurityNode);
-            this.RootNode.Children.Add(this.UsersNode);
-
-            this.IsModified = true;
-            this.SmallImages.Add(Neos_IdentityServer_Console_Snapin.folder16, Color.Black);
-            this.LargeImages.Add(Neos_IdentityServer_Console_Snapin.folder32, Color.Black);
 
         }
 
@@ -150,10 +62,10 @@ namespace Neos.IdentityServer.Console
         /// </summary>
         protected override void OnInitialize()
         {
-            base.OnInitialize();
             try
             {
-                ManagementAdminService.Initialize(true);
+                ManagementService.Initialize(true);
+                BuildNodes();
             }
             catch (Exception ex)
             {
@@ -165,6 +77,7 @@ namespace Neos.IdentityServer.Console
                 this.Console.ShowDialog(msgp);
                 this.RootNode.Children.Clear();
             }
+            base.OnInitialize();
         }
 
         /// <summary>
@@ -175,7 +88,31 @@ namespace Neos.IdentityServer.Console
             try
             {
                 if (persistenceData != null)
-                    ManagementAdminService.Filter = (UsersFilterObject)persistenceData;
+                {
+//                    try
+//                    {
+                        MMCPersistenceData data = (MMCPersistenceData)persistenceData;
+                        MMCService.Filter = data.Filter;
+                        if (data.Language == 0)
+                        {
+                            if (CultureInfo.DefaultThreadCurrentUICulture != CultureInfo.InstalledUICulture)
+                            {
+                                CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.InstalledUICulture;
+                                BuildNodes(false);
+                            }
+                        }
+                        else
+                            if (CultureInfo.DefaultThreadCurrentUICulture != new CultureInfo(data.Language))
+                            {
+                                CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo(data.Language);
+                                BuildNodes(false);
+                            }
+//                    }
+//                    catch (SerializationException)
+//                    {
+                        //nothing 
+//                    }
+                }
             }
             catch (Exception ex)
             {
@@ -185,7 +122,6 @@ namespace Neos.IdentityServer.Console
                 msgp.Icon = MessageBoxIcon.Error;
                 this.Console.ShowDialog(msgp);
             }
-
         }
 
         /// <summary>
@@ -195,7 +131,13 @@ namespace Neos.IdentityServer.Console
         {
             try
             {
-                return (byte[])ManagementAdminService.Filter;
+                MMCPersistenceData data = new MMCPersistenceData();
+                data.Filter = MMCService.Filter;
+                if (CultureInfo.DefaultThreadCurrentUICulture.LCID == CultureInfo.InstalledUICulture.LCID)
+                    data.Language = 0;
+                else
+                    data.Language = CultureInfo.DefaultThreadCurrentUICulture.LCID;
+                return (byte[])data;
             }
             catch (Exception ex)
             {
@@ -206,6 +148,179 @@ namespace Neos.IdentityServer.Console
                 this.Console.ShowDialog(msgp);
                 return null;
             }
+        }
+
+        /// <summary>
+        /// BuildNodes method 
+        /// </summary>
+        private void BuildNodes(bool doall = true)
+        {
+            if (doall)
+            {
+                this.RootNode = new RootScopeNode();
+                FormViewDescription fvr = new FormViewDescription();
+                fvr.DisplayName = "MFA Platform";
+                fvr.ControlType = typeof(RootViewControl);
+                fvr.ViewType = typeof(RootFormView);
+                this.RootNode.ViewDescriptions.Add(fvr);
+                this.RootNode.ViewDescriptions.DefaultIndex = 0;
+
+                // Service Node
+                this.ServiceNode = new ServiceScopeNode();
+                FormViewDescription fvc = new FormViewDescription();
+                fvc.DisplayName = "MFA Platform Service";
+                fvc.ControlType = typeof(ServiceViewControl);
+                fvc.ViewType = typeof(ServiceFormView);
+                this.ServiceNode.ViewDescriptions.Add(fvc);
+                this.ServiceNode.ViewDescriptions.DefaultIndex = 0;
+
+                // General Scope
+                this.ServiceGeneralNode = new ServiceGeneralScopeNode();
+                FormViewDescription fvs = new FormViewDescription();
+                fvs.DisplayName = "MFA Platform General Properties";
+                fvs.ControlType = typeof(GeneralViewControl);
+                fvs.ViewType = typeof(GeneralFormView);
+                this.ServiceGeneralNode.ViewDescriptions.Add(fvs);
+                this.ServiceGeneralNode.ViewDescriptions.DefaultIndex = 0;
+
+                // ADDS Scope
+                this.ServiceADDSNode = new ServiceADDSScopeNode();
+                FormViewDescription fadds = new FormViewDescription();
+                fadds.DisplayName = "MFA Platform Active Directory Properties";
+                fadds.ControlType = typeof(ADDSViewControl);
+                fadds.ViewType = typeof(ServiceADDSFormView);
+                this.ServiceADDSNode.ViewDescriptions.Add(fadds);
+                this.ServiceADDSNode.ViewDescriptions.DefaultIndex = 0;
+
+                // SQL Scope
+                this.ServiceSQLNode = new ServiceSQLScopeNode();
+                FormViewDescription fsql = new FormViewDescription();
+                fsql.DisplayName = "MFA Platform SQL Server Properties";
+                fsql.ControlType = typeof(SQLViewControl);
+                fsql.ViewType = typeof(ServiceSQLFormView);
+                this.ServiceSQLNode.ViewDescriptions.Add(fsql);
+                this.ServiceSQLNode.ViewDescriptions.DefaultIndex = 0;
+
+                // SMTP Scope
+                this.ServiceSMTPNode = new ServiceSMTPScopeNode();
+                FormViewDescription fsmtp = new FormViewDescription();
+                fsmtp.DisplayName = "MFA Platform SMTP Properties";
+                fsmtp.ControlType = typeof(SMTPViewControl);
+                fsmtp.ViewType = typeof(ServiceSMTPFormView);
+                this.ServiceSMTPNode.ViewDescriptions.Add(fsmtp);
+                this.ServiceSMTPNode.ViewDescriptions.DefaultIndex = 0;
+
+                // SMS Scope
+                this.ServiceSMSNode = new ServicePhoneScopeNode();
+                FormViewDescription fsms = new FormViewDescription();
+                fsms.DisplayName = "MFA Platform SMS Properties";
+                fsms.ControlType = typeof(SMSViewControl);
+                fsms.ViewType = typeof(ServiceSMSFormView);
+                this.ServiceSMSNode.ViewDescriptions.Add(fsms);
+                this.ServiceSMSNode.ViewDescriptions.DefaultIndex = 0;
+
+                // Parameters Scope
+                this.ServiceSecurityNode = new ServiceSecurityScopeNode();
+                FormViewDescription fvp = new FormViewDescription();
+                fvp.DisplayName = "MFA Platform Security Properties";
+                fvp.ControlType = typeof(ServiceSecurityViewControl);
+                fvp.ViewType = typeof(ServiceSecurityFormView);
+                this.ServiceSecurityNode.ViewDescriptions.Add(fvp);
+                this.ServiceSecurityNode.ViewDescriptions.DefaultIndex = 0;
+
+                // Users Scope
+                this.UsersNode = new UsersScopeNode();
+                FormViewDescription fvu = new FormViewDescription();
+                fvu.DisplayName = "MFA Platform Users";
+                fvu.ControlType = typeof(UsersListView);
+                fvu.ViewType = typeof(UsersFormView);
+                this.UsersNode.ViewDescriptions.Add(fvu);
+                this.UsersNode.ViewDescriptions.DefaultIndex = 0;
+
+                this.RootNode.Children.Add(this.ServiceNode);
+                this.RootNode.Children.Add(this.ServiceGeneralNode);
+                this.RootNode.Children.Add(this.ServiceADDSNode);
+                this.RootNode.Children.Add(this.ServiceSQLNode);
+                this.RootNode.Children.Add(this.ServiceSMTPNode);
+                this.RootNode.Children.Add(this.ServiceSMSNode);
+                this.RootNode.Children.Add(this.ServiceSecurityNode);
+                this.RootNode.Children.Add(this.UsersNode);
+
+                this.IsModified = true;
+                this.SmallImages.Add(Neos.IdentityServer.Console.Resources.Neos_IdentityServer_Console_Snapin.folder16, Color.Black);
+                this.LargeImages.Add(Neos.IdentityServer.Console.Resources.Neos_IdentityServer_Console_Snapin.folder32, Color.Black);
+            }
+            else
+            {
+                RefreshUI();
+            }
+        }
+
+        /// <summary>
+        /// RefreshUI method implmentation
+        /// </summary>
+        public void RefreshUI()
+        {
+            ((RefreshableScopeNode)this.RootNode).RefreshUI();
+            ((RefreshableScopeNode)this.ServiceNode).RefreshUI();
+            ((RefreshableScopeNode)this.ServiceGeneralNode).RefreshUI();
+            ((RefreshableScopeNode)this.ServiceADDSNode).RefreshUI();
+            ((RefreshableScopeNode)this.ServiceSQLNode).RefreshUI();
+            ((RefreshableScopeNode)this.ServiceSMTPNode).RefreshUI();
+            ((RefreshableScopeNode)this.ServiceSMSNode).RefreshUI();
+            ((RefreshableScopeNode)this.ServiceSecurityNode).RefreshUI();
+            ((RefreshableScopeNode)this.UsersNode).RefreshUI();
+        }
+    }
+
+    [Serializable]
+    internal class MMCPersistenceData
+    {
+        private DataFilterObject _filter;
+        private int _uilanguage;
+
+
+        /// <summary>
+        /// implicit conversion to byte array
+        /// </summary>
+        public static explicit operator byte[](MMCPersistenceData filterobj)
+        {
+            if (filterobj == null)
+                return null;
+            BinaryFormatter bf = new BinaryFormatter();
+            using (MemoryStream ms = new MemoryStream())
+            {
+                bf.Serialize(ms, filterobj);
+                return ms.ToArray();
+            }
+        }
+
+        /// <summary>
+        /// implicit conversion from ResultNode
+        /// </summary>
+        public static explicit operator MMCPersistenceData(byte[] data)
+        {
+            if (data == null)
+                return null;
+            using (MemoryStream memStream = new MemoryStream())
+            {
+                BinaryFormatter binForm = new BinaryFormatter();
+                memStream.Write(data, 0, data.Length);
+                memStream.Seek(0, SeekOrigin.Begin);
+                return (MMCPersistenceData)binForm.Deserialize(memStream);
+            }
+        }
+
+        public DataFilterObject Filter
+        {
+            get { return _filter; }
+            set { _filter = value; }
+        }
+
+        public int Language
+        {
+            get { return _uilanguage; }
+            set { _uilanguage = value; }
         }
     }
 } 

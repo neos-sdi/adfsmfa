@@ -182,7 +182,7 @@
     <value>50</value>
   </data>
   <data name="enabledDataGridViewCheckBoxColumn.Width" type="System.Int32, mscorlib">
-    <value>50</value>
+    <value>60</value>
   </data>
   <data name="secretKeyDataGridViewTextBoxColumn.HeaderText" xml:space="preserve">
     <value>SecretKey</value>

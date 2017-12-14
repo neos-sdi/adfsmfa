@@ -78,6 +78,10 @@
       <Project>{15b3e0d2-6217-493a-a690-158c497f5318}</Project>
       <Name>Neos.IdentityServer.MultiFactor.Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Neos.IdentityServer.MultiFactor.DataTypes\Neos.IdentityServer.MultiFactor.DataTypes.csproj">
+      <Project>{9b735255-31a8-4ff5-a918-fc47d4a95f38}</Project>
+      <Name>Neos.IdentityServer.MultiFactor.DataTypes</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Neos.IdentityServer.QrCodeNet\Neos.IdentityServer.MultiFactor.QRCodeNet.csproj">
       <Project>{aa3fd0c4-5577-4327-8486-aa4f5903db9b}</Project>
       <Name>Neos.IdentityServer.MultiFactor.QRCodeNet</Name>

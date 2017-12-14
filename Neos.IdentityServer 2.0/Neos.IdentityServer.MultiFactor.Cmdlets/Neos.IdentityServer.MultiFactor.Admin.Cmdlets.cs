@@ -25,6 +25,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     using System.DirectoryServices;
     using Neos.IdentityServer.MultiFactor.Cmdlets.Ressources;
     using System.Management.Automation.Host;
+    using Neos.IdentityServer.MultiFactor;
     using System.Collections.ObjectModel;
 
     /// <summary>
@@ -80,9 +81,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         string _identity = string.Empty;
         private int _maxrows = 20000;
         private PSRegistration[] _list = null;
-        private UsersFilterObject _filter = new UsersFilterObject();
-        private UsersPagingObject _paging = new UsersPagingObject();
-        private UsersOrderObject _order = new UsersOrderObject();
+        private DataFilterObject _filter = new DataFilterObject();
+        private DataPagingObject _paging = new DataPagingObject();
+        private DataOrderObject _order = new DataOrderObject();
 
         /// <summary>
         /// <para type="description">identity of the user to selected (upn).</para>
@@ -122,7 +123,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// </summary>
         [Parameter(ParameterSetName = "Data")]
         [Alias("Field", "ATTR")]
-        public UsersFilterField FilterField
+        public DataFilterField FilterField
         {
             get { return _filter.FilterField; }
             set { _filter.FilterField = value; }
@@ -133,7 +134,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// </summary>
         [Parameter(ParameterSetName = "Data")]
         [Alias("Operator", "OP")]
-        public UsersFilterOperator FilterOperator
+        public DataFilterOperator FilterOperator
         {
             get { return _filter.FilterOperator; }
             set {_filter.FilterOperator = value; }
@@ -155,7 +156,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// </summary>
         [Parameter(ParameterSetName = "Data")]
         [Alias("Method")]
-        public UsersPreferredMethod FilterMethod
+        public PreferredMethod FilterMethod
         {
             get { return _filter.FilterMethod; }
             set { _filter.FilterMethod = value; }
@@ -197,7 +198,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <para type="description">When using sorting this is the Filed user for ordering results.</para>
         /// </summary>
         [Parameter(ParameterSetName = "Data")]
-        public UsersOrderField SortOrder
+        public DataOrderField SortOrder
         {
             get { return _order.Column; }
             set { _order.Column = value; }
@@ -227,9 +228,8 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                     _paging.CurrentPage = CurrentPage;
                     _paging.PageSize = PagingSize;
 
-                    ManagementAdminService.Initialize(this.Host, true);
-                    IAdministrationService intf = ManagementAdminService.GetService();
-                    PSRegistrationList mmc = (PSRegistrationList)intf.GetUserRegistrations(_filter, _order, _paging, MaxRows);
+                    ManagementService.Initialize(this.Host, true);
+                    PSRegistrationList mmc = (PSRegistrationList)ManagementService.GetUserRegistrations(_filter, _order, _paging, MaxRows);
                     _list = mmc.ToArray();
                 }
                 catch (Exception ex)
@@ -241,9 +241,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             {
                 try
                 {
-                    ManagementAdminService.Initialize(this.Host, true);
-                    IAdministrationService intf = ManagementAdminService.GetService();
-                    PSRegistration ret = (PSRegistration)intf.GetUserRegistration(Identity);
+                    ManagementService.Initialize(this.Host, true);
+                    PSRegistration ret = (PSRegistration)ManagementService.GetUserRegistration(Identity);
+
                     if (ret == null)
                         throw new Exception(string.Format(errors_strings.ErrorUserNotFound, this.Identity));
                     _list = new PSRegistration[] { ret };
@@ -323,7 +323,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         private string _identity = string.Empty;
         private string _mailaddress = string.Empty;
         private string _phonenumber = string.Empty;
-        private UsersPreferredMethod _method = UsersPreferredMethod.None;
+        private PreferredMethod _method = PreferredMethod.None;
         private bool _enabled = true;
         private bool _resetkey = false;
 
@@ -369,8 +369,8 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// </summary>
         [Parameter(ParameterSetName = "Identity")]
         [Parameter(ParameterSetName = "Data")]
-        [ValidateRange(UsersPreferredMethod.Choose, UsersPreferredMethod.None)]
-        public UsersPreferredMethod Method
+        [ValidateRange(PreferredMethod.Choose, PreferredMethod.None)]
+        public PreferredMethod Method
         {
             get { return _method; }
             set { _method = value; }
@@ -419,9 +419,8 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             {
                 try
                 {
-                    ManagementAdminService.Initialize(this.Host, true);
-                    IAdministrationService intf = ManagementAdminService.GetService();
-                    PSRegistration res = (PSRegistration)intf.GetUserRegistration(Identity);
+                    ManagementService.Initialize(this.Host, true);
+                    PSRegistration res = (PSRegistration)ManagementService.GetUserRegistration(Identity);
                     if (res == null)
                         throw new Exception(string.Format(errors_strings.ErrorUserNotFound, this.Identity));
                     Data = new PSRegistration[] { res };
@@ -439,7 +438,6 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         protected override void ProcessRecord()
         {
             int i = 0;
-            IAdministrationService intf = ManagementAdminService.GetService();
             ProgressRecord prog = null;
             if (_data.Length >= 10)
             {
@@ -464,20 +462,20 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                             reg.MailAddress = this.MailAddress;
                         if (PhoneNumber != string.Empty)
                             reg.PhoneNumber = this.PhoneNumber;
-                        if (this.Method != UsersPreferredMethod.None)
-                            reg.PreferredMethod = (RegistrationPreferredMethod)this.Method;
+                        if (this.Method != PreferredMethod.None)
+                            reg.PreferredMethod = (PreferredMethod)this.Method;
                         reg.Enabled = this.Enabled;
 
-                        if (string.IsNullOrEmpty(reg.MailAddress) && ManagementAdminService.Config.MailEnabled)
+                        if (string.IsNullOrEmpty(reg.MailAddress) && ManagementService.Config.MailEnabled)
                            this.Host.UI.WriteWarningLine(string.Format(errors_strings.ErrorEmailNotProvided, reg.UPN));
-                        if (string.IsNullOrEmpty(reg.PhoneNumber) && ManagementAdminService.Config.SMSEnabled)
+                        if (string.IsNullOrEmpty(reg.PhoneNumber) && ManagementService.Config.SMSEnabled)
                             this.Host.UI.WriteWarningLine(string.Format(errors_strings.ErrorPhoneNotProvided, reg.UPN));
-                        intf.SetUserRegistration((MMCRegistration)reg);
+
+                        ManagementService.Initialize(this.Host, true);
+                        ManagementService.SetUserRegistration((Registration)reg, this.ResetKey);
+
                         if (this.ResetKey)
-                        {
-                            KeysManager.NewKey(reg.UPN);
                             this.WriteVerbose(string.Format(infos_strings.InfosUserHasNewKey, reg.UPN));
-                        }
                         this. WriteVerbose(string.Format(infos_strings.InfosUserUpdated, reg.UPN));
                     }
                     catch (Exception Ex)
@@ -511,7 +509,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         private string _identity = string.Empty;
         private string _mailaddress = string.Empty;
         private string _phonenumber = string.Empty;
-        private UsersPreferredMethod _method = UsersPreferredMethod.None;
+        private PreferredMethod _method = PreferredMethod.None;
         private bool _enabled = true;
 
         PSRegistration[] _data = null;
@@ -553,8 +551,8 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <para type="description">MFA Method for the new users.</para>
         /// </summary>
         [Parameter(ParameterSetName = "Identity")]
-        [ValidateRange(UsersPreferredMethod.Choose, UsersPreferredMethod.None)]
-        public UsersPreferredMethod Method
+        [ValidateRange(PreferredMethod.Choose, PreferredMethod.None)]
+        public PreferredMethod Method
         {
             get { return _method; }
             set { _method = value; }
@@ -591,10 +589,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             {
                 try
                 {
-                    ManagementAdminService.Initialize(this.Host, true);
-                    IAdministrationService intf = ManagementAdminService.GetService();
+                    ManagementService.Initialize(this.Host, true);
+                    PSRegistration res = (PSRegistration)ManagementService.GetUserRegistration(Identity);
 
-                    PSRegistration res = (PSRegistration)intf.GetUserRegistration(Identity);
                     if (res != null)
                         throw new Exception(string.Format(errors_strings.ErrorUserExists, this.Identity));
                     res = new PSRegistration();
@@ -614,7 +611,6 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         protected override void ProcessRecord()
         {
             int i = 0;
-            IAdministrationService intf = ManagementAdminService.GetService();
             ProgressRecord prog = null;
             if (_data.Length >= 10)
             {
@@ -638,19 +634,20 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                             reg.MailAddress = this.MailAddress;
                         if (PhoneNumber != string.Empty)
                             reg.PhoneNumber = this.PhoneNumber;
-                        if (this.Method != UsersPreferredMethod.None)
-                            reg.PreferredMethod = (RegistrationPreferredMethod)this.Method;
+                        if (this.Method != PreferredMethod.None)
+                            reg.PreferredMethod = (PreferredMethod)this.Method;
                         reg.Enabled = this.Enabled; 
 
-                        if (string.IsNullOrEmpty(reg.MailAddress) && ManagementAdminService.Config.MailEnabled)
+                        if (string.IsNullOrEmpty(reg.MailAddress) && ManagementService.Config.MailEnabled)
                             this.Host.UI.WriteWarningLine(string.Format(errors_strings.ErrorEmailNotProvided, reg.UPN));
-                        if (string.IsNullOrEmpty(reg.PhoneNumber) && ManagementAdminService.Config.SMSEnabled)
+                        if (string.IsNullOrEmpty(reg.PhoneNumber) && ManagementService.Config.SMSEnabled)
                             this.Host.UI.WriteWarningLine(string.Format(errors_strings.ErrorPhoneNotProvided, reg.UPN));
 
-                        PSRegistration ret = (PSRegistration)intf.AddUserRegistration((MMCRegistration)reg);
+                        ManagementService.Initialize(this.Host, true);
+                        PSRegistration ret = (PSRegistration)ManagementService.AddUserRegistration((Registration)reg);
+
                         if (ret != null)
                         {
-                            KeysManager.NewKey(reg.UPN);
                             this.WriteVerbose(string.Format(infos_strings.InfosUserHasNewKey, reg.UPN));
                             this.WriteObject(ret);
                             this.WriteVerbose(string.Format(infos_strings.InfosUserAdded, reg.UPN));
@@ -721,10 +718,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             {
                 try
                 {
-                    ManagementAdminService.Initialize(this.Host, true);
-                    IAdministrationService intf = ManagementAdminService.GetService();
+                    ManagementService.Initialize(this.Host, true);
+                    PSRegistration res = (PSRegistration)ManagementService.GetUserRegistration(Identity);
 
-                    PSRegistration res = (PSRegistration)intf.GetUserRegistration(Identity);
                     if (res == null)
                         throw new Exception(string.Format(errors_strings.ErrorUserNotFound, this.Identity));
                     Data = new PSRegistration[] { res };
@@ -742,7 +738,6 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         protected override void ProcessRecord()
         {
             int i = 0;
-            IAdministrationService intf = ManagementAdminService.GetService();
             ProgressRecord prog = null;
             if (_data.Length >= 10)
             {
@@ -762,8 +757,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                             prog.CurrentOperation = string.Format("\"{0}\" ", reg.UPN);
                             this.WriteProgress(prog);
                         }
-                        KeysManager.RemoveKey(reg.UPN);
-                        intf.DeleteUserRegistration((MMCRegistration)reg);
+
+                        ManagementService.DeleteUserRegistration((Registration)reg, true);
+
                         this.WriteVerbose(string.Format(infos_strings.InfosUserDeleted, reg.UPN));
                     }
                     catch (Exception Ex)
@@ -830,10 +826,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             {
                 try
                 {
-                    ManagementAdminService.Initialize(this.Host, true);
-                    IAdministrationService intf = ManagementAdminService.GetService();
+                    ManagementService.Initialize(this.Host, true);
+                    PSRegistration res = (PSRegistration)ManagementService.GetUserRegistration(Identity);
 
-                    PSRegistration res = (PSRegistration)intf.GetUserRegistration(Identity);
                     if (res == null)
                         throw new Exception(string.Format(errors_strings.ErrorUserNotFound, this.Identity));
                     Data = new PSRegistration[] { res };
@@ -851,7 +846,6 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         protected override void ProcessRecord()
         {
             int i = 0;
-            IAdministrationService intf = ManagementAdminService.GetService();
             ProgressRecord prog = null;
             if (_data.Length >= 10)
             {
@@ -872,7 +866,8 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                             this.WriteProgress(prog);
                         }
 
-                        PSRegistration res = (PSRegistration)intf.EnableUserRegistration((MMCRegistration)reg);
+                        PSRegistration res = (PSRegistration)ManagementService.EnableUserRegistration((Registration)reg);
+
                         this.WriteObject(res);
                         this.WriteVerbose(string.Format(infos_strings.InfosUserUpdated, reg.UPN));
                     }
@@ -940,10 +935,8 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             {
                 try
                 {
-                    ManagementAdminService.Initialize(this.Host, true);
-                    IAdministrationService intf = ManagementAdminService.GetService();
-
-                    PSRegistration res = (PSRegistration)intf.GetUserRegistration(Identity);
+                    ManagementService.Initialize(this.Host, true);
+                    PSRegistration res = (PSRegistration)ManagementService.GetUserRegistration(Identity);
                     if (res == null)
                         throw new Exception(string.Format(errors_strings.ErrorUserNotFound, this.Identity));
                     Data = new PSRegistration[] { res };
@@ -963,7 +956,6 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             if (_data == null)
                 return;
             int i= 0;
-            IAdministrationService intf = ManagementAdminService.GetService();
             ProgressRecord prog = null;
             if (_data.Length >= 10)
             {
@@ -984,7 +976,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                             this.WriteProgress(prog);
                         }
 
-                        PSRegistration res = (PSRegistration)intf.DisableUserRegistration((MMCRegistration)reg);
+                        PSRegistration res = (PSRegistration)ManagementService.DisableUserRegistration((Registration)reg);
                         this.WriteObject(res);
                         this.WriteVerbose(string.Format(infos_strings.InfosUserUpdated, reg.UPN));
                     }
@@ -1024,8 +1016,8 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             base.BeginProcessing();
             try
             {
-                ManagementAdminService.Initialize(this.Host, true);
-                _farm = ManagementAdminService.ADFSManager.ADFSFarm;
+                ManagementService.Initialize(this.Host, true);
+                _farm = ManagementService.ADFSManager.ADFSFarm;
             }
             catch (Exception ex)
             {
@@ -1085,7 +1077,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             base.BeginProcessing();
             try
             {
-                ManagementAdminService.Initialize(this.Host, true);
+                ManagementService.Initialize(this.Host, true);
             }
             catch (Exception ex)
             {
@@ -1101,7 +1093,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             try
             {
                 PSHost hh = GetHostForVerbose();
-                ADFSServiceManager svc = ManagementAdminService.ADFSManager;
+                ADFSServiceManager svc = ManagementService.ADFSManager;
                 ADFSServerHost props = (ADFSServerHost)svc.RegisterADFSComputer(hh);
                 this.WriteObject(props);
             }
@@ -1120,7 +1112,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     /// <para type="description">This Cmdlet does not support remoting.</para>
     /// </summary>
     /// <example>
-    ///   <para>Register-MFAComputer</para>
+    ///   <para>UnRegister-MFAComputer</para>
     /// </example>
     [Cmdlet(VerbsLifecycle.Unregister, "MFAComputer", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
     public sealed class UnRegisterMFAComputer : MFACmdlet
@@ -1133,7 +1125,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             base.BeginProcessing();
             try
             {
-                ManagementAdminService.Initialize(this.Host, true);
+                ManagementService.Initialize(this.Host, true);
             }
             catch (Exception ex)
             {
@@ -1149,7 +1141,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             try 
             {
                 PSHost hh = GetHostForVerbose();
-                ADFSServiceManager svc = ManagementAdminService.ADFSManager;
+                ADFSServiceManager svc = ManagementService.ADFSManager;
                 svc.UnRegisterADFSComputer(hh);
             }
             catch (Exception ex)
@@ -1208,8 +1200,8 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             {
                 try
                 {
-                    ManagementAdminService.Initialize(this.Host, true);
-                    ADFSFarmHost lst = ManagementAdminService.ADFSManager.ADFSFarm;
+                    ManagementService.Initialize(this.Host, true);
+                    ADFSFarmHost lst = ManagementService.ADFSManager.ADFSFarm;
                     _list = lst.Servers.ToArray();
                 }
                 catch (Exception ex)
@@ -1221,8 +1213,8 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             {
                 try
                 {
-                    ManagementAdminService.Initialize(this.Host, true);
-                    ADFSFarmHost lst = ManagementAdminService.ADFSManager.ADFSFarm;
+                    ManagementService.Initialize(this.Host, true);
+                    ADFSFarmHost lst = ManagementService.ADFSManager.ADFSFarm;
                     ADFSServerHost computer = null;
                     foreach (ADFSServerHost itm in lst.Servers)
                     {
@@ -1308,7 +1300,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             base.BeginProcessing();
             try
             {
-                ManagementAdminService.Initialize(this.Host, true);
+                ManagementService.Initialize(this.Host, true);
             }
             catch (Exception ex)
             {
@@ -1328,7 +1320,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                     if (string.IsNullOrEmpty(Identity))
                         Identity = "local";
                     PSHost hh = GetHostForVerbose();
-                    ADFSServiceManager svc = ManagementAdminService.ADFSManager;
+                    ADFSServiceManager svc = ManagementService.ADFSManager;
                     if (!svc.RestartServer(hh, this.Identity))
                         this.Host.UI.WriteWarningLine(errors_strings.ErrorInvalidServerName);
                     else
@@ -1368,7 +1360,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             base.BeginProcessing();
             try
             {
-                ManagementAdminService.Initialize(this.Host, true);
+                ManagementService.Initialize(this.Host, true);
             }
             catch (Exception ex)
             {
@@ -1386,7 +1378,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 if (ShouldProcess("Restart MFA Farm services"))
                 {
                     PSHost hh = GetHostForVerbose();
-                    ADFSServiceManager svc = ManagementAdminService.ADFSManager;
+                    ADFSServiceManager svc = ManagementService.ADFSManager;
                     svc.RestartFarm(hh);
                     this.Host.UI.WriteLine(ConsoleColor.Green, this.Host.UI.RawUI.BackgroundColor, infos_strings.InfosAllServicesRestarted);
                 }
@@ -1430,7 +1422,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     public sealed class RegisterMFASystem : MFACmdlet, IDynamicParameters
     {
         private BackupFilePathDynamicParameters Dyn;
-        private MMCSecretKeyFormat _fmt = MMCSecretKeyFormat.RNG;
+        private FlatSecretKeyFormat _fmt = FlatSecretKeyFormat.RNG;
         private int _duration = 5;
 
         /// <summary>
@@ -1471,7 +1463,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// KeysFormat property
         /// </summary>
         [Parameter(ParameterSetName = "Data")]
-        public MMCSecretKeyFormat KeysFormat
+        public FlatSecretKeyFormat KeysFormat
         {
             get { return _fmt; }
             set { _fmt = value;}
@@ -1510,7 +1502,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             base.BeginProcessing();
             try
             {
-                ManagementAdminService.Initialize(this.Host, false);
+                ManagementService.Initialize(this.Host, false);
             }
             catch (Exception ex)
             {
@@ -1528,16 +1520,16 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 if (ShouldProcess("Register-MFASystem", "Changing Keyformat invalidate all users keys ! When choosing CUSTOM KeyFormat, additional steps are required (Set-MFAConfigkeys and New-MFASecretKeysDatabase)" ))
                 {
                     PSHost hh = GetHostForVerbose();
-                    ADFSServiceManager svc = ManagementAdminService.ADFSManager;
+                    ADFSServiceManager svc = ManagementService.ADFSManager;
                     if (this.AllowUpgrade)
                     {
-                        if (svc.RegisterMFAProvider(hh, this.Activate, this.RestartFarm, true, Dyn.BackupFilePath, (RegistrationSecretKeyFormat)this.KeysFormat, this.RSACertificateDuration))
+                        if (svc.RegisterMFAProvider(hh, this.Activate, this.RestartFarm, true, Dyn.BackupFilePath, (SecretKeyFormat)this.KeysFormat, this.RSACertificateDuration))
                             this.Host.UI.WriteLine(ConsoleColor.Green, this.Host.UI.RawUI.BackgroundColor, String.Format(infos_strings.InfosSystemRegistered));
                         else
                             this.Host.UI.WriteLine(ConsoleColor.Yellow, this.Host.UI.RawUI.BackgroundColor, String.Format(infos_strings.InfosSystemAlreadyInitialized));
                     }
                     else
-                        if (svc.RegisterMFAProvider(hh, this.Activate, this.RestartFarm, false, null, (RegistrationSecretKeyFormat)this.KeysFormat, this.RSACertificateDuration))
+                        if (svc.RegisterMFAProvider(hh, this.Activate, this.RestartFarm, false, null, (SecretKeyFormat)this.KeysFormat, this.RSACertificateDuration))
                             this.Host.UI.WriteLine(ConsoleColor.Green, this.Host.UI.RawUI.BackgroundColor, String.Format(infos_strings.InfosSystemRegistered));
                         else
                             this.Host.UI.WriteLine(ConsoleColor.Yellow, this.Host.UI.RawUI.BackgroundColor, String.Format(infos_strings.InfosSystemAlreadyInitialized));
@@ -1612,7 +1604,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             base.BeginProcessing();
             try
             {
-                ManagementAdminService.Initialize(this.Host, true);
+                ManagementService.Initialize(this.Host, true);
             }
             catch (Exception ex)
             {
@@ -1630,7 +1622,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 if (ShouldProcess("UnRegister-MFASystem"))
                 {
                     PSHost hh = GetHostForVerbose();
-                    ADFSServiceManager svc = ManagementAdminService.ADFSManager;
+                    ADFSServiceManager svc = ManagementService.ADFSManager;
                     svc.UnRegisterMFAProvider(hh, this.BackupFilePath, this.RestartFarm);
                     this.Host.UI.WriteLine(ConsoleColor.Green, this.Host.UI.RawUI.BackgroundColor, String.Format(infos_strings.InfosSystemUnRegistered));
 
@@ -1662,7 +1654,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             base.BeginProcessing();
             try
             {
-                ManagementAdminService.Initialize(this.Host, true);
+                ManagementService.Initialize(this.Host, true);
             }
             catch (Exception ex)
             {
@@ -1680,7 +1672,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 if (ShouldProcess("Enable-MFASystem"))
                 {
                     PSHost hh = GetHostForVerbose();
-                    ADFSServiceManager svc = ManagementAdminService.ADFSManager;
+                    ADFSServiceManager svc = ManagementService.ADFSManager;
                     svc.EnableMFAProvider(hh);
                     this.Host.UI.WriteLine(ConsoleColor.Green, this.Host.UI.RawUI.BackgroundColor, String.Format(infos_strings.InfosSystemRegistered));
                 }
@@ -1711,7 +1703,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             base.BeginProcessing();
             try
             {
-                ManagementAdminService.Initialize(this.Host, true);
+                ManagementService.Initialize(this.Host, true);
             }
             catch (Exception ex)
             {
@@ -1729,7 +1721,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 if (ShouldProcess("Disable-MFASystem"))
                 {
                     PSHost hh = GetHostForVerbose();
-                    ADFSServiceManager svc = ManagementAdminService.ADFSManager;
+                    ADFSServiceManager svc = ManagementService.ADFSManager;
                     svc.DisableMFAProvider(hh);
                     this.Host.UI.WriteLine(ConsoleColor.Green, this.Host.UI.RawUI.BackgroundColor, String.Format(infos_strings.InfosSystemUnRegistered));
                 }
@@ -1789,7 +1781,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             base.BeginProcessing();
             try
             {
-                ManagementAdminService.Initialize(this.Host, true);
+                ManagementService.Initialize(this.Host, true);
             }
             catch (Exception ex)
             {
@@ -1814,7 +1806,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                     if (this.Host.UI.PromptForChoice("Install-MFACertificate", infos_strings.InfoAllKeyWillbeReset, col, 1) == 0)
                     {
                         PSHost hh = GetHostForVerbose();
-                        ADFSServiceManager svc = ManagementAdminService.ADFSManager;
+                        ADFSServiceManager svc = ManagementService.ADFSManager;
                         svc.RegisterNewRSACertificate(hh, this.RSACertificateDuration, this.RestartFarm);
                         this.Host.UI.WriteLine(ConsoleColor.Green, this.Host.UI.RawUI.BackgroundColor, String.Format(infos_strings.InfosRSACertificateChanged));
                     }
@@ -1853,7 +1845,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             try
             {
 
-                MMCConfig cf = new MMCConfig();
+                FlatConfig cf = new FlatConfig();
                 cf.Load(this.Host);
                 _config = (PSConfig)cf;
             }
@@ -1918,7 +1910,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     public sealed class SetMFAConfig : MFACmdlet
     {
         private PSConfig _config;
-        private MMCConfig _target;
+        private FlatConfig _target;
 
         /// <summary>
         /// <para type="description">Config parameter, a variable of type PSConfig.</para>
@@ -1941,7 +1933,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             {
                 try
                 {
-                    _target = (MMCConfig)_config;
+                    _target = (FlatConfig)_config;
                 }
                 catch (Exception ex)
                 {
@@ -1982,8 +1974,8 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     public sealed class SetMFATemplateMode : MFACmdlet
     {
         private PSTemplateMode _template;
-        private MMCTemplateMode _target;
-        private MMCConfig _config;
+        private FlatTemplateMode _target;
+        private FlatConfig _config;
 
         /// <summary>
         /// <para type="description">Template enumeration member. </para>
@@ -2004,9 +1996,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             base.BeginProcessing();
             try
             {
-                _config = new MMCConfig();
+                _config = new FlatConfig();
                 _config.Load(this.Host);
-                _target = (MMCTemplateMode)_template;
+                _target = (FlatTemplateMode)_template;
             }
             catch (Exception ex)
             {
@@ -2065,7 +2057,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             try
             {
 
-                MMCConfigSQL cf = new MMCConfigSQL();
+                FlatConfigSQL cf = new FlatConfigSQL();
                 cf.Load(this.Host);
                 _config = (PSConfigSQL)cf;
             }
@@ -2130,7 +2122,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     public sealed class SetMFAConfigSQL : MFACmdlet
     {
         private PSConfigSQL _config;
-        private MMCConfigSQL _target;
+        private FlatConfigSQL _target;
 
         /// <summary>
         /// <para type="description">Config parameter, a variable of type PSConfigSQL.</para>
@@ -2153,7 +2145,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             {
                 try
                 {
-                    _target = (MMCConfigSQL)_config;
+                    _target = (FlatConfigSQL)_config;
                 }
                 catch (Exception ex)
                 {
@@ -2204,7 +2196,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             try
             {
 
-                MMCConfigADDS cf = new MMCConfigADDS();
+                FlatConfigADDS cf = new FlatConfigADDS();
                 cf.Load(this.Host);
                 _config = (PSConfigADDS)cf;
             }
@@ -2269,7 +2261,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     public sealed class SetMFAConfigADDS : MFACmdlet
     {
         private PSConfigADDS _config;
-        private MMCConfigADDS _target;
+        private FlatConfigADDS _target;
 
         /// <summary>
         /// <para type="description">Config parameter, a variable of type PSConfigADDS.</para>
@@ -2292,7 +2284,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             {
                 try
                 {
-                    _target = (MMCConfigADDS)_config;
+                    _target = (FlatConfigADDS)_config;
                 }
                 catch (Exception ex)
                 {
@@ -2343,7 +2335,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             try
             {
 
-                MMCConfigMail cf = new MMCConfigMail();
+                FlatConfigMail cf = new FlatConfigMail();
                 cf.Load(this.Host);
                 _config = (PSConfigMail)cf;
             }
@@ -2408,7 +2400,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     public sealed class SetMFAConfigMails : MFACmdlet
     {
         private PSConfigMail _config;
-        private MMCConfigMail _target;
+        private FlatConfigMail _target;
 
         /// <summary>
         /// <para type="description">Config parameter, a variable of type PSConfigMail.</para>
@@ -2431,7 +2423,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             {
                 try
                 {
-                    _target = (MMCConfigMail)_config;
+                    _target = (FlatConfigMail)_config;
                 }
                 catch (Exception ex)
                 {
@@ -2487,7 +2479,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             try
             {
 
-                MMCKeysConfig cf = new MMCKeysConfig();
+                FlatKeysConfig cf = new FlatKeysConfig();
                 cf.Load(this.Host);
                 _config = (PSKeysConfig)cf;
             }
@@ -2552,7 +2544,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     public sealed class SetMFAConfigKeys : MFACmdlet
     {
         private PSKeysConfig _config;
-        private MMCKeysConfig _target;
+        private FlatKeysConfig _target;
 
         /// <summary>
         /// <para type="description">Config parameter, a variable of type PSKeyConfig.</para>
@@ -2575,7 +2567,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             {
                 try
                 {
-                    _target = (MMCKeysConfig)_config;
+                    _target = (FlatKeysConfig)_config;
                 }
                 catch (Exception ex)
                 {
@@ -2631,7 +2623,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             try
             {
 
-                MMCExternalOTPProvider cf = new MMCExternalOTPProvider();
+                FlatExternalOTPProvider cf = new FlatExternalOTPProvider();
                 cf.Load(this.Host);
                 _config = (PSExternalOTPProvider)cf;
             }
@@ -2696,7 +2688,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     public sealed class SetMFAExternalOTPProvider : MFACmdlet
     {
         private PSExternalOTPProvider _config;
-        private MMCExternalOTPProvider _target;
+        private FlatExternalOTPProvider _target;
 
         /// <summary>
         /// <para type="description">Config parameter, a variable of type PSExternalOTPProvider.</para>
@@ -2719,7 +2711,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             {
                 try
                 {
-                    _target = (MMCExternalOTPProvider)_config;
+                    _target = (FlatExternalOTPProvider)_config;
                 }
                 catch (Exception ex)
                 {
@@ -2818,8 +2810,8 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             base.BeginProcessing();
             try
             {
-                ManagementAdminService.Initialize(this.Host, true);
-                MMCConfigSQL cf = new MMCConfigSQL();
+                ManagementService.Initialize(this.Host, true);
+                FlatConfigSQL cf = new FlatConfigSQL();
                 cf.Load(this.Host);
                 _config = (PSConfigSQL)cf;
             }
@@ -2839,7 +2831,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 if (ShouldProcess("MFA SQL Database creation (must be sysadmin or dbcreator an securityadmin)"))
                 {
                     PSHost hh = GetHostForVerbose();
-                    ADFSServiceManager svc = ManagementAdminService.ADFSManager;
+                    ADFSServiceManager svc = ManagementService.ADFSManager;
                     svc.CreateMFADatabase(hh, _servername, _databasename, _username, _password);
                     this.Host.UI.WriteLine(ConsoleColor.Green, this.Host.UI.RawUI.BackgroundColor, string.Format(infos_strings.InfosDatabaseCreated, _databasename));
 
@@ -2923,8 +2915,8 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             base.BeginProcessing();
             try
             {
-                ManagementAdminService.Initialize(this.Host, true);
-                MMCConfigSQL cf = new MMCConfigSQL();
+                ManagementService.Initialize(this.Host, true);
+                FlatConfigSQL cf = new FlatConfigSQL();
                 cf.Load(this.Host);
                 _config = (PSConfigSQL)cf;
             }
@@ -2944,7 +2936,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 if (ShouldProcess("MFA Secret Keys Database creation (must be sysadmin or dbcreator an securityadmin)"))
                 {
                     PSHost hh = GetHostForVerbose();
-                    ADFSServiceManager svc = ManagementAdminService.ADFSManager;
+                    ADFSServiceManager svc = ManagementService.ADFSManager;
                     svc.CreateMFASecretKeysDatabase(hh, _servername, _databasename, _username, _password);
                     this.Host.UI.WriteLine(ConsoleColor.Green, this.Host.UI.RawUI.BackgroundColor, string.Format(infos_strings.InfosDatabaseCreated, _databasename));
 

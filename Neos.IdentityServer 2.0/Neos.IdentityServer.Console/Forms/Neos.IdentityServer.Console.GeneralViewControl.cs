@@ -15,31 +15,6 @@
 // https://github.com/neos-sdi/adfsmfa                                                                                                                                                      //
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
-/*
-  Issuer="redhook" 
-  AdminContact="franck.musson@gmail.com" 
-  DefaultCountryCode="fr" 
-
-  UseActiveDirectory="true" 
-  CustomUpdatePassword="true" 
-
-  AppsEnabled="true" 
-    TOTPShadows="2" 
-    Algorithm="SHA1" 
- 
- 
-  MailEnabled="true" 
-  SMSEnabled="true" 
-    DeliveryWindow="300" 
-    RefreshScan="3000" 
-    
-  UserFeatures="BypassDisabled AllowUnRegistered AllowChangePassword AllowManageOptions"
-  <ActivationAdvertising>
-    <FirstDay>1</FirstDay>
-    <LastDay>31</LastDay>
-  </ActivationAdvertising>
-*/
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -55,6 +30,7 @@ using Neos.IdentityServer.Console.Controls;
 using System.Threading;
 using Neos.IdentityServer.MultiFactor;
 using System.DirectoryServices;
+using Microsoft.ManagementConsole.Advanced;
 
 namespace Neos.IdentityServer.Console
 {
@@ -85,10 +61,7 @@ namespace Neos.IdentityServer.Console
             this.SuspendLayout();
             try
             {
-                ADFSServiceManager mgr = ManagementAdminService.ADFSManager;
-                bool isconfigured = mgr.IsFarmConfigured();
-                bool isactive = mgr.IsMFAProviderEnabled(null);
-                this.tableLayoutPanel.Controls.Add(new GeneralConfigurationControl(mgr.Config, isconfigured, isactive), 0, 1);
+                this.tableLayoutPanel.Controls.Add(new GeneralConfigurationControl(this, this.SnapIn), 0, 1);
             }
             finally
             {
@@ -101,23 +74,77 @@ namespace Neos.IdentityServer.Console
         /// </summary>
         internal void RefreshData()
         {
+            ComponentResourceManager resources = new ComponentResourceManager(typeof(GeneralViewControl));
+            this.label1.Text = resources.GetString("label1.Text");
+            this.label2.Text = resources.GetString("label2.Text");
+            this.label3.Text = resources.GetString("label3.Text");
+
             this.SuspendLayout();
             try
             {
+
                 for (int j = this.tableLayoutPanel.Controls.Count - 1; j >= 0; j--)
                 {
                     Control ctrl = this.tableLayoutPanel.Controls[j];
                     if (ctrl is GeneralConfigurationControl)
                         this.tableLayoutPanel.Controls.RemoveAt(j);
                 }
-                ADFSServiceManager mgr = ManagementAdminService.ADFSManager;
-                bool isconfigured = mgr.IsFarmConfigured();
-                bool isactive = mgr.IsMFAProviderEnabled(null);
-                this.tableLayoutPanel.Controls.Add(new GeneralConfigurationControl(mgr.Config, isconfigured, isactive), 0, 1);
+                this.tableLayoutPanel.Controls.Add(new GeneralConfigurationControl(this, this.SnapIn), 0, 1);
             }
             finally
             {
-                this.ResumeLayout(true);
+               this.ResumeLayout();
+            }
+        }
+
+        /// <summary>
+        /// CancelData method implementation
+        /// </summary>
+        internal void CancelData()
+        {
+            try
+            {
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
+                ComponentResourceManager resources = new ComponentResourceManager(typeof(GeneralViewControl));
+                messageBoxParameters.Text = resources.GetString("GLVALIDSAVE");
+                messageBoxParameters.Buttons = MessageBoxButtons.YesNo;
+                messageBoxParameters.Icon = MessageBoxIcon.Question;
+                if (this.SnapIn.Console.ShowDialog(messageBoxParameters) == DialogResult.Yes)
+                {
+                    ManagementService.ADFSManager.ReadConfiguration(null);
+                    RefreshData();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
+                messageBoxParameters.Text = ex.Message;
+                messageBoxParameters.Buttons = MessageBoxButtons.OK;
+                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                this.SnapIn.Console.ShowDialog(messageBoxParameters);
+            }
+        }
+
+        /// <summary>
+        /// SaveData method implementation
+        /// </summary>
+        internal void SaveData()
+        {
+            try
+            {
+                ManagementService.ADFSManager.WriteConfiguration(null);
+            }
+            catch (Exception ex)
+            {
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
+                messageBoxParameters.Text = ex.Message;
+                messageBoxParameters.Buttons = MessageBoxButtons.OK;
+                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                this.SnapIn.Console.ShowDialog(messageBoxParameters);
+            }
+            finally
+            {
+                RefreshData();
             }
         }
 
@@ -174,6 +201,21 @@ namespace Neos.IdentityServer.Console
             if (!DesignMode)
                 Size = Parent.ClientSize;
         }
-        #endregion      
+
+        /// <summary>
+        /// ConfigurationStatusChanged method implementation
+        /// </summary>
+ /*       private void ConfigurationStatusChanged(ADFSServiceManager mgr, ConfigOperationStatus status, Exception ex = null)
+        {
+            if (status == ConfigOperationStatus.ConfigLoaded)
+            {
+                if (this.InvokeRequired)
+                    this.Invoke(new MethodInvoker(() => RefreshData()));
+                else
+                    RefreshData();
+                return;
+            }
+        } */
+        #endregion         
     }
 }

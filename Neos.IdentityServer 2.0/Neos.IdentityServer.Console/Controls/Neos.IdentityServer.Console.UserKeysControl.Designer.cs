@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(UserPropertiesKeysControl));
             this.groupBoxKey = new System.Windows.Forms.GroupBox();
             this.BTNSendByMail = new System.Windows.Forms.Button();
             this.clearkeyBtn = new System.Windows.Forms.Button();
@@ -40,90 +41,65 @@
             // 
             // groupBoxKey
             // 
+            resources.ApplyResources(this.groupBoxKey, "groupBoxKey");
             this.groupBoxKey.Controls.Add(this.BTNSendByMail);
             this.groupBoxKey.Controls.Add(this.clearkeyBtn);
             this.groupBoxKey.Controls.Add(this.newkeyBtn);
             this.groupBoxKey.Controls.Add(this.DisplayKey);
-            this.groupBoxKey.Location = new System.Drawing.Point(13, 433);
             this.groupBoxKey.Name = "groupBoxKey";
-            this.groupBoxKey.Size = new System.Drawing.Size(456, 176);
-            this.groupBoxKey.TabIndex = 7;
             this.groupBoxKey.TabStop = false;
-            this.groupBoxKey.Text = "Secret";
             // 
             // BTNSendByMail
             // 
-            this.BTNSendByMail.Location = new System.Drawing.Point(271, 142);
+            resources.ApplyResources(this.BTNSendByMail, "BTNSendByMail");
             this.BTNSendByMail.Name = "BTNSendByMail";
-            this.BTNSendByMail.Size = new System.Drawing.Size(162, 23);
-            this.BTNSendByMail.TabIndex = 4;
-            this.BTNSendByMail.Text = "Envoyer la clé par mail";
             this.BTNSendByMail.UseVisualStyleBackColor = true;
             // 
             // clearkeyBtn
             // 
-            this.clearkeyBtn.Location = new System.Drawing.Point(19, 142);
+            resources.ApplyResources(this.clearkeyBtn, "clearkeyBtn");
             this.clearkeyBtn.Name = "clearkeyBtn";
-            this.clearkeyBtn.Size = new System.Drawing.Size(102, 23);
-            this.clearkeyBtn.TabIndex = 2;
-            this.clearkeyBtn.Text = "Effacer Key";
             this.clearkeyBtn.UseVisualStyleBackColor = true;
             this.clearkeyBtn.Click += new System.EventHandler(this.clearkeyBtn_Click);
             // 
             // newkeyBtn
             // 
-            this.newkeyBtn.Location = new System.Drawing.Point(145, 142);
+            resources.ApplyResources(this.newkeyBtn, "newkeyBtn");
             this.newkeyBtn.Name = "newkeyBtn";
-            this.newkeyBtn.Size = new System.Drawing.Size(102, 23);
-            this.newkeyBtn.TabIndex = 3;
-            this.newkeyBtn.Text = "Nouvelle Key";
             this.newkeyBtn.UseVisualStyleBackColor = true;
             this.newkeyBtn.Click += new System.EventHandler(this.newkeyBtn_Click);
             // 
             // DisplayKey
             // 
-            this.DisplayKey.Location = new System.Drawing.Point(19, 28);
-            this.DisplayKey.Multiline = true;
+            resources.ApplyResources(this.DisplayKey, "DisplayKey");
             this.DisplayKey.Name = "DisplayKey";
             this.DisplayKey.ReadOnly = true;
-            this.DisplayKey.Size = new System.Drawing.Size(415, 98);
-            this.DisplayKey.TabIndex = 1;
             this.DisplayKey.TabStop = false;
             this.DisplayKey.TextChanged += new System.EventHandler(this.EmailPrompt_TextChanged);
             // 
             // EmailPrompt
             // 
-            this.EmailPrompt.AutoSize = true;
-            this.EmailPrompt.Location = new System.Drawing.Point(19, 3);
+            resources.ApplyResources(this.EmailPrompt, "EmailPrompt");
             this.EmailPrompt.Name = "EmailPrompt";
-            this.EmailPrompt.Size = new System.Drawing.Size(98, 13);
-            this.EmailPrompt.TabIndex = 8;
-            this.EmailPrompt.Text = "Adresse email :  {0}";
             this.EmailPrompt.TextChanged += new System.EventHandler(this.EmailPrompt_TextChanged);
             // 
             // qrCodeGraphic
             // 
+            resources.ApplyResources(this.qrCodeGraphic, "qrCodeGraphic");
             this.qrCodeGraphic.ErrorCorrectLevel = Neos.IdentityServer.MultiFactor.QrEncoding.ErrorCorrectionLevel.L;
-            this.qrCodeGraphic.Location = new System.Drawing.Point(17, 26);
-            this.qrCodeGraphic.Margin = new System.Windows.Forms.Padding(0);
-            this.qrCodeGraphic.MaximumSize = new System.Drawing.Size(800, 800);
-            this.qrCodeGraphic.MinimumSize = new System.Drawing.Size(400, 400);
             this.qrCodeGraphic.Name = "qrCodeGraphic";
             this.qrCodeGraphic.QuietZoneModule = Neos.IdentityServer.MultiFactor.QrEncoding.Windows.Render.QuietZoneModules.Zero;
-            this.qrCodeGraphic.Size = new System.Drawing.Size(400, 400);
-            this.qrCodeGraphic.TabIndex = 0;
             this.qrCodeGraphic.TabStop = false;
             // 
             // UserPropertiesKeysControl
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Window;
             this.Controls.Add(this.qrCodeGraphic);
             this.Controls.Add(this.EmailPrompt);
             this.Controls.Add(this.groupBoxKey);
             this.Name = "UserPropertiesKeysControl";
-            this.Size = new System.Drawing.Size(489, 626);
             this.groupBoxKey.ResumeLayout(false);
             this.groupBoxKey.PerformLayout();
             this.ResumeLayout(false);

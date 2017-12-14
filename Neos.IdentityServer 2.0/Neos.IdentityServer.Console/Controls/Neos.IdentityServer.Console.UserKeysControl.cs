@@ -62,24 +62,25 @@ namespace Neos.IdentityServer.Console
         /// <summary>
         /// GetUserControlData method implmentation
         /// </summary>
-        public MMCRegistrationList GetUserControlData(MMCRegistrationList lst)
+        public RegistrationList GetUserControlData(RegistrationList lst)
         {
-            MMCRegistration obj = lst[0];
+            Registration obj = lst[0];
             return lst;
         }
 
         /// <summary>
         /// SetUserControlData method implmentation
         /// </summary>
-        public void SetUserControlData(MMCRegistrationList lst, bool disablesync)
+        public void SetUserControlData(RegistrationList lst, bool disablesync)
         {
             SyncDisabled = disablesync;
             try
             {
-                MMCRegistration obj = ((MMCRegistrationList)lst)[0];
-                _secretkey = KeysManager.EncodedKey(((MMCRegistration)obj).UPN);
-                _upn = ((MMCRegistration)obj).UPN;
-                _email = ((MMCRegistration)obj).MailAddress;
+                Registration obj = ((RegistrationList)lst)[0];
+                _secretkey = MMCService.GetEncodedUserKey(((Registration)obj).UPN);
+               // _secretkey = KeysManager.EncodedKey(((Registration)obj).UPN);
+                _upn = ((Registration)obj).UPN;
+                _email = ((Registration)obj).MailAddress;
 
                 if (string.IsNullOrEmpty(_email))
                 {
@@ -95,7 +96,7 @@ namespace Neos.IdentityServer.Console
                 {
                     this.DisplayKey.Text =_secretkey;
                     if (!string.IsNullOrEmpty(_upn))
-                        this.qrCodeGraphic.Text = ManagementAdminService.GetQRCodeValue(_upn, this.DisplayKey.Text);
+                        this.qrCodeGraphic.Text = MMCService.GetQRCodeValue(_upn, this.DisplayKey.Text);
                     else
                         this.qrCodeGraphic.Text = string.Empty;
                 }
@@ -115,10 +116,10 @@ namespace Neos.IdentityServer.Console
         /// </summary>
         private void newkeyBtn_Click(object sender, EventArgs e)
         {
-            KeysManager.NewKey(_upn);
-            _secretkey = KeysManager.EncodedKey(_upn);
+            MMCService.NewUserKey(_upn);
+            _secretkey = MMCService.GetEncodedUserKey(_upn);
             this.DisplayKey.Text = _secretkey;
-            this.qrCodeGraphic.Text = ManagementAdminService.GetQRCodeValue(_upn, this.DisplayKey.Text);
+            this.qrCodeGraphic.Text = MMCService.GetQRCodeValue(_upn, this.DisplayKey.Text);
             if (!SyncDisabled)
                 userPropertyPage.SyncSharedUserData(this, true);
         }
@@ -140,7 +141,7 @@ namespace Neos.IdentityServer.Console
         /// </summary>
         private void BTNSendByMail_Click(object sender, EventArgs e)
         {
-            ManagementAdminService.SendKeyByEmail(_email, _upn, this.DisplayKey.Text);
+            MMCService.SendKeyByEmail(_email, _upn, this.DisplayKey.Text);
         }
 
         /// <summary>

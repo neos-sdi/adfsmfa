@@ -15,50 +15,13 @@
 // https://github.com/neos-sdi/adfsmfa                                                                                                                                                      //
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Runtime.Serialization;
-using System.ServiceModel;
-using Neos.IdentityServer.MultiFactor;
 
 namespace Neos.IdentityServer.MultiFactor.Administration
 {
-    [ServiceContract]
-    public interface IAdministrationService
-    {
-        [OperationContract]
-        MMCRegistration GetUserRegistration(string upn);
-
-        [OperationContract]
-        MMCRegistration AddUserRegistration(MMCRegistration reg);
-
-        [OperationContract]
-        bool DeleteUserRegistration(MMCRegistration reg);
-
-        [OperationContract]
-        void SetUserRegistration(MMCRegistration reg);
-
-        [OperationContract]
-        MMCRegistration EnableUserRegistration(MMCRegistration reg);
-
-        [OperationContract]
-        MMCRegistration DisableUserRegistration(MMCRegistration reg);
-
-        [OperationContract]
-        MMCRegistrationList GetUserRegistrations(UsersFilterObject filter, UsersOrderObject order, UsersPagingObject paging, int maxrows = 20000);
-
-        [OperationContract]
-        MMCRegistrationList GetAllUserRegistrations(UsersOrderObject order, int maxrows = 20000, bool enabledonly = false);
-
-        [OperationContract]
-        int GetUserRegistrationsCount(UsersFilterObject filter);
-    }
-
     public interface IUserPropertiesDataObject
     {
-        MMCRegistrationList GetUserControlData(MMCRegistrationList registrations);
-        void SetUserControlData(MMCRegistrationList registrations, bool disablesync);
+        RegistrationList GetUserControlData(RegistrationList registrations);
+        void SetUserControlData(RegistrationList registrations, bool disablesync);
         bool SyncDisabled {get; set;}
     }
 }

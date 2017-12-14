@@ -53,6 +53,10 @@
       <Project>{15b3e0d2-6217-493a-a690-158c497f5318}</Project>
       <Name>Neos.IdentityServer.MultiFactor.Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Neos.IdentityServer.MultiFactor.DataTypes\Neos.IdentityServer.MultiFactor.DataTypes.csproj">
+      <Project>{9b735255-31a8-4ff5-a918-fc47d4a95f38}</Project>
+      <Name>Neos.IdentityServer.MultiFactor.DataTypes</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="Neos.IdentityServer.pfx" />

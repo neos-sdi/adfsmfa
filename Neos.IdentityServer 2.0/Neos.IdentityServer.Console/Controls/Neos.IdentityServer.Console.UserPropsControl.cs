@@ -51,7 +51,7 @@ namespace Neos.IdentityServer.Console
         /// </summary>
         private void UserPropertiesControl_Load(object sender, EventArgs e)
         {
-            MethodSource.DataSource = new UsersPreferredMethodList(false);
+            MethodSource.DataSource = new MMCPreferredMethodList(false);
         }
 
         #region IUserPropertiesDataObject
@@ -67,31 +67,31 @@ namespace Neos.IdentityServer.Console
         /// <summary>
         /// GetData method implmentation 
         /// </summary>
-        public MMCRegistrationList GetUserControlData(MMCRegistrationList lst)
+        public RegistrationList GetUserControlData(RegistrationList lst)
         {
-            MMCRegistration obj = ((MMCRegistrationList)lst)[0];
-            ((MMCRegistration)obj).UPN = this.UserName.Text;
-            ((MMCRegistration)obj).MailAddress = this.Email.Text;
-            ((MMCRegistration)obj).PhoneNumber = this.Phone.Text;
-            ((MMCRegistration)obj).Enabled = this.cbEnabled.Checked;
-            ((MMCRegistration)obj).PreferredMethod = (RegistrationPreferredMethod)((int)this.CBMethod.SelectedValue);
+            Registration obj = ((RegistrationList)lst)[0];
+            ((Registration)obj).UPN = this.UserName.Text;
+            ((Registration)obj).MailAddress = this.Email.Text;
+            ((Registration)obj).PhoneNumber = this.Phone.Text;
+            ((Registration)obj).Enabled = this.cbEnabled.Checked;
+            ((Registration)obj).PreferredMethod = (PreferredMethod)((int)this.CBMethod.SelectedValue);
             return lst;
         }
 
         /// <summary>
         /// SetData method implmentation 
         /// </summary>
-        public void SetUserControlData(MMCRegistrationList lst, bool disablesync)
+        public void SetUserControlData(RegistrationList lst, bool disablesync)
         {
             SyncDisabled = disablesync;
             try
             {
-                MMCRegistration obj = ((MMCRegistrationList)lst)[0];
-                this.UserName.Text = ((MMCRegistration)obj).UPN;
-                this.Email.Text = ((MMCRegistration)obj).MailAddress;
-                this.Phone.Text = ((MMCRegistration)obj).PhoneNumber;
-                this.cbEnabled.Checked = ((MMCRegistration)obj).Enabled;
-                this.CBMethod.SelectedValue = (UsersPreferredMethod)(((MMCRegistration)obj).PreferredMethod);
+                Registration obj = ((RegistrationList)lst)[0];
+                this.UserName.Text = ((Registration)obj).UPN;
+                this.Email.Text = ((Registration)obj).MailAddress;
+                this.Phone.Text = ((Registration)obj).PhoneNumber;
+                this.cbEnabled.Checked = ((Registration)obj).Enabled;
+                this.CBMethod.SelectedValue = (PreferredMethod)(((Registration)obj).PreferredMethod);
             }
             finally
             {

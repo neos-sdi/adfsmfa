@@ -38,7 +38,7 @@ namespace Neos.IdentityServer.Console
     {
         private UsersFormView _frm = null;
         private Control oldParent;
-        private MMCRegistrationList _lst = null;
+        private RegistrationList _lst = null;
 
         public event SelectionEventHandler DataSelectionChanged;
         public event SelectionEventHandler DataEditionActivated;
@@ -58,8 +58,6 @@ namespace Neos.IdentityServer.Console
         {
             FormView = (UsersFormView)view;
             FormView.PlugEvents(this);
-          //  RemoteAdminService.Paging.PageSize = 5000;
-          //  RemoteAdminService.Paging.CurrentPage = 1;
             OnInitialize();
         }
 
@@ -76,7 +74,6 @@ namespace Neos.IdentityServer.Console
             }
             if (this.DataSelectionChanged != null)
                 this.DataSelectionChanged(this, new SelectionDataEventArgs(GetSelectedUsers(), MMCListAction.SelectionChanged));
-           // IMG.ImageLayout = DataGridViewImageCellLayout.Normal;
         }
 
         #region Properties
@@ -108,7 +105,7 @@ namespace Neos.IdentityServer.Console
         /// <summary>
         /// DataList property
         /// </summary>
-        protected List<MMCRegistration> DataList
+        protected List<Registration> DataList
         {
             get { return _lst; }
         }
@@ -150,12 +147,19 @@ namespace Neos.IdentityServer.Console
         {
             this.UseWaitCursor = true;
             this.Cursor = Cursors.WaitCursor;
+            ComponentResourceManager resources = new ComponentResourceManager(typeof(UsersListView));
+            this.uPNDataGridViewTextBoxColumn.HeaderText = resources.GetString("uPNDataGridViewTextBoxColumn.HeaderText");
+            this.mailAddressDataGridViewTextBoxColumn.HeaderText = resources.GetString("mailAddressDataGridViewTextBoxColumn.HeaderText");
+            this.phoneNumberDataGridViewTextBoxColumn.HeaderText = resources.GetString("phoneNumberDataGridViewTextBoxColumn.HeaderText");
+            this.creationDateDataGridViewTextBoxColumn.HeaderText = resources.GetString("creationDateDataGridViewTextBoxColumn.HeaderText");
+            this.preferredMethodDataGridViewTextBoxColumn.HeaderText = resources.GetString("preferredMethodDataGridViewTextBoxColumn.HeaderText");
+            this.enabledDataGridViewCheckBoxColumn.HeaderText = resources.GetString("enabledDataGridViewCheckBoxColumn.HeaderText");
             try
             {
-                _lst = ManagementAdminService.GetUsers();
+                _lst = MMCService.GetUsers();
                 if (clearselection)
                    this.GridView.RowCount = 0;
-                this.GridView.RowCount = ManagementAdminService.GetUsersCount(); 
+                this.GridView.RowCount = MMCService.GetUsersCount(); 
                 if (refreshgrid)
                     this.GridView.Refresh();
                 if (clearselection)
@@ -174,27 +178,27 @@ namespace Neos.IdentityServer.Console
         /// <summary>
         /// SetUserData method implementation
         /// </summary>
-        internal void SetUserData(MMCRegistrationList registrations)
+        internal void SetUserData(RegistrationList registrations)
         {
-            ManagementAdminService.SetUser(registrations);
+            MMCService.SetUser(registrations);
             UpdateRows(registrations);
         }
 
         /// <summary>
         /// AddUserData method implmentation
         /// </summary>
-        internal void AddUserData(MMCRegistrationList registrations)
+        internal void AddUserData(RegistrationList registrations)
         {
-            MMCRegistrationList results = ManagementAdminService.AddUser(registrations);
+            RegistrationList results = MMCService.AddUser(registrations);
             AddRows(results);
         }
 
         /// <summary>
         /// DeleteUserData method implementation
         /// </summary>
-        internal bool DeleteUserData(MMCRegistrationList registrations)
+        internal bool DeleteUserData(RegistrationList registrations)
         {
-            bool ret = ManagementAdminService.DeleteUser(registrations);
+            bool ret = MMCService.DeleteUser(registrations);
             DeleteRows(registrations);
             return ret;
         }
@@ -202,30 +206,30 @@ namespace Neos.IdentityServer.Console
         /// <summary>
         /// EnableUserData method implementation
         /// </summary>
-        internal void EnableUserData(MMCRegistrationList registrations)
+        internal void EnableUserData(RegistrationList registrations)
         {
-            MMCRegistrationList results = ManagementAdminService.EnableUser(registrations);
+            RegistrationList results = MMCService.EnableUser(registrations);
             EnableDisableRows(results);
         }
 
         /// <summary>
         /// DisableUserData method implementation
         /// </summary>
-        internal void DisableUserData(MMCRegistrationList registrations)
+        internal void DisableUserData(RegistrationList registrations)
         {
-            MMCRegistrationList results = ManagementAdminService.DisableUser(registrations);
+            RegistrationList results = MMCService.DisableUser(registrations);
             EnableDisableRows(results);
         }
 
         /// <summary>
         /// GetSelectedUsers method implementation
         /// </summary>
-        internal MMCRegistrationList GetSelectedUsers()
+        internal RegistrationList GetSelectedUsers()
         {
-            MMCRegistrationList result = new MMCRegistrationList();
+            RegistrationList result = new RegistrationList();
             foreach (DataGridViewRow row in GridView.SelectedRows)
             {
-                MMCRegistration reg = new MMCRegistration();
+                Registration reg = new Registration();
                 reg.ID = GridView.Rows[row.Index].Cells[1].Value.ToString();
                 if (reg.ID != Guid.Empty.ToString())
                 {
@@ -233,7 +237,7 @@ namespace Neos.IdentityServer.Console
                     reg.MailAddress = GridView.Rows[row.Index].Cells[3].Value.ToString();
                     reg.PhoneNumber = GridView.Rows[row.Index].Cells[4].Value.ToString();
                     reg.CreationDate = Convert.ToDateTime(GridView.Rows[row.Index].Cells[5].Value);
-                    reg.PreferredMethod = (RegistrationPreferredMethod)Enum.Parse(typeof(RegistrationPreferredMethod), GridView.Rows[row.Index].Cells[6].Value.ToString());
+                    reg.PreferredMethod = (PreferredMethod)Enum.Parse(typeof(PreferredMethod), GridView.Rows[row.Index].Cells[6].Value.ToString());
                     reg.Enabled = (bool)bool.Parse(GridView.Rows[row.Index].Cells[7].Value.ToString());
                     result.Add(reg);
                 }
@@ -246,16 +250,16 @@ namespace Neos.IdentityServer.Console
         /// </summary>
         private int EnsurePageForRowIndex(int rowindex)
         {
-            int idx = rowindex % ManagementAdminService.Paging.PageSize;
-            int page = (rowindex / ManagementAdminService.Paging.PageSize) + 1;
-            if (page != ManagementAdminService.Paging.CurrentPage)
+            int idx = rowindex % MMCService.Paging.PageSize;
+            int page = (rowindex / MMCService.Paging.PageSize) + 1;
+            if (page != MMCService.Paging.CurrentPage)
             {
                 this.UseWaitCursor = true;
                 this.Cursor = Cursors.WaitCursor;
                 try
                 {
-                    ManagementAdminService.Paging.CurrentPage = page;
-                    _lst = ManagementAdminService.GetUsers();
+                    MMCService.Paging.CurrentPage = page;
+                    _lst = MMCService.GetUsers();
                 }
                 finally
                 {
@@ -271,7 +275,7 @@ namespace Neos.IdentityServer.Console
         /// <summary>
         /// AddRows method implementation
         /// </summary>
-        private void AddRows(MMCRegistrationList registrations)
+        private void AddRows(RegistrationList registrations)
         {
             RefreshData(true);
             if (this.DataSelectionChanged != null)
@@ -281,7 +285,7 @@ namespace Neos.IdentityServer.Console
         /// <summary>
         /// UpdateRows method implementation
         /// </summary>
-        private void UpdateRows(MMCRegistrationList registrations)
+        private void UpdateRows(RegistrationList registrations)
         {
             RefreshData(true);
             if (this.DataSelectionChanged != null)
@@ -291,9 +295,9 @@ namespace Neos.IdentityServer.Console
         /// <summary>
         /// DeleteRows method implementation
         /// </summary>
-        private void DeleteRows(MMCRegistrationList registrations)
+        private void DeleteRows(RegistrationList registrations)
         {
-            RefreshData(true);
+            RefreshData(true, true);
             if (this.DataSelectionChanged != null)
                 this.DataSelectionChanged(this, new SelectionDataEventArgs(GetSelectedUsers(), MMCListAction.SelectionChanged));
         }
@@ -301,7 +305,7 @@ namespace Neos.IdentityServer.Console
         /// <summary>
         /// EnableDisableRows method implementation
         /// </summary>
-        private void EnableDisableRows(MMCRegistrationList registrations)
+        private void EnableDisableRows(RegistrationList registrations)
         {
             RefreshData(true);
             if (this.DataSelectionChanged != null)
@@ -356,12 +360,12 @@ namespace Neos.IdentityServer.Console
                     if (isfound)
                     {
                         if (_lst[idx].Enabled)
-                            e.Value = Neos.IdentityServer.Console.Neos_IdentityServer_Console_Snapin.small_user_enabled;
+                            e.Value = Neos.IdentityServer.Console.Resources.Neos_IdentityServer_Console_Snapin.small_user_enabled;
                         else
-                            e.Value = Neos.IdentityServer.Console.Neos_IdentityServer_Console_Snapin.small_user_disabled;
+                            e.Value = Neos.IdentityServer.Console.Resources.Neos_IdentityServer_Console_Snapin.small_user_disabled;
                     }
                     else
-                        e.Value = Neos.IdentityServer.Console.Neos_IdentityServer_Console_Snapin.small_user_disabled;
+                        e.Value = Neos.IdentityServer.Console.Resources.Neos_IdentityServer_Console_Snapin.small_user_disabled;
                     break;
                 case 1:
                     if (isfound)
@@ -397,7 +401,7 @@ namespace Neos.IdentityServer.Console
                     if (isfound)
                         e.Value = _lst[idx].PreferredMethod;
                     else
-                        e.Value = RegistrationPreferredMethod.Choose;
+                        e.Value = PreferredMethod.Choose;
                     break;
                 case 7:
                     if (isfound)
@@ -432,7 +436,7 @@ namespace Neos.IdentityServer.Console
                     _lst[idx].CreationDate = Convert.ToDateTime(e.Value.ToString());
                     break;
                 case 6:
-                    _lst[idx].PreferredMethod = (RegistrationPreferredMethod)Enum.Parse(typeof(RegistrationPreferredMethod), e.Value.ToString());
+                    _lst[idx].PreferredMethod = (PreferredMethod)Enum.Parse(typeof(PreferredMethod), e.Value.ToString());
                     break;
                 case 7:
                     _lst[idx].Enabled = bool.Parse(e.Value.ToString());
@@ -445,64 +449,64 @@ namespace Neos.IdentityServer.Console
         /// </summary>
         private void GridView_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
-            UsersOrderField ff = ManagementAdminService.Order.Column;
-            SortDirection ss = ManagementAdminService.Order.Direction;
+            DataOrderField ff = MMCService.Order.Column;
+            SortDirection ss = MMCService.Order.Direction;
             switch (e.ColumnIndex)
             {
-                case 1: ManagementAdminService.Order.Column = UsersOrderField.ID;
-                    if (ff == UsersOrderField.ID)
+                case 1: MMCService.Order.Column = DataOrderField.ID;
+                    if (ff == DataOrderField.ID)
                     {
-                        if (ManagementAdminService.Order.Direction == SortDirection.Ascending)
-                            ManagementAdminService.Order.Direction = SortDirection.Descending;
+                        if (MMCService.Order.Direction == SortDirection.Ascending)
+                            MMCService.Order.Direction = SortDirection.Descending;
                         else
-                            ManagementAdminService.Order.Direction = SortDirection.Ascending;
+                            MMCService.Order.Direction = SortDirection.Ascending;
                     }
                     else
-                        ManagementAdminService.Order.Direction = SortDirection.Ascending;
+                        MMCService.Order.Direction = SortDirection.Ascending;
                    break;
-                case 2: ManagementAdminService.Order.Column = UsersOrderField.UserName;
-                   if (ff == UsersOrderField.UserName)
+                case 2: MMCService.Order.Column = DataOrderField.UserName;
+                   if (ff == DataOrderField.UserName)
                    {
-                       if (ManagementAdminService.Order.Direction == SortDirection.Ascending)
-                           ManagementAdminService.Order.Direction = SortDirection.Descending;
+                       if (MMCService.Order.Direction == SortDirection.Ascending)
+                           MMCService.Order.Direction = SortDirection.Descending;
                        else
-                           ManagementAdminService.Order.Direction = SortDirection.Ascending;
+                           MMCService.Order.Direction = SortDirection.Ascending;
                    }
                    else
-                       ManagementAdminService.Order.Direction = SortDirection.Ascending;
+                       MMCService.Order.Direction = SortDirection.Ascending;
                    break;
-                case 3: ManagementAdminService.Order.Column = UsersOrderField.Email;
-                   if (ff == UsersOrderField.Email)
+                case 3: MMCService.Order.Column = DataOrderField.Email;
+                   if (ff == DataOrderField.Email)
                    {
-                       if (ManagementAdminService.Order.Direction == SortDirection.Ascending)
-                           ManagementAdminService.Order.Direction = SortDirection.Descending;
+                       if (MMCService.Order.Direction == SortDirection.Ascending)
+                           MMCService.Order.Direction = SortDirection.Descending;
                        else
-                           ManagementAdminService.Order.Direction = SortDirection.Ascending;
+                           MMCService.Order.Direction = SortDirection.Ascending;
                    }
                    else
-                       ManagementAdminService.Order.Direction = SortDirection.Ascending;
+                       MMCService.Order.Direction = SortDirection.Ascending;
                    break;
-                case 4: ManagementAdminService.Order.Column = UsersOrderField.Phone;
-                   if (ff == UsersOrderField.Phone)
+                case 4: MMCService.Order.Column = DataOrderField.Phone;
+                   if (ff == DataOrderField.Phone)
                    {
-                       if (ManagementAdminService.Order.Direction == SortDirection.Ascending)
-                           ManagementAdminService.Order.Direction = SortDirection.Descending;
+                       if (MMCService.Order.Direction == SortDirection.Ascending)
+                           MMCService.Order.Direction = SortDirection.Descending;
                        else
-                           ManagementAdminService.Order.Direction = SortDirection.Ascending;
+                           MMCService.Order.Direction = SortDirection.Ascending;
                    }
                    else
-                       ManagementAdminService.Order.Direction = SortDirection.Ascending;
+                       MMCService.Order.Direction = SortDirection.Ascending;
                    break;
-                case 5: ManagementAdminService.Order.Column = UsersOrderField.CreationDate;
-                   if (ff == UsersOrderField.CreationDate)
+                case 5: MMCService.Order.Column = DataOrderField.CreationDate;
+                   if (ff == DataOrderField.CreationDate)
                    {
-                       if (ManagementAdminService.Order.Direction == SortDirection.Ascending)
-                           ManagementAdminService.Order.Direction = SortDirection.Descending;
+                       if (MMCService.Order.Direction == SortDirection.Ascending)
+                           MMCService.Order.Direction = SortDirection.Descending;
                        else
-                           ManagementAdminService.Order.Direction = SortDirection.Ascending;
+                           MMCService.Order.Direction = SortDirection.Ascending;
                    }
                    else
-                       ManagementAdminService.Order.Direction = SortDirection.Ascending;
+                       MMCService.Order.Direction = SortDirection.Ascending;
                    break;
             }
             RefreshData(true);
@@ -513,10 +517,10 @@ namespace Neos.IdentityServer.Console
 
     public class SelectionDataEventArgs : EventArgs
     {
-        MMCRegistrationList _list = null;
+        RegistrationList _list = null;
         MMCListAction _action;
 
-        public SelectionDataEventArgs(MMCRegistrationList list, MMCListAction action)
+        public SelectionDataEventArgs(RegistrationList list, MMCListAction action)
         {
             _list = list;
             _action = action;
@@ -525,7 +529,7 @@ namespace Neos.IdentityServer.Console
         /// <summary>
         /// Selection property
         /// </summary>
-        public MMCRegistrationList Selection
+        public RegistrationList Selection
         {
             get { return _list; }
         }

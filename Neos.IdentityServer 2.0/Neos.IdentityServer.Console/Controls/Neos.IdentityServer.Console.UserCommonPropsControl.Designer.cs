@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(UserCommonPropertiesControl));
             this.MethodSource = new System.Windows.Forms.BindingSource(this.components);
             this.UserInfo = new System.Windows.Forms.GroupBox();
             this.listUsers = new System.Windows.Forms.ListView();
@@ -45,7 +46,7 @@
             // 
             // MethodSource
             // 
-            this.MethodSource.DataSource = typeof(Neos.IdentityServer.MultiFactor.Administration.UsersPreferredMethodList);
+            this.MethodSource.DataSource = typeof(Neos.IdentityServer.Console.MMCPreferredMethodList);
             // 
             // UserInfo
             // 
@@ -54,12 +55,9 @@
             this.UserInfo.Controls.Add(this.CBMethod);
             this.UserInfo.Controls.Add(this.cbEnabled);
             this.UserInfo.Controls.Add(this.UserNamesPrompt);
-            this.UserInfo.Location = new System.Drawing.Point(14, 18);
+            resources.ApplyResources(this.UserInfo, "UserInfo");
             this.UserInfo.Name = "UserInfo";
-            this.UserInfo.Size = new System.Drawing.Size(456, 227);
-            this.UserInfo.TabIndex = 1;
             this.UserInfo.TabStop = false;
-            this.UserInfo.Text = "Informations Utilisateurs";
             // 
             // listUsers
             // 
@@ -67,27 +65,20 @@
             this.UserName});
             this.listUsers.FullRowSelect = true;
             this.listUsers.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-            this.listUsers.Location = new System.Drawing.Point(107, 26);
+            resources.ApplyResources(this.listUsers, "listUsers");
             this.listUsers.MultiSelect = false;
             this.listUsers.Name = "listUsers";
-            this.listUsers.Size = new System.Drawing.Size(327, 112);
-            this.listUsers.TabIndex = 1;
             this.listUsers.UseCompatibleStateImageBehavior = false;
             this.listUsers.View = System.Windows.Forms.View.List;
             // 
             // UserName
             // 
-            this.UserName.Text = "Nom";
-            this.UserName.Width = 200;
+            resources.ApplyResources(this.UserName, "UserName");
             // 
             // label1
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(19, 135);
+            resources.ApplyResources(this.label1, "label1");
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(76, 39);
-            this.label1.TabIndex = 6;
-            this.label1.Text = "Méthode \r\nd\'identification\r\nséléctionnée : \r\n";
             // 
             // CBMethod
             // 
@@ -95,63 +86,46 @@
             this.CBMethod.DisplayMember = "Label";
             this.CBMethod.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.CBMethod.FormattingEnabled = true;
-            this.CBMethod.Location = new System.Drawing.Point(106, 153);
+            resources.ApplyResources(this.CBMethod, "CBMethod");
             this.CBMethod.Name = "CBMethod";
-            this.CBMethod.Size = new System.Drawing.Size(328, 21);
-            this.CBMethod.TabIndex = 2;
             this.CBMethod.ValueMember = "ID";
             this.CBMethod.SelectedIndexChanged += new System.EventHandler(this.CBMethod_SelectedIndexChanged);
             // 
             // cbEnabled
             // 
-            this.cbEnabled.AutoSize = true;
-            this.cbEnabled.Location = new System.Drawing.Point(106, 193);
+            resources.ApplyResources(this.cbEnabled, "cbEnabled");
             this.cbEnabled.Name = "cbEnabled";
-            this.cbEnabled.Size = new System.Drawing.Size(157, 17);
-            this.cbEnabled.TabIndex = 3;
-            this.cbEnabled.Text = "Authentification MFA Active";
             this.cbEnabled.UseVisualStyleBackColor = true;
             this.cbEnabled.CheckedChanged += new System.EventHandler(this.cbEnabled_CheckedChanged);
             // 
             // UserNamesPrompt
             // 
-            this.UserNamesPrompt.AutoSize = true;
-            this.UserNamesPrompt.Location = new System.Drawing.Point(16, 26);
+            resources.ApplyResources(this.UserNamesPrompt, "UserNamesPrompt");
             this.UserNamesPrompt.Name = "UserNamesPrompt";
-            this.UserNamesPrompt.Size = new System.Drawing.Size(89, 13);
-            this.UserNamesPrompt.TabIndex = 3;
-            this.UserNamesPrompt.Text = "Liste Utilisateurs :";
             // 
             // BTNReinit
             // 
-            this.BTNReinit.Location = new System.Drawing.Point(201, 282);
+            resources.ApplyResources(this.BTNReinit, "BTNReinit");
             this.BTNReinit.Name = "BTNReinit";
-            this.BTNReinit.Size = new System.Drawing.Size(247, 23);
-            this.BTNReinit.TabIndex = 2;
-            this.BTNReinit.Text = "Réinitialiser toutes les clés";
             this.BTNReinit.UseVisualStyleBackColor = true;
             this.BTNReinit.Click += new System.EventHandler(this.BTNReinit_Click);
             // 
             // BTNSendByMail
             // 
-            this.BTNSendByMail.Location = new System.Drawing.Point(201, 329);
+            resources.ApplyResources(this.BTNSendByMail, "BTNSendByMail");
             this.BTNSendByMail.Name = "BTNSendByMail";
-            this.BTNSendByMail.Size = new System.Drawing.Size(247, 23);
-            this.BTNSendByMail.TabIndex = 3;
-            this.BTNSendByMail.Text = "Envoyer les clés par mail";
             this.BTNSendByMail.UseVisualStyleBackColor = true;
             this.BTNSendByMail.Click += new System.EventHandler(this.BTNSendByMail_Click);
             // 
             // UserCommonPropertiesControl
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Window;
             this.Controls.Add(this.BTNSendByMail);
             this.Controls.Add(this.BTNReinit);
             this.Controls.Add(this.UserInfo);
             this.Name = "UserCommonPropertiesControl";
-            this.Size = new System.Drawing.Size(489, 461);
             this.Load += new System.EventHandler(this.UserCommonPropertiesControl_Load);
             ((System.ComponentModel.ISupportInitialize)(this.MethodSource)).EndInit();
             this.UserInfo.ResumeLayout(false);

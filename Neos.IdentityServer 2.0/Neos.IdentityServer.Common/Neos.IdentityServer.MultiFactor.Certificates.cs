@@ -23,7 +23,7 @@ using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Xml;
 using CERTENROLLLib;
-using System.Text.RegularExpressions;
+
 
 namespace Neos.IdentityServer.MultiFactor
 {
@@ -205,7 +205,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// GetCertificate method implementation
         /// </summary>
-        public static X509Certificate2 GetCertificate(string thumprint, StoreLocation location)
+        internal static X509Certificate2 GetCertificate(string thumprint, StoreLocation location)
         {
             X509Certificate2 data = null;
             X509Store store = new X509Store(location);
@@ -354,68 +354,6 @@ namespace Neos.IdentityServer.MultiFactor
             var base64encoded = enroll.CreatePFX("", PFXExportOptions.PFXExportChainWithRoot);
 
             return base64encoded;           
-        }
-    }
-
-    /// <summary>
-    /// Thumbprint Class
-    /// </summary>
-    public static class Thumbprint
-    {
-        public readonly static string Empty = "0000000000000000000000000000000000000000";
-        public readonly static string Null = "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF";
-        public readonly static string Demo = "0123456789ABCDEF0123456789ABCDEF01234567";
-
-        /// <summary>
-        /// IsValid method implmentation
-        /// </summary>
-        public static bool IsValid(string thumbprint)
-        {
-            if (string.IsNullOrEmpty(thumbprint))
-                return false;
-            string pattern = @"\b([a-fA-F0-9]{40})\b";
-          //  string substitution = @"";
-            string input = thumbprint;
-            RegexOptions options = RegexOptions.IgnorePatternWhitespace;
-        
-            Regex regex = new Regex(pattern, options);
-            return regex.IsMatch(input);
-        }
-
-        /// <summary>
-        /// IsAllowed method implmentation
-        /// </summary>
-        public static bool IsAllowed(string thumbprint)
-        {
-            bool result = IsValid(thumbprint);
-            if (result)
-            {
-                if (thumbprint.ToUpper().Equals(Thumbprint.Null))
-                    result = false;
-                else if (thumbprint.ToUpper().Equals(Thumbprint.Empty))
-                    result = false;
-                else if (thumbprint.ToUpper().Equals(Thumbprint.Demo))
-                    result = false;
-            }
-            return result;
-        }
-
-        /// <summary>
-        /// IsAllowed method implmentation
-        /// </summary>
-        public static bool IsNullOrEmpty(string thumbprint)
-        {
-            bool result = IsValid(thumbprint);
-            if (result)
-            {
-                if (thumbprint.ToUpper().Equals(Thumbprint.Null))
-                    result = true;
-                else if (thumbprint.ToUpper().Equals(Thumbprint.Empty))
-                    result = true;
-                else
-                    result =false;
-            }
-            return result;
         }
     }
 }

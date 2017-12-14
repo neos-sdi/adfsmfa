@@ -367,6 +367,15 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Inscription request.
+        /// </summary>
+        internal static string HtmlUIMGotoInscription {
+            get {
+                return ResourceManager.GetString("HtmlUIMGotoInscription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Change my options.
         /// </summary>
         internal static string HtmlUIMGoToRegistration {

@@ -8,7 +8,8 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Neos.IdentityServer.MultiFactor.Administration.Resources {
+namespace Neos.IdentityServer.MultiFactor.Administration.Resources
+{
     using System;
     
     

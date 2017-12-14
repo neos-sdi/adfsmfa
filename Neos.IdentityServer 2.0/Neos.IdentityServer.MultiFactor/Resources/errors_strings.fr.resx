@@ -127,7 +127,7 @@
     <value>Accès autorisé ! cependant compte n'est pas encore activé !  Il est recommandé de compléter vos options dès à présent ou de contacter vos administrateurs, ceux-ci vous informeront du processus d'activation.</value>
   </data>
   <data name="ErrorAccountNoAccess" xml:space="preserve">
-    <value>Accès non autorisé ! Votre compte n'est pas activé !  Veuillez contacter les administrateurs pour plus d'information.</value>
+    <value>Accès non autorisé ! Votre compte n'est pas activé !  Veuillez contacter les administrateurs pour plus d'informations.</value>
   </data>
   <data name="ErrorAccountNotEnabled" xml:space="preserve">
     <value>Accès non autorisé ! Votre compte n'est pas activé !  Veuillrez contacter vos administrateurs, pour être informé du processus d'activation.</value>

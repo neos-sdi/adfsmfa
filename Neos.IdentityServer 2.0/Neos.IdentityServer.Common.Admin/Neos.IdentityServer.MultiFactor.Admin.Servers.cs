@@ -20,7 +20,6 @@ using Neos.IdentityServer.MultiFactor.Administration.Resources;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Globalization;
 using System.IO;
 using System.Management.Automation;
 using System.Management.Automation.Host;
@@ -28,12 +27,37 @@ using System.Management.Automation.Runspaces;
 using System.Net;
 using System.Security.Cryptography.X509Certificates;
 using System.ServiceProcess;
-using System.Threading;
-using System.Xml.Serialization;
 using System.Data.SqlClient;
 
 namespace Neos.IdentityServer.MultiFactor.Administration
 {
+    #region enums
+    /// <summary>
+    /// ServiceOperationStatus enum
+    /// </summary>
+    public enum ServiceOperationStatus
+    {
+        OperationUnknown,
+        OperationPending,
+        OperationRunning,
+        OperationStopped,
+        OperationInError
+    }
+
+    /// <summary>
+    /// ServiceOperationStatus enum
+    /// </summary>
+    public enum ConfigOperationStatus
+    {
+        ConfigUnknown,
+        ConfigLoaded,
+        ConfigIsDirty,
+        ConfigSaved,
+        ConfigStopped,
+        ConfigInError
+    }
+    #endregion
+
     #region ADFSServiceManager
     /// <summary>
     /// ADFSServiceManager Class
@@ -69,13 +93,24 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         }
 
         /// <summary>
+        /// ADFSServiceManager constructor
+        /// </summary>
+        public ADFSServiceManager(ServiceOperationStatus status = ServiceOperationStatus.OperationUnknown, ConfigOperationStatus configstatus = ConfigOperationStatus.ConfigUnknown)
+        {
+            ServiceStatusChanged += DefaultServiceStatusChanged;
+            ConfigurationStatusChanged += DefaultConfigurationStatusChanged;
+            this.ServiceStatusChanged(this, status, "");
+            this.ConfigurationStatusChanged(this, configstatus);
+        }
+
+        /// <summary>
         /// Initialize method implementation
         /// </summary>
-        public void Initialize(bool dontthrow = false)
+        public void Initialize(string mailslothost = "MGT", bool dontthrow = false)
         {
             try
             {
-                _mailslotsrv = new MailSlotServer("MGT");
+                _mailslotsrv = new MailSlotServer(mailslothost);
                 _mailslotsrv.MailSlotMessageArrived += MailSlotMessageArrived;
                 _mailslotsrv.AllowToSelf = true;
                 _mailslotsrv.Start();
@@ -125,17 +160,6 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         }
 
         /// <summary>
-        /// ADFSServiceManager constructor
-        /// </summary>
-        public ADFSServiceManager(ServiceOperationStatus status = ServiceOperationStatus.OperationUnknown, ConfigOperationStatus configstatus = ConfigOperationStatus.ConfigUnknown)
-        {
-            ServiceStatusChanged += DefaultServiceStatusChanged;
-            ConfigurationStatusChanged += DefaultConfigurationStatusChanged;
-            this.ServiceStatusChanged(this, status, "");
-            this.ConfigurationStatusChanged(this, configstatus);
-        }
-
-        /// <summary>
         /// MailslotServer property
         /// </summary>
         public MailSlotServer MailslotServer
@@ -178,7 +202,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             this.ConfigurationStatusChanged(this, ConfigurationStatus);
         }
 
-                /// <summary>
+        /// <summary>
         /// EnsureLocalService method implementation
         /// </summary>
         public void EnsureLocalService()
@@ -198,7 +222,6 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             {
                 EnsureLocalService();
                 _config = ReadConfiguration(Host);
-                KeysManager.Initialize(_config);
                 if (!IsFarmConfigured())
                     throw new Exception(errors_strings.ErrorMFAFarmNotInitialized);
             }
@@ -514,7 +537,10 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 EnsureLocalService();
                 _config = CFGUtilities.ReadConfiguration(Host);
                 _config.IsDirty = false;
-                this.ConfigurationStatusChanged(this, ConfigOperationStatus.ConfigLoaded);
+                if (this.IsMFAProviderEnabled(Host))
+                    this.ConfigurationStatusChanged(this, ConfigOperationStatus.ConfigLoaded);
+                else
+                    this.ConfigurationStatusChanged(this, ConfigOperationStatus.ConfigStopped);
             }
             catch (CmdletInvocationException cm)
             {
@@ -539,9 +565,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             {
                 EnsureLocalService();
                 CFGUtilities.WriteConfiguration(Host, _config);
-                using (MailSlotClient mailslot = new MailSlotClient("ADM"))
+                using (MailSlotClient mailslot = new MailSlotClient())
                 {
-                    mailslot.SendNotification(0x1);
+                    mailslot.SendNotification(0xAA);
                 }
                 _config.IsDirty = false;
                 this.ConfigurationStatusChanged(this, ConfigOperationStatus.ConfigSaved);
@@ -853,7 +879,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// </summary>
         public string RegisterNewRSACertificate(PSHost Host = null, int years = 5, bool restart = true)
         {
-            if (_config.KeysConfig.KeyFormat == RegistrationSecretKeyFormat.RSA)
+            if (_config.KeysConfig.KeyFormat == SecretKeyFormat.RSA)
             {
                 _config.KeysConfig.CertificateThumbprint = internalRegisterNewRSACertificate(Host, years);
                 _config.IsDirty = true;
@@ -865,9 +891,20 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             else
             {
                 if (Host != null)
-                    Host.UI.WriteWarningLine(DateTime.Now.ToLongTimeString() + " MFA System : Configuration is RNG ! no action taken !");
+                    Host.UI.WriteWarningLine(DateTime.Now.ToLongTimeString() + " MFA System : Configuration is not RSA ! no action taken !");
+                else
+                    throw new Exception("MFA System : Configuration is not RSA ! no action taken !");
                 return "";
             }
+        }
+
+        /// <summary>
+        /// CheckCertificate metnod implementation
+        /// </summary>
+        internal bool CheckCertificate(string thumbprint)
+        {
+            X509Certificate2 cert = Certs.GetCertificate(thumbprint, StoreLocation.LocalMachine);
+            return (cert != null);
         }
 
         /// <summary>
@@ -920,7 +957,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <summary>
         /// RegisterMFAProvider method implmentation
         /// </summary>
-        public bool RegisterMFAProvider(PSHost host, bool activate = true, bool restartfarm = true, bool upgrade = false, string filepath = null, RegistrationSecretKeyFormat format = RegistrationSecretKeyFormat.RNG, int certduration = 5)
+        public bool RegisterMFAProvider(PSHost host, bool activate = true, bool restartfarm = true, bool upgrade = false, string filepath = null, SecretKeyFormat format = SecretKeyFormat.RNG, int certduration = 5)
         {
             bool needregister = false;
             if (_config == null)
@@ -953,12 +990,12 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                     _config.KeysConfig.KeyFormat = format;
                     _config.IsDirty = true;
                 }
-                if ((format == RegistrationSecretKeyFormat.RSA) && (!Thumbprint.IsAllowed(Config.KeysConfig.CertificateThumbprint)))
+                if ((format == SecretKeyFormat.RSA) && (!Thumbprint.IsAllowed(Config.KeysConfig.CertificateThumbprint)))
                 {
                     _config.KeysConfig.CertificateThumbprint = internalRegisterNewRSACertificate(host, certduration);
                     _config.IsDirty = true;
                 }
-                if (format == RegistrationSecretKeyFormat.CUSTOM) 
+                if (format == SecretKeyFormat.CUSTOM) 
                 {
                     _config.KeysConfig.CertificateValidity = certduration;
                     _config.IsDirty = true;
@@ -1031,7 +1068,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             if (!_config.Hosts.ADFSFarm.IsInitialized)
                 throw new Exception(errors_strings.ErrorMFAFarmNotInitialized);
             internalActivateConfiguration(Host);
-            using (MailSlotClient mailslot = new MailSlotClient("MGT"))
+            using (MailSlotClient mailslot = new MailSlotClient())
             {
                 mailslot.SendNotification(0xAA);
             }
@@ -1048,7 +1085,8 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 _config = ReadConfiguration(Host);
             }
             internalDeActivateConfiguration(Host);
-            using (MailSlotClient mailslot = new MailSlotClient("MGT"))
+            this.ConfigurationStatusChanged(this, ConfigOperationStatus.ConfigStopped);
+            using (MailSlotClient mailslot = new MailSlotClient())
             {
                 mailslot.SendNotification(0xAA);
             }
@@ -1329,7 +1367,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <summary>
         /// CreateMFADatabase method implementation
         /// </summary>
-        public void CreateMFADatabase(PSHost host, string _servername, string _databasename, string _username, string _password)
+        public string CreateMFADatabase(PSHost host, string _servername, string _databasename, string _username, string _password)
         {
             string sqlscript = File.ReadAllText(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + @"\MFA\mfa-db.sql");
             sqlscript = sqlscript.Replace("%DATABASENAME%", _databasename);
@@ -1368,19 +1406,20 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             {
                 cnx2.Close();
             }
-            MMCConfigSQL  cf = new MMCConfigSQL();
+            FlatConfigSQL  cf = new FlatConfigSQL();
             cf.Load(host);
             if (!string.IsNullOrEmpty(_password))
                 cf.ConnectionString = "Persist Security Info=True;User ID="+ _username+";Password="+_password+";Initial Catalog=" + _databasename + ";Data Source=" + _servername;
             else
                 cf.ConnectionString = "Persist Security Info=False;Integrated Security=SSPI;Initial Catalog=" + _databasename + ";Data Source=" + _servername;
             cf.Update(host);
+            return cf.ConnectionString;
         }
 
         /// <summary>
         /// CreateMFADatabase method implementation
         /// </summary>
-        public void CreateMFASecretKeysDatabase(PSHost host, string _servername, string _databasename, string _username, string _password)
+        public string CreateMFASecretKeysDatabase(PSHost host, string _servername, string _databasename, string _username, string _password)
         {
             string sqlscript = File.ReadAllText(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + @"\MFA\mfa-secretkey-db.sql");
             sqlscript = sqlscript.Replace("%DATABASENAME%", _databasename);
@@ -1419,76 +1458,17 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             {
                 cnx2.Close();
             }
-            MMCExternalKeyManager cf = new MMCExternalKeyManager();
+            FlatExternalKeyManager cf = new FlatExternalKeyManager();
             cf.Load(host);
             if (!string.IsNullOrEmpty(_password))
                 cf.Parameters.Data = "Persist Security Info=True;User ID=" + _username + ";Password=" + _password + ";Initial Catalog=" + _databasename + ";Data Source=" + _servername;
             else
                 cf.Parameters.Data = "Persist Security Info=False;Integrated Security=SSPI;Initial Catalog=" + _databasename + ";Data Source=" + _servername;
             cf.Update(host);
+            return cf.Parameters.Data;
         }
 
         #endregion
-    }
-    #endregion
-
-    #region ADFS Version
-    internal class RegistryVersion
-    {
-        private string _currentVersion;
-        private string _productName;
-        private string _installationType;
-        private int _currentBuild;
-        private int _currentMajorVersionNumber;
-        private int _currentMinorVersionNumber;
-
-        internal RegistryVersion()
-        {
-            RegistryKey rk = Registry.LocalMachine.OpenSubKey("Software\\Microsoft\\Windows NT\\CurrentVersion");
-
-            _currentVersion = Convert.ToString(rk.GetValue("CurrentVersion"));
-            _productName = Convert.ToString(rk.GetValue("ProductName"));
-            _installationType = Convert.ToString(rk.GetValue("InstallationType"));
-            _currentBuild = Convert.ToInt32(rk.GetValue("CurrentBuild"));
-            _currentMajorVersionNumber = Convert.ToInt32(rk.GetValue("CurrentMajorVersionNumber"));
-            _currentMinorVersionNumber = Convert.ToInt32(rk.GetValue("CurrentMinorVersionNumber"));
-        }
-
-        public string CurrentVersion
-        {
-            get { return _currentVersion; }
-            set { _currentVersion = value; }
-        }
-
-        public string ProductName
-        {
-            get { return _productName; }
-            set { _productName = value; }
-        }
-
-        public string InstallationType
-        {
-            get { return _installationType; }
-            set { _installationType = value; }
-        }
-
-        public int CurrentBuild
-        {
-            get { return _currentBuild; }
-            set { _currentBuild = value; }
-        }
-
-        public int CurrentMajorVersionNumber
-        {
-            get { return _currentMajorVersionNumber; }
-            set { _currentMajorVersionNumber = value; }
-        }
-
-        public int CurrentMinorVersionNumber
-        {
-            get { return _currentMinorVersionNumber; }
-            set { _currentMinorVersionNumber = value; }
-        }
     }
     #endregion
 }

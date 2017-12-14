@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.DirectoryServices;
+using System.DirectoryServices.ActiveDirectory;
 using System.Linq;
 using System.ServiceModel;
 using System.Text;
@@ -450,7 +451,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             };
 
             string qryldap = "(&(objectCategory=user)(objectClass=user)";
-            bool hasparameter = string.Empty!=filter.FilterValue;
+            bool hasparameter = string.Empty != filter.FilterValue;
             if (filter.FilterisActive)
             {
                 if (hasparameter)
@@ -469,7 +470,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                         qryldap += string.Format(stroperator, strfields);
                     }
                 }
-                
+
                 if (filter.FilterMethod != UsersPreferredMethod.None)
                 {
                     string strmethod = string.Empty;
@@ -478,7 +479,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 }
                 if (filter.EnabledOnly)
                 {
-                    qryldap += "(" + _config.Hosts.ActiveDirectoryHost.totpEnabledAttribute + "="+ true.ToString()+")";
+                    qryldap += "(" + _config.Hosts.ActiveDirectoryHost.totpEnabledAttribute + "=" + true.ToString() + ")";
                 }
                 qryldap += "(!(userAccountControl:1.2.840.113556.1.4.803:=2))";
             }
@@ -489,7 +490,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             }
             qryldap += ")";
 
-            
+
             MMCRegistrationList registrations = new MMCRegistrationList();
             try
             {

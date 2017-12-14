@@ -656,7 +656,6 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             }
         }
 
-
         /// <summary>
         /// HasRegistration method implementation
         /// </summary>

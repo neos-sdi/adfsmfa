@@ -27,7 +27,7 @@ using Microsoft.ManagementConsole;
 using Microsoft.ManagementConsole.Advanced;
 using Neos.IdentityServer.MultiFactor.Administration;
 using Neos.IdentityServer.MultiFactor;
-// using Neos.IdentityServer.Console.PropertyPages;
+using res = Neos.IdentityServer.Console.Resources.Neos_IdentityServer_Console_UserPropertyPages;
 
 namespace Neos.IdentityServer.Console
 {
@@ -53,19 +53,19 @@ namespace Neos.IdentityServer.Console
             {
                 this.Control = new UserPropertiesControl(this);
                 userPropertiesControl = this.Control as IUserPropertiesDataObject;
-                this.Title = "Général";
+                this.Title = res.PPAGEGENERALTITLE;
             }
             else if (usercontrol.Equals(typeof(UserPropertiesKeysControl)))
             {
                 this.Control = new UserPropertiesKeysControl(this);
                 userPropertiesControl = this.Control as IUserPropertiesDataObject;
-                this.Title = "Clé";
+                this.Title = res.PPAGEKEYSTITLE;
             }
             else if (usercontrol.Equals(typeof(UserCommonPropertiesControl)))
             {
                 this.Control = new UserCommonPropertiesControl(this);
                 userPropertiesControl = this.Control as IUserPropertiesDataObject;
-                this.Title = "Propriétés Communes";
+                this.Title = res.PPAGECOMMONTITILE;
             }
 
         }
@@ -96,8 +96,8 @@ namespace Neos.IdentityServer.Console
         {
             if (Dirty)
             {
-                MMCRegistrationList registrations = GetSharedUserData();
-                foreach (MMCRegistration reg in registrations)
+                RegistrationList registrations = GetSharedUserData();
+                foreach (Registration reg in registrations)
                 {
                     if (CanApplyDataChanges(reg))
                     {
@@ -177,9 +177,9 @@ namespace Neos.IdentityServer.Console
         {
             if (usersFormView == null)
                 return;
-            MMCRegistrationList registrations = GetSharedUserData();
+            RegistrationList registrations = GetSharedUserData();
             userPropertiesControl.GetUserControlData(registrations);
-            foreach (MMCRegistration reg in registrations)
+            foreach (Registration reg in registrations)
             {
                 reg.IsApplied = false;
             }
@@ -195,28 +195,28 @@ namespace Neos.IdentityServer.Console
         {
             if (usersFormView == null)
                 return;
-            MMCRegistrationList registrations = GetSharedUserData();
+            RegistrationList registrations = GetSharedUserData();
             userPropertiesControl.SetUserControlData(registrations, disablesync);
         }
 
         /// <summary>
         /// GetSharedUserData method implementation
         /// </summary>
-        internal MMCRegistrationList GetSharedUserData()
+        internal RegistrationList GetSharedUserData()
         {
             if (usersFormView == null)
                 return null;
             WritableSharedDataItem shareddata = usersFormView.SharedUserData.GetItem("@adfsmfa_useredit" + seed);
             if (shareddata == null)
-                return new MMCRegistrationList();
-            MMCRegistrationList registrations = shareddata.GetData();
+                return new RegistrationList();
+            RegistrationList registrations = shareddata.GetData();
             if (registrations == null)
             {
-                registrations = (MMCRegistrationList)this.ParentSheet.SelectionObject;
+                registrations = (RegistrationList)this.ParentSheet.SelectionObject;
                 if (registrations == null)
                 {
-                    registrations = new MMCRegistrationList();
-                    MMCRegistration reg = new MMCRegistration();
+                    registrations = new RegistrationList();
+                    Registration reg = new Registration();
                     reg.Enabled = true;
                     registrations.Add(reg);
                 }
@@ -228,7 +228,7 @@ namespace Neos.IdentityServer.Console
         /// <summary>
         /// SetSharedUserData method implementation
         /// </summary>
-        internal void SetSharedUserData(MMCRegistrationList registrations)
+        internal void SetSharedUserData(RegistrationList registrations)
         {
             if (usersFormView == null)
                 return;
@@ -237,11 +237,11 @@ namespace Neos.IdentityServer.Console
                 return;
             if (registrations == null)
             {
-                registrations = (MMCRegistrationList)this.ParentSheet.SelectionObject;
+                registrations = (RegistrationList)this.ParentSheet.SelectionObject;
                 if (registrations == null)
                 {
-                    registrations = new MMCRegistrationList();
-                    MMCRegistration reg = new MMCRegistration();
+                    registrations = new RegistrationList();
+                    Registration reg = new Registration();
                     reg.Enabled = true;
                     registrations.Add(reg);
                 }
@@ -252,7 +252,7 @@ namespace Neos.IdentityServer.Console
         /// <summary>
         /// CanApplyDataChanges method implementation
         /// </summary>
-        private bool CanApplyDataChanges(MMCRegistration registration)
+        private bool CanApplyDataChanges(Registration registration)
         {
             bool result = false;
             if (registration.IsApplied)
@@ -260,16 +260,16 @@ namespace Neos.IdentityServer.Console
             if (string.IsNullOrEmpty(registration.UPN))
             {
                 MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = "le nom de l'utilsateur ne peux être vide !";
+                messageBoxParameters.Text = res.PPAGEVALIDUSER;
                 messageBoxParameters.Buttons = MessageBoxButtons.OK;
                 messageBoxParameters.Icon = MessageBoxIcon.Error;
                 ParentSheet.ShowDialog(messageBoxParameters);
                 ParentSheet.SetActivePage(0);
             }
-            else if (string.IsNullOrEmpty(KeysManager.ReadKey(registration.UPN)))
+            else if (string.IsNullOrEmpty(MMCService.GetEncodedUserKey(registration.UPN)))
             {
                 MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = "Une clé numérique valide est requise pour générer des codes TOTP permettant de valider votre identité !";
+                messageBoxParameters.Text = res.PPAGEVALIDKEY;
                 messageBoxParameters.Buttons = MessageBoxButtons.OK;
                 messageBoxParameters.Icon = MessageBoxIcon.Error;
                 ParentSheet.ShowDialog(messageBoxParameters);
@@ -278,7 +278,7 @@ namespace Neos.IdentityServer.Console
             else if (string.IsNullOrEmpty(registration.MailAddress))
             {
                 MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = "Une adresse de messagerie secondaire est requis pour recevoir les codes par e-mails !\rSouhaitez-vous continuer ?";
+                messageBoxParameters.Text = res.PPAGEVALIDMAIL;
                 messageBoxParameters.Buttons = MessageBoxButtons.YesNo;
                 messageBoxParameters.Icon = MessageBoxIcon.Warning;
                 if (ParentSheet.ShowDialog(messageBoxParameters) == DialogResult.Yes)
@@ -286,10 +286,10 @@ namespace Neos.IdentityServer.Console
                 else
                     ParentSheet.SetActivePage(0);
             }
-            else if (!ManagementAdminService.IsValidEmail(registration.MailAddress))
+            else if (!MMCService.IsValidEmail(registration.MailAddress))
             {
                 MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = "Adresse de messagerie secondaire invalide !";
+                messageBoxParameters.Text = res.PPAGEINVALIDMAIL;
                 messageBoxParameters.Buttons = MessageBoxButtons.OK;
                 messageBoxParameters.Icon = MessageBoxIcon.Error;
                 ParentSheet.ShowDialog(messageBoxParameters);
@@ -298,7 +298,7 @@ namespace Neos.IdentityServer.Console
             else if (string.IsNullOrEmpty(registration.PhoneNumber))
             {
                 MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = "Un N° de téléphone est requis pour recevoir les codes par SMS !\r\rSouhaitez-vous continuer ?";
+                messageBoxParameters.Text = res.PPAGEVALIDPHONE;
                 messageBoxParameters.Buttons = MessageBoxButtons.YesNo;
                 messageBoxParameters.Icon = MessageBoxIcon.Warning;
                 if (ParentSheet.ShowDialog(messageBoxParameters) == DialogResult.Yes)
@@ -306,10 +306,10 @@ namespace Neos.IdentityServer.Console
                 else
                     ParentSheet.SetActivePage(0);
             }
-            else if (!ManagementAdminService.IsValidPhone(registration.PhoneNumber))
+            else if (!MMCService.IsValidPhone(registration.PhoneNumber))
             {
                 MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = "Un N° de téléphone valide est requis pour recevoir les codes par SMS !";
+                messageBoxParameters.Text = res.PPAGEINVALIDPHONE;
                 messageBoxParameters.Buttons = MessageBoxButtons.OK;
                 messageBoxParameters.Icon = MessageBoxIcon.Error;
                 ParentSheet.ShowDialog(messageBoxParameters);

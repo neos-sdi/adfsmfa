@@ -79,6 +79,7 @@ namespace Neos.IdentityServer.Multifactor.SMS
         public const string MODE_SMS_ONE_WAY_OTP = "sms_one_way_otp";
         public const string MODE_SMS_ONE_WAY_OTP_PLUS_PIN = "sms_one_way_otp_plus_pin";
         public const string MODE_PHONE_APP_STANDARD = "phone_app_standard";
+        public const string MODE_PHONE_APP_PIN = "phone_app_pin";
 
         public const string NOTIFICATION_TYPE_APNS = "apns"; // iOS
         public const string NOTIFICATION_TYPE_C2DM = "c2dm"; // Android
@@ -157,11 +158,14 @@ namespace Neos.IdentityServer.Multifactor.SMS
                 pfAuthParams.Mode != MODE_SMS_TWO_WAY_OTP_PLUS_PIN  && 
                 pfAuthParams.Mode != MODE_SMS_ONE_WAY_OTP &&
                 pfAuthParams.Mode != MODE_SMS_ONE_WAY_OTP_PLUS_PIN && 
-                pfAuthParams.Mode != MODE_PHONE_APP_STANDARD)
+                pfAuthParams.Mode != MODE_PHONE_APP_STANDARD &&
+                pfAuthParams.Mode != MODE_PHONE_APP_PIN)
                 pfAuthParams.Mode = MODE_SMS_ONE_WAY_OTP; //  pfAuthParams.Mode = MODE_STANDARD;
             otp = "";
             call_status = 0;
             error_id = 0;
+
+          //  pfAuthParams.Pin = "7812";
 
             string auth_message = CreateMessage(pfAuthParams, asynchronous);
 
@@ -210,10 +214,11 @@ namespace Neos.IdentityServer.Multifactor.SMS
         /// </summary>
         private static string CreateMessage(PhoneFactorParams pfAuthParams, bool asynchronous)
         {
-            bool sms       = pfAuthParams.Mode == MODE_SMS_TWO_WAY_OTP || pfAuthParams.Mode == MODE_SMS_TWO_WAY_OTP_PLUS_PIN || pfAuthParams.Mode == MODE_SMS_ONE_WAY_OTP || pfAuthParams.Mode == MODE_SMS_ONE_WAY_OTP_PLUS_PIN;
-            bool two_way   = pfAuthParams.Mode == MODE_SMS_TWO_WAY_OTP || pfAuthParams.Mode == MODE_SMS_TWO_WAY_OTP_PLUS_PIN;
-            bool otp       = pfAuthParams.Mode == MODE_SMS_TWO_WAY_OTP || pfAuthParams.Mode == MODE_SMS_ONE_WAY_OTP;
-            bool phone_app = pfAuthParams.Mode == MODE_PHONE_APP_STANDARD;
+            bool sms           = pfAuthParams.Mode == MODE_SMS_TWO_WAY_OTP || pfAuthParams.Mode == MODE_SMS_TWO_WAY_OTP_PLUS_PIN || pfAuthParams.Mode == MODE_SMS_ONE_WAY_OTP || pfAuthParams.Mode == MODE_SMS_ONE_WAY_OTP_PLUS_PIN;
+            bool two_way       = pfAuthParams.Mode == MODE_SMS_TWO_WAY_OTP || pfAuthParams.Mode == MODE_SMS_TWO_WAY_OTP_PLUS_PIN;
+            bool otp           = pfAuthParams.Mode == MODE_SMS_TWO_WAY_OTP || pfAuthParams.Mode == MODE_SMS_ONE_WAY_OTP;
+            bool phone_app     = pfAuthParams.Mode == MODE_PHONE_APP_PIN || pfAuthParams.Mode == MODE_PHONE_APP_STANDARD;
+            bool phone_app_pin = pfAuthParams.Mode == MODE_PHONE_APP_PIN;
 
             XmlDocument doc = new XmlDocument();
 
@@ -339,6 +344,32 @@ namespace Neos.IdentityServer.Multifactor.SMS
                 element = doc.CreateElement("phoneAppAccountName");
                 element.InnerText = pfAuthParams.AccountName;
                 phone_app_auth_info.AppendChild(element);
+
+                if (phone_app_pin)
+                {
+                    element = doc.CreateElement("pin");
+                    element.SetAttribute("pinChangeRequired", "0");
+                    string pinFormat;
+                    string pinFormatted;
+                    if (pfAuthParams.Sha1PinHash.Length == 0)
+                    {
+                        pinFormat = "plainText";
+                        pinFormatted = pfAuthParams.Pin;
+                    }
+                    else
+                    {
+                        pinFormat = "sha1";
+                        pinFormatted = pfAuthParams.Sha1PinHash;
+                    }
+                    element.SetAttribute("pinFormat", pinFormat);
+                    if (pfAuthParams.Sha1PinHash.Length != 0)
+                    {
+                        element.SetAttribute("sha1Salt", pfAuthParams.Sha1Salt);
+                    }
+                    element.InnerText = pinFormatted;
+                    phone_app_auth_info.AppendChild(element);
+                }
+
                 XmlElement phone_app_messages = doc.CreateElement("phoneAppMessages");
                 element = doc.CreateElement("message");
                 element.SetAttribute("type", "authenticateButton");
@@ -398,10 +429,63 @@ namespace Neos.IdentityServer.Multifactor.SMS
                     element = doc.CreateElement("message");
                     element.SetAttribute("type", "standard");
                     element.InnerText = "Tap Authenticate to complete your authentication.";
-                    phone_app_messages.AppendChild(element);
                 }
-
+                else
+                {
+                    element = doc.CreateElement("message");
+                    element.SetAttribute("type", "confirmPinField");
+                    element.InnerText = "Confirm PIN";
+                    phone_app_messages.AppendChild(element);
+                    element = doc.CreateElement("message");
+                    element.SetAttribute("type", "newPinField");
+                    element.InnerText = "New PIN";
+                    phone_app_messages.AppendChild(element);
+                    element = doc.CreateElement("message");
+                    element.SetAttribute("type", "pin");
+                    element.InnerText = "Enter your PIN and tap Authenticate to complete your authentication.";
+                    phone_app_messages.AppendChild(element);
+                    element = doc.CreateElement("message");
+                    element.SetAttribute("type", "pinAllSameDigits");
+                    element.InnerText = "Your PIN cannot contain 3 or more repeating digits.";
+                    phone_app_messages.AppendChild(element);
+                    element = doc.CreateElement("message");
+                    element.SetAttribute("type", "pinExpired");
+                    element.InnerText = "Your PIN has expired. Please enter a new PIN to complete your authentication.";
+                    phone_app_messages.AppendChild(element);
+                    element = doc.CreateElement("message");
+                    element.SetAttribute("type", "pinField");
+                    element.InnerText = "PIN";
+                    phone_app_messages.AppendChild(element);
+                    element = doc.CreateElement("message");
+                    element.SetAttribute("type", "pinHistoryDuplicate");
+                    element.InnerText = "Your PIN cannot be the same as one of your recently used PINs. Please choose a different PIN.";
+                    phone_app_messages.AppendChild(element);
+                    element = doc.CreateElement("message");
+                    element.SetAttribute("type", "pinLength");
+                    element.InnerText = "Your PIN must be a minimum of 4 digits.";
+                    phone_app_messages.AppendChild(element);
+                    element = doc.CreateElement("message");
+                    element.SetAttribute("type", "pinMismatch");
+                    element.InnerText = "New PIN and Confirm PIN must match.";
+                    phone_app_messages.AppendChild(element);
+                    element = doc.CreateElement("message");
+                    element.SetAttribute("type", "pinRetry");
+                    element.InnerText = "Incorrect PIN. Please try again.";
+                    phone_app_messages.AppendChild(element);
+                    element = doc.CreateElement("message");
+                    element.SetAttribute("type", "pinSequentialDigits");
+                    element.InnerText = "Your PIN cannot contain 3 or more sequential digits ascending or descending.";
+                    phone_app_messages.AppendChild(element);
+                    element = doc.CreateElement("message");
+                    element.SetAttribute("type", "pinSubsetOfPhone");
+                    element.InnerText = "Your PIN cannot contain a 4 digit subset of your phone number or backup phone number.";
+                    phone_app_messages.AppendChild(element);
+                    element = doc.CreateElement("message");
+                    element.SetAttribute("type", "saveButton");
+                    element.InnerText = "Save";
+                }
                 phone_app_auth_info.AppendChild(phone_app_messages);
+                auth_request.AppendChild(phone_app_auth_info);
             }
             auth_request.AppendChild(pin_info);
             return doc.InnerXml;
