@@ -97,15 +97,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Neos.IdentityServer.MultiFactor.Provider.cs" />
-    <None Include="app.config">
-      <SubType>Designer</SubType>
-    </None>
     <None Include="Neos.IdentityServer.pfx" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="configdata.xml">
-      <SubType>Designer</SubType>
-    </Content>
     <Content Include="register multi factor.txt" />
     <Content Include="SQL\mfa-db.sql" />
     <Content Include="SQL\mfa-secretkey-db.sql" />

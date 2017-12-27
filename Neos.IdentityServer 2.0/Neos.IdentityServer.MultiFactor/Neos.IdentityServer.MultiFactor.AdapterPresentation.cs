@@ -299,7 +299,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         private string GetFormPreRenderHtmlRegistration(AuthenticationContext usercontext)
         {
-            string reg = @"/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/";
+            string reg = @"/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,})+$/";
             string pho = @"/^\+(?:[0-9] ?){6,14}[0-9]$/";
             string pho10 = @"/^\d{10}$/";
             string phous = @"/^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/";
@@ -588,7 +588,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         private string GetFormPreRenderHtmlInvitation(AuthenticationContext usercontext)
         {
-            string reg = @"/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/";
+            string reg = @"/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,})+$/";
             string pho = @"/^\+(?:[0-9] ?){6,14}[0-9]$/";
             string pho10 = @"/^\d{10}$/";
             string phous = @"/^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/";
