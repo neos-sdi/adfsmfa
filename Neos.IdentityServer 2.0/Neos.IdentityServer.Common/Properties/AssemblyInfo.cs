@@ -39,7 +39,7 @@ using System.Resources;
 [assembly: ComVisible(false)]
 
 // Le GUID suivant est pour l'ID de la typelib si ce projet est exposé à COM
-[assembly: Guid("d6235d15-6e4c-406f-8bbe-fa59241bcc11")]
+// [assembly: Guid("d6235d15-6e4c-406f-8bbe-fa59241bcc11")]
 
 // Les informations de version pour un assembly se composent des quatre valeurs suivantes :
 //
@@ -52,9 +52,9 @@ using System.Resources;
 // en utilisant '*', comme ci-dessous :
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("2.0.0.0")]
-[assembly: AssemblyFileVersion("2.0.2.963")]
+[assembly: AssemblyFileVersion("2.0.2.964")]
 [assembly: AssemblyInformationalVersion("2.0.0.0")]
-[assembly: NeutralResourcesLanguageAttribute("")]
+
 
 // To Generate PubliKey 
 //

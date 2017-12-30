@@ -37,7 +37,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // Le GUID suivant est pour l'ID de la typelib si ce projet est exposé à COM
-[assembly: Guid("f3496c0c-6de3-48a5-9531-306f1148d36c")]
+// [assembly: Guid("f3496c0c-6de3-48a5-9531-306f1148d36c")]
 
 // Les informations de version pour un assembly se composent des quatre valeurs suivantes :
 //
@@ -50,7 +50,7 @@ using System.Runtime.InteropServices;
 // en utilisant '*', comme indiqué ci-dessous :
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("2.0.0.0")]
-[assembly: AssemblyFileVersion("2.0.2.963")]
+[assembly: AssemblyFileVersion("2.0.2.964")]
 [assembly: AssemblyInformationalVersion("2.0.0.0")]
 
 [assembly: InternalsVisibleTo("Neos.IdentityServer.MultiFactor.Common, PublicKey=0024000004800000940000000602000000240000525341310004000001000100136c66e4526621536817a4316e736760a2c6511c4ad8944be23e694c66bf6d91632687c3d52912d1dcb33bbf8970966dc85872649dbd11d6e326f8801f5748c162a9e0a0f0e5a5ccc05d9f5e40d75330a6fb3950dd4304c77f453b9cbbc36919de99e2b88aef1ba71bc5d4dc9d81243cd9f5fc6ede161ae639fd60e20bb264c0")]

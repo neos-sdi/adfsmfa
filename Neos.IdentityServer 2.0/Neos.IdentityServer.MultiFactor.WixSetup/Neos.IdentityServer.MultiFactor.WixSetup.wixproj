@@ -19,7 +19,8 @@
     <LinkerAdditionalOptions>
     </LinkerAdditionalOptions>
     <SuppressPdbOutput>True</SuppressPdbOutput>
-    <LeaveTemporaryFiles>True</LeaveTemporaryFiles>
+    <LeaveTemporaryFiles>False</LeaveTemporaryFiles>
+    <VerboseOutput>True</VerboseOutput>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <OutputPath>bin\$(Configuration)\</OutputPath>
@@ -31,7 +32,8 @@
     <OutputPath>bin\$(Platform)\$(Configuration)\</OutputPath>
     <IntermediateOutputPath>obj\$(Platform)\$(Configuration)\</IntermediateOutputPath>
     <SuppressPdbOutput>True</SuppressPdbOutput>
-    <LeaveTemporaryFiles>True</LeaveTemporaryFiles>
+    <LeaveTemporaryFiles>False</LeaveTemporaryFiles>
+    <VerboseOutput>True</VerboseOutput>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
     <OutputPath>bin\$(Platform)\$(Configuration)\</OutputPath>

@@ -159,4 +159,10 @@
   <data name="InfosDatabaseCreated" xml:space="preserve">
     <value>Base de datos "{0}" creado!</value>
   </data>
+  <data name="InfosSystemExported" xml:space="preserve">
+    <value>La configuración de MFA se exportó exitosamente al archivo {0}</value>
+  </data>
+  <data name="InfosSystemImported" xml:space="preserve">
+    <value>La configuración de MFA se importó correctamente desde el archivo {0}</value>
+  </data>
 </root>

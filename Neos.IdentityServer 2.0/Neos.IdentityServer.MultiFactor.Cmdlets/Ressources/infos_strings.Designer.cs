@@ -133,6 +133,24 @@ namespace Neos.IdentityServer.MultiFactor.Cmdlets.Ressources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à MFA Configuration correctly exported to file {0} !.
+        /// </summary>
+        internal static string InfosSystemExported {
+            get {
+                return ResourceManager.GetString("InfosSystemExported", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à MFA Configuration correctly imported from file {0} !.
+        /// </summary>
+        internal static string InfosSystemImported {
+            get {
+                return ResourceManager.GetString("InfosSystemImported", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à MFA System correctly registered ! .
         /// </summary>
         internal static string InfosSystemRegistered {

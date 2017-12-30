@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-	<Product Id="a23dd485-5365-4d82-8309-1034940ee0e1" Name="Neos MFA Provider for ADFS 2012 R2/2016" Language="1033" Version="2.0.0.0" Manufacturer="Neos-SDI" UpgradeCode="a23dd485-5365-4d82-8309-1034940ef0f1" >
+	<Product Id="a23dd485-5365-4d82-8309-103494000001" Name="Neos MFA Provider for ADFS 2012 R2/2016" Language="1033" Version="2.0.2.964" Manufacturer="Neos-SDI" UpgradeCode="a23dd485-5365-4d82-8309-103495000001" >
 		<Package InstallerVersion="500" Compressed="yes" InstallScope="perMachine" InstallPrivileges="elevated" Platform="x64" Description="Multi-Factor Authentication for ADFS 3.0 / 2016" />
 
-		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
-		<MediaTemplate EmbedCab="yes" CabinetTemplate="MFA{0}.cab" /> 
+    <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+
+    <MediaTemplate EmbedCab="yes" CabinetTemplate="MFA{0}.cab" /> 
     
 		<Feature Id="ProductFeature" Title="adfsmfa Core Components" Description="Neos Identity Service Core Components" InstallDefault="local" TypicalDefault="install" Level="1" >
       <ComponentGroupRef Id="Neos.IdentityServer.MultiFactor.Core" />
@@ -39,11 +40,10 @@
     </Feature>
 
     <Binary Id='CustomAction.CA' SourceFile="$(var.Neos.IdentityServer.Deployment.TargetDir)Neos.IdentityServer.Deployment.CA.dll" />
-    <CustomAction Id="xInstallService" BinaryKey='CustomAction.CA' DllEntry="InstallService" Execute="commit"/>
-    <CustomAction Id="xUninstallService" BinaryKey='CustomAction.CA' DllEntry="UnInstallService" />
-
-    <CustomAction Id="xStartService" BinaryKey='CustomAction.CA' DllEntry="StartService" Execute="commit"  />
-    <CustomAction Id="xStopService" BinaryKey='CustomAction.CA' DllEntry="StopService" />
+    <CustomAction Id="xInstallService" BinaryKey='CustomAction.CA' DllEntry="InstallService" Execute="commit" />
+    <CustomAction Id="xUninstallService" BinaryKey='CustomAction.CA' DllEntry="UnInstallService" /> 
+    <CustomAction Id="xStartService" BinaryKey='CustomAction.CA' DllEntry="StartService" Execute="commit" /> 
+    <CustomAction Id="xStopService" BinaryKey='CustomAction.CA' DllEntry="StopService" /> 
 
     <InstallExecuteSequence>
       <Custom Action="xInstallService" Before="InstallFinalize" >
@@ -54,8 +54,8 @@
       </Custom>
       <Custom Action="xUninstallService" After="InstallInitialize" >
         Installed AND NOT PATCH
-      </Custom>
-    <!--  <Custom Action="xStopService" Before="InstallValidate" /> -->
+      </Custom> 
+      <!--  <Custom Action="xStopService" Before="InstallValidate" /> -->
     </InstallExecuteSequence>
     
   </Product>
@@ -76,16 +76,16 @@
 
       <Directory Id="ProgramFiles64Folder">
         <Directory Id="INSTALLFOLDER" Name="MFA" >
-          <Component Id="MFADIR" Guid="E7173CAB-E43F-4A07-99F0-774EF9B76199" SharedDllRefCount="no" KeyPath="yes" NeverOverwrite="no" Permanent="no" Transitive="no" Win64="yes" >
+          <Component Id="MFADIR" Guid="E7173CAB-E43F-4A07-99F0-774EF9B76999" SharedDllRefCount="no" KeyPath="yes" NeverOverwrite="no" Permanent="no" Transitive="no" Win64="yes" >
             <CreateFolder/>
           </Component>
           <Directory Id="MFAFR" Name="fr">
-            <Component Id="MFAFR" Guid="E7173CAB-E43F-4A07-99F0-774EF9B76198" SharedDllRefCount="no" KeyPath="yes" NeverOverwrite="no" Permanent="no" Transitive="no" Win64="yes" >
+            <Component Id="MFAFR" Guid="E7173CAB-E43F-4A07-99F0-774EF9B76998" SharedDllRefCount="no" KeyPath="yes" NeverOverwrite="no" Permanent="no" Transitive="no" Win64="yes" >
               <CreateFolder/>
             </Component>
           </Directory>
           <Directory Id="MFAES" Name="es" >
-            <Component Id="MFAES" Guid="E7173CAB-E43F-4A07-99F0-774EF9B76197" SharedDllRefCount="no" KeyPath="yes" NeverOverwrite="no" Permanent="no" Transitive="no" Win64="yes">
+            <Component Id="MFAES" Guid="E7173CAB-E43F-4A07-99F0-774EF9B76997" SharedDllRefCount="no" KeyPath="yes" NeverOverwrite="no" Permanent="no" Transitive="no" Win64="yes">
               <CreateFolder/>
             </Component>
           </Directory>
@@ -93,16 +93,16 @@
         <Directory Id="WPS" Name="WindowsPowerShell">
           <Directory Id="MODS" Name="Modules">
             <Directory Id="PS" Name="Neos.IdentityServer.MultiFactor.Cmdlets">
-              <Component Id="PS" Guid="E7173CAB-E43F-4A07-99F0-774EF9B76100" SharedDllRefCount="no" KeyPath="yes" NeverOverwrite="no" Permanent="no" Transitive="no" Win64="yes" >
+              <Component Id="PS" Guid="E7173CAB-E43F-4A07-99F0-774EF9B76900" SharedDllRefCount="no" KeyPath="yes" NeverOverwrite="no" Permanent="no" Transitive="no" Win64="yes" >
                 <CreateFolder/>
               </Component>
               <Directory Id="PSFR" Name="fr">
-                <Component Id="PSFR" Guid="E7173CAB-E43F-4A07-99F0-774EF9B76101" SharedDllRefCount="no" KeyPath="yes" NeverOverwrite="no" Permanent="no" Transitive="no" Win64="yes" >
+                <Component Id="PSFR" Guid="E7173CAB-E43F-4A07-99F0-774EF9B76901" SharedDllRefCount="no" KeyPath="yes" NeverOverwrite="no" Permanent="no" Transitive="no" Win64="yes" >
                   <CreateFolder/>
                 </Component>
               </Directory>
               <Directory Id="PSES" Name="es" >
-                <Component Id="PSES" Guid="E7173CAB-E43F-4A07-99F0-774EF9B76102" SharedDllRefCount="no" KeyPath="yes" NeverOverwrite="no" Permanent="no" Transitive="no" Win64="yes">
+                <Component Id="PSES" Guid="E7173CAB-E43F-4A07-99F0-774EF9B76902" SharedDllRefCount="no" KeyPath="yes" NeverOverwrite="no" Permanent="no" Transitive="no" Win64="yes">
                   <CreateFolder/>
                 </Component>
               </Directory>
@@ -189,6 +189,7 @@
       <Component Id="GACDeployment34" Guid="E7173CAB-E43F-4A07-99F7-774EF9B76134" Win64="yes" Directory="AssemblyFolder" DiskId="1" Permanent="yes" >
         <File Assembly=".net" KeyPath="yes" Id="libphonenumber_csharp_portable.dll"  Name="libphonenumber_csharp_portable.dll" Source="$(var.Neos.IdentityServer.MultiFactor.SMS.Azure.TargetDir)libphonenumber_csharp_portable.dll" />
       </Component>
+
     </ComponentGroup>
   </Fragment>
   

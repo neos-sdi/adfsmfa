@@ -5737,25 +5737,15 @@ namespace Neos.IdentityServer.Console.Controls
         /// </summary>
         internal static bool CheckSMSAssembly(string fqiassembly)
         {
-
             try
             {
                 Assembly assembly = Assembly.Load(ParseAssembly(fqiassembly));
                 Type _typetoload = assembly.GetType(ParseType(fqiassembly));
-                IExternalOTPProvider wrapper = null;
-                if (_typetoload.IsClass && !_typetoload.IsAbstract && _typetoload.GetInterface("IExternalOTPProvider2") != null)
-                {
-                    object o = Activator.CreateInstance(_typetoload, true); // Allow Calling internal Constructors
-                    if (o != null)
-                        wrapper = o as IExternalOTPProvider2;
-                }
+                if (_typetoload.IsClass && !_typetoload.IsAbstract && _typetoload.GetInterface("IExternalProvider") != null)
+                    return (Activator.CreateInstance(_typetoload, true) != null); // Allow Calling internal Constructors
                 else if (_typetoload.IsClass && !_typetoload.IsAbstract && _typetoload.GetInterface("IExternalOTPProvider") != null)
-                {
-                    object o = Activator.CreateInstance(_typetoload, true); // Allow Calling internal Constructors
-                    if (o != null)
-                        wrapper = o as IExternalOTPProvider;
-                }
-                return (wrapper != null);
+                    return (Activator.CreateInstance(_typetoload, true) != null); // Allow Calling internal Constructors
+                return false;
             }
             catch (Exception)
             {
@@ -5768,19 +5758,14 @@ namespace Neos.IdentityServer.Console.Controls
         /// </summary>
         internal static bool CheckKeysAssembly(string fqiassembly)
         {
-
             try
             {
                 Assembly assembly = Assembly.Load(ParseAssembly(fqiassembly));
                 Type _typetoload = assembly.GetType(ParseType(fqiassembly));
-                ISecretKeyManager wrapper = null;
+
                 if (_typetoload.IsClass && !_typetoload.IsAbstract && _typetoload.GetInterface("ISecretKeyManager") != null)
-                {
-                    object o = Activator.CreateInstance(_typetoload, true); // Allow Calling internal Constructors
-                    if (o != null)
-                        wrapper = o as ISecretKeyManager;
-                }
-                return (wrapper != null);
+                    return (Activator.CreateInstance(_typetoload, true) != null); // Allow Calling internal Constructors
+                return false;
             }
             catch (Exception)
             {

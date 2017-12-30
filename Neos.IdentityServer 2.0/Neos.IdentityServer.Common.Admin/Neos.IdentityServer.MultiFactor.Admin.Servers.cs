@@ -668,9 +668,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         }
 
         /// <summary>
-        /// internalBackupConfiguration method implmentation
+        /// internalExportConfiguration method implmentation
         /// </summary>
-        private void internalBackupConfiguration(PSHost Host, MFAConfig config, string backupfile)
+        private void internalExportConfiguration(PSHost Host, string backupfile)
         {
             Runspace SPRunSpace = null;
             PowerShell SPPowerShell = null;
@@ -697,7 +697,41 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 pipeline.Commands.Add(exportcmd);
                 Collection<PSObject> PSOutput = pipeline.Invoke();
                 if (Host != null)
-                    Host.UI.WriteVerboseLine(DateTime.Now.ToLongTimeString() + " MFA Configuration saved to => "+backupfile);
+                    Host.UI.WriteVerboseLine(DateTime.Now.ToLongTimeString() + " MFA Configuration saved to => "+pth);
+            }
+            finally
+            {
+                if (SPRunSpace != null)
+                    SPRunSpace.Close();
+            }
+        }
+
+        /// <summary>
+        /// internalImportConfiguration method implmentation
+        /// </summary>
+        private void internalImportConfiguration(PSHost Host, string importfile)
+        {
+            Runspace SPRunSpace = null;
+            PowerShell SPPowerShell = null;
+            try
+            {
+                RunspaceConfiguration SPRunConfig = RunspaceConfiguration.Create();
+                SPRunSpace = RunspaceFactory.CreateRunspace(SPRunConfig);
+
+                SPPowerShell = PowerShell.Create();
+                SPPowerShell.Runspace = SPRunSpace;
+                SPRunSpace.Open();
+
+                Pipeline pipeline = SPRunSpace.CreatePipeline();
+                Command exportcmd = new Command("Import-AdfsAuthenticationProviderConfigurationData", false);
+                CommandParameter NParam = new CommandParameter("Name", "MultifactorAuthenticationProvider");
+                exportcmd.Parameters.Add(NParam);
+                CommandParameter PParam = new CommandParameter("FilePath", importfile);
+                exportcmd.Parameters.Add(PParam);
+                pipeline.Commands.Add(exportcmd);
+                Collection<PSObject> PSOutput = pipeline.Invoke();
+                if (Host != null)
+                    Host.UI.WriteVerboseLine(DateTime.Now.ToLongTimeString() + " MFA Configuration saved to => " + importfile);
             }
             finally
             {
@@ -979,10 +1013,12 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 _config.UpgradeDefaults();
             else if ((!upgrade) && (IsFarmConfigured()))
                 return false;
-             //   throw new Exception(errors_strings.ErrorMFAFarmAlreadyInitialized);
 
             if ((_config != null) && (upgrade))
-                internalBackupConfiguration(host, _config, filepath);
+                internalExportConfiguration(host, filepath);
+            else if ((_config == null) && (upgrade))
+                throw new Exception("You Cannot use allowupgrade switch because MFA-System is not initialized ! You can also import a backup configuration with the cmdlet Import-MFASystemConfiguration");
+
             try
             {
                 if (_config.KeysConfig.KeyFormat != format)
@@ -1045,12 +1081,56 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 _config = ReadConfiguration(Host);
             }
             if (!string.IsNullOrEmpty(filepath))
-                internalBackupConfiguration(Host, _config, filepath);
+                internalExportConfiguration(Host, filepath);
             internalDeActivateConfiguration(Host);
             internalUnRegisterConfiguration(Host);
             if (restartfarm)
                 RestartFarm(Host);
             _config = null;
+        }
+
+        /// <summary>
+        /// ImportMFAProviderConfiguration method implementation
+        /// </summary>
+        public void ImportMFAProviderConfiguration(PSHost Host, bool activate, bool restartfarm, string importfile)
+        {
+            if (_config == null)
+            {
+                EnsureLocalService();
+                _config = ReadConfiguration(Host);
+            }
+            this.ConfigurationStatusChanged(this, ConfigOperationStatus.ConfigIsDirty);
+            try
+            {
+                internalImportConfiguration(Host, importfile);
+                using (MailSlotClient mailslot = new MailSlotClient())
+                {
+                    mailslot.SendNotification(0xAA);
+                }
+                this.ConfigurationStatusChanged(this, ConfigOperationStatus.ConfigSaved);
+                _config = ReadConfiguration(Host);
+            }
+            catch (Exception ex)
+            {
+                this.ConfigurationStatusChanged(this, ConfigOperationStatus.ConfigInError, ex);
+            }
+            if (activate)
+               internalActivateConfiguration(Host);
+            if (restartfarm)
+                RestartFarm(Host);
+        }
+
+        /// <summary>
+        /// ExportMFAProviderConfiguration method implementation
+        /// </summary>
+        public void ExportMFAProviderConfiguration(PSHost Host, string exportfilepath)
+        {
+            if (_config == null)
+            {
+                EnsureConfiguration(Host);
+                _config = ReadConfiguration(Host);
+            }
+            internalExportConfiguration(Host, exportfilepath);
         }
 
         /// <summary>

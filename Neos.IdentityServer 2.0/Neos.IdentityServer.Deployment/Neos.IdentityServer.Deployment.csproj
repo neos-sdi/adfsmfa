@@ -69,6 +69,7 @@
   <ItemGroup>
     <Compile Include="CustomAction.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Content Include="CustomAction.config" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Neos.IdentityServer.pfx" />

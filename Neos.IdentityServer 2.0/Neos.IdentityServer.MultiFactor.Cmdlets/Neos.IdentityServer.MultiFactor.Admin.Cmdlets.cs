@@ -369,7 +369,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// </summary>
         [Parameter(ParameterSetName = "Identity")]
         [Parameter(ParameterSetName = "Data")]
-        [ValidateRange(PreferredMethod.Choose, PreferredMethod.None)]
+        [ValidateRange(PreferredMethod.Choose, PreferredMethod.Phone)]
         public PreferredMethod Method
         {
             get { return _method; }
@@ -1545,17 +1545,163 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     /// <summary>
     /// <para type="description">Set the name of the backup file.</para>
     /// </summary>
-    public class BackupFilePathDynamicParameters 
+    public class BackupFilePathDynamicParameters
     {
         /// <summary>
         /// <para type="description">Set the name of the backup file.</para>
         /// BackupFileName property
         /// </summary>
-        [Parameter(ParameterSetName = "Data", Mandatory=true)]
+        [Parameter(ParameterSetName = "Data", Mandatory = true)]
         public string BackupFilePath
         {
             get;
             set;
+        }
+    }
+
+    /// <summary>
+    /// <para type="synopsis">Update MFA Configuration with a configuration file.</para>
+    /// <para type="description">Update Configuration of MFA components. Activate it</para>
+    /// </summary>
+    /// <example>
+    ///   <para>Import-MFASystemConfiguration -ImportFilePath c:\temp\mysavedconfig.xml</para>
+    ///   <para>Import a new configuration for MFA with a file. You must complete configuration with other CmdLets</para>
+    /// </example>
+    /// <example>
+    ///   <para>Import-MFASystemConfiguration -Activate -RestartFarm -ImportFilePath c:\temp\mysavedconfig.xml</para>
+    ///   <para>Update MFA configuration with the specified file. Activation and Restart of services is available. </para>
+    /// </example>
+    [Cmdlet("Import", "MFASystemConfiguration", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
+    public sealed class ImportMFASystemConfiguration : MFACmdlet
+    {
+        /// <summary>
+        /// <para type="description">Active MFA as Provider in ADFS, User will be prompted for 2FA immediately.</para>
+        /// Activate property
+        /// </summary>
+        [Parameter(ParameterSetName = "Data")]
+        public SwitchParameter Activate
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// <para type="description">Restart all Farm ADFS services after registration.</para>
+        /// RestartFarm property
+        /// </summary>
+        [Parameter(ParameterSetName = "Data")]
+        public SwitchParameter RestartFarm
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// <para type="description">Set the name of the backup file.</para>
+        /// BackupFileName property
+        /// </summary>
+        [Parameter(ParameterSetName = "Data", Mandatory = true)]
+        public string ImportFilePath
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// BeginProcessing method implementation
+        /// </summary>
+        protected override void BeginProcessing()
+        {
+            base.BeginProcessing();
+            try
+            {
+                ManagementService.Initialize(this.Host, false);
+            }
+            catch (Exception ex)
+            {
+                this.ThrowTerminatingError(new ErrorRecord(ex, "3011", ErrorCategory.OperationStopped, this));
+            }
+        }
+
+        /// <summary>
+        /// ProcessRecord method override
+        /// </summary>
+        protected override void ProcessRecord()
+        {
+            try
+            {
+                if (ShouldProcess("Import-MFASystemConfiguration", "Import and ovveride the current MFA configuration with : " + ImportFilePath + " ? "))
+                {
+                    PSHost hh = GetHostForVerbose();
+                    ADFSServiceManager svc = ManagementService.ADFSManager;
+                    svc.ImportMFAProviderConfiguration(hh, this.Activate, this.RestartFarm, ImportFilePath);
+                    this.Host.UI.WriteLine(ConsoleColor.Green, this.Host.UI.RawUI.BackgroundColor, String.Format(infos_strings.InfosSystemImported, ImportFilePath));
+                }
+            }
+            catch (Exception ex)
+            {
+                this.ThrowTerminatingError(new ErrorRecord(ex, "3012", ErrorCategory.OperationStopped, this));
+            }
+        }
+    }
+
+    /// <summary>
+    /// <para type="synopsis">Save current MFA Configuration to a file.</para>
+    /// <para type="description">Save current Configuration of MFA components</para>
+    /// </summary>
+    /// <example>
+    ///   <para>Export-MFASystemConfiguration -ExportFilePath c:\temp\mysavedconfig.xml</para>
+    ///   <para>Export current MFA configuration to the specified file.</para>
+    /// </example>
+    [Cmdlet("Export", "MFASystemConfiguration", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
+    public sealed class ExportMFASystemConfiguration : MFACmdlet
+    {
+        /// <summary>
+        /// <para type="description">Set the name of the export file.</para>
+        /// ExportFilePath property
+        /// </summary>
+        [Parameter(ParameterSetName = "Data", Mandatory = true)]
+        public string ExportFilePath
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// BeginProcessing method implementation
+        /// </summary>
+        protected override void BeginProcessing()
+        {
+            base.BeginProcessing();
+            try
+            {
+                ManagementService.Initialize(this.Host, false);
+            }
+            catch (Exception ex)
+            {
+                this.ThrowTerminatingError(new ErrorRecord(ex, "3011", ErrorCategory.OperationStopped, this));
+            }
+        }
+
+        /// <summary>
+        /// ProcessRecord method override
+        /// </summary>
+        protected override void ProcessRecord()
+        {
+            try
+            {
+                if (ShouldProcess("Export-MFASystemConfiguration", "Export current MFA configuration to file : " + ExportFilePath + " ?"))
+                {
+                    PSHost hh = GetHostForVerbose();
+                    ADFSServiceManager svc = ManagementService.ADFSManager;
+                    svc.ExportMFAProviderConfiguration(hh, ExportFilePath);
+                    this.Host.UI.WriteLine(ConsoleColor.Green, this.Host.UI.RawUI.BackgroundColor, String.Format(infos_strings.InfosSystemExported, ExportFilePath));
+                }
+            }
+            catch (Exception ex)
+            {
+                this.ThrowTerminatingError(new ErrorRecord(ex, "3012", ErrorCategory.OperationStopped, this));
+            }
         }
     }
 
