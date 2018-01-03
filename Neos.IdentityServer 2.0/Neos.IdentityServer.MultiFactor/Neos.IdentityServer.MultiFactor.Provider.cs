@@ -283,8 +283,6 @@ namespace Neos.IdentityServer.MultiFactor
                  {
                      try
                      {
-                         Debugger.Launch();
-                         Debugger.Break();
                          Stream stm = configData.Data;
                          XmlConfigSerializer xmlserializer = new XmlConfigSerializer(typeof(MFAConfig));
                          using (StreamReader reader = new StreamReader(stm))

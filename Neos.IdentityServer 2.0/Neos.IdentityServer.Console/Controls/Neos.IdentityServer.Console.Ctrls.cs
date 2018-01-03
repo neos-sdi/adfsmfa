@@ -5667,7 +5667,7 @@ namespace Neos.IdentityServer.Console.Controls
                 MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
                 messageBoxParameters.Text = res.CTRLSECRSAGENERATE;
                 messageBoxParameters.Buttons = MessageBoxButtons.OKCancel;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                messageBoxParameters.Icon = MessageBoxIcon.Warning;
                 bool result = (this._snapin.Console.ShowDialog(messageBoxParameters) == DialogResult.OK);
                 if (result)
                 {

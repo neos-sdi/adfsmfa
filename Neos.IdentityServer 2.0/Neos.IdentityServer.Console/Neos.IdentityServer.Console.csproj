@@ -426,6 +426,7 @@
     <None Include="Properties\DataSources\Neos.IdentityServer.MultiFactor.Admin.UsersFilterOperatorList.datasource" />
     <None Include="Properties\DataSources\Neos.IdentityServer.MultiFactor.Admin.UsersPreferredMethodList.datasource" />
     <None Include="ResFiles\dsuiext_4126.ico" />
+    <None Include="SnapMMC\import.csv" />
     <None Include="SnapMMC\MFA.msc" />
   </ItemGroup>
   <ItemGroup>
@@ -442,6 +443,7 @@
     <Content Include="ResFiles\user_off32.bmp" />
     <Content Include="ResFiles\user_on16.bmp" />
     <Content Include="ResFiles\user_on32.bmp" />
+    <Content Include="SnapMMC\import.xml" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

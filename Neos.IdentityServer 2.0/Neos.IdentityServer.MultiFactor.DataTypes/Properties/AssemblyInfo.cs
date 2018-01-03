@@ -28,7 +28,7 @@ using System.Resources;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Neos-Sdi")]
 [assembly: AssemblyProduct("Microsoft.IdentityServer.MultiFactor.DataTypes")]
-[assembly: AssemblyCopyright("Copyright Neos-Sdi © 2017")]
+[assembly: AssemblyCopyright("Copyright Neos-Sdi © 2018")]
 [assembly: AssemblyTrademark("Neos-Sdi")]
 [assembly: AssemblyCulture("")]
 
@@ -49,7 +49,7 @@ using System.Resources;
 //      Révision
 //
 [assembly: AssemblyVersion("2.0.0.0")]
-[assembly: AssemblyFileVersion("2.0.2.964")]
+[assembly: AssemblyFileVersion("2.0.2.965")]
 [assembly: AssemblyInformationalVersion("2.0.0.0")]
 
 

@@ -971,6 +971,11 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                     if (Host != null)
                         Host.UI.WriteVerboseLine(DateTime.Now.ToLongTimeString() + " MFA Certificate \"" + thumbprint + "\" Added to ADFS Decrypting Certificates list");
                 }
+                catch (CmdletInvocationException) // if Rollover is enabled cannot add 
+                {
+                    if (Host != null)
+                        Host.UI.WriteWarningLine(DateTime.Now.ToLongTimeString() + " Error adding certificate \"" + thumbprint + "\" to ADFS Decrypting Certificates list, your must do it manually !");
+                }
                 catch (Exception)
                 {
                     if (Host != null)
