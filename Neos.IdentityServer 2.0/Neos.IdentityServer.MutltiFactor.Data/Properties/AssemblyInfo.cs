@@ -49,7 +49,7 @@ using System.Resources;
 //      Révision
 //
 [assembly: AssemblyVersion("2.0.0.0")]
-[assembly: AssemblyFileVersion("2.0.2.965")]
+[assembly: AssemblyFileVersion("2.0.2.966")]
 [assembly: AssemblyInformationalVersion("2.0.0.0")]
 
 // To Generate PubliKey 

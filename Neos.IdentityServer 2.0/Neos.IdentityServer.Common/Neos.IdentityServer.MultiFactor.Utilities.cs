@@ -425,7 +425,7 @@ namespace Neos.IdentityServer.MultiFactor
         public OTPGenerator(HashMode mode = HashMode.SHA1)
         {
             RequestedDatetime = DateTime.UtcNow;
-            _mode = mode;
+            HashMode = mode;
             var timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromMilliseconds(500);
             timer.Tick += (s, e) => SecondsToGo = TOTPDuration - Convert.ToInt32(GetUnixTimestamp(RequestedDatetime) % TOTPDuration);
@@ -438,14 +438,13 @@ namespace Neos.IdentityServer.MultiFactor
         public OTPGenerator(byte[] asecret, string aid, HashMode mode = HashMode.SHA1)
         {
             RequestedDatetime = DateTime.UtcNow;
-            _mode = mode;
+            HashMode = mode;
+            Secret = asecret;
+            Identity = aid;
             var timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromMilliseconds(500);
             timer.Tick += (s, e) => SecondsToGo = TOTPDuration - Convert.ToInt32(GetUnixTimestamp(RequestedDatetime) % TOTPDuration);
             timer.IsEnabled = true;
-
-            Secret = asecret;
-            Identity = aid;
         }
 
         /// <summary>
@@ -455,14 +454,13 @@ namespace Neos.IdentityServer.MultiFactor
         {
             RequestedDatetime = DateTime.UtcNow;
             byte[] asecret = Base32.GetBytesFromString(ssecret);
-            _mode = mode;
+            HashMode = mode;
+            Secret = asecret;
+            Identity = aid;
             var timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromMilliseconds(500);
             timer.Tick += (s, e) => SecondsToGo = TOTPDuration - Convert.ToInt32(GetUnixTimestamp(RequestedDatetime) % TOTPDuration);
             timer.IsEnabled = true;
-
-            Secret = asecret;
-            Identity = aid;
         }
 
         /// <summary>
@@ -472,14 +470,13 @@ namespace Neos.IdentityServer.MultiFactor
         {
             RequestedDatetime = datetime;
             byte[] asecret = Base32.GetBytesFromString(ssecret);
-            _mode = mode;
+            HashMode = mode;
+            Secret = asecret;
+            Identity = aid;
             var timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromMilliseconds(500);
             timer.Tick += (s, e) => SecondsToGo = TOTPDuration - Convert.ToInt32(GetUnixTimestamp(RequestedDatetime) % TOTPDuration);
             timer.IsEnabled = true;
-
-            Secret = asecret;
-            Identity = aid;
         }
 
         /// <summary>
@@ -512,6 +509,15 @@ namespace Neos.IdentityServer.MultiFactor
         {
             get { return _secret; }
             set { _secret = value; }
+        }
+
+        /// <summary>
+        /// HashMode property implementation
+        /// </summary>
+        public HashMode HashMode
+        {
+            get { return _mode; }
+            set { _mode = value; }
         }
 
         /// <summary>
@@ -1528,7 +1534,6 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public static string GetQRCodeString(string UPN, string QRString, MFAConfig config)
         {
-            string result = string.Empty;
             string Content = string.Format("otpauth://totp/{0}:{1}?secret={2}&issuer={0}&algorithm={3}", config.Issuer, UPN, QRString, config.Algorithm);
 
             var encoder = new QrEncoding.QrEncoder(ErrorCorrectionLevel.L);
@@ -1541,9 +1546,8 @@ namespace Neos.IdentityServer.MultiFactor
                 var render = new GraphicsRenderer(new FixedModuleSize(3, QuietZoneModules.Zero));
                 render.WriteToStream(matrix, ImageFormat.Png, ms);
                 ms.Position = 0;
-                result = ConvertToBase64(ms);
+                return ConvertToBase64(ms);
             }
-            return result;
         }
 
         /// <summary>
@@ -1551,9 +1555,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public static string GetQRCodeValue(string UPN, string QRString, MFAConfig config)
         {
-            string result = string.Empty;
-            string Content = string.Format("otpauth://totp/{0}:{1}?secret={2}&issuer={0}&algorithm={3}", config.Issuer, UPN, QRString, config.Algorithm);
-            return Content;
+            return string.Format("otpauth://totp/{0}:{1}?secret={2}&issuer={0}&algorithm={3}", config.Issuer, UPN, QRString, config.Algorithm);
         }
 
         /// <summary>
@@ -1561,7 +1563,6 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public static Stream GetQRCodeStream(string UPN, string QRString, MFAConfig config)
         {
-            string result = string.Empty;
             string Content = string.Format("otpauth://totp/{0}:{1}?secret={2}&issuer={0}&algorithm={3}", config.Issuer, UPN, QRString, config.Algorithm);
 
             var encoder = new QrEncoding.QrEncoder(ErrorCorrectionLevel.L);

@@ -1595,56 +1595,61 @@ namespace Neos.IdentityServer.MultiFactor
             }
             else if (notif.OTP == (int)NotificationStatus.Totp)  // Using a TOTP Application (Microsoft Authnetication, Google Authentication, etc...)
             {
-                if (Config.TOTPShadows <= 0)
+                if (!KeysManager.ValidateKey(usercontext.UPN))
+                    throw new CryptographicException(string.Format("SECURTY ERROR : Invalid Key for User {0}", usercontext.UPN));
+                string encodedkey = KeysManager.ProbeKey(usercontext.UPN);
+
+                // Iterate through HashMode to check if != SHA1 / Microsoft Authnetication, Google Authentication and more support only SHA1
+                foreach (HashMode algo in Enum.GetValues(typeof(HashMode)))
                 {
-                    if (!KeysManager.ValidateKey(usercontext.UPN))
-                        throw new CryptographicException(string.Format("SECURTY ERROR : Invalid Key for User {0}", usercontext.UPN));
-                    string encodedkey = KeysManager.ProbeKey(usercontext.UPN);
-                    DateTime call = DateTime.UtcNow;
-                    OTPGenerator gen = new OTPGenerator(encodedkey, usercontext.UPN, call, Config.Algorithm);  // eg : TOTP code
-                    gen.ComputeOTP(call);
-                    string generatedpin = gen.OTP.ToString("D6");
-                    return (Convert.ToInt32(pin) == Convert.ToInt32(generatedpin));
-                }
-                else
-                {   // Current TOTP
-                    if (!KeysManager.ValidateKey(usercontext.UPN))
-                        throw new CryptographicException(string.Format("SECURTY ERROR : Invalid Key for User {0}", usercontext.UPN));
-                    string encodedkey = KeysManager.ProbeKey(usercontext.UPN);
-                    DateTime tcall = DateTime.UtcNow;
-                    OTPGenerator gen = new OTPGenerator(encodedkey, usercontext.UPN, tcall, Config.Algorithm);  // eg : TOTP code
-                    gen.ComputeOTP(tcall);
-                    string currentpin = gen.OTP.ToString("D6");
-                    if (Convert.ToInt32(pin) == Convert.ToInt32(currentpin))
+                    if (Config.TOTPShadows <= 0)
                     {
-                        return true;
-                    }
-                    // TOTP with Shadow (current - x latest)
-                    for (int i = 1; i <= Config.TOTPShadows; i++)
-                    {
-                        DateTime call = tcall.AddSeconds(-(i * OTPGenerator.TOTPDuration));
-                        OTPGenerator gen2 = new OTPGenerator(encodedkey, usercontext.UPN, call, Config.Algorithm);  // eg : TOTP code
-                        gen2.ComputeOTP(call);
-                        string generatedpin = gen2.OTP.ToString("D6");
+                        DateTime call = DateTime.UtcNow;
+                        OTPGenerator gen = new OTPGenerator(encodedkey, usercontext.UPN, call, algo);  // eg : TOTP code
+                        gen.ComputeOTP(call);
+                        string generatedpin = gen.OTP.ToString("D6");
                         if (Convert.ToInt32(pin) == Convert.ToInt32(generatedpin))
                         {
                             return true;
                         }
                     }
-                    // TOTP with Shadow (current + x latest) - not possible. but can be usefull if time sync is not adequate
-                    for (int i = 1; i <= Config.TOTPShadows; i++)
-                    {
-                        DateTime call = tcall.AddSeconds(i * OTPGenerator.TOTPDuration);
-                        OTPGenerator gen3 = new OTPGenerator(encodedkey, usercontext.UPN, call, Config.Algorithm);  // eg : TOTP code
-                        gen3.ComputeOTP(call);
-                        string generatedpin = gen3.OTP.ToString("D6");
-                        if (Convert.ToInt32(pin) == Convert.ToInt32(generatedpin))
+                    else
+                    {   // Current TOTP
+                        DateTime tcall = DateTime.UtcNow;
+                        OTPGenerator gen = new OTPGenerator(encodedkey, usercontext.UPN, tcall, algo);  // eg : TOTP code
+                        gen.ComputeOTP(tcall);
+                        string currentpin = gen.OTP.ToString("D6");
+                        if (Convert.ToInt32(pin) == Convert.ToInt32(currentpin))
                         {
                             return true;
                         }
+                        // TOTP with Shadow (current - x latest)
+                        for (int i = 1; i <= Config.TOTPShadows; i++)
+                        {
+                            DateTime call = tcall.AddSeconds(-(i * OTPGenerator.TOTPDuration));
+                            OTPGenerator gen2 = new OTPGenerator(encodedkey, usercontext.UPN, call, algo);  // eg : TOTP code
+                            gen2.ComputeOTP(call);
+                            string generatedpin = gen2.OTP.ToString("D6");
+                            if (Convert.ToInt32(pin) == Convert.ToInt32(generatedpin))
+                            {
+                                return true;
+                            }
+                        }
+                        // TOTP with Shadow (current + x latest) - not possible. but can be usefull if time sync is not adequate
+                        for (int i = 1; i <= Config.TOTPShadows; i++)
+                        {
+                            DateTime call = tcall.AddSeconds(i * OTPGenerator.TOTPDuration);
+                            OTPGenerator gen3 = new OTPGenerator(encodedkey, usercontext.UPN, call, algo);  // eg : TOTP code
+                            gen3.ComputeOTP(call);
+                            string generatedpin = gen3.OTP.ToString("D6");
+                            if (Convert.ToInt32(pin) == Convert.ToInt32(generatedpin))
+                            {
+                                return true;
+                            }
+                        }
                     }
-                    return false;
                 }
+                return false;
             }
             else if (notif.OTP == (int)NotificationStatus.Error)    // Active Request for code
                 return false;
