@@ -109,7 +109,7 @@ namespace Neos.IdentityServer.MultiFactor
             else
                 client = new SQLDataRepositoryService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow);
             client.OnKeyDataEvent += KeyDataEvent;
-            return client.SetUserRegistration(registration); ;
+            return client.SetUserRegistration(registration, resetkey); 
         }
 
         /// <summary>
@@ -123,7 +123,7 @@ namespace Neos.IdentityServer.MultiFactor
             else
                 client = new SQLDataRepositoryService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow);
             client.OnKeyDataEvent += KeyDataEvent;
-            return client.AddUserRegistration(reg);
+            return client.AddUserRegistration(reg, addkey);
         }
 
         /// <summary>
@@ -1534,11 +1534,11 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public static string GetQRCodeString(string UPN, string QRString, MFAConfig config)
         {
-            string Content = string.Format("otpauth://totp/{0}:{1}?secret={2}&issuer={0}&algorithm={3}", config.Issuer, UPN, QRString, config.Algorithm);
+            string content = string.Format("otpauth://totp/{0}:{1}?secret={2}&issuer={3}&algorithm={4}", config.Issuer, UPN, QRString, config.QRIssuer, config.Algorithm);
 
             var encoder = new QrEncoding.QrEncoder(ErrorCorrectionLevel.L);
             QrCode qr;
-            if (!encoder.TryEncode(Content, out qr))
+            if (!encoder.TryEncode(content, out qr))
                 return string.Empty;
             BitMatrix matrix = qr.Matrix;
             using (MemoryStream ms = new MemoryStream())
@@ -1555,7 +1555,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public static string GetQRCodeValue(string UPN, string QRString, MFAConfig config)
         {
-            return string.Format("otpauth://totp/{0}:{1}?secret={2}&issuer={0}&algorithm={3}", config.Issuer, UPN, QRString, config.Algorithm);
+            return string.Format("otpauth://totp/{0}:{1}?secret={2}&issuer={3}&algorithm={4}", config.Issuer, UPN, QRString, config.QRIssuer, config.Algorithm);
         }
 
         /// <summary>
@@ -1563,11 +1563,11 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public static Stream GetQRCodeStream(string UPN, string QRString, MFAConfig config)
         {
-            string Content = string.Format("otpauth://totp/{0}:{1}?secret={2}&issuer={0}&algorithm={3}", config.Issuer, UPN, QRString, config.Algorithm);
+            string content = string.Format("otpauth://totp/{0}:{1}?secret={2}&issuer={3}&algorithm={4}", config.Issuer, UPN, QRString, config.QRIssuer, config.Algorithm);
 
             var encoder = new QrEncoding.QrEncoder(ErrorCorrectionLevel.L);
             QrCode qr;
-            if (!encoder.TryEncode(Content, out qr))
+            if (!encoder.TryEncode(content, out qr))
                 return null;
             BitMatrix matrix = qr.Matrix;
             var render = new GraphicsRenderer(new FixedModuleSize(3, QuietZoneModules.Zero));

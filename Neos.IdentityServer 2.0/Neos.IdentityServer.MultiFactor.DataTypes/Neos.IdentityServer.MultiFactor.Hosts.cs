@@ -23,6 +23,7 @@ using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Xml;
+using System.Web;
 using System.Xml.Serialization;
 using Microsoft.IdentityServer.Web.Authentication.External;
 
@@ -435,6 +436,15 @@ namespace Neos.IdentityServer.MultiFactor
                     return _issuer;
             }
             set { _issuer = value; }
+        }
+
+        [XmlIgnore]
+        public string QRIssuer
+        {
+            get
+            {
+                return HttpUtility.UrlEncode(this.Issuer);
+            }
         }
 
         [XmlAttribute("UseActiveDirectory")]
