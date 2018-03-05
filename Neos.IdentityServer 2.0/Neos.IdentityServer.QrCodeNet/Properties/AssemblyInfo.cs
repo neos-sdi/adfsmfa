@@ -29,7 +29,7 @@ using System.Windows;
 [assembly: Guid("46f0d5b0-3954-4f7e-94dc-4d2757f22441")]
 
 [assembly: AssemblyVersion("2.0.0.0")]
-[assembly: AssemblyFileVersion("2.0.2.967")]
+[assembly: AssemblyFileVersion("2.0.2.968")]
 [assembly: AssemblyInformationalVersion("2.0.0.0")]
 
 [assembly: ThemeInfo(
