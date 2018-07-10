@@ -1,0 +1,456 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="CRLPROVACTIVE" xml:space="preserve">
+    <value>Activo</value>
+  </data>
+  <data name="CRTLADFSRESTARTFARMSERVICES" xml:space="preserve">
+    <value>Reiniciar todos los servicios de federación</value>
+  </data>
+  <data name="CRTLADFSRESTARTSERVICES" xml:space="preserve">
+    <value>Reiniciar los servicios de federación</value>
+  </data>
+  <data name="CRTLADFSSTARTSERVICES" xml:space="preserve">
+    <value>Comience los servicios de federación</value>
+  </data>
+  <data name="CRTLADFSSTOPSERVICES" xml:space="preserve">
+    <value>Detener los servicios de federación</value>
+  </data>
+  <data name="CTRGLMANAGEREG" xml:space="preserve">
+    <value>Notificaciones de registro</value>
+  </data>
+  <data name="CTRGLMANAGEREGEND" xml:space="preserve">
+    <value>Final</value>
+  </data>
+  <data name="CTRGLMANAGEREGSTART" xml:space="preserve">
+    <value>Inicio</value>
+  </data>
+  <data name="CTRLADACCOUNT" xml:space="preserve">
+    <value>Cuenta de acceso</value>
+  </data>
+  <data name="CTRLADATCHECKDATEERROR" xml:space="preserve">
+    <value>¡Atributo de ADDS inválido para la fecha de verificación !</value>
+  </data>
+  <data name="CTRLADATENABLEDERROR" xml:space="preserve">
+    <value>¡Atributo ADDS inválido para Habilitado !</value>
+  </data>
+  <data name="CTRLADATMETHODERROR" xml:space="preserve">
+    <value>¡Atributo ADDS inválido para el método !</value>
+  </data>
+  <data name="CTRLADATOVERRIDEERROR" xml:space="preserve">
+    <value>¡Atributo ADDS inválido para el método específico!</value>
+  </data>
+  <data name="CTRLADATPINERROR" xml:space="preserve">
+    <value>¡Atributo ADDS inválido para Código PIN !</value>
+  </data>
+  <data name="CTRLADATTACCOUNT" xml:space="preserve">
+    <value>¡Cuenta de ADDS inválida !</value>
+  </data>
+  <data name="CTRLADATTCODE" xml:space="preserve">
+    <value>Código de verificación TOTP</value>
+  </data>
+  <data name="CTRLADATTDOMAIN" xml:space="preserve">
+    <value>¡Dirección de dominio ADDS inválida !</value>
+  </data>
+  <data name="CTRLADATTEMAILERROR" xml:space="preserve">
+    <value>¡Atributo ADDS inválido para la dirección de correo electrónico !</value>
+  </data>
+  <data name="CTRLADATTKEY" xml:space="preserve">
+    <value>Clave secreta</value>
+  </data>
+  <data name="CTRLADATTKEYERROR" xml:space="preserve">
+    <value>¡Atributo ADDS inválido para Key !</value>
+  </data>
+  <data name="CTRLADATTMAIL" xml:space="preserve">
+    <value>Dirección de correo electrónico</value>
+  </data>
+  <data name="CTRLADATTMETHOD" xml:space="preserve">
+    <value>Método predeterminado de MFA</value>
+  </data>
+  <data name="CTRLADATTOTPERROR" xml:space="preserve">
+    <value>¡Atributo ADDS inválido para TOTP !</value>
+  </data>
+  <data name="CTRLADATTOVERRIDE" xml:space="preserve">
+    <value>Método específico de MFA</value>
+  </data>
+  <data name="CTRLADATTPASSWORD" xml:space="preserve">
+    <value>¡Contraseña de ADDS inválida !</value>
+  </data>
+  <data name="CTRLADATTPHONE" xml:space="preserve">
+    <value>Teléfono móvil</value>
+  </data>
+  <data name="CTRLADATTPHONEERROR" xml:space="preserve">
+    <value>¡Atributo ADDS inválido para el número de teléfono !</value>
+  </data>
+  <data name="CTRLADATTPIN" xml:space="preserve">
+    <value>Código PIN</value>
+  </data>
+  <data name="CTRLADATTRIBUTES" xml:space="preserve">
+    <value>Definición de atributos de Active Directory</value>
+  </data>
+  <data name="CTRLADATTSTATUS" xml:space="preserve">
+    <value>Estado de activación del usuario</value>
+  </data>
+  <data name="CTRLADATTVALIDATION" xml:space="preserve">
+    <value>Fecha de verificación de TOTP</value>
+  </data>
+  <data name="CTRLADATTVALIDITY" xml:space="preserve">
+    <value>Fecha de validez TOTP</value>
+  </data>
+  <data name="CTRLADATVALIDITYDATEERROR" xml:space="preserve">
+    <value>¡Atributo ADDS inválido para la fecha de validez !</value>
+  </data>
+  <data name="CTRLADCONNECTIONERROR" xml:space="preserve">
+    <value>¡No se puede conectar en ADDS bosque / dominio !</value>
+  </data>
+  <data name="CTRLADCONNECTIONOK" xml:space="preserve">
+    <value>Inicie sesión en ADDS bosque / dominio operativo !</value>
+  </data>
+  <data name="CTRLADDOMAIN" xml:space="preserve">
+    <value>Nombre de dominio</value>
+  </data>
+  <data name="CTRLADFSACTIVATEMFA" xml:space="preserve">
+    <value>Habilitar MFA</value>
+  </data>
+  <data name="CTRLADFSDEACTIVATEMFA" xml:space="preserve">
+    <value>Deshabilitar MFA</value>
+  </data>
+  <data name="CTRLADPASSWORD" xml:space="preserve">
+    <value>Contraseña</value>
+  </data>
+  <data name="CTRLADTEST" xml:space="preserve">
+    <value>Ensayo</value>
+  </data>
+  <data name="CTRLADUSEADDS" xml:space="preserve">
+    <value>Usar la configuración de Active Directory</value>
+  </data>
+  <data name="CTRLAZURETENANTID" xml:space="preserve">
+    <value>Sosteniendo Azure</value>
+  </data>
+  <data name="CTRLAZURETHUMPRINT" xml:space="preserve">
+    <value>Huella del certificado Azure</value>
+  </data>
+  <data name="CTRLCANCEL" xml:space="preserve">
+    <value>Anular</value>
+  </data>
+  <data name="CTRLGLCOMANYNAME" xml:space="preserve">
+    <value>Nombre de la Sociedad</value>
+  </data>
+  <data name="CTRLGLCONTACT" xml:space="preserve">
+    <value>Contacto administrativo (email)</value>
+  </data>
+  <data name="CTRLGLCONTRYCODE" xml:space="preserve">
+    <value>Código de país predeterminado</value>
+  </data>
+  <data name="CTRLGLDELVERY" xml:space="preserve">
+    <value>Tiempo de validación (en segundos)</value>
+  </data>
+  <data name="CTRLGLHASH" xml:space="preserve">
+    <value>Algoritmo Hash</value>
+  </data>
+  <data name="CTRLGLINVALIDEMAILCONTACT" xml:space="preserve">
+    <value>Formato de correo electrónico no válido para el contacto administrativo</value>
+  </data>
+  <data name="CTRLGLMANAGEOPTIONS" xml:space="preserve">
+    <value>Administrar las opciones de usuario</value>
+  </data>
+  <data name="CTRLGLMANAGEOPTS" xml:space="preserve">
+    <value>Gestión de opciones</value>
+  </data>
+  <data name="CTRLGLMANAGEPWD" xml:space="preserve">
+    <value>Gestión de contraseñas</value>
+  </data>
+  <data name="CTRLGLMAXCODES" xml:space="preserve">
+    <value>Historial de códigos autorizado</value>
+  </data>
+  <data name="CTRLGLMFAREGISTER" xml:space="preserve">
+    <value>Registro de usuario</value>
+  </data>
+  <data name="CTRLGLMFAREGISTER1" xml:space="preserve">
+    <value>Administrativo - Registro realizado por el soporte</value>
+  </data>
+  <data name="CTRLGLMFAREGISTER2" xml:space="preserve">
+    <value>Usuario: registro realizado por el usuario</value>
+  </data>
+  <data name="CTRLGLMFAREGISTER3" xml:space="preserve">
+    <value>No administrado: póngase en contacto con el soporte</value>
+  </data>
+  <data name="CTRLGLMFASTATUS" xml:space="preserve">
+    <value>Estado de MFA</value>
+  </data>
+  <data name="CTRLGLMFASTATUS1" xml:space="preserve">
+    <value>Obligatorio: MFA no se puede inhabilitar</value>
+  </data>
+  <data name="CTRLGLMFASTATUS2" xml:space="preserve">
+    <value>Opcional: MFA se puede deshabilitar en opciones</value>
+  </data>
+  <data name="CTRLGLMFASTATUS3" xml:space="preserve">
+    <value>No requerido</value>
+  </data>
+  <data name="CTRLGLPOLICY" xml:space="preserve">
+    <value>Política de seguridad (modelo)</value>
+  </data>
+  <data name="CTRLGLREFRESH" xml:space="preserve">
+    <value>Frecuencia de actualización (en milisegundos)</value>
+  </data>
+  <data name="CTRLGLUSEAPPS" xml:space="preserve">
+    <value>Usar aplicaciones de autenticación (Google Authenticator, Microsoft Authenticator)</value>
+  </data>
+  <data name="CTRLGLUSEMAILS" xml:space="preserve">
+    <value>Usa notificaciones por correo electrónico</value>
+  </data>
+  <data name="CTRLGLUSESMS" xml:space="preserve">
+    <value>Use notificaciones por SMS</value>
+  </data>
+  <data name="CTRLINVALIDVALUE" xml:space="preserve">
+    <value>El valor no válido debe estar entre {0} y {1}.</value>
+  </data>
+  <data name="CTRLNULLOREMPTYERROR" xml:space="preserve">
+    <value>Los valores nulos o vacíos no están permitidos.</value>
+  </data>
+  <data name="CTRLPROVPIN" xml:space="preserve">
+    <value>Código PIN necesario</value>
+  </data>
+  <data name="CTRLPROVWIZARD" xml:space="preserve">
+    <value>Asistente de registro</value>
+  </data>
+  <data name="CTRLSAVE" xml:space="preserve">
+    <value>Guardar</value>
+  </data>
+  <data name="CTRLSECASSEMBLY" xml:space="preserve">
+    <value>Implementación (clase completa)</value>
+  </data>
+  <data name="CTRLSECCERTIFDURATION" xml:space="preserve">
+    <value>Período de validez</value>
+  </data>
+  <data name="CTRLSECCERTIFICATES" xml:space="preserve">
+    <value>Certificados</value>
+  </data>
+  <data name="CTRLSECINVALIDCERT" xml:space="preserve">
+    <value>Certificado no encontrado !</value>
+  </data>
+  <data name="CTRLSECINVALIDEXTERROR" xml:space="preserve">
+    <value>Extensión inválida ! No se puede cargar !</value>
+  </data>
+  <data name="CTRLSECKEYGEN" xml:space="preserve">
+    <value>Longitud de clave generada</value>
+  </data>
+  <data name="CTRLSECKEYLENGTH" xml:space="preserve">
+    <value>Longitud máxima de clave</value>
+  </data>
+  <data name="CTRLSECKEYMODE" xml:space="preserve">
+    <value>Modo clave de seguridad</value>
+  </data>
+  <data name="CTRLSECNEWCERT" xml:space="preserve">
+    <value>Nuevo certificado</value>
+  </data>
+  <data name="CTRLSECNEWDATABASE" xml:space="preserve">
+    <value>Base de datos de nuevas claves</value>
+  </data>
+  <data name="CTRLSECPARAMS" xml:space="preserve">
+    <value>Configuraciones</value>
+  </data>
+  <data name="CTRLSECRSAGENERATE" xml:space="preserve">
+    <value>Confirmar la creación de un nuevo certificado para MFA? \ rPrecaución: todas las claves existentes serán invalidadas !</value>
+  </data>
+  <data name="CTRLSECTHUMPRINT" xml:space="preserve">
+    <value>Huella digital del certificado</value>
+  </data>
+  <data name="CTRLSECWIZTITLE" xml:space="preserve">
+    <value>Claves SQL: Creando la base de datos</value>
+  </data>
+  <data name="CTRLSMSASSEMBLY" xml:space="preserve">
+    <value>Implementación (clase completa)</value>
+  </data>
+  <data name="CTRLSMSASYNCCALL" xml:space="preserve">
+    <value>Llamadas asincrónicas</value>
+  </data>
+  <data name="CTRLSMSCOMPANY" xml:space="preserve">
+    <value>Nombre de la Sociedad</value>
+  </data>
+  <data name="CTRLSMSIVALIDEXTERROR" xml:space="preserve">
+    <value>Extensión inválida ! No se puede cargar !</value>
+  </data>
+  <data name="CTRLSMSPARAMS" xml:space="preserve">
+    <value>Configuraciones</value>
+  </data>
+  <data name="CTRLSMSSHA1" xml:space="preserve">
+    <value>Suplemento SHA1</value>
+  </data>
+  <data name="CTRLSMSTIMEOUT" xml:space="preserve">
+    <value>Tiempo fuera</value>
+  </data>
+  <data name="CTRLSMTPACCOUNT" xml:space="preserve">
+    <value>Cuenta de conexión</value>
+  </data>
+  <data name="CTRLSMTPCOMPANY" xml:space="preserve">
+    <value>Nombre de la Sociedad</value>
+  </data>
+  <data name="CTRLSMTPFROM" xml:space="preserve">
+    <value>Contacto administrativo (from)</value>
+  </data>
+  <data name="CTRLSMTPIDENTIFICATION" xml:space="preserve">
+    <value>Identificación</value>
+  </data>
+  <data name="CTRLSMTPMAILERROR" xml:space="preserve">
+    <value>Formato de correo inválido !</value>
+  </data>
+  <data name="CTRLSMTPMESSAGEOK" xml:space="preserve">
+    <value>Mensaje de prueba enviado a</value>
+  </data>
+  <data name="CTRLSMTPPASSWORD" xml:space="preserve">
+    <value>Contraseña</value>
+  </data>
+  <data name="CTRLSMTPPORT" xml:space="preserve">
+    <value>Porta</value>
+  </data>
+  <data name="CTRLSMTPPORTERROR" xml:space="preserve">
+    <value>Porta inválido !</value>
+  </data>
+  <data name="CTRLSMTPSERVER" xml:space="preserve">
+    <value>Servidor de correo</value>
+  </data>
+  <data name="CTRLSMTPSERVERADDRESS" xml:space="preserve">
+    <value>Dirección del servidor</value>
+  </data>
+  <data name="CTRLSMTPTEST" xml:space="preserve">
+    <value>Ensayo</value>
+  </data>
+  <data name="CTRLSQLCONNECTERROR" xml:space="preserve">
+    <value>¡No se puede conectar a la base de datos SQL de MFA !</value>
+  </data>
+  <data name="CTRLSQLCONNECTOK" xml:space="preserve">
+    <value>¡Inicie sesión en la base de datos SQL de MFA en funcionamiento !</value>
+  </data>
+  <data name="CTRLSQLCONNECTSTR" xml:space="preserve">
+    <value>Cadena de conexión</value>
+  </data>
+  <data name="CTRLSQLCONNECTSTRERROR" xml:space="preserve">
+    <value>Cadena de conexión SQL no válida !</value>
+  </data>
+  <data name="CTRLSQLCREATEDB" xml:space="preserve">
+    <value>Crear base de datos MFA</value>
+  </data>
+  <data name="CTRLSQLTEST" xml:space="preserve">
+    <value>Ensayo</value>
+  </data>
+  <data name="CTRLSQLUSING" xml:space="preserve">
+    <value>Usar la configuración de SQL Server</value>
+  </data>
+</root>
