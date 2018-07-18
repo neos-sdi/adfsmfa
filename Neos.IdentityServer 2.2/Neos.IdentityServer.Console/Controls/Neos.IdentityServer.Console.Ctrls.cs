@@ -279,6 +279,7 @@ namespace Neos.IdentityServer.Console.Controls
         private ErrorProvider errors;
         private CheckBox chkProviderEnabled;
         private CheckBox chkProviderEnroll;
+        private CheckBox chkProviderEnrollStrict;
         private CheckBox chkProviderPin;
 
         /// <summary>
@@ -375,17 +376,17 @@ namespace Neos.IdentityServer.Console.Controls
         private void DoCreateControls()
         {
             this.Dock = DockStyle.Top;
-            this.Height = 90;
+            this.Height = 110;
             this.Width = 512;
             this.Margin = new Padding(30, 5, 30, 5);
 
             _panel.Width = 20;
-            _panel.Height = 75;
+            _panel.Height = 95;
             this.Controls.Add(_panel);
 
             _txtpanel.Left = 20;
             _txtpanel.Width = this.Width - 20;
-            _txtpanel.Height = 75;
+            _txtpanel.Height = 95;
             _txtpanel.BackColor = System.Drawing.SystemColors.Control;
             this.Controls.Add(_txtpanel);
 
@@ -395,7 +396,7 @@ namespace Neos.IdentityServer.Console.Controls
             lblProviderDesc.Text = _provider.Description;
             lblProviderDesc.Left = 10;
             lblProviderDesc.Top = 10;
-            lblProviderDesc.Width = 900;
+            lblProviderDesc.Width = 800;
             lblProviderDesc.Font =  new System.Drawing.Font(lblProviderDesc.Font.Name, 16F, FontStyle.Bold);
             _txtpanel.Controls.Add(lblProviderDesc);
 
@@ -418,7 +419,7 @@ namespace Neos.IdentityServer.Console.Controls
                     break;
             }
             chkProviderEnabled.Enabled = _provider.AllowDisable;
-            chkProviderEnabled.Left = 910;
+            chkProviderEnabled.Left = 810;
             chkProviderEnabled.Top = 10;
             chkProviderEnabled.Width = 300;
             chkProviderEnabled.CheckedChanged += chkProviderChanged;
@@ -442,11 +443,47 @@ namespace Neos.IdentityServer.Console.Controls
                     chkProviderEnroll.Enabled = false;
                     break;
             }
-            chkProviderEnroll.Left = 910;
+            chkProviderEnroll.Left = 810;
             chkProviderEnroll.Top = 30;
             chkProviderEnroll.Width = 300;
             chkProviderEnroll.CheckedChanged += chkProviderEnrollChanged;
             _txtpanel.Controls.Add(chkProviderEnroll);
+
+            chkProviderEnrollStrict = new CheckBox();
+            chkProviderEnrollStrict.Text = res.CTRLPROVWIZARDSTRICT;
+            switch (_kind)
+            {
+                case PreferredMethod.Code:
+                    chkProviderEnrollStrict.Checked = Config.OTPProvider.EnrollWizardStrict;
+                    if (!chkProviderEnroll.Checked)
+                        chkProviderEnrollStrict.Enabled = false;
+                    else
+                        chkProviderEnrollStrict.Enabled = true;
+                    break;
+                case PreferredMethod.Email:
+                    chkProviderEnrollStrict.Checked = Config.MailProvider.EnrollWizardStrict;
+                    if (!chkProviderEnroll.Checked)
+                        chkProviderEnrollStrict.Enabled = false;
+                    else
+                        chkProviderEnrollStrict.Enabled = true;
+                    break;
+                case PreferredMethod.External:
+                    chkProviderEnrollStrict.Checked = Config.ExternalProvider.EnrollWizardStrict;
+                    if (!chkProviderEnroll.Checked)
+                        chkProviderEnrollStrict.Enabled = false;
+                    else
+                        chkProviderEnrollStrict.Enabled = true;
+                    break;
+                case PreferredMethod.Azure:
+                    chkProviderEnrollStrict.Checked = false;
+                    chkProviderEnrollStrict.Enabled = false;
+                    break;
+            }
+            chkProviderEnrollStrict.Left = 840;
+            chkProviderEnrollStrict.Top = 50;
+            chkProviderEnrollStrict.Width = 300;
+            chkProviderEnrollStrict.CheckedChanged += chkProviderEnrollChanged;
+            _txtpanel.Controls.Add(chkProviderEnrollStrict);
 
             chkProviderPin = new CheckBox();
             chkProviderPin.Text = res.CTRLPROVPIN;
@@ -465,8 +502,8 @@ namespace Neos.IdentityServer.Console.Controls
                     chkProviderPin.Checked = Config.AzureProvider.PinRequired;
                     break;
             }
-            chkProviderPin.Left = 910;
-            chkProviderPin.Top = 50;
+            chkProviderPin.Left = 810;
+            chkProviderPin.Top = 70;
             chkProviderPin.Width = 300;
             chkProviderPin.CheckedChanged += chkProviderPinChanged;
             _txtpanel.Controls.Add(chkProviderPin);
@@ -540,15 +577,46 @@ namespace Neos.IdentityServer.Console.Controls
                 {
                     case PreferredMethod.Code:
                         Config.OTPProvider.EnrollWizard = chkProviderEnroll.Checked;
+                        if (chkProviderEnroll.Checked)
+                        {
+                            Config.OTPProvider.EnrollWizardStrict = chkProviderEnrollStrict.Checked;
+                            chkProviderEnrollStrict.Enabled = true;
+                        }
+                        else
+                        {
+                            Config.OTPProvider.EnrollWizardStrict = false;
+                            chkProviderEnrollStrict.Enabled = false;
+                        }
                         break;
                     case PreferredMethod.Email:
                         Config.MailProvider.EnrollWizard = chkProviderEnroll.Checked;
+                        if (chkProviderEnroll.Checked)
+                        {
+                            Config.MailProvider.EnrollWizardStrict = chkProviderEnrollStrict.Checked;
+                            chkProviderEnrollStrict.Enabled = true;
+                        }
+                        else
+                        {
+                            Config.MailProvider.EnrollWizardStrict = false;
+                            chkProviderEnrollStrict.Enabled = false;
+                        }
                         break;
                     case PreferredMethod.External:
                         Config.ExternalProvider.EnrollWizard = chkProviderEnroll.Checked;
+                        if (chkProviderEnroll.Checked)
+                        {
+                            Config.ExternalProvider.EnrollWizardStrict = chkProviderEnrollStrict.Checked;
+                            chkProviderEnrollStrict.Enabled = true;
+                        }
+                        else
+                        {
+                            Config.ExternalProvider.EnrollWizardStrict = false;
+                            chkProviderEnrollStrict.Enabled = false;
+                        }
                         break;
                     case PreferredMethod.Azure:
-                        Config.AzureProvider.EnrollWizard = chkProviderEnroll.Checked;
+                        Config.AzureProvider.EnrollWizard = false;
+                        Config.AzureProvider.EnrollWizardStrict = false;
                         break;
                 }
                 ManagementService.ADFSManager.SetDirty(true);

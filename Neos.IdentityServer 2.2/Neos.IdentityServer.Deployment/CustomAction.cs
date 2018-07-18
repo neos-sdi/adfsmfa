@@ -70,6 +70,14 @@ namespace Neos.IdentityServer.Deployment
         {
             try
             {
+                try
+                {
+                    RegisterEventLogs();
+                }
+                catch (Exception E)
+                {
+                    session.Log("Error registering EventLog entries : "+E.Message);
+                }
                 session.Log("Service Installing [mfanotifhub]");
                 internalInstallService(@"C:\Program Files\MFA\Neos.IdentityServer.MultiFactor.NotificationHub.exe");
                 session.Log("Service Installed [mfanotifhub]");
@@ -223,6 +231,30 @@ namespace Neos.IdentityServer.Deployment
             {
                 ADFSController.Close();
             }
+        }
+
+        private static string EventLogSource = "ADFS MFA DataServices";
+        private static string AdminEventLogSource = "ADFS MFA Administration";
+        private static string MFAEventLogSource = "ADFS MFA Service";
+        private static string MMCEventLogSource = "ADFS MFA MMC";
+        private static string NOTIFEventLogSource = "ADFS MFA Notification Hub";
+        private static string EventLogGroup = "Application";
+
+        /// <summary>
+        /// RegisterEventLogs method implementation
+        /// </summary>
+        private static void RegisterEventLogs()
+        {
+            if (!EventLog.SourceExists(EventLogSource))
+                EventLog.CreateEventSource(EventLogSource, EventLogGroup);
+            if (!EventLog.SourceExists(AdminEventLogSource))
+                EventLog.CreateEventSource(AdminEventLogSource, EventLogGroup);
+            if (!EventLog.SourceExists(MFAEventLogSource))
+                EventLog.CreateEventSource(MFAEventLogSource, EventLogGroup);
+            if (!EventLog.SourceExists(MMCEventLogSource))
+                EventLog.CreateEventSource(MMCEventLogSource, EventLogGroup);
+            if (!EventLog.SourceExists(NOTIFEventLogSource))
+                EventLog.CreateEventSource(NOTIFEventLogSource, EventLogGroup);
         }
 
     }

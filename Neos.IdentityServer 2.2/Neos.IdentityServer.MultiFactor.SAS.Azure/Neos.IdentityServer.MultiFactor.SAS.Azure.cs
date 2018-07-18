@@ -83,6 +83,15 @@ namespace Neos.IdentityServer.MultiFactor.SAS
         }
 
         /// <summary>
+        /// EnrollmentNeverUseOptions property implementation
+        /// </summary>
+        public override bool EnrollmentNeverUseOptions
+        {
+            get { return false; }
+            set { throw new Exception("Enrollment Not allowed here !"); }
+        }
+
+        /// <summary>
         /// Name property implementation
         /// </summary>
         public override string Name
@@ -390,7 +399,8 @@ namespace Neos.IdentityServer.MultiFactor.SAS
                         CertId = az.Data.ThumbPrint;
                         STSIdentifier = az.ADFSIdentifier;
                         CompanyName = az.CompanyName;
-
+                       // AllowEnrollment = az.EnrollWizard;
+                       // EnrollmentNeverUseOptions = az.EnrollWizardStrict;
                         Enabled = az.Enabled;
                         PinRequired = az.PinRequired;
 

@@ -43,6 +43,7 @@ namespace Neos.IdentityServer.Multifactor.SMS
         private ExternalOTPProvider Data = null;
         private bool _isinitialized = false;
         private bool _allowenrollment = true;
+        private bool _enrollmentneveruseoptions = false;
 
         /// <summary>
         /// Kind property implementation
@@ -89,6 +90,15 @@ namespace Neos.IdentityServer.Multifactor.SMS
         {
             get { return _allowenrollment; }
             set { _allowenrollment = value; }
+        }
+
+        /// <summary>
+        /// EnrollmentNeverUseOptions property implementation
+        /// </summary>
+        public override bool EnrollmentNeverUseOptions
+        {
+            get { return _enrollmentneveruseoptions; }
+            set { _enrollmentneveruseoptions = value; }
         }
 
         /// <summary>
@@ -300,8 +310,8 @@ namespace Neos.IdentityServer.Multifactor.SMS
 
                         Enabled = param.Enabled;
                         AllowEnrollment = param.EnrollWizard;
+                        EnrollmentNeverUseOptions = param.EnrollWizardStrict;
                         PinRequired = param.PinRequired;
-
                         _isinitialized = true;
                         return;
                     }

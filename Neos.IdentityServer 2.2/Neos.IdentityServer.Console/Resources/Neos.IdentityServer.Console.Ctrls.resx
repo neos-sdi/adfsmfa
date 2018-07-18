@@ -330,6 +330,9 @@
   <data name="CTRLPROVWIZARD" xml:space="preserve">
     <value>Enrollement Wizard</value>
   </data>
+  <data name="CTRLPROVWIZARDSTRICT" xml:space="preserve">
+    <value>Disallow manage my options</value>
+  </data>
   <data name="CTRLSAVE" xml:space="preserve">
     <value>Save</value>
   </data>

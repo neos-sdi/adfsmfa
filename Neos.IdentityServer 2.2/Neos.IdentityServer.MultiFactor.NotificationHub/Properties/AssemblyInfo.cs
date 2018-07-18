@@ -27,7 +27,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Neos-Sdi")]
 [assembly: AssemblyProduct("Microsoft.IdentityServer.MultiFactor")]
-[assembly: AssemblyCopyright("Copyright Neos-Sdi © 2017")]
+[assembly: AssemblyCopyright("Copyright Neos-Sdi © 2018")]
 [assembly: AssemblyTrademark("Neos-Sdi")]
 [assembly: AssemblyCulture("")]
 
@@ -50,5 +50,5 @@ using System.Runtime.InteropServices;
 // en utilisant '*', comme indiqué ci-dessous :
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("2.2.0.0")]
-[assembly: AssemblyFileVersion("2.2.0.18")]
+[assembly: AssemblyFileVersion("2.2.0.20")]
 [assembly: AssemblyInformationalVersion("2.2.0.0")]

@@ -1820,9 +1820,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public static string GetQRCodeValue(string UPN, string QRString, MFAConfig config)
         {
-            string result = string.Empty;
-            string Content = string.Format("otpauth://totp/{0}:{1}?secret={2}&issuer={3}&algorithm={4}", config.Issuer, UPN, QRString, config.QRIssuer, config.OTPProvider.Algorithm);
-            return Content;
+            return string.Format("otpauth://totp/{0}:{1}?secret={2}&issuer={3}&algorithm={4}", config.Issuer, UPN, QRString, config.QRIssuer, config.OTPProvider.Algorithm);
         }
 
         /// <summary>
@@ -1830,7 +1828,6 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public static Stream GetQRCodeStream(string UPN, string QRString, MFAConfig config)
         {
-            string result = string.Empty;
             string Content = string.Format("otpauth://totp/{0}:{1}?secret={2}&issuer={3}&algorithm={4}", config.Issuer, UPN, QRString, config.QRIssuer, config.OTPProvider.Algorithm);
 
             var encoder = new QrEncoding.QrEncoder(ErrorCorrectionLevel.L);

@@ -613,6 +613,28 @@ namespace Neos.IdentityServer.MultiFactor
         }
 
         /// <summary>
+        /// FirstChoiceMethod property implementation
+        /// </summary>
+        [XmlAttribute("FirstChoiceMethod")]
+        public PreferredMethod FirstChoiceMethod
+        {
+            get
+            {
+                if (_context.Data.ContainsKey("_authctxfirstmethod") && _context.Data["_authctxfirstmethod"] != null)
+                    return (PreferredMethod)_context.Data["_authctxfirstmethod"];
+                else
+                    return (int)PreferredMethod.Choose;
+            }
+            set
+            {
+                if (_context.Data.ContainsKey("_authctxfirstmethod"))
+                    _context.Data["_authctxfirstmethod"] = (int)value;
+                else
+                    _context.Data.Add("_authctxfirstmethod", (int)value);
+            }
+        }
+
+        /// <summary>
         /// SelectedMethod property implementation
         /// </summary>
         [XmlAttribute("SelectedMethod")]
@@ -678,6 +700,9 @@ namespace Neos.IdentityServer.MultiFactor
             }
         }
 
+        /// <summary>
+        /// WizPageID property implementation
+        /// </summary>
         [XmlAttribute("WizPageID")]
         public int WizPageID
         {

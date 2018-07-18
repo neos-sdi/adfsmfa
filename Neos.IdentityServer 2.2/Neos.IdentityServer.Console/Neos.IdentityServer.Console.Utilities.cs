@@ -120,6 +120,14 @@ namespace Neos.IdentityServer.Console
         }
 
         /// <summary>
+        /// GetQRCodeString method implementation
+        /// </summary>
+        public static string GetQRCodeString(string upn, string secret)
+        {
+            return QRUtilities.GetQRCodeString(upn, secret, ManagementService.Config);
+        }
+
+        /// <summary>
         /// SendKeyByEmail method implementation
         /// </summary>
         public static void SendKeyByEmail(string email, string upn, string key)

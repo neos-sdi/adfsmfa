@@ -330,6 +330,9 @@
   <data name="CTRLPROVWIZARD" xml:space="preserve">
     <value>Asistente de registro</value>
   </data>
+  <data name="CTRLPROVWIZARDSTRICT" xml:space="preserve">
+    <value>No permitir administrar mis opciones de configuración</value>
+  </data>
   <data name="CTRLSAVE" xml:space="preserve">
     <value>Guardar</value>
   </data>

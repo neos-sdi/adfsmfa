@@ -700,6 +700,15 @@ namespace Neos.IdentityServer.Console.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Disallow manage my options.
+        /// </summary>
+        internal static string CTRLPROVWIZARDSTRICT {
+            get {
+                return ResourceManager.GetString("CTRLPROVWIZARDSTRICT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Save.
         /// </summary>
         internal static string CTRLSAVE {

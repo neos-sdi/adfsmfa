@@ -90,6 +90,15 @@ namespace Neos.IdentityServer.MultiFactor.Samples
         }
 
         /// <summary>
+        /// EnrollmentNeverUseOptions property implementation
+        /// </summary>
+        public override bool EnrollmentNeverUseOptions
+        {
+            get { return false; }
+            set { throw new Exception("Enrollment Not allowed here !"); }
+        }
+
+        /// <summary>
         /// Name property implementation
         /// </summary>
         public override string Name
@@ -518,6 +527,8 @@ namespace Neos.IdentityServer.MultiFactor.Samples
                         ExternalProviderParams param = externalsystem as ExternalProviderParams;
                         Enabled = param.Enabled;
                         PinRequired = param.PinRequired;
+                        AllowEnrollment = param.EnrollWizard;
+                        EnrollmentNeverUseOptions = param.EnrollWizardStrict;
                         _isinitialized = true;
                         return;
                     }

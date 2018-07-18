@@ -64,6 +64,7 @@ namespace Neos.IdentityServer.MultiFactor
         public abstract bool AllowDisable { get; }
         public abstract bool AllowOverride { get; }
         public abstract bool AllowEnrollment { get; set; }
+        public abstract bool EnrollmentNeverUseOptions { get; set; }
         public abstract string Name { get; }
         public abstract string Description { get; }
 
@@ -403,6 +404,7 @@ namespace Neos.IdentityServer.MultiFactor
         private HashMode Algorithm = HashMode.SHA1;
         private bool _isinitialized = false;
         private bool _allowenrollment = true;
+        private bool _enrollmentneveruseoptions = false;
 
         /// <summary>
         /// Kind property implementation
@@ -443,6 +445,15 @@ namespace Neos.IdentityServer.MultiFactor
         {
             get { return _allowenrollment; }
             set { _allowenrollment = value; }
+        }
+
+        /// <summary>
+        /// EnrollmentNeverUseOptions property implementation
+        /// </summary>
+        public override bool EnrollmentNeverUseOptions
+        {
+            get { return _enrollmentneveruseoptions; }
+            set { _enrollmentneveruseoptions = value; }
         }
 
         /// <summary>
@@ -619,6 +630,7 @@ namespace Neos.IdentityServer.MultiFactor
                         Algorithm = param.Algorithm;
                         Enabled = param.Enabled;
                         AllowEnrollment = param.EnrollWizard;
+                        EnrollmentNeverUseOptions = param.EnrollWizardStrict;
                         PinRequired = param.PinRequired;
                         _isinitialized = true;
                         return;
@@ -700,50 +712,56 @@ namespace Neos.IdentityServer.MultiFactor
         {
             if (usercontext.SelectedMethod == AuthenticationResponseKind.PhoneAppOTP)  // Using a TOTP Application (Microsoft Authnetication, Google Authentication, etc...)
             {
-                if (TOTPShadows <= 0)
+                foreach (HashMode algo in Enum.GetValues(typeof(HashMode)))
                 {
-                    if (!KeysManager.ValidateKey(usercontext.UPN))
-                        throw new CryptographicException(string.Format("SECURTY ERROR : Invalid Key for User {0}", usercontext.UPN));
-                    string encodedkey = KeysManager.ProbeKey(usercontext.UPN);
-                    DateTime call = DateTime.UtcNow;
-                    OTPGenerator gen = new OTPGenerator(encodedkey, usercontext.UPN, call, Algorithm);  // eg : TOTP code
-                    gen.ComputeOTP(call);
-                    string generatedpin = gen.OTP.ToString("D6");
-                    return (Convert.ToInt32(pin) == Convert.ToInt32(generatedpin));
-                }
-                else
-                {   // Current TOTP
-                    if (!KeysManager.ValidateKey(usercontext.UPN))
-                        throw new CryptographicException(string.Format("SECURTY ERROR : Invalid Key for User {0}", usercontext.UPN));
-                    string encodedkey = KeysManager.ProbeKey(usercontext.UPN);
-                    DateTime tcall = DateTime.UtcNow;
-                    OTPGenerator gen = new OTPGenerator(encodedkey, usercontext.UPN, tcall, Algorithm);  // eg : TOTP code
-                    gen.ComputeOTP(tcall);
-                    string currentpin = gen.OTP.ToString("D6");
-                    if (pin == Convert.ToInt32(currentpin))
-                        return true;
-                    // TOTP with Shadow (current - x latest)
-                    for (int i = 1; i <= TOTPShadows; i++)
+                    if (algo <= Algorithm)
                     {
-                        DateTime call = tcall.AddSeconds(-(i * OTPGenerator.TOTPDuration));
-                        OTPGenerator gen2 = new OTPGenerator(encodedkey, usercontext.UPN, call, Algorithm);  // eg : TOTP code
-                        gen2.ComputeOTP(call);
-                        string generatedpin = gen2.OTP.ToString("D6");
-                        if (pin == Convert.ToInt32(generatedpin))
-                            return true;
+                        if (TOTPShadows <= 0)
+                        {
+                            if (!KeysManager.ValidateKey(usercontext.UPN))
+                                throw new CryptographicException(string.Format("SECURTY ERROR : Invalid Key for User {0}", usercontext.UPN));
+                            string encodedkey = KeysManager.ProbeKey(usercontext.UPN);
+                            DateTime call = DateTime.UtcNow;
+                            OTPGenerator gen = new OTPGenerator(encodedkey, usercontext.UPN, call, algo);  // eg : TOTP code
+                            gen.ComputeOTP(call);
+                            string generatedpin = gen.OTP.ToString("D6");
+                            return (Convert.ToInt32(pin) == Convert.ToInt32(generatedpin));
+                        }
+                        else
+                        {   // Current TOTP
+                            if (!KeysManager.ValidateKey(usercontext.UPN))
+                                throw new CryptographicException(string.Format("SECURTY ERROR : Invalid Key for User {0}", usercontext.UPN));
+                            string encodedkey = KeysManager.ProbeKey(usercontext.UPN);
+                            DateTime tcall = DateTime.UtcNow;
+                            OTPGenerator gen = new OTPGenerator(encodedkey, usercontext.UPN, tcall, algo);  // eg : TOTP code
+                            gen.ComputeOTP(tcall);
+                            string currentpin = gen.OTP.ToString("D6");
+                            if (pin == Convert.ToInt32(currentpin))
+                                return true;
+                            // TOTP with Shadow (current - x latest)
+                            for (int i = 1; i <= TOTPShadows; i++)
+                            {
+                                DateTime call = tcall.AddSeconds(-(i * OTPGenerator.TOTPDuration));
+                                OTPGenerator gen2 = new OTPGenerator(encodedkey, usercontext.UPN, call, algo);  // eg : TOTP code
+                                gen2.ComputeOTP(call);
+                                string generatedpin = gen2.OTP.ToString("D6");
+                                if (pin == Convert.ToInt32(generatedpin))
+                                    return true;
+                            }
+                            // TOTP with Shadow (current + x latest) - not possible. but can be usefull if time sync is not adequate
+                            for (int i = 1; i <= TOTPShadows; i++)
+                            {
+                                DateTime call = tcall.AddSeconds(i * OTPGenerator.TOTPDuration);
+                                OTPGenerator gen3 = new OTPGenerator(encodedkey, usercontext.UPN, call, algo);  // eg : TOTP code
+                                gen3.ComputeOTP(call);
+                                string generatedpin = gen3.OTP.ToString("D6");
+                                if (pin == Convert.ToInt32(generatedpin))
+                                    return true;
+                            }
+                        }
                     }
-                    // TOTP with Shadow (current + x latest) - not possible. but can be usefull if time sync is not adequate
-                    for (int i = 1; i <= TOTPShadows; i++)
-                    {
-                        DateTime call = tcall.AddSeconds(i * OTPGenerator.TOTPDuration);
-                        OTPGenerator gen3 = new OTPGenerator(encodedkey, usercontext.UPN, call, Algorithm);  // eg : TOTP code
-                        gen3.ComputeOTP(call);
-                        string generatedpin = gen3.OTP.ToString("D6");
-                        if (pin == Convert.ToInt32(generatedpin))
-                            return true;
-                    }
-                    return false;
                 }
+                return false;
             }
             else
                 return false;
@@ -759,6 +777,7 @@ namespace Neos.IdentityServer.MultiFactor
         private IExternalOTPProvider _sasprovider;
         private bool _isinitialized = false;
         private bool _allowenrollment = true;
+        private bool _enrollmentneveruseoptions = false;
 
         /// <summary>
         /// Kind property implementation
@@ -807,6 +826,14 @@ namespace Neos.IdentityServer.MultiFactor
             set { _allowenrollment = value; }
         }
 
+        /// <summary>
+        /// EnrollmentNeverUseOptions property implementation
+        /// </summary>
+        public override bool EnrollmentNeverUseOptions
+        {
+            get { return _enrollmentneveruseoptions; }
+            set { _enrollmentneveruseoptions = value; }
+        }
 
         /// <summary>
         /// IsTwoWayByDefault property implementation
@@ -1014,6 +1041,7 @@ namespace Neos.IdentityServer.MultiFactor
 
                         Enabled = param.Enabled;
                         AllowEnrollment = param.EnrollWizard;
+                        EnrollmentNeverUseOptions = param.EnrollWizardStrict;
                         PinRequired = param.PinRequired;
                         _isinitialized = true;
                         return;
@@ -1154,6 +1182,7 @@ namespace Neos.IdentityServer.MultiFactor
         private bool _isinitialized = false;
         private MailProvider Data;
         private bool _allowenrollment = true;
+        private bool _enrollmentneveruseoptions = false;
 
         /// <summary>
         /// Kind property implementation
@@ -1194,6 +1223,15 @@ namespace Neos.IdentityServer.MultiFactor
         {
             get { return _allowenrollment; }
             set { _allowenrollment = value; }
+        }
+
+        /// <summary>
+        /// EnrollmentNeverUseOptions property implementation
+        /// </summary>
+        public override bool EnrollmentNeverUseOptions
+        {
+            get { return _enrollmentneveruseoptions; }
+            set { _enrollmentneveruseoptions = value; }
         }
 
         /// <summary>
@@ -1369,11 +1407,12 @@ namespace Neos.IdentityServer.MultiFactor
                 {
                     if (externalsystem is MailProviderParams)
                     {
-                        MailProviderParams otp = externalsystem as MailProviderParams;
-                        Data = otp.Data;
-                        Enabled = otp.Enabled;
-                        AllowEnrollment = otp.EnrollWizard;
-                        PinRequired = otp.PinRequired;
+                        MailProviderParams param = externalsystem as MailProviderParams;
+                        Data = param.Data;
+                        Enabled = param.Enabled;
+                        AllowEnrollment = param.EnrollWizard;
+                        EnrollmentNeverUseOptions = param.EnrollWizardStrict;
+                        PinRequired = param.PinRequired;
                         _isinitialized = true;
                         return;
                     }

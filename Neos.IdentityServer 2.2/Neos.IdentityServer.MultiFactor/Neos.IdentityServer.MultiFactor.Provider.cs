@@ -453,6 +453,29 @@ namespace Neos.IdentityServer.MultiFactor
                                 usercontext.UIMode = ProviderPageMode.SelectOptions;
                                 return new AdapterPresentation(this, context);
                             }
+                            else if (Config.UserFeatures.CanEnrollDevices())
+                            {
+                                IExternalProvider prov = RuntimeAuthProvider.GetProvider(usercontext.FirstChoiceMethod);
+                                if ((prov.AllowEnrollment) && (prov.EnrollmentNeverUseOptions))
+                                {
+                                    switch (usercontext.FirstChoiceMethod)
+                                    {
+                                        case PreferredMethod.Code:
+                                            usercontext.UIMode = ProviderPageMode.EnrollOTPAndSave;
+                                            break;
+                                        case PreferredMethod.Email:
+                                            usercontext.UIMode = ProviderPageMode.EnrollEmailAndSave;
+                                            break;
+                                        case PreferredMethod.External:
+                                            usercontext.UIMode = ProviderPageMode.EnrollPhoneAndSave;
+                                            break;
+                                        case PreferredMethod.Biometrics:
+                                            usercontext.UIMode = ProviderPageMode.EnrollBiometricsAndSave;
+                                            break;
+                                    }
+                                    return new AdapterPresentation(this, context);
+                                }
+                            }
                         }
                         else
                         {
@@ -469,6 +492,8 @@ namespace Neos.IdentityServer.MultiFactor
                 }
                 else
                 {
+                    if (usercontext.FirstChoiceMethod==PreferredMethod.Choose)
+                        usercontext.FirstChoiceMethod = usercontext.PreferredMethod;
                     usercontext.UIMode = ProviderPageMode.ChooseMethod;
                     return new AdapterPresentation(this, context);
                 }
@@ -1004,6 +1029,31 @@ namespace Neos.IdentityServer.MultiFactor
                     usercontext.UIMode = ProviderPageMode.SelectOptions;
                     return new AdapterPresentation(this, context);
                 }
+                else if ((usercontext.FirstChoiceMethod != PreferredMethod.Choose) && (Config.UserFeatures.CanEnrollDevices()))
+                {
+                    IExternalProvider prov = RuntimeAuthProvider.GetProvider(usercontext.FirstChoiceMethod);
+                    if ((prov.AllowEnrollment) && (prov.EnrollmentNeverUseOptions))
+                    {
+                        switch (usercontext.FirstChoiceMethod)
+                        {
+                            case PreferredMethod.Code:
+                                usercontext.UIMode = ProviderPageMode.EnrollOTPAndSave;
+                                break;
+                            case PreferredMethod.Email:
+                                usercontext.UIMode = ProviderPageMode.EnrollEmailAndSave;
+                                break;
+                            case PreferredMethod.External:
+                                usercontext.UIMode = ProviderPageMode.EnrollPhoneAndSave;
+                                break;
+                            case PreferredMethod.Biometrics:
+                                usercontext.UIMode = ProviderPageMode.EnrollBiometricsAndSave;
+                                break;
+                        }
+                        return new AdapterPresentation(this, context);
+                    }
+                    else
+                        return null;
+                }
                 else
                     return null;
             }
@@ -1115,6 +1165,8 @@ namespace Neos.IdentityServer.MultiFactor
                     int lnk = Convert.ToInt32(proofData.Properties["lnk"].ToString());
                     if (lnk == 3)
                     {
+                        if (usercontext.FirstChoiceMethod==PreferredMethod.Choose)
+                            usercontext.FirstChoiceMethod = usercontext.PreferredMethod;
                         usercontext.UIMode = ProviderPageMode.ChooseMethod;
                         return new AdapterPresentation(this, context);
                     }
@@ -1329,6 +1381,7 @@ namespace Neos.IdentityServer.MultiFactor
             ResourcesLocale Resources = new ResourcesLocale(context.Lcid);
             claims = new Claim[] { GetAuthMethodClaim(usercontext.SelectedMethod) };
             IAdapterPresentation result = null;
+            usercontext.FirstChoiceMethod = PreferredMethod.Choose;
             try
             {
                 int btnclicked = Convert.ToInt32(proofData.Properties["btnclicked"].ToString());
@@ -1355,12 +1408,12 @@ namespace Neos.IdentityServer.MultiFactor
                         break;
                     case 2: // Next Button
                         usercontext.WizPageID = 1;
+                        usercontext.KeyStatus = SecretKeyStatus.Success;
                         result = new AdapterPresentation(this, context);
                         break;
                     case 3: // Code verification
                         try
                         {
-                           // ValidateUserOptions(usercontext, context, proofData, Resources, true);
                             usercontext.SelectedMethod = AuthenticationResponseKind.PhoneAppOTP;
                             if ((int)AuthenticationResponseKind.Error == prov.PostAuthenticationRequest(usercontext))
                             {
@@ -1429,6 +1482,7 @@ namespace Neos.IdentityServer.MultiFactor
             ResourcesLocale Resources = new ResourcesLocale(context.Lcid);
             claims = new Claim[] { GetAuthMethodClaim(usercontext.SelectedMethod) };
             IAdapterPresentation result = null;
+            usercontext.FirstChoiceMethod = PreferredMethod.Choose;
             try
             {
                 int btnclicked = Convert.ToInt32(proofData.Properties["btnclicked"].ToString());
@@ -1539,6 +1593,7 @@ namespace Neos.IdentityServer.MultiFactor
             claims = new Claim[] { GetAuthMethodClaim(usercontext.SelectedMethod) };
             IAdapterPresentation result = null;
             usercontext.KeyChanged = false;
+            usercontext.FirstChoiceMethod = PreferredMethod.Choose;
             try
             {
                 int btnclicked = Convert.ToInt32(proofData.Properties["btnclicked"].ToString());
@@ -2305,6 +2360,43 @@ namespace Neos.IdentityServer.MultiFactor
             }
             else
                 usercontext.ShowOptions = false;
+        }
+
+        /// <summary>
+        /// HasAccessToOptions method
+        /// </summary>
+        internal bool HasAccessToOptions(IExternalProvider prov)
+        {
+            if (prov == null)
+                return false;
+            if (!prov.Enabled)
+                return false;
+            if (!Config.UserFeatures.CanAccessOptions())
+                return false;
+            if (Config.UserFeatures.CanManageOptions() || Config.UserFeatures.CanManagePassword())
+                return true;
+            if (Config.UserFeatures.CanEnrollDevices() && (prov.AllowEnrollment))
+            {
+                if (!prov.EnrollmentNeverUseOptions)
+                    return true;
+                else
+                    return false;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// HasAccessToPinCode method
+        /// </summary>
+        internal bool HasAccessToPinCode(IExternalProvider prov)
+        {
+            if (prov == null)
+                return false;
+            if (!prov.Enabled)
+                return false;
+            if (!prov.PinRequired)
+                return false;
+            return true;
         }
         #endregion
     }

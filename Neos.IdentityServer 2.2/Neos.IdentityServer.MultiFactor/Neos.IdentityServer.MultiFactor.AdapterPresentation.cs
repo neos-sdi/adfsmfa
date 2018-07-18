@@ -18,6 +18,7 @@
 using System;
 using Microsoft.IdentityServer.Web.Authentication.External;
 using Neos.IdentityServer.MultiFactor.Resources;
+using Neos.IdentityServer.MultiFactor;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -317,7 +318,7 @@ namespace Neos.IdentityServer.MultiFactor
                 result += "<input id=\"pincode\" name=\"pincode\" type=\"password\" placeholder=\"PIN Number\" class=\"text fullWidth\" /></br></br>";
             }
 
-            if (Provider.Config.UserFeatures.CanAccessOptions())
+            if (Provider.HasAccessToOptions(prov))
             {
                 if (usercontext.ShowOptions)
                     result += "<input id=\"options\" type=\"checkbox\" name=\"Options\" checked=\"true\" /> " + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMAccessOptions") + "</br></br></br>";
@@ -484,9 +485,9 @@ namespace Neos.IdentityServer.MultiFactor
                     break;
             }
 
-            if (prov != null)
+            if ((prov != null) && (prov.Enabled))
             {
-                if ((prov != null) && (prov.IsUIElementRequired(usercontext, RequiredMethodElements.KeyParameterRequired)))
+                if ((prov.IsUIElementRequired(usercontext, RequiredMethodElements.KeyParameterRequired)))
                 {
                     string displaykey = string.Empty;
                     if (usercontext.KeyStatus == SecretKeyStatus.Success)
@@ -496,12 +497,12 @@ namespace Neos.IdentityServer.MultiFactor
                     result += "<div class=\"fieldMargin smallText\"><label for=\"\"></label>" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlREGLabelAppKey") + "</div>";
                     result += "<input id=\"secretkey\" name=\"secretkey\" type=\"text\" readonly=\"true\" placeholder=\"DisplayKey\" class=\"text fullWidth\" style=\"background-color: #C0C0C0\" value=\"" + StripDisplayKey(displaykey) + "\"/></br></br>";
                 }
-                if ((prov != null) && (prov.IsUIElementRequired(usercontext, RequiredMethodElements.EmailParameterRequired)))
+                if ((prov.IsUIElementRequired(usercontext, RequiredMethodElements.EmailParameterRequired)))
                 {
                     result += "<div class=\"fieldMargin smallText\"><label for=\"\"></label>" + prov.GetUICFGLabel(usercontext) + " : </div>";
                     result += "<input id=\"email\" name=\"email\" type=\"text\" readonly=\"true\" placeholder=\"Personal Email Address\" class=\"text fullWidth\" style=\"background-color: #C0C0C0\" value=\"" + usercontext.MailAddress + "\"/></br></br>";
                 }
-                if ((prov != null) && (prov.IsUIElementRequired(usercontext, RequiredMethodElements.PhoneParameterRequired)))
+                if ((prov.IsUIElementRequired(usercontext, RequiredMethodElements.PhoneParameterRequired)))
                 {
                     result += "<div class=\"fieldMargin smallText\"><label for=\"\"></label>" + prov.GetUICFGLabel(usercontext) + " : </div>";
                     result += "<input id=\"phone\" name=\"phone\" type=\"text\" readonly=\"true\" placeholder=\"Phone Number\" class=\"text fullWidth\" style=\"background-color: #C0C0C0\" value=\"" + usercontext.PhoneNumber + "\"/></br></br>";
@@ -535,22 +536,22 @@ namespace Neos.IdentityServer.MultiFactor
                 {
                     result += "<div class=\"fieldMargin error smallText\"><label for=\"\"></label>No options available for " + prov.Description + "</div></br>";
                 }
-                if ((prov != null) && (prov.IsUIElementRequired(usercontext, RequiredMethodElements.KeyParameterRequired)))
+                if ((prov.IsUIElementRequired(usercontext, RequiredMethodElements.KeyParameterRequired)))
                 {
                     result += "</br>";
                     result += "<a class=\"actionLink\" href=\"#\" id=\"enrollopt\" name=\"enrollopt\" onclick=\"fnlinkclicked(registrationForm, 3)\"; style=\"cursor: pointer;\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlEnrollOTP") + "</a>";
                 }
-                if ((prov != null) && (prov.IsUIElementRequired(usercontext, RequiredMethodElements.EmailParameterRequired)))
+                if ((prov.IsUIElementRequired(usercontext, RequiredMethodElements.EmailParameterRequired)))
                 {
                     result += "</br>";
                     result += "<a class=\"actionLink\" href=\"#\" id=\"enrollemail\" name=\"enrollemail\" onclick=\"fnlinkclicked(registrationForm, 4)\"; style=\"cursor: pointer;\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlEnrollEmail") + "</a>";
                 }
-                if ((prov != null) && (prov.IsUIElementRequired(usercontext, RequiredMethodElements.PhoneParameterRequired)))
+                if ((prov.IsUIElementRequired(usercontext, RequiredMethodElements.PhoneParameterRequired)))
                 {
                     result += "</br>";
                     result += "<a class=\"actionLink\" href=\"#\" id=\"enrollphone\" name=\"enrollphone\" onclick=\"fnlinkclicked(registrationForm, 5)\"; style=\"cursor: pointer;\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlEnrollPhone") + "</a>";
                 }
-                if ((prov != null) && (prov.IsUIElementRequired(usercontext, RequiredMethodElements.BiometricParameterRequired)))
+                if ((prov.IsUIElementRequired(usercontext, RequiredMethodElements.BiometricParameterRequired)))
                 {
                     result += "</br>";
                     result += "<a class=\"actionLink\" href=\"#\" id=\"enrollbio\" name=\"enrollbio\" onclick=\"fnlinkclicked(registrationForm, 6)\"; style=\"cursor: pointer;\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlEnrollBiometrics") + "</a>";
@@ -566,11 +567,14 @@ namespace Neos.IdentityServer.MultiFactor
             {   // PIN Code
                 prov = RuntimeAuthProvider.GetProvider(PreferredMethod.Code);
                 result += "<div class=\"fieldMargin smallText\"><label for=\"\"></label>" + BaseExternalProvider.GetPINLabel(usercontext) + " : </div>";
-                if (usercontext.PinCode <= 0)
-                    result += "<input id=\"pincode\" name=\"pincode\" type=\"password\" readonly=\"true\" placeholder=\"PIN Number\" class=\"text fullWidth\" style=\"background-color: #C0C0C0\" value=\"" + Provider.Config.DefaultPin + "\"/></br></br>";
-                else
-                    result += "<input id=\"pincode\" name=\"pincode\" type=\"password\" readonly=\"true\" placeholder=\"PIN Number\" class=\"text fullWidth\" style=\"background-color: #C0C0C0\" value=\"" + usercontext.PinCode + "\"/></br></br>";
-                result += "</br>";
+                if (prov.PinRequired)
+                {
+                    if (usercontext.PinCode <= 0)
+                        result += "<input id=\"pincode\" name=\"pincode\" type=\"password\" readonly=\"true\" placeholder=\"PIN Number\" class=\"text fullWidth\" style=\"background-color: #C0C0C0\" value=\"" + Provider.Config.DefaultPin + "\"/></br></br>";
+                    else
+                        result += "<input id=\"pincode\" name=\"pincode\" type=\"password\" readonly=\"true\" placeholder=\"PIN Number\" class=\"text fullWidth\" style=\"background-color: #C0C0C0\" value=\"" + usercontext.PinCode + "\"/></br></br>";
+                    result += "</br>";
+                }
                 result += "<a class=\"actionLink\" href=\"#\" id=\"enrollpin\" name=\"enrollpin\" onclick=\"fnlinkclicked(registrationForm, 7)\"; style=\"cursor: pointer;\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlEnrollPinCode") + "</a>";
                 result += "<br />";
             }
@@ -734,9 +738,9 @@ namespace Neos.IdentityServer.MultiFactor
                     break;
             }
 
-            if (prov != null)
+            if ((prov != null) && (prov.Enabled))
             {
-                if ((prov != null) && (prov.IsUIElementRequired(usercontext, RequiredMethodElements.KeyParameterRequired)))
+                if ((prov.IsUIElementRequired(usercontext, RequiredMethodElements.KeyParameterRequired)))
                 {
                     string displaykey = string.Empty;
                     if (usercontext.KeyStatus == SecretKeyStatus.Success)
@@ -749,7 +753,7 @@ namespace Neos.IdentityServer.MultiFactor
                     result += "<input id=\"nextButton\" type=\"submit\" class=\"submit\" name=\"nextButton\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMRecordNewKey") + "\" onclick=\"fnbtnclicked(3)\" />";                    
                     result += "</br>";
                 }
-                if ((prov != null) && (prov.IsUIElementRequired(usercontext, RequiredMethodElements.EmailParameterRequired)))
+                if ((prov.IsUIElementRequired(usercontext, RequiredMethodElements.EmailParameterRequired)))
                 {
                     result += "<div class=\"fieldMargin smallText\"><label for=\"\"></label>" + prov.GetUICFGLabel(usercontext) + " : </div>";
                     result += "<input id=\"email\" name=\"email\" type=\"text\" readonly=\"true\" placeholder=\"Personal Email Address\" class=\"text fullWidth\" style=\"background-color: #C0C0C0\" value=\"" + usercontext.MailAddress + "\"/></br></br></br>";
@@ -757,7 +761,7 @@ namespace Neos.IdentityServer.MultiFactor
                     result += "<input id=\"emailButton\" type=\"submit\" class=\"submit\" name=\"emailButton\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMRecordNewEmail") + "\" onclick=\"fnbtnclicked(4)\" />";
                     result += "</br>";
                 }
-                if ((prov != null) && (prov.IsUIElementRequired(usercontext, RequiredMethodElements.PhoneParameterRequired)))
+                if ((prov.IsUIElementRequired(usercontext, RequiredMethodElements.PhoneParameterRequired)))
                 {
                     result += "<div class=\"fieldMargin smallText\"><label for=\"\"></label>" + prov.GetUICFGLabel(usercontext) + " : </div>";
                     result += "<input id=\"phone\" name=\"phone\" readonly=\"true\" type=\"text\" placeholder=\"Phone Number\" class=\"text fullWidth\" style=\"background-color: #C0C0C0\" value=\"" + usercontext.PhoneNumber + "\"/></br></br></br>";
@@ -793,13 +797,13 @@ namespace Neos.IdentityServer.MultiFactor
                 {
                     result += "<div class=\"fieldMargin error smallText\"><label for=\"\"></label>No options available for " + prov.Description + "</div></br>";
                 }
-                if ((prov != null) && (prov.IsUIElementRequired(usercontext, RequiredMethodElements.PinParameterRequired)))
+                if ((prov.PinRequired) && (prov.IsUIElementRequired(usercontext, RequiredMethodElements.PinParameterRequired)))
                 {
                     result += "<div class=\"fieldMargin smallText\"><label for=\"\"></label>" + BaseExternalProvider.GetPINLabel(usercontext) + " : </div>";
-                    if (usercontext.PinCode<=0)
-                        result += "<input id=\"pincode\" name=\"pincode\" type=\"password\" placeholder=\"PIN Number\" class=\"text fullWidth\" value=\"" + Provider.Config.DefaultPin + "\"/></br></br>";
+                    if (usercontext.PinCode <=0 )
+                        result += "<input id=\"pincode\" name=\"pincode\" type=\"password\" placeholder=\"Default PIN code\" class=\"text fullWidth\" value=\"" + Provider.Config.DefaultPin + "\"/></br></br>";
                     else
-                        result += "<input id=\"pincode\" name=\"pincode\" type=\"password\" placeholder=\"PIN Number\" class=\"text fullWidth\" value=\"" + usercontext.PinCode + "\"/></br></br>";
+                        result += "<input id=\"pincode\" name=\"pincode\" type=\"password\" placeholder=\"PIN code\" class=\"text fullWidth\" value=\"" + usercontext.PinCode + "\"/></br></br>";
                 }
                 result += "<br />";
                 if (!string.IsNullOrEmpty(prov.GetAccountManagementUrl(usercontext)))
@@ -905,30 +909,31 @@ namespace Neos.IdentityServer.MultiFactor
                 if (RuntimeAuthProvider.IsUIElementRequired(usercontext, RequiredMethodElements.OTPLinkRequired))
                 {
                     prov = RuntimeAuthProvider.GetProvider(PreferredMethod.Code);
-                    if (prov.AllowEnrollment)
+                    if (Provider.HasAccessToOptions(prov))
                         result += "<a class=\"actionLink\" href=\"#\" id=\"enrollopt\" name=\"enrollopt\" onclick=\"return SetLinkTitle(selectoptionsForm, '3')\"; style=\"cursor: pointer;\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlEnrollOTP") + "</a>";
                 }
                 if (RuntimeAuthProvider.IsUIElementRequired(usercontext, RequiredMethodElements.BiometricLinkRequired))
                 {
                     prov = RuntimeAuthProvider.GetProvider(PreferredMethod.Biometrics);
-                    if (prov.AllowEnrollment)
+                    if (Provider.HasAccessToOptions(prov))
                         result += "<a class=\"actionLink\" href=\"#\" id=\"enrollbio\" name=\"enrollbio\" onclick=\"return SetLinkTitle(selectoptionsForm, '4')\"; style=\"cursor: pointer;\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlEnrollBiometric") + "</a>";
                 }
                 if (RuntimeAuthProvider.IsUIElementRequired(usercontext, RequiredMethodElements.EmailLinkRequired))
                 {
                     prov = RuntimeAuthProvider.GetProvider(PreferredMethod.Email);
-                    if (prov.AllowEnrollment)
+                    if (Provider.HasAccessToOptions(prov))
                         result += "<a class=\"actionLink\" href=\"#\" id=\"enrollemail\" name=\"enrollemail\" onclick=\"return SetLinkTitle(selectoptionsForm, '5')\"; style=\"cursor: pointer;\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlEnrollEmail") + "</a>";
                 }
                 if (RuntimeAuthProvider.IsUIElementRequired(usercontext, RequiredMethodElements.PhoneLinkRequired))
                 {
                     prov = RuntimeAuthProvider.GetProvider(PreferredMethod.External);
-                    if (prov.AllowEnrollment)
+                    if (Provider.HasAccessToOptions(prov))
                         result += "<a class=\"actionLink\" href=\"#\" id=\"enrollphone\" name=\"enrollphone\" onclick=\"return SetLinkTitle(selectoptionsForm, '6')\"; style=\"cursor: pointer;\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlEnrollPhone") + "</a>";
                 }
                 if (RuntimeAuthProvider.IsUIElementRequired(usercontext, RequiredMethodElements.PinLinkRequired))
                 {
-                    result += "<a class=\"actionLink\" href=\"#\" id=\"enrollpin\" name=\"enrollpin\"  onclick=\"return SetLinkTitle(selectoptionsForm, '7')\"; style=\"cursor: pointer;\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlEnrollPinCode") + "</a>";
+                    if (Provider.HasAccessToPinCode(prov))
+                        result += "<a class=\"actionLink\" href=\"#\" id=\"enrollpin\" name=\"enrollpin\"  onclick=\"return SetLinkTitle(selectoptionsForm, '7')\"; style=\"cursor: pointer;\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlEnrollPinCode") + "</a>";
                 }
             }
             result += "<script>";
@@ -1729,7 +1734,6 @@ namespace Neos.IdentityServer.MultiFactor
                 case 1: // Always Reset the Key
                     KeysManager.NewKey(usercontext.UPN);
                     string displaykey = KeysManager.EncodedKey(usercontext.UPN);
-                    usercontext.KeyStatus = SecretKeyStatus.Success;
 
                     result += "<div class=\"fieldMargin smallText\"><label for=\"\"></label>" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelWRQRCode") + "</div></br>";
                     result += "<input id=\"secretkey\" name=\"secretkey\" type=\"text\" readonly=\"true\" placeholder=\"DisplayKey\" class=\"text fullWidth\" style=\"background-color: #C0C0C0\" value=\"" + StripDisplayKey(displaykey) + "\"/></br></br>";

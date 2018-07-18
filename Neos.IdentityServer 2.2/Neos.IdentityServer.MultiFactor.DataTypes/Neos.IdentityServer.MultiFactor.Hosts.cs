@@ -159,7 +159,6 @@ namespace Neos.IdentityServer.MultiFactor
         {
             return options.HasFlag(UserFeaturesOptions.AllowEnrollment);
         }
-
         #endregion
     }
 
@@ -683,6 +682,7 @@ namespace Neos.IdentityServer.MultiFactor
             this.Enabled = prov.Enabled;
             this.PinRequired = prov.PinRequired;
             this.EnrollWizard = prov.EnrollWizard;
+            this.EnrollWizardStrict = prov.EnrollWizardStrict;
         }
 
         public int TOTPShadows { get; set; }
@@ -690,6 +690,7 @@ namespace Neos.IdentityServer.MultiFactor
         public bool Enabled { get; set; }
         public bool PinRequired { get; set; }
         public bool EnrollWizard { get; set; }
+        public bool EnrollWizardStrict { get; set; }
     }
 
     /// <summary>
@@ -711,12 +712,14 @@ namespace Neos.IdentityServer.MultiFactor
             Enabled = prov.Enabled;
             PinRequired = prov.PinRequired;
             EnrollWizard = prov.EnrollWizard;
+            EnrollWizardStrict = prov.EnrollWizardStrict;
         }
 
         public MailProvider Data { get; set; }
         public bool Enabled { get; set; }
         public bool PinRequired { get; set; }
         public bool EnrollWizard { get; set; }
+        public bool EnrollWizardStrict { get; set; }
     }
 
     /// <summary>
@@ -738,12 +741,14 @@ namespace Neos.IdentityServer.MultiFactor
             Enabled = prov.Enabled; 
             PinRequired = prov.PinRequired;
             EnrollWizard = prov.EnrollWizard;
+            EnrollWizardStrict = prov.EnrollWizardStrict;
         }
 
         public ExternalOTPProvider Data { get; set; }
         public bool Enabled { get; set; }
         public bool PinRequired { get; set; }
         public bool EnrollWizard { get; set; }
+        public bool EnrollWizardStrict { get; set; }
     }
 
     /// <summary>
@@ -767,6 +772,7 @@ namespace Neos.IdentityServer.MultiFactor
             this.Enabled = prov.Enabled;
             this.PinRequired = prov.PinRequired;
             this.EnrollWizard = false;
+            this.EnrollWizardStrict = prov.EnrollWizardStrict;
         }
 
         public AzureProvider Data { get; set; }
@@ -775,6 +781,7 @@ namespace Neos.IdentityServer.MultiFactor
         public bool Enabled { get; set; }
         public bool PinRequired { get; set; }
         public bool EnrollWizard { get; set; }
+        public bool EnrollWizardStrict { get; set; }
     }
     #endregion
 
@@ -793,6 +800,7 @@ namespace Neos.IdentityServer.MultiFactor
         private bool _requiredpin = false;
         private bool _enabled = true;
         private bool _enrollwizard = true;
+        private bool _enrollwizardstrict = false;
 
         [XmlAttribute("Enabled")]
         public bool Enabled
@@ -813,6 +821,13 @@ namespace Neos.IdentityServer.MultiFactor
         {
             get { return _enrollwizard; }
             set { _enrollwizard = value; }
+        }
+
+        [XmlAttribute("EnrollWizardStrict")]
+        public bool EnrollWizardStrict
+        {
+            get { return _enrollwizardstrict; }
+            set { _enrollwizardstrict = value; }
         }
 
         [XmlAttribute("Company")]
@@ -886,6 +901,7 @@ namespace Neos.IdentityServer.MultiFactor
         private bool _requiredpin = false;
         private bool _enabled = false;
         private bool _enrollwizard = false;
+        private bool _enrollwizardstrict = false;
 
         [XmlAttribute("Enabled")]
         public bool Enabled
@@ -906,6 +922,13 @@ namespace Neos.IdentityServer.MultiFactor
         {
             get { return _enrollwizard; }
             set { _enrollwizard = value; }
+        }
+
+        [XmlAttribute("EnrollWizardStrict")]
+        public bool EnrollWizardStrict
+        {
+            get { return _enrollwizardstrict; }
+            set { _enrollwizardstrict = value; }
         }
 
         [XmlAttribute("TenantId")]
@@ -934,6 +957,7 @@ namespace Neos.IdentityServer.MultiFactor
         private bool _requiredpin = false;
         private bool _enabled = true;
         private bool _enrollwizard = true;
+        private bool _enrollwizardstrict = false;
 
         [XmlAttribute("Enabled")]
         public bool Enabled
@@ -955,6 +979,14 @@ namespace Neos.IdentityServer.MultiFactor
             get { return _enrollwizard; }
             set { _enrollwizard = value; }
         }
+
+        [XmlAttribute("EnrollWizardStrict")]
+        public bool EnrollWizardStrict
+        {
+            get { return _enrollwizardstrict; }
+            set { _enrollwizardstrict = value; }
+        }
+
         [XmlAttribute("from")]
         public string From
         {
@@ -1041,6 +1073,7 @@ namespace Neos.IdentityServer.MultiFactor
         private bool _enrollwizard = true;
         private int _totpShadows = 2;
         private HashMode _algorithm = HashMode.SHA1;
+        private bool _enrollwizardstrict = false;
 
         [XmlAttribute("Enabled")]
         public bool Enabled
@@ -1061,6 +1094,13 @@ namespace Neos.IdentityServer.MultiFactor
         {
             get { return _enrollwizard; }
             set { _enrollwizard = value; }
+        }
+
+        [XmlAttribute("EnrollWizardStrict")]
+        public bool EnrollWizardStrict
+        {
+            get { return _enrollwizardstrict; }
+            set { _enrollwizardstrict = value; }
         }
 
         [XmlAttribute("TOTPShadows")]
