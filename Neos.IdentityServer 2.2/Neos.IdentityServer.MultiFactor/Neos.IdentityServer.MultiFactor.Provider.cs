@@ -455,25 +455,28 @@ namespace Neos.IdentityServer.MultiFactor
                             }
                             else if (Config.UserFeatures.CanEnrollDevices())
                             {
-                                IExternalProvider prov = RuntimeAuthProvider.GetProvider(usercontext.FirstChoiceMethod);
-                                if ((prov.AllowEnrollment) && (prov.EnrollmentNeverUseOptions))
+                                if ((usercontext.FirstChoiceMethod != PreferredMethod.Choose) && (usercontext.FirstChoiceMethod != PreferredMethod.None))
                                 {
-                                    switch (usercontext.FirstChoiceMethod)
+                                    IExternalProvider prov = RuntimeAuthProvider.GetProvider(usercontext.FirstChoiceMethod);
+                                    if ((prov!=null) &&((prov.AllowEnrollment) && (prov.EnrollmentNeverUseOptions)))
                                     {
-                                        case PreferredMethod.Code:
-                                            usercontext.UIMode = ProviderPageMode.EnrollOTPAndSave;
-                                            break;
-                                        case PreferredMethod.Email:
-                                            usercontext.UIMode = ProviderPageMode.EnrollEmailAndSave;
-                                            break;
-                                        case PreferredMethod.External:
-                                            usercontext.UIMode = ProviderPageMode.EnrollPhoneAndSave;
-                                            break;
-                                        case PreferredMethod.Biometrics:
-                                            usercontext.UIMode = ProviderPageMode.EnrollBiometricsAndSave;
-                                            break;
+                                        switch (usercontext.FirstChoiceMethod)
+                                        {
+                                            case PreferredMethod.Code:
+                                                usercontext.UIMode = ProviderPageMode.EnrollOTPAndSave;
+                                                break;
+                                            case PreferredMethod.Email:
+                                                usercontext.UIMode = ProviderPageMode.EnrollEmailAndSave;
+                                                break;
+                                            case PreferredMethod.External:
+                                                usercontext.UIMode = ProviderPageMode.EnrollPhoneAndSave;
+                                                break;
+                                            case PreferredMethod.Biometrics:
+                                                usercontext.UIMode = ProviderPageMode.EnrollBiometricsAndSave;
+                                                break;
+                                        }
+                                        return new AdapterPresentation(this, context);
                                     }
-                                    return new AdapterPresentation(this, context);
                                 }
                             }
                         }
@@ -1029,38 +1032,38 @@ namespace Neos.IdentityServer.MultiFactor
                     usercontext.UIMode = ProviderPageMode.SelectOptions;
                     return new AdapterPresentation(this, context);
                 }
-                else if ((usercontext.FirstChoiceMethod != PreferredMethod.Choose) && (Config.UserFeatures.CanEnrollDevices()))
+                else if (Config.UserFeatures.CanEnrollDevices())
                 {
-                    IExternalProvider prov = RuntimeAuthProvider.GetProvider(usercontext.FirstChoiceMethod);
-                    if ((prov.AllowEnrollment) && (prov.EnrollmentNeverUseOptions))
+                    if ((usercontext.FirstChoiceMethod != PreferredMethod.Choose) && (usercontext.FirstChoiceMethod != PreferredMethod.None))
                     {
-                        switch (usercontext.FirstChoiceMethod)
+                        IExternalProvider prov = RuntimeAuthProvider.GetProvider(usercontext.FirstChoiceMethod);
+                        if ((prov!=null) && ((prov.AllowEnrollment) && (prov.EnrollmentNeverUseOptions)))
                         {
-                            case PreferredMethod.Code:
-                                usercontext.UIMode = ProviderPageMode.EnrollOTPAndSave;
-                                break;
-                            case PreferredMethod.Email:
-                                usercontext.UIMode = ProviderPageMode.EnrollEmailAndSave;
-                                break;
-                            case PreferredMethod.External:
-                                usercontext.UIMode = ProviderPageMode.EnrollPhoneAndSave;
-                                break;
-                            case PreferredMethod.Biometrics:
-                                usercontext.UIMode = ProviderPageMode.EnrollBiometricsAndSave;
-                                break;
+                            switch (usercontext.FirstChoiceMethod)
+                            {
+                                case PreferredMethod.Code:
+                                    usercontext.UIMode = ProviderPageMode.EnrollOTPAndSave;
+                                    break;
+                                case PreferredMethod.Email:
+                                    usercontext.UIMode = ProviderPageMode.EnrollEmailAndSave;
+                                    break;
+                                case PreferredMethod.External:
+                                    usercontext.UIMode = ProviderPageMode.EnrollPhoneAndSave;
+                                    break;
+                                case PreferredMethod.Biometrics:
+                                    usercontext.UIMode = ProviderPageMode.EnrollBiometricsAndSave;
+                                    break;
+                            }
+                            return new AdapterPresentation(this, context);
                         }
-                        return new AdapterPresentation(this, context);
                     }
-                    else
-                        return null;
                 }
-                else
-                    return null;
             }
             catch (Exception ex)
             {
                 throw new ExternalAuthenticationException(usercontext.UPN + " : " + ex.Message, context);
             }
+            return null;
         }
 
         /// <summary>
