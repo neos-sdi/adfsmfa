@@ -113,10 +113,6 @@
     <None Include="Neos.IdentityServer.pfx" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="configdata.xml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="register multi factor.txt" />
     <Content Include="Resources\crouge.jpg" />
     <Content Include="Resources\cvert.jpg" />
     <Content Include="Resources\p_authy2.png" />

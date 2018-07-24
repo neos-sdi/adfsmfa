@@ -49,7 +49,7 @@ namespace Neos.IdentityServer.Console
         private ScopeNode ServiceSMTPNode;
         private ScopeNode ServiceSMSNode;
         private ScopeNode ServiceAzureNode;
-        private ScopeNode ServiceSecurityNode;
+       // private ScopeNode ServiceSecurityNode;
         private ScopeNode UsersNode;
 
         /// <summary>
@@ -214,11 +214,11 @@ namespace Neos.IdentityServer.Console
                 this.ServiceProvidersNode.ViewDescriptions.DefaultIndex = 0;
 
                 // TOTP Scope
-                this.ServiceTOTPNode = new ServiceTOTPScopeNode();
+                this.ServiceTOTPNode = new ServiceSecurityScopeNode();
                 FormViewDescription ftotp = new FormViewDescription();
                 ftotp.DisplayName = "MFA Platform TOTP Properties";
-                ftotp.ControlType = typeof(TOTPViewControl);
-                ftotp.ViewType = typeof(ServiceTOTPFormView);
+                ftotp.ControlType = typeof(ServiceSecurityViewControl);
+                ftotp.ViewType = typeof(ServiceSecurityFormView);
                 this.ServiceTOTPNode.ViewDescriptions.Add(ftotp);
                 this.ServiceTOTPNode.ViewDescriptions.DefaultIndex = 0;
 
@@ -249,15 +249,6 @@ namespace Neos.IdentityServer.Console
                 this.ServiceAzureNode.ViewDescriptions.Add(faz);
                 this.ServiceAzureNode.ViewDescriptions.DefaultIndex = 0;
 
-                // Parameters Scope
-                this.ServiceSecurityNode = new ServiceSecurityScopeNode();
-                FormViewDescription fvp = new FormViewDescription();
-                fvp.DisplayName = "MFA Platform Security Properties";
-                fvp.ControlType = typeof(ServiceSecurityViewControl);
-                fvp.ViewType = typeof(ServiceSecurityFormView);
-                this.ServiceSecurityNode.ViewDescriptions.Add(fvp);
-                this.ServiceSecurityNode.ViewDescriptions.DefaultIndex = 0;
-
                 // Users Scope
                 this.UsersNode = new UsersScopeNode();
                 FormViewDescription fvu = new FormViewDescription();
@@ -276,7 +267,6 @@ namespace Neos.IdentityServer.Console
                 this.ServiceProvidersNode.Children.Add(this.ServiceSMTPNode);
                 this.ServiceProvidersNode.Children.Add(this.ServiceSMSNode);
                 this.ServiceProvidersNode.Children.Add(this.ServiceAzureNode);
-                this.RootNode.Children.Add(this.ServiceSecurityNode);
                 this.RootNode.Children.Add(this.UsersNode);
 
                 this.IsModified = true;
@@ -300,9 +290,10 @@ namespace Neos.IdentityServer.Console
             ((RefreshableScopeNode)this.ServiceADDSNode).RefreshUI();
             ((RefreshableScopeNode)this.ServiceSQLNode).RefreshUI();
             ((RefreshableScopeNode)this.ServiceProvidersNode).RefreshUI();
+            ((RefreshableScopeNode)this.ServiceTOTPNode).RefreshUI();
             ((RefreshableScopeNode)this.ServiceSMTPNode).RefreshUI();
             ((RefreshableScopeNode)this.ServiceSMSNode).RefreshUI();
-            ((RefreshableScopeNode)this.ServiceSecurityNode).RefreshUI();
+            ((RefreshableScopeNode)this.ServiceAzureNode).RefreshUI();
             ((RefreshableScopeNode)this.UsersNode).RefreshUI();
         }
     }

@@ -53,7 +53,7 @@ namespace Neos.IdentityServer.Console
         {
             TOTPControl = (TOTPViewControl)this.Control;
             totpScopeNode = (ServiceTOTPScopeNode)this.ScopeNode;
-            totpScopeNode.TOTPFormView = this;
+           // totpScopeNode.TOTPFormView = this;
 
             ActionsPaneItems.Clear();
             SelectionData.ActionsPaneItems.Clear();

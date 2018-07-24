@@ -667,116 +667,6 @@ namespace Neos.IdentityServer.Console
     }
 
     /// <summary>
-    /// ServiceTOTPScopeNode class
-    /// </summary>
-    public class ServiceTOTPScopeNode : RefreshableScopeNode
-    {
-        internal ServiceTOTPFormView TOTPFormView;
-        private Microsoft.ManagementConsole.Action SaveConfig;
-        private Microsoft.ManagementConsole.Action CancelConfig;
-
-
-        /// <summary>
-        /// Constructor implementation
-        /// </summary>
-        public ServiceTOTPScopeNode()
-            : base(true)
-        {
-            //  this.DisplayName = "Configuration TOTP";
-            this.DisplayName = res.TOTPSCOPENODEDESC;
-            this.LanguageIndependentName = "MFA SMTP Configuration";
-
-            SaveConfig = new Microsoft.ManagementConsole.Action(res.GENERALSCOPESAVE, res.GENERALSCOPESAVEDESC, -1, "SaveConfig");
-            CancelConfig = new Microsoft.ManagementConsole.Action(res.GENERALSCOPECANCEL, res.GENERALSCOPECANCELDESC, -1, "CancelConfig");
-
-            this.ActionsPaneHelpItems.Clear();
-            this.ActionsPaneItems.Clear();
-            this.EnabledStandardVerbs = StandardVerbs.Refresh;
-
-            this.ActionsPaneItems.Add(SaveConfig);
-            this.ActionsPaneItems.Add(new Microsoft.ManagementConsole.ActionSeparator());
-            this.ActionsPaneItems.Add(CancelConfig);
-            this.HelpTopic = string.Empty;
-        }
-
-        /// <summary>
-        /// OnExpand method implementation
-        /// </summary>
-        protected override void OnExpand(AsyncStatus status)
-        {
-            base.OnExpand(status);
-        }
-
-        /// <summary>
-        /// OnRefresh method implmentattion
-        /// </summary>
-        protected override void OnRefresh(AsyncStatus status)
-        {
-            base.OnRefresh(status);
-            if (this.TOTPFormView != null)
-                this.TOTPFormView.Refresh();
-        }
-
-        /// <summary>
-        /// OnAction method implmentation
-        /// </summary>
-        protected override void OnAction(Microsoft.ManagementConsole.Action action, AsyncStatus status)
-        {
-            switch ((string)action.Tag)
-            {
-                case "SaveConfig":
-                    if (this.TOTPFormView != null)
-                        this.TOTPFormView.DoSave();
-                    break;
-                case "CancelConfig":
-                    if (this.TOTPFormView != null)
-                        this.TOTPFormView.DoCancel();
-                    break;
-            }
-        }
-
-        /// <summary>
-        /// RefreshDescription method
-        /// </summary>
-        protected override void RefreshDescription()
-        {
-            this.DisplayName = res.SMTPSCOPENODEDESC;
-        }
-
-        /// <summary>
-        /// RefreshActions method
-        /// </summary>
-        protected override void RefreshActions()
-        {
-            foreach (ActionsPaneItem itm in this.ActionsPaneItems)
-            {
-                if (itm is Microsoft.ManagementConsole.Action)
-                {
-                    if ((string)((Microsoft.ManagementConsole.Action)itm).Tag == "SaveConfig")
-                    {
-                        ((Microsoft.ManagementConsole.Action)itm).DisplayName = res.GENERALSCOPESAVE;
-                        ((Microsoft.ManagementConsole.Action)itm).Description = res.GENERALSCOPESAVEDESC;
-                    }
-                    else if ((string)((Microsoft.ManagementConsole.Action)itm).Tag == "CancelConfig")
-                    {
-                        ((Microsoft.ManagementConsole.Action)itm).DisplayName = res.GENERALSCOPECANCEL;
-                        ((Microsoft.ManagementConsole.Action)itm).Description = res.GENERALSCOPECANCELDESC;
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// RefreshForms method
-        /// </summary>
-        protected override void RefreshForms()
-        {
-            if (TOTPFormView != null)
-                TOTPFormView.Refresh();
-        }
-    }
-
-    /// <summary>
     /// ServiceSMTPScopeNode class
     /// </summary>
     public class ServiceSMTPScopeNode: RefreshableScopeNode
@@ -1066,7 +956,7 @@ namespace Neos.IdentityServer.Console
         /// </summary>
         protected override void RefreshDescription()
         {
-            this.DisplayName = res.SMSSCOPENODEDESC;
+            this.DisplayName = res.AZURESCOPENODEDESC;
         }
 
         /// <summary>
@@ -1118,7 +1008,7 @@ namespace Neos.IdentityServer.Console
         public ServiceSecurityScopeNode(): base(true)
         {
            // this.DisplayName = "Gestion de la sécurité";
-            this.DisplayName = res.SECURITYSCOPENODEDESC;
+            this.DisplayName = res.TOTPSCOPENODEDESC;
             this.LanguageIndependentName = "MFA paramétres de sécurité";
 
             SaveConfig = new Microsoft.ManagementConsole.Action(res.GENERALSCOPESAVE, res.GENERALSCOPESAVEDESC, -1, "SaveConfig");
@@ -1176,7 +1066,7 @@ namespace Neos.IdentityServer.Console
         /// </summary>
         protected override void RefreshDescription()
         {
-            this.DisplayName = res.SECURITYSCOPENODEDESC;
+            this.DisplayName = res.TOTPSCOPENODEDESC;
         }
 
         /// <summary>

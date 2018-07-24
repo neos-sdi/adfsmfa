@@ -141,12 +141,6 @@
     <Compile Include="Forms\Neos.IdentityServer.Console.ProvidersViewControl.Designer.cs">
       <DependentUpon>Neos.IdentityServer.Console.ProvidersViewControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\Neos.IdentityServer.Console.TOTPViewControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Forms\Neos.IdentityServer.Console.TOTPViewControl.Designer.cs">
-      <DependentUpon>Neos.IdentityServer.Console.TOTPViewControl.cs</DependentUpon>
-    </Compile>
     <Compile Include="Forms\Neos.IdentityServer.Console.SMTPViewControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -234,7 +228,6 @@
     <Compile Include="Views\Neos.IdentityServer.Console.AzureFormView.cs" />
     <Compile Include="Views\Neos.IdentityServer.Console.SMSFormView.cs" />
     <Compile Include="Views\Neos.IdentityServer.Console.ProvidersFormView.cs" />
-    <Compile Include="Views\Neos.IdentityServer.Console.TOTPFormView.cs" />
     <Compile Include="Views\Neos.IdentityServer.Console.SMTPFormView.cs" />
     <Compile Include="Views\Neos.IdentityServer.Console.SQLFormView.cs" />
     <Compile Include="Views\Neos.IdentityServer.Console.UsersFormView.cs" />
@@ -355,17 +348,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.ProvidersViewControl.resx">
       <DependentUpon>Neos.IdentityServer.Console.ProvidersViewControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.TOTPViewControl.es.resx">
-      <DependentUpon>Neos.IdentityServer.Console.TOTPViewControl.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.TOTPViewControl.fr.resx">
-      <DependentUpon>Neos.IdentityServer.Console.TOTPViewControl.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.TOTPViewControl.resx">
-      <DependentUpon>Neos.IdentityServer.Console.TOTPViewControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SMTPViewControl.es.resx">
       <DependentUpon>Neos.IdentityServer.Console.SMTPViewControl.cs</DependentUpon>

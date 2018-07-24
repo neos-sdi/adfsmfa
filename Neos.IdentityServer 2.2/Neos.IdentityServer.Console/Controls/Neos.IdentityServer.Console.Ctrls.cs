@@ -385,7 +385,7 @@ namespace Neos.IdentityServer.Console.Controls
             this.Controls.Add(_panel);
 
             _txtpanel.Left = 20;
-            _txtpanel.Width = this.Width - 20;
+            _txtpanel.Width = this.Width - 40;
             _txtpanel.Height = 95;
             _txtpanel.BackColor = System.Drawing.SystemColors.Control;
             this.Controls.Add(_txtpanel);
@@ -396,7 +396,7 @@ namespace Neos.IdentityServer.Console.Controls
             lblProviderDesc.Text = _provider.Description;
             lblProviderDesc.Left = 10;
             lblProviderDesc.Top = 10;
-            lblProviderDesc.Width = 800;
+            lblProviderDesc.Width = 500;
             lblProviderDesc.Font =  new System.Drawing.Font(lblProviderDesc.Font.Name, 16F, FontStyle.Bold);
             _txtpanel.Controls.Add(lblProviderDesc);
 
@@ -419,7 +419,7 @@ namespace Neos.IdentityServer.Console.Controls
                     break;
             }
             chkProviderEnabled.Enabled = _provider.AllowDisable;
-            chkProviderEnabled.Left = 810;
+            chkProviderEnabled.Left = 510;
             chkProviderEnabled.Top = 10;
             chkProviderEnabled.Width = 300;
             chkProviderEnabled.CheckedChanged += chkProviderChanged;
@@ -443,7 +443,8 @@ namespace Neos.IdentityServer.Console.Controls
                     chkProviderEnroll.Enabled = false;
                     break;
             }
-            chkProviderEnroll.Left = 810;
+            chkProviderEnroll.Enabled = chkProviderEnabled.Checked;
+            chkProviderEnroll.Left = 510;
             chkProviderEnroll.Top = 30;
             chkProviderEnroll.Width = 300;
             chkProviderEnroll.CheckedChanged += chkProviderEnrollChanged;
@@ -479,7 +480,8 @@ namespace Neos.IdentityServer.Console.Controls
                     chkProviderEnrollStrict.Enabled = false;
                     break;
             }
-            chkProviderEnrollStrict.Left = 840;
+            chkProviderEnrollStrict.Enabled = chkProviderEnabled.Checked;
+            chkProviderEnrollStrict.Left = 540;
             chkProviderEnrollStrict.Top = 50;
             chkProviderEnrollStrict.Width = 300;
             chkProviderEnrollStrict.CheckedChanged += chkProviderEnrollChanged;
@@ -502,7 +504,8 @@ namespace Neos.IdentityServer.Console.Controls
                     chkProviderPin.Checked = Config.AzureProvider.PinRequired;
                     break;
             }
-            chkProviderPin.Left = 810;
+            chkProviderPin.Enabled = chkProviderEnabled.Checked;
+            chkProviderPin.Left = 510;
             chkProviderPin.Top = 70;
             chkProviderPin.Width = 300;
             chkProviderPin.CheckedChanged += chkProviderPinChanged;
@@ -1040,6 +1043,7 @@ namespace Neos.IdentityServer.Console.Controls
         private RadioButton rdioREGUnManaged;
         private CheckBox chkAllowManageOptions;
         private CheckBox chkAllowChangePassword;
+        private CheckBox chkAllowKMSOO;
         private NumericUpDown txtADVStart;
         private NumericUpDown txtADVEnd;
 
@@ -1344,7 +1348,7 @@ namespace Neos.IdentityServer.Console.Controls
             _paneloptmfa.Left = 530;
             _paneloptmfa.Top = 198;
             _paneloptmfa.Height = 100;
-            _paneloptmfa.Width = 300;
+            _paneloptmfa.Width = 400;
             _txtpanel.Controls.Add(_paneloptmfa);
 
             Label optCFGLabel = new Label();
@@ -1369,6 +1373,14 @@ namespace Neos.IdentityServer.Console.Controls
             chkAllowChangePassword.Width = 300;
             chkAllowChangePassword.CheckedChanged += AllowChangePasswordCheckedChanged;
             _paneloptmfa.Controls.Add(chkAllowChangePassword);
+
+            chkAllowKMSOO = new CheckBox();
+            chkAllowKMSOO.Text = res.CTRLGLMANAGEKMSOO;
+            chkAllowKMSOO.Left = 20;
+            chkAllowKMSOO.Top = 79;
+            chkAllowKMSOO.Width = 400;
+            chkAllowKMSOO.CheckedChanged += AllowKMSOOCheckedChanged;
+            _paneloptmfa.Controls.Add(chkAllowKMSOO);
 
 
             _paneladvmfa = new Panel();
@@ -1538,6 +1550,7 @@ namespace Neos.IdentityServer.Console.Controls
 
                 chkAllowManageOptions.Checked = Config.UserFeatures.CanManageOptions();
                 chkAllowChangePassword.Checked = Config.UserFeatures.CanManagePassword();
+                chkAllowKMSOO.Checked = Config.KeepMySelectedOptionOn;
 
                 if (!unlocked)
                 {
@@ -1548,7 +1561,8 @@ namespace Neos.IdentityServer.Console.Controls
                     rdioREGUser.Enabled = rdioREGUser.Checked;
                     rdioREGUnManaged.Enabled = rdioREGUnManaged.Checked;
                     chkAllowManageOptions.Enabled = false;
-                    chkAllowChangePassword.Enabled = false; 
+                    chkAllowChangePassword.Enabled = false;
+                    chkAllowKMSOO.Enabled = false;
                 }
                 else
                 {
@@ -1561,6 +1575,7 @@ namespace Neos.IdentityServer.Console.Controls
                     rdioREGUnManaged.Enabled = true;
                     chkAllowManageOptions.Enabled = true;
                     chkAllowChangePassword.Enabled = true;
+                    chkAllowKMSOO.Enabled = true;
                 }
                 txtADVStart.Enabled = Config.UserFeatures.IsAdvertisable();
                 txtADVEnd.Enabled = Config.UserFeatures.IsAdvertisable();
@@ -1788,6 +1803,29 @@ namespace Neos.IdentityServer.Console.Controls
                 this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
+
+        /// <summary>
+        /// AllowKMSOOCheckedChanged method implementation
+        /// </summary>
+        private void AllowKMSOOCheckedChanged(object sender, EventArgs e)
+        {
+            if (_UpdateLayoutPolicy)
+                return;
+            try
+            {
+                Config.KeepMySelectedOptionOn = chkAllowKMSOO.Checked;
+                ManagementService.ADFSManager.SetDirty(true);
+            }
+            catch (Exception ex)
+            {
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
+                messageBoxParameters.Text = ex.Message;
+                messageBoxParameters.Buttons = MessageBoxButtons.OK;
+                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                this._snapin.Console.ShowDialog(messageBoxParameters);
+            }
+        }
+
         #endregion
 
         #region Advertising
@@ -3760,342 +3798,6 @@ namespace Neos.IdentityServer.Console.Controls
         }
     }
 
-    public partial class TOTPConfigurationControl : Panel
-    {
-        private NamespaceSnapInBase _snapin;
-        private Panel _panel;
-        private Panel _txtpanel;
-
-        // Controls
-        private TextBox txtTOTPShadows;
-        private TextBox txtHashAlgo;
-        private TOTPViewControl _view;
-      //  private bool _UpdateLayoutPolicy = false;
-        private ErrorProvider errors;
-
-
-        /// <summary>
-        /// ConfigurationControl Constructor
-        /// </summary>
-        public TOTPConfigurationControl(TOTPViewControl view, NamespaceSnapInBase snap)
-        {
-            _view = view;
-            _snapin = snap;
-            _panel = new Panel();
-            _txtpanel = new Panel();
-            BackColor = System.Drawing.SystemColors.Window;
-            AutoSize = false;
-        }
-
-        /// <summary>
-        /// OnCreateControl method override
-        /// </summary>
-        protected override void OnCreateControl()
-        {
-            base.OnCreateControl();
-            ManagementService.ADFSManager.ConfigurationStatusChanged += ConfigurationStatusChanged;
-            DoCreateControls();
-        }
-
-        /// <summary>
-        /// ConfigurationStatusChanged method implementation
-        /// </summary>
-        internal void ConfigurationStatusChanged(ADFSServiceManager mgr, ConfigOperationStatus status, Exception ex = null)
-        {
-            UpdateLayoutConfigStatus(status);
-            this._panel.Refresh();
-        }
-
-        /// <summary>
-        /// UpdateLayoutConfigStatus method implementation
-        /// </summary>
-        private void UpdateLayoutConfigStatus(ConfigOperationStatus status)
-        {
-            switch (status)
-            {
-                case ConfigOperationStatus.ConfigInError:
-                    _panel.BackColor = Color.DarkRed;
-                    break;
-                case ConfigOperationStatus.ConfigSaved:
-                    _panel.BackColor = Color.Orange;
-                    break;
-                case ConfigOperationStatus.ConfigLoaded:
-                    if (IsValidData())
-                        _panel.BackColor = Color.Green;
-                    else
-                        _panel.BackColor = Color.DarkRed;
-                    break;
-                case ConfigOperationStatus.ConfigIsDirty:
-                    _panel.BackColor = Color.DarkOrange;
-                    break;
-                case ConfigOperationStatus.ConfigStopped:
-                    _panel.BackColor = Color.DarkGray;
-                    break;
-                default:
-                    _panel.BackColor = Color.Yellow;
-                    break;
-            }
-            return;
-        }
-
-        /// <summary>
-        /// Config property
-        /// </summary>
-        public MFAConfig Config
-        {
-            get { return ManagementService.ADFSManager.Config; }
-        }
-
-        /// <summary>
-        /// UpdateAttibutesLayouts method implmentation
-        /// </summary>
-        private bool UpdateAttibutesLayouts()
-        {
-            bool ret = true;  
-            try
-            {
-                ret = _view.ValidateChildren();
-            }
-            catch (Exception)
-            {
-                ret = false;
-            }
-            return ret;
-        }
-
-        /// <summary>
-        /// IsValidData
-        /// </summary>
-        private bool IsValidData()
-        {
-            return !(string.IsNullOrEmpty(txtTOTPShadows.Text) ||
-                    string.IsNullOrEmpty(txtHashAlgo.Text));
-        }
-
-        /// <summary>
-        /// Initialize method implementation
-        /// </summary>
-        private void DoCreateControls()
-        {
-            this.Dock = DockStyle.Top;
-            this.Height = 585;
-            this.Width = 512;
-            this.Margin = new Padding(30, 5, 30, 5);
-
-            _panel.Width = 20;
-            _panel.Height = 485;
-            this.Controls.Add(_panel);
-
-            _txtpanel.Left = 20;
-            _txtpanel.Width = this.Width - 20;
-            _txtpanel.Height = 485;
-            _txtpanel.BackColor = System.Drawing.SystemColors.Control;
-            this.Controls.Add(_txtpanel);
-
-            Label lblTOTPShadows = new Label();
-            lblTOTPShadows.Text = res.CTRLGLMAXCODES+" : ";
-            lblTOTPShadows.Left = 10;
-            lblTOTPShadows.Top = 19;
-            lblTOTPShadows.Width = 170;
-            _txtpanel.Controls.Add(lblTOTPShadows);
-
-            txtTOTPShadows = new TextBox();
-            txtTOTPShadows.Text = Config.OTPProvider.TOTPShadows.ToString();
-            txtTOTPShadows.Left = 210;
-            txtTOTPShadows.Top = 15;
-            txtTOTPShadows.Width = 20;
-            txtTOTPShadows.TextAlign = HorizontalAlignment.Center;
-            txtTOTPShadows.MaxLength = 2;
-            txtTOTPShadows.Validating += TOTPShadowsValidating;
-            txtTOTPShadows.Validated += TOTPShadowsValidated;
-            _txtpanel.Controls.Add(txtTOTPShadows);
-
-            Label lblHashAlgo = new Label();
-            lblHashAlgo.Text = res.CTRLGLHASH+" : ";
-            lblHashAlgo.Left = 10;
-            lblHashAlgo.Top = 51;
-            lblHashAlgo.Width = 170;
-            _txtpanel.Controls.Add(lblHashAlgo);
-
-            txtHashAlgo = new TextBox();
-            txtHashAlgo.Text = Config.OTPProvider.Algorithm.ToString();
-            txtHashAlgo.Left = 210;
-            txtHashAlgo.Top = 47;
-            txtHashAlgo.Width = 60;
-            txtHashAlgo.TextAlign = HorizontalAlignment.Center;
-            txtHashAlgo.MaxLength = 6;
-            txtHashAlgo.CharacterCasing = CharacterCasing.Upper;
-            txtHashAlgo.Validating += HashAlgoValidating;
-            txtHashAlgo.Validated += HashAlgoValidated;
-            _txtpanel.Controls.Add(txtHashAlgo);
-
-
-            LinkLabel tblSaveConfig = new LinkLabel();
-            tblSaveConfig.Text = res.CTRLSAVE;
-            tblSaveConfig.Left = 20;
-            tblSaveConfig.Top = 490;
-            tblSaveConfig.Width = 60;
-            tblSaveConfig.LinkClicked += SaveConfigLinkClicked;
-            tblSaveConfig.TabStop = true;
-            this.Controls.Add(tblSaveConfig);
-
-            LinkLabel tblCancelConfig = new LinkLabel();
-            tblCancelConfig.Text = res.CTRLCANCEL;
-            tblCancelConfig.Left = 90;
-            tblCancelConfig.Top = 490;
-            tblCancelConfig.Width = 60;
-            tblCancelConfig.LinkClicked += CancelConfigLinkClicked;
-            tblCancelConfig.TabStop = true;
-            this.Controls.Add(tblCancelConfig);
-
-            errors = new ErrorProvider(_view);
-            _view.AutoValidate = AutoValidate.EnableAllowFocusChange;
-            errors.BlinkStyle = ErrorBlinkStyle.NeverBlink;
-
-            UpdateLayoutConfigStatus(ManagementService.ADFSManager.ConfigurationStatus);
-            UpdateAttibutesLayouts();
-        }
-
-        /// <summary>
-        /// OnResize method implmentation
-        /// </summary>
-        protected override void OnResize(EventArgs eventargs)
-        {
-           if (_txtpanel != null)
-               _txtpanel.Width = this.Width - 20;
-        }
-
-       
-
-        #region HashAlgo
-        /// <summary>
-        /// HashAlgoValidating event
-        /// </summary>
-        private void HashAlgoValidating(object sender, CancelEventArgs e)
-        {
-            try
-            {
-                HashMode hash = (HashMode)Enum.Parse(typeof(HashMode), txtHashAlgo.Text);
-                if (txtHashAlgo.Modified)
-                {
-                    ManagementService.ADFSManager.SetDirty(true);
-                    Config.OTPProvider.Algorithm = hash;
-                }
-                if (string.IsNullOrEmpty(txtHashAlgo.Text))
-                {
-                    e.Cancel = true;
-                    errors.SetError(txtHashAlgo, res.CTRLNULLOREMPTYERROR);
-                }
-            }
-            catch (Exception ex)
-            {
-                e.Cancel = true;
-                errors.SetError(txtHashAlgo, ex.Message);
-            }
-        }
-
-        /// <summary>
-        /// HashAlgoValidated method implmentation
-        /// </summary>
-        private void HashAlgoValidated(object sender, EventArgs e)
-        {
-            try
-            {
-                if (txtHashAlgo.Modified)
-                {
-                    Config.OTPProvider.Algorithm = (HashMode)Enum.Parse(typeof(HashMode), txtHashAlgo.Text); 
-                    ManagementService.ADFSManager.SetDirty(true);
-                }
-                errors.SetError(txtHashAlgo, "");
-            }
-            catch (Exception ex)
-            {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
-                this._snapin.Console.ShowDialog(messageBoxParameters);
-            }
-        }
-        #endregion
-
-        #region TOTPShadows
-        /// <summary>
-        /// TOTPShadowsValidating event
-        /// </summary>
-        private void TOTPShadowsValidating(object sender, CancelEventArgs e)
-        {
-            try
-            {
-                int refr = Convert.ToInt32(txtTOTPShadows.Text);
-                if (txtTOTPShadows.Modified)
-                {
-                    ManagementService.ADFSManager.SetDirty(true);
-                    Config.OTPProvider.TOTPShadows = refr;
-                }
-                if (string.IsNullOrEmpty(txtTOTPShadows.Text))
-                {
-                    e.Cancel = true;
-                    errors.SetError(txtTOTPShadows, res.CTRLNULLOREMPTYERROR);
-                }
-                if ((refr < 1) || (refr > 10))
-                {
-                    e.Cancel = true;
-                    errors.SetError(txtTOTPShadows, string.Format(res.CTRLINVALIDVALUE, "1", "10"));
-                }
-            }
-            catch (Exception ex)
-            {
-                e.Cancel = true;
-                errors.SetError(txtTOTPShadows, ex.Message);
-            }
-        }
-
-        /// <summary>
-        /// TOTPShadowsValidated event
-        /// </summary>
-        private void TOTPShadowsValidated(object sender, EventArgs e)
-        {
-            try
-            {
-                if (txtTOTPShadows.Modified)
-                {
-                    Config.OTPProvider.TOTPShadows = Convert.ToInt32(txtTOTPShadows.Text);
-                    ManagementService.ADFSManager.SetDirty(true);
-                }
-                errors.SetError(txtTOTPShadows, "");
-            }
-            catch (Exception ex)
-            {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
-                this._snapin.Console.ShowDialog(messageBoxParameters);
-            }
-        }
-        #endregion
-
-        /// <summary>
-        /// SaveConfigLinkClicked event
-        /// </summary>
-        private void SaveConfigLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            if (_view != null)
-                _view.SaveData();
-        }
-
-        /// <summary>
-        /// CancelConfigLinkClicked event
-        /// </summary>
-        private void CancelConfigLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            if (_view != null)
-                _view.CancelData();
-        }
-
-    }
-
     public partial class SMTPConfigurationControl : Panel
     {
         private NamespaceSnapInBase _snapin;
@@ -4110,6 +3812,7 @@ namespace Neos.IdentityServer.Console.Controls
         private CheckBox chkUseSSL;
         private TextBox txtAccount;
         private TextBox txtPassword;
+        private CheckBox chkAnonymous;
         private Button btnConnect;
 
 
@@ -4310,6 +4013,7 @@ namespace Neos.IdentityServer.Console.Controls
             txtAccount.Left = 210;
             txtAccount.Top = 200;
             txtAccount.Width = 250;
+            txtAccount.Enabled = !Config.MailProvider.Anonymous;
             txtAccount.Validating += UserNameValidating;
             txtAccount.Validated += UserNameValidated;
             _txtpanel.Controls.Add(txtAccount);
@@ -4326,10 +4030,25 @@ namespace Neos.IdentityServer.Console.Controls
             txtPassword.Left = 210;
             txtPassword.Top = 232;
             txtPassword.Width = 250;
+            txtPassword.Enabled = !Config.MailProvider.Anonymous;
             txtPassword.PasswordChar = '*';
             txtPassword.Validating += PwdValidating;
             txtPassword.Validated += PwdValidated;
             _txtpanel.Controls.Add(txtPassword);
+
+
+            chkAnonymous = new CheckBox();
+            chkAnonymous.Text = res.CTRLSMTPANONYMOUS;
+            chkAnonymous.Checked = Config.MailProvider.Anonymous;
+            chkAnonymous.Left = 480;
+            chkAnonymous.Top = 232;
+            chkAnonymous.Width = 150;
+            chkAnonymous.Validating += AnonymousValidating;
+            chkAnonymous.Validated += AnonymousValidated;
+            chkAnonymous.CheckedChanged += AnonymousChecked;
+            _txtpanel.Controls.Add(chkAnonymous);
+
+
 
             btnConnect = new Button();
             btnConnect.Text = res.CTRLSMTPTEST;
@@ -4813,6 +4532,83 @@ namespace Neos.IdentityServer.Console.Controls
         }
         #endregion
 
+        #region Anonymous
+        /// <summary>
+        /// AnonymousValidating method implementation
+        /// </summary>
+        private void AnonymousValidating(object sender, CancelEventArgs e)
+        {
+            this.Cursor = Cursors.WaitCursor;
+            try
+            {
+                if (Config.MailProvider.Anonymous != chkAnonymous.Checked)
+                {
+                    Config.MailProvider.Anonymous = chkAnonymous.Checked;
+                    txtAccount.Enabled = !chkAnonymous.Checked;
+                    txtPassword.Enabled = !chkAnonymous.Checked;
+                    ManagementService.ADFSManager.SetDirty(true);
+                }
+            }
+            catch (Exception ex)
+            {
+                e.Cancel = true;
+                errors.SetError(chkAnonymous, ex.Message);
+            }
+            finally
+            {
+                this.Cursor = Cursors.Default;
+            }
+        }
+
+        /// <summary>
+        /// AnonymousValidated method implementation
+        /// </summary>
+        private void AnonymousValidated(object sender, EventArgs e)
+        {
+            try
+            {
+                if (Config.MailProvider.Anonymous != chkAnonymous.Checked)
+                {
+                    Config.MailProvider.Anonymous = chkAnonymous.Checked;
+                    txtAccount.Enabled = !chkAnonymous.Checked;
+                    txtPassword.Enabled = !chkAnonymous.Checked;
+                    ManagementService.ADFSManager.SetDirty(true);
+                }
+                errors.SetError(chkAnonymous, "");
+            }
+            catch (Exception ex)
+            {
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
+                messageBoxParameters.Text = ex.Message;
+                messageBoxParameters.Buttons = MessageBoxButtons.OK;
+                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                this._snapin.Console.ShowDialog(messageBoxParameters);
+            }
+        }
+
+        /// <summary>
+        /// AnonymousChecked method implementation
+        /// </summary>
+        private void AnonymousChecked(object sender, EventArgs e)
+        {
+            try
+            {
+                Config.MailProvider.Anonymous = chkAnonymous.Checked;
+                txtAccount.Enabled = !chkAnonymous.Checked;
+                txtPassword.Enabled = !chkAnonymous.Checked;
+                ManagementService.ADFSManager.SetDirty(true);
+            }
+            catch (Exception ex)
+            {
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
+                messageBoxParameters.Text = ex.Message;
+                messageBoxParameters.Buttons = MessageBoxButtons.OK;
+                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                this._snapin.Console.ShowDialog(messageBoxParameters);
+            }
+        }
+        #endregion
+
         /// <summary>
         /// btnConnectClick method
         /// </summary>
@@ -4835,7 +4631,8 @@ namespace Neos.IdentityServer.Console.Controls
                 client.UseDefaultCredentials = false;
                 client.DeliveryMethod = SmtpDeliveryMethod.Network;
                 client.EnableSsl = mail.UseSSL;
-                client.Credentials = new NetworkCredential(mail.UserName, mail.Password);
+                if (!mail.Anonymous)
+                    client.Credentials = new NetworkCredential(mail.UserName, mail.Password);
                 client.Send(Message);
 
                 MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
@@ -5862,6 +5659,9 @@ namespace Neos.IdentityServer.Console.Controls
         private ServiceSecurityViewControl _view;
         private bool _UpdateControlsLayouts;
         private ErrorProvider errors;
+
+        private TextBox txtTOTPShadows;
+        private TextBox txtHashAlgo;
         private ComboBox cbFormat;
         private ComboBox cbKeySize;
         private Panel _panelRNG;
@@ -5955,24 +5755,62 @@ namespace Neos.IdentityServer.Console.Controls
         {
             this.SuspendLayout();
             this.Dock = DockStyle.Top;
-            this.Height = 585;
+            this.Height = 612;
             this.Width = 1050;
             this.Margin = new Padding(30, 5, 30, 5);
 
             _panel.Width = 20;
-            _panel.Height = 491;
+            _panel.Height = 550;
             this.Controls.Add(_panel);
 
             _txtpanel.Left = 20;
             _txtpanel.Width = this.Width - 20;
-            _txtpanel.Height = 491;
+            _txtpanel.Height = 550;
             _txtpanel.BackColor = System.Drawing.SystemColors.Control;
             this.Controls.Add(_txtpanel);
+
+            Label lblTOTPShadows = new Label();
+            lblTOTPShadows.Text = res.CTRLGLMAXCODES + " : ";
+            lblTOTPShadows.Left = 10;
+            lblTOTPShadows.Top = 19;
+            lblTOTPShadows.Width = 170;
+            _txtpanel.Controls.Add(lblTOTPShadows);
+
+            txtTOTPShadows = new TextBox();
+            txtTOTPShadows.Text = Config.OTPProvider.TOTPShadows.ToString();
+            txtTOTPShadows.Left = 180;
+            txtTOTPShadows.Top = 15;
+            txtTOTPShadows.Width = 20;
+            txtTOTPShadows.TextAlign = HorizontalAlignment.Center;
+            txtTOTPShadows.MaxLength = 2;
+            txtTOTPShadows.Validating += TOTPShadowsValidating;
+            txtTOTPShadows.Validated += TOTPShadowsValidated;
+            _txtpanel.Controls.Add(txtTOTPShadows);
+
+            Label lblHashAlgo = new Label();
+            lblHashAlgo.Text = res.CTRLGLHASH + " : ";
+            lblHashAlgo.Left = 10;
+            lblHashAlgo.Top = 51;
+            lblHashAlgo.Width = 170;
+            _txtpanel.Controls.Add(lblHashAlgo);
+
+            txtHashAlgo = new TextBox();
+            txtHashAlgo.Text = Config.OTPProvider.Algorithm.ToString();
+            txtHashAlgo.Left = 180;
+            txtHashAlgo.Top = 47;
+            txtHashAlgo.Width = 60;
+            txtHashAlgo.TextAlign = HorizontalAlignment.Center;
+            txtHashAlgo.MaxLength = 6;
+            txtHashAlgo.CharacterCasing = CharacterCasing.Upper;
+            txtHashAlgo.Validating += HashAlgoValidating;
+            txtHashAlgo.Validated += HashAlgoValidated;
+            _txtpanel.Controls.Add(txtHashAlgo);
+
 
             Label lblSecMode = new Label();
             lblSecMode.Text = res.CTRLSECKEYMODE+" : ";
             lblSecMode.Left = 10;
-            lblSecMode.Top = 19;
+            lblSecMode.Top = 100;
             lblSecMode.Width = 150;
             _txtpanel.Controls.Add(lblSecMode);
 
@@ -5980,7 +5818,7 @@ namespace Neos.IdentityServer.Console.Controls
             cbFormat = new ComboBox();
             cbFormat.DropDownStyle = ComboBoxStyle.DropDownList;
             cbFormat.Left = 180;
-            cbFormat.Top = 15;
+            cbFormat.Top = 96;
             cbFormat.Width = 200;
             _txtpanel.Controls.Add(cbFormat);
 
@@ -5994,7 +5832,7 @@ namespace Neos.IdentityServer.Console.Controls
             Label lblMaxKeyLen = new Label();
             lblMaxKeyLen.Text = res.CTRLSECKEYLENGTH+" : ";
             lblMaxKeyLen.Left = 10;
-            lblMaxKeyLen.Top = 51;
+            lblMaxKeyLen.Top = 132;
             lblMaxKeyLen.Width = 150;
             _txtpanel.Controls.Add(lblMaxKeyLen);
 
@@ -6002,7 +5840,7 @@ namespace Neos.IdentityServer.Console.Controls
             cbKeySize = new ComboBox();
             cbKeySize.DropDownStyle = ComboBoxStyle.DropDownList;
             cbKeySize.Left = 180;
-            cbKeySize.Top = 47;
+            cbKeySize.Top = 128;
             cbKeySize.Width = 200;
             _txtpanel.Controls.Add(cbKeySize);
 
@@ -6014,7 +5852,7 @@ namespace Neos.IdentityServer.Console.Controls
 
             _panelRNG = new Panel();
             _panelRNG.Left = 0;
-            _panelRNG.Top = 95;
+            _panelRNG.Top = 171;
             _panelRNG.Height = 60;
             _panelRNG.Width = 400;
             _txtpanel.Controls.Add(_panelRNG);
@@ -6049,7 +5887,7 @@ namespace Neos.IdentityServer.Console.Controls
 
             _panelCERT = new Panel();
             _panelCERT.Left = 0;
-            _panelCERT.Top = 155;
+            _panelCERT.Top = 236;
             _panelCERT.Height = 50;
             _panelCERT.Width = 400;
             _txtpanel.Controls.Add(_panelCERT);
@@ -6081,7 +5919,7 @@ namespace Neos.IdentityServer.Console.Controls
 
             _panelRSA = new Panel();
             _panelRSA.Left = 0;
-            _panelRSA.Top = 225;
+            _panelRSA.Top = 306;
             _panelRSA.Height = 50;
             _panelRSA.Width = 700;
             _txtpanel.Controls.Add(_panelRSA);
@@ -6120,7 +5958,7 @@ namespace Neos.IdentityServer.Console.Controls
 
             _panelCUSTOM = new Panel();
             _panelCUSTOM.Left = 0;
-            _panelCUSTOM.Top = 300;
+            _panelCUSTOM.Top = 381;
             _panelCUSTOM.Height = 160;
             _panelCUSTOM.Width = 1050;
             _txtpanel.Controls.Add(_panelCUSTOM);
@@ -6177,7 +6015,7 @@ namespace Neos.IdentityServer.Console.Controls
             LinkLabel tblSaveConfig = new LinkLabel();
             tblSaveConfig.Text = res.CTRLSAVE;
             tblSaveConfig.Left = 20;
-            tblSaveConfig.Top = 501;
+            tblSaveConfig.Top = 561;
             tblSaveConfig.Width = 60;
             tblSaveConfig.LinkClicked += SaveConfigLinkClicked;
             tblSaveConfig.TabStop = true;
@@ -6186,7 +6024,7 @@ namespace Neos.IdentityServer.Console.Controls
             LinkLabel tblCancelConfig = new LinkLabel();
             tblCancelConfig.Text = res.CTRLCANCEL;
             tblCancelConfig.Left = 90;
-            tblCancelConfig.Top = 501;
+            tblCancelConfig.Top = 561;
             tblCancelConfig.Width = 60;
             tblCancelConfig.LinkClicked += CancelConfigLinkClicked;
             tblCancelConfig.TabStop = true;
@@ -6265,6 +6103,118 @@ namespace Neos.IdentityServer.Console.Controls
                 return false;
             }
         }
+
+
+        #region HashAlgo
+        /// <summary>
+        /// HashAlgoValidating event
+        /// </summary>
+        private void HashAlgoValidating(object sender, CancelEventArgs e)
+        {
+            try
+            {
+                HashMode hash = (HashMode)Enum.Parse(typeof(HashMode), txtHashAlgo.Text);
+                if (txtHashAlgo.Modified)
+                {
+                    ManagementService.ADFSManager.SetDirty(true);
+                    Config.OTPProvider.Algorithm = hash;
+                }
+                if (string.IsNullOrEmpty(txtHashAlgo.Text))
+                {
+                    e.Cancel = true;
+                    errors.SetError(txtHashAlgo, res.CTRLNULLOREMPTYERROR);
+                }
+            }
+            catch (Exception ex)
+            {
+                e.Cancel = true;
+                errors.SetError(txtHashAlgo, ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// HashAlgoValidated method implmentation
+        /// </summary>
+        private void HashAlgoValidated(object sender, EventArgs e)
+        {
+            try
+            {
+                if (txtHashAlgo.Modified)
+                {
+                    Config.OTPProvider.Algorithm = (HashMode)Enum.Parse(typeof(HashMode), txtHashAlgo.Text);
+                    ManagementService.ADFSManager.SetDirty(true);
+                }
+                errors.SetError(txtHashAlgo, "");
+            }
+            catch (Exception ex)
+            {
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
+                messageBoxParameters.Text = ex.Message;
+                messageBoxParameters.Buttons = MessageBoxButtons.OK;
+                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                this._snapin.Console.ShowDialog(messageBoxParameters);
+            }
+        }
+        #endregion
+
+        #region TOTPShadows
+        /// <summary>
+        /// TOTPShadowsValidating event
+        /// </summary>
+        private void TOTPShadowsValidating(object sender, CancelEventArgs e)
+        {
+            try
+            {
+                int refr = Convert.ToInt32(txtTOTPShadows.Text);
+                if (txtTOTPShadows.Modified)
+                {
+                    ManagementService.ADFSManager.SetDirty(true);
+                    Config.OTPProvider.TOTPShadows = refr;
+                }
+                if (string.IsNullOrEmpty(txtTOTPShadows.Text))
+                {
+                    e.Cancel = true;
+                    errors.SetError(txtTOTPShadows, res.CTRLNULLOREMPTYERROR);
+                }
+                if ((refr < 1) || (refr > 10))
+                {
+                    e.Cancel = true;
+                    errors.SetError(txtTOTPShadows, string.Format(res.CTRLINVALIDVALUE, "1", "10"));
+                }
+            }
+            catch (Exception ex)
+            {
+                e.Cancel = true;
+                errors.SetError(txtTOTPShadows, ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// TOTPShadowsValidated event
+        /// </summary>
+        private void TOTPShadowsValidated(object sender, EventArgs e)
+        {
+            try
+            {
+                if (txtTOTPShadows.Modified)
+                {
+                    Config.OTPProvider.TOTPShadows = Convert.ToInt32(txtTOTPShadows.Text);
+                    ManagementService.ADFSManager.SetDirty(true);
+                }
+                errors.SetError(txtTOTPShadows, "");
+            }
+            catch (Exception ex)
+            {
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
+                messageBoxParameters.Text = ex.Message;
+                messageBoxParameters.Buttons = MessageBoxButtons.OK;
+                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                this._snapin.Console.ShowDialog(messageBoxParameters);
+            }
+        }
+        #endregion
+
+
 
         /// <summary>
         /// SelectedFormatChanged method

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-  <Product Id="a23dd485-5365-4d82-8309-103494000001" Name="Neos MFA Provider for ADFS 2012 R2/2016" Language="1033" Version="2.2.0.21" Manufacturer="Neos-SDI" UpgradeCode="a23dd485-5365-4d82-8309-103495000001" >    
+  <Product Id="a23dd485-5365-4d82-8309-103494000001" Name="Neos MFA Provider for ADFS 2012 R2/2016" Language="1033" Version="2.2.0.22" Manufacturer="Neos-SDI" UpgradeCode="a23dd485-5365-4d82-8309-103495000001" >    
 		<Package InstallerVersion="500" Compressed="yes" InstallScope="perMachine" InstallPrivileges="elevated" Platform="x64" Description="Multi-Factor Authentication for ADFS 3.0 / 2016" />
 
     <MajorUpgrade DisallowUpgradeErrorMessage="A later version of [ProductName] is already installed" 
@@ -255,7 +255,7 @@
   <Fragment>
     <ComponentGroup Id="Neos.IdentityServer.ShortCuts">
       <Component Id="GACDeployment80" Guid="E7173CAB-E43F-4A07-0220-018000006180" Directory="INSTALLFOLDER" DiskId="1" Win64="yes" >
-        <Shortcut Id="DesktopShortcut" Directory="DesktopFolder" Name="MFA" Description="Neos-Sdi MFA Extensions for ADFS (2012R2 and 2016)"
+        <Shortcut Id="DesktopShortcut" Directory="DesktopFolder" Name="MFA" Description="Neos-Sdi MFA Extensions for ADFS (2012R2 and 2016)" Show="maximized"
           WorkingDirectory="INSTALLFOLDER"
           Target="[INSTALLFOLDER]MFA.msc" >
           <Icon Id="Microsoft_201.ico" SourceFile="$(var.Neos.IdentityServer.Console.NativeResources.ProjectDir)Microsoft_201.ico" />

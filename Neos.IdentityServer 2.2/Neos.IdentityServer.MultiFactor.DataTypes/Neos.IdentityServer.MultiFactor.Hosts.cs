@@ -247,6 +247,7 @@ namespace Neos.IdentityServer.MultiFactor
         private int _deliveryWindow = 300;
         private int _pinlength = 4;
         private int _defaultpin = 0;
+        private bool _kmsoo = true;
 
         private bool _useActiveDirectory = true;
         private bool _customUpdatePassword = true;
@@ -287,6 +288,7 @@ namespace Neos.IdentityServer.MultiFactor
 
                 UseActiveDirectory = true;
                 CustomUpdatePassword = true;
+                KeepMySelectedOptionOn = true;
                 DefaultCountryCode = "fr";
                 AdminContact = "adminmfa@contoso.com";
                 UserFeatures = (UserFeaturesOptions.AllowDisabled | UserFeaturesOptions.AllowUnRegistered | UserFeaturesOptions.AllowManageOptions | UserFeaturesOptions.AllowChangePassword);
@@ -438,6 +440,13 @@ namespace Neos.IdentityServer.MultiFactor
         {
             get { return _defaultpin; }
             set { _defaultpin = value; }
+        }
+
+        [XmlAttribute("KMSOO")]
+        public bool KeepMySelectedOptionOn 
+        {
+            get { return _kmsoo; }
+            set { _kmsoo = value; }
         }
 
         [XmlAttribute("Issuer")]
@@ -958,6 +967,7 @@ namespace Neos.IdentityServer.MultiFactor
         private bool _enabled = true;
         private bool _enrollwizard = true;
         private bool _enrollwizardstrict = false;
+        private bool _anonymous = false;
 
         [XmlAttribute("Enabled")]
         public bool Enabled
@@ -1006,6 +1016,13 @@ namespace Neos.IdentityServer.MultiFactor
         {
             get;
             set;
+        }
+
+        [XmlAttribute("anonymous")]
+        public bool Anonymous
+        {
+            get { return _anonymous; }
+            set { _anonymous = value; }
         }
 
         [XmlAttribute("host")]

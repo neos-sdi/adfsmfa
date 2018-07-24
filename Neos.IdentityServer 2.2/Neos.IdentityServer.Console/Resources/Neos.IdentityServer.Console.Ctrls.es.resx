@@ -267,6 +267,9 @@
   <data name="CTRLGLINVALIDEMAILCONTACT" xml:space="preserve">
     <value>Formato de correo electrónico no válido para el contacto administrativo</value>
   </data>
+  <data name="CTRLGLMANAGEKMSOO" xml:space="preserve">
+    <value>El usuario puede seleccionar el proveedor predeterminado</value>
+  </data>
   <data name="CTRLGLMANAGEOPTIONS" xml:space="preserve">
     <value>Administrar las opciones de usuario</value>
   </data>
@@ -401,6 +404,9 @@
   </data>
   <data name="CTRLSMTPACCOUNT" xml:space="preserve">
     <value>Cuenta de conexión</value>
+  </data>
+  <data name="CTRLSMTPANONYMOUS" xml:space="preserve">
+    <value>Anonimato</value>
   </data>
   <data name="CTRLSMTPCOMPANY" xml:space="preserve">
     <value>Nombre de la Sociedad</value>

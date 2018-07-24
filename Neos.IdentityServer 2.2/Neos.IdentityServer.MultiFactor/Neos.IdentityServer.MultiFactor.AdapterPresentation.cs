@@ -1058,7 +1058,8 @@ namespace Neos.IdentityServer.MultiFactor
             }
 
             result += "<input id=\"opt5\" name=\"opt\" type=\"radio\" value=\"4\" onchange=\"ChooseMethodChanged()\"/> " + Resources.GetString(ResourcesLocaleKind.Html, "HtmlCHOOSEOptionNone") + "<br /><br />";
-            result += "<input id=\"remember\" type=\"checkbox\" name=\"Remember\"> " + Resources.GetString(ResourcesLocaleKind.Html, "HtmlCHOOSEOptionRemember") + "<br /><br />";
+            if (Provider.KeepMySelectedOptionOn())
+                result += "<input id=\"remember\" type=\"checkbox\" name=\"Remember\"> " + Resources.GetString(ResourcesLocaleKind.Html, "HtmlCHOOSEOptionRemember") + "<br /><br />";
             result += "<input id=\"context\" type=\"hidden\" name=\"Context\" value=\"%Context%\">";
             result += "<input id=\"authMethod\" type=\"hidden\" name=\"AuthMethod\" value=\"%AuthMethod%\">";
             result += "<input id=\"saveButton\" type=\"submit\" class=\"submit\" name=\"Continue\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlCHOOSEOptionSendCode") + "\" >";

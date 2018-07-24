@@ -502,6 +502,15 @@ namespace Neos.IdentityServer.Console.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à User can select default provider.
+        /// </summary>
+        internal static string CTRLGLMANAGEKMSOO {
+            get {
+                return ResourceManager.GetString("CTRLGLMANAGEKMSOO", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à User management options.
         /// </summary>
         internal static string CTRLGLMANAGEOPTIONS {
@@ -912,6 +921,15 @@ namespace Neos.IdentityServer.Console.Resources {
         internal static string CTRLSMTPACCOUNT {
             get {
                 return ResourceManager.GetString("CTRLSMTPACCOUNT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Anonymous.
+        /// </summary>
+        internal static string CTRLSMTPANONYMOUS {
+            get {
+                return ResourceManager.GetString("CTRLSMTPANONYMOUS", resourceCulture);
             }
         }
         

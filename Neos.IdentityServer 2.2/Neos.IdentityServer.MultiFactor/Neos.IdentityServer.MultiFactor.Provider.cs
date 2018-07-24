@@ -460,22 +460,25 @@ namespace Neos.IdentityServer.MultiFactor
                                     IExternalProvider prov = RuntimeAuthProvider.GetProvider(usercontext.FirstChoiceMethod);
                                     if ((prov!=null) &&((prov.AllowEnrollment) && (prov.EnrollmentNeverUseOptions)))
                                     {
-                                        switch (usercontext.FirstChoiceMethod)
+                                        if (usercontext.FirstChoiceMethod != usercontext.PreferredMethod)
                                         {
-                                            case PreferredMethod.Code:
-                                                usercontext.UIMode = ProviderPageMode.EnrollOTPAndSave;
-                                                break;
-                                            case PreferredMethod.Email:
-                                                usercontext.UIMode = ProviderPageMode.EnrollEmailAndSave;
-                                                break;
-                                            case PreferredMethod.External:
-                                                usercontext.UIMode = ProviderPageMode.EnrollPhoneAndSave;
-                                                break;
-                                            case PreferredMethod.Biometrics:
-                                                usercontext.UIMode = ProviderPageMode.EnrollBiometricsAndSave;
-                                                break;
+                                            switch (usercontext.FirstChoiceMethod)
+                                            {
+                                                case PreferredMethod.Code:
+                                                    usercontext.UIMode = ProviderPageMode.EnrollOTPAndSave;
+                                                    break;
+                                                case PreferredMethod.Email:
+                                                    usercontext.UIMode = ProviderPageMode.EnrollEmailAndSave;
+                                                    break;
+                                                case PreferredMethod.External:
+                                                    usercontext.UIMode = ProviderPageMode.EnrollPhoneAndSave;
+                                                    break;
+                                                case PreferredMethod.Biometrics:
+                                                    usercontext.UIMode = ProviderPageMode.EnrollBiometricsAndSave;
+                                                    break;
+                                            }
+                                            return new AdapterPresentation(this, context);
                                         }
-                                        return new AdapterPresentation(this, context);
                                     }
                                 }
                             }
@@ -1039,22 +1042,25 @@ namespace Neos.IdentityServer.MultiFactor
                         IExternalProvider prov = RuntimeAuthProvider.GetProvider(usercontext.FirstChoiceMethod);
                         if ((prov!=null) && ((prov.AllowEnrollment) && (prov.EnrollmentNeverUseOptions)))
                         {
-                            switch (usercontext.FirstChoiceMethod)
+                            if (usercontext.FirstChoiceMethod != usercontext.PreferredMethod)
                             {
-                                case PreferredMethod.Code:
-                                    usercontext.UIMode = ProviderPageMode.EnrollOTPAndSave;
-                                    break;
-                                case PreferredMethod.Email:
-                                    usercontext.UIMode = ProviderPageMode.EnrollEmailAndSave;
-                                    break;
-                                case PreferredMethod.External:
-                                    usercontext.UIMode = ProviderPageMode.EnrollPhoneAndSave;
-                                    break;
-                                case PreferredMethod.Biometrics:
-                                    usercontext.UIMode = ProviderPageMode.EnrollBiometricsAndSave;
-                                    break;
+                                switch (usercontext.FirstChoiceMethod)
+                                {
+                                    case PreferredMethod.Code:
+                                        usercontext.UIMode = ProviderPageMode.EnrollOTPAndSave;
+                                        break;
+                                    case PreferredMethod.Email:
+                                        usercontext.UIMode = ProviderPageMode.EnrollEmailAndSave;
+                                        break;
+                                    case PreferredMethod.External:
+                                        usercontext.UIMode = ProviderPageMode.EnrollPhoneAndSave;
+                                        break;
+                                    case PreferredMethod.Biometrics:
+                                        usercontext.UIMode = ProviderPageMode.EnrollBiometricsAndSave;
+                                        break;
+                                }
+                                return new AdapterPresentation(this, context);
                             }
-                            return new AdapterPresentation(this, context);
                         }
                     }
                 }
@@ -2401,6 +2407,15 @@ namespace Neos.IdentityServer.MultiFactor
                 return false;
             return true;
         }
+
+        /// <summary>
+        /// KeepMySelectedOptionOn method
+        /// </summary>
+        internal bool KeepMySelectedOptionOn()
+        {
+            return Config.KeepMySelectedOptionOn;
+        }
         #endregion
+
     }
 }

@@ -21,6 +21,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -29,11 +30,18 @@ namespace Neos.IdentityServer.Console
 {
     public partial class DatabaseWizard : Form
     {
+
+        private const int EM_SETCUEBANNER = 0x1501;
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        private static extern Int32 SendMessage(IntPtr hWnd, int msg, int wParam, [MarshalAs(UnmanagedType.LPWStr)]string lParam);
+
         ComponentResourceManager resources;
         public DatabaseWizard()
         {
             resources = new ComponentResourceManager(typeof(DatabaseWizard));
             InitializeComponent();
+            SendMessage(txtAccount.Handle, EM_SETCUEBANNER, 0, "    ADFS account    ");
         }
 
         /// <summary>

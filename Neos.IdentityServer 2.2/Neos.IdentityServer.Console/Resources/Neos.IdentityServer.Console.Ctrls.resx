@@ -264,6 +264,9 @@
   <data name="CTRLGLINVALIDEMAILCONTACT" xml:space="preserve">
     <value>Invalid email format for admin contact !</value>
   </data>
+  <data name="CTRLGLMANAGEKMSOO" xml:space="preserve">
+    <value>User can select default provider</value>
+  </data>
   <data name="CTRLGLMANAGEOPTIONS" xml:space="preserve">
     <value>User management options</value>
   </data>
@@ -401,6 +404,9 @@
   </data>
   <data name="CTRLSMTPACCOUNT" xml:space="preserve">
     <value>Connection account</value>
+  </data>
+  <data name="CTRLSMTPANONYMOUS" xml:space="preserve">
+    <value>Anonymous</value>
   </data>
   <data name="CTRLSMTPCOMPANY" xml:space="preserve">
     <value>Company Name</value>

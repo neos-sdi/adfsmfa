@@ -1562,7 +1562,8 @@ namespace Neos.IdentityServer.MultiFactor
             client.UseDefaultCredentials = false;
             client.DeliveryMethod = SmtpDeliveryMethod.Network;
             client.EnableSsl = mail.UseSSL;
-            client.Credentials = new NetworkCredential(mail.UserName, mail.Password);
+            if (!mail.Anonymous)
+                client.Credentials = new NetworkCredential(mail.UserName, mail.Password);
             client.Send(Message);
         }
 
