@@ -134,7 +134,7 @@
     <comment>Code PIN</comment>
   </data>
   <data name="GLOBALWarnOverNetwork" xml:space="preserve">
-    <value>(The data are transmitted on the internet)</value>
+    <value>(The data is transmitted over the internet)</value>
     <comment>(Les données sont transmises sur internet)</comment>
   </data>
   <data name="GLOBALWarnThirdParty" xml:space="preserve">
