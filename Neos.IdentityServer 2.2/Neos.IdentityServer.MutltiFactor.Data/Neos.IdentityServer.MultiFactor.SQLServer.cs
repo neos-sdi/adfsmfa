@@ -105,7 +105,10 @@ namespace Neos.IdentityServer.MultiFactor.Data
                     reg.PIN = rd.GetInt32(4);
                     reg.Enabled = rd.GetBoolean(5);
                     reg.PreferredMethod = (PreferredMethod)rd.GetInt32(6);
-                    reg.OverrideMethod = rd.GetString(7);
+                    if (!rd.IsDBNull(7))
+                        reg.OverrideMethod = rd.GetString(7);
+                    else
+                        reg.OverrideMethod = string.Empty;
                     reg.IsRegistered = true;
                     return reg;
                 }
@@ -496,7 +499,10 @@ namespace Neos.IdentityServer.MultiFactor.Data
                     reg.PIN = rd.GetInt32(5);
                     reg.Enabled = rd.GetBoolean(6);
                     reg.PreferredMethod = (PreferredMethod)rd.GetInt32(7);
-                    reg.OverrideMethod = rd.GetString(8);
+                    if (!rd.IsDBNull(8))
+                        reg.OverrideMethod = rd.GetString(8);
+                    else
+                        reg.OverrideMethod = string.Empty;
                     reg.IsRegistered = true;
                     regs.Add(reg);
                     i++;
@@ -563,7 +569,10 @@ namespace Neos.IdentityServer.MultiFactor.Data
                     reg.PIN = rd.GetInt32(4);
                     reg.Enabled = rd.GetBoolean(5);
                     reg.PreferredMethod = (PreferredMethod)rd.GetInt32(6);
-                    reg.OverrideMethod = rd.GetString(7);
+                    if (!rd.IsDBNull(7))
+                        reg.OverrideMethod = rd.GetString(7);
+                    else
+                        reg.OverrideMethod = string.Empty;
                     reg.IsRegistered = true;
                     regs.Add(reg);
                 }
