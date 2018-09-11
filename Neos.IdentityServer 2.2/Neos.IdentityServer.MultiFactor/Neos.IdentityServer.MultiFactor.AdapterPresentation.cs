@@ -65,6 +65,20 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// Constructor overload implementation
         /// </summary>
+        public AdapterPresentation(AuthenticationProvider provider, IAuthenticationContext context, string message, bool ismessage)
+        {
+            this._provider = provider;
+            this._context = new AuthenticationContext(context);
+            this._context.UIMessage = message;
+            this._isPermanentFailure = (this._context.TargetUIMode == ProviderPageMode.DefinitiveError);
+            this._ismessage = ismessage;
+            this._disableoptions = false;
+            this._resmgr = new ResourcesLocale(context.Lcid);
+        }
+
+        /// <summary>
+        /// Constructor overload implementation
+        /// </summary>
         public AdapterPresentation(AuthenticationProvider provider, IAuthenticationContext context, ProviderPageMode suite)
         {
             this._provider = provider;
@@ -302,6 +316,22 @@ namespace Neos.IdentityServer.MultiFactor
         private string GetFormHtmlIdentification(AuthenticationContext usercontext)
         {
             string result = "<form method=\"post\" id=\"IdentificationForm\" autocomplete=\"off\">";
+
+            if (_isPermanentFailure)
+            {
+                if (!String.IsNullOrEmpty(usercontext.UIMessage))
+                    result += "<p class=\"error\">" + usercontext.UIMessage + "</p></br>";
+                else
+                    result += "<p class=\"error\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlErrorRestartSession") + "</p></br>";
+            }
+            else
+            {
+                if (_ismessage)
+                    result += "<p class=\"text fullWidth\" style=\"color: #6FA400\">" + usercontext.UIMessage + "</p></br>";
+                else
+                    result += "<p class=\"error\">" + usercontext.UIMessage + "</p></br>";
+            }
+
             IExternalProvider prov = RuntimeAuthProvider.GetProvider(usercontext.PreferredMethod);
             if ((prov != null) && (prov.IsUIElementRequired(usercontext, RequiredMethodElements.CodeInputRequired)))
             {
@@ -1435,6 +1465,22 @@ namespace Neos.IdentityServer.MultiFactor
             result += "</script>" + "\r\n"; 
 
             result += "<form method=\"post\" id=\"refreshForm\" autocomplete=\"off\" \">";
+
+            if (_isPermanentFailure)
+            {
+                if (!String.IsNullOrEmpty(usercontext.UIMessage))
+                    result += "<p class=\"error\">" + usercontext.UIMessage + "</p></br>";
+                else
+                    result += "<p class=\"error\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlErrorRestartSession") + "</p></br>";
+            }
+            else
+            {
+                if (_ismessage)
+                    result += "<p class=\"text fullWidth\" style=\"color: #6FA400\">" + usercontext.UIMessage + "</p></br>";
+                else
+                    result += "<p class=\"error\">" + usercontext.UIMessage + "</p></br>";
+            }
+
             if (usercontext.IsRemote)
             {
                 IExternalProvider prov = RuntimeAuthProvider.GetProvider(usercontext.PreferredMethod);
@@ -1636,88 +1682,98 @@ namespace Neos.IdentityServer.MultiFactor
                 case 0:
                     result += "<div class=\"fieldMargin smallText\"><label for=\"\"></label>" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelWREGOTP") + "</div></br>";
                     result += "<table>";
-                    result += " <tr>";
-                    result += "  <td>";
-                    result += "   <img id=\"ms\" src=\"data:image/png;base64," + Convert.ToBase64String(images.microsoft.ToByteArray(ImageFormat.Png)) + "\"/>";
-                    result += "  </td>";
-                    result += "  <td> ";
-                    result += "    <table>";
-                    result += "      <tr>";
-                    result += "        <td>&nbsp</td>";
-                    result += "        <td> ";
-                    result += "          <a href=\"https://www.microsoft.com/store/p/microsoft-authenticator/9nblgggzmcj6\" target=\"blank\">Microsoft Store</a>";
-                    result += "        </td>";
-                    result += "      </tr>";
-                    result += "      <tr>";
-                    result += "        <td>&nbsp</td>";
-                    result += "        <td>";
-                    result += "          <a href=\"https://play.google.com/store/apps/details?id=com.azure.authenticator\" target=\"blank\">Google Play</a>";
-                    result += "        </td>";
-                    result += "      </tr>";
-                    result += "      <tr>";
-                    result += "        <td>&nbsp</td>";
-                    result += "        <td>";
-                    result += "          <a href=\"https://itunes.apple.com/app/microsoft-authenticator/id983156458\" target=\"blank\">iTunes</a>";
-                    result += "        </td>";
-                    result += "      </tr>";
-                    result += "    </table";
-                    result += "  </td>";
-                    result += " </tr>";
-
-                    result += " <tr>";
-                    result += "  <td>";
-                    result += "    <img id=\"gl\" src=\"data:image/png;base64," + Convert.ToBase64String(images.google.ToByteArray(ImageFormat.Png)) + "\"/>";
-                    result += "  </td>";
-                    result += "  <td> ";
-                    result += "    <table>";
-                    result += "      <tr>";
-                    result += "        <td>&nbsp</td>";
-                    result += "        <td>&nbsp</td>";
-                    result += "      </tr>";
-                    result += "      <tr>";
-                    result += "        <td>&nbsp</td>";
-                    result += "        <td >";
-                    result += "          <a href=\"https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2\" target=\"blank\">Google Play</a>";
-                    result += "        </td>";
-                    result += "      </tr>";
-                    result += "      <tr>";
-                    result += "        <td>&nbsp</td>";
-                    result += "        <td>";
-                    result += "          <a href=\"https://itunes.apple.com/app/google-authenticator/id388497605\" target=\"blank\">iTunes</a>";
-                    result += "        </td>";
-                    result += "      </tr>";
-                    result += "    </table";
-                    result += "  </td>";
-                    result += " </tr>";
-
-                    result += " <tr>";
-                    result += "  <td>";
-                    result += "    <img id=\"at\" src=\"data:image/png;base64," + Convert.ToBase64String(images.authy2.ToByteArray(ImageFormat.Png)) + "\"/>";
-                    result += "  </td>";
-                    result += "  <td> ";
-                    result += "    <table";
-                    result += "      <tr>";
-                    result += "        <td>&nbsp</td>";
-                    result += "        <td>&nbsp</td>";
-                    result += "      </tr>";
-                    result += "      <tr>";
-                    result += "        <td>&nbsp</td>";
-                    result += "        <td>";
-                    result += "          <a href=\"https://play.google.com/store/apps/details?id=com.authy.authy\" target=\"blank\">Google Play</a>";
-                    result += "        </td>";
-                    result += "      </tr>";
-                    result += "      <tr>";
-                    result += "        <td>&nbsp</td>";
-                    result += "        <td>";
-                    result += "          <a href=\"https://itunes.apple.com/app/authy/id494168017\" target=\"blank\">iTunes</a>";
-                    result += "        </td>";
-                    result += "      </tr>";
-                    result += "    </table";
-                    result += "  </td>";
-                    result += " </tr>";
-
+                    if (!Provider.Config.OTPProvider.WizardOptions.HasFlag(OTPWizardOptions.NoMicrosoftAuthenticator))
+                    {
+                        result += " <tr>";
+                        result += "  <td>";
+                        result += "   <img id=\"ms\" src=\"data:image/png;base64," + Convert.ToBase64String(images.microsoft.ToByteArray(ImageFormat.Png)) + "\"/>";
+                        result += "  </td>";
+                        result += "  <td> ";
+                        result += "    <table>";
+                        result += "      <tr>";
+                        result += "        <td>&nbsp</td>";
+                        result += "        <td> ";
+                        result += "          <a href=\"https://www.microsoft.com/store/p/microsoft-authenticator/9nblgggzmcj6\" target=\"blank\">Microsoft Store</a>";
+                        result += "        </td>";
+                        result += "      </tr>";
+                        result += "      <tr>";
+                        result += "        <td>&nbsp</td>";
+                        result += "        <td>";
+                        result += "          <a href=\"https://play.google.com/store/apps/details?id=com.azure.authenticator\" target=\"blank\">Google Play</a>";
+                        result += "        </td>";
+                        result += "      </tr>";
+                        result += "      <tr>";
+                        result += "        <td>&nbsp</td>";
+                        result += "        <td>";
+                        result += "          <a href=\"https://itunes.apple.com/app/microsoft-authenticator/id983156458\" target=\"blank\">iTunes</a>";
+                        result += "        </td>";
+                        result += "      </tr>";
+                        result += "    </table";
+                        result += "  </td>";
+                        result += " </tr>";
+                    }
+                    if (!Provider.Config.OTPProvider.WizardOptions.HasFlag(OTPWizardOptions.NoGoogleAuthenticator))
+                    {
+                        result += " <tr>";
+                        result += "  <td>";
+                        result += "    <img id=\"gl\" src=\"data:image/png;base64," + Convert.ToBase64String(images.google.ToByteArray(ImageFormat.Png)) + "\"/>";
+                        result += "  </td>";
+                        result += "  <td> ";
+                        result += "    <table>";
+                        result += "      <tr>";
+                        result += "        <td>&nbsp</td>";
+                        result += "        <td>&nbsp</td>";
+                        result += "      </tr>";
+                        result += "      <tr>";
+                        result += "        <td>&nbsp</td>";
+                        result += "        <td >";
+                        result += "          <a href=\"https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2\" target=\"blank\">Google Play</a>";
+                        result += "        </td>";
+                        result += "      </tr>";
+                        result += "      <tr>";
+                        result += "        <td>&nbsp</td>";
+                        result += "        <td>";
+                        result += "          <a href=\"https://itunes.apple.com/app/google-authenticator/id388497605\" target=\"blank\">iTunes</a>";
+                        result += "        </td>";
+                        result += "      </tr>";
+                        result += "    </table";
+                        result += "  </td>";
+                        result += " </tr>";
+                    }
+                    if (!Provider.Config.OTPProvider.WizardOptions.HasFlag(OTPWizardOptions.NoAuthyAuthenticator))
+                    {
+                        result += " <tr>";
+                        result += "  <td>";
+                        result += "    <img id=\"at\" src=\"data:image/png;base64," + Convert.ToBase64String(images.authy2.ToByteArray(ImageFormat.Png)) + "\"/>";
+                        result += "  </td>";
+                        result += "  <td> ";
+                        result += "    <table";
+                        result += "      <tr>";
+                        result += "        <td>&nbsp</td>";
+                        result += "        <td>&nbsp</td>";
+                        result += "      </tr>";
+                        result += "      <tr>";
+                        result += "        <td>&nbsp</td>";
+                        result += "        <td>";
+                        result += "          <a href=\"https://play.google.com/store/apps/details?id=com.authy.authy\" target=\"blank\">Google Play</a>";
+                        result += "        </td>";
+                        result += "      </tr>";
+                        result += "      <tr>";
+                        result += "        <td>&nbsp</td>";
+                        result += "        <td>";
+                        result += "          <a href=\"https://itunes.apple.com/app/authy/id494168017\" target=\"blank\">iTunes</a>";
+                        result += "        </td>";
+                        result += "      </tr>";
+                        result += "    </table";
+                        result += "  </td>";
+                        result += " </tr>";
+                    }
                     result += "</table></br>";
-                    result += "<div class=\"fieldMargin smallText\"><label for=\"\"><a href=\"https://www.google.fr/search?q=Authenticator+apps&oq=Authenticator+apps\" target=\"blank\">Or Search Google</a>" + "</div>";
+
+                    if (!Provider.Config.OTPProvider.WizardOptions.HasFlag(OTPWizardOptions.NoGooglSearch))
+                    {
+                        result += "<div class=\"fieldMargin smallText\"><label for=\"\"><a href=\"https://www.google.fr/search?q=Authenticator+apps&oq=Authenticator+apps\" target=\"blank\">Or Search Google</a>" + "</div>";
+                    }
                     result += "</br>";
 
                     result += "<p class=\"error\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelWREGOTPWarning") + "</p></br></br>";

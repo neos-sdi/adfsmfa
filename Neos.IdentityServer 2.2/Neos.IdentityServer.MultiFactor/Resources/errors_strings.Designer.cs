@@ -144,6 +144,15 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Incorrect identification, please try again..
+        /// </summary>
+        internal static string ErrorInvalidIdentificationRetry {
+            get {
+                return ResourceManager.GetString("ErrorInvalidIdentificationRetry", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Invalid Secret Key !.
         /// </summary>
         internal static string ErrorInvalidKey {
@@ -241,6 +250,15 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         internal static string ErrorSendingToastInformation {
             get {
                 return ResourceManager.GetString("ErrorSendingToastInformation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Error when sending identification request ! Retrying !.
+        /// </summary>
+        internal static string ErrorSendingToastInformationRetry {
+            get {
+                return ResourceManager.GetString("ErrorSendingToastInformationRetry", resourceCulture);
             }
         }
         

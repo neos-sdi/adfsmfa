@@ -1942,6 +1942,7 @@ namespace Neos.IdentityServer.MultiFactor
                         config.OTPProvider.Enabled = true;   // always let an active option eg : aplication in this case
                     KeysManager.Initialize(config);  // Important
                     RuntimeAuthProvider.LoadProviders(config);
+                    GetADFSProperties(config);
                 }
             }
             finally
@@ -1999,6 +2000,47 @@ namespace Neos.IdentityServer.MultiFactor
                     File.Delete(pth);
             }
             return config;
+        }
+
+        /// <summary>
+        /// GetExternalLockoutParameters method implementation
+        /// </summary>
+        internal static void GetADFSProperties(MFAConfig config)
+        {
+            Runspace SPRunSpace = null;
+            PowerShell SPPowerShell = null;
+            try
+            {
+                RunspaceConfiguration SPRunConfig = RunspaceConfiguration.Create();
+                SPRunSpace = RunspaceFactory.CreateRunspace(SPRunConfig);
+
+                SPPowerShell = PowerShell.Create();
+                SPPowerShell.Runspace = SPRunSpace;
+                SPRunSpace.Open();
+
+                Pipeline pipeline = SPRunSpace.CreatePipeline();
+                Command exportcmd = new Command("Get-ADFSProperties", false);
+                pipeline.Commands.Add(exportcmd);
+                Collection<PSObject> PSOutput = pipeline.Invoke();
+
+                bool lockoutenabled = false;
+                int lockoutcount = 0;
+                foreach (var result in PSOutput)
+                {
+                    lockoutenabled = Convert.ToBoolean(result.Properties["ExtranetLockoutEnabled"].Value);
+                    if (lockoutenabled) 
+                        lockoutcount = Convert.ToInt32(result.Properties["ExtranetLockoutThreshold"].Value);
+                }
+                if ((lockoutenabled) && (lockoutcount > 0))
+                    config.MaxRetries = lockoutcount;
+                else
+                    config.MaxRetries = 0;
+            }
+            finally
+            {
+                if (SPRunSpace != null)
+                    SPRunSpace.Close();
+            }
         }
     }
 

@@ -448,6 +448,15 @@ namespace Neos.IdentityServer.Console.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Show Google search.
+        /// </summary>
+        internal static string CTRLGLALLOWGOOGLESEARCH {
+            get {
+                return ResourceManager.GetString("CTRLGLALLOWGOOGLESEARCH", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Company Name.
         /// </summary>
         internal static string CTRLGLCOMANYNAME {
@@ -633,6 +642,33 @@ namespace Neos.IdentityServer.Console.Resources {
         internal static string CTRLGLREFRESH {
             get {
                 return ResourceManager.GetString("CTRLGLREFRESH", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Show Authy Authenticator.
+        /// </summary>
+        internal static string CTRLGLSHOWAUTHY {
+            get {
+                return ResourceManager.GetString("CTRLGLSHOWAUTHY", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Show Google Authenticator.
+        /// </summary>
+        internal static string CTRLGLSHOWGOOGLE {
+            get {
+                return ResourceManager.GetString("CTRLGLSHOWGOOGLE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Show Microsoft Authenticator.
+        /// </summary>
+        internal static string CTRLGLSHOWMICROSOFT {
+            get {
+                return ResourceManager.GetString("CTRLGLSHOWMICROSOFT", resourceCulture);
             }
         }
         
@@ -840,6 +876,15 @@ namespace Neos.IdentityServer.Console.Resources {
         internal static string CTRLSECTHUMPRINT {
             get {
                 return ResourceManager.GetString("CTRLSECTHUMPRINT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Registration wizard options.
+        /// </summary>
+        internal static string CTRLSECWIZARD {
+            get {
+                return ResourceManager.GetString("CTRLSECWIZARD", resourceCulture);
             }
         }
         

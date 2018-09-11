@@ -73,6 +73,7 @@ namespace Neos.IdentityServer.MultiFactor
             try
             {
                 AuthenticationContext usercontext = new AuthenticationContext(context);
+                usercontext.CurrentRetries = 0;
                 switch (usercontext.UIMode)
                 {
                     case ProviderPageMode.PreSet:
@@ -149,9 +150,6 @@ namespace Neos.IdentityServer.MultiFactor
                         {
                             if (Config.UserFeatures.CanManageOptions())
                             {
-                               // KeysManager.NewKey(usercontext.UPN);
-                               // usercontext.KeyStatus = SecretKeyStatus.Success;
-                               // usercontext.KeyChanged = true;
                                 usercontext.UIMode = ProviderPageMode.PreSet;
                             }
                         }
@@ -170,9 +168,6 @@ namespace Neos.IdentityServer.MultiFactor
                         {
                             if (usercontext.KeyStatus == SecretKeyStatus.NoKey)
                             {
-                               // KeysManager.NewKey(usercontext.UPN);
-                               // usercontext.KeyStatus = SecretKeyStatus.Success;
-                               // usercontext.KeyChanged = true;
                                 usercontext.PreferredMethod = PreferredMethod.Choose;
                             }
                             usercontext.UIMode = ProviderPageMode.Bypass;
@@ -181,9 +176,6 @@ namespace Neos.IdentityServer.MultiFactor
                         {
                             if (usercontext.KeyStatus == SecretKeyStatus.NoKey)
                             {
-                               // KeysManager.NewKey(usercontext.UPN);
-                               // usercontext.KeyStatus = SecretKeyStatus.Success;
-                               // usercontext.KeyChanged = true;
                                 usercontext.PreferredMethod = PreferredMethod.Choose;
                             }
                             usercontext.UIMode = ProviderPageMode.Locking;
@@ -207,27 +199,18 @@ namespace Neos.IdentityServer.MultiFactor
                         usercontext.UIMode = ProviderPageMode.Locking;
                     else if (Config.UserFeatures.IsRegistrationNotRequired())
                     {
-                       // KeysManager.NewKey(usercontext.UPN);
-                       // usercontext.KeyStatus = SecretKeyStatus.Success;
-                       // usercontext.KeyChanged = true;
                         usercontext.PreferredMethod = PreferredMethod.Choose;
                         usercontext.Enabled = false;
                         usercontext.UIMode = ProviderPageMode.Bypass;
                     }
                     else if (Config.UserFeatures.IsRegistrationRequired())
                     {
-                       // KeysManager.NewKey(usercontext.UPN);
-                       // usercontext.KeyStatus = SecretKeyStatus.Success;
-                       // usercontext.KeyChanged = true;
                         usercontext.PreferredMethod = PreferredMethod.Choose;
                         usercontext.Enabled = false;
                         usercontext.UIMode = ProviderPageMode.Locking;
                     }
                     else if (Config.UserFeatures.IsRegistrationAllowed())
                     {
-                       // KeysManager.NewKey(usercontext.UPN);
-                       // usercontext.KeyStatus = SecretKeyStatus.Success;
-                       // usercontext.KeyChanged = true;
                         usercontext.PreferredMethod = PreferredMethod.Choose;
                         usercontext.Enabled = true;
                         usercontext.UIMode = ProviderPageMode.Locking;
@@ -280,6 +263,8 @@ namespace Neos.IdentityServer.MultiFactor
                                  _config.OTPProvider.Enabled = true;   // always let an active option eg : aplication in this case
                              KeysManager.Initialize(_config);  // Always Bind KeysManager Otherwise this is made in CFGUtilities.ReadConfiguration
                              RuntimeAuthProvider.LoadProviders(_config); // Load Available providers
+                             CFGUtilities.GetADFSProperties(_config);
+
                          }
 
                          RuntimeRepository.MailslotServer.MailSlotMessageArrived += this.OnMessageArrived;
@@ -427,6 +412,12 @@ namespace Neos.IdentityServer.MultiFactor
                 int lnk = Convert.ToInt32(proofData.Properties["lnk"].ToString());
                 if (lnk == 0)
                 {
+                    if (usercontext.CurrentRetries >= Config.MaxRetries)
+                    {
+                        usercontext.UIMode = ProviderPageMode.Locking;
+                        return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorInvalidIdentificationRestart"), ProviderPageMode.DefinitiveError);
+                    }
+                    usercontext.CurrentRetries++;
                     if(DateTime.Now.ToUniversalTime() > usercontext.SessionDate.AddSeconds(Convert.ToDouble(Config.DeliveryWindow)).ToUniversalTime())
                     {
                         usercontext.UIMode = ProviderPageMode.Locking;
@@ -438,7 +429,6 @@ namespace Neos.IdentityServer.MultiFactor
                         {
                             if (pincode)
                             {
-                                // if (Convert.ToInt32(pin) <= 0)
                                 if (Convert.ToInt32(pin) < 0)
                                     pin = Config.DefaultPin;
                                 if (Convert.ToInt32(pin) != usercontext.PinCode)
@@ -458,7 +448,7 @@ namespace Neos.IdentityServer.MultiFactor
                                 if ((usercontext.FirstChoiceMethod != PreferredMethod.Choose) && (usercontext.FirstChoiceMethod != PreferredMethod.None))
                                 {
                                     IExternalProvider prov = RuntimeAuthProvider.GetProvider(usercontext.FirstChoiceMethod);
-                                    if ((prov!=null) &&((prov.AllowEnrollment) && (prov.EnrollmentNeverUseOptions)))
+                                    if ((prov != null) && ((prov.AllowEnrollment) && (prov.EnrollmentNeverUseOptions)))
                                     {
                                         if (usercontext.FirstChoiceMethod != usercontext.PreferredMethod)
                                         {
@@ -485,8 +475,16 @@ namespace Neos.IdentityServer.MultiFactor
                         }
                         else
                         {
-                            usercontext.UIMode = ProviderPageMode.Locking;
-                            return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorInvalidIdentificationRestart"), ProviderPageMode.DefinitiveError);
+                            if (usercontext.CurrentRetries >= Config.MaxRetries)
+                            {
+                                usercontext.UIMode = ProviderPageMode.Locking;
+                                return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorInvalidIdentificationRestart"), ProviderPageMode.DefinitiveError);
+                            }
+                            else
+                            {
+                                usercontext.UIMode = ProviderPageMode.Identification;
+                                return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorInvalidIdentificationRetry"), false);
+                            }
                         }
                     }
                     catch (CryptographicException cex)
@@ -1181,18 +1179,25 @@ namespace Neos.IdentityServer.MultiFactor
                     }
                 }
 
-                int callres = PostAuthenticationRequest(usercontext);
-                if (callres == (int)AuthenticationResponseKind.Error)
-                {
-                    usercontext.UIMode = ProviderPageMode.Locking;
-                    return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorSendingToastInformation"), ProviderPageMode.DefinitiveError);
-                }
+                int callres = 0;
                 if (!usercontext.IsRemote)
                 {
+                    callres = PostAuthenticationRequest(usercontext);
+                    if (callres == (int)AuthenticationResponseKind.Error)
+                    {
+                        usercontext.UIMode = ProviderPageMode.Locking;
+                        return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorSendingToastInformation"), ProviderPageMode.DefinitiveError);
+                    }
                     usercontext.UIMode = ProviderPageMode.Identification;
                 }
                 else if (!usercontext.IsTwoWay)
                 {
+                    callres = PostAuthenticationRequest(usercontext);
+                    if (callres == (int)AuthenticationResponseKind.Error)
+                    {
+                        usercontext.UIMode = ProviderPageMode.Locking;
+                        return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorSendingToastInformation"), ProviderPageMode.DefinitiveError);
+                    }
                     switch (usercontext.SelectedMethod)
                     {
                         case AuthenticationResponseKind.SmsOneWayOTP:
@@ -1218,6 +1223,21 @@ namespace Neos.IdentityServer.MultiFactor
                 }
                 else if (usercontext.IsTwoWay)
                 {
+                    usercontext.CurrentRetries++;
+                    callres = PostAuthenticationRequest(usercontext);
+                    if (callres == (int)AuthenticationResponseKind.Error)
+                    {
+                        if (usercontext.CurrentRetries >= Config.MaxRetries)
+                        {
+                            usercontext.UIMode = ProviderPageMode.Locking;
+                            return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorSendingToastInformation"), ProviderPageMode.DefinitiveError);
+                        }
+                        else
+                        {
+                            usercontext.UIMode = ProviderPageMode.SendAuthRequest;
+                            return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorSendingToastInformationRetry"), false);
+                        }
+                    }
                     if ((int)AuthenticationResponseKind.Error != SetAuthenticationResult(usercontext, string.Empty))
                     {
                         switch (usercontext.SelectedMethod)
@@ -1250,8 +1270,16 @@ namespace Neos.IdentityServer.MultiFactor
                     }
                     else
                     {
-                        usercontext.UIMode = ProviderPageMode.Locking;
-                        return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorSendingToastInformation"), ProviderPageMode.DefinitiveError);
+                        if (usercontext.CurrentRetries >= Config.MaxRetries)
+                        {
+                            usercontext.UIMode = ProviderPageMode.Locking;
+                            return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorSendingToastInformation"), ProviderPageMode.DefinitiveError);
+                        }
+                        else
+                        {
+                            usercontext.UIMode = ProviderPageMode.SendAuthRequest;
+                            return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorSendingToastInformationRetry"), false);
+                        }
                     }
                 }
                 result = new AdapterPresentation(this, context);

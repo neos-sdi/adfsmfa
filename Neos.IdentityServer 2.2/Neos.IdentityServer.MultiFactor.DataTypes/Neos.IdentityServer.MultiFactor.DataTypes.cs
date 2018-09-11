@@ -635,6 +635,28 @@ namespace Neos.IdentityServer.MultiFactor
         }
 
         /// <summary>
+        /// CurrentRetries property implementation
+        /// </summary>
+        [XmlAttribute("CurrentRetries")]
+        public int CurrentRetries
+        {
+            get
+            {
+                if (_context.Data.ContainsKey("_authctxcurrentretries") && _context.Data["_authctxcurrentretries"] != null)
+                    return (int)_context.Data["_authctxcurrentretries"];
+                else
+                    return 0;
+            }
+            set
+            {
+                if (_context.Data.ContainsKey("_authctxcurrentretries"))
+                    _context.Data["_authctxcurrentretries"] = (int)value;
+                else
+                    _context.Data.Add("_authctxcurrentretries", (int)value);
+            }
+        }
+
+        /// <summary>
         /// SelectedMethod property implementation
         /// </summary>
         [XmlAttribute("SelectedMethod")]
@@ -1382,6 +1404,16 @@ namespace Neos.IdentityServer.MultiFactor
         ClientSecret384 = 3,
         ClientSecret512 = 4,
         Custom = 5
+    }
+
+    [Serializable, Flags]
+    public enum OTPWizardOptions
+    {
+        All = 0x0,
+        NoMicrosoftAuthenticator = 0x1,
+        NoGoogleAuthenticator = 0x2,
+        NoAuthyAuthenticator = 0x4,
+        NoGooglSearch = 0x8
     }
 
     [Serializable]

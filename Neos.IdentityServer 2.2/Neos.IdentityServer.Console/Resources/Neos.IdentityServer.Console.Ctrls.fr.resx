@@ -246,6 +246,9 @@
   <data name="CTRLCANCEL" xml:space="preserve">
     <value>Annuler</value>
   </data>
+  <data name="CTRLGLALLOWGOOGLESEARCH" xml:space="preserve">
+    <value>Afficher la recherche Google</value>
+  </data>
   <data name="CTRLGLCOMANYNAME" xml:space="preserve">
     <value>Nom de la socièté</value>
   </data>
@@ -308,6 +311,15 @@
   </data>
   <data name="CTRLGLREFRESH" xml:space="preserve">
     <value>Fréquence de rafraichissement (en millisecondes)</value>
+  </data>
+  <data name="CTRLGLSHOWAUTHY" xml:space="preserve">
+    <value>Afficher Authy Authenticator</value>
+  </data>
+  <data name="CTRLGLSHOWGOOGLE" xml:space="preserve">
+    <value>Afficher Google Authenticator</value>
+  </data>
+  <data name="CTRLGLSHOWMICROSOFT" xml:space="preserve">
+    <value>Afficher Microsoft Authenticator</value>
   </data>
   <data name="CTRLGLUSEAPPS" xml:space="preserve">
     <value>Utiliser les applications d'authentification (Google Authenticator, Microsoft Authenticator)</value>
@@ -377,6 +389,9 @@
   </data>
   <data name="CTRLSECTHUMPRINT" xml:space="preserve">
     <value>Empreinte du certificat</value>
+  </data>
+  <data name="CTRLSECWIZARD" xml:space="preserve">
+    <value>Options assistant d'enregistrement</value>
   </data>
   <data name="CTRLSECWIZTITLE" xml:space="preserve">
     <value>SQL Keys : Création de la base de données</value>

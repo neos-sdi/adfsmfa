@@ -146,6 +146,9 @@
   <data name="ErrorInvalidIdentificationRestart" xml:space="preserve">
     <value>Invalid identification, please restart your session.</value>
   </data>
+  <data name="ErrorInvalidIdentificationRetry" xml:space="preserve">
+    <value>Incorrect identification, please try again.</value>
+  </data>
   <data name="ErrorInvalidKey" xml:space="preserve">
     <value>Invalid Secret Key !</value>
   </data>
@@ -180,6 +183,9 @@
   </data>
   <data name="ErrorSendingToastInformation" xml:space="preserve">
     <value>Error when sending identification request !</value>
+  </data>
+  <data name="ErrorSendingToastInformationRetry" xml:space="preserve">
+    <value>Error when sending identification request ! Retrying !</value>
   </data>
   <data name="ErrorValidationTimeWindowElapsed" xml:space="preserve">
     <value>Window validation time elapsed.</value>

@@ -5675,6 +5675,11 @@ namespace Neos.IdentityServer.Console.Controls
         private TextBox txtDLLCUST;
         private TextBox txtParams;
         private Button btnCUSTOMDB;
+        private Panel _panelWiz;
+        private CheckBox chkAllowMicrosoft;
+        private CheckBox chkAllowGoogle;
+        private CheckBox chkAllowAuthy;
+        private CheckBox chkAllowSearch;
 
         /// <summary>
         /// ConfigurationControl Constructor
@@ -5806,7 +5811,6 @@ namespace Neos.IdentityServer.Console.Controls
             txtHashAlgo.Validated += HashAlgoValidated;
             _txtpanel.Controls.Add(txtHashAlgo);
 
-
             Label lblSecMode = new Label();
             lblSecMode.Text = res.CTRLSECKEYMODE+" : ";
             lblSecMode.Left = 10;
@@ -5828,7 +5832,6 @@ namespace Neos.IdentityServer.Console.Controls
             cbFormat.SelectedValue = Config.KeysConfig.KeyFormat;
             cbFormat.SelectedIndexChanged += SelectedFormatChanged;
 
-
             Label lblMaxKeyLen = new Label();
             lblMaxKeyLen.Text = res.CTRLSECKEYLENGTH+" : ";
             lblMaxKeyLen.Left = 10;
@@ -5849,6 +5852,57 @@ namespace Neos.IdentityServer.Console.Controls
             cbKeySize.DisplayMember = "Label";
             cbKeySize.SelectedValue = Config.KeysConfig.KeySize;
             cbKeySize.SelectedIndexChanged += SelectedKeySizeChanged;
+
+            _panelWiz = new Panel();
+            _panelWiz.Left = 500;
+            _panelWiz.Top = 10;
+            _panelWiz.Height = 200;
+            _panelWiz.Width = 400;
+            _txtpanel.Controls.Add(_panelWiz);
+
+            Label lblTOTPWizard = new Label();
+            lblTOTPWizard.Text = res.CTRLSECWIZARD + " : ";
+            lblTOTPWizard.Left = 10;
+            lblTOTPWizard.Top = 41;
+            lblTOTPWizard.Width = 250;
+            _panelWiz.Controls.Add(lblTOTPWizard);
+
+            chkAllowMicrosoft = new CheckBox();
+            chkAllowMicrosoft.Text = res.CTRLGLSHOWMICROSOFT;
+            chkAllowMicrosoft.Checked = !Config.OTPProvider.WizardOptions.HasFlag(OTPWizardOptions.NoMicrosoftAuthenticator);
+            chkAllowMicrosoft.Left = 20;
+            chkAllowMicrosoft.Top = 65;
+            chkAllowMicrosoft.Width = 300;
+            chkAllowMicrosoft.CheckedChanged += AllowMicrosoftCheckedChanged;
+            _panelWiz.Controls.Add(chkAllowMicrosoft);
+
+            chkAllowGoogle = new CheckBox();
+            chkAllowGoogle.Text = res.CTRLGLSHOWGOOGLE;
+            chkAllowGoogle.Checked = !Config.OTPProvider.WizardOptions.HasFlag(OTPWizardOptions.NoGoogleAuthenticator);
+            chkAllowGoogle.Left = 20;
+            chkAllowGoogle.Top = 96;
+            chkAllowGoogle.Width = 300;
+            chkAllowGoogle.CheckedChanged += AllowGoogleCheckedChanged;
+            _panelWiz.Controls.Add(chkAllowGoogle);
+
+            chkAllowAuthy = new CheckBox();
+            chkAllowAuthy.Text = res.CTRLGLSHOWAUTHY;
+            chkAllowAuthy.Checked = !Config.OTPProvider.WizardOptions.HasFlag(OTPWizardOptions.NoAuthyAuthenticator);
+            chkAllowAuthy.Left = 20;
+            chkAllowAuthy.Top = 127;
+            chkAllowAuthy.Width = 300;
+            chkAllowAuthy.CheckedChanged += AllowAuthyCheckedChanged;
+            _panelWiz.Controls.Add(chkAllowAuthy);
+
+            chkAllowSearch = new CheckBox();
+            chkAllowSearch.Text = res.CTRLGLALLOWGOOGLESEARCH;
+            chkAllowSearch.Checked = !Config.OTPProvider.WizardOptions.HasFlag(OTPWizardOptions.NoGooglSearch);
+            chkAllowSearch.Left = 20;
+            chkAllowSearch.Top = 158;
+            chkAllowSearch.Width = 300;
+            chkAllowSearch.CheckedChanged += AllowSearchGoogleCheckedChanged;
+            _panelWiz.Controls.Add(chkAllowSearch);
+
 
             _panelRNG = new Panel();
             _panelRNG.Left = 0;
@@ -6214,8 +6268,6 @@ namespace Neos.IdentityServer.Console.Controls
         }
         #endregion
 
-
-
         /// <summary>
         /// SelectedFormatChanged method
         /// </summary>
@@ -6465,6 +6517,140 @@ namespace Neos.IdentityServer.Console.Controls
                 this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
+
+        #region Wizard Options
+        /// <summary>
+        /// AllowSearchGoogleCheckedChanged method implementation
+        /// </summary>
+        private void AllowSearchGoogleCheckedChanged(object sender, EventArgs e)
+        {
+            this.Cursor = Cursors.Default;
+            try
+            {
+                if (!chkAllowSearch.Checked)
+                {
+                    Config.OTPProvider.WizardOptions |= OTPWizardOptions.NoGooglSearch;
+                }
+                else
+                {
+                    Config.OTPProvider.WizardOptions &= ~ OTPWizardOptions.NoGooglSearch;
+                }
+                ManagementService.ADFSManager.SetDirty(true);
+                errors.SetError(txtParams, "");
+            }
+            catch (Exception ex)
+            {
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
+                messageBoxParameters.Text = ex.Message;
+                messageBoxParameters.Buttons = MessageBoxButtons.OK;
+                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                this._snapin.Console.ShowDialog(messageBoxParameters);
+            }
+            finally
+            {
+                this.Cursor = Cursors.Default;
+            }
+        }
+
+        /// <summary>
+        /// AllowAuthyCheckedChanged method implementation
+        /// </summary>
+        private void AllowAuthyCheckedChanged(object sender, EventArgs e)
+        {
+            this.Cursor = Cursors.WaitCursor;
+            try
+            {
+                if (!chkAllowAuthy.Checked)
+                {
+                    Config.OTPProvider.WizardOptions |= OTPWizardOptions.NoAuthyAuthenticator;
+                }
+                else
+                {
+                    Config.OTPProvider.WizardOptions &= ~OTPWizardOptions.NoAuthyAuthenticator;
+                }
+                ManagementService.ADFSManager.SetDirty(true);
+                errors.SetError(txtParams, "");
+            }
+            catch (Exception ex)
+            {
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
+                messageBoxParameters.Text = ex.Message;
+                messageBoxParameters.Buttons = MessageBoxButtons.OK;
+                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                this._snapin.Console.ShowDialog(messageBoxParameters);
+            }
+            finally
+            {
+                this.Cursor = Cursors.Default;
+            }
+        }
+
+        /// <summary>
+        /// AllowGoogleCheckedChanged method implementation
+        /// </summary>
+        private void AllowGoogleCheckedChanged(object sender, EventArgs e)
+        {
+            this.Cursor = Cursors.WaitCursor;
+            try
+            {
+                if (!chkAllowGoogle.Checked)
+                {
+                    Config.OTPProvider.WizardOptions |= OTPWizardOptions.NoGoogleAuthenticator;
+                }
+                else
+                {
+                    Config.OTPProvider.WizardOptions &= ~OTPWizardOptions.NoGoogleAuthenticator;
+                }
+                ManagementService.ADFSManager.SetDirty(true);
+                errors.SetError(txtParams, "");
+            }
+            catch (Exception ex)
+            {
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
+                messageBoxParameters.Text = ex.Message;
+                messageBoxParameters.Buttons = MessageBoxButtons.OK;
+                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                this._snapin.Console.ShowDialog(messageBoxParameters);
+            }
+            finally
+            {
+                this.Cursor = Cursors.Default;
+            }
+        }
+
+        /// <summary>
+        /// AllowMicrosoftCheckedChanged method implementation
+        /// </summary>
+        private void AllowMicrosoftCheckedChanged(object sender, EventArgs e)
+        {
+            this.Cursor = Cursors.WaitCursor;
+            try
+            {
+                if (!chkAllowMicrosoft.Checked)
+                {
+                    Config.OTPProvider.WizardOptions |= OTPWizardOptions.NoMicrosoftAuthenticator;
+                }
+                else
+                {
+                    Config.OTPProvider.WizardOptions &= ~OTPWizardOptions.NoMicrosoftAuthenticator;
+                }
+                ManagementService.ADFSManager.SetDirty(true);
+                errors.SetError(txtParams, "");
+            }
+            catch (Exception ex)
+            {
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
+                messageBoxParameters.Text = ex.Message;
+                messageBoxParameters.Buttons = MessageBoxButtons.OK;
+                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                this._snapin.Console.ShowDialog(messageBoxParameters);
+            }
+            finally
+            {
+                this.Cursor = Cursors.Default;
+            }
+        }
+        #endregion
 
         /// <summary>
         /// btnRSACertClick method implmentation

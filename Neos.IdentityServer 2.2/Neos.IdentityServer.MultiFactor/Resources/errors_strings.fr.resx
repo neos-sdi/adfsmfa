@@ -146,6 +146,9 @@
   <data name="ErrorInvalidIdentificationRestart" xml:space="preserve">
     <value>Identification incorrecte, redémarrez votre session.</value>
   </data>
+  <data name="ErrorInvalidIdentificationRetry" xml:space="preserve">
+    <value>Identification incorrecte, veuillez essayer de nouveau.</value>
+  </data>
   <data name="ErrorInvalidKey" xml:space="preserve">
     <value>Clé secréte invalide !</value>
   </data>
@@ -180,6 +183,9 @@
   </data>
   <data name="ErrorSendingToastInformation" xml:space="preserve">
     <value>Erreur lors de l'envoi de la demande d'identification !</value>
+  </data>
+  <data name="ErrorSendingToastInformationRetry" xml:space="preserve">
+    <value>Erreur lors de l'identification ! nouvel essai en cours !</value>
   </data>
   <data name="ErrorValidationTimeWindowElapsed" xml:space="preserve">
     <value>Fenêtre de validation épuisée.</value>

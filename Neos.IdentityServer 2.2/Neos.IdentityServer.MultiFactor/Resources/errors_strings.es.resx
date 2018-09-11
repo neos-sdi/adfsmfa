@@ -146,6 +146,9 @@
   <data name="ErrorInvalidIdentificationRestart" xml:space="preserve">
     <value>Identificación incorrecta, reiniciar la sesión.</value>
   </data>
+  <data name="ErrorInvalidIdentificationRetry" xml:space="preserve">
+    <value>Identificación incorrecta, por favor intente nuevamente.</value>
+  </data>
   <data name="ErrorInvalidKey" xml:space="preserve">
     <value>Clave invalida !</value>
   </data>
@@ -181,6 +184,9 @@
   <data name="ErrorSendingToastInformation" xml:space="preserve">
     <value>error durante la transmisión de la petición de identificación !
 </value>
+  </data>
+  <data name="ErrorSendingToastInformationRetry" xml:space="preserve">
+    <value>¡Error durante la identificación! ¡nueva prueba en progreso!</value>
   </data>
   <data name="ErrorValidationTimeWindowElapsed" xml:space="preserve">
     <value>Ventana de validación agotado.</value>

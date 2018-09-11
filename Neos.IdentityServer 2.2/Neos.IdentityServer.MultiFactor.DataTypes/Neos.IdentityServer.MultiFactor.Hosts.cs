@@ -248,6 +248,7 @@ namespace Neos.IdentityServer.MultiFactor
         private int _pinlength = 4;
         private int _defaultpin = 0;
         private bool _kmsoo = true;
+        private int _maxretries = 1;
 
         private bool _useActiveDirectory = true;
         private bool _customUpdatePassword = true;
@@ -285,6 +286,7 @@ namespace Neos.IdentityServer.MultiFactor
                 Issuer = "MFA";
                 PinLength = 4;
                 DefaultPin = 0;
+                MaxRetries = 1;
 
                 UseActiveDirectory = true;
                 CustomUpdatePassword = true;
@@ -347,6 +349,8 @@ namespace Neos.IdentityServer.MultiFactor
                 DeliveryWindow = 300;
             if (PinLength <= 0)
                 PinLength = 4;
+            if (MaxRetries <= 0)
+                MaxRetries = 1;
             if (string.IsNullOrEmpty(Issuer))
                 Issuer = "MFA";
             if (OTPProvider.TOTPShadows <= 0)
@@ -449,6 +453,13 @@ namespace Neos.IdentityServer.MultiFactor
             set { _kmsoo = value; }
         }
 
+        [XmlIgnore]
+        public int MaxRetries
+        {
+            get { return _maxretries; }
+            set { _maxretries = value; }
+        }
+
         [XmlAttribute("Issuer")]
         public string Issuer
         {
@@ -520,6 +531,7 @@ namespace Neos.IdentityServer.MultiFactor
             get { return _advertising; }
             set { _advertising = value; }
         }
+
         [XmlElement("Hosts")]
         public Hosts Hosts
         {
@@ -1091,6 +1103,7 @@ namespace Neos.IdentityServer.MultiFactor
         private int _totpShadows = 2;
         private HashMode _algorithm = HashMode.SHA1;
         private bool _enrollwizardstrict = false;
+        private OTPWizardOptions _otpwizardoptions = OTPWizardOptions.All;
 
         [XmlAttribute("Enabled")]
         public bool Enabled
@@ -1133,6 +1146,14 @@ namespace Neos.IdentityServer.MultiFactor
             get { return _algorithm; }
             set { _algorithm = value; }
         }
+
+        [XmlAttribute("WizardOptions")]
+        public OTPWizardOptions WizardOptions
+        {
+            get { return _otpwizardoptions; }
+            set { _otpwizardoptions = value; }
+        }
+
     }
     #endregion
 
