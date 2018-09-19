@@ -204,19 +204,19 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <summary>
         /// GetUserRegistrations method implementation
         /// </summary>
-        internal static RegistrationList GetUserRegistrations(DataFilterObject filter, DataOrderObject order, DataPagingObject paging, int maxrows = 20000)
+        internal static RegistrationList GetUserRegistrations(DataFilterObject filter, DataOrderObject order, DataPagingObject paging)
         {
             EnsureService();
-            return RuntimeRepository.GetUserRegistrations(Config, filter, order, paging, maxrows);
+            return RuntimeRepository.GetUserRegistrations(Config, filter, order, paging);
         }
 
         /// <summary>
         /// GetAllUserRegistrations method implementation
         /// </summary>
-        internal static RegistrationList GetAllUserRegistrations(DataOrderObject order, int maxrows = 20000, bool enabledonly = false)
+        internal static RegistrationList GetAllUserRegistrations(DataOrderObject order, bool enabledonly = false)
         {
             EnsureService();
-            return RuntimeRepository.GetAllUserRegistrations(Config, order, maxrows, enabledonly);
+            return RuntimeRepository.GetAllUserRegistrations(Config, order, enabledonly);
         }
 
         /// <summary>

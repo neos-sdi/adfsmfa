@@ -261,10 +261,10 @@ namespace Neos.IdentityServer.Console
         /// <summary>
         /// GetUsers method implementation
         /// </summary>
-        public static RegistrationList GetUsers(int maxrows = 20000)
+        public static RegistrationList GetUsers()
         {
             EnsureService();
-            return ManagementService.GetUserRegistrations(Filter, Order, Paging, maxrows);
+            return ManagementService.GetUserRegistrations(Filter, Order, Paging);
         }
 
         /// <summary>
@@ -273,7 +273,7 @@ namespace Neos.IdentityServer.Console
         public static RegistrationList GetAllUsers(bool enabledonly = false)
         {
             EnsureService();
-            return ManagementService.GetAllUserRegistrations(Order, int.MaxValue, enabledonly);
+            return ManagementService.GetAllUserRegistrations(Order, enabledonly);
         }
 
         /// <summary>

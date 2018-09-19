@@ -108,6 +108,8 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <para type="description">User status.</para>
         /// </summary>
         public bool Enabled { get; set; }
+
+
         internal bool IsRegistered { get; set; }
 
         /// <summary>
@@ -225,16 +227,19 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// </summary>
         public int DeliveryWindow { get; set; }
 
+        /*
         /// <summary>
         /// <para type="description">Number of prior TOTP codes allowed (default 2). Code change every 30 seconds.</para>
         /// </summary>
         public int TOTPShadows { get; set; }
+        */
 
         /// <summary>
         /// <para type="description">Required PIN length wehen using aditionnal control with personal PIN.</para>
         /// </summary>
         public int PinLength { get; set; }
 
+        /*
         /// <summary>
         /// <para type="description">Globally allow MFA with sending email to users, less secure than TOTP Code.</para>
         /// <para type="description">Must specify properties of ConfigMail.</para>
@@ -261,16 +266,19 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <para type="description">Globally allow MFA Biometrics / FIDO.</para>
         /// </summary>
         public bool BiometricsEnabled { get; set; }
+        */
 
         /// <summary>
         /// <para type="description">Default value for user's PIN.</para>
         /// </summary>
         public int DefaultPin { get; set; }
 
+        /*
         /// <summary>
         /// <para type="description">TOTP Hash mode for TOTP Key (Default SHA1).</para>
         /// </summary>
         public HashMode Algorithm { get; set; }
+        */
 
         /// <summary>
         /// <para type="description">Issuer description (eg "my company").</para>
@@ -287,6 +295,11 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <para type="description">Use or not our implementation for changing user password,if not we are using /ADFS/Portal/updatepasswor.</para>
         /// </summary>
         public bool CustomUpdatePassword { get; set; }
+
+        /// <summary>
+        /// <para type="description">Let user to change the default MFA provider for later use.</para>
+        /// </summary>
+        public bool KeepMySelectedOptionOn { get; set; }
 
         /// <summary>
         /// <para type="description">Default contry code, used for SMS calls .</para>
@@ -320,20 +333,14 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             {
                 PSConfig psconfig = new PSConfig();
                 psconfig.AdminContact = config.AdminContact;
-                psconfig.Algorithm = config.Algorithm;
-                psconfig.AppsEnabled = config.AppsEnabled;
-                psconfig.CustomUpdatePassword = config.CustomUpdatePassword;
                 psconfig.DefaultCountryCode = config.DefaultCountryCode;
                 psconfig.DeliveryWindow = config.DeliveryWindow;
                 psconfig.Issuer = config.Issuer;
-                psconfig.MailEnabled = config.MailEnabled;
-                psconfig.SMSEnabled = config.SMSEnabled;
-                psconfig.AzureEnabled = config.AzureEnabled;
-                psconfig.BiometricsEnabled = config.BiometricsEnabled;
                 psconfig.DefaultPin = config.DefaultPin;
-                psconfig.TOTPShadows = config.TOTPShadows;
                 psconfig.PinLength = config.PinLength;
                 psconfig.UseActiveDirectory = config.UseActiveDirectory;
+                psconfig.CustomUpdatePassword = config.CustomUpdatePassword;
+                psconfig.KeepMySelectedOptionOn = config.KeepMySelectedOptionOn;
                 psconfig.UserFeatures = config.UserFeatures;
                 psconfig.AdvertisingDays = config.AdvertisingDays;
                 return psconfig;
@@ -351,21 +358,15 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             {
                 FlatConfig config = new FlatConfig();
                 config.AdminContact = psconfig.AdminContact;
-                config.Algorithm = psconfig.Algorithm;
-                config.AppsEnabled = psconfig.AppsEnabled;
                 config.CustomUpdatePassword = psconfig.CustomUpdatePassword;
                 config.DefaultCountryCode = psconfig.DefaultCountryCode;
                 config.DeliveryWindow = psconfig.DeliveryWindow;
                 config.IsDirty = true;
                 config.Issuer = psconfig.Issuer;
-                config.MailEnabled = psconfig.MailEnabled;
-                config.SMSEnabled = psconfig.SMSEnabled;
-                config.AzureEnabled = psconfig.AzureEnabled;
-                config.BiometricsEnabled = psconfig.BiometricsEnabled;
                 config.DefaultPin = psconfig.DefaultPin;
-                config.TOTPShadows = psconfig.TOTPShadows;
                 config.PinLength = psconfig.PinLength;
                 config.UseActiveDirectory = psconfig.UseActiveDirectory;
+                config.KeepMySelectedOptionOn = psconfig.KeepMySelectedOptionOn;
                 config.UserFeatures = psconfig.UserFeatures;
                 config.AdvertisingDays = psconfig.AdvertisingDays;
                 return config;
@@ -482,6 +483,11 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         public string EnabledAttribute { get; set; }
 
         /// <summary>
+        /// <para type="description">ADDS atribute name used to store user pin code (default msDS-cloudExtensionAttribute15).</para>
+        /// </summary>
+        public string PinAttribute { get; set; }
+
+        /// <summary>
         /// implicit conversion to PSConfig
         /// </summary>
         public static explicit operator PSConfigADDS(FlatConfigADDS addsconfig)
@@ -499,6 +505,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 psconfigadds.PhoneAttribute = addsconfig.PhoneAttribute;
                 psconfigadds.MethodAttribute = addsconfig.MethodAttribute;
                 psconfigadds.OverrideMethodAttribute = addsconfig.OverrideMethodAttribute;
+                psconfigadds.PinAttribute = addsconfig.PinAttribute;
                 psconfigadds.EnabledAttribute = addsconfig.EnabledAttribute;
                 return psconfigadds;
             }
@@ -523,290 +530,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 config.PhoneAttribute = psconfig.PhoneAttribute;
                 config.MethodAttribute = psconfig.MethodAttribute;
                 config.OverrideMethodAttribute = psconfig.OverrideMethodAttribute;
+                config.PinAttribute = psconfig.PinAttribute;
                 config.EnabledAttribute = psconfig.EnabledAttribute;
                 return config;
-            }
-        }
-    }
-    #endregion
-
-    #region PSConfigMail
-    /// <summary>
-    /// PSConfigMail class
-    /// <para type="synopsis">SMTP configuration properties in MFA System.</para>
-    /// <para type="description">SMTP/POP configuration properties registered with MFA.</para>
-    /// <para type="description">You can access, update attributes properties.</para>
-    /// </summary>
-    /// <example>
-    ///   <para>Get-MFAConfigMail</para>
-    /// </example>
-    public class PSConfigMail
-    {
-        /// <summary>
-        /// <para type="description">Mail from property.</para>
-        /// </summary>
-        public string From { get; set; }
-
-        /// <summary>
-        /// <para type="description">Account Name used to access Mail platform.</para>
-        /// </summary>
-        public string UserName { get; set; }
-
-        /// <summary>
-        /// <para type="description">Password used with Username to access Mail platform.</para>
-        /// </summary>
-        public string Password { get; set; }
-
-        /// <summary>
-        /// <para type="description">Mail platform Host eg : smtp.office365.com.</para>
-        /// </summary>
-        public string Host { get; set; }
-
-        /// <summary>
-        /// <para type="description">Mail platform IP Port eg : 587.</para>
-        /// </summary>
-        public int Port { get; set; }
-
-        /// <summary>
-        /// <para type="description">Mail platform SSL option.</para>
-        /// </summary>
-        public bool UseSSL { get; set; }
-
-        /// <summary>
-        /// <para type="description">Your company description, tis is used in default mails contents.</para>
-        /// </summary>
-        public string Company { get; set; }
-
-        /// <summary>
-        /// <para type="description">indicate if IN validation is required with Mail.</para>
-        /// </summary>
-        public bool PinRequired { get; set; }
-
-        /// <summary>
-        /// <para type="description">Custom mail templates.</para>
-        /// </summary>
-        public PSConfigMailFileNames MailOTP { get; set; }
-
-        /// <summary>
-        /// <para type="description">Custom mail templates.</para>
-        /// </summary>
-        public PSConfigMailFileNames MailInscription { get; set; }
-
-        /// <summary>
-        /// <para type="description">Custom mail templates.</para>
-        /// </summary>
-        public PSConfigMailFileNames MailSecureKey { get; set; }
-
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        public PSConfigMail()
-        {
-            this.MailOTP = new PSConfigMailFileNames();
-            this.MailInscription = new PSConfigMailFileNames();
-            this.MailSecureKey = new PSConfigMailFileNames();
-        }
-
-        /// <summary>
-        /// explicit conversion to PSConfigMail
-        /// </summary>
-        public static explicit operator PSConfigMail(FlatConfigMail mails)
-        {
-            if (mails == null)
-                return null;
-            else
-            {
-                PSConfigMail psconfig = new PSConfigMail();
-                psconfig.From = mails.From;
-                psconfig.UserName = mails.UserName;
-                psconfig.Password = mails.Password;
-                psconfig.Host = mails.Host;
-                psconfig.Port = mails.Port;
-                psconfig.UseSSL = mails.UseSSL;
-                psconfig.Company = mails.Company;
-                psconfig.PinRequired = mails.PinRequired;
-                psconfig.MailOTP.Templates.Clear();
-                foreach (FlatConfigMailFileName itm in mails.MailOTPContent)
-                {
-                    psconfig.MailOTP.Templates.Add((PSConfigMailFileName)itm);
-                }
-                psconfig.MailInscription.Templates.Clear();
-                foreach (FlatConfigMailFileName itm in mails.MailAdminContent)
-                {
-                    psconfig.MailInscription.Templates.Add((PSConfigMailFileName)itm);
-                }
-                psconfig.MailSecureKey.Templates.Clear();
-                foreach (FlatConfigMailFileName itm in mails.MailKeyContent)
-                {
-                    psconfig.MailSecureKey.Templates.Add((PSConfigMailFileName)itm);
-                }
-                return psconfig;
-            }
-        }
-
-        /// <summary>
-        /// explicit conversion from PSConfigMail
-        /// </summary>
-        public static explicit operator FlatConfigMail(PSConfigMail mails)
-        {
-            if (mails == null)
-                return null;
-            else
-            {
-                FlatConfigMail psconfig = new FlatConfigMail();
-                psconfig.IsDirty = true;
-                psconfig.From = mails.From;
-                psconfig.UserName = mails.UserName;
-                psconfig.Password = mails.Password;
-                psconfig.Host = mails.Host;
-                psconfig.Port = mails.Port;
-                psconfig.UseSSL = mails.UseSSL;
-                psconfig.Company = mails.Company;
-                psconfig.PinRequired = mails.PinRequired;
-                psconfig.MailOTPContent.Clear();
-                foreach (PSConfigMailFileName itm in mails.MailOTP.Templates)
-                {
-                    psconfig.MailOTPContent.Add((FlatConfigMailFileName)itm);
-                }
-                psconfig.MailAdminContent.Clear();
-                foreach (PSConfigMailFileName itm in mails.MailInscription.Templates)
-                {
-                    psconfig.MailAdminContent.Add((FlatConfigMailFileName)itm);
-                }
-                psconfig.MailKeyContent.Clear();
-                foreach (PSConfigMailFileName itm in mails.MailSecureKey.Templates)
-                {
-                    psconfig.MailKeyContent.Add((FlatConfigMailFileName)itm);
-                }
-                return psconfig;
-            }
-        }
-    }
-
-    /// <summary>
-    /// PSConfigMailFileName class
-    /// <para type="synopsis">Mail custom templates used in MFA System.</para>
-    /// <para type="description">Mail custom templates registered with MFA.</para>
-    /// </summary>
-    public class PSConfigMailFileName
-    {
-        /// <summary>
-        /// <para type="description">LCID (1033, 1034, 1036, 3082).</para>
-        /// </summary>
-        public int LCID { get; set; }
-
-        /// <summary>
-        /// <para type="description">File path to Html file user as custom template.</para>
-        /// </summary>
-        public string FileName { get; set; }
-
-        /// <summary>
-        /// <para type="description">Enabled status for custom template.</para>
-        /// </summary>
-        public bool Enabled { get; set; }
-
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        public PSConfigMailFileName(int lcid, string filename, bool enabled = true)
-        {
-            this.LCID = lcid;
-            this.FileName = filename;
-            this.Enabled = enabled;
-        }
-
-        /// <summary>
-        /// explicit operator 
-        /// </summary>
-        public static explicit operator PSConfigMailFileName(FlatConfigMailFileName file)
-        {
-            if (file == null)
-                return null;
-            else
-                return new PSConfigMailFileName(file.LCID, file.FileName, file.Enabled);
-        }
-
-        /// <summary>
-        /// explicit operator 
-        /// </summary>
-        public static explicit operator FlatConfigMailFileName(PSConfigMailFileName file)
-        {
-            if (file == null)
-                return null;
-            else
-                return new FlatConfigMailFileName(file.LCID, file.FileName, file.Enabled);
-        }
-    }
-
-    /// <summary>
-    /// PSConfigMailFileName class
-    /// <para type="synopsis">Mail custom templates collection used in MFA System.</para>
-    /// <para type="description">Mail custom templates collection registered with MFA.</para>
-    /// </summary>
-    public class PSConfigMailFileNames
-    {
-        private List<PSConfigMailFileName> _list = new List<PSConfigMailFileName>();
-
-        /// <summary>
-        /// <para type="description">Templates property.</para>
-        /// </summary>
-        public List<PSConfigMailFileName> Templates 
-        { 
-            get 
-            { 
-                return _list; 
-            } 
-        }
-
-        /// <summary>
-        /// AddTemplate method implmentation
-        /// </summary>
-        public void AddTemplate(int lcid, string filename, bool enabled = true)
-        {
-            try
-            {
-                var item = (from i in _list where i.LCID == lcid select i).First();
-                _list.Add(new PSConfigMailFileName(lcid, filename, enabled));
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Template always exists !", ex);
-            }
-        }
-
-        /// <summary>
-        /// SetTemplate method implmentation
-        /// </summary>
-        public void SetTemplate(int lcid, string filename, bool enabled = true)
-        {
-            try
-            {
-                PSConfigMailFileName item = (from it in _list where it.LCID == lcid select it).First();
-                int i = _list.IndexOf(item);
-                item.FileName = filename;
-                item.Enabled = enabled;
-                _list[i] = item;
-            }
-            catch (Exception)
-            {
-                _list.Add(new PSConfigMailFileName(lcid, filename, enabled));
-            }
-        }
-
-        /// <summary>
-        /// RemoveTemplate method implmentation
-        /// </summary>
-        public void RemoveTemplate(int lcid)
-        {
-            try
-            {
-                PSConfigMailFileName item = (from it in _list where it.LCID == lcid select it).First();
-                int i = _list.IndexOf(item);
-                _list.RemoveAt(i);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Template dosen't exists !", ex);
             }
         }
     }
@@ -955,6 +681,406 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     }
     #endregion
 
+    #region PSConfigTOTPProvider
+    /// <summary>
+    /// PSConfigTOTPProvider class
+    /// <para type="synopsis">Parameters for TOTP Provider.</para>
+    /// <para type="description">provided for TOTP MFA.</para>
+    /// <para type="description">Typically this component is used with authenticator applications, Notification and more.</para>
+    /// </summary>
+    public class PSConfigTOTPProvider
+    {
+        /// <summary>
+        /// <para type="description">TOTP Provider Enabled property.</para>
+        /// </summary>
+        public bool Enabled { get; set; }
+
+        /// <summary>
+        /// <para type="description">TOTP Provider Enrollment Wizard Enabled property.</para>
+        /// </summary>
+        public bool EnrollWizard { get; set; }
+
+        /// <summary>
+        /// <para type="description">TOTP Provider Enrollment Wizard Enabled in manage my options property.</para>
+        /// </summary>
+        public bool EnrollWizardStrict { get; set; }
+
+        /// <summary>
+        /// <para type="description">TOTP Provider Shadow codes. 2 by default</para>
+        /// </summary>
+        public int TOTPShadows { get; set; }
+
+        /// <summary>
+        /// <para type="description">TOTP Provider Hash algorithm. SHA1 by default</para>
+        /// </summary>
+        public HashMode Algorithm { get; set; }
+
+        /// <summary>
+        /// <para type="description">Set if additionnal verification with PIN (locally administered) must be done.</para>
+        /// </summary>
+        public bool PinRequired { get; set; }
+
+        /// <summary>
+        /// <para type="description">Set TOP Wizard Application list enabled/ disabled.</para>
+        /// </summary>
+        public OTPWizardOptions WizardOptions { get; set; }
+
+        /// <summary>
+        /// explicit operator from PSConfigTOTPProvider
+        /// </summary>
+        public static explicit operator PSConfigTOTPProvider(FlatOTPProvider otp)
+        {
+            if (otp == null)
+                return null;
+            else
+            {
+                PSConfigTOTPProvider target = new PSConfigTOTPProvider();
+                target.Enabled = otp.Enabled;
+                target.EnrollWizard = otp.EnrollWizard;
+                target.EnrollWizardStrict = otp.EnrollWizardStrict;
+                target.TOTPShadows = otp.TOTPShadows;
+                target.Algorithm = otp.Algorithm; 
+                target.PinRequired = otp.PinRequired;
+                target.WizardOptions = otp.WizardOptions;
+                return target;
+            }
+        }
+
+        /// <summary>
+        /// explicit operator from MMCKeysConfig
+        /// </summary>
+        public static explicit operator FlatOTPProvider(PSConfigTOTPProvider otp)
+        {
+            if (otp == null)
+                return null;
+            else
+            {
+                FlatOTPProvider target = new FlatOTPProvider();
+                target.IsDirty = true;
+                target.Enabled = otp.Enabled;
+                target.EnrollWizard = otp.EnrollWizard;
+                target.EnrollWizardStrict = otp.EnrollWizardStrict;
+                target.TOTPShadows = otp.TOTPShadows;
+                target.Algorithm = otp.Algorithm;
+                target.PinRequired = otp.PinRequired;
+                target.WizardOptions = otp.WizardOptions;
+                return target;
+            }
+        }
+    }
+    #endregion
+
+
+    #region PSConfigMail
+    /// <summary>
+    /// PSConfigMail class
+    /// <para type="synopsis">SMTP configuration properties in MFA System.</para>
+    /// <para type="description">SMTP/POP configuration properties registered with MFA.</para>
+    /// <para type="description">You can access, update attributes properties.</para>
+    /// </summary>
+    /// <example>
+    ///   <para>Get-MFAConfigMail</para>
+    /// </example>
+    public class PSConfigMail
+    {
+        /// <summary>
+        /// <para type="description">Mail Provider Enabled property.</para>
+        /// </summary>
+        public bool Enabled { get; set; }
+
+        /// <summary>
+        /// <para type="description">Mail Provider Enrollment Wizard Enabled property.</para>
+        /// </summary>
+        public bool EnrollWizard { get; set; }
+
+        /// <summary>
+        /// <para type="description">Mail Provider Enrollment Wizard Enabled in manage my options property.</para>
+        /// </summary>
+        public bool EnrollWizardStrict { get; set; }
+
+        /// <summary>
+        /// <para type="description">Mail from property.</para>
+        /// </summary>
+        public string From { get; set; }
+
+        /// <summary>
+        /// <para type="description">Account Name used to access Mail platform.</para>
+        /// </summary>
+        public string UserName { get; set; }
+
+        /// <summary>
+        /// <para type="description">Password used with Username to access Mail platform.</para>
+        /// </summary>
+        public string Password { get; set; }
+
+        /// <summary>
+        /// <para type="description">Mail platform Host eg : smtp.office365.com.</para>
+        /// </summary>
+        public string Host { get; set; }
+
+        /// <summary>
+        /// <para type="description">Mail platform IP Port eg : 587.</para>
+        /// </summary>
+        public int Port { get; set; }
+
+        /// <summary>
+        /// <para type="description">Mail platform SSL option.</para>
+        /// </summary>
+        public bool UseSSL { get; set; }
+
+        /// <summary>
+        /// <para type="description">Your company description, tis is used in default mails contents.</para>
+        /// </summary>
+        public string Company { get; set; }
+
+        /// <summary>
+        /// <para type="description">indicate if IN validation is required with Mail.</para>
+        /// </summary>
+        public bool PinRequired { get; set; }
+
+        /// <summary>
+        /// <para type="description">indicate if connetion is Anonymous.</para>
+        /// </summary>
+        public bool Anonymous { get; set; }
+
+        /// <summary>
+        /// <para type="description">Custom mail templates.</para>
+        /// </summary>
+        public PSConfigMailFileNames MailOTP { get; set; }
+
+        /// <summary>
+        /// <para type="description">Custom mail templates.</para>
+        /// </summary>
+        public PSConfigMailFileNames MailInscription { get; set; }
+
+        /// <summary>
+        /// <para type="description">Custom mail templates.</para>
+        /// </summary>
+        public PSConfigMailFileNames MailSecureKey { get; set; }
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public PSConfigMail()
+        {
+            this.MailOTP = new PSConfigMailFileNames();
+            this.MailInscription = new PSConfigMailFileNames();
+            this.MailSecureKey = new PSConfigMailFileNames();
+        }
+
+        /// <summary>
+        /// explicit conversion to PSConfigMail
+        /// </summary>
+        public static explicit operator PSConfigMail(FlatConfigMail mails)
+        {
+            if (mails == null)
+                return null;
+            else
+            {
+                PSConfigMail psconfig = new PSConfigMail();
+                psconfig.Enabled = mails.Enabled;
+                psconfig.EnrollWizard =  mails.EnrollWizard;
+                psconfig.EnrollWizardStrict = mails.EnrollWizardStrict;
+                psconfig.From = mails.From;
+                psconfig.UserName = mails.UserName;
+                psconfig.Password = mails.Password;
+                psconfig.Host = mails.Host;
+                psconfig.Port = mails.Port;
+                psconfig.UseSSL = mails.UseSSL;
+                psconfig.Company = mails.Company;
+                psconfig.PinRequired = mails.PinRequired;
+                psconfig.Anonymous = mails.Anonymous;
+                psconfig.MailOTP.Templates.Clear();
+                foreach (FlatConfigMailFileName itm in mails.MailOTPContent)
+                {
+                    psconfig.MailOTP.Templates.Add((PSConfigMailFileName)itm);
+                }
+                psconfig.MailInscription.Templates.Clear();
+                foreach (FlatConfigMailFileName itm in mails.MailAdminContent)
+                {
+                    psconfig.MailInscription.Templates.Add((PSConfigMailFileName)itm);
+                }
+                psconfig.MailSecureKey.Templates.Clear();
+                foreach (FlatConfigMailFileName itm in mails.MailKeyContent)
+                {
+                    psconfig.MailSecureKey.Templates.Add((PSConfigMailFileName)itm);
+                }
+                return psconfig;
+            }
+        }
+
+        /// <summary>
+        /// explicit conversion from PSConfigMail
+        /// </summary>
+        public static explicit operator FlatConfigMail(PSConfigMail mails)
+        {
+            if (mails == null)
+                return null;
+            else
+            {
+                FlatConfigMail psconfig = new FlatConfigMail();
+                psconfig.IsDirty = true;
+                psconfig.Enabled = mails.Enabled;
+                psconfig.EnrollWizard = mails.EnrollWizard;
+                psconfig.EnrollWizardStrict = mails.EnrollWizardStrict;
+                psconfig.From = mails.From;
+                psconfig.UserName = mails.UserName;
+                psconfig.Password = mails.Password;
+                psconfig.Host = mails.Host;
+                psconfig.Port = mails.Port;
+                psconfig.UseSSL = mails.UseSSL;
+                psconfig.Company = mails.Company;
+                psconfig.PinRequired = mails.PinRequired;
+                psconfig.Anonymous = mails.Anonymous;
+                psconfig.MailOTPContent.Clear();
+                foreach (PSConfigMailFileName itm in mails.MailOTP.Templates)
+                {
+                    psconfig.MailOTPContent.Add((FlatConfigMailFileName)itm);
+                }
+                psconfig.MailAdminContent.Clear();
+                foreach (PSConfigMailFileName itm in mails.MailInscription.Templates)
+                {
+                    psconfig.MailAdminContent.Add((FlatConfigMailFileName)itm);
+                }
+                psconfig.MailKeyContent.Clear();
+                foreach (PSConfigMailFileName itm in mails.MailSecureKey.Templates)
+                {
+                    psconfig.MailKeyContent.Add((FlatConfigMailFileName)itm);
+                }
+                return psconfig;
+            }
+        }
+    }
+
+    /// <summary>
+    /// PSConfigMailFileName class
+    /// <para type="synopsis">Mail custom templates used in MFA System.</para>
+    /// <para type="description">Mail custom templates registered with MFA.</para>
+    /// </summary>
+    public class PSConfigMailFileName
+    {
+        /// <summary>
+        /// <para type="description">LCID (1033, 1034, 1036, 3082).</para>
+        /// </summary>
+        public int LCID { get; set; }
+
+        /// <summary>
+        /// <para type="description">File path to Html file user as custom template.</para>
+        /// </summary>
+        public string FileName { get; set; }
+
+        /// <summary>
+        /// <para type="description">Enabled status for custom template.</para>
+        /// </summary>
+        public bool Enabled { get; set; }
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public PSConfigMailFileName(int lcid, string filename, bool enabled = true)
+        {
+            this.LCID = lcid;
+            this.FileName = filename;
+            this.Enabled = enabled;
+        }
+
+        /// <summary>
+        /// explicit operator 
+        /// </summary>
+        public static explicit operator PSConfigMailFileName(FlatConfigMailFileName file)
+        {
+            if (file == null)
+                return null;
+            else
+                return new PSConfigMailFileName(file.LCID, file.FileName, file.Enabled);
+        }
+
+        /// <summary>
+        /// explicit operator 
+        /// </summary>
+        public static explicit operator FlatConfigMailFileName(PSConfigMailFileName file)
+        {
+            if (file == null)
+                return null;
+            else
+                return new FlatConfigMailFileName(file.LCID, file.FileName, file.Enabled);
+        }
+    }
+
+    /// <summary>
+    /// PSConfigMailFileName class
+    /// <para type="synopsis">Mail custom templates collection used in MFA System.</para>
+    /// <para type="description">Mail custom templates collection registered with MFA.</para>
+    /// </summary>
+    public class PSConfigMailFileNames
+    {
+        private List<PSConfigMailFileName> _list = new List<PSConfigMailFileName>();
+
+        /// <summary>
+        /// <para type="description">Templates property.</para>
+        /// </summary>
+        public List<PSConfigMailFileName> Templates
+        {
+            get
+            {
+                return _list;
+            }
+        }
+
+        /// <summary>
+        /// AddTemplate method implmentation
+        /// </summary>
+        public void AddTemplate(int lcid, string filename, bool enabled = true)
+        {
+            try
+            {
+                var item = (from i in _list where i.LCID == lcid select i).First();
+                _list.Add(new PSConfigMailFileName(lcid, filename, enabled));
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Template always exists !", ex);
+            }
+        }
+
+        /// <summary>
+        /// SetTemplate method implmentation
+        /// </summary>
+        public void SetTemplate(int lcid, string filename, bool enabled = true)
+        {
+            try
+            {
+                PSConfigMailFileName item = (from it in _list where it.LCID == lcid select it).First();
+                int i = _list.IndexOf(item);
+                item.FileName = filename;
+                item.Enabled = enabled;
+                _list[i] = item;
+            }
+            catch (Exception)
+            {
+                _list.Add(new PSConfigMailFileName(lcid, filename, enabled));
+            }
+        }
+
+        /// <summary>
+        /// RemoveTemplate method implmentation
+        /// </summary>
+        public void RemoveTemplate(int lcid)
+        {
+            try
+            {
+                PSConfigMailFileName item = (from it in _list where it.LCID == lcid select it).First();
+                int i = _list.IndexOf(item);
+                _list.RemoveAt(i);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Template dosen't exists !", ex);
+            }
+        }
+    }
+    #endregion
+
     #region PSConfigExternalProvider
     /// <summary>
     /// PSConfigExternalProvider class
@@ -963,7 +1089,22 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     /// <para type="description">Typically this component is used when sending SMS, you can use your own SMS gateway.</para>
     /// </summary>
     public class PSConfigExternalProvider
-    { 
+    {
+        /// <summary>
+        /// <para type="description">External Provider Enabled property.</para>
+        /// </summary>
+        public bool Enabled { get; set; }
+
+        /// <summary>
+        /// <para type="description">External Provider Enrollment Wizard Enabled property.</para>
+        /// </summary>
+        public bool EnrollWizard { get; set; }
+
+        /// <summary>
+        /// <para type="description">External Provider Enrollment Wizard Enabled in manage my options property.</para>
+        /// </summary>
+        public bool EnrollWizardStrict { get; set; }
+
         /// <summary>
         /// <para type="description">your company name, can be used to format External message sent to user.</para>
         /// </summary>
@@ -1009,6 +1150,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             else
             {
                 PSConfigExternalProvider target = new PSConfigExternalProvider();
+                target.Enabled = otp.Enabled;
+                target.EnrollWizard = otp.EnrollWizard;
+                target.EnrollWizardStrict = otp.EnrollWizardStrict;
                 target.Company = otp.Company;
                 target.FullQualifiedImplementation = otp.FullQualifiedImplementation;
                 target.IsTwoWay = otp.IsTwoWay;
@@ -1031,6 +1175,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             {
                 FlatExternalProvider target = new FlatExternalProvider();
                 target.IsDirty = true;
+                target.Enabled = otp.Enabled;
+                target.EnrollWizard = otp.EnrollWizard;
+                target.EnrollWizardStrict = otp.EnrollWizardStrict;
                 target.Company = otp.Company;
                 target.FullQualifiedImplementation = otp.FullQualifiedImplementation;
                 target.IsTwoWay = otp.IsTwoWay;
@@ -1054,6 +1201,21 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     /// </summary>
     public class PSConfigAzureProvider
     {
+        /// <summary>
+        /// <para type="description">Azure Provider Enabled property.</para>
+        /// </summary>
+        public bool Enabled { get; set; }
+
+        /// <summary>
+        /// <para type="description">Azure Provider Enrollment Wizard Enabled property.</para>
+        /// </summary>
+        public bool EnrollWizard { get; set; }
+
+        /// <summary>
+        /// <para type="description">Azure Provider Enrollment Wizard Enabled in manage my options property.</para>
+        /// </summary>
+        public bool EnrollWizardStrict { get; set; }
+
         /// <summary>
         /// <para type="description">your Azure/o365 tenantId / tenant name.</para>
         /// </summary>
@@ -1081,6 +1243,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 PSConfigAzureProvider target = new PSConfigAzureProvider();
                 target.TenantId = otp.TenantId;
                 target.Thumbprint = otp.ThumbPrint;
+                target.Enabled = otp.Enabled;
+                target.EnrollWizard = false;
+                target.EnrollWizardStrict = false;
                 target.PinRequired = otp.PinRequired;
                 return target;
             }
@@ -1099,6 +1264,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 target.IsDirty = true;
                 target.TenantId = otp.TenantId;
                 target.ThumbPrint = otp.Thumbprint;
+                target.Enabled = otp.Enabled;
+                target.EnrollWizard = false;
+                target.EnrollWizardStrict = false;
                 target.PinRequired = otp.PinRequired;
                 return target;
             }

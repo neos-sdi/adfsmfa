@@ -195,18 +195,12 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     {
         public bool IsDirty { get; set; }
         public int DeliveryWindow { get; set; }
-        public int TOTPShadows { get; set; }
-        public bool MailEnabled { get; set; }
-        public bool SMSEnabled { get; set; }
-        public bool AppsEnabled { get; set; }
-        public bool AzureEnabled { get; set; }
-        public bool BiometricsEnabled { get; set; }
         public int PinLength { get; set; }
         public int DefaultPin { get; set; }
-        public HashMode Algorithm { get; set; }
         public string Issuer { get; set; }
         public bool UseActiveDirectory { get; set; }
         public bool CustomUpdatePassword { get; set; }
+        public bool KeepMySelectedOptionOn { get; set; }
         public string DefaultCountryCode { get; set; }
         public string AdminContact { get; set; }
         public UserFeaturesOptions UserFeatures { get; set; }
@@ -222,19 +216,13 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             AdminContact = cfg.AdminContact;
             IsDirty = cfg.IsDirty;
             DeliveryWindow = cfg.DeliveryWindow;
-            TOTPShadows = cfg.OTPProvider.TOTPShadows;
-            MailEnabled = cfg.MailProvider.Enabled;
-            SMSEnabled = cfg.ExternalProvider.Enabled;
-            AppsEnabled = cfg.OTPProvider.Enabled;
-            AzureEnabled = cfg.AzureProvider.Enabled;
-            BiometricsEnabled = false;
             DefaultPin = cfg.DefaultPin;
             PinLength = cfg.PinLength;
-            Algorithm = cfg.OTPProvider.Algorithm;
             Issuer = cfg.Issuer;
             UseActiveDirectory = cfg.UseActiveDirectory;
             CustomUpdatePassword = cfg.CustomUpdatePassword;
             DefaultCountryCode = cfg.DefaultCountryCode;
+            KeepMySelectedOptionOn = cfg.KeepMySelectedOptionOn;
             AdminContact = cfg.AdminContact;
             UserFeatures = cfg.UserFeatures;
             AdvertisingDays = cfg.AdvertisingDays;
@@ -250,18 +238,12 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             cfg.AdminContact = AdminContact;
             cfg.IsDirty = IsDirty;
             cfg.DeliveryWindow = DeliveryWindow;
-            cfg.OTPProvider.TOTPShadows = TOTPShadows;
-            cfg.MailProvider.Enabled = MailEnabled;
-            cfg.ExternalProvider.Enabled = SMSEnabled;
-            cfg.OTPProvider.Enabled = AppsEnabled;
-            cfg.AzureProvider.Enabled = AzureEnabled;
-           // cfg.BiometricsEnabled = false;
             cfg.DefaultPin = DefaultPin;
             cfg.PinLength = PinLength;
-            cfg.OTPProvider.Algorithm = Algorithm;
             cfg.Issuer = Issuer;
             cfg.UseActiveDirectory = UseActiveDirectory;
             cfg.CustomUpdatePassword = CustomUpdatePassword;
+            cfg.KeepMySelectedOptionOn = KeepMySelectedOptionOn;
             cfg.DefaultCountryCode = DefaultCountryCode;
             cfg.AdminContact = AdminContact;
             cfg.UserFeatures = UserFeatures;
@@ -347,6 +329,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         public string PhoneAttribute { get; set; }
         public string MethodAttribute { get; set; }
         public string OverrideMethodAttribute { get; set; }
+        public string PinAttribute { get; set; }
         public string EnabledAttribute { get; set; }
 
         /// <summary>
@@ -366,6 +349,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             PhoneAttribute = adds.phoneAttribute;
             MethodAttribute = adds.methodAttribute;
             OverrideMethodAttribute = adds.overridemethodAttribute;
+            PinAttribute = adds.pinattribute;
             EnabledAttribute = adds.totpEnabledAttribute;
         }
 
@@ -396,134 +380,13 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             if (!ManagementService.CheckRepositoryAttribute(OverrideMethodAttribute, 1))
                 throw new ArgumentException(string.Format("Attribute {0} not found in forest schema !", OverrideMethodAttribute));
             adds.overridemethodAttribute = OverrideMethodAttribute;
+            if (!ManagementService.CheckRepositoryAttribute(PinAttribute, 1))
+                throw new ArgumentException(string.Format("Attribute {0} not found in forest schema !", PinAttribute));
+            PinAttribute = adds.pinattribute;
             if (!ManagementService.CheckRepositoryAttribute(EnabledAttribute, 1))
                 throw new ArgumentException(string.Format("Attribute {0} not found in forest schema !", EnabledAttribute));
             adds.totpEnabledAttribute = EnabledAttribute;
             ManagementService.ADFSManager.WriteConfiguration(host);
-        }
-    }
-
-    [Serializable]
-    public class FlatConfigMail
-    {
-        public bool IsDirty { get; set; }
-        public string From { get; set; }
-        public string UserName { get; set; }
-        public string Password { get; set; }
-        public string Host { get; set; }
-        public int Port { get; set; }
-        public bool UseSSL { get; set; }
-        public bool PinRequired { get; set; }
-        public string Company { get; set; }
-        public List<FlatConfigMailFileName> MailOTPContent { get; set; }
-        public List<FlatConfigMailFileName> MailAdminContent { get; set; }
-        public List<FlatConfigMailFileName> MailKeyContent { get; set; }
-
-        public FlatConfigMail()
-        {
-            this.MailOTPContent = new List<FlatConfigMailFileName>();
-            this.MailAdminContent = new List<FlatConfigMailFileName>();
-            this.MailKeyContent = new List<FlatConfigMailFileName>();
-        }
-
-        /// <summary>
-        /// Update method implmentation
-        /// </summary>
-        public void Load(PSHost host)
-        {
-            ManagementService.Initialize(host, true);
-            MFAConfig cfg = ManagementService.Config;
-            MailProvider mail = cfg.MailProvider;
-            IsDirty = cfg.IsDirty;
-            From  = mail.From;
-            UserName = mail.UserName;
-            Password = mail.Password;
-            Host = mail.Host;
-            Port = mail.Port; 
-            UseSSL = mail.UseSSL;
-            Company = mail.Company;
-            PinRequired = mail.PinRequired;
-            MailOTPContent.Clear();
-            foreach(SendMailFileName itm in mail.MailOTPContent)
-            {
-                MailOTPContent.Add((FlatConfigMailFileName)itm);
-            }
-            MailAdminContent.Clear();
-            foreach(SendMailFileName itm in mail.MailAdminContent)
-            {
-                MailAdminContent.Add((FlatConfigMailFileName)itm);
-            }
-            MailKeyContent.Clear();
-            foreach(SendMailFileName itm in mail.MailKeyContent)
-            {
-                MailKeyContent.Add((FlatConfigMailFileName)itm);
-            }
-        }
-
-        /// <summary>
-        /// Update method implmentation
-        /// </summary>
-        public void Update(PSHost host)
-        {
-            ManagementService.Initialize(host, true);
-            MFAConfig cfg = ManagementService.Config;
-            MailProvider mail = cfg.MailProvider;
-            cfg.IsDirty = IsDirty;
-            mail.From = From;
-            mail.UserName = UserName;
-            mail.Password = Password;
-            mail.Host = Host;
-            mail.Port = Port;
-            mail.UseSSL = UseSSL;
-            mail.Company = Company;
-            mail.PinRequired = PinRequired;
-            mail.MailOTPContent.Clear();
-            foreach (FlatConfigMailFileName itm in MailOTPContent)
-            {
-                mail.MailOTPContent.Add((SendMailFileName)itm);
-            }
-            mail.MailAdminContent.Clear();
-            foreach (FlatConfigMailFileName itm in MailAdminContent)
-            {
-                mail.MailAdminContent.Add((SendMailFileName)itm);
-            }
-            mail.MailKeyContent.Clear();
-            foreach (FlatConfigMailFileName itm in MailKeyContent)
-            {
-                mail.MailKeyContent.Add((SendMailFileName)itm);
-            }
-            ManagementService.ADFSManager.WriteConfiguration(host);
-        }
-    }
-
-    [Serializable]
-    public class FlatConfigMailFileName
-    {
-        public int LCID { get; set; }
-        public string FileName { get; set; }
-        public bool Enabled { get; set; }
-
-        public FlatConfigMailFileName(int lcid, string filename, bool enabled = true)
-        {
-            this.LCID = lcid;
-            this.FileName = filename;
-            this.Enabled = enabled;
-        }
-
-        public static explicit operator SendMailFileName(FlatConfigMailFileName file)
-        {
-            if (file == null)
-                return null;
-            else
-                return new SendMailFileName(file.LCID, file.FileName, file.Enabled);
-        }
-
-        public static explicit operator FlatConfigMailFileName(SendMailFileName file)
-        {
-            if (file == null)
-                return null;
-            else
-                return new FlatConfigMailFileName(file.LCID, file.FileName, file.Enabled);
         }
     }
 
@@ -632,10 +495,65 @@ namespace Neos.IdentityServer.MultiFactor.Administration
 
     }
 
+  //  <OTPProvider WizardOptions="NoGoogleAuthenticator" Algorithm="SHA1" TOTPShadows="2" EnrollWizardStrict="false" EnrollWizard="true" PinRequired="false" Enabled="true"/>
+    [Serializable]
+    public class FlatOTPProvider
+    {
+        public bool IsDirty { get; set; }
+        public bool Enabled { get; set; }
+        public bool EnrollWizard { get; set; }
+        public bool EnrollWizardStrict { get; set; }
+        public HashMode Algorithm { get; set; }
+        public int TOTPShadows { get; set; }
+        public OTPWizardOptions WizardOptions { get; set; }
+        public bool PinRequired { get; set; }
+
+        /// <summary>
+        /// Update method implmentation
+        /// </summary>
+        public void Load(PSHost host)
+        {
+            ManagementService.Initialize(host, true);
+            MFAConfig cfg = ManagementService.Config;
+            OTPProvider otp = cfg.OTPProvider;
+            this.IsDirty = cfg.IsDirty;
+            this.Enabled = otp.Enabled;
+            this.EnrollWizard = otp.EnrollWizard;
+            this.EnrollWizardStrict = otp.EnrollWizardStrict;
+            this.Algorithm = otp.Algorithm;
+            this.TOTPShadows = otp.TOTPShadows;
+            this.WizardOptions = otp.WizardOptions;
+            this.PinRequired = otp.PinRequired;
+        }
+
+        /// <summary>
+        /// Update method implmentation
+        /// </summary>
+        public void Update(PSHost host)
+        {
+            ManagementService.Initialize(host, true);
+            MFAConfig cfg = ManagementService.Config;
+            OTPProvider otp = cfg.OTPProvider;
+            cfg.IsDirty = true;
+            otp.Enabled = this.Enabled;
+            otp.EnrollWizard = this.EnrollWizard;
+            otp.EnrollWizardStrict = this.EnrollWizardStrict;
+            otp.Algorithm = this.Algorithm;
+            otp.TOTPShadows = this.TOTPShadows;
+            otp.WizardOptions = this.WizardOptions;
+            otp.PinRequired = this.PinRequired;
+            otp.PinRequired = this.PinRequired;
+            ManagementService.ADFSManager.WriteConfiguration(host);
+        }
+    }
+
     [Serializable]
     public class FlatExternalProvider
     {
         public bool IsDirty { get; set; }
+        public bool Enabled { get; set; }
+        public bool EnrollWizard { get; set; }
+        public bool EnrollWizardStrict { get; set; }
         public string Company { get; set; }
         public string Sha1Salt { get; set; }
         public string FullQualifiedImplementation  { get; set; }
@@ -654,6 +572,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             MFAConfig cfg = ManagementService.Config;
             ExternalOTPProvider otp = cfg.ExternalProvider;
             this.IsDirty = cfg.IsDirty;
+            this.Enabled = otp.Enabled;
+            this.EnrollWizard = otp.EnrollWizard;
+            this.EnrollWizardStrict = otp.EnrollWizardStrict;
             this.Company = otp.Company;
             this.FullQualifiedImplementation = otp.FullQualifiedImplementation;
             this.IsTwoWay = otp.IsTwoWay;
@@ -673,6 +594,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             MFAConfig cfg = ManagementService.Config;
             ExternalOTPProvider otp = cfg.ExternalProvider;
             cfg.IsDirty = true;
+            otp.Enabled = this.Enabled;
+            otp.EnrollWizard = this.EnrollWizard;
+            otp.EnrollWizardStrict = this.EnrollWizardStrict;
             otp.Company = this.Company;
             otp.FullQualifiedImplementation = this.FullQualifiedImplementation;
             otp.IsTwoWay = this.IsTwoWay;
@@ -688,6 +612,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     public class FlatAzureProvider
     {
         public bool IsDirty { get; set; }
+        public bool Enabled { get; set; }
+        public bool EnrollWizard { get; set; }
+        public bool EnrollWizardStrict { get; set; }
         public string TenantId { get; set; }
         public string ThumbPrint { get; set; }
         public bool PinRequired { get; set; }
@@ -701,6 +628,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             MFAConfig cfg = ManagementService.Config;
             AzureProvider otp = cfg.AzureProvider;
             this.IsDirty = cfg.IsDirty;
+            this.Enabled = otp.Enabled;
+            this.EnrollWizard = otp.EnrollWizard;
+            this.EnrollWizardStrict = otp.EnrollWizardStrict;
             this.TenantId = otp.TenantId;
             this.ThumbPrint = otp.ThumbPrint;
             this.PinRequired = otp.PinRequired;
@@ -715,10 +645,150 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             MFAConfig cfg = ManagementService.Config;
             AzureProvider otp = cfg.AzureProvider;
             cfg.IsDirty = true;
+            otp.Enabled = this.Enabled;
+            otp.EnrollWizard = this.EnrollWizard;
+            otp.EnrollWizardStrict = this.EnrollWizardStrict;
             otp.TenantId = this.TenantId;
             otp.ThumbPrint = this.ThumbPrint;
             otp.PinRequired = this.PinRequired;
             ManagementService.ADFSManager.WriteConfiguration(host);
         }
     }
+
+    [Serializable]
+    public class FlatConfigMail
+    {
+        public bool IsDirty { get; set; }
+        public bool Enabled { get; set; }
+        public bool EnrollWizard { get; set; }
+        public bool EnrollWizardStrict { get; set; }
+        public string From { get; set; }
+        public string UserName { get; set; }
+        public string Password { get; set; }
+        public string Host { get; set; }
+        public int Port { get; set; }
+        public bool UseSSL { get; set; }
+        public bool PinRequired { get; set; }
+        public string Company { get; set; }
+        public bool Anonymous { get; set; }
+        public List<FlatConfigMailFileName> MailOTPContent { get; set; }
+        public List<FlatConfigMailFileName> MailAdminContent { get; set; }
+        public List<FlatConfigMailFileName> MailKeyContent { get; set; }
+
+        public FlatConfigMail()
+        {
+            this.MailOTPContent = new List<FlatConfigMailFileName>();
+            this.MailAdminContent = new List<FlatConfigMailFileName>();
+            this.MailKeyContent = new List<FlatConfigMailFileName>();
+        }
+
+        /// <summary>
+        /// Update method implmentation
+        /// </summary>
+        public void Load(PSHost host)
+        {
+            ManagementService.Initialize(host, true);
+            MFAConfig cfg = ManagementService.Config;
+            MailProvider mail = cfg.MailProvider;
+            IsDirty = cfg.IsDirty;
+            Enabled = mail.Enabled;
+            EnrollWizard = mail.EnrollWizard;
+            EnrollWizardStrict = mail.EnrollWizardStrict;
+            From = mail.From;
+            UserName = mail.UserName;
+            Password = mail.Password;
+            Host = mail.Host;
+            Port = mail.Port;
+            UseSSL = mail.UseSSL;
+            Company = mail.Company;
+            PinRequired = mail.PinRequired;
+            Anonymous = mail.Anonymous;
+            MailOTPContent.Clear();
+            foreach (SendMailFileName itm in mail.MailOTPContent)
+            {
+                MailOTPContent.Add((FlatConfigMailFileName)itm);
+            }
+            MailAdminContent.Clear();
+            foreach (SendMailFileName itm in mail.MailAdminContent)
+            {
+                MailAdminContent.Add((FlatConfigMailFileName)itm);
+            }
+            MailKeyContent.Clear();
+            foreach (SendMailFileName itm in mail.MailKeyContent)
+            {
+                MailKeyContent.Add((FlatConfigMailFileName)itm);
+            }
+        }
+
+        /// <summary>
+        /// Update method implmentation
+        /// </summary>
+        public void Update(PSHost host)
+        {
+            ManagementService.Initialize(host, true);
+            MFAConfig cfg = ManagementService.Config;
+            MailProvider mail = cfg.MailProvider;
+            cfg.IsDirty = IsDirty;
+            mail.Enabled = Enabled;
+            mail.EnrollWizard = EnrollWizard;
+            mail.EnrollWizardStrict = EnrollWizardStrict;
+            mail.From = From;
+            mail.UserName = UserName;
+            mail.Password = Password;
+            mail.Host = Host;
+            mail.Port = Port;
+            mail.UseSSL = UseSSL;
+            mail.Company = Company;
+            mail.PinRequired = PinRequired;
+            mail.Anonymous = Anonymous;
+            mail.MailOTPContent.Clear();
+            foreach (FlatConfigMailFileName itm in MailOTPContent)
+            {
+                mail.MailOTPContent.Add((SendMailFileName)itm);
+            }
+            mail.MailAdminContent.Clear();
+            foreach (FlatConfigMailFileName itm in MailAdminContent)
+            {
+                mail.MailAdminContent.Add((SendMailFileName)itm);
+            }
+            mail.MailKeyContent.Clear();
+            foreach (FlatConfigMailFileName itm in MailKeyContent)
+            {
+                mail.MailKeyContent.Add((SendMailFileName)itm);
+            }
+            ManagementService.ADFSManager.WriteConfiguration(host);
+        }
+    }
+
+    [Serializable]
+    public class FlatConfigMailFileName
+    {
+        public int LCID { get; set; }
+        public string FileName { get; set; }
+        public bool Enabled { get; set; }
+
+        public FlatConfigMailFileName(int lcid, string filename, bool enabled = true)
+        {
+            this.LCID = lcid;
+            this.FileName = filename;
+            this.Enabled = enabled;
+        }
+
+        public static explicit operator SendMailFileName(FlatConfigMailFileName file)
+        {
+            if (file == null)
+                return null;
+            else
+                return new SendMailFileName(file.LCID, file.FileName, file.Enabled);
+        }
+
+        public static explicit operator FlatConfigMailFileName(SendMailFileName file)
+        {
+            if (file == null)
+                return null;
+            else
+                return new FlatConfigMailFileName(file.LCID, file.FileName, file.Enabled);
+        }
+    }
+
 }

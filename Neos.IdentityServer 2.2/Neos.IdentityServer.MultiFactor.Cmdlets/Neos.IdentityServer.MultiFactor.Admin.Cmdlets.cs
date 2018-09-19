@@ -1,4 +1,5 @@
-﻿//******************************************************************************************************************************************************************************************//
+﻿using Neos.IdentityServer.MultiFactor.Cmdlets;
+//******************************************************************************************************************************************************************************************//
 // Copyright (c) 2017 Neos-Sdi (http://www.neos-sdi.com)                                                                                                                                    //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
@@ -94,16 +95,6 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         {
             get { return _identity; }
             set { _identity = value; }
-        }
-
-        /// <summary>
-        /// <para type="description">MaxRows to return.</para>
-        /// </summary>
-        [Parameter(ParameterSetName = "Data")]
-        public int MaxRows
-        {
-            get { return _maxrows; }
-            set { _maxrows = value; }
         }
 
         /// <summary>
@@ -229,7 +220,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                     _paging.PageSize = PagingSize;
 
                     ManagementService.Initialize(this.Host, true);
-                    PSRegistrationList mmc = (PSRegistrationList)ManagementService.GetUserRegistrations(_filter, _order, _paging, MaxRows);
+                    PSRegistrationList mmc = (PSRegistrationList)ManagementService.GetUserRegistrations(_filter, _order, _paging);
                     _list = mmc.ToArray();
                 }
                 catch (Exception ex)
@@ -325,6 +316,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         private string _phonenumber = string.Empty;
         private PreferredMethod _method = PreferredMethod.None;
         private bool _enabled = true;
+        private int _pincode = -1;
         private bool _resetkey = false;
 
         PSRegistration[] _data = null;
@@ -374,6 +366,17 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         {
             get { return _method; }
             set { _method = value; }
+        }
+
+        /// <summary>
+        /// <para type="description">Pin code of selected users.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [Parameter(ParameterSetName = "Data")]
+        public int Pin
+        {
+            get { return _pincode; }
+            set { _pincode = value; }
         }
 
         /// <summary>
@@ -464,6 +467,8 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                             reg.PhoneNumber = this.PhoneNumber;
                         if (this.Method != PreferredMethod.None)
                             reg.PreferredMethod = (PreferredMethod)this.Method;
+                        if (this.Pin > -1)
+                            reg.PIN = this.Pin;
                         reg.Enabled = this.Enabled;
 
                         if (string.IsNullOrEmpty(reg.MailAddress) && ManagementService.Config.MailProvider.Enabled)
@@ -510,6 +515,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         private string _mailaddress = string.Empty;
         private string _phonenumber = string.Empty;
         private PreferredMethod _method = PreferredMethod.None;
+        private int _pincode = -1;
         private bool _enabled = true;
 
         PSRegistration[] _data = null;
@@ -556,6 +562,17 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         {
             get { return _method; }
             set { _method = value; }
+        }
+
+        /// <summary>
+        /// <para type="description">Pin code of selected users.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [Parameter(ParameterSetName = "Data")]
+        public int Pin
+        {
+            get { return _pincode; }
+            set { _pincode = value; }
         }
 
         /// <summary>
@@ -636,6 +653,8 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                             reg.PhoneNumber = this.PhoneNumber;
                         if (this.Method != PreferredMethod.None)
                             reg.PreferredMethod = (PreferredMethod)this.Method;
+                        if (this.Pin > -1)
+                            reg.PIN = this.Pin;
                         reg.Enabled = this.Enabled; 
 
                         if (string.IsNullOrEmpty(reg.MailAddress) && ManagementService.Config.MailProvider.Enabled)
@@ -2462,18 +2481,68 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     }
 
     /// <summary>
-    /// <para type="synopsis">Get SMTP Configuration.</para>
-    /// <para type="description">Get SMTP configuration options.</para>
+    /// PSProviderType
+    /// <para type="synopsis">MFA Providers Kinds.</para>
+    /// <para type="description">MFA Providers Types (Code, Email, External, Azure, Biometrics).</para>
+    /// </summary>    
+    public enum PSProviderType
+    {
+        /// <summary>
+        /// <para type="description">Kind for TOTP MFA Provider</para>
+        /// </summary>
+        Code = 1,
+
+        /// <summary>
+        /// <para type="description">Kind for Email MFA Provider</para>
+        /// </summary>
+        Email = 2,
+
+        /// <summary>
+        /// <para type="description">Kind for External / SMS MFA Provider</para>
+        /// </summary>
+        External = 3,
+
+        /// <summary>
+        /// <para type="description">Kind for Azure MFA Provider</para>
+        /// </summary>
+        Azure = 4,
+
+        /// <summary>
+        /// <para type="description">Kind for Biometric MFA Provider</para>
+        /// </summary>
+        Biometrics = 5
+    }         
+
+    /// <summary>
+    /// <para type="synopsis">Get MFA Provider Configuration.</para>
+    /// <para type="description">Get MFA Provider configuration options.</para>
     /// </summary>
     /// <example>
-    ///   <para>Get-MFAConfigMails</para>
-    ///   <para>Get MFA configuration for SMTP</para>
+    ///   <para>Get-MFAProvider -ProviderType External</para>
+    ///   <para>Get MFA Provider configuration for (Code, Email, External, Azure, Biometrics)</para>
     /// </example>
-    [Cmdlet(VerbsCommon.Get, "MFAConfigMails", SupportsShouldProcess = true, SupportsPaging = false, ConfirmImpact = ConfirmImpact.Medium, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
-    [OutputType(typeof(PSConfigMail))]
-    public sealed class GetMFAConfigMails : MFACmdlet
+    [Cmdlet(VerbsCommon.Get, "MFAProvider", SupportsShouldProcess = true, SupportsPaging = false, ConfirmImpact = ConfirmImpact.Medium, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
+    public sealed class GetMFAProvider : MFACmdlet
     {
-        private PSConfigMail _config;
+        private PSConfigTOTPProvider _config0;
+        private PSConfigMail _config1;
+        private PSConfigExternalProvider _config2;
+        private PSConfigAzureProvider _config3;
+
+        private PSProviderType _providertype = PSProviderType.Code;
+
+        /// <summary>
+        /// <para type="description">Provider Type parameter, (Code, Email, External, Azure, Biometrics) Required.</para>
+        /// </summary>
+        [Parameter(Mandatory = true, Position = 0, ParameterSetName = "Identity", ValueFromPipeline = true)]
+        [Parameter(Mandatory = true, Position = 0, ParameterSetName = "Data", ValueFromPipeline = true)]
+        [ValidateRange(PSProviderType.Code, PSProviderType.Azure)]
+        public PSProviderType ProviderType
+        {
+            get { return _providertype; }
+            set { _providertype = value; }
+        }
+
         /// <summary>
         /// BeginProcessing method implementation
         /// </summary>
@@ -2482,10 +2551,31 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             base.BeginProcessing();
             try
             {
-
-                FlatConfigMail cf = new FlatConfigMail();
-                cf.Load(this.Host);
-                _config = (PSConfigMail)cf;
+                switch (ProviderType)
+                {
+                    case PSProviderType.Code:
+                        FlatOTPProvider cf0 = new FlatOTPProvider();
+                        cf0.Load(this.Host);
+                        _config0 = (PSConfigTOTPProvider)cf0;
+                        break;
+                    case PSProviderType.Email:
+                        FlatConfigMail cf1 = new FlatConfigMail();
+                        cf1.Load(this.Host);
+                        _config1 = (PSConfigMail)cf1;
+                        break;
+                    case PSProviderType.External:
+                        FlatExternalProvider cf2 = new FlatExternalProvider();
+                        cf2.Load(this.Host); 
+                        _config2 = (PSConfigExternalProvider)cf2;
+                        break;
+                    case PSProviderType.Azure:
+                        FlatAzureProvider cf3 = new FlatAzureProvider();
+                        cf3.Load(this.Host);
+                        _config3 = (PSConfigAzureProvider)cf3;
+                        break;
+                    default:
+                        break;
+                }
             }
             catch (Exception ex)
             {
@@ -2498,7 +2588,10 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// </summary>
         protected override void EndProcessing()
         {
-            _config = null;
+            _config0 = null;
+            _config1 = null;
+            _config2 = null;
+            _config3 = null;
             base.EndProcessing();
         }
 
@@ -2511,7 +2604,23 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             {
                 if (ShouldProcess("MFA Mails Configuration"))
                 {
-                    WriteObject(_config);
+                    switch (ProviderType)
+                    {
+                        case PSProviderType.Code:
+                            WriteObject(_config0);
+                            break;
+                        case PSProviderType.Email:
+                            WriteObject(_config1);
+                            break;
+                        case PSProviderType.External:
+                            WriteObject(_config2);
+                            break;
+                        case PSProviderType.Azure:
+                            WriteObject(_config3);
+                            break;
+                        default:
+                            break;
+                    }
                 }
             }
             catch (Exception ex)
@@ -2525,59 +2634,73 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// </summary>
         protected override void StopProcessing()
         {
-            _config = null;
+            _config0 = null;
+            _config1 = null;
+            _config2 = null;
+            _config3 = null;
             base.StopProcessing();
         }
     }
 
     /// <summary>
-    /// <para type="synopsis">Set SMTP Configuration.</para>
-    /// <para type="description">Set SMTP configuration options.</para>
+    /// <para type="synopsis">Set MFA Provider Configuration.</para>
+    /// <para type="description">Set MFA Provider configuration options.</para>
     /// </summary>
     /// <example>
-    ///   <para>Set-MFAConfigMails -Config $cfg</para>
-    ///   <para>Set MFA configuration for SMTP</para>
+    ///   <para>Set-MFAProvider -ProviderType Code -Data $cfg</para>
+    ///   <para>Set MFA Provider configuration for (Code, Email, External, Azure, Biometrics)</para>
     /// </example>
     /// <example>
-    ///   <para>$cfg = Get-MFAConfigMails</para>
+    ///   <para>$cfg = Get-MFAProvider Email</para>
     ///   <para>$cfg.Host = smtp.office365.com</para>
-    ///   <para>Set-MFAConfigMails $cfg</para>
-    ///   <para>Set MFA SMTP configuration options, modity values and finally Update configuration.</para>
+    ///   <para>Set-MFAProvider Email $cfg</para>
+    ///   <para>Set MFA Provider configuration (Code, Email, External, Azure, Biometrics), modity values and finally Update configuration.</para>
     /// </example>
-    [Cmdlet(VerbsCommon.Set, "MFAConfigMails", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
-    public sealed class SetMFAConfigMails : MFACmdlet
+    [Cmdlet(VerbsCommon.Set, "MFAProvider", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
+    public sealed class SetMFAProvider : MFACmdlet, IDynamicParameters
     {
-        private PSConfigMail _config;
-        private FlatConfigMail _target;
+        private TOTPDynamicParameters _target0;
+        private MailDynamicParameters _target1;
+        private ExternalDynamicParameters _target2;
+        private AzureDynamicParameters _target3;
+
+        private PSProviderType _providertype = PSProviderType.Code;
 
         /// <summary>
-        /// <para type="description">Config parameter, a variable of type PSConfigMail.</para>
+        /// <para type="description">Provider Type parameter, (Code, Email, External, Azure, Biometrics) Required.</para>
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = "Data", ValueFromPipeline = true)]
-        [ValidateNotNullOrEmpty()]
-        public PSConfigMail Config
+        [ValidateRange(PSProviderType.Code, PSProviderType.Azure)]
+        public PSProviderType ProviderType
         {
-            get { return _config; }
-            set { _config = value; }
+            get { return _providertype; }
+            set { _providertype = value; }
         }
 
         /// <summary>
-        /// BeginProcessing method implementation
+        /// <para type="description">Set the value of Provider configuration.</para>
+        /// GetDynamicParameters implementation
         /// </summary>
-        protected override void BeginProcessing()
+        public object GetDynamicParameters()
         {
-            base.BeginProcessing();
-            if (_config != null)
+            switch (ProviderType)
             {
-                try
-                {
-                    _target = (FlatConfigMail)_config;
-                }
-                catch (Exception ex)
-                {
-                    this.ThrowTerminatingError(new ErrorRecord(ex, "3023", ErrorCategory.OperationStopped, this));
-                }
+                case PSProviderType.Code:
+                    _target0 = new TOTPDynamicParameters();
+                    return _target0;
+                case PSProviderType.Email:
+                    _target1 = new MailDynamicParameters();
+                    return _target1;
+                case PSProviderType.External:
+                    _target2 = new ExternalDynamicParameters();
+                    return _target2;
+                case PSProviderType.Azure:
+                    _target3 = new AzureDynamicParameters();
+                    return _target3;
+                default:
+                    break;
             }
+            return null;
         }
 
         /// <summary>
@@ -2589,7 +2712,23 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             {
                 try
                 {
-                    _target.Update(this.Host);
+                    switch (ProviderType)
+                    {
+                        case PSProviderType.Code:
+                            ((FlatOTPProvider)(_target0.Data)).Update(this.Host);
+                            break;
+                        case PSProviderType.Email:
+                            ((FlatConfigMail)(_target1.Data)).Update(this.Host);
+                            break;
+                        case PSProviderType.External:
+                            ((FlatExternalProvider)(_target2.Data)).Update(this.Host);
+                            break;
+                        case PSProviderType.Azure:
+                            ((FlatAzureProvider)(_target3.Data)).Update(this.Host);
+                            break;
+                        default:
+                            break;
+                    }
                     this.WriteVerbose(infos_strings.InfosConfigUpdated);
                 }
                 catch (Exception ex)
@@ -2598,6 +2737,94 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 }
             }
         }
+
+        /// <summary>
+        /// EndProcessing method implementation
+        /// </summary>
+        protected override void EndProcessing()
+        {
+            _target0 = null;
+            _target1 = null;
+            _target2 = null;
+            _target3 = null;
+            base.EndProcessing();
+        }
+
+        /// <summary>
+        /// StopProcessing method implementation
+        /// </summary>
+        protected override void StopProcessing()
+        {
+            _target0 = null;
+            _target1 = null;
+            _target2 = null;
+            _target3 = null;
+            base.StopProcessing();
+        }
+    }
+
+    /// <summary>
+    /// <para type="description">Set TOTP Provider configuration data.</para>
+    /// </summary>
+    public class TOTPDynamicParameters
+    {
+        /// <summary>
+        /// <para type="description">Set the value of TOTP Provider.</para>
+        /// Data property
+        /// </summary>
+        [Parameter(Mandatory = true, Position = 1, ParameterSetName = "Data", ValueFromPipeline = true)]
+        public PSConfigTOTPProvider Data
+        {
+            get;
+            set;
+        }
+    }
+
+    /// <summary>
+    /// <para type="description">Set Mail Provider configuration data.</para>
+    /// </summary>
+    public class MailDynamicParameters
+    {
+        /// <summary>
+        /// <para type="description">Set the value of Email Provider.</para>
+        /// Data property
+        /// </summary>
+        [Parameter(Mandatory = true, Position = 1, ParameterSetName = "Data", ValueFromPipeline = true)]
+        public PSConfigMail Data
+        {
+            get;
+            set;
+        }
+    }
+
+    /// <summary>
+    /// <para type="description">Set External Provider configuration data.</para>
+    /// </summary>
+    public class ExternalDynamicParameters
+    {
+        /// <summary>
+        /// <para type="description">Set the value of SMS provider.</para>
+        /// Data property
+        /// </summary>
+        [Parameter(Mandatory = true, Position = 1, ParameterSetName = "Data", ValueFromPipeline = true)]
+        public PSConfigExternalProvider Data
+        {
+            get;
+            set;
+        }
+    }
+
+    /// <summary>
+    /// <para type="description">Set Azure Provider configuration data.</para>
+    /// </summary>
+    public class AzureDynamicParameters
+    {
+        /// <summary>
+        /// <para type="description">Set the value of Azure provider.</para>
+        /// Data property
+        /// </summary>
+        [Parameter(Mandatory = true, Position = 1, ParameterSetName = "Data", ValueFromPipeline = true)]
+        public PSConfigAzureProvider Data { get; set; }
     }
 
     /// <summary>
@@ -2730,294 +2957,6 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         protected override void ProcessRecord()
         {
             if (ShouldProcess("MFA Secure Keys Configuration"))
-            {
-                try
-                {
-                    _target.Update(this.Host);
-                    this.WriteVerbose(infos_strings.InfosConfigUpdated);
-                }
-                catch (Exception ex)
-                {
-                    this.ThrowTerminatingError(new ErrorRecord(ex, "3024", ErrorCategory.OperationStopped, this));
-                }
-            }
-        }
-    }
-
-    /// <summary>
-    /// <para type="synopsis">Get External Provider Configuration.</para>
-    /// <para type="description">Get External Provider configuration options.</para>
-    /// </summary>
-    /// <example>
-    ///   <para>Get-MFAExternalProvider</para>
-    ///   <para>Get MFA External Provider configuration options</para>
-    /// </example>
-    /// <example>
-    ///  <para>(Get-MFAExternalProvider).FullQualifiedImplementation</para>
-    ///  <para>(Get-MFAExternalProvider).Parameters</para>
-    /// </example>
-    [Cmdlet(VerbsCommon.Get, "MFAExternalProvider", SupportsShouldProcess = true, SupportsPaging = false, ConfirmImpact = ConfirmImpact.Medium, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
-    [OutputType(typeof(PSConfigExternalProvider))]
-    public sealed class GetMFAExternalProvider : MFACmdlet
-    {
-        private PSConfigExternalProvider _config;
-
-        /// <summary>
-        /// BeginProcessing method implementation
-        /// </summary>
-        protected override void BeginProcessing()
-        {
-            base.BeginProcessing();
-            try
-            {
-
-                FlatExternalProvider cf = new FlatExternalProvider();
-                cf.Load(this.Host);
-                _config = (PSConfigExternalProvider)cf;
-            }
-            catch (Exception ex)
-            {
-                this.ThrowTerminatingError(new ErrorRecord(ex, "3021", ErrorCategory.OperationStopped, this));
-            }
-        }
-
-        /// <summary>
-        /// EndProcessing method implementation
-        /// </summary>
-        protected override void EndProcessing()
-        {
-            _config = null;
-            base.EndProcessing();
-        }
-
-        /// <summary>
-        /// ProcessInternalRecord method override
-        /// </summary>
-        protected override void ProcessRecord()
-        {
-            try
-            {
-                if (ShouldProcess("MFA External Provider Configuration"))
-                {
-                    WriteObject(_config);
-                }
-            }
-            catch (Exception ex)
-            {
-                this.ThrowTerminatingError(new ErrorRecord(ex, "3022", ErrorCategory.OperationStopped, this));
-            }
-        }
-
-        /// <summary>
-        /// StopProcessing method implementation
-        /// </summary>
-        protected override void StopProcessing()
-        {
-            _config = null;
-            base.StopProcessing();
-        }
-    }
-
-    /// <summary>
-    /// <para type="synopsis">Set External Provider Configuration.</para>
-    /// <para type="description">Set External Provider configuration options.</para>
-    /// </summary>
-    /// <example>
-    ///   <para>Set-MFAExternalProvider -Config $cfg</para>
-    ///   <para>Set MFA External Provider configuration</para>
-    /// </example>
-    /// <example>
-    ///   <para>$cfg = Get-MFAExternalProvider</para>
-    ///   <para>$cfg.Parameters.Value = "your parameters as string"</para>
-    ///   <para>Set-MFAExternalProvider $cfg</para>
-    ///   <para>Set MFA External Provider configuration options, modity values and finally Update configuration.</para>
-    /// </example>
-    [Cmdlet(VerbsCommon.Set, "MFAExternalProvider", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
-    public sealed class SetMFAExternalProvider : MFACmdlet
-    {
-        private PSConfigExternalProvider _config;
-        private FlatExternalProvider _target;
-
-        /// <summary>
-        /// <para type="description">Config parameter, a variable of type PSExternalOTPProvider.</para>
-        /// </summary>
-        [Parameter(Mandatory = true, Position = 0, ParameterSetName = "Data", ValueFromPipeline = true)]
-        [ValidateNotNullOrEmpty()]
-        public PSConfigExternalProvider Config
-        {
-            get { return _config; }
-            set { _config = value; }
-        }
-
-        /// <summary>
-        /// BeginProcessing method implementation
-        /// </summary>
-        protected override void BeginProcessing()
-        {
-            base.BeginProcessing();
-            if (_config != null)
-            {
-                try
-                {
-                    _target = (FlatExternalProvider)_config;
-                }
-                catch (Exception ex)
-                {
-                    this.ThrowTerminatingError(new ErrorRecord(ex, "3023", ErrorCategory.OperationStopped, this));
-                }
-            }
-        }
-
-        /// <summary>
-        /// ProcessRecord method override
-        /// </summary>
-        protected override void ProcessRecord()
-        {
-            if (ShouldProcess("MFA External Provider Configuration"))
-            {
-                try
-                {
-                    _target.Update(this.Host);
-                    this.WriteVerbose(infos_strings.InfosConfigUpdated);
-                }
-                catch (Exception ex)
-                {
-                    this.ThrowTerminatingError(new ErrorRecord(ex, "3024", ErrorCategory.OperationStopped, this));
-                }
-            }
-        }
-    }
-
-    /// <summary>
-    /// <para type="synopsis">Get Azure Provider Configuration.</para>
-    /// <para type="description">Get Azure Provider configuration options.</para>
-    /// </summary>
-    /// <example>
-    ///   <para>Get-MFAAzureProvider</para>
-    ///   <para>Get MFA Azure Provider configuration options</para>
-    /// </example>
-    /// <example>
-    ///  <para>(Get-MFAAzureProvider).TenantId</para>
-    ///  <para>(Get-MFAAzureProvider).Thumbprint</para>
-    /// </example>
-    [Cmdlet(VerbsCommon.Get, "MFAAzureProvider", SupportsShouldProcess = true, SupportsPaging = false, ConfirmImpact = ConfirmImpact.Medium, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
-    [OutputType(typeof(PSConfigAzureProvider))]
-    public sealed class GetMFAAzureProvider : MFACmdlet
-    {
-        private PSConfigAzureProvider _config;
-
-        /// <summary>
-        /// BeginProcessing method implementation
-        /// </summary>
-        protected override void BeginProcessing()
-        {
-            base.BeginProcessing();
-            try
-            {
-
-                FlatAzureProvider cf = new FlatAzureProvider();
-                cf.Load(this.Host);
-                _config = (PSConfigAzureProvider)cf;
-            }
-            catch (Exception ex)
-            {
-                this.ThrowTerminatingError(new ErrorRecord(ex, "3021", ErrorCategory.OperationStopped, this));
-            }
-        }
-
-        /// <summary>
-        /// EndProcessing method implementation
-        /// </summary>
-        protected override void EndProcessing()
-        {
-            _config = null;
-            base.EndProcessing();
-        }
-
-        /// <summary>
-        /// ProcessInternalRecord method override
-        /// </summary>
-        protected override void ProcessRecord()
-        {
-            try
-            {
-                if (ShouldProcess("MFA External Provider Configuration"))
-                {
-                    WriteObject(_config);
-                }
-            }
-            catch (Exception ex)
-            {
-                this.ThrowTerminatingError(new ErrorRecord(ex, "3022", ErrorCategory.OperationStopped, this));
-            }
-        }
-
-        /// <summary>
-        /// StopProcessing method implementation
-        /// </summary>
-        protected override void StopProcessing()
-        {
-            _config = null;
-            base.StopProcessing();
-        }
-    }
-
-    /// <summary>
-    /// <para type="synopsis">Set External Provider Configuration.</para>
-    /// <para type="description">Set External Provider configuration options.</para>
-    /// </summary>
-    /// <example>
-    ///   <para>Set-MFAAzureProvider -Config $cfg</para>
-    ///   <para>Set MFA Azure Provider configuration</para>
-    /// </example>
-    /// <example>
-    ///   <para>$cfg = Get-MFAAzureProvider</para>
-    ///   <para>$cfg.TenantId = "yourdomain.onmicrosoft.com"</para>
-    ///   <para>Set-MFAAzureProvider $cfg</para>
-    ///   <para>Set MFA Azure Provider configuration options, modity values and finally Update configuration.</para>
-    /// </example>
-    [Cmdlet(VerbsCommon.Set, "MFAAzureProvider", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
-    public sealed class SetMFAAzureProvider : MFACmdlet
-    {
-        private PSConfigAzureProvider _config;
-        private FlatAzureProvider _target;
-
-        /// <summary>
-        /// <para type="description">Config parameter, a variable of type PSExternalOTPProvider.</para>
-        /// </summary>
-        [Parameter(Mandatory = true, Position = 0, ParameterSetName = "Data", ValueFromPipeline = true)]
-        [ValidateNotNullOrEmpty()]
-        public PSConfigAzureProvider Config
-        {
-            get { return _config; }
-            set { _config = value; }
-        }
-
-        /// <summary>
-        /// BeginProcessing method implementation
-        /// </summary>
-        protected override void BeginProcessing()
-        {
-            base.BeginProcessing();
-            if (_config != null)
-            {
-                try
-                {
-                    _target = (FlatAzureProvider)_config;
-                }
-                catch (Exception ex)
-                {
-                    this.ThrowTerminatingError(new ErrorRecord(ex, "3023", ErrorCategory.OperationStopped, this));
-                }
-            }
-        }
-
-        /// <summary>
-        /// ProcessRecord method override
-        /// </summary>
-        protected override void ProcessRecord()
-        {
-            if (ShouldProcess("MFA Azure Provider Configuration"))
             {
                 try
                 {

@@ -1123,6 +1123,24 @@ namespace Neos.IdentityServer.Console.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Maximum Rows .
+        /// </summary>
+        internal static string CTRLSQLMAXROWS {
+            get {
+                return ResourceManager.GetString("CTRLSQLMAXROWS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à {0} is not valid ! must be between 1000 and 1000000.
+        /// </summary>
+        internal static string CTRLSQLMAXROWSERROR {
+            get {
+                return ResourceManager.GetString("CTRLSQLMAXROWSERROR", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Test.
         /// </summary>
         internal static string CTRLSQLTEST {

@@ -45,11 +45,11 @@ namespace Neos.IdentityServer.MultiFactor.Data
         public abstract bool DeleteUserRegistration(Registration reg, bool dropkey = true);
         public abstract Registration EnableUserRegistration(Registration reg);
         public abstract Registration DisableUserRegistration(Registration reg);
-        public abstract RegistrationList GetUserRegistrations(DataFilterObject filter, DataOrderObject order, DataPagingObject paging, int maxrows = 20000);
-        public abstract RegistrationList GetAllUserRegistrations(DataOrderObject order, int maxrows = 20000, bool enabledonly = false);
+        public abstract RegistrationList GetUserRegistrations(DataFilterObject filter, DataOrderObject order, DataPagingObject paging);
+        public abstract RegistrationList GetAllUserRegistrations(DataOrderObject order, bool enabledonly = false);
         public abstract int GetUserRegistrationsCount(DataFilterObject filter);
         public abstract bool HasRegistration(string upn);
-        public abstract RegistrationList GetImportUserRegistrations(string ldappath, bool enable); 
+        public abstract RegistrationList GetImportUserRegistrations(string ldappath, bool enable);        
     }
 
     public abstract class KeysRepositoryService

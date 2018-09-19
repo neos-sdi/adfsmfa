@@ -426,6 +426,8 @@ namespace Neos.IdentityServer.MultiFactor
             client.OnKeyDataEvent += KeyDataEvent;
             if (reg.PIN <= 0)
                 reg.PIN = cfg.DefaultPin;
+            if (reg.OverrideMethod == null)
+                reg.OverrideMethod = string.Empty;
             return client.SetUserRegistration(reg, resetkey);
         }
 
@@ -441,6 +443,8 @@ namespace Neos.IdentityServer.MultiFactor
                 client = new SQLDataRepositoryService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow);
             if (reg.PIN <= 0)
                 reg.PIN = cfg.DefaultPin;
+            if (reg.OverrideMethod == null)
+                reg.OverrideMethod = string.Empty;
             client.OnKeyDataEvent += KeyDataEvent;
             return client.AddUserRegistration(reg, addkey);
         }
@@ -490,7 +494,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// GetUserRegistrations method implementation
         /// </summary>
-        internal static RegistrationList GetUserRegistrations(MFAConfig cfg, DataFilterObject filter, DataOrderObject order, DataPagingObject paging, int maxrows = 20000)
+        internal static RegistrationList GetUserRegistrations(MFAConfig cfg, DataFilterObject filter, DataOrderObject order, DataPagingObject paging)
         {
             DataRepositoryService client = null;
             if (cfg.UseActiveDirectory)
@@ -498,13 +502,13 @@ namespace Neos.IdentityServer.MultiFactor
             else
                 client = new SQLDataRepositoryService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow);
             client.OnKeyDataEvent += KeyDataEvent;
-            return client.GetUserRegistrations(filter, order, paging, maxrows);
+            return client.GetUserRegistrations(filter, order, paging);
         }
 
         /// <summary>
         /// GetAllUserRegistrations method implementation
         /// </summary>
-        internal static RegistrationList GetAllUserRegistrations(MFAConfig cfg, DataOrderObject order, int maxrows = 20000, bool enabledonly = false)
+        internal static RegistrationList GetAllUserRegistrations(MFAConfig cfg, DataOrderObject order, bool enabledonly = false)
         {
             DataRepositoryService client = null;
             if (cfg.UseActiveDirectory)
@@ -512,7 +516,7 @@ namespace Neos.IdentityServer.MultiFactor
             else
                 client = new SQLDataRepositoryService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow);
             client.OnKeyDataEvent += KeyDataEvent;
-            return client.GetAllUserRegistrations(order, maxrows, enabledonly);
+            return client.GetAllUserRegistrations(order, enabledonly);
         }
 
         /// <summary>
@@ -563,7 +567,6 @@ namespace Neos.IdentityServer.MultiFactor
                 client2.OnKeyDataEvent += KeyDataEvent;
                 foreach (Registration reg in lst)
                 {
-                    
                     if (enable)
                         reg.Enabled = true;
                     if (!client2.HasRegistration(reg.UPN))
@@ -2034,7 +2037,7 @@ namespace Neos.IdentityServer.MultiFactor
                 if ((lockoutenabled) && (lockoutcount > 0))
                     config.MaxRetries = lockoutcount;
                 else
-                    config.MaxRetries = 0;
+                    config.MaxRetries = 1;
             }
             finally
             {

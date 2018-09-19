@@ -471,6 +471,12 @@
   <data name="CTRLSQLCREATEDB" xml:space="preserve">
     <value>Crear base de datos MFA</value>
   </data>
+  <data name="CTRLSQLMAXROWS" xml:space="preserve">
+    <value>Número máximo de líneas</value>
+  </data>
+  <data name="CTRLSQLMAXROWSERROR" xml:space="preserve">
+    <value>{0} no es válido! el valor debe estar entre 1000 y 1000000</value>
+  </data>
   <data name="CTRLSQLTEST" xml:space="preserve">
     <value>Ensayo</value>
   </data>

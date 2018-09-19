@@ -1290,11 +1290,20 @@ namespace Neos.IdentityServer.MultiFactor
     /// </summary>
     public class SQLServerHost
     {
+        private int _maxrows = 10000;
+
         [XmlAttribute("ConnectionString")]
         public string ConnectionString 
         {
             get;
             set;
+        }
+
+        [XmlAttribute("MaxRows")]
+        public int MaxRows
+        {
+            get { return _maxrows; }
+            set { _maxrows = value; }
         }
     }
 
@@ -1313,6 +1322,7 @@ namespace Neos.IdentityServer.MultiFactor
        // string _notifcheckdateattribute = "msDS-cloudExtensionAttribute16";
        // string _TOTPAttr = "msDS-cloudExtensionAttribute17";
         string _TOTPEnabled = "msDS-cloudExtensionAttribute18";
+        int _maxrows = 10000;
 
         #region ADDS Connection attributes
         [XmlAttribute("DomainAddress")]
@@ -1403,6 +1413,13 @@ namespace Neos.IdentityServer.MultiFactor
         {
             get { return _TOTPEnabled; }
             set { _TOTPEnabled = value; }
+        }
+
+        [XmlAttribute("MaxRows")]
+        public int MaxRows
+        {
+            get { return _maxrows; }
+            set { _maxrows = value; }
         }
     }
 

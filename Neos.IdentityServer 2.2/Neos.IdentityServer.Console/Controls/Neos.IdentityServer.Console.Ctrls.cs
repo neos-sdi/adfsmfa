@@ -2124,6 +2124,7 @@ namespace Neos.IdentityServer.Console.Controls
         private TextBox txtTOTPAttribute;
         private TextBox txtEnabledAttribute;
         private TextBox txtCheckdateAttribute;
+        private TextBox txtMaxRows;
         private Button btnConnect;
         private ErrorProvider errors;
 
@@ -2217,12 +2218,12 @@ namespace Neos.IdentityServer.Console.Controls
             this.Margin = new Padding(30, 5, 30, 5);
 
             _panel.Width = 20;
-            _panel.Height = 440;
+            _panel.Height = 471;
             this.Controls.Add(_panel);
 
             _txtpanel.Left = 20;
             _txtpanel.Width = this.Width - 20;
-            _txtpanel.Height = 440;
+            _txtpanel.Height = 471;
             _txtpanel.BackColor = System.Drawing.SystemColors.Control;
             this.Controls.Add(_txtpanel);
 
@@ -2457,10 +2458,30 @@ namespace Neos.IdentityServer.Console.Controls
             txtEnabledAttribute.Validated += EnabledAttributeValidated;
             _txtpanel.Controls.Add(txtEnabledAttribute);
 
+
+            Label lblMaxRows = new Label();
+            lblMaxRows.Text = res.CTRLSQLMAXROWS + " : ";
+            lblMaxRows.Left = 50;
+            lblMaxRows.Top = 429;
+            lblMaxRows.Width = 150;
+            _txtpanel.Controls.Add(lblMaxRows);
+
+            txtMaxRows = new TextBox();
+            txtMaxRows.Text = Config.Hosts.ActiveDirectoryHost.MaxRows.ToString();
+            txtMaxRows.Left = 210;
+            txtMaxRows.Top = 425;
+            txtMaxRows.Width = 50;
+            txtMaxRows.TextAlign = HorizontalAlignment.Right;
+            txtMaxRows.Enabled = Config.UseActiveDirectory;
+            txtMaxRows.Validating += MaxRowsValidating;
+            txtMaxRows.Validated += MaxRowsValidated;
+            _txtpanel.Controls.Add(txtMaxRows);
+
+
             LinkLabel tblSaveConfig = new LinkLabel();
             tblSaveConfig.Text = res.CTRLSAVE;
             tblSaveConfig.Left = 20;
-            tblSaveConfig.Top = 450;
+            tblSaveConfig.Top = 481;
             tblSaveConfig.Width = 60;
             tblSaveConfig.LinkClicked += SaveConfigLinkClicked;
             tblSaveConfig.TabStop = true;
@@ -2469,7 +2490,7 @@ namespace Neos.IdentityServer.Console.Controls
             LinkLabel tblCancelConfig = new LinkLabel();
             tblCancelConfig.Text = res.CTRLCANCEL;
             tblCancelConfig.Left = 90;
-            tblCancelConfig.Top = 450;
+            tblCancelConfig.Top = 481;
             tblCancelConfig.Width = 60;
             tblCancelConfig.LinkClicked += CancelConfigLinkClicked;
             tblCancelConfig.TabStop = true;
@@ -2515,6 +2536,7 @@ namespace Neos.IdentityServer.Console.Controls
                 txtPhoneAttribute.Enabled = isenabled;
                 txtTOTPAttribute.Enabled = isenabled;
                 txtPinAttribute.Enabled = isenabled;
+                txtMaxRows.Enabled = isenabled;
                 btnConnect.Enabled = isenabled;
             }
             finally
@@ -3342,6 +3364,62 @@ namespace Neos.IdentityServer.Console.Controls
         }
         #endregion
 
+        /// <summary>
+        /// MaxRowsValidating method
+        /// </summary>
+        private void MaxRowsValidating(object sender, CancelEventArgs e)
+        {
+            this.Cursor = Cursors.WaitCursor;
+            try
+            {
+                if (txtMaxRows.Modified)
+                {
+                    int maxrows = Convert.ToInt32(txtMaxRows.Text);
+                    if ((maxrows < 1000) || (maxrows > 1000000))
+                        throw new ArgumentException(String.Format(res.CTRLSQLMAXROWSERROR, maxrows), "MaxRows");
+                    Config.Hosts.ActiveDirectoryHost.MaxRows = maxrows;
+                    ManagementService.ADFSManager.SetDirty(true);
+                }
+                e.Cancel = false;
+            }
+            catch (Exception ex)
+            {
+                e.Cancel = true;
+                errors.SetError(txtMaxRows, ex.Message);
+            }
+            finally
+            {
+                this.Cursor = Cursors.Default;
+            }
+
+        }
+
+        /// <summary>
+        /// MaxRowsValidated method
+        /// </summary>
+        private void MaxRowsValidated(object sender, EventArgs e)
+        {
+            try
+            {
+                if (txtMaxRows.Modified)
+                {
+                    int maxrows = Convert.ToInt32(txtMaxRows.Text);
+                    if ((maxrows < 1000) || (maxrows > 1000000))
+                        throw new ArgumentException(String.Format(res.CTRLSQLMAXROWSERROR, maxrows), "MaxRows");
+                    Config.Hosts.ActiveDirectoryHost.MaxRows = maxrows;
+                    ManagementService.ADFSManager.SetDirty(true);
+                }
+                errors.SetError(txtMaxRows, "");
+            }
+            catch (Exception ex)
+            {
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
+                messageBoxParameters.Text = ex.Message;
+                messageBoxParameters.Buttons = MessageBoxButtons.OK;
+                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                this._snapin.Console.ShowDialog(messageBoxParameters);
+            }
+        }
 
         /// <summary>
         /// btnConnectClick method implmentation
@@ -3406,6 +3484,7 @@ namespace Neos.IdentityServer.Console.Controls
         private SQLViewControl _view;
         private CheckBox chkUseSQL;
         private TextBox txtConnectionString;
+        private TextBox txtMaxRows;
         private bool _UpdateControlsLayouts;
         private Button btnConnect;
         private Button btnCreateDB;
@@ -3535,6 +3614,24 @@ namespace Neos.IdentityServer.Console.Controls
             txtConnectionString.Validated += ConnectionStringValidated;
             _txtpanel.Controls.Add(txtConnectionString);
 
+            Label lblMaxRows = new Label();
+            lblMaxRows.Text = res.CTRLSQLMAXROWS + " : ";
+            lblMaxRows.Left = 50;
+            lblMaxRows.Top = 82;
+            lblMaxRows.Width = 150;
+            _txtpanel.Controls.Add(lblMaxRows);
+
+            txtMaxRows = new TextBox();
+            txtMaxRows.Text = Config.Hosts.SQLServerHost.MaxRows.ToString();
+            txtMaxRows.Left = 210;
+            txtMaxRows.Top = 78;
+            txtMaxRows.Width = 50;
+            txtMaxRows.TextAlign = HorizontalAlignment.Right;
+            txtMaxRows.Enabled = !Config.UseActiveDirectory;
+            txtMaxRows.Validating += MaxRowsValidating;
+            txtMaxRows.Validated += MaxRowsValidated;
+            _txtpanel.Controls.Add(txtMaxRows);
+
             btnConnect = new Button();
             btnConnect.Text = res.CTRLSQLTEST;
             btnConnect.Left = 680;
@@ -3601,6 +3698,7 @@ namespace Neos.IdentityServer.Console.Controls
             try
             {
                 txtConnectionString.Enabled = isenabled;
+                txtMaxRows.Enabled = isenabled;
                 btnConnect.Enabled = isenabled;
                 btnCreateDB.Enabled = isenabled;
             }
@@ -3709,6 +3807,63 @@ namespace Neos.IdentityServer.Console.Controls
                     ManagementService.ADFSManager.SetDirty(true);
                 }
                 errors.SetError(txtConnectionString, "");
+            }
+            catch (Exception ex)
+            {
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
+                messageBoxParameters.Text = ex.Message;
+                messageBoxParameters.Buttons = MessageBoxButtons.OK;
+                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                this._snapin.Console.ShowDialog(messageBoxParameters);
+            }
+        }
+
+        /// <summary>
+        /// MaxRowsValidating method
+        /// </summary>
+        private void MaxRowsValidating(object sender, CancelEventArgs e)
+        {
+            this.Cursor = Cursors.WaitCursor;
+            try
+            {
+                if (txtMaxRows.Modified)
+                {
+                    int maxrows = Convert.ToInt32(txtMaxRows.Text);
+                    if ((maxrows<1000) || (maxrows>1000000))
+                        throw new ArgumentException(String.Format(res.CTRLSQLMAXROWSERROR, maxrows), "MaxRows");
+                    Config.Hosts.SQLServerHost.MaxRows = maxrows;
+                    ManagementService.ADFSManager.SetDirty(true);
+                }
+                e.Cancel = !UpdateAttributesLayouts();
+            }
+            catch (Exception ex)
+            {
+                e.Cancel = true;
+                errors.SetError(txtMaxRows, ex.Message);
+            }
+            finally
+            {
+                this.Cursor = Cursors.Default;
+            }
+
+        }
+
+        /// <summary>
+        /// MaxRowsValidated method
+        /// </summary>
+        private void MaxRowsValidated(object sender, EventArgs e)
+        {
+            try
+            {
+                if (txtMaxRows.Modified)
+                {
+                    int maxrows = Convert.ToInt32(txtMaxRows.Text);
+                    if ((maxrows < 1000) || (maxrows > 1000000))
+                        throw new ArgumentException(String.Format(res.CTRLSQLMAXROWSERROR, maxrows), "MaxRows");
+                    Config.Hosts.SQLServerHost.MaxRows = maxrows;
+                    ManagementService.ADFSManager.SetDirty(true);
+                }
+                errors.SetError(txtMaxRows, "");
             }
             catch (Exception ex)
             {

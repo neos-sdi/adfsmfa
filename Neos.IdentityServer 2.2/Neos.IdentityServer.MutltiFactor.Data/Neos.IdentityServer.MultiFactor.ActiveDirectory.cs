@@ -449,7 +449,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// <summary>
         /// GetUserRegistrations method implementation
         /// </summary>
-        public override RegistrationList GetUserRegistrations(DataFilterObject filter, DataOrderObject order, DataPagingObject paging, int maxrows = 20000)
+        public override RegistrationList GetUserRegistrations(DataFilterObject filter, DataOrderObject order, DataPagingObject paging)
         {
             Dictionary<int, string> fliedlsvalues = new Dictionary<int, string> 
             {
@@ -544,7 +544,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                         dsusr.PropertiesToLoad.Add(_host.overridemethodAttribute);
                         dsusr.PropertiesToLoad.Add(_host.pinattribute);
                         dsusr.PropertiesToLoad.Add(_host.totpEnabledAttribute);
-                        dsusr.SizeLimit = maxrows;
+                        dsusr.SizeLimit = _host.MaxRows;
 
                         switch (order.Column)
                         {
@@ -586,7 +586,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                                 xpaging.IsRecurse = true;
                                 if (xpaging.CurrentPage > 0) 
                                 {
-                                    RegistrationList verif = GetUserRegistrations(filter, order, xpaging, maxrows);
+                                    RegistrationList verif = GetUserRegistrations(filter, order, xpaging);
                                     foreach (Registration reg in verif)
                                     {
                                         using (DirectoryEntry DirEntry = ADDSUtils.GetDirectoryEntry(_host, src[0]))
@@ -681,7 +681,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// <summary>
         /// GetAllUserRegistrations method implementation
         /// </summary>
-        public override RegistrationList GetAllUserRegistrations(DataOrderObject order, int maxrows = 20000, bool enabledonly = false)
+        public override RegistrationList GetAllUserRegistrations(DataOrderObject order, bool enabledonly = false)
         {
             RegistrationList registrations = new RegistrationList();
             try
@@ -705,7 +705,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                         dsusr.PropertiesToLoad.Add(_host.overridemethodAttribute);
                         dsusr.PropertiesToLoad.Add(_host.pinattribute);
                         dsusr.PropertiesToLoad.Add(_host.totpEnabledAttribute);
-                        dsusr.SizeLimit = maxrows;
+                        dsusr.SizeLimit = _host.MaxRows;
 
                         switch (order.Column)
                         {
@@ -890,6 +890,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                     {
                         dsusr.PropertiesToLoad.Clear();
                         dsusr.PropertiesToLoad.Add("objectGUID");
+                        dsusr.SizeLimit = _host.MaxRows;
                         // filtrer IsRegistered
                         SearchResultCollection src = dsusr.FindAll();
                         if (src != null)
@@ -961,7 +962,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// <summary>
         /// GetImportUserRegistrations
         /// </summary>
-        public override RegistrationList GetImportUserRegistrations(string ldappath, bool enable)
+        public override RegistrationList GetImportUserRegistrations(string ldappath, bool enable = false)
         {
             ldappath = ldappath.Replace("ldap://", "LDAP://");
             if (!ldappath.StartsWith("LDAP://"))
@@ -980,6 +981,12 @@ namespace Neos.IdentityServer.MultiFactor.Data
                         dsusr.PropertiesToLoad.Clear();
                         dsusr.PropertiesToLoad.Add("objectGUID");
                         dsusr.PropertiesToLoad.Add("userPrincipalName");
+                        dsusr.PropertiesToLoad.Add("mail");
+                        dsusr.PropertiesToLoad.Add("otherMailbox");
+                        dsusr.PropertiesToLoad.Add("mobile");
+                        dsusr.PropertiesToLoad.Add("otherMobile");
+                        dsusr.PropertiesToLoad.Add("telephoneNumber");
+                        dsusr.SizeLimit = _host.MaxRows;
 
                         SearchResultCollection src = dsusr.FindAll();
                         if (src != null)
@@ -992,8 +999,27 @@ namespace Neos.IdentityServer.MultiFactor.Data
                                     if (DirEntry.Properties["objectGUID"].Value != null)
                                     {
                                         reg.ID = new Guid((byte[])DirEntry.Properties["objectGUID"].Value).ToString();
-                                        reg.UPN = DirEntry.Properties["userPrincipalName"].Value.ToString();
-                                        registrations.Add(reg);
+                                        if (DirEntry.Properties["userPrincipalName"].Value != null)
+                                        {
+                                            reg.UPN = DirEntry.Properties["userPrincipalName"].Value.ToString();
+
+                                            if (DirEntry.Properties["otherMailbox"].Value != null)
+                                                reg.MailAddress = DirEntry.Properties["otherMailbox"].Value.ToString();
+                                            else if (DirEntry.Properties["mail"].Value != null)
+                                                reg.MailAddress = DirEntry.Properties["mail"].Value.ToString();
+
+                                            if (DirEntry.Properties["mobile"].Value != null)
+                                                reg.PhoneNumber = DirEntry.Properties["mobile"].Value.ToString();
+                                            else if (DirEntry.Properties["otherMobile"].Value != null)
+                                                reg.PhoneNumber = DirEntry.Properties["otherMobile"].Value.ToString();
+                                            else if (DirEntry.Properties["telephoneNumber"].Value != null)
+                                                reg.PhoneNumber = DirEntry.Properties["telephoneNumber"].Value.ToString();
+
+                                            reg.OverrideMethod = string.Empty;
+                                            reg.Enabled = enable;
+
+                                            registrations.Add(reg);
+                                        }
                                     }
                                 };
                             }

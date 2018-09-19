@@ -163,7 +163,10 @@ namespace Neos.IdentityServer.MultiFactor.Data
 
             SqlParameter prm5 = new SqlParameter("@OVERRIDE", SqlDbType.VarChar);
             sql.Parameters.Add(prm5);
-            prm5.Value = reg.OverrideMethod;
+            if (reg.OverrideMethod == null)
+                prm5.Value = string.Empty;
+            else
+                prm5.Value = reg.OverrideMethod;
 
             SqlParameter prm6 = new SqlParameter("@ENABLED", SqlDbType.Bit);
             sql.Parameters.Add(prm6);
@@ -236,8 +239,10 @@ namespace Neos.IdentityServer.MultiFactor.Data
 
             SqlParameter prm7 = new SqlParameter("@OVERRIDE", SqlDbType.VarChar);
             sql.Parameters.Add(prm7);
-            prm7.Value = reg.OverrideMethod;
-
+            if (reg.OverrideMethod == null)
+                prm7.Value = string.Empty;
+            else
+                prm7.Value = reg.OverrideMethod;
             con.Open();
             try
             {
@@ -364,7 +369,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// <summary>
         /// GetUserRegistrations method implementation
         /// </summary>
-        public override RegistrationList GetUserRegistrations(DataFilterObject filter, DataOrderObject order, DataPagingObject paging, int maxrows = 20000)
+        public override RegistrationList GetUserRegistrations(DataFilterObject filter, DataOrderObject order, DataPagingObject paging)
         {
             Dictionary<int, string> fliedlsvalues = new Dictionary<int, string> 
             {
@@ -467,7 +472,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
             }
             if (paging.isActive)
             {
-                request = "SELECT TOP " + maxrows.ToString() + " NUMBER, ID, UPN, MAILADDRESS, PHONENUMBER, PIN, ENABLED, METHOD, OVERRIDE FROM (" + request;
+                request = "SELECT TOP " + _host.MaxRows.ToString() + " NUMBER, ID, UPN, MAILADDRESS, PHONENUMBER, PIN, ENABLED, METHOD, OVERRIDE FROM (" + request;
 
                 request += ") AS TBL WHERE NUMBER BETWEEN " + ((paging.CurrentPage - 1) * paging.PageSize + 1) + " AND  " + (paging.CurrentPage) * paging.PageSize;
             }
@@ -523,13 +528,13 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// <summary>
         /// GetAllUserRegistrations method implementation
         /// </summary>
-        public override RegistrationList GetAllUserRegistrations(DataOrderObject order, int maxrows = 20000, bool enabledonly = false)
+        public override RegistrationList GetAllUserRegistrations(DataOrderObject order, bool enabledonly = false)
         {
             string request = string.Empty;
             if (enabledonly)
-                request = "SELECT TOP " + maxrows.ToString() + " ID, UPN, MAILADDRESS, PHONENUMBER, PIN, ENABLED, METHOD, OVERRIDE FROM REGISTRATIONS WHERE ENABLED=1";
+                request = "SELECT TOP " + _host.MaxRows.ToString() + " ID, UPN, MAILADDRESS, PHONENUMBER, PIN, ENABLED, METHOD, OVERRIDE FROM REGISTRATIONS WHERE ENABLED=1";
             else
-                request = "SELECT TOP " + maxrows.ToString() + " ID, UPN, MAILADDRESS, PHONENUMBER, PIN, ENABLED, METHOD, OVERRIDE FROM REGISTRATIONS";
+                request = "SELECT TOP " + _host.MaxRows.ToString() + " ID, UPN, MAILADDRESS, PHONENUMBER, PIN, ENABLED, METHOD, OVERRIDE FROM REGISTRATIONS";
 
             switch (order.Column)
             {
