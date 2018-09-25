@@ -135,4 +135,10 @@
   <data name="ErrorMFAUnAuthorized" xml:space="preserve">
     <value>Acceso denegado al usuario actual ! que no es un administrador de AD FS</value>
   </data>
+  <data name="InfoSendingMailToUser" xml:space="preserve">
+    <value>Correo sensible enviado al usuario {0}</value>
+  </data>
+  <data name="InfosSendingMails" xml:space="preserve">
+    <value>{0} correos electrónicos enviados!</value>
+  </data>
 </root>

@@ -135,4 +135,10 @@
   <data name="ErrorMFAUnAuthorized" xml:space="preserve">
     <value>Acces denied for current user ! must be an ADFS admin</value>
   </data>
+  <data name="InfoSendingMailToUser" xml:space="preserve">
+    <value>Sensitive mail sent to user {0}</value>
+  </data>
+  <data name="InfosSendingMails" xml:space="preserve">
+    <value>{0} emails sent !</value>
+  </data>
 </root>

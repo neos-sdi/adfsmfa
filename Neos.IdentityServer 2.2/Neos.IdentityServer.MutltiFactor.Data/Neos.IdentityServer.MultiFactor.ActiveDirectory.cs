@@ -838,6 +838,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                 {1, "(" + _host.methodAttribute + "=1)"},
                 {2, "(" + _host.methodAttribute + "=2)"},
                 {3, "(" + _host.methodAttribute + "=3)"},
+                {4, "(" + _host.methodAttribute + "=4)"}
             };
 
             string qryldap = "(&(objectCategory=user)(objectClass=user)";

@@ -1033,6 +1033,7 @@ namespace Neos.IdentityServer.Console.Controls
         private TextBox txtAdminContact;
         private TextBox txtCountryCode;
         private TextBox txtDeliveryWindow;
+        private TextBox txtMaxRetries;
         private ComboBox cbConfigTemplate;
 
         private RadioButton rdioMFARequired;
@@ -1245,6 +1246,23 @@ namespace Neos.IdentityServer.Console.Controls
             txtDeliveryWindow.Validating += DeliveryWindowValidating;
             txtDeliveryWindow.Validated += DeliveryWindowValidated;
             _txtpanel.Controls.Add(txtDeliveryWindow);
+
+            Label lblMaxRetries = new Label();
+            lblMaxRetries.Text = res.CTRLDLGMAXRETRIES + " : ";
+            lblMaxRetries.Left = 530;
+            lblMaxRetries.Top = 115;
+            lblMaxRetries.Width = 150;
+            _txtpanel.Controls.Add(lblMaxRetries);
+
+            txtMaxRetries = new TextBox();
+            txtMaxRetries.Text = Config.MaxRetries.ToString();
+            txtMaxRetries.Left = 690;
+            txtMaxRetries.Top = 111;
+            txtMaxRetries.Width = 40;
+            txtMaxRetries.MaxLength = 2;
+            txtMaxRetries.Validating += MaxRetriesValidating;
+            txtMaxRetries.Validated += MaxRetriesValidated;
+            _txtpanel.Controls.Add(txtMaxRetries);
 
             Label lblConfigTemplate = new Label();
             lblConfigTemplate.Text = res.CTRLGLPOLICY+" : ";
@@ -1915,6 +1933,63 @@ namespace Neos.IdentityServer.Console.Controls
                     ManagementService.ADFSManager.SetDirty(true);
                 }
                 errors.SetError(txtDeliveryWindow, "");
+            }
+            catch (Exception ex)
+            {
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
+                messageBoxParameters.Text = ex.Message;
+                messageBoxParameters.Buttons = MessageBoxButtons.OK;
+                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                this._snapin.Console.ShowDialog(messageBoxParameters);
+            }
+        }
+        #endregion
+
+        #region MaxRetries
+        /// <summary>
+        /// MaxRetriesValidating method implementation
+        /// </summary>
+        private void MaxRetriesValidating(object sender, CancelEventArgs e)
+        {
+            try
+            {
+                int refr = Convert.ToInt32(txtMaxRetries.Text);
+                if (txtMaxRetries.Modified)
+                {
+                    ManagementService.ADFSManager.SetDirty(true);
+                    Config.MaxRetries = refr;
+                }
+                if (string.IsNullOrEmpty(txtMaxRetries.Text))
+                {
+                    e.Cancel = true;
+                    errors.SetError(txtMaxRetries, res.CTRLNULLOREMPTYERROR);
+                }
+                if ((refr < 1) || (refr > 12))
+                {
+                    e.Cancel = true;
+                    errors.SetError(txtMaxRetries, string.Format(res.CTRLINVALIDVALUE, "1", "12"));
+                }
+            }
+            catch (Exception ex)
+            {
+                e.Cancel = true;
+                errors.SetError(txtMaxRetries, ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// MaxRetriesValidated method implementation
+        /// </summary>
+        private void MaxRetriesValidated(object sender, EventArgs e)
+        {
+            try
+            {
+                if (txtDeliveryWindow.Modified)
+                {
+                    Config.DeliveryWindow = Convert.ToInt32(txtMaxRetries.Text);
+                    ManagementService.ADFSManager.SetDirty(true);
+                }
+                errors.SetError(txtMaxRetries, "");
             }
             catch (Exception ex)
             {

@@ -227,58 +227,20 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// </summary>
         public int DeliveryWindow { get; set; }
 
-        /*
         /// <summary>
-        /// <para type="description">Number of prior TOTP codes allowed (default 2). Code change every 30 seconds.</para>
+        /// <para type="description">Number of allowed retry allowed (default 3)..</para>
         /// </summary>
-        public int TOTPShadows { get; set; }
-        */
+        public int MaxRetries { get; set; }  
 
         /// <summary>
         /// <para type="description">Required PIN length wehen using aditionnal control with personal PIN.</para>
         /// </summary>
         public int PinLength { get; set; }
 
-        /*
-        /// <summary>
-        /// <para type="description">Globally allow MFA with sending email to users, less secure than TOTP Code.</para>
-        /// <para type="description">Must specify properties of ConfigMail.</para>
-        /// </summary>
-        public bool MailEnabled { get; set; }
-
-        /// <summary>
-        /// <para type="description">Globally allow MFA with external Code Provider, sending SMS to users, less secure than TOTP Code.</para>
-        /// <para type="description">Must define ExternalProvider (see SMS Azure and samples).</para>
-        /// </summary>
-        public bool SMSEnabled { get; set; }
-
-        /// <summary>
-        /// <para type="description">Globally allow MFA with TOTP, users are using an applition to generate TOTP codes based on thier secret key (Default mode).</para>
-        /// </summary>
-        public bool AppsEnabled { get; set; }
-
-        /// <summary>
-        /// <para type="description">Globally allow MFA with Microsoft Azure, All verifications are made by Microsoft (very less secure).</para>
-        /// </summary>
-        public bool AzureEnabled { get; set; }
-
-        /// <summary>
-        /// <para type="description">Globally allow MFA Biometrics / FIDO.</para>
-        /// </summary>
-        public bool BiometricsEnabled { get; set; }
-        */
-
         /// <summary>
         /// <para type="description">Default value for user's PIN.</para>
         /// </summary>
         public int DefaultPin { get; set; }
-
-        /*
-        /// <summary>
-        /// <para type="description">TOTP Hash mode for TOTP Key (Default SHA1).</para>
-        /// </summary>
-        public HashMode Algorithm { get; set; }
-        */
 
         /// <summary>
         /// <para type="description">Issuer description (eg "my company").</para>
@@ -335,6 +297,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 psconfig.AdminContact = config.AdminContact;
                 psconfig.DefaultCountryCode = config.DefaultCountryCode;
                 psconfig.DeliveryWindow = config.DeliveryWindow;
+                psconfig.MaxRetries = config.MaxRetries;
                 psconfig.Issuer = config.Issuer;
                 psconfig.DefaultPin = config.DefaultPin;
                 psconfig.PinLength = config.PinLength;
@@ -361,6 +324,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 config.CustomUpdatePassword = psconfig.CustomUpdatePassword;
                 config.DefaultCountryCode = psconfig.DefaultCountryCode;
                 config.DeliveryWindow = psconfig.DeliveryWindow;
+                config.MaxRetries = psconfig.MaxRetries;
                 config.IsDirty = true;
                 config.Issuer = psconfig.Issuer;
                 config.DefaultPin = psconfig.DefaultPin;
@@ -393,6 +357,21 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         public string ConnectionString { get; set; }
 
         /// <summary>
+        /// <para type="description">Get or Set the max rows limit used to access MFA SQL Database.</para>
+        /// </summary>
+        public int MaxRows { get; set; }
+
+        /// <summary>
+        /// <para type="description">Get or Set the SQLServer 2016 and up Always Encrypted feature. default = false.</para>
+        /// </summary>
+        public bool IsAlwaysEncrypted { get; set; }
+
+        /// <summary>
+        /// <para type="description">Get or Set the SQLServer 2016 and up Always Encrypted feature Thumprint.</para>
+        /// </summary>
+        public string ThumbPrint { get; set; }
+
+        /// <summary>
         /// implicit conversion to PSConfig
         /// </summary>
         public static explicit operator PSConfigSQL(FlatConfigSQL sqlconfig)
@@ -403,6 +382,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             {
                 PSConfigSQL psconfigsql = new PSConfigSQL();
                 psconfigsql.ConnectionString = sqlconfig.ConnectionString;
+                psconfigsql.MaxRows = sqlconfig.MaxRows;
+                psconfigsql.IsAlwaysEncrypted = sqlconfig.IsAlwaysEncrypted;
+                psconfigsql.ThumbPrint = sqlconfig.ThumbPrint;
                 return psconfigsql;
             }
         }
@@ -419,6 +401,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 FlatConfigSQL config = new FlatConfigSQL();
                 config.IsDirty = true;
                 config.ConnectionString = psconfig.ConnectionString;
+                config.MaxRows = psconfig.MaxRows;
+                config.IsAlwaysEncrypted = psconfig.IsAlwaysEncrypted;
+                config.ThumbPrint = psconfig.ThumbPrint;
                 return config;
             }
         }
@@ -488,6 +473,11 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         public string PinAttribute { get; set; }
 
         /// <summary>
+        /// <para type="description">Get or Set the max rows limit used to access MFA Active Directory.</para>
+        /// </summary>
+        public int MaxRows { get; set; }
+
+        /// <summary>
         /// implicit conversion to PSConfig
         /// </summary>
         public static explicit operator PSConfigADDS(FlatConfigADDS addsconfig)
@@ -507,6 +497,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 psconfigadds.OverrideMethodAttribute = addsconfig.OverrideMethodAttribute;
                 psconfigadds.PinAttribute = addsconfig.PinAttribute;
                 psconfigadds.EnabledAttribute = addsconfig.EnabledAttribute;
+                psconfigadds.MaxRows = addsconfig.MaxRows;
                 return psconfigadds;
             }
         }
@@ -532,6 +523,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 config.OverrideMethodAttribute = psconfig.OverrideMethodAttribute;
                 config.PinAttribute = psconfig.PinAttribute;
                 config.EnabledAttribute = psconfig.EnabledAttribute;
+                config.MaxRows = psconfig.MaxRows;
                 return config;
             }
         }

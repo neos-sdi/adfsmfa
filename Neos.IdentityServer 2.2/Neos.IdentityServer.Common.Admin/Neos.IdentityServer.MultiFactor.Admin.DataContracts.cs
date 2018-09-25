@@ -195,6 +195,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     {
         public bool IsDirty { get; set; }
         public int DeliveryWindow { get; set; }
+        public int MaxRetries { get; set; }
         public int PinLength { get; set; }
         public int DefaultPin { get; set; }
         public string Issuer { get; set; }
@@ -216,6 +217,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             AdminContact = cfg.AdminContact;
             IsDirty = cfg.IsDirty;
             DeliveryWindow = cfg.DeliveryWindow;
+            MaxRetries = cfg.MaxRetries;
             DefaultPin = cfg.DefaultPin;
             PinLength = cfg.PinLength;
             Issuer = cfg.Issuer;
@@ -238,6 +240,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             cfg.AdminContact = AdminContact;
             cfg.IsDirty = IsDirty;
             cfg.DeliveryWindow = DeliveryWindow;
+            cfg.MaxRetries = MaxRetries;
             cfg.DefaultPin = DefaultPin;
             cfg.PinLength = PinLength;
             cfg.Issuer = Issuer;
@@ -288,6 +291,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     {
         public bool IsDirty { get; set; }
         public string ConnectionString { get; set; }
+        public int MaxRows { get; set; }
+        public bool IsAlwaysEncrypted { get; set; }
+        public string ThumbPrint { get; set; }
 
         /// <summary>
         /// Update method implmentation
@@ -299,6 +305,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             SQLServerHost sql = cfg.Hosts.SQLServerHost;
             IsDirty = cfg.IsDirty;
             ConnectionString = sql.ConnectionString;
+            MaxRows = sql.MaxRows;
+            IsAlwaysEncrypted = sql.IsAlwaysEncrypted;
+            ThumbPrint = sql.ThumbPrint;
         }
 
         /// <summary>
@@ -313,6 +322,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             if (!ManagementService.CheckRepositoryAttribute(ConnectionString, 2))
                 throw new ArgumentException(string.Format("Invalid ConnectionString {0} !", ConnectionString));
             sql.ConnectionString = ConnectionString;
+            sql.MaxRows = MaxRows;
+            sql.IsAlwaysEncrypted = IsAlwaysEncrypted;
+            sql.ThumbPrint = ThumbPrint;
             ManagementService.ADFSManager.WriteConfiguration(host);
         }
     }
@@ -331,6 +343,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         public string OverrideMethodAttribute { get; set; }
         public string PinAttribute { get; set; }
         public string EnabledAttribute { get; set; }
+        public int MaxRows { get; set; }
 
         /// <summary>
         /// Update method implmentation
@@ -351,6 +364,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             OverrideMethodAttribute = adds.overridemethodAttribute;
             PinAttribute = adds.pinattribute;
             EnabledAttribute = adds.totpEnabledAttribute;
+            MaxRows = adds.MaxRows;
         }
 
         /// <summary>
@@ -386,6 +400,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             if (!ManagementService.CheckRepositoryAttribute(EnabledAttribute, 1))
                 throw new ArgumentException(string.Format("Attribute {0} not found in forest schema !", EnabledAttribute));
             adds.totpEnabledAttribute = EnabledAttribute;
+            adds.MaxRows = MaxRows;
             ManagementService.ADFSManager.WriteConfiguration(host);
         }
     }

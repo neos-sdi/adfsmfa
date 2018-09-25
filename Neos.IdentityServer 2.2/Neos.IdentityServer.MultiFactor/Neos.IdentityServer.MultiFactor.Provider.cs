@@ -263,8 +263,6 @@ namespace Neos.IdentityServer.MultiFactor
                                  _config.OTPProvider.Enabled = true;   // always let an active option eg : aplication in this case
                              KeysManager.Initialize(_config);  // Always Bind KeysManager Otherwise this is made in CFGUtilities.ReadConfiguration
                              RuntimeAuthProvider.LoadProviders(_config); // Load Available providers
-                             CFGUtilities.GetADFSProperties(_config);
-
                          }
 
                          RuntimeRepository.MailslotServer.MailSlotMessageArrived += this.OnMessageArrived;

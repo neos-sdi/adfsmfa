@@ -202,7 +202,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
             if (SQLUtils.HasRegistration(_host, reg.UPN))
                 return SetUserRegistration(reg, newkey);
 
-            string request = "INSERT INTO REGISTRATIONS (UPN, MAILADDRESS, PHONENUMBER, PIN, ENABLED, METHOD, OVERRIDE) VALUES (@UPN, @MAILADDRESS, @PHONENUMBER, @PIN, @ENABLED, @METHOD, @OVERRIDE)";
+            string request = "INSERT INTO REGISTRATIONS (UPN, SECRETKEY, MAILADDRESS, PHONENUMBER, PIN, ENABLED, METHOD, OVERRIDE) VALUES (@UPN, @SECRETKEY, @MAILADDRESS, @PHONENUMBER, @PIN, @ENABLED, @METHOD, @OVERRIDE)";
 
             SqlConnection con = new SqlConnection(_connectionstring);
             SqlCommand sql = new SqlCommand(request, con);
@@ -210,6 +210,10 @@ namespace Neos.IdentityServer.MultiFactor.Data
             SqlParameter prm1 = new SqlParameter("@UPN", SqlDbType.VarChar);
             sql.Parameters.Add(prm1);
             prm1.Value = reg.UPN;
+
+            SqlParameter prm1a = new SqlParameter("@SECRETKEY", SqlDbType.VarChar);
+            sql.Parameters.Add(prm1a);
+            prm1a.Value = Guid.NewGuid().ToString().ToUpper();
 
             SqlParameter prm2 = new SqlParameter("@MAILADDRESS", SqlDbType.VarChar);
             sql.Parameters.Add(prm2);
@@ -403,7 +407,8 @@ namespace Neos.IdentityServer.MultiFactor.Data
                 {0, " METHOD = 0 "},
                 {1, " METHOD = 1 "},
                 {2, " METHOD = 2 "},
-                {3, " METHOD = 3 "}
+                {3, " METHOD = 3 "},
+                {4, " METHOD = 4 "}
             };
 
             string request = string.Empty;
@@ -631,7 +636,8 @@ namespace Neos.IdentityServer.MultiFactor.Data
                 {0, " METHOD = 0 "},
                 {1, " METHOD = 1 "},
                 {2, " METHOD = 2 "},
-                {3, " METHOD = 3 "}
+                {3, " METHOD = 3 "},
+                {4, " METHOD = 4 "}
             };
 
             string request = "SELECT COUNT(ID) FROM REGISTRATIONS";
@@ -828,7 +834,6 @@ namespace Neos.IdentityServer.MultiFactor.Data
         public override bool HasStoredCertificate(string upn)
         {
             return false;
-
         }
         #endregion
 

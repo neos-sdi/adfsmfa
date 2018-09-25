@@ -113,5 +113,23 @@ namespace Neos.IdentityServer.Console.Resources {
                 return ResourceManager.GetString("ErrorMFAUnAuthorized", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Sensitive mail sent to user {0}.
+        /// </summary>
+        internal static string InfoSendingMailToUser {
+            get {
+                return ResourceManager.GetString("InfoSendingMailToUser", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à {0} emails sent !.
+        /// </summary>
+        internal static string InfosSendingMails {
+            get {
+                return ResourceManager.GetString("InfosSendingMails", resourceCulture);
+            }
+        }
     }
 }

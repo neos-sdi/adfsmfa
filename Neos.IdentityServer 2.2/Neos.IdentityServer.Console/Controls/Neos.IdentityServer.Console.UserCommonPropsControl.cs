@@ -26,6 +26,8 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Neos.IdentityServer.MultiFactor.Administration;
 using Neos.IdentityServer.MultiFactor;
+using Microsoft.ManagementConsole.Advanced;
+using Neos.IdentityServer.Console.Resources;
 
 namespace Neos.IdentityServer.Console
 {
@@ -143,6 +145,7 @@ namespace Neos.IdentityServer.Console
         private void BTNSendByMail_Click(object sender, EventArgs e)
         {
             Cursor crs = this.Cursor;
+            int cnt = 0;
             try
             {
                 this.Cursor = Cursors.WaitCursor;
@@ -151,11 +154,26 @@ namespace Neos.IdentityServer.Console
                 {
                     string secret = MMCService.GetEncodedUserKey(reg.UPN);
                     MMCService.SendKeyByEmail(reg.MailAddress, reg.UPN, secret);
+                    cnt++;
                 }
+            }
+            catch (Exception ex)
+            {
+                this.Cursor = crs;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
+                messageBoxParameters.Text = ex.Message;
+                messageBoxParameters.Buttons = MessageBoxButtons.OK;
+                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                userPropertyPage.ParentSheet.ShowDialog(messageBoxParameters);
             }
             finally
             {
                 this.Cursor = crs;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
+                messageBoxParameters.Text = string.Format(errors_strings.InfosSendingMails, cnt);
+                messageBoxParameters.Buttons = MessageBoxButtons.OK;
+                messageBoxParameters.Icon = MessageBoxIcon.Information;
+                userPropertyPage.ParentSheet.ShowDialog(messageBoxParameters);
             }
         }
         #endregion

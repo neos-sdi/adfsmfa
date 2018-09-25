@@ -448,6 +448,15 @@ namespace Neos.IdentityServer.Console.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Max retries allowed.
+        /// </summary>
+        internal static string CTRLDLGMAXRETRIES {
+            get {
+                return ResourceManager.GetString("CTRLDLGMAXRETRIES", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Show Google search.
         /// </summary>
         internal static string CTRLGLALLOWGOOGLESEARCH {

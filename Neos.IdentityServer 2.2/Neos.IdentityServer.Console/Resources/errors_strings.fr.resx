@@ -135,4 +135,10 @@
   <data name="ErrorMFAUnAuthorized" xml:space="preserve">
     <value>Accès refusé pour l'utilisateur courant ! vous n'êtes pas un administrateur ADFS</value>
   </data>
+  <data name="InfoSendingMailToUser" xml:space="preserve">
+    <value>Courrier sensible envoyé à l'utilisateur {0}</value>
+  </data>
+  <data name="InfosSendingMails" xml:space="preserve">
+    <value>{0} email envoyés !</value>
+  </data>
 </root>

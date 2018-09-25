@@ -416,7 +416,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// SetUserRegistration method implementation
         /// </summary>
-        internal static Registration SetUserRegistration(MFAConfig cfg, Registration reg, bool resetkey = false)
+        internal static Registration SetUserRegistration(MFAConfig cfg, Registration reg, bool resetkey = false, bool noemail = false)
         {
             DataRepositoryService client = null;
             if (cfg.UseActiveDirectory)
@@ -428,13 +428,25 @@ namespace Neos.IdentityServer.MultiFactor
                 reg.PIN = cfg.DefaultPin;
             if (reg.OverrideMethod == null)
                 reg.OverrideMethod = string.Empty;
-            return client.SetUserRegistration(reg, resetkey);
+            Registration newreg = client.SetUserRegistration(reg, resetkey);
+            if (newreg != null)
+            {
+                if ((!noemail) && (resetkey))
+                {
+                    if (!string.IsNullOrEmpty(newreg.MailAddress))
+                    {
+                        string qrcode = KeysManager.EncodedKey(newreg.UPN);
+                        MailUtilities.SendKeyByEmail(newreg.MailAddress, newreg.UPN, qrcode, cfg.MailProvider, cfg, CultureInfo.CurrentUICulture);
+                    }
+                }
+            }
+            return newreg;
         }
 
         /// <summary>
         /// AddUserRegistration method implementation
         /// </summary>
-        internal static Registration AddUserRegistration(MFAConfig cfg, Registration reg, bool addkey = true)
+        internal static Registration AddUserRegistration(MFAConfig cfg, Registration reg, bool addkey = true, bool noemail = false)
         {
             DataRepositoryService client = null;
             if (cfg.UseActiveDirectory)
@@ -446,7 +458,19 @@ namespace Neos.IdentityServer.MultiFactor
             if (reg.OverrideMethod == null)
                 reg.OverrideMethod = string.Empty;
             client.OnKeyDataEvent += KeyDataEvent;
-            return client.AddUserRegistration(reg, addkey);
+            Registration newreg = client.AddUserRegistration(reg, addkey);
+            if (newreg!=null)
+            {
+                if ((!noemail) && (addkey))
+                {
+                    if (!string.IsNullOrEmpty(newreg.MailAddress))
+                    {
+                        string qrcode = KeysManager.EncodedKey(newreg.UPN);
+                        MailUtilities.SendKeyByEmail(newreg.MailAddress, newreg.UPN, qrcode, cfg.MailProvider, cfg, CultureInfo.CurrentUICulture);
+                    }
+                }
+            }
+            return newreg;
         }
 
         /// <summary>
@@ -1731,12 +1755,19 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         internal static string GetUserBusinessEmail(string username)
         {
-            using (var ctx = new PrincipalContext(ContextType.Domain))
+            try
             {
-                using (var user = UserPrincipal.FindByIdentity(ctx, IdentityType.UserPrincipalName, username))
+                using (var ctx = new PrincipalContext(ContextType.Domain))
                 {
-                    return user.EmailAddress;
+                    using (var user = UserPrincipal.FindByIdentity(ctx, IdentityType.UserPrincipalName, username))
+                    {
+                        return user.EmailAddress;
+                    }
                 }
+            }
+            catch
+            {
+                return string.Empty;
             }
         }
 
@@ -1945,7 +1976,6 @@ namespace Neos.IdentityServer.MultiFactor
                         config.OTPProvider.Enabled = true;   // always let an active option eg : aplication in this case
                     KeysManager.Initialize(config);  // Important
                     RuntimeAuthProvider.LoadProviders(config);
-                    GetADFSProperties(config);
                 }
             }
             finally
@@ -2003,47 +2033,6 @@ namespace Neos.IdentityServer.MultiFactor
                     File.Delete(pth);
             }
             return config;
-        }
-
-        /// <summary>
-        /// GetExternalLockoutParameters method implementation
-        /// </summary>
-        internal static void GetADFSProperties(MFAConfig config)
-        {
-            Runspace SPRunSpace = null;
-            PowerShell SPPowerShell = null;
-            try
-            {
-                RunspaceConfiguration SPRunConfig = RunspaceConfiguration.Create();
-                SPRunSpace = RunspaceFactory.CreateRunspace(SPRunConfig);
-
-                SPPowerShell = PowerShell.Create();
-                SPPowerShell.Runspace = SPRunSpace;
-                SPRunSpace.Open();
-
-                Pipeline pipeline = SPRunSpace.CreatePipeline();
-                Command exportcmd = new Command("Get-ADFSProperties", false);
-                pipeline.Commands.Add(exportcmd);
-                Collection<PSObject> PSOutput = pipeline.Invoke();
-
-                bool lockoutenabled = false;
-                int lockoutcount = 0;
-                foreach (var result in PSOutput)
-                {
-                    lockoutenabled = Convert.ToBoolean(result.Properties["ExtranetLockoutEnabled"].Value);
-                    if (lockoutenabled) 
-                        lockoutcount = Convert.ToInt32(result.Properties["ExtranetLockoutThreshold"].Value);
-                }
-                if ((lockoutenabled) && (lockoutcount > 0))
-                    config.MaxRetries = lockoutcount;
-                else
-                    config.MaxRetries = 1;
-            }
-            finally
-            {
-                if (SPRunSpace != null)
-                    SPRunSpace.Close();
-            }
         }
     }
 

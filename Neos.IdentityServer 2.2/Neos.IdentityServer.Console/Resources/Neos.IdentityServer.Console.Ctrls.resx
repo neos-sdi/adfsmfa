@@ -246,6 +246,9 @@
   <data name="CTRLCANCEL" xml:space="preserve">
     <value>Cancel</value>
   </data>
+  <data name="CTRLDLGMAXRETRIES" xml:space="preserve">
+    <value>Max retries allowed</value>
+  </data>
   <data name="CTRLGLALLOWGOOGLESEARCH" xml:space="preserve">
     <value>Show Google search</value>
   </data>

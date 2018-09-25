@@ -248,7 +248,7 @@ namespace Neos.IdentityServer.MultiFactor
         private int _pinlength = 4;
         private int _defaultpin = 0;
         private bool _kmsoo = true;
-        private int _maxretries = 1;
+        private int _maxretries = 3;
 
         private bool _useActiveDirectory = true;
         private bool _customUpdatePassword = true;
@@ -324,6 +324,9 @@ namespace Neos.IdentityServer.MultiFactor
                 AzureProvider.PinRequired = false;
 
                 Hosts.SQLServerHost.ConnectionString = "Password=yourpassword;Persist Security Info=True;User ID=yoursqlusername;Initial Catalog=yourdatabasename;Data Source=yoursqlserver\\yourinstance";
+                Hosts.SQLServerHost.IsAlwaysEncrypted = false;
+                Hosts.SQLServerHost.ThumbPrint = Thumbprint.Demo;
+                Hosts.SQLServerHost.MaxRows = 10000;
 
                 MailProvider.From = "sender.email@contoso.com";
                 MailProvider.UserName = "user.name@contoso.com";
@@ -366,6 +369,10 @@ namespace Neos.IdentityServer.MultiFactor
 
             if (string.IsNullOrEmpty(Hosts.SQLServerHost.ConnectionString))
                 Hosts.SQLServerHost.ConnectionString = "Password=yourpassword;Persist Security Info=True;User ID=yoursqlusername;Initial Catalog=yourdatabasename;Data Source=yoursqlserver\\yourinstance";
+            if (string.IsNullOrEmpty(Hosts.SQLServerHost.ThumbPrint))
+                Hosts.SQLServerHost.ThumbPrint = Thumbprint.Demo;
+            Hosts.SQLServerHost.MaxRows = 10000;
+            Hosts.SQLServerHost.IsAlwaysEncrypted = false;
 
             if (string.IsNullOrEmpty(MailProvider.From))
                 MailProvider.From = "sender.email@contoso.com";
@@ -453,11 +460,16 @@ namespace Neos.IdentityServer.MultiFactor
             set { _kmsoo = value; }
         }
 
-        [XmlIgnore]
+        [XmlAttribute("MaxRetries")]
         public int MaxRetries
         {
             get { return _maxretries; }
-            set { _maxretries = value; }
+            set 
+            {
+                if (value <= 0)
+                    throw new ArgumentOutOfRangeException();
+                _maxretries = value; 
+            }
         }
 
         [XmlAttribute("Issuer")]
@@ -1291,12 +1303,28 @@ namespace Neos.IdentityServer.MultiFactor
     public class SQLServerHost
     {
         private int _maxrows = 10000;
+        private string _thumbprint = Thumbprint.Demo;
+        private bool _isalwaysencrypted = false;
 
         [XmlAttribute("ConnectionString")]
         public string ConnectionString 
         {
             get;
             set;
+        }
+
+        [XmlAttribute("ThumbPrint")]
+        public string ThumbPrint
+        {
+            get { return _thumbprint; }
+            set { _thumbprint = value; }
+        }
+
+        [XmlAttribute("IsAlwaysEncrypted")]
+        public bool IsAlwaysEncrypted
+        {
+            get { return _isalwaysencrypted; }
+            set { _isalwaysencrypted = value; }
         }
 
         [XmlAttribute("MaxRows")]

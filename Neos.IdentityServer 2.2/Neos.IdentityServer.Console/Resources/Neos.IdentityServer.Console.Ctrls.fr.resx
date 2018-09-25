@@ -246,6 +246,9 @@
   <data name="CTRLCANCEL" xml:space="preserve">
     <value>Annuler</value>
   </data>
+  <data name="CTRLDLGMAXRETRIES" xml:space="preserve">
+    <value>Nombre d'essais autorisés</value>
+  </data>
   <data name="CTRLGLALLOWGOOGLESEARCH" xml:space="preserve">
     <value>Afficher la recherche Google</value>
   </data>

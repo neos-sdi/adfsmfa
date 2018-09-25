@@ -65,7 +65,7 @@ namespace Neos.IdentityServer.Console
             this.Add(new MMCFilterOperatorItem() { ID = DataFilterOperator.StartWith, Label = res.MMCOPSTARTWITH });
             this.Add(new MMCFilterOperatorItem() { ID = DataFilterOperator.Contains, Label = res.MMCOPCONTAINS });
             this.Add(new MMCFilterOperatorItem() { ID = DataFilterOperator.NotEqual, Label = res.MMCOPNOTEQUAL });
-            this.Add(new MMCFilterOperatorItem() { ID = DataFilterOperator.EndsWith, Label = res.MMCOPNOTEQUAL });
+            this.Add(new MMCFilterOperatorItem() { ID = DataFilterOperator.EndsWith, Label = res.MMCOPENDSWITH });
             this.Add(new MMCFilterOperatorItem() { ID = DataFilterOperator.NotContains, Label = res.MMCOPNOTCONTAINS });
         }
     }

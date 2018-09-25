@@ -80,7 +80,6 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     public sealed class GetMFAUser : MFACmdlet
     {
         string _identity = string.Empty;
-        private int _maxrows = 20000;
         private PSRegistration[] _list = null;
         private DataFilterObject _filter = new DataFilterObject();
         private DataPagingObject _paging = new DataPagingObject();
@@ -147,6 +146,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// </summary>
         [Parameter(ParameterSetName = "Data")]
         [Alias("Method")]
+        [ValidateRange(PreferredMethod.Choose, PreferredMethod.None)]
         public PreferredMethod FilterMethod
         {
             get { return _filter.FilterMethod; }
@@ -316,6 +316,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         private string _phonenumber = string.Empty;
         private PreferredMethod _method = PreferredMethod.None;
         private bool _enabled = true;
+        private bool _noemail = false;
         private int _pincode = -1;
         private bool _resetkey = false;
 
@@ -361,7 +362,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// </summary>
         [Parameter(ParameterSetName = "Identity")]
         [Parameter(ParameterSetName = "Data")]
-        [ValidateRange(PreferredMethod.Choose, PreferredMethod.Azure)]
+        [ValidateSet("Choose", "Code", "Email", "External", "Azure")]
         public PreferredMethod Method
         {
             get { return _method; }
@@ -388,6 +389,16 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         {
             get { return _enabled; }
             set { _enabled = value; }
+        }
+
+        /// <summary>
+        /// <para type="description">NoEmailForNewKey transmission when create a new Key for MFA.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        public SwitchParameter NoEmailForNewKey
+        {
+            get { return _noemail; }
+            set { _noemail = value; }
         }
 
         /// <summary>
@@ -477,11 +488,15 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                             this.Host.UI.WriteWarningLine(string.Format(errors_strings.ErrorPhoneNotProvided, reg.UPN));
 
                         ManagementService.Initialize(this.Host, true);
-                        ManagementService.SetUserRegistration((Registration)reg, this.ResetKey);
+                        PSRegistration ret = (PSRegistration)ManagementService.SetUserRegistration((Registration)reg, this.ResetKey, this.NoEmailForNewKey);
 
-                        if (this.ResetKey)
-                            this.WriteVerbose(string.Format(infos_strings.InfosUserHasNewKey, reg.UPN));
-                        this. WriteVerbose(string.Format(infos_strings.InfosUserUpdated, reg.UPN));
+                        if (ret != null)
+                        {
+                            if (this.ResetKey)
+                                this.WriteVerbose(string.Format(infos_strings.InfosUserHasNewKey, ret.UPN));
+                            this.WriteObject(ret);
+                            this.WriteVerbose(string.Format(infos_strings.InfosUserUpdated, ret.UPN));
+                        }
                     }
                     catch (Exception Ex)
                     {
@@ -517,6 +532,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         private PreferredMethod _method = PreferredMethod.None;
         private int _pincode = -1;
         private bool _enabled = true;
+        private bool _noemail = false;
 
         PSRegistration[] _data = null;
 
@@ -557,7 +573,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <para type="description">MFA Method for the new users.</para>
         /// </summary>
         [Parameter(ParameterSetName = "Identity")]
-        [ValidateRange(PreferredMethod.Choose, PreferredMethod.None)]
+        [ValidateSet("Choose", "Code", "Email", "External", "Azure")]
         public PreferredMethod Method
         {
             get { return _method; }
@@ -583,6 +599,16 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         {
             get { return _enabled; }
             set { _enabled = value; }
+        }
+
+        /// <summary>
+        /// <para type="description">NoEmailForNewKey transmission when create a new Key for MFA.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        public SwitchParameter NoEmailForNewKey
+        {
+            get { return _noemail; }
+            set { _noemail = value; }
         }
 
         /// <summary>
@@ -663,7 +689,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                             this.Host.UI.WriteWarningLine(string.Format(errors_strings.ErrorPhoneNotProvided, reg.UPN));
 
                         ManagementService.Initialize(this.Host, true);
-                        PSRegistration ret = (PSRegistration)ManagementService.AddUserRegistration((Registration)reg);
+                        PSRegistration ret = (PSRegistration)ManagementService.AddUserRegistration((Registration)reg, true, this.NoEmailForNewKey);
 
                         if (ret != null)
                         {

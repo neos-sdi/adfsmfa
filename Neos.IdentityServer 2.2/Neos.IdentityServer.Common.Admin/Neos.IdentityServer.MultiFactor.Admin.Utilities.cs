@@ -159,19 +159,19 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <summary>
         /// SetUserRegistration method implementation
         /// </summary>
-        internal static Registration SetUserRegistration(Registration reg, bool resetkey = false)
+        internal static Registration SetUserRegistration(Registration reg, bool resetkey = false, bool noemail = false)
         {
             EnsureService();
-            return RuntimeRepository.SetUserRegistration(Config, reg, resetkey);
+            return RuntimeRepository.SetUserRegistration(Config, reg, resetkey, noemail);
         }
 
         /// <summary>
         /// AddUserRegistration method implementation
         /// </summary>
-        internal static Registration AddUserRegistration(Registration reg, bool addkey = true)
+        internal static Registration AddUserRegistration(Registration reg, bool addkey = true, bool noemail = false)
         {
             EnsureService();
-            return RuntimeRepository.AddUserRegistration(Config, reg, addkey);
+            return RuntimeRepository.AddUserRegistration(Config, reg, addkey, noemail);
         }
 
         /// <summary>
