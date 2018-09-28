@@ -1084,7 +1084,7 @@ namespace Neos.IdentityServer.MultiFactor
             {
                 result += "<input id=\"opt3\" name=\"opt\" type=\"radio\" value=\"2\" onchange=\"ChooseMethodChanged()\" " + ((method == PreferredMethod.Email) ? "checked=\"checked\"> " : "> ") + RuntimeAuthProvider.GetProvider(PreferredMethod.Email).GetUIChoiceLabel(usercontext) + "<br /><br />";
                 result += "<div>" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlCHOOSEOptionEmailWarning") + "</div></br>";
-                result += "<input id=\"stmail\" name=\"stmail\" type=\"text\" class=\"text autoWidth\" disabled=\"disabled\" ><span class=\"text bigText\">" + MailUtilities.StripEmailDomain(usercontext.MailAddress) + "</span><br /><br />";
+                result += "<input id=\"stmail\" name=\"stmail\" type=\"text\" class=\"text fullWidth\" disabled=\"disabled\" placeholder=\"username" + MailUtilities.StripEmailDomain(usercontext.MailAddress) + "\"><br /><br />";
             }
 
             result += "<input id=\"opt5\" name=\"opt\" type=\"radio\" value=\"4\" onchange=\"ChooseMethodChanged()\"/> " + Resources.GetString(ResourcesLocaleKind.Html, "HtmlCHOOSEOptionNone") + "<br /><br />";
