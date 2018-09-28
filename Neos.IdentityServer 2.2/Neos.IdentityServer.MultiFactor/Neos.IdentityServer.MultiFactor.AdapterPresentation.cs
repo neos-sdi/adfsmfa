@@ -626,7 +626,7 @@ namespace Neos.IdentityServer.MultiFactor
             result += "</td>";
             result += "<td style=\"width: 15px\" />";
             result += "<td>";
-            result += "<input id=\"cancelButton\" type=\"submit\" class=\"submit\" name=\"cancel\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlPWDCancel") + "\" onclick=\"fnbtnclicked(2)\" />";
+            result += "<input id=\"mfa-cancelButton\" type=\"submit\" class=\"submit\" name=\"cancel\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlPWDCancel") + "\" onclick=\"fnbtnclicked(2)\" />";
             result += "</td>";
             result += "</tr></table>";
             result += "</form>";
@@ -858,7 +858,7 @@ namespace Neos.IdentityServer.MultiFactor
             result += "</td>";
             result += "<td style=\"width: 15px\" />";
             result += "<td>";
-            result += "<input id=\"cancelButton\" type=\"submit\" class=\"submit\" name=\"cancel\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlPWDCancel") + "\" onclick=\"fnbtnclicked(2)\" />";
+            result += "<input id=\"mfa-cancelButton\" type=\"submit\" class=\"submit\" name=\"cancel\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlPWDCancel") + "\" onclick=\"fnbtnclicked(2)\" />";
             result += "</td>";
             result += "</tr></table>";
             result += "</form>";
@@ -1205,7 +1205,7 @@ namespace Neos.IdentityServer.MultiFactor
                 result += "</td>";
                 result += "<td style=\"width: 15px\" />";
                 result += "<td>";
-                result += "<input id=\"cancelButton\" type=\"submit\" class=\"submit\" name=\"cancel\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlPWDCancel") + "\" onClick=\"fnbtnclicked(2)\"/>";
+                result += "<input id=\"mfa-cancelButton\" type=\"submit\" class=\"submit\" name=\"cancel\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlPWDCancel") + "\" onClick=\"fnbtnclicked(2)\"/>";
                 result += "</td>";
                 result += "</tr></table>";
                 result += "</form>";
@@ -1784,7 +1784,7 @@ namespace Neos.IdentityServer.MultiFactor
                     result += "</td>";
                     result += "<td style=\"width: 15px\" />";
                     result += "<td>";
-                    result += "<input id=\"cancelButton\" type=\"submit\" class=\"submit\" name=\"cancel\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlPWDCancel") + "\" onclick=\"fnbtnclicked(1)\" />";
+                    result += "<input id=\"mfa-cancelButton\" type=\"submit\" class=\"submit\" name=\"cancel\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlPWDCancel") + "\" onclick=\"fnbtnclicked(1)\" />";
                     result += "</td>";
                     result += "</tr></table>";
                     break;
@@ -1954,7 +1954,7 @@ namespace Neos.IdentityServer.MultiFactor
                     result += "</td>";
                     result += "<td style=\"width: 15px\" />";
                     result += "<td>";
-                    result += "<input id=\"cancelButton\" type=\"submit\" class=\"submit\" name=\"cancel\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlPWDCancel") + "\" onclick=\"fnbtnclicked(1)\" />";
+                    result += "<input id=\"mfa-cancelButton\" type=\"submit\" class=\"submit\" name=\"cancel\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlPWDCancel") + "\" onclick=\"fnbtnclicked(1)\" />";
                     result += "</td>";
                     result += "</tr></table>";
                     result += "</br>";
@@ -1988,7 +1988,7 @@ namespace Neos.IdentityServer.MultiFactor
                     result += "</td>";
                     result += "<td style=\"width: 15px\" />";
                     result += "<td>";
-                    result += "<input id=\"cancelButton\" type=\"submit\" class=\"submit\" name=\"cancel\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlPWDCancel") + "\" onclick=\"fnbtnclicked(1)\" />";
+                    result += "<input id=\"mfa-cancelButton\" type=\"submit\" class=\"submit\" name=\"cancel\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlPWDCancel") + "\" onclick=\"fnbtnclicked(1)\" />";
                     result += "</td>";
                     result += "</tr></table>";
                     break;
@@ -2125,7 +2125,7 @@ namespace Neos.IdentityServer.MultiFactor
                     result += "</td>";
                     result += "<td style=\"width: 15px\" />";
                     result += "<td>";
-                    result += "<input id=\"cancelButton\" type=\"submit\" class=\"submit\" name=\"cancel\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlPWDCancel") + "\" onclick=\"fnbtnclicked(1)\" />";
+                    result += "<input id=\"mfa-cancelButton\" type=\"submit\" class=\"submit\" name=\"cancel\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlPWDCancel") + "\" onclick=\"fnbtnclicked(1)\" />";
                     result += "</td>";
                     result += "</tr></table>";
                     result += "</br>";
@@ -2159,7 +2159,7 @@ namespace Neos.IdentityServer.MultiFactor
                     result += "</td>";
                     result += "<td style=\"width: 15px\" />";
                     result += "<td>";
-                    result += "<input id=\"cancelButton\" type=\"submit\" class=\"submit\" name=\"cancel\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlPWDCancel") + "\" onclick=\"fnbtnclicked(1)\" />";
+                    result += "<input id=\"mfa-cancelButton\" type=\"submit\" class=\"submit\" name=\"cancel\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlPWDCancel") + "\" onclick=\"fnbtnclicked(1)\" />";
                     result += "</td>";
                     result += "</tr></table>";
                     break;
@@ -2301,7 +2301,7 @@ namespace Neos.IdentityServer.MultiFactor
                     result += "</td>";
                     result += "<td style=\"width: 15px\" />";
                     result += "<td>";
-                    result += "<input id=\"cancelButton\" type=\"submit\" class=\"submit\" name=\"cancel\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlPWDCancel") + "\" onclick=\"fnbtnclicked(1)\" />";
+                    result += "<input id=\"mfa-cancelButton\" type=\"submit\" class=\"submit\" name=\"cancel\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlPWDCancel") + "\" onclick=\"fnbtnclicked(1)\" />";
                     result += "</td>";
                     result += "</tr></table>";
                     result += "</br>";
@@ -2326,7 +2326,7 @@ namespace Neos.IdentityServer.MultiFactor
                     result += "</td>";
                     result += "<td style=\"width: 15px\" />";
                     result += "<td>";
-                    result += "<input id=\"cancelButton\" type=\"submit\" class=\"submit\" name=\"cancel\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlPWDCancel") + "\" onclick=\"fnbtnclicked(1)\" />";
+                    result += "<input id=\"mfa-cancelButton\" type=\"submit\" class=\"submit\" name=\"cancel\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlPWDCancel") + "\" onclick=\"fnbtnclicked(1)\" />";
                     result += "</td>";
                     result += "</tr></table>";
                     break;
