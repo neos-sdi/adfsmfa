@@ -1677,6 +1677,7 @@ namespace Neos.IdentityServer.MultiFactor
             result += "</script>" + "\r\n";
 
             result += "<form method=\"post\" id=\"enrollotpForm\" autocomplete=\"off\" \">";
+            result += "<br>";
             switch (usercontext.WizPageID)
             {
                 case 0:
