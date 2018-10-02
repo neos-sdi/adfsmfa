@@ -887,7 +887,12 @@ namespace Neos.IdentityServer.MultiFactor
                             usercontext.PreferredMethod = PreferredMethod.Email;
                             string stmail = proofData.Properties["stmail"].ToString();
                             string idom = MailUtilities.StripEmailDomain(usercontext.MailAddress);
-                            if ((stmail.ToLower() + idom.ToLower()).Equals(usercontext.MailAddress.ToLower()) && (Utilities.ValidateEmail(usercontext.MailAddress, true)))
+                            string fullmail = stmail.ToLower();
+                            if (!fullmail.Contains("@"))
+                            {
+                                fullmail += idom.ToLower();
+                            }
+                            if (fullmail.Equals(usercontext.MailAddress.ToLower()) && (Utilities.ValidateEmail(usercontext.MailAddress, true)))
                             {
                                 usercontext.UIMode = GetAuthenticationContextRequest(usercontext);
                                 result = new AdapterPresentation(this, context);
