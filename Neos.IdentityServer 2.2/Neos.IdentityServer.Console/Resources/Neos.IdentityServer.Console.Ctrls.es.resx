@@ -381,8 +381,11 @@
   <data name="CTRLSECNEWCERT" xml:space="preserve">
     <value>Nuevo certificado</value>
   </data>
+  <data name="CTRLSECNEWCRYPTEDDATABASE" xml:space="preserve">
+    <value>Crear base de datos encriptada</value>
+  </data>
   <data name="CTRLSECNEWDATABASE" xml:space="preserve">
-    <value>Base de datos de nuevas claves</value>
+    <value>Crear base de datos</value>
   </data>
   <data name="CTRLSECPARAMS" xml:space="preserve">
     <value>Configuraciones</value>
@@ -471,8 +474,20 @@
   <data name="CTRLSQLCONNECTSTRERROR" xml:space="preserve">
     <value>Cadena de conexión SQL no válida !</value>
   </data>
+  <data name="CTRLSQLCREATECRYPTEDDB" xml:space="preserve">
+    <value>Crear base de datos cifrada de MFA</value>
+  </data>
   <data name="CTRLSQLCREATEDB" xml:space="preserve">
     <value>Crear base de datos MFA</value>
+  </data>
+  <data name="CTRLSQLCRYPTUSING" xml:space="preserve">
+    <value>Utilice la función "Siempre encriptada" (SQL Server 2016 +)</value>
+  </data>
+  <data name="CTRLSQLENCRYPTNAME" xml:space="preserve">
+    <value>Nombre de la clave</value>
+  </data>
+  <data name="CTRLSQLINVALIDCERTERROR" xml:space="preserve">
+    <value>Certificado {0} inválido</value>
   </data>
   <data name="CTRLSQLMAXROWS" xml:space="preserve">
     <value>Número máximo de líneas</value>
@@ -480,8 +495,14 @@
   <data name="CTRLSQLMAXROWSERROR" xml:space="preserve">
     <value>{0} no es válido! el valor debe estar entre 1000 y 1000000</value>
   </data>
+  <data name="CTRLSQLREUSECERT" xml:space="preserve">
+    <value>Reutilizar el certificado</value>
+  </data>
   <data name="CTRLSQLTEST" xml:space="preserve">
     <value>Ensayo</value>
+  </data>
+  <data name="CTRLSQLTHUMBPRINT" xml:space="preserve">
+    <value>Huella del certificado</value>
   </data>
   <data name="CTRLSQLUSING" xml:space="preserve">
     <value>Usar la configuración de SQL Server</value>

@@ -381,8 +381,11 @@
   <data name="CTRLSECNEWCERT" xml:space="preserve">
     <value>New certificate</value>
   </data>
+  <data name="CTRLSECNEWCRYPTEDDATABASE" xml:space="preserve">
+    <value>Create SQL crypted database</value>
+  </data>
   <data name="CTRLSECNEWDATABASE" xml:space="preserve">
-    <value>New SQL Keys Database</value>
+    <value>Create SQL Database</value>
   </data>
   <data name="CTRLSECPARAMS" xml:space="preserve">
     <value>Parameters</value>
@@ -397,7 +400,7 @@
     <value>Registration wizard options</value>
   </data>
   <data name="CTRLSECWIZTITLE" xml:space="preserve">
-    <value>SQL Keys: Creating the database</value>
+    <value>Create a new SQL database</value>
   </data>
   <data name="CTRLSMSASSEMBLY" xml:space="preserve">
     <value>Implementation (full class)</value>
@@ -471,8 +474,20 @@
   <data name="CTRLSQLCONNECTSTRERROR" xml:space="preserve">
     <value>Invalid SQL Connection String !</value>
   </data>
+  <data name="CTRLSQLCREATECRYPTEDDB" xml:space="preserve">
+    <value>Create MFA Encrypted Database</value>
+  </data>
   <data name="CTRLSQLCREATEDB" xml:space="preserve">
     <value>Create MFA Database</value>
+  </data>
+  <data name="CTRLSQLCRYPTUSING" xml:space="preserve">
+    <value>Use Always Encrypted feature (SQL Server 2016 +)</value>
+  </data>
+  <data name="CTRLSQLENCRYPTNAME" xml:space="preserve">
+    <value>Name of the encryption key</value>
+  </data>
+  <data name="CTRLSQLINVALIDCERTERROR" xml:space="preserve">
+    <value>Invalid certificate {0}</value>
   </data>
   <data name="CTRLSQLMAXROWS" xml:space="preserve">
     <value>Maximum Rows </value>
@@ -480,8 +495,14 @@
   <data name="CTRLSQLMAXROWSERROR" xml:space="preserve">
     <value>{0} is not valid ! must be between 1000 and 1000000</value>
   </data>
+  <data name="CTRLSQLREUSECERT" xml:space="preserve">
+    <value>Reuse Certificate</value>
+  </data>
   <data name="CTRLSQLTEST" xml:space="preserve">
     <value>Test</value>
+  </data>
+  <data name="CTRLSQLTHUMBPRINT" xml:space="preserve">
+    <value>Certificate thumprint</value>
   </data>
   <data name="CTRLSQLUSING" xml:space="preserve">
     <value>Use SQL Server configuration</value>

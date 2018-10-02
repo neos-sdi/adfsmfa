@@ -28,6 +28,7 @@ using System.Net;
 using System.Security.Cryptography.X509Certificates;
 using System.ServiceProcess;
 using System.Data.SqlClient;
+using System.Security.Cryptography;
 
 namespace Neos.IdentityServer.MultiFactor.Administration
 {
@@ -295,6 +296,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         #endregion
 
         #region ADFS Services
+        /// <summary>
+        /// IsFarmConfigured method implementation
+        /// </summary>
         public bool IsFarmConfigured()
         {
             if (ADFSFarm==null)
@@ -940,6 +944,17 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         }
 
         /// <summary>
+        /// RegisterNewRSACertificate method implmentation
+        /// </summary>
+        public string RegisterNewSQLCertificate(PSHost Host = null, int years = 5, string keyname = "adfsmfa")
+        {
+            _config.Hosts.SQLServerHost.ThumbPrint = internalRegisterNewSQLCertificate(Host, years, keyname);
+            _config.IsDirty = true;
+            CFGUtilities.WriteConfiguration(Host, _config);
+            return _config.Hosts.SQLServerHost.ThumbPrint;
+        }
+
+        /// <summary>
         /// CheckCertificate metnod implementation
         /// </summary>
         internal bool CheckCertificate(string thumbprint)
@@ -987,7 +1002,57 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 {
                     if (Host != null)
                         Host.UI.WriteWarningLine(DateTime.Now.ToLongTimeString() + " Error adding certificate \"" + thumbprint + "\" to ADFS Decrypting Certificates list, your must do it manually !");
-                    return "";
+                }
+                finally
+                {
+                    if (SPRunSpace != null)
+                        SPRunSpace.Close();
+                }
+                return thumbprint;
+            }
+            else
+                return "";
+        }
+
+        /// <summary>
+        /// internalRegisterNewSQLCertificate method implementation
+        /// </summary>
+        private string internalRegisterNewSQLCertificate(PSHost Host, int years, string keyname)
+        {
+            X509Certificate2 cert = Certs.CreateSelfSignedCertificateForSQLEncryption("MFA SQL Key : "+keyname, years);
+            if (cert != null)
+            {
+                string thumbprint = cert.Thumbprint;
+                if (Host != null)
+                    Host.UI.WriteVerboseLine(DateTime.Now.ToLongTimeString() + " MFA Certificate \"" + thumbprint + "\" Created for using with SQL keys");
+                Runspace SPRunSpace = null;
+                PowerShell SPPowerShell = null;
+                try
+                {
+                    RunspaceConfiguration SPRunConfig = RunspaceConfiguration.Create();
+                    SPRunSpace = RunspaceFactory.CreateRunspace(SPRunConfig);
+
+                    SPPowerShell = PowerShell.Create();
+                    SPPowerShell.Runspace = SPRunSpace;
+                    SPRunSpace.Open();
+
+                    Pipeline pipeline = SPRunSpace.CreatePipeline();
+                    Command exportcmd = new Command("Add-AdfsCertificate -CertificateType \"Token-Decrypting\" -Thumbprint \"" + thumbprint + "\"", true);
+                    pipeline.Commands.Add(exportcmd);
+
+                    Collection<PSObject> PSOutput = pipeline.Invoke();
+                    if (Host != null)
+                        Host.UI.WriteVerboseLine(DateTime.Now.ToLongTimeString() + " SQL Certificate \"" + thumbprint + "\" Added to ADFS Decrypting Certificates list");
+                }
+                catch (CmdletInvocationException) // if Rollover is enabled cannot add 
+                {
+                    if (Host != null)
+                        Host.UI.WriteWarningLine(DateTime.Now.ToLongTimeString() + " Error adding certificate \"" + thumbprint + "\" to ADFS Decrypting Certificates list, your must do it manually !");
+                }
+                catch (Exception)
+                {
+                    if (Host != null)
+                        Host.UI.WriteWarningLine(DateTime.Now.ToLongTimeString() + " Error adding certificate \"" + thumbprint + "\" to ADFS Decrypting Certificates list, your must do it manually !");
                 }
                 finally
                 {
@@ -1467,7 +1532,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             }
             return xprops;
         }
+        #endregion
 
+        #region MFA Database
         /// <summary>
         /// CreateMFADatabase method implementation
         /// </summary>
@@ -1516,10 +1583,100 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 cf.ConnectionString = "Persist Security Info=True;User ID="+ _username+";Password="+_password+";Initial Catalog=" + _databasename + ";Data Source=" + _servername;
             else
                 cf.ConnectionString = "Persist Security Info=False;Integrated Security=SSPI;Initial Catalog=" + _databasename + ";Data Source=" + _servername;
+            cf.IsAlwaysEncrypted = false;
+            cf.ThumbPrint = string.Empty;
             cf.Update(host);
             return cf.ConnectionString;
         }
 
+        /// <summary>
+        /// CreateMFAEncryptedDatabase method implementation
+        /// </summary>
+        public string CreateMFAEncryptedDatabase(PSHost host, string _servername, string _databasename, string _username, string _password, string _keyname, string _thumbprint)
+        {
+            string _encrypted = GetSQLKeyEncryptedValue("LocalMachine/my/" + _thumbprint.ToUpper());
+            string sqlscript = File.ReadAllText(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + @"\MFA\mfa-db-encrypted.sql");
+            sqlscript = sqlscript.Replace("%DATABASENAME%", _databasename);
+            sqlscript = sqlscript.Replace("%SQLKEY%", _keyname);
+            SqlConnection cnx = new SqlConnection("Integrated Security=SSPI;Persist Security Info=False;Initial Catalog=master;Data Source=" + _servername);
+            cnx.Open();
+            try
+            {
+                SqlCommand cmd = new SqlCommand(string.Format("CREATE DATABASE {0}", _databasename), cnx);
+                cmd.ExecuteNonQuery();
+                SqlCommand cmdl = null;
+                if (!string.IsNullOrEmpty(_password))
+                    cmdl = new SqlCommand(string.Format("IF NOT EXISTS (SELECT name FROM master.sys.server_principals WHERE name = '{0}') BEGIN CREATE LOGIN [{0}] WITH PASSWORD = '{1}', DEFAULT_DATABASE=[master] END", _username, _password), cnx);
+                else
+                    cmdl = new SqlCommand(string.Format("IF NOT EXISTS (SELECT name FROM master.sys.server_principals WHERE name = '{0}') BEGIN CREATE LOGIN [{0}] FROM WINDOWS WITH DEFAULT_DATABASE=[master] END", _username), cnx);
+                cmdl.ExecuteNonQuery();
+            }
+            finally
+            {
+                cnx.Close();
+            }
+            SqlConnection cnx2 = new SqlConnection("Integrated Security=SSPI;Persist Security Info=False;Initial Catalog=" + _databasename + ";Data Source=" + _servername);
+            cnx2.Open();
+            try
+            {
+                SqlCommand cmd = new SqlCommand(string.Format("CREATE USER [{0}] FOR LOGIN [{0}]", _username), cnx2);
+                cmd.ExecuteNonQuery();
+                SqlCommand cmd1 = new SqlCommand(string.Format("ALTER ROLE [db_owner] ADD MEMBER [{0}]", _username), cnx2);
+                cmd1.ExecuteNonQuery();
+                SqlCommand cmd2 = new SqlCommand(string.Format("ALTER ROLE [db_securityadmin] ADD MEMBER [{0}]", _username), cnx2);
+                cmd2.ExecuteNonQuery();
+                SqlCommand cmd3 = new SqlCommand(string.Format("GRANT ALTER ANY COLUMN ENCRYPTION KEY TO [{0}]", _username), cnx2);
+                cmd3.ExecuteNonQuery();
+                SqlCommand cmd4 = new SqlCommand(string.Format("CREATE COLUMN MASTER KEY [{0}] WITH (KEY_STORE_PROVIDER_NAME = 'MSSQL_CERTIFICATE_STORE', KEY_PATH = 'LocalMachine/My/{1}')", _keyname, _thumbprint.ToUpper()), cnx2);
+                cmd4.ExecuteNonQuery();
+                SqlCommand cmd5 = new SqlCommand(string.Format("CREATE COLUMN ENCRYPTION KEY [{0}] WITH VALUES (COLUMN_MASTER_KEY = [{0}], ALGORITHM = 'RSA_OAEP', ENCRYPTED_VALUE = {1})", _keyname, _encrypted), cnx2);
+                cmd5.ExecuteNonQuery();
+            }
+            finally
+            {
+                cnx2.Close();
+            }
+            SqlConnection cnx3 = new SqlConnection("Integrated Security=SSPI;Persist Security Info=False;Initial Catalog=" + _databasename + ";Data Source=" + _servername);
+            cnx3.Open();
+            try
+            {
+                SqlCommand cmdl = new SqlCommand(sqlscript, cnx3);
+                cmdl.ExecuteNonQuery();
+            }
+            finally
+            {
+                cnx3.Close();
+            }
+
+            FlatConfigSQL cf = new FlatConfigSQL();
+            cf.Load(host);
+            if (!string.IsNullOrEmpty(_password))
+                cf.ConnectionString = "Persist Security Info=True;User ID=" + _username + ";Password=" + _password + ";Initial Catalog=" + _databasename + ";Data Source=" + _servername +";Column Encryption Setting=enabled";
+            else
+                cf.ConnectionString = "Persist Security Info=False;Integrated Security=SSPI;Initial Catalog=" + _databasename + ";Data Source=" + _servername + ";Column Encryption Setting=enabled";
+            cf.IsAlwaysEncrypted = true;
+            cf.ThumbPrint = _thumbprint;
+            cf.Update(host);
+            return cf.ConnectionString;
+        }
+
+        /// <summary>
+        /// GetSQLKeyEncryptedValue method implementation
+        /// </summary>
+        private string GetSQLKeyEncryptedValue(string masterkeypath)
+        {
+            var randomBytes = new byte[32];
+            using (var rng = new RNGCryptoServiceProvider())
+            {
+                rng.GetBytes(randomBytes);
+            }
+            var provider = new SqlColumnEncryptionCertificateStoreProvider();
+            var encryptedKey = provider.EncryptColumnEncryptionKey(masterkeypath, "RSA_OAEP", randomBytes);
+            return "0x" + BitConverter.ToString(encryptedKey).Replace("-", "");
+        }
+        #endregion
+
+        #region MFA SecretKey Database
         /// <summary>
         /// CreateMFADatabase method implementation
         /// </summary>
@@ -1568,10 +1725,83 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 cf.Parameters.Data = "Persist Security Info=True;User ID=" + _username + ";Password=" + _password + ";Initial Catalog=" + _databasename + ";Data Source=" + _servername;
             else
                 cf.Parameters.Data = "Persist Security Info=False;Integrated Security=SSPI;Initial Catalog=" + _databasename + ";Data Source=" + _servername;
+            cf.IsAlwaysEncrypted = false;
+            cf.ThumbPrint = string.Empty;
             cf.Update(host);
             return cf.Parameters.Data;
         }
 
+        /// <summary>
+        /// CreateMFAEncryptedSecretKeysDatabase method implementation
+        /// </summary>
+        public string CreateMFAEncryptedSecretKeysDatabase(PSHost host, string _servername, string _databasename, string _username, string _password, string _keyname, string _thumbprint)
+        {
+            string _encrypted = GetSQLKeyEncryptedValue("LocalMachine/my/" + _thumbprint.ToUpper());
+            string sqlscript = File.ReadAllText(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + @"\MFA\mfa-secretkey-db-encrypted.sql");
+            sqlscript = sqlscript.Replace("%DATABASENAME%", _databasename);
+            sqlscript = sqlscript.Replace("%SQLKEY%", _keyname);
+            SqlConnection cnx = new SqlConnection("Integrated Security=SSPI;Persist Security Info=False;Initial Catalog=master;Data Source=" + _servername);
+            cnx.Open();
+            try
+            {
+                SqlCommand cmd = new SqlCommand(string.Format("CREATE DATABASE {0}", _databasename), cnx);
+                cmd.ExecuteNonQuery();
+                SqlCommand cmdl = null;
+                if (!string.IsNullOrEmpty(_password))
+                    cmdl = new SqlCommand(string.Format("IF NOT EXISTS (SELECT name FROM master.sys.server_principals WHERE name = '{0}') BEGIN CREATE LOGIN [{0}] WITH PASSWORD = '{1}', DEFAULT_DATABASE=[master] END", _username, _password), cnx);
+                else
+                    cmdl = new SqlCommand(string.Format("IF NOT EXISTS (SELECT name FROM master.sys.server_principals WHERE name = '{0}') BEGIN CREATE LOGIN [{0}] FROM WINDOWS WITH DEFAULT_DATABASE=[master] END", _username), cnx);
+                cmdl.ExecuteNonQuery();
+            }
+            finally
+            {
+                cnx.Close();
+            }
+            SqlConnection cnx2 = new SqlConnection("Integrated Security=SSPI;Persist Security Info=False;Initial Catalog=" + _databasename + ";Data Source=" + _servername);
+            cnx2.Open();
+            try
+            {
+                SqlCommand cmd = new SqlCommand(string.Format("CREATE USER [{0}] FOR LOGIN [{0}]", _username), cnx2);
+                cmd.ExecuteNonQuery();
+                SqlCommand cmd1 = new SqlCommand(string.Format("ALTER ROLE [db_owner] ADD MEMBER [{0}]", _username), cnx2);
+                cmd1.ExecuteNonQuery();
+                SqlCommand cmd2 = new SqlCommand(string.Format("ALTER ROLE [db_securityadmin] ADD MEMBER [{0}]", _username), cnx2);
+                cmd2.ExecuteNonQuery();
+                SqlCommand cmd3 = new SqlCommand(string.Format("GRANT ALTER ANY COLUMN ENCRYPTION KEY TO [{0}]", _username), cnx2);
+                cmd3.ExecuteNonQuery();
+                SqlCommand cmd4 = new SqlCommand(string.Format("CREATE COLUMN MASTER KEY [{0}] WITH (KEY_STORE_PROVIDER_NAME = 'MSSQL_CERTIFICATE_STORE', KEY_PATH = 'LocalMachine/My/{1}')", _keyname, _thumbprint.ToUpper()), cnx2);
+                cmd4.ExecuteNonQuery();
+                SqlCommand cmd5 = new SqlCommand(string.Format("CREATE COLUMN ENCRYPTION KEY [{0}] WITH VALUES (COLUMN_MASTER_KEY = [{0}], ALGORITHM = 'RSA_OAEP', ENCRYPTED_VALUE = {1})", _keyname, _encrypted), cnx2);
+                cmd5.ExecuteNonQuery();
+            }
+            finally
+            {
+                cnx2.Close();
+            }
+
+            SqlConnection cnx3 = new SqlConnection("Integrated Security=SSPI;Persist Security Info=False;Initial Catalog=" + _databasename + ";Data Source=" + _servername);
+            cnx3.Open();
+            try
+            {
+                SqlCommand cmdl = new SqlCommand(sqlscript, cnx3);
+                cmdl.ExecuteNonQuery();
+            }
+            finally
+            {
+                cnx3.Close();
+            }
+
+            FlatExternalKeyManager cf = new FlatExternalKeyManager();
+            cf.Load(host);
+            if (!string.IsNullOrEmpty(_password))
+                cf.Parameters.Data = "Persist Security Info=True;User ID=" + _username + ";Password=" + _password + ";Initial Catalog=" + _databasename + ";Data Source=" + _servername + ";Column Encryption Setting=enabled";
+            else
+                cf.Parameters.Data = "Persist Security Info=False;Integrated Security=SSPI;Initial Catalog=" + _databasename + ";Data Source=" + _servername + ";Column Encryption Setting=enabled";
+            cf.IsAlwaysEncrypted = true;
+            cf.ThumbPrint = _thumbprint;
+            cf.Update(host);
+            return cf.Parameters.Data;
+        }
         #endregion
     }
     #endregion

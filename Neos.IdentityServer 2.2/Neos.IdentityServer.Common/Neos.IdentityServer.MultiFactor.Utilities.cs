@@ -2051,8 +2051,6 @@ namespace Neos.IdentityServer.MultiFactor
             rnd.GetBytes(buffer);
             uint val = BitConverter.ToUInt32(buffer, 0) % 1000000;
             return Convert.ToInt32(val);
-           // Random random = new Random();
-           // return random.Next(1, 999999);
         }
 
         /// <summary>

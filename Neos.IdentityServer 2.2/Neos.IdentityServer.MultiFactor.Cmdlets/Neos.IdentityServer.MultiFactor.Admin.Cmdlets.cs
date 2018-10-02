@@ -146,7 +146,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// </summary>
         [Parameter(ParameterSetName = "Data")]
         [Alias("Method")]
-        [ValidateRange(PreferredMethod.Choose, PreferredMethod.None)]
+        [ValidateSet("Choose", "Code", "Email", "External", "Azure")]
         public PreferredMethod FilterMethod
         {
             get { return _filter.FilterMethod; }
@@ -1771,7 +1771,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <para type="description">Set the name of the backup file.</para>
         /// BackupFileName property
         /// </summary>
-        [Parameter(ParameterSetName = "Data")]
+        [Parameter(Mandatory = true, ParameterSetName = "Data")]
         public string BackupFilePath
         {
             get;
@@ -2000,8 +2000,8 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                     {
                         PSHost hh = GetHostForVerbose();
                         ADFSServiceManager svc = ManagementService.ADFSManager;
-                        svc.RegisterNewRSACertificate(hh, this.RSACertificateDuration, this.RestartFarm);
-                        this.Host.UI.WriteLine(ConsoleColor.Green, this.Host.UI.RawUI.BackgroundColor, String.Format(infos_strings.InfosRSACertificateChanged));
+                        string thumb = svc.RegisterNewRSACertificate(hh, this.RSACertificateDuration, this.RestartFarm);
+                        this.Host.UI.WriteLine(ConsoleColor.Green, this.Host.UI.RawUI.BackgroundColor, String.Format(infos_strings.InfosRSACertificateChanged, thumb));
                     }
                 }
             }
@@ -2799,11 +2799,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// Data property
         /// </summary>
         [Parameter(Mandatory = true, Position = 1, ParameterSetName = "Data", ValueFromPipeline = true)]
-        public PSConfigTOTPProvider Data
-        {
-            get;
-            set;
-        }
+        public PSConfigTOTPProvider Data { get; set; }
     }
 
     /// <summary>
@@ -2816,11 +2812,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// Data property
         /// </summary>
         [Parameter(Mandatory = true, Position = 1, ParameterSetName = "Data", ValueFromPipeline = true)]
-        public PSConfigMail Data
-        {
-            get;
-            set;
-        }
+        public PSConfigMail Data { get; set; }
     }
 
     /// <summary>
@@ -2833,11 +2825,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// Data property
         /// </summary>
         [Parameter(Mandatory = true, Position = 1, ParameterSetName = "Data", ValueFromPipeline = true)]
-        public PSConfigExternalProvider Data
-        {
-            get;
-            set;
-        }
+        public PSConfigExternalProvider Data { get; set; }
     }
 
     /// <summary>
@@ -3005,21 +2993,28 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     ///   <para>New-MFADatabase -ServerName SQLServer\Instance -DatabaseName MFADatabase -UserName sqlaccount -Password pass</para>
     ///   <para>New-MFADatabase -ServerName SQLServer\Instance -DatabaseName MFADatabase -UserName Domain\ADFSaccount</para>
     ///   <para>New-MFADatabase -ServerName SQLServer\Instance -DatabaseName MFADatabase -UserName Domain\ADFSManagedAccount$</para>
+    ///   <para></para>
+    ///   <para>When using SQL Server 2016 (and up) Always encrypted columsn</para>
+    ///   <para>New-MFADatabase -ServerName SQLServer\Instance -DatabaseName MFAKeysDatabase -UserName Domain\ADFSaccount -Encrypted</para>
+    ///   <para>New-MFADatabase -ServerName SQLServer\Instance -DatabaseName MFAKeysDatabase -UserName Domain\ADFSaccount -Encrypted -EncryptedKeyName mykey</para>
+    ///   <para>New-MFADatabase -ServerName SQLServer\Instance -DatabaseName MFAKeysDatabase -UserName Domain\ADFSManagedAccount$ -Encripted -ReuseCertificate -ThumPrint <thumprint></para>
+    ///   <para>New-MFADatabase -ServerName SQLServer\Instance -DatabaseName MFAKeysDatabase -UserName Domain\ADFSManagedAccount$ -Encripted -ReuseCertificate -ThumPrint <thumprint> -encryptedkeyname mykey</para>
     ///   <para>Create a new database for MFA, grant rights to the specified account</para>
     /// </example>
     [Cmdlet(VerbsCommon.New, "MFADatabase", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
-    public sealed class NewMFADatabase : MFACmdlet
+    public sealed class NewMFADatabase : MFACmdlet, IDynamicParameters
     {
         private string _servername;
         private string _databasename;
         private string _username;
         private string _password;
+        private SQLEncryptedDatabaseDynamicParameters Dyn;
         private PSConfigSQL _config;
 
         /// <summary>
         /// <para type="description">SQL ServerName, you must include Instance if needed eg : server\instance.</para>
         /// </summary>
-        [Parameter(ParameterSetName = "Data")]
+        [Parameter(Mandatory = true, ParameterSetName = "Data")]
         [ValidateNotNullOrEmpty()]
         public string ServerName
         {
@@ -3030,7 +3025,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <summary>
         /// <para type="description">Name of the SQL Database, if database exists an error is thrown.</para>
         /// </summary>
-        [Parameter(ParameterSetName = "Data")]
+        [Parameter(Mandatory = true, ParameterSetName = "Data")]
         [ValidateNotNullOrEmpty()]
         public string DatabaseName
         {
@@ -3041,7 +3036,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <summary>
         /// <para type="description">AccountName, can be a domain, managed account : domain\adfsaccount or domain\adfsaccount$ without password, or an SQL Account with password.</para>
         /// </summary>
-        [Parameter(ParameterSetName = "Data")]
+        [Parameter(Mandatory = true, ParameterSetName = "Data")]
         [ValidateNotNullOrEmpty()]
         public string UserName
         {
@@ -3057,6 +3052,30 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         {
             get { return _password; }
             set { _password = value; }
+        }
+
+        /// <summary>
+        /// <para type="description">Encrypted, only if Database Server is SQLServer 2016 and Up. Encrypt data columns to be compliant with RGPD. most secure option</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Data")]
+        public SwitchParameter Encrypted
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// <para type="description">Get the values of SQL Database Encryption.</para>
+        /// GetDynamicParameters implementation
+        /// </summary>
+        public object GetDynamicParameters()
+        {
+            if (Encrypted)
+            {
+                Dyn = new SQLEncryptedDatabaseDynamicParameters();
+                return Dyn;
+            }
+            return null;
         }
 
         /// <summary>
@@ -3089,9 +3108,24 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 {
                     PSHost hh = GetHostForVerbose();
                     ADFSServiceManager svc = ManagementService.ADFSManager;
-                    svc.CreateMFADatabase(hh, _servername, _databasename, _username, _password);
-                    this.Host.UI.WriteLine(ConsoleColor.Green, this.Host.UI.RawUI.BackgroundColor, string.Format(infos_strings.InfosDatabaseCreated, _databasename));
-
+                    if (!Encrypted)
+                    {
+                        svc.CreateMFADatabase(hh, ServerName, DatabaseName, UserName, Password);
+                        this.Host.UI.WriteLine(ConsoleColor.Green, this.Host.UI.RawUI.BackgroundColor, string.Format(infos_strings.InfosDatabaseCreated, DatabaseName));
+                    }
+                    else
+                    {
+                        string thumb = string.Empty;
+                        if (string.IsNullOrEmpty(Dyn.ThumbPrint))
+                        {
+                            thumb = svc.RegisterNewSQLCertificate(hh, Dyn.CertificateDuration, Dyn.EncryptKeyName);
+                            this.Host.UI.WriteLine(ConsoleColor.Green, this.Host.UI.RawUI.BackgroundColor, String.Format(infos_strings.InfosSQLCertificateChanged, thumb));
+                        }
+                        else
+                            thumb = Dyn.ThumbPrint;
+                        svc.CreateMFAEncryptedDatabase(hh, ServerName, DatabaseName, UserName, Password, Dyn.EncryptKeyName, thumb);
+                        this.Host.UI.WriteLine(ConsoleColor.Green, this.Host.UI.RawUI.BackgroundColor, string.Format(infos_strings.InfosDatabaseCreated, DatabaseName));
+                    }
                 }
             }
             catch (Exception ex)
@@ -3106,25 +3140,33 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     /// <para type="description">Create a new SQL Database for storing RSA keys and certificates, can be used with ADDS and SQL configuration.</para>
     /// </summary>
     /// <example>
-    ///   <para>MFASecretKeysDatabase -ServerName SQLServer\Instance -DatabaseName MFAKeysDatabase -UserName sqlaccount -Password pass</para>
-    ///   <para>MFASecretKeysDatabase -ServerName SQLServer\Instance -DatabaseName MFAKeysDatabase -UserName Domain\ADFSaccount</para>
-    ///   <para>MFASecretKeysDatabase -ServerName SQLServer\Instance -DatabaseName MFAKeysDatabase -UserName Domain\ADFSManagedAccount$</para>
+    ///   <para>New-MFASecretKeysDatabase -ServerName SQLServer\Instance -DatabaseName MFAKeysDatabase -UserName sqlaccount -Password pass</para>
+    ///   <para>New-MFASecretKeysDatabase -ServerName SQLServer\Instance -DatabaseName MFAKeysDatabase -UserName Domain\ADFSaccount</para>
+    ///   <para>New-MFASecretKeysDatabase -ServerName SQLServer\Instance -DatabaseName MFAKeysDatabase -UserName Domain\ADFSManagedAccount$</para>
+    ///   <para></para>
+    ///   <para>When using SQL Server 2016 (and up) Always encrypted columsn</para>
+    ///   <para>New-MFASecretKeysDatabase -ServerName SQLServer\Instance -DatabaseName MFAKeysDatabase -UserName Domain\ADFSaccount -Encrypted</para>
+    ///   <para>New-MFASecretKeysDatabase -ServerName SQLServer\Instance -DatabaseName MFAKeysDatabase -UserName Domain\ADFSaccount -Encrypted -EncryptedKeyName mykey</para>
+    ///   <para>New-MFASecretKeysDatabase -ServerName SQLServer\Instance -DatabaseName MFAKeysDatabase -UserName Domain\ADFSManagedAccount$ -Encripted -ReuseCertificate -ThumPrint <thumprint></para>
+    ///   <para>New-MFASecretKeysDatabase -ServerName SQLServer\Instance -DatabaseName MFAKeysDatabase -UserName Domain\ADFSManagedAccount$ -Encripted -ReuseCertificate -ThumPrint <thumprint> -encryptedkeyname mykey</para>
+    ///   <para></para>
     ///   <para>(Get-MFAConfigKeys).KeyFormat must be equal to CUSTOM to be effective</para>
     ///   <para>Create a new database for MFA Secret Keys, grant rights to the specified account</para>
     /// </example>
     [Cmdlet(VerbsCommon.New, "MFASecretKeysDatabase", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
-    public sealed class NewMFASecretKeysDatabase : MFACmdlet
+    public sealed class NewMFASecretKeysDatabase : MFACmdlet, IDynamicParameters
     {
         private string _servername;
         private string _databasename;
         private string _username;
         private string _password;
+        private SQLEncryptedDatabaseDynamicParameters Dyn;
         private PSConfigSQL _config;
 
         /// <summary>
         /// <para type="description">SQL ServerName, you must include Instance if needed eg : server\instance.</para>
         /// </summary>
-        [Parameter(ParameterSetName = "Data")]
+        [Parameter(Mandatory = true, ParameterSetName = "Data")]
         [ValidateNotNullOrEmpty()]
         public string ServerName
         {
@@ -3135,7 +3177,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <summary>
         /// <para type="description">Name of the SQL Database, if database exists an error is thrown.</para>
         /// </summary>
-        [Parameter(ParameterSetName = "Data")]
+        [Parameter(Mandatory = true, ParameterSetName = "Data")]
         [ValidateNotNullOrEmpty()]
         public string DatabaseName
         {
@@ -3146,7 +3188,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <summary>
         /// <para type="description">AccountName, can be a domain, managed account : domain\adfsaccount or domain\adfsaccount$ without password, or an SQL Account with password.</para>
         /// </summary>
-        [Parameter(ParameterSetName = "Data")]
+        [Parameter(Mandatory = true, ParameterSetName = "Data")]
         [ValidateNotNullOrEmpty()]
         public string UserName
         {
@@ -3162,6 +3204,30 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         {
             get { return _password; }
             set { _password = value; }
+        }
+
+        /// <summary>
+        /// <para type="description">Encrypted, only if Database Server is SQLServer 2016 and Up. Encrypt data columns to be compliant with RGPD. most secure option</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Data")]
+        public SwitchParameter Encrypted
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// <para type="description">Get the values of SQL Database Encryption.</para>
+        /// GetDynamicParameters implementation
+        /// </summary>
+        public object GetDynamicParameters()
+        {
+            if (Encrypted)
+            {
+                Dyn = new SQLEncryptedDatabaseDynamicParameters();
+                return Dyn;
+            }
+            return null;
         }
 
         /// <summary>
@@ -3194,9 +3260,24 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 {
                     PSHost hh = GetHostForVerbose();
                     ADFSServiceManager svc = ManagementService.ADFSManager;
-                    svc.CreateMFASecretKeysDatabase(hh, _servername, _databasename, _username, _password);
-                    this.Host.UI.WriteLine(ConsoleColor.Green, this.Host.UI.RawUI.BackgroundColor, string.Format(infos_strings.InfosDatabaseCreated, _databasename));
-
+                    if (!Encrypted)
+                    {
+                        svc.CreateMFASecretKeysDatabase(hh, ServerName, DatabaseName, UserName, Password);
+                        this.Host.UI.WriteLine(ConsoleColor.Green, this.Host.UI.RawUI.BackgroundColor, string.Format(infos_strings.InfosDatabaseCreated, DatabaseName));
+                    }
+                    else
+                    {
+                        string thumb = string.Empty;
+                        if (string.IsNullOrEmpty(Dyn.ThumbPrint))
+                        {
+                            thumb = svc.RegisterNewSQLCertificate(hh, Dyn.CertificateDuration, Dyn.EncryptKeyName);
+                            this.Host.UI.WriteLine(ConsoleColor.Green, this.Host.UI.RawUI.BackgroundColor, String.Format(infos_strings.InfosSQLCertificateChanged, thumb));
+                        }
+                        else
+                            thumb = Dyn.ThumbPrint;
+                        svc.CreateMFAEncryptedSecretKeysDatabase(hh, ServerName, DatabaseName, UserName, Password, Dyn.EncryptKeyName, thumb);
+                        this.Host.UI.WriteLine(ConsoleColor.Green, this.Host.UI.RawUI.BackgroundColor, string.Format(infos_strings.InfosDatabaseCreated, DatabaseName));
+                    }
                 }
             }
             catch (Exception ex)
@@ -3205,5 +3286,102 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             }
         }
     }
+
+    /// <summary>
+    /// <para type="description">Set TOTP Provider configuration data.</para>
+    /// </summary>
+    public class SQLEncryptedDatabaseDynamicParameters
+    {
+        private int _duration = 5;
+        private bool _restart = true;
+        private string _encryptedname;
+        private string _thumbprint = string.Empty;
+        private SwitchParameter _reuse;
+
+        /// <summary>
+        /// <para type="description">Restart Farm Services</para>
+        /// RestartFarm property
+        /// </summary>
+        [Parameter(ParameterSetName = "Data")]
+        public SwitchParameter RestartFarm
+        {
+            get { return _restart; }
+            set { _restart = value; }
+        }
+
+        /// <summary>
+        /// <para type="description">EncryptKeyName, SQLServer crypting key, required if encrypted switch is used.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Data")]
+        public string EncryptKeyName 
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(_encryptedname))
+                    return "adfsmfa";
+                else
+                    return _encryptedname;
+            }
+            set
+            {
+                _encryptedname = value;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">CertificateDuration, SQLServer crypting certificate duration, in years, default = 5. Required if new certificate is requested.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Data")]
+        public int CertificateDuration 
+        { 
+            get { return _duration; } 
+            set 
+            { 
+                if (value<1)
+                    _duration = 1;
+                else
+                    _duration = value;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">ReuseCertificate, Reuse existing SQLServer crypting certificate,you must also specify a certificate ThumPrint.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Data")]
+        public SwitchParameter ReuseCertificate
+        {
+            get { return _reuse; }
+            set { _reuse = value; }
+        }
+
+        /// <summary>
+        /// <para type="description">ThumbPrint, existing SQLServer crypting certificate thumbprint, you must specify switch parameter ReuseCertificate.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Data")]
+        public string ThumbPrint
+        {
+            get
+            {
+                if (!ReuseCertificate)
+                    return string.Empty;
+                else
+                    return _thumbprint;
+            }
+            set
+            {
+                if (ReuseCertificate)
+                {
+                    ManagementService.Initialize(true);
+                    ADFSServiceManager svc = ManagementService.ADFSManager;
+                    if (svc.CheckCertificate(value))
+                        _thumbprint = value.ToUpper();
+                    else
+                        throw new ArgumentException("Invalid certificate thumprint !", "ThumbPrint");
+                }
+            }
+        }
+
+    }
+
     #endregion  
 }

@@ -118,7 +118,9 @@
     <Content Include="Resources\p_authy2.png" />
     <Content Include="Resources\p_googleauthenticator.png" />
     <Content Include="Resources\p_msAuthenticator.png" />
+    <Content Include="SQL\mfa-db-Encrypted.sql" />
     <Content Include="SQL\mfa-db.sql" />
+    <Content Include="SQL\mfa-secretkey-db-Encrypted.sql" />
     <Content Include="SQL\mfa-secretkey-db.sql" />
   </ItemGroup>
   <ItemGroup>

@@ -121,7 +121,7 @@
     <value>Records count : {0}</value>
   </data>
   <data name="InfosRSACertificateChanged" xml:space="preserve">
-    <value>MFA certificate correctly updated !</value>
+    <value>MFA certificate correctly updated ! ThumbPrint {0}</value>
   </data>
   <data name="InfosSystemAlreadyInitialized" xml:space="preserve">
     <value>MFA is already initialized ! you must run "UnRegister-MFASytem" PowerShell Cmdlet if you want to reinitialize ALL the MFA configuration</value>
@@ -167,5 +167,8 @@
   </data>
   <data name="InfosSystemInInvalidState" xml:space="preserve">
     <value>MFA Configuration Import with errors !</value>
+  </data>
+  <data name="InfosSQLCertificateChanged" xml:space="preserve">
+    <value>SQL certificate correctly updated ! ThumbPrint {0}</value>
   </data>
 </root>

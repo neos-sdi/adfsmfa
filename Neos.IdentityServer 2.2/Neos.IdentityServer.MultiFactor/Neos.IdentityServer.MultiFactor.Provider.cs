@@ -844,51 +844,18 @@ namespace Neos.IdentityServer.MultiFactor
             usercontext.KeyChanged = false;
             try
             {
+                int btnclicked = Convert.ToInt32(proofData.Properties["btnclicked"].ToString());
                 int opt = Convert.ToInt32(proofData.Properties["opt"].ToString());
                 object rem = null;
                 bool remember = proofData.Properties.TryGetValue("remember", out rem);
-                switch (opt)
+                if (btnclicked == 0)
                 {
-                    case 0:
-                        if (RuntimeAuthProvider.IsProviderAvailable(usercontext, PreferredMethod.Code))
-                        {
-                            usercontext.PreferredMethod = PreferredMethod.Code;
-                            usercontext.UIMode = GetAuthenticationContextRequest(usercontext);
-                            result = new AdapterPresentation(this, context);
-                            if (remember)
-                                RuntimeRepository.SetUserRegistration(Config, (Registration)usercontext);
-                        }
-                        else
-                        {
-                            usercontext.PreferredMethod = PreferredMethod.Choose;
-                            usercontext.UIMode = ProviderPageMode.Locking;
-                            result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorInvalidIdentificationRestart"), ProviderPageMode.DefinitiveError);
-                        }
-                        break;
-                    case 1:
-                        if (RuntimeAuthProvider.IsProviderAvailable(usercontext, PreferredMethod.External))
-                        {
-                            usercontext.PreferredMethod = PreferredMethod.External;
-                            usercontext.UIMode = GetAuthenticationContextRequest(usercontext);
-                            result = new AdapterPresentation(this, context);
-                            if (remember)
-                                RuntimeRepository.SetUserRegistration(Config, (Registration)usercontext);
-                        }
-                        else
-                        {
-                            usercontext.PreferredMethod = PreferredMethod.Choose;
-                            usercontext.UIMode = ProviderPageMode.Locking;
-                            result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorInvalidIdentificationRestart"), ProviderPageMode.DefinitiveError);
-                        }
-                        break;
-                    case 2:
-                        if (RuntimeAuthProvider.IsProviderAvailable(usercontext, PreferredMethod.Email))
-                        {
-                            usercontext.PreferredMethod = PreferredMethod.Email;
-                            string stmail = proofData.Properties["stmail"].ToString();
-                            string idom = MailUtilities.StripEmailDomain(usercontext.MailAddress);
-                            if ((stmail.ToLower() + idom.ToLower()).Equals(usercontext.MailAddress.ToLower()) && (Utilities.ValidateEmail(usercontext.MailAddress, true)))
+                    switch (opt)
+                    {
+                        case 0:
+                            if (RuntimeAuthProvider.IsProviderAvailable(usercontext, PreferredMethod.Code))
                             {
+                                usercontext.PreferredMethod = PreferredMethod.Code;
                                 usercontext.UIMode = GetAuthenticationContextRequest(usercontext);
                                 result = new AdapterPresentation(this, context);
                                 if (remember)
@@ -900,35 +867,76 @@ namespace Neos.IdentityServer.MultiFactor
                                 usercontext.UIMode = ProviderPageMode.Locking;
                                 result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorInvalidIdentificationRestart"), ProviderPageMode.DefinitiveError);
                             }
-                        }
-                        else
-                        {
+                            break;
+                        case 1:
+                            if (RuntimeAuthProvider.IsProviderAvailable(usercontext, PreferredMethod.External))
+                            {
+                                usercontext.PreferredMethod = PreferredMethod.External;
+                                usercontext.UIMode = GetAuthenticationContextRequest(usercontext);
+                                result = new AdapterPresentation(this, context);
+                                if (remember)
+                                    RuntimeRepository.SetUserRegistration(Config, (Registration)usercontext);
+                            }
+                            else
+                            {
+                                usercontext.PreferredMethod = PreferredMethod.Choose;
+                                usercontext.UIMode = ProviderPageMode.Locking;
+                                result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorInvalidIdentificationRestart"), ProviderPageMode.DefinitiveError);
+                            }
+                            break;
+                        case 2:
+                            if (RuntimeAuthProvider.IsProviderAvailable(usercontext, PreferredMethod.Email))
+                            {
+                                usercontext.PreferredMethod = PreferredMethod.Email;
+                                if (Utilities.ValidateEmail(usercontext.MailAddress, true))
+                                {
+                                    usercontext.UIMode = GetAuthenticationContextRequest(usercontext);
+                                    result = new AdapterPresentation(this, context);
+                                    if (remember)
+                                        RuntimeRepository.SetUserRegistration(Config, (Registration)usercontext);
+                                }
+                                else
+                                {
+                                    usercontext.PreferredMethod = PreferredMethod.Choose;
+                                    usercontext.UIMode = ProviderPageMode.Locking;
+                                    result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorInvalidIdentificationRestart"), ProviderPageMode.DefinitiveError);
+                                }
+                            }
+                            else
+                            {
+                                usercontext.PreferredMethod = PreferredMethod.Choose;
+                                usercontext.UIMode = ProviderPageMode.Locking;
+                                result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorInvalidIdentificationRestart"), ProviderPageMode.DefinitiveError);
+                            }
+                            break;
+                        case 3:
+                            if (RuntimeAuthProvider.IsProviderAvailable(usercontext, PreferredMethod.Azure))
+                            {
+                                usercontext.PreferredMethod = PreferredMethod.Azure;
+                                usercontext.UIMode = GetAuthenticationContextRequest(usercontext);
+                                result = new AdapterPresentation(this, context);
+                                if (remember)
+                                    RuntimeRepository.SetUserRegistration(Config, (Registration)usercontext);
+                            }
+                            else
+                            {
+                                usercontext.PreferredMethod = PreferredMethod.Choose;
+                                usercontext.UIMode = ProviderPageMode.Locking;
+                                result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorInvalidIdentificationRestart"), ProviderPageMode.DefinitiveError);
+                            }
+                            break;
+                        default:
                             usercontext.PreferredMethod = PreferredMethod.Choose;
                             usercontext.UIMode = ProviderPageMode.Locking;
                             result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorInvalidIdentificationRestart"), ProviderPageMode.DefinitiveError);
-                        }
-                        break;
-                    case 3:
-                        if (RuntimeAuthProvider.IsProviderAvailable(usercontext, PreferredMethod.Azure))
-                        {
-                            usercontext.PreferredMethod = PreferredMethod.Azure;
-                            usercontext.UIMode = GetAuthenticationContextRequest(usercontext);
-                            result = new AdapterPresentation(this, context);
-                            if (remember)
-                                RuntimeRepository.SetUserRegistration(Config, (Registration)usercontext);
-                        }
-                        else
-                        {
-                            usercontext.PreferredMethod = PreferredMethod.Choose;
-                            usercontext.UIMode = ProviderPageMode.Locking;
-                            result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorInvalidIdentificationRestart"), ProviderPageMode.DefinitiveError);
-                        }
-                        break;
-                    case 4:
-                        usercontext.PreferredMethod = PreferredMethod.Choose;
-                        usercontext.UIMode = ProviderPageMode.Locking;
-                        result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorInvalidIdentificationRestart"), ProviderPageMode.DefinitiveError);
-                        break;
+                            break;
+                    }
+                }
+                else
+                {
+                    usercontext.PreferredMethod = PreferredMethod.Choose;
+                    usercontext.UIMode = ProviderPageMode.Locking;
+                    result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorInvalidIdentificationRestart"), ProviderPageMode.DefinitiveError);
                 }
             }
             catch (Exception ex)

@@ -1020,24 +1020,10 @@ namespace Neos.IdentityServer.MultiFactor
             result += "}" + "\r\n";
             result += "\r\n";
 
-            result += "function ValidateEmail(frm)" + "\r\n";
+            result += "function fnbtnclicked(id)" + "\r\n";
             result += "{" + "\r\n";
-            result += "   var data = document.getElementById('opt3');" + "\r\n";
-            result += "   var email = document.getElementById('stmail');" + "\r\n";
-            result += "   var err = document.getElementById('errorText');" + "\r\n";
-            result += "   if (data.checked)" + "\r\n";
-            result += "   {" + "\r\n";
-            result += "         if ((email) && (email.value!==''))" + "\r\n";
-            result += "         {" + "\r\n";
-            result += "             return true;" + "\r\n";
-            result += "         }" + "\r\n";
-            result += "         else" + "\r\n";
-            result += "         {" + "\r\n";
-            result += "             err.innerHTML = \"" + Resources.GetString(ResourcesLocaleKind.Validation, "ValidIncorrectEmail") + "\";" + "\r\n";
-            result += "             return false;" + "\r\n";
-            result += "         }" + "\r\n";
-            result += "   }" + "\r\n";
-            result += "   return true;" + "\r\n";
+            result += "   var lnk = document.getElementById('btnclicked');" + "\r\n";
+            result += "   lnk.value = id;" + "\r\n";
             result += "}" + "\r\n";
             result += "\r\n";
 
@@ -1062,39 +1048,68 @@ namespace Neos.IdentityServer.MultiFactor
             result += "}" + "\r\n";
             result += "</script>" + "\r\n";
 
-            result += "<form method=\"post\" id=\"ChooseMethodForm\" autocomplete=\"off\" onsubmit=\"return ValidateEmail(this)\" >";
+            result += "<form method=\"post\" id=\"ChooseMethodForm\" autocomplete=\"off\" \" >";
             result += "<div id=\"error\" class=\"fieldMargin error smallText\"><label id=\"errorText\" name=\"errorText\" for=\"\"></label></div>";
 
-            PreferredMethod method = usercontext.PreferredMethod;
+            PreferredMethod method = GetMethod4FBUsers(usercontext);
             if (RuntimeAuthProvider.IsProviderAvailableForUser(usercontext, PreferredMethod.Code))
             {
-               
-                result += "<input id=\"opt1\" name=\"opt\" type=\"radio\" value=\"0\" onchange=\"ChooseMethodChanged()\" "+ (((method == PreferredMethod.Code) || (method == PreferredMethod.Choose)) ? "checked=\"checked\"> " : "> ") + RuntimeAuthProvider.GetProvider(PreferredMethod.Code).GetUIChoiceLabel(usercontext)  + "<br /></br>";
-            }
-            if (RuntimeAuthProvider.IsProviderAvailableForUser(usercontext, PreferredMethod.Azure))
-            {
-                result += "<input id=\"opt4\" name=\"opt\" type=\"radio\" value=\"3\" onchange=\"ChooseMethodChanged()\" " + ((method == PreferredMethod.Azure) ? "checked=\"checked\"> " : "> ") + RuntimeAuthProvider.GetProvider(PreferredMethod.Azure).GetUIChoiceLabel(usercontext) + "</br></br>";
-            }
-            if (RuntimeAuthProvider.IsProviderAvailableForUser(usercontext, PreferredMethod.External))
-            {
-               result += "<input id=\"opt2\" name=\"opt\" type=\"radio\" value=\"1\" onchange=\"ChooseMethodChanged()\" " + ((method == PreferredMethod.External) ? "checked=\"checked\"> " : "> ") + RuntimeAuthProvider.GetProvider(PreferredMethod.External).GetUIChoiceLabel(usercontext) + "</br></br>";
+                result += "<input id=\"opt1\" name=\"opt\" type=\"radio\" value=\"0\" onchange=\"ChooseMethodChanged()\" "+ (((method == PreferredMethod.Code) || (method == PreferredMethod.Choose)) ? "checked=\"checked\"> " : "> ") + RuntimeAuthProvider.GetProvider(PreferredMethod.Code).GetUIChoiceLabel(usercontext)  + "<br /><br/>";
             }
 
             if (RuntimeAuthProvider.IsProviderAvailableForUser(usercontext, PreferredMethod.Email))
             {
-                result += "<input id=\"opt3\" name=\"opt\" type=\"radio\" value=\"2\" onchange=\"ChooseMethodChanged()\" " + ((method == PreferredMethod.Email) ? "checked=\"checked\"> " : "> ") + RuntimeAuthProvider.GetProvider(PreferredMethod.Email).GetUIChoiceLabel(usercontext) + "<br /><br />";
-                result += "<div>" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlCHOOSEOptionEmailWarning") + "</div></br>";
-                result += "<input id=\"stmail\" name=\"stmail\" type=\"text\" class=\"text fullWidth\" disabled=\"disabled\" placeholder=\"username" + MailUtilities.StripEmailDomain(usercontext.MailAddress) + "\"><br /><br />";
+                result += "<input id=\"opt3\" name=\"opt\" type=\"radio\" value=\"2\" onchange=\"ChooseMethodChanged()\" " + ((method == PreferredMethod.Email) ? "checked=\"checked\"> " : "> ") + RuntimeAuthProvider.GetProvider(PreferredMethod.Email).GetUIChoiceLabel(usercontext) + "<br />";
+                result += "<div style=\"text-indent: 20px;\"><i>" + usercontext.MailAddress + "</i></div><br/>";
             }
 
-            result += "<input id=\"opt5\" name=\"opt\" type=\"radio\" value=\"4\" onchange=\"ChooseMethodChanged()\"/> " + Resources.GetString(ResourcesLocaleKind.Html, "HtmlCHOOSEOptionNone") + "<br /><br />";
+            if (RuntimeAuthProvider.IsProviderAvailableForUser(usercontext, PreferredMethod.External))
+            {
+               result += "<input id=\"opt2\" name=\"opt\" type=\"radio\" value=\"1\" onchange=\"ChooseMethodChanged()\" " + ((method == PreferredMethod.External) ? "checked=\"checked\"> " : "> ") + RuntimeAuthProvider.GetProvider(PreferredMethod.External).GetUIChoiceLabel(usercontext) + "<br/><br/>";
+            }
+
+            if (RuntimeAuthProvider.IsProviderAvailableForUser(usercontext, PreferredMethod.Azure))
+            {
+                result += "<input id=\"opt4\" name=\"opt\" type=\"radio\" value=\"3\" onchange=\"ChooseMethodChanged()\" " + ((method == PreferredMethod.Azure) ? "checked=\"checked\"> " : "> ") + RuntimeAuthProvider.GetProvider(PreferredMethod.Azure).GetUIChoiceLabel(usercontext) + "<br/><br/>";
+            }
+
+            result += "<br/>";
             if (Provider.KeepMySelectedOptionOn())
                 result += "<input id=\"remember\" type=\"checkbox\" name=\"Remember\"> " + Resources.GetString(ResourcesLocaleKind.Html, "HtmlCHOOSEOptionRemember") + "<br /><br />";
             result += "<input id=\"context\" type=\"hidden\" name=\"Context\" value=\"%Context%\">";
             result += "<input id=\"authMethod\" type=\"hidden\" name=\"AuthMethod\" value=\"%AuthMethod%\">";
-            result += "<input id=\"saveButton\" type=\"submit\" class=\"submit\" name=\"Continue\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlCHOOSEOptionSendCode") + "\" >";
+            result += "<input id=\"btnclicked\" type=\"hidden\" name=\"btnclicked\" value=\"0\" />";
+
+            result += "<table><tr>";
+            result += "<td>";
+            result += "<input id=\"saveButton\" type=\"submit\" class=\"submit\" name=\"Continue\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlCHOOSEOptionSendCode") + "\" onclick=\"fnbtnclicked(0)\" />";
+            result += "</td>";
+            result += "<td style=\"width: 15px\" />";
+            result += "<td>";
+            result += "<input id=\"mfa-cancelButton\" type=\"submit\" class=\"submit\" name=\"cancel\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlPWDCancel") + "\" onclick=\"fnbtnclicked(1)\" />";
+            result += "</td>";
+            result += "</tr></table>";
             result += "</form>";
             return result;
+        }
+
+        /// <summary>
+        /// GetMethod4FBUsers method implementation
+        /// </summary>
+        private PreferredMethod GetMethod4FBUsers(AuthenticationContext usercontext)
+        {
+            PreferredMethod method = usercontext.PreferredMethod;
+            PreferredMethod idMethod = usercontext.PreferredMethod;
+            do
+            {
+                idMethod++;
+                if (idMethod > PreferredMethod.Azure)
+                    idMethod = PreferredMethod.Code;
+                else if (idMethod == method)
+                    return method;
+            } while (!RuntimeAuthProvider.IsProviderAvailableForUser(usercontext, idMethod));
+            return idMethod;
+
         }
         #endregion
 
@@ -2340,7 +2355,6 @@ namespace Neos.IdentityServer.MultiFactor
             return result;
         }
         #endregion
-
 
         #region Html Parts
         /// <summary>

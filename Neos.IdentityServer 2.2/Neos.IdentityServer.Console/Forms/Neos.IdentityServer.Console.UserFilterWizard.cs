@@ -49,6 +49,7 @@ namespace Neos.IdentityServer.Console
             bindingMethod.DataSource = new MMCPreferredMethodList(true);
             bindingOperator.DataSource = new MMCFilterOperatorList();
             bindingFields.DataSource = new MMCFilterFieldList();
+            bindingRestrictedOperator.DataSource = new MMCFilterOperatorRestrictedList();
 
             if (!MMCService.Filter.FilterisActive)
             {
@@ -102,6 +103,51 @@ namespace Neos.IdentityServer.Console
         {
             if (cbNull.Checked)
                 TXTValue.Text = string.Empty;
+        }
+
+        /// <summary>
+        /// CBFields_SelectedIndexChanged method 
+        /// </summary>
+        private void CBFields_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (MMCService.IsSQLEncrypted)
+            {
+                switch (((MMCFilterFieldItem)this.CBFields.SelectedItem).ID)
+                {
+                    case DataFilterField.UserName:
+                        if (this.CBOperators.DataSource != this.bindingOperator)
+                        {
+                            this.CBOperators.DataSource = this.bindingOperator;
+                            this.CBOperators.DisplayMember = "Label";
+                            this.CBOperators.ValueMember = "ID";
+                        }
+                        break;
+                    case DataFilterField.Email:
+                        if (this.CBOperators.DataSource != this.bindingRestrictedOperator)
+                        {
+                            this.CBOperators.DataSource = this.bindingRestrictedOperator;
+                            this.CBOperators.DisplayMember = "Label";
+                            this.CBOperators.ValueMember = "ID";
+                        }
+                        break;
+                    case DataFilterField.PhoneNumber:
+                        if (this.CBOperators.DataSource != this.bindingRestrictedOperator)
+                        {
+                            this.CBOperators.DataSource = this.bindingRestrictedOperator;
+                            this.CBOperators.DisplayMember = "Label";
+                            this.CBOperators.ValueMember = "ID";
+                        }
+                        break;
+                    default:
+                        if (this.CBOperators.DataSource != this.bindingOperator)
+                        {
+                            this.CBOperators.DataSource = this.bindingOperator;
+                            this.CBOperators.DisplayMember = "Label";
+                            this.CBOperators.ValueMember = "ID";
+                        }
+                        break;
+                }
+            }
         }
     }
 }

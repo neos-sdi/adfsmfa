@@ -367,9 +367,25 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         public bool IsAlwaysEncrypted { get; set; }
 
         /// <summary>
+        /// <para type="description">Get or Set the validity of the generated certificate (in years, 5 per default).</para>
+        /// </summary>
+        public int CertificateValidity { get; set; }
+
+        /// <summary>
         /// <para type="description">Get or Set the SQLServer 2016 and up Always Encrypted feature Thumprint.</para>
         /// </summary>
         public string ThumbPrint { get; set; }
+
+        /// <summary>
+        /// <para type="description">Get or Set the indicating if we are reusing an existing certificate.</para>
+        /// </summary>
+        public bool CertReuse { get; set; }
+
+        /// <summary>
+        /// <para type="description">Get or Set the SQLServer 2016 crypting key name.</para>
+        /// </summary>
+        public string KeyName { get; set; }
+
 
         /// <summary>
         /// implicit conversion to PSConfig
@@ -385,6 +401,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 psconfigsql.MaxRows = sqlconfig.MaxRows;
                 psconfigsql.IsAlwaysEncrypted = sqlconfig.IsAlwaysEncrypted;
                 psconfigsql.ThumbPrint = sqlconfig.ThumbPrint;
+                psconfigsql.KeyName = sqlconfig.KeyName;
+                psconfigsql.CertReuse = sqlconfig.CertReuse;
+                psconfigsql.CertificateValidity = sqlconfig.CertificateValidity;
                 return psconfigsql;
             }
         }
@@ -404,6 +423,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 config.MaxRows = psconfig.MaxRows;
                 config.IsAlwaysEncrypted = psconfig.IsAlwaysEncrypted;
                 config.ThumbPrint = psconfig.ThumbPrint;
+                config.KeyName = psconfig.KeyName;
+                config.CertReuse = psconfig.CertReuse;
+                config.CertificateValidity = psconfig.CertificateValidity;
                 return config;
             }
         }
@@ -635,6 +657,31 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         public string FullQualifiedImplementation { get; set; }
 
         /// <summary>
+        /// <para type="description">Encrypted, information for KeyManager about encrypting his data</para>
+        /// </summary>
+        public bool IsAlwaysEncrypted { get; set; }
+
+        /// <summary>
+        /// <para type="description">ThumbPrint of encryption certificate, see sample implementation of Neos.IdentityServer.Multifactor.Keys.CustomKeyManager</para>
+        /// </summary>
+        public string ThumbPrint { get; set; }
+
+        /// <summary>
+        /// <para type="description">Name of the SQL Server encryption key (default adfsmfa)</para>
+        /// </summary>
+        public string KeyName;
+
+        /// <summary>
+        /// <para type="description">ThumbPrint of encryption certificate, see sample implementation of Neos.IdentityServer.Multifactor.Keys.CustomKeyManager</para>
+        /// </summary>
+        public int CertificateValidity { get; set; }
+
+        /// <summary>
+        /// <para type="description">if you want to reuse the same certificate ThumbPrint of encryption certificate. </para>
+        /// </summary>
+        public bool CertReuse { get; set; }
+
+        /// <summary>
         /// <para type="description">Specify your own parameters, values stored as CNAME, set it as string with Parameters.Data = "myparameters"</para>
         /// </summary>
         public XmlCDataSection Parameters { get; set; }
@@ -650,7 +697,13 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             {
                 PSExternalKeyManager ret = new PSExternalKeyManager();
                 ret.FullQualifiedImplementation = mgr.FullQualifiedImplementation;
+                ret.IsAlwaysEncrypted = mgr.IsAlwaysEncrypted;
+                ret.KeyName = mgr.KeyName;
+                ret.CertificateValidity = mgr.CertificateValidity;
+                ret.CertReuse = mgr.CertReuse;
+                ret.ThumbPrint = mgr.ThumbPrint;
                 ret.Parameters = mgr.Parameters;
+
                 return ret;
             }
         }
@@ -666,6 +719,11 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             {
                 FlatExternalKeyManager ret = new FlatExternalKeyManager();
                 ret.FullQualifiedImplementation = mgr.FullQualifiedImplementation;
+                ret.IsAlwaysEncrypted = mgr.IsAlwaysEncrypted;
+                ret.KeyName = mgr.KeyName;
+                ret.CertificateValidity = mgr.CertificateValidity;
+                ret.CertReuse = mgr.CertReuse;
+                ret.ThumbPrint = mgr.ThumbPrint;
                 ret.Parameters = mgr.Parameters;
                 return ret;
             }

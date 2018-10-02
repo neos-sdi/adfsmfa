@@ -244,6 +244,16 @@ namespace Neos.IdentityServer.MultiFactor
         }
 
         /// <summary>
+        /// CreateSelfSignedCertificateForSQLEncryption method implementation
+        /// </summary>
+        public static X509Certificate2 CreateSelfSignedCertificateForSQLEncryption(string subjectName, int years)
+        {
+            string cert = InternalCreateSelfSignedCertificateForSQL(subjectName, years);
+            // instantiate the target class with the PKCS#12 data (and the empty password)
+            return new X509Certificate2(Convert.FromBase64String(cert), "", X509KeyStorageFlags.Exportable | X509KeyStorageFlags.PersistKeySet);
+        }
+
+        /// <summary>
         /// RemoveSelfSignedCertificate method implmentation
         /// </summary>
         public static bool RemoveSelfSignedCertificate(X509Certificate2 cert)
@@ -285,7 +295,7 @@ namespace Neos.IdentityServer.MultiFactor
         }
 
         /// <summary>
-        /// CreateSelfSignedCertificate method implementation
+        /// CreateSelfSignedCertificateAsString method implementation
         /// </summary>
         public static string CreateSelfSignedCertificateAsString(string subjectName, int years)
         {
@@ -293,7 +303,15 @@ namespace Neos.IdentityServer.MultiFactor
         }
 
         /// <summary>
-        /// CreateSelfSignedCertificate method implementation
+        /// CreateSelfSignedCertificateForSQLAsString method implementation
+        /// </summary>
+        public static string CreateSelfSignedCertificateForSQLAsString(string subjectName, int years)
+        {
+            return InternalCreateSelfSignedCertificateForSQL(subjectName, years);
+        }
+
+        /// <summary>
+        /// InternalCreateSelfSignedCertificate method implementation
         /// </summary>
         [SuppressUnmanagedCodeSecurity]
         private static string InternalCreateSelfSignedCertificate(string subjectName, int years)
@@ -357,5 +375,75 @@ namespace Neos.IdentityServer.MultiFactor
 
             return base64encoded;           
         }
+
+        /// <summary>
+        /// InternalCreateSelfSignedCertificate method implementation
+        /// </summary>
+        [SuppressUnmanagedCodeSecurity]
+        private static string InternalCreateSelfSignedCertificateForSQL(string keyName, int years)
+        {
+
+            var dn = new CX500DistinguishedName();
+            var neos = new CX500DistinguishedName();
+            dn.Encode("CN=" + keyName, X500NameFlags.XCN_CERT_NAME_STR_NONE);
+            neos.Encode("CN=Always Encrypted Certificate", X500NameFlags.XCN_CERT_NAME_STR_NONE);
+
+            CX509PrivateKey privateKey = new CX509PrivateKey();
+            privateKey.ProviderName = "Microsoft RSA SChannel Cryptographic Provider";
+            privateKey.MachineContext = true;
+            privateKey.Length = 2048;
+            privateKey.KeySpec = X509KeySpec.XCN_AT_KEYEXCHANGE; // use is not limited
+            privateKey.ExportPolicy = X509PrivateKeyExportFlags.XCN_NCRYPT_ALLOW_PLAINTEXT_EXPORT_FLAG | X509PrivateKeyExportFlags.XCN_NCRYPT_ALLOW_EXPORT_FLAG | X509PrivateKeyExportFlags.XCN_NCRYPT_ALLOW_ARCHIVING_FLAG | X509PrivateKeyExportFlags.XCN_NCRYPT_ALLOW_PLAINTEXT_ARCHIVING_FLAG;
+            privateKey.SecurityDescriptor = "D:PAI(A;;0xd01f01ff;;;SY)(A;;0xd01f01ff;;;BA)(A;;0x80120089;;;NS)";
+            privateKey.Create();
+
+            var hashobj = new CObjectId();
+            hashobj.InitializeFromAlgorithmName(ObjectIdGroupId.XCN_CRYPT_HASH_ALG_OID_GROUP_ID,
+                                                ObjectIdPublicKeyFlags.XCN_CRYPT_OID_INFO_PUBKEY_ANY,
+                                                AlgorithmFlags.AlgorithmFlagsNone, "SHA256");
+
+
+           // 2.5.29.37 – Enhanced Key Usage includes
+
+            var oid = new CObjectId();
+            oid.InitializeFromValue("1.3.6.1.5.5.8.2.2"); // IP security IKE intermediate
+            var oidlist = new CObjectIds();
+            oidlist.Add(oid);
+
+            var coid = new CObjectId();
+            coid.InitializeFromValue("1.3.6.1.4.1.311.10.3.11"); // Key Recovery
+            oidlist.Add(coid);
+
+            var eku = new CX509ExtensionEnhancedKeyUsage();
+            eku.InitializeEncode(oidlist);
+
+            // Create the self signing request
+            var cert = new CX509CertificateRequestCertificate();
+            cert.InitializeFromPrivateKey(X509CertificateEnrollmentContext.ContextAdministratorForceMachine, privateKey, "");
+            cert.Subject = dn;
+            cert.Issuer = neos;
+            cert.NotBefore = DateTime.Now.AddDays(-10);
+
+            cert.NotAfter = DateTime.Now.AddYears(years);
+            cert.X509Extensions.Add((CX509Extension)eku); // add the EKU
+            cert.HashAlgorithm = hashobj; // Specify the hashing algorithm
+            cert.Encode(); // encode the certificate
+
+            // Do the final enrollment process
+            var enroll = new CX509Enrollment();
+            enroll.InitializeFromRequest(cert); // load the certificate
+            enroll.CertificateFriendlyName = keyName; // Optional: add a friendly name
+
+            string csr = enroll.CreateRequest(); // Output the request in base64
+
+            // and install it back as the response
+            enroll.InstallResponse(InstallResponseRestrictionFlags.AllowUntrustedCertificate, csr, EncodingType.XCN_CRYPT_STRING_BASE64, ""); // no password
+
+            // output a base64 encoded PKCS#12 so we can import it back to the .Net security classes
+            var base64encoded = enroll.CreatePFX("", PFXExportOptions.PFXExportChainWithRoot);
+
+            return base64encoded;
+        }
+
     }
 }

@@ -71,6 +71,18 @@ namespace Neos.IdentityServer.Console
     }
 
     /// <summary>
+    /// MMCFilterOperatorRestrictedList class implémentation
+    /// </summary>
+    public class MMCFilterOperatorRestrictedList : BindingList<MMCFilterOperatorItem>
+    {
+        public MMCFilterOperatorRestrictedList()
+        {
+            this.Add(new MMCFilterOperatorItem() { ID = DataFilterOperator.Equal, Label = res.MMCOPEQUAL });
+            this.Add(new MMCFilterOperatorItem() { ID = DataFilterOperator.NotEqual, Label = res.MMCOPNOTEQUAL });
+        }
+    }
+
+    /// <summary>
     /// MMCPreferredMethodItem class implémentation
     /// </summary>
     public class MMCPreferredMethodItem

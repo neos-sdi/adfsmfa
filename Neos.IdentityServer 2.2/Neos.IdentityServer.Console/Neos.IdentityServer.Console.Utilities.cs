@@ -74,6 +74,21 @@ namespace Neos.IdentityServer.Console
             get { return _order; }
         }
 
+        /// <summary>
+        /// IsSQLEncrypted property
+        /// </summary>
+        public static bool IsSQLEncrypted
+        {
+            get 
+            { 
+                EnsureService();
+                if (!ManagementService.Config.UseActiveDirectory)
+                    return ManagementService.Config.Hosts.SQLServerHost.IsAlwaysEncrypted;
+                else
+                    return false;
+            }
+        }
+
         #region Utilities method
         /// <summary>
         /// IsValidEmail method implementation

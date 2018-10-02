@@ -52,7 +52,7 @@ using System.Resources;
 // en utilisant '*', comme ci-dessous :
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("2.2.0.0")]
-[assembly: AssemblyFileVersion("2.2.0.37")]
+[assembly: AssemblyFileVersion("2.2.0.39")]
 [assembly: AssemblyInformationalVersion("2.2.0.0")]
 
 

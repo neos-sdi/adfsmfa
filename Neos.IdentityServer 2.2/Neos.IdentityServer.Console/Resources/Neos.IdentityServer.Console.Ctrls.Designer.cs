@@ -853,7 +853,16 @@ namespace Neos.IdentityServer.Console.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à New SQL Keys Database.
+        ///   Recherche une chaîne localisée semblable à Create SQL crypted database.
+        /// </summary>
+        internal static string CTRLSECNEWCRYPTEDDATABASE {
+            get {
+                return ResourceManager.GetString("CTRLSECNEWCRYPTEDDATABASE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Create SQL Database.
         /// </summary>
         internal static string CTRLSECNEWDATABASE {
             get {
@@ -898,7 +907,7 @@ namespace Neos.IdentityServer.Console.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à SQL Keys: Creating the database.
+        ///   Recherche une chaîne localisée semblable à Create a new SQL database.
         /// </summary>
         internal static string CTRLSECWIZTITLE {
             get {
@@ -1123,11 +1132,47 @@ namespace Neos.IdentityServer.Console.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Create MFA Encrypted Database.
+        /// </summary>
+        internal static string CTRLSQLCREATECRYPTEDDB {
+            get {
+                return ResourceManager.GetString("CTRLSQLCREATECRYPTEDDB", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Create MFA Database.
         /// </summary>
         internal static string CTRLSQLCREATEDB {
             get {
                 return ResourceManager.GetString("CTRLSQLCREATEDB", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Use Always Encrypted feature (SQL Server 2016 +).
+        /// </summary>
+        internal static string CTRLSQLCRYPTUSING {
+            get {
+                return ResourceManager.GetString("CTRLSQLCRYPTUSING", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Name of the encryption key.
+        /// </summary>
+        internal static string CTRLSQLENCRYPTNAME {
+            get {
+                return ResourceManager.GetString("CTRLSQLENCRYPTNAME", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Invalid certificate {0}.
+        /// </summary>
+        internal static string CTRLSQLINVALIDCERTERROR {
+            get {
+                return ResourceManager.GetString("CTRLSQLINVALIDCERTERROR", resourceCulture);
             }
         }
         
@@ -1150,11 +1195,29 @@ namespace Neos.IdentityServer.Console.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Reuse Certificate.
+        /// </summary>
+        internal static string CTRLSQLREUSECERT {
+            get {
+                return ResourceManager.GetString("CTRLSQLREUSECERT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Test.
         /// </summary>
         internal static string CTRLSQLTEST {
             get {
                 return ResourceManager.GetString("CTRLSQLTEST", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Certificate thumprint.
+        /// </summary>
+        internal static string CTRLSQLTHUMBPRINT {
+            get {
+                return ResourceManager.GetString("CTRLSQLTHUMBPRINT", resourceCulture);
             }
         }
         

@@ -31,6 +31,7 @@ using System.Net;
 using System.Net.Mail;
 using System.Reflection;
 using res = Neos.IdentityServer.Console.Resources.Neos_IdentityServer_Console_Ctrls;
+using System.Security.Cryptography.X509Certificates;
 
 
 namespace Neos.IdentityServer.Console.Controls
@@ -3562,8 +3563,15 @@ namespace Neos.IdentityServer.Console.Controls
         private TextBox txtMaxRows;
         private bool _UpdateControlsLayouts;
         private Button btnConnect;
+        private CheckBox chkUseAlwaysEncryptSQL;
+        private TextBox txtEncryptKeyName;
+        private NumericUpDown txtCertificateDuration;
+        private CheckBox chkReuseCertificate;
+        private TextBox txtCertificateThumbPrint;
         private Button btnCreateDB;
+        private Button btnCreateCryptedDB;
         private ErrorProvider errors;
+
 
         /// <summary>
         /// ConfigurationControl Constructor
@@ -3654,12 +3662,12 @@ namespace Neos.IdentityServer.Console.Controls
             this.Margin = new Padding(30, 5, 30, 5);
 
             _panel.Width = 20;
-            _panel.Height = 151;
+            _panel.Height = 362;
             this.Controls.Add(_panel);
 
             _txtpanel.Left = 20;
             _txtpanel.Width = this.Width - 20;
-            _txtpanel.Height = 151;
+            _txtpanel.Height = 362;
             _txtpanel.BackColor = System.Drawing.SystemColors.Control;
             this.Controls.Add(_txtpanel);
 
@@ -3725,11 +3733,92 @@ namespace Neos.IdentityServer.Console.Controls
             btnCreateDB.Click += btnCreateDBClick;
             _txtpanel.Controls.Add(btnCreateDB);
 
+            chkUseAlwaysEncryptSQL = new CheckBox();
+            chkUseAlwaysEncryptSQL.Text = res.CTRLSQLCRYPTUSING;
+            chkUseAlwaysEncryptSQL.Checked = Config.Hosts.SQLServerHost.IsAlwaysEncrypted;
+            chkUseAlwaysEncryptSQL.Enabled = !Config.UseActiveDirectory;
+            chkUseAlwaysEncryptSQL.Left = 10;
+            chkUseAlwaysEncryptSQL.Top = 144;
+            chkUseAlwaysEncryptSQL.Width = 450;
+            chkUseAlwaysEncryptSQL.CheckedChanged += UseSQLCryptCheckedChanged;
+            _txtpanel.Controls.Add(chkUseAlwaysEncryptSQL);
+
+            Label lblEncryptKeyName = new Label();
+            lblEncryptKeyName.Text = res.CTRLSQLENCRYPTNAME + " : ";
+            lblEncryptKeyName.Left = 50;
+            lblEncryptKeyName.Top = 175;
+            lblEncryptKeyName.Width = 150;
+            _txtpanel.Controls.Add(lblEncryptKeyName);
+            
+            txtEncryptKeyName = new TextBox();
+            txtEncryptKeyName.Text = Config.Hosts.SQLServerHost.KeyName;
+            txtEncryptKeyName.Left = 210;
+            txtEncryptKeyName.Top = 171;
+            txtEncryptKeyName.Width = 100;
+            txtEncryptKeyName.Enabled = (!Config.UseActiveDirectory && Config.Hosts.SQLServerHost.IsAlwaysEncrypted);
+            txtEncryptKeyName.Validating += EncryptKeyNameValidating;
+            txtEncryptKeyName.Validated += EncryptKeyNameValidated;
+            _txtpanel.Controls.Add(txtEncryptKeyName);
+
+            Label lblCertificateDuration = new Label();
+            lblCertificateDuration.Text = res.CTRLSECCERTIFDURATION + " : ";
+            lblCertificateDuration.Left = 50;
+            lblCertificateDuration.Top = 206;
+            lblCertificateDuration.Width = 150;
+            _txtpanel.Controls.Add(lblCertificateDuration);
+
+            txtCertificateDuration = new NumericUpDown();
+            txtCertificateDuration.Left = 210;
+            txtCertificateDuration.Top = 202;
+            txtCertificateDuration.Width = 50;
+            txtCertificateDuration.TextAlign = HorizontalAlignment.Center;
+            txtCertificateDuration.Value = Config.Hosts.SQLServerHost.CertificateValidity;
+            txtCertificateDuration.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
+            txtCertificateDuration.Maximum = new decimal(new int[] { 9999, 0, 0, 0 });
+            txtCertificateDuration.ValueChanged += CertValidityChanged;
+            txtCertificateDuration.Enabled = (!Config.UseActiveDirectory && Config.Hosts.SQLServerHost.IsAlwaysEncrypted);
+            _txtpanel.Controls.Add(txtCertificateDuration);
+
+            chkReuseCertificate = new CheckBox();
+            chkReuseCertificate.Text = res.CTRLSQLREUSECERT;
+            chkReuseCertificate.Checked = Config.Hosts.SQLServerHost.CertReuse;
+            chkReuseCertificate.Enabled = (!Config.UseActiveDirectory && Config.Hosts.SQLServerHost.IsAlwaysEncrypted);
+            chkReuseCertificate.Left = 50;
+            chkReuseCertificate.Top = 233;
+            chkReuseCertificate.Width = 450;
+            chkReuseCertificate.CheckedChanged += UseSQLReuseCertCheckedChanged;
+            _txtpanel.Controls.Add(chkReuseCertificate);
+
+            Label lblCertificateThumbPrint = new Label();
+            lblCertificateThumbPrint.Text = res.CTRLSQLTHUMBPRINT + " : ";
+            lblCertificateThumbPrint.Left = 100;
+            lblCertificateThumbPrint.Top = 264;
+            lblCertificateThumbPrint.Width = 150;
+            _txtpanel.Controls.Add(lblCertificateThumbPrint);
+
+            txtCertificateThumbPrint = new TextBox();
+            txtCertificateThumbPrint.Text = Config.Hosts.SQLServerHost.ThumbPrint;
+            txtCertificateThumbPrint.Left = 260;
+            txtCertificateThumbPrint.Top = 260;
+            txtCertificateThumbPrint.Width = 300;
+            txtCertificateThumbPrint.Enabled = (!Config.UseActiveDirectory && Config.Hosts.SQLServerHost.IsAlwaysEncrypted && Config.Hosts.SQLServerHost.CertReuse);
+            txtCertificateThumbPrint.Validating += CertificateThumbPrintValidating;
+            txtCertificateThumbPrint.Validated += CertificateThumbPrintValidated;
+            _txtpanel.Controls.Add(txtCertificateThumbPrint);
+
+            btnCreateCryptedDB = new Button();
+            btnCreateCryptedDB.Text = res.CTRLSQLCREATECRYPTEDDB;
+            btnCreateCryptedDB.Left = 680;
+            btnCreateCryptedDB.Top = 322;
+            btnCreateCryptedDB.Width = 230;
+            btnCreateCryptedDB.Enabled = (!Config.UseActiveDirectory && Config.Hosts.SQLServerHost.IsAlwaysEncrypted);
+            btnCreateCryptedDB.Click += btnCreateCryptedDBClick;
+            _txtpanel.Controls.Add(btnCreateCryptedDB);
 
             LinkLabel tblSaveConfig = new LinkLabel();
             tblSaveConfig.Text = res.CTRLSAVE;
             tblSaveConfig.Left = 20;
-            tblSaveConfig.Top = 161;
+            tblSaveConfig.Top = 372;
             tblSaveConfig.Width = 60;
             tblSaveConfig.LinkClicked += SaveConfigLinkClicked;
             tblSaveConfig.TabStop = true;
@@ -3738,7 +3827,7 @@ namespace Neos.IdentityServer.Console.Controls
             LinkLabel tblCancelConfig = new LinkLabel();
             tblCancelConfig.Text = res.CTRLCANCEL;
             tblCancelConfig.Left = 90;
-            tblCancelConfig.Top = 161;
+            tblCancelConfig.Top = 372;
             tblCancelConfig.Width = 60;
             tblCancelConfig.LinkClicked += CancelConfigLinkClicked;
             tblCancelConfig.TabStop = true;
@@ -3765,7 +3854,7 @@ namespace Neos.IdentityServer.Console.Controls
         /// <summary>
         /// UpdateControlsLayouts method implementation
         /// </summary>
-        private void UpdateControlsLayouts(bool isenabled)
+        private void UpdateControlsLayouts(bool isenabled, bool iscrypted, bool reusecert)
         {
             if (_UpdateControlsLayouts)
                 return;
@@ -3776,6 +3865,12 @@ namespace Neos.IdentityServer.Console.Controls
                 txtMaxRows.Enabled = isenabled;
                 btnConnect.Enabled = isenabled;
                 btnCreateDB.Enabled = isenabled;
+                txtCertificateDuration.Enabled = isenabled && iscrypted;
+                txtEncryptKeyName.Enabled = isenabled && iscrypted;
+                txtCertificateThumbPrint.Enabled = isenabled && iscrypted && reusecert;
+                chkUseAlwaysEncryptSQL.Enabled = isenabled;
+                chkReuseCertificate.Enabled = isenabled && iscrypted;
+                btnCreateCryptedDB.Enabled = isenabled && iscrypted;
             }
             finally
             {
@@ -3798,6 +3893,18 @@ namespace Neos.IdentityServer.Console.Controls
                 }
                 else
                     errors.SetError(txtConnectionString, "");
+                if ((Config.Hosts.SQLServerHost.IsAlwaysEncrypted) &&(Config.Hosts.SQLServerHost.CertReuse))
+                {
+                    if (Certs.GetCertificate(Config.Hosts.SQLServerHost.ThumbPrint, StoreLocation.LocalMachine)==null)
+                    {
+                        ret = false;
+                        errors.SetError(txtCertificateThumbPrint, string.Format(res.CTRLSQLINVALIDCERTERROR, Config.Hosts.SQLServerHost.ThumbPrint));
+                    }
+                    else
+                        errors.SetError(txtCertificateThumbPrint, "");
+                }
+                else
+                    errors.SetError(txtCertificateThumbPrint, "");
             }
             catch (Exception Ex)
             {
@@ -3831,7 +3938,7 @@ namespace Neos.IdentityServer.Console.Controls
             {
                 Config.UseActiveDirectory = !chkUseSQL.Checked;
                 ManagementService.ADFSManager.SetDirty(true);
-                UpdateControlsLayouts(!Config.UseActiveDirectory);
+                UpdateControlsLayouts(!Config.UseActiveDirectory, Config.Hosts.SQLServerHost.IsAlwaysEncrypted, Config.Hosts.SQLServerHost.CertReuse);
             }
             catch (Exception ex)
             {
@@ -3920,7 +4027,6 @@ namespace Neos.IdentityServer.Console.Controls
             {
                 this.Cursor = Cursors.Default;
             }
-
         }
 
         /// <summary>
@@ -4006,6 +4112,210 @@ namespace Neos.IdentityServer.Console.Controls
                 messageBoxParameters.Buttons = MessageBoxButtons.OK;
                 messageBoxParameters.Icon = MessageBoxIcon.Error;
                 this._snapin.Console.ShowDialog(messageBoxParameters);
+            }
+        }
+
+        /// <summary>
+        /// btnCreateCryptedDBClick method implmentation
+        /// </summary>
+        private void btnCreateCryptedDBClick(object sender, EventArgs e)
+        {
+            DatabaseWizard Wizard = new DatabaseWizard();
+            try
+            {
+                if (Config.Hosts.SQLServerHost.IsAlwaysEncrypted)
+                {
+                    bool result = (this._snapin.Console.ShowDialog(Wizard) == DialogResult.OK);
+                    if (result)
+                    {
+                        string thumb = string.Empty;
+                        if ((Config.Hosts.SQLServerHost.CertReuse) && (Certs.GetCertificate(Config.Hosts.SQLServerHost.ThumbPrint.ToUpper(), StoreLocation.LocalMachine)) != null)
+                            thumb = Config.Hosts.SQLServerHost.ThumbPrint.ToUpper();
+                        else
+                            thumb = ManagementService.ADFSManager.RegisterNewSQLCertificate(null, Config.Hosts.SQLServerHost.CertificateValidity, Config.Hosts.SQLServerHost.KeyName);
+                        this.txtConnectionString.Text = ManagementService.ADFSManager.CreateMFAEncryptedDatabase(null, Wizard.txtInstance.Text, Wizard.txtDBName.Text, Wizard.txtAccount.Text, Wizard.txtPwd.Text, Config.Hosts.SQLServerHost.KeyName, thumb);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
+                messageBoxParameters.Text = ex.Message;
+                messageBoxParameters.Buttons = MessageBoxButtons.OK;
+                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                this._snapin.Console.ShowDialog(messageBoxParameters);
+            }
+        }
+
+        /// <summary>
+        /// UseSQLCryptCheckedChanged method implementation
+        /// </summary>
+        private void UseSQLCryptCheckedChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                Config.Hosts.SQLServerHost.IsAlwaysEncrypted = chkUseAlwaysEncryptSQL.Checked;
+                ManagementService.ADFSManager.SetDirty(true);
+                UpdateControlsLayouts(!Config.UseActiveDirectory, Config.Hosts.SQLServerHost.IsAlwaysEncrypted, Config.Hosts.SQLServerHost.CertReuse);
+            }
+            catch (Exception ex)
+            {
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
+                messageBoxParameters.Text = ex.Message;
+                messageBoxParameters.Buttons = MessageBoxButtons.OK;
+                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                this._snapin.Console.ShowDialog(messageBoxParameters);
+            }
+        }
+
+        /// <summary>
+        /// UseSQLReuseCertCheckedChanged method implementaton
+        /// </summary>
+        private void UseSQLReuseCertCheckedChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                this.Config.Hosts.SQLServerHost.CertReuse = chkReuseCertificate.Checked;
+                ManagementService.ADFSManager.SetDirty(true);
+                UpdateControlsLayouts(!Config.UseActiveDirectory, Config.Hosts.SQLServerHost.IsAlwaysEncrypted, Config.Hosts.SQLServerHost.CertReuse);
+            }
+            catch (Exception ex)
+            {
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
+                messageBoxParameters.Text = ex.Message;
+                messageBoxParameters.Buttons = MessageBoxButtons.OK;
+                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                this._snapin.Console.ShowDialog(messageBoxParameters);
+            }
+        }
+
+        /// <summary>
+        /// CertValidityChanged method implementation
+        /// </summary>
+        private void CertValidityChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                Config.Hosts.SQLServerHost.CertificateValidity = Convert.ToInt32(txtCertificateDuration.Value);
+                ManagementService.ADFSManager.SetDirty(true);
+            }
+            catch (Exception ex)
+            {
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
+                messageBoxParameters.Text = ex.Message;
+                messageBoxParameters.Buttons = MessageBoxButtons.OK;
+                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                this._snapin.Console.ShowDialog(messageBoxParameters);
+            }
+        }
+
+        /// <summary>
+        /// EncryptKeyNameValidated method implementation
+        /// </summary>
+        private void EncryptKeyNameValidated(object sender, EventArgs e)
+        {
+            try
+            {
+                if (txtEncryptKeyName.Modified)
+                {
+                    Config.Hosts.SQLServerHost.KeyName = txtEncryptKeyName.Text;
+                    ManagementService.ADFSManager.SetDirty(true);
+                }
+                errors.SetError(txtEncryptKeyName, "");
+            }
+            catch (Exception ex)
+            {
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
+                messageBoxParameters.Text = ex.Message;
+                messageBoxParameters.Buttons = MessageBoxButtons.OK;
+                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                this._snapin.Console.ShowDialog(messageBoxParameters);
+            }
+        }
+
+        /// <summary>
+        /// EncryptKeyNameValidating method implmentation
+        /// </summary>
+        private void EncryptKeyNameValidating(object sender, CancelEventArgs e)
+        {
+            this.Cursor = Cursors.WaitCursor;
+            try
+            {
+                if (txtEncryptKeyName.Modified)
+                {
+                    Config.Hosts.SQLServerHost.KeyName = txtEncryptKeyName.Text;
+                    ManagementService.ADFSManager.SetDirty(true);
+                }
+                e.Cancel = !UpdateAttributesLayouts();
+            }
+            catch (Exception ex)
+            {
+                e.Cancel = true;
+                errors.SetError(txtEncryptKeyName, ex.Message);
+            }
+            finally
+            {
+                this.Cursor = Cursors.Default;
+            }
+        }
+
+        /// <summary>
+        /// CertificateThumbPrintValidated method implementation
+        /// </summary>
+        private void CertificateThumbPrintValidated(object sender, EventArgs e)
+        {
+            try
+            {
+                if (txtCertificateThumbPrint.Modified)
+                {
+                    if ((Config.Hosts.SQLServerHost.IsAlwaysEncrypted) && (Config.Hosts.SQLServerHost.CertReuse))
+                    {
+                        if (Certs.GetCertificate(txtCertificateThumbPrint.Text, StoreLocation.LocalMachine) == null)
+                            throw new ArgumentException(String.Format(res.CTRLSQLINVALIDCERTERROR, txtCertificateThumbPrint.Text), "Certificate ThumbPrint");
+                    }
+                    Config.Hosts.SQLServerHost.ThumbPrint = txtCertificateThumbPrint.Text.ToUpper();
+                    ManagementService.ADFSManager.SetDirty(true);
+                }
+                errors.SetError(txtCertificateThumbPrint, "");
+            }
+            catch (Exception ex)
+            {
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
+                messageBoxParameters.Text = ex.Message;
+                messageBoxParameters.Buttons = MessageBoxButtons.OK;
+                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                this._snapin.Console.ShowDialog(messageBoxParameters);
+            }
+        }
+
+        /// <summary>
+        /// CertificateThumbPrintValidating method implementation
+        /// </summary>
+        private void CertificateThumbPrintValidating(object sender, CancelEventArgs e)
+        {
+            this.Cursor = Cursors.WaitCursor;
+            try
+            {
+                if (txtCertificateThumbPrint.Modified)
+                {
+                    if ((Config.Hosts.SQLServerHost.IsAlwaysEncrypted) && (Config.Hosts.SQLServerHost.CertReuse))
+                    {
+                        if (Certs.GetCertificate(txtCertificateThumbPrint.Text, StoreLocation.LocalMachine) == null)
+                            throw new ArgumentException(String.Format(res.CTRLSQLINVALIDCERTERROR, txtCertificateThumbPrint.Text), "Certificate ThumbPrint");
+                    }
+                    Config.Hosts.SQLServerHost.ThumbPrint = txtCertificateThumbPrint.Text.ToUpper();
+                    ManagementService.ADFSManager.SetDirty(true);
+                }
+                e.Cancel = !UpdateAttributesLayouts();
+            }
+            catch (Exception ex)
+            {
+                e.Cancel = true;
+                errors.SetError(txtCertificateThumbPrint, ex.Message);
+            }
+            finally
+            {
+                this.Cursor = Cursors.Default;
             }
         }
 
@@ -5910,6 +6220,12 @@ namespace Neos.IdentityServer.Console.Controls
         private CheckBox chkAllowGoogle;
         private CheckBox chkAllowAuthy;
         private CheckBox chkAllowSearch;
+        private CheckBox chkUseAlwaysEncryptSQL;
+        private TextBox txtEncryptKeyName;
+        private NumericUpDown txtCertificateDuration;
+        private CheckBox chkReuseCertificate;
+        private TextBox txtCertificateThumbPrint;
+        private Button btnCreateCryptedDB;
 
         /// <summary>
         /// ConfigurationControl Constructor
@@ -5990,17 +6306,17 @@ namespace Neos.IdentityServer.Console.Controls
         {
             this.SuspendLayout();
             this.Dock = DockStyle.Top;
-            this.Height = 612;
+            this.Height = 783;
             this.Width = 1050;
             this.Margin = new Padding(30, 5, 30, 5);
 
             _panel.Width = 20;
-            _panel.Height = 550;
+            _panel.Height = 741;
             this.Controls.Add(_panel);
 
             _txtpanel.Left = 20;
             _txtpanel.Width = this.Width - 20;
-            _txtpanel.Height = 550;
+            _txtpanel.Height = 741;
             _txtpanel.BackColor = System.Drawing.SystemColors.Control;
             this.Controls.Add(_txtpanel);
 
@@ -6205,7 +6521,7 @@ namespace Neos.IdentityServer.Console.Controls
             _panelRSA.Left = 0;
             _panelRSA.Top = 306;
             _panelRSA.Height = 50;
-            _panelRSA.Width = 700;
+            _panelRSA.Width = 1050;
             _txtpanel.Controls.Add(_panelRSA);
 
             Label lblRSA = new Label();
@@ -6223,7 +6539,8 @@ namespace Neos.IdentityServer.Console.Controls
             _panelRSA.Controls.Add(lblRSAKey);
 
             txtRSAThumb = new TextBox();
-            txtRSAThumb.Text = Config.KeysConfig.CertificateThumbprint;
+            if (!string.IsNullOrEmpty(Config.KeysConfig.CertificateThumbprint))
+                txtRSAThumb.Text = Config.KeysConfig.CertificateThumbprint.ToUpper();
             txtRSAThumb.Left = 180;
             txtRSAThumb.Top = 23;
             txtRSAThumb.Width = 300;
@@ -6233,9 +6550,9 @@ namespace Neos.IdentityServer.Console.Controls
 
             btnRSACert = new Button();
             btnRSACert.Text = res.CTRLSECNEWCERT;
-            btnRSACert.Left = 510;
+            btnRSACert.Left = 680;
             btnRSACert.Top = 21;
-            btnRSACert.Width = 150;
+            btnRSACert.Width = 250;
             btnRSACert.Click += btnRSACertClick;
             _panelRSA.Controls.Add(btnRSACert);
 
@@ -6243,7 +6560,7 @@ namespace Neos.IdentityServer.Console.Controls
             _panelCUSTOM = new Panel();
             _panelCUSTOM.Left = 0;
             _panelCUSTOM.Top = 381;
-            _panelCUSTOM.Height = 160;
+            _panelCUSTOM.Height = 791;
             _panelCUSTOM.Width = 1050;
             _txtpanel.Controls.Add(_panelCUSTOM);
 
@@ -6290,16 +6607,101 @@ namespace Neos.IdentityServer.Console.Controls
 
             btnCUSTOMDB = new Button();
             btnCUSTOMDB.Text = res.CTRLSECNEWDATABASE;
-            btnCUSTOMDB.Left = 180;
+            btnCUSTOMDB.Left = 680;
             btnCUSTOMDB.Top = 130;
             btnCUSTOMDB.Width = 250;
             btnCUSTOMDB.Click += btnCUSTOMDBClick;
             _panelCUSTOM.Controls.Add(btnCUSTOMDB);
 
+
+            chkUseAlwaysEncryptSQL = new CheckBox();
+            chkUseAlwaysEncryptSQL.Text = res.CTRLSQLCRYPTUSING;
+            chkUseAlwaysEncryptSQL.Checked = Config.KeysConfig.ExternalKeyManager.IsAlwaysEncrypted;
+            chkUseAlwaysEncryptSQL.Enabled = !Config.UseActiveDirectory;
+            chkUseAlwaysEncryptSQL.Left = 10;
+            chkUseAlwaysEncryptSQL.Top = 161;
+            chkUseAlwaysEncryptSQL.Width = 450;
+            chkUseAlwaysEncryptSQL.CheckedChanged += UseSQLCryptCheckedChanged;
+            _panelCUSTOM.Controls.Add(chkUseAlwaysEncryptSQL);
+
+            Label lblEncryptKeyName = new Label();
+            lblEncryptKeyName.Text = res.CTRLSQLENCRYPTNAME + " : ";
+            lblEncryptKeyName.Left = 50;
+            lblEncryptKeyName.Top = 192;
+            lblEncryptKeyName.Width = 150;
+            _panelCUSTOM.Controls.Add(lblEncryptKeyName);
+
+            txtEncryptKeyName = new TextBox();
+            txtEncryptKeyName.Text = Config.KeysConfig.ExternalKeyManager.KeyName;
+            txtEncryptKeyName.Left = 210;
+            txtEncryptKeyName.Top = 188;
+            txtEncryptKeyName.Width = 100;
+            txtEncryptKeyName.Enabled = Config.KeysConfig.ExternalKeyManager.IsAlwaysEncrypted;
+            txtEncryptKeyName.Validating += EncryptKeyNameValidating;
+            txtEncryptKeyName.Validated += EncryptKeyNameValidated;
+            _panelCUSTOM.Controls.Add(txtEncryptKeyName);
+
+            Label lblCertificateDuration = new Label();
+            lblCertificateDuration.Text = res.CTRLSECCERTIFDURATION + " : ";
+            lblCertificateDuration.Left = 50;
+            lblCertificateDuration.Top = 223;
+            lblCertificateDuration.Width = 150;
+            _panelCUSTOM.Controls.Add(lblCertificateDuration);
+
+            txtCertificateDuration = new NumericUpDown();
+            txtCertificateDuration.Left = 210;
+            txtCertificateDuration.Top = 219;
+            txtCertificateDuration.Width = 50;
+            txtCertificateDuration.TextAlign = HorizontalAlignment.Center;
+            txtCertificateDuration.Value = Config.KeysConfig.ExternalKeyManager.CertificateValidity;
+            txtCertificateDuration.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
+            txtCertificateDuration.Maximum = new decimal(new int[] { 9999, 0, 0, 0 });
+            txtCertificateDuration.ValueChanged += CertCryptValidityChanged;
+            txtCertificateDuration.Enabled = Config.KeysConfig.ExternalKeyManager.IsAlwaysEncrypted;
+            _panelCUSTOM.Controls.Add(txtCertificateDuration);
+
+            chkReuseCertificate = new CheckBox();
+            chkReuseCertificate.Text = res.CTRLSQLREUSECERT;
+            chkReuseCertificate.Checked = Config.KeysConfig.ExternalKeyManager.CertReuse;
+            chkReuseCertificate.Enabled = Config.KeysConfig.ExternalKeyManager.IsAlwaysEncrypted;
+            chkReuseCertificate.Left = 50;
+            chkReuseCertificate.Top = 254;
+            chkReuseCertificate.Width = 450;
+            chkReuseCertificate.CheckedChanged += UseSQLReuseCertCheckedChanged;
+            _panelCUSTOM.Controls.Add(chkReuseCertificate);
+
+            Label lblCertificateThumbPrint = new Label();
+            lblCertificateThumbPrint.Text = res.CTRLSQLTHUMBPRINT + " : ";
+            lblCertificateThumbPrint.Left = 100;
+            lblCertificateThumbPrint.Top = 285;
+            lblCertificateThumbPrint.Width = 150;
+            _panelCUSTOM.Controls.Add(lblCertificateThumbPrint);
+
+            txtCertificateThumbPrint = new TextBox();
+            if (!string.IsNullOrEmpty(Config.KeysConfig.ExternalKeyManager.ThumbPrint))
+                txtCertificateThumbPrint.Text = Config.KeysConfig.ExternalKeyManager.ThumbPrint.ToUpper();
+            txtCertificateThumbPrint.Left = 260;
+            txtCertificateThumbPrint.Top = 281;
+            txtCertificateThumbPrint.Width = 300;
+            txtCertificateThumbPrint.Enabled = (Config.KeysConfig.ExternalKeyManager.IsAlwaysEncrypted && Config.KeysConfig.ExternalKeyManager.CertReuse);
+            txtCertificateThumbPrint.Validating += CertificateThumbPrintValidating;
+            txtCertificateThumbPrint.Validated += CertificateThumbPrintValidated;
+            _panelCUSTOM.Controls.Add(txtCertificateThumbPrint);
+
+            btnCreateCryptedDB = new Button();
+            btnCreateCryptedDB.Text = res.CTRLSECNEWCRYPTEDDATABASE;
+            btnCreateCryptedDB.Left = 680;
+            btnCreateCryptedDB.Top = 312;
+            btnCreateCryptedDB.Width = 250;
+            btnCreateCryptedDB.Enabled = Config.KeysConfig.ExternalKeyManager.IsAlwaysEncrypted;
+            btnCreateCryptedDB.Click += btnCUSTOMCRYPTEDDBClick;
+            _panelCUSTOM.Controls.Add(btnCreateCryptedDB);
+
+          
             LinkLabel tblSaveConfig = new LinkLabel();
             tblSaveConfig.Text = res.CTRLSAVE;
             tblSaveConfig.Left = 20;
-            tblSaveConfig.Top = 561;
+            tblSaveConfig.Top = 751;
             tblSaveConfig.Width = 60;
             tblSaveConfig.LinkClicked += SaveConfigLinkClicked;
             tblSaveConfig.TabStop = true;
@@ -6308,7 +6710,7 @@ namespace Neos.IdentityServer.Console.Controls
             LinkLabel tblCancelConfig = new LinkLabel();
             tblCancelConfig.Text = res.CTRLCANCEL;
             tblCancelConfig.Left = 90;
-            tblCancelConfig.Top = 561;
+            tblCancelConfig.Top = 751;
             tblCancelConfig.Width = 60;
             tblCancelConfig.LinkClicked += CancelConfigLinkClicked;
             tblCancelConfig.TabStop = true;
@@ -6362,6 +6764,28 @@ namespace Neos.IdentityServer.Console.Controls
                         this._panelRNG.Enabled = false;
                         this._panelCERT.Enabled = true;
                         break;
+                }
+                if (_panelCUSTOM.Enabled)
+                {
+                    if (chkUseAlwaysEncryptSQL.Checked)
+                    {
+                        this.txtEncryptKeyName.Enabled = true;
+                        this.txtCertificateDuration.Enabled = true;
+                        this.chkReuseCertificate.Enabled = true;
+                        if (this.chkReuseCertificate.Checked)
+                            this.txtCertificateThumbPrint.Enabled = true;
+                        else
+                            this.txtCertificateThumbPrint.Enabled = false;
+                        this.btnCreateCryptedDB.Enabled = true;
+                    }
+                    else
+                    {
+                        this.txtEncryptKeyName.Enabled = false;
+                        this.txtCertificateDuration.Enabled = false;
+                        this.chkReuseCertificate.Enabled = false;
+                        this.txtCertificateThumbPrint.Enabled = false;
+                        this.btnCreateCryptedDB.Enabled = false;
+                    }
                 }
             }
             finally
@@ -6591,14 +7015,14 @@ namespace Neos.IdentityServer.Console.Controls
                 if (txtRSAThumb.Modified)
                 {
                     ManagementService.ADFSManager.SetDirty(true);
-                    Config.KeysConfig.CertificateThumbprint = txtRSAThumb.Text;
+                    Config.KeysConfig.CertificateThumbprint = txtRSAThumb.Text.ToUpper();
                 }
                 if (string.IsNullOrEmpty(txtRSAThumb.Text))
                 {
                     e.Cancel = true;
                     errors.SetError(txtRSAThumb, res.CTRLNULLOREMPTYERROR);
                 }
-                if (!ManagementService.ADFSManager.CheckCertificate(txtRSAThumb.Text))
+                if (!ManagementService.ADFSManager.CheckCertificate(txtRSAThumb.Text.ToUpper()))
                 {
                     e.Cancel = true;
                     errors.SetError(txtRSAThumb, res.CTRLSECINVALIDCERT);
@@ -6620,7 +7044,7 @@ namespace Neos.IdentityServer.Console.Controls
             {
                 if (txtRSAThumb.Modified)
                 {
-                    Config.KeysConfig.CertificateThumbprint = txtRSAThumb.Text;
+                    Config.KeysConfig.CertificateThumbprint = txtRSAThumb.Text.ToUpper(); ;
                     ManagementService.ADFSManager.SetDirty(true);
                 }
                 errors.SetError(txtRSAThumb, "");
@@ -6932,9 +7356,214 @@ namespace Neos.IdentityServer.Console.Controls
                 messageBoxParameters.Icon = MessageBoxIcon.Error;
                 this._snapin.Console.ShowDialog(messageBoxParameters);
             }
-
         }
 
+        /// <summary>
+        /// UseSQLCryptCheckedChanged method implementation
+        /// </summary>
+        private void UseSQLCryptCheckedChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                Config.KeysConfig.ExternalKeyManager.IsAlwaysEncrypted = chkUseAlwaysEncryptSQL.Checked;
+                ManagementService.ADFSManager.SetDirty(true);
+                UpdateControlsLayouts();
+            }
+            catch (Exception ex)
+            {
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
+                messageBoxParameters.Text = ex.Message;
+                messageBoxParameters.Buttons = MessageBoxButtons.OK;
+                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                this._snapin.Console.ShowDialog(messageBoxParameters);
+            }
+        }
+
+        /// <summary>
+        /// UseSQLReuseCertCheckedChanged method implementaton
+        /// </summary>
+        private void UseSQLReuseCertCheckedChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                Config.KeysConfig.ExternalKeyManager.CertReuse = chkReuseCertificate.Checked;
+                ManagementService.ADFSManager.SetDirty(true);
+                UpdateControlsLayouts();
+            }
+            catch (Exception ex)
+            {
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
+                messageBoxParameters.Text = ex.Message;
+                messageBoxParameters.Buttons = MessageBoxButtons.OK;
+                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                this._snapin.Console.ShowDialog(messageBoxParameters);
+            }
+        }
+
+        /// <summary>
+        /// CertValidityChanged method implementation
+        /// </summary>
+        private void CertCryptValidityChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                Config.KeysConfig.ExternalKeyManager.CertificateValidity = Convert.ToInt32(txtCertificateDuration.Value);
+                ManagementService.ADFSManager.SetDirty(true);
+            }
+            catch (Exception ex)
+            {
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
+                messageBoxParameters.Text = ex.Message;
+                messageBoxParameters.Buttons = MessageBoxButtons.OK;
+                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                this._snapin.Console.ShowDialog(messageBoxParameters);
+            }
+        }
+
+        /// <summary>
+        /// EncryptKeyNameValidated method implementation
+        /// </summary>
+        private void EncryptKeyNameValidated(object sender, EventArgs e)
+        {
+            try
+            {
+                if (txtEncryptKeyName.Modified)
+                {
+                    Config.KeysConfig.ExternalKeyManager.KeyName = txtEncryptKeyName.Text;
+                    ManagementService.ADFSManager.SetDirty(true);
+                }
+                errors.SetError(txtEncryptKeyName, "");
+            }
+            catch (Exception ex)
+            {
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
+                messageBoxParameters.Text = ex.Message;
+                messageBoxParameters.Buttons = MessageBoxButtons.OK;
+                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                this._snapin.Console.ShowDialog(messageBoxParameters);
+            }
+        }
+
+        /// <summary>
+        /// EncryptKeyNameValidating method implmentation
+        /// </summary>
+        private void EncryptKeyNameValidating(object sender, CancelEventArgs e)
+        {
+            this.Cursor = Cursors.WaitCursor;
+            try
+            {
+                if (txtEncryptKeyName.Modified)
+                {
+                    Config.KeysConfig.ExternalKeyManager.KeyName = txtEncryptKeyName.Text;
+                    ManagementService.ADFSManager.SetDirty(true);
+                }
+                UpdateControlsLayouts();
+                e.Cancel = false; 
+            }
+            catch (Exception ex)
+            {
+                e.Cancel = true;
+                errors.SetError(txtEncryptKeyName, ex.Message);
+            }
+            finally
+            {
+                this.Cursor = Cursors.Default;
+            }
+        }
+
+        /// <summary>
+        /// CertificateThumbPrintValidated method implementation
+        /// </summary>
+        private void CertificateThumbPrintValidated(object sender, EventArgs e)
+        {
+            try
+            {
+                if (txtCertificateThumbPrint.Modified)
+                {
+                    if ((Config.KeysConfig.ExternalKeyManager.IsAlwaysEncrypted) && (Config.KeysConfig.ExternalKeyManager.CertReuse))
+                    {
+                        if (Certs.GetCertificate(txtCertificateThumbPrint.Text, StoreLocation.LocalMachine) == null)
+                            throw new ArgumentException(String.Format(res.CTRLSQLINVALIDCERTERROR, txtCertificateThumbPrint.Text), "Certificate ThumbPrint");
+                    }
+                    Config.KeysConfig.ExternalKeyManager.ThumbPrint = txtCertificateThumbPrint.Text.ToUpper();
+                    ManagementService.ADFSManager.SetDirty(true);
+                }
+                errors.SetError(txtCertificateThumbPrint, "");
+            }
+            catch (Exception ex)
+            {
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
+                messageBoxParameters.Text = ex.Message;
+                messageBoxParameters.Buttons = MessageBoxButtons.OK;
+                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                this._snapin.Console.ShowDialog(messageBoxParameters);
+            }
+        }
+
+        /// <summary>
+        /// CertificateThumbPrintValidating method implementation
+        /// </summary>
+        private void CertificateThumbPrintValidating(object sender, CancelEventArgs e)
+        {
+            this.Cursor = Cursors.WaitCursor;
+            try
+            {
+                if (txtCertificateThumbPrint.Modified)
+                {
+                    if ((Config.KeysConfig.ExternalKeyManager.IsAlwaysEncrypted) && (Config.KeysConfig.ExternalKeyManager.CertReuse))
+                    {
+                        if (Certs.GetCertificate(txtCertificateThumbPrint.Text, StoreLocation.LocalMachine) == null)
+                            throw new ArgumentException(String.Format(res.CTRLSQLINVALIDCERTERROR, txtCertificateThumbPrint.Text), "Certificate ThumbPrint");
+                    }
+                    Config.KeysConfig.ExternalKeyManager.ThumbPrint = txtCertificateThumbPrint.Text.ToUpper();
+                    ManagementService.ADFSManager.SetDirty(true);
+                }
+                UpdateControlsLayouts();
+                e.Cancel = false; 
+            }
+            catch (Exception ex)
+            {
+                e.Cancel = true;
+                errors.SetError(txtCertificateThumbPrint, ex.Message);
+            }
+            finally
+            {
+                this.Cursor = Cursors.Default;
+            }
+        }
+
+        /// <summary>
+        /// btnCUSTOMCRYPTEDDBClick event
+        /// </summary>
+        private void btnCUSTOMCRYPTEDDBClick(object sender, EventArgs e)
+        {
+            DatabaseWizard Wizard = new DatabaseWizard();
+            Wizard.Text = res.CTRLSECWIZTITLE;
+            try
+            {
+                if (Config.KeysConfig.ExternalKeyManager.IsAlwaysEncrypted)
+                {
+                    bool result = (this._snapin.Console.ShowDialog(Wizard) == DialogResult.OK);
+                    if (result)
+                    {
+                        string thumb = string.Empty;
+                        if ((Config.KeysConfig.ExternalKeyManager.CertReuse) && (Certs.GetCertificate(Config.KeysConfig.ExternalKeyManager.ThumbPrint.ToUpper(), StoreLocation.LocalMachine)) != null)
+                            thumb = Config.Hosts.SQLServerHost.ThumbPrint.ToUpper();
+                        else
+                            thumb = ManagementService.ADFSManager.RegisterNewSQLCertificate(null, Config.KeysConfig.ExternalKeyManager.CertificateValidity, Config.KeysConfig.ExternalKeyManager.KeyName);
+                        this.txtParams.Text = ManagementService.ADFSManager.CreateMFAEncryptedSecretKeysDatabase(null, Wizard.txtInstance.Text, Wizard.txtDBName.Text, Wizard.txtAccount.Text, Wizard.txtPwd.Text, Config.KeysConfig.ExternalKeyManager.KeyName, thumb);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
+                messageBoxParameters.Text = ex.Message;
+                messageBoxParameters.Buttons = MessageBoxButtons.OK;
+                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                this._snapin.Console.ShowDialog(messageBoxParameters);
+            }
+        }
 
         /// <summary>
         /// SaveConfigLinkClicked event

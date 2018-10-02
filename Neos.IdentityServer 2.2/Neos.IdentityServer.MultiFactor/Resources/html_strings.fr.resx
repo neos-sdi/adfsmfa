@@ -124,7 +124,7 @@
     <value>Changer mon mot de passe</value>
   </data>
   <data name="HtmlCHOOSEOptionEmailWarning" xml:space="preserve">
-    <value>Pour confirmer qu'il s'agit bien de votre adresse de messagerie, complétez la partie masquée et cliquez sur "Envoyer le code" pour recevoir votre code.</value>
+    <value>Envoyer un email à</value>
   </data>
   <data name="HtmlCHOOSEOptionNone" xml:space="preserve">
     <value>Je n'ai aucune de ces informations</value>

@@ -301,6 +301,11 @@ namespace Neos.IdentityServer.MultiFactor
                 KeysConfig.CertificateThumbprint = Thumbprint.Empty;
                 KeysConfig.ExternalKeyManager.FullQualifiedImplementation = "Neos.IdentityServer.Multifactor.Keys.CustomKeyManager, Neos.IdentityServer.Multifactor.Keys.Sample, Version=2.2.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2";
                 KeysConfig.ExternalKeyManager.Parameters.Data = "Persist Security Info=False;Integrated Security=SSPI;Initial Catalog=yourdatabase;Data Source=yourserverinstance";
+                KeysConfig.ExternalKeyManager.CertificateValidity = 15;
+                KeysConfig.ExternalKeyManager.CertReuse = false;
+                KeysConfig.ExternalKeyManager.IsAlwaysEncrypted = false;
+                KeysConfig.ExternalKeyManager.KeyName = "adfsmfa";
+                KeysConfig.ExternalKeyManager.ThumbPrint = Thumbprint.Empty;
 
                 OTPProvider.Enabled = true;
                 OTPProvider.TOTPShadows = 2;
@@ -403,6 +408,8 @@ namespace Neos.IdentityServer.MultiFactor
                         KeysConfig.ExternalKeyManager.FullQualifiedImplementation = "Neos.IdentityServer.Multifactor.Keys.CustomKeyManager, Neos.IdentityServer.Multifactor.Keys.Sample, Version=2.2.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2";
                     if (this.KeysConfig.ExternalKeyManager.Parameters.Length == 0)
                         KeysConfig.ExternalKeyManager.Parameters.Data = "Persist Security Info=False;Integrated Security=SSPI;Initial Catalog=yourdatabase;Data Source=yourserverinstance";
+                    if (string.IsNullOrEmpty(KeysConfig.ExternalKeyManager.KeyName))
+                        KeysConfig.ExternalKeyManager.KeyName = "adfsmfa";
                 }
             }
             if (this.ExternalProvider != null)
@@ -653,13 +660,53 @@ namespace Neos.IdentityServer.MultiFactor
     public class ExternalKeyManagerConfig
     {
         private string _class;
+        private bool _encrypted = false;
+        private string _thumbprint;
         private XmlCDataSection _cdata;
+        private string _keyname = "adfsmfa";
+        private bool _certreuse = false;
+        private int _certvalidity = 15;
 
         [XmlAttribute("FullQualifiedImplementation")]
         public string FullQualifiedImplementation
         {
             get { return _class; }
             set { _class = value; }
+        }
+
+        [XmlAttribute("IsAlwaysEncrypted")]
+        public bool IsAlwaysEncrypted
+        {
+            get { return _encrypted; }
+            set { _encrypted = value; }
+        }
+
+        [XmlAttribute("ThumbPrint")]
+        public string ThumbPrint
+        {
+            get { return _thumbprint; }
+            set { _thumbprint = value; }
+        }
+
+        [XmlAttribute("KeyName")]
+        public string KeyName
+        {
+            get { return _keyname; }
+            set { _keyname = value; }
+        }
+
+        [XmlAttribute("CertReuse")]
+        public bool CertReuse 
+        { 
+            get { return _certreuse; }
+            set { _certreuse = value; }
+        }
+
+        [XmlAttribute("CertificateValidity")]
+        public int CertificateValidity 
+        {
+            get { return _certvalidity; }
+            set { _certvalidity = value; } 
         }
 
         [XmlElement("Parameters", typeof(XmlCDataSection))]
@@ -1303,8 +1350,11 @@ namespace Neos.IdentityServer.MultiFactor
     public class SQLServerHost
     {
         private int _maxrows = 10000;
+        private int _certduration = 5;
         private string _thumbprint = Thumbprint.Demo;
         private bool _isalwaysencrypted = false;
+        private string _keyname = "adfsmfa";
+        private bool _certreuse;
 
         [XmlAttribute("ConnectionString")]
         public string ConnectionString 
@@ -1313,11 +1363,32 @@ namespace Neos.IdentityServer.MultiFactor
             set;
         }
 
+        [XmlAttribute("KeyName")]
+        public string KeyName
+        {
+            get { return _keyname; }
+            set { _keyname = value; }
+        }
+
+        [XmlAttribute("CertReuse")]
+        public bool CertReuse 
+        {
+            get { return _certreuse; }
+            set { _certreuse = value; }
+        }
+
         [XmlAttribute("ThumbPrint")]
         public string ThumbPrint
         {
             get { return _thumbprint; }
             set { _thumbprint = value; }
+        }
+
+        [XmlAttribute("CertificateValidity")]
+        public int CertificateValidity
+        {
+            get { return _certduration; }
+            set { _certduration = value; }
         }
 
         [XmlAttribute("IsAlwaysEncrypted")]

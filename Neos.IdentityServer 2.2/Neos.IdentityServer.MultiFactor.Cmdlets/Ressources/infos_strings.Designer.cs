@@ -106,7 +106,7 @@ namespace Neos.IdentityServer.MultiFactor.Cmdlets.Ressources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à MFA certificate correctly updated !.
+        ///   Recherche une chaîne localisée semblable à MFA certificate correctly updated ! ThumbPrint {0}.
         /// </summary>
         internal static string InfosRSACertificateChanged {
             get {
@@ -120,6 +120,15 @@ namespace Neos.IdentityServer.MultiFactor.Cmdlets.Ressources {
         internal static string InfosServerServicesRestarted {
             get {
                 return ResourceManager.GetString("InfosServerServicesRestarted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à SQL certificate correctly updated ! ThumbPrint {0}.
+        /// </summary>
+        internal static string InfosSQLCertificateChanged {
+            get {
+                return ResourceManager.GetString("InfosSQLCertificateChanged", resourceCulture);
             }
         }
         

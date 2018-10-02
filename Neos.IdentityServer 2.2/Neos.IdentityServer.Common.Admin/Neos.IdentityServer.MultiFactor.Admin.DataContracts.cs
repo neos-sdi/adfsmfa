@@ -289,11 +289,14 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     [Serializable]
     public class FlatConfigSQL
     {
+        public string KeyName { get; set; }
+        public int CertificateValidity { get; set; }
         public bool IsDirty { get; set; }
         public string ConnectionString { get; set; }
         public int MaxRows { get; set; }
         public bool IsAlwaysEncrypted { get; set; }
         public string ThumbPrint { get; set; }
+        public bool CertReuse { get; set; }
 
         /// <summary>
         /// Update method implmentation
@@ -308,6 +311,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             MaxRows = sql.MaxRows;
             IsAlwaysEncrypted = sql.IsAlwaysEncrypted;
             ThumbPrint = sql.ThumbPrint;
+            KeyName = sql.KeyName;
+            CertReuse = sql.CertReuse;
+            CertificateValidity = sql.CertificateValidity;
         }
 
         /// <summary>
@@ -325,6 +331,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             sql.MaxRows = MaxRows;
             sql.IsAlwaysEncrypted = IsAlwaysEncrypted;
             sql.ThumbPrint = ThumbPrint;
+            sql.KeyName = KeyName;
+            sql.CertReuse = CertReuse;
+            sql.CertificateValidity = CertificateValidity;
             ManagementService.ADFSManager.WriteConfiguration(host);
         }
     }
@@ -456,6 +465,11 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     public class FlatExternalKeyManager
     {
         public string FullQualifiedImplementation { get; set; }
+        public bool IsAlwaysEncrypted { get; set; }
+        public string KeyName { get; set; }
+        public string ThumbPrint { get; set; }
+        public int CertificateValidity { get; set; }
+        public bool CertReuse { get; set; }
         public XmlCDataSection Parameters { get; set; }
 
         public static explicit operator ExternalKeyManagerConfig(FlatExternalKeyManager mgr)
@@ -466,7 +480,12 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             {
                 ExternalKeyManagerConfig ret = new ExternalKeyManagerConfig();
                 ret.FullQualifiedImplementation = mgr.FullQualifiedImplementation;
+                ret.IsAlwaysEncrypted = mgr.IsAlwaysEncrypted;
+                ret.ThumbPrint = mgr.ThumbPrint;
+                ret.KeyName = mgr.KeyName;
                 ret.Parameters = mgr.Parameters;
+                ret.CertificateValidity = mgr.CertificateValidity;
+                ret.CertReuse = mgr.CertReuse;
                 return ret;
             }
         }
@@ -479,7 +498,12 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             {
                 FlatExternalKeyManager ret = new FlatExternalKeyManager();
                 ret.FullQualifiedImplementation = mgr.FullQualifiedImplementation;
+                ret.IsAlwaysEncrypted = mgr.IsAlwaysEncrypted;
+                ret.ThumbPrint = mgr.ThumbPrint;
+                ret.KeyName = mgr.KeyName;
                 ret.Parameters = mgr.Parameters;
+                ret.CertificateValidity = mgr.CertificateValidity;
+                ret.CertReuse = mgr.CertReuse;
                 return ret;
             }
         }
@@ -487,10 +511,11 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         public void Load(PSHost host)
         {
             ManagementService.Initialize(host, true);
-           // MFAConfig cfg = ManagementService.ADFSManager.ReadConfiguration(host);
             MFAConfig cfg = ManagementService.Config;
             KeysManagerConfig otp = cfg.KeysConfig;
             this.FullQualifiedImplementation = otp.ExternalKeyManager.FullQualifiedImplementation;
+            this.ThumbPrint = otp.ExternalKeyManager.ThumbPrint;
+            this.IsAlwaysEncrypted = otp.ExternalKeyManager.IsAlwaysEncrypted;
             this.Parameters = otp.ExternalKeyManager.Parameters;
         }
 
@@ -504,10 +529,11 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             MFAConfig cfg = ManagementService.Config;
             KeysManagerConfig otp = cfg.KeysConfig;
             otp.ExternalKeyManager.FullQualifiedImplementation = this.FullQualifiedImplementation;
+            otp.ExternalKeyManager.ThumbPrint = this.ThumbPrint;
+            otp.ExternalKeyManager.IsAlwaysEncrypted = this.IsAlwaysEncrypted;
             otp.ExternalKeyManager.Parameters = this.Parameters;
             ManagementService.ADFSManager.WriteConfiguration(host);
         }
-
     }
 
   //  <OTPProvider WizardOptions="NoGoogleAuthenticator" Algorithm="SHA1" TOTPShadows="2" EnrollWizardStrict="false" EnrollWizard="true" PinRequired="false" Enabled="true"/>

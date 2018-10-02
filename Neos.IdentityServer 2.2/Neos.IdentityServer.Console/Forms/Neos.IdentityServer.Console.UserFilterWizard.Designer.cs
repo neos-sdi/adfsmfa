@@ -37,46 +37,47 @@
             this.cbNull = new System.Windows.Forms.CheckBox();
             this.label4 = new System.Windows.Forms.Label();
             this.CBMethod = new System.Windows.Forms.ComboBox();
-            this.bindingMethod = new System.Windows.Forms.BindingSource(this.components);
             this.CBEnabledOnly = new System.Windows.Forms.CheckBox();
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.CBFields = new System.Windows.Forms.ComboBox();
-            this.bindingFields = new System.Windows.Forms.BindingSource(this.components);
             this.CBOperators = new System.Windows.Forms.ComboBox();
+            this.bindingMethod = new System.Windows.Forms.BindingSource(this.components);
+            this.bindingFields = new System.Windows.Forms.BindingSource(this.components);
             this.bindingOperator = new System.Windows.Forms.BindingSource(this.components);
+            this.bindingRestrictedOperator = new System.Windows.Forms.BindingSource(this.components);
             this.GBFilters.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.bindingMethod)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingFields)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingOperator)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.bindingRestrictedOperator)).BeginInit();
             this.SuspendLayout();
             // 
             // BTNOk
             // 
-            resources.ApplyResources(this.BTNOk, "BTNOk");
             this.BTNOk.DialogResult = System.Windows.Forms.DialogResult.OK;
+            resources.ApplyResources(this.BTNOk, "BTNOk");
             this.BTNOk.Name = "BTNOk";
             this.BTNOk.UseVisualStyleBackColor = true;
             this.BTNOk.Click += new System.EventHandler(this.button1_Click);
             // 
             // BTNCancel
             // 
-            resources.ApplyResources(this.BTNCancel, "BTNCancel");
             this.BTNCancel.CausesValidation = false;
             this.BTNCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            resources.ApplyResources(this.BTNCancel, "BTNCancel");
             this.BTNCancel.Name = "BTNCancel";
             this.BTNCancel.UseVisualStyleBackColor = true;
             // 
             // TXTValue
             // 
-            resources.ApplyResources(this.TXTValue, "TXTValue");
             this.TXTValue.CausesValidation = false;
+            resources.ApplyResources(this.TXTValue, "TXTValue");
             this.TXTValue.Name = "TXTValue";
             // 
             // GBFilters
             // 
-            resources.ApplyResources(this.GBFilters, "GBFilters");
             this.GBFilters.Controls.Add(this.cbNull);
             this.GBFilters.Controls.Add(this.label4);
             this.GBFilters.Controls.Add(this.CBMethod);
@@ -87,6 +88,7 @@
             this.GBFilters.Controls.Add(this.CBFields);
             this.GBFilters.Controls.Add(this.CBOperators);
             this.GBFilters.Controls.Add(this.TXTValue);
+            resources.ApplyResources(this.GBFilters, "GBFilters");
             this.GBFilters.Name = "GBFilters";
             this.GBFilters.TabStop = false;
             // 
@@ -104,17 +106,13 @@
             // 
             // CBMethod
             // 
-            resources.ApplyResources(this.CBMethod, "CBMethod");
             this.CBMethod.DataSource = this.bindingMethod;
             this.CBMethod.DisplayMember = "Label";
             this.CBMethod.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.CBMethod.FormattingEnabled = true;
+            resources.ApplyResources(this.CBMethod, "CBMethod");
             this.CBMethod.Name = "CBMethod";
             this.CBMethod.ValueMember = "ID";
-            // 
-            // bindingMethod
-            // 
-            this.bindingMethod.DataSource = typeof(Neos.IdentityServer.Console.MMCPreferredMethodList);
             // 
             // CBEnabledOnly
             // 
@@ -139,33 +137,26 @@
             // 
             // CBFields
             // 
-            resources.ApplyResources(this.CBFields, "CBFields");
             this.CBFields.CausesValidation = false;
             this.CBFields.DataSource = this.bindingFields;
             this.CBFields.DisplayMember = "Label";
             this.CBFields.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.CBFields.FormattingEnabled = true;
+            resources.ApplyResources(this.CBFields, "CBFields");
             this.CBFields.Name = "CBFields";
             this.CBFields.ValueMember = "ID";
-            // 
-            // bindingFields
-            // 
-            this.bindingFields.DataSource = typeof(Neos.IdentityServer.Console.MMCFilterFieldList);
+            this.CBFields.SelectedIndexChanged += new System.EventHandler(this.CBFields_SelectedIndexChanged);
             // 
             // CBOperators
             // 
-            resources.ApplyResources(this.CBOperators, "CBOperators");
             this.CBOperators.CausesValidation = false;
             this.CBOperators.DataSource = this.bindingOperator;
             this.CBOperators.DisplayMember = "Label";
             this.CBOperators.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.CBOperators.FormattingEnabled = true;
+            resources.ApplyResources(this.CBOperators, "CBOperators");
             this.CBOperators.Name = "CBOperators";
             this.CBOperators.ValueMember = "ID";
-            // 
-            // bindingOperator
-            // 
-            this.bindingOperator.DataSource = typeof(Neos.IdentityServer.Console.MMCFilterOperatorList);
             // 
             // UsersFilterWizard
             // 
@@ -187,6 +178,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.bindingMethod)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingFields)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingOperator)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.bindingRestrictedOperator)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -209,5 +201,6 @@
         private System.Windows.Forms.BindingSource bindingOperator;
         private System.Windows.Forms.BindingSource bindingFields;
         private System.Windows.Forms.CheckBox cbNull;
+        private System.Windows.Forms.BindingSource bindingRestrictedOperator;
     }
 }
