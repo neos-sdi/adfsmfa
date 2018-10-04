@@ -1692,7 +1692,11 @@ namespace Neos.IdentityServer.MultiFactor
             result += "</script>" + "\r\n";
 
             result += "<form method=\"post\" id=\"enrollotpForm\" autocomplete=\"off\" \">";
+<<<<<<< HEAD
 
+=======
+            result += "<br>";
+>>>>>>> 5773576168fe0854777092911db8a6a6e31ac326
             switch (usercontext.WizPageID)
             {
                 case 0:
@@ -1839,7 +1843,7 @@ namespace Neos.IdentityServer.MultiFactor
                     result += "</td>";
                     result += "<td style=\"width: 15px\" />";
                     result += "<td>";
-                    result += "<input id=\"cancelButton\" type=\"submit\" class=\"submit\" name=\"cancel\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlPWDCancel") + "\" onclick=\"fnbtnclicked(1)\" />";
+                    result += "<input id=\"mfa-cancelButton\" type=\"submit\" class=\"submit\" name=\"cancel\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlPWDCancel") + "\" onclick=\"fnbtnclicked(1)\" />";
                     result += "</td>";
                     result += "</tr></table>";
                     break;
