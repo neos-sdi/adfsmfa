@@ -1692,9 +1692,15 @@ namespace Neos.IdentityServer.MultiFactor
             result += "</script>" + "\r\n";
 
             result += "<form method=\"post\" id=\"enrollotpForm\" autocomplete=\"off\" \">";
+
             switch (usercontext.WizPageID)
             {
                 case 0:
+                    if (!String.IsNullOrEmpty(usercontext.UIMessage))
+                        result += "<div id=\"error\" class=\"fieldMargin error smallText\"><label id=\"errorText\" name=\"errorText\" for=\"\">" + usercontext.UIMessage + "</label></div>";
+                    else
+                        result += "<div id=\"error\" class=\"fieldMargin error smallText\"><label id=\"errorText\" name=\"errorText\" for=\"\"></label></div>";
+
                     result += "<div class=\"fieldMargin smallText\"><label for=\"\"></label>" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelWREGOTP") + "</div></br>";
                     result += "<table>";
                     if (!Provider.Config.OTPProvider.WizardOptions.HasFlag(OTPWizardOptions.NoMicrosoftAuthenticator))
@@ -1869,7 +1875,12 @@ namespace Neos.IdentityServer.MultiFactor
                 result += "   var mailformat = " + reg + " ;" + "\r\n";
                 result += "   var email = document.getElementById('email');" + "\r\n";
                 result += "   var err = document.getElementById('errorText');" + "\r\n";
+                result += "   var canceled = document.getElementById('btnclicked');" + "\r\n";
 
+                result += "   if ((canceled) && (canceled.value==1))" + "\r\n";
+                result += "   {" + "\r\n";
+                result += "         return true;" + "\r\n";
+                result += "   }" + "\r\n";
                 result += "   if ((email) && (email.value==''))" + "\r\n";
                 result += "   {" + "\r\n";
                 result += "         err.innerHTML = \"" + Resources.GetString(ResourcesLocaleKind.Validation, "ValidIncorrectEmail") + "\";" + "\r\n";
@@ -2041,7 +2052,12 @@ namespace Neos.IdentityServer.MultiFactor
                 result += "   var phoneformatus = " + phous + " ;" + "\r\n";
                 result += "   var phone = document.getElementById('phone');" + "\r\n";
                 result += "   var err = document.getElementById('errorText');" + "\r\n";
+                result += "   var canceled = document.getElementById('btnclicked');" + "\r\n";
 
+                result += "   if ((canceled) && (canceled.value==1))" + "\r\n";
+                result += "   {" + "\r\n";
+                result += "         return true;" + "\r\n";
+                result += "   }" + "\r\n";
                 result += "   if ((phone) && (phone.value==''))" + "\r\n";
                 result += "   {" + "\r\n";
                 result += "         err.innerHTML = \"" + Resources.GetString(ResourcesLocaleKind.Validation, "ValidIncorrectPhoneNumber") + "\";" + "\r\n";

@@ -240,7 +240,9 @@ namespace Neos.IdentityServer.MultiFactor
         {
             string cert = InternalCreateSelfSignedCertificate(subjectName, years);
             // instantiate the target class with the PKCS#12 data (and the empty password)
-            return new X509Certificate2(Convert.FromBase64String(cert), "", X509KeyStorageFlags.Exportable | X509KeyStorageFlags.PersistKeySet);
+            X509Certificate2 x509 = new X509Certificate2(Convert.FromBase64String(cert), "", X509KeyStorageFlags.Exportable | X509KeyStorageFlags.PersistKeySet);
+            CleanSelfSignedCertificate(x509);
+            return x509;
         }
 
         /// <summary>
@@ -250,7 +252,9 @@ namespace Neos.IdentityServer.MultiFactor
         {
             string cert = InternalCreateSelfSignedCertificateForSQL(subjectName, years);
             // instantiate the target class with the PKCS#12 data (and the empty password)
-            return new X509Certificate2(Convert.FromBase64String(cert), "", X509KeyStorageFlags.Exportable | X509KeyStorageFlags.PersistKeySet);
+            X509Certificate2 x509 = new X509Certificate2(Convert.FromBase64String(cert), "", X509KeyStorageFlags.Exportable | X509KeyStorageFlags.PersistKeySet);
+            CleanSelfSignedCertificate(x509);
+            return x509;
         }
 
         /// <summary>
@@ -288,6 +292,38 @@ namespace Neos.IdentityServer.MultiFactor
                 {
                     store1.Close();
                     store2.Close();
+                }
+            }
+            else
+                return false;
+        }
+
+        /// <summary>
+        /// CleanSelfSignedCertificate method implmentation
+        /// </summary>
+        public static bool CleanSelfSignedCertificate(X509Certificate2 cert)
+        {
+            if (cert != null)
+            {
+                X509Store store = new X509Store(StoreName.CertificateAuthority, StoreLocation.LocalMachine);
+                store.Open(OpenFlags.MaxAllowed);
+                try
+                {
+                    X509Certificate2Collection collection2 = (X509Certificate2Collection)store.Certificates;
+                    X509Certificate2Collection findCollection2 = (X509Certificate2Collection)collection2.Find(X509FindType.FindByThumbprint, cert.Thumbprint, false);
+                    foreach (X509Certificate2 x509 in findCollection2)
+                    {
+                        store.Remove(x509);
+                    }
+                    return true;
+                }
+                catch
+                {
+                    return false;
+                }
+                finally
+                {
+                    store.Close();
                 }
             }
             else
