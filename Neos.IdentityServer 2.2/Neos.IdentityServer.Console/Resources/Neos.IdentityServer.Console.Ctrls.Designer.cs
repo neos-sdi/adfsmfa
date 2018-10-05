@@ -853,6 +853,15 @@ namespace Neos.IdentityServer.Console.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Certificate created successfully !.
+        /// </summary>
+        internal static string CTRLSECNEWCERTCREATED {
+            get {
+                return ResourceManager.GetString("CTRLSECNEWCERTCREATED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Create SQL crypted database.
         /// </summary>
         internal static string CTRLSECNEWCRYPTEDDATABASE {
@@ -880,7 +889,7 @@ namespace Neos.IdentityServer.Console.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Confirm the creation of a new certificate for MFA? \ rCaution: All existing keys will be invalidated !.
+        ///   Recherche une chaîne localisée semblable à Confirm the creation of a new certificate for MFA ? \rCaution: All existing keys will be invalidated !.
         /// </summary>
         internal static string CTRLSECRSAGENERATE {
             get {
@@ -1191,6 +1200,15 @@ namespace Neos.IdentityServer.Console.Resources {
         internal static string CTRLSQLMAXROWSERROR {
             get {
                 return ResourceManager.GetString("CTRLSQLMAXROWSERROR", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à MFA Database {0} created successfully !.
+        /// </summary>
+        internal static string CTRLSQLNEWDBCREATED {
+            get {
+                return ResourceManager.GetString("CTRLSQLNEWDBCREATED", resourceCulture);
             }
         }
         

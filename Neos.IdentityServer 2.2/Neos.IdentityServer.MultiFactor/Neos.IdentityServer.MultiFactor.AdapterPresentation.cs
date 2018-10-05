@@ -1692,7 +1692,6 @@ namespace Neos.IdentityServer.MultiFactor
             result += "</script>" + "\r\n";
 
             result += "<form method=\"post\" id=\"enrollotpForm\" autocomplete=\"off\" \">";
-
             switch (usercontext.WizPageID)
             {
                 case 0:
@@ -1813,6 +1812,7 @@ namespace Neos.IdentityServer.MultiFactor
                     KeysManager.NewKey(usercontext.UPN);
                     string displaykey = KeysManager.EncodedKey(usercontext.UPN);
 
+                    result += "</br>";
                     result += "<div class=\"fieldMargin smallText\"><label for=\"\"></label>" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelWRQRCode") + "</div></br>";
                     result += "<input id=\"secretkey\" name=\"secretkey\" type=\"text\" readonly=\"true\" placeholder=\"DisplayKey\" class=\"text fullWidth\" style=\"background-color: #C0C0C0\" value=\"" + StripDisplayKey(displaykey) + "\"/></br></br>";
                     result += "<p style=\"text-align:center\"><img id=\"qr\" src=\"data:image/png;base64," + Provider.GetQRCodeString(usercontext) + "\"/></p></br>";
@@ -1820,17 +1820,20 @@ namespace Neos.IdentityServer.MultiFactor
                     break;
                 case 2: // Code verification
                     IExternalProvider prov = RuntimeAuthProvider.GetProvider(PreferredMethod.Code);
+                    result += "</br>";
                     result += "<div class=\"fieldMargin smallText\"><label for=\"\"></label>" + prov.GetUILabel(usercontext) + " : </div>";
                     result += "<input id=\"totp\" name=\"totp\" type=\"password\" placeholder=\"Verification Code\" class=\"text fullWidth\" autofocus=\"autofocus\" /></br></br>";
                     result += "<input id=\"checkButton\" type=\"submit\" class=\"submit\" name=\"checkButton\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMCheck") + "\" onclick=\"fnbtnclicked(4)\" /></br></br>";
                     result += "<br />";
                     break;
                 case 3: // Successfull test
+                    result += "</br>";
                     result += "<div id=\"error\" class=\"fieldMargin error smallText\"><label id=\"errorText\" style=\"color: #6FA400\" name=\"errorText\" for=\"\">" + usercontext.UIMessage + "</label></div></br>";
                     result += "<p style=\"text-align:center\"><img id=\"msgreen\" src=\"data:image/png;base64," + Convert.ToBase64String(images.cvert.ToByteArray(ImageFormat.Jpeg)) + "\"/></p></br></br>";
                     result += "<input id=\"finishButton\" type=\"submit\" class=\"submit\" name=\"finishButton\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelVERIFYOTPOK") + "\" onclick=\"fnbtnclicked(1)\" />";                    
                     break;
                 case 4: // Wrong result test
+                    result += "</br>";
                     result += "<div id=\"error\" class=\"fieldMargin error smallText\"><label id=\"errorText\" name=\"errorText\" for=\"\">" + usercontext.UIMessage + "</label></div></br>";
                     result += "<p style=\"text-align:center\"><img id=\"msred\" src=\"data:image/png;base64," + Convert.ToBase64String(images.crouge.ToByteArray(ImageFormat.Jpeg)) + "\"/></p></br></br>";
                     result += "<table><tr>";

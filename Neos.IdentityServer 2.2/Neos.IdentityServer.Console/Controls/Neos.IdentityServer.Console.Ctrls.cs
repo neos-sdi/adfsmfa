@@ -4100,9 +4100,23 @@ namespace Neos.IdentityServer.Console.Controls
             try
             {
                 bool result = (this._snapin.Console.ShowDialog(Wizard) == DialogResult.OK);
-                if (result)
+                Cursor crs = this.Cursor;
+                try
                 {
-                    this.txtConnectionString.Text = ManagementService.ADFSManager.CreateMFADatabase(null, Wizard.txtInstance.Text, Wizard.txtDBName.Text, Wizard.txtAccount.Text, Wizard.txtPwd.Text);
+                    this.Cursor = Cursors.WaitCursor; 
+                    if (result)
+                    {
+                        this.txtConnectionString.Text = ManagementService.ADFSManager.CreateMFADatabase(null, Wizard.txtInstance.Text, Wizard.txtDBName.Text, Wizard.txtAccount.Text, Wizard.txtPwd.Text);
+                        MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
+                        messageBoxParameters.Text = string.Format(res.CTRLSQLNEWDBCREATED, Wizard.txtDBName.Text);
+                        messageBoxParameters.Buttons = MessageBoxButtons.OK;
+                        messageBoxParameters.Icon = MessageBoxIcon.Information;
+                        this._snapin.Console.ShowDialog(messageBoxParameters);
+                    }
+                }
+                finally
+                {
+                    this.Cursor = crs;
                 }
             }
             catch (Exception ex)
@@ -4126,14 +4140,28 @@ namespace Neos.IdentityServer.Console.Controls
                 if (Config.Hosts.SQLServerHost.IsAlwaysEncrypted)
                 {
                     bool result = (this._snapin.Console.ShowDialog(Wizard) == DialogResult.OK);
-                    if (result)
+                    Cursor crs = this.Cursor;
+                    try
                     {
-                        string thumb = string.Empty;
-                        if ((Config.Hosts.SQLServerHost.CertReuse) && (Certs.GetCertificate(Config.Hosts.SQLServerHost.ThumbPrint.ToUpper(), StoreLocation.LocalMachine)) != null)
-                            thumb = Config.Hosts.SQLServerHost.ThumbPrint.ToUpper();
-                        else
-                            thumb = ManagementService.ADFSManager.RegisterNewSQLCertificate(null, Config.Hosts.SQLServerHost.CertificateValidity, Config.Hosts.SQLServerHost.KeyName);
-                        this.txtConnectionString.Text = ManagementService.ADFSManager.CreateMFAEncryptedDatabase(null, Wizard.txtInstance.Text, Wizard.txtDBName.Text, Wizard.txtAccount.Text, Wizard.txtPwd.Text, Config.Hosts.SQLServerHost.KeyName, thumb);
+                        this.Cursor = Cursors.WaitCursor; 
+                        if (result)
+                        {
+                            string thumb = string.Empty;
+                            if ((Config.Hosts.SQLServerHost.CertReuse) && (Certs.GetCertificate(Config.Hosts.SQLServerHost.ThumbPrint.ToUpper(), StoreLocation.LocalMachine)) != null)
+                                thumb = Config.Hosts.SQLServerHost.ThumbPrint.ToUpper();
+                            else
+                                thumb = ManagementService.ADFSManager.RegisterNewSQLCertificate(null, Config.Hosts.SQLServerHost.CertificateValidity, Config.Hosts.SQLServerHost.KeyName);
+                            this.txtConnectionString.Text = ManagementService.ADFSManager.CreateMFAEncryptedDatabase(null, Wizard.txtInstance.Text, Wizard.txtDBName.Text, Wizard.txtAccount.Text, Wizard.txtPwd.Text, Config.Hosts.SQLServerHost.KeyName, thumb);
+                            MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
+                            messageBoxParameters.Text = string.Format(res.CTRLSQLNEWDBCREATED, Wizard.txtDBName.Text);
+                            messageBoxParameters.Buttons = MessageBoxButtons.OK;
+                            messageBoxParameters.Icon = MessageBoxIcon.Information;
+                            this._snapin.Console.ShowDialog(messageBoxParameters);
+                        }
+                    }
+                    finally
+                    {
+                        this.Cursor = crs;
                     }
                 }
             }
@@ -7318,9 +7346,25 @@ namespace Neos.IdentityServer.Console.Controls
                 messageBoxParameters.Buttons = MessageBoxButtons.OKCancel;
                 messageBoxParameters.Icon = MessageBoxIcon.Error;
                 bool result = (this._snapin.Console.ShowDialog(messageBoxParameters) == DialogResult.OK);
-                if (result)
+                Cursor curs = this.Cursor;
+                try
                 {
-                    this.txtRSAThumb.Text = ManagementService.ADFSManager.RegisterNewRSACertificate(null, Config.KeysConfig.CertificateValidity);
+                    this.Cursor = Cursors.WaitCursor;
+                    if (result)
+                    {
+                        this.txtRSAThumb.Text = ManagementService.ADFSManager.RegisterNewRSACertificate(null, Config.KeysConfig.CertificateValidity);
+
+                        MessageBoxParameters messageBoxParameters2 = new MessageBoxParameters();
+                        messageBoxParameters2.Text = res.CTRLSECNEWCERTCREATED;
+                        messageBoxParameters2.Buttons = MessageBoxButtons.OK;
+                        messageBoxParameters2.Icon = MessageBoxIcon.Information;
+                        this._snapin.Console.ShowDialog(messageBoxParameters2);
+
+                    }
+                }
+                finally
+                {
+                    this.Cursor = curs;
                 }
             }
             catch (Exception ex)
@@ -7343,9 +7387,23 @@ namespace Neos.IdentityServer.Console.Controls
             try
             {
                 bool result = (this._snapin.Console.ShowDialog(Wizard) == DialogResult.OK);
-                if (result)
+                Cursor curs = this.Cursor;
+                try
                 {
-                    this.txtParams.Text = ManagementService.ADFSManager.CreateMFASecretKeysDatabase(null, Wizard.txtInstance.Text, Wizard.txtDBName.Text, Wizard.txtAccount.Text, Wizard.txtPwd.Text);
+                    this.Cursor = Cursors.WaitCursor;
+                    if (result)
+                    {
+                        this.txtParams.Text = ManagementService.ADFSManager.CreateMFASecretKeysDatabase(null, Wizard.txtInstance.Text, Wizard.txtDBName.Text, Wizard.txtAccount.Text, Wizard.txtPwd.Text);
+                        MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
+                        messageBoxParameters.Text = string.Format(res.CTRLSQLNEWDBCREATED, Wizard.txtDBName.Text);
+                        messageBoxParameters.Buttons = MessageBoxButtons.OK;
+                        messageBoxParameters.Icon = MessageBoxIcon.Information;
+                        this._snapin.Console.ShowDialog(messageBoxParameters);
+                    }
+                }
+                finally
+                {
+                    this.Cursor = curs;
                 }
             }
             catch (Exception ex)
@@ -7544,14 +7602,29 @@ namespace Neos.IdentityServer.Console.Controls
                 if (Config.KeysConfig.ExternalKeyManager.IsAlwaysEncrypted)
                 {
                     bool result = (this._snapin.Console.ShowDialog(Wizard) == DialogResult.OK);
-                    if (result)
+                    Cursor curs = this.Cursor;
+                    try
                     {
-                        string thumb = string.Empty;
-                        if ((Config.KeysConfig.ExternalKeyManager.CertReuse) && (Certs.GetCertificate(Config.KeysConfig.ExternalKeyManager.ThumbPrint.ToUpper(), StoreLocation.LocalMachine)) != null)
-                            thumb = Config.Hosts.SQLServerHost.ThumbPrint.ToUpper();
-                        else
-                            thumb = ManagementService.ADFSManager.RegisterNewSQLCertificate(null, Config.KeysConfig.ExternalKeyManager.CertificateValidity, Config.KeysConfig.ExternalKeyManager.KeyName);
-                        this.txtParams.Text = ManagementService.ADFSManager.CreateMFAEncryptedSecretKeysDatabase(null, Wizard.txtInstance.Text, Wizard.txtDBName.Text, Wizard.txtAccount.Text, Wizard.txtPwd.Text, Config.KeysConfig.ExternalKeyManager.KeyName, thumb);
+                        this.Cursor = Cursors.WaitCursor;
+                        if (result)
+                        {
+                            string thumb = string.Empty;
+                            if ((Config.KeysConfig.ExternalKeyManager.CertReuse) && (Certs.GetCertificate(Config.KeysConfig.ExternalKeyManager.ThumbPrint.ToUpper(), StoreLocation.LocalMachine)) != null)
+                                thumb = Config.Hosts.SQLServerHost.ThumbPrint.ToUpper();
+                            else
+                                thumb = ManagementService.ADFSManager.RegisterNewSQLCertificate(null, Config.KeysConfig.ExternalKeyManager.CertificateValidity, Config.KeysConfig.ExternalKeyManager.KeyName);
+                            this.txtParams.Text = ManagementService.ADFSManager.CreateMFAEncryptedSecretKeysDatabase(null, Wizard.txtInstance.Text, Wizard.txtDBName.Text, Wizard.txtAccount.Text, Wizard.txtPwd.Text, Config.KeysConfig.ExternalKeyManager.KeyName, thumb);
+
+                            MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
+                            messageBoxParameters.Text = string.Format(res.CTRLSQLNEWDBCREATED, Wizard.txtDBName.Text);
+                            messageBoxParameters.Buttons = MessageBoxButtons.OK;
+                            messageBoxParameters.Icon = MessageBoxIcon.Information;
+                            this._snapin.Console.ShowDialog(messageBoxParameters);
+                        }
+                    }
+                    finally
+                    {
+                        this.Cursor = curs;
                     }
                 }
             }

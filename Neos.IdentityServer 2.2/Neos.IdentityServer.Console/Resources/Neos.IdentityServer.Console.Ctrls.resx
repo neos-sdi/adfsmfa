@@ -381,6 +381,9 @@
   <data name="CTRLSECNEWCERT" xml:space="preserve">
     <value>New certificate</value>
   </data>
+  <data name="CTRLSECNEWCERTCREATED" xml:space="preserve">
+    <value>Certificate created successfully !</value>
+  </data>
   <data name="CTRLSECNEWCRYPTEDDATABASE" xml:space="preserve">
     <value>Create SQL crypted database</value>
   </data>
@@ -391,7 +394,7 @@
     <value>Parameters</value>
   </data>
   <data name="CTRLSECRSAGENERATE" xml:space="preserve">
-    <value>Confirm the creation of a new certificate for MFA? \ rCaution: All existing keys will be invalidated !</value>
+    <value>Confirm the creation of a new certificate for MFA ? \rCaution: All existing keys will be invalidated !</value>
   </data>
   <data name="CTRLSECTHUMPRINT" xml:space="preserve">
     <value>Certificate thumbprint</value>
@@ -494,6 +497,9 @@
   </data>
   <data name="CTRLSQLMAXROWSERROR" xml:space="preserve">
     <value>{0} is not valid ! must be between 1000 and 1000000</value>
+  </data>
+  <data name="CTRLSQLNEWDBCREATED" xml:space="preserve">
+    <value>MFA Database {0} created successfully !</value>
   </data>
   <data name="CTRLSQLREUSECERT" xml:space="preserve">
     <value>Reuse Certificate</value>

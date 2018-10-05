@@ -381,6 +381,9 @@
   <data name="CTRLSECNEWCERT" xml:space="preserve">
     <value>Nuevo certificado</value>
   </data>
+  <data name="CTRLSECNEWCERTCREATED" xml:space="preserve">
+    <value>Certificado creado correctamente !</value>
+  </data>
   <data name="CTRLSECNEWCRYPTEDDATABASE" xml:space="preserve">
     <value>Crear base de datos encriptada</value>
   </data>
@@ -494,6 +497,9 @@
   </data>
   <data name="CTRLSQLMAXROWSERROR" xml:space="preserve">
     <value>{0} no es válido! el valor debe estar entre 1000 y 1000000</value>
+  </data>
+  <data name="CTRLSQLNEWDBCREATED" xml:space="preserve">
+    <value>MFA {0} base de datos creada con éxito !</value>
   </data>
   <data name="CTRLSQLREUSECERT" xml:space="preserve">
     <value>Reutilizar el certificado</value>
