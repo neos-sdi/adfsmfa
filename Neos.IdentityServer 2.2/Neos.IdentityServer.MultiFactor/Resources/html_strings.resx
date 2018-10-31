@@ -244,7 +244,7 @@
     <value>Register a new key</value>
   </data>
   <data name="HtmlLabelWREGOTP" xml:space="preserve">
-    <value>You must have an authentication application such as Microsoft Authenticator, Google Authenticator installed on your device before you can continue and register your account</value>
+    <value>You must first install an authenticator app on your mobile device. Install an app such as Microsoft Authenticator or Google Authenticator and then click Register a new key.</value>
   </data>
   <data name="HtmlLabelWREGOTPWarning" xml:space="preserve">
     <value>By continuing, your current key will be invalidated and reset</value>
