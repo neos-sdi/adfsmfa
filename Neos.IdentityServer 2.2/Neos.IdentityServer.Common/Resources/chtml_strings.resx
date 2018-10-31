@@ -202,11 +202,11 @@
     <comment>Accéder à mes options de configuration</comment>
   </data>
   <data name="OTPUIMessage" xml:space="preserve">
-    <value>Enter the verification code for your mobile application.</value>
+    <value>Enter the verification code displayed in the authenticator app on your mobile device.</value>
     <comment>Entrez le code de vérification de votre application mobile.</comment>
   </data>
   <data name="OTPUIOTPLabel" xml:space="preserve">
-    <value>Single use access code</value>
+    <value>Enter code</value>
     <comment>Code d'accès à usage unique</comment>
   </data>
   <data name="SMSUICFGLabel" xml:space="preserve">
