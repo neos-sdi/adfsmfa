@@ -1700,6 +1700,7 @@ namespace Neos.IdentityServer.MultiFactor
                     else
                         result += "<div id=\"error\" class=\"fieldMargin error smallText\"><label id=\"errorText\" name=\"errorText\" for=\"\"></label></div>";
 
+                    result += "<div id=\"loginMessage\" class=\"groupMargin\">Enroll Authenticator App</div>";
                     result += "<div class=\"fieldMargin smallText\"><label for=\"\"></label>" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelWREGOTP") + "</div></br>";
                     result += "<table>";
                     if (!Provider.Config.OTPProvider.WizardOptions.HasFlag(OTPWizardOptions.NoMicrosoftAuthenticator))
