@@ -206,7 +206,7 @@
     <comment>Entrez le code de vérification de votre application mobile.</comment>
   </data>
   <data name="OTPUIOTPLabel" xml:space="preserve">
-    <value>Enter code</value>
+    <value>Enter Code</value>
     <comment>Code d'accès à usage unique</comment>
   </data>
   <data name="SMSUICFGLabel" xml:space="preserve">
