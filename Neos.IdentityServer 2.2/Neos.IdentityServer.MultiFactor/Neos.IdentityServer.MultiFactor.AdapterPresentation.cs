@@ -320,23 +320,23 @@ namespace Neos.IdentityServer.MultiFactor
             if (_isPermanentFailure)
             {
                 if (!String.IsNullOrEmpty(usercontext.UIMessage))
-                    result += "<p class=\"error\">" + usercontext.UIMessage + "</p></br>";
+                    result += "<p class=\"error groupMargin\">" + usercontext.UIMessage + "</p>";
                 else
-                    result += "<p class=\"error\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlErrorRestartSession") + "</p></br>";
+                    result += "<p class=\"error groupMargin\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlErrorRestartSession") + "</p>";
             }
             else
             {
                 if (_ismessage)
-                    result += "<p class=\"text fullWidth\" style=\"color: #6FA400\">" + usercontext.UIMessage + "</p></br>";
+                    result += "<p class=\"text fullWidth groupMargin\" style=\"color: #6FA400\">" + usercontext.UIMessage + "</p>";
                 else
-                    result += "<p class=\"error\">" + usercontext.UIMessage + "</p></br>";
+                    result += "<p class=\"error groupMargin\">" + usercontext.UIMessage + "</p>";
             }
 
             IExternalProvider prov = RuntimeAuthProvider.GetProvider(usercontext.PreferredMethod);
             if ((prov != null) && (prov.IsUIElementRequired(usercontext, RequiredMethodElements.CodeInputRequired)))
             {
-                result += "<div class=\"fieldMargin smallText\"><label for=\"\"></label>" + prov.GetUILabel(usercontext) + " : </div>";
-                result += "<input id=\"totp\" name=\"totp\" type=\"password\" placeholder=\"Verification Code\" class=\"text fullWidth\" autofocus=\"autofocus\" /></br>";
+                result += "<div id=\"loginMessage\" class=\"fieldMargin smallText\"><label for=\"\"></label>" + prov.GetUILabel(usercontext) + " : </div>";
+                result += "<input id=\"totp\" name=\"totp\" type=\"password\" placeholder=\"Verification Code\" class=\"text textPaginated fullWidth\" autofocus=\"autofocus\" /></br>";
                 result += "<div class=\"fieldMargin smallText\"><label for=\"\"></label>" + prov.GetUIMessage(usercontext) + "</div>";
                 if (!string.IsNullOrEmpty(prov.GetUIWarningThirdPartyLabel(usercontext)) && (usercontext.IsSendBack))
                     result += "<div class=\"error smallText\"><label for=\"\"></label>" + prov.GetUIWarningThirdPartyLabel(usercontext) + "</div>";
