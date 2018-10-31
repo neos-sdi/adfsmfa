@@ -139,7 +139,7 @@
     <value>wrong Identification, please restart your session</value>
   </data>
   <data name="HtmlLabelWRQRCode" xml:space="preserve">
-    <value>Scan the QR Code with a TOTP application like Microsoft Authenticator, Google Authenticator for registering your account</value>
+    <value>In the authenticator app on your mobile device, add your account by scanning the QR code.</value>
   </data>
   <data name="HtmlPWDCancel" xml:space="preserve">
     <value>Cancel</value>
