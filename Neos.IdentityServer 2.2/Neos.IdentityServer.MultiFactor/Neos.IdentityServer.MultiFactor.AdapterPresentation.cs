@@ -1822,7 +1822,7 @@ namespace Neos.IdentityServer.MultiFactor
                 case 2: // Code verification
                     IExternalProvider prov = RuntimeAuthProvider.GetProvider(PreferredMethod.Code);
                     result += "<div id=\"loginMessage\" class=\"fieldMargin smallText\"><label for=\"\"></label>" + prov.GetUILabel(usercontext) + "</div>";
-                    result += "<input id=\"totp\" name=\"totp\" type=\"password\" placeholder=\"Verification Code\" class=\"text fullWidth\" autofocus=\"autofocus\" /></br></br>";
+                    result += "<input id=\"totp\" name=\"totp\" type=\"password\" placeholder=\"Code\" class=\"text textPaginated fullWidth\" autofocus=\"autofocus\" /></br></br>";
                     result += "<input id=\"checkButton\" type=\"submit\" class=\"submit\" name=\"checkButton\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMCheck") + "\" onclick=\"fnbtnclicked(4)\" /></br></br>";
                     result += "<br />";
                     break;
@@ -1999,7 +1999,7 @@ namespace Neos.IdentityServer.MultiFactor
                     break;
                 case 2: // Code verification
                     result += "<div class=\"fieldMargin smallText\"><label for=\"\"></label>" + prov.GetUILabel(usercontext) + " : </div>";
-                    result += "<input id=\"totp\" name=\"totp\" type=\"password\" placeholder=\"Verification Code\" class=\"text fullWidth\" autofocus=\"autofocus\" /></br></br>";
+                    result += "<input id=\"totp\" name=\"totp\" type=\"password\" placeholder=\"Code\" class=\"text textPaginated fullWidth\" autofocus=\"autofocus\" /></br></br>";
                     result += "<input id=\"checkButton\" type=\"submit\" class=\"submit\" name=\"checkButton\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMCheck") + "\" onclick=\"fnbtnclicked(4)\" /></br></br>";
                     result += "<br />";
                     break;
