@@ -335,7 +335,7 @@ namespace Neos.IdentityServer.MultiFactor
             IExternalProvider prov = RuntimeAuthProvider.GetProvider(usercontext.PreferredMethod);
             if ((prov != null) && (prov.IsUIElementRequired(usercontext, RequiredMethodElements.CodeInputRequired)))
             {
-                result += "<div id=\"loginMessage\" class=\"fieldMargin smallText\"><label for=\"\"></label>" + prov.GetUILabel(usercontext) + " : </div>";
+                result += "<div id=\"loginMessage\" class=\"fieldMargin smallText\"><label for=\"\"></label>" + prov.GetUILabel(usercontext) + "</div>";
                 result += "<input id=\"totp\" name=\"totp\" type=\"password\" placeholder=\"Code\" class=\"text textPaginated fullWidth\" autofocus=\"autofocus\" /></br>";
                 result += "<div class=\"fieldMargin smallText\"><label for=\"\"></label>" + prov.GetUIMessage(usercontext) + "</div>";
                 if (!string.IsNullOrEmpty(prov.GetUIWarningThirdPartyLabel(usercontext)) && (usercontext.IsSendBack))
@@ -1813,7 +1813,7 @@ namespace Neos.IdentityServer.MultiFactor
                     KeysManager.NewKey(usercontext.UPN);
                     string displaykey = KeysManager.EncodedKey(usercontext.UPN);
 
-                    result += "</br>";
+                    result += "<div id=\"loginMessage\" class=\"groupMargin\">Enroll Authenticator App</div>";
                     result += "<div class=\"fieldMargin smallText\"><label for=\"\"></label>" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelWRQRCode") + "</div></br>";
                     result += "<input id=\"secretkey\" name=\"secretkey\" type=\"text\" readonly=\"true\" placeholder=\"DisplayKey\" class=\"text fullWidth\" style=\"background-color: #C0C0C0\" value=\"" + StripDisplayKey(displaykey) + "\"/></br></br>";
                     result += "<p style=\"text-align:center\"><img id=\"qr\" src=\"data:image/png;base64," + Provider.GetQRCodeString(usercontext) + "\"/></p></br>";
@@ -1821,8 +1821,7 @@ namespace Neos.IdentityServer.MultiFactor
                     break;
                 case 2: // Code verification
                     IExternalProvider prov = RuntimeAuthProvider.GetProvider(PreferredMethod.Code);
-                    result += "</br>";
-                    result += "<div class=\"fieldMargin smallText\"><label for=\"\"></label>" + prov.GetUILabel(usercontext) + " : </div>";
+                    result += "<div id=\"loginMessage\" class=\"fieldMargin smallText\"><label for=\"\"></label>" + prov.GetUILabel(usercontext) + "</div>";
                     result += "<input id=\"totp\" name=\"totp\" type=\"password\" placeholder=\"Verification Code\" class=\"text fullWidth\" autofocus=\"autofocus\" /></br></br>";
                     result += "<input id=\"checkButton\" type=\"submit\" class=\"submit\" name=\"checkButton\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMCheck") + "\" onclick=\"fnbtnclicked(4)\" /></br></br>";
                     result += "<br />";
