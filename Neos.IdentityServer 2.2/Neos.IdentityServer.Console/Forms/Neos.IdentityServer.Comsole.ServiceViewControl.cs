@@ -33,10 +33,13 @@ using Neos.IdentityServer.MultiFactor.Administration;
 
 namespace Neos.IdentityServer.Console
 {
-    public partial class ServiceViewControl : UserControl, IFormViewControl
+    public partial class ServiceViewControl : UserControl, IFormViewControl, IMMCNotificationData
     {
         private Control oldParent;
         private ServiceFormView _frm = null;
+        private ConfigurationControl _ctrl = null;
+        private List<ADFSServerControl> _lst = new List<ADFSServerControl>();
+        private bool _notifenabled;
 
         /// <summary>
         /// Constructor
@@ -55,81 +58,6 @@ namespace Neos.IdentityServer.Console
             OnInitialize();
         }
 
-        /// <summary>
-        /// OnInitialize method
-        /// </summary>
-        protected virtual void OnInitialize()
-        {
-            this.Cursor = Cursors.WaitCursor;
-            this.SuspendLayout();
-            try
-            {
-                this.tableLayoutPanel.Controls.Add(new ConfigurationControl(), 0, 1);
-
-                bool isconfigured = ManagementService.ADFSManager.IsFarmConfigured();
-                if (isconfigured)
-                {
-                    int i = 3;
-                    foreach (ADFSServerHost srv in ManagementService.ADFSManager.ADFSFarm.Servers)
-                    {
-                        bool isok = ManagementService.ADFSManager.IsRunning(srv.FQDN);
-                        this.tableLayoutPanel.Controls.Add(new ADFSServerControl(srv, isok), 0, i);
-                        i++;
-                    }
-                }
-            }
-            finally
-            {
-                this.ResumeLayout(true);
-                this.Cursor = Cursors.Default;
-            }
-        }
-
-        /// <summary>
-        /// RefreshData method implementation
-        /// </summary>
-        internal void RefreshData()
-        {
-            this.Cursor = Cursors.WaitCursor;
-            ComponentResourceManager resources = new ComponentResourceManager(typeof(ServiceViewControl));
-            this.label1.Text = resources.GetString("label1.Text");
-            this.label2.Text = resources.GetString("label2.Text");
-            this.label3.Text = resources.GetString("label3.Text");
-            this.label4.Text = resources.GetString("label4.Text");
-
-            this.SuspendLayout();
-            try
-            {
-                for (int j = this.tableLayoutPanel.Controls.Count - 1; j >= 0; j--)
-                {
-                    Control ctrl = this.tableLayoutPanel.Controls[j];
-                    if (ctrl is ADFSServerControl)
-                        this.tableLayoutPanel.Controls.RemoveAt(j);
-                    else if (ctrl is ConfigurationControl)
-                        this.tableLayoutPanel.Controls.RemoveAt(j);
-                }
-
-                this.tableLayoutPanel.Controls.Add(new ConfigurationControl(), 0, 1);
-
-                bool isconfigured = ManagementService.ADFSManager.IsFarmConfigured();
-                if (isconfigured)
-                {
-                    int i = 3;
-                    foreach (ADFSServerHost srv in ManagementService.ADFSManager.ADFSFarm.Servers)
-                    {
-                        bool isok = ManagementService.ADFSManager.IsRunning(srv.FQDN);
-                        this.tableLayoutPanel.Controls.Add(new ADFSServerControl(srv, isok), 0, i);
-                        i++;
-                    }
-                }
-            }
-            finally
-            {
-                this.ResumeLayout(true);
-                this.Cursor = Cursors.Default;
-            }
-        }
-
         #region Properties
         /// <summary>
         /// FormView property implementation
@@ -138,6 +66,15 @@ namespace Neos.IdentityServer.Console
         {
             get { return _frm; }
             private set { _frm = value; }
+        }
+
+        /// <summary>
+        /// ControlInstance property implmentation
+        /// </summary>
+        protected ConfigurationControl ControlInstance
+        {
+            get { return _ctrl; }
+            private set { _ctrl = value; }
         }
 
         /// <summary>
@@ -155,6 +92,75 @@ namespace Neos.IdentityServer.Console
         {
             get { return this.FormView.ScopeNode as ServiceScopeNode; }
         }
+        #endregion
+
+        /// <summary>
+        /// OnInitialize method
+        /// </summary>
+        protected virtual void OnInitialize()
+        {
+            this.Cursor = Cursors.WaitCursor;
+            this.SuspendLayout();
+            try
+            {
+                ControlInstance = new ConfigurationControl(this);
+                this.tableLayoutPanel.Controls.Add(ControlInstance, 0, 1);
+
+                bool isconfigured = ManagementService.ADFSManager.IsFarmConfigured();
+                _lst.Clear();
+                if (isconfigured)
+                {
+                    int i = 3;
+                    foreach (ADFSServerHost srv in ManagementService.ADFSManager.ADFSFarm.Servers)
+                    {
+                        bool isok = ManagementService.ADFSManager.IsRunning(srv.FQDN);
+                        ADFSServerControl crt = new ADFSServerControl(this, srv, isok);
+                        _lst.Add(crt);
+                        this.tableLayoutPanel.Controls.Add(crt, 0, i);
+                        i++;
+                    }
+                }
+            }
+            finally
+            {
+                this.ResumeLayout(true);
+                this.Cursor = Cursors.Default;
+            }
+        }
+
+        /// <summary>
+        /// RefreshData method implementation
+        /// </summary>
+        internal void RefreshData()
+        {
+            this.SuspendLayout();
+            this.Cursor = Cursors.WaitCursor;
+            _notifenabled = false;
+            try
+            {
+                ComponentResourceManager resources = new ComponentResourceManager(typeof(ServiceViewControl));
+                this.label1.Text = resources.GetString("label1.Text");
+                this.label2.Text = resources.GetString("label2.Text");
+                this.label3.Text = resources.GetString("label3.Text");
+
+                ManagementService.ADFSManager.ReadConfiguration(null);
+                ((IMMCRefreshData)ControlInstance).DoRefreshData();
+                bool isconfigured = ManagementService.ADFSManager.IsFarmConfigured();
+                if (isconfigured)
+                {
+                    foreach (ADFSServerControl srv in _lst)
+                    {
+                        ((IMMCRefreshData)srv).DoRefreshData();
+                    }
+                }
+            }
+            finally
+            {
+                _notifenabled = true;
+                this.Cursor = Cursors.Default;
+                this.ResumeLayout();
+            }
+        }
 
         /// <summary>
         /// OnParentChanged method override
@@ -166,7 +172,7 @@ namespace Neos.IdentityServer.Console
                 if (!DesignMode)
                 {
                     Size = Parent.ClientSize;
-                    tableLayoutPanel.Size = Size; 
+                    tableLayoutPanel.Size = Size;
                 }
                 Parent.SizeChanged += Parent_SizeChanged;
             }
@@ -186,6 +192,13 @@ namespace Neos.IdentityServer.Console
             if (!DesignMode)
                 Size = Parent.ClientSize;
         }
-        #endregion
+
+        /// <summary>
+        /// IsNotifsEnabled method implementation
+        /// </summary>
+        public bool IsNotifsEnabled()
+        {
+            return _notifenabled;
+        }
     }
 }

@@ -64,7 +64,7 @@ namespace Neos.IdentityServer.MultiFactor
         public abstract bool AllowDisable { get; }
         public abstract bool AllowOverride { get; }
         public abstract bool AllowEnrollment { get; set; }
-        public abstract bool EnrollmentNeverUseOptions { get; set; }
+        public abstract ForceWizardMode ForceEnrollment { get; set; }
         public abstract string Name { get; }
         public abstract string Description { get; }
 
@@ -404,7 +404,7 @@ namespace Neos.IdentityServer.MultiFactor
         private HashMode Algorithm = HashMode.SHA1;
         private bool _isinitialized = false;
         private bool _allowenrollment = true;
-        private bool _enrollmentneveruseoptions = false;
+        private ForceWizardMode _forceenrollment = ForceWizardMode.Disabled;
 
         /// <summary>
         /// Kind property implementation
@@ -448,12 +448,12 @@ namespace Neos.IdentityServer.MultiFactor
         }
 
         /// <summary>
-        /// EnrollmentNeverUseOptions property implementation
+        /// ForceEnrollment property implementation
         /// </summary>
-        public override bool EnrollmentNeverUseOptions
+        public override ForceWizardMode ForceEnrollment
         {
-            get { return _enrollmentneveruseoptions; }
-            set { _enrollmentneveruseoptions = value; }
+            get { return _forceenrollment; }
+            set { _forceenrollment = value; }
         }
 
         /// <summary>
@@ -630,7 +630,7 @@ namespace Neos.IdentityServer.MultiFactor
                         Algorithm = param.Algorithm;
                         Enabled = param.Enabled;
                         AllowEnrollment = param.EnrollWizard;
-                        EnrollmentNeverUseOptions = param.EnrollWizardStrict;
+                        ForceEnrollment = param.ForceWizard;
                         PinRequired = param.PinRequired;
                         _isinitialized = true;
                         return;
@@ -777,7 +777,7 @@ namespace Neos.IdentityServer.MultiFactor
         private IExternalOTPProvider _sasprovider;
         private bool _isinitialized = false;
         private bool _allowenrollment = true;
-        private bool _enrollmentneveruseoptions = false;
+        private ForceWizardMode _forceenrollment = ForceWizardMode.Disabled;
 
         /// <summary>
         /// Kind property implementation
@@ -827,12 +827,12 @@ namespace Neos.IdentityServer.MultiFactor
         }
 
         /// <summary>
-        /// EnrollmentNeverUseOptions property implementation
+        /// ForceEnrollment property implementation
         /// </summary>
-        public override bool EnrollmentNeverUseOptions
+        public override ForceWizardMode ForceEnrollment
         {
-            get { return _enrollmentneveruseoptions; }
-            set { _enrollmentneveruseoptions = value; }
+            get { return _forceenrollment; }
+            set { _forceenrollment = value; }
         }
 
         /// <summary>
@@ -1041,7 +1041,7 @@ namespace Neos.IdentityServer.MultiFactor
 
                         Enabled = param.Enabled;
                         AllowEnrollment = param.EnrollWizard;
-                        EnrollmentNeverUseOptions = param.EnrollWizardStrict;
+                        ForceEnrollment = param.ForceWizard;
                         PinRequired = param.PinRequired;
                         _isinitialized = true;
                         return;
@@ -1182,7 +1182,7 @@ namespace Neos.IdentityServer.MultiFactor
         private bool _isinitialized = false;
         private MailProvider Data;
         private bool _allowenrollment = true;
-        private bool _enrollmentneveruseoptions = false;
+        private ForceWizardMode _forceenrollment = ForceWizardMode.Disabled;
 
         /// <summary>
         /// Kind property implementation
@@ -1226,12 +1226,12 @@ namespace Neos.IdentityServer.MultiFactor
         }
 
         /// <summary>
-        /// EnrollmentNeverUseOptions property implementation
+        /// ForceEnrollment property implementation
         /// </summary>
-        public override bool EnrollmentNeverUseOptions
+        public override ForceWizardMode ForceEnrollment
         {
-            get { return _enrollmentneveruseoptions; }
-            set { _enrollmentneveruseoptions = value; }
+            get { return _forceenrollment; }
+            set { _forceenrollment = value; }
         }
 
         /// <summary>
@@ -1411,7 +1411,7 @@ namespace Neos.IdentityServer.MultiFactor
                         Data = param.Data;
                         Enabled = param.Enabled;
                         AllowEnrollment = param.EnrollWizard;
-                        EnrollmentNeverUseOptions = param.EnrollWizardStrict;
+                        ForceEnrollment = param.ForceWizard;
                         PinRequired = param.PinRequired;
                         _isinitialized = true;
                         return;

@@ -32,10 +32,11 @@ namespace Neos.IdentityServer.Multifactor.Keys
     /// <summary>
     /// KeyManager Class
     /// </summary>
-    public class CustomKeyManager : ISecretKeyManager
+    public class CustomKeyManager : ISecretKeyManager, IDataRepositorySQLConnection
     {
         private MFAConfig _cfg;
         private string _connectionstring;
+        private string _dataparameters;
         private int _validity;
         private static Encryption _cryptoRSADataProvider = null;
         private KeySizeMode _ksize = KeySizeMode.KeySize1024;
@@ -57,7 +58,8 @@ namespace Neos.IdentityServer.Multifactor.Keys
         public void Initialize(MFAConfig config)
         {
             _cfg = config;
-            _connectionstring = config.KeysConfig.ExternalKeyManager.Parameters.Data;
+            _connectionstring = config.KeysConfig.ExternalKeyManager.ConnectionString;
+            _dataparameters = config.KeysConfig.ExternalKeyManager.Parameters.Data;
             _validity = config.KeysConfig.CertificateValidity;
             _ksize = config.KeysConfig.KeySize;
             _repos = new CustomKeysRepositoryService(_cfg);
@@ -230,6 +232,14 @@ namespace Neos.IdentityServer.Multifactor.Keys
             return key.StartsWith(this.Prefix);
         }
 
+        /// <summary>
+        /// CheckConnection method implementation
+        /// </summary>
+        public bool CheckConnection(string connectionstring)
+        {
+            return (KeysStorage as IDataRepositorySQLConnection).CheckConnection(connectionstring);
+        }
+
         #region private methods
         /// <summary>
         /// CreateCertificate method implmentation
@@ -246,16 +256,18 @@ namespace Neos.IdentityServer.Multifactor.Keys
         #endregion
     }
 
-    internal class CustomKeysRepositoryService : KeysRepositoryService
+    internal class CustomKeysRepositoryService : KeysRepositoryService, IDataRepositorySQLConnection
     {
         string _connectionstring;
+        string _dataparameters;
 
         /// <summary>
         /// ADDSKeysRepositoryService constructor
         /// </summary>
         public CustomKeysRepositoryService(MFAConfig cfg)
         {
-            _connectionstring = cfg.KeysConfig.ExternalKeyManager.Parameters.Data;
+            _connectionstring = cfg.KeysConfig.ExternalKeyManager.ConnectionString;
+            _dataparameters = cfg.KeysConfig.ExternalKeyManager.Parameters.Data;
         }
 
         #region Key Management
@@ -409,6 +421,33 @@ namespace Neos.IdentityServer.Multifactor.Keys
         {
             return true;
         }
+
+        /// <summary>
+        /// CheckConnection method implementation
+        /// </summary>
+        public bool CheckConnection(string connectionstring)
+        {
+            SqlConnection con;
+            if (string.IsNullOrEmpty(connectionstring))
+                return false;
+            if (!connectionstring.ToLower().Contains("connection timeout="))
+                connectionstring += ";Connection Timeout=2";
+            con = new SqlConnection(connectionstring);
+            try
+            {
+                con.Open();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            finally
+            {
+                con.Close();
+            }
+        }
+
 
         #region private methods
         /// <summary>

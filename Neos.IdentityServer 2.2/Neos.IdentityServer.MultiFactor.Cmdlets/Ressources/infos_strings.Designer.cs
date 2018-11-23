@@ -106,7 +106,7 @@ namespace Neos.IdentityServer.MultiFactor.Cmdlets.Ressources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à MFA certificate correctly updated ! ThumbPrint {0}.
+        ///   Recherche une chaîne localisée semblable à MFA certificate {0} correctly updated ! You must deploy this certificate on all others ADFS servers..
         /// </summary>
         internal static string InfosRSACertificateChanged {
             get {
@@ -124,7 +124,7 @@ namespace Neos.IdentityServer.MultiFactor.Cmdlets.Ressources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à SQL certificate correctly updated ! ThumbPrint {0}.
+        ///   Recherche une chaîne localisée semblable à SQL certificate {0} correctly updated ! You must deploy this certificate on all others ADFS servers..
         /// </summary>
         internal static string InfosSQLCertificateChanged {
             get {

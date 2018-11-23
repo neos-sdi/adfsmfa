@@ -1305,31 +1305,6 @@ namespace Neos.IdentityServer.Console
         }
 
         #region Imports
-
-        /// <summary>
-        /// InitializeTrace method implementation
-        /// </summary>
-        private TraceListener InitializeTrace(string filename)
-        {
-            DefaultTraceListener listen = new DefaultTraceListener();
-            listen.Name = "MFATrace";
-            Trace.Listeners.Add(listen);
-            listen.TraceOutputOptions = TraceOptions.DateTime;
-            listen.LogFileName = filename + ".log";
-            return listen;
-        }
-
-        /// <summary>
-        /// FinalizeTrace method implmentation
-        /// </summary>
-        private void FinalizeTrace(TraceListener listen)
-        {
-            Trace.Flush();
-            Trace.Close();
-            listen.Close();
-            Trace.Listeners.Remove("MFATrace");
-        }
-
         /// <summary>
         /// DoImportCSV method
         /// </summary>
@@ -1338,84 +1313,21 @@ namespace Neos.IdentityServer.Console
             OpenFileDialog Wizard = new OpenFileDialog();
             try
             {
-                int all = 1;
-                int cnt = 0;
-                int err = 0;
                 Wizard.DefaultExt = "csv";
                 Wizard.Filter = "CSV Files (.csv)|*.csv|All Files (*.*)|*.*";
                 Wizard.Title = res.USERSSCOPEIMPORTCSVTITLE;
                 bool result = (this.usersFormView.SnapIn.Console.ShowDialog(Wizard) == DialogResult.OK);
                 if (result)
                 {
-                    string filename = Wizard.FileName;
-                    var contents = File.ReadAllText(filename).Split('\n');
-                    var csv = from line in contents
-                              select line.Split(';').ToArray();
-                    var header = csv.First(r => r.Length > 1 && r.Last().Trim().Length > 0);
-                    int?[] ids = GetCSVHeadersId(header);
+                    ImportUsersCSV imp = new ImportUsersCSV(ManagementService.ADFSManager.Config);
+                    imp.FileName = Wizard.FileName;
+                    imp.ForceNewKey = false;
+                    imp.SendEmail = false;
+                    imp.DoImport();
 
-                    var listen = InitializeTrace(filename);
-                    try
-                    {
-                        Trace.WriteLine("");
-                        Trace.WriteLine(string.Format("Importing file : {0}", filename));
-                        Trace.Indent();
-                        foreach (var row in csv.Skip(1).TakeWhile(r => r.Length > 1 && r.Last().Trim().Length > 0))
-                        {
-                            Trace.TraceInformation("Importing record N° {0}", all.ToString());
-                            this.usersFormView.Control.Cursor = Cursors.WaitCursor;
-                            try
-                            {
-                                Registration reg = new Registration();
-                                if ((ids[0].HasValue) && (!string.IsNullOrEmpty(row[ids[0].Value])))
-                                    reg.UPN = row[ids[0].Value];
-                                else
-                                    throw new InvalidDataException("upn must be provided !");
-
-                                if ((ids[1].HasValue) && (!string.IsNullOrEmpty(row[ids[1].Value])))
-                                    reg.MailAddress = row[ids[1].Value];
-                                else if (ManagementService.ADFSManager.Config.MailProvider.Enabled)
-                                    throw new InvalidDataException("email must be provided !");
-
-                                if ((ids[2].HasValue) && (!string.IsNullOrEmpty(row[ids[2].Value])))
-                                    reg.PhoneNumber = row[ids[2].Value];
-                                else if (ManagementService.ADFSManager.Config.ExternalProvider.Enabled)
-                                    throw new InvalidDataException("mobile must be provided !");
-
-                                if ((ids[3].HasValue) && (!string.IsNullOrEmpty(row[ids[3].Value])))
-                                    reg.PreferredMethod = (PreferredMethod)Enum.Parse(typeof(PreferredMethod), row[ids[3].Value]);
-                                else
-                                    reg.PreferredMethod = PreferredMethod.Choose;
-
-                                if ((ids[4].HasValue) && (!string.IsNullOrEmpty(row[ids[4].Value])))
-                                    reg.Enabled = bool.Parse(row[ids[4].Value]);
-                                else
-                                    reg.Enabled = false;
-
-                                ManagementService.AddUserRegistration(reg);
-                                Trace.TraceInformation("Record N° {0} imported for user : {1} !", all.ToString(), reg.UPN);
-                                cnt++;
-                            }
-                            catch (Exception ex)
-                            {
-                                err++;
-                                Trace.TraceError("Error importing Record N° {0} \r\r {1}", all.ToString(), ex.Message);
-                            }
-                            finally
-                            {
-                                all++;
-                                this.usersFormView.Control.Cursor = Cursors.Default;
-                            }
-                        }
-                    }
-                    finally
-                    {
-                        Trace.Unindent();
-                        FinalizeTrace(listen);
-                    }
                     MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
                     messageBoxParameters.Caption = res.USERSSCOPEIMPORTCSVRESTITLE;
-                    messageBoxParameters.Text = string.Format(res.USERSSCOPEIMPORTCSVCOUNT, cnt.ToString(), err.ToString());
+                    messageBoxParameters.Text = string.Format(res.USERSSCOPEIMPORTCSVCOUNT, imp.RecordsImported.ToString(), imp.ErrorsCount.ToString());
                     messageBoxParameters.Buttons = MessageBoxButtons.OK;
                     messageBoxParameters.Icon = MessageBoxIcon.Information;
                     this.usersFormView.SnapIn.Console.ShowDialog(messageBoxParameters);
@@ -1435,32 +1347,6 @@ namespace Neos.IdentityServer.Console
         }
 
         /// <summary>
-        /// GetCSVHeadersId implmentation
-        /// </summary>
-        private int?[] GetCSVHeadersId(string[] header)
-        {
-            int?[] tmp = new int?[5] {null, null, null, null, null};
-            int pos = 0;
-            
-            foreach(string s in header)
-            {
-                string hs = s.Replace("\r", "").Replace("\n", "");
-                if (hs.ToLower().Equals("upn"))
-                    tmp[0] = pos;
-                else if (hs.ToLower().Equals("email"))
-                    tmp[1] = pos;
-                else if (hs.ToLower().Equals("mobile"))
-                    tmp[2] = pos;
-                else if (hs.ToLower().Equals("method"))
-                    tmp[3] = pos;
-                else if (hs.ToLower().Equals("enabled"))
-                    tmp[4] = pos;
-                pos++;
-            }
-            return tmp;
-        }
-
-        /// <summary>
         /// DoImportXML method
         /// </summary>
         private void DoImportXML()
@@ -1468,80 +1354,21 @@ namespace Neos.IdentityServer.Console
             OpenFileDialog Wizard = new OpenFileDialog();
             try
             {
-                int all = 1;
-                int cnt = 0;
-                int err = 0;
                 Wizard.DefaultExt = "xml";
                 Wizard.Filter = "XML Files (.xml)|*.xml|All Files (*.*)|*.*";
                 Wizard.Title = res.USERSSCOPEIMPORTXMLTITLE;
                 bool result = (this.usersFormView.SnapIn.Console.ShowDialog(Wizard) == DialogResult.OK);
                 if (result)
                 {
-                    string filename = Wizard.FileName;
-                    var xml = XDocument.Load(filename);
-                    var listen = InitializeTrace(filename);
-                    try
-                    {
-                        Trace.WriteLine("");
-                        Trace.WriteLine(string.Format("Importing file : {0}", filename));
-                        Trace.Indent();
+                    ImportUsersXML imp = new ImportUsersXML(ManagementService.ADFSManager.Config);
+                    imp.FileName = Wizard.FileName;
+                    imp.ForceNewKey = false;
+                    imp.SendEmail = false;
+                    imp.DoImport();
 
-                        foreach (var row in xml.Root.Descendants("User"))
-                        {
-                            Trace.TraceInformation("Importing record N° {0}", all.ToString());
-                            this.usersFormView.Control.Cursor = Cursors.WaitCursor;
-                            try
-                            {
-                                Registration reg = new Registration();
-                                if (row.Attribute("upn") != null)
-                                    reg.UPN = row.Attribute("upn").Value;
-                                else
-                                    throw new InvalidDataException("upn must be provided !");
-
-                                if (row.Attribute("email") != null)
-                                    reg.MailAddress = row.Attribute("email").Value;
-                                else if (ManagementService.ADFSManager.Config.MailProvider.Enabled)
-                                    throw new InvalidDataException("email must be provided !");
-
-                                if (row.Attribute("mobile") != null)
-                                    reg.PhoneNumber = row.Attribute("mobile").Value;
-                                else if (ManagementService.ADFSManager.Config.ExternalProvider.Enabled)
-                                    throw new InvalidDataException("mobile must be provided !");
-
-                                if (row.Attribute("method") != null)
-                                    reg.PreferredMethod = (PreferredMethod)Enum.Parse(typeof(PreferredMethod), row.Attribute("method").Value);
-                                else
-                                    reg.PreferredMethod = PreferredMethod.Choose;
-
-                                if (row.Attribute("enabled") != null)
-                                    reg.Enabled = bool.Parse(row.Attribute("enabled").Value);
-                                else
-                                    reg.Enabled = false;
-
-                                ManagementService.AddUserRegistration(reg);
-                                Trace.TraceInformation("Record N° {0} imported for user : {1} !", all.ToString(), reg.UPN);
-                                cnt++;
-                            }
-                            catch (Exception ex)
-                            {
-                                err++;
-                                Trace.TraceError("Error importing Record N° {0} \r\r {1}", all.ToString(), ex.Message);
-                            }
-                            finally
-                            {
-                                all++;
-                                this.usersFormView.Control.Cursor = Cursors.Default;
-                            }
-                        }
-                    }
-                    finally
-                    {
-                        Trace.Unindent();
-                        FinalizeTrace(listen);
-                    }
                     MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
                     messageBoxParameters.Caption = res.USERSSCOPEIMPORTXMLRESTITLE;
-                    messageBoxParameters.Text = string.Format(res.USERSSCOPEIMPORTXMLCOUNT, cnt.ToString(), err.ToString());
+                    messageBoxParameters.Text = string.Format(res.USERSSCOPEIMPORTXMLCOUNT, imp.RecordsImported.ToString(), imp.ErrorsCount.ToString());
                     messageBoxParameters.Buttons = MessageBoxButtons.OK;
                     messageBoxParameters.Icon = MessageBoxIcon.Information;
                     this.usersFormView.SnapIn.Console.ShowDialog(messageBoxParameters);
@@ -1570,10 +1397,17 @@ namespace Neos.IdentityServer.Console
                 bool result = (this.SnapIn.Console.ShowDialog(Wizard) == DialogResult.OK);
                 if (result)
                 {
-                    ManagementService.ImportADDSUsers(Wizard.LDAPQuery.Text, Wizard.checkBoxEnabled.Checked);
+                    ImportUsersADDS imp = new ImportUsersADDS(ManagementService.ADFSManager.Config);
+                    imp.LDAPPath = Wizard.LDAPQuery.Text;
+                    imp.ForceNewKey = false;
+                    imp.SendEmail = false;
+                    imp.DisableAll = Wizard.checkBoxDisable.Checked;
+
+                    imp.DoImport();
+
                     if (this.usersFormView != null)
                         this.usersFormView.Refresh(true, true);
-                                    }
+                }
             }
             catch (Exception ex)
             {

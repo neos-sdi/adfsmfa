@@ -174,11 +174,9 @@
       <LastGenOutput>infos_strings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\title_strings.es.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>title_strings.es.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\title_strings.fr.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>title_strings.fr.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\title_strings.resx">

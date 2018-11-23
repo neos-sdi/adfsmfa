@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-  <Product Id="a23dd485-5365-4d82-8309-103494000001" Name="Neos MFA Provider for ADFS 2012 R2/2016" Language="1033" Version="2.2.0.41" Manufacturer="Neos-SDI" UpgradeCode="a23dd485-5365-4d82-8309-103495000001" >    
+  <Product Id="a23dd485-5365-4d82-8309-103494000001" Name="Neos MFA Provider for ADFS 2012 R2/2016" Language="1033" Version="2.2.0.1000" Manufacturer="Neos-SDI" UpgradeCode="a23dd485-5365-4d82-8309-103495000001" >    
 		<Package InstallerVersion="500" Compressed="yes" InstallScope="perMachine" InstallPrivileges="elevated" Platform="x64" Description="Multi-Factor Authentication for ADFS 3.0 / 2016" />
 
     <MajorUpgrade DisallowUpgradeErrorMessage="A later version of [ProductName] is already installed" 
@@ -43,7 +43,7 @@
 
     <Binary Id='CustomAction.CA' SourceFile="$(var.Neos.IdentityServer.Deployment.TargetDir)Neos.IdentityServer.Deployment.CA.dll" />
     <CustomAction Id="xInstallService" BinaryKey='CustomAction.CA' DllEntry="InstallService" Execute="commit" Impersonate="no" />
-    <CustomAction Id="xUninstallService" BinaryKey='CustomAction.CA' DllEntry="UnInstallService" Impersonate="no"/>
+    <CustomAction Id="xUninstallService" BinaryKey='CustomAction.CA' DllEntry="UnInstallService" Impersonate="no" />
 
     <CustomAction Id="xStartService" BinaryKey='CustomAction.CA' DllEntry="StartService" Execute="commit" Impersonate="no"/>
     <CustomAction Id="xStopService" BinaryKey='CustomAction.CA' DllEntry="StopService" Impersonate="no"/>
@@ -235,6 +235,8 @@
       <Component Id="GACDeployment60" Guid="E7173CAB-E43F-4A07-0220-018000006160" Win64="yes" Directory="INSTALLFOLDER" DiskId="1" >
         <File KeyPath="yes" Id="Neos.IdentityServer.Console.dll"  Name="Neos.IdentityServer.Console.dll" Source="$(var.Neos.IdentityServer.Console.TargetPath)" Vital="yes"/>
         <File KeyPath="no" Id="mfa.msc"  Name="mfa.msc" Source="$(var.Neos.IdentityServer.Console.ProjectDir)SnapMMC\mfa.msc" Vital="yes" />
+        <File KeyPath="no" Id="import.csv"  Name="import.csv" Source="$(var.Neos.IdentityServer.Console.ProjectDir)SnapMMC\import.csv" />
+        <File KeyPath="no" Id="import.xml"  Name="import.xml" Source="$(var.Neos.IdentityServer.Console.ProjectDir)SnapMMC\import.xml" />
         <File KeyPath="no" Id="Neos.IdentityServer.Console.NativeResources.dll"  Name="Neos.IdentityServer.Console.NativeResources.dll" Source="$(var.Neos.IdentityServer.Console.NativeResources.TargetPath)" Vital="yes" />
       </Component>
       <Component Id="GACDeployment61" Guid="E7173CAB-E43F-4A07-0220-018000006161" Win64="yes" Directory="MFAFR" DiskId="1" >

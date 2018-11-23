@@ -34,10 +34,13 @@ using Neos.IdentityServer.Console.Controls;
 
 namespace Neos.IdentityServer.Console
 {
-    public partial class ProvidersViewControl : UserControl, IFormViewControl
+    public partial class ProvidersViewControl : UserControl, IFormViewControl, IMMCNotificationData
     {
         private Control oldParent;
         private ServiceProvidersFormView _frm = null;
+        private bool _isnotifsenabled = true;
+        private MFAProvidersValidationControl _ctrl;
+        private List<MFAProvidersControl> _lst = new List<MFAProvidersControl>();
 
         public ProvidersViewControl()
         {
@@ -59,34 +62,47 @@ namespace Neos.IdentityServer.Console
         protected virtual void OnInitialize()
         {
             this.SuspendLayout();
+            this.HorizontalScroll.Enabled = false;
+            this.HorizontalScroll.Visible = false;
             try
             {
+                _lst.Clear();
+                MFAProvidersControl tmp = null;
                 int i = 2;
                 IExternalProvider totp = RuntimeAuthProvider.GetProviderInstance(PreferredMethod.Code);
                 if (totp != null)
                 {
-                    this.tableLayoutPanel.Controls.Add(new MFAProvidersControl(this, this.SnapIn, totp), 0, i);
+                    tmp = new MFAProvidersControl(this, this.SnapIn, totp);
+                    _lst.Add(tmp);
+                    this.tableLayoutPanel.Controls.Add(tmp, 0, i);
                     i++;
                 }
                 IExternalProvider email = RuntimeAuthProvider.GetProviderInstance(PreferredMethod.Email);
                 if(email != null)
-                { 
-                    this.tableLayoutPanel.Controls.Add(new MFAProvidersControl(this, this.SnapIn, email), 0, i);
+                {
+                    tmp = new MFAProvidersControl(this, this.SnapIn, email);
+                    _lst.Add(tmp);
+                    this.tableLayoutPanel.Controls.Add(tmp, 0, i);
                     i++;
                 }
                 IExternalProvider phone = RuntimeAuthProvider.GetProviderInstance(PreferredMethod.External);
                 if (phone != null)
                 {
-                    this.tableLayoutPanel.Controls.Add(new MFAProvidersControl(this, this.SnapIn, phone), 0, i);
+                    tmp = new MFAProvidersControl(this, this.SnapIn, phone);
+                    _lst.Add(tmp);
+                    this.tableLayoutPanel.Controls.Add(tmp, 0, i);
                     i++;
                 }
                 IExternalProvider azure = RuntimeAuthProvider.GetProviderInstance(PreferredMethod.Azure);
                 if (azure != null)
                 {
-                    this.tableLayoutPanel.Controls.Add(new MFAProvidersControl(this, this.SnapIn, azure), 0, i);
+                    tmp = new MFAProvidersControl(this, this.SnapIn, azure);
+                    _lst.Add(tmp);
+                    this.tableLayoutPanel.Controls.Add(tmp, 0, i);
                     i++;
                 }
-                this.tableLayoutPanel.Controls.Add(new MFAProvidersValidationControl(this, this.SnapIn), 0, i); 
+                ControlInstance = new MFAProvidersValidationControl(this, this.SnapIn);
+                this.tableLayoutPanel.Controls.Add(ControlInstance, 0, i); 
             }
             finally
             {
@@ -102,6 +118,15 @@ namespace Neos.IdentityServer.Console
         {
             get { return _frm; }
             private set { _frm = value; }
+        }
+
+        /// <summary>
+        /// ControlInstance property implmentation
+        /// </summary>
+        protected MFAProvidersValidationControl ControlInstance
+        {
+            get { return _ctrl; }
+            private set { _ctrl = value; }
         }
 
         /// <summary>
@@ -154,53 +179,26 @@ namespace Neos.IdentityServer.Console
         /// </summary>
         internal void RefreshData()
         {
-            ComponentResourceManager resources = new ComponentResourceManager(typeof(ProvidersViewControl));
-            this.label1.Text = resources.GetString("label1.Text");
-            this.label2.Text = resources.GetString("label2.Text");
-            this.label3.Text = resources.GetString("label3.Text");
-
             this.SuspendLayout();
             this.Cursor = Cursors.WaitCursor;
+            _isnotifsenabled = false;
             try
             {
-                for (int j = this.tableLayoutPanel.Controls.Count - 1; j >= 0; j--)
-                {
-                    Control ctrl = this.tableLayoutPanel.Controls[j];
-                    if (ctrl is MFAProvidersControl)
-                        this.tableLayoutPanel.Controls.RemoveAt(j);
-                    if (ctrl is MFAProvidersValidationControl)
-                        this.tableLayoutPanel.Controls.RemoveAt(j);
-                }
-                int i = 2;
-                IExternalProvider totp = RuntimeAuthProvider.GetProviderInstance(PreferredMethod.Code);
-                if (totp != null)
-                {
-                    this.tableLayoutPanel.Controls.Add(new MFAProvidersControl(this, this.SnapIn, totp), 0, i);
-                    i++;
-                }
+                ComponentResourceManager resources = new ComponentResourceManager(typeof(ProvidersViewControl));
+                this.label1.Text = resources.GetString("label1.Text");
+                this.label2.Text = resources.GetString("label2.Text");
+                this.label3.Text = resources.GetString("label3.Text");
 
-                IExternalProvider email = RuntimeAuthProvider.GetProviderInstance(PreferredMethod.Email);
-                if (email != null)
+                ManagementService.ADFSManager.ReadConfiguration(null);
+                ((IMMCRefreshData)ControlInstance).DoRefreshData();
+                foreach (MFAProvidersControl ct in _lst)
                 {
-                    this.tableLayoutPanel.Controls.Add(new MFAProvidersControl(this, this.SnapIn, email), 0, i);
-                    i++;
+                    ((IMMCRefreshData)ct).DoRefreshData();
                 }
-                IExternalProvider phone = RuntimeAuthProvider.GetProviderInstance(PreferredMethod.External);
-                if (phone != null)
-                {
-                    this.tableLayoutPanel.Controls.Add(new MFAProvidersControl(this, this.SnapIn, phone), 0, i);
-                    i++;
-                }
-                IExternalProvider azure = RuntimeAuthProvider.GetProviderInstance(PreferredMethod.Azure);
-                if (azure != null)
-                {
-                    this.tableLayoutPanel.Controls.Add(new MFAProvidersControl(this, this.SnapIn, azure), 0, i);
-                    i++;
-                }
-                this.tableLayoutPanel.Controls.Add(new MFAProvidersValidationControl(this, this.SnapIn), 0, i); 
             }
             finally
             {
+                _isnotifsenabled = true;
                 this.Cursor = Cursors.Default;
                 this.ResumeLayout();
             }
@@ -219,10 +217,7 @@ namespace Neos.IdentityServer.Console
                 messageBoxParameters.Buttons = MessageBoxButtons.YesNo;
                 messageBoxParameters.Icon = MessageBoxIcon.Question;
                 if (this.SnapIn.Console.ShowDialog(messageBoxParameters) == DialogResult.Yes)
-                {
-                    ManagementService.ADFSManager.ReadConfiguration(null);
-                    RefreshData();
-                }
+                   RefreshData();
             }
             catch (Exception ex)
             {
@@ -239,25 +234,37 @@ namespace Neos.IdentityServer.Console
         /// </summary>
         internal void SaveData()
         {
-            this.Cursor = Cursors.WaitCursor;
-            try
+            if (this.ValidateChildren())
             {
-                ManagementService.ADFSManager.WriteConfiguration(null);
+                this.Cursor = Cursors.WaitCursor;
+                _isnotifsenabled = false;
+                try
+                {
+                    ManagementService.ADFSManager.WriteConfiguration(null);
+                }
+                catch (Exception ex)
+                {
+                    this.Cursor = Cursors.Default;
+                    MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
+                    messageBoxParameters.Text = ex.Message;
+                    messageBoxParameters.Buttons = MessageBoxButtons.OK;
+                    messageBoxParameters.Icon = MessageBoxIcon.Error;
+                    this.SnapIn.Console.ShowDialog(messageBoxParameters);
+                }
+                finally
+                {
+                    _isnotifsenabled = true;
+                    this.Cursor = Cursors.Default;
+                }
             }
-            catch (Exception ex)
-            {
-                this.Cursor = Cursors.Default;
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
-                this.SnapIn.Console.ShowDialog(messageBoxParameters);
-            }
-            finally
-            {
-                RefreshData();
-                this.Cursor = Cursors.Default;
-            }
+        }
+
+        /// <summary>
+        /// IsNotifsEnabled method implmentation
+        /// </summary>
+        public bool IsNotifsEnabled()
+        {
+            return _isnotifsenabled;
         }
     }
 }

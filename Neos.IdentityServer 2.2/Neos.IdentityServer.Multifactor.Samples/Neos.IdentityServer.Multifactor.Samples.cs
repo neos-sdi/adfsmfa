@@ -23,6 +23,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Neos.IdentityServer.MultiFactor;
 using System.Globalization;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Neos.IdentityServer.MultiFactor.Samples
 {
@@ -86,16 +87,16 @@ namespace Neos.IdentityServer.MultiFactor.Samples
         public override bool AllowEnrollment
         {
             get { return false; }
-            set { throw new Exception("Enrollment Not allowed here !"); }
+            set { }
         }
 
         /// <summary>
-        /// EnrollmentNeverUseOptions property implementation
+        /// ForceEnrollment property implementation
         /// </summary>
-        public override bool EnrollmentNeverUseOptions
+        public override ForceWizardMode ForceEnrollment
         {
-            get { return false; }
-            set { throw new Exception("Enrollment Not allowed here !"); }
+            get { return ForceWizardMode.Disabled; }
+            set { }
         }
 
         /// <summary>
@@ -528,7 +529,7 @@ namespace Neos.IdentityServer.MultiFactor.Samples
                         Enabled = param.Enabled;
                         PinRequired = param.PinRequired;
                         AllowEnrollment = param.EnrollWizard;
-                        EnrollmentNeverUseOptions = param.EnrollWizardStrict;
+                        ForceEnrollment = param.ForceWizard;
                         _isinitialized = true;
                         return;
                     }
@@ -683,6 +684,7 @@ namespace Neos.IdentityServer.MultiFactor.Samples
         /// <summary>
         /// GetUserCodeWithExternalSystem demo method
         /// </summary>
+#pragma warning disable 162
         public int GetUserCodeWithExternalSystem(string upn, string phonenumber, string email, ExternalOTPProvider externalsys, CultureInfo culture)
         {
             // Compute and send your TOTP code and return his value if everything goes right
@@ -691,6 +693,7 @@ namespace Neos.IdentityServer.MultiFactor.Samples
             else
                 return (int)AuthenticationResponseKind.Error;  // return error
         }
+#pragma warning restore 162
     }
 }
 

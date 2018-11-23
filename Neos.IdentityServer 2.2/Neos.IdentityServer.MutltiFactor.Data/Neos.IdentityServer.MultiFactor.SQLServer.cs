@@ -24,7 +24,7 @@ using System.Security.Cryptography.X509Certificates;
 
 namespace Neos.IdentityServer.MultiFactor.Data
 {
-    internal class SQLDataRepositoryService: DataRepositoryService
+    internal class SQLDataRepositoryService : DataRepositoryService, IDataRepositorySQLConnection
     {
         private SQLServerHost _host;
         private string _connectionstring;
@@ -44,23 +44,16 @@ namespace Neos.IdentityServer.MultiFactor.Data
 
         #region DataRepositoryService
         /// <summary>
-        /// CheckRepositoryAttribute method implementation
+        /// CheckConnection method implementation
         /// </summary>
-        public override bool CheckRepositoryAttribute(string attribute)
+        public bool CheckConnection(string connectionstring)
         {
             SqlConnection con;
-            if (attribute.ToLower().Equals("connectionstring"))
-            {
-                if (string.IsNullOrEmpty(_connectionstring))
-                    return false;
-                con = new SqlConnection(_connectionstring);
-            }
-            else
-            {
-                if (string.IsNullOrEmpty(attribute))
-                    return false;
-                con = new SqlConnection(attribute);
-            }
+            if (string.IsNullOrEmpty(connectionstring))
+                return false;
+            if (!connectionstring.ToLower().Contains("connection timeout="))
+                connectionstring += ";Connection Timeout=2";
+            con = new SqlConnection(connectionstring);
             try
             {
                 con.Open();
@@ -129,12 +122,18 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// <summary>
         /// SetUserRegistration method implementation
         /// </summary>
-        public override Registration SetUserRegistration(Registration reg, bool resetkey = false)
+        public override Registration SetUserRegistration(Registration reg, bool resetkey = false, bool caninsert = true, bool disableoninsert = false)
         {
             if (!SQLUtils.HasRegistration(_host, reg.UPN))
-               return AddUserRegistration(reg, resetkey);
-
-            string request = "UPDATE REGISTRATIONS SET MAILADDRESS = @MAILADDRESS, PHONENUMBER = @PHONENUMBER, PIN=@PIN, METHOD=@METHOD, OVERRIDE=@OVERRIDE, ENABLED=@ENABLED WHERE UPN=@UPN";
+                if (caninsert)
+                    return AddUserRegistration(reg, resetkey, false);
+                else
+                    return GetUserRegistration(reg.UPN);
+            string request;
+            if (disableoninsert)
+               request = "UPDATE REGISTRATIONS SET MAILADDRESS = @MAILADDRESS, PHONENUMBER = @PHONENUMBER, PIN=@PIN, METHOD=@METHOD, OVERRIDE=@OVERRIDE, WHERE UPN=@UPN";
+            else
+                request = "UPDATE REGISTRATIONS SET MAILADDRESS = @MAILADDRESS, PHONENUMBER = @PHONENUMBER, PIN=@PIN, METHOD=@METHOD, OVERRIDE=@OVERRIDE, ENABLED=@ENABLED WHERE UPN=@UPN";
 
             SqlConnection con = new SqlConnection(_connectionstring);
             SqlCommand sql = new SqlCommand(request, con);
@@ -168,9 +167,12 @@ namespace Neos.IdentityServer.MultiFactor.Data
             else
                 prm5.Value = reg.OverrideMethod;
 
-            SqlParameter prm6 = new SqlParameter("@ENABLED", SqlDbType.Bit);
-            sql.Parameters.Add(prm6);
-            prm6.Value = reg.Enabled;
+            if (!disableoninsert)
+            {
+                SqlParameter prm6 = new SqlParameter("@ENABLED", SqlDbType.Bit);
+                sql.Parameters.Add(prm6);
+                prm6.Value = reg.Enabled;
+            }
 
             SqlParameter prm7 = new SqlParameter("@UPN", SqlDbType.VarChar);
             sql.Parameters.Add(prm7);
@@ -197,10 +199,13 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// <summary>
         /// AddUserRegistration method implementation
         /// </summary>
-        public override Registration AddUserRegistration(Registration reg, bool newkey = true)
+        public override Registration AddUserRegistration(Registration reg, bool resetkey = false, bool canupdate = true, bool disableoninsert = false)
         {
             if (SQLUtils.HasRegistration(_host, reg.UPN))
-                return SetUserRegistration(reg, newkey);
+                if (canupdate)
+                    return SetUserRegistration(reg, resetkey, false);
+                else
+                    return GetUserRegistration(reg.UPN);
 
             string request = "INSERT INTO REGISTRATIONS (UPN, SECRETKEY, MAILADDRESS, PHONENUMBER, PIN, ENABLED, METHOD, OVERRIDE) VALUES (@UPN, @SECRETKEY, @MAILADDRESS, @PHONENUMBER, @PIN, @ENABLED, @METHOD, @OVERRIDE)";
 
@@ -235,7 +240,10 @@ namespace Neos.IdentityServer.MultiFactor.Data
 
             SqlParameter prm5 = new SqlParameter("@ENABLED", SqlDbType.Bit);
             sql.Parameters.Add(prm5);
-            prm5.Value = reg.Enabled;
+            if (disableoninsert)
+                prm5.Value = false;
+            else
+                prm5.Value = reg.Enabled;
 
             SqlParameter prm6 = new SqlParameter("@METHOD", SqlDbType.Int);
             sql.Parameters.Add(prm6);
@@ -251,8 +259,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
             try
             {
                 int res = sql.ExecuteNonQuery();
-                if (newkey)
-                    this.OnKeyDataEvent(reg.UPN, KeysDataManagerEventKind.add);
+                this.OnKeyDataEvent(reg.UPN, KeysDataManagerEventKind.add);
             }
             catch (Exception ex)
             {
@@ -706,7 +713,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// <summary>
         /// GetImportUserRegistrations
         /// </summary>
-        public override RegistrationList GetImportUserRegistrations(string ldappath, bool enable)
+        public override RegistrationList GetImportUserRegistrations(string domain, string username, string password, string ldappath, DateTime? created, DateTime? modified, string mailattribute, string phoneattribute, PreferredMethod method, bool disableall = false)
         {
             throw new NotImplementedException("Not supported by SQL Provider");
         }
@@ -721,7 +728,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
         #endregion
     }
 
-    internal class SQLKeysRepositoryService : KeysRepositoryService
+    internal class SQLKeysRepositoryService : KeysRepositoryService, IDataRepositorySQLConnection
     {
         SQLServerHost _host;
         string _connectionstring;
@@ -906,6 +913,32 @@ namespace Neos.IdentityServer.MultiFactor.Data
             return secretkey;
         }
         #endregion
+
+        /// <summary>
+        /// CheckConnection method implementation
+        /// </summary>
+        public bool CheckConnection(string connectionstring)
+        {
+            SqlConnection con;
+            if (string.IsNullOrEmpty(connectionstring))
+                return false;
+            if (!connectionstring.ToLower().Contains("connection timeout="))
+                connectionstring += ";Connection Timeout=2";
+            con = new SqlConnection(connectionstring);
+            try
+            {
+                con.Open();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            finally
+            {
+                con.Close();
+            }
+        }
     }
 
     internal static class SQLUtils

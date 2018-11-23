@@ -24,6 +24,22 @@ using res = Neos.IdentityServer.Console.Resources.Neos_IdentityServer_Console_Da
 namespace Neos.IdentityServer.Console
 {
     /// <summary>
+    /// IMMCRefreshData
+    /// </summary>
+    public interface IMMCRefreshData
+    {
+        void DoRefreshData();
+    }
+
+    /// <summary>
+    /// IMMCNotificationData
+    /// </summary>
+    public interface IMMCNotificationData
+    {
+        bool IsNotifsEnabled();
+    }
+
+    /// <summary>
     /// MMCFilterFieldItem class
     /// </summary>
     public class MMCFilterFieldItem

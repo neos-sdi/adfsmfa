@@ -27,23 +27,16 @@ using System.Management.Automation.Host;
 using System.Xml;
 
 namespace Neos.IdentityServer.MultiFactor.Administration
-{
-    [Serializable]
-    public enum FlatSecretKeyFormat
-    {
-        RNG = 0,
-        RSA = 1,
-        CUSTOM = 2
-    }
+{  
 
     [Serializable]
     public enum FlatTemplateMode
     {
-        Free = 0,                        // (UserFeaturesOptions.BypassDisabled | UserFeaturesOptions.BypassUnRegistered | UserFeaturesOptions.AllowManageOptions | UserFeaturesOptions.AllowChangePassword);
-        Open = 1,                        // (UserFeaturesOptions.BypassDisabled | UserFeaturesOptions.AllowUnRegistered | UserFeaturesOptions.AllowManageOptions | UserFeaturesOptions.AllowChangePassword);
-        Default = 2,                     // (UserFeaturesOptions.AllowDisabled | UserFeaturesOptions.AllowUnRegistered | UserFeaturesOptions.AllowManageOptions | UserFeaturesOptions.AllowChangePassword);
+        Free = 0,                        // (UserFeaturesOptions.BypassDisabled | UserFeaturesOptions.BypassUnRegistered | UserFeaturesOptions.AllowManageOptions | UserFeaturesOptions.AllowChangePassword | UserFeaturesOptions.AllowEnrollment));
+        Open = 1,                        // (UserFeaturesOptions.BypassDisabled | UserFeaturesOptions.AllowUnRegistered | UserFeaturesOptions.AllowManageOptions | UserFeaturesOptions.AllowChangePassword | UserFeaturesOptions.AllowEnrollment));
+        Default = 2,                     // (UserFeaturesOptions.AllowDisabled | UserFeaturesOptions.AllowUnRegistered | UserFeaturesOptions.AllowManageOptions | UserFeaturesOptions.AllowChangePassword | UserFeaturesOptions.AllowEnrollment));
         Managed = 3,                     // (UserFeaturesOptions.BypassDisabled | UserFeaturesOptions.AllowUnRegistered | UserFeaturesOptions.AllowProvideInformations | UserFeaturesOptions.AllowChangePassword);
-        Strict = 4,                      // (UserFeaturesOptions.AllowProvideInformations);
+        Strict = 4,                      // (UserFeaturesOptions.AllowProvideInformations | UserFeaturesOptions.AdministrativeMode);
         Administrative = 5,              // (UserFeaturesOptions.AdministrativeMode);
         Custom = 6                       // Empty 
     }
@@ -109,6 +102,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             options = options.Remove(UserFeaturesOptions.BypassUnRegistered);
             options = options.Remove(UserFeaturesOptions.AllowUnRegistered);
             options = options.Add(UserFeaturesOptions.AllowProvideInformations);   // Allow only provide informations
+            options = options.Add(UserFeaturesOptions.AdministrativeMode); // Admin only
             return options;
         }
 
@@ -119,6 +113,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         {
             options = options.Remove(UserFeaturesOptions.BypassUnRegistered);
             options = options.Remove(UserFeaturesOptions.AllowProvideInformations);
+            options = options.Remove(UserFeaturesOptions.AdministrativeMode);
             options = options.Add(UserFeaturesOptions.AllowUnRegistered);    // Allow User to register
             return options;
         }
@@ -140,11 +135,11 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// </summary>
         public static UserTemplateMode GetPolicyTemplate(this UserFeaturesOptions options)
         {
-            if (options == (UserFeaturesOptions.BypassDisabled | UserFeaturesOptions.BypassUnRegistered | UserFeaturesOptions.AllowManageOptions | UserFeaturesOptions.AllowChangePassword))
+            if (options == (UserFeaturesOptions.BypassDisabled | UserFeaturesOptions.BypassUnRegistered | UserFeaturesOptions.AllowManageOptions | UserFeaturesOptions.AllowChangePassword | UserFeaturesOptions.AllowEnrollment))
                 return UserTemplateMode.Free;
-            else if (options == (UserFeaturesOptions.BypassDisabled | UserFeaturesOptions.AllowUnRegistered | UserFeaturesOptions.AllowManageOptions | UserFeaturesOptions.AllowChangePassword))
+            else if (options == (UserFeaturesOptions.BypassDisabled | UserFeaturesOptions.AllowUnRegistered | UserFeaturesOptions.AllowManageOptions | UserFeaturesOptions.AllowChangePassword | UserFeaturesOptions.AllowEnrollment))
                 return UserTemplateMode.Open;
-            else if (options == (UserFeaturesOptions.AllowDisabled | UserFeaturesOptions.AllowUnRegistered | UserFeaturesOptions.AllowManageOptions | UserFeaturesOptions.AllowChangePassword))
+            else if (options == (UserFeaturesOptions.AllowDisabled | UserFeaturesOptions.AllowUnRegistered | UserFeaturesOptions.AllowManageOptions | UserFeaturesOptions.AllowChangePassword | UserFeaturesOptions.AllowEnrollment))
                 return UserTemplateMode.Default;
             else if (options == (UserFeaturesOptions.BypassDisabled | UserFeaturesOptions.AllowUnRegistered | UserFeaturesOptions.AllowProvideInformations | UserFeaturesOptions.AllowChangePassword))
                 return UserTemplateMode.Managed;
@@ -164,13 +159,13 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             switch (template)
             {
                 case UserTemplateMode.Free:
-                    options = (UserFeaturesOptions.BypassDisabled | UserFeaturesOptions.BypassUnRegistered | UserFeaturesOptions.AllowManageOptions | UserFeaturesOptions.AllowChangePassword);
+                    options = (UserFeaturesOptions.BypassDisabled | UserFeaturesOptions.BypassUnRegistered | UserFeaturesOptions.AllowManageOptions | UserFeaturesOptions.AllowChangePassword | UserFeaturesOptions.AllowEnrollment);
                     break;
                 case UserTemplateMode.Open:
-                    options = (UserFeaturesOptions.BypassDisabled | UserFeaturesOptions.AllowUnRegistered | UserFeaturesOptions.AllowManageOptions | UserFeaturesOptions.AllowChangePassword);
+                    options = (UserFeaturesOptions.BypassDisabled | UserFeaturesOptions.AllowUnRegistered | UserFeaturesOptions.AllowManageOptions | UserFeaturesOptions.AllowChangePassword | UserFeaturesOptions.AllowEnrollment);
                     break;
                 case UserTemplateMode.Default:
-                    options = (UserFeaturesOptions.AllowDisabled | UserFeaturesOptions.AllowUnRegistered | UserFeaturesOptions.AllowManageOptions | UserFeaturesOptions.AllowChangePassword);
+                    options = (UserFeaturesOptions.AllowDisabled | UserFeaturesOptions.AllowUnRegistered | UserFeaturesOptions.AllowManageOptions | UserFeaturesOptions.AllowChangePassword | UserFeaturesOptions.AllowEnrollment);
                     break;
                 case UserTemplateMode.Managed:
                     options = (UserFeaturesOptions.BypassDisabled | UserFeaturesOptions.AllowUnRegistered | UserFeaturesOptions.AllowProvideInformations | UserFeaturesOptions.AllowChangePassword);
@@ -179,10 +174,10 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                     options = (UserFeaturesOptions.AllowProvideInformations | UserFeaturesOptions.AdministrativeMode);
                     break;
                 case UserTemplateMode.Administrative:
-                    options = UserFeaturesOptions.AdministrativeMode;
+                    options = (UserFeaturesOptions.AdministrativeMode);
                     break;
                 default:
-                    options = UserFeaturesOptions.NoSet;
+                    options = (UserFeaturesOptions.AllowDisabled | UserFeaturesOptions.AllowUnRegistered);
                     break;
             }
             return options;
@@ -264,22 +259,25 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             switch (mode)
             {
                 case FlatTemplateMode.Free:
-                    cfg.UserFeatures = (UserFeaturesOptions.BypassDisabled | UserFeaturesOptions.BypassUnRegistered | UserFeaturesOptions.AllowManageOptions | UserFeaturesOptions.AllowChangePassword);
+                    cfg.UserFeatures = (UserFeaturesOptions.BypassDisabled | UserFeaturesOptions.BypassUnRegistered | UserFeaturesOptions.AllowManageOptions | UserFeaturesOptions.AllowChangePassword | UserFeaturesOptions.AllowEnrollment);
                     break;
                 case FlatTemplateMode.Open:
-                    cfg.UserFeatures = (UserFeaturesOptions.BypassDisabled | UserFeaturesOptions.AllowUnRegistered | UserFeaturesOptions.AllowManageOptions | UserFeaturesOptions.AllowChangePassword);
+                    cfg.UserFeatures = (UserFeaturesOptions.BypassDisabled | UserFeaturesOptions.AllowUnRegistered | UserFeaturesOptions.AllowManageOptions | UserFeaturesOptions.AllowChangePassword | UserFeaturesOptions.AllowEnrollment);
                     break;
                 case FlatTemplateMode.Default:
-                    cfg.UserFeatures = (UserFeaturesOptions.AllowDisabled | UserFeaturesOptions.AllowUnRegistered | UserFeaturesOptions.AllowManageOptions | UserFeaturesOptions.AllowChangePassword);
+                    cfg.UserFeatures = (UserFeaturesOptions.AllowDisabled | UserFeaturesOptions.AllowUnRegistered | UserFeaturesOptions.AllowManageOptions | UserFeaturesOptions.AllowChangePassword | UserFeaturesOptions.AllowEnrollment);
                     break;
                 case FlatTemplateMode.Managed:
                     cfg.UserFeatures = (UserFeaturesOptions.BypassDisabled | UserFeaturesOptions.AllowUnRegistered | UserFeaturesOptions.AllowProvideInformations | UserFeaturesOptions.AllowChangePassword);
                     break;
                 case FlatTemplateMode.Strict:
-                    cfg.UserFeatures = (UserFeaturesOptions.AllowProvideInformations);
+                    cfg.UserFeatures = (UserFeaturesOptions.AdministrativeMode | UserFeaturesOptions.AllowProvideInformations);
                     break;
                 case FlatTemplateMode.Administrative:
                     cfg.UserFeatures = (UserFeaturesOptions.AdministrativeMode);
+                    break;
+                default:
+                    cfg.UserFeatures = (UserFeaturesOptions.AllowDisabled | UserFeaturesOptions.AllowUnRegistered);
                     break;
             }
             ManagementService.ADFSManager.WriteConfiguration(host);
@@ -325,7 +323,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             MFAConfig cfg = ManagementService.Config;
             SQLServerHost sql = cfg.Hosts.SQLServerHost;
             cfg.IsDirty = IsDirty;
-            if (!ManagementService.CheckRepositoryAttribute(ConnectionString, 2))
+            if (!ManagementService.CheckSQLConnection(ConnectionString))
                 throw new ArgumentException(string.Format("Invalid ConnectionString {0} !", ConnectionString));
             sql.ConnectionString = ConnectionString;
             sql.MaxRows = MaxRows;
@@ -385,29 +383,29 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             MFAConfig cfg = ManagementService.Config;
             ADDSHost adds = cfg.Hosts.ActiveDirectoryHost;
             cfg.IsDirty = IsDirty;
-            adds.Account = Account;
-            adds.Password = adds.Password;
-            adds.DomainAddress = adds.DomainAddress;
-            if (!ManagementService.CheckRepositoryAttribute(KeyAttribute, 1))
+            if (!ManagementService.CheckADDSAttribute(DomainAddress, Account, Password, KeyAttribute))
                 throw new ArgumentException(string.Format("Attribute {0} not found in forest schema !", KeyAttribute));
-            adds.keyAttribute = KeyAttribute;
-            if (!ManagementService.CheckRepositoryAttribute(MailAttribute, 1))
+            if (!ManagementService.CheckADDSAttribute(DomainAddress, Account, Password, MailAttribute))
                 throw new ArgumentException(string.Format("Attribute {0} not found in forest schema !", MailAttribute));
-            adds.mailAttribute = MailAttribute;
-            if (!ManagementService.CheckRepositoryAttribute(PhoneAttribute, 1))
+            if (!ManagementService.CheckADDSAttribute(DomainAddress, Account, Password, PhoneAttribute))
                 throw new ArgumentException(string.Format("Attribute {0} not found in forest schema !", PhoneAttribute));
-            adds.phoneAttribute = PhoneAttribute;
-            if (!ManagementService.CheckRepositoryAttribute(MethodAttribute,1 ))
+            if (!ManagementService.CheckADDSAttribute(DomainAddress, Account, Password, MethodAttribute))
                 throw new ArgumentException(string.Format("Attribute {0} not found in forest schema !", MethodAttribute));
-            adds.methodAttribute = MethodAttribute;
-            if (!ManagementService.CheckRepositoryAttribute(OverrideMethodAttribute, 1))
+            if (!ManagementService.CheckADDSAttribute(DomainAddress, Account, Password, OverrideMethodAttribute))
                 throw new ArgumentException(string.Format("Attribute {0} not found in forest schema !", OverrideMethodAttribute));
-            adds.overridemethodAttribute = OverrideMethodAttribute;
-            if (!ManagementService.CheckRepositoryAttribute(PinAttribute, 1))
+            if (!ManagementService.CheckADDSAttribute(DomainAddress, Account, Password, PinAttribute))
                 throw new ArgumentException(string.Format("Attribute {0} not found in forest schema !", PinAttribute));
-            PinAttribute = adds.pinattribute;
-            if (!ManagementService.CheckRepositoryAttribute(EnabledAttribute, 1))
+            if (!ManagementService.CheckADDSAttribute(DomainAddress, Account, Password, EnabledAttribute))
                 throw new ArgumentException(string.Format("Attribute {0} not found in forest schema !", EnabledAttribute));
+            adds.Account = Account;
+            adds.Password = Password;
+            adds.DomainAddress = DomainAddress;
+            adds.keyAttribute = KeyAttribute;
+            adds.mailAttribute = MailAttribute;
+            adds.phoneAttribute = PhoneAttribute;
+            adds.methodAttribute = MethodAttribute;
+            adds.overridemethodAttribute = OverrideMethodAttribute;
+            PinAttribute = adds.pinattribute;
             adds.totpEnabledAttribute = EnabledAttribute;
             adds.MaxRows = MaxRows;
             ManagementService.ADFSManager.WriteConfiguration(host);
@@ -420,7 +418,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         public bool IsDirty { get; set; }
         public KeyGeneratorMode KeyGenerator  { get; set; }
         public KeySizeMode KeySize { get; set; }
-        public SecretKeyFormat KeyFormat  { get; set; }
+        public SecretKeyFormat KeysFormat  { get; set; }
         public string CertificateThumbprint  { get; set; }
         public int CertificateValidity  { get; set; }
         public FlatExternalKeyManager ExternalKeyManager  { get; set; }
@@ -436,7 +434,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             IsDirty = cfg.IsDirty;
             this.CertificateThumbprint = keys.CertificateThumbprint;
             this.CertificateValidity = keys.CertificateValidity;
-            this.KeyFormat = keys.KeyFormat;
+            this.KeysFormat = keys.KeyFormat;
             this.KeyGenerator = keys.KeyGenerator;
             this.KeySize = keys.KeySize;
             this.ExternalKeyManager = (FlatExternalKeyManager)keys.ExternalKeyManager;
@@ -453,7 +451,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             cfg.IsDirty = true;
             keys.CertificateThumbprint = this.CertificateThumbprint;
             keys.CertificateValidity = this.CertificateValidity;
-            keys.KeyFormat = this.KeyFormat;
+            keys.KeyFormat = this.KeysFormat;
             keys.KeyGenerator = this.KeyGenerator;
             keys.KeySize = this.KeySize;
             keys.ExternalKeyManager = (ExternalKeyManagerConfig)this.ExternalKeyManager;
@@ -465,6 +463,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     public class FlatExternalKeyManager
     {
         public string FullQualifiedImplementation { get; set; }
+        public string ConnectionString { get; set; }
         public bool IsAlwaysEncrypted { get; set; }
         public string KeyName { get; set; }
         public string ThumbPrint { get; set; }
@@ -480,6 +479,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             {
                 ExternalKeyManagerConfig ret = new ExternalKeyManagerConfig();
                 ret.FullQualifiedImplementation = mgr.FullQualifiedImplementation;
+                ret.ConnectionString = mgr.ConnectionString;
                 ret.IsAlwaysEncrypted = mgr.IsAlwaysEncrypted;
                 ret.ThumbPrint = mgr.ThumbPrint;
                 ret.KeyName = mgr.KeyName;
@@ -498,6 +498,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             {
                 FlatExternalKeyManager ret = new FlatExternalKeyManager();
                 ret.FullQualifiedImplementation = mgr.FullQualifiedImplementation;
+                ret.ConnectionString = mgr.ConnectionString;
                 ret.IsAlwaysEncrypted = mgr.IsAlwaysEncrypted;
                 ret.ThumbPrint = mgr.ThumbPrint;
                 ret.KeyName = mgr.KeyName;
@@ -515,6 +516,10 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             KeysManagerConfig otp = cfg.KeysConfig;
             this.FullQualifiedImplementation = otp.ExternalKeyManager.FullQualifiedImplementation;
             this.ThumbPrint = otp.ExternalKeyManager.ThumbPrint;
+            this.KeyName = otp.ExternalKeyManager.KeyName;
+            this.CertificateValidity = otp.ExternalKeyManager.CertificateValidity;
+            this.CertReuse = otp.ExternalKeyManager.CertReuse;
+            this.ConnectionString = otp.ExternalKeyManager.ConnectionString;
             this.IsAlwaysEncrypted = otp.ExternalKeyManager.IsAlwaysEncrypted;
             this.Parameters = otp.ExternalKeyManager.Parameters;
         }
@@ -525,25 +530,27 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         public void Update(PSHost host)
         {
             ManagementService.Initialize(host, true);
-           // MFAConfig cfg = ManagementService.ADFSManager.Config;
             MFAConfig cfg = ManagementService.Config;
             KeysManagerConfig otp = cfg.KeysConfig;
             otp.ExternalKeyManager.FullQualifiedImplementation = this.FullQualifiedImplementation;
             otp.ExternalKeyManager.ThumbPrint = this.ThumbPrint;
+            otp.ExternalKeyManager.KeyName = this.KeyName;
+            otp.CertificateValidity = this.CertificateValidity;
+            otp.ExternalKeyManager.CertReuse = this.CertReuse;
+            otp.ExternalKeyManager.ConnectionString = this.ConnectionString;
             otp.ExternalKeyManager.IsAlwaysEncrypted = this.IsAlwaysEncrypted;
             otp.ExternalKeyManager.Parameters = this.Parameters;
             ManagementService.ADFSManager.WriteConfiguration(host);
         }
     }
 
-  //  <OTPProvider WizardOptions="NoGoogleAuthenticator" Algorithm="SHA1" TOTPShadows="2" EnrollWizardStrict="false" EnrollWizard="true" PinRequired="false" Enabled="true"/>
     [Serializable]
     public class FlatOTPProvider
     {
         public bool IsDirty { get; set; }
         public bool Enabled { get; set; }
         public bool EnrollWizard { get; set; }
-        public bool EnrollWizardStrict { get; set; }
+        public ForceWizardMode ForceWizard { get; set; }
         public HashMode Algorithm { get; set; }
         public int TOTPShadows { get; set; }
         public OTPWizardOptions WizardOptions { get; set; }
@@ -560,7 +567,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             this.IsDirty = cfg.IsDirty;
             this.Enabled = otp.Enabled;
             this.EnrollWizard = otp.EnrollWizard;
-            this.EnrollWizardStrict = otp.EnrollWizardStrict;
+            this.ForceWizard = otp.ForceWizard;
             this.Algorithm = otp.Algorithm;
             this.TOTPShadows = otp.TOTPShadows;
             this.WizardOptions = otp.WizardOptions;
@@ -578,7 +585,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             cfg.IsDirty = true;
             otp.Enabled = this.Enabled;
             otp.EnrollWizard = this.EnrollWizard;
-            otp.EnrollWizardStrict = this.EnrollWizardStrict;
+            otp.ForceWizard = this.ForceWizard;
             otp.Algorithm = this.Algorithm;
             otp.TOTPShadows = this.TOTPShadows;
             otp.WizardOptions = this.WizardOptions;
@@ -594,7 +601,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         public bool IsDirty { get; set; }
         public bool Enabled { get; set; }
         public bool EnrollWizard { get; set; }
-        public bool EnrollWizardStrict { get; set; }
+        public ForceWizardMode ForceWizard { get; set; }
         public string Company { get; set; }
         public string Sha1Salt { get; set; }
         public string FullQualifiedImplementation  { get; set; }
@@ -609,13 +616,12 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         public void Load(PSHost host)
         {
             ManagementService.Initialize(host, true);
-           // MFAConfig cfg = ManagementService.ADFSManager.ReadConfiguration(host);
             MFAConfig cfg = ManagementService.Config;
             ExternalOTPProvider otp = cfg.ExternalProvider;
             this.IsDirty = cfg.IsDirty;
             this.Enabled = otp.Enabled;
             this.EnrollWizard = otp.EnrollWizard;
-            this.EnrollWizardStrict = otp.EnrollWizardStrict;
+            this.ForceWizard = otp.ForceWizard;
             this.Company = otp.Company;
             this.FullQualifiedImplementation = otp.FullQualifiedImplementation;
             this.IsTwoWay = otp.IsTwoWay;
@@ -631,13 +637,12 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         public void Update(PSHost host)
         {
             ManagementService.Initialize(host, true);
-           // MFAConfig cfg = ManagementService.ADFSManager.Config;
             MFAConfig cfg = ManagementService.Config;
             ExternalOTPProvider otp = cfg.ExternalProvider;
             cfg.IsDirty = true;
             otp.Enabled = this.Enabled;
             otp.EnrollWizard = this.EnrollWizard;
-            otp.EnrollWizardStrict = this.EnrollWizardStrict;
+            otp.ForceWizard = this.ForceWizard;
             otp.Company = this.Company;
             otp.FullQualifiedImplementation = this.FullQualifiedImplementation;
             otp.IsTwoWay = this.IsTwoWay;
@@ -655,7 +660,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         public bool IsDirty { get; set; }
         public bool Enabled { get; set; }
         public bool EnrollWizard { get; set; }
-        public bool EnrollWizardStrict { get; set; }
+        public ForceWizardMode ForceWizard { get; set; }
         public string TenantId { get; set; }
         public string ThumbPrint { get; set; }
         public bool PinRequired { get; set; }
@@ -671,7 +676,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             this.IsDirty = cfg.IsDirty;
             this.Enabled = otp.Enabled;
             this.EnrollWizard = otp.EnrollWizard;
-            this.EnrollWizardStrict = otp.EnrollWizardStrict;
+            this.ForceWizard = otp.ForceWizard;
             this.TenantId = otp.TenantId;
             this.ThumbPrint = otp.ThumbPrint;
             this.PinRequired = otp.PinRequired;
@@ -688,7 +693,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             cfg.IsDirty = true;
             otp.Enabled = this.Enabled;
             otp.EnrollWizard = this.EnrollWizard;
-            otp.EnrollWizardStrict = this.EnrollWizardStrict;
+            otp.ForceWizard = this.ForceWizard;
             otp.TenantId = this.TenantId;
             otp.ThumbPrint = this.ThumbPrint;
             otp.PinRequired = this.PinRequired;
@@ -702,7 +707,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         public bool IsDirty { get; set; }
         public bool Enabled { get; set; }
         public bool EnrollWizard { get; set; }
-        public bool EnrollWizardStrict { get; set; }
+        public ForceWizardMode ForceWizard { get; set; }
         public string From { get; set; }
         public string UserName { get; set; }
         public string Password { get; set; }
@@ -734,7 +739,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             IsDirty = cfg.IsDirty;
             Enabled = mail.Enabled;
             EnrollWizard = mail.EnrollWizard;
-            EnrollWizardStrict = mail.EnrollWizardStrict;
+            ForceWizard = mail.ForceWizard;
             From = mail.From;
             UserName = mail.UserName;
             Password = mail.Password;
@@ -772,7 +777,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             cfg.IsDirty = IsDirty;
             mail.Enabled = Enabled;
             mail.EnrollWizard = EnrollWizard;
-            mail.EnrollWizardStrict = EnrollWizardStrict;
+            mail.ForceWizard = ForceWizard;
             mail.From = From;
             mail.UserName = UserName;
             mail.Password = Password;

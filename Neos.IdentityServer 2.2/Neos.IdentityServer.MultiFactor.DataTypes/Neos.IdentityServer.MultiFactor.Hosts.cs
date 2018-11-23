@@ -26,10 +26,10 @@ using System.Xml;
 using System.Xml.Serialization;
 using Microsoft.IdentityServer.Web.Authentication.External;
 using System.Web;
+using System.DirectoryServices.ActiveDirectory;
 
 namespace Neos.IdentityServer.MultiFactor
 {
-
     #region MFAConfig
     public enum UserTemplateMode
     {
@@ -67,13 +67,21 @@ namespace Neos.IdentityServer.MultiFactor
             return options.HasFlag(UserFeaturesOptions.AdministrativeMode) && !options.HasFlag(UserFeaturesOptions.AllowProvideInformations);
         }
 
+        /// <summary>
+        /// IsStrict method implementation
+        /// </summary>
+        public static bool IsStrict(this UserFeaturesOptions options)
+        {
+            return options.HasFlag(UserFeaturesOptions.AdministrativeMode) && options.HasFlag(UserFeaturesOptions.AllowProvideInformations);
+        }
+
         #region MFA Enabled
         /// <summary>
         /// IsMFARequired method implementation
         /// </summary>
         public static bool IsMFARequired(this UserFeaturesOptions options)
         {
-            return ((options == UserFeaturesOptions.NoSet) || options.HasFlag(UserFeaturesOptions.AdministrativeMode));
+            return (options.HasFlag(UserFeaturesOptions.AdministrativeMode));
         }
 
         /// <summary>
@@ -107,7 +115,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public static bool IsRegistrationAllowed(this UserFeaturesOptions options)
         {
-            return (options.HasFlag(UserFeaturesOptions.AllowUnRegistered) && !options.HasFlag(UserFeaturesOptions.AllowProvideInformations) && !options.HasFlag(UserFeaturesOptions.AdministrativeMode) && (options != UserFeaturesOptions.NoSet));
+            return (options.HasFlag(UserFeaturesOptions.AllowUnRegistered) && (!options.HasFlag(UserFeaturesOptions.AllowProvideInformations) && !options.HasFlag(UserFeaturesOptions.AdministrativeMode)));
         }
 
         /// <summary>
@@ -115,7 +123,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public static bool IsRegistrationNotRequired(this UserFeaturesOptions options)
         {
-            return (((options == UserFeaturesOptions.NoSet) || options.HasFlag(UserFeaturesOptions.AdministrativeMode)) || options.HasFlag(UserFeaturesOptions.BypassUnRegistered)) && !options.HasFlag(UserFeaturesOptions.AllowProvideInformations);
+            return ((options.HasFlag(UserFeaturesOptions.BypassUnRegistered) || options.HasFlag(UserFeaturesOptions.AdministrativeMode)) && !options.HasFlag(UserFeaturesOptions.AllowProvideInformations));
         }
 
         /// <summary>
@@ -252,7 +260,7 @@ namespace Neos.IdentityServer.MultiFactor
 
         private bool _useActiveDirectory = true;
         private bool _customUpdatePassword = true;
-        private UserFeaturesOptions _userFeatures = (UserFeaturesOptions.AllowDisabled | UserFeaturesOptions.AllowUnRegistered | UserFeaturesOptions.AllowManageOptions | UserFeaturesOptions.AllowChangePassword); // Default Mode
+        private UserFeaturesOptions _userFeatures = (UserFeaturesOptions.AllowDisabled | UserFeaturesOptions.AllowUnRegistered | UserFeaturesOptions.AllowManageOptions | UserFeaturesOptions.AllowChangePassword | UserFeaturesOptions.AllowEnrollment); // Default Mode
         private ConfigAdvertising _advertising = new ConfigAdvertising(1, 31);
         private string _issuer;
        
@@ -293,14 +301,15 @@ namespace Neos.IdentityServer.MultiFactor
                 KeepMySelectedOptionOn = true;
                 DefaultCountryCode = "fr";
                 AdminContact = "adminmfa@contoso.com";
-                UserFeatures = (UserFeaturesOptions.AllowDisabled | UserFeaturesOptions.AllowUnRegistered | UserFeaturesOptions.AllowManageOptions | UserFeaturesOptions.AllowChangePassword);
+                UserFeatures = (UserFeaturesOptions.AllowDisabled | UserFeaturesOptions.AllowUnRegistered | UserFeaturesOptions.AllowManageOptions | UserFeaturesOptions.AllowChangePassword | UserFeaturesOptions.AllowEnrollment);
 
                 KeysConfig.KeyGenerator = KeyGeneratorMode.ClientSecret512;
                 KeysConfig.KeyFormat = SecretKeyFormat.RNG;
                 KeysConfig.KeySize = KeySizeMode.KeySize1024;
                 KeysConfig.CertificateThumbprint = Thumbprint.Empty;
                 KeysConfig.ExternalKeyManager.FullQualifiedImplementation = "Neos.IdentityServer.Multifactor.Keys.CustomKeyManager, Neos.IdentityServer.Multifactor.Keys.Sample, Version=2.2.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2";
-                KeysConfig.ExternalKeyManager.Parameters.Data = "Persist Security Info=False;Integrated Security=SSPI;Initial Catalog=yourdatabase;Data Source=yourserverinstance";
+                KeysConfig.ExternalKeyManager.Parameters.Data = "your parameters here !";
+                KeysConfig.ExternalKeyManager.ConnectionString = "Persist Security Info=False;Integrated Security=SSPI;Initial Catalog=yourdatabase;Data Source=yourserverinstance";
                 KeysConfig.ExternalKeyManager.CertificateValidity = 15;
                 KeysConfig.ExternalKeyManager.CertReuse = false;
                 KeysConfig.ExternalKeyManager.IsAlwaysEncrypted = false;
@@ -406,8 +415,8 @@ namespace Neos.IdentityServer.MultiFactor
                 {
                     if (string.IsNullOrEmpty(this.KeysConfig.ExternalKeyManager.FullQualifiedImplementation))
                         KeysConfig.ExternalKeyManager.FullQualifiedImplementation = "Neos.IdentityServer.Multifactor.Keys.CustomKeyManager, Neos.IdentityServer.Multifactor.Keys.Sample, Version=2.2.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2";
-                    if (this.KeysConfig.ExternalKeyManager.Parameters.Length == 0)
-                        KeysConfig.ExternalKeyManager.Parameters.Data = "Persist Security Info=False;Integrated Security=SSPI;Initial Catalog=yourdatabase;Data Source=yourserverinstance";
+                    if (string.IsNullOrEmpty(this.KeysConfig.ExternalKeyManager.ConnectionString))
+                        KeysConfig.ExternalKeyManager.ConnectionString = "Persist Security Info=False;Integrated Security=SSPI;Initial Catalog=yourdatabase;Data Source=yourserverinstance"; 
                     if (string.IsNullOrEmpty(KeysConfig.ExternalKeyManager.KeyName))
                         KeysConfig.ExternalKeyManager.KeyName = "adfsmfa";
                 }
@@ -541,7 +550,7 @@ namespace Neos.IdentityServer.MultiFactor
         public UserFeaturesOptions UserFeatures
         {
             get { return _userFeatures; }
-            set { _userFeatures = value | UserFeaturesOptions.AllowEnrollment; }
+            set { _userFeatures = value; }
         }
 
         [XmlElement("ActivationAdvertising")]
@@ -666,12 +675,20 @@ namespace Neos.IdentityServer.MultiFactor
         private string _keyname = "adfsmfa";
         private bool _certreuse = false;
         private int _certvalidity = 15;
+        private string _connectionstring;
 
         [XmlAttribute("FullQualifiedImplementation")]
         public string FullQualifiedImplementation
         {
             get { return _class; }
             set { _class = value; }
+        }
+
+        [XmlAttribute("ConnectionString")]
+        public string ConnectionString
+        {
+            get { return _connectionstring; }
+            set { _connectionstring = value; }
         }
 
         [XmlAttribute("IsAlwaysEncrypted")]
@@ -740,6 +757,10 @@ namespace Neos.IdentityServer.MultiFactor
     /// </summary>
     public abstract class BaseProviderParams
     {
+        public abstract bool Enabled { get; set; }
+        public abstract bool PinRequired { get; set; }
+        public abstract bool EnrollWizard { get; set; }
+        public abstract ForceWizardMode ForceWizard { get; set; }
     }
 
     /// <summary>
@@ -762,15 +783,15 @@ namespace Neos.IdentityServer.MultiFactor
             this.Enabled = prov.Enabled;
             this.PinRequired = prov.PinRequired;
             this.EnrollWizard = prov.EnrollWizard;
-            this.EnrollWizardStrict = prov.EnrollWizardStrict;
+            this.ForceWizard = prov.ForceWizard;
         }
 
         public int TOTPShadows { get; set; }
         public HashMode Algorithm { get; set; }
-        public bool Enabled { get; set; }
-        public bool PinRequired { get; set; }
-        public bool EnrollWizard { get; set; }
-        public bool EnrollWizardStrict { get; set; }
+        public override bool Enabled { get; set; }
+        public override bool PinRequired { get; set; }
+        public override bool EnrollWizard { get; set; }
+        public override ForceWizardMode ForceWizard { get; set; }
     }
 
     /// <summary>
@@ -792,14 +813,14 @@ namespace Neos.IdentityServer.MultiFactor
             Enabled = prov.Enabled;
             PinRequired = prov.PinRequired;
             EnrollWizard = prov.EnrollWizard;
-            EnrollWizardStrict = prov.EnrollWizardStrict;
+            ForceWizard = prov.ForceWizard;
         }
 
         public MailProvider Data { get; set; }
-        public bool Enabled { get; set; }
-        public bool PinRequired { get; set; }
-        public bool EnrollWizard { get; set; }
-        public bool EnrollWizardStrict { get; set; }
+        public override bool Enabled { get; set; }
+        public override bool PinRequired { get; set; }
+        public override bool EnrollWizard { get; set; }
+        public override ForceWizardMode ForceWizard { get; set; }
     }
 
     /// <summary>
@@ -821,14 +842,14 @@ namespace Neos.IdentityServer.MultiFactor
             Enabled = prov.Enabled; 
             PinRequired = prov.PinRequired;
             EnrollWizard = prov.EnrollWizard;
-            EnrollWizardStrict = prov.EnrollWizardStrict;
+            ForceWizard = prov.ForceWizard;
         }
 
         public ExternalOTPProvider Data { get; set; }
-        public bool Enabled { get; set; }
-        public bool PinRequired { get; set; }
-        public bool EnrollWizard { get; set; }
-        public bool EnrollWizardStrict { get; set; }
+        public override bool Enabled { get; set; }
+        public override bool PinRequired { get; set; }
+        public override bool EnrollWizard { get; set; }
+        public override ForceWizardMode ForceWizard { get; set; }
     }
 
     /// <summary>
@@ -852,16 +873,16 @@ namespace Neos.IdentityServer.MultiFactor
             this.Enabled = prov.Enabled;
             this.PinRequired = prov.PinRequired;
             this.EnrollWizard = false;
-            this.EnrollWizardStrict = prov.EnrollWizardStrict;
+            this.ForceWizard = ForceWizardMode.Disabled;
         }
 
         public AzureProvider Data { get; set; }
         public string ADFSIdentifier { get; set; }
         public string CompanyName { get; set; }
-        public bool Enabled { get; set; }
-        public bool PinRequired { get; set; }
-        public bool EnrollWizard { get; set; }
-        public bool EnrollWizardStrict { get; set; }
+        public override bool Enabled { get; set; }
+        public override bool PinRequired { get; set; }
+        public override bool EnrollWizard { get; set; }
+        public override ForceWizardMode ForceWizard { get; set; }
     }
     #endregion
 
@@ -880,7 +901,7 @@ namespace Neos.IdentityServer.MultiFactor
         private bool _requiredpin = false;
         private bool _enabled = true;
         private bool _enrollwizard = true;
-        private bool _enrollwizardstrict = false;
+        private ForceWizardMode _forcewizard = ForceWizardMode.Disabled;
 
         [XmlAttribute("Enabled")]
         public bool Enabled
@@ -903,11 +924,11 @@ namespace Neos.IdentityServer.MultiFactor
             set { _enrollwizard = value; }
         }
 
-        [XmlAttribute("EnrollWizardStrict")]
-        public bool EnrollWizardStrict
+        [XmlAttribute("ForceWizard")]
+        public ForceWizardMode ForceWizard
         {
-            get { return _enrollwizardstrict; }
-            set { _enrollwizardstrict = value; }
+            get { return _forcewizard; }
+            set { _forcewizard = value; }
         }
 
         [XmlAttribute("Company")]
@@ -981,7 +1002,9 @@ namespace Neos.IdentityServer.MultiFactor
         private bool _requiredpin = false;
         private bool _enabled = false;
         private bool _enrollwizard = false;
-        private bool _enrollwizardstrict = false;
+        private string _class;
+        private XmlCDataSection _cdata;
+        private ForceWizardMode _forcewizard = ForceWizardMode.Disabled;
 
         [XmlAttribute("Enabled")]
         public bool Enabled
@@ -1004,11 +1027,11 @@ namespace Neos.IdentityServer.MultiFactor
             set { _enrollwizard = value; }
         }
 
-        [XmlAttribute("EnrollWizardStrict")]
-        public bool EnrollWizardStrict
+        [XmlAttribute("ForceWizard")]
+        public ForceWizardMode ForceWizard
         {
-            get { return _enrollwizardstrict; }
-            set { _enrollwizardstrict = value; }
+            get { return _forcewizard; }
+            set { _forcewizard = value; }
         }
 
         [XmlAttribute("TenantId")]
@@ -1024,6 +1047,36 @@ namespace Neos.IdentityServer.MultiFactor
             get { return _thumbprint; }
             set { _thumbprint = value; }
         }
+
+        [XmlAttribute("FullQualifiedImplementation")]
+        public string FullQualifiedImplementation
+        {
+            get { return _class; }
+            set { _class = value; }
+        }
+
+        [XmlElement("Parameters", typeof(XmlCDataSection))]
+        public XmlCDataSection Parameters
+        {
+            get
+            {
+                if (_cdata == null)
+                {
+                    XmlDocument doc = new XmlDocument();
+                    _cdata = doc.CreateCDataSection(null);
+                }
+                return _cdata;
+            }
+            set
+            {
+                if (_cdata == null)
+                {
+                    XmlDocument doc = new XmlDocument();
+                    _cdata = doc.CreateCDataSection(null);
+                }
+                _cdata.Data = value.Data;
+            }
+        }
     }
     #endregion
 
@@ -1037,8 +1090,10 @@ namespace Neos.IdentityServer.MultiFactor
         private bool _requiredpin = false;
         private bool _enabled = true;
         private bool _enrollwizard = true;
-        private bool _enrollwizardstrict = false;
+        private ForceWizardMode _forcewizard = ForceWizardMode.Disabled;
         private bool _anonymous = false;
+        private string _class;
+        private XmlCDataSection _cdata;
 
         [XmlAttribute("Enabled")]
         public bool Enabled
@@ -1061,11 +1116,11 @@ namespace Neos.IdentityServer.MultiFactor
             set { _enrollwizard = value; }
         }
 
-        [XmlAttribute("EnrollWizardStrict")]
-        public bool EnrollWizardStrict
+        [XmlAttribute("ForceWizard")]
+        public ForceWizardMode ForceWizard
         {
-            get { return _enrollwizardstrict; }
-            set { _enrollwizardstrict = value; }
+            get { return _forcewizard; }
+            set { _forcewizard = value; }
         }
 
         [XmlAttribute("from")]
@@ -1147,6 +1202,36 @@ namespace Neos.IdentityServer.MultiFactor
             get;
             set;
         }
+
+        [XmlAttribute("FullQualifiedImplementation")]
+        public string FullQualifiedImplementation
+        {
+            get { return _class; }
+            set { _class = value; }
+        }
+
+        [XmlElement("Parameters", typeof(XmlCDataSection))]
+        public XmlCDataSection Parameters
+        {
+            get
+            {
+                if (_cdata == null)
+                {
+                    XmlDocument doc = new XmlDocument();
+                    _cdata = doc.CreateCDataSection(null);
+                }
+                return _cdata;
+            }
+            set
+            {
+                if (_cdata == null)
+                {
+                    XmlDocument doc = new XmlDocument();
+                    _cdata = doc.CreateCDataSection(null);
+                }
+                _cdata.Data = value.Data;
+            }
+        }
     }
     #endregion
 
@@ -1159,10 +1244,12 @@ namespace Neos.IdentityServer.MultiFactor
         private bool _requiredpin = false;
         private bool _enabled = true;
         private bool _enrollwizard = true;
+        private ForceWizardMode _forcewizard = ForceWizardMode.Disabled;
         private int _totpShadows = 2;
         private HashMode _algorithm = HashMode.SHA1;
-        private bool _enrollwizardstrict = false;
         private OTPWizardOptions _otpwizardoptions = OTPWizardOptions.All;
+        private string _class;
+        private XmlCDataSection _cdata;
 
         [XmlAttribute("Enabled")]
         public bool Enabled
@@ -1185,11 +1272,11 @@ namespace Neos.IdentityServer.MultiFactor
             set { _enrollwizard = value; }
         }
 
-        [XmlAttribute("EnrollWizardStrict")]
-        public bool EnrollWizardStrict
+        [XmlAttribute("ForceWizard")]
+        public ForceWizardMode ForceWizard
         {
-            get { return _enrollwizardstrict; }
-            set { _enrollwizardstrict = value; }
+            get { return _forcewizard; }
+            set { _forcewizard = value; }
         }
 
         [XmlAttribute("TOTPShadows")]
@@ -1213,6 +1300,35 @@ namespace Neos.IdentityServer.MultiFactor
             set { _otpwizardoptions = value; }
         }
 
+        [XmlAttribute("FullQualifiedImplementation")]
+        public string FullQualifiedImplementation
+        {
+            get { return _class; }
+            set { _class = value; }
+        }
+
+        [XmlElement("Parameters", typeof(XmlCDataSection))]
+        public XmlCDataSection Parameters
+        {
+            get
+            {
+                if (_cdata == null)
+                {
+                    XmlDocument doc = new XmlDocument();
+                    _cdata = doc.CreateCDataSection(null);
+                }
+                return _cdata;
+            }
+            set
+            {
+                if (_cdata == null)
+                {
+                    XmlDocument doc = new XmlDocument();
+                    _cdata = doc.CreateCDataSection(null);
+                }
+                _cdata.Data = value.Data;
+            }
+        }
     }
     #endregion
 
@@ -1406,22 +1522,106 @@ namespace Neos.IdentityServer.MultiFactor
         }
     }
 
+
+    /// <summary>
+    /// ADDSHostForest class implementation
+    /// </summary>
+    public class ADDSHostForest
+    {
+        public bool IsRoot { get; set; }
+        public string ForestDNS { get; set; }
+        public List<string> TopLevelNames = new List<string>();
+    }
+
     /// <summary>
     /// ADDSHost class implementation
     /// </summary>
     public class ADDSHost
     {
-        string _domainaddress = string.Empty;
-        string _keyattr = "msDS-cloudExtensionAttribute10";
-        string _mailattr = "msDS-cloudExtensionAttribute11";
-        string _phoneattr = "msDS-cloudExtensionAttribute12";
-        string _methodattr = "msDS-cloudExtensionAttribute13";
-        string _overridemethodattr = "msDS-cloudExtensionAttribute14";
-        string _pinattr = "msDS-cloudExtensionAttribute15";
-       // string _notifcheckdateattribute = "msDS-cloudExtensionAttribute16";
-       // string _TOTPAttr = "msDS-cloudExtensionAttribute17";
-        string _TOTPEnabled = "msDS-cloudExtensionAttribute18";
-        int _maxrows = 10000;
+        private string _domainaddress = string.Empty;
+        private string _keyattr = "msDS-cloudExtensionAttribute10";
+        private string _mailattr = "msDS-cloudExtensionAttribute11";
+        private string _phoneattr = "msDS-cloudExtensionAttribute12";
+        private string _methodattr = "msDS-cloudExtensionAttribute13";
+        private string _overridemethodattr = "msDS-cloudExtensionAttribute14";
+        private string _pinattr = "msDS-cloudExtensionAttribute15";
+        // private string _notifcheckdateattribute = "msDS-cloudExtensionAttribute16";
+        // private string _TOTPAttr = "msDS-cloudExtensionAttribute17";
+        private string _TOTPEnabled = "msDS-cloudExtensionAttribute18";
+        private int _maxrows = 10000;
+        private  bool _isbinded = false;
+        private List<ADDSHostForest> _forests = new List<ADDSHostForest>();   
+
+        /// <summary>
+        /// ADDSHost constructor
+        /// </summary>
+        public ADDSHost()
+        {
+            _isbinded = false;
+        }
+
+        /// <summary>
+        /// Bind method implementation
+        /// </summary>
+        public void Bind()
+        {
+            if (_isbinded)
+                return;
+            _isbinded = true;
+
+            Forests.Clear();
+            Forest currentforest = Forest.GetCurrentForest();
+            ADDSHostForest root = new ADDSHostForest();
+            root.IsRoot = true;
+            root.ForestDNS = currentforest.Name;
+            Forests.Add(root);
+            foreach (ForestTrustRelationshipInformation trusts in currentforest.GetAllTrustRelationships())
+            {
+                ADDSHostForest sub = new ADDSHostForest();
+                sub.IsRoot = false;
+                sub.ForestDNS = trusts.TargetName;
+                foreach (TopLevelName t in trusts.TopLevelNames)
+                {
+                    if (t.Status == TopLevelNameStatus.Enabled)
+                        sub.TopLevelNames.Add(t.Name);
+                }
+                Forests.Add(sub);
+            }
+        }
+
+        /// <summary>
+        /// GetForestForUPN method implementation
+        /// </summary>
+        public string GetForestForUPN(string upn)
+        {
+            string result = string.Empty;
+            string domtofind = upn.Substring(upn.IndexOf('@')+1);
+            foreach (ADDSHostForest f in Forests)
+            {
+                if (f.IsRoot)
+                    result = f.ForestDNS;
+                else
+                {
+                    foreach (string s in f.TopLevelNames)
+                    {
+                        if (s.ToLower().Equals(domtofind.ToLower()))
+                        {
+                            result = s;
+                            break;
+                        }
+                    }
+                }
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// Forests property implementation
+        /// </summary>
+        public List<ADDSHostForest> Forests
+        {
+            get { return _forests; }
+        }
 
         #region ADDS Connection attributes
         [XmlAttribute("DomainAddress")]

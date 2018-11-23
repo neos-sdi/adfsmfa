@@ -79,16 +79,16 @@ namespace Neos.IdentityServer.MultiFactor.SAS
         public override bool AllowEnrollment
         {
             get { return false; }
-            set { throw new Exception("Enrollment Not allowed here !"); }
+            set { }
         }
 
         /// <summary>
-        /// EnrollmentNeverUseOptions property implementation
+        /// ForceEnrollment property implementation
         /// </summary>
-        public override bool EnrollmentNeverUseOptions
+        public override ForceWizardMode ForceEnrollment
         {
-            get { return false; }
-            set { throw new Exception("Enrollment Not allowed here !"); }
+            get { return ForceWizardMode.Disabled; }
+            set { }
         }
 
         /// <summary>
@@ -399,11 +399,10 @@ namespace Neos.IdentityServer.MultiFactor.SAS
                         CertId = az.Data.ThumbPrint;
                         STSIdentifier = az.ADFSIdentifier;
                         CompanyName = az.CompanyName;
-                       // AllowEnrollment = az.EnrollWizard;
-                       // EnrollmentNeverUseOptions = az.EnrollWizardStrict;
                         Enabled = az.Enabled;
                         PinRequired = az.PinRequired;
-
+                        AllowEnrollment = az.EnrollWizard;
+                        ForceEnrollment = az.ForceWizard;
                         _sasprovider = new NeosSasProvider(TenantId, ClientId, CertId);
                         _isinitialized = true;
                         return;
@@ -675,7 +674,7 @@ namespace Neos.IdentityServer.MultiFactor.SAS
                 Lcid = CultureInfo.GetCultureInfo(ctx.Lcid).Name,
                 UserPrincipalName = ctx.UPN,
                 
-                CompanyName = "redhook software",
+                CompanyName = this.CompanyName,
                 AuthenticationMethodId = AuthenticationMethodToString(ctx.SelectedMethod),
                 ReplicationScope = null,
                 ContextId = ctx.ActivityId,

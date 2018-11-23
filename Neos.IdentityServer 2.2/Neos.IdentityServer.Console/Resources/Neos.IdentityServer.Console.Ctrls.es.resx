@@ -267,6 +267,9 @@
   <data name="CTRLGLDELVERY" xml:space="preserve">
     <value>Tiempo de validación (en segundos)</value>
   </data>
+  <data name="CTRLGLENROLLWIZ" xml:space="preserve">
+    <value>Asistente de registro</value>
+  </data>
   <data name="CTRLGLHASH" xml:space="preserve">
     <value>Algoritmo Hash</value>
   </data>
@@ -349,7 +352,7 @@
     <value>Asistente de registro</value>
   </data>
   <data name="CTRLPROVWIZARDSTRICT" xml:space="preserve">
-    <value>No permitir administrar mis opciones de configuración</value>
+    <value>Forzar asistente si no se completa</value>
   </data>
   <data name="CTRLSAVE" xml:space="preserve">
     <value>Guardar</value>
@@ -382,7 +385,7 @@
     <value>Nuevo certificado</value>
   </data>
   <data name="CTRLSECNEWCERTCREATED" xml:space="preserve">
-    <value>Certificado creado correctamente !</value>
+    <value>Certificado creado correctamente ! Debe implementar el nuevo certificado {0} en todos los demás servidores ADFS</value>
   </data>
   <data name="CTRLSECNEWCRYPTEDDATABASE" xml:space="preserve">
     <value>Crear base de datos encriptada</value>
@@ -500,6 +503,9 @@
   </data>
   <data name="CTRLSQLNEWDBCREATED" xml:space="preserve">
     <value>MFA {0} base de datos creada con éxito !</value>
+  </data>
+  <data name="CTRLSQLNEWDBCREATED2" xml:space="preserve">
+    <value>Base de datos MFA {0} creada con éxito ! Debe implementar el nuevo certificado {1} en todos los demás servidores ADFS</value>
   </data>
   <data name="CTRLSQLREUSECERT" xml:space="preserve">
     <value>Reutilizar el certificado</value>

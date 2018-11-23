@@ -28,6 +28,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     using System.Management.Automation.Host;
     using Neos.IdentityServer.MultiFactor;
     using System.Collections.ObjectModel;
+    using MFA;
 
     /// <summary>
     /// MFACmdlet class
@@ -147,10 +148,10 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         [Parameter(ParameterSetName = "Data")]
         [Alias("Method")]
         [ValidateSet("Choose", "Code", "Email", "External", "Azure")]
-        public PreferredMethod FilterMethod
+        public PSPreferredMethod FilterMethod
         {
-            get { return _filter.FilterMethod; }
-            set { _filter.FilterMethod = value; }
+            get { return ((PSPreferredMethod)_filter.FilterMethod); }
+            set { _filter.FilterMethod = ((PreferredMethod)value); }
         }
 
         /// <summary>
@@ -314,9 +315,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         private string _identity = string.Empty;
         private string _mailaddress = string.Empty;
         private string _phonenumber = string.Empty;
-        private PreferredMethod _method = PreferredMethod.None;
+        private PSPreferredMethod _method = PSPreferredMethod.None;
         private bool _enabled = true;
-        private bool _noemail = false;
+        private bool _email = false;
         private int _pincode = -1;
         private bool _resetkey = false;
 
@@ -363,7 +364,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         [Parameter(ParameterSetName = "Identity")]
         [Parameter(ParameterSetName = "Data")]
         [ValidateSet("Choose", "Code", "Email", "External", "Azure")]
-        public PreferredMethod Method
+        public PSPreferredMethod Method
         {
             get { return _method; }
             set { _method = value; }
@@ -392,13 +393,14 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         }
 
         /// <summary>
-        /// <para type="description">NoEmailForNewKey transmission when create a new Key for MFA.</para>
+        /// <para type="description">EmailForNewKey allow email when create a new Key for MFA.</para>
         /// </summary>
         [Parameter(ParameterSetName = "Identity")]
-        public SwitchParameter NoEmailForNewKey
+        [Parameter(ParameterSetName = "Data")]
+        public SwitchParameter EmailForNewKey
         {
-            get { return _noemail; }
-            set { _noemail = value; }
+            get { return _email; }
+            set { _email = value; }
         }
 
         /// <summary>
@@ -476,8 +478,8 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                             reg.MailAddress = this.MailAddress;
                         if (PhoneNumber != string.Empty)
                             reg.PhoneNumber = this.PhoneNumber;
-                        if (this.Method != PreferredMethod.None)
-                            reg.PreferredMethod = (PreferredMethod)this.Method;
+                        if (this.Method != PSPreferredMethod.None)
+                            reg.PreferredMethod = this.Method;
                         if (this.Pin > -1)
                             reg.PIN = this.Pin;
                         reg.Enabled = this.Enabled;
@@ -488,7 +490,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                             this.Host.UI.WriteWarningLine(string.Format(errors_strings.ErrorPhoneNotProvided, reg.UPN));
 
                         ManagementService.Initialize(this.Host, true);
-                        PSRegistration ret = (PSRegistration)ManagementService.SetUserRegistration((Registration)reg, this.ResetKey, this.NoEmailForNewKey);
+                        PSRegistration ret = (PSRegistration)ManagementService.SetUserRegistration((Registration)reg, this.ResetKey, true, this.EmailForNewKey);
 
                         if (ret != null)
                         {
@@ -497,6 +499,8 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                             this.WriteObject(ret);
                             this.WriteVerbose(string.Format(infos_strings.InfosUserUpdated, ret.UPN));
                         }
+                        else
+                            throw new Exception(string.Format(errors_strings.ErrorUserNotFound, reg.UPN));
                     }
                     catch (Exception Ex)
                     {
@@ -529,10 +533,10 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         private string _identity = string.Empty;
         private string _mailaddress = string.Empty;
         private string _phonenumber = string.Empty;
-        private PreferredMethod _method = PreferredMethod.None;
+        private PSPreferredMethod _method = PSPreferredMethod.None;
         private int _pincode = -1;
         private bool _enabled = true;
-        private bool _noemail = false;
+        private bool _email = false;
 
         PSRegistration[] _data = null;
 
@@ -574,7 +578,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// </summary>
         [Parameter(ParameterSetName = "Identity")]
         [ValidateSet("Choose", "Code", "Email", "External", "Azure")]
-        public PreferredMethod Method
+        public PSPreferredMethod Method
         {
             get { return _method; }
             set { _method = value; }
@@ -602,13 +606,13 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         }
 
         /// <summary>
-        /// <para type="description">NoEmailForNewKey transmission when create a new Key for MFA.</para>
+        /// <para type="description">EmailForNewKey allow Key email when create a new Key for MFA.</para>
         /// </summary>
         [Parameter(ParameterSetName = "Identity")]
-        public SwitchParameter NoEmailForNewKey
+        public SwitchParameter EmailForNewKey
         {
-            get { return _noemail; }
-            set { _noemail = value; }
+            get { return _email; }
+            set { _email = value; }
         }
 
         /// <summary>
@@ -677,8 +681,8 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                             reg.MailAddress = this.MailAddress;
                         if (PhoneNumber != string.Empty)
                             reg.PhoneNumber = this.PhoneNumber;
-                        if (this.Method != PreferredMethod.None)
-                            reg.PreferredMethod = (PreferredMethod)this.Method;
+                        if (this.Method != PSPreferredMethod.None)
+                            reg.PreferredMethod = this.Method;
                         if (this.Pin > -1)
                             reg.PIN = this.Pin;
                         reg.Enabled = this.Enabled; 
@@ -689,7 +693,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                             this.Host.UI.WriteWarningLine(string.Format(errors_strings.ErrorPhoneNotProvided, reg.UPN));
 
                         ManagementService.Initialize(this.Host, true);
-                        PSRegistration ret = (PSRegistration)ManagementService.AddUserRegistration((Registration)reg, true, this.NoEmailForNewKey);
+                        PSRegistration ret = (PSRegistration)ManagementService.AddUserRegistration((Registration)reg, false, true, this.EmailForNewKey);
 
                         if (ret != null)
                         {
@@ -698,7 +702,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                             this.WriteVerbose(string.Format(infos_strings.InfosUserAdded, reg.UPN));
                         }
                         else
-                            throw new Exception(string.Format(errors_strings.ErrorAddingUser, reg.UPN));
+                            throw new Exception(string.Format(errors_strings.ErrorUserNotFound, reg.UPN));
                     }
                     catch (Exception Ex)
                     {
@@ -1452,11 +1456,11 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     ///   <para>Create a new empty configuration for MFA. You must complete configuration with other CmdLets</para>
     /// </example>
     /// <example>
-    ///   <para>Register-MFASystem -Activate -RestartFarm -KeyFormat RSA -RSACertificateDuration 10</para>
+    ///   <para>Register-MFASystem -Activate -RestartFarm -KeysFormat RSA -RSACertificateDuration 10</para>
     ///   <para>Create a new empty configuration for MFA. Activation and Restart of services. Key Format is set to RSA with a cetificate for 10 Years</para>
     /// </example>
     /// <example>
-    ///   <para>Register-MFASystem -Activate -RestartFarm -KeyFormat CUSTOM -RSACertificateDuration 10</para>
+    ///   <para>Register-MFASystem -Activate -RestartFarm -KeysFormat CUSTOM -RSACertificateDuration 10</para>
     ///   <para>Create a new empty configuration for MFA. Activation and Restart of services. Key Format is set to RSA CUSTOM with a cetificate for 10 Years, you must create a database for storing user keys and certificates with New-MFASecretKeysDatabase Cmdlet</para>
     /// </example>
     /// <example>
@@ -1467,7 +1471,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     public sealed class RegisterMFASystem : MFACmdlet, IDynamicParameters
     {
         private BackupFilePathDynamicParameters Dyn;
-        private FlatSecretKeyFormat _fmt = FlatSecretKeyFormat.RNG;
+        private PSSecretKeyFormat _fmt = PSSecretKeyFormat.RNG;
         private int _duration = 5;
 
         /// <summary>
@@ -1508,7 +1512,8 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// KeysFormat property
         /// </summary>
         [Parameter(ParameterSetName = "Data")]
-        public FlatSecretKeyFormat KeysFormat
+        [ValidateSet("RNG", "RSA", "CUSTOM")]
+        public PSSecretKeyFormat KeysFormat
         {
             get { return _fmt; }
             set { _fmt = value;}
@@ -1568,13 +1573,13 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                     ADFSServiceManager svc = ManagementService.ADFSManager;
                     if (this.AllowUpgrade)
                     {
-                        if (svc.RegisterMFAProvider(hh, this.Activate, this.RestartFarm, true, Dyn.BackupFilePath, (SecretKeyFormat)this.KeysFormat, this.RSACertificateDuration))
+                        if (svc.RegisterMFAProvider(hh, this.Activate, this.RestartFarm, true, Dyn.BackupFilePath, (Neos.IdentityServer.MultiFactor.SecretKeyFormat)this.KeysFormat, this.RSACertificateDuration))
                             this.Host.UI.WriteLine(ConsoleColor.Green, this.Host.UI.RawUI.BackgroundColor, String.Format(infos_strings.InfosSystemRegistered));
                         else
                             this.Host.UI.WriteLine(ConsoleColor.Yellow, this.Host.UI.RawUI.BackgroundColor, String.Format(infos_strings.InfosSystemAlreadyInitialized));
                     }
                     else
-                        if (svc.RegisterMFAProvider(hh, this.Activate, this.RestartFarm, false, null, (SecretKeyFormat)this.KeysFormat, this.RSACertificateDuration))
+                        if (svc.RegisterMFAProvider(hh, this.Activate, this.RestartFarm, false, null, (Neos.IdentityServer.MultiFactor.SecretKeyFormat)this.KeysFormat, this.RSACertificateDuration))
                             this.Host.UI.WriteLine(ConsoleColor.Green, this.Host.UI.RawUI.BackgroundColor, String.Format(infos_strings.InfosSystemRegistered));
                         else
                             this.Host.UI.WriteLine(ConsoleColor.Yellow, this.Host.UI.RawUI.BackgroundColor, String.Format(infos_strings.InfosSystemAlreadyInitialized));
@@ -2507,41 +2512,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     }
 
     /// <summary>
-    /// PSProviderType
-    /// <para type="synopsis">MFA Providers Kinds.</para>
-    /// <para type="description">MFA Providers Types (Code, Email, External, Azure, Biometrics).</para>
-    /// </summary>    
-    public enum PSProviderType
-    {
-        /// <summary>
-        /// <para type="description">Kind for TOTP MFA Provider</para>
-        /// </summary>
-        Code = 1,
-
-        /// <summary>
-        /// <para type="description">Kind for Email MFA Provider</para>
-        /// </summary>
-        Email = 2,
-
-        /// <summary>
-        /// <para type="description">Kind for External / SMS MFA Provider</para>
-        /// </summary>
-        External = 3,
-
-        /// <summary>
-        /// <para type="description">Kind for Azure MFA Provider</para>
-        /// </summary>
-        Azure = 4,
-
-        /// <summary>
-        /// <para type="description">Kind for Biometric MFA Provider</para>
-        /// </summary>
-        Biometrics = 5
-    }         
-
-    /// <summary>
     /// <para type="synopsis">Get MFA Provider Configuration.</para>
     /// <para type="description">Get MFA Provider configuration options.</para>
+    /// <para type="description"></para>
     /// </summary>
     /// <example>
     ///   <para>Get-MFAProvider -ProviderType External</para>
@@ -2551,7 +2524,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     public sealed class GetMFAProvider : MFACmdlet
     {
         private PSConfigTOTPProvider _config0;
-        private PSConfigMail _config1;
+        private PSConfigMailProvider _config1;
         private PSConfigExternalProvider _config2;
         private PSConfigAzureProvider _config3;
 
@@ -2560,7 +2533,6 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <summary>
         /// <para type="description">Provider Type parameter, (Code, Email, External, Azure, Biometrics) Required.</para>
         /// </summary>
-        [Parameter(Mandatory = true, Position = 0, ParameterSetName = "Identity", ValueFromPipeline = true)]
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = "Data", ValueFromPipeline = true)]
         [ValidateRange(PSProviderType.Code, PSProviderType.Azure)]
         public PSProviderType ProviderType
@@ -2587,7 +2559,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                     case PSProviderType.Email:
                         FlatConfigMail cf1 = new FlatConfigMail();
                         cf1.Load(this.Host);
-                        _config1 = (PSConfigMail)cf1;
+                        _config1 = (PSConfigMailProvider)cf1;
                         break;
                     case PSProviderType.External:
                         FlatExternalProvider cf2 = new FlatExternalProvider();
@@ -2674,13 +2646,20 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     /// </summary>
     /// <example>
     ///   <para>Set-MFAProvider -ProviderType Code -Data $cfg</para>
-    ///   <para>Set MFA Provider configuration for (Code, Email, External, Azure, Biometrics)</para>
     /// </example>
     /// <example>
-    ///   <para>$cfg = Get-MFAProvider Email</para>
+    ///   <para>$cfg = Get-MFAProvider -ProviderType email</para>
     ///   <para>$cfg.Host = smtp.office365.com</para>
     ///   <para>Set-MFAProvider Email $cfg</para>
-    ///   <para>Set MFA Provider configuration (Code, Email, External, Azure, Biometrics), modity values and finally Update configuration.</para>
+    /// </example>
+    /// <example>
+    ///   <para></para>
+    ///   <para>$cfg = Get-MFAProvider -ProviderType email</para>
+    ///   <para>$cfg.MailOTP.Templates</para>
+    ///   <para>$cfg.MailOTP.AddTemplate(1036, "c:\temp\mytemplate.html")</para>
+    ///   <para>$cfg.MailOTP.SetTemplate(1033, "c:\temp\mytemplate2.html")</para>
+    ///   <para>$cfg.MailOTP.RemoveTemplate(1033)</para>
+    ///   <para>Set-MFAProvider -ProviderType email $cfg</para>
     /// </example>
     [Cmdlet(VerbsCommon.Set, "MFAProvider", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
     public sealed class SetMFAProvider : MFACmdlet, IDynamicParameters
@@ -2812,7 +2791,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// Data property
         /// </summary>
         [Parameter(Mandatory = true, Position = 1, ParameterSetName = "Data", ValueFromPipeline = true)]
-        public PSConfigMail Data { get; set; }
+        public PSConfigMailProvider Data { get; set; }
     }
 
     /// <summary>
@@ -2854,10 +2833,10 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     ///  <para>(Get-MFAConfigKeys).ExternalKeyManager.Parameters</para>
     /// </example>
     [Cmdlet(VerbsCommon.Get, "MFAConfigKeys", SupportsShouldProcess = true, SupportsPaging = false, ConfirmImpact = ConfirmImpact.Medium, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
-    [OutputType(typeof(PSKeysConfig))]
+    [OutputType(typeof(PSConfigKeys))]
     public sealed class GetMFAConfigKeys : MFACmdlet
     {
-        private PSKeysConfig _config;
+        private PSConfigKeys _config;
 
         /// <summary>
         /// BeginProcessing method implementation
@@ -2870,7 +2849,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
 
                 FlatKeysConfig cf = new FlatKeysConfig();
                 cf.Load(this.Host);
-                _config = (PSKeysConfig)cf;
+                _config = (PSConfigKeys)cf;
             }
             catch (Exception ex)
             {
@@ -2925,14 +2904,14 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     /// </example>
     /// <example>
     ///   <para>$cfg = Get-MFAConfigKeys</para>
-    ///   <para>$cfg.KeyFormat = RSA</para>
+    ///   <para>$cfg.KeyFormat = [MFA.PSSecretKeyFormat]::RSA</para>
     ///   <para>Set-MFAConfigKeys $cfg</para>
     ///   <para>Set MFA Secret Keys configuration options, modity values and finally Update configuration.</para>
     /// </example>
     [Cmdlet(VerbsCommon.Set, "MFAConfigKeys", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
     public sealed class SetMFAConfigKeys : MFACmdlet
     {
-        private PSKeysConfig _config;
+        private PSConfigKeys _config;
         private FlatKeysConfig _target;
 
         /// <summary>
@@ -2940,7 +2919,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = "Data", ValueFromPipeline = true)]
         [ValidateNotNullOrEmpty()]
-        public PSKeysConfig Config
+        public PSConfigKeys Config
         {
             get { return _config; }
             set { _config = value; }
@@ -2997,8 +2976,8 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     ///   <para>When using SQL Server 2016 (and up) Always encrypted columsn</para>
     ///   <para>New-MFADatabase -ServerName SQLServer\Instance -DatabaseName MFAKeysDatabase -UserName Domain\ADFSaccount -Encrypted</para>
     ///   <para>New-MFADatabase -ServerName SQLServer\Instance -DatabaseName MFAKeysDatabase -UserName Domain\ADFSaccount -Encrypted -EncryptedKeyName mykey</para>
-    ///   <para>New-MFADatabase -ServerName SQLServer\Instance -DatabaseName MFAKeysDatabase -UserName Domain\ADFSManagedAccount$ -Encripted -ReuseCertificate -ThumPrint <thumprint></para>
-    ///   <para>New-MFADatabase -ServerName SQLServer\Instance -DatabaseName MFAKeysDatabase -UserName Domain\ADFSManagedAccount$ -Encripted -ReuseCertificate -ThumPrint <thumprint> -encryptedkeyname mykey</para>
+    ///   <para>New-MFADatabase -ServerName SQLServer\Instance -DatabaseName MFAKeysDatabase -UserName Domain\ADFSManagedAccount$ -Encripted -ReuseCertificate -ThumPrint 0123456789ABCDEF...</para>
+    ///   <para>New-MFADatabase -ServerName SQLServer\Instance -DatabaseName MFAKeysDatabase -UserName Domain\ADFSManagedAccount$ -Encripted -ReuseCertificate -ThumPrint 0123456789ABCDEF... -encryptedkeyname mykey</para>
     ///   <para>Create a new database for MFA, grant rights to the specified account</para>
     /// </example>
     [Cmdlet(VerbsCommon.New, "MFADatabase", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
@@ -3147,8 +3126,8 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     ///   <para>When using SQL Server 2016 (and up) Always encrypted columsn</para>
     ///   <para>New-MFASecretKeysDatabase -ServerName SQLServer\Instance -DatabaseName MFAKeysDatabase -UserName Domain\ADFSaccount -Encrypted</para>
     ///   <para>New-MFASecretKeysDatabase -ServerName SQLServer\Instance -DatabaseName MFAKeysDatabase -UserName Domain\ADFSaccount -Encrypted -EncryptedKeyName mykey</para>
-    ///   <para>New-MFASecretKeysDatabase -ServerName SQLServer\Instance -DatabaseName MFAKeysDatabase -UserName Domain\ADFSManagedAccount$ -Encripted -ReuseCertificate -ThumPrint <thumprint></para>
-    ///   <para>New-MFASecretKeysDatabase -ServerName SQLServer\Instance -DatabaseName MFAKeysDatabase -UserName Domain\ADFSManagedAccount$ -Encripted -ReuseCertificate -ThumPrint <thumprint> -encryptedkeyname mykey</para>
+    ///   <para>New-MFASecretKeysDatabase -ServerName SQLServer\Instance -DatabaseName MFAKeysDatabase -UserName Domain\ADFSManagedAccount$ -Encripted -ReuseCertificate -ThumPrint 0123456789ABCDEF...</para>
+    ///   <para>New-MFASecretKeysDatabase -ServerName SQLServer\Instance -DatabaseName MFAKeysDatabase -UserName Domain\ADFSManagedAccount$ -Encripted -ReuseCertificate -ThumPrint 0123456789ABCDEF... -encryptedkeyname mykey</para>
     ///   <para></para>
     ///   <para>(Get-MFAConfigKeys).KeyFormat must be equal to CUSTOM to be effective</para>
     ///   <para>Create a new database for MFA Secret Keys, grant rights to the specified account</para>
@@ -3283,6 +3262,338 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             catch (Exception ex)
             {
                 this.ThrowTerminatingError(new ErrorRecord(ex, "3022", ErrorCategory.OperationStopped, this));
+            }
+        }
+    }
+
+    /// <summary>
+    /// <para type="synopsis">Imports users from CSV file in MFA System.</para>
+    /// <para type="description">Imports users from CSV file in MFA System, can be used with ADDS and SQL configuration.</para>
+    /// </summary>
+    /// <example>
+    ///   <para>Import-MFAUsersCSV -LitteralPath c:\temp\import.csv</para>
+    ///   <para>Import-MFAUsersCSV -LitteralPath c:\temp\import.csv -DisableAll -SendMail -NewKey</para>
+    ///   <para></para>
+    ///   <para>LitteralPath is required, full file name path</para>
+    ///   <para></para>
+    ///   <para>NewKey generation of a new Key only if an update occurs, when adding a user, a key is always generated</para>
+    ///   <para></para>
+    ///   <para>DisableAll Status of Added users set to disabled</para>
+    /// </example>
+    [Cmdlet("Import", "MFAUsersCSV", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Identity")]
+    public sealed class ImportMFAUsersCSV : MFACmdlet
+    {
+        /// <summary>
+        /// <para type="description">Litteral path to the CSV file to be imported.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        public string LitteralPath { get; set; }
+
+        /// <summary>
+        /// <para type="description">allow send email when a new Key is generated for MFA.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        public SwitchParameter SendEmail { get; set; }
+
+        /// <summary>
+        /// <para type="description">Regenerate a new secret key for the updated users.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        public SwitchParameter NewKey { get; set; }
+
+        /// <summary>
+        /// <para type="description">Imported users are not enabled by default. an extra administrative task required !</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        public SwitchParameter DisableAll { get; set; }
+
+        /// <summary>
+        /// <para type="description">Suppress log file generation</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        public SwitchParameter NoLogFile { get; set; }
+
+
+        /// <summary>
+        /// BeginProcessing method implementation
+        /// </summary>
+        protected override void BeginProcessing()
+        {
+            base.BeginProcessing();
+            try
+            {
+                ManagementService.Initialize(this.Host, true);
+            }
+            catch (Exception ex)
+            {
+                this.ThrowTerminatingError(new ErrorRecord(ex, "1013", ErrorCategory.OperationStopped, this));
+            }
+        }
+
+        /// <summary>
+        /// ProcessRecord method override
+        /// </summary>
+        protected override void ProcessRecord()
+        {
+            if (ShouldProcess("Import Users in MFA with CSV file"))
+            {
+                try
+                {
+                    ImportUsersCSV imp = new ImportUsersCSV(ManagementService.ADFSManager.Config);
+                    imp.FileName = this.LitteralPath;
+                    imp.ForceNewKey = this.NewKey;
+                    imp.SendEmail = this.SendEmail;
+                    imp.DisableAll = this.DisableAll;
+                    imp.NoLogFile = this.NoLogFile;
+                    this.Host.UI.WriteLine(string.Format("Import Users Starting {0}", DateTime.Now.ToString()));
+                    imp.DoImport();
+                    this.Host.UI.WriteLine(string.Format("Import Users Finished {0} Users Imported : {1} Errors {2}", DateTime.Now.ToString(), imp.RecordsImported.ToString(), imp.ErrorsCount.ToString()));
+                }
+                catch (Exception Ex)
+                {
+                    this.Host.UI.WriteErrorLine(Ex.Message);
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// <para type="synopsis">Imports users from XML file in MFA System.</para>
+    /// <para type="description">Imports users from XML file in MFA System, can be used with ADDS and SQL configuration.</para>
+    /// </summary>
+    /// <example>
+    ///   <para>Import-MFAUsersXML -LitteralPath c:\temp\import.xml</para>
+    ///   <para>Import-MFAUsersXML -LitteralPath c:\temp\import.xml -DisableAll -SendMail -NewKey</para>
+    ///   <para></para>
+    ///   <para>LitteralPath is required, full file name path</para>
+    ///   <para></para>
+    ///   <para>NewKey generation of a new Key only if an update occurs, when adding a user, a key is always generated</para>
+    ///   <para></para>
+    ///   <para>DisableAll Status of Added users set to disabled</para>
+    /// </example>
+    [Cmdlet("Import", "MFAUsersXML", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Identity")]
+    public sealed class ImportMFAUsersXML : MFACmdlet
+    {
+        /// <summary>
+        /// <para type="description">Litteral path to the XML file to be imported.</para>
+        /// </summary>
+        [Parameter(Mandatory = true, ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public string LitteralPath { get; set; }
+
+        /// <summary>
+        /// <para type="description">allow send email when a new Key is generated for MFA.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        public SwitchParameter SendEmail { get; set; }
+
+        /// <summary>
+        /// <para type="description">Regenerate a new secret key for updated users.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        public SwitchParameter NewKey { get; set; }
+
+        /// <summary>
+        /// <para type="description">Imported users are not enabled by default. an extra administrative task required !</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        public SwitchParameter DisableAll { get; set; } 
+
+        /// <summary>
+        /// <para type="description">Imported users are not enabled by default. an extra administrative task required !</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        public SwitchParameter NoLogFile { get; set; }
+
+        /// <summary>
+        /// BeginProcessing method implementation
+        /// </summary>
+        protected override void BeginProcessing()
+        {
+            base.BeginProcessing();
+            try
+            {
+                ManagementService.Initialize(this.Host, true);
+            }
+            catch (Exception ex)
+            {
+                this.ThrowTerminatingError(new ErrorRecord(ex, "1013", ErrorCategory.OperationStopped, this));
+            }
+        }
+
+        /// <summary>
+        /// ProcessRecord method override
+        /// </summary>
+        protected override void ProcessRecord()
+        {
+            if (ShouldProcess("Import Users in MFA with XML file"))
+            {
+                try
+                {
+                    ImportUsersXML imp = new ImportUsersXML(ManagementService.ADFSManager.Config);
+                    imp.FileName = this.LitteralPath;
+                    imp.ForceNewKey = this.NewKey;
+                    imp.SendEmail = this.SendEmail;
+                    imp.DisableAll = this.DisableAll;
+                    imp.NoLogFile = this.NoLogFile;
+                    this.Host.UI.WriteLine(string.Format("Import Users Starting {0}", DateTime.Now.ToString()));
+                    imp.DoImport();
+                    this.Host.UI.WriteLine(string.Format("Import Users Finished {0} Users Imported : {1} Errors {2}", DateTime.Now.ToString(), imp.RecordsImported.ToString(), imp.ErrorsCount.ToString()));
+                }
+                catch (Exception Ex)
+                {
+                    this.Host.UI.WriteErrorLine(Ex.Message);
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// <para type="synopsis">Imports users from ADDS in MFA System.</para>
+    /// <para type="description">Imports users from ADDS in MFA System, can be used with ADDS and SQL configuration.</para>
+    /// </summary>
+    /// <example>
+    ///   <para>Import-MFAUsersADDS -LDAPPath "dc=domain,dc=com"</para>
+    ///   <para>Import-MFAUsersADDS -LDAPPath "dc=domain,dc=com" -DisableAll -SendMail -NewKey</para>
+    ///   <para>Import-MFAUsersADDS -LDAPPath "dc=domain,dc=com" -Method Code -ModifiedSince ([DateTime]::UtcNow.AddHours(-4))</para>
+    ///   <para>Import-MFAUsersADDS -LDAPPath "dc=domain,dc=com" -Method Code -ModifiedSince ([DateTime]::UtcNow.AddMinutes(-30))</para>
+    ///   <para></para>
+    ///   <para>LitteralPath is required, full file name path</para>
+    ///   <para></para>
+    ///   <para>NewKey generation of a new Key only if an update occurs, when adding a user, a key is always generated</para>
+    ///   <para></para>
+    ///   <para>DisableAll Status of Added users set to disabled</para>
+    /// </example>
+    [Cmdlet("Import", "MFAUsersADDS", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Identity")]
+    public sealed class ImportMFAUsersADDS : MFACmdlet
+    {
+        /// <summary>
+        /// <para type="description">ADDS LDAP path to query (dc=domain,dc=com)</para>
+        /// </summary>
+        [Parameter(Mandatory = true, ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public string LDAPPath { get; set; }
+
+        /// <summary>
+        /// <para type="description">ADDS DNS domain or forest</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        public string DomainName { get; set; }
+
+        /// <summary>
+        /// <para type="description">optionnal UserName used to connect</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        public string UserName { get; set; }
+
+        /// <summary>
+        /// <para type="description">optionnal Password used to connect</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        public string Password { get; set; }
+
+        /// <summary>
+        /// <para type="description">Imports only users created since CreatedSince property</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        public DateTime? CreatedSince { get; set; }
+
+        /// <summary>
+        /// <para type="description">Imports only users modified since ModifiedSince property</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        public DateTime? ModifiedSince { get; set; }
+
+        /// <summary>
+        /// <para type="description">Mail Attribute for Email or $null</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        public string MailAttributes { get; set; }
+
+        /// <summary>
+        /// <para type="description">Phone Attribute for Phone or $null</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        public string PhoneAttribute { get; set; }
+
+        /// <summary>
+        /// <para type="description">Default value for method</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        public PSPreferredMethod Method { get; set; }
+
+        /// <summary>
+        /// <para type="description">allow send email when a new Key is generated for MFA.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        public SwitchParameter SendEmail { get; set; }
+
+        /// <summary>
+        /// <para type="description">Regenerate a new secret key for updated users.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        public SwitchParameter NewKey { get; set; }
+
+        /// <summary>
+        /// <para type="description">Imported users are not enabled by default. an extra administrative task required !</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        public SwitchParameter DisableAll { get; set; }
+
+        /// <summary>
+        /// <para type="description">Imported users are not enabled by default. an extra administrative task required !</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        public SwitchParameter NoLogFile { get; set; }
+
+        /// <summary>
+        /// BeginProcessing method implementation
+        /// </summary>
+        protected override void BeginProcessing()
+        {
+            base.BeginProcessing();
+            try
+            {
+                ManagementService.Initialize(this.Host, true);
+            }
+            catch (Exception ex)
+            {
+                this.ThrowTerminatingError(new ErrorRecord(ex, "1013", ErrorCategory.OperationStopped, this));
+            }
+        }
+
+        /// <summary>
+        /// ProcessRecord method override
+        /// </summary>
+        protected override void ProcessRecord()
+        {
+            if (ShouldProcess("Import Users in MFA with XML file"))
+            {
+                try
+                {
+                    ImportUsersADDS imp = new ImportUsersADDS(ManagementService.ADFSManager.Config);
+                    imp.ForceNewKey = this.NewKey;
+                    imp.SendEmail = this.SendEmail;
+                    imp.DisableAll = this.DisableAll;
+                    imp.NoLogFile = this.NoLogFile;
+                    imp.CreatedSince = this.CreatedSince;
+                    imp.ModifiedSince = this.ModifiedSince;
+                    imp.DomainName = this.DomainName;
+                    imp.LDAPPath = this.LDAPPath;
+                    imp.MailAttribute = this.MailAttributes;
+                    imp.PhoneAttribute = this.PhoneAttribute;
+                    imp.Method = (PreferredMethod)this.Method;
+                    imp.UserName = this.UserName;
+                    imp.Password = this.Password;
+
+                    this.Host.UI.WriteLine(string.Format("Import Users Starting {0}", DateTime.Now.ToString()));
+                    imp.DoImport();
+                    this.Host.UI.WriteLine(string.Format("Import Users Finished {0} Users Imported : {1} Errors {2}", DateTime.Now.ToString(), imp.RecordsImported.ToString(), imp.ErrorsCount.ToString()));
+                }
+                catch (Exception Ex)
+                {
+                    this.Host.UI.WriteErrorLine(Ex.Message);
+                }
             }
         }
     }

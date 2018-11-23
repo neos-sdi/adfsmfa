@@ -34,10 +34,12 @@ using Microsoft.ManagementConsole.Advanced;
 
 namespace Neos.IdentityServer.Console
 {
-    public partial class GeneralViewControl : UserControl, IFormViewControl
+    public partial class GeneralViewControl : UserControl, IFormViewControl, IMMCNotificationData
     {
         private Control oldParent;
         private GeneralFormView _frm = null;
+        private GeneralConfigurationControl _ctrl = null;
+        private bool _isnotifsenabled = true;
 
         public GeneralViewControl()
         {
@@ -61,7 +63,8 @@ namespace Neos.IdentityServer.Console
             this.SuspendLayout();
             try
             {
-                this.tableLayoutPanel.Controls.Add(new GeneralConfigurationControl(this, this.SnapIn), 0, 1);
+                ControlInstance = new GeneralConfigurationControl(this, this.SnapIn);
+                this.tableLayoutPanel.Controls.Add(ControlInstance, 0, 1);
             }
             finally
             {
@@ -74,26 +77,19 @@ namespace Neos.IdentityServer.Console
         /// </summary>
         internal void RefreshData()
         {
-            ComponentResourceManager resources = new ComponentResourceManager(typeof(GeneralViewControl));
-            this.label1.Text = resources.GetString("label1.Text");
-            this.label2.Text = resources.GetString("label2.Text");
-            this.label3.Text = resources.GetString("label3.Text");
-
             this.SuspendLayout();
+            this.Cursor = Cursors.WaitCursor;
+            _isnotifsenabled = false;
             try
             {
-
-                for (int j = this.tableLayoutPanel.Controls.Count - 1; j >= 0; j--)
-                {
-                    Control ctrl = this.tableLayoutPanel.Controls[j];
-                    if (ctrl is GeneralConfigurationControl)
-                        this.tableLayoutPanel.Controls.RemoveAt(j);
-                }
-                this.tableLayoutPanel.Controls.Add(new GeneralConfigurationControl(this, this.SnapIn), 0, 1);
+                ManagementService.ADFSManager.ReadConfiguration(null);
+                ((IMMCRefreshData)ControlInstance).DoRefreshData();
             }
             finally
             {
-               this.ResumeLayout();
+                _isnotifsenabled = true;
+                this.Cursor = Cursors.Default;
+                this.ResumeLayout();
             }
         }
 
@@ -110,10 +106,7 @@ namespace Neos.IdentityServer.Console
                 messageBoxParameters.Buttons = MessageBoxButtons.YesNo;
                 messageBoxParameters.Icon = MessageBoxIcon.Question;
                 if (this.SnapIn.Console.ShowDialog(messageBoxParameters) == DialogResult.Yes)
-                {
-                    ManagementService.ADFSManager.ReadConfiguration(null);
-                    RefreshData();
-                }
+                   RefreshData();
             }
             catch (Exception ex)
             {
@@ -130,21 +123,27 @@ namespace Neos.IdentityServer.Console
         /// </summary>
         internal void SaveData()
         {
-            try
+            if (this.ValidateChildren())
             {
-                ManagementService.ADFSManager.WriteConfiguration(null);
-            }
-            catch (Exception ex)
-            {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
-                this.SnapIn.Console.ShowDialog(messageBoxParameters);
-            }
-            finally
-            {
-                RefreshData();
+                this.Cursor = Cursors.WaitCursor;
+                _isnotifsenabled = false;
+                try
+                {
+                    ManagementService.ADFSManager.WriteConfiguration(null);
+                }
+                catch (Exception ex)
+                {
+                    MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
+                    messageBoxParameters.Text = ex.Message;
+                    messageBoxParameters.Buttons = MessageBoxButtons.OK;
+                    messageBoxParameters.Icon = MessageBoxIcon.Error;
+                    this.SnapIn.Console.ShowDialog(messageBoxParameters);
+                }
+                finally
+                {
+                    _isnotifsenabled = true;
+                    this.Cursor = Cursors.Default;
+                }
             }
         }
 
@@ -158,6 +157,11 @@ namespace Neos.IdentityServer.Console
             private set { _frm = value; }
         }
 
+        protected GeneralConfigurationControl ControlInstance 
+        {
+            get { return _ctrl; }
+            set { _ctrl = value; }
+        }
         /// <summary>
         /// SnapIn method implementation
         /// </summary>
@@ -201,21 +205,14 @@ namespace Neos.IdentityServer.Console
             if (!DesignMode)
                 Size = Parent.ClientSize;
         }
-
-        /// <summary>
-        /// ConfigurationStatusChanged method implementation
-        /// </summary>
- /*       private void ConfigurationStatusChanged(ADFSServiceManager mgr, ConfigOperationStatus status, Exception ex = null)
-        {
-            if (status == ConfigOperationStatus.ConfigLoaded)
-            {
-                if (this.InvokeRequired)
-                    this.Invoke(new MethodInvoker(() => RefreshData()));
-                else
-                    RefreshData();
-                return;
-            }
-        } */
         #endregion         
+    
+        /// <summary>
+        /// IsNotifsEnabled method implementation
+        /// </summary>
+        public bool IsNotifsEnabled()
+        {
+            return _isnotifsenabled;
+        }
     }
 }

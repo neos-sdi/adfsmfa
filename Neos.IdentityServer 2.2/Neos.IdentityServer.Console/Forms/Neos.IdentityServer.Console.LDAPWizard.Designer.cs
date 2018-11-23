@@ -31,7 +31,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LDAPWizard));
             this.LDAPQuery = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.checkBoxEnabled = new System.Windows.Forms.CheckBox();
+            this.checkBoxDisable = new System.Windows.Forms.CheckBox();
             this.btnOK = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
             this.SuspendLayout();
@@ -48,13 +48,13 @@
             resources.ApplyResources(this.label1, "label1");
             this.label1.Name = "label1";
             // 
-            // checkBoxEnabled
+            // checkBoxDisable
             // 
-            resources.ApplyResources(this.checkBoxEnabled, "checkBoxEnabled");
-            this.checkBoxEnabled.Checked = true;
-            this.checkBoxEnabled.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxEnabled.Name = "checkBoxEnabled";
-            this.checkBoxEnabled.UseVisualStyleBackColor = true;
+            resources.ApplyResources(this.checkBoxDisable, "checkBoxDisable");
+            this.checkBoxDisable.Checked = true;
+            this.checkBoxDisable.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxDisable.Name = "checkBoxDisable";
+            this.checkBoxDisable.UseVisualStyleBackColor = true;
             // 
             // btnOK
             // 
@@ -78,7 +78,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnOK);
-            this.Controls.Add(this.checkBoxEnabled);
+            this.Controls.Add(this.checkBoxDisable);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.LDAPQuery);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
@@ -95,6 +95,6 @@
         private System.Windows.Forms.Button btnOK;
         private System.Windows.Forms.Button btnCancel;
         internal System.Windows.Forms.TextBox LDAPQuery;
-        internal System.Windows.Forms.CheckBox checkBoxEnabled;
+        internal System.Windows.Forms.CheckBox checkBoxDisable;
     }
 }

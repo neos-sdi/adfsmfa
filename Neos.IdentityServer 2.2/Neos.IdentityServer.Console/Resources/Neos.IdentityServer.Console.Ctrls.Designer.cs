@@ -502,6 +502,15 @@ namespace Neos.IdentityServer.Console.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Registration Wizards.
+        /// </summary>
+        internal static string CTRLGLENROLLWIZ {
+            get {
+                return ResourceManager.GetString("CTRLGLENROLLWIZ", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Hash algorithm.
         /// </summary>
         internal static string CTRLGLHASH {
@@ -754,7 +763,7 @@ namespace Neos.IdentityServer.Console.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Disallow manage my options.
+        ///   Recherche une chaîne localisée semblable à Force wizard if not completed.
         /// </summary>
         internal static string CTRLPROVWIZARDSTRICT {
             get {
@@ -853,7 +862,7 @@ namespace Neos.IdentityServer.Console.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Certificate created successfully !.
+        ///   Recherche une chaîne localisée semblable à Certificate created successfully ! You must deploy new certificate {0} on all others ADFS servers.
         /// </summary>
         internal static string CTRLSECNEWCERTCREATED {
             get {
@@ -1209,6 +1218,15 @@ namespace Neos.IdentityServer.Console.Resources {
         internal static string CTRLSQLNEWDBCREATED {
             get {
                 return ResourceManager.GetString("CTRLSQLNEWDBCREATED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à MFA Database {0} created successfully ! You must deploy new certificate {1} on all others ADFS servers.
+        /// </summary>
+        internal static string CTRLSQLNEWDBCREATED2 {
+            get {
+                return ResourceManager.GetString("CTRLSQLNEWDBCREATED2", resourceCulture);
             }
         }
         

@@ -1378,6 +1378,9 @@ namespace Neos.IdentityServer.MultiFactor
         Unknown = 2
     }
 
+    /// <summary>
+    /// SecretKeyFormat
+    /// </summary>
     [Serializable]
     public enum SecretKeyFormat
     {
@@ -1386,6 +1389,9 @@ namespace Neos.IdentityServer.MultiFactor
         CUSTOM = 2
     }
 
+    /// <summary>
+    /// HashMode
+    /// </summary>
     [Serializable]
     public enum HashMode
     {
@@ -1395,6 +1401,9 @@ namespace Neos.IdentityServer.MultiFactor
         SHA512 = 3
     }
 
+    /// <summary>
+    /// KeyGeneratorMode
+    /// </summary>
     [Serializable]
     public enum KeyGeneratorMode
     {
@@ -1406,6 +1415,9 @@ namespace Neos.IdentityServer.MultiFactor
         Custom = 5
     }
 
+    /// <summary>
+    /// OTPWizardOptions
+    /// </summary>
     [Serializable, Flags]
     public enum OTPWizardOptions
     {
@@ -1416,6 +1428,9 @@ namespace Neos.IdentityServer.MultiFactor
         NoGooglSearch = 0x8
     }
 
+    /// <summary>
+    /// KeySizeMode
+    /// </summary>
     [Serializable]
     public enum KeySizeMode
     {
@@ -1423,6 +1438,17 @@ namespace Neos.IdentityServer.MultiFactor
         KeySize512 = 1,
         KeySize1024 = 2,
         KeySize2048 = 3
+    }
+
+    /// <summary>
+    /// ForceWizardMode
+    /// </summary>
+    [Serializable]
+    public enum ForceWizardMode
+    {
+        Disabled = 0,
+        Enabled = 1,
+        Strict = 2
     }
 
     /// <summary>
@@ -1453,6 +1479,11 @@ namespace Neos.IdentityServer.MultiFactor
         EnrollEmailAndSave = 25,
         EnrollPhoneAndSave = 26,
         EnrollPinAndSave = 27,
+        EnrollOTPForce = 33,
+        EnrollBiometricsForce = 34,
+        EnrollEmailForce = 35,
+        EnrollPhoneForce = 36,
+        EnrollPinForce = 37,
         None = 64,
         DefinitiveError = 128
     }

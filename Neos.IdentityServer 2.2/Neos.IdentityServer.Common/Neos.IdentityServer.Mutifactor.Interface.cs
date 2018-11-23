@@ -43,7 +43,7 @@ namespace Neos.IdentityServer.MultiFactor
         bool IsInitialized { get; }
         bool AllowOverride { get; }
         bool AllowEnrollment { get; set; }
-        bool EnrollmentNeverUseOptions { get; set; }
+        ForceWizardMode ForceEnrollment { get; set; }
         bool IsTwoWayByDefault  { get; }
         string Name { get; }
         string Description { get; }

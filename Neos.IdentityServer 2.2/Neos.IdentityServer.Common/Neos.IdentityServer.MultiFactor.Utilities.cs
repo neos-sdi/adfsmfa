@@ -63,7 +63,10 @@ namespace Neos.IdentityServer.MultiFactor
                     provider = GetProviderInstance(ctx.PreferredMethod);
                     if (provider == null)
                     {
-                        provider = new NeosOTPProvider();
+                        if (string.IsNullOrEmpty(cfg.OTPProvider.FullQualifiedImplementation))
+                            provider = new NeosOTPProvider();
+                        else
+                            provider = LoadExternalProvider(cfg.OTPProvider.FullQualifiedImplementation);
                         AddOrUpdateProvider(ctx.PreferredMethod, provider);
                         provider.Initialize(new OTPProviderParams(cfg.OTPProvider));
                     }
@@ -72,7 +75,10 @@ namespace Neos.IdentityServer.MultiFactor
                     provider = GetProviderInstance(ctx.PreferredMethod);
                     if (provider == null)
                     {
-                        provider = new NeosMailProvider();
+                        if (string.IsNullOrEmpty(cfg.MailProvider.FullQualifiedImplementation))
+                            provider = new NeosMailProvider();
+                        else
+                            provider = LoadExternalProvider(cfg.MailProvider.FullQualifiedImplementation);
                         AddOrUpdateProvider(ctx.PreferredMethod, provider);
                         provider.Initialize(new MailProviderParams(cfg.MailProvider));
                     }
@@ -102,7 +108,10 @@ namespace Neos.IdentityServer.MultiFactor
                     {
                         try
                         {
-                            provider = LoadAzureProvider();
+                            if (string.IsNullOrEmpty(cfg.AzureProvider.FullQualifiedImplementation))
+                                provider = LoadAzureProvider();
+                            else
+                                provider = LoadExternalProvider(cfg.AzureProvider.FullQualifiedImplementation);
                             AddOrUpdateProvider(ctx.PreferredMethod, provider);
                             provider.Initialize(new AzureProviderParams(cfg.AzureProvider, cfg.Hosts.ADFSFarm.FarmIdentifier, cfg.Issuer));
                         }
@@ -278,7 +287,10 @@ namespace Neos.IdentityServer.MultiFactor
                         provider = GetProviderInstance(meth);
                         if (provider == null)
                         {
-                            provider = new NeosOTPProvider();
+                            if (string.IsNullOrEmpty(cfg.OTPProvider.FullQualifiedImplementation))
+                                provider = new NeosOTPProvider();
+                            else
+                                provider = LoadExternalProvider(cfg.OTPProvider.FullQualifiedImplementation);
                             AddOrUpdateProvider(meth, provider);
                             provider.Initialize(new OTPProviderParams(cfg.OTPProvider));
                         }
@@ -287,7 +299,10 @@ namespace Neos.IdentityServer.MultiFactor
                         provider = GetProviderInstance(meth);
                         if (provider == null)
                         {
-                            provider = new NeosMailProvider();
+                            if (string.IsNullOrEmpty(cfg.MailProvider.FullQualifiedImplementation))
+                                provider = new NeosMailProvider();
+                            else
+                                provider = LoadExternalProvider(cfg.MailProvider.FullQualifiedImplementation);
                             AddOrUpdateProvider(meth, provider);
                             provider.Initialize(new MailProviderParams(cfg.MailProvider));
                         }
@@ -317,7 +332,10 @@ namespace Neos.IdentityServer.MultiFactor
                         {
                             try
                             {
-                                provider = LoadAzureProvider();
+                                if (string.IsNullOrEmpty(cfg.AzureProvider.FullQualifiedImplementation))
+                                    provider = LoadAzureProvider();
+                                else
+                                    provider = LoadExternalProvider(cfg.AzureProvider.FullQualifiedImplementation);
                                 AddOrUpdateProvider(meth, provider);
                                 provider.Initialize(new AzureProviderParams(cfg.AzureProvider, cfg.Hosts.ADFSFarm.FarmIdentifier, cfg.Issuer));
                             }
@@ -416,7 +434,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// SetUserRegistration method implementation
         /// </summary>
-        internal static Registration SetUserRegistration(MFAConfig cfg, Registration reg, bool resetkey = false, bool noemail = false)
+        internal static Registration SetUserRegistration(MFAConfig cfg, Registration reg, bool resetkey = false, bool caninsert = true, bool email = false)
         {
             DataRepositoryService client = null;
             if (cfg.UseActiveDirectory)
@@ -428,10 +446,10 @@ namespace Neos.IdentityServer.MultiFactor
                 reg.PIN = cfg.DefaultPin;
             if (reg.OverrideMethod == null)
                 reg.OverrideMethod = string.Empty;
-            Registration newreg = client.SetUserRegistration(reg, resetkey);
+            Registration newreg = client.SetUserRegistration(reg, resetkey, caninsert);
             if (newreg != null)
             {
-                if ((!noemail) && (resetkey))
+                if ((email) && (resetkey))
                 {
                     if (!string.IsNullOrEmpty(newreg.MailAddress))
                     {
@@ -446,7 +464,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// AddUserRegistration method implementation
         /// </summary>
-        internal static Registration AddUserRegistration(MFAConfig cfg, Registration reg, bool addkey = true, bool noemail = false)
+        internal static Registration AddUserRegistration(MFAConfig cfg, Registration reg, bool resetkey = false, bool canupdate = true, bool email = false)
         {
             DataRepositoryService client = null;
             if (cfg.UseActiveDirectory)
@@ -458,10 +476,10 @@ namespace Neos.IdentityServer.MultiFactor
             if (reg.OverrideMethod == null)
                 reg.OverrideMethod = string.Empty;
             client.OnKeyDataEvent += KeyDataEvent;
-            Registration newreg = client.AddUserRegistration(reg, addkey);
+            Registration newreg = client.AddUserRegistration(reg, resetkey, canupdate);
             if (newreg!=null)
             {
-                if ((!noemail) && (addkey))
+                if (email) 
                 {
                     if (!string.IsNullOrEmpty(newreg.MailAddress))
                     {
@@ -557,10 +575,11 @@ namespace Neos.IdentityServer.MultiFactor
             return client.GetUserRegistrationsCount(filter);
         }
 
+        /*
         /// <summary>
         /// ImportUsers method implementation
         /// </summary>
-        internal static void ImportADDSUsers(MFAConfig cfg, string ldappath, bool enable)
+        internal static void ImportADDSUsers(MFAConfig cfg, string ldappath, bool enable)  // TO BE REMOVED
         {
             string filename = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles)+"\\MFA\\adimport_"+DateTime.UtcNow.ToFileTimeUtc().ToString()+".log";
             TraceListener listen = InitializeTrace(filename);
@@ -570,8 +589,9 @@ namespace Neos.IdentityServer.MultiFactor
                 Trace.WriteLine(string.Format("Importing for AD : {0}", ldappath));
                 Trace.Indent();
                 Trace.WriteLine("Querying users from AD");
-                DataRepositoryService client = new ADDSDataRepositoryService(cfg.Hosts.ActiveDirectoryHost, cfg.DeliveryWindow);
-                RegistrationList lst = client.GetImportUserRegistrations(ldappath, enable);
+                ADDSHost h = cfg.Hosts.ActiveDirectoryHost;
+                DataRepositoryService client = new ADDSDataRepositoryService(h, cfg.DeliveryWindow);
+                RegistrationList lst = client.GetImportUserRegistrations(h.DomainName, h.Account, h.Password, ldappath, null, null, null, null);
                 Trace.WriteLine(string.Format("Querying return {0} users from AD", lst.Count.ToString()));
                 DataRepositoryService client2 = null;
                 if (cfg.UseActiveDirectory)
@@ -636,35 +656,75 @@ namespace Neos.IdentityServer.MultiFactor
             Trace.Close();
             listen.Close();
             Trace.Listeners.Remove("MFATrace");
-        }
-
+        } */
 
         /// <summary>
-        /// CheckRepositoryAttribute method implementation
+        /// CheckADDSConnection method implmentation
         /// </summary>
-        internal static bool CheckRepositoryAttribute(MFAConfig cfg, string attributename, int choice = 0)
+        internal static bool CheckADDSConnection(MFAConfig config, string domainname, string username, string password)
         {
-            DataRepositoryService client = null;
-            switch (choice)
+            DataRepositoryService dt = GetDataRepository(config, Data.DataRepositoryKind.ADDS);
+            return (dt as IDataRepositoryADDSConnection).CheckConnection(domainname, username, password);
+        }
+
+        /// <summary>
+        /// CheckADDSAttribute method implmentation
+        /// </summary>
+        internal static bool CheckADDSAttribute(MFAConfig config,  string domainname, string username, string password, string attributename)
+        {
+            DataRepositoryService dt = GetDataRepository(config, Data.DataRepositoryKind.ADDS);
+            return (dt as IDataRepositoryADDSConnection).CheckAttribute(domainname, username, password, attributename);
+        }
+
+        /// <summary>
+        /// CheckSQLConnection method implmentation
+        /// </summary>
+        internal static bool CheckSQLConnection(MFAConfig config, string connectionstring)
+        {
+            DataRepositoryService dt = GetDataRepository(config, Data.DataRepositoryKind.SQL);
+            return (dt as IDataRepositorySQLConnection).CheckConnection(connectionstring);
+        }
+
+        /// <summary>
+        /// CheckKeysConnection method implmentation
+        /// </summary>
+        internal static bool CheckKeysConnection(MFAConfig config, string connectionstring)
+        {
+            ISecretKeyManager dt = GetKeysRepository(config);
+            if (dt is IDataRepositorySQLConnection)
+                return (dt as IDataRepositorySQLConnection).CheckConnection(connectionstring);
+            return false;
+        }
+
+        /// <summary>
+        /// GetKeysRepository method implmentation
+        /// </summary>
+        private static ISecretKeyManager GetKeysRepository(MFAConfig config)
+        {
+            if (KeysManager.Manager != null)
+                return KeysManager.Manager;
+            else
+                return null;
+        }
+
+        /// <summary>
+        /// GetDataRepository method implementation
+        /// </summary>
+        private static DataRepositoryService GetDataRepository(MFAConfig cfg, DataRepositoryKind kind)
+        {
+            switch (kind)
             {
-                case 1:
-                    client = new ADDSDataRepositoryService(cfg.Hosts.ActiveDirectoryHost, cfg.DeliveryWindow);
-                    return client.CheckRepositoryAttribute(attributename);
-                case 2:
-                    client = new SQLDataRepositoryService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow);
-                    return client.CheckRepositoryAttribute(attributename);
+                case DataRepositoryKind.ADDS:
+                    return new ADDSDataRepositoryService(cfg.Hosts.ActiveDirectoryHost, cfg.DeliveryWindow);
+                case DataRepositoryKind.SQL:
+                    return new SQLDataRepositoryService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow);
                 default:
                     if (cfg.UseActiveDirectory)
-                    {
-                        client = new ADDSDataRepositoryService(cfg.Hosts.ActiveDirectoryHost, cfg.DeliveryWindow);
-                        return client.CheckRepositoryAttribute(attributename);
-                    }
+                        return new ADDSDataRepositoryService(cfg.Hosts.ActiveDirectoryHost, cfg.DeliveryWindow);
                     else
-                    {
-                        client = new SQLDataRepositoryService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow);
-                        return client.CheckRepositoryAttribute(attributename);
-                    }
+                        return new SQLDataRepositoryService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow);
             }
+
         }
         #endregion
 
@@ -1067,6 +1127,17 @@ namespace Neos.IdentityServer.MultiFactor
         }
 
         /// <summary>
+        /// Manager manager property implementation
+        /// </summary>
+        internal static ISecretKeyManager Manager
+        {
+            get
+            {
+                return _manager;
+            }
+        }
+
+        /// <summary>
         /// IsLoaded property
         /// </summary>
         internal static bool IsLoaded
@@ -1157,14 +1228,6 @@ namespace Neos.IdentityServer.MultiFactor
         {
             return _manager.HasKeyPrefix(key);
         }
-
-        /// <summary>
-        /// GetDataManager 
-        /// </summary>
-       /* internal static IKeysDataManager GetDataManager()
-        {
-            return _datamanager;
-        } */
     }
 
     /// <summary>

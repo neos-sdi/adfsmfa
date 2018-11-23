@@ -25,6 +25,7 @@ using System.Text.RegularExpressions;
 using Neos.IdentityServer.MultiFactor;
 using Neos.IdentityServer.MultiFactor.Administration.Resources;
 using System.Runtime.CompilerServices;
+using Neos.IdentityServer.MultiFactor.Data;
 
 
 namespace Neos.IdentityServer.MultiFactor.Administration
@@ -86,6 +87,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         {
             get { return _order; }
         }
+
         /// <summary>
         /// ADFSManager property
         /// </summary>
@@ -138,14 +140,6 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 }
             }
         }
-        /// <summary>
-        /// CheckRepositoryAttribute method implementation
-        /// </summary>
-        internal static bool CheckRepositoryAttribute(string attributename, int choice = 0)
-        {
-            EnsureService();
-            return RuntimeRepository.CheckRepositoryAttribute(Config, attributename, choice);
-        }
 
         /// <summary>
         /// GetUserRegistration method implementation
@@ -159,19 +153,19 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <summary>
         /// SetUserRegistration method implementation
         /// </summary>
-        internal static Registration SetUserRegistration(Registration reg, bool resetkey = false, bool noemail = false)
+        internal static Registration SetUserRegistration(Registration reg, bool resetkey = false, bool caninsert = true, bool email = false)
         {
             EnsureService();
-            return RuntimeRepository.SetUserRegistration(Config, reg, resetkey, noemail);
+            return RuntimeRepository.SetUserRegistration(Config, reg, resetkey, caninsert, email);
         }
 
         /// <summary>
         /// AddUserRegistration method implementation
         /// </summary>
-        internal static Registration AddUserRegistration(Registration reg, bool addkey = true, bool noemail = false)
+        internal static Registration AddUserRegistration(Registration reg, bool resetkey = false, bool canupdate = true, bool email = false)
         {
             EnsureService();
-            return RuntimeRepository.AddUserRegistration(Config, reg, addkey, noemail);
+            return RuntimeRepository.AddUserRegistration(Config, reg, resetkey, canupdate, email);
         }
 
         /// <summary>
@@ -247,13 +241,41 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         }
 
         /// <summary>
-        /// ImportUsers method implementation
+        /// CheckADDSConnection method implmentation
         /// </summary>
-        internal static void ImportADDSUsers(string ldappath, bool enable)
+        internal static bool CheckADDSConnection(string domainname, string username, string password)
         {
             EnsureService();
-            RuntimeRepository.ImportADDSUsers(Config, ldappath, enable);
+            return RuntimeRepository.CheckADDSConnection(Config, domainname, username, password);
         }
+
+        /// <summary>
+        /// CheckADDSAttribute method implmentation
+        /// </summary>
+        internal static bool CheckADDSAttribute(string domainname, string username, string password, string attributename)
+        {
+            EnsureService();
+            return RuntimeRepository.CheckADDSAttribute(Config, domainname, username, password, attributename);
+        }
+
+        /// <summary>
+        /// CheckADDSAttribute method implmentation
+        /// </summary>
+        internal static bool CheckSQLConnection(string connectionstring)
+        {
+            EnsureService();
+            return RuntimeRepository.CheckSQLConnection(Config, connectionstring);
+        }
+
+        /// <summary>
+        /// CheckADDSAttribute method implmentation
+        /// </summary>
+        internal static bool CheckKeysConnection(string connectionstring)
+        {
+            EnsureService();
+            return RuntimeRepository.CheckKeysConnection(Config, connectionstring);
+        }
+
     }
 
     public static class ADFSManagementRights

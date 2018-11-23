@@ -136,4 +136,7 @@
   <data name="label1.Text" xml:space="preserve">
     <value>Paramètres de configuration Active Directory</value>
   </data>
+  <data name="ADDSVALIDSAVE" xml:space="preserve">
+    <value>Annuler les modifications et recharger les données ?</value>
+  </data>
 </root>

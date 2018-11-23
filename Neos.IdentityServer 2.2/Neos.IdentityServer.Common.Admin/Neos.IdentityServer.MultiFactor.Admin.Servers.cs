@@ -111,6 +111,10 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         {
             try
             {
+                ServiceController ADFSController = new ServiceController("mfanotifhub");
+                if (ADFSController.Status != ServiceControllerStatus.Running)
+                    ADFSController.Start();
+                ADFSController.WaitForStatus(ServiceControllerStatus.Running, new TimeSpan(0, 0, 30));
                 _mailslotsrv = new MailSlotServer(mailslothost);
                 _mailslotsrv.MailSlotMessageArrived += MailSlotMessageArrived;
                 _mailslotsrv.AllowToSelf = true;
@@ -974,7 +978,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 string thumbprint = cert.Thumbprint;
                 if (Host != null)
                     Host.UI.WriteVerboseLine(DateTime.Now.ToLongTimeString() + " MFA Certificate \"" + thumbprint + "\" Created for using with RSA keys");
-                Runspace SPRunSpace = null;
+              /*  Runspace SPRunSpace = null;
                 PowerShell SPPowerShell = null;
                 try
                 {
@@ -1007,7 +1011,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 {
                     if (SPRunSpace != null)
                         SPRunSpace.Close();
-                }
+                } */
                 return thumbprint;
             }
             else
@@ -1025,7 +1029,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 string thumbprint = cert.Thumbprint;
                 if (Host != null)
                     Host.UI.WriteVerboseLine(DateTime.Now.ToLongTimeString() + " MFA Certificate \"" + thumbprint + "\" Created for using with SQL keys");
-                Runspace SPRunSpace = null;
+              /*  Runspace SPRunSpace = null;
                 PowerShell SPPowerShell = null;
                 try
                 {
@@ -1058,7 +1062,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 {
                     if (SPRunSpace != null)
                         SPRunSpace.Close();
-                }
+                } */
                 return thumbprint;
             }
             else
@@ -1563,14 +1567,35 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             cnx2.Open();
             try
             {
-                SqlCommand cmd = new SqlCommand(string.Format("CREATE USER [{0}] FOR LOGIN [{0}]", _username), cnx2);
-                cmd.ExecuteNonQuery();
-                SqlCommand cmd1 = new SqlCommand(string.Format("ALTER ROLE [db_owner] ADD MEMBER [{0}]", _username), cnx2);
-                cmd1.ExecuteNonQuery();
-                SqlCommand cmd2 = new SqlCommand(string.Format("ALTER ROLE [db_securityadmin] ADD MEMBER [{0}]", _username), cnx2);
-                cmd2.ExecuteNonQuery();
+                try
+                {
+                    SqlCommand cmd = new SqlCommand(string.Format("CREATE USER [{0}] FOR LOGIN [{0}]", _username), cnx2);
+                    cmd.ExecuteNonQuery();
+                }
+                catch (Exception)
+                {
+                    // Nothing : the indicated user is definitely the interactive user so the dbo
+                }
+                try
+                {
+                    SqlCommand cmd1 = new SqlCommand(string.Format("ALTER ROLE [db_owner] ADD MEMBER [{0}]", _username), cnx2);
+                    cmd1.ExecuteNonQuery();
+                }
+                catch (Exception)
+                {
+                    // Nothing : the indicated user is definitely the interactive user so the dbo
+                }
+                try
+                {
+                    SqlCommand cmd2 = new SqlCommand(string.Format("ALTER ROLE [db_securityadmin] ADD MEMBER [{0}]", _username), cnx2);
+                    cmd2.ExecuteNonQuery();
+                }
+                catch (Exception)
+                {
+                    // Nothing : the indicated user is definitely the interactive user so the dbo
+                }
 
-                SqlCommand cmdl = new SqlCommand(sqlscript, cnx2);
+                SqlCommand cmdl = new SqlCommand(sqlscript, cnx2); // Create Tables and more
                 cmdl.ExecuteNonQuery();
             }
             finally
@@ -1619,14 +1644,42 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             cnx2.Open();
             try
             {
-                SqlCommand cmd = new SqlCommand(string.Format("CREATE USER [{0}] FOR LOGIN [{0}]", _username), cnx2);
-                cmd.ExecuteNonQuery();
-                SqlCommand cmd1 = new SqlCommand(string.Format("ALTER ROLE [db_owner] ADD MEMBER [{0}]", _username), cnx2);
-                cmd1.ExecuteNonQuery();
-                SqlCommand cmd2 = new SqlCommand(string.Format("ALTER ROLE [db_securityadmin] ADD MEMBER [{0}]", _username), cnx2);
-                cmd2.ExecuteNonQuery();
-                SqlCommand cmd3 = new SqlCommand(string.Format("GRANT ALTER ANY COLUMN ENCRYPTION KEY TO [{0}]", _username), cnx2);
-                cmd3.ExecuteNonQuery();
+                try
+                {
+                    SqlCommand cmd = new SqlCommand(string.Format("CREATE USER [{0}] FOR LOGIN [{0}]", _username), cnx2);
+                    cmd.ExecuteNonQuery();
+                }
+                catch (Exception)
+                {
+                    // Nothing : the indicated user is definitely the interactive user so the dbo
+                }
+                try
+                {
+                    SqlCommand cmd1 = new SqlCommand(string.Format("ALTER ROLE [db_owner] ADD MEMBER [{0}]", _username), cnx2);
+                    cmd1.ExecuteNonQuery();
+                }
+                catch (Exception)
+                {
+                    // Nothing : the indicated user is definitely the interactive user so the dbo
+                }
+                try
+                {
+                    SqlCommand cmd2 = new SqlCommand(string.Format("ALTER ROLE [db_securityadmin] ADD MEMBER [{0}]", _username), cnx2);
+                    cmd2.ExecuteNonQuery();
+                }
+                catch (Exception)
+                {
+                    // Nothing : the indicated user is definitely the interactive user so the dbo
+                }
+                try
+                {
+                    SqlCommand cmd3 = new SqlCommand(string.Format("GRANT ALTER ANY COLUMN ENCRYPTION KEY TO [{0}]", _username), cnx2);
+                    cmd3.ExecuteNonQuery();
+                }
+                catch (Exception)
+                {
+                    // Nothing : the indicated user is definitely the interactive user so the dbo
+                }
                 SqlCommand cmd4 = new SqlCommand(string.Format("CREATE COLUMN MASTER KEY [{0}] WITH (KEY_STORE_PROVIDER_NAME = 'MSSQL_CERTIFICATE_STORE', KEY_PATH = 'LocalMachine/My/{1}')", _keyname, _thumbprint.ToUpper()), cnx2);
                 cmd4.ExecuteNonQuery();
                 SqlCommand cmd5 = new SqlCommand(string.Format("CREATE COLUMN ENCRYPTION KEY [{0}] WITH VALUES (COLUMN_MASTER_KEY = [{0}], ALGORITHM = 'RSA_OAEP', ENCRYPTED_VALUE = {1})", _keyname, _encrypted), cnx2);
@@ -1640,7 +1693,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             cnx3.Open();
             try
             {
-                SqlCommand cmdl = new SqlCommand(sqlscript, cnx3);
+                SqlCommand cmdl = new SqlCommand(sqlscript, cnx3); // create tables and more
                 cmdl.ExecuteNonQuery();
             }
             finally
@@ -1705,14 +1758,34 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             cnx2.Open();
             try
             {
-                SqlCommand cmd = new SqlCommand(string.Format("CREATE USER [{0}] FOR LOGIN [{0}]", _username), cnx2);
-                cmd.ExecuteNonQuery();
-                SqlCommand cmd1 = new SqlCommand(string.Format("ALTER ROLE [db_owner] ADD MEMBER [{0}]", _username), cnx2);
-                cmd1.ExecuteNonQuery();
-                SqlCommand cmd2 = new SqlCommand(string.Format("ALTER ROLE [db_securityadmin] ADD MEMBER [{0}]", _username), cnx2);
-                cmd2.ExecuteNonQuery();
-
-                SqlCommand cmdl = new SqlCommand(sqlscript, cnx2);
+                try
+                {
+                    SqlCommand cmd = new SqlCommand(string.Format("CREATE USER [{0}] FOR LOGIN [{0}]", _username), cnx2);
+                    cmd.ExecuteNonQuery();
+                }
+                catch (Exception)
+                {
+                    // Nothing : the indicated user is definitely the interactive user so the dbo
+                }
+                try
+                {
+                    SqlCommand cmd1 = new SqlCommand(string.Format("ALTER ROLE [db_owner] ADD MEMBER [{0}]", _username), cnx2);
+                    cmd1.ExecuteNonQuery();
+                }
+                catch (Exception)
+                {
+                    // Nothing : the indicated user is definitely the interactive user so the dbo
+                }
+                try
+                {
+                    SqlCommand cmd2 = new SqlCommand(string.Format("ALTER ROLE [db_securityadmin] ADD MEMBER [{0}]", _username), cnx2);
+                    cmd2.ExecuteNonQuery();
+                }
+                catch (Exception)
+                {
+                    // Nothing : the indicated user is definitely the interactive user so the dbo
+                }
+                SqlCommand cmdl = new SqlCommand(sqlscript, cnx2); // Create Tables and more
                 cmdl.ExecuteNonQuery();
             }
             finally
@@ -1761,14 +1834,42 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             cnx2.Open();
             try
             {
-                SqlCommand cmd = new SqlCommand(string.Format("CREATE USER [{0}] FOR LOGIN [{0}]", _username), cnx2);
-                cmd.ExecuteNonQuery();
-                SqlCommand cmd1 = new SqlCommand(string.Format("ALTER ROLE [db_owner] ADD MEMBER [{0}]", _username), cnx2);
-                cmd1.ExecuteNonQuery();
-                SqlCommand cmd2 = new SqlCommand(string.Format("ALTER ROLE [db_securityadmin] ADD MEMBER [{0}]", _username), cnx2);
-                cmd2.ExecuteNonQuery();
-                SqlCommand cmd3 = new SqlCommand(string.Format("GRANT ALTER ANY COLUMN ENCRYPTION KEY TO [{0}]", _username), cnx2);
-                cmd3.ExecuteNonQuery();
+                try
+                {
+                    SqlCommand cmd = new SqlCommand(string.Format("CREATE USER [{0}] FOR LOGIN [{0}]", _username), cnx2);
+                    cmd.ExecuteNonQuery();
+                }
+                catch (Exception)
+                {
+                    // Nothing : the indicated user is definitely the interactive user so the dbo
+                }
+                try
+                {
+                    SqlCommand cmd1 = new SqlCommand(string.Format("ALTER ROLE [db_owner] ADD MEMBER [{0}]", _username), cnx2);
+                    cmd1.ExecuteNonQuery();
+                }
+                catch (Exception)
+                {
+                    // Nothing : the indicated user is definitely the interactive user so the dbo
+                }
+                try
+                {
+                    SqlCommand cmd2 = new SqlCommand(string.Format("ALTER ROLE [db_securityadmin] ADD MEMBER [{0}]", _username), cnx2);
+                    cmd2.ExecuteNonQuery();
+                }
+                catch (Exception)
+                {
+                    // Nothing : the indicated user is definitely the interactive user so the dbo
+                }
+                try
+                {
+                    SqlCommand cmd3 = new SqlCommand(string.Format("GRANT ALTER ANY COLUMN ENCRYPTION KEY TO [{0}]", _username), cnx2);
+                    cmd3.ExecuteNonQuery();
+                }
+                catch (Exception)
+                {
+                    // Nothing : the indicated user is definitely the interactive user so the dbo
+                }
                 SqlCommand cmd4 = new SqlCommand(string.Format("CREATE COLUMN MASTER KEY [{0}] WITH (KEY_STORE_PROVIDER_NAME = 'MSSQL_CERTIFICATE_STORE', KEY_PATH = 'LocalMachine/My/{1}')", _keyname, _thumbprint.ToUpper()), cnx2);
                 cmd4.ExecuteNonQuery();
                 SqlCommand cmd5 = new SqlCommand(string.Format("CREATE COLUMN ENCRYPTION KEY [{0}] WITH VALUES (COLUMN_MASTER_KEY = [{0}], ALGORITHM = 'RSA_OAEP', ENCRYPTED_VALUE = {1})", _keyname, _encrypted), cnx2);

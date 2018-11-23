@@ -30,18 +30,31 @@ namespace Neos.IdentityServer.MultiFactor.Data
         add,
         Remove
     }
+
+    public enum DataRepositoryKind
+    {
+        ADDS,
+        SQL
+    }
         
-  //  public delegate void KeysDataManagerEvent(string user, KeysDataManagerEventKind kind);
+    public interface IDataRepositoryADDSConnection
+    {
+        bool CheckConnection(string domainname, string username, string password);
+        bool CheckAttribute(string domainname, string username, string password, string attributename);
+    }
+
+    public interface IDataRepositorySQLConnection
+    {
+        bool CheckConnection(string connectionstring);
+    }
 
     public abstract class DataRepositoryService
     {
         public delegate void KeysDataManagerEvent(string user, KeysDataManagerEventKind kind);
         public abstract event KeysDataManagerEvent OnKeyDataEvent;
-
-        public abstract bool CheckRepositoryAttribute(string attributename);
         public abstract Registration GetUserRegistration(string upn);
-        public abstract Registration SetUserRegistration(Registration reg, bool resetkey = false);
-        public abstract Registration AddUserRegistration(Registration reg, bool newkey = true);
+        public abstract Registration SetUserRegistration(Registration reg, bool resetkey = false, bool caninsert = true, bool disableoninsert = false);
+        public abstract Registration AddUserRegistration(Registration reg, bool resetkey = false, bool canupdate = true, bool disableoninsert = false);
         public abstract bool DeleteUserRegistration(Registration reg, bool dropkey = true);
         public abstract Registration EnableUserRegistration(Registration reg);
         public abstract Registration DisableUserRegistration(Registration reg);
@@ -49,7 +62,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
         public abstract RegistrationList GetAllUserRegistrations(DataOrderObject order, bool enabledonly = false);
         public abstract int GetUserRegistrationsCount(DataFilterObject filter);
         public abstract bool HasRegistration(string upn);
-        public abstract RegistrationList GetImportUserRegistrations(string ldappath, bool enable);        
+        public abstract RegistrationList GetImportUserRegistrations(string domain, string username, string password, string ldappath, DateTime? created, DateTime? modified, string mailattribute, string phoneattribute, PreferredMethod method, bool disableall = false);        
     }
 
     public abstract class KeysRepositoryService

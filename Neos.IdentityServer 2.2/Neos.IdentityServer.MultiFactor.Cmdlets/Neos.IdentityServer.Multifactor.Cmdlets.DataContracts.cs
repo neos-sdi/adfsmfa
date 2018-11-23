@@ -15,12 +15,14 @@
 // https://github.com/neos-sdi/adfsmfa                                                                                                                                                      //
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
-namespace Neos.IdentityServer.MultiFactor.Administration
+namespace MFA
 {
     using System;
     using System.Linq;
     using System.Collections.Generic;
     using System.Xml;
+    using Neos.IdentityServer.MultiFactor;
+    using Neos.IdentityServer.MultiFactor.Administration;
 
     #region PSRegistration class
     /// <summary>
@@ -115,7 +117,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <summary>
         /// <para type="description">Preferred MFA method : Choose, Code, email, Phone, Face (for future use).</para>
         /// </summary>
-        public PreferredMethod PreferredMethod { get; set; }
+        public PSPreferredMethod PreferredMethod { get; set; }
 
         internal string OverrideMethod { get; set; }
         internal bool IsApplied { get; set; }
@@ -136,7 +138,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 psnode.PhoneNumber = registration.PhoneNumber;
                 psnode.IsRegistered = registration.IsRegistered;
                 psnode.Enabled = registration.Enabled;
-                psnode.PreferredMethod = registration.PreferredMethod;
+                psnode.PreferredMethod = (PSPreferredMethod)registration.PreferredMethod;
                 psnode.OverrideMethod = registration.OverrideMethod;
                 psnode.PIN = registration.PIN;
                 psnode.IsApplied = registration.IsApplied;
@@ -160,7 +162,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 registration.PhoneNumber = psnode.PhoneNumber;
                 registration.IsRegistered = psnode.IsRegistered;
                 registration.Enabled = psnode.Enabled;
-                registration.PreferredMethod = psnode.PreferredMethod;
+                registration.PreferredMethod = (PreferredMethod)psnode.PreferredMethod;
                 registration.OverrideMethod = psnode.OverrideMethod;
                 registration.PIN = psnode.PIN;
                 registration.IsApplied = psnode.IsApplied;
@@ -169,44 +171,6 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         }
     }
     #endregion
-
-    /// <summary>
-    /// PSTemplateMode
-    /// <para type="synopsis">Policy templates for users features.</para>
-    /// <para type="description">Policy templates for users featuresregistered with MFA.</para>
-    /// </summary>
-    public enum PSTemplateMode
-    {
-        /// <summary>
-        /// <para type="description">(UserFeaturesOptions.BypassDisabled | UserFeaturesOptions.BypassUnRegistered | UserFeaturesOptions.AllowManageOptions | UserFeaturesOptions.AllowChangePassword)</para>
-        /// </summary>
-        Free = 0,                        // (UserFeaturesOptions.BypassDisabled | UserFeaturesOptions.BypassUnRegistered | UserFeaturesOptions.AllowManageOptions | UserFeaturesOptions.AllowChangePassword);
-
-        /// <summary>
-        /// <para type="description">(UserFeaturesOptions.BypassDisabled | UserFeaturesOptions.AllowUnRegistered | UserFeaturesOptions.AllowManageOptions | UserFeaturesOptions.AllowChangePassword)</para>
-        /// </summary>
-        Open = 1,                        // (UserFeaturesOptions.BypassDisabled | UserFeaturesOptions.AllowUnRegistered | UserFeaturesOptions.AllowManageOptions | UserFeaturesOptions.AllowChangePassword);
-
-        /// <summary>
-        /// <para type="description">(UserFeaturesOptions.AllowDisabled | UserFeaturesOptions.AllowUnRegistered | UserFeaturesOptions.AllowManageOptions | UserFeaturesOptions.AllowChangePassword)</para>
-        /// </summary>
-        Default = 2,                     // (UserFeaturesOptions.AllowDisabled | UserFeaturesOptions.AllowUnRegistered | UserFeaturesOptions.AllowManageOptions | UserFeaturesOptions.AllowChangePassword);
-
-        /// <summary>
-        /// <para type="description">(UserFeaturesOptions.BypassDisabled | UserFeaturesOptions.AllowUnRegistered | UserFeaturesOptions.AllowProvideInformations | UserFeaturesOptions.AllowChangePassword)</para>
-        /// </summary>
-        Managed = 3,                     // (UserFeaturesOptions.BypassDisabled | UserFeaturesOptions.AllowUnRegistered | UserFeaturesOptions.AllowProvideInformations | UserFeaturesOptions.AllowChangePassword);
-
-        /// <summary>
-        /// <para type="description">(UserFeaturesOptions.AllowProvideInformations)</para>
-        /// </summary>
-        Strict = 4,                      // (UserFeaturesOptions.AllowProvideInformations);
-
-        /// <summary>
-        /// <para type="description">(UserFeaturesOptions.AdministrativeMode)</para>
-        /// </summary>
-        Administrative = 5               // (UserFeaturesOptions.AdministrativeMode);   
-    }
 
     #region PSConfig
     /// <summary>
@@ -276,7 +240,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <summary>
         /// <para type="description">Policy attributes for users management and registration.</para>
         /// </summary>
-        public UserFeaturesOptions UserFeatures { get; set; }
+        public PSUserFeaturesOptions UserFeatures { get; set; }
 
         /// <summary>
         /// <para type="description">Policy attributes for warnings to users.</para>
@@ -304,7 +268,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 psconfig.UseActiveDirectory = config.UseActiveDirectory;
                 psconfig.CustomUpdatePassword = config.CustomUpdatePassword;
                 psconfig.KeepMySelectedOptionOn = config.KeepMySelectedOptionOn;
-                psconfig.UserFeatures = config.UserFeatures;
+                psconfig.UserFeatures = (PSUserFeaturesOptions)config.UserFeatures;
                 psconfig.AdvertisingDays = config.AdvertisingDays;
                 return psconfig;
             }
@@ -331,7 +295,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 config.PinLength = psconfig.PinLength;
                 config.UseActiveDirectory = psconfig.UseActiveDirectory;
                 config.KeepMySelectedOptionOn = psconfig.KeepMySelectedOptionOn;
-                config.UserFeatures = psconfig.UserFeatures;
+                config.UserFeatures = (UserFeaturesOptions)psconfig.UserFeatures;
                 config.AdvertisingDays = psconfig.AdvertisingDays;
                 return config;
             }
@@ -552,30 +516,30 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     }
     #endregion
 
-    #region PSKeysConfig
+    #region PSConfigKeys
     /// <summary>
     /// PSKeysConfig class
     /// <para type="synopsis">Secret key Management used in MFA System.</para>
     /// <para type="description">Secret key Management registered with MFA.</para>
     /// </summary>
-    public class PSKeysConfig
+    public class PSConfigKeys
     {
         /// <summary>
         /// <para type="description">Used when RNG is selected, for choosing the size of the generated random number (128 to 512 bytes).</para>
         /// </summary>
-        public KeyGeneratorMode KeyGenerator { get; set; }
+        public PSKeyGeneratorMode KeyGenerator { get; set; }
 
         /// <summary>
         /// <para type="description">Used to trim the key at a fixed size, when you use RSA the key is very long, and QRCode is often too big for TOTP Application (1024 is a good size, even if RSA key is 2048 bytes long).</para>
         /// </summary>
-        public KeySizeMode KeySize { get; set; }
+        public PSKeySizeMode KeySize { get; set; }
 
         /// <summary>
         /// <para type="description">Type of generated Keys for users (RNG, RSA, CUSTOM RSA).</para>
         /// <para type="description">Changing the key format, invalidate all the users secret keys previously used.</para>
         /// <para type="description">RSA and RSA Custom are using Certificates. Custom RSA must Use Specific database to the keys and certs, one for each user, see New-MFASecretKeysDatabase cmdlet.</para>
         /// </summary>
-        public SecretKeyFormat KeyFormat { get; set; }
+        public PSSecretKeyFormat KeysFormat { get; set; }
 
         /// <summary>
         /// <para type="description">Certificate Thumbprint when using KeyFormat==RSA. the certificate is deployed on all ADFS servers in Crypting Certificates store</para>
@@ -596,7 +560,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <summary>
         /// PSKeysConfig constructor
         /// </summary>
-        public PSKeysConfig()
+        public PSConfigKeys()
         {
             this.ExternalKeyManager = new PSExternalKeyManager();
         }
@@ -604,18 +568,18 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <summary>
         /// explicit operator from MMCKeysConfig
         /// </summary>
-        public static explicit operator PSKeysConfig(FlatKeysConfig mgr)
+        public static explicit operator PSConfigKeys(FlatKeysConfig mgr)
         {
             if (mgr == null)
                 return null;
             else
             {
-                PSKeysConfig target = new PSKeysConfig();
+                PSConfigKeys target = new PSConfigKeys();
                 target.CertificateThumbprint = mgr.CertificateThumbprint;
                 target.CertificateValidity = mgr.CertificateValidity;
-                target.KeyFormat = mgr.KeyFormat;
-                target.KeyGenerator = mgr.KeyGenerator;
-                target.KeySize = mgr.KeySize;
+                target.KeysFormat = (PSSecretKeyFormat)mgr.KeysFormat;
+                target.KeyGenerator = (PSKeyGeneratorMode)mgr.KeyGenerator;
+                target.KeySize = (PSKeySizeMode)mgr.KeySize;
                 target.ExternalKeyManager = (PSExternalKeyManager)mgr.ExternalKeyManager;
                 return target;
             }
@@ -624,7 +588,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <summary>
         /// explicit operator from MMCKeysConfig
         /// </summary>
-        public static explicit operator FlatKeysConfig(PSKeysConfig mgr)
+        public static explicit operator FlatKeysConfig(PSConfigKeys mgr)
         {
             if (mgr == null)
                 return null;
@@ -634,9 +598,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 target.IsDirty = true;
                 target.CertificateThumbprint = mgr.CertificateThumbprint;
                 target.CertificateValidity = mgr.CertificateValidity;
-                target.KeyFormat = mgr.KeyFormat;
-                target.KeyGenerator = mgr.KeyGenerator;
-                target.KeySize = mgr.KeySize;
+                target.KeysFormat = (SecretKeyFormat)mgr.KeysFormat;
+                target.KeyGenerator = (KeyGeneratorMode)mgr.KeyGenerator;
+                target.KeySize = (KeySizeMode)mgr.KeySize;
                 target.ExternalKeyManager = (FlatExternalKeyManager)mgr.ExternalKeyManager;
                 return target;
             }
@@ -657,6 +621,11 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         public string FullQualifiedImplementation { get; set; }
 
         /// <summary>
+        /// <para type="description">Connection string to SQL Database, see sample implementation of Neos.IdentityServer.Multifactor.Keys.CustomKeyManager</para>
+        /// </summary>
+        public string ConnectionString { get; set; }
+
+        /// <summary>
         /// <para type="description">Encrypted, information for KeyManager about encrypting his data</para>
         /// </summary>
         public bool IsAlwaysEncrypted { get; set; }
@@ -669,7 +638,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <summary>
         /// <para type="description">Name of the SQL Server encryption key (default adfsmfa)</para>
         /// </summary>
-        public string KeyName;
+        public string KeyName { get; set; }
 
         /// <summary>
         /// <para type="description">ThumbPrint of encryption certificate, see sample implementation of Neos.IdentityServer.Multifactor.Keys.CustomKeyManager</para>
@@ -697,6 +666,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             {
                 PSExternalKeyManager ret = new PSExternalKeyManager();
                 ret.FullQualifiedImplementation = mgr.FullQualifiedImplementation;
+                ret.ConnectionString = mgr.ConnectionString;
                 ret.IsAlwaysEncrypted = mgr.IsAlwaysEncrypted;
                 ret.KeyName = mgr.KeyName;
                 ret.CertificateValidity = mgr.CertificateValidity;
@@ -719,6 +689,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             {
                 FlatExternalKeyManager ret = new FlatExternalKeyManager();
                 ret.FullQualifiedImplementation = mgr.FullQualifiedImplementation;
+                ret.ConnectionString = mgr.ConnectionString;
                 ret.IsAlwaysEncrypted = mgr.IsAlwaysEncrypted;
                 ret.KeyName = mgr.KeyName;
                 ret.CertificateValidity = mgr.CertificateValidity;
@@ -751,9 +722,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         public bool EnrollWizard { get; set; }
 
         /// <summary>
-        /// <para type="description">TOTP Provider Enrollment Wizard Enabled in manage my options property.</para>
+        /// <para type="description">TOTP Provider Force Wizard if user dosen't complete during signing.</para>
         /// </summary>
-        public bool EnrollWizardStrict { get; set; }
+        public PSForceWizardMode ForceWizard { get; set; }
 
         /// <summary>
         /// <para type="description">TOTP Provider Shadow codes. 2 by default</para>
@@ -763,7 +734,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <summary>
         /// <para type="description">TOTP Provider Hash algorithm. SHA1 by default</para>
         /// </summary>
-        public HashMode Algorithm { get; set; }
+        public PSHashMode Algorithm { get; set; }
 
         /// <summary>
         /// <para type="description">Set if additionnal verification with PIN (locally administered) must be done.</para>
@@ -773,7 +744,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <summary>
         /// <para type="description">Set TOP Wizard Application list enabled/ disabled.</para>
         /// </summary>
-        public OTPWizardOptions WizardOptions { get; set; }
+        public PSOTPWizardOptions WizardOptions { get; set; }
 
         /// <summary>
         /// explicit operator from PSConfigTOTPProvider
@@ -787,11 +758,11 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 PSConfigTOTPProvider target = new PSConfigTOTPProvider();
                 target.Enabled = otp.Enabled;
                 target.EnrollWizard = otp.EnrollWizard;
-                target.EnrollWizardStrict = otp.EnrollWizardStrict;
+                target.ForceWizard = (PSForceWizardMode)otp.ForceWizard;
                 target.TOTPShadows = otp.TOTPShadows;
-                target.Algorithm = otp.Algorithm; 
+                target.Algorithm = (MFA.PSHashMode)otp.Algorithm; 
                 target.PinRequired = otp.PinRequired;
-                target.WizardOptions = otp.WizardOptions;
+                target.WizardOptions = (PSOTPWizardOptions)otp.WizardOptions;
                 return target;
             }
         }
@@ -809,17 +780,16 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 target.IsDirty = true;
                 target.Enabled = otp.Enabled;
                 target.EnrollWizard = otp.EnrollWizard;
-                target.EnrollWizardStrict = otp.EnrollWizardStrict;
+                target.ForceWizard = (ForceWizardMode)otp.ForceWizard;
                 target.TOTPShadows = otp.TOTPShadows;
-                target.Algorithm = otp.Algorithm;
+                target.Algorithm = (HashMode)otp.Algorithm;
                 target.PinRequired = otp.PinRequired;
-                target.WizardOptions = otp.WizardOptions;
+                target.WizardOptions = (OTPWizardOptions)otp.WizardOptions;
                 return target;
             }
         }
     }
     #endregion
-
 
     #region PSConfigMail
     /// <summary>
@@ -831,7 +801,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     /// <example>
     ///   <para>Get-MFAConfigMail</para>
     /// </example>
-    public class PSConfigMail
+    public class PSConfigMailProvider
     {
         /// <summary>
         /// <para type="description">Mail Provider Enabled property.</para>
@@ -844,9 +814,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         public bool EnrollWizard { get; set; }
 
         /// <summary>
-        /// <para type="description">Mail Provider Enrollment Wizard Enabled in manage my options property.</para>
+        /// <para type="description">Mail Provider Force Wizard if user dosen't complete during signing.</para>
         /// </summary>
-        public bool EnrollWizardStrict { get; set; }
+        public PSForceWizardMode ForceWizard { get; set; }
 
         /// <summary>
         /// <para type="description">Mail from property.</para>
@@ -911,7 +881,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <summary>
         /// Constructor
         /// </summary>
-        public PSConfigMail()
+        public PSConfigMailProvider()
         {
             this.MailOTP = new PSConfigMailFileNames();
             this.MailInscription = new PSConfigMailFileNames();
@@ -921,16 +891,16 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <summary>
         /// explicit conversion to PSConfigMail
         /// </summary>
-        public static explicit operator PSConfigMail(FlatConfigMail mails)
+        public static explicit operator PSConfigMailProvider(FlatConfigMail mails)
         {
             if (mails == null)
                 return null;
             else
             {
-                PSConfigMail psconfig = new PSConfigMail();
+                PSConfigMailProvider psconfig = new PSConfigMailProvider();
                 psconfig.Enabled = mails.Enabled;
                 psconfig.EnrollWizard =  mails.EnrollWizard;
-                psconfig.EnrollWizardStrict = mails.EnrollWizardStrict;
+                psconfig.ForceWizard = (PSForceWizardMode)mails.ForceWizard;
                 psconfig.From = mails.From;
                 psconfig.UserName = mails.UserName;
                 psconfig.Password = mails.Password;
@@ -962,7 +932,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <summary>
         /// explicit conversion from PSConfigMail
         /// </summary>
-        public static explicit operator FlatConfigMail(PSConfigMail mails)
+        public static explicit operator FlatConfigMail(PSConfigMailProvider mails)
         {
             if (mails == null)
                 return null;
@@ -972,7 +942,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 psconfig.IsDirty = true;
                 psconfig.Enabled = mails.Enabled;
                 psconfig.EnrollWizard = mails.EnrollWizard;
-                psconfig.EnrollWizardStrict = mails.EnrollWizardStrict;
+                psconfig.ForceWizard = (ForceWizardMode)mails.ForceWizard;
                 psconfig.From = mails.From;
                 psconfig.UserName = mails.UserName;
                 psconfig.Password = mails.Password;
@@ -1084,12 +1054,14 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         {
             try
             {
-                var item = (from i in _list where i.LCID == lcid select i).First();
+                PSConfigMailFileName item = (from it in _list where it.LCID == lcid select it).FirstOrDefault();
+                if (item!=null)
+                    throw new Exception("Template already exists !");
                 _list.Add(new PSConfigMailFileName(lcid, filename, enabled));
             }
-            catch (Exception ex)
+            catch (Exception ex )
             {
-                throw new Exception("Template always exists !", ex);
+                throw new Exception("Error Adding Template !", ex);
             }
         }
 
@@ -1106,9 +1078,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 item.Enabled = enabled;
                 _list[i] = item;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                _list.Add(new PSConfigMailFileName(lcid, filename, enabled));
+                throw new Exception("Template dosen't exists !", ex);
             }
         }
 
@@ -1151,9 +1123,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         public bool EnrollWizard { get; set; }
 
         /// <summary>
-        /// <para type="description">External Provider Enrollment Wizard Enabled in manage my options property.</para>
+        /// <para type="description">External Provider Force Wizard if user dosen't complete during signing.</para>
         /// </summary>
-        public bool EnrollWizardStrict { get; set; }
+        public MFA.PSForceWizardMode ForceWizard { get; set; }
 
         /// <summary>
         /// <para type="description">your company name, can be used to format External message sent to user.</para>
@@ -1202,7 +1174,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 PSConfigExternalProvider target = new PSConfigExternalProvider();
                 target.Enabled = otp.Enabled;
                 target.EnrollWizard = otp.EnrollWizard;
-                target.EnrollWizardStrict = otp.EnrollWizardStrict;
+                target.ForceWizard = (MFA.PSForceWizardMode)otp.ForceWizard;
                 target.Company = otp.Company;
                 target.FullQualifiedImplementation = otp.FullQualifiedImplementation;
                 target.IsTwoWay = otp.IsTwoWay;
@@ -1227,7 +1199,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 target.IsDirty = true;
                 target.Enabled = otp.Enabled;
                 target.EnrollWizard = otp.EnrollWizard;
-                target.EnrollWizardStrict = otp.EnrollWizardStrict;
+                target.ForceWizard = (ForceWizardMode)otp.ForceWizard;
                 target.Company = otp.Company;
                 target.FullQualifiedImplementation = otp.FullQualifiedImplementation;
                 target.IsTwoWay = otp.IsTwoWay;
@@ -1262,9 +1234,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         public bool EnrollWizard { get; set; }
 
         /// <summary>
-        /// <para type="description">Azure Provider Enrollment Wizard Enabled in manage my options property.</para>
+        /// <para type="description">Azure Provider Force Wizard if user dosen't complete during signing.</para>
         /// </summary>
-        public bool EnrollWizardStrict { get; set; }
+        public MFA.PSForceWizardMode ForceWizard { get; set; }
 
         /// <summary>
         /// <para type="description">your Azure/o365 tenantId / tenant name.</para>
@@ -1295,7 +1267,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 target.Thumbprint = otp.ThumbPrint;
                 target.Enabled = otp.Enabled;
                 target.EnrollWizard = false;
-                target.EnrollWizardStrict = false;
+                target.ForceWizard = MFA.PSForceWizardMode.Disabled;
                 target.PinRequired = otp.PinRequired;
                 return target;
             }
@@ -1316,7 +1288,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 target.ThumbPrint = otp.Thumbprint;
                 target.Enabled = otp.Enabled;
                 target.EnrollWizard = false;
-                target.EnrollWizardStrict = false;
+                target.ForceWizard = ForceWizardMode.Disabled;
                 target.PinRequired = otp.PinRequired;
                 return target;
             }

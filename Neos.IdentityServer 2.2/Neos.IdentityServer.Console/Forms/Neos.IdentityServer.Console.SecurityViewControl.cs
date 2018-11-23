@@ -34,10 +34,12 @@ using Microsoft.ManagementConsole.Advanced;
 
 namespace Neos.IdentityServer.Console
 {
-    public partial class ServiceSecurityViewControl : UserControl, IFormViewControl
+    public partial class ServiceSecurityViewControl : UserControl, IFormViewControl, IMMCNotificationData
     {
         private Control oldParent;
         private ServiceSecurityFormView _frm = null;
+        private SecurityConfigurationControl _ctrl = null;
+        private bool _notifenabled = true;
 
         /// <summary>
         /// Constructor 
@@ -64,7 +66,8 @@ namespace Neos.IdentityServer.Console
             this.SuspendLayout();
             try
             {
-                this.tableLayoutPanel.Controls.Add(new SecurityConfigurationControl(this, this.SnapIn), 0, 1);
+                ControlInstance = new SecurityConfigurationControl(this, this.SnapIn);
+                this.tableLayoutPanel.Controls.Add(ControlInstance, 0, 1);
             }
             finally
             {
@@ -80,6 +83,15 @@ namespace Neos.IdentityServer.Console
         {
             get { return _frm; }
             private set { _frm = value; }
+        }
+
+        /// <summary>
+        /// ControlInstance property implmentation
+        /// </summary>
+        protected SecurityConfigurationControl ControlInstance
+        {
+            get { return _ctrl; }
+            private set { _ctrl = value; }
         }
 
         /// <summary>
@@ -132,25 +144,22 @@ namespace Neos.IdentityServer.Console
         /// </summary>
         internal void RefreshData()
         {
-            ComponentResourceManager resources = new ComponentResourceManager(typeof(ServiceSecurityViewControl));
-            this.label1.Text = resources.GetString("label1.Text");
-            this.label2.Text = resources.GetString("label2.Text");
-            this.label3.Text = resources.GetString("label3.Text");
-
             this.SuspendLayout();
             this.Cursor = Cursors.WaitCursor;
+            _notifenabled = false; 
             try
             {
-                for (int j = this.tableLayoutPanel.Controls.Count - 1; j >= 0; j--)
-                {
-                    Control ctrl = this.tableLayoutPanel.Controls[j];
-                    if (ctrl is SecurityConfigurationControl)
-                        this.tableLayoutPanel.Controls.RemoveAt(j);
-                }
-                this.tableLayoutPanel.Controls.Add(new SecurityConfigurationControl(this, this.SnapIn), 0, 1);
+                ComponentResourceManager resources = new ComponentResourceManager(typeof(ServiceSecurityViewControl));
+                this.label1.Text = resources.GetString("label1.Text");
+                this.label2.Text = resources.GetString("label2.Text");
+                this.label3.Text = resources.GetString("label3.Text");
+
+                ManagementService.ADFSManager.ReadConfiguration(null);
+                ((IMMCRefreshData)ControlInstance).DoRefreshData();
             }
             finally
             {
+                _notifenabled = true; 
                 this.Cursor = Cursors.Default;
                 this.ResumeLayout();
             }
@@ -170,10 +179,7 @@ namespace Neos.IdentityServer.Console
                 messageBoxParameters.Buttons = MessageBoxButtons.YesNo;
                 messageBoxParameters.Icon = MessageBoxIcon.Question;
                 if (this.SnapIn.Console.ShowDialog(messageBoxParameters) == DialogResult.Yes)
-                {
-                    ManagementService.ADFSManager.ReadConfiguration(null);
-                    RefreshData();
-                }
+                   RefreshData();
             }
             catch (Exception ex)
             {
@@ -190,25 +196,37 @@ namespace Neos.IdentityServer.Console
         /// </summary>
         internal void SaveData()
         {
-            this.Cursor = Cursors.WaitCursor;
-            try
+            if (this.ValidateChildren())
             {
-                ManagementService.ADFSManager.WriteConfiguration(null);
+                this.Cursor = Cursors.WaitCursor;
+                _notifenabled = false;
+                try
+                {
+                    ManagementService.ADFSManager.WriteConfiguration(null);
+                }
+                catch (Exception ex)
+                {
+                    this.Cursor = Cursors.Default;
+                    MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
+                    messageBoxParameters.Text = ex.Message;
+                    messageBoxParameters.Buttons = MessageBoxButtons.OK;
+                    messageBoxParameters.Icon = MessageBoxIcon.Error;
+                    this.SnapIn.Console.ShowDialog(messageBoxParameters);
+                }
+                finally
+                {
+                    _notifenabled = true;
+                    this.Cursor = Cursors.Default;
+                }
             }
-            catch (Exception ex)
-            {
-                this.Cursor = Cursors.Default;
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
-                this.SnapIn.Console.ShowDialog(messageBoxParameters);
-            }
-            finally
-            {
-                RefreshData();
-                this.Cursor = Cursors.Default;
-            }
+        }
+
+        /// <summary>
+        /// IsNotifsEnabled method implementation
+        /// </summary>
+        public bool IsNotifsEnabled()
+        {
+            return _notifenabled;
         }
     }
 }

@@ -167,31 +167,31 @@
   <data name="&gt;&gt;label1.ZOrder" xml:space="preserve">
     <value>3</value>
   </data>
-  <data name="checkBoxEnabled.AutoSize" type="System.Boolean, mscorlib">
+  <data name="checkBoxDisable.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
-  <data name="checkBoxEnabled.Location" type="System.Drawing.Point, System.Drawing">
+  <data name="checkBoxDisable.Location" type="System.Drawing.Point, System.Drawing">
     <value>20, 71</value>
   </data>
-  <data name="checkBoxEnabled.Size" type="System.Drawing.Size, System.Drawing">
-    <value>87, 17</value>
+  <data name="checkBoxDisable.Size" type="System.Drawing.Size, System.Drawing">
+    <value>91, 17</value>
   </data>
-  <data name="checkBoxEnabled.TabIndex" type="System.Int32, mscorlib">
+  <data name="checkBoxDisable.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
   </data>
-  <data name="checkBoxEnabled.Text" xml:space="preserve">
-    <value>Enable users</value>
+  <data name="checkBoxDisable.Text" xml:space="preserve">
+    <value>Disable Users</value>
   </data>
-  <data name="&gt;&gt;checkBoxEnabled.Name" xml:space="preserve">
-    <value>checkBoxEnabled</value>
+  <data name="&gt;&gt;checkBoxDisable.Name" xml:space="preserve">
+    <value>checkBoxDisable</value>
   </data>
-  <data name="&gt;&gt;checkBoxEnabled.Type" xml:space="preserve">
+  <data name="&gt;&gt;checkBoxDisable.Type" xml:space="preserve">
     <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;checkBoxEnabled.Parent" xml:space="preserve">
+  <data name="&gt;&gt;checkBoxDisable.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
-  <data name="&gt;&gt;checkBoxEnabled.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;checkBoxDisable.ZOrder" xml:space="preserve">
     <value>2</value>
   </data>
   <data name="btnOK.Location" type="System.Drawing.Point, System.Drawing">

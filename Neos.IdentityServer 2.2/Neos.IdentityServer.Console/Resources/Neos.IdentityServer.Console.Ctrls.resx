@@ -264,6 +264,9 @@
   <data name="CTRLGLDELVERY" xml:space="preserve">
     <value>Validation time (in seconds)</value>
   </data>
+  <data name="CTRLGLENROLLWIZ" xml:space="preserve">
+    <value>Registration Wizards</value>
+  </data>
   <data name="CTRLGLHASH" xml:space="preserve">
     <value>Hash algorithm</value>
   </data>
@@ -349,7 +352,7 @@
     <value>Enrollement Wizard</value>
   </data>
   <data name="CTRLPROVWIZARDSTRICT" xml:space="preserve">
-    <value>Disallow manage my options</value>
+    <value>Force wizard if not completed</value>
   </data>
   <data name="CTRLSAVE" xml:space="preserve">
     <value>Save</value>
@@ -382,7 +385,7 @@
     <value>New certificate</value>
   </data>
   <data name="CTRLSECNEWCERTCREATED" xml:space="preserve">
-    <value>Certificate created successfully !</value>
+    <value>Certificate created successfully ! You must deploy new certificate {0} on all others ADFS servers</value>
   </data>
   <data name="CTRLSECNEWCRYPTEDDATABASE" xml:space="preserve">
     <value>Create SQL crypted database</value>
@@ -500,6 +503,9 @@
   </data>
   <data name="CTRLSQLNEWDBCREATED" xml:space="preserve">
     <value>MFA Database {0} created successfully !</value>
+  </data>
+  <data name="CTRLSQLNEWDBCREATED2" xml:space="preserve">
+    <value>MFA Database {0} created successfully ! You must deploy new certificate {1} on all others ADFS servers</value>
   </data>
   <data name="CTRLSQLREUSECERT" xml:space="preserve">
     <value>Reuse Certificate</value>

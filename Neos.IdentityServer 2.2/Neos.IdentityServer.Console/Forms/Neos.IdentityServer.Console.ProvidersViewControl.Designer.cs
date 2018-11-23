@@ -41,15 +41,17 @@
             // tableLayoutPanel
             // 
             resources.ApplyResources(this.tableLayoutPanel, "tableLayoutPanel");
+            this.tableLayoutPanel.BackColor = System.Drawing.SystemColors.Window;
             this.tableLayoutPanel.Controls.Add(this.panel1, 0, 0);
             this.tableLayoutPanel.Name = "tableLayoutPanel";
             // 
             // panel1
             // 
+            resources.ApplyResources(this.panel1, "panel1");
+            this.panel1.BackColor = System.Drawing.SystemColors.Window;
             this.panel1.Controls.Add(this.label3);
             this.panel1.Controls.Add(this.label2);
             this.panel1.Controls.Add(this.label1);
-            resources.ApplyResources(this.panel1, "panel1");
             this.panel1.Name = "panel1";
             // 
             // label3
@@ -69,8 +71,9 @@
             // 
             // ProvidersViewControl
             // 
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Inherit;
             resources.ApplyResources(this, "$this");
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoValidate = System.Windows.Forms.AutoValidate.EnableAllowFocusChange;
             this.BackColor = System.Drawing.SystemColors.Window;
             this.Controls.Add(this.tableLayoutPanel);
             this.Name = "ProvidersViewControl";

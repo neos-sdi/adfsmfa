@@ -34,10 +34,13 @@ using Microsoft.ManagementConsole.Advanced;
 
 namespace Neos.IdentityServer.Console
 {
-    public partial class SQLViewControl: UserControl, IFormViewControl
+    public partial class SQLViewControl : UserControl, IFormViewControl, IMMCNotificationData
     {
         private Control oldParent;
         private ServiceSQLFormView _frm = null;
+        private SQLConfigurationControl _ctrl = null;
+        private bool _isnotifenabled = true;
+
 
         public SQLViewControl()
         {
@@ -61,7 +64,8 @@ namespace Neos.IdentityServer.Console
             this.SuspendLayout();
             try
             {
-                this.tableLayoutPanel.Controls.Add(new SQLConfigurationControl(this, this.SnapIn), 0, 1);
+                ControlInstance = new SQLConfigurationControl(this, this.SnapIn);
+                this.tableLayoutPanel.Controls.Add(ControlInstance, 0, 1);
             }
             finally
             {
@@ -77,6 +81,15 @@ namespace Neos.IdentityServer.Console
         {
             get { return _frm; }
             private set { _frm = value; }
+        }
+
+        /// <summary>
+        /// ControlInstance property implmentation
+        /// </summary>
+        protected SQLConfigurationControl ControlInstance
+        {
+            get { return _ctrl; }
+            private set { _ctrl = value; }
         }
 
         /// <summary>
@@ -129,25 +142,22 @@ namespace Neos.IdentityServer.Console
         /// </summary>
         internal void RefreshData()
         {
-            ComponentResourceManager resources = new ComponentResourceManager(typeof(SQLViewControl));
-            this.label1.Text = resources.GetString("label1.Text");
-            this.label2.Text = resources.GetString("label2.Text");
-            this.label3.Text = resources.GetString("label3.Text");
-
             this.SuspendLayout();
             this.Cursor = Cursors.WaitCursor;
+            this._isnotifenabled = false;
             try
             {
-                for (int j = this.tableLayoutPanel.Controls.Count - 1; j >= 0; j--)
-                {
-                    Control ctrl = this.tableLayoutPanel.Controls[j];
-                    if (ctrl is SQLConfigurationControl)
-                        this.tableLayoutPanel.Controls.RemoveAt(j);
-                }
-                this.tableLayoutPanel.Controls.Add(new SQLConfigurationControl(this, this.SnapIn), 0, 1);
+                ComponentResourceManager resources = new ComponentResourceManager(typeof(SQLViewControl));
+                this.label1.Text = resources.GetString("label1.Text");
+                this.label2.Text = resources.GetString("label2.Text");
+                this.label3.Text = resources.GetString("label3.Text");
+
+                ManagementService.ADFSManager.ReadConfiguration(null);
+                ((IMMCRefreshData)ControlInstance).DoRefreshData();
             }
             finally
             {
+                this._isnotifenabled = true;
                 this.Cursor = Cursors.Default;
                 this.ResumeLayout();
             }
@@ -166,10 +176,7 @@ namespace Neos.IdentityServer.Console
                 messageBoxParameters.Buttons = MessageBoxButtons.YesNo;
                 messageBoxParameters.Icon = MessageBoxIcon.Question;
                 if (this.SnapIn.Console.ShowDialog(messageBoxParameters) == DialogResult.Yes)
-                {
-                    ManagementService.ADFSManager.ReadConfiguration(null);
-                    RefreshData();
-                }
+                   RefreshData();
             }
             catch (Exception ex)
             {
@@ -186,9 +193,10 @@ namespace Neos.IdentityServer.Console
         /// </summary>
         internal void SaveData()
         {
-            //  if (this.ValidateChildren())
+            if (this.ValidateChildren())
             {
                 this.Cursor = Cursors.WaitCursor;
+                this._isnotifenabled = false;
                 try
                 {
                     ManagementService.ADFSManager.WriteConfiguration(null);
@@ -204,11 +212,18 @@ namespace Neos.IdentityServer.Console
                 }
                 finally
                 {
-                    RefreshData();
+                    this._isnotifenabled = true;
                     this.Cursor = Cursors.Default;
                 }
             }
         }
-  
+
+        /// <summary>
+        /// IsNotifsEnabled method implementation
+        /// </summary>
+        public bool IsNotifsEnabled()
+        {
+            return _isnotifenabled;
+        }
     }
 }

@@ -34,10 +34,12 @@ using Microsoft.ManagementConsole.Advanced;
 
 namespace Neos.IdentityServer.Console
 {
-    public partial class ADDSViewControl : UserControl, IFormViewControl
+    public partial class ADDSViewControl : UserControl, IFormViewControl, IMMCNotificationData
     {
         private Control oldParent;
         private ServiceADDSFormView _frm = null;
+        private bool _isnotifsenabled = true;
+        private ADDSConfigurationControl _ctrl = null;
 
         public ADDSViewControl()
         {
@@ -61,7 +63,8 @@ namespace Neos.IdentityServer.Console
             this.SuspendLayout();
             try
             {
-                this.tableLayoutPanel.Controls.Add(new ADDSConfigurationControl(this, this.SnapIn), 0, 1);
+                ControlInstance = new ADDSConfigurationControl(this, this.SnapIn);
+                this.tableLayoutPanel.Controls.Add(ControlInstance, 0, 1);
             }
             finally
             {
@@ -74,25 +77,22 @@ namespace Neos.IdentityServer.Console
         /// </summary>
         internal void RefreshData()
         {
-            ComponentResourceManager resources = new ComponentResourceManager(typeof(ADDSViewControl));
-            this.label1.Text = resources.GetString("label1.Text");
-            this.label2.Text = resources.GetString("label2.Text");
-            this.label3.Text = resources.GetString("label3.Text");
-
             this.SuspendLayout();
             this.Cursor = Cursors.WaitCursor;
+            this._isnotifsenabled = false;
             try
             {
-                for (int j = this.tableLayoutPanel.Controls.Count - 1; j >= 0; j--)
-                {
-                    Control ctrl = this.tableLayoutPanel.Controls[j];
-                    if (ctrl is ADDSConfigurationControl)
-                        this.tableLayoutPanel.Controls.RemoveAt(j);
-                }
-                this.tableLayoutPanel.Controls.Add(new ADDSConfigurationControl(this, this.SnapIn), 0, 1);
+                ComponentResourceManager resources = new ComponentResourceManager(typeof(ADDSViewControl));
+                this.label1.Text = resources.GetString("label1.Text");
+                this.label2.Text = resources.GetString("label2.Text");
+                this.label3.Text = resources.GetString("label3.Text");
+
+                ManagementService.ADFSManager.ReadConfiguration(null);
+                ((IMMCRefreshData)ControlInstance).DoRefreshData();
             }
             finally
             {
+                this._isnotifsenabled = true;
                 this.Cursor = Cursors.Default;
                 this.ResumeLayout();
             }
@@ -111,10 +111,7 @@ namespace Neos.IdentityServer.Console
                 messageBoxParameters.Buttons = MessageBoxButtons.YesNo;
                 messageBoxParameters.Icon = MessageBoxIcon.Question;
                 if (this.SnapIn.Console.ShowDialog(messageBoxParameters) == DialogResult.Yes)
-                {
-                    ManagementService.ADFSManager.ReadConfiguration(null);
-                    RefreshData();
-                }
+                   RefreshData();
             }
             catch (Exception ex)
             {
@@ -131,9 +128,10 @@ namespace Neos.IdentityServer.Console
         /// </summary>
         internal void SaveData()
         {
-           // if (this.ValidateChildren())
+            if (this.ValidateChildren())
             {
                 this.Cursor = Cursors.WaitCursor;
+                this._isnotifsenabled = false;
                 try
                 {
                     ManagementService.ADFSManager.WriteConfiguration(null);
@@ -149,7 +147,7 @@ namespace Neos.IdentityServer.Console
                 }
                 finally
                 {
-                    RefreshData();
+                    this._isnotifsenabled = true;
                     this.Cursor = Cursors.Default;
                 }
             }
@@ -163,6 +161,15 @@ namespace Neos.IdentityServer.Console
         {
             get { return _frm; }
             private set { _frm = value; }
+        }
+
+        /// <summary>
+        /// ControlInstance property implmentation
+        /// </summary>
+        protected ADDSConfigurationControl ControlInstance
+        {
+            get { return _ctrl; }
+            private set { _ctrl = value; }
         }
 
         /// <summary>
@@ -209,5 +216,13 @@ namespace Neos.IdentityServer.Console
                 Size = Parent.ClientSize;
         }
         #endregion
+
+        /// <summary>
+        /// IsNotifsEnabled() method implmentation
+        /// </summary>
+        public bool IsNotifsEnabled()
+        {
+            return _isnotifsenabled;
+        }
     }
 }

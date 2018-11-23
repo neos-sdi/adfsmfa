@@ -385,7 +385,21 @@ namespace Neos.IdentityServer.MultiFactor
                 case ProviderPageMode.EnrollPinAndSave:
                     result = TryEnrollPinCode(usercontext, context, proofData, request, out claims, true);
                     break;
-
+                case ProviderPageMode.EnrollOTPForce:
+                    result = TryEnrollOTP(usercontext, context, proofData, request, out claims, true);
+                    break;
+                case ProviderPageMode.EnrollEmailForce:
+                    result = TryEnrollEmail(usercontext, context, proofData, request, out claims, true);
+                    break;
+                case ProviderPageMode.EnrollPhoneForce:
+                    result = TryEnrollPhone(usercontext, context, proofData, request, out claims, true);
+                    break;
+                case ProviderPageMode.EnrollBiometricsForce:
+                    result = TryEnrollBio(usercontext, context, proofData, request, out claims, true);
+                    break;
+                case ProviderPageMode.EnrollPinForce:
+                    result = TryEnrollPinCode(usercontext, context, proofData, request, out claims, true);
+                    break;
             }
             return result;
         }
@@ -431,8 +445,16 @@ namespace Neos.IdentityServer.MultiFactor
                                     pin = Config.DefaultPin;
                                 if (Convert.ToInt32(pin) != usercontext.PinCode)
                                 {
-                                    usercontext.UIMode = ProviderPageMode.Locking;
-                                    return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorInvalidIdentificationRestart"), ProviderPageMode.DefinitiveError);
+                                    if (usercontext.CurrentRetries >= Config.MaxRetries)
+                                    {
+                                        usercontext.UIMode = ProviderPageMode.Locking;
+                                        return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorInvalidIdentificationRestart"), ProviderPageMode.DefinitiveError);
+                                    }
+                                    else
+                                    {
+                                        usercontext.UIMode = ProviderPageMode.Identification;
+                                        return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorInvalidIdentificationRetry"), false);
+                                    }
                                 }
                             }
                             claims = new Claim[] { GetAuthMethodClaim(usercontext.SelectedMethod) };
@@ -441,32 +463,29 @@ namespace Neos.IdentityServer.MultiFactor
                                 usercontext.UIMode = ProviderPageMode.SelectOptions;
                                 return new AdapterPresentation(this, context);
                             }
-                            else if (Config.UserFeatures.CanEnrollDevices())
+                            else if ((usercontext.FirstChoiceMethod != PreferredMethod.Choose) && (usercontext.FirstChoiceMethod != PreferredMethod.None))
                             {
-                                if ((usercontext.FirstChoiceMethod != PreferredMethod.Choose) && (usercontext.FirstChoiceMethod != PreferredMethod.None))
+                                IExternalProvider prov = RuntimeAuthProvider.GetProvider(usercontext.FirstChoiceMethod);
+                                if ((prov != null) && (prov.ForceEnrollment != ForceWizardMode.Disabled))
                                 {
-                                    IExternalProvider prov = RuntimeAuthProvider.GetProvider(usercontext.FirstChoiceMethod);
-                                    if ((prov != null) && ((prov.AllowEnrollment) && (prov.EnrollmentNeverUseOptions)))
+                                    if (usercontext.FirstChoiceMethod != usercontext.PreferredMethod)
                                     {
-                                        if (usercontext.FirstChoiceMethod != usercontext.PreferredMethod)
+                                        switch (usercontext.FirstChoiceMethod)
                                         {
-                                            switch (usercontext.FirstChoiceMethod)
-                                            {
-                                                case PreferredMethod.Code:
-                                                    usercontext.UIMode = ProviderPageMode.EnrollOTPAndSave;
-                                                    break;
-                                                case PreferredMethod.Email:
-                                                    usercontext.UIMode = ProviderPageMode.EnrollEmailAndSave;
-                                                    break;
-                                                case PreferredMethod.External:
-                                                    usercontext.UIMode = ProviderPageMode.EnrollPhoneAndSave;
-                                                    break;
-                                                case PreferredMethod.Biometrics:
-                                                    usercontext.UIMode = ProviderPageMode.EnrollBiometricsAndSave;
-                                                    break;
-                                            }
-                                            return new AdapterPresentation(this, context);
+                                            case PreferredMethod.Code:
+                                                usercontext.UIMode = ProviderPageMode.EnrollOTPForce;
+                                                break;
+                                            case PreferredMethod.Email:
+                                                usercontext.UIMode = ProviderPageMode.EnrollEmailForce;
+                                                break;
+                                            case PreferredMethod.External:
+                                                usercontext.UIMode = ProviderPageMode.EnrollPhoneForce;
+                                                break;
+                                            case PreferredMethod.Biometrics:
+                                                usercontext.UIMode = ProviderPageMode.EnrollBiometricsForce;
+                                                break;
                                         }
+                                        return new AdapterPresentation(this, context);
                                     }
                                 }
                             }
@@ -1039,32 +1058,29 @@ namespace Neos.IdentityServer.MultiFactor
                     usercontext.UIMode = ProviderPageMode.SelectOptions;
                     return new AdapterPresentation(this, context);
                 }
-                else if (Config.UserFeatures.CanEnrollDevices())
+                else if ((usercontext.FirstChoiceMethod != PreferredMethod.Choose) && (usercontext.FirstChoiceMethod != PreferredMethod.None))
                 {
-                    if ((usercontext.FirstChoiceMethod != PreferredMethod.Choose) && (usercontext.FirstChoiceMethod != PreferredMethod.None))
+                    IExternalProvider prov = RuntimeAuthProvider.GetProvider(usercontext.FirstChoiceMethod);
+                    if ((prov != null) && ((prov.AllowEnrollment) && (prov.ForceEnrollment!=ForceWizardMode.Disabled)))
                     {
-                        IExternalProvider prov = RuntimeAuthProvider.GetProvider(usercontext.FirstChoiceMethod);
-                        if ((prov!=null) && ((prov.AllowEnrollment) && (prov.EnrollmentNeverUseOptions)))
+                        if (usercontext.FirstChoiceMethod != usercontext.PreferredMethod)
                         {
-                            if (usercontext.FirstChoiceMethod != usercontext.PreferredMethod)
+                            switch (usercontext.FirstChoiceMethod)
                             {
-                                switch (usercontext.FirstChoiceMethod)
-                                {
-                                    case PreferredMethod.Code:
-                                        usercontext.UIMode = ProviderPageMode.EnrollOTPAndSave;
-                                        break;
-                                    case PreferredMethod.Email:
-                                        usercontext.UIMode = ProviderPageMode.EnrollEmailAndSave;
-                                        break;
-                                    case PreferredMethod.External:
-                                        usercontext.UIMode = ProviderPageMode.EnrollPhoneAndSave;
-                                        break;
-                                    case PreferredMethod.Biometrics:
-                                        usercontext.UIMode = ProviderPageMode.EnrollBiometricsAndSave;
-                                        break;
-                                }
-                                return new AdapterPresentation(this, context);
+                                case PreferredMethod.Code:
+                                    usercontext.UIMode = ProviderPageMode.EnrollOTPForce;
+                                    break;
+                                case PreferredMethod.Email:
+                                    usercontext.UIMode = ProviderPageMode.EnrollEmailForce;
+                                    break;
+                                case PreferredMethod.External:
+                                    usercontext.UIMode = ProviderPageMode.EnrollPhoneForce;
+                                    break;
+                                case PreferredMethod.Biometrics:
+                                    usercontext.UIMode = ProviderPageMode.EnrollBiometricsForce;
+                                    break;
                             }
+                            return new AdapterPresentation(this, context);
                         }
                     }
                 }
@@ -1442,7 +1458,10 @@ namespace Neos.IdentityServer.MultiFactor
                         else if (usercontext.TargetUIMode == ProviderPageMode.Invitation)
                         {
                             usercontext.UIMode = ProviderPageMode.Invitation;
-                            usercontext.TargetUIMode = ProviderPageMode.Bypass;
+                            if (Config.UserFeatures.IsMFARequired())
+                                usercontext.TargetUIMode = ProviderPageMode.Locking;
+                            else
+                                usercontext.TargetUIMode = ProviderPageMode.Bypass;
                         }
                         else 
                             usercontext.UIMode = ProviderPageMode.SelectOptions;
@@ -1507,7 +1526,10 @@ namespace Neos.IdentityServer.MultiFactor
                 else if (usercontext.TargetUIMode == ProviderPageMode.Invitation)
                 {
                     usercontext.UIMode = ProviderPageMode.Invitation;
-                    usercontext.TargetUIMode = ProviderPageMode.Bypass;
+                    if (Config.UserFeatures.IsMFARequired())
+                        usercontext.TargetUIMode = ProviderPageMode.Locking;
+                    else
+                        usercontext.TargetUIMode = ProviderPageMode.Bypass;
                 }
                 else
                     usercontext.UIMode = ProviderPageMode.SelectOptions;
@@ -1548,7 +1570,10 @@ namespace Neos.IdentityServer.MultiFactor
                         else if (usercontext.TargetUIMode == ProviderPageMode.Invitation)
                         {
                             usercontext.UIMode = ProviderPageMode.Invitation;
-                            usercontext.TargetUIMode = ProviderPageMode.Bypass;
+                            if (Config.UserFeatures.IsMFARequired())
+                                usercontext.TargetUIMode = ProviderPageMode.Locking;
+                            else
+                                usercontext.TargetUIMode = ProviderPageMode.Bypass;
                         }
                         else
                             usercontext.UIMode = ProviderPageMode.SelectOptions;
@@ -1617,7 +1642,10 @@ namespace Neos.IdentityServer.MultiFactor
                 else if (usercontext.TargetUIMode == ProviderPageMode.Invitation)
                 {
                     usercontext.UIMode = ProviderPageMode.Invitation;
-                    usercontext.TargetUIMode = ProviderPageMode.Bypass;
+                    if (Config.UserFeatures.IsMFARequired())
+                        usercontext.TargetUIMode = ProviderPageMode.Locking;
+                    else
+                        usercontext.TargetUIMode = ProviderPageMode.Bypass;
                 }
                 else
                     usercontext.UIMode = ProviderPageMode.SelectOptions;
@@ -1658,7 +1686,10 @@ namespace Neos.IdentityServer.MultiFactor
                         else if (usercontext.TargetUIMode == ProviderPageMode.Invitation)
                         {
                             usercontext.UIMode = ProviderPageMode.Invitation;
-                            usercontext.TargetUIMode = ProviderPageMode.Bypass;
+                            if (Config.UserFeatures.IsMFARequired())
+                                usercontext.TargetUIMode = ProviderPageMode.Locking;
+                            else
+                                usercontext.TargetUIMode = ProviderPageMode.Bypass;
                         }
                         else
                             usercontext.UIMode = ProviderPageMode.SelectOptions;
@@ -1744,8 +1775,25 @@ namespace Neos.IdentityServer.MultiFactor
             }
             catch (Exception ex)
             {
-                usercontext.UIMode = ProviderPageMode.SelectOptions;
+                if (usercontext.TargetUIMode == ProviderPageMode.Registration)
+                {
+                    usercontext.UIMode = ProviderPageMode.Registration;
+                    usercontext.TargetUIMode = ProviderPageMode.Bypass;
+                }
+                else if (usercontext.TargetUIMode == ProviderPageMode.Invitation)
+                {
+                    usercontext.UIMode = ProviderPageMode.Invitation;
+                    if (Config.UserFeatures.IsMFARequired())
+                        usercontext.TargetUIMode = ProviderPageMode.Locking;
+                    else
+                        usercontext.TargetUIMode = ProviderPageMode.Bypass;
+                }
+                else
+                    usercontext.UIMode = ProviderPageMode.SelectOptions;
                 result = new AdapterPresentation(this, context, ex.Message);
+
+              //  usercontext.UIMode = ProviderPageMode.SelectOptions;
+              //  result = new AdapterPresentation(this, context, ex.Message);
             }
             return result;
         }
@@ -1783,7 +1831,10 @@ namespace Neos.IdentityServer.MultiFactor
                         else if (usercontext.TargetUIMode == ProviderPageMode.Invitation)
                         {
                             usercontext.UIMode = ProviderPageMode.Invitation;
-                            usercontext.TargetUIMode = ProviderPageMode.Bypass;
+                            if (Config.UserFeatures.IsMFARequired())
+                                usercontext.TargetUIMode = ProviderPageMode.Locking;
+                            else
+                                usercontext.TargetUIMode = ProviderPageMode.Bypass;
                         }
                         else
                             usercontext.UIMode = ProviderPageMode.SelectOptions;
@@ -1849,11 +1900,13 @@ namespace Neos.IdentityServer.MultiFactor
                 else if (usercontext.TargetUIMode == ProviderPageMode.Invitation)
                 {
                     usercontext.UIMode = ProviderPageMode.Invitation;
-                    usercontext.TargetUIMode = ProviderPageMode.Bypass;
+                    if (Config.UserFeatures.IsMFARequired())
+                        usercontext.TargetUIMode = ProviderPageMode.Locking;
+                    else
+                        usercontext.TargetUIMode = ProviderPageMode.Bypass;
                 }
                 else
                     usercontext.UIMode = ProviderPageMode.SelectOptions;
-
                 result = new AdapterPresentation(this, context, ex.Message);
             }
             return result;
@@ -2419,12 +2472,23 @@ namespace Neos.IdentityServer.MultiFactor
             if (Config.UserFeatures.CanManageOptions() || Config.UserFeatures.CanManagePassword())
                 return true;
             if (Config.UserFeatures.CanEnrollDevices() && (prov.AllowEnrollment))
-            {
-                if (!prov.EnrollmentNeverUseOptions)
-                    return true;
-                else
-                    return false;
-            }
+               return true;
+            return false;
+        }
+
+        /// <summary>
+        /// HasStrictAccessToOptions method
+        /// </summary>
+        internal bool HasStrictAccessToOptions(IExternalProvider prov)
+        {
+            if (prov == null)
+                return false;
+            if (!prov.Enabled)
+                return false;
+            if (!Config.UserFeatures.CanAccessOptions())
+                return false;
+            if (Config.UserFeatures.CanEnrollDevices() && (prov.AllowEnrollment))
+               return true;
             return false;
         }
 

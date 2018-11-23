@@ -47,7 +47,6 @@ namespace Neos.IdentityServer.Console
 
         }
 
-
         /// <summary>
         /// Initialize method override
         /// </summary>

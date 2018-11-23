@@ -128,7 +128,7 @@
     <value>127, 17</value>
   </data>
   <data name="checkBoxEnabled.Text" xml:space="preserve">
-    <value>Activer les utilisateurs</value>
+    <value>Désactiver les utilisateurs</value>
   </data>
   <data name="btnCancel.Text" xml:space="preserve">
     <value>Annuler</value>

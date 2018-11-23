@@ -201,7 +201,7 @@ namespace Neos.IdentityServer.Console
             EnsureService();
             foreach (Registration reg in registrations)
             {
-                ManagementService.SetUserRegistration(reg, false);
+                ManagementService.SetUserRegistration(reg, false, false, false);
             }
         }
 
@@ -214,7 +214,7 @@ namespace Neos.IdentityServer.Console
             RegistrationList lst = new RegistrationList();
             foreach(Registration reg in registrations)
             {
-                lst.Add(ManagementService.AddUserRegistration(reg, false));
+                lst.Add(ManagementService.AddUserRegistration(reg, false, false, false));
             }
             return lst;
         }
@@ -234,15 +234,6 @@ namespace Neos.IdentityServer.Console
                     _ret = false;
             }
             return _ret;
-        }
-
-        /// <summary>
-        /// CheckAttribute method implementation
-        /// </summary>
-        internal static bool CheckAttribute(string attribute, int choice)
-        {
-            EnsureService();
-            return ManagementService.CheckRepositoryAttribute(attribute, choice); 
         }
 
         /// <summary>

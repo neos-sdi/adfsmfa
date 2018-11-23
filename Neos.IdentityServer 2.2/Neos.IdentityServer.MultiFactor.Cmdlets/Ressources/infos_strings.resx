@@ -121,7 +121,7 @@
     <value>Records count : {0}</value>
   </data>
   <data name="InfosRSACertificateChanged" xml:space="preserve">
-    <value>MFA certificate correctly updated ! ThumbPrint {0}</value>
+    <value>MFA certificate {0} correctly updated ! You must deploy this certificate on all others ADFS servers.</value>
   </data>
   <data name="InfosSystemAlreadyInitialized" xml:space="preserve">
     <value>MFA is already initialized ! you must run "UnRegister-MFASytem" PowerShell Cmdlet if you want to reinitialize ALL the MFA configuration</value>
@@ -169,6 +169,6 @@
     <value>MFA Configuration Import with errors !</value>
   </data>
   <data name="InfosSQLCertificateChanged" xml:space="preserve">
-    <value>SQL certificate correctly updated ! ThumbPrint {0}</value>
+    <value>SQL certificate {0} correctly updated ! You must deploy this certificate on all others ADFS servers.</value>
   </data>
 </root>
