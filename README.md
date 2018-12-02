@@ -17,17 +17,30 @@
         <p align="left">SharePoint Identity Service Application (Claim Provider for SharePoint 2013/2016) : <a href="https://github.com/neos-sdi/spidentityservice/">https://github.com/neos-sdi/spidentityservice</a></p>
     </li>
 </ul>
-<h2>Install & Documentation</h2><p><a "https://github.com/neos-sdi/adfsmfa/wiki/Doc2">https://github.com/neos-sdi/adfsmfa/wiki/documentation</a></p>
-<h2>Downloads</h2><p><a "https://github.com/neos-sdi/adfsmfa/releases">https://github.com/neos-sdi/adfsmfa/releases</a></p>
+<h2>Install & Documentation</h2>
+<ul>
+    <li>
+        <p><a href="https://github.com/neos-sdi/adfsmfa/wiki/Doc2">https://github.com/neos-sdi/adfsmfa/wiki/documentation</a></p>
+    </li>
+</ul>
+<h2>Downloads</h2>
+<ul>
+    <li>
+        <p><a href="https://github.com/neos-sdi/adfsmfa/releases">https://github.com/neos-sdi/adfsmfa/releases</a></p>
+    </li>
+</ul>
 <h2>Features</h2>
 <ul>
     <li>Localized French/English/Spanish</li>
     <li>run with ADFS Windows 2012 R2 and 2016 compatible with ADFS 2019</li>
     <li>Enable self-registration </li>
     <li>Enable self-registration with QR code (using component from&nbsp; George Mamaladze and his team <a href="https://qrcodenet.codeplex.com/">https://qrcodenet.codeplex.com/</a>; Great Work !)</li>
-    <li>Enable custom change password. </li><li>Secret Keys length (Guid, 128, 256, 384 &amp; 512 bytes) RNG generator</li>
-    <li>Secret Keys RSA encryption length (2048 bytes) RSA</li><li>Can use ADDS customizable attributes or Custom SQL-Server Database </li>
-    <li>Can send TOTP code by email (customizable template in resources) </li><li>Can send TOTP code by sms (customizable and extensible with API) </li>
+    <li>Enable custom change password. </li>
+    <li>Secret Keys length (Guid, 128, 256, 384 &amp; 512 bytes) RNG generator</li>
+    <li>Secret Keys RSA encryption length (2048 bytes) RSA</li>
+    <li>Can use ADDS customizable attributes or Custom SQL-Server Database </li>
+    <li>Can send TOTP code by email (customizable template in resources) </li>
+    <li>Can send TOTP code by sms (customizable and extensible with API) </li>
     <li>Can send TOTP code using Authenticator Apps like MS Authenticator, Google Authentication and more</li>
     <li>Can work with ADDS multi-forests with trust relationships when using ADDS Storage mode</li>
     <li>Can work with LDAP 3.0 Providers (ADFS2016/2019) when using SQL Storage mode</li>
@@ -42,6 +55,7 @@
     <li>To work with ADDS, the ADFS Service account must have read and write to users properties.</li>
     <li>To work with SQL Server Database, you must deploy the database on a separate SQL Server (WID &amp; replication is not supported)</li>
     <li>To bypass MFA, specific cmdlet should be run to deal with Web Services and rich clients (like Outlook), but this is specific to ADFS not to the component.</li>
-    <li>Working with ADFS on W8 and W10. and Windows server 2019</li><li>the Identity claim is by design UPN (common and recommended in federation projects (planned to be customizable))<p>http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn</p></li>
+    <li>Working with ADFS on W8 and W10. and Windows server 2019</li>
+    <li>the Identity claim is by design UPN (common and recommended in federation projects (planned to be customizable))<p>http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn</p></li>
 </ul>
-</div><div class="ClearBoth"></div> 
+</div><div class="ClearBoth"></div>
