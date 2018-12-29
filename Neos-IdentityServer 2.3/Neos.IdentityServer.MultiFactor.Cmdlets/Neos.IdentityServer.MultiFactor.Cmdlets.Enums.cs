@@ -234,6 +234,34 @@ namespace MFA
     }
 
     /// <summary>
+    /// PSUIKind
+    /// <para type="synopsis">Kind of ADFS's User Interface version</para>
+    /// <para type="synopsis">Kind of ADFS's User Interface version (ADFS 2019 or Older with Custome Themes</para>
+    /// </summary>
+    public enum PSUIKind
+    {
+        /// <summary>
+        /// <para type="description">Default UI theme for ADFS 2012r2, 2016 and 2019</para>
+        /// </summary>
+        Default,
+
+        /// <summary>
+        /// <para type="description">Default UI theme for ADFS 2019 only</para>
+        /// </summary>
+        Default2019,
+
+        /// <summary>
+        /// <para type="description">Default UI theme for ADFS 2019 with centered UI</para>
+        /// </summary>
+        Centered2019,
+
+        /// <summary>
+        /// <para type="description">Default UI theme for ADFS 2019 with centered and paginated UI</para>
+        /// </summary>
+        Paginated2019
+    }
+
+    /// <summary>
     /// PSKeyGeneratorMode
     /// <para type="synopsis">For RNG Key generation, Key Size from 128 bytes to 512 bytes.</para>
     /// <para type="description">Configuration options for registering or accessing MFA. Must be combined with binary OR, in MMC you can use Templates</para>

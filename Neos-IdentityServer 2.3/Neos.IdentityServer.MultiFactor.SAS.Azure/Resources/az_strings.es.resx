@@ -149,6 +149,9 @@
     <value>(la autenticación es hecha por Microsoft)</value>
     <comment>(l'authentification est réalisée par Microsoft)</comment>
   </data>
+  <data name="GLOBALWIZLabel" xml:space="preserve">
+    <value>Registre tu móvil</value>
+  </data>
   <data name="NOTIFChoiceLabel" xml:space="preserve">
     <value>Enviar una notificación en mi móvil (MS)</value>
     <comment>Envoyer une notification sur mon mobile (MS)</comment>

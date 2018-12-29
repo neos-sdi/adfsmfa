@@ -104,16 +104,304 @@ namespace Neos.IdentityServer.MultiFactor
             this.Resources = new ResourcesLocale(context.Lcid);
         }
 
-        public abstract bool IsPermanentFailure { get; internal set; }
-        public abstract bool IsMessage { get; internal set; }
-        public abstract bool DisableOptions { get; internal set; }
-        public abstract AuthenticationProvider Provider { get; internal set; }
-        public abstract AuthenticationContext Context { get; internal set; }
-        public abstract ResourcesLocale Resources { get; internal set; }
+        #region Properties
+        /// <summary>
+        /// UiKind property 
+        /// </summary>
+        public virtual ADFSUserInterfaceKind UiKind
+        {
+            get;
+            set;
+        }
 
-        public abstract string GetPageTitle(int lcid);
-        public abstract string GetFormHtml(int lcid);
-        public abstract string GetFormPreRenderHtml(int lcid);
+        /// <summary>
+        /// IsPermanentFailure property
+        /// </summary>
+        public virtual bool IsPermanentFailure
+        {
+            get;
+            internal set;
+        }
+
+        /// <summary>
+        /// IsMessage property
+        /// </summary>
+        public virtual bool IsMessage
+        {
+            get;
+            internal set;
+        }
+
+        /// <summary>
+        /// DisableOptions property
+        /// </summary>
+        public virtual bool DisableOptions
+        {
+            get;
+            internal set;
+        }
+
+        /// <summary>
+        /// Provider property
+        /// </summary>
+        public virtual AuthenticationProvider Provider
+        {
+            get;
+            internal set;
+        }
+
+        /// <summary>
+        /// Context property
+        /// </summary>
+        public virtual AuthenticationContext Context
+        {
+            get; 
+            internal set;
+        }
+
+        /// <summary>
+        /// Resources property
+        /// </summary>
+        public virtual ResourcesLocale Resources
+        {
+            get;
+            internal set;
+        }
+
+        /// <summary>
+        /// UseUIPaginated property
+        /// </summary>
+        public virtual bool UseUIPaginated
+        {
+            get; 
+            internal set;
+        }
+
+        #endregion
+
+        #region ADFS Interfaces
+        /// <summary>
+        /// IAdapterPresentation GetPageTitle implementation
+        /// </summary>
+        public virtual string GetPageTitle(int lcid)
+        {
+            return Resources.GetString(ResourcesLocaleKind.Titles, "TitlePageTitle");
+        }
+
+        /// <summary>
+        /// GetFormHtmlMessageZone method implementation
+        /// </summary>
+        public virtual string GetFormHtmlMessageZone(AuthenticationContext usercontext)
+        {
+            string result = string.Empty;
+            if (IsPermanentFailure)
+            {
+                result += "</br>";
+                if (!String.IsNullOrEmpty(usercontext.UIMessage))
+                    result += "<p class=\"error\">" + usercontext.UIMessage + "</p></br>";
+                else
+                    result += "<p class=\"error\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlErrorRestartSession") + "</p></br>";
+            }
+            else
+            {
+                if (!String.IsNullOrEmpty(usercontext.UIMessage))
+                {
+                    result += "</br>";
+                    if (IsMessage)
+                        result += "<p class=\"text fullWidth\" style=\"color: #6FA400\">" + usercontext.UIMessage + "</p></br>";
+                    else
+                        result += "<p class=\"error\">" + usercontext.UIMessage + "</p></br>";
+                }
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// GetFormPreRenderHtmlCSS implementation
+        /// </summary>
+        protected virtual string GetFormPreRenderHtmlCSS(AuthenticationContext usercontext)
+        {
+            string result = "<style>" + "\r\n";
+            result += "#wizardMessage, #wizardMessage2, #wizardMessage3 {" + "\r\n";
+            result += "box-sizing: border-box;" + "\r\n";
+            result += "color: rgb(38, 38, 38);" + "\r\n";
+            result += "direction: ltr;" + "\r\n";
+            result += "display: block;" + "\r\n";
+            result += "font-family: \"Segoe UI Webfont\", -apple-system, \"Helvetica Neue\", \"Lucida Grande\", Roboto, Ebrima, \"Nirmala UI\", Gadugi, \"Segoe Xbox Symbol\", \"Segoe UI Symbol\", \"Meiryo UI\", \"Khmer UI\", Tunga, \"Lao UI\", Raavi, \"Iskoola Pota\", Latha, Leelawadee, \"Microsoft YaHei UI\", \"Microsoft JhengHei UI\", \"Malgun Gothic\", \"Estrangelo Edessa\", \"Microsoft Himalaya\", \"Microsoft New Tai Lue\", \"Microsoft PhagsPa\", \"Microsoft Tai Le\", \"Microsoft Yi Baiti\", \"Mongolian Baiti\", \"MV Boli\", \"Myanmar Text\", \"Cambria Math\";" + "\r\n";
+            result += "font-weight: 300;" + "\r\n";
+            result += "font-size: 1.7em;" + "\r\n";
+            result += "height: auto;" + "\r\n";
+            result += "line-height: 28px;" + "\r\n";
+            result += "margin-bottom: 16px;" + "\r\n";
+            result += "margin-left: -2px;" + "\r\n";
+            result += "margin-right: -2px;" + "\r\n";
+            result += "margin-top: 16px;" + "\r\n";
+            result += "padding-bottom: 0px;" + "\r\n";
+            result += "padding-left: 0px;" + "\r\n";
+            result += "padding-right: 0px;" + "\r\n";
+            result += "padding-top: 0px;" + "\r\n";
+            result += "text-align: left;" + "\r\n";
+            result += "text-size-adjust: 100%;" + "\r\n";
+            result += "width: 342px;" + "\r\n";
+            result += "background-color: transparent;" + "\r\n";
+            result += "}" + "\r\n";
+            result += "</style>" + "\r\n";
+            return result;
+        }
+
+
+        /// <summary>
+        /// IAdapterPresentationForm GetFormHtml implementation
+        /// </summary>
+        public virtual string GetFormHtml(int lcid)
+        {
+            string result = string.Empty;
+            switch (Context.UIMode)
+            {
+                case ProviderPageMode.Identification:
+                    result = GetFormHtmlIdentification(Context);
+                    break;
+                case ProviderPageMode.Registration: // User self registration and enable
+                    result = GetFormHtmlRegistration(Context);
+                    break;
+                case ProviderPageMode.Invitation: // admministrative user registration and let disabled
+                    result = GetFormHtmlInvitation(Context);
+                    break;
+                case ProviderPageMode.SelectOptions:
+                    result = GetFormHtmlSelectOptions(Context);
+                    break;
+                case ProviderPageMode.ChooseMethod:
+                    result = GetFormHtmlChooseMethod(Context);
+                    break;
+                case ProviderPageMode.ChangePassword:
+                    result = GetFormHtmlChangePassword(Context);
+                    break;
+                case ProviderPageMode.Bypass:
+                    result = GetFormHtmlBypass(Context);
+                    break;
+                case ProviderPageMode.Locking:
+                    result = GetFormHtmlLocking(Context);
+                    break;
+                case ProviderPageMode.ShowQRCode:
+                    result = GetFormHtmlShowQRCode(Context);
+                    break;
+                case ProviderPageMode.SendAuthRequest:
+                    result = GetFormHtmlSendCodeRequest(Context);
+                    break;
+                case ProviderPageMode.SendAdministrativeRequest:
+                    result = GetFormHtmlSendAdministrativeRequest(Context);
+                    break;
+                case ProviderPageMode.SendKeyRequest:
+                    result = GetFormHtmlSendKeyRequest(Context);
+                    break;
+                case ProviderPageMode.EnrollOTP:
+                case ProviderPageMode.EnrollOTPAndSave:
+                case ProviderPageMode.EnrollOTPForce:
+                    result = GetFormHtmlEnrollOTP(Context);
+                    break;
+                case ProviderPageMode.EnrollEmail:
+                case ProviderPageMode.EnrollEmailAndSave:
+                case ProviderPageMode.EnrollEmailForce:
+                    result = GetFormHtmlEnrollEmail(Context);
+                    break;
+                case ProviderPageMode.EnrollPhone:
+                case ProviderPageMode.EnrollPhoneAndSave:
+                case ProviderPageMode.EnrollPhoneForce:
+                    result = GetFormHtmlEnrollPhone(Context);
+                    break;
+                case ProviderPageMode.EnrollBiometrics:
+                case ProviderPageMode.EnrollBiometricsAndSave:
+                case ProviderPageMode.EnrollBiometricsForce:
+                    result = GetFormHtmlEnrollBio(Context);
+                    break;
+                case ProviderPageMode.EnrollPin:
+                case ProviderPageMode.EnrollPinAndSave:
+                case ProviderPageMode.EnrollPinForce:
+                    result = GetFormHtmlEnrollPinCode(Context);
+                    break;
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// IAdapterPresentationForm GetFormPreRenderHtml implementation
+        /// </summary>
+        public virtual string GetFormPreRenderHtml(int lcid)
+        {
+            string result = string.Empty;
+            switch (Context.UIMode)
+            {
+                case ProviderPageMode.Identification:
+                    result = GetFormPreRenderHtmlIdentification(Context);
+                    break;
+                case ProviderPageMode.Registration: // User self registration and enable
+                    result = GetFormPreRenderHtmlRegistration(Context);
+                    break;
+                case ProviderPageMode.Invitation: // admministrative user registration and let disabled
+                    result = GetFormPreRenderHtmlInvitation(Context);
+                    break;
+                case ProviderPageMode.SelectOptions:
+                    result = GetFormPreRenderHtmlSelectOptions(Context);
+                    break;
+                case ProviderPageMode.ChooseMethod:
+                    result = GetFormPreRenderHtmlChooseMethod(Context);
+                    break;
+                case ProviderPageMode.ChangePassword:
+                    result = GetFormPreRenderHtmlCSS(Context);
+                    result += GetFormPreRenderHtmlChangePassword(Context);
+                    break;
+                case ProviderPageMode.Bypass:
+                    result = GetFormPreRenderHtmlBypass(Context);
+                    break;
+                case ProviderPageMode.Locking:
+                    result = GetFormPreRenderHtmlLocking(Context);
+                    break;
+                case ProviderPageMode.ShowQRCode:
+                    result = GetFormPreRenderHtmlShowQRCode(Context);
+                    break;
+                case ProviderPageMode.SendAuthRequest:
+                    result = GetFormPreRenderHtmlSendCodeRequest(Context);
+                    break;
+                case ProviderPageMode.SendAdministrativeRequest:
+                    result = GetFormPreRenderHtmlSendAdministrativeRequest(Context);
+                    break;
+                case ProviderPageMode.SendKeyRequest:
+                    result = GetFormPreRenderHtmlSendKeyRequest(Context);
+                    break;
+                case ProviderPageMode.EnrollOTP:
+                case ProviderPageMode.EnrollOTPAndSave:
+                case ProviderPageMode.EnrollOTPForce:
+                    result = GetFormPreRenderHtmlCSS(Context);
+                    result += GetFormPreRenderHtmlEnrollOTP(Context);
+                    break;
+                case ProviderPageMode.EnrollEmail:
+                case ProviderPageMode.EnrollEmailAndSave:
+                case ProviderPageMode.EnrollEmailForce:
+                    result = GetFormPreRenderHtmlCSS(Context);
+                    result += GetFormPreRenderHtmlEnrollEmail(Context);
+                    break;
+                case ProviderPageMode.EnrollPhone:
+                case ProviderPageMode.EnrollPhoneAndSave:
+                case ProviderPageMode.EnrollPhoneForce:
+                    result = GetFormPreRenderHtmlCSS(Context);
+                    result += GetFormPreRenderHtmlEnrollPhone(Context);
+                    break;
+                case ProviderPageMode.EnrollBiometrics:
+                case ProviderPageMode.EnrollBiometricsAndSave:
+                case ProviderPageMode.EnrollBiometricsForce:
+                    result = GetFormPreRenderHtmlCSS(Context);
+                    result += GetFormPreRenderHtmlEnrollBio(Context);
+                    break;
+                case ProviderPageMode.EnrollPin:
+                case ProviderPageMode.EnrollPinAndSave:
+                case ProviderPageMode.EnrollPinForce:
+                    result = GetFormPreRenderHtmlCSS(Context);
+                    result += GetFormPreRenderHtmlEnrollPinCode(Context);
+                    break;
+            }
+            return result;
+        }
+        #endregion
 
         public abstract string GetFormPreRenderHtmlIdentification(AuthenticationContext usercontext);
         public abstract string GetFormHtmlIdentification(AuthenticationContext usercontext);
@@ -131,8 +419,6 @@ namespace Neos.IdentityServer.MultiFactor
         public abstract string GetFormHtmlBypass(AuthenticationContext usercontext);
         public abstract string GetFormPreRenderHtmlLocking(AuthenticationContext usercontext);
         public abstract string GetFormHtmlLocking(AuthenticationContext usercontext);
-        public abstract string GetFormPreRenderHtmlShowQRCode(AuthenticationContext usercontext);
-        public abstract string GetFormHtmlShowQRCode(AuthenticationContext usercontext);
         public abstract string GetFormPreRenderHtmlSendCodeRequest(AuthenticationContext usercontext);
         public abstract string GetFormHtmlSendCodeRequest(AuthenticationContext usercontext);
         public abstract string GetFormPreRenderHtmlSendAdministrativeRequest(AuthenticationContext usercontext);
@@ -149,18 +435,278 @@ namespace Neos.IdentityServer.MultiFactor
         public abstract string GetFormHtmlEnrollBio(AuthenticationContext Context);
         public abstract string GetFormPreRenderHtmlEnrollPinCode(AuthenticationContext usercontext);
         public abstract string GetFormHtmlEnrollPinCode(AuthenticationContext usercontext);
+
+        #region QRCode
+        /// <summary>
+        /// GetFormPreRenderHtmlShowQRCode implementation
+        /// </summary>
+        /// <param name="usercontext"></param>
+        /// <returns></returns>
+        public virtual string GetFormPreRenderHtmlShowQRCode(AuthenticationContext usercontext)
+        {
+            return string.Empty;
+        }
+
+        /// <summary>
+        /// GetFormHtmlShowQRCode implementation
+        /// </summary>
+        public virtual string GetFormHtmlShowQRCode(AuthenticationContext usercontext)
+        {
+            string result = "<form method=\"post\" id=\"loginForm\" autocomplete=\"off\" >";
+            result += "<div class=\"fieldMargin smallText\"><label for=\"\"></label>" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelWRQRCode") + "</div></br>";
+            result += "<p style=\"text-align:center\"><img id=\"qr\" src=\"data:image/png;base64," + Provider.GetQRCodeString(usercontext) + "\"/></p></br>";
+            result += "<input id=\"context\" type=\"hidden\" name=\"Context\" value=\"%Context%\"/>";
+            result += "<input id=\"authMethod\" type=\"hidden\" name=\"AuthMethod\" value=\"%AuthMethod%\"/>";
+            result += "<input id=\"saveButton\" type=\"submit\" class=\"submit\" name=\"Continue\" value=\"OK\" />";
+            result += "</form>";
+            return result;
+        }
+        #endregion
+
+        #region Donut
+        /// <summary>
+        /// GetPartHtmlDonut method implementation
+        /// </summary>
+        protected virtual string GetPartHtmlDonut(bool visible = true)
+        {
+            string result = string.Empty;
+            if (visible)
+                result = "<div id=\"cookiePullWaitingWheel\" \">";
+            else
+                result = "<div id=\"cookiePullWaitingWheel\" style=\"visibility:hidden;\">";
+            result += "<style>";
+            result += "#floatingCirclesG {";
+            result += "position: relative;";
+            result += "width: 125px;";
+            result += "height: 125px;";
+            result += "margin: auto;";
+            result += "transform: scale(0.4);";
+            result += "-o-transform: scale(0.4);";
+            result += "-ms-transform: scale(0.4);";
+            result += "-webkit-transform: scale(0.4);";
+            result += "-moz-transform: scale(0.4);";
+            result += "}";
+
+            result += ".f_circleG {";
+            result += "position: absolute;";
+            result += "height: 22px;";
+            result += "width: 22px;";
+            result += "border-radius: 12px;";
+            result += "-o-border-radius: 12px;";
+            result += "-ms-border-radius: 12px;";
+            result += "-webkit-border-radius: 12px;";
+            result += "-moz-border-radius: 12px;";
+            result += "animation-name: f_fadeG;";
+            result += "-o-animation-name: f_fadeG;";
+            result += "-ms-animation-name: f_fadeG;";
+            result += "-webkit-animation-name: f_fadeG;";
+            result += "-moz-animation-name: f_fadeG;";
+            result += "animation-duration: 1.2s;";
+            result += "-o-animation-duration: 1.2s;";
+            result += "-ms-animation-duration: 1.2s;";
+            result += "-webkit-animation-duration: 1.2s;";
+            result += "-moz-animation-duration: 1.2s;";
+            result += "animation-iteration-count: infinite;";
+            result += "-o-animation-iteration-count: infinite;";
+            result += "-ms-animation-iteration-count: infinite;";
+            result += "-webkit-animation-iteration-count: infinite;";
+            result += "-moz-animation-iteration-count: infinite;";
+            result += "animation-direction: normal;";
+            result += "-o-animation-direction: normal;";
+            result += "-ms-animation-direction: normal;";
+            result += "-webkit-animation-direction: normal;";
+            result += "-moz-animation-direction: normal;";
+            result += "}";
+
+            result += "#frotateG_01 {";
+            result += "left: 0;";
+            result += "top: 51px;";
+            result += "animation-delay: 0.45s;";
+            result += "-o-animation-delay: 0.45s;";
+            result += "-ms-animation-delay: 0.45s;";
+            result += "-webkit-animation-delay: 0.45s;";
+            result += "-moz-animation-delay: 0.45s;";
+            result += "}";
+
+            result += "#frotateG_02 {";
+            result += "left: 15px;";
+            result += "top: 15px;";
+            result += "animation-delay: 0.6s;";
+            result += "-o-animation-delay: 0.6s;";
+            result += "-ms-animation-delay: 0.6s;";
+            result += "-webkit-animation-delay: 0.6s;";
+            result += "-moz-animation-delay: 0.6s;";
+            result += "}";
+
+            result += "#frotateG_03 {";
+            result += "left: 51px;";
+            result += "top: 0;";
+            result += "animation-delay: 0.75s;";
+            result += "-o-animation-delay: 0.75s;";
+            result += "-ms-animation-delay: 0.75s;";
+            result += "-webkit-animation-delay: 0.75s;";
+            result += "-moz-animation-delay: 0.75s;";
+            result += "}";
+
+            result += "#frotateG_04 {";
+            result += "right: 15px;";
+            result += "top: 15px;";
+            result += "animation-delay: 0.9s;";
+            result += "-o-animation-delay: 0.9s;";
+            result += "-ms-animation-delay: 0.9s;";
+            result += "-webkit-animation-delay: 0.9s;";
+            result += "-moz-animation-delay: 0.9s;";
+            result += "}";
+
+            result += "#frotateG_05 {";
+            result += "right: 0;";
+            result += "top: 51px;";
+            result += "animation-delay: 1.05s;";
+            result += "-o-animation-delay: 1.05s;";
+            result += "-ms-animation-delay: 1.05s;";
+            result += "-webkit-animation-delay: 1.05s;";
+            result += "-moz-animation-delay: 1.05s;";
+            result += "}";
+
+            result += "#frotateG_06 {";
+            result += "right: 15px;";
+            result += "bottom: 15px;";
+            result += "animation-delay: 1.2s;";
+            result += "-o-animation-delay: 1.2s;";
+            result += "-ms-animation-delay: 1.2s;";
+            result += "-webkit-animation-delay: 1.2s;";
+            result += "-moz-animation-delay: 1.2s;";
+            result += "}";
+
+            result += "#frotateG_07 {";
+            result += "left: 51px;";
+            result += "bottom: 0;";
+            result += "animation-delay: 1.35s;";
+            result += "-o-animation-delay: 1.35s;";
+            result += "-ms-animation-delay: 1.35s;";
+            result += "-webkit-animation-delay: 1.35s;";
+            result += "-moz-animation-delay: 1.35s;";
+            result += "}";
+
+            result += "#frotateG_08 {";
+            result += "left: 15px;";
+            result += "bottom: 15px;";
+            result += "animation-delay: 1.5s;";
+            result += "-o-animation-delay: 1.5s;";
+            result += "-ms-animation-delay: 1.5s;";
+            result += "-webkit-animation-delay: 1.5s;";
+            result += "-moz-animation-delay: 1.5s;";
+            result += "}";
+
+            result += "@keyframes f_fadeG {";
+            result += "0% {";
+            result += "background-color: rgb(47,146,212);";
+            result += "}";
+
+            result += "100% {";
+            result += "background-color: rgb(255,255,255);";
+            result += "}";
+            result += "}";
+
+            result += "@-o-keyframes f_fadeG {";
+            result += "0% {";
+            result += "background-color: rgb(47,146,212);";
+            result += "}";
+
+            result += "100% {";
+            result += "background-color: rgb(255,255,255);";
+            result += "}";
+            result += "}";
+
+            result += "@-ms-keyframes f_fadeG {";
+            result += "0% {";
+            result += "background-color: rgb(47,146,212);";
+            result += "}";
+
+            result += "100% {";
+            result += "background-color: rgb(255,255,255);";
+            result += "}";
+            result += "}";
+
+            result += "@-webkit-keyframes f_fadeG {";
+            result += "0% {";
+            result += "background-color: rgb(47,146,212);";
+            result += "}";
+
+            result += "100% {";
+            result += "background-color: rgb(255,255,255);";
+            result += "}";
+            result += "}";
+
+            result += "@-moz-keyframes f_fadeG {";
+            result += "0% {";
+            result += "background-color: rgb(47,146,212);";
+            result += "}";
+
+            result += "100% {";
+            result += "background-color: rgb(255,255,255);";
+            result += "}";
+            result += "}";
+            result += "</style>";
+
+            result += "<div id=\"floatingCirclesG\"\">";
+            result += "<div class=\"f_circleG\" id=\"frotateG_01\"></div>";
+            result += "<div class=\"f_circleG\" id=\"frotateG_02\"></div>";
+            result += "<div class=\"f_circleG\" id=\"frotateG_03\"></div>";
+            result += "<div class=\"f_circleG\" id=\"frotateG_04\"></div>";
+            result += "<div class=\"f_circleG\" id=\"frotateG_05\"></div>";
+            result += "<div class=\"f_circleG\" id=\"frotateG_06\"></div>";
+            result += "<div class=\"f_circleG\" id=\"frotateG_07\"></div>";
+            result += "<div class=\"f_circleG\" id=\"frotateG_08\"></div>";
+            result += "</div>";
+            result += "</div>";
+
+            return result;
+        }
+#endregion
+
+        #region Utils
+        /// <summary>
+        /// StripDisplayKey method implmentation
+        /// </summary>
+        internal string StripDisplayKey(string dkey)
+        {
+            if ((dkey != null) && (dkey.Length >= 5))
+                return dkey.Substring(0, 5) + " ... (truncated for security reasons) ... ";
+            else
+                return " ... (invalid key) ... ";
+        }
+        #endregion
     }
 
     public class AdapterPresentation : BasePresentation
     {
-        private DefaultAdapterPresentation _adapter = null;
+        private BasePresentation _adapter = null;
         #region Constructors
         /// <summary>
         /// Constructor implementation
         /// </summary>
         public AdapterPresentation(AuthenticationProvider provider, IAuthenticationContext context)
         {
-            _adapter = new DefaultAdapterPresentation(provider, context);
+            if (provider == null)
+                throw new ArgumentNullException("Provider");
+            if (provider.Config == null)
+                throw new ArgumentNullException("Config");
+            switch (provider.Config.UiKind)
+            {
+                case ADFSUserInterfaceKind.Default2019:
+                    _adapter = new AdapterPresentation2019(provider, context);
+                    _adapter.UseUIPaginated = provider.Config.UseUIPaginated;
+                    break;
+                case ADFSUserInterfaceKind.Custom:
+                    _adapter = new AdapterPresentationDefault(provider, context);
+                    _adapter.UseUIPaginated = provider.Config.UseUIPaginated;
+                    break;
+                default:
+                    _adapter = new AdapterPresentationDefault(provider, context);
+                    _adapter.UseUIPaginated = provider.Config.UseUIPaginated;
+                    break;
+            }
         }
 
         /// <summary>
@@ -168,7 +714,25 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public AdapterPresentation(AuthenticationProvider provider, IAuthenticationContext context, string message)
         {
-            _adapter = new DefaultAdapterPresentation(provider, context, message);
+            if (provider == null)
+                throw new ArgumentNullException("Provider");
+            if (provider.Config == null)
+                throw new ArgumentNullException("Config");
+            switch (provider.Config.UiKind)
+            {
+                case ADFSUserInterfaceKind.Default2019:
+                    _adapter = new AdapterPresentation2019(provider, context, message);
+                    _adapter.UseUIPaginated = provider.Config.UseUIPaginated;
+                    break;
+                case ADFSUserInterfaceKind.Custom:
+                    _adapter = new AdapterPresentationDefault(provider, context, message);
+                    _adapter.UseUIPaginated = provider.Config.UseUIPaginated;
+                    break;
+                default:
+                    _adapter = new AdapterPresentationDefault(provider, context, message);
+                    _adapter.UseUIPaginated = provider.Config.UseUIPaginated;
+                    break;
+            }
         }
 
         /// <summary>
@@ -176,7 +740,25 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public AdapterPresentation(AuthenticationProvider provider, IAuthenticationContext context, string message, bool ismessage)
         {
-            _adapter = new DefaultAdapterPresentation(provider, context, message, ismessage);
+            if (provider == null)
+                throw new ArgumentNullException("Provider");
+            if (provider.Config == null)
+                throw new ArgumentNullException("Config");
+            switch (provider.Config.UiKind)
+            {
+                case ADFSUserInterfaceKind.Default2019:
+                    _adapter = new AdapterPresentation2019(provider, context, message, ismessage);
+                    _adapter.UseUIPaginated = provider.Config.UseUIPaginated;
+                    break;
+                case ADFSUserInterfaceKind.Custom:
+                    _adapter = new AdapterPresentationDefault(provider, context, message, ismessage);
+                    _adapter.UseUIPaginated = provider.Config.UseUIPaginated;
+                    break;
+                default:
+                    _adapter = new AdapterPresentationDefault(provider, context, message, ismessage);
+                    _adapter.UseUIPaginated = provider.Config.UseUIPaginated;
+                    break;
+            }
         }
 
         /// <summary>
@@ -184,7 +766,25 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public AdapterPresentation(AuthenticationProvider provider, IAuthenticationContext context, ProviderPageMode suite)
         {
-            _adapter = new DefaultAdapterPresentation(provider, context, suite);
+            if (provider == null)
+                throw new ArgumentNullException("Provider");
+            if (provider.Config == null)
+                throw new ArgumentNullException("Config");
+            switch (provider.Config.UiKind)
+            {
+                case ADFSUserInterfaceKind.Default2019:
+                    _adapter = new AdapterPresentation2019(provider, context, suite);
+                    _adapter.UseUIPaginated = provider.Config.UseUIPaginated;
+                    break;
+                case ADFSUserInterfaceKind.Custom:
+                    _adapter = new AdapterPresentationDefault(provider, context, suite);
+                    _adapter.UseUIPaginated = provider.Config.UseUIPaginated;
+                    break;
+                default:
+                    _adapter = new AdapterPresentationDefault(provider, context, suite);
+                    _adapter.UseUIPaginated = provider.Config.UseUIPaginated;
+                    break;
+            }
         }
 
         /// <summary>
@@ -192,7 +792,25 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public AdapterPresentation(AuthenticationProvider provider, IAuthenticationContext context, string message, ProviderPageMode suite, bool disableoptions = false)
         {
-            _adapter = new DefaultAdapterPresentation(provider, context, message, suite, disableoptions);
+            if (provider == null)
+                throw new ArgumentNullException("Provider");
+            if (provider.Config == null)
+                throw new ArgumentNullException("Config");
+            switch (provider.Config.UiKind)
+            {
+                case ADFSUserInterfaceKind.Default2019:
+                    _adapter = new AdapterPresentation2019(provider, context, message, suite, disableoptions);
+                    _adapter.UseUIPaginated = provider.Config.UseUIPaginated;
+                    break;
+                case ADFSUserInterfaceKind.Custom:
+                    _adapter = new AdapterPresentationDefault(provider, context, message, suite, disableoptions);
+                    _adapter.UseUIPaginated = provider.Config.UseUIPaginated;
+                    break;
+                default:
+                    _adapter = new AdapterPresentationDefault(provider, context, message, suite, disableoptions);
+                    _adapter.UseUIPaginated = provider.Config.UseUIPaginated;
+                    break;
+            }
         }
         #endregion
 
@@ -548,5 +1166,4 @@ namespace Neos.IdentityServer.MultiFactor
             return _adapter.GetFormHtmlEnrollPinCode(usercontext);
         }
     }
-
 }

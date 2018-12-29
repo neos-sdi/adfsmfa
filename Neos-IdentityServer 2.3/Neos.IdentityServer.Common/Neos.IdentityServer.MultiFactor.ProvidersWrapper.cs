@@ -69,6 +69,7 @@ namespace Neos.IdentityServer.MultiFactor
         public abstract string Description { get; }
 
         public abstract string GetUILabel(AuthenticationContext ctx);
+        public abstract string GetWizardUILabel(AuthenticationContext ctx);
         public abstract string GetUICFGLabel(AuthenticationContext ctx);
         public abstract string GetUIMessage(AuthenticationContext ctx);
         public abstract string GetUIListOptionLabel(AuthenticationContext ctx);
@@ -114,10 +115,32 @@ namespace Neos.IdentityServer.MultiFactor
             get { return false; }
         }
 
+        /// <summary>
+        /// GetPINLabel implementation
+        /// </summary>
         public static string GetPINLabel(AuthenticationContext ctx)
         {
             Resources.chtml_strings.Culture = new CultureInfo(ctx.Lcid);
             return Resources.chtml_strings.GLOBALPINLabel;
+        }
+
+        /// <summary>
+        /// GetPINMessage implementation
+        /// </summary>
+        public static string GetPINMessage(AuthenticationContext ctx)
+        {
+            Resources.chtml_strings.Culture = new CultureInfo(ctx.Lcid);
+            return Resources.chtml_strings.GLOBALPINMessage;
+        }
+
+        /// <summary>
+        /// GetPINWizardUILabel implementation
+        /// </summary>
+        public static string GetPINWizardUILabel(AuthenticationContext ctx)
+        {
+            Resources.chtml_strings.Culture = new CultureInfo(ctx.Lcid);
+            return Resources.chtml_strings.GLOBALUIPINLabel;
+
         }
 
         /// <summary>
@@ -479,6 +502,15 @@ namespace Neos.IdentityServer.MultiFactor
         {
             Resources.chtml_strings.Culture = new CultureInfo(ctx.Lcid);
             return Resources.chtml_strings.OTPUIOTPLabel;
+        }
+
+        /// <summary>
+        /// GetWizardUILabel method implementation
+        /// </summary>
+        public override string GetWizardUILabel(AuthenticationContext ctx)
+        {
+            Resources.chtml_strings.Culture = new CultureInfo(ctx.Lcid);
+            return Resources.chtml_strings.OTPUIWIZLabel;
         }
 
         /// <summary>
@@ -866,6 +898,15 @@ namespace Neos.IdentityServer.MultiFactor
         {
             Resources.chtml_strings.Culture = new CultureInfo(ctx.Lcid);
             return Resources.chtml_strings.SMSUIOTPLabel;
+        }
+
+        /// <summary>
+        /// GetWizardUILabel method implementation
+        /// </summary>
+        public override string GetWizardUILabel(AuthenticationContext ctx)
+        {
+            Resources.chtml_strings.Culture = new CultureInfo(ctx.Lcid);
+            return Resources.chtml_strings.SMSUIWIZLabel;
         }
 
         /// <summary>
@@ -1257,6 +1298,15 @@ namespace Neos.IdentityServer.MultiFactor
         {
             Resources.chtml_strings.Culture = new CultureInfo(ctx.Lcid);
             return Resources.chtml_strings.MAILUIOTPLabel;
+        }
+
+        /// <summary>
+        /// GetWizardUILabel method implementation
+        /// </summary>
+        public override string GetWizardUILabel(AuthenticationContext ctx)
+        {
+            Resources.chtml_strings.Culture = new CultureInfo(ctx.Lcid);
+            return Resources.chtml_strings.MAILUIWIZLabel;
         }
 
         /// <summary>

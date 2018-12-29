@@ -244,6 +244,16 @@ namespace MFA
         public PSUserFeaturesOptions UserFeatures { get; set; }
 
         /// <summary>
+        /// <para type="description">Kind of ADFS's User Interface version.</para>
+        /// </summary>
+        public PSUIKind UiKind { get; set; }
+
+        /// <summary>
+        /// <para type="description">Use ADFS 2019 paginated UI Styles.</para>
+        /// </summary>
+        public bool UseUIPaginated { get; set; }
+
+        /// <summary>
         /// <para type="description">Policy attributes for warnings to users.</para>
         /// </summary>
         public ConfigAdvertising AdvertisingDays { get; set; }
@@ -253,7 +263,6 @@ namespace MFA
         /// </summary>
         public static explicit operator PSConfig(FlatConfig config)
         {
-            
             if (config == null)
                 return null;
             else
@@ -271,6 +280,8 @@ namespace MFA
                 psconfig.KeepMySelectedOptionOn = config.KeepMySelectedOptionOn;
                 psconfig.UserFeatures = (PSUserFeaturesOptions)config.UserFeatures;
                 psconfig.AdvertisingDays = config.AdvertisingDays;
+                psconfig.UseUIPaginated = config.UseUIPaginated;
+                psconfig.UiKind = (PSUIKind)config.UiKind;
                 return psconfig;
             }
         }
@@ -298,6 +309,8 @@ namespace MFA
                 config.KeepMySelectedOptionOn = psconfig.KeepMySelectedOptionOn;
                 config.UserFeatures = (UserFeaturesOptions)psconfig.UserFeatures;
                 config.AdvertisingDays = psconfig.AdvertisingDays;
+                config.UseUIPaginated = psconfig.UseUIPaginated;
+                config.UiKind = (ADFSUserInterfaceKind)psconfig.UiKind;
                 return config;
             }
         }

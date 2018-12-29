@@ -145,28 +145,28 @@
     <value>Cancel</value>
   </data>
   <data name="HtmlPWDLabelActual" xml:space="preserve">
-    <value>Current password:</value>
+    <value>Current password</value>
   </data>
   <data name="HtmlPWDLabelNew" xml:space="preserve">
-    <value>New password:</value>
+    <value>New password</value>
   </data>
   <data name="HtmlPWDLabelNewConfirmation" xml:space="preserve">
-    <value>New password confirmation:</value>
+    <value>Password confirmation</value>
   </data>
   <data name="HtmlPWDSave" xml:space="preserve">
     <value>Save</value>
   </data>
   <data name="HtmlREGAccessMethod" xml:space="preserve">
-    <value>Default access method:</value>
+    <value>Default access method</value>
   </data>
   <data name="HtmlREGLabelAppKey" xml:space="preserve">
-    <value>Secret Key:</value>
+    <value>Secret Key</value>
   </data>
   <data name="HtmlREGLabelMail" xml:space="preserve">
-    <value>Personal email address:</value>
+    <value>Personal email address</value>
   </data>
   <data name="HtmlREGLabelPhoneNumber" xml:space="preserve">
-    <value>Cellphone number:</value>
+    <value>Cellphone number</value>
   </data>
   <data name="HtmlREGOptionChooseBest" xml:space="preserve">
     <value>Let me choose the best option</value>
@@ -229,7 +229,7 @@
     <value>Send Code</value>
   </data>
   <data name="HtmlREGAccessPageMethods" xml:space="preserve">
-    <value>Configuration options:</value>
+    <value>Configuration options</value>
   </data>
   <data name="HtmlUIMLabelDefault" xml:space="preserve">
     <value>Use default configuration</value>
@@ -241,7 +241,7 @@
     <value>Enroll my authentication application </value>
   </data>
   <data name="HtmlUIMRecordNewKey" xml:space="preserve">
-    <value>Register a new key</value>
+    <value>Get a new key</value>
   </data>
   <data name="HtmlLabelWREGOTP" xml:space="preserve">
     <value>You must have an authentication application such as Microsoft Authenticator, Google Authenticator installed on your device before you can continue and register your account</value>

@@ -145,28 +145,28 @@
     <value>Annuler</value>
   </data>
   <data name="HtmlPWDLabelActual" xml:space="preserve">
-    <value>Mot de passe actuel :</value>
+    <value>Mot de passe actuel</value>
   </data>
   <data name="HtmlPWDLabelNew" xml:space="preserve">
-    <value>Nouveau mot de passe :</value>
+    <value>Nouveau mot de passe</value>
   </data>
   <data name="HtmlPWDLabelNewConfirmation" xml:space="preserve">
-    <value>Confirmation du nouveau mot de passe :</value>
+    <value>Confirmation mot de passe</value>
   </data>
   <data name="HtmlPWDSave" xml:space="preserve">
     <value>Enregistrer</value>
   </data>
   <data name="HtmlREGAccessMethod" xml:space="preserve">
-    <value>Methode d'accès par défaut :</value>
+    <value>Methode d'accès par défaut</value>
   </data>
   <data name="HtmlREGLabelAppKey" xml:space="preserve">
-    <value>Clé d'application :</value>
+    <value>Clé d'application</value>
   </data>
   <data name="HtmlREGLabelMail" xml:space="preserve">
-    <value>Adresse mail personnelle :</value>
+    <value>Adresse mail personnelle</value>
   </data>
   <data name="HtmlREGLabelPhoneNumber" xml:space="preserve">
-    <value>Numéro de téléphone portable :</value>
+    <value>Numéro de téléphone portable</value>
   </data>
   <data name="HtmlREGOptionChooseBest" xml:space="preserve">
     <value>Me laisser choisir la meilleure option</value>
@@ -232,7 +232,7 @@
     <value>Demande d'inscription</value>
   </data>
   <data name="HtmlREGAccessPageMethods" xml:space="preserve">
-    <value>Options de configuration :</value>
+    <value>Options de configuration</value>
   </data>
   <data name="HtmlUIMLabelDefault" xml:space="preserve">
     <value>Utiliser les options par défaut</value>
@@ -247,7 +247,7 @@
     <value>Enregistrer mon application d'authentification</value>
   </data>
   <data name="HtmlUIMRecordNewKey" xml:space="preserve">
-    <value>Enregister une nouvelle clé</value>
+    <value>Nouvelle clé</value>
   </data>
   <data name="HtmlLabelWREGOTP" xml:space="preserve">
     <value>Vous devez avoir installé une application d'authentification telle que Microsoft Authenticator, Google Authenticator sur votre device avant pouvoir continuer et enregistrer votre compte</value>

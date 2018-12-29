@@ -566,12 +566,12 @@ namespace Neos.IdentityServer.MultiFactor
                             usercontext.UIMode = ProviderPageMode.SelectOptions;
 
                             UpdateProviderOverrideOption(usercontext, context, proofData);
-                            RuntimeRepository.SetUserRegistration(Config, (Registration)usercontext);
+                            RuntimeRepository.SetUserRegistration(Config, (Registration)usercontext, usercontext.KeyStatus!=SecretKeyStatus.Success);
                             ValidateProviderManagementUrl(usercontext, context, proofData);
 
                             usercontext.UIMode = ProviderPageMode.SelectOptions;
                             result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Informations, "InfosConfigurationModified"));
-                             break;
+                            break;
                         }
                     case 2:  // Cancel   
                         {
@@ -686,7 +686,7 @@ namespace Neos.IdentityServer.MultiFactor
                             usercontext.PreferredMethod = (PreferredMethod)page;
 
                             UpdateProviderOverrideOption(usercontext, context, proofData);
-                            RuntimeRepository.SetUserRegistration(Config, (Registration)usercontext);
+                            RuntimeRepository.SetUserRegistration(Config, (Registration)usercontext, usercontext.KeyStatus!=SecretKeyStatus.Success);
                             ValidateProviderManagementUrl(usercontext, context, proofData);
 
                             if (Config.UserFeatures.IsRegistrationRequired())
@@ -878,7 +878,7 @@ namespace Neos.IdentityServer.MultiFactor
                                 usercontext.UIMode = GetAuthenticationContextRequest(usercontext);
                                 result = new AdapterPresentation(this, context);
                                 if (remember)
-                                    RuntimeRepository.SetUserRegistration(Config, (Registration)usercontext);
+                                    RuntimeRepository.SetUserRegistration(Config, (Registration)usercontext, false);
                             }
                             else
                             {
@@ -894,7 +894,7 @@ namespace Neos.IdentityServer.MultiFactor
                                 usercontext.UIMode = GetAuthenticationContextRequest(usercontext);
                                 result = new AdapterPresentation(this, context);
                                 if (remember)
-                                    RuntimeRepository.SetUserRegistration(Config, (Registration)usercontext);
+                                    RuntimeRepository.SetUserRegistration(Config, (Registration)usercontext, false);
                             }
                             else
                             {
@@ -912,7 +912,7 @@ namespace Neos.IdentityServer.MultiFactor
                                     usercontext.UIMode = GetAuthenticationContextRequest(usercontext);
                                     result = new AdapterPresentation(this, context);
                                     if (remember)
-                                        RuntimeRepository.SetUserRegistration(Config, (Registration)usercontext);
+                                        RuntimeRepository.SetUserRegistration(Config, (Registration)usercontext, false);
                                 }
                                 else
                                 {
@@ -935,7 +935,7 @@ namespace Neos.IdentityServer.MultiFactor
                                 usercontext.UIMode = GetAuthenticationContextRequest(usercontext);
                                 result = new AdapterPresentation(this, context);
                                 if (remember)
-                                    RuntimeRepository.SetUserRegistration(Config, (Registration)usercontext);
+                                    RuntimeRepository.SetUserRegistration(Config, (Registration)usercontext, false);
                             }
                             else
                             {
@@ -1337,7 +1337,7 @@ namespace Neos.IdentityServer.MultiFactor
                 {
                     // Store Account as disabled and reload it
                     usercontext.Enabled = false;
-                    Registration reg = RuntimeRepository.SetUserRegistration(Config, (Registration)usercontext);
+                    Registration reg = RuntimeRepository.SetUserRegistration(Config, (Registration)usercontext, false);
                     usercontext.Assign(reg);
 
                     if (Config.UserFeatures.IsMFANotRequired() || Config.UserFeatures.IsMFAAllowed()) // Bypass
@@ -1487,6 +1487,7 @@ namespace Neos.IdentityServer.MultiFactor
                             {
                                 usercontext.WizPageID = 2;
                                 usercontext.UIMode = ProviderPageMode.EnrollOTP;
+                                result = new AdapterPresentation(this, context);
                             }
                         }
                         catch (Exception ex)
@@ -1495,7 +1496,6 @@ namespace Neos.IdentityServer.MultiFactor
                             usercontext.WizPageID = 0;
                             return new AdapterPresentation(this, context, ex.Message, false);
                         }
-                        result = new AdapterPresentation(this, context);
                         break;
                     case 4: // Code validation
                         string totp = proofData.Properties["totp"].ToString();
@@ -1503,11 +1503,10 @@ namespace Neos.IdentityServer.MultiFactor
                         if ((int)AuthenticationResponseKind.Error != prov.SetAuthenticationResult(usercontext, totp))
                         {
                             if (forcesave)
-                                RuntimeRepository.SetUserRegistration(Config, (Registration)usercontext); 
+                                RuntimeRepository.SetUserRegistration(Config, (Registration)usercontext, usercontext.KeyStatus!=SecretKeyStatus.Success); 
                             usercontext.WizPageID = 3;
-                            usercontext.UIMessage = Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelVERIFYOTPSuccess");
                             usercontext.UIMode = ProviderPageMode.EnrollOTP;
-                            result = new AdapterPresentation(this, context);
+                            result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelVERIFYOTPSuccess"), true);
                         }
                         else
                         {
@@ -1535,7 +1534,10 @@ namespace Neos.IdentityServer.MultiFactor
                 }
                 else
                 {
-                    usercontext.UIMode = ProviderPageMode.EnrollOTP;
+                    if (forcesave)
+                        usercontext.UIMode = ProviderPageMode.EnrollOTPAndSave;
+                    else
+                        usercontext.UIMode = ProviderPageMode.EnrollOTP;
                     usercontext.WizPageID = 0;
                 }
                 result = new AdapterPresentation(this, context, ex.Message, false);
@@ -1604,6 +1606,7 @@ namespace Neos.IdentityServer.MultiFactor
                             {
                                 usercontext.WizPageID = 2;
                                 usercontext.UIMode = ProviderPageMode.EnrollEmail;
+                                result = new AdapterPresentation(this, context);
                             }
                         }
                         catch (Exception ex)
@@ -1612,7 +1615,6 @@ namespace Neos.IdentityServer.MultiFactor
                             usercontext.WizPageID = 0;
                             return new AdapterPresentation(this, context, ex.Message, false);
                         }
-                        result = new AdapterPresentation(this, context);
                         break;
                     case 4: // Code Validation
                         string totp = proofData.Properties["totp"].ToString();
@@ -1620,11 +1622,10 @@ namespace Neos.IdentityServer.MultiFactor
                         if ((int)AuthenticationResponseKind.Error != prov.SetAuthenticationResult(usercontext, totp))
                         {
                             if (forcesave)
-                                RuntimeRepository.SetUserRegistration(Config, (Registration)usercontext); 
+                                RuntimeRepository.SetUserRegistration(Config, (Registration)usercontext, false); 
                             usercontext.WizPageID = 3;
-                            usercontext.UIMessage = Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelVERIFYOTPSuccess");
                             usercontext.UIMode = ProviderPageMode.EnrollEmail;
-                            result = new AdapterPresentation(this, context);
+                            result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelVERIFYOTPSuccess"), true);
                         }
                         else
                         {
@@ -1655,7 +1656,10 @@ namespace Neos.IdentityServer.MultiFactor
                 }
                 else
                 {
-                    usercontext.UIMode = ProviderPageMode.EnrollEmail;
+                    if (forcesave)
+                        usercontext.UIMode = ProviderPageMode.EnrollEmailAndSave;
+                    else
+                        usercontext.UIMode = ProviderPageMode.EnrollEmail;
                     usercontext.WizPageID = 0;
                 }
                 result = new AdapterPresentation(this, context, ex.Message, false);
@@ -1768,11 +1772,10 @@ namespace Neos.IdentityServer.MultiFactor
                         if ((int)AuthenticationResponseKind.Error != prov.SetAuthenticationResult(usercontext, totp))
                         {
                             if (forcesave)
-                                RuntimeRepository.SetUserRegistration(Config, (Registration)usercontext); 
+                                RuntimeRepository.SetUserRegistration(Config, (Registration)usercontext, false); 
                             usercontext.WizPageID = 3;
-                            usercontext.UIMessage = Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelVERIFYOTPSuccess");
                             usercontext.UIMode = ProviderPageMode.EnrollPhone;
-                            result = new AdapterPresentation(this, context);
+                            result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelVERIFYOTPSuccess"), true);
                         }
                         else
                         {
@@ -1802,7 +1805,10 @@ namespace Neos.IdentityServer.MultiFactor
                 }
                 else
                 {
-                    usercontext.UIMode = ProviderPageMode.EnrollPhone;
+                    if (forcesave)
+                        usercontext.UIMode = ProviderPageMode.EnrollPhoneAndSave;
+                    else
+                        usercontext.UIMode = ProviderPageMode.EnrollPhone;
                     usercontext.WizPageID = 0;
                 }
                 result = new AdapterPresentation(this, context, ex.Message, false);
@@ -1866,30 +1872,30 @@ namespace Neos.IdentityServer.MultiFactor
                             {
                                 usercontext.WizPageID = 4;
                                 usercontext.UIMode = ProviderPageMode.EnrollPin;
-                                result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelVERIFYOTPError"));
+                                result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelVERIFYOTPError"), false);
                             }
                             else
                             {
                                 usercontext.WizPageID = 3;
                                 usercontext.UIMode = ProviderPageMode.EnrollPin;
+                                result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelVERIFYOTPSuccess"), true);
                             }
                         }
                         catch (Exception ex)
                         {
-                            return new AdapterPresentation(this, context, ex.Message);
+                            return new AdapterPresentation(this, context, ex.Message, false);
                         }
-                        result = new AdapterPresentation(this, context);
+                       
                         break;
                     case 4: // Code validation
                         int totp2 = Convert.ToInt32(proofData.Properties["pincode"]);                           
                         if (usercontext.PinCode != totp2)
                         {
                             if (forcesave)
-                                RuntimeRepository.SetUserRegistration(Config, (Registration)usercontext); 
+                                RuntimeRepository.SetUserRegistration(Config, (Registration)usercontext, false); 
                             usercontext.WizPageID = 3;
-                            usercontext.UIMessage = Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelVERIFYOTPSuccess");
                             usercontext.UIMode = ProviderPageMode.EnrollPin;
-                            result = new AdapterPresentation(this, context);
+                            result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelVERIFYOTPSuccess"), true);
                         }
                         else
                         {
@@ -1897,7 +1903,7 @@ namespace Neos.IdentityServer.MultiFactor
                             usercontext.UIMode = ProviderPageMode.EnrollPin;
                             Registration reg = RuntimeRepository.GetUserRegistration(Config, usercontext.UPN); // Rollback
                             usercontext.PinCode = reg.PIN;
-                            result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelVERIFYOTPError"));
+                            result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelVERIFYOTPError"), false);
                         }
                         break;
                 }
@@ -1919,8 +1925,11 @@ namespace Neos.IdentityServer.MultiFactor
                 }
                 else
                 {
+                    if (forcesave)
+                        usercontext.UIMode = ProviderPageMode.EnrollPinAndSave;
+                    else
+                        usercontext.UIMode = ProviderPageMode.EnrollPin;
                     usercontext.WizPageID = 1;
-                    usercontext.UIMode = ProviderPageMode.EnrollPin;
                 }
                 result = new AdapterPresentation(this, context, ex.Message, false);
             }

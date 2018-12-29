@@ -1,7 +1,7 @@
 <?xml version="1.0"?><MMC_ConsoleFile ConsoleVersion="3.0" ProgramMode="Author">
-  <ConsoleFileID>{4B3ADF39-C221-480B-932C-B3C8EF32E3EF}</ConsoleFileID>
+  <ConsoleFileID>{4F57FA4C-F5EC-4E10-873A-328904677FB8}</ConsoleFileID>
   <FrameState ShowStatusBar="true">
-    <WindowPlacement ShowCommand="SW_SHOWNORMAL">
+    <WindowPlacement WPF_RESTORETOMAXIMIZED="true" ShowCommand="SW_SHOWMAXIMIZED">
       <Point Name="MinPosition" X="-1" Y="-1"/>
       <Point Name="MaxPosition" X="-1" Y="-1"/>
       <Rectangle Name="NormalPosition" Top="104" Bottom="863" Left="104" Right="1544"/>
@@ -10,11 +10,25 @@
   <Views>
     <View ID="1" ScopePaneWidth="292" ActionsPaneWidth="-1">
       <BookMark Name="RootNode" NodeID="1"/>
-      <BookMark Name="SelectedNode" NodeID="1"/>
-      <WindowPlacement WPF_RESTORETOMAXIMIZED="true" ShowCommand="SW_SHOWMAXIMIZED">
+      <BookMark Name="SelectedNode" NodeID="2"/>
+      <WindowPlacement ShowCommand="SW_SHOWNORMAL">
         <Point Name="MinPosition" X="-1" Y="-1"/>
         <Point Name="MaxPosition" X="-8" Y="-31"/>
         <Rectangle Name="NormalPosition" Top="0" Bottom="436" Left="0" Right="1186"/>
+      </WindowPlacement>
+      <ViewOptions ViewMode="Report" ScopePaneVisible="true" ActionsPaneVisible="true" DescriptionBarVisible="false" DefaultColumn0Width="200" DefaultColumn1Width="0"/>
+    </View>
+    <View ID="2" ScopePaneWidth="396" ActionsPaneWidth="-1">
+      <BookMark Name="RootNode" NodeID="2"/>
+      <BookMark Name="SelectedNode" NodeID="2">
+        <DynamicPath>
+          <Segment String="Configuration Utilisateurs" Custom="TQBGAEEAIABVAHMAZQByAHMAIABNAGEAbgBhAGcAZQBtAGUAbgB0AA=="/>
+        </DynamicPath>
+      </BookMark>
+      <WindowPlacement WPF_RESTORETOMAXIMIZED="true" ShowCommand="SW_SHOWMAXIMIZED">
+        <Point Name="MinPosition" X="-1" Y="-1"/>
+        <Point Name="MaxPosition" X="-8" Y="-31"/>
+        <Rectangle Name="NormalPosition" Top="52" Bottom="705" Left="52" Right="1652"/>
       </WindowPlacement>
       <ViewOptions ViewMode="Report" ScopePaneVisible="true" ActionsPaneVisible="true" DescriptionBarVisible="false" DefaultColumn0Width="200" DefaultColumn1Width="0"/>
     </View>
@@ -50,18 +64,22 @@
                 <GUID Name="Snapin">FX:{9627f1f3-a6d2-4cf8-90a2-10f85a7a4ee7}</GUID>
                 <Stream BinaryRefIndex="1"/>
               </Component>
+              <Component ViewID="2">
+                <GUID Name="Snapin">FX:{9627f1f3-a6d2-4cf8-90a2-10f85a7a4ee7}</GUID>
+                <Stream BinaryRefIndex="2"/>
+              </Component>
             </Components>
           </Node>
         </Nodes>
         <String Name="Name" ID="3"/>
         <Bitmaps>
-          <BinaryData Name="Small" BinaryRefIndex="2"/>
-          <BinaryData Name="Large" BinaryRefIndex="3"/>
+          <BinaryData Name="Small" BinaryRefIndex="3"/>
+          <BinaryData Name="Large" BinaryRefIndex="4"/>
         </Bitmaps>
         <ComponentDatas>
           <ComponentData>
             <GUID Name="Snapin">{C96401CC-0E17-11D3-885B-00C04F72C717}</GUID>
-            <Stream BinaryRefIndex="4"/>
+            <Stream BinaryRefIndex="5"/>
           </ComponentData>
         </ComponentDatas>
         <Components/>
@@ -70,7 +88,15 @@
   </ScopeTree>
   <ConsoleTaskpads/>
   <ViewSettingsCache>
+    <TargetView ViewID="1" NodeTypeGUID="{00000000-0000-0000-0000-000000000000}"/>
+    <ViewSettings Flag_TaskPadID="true" Age="2">
+      <GUID>{00000000-0000-0000-0000-000000000000}</GUID>
+    </ViewSettings>
     <TargetView ViewID="1" NodeTypeGUID="{C96401CE-0E17-11D3-885B-00C04F72C717}"/>
+    <ViewSettings Flag_TaskPadID="true" Age="3">
+      <GUID>{00000000-0000-0000-0000-000000000000}</GUID>
+    </ViewSettings>
+    <TargetView ViewID="2" NodeTypeGUID="{00000000-0000-0000-0000-000000000000}"/>
     <ViewSettings Flag_TaskPadID="true" Age="1">
       <GUID>{00000000-0000-0000-0000-000000000000}</GUID>
     </ViewSettings>
@@ -89,13 +115,38 @@
   </StringTables>
   <BinaryStorage>
     <Binary>
-
+AAABAAAA/////wEAAAAAAAAADAIAAABeTmVvcy5JZGVudGl0eVNlcnZlci5Db25zb2xlLCBWZXJz
+aW9uPTIuMy4wLjAsIEN1bHR1cmU9bmV1dHJhbCwgUHVibGljS2V5VG9rZW49MTc1YWE1ZWU3NTZk
+MmFhMgwDAAAAbE5lb3MuSWRlbnRpdHlTZXJ2ZXIuTXVsdGlGYWN0b3IuRGF0YVR5cGVzLCBWZXJz
+aW9uPTIuMy4wLjAsIEN1bHR1cmU9bmV1dHJhbCwgUHVibGljS2V5VG9rZW49MTc1YWE1ZWU3NTZk
+MmFhMgUBAAAALk5lb3MuSWRlbnRpdHlTZXJ2ZXIuQ29uc29sZS5NTUNQZXJzaXN0ZW5jZURhdGEC
+AAAAB19maWx0ZXILX3VpbGFuZ3VhZ2UEADBOZW9zLklkZW50aXR5U2VydmVyLk11bHRpRmFjdG9y
+LkRhdGFGaWx0ZXJPYmplY3QDAAAACAIAAAAJBAAAAAAAAAAFBAAAADBOZW9zLklkZW50aXR5U2Vy
+dmVyLk11bHRpRmFjdG9yLkRhdGFGaWx0ZXJPYmplY3QGAAAAC2ZpbHRlcmZpZWxkDmZpbHRlcm9w
+ZXJhdG9yDGZpbHRlcm1ldGhvZAtmaWx0ZXJ2YWx1ZQtlbmFibGVkb25seQ5maWx0ZXJpc2FjdGl2
+ZQQEBAEAAC9OZW9zLklkZW50aXR5U2VydmVyLk11bHRpRmFjdG9yLkRhdGFGaWx0ZXJGaWVsZAMA
+AAAyTmVvcy5JZGVudGl0eVNlcnZlci5NdWx0aUZhY3Rvci5EYXRhRmlsdGVyT3BlcmF0b3IDAAAA
+L05lb3MuSWRlbnRpdHlTZXJ2ZXIuTXVsdGlGYWN0b3IuUHJlZmVycmVkTWV0aG9kAwAAAAEBAwAA
+AAX7////L05lb3MuSWRlbnRpdHlTZXJ2ZXIuTXVsdGlGYWN0b3IuRGF0YUZpbHRlckZpZWxkAQAA
+AAd2YWx1ZV9fAAgDAAAAAAAAAAX6////Mk5lb3MuSWRlbnRpdHlTZXJ2ZXIuTXVsdGlGYWN0b3Iu
+RGF0YUZpbHRlck9wZXJhdG9yAQAAAAd2YWx1ZV9fAAgDAAAAAgAAAAX5////L05lb3MuSWRlbnRp
+dHlTZXJ2ZXIuTXVsdGlGYWN0b3IuUHJlZmVycmVkTWV0aG9kAQAAAAd2YWx1ZV9fAAgDAAAABgAA
+AAYIAAAAAAEBCw==
     </Binary>
     <Binary>
-AAAAAAAAAAA=
+AAAAAAMAAAAbTUZBIFByb3ZpZGVycyBDb25maWd1cmF0aW9uDU1GQSBQcm92aWRlcnMAAAAAFUdl
+bmVyaWMgTUZBIHBhcm1ldGVycx9NRkEgUGxhdGZvcm0gR2VuZXJhbCBQcm9wZXJ0aWVzAAAAABpN
+RkEgQXV0aGVudGljYXRpb24gQ29uc29sZQxNRkEgUGxhdGZvcm0AAAAA
     </Binary>
     <Binary>
-SUwBAQIABAAEABAAEAD/////IQD//////////0JNNgAAAAAAAAA2AAAAKAAAAEAAAAAQAAAAAQAg
+AAAAAAUAAAAaTUZBIEF1dGhlbnRpY2F0aW9uIENvbnNvbGUMTUZBIFBsYXRmb3JtAAAAACJNRkEg
+QWN0aXZlIERpcmVjdG9yeSBDb25maWd1cmF0aW9uKE1GQSBQbGF0Zm9ybSBBY3RpdmUgRGlyZWN0
+b3J5IFByb3BlcnRpZXMAAAAAFU1GQSBTUUwgQ29uZmlndXJhdGlvbiJNRkEgUGxhdGZvcm0gU1FM
+IFNlcnZlciBQcm9wZXJ0aWVzAAAAABtNRkEgUHJvdmlkZXJzIENvbmZpZ3VyYXRpb24NTUZBIFBy
+b3ZpZGVycwAAAAAUTUZBIFVzZXJzIE1hbmFnZW1lbnQSTUZBIFBsYXRmb3JtIFVzZXJzAAAAAA==
+    </Binary>
+    <Binary>
+SUwBAQIABAAIABAAEAD/////IRD//////////0JNNgAAAAAAAAA2AAAAKAAAAEAAAAAQAAAAAQAg
 AAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
@@ -171,10 +222,11 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 AAAAAAAAAAAAAAAAAAAAAABCTT4AAAAAAAAAPgAAACgAAABAAAAAEAAAAAEAAQAAAAAAgAAAAAAA
 AAAAAAAAAAAAAAAAAAAAAAAA////AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AA==
     </Binary>
     <Binary>
-SUwBAQEABAAEACAAIAD/////IQD//////////0JNNgAAAAAAAAA2AAAAKAAAAIAAAAAgAAAAAQAg
+SUwBAQEABAAIACAAIAD/////IRD//////////0JNNgAAAAAAAAA2AAAAKAAAAIAAAAAgAAAAAQAg
 AAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
@@ -472,7 +524,8 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAA==
     </Binary>
     <Binary>
 AQAAABQAAAAAAAAAAwAAAP////8=

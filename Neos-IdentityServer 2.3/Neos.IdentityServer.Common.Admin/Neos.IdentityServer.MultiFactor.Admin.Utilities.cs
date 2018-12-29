@@ -162,7 +162,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <summary>
         /// AddUserRegistration method implementation
         /// </summary>
-        internal static Registration AddUserRegistration(Registration reg, bool resetkey = false, bool canupdate = true, bool email = false)
+        internal static Registration AddUserRegistration(Registration reg, bool resetkey = true, bool canupdate = true, bool email = false)
         {
             EnsureService();
             return RuntimeRepository.AddUserRegistration(Config, reg, resetkey, canupdate, email);

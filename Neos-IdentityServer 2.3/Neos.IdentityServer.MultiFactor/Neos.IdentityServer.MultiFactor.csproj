@@ -65,6 +65,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Neos.IdentityServer.MultiFactor.AdapaterPresentation.2019.cs" />
     <Compile Include="Neos.IdentityServer.Multifactor.AdapterMetadata.cs" />
     <Compile Include="Neos.IdentityServer.MultiFactor.AdapterPresentation.cs" />
     <Compile Include="Neos.IdentityServer.MultiFactor.BasePresentation.cs" />

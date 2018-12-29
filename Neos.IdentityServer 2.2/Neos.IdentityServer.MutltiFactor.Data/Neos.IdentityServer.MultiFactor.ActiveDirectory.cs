@@ -1345,12 +1345,12 @@ namespace Neos.IdentityServer.MultiFactor.Data
         internal static DirectoryEntry GetDirectoryEntryForUPN(ADDSHost host, string upn)
         {
             DirectoryEntry entry = null;
-            if (!string.IsNullOrEmpty(host.DomainAddress))
-                entry = new DirectoryEntry(host.DomainAddress);
+            if (!string.IsNullOrEmpty(host.DomainName))
+                entry = new DirectoryEntry("LDAP://" + host.DomainName);
             else
             {
                 string dom = host.GetForestForUPN(upn);
-                entry = new DirectoryEntry("LDAP://"+dom);
+                entry = new DirectoryEntry("LDAP://" + dom);
             }
             if (!string.IsNullOrEmpty(host.Account))
                 entry.Username = host.Account;
@@ -1365,8 +1365,8 @@ namespace Neos.IdentityServer.MultiFactor.Data
         internal static DirectoryEntry GetDirectoryEntry(ADDSHost host, ADDSHostForest forest)
         {
             DirectoryEntry entry = null;
-            if (!string.IsNullOrEmpty(host.DomainAddress))
-                entry = new DirectoryEntry(host.DomainAddress);
+            if (!string.IsNullOrEmpty(host.DomainName))
+                entry = new DirectoryEntry("LDAP://" + host.DomainName);
             else
                 entry = new DirectoryEntry("LDAP://"+forest.ForestDNS);
             if (!string.IsNullOrEmpty(host.Account))
@@ -1382,8 +1382,8 @@ namespace Neos.IdentityServer.MultiFactor.Data
         internal static DirectoryEntry GetDirectoryEntry(ADDSHost host)
         {
             DirectoryEntry entry = null;
-            if (!string.IsNullOrEmpty(host.DomainAddress))
-                entry = new DirectoryEntry(host.DomainAddress);
+            if (!string.IsNullOrEmpty(host.DomainName))
+                entry = new DirectoryEntry("LDAP://" + host.DomainName);
             else
                 entry = new DirectoryEntry();
             if (!string.IsNullOrEmpty(host.Account))
@@ -1400,7 +1400,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
         {
             DirectoryEntry entry = null;
             if (!string.IsNullOrEmpty(domainname))
-                entry = new DirectoryEntry(domainname);
+                entry = new DirectoryEntry("LDAP://" + domainname);
             else
                 entry = new DirectoryEntry();
             if (!string.IsNullOrEmpty(username))
@@ -1430,8 +1430,8 @@ namespace Neos.IdentityServer.MultiFactor.Data
         internal static DirectoryEntry GetDirectoryEntry(ADDSHost host, string path)
         {
             DirectoryEntry entry = null;
-            if (!string.IsNullOrEmpty(host.DomainAddress))
-                entry = new DirectoryEntry(host.DomainAddress);
+            if (!string.IsNullOrEmpty(host.DomainName))
+                entry = new DirectoryEntry("LDAP://" + host.DomainName);
             else
                 entry = new DirectoryEntry();
             entry.Path = path;
@@ -1449,7 +1449,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
         {
             DirectoryEntry entry = null;
             if (!string.IsNullOrEmpty(domain))
-                entry = new DirectoryEntry(domain);
+                entry = new DirectoryEntry("LDAP://" + domain);
             else
                 entry = new DirectoryEntry();
             entry.Path = path;

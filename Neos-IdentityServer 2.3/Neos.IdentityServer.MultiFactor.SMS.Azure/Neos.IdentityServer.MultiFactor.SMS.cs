@@ -135,6 +135,15 @@ namespace Neos.IdentityServer.Multifactor.SMS
         }
 
         /// <summary>
+        /// GetWizardUILabel method implementation
+        /// </summary>
+        public override string GetWizardUILabel(AuthenticationContext ctx)
+        {
+            html_strings.Culture = new CultureInfo(ctx.Lcid);
+            return html_strings.SMSUIWIZLabel;
+        }
+
+        /// <summary>
         /// GetUICFGLabel method implementation
         /// </summary>
         public override string GetUICFGLabel(AuthenticationContext ctx)

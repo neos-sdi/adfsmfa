@@ -142,7 +142,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Enroll my personal email.
+        ///   Recherche une chaîne localisée semblable à Enroll my personal email address.
         /// </summary>
         internal static string HtmlEnrollEmail {
             get {
@@ -151,7 +151,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Enroll my autentication application .
+        ///   Recherche une chaîne localisée semblable à Enroll my authentication application .
         /// </summary>
         internal static string HtmlEnrollOTP {
             get {
@@ -234,7 +234,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Your account is validated !
+        ///   Recherche une chaîne localisée semblable à Your account is validated!
         ///You will be able to use single-use code validation in the future..
         /// </summary>
         internal static string HtmlLabelVERIFYOTPSuccess {
@@ -244,7 +244,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à You must have installed an authentication application such as Microsoft Authenticator, Google Authenticator on your device before you can continue and register your account.
+        ///   Recherche une chaîne localisée semblable à You must have an authentication application such as Microsoft Authenticator, Google Authenticator installed on your device before you can continue and register your account.
         /// </summary>
         internal static string HtmlLabelWREGOTP {
             get {
@@ -262,7 +262,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à You must enter an email for confirming your identiy, this email must be reacheable without needing enterprise verification (personal email).
+        ///   Recherche une chaîne localisée semblable à You must enter an email address to confirm your identiy. This email must be reachable without needing enterprise verification (personal email address).
         /// </summary>
         internal static string HtmlLabelWREmail {
             get {
@@ -271,7 +271,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à You must enter your phone number for confirming your identiy, this phone must be reacheable .
+        ///   Recherche une chaîne localisée semblable à You must enter your phone number in order to confirm your identity. This phone must be reachable..
         /// </summary>
         internal static string HtmlLabelWRPhone {
             get {
@@ -280,7 +280,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à You must enter a secret code (4 digits) to validate your identié. Be sure not to use the codes of your bank card or telephone as well as details concerning your date of birth..
+        ///   Recherche une chaîne localisée semblable à You must enter a secret code (4 digits) in order to validate your identity. Be sure not to use the codes of your bank card or telephone as well as details concerning your date of birth..
         /// </summary>
         internal static string HtmlLabelWRPinCode {
             get {
@@ -316,7 +316,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Current password :.
+        ///   Recherche une chaîne localisée semblable à Current password.
         /// </summary>
         internal static string HtmlPWDLabelActual {
             get {
@@ -325,7 +325,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à New password :.
+        ///   Recherche une chaîne localisée semblable à New password.
         /// </summary>
         internal static string HtmlPWDLabelNew {
             get {
@@ -334,7 +334,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à New password confirmation :.
+        ///   Recherche une chaîne localisée semblable à Password confirmation.
         /// </summary>
         internal static string HtmlPWDLabelNewConfirmation {
             get {
@@ -352,7 +352,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Default access method :.
+        ///   Recherche une chaîne localisée semblable à Default access method.
         /// </summary>
         internal static string HtmlREGAccessMethod {
             get {
@@ -361,7 +361,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Configuration options :.
+        ///   Recherche une chaîne localisée semblable à Configuration options.
         /// </summary>
         internal static string HtmlREGAccessPageMethods {
             get {
@@ -370,7 +370,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Secret Key :.
+        ///   Recherche une chaîne localisée semblable à Secret Key.
         /// </summary>
         internal static string HtmlREGLabelAppKey {
             get {
@@ -379,7 +379,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Personal email address :.
+        ///   Recherche une chaîne localisée semblable à Personal email address.
         /// </summary>
         internal static string HtmlREGLabelMail {
             get {
@@ -388,7 +388,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Cellphone number :.
+        ///   Recherche une chaîne localisée semblable à Cellphone number.
         /// </summary>
         internal static string HtmlREGLabelPhoneNumber {
             get {
@@ -460,7 +460,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Your secret key has changed !.
+        ///   Recherche une chaîne localisée semblable à Your secret key has changed!.
         /// </summary>
         internal static string HtmlSecretKeyChanged {
             get {
@@ -469,7 +469,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à access my options after authentication.
+        ///   Recherche une chaîne localisée semblable à Access my options after authentication.
         /// </summary>
         internal static string HtmlUIMAccessOptions {
             get {
@@ -550,7 +550,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Register a new Email .
+        ///   Recherche une chaîne localisée semblable à Register a new email address.
         /// </summary>
         internal static string HtmlUIMRecordNewEmail {
             get {
@@ -559,7 +559,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Register a new key.
+        ///   Recherche une chaîne localisée semblable à Get a new key.
         /// </summary>
         internal static string HtmlUIMRecordNewKey {
             get {

@@ -133,6 +133,15 @@ namespace Neos.IdentityServer.MultiFactor.SAS.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Enroll your mobile.
+        /// </summary>
+        internal static string GLOBALWIZLabel {
+            get {
+                return ResourceManager.GetString("GLOBALWIZLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Send a notification to my mobile (MS).
         /// </summary>
         internal static string NOTIFChoiceLabel {

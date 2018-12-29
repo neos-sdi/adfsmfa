@@ -265,6 +265,24 @@ namespace Neos.IdentityServer.MultiFactor
         }
 
         /// <summary>
+        /// GetProvider method provider
+        /// </summary>
+        internal static bool IsPinCodeRequired(AuthenticationContext ctx)
+        {
+            foreach (IExternalProvider prov in Providers.Values)
+            {
+                if (prov == null)
+                    return false;
+                else
+                {
+                    if (prov.PinRequired)
+                        return true;
+                }
+            }
+            return false;
+        }
+
+        /// <summary>
         /// Providers property implementation
         /// </summary>
         private static Dictionary<PreferredMethod, IExternalProvider> Providers
@@ -468,7 +486,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// AddUserRegistration method implementation
         /// </summary>
-        internal static Registration AddUserRegistration(MFAConfig cfg, Registration reg, bool resetkey = false, bool canupdate = true, bool email = false)
+        internal static Registration AddUserRegistration(MFAConfig cfg, Registration reg, bool resetkey = true, bool canupdate = true, bool email = false)
         {
             DataRepositoryService client = null;
             if (cfg.UseActiveDirectory)
@@ -2395,16 +2413,20 @@ namespace Neos.IdentityServer.MultiFactor
             set { _currentMinorVersionNumber = value; }
         }
 
+        public bool IsWindows2019
+        {
+            get { return ((this.CurrentMajorVersionNumber == 10) && (this.CurrentBuild >= 17763)); }
+        }
+
         public bool IsWindows2016
         {
-            get { return (this.CurrentMajorVersionNumber == 10); }
+            get { return ((this.CurrentMajorVersionNumber == 10) && ((this.CurrentBuild >= 14393) && (this.CurrentBuild < 17763))); }
         }
 
         public bool IsWindows2012R2
         {
-            get { return (this.CurrentMajorVersionNumber != 10); }
+            get { return ((this.CurrentMajorVersionNumber == 0) && ((this.CurrentBuild >= 9600) && (this.CurrentBuild < 14393))); }
         }
-
     }
     #endregion
 }

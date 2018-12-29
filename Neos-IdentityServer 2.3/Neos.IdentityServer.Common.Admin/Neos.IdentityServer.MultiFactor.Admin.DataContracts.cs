@@ -189,6 +189,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     [Serializable]
     public class FlatConfig
     {
+        public bool UseUIPaginated;
         public bool IsDirty { get; set; }
         public int DeliveryWindow { get; set; }
         public int MaxRetries { get; set; }
@@ -202,6 +203,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         public string AdminContact { get; set; }
         public UserFeaturesOptions UserFeatures { get; set; }
         public ConfigAdvertising AdvertisingDays { get; set; }
+        public ADFSUserInterfaceKind UiKind { get; set; }
 
         /// <summary>
         /// Update method implmentation
@@ -224,6 +226,8 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             AdminContact = cfg.AdminContact;
             UserFeatures = cfg.UserFeatures;
             AdvertisingDays = cfg.AdvertisingDays;
+            UseUIPaginated = cfg.UseUIPaginated;
+            UiKind = cfg.UiKind;
         }
 
         /// <summary>
@@ -247,6 +251,8 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             cfg.AdminContact = AdminContact;
             cfg.UserFeatures = UserFeatures;
             cfg.AdvertisingDays = AdvertisingDays;
+            cfg.UiKind = UiKind;
+            cfg.UseUIPaginated = UseUIPaginated;
             ManagementService.ADFSManager.WriteConfiguration(host);
         }
 

@@ -1094,6 +1094,7 @@ namespace Neos.IdentityServer.MultiFactor
         private bool _anonymous = false;
         private string _class;
         private XmlCDataSection _cdata;
+        private List<string> _blocked = new List<string>();
 
         [XmlAttribute("Enabled")]
         public bool Enabled
@@ -1177,6 +1178,14 @@ namespace Neos.IdentityServer.MultiFactor
         {
             get { return _comp; }
             set { _comp = value; }
+        }
+
+        [XmlArray("BlockedDomains")]
+        [XmlArrayItem("Domain", Type = typeof(string))]
+        public List<string> BlockedDomains
+        {
+            get;
+            set;
         }
 
         [XmlArray("MailOTP")]
@@ -1615,9 +1624,7 @@ namespace Neos.IdentityServer.MultiFactor
             return result;
         }
 
-        /// <summary>
-        /// Forests property implementation
-        /// </summary>
+        [XmlIgnore]
         public List<ADDSHostForest> Forests
         {
             get { return _forests; }

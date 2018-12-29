@@ -1330,11 +1330,15 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             {
                 RegistryVersion reg = new RegistryVersion();
                 InitFarmProperties(Host);
-                if (reg.CurrentMajorVersionNumber == 10)
+                if (reg.IsWindows2019)
+                {
+                    result = InitServerNodeConfiguration2019(Host, reg);
+                }
+                else if (reg.IsWindows2016)
                 {
                     result = InitServerNodeConfiguration2016(Host, reg);
                 }
-                else
+                else if (reg.IsWindows2012R2)
                 {
                     result = InitServerNodeConfiguration2012(Host, reg);
                 }
@@ -1416,9 +1420,11 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             try
             {
                 RegistryVersion reg = new RegistryVersion();
-                if (reg.CurrentMajorVersionNumber == 10)
+                if (reg.IsWindows2019)
+                    result = InitServerNodeConfiguration2019(Host, reg);
+                else if (reg.IsWindows2016)
                     result = InitServerNodeConfiguration2016(Host, reg);
-                else
+                else if (reg.IsWindows2012R2)
                     result = InitServerNodeConfiguration2012(Host, reg);
                 SetDirty(true);
             }
@@ -1483,7 +1489,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         }
 
         /// <summary>
-        /// InitServerNodeConfiguration method implementation
+        /// InitServerNodeConfiguration2016 method implementation
         /// </summary>
         private ADFSServerHost InitServerNodeConfiguration2016(PSHost Host, RegistryVersion reg)
         {
@@ -1507,26 +1513,23 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 foreach (var result in PSOutput)
                 {
                     string fqdn = result.Members["FQDN"].Value.ToString();
-                  //  if (SPRunSpace.ConnectionInfo.ComputerName.ToLower().Equals(fqdn.ToLower()))
-                  //  {
-                        ADFSServerHost props = new ADFSServerHost();
-                        props.FQDN = fqdn;
-                        props.BehaviorLevel = Convert.ToInt32(result.Members["BehaviorLevel"].Value);
-                        props.HeartbeatTmeStamp = Convert.ToDateTime(result.Members["HeartbeatTimeStamp"].Value);
-                        props.NodeType = result.Members["NodeType"].Value.ToString();
-                        props.CurrentVersion = reg.CurrentVersion;
-                        props.CurrentBuild = reg.CurrentBuild;
-                        props.InstallationType = reg.InstallationType;
-                        props.ProductName = reg.ProductName;
-                        props.CurrentMajorVersionNumber = reg.CurrentMajorVersionNumber;
-                        props.CurrentMinorVersionNumber = reg.CurrentMinorVersionNumber;
-                        int i = ADFSFarm.Servers.FindIndex(c => c.FQDN.ToLower() == props.FQDN.ToLower());
-                        if (i<0)
-                            ADFSFarm.Servers.Add(props);
-                        else
-                           ADFSFarm.Servers[i] = props;
-                        xprops = props;
-                   // }
+                    ADFSServerHost props = new ADFSServerHost();
+                    props.FQDN = fqdn;
+                    props.BehaviorLevel = Convert.ToInt32(result.Members["BehaviorLevel"].Value);
+                    props.HeartbeatTmeStamp = Convert.ToDateTime(result.Members["HeartbeatTimeStamp"].Value);
+                    props.NodeType = result.Members["NodeType"].Value.ToString();
+                    props.CurrentVersion = reg.CurrentVersion;
+                    props.CurrentBuild = reg.CurrentBuild;
+                    props.InstallationType = reg.InstallationType;
+                    props.ProductName = reg.ProductName;
+                    props.CurrentMajorVersionNumber = reg.CurrentMajorVersionNumber;
+                    props.CurrentMinorVersionNumber = reg.CurrentMinorVersionNumber;
+                    int i = ADFSFarm.Servers.FindIndex(c => c.FQDN.ToLower() == props.FQDN.ToLower());
+                    if (i<0)
+                        ADFSFarm.Servers.Add(props);
+                    else
+                        ADFSFarm.Servers[i] = props;
+                    xprops = props;
                 }
             }
             finally
@@ -1536,6 +1539,59 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             }
             return xprops;
         }
+
+        /// <summary>
+        /// InitServerNodeConfiguration2019 method implementation
+        /// </summary>
+        private ADFSServerHost InitServerNodeConfiguration2019(PSHost Host, RegistryVersion reg)
+        {
+            ADFSServerHost xprops = null;
+            Runspace SPRunSpace = null;
+            PowerShell SPPowerShell = null;
+            try
+            {
+                RunspaceConfiguration SPRunConfig = RunspaceConfiguration.Create();
+                SPRunSpace = RunspaceFactory.CreateRunspace(SPRunConfig);
+                SPPowerShell = PowerShell.Create();
+                SPPowerShell.Runspace = SPRunSpace;
+                SPRunSpace.Open();
+
+                Pipeline pipeline = SPRunSpace.CreatePipeline();
+                Command exportcmd = new Command("(Get-AdfsFarmInformation).FarmNodes", true);
+
+                pipeline.Commands.Add(exportcmd);
+
+                Collection<PSObject> PSOutput = pipeline.Invoke();
+                foreach (var result in PSOutput)
+                {
+                    string fqdn = result.Members["FQDN"].Value.ToString();
+                    ADFSServerHost props = new ADFSServerHost();
+                    props.FQDN = fqdn;
+                    props.BehaviorLevel = Convert.ToInt32(result.Members["BehaviorLevel"].Value);
+                    props.HeartbeatTmeStamp = Convert.ToDateTime(result.Members["HeartbeatTimeStamp"].Value);
+                    props.NodeType = result.Members["NodeType"].Value.ToString();
+                    props.CurrentVersion = reg.CurrentVersion;
+                    props.CurrentBuild = reg.CurrentBuild;
+                    props.InstallationType = reg.InstallationType;
+                    props.ProductName = reg.ProductName;
+                    props.CurrentMajorVersionNumber = reg.CurrentMajorVersionNumber;
+                    props.CurrentMinorVersionNumber = reg.CurrentMinorVersionNumber;
+                    int i = ADFSFarm.Servers.FindIndex(c => c.FQDN.ToLower() == props.FQDN.ToLower());
+                    if (i < 0)
+                        ADFSFarm.Servers.Add(props);
+                    else
+                        ADFSFarm.Servers[i] = props;
+                    xprops = props;
+                }
+            }
+            finally
+            {
+                if (SPRunSpace != null)
+                    SPRunSpace.Close();
+            }
+            return xprops;
+        }
+
         #endregion
 
         #region MFA Database

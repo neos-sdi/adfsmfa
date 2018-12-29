@@ -2750,7 +2750,7 @@ namespace Neos.IdentityServer.Console.Controls
                 _txtpanel.Controls.Add(lblPassword);
 
                 txtPassword = new TextBox();
-                txtPassword.Text = Config.Hosts.ActiveDirectoryHost.Account;
+                txtPassword.Text = Config.Hosts.ActiveDirectoryHost.Password;
                 txtPassword.Left = 580;
                 txtPassword.Top = 78;
                 txtPassword.Width = 230;
@@ -2997,7 +2997,7 @@ namespace Neos.IdentityServer.Console.Controls
                 txtUserName.Text = Config.Hosts.ActiveDirectoryHost.Account;
                 txtUserName.Enabled = Config.UseActiveDirectory;
 
-                txtPassword.Text = Config.Hosts.ActiveDirectoryHost.Account;
+                txtPassword.Text = Config.Hosts.ActiveDirectoryHost.Password;
                 txtPassword.Enabled = Config.UseActiveDirectory;
 
                 btnConnect.Enabled = Config.UseActiveDirectory;

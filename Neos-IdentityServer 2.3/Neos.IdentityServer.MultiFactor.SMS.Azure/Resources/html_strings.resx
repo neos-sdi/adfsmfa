@@ -166,7 +166,10 @@
     <comment>Nous avons envoyé un SMS contenant un code de vérification. {0}</comment>
   </data>
   <data name="SMSUIOTPLabel" xml:space="preserve">
-    <value>Access code received by phone</value>
+    <value>Enter Code</value>
     <comment>Code d'accès reçu par téléphone</comment>
+  </data>
+  <data name="SMSUIWIZLabel" xml:space="preserve">
+    <value>Enroll your mobile</value>
   </data>
 </root>

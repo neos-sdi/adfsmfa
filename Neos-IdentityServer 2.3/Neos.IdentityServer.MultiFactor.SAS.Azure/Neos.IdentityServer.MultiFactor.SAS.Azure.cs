@@ -117,6 +117,14 @@ namespace Neos.IdentityServer.MultiFactor.SAS
         }
 
         /// <summary>
+        /// GetWizardUILabel method implementation
+        /// </summary>
+        public override string GetWizardUILabel(AuthenticationContext ctx)
+        {
+            return string.Empty;
+        }
+
+        /// <summary>
         /// GetUICFGLabel method implementation
         /// </summary>
         public override string GetUICFGLabel(AuthenticationContext ctx)

@@ -169,11 +169,20 @@ namespace Neos.IdentityServer.MultiFactor.SMS.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Access code received by phone.
+        ///   Recherche une chaîne localisée semblable à Enter Code.
         /// </summary>
         internal static string SMSUIOTPLabel {
             get {
                 return ResourceManager.GetString("SMSUIOTPLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Enroll your mobile.
+        /// </summary>
+        internal static string SMSUIWIZLabel {
+            get {
+                return ResourceManager.GetString("SMSUIWIZLabel", resourceCulture);
             }
         }
     }

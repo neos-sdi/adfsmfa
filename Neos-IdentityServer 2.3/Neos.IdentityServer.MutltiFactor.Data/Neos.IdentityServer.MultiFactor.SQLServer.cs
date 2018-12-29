@@ -199,7 +199,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// <summary>
         /// AddUserRegistration method implementation
         /// </summary>
-        public override Registration AddUserRegistration(Registration reg, bool resetkey = false, bool canupdate = true, bool disableoninsert = false)
+        public override Registration AddUserRegistration(Registration reg, bool resetkey = true, bool canupdate = true, bool disableoninsert = false)
         {
             if (SQLUtils.HasRegistration(_host, reg.UPN))
                 if (canupdate)
@@ -259,7 +259,8 @@ namespace Neos.IdentityServer.MultiFactor.Data
             try
             {
                 int res = sql.ExecuteNonQuery();
-                this.OnKeyDataEvent(reg.UPN, KeysDataManagerEventKind.add);
+                if (resetkey)
+                    this.OnKeyDataEvent(reg.UPN, KeysDataManagerEventKind.add);
             }
             catch (Exception ex)
             {

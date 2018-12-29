@@ -133,6 +133,12 @@
     <value>PIN Code</value>
     <comment>Code PIN</comment>
   </data>
+  <data name="GLOBALPINMessage" xml:space="preserve">
+    <value>Enter your PIN code</value>
+  </data>
+  <data name="GLOBALUIPINLabel" xml:space="preserve">
+    <value>Enroll your Pin code</value>
+  </data>
   <data name="GLOBALWarnOverNetwork" xml:space="preserve">
     <value>(The data is transmitted over the internet)</value>
     <comment>(Les données sont transmises sur internet)</comment>
@@ -174,8 +180,11 @@
     <comment>Nous avons envoyé un email contenant un code de vérification.</comment>
   </data>
   <data name="MAILUIOTPLabel" xml:space="preserve">
-    <value>Access code received by email</value>
+    <value>Enter Code</value>
     <comment>Code d'accès reçu par email</comment>
+  </data>
+  <data name="MAILUIWIZLabel" xml:space="preserve">
+    <value>Enroll your email address</value>
   </data>
   <data name="OTPUICFGLabel" xml:space="preserve">
     <value>Single use access code</value>
@@ -202,12 +211,15 @@
     <comment>Accéder à mes options de configuration</comment>
   </data>
   <data name="OTPUIMessage" xml:space="preserve">
-    <value>Enter the verification code for your mobile application.</value>
+    <value>Enter the verification code displayed in the authenticator app on your mobile device.</value>
     <comment>Entrez le code de vérification de votre application mobile.</comment>
   </data>
   <data name="OTPUIOTPLabel" xml:space="preserve">
-    <value>Single use access code</value>
+    <value>Enter Code</value>
     <comment>Code d'accès à usage unique</comment>
+  </data>
+  <data name="OTPUIWIZLabel" xml:space="preserve">
+    <value>Enroll Authenticator App</value>
   </data>
   <data name="SMSUICFGLabel" xml:space="preserve">
     <value>Phone number</value>
@@ -248,5 +260,8 @@
   <data name="SMSUIOTPLabel" xml:space="preserve">
     <value>Access code received by phone</value>
     <comment>Code d'accès reçu par téléphone</comment>
+  </data>
+  <data name="SMSUIWIZLabel" xml:space="preserve">
+    <value>Enroll your mobile</value>
   </data>
 </root>

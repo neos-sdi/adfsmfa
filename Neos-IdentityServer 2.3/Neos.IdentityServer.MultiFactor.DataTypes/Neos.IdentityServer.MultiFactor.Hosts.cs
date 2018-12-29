@@ -257,12 +257,14 @@ namespace Neos.IdentityServer.MultiFactor
         private int _defaultpin = 0;
         private bool _kmsoo = true;
         private int _maxretries = 3;
+        private bool _useuipaginated = false;
 
         private bool _useActiveDirectory = true;
         private bool _customUpdatePassword = true;
         private UserFeaturesOptions _userFeatures = (UserFeaturesOptions.AllowDisabled | UserFeaturesOptions.AllowUnRegistered | UserFeaturesOptions.AllowManageOptions | UserFeaturesOptions.AllowChangePassword | UserFeaturesOptions.AllowEnrollment); // Default Mode
         private ConfigAdvertising _advertising = new ConfigAdvertising(1, 31);
         private string _issuer;
+        private ADFSUserInterfaceKind _adfsuikind = ADFSUserInterfaceKind.Default;
        
 
         /// <summary>
@@ -295,6 +297,8 @@ namespace Neos.IdentityServer.MultiFactor
                 PinLength = 4;
                 DefaultPin = 0;
                 MaxRetries = 1;
+                UiKind = ADFSUserInterfaceKind.Default;
+                UseUIPaginated = false;
 
                 UseActiveDirectory = true;
                 CustomUpdatePassword = true;
@@ -379,6 +383,8 @@ namespace Neos.IdentityServer.MultiFactor
                 DefaultCountryCode = "fr";
             if (string.IsNullOrEmpty(AdminContact))
                 AdminContact = "adminmfa@contoso.com";
+            UiKind = ADFSUserInterfaceKind.Default;
+            UseUIPaginated = false;
             UserFeatures = (UserFeaturesOptions.AllowDisabled | UserFeaturesOptions.AllowUnRegistered | UserFeaturesOptions.AllowManageOptions | UserFeaturesOptions.AllowChangePassword);
 
             if (string.IsNullOrEmpty(Hosts.SQLServerHost.ConnectionString))
@@ -601,6 +607,21 @@ namespace Neos.IdentityServer.MultiFactor
             get;
             set;
         }
+
+        [XmlElement("UiKind")]
+        public ADFSUserInterfaceKind UiKind
+        {
+            get { return _adfsuikind; }
+            set { _adfsuikind = value; }
+        }
+
+        [XmlElement("UseUIPaginated")]
+        public bool UseUIPaginated
+        {
+            get { return _useuipaginated; }
+            set { _useuipaginated = value; }
+        }
+
     }
     #endregion
 
@@ -1422,7 +1443,7 @@ namespace Neos.IdentityServer.MultiFactor
     }
 
     /// <summary>
-    /// SQLServerHost class implementation
+    /// ADFSFarmHost class implementation
     /// </summary>
     public class ADFSFarmHost
     {

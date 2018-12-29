@@ -48,6 +48,7 @@ namespace Neos.IdentityServer.MultiFactor
         string Name { get; }
         string Description { get; }
         string GetUILabel(AuthenticationContext ctx);
+        string GetWizardUILabel(AuthenticationContext ctx);
         string GetUICFGLabel(AuthenticationContext ctx);
         string GetUIMessage(AuthenticationContext ctx);
         string GetUIListOptionLabel(AuthenticationContext ctx);

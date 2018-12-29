@@ -1500,7 +1500,17 @@ namespace Neos.IdentityServer.MultiFactor
         Azure = 4,
         Biometrics = 5,
         None = 6
-    }         
+    }
+
+    /// <summary>
+    /// ADFSUserInterfaceKind
+    /// </summary>
+    public enum ADFSUserInterfaceKind
+    {
+        Default,
+        Default2019,
+        Custom
+    }
 
     /// <summary>
     /// Thumbprint Class

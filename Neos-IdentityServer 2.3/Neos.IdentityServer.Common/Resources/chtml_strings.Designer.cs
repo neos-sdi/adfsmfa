@@ -97,7 +97,25 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à (The data are transmitted on the internet).
+        ///   Recherche une chaîne localisée semblable à Enter your PIN code.
+        /// </summary>
+        internal static string GLOBALPINMessage {
+            get {
+                return ResourceManager.GetString("GLOBALPINMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Enroll your Pin code.
+        /// </summary>
+        internal static string GLOBALUIPINLabel {
+            get {
+                return ResourceManager.GetString("GLOBALUIPINLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à (The data is transmitted over the internet).
         /// </summary>
         internal static string GLOBALWarnOverNetwork {
             get {
@@ -187,11 +205,20 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Access code received by email.
+        ///   Recherche une chaîne localisée semblable à Enter Code.
         /// </summary>
         internal static string MAILUIOTPLabel {
             get {
                 return ResourceManager.GetString("MAILUIOTPLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Enroll your email address.
+        /// </summary>
+        internal static string MAILUIWIZLabel {
+            get {
+                return ResourceManager.GetString("MAILUIWIZLabel", resourceCulture);
             }
         }
         
@@ -250,7 +277,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Enter the verification code for your mobile application..
+        ///   Recherche une chaîne localisée semblable à Enter the verification code displayed in the authenticator app on your mobile device..
         /// </summary>
         internal static string OTPUIMessage {
             get {
@@ -259,11 +286,20 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Single use access code.
+        ///   Recherche une chaîne localisée semblable à Enter Code.
         /// </summary>
         internal static string OTPUIOTPLabel {
             get {
                 return ResourceManager.GetString("OTPUIOTPLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Enroll Authenticator App.
+        /// </summary>
+        internal static string OTPUIWIZLabel {
+            get {
+                return ResourceManager.GetString("OTPUIWIZLabel", resourceCulture);
             }
         }
         
@@ -354,6 +390,15 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         internal static string SMSUIOTPLabel {
             get {
                 return ResourceManager.GetString("SMSUIOTPLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Enroll your mobile.
+        /// </summary>
+        internal static string SMSUIWIZLabel {
+            get {
+                return ResourceManager.GetString("SMSUIWIZLabel", resourceCulture);
             }
         }
     }

@@ -145,28 +145,28 @@
     <value>Cancelar</value>
   </data>
   <data name="HtmlPWDLabelActual" xml:space="preserve">
-    <value>Contraseña actual :</value>
+    <value>Contraseña actual</value>
   </data>
   <data name="HtmlPWDLabelNew" xml:space="preserve">
-    <value>Nueva contraseña:</value>
+    <value>Nueva contraseña</value>
   </data>
   <data name="HtmlPWDLabelNewConfirmation" xml:space="preserve">
-    <value>Confirmación de nueva contraseña :</value>
+    <value>Confirmación contraseña</value>
   </data>
   <data name="HtmlPWDSave" xml:space="preserve">
     <value>Guardar</value>
   </data>
   <data name="HtmlREGAccessMethod" xml:space="preserve">
-    <value>Método de acceso por defecto :</value>
+    <value>Método de acceso por defecto</value>
   </data>
   <data name="HtmlREGLabelAppKey" xml:space="preserve">
-    <value>Tecla de aplicación :</value>
+    <value>Tecla de aplicación</value>
   </data>
   <data name="HtmlREGLabelMail" xml:space="preserve">
     <value>Dirección de correo electrónico personal:</value>
   </data>
   <data name="HtmlREGLabelPhoneNumber" xml:space="preserve">
-    <value>Número de teléfono móvil :</value>
+    <value>Número de teléfono móvil</value>
   </data>
   <data name="HtmlREGOptionChooseBest" xml:space="preserve">
     <value>Me deja elegir la mejor opción</value>
@@ -233,7 +233,7 @@
     <value>Solicitud de inscripción</value>
   </data>
   <data name="HtmlREGAccessPageMethods" xml:space="preserve">
-    <value>Opciones de configuración :</value>
+    <value>Opciones de configuración</value>
   </data>
   <data name="HtmlREGAzureAccount" xml:space="preserve">
     <value>Acceda a mis opciones de configuración de Azure</value>
@@ -248,7 +248,7 @@
     <value>Registra mi aplicación de autenticación</value>
   </data>
   <data name="HtmlUIMRecordNewKey" xml:space="preserve">
-    <value>Registre una nueva clave</value>
+    <value>Nueva clave</value>
   </data>
   <data name="HtmlLabelWREGOTP" xml:space="preserve">
     <value>Debe haber instalado una aplicación de autenticación como Microsoft Authenticator, Google Authenticator en su dispositivo para poder continuar y registrar su cuenta.</value>

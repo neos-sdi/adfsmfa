@@ -131,6 +131,12 @@
     <value>Code PIN</value>
     <comment>Code Pin</comment>
   </data>
+  <data name="GLOBALPINMessage" xml:space="preserve">
+    <value>Entrez votre code PIN</value>
+  </data>
+  <data name="GLOBALUIPINLabel" xml:space="preserve">
+    <value>Enregistrer votre code Pin</value>
+  </data>
   <data name="GLOBALWarnOverNetwork" xml:space="preserve">
     <value>(Les données sont transmises sur internet)</value>
     <comment>(Les données sont transmises sur internet)</comment>
@@ -172,8 +178,11 @@
     <comment>Nous avons envoyé un email contenant un code de vérification.</comment>
   </data>
   <data name="MAILUIOTPLabel" xml:space="preserve">
-    <value>Code d'accès reçu par email</value>
+    <value>Entrez le Code</value>
     <comment>Code d'accès reçu par email</comment>
+  </data>
+  <data name="MAILUIWIZLabel" xml:space="preserve">
+    <value>Enregistrer votre Email</value>
   </data>
   <data name="OTPUICFGLabel" xml:space="preserve">
     <value>Code d'accès à usage unique</value>
@@ -200,12 +209,15 @@
     <comment>Accéder à mes options de configuration</comment>
   </data>
   <data name="OTPUIMessage" xml:space="preserve">
-    <value>Entrez le code de vérification de votre application mobile.</value>
+    <value>Entrez le code de vérification affiché dans l'application d'authentification sur votre appareil mobile.</value>
     <comment>Entrez le code de vérification de votre application mobile.</comment>
   </data>
   <data name="OTPUIOTPLabel" xml:space="preserve">
-    <value>Code d'accès à usage unique</value>
+    <value>Entrez le Code</value>
     <comment>Code d'accès à usage unique</comment>
+  </data>
+  <data name="OTPUIWIZLabel" xml:space="preserve">
+    <value>Enregistrer votre Application</value>
   </data>
   <data name="SMSUICFGLabel" xml:space="preserve">
     <value>Numéro de téléphone</value>
@@ -244,7 +256,10 @@
     <comment>Nous avons envoyé un SMS contenant un code de vérification. {0}</comment>
   </data>
   <data name="SMSUIOTPLabel" xml:space="preserve">
-    <value>Code d'accès reçu par téléphone</value>
+    <value>Entrez le Code</value>
     <comment>Code d'accès reçu par téléphone</comment>
+  </data>
+  <data name="SMSUIWIZLabel" xml:space="preserve">
+    <value>Enregistrer votre téléphone</value>
   </data>
 </root>
