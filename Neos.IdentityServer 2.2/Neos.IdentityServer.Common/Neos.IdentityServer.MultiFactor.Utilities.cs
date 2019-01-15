@@ -734,7 +734,9 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         internal static void ChangePassword(string username, string oldpassword, string newpassword)
         {
-            using (var ctx = new PrincipalContext(ContextType.Domain))
+            ADDSForestUtils utl = new ADDSForestUtils();
+            string dns = utl.GetForestDNSForUPN(username);
+            using (var ctx = new PrincipalContext(ContextType.Domain, dns))
             {
                 using (var user = UserPrincipal.FindByIdentity(ctx, IdentityType.UserPrincipalName, username))
                 {

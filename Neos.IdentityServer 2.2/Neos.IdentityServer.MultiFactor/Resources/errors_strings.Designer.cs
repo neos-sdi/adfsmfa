@@ -79,7 +79,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Access allowed ! but your account is not enabled ! it is recommanded that you provide now all required informations or contact your administartors, they will notify you about the activation process..
+        ///   Recherche une chaîne localisée semblable à Access to this application requires additional authentication. To initate additional authentication setup press &quot;Change my options&quot;.
         /// </summary>
         internal static string ErrorAccountAuthorized {
             get {

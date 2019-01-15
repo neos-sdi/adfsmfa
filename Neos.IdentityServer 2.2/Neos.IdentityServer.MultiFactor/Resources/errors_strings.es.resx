@@ -124,7 +124,7 @@
     <value>El acceso no está permitido !  su cuenta no está habilitada ! Se ha enviado una solicitud a los administradores, se le notificará pronto del proceso de activación.</value>
   </data>
   <data name="ErrorAccountAuthorized" xml:space="preserve">
-    <value>Acceso permitido ! Pero su cuenta no está habilitada! Se recomienda que usted proporcione ahora todas las informaciones requeridas o contacte a sus administradores, ellos le notificarán sobre el proceso de activación.</value>
+    <value>El acceso a esta aplicación requiere autenticación adicional. Para iniciar la configuración de autenticación adicional, presione "Cambiar mis opciones"</value>
   </data>
   <data name="ErrorAccountNoAccess" xml:space="preserve">
     <value>El acceso no autorizado ! Su cuenta no está activado ! Por favor, póngase en contacto con los administradores para iniciar el proceso de activación. o confirmar la forma anterior !</value>

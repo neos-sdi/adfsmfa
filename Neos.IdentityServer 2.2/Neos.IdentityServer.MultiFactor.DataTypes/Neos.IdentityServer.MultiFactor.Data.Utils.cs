@@ -19,6 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.DirectoryServices;
+using System.DirectoryServices.ActiveDirectory;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -53,5 +54,91 @@ namespace Neos.IdentityServer.MultiFactor.Data
             EventLog.WriteEntry(EventLogSource, message, type, eventID);
         }
     }
+    /// <summary>
+    /// ADDSForest class implementation
+    /// </summary>
+    public class ADDSForest
+    {
+        public bool IsRoot { get; set; }
+        public string ForestDNS { get; set; }
+        public List<string> TopLevelNames = new List<string>();
+    }
 
+    /// <summary>
+    /// ADDSForestUtils class implementation
+    /// </summary>
+    public class ADDSForestUtils
+    {
+        private bool _isbinded = false;
+        private List<ADDSForest> _forests = new List<ADDSForest>();
+
+        /// <summary>
+        /// ADDSForestUtils constructor
+        /// </summary>
+        public ADDSForestUtils()
+        {
+            _isbinded = false;
+            Bind();
+        }
+
+        /// <summary>
+        /// Bind method implementation
+        /// </summary>
+        public void Bind()
+        {
+            if (_isbinded)
+                return;
+            _isbinded = true;
+
+            Forests.Clear();
+            Forest currentforest = Forest.GetCurrentForest();
+            ADDSForest root = new ADDSForest();
+            root.IsRoot = true;
+            root.ForestDNS = currentforest.Name;
+            Forests.Add(root);
+            foreach (ForestTrustRelationshipInformation trusts in currentforest.GetAllTrustRelationships())
+            {
+                ADDSForest sub = new ADDSForest();
+                sub.IsRoot = false;
+                sub.ForestDNS = trusts.TargetName;
+                foreach (TopLevelName t in trusts.TopLevelNames)
+                {
+                    if (t.Status == TopLevelNameStatus.Enabled)
+                        sub.TopLevelNames.Add(t.Name);
+                }
+                Forests.Add(sub);
+            }
+        }
+
+        /// <summary>
+        /// GetForestDNSForUPN method implementation
+        /// </summary>
+        public string GetForestDNSForUPN(string upn)
+        {
+            string result = string.Empty;
+            string domtofind = upn.Substring(upn.IndexOf('@') + 1);
+            foreach (ADDSForest f in Forests)
+            {
+                if (f.IsRoot) // Fallback/default Forest
+                    result = f.ForestDNS;
+                else
+                {
+                    foreach (string s in f.TopLevelNames)
+                    {
+                        if (s.ToLower().Equals(domtofind.ToLower()))
+                        {
+                            result = f.ForestDNS;
+                            break;
+                        }
+                    }
+                }
+            }
+            return result;
+        }
+
+        public List<ADDSForest> Forests
+        {
+            get { return _forests; }
+        }
+    }
 }

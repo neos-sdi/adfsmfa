@@ -124,7 +124,7 @@
     <value>Access not allowed ! your account is not enabled ! a request has been sended to administartors, you will be notified soon of the activation process.</value>
   </data>
   <data name="ErrorAccountAuthorized" xml:space="preserve">
-    <value>Access allowed ! but your account is not enabled ! it is recommanded that you provide now all required informations or contact your administartors, they will notify you about the activation process.</value>
+    <value>Access to this application requires additional authentication. To initate additional authentication setup press "Change my options"</value>
   </data>
   <data name="ErrorAccountNoAccess" xml:space="preserve">
     <value>Unauthorized access ! Your account is not activated ! Please contact the administrators to start the activation process or validate the previous form !</value>
