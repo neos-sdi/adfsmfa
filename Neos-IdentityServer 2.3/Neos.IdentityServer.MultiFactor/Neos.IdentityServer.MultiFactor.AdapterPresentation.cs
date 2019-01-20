@@ -66,6 +66,56 @@ namespace Neos.IdentityServer.MultiFactor
         }
         #endregion
 
+        #region CSS
+        /// <summary>
+        /// GetFormPreRenderHtmlCSS implementation
+        /// </summary>
+        protected override string GetFormPreRenderHtmlCSS(AuthenticationContext usercontext, bool removetag = false)
+        {
+            string result = string.Empty;
+            if (!removetag)
+                result = "<style>" + "\r\n";
+            result += "\r\n";
+            result += base.GetFormPreRenderHtmlCSS(usercontext, true);
+            result += "\r\n";
+
+            result += "#buttonquit {" + "\r\n";
+            result += "border:none;" + "\r\n";
+            result += "background-color:rgb(232, 17, 35);" + "\r\n";
+            result += "min-width:120px;" + "\r\n";
+            result += "width:auto;" + "\r\n";
+            result += "height:30px;" + "\r\n";
+            result += "padding:4px 20px 6px 20px;" + "\r\n";
+            result += "border-style:solid;" + "\r\n";
+            result += "border-width:1px;" + "\r\n";
+            result += "transition:background 0s;" + "\r\n";
+            result += "color:rgb(255, 255, 255);" + "\r\n";
+            result += "cursor:pointer;" + "\r\n";
+            result += "margin-bottom:8px;" + "\r\n";
+            result += "-ms-user-select:none;" + "\r\n";
+            result += "-moz-transition:background 0s;" + "\r\n";
+            result += "-webkit-transition:background 0s;" + "\r\n";
+            result += "-o-transition:background 0s;" + "\r\n";
+            result += "-webkit-touch-callout:none;" + "\r\n";
+            result += "-webkit-user-select:none;" + "\r\n";
+            result += "-khtml-user-select:none;" + "\r\n";
+            result += "-moz-user-select: none;" + "\r\n";
+            result += "-o-user-select: none;" + "\r\n";
+            result += "user-select:none;" + "\r\n";
+            result += "}" + "\r\n";
+
+            result += "#buttonquit:hover {" + "\r\n";
+            result += "background-color:rgb(170, 0, 0);" + "\r\n";
+            result += "}" + "\r\n";
+
+            if (!removetag)
+                result += "</style>" + "\r\n";
+            else
+                result += "\r\n";
+            return result;
+        }
+        #endregion
+
         #region Identification
         /// <summary>
         /// GetFormPreRenderHtmlIdentification implementation

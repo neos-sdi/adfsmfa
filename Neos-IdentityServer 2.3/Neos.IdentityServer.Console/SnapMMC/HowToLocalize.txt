@@ -20,14 +20,18 @@ How to do ?
 
 1- Retrieve the complete code of the solution (version 2.3 or more)
 2- unpack the source code on your workstation (no development tool required).
-3- Move to the directory ..\Manage_Resources
-4- Execute: 0-import_resources.cmd
-5- Execute: 1-edit_resources.cmd
-6- Move to the directory .. \Manage_Resources\Sources
-7- With a text editor of your choice (Notepad, TextPad, VS, but not MSWord) modify the libellations present in the different .resx files.
-8- Execute: 2-Build_resources.cmd (ES or FR)
-9- Get the .resources files corresponding to the .resx files you have modified
-10- Copy the .resources files on the different ADFS servers in C:\Program Files\MFA\ResourceSet
-11- Restart the ADFS services (net stop adfssrv and net start adfssrv)
+3- On your adfs server move to C:\Program Files\MFA\ResourceSet
+4- Copy ResGen.exe on your Workstation
+5- On Workstation
+6- Move to the directory ..\Manage_Resources
+7- Paste the Resgen.exe
+8- Execute: 0-import_resources.cmd
+9- Execute: 1-edit_resources.cmd
+10- Move to the directory .. \Manage_Resources\Sources
+11- With a text editor of your choice (Notepad, TextPad, VS, but not MSWord) modify the libellations present in the different .resx files.
+12- Execute: 2-Build_resources.cmd (ES or FR)
+13- Get the .resources files corresponding to the .resx files you have modified
+14- Copy the .resources files on the different ADFS servers in C:\Program Files\MFA\ResourceSet
+15- Restart the ADFS services (net stop adfssrv and net start adfssrv)
 
-12- Done!
+16- Done!

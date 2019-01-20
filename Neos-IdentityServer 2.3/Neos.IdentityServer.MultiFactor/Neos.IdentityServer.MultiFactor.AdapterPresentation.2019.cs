@@ -70,6 +70,98 @@ namespace Neos.IdentityServer.MultiFactor
         }
         #endregion
 
+        #region CSS
+        /// <summary>
+        /// GetFormPreRenderHtmlCSS implementation
+        /// </summary>
+        protected override string GetFormPreRenderHtmlCSS(AuthenticationContext usercontext, bool removetag = false)
+        {
+            string result = string.Empty;
+            if (!removetag)
+                result = "<style>" + "\r\n";
+            result += "\r\n";
+            result += base.GetFormPreRenderHtmlCSS(usercontext, true);
+            result += "\r\n";
+
+            result += "#buttonquit {" + "\r\n";
+            result += "align-items: flex-start;" + "\r\n";
+            result += "background-color: rgb(232, 17, 35);" + "\r\n";
+            result += "border-bottom-color: rgb(232, 17, 35);" + "\r\n";
+            result += "border-bottom-style: solid;" + "\r\n";
+            result += "border-bottom-width: 1px;" + "\r\n";
+            result += "border-image-outset: 0px;" + "\r\n";
+            result += "border-image-repeat: stretch;" + "\r\n";
+            result += "border-image-slice: 100%;" + "\r\n";
+            result += "border-image-source: none;" + "\r\n";
+            result += "border-image-width: 1;" + "\r\n";
+            result += "border-left-color: rgb(232, 17, 35);" + "\r\n";
+            result += "border-left-style: solid;" + "\r\n";
+            result += "border-left-width: 1px;" + "\r\n";
+            result += "border-right-color: rgb(232, 17, 35);" + "\r\n";
+            result += "border-right-style: solid;" + "\r\n";
+            result += "border-right-width: 1px;" + "\r\n";
+            result += "border-top-color: rgb(232, 17, 35);" + "\r\n";
+            result += "border-top-style: solid;" + "\r\n";
+            result += "border-top-width: 1px;" + "\r\n";
+            result += "box-sizing: border-box;" + "\r\n";
+            result += "color: rgb(255, 255, 255);" + "\r\n";
+            result += "cursor: pointer;" + "\r\n";
+            result += "direction: ltr;" + "\r\n";
+            result += "display: inline-block;" + "\r\n";
+            result += "font-family: \"Segoe UI Webfont\", -apple-system, \"Helvetica Neue\", \"Lucida Grande\", Roboto, Ebrima, \"Nirmala UI\", Gadugi, \"Segoe Xbox Symbol\", \"Segoe UI Symbol\", \"Meiryo UI\", \"Khmer UI\", Tunga, \"Lao UI\", Raavi, \"Iskoola Pota\", Latha, Leelawadee, \"Microsoft YaHei UI\", \"Microsoft JhengHei UI\", \"Malgun Gothic\", \"Estrangelo Edessa\", \"Microsoft Himalaya\", \"Microsoft New Tai Lue\", \"Microsoft PhagsPa\", \"Microsoft Tai Le\", \"Microsoft Yi Baiti\", \"Mongolian Baiti\", \"MV Boli\", \"Myanmar Text\", \"Cambria Math\";" + "\r\n";
+            result += "font-size: 15px;" + "\r\n";
+            result += "font-stretch: normal;" + "\r\n";
+            result += "font-style: normal;" + "\r\n";
+            result += "font-variant-caps: normal;" + "\r\n";
+            result += "font-variant-ligatures: normal;" + "\r\n";
+            result += "font-variant-numeric: normal;" + "\r\n";
+            result += "font-weight: normal;" + "\r\n";
+            result += "height: 36px;" + "\r\n";
+            result += "letter-spacing: normal;" + "\r\n";
+            result += "line-height: 25px;" + "\r\n";
+            result += "margin-bottom: 0px;" + "\r\n";
+            result += "margin-left: 0px;" + "\r\n";
+            result += "margin-right: 0px;" + "\r\n";
+            result += "margin-top: 0px;" + "\r\n";
+            result += "max-width: 100%;" + "\r\n";
+            result += "min-width: 165px;" + "\r\n";
+            result += "overflow-x: hidden;" + "\r\n";
+            result += "overflow-y: hidden;" + "\r\n";
+            result += "padding-bottom: 4px;" + "\r\n";
+            result += "padding-left: 12px;" + "\r\n";
+            result += "padding-right: 12px;" + "\r\n";
+            result += "padding-top: 4px;" + "\r\n";
+            result += "position: relative;" + "\r\n";
+            result += "text-align: center;" + "\r\n";
+            result += "text-indent: 0px;" + "\r\n";
+            result += "text-overflow: ellipsis;" + "\r\n";
+            result += "text-rendering: auto;" + "\r\n";
+            result += "text-shadow: none;" + "\r\n";
+            result += "text-size-adjust: 100%;" + "\r\n";
+            result += "touch-action: manipulation;" + "\r\n";
+            result += "user-select: none;" + "\r\n";
+            result += "vertical-align: middle;" + "\r\n";
+            result += "white-space: nowrap;" + "\r\n";
+            result += "width: 100%;" + "\r\n";
+            result += "word-spacing: 0px;" + "\r\n";
+            result += "writing-mode: horizontal-tb;" + "\r\n";
+            result += "-webkit-appearance: none;" + "\r\n";
+            result += "-webkit-rtl-ordering: logical;" + "\r\n";
+            result += "-webkit-border-image: none;" + "\r\n";
+            result += "}" + "\r\n";
+
+            result += "#buttonquit:hover {" + "\r\n";
+            result += "background: rgb(170, 0, 0);" + "\r\n";
+            result += "border: 1px solid rgb(232, 17, 35);" + "\r\n";
+            result += "}" + "\r\n";
+
+            if (!removetag)
+                result += "</style>" + "\r\n";
+            else
+                result += "\r\n";
+            return result;
+        }
+        #endregion
 
         #region Identification
         /// <summary>
