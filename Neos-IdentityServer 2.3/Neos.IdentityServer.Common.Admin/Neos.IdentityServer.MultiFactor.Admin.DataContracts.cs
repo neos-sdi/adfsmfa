@@ -289,6 +289,33 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             }
             ManagementService.ADFSManager.WriteConfiguration(host);
         }
+
+        /// <summary>
+        /// SetTheme method implementation
+        /// </summary>
+        internal void SetTheme(PSHost host, int _kind, string _theme, bool _dynparam)
+        {
+            RegistryVersion reg = new RegistryVersion();
+            ManagementService.Initialize(true);
+            MFAConfig cfg = ManagementService.Config;
+            if (reg.IsWindows2019)
+            {
+                cfg.UiKind = (ADFSUserInterfaceKind)_kind;
+                if ((ADFSUserInterfaceKind)_kind == ADFSUserInterfaceKind.Default)
+                    cfg.UseUIPaginated = false;
+                else
+                    cfg.UseUIPaginated = _dynparam;
+                ManagementService.ADFSManager.SetADFSTheme(host, _theme, cfg.UseUIPaginated, true);
+                ManagementService.ADFSManager.WriteConfiguration(host);
+            }
+            else
+            {
+                cfg.UiKind = ADFSUserInterfaceKind.Default;
+                cfg.UseUIPaginated = false;
+                ManagementService.ADFSManager.SetADFSTheme(host, _theme, false, false);
+                ManagementService.ADFSManager.WriteConfiguration(host);
+            }
+        }
     }
 
     [Serializable]

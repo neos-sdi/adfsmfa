@@ -1,0 +1,33 @@
+﻿# Localizing MFA Web parts
+
+For security reasons, and to avoid unsafe code execution. 
+The translation of the resources must be done by recompiling the code of the adfsmfa solution with Visual Studio and signing the code with your own key.
+
+Remember that this is an open-source project. 
+If you think you have a better translation and that it can be shared with everyone. you must post a pull-request at https://github.com/neos-sdi/adfsmfa/pulls. 
+If these proposals are integrated, they will be maintained in the future.
+
+You can also offer translations for unsupported languages (French, English, Spanish (draft)), such as German, Italian, Russian, etc.
+
+If you do not want or can not recompile the solution, we'll give you a simpler alternative that does not require software development skills.
+We think that this is not the best solution, but it can allow you to precisely test the interface you want to offer. 
+Later, you will need to be able to upgrade your translations or to propose them to the community in order to integrate your work into the project.
+
+Editing resource-based translations is only available for the Web Interface part.
+The console and PowerShell do not allow resource-based translation.
+
+How to do ?
+
+1- Retrieve the complete code of the solution (version 2.3 or more)
+2- unpack the source code on your workstation (no development tool required).
+3- Move to the directory ..\Manage_Resources
+4- Execute: 0-import_resources.cmd
+5- Execute: 1-edit_resources.cmd
+6- Move to the directory .. \Manage_Resources\Sources
+7- With a text editor of your choice (Notepad, TextPad, VS, but not MSWord) modify the libellations present in the different .resx files.
+8- Execute: 2-Build_resources.cmd (ES or FR)
+9- Get the .resources files corresponding to the .resx files you have modified
+10- Copy the .resources files on the different ADFS servers in C:\Program Files\MFA\ResourceSet
+11- Restart the ADFS services (net stop adfssrv and net start adfssrv)
+
+12- Done!

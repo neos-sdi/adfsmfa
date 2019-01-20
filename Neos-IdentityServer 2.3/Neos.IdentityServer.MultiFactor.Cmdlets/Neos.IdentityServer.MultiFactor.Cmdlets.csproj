@@ -93,13 +93,11 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Ressources\errors_strings.es.resx" />
     <EmbeddedResource Include="Ressources\errors_strings.fr.resx" />
     <EmbeddedResource Include="Ressources\errors_strings.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>errors_strings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="Ressources\infos_strings.es.resx" />
     <EmbeddedResource Include="Ressources\infos_strings.fr.resx" />
     <EmbeddedResource Include="Ressources\infos_strings.resx">
       <Generator>ResXFileCodeGenerator</Generator>

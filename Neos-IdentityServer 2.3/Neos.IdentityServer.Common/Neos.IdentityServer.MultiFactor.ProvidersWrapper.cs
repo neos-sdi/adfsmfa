@@ -29,7 +29,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Script.Serialization;
 
-namespace Neos.IdentityServer.MultiFactor
+namespace Neos.IdentityServer.MultiFactor.Common
 {
     public enum RequiredMethodElements
     {
@@ -120,8 +120,8 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public static string GetPINLabel(AuthenticationContext ctx)
         {
-            Resources.chtml_strings.Culture = new CultureInfo(ctx.Lcid);
-            return Resources.chtml_strings.GLOBALPINLabel;
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
+            return Resources.GetString(ResourcesLocaleKind.Html, "GLOBALPINLabel");
         }
 
         /// <summary>
@@ -129,8 +129,8 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public static string GetPINMessage(AuthenticationContext ctx)
         {
-            Resources.chtml_strings.Culture = new CultureInfo(ctx.Lcid);
-            return Resources.chtml_strings.GLOBALPINMessage;
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
+            return Resources.GetString(ResourcesLocaleKind.Html, "GLOBALPINMessage");
         }
 
         /// <summary>
@@ -138,9 +138,8 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public static string GetPINWizardUILabel(AuthenticationContext ctx)
         {
-            Resources.chtml_strings.Culture = new CultureInfo(ctx.Lcid);
-            return Resources.chtml_strings.GLOBALUIPINLabel;
-
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
+            return Resources.GetString(ResourcesLocaleKind.Html, "GLOBALUIPINLabel");
         }
 
         /// <summary>
@@ -500,8 +499,8 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public override string GetUILabel(AuthenticationContext ctx)
         {
-            Resources.chtml_strings.Culture = new CultureInfo(ctx.Lcid);
-            return Resources.chtml_strings.OTPUIOTPLabel;
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
+            return Resources.GetString(ResourcesLocaleKind.Html, "OTPUIOTPLabel");
         }
 
         /// <summary>
@@ -509,8 +508,8 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public override string GetWizardUILabel(AuthenticationContext ctx)
         {
-            Resources.chtml_strings.Culture = new CultureInfo(ctx.Lcid);
-            return Resources.chtml_strings.OTPUIWIZLabel;
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
+            return Resources.GetString(ResourcesLocaleKind.Html, "OTPUIWIZLabel");
         }
 
         /// <summary>
@@ -518,8 +517,8 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public override string GetUICFGLabel(AuthenticationContext ctx)
         {
-            Resources.chtml_strings.Culture = new CultureInfo(ctx.Lcid);
-            return Resources.chtml_strings.OTPUICFGLabel;
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
+            return Resources.GetString(ResourcesLocaleKind.Html, "OTPUICFGLabel");
         }
 
         /// <summary>
@@ -527,8 +526,8 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public override string GetUIMessage(AuthenticationContext ctx)
         {
-            Resources.chtml_strings.Culture = new CultureInfo(ctx.Lcid);
-            return Resources.chtml_strings.OTPUIMessage;
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
+            return Resources.GetString(ResourcesLocaleKind.Html, "OTPUIMessage");
         }
 
         /// <summary>
@@ -536,8 +535,8 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public override string GetUIListOptionLabel(AuthenticationContext ctx)
         {
-            Resources.chtml_strings.Culture = new CultureInfo(ctx.Lcid);
-            return Resources.chtml_strings.OTPUIListOptionLabel;
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
+            return Resources.GetString(ResourcesLocaleKind.Html, "OTPUIListOptionLabel");
         }
 
         /// <summary>
@@ -545,8 +544,8 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public override string GetUIListChoiceLabel(AuthenticationContext ctx)
         {
-            Resources.chtml_strings.Culture = new CultureInfo(ctx.Lcid);
-            return Resources.chtml_strings.OTPUIListChoiceLabel;
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
+            return Resources.GetString(ResourcesLocaleKind.Html, "OTPUIListChoiceLabel");
         }
 
         /// <summary>
@@ -554,8 +553,8 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public override string GetUIConfigLabel(AuthenticationContext ctx)
         {
-            Resources.chtml_strings.Culture = new CultureInfo(ctx.Lcid);
-            return Resources.chtml_strings.OTPUIConfigLabel;
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
+            return Resources.GetString(ResourcesLocaleKind.Html, "OTPUIConfigLabel");
         }
 
         /// <summary>
@@ -563,8 +562,8 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public override string GetUIChoiceLabel(AuthenticationContext ctx, AvailableAuthenticationMethod method = null)
         {
-            Resources.chtml_strings.Culture = new CultureInfo(ctx.Lcid);
-            return Resources.chtml_strings.OTPUIChoiceLabel;
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
+            return Resources.GetString(ResourcesLocaleKind.Html, "OTPUIChoiceLabel");
         }
 
         /// <summary>
@@ -896,8 +895,8 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public override string GetUILabel(AuthenticationContext ctx)
         {
-            Resources.chtml_strings.Culture = new CultureInfo(ctx.Lcid);
-            return Resources.chtml_strings.SMSUIOTPLabel;
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
+            return Resources.GetString(ResourcesLocaleKind.Html, "SMSUIOTPLabel");
         }
 
         /// <summary>
@@ -905,8 +904,8 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public override string GetWizardUILabel(AuthenticationContext ctx)
         {
-            Resources.chtml_strings.Culture = new CultureInfo(ctx.Lcid);
-            return Resources.chtml_strings.SMSUIWIZLabel;
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
+            return Resources.GetString(ResourcesLocaleKind.Html, "SMSUIWIZLabel");
         }
 
         /// <summary>
@@ -914,8 +913,8 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public override string GetUICFGLabel(AuthenticationContext ctx)
         {
-            Resources.chtml_strings.Culture = new CultureInfo(ctx.Lcid);
-            return Resources.chtml_strings.SMSUICFGLabel;
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
+            return Resources.GetString(ResourcesLocaleKind.Html, "SMSUICFGLabel");
         }
 
         /// <summary>
@@ -923,11 +922,11 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public override string GetUIMessage(AuthenticationContext ctx)
         {
-            Resources.chtml_strings.Culture = new CultureInfo(ctx.Lcid);
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
             if (string.IsNullOrEmpty(ctx.PhoneNumber))
-                return string.Format(Resources.chtml_strings.SMSUIMessage, string.Empty);
+                return string.Format(Resources.GetString(ResourcesLocaleKind.Html, "SMSUIMessage"), string.Empty);
             else
-                return string.Format(Resources.chtml_strings.SMSUIMessage, Utilities.StripPhoneNumber(ctx.PhoneNumber));
+                return string.Format(Resources.GetString(ResourcesLocaleKind.Html, "SMSUIMessage"), Utilities.StripPhoneNumber(ctx.PhoneNumber));
         }
 
         /// <summary>
@@ -935,8 +934,8 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public override string GetUIListOptionLabel(AuthenticationContext ctx)
         {
-            Resources.chtml_strings.Culture = new CultureInfo(ctx.Lcid);
-            return Resources.chtml_strings.SMSUIListOptionLabel;
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
+            return Resources.GetString(ResourcesLocaleKind.Html, "SMSUIListOptionLabel");
         }
 
         /// <summary>
@@ -944,8 +943,8 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public override string GetUIListChoiceLabel(AuthenticationContext ctx)
         {
-            Resources.chtml_strings.Culture = new CultureInfo(ctx.Lcid);
-            return Resources.chtml_strings.SMSUIListChoiceLabel;
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
+            return Resources.GetString(ResourcesLocaleKind.Html, "SMSUIListChoiceLabel");
         }
 
         /// <summary>
@@ -953,11 +952,11 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public override string GetUIConfigLabel(AuthenticationContext ctx)
         {
-            Resources.chtml_strings.Culture = new CultureInfo(ctx.Lcid);
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
             if (string.IsNullOrEmpty(ctx.PhoneNumber))
-                return Resources.chtml_strings.SMSUIConfigLabel;
+                return Resources.GetString(ResourcesLocaleKind.Html, "SMSUIConfigLabel");
             else
-                return string.Format(Resources.chtml_strings.SMSUIConfigLabel2, Utilities.StripPhoneNumber(ctx.PhoneNumber));
+                return string.Format(Resources.GetString(ResourcesLocaleKind.Html, "SMSUIConfigLabel2"), Utilities.StripPhoneNumber(ctx.PhoneNumber));
         }
 
         /// <summary>
@@ -965,10 +964,11 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public override string GetUIChoiceLabel(AuthenticationContext ctx, AvailableAuthenticationMethod method = null)
         {
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
             if (ctx.IsTwoWay)
-                return Resources.chtml_strings.SMSUIChoiceLabel2;
+                return Resources.GetString(ResourcesLocaleKind.Html, "SMSUIChoiceLabel2");
             else
-                return Resources.chtml_strings.SMSUIChoiceLabel;
+                return Resources.GetString(ResourcesLocaleKind.Html, "SMSUIChoiceLabel");
         }
 
         /// <summary>
@@ -976,8 +976,8 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public override string GetUIWarningInternetLabel(AuthenticationContext ctx)
         {
-            Resources.chtml_strings.Culture = new CultureInfo(ctx.Lcid);
-            return Resources.chtml_strings.GLOBALWarnOverNetwork;
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
+            return Resources.GetString(ResourcesLocaleKind.Html, "GLOBALWarnOverNetwork");
         }
 
         /// <summary>
@@ -987,8 +987,8 @@ namespace Neos.IdentityServer.MultiFactor
         {
             if (ctx.IsTwoWay)
             {
-                Resources.chtml_strings.Culture = new CultureInfo(ctx.Lcid);
-                return Resources.chtml_strings.GLOBALWarnThirdParty;
+                ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
+                return Resources.GetString(ResourcesLocaleKind.Html, "GLOBALWarnThirdParty");
             }
             else
                 return string.Empty;
@@ -1001,8 +1001,8 @@ namespace Neos.IdentityServer.MultiFactor
         {
             if (ctx.IsTwoWay)
             {
-                Resources.chtml_strings.Culture = new CultureInfo(ctx.Lcid);
-                return Resources.chtml_strings.GLOBALListChoiceDefaultLabel;
+                ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
+                return Resources.GetString(ResourcesLocaleKind.Html, "GLOBALListChoiceDefaultLabel");
             }
             else
                 return string.Empty;
@@ -1165,7 +1165,7 @@ namespace Neos.IdentityServer.MultiFactor
             if (!IsInitialized)
                 throw new Exception("Provider not initialized !");
 
-            Resources.chtml_strings.Culture = new CultureInfo(ctx.Lcid);
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
 
             List<AvailableAuthenticationMethod> result = GetSessionData(this.Kind, ctx);
             if (result != null)
@@ -1296,8 +1296,8 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public override string GetUILabel(AuthenticationContext ctx)
         {
-            Resources.chtml_strings.Culture = new CultureInfo(ctx.Lcid);
-            return Resources.chtml_strings.MAILUIOTPLabel;
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
+            return Resources.GetString(ResourcesLocaleKind.Html, "MAILUIOTPLabel");
         }
 
         /// <summary>
@@ -1305,8 +1305,8 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public override string GetWizardUILabel(AuthenticationContext ctx)
         {
-            Resources.chtml_strings.Culture = new CultureInfo(ctx.Lcid);
-            return Resources.chtml_strings.MAILUIWIZLabel;
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
+            return Resources.GetString(ResourcesLocaleKind.Html, "MAILUIWIZLabel");
         }
 
         /// <summary>
@@ -1314,8 +1314,8 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public override string GetUICFGLabel(AuthenticationContext ctx)
         {
-            Resources.chtml_strings.Culture = new CultureInfo(ctx.Lcid);
-            return Resources.chtml_strings.MAILUICFGLabel;
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
+            return Resources.GetString(ResourcesLocaleKind.Html, "MAILUICFGLabel");
         }
 
         /// <summary>
@@ -1323,8 +1323,8 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public override string GetUIMessage(AuthenticationContext ctx)
         {
-            Resources.chtml_strings.Culture = new CultureInfo(ctx.Lcid);
-            return Resources.chtml_strings.MAILUIMessage;
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
+            return Resources.GetString(ResourcesLocaleKind.Html, "MAILUIMessage");
         }
 
         /// <summary>
@@ -1332,8 +1332,8 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public override string GetUIListOptionLabel(AuthenticationContext ctx)
         {
-            Resources.chtml_strings.Culture = new CultureInfo(ctx.Lcid);
-            return Resources.chtml_strings.MAILUIListOptionLabel;
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
+            return Resources.GetString(ResourcesLocaleKind.Html, "MAILUIListOptionLabel");
         }
 
         /// <summary>
@@ -1341,8 +1341,8 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public override string GetUIListChoiceLabel(AuthenticationContext ctx)
         {
-            Resources.chtml_strings.Culture = new CultureInfo(ctx.Lcid);
-            return Resources.chtml_strings.MAILUIListChoiceLabel;
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
+            return Resources.GetString(ResourcesLocaleKind.Html, "MAILUIListChoiceLabel");
         }
 
         /// <summary>
@@ -1350,11 +1350,11 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public override string GetUIConfigLabel(AuthenticationContext ctx)
         {
-            Resources.chtml_strings.Culture = new CultureInfo(ctx.Lcid);
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
             if (string.IsNullOrEmpty(ctx.MailAddress))
-                return Resources.chtml_strings.MAILUIConfigLabel;
+                return Resources.GetString(ResourcesLocaleKind.Html, "MAILUIConfigLabel");
             else
-                return string.Format(Resources.chtml_strings.MAILUIConfigLabel2, Utilities.StripEmailAddress(ctx.MailAddress));
+                return string.Format(Resources.GetString(ResourcesLocaleKind.Html, "MAILUIConfigLabel2"), Utilities.StripEmailAddress(ctx.MailAddress));
         }
 
         /// <summary>
@@ -1362,8 +1362,8 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public override string GetUIChoiceLabel(AuthenticationContext ctx, AvailableAuthenticationMethod method = null)
         {
-            Resources.chtml_strings.Culture = new CultureInfo(ctx.Lcid);
-            return Resources.chtml_strings.MAILUIChoiceLabel;
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
+            return Resources.GetString(ResourcesLocaleKind.Html, "MAILUIChoiceLabel");
         }
 
         /// <summary>
@@ -1371,8 +1371,8 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public override string GetUIWarningInternetLabel(AuthenticationContext ctx)
         {
-            Resources.chtml_strings.Culture = new CultureInfo(ctx.Lcid);
-            return Resources.chtml_strings.GLOBALWarnOverNetwork;
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
+            return Resources.GetString(ResourcesLocaleKind.Html, "GLOBALWarnOverNetwork");
         }
 
         /// <summary>
@@ -1519,7 +1519,7 @@ namespace Neos.IdentityServer.MultiFactor
             if (!IsInitialized)
                 throw new Exception("Provider not initialized !");
 
-            Resources.chtml_strings.Culture = new CultureInfo(ctx.Lcid);
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
             List<AvailableAuthenticationMethod> result = GetSessionData(this.Kind, ctx);
             if (result != null)
                 return result;
@@ -1570,8 +1570,8 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public string GetUIWarningInternetLabel(AuthenticationContext ctx)
         {
-            Resources.chtml_strings.Culture = new CultureInfo(ctx.Lcid);
-            return Resources.chtml_strings.GLOBALWarnOverNetwork;
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
+            return Resources.GetString(ResourcesLocaleKind.Html, "GLOBALWarnOverNetwork");
         }
 
         /// <summary>
@@ -1587,8 +1587,8 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public string GetUIInscriptionMessageLabel(AuthenticationContext ctx)
         {
-            Resources.chtml_strings.Culture = new CultureInfo(ctx.Lcid);
-            return Resources.chtml_strings.ADMINInscriptionEmail;
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
+            return Resources.GetString(ResourcesLocaleKind.Html, "ADMINInscriptionEmail");
         }
 
         /// <summary>
@@ -1596,8 +1596,8 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public string GetUISecretKeyMessageLabel(AuthenticationContext ctx)
         {
-            Resources.chtml_strings.Culture = new CultureInfo(ctx.Lcid);
-            return Resources.chtml_strings.ADMINKeyEmail;
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
+            return Resources.GetString(ResourcesLocaleKind.Html, "ADMINKeyEmail");
         }
 
 
@@ -1654,7 +1654,7 @@ namespace Neos.IdentityServer.MultiFactor
             catch (Exception ex)
             {
                 ctx.Notification = (int)AuthenticationResponseKind.Error;
-                Log.WriteEntry(Resources.cerrors_strings.ErrorSendingAdministrativeRequest + "\r\n" + ctx.UPN + " : " + "\r\n" + ex.Message + "\r\n" + ex.StackTrace, EventLogEntryType.Error, 801);
+                Log.WriteEntry(Resources.CSErrors.ErrorSendingAdministrativeRequest + "\r\n" + ctx.UPN + " : " + "\r\n" + ex.Message + "\r\n" + ex.StackTrace, EventLogEntryType.Error, 801);
             }
             return ctx.Notification;
         }
@@ -1673,7 +1673,7 @@ namespace Neos.IdentityServer.MultiFactor
             catch (Exception ex)
             {
                 ctx.Notification = (int)AuthenticationResponseKind.Error;
-                Log.WriteEntry(Resources.cerrors_strings.ErrorSendingAdministrativeRequest + "\r\n" + ctx.UPN + " : " + "\r\n" + ex.Message + "\r\n" + ex.StackTrace, EventLogEntryType.Error, 801);
+                Log.WriteEntry(Resources.CSErrors.ErrorSendingAdministrativeRequest + "\r\n" + ctx.UPN + " : " + "\r\n" + ex.Message + "\r\n" + ex.StackTrace, EventLogEntryType.Error, 801);
             }
             return ctx.Notification;
         }
@@ -1713,7 +1713,7 @@ namespace Neos.IdentityServer.MultiFactor
             catch (Exception ex)
             {
                 ctx.Notification = (int)AuthenticationResponseKind.Error;
-                Log.WriteEntry(Resources.cerrors_strings.ErrorSendingSecretKeyRequest + "\r\n" + ctx.UPN + " : " + "\r\n" + ex.Message + "\r\n" + ex.StackTrace, EventLogEntryType.Error, 801);
+                Log.WriteEntry(Resources.CSErrors.ErrorSendingSecretKeyRequest + "\r\n" + ctx.UPN + " : " + "\r\n" + ex.Message + "\r\n" + ex.StackTrace, EventLogEntryType.Error, 801);
             }
             return ctx.Notification;
         }
@@ -1732,7 +1732,7 @@ namespace Neos.IdentityServer.MultiFactor
             catch (Exception ex)
             {
                 ctx.Notification = (int)AuthenticationResponseKind.Error;
-                Log.WriteEntry(Resources.cerrors_strings.ErrorSendingSecretKeyRequest + "\r\n" + ctx.UPN + " : " + "\r\n" + ex.Message + "\r\n" + ex.StackTrace, EventLogEntryType.Error, 801);
+                Log.WriteEntry(Resources.CSErrors.ErrorSendingSecretKeyRequest + "\r\n" + ctx.UPN + " : " + "\r\n" + ex.Message + "\r\n" + ex.StackTrace, EventLogEntryType.Error, 801);
             }
             return ctx.Notification;
         }

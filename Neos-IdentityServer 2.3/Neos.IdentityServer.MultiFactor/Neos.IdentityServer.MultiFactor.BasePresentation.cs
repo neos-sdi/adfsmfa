@@ -41,8 +41,9 @@ namespace Neos.IdentityServer.MultiFactor
         {
             this.Provider = provider;
             this.Context = new AuthenticationContext(context);
-            this.IsPermanentFailure = (this.Context.TargetUIMode == ProviderPageMode.DefinitiveError);
-            this.IsMessage = (this.Context.TargetUIMode != ProviderPageMode.DefinitiveError);
+            this.Context.UIMessage = string.Empty;
+            this.IsPermanentFailure = false; // (this.Context.TargetUIMode == ProviderPageMode.DefinitiveError);
+            this.IsMessage = true; // (this.Context.TargetUIMode != ProviderPageMode.DefinitiveError);
             this.DisableOptions = false;
             this.Resources = new ResourcesLocale(context.Lcid);
         }
@@ -82,6 +83,7 @@ namespace Neos.IdentityServer.MultiFactor
         {
             this.Provider = provider;
             this.Context = new AuthenticationContext(context);
+            this.Context.UIMessage = string.Empty;
             this.Context.TargetUIMode = suite;
             this.IsPermanentFailure = (this.Context.TargetUIMode == ProviderPageMode.DefinitiveError);
             this.IsMessage = (this.Context.TargetUIMode != ProviderPageMode.DefinitiveError);
@@ -198,9 +200,9 @@ namespace Neos.IdentityServer.MultiFactor
             {
                 result += "</br>";
                 if (!String.IsNullOrEmpty(usercontext.UIMessage))
-                    result += "<p class=\"error\">" + usercontext.UIMessage + "</p></br>";
+                    result += "<div id=\"error\" class=\"fieldMargin error smallText\"><label id=\"errorText\" name=\"errorText\" for=\"\">" + usercontext.UIMessage + "</label></div>";
                 else
-                    result += "<p class=\"error\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlErrorRestartSession") + "</p></br>";
+                    result += "<div id=\"error\" class=\"fieldMargin error smallText\"><label id=\"errorText\" name=\"errorText\" for=\"\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlErrorRestartSession") + "</label></div>";
             }
             else
             {
@@ -208,9 +210,14 @@ namespace Neos.IdentityServer.MultiFactor
                 {
                     result += "</br>";
                     if (IsMessage)
-                        result += "<p class=\"text fullWidth\" style=\"color: #6FA400\">" + usercontext.UIMessage + "</p></br>";
+                        result += "<div id=\"error\" class=\"fieldMargin smallText\" style=\"color: #6FA400\"><label id=\"errorText\" name=\"errorText\" for=\"\">" + usercontext.UIMessage + "</label></div>";
                     else
-                        result += "<p class=\"error\">" + usercontext.UIMessage + "</p></br>";
+                        result += "<div id=\"error\" class=\"fieldMargin error smallText\"><label id=\"errorText\" name=\"errorText\" for=\"\">" + usercontext.UIMessage + "</label></div>";
+                }
+                else
+                {
+                    result += "</br>";
+                    result += "<div id=\"error\" class=\"fieldMargin error smallText\"><label id=\"errorText\" name=\"errorText\" for=\"\"></label></div>";
                 }
             }
             return result;
@@ -245,6 +252,36 @@ namespace Neos.IdentityServer.MultiFactor
             result += "width: 342px;" + "\r\n";
             result += "background-color: transparent;" + "\r\n";
             result += "}" + "\r\n";
+
+            result += "#buttonquit {" + "\r\n";
+            result += "border:none;"+ "\r\n";
+            result += "background-color:rgb(232, 17, 35);" + "\r\n";
+            result += "min-width:80px;" + "\r\n";
+            result += "width:auto;" + "\r\n";
+            result += "height:30px;" + "\r\n";
+            result += "padding:4px 20px 6px 20px;" + "\r\n";
+            result += "border-style:solid;" + "\r\n";
+            result += "border-width:1px;" + "\r\n";
+            result += "transition:background 0s;" + "\r\n";
+            result += "color:rgb(255, 255, 255);" + "\r\n";
+            result += "cursor:pointer;" + "\r\n";
+            result += "margin-bottom:8px;" + "\r\n";  
+            result += "-ms-user-select:none;" + "\r\n";
+            result += "-moz-transition:background 0s;" + "\r\n";
+            result += "-webkit-transition:background 0s;" + "\r\n";
+            result += "-o-transition:background 0s;" + "\r\n";
+            result += "-webkit-touch-callout:none;" + "\r\n";
+            result += "-webkit-user-select:none;" + "\r\n";
+            result += "-khtml-user-select:none;" + "\r\n";
+            result += "-moz-user-select: none;" + "\r\n";
+            result += "-o-user-select: none;" + "\r\n";
+            result += "user-select:none;" + "\r\n";
+            result += "}" + "\r\n";
+
+            result += "#buttonquit:hover {" + "\r\n";
+            result += "background-color:rgb(170, 0, 0);" + "\r\n";
+            result += "}" + "\r\n";
+            
             result += "</style>" + "\r\n";
             return result;
         }
@@ -332,13 +369,16 @@ namespace Neos.IdentityServer.MultiFactor
             switch (Context.UIMode)
             {
                 case ProviderPageMode.Identification:
-                    result = GetFormPreRenderHtmlIdentification(Context);
+                    result = GetFormPreRenderHtmlCSS(Context);
+                    result += GetFormPreRenderHtmlIdentification(Context);
                     break;
                 case ProviderPageMode.Registration: // User self registration and enable
-                    result = GetFormPreRenderHtmlRegistration(Context);
+                    result = GetFormPreRenderHtmlCSS(Context);
+                    result += GetFormPreRenderHtmlRegistration(Context);
                     break;
                 case ProviderPageMode.Invitation: // admministrative user registration and let disabled
-                    result = GetFormPreRenderHtmlInvitation(Context);
+                    result = GetFormPreRenderHtmlCSS(Context);
+                    result += GetFormPreRenderHtmlInvitation(Context);
                     break;
                 case ProviderPageMode.SelectOptions:
                     result = GetFormPreRenderHtmlSelectOptions(Context);
@@ -354,7 +394,8 @@ namespace Neos.IdentityServer.MultiFactor
                     result = GetFormPreRenderHtmlBypass(Context);
                     break;
                 case ProviderPageMode.Locking:
-                    result = GetFormPreRenderHtmlLocking(Context);
+                    result = GetFormPreRenderHtmlCSS(Context);
+                    result += GetFormPreRenderHtmlLocking(Context);
                     break;
                 case ProviderPageMode.ShowQRCode:
                     result = GetFormPreRenderHtmlShowQRCode(Context);
@@ -698,13 +739,9 @@ namespace Neos.IdentityServer.MultiFactor
                     _adapter = new AdapterPresentation2019(provider, context);
                     _adapter.UseUIPaginated = provider.Config.UseUIPaginated;
                     break;
-                case ADFSUserInterfaceKind.Custom:
-                    _adapter = new AdapterPresentationDefault(provider, context);
-                    _adapter.UseUIPaginated = provider.Config.UseUIPaginated;
-                    break;
                 default:
                     _adapter = new AdapterPresentationDefault(provider, context);
-                    _adapter.UseUIPaginated = provider.Config.UseUIPaginated;
+                    _adapter.UseUIPaginated = false;
                     break;
             }
         }
@@ -724,13 +761,9 @@ namespace Neos.IdentityServer.MultiFactor
                     _adapter = new AdapterPresentation2019(provider, context, message);
                     _adapter.UseUIPaginated = provider.Config.UseUIPaginated;
                     break;
-                case ADFSUserInterfaceKind.Custom:
-                    _adapter = new AdapterPresentationDefault(provider, context, message);
-                    _adapter.UseUIPaginated = provider.Config.UseUIPaginated;
-                    break;
                 default:
                     _adapter = new AdapterPresentationDefault(provider, context, message);
-                    _adapter.UseUIPaginated = provider.Config.UseUIPaginated;
+                    _adapter.UseUIPaginated = false;
                     break;
             }
         }
@@ -750,13 +783,9 @@ namespace Neos.IdentityServer.MultiFactor
                     _adapter = new AdapterPresentation2019(provider, context, message, ismessage);
                     _adapter.UseUIPaginated = provider.Config.UseUIPaginated;
                     break;
-                case ADFSUserInterfaceKind.Custom:
-                    _adapter = new AdapterPresentationDefault(provider, context, message, ismessage);
-                    _adapter.UseUIPaginated = provider.Config.UseUIPaginated;
-                    break;
                 default:
                     _adapter = new AdapterPresentationDefault(provider, context, message, ismessage);
-                    _adapter.UseUIPaginated = provider.Config.UseUIPaginated;
+                    _adapter.UseUIPaginated = false;
                     break;
             }
         }
@@ -776,13 +805,9 @@ namespace Neos.IdentityServer.MultiFactor
                     _adapter = new AdapterPresentation2019(provider, context, suite);
                     _adapter.UseUIPaginated = provider.Config.UseUIPaginated;
                     break;
-                case ADFSUserInterfaceKind.Custom:
-                    _adapter = new AdapterPresentationDefault(provider, context, suite);
-                    _adapter.UseUIPaginated = provider.Config.UseUIPaginated;
-                    break;
                 default:
                     _adapter = new AdapterPresentationDefault(provider, context, suite);
-                    _adapter.UseUIPaginated = provider.Config.UseUIPaginated;
+                    _adapter.UseUIPaginated = false;
                     break;
             }
         }
@@ -802,13 +827,9 @@ namespace Neos.IdentityServer.MultiFactor
                     _adapter = new AdapterPresentation2019(provider, context, message, suite, disableoptions);
                     _adapter.UseUIPaginated = provider.Config.UseUIPaginated;
                     break;
-                case ADFSUserInterfaceKind.Custom:
-                    _adapter = new AdapterPresentationDefault(provider, context, message, suite, disableoptions);
-                    _adapter.UseUIPaginated = provider.Config.UseUIPaginated;
-                    break;
                 default:
                     _adapter = new AdapterPresentationDefault(provider, context, message, suite, disableoptions);
-                    _adapter.UseUIPaginated = provider.Config.UseUIPaginated;
+                    _adapter.UseUIPaginated = false;
                     break;
             }
         }

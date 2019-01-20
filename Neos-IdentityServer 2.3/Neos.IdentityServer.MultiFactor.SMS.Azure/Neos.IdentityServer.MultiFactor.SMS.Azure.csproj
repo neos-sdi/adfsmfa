@@ -50,26 +50,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Neos.IdentityServer.Multifactor.ResourcesManager.cs" />
     <Compile Include="Neos.IdentityServer.MultiFactor.SMS.cs" />
     <Compile Include="Neos.IdentityServer.MultiFactor.SMS.SDK.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Resources\azure_strings.Designer.cs">
+    <Compile Include="Resources\SAzure.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>azure_strings.resx</DependentUpon>
+      <DependentUpon>SAzure.resx</DependentUpon>
     </Compile>
-    <Compile Include="Resources\azure_strings.es.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>azure_strings.es.resx</DependentUpon>
-    </Compile>
-    <Compile Include="Resources\azure_strings.fr.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>azure_strings.fr.resx</DependentUpon>
-    </Compile>
-    <Compile Include="Resources\html_strings.Designer.cs">
-      <DependentUpon>html_strings.resx</DependentUpon>
+    <Compile Include="Resources\SHtml.Designer.cs">
+      <DependentUpon>SHtml.resx</DependentUpon>
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
@@ -79,26 +70,22 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\azure_strings.es.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>azure_strings.es.Designer.cs</LastGenOutput>
+    <EmbeddedResource Include="Resources\SAzure.es.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Resources\azure_strings.fr.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>azure_strings.fr.Designer.cs</LastGenOutput>
+    <EmbeddedResource Include="Resources\SAzure.fr.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Resources\azure_strings.resx">
+    <EmbeddedResource Include="Resources\SAzure.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>azure_strings.Designer.cs</LastGenOutput>
+      <LastGenOutput>SAzure.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Resources\html_strings.es.resx" />
-    <EmbeddedResource Include="Resources\html_strings.fr.resx" />
-    <EmbeddedResource Include="Resources\html_strings.resx">
+    <EmbeddedResource Include="Resources\SHtml.es.resx" />
+    <EmbeddedResource Include="Resources\SHtml.fr.resx" />
+    <EmbeddedResource Include="Resources\SHtml.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>html_strings.Designer.cs</LastGenOutput>
+      <LastGenOutput>SHtml.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

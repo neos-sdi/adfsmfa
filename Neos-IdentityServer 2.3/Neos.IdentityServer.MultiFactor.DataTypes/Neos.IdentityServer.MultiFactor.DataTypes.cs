@@ -1507,9 +1507,8 @@ namespace Neos.IdentityServer.MultiFactor
     /// </summary>
     public enum ADFSUserInterfaceKind
     {
-        Default,
-        Default2019,
-        Custom
+        Default = 0,
+        Default2019 = 1
     }
 
     /// <summary>

@@ -2234,6 +2234,122 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     }
 
     /// <summary>
+    /// <para type="synopsis">Set ADFS Theme.</para>
+    /// <para type="description">Set ADFS Theme.</para>
+    /// </summary>
+    /// <example>
+    ///   <para>Set-MFAThemeMode -UIKind Default -Theme yourcompatibletheme</para>
+    ///   <para>Set-MFAThemeMode -UIKind Default2019 -Theme yourcompatibletheme -Paginated:$false </para>
+    ///   <para>Set-MFAThemeMode -UIKind Default2019 -Theme yourcompatibletheme -Paginated:$true </para>
+    ///   <para>Change policy template for MFA configuration</para>
+    /// </example>
+    [Cmdlet(VerbsCommon.Set, "MFAThemeMode", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
+    public sealed class SetMFAThemeMode : MFACmdlet, IDynamicParameters
+    {
+        private PSUIKind _kind = PSUIKind.Default;
+        private string _theme;
+        private FlatConfig _config;
+        private MFAThemeModeDynamicParameters _dynparam;
+
+        /// <summary>
+        /// <para type="description">ADFS UI Mode.</para>
+        /// </summary>
+        [Parameter(Mandatory = true, Position = 0, ParameterSetName = "Data", ValueFromPipeline = false)]
+        [ValidateNotNullOrEmpty()]
+        public PSUIKind UIKind
+        {
+            get { return _kind; }
+            set { _kind = value; }
+        }
+
+        /// <summary>
+        /// <para type="description">ADFS Theme Name.</para>
+        /// </summary>
+        [Parameter(Mandatory = true, Position = 1, ParameterSetName = "Data", ValueFromPipeline = false)]
+        [ValidateNotNullOrEmpty()]
+        public string Theme
+        {
+            get { return _theme; }
+            set { _theme = value; }
+        }
+
+        /// <summary>
+        /// <para type="description">Set UI Themes 2019 configuration.</para>
+        /// GetDynamicParameters implementation
+        /// </summary>
+        public object GetDynamicParameters()
+        {
+            if (_kind == PSUIKind.Default2019)
+            {
+                _dynparam = new MFAThemeModeDynamicParameters();
+                return _dynparam;
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// BeginProcessing method implementation
+        /// </summary>
+        protected override void BeginProcessing()
+        {
+            base.BeginProcessing();
+            try
+            {
+                _config = new FlatConfig();
+                _config.Load(this.Host);
+            }
+            catch (Exception ex)
+            {
+                this.ThrowTerminatingError(new ErrorRecord(ex, "3023", ErrorCategory.OperationStopped, this));
+            }
+        }
+
+        /// <summary>
+        /// ProcessRecord method override
+        /// </summary>
+        protected override void ProcessRecord()
+        {
+            if (ShouldProcess("MFA Theme Configuration"))
+            {
+                try
+                {
+                    if (_dynparam!=null)
+                        _config.SetTheme(this.Host, (int)_kind, _theme, _dynparam.Paginated);
+                    else
+                        _config.SetTheme(this.Host, (int)_kind, _theme, false);
+                    this.WriteVerbose(infos_strings.InfosConfigUpdated);
+                }
+                catch (Exception ex)
+                {
+                    this.ThrowTerminatingError(new ErrorRecord(ex, "3024", ErrorCategory.OperationStopped, this));
+                }
+            }
+        }
+
+        /// <summary>
+        /// StopProcessing method implementation
+        /// </summary>
+        protected override void StopProcessing()
+        {
+            _config = null;
+            base.StopProcessing();
+        }
+    }
+
+    /// <summary>
+    /// <para type="description">Set MFA Themes Options for Ui 2019.</para>
+    /// </summary>
+    public class MFAThemeModeDynamicParameters
+    {
+        /// <summary>
+        /// <para type="description">Set the value for ADFS 2019 paginated mode.</para>
+        /// Data property
+        /// </summary>
+        [Parameter(Mandatory = true, Position = 1, ParameterSetName = "Data", ValueFromPipeline = true)]
+        public SwitchParameter Paginated { get; set; }
+    }
+
+    /// <summary>
     /// <para type="synopsis">Get SQL Configuration.</para>
     /// <para type="description">Get SQL configuration (UseActiveDirectory==false).</para>
     /// </summary>

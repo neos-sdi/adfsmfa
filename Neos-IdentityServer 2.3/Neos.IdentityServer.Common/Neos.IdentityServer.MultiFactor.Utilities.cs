@@ -16,10 +16,11 @@
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
 using Microsoft.Win32;
+using Neos.IdentityServer.MultiFactor.Common;
 using Neos.IdentityServer.MultiFactor.Data;
 using Neos.IdentityServer.MultiFactor.QrEncoding;
 using Neos.IdentityServer.MultiFactor.QrEncoding.Windows.Render;
-using Neos.IdentityServer.MultiFactor.Resources;
+using Neos.IdentityServer.MultiFactor.Common.Resources;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -756,7 +757,9 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         internal static void ChangePassword(string username, string oldpassword, string newpassword)
         {
-            using (var ctx = new PrincipalContext(ContextType.Domain))
+            ADDSForestUtils utl = new ADDSForestUtils();
+            string dns = utl.GetForestDNSForUPN(username);
+            using (var ctx = new PrincipalContext(ContextType.Domain, dns))
             {
                 using (var user = UserPrincipal.FindByIdentity(ctx, IdentityType.UserPrincipalName, username))
                 {
@@ -1659,8 +1662,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         internal static void SetCultureInfo(int lcid)
         {
-            System.Globalization.CultureInfo inf = new System.Globalization.CultureInfo(lcid);
-            cmail_strings.Culture = inf;
+            ResourcesLocale Resources = new ResourcesLocale(lcid);
         }
 
         /// <summary>
@@ -1706,8 +1708,8 @@ namespace Neos.IdentityServer.MultiFactor
             {
                 lock(lck)
                 {
-                    cmail_strings.Culture = culture;
-                    htmlres = cmail_strings.MailOTPContent;
+                    ResourcesLocale Resources = new ResourcesLocale(culture.LCID);
+                    htmlres = Resources.GetString(ResourcesLocaleKind.Mail, "MailOTPContent");
                 }
             }
             string html = StripEmailContent(htmlres);
@@ -1719,8 +1721,8 @@ namespace Neos.IdentityServer.MultiFactor
             Message.DeliveryNotificationOptions = DeliveryNotificationOptions.Never;
             lock(lck)
             {
-                cmail_strings.Culture = culture;
-                Message.Subject = cmail_strings.MailOTPTitle;
+                ResourcesLocale Resources = new ResourcesLocale(culture.LCID);
+                Message.Subject = Resources.GetString(ResourcesLocaleKind.Mail, "MailOTPTitle");
             }
             SendMail(Message, mail);
         }
@@ -1752,8 +1754,8 @@ namespace Neos.IdentityServer.MultiFactor
             {
                 lock (lck)
                 {
-                    cmail_strings.Culture = culture;
-                    htmlres = cmail_strings.MailAdminContent;
+                    ResourcesLocale Resources = new ResourcesLocale(culture.LCID);
+                    htmlres = Resources.GetString(ResourcesLocaleKind.Mail, "MailAdminContent");
                 }
             }
             string sendermail = GetUserBusinessEmail(user.UPN);
@@ -1767,8 +1769,8 @@ namespace Neos.IdentityServer.MultiFactor
             Message.DeliveryNotificationOptions = DeliveryNotificationOptions.Never;
             lock (lck)
             {
-                cmail_strings.Culture = culture;
-                Message.Subject = string.Format(cmail_strings.MailAdminTitle, user.UPN);
+                ResourcesLocale Resources = new ResourcesLocale(culture.LCID);
+                Message.Subject = string.Format(Resources.GetString(ResourcesLocaleKind.Mail, "MailAdminTitle"), user.UPN);
             }
             SendMail(Message, mail);
         }
@@ -1800,8 +1802,8 @@ namespace Neos.IdentityServer.MultiFactor
             {
                 lock(lck)
                 {
-                    cmail_strings.Culture = culture;
-                    htmlres = cmail_strings.MailKeyContent;
+                    ResourcesLocale Resources = new ResourcesLocale(culture.LCID);
+                    htmlres = Resources.GetString(ResourcesLocaleKind.Mail, "MailKeyContent");
                 }
             }
 
@@ -1822,8 +1824,8 @@ namespace Neos.IdentityServer.MultiFactor
                 Message.DeliveryNotificationOptions = DeliveryNotificationOptions.Never;
                 lock (lck)
                 {
-                    cmail_strings.Culture = culture;
-                    Message.Subject = cmail_strings.MailKeyTitle;
+                    ResourcesLocale Resources = new ResourcesLocale(culture.LCID);
+                    Message.Subject = Resources.GetString(ResourcesLocaleKind.Mail, "MailKeyTitle");
                 }
                 Message.Priority = MailPriority.High;
 

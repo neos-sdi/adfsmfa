@@ -19,6 +19,7 @@
 using System.Globalization;
 using Microsoft.IdentityServer.Web.Authentication.External;
 using System.Collections.Generic;
+using Neos.IdentityServer.MultiFactor.Common;
 
 namespace Neos.IdentityServer.MultiFactor
 {

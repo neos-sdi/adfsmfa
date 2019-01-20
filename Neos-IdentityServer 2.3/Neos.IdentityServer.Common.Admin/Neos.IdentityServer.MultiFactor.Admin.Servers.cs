@@ -213,7 +213,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         public void EnsureLocalService()
         {
             if (!IsADFSServer())
-                throw new Exception(errors_strings.ErrorADFSPlatformNotSupported); 
+                throw new Exception(SErrors.ErrorADFSPlatformNotSupported); 
             if (!IsRunning())
                 StartService();
         }
@@ -228,7 +228,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 EnsureLocalService();
                 _config = ReadConfiguration(Host);
                 if (!IsFarmConfigured())
-                    throw new Exception(errors_strings.ErrorMFAFarmNotInitialized);
+                    throw new Exception(SErrors.ErrorMFAFarmNotInitialized);
             }
         }
 
@@ -239,7 +239,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         {
             EnsureConfiguration(Host);
             if (_config == null)
-                throw new Exception(errors_strings.ErrorLoadingMFAConfiguration);
+                throw new Exception(SErrors.ErrorLoadingMFAConfiguration);
             return;
         }
 
@@ -560,7 +560,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             catch (CmdletInvocationException cm)
             {
                 this.ConfigurationStatusChanged(this, ConfigOperationStatus.ConfigInError, cm);
-                throw new CmdletInvocationException(errors_strings.ErrorMFAFarmNotInitialized, cm);
+                throw new CmdletInvocationException(SErrors.ErrorMFAFarmNotInitialized, cm);
             }
             catch (Exception ex)
             {
@@ -924,6 +924,64 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         }
 
         /// <summary>
+        /// SetADFSTheme method implementation
+        /// </summary>
+        internal void SetADFSTheme(PSHost pSHost, string themename, bool paginated, bool supports2019)
+        {
+            internalSetADFSTheme(pSHost, themename, paginated, supports2019);
+        }
+
+        /// <summary>
+        /// internalSetADFSTheme method implementation
+        /// </summary>
+        private void internalSetADFSTheme(PSHost Host, string themename, bool paginated, bool supports2019)
+        {
+            Runspace SPRunSpace = null;
+            PowerShell SPPowerShell = null;
+            try
+            {
+                RunspaceConfiguration SPRunConfig = RunspaceConfiguration.Create();
+                SPRunSpace = RunspaceFactory.CreateRunspace(SPRunConfig);
+
+                SPPowerShell = PowerShell.Create();
+                SPPowerShell.Runspace = SPRunSpace;
+                SPRunSpace.Open();
+
+                if (supports2019)
+                {
+                    Pipeline pipeline = SPRunSpace.CreatePipeline();
+                    Command policycmd = new Command("Set-AdfsGlobalAuthenticationPolicy", false);
+                    CommandParameter PParam = new CommandParameter("EnablePaginatedAuthenticationPages", paginated);
+                    policycmd.Parameters.Add(PParam);
+                    CommandParameter CParam = new CommandParameter("Force", true);
+                    policycmd.Parameters.Add(CParam);
+                    pipeline.Commands.Add(policycmd);
+
+                    Collection<PSObject> PSOutput = pipeline.Invoke();
+                    if (Host != null)
+                        Host.UI.WriteVerboseLine(DateTime.Now.ToLongTimeString() + " ADFS MFA Pagination : Changed");
+                }
+
+                Pipeline pipeline2 = SPRunSpace.CreatePipeline();
+                Command themecmd = new Command("Set-AdfsWebConfig", false);
+                CommandParameter NParam = new CommandParameter("ActiveThemeName", themename);
+                themecmd.Parameters.Add(NParam);
+                pipeline2.Commands.Add(themecmd);
+
+                Collection<PSObject> PSOutput2 = pipeline2.Invoke();
+                if (Host != null)
+                    Host.UI.WriteVerboseLine(DateTime.Now.ToLongTimeString() + " ADFS MFA Theme : Changed");
+            }
+            finally
+            {
+                if (SPRunSpace != null)
+                    SPRunSpace.Close();
+            }
+            return;
+        }
+
+
+        /// <summary>
         /// RegisterNewRSACertificate method implmentation
         /// </summary>
         public string RegisterNewRSACertificate(PSHost Host = null, int years = 5, bool restart = true)
@@ -1239,7 +1297,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                     _config = new MFAConfig(true);
             }
             if (!_config.Hosts.ADFSFarm.IsInitialized)
-                throw new Exception(errors_strings.ErrorMFAFarmNotInitialized);
+                throw new Exception(SErrors.ErrorMFAFarmNotInitialized);
             internalActivateConfiguration(Host);
             using (MailSlotClient mailslot = new MailSlotClient())
             {
@@ -1415,7 +1473,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         {
             ADFSServerHost result = null;
             if (!ADFSFarm.IsInitialized)
-                throw new Exception(errors_strings.ErrorMFAFarmNotInitialized);
+                throw new Exception(SErrors.ErrorMFAFarmNotInitialized);
             EnsureConfiguration(Host);
             try
             {

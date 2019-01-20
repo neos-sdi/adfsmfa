@@ -54,14 +54,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Neos.IdentityServer.Multifactor.SAS.ResourcesManager.cs" />
     <Compile Include="Neos.IdentityServer.MultiFactor.SAS.Aad.cs" />
     <Compile Include="Neos.IdentityServer.MultiFactor.SAS.Azure.cs" />
     <Compile Include="Neos.IdentityServer.MultiFactor.SAS.DataTypes.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Resources\az_strings.Designer.cs">
+    <Compile Include="Resources\SSAS.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>az_strings.resx</DependentUpon>
+      <DependentUpon>SSAS.resx</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -78,11 +79,11 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\az_strings.fr.resx" />
-    <EmbeddedResource Include="Resources\az_strings.es.resx" />
-    <EmbeddedResource Include="Resources\az_strings.resx">
+    <EmbeddedResource Include="Resources\SSAS.fr.resx" />
+    <EmbeddedResource Include="Resources\SSAS.es.resx" />
+    <EmbeddedResource Include="Resources\SSAS.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>az_strings.Designer.cs</LastGenOutput>
+      <LastGenOutput>SSAS.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

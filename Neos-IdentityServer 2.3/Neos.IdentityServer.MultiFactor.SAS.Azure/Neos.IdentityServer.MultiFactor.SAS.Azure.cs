@@ -27,6 +27,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using res = Neos.IdentityServer.MultiFactor.SAS.Resources;
+using Neos.IdentityServer.MultiFactor.Common;
 
 namespace Neos.IdentityServer.MultiFactor.SAS
 {
@@ -112,8 +113,8 @@ namespace Neos.IdentityServer.MultiFactor.SAS
         /// </summary>
         public override string GetUILabel(AuthenticationContext ctx)
         {
-            Resources.az_strings.Culture = new CultureInfo(ctx.Lcid);
-            return Resources.az_strings.GLOBALOTPLabel;
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
+            return Resources.GetString(ResourcesLocaleKind.Html, "GLOBALOTPLabel");
         }
 
         /// <summary>
@@ -129,8 +130,8 @@ namespace Neos.IdentityServer.MultiFactor.SAS
         /// </summary>
         public override string GetUICFGLabel(AuthenticationContext ctx)
         {
-            Resources.az_strings.Culture = new CultureInfo(ctx.Lcid);
-            return Resources.az_strings.GLOBALCFGLabel;
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
+            return Resources.GetString(ResourcesLocaleKind.Html, "GLOBALCFGLabel");
         }
 
         /// <summary>
@@ -142,44 +143,44 @@ namespace Neos.IdentityServer.MultiFactor.SAS
                 throw new Exception("Provider not initialized !");
 
             GetAuthenticationContext(ctx);
-            Resources.az_strings.Culture = new CultureInfo(ctx.Lcid);
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
             switch (ctx.SelectedMethod)
             {
                 case AuthenticationResponseKind.PhoneAppNotification:
-                     return Resources.az_strings.NOTIFMessage;
+                     return Resources.GetString(ResourcesLocaleKind.Html, "NOTIFMessage");
 
                 case AuthenticationResponseKind.PhoneAppOTP:
-                     return Resources.az_strings.OTPMessage;
+                     return Resources.GetString(ResourcesLocaleKind.Html, "OTPMessage");
 
                 case AuthenticationResponseKind.SmsOneWayOTPplusPin:
                 case AuthenticationResponseKind.SmsOneWayOTP:
                 case AuthenticationResponseKind.SmsTwoWayOTPplusPin:
                 case AuthenticationResponseKind.SmsTwoWayOTP:
                     if (string.IsNullOrEmpty(ctx.ExtraInfos))
-                        return string.Format(Resources.az_strings.SMSMessage, string.Empty);
+                        return string.Format(Resources.GetString(ResourcesLocaleKind.Html, "SMSMessage"), string.Empty);
                     else
-                       return string.Format(Resources.az_strings.SMSMessage, Utilities.StripPhoneNumber(ctx.ExtraInfos));
+                       return string.Format(Resources.GetString(ResourcesLocaleKind.Html, "SMSMessage"), Utilities.StripPhoneNumber(ctx.ExtraInfos));
 
                 case AuthenticationResponseKind.VoiceTwoWayMobilePlusPin:
                 case AuthenticationResponseKind.VoiceTwoWayMobile:
                     if (string.IsNullOrEmpty(ctx.ExtraInfos))
-                        return string.Format(Resources.az_strings.VOICE1Message, string.Empty);
+                        return string.Format(Resources.GetString(ResourcesLocaleKind.Html, "VOICE1Message"), string.Empty);
                     else
-                        return string.Format(Resources.az_strings.VOICE1Message, Utilities.StripPhoneNumber(ctx.ExtraInfos));
+                        return string.Format(Resources.GetString(ResourcesLocaleKind.Html, "VOICE1Message"), Utilities.StripPhoneNumber(ctx.ExtraInfos));
 
                 case AuthenticationResponseKind.VoiceTwoWayAlternateMobilePlusPin:
                 case AuthenticationResponseKind.VoiceTwoWayAlternateMobile:
                     if (string.IsNullOrEmpty(ctx.ExtraInfos))
-                        return string.Format(Resources.az_strings.VOICE2Message, string.Empty);
+                        return string.Format(Resources.GetString(ResourcesLocaleKind.Html, "VOICE2Message"), string.Empty);
                     else
-                        return string.Format(Resources.az_strings.VOICE2Message, Utilities.StripPhoneNumber(ctx.ExtraInfos));
+                        return string.Format(Resources.GetString(ResourcesLocaleKind.Html, "VOICE2Message"), Utilities.StripPhoneNumber(ctx.ExtraInfos));
 
                 case AuthenticationResponseKind.VoiceTwoWayOfficePlusPin:
                 case AuthenticationResponseKind.VoiceTwoWayOffice:
                     if (string.IsNullOrEmpty(ctx.ExtraInfos))
-                        return string.Format(Resources.az_strings.VOICE3Message, string.Empty);
+                        return string.Format(Resources.GetString(ResourcesLocaleKind.Html, "VOICE3Message"), string.Empty);
                     else
-                        return string.Format(Resources.az_strings.VOICE3Message, Utilities.StripPhoneNumber(ctx.ExtraInfos));
+                        return string.Format(Resources.GetString(ResourcesLocaleKind.Html, "VOICE3Message"), Utilities.StripPhoneNumber(ctx.ExtraInfos));
                 default:
                     return string.Empty;
             }
@@ -190,8 +191,8 @@ namespace Neos.IdentityServer.MultiFactor.SAS
         /// </summary>
         public override string GetUIListOptionLabel(AuthenticationContext ctx)
         {
-            Resources.az_strings.Culture = new CultureInfo(ctx.Lcid);
-            return Resources.az_strings.GLOBALListOptionLabel;
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
+            return Resources.GetString(ResourcesLocaleKind.Html, "GLOBALListOptionLabel");
         }
 
         /// <summary>
@@ -199,8 +200,8 @@ namespace Neos.IdentityServer.MultiFactor.SAS
         /// </summary>
         public override string GetUIListChoiceLabel(AuthenticationContext ctx)
         {
-            Resources.az_strings.Culture = new CultureInfo(ctx.Lcid);
-            return Resources.az_strings.GLOBALListChoiceLabel;
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
+            return Resources.GetString(ResourcesLocaleKind.Html, "GLOBALListChoiceLabel");
         }
 
         /// <summary>
@@ -212,43 +213,43 @@ namespace Neos.IdentityServer.MultiFactor.SAS
                 throw new Exception("Provider not initialized !");
 
             GetAuthenticationContext(ctx);
-            Resources.az_strings.Culture = new CultureInfo(ctx.Lcid);
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
             switch (ctx.SelectedMethod)
             {
                 case AuthenticationResponseKind.PhoneAppNotification:
-                    return Resources.az_strings.NOTIFConfigLabel;
+                    return Resources.GetString(ResourcesLocaleKind.Html, "NOTIFConfigLabel");
 
                 case AuthenticationResponseKind.PhoneAppOTP:
-                    return Resources.az_strings.OTPConfigLabel;
+                    return Resources.GetString(ResourcesLocaleKind.Html, "OTPConfigLabel");
 
                 case AuthenticationResponseKind.SmsOneWayOTPplusPin:
                 case AuthenticationResponseKind.SmsOneWayOTP:
                 case AuthenticationResponseKind.SmsTwoWayOTPplusPin:
                 case AuthenticationResponseKind.SmsTwoWayOTP:
                     if (string.IsNullOrEmpty(ctx.ExtraInfos))
-                        return Resources.az_strings.SMSConfigLabel;
+                        return Resources.GetString(ResourcesLocaleKind.Html, "SMSConfigLabel");
                     else
-                        return string.Format(Resources.az_strings.SMSConfigLabel2, Utilities.StripPhoneNumber(ctx.ExtraInfos));
+                        return string.Format(Resources.GetString(ResourcesLocaleKind.Html, "SMSConfigLabel2"), Utilities.StripPhoneNumber(ctx.ExtraInfos));
                 case AuthenticationResponseKind.VoiceTwoWayMobilePlusPin:
                 case AuthenticationResponseKind.VoiceTwoWayMobile:
                     if (string.IsNullOrEmpty(ctx.ExtraInfos))
-                        return Resources.az_strings.VOICE1ConfigLabel;
+                        return Resources.GetString(ResourcesLocaleKind.Html, "VOICE1ConfigLabel");
                     else
-                        return string.Format(Resources.az_strings.VOICE1ConfigLabel2, Utilities.StripPhoneNumber(ctx.ExtraInfos));
+                        return string.Format(Resources.GetString(ResourcesLocaleKind.Html, "VOICE1ConfigLabel2"), Utilities.StripPhoneNumber(ctx.ExtraInfos));
 
                 case AuthenticationResponseKind.VoiceTwoWayAlternateMobilePlusPin:
                 case AuthenticationResponseKind.VoiceTwoWayAlternateMobile:
                     if (string.IsNullOrEmpty(ctx.ExtraInfos))
-                        return Resources.az_strings.VOICE2ConfigLabel;
+                        return Resources.GetString(ResourcesLocaleKind.Html, "VOICE2ConfigLabel");
                     else
-                        return string.Format(Resources.az_strings.VOICE2ConfigLabel2, Utilities.StripPhoneNumber(ctx.ExtraInfos));
+                        return string.Format(Resources.GetString(ResourcesLocaleKind.Html, "VOICE2ConfigLabel2"), Utilities.StripPhoneNumber(ctx.ExtraInfos));
 
                 case AuthenticationResponseKind.VoiceTwoWayOfficePlusPin:
                 case AuthenticationResponseKind.VoiceTwoWayOffice:
                     if (string.IsNullOrEmpty(ctx.ExtraInfos))
-                        return Resources.az_strings.VOICE3ConfigLabel;
+                        return Resources.GetString(ResourcesLocaleKind.Html, "VOICE3ConfigLabel");
                     else
-                        return string.Format(Resources.az_strings.VOICE3ConfigLabel2, Utilities.StripPhoneNumber(ctx.ExtraInfos));
+                        return string.Format(Resources.GetString(ResourcesLocaleKind.Html, "VOICE3ConfigLabel2"), Utilities.StripPhoneNumber(ctx.ExtraInfos));
                 default:
                     return string.Empty;
             }
@@ -266,31 +267,31 @@ namespace Neos.IdentityServer.MultiFactor.SAS
             AuthenticationResponseKind mk = ctx.SelectedMethod;
             if (method != null)
                 mk = method.Method;
-            Resources.az_strings.Culture = new CultureInfo(ctx.Lcid);
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
             switch (mk)
             {
                 case AuthenticationResponseKind.PhoneAppNotification:
-                    return Resources.az_strings.NOTIFChoiceLabel;
+                    return Resources.GetString(ResourcesLocaleKind.Html, "NOTIFChoiceLabel");
 
                 case AuthenticationResponseKind.PhoneAppOTP:
-                    return Resources.az_strings.OTPChoiceLabel;
+                    return Resources.GetString(ResourcesLocaleKind.Html, "OTPChoiceLabel");
 
                 case AuthenticationResponseKind.SmsOneWayOTPplusPin:
                 case AuthenticationResponseKind.SmsOneWayOTP:
                 case AuthenticationResponseKind.SmsTwoWayOTPplusPin:
                 case AuthenticationResponseKind.SmsTwoWayOTP:
-                    return Resources.az_strings.SMSChoiceLabel;
+                    return Resources.GetString(ResourcesLocaleKind.Html, "SMSChoiceLabel");
 
                 case AuthenticationResponseKind.VoiceTwoWayMobilePlusPin:
                 case AuthenticationResponseKind.VoiceTwoWayMobile:
-                    return Resources.az_strings.VOICE1ChoiceLabel;
+                    return Resources.GetString(ResourcesLocaleKind.Html, "VOICE1ChoiceLabel");
 
                 case AuthenticationResponseKind.VoiceTwoWayAlternateMobilePlusPin:
                 case AuthenticationResponseKind.VoiceTwoWayAlternateMobile:
-                    return Resources.az_strings.VOICE2ChoiceLabel;
+                    return Resources.GetString(ResourcesLocaleKind.Html, "VOICE2ChoiceLabel");
                 case AuthenticationResponseKind.VoiceTwoWayOfficePlusPin:
                 case AuthenticationResponseKind.VoiceTwoWayOffice:
-                    return Resources.az_strings.VOICE3ChoiceLabel;
+                    return Resources.GetString(ResourcesLocaleKind.Html, "VOICE3ChoiceLabel");
                 default:
                     return string.Empty;
             }
@@ -301,8 +302,8 @@ namespace Neos.IdentityServer.MultiFactor.SAS
         /// </summary>
         public override string GetUIWarningInternetLabel(AuthenticationContext ctx)
         {
-            Resources.az_strings.Culture = new CultureInfo(ctx.Lcid);
-            return Resources.az_strings.GLOBALWarnOverNetwork;
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
+            return Resources.GetString(ResourcesLocaleKind.Html, "GLOBALWarnOverNetwork");
         }
 
         /// <summary>
@@ -310,8 +311,8 @@ namespace Neos.IdentityServer.MultiFactor.SAS
         /// </summary>
         public override string GetUIWarningThirdPartyLabel(AuthenticationContext ctx)
         {
-            Resources.az_strings.Culture = new CultureInfo(ctx.Lcid);
-            return Resources.az_strings.GLOBALWarnThirdParty;
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
+            return Resources.GetString(ResourcesLocaleKind.Html, "GLOBALWarnThirdParty");
         }
 
         /// <summary>
@@ -319,8 +320,8 @@ namespace Neos.IdentityServer.MultiFactor.SAS
         /// </summary>
         public override string GetUIDefaultChoiceLabel(AuthenticationContext ctx)
         {
-            Resources.az_strings.Culture = new CultureInfo(ctx.Lcid);
-            return Resources.az_strings.GLOBALListChoiceDefaultLabel;
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
+            return Resources.GetString(ResourcesLocaleKind.Html, "GLOBALListChoiceDefaultLabel");
         }
 
         /// <summary>
@@ -328,8 +329,8 @@ namespace Neos.IdentityServer.MultiFactor.SAS
         /// </summary>
         public override string GetUIAccountManagementLabel(AuthenticationContext ctx)
         {
-            Resources.az_strings.Culture = new CultureInfo(ctx.Lcid);
-            return Resources.az_strings.GLOBALManagement;
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
+            return Resources.GetString(ResourcesLocaleKind.Html, "GLOBALManagement");
         }
 
         /// <summary>

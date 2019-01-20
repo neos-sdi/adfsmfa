@@ -130,12 +130,12 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 }
                 catch (CmdletInvocationException cm)
                 {
-                    EventLog.WriteEntry(EventLogSource, errors_strings.ErrorMFAUnAuthorized + "\r\r" + cm.Message, EventLogEntryType.Error, 30901);
+                    EventLog.WriteEntry(EventLogSource, SErrors.ErrorMFAUnAuthorized + "\r\r" + cm.Message, EventLogEntryType.Error, 30901);
                     throw cm;
                 }
                 catch (Exception ex)
                 {
-                    EventLog.WriteEntry(EventLogSource, string.Format(errors_strings.ErrorLoadingMFAConfiguration, ex.Message), EventLogEntryType.Error, 30900);
+                    EventLog.WriteEntry(EventLogSource, string.Format(SErrors.ErrorLoadingMFAConfiguration, ex.Message), EventLogEntryType.Error, 30900);
                     throw ex;
                 }
             }

@@ -17,6 +17,7 @@
 //******************************************************************************************************************************************************************************************//
 // #define softemail
 using Microsoft.IdentityServer.Web.Authentication.External;
+using Neos.IdentityServer.MultiFactor.Common;
 using System;
 using System.Collections.Specialized;
 using System.Diagnostics;
@@ -38,12 +39,12 @@ namespace Neos.IdentityServer.MultiFactor
     {
         private static MFAConfig _config;
         private static object __notificationobject = 0;
-      //  private static RegistryVersion _registry = new RegistryVersion();
+        private static string _rootdir = string.Empty;
 
         /// <summary>
         /// Constructor override
         /// </summary>
-        public AuthenticationProvider()
+        static AuthenticationProvider()
         {
             Trace.AutoFlush = true;
             Trace.TraceInformation("AuthenticationProvider:Contructor");
@@ -84,25 +85,28 @@ namespace Neos.IdentityServer.MultiFactor
                         if (usercontext.TargetUIMode == ProviderPageMode.DefinitiveError)
                             result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorAccountNoAccess"), ProviderPageMode.DefinitiveError);
                         else if (Config.UserFeatures.IsMFARequired())
-                            result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorAccountNoAccess"), ProviderPageMode.DefinitiveError);
-                        else if (Config.UserFeatures.IsMFAAllowed())  
+                        {
+                            if (usercontext.TargetUIMode == ProviderPageMode.Invitation)
+                            {
+                                result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorAccountNotEnabled"), ProviderPageMode.DefinitiveError);
+                            }
+                            else
+                                result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorAccountNoAccess"), ProviderPageMode.DefinitiveError);
+                        }
+                        else if (Config.UserFeatures.IsMFAAllowed())
                         {
                             if (Config.UserFeatures.IsAdvertisable() && (Config.AdvertisingDays.OnFire))
-                            {
                                 result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorAccountAuthorized"), ProviderPageMode.Bypass);
-                            }
                             else
                             {
                                 usercontext.UIMode = ProviderPageMode.Bypass;
                                 result = new AdapterPresentation(this, context);
                             }
                         }
-                        else if (Config.UserFeatures.IsRegistrationAllowed()) 
+                        else if (Config.UserFeatures.IsRegistrationAllowed())
                         {
                             if (Config.UserFeatures.IsAdvertisable() && (Config.AdvertisingDays.OnFire))
-                            {
                                 result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorAccountAuthorized"), ProviderPageMode.Bypass);
-                            }
                             else
                             {
                                 usercontext.UIMode = ProviderPageMode.Bypass;
@@ -149,9 +153,7 @@ namespace Neos.IdentityServer.MultiFactor
                         if (usercontext.KeyStatus == SecretKeyStatus.NoKey)
                         {
                             if (Config.UserFeatures.CanManageOptions())
-                            {
                                 usercontext.UIMode = ProviderPageMode.PreSet;
-                            }
                         }
                         else if (usercontext.PreferredMethod == PreferredMethod.Choose)
                             usercontext.UIMode = ProviderPageMode.ChooseMethod;
@@ -167,17 +169,13 @@ namespace Neos.IdentityServer.MultiFactor
                         else if (Config.UserFeatures.IsMFANotRequired())
                         {
                             if (usercontext.KeyStatus == SecretKeyStatus.NoKey)
-                            {
                                 usercontext.PreferredMethod = PreferredMethod.Choose;
-                            }
                             usercontext.UIMode = ProviderPageMode.Bypass;
                         }
                         else if (Config.UserFeatures.IsMFAAllowed())
                         {
                             if (usercontext.KeyStatus == SecretKeyStatus.NoKey)
-                            {
                                 usercontext.PreferredMethod = PreferredMethod.Choose;
-                            }
                             usercontext.UIMode = ProviderPageMode.Locking;
                             usercontext.TargetUIMode = ProviderPageMode.None;
                         }
@@ -195,25 +193,30 @@ namespace Neos.IdentityServer.MultiFactor
                     AuthenticationContext usercontext = new AuthenticationContext(context);
                     usercontext.UPN = upn;
 
-                    if (Config.UserFeatures.IsAdministrative())
-                        usercontext.UIMode = ProviderPageMode.Locking;
-                    else if (Config.UserFeatures.IsRegistrationNotRequired())
+                    if (Config.UserFeatures.IsAdministrative()) // Error : administrative Only Registration
                     {
-                        usercontext.PreferredMethod = PreferredMethod.Choose;
-                        usercontext.Enabled = false;
-                        usercontext.UIMode = ProviderPageMode.Bypass;
+                        usercontext.UIMode = ProviderPageMode.Locking;
+                        usercontext.TargetUIMode = ProviderPageMode.DefinitiveError;
                     }
-                    else if (Config.UserFeatures.IsRegistrationRequired())
+                    else if (Config.UserFeatures.IsRegistrationRequired())  // Provide Information
                     {
                         usercontext.PreferredMethod = PreferredMethod.Choose;
                         usercontext.Enabled = false;
                         usercontext.UIMode = ProviderPageMode.Locking;
+                        usercontext.TargetUIMode = ProviderPageMode.Invitation;
                     }
-                    else if (Config.UserFeatures.IsRegistrationAllowed())
+                    else if (Config.UserFeatures.IsRegistrationAllowed())  // Provide Registration
                     {
                         usercontext.PreferredMethod = PreferredMethod.Choose;
                         usercontext.Enabled = true;
                         usercontext.UIMode = ProviderPageMode.Locking;
+                        usercontext.TargetUIMode = ProviderPageMode.Registration;
+                    }
+                    else if (Config.UserFeatures.IsRegistrationNotRequired()) // Bypass registration / Information
+                    {
+                        usercontext.PreferredMethod = PreferredMethod.Choose;
+                        usercontext.Enabled = false;
+                        usercontext.UIMode = ProviderPageMode.Bypass;
                         usercontext.TargetUIMode = ProviderPageMode.None;
                     }
                     else
@@ -559,7 +562,7 @@ namespace Neos.IdentityServer.MultiFactor
                             {
                                 error = ex.Message;
                                 usercontext.PageID = page;
-                                return new AdapterPresentation(this, context, ex.Message);
+                                return new AdapterPresentation(this, context, ex.Message, false);
                             }
 
                             usercontext.PreferredMethod = (PreferredMethod)page;
@@ -636,7 +639,7 @@ namespace Neos.IdentityServer.MultiFactor
                             if (string.IsNullOrEmpty(error))
                                 result = new AdapterPresentation(this, context);
                             else
-                                result = new AdapterPresentation(this, context, error);
+                                result = new AdapterPresentation(this, context, error, false);
                             break;
                         }
                 }
@@ -680,7 +683,7 @@ namespace Neos.IdentityServer.MultiFactor
                             {
                                 error = ex.Message;
                                 usercontext.PageID = page;
-                                return new AdapterPresentation(this, context, ex.Message);
+                                return new AdapterPresentation(this, context, ex.Message, false);
                             }
 
                             usercontext.PreferredMethod = (PreferredMethod)page;
@@ -773,7 +776,7 @@ namespace Neos.IdentityServer.MultiFactor
                             if (string.IsNullOrEmpty(error))
                                 result = new AdapterPresentation(this, context);
                             else
-                                result = new AdapterPresentation(this, context, error);
+                                result = new AdapterPresentation(this, context, error, false);
                             break;
                         }
                 }
@@ -980,33 +983,36 @@ namespace Neos.IdentityServer.MultiFactor
             {
                 try
                 {
-                    string oldpass = proofData.Properties["oldpwd"].ToString();
-                    string newpass = proofData.Properties["newpwd"].ToString();
-                    string cnfpass = proofData.Properties["cnfpwd"].ToString();
-                    if (newpass.Equals(cnfpass))
+                    string oldpass = proofData.Properties["oldpwdedit"].ToString();
+                    string newpass = proofData.Properties["newpwdedit"].ToString();
+                    string cnfpass = proofData.Properties["cnfpwdedit"].ToString();
+                    string btnclick = proofData.Properties["btnclicked"].ToString();
+                    if (btnclick == "1")
                     {
-                        try
+                        if (newpass.Equals(cnfpass))
                         {
-                            usercontext.UIMode = ProviderPageMode.SelectOptions;
-                            string btnclick = proofData.Properties["btnclicked"].ToString();
-                            if (btnclick == "1")
+                            try
                             {
+                                usercontext.UIMode = ProviderPageMode.SelectOptions;
                                 RuntimeRepository.ChangePassword(usercontext.UPN, oldpass, newpass);
                                 result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Informations, "InfosPasswordModified"));
                             }
-                            else
-                                result = new AdapterPresentation(this, context);
+                            catch (Exception ex)
+                            {
+                                usercontext.UIMode = ProviderPageMode.Locking;
+                                result = new AdapterPresentation(this, context, ex.Message, ProviderPageMode.DefinitiveError);
+                            }
                         }
-                        catch (Exception ex)
+                        else
                         {
-                            usercontext.UIMode = ProviderPageMode.Locking;
-                            result = new AdapterPresentation(this, context, ex.Message, ProviderPageMode.DefinitiveError);
+                            usercontext.UIMode = ProviderPageMode.ChangePassword;
+                            result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorInvalidPassword"), ProviderPageMode.DefinitiveError);
                         }
                     }
-                    else
+                    else if (btnclick == "2")
                     {
-                        usercontext.UIMode = ProviderPageMode.ChangePassword;
-                        result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorInvalidPassword"), ProviderPageMode.DefinitiveError);
+                        usercontext.UIMode = ProviderPageMode.SelectOptions;
+                        result = new AdapterPresentation(this, context);
                     }
                 }
                 catch (Exception ex)
@@ -1016,13 +1022,8 @@ namespace Neos.IdentityServer.MultiFactor
             }
             else
             {
-                try
-                {
-                }
-                catch (Exception ex)
-                {
-                    throw new ExternalAuthenticationException(usercontext.UPN + " : " + ex.Message, context);
-                }
+                usercontext.UIMode = ProviderPageMode.SelectOptions;
+                result = new AdapterPresentation(this, context);
             }
             return result;
             #endregion
@@ -1587,8 +1588,17 @@ namespace Neos.IdentityServer.MultiFactor
                         result = new AdapterPresentation(this, context);
                         break;
                     case 2: // Next Button
-                        usercontext.WizPageID = 1; // Goto Donut
-                        ValidateUserEmail(usercontext, context, proofData, Resources, true);
+                        try
+                        {
+                            usercontext.WizPageID = 1; // Goto Donut
+                            ValidateUserEmail(usercontext, context, proofData, Resources, true);
+                        }
+                        catch (Exception ex)
+                        {
+                            usercontext.UIMode = ProviderPageMode.EnrollEmail;
+                            usercontext.WizPageID = 0;
+                            return new AdapterPresentation(this, context, ex.Message, false);
+                        }
                         result = new AdapterPresentation(this, context);
                         break;
                     case 3: // Code Validation Donut
@@ -1635,7 +1645,6 @@ namespace Neos.IdentityServer.MultiFactor
                             usercontext.MailAddress = reg.MailAddress;
                             result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelVERIFYOTPError"), false);
                         }
-                        result = new AdapterPresentation(this, context);
                         break;
                 }
             }
@@ -1709,8 +1718,17 @@ namespace Neos.IdentityServer.MultiFactor
                         result = new AdapterPresentation(this, context);
                         break;
                     case 2: // Next Button
-                        usercontext.WizPageID = 1; // Goto Donut
-                        ValidateUserPhone(usercontext, context, proofData, Resources, true);
+                        try
+                        {
+                            usercontext.WizPageID = 1; // Goto Donut
+                            ValidateUserPhone(usercontext, context, proofData, Resources, true);
+                        }
+                        catch (Exception ex)
+                        {
+                            usercontext.UIMode = ProviderPageMode.EnrollEmail;
+                            usercontext.WizPageID = 0;
+                            return new AdapterPresentation(this, context, ex.Message, false);
+                        }
                         result = new AdapterPresentation(this, context);
                         break;
                     case 3: // Code Validation Donut
@@ -1860,8 +1878,17 @@ namespace Neos.IdentityServer.MultiFactor
                         result = new AdapterPresentation(this, context);
                         break;
                     case 2: // Next Button
-                        usercontext.WizPageID = 2;
-                        ValidateUserPin(usercontext, context, proofData, Resources, true);
+                        try
+                        {
+                            usercontext.WizPageID = 2;
+                            ValidateUserPin(usercontext, context, proofData, Resources, true);
+                        }
+                        catch (Exception ex)
+                        {
+                            usercontext.UIMode = ProviderPageMode.EnrollPin;
+                            usercontext.WizPageID = 0;
+                            return new AdapterPresentation(this, context, ex.Message, false);
+                        }
                         result = new AdapterPresentation(this, context);
                         break;
                     case 3: // Code verification
@@ -1885,7 +1912,6 @@ namespace Neos.IdentityServer.MultiFactor
                         {
                             return new AdapterPresentation(this, context, ex.Message, false);
                         }
-                       
                         break;
                     case 4: // Code validation
                         int totp2 = Convert.ToInt32(proofData.Properties["pincode"]);                           

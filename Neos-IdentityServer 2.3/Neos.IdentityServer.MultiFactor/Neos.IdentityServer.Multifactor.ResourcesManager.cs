@@ -18,6 +18,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Resources;
@@ -29,11 +30,11 @@ namespace Neos.IdentityServer.MultiFactor
     public class ResourcesLocale
     {
         private CultureInfo resourceCulture;
-        private ResourceManager _html_strings;
-        private ResourceManager _errors_strings;
-        private ResourceManager _infos_strings;
-        private ResourceManager _title_strings;
-        private ResourceManager _valid_strings;
+        private ResourceManager _SHtml;
+        private ResourceManager _SErrors;
+        private ResourceManager _SInfos;
+        private ResourceManager _STitle;
+        private ResourceManager _SCheck;
 
         /// <summary>
         /// ResourceManager constructor
@@ -54,95 +55,106 @@ namespace Neos.IdentityServer.MultiFactor
             }
         }
 
+        private ResourceManager GetResourceManager(string resourcename)
+        {
+            if (File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles)+@"\MFA\ResourceSet" + @"\" + resourcename + "." + Culture.TwoLetterISOLanguageName + ".resources"))
+                return ResourceManager.CreateFileBasedResourceManager(resourcename, Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + @"\MFA\ResourceSet", null);
+            else
+                return new ResourceManager(resourcename, typeof(ResourcesLocale).Assembly);
+        }
+
         /// <summary>
-        /// html_strings property
+        /// SHhtml property
         /// </summary>
-        private ResourceManager html_strings
+        private ResourceManager SHhtml
         {
             get
             {
-                if (_html_strings == null)
+                if (_SHtml == null)
                 {
-                    _html_strings = new ResourceManager("Neos.IdentityServer.MultiFactor.Resources.html_strings", typeof(ResourcesLocale).Assembly);
+                    _SHtml = GetResourceManager("Neos.IdentityServer.MultiFactor.Resources.SHtml");
                 }
-                return _html_strings;
+                return _SHtml;
             }
         }
 
         /// <summary>
-        /// errors_strings property 
+        /// SErrors property 
         /// </summary>
-        private ResourceManager errors_strings
+        private ResourceManager SErrors
         {
             get
             {
-                if (_errors_strings == null)
+                if (_SErrors == null)
                 {
-                    _errors_strings = new ResourceManager("Neos.IdentityServer.MultiFactor.Resources.errors_strings", typeof(ResourcesLocale).Assembly);
+                    _SErrors = GetResourceManager("Neos.IdentityServer.MultiFactor.Resources.SErrors");
                 }
-                return _errors_strings;
+                return _SErrors;
             }
         }
 
         /// <summary>
-        /// infos_strings property
+        /// SInfos property
         /// </summary>
-        private ResourceManager infos_strings
+        private ResourceManager SInfos
         {
             get
             {
-                if (_infos_strings == null)
+                if (_SInfos == null)
                 {
-                    _infos_strings = new ResourceManager("Neos.IdentityServer.MultiFactor.Resources.infos_strings", typeof(ResourcesLocale).Assembly);
+                    _SInfos = GetResourceManager("Neos.IdentityServer.MultiFactor.Resources.SInfos");
                 }
-                return _infos_strings;
+                return _SInfos;
             }
         }
 
         /// <summary>
         /// title_strings property
         /// </summary>
-        private ResourceManager title_strings
+        private ResourceManager STitle
         {
             get
             {
-                if (_title_strings == null)
+                if (_STitle == null)
                 {
-                    _title_strings = new ResourceManager("Neos.IdentityServer.MultiFactor.Resources.title_strings", typeof(ResourcesLocale).Assembly);
+                    _STitle = GetResourceManager("Neos.IdentityServer.MultiFactor.Resources.STitle");
                 }
-                return _title_strings;
+                return _STitle;
             }
         }
 
         /// <summary>
-        /// valid_strings property
+        /// SCheck property
         /// </summary>
-        private ResourceManager valid_strings
+        private ResourceManager SCheck
         {
             get
             {
-                if (_valid_strings == null)
+                if (_SCheck == null)
                 {
-                    _valid_strings = new ResourceManager("Neos.IdentityServer.MultiFactor.Resources.valid_strings", typeof(ResourcesLocale).Assembly);
+                    _SCheck = GetResourceManager("Neos.IdentityServer.MultiFactor.Resources.SCheck");
                 }
-                return _valid_strings;
+                return _SCheck;
             }
         }
 
+        /// <summary>
+        /// GetString method implementation
+        /// </summary>
         public virtual string GetString(ResourcesLocaleKind kind, string name)
         {
             switch (kind)
             {
                 case ResourcesLocaleKind.Errors:
-                    return errors_strings.GetString(name, this.Culture);
+                    return SErrors.GetString(name, this.Culture);
                 case ResourcesLocaleKind.Html:
-                    return html_strings.GetString(name, this.Culture);
+                    return SHhtml.GetString(name, this.Culture);
                 case ResourcesLocaleKind.Informations:
-                    return infos_strings.GetString(name, this.Culture);
+                    return SInfos.GetString(name, this.Culture);
                 case ResourcesLocaleKind.Titles:
-                    return title_strings.GetString(name, this.Culture);
+                    return STitle.GetString(name, this.Culture);
                 case ResourcesLocaleKind.Validation:
-                    return valid_strings.GetString(name, this.Culture);
+                    return SCheck.GetString(name, this.Culture);
                 default:
                     return string.Empty;
             }

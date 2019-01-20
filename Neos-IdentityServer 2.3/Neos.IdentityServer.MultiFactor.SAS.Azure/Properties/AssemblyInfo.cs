@@ -27,7 +27,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Neos-Sdi")]
 [assembly: AssemblyProduct("Neos.IdentityServer.MultiFactor.SAS.Azure")]
-[assembly: AssemblyCopyright("Copyright Neos-Sdi © 2018")]
+[assembly: AssemblyCopyright("Copyright Neos-Sdi © 2019")]
 [assembly: AssemblyTrademark("Neos-Sdi")]
 [assembly: AssemblyCulture("")]
 
@@ -50,5 +50,5 @@ using System.Runtime.InteropServices;
 // Vous pouvez spécifier toutes les valeurs ou indiquer les numéros de build et de révision par défaut 
 // en utilisant '*', comme indiqué ci-dessous :
 [assembly: AssemblyVersion("2.3.0.0")]
-[assembly: AssemblyFileVersion("2.3.0.73")]
+[assembly: AssemblyFileVersion("2.3.0.217")]
 [assembly: AssemblyInformationalVersion("2.3.0.0")]

@@ -9,7 +9,7 @@
     <ProjectGuid>{15B3E0D2-6217-493A-A690-158C497F5318}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Neos.IdentityServer.MultiFactor</RootNamespace>
+    <RootNamespace>Neos.IdentityServer.MultiFactor.Common</RootNamespace>
     <AssemblyName>Neos.IdentityServer.MultiFactor.Common</AssemblyName>
     <ProjectTypeGuids>{3D9AD99F-2412-4246-B90B-4EAA41C64699};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <StartArguments>/client:"WcfTestClient.exe"</StartArguments>
@@ -75,21 +75,22 @@
   <ItemGroup>
     <Compile Include="Neos.IdentityServer.MultiFactor.Admin.Imports.cs" />
     <Compile Include="Neos.IdentityServer.MultiFactor.ProvidersWrapper.cs" />
+    <Compile Include="Neos.IdentityServer.Multifactor.ResourcesManager.cs" />
     <Compile Include="Neos.IdentityServer.MultiFactor.Utilities.cs" />
     <Compile Include="Neos.IdentityServer.Mutifactor.Interface.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Resources\cerrors_strings.Designer.cs">
+    <Compile Include="Resources\CSErrors.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>cerrors_strings.resx</DependentUpon>
+      <DependentUpon>CSErrors.resx</DependentUpon>
     </Compile>
-    <Compile Include="Resources\chtml_strings.Designer.cs">
-      <DependentUpon>chtml_strings.resx</DependentUpon>
+    <Compile Include="Resources\CSHtml.Designer.cs">
+      <DependentUpon>CSHtml.resx</DependentUpon>
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
-    <Compile Include="Resources\cmail_strings.Designer.cs">
-      <DependentUpon>cmail_strings.resx</DependentUpon>
+    <Compile Include="Resources\CSMail.Designer.cs">
+      <DependentUpon>CSMail.resx</DependentUpon>
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
@@ -117,27 +118,27 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\cerrors_strings.es.resx" />
-    <EmbeddedResource Include="Resources\cerrors_strings.resx">
+    <EmbeddedResource Include="Resources\CSErrors.es.resx" />
+    <EmbeddedResource Include="Resources\CSErrors.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>cerrors_strings.Designer.cs</LastGenOutput>
+      <LastGenOutput>CSErrors.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="Resources\cerrors_strings.fr.resx" />
-    <EmbeddedResource Include="Resources\chtml_strings.es.resx" />
-    <EmbeddedResource Include="Resources\chtml_strings.fr.resx" />
-    <EmbeddedResource Include="Resources\chtml_strings.resx">
+    <EmbeddedResource Include="Resources\CSErrors.fr.resx" />
+    <EmbeddedResource Include="Resources\CSHtml.es.resx" />
+    <EmbeddedResource Include="Resources\CSHtml.fr.resx" />
+    <EmbeddedResource Include="Resources\CSHtml.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>chtml_strings.Designer.cs</LastGenOutput>
+      <LastGenOutput>CSHtml.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="Resources\cmail_strings.es.resx">
+    <EmbeddedResource Include="Resources\CSMail.es.resx">
       <LastGenOutput>mail_strings.es.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="Resources\cmail_strings.fr.resx">
+    <EmbeddedResource Include="Resources\CSMail.fr.resx">
       <LastGenOutput>mail_strings.fr.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="Resources\cmail_strings.resx">
+    <EmbeddedResource Include="Resources\CSMail.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>cmail_strings.Designer.cs</LastGenOutput>
+      <LastGenOutput>CSMail.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

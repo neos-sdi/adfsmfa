@@ -24,6 +24,7 @@ using Neos.IdentityServer.MultiFactor;
 using PhoneNumbers;
 using Neos.IdentityServer.MultiFactor.SMS.Resources;
 using System.Globalization;
+using Neos.IdentityServer.MultiFactor.Common;
 
 //******************************************************************************************************************************************************************************************//
 //                                                                                                                                                                                          //  
@@ -130,8 +131,8 @@ namespace Neos.IdentityServer.Multifactor.SMS
         /// </summary>
         public override string GetUILabel(AuthenticationContext ctx)
         {
-            html_strings.Culture = new CultureInfo(ctx.Lcid);
-            return html_strings.SMSUIOTPLabel;
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
+            return Resources.GetString(ResourcesLocaleKind.Html, "SMSUIOTPLabel");
         }
 
         /// <summary>
@@ -139,8 +140,8 @@ namespace Neos.IdentityServer.Multifactor.SMS
         /// </summary>
         public override string GetWizardUILabel(AuthenticationContext ctx)
         {
-            html_strings.Culture = new CultureInfo(ctx.Lcid);
-            return html_strings.SMSUIWIZLabel;
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
+            return Resources.GetString(ResourcesLocaleKind.Html, "SMSUIWIZLabel");
         }
 
         /// <summary>
@@ -148,8 +149,8 @@ namespace Neos.IdentityServer.Multifactor.SMS
         /// </summary>
         public override string GetUICFGLabel(AuthenticationContext ctx)
         {
-            html_strings.Culture = new CultureInfo(ctx.Lcid);
-            return html_strings.SMSUICFGLabel;
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
+            return Resources.GetString(ResourcesLocaleKind.Html, "SMSUICFGLabel");
         }
 
         /// <summary>
@@ -157,11 +158,11 @@ namespace Neos.IdentityServer.Multifactor.SMS
         /// </summary>
         public override string GetUIMessage(AuthenticationContext ctx)
         {
-            html_strings.Culture = new CultureInfo(ctx.Lcid);
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
             if (string.IsNullOrEmpty(ctx.PhoneNumber))
-                return string.Format(html_strings.SMSUIMessage, string.Empty);
+                return string.Format(Resources.GetString(ResourcesLocaleKind.Html, "SMSUIMessage"), string.Empty);
             else
-                return string.Format(html_strings.SMSUIMessage, Utilities.StripPhoneNumber(ctx.PhoneNumber));
+                return string.Format(Resources.GetString(ResourcesLocaleKind.Html, "SMSUIMessage"), Utilities.StripPhoneNumber(ctx.PhoneNumber));
         }
 
         /// <summary>
@@ -169,8 +170,8 @@ namespace Neos.IdentityServer.Multifactor.SMS
         /// </summary>
         public override string GetUIListOptionLabel(AuthenticationContext ctx)
         {
-            html_strings.Culture = new CultureInfo(ctx.Lcid);
-            return html_strings.SMSUIListOptionLabel;
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
+            return Resources.GetString(ResourcesLocaleKind.Html, "SMSUIListOptionLabel");
         }
 
         /// <summary>
@@ -178,8 +179,8 @@ namespace Neos.IdentityServer.Multifactor.SMS
         /// </summary>
         public override string GetUIListChoiceLabel(AuthenticationContext ctx)
         {
-            html_strings.Culture = new CultureInfo(ctx.Lcid);
-            return html_strings.SMSUIListChoiceLabel;
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
+            return Resources.GetString(ResourcesLocaleKind.Html, "SMSUIListChoiceLabel");
         }
 
 
@@ -188,11 +189,11 @@ namespace Neos.IdentityServer.Multifactor.SMS
         /// </summary>
         public override string GetUIConfigLabel(AuthenticationContext ctx)
         {
-            html_strings.Culture = new CultureInfo(ctx.Lcid);
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
             if (string.IsNullOrEmpty(ctx.ExtraInfos))
-                return html_strings.SMSUIConfigLabel;
+                return Resources.GetString(ResourcesLocaleKind.Html, "SMSUIConfigLabel");
             else
-                return string.Format(html_strings.SMSUIConfigLabel2, Utilities.StripPhoneNumber(ctx.ExtraInfos));
+                return string.Format(Resources.GetString(ResourcesLocaleKind.Html, "SMSUIConfigLabel2"), Utilities.StripPhoneNumber(ctx.ExtraInfos));
         }
 
         /// <summary>
@@ -207,16 +208,16 @@ namespace Neos.IdentityServer.Multifactor.SMS
             AuthenticationResponseKind mk = ctx.SelectedMethod;
             if (method != null)
                 mk = method.Method;
-            html_strings.Culture = new CultureInfo(ctx.Lcid);
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
             switch (mk)
             {
                 case AuthenticationResponseKind.SmsOTP:
                 case AuthenticationResponseKind.SmsOneWayOTP:
-                    return html_strings.SMSUIChoiceLabel;
+                    return Resources.GetString(ResourcesLocaleKind.Html, "SMSUIChoiceLabel");
                 case AuthenticationResponseKind.SmsTwoWayOTP:
-                    return html_strings.SMSUIChoiceLabel2;
+                    return Resources.GetString(ResourcesLocaleKind.Html, "SMSUIChoiceLabel2");
                 default:
-                    return html_strings.SMSUIChoiceLabel;
+                    return Resources.GetString(ResourcesLocaleKind.Html, "SMSUIChoiceLabel");
             }
         }
 
@@ -225,8 +226,8 @@ namespace Neos.IdentityServer.Multifactor.SMS
         /// </summary>
         public override string GetUIWarningInternetLabel(AuthenticationContext ctx)
         {
-            html_strings.Culture = new CultureInfo(ctx.Lcid);
-            return html_strings.GLOBALWarnOverNetwork;
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
+            return Resources.GetString(ResourcesLocaleKind.Html, "GLOBALWarnOverNetwork");
         }
 
         /// <summary>
@@ -234,8 +235,8 @@ namespace Neos.IdentityServer.Multifactor.SMS
         /// </summary>
         public override string GetUIWarningThirdPartyLabel(AuthenticationContext ctx)
         {
-            html_strings.Culture = new CultureInfo(ctx.Lcid);
-            return html_strings.GLOBALWarnThirdParty;
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
+            return Resources.GetString(ResourcesLocaleKind.Html, "GLOBALWarnThirdParty");
         }
 
         /// <summary>
@@ -243,8 +244,8 @@ namespace Neos.IdentityServer.Multifactor.SMS
         /// </summary>
         public override string GetUIDefaultChoiceLabel(AuthenticationContext ctx)
         {
-            html_strings.Culture = new CultureInfo(ctx.Lcid);
-            return html_strings.GLOBALListChoiceDefaultLabel;
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
+            return Resources.GetString(ResourcesLocaleKind.Html, "GLOBALListChoiceDefaultLabel");
         }
 
         /// <summary>
@@ -252,8 +253,8 @@ namespace Neos.IdentityServer.Multifactor.SMS
         /// </summary>
         public override string GetUIAccountManagementLabel(AuthenticationContext ctx)
         {
-            html_strings.Culture = new CultureInfo(ctx.Lcid);
-            return html_strings.SMSUIManagement;
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
+            return Resources.GetString(ResourcesLocaleKind.Html, "SMSUIManagement");
         }
 
         /// <summary>
@@ -342,7 +343,7 @@ namespace Neos.IdentityServer.Multifactor.SMS
         {
             if (!IsInitialized)
                 throw new Exception("Provider not initialized !");
-            azure_strings.Culture = new CultureInfo(ctx.Lcid);
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
             AvailableAuthenticationMethod result = GetSelectedAuthenticationMethod(ctx);
             ctx.PinRequired = result.RequiredPin;
             ctx.IsRemote = result.IsRemote;
@@ -360,7 +361,7 @@ namespace Neos.IdentityServer.Multifactor.SMS
         {
             if (!IsInitialized)
                 throw new Exception("Provider not initialized !");
-            azure_strings.Culture = new CultureInfo(ctx.Lcid);
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
             if (ctx.SelectedMethod == AuthenticationResponseKind.Error)
                 GetAuthenticationContext(ctx);
 
@@ -406,8 +407,7 @@ namespace Neos.IdentityServer.Multifactor.SMS
             if (!IsInitialized)
                 throw new Exception("Provider not initialized !");
 
-            html_strings.Culture = new CultureInfo(ctx.Lcid);
-            azure_strings.Culture = new CultureInfo(ctx.Lcid);
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
             List<AvailableAuthenticationMethod> result = GetSessionData(this.Kind, ctx);
             if (result != null)
                 return result;
@@ -467,7 +467,7 @@ namespace Neos.IdentityServer.Multifactor.SMS
         /// </summary>
         private int GetUserCodeWithExternalSystem(AuthenticationContext ctx, ExternalOTPProvider externalsys, CultureInfo culture)
         {
-            azure_strings.Culture = culture;
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
             String NumberStr = ctx.PhoneNumber;
             int CountryCode = 0;
             ulong NationalNumber = 0;
@@ -492,12 +492,12 @@ namespace Neos.IdentityServer.Multifactor.SMS
 
             if (ctx.IsTwoWay)
             {
-                Params.SmsText = string.Format(azure_strings.SMSTwoWayMessage, externalsys.Company);
+                Params.SmsText = string.Format(Resources.GetString(ResourcesLocaleKind.Azure, "SMSTwoWayMessage"), externalsys.Company);
                 Params.Mode = PhoneFactor.MODE_SMS_TWO_WAY_OTP;
             }
             else
             {
-                Params.SmsText = string.Format(azure_strings.SMSMessage, externalsys.Company);
+                Params.SmsText = string.Format(Resources.GetString(ResourcesLocaleKind.Azure, "SMSMessage"), externalsys.Company);
                 Params.Mode = PhoneFactor.MODE_SMS_ONE_WAY_OTP;
             }
 
@@ -524,7 +524,7 @@ namespace Neos.IdentityServer.Multifactor.SMS
         /// </summary>
         public int GetUserCodeWithExternalSystem(string upn, string phonenumber, string smstext, ExternalOTPProvider externalsys, CultureInfo culture)
         {
-            azure_strings.Culture = culture;
+            ResourcesLocale Resources = new ResourcesLocale(culture.LCID);
             String NumberStr = phonenumber;
             int CountryCode = 0;
             ulong NationalNumber = 0;
@@ -549,12 +549,12 @@ namespace Neos.IdentityServer.Multifactor.SMS
 
             if (externalsys.IsTwoWay)
             {
-                Params.SmsText = string.Format(azure_strings.SMSTwoWayMessage, externalsys.Company);
+                Params.SmsText = string.Format(Resources.GetString(ResourcesLocaleKind.Azure, "SMSTwoWayMessage"), externalsys.Company);
                 Params.Mode = PhoneFactor.MODE_SMS_TWO_WAY_OTP;
             }
             else
             {
-                Params.SmsText = string.Format(azure_strings.SMSMessage, externalsys.Company);
+                Params.SmsText = string.Format(Resources.GetString(ResourcesLocaleKind.Azure, "SMSMessage"), externalsys.Company);
                 Params.Mode = PhoneFactor.MODE_SMS_ONE_WAY_OTP;
             }
 

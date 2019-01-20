@@ -65,46 +65,41 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Neos.IdentityServer.MultiFactor.AdapaterPresentation.2019.cs" />
+    <Compile Include="Neos.IdentityServer.MultiFactor.AdapterPresentation.2019.cs" />
     <Compile Include="Neos.IdentityServer.Multifactor.AdapterMetadata.cs" />
     <Compile Include="Neos.IdentityServer.MultiFactor.AdapterPresentation.cs" />
     <Compile Include="Neos.IdentityServer.MultiFactor.BasePresentation.cs" />
     <Compile Include="Neos.IdentityServer.Multifactor.ResourcesManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Resources\errors_strings.Designer.cs">
+    <Compile Include="Resources\SErrors.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>errors_strings.resx</DependentUpon>
+      <DependentUpon>SErrors.resx</DependentUpon>
     </Compile>
-    <Compile Include="Resources\html_strings.Designer.cs">
+    <Compile Include="Resources\SHtml.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>html_strings.resx</DependentUpon>
+      <DependentUpon>SHtml.resx</DependentUpon>
     </Compile>
     <Compile Include="Resources\images.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>images.resx</DependentUpon>
     </Compile>
-    <Compile Include="Resources\infos_strings.Designer.cs">
+    <Compile Include="Resources\SInfos.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>infos_strings.resx</DependentUpon>
+      <DependentUpon>SInfos.resx</DependentUpon>
     </Compile>
-    <Compile Include="Resources\title_strings.Designer.cs">
+    <Compile Include="Resources\STitle.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>title_strings.resx</DependentUpon>
+      <DependentUpon>STitle.resx</DependentUpon>
     </Compile>
-    <Compile Include="Resources\valid_strings.Designer.cs">
+    <Compile Include="Resources\SCheck.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>valid_strings.resx</DependentUpon>
-    </Compile>
-    <Compile Include="Resources\valid_strings.es.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>valid_strings.es.resx</DependentUpon>
+      <DependentUpon>SCheck.resx</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -143,21 +138,21 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\errors_strings.es.resx">
+    <EmbeddedResource Include="Resources\SErrors.es.resx">
       <LastGenOutput>errors_strings.es.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="Resources\errors_strings.fr.resx">
+    <EmbeddedResource Include="Resources\SErrors.fr.resx">
       <LastGenOutput>errors_strings.fr.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="Resources\html_strings.es.resx">
+    <EmbeddedResource Include="Resources\SHtml.es.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Resources\html_strings.fr.resx">
+    <EmbeddedResource Include="Resources\SHtml.fr.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Resources\html_strings.resx">
+    <EmbeddedResource Include="Resources\SHtml.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>html_strings.Designer.cs</LastGenOutput>
+      <LastGenOutput>SHtml.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\images.resx">
@@ -165,34 +160,31 @@
       <LastGenOutput>images.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Resources\infos_strings.es.resx" />
-    <EmbeddedResource Include="Resources\infos_strings.fr.resx" />
-    <EmbeddedResource Include="Resources\errors_strings.resx">
+    <EmbeddedResource Include="Resources\SInfos.es.resx" />
+    <EmbeddedResource Include="Resources\SInfos.fr.resx" />
+    <EmbeddedResource Include="Resources\SErrors.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>errors_strings.Designer.cs</LastGenOutput>
+      <LastGenOutput>SErrors.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="Resources\infos_strings.resx">
+    <EmbeddedResource Include="Resources\SInfos.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>infos_strings.Designer.cs</LastGenOutput>
+      <LastGenOutput>SInfos.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="Resources\title_strings.es.resx">
+    <EmbeddedResource Include="Resources\STitle.es.resx">
       <LastGenOutput>title_strings.es.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="Resources\title_strings.fr.resx">
+    <EmbeddedResource Include="Resources\STitle.fr.resx">
       <LastGenOutput>title_strings.fr.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="Resources\title_strings.resx">
+    <EmbeddedResource Include="Resources\STitle.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>title_strings.Designer.cs</LastGenOutput>
+      <LastGenOutput>STitle.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="Resources\valid_strings.es.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>valid_strings.es.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Resources\valid_strings.fr.resx" />
-    <EmbeddedResource Include="Resources\valid_strings.resx">
+    <EmbeddedResource Include="Resources\SCheck.es.resx" />
+    <EmbeddedResource Include="Resources\SCheck.fr.resx" />
+    <EmbeddedResource Include="Resources\SCheck.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>valid_strings.Designer.cs</LastGenOutput>
+      <LastGenOutput>SCheck.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup />

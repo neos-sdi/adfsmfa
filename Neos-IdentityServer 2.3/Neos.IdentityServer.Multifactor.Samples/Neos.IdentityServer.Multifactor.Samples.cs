@@ -24,6 +24,7 @@ using System.Threading.Tasks;
 using Neos.IdentityServer.MultiFactor;
 using System.Globalization;
 using System.Diagnostics.CodeAnalysis;
+using Neos.IdentityServer.MultiFactor.Common;
 
 namespace Neos.IdentityServer.MultiFactor.Samples
 {

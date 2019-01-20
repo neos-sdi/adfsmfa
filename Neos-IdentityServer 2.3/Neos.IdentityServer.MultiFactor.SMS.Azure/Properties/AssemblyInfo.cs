@@ -27,7 +27,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Neos-Sdi")]
 [assembly: AssemblyProduct("Neos.IdentityServer.MultiFactor.SMS.Azure")]
-[assembly: AssemblyCopyright("Copyright Neos-Sdi © 2018")]
+[assembly: AssemblyCopyright("Copyright Neos-Sdi © 2019")]
 [assembly: AssemblyTrademark("Neos-Sdi")]
 [assembly: AssemblyCulture("")]
 
@@ -51,5 +51,5 @@ using System.Runtime.InteropServices;
 // en utilisant '*', comme indiqué ci-dessous :
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("2.3.0.0")]
-[assembly: AssemblyFileVersion("2.3.0.73")]
+[assembly: AssemblyFileVersion("2.3.0.217")]
 [assembly: AssemblyInformationalVersion("2.3.0.0")]

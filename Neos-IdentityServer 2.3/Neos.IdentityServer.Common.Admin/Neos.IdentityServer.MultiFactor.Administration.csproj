@@ -68,10 +68,10 @@
     <Compile Include="Neos.IdentityServer.MultiFactor.Admin.DataContracts.cs" />
     <Compile Include="Neos.IdentityServer.MultiFactor.Admin.Utilities.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Resources\errors_strings.Designer.cs">
+    <Compile Include="Resources\SErrors.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>errors_strings.resx</DependentUpon>
+      <DependentUpon>SErrors.resx</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -96,11 +96,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\errors_strings.es.resx" />
-    <EmbeddedResource Include="Resources\errors_strings.fr.resx" />
-    <EmbeddedResource Include="Resources\errors_strings.resx">
+    <EmbeddedResource Include="Resources\SErrors.fr.resx" />
+    <EmbeddedResource Include="Resources\SErrors.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>errors_strings.Designer.cs</LastGenOutput>
+      <LastGenOutput>SErrors.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
