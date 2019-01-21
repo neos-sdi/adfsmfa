@@ -20,7 +20,7 @@
 <h2>Install & Documentation</h2>
 <ul>
     <li>
-        <p><a href="https://github.com/neos-sdi/adfsmfa/wiki/Doc2">https://github.com/neos-sdi/adfsmfa/wiki/documentation</a></p>
+        <p><a href="https://github.com/neos-sdi/adfsmfa/wiki/Documentation">https://github.com/neos-sdi/adfsmfa/wiki/documentation</a></p>
     </li>
 </ul>
 <h2>Downloads</h2>
