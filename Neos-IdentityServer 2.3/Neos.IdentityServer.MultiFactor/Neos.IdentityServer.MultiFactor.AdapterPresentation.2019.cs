@@ -197,17 +197,17 @@ namespace Neos.IdentityServer.MultiFactor
             IExternalProvider prov = RuntimeAuthProvider.GetProvider(usercontext.PreferredMethod);
             if ((prov != null) && (prov.IsUIElementRequired(usercontext, RequiredMethodElements.CodeInputRequired)))
             {
-                result += "<div id=\"wizardMessage\" class=\"groupMargin\"><label for=\"\"></label>" + prov.GetUILabel(usercontext) + "</div>";
+                result += "<div id=\"wizardMessage\" class=\"groupMargin\">" + prov.GetUILabel(usercontext) + "</div>";
                 result += "<input id=\"totp\" name=\"totp\" type=\"password\" placeholder=\"Code\" class=\""+(UseUIPaginated ? "text textPaginated fullWidth" : "text fullWidth") +"\" autofocus=\"autofocus\" /></br>";
-                result += "<div class=\"fieldMargin smallText\"><label for=\"\"></label>" + prov.GetUIMessage(usercontext) + "</div>";
+                result += "<div class=\"fieldMargin smallText\">" + prov.GetUIMessage(usercontext) + "</div></br>";
                 if (!string.IsNullOrEmpty(prov.GetUIWarningThirdPartyLabel(usercontext)) && (usercontext.IsSendBack))
-                    result += "<div class=\"error smallText\"><label for=\"\"></label>" + prov.GetUIWarningThirdPartyLabel(usercontext) + "</div>";
-                result += "<br />";
+                    result += "<div class=\"error smallText\">" + prov.GetUIWarningThirdPartyLabel(usercontext) + "</div></br>";
             }
             if ((prov != null) && (prov.IsUIElementRequired(usercontext, RequiredMethodElements.PinParameterRequired)))
             {
-                result += "<div class=\"fieldMargin smallText\"><label for=\"\"></label>" + BaseExternalProvider.GetPINLabel(usercontext) + "</div>";
-                result += "<input id=\"pincode\" name=\"pincode\" type=\"password\" placeholder=\"PIN Number\" class=\"text fullWidth\" /></br></br>";
+                result += "<div id=\"wizardMessage2\" class=\"groupMargin\">" + BaseExternalProvider.GetPINLabel(usercontext) + "</div>";
+                result += "<input id=\"pincode\" name=\"pincode\" type=\"password\" placeholder=\"PIN Number\" class=\"" + (UseUIPaginated ? "text textPaginated fullWidth" : "text fullWidth") + "\" /></br>";
+                result += "<div class=\"fieldMargin smallText\">" + BaseExternalProvider.GetPINMessage(usercontext) + "</div></br>";
             }
 
             if (Provider.HasAccessToOptions(prov))
@@ -324,7 +324,7 @@ namespace Neos.IdentityServer.MultiFactor
             string result = string.Empty;
 
             result += "<form method=\"post\" id=\"registrationForm\" autocomplete=\"off\" onsubmit=\"return ValidateRegistration(this)\" >";
-            result += "<div id=\"wizardMessage\" class=\"groupMargin\"><label for=\"\"></label>" + Resources.GetString(ResourcesLocaleKind.Titles, "RegistrationPageTitle") + "</div>";
+            result += "<div id=\"wizardMessage\" class=\"groupMargin\">" + Resources.GetString(ResourcesLocaleKind.Titles, "RegistrationPageTitle") + "</div>";
 
             result += GetPartHtmlPagingMethod(usercontext);
 
@@ -360,17 +360,17 @@ namespace Neos.IdentityServer.MultiFactor
                     {
                         displaykey = KeysManager.EncodedKey(usercontext.UPN);
                     }
-                    result += "<b><div class=\"fieldMargin\"><label for=\"\"></label>" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlREGLabelAppKey") + "</div></b>";
+                    result += "<b><div class=\"fieldMargin\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlREGLabelAppKey") + "</div></b>";
                     result += "<input id=\"secretkey\" name=\"secretkey\" type=\"text\" readonly=\"true\" placeholder=\"DisplayKey\" class=\"" + (UseUIPaginated ? "text textPaginated fullWidth" : "text fullWidth") + "\" style=\"background-color: #F0F0F0\" value=\"" + StripDisplayKey(displaykey) + "\"/></br>";
                 }
                 if ((prov.IsUIElementRequired(usercontext, RequiredMethodElements.EmailParameterRequired)))
                 {
-                    result += "<b><div class=\"fieldMargin\"><label for=\"\"></label>" + prov.GetUICFGLabel(usercontext) + "</div></b>";
+                    result += "<b><div class=\"fieldMargin\">" + prov.GetUICFGLabel(usercontext) + "</div></b>";
                     result += "<input id=\"email\" name=\"email\" type=\"text\" readonly=\"true\" placeholder=\"Personal Email Address\" class=\"" + (UseUIPaginated ? "text textPaginated fullWidth" : "text fullWidth") + "\" style=\"background-color: #F0F0F0\" value=\"" + usercontext.MailAddress + "\"/></br>";
                 }
                 if ((prov.IsUIElementRequired(usercontext, RequiredMethodElements.PhoneParameterRequired)))
                 {
-                    result += "<b><div class=\"fieldMargin\"><label for=\"\"></label>" + prov.GetUICFGLabel(usercontext) + "</div></b>";
+                    result += "<b><div class=\"fieldMargin\">" + prov.GetUICFGLabel(usercontext) + "</div></b>";
                     result += "<input id=\"phone\" name=\"phone\" type=\"text\" readonly=\"true\" placeholder=\"Phone Number\" class=\"" + (UseUIPaginated ? "text textPaginated fullWidth" : "text fullWidth") + "\" style=\"background-color: #F0F0F0\" value=\"" + usercontext.PhoneNumber + "\"/></br>";
                 }
 
@@ -400,7 +400,7 @@ namespace Neos.IdentityServer.MultiFactor
                 }
                 else if (lst.Count <= 0)
                 {
-                    result += "<div class=\"fieldMargin error smallText\"><label for=\"\"></label>No options available for " + prov.Description + "</div></br>";
+                    result += "<div class=\"fieldMargin error smallText\">No options available for " + prov.Description + "</div></br>";
                 }
                 if ((prov.IsUIElementRequired(usercontext, RequiredMethodElements.KeyParameterRequired)))
                 {
@@ -429,7 +429,7 @@ namespace Neos.IdentityServer.MultiFactor
             {   // PIN Code
                 if (RuntimeAuthProvider.IsPinCodeRequired(usercontext))
                 {
-                    result += "<b><div class=\"fieldMargin\"><label for=\"\"></label>" + BaseExternalProvider.GetPINLabel(usercontext) + " : </div></b>";
+                    result += "<b><div class=\"fieldMargin\">" + BaseExternalProvider.GetPINLabel(usercontext) + " : </div></b>";
                     if (usercontext.PinCode > 0)
                         result += "<input id=\"pincode\" name=\"pincode\" type=\"password\" readonly=\"true\" placeholder=\"Pin Code\" class=\"" + (UseUIPaginated ? "text textPaginated fullWidth" : "text fullWidth") + "\" style=\"background-color: #F0F0F0\" value=\"" + usercontext.PinCode + "\"/></br>";
                     else
@@ -565,7 +565,7 @@ namespace Neos.IdentityServer.MultiFactor
             string result = string.Empty;
 
             result += "<form method=\"post\" id=\"invitationForm\" autocomplete=\"off\" onsubmit=\"return ValidateInvitation(this)\" >";
-            result += "<div id=\"wizardMessage\" class=\"groupMargin\"><label for=\"\"></label>" + Resources.GetString(ResourcesLocaleKind.Titles, "InvitationPageTitle") + "</div>";
+            result += "<div id=\"wizardMessage\" class=\"groupMargin\">" + Resources.GetString(ResourcesLocaleKind.Titles, "InvitationPageTitle") + "</div>";
 
             result += GetPartHtmlPagingMethod(usercontext);
             IExternalProvider prov = null;
@@ -600,17 +600,17 @@ namespace Neos.IdentityServer.MultiFactor
                     {
                         displaykey = KeysManager.EncodedKey(usercontext.UPN);
                     }
-                    result += "<b><div class=\"fieldMargin\"><label for=\"\"></label>" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlREGLabelAppKey") + "</div></b>";
+                    result += "<b><div class=\"fieldMargin\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlREGLabelAppKey") + "</div></b>";
                     result += "<input id=\"secretkey\" name=\"secretkey\" type=\"text\" readonly=\"true\" placeholder=\"DisplayKey\" class=\"" + (UseUIPaginated ? "text textPaginated fullWidth" : "text fullWidth") + "\" style=\"background-color: #F0F0F0\" value=\"" + StripDisplayKey(displaykey) + "\"/></br>";
                 }
                 if ((prov.IsUIElementRequired(usercontext, RequiredMethodElements.EmailParameterRequired)))
                 {
-                    result += "<b><div class=\"fieldMargin\"><label for=\"\"></label>" + prov.GetUICFGLabel(usercontext) + "</div></b>";
+                    result += "<b><div class=\"fieldMargin\">" + prov.GetUICFGLabel(usercontext) + "</div></b>";
                     result += "<input id=\"email\" name=\"email\" type=\"text\" readonly=\"true\" placeholder=\"Personal Email Address\" class=\"" + (UseUIPaginated ? "text textPaginated fullWidth" : "text fullWidth") + "\" style=\"background-color: #F0F0F0\" value=\"" + usercontext.MailAddress + "\"/></br>";
                 }
                 if ((prov.IsUIElementRequired(usercontext, RequiredMethodElements.PhoneParameterRequired)))
                 {
-                    result += "<b><div class=\"fieldMargin\"><label for=\"\"></label>" + prov.GetUICFGLabel(usercontext) + "</div></b>";
+                    result += "<b><div class=\"fieldMargin\">" + prov.GetUICFGLabel(usercontext) + "</div></b>";
                     result += "<input id=\"phone\" name=\"phone\" type=\"text\" readonly=\"true\" placeholder=\"Phone Number\" class=\"" + (UseUIPaginated ? "text textPaginated fullWidth" : "text fullWidth") + "\" style=\"background-color: #F0F0F0\" value=\"" + usercontext.PhoneNumber + "\"/></br>";
                 }
 
@@ -640,7 +640,7 @@ namespace Neos.IdentityServer.MultiFactor
                 }
                 else if (lst.Count <= 0)
                 {
-                    result += "<div class=\"fieldMargin error smallText\"><label for=\"\"></label>No options available for " + prov.Description + "</div></br>";
+                    result += "<div class=\"fieldMargin error smallText\">No options available for " + prov.Description + "</div></br>";
                 }
                 if ((prov.IsUIElementRequired(usercontext, RequiredMethodElements.KeyParameterRequired)))
                 {
@@ -668,7 +668,7 @@ namespace Neos.IdentityServer.MultiFactor
             {
                 if (RuntimeAuthProvider.IsPinCodeRequired(usercontext))
                 {
-                    result += "<b><div class=\"fieldMargin smallText\"><label for=\"\"></label>" + BaseExternalProvider.GetPINLabel(usercontext) + " : </div></b>";
+                    result += "<b><div class=\"fieldMargin smallText\">" + BaseExternalProvider.GetPINLabel(usercontext) + " : </div></b>";
                     if (usercontext.PinCode > 0)
                         result += "<input id=\"pincode\" name=\"pincode\" type=\"password\" readonly=\"true\" placeholder=\"Pin Code\" class=\"" + (UseUIPaginated ? "text textPaginated fullWidth" : "text fullWidth") + "\" style=\"background-color: #F0F0F0\" value=\"" + usercontext.PinCode + "\"/></br>";
                     else
@@ -868,7 +868,7 @@ namespace Neos.IdentityServer.MultiFactor
         {
             string result = string.Empty;
             result += "<form method=\"post\" id=\"ChooseMethodForm\" autocomplete=\"off\" \" >";
-            result += "</br><b><div id=\"pwdTitle\" class=\"groupMargin\"><label for=\"\"></label>" + Resources.GetString(ResourcesLocaleKind.Titles, "MustUseCodePageTitle") + "</div></b></br>";
+            result += "</br><b><div id=\"pwdTitle\" class=\"groupMargin\">" + Resources.GetString(ResourcesLocaleKind.Titles, "MustUseCodePageTitle") + "</div></b></br>";
             PreferredMethod method = GetMethod4FBUsers(usercontext);
             if (RuntimeAuthProvider.IsProviderAvailableForUser(usercontext, PreferredMethod.Code))
             {
@@ -1005,16 +1005,16 @@ namespace Neos.IdentityServer.MultiFactor
             if (Provider.Config.CustomUpdatePassword)
             {
                 result += "<form method=\"post\" id=\"passwordForm\" autocomplete=\"off\" onsubmit=\"return ValidChangePwd(this)\" >";
-                result += "<div id=\"wizardMessage\" class=\"groupMargin\"><label for=\"\"></label>" + Resources.GetString(ResourcesLocaleKind.Titles, "PasswordPageTitle") + "</div>";
+                result += "<div id=\"wizardMessage\" class=\"groupMargin\">" + Resources.GetString(ResourcesLocaleKind.Titles, "PasswordPageTitle") + "</div>";
                 result += "</br>";
 
-                result += "<b><div id=\"oldpwd\" class=\"groupMargin\"><label for=\"\"></label>" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlPWDLabelActual") + "</div></b>";
+                result += "<b><div id=\"oldpwd\" class=\"groupMargin\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlPWDLabelActual") + "</div></b>";
                 result += "<input id=\"oldpwdedit\" name=\"oldpwdedit\" type=\"password\" class=\"" + (UseUIPaginated ? "text textPaginated fullWidth" : "text fullWidth") + "\"/></br>";
 
-                result += "<b><div id=\"newpwd\" class=\"groupMargin\"><label for=\"\"></label>" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlPWDLabelNew") + "</div></b>";
+                result += "<b><div id=\"newpwd\" class=\"groupMargin\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlPWDLabelNew") + "</div></b>";
                 result += "<input id=\"newpwdedit\" name=\"newpwdedit\" type=\"password\" class=\"" + (UseUIPaginated ? "text textPaginated fullWidth" : "text fullWidth") + "\"/></br>";
 
-                result += "<b><div id=\"cnfpwd\" class=\"groupMargin\"><label for=\"\"></label>" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlPWDLabelNewConfirmation") + "</div></b>";
+                result += "<b><div id=\"cnfpwd\" class=\"groupMargin\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlPWDLabelNewConfirmation") + "</div></b>";
                 result += "<input id=\"cnfpwdedit\" name=\"cnfpwdedit\" type=\"password\" class=\"" + (UseUIPaginated ? "text textPaginated fullWidth" : "text fullWidth") + "\"/></br></br>";
 
                 result += "<input id=\"context\" type=\"hidden\" name=\"Context\" value=\"%Context%\"/>";
@@ -1097,8 +1097,9 @@ namespace Neos.IdentityServer.MultiFactor
             if (needinput)
             {
                 result += "<form method=\"post\" id=\"bypassForm\" autocomplete=\"off\" title=\"PIN Confirmation\" >";
-                result += "<div class=\"fieldMargin smallText\"><label for=\"\"></label>" + BaseExternalProvider.GetPINLabel(usercontext) + " : </div>";
-                result += "<input id=\"pincode\" name=\"pincode\" type=\"password\" placeholder=\"PIN Number\" class=\"text fullWidth\" /></br></br>";
+                result += "<div class=\"fieldMargin smallText\">" + BaseExternalProvider.GetPINLabel(usercontext) + " : </div>";
+                result += "<input id=\"pincode\" name=\"pincode\" type=\"password\" placeholder=\"PIN Number\" class=\"" + (UseUIPaginated ? "text textPaginated fullWidth" : "text fullWidth") + "\" /></br>";
+                result += "<div class=\"fieldMargin smallText\">" + BaseExternalProvider.GetPINMessage(usercontext) + "</div></br>";
                 result += "<input id=\"context\" type=\"hidden\" name=\"Context\" value=\"%Context%\"/>";
                 result += "<input id=\"authMethod\" type=\"hidden\" name=\"AuthMethod\" value=\"%AuthMethod%\"/>";
                 result += "<input id=\"continueButton\" type=\"submit\" class=\"submit\" name=\"Continue\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMConnexion") + "\" /></br></br>";
@@ -1293,11 +1294,11 @@ namespace Neos.IdentityServer.MultiFactor
             {
                 IExternalProvider prov = RuntimeAuthProvider.GetProvider(usercontext.PreferredMethod);
                 result += GetPartHtmlDonut();
-                result += "<div class=\"fieldMargin smallText\"><label for=\"\"></label>" + prov.GetUIMessage(usercontext) + "</div></br>";
+                result += "<div class=\"fieldMargin smallText\">" + prov.GetUIMessage(usercontext) + "</div></br>";
                 if (!string.IsNullOrEmpty(prov.GetUIWarningInternetLabel(usercontext)) && (usercontext.IsRemote))
-                    result += "<div class=\"error smallText\"><label for=\"\"></label>" + prov.GetUIWarningInternetLabel(usercontext) + "</div>";
+                    result += "<div class=\"error smallText\">" + prov.GetUIWarningInternetLabel(usercontext) + "</div>";
                 if (!string.IsNullOrEmpty(prov.GetUIWarningThirdPartyLabel(usercontext)) && (usercontext.IsTwoWay))
-                    result += "<div class=\"error smallText\"><label for=\"\"></label>" + prov.GetUIWarningThirdPartyLabel(usercontext) + "</div>";
+                    result += "<div class=\"error smallText\">" + prov.GetUIWarningThirdPartyLabel(usercontext) + "</div>";
                 result += "<br />";
                 if (usercontext.IsTwoWay && (Provider.Config.UserFeatures.CanAccessOptions()))
                 {
@@ -1358,15 +1359,15 @@ namespace Neos.IdentityServer.MultiFactor
             result += "</script>" + "\r\n";
 
             result += "<form method=\"post\" id=\"invitationReqForm\" autocomplete=\"off\" \">";
-            result += "<div class=\"fieldMargin smallText\"><label for=\"\"></label>" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlINSWaitRequest") + "</div>";
+            result += "<div class=\"fieldMargin smallText\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlINSWaitRequest") + "</div>";
 
             IExternalAdminProvider admprov = RuntimeAuthProvider.GetAdministrativeProvider(Provider.Config);
             result += GetPartHtmlDonut();
             if (admprov != null)
             {
-                result += "<div class=\"fieldMargin smallText\"><label for=\"\"></label>" + admprov.GetUIInscriptionMessageLabel(usercontext) + "</div></br>";
+                result += "<div class=\"fieldMargin smallText\">" + admprov.GetUIInscriptionMessageLabel(usercontext) + "</div></br>";
                 if (!string.IsNullOrEmpty(admprov.GetUIWarningInternetLabel(usercontext)) && (usercontext.IsRemote))
-                    result += "<div class=\"error smallText\"><label for=\"\"></label>" + admprov.GetUIWarningInternetLabel(usercontext) + "</div>";
+                    result += "<div class=\"error smallText\">" + admprov.GetUIWarningInternetLabel(usercontext) + "</div>";
             }
             result += "<input id=\"context\" type=\"hidden\" name=\"Context\" value=\"%Context%\"/>";
             result += "<input id=\"authMethod\" type=\"hidden\" name=\"AuthMethod\" value=\"%AuthMethod%\"/>";
@@ -1414,16 +1415,16 @@ namespace Neos.IdentityServer.MultiFactor
             result += "</script>" + "\r\n";
 
             result += "<form method=\"post\" id=\"sendkeyReqForm\" autocomplete=\"off\" \">";
-            result += "<div class=\"fieldMargin smallText\"><label for=\"\"></label>" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlINSWaitRequest") + "</div>";
+            result += "<div class=\"fieldMargin smallText\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlINSWaitRequest") + "</div>";
 
             IExternalAdminProvider admprov = RuntimeAuthProvider.GetAdministrativeProvider(Provider.Config);
 
             result += GetPartHtmlDonut();
             if (admprov != null)
             {
-                result += "<div class=\"fieldMargin smallText\"><label for=\"\"></label>" + admprov.GetUISecretKeyMessageLabel(usercontext) + "</div></br>";
+                result += "<div class=\"fieldMargin smallText\">" + admprov.GetUISecretKeyMessageLabel(usercontext) + "</div></br>";
                 if (!string.IsNullOrEmpty(admprov.GetUIWarningInternetLabel(usercontext)) && (usercontext.IsRemote))
-                    result += "<div class=\"error smallText\"><label for=\"\"></label>" + admprov.GetUIWarningInternetLabel(usercontext) + "</div>";
+                    result += "<div class=\"error smallText\">" + admprov.GetUIWarningInternetLabel(usercontext) + "</div>";
             }
             result += "<input id=\"context\" type=\"hidden\" name=\"Context\" value=\"%Context%\"/>";
             result += "<input id=\"authMethod\" type=\"hidden\" name=\"AuthMethod\" value=\"%AuthMethod%\"/>";
@@ -1465,8 +1466,8 @@ namespace Neos.IdentityServer.MultiFactor
             switch (usercontext.WizPageID)
             {
                 case 0:
-                    result += "<div id=\"wizardMessage\" class=\"groupMargin\"><label for=\"\"></label>" + prov.GetWizardUILabel(usercontext) + "</div>";
-                    result += "<div class=\"fieldMargin smallText\"><label for=\"\"></label>" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelWREGOTP") + "</div></br>";
+                    result += "<div id=\"wizardMessage\" class=\"groupMargin\">" + prov.GetWizardUILabel(usercontext) + "</div>";
+                    result += "<div class=\"fieldMargin smallText\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelWREGOTP") + "</div></br>";
                     result += "<table>";
                     if (!Provider.Config.OTPProvider.WizardOptions.HasFlag(OTPWizardOptions.NoMicrosoftAuthenticator))
                     {
@@ -1577,16 +1578,16 @@ namespace Neos.IdentityServer.MultiFactor
                     KeysManager.NewKey(usercontext.UPN);
                     string displaykey = KeysManager.EncodedKey(usercontext.UPN);
 
-                    result += "<div id=\"wizardMessage\" class=\"groupMargin\"><label for=\"\"></label>" + prov.GetWizardUILabel(usercontext) + "</div>";
-                    result += "<div class=\"fieldMargin smallText\"><label for=\"\"></label>" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelWRQRCode") + "</div></br>";
+                    result += "<div id=\"wizardMessage\" class=\"groupMargin\">" + prov.GetWizardUILabel(usercontext) + "</div>";
+                    result += "<div class=\"fieldMargin smallText\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelWRQRCode") + "</div></br>";
                     result += "<input id=\"secretkey\" name=\"secretkey\" type=\"text\" readonly=\"true\" placeholder=\"DisplayKey\" class=\"text fullWidth\" style=\"background-color: #F0F0F0\" value=\"" + StripDisplayKey(displaykey) + "\"/></br></br>";
                     result += "<p style=\"text-align:center\"><img id=\"qr\" src=\"data:image/png;base64," + Provider.GetQRCodeString(usercontext) + "\"/></p></br>";
                     result += "<input id=\"nextButton\" type=\"submit\" class=\"submit\" name=\"nextButton\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelWVERIFYOTP") + "\" onclick=\"fnbtnclicked(3)\" />";
                     break;
                 case 2: // Code verification
-                    result += "<div id=\"wizardMessage\" class=\"groupMargin\"><label for=\"\"></label>" + prov.GetUILabel(usercontext) + "</div>";
+                    result += "<div id=\"wizardMessage\" class=\"groupMargin\">" + prov.GetUILabel(usercontext) + "</div>";
                     result += "<input id=\"totp\" name=\"totp\" type=\"password\" placeholder=\"Code\" class=\"" + (UseUIPaginated ? "text textPaginated fullWidth" : "text fullWidth") + "\" autofocus=\"autofocus\" /></br>";
-                    result += "<div class=\"fieldMargin smallText\"><label for=\"\"></label>" + prov.GetUIMessage(usercontext) + "</div></br>";
+                    result += "<div class=\"fieldMargin smallText\">" + prov.GetUIMessage(usercontext) + "</div></br>";
                     result += "<table><tr>";
                     result += "<td>";
                     result += "<input id=\"checkButton\" type=\"submit\" class=\"submit\" name=\"checkButton\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMCheck") + "\" onclick=\"fnbtnclicked(4)\" />";
@@ -1727,8 +1728,8 @@ namespace Neos.IdentityServer.MultiFactor
             switch (usercontext.WizPageID)
             {
                 case 0: // Get User email
-                    result += "<div id=\"wizardMessage\" class=\"groupMargin\"><label for=\"\"></label>" + prov.GetWizardUILabel(usercontext) + "</div>";
-                    result += "<div class=\"fieldMargin smallText\"><label for=\"\"></label>" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelWREmail") + "</div></br>";
+                    result += "<div id=\"wizardMessage\" class=\"groupMargin\">" + prov.GetWizardUILabel(usercontext) + "</div>";
+                    result += "<div class=\"fieldMargin smallText\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelWREmail") + "</div></br>";
                     result += "<input id=\"email\" name=\"email\" type=\"text\" placeholder=\"Personal Email Address\" class=\"" + (UseUIPaginated ? "text textPaginated fullWidth" : "text fullWidth") + "\" value=\"" + usercontext.MailAddress + "\"/></br>";
                     result += "</br>";
                     result += "<table><tr>";
@@ -1745,17 +1746,17 @@ namespace Neos.IdentityServer.MultiFactor
                     break;
                 case 1:
                     result += GetPartHtmlDonut();
-                    result += "<div class=\"fieldMargin smallText\"><label for=\"\"></label>" + prov.GetUIMessage(usercontext) + "</div></br>";
+                    result += "<div class=\"fieldMargin smallText\">" + prov.GetUIMessage(usercontext) + "</div></br>";
                     if (!string.IsNullOrEmpty(prov.GetUIWarningInternetLabel(usercontext)) && (usercontext.IsRemote))
-                        result += "<div class=\"error smallText\"><label for=\"\"></label>" + prov.GetUIWarningInternetLabel(usercontext) + "</div>";
+                        result += "<div class=\"error smallText\">" + prov.GetUIWarningInternetLabel(usercontext) + "</div>";
                     if (!string.IsNullOrEmpty(prov.GetUIWarningThirdPartyLabel(usercontext)) && (usercontext.IsTwoWay))
-                        result += "<div class=\"error smallText\"><label for=\"\"></label>" + prov.GetUIWarningThirdPartyLabel(usercontext) + "</div>";
+                        result += "<div class=\"error smallText\">" + prov.GetUIWarningThirdPartyLabel(usercontext) + "</div>";
                     result += "<br />";
                     break;
                 case 2: // Code verification
-                    result += "<div id=\"wizardMessage\" class=\"groupMargin\"><label for=\"\"></label>" + prov.GetUILabel(usercontext) + "</div>";
+                    result += "<div id=\"wizardMessage\" class=\"groupMargin\">" + prov.GetUILabel(usercontext) + "</div>";
                     result += "<input id=\"totp\" name=\"totp\" type=\"password\" placeholder=\"Code\" class=\"" + (UseUIPaginated ? "text textPaginated fullWidth" : "text fullWidth") + "\" autofocus=\"autofocus\" /></br>";
-                    result += "<div class=\"fieldMargin smallText\"><label for=\"\"></label>" + prov.GetUIMessage(usercontext) + "</div></br>";
+                    result += "<div class=\"fieldMargin smallText\">" + prov.GetUIMessage(usercontext) + "</div></br>";
                     result += "<table><tr>";
                     result += "<td>";
                     result += "<input id=\"checkButton\" type=\"submit\" class=\"submit\" name=\"checkButton\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMCheck") + "\" onclick=\"fnbtnclicked(4)\" />";
@@ -1912,8 +1913,8 @@ namespace Neos.IdentityServer.MultiFactor
             switch (usercontext.WizPageID)
             {
                 case 0: // Get User Phone number
-                    result += "<div id=\"wizardMessage\" class=\"groupMargin\"><label for=\"\"></label>" + prov.GetWizardUILabel(usercontext) + "</div>";
-                    result += "<div class=\"fieldMargin smallText\"><label for=\"\"></label>" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelWRPhone") + "</div></br>";
+                    result += "<div id=\"wizardMessage\" class=\"groupMargin\">" + prov.GetWizardUILabel(usercontext) + "</div>";
+                    result += "<div class=\"fieldMargin smallText\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelWRPhone") + "</div></br>";
                     result += "<input id=\"phone\" name=\"phone\" type=\"text\" placeholder=\"Personal Phone number\" class=\"" + (UseUIPaginated ? "text textPaginated fullWidth" : "text fullWidth") + "\" value=\"" + usercontext.PhoneNumber + "\"/></br>";
                     result += "</br>";
                     result += "<table><tr>";
@@ -1930,17 +1931,17 @@ namespace Neos.IdentityServer.MultiFactor
                     break;
                 case 1:
                     result += GetPartHtmlDonut();
-                    result += "<div class=\"fieldMargin smallText\"><label for=\"\"></label>" + prov.GetUIMessage(usercontext) + "</div></br>";
+                    result += "<div class=\"fieldMargin smallText\">" + prov.GetUIMessage(usercontext) + "</div></br>";
                     if (!string.IsNullOrEmpty(prov.GetUIWarningInternetLabel(usercontext)) && (usercontext.IsRemote))
-                        result += "<div class=\"error smallText\"><label for=\"\"></label>" + prov.GetUIWarningInternetLabel(usercontext) + "</div>";
+                        result += "<div class=\"error smallText\">" + prov.GetUIWarningInternetLabel(usercontext) + "</div>";
                     if (!string.IsNullOrEmpty(prov.GetUIWarningThirdPartyLabel(usercontext)) && (usercontext.IsTwoWay))
-                        result += "<div class=\"error smallText\"><label for=\"\"></label>" + prov.GetUIWarningThirdPartyLabel(usercontext) + "</div>";
+                        result += "<div class=\"error smallText\">" + prov.GetUIWarningThirdPartyLabel(usercontext) + "</div>";
                     result += "<br />";
                     break;
                 case 2: // Code verification If One-Way
-                    result += "<div id=\"wizardMessage\" class=\"groupMargin\"><label for=\"\"></label>" + prov.GetUILabel(usercontext) + "</div>";
+                    result += "<div id=\"wizardMessage\" class=\"groupMargin\">" + prov.GetUILabel(usercontext) + "</div>";
                     result += "<input id=\"totp\" name=\"totp\" type=\"password\" placeholder=\"Code\" class=\""+(UseUIPaginated ? "text textPaginated fullWidth" : "text fullWidth") +"\" autofocus=\"autofocus\" /></br>";
-                    result += "<div class=\"fieldMargin smallText\"><label for=\"\"></label>" + prov.GetUIMessage(usercontext) + "</div></br>";
+                    result += "<div class=\"fieldMargin smallText\">" + prov.GetUIMessage(usercontext) + "</div></br>";
                     result += "<table><tr>";
                     result += "<td>";
                     result += "<input id=\"checkButton\" type=\"submit\" class=\"submit\" name=\"checkButton\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMCheck") + "\" onclick=\"fnbtnclicked(4)\" />";
@@ -2068,8 +2069,8 @@ namespace Neos.IdentityServer.MultiFactor
             switch (usercontext.WizPageID)
             {
                 case 0: // Get User Pin
-                    result += "<div id=\"wizardMessage\" class=\"groupMargin\"><label for=\"\"></label>" + BaseExternalProvider.GetPINWizardUILabel(usercontext) + "</div>";
-                    result += "<div class=\"fieldMargin smallText\"><label for=\"\"></label>" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelWRPinCode") + "</div></br>";
+                    result += "<div id=\"wizardMessage\" class=\"groupMargin\">" + BaseExternalProvider.GetPINWizardUILabel(usercontext) + "</div>";
+                    result += "<div class=\"fieldMargin smallText\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelWRPinCode") + "</div></br>";
                     if (usercontext.PinCode <= 0)
                         result += "<input id=\"pincode\" name=\"pincode\" type=\"password\" placeholder=\"PIN Number\" class=\"" + (UseUIPaginated ? "text textPaginated fullWidth" : "text fullWidth") + "\" value=\"" + Provider.Config.DefaultPin + "\"/></br>";
                     else
@@ -2087,9 +2088,9 @@ namespace Neos.IdentityServer.MultiFactor
                     result += GetFormHtmlMessageZone(usercontext);
                     break;
                 case 2: // Code verification
-                    result += "<div id=\"wizardMessage\" class=\"groupMargin\"><label for=\"\"></label>" + BaseExternalProvider.GetPINLabel(usercontext) + "</div>";
+                    result += "<div id=\"wizardMessage\" class=\"groupMargin\">" + BaseExternalProvider.GetPINLabel(usercontext) + "</div>";
                     result += "<input id=\"pincode\" name=\"pincode\" type=\"password\" placeholder=\"PIN Code\" class=\"" + (UseUIPaginated ? "text textPaginated fullWidth" : "text fullWidth") + "\" autofocus=\"autofocus\" /></br>";
-                    result += "<div class=\"fieldMargin smallText\"><label for=\"\"></label>" + BaseExternalProvider.GetPINMessage(usercontext) + "</div></br>";
+                    result += "<div class=\"fieldMargin smallText\">" + BaseExternalProvider.GetPINMessage(usercontext) + "</div></br>";
                     result += "<table><tr>";
                     result += "<td>";
                     result += "<input id=\"checkButton\" type=\"submit\" class=\"submit\" name=\"checkButton\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMCheck") + "\" onclick=\"fnbtnclicked(3)\" />";
@@ -2141,7 +2142,7 @@ namespace Neos.IdentityServer.MultiFactor
         {
             bool showpin = false;
             string result = string.Empty;
-            result += "<b><div class=\"fieldMargin\"><label for=\"\"></label>" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlREGAccessPageMethods") + "</div></b>";
+            result += "<b><div class=\"fieldMargin\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlREGAccessPageMethods") + "</div></b>";
             result += "<select id=\"selectpage\" name=\"selectpage\" role=\"combobox\"  required=\"required\" contenteditable=\"false\" class=\"text fullWidth\" onchange=\"this.form.submit()\">";
 
             IExternalProvider prov = null;
@@ -2216,7 +2217,7 @@ namespace Neos.IdentityServer.MultiFactor
             else
                 method = reg.PreferredMethod;
             string result = string.Empty;
-            result += "<b><div class=\"fieldMargin\"><label for=\"\"></label>" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlREGAccessMethod") + "</div></b>";
+            result += "<b><div class=\"fieldMargin\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlREGAccessMethod") + "</div></b>";
             result += "<select id=\"selectopt\" name=\"selectopt\" role=\"combobox\"  required=\"required\" contenteditable=\"false\" class=\"text fullWidth\" >";
 
             result += "<option value=\"0\" " + ((method == PreferredMethod.Choose) ? "selected=\"true\"> " : "> ") + Resources.GetString(ResourcesLocaleKind.Html, "HtmlREGOptionChooseBest") + "</option>";
@@ -2252,7 +2253,7 @@ namespace Neos.IdentityServer.MultiFactor
             else
                 method = reg.PreferredMethod;
             string result = string.Empty;
-            result += "<b><div class=\"fieldMargin\"><label for=\"\"></label>" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlREGAccessMethod") + "</div></b>";
+            result += "<b><div class=\"fieldMargin\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlREGAccessMethod") + "</div></b>";
             result += "<select id=\"selectopt\" name=\"selectopt\" role=\"combobox\"  required=\"required\" contenteditable=\"false\" class=\"text fullWidth\" >";
 
             result += "<option value=\"0\" " + ((method == PreferredMethod.Choose) ? "selected=\"true\"> " : "> ") + Resources.GetString(ResourcesLocaleKind.Html, "HtmlREGOptionChooseBest") + "</option>";

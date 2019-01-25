@@ -121,20 +121,14 @@
   <data name="label3.Size" type="System.Drawing.Size, System.Drawing">
     <value>273, 13</value>
   </data>
-  <data name="label3.Text" xml:space="preserve">
-    <value>Configuration de la messagerie SMS  pour MFA</value>
+  <data name="ProviderTitle" xml:space="preserve">
+    <value>Configuration de {0}</value>
   </data>
   <data name="label2.Size" type="System.Drawing.Size, System.Drawing">
     <value>328, 13</value>
   </data>
-  <data name="label2.Text" xml:space="preserve">
-    <value>Gestion des paramétres de configuration messagerie SMS pour MFA</value>
-  </data>
   <data name="label1.Size" type="System.Drawing.Size, System.Drawing">
     <value>469, 24</value>
-  </data>
-  <data name="label1.Text" xml:space="preserve">
-    <value>Paramétres de configuration SMS (fournisseur externe)</value>
   </data>
   <data name="SMSVALIDSAVE" xml:space="preserve">
     <value>Annuler les modifications et recharger les données ?</value>

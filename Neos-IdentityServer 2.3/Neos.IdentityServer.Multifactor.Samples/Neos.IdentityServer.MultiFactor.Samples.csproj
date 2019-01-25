@@ -44,9 +44,11 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Neos.IdentityServer.Multifactor.Samples.cs" />
+    <Compile Include="Neos.IdentityServer.MultiFactor.Providers.TOTP.Sample.cs" />
+    <Compile Include="Neos.IdentityServer.Multifactor.Providers.Samples.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

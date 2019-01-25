@@ -799,6 +799,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public OTPProviderParams(OTPProvider prov): base()
         {
+            this.Data = prov;
             this.TOTPShadows = prov.TOTPShadows;
             this.Algorithm = prov.Algorithm;
             this.Enabled = prov.Enabled;
@@ -807,6 +808,7 @@ namespace Neos.IdentityServer.MultiFactor
             this.ForceWizard = prov.ForceWizard;
         }
 
+        public OTPProvider Data { get; set; }
         public int TOTPShadows { get; set; }
         public HashMode Algorithm { get; set; }
         public override bool Enabled { get; set; }
@@ -1265,7 +1267,7 @@ namespace Neos.IdentityServer.MultiFactor
     }
     #endregion
 
-    #region MailProvider
+    #region OTPProvider
     /// <summary>
     /// OTPProvider class implementation
     /// </summary>

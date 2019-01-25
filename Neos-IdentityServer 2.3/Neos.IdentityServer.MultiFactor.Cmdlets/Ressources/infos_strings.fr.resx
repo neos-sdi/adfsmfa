@@ -171,4 +171,7 @@
   <data name="InfosSQLCertificateChanged" xml:space="preserve">
     <value>Le certificat MFA SQL {0} correctement mis à jour ! Vous devez déployer ce certificat sur tous les autres serveurs ADFS.</value>
   </data>
+  <data name="InfosWarningAboutTheme" xml:space="preserve">
+    <value>MISE EN GARDE ! votre thème doit être entièrement compatible (js, css, etc ...) avec l'interface utilisateur de votre choix : {0}</value>
+  </data>
 </root>

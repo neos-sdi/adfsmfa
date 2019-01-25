@@ -221,5 +221,14 @@ namespace Neos.IdentityServer.MultiFactor.Cmdlets.Ressources {
                 return ResourceManager.GetString("InfosUserUpdated", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à CAUTION ! your theme must be fully compatible (js, css, etc...) with the UI you choose : {0}.
+        /// </summary>
+        internal static string InfosWarningAboutTheme {
+            get {
+                return ResourceManager.GetString("InfosWarningAboutTheme", resourceCulture);
+            }
+        }
     }
 }

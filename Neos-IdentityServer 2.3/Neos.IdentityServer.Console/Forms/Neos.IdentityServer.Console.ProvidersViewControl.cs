@@ -67,40 +67,26 @@ namespace Neos.IdentityServer.Console
             try
             {
                 _lst.Clear();
-                MFAProvidersControl tmp = null;
                 int i = 2;
-                IExternalProvider totp = RuntimeAuthProvider.GetProviderInstance(PreferredMethod.Code);
-                if (totp != null)
-                {
-                    tmp = new MFAProvidersControl(this, this.SnapIn, totp);
-                    _lst.Add(tmp);
-                    this.tableLayoutPanel.Controls.Add(tmp, 0, i);
-                    i++;
-                }
-                IExternalProvider email = RuntimeAuthProvider.GetProviderInstance(PreferredMethod.Email);
-                if(email != null)
-                {
-                    tmp = new MFAProvidersControl(this, this.SnapIn, email);
-                    _lst.Add(tmp);
-                    this.tableLayoutPanel.Controls.Add(tmp, 0, i);
-                    i++;
-                }
-                IExternalProvider phone = RuntimeAuthProvider.GetProviderInstance(PreferredMethod.External);
-                if (phone != null)
-                {
-                    tmp = new MFAProvidersControl(this, this.SnapIn, phone);
-                    _lst.Add(tmp);
-                    this.tableLayoutPanel.Controls.Add(tmp, 0, i);
-                    i++;
-                }
-                IExternalProvider azure = RuntimeAuthProvider.GetProviderInstance(PreferredMethod.Azure);
-                if (azure != null)
-                {
-                    tmp = new MFAProvidersControl(this, this.SnapIn, azure);
-                    _lst.Add(tmp);
-                    this.tableLayoutPanel.Controls.Add(tmp, 0, i);
-                    i++;
-                }
+                MFAProvidersControl tmp1 = new MFAProvidersControl(this, this.SnapIn, PreferredMethod.Code);
+                _lst.Add(tmp1);
+                this.tableLayoutPanel.Controls.Add(tmp1, 0, i);
+                i++;
+
+                MFAProvidersControl tmp2 = new MFAProvidersControl(this, this.SnapIn, PreferredMethod.Email);
+                _lst.Add(tmp2);
+                this.tableLayoutPanel.Controls.Add(tmp2, 0, i);
+                i++;
+
+                MFAProvidersControl tmp3 = new MFAProvidersControl(this, this.SnapIn, PreferredMethod.External);
+                _lst.Add(tmp3);
+                this.tableLayoutPanel.Controls.Add(tmp3, 0, i);
+                i++;
+
+                MFAProvidersControl tmp4 = new MFAProvidersControl(this, this.SnapIn, PreferredMethod.Azure);
+                _lst.Add(tmp4);
+                this.tableLayoutPanel.Controls.Add(tmp4, 0, i);
+                i++;
                 ControlInstance = new MFAProvidersValidationControl(this, this.SnapIn);
                 this.tableLayoutPanel.Controls.Add(ControlInstance, 0, i); 
             }
@@ -140,7 +126,7 @@ namespace Neos.IdentityServer.Console
         /// <summary>
         /// ScopeNode method implementation
         /// </summary>
-        protected ServiceProvidersScopeNode ScopeNode
+        public ServiceProvidersScopeNode ScopeNode
         {
             get { return this.FormView.ScopeNode as ServiceProvidersScopeNode; }
         }

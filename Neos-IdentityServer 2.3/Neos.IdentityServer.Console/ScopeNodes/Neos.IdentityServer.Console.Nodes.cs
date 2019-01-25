@@ -42,9 +42,9 @@ namespace Neos.IdentityServer.Console
     {
         public RefreshableScopeNode(): base(){}
         public RefreshableScopeNode(bool hideExpandIcon):base(hideExpandIcon){}
-        protected abstract void RefreshDescription();
-        protected abstract void RefreshActions();
-        protected abstract void RefreshForms();
+        public abstract void RefreshDescription();
+        public abstract void RefreshActions();
+        public abstract void RefreshForms();
 
         /// <summary>
         /// RefreshUI method
@@ -112,7 +112,7 @@ namespace Neos.IdentityServer.Console
         /// <summary>
         /// RefreshDescription method
         /// </summary>
-        protected override void RefreshDescription()
+        public override void RefreshDescription()
         {
             this.DisplayName = res.ROOTSCOPENODEDESC;
         }
@@ -120,7 +120,7 @@ namespace Neos.IdentityServer.Console
         /// <summary>
         /// RefreshActions method
         /// </summary>
-        protected override void RefreshActions()
+        public override void RefreshActions()
         {
             foreach(ActionsPaneItem itm in  this.ActionsPaneItems)
             {
@@ -154,7 +154,7 @@ namespace Neos.IdentityServer.Console
         /// <summary>
         /// RefreshForms method
         /// </summary>
-        protected override void RefreshForms()
+        public override void RefreshForms()
         {
             if (rootFormView != null)
                 rootFormView.Refresh();
@@ -200,7 +200,7 @@ namespace Neos.IdentityServer.Console
         /// <summary>
         /// RefreshDescription method
         /// </summary>
-        protected override void RefreshDescription()
+        public override void RefreshDescription()
         {
             this.DisplayName = res.SERVICESCOPENODEDESC;
         }
@@ -208,7 +208,7 @@ namespace Neos.IdentityServer.Console
         /// <summary>
         /// RefreshActions method
         /// </summary>
-        protected override void RefreshActions()
+        public override void RefreshActions()
         {
 
         }
@@ -216,7 +216,7 @@ namespace Neos.IdentityServer.Console
         /// <summary>
         /// RefreshForms method
         /// </summary>
-        protected override void RefreshForms()
+        public override void RefreshForms()
         {
             if (serviceFormView != null)
                 serviceFormView.Refresh();
@@ -293,7 +293,7 @@ namespace Neos.IdentityServer.Console
         /// <summary>
         /// RefreshDescription method
         /// </summary>
-        protected override void RefreshDescription()
+        public override void RefreshDescription()
         {
             this.DisplayName = res.GENERALSCOPENODEDESC;
         }
@@ -301,7 +301,7 @@ namespace Neos.IdentityServer.Console
         /// <summary>
         /// RefreshActions method
         /// </summary>
-        protected override void RefreshActions()
+        public override void RefreshActions()
         {
             foreach (ActionsPaneItem itm in this.ActionsPaneItems)
             {
@@ -324,7 +324,7 @@ namespace Neos.IdentityServer.Console
         /// <summary>
         /// RefreshForms method
         /// </summary>
-        protected override void RefreshForms()
+        public override void RefreshForms()
         {
             if (generalFormView != null)
                 generalFormView.Refresh();
@@ -401,7 +401,7 @@ namespace Neos.IdentityServer.Console
         /// <summary>
         /// RefreshDescription method
         /// </summary>
-        protected override void RefreshDescription()
+        public override void RefreshDescription()
         {
             this.DisplayName = res.ADDSSCOPENODEDESC;
         }
@@ -409,7 +409,7 @@ namespace Neos.IdentityServer.Console
         /// <summary>
         /// RefreshActions method
         /// </summary>
-        protected override void RefreshActions()
+        public override void RefreshActions()
         {
             foreach (ActionsPaneItem itm in this.ActionsPaneItems)
             {
@@ -432,7 +432,7 @@ namespace Neos.IdentityServer.Console
         /// <summary>
         /// RefreshForms method
         /// </summary>
-        protected override void RefreshForms()
+        public override void RefreshForms()
         {
             if (ADDSFormView != null)
                 ADDSFormView.Refresh();
@@ -510,7 +510,7 @@ namespace Neos.IdentityServer.Console
         /// <summary>
         /// RefreshDescription method
         /// </summary>
-        protected override void RefreshDescription()
+        public override void RefreshDescription()
         {
             this.DisplayName = res.SQLSCOPENODEDESC;
         }
@@ -518,7 +518,7 @@ namespace Neos.IdentityServer.Console
         /// <summary>
         /// RefreshActions method
         /// </summary>
-        protected override void RefreshActions()
+        public override void RefreshActions()
         {
             foreach (ActionsPaneItem itm in this.ActionsPaneItems)
             {
@@ -541,7 +541,7 @@ namespace Neos.IdentityServer.Console
         /// <summary>
         /// RefreshForms method
         /// </summary>
-        protected override void RefreshForms()
+        public override void RefreshForms()
         {
             if (SQLFormView != null)
                 SQLFormView.Refresh();
@@ -561,8 +561,7 @@ namespace Neos.IdentityServer.Console
         /// <summary>
         /// Constructor implementation
         /// </summary>
-        public ServiceProvidersScopeNode()
-            : base(true)
+        public ServiceProvidersScopeNode(): base(true)
         {
             this.DisplayName = res.MFASCOPENODEDESC;
             this.LanguageIndependentName = "MFA Providers Configuration";
@@ -619,7 +618,7 @@ namespace Neos.IdentityServer.Console
         /// <summary>
         /// RefreshDescription method
         /// </summary>
-        protected override void RefreshDescription()
+        public override void RefreshDescription()
         {
             this.DisplayName = res.MFASCOPENODEDESC;
         }
@@ -627,7 +626,7 @@ namespace Neos.IdentityServer.Console
         /// <summary>
         /// RefreshActions method
         /// </summary>
-        protected override void RefreshActions()
+        public override void RefreshActions()
         {
             foreach (ActionsPaneItem itm in this.ActionsPaneItems)
             {
@@ -650,7 +649,7 @@ namespace Neos.IdentityServer.Console
         /// <summary>
         /// RefreshForms method
         /// </summary>
-        protected override void RefreshForms()
+        public override void RefreshForms()
         {
             if (ProvidersFormView != null)
                 ProvidersFormView.Refresh();
@@ -672,9 +671,9 @@ namespace Neos.IdentityServer.Console
         /// </summary>
         public ServiceSMTPScopeNode(): base(true)
         {
-          //  this.DisplayName = "Configuration SMTP";
-            this.DisplayName = res.SMTPSCOPENODEDESC;
-            this.LanguageIndependentName = "MFA SMTP Configuration";
+            IExternalProvider prv = RuntimeAuthProvider.GetProviderInstance(PreferredMethod.Email);
+            this.DisplayName = prv.Description;
+            this.LanguageIndependentName = prv.Description;
 
             SaveConfig = new Microsoft.ManagementConsole.Action(res.GENERALSCOPESAVE, res.GENERALSCOPESAVEDESC, -1, "SaveConfig");
             CancelConfig = new Microsoft.ManagementConsole.Action(res.GENERALSCOPECANCEL, res.GENERALSCOPECANCELDESC, -1, "CancelConfig");
@@ -728,15 +727,16 @@ namespace Neos.IdentityServer.Console
         /// <summary>
         /// RefreshDescription method
         /// </summary>
-        protected override void RefreshDescription()
+        public override void RefreshDescription()
         {
-            this.DisplayName = res.SMTPSCOPENODEDESC;
+            IExternalProvider prv = RuntimeAuthProvider.GetProviderInstance(PreferredMethod.Email);
+            this.DisplayName = prv.Description;
         }
 
         /// <summary>
         /// RefreshActions method
         /// </summary>
-        protected override void RefreshActions()
+        public override void RefreshActions()
         {
             foreach (ActionsPaneItem itm in this.ActionsPaneItems)
             {
@@ -759,7 +759,7 @@ namespace Neos.IdentityServer.Console
         /// <summary>
         /// RefreshForms method
         /// </summary>
-        protected override void RefreshForms()
+        public override void RefreshForms()
         {
             if (SMTPFormView != null)
                 SMTPFormView.Refresh();
@@ -780,9 +780,9 @@ namespace Neos.IdentityServer.Console
         /// </summary>
         public ServicePhoneScopeNode(): base(true)
         {
-           // this.DisplayName = "Configuration SMS";
-            this.DisplayName = res.SMSSCOPENODEDESC;
-            this.LanguageIndependentName = "MFA SMS Configuration";
+            IExternalProvider prv = RuntimeAuthProvider.GetProviderInstance(PreferredMethod.External);
+            this.DisplayName = prv.Description;
+            this.LanguageIndependentName = prv.Description;
 
             SaveConfig = new Microsoft.ManagementConsole.Action(res.GENERALSCOPESAVE, res.GENERALSCOPESAVEDESC, -1, "SaveConfig");
             CancelConfig = new Microsoft.ManagementConsole.Action(res.GENERALSCOPECANCEL, res.GENERALSCOPECANCELDESC, -1, "CancelConfig");
@@ -836,15 +836,16 @@ namespace Neos.IdentityServer.Console
         /// <summary>
         /// RefreshDescription method
         /// </summary>
-        protected override void RefreshDescription()
+        public override void RefreshDescription()
         {
-            this.DisplayName = res.SMSSCOPENODEDESC;
+            IExternalProvider prv = RuntimeAuthProvider.GetProviderInstance(PreferredMethod.External);
+            this.DisplayName = prv.Description;
         }
 
         /// <summary>
         /// RefreshActions method
         /// </summary>
-        protected override void RefreshActions()
+        public override void RefreshActions()
         {
             foreach (ActionsPaneItem itm in this.ActionsPaneItems)
             {
@@ -867,7 +868,7 @@ namespace Neos.IdentityServer.Console
         /// <summary>
         /// RefreshForms method
         /// </summary>
-        protected override void RefreshForms()
+        public override void RefreshForms()
         {
             if (this.SMSFormView != null)
                 this.SMSFormView.Refresh();
@@ -886,12 +887,11 @@ namespace Neos.IdentityServer.Console
         /// <summary>
         /// Constructor implementation
         /// </summary>
-        public ServiceAzureScopeNode()
-            : base(true)
+        public ServiceAzureScopeNode(): base(true)
         {
-            // this.DisplayName = "Configuration Azure";
-            this.DisplayName = res.AZURESCOPENODEDESC;
-            this.LanguageIndependentName = "MFA Azure Configuration";
+            IExternalProvider prv = RuntimeAuthProvider.GetProviderInstance(PreferredMethod.Azure);
+            this.DisplayName = prv.Description;
+            this.LanguageIndependentName = prv.Description;
 
             SaveConfig = new Microsoft.ManagementConsole.Action(res.GENERALSCOPESAVE, res.GENERALSCOPESAVEDESC, -1, "SaveConfig");
             CancelConfig = new Microsoft.ManagementConsole.Action(res.GENERALSCOPECANCEL, res.GENERALSCOPECANCELDESC, -1, "CancelConfig");
@@ -945,15 +945,16 @@ namespace Neos.IdentityServer.Console
         /// <summary>
         /// RefreshDescription method
         /// </summary>
-        protected override void RefreshDescription()
+        public override void RefreshDescription()
         {
-            this.DisplayName = res.AZURESCOPENODEDESC;
+            IExternalProvider prv = RuntimeAuthProvider.GetProviderInstance(PreferredMethod.Azure);
+            this.DisplayName = prv.Description;
         }
 
         /// <summary>
         /// RefreshActions method
         /// </summary>
-        protected override void RefreshActions()
+        public override void RefreshActions()
         {
             foreach (ActionsPaneItem itm in this.ActionsPaneItems)
             {
@@ -976,7 +977,7 @@ namespace Neos.IdentityServer.Console
         /// <summary>
         /// RefreshForms method
         /// </summary>
-        protected override void RefreshForms()
+        public override void RefreshForms()
         {
             if (this.AzureFormView != null)
                 this.AzureFormView.Refresh();
@@ -998,9 +999,9 @@ namespace Neos.IdentityServer.Console
         /// </summary>
         public ServiceSecurityScopeNode(): base(true)
         {
-           // this.DisplayName = "Gestion de la sécurité";
-            this.DisplayName = res.TOTPSCOPENODEDESC;
-            this.LanguageIndependentName = "MFA paramétres de sécurité";
+            IExternalProvider prv = RuntimeAuthProvider.GetProviderInstance(PreferredMethod.Code);
+            this.DisplayName = prv.Description;
+            this.LanguageIndependentName = prv.Description;
 
             SaveConfig = new Microsoft.ManagementConsole.Action(res.GENERALSCOPESAVE, res.GENERALSCOPESAVEDESC, -1, "SaveConfig");
             CancelConfig = new Microsoft.ManagementConsole.Action(res.GENERALSCOPECANCEL, res.GENERALSCOPECANCELDESC, -1, "CancelConfig");
@@ -1055,15 +1056,16 @@ namespace Neos.IdentityServer.Console
         /// <summary>
         /// RefreshDescription method
         /// </summary>
-        protected override void RefreshDescription()
+        public override void RefreshDescription()
         {
-            this.DisplayName = res.TOTPSCOPENODEDESC;
+            IExternalProvider prv = RuntimeAuthProvider.GetProviderInstance(PreferredMethod.Code);
+            this.DisplayName = prv.Description;
         }
 
         /// <summary>
         /// RefreshActions method
         /// </summary>
-        protected override void RefreshActions()
+        public override void RefreshActions()
         {
             foreach (ActionsPaneItem itm in this.ActionsPaneItems)
             {
@@ -1086,7 +1088,7 @@ namespace Neos.IdentityServer.Console
         /// <summary>
         /// RefreshForms method
         /// </summary>
-        protected override void RefreshForms()
+        public override void RefreshForms()
         {
             if (this.SecurityFormView != null)
                 this.SecurityFormView.Refresh();
@@ -1176,7 +1178,7 @@ namespace Neos.IdentityServer.Console
         /// <summary>
         /// RefreshDescription method
         /// </summary>
-        protected override void RefreshDescription()
+        public override void RefreshDescription()
         {
             this.DisplayName = res.USERSSCOPENODEDESC;
         }
@@ -1184,7 +1186,7 @@ namespace Neos.IdentityServer.Console
         /// <summary>
         /// RefreshActions method
         /// </summary>
-        protected override void RefreshActions()
+        public override void RefreshActions()
         {
             foreach (ActionsPaneItem itm in this.ActionsPaneItems)
             {
@@ -1242,7 +1244,7 @@ namespace Neos.IdentityServer.Console
         /// <summary>
         /// RefreshForms method
         /// </summary>
-        protected override void RefreshForms()
+        public override void RefreshForms()
         {
             if (this.usersFormView != null)
                 this.usersFormView.Refresh();

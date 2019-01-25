@@ -69,6 +69,7 @@ namespace Neos.IdentityServer.Console
         /// </summary>
         internal void Refresh()
         {
+
             if (SecurityControl != null)
                 SecurityControl.RefreshData();
         }

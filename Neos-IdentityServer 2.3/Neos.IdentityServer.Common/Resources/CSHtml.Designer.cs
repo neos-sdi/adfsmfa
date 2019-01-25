@@ -88,7 +88,7 @@ namespace Neos.IdentityServer.MultiFactor.Common.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à PIN Code.
+        ///   Recherche une chaîne localisée semblable à Enter PIN.
         /// </summary>
         internal static string GLOBALPINLabel {
             get {

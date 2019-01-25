@@ -90,7 +90,9 @@ namespace Neos.IdentityServer.MultiFactor
                     {
                         try
                         {
-                            if (IsLegacyExternalWrapper(cfg.ExternalProvider.FullQualifiedImplementation))
+                            if (string.IsNullOrEmpty(cfg.ExternalProvider.FullQualifiedImplementation))
+                                provider = new NeosPlugExternalProvider();
+                            else if (IsLegacyExternalWrapper(cfg.ExternalProvider.FullQualifiedImplementation))
                                 provider = new NeosLegacySMSProvider();
                             else
                                 provider = LoadExternalProvider(cfg.ExternalProvider.FullQualifiedImplementation);
@@ -165,6 +167,8 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         private static IExternalProvider LoadExternalProvider(string AssemblyFulldescription)
         {
+            if (string.IsNullOrEmpty(AssemblyFulldescription))
+                return null;
             Assembly assembly = Assembly.Load(Utilities.ParseAssembly(AssemblyFulldescription));
             Type _typetoload = assembly.GetType(Utilities.ParseType(AssemblyFulldescription));
 
@@ -179,6 +183,8 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         private static bool IsLegacyExternalWrapper(string AssemblyFulldescription)
         {
+            if (string.IsNullOrEmpty(AssemblyFulldescription))
+                return false;
             Assembly assembly = Assembly.Load(Utilities.ParseAssembly(AssemblyFulldescription));
             Type _typetoload = assembly.GetType(Utilities.ParseType(AssemblyFulldescription));
 
@@ -332,7 +338,9 @@ namespace Neos.IdentityServer.MultiFactor
                         {
                             try
                             {
-                                if (IsLegacyExternalWrapper(cfg.ExternalProvider.FullQualifiedImplementation))
+                                if (string.IsNullOrEmpty(cfg.ExternalProvider.FullQualifiedImplementation))
+                                    provider = new NeosPlugExternalProvider();
+                                else if (IsLegacyExternalWrapper(cfg.ExternalProvider.FullQualifiedImplementation))
                                     provider = new NeosLegacySMSProvider();
                                 else
                                     provider = LoadExternalProvider(cfg.ExternalProvider.FullQualifiedImplementation);
@@ -807,9 +815,11 @@ namespace Neos.IdentityServer.MultiFactor
     /// <summary>
     /// OTPGenerator static class
     /// </summary>
-    internal partial class OTPGenerator
+    public partial class OTPGenerator
     {
         private int _secondsToGo;
+        private int _digits;
+        private int _duration;
         private string _identity;
         private byte[] _secret;
         private Int64 _timestamp;
@@ -819,31 +829,33 @@ namespace Neos.IdentityServer.MultiFactor
         private DateTime _datetime;
         private HashMode _mode = HashMode.SHA1;
 
-        public static int TOTPDuration = 30;
-
         /// <summary>
         /// Constructor
         /// </summary>
-        public OTPGenerator(HashMode mode = HashMode.SHA1)
+        public OTPGenerator(HashMode mode = HashMode.SHA1, int duration = 30, int digits = 6)
         {
             RequestedDatetime = DateTime.UtcNow;
             _mode = mode;
+            _digits = digits;
+            _duration = duration;
             var timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromMilliseconds(500);
-            timer.Tick += (s, e) => SecondsToGo = TOTPDuration - Convert.ToInt32(GetUnixTimestamp(RequestedDatetime) % TOTPDuration);
+            timer.Tick += (s, e) => SecondsToGo = duration - Convert.ToInt32(GetUnixTimestamp(RequestedDatetime) % duration);
             timer.IsEnabled = true;
         }
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public OTPGenerator(byte[] asecret, string aid, HashMode mode = HashMode.SHA1)
+        public OTPGenerator(byte[] asecret, string aid, HashMode mode = HashMode.SHA1, int duration = 30, int digits = 6)
         {
             RequestedDatetime = DateTime.UtcNow;
             _mode = mode;
+            _digits = digits;
+            _duration = duration;
             var timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromMilliseconds(500);
-            timer.Tick += (s, e) => SecondsToGo = TOTPDuration - Convert.ToInt32(GetUnixTimestamp(RequestedDatetime) % TOTPDuration);
+            timer.Tick += (s, e) => SecondsToGo = duration - Convert.ToInt32(GetUnixTimestamp(RequestedDatetime) % duration);
             timer.IsEnabled = true;
 
             Secret = asecret;
@@ -853,14 +865,16 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// Constructor
         /// </summary>
-        public OTPGenerator(string ssecret, string aid, HashMode mode = HashMode.SHA1)
+        public OTPGenerator(string ssecret, string aid, HashMode mode = HashMode.SHA1, int duration = 30, int digits = 6)
         {
             RequestedDatetime = DateTime.UtcNow;
             byte[] asecret = Base32.GetBytesFromString(ssecret);
             _mode = mode;
+            _digits = digits;
+            _duration = duration;
             var timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromMilliseconds(500);
-            timer.Tick += (s, e) => SecondsToGo = TOTPDuration - Convert.ToInt32(GetUnixTimestamp(RequestedDatetime) % TOTPDuration);
+            timer.Tick += (s, e) => SecondsToGo = duration - Convert.ToInt32(GetUnixTimestamp(RequestedDatetime) % duration);
             timer.IsEnabled = true;
 
             Secret = asecret;
@@ -870,14 +884,16 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// Constructor
         /// </summary>
-        public OTPGenerator(string ssecret, string aid, DateTime datetime, HashMode mode = HashMode.SHA1)
+        public OTPGenerator(string ssecret, string aid, DateTime datetime, HashMode mode = HashMode.SHA1, int duration = 30, int digits = 6)
         {
             RequestedDatetime = datetime;
             byte[] asecret = Base32.GetBytesFromString(ssecret);
             _mode = mode;
+            _digits = digits;
+            _duration = duration;
             var timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromMilliseconds(500);
-            timer.Tick += (s, e) => SecondsToGo = TOTPDuration - Convert.ToInt32(GetUnixTimestamp(RequestedDatetime) % TOTPDuration);
+            timer.Tick += (s, e) => SecondsToGo = duration - Convert.ToInt32(GetUnixTimestamp(RequestedDatetime) % duration);
             timer.IsEnabled = true;
 
             Secret = asecret;
@@ -893,7 +909,7 @@ namespace Neos.IdentityServer.MultiFactor
             private set 
             { 
                 _secondsToGo = value;
-                if (SecondsToGo == TOTPDuration)
+                if (SecondsToGo == _duration)
                     ComputeOTP(RequestedDatetime); 
             }
         }
@@ -944,6 +960,22 @@ namespace Neos.IdentityServer.MultiFactor
         }
 
         /// <summary>
+        /// Duration property implementation
+        /// </summary>
+        public int Duration
+        {
+            get { return _duration; }
+        }
+
+        /// <summary>
+        /// DigitsCount property implementation
+        /// </summary>
+        public int DigitsCount
+        {
+            get { return _digits; }
+        }
+
+        /// <summary>
         /// HmacPart1 property implementation
         /// </summary>
         public byte[] HmacPart1
@@ -986,12 +1018,20 @@ namespace Neos.IdentityServer.MultiFactor
         }
 
         /// <summary>
+        /// OTP property implementation
+        /// </summary>
+        public string Digits
+        {
+            get { return _oneTimePassword.ToString("D"+_digits.ToString()); }
+        }
+
+        /// <summary>
         /// ComputeOneTimePassword method implmentation
         /// </summary>
         public void ComputeOTP(DateTime date)
         {
             // https://tools.ietf.org/html/rfc4226
-            Timestamp = Convert.ToInt64(GetUnixTimestamp(date) / TOTPDuration);
+            Timestamp = Convert.ToInt64(GetUnixTimestamp(date) / _duration);
             var data = BitConverter.GetBytes(Timestamp).Reverse().ToArray();
             switch (_mode)
             {
@@ -1009,7 +1049,19 @@ namespace Neos.IdentityServer.MultiFactor
                     break;
             }
             Offset = Hmac.Last() & 0x0F;
-            OTP = (((Hmac[Offset + 0] & 0x7f) << 24) | ((Hmac[Offset + 1] & 0xff) << 16) | ((Hmac[Offset + 2] & 0xff) << 8) | (Hmac[Offset + 3] & 0xff)) % 1000000;
+            switch (this.DigitsCount)
+            {
+                case 4: OTP = (((Hmac[Offset + 0] & 0x7f) << 24) | ((Hmac[Offset + 1] & 0xff) << 16) | ((Hmac[Offset + 2] & 0xff) << 8) | (Hmac[Offset + 3] & 0xff)) % 10000;
+                    break;
+                case 5: OTP = (((Hmac[Offset + 0] & 0x7f) << 24) | ((Hmac[Offset + 1] & 0xff) << 16) | ((Hmac[Offset + 2] & 0xff) << 8) | (Hmac[Offset + 3] & 0xff)) % 100000;
+                    break;
+                default: OTP = (((Hmac[Offset + 0] & 0x7f) << 24) | ((Hmac[Offset + 1] & 0xff) << 16) | ((Hmac[Offset + 2] & 0xff) << 8) | (Hmac[Offset + 3] & 0xff)) % 1000000;
+                    break;
+                case 7: OTP =  (((Hmac[Offset + 0] & 0x7f) << 24) | ((Hmac[Offset + 1] & 0xff) << 16) | ((Hmac[Offset + 2] & 0xff) << 8) | (Hmac[Offset + 3] & 0xff)) % 10000000;
+                    break;
+                case 8: OTP =  (((Hmac[Offset + 0] & 0x7f) << 24) | ((Hmac[Offset + 1] & 0xff) << 16) | ((Hmac[Offset + 2] & 0xff) << 8) | (Hmac[Offset + 3] & 0xff)) % 100000000;
+                    break;
+            }
         }
 
         /// <summary>
@@ -1091,7 +1143,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// GetBytesFromString method
         /// </summary>
-        internal static byte[] GetBytesFromString(string str)
+        public static byte[] GetBytesFromString(string str)
         {
             byte[] bytes = new byte[str.Length * sizeof(char)];
             System.Buffer.BlockCopy(str.ToCharArray(), 0, bytes, 0, bytes.Length);
@@ -1101,7 +1153,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// GetStringFromByteArray method
         /// </summary>
-        internal static string GetStringFromByteArray(byte[] bytes)
+        public static string GetStringFromByteArray(byte[] bytes)
         {
             char[] chars = new char[bytes.Length / sizeof(char)];
             System.Buffer.BlockCopy(bytes, 0, chars, 0, bytes.Length);
@@ -1113,7 +1165,7 @@ namespace Neos.IdentityServer.MultiFactor
     /// <summary>
     /// KeysManager static class
     /// </summary>
-    internal static class KeysManager
+    public static class KeysManager
     {
         private static ISecretKeyManager _manager;
         private static bool _isloaded = true;
@@ -1154,7 +1206,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// Manager manager property implementation
         /// </summary>
-        internal static ISecretKeyManager Manager
+        public static ISecretKeyManager Manager
         {
             get
             {
@@ -1165,7 +1217,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// IsLoaded property
         /// </summary>
-        internal static bool IsLoaded
+        public static bool IsLoaded
         {
             get { return _isloaded; }
             set { _isloaded = value; }
@@ -1201,7 +1253,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// EncodedKey method implementation
         /// </summary>
-        internal static string EncodedKey(string upn)
+        public static string EncodedKey(string upn)
         {
             return _manager.EncodedKey(upn);
         }
@@ -1209,7 +1261,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// ProbeKey method implementation
         /// </summary>
-        internal static string ProbeKey(string upn)
+        public static string ProbeKey(string upn)
         {
             return _manager.ProbeKey(upn);
         }
@@ -1225,7 +1277,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// CheckKey method implmentation
         /// </summary>
-        internal static bool ValidateKey(string upn)
+        public static bool ValidateKey(string upn)
         {
             return _manager.ValidateKey(upn);
         }
@@ -1919,8 +1971,12 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public static string GetQRCodeString(string UPN, string QRString, MFAConfig config)
         {
-            string result = string.Empty;
-            string Content = string.Format("otpauth://totp/{0}:{1}?secret={2}&issuer={3}&algorithm={4}", config.Issuer, UPN, QRString, config.QRIssuer, config.OTPProvider.Algorithm);
+            string Content = string.Empty;
+            ITOTPProviderParameters prv = RuntimeAuthProvider.GetProvider(PreferredMethod.Code) as ITOTPProviderParameters;
+            if (prv != null)
+                Content = string.Format("otpauth://totp/{0}:{1}?secret={2}&issuer={3}&algorithm={4}&digits={5}&period={6}", config.Issuer, UPN, QRString, config.QRIssuer, config.OTPProvider.Algorithm, prv.Digits.ToString(), prv.Duration.ToString());
+            else
+                Content = string.Format("otpauth://totp/{0}:{1}?secret={2}&issuer={3}&algorithm={4}", config.Issuer, UPN, QRString, config.QRIssuer, config.OTPProvider.Algorithm);
 
             var encoder = new QrEncoding.QrEncoder(ErrorCorrectionLevel.L);
             QrCode qr;
@@ -1932,9 +1988,8 @@ namespace Neos.IdentityServer.MultiFactor
                 var render = new GraphicsRenderer(new FixedModuleSize(3, QuietZoneModules.Zero));
                 render.WriteToStream(matrix, ImageFormat.Png, ms);
                 ms.Position = 0;
-                result = ConvertToBase64(ms);
+                return ConvertToBase64(ms);
             }
-            return result;
         }
 
         /// <summary>
@@ -1942,7 +1997,11 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public static string GetQRCodeValue(string UPN, string QRString, MFAConfig config)
         {
-            return string.Format("otpauth://totp/{0}:{1}?secret={2}&issuer={3}&algorithm={4}", config.Issuer, UPN, QRString, config.QRIssuer, config.OTPProvider.Algorithm);
+            ITOTPProviderParameters prv = RuntimeAuthProvider.GetProvider(PreferredMethod.Code) as ITOTPProviderParameters;
+            if (prv != null)
+                return string.Format("otpauth://totp/{0}:{1}?secret={2}&issuer={3}&algorithm={4}&digits={5}&period={6}", config.Issuer, UPN, QRString, config.QRIssuer, config.OTPProvider.Algorithm, prv.Digits.ToString(), prv.Duration.ToString());
+            else
+                return string.Format("otpauth://totp/{0}:{1}?secret={2}&issuer={3}&algorithm={4}", config.Issuer, UPN, QRString, config.QRIssuer, config.OTPProvider.Algorithm);
         }
 
         /// <summary>
@@ -1950,7 +2009,12 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public static Stream GetQRCodeStream(string UPN, string QRString, MFAConfig config)
         {
-            string Content = string.Format("otpauth://totp/{0}:{1}?secret={2}&issuer={3}&algorithm={4}", config.Issuer, UPN, QRString, config.QRIssuer, config.OTPProvider.Algorithm);
+            string Content = string.Empty;
+            ITOTPProviderParameters prv = RuntimeAuthProvider.GetProvider(PreferredMethod.Code) as ITOTPProviderParameters;
+            if (prv != null)
+                Content = string.Format("otpauth://totp/{0}:{1}?secret={2}&issuer={3}&algorithm={4}&digits={5}&period={6}", config.Issuer, UPN, QRString, config.QRIssuer, config.OTPProvider.Algorithm, prv.Digits.ToString(), prv.Duration.ToString());
+            else
+                Content = string.Format("otpauth://totp/{0}:{1}?secret={2}&issuer={3}&algorithm={4}", config.Issuer, UPN, QRString, config.QRIssuer, config.OTPProvider.Algorithm);
 
             var encoder = new QrEncoding.QrEncoder(ErrorCorrectionLevel.L);
             QrCode qr;
@@ -2126,12 +2190,12 @@ namespace Neos.IdentityServer.MultiFactor
     /// <summary>
     /// Utilities class
     /// </summary>
-    internal static class Utilities
+    public static class Utilities
     {
         /// <summary>
         /// GetRandomOTP  method implementation
         /// </summary>
-        internal static int GetRandomOTP()
+        public static int GetRandomOTP()
         {
             RandomNumberGenerator rnd = new RNGCryptoServiceProvider();
             byte[] buffer = new byte[4];
@@ -2190,7 +2254,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// ValidateEmail method implementation
         /// </summary>
-        internal static bool ValidateEmail(string email, bool checkempty = false)
+        public static bool ValidateEmail(string email, bool checkempty = false)
         {
             try
             {
@@ -2215,7 +2279,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// ValidateEmail method implementation
         /// </summary>
-        internal static bool ValidateEmail(string email, List<string> blocked, bool checkempty = false)
+        public static bool ValidateEmail(string email, List<string> blocked, bool checkempty = false)
         {
             try
             {
@@ -2235,9 +2299,9 @@ namespace Neos.IdentityServer.MultiFactor
         }
 
         /// <summary>
-        /// ValidateEmail method implementation
+        /// ValidatePhoneNumber method implementation
         /// </summary>
-        internal static bool ValidatePhoneNumber(string phone, bool checkempty = false)
+        public static bool ValidatePhoneNumber(string phone, bool checkempty = false)
         {
             try
             {
@@ -2260,7 +2324,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// StripEmailAddress method
         /// </summary>
-        internal static string StripEmailAddress(string email)
+        public static string StripEmailAddress(string email)
         {
             try
             {
@@ -2296,7 +2360,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// StripPhoneNumer method
         /// </summary>
-        internal static string StripPhoneNumber(string phone)
+        public static string StripPhoneNumber(string phone)
         {
             try
             {

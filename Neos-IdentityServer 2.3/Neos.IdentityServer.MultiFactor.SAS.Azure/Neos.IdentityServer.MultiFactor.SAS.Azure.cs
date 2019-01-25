@@ -39,8 +39,8 @@ namespace Neos.IdentityServer.MultiFactor.SAS
         private string STSIdentifier = "stsidentifier";
         private string CompanyName = "MFA";
         private ISasProvider _sasprovider = null;
-        private bool _isinitialized = false;
 
+        private bool _isinitialized = false;
 
         /// <summary>
         /// Kind property implementation
@@ -56,6 +56,16 @@ namespace Neos.IdentityServer.MultiFactor.SAS
         public override bool IsInitialized
         {
             get { return _isinitialized; }
+        }
+
+        internal ISasProvider SasProvider
+        {
+            get 
+            { 
+                if (_sasprovider==null)
+                    _sasprovider = new NeosSasProvider(TenantId, ClientId, CertId);
+                return _sasprovider; 
+            }
         }
 
         /// <summary>
@@ -412,7 +422,6 @@ namespace Neos.IdentityServer.MultiFactor.SAS
                         PinRequired = az.PinRequired;
                         AllowEnrollment = az.EnrollWizard;
                         ForceEnrollment = az.ForceWizard;
-                        _sasprovider = new NeosSasProvider(TenantId, ClientId, CertId);
                         _isinitialized = true;
                         return;
                     }
@@ -423,6 +432,7 @@ namespace Neos.IdentityServer.MultiFactor.SAS
             catch (Exception ex)
             {
                 this.Enabled = false;
+                _isinitialized = false;
                 throw ex;
             }
         }
@@ -656,7 +666,7 @@ namespace Neos.IdentityServer.MultiFactor.SAS
             GetAvailableAuthenticationMethodsResponse response;
             try
             {
-                response = this._sasprovider.GetAvailableAuthenticationMethods(request);
+                response = SasProvider.GetAvailableAuthenticationMethods(request);
             }
             catch (Exception ex)
             {
@@ -693,7 +703,7 @@ namespace Neos.IdentityServer.MultiFactor.SAS
             BeginTwoWayAuthenticationResponse response;
             try
             {
-                response = this._sasprovider.BeginTwoWayAuthentication(request);
+                response = SasProvider.BeginTwoWayAuthentication(request);
             }
             catch (Exception ex2)
             {
@@ -728,7 +738,7 @@ namespace Neos.IdentityServer.MultiFactor.SAS
             {
                 do
                 {
-                    response = this._sasprovider.EndTwoWayAuthentication(request);
+                    response = SasProvider.EndTwoWayAuthentication(request);
                     if (response.Result.Value.Equals("AuthenticationPending"))
                         Thread.Sleep(1000);
                 } while (response.Result.Value.Equals("AuthenticationPending"));

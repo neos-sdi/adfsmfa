@@ -123,7 +123,7 @@ namespace Neos.IdentityServer.Multifactor.SMS
         /// </summary>
         public override string Description
         {
-            get { return "Multi-Factor Provider for SMS"; }
+            get { return "SMS Multi-Factor Provider"; }
         }
 
         /// <summary>

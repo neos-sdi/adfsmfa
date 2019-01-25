@@ -65,6 +65,8 @@ namespace Neos.IdentityServer.Console
             {
                 ControlInstance = new SMSConfigurationControl(this, this.SnapIn);
                 this.tableLayoutPanel.Controls.Add(ControlInstance, 0, 1);
+                ComponentResourceManager resources = new ComponentResourceManager(typeof(SMSViewControl));
+                this.ProviderTitle.Text = String.Format(resources.GetString("ProviderTitle.Text"), this.ScopeNode.DisplayName);
             }
             finally
             {
@@ -102,7 +104,7 @@ namespace Neos.IdentityServer.Console
         /// <summary>
         /// ScopeNode method implementation
         /// </summary>
-        protected ServicePhoneScopeNode ScopeNode
+        public ServicePhoneScopeNode ScopeNode
         {
             get { return this.FormView.ScopeNode as ServicePhoneScopeNode; }
         }
@@ -146,6 +148,9 @@ namespace Neos.IdentityServer.Console
             this._isnotifsenabled = false;
             try
             {
+                ComponentResourceManager resources = new ComponentResourceManager(typeof(SMSViewControl));
+                this.ProviderTitle.Text = String.Format(resources.GetString("ProviderTitle.Text"), this.ScopeNode.DisplayName);
+
                 ManagementService.ADFSManager.ReadConfiguration(null);
                 ((IMMCRefreshData)ControlInstance).DoRefreshData();
             }

@@ -94,17 +94,6 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         }
 
         /// <summary>
-        /// ADFSServiceManager constructor
-        /// </summary>
-        public ADFSServiceManager(ServiceOperationStatus status = ServiceOperationStatus.OperationUnknown, ConfigOperationStatus configstatus = ConfigOperationStatus.ConfigUnknown)
-        {
-            ServiceStatusChanged += DefaultServiceStatusChanged;
-            ConfigurationStatusChanged += DefaultConfigurationStatusChanged;
-            this.ServiceStatusChanged(this, status, "");
-            this.ConfigurationStatusChanged(this, configstatus);
-        }
-
-        /// <summary>
         /// Initialize method implementation
         /// </summary>
         public void Initialize(string mailslothost = "MGT", bool dontthrow = false)
@@ -112,9 +101,17 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             try
             {
                 ServiceController ADFSController = new ServiceController("mfanotifhub");
-                if (ADFSController.Status != ServiceControllerStatus.Running)
-                    ADFSController.Start();
-                ADFSController.WaitForStatus(ServiceControllerStatus.Running, new TimeSpan(0, 0, 30));
+                try
+                {
+                    if (ADFSController.Status != ServiceControllerStatus.Running)
+                        ADFSController.Start();
+                    ADFSController.WaitForStatus(ServiceControllerStatus.Running, new TimeSpan(0, 0, 30));
+                }
+                catch (Exception e)
+                {
+                    if (!dontthrow)
+                        throw e;
+                }
                 _mailslotsrv = new MailSlotServer(mailslothost);
                 _mailslotsrv.MailSlotMessageArrived += MailSlotMessageArrived;
                 _mailslotsrv.AllowToSelf = true;
@@ -132,10 +129,10 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// </summary>
         private void MailSlotMessageArrived(MailSlotServer maislotserver, MailSlotMessage message)
         {
-            if (message.Operation == 0xAA)
+            if (message.Operation == 0xAA) 
             {
                 _config = null;
-                EnsureConfiguration(null);
+                EnsureConfiguration(null); // Force Reload Configuration
                 _mailslotsrv.AllowedMachines.Clear();
                 foreach (ADFSServerHost svr in Config.Hosts.ADFSFarm.Servers)
                 {
@@ -579,12 +576,12 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             try
             {
                 EnsureLocalService();
+                _config.IsDirty = false;
                 CFGUtilities.WriteConfiguration(Host, _config);
                 using (MailSlotClient mailslot = new MailSlotClient())
                 {
                     mailslot.SendNotification(0xAA);
                 }
-                _config.IsDirty = false;
                 this.ConfigurationStatusChanged(this, ConfigOperationStatus.ConfigSaved);
             }
             catch (Exception ex)

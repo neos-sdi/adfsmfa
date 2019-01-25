@@ -33,6 +33,15 @@ namespace Neos.IdentityServer.MultiFactor
     }
 
     /// <summary>
+    /// ITOTPProviderParameters interface declaration
+    /// </summary>
+    public interface ITOTPProviderParameters
+    {
+        int Duration { get; }
+        int Digits { get; }
+    }
+
+    /// <summary>
     /// IExternalProvider interface declaration
     /// </summary>
     public interface IExternalProvider

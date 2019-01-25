@@ -206,7 +206,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// GetCertificate method implementation
         /// </summary>
-        internal static X509Certificate2 GetCertificate(string value, StoreLocation location)
+        public static X509Certificate2 GetCertificate(string value, StoreLocation location)
         {
             X509Certificate2 data = null;
             X509Store store = new X509Store(location);

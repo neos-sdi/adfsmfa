@@ -2437,11 +2437,8 @@ namespace Neos.IdentityServer.MultiFactor
                     if (strpin.Length != Config.PinLength)
                         throw new Exception(string.Format(Resources.GetString(ResourcesLocaleKind.Errors, "ErrorPinLength"), Config.PinLength));
                 }
-               // if (Convert.ToInt32(strpin) <= 0)
                 if (Convert.ToInt32(strpin) < 0)
                    throw new Exception(Resources.GetString(ResourcesLocaleKind.Errors, "ErrorPinValue"));
-               /* if (Convert.ToInt32(strpin) == Config.DefaultPin)
-                   throw new Exception(Resources.GetString(ResourcesLocaleKind.Errors, "ErrorPinDefault")); */
             }
             catch (Exception ex)
             {

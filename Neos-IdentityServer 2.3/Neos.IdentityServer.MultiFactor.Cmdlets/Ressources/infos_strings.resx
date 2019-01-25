@@ -171,4 +171,7 @@
   <data name="InfosSQLCertificateChanged" xml:space="preserve">
     <value>SQL certificate {0} correctly updated ! You must deploy this certificate on all others ADFS servers.</value>
   </data>
+  <data name="InfosWarningAboutTheme" xml:space="preserve">
+    <value>CAUTION ! your theme must be fully compatible (js, css, etc...) with the UI you choose : {0}</value>
+  </data>
 </root>

@@ -394,12 +394,12 @@ namespace Neos.IdentityServer.Console.Controls
         /// <summary>
         /// ADFSServerControl Constructor
         /// </summary>
-        public MFAProvidersControl(ProvidersViewControl view, NamespaceSnapInBase snap, IExternalProvider provider)
+        public MFAProvidersControl(ProvidersViewControl view, NamespaceSnapInBase snap, PreferredMethod kind)
         {
             _view = view;
             _snapin = snap;
-            _provider = provider;
-            _kind = provider.Kind;
+            _provider = null;
+            _kind =kind;
             _panel = new Panel();
             _txtpanel = new Panel();
             BackColor = System.Drawing.SystemColors.Window;
@@ -458,25 +458,9 @@ namespace Neos.IdentityServer.Console.Controls
                     break;
                 case ConfigOperationStatus.ConfigLoaded:
                     _panel.BackColor = Color.Green;
-                    switch (_kind)
-                    {
-                        case PreferredMethod.Code:
-                            if (!Config.OTPProvider.Enabled)
-                                _panel.BackColor = Color.DarkGray;
-                            break;
-                        case PreferredMethod.Email:
-                            if (!Config.MailProvider.Enabled)
-                                _panel.BackColor = Color.DarkGray;
-                            break;
-                        case PreferredMethod.External:
-                            if (!Config.ExternalProvider.Enabled)
-                                _panel.BackColor = Color.DarkGray;
-                            break;
-                        case PreferredMethod.Azure:
-                            if (!Config.AzureProvider.Enabled)
-                                _panel.BackColor = Color.DarkGray;
-                            break;
-                    }
+                    _provider = RuntimeAuthProvider.GetProviderInstance(this._kind);
+                    if (!_provider.Enabled)
+                        _panel.BackColor = Color.DarkGray;
                     break;
                 case ConfigOperationStatus.ConfigStopped:
                     _panel.BackColor = Color.Red;
@@ -499,6 +483,9 @@ namespace Neos.IdentityServer.Console.Controls
             _view.CausesValidation = false;
             try
             {
+                _view.ScopeNode.RefreshDescription();
+                _provider = RuntimeAuthProvider.GetProviderInstance(this._kind);
+
                 this.Dock = DockStyle.Top;
                 this.Height = 75;
                 this.Width = 760;
@@ -521,27 +508,15 @@ namespace Neos.IdentityServer.Console.Controls
                 lblProviderDesc.Left = 10;
                 lblProviderDesc.Top = 10;
                 lblProviderDesc.Width = 500;
+                lblProviderDesc.Height = 30;
                 lblProviderDesc.Font = new System.Drawing.Font(lblProviderDesc.Font.Name, 16F, FontStyle.Bold);
                 _txtpanel.Controls.Add(lblProviderDesc);
 
                 // Second col
                 chkProviderEnabled = new CheckBox();
                 chkProviderEnabled.Text = res.CTRLPROVACTIVE;
-                switch (_kind)
-                {
-                    case PreferredMethod.Code:
-                        chkProviderEnabled.Checked = Config.OTPProvider.Enabled;
-                        break;
-                    case PreferredMethod.Email:
-                        chkProviderEnabled.Checked = Config.MailProvider.Enabled;
-                        break;
-                    case PreferredMethod.External:
-                        chkProviderEnabled.Checked = Config.ExternalProvider.Enabled;
-                        break;
-                    case PreferredMethod.Azure:
-                        chkProviderEnabled.Checked = Config.AzureProvider.Enabled;
-                        break;
-                }
+
+                chkProviderEnabled.Checked = _provider.Enabled;
                 chkProviderEnabled.Enabled = _provider.AllowDisable;
                 chkProviderEnabled.Left = 510;
                 chkProviderEnabled.Top = 10;
@@ -551,23 +526,13 @@ namespace Neos.IdentityServer.Console.Controls
 
                 chkProviderEnroll = new CheckBox();
                 chkProviderEnroll.Text = res.CTRLPROVWIZARD;
-                switch (_kind)
+                chkProviderEnroll.Checked = _provider.AllowEnrollment;
+                chkProviderEnroll.Enabled = _provider.Enabled;
+                if (_kind==PreferredMethod.Azure)
                 {
-                    case PreferredMethod.Code:
-                        chkProviderEnroll.Checked = Config.OTPProvider.EnrollWizard;
-                        break;
-                    case PreferredMethod.Email:
-                        chkProviderEnroll.Checked = Config.MailProvider.EnrollWizard;
-                        break;
-                    case PreferredMethod.External:
-                        chkProviderEnroll.Checked = Config.ExternalProvider.EnrollWizard;
-                        break;
-                    case PreferredMethod.Azure:
-                        chkProviderEnroll.Checked = false;
-                        chkProviderEnroll.Enabled = false;
-                        break;
+                    chkProviderEnroll.Checked = false;
+                    chkProviderEnroll.Enabled = false;
                 }
-                chkProviderEnroll.Enabled = chkProviderEnabled.Checked;
                 chkProviderEnroll.Left = 510;
                 chkProviderEnroll.Top = 30;
                 chkProviderEnroll.Width = 300;
@@ -576,22 +541,8 @@ namespace Neos.IdentityServer.Console.Controls
 
                 chkProviderPin = new CheckBox();
                 chkProviderPin.Text = res.CTRLPROVPIN;
-                switch (_kind)
-                {
-                    case PreferredMethod.Code:
-                        chkProviderPin.Checked = Config.OTPProvider.PinRequired;
-                        break;
-                    case PreferredMethod.Email:
-                        chkProviderPin.Checked = Config.MailProvider.PinRequired;
-                        break;
-                    case PreferredMethod.External:
-                        chkProviderPin.Checked = Config.ExternalProvider.PinRequired;
-                        break;
-                    case PreferredMethod.Azure:
-                        chkProviderPin.Checked = Config.AzureProvider.PinRequired;
-                        break;
-                }
-                chkProviderPin.Enabled = chkProviderEnabled.Checked;
+                chkProviderPin.Checked = _provider.PinRequired;
+                chkProviderPin.Enabled = _provider.Enabled;
                 chkProviderPin.Left = 510;
                 chkProviderPin.Top = 50;
                 chkProviderPin.Width = 300;
@@ -620,62 +571,26 @@ namespace Neos.IdentityServer.Console.Controls
             _view.CausesValidation = false;
             try
             {
+                _view.ScopeNode.RefreshDescription();
+                _provider = RuntimeAuthProvider.GetProviderInstance(this._kind);
+
                 lblProviderDesc.Text = _provider.Description;
                 chkProviderEnabled.Text = res.CTRLPROVACTIVE;
                 chkProviderEnroll.Text = res.CTRLPROVWIZARD;
                 chkProviderPin.Text = res.CTRLPROVPIN;
 
-                switch (_kind)
-                {
-                    case PreferredMethod.Code:
-                        chkProviderEnabled.Checked = Config.OTPProvider.Enabled;
-                        break;
-                    case PreferredMethod.Email:
-                        chkProviderEnabled.Checked = Config.MailProvider.Enabled;
-                        break;
-                    case PreferredMethod.External:
-                        chkProviderEnabled.Checked = Config.ExternalProvider.Enabled;
-                        break;
-                    case PreferredMethod.Azure:
-                        chkProviderEnabled.Checked = Config.AzureProvider.Enabled;
-                        break;
-                }
+                chkProviderEnabled.Checked = _provider.Enabled;
                 chkProviderEnabled.Enabled = _provider.AllowDisable;
 
-                switch (_kind)
+                chkProviderEnroll.Checked = _provider.AllowEnrollment;
+                chkProviderEnroll.Enabled = _provider.Enabled;
+                if (_kind == PreferredMethod.Azure)
                 {
-                    case PreferredMethod.Code:
-                        chkProviderEnroll.Checked = Config.OTPProvider.EnrollWizard;
-                        break;
-                    case PreferredMethod.Email:
-                        chkProviderEnroll.Checked = Config.MailProvider.EnrollWizard;
-                        break;
-                    case PreferredMethod.External:
-                        chkProviderEnroll.Checked = Config.ExternalProvider.EnrollWizard;
-                        break;
-                    case PreferredMethod.Azure:
-                        chkProviderEnroll.Checked = false;
-                        chkProviderEnroll.Enabled = false;
-                        break;
+                    chkProviderEnroll.Checked = false;
+                    chkProviderEnroll.Enabled = false;
                 }
-                chkProviderEnroll.Enabled = chkProviderEnabled.Checked;
-
-                switch (_kind)
-                {
-                    case PreferredMethod.Code:
-                        chkProviderPin.Checked = Config.OTPProvider.PinRequired;
-                        break;
-                    case PreferredMethod.Email:
-                        chkProviderPin.Checked = Config.MailProvider.PinRequired;
-                        break;
-                    case PreferredMethod.External:
-                        chkProviderPin.Checked = Config.ExternalProvider.PinRequired;
-                        break;
-                    case PreferredMethod.Azure:
-                        chkProviderPin.Checked = Config.AzureProvider.PinRequired;
-                        break;
-                }
-                chkProviderPin.Enabled = chkProviderEnabled.Checked;
+                chkProviderPin.Checked = _provider.PinRequired;
+                chkProviderPin.Enabled = _provider.Enabled;
             }
             finally
             {
@@ -4945,6 +4860,9 @@ namespace Neos.IdentityServer.Console.Controls
                     break;
                 case ConfigOperationStatus.ConfigLoaded:
                     _panel.BackColor = Color.Green;
+                    IExternalProvider _provider = RuntimeAuthProvider.GetProviderInstance(PreferredMethod.Email);
+                    if (!_provider.Enabled)
+                        _panel.BackColor = Color.DarkGray;                   
                     break;
                 case ConfigOperationStatus.ConfigIsDirty:
                     _panel.BackColor = Color.DarkOrange;
@@ -4981,6 +4899,8 @@ namespace Neos.IdentityServer.Console.Controls
             _view.CausesValidation = false;
             try
             {
+                _view.ScopeNode.RefreshDescription();
+
                 this.Dock = DockStyle.Top;
                 this.Height = 585;
                 this.Width = 512;
@@ -5178,6 +5098,8 @@ namespace Neos.IdentityServer.Console.Controls
             _view.CausesValidation = false;
             try
             {
+                _view.ScopeNode.RefreshDescription();
+
                 txtCompany.Text = Config.MailProvider.Company;
 
                 txtFrom.Text = Config.MailProvider.From;
@@ -5691,7 +5613,6 @@ namespace Neos.IdentityServer.Console.Controls
         private Panel _panel;
         private Panel _txtpanel;
         private SMSViewControl _view;
-        private bool _UpdateControlsLayouts;
         private ErrorProvider errors;
         private TextBox txtCompany;
         private CheckBox chkIsTwoWay;
@@ -5760,6 +5681,9 @@ namespace Neos.IdentityServer.Console.Controls
                     break;
                 case ConfigOperationStatus.ConfigLoaded:
                     _panel.BackColor = Color.Green;
+                    IExternalProvider _provider = RuntimeAuthProvider.GetProviderInstance(PreferredMethod.External);
+                    if (!_provider.Enabled)
+                        _panel.BackColor = Color.DarkGray;
                     break;
                 case ConfigOperationStatus.ConfigIsDirty:
                     _panel.BackColor = Color.DarkOrange;
@@ -5796,6 +5720,8 @@ namespace Neos.IdentityServer.Console.Controls
             _view.CausesValidation = false;
             try
             {
+                _view.ScopeNode.RefreshDescription();
+
                 this.Dock = DockStyle.Top;
                 this.Height = 585;
                 this.Width = 512;
@@ -5927,7 +5853,6 @@ namespace Neos.IdentityServer.Console.Controls
             finally
             {
                 UpdateLayoutConfigStatus(ManagementService.ADFSManager.ConfigurationStatus);
-                UpdateControlsLayouts(Config.ExternalProvider.Enabled);
                 ValidateData();
                 _view.AutoValidate = AutoValidate.EnableAllowFocusChange;
                 _view.CausesValidation = true;
@@ -5945,6 +5870,8 @@ namespace Neos.IdentityServer.Console.Controls
             _view.CausesValidation = false;
             try
             {
+                _view.ScopeNode.RefreshDescription();
+
                 txtCompany.Text = Config.ExternalProvider.Company;
 
                 chkIsTwoWay.Checked = Config.ExternalProvider.IsTwoWay;
@@ -5969,7 +5896,6 @@ namespace Neos.IdentityServer.Console.Controls
             finally
             {
                 UpdateLayoutConfigStatus(ManagementService.ADFSManager.ConfigurationStatus);
-                UpdateControlsLayouts(Config.ExternalProvider.Enabled);
                 ValidateData();
                 _view.CausesValidation = true;
                 _view.AutoValidate = AutoValidate.EnableAllowFocusChange;
@@ -5998,17 +5924,16 @@ namespace Neos.IdentityServer.Console.Controls
             else
                 errors.SetError(txtSHA1, "");
 
-            if (string.IsNullOrEmpty(txtDLL.Text))
-                errors.SetError(txtDLL, res.CTRLNULLOREMPTYERROR);
-            else if (!AssemblyParser.CheckSMSAssembly(txtDLL.Text))
-                errors.SetError(txtDLL, res.CTRLSMSIVALIDEXTERROR);
+            if (!string.IsNullOrEmpty(txtDLL.Text))
+            {
+                if (!AssemblyParser.CheckSMSAssembly(txtDLL.Text))
+                    errors.SetError(txtDLL, res.CTRLSMSIVALIDEXTERROR);
+                else
+                    errors.SetError(txtDLL, "");
+            }
             else
                 errors.SetError(txtDLL, "");
-
-            if (string.IsNullOrEmpty(txtParams.Text))
-                errors.SetError(txtParams, res.CTRLNULLOREMPTYERROR);
-            else
-                errors.SetError(txtParams, "");
+            errors.SetError(txtParams, "");
         }
 
         /// <summary>
@@ -6018,28 +5943,6 @@ namespace Neos.IdentityServer.Console.Controls
         {
             if (_txtpanel != null)
                 _txtpanel.Width = this.Width - 20;
-        }
-
-        /// <summary>
-        /// UpdateControlsLayouts method implementation
-        /// </summary>
-        private void UpdateControlsLayouts(bool isenabled)
-        {
-            if (_UpdateControlsLayouts)
-                return;
-            _UpdateControlsLayouts = true;
-            try
-            {
-                txtCompany.Enabled = isenabled;
-                txtTimeout.Enabled = isenabled;
-                txtSHA1.Enabled = isenabled;
-                txtDLL.Enabled = isenabled;
-                txtParams.Enabled = isenabled;
-            }
-            finally
-            {
-                _UpdateControlsLayouts = false;
-            }
         }
 
         /// <summary>
@@ -6232,10 +6135,11 @@ namespace Neos.IdentityServer.Console.Controls
                 if (txtDLL.Modified)
                 {
                     ManagementService.ADFSManager.SetDirty(true);
-                    if (string.IsNullOrEmpty(txtDLL.Text))
-                        throw new Exception(res.CTRLNULLOREMPTYERROR);
-                    if (!AssemblyParser.CheckSMSAssembly(txtDLL.Text))
-                        throw new Exception(res.CTRLSMSIVALIDEXTERROR);
+                    if (!string.IsNullOrEmpty(txtDLL.Text))
+                    {
+                        if (!AssemblyParser.CheckSMSAssembly(txtDLL.Text))
+                            throw new Exception(res.CTRLSMSIVALIDEXTERROR);
+                    }
                     Config.ExternalProvider.FullQualifiedImplementation = txtDLL.Text;
                     errors.SetError(txtDLL, "");
                 }
@@ -6285,8 +6189,6 @@ namespace Neos.IdentityServer.Console.Controls
                 if (txtParams.Modified)
                 {
                     ManagementService.ADFSManager.SetDirty(true);
-                    if (string.IsNullOrEmpty(txtParams.Text))
-                        throw new Exception(res.CTRLNULLOREMPTYERROR);
                     Config.ExternalProvider.Parameters.Data = txtParams.Text;
                     errors.SetError(txtParams, "");
                 }
@@ -6328,7 +6230,7 @@ namespace Neos.IdentityServer.Console.Controls
         /// SaveConfigLinkClicked event
         /// </summary>
         private void SaveConfigLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
+        { 
             if (_view != null)
                 _view.SaveData();
         }
@@ -6411,6 +6313,9 @@ namespace Neos.IdentityServer.Console.Controls
                     break;
                 case ConfigOperationStatus.ConfigLoaded:
                     _panel.BackColor = Color.Green;
+                    IExternalProvider _provider = RuntimeAuthProvider.GetProviderInstance(PreferredMethod.Azure);
+                    if (!_provider.Enabled)
+                        _panel.BackColor = Color.DarkGray;
                     break;
                 case ConfigOperationStatus.ConfigIsDirty:
                     _panel.BackColor = Color.DarkOrange;
@@ -6829,6 +6734,9 @@ namespace Neos.IdentityServer.Console.Controls
                     break;
                 case ConfigOperationStatus.ConfigLoaded:
                     _panel.BackColor = Color.Green;
+                    IExternalProvider _provider = RuntimeAuthProvider.GetProviderInstance(PreferredMethod.Code);
+                    if (!_provider.Enabled)
+                        _panel.BackColor = Color.DarkGray;
                     break;
                 case ConfigOperationStatus.ConfigIsDirty:
                     _panel.BackColor = Color.DarkOrange;
@@ -6865,6 +6773,8 @@ namespace Neos.IdentityServer.Console.Controls
             _view.CausesValidation = false;
             try
             {
+                _view.ScopeNode.RefreshDescription();
+
                 this.Dock = DockStyle.Top;
                 this.Height = 783;
                 this.Width = 1050;
@@ -7313,6 +7223,8 @@ namespace Neos.IdentityServer.Console.Controls
             _view.CausesValidation = false;
             try
             {
+                _view.ScopeNode.RefreshDescription();
+
                 txtTOTPShadows.Text = Config.OTPProvider.TOTPShadows.ToString();
                 txtHashAlgo.Text = Config.OTPProvider.Algorithm.ToString();
 

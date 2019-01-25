@@ -2239,8 +2239,8 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     /// </summary>
     /// <example>
     ///   <para>Set-MFAThemeMode -UIKind Default -Theme yourcompatibletheme</para>
-    ///   <para>Set-MFAThemeMode -UIKind Default2019 -Theme yourcompatibletheme -Paginated:$false </para>
-    ///   <para>Set-MFAThemeMode -UIKind Default2019 -Theme yourcompatibletheme -Paginated:$true </para>
+    ///   <para>Set-MFAThemeMode -UIKind Default2019 -Theme yourcompatibletheme</para>
+    ///   <para>Set-MFAThemeMode -UIKind Default2019 -Theme yourcompatibletheme -Paginated</para>
     ///   <para>Change policy template for MFA configuration</para>
     /// </example>
     [Cmdlet(VerbsCommon.Set, "MFAThemeMode", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
@@ -2309,11 +2309,15 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// </summary>
         protected override void ProcessRecord()
         {
+            if (UIKind==PSUIKind.Default2019)
+                this.WriteWarning(string.Format(infos_strings.InfosWarningAboutTheme, "ADFS 2019"));
+            else
+                this.WriteWarning(string.Format(infos_strings.InfosWarningAboutTheme, "ADFS 2012r2/2016/2019"));
             if (ShouldProcess("MFA Theme Configuration"))
             {
                 try
                 {
-                    if (_dynparam!=null)
+                    if (_dynparam != null)
                         _config.SetTheme(this.Host, (int)_kind, _theme, _dynparam.Paginated);
                     else
                         _config.SetTheme(this.Host, (int)_kind, _theme, false);
@@ -2341,12 +2345,18 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     /// </summary>
     public class MFAThemeModeDynamicParameters
     {
+        private bool _usepaginated = false;
+
         /// <summary>
         /// <para type="description">Set the value for ADFS 2019 paginated mode.</para>
-        /// Data property
+        /// Paginated property
         /// </summary>
-        [Parameter(Mandatory = true, Position = 1, ParameterSetName = "Data", ValueFromPipeline = true)]
-        public SwitchParameter Paginated { get; set; }
+        [Parameter(Mandatory = false)]
+        public SwitchParameter Paginated 
+        {
+            get { return _usepaginated; }
+            set { _usepaginated=value; } 
+        }
     }
 
     /// <summary>
@@ -2829,7 +2839,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// </summary>
         protected override void ProcessRecord()
         {
-            if (ShouldProcess("MFA Mails Configuration"))
+            if (ShouldProcess("MFA Providers Configuration"))
             {
                 try
                 {
@@ -3807,7 +3817,6 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 }
             }
         }
-
     }
 
     #endregion  

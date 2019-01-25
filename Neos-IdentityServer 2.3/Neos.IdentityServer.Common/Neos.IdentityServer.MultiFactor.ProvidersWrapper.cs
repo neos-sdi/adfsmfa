@@ -420,13 +420,30 @@ namespace Neos.IdentityServer.MultiFactor.Common
     /// <summary>
     /// NeosOTPProvider class implementation
     /// </summary>
-    public class NeosOTPProvider: BaseExternalProvider
+    public class NeosOTPProvider : BaseExternalProvider, ITOTPProviderParameters
     {
         private int TOTPShadows = 2;
         private HashMode Algorithm = HashMode.SHA1;
         private bool _isinitialized = false;
         private bool _allowenrollment = true;
         private ForceWizardMode _forceenrollment = ForceWizardMode.Disabled;
+
+        /// <summary>
+        /// TOTP Duration in seconds
+        /// </summary>
+        public int Duration
+        {
+            get { return 30; }
+        }
+
+        /// <summary>
+        /// TOTP Digits numbers count
+        /// </summary>
+        public int Digits
+        {
+            get { return 6; }
+        }
+
 
         /// <summary>
         /// Kind property implementation
@@ -753,10 +770,9 @@ namespace Neos.IdentityServer.MultiFactor.Common
                                 throw new CryptographicException(string.Format("SECURTY ERROR : Invalid Key for User {0}", usercontext.UPN));
                             string encodedkey = KeysManager.ProbeKey(usercontext.UPN);
                             DateTime call = DateTime.UtcNow;
-                            OTPGenerator gen = new OTPGenerator(encodedkey, usercontext.UPN, call, algo);  // eg : TOTP code
+                            OTPGenerator gen = new OTPGenerator(encodedkey, usercontext.UPN, call, algo, this.Duration, this.Digits);  // eg : TOTP code
                             gen.ComputeOTP(call);
-                            string generatedpin = gen.OTP.ToString("D6");
-                            return (Convert.ToInt32(pin) == Convert.ToInt32(generatedpin));
+                            return (Convert.ToInt32(pin) == Convert.ToInt32(gen.Digits));
                         }
                         else
                         {   // Current TOTP
@@ -764,29 +780,26 @@ namespace Neos.IdentityServer.MultiFactor.Common
                                 throw new CryptographicException(string.Format("SECURTY ERROR : Invalid Key for User {0}", usercontext.UPN));
                             string encodedkey = KeysManager.ProbeKey(usercontext.UPN);
                             DateTime tcall = DateTime.UtcNow;
-                            OTPGenerator gen = new OTPGenerator(encodedkey, usercontext.UPN, tcall, algo);  // eg : TOTP code
+                            OTPGenerator gen = new OTPGenerator(encodedkey, usercontext.UPN, tcall, algo, this.Duration, this.Digits);  // eg : TOTP code
                             gen.ComputeOTP(tcall);
-                            string currentpin = gen.OTP.ToString("D6");
-                            if (pin == Convert.ToInt32(currentpin))
+                            if (pin == Convert.ToInt32(gen.Digits))
                                 return true;
                             // TOTP with Shadow (current - x latest)
                             for (int i = 1; i <= TOTPShadows; i++)
                             {
-                                DateTime call = tcall.AddSeconds(-(i * OTPGenerator.TOTPDuration));
-                                OTPGenerator gen2 = new OTPGenerator(encodedkey, usercontext.UPN, call, algo);  // eg : TOTP code
+                                DateTime call = tcall.AddSeconds(-(i * this.Duration));
+                                OTPGenerator gen2 = new OTPGenerator(encodedkey, usercontext.UPN, call, algo, this.Duration, this.Digits);  // eg : TOTP code
                                 gen2.ComputeOTP(call);
-                                string generatedpin = gen2.OTP.ToString("D6");
-                                if (pin == Convert.ToInt32(generatedpin))
+                                if (pin == Convert.ToInt32(gen2.Digits))
                                     return true;
                             }
                             // TOTP with Shadow (current + x latest) - not possible. but can be usefull if time sync is not adequate
                             for (int i = 1; i <= TOTPShadows; i++)
                             {
-                                DateTime call = tcall.AddSeconds(i * OTPGenerator.TOTPDuration);
-                                OTPGenerator gen3 = new OTPGenerator(encodedkey, usercontext.UPN, call, algo);  // eg : TOTP code
+                                DateTime call = tcall.AddSeconds(i * this.Duration);
+                                OTPGenerator gen3 = new OTPGenerator(encodedkey, usercontext.UPN, call, algo, this.Duration, this.Digits);  // eg : TOTP code
                                 gen3.ComputeOTP(call);
-                                string generatedpin = gen3.OTP.ToString("D6");
-                                if (pin == Convert.ToInt32(generatedpin))
+                                if (pin == Convert.ToInt32(gen3.Digits))
                                     return true;
                             }
                         }
@@ -879,7 +892,7 @@ namespace Neos.IdentityServer.MultiFactor.Common
         /// </summary>
         public override string Name
         {
-            get { return "Neos.Provider.LegacyExternal"; }
+            get { return "Neos.Provider.Legacy.External"; }
         }
 
         /// <summary>
@@ -887,7 +900,7 @@ namespace Neos.IdentityServer.MultiFactor.Common
         /// </summary>
         public override string Description
         {
-            get { return "Legacy Multi-Factor Provider for SMS"; }
+            get { return "SMS Legacy Multi-Factor Provider"; }
         }
 
         /// <summary>
@@ -1556,6 +1569,322 @@ namespace Neos.IdentityServer.MultiFactor.Common
                 return false;
         }
     }
+
+    /// <summary>
+    /// NeosLegacySMSProvider class implmentation
+    /// </summary>
+    public class NeosPlugExternalProvider : BaseExternalProvider
+    {
+        private bool _isinitialized = false;
+        private bool _allowenrollment = false;
+        private ForceWizardMode _forceenrollment = ForceWizardMode.Disabled;
+
+
+        /// <summary>
+        /// Enabled property implmentation
+        /// </summary>
+        public override bool Enabled
+        {
+            get { return base.Enabled; }
+            set { base.Enabled = false; }
+        }
+
+        /// <summary>
+        /// PinRequired  property implementation
+        /// </summary>
+        public override bool PinRequired
+        {
+            get { return base.PinRequired; }
+            set { base.PinRequired = false; }
+        }
+
+        /// <summary>
+        /// Kind property implementation
+        /// </summary>
+        public override PreferredMethod Kind
+        {
+            get { return PreferredMethod.External; }
+        }
+
+        /// <summary>
+        /// IsInitialized property implmentation
+        /// </summary>
+        public override bool IsInitialized
+        {
+            get { return _isinitialized; }
+        }
+
+        /// <summary>
+        /// AllowDisable property implementation
+        /// </summary>
+        public override bool AllowDisable
+        {
+            get { return false; }
+        }
+
+        /// <summary>
+        /// AllowOverride property implmentation
+        /// </summary>
+        public override bool AllowOverride
+        {
+            get { return false; }
+        }
+
+        /// <summary>
+        /// AllowEnrollment property implementation
+        /// </summary>
+        public override bool AllowEnrollment
+        {
+            get { return _allowenrollment; }
+            set { _allowenrollment = false; }
+        }
+
+        /// <summary>
+        /// ForceEnrollment property implementation
+        /// </summary>
+        public override ForceWizardMode ForceEnrollment
+        {
+            get { return _forceenrollment; }
+            set { _forceenrollment = ForceWizardMode.Disabled; }
+        }
+
+        /// <summary>
+        /// IsTwoWayByDefault property implementation
+        /// </summary>
+        public override bool IsTwoWayByDefault
+        {
+            get { return false; }
+        }
+
+        /// <summary>
+        /// Name property implementation
+        /// </summary>
+        public override string Name
+        {
+            get { return "Neos.Provider.Plug.External"; }
+        }
+
+        /// <summary>
+        /// Description property implementation
+        /// </summary>
+        public override string Description
+        {
+            get { return "External Multi-Factor Provider (Plug)"; }
+        }
+
+        /// <summary>
+        /// GetUILabel method implementation
+        /// </summary>
+        public override string GetUILabel(AuthenticationContext ctx)
+        {
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
+            return Resources.GetString(ResourcesLocaleKind.Html, "SMSUIOTPLabel");
+        }
+
+        /// <summary>
+        /// GetWizardUILabel method implementation
+        /// </summary>
+        public override string GetWizardUILabel(AuthenticationContext ctx)
+        {
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
+            return Resources.GetString(ResourcesLocaleKind.Html, "SMSUIWIZLabel");
+        }
+
+        /// <summary>
+        /// GetUICFGLabel method implementation
+        /// </summary>
+        public override string GetUICFGLabel(AuthenticationContext ctx)
+        {
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
+            return Resources.GetString(ResourcesLocaleKind.Html, "SMSUICFGLabel");
+        }
+
+        /// <summary>
+        /// GetUIMessage method implementation
+        /// </summary>
+        public override string GetUIMessage(AuthenticationContext ctx)
+        {
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
+            return string.Format(Resources.GetString(ResourcesLocaleKind.Html, "SMSUIMessage"), string.Empty);
+        }
+
+        /// <summary>
+        /// GetUIListOptionLabel method implementation
+        /// </summary>
+        public override string GetUIListOptionLabel(AuthenticationContext ctx)
+        {
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
+            return Resources.GetString(ResourcesLocaleKind.Html, "SMSUIListOptionLabel");
+        }
+
+        /// <summary>
+        /// GetUIListChoiceLabel method implementation
+        /// </summary>
+        public override string GetUIListChoiceLabel(AuthenticationContext ctx)
+        {
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
+            return Resources.GetString(ResourcesLocaleKind.Html, "SMSUIListChoiceLabel");
+        }
+
+        /// <summary>
+        /// GetUIConfigLabel method implementation
+        /// </summary>
+        public override string GetUIConfigLabel(AuthenticationContext ctx)
+        {
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
+            return Resources.GetString(ResourcesLocaleKind.Html, "SMSUIConfigLabel");
+        }
+
+        /// <summary>
+        /// GetUIChoiceLabel method implementation
+        /// </summary>
+        public override string GetUIChoiceLabel(AuthenticationContext ctx, AvailableAuthenticationMethod method = null)
+        {
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
+            return Resources.GetString(ResourcesLocaleKind.Html, "SMSUIChoiceLabel");
+        }
+
+        /// <summary>
+        /// GetUIWarningInternetLabel method implmentation
+        /// </summary>
+        public override string GetUIWarningInternetLabel(AuthenticationContext ctx)
+        {
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
+            return Resources.GetString(ResourcesLocaleKind.Html, "GLOBALWarnOverNetwork");
+        }
+
+        /// <summary>
+        /// GetUIWarningThirdPartyLabel method implementation
+        /// </summary>
+        public override string GetUIWarningThirdPartyLabel(AuthenticationContext ctx)
+        {
+            if (ctx.IsTwoWay)
+            {
+                ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
+                return Resources.GetString(ResourcesLocaleKind.Html, "GLOBALWarnThirdParty");
+            }
+            else
+                return string.Empty;
+        }
+
+        /// <summary>
+        /// GetUIDefaultChoiceLabel method implementation
+        /// </summary>
+        public override string GetUIDefaultChoiceLabel(AuthenticationContext ctx)
+        {
+            if (ctx.IsTwoWay)
+            {
+                ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
+                return Resources.GetString(ResourcesLocaleKind.Html, "GLOBALListChoiceDefaultLabel");
+            }
+            else
+                return string.Empty;
+        }
+
+        /// <summary>
+        /// GetUIAccountManagementLabel method implementation
+        /// </summary>
+        public override string GetUIAccountManagementLabel(AuthenticationContext ctx)
+        {
+            return string.Empty;
+        }
+
+        /// <summary>
+        /// GetAccountManagementUrl method implmentation
+        /// </summary>
+        public override string GetAccountManagementUrl(AuthenticationContext ctx)
+        {
+            return null;
+        }
+
+        /// <summary>
+        /// IsAvailable method implmentation
+        /// </summary>
+        public override bool IsAvailable(AuthenticationContext ctx)
+        {
+            return false;
+        }
+
+
+        /// <summary>
+        /// IsAvailableForUser method implmentation
+        /// </summary>
+        public override bool IsAvailableForUser(AuthenticationContext ctx)
+        {
+            return false;
+        }
+
+        /// <summary>
+        /// IsMethodElementRequired implementation
+        /// </summary>
+        public override bool IsUIElementRequired(AuthenticationContext ctx, RequiredMethodElements element)
+        {
+            return false;
+        }
+
+        /// <summary>
+        /// Initialize method implementation
+        /// </summary>
+        public override void Initialize(BaseProviderParams externalsystem)
+        {
+            try
+            {
+                if (!_isinitialized)
+                {
+                    if (externalsystem is ExternalProviderParams)
+                    {
+                        ExternalProviderParams param = externalsystem as ExternalProviderParams;
+                        Enabled = false;
+                        AllowEnrollment = false;
+                        ForceEnrollment = ForceWizardMode.Disabled;
+                        PinRequired = false;
+                        _isinitialized = true;
+                        return;
+                    }
+                    else
+                        throw new InvalidCastException("Invalid External Provider !");
+                }
+            }
+            catch (Exception ex)
+            {
+                this.Enabled = false;
+                throw ex;
+            }
+        }
+
+        /// <summary>
+        /// PostAutnenticationRequest method implmentation
+        /// </summary>
+        public override int PostAuthenticationRequest(AuthenticationContext ctx)
+        {
+            if (!IsInitialized)
+                throw new Exception("Provider not initialized !");
+
+            return (int)AuthenticationResponseKind.Error;
+        }
+
+        /// <summary>
+        /// SetAuthenticationResult method implmentation
+        /// </summary>
+        public override int SetAuthenticationResult(AuthenticationContext ctx, string pin)
+        {
+            if (!IsInitialized)
+                throw new Exception("Provider not initialized !");
+            return (int)AuthenticationResponseKind.Error;
+        }
+
+        /// <summary>
+        /// GetAuthenticationMethods method implmentation
+        /// </summary>
+        public override List<AvailableAuthenticationMethod> GetAuthenticationMethods(AuthenticationContext ctx)
+        {
+            if (!IsInitialized)
+                throw new Exception("Provider not initialized !");
+
+            return new List<AvailableAuthenticationMethod>();
+        }
+    }
+
 
     /// <summary>
     /// NeosAdministrationProvider class implementation

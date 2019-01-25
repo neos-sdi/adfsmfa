@@ -665,9 +665,9 @@ namespace MFA
         public bool CertReuse { get; set; }
 
         /// <summary>
-        /// <para type="description">Specify your own parameters, values stored as CNAME, set it as string with Parameters.Data = "myparameters"</para>
+        /// <para type="description">Specify your own parameters, values stored as CData, set it as string with Parameters = "myparameters"</para>
         /// </summary>
-        public XmlCDataSection Parameters { get; set; }
+        public string Parameters { get; set; }
 
         /// <summary>
         /// explicit operator 
@@ -686,7 +686,7 @@ namespace MFA
                 ret.CertificateValidity = mgr.CertificateValidity;
                 ret.CertReuse = mgr.CertReuse;
                 ret.ThumbPrint = mgr.ThumbPrint;
-                ret.Parameters = mgr.Parameters;
+                ret.Parameters = mgr.Parameters.InnerText;
 
                 return ret;
             }
@@ -709,7 +709,7 @@ namespace MFA
                 ret.CertificateValidity = mgr.CertificateValidity;
                 ret.CertReuse = mgr.CertReuse;
                 ret.ThumbPrint = mgr.ThumbPrint;
-                ret.Parameters = mgr.Parameters;
+                ret.Parameters.InnerText = mgr.Parameters;
                 return ret;
             }
         }
@@ -761,6 +761,16 @@ namespace MFA
         public PSOTPWizardOptions WizardOptions { get; set; }
 
         /// <summary>
+        /// <para type="description">Full qualified implementation class for replacing default otp provider.</para>
+        /// </summary>
+        public string FullQualifiedImplementation { get; set; }
+
+        /// <summary>
+        /// <para type="description">Full qualified implementation parameters for replacing default otp provider.</para>
+        /// </summary>
+        public string Parameters { get; set; }
+
+        /// <summary>
         /// explicit operator from PSConfigTOTPProvider
         /// </summary>
         public static explicit operator PSConfigTOTPProvider(FlatOTPProvider otp)
@@ -777,6 +787,8 @@ namespace MFA
                 target.Algorithm = (MFA.PSHashMode)otp.Algorithm; 
                 target.PinRequired = otp.PinRequired;
                 target.WizardOptions = (PSOTPWizardOptions)otp.WizardOptions;
+                target.FullQualifiedImplementation = otp.FullQualifiedImplementation;
+                target.Parameters = otp.Parameters.InnerText;
                 return target;
             }
         }
@@ -799,6 +811,8 @@ namespace MFA
                 target.Algorithm = (HashMode)otp.Algorithm;
                 target.PinRequired = otp.PinRequired;
                 target.WizardOptions = (OTPWizardOptions)otp.WizardOptions;
+                target.FullQualifiedImplementation = otp.FullQualifiedImplementation;
+                target.Parameters.InnerText = otp.Parameters;
                 return target;
             }
         }
@@ -878,6 +892,16 @@ namespace MFA
         public bool Anonymous { get; set; }
 
         /// <summary>
+        /// <para type="description">Full qualified implementation class for replacing default mail provider.</para>
+        /// </summary>
+        public string FullQualifiedImplementation { get; set; }
+
+        /// <summary>
+        /// <para type="description">Full qualified implementation parameters for replacing default mail provider.</para>
+        /// </summary>
+        public string Parameters { get; set; }
+
+        /// <summary>
         /// <para type="description">List of domains that are not allowed.</para>
         /// </summary>
         public PSConfigMailBlockedDomains BlockedDomains { get; set; }
@@ -896,7 +920,7 @@ namespace MFA
         /// <para type="description">Custom mail templates.</para>
         /// </summary>
         public PSConfigMailFileNames MailSecureKey { get; set; }
-
+        
         /// <summary>
         /// Constructor
         /// </summary>
@@ -930,6 +954,8 @@ namespace MFA
                 psconfig.Company = mails.Company;
                 psconfig.PinRequired = mails.PinRequired;
                 psconfig.Anonymous = mails.Anonymous;
+                psconfig.FullQualifiedImplementation = mails.FullQualifiedImplementation;
+                psconfig.Parameters = mails.Parameters.InnerText;
 
                 psconfig.BlockedDomains.Domains.Clear();
                 foreach (string itm in mails.BlockedDomains.Domains)
@@ -979,6 +1005,8 @@ namespace MFA
                 psconfig.Company = mails.Company;
                 psconfig.PinRequired = mails.PinRequired;
                 psconfig.Anonymous = mails.Anonymous;
+                psconfig.FullQualifiedImplementation = mails.FullQualifiedImplementation;
+                psconfig.Parameters.InnerText = mails.Parameters;
 
                 psconfig.BlockedDomains.Clear();
                 foreach (string itm in mails.BlockedDomains.Domains)
@@ -1234,9 +1262,9 @@ namespace MFA
         public string FullQualifiedImplementation { get; set; }
 
         /// <summary>
-        /// <para type="description">Specify your own parameters, values stored as CNAME, set it as string with Parameters.Data = "myparameters"</para>
+        /// <para type="description">Specify your own parameters, values stored as CData, set it as string with Parameters = "myparameters"</para>
         /// </summary>
-        public XmlCDataSection Parameters { get; set; }
+        public string Parameters { get; set; }
 
         /// <summary>
         /// <para type="description">Pass parameter to your implemented provider, indicating if the mode is Request/Response</para>

@@ -589,6 +589,30 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         public int TOTPShadows { get; set; }
         public OTPWizardOptions WizardOptions { get; set; }
         public bool PinRequired { get; set; }
+        public string FullQualifiedImplementation { get; set; }
+        private XmlCDataSection _cdata;
+
+        public XmlCDataSection Parameters
+        {
+            get
+            {
+                if (_cdata == null)
+                {
+                    XmlDocument doc = new XmlDocument();
+                    _cdata = doc.CreateCDataSection(null);
+                }
+                return _cdata;
+            }
+            set
+            {
+                if (_cdata == null)
+                {
+                    XmlDocument doc = new XmlDocument();
+                    _cdata = doc.CreateCDataSection(null);
+                }
+                _cdata.Data = value.Data;
+            }
+        }
 
         /// <summary>
         /// Update method implmentation
@@ -606,6 +630,8 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             this.TOTPShadows = otp.TOTPShadows;
             this.WizardOptions = otp.WizardOptions;
             this.PinRequired = otp.PinRequired;
+            this.FullQualifiedImplementation = otp.FullQualifiedImplementation;
+            this.Parameters = otp.Parameters;
         }
 
         /// <summary>
@@ -624,7 +650,8 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             otp.TOTPShadows = this.TOTPShadows;
             otp.WizardOptions = this.WizardOptions;
             otp.PinRequired = this.PinRequired;
-            otp.PinRequired = this.PinRequired;
+            otp.FullQualifiedImplementation = this.FullQualifiedImplementation;
+            otp.Parameters = this.Parameters;
             ManagementService.ADFSManager.WriteConfiguration(host);
         }
     }
@@ -640,7 +667,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         public string Sha1Salt { get; set; }
         public string FullQualifiedImplementation  { get; set; }
         public bool PinRequired { get; set; }
-        public XmlCDataSection Parameters  { get; set; }
+        public string Parameters  { get; set; }
         public bool IsTwoWay  { get; set; }
         public int Timeout  { get; set; }
 
@@ -662,7 +689,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             this.Sha1Salt = otp.Sha1Salt;
             this.Timeout = otp.Timeout;
             this.PinRequired = otp.PinRequired;
-            this.Parameters = otp.Parameters;
+            this.Parameters = otp.Parameters.InnerText;
         }
 
         /// <summary>
@@ -682,7 +709,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             otp.IsTwoWay = this.IsTwoWay;
             otp.Sha1Salt = this.Sha1Salt;
             otp.Timeout = this.Timeout;
-            otp.Parameters = this.Parameters;
+            otp.Parameters.InnerText = this.Parameters;
             otp.PinRequired = this.PinRequired;
             ManagementService.ADFSManager.WriteConfiguration(host);
         }
@@ -751,10 +778,35 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         public bool PinRequired { get; set; }
         public string Company { get; set; }
         public bool Anonymous { get; set; }
+        public string FullQualifiedImplementation { get; set; }
+        private XmlCDataSection _cdata;
         public FlatConfigMailBlockedDomains BlockedDomains { get; set; }
         public List<FlatConfigMailFileName> MailOTPContent { get; set; }
         public List<FlatConfigMailFileName> MailAdminContent { get; set; }
         public List<FlatConfigMailFileName> MailKeyContent { get; set; }
+
+
+        public XmlCDataSection Parameters
+        {
+            get
+            {
+                if (_cdata == null)
+                {
+                    XmlDocument doc = new XmlDocument();
+                    _cdata = doc.CreateCDataSection(null);
+                }
+                return _cdata;
+            }
+            set
+            {
+                if (_cdata == null)
+                {
+                    XmlDocument doc = new XmlDocument();
+                    _cdata = doc.CreateCDataSection(null);
+                }
+                _cdata.Data = value.Data;
+            }
+        }
 
         public FlatConfigMail()
         {
@@ -785,6 +837,8 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             Company = mail.Company;
             PinRequired = mail.PinRequired;
             Anonymous = mail.Anonymous;
+            FullQualifiedImplementation = mail.FullQualifiedImplementation;
+            Parameters = mail.Parameters;
 
             BlockedDomains.Clear();
             foreach (string itm in mail.BlockedDomains)
@@ -830,6 +884,8 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             mail.Company = Company;
             mail.PinRequired = PinRequired;
             mail.Anonymous = Anonymous;
+            mail.FullQualifiedImplementation = FullQualifiedImplementation;
+            mail.Parameters = Parameters;
 
             mail.BlockedDomains.Clear();
             foreach (string itm in BlockedDomains.Domains)
