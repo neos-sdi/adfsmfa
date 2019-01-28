@@ -123,19 +123,4 @@
   <data name="SMSTwoWayMessage" xml:space="preserve">
     <value>You must send back this code &lt;$otp$&gt; as security code for the account {0}</value>
   </data>
-  <data name="HtmlPRVUseApp" xml:space="preserve">
-    <value>Enter the verification code for your mobile application.</value>
-  </data>
-  <data name="HtmlPRVUsePhone" xml:space="preserve">
-    <value>We sent an SMS containing a verification code. {0}</value>
-  </data>
-  <data name="HtmlPRVUseEmail" xml:space="preserve">
-    <value>We sent an email containing a verification code.</value>
-  </data>
-  <data name="HtmlPRVWarnOverNetwork" xml:space="preserve">
-    <value>(data is transmitted over internet)</value>
-  </data>
-  <data name="HtmlPRVWarnThirdParty" xml:space="preserve">
-    <value>(authentication is performed by Microsoft)</value>
-  </data>
 </root>

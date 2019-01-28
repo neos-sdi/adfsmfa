@@ -483,7 +483,6 @@ namespace Neos.IdentityServer.Console.Controls
             _view.CausesValidation = false;
             try
             {
-                _view.ScopeNode.RefreshDescription();
                 _provider = RuntimeAuthProvider.GetProviderInstance(this._kind);
 
                 this.Dock = DockStyle.Top;
@@ -571,7 +570,6 @@ namespace Neos.IdentityServer.Console.Controls
             _view.CausesValidation = false;
             try
             {
-                _view.ScopeNode.RefreshDescription();
                 _provider = RuntimeAuthProvider.GetProviderInstance(this._kind);
 
                 lblProviderDesc.Text = _provider.Description;
@@ -4899,7 +4897,7 @@ namespace Neos.IdentityServer.Console.Controls
             _view.CausesValidation = false;
             try
             {
-                _view.ScopeNode.RefreshDescription();
+                _view.RefreshProviderInformation();
 
                 this.Dock = DockStyle.Top;
                 this.Height = 585;
@@ -5098,7 +5096,7 @@ namespace Neos.IdentityServer.Console.Controls
             _view.CausesValidation = false;
             try
             {
-                _view.ScopeNode.RefreshDescription();
+                _view.RefreshProviderInformation();
 
                 txtCompany.Text = Config.MailProvider.Company;
 
@@ -5720,7 +5718,7 @@ namespace Neos.IdentityServer.Console.Controls
             _view.CausesValidation = false;
             try
             {
-                _view.ScopeNode.RefreshDescription();
+                _view.RefreshProviderInformation();
 
                 this.Dock = DockStyle.Top;
                 this.Height = 585;
@@ -5870,7 +5868,7 @@ namespace Neos.IdentityServer.Console.Controls
             _view.CausesValidation = false;
             try
             {
-                _view.ScopeNode.RefreshDescription();
+                _view.RefreshProviderInformation();
 
                 txtCompany.Text = Config.ExternalProvider.Company;
 
@@ -6773,7 +6771,7 @@ namespace Neos.IdentityServer.Console.Controls
             _view.CausesValidation = false;
             try
             {
-                _view.ScopeNode.RefreshDescription();
+                _view.RefreshProviderInformation();
 
                 this.Dock = DockStyle.Top;
                 this.Height = 783;
@@ -7223,7 +7221,7 @@ namespace Neos.IdentityServer.Console.Controls
             _view.CausesValidation = false;
             try
             {
-                _view.ScopeNode.RefreshDescription();
+                _view.RefreshProviderInformation();
 
                 txtTOTPShadows.Text = Config.OTPProvider.TOTPShadows.ToString();
                 txtHashAlgo.Text = Config.OTPProvider.Algorithm.ToString();

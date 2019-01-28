@@ -65,9 +65,7 @@ namespace Neos.IdentityServer.Console
             {
                 ControlInstance = new SMTPConfigurationControl(this, this.SnapIn);
                 this.tableLayoutPanel.Controls.Add(ControlInstance, 0, 1);
-
-                ComponentResourceManager resources = new ComponentResourceManager(typeof(SMTPViewControl));
-                this.ProviderTitle.Text = String.Format(resources.GetString("ProviderTitle.Text"), this.ScopeNode.DisplayName);
+                RefreshProviderInformation();
             }
             finally
             {
@@ -105,7 +103,7 @@ namespace Neos.IdentityServer.Console
         /// <summary>
         /// ScopeNode method implementation
         /// </summary>
-        public ServiceSMTPScopeNode ScopeNode
+        protected ServiceSMTPScopeNode ScopeNode
         {
             get { return this.FormView.ScopeNode as ServiceSMTPScopeNode; }
         }
@@ -149,9 +147,6 @@ namespace Neos.IdentityServer.Console
             _notifenabled = false;
             try
             {
-                ComponentResourceManager resources = new ComponentResourceManager(typeof(SMTPViewControl));
-                this.ProviderTitle.Text = String.Format(resources.GetString("ProviderTitle.Text"), this.ScopeNode.DisplayName);
-
                 ManagementService.ADFSManager.ReadConfiguration(null);
                 ((IMMCRefreshData)ControlInstance).DoRefreshData();
             }
@@ -224,6 +219,16 @@ namespace Neos.IdentityServer.Console
         public bool IsNotifsEnabled()
         {
             return _notifenabled;
+        }
+
+        /// <summary>
+        /// RefreshProviderInformation method implementation
+        /// </summary>
+        public void RefreshProviderInformation()
+        {
+            this.ScopeNode.RefreshDescription();
+            ComponentResourceManager resources = new ComponentResourceManager(typeof(SMTPViewControl));
+            this.ProviderTitle.Text = string.Format(resources.GetString("ProviderTitle.Text"), this.ScopeNode.DisplayName);
         }
     }
 }

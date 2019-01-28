@@ -61,11 +61,11 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Check your email account.
+        ///   Recherche une chaîne localisée semblable à Use default option.
         /// </summary>
-        internal static string HtlmUIMUseEmail {
+        internal static string GLOBALListChoiceDefaultLabel {
             get {
-                return ResourceManager.GetString("HtlmUIMUseEmail", resourceCulture);
+                return ResourceManager.GetString("GLOBALListChoiceDefaultLabel", resourceCulture);
             }
         }
         
@@ -84,24 +84,6 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         internal static string HtmlChangePassword {
             get {
                 return ResourceManager.GetString("HtmlChangePassword", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Email To.
-        /// </summary>
-        internal static string HtmlCHOOSEOptionEmailWarning {
-            get {
-                return ResourceManager.GetString("HtmlCHOOSEOptionEmailWarning", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à I have no such information.
-        /// </summary>
-        internal static string HtmlCHOOSEOptionNone {
-            get {
-                return ResourceManager.GetString("HtmlCHOOSEOptionNone", resourceCulture);
             }
         }
         
@@ -378,92 +360,11 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Personal email address.
-        /// </summary>
-        internal static string HtmlREGLabelMail {
-            get {
-                return ResourceManager.GetString("HtmlREGLabelMail", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Cellphone number.
-        /// </summary>
-        internal static string HtmlREGLabelPhoneNumber {
-            get {
-                return ResourceManager.GetString("HtmlREGLabelPhoneNumber", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Recherche une chaîne localisée semblable à Let me choose the best option.
         /// </summary>
         internal static string HtmlREGOptionChooseBest {
             get {
                 return ResourceManager.GetString("HtmlREGOptionChooseBest", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Send an email to your personal address.
-        /// </summary>
-        internal static string HtmlREGOptionEmail {
-            get {
-                return ResourceManager.GetString("HtmlREGOptionEmail", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Send a notification to your cellphone.
-        /// </summary>
-        internal static string HtmlREGOptionPhone {
-            get {
-                return ResourceManager.GetString("HtmlREGOptionPhone", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Use a TOTP application.
-        /// </summary>
-        internal static string HtmlREGOptionTOTP {
-            get {
-                return ResourceManager.GetString("HtmlREGOptionTOTP", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Reinitialize your key.
-        /// </summary>
-        internal static string HtmlREGResetQR {
-            get {
-                return ResourceManager.GetString("HtmlREGResetQR", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Send by email.
-        /// </summary>
-        internal static string HtmlREGSendQR {
-            get {
-                return ResourceManager.GetString("HtmlREGSendQR", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Show me the QR Code.
-        /// </summary>
-        internal static string HtmlREGShowQR {
-            get {
-                return ResourceManager.GetString("HtmlREGShowQR", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Your secret key has changed!.
-        /// </summary>
-        internal static string HtmlSecretKeyChanged {
-            get {
-                return ResourceManager.GetString("HtmlSecretKeyChanged", resourceCulture);
             }
         }
         
@@ -522,15 +423,6 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Use default configuration.
-        /// </summary>
-        internal static string HtmlUIMLabelDefault {
-            get {
-                return ResourceManager.GetString("HtmlUIMLabelDefault", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Recherche une chaîne localisée semblable à I do not have the code.
         /// </summary>
         internal static string HtmlUIMNoCode {
@@ -558,47 +450,11 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Register a new email address.
-        /// </summary>
-        internal static string HtmlUIMRecordNewEmail {
-            get {
-                return ResourceManager.GetString("HtmlUIMRecordNewEmail", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Recherche une chaîne localisée semblable à Get a new key.
         /// </summary>
         internal static string HtmlUIMRecordNewKey {
             get {
                 return ResourceManager.GetString("HtmlUIMRecordNewKey", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Use your authenticator application.
-        /// </summary>
-        internal static string HtmlUIMUseApp {
-            get {
-                return ResourceManager.GetString("HtmlUIMUseApp", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Check for SMS on your phone.
-        /// </summary>
-        internal static string HtmlUIMUsePhone {
-            get {
-                return ResourceManager.GetString("HtmlUIMUsePhone", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Phone verification.
-        /// </summary>
-        internal static string HtmlUIVerifyPhone {
-            get {
-                return ResourceManager.GetString("HtmlUIVerifyPhone", resourceCulture);
             }
         }
     }

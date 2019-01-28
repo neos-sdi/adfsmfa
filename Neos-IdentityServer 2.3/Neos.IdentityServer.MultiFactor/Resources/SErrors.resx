@@ -139,10 +139,6 @@
   <data name="ErrorEmailException" xml:space="preserve">
     <value>Email invalid format !</value>
   </data>
-  <data name="ErrorInvalidEmail" xml:space="preserve">
-    <value>Error invalid email format : 
-{0}</value>
-  </data>
   <data name="ErrorInvalidIdentificationRestart" xml:space="preserve">
     <value>Invalid identification, please restart your session.</value>
   </data>
@@ -169,17 +165,11 @@
     <value>Error loading User Registration ! 
 {0}</value>
   </data>
-  <data name="ErrorPinDefault" xml:space="preserve">
-    <value>Default PIN value must be changed !</value>
-  </data>
   <data name="ErrorPinLength" xml:space="preserve">
     <value>Invalid PIN length, {0} numbers required !</value>
   </data>
   <data name="ErrorPinValue" xml:space="preserve">
     <value>Invalid PIN value !</value>
-  </data>
-  <data name="ErrorRegistrationEmptyEmail" xml:space="preserve">
-    <value>Warning ! the user {0} has choosen to connect via a procedure with an untrusted email address : {1}. This email must be set in the standard registration procedure, this is not the case. Perhaps that the email validation option was not active when the user has registered. This is not a normal condition ! Please, investigate, it's maybe a legitim connection.</value>
   </data>
   <data name="ErrorSendingToastInformation" xml:space="preserve">
     <value>Error when sending identification request !</value>

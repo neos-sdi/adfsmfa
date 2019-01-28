@@ -64,24 +64,59 @@ namespace Neos.IdentityServer.MultiFactor
                     provider = GetProviderInstance(ctx.PreferredMethod);
                     if (provider == null)
                     {
-                        if (string.IsNullOrEmpty(cfg.OTPProvider.FullQualifiedImplementation))
-                            provider = new NeosOTPProvider();
-                        else
-                            provider = LoadExternalProvider(cfg.OTPProvider.FullQualifiedImplementation);
-                        AddOrUpdateProvider(ctx.PreferredMethod, provider);
-                        provider.Initialize(new OTPProviderParams(cfg.OTPProvider));
+                        try
+                        {
+
+                            if (string.IsNullOrEmpty(cfg.OTPProvider.FullQualifiedImplementation))
+                                provider = new NeosOTPProvider();
+                            else
+                                provider = LoadExternalProvider(cfg.OTPProvider.FullQualifiedImplementation);
+                            if (provider != null)
+                            {
+                                if (provider.Kind == PreferredMethod.Code)
+                                {
+                                    AddOrUpdateProvider(ctx.PreferredMethod, provider);
+                                    provider.Initialize(new OTPProviderParams(cfg.OTPProvider));
+                                }
+                                else
+                                    throw new Exception("Invalid Provider Kind !");
+                            }
+                            else
+                                throw new Exception("Invalid Provider Kind !");
+                        }
+                        catch (Exception)
+                        {
+                            provider = null;
+                        }
                     }
                     break;
                 case PreferredMethod.Email:
                     provider = GetProviderInstance(ctx.PreferredMethod);
                     if (provider == null)
                     {
-                        if (string.IsNullOrEmpty(cfg.MailProvider.FullQualifiedImplementation))
-                            provider = new NeosMailProvider();
-                        else
-                            provider = LoadExternalProvider(cfg.MailProvider.FullQualifiedImplementation);
-                        AddOrUpdateProvider(ctx.PreferredMethod, provider);
-                        provider.Initialize(new MailProviderParams(cfg.MailProvider));
+                        try
+                        {
+                            if (string.IsNullOrEmpty(cfg.MailProvider.FullQualifiedImplementation))
+                                provider = new NeosMailProvider();
+                            else
+                                provider = LoadExternalProvider(cfg.MailProvider.FullQualifiedImplementation);
+                            if (provider != null)
+                            {
+                                if (provider.Kind == PreferredMethod.Email)
+                                {
+                                    AddOrUpdateProvider(ctx.PreferredMethod, provider);
+                                    provider.Initialize(new MailProviderParams(cfg.MailProvider));
+                                }
+                                else
+                                    throw new Exception("Invalid Provider Kind !");
+                            }
+                            else
+                                throw new Exception("Invalid Provider Kind !");
+                        }
+                        catch (Exception)
+                        {
+                            provider = null;
+                        }
                     }
                     break;
                 case PreferredMethod.External:
@@ -96,8 +131,18 @@ namespace Neos.IdentityServer.MultiFactor
                                 provider = new NeosLegacySMSProvider();
                             else
                                 provider = LoadExternalProvider(cfg.ExternalProvider.FullQualifiedImplementation);
-                            AddOrUpdateProvider(ctx.PreferredMethod, provider);
-                            provider.Initialize(new ExternalProviderParams(cfg.ExternalProvider));
+                            if (provider != null)
+                            {
+                                if (provider.Kind == PreferredMethod.External)
+                                {
+                                    AddOrUpdateProvider(ctx.PreferredMethod, provider);
+                                    provider.Initialize(new ExternalProviderParams(cfg.ExternalProvider));
+                                }
+                                else
+                                    throw new Exception("Invalid Provider Kind !");
+                            }
+                            else
+                                throw new Exception("Invalid Provider Kind !");
                         }
                         catch (Exception)
                         {
@@ -115,8 +160,18 @@ namespace Neos.IdentityServer.MultiFactor
                                 provider = LoadAzureProvider();
                             else
                                 provider = LoadExternalProvider(cfg.AzureProvider.FullQualifiedImplementation);
-                            AddOrUpdateProvider(ctx.PreferredMethod, provider);
-                            provider.Initialize(new AzureProviderParams(cfg.AzureProvider, cfg.Hosts.ADFSFarm.FarmIdentifier, cfg.Issuer));
+                            if (provider != null)
+                            {
+                                if (provider.Kind == PreferredMethod.Azure)
+                                {
+                                    AddOrUpdateProvider(ctx.PreferredMethod, provider);
+                                    provider.Initialize(new AzureProviderParams(cfg.AzureProvider, cfg.Hosts.ADFSFarm.FarmIdentifier, cfg.Issuer));
+                                }
+                                else
+                                    throw new Exception("Invalid Provider Kind !");
+                            }
+                            else
+                                throw new Exception("Invalid Provider Kind !");
                         }
                         catch (Exception)
                         {
@@ -312,24 +367,58 @@ namespace Neos.IdentityServer.MultiFactor
                         provider = GetProviderInstance(meth);
                         if (provider == null)
                         {
-                            if (string.IsNullOrEmpty(cfg.OTPProvider.FullQualifiedImplementation))
-                                provider = new NeosOTPProvider();
-                            else
-                                provider = LoadExternalProvider(cfg.OTPProvider.FullQualifiedImplementation);
-                            AddOrUpdateProvider(meth, provider);
-                            provider.Initialize(new OTPProviderParams(cfg.OTPProvider));
+                            try
+                            {
+                                if (string.IsNullOrEmpty(cfg.OTPProvider.FullQualifiedImplementation))
+                                    provider = new NeosOTPProvider();
+                                else
+                                    provider = LoadExternalProvider(cfg.OTPProvider.FullQualifiedImplementation);
+                                if (provider != null)
+                                {
+                                    if (provider.Kind == PreferredMethod.Code)
+                                    {
+                                        AddOrUpdateProvider(meth, provider);
+                                        provider.Initialize(new OTPProviderParams(cfg.OTPProvider));
+                                    }
+                                    else
+                                        throw new Exception("Invalid Provider Kind !");
+                                }
+                                else
+                                    throw new Exception("Invalid Provider Kind !");
+                            }
+                            catch (Exception)
+                            {
+                                provider = null;
+                            }
                         }
                         break;
                     case PreferredMethod.Email:
                         provider = GetProviderInstance(meth);
                         if (provider == null)
                         {
-                            if (string.IsNullOrEmpty(cfg.MailProvider.FullQualifiedImplementation))
-                                provider = new NeosMailProvider();
-                            else
-                                provider = LoadExternalProvider(cfg.MailProvider.FullQualifiedImplementation);
-                            AddOrUpdateProvider(meth, provider);
-                            provider.Initialize(new MailProviderParams(cfg.MailProvider));
+                            try
+                            {
+                                if (string.IsNullOrEmpty(cfg.MailProvider.FullQualifiedImplementation))
+                                    provider = new NeosMailProvider();
+                                else
+                                    provider = LoadExternalProvider(cfg.MailProvider.FullQualifiedImplementation);
+                                if (provider != null)
+                                {
+                                    if (provider.Kind == PreferredMethod.Email)
+                                    {
+                                        AddOrUpdateProvider(meth, provider);
+                                        provider.Initialize(new MailProviderParams(cfg.MailProvider));
+                                    }
+                                    else
+                                        throw new Exception("Invalid Provider Kind !");
+                                }
+                                else
+                                    throw new Exception("Invalid Provider Kind !");
+                            }
+                            catch (Exception)
+                            {
+                                provider = null;
+                            }
                         }
                         break;
                     case PreferredMethod.External:
@@ -344,8 +433,18 @@ namespace Neos.IdentityServer.MultiFactor
                                     provider = new NeosLegacySMSProvider();
                                 else
                                     provider = LoadExternalProvider(cfg.ExternalProvider.FullQualifiedImplementation);
-                                AddOrUpdateProvider(meth, provider);
-                                provider.Initialize(new ExternalProviderParams(cfg.ExternalProvider));
+                                if (provider != null)
+                                {
+                                    if (provider.Kind == PreferredMethod.External)
+                                    {
+                                        AddOrUpdateProvider(meth, provider);
+                                        provider.Initialize(new ExternalProviderParams(cfg.ExternalProvider));
+                                    }
+                                    else
+                                        throw new Exception("Invalid Provider Kind !");
+                                }
+                                else
+                                    throw new Exception("Invalid Provider Kind !");
                             }
                             catch (Exception)
                             {
@@ -363,8 +462,18 @@ namespace Neos.IdentityServer.MultiFactor
                                     provider = LoadAzureProvider();
                                 else
                                     provider = LoadExternalProvider(cfg.AzureProvider.FullQualifiedImplementation);
-                                AddOrUpdateProvider(meth, provider);
-                                provider.Initialize(new AzureProviderParams(cfg.AzureProvider, cfg.Hosts.ADFSFarm.FarmIdentifier, cfg.Issuer));
+                                if (provider != null)
+                                {
+                                    if (provider.Kind == PreferredMethod.Azure)
+                                    {
+                                        AddOrUpdateProvider(meth, provider);
+                                        provider.Initialize(new AzureProviderParams(cfg.AzureProvider, cfg.Hosts.ADFSFarm.FarmIdentifier, cfg.Issuer));
+                                    }
+                                    else
+                                        throw new Exception("Invalid Provider Kind !");
+                                }
+                                else
+                                    throw new Exception("Invalid Provider Kind !");
                             }
                             catch (Exception)
                             {

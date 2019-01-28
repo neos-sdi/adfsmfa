@@ -139,10 +139,6 @@
   <data name="ErrorEmailException" xml:space="preserve">
     <value>Format d'email incorrect !</value>
   </data>
-  <data name="ErrorInvalidEmail" xml:space="preserve">
-    <value>Erreur format d'email incorrect : 
-{0}</value>
-  </data>
   <data name="ErrorInvalidIdentificationRestart" xml:space="preserve">
     <value>Identification incorrecte, redémarrez votre session.</value>
   </data>
@@ -169,17 +165,11 @@
     <value>Erreur au chargement du profil utilisateur ! 
 {0}</value>
   </data>
-  <data name="ErrorPinDefault" xml:space="preserve">
-    <value>La valeur par défaut du PIN doit être modifiée !</value>
-  </data>
   <data name="ErrorPinLength" xml:space="preserve">
     <value>Longueur du code PIN invalide, {0} chiffres requis !</value>
   </data>
   <data name="ErrorPinValue" xml:space="preserve">
     <value>Code PIN invalide !</value>
-  </data>
-  <data name="ErrorRegistrationEmptyEmail" xml:space="preserve">
-    <value>Warning ! l'utilisateur {0} a choisi de se connecter avec une procédure par email non trusté : {1}. lors de la phase d'enregistrement ceci ne doit pas se produire. ceci peut être dû a fait que la validation par email n'était pas active au momment de l'enregistrement. Cette situation est exceptionelle ! Veillez impérativement faire les vérifications utiles, bien que cette connexion puisse être légitime.</value>
   </data>
   <data name="ErrorSendingToastInformation" xml:space="preserve">
     <value>Erreur lors de l'envoi de la demande d'identification !</value>

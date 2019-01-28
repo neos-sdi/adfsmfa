@@ -2846,16 +2846,28 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                     switch (ProviderType)
                     {
                         case PSProviderType.Code:
-                            ((FlatOTPProvider)(_target0.Data)).Update(this.Host);
+                            if ((_target0.Data) is PSConfigTOTPProvider)
+                                ((FlatOTPProvider)(_target0.Data)).Update(this.Host);
+                            else
+                                throw new Exception("Invalid Profider Type !");
                             break;
                         case PSProviderType.Email:
-                            ((FlatConfigMail)(_target1.Data)).Update(this.Host);
+                            if ((_target1.Data) is PSConfigMailProvider)
+                                ((FlatConfigMail)(_target1.Data)).Update(this.Host);
+                            else
+                                throw new Exception("Invalid Profider Type !");
                             break;
                         case PSProviderType.External:
-                            ((FlatExternalProvider)(_target2.Data)).Update(this.Host);
+                            if ((_target2.Data) is PSConfigExternalProvider)
+                                ((FlatExternalProvider)(_target2.Data)).Update(this.Host);
+                            else
+                                throw new Exception("Invalid Profider Type !");
                             break;
                         case PSProviderType.Azure:
-                            ((FlatAzureProvider)(_target3.Data)).Update(this.Host);
+                            if ((_target3.Data) is PSConfigAzureProvider)
+                                ((FlatAzureProvider)(_target3.Data)).Update(this.Host);
+                            else
+                                throw new Exception("Invalid Profider Type !");
                             break;
                         default:
                             break;

@@ -187,15 +187,6 @@ namespace Neos.IdentityServer.MultiFactor.Common.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Access my configuration options.
-        /// </summary>
-        internal static string MAILUIManagement {
-            get {
-                return ResourceManager.GetString("MAILUIManagement", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Recherche une chaîne localisée semblable à We sent an email containing a verification code..
         /// </summary>
         internal static string MAILUIMessage {
@@ -264,15 +255,6 @@ namespace Neos.IdentityServer.MultiFactor.Common.Resources {
         internal static string OTPUIListOptionLabel {
             get {
                 return ResourceManager.GetString("OTPUIListOptionLabel", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Access my configuration options.
-        /// </summary>
-        internal static string OTPUIManagement {
-            get {
-                return ResourceManager.GetString("OTPUIManagement", resourceCulture);
             }
         }
         
@@ -363,15 +345,6 @@ namespace Neos.IdentityServer.MultiFactor.Common.Resources {
         internal static string SMSUIListOptionLabel {
             get {
                 return ResourceManager.GetString("SMSUIListOptionLabel", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Access my configuration options.
-        /// </summary>
-        internal static string SMSUIManagement {
-            get {
-                return ResourceManager.GetString("SMSUIManagement", resourceCulture);
             }
         }
         

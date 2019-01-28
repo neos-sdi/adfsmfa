@@ -117,20 +117,11 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="HtlmUIMUseEmail" xml:space="preserve">
-    <value>Check your email account</value>
-  </data>
   <data name="HtmlChangeConfiguration" xml:space="preserve">
     <value>Change my configuration options</value>
   </data>
   <data name="HtmlChangePassword" xml:space="preserve">
     <value>Change my password</value>
-  </data>
-  <data name="HtmlCHOOSEOptionEmailWarning" xml:space="preserve">
-    <value>Email To</value>
-  </data>
-  <data name="HtmlCHOOSEOptionNone" xml:space="preserve">
-    <value>I have no such information</value>
   </data>
   <data name="HtmlCHOOSEOptionRemember" xml:space="preserve">
     <value>Remember my selection</value>
@@ -162,26 +153,8 @@
   <data name="HtmlREGLabelAppKey" xml:space="preserve">
     <value>Secret Key</value>
   </data>
-  <data name="HtmlREGLabelMail" xml:space="preserve">
-    <value>Personal email address</value>
-  </data>
-  <data name="HtmlREGLabelPhoneNumber" xml:space="preserve">
-    <value>Cellphone number</value>
-  </data>
   <data name="HtmlREGOptionChooseBest" xml:space="preserve">
     <value>Let me choose the best option</value>
-  </data>
-  <data name="HtmlREGOptionEmail" xml:space="preserve">
-    <value>Send an email to your personal address</value>
-  </data>
-  <data name="HtmlREGOptionPhone" xml:space="preserve">
-    <value>Send a notification to your cellphone</value>
-  </data>
-  <data name="HtmlREGOptionTOTP" xml:space="preserve">
-    <value>Use a TOTP application</value>
-  </data>
-  <data name="HtmlREGShowQR" xml:space="preserve">
-    <value>Show me the QR Code</value>
   </data>
   <data name="HtmlUIMAccessOptions" xml:space="preserve">
     <value>Access my options after authentication</value>
@@ -191,18 +164,6 @@
   </data>
   <data name="HtmlUIMNoCode" xml:space="preserve">
     <value>I do not have the code</value>
-  </data>
-  <data name="HtmlUIMUseApp" xml:space="preserve">
-    <value>Use your authenticator application</value>
-  </data>
-  <data name="HtmlUIMUsePhone" xml:space="preserve">
-    <value>Check for SMS on your phone</value>
-  </data>
-  <data name="HtmlREGResetQR" xml:space="preserve">
-    <value>Reinitialize your key</value>
-  </data>
-  <data name="HtmlSecretKeyChanged" xml:space="preserve">
-    <value>Your secret key has changed!</value>
   </data>
   <data name="HtmlINSRequest" xml:space="preserve">
     <value>Send request</value>
@@ -219,9 +180,6 @@
   <data name="HtmlUIMGoToRegistration" xml:space="preserve">
     <value>Change my options</value>
   </data>
-  <data name="HtmlREGSendQR" xml:space="preserve">
-    <value>Send by email</value>
-  </data>
   <data name="HtmlUIMGotoInscription" xml:space="preserve">
     <value>Inscription request</value>
   </data>
@@ -230,9 +188,6 @@
   </data>
   <data name="HtmlREGAccessPageMethods" xml:space="preserve">
     <value>Configuration options</value>
-  </data>
-  <data name="HtmlUIMLabelDefault" xml:space="preserve">
-    <value>Use default configuration</value>
   </data>
   <data name="HtmlEnrollBiometric" xml:space="preserve">
     <value>Enroll my biometric device</value>
@@ -269,12 +224,6 @@ You can try the operation again by selecting "Previous".</value>
     <value>Your account is validated!
 You will be able to use single-use code validation in the future.</value>
   </data>
-  <data name="HtmlUIMRecordNewEmail" xml:space="preserve">
-    <value>Register a new email address</value>
-  </data>
-  <data name="HtmlUIVerifyPhone" xml:space="preserve">
-    <value>Phone verification</value>
-  </data>
   <data name="HtmlLabelWREmail" xml:space="preserve">
     <value>You must enter an email address to confirm your identiy. This email must be reachable without needing enterprise verification (personal email address)</value>
   </data>
@@ -298,5 +247,8 @@ You will be able to use single-use code validation in the future.</value>
   </data>
   <data name="HtmlUIMQuit" xml:space="preserve">
     <value>Quit</value>
+  </data>
+  <data name="GLOBALListChoiceDefaultLabel" xml:space="preserve">
+    <value>Use default option</value>
   </data>
 </root>

@@ -171,10 +171,6 @@
     <value>Dirección de correo electrónico personal</value>
     <comment>Adresse email personnelle</comment>
   </data>
-  <data name="MAILUIManagement" xml:space="preserve">
-    <value>Acceda a mis opciones de configuración</value>
-    <comment>Accéder à mes options de configuration</comment>
-  </data>
   <data name="MAILUIMessage" xml:space="preserve">
     <value>Enviamos un correo electrónico que contiene un código de verificación.</value>
     <comment>Nous avons envoyé un email contenant un code de vérification.</comment>
@@ -205,10 +201,6 @@
   <data name="OTPUIListOptionLabel" xml:space="preserve">
     <value>Aplicación de autenticación</value>
     <comment>Application d'authentification</comment>
-  </data>
-  <data name="OTPUIManagement" xml:space="preserve">
-    <value>Acceda a mis opciones de configuración</value>
-    <comment>Accéder à mes options de configuration</comment>
   </data>
   <data name="OTPUIMessage" xml:space="preserve">
     <value>Ingrese el código de verificación que se muestra en la aplicación de autenticación en su dispositivo móvil.</value>
@@ -248,10 +240,6 @@
   <data name="SMSUIListOptionLabel" xml:space="preserve">
     <value>Autenticación de teléfono móvil</value>
     <comment>Téléphone mobile d'authentification</comment>
-  </data>
-  <data name="SMSUIManagement" xml:space="preserve">
-    <value>Acceda a mis opciones de configuración</value>
-    <comment>Accéder à mes options de configuration</comment>
   </data>
   <data name="SMSUIMessage" xml:space="preserve">
     <value>Hemos enviado un SMS con un código de verificación. {0}</value>

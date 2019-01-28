@@ -118,18 +118,6 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="GlobalViewlabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>223, 26</value>
-  </data>
-  <data name="GlobalViewlabel.Text" xml:space="preserve">
-    <value>Descripción general</value>
-  </data>
-  <data name="GlobalViewLabelText.Size" type="System.Drawing.Size, System.Drawing">
-    <value>631, 13</value>
-  </data>
-  <data name="GlobalViewLabelText.Text" xml:space="preserve">
-    <value>La extensión MFA para ADFS 2012R2 o ADFS 2016 permite la autenticación multifactorial (2FA) para ser utilizada sin costo adicional</value>
-  </data>
   <data name="pictureNeosSdi.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAAQQAAAA/CAYAAAAGwrbQAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO

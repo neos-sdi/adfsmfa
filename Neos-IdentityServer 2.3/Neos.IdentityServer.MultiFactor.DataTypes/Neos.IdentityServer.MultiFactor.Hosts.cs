@@ -327,13 +327,13 @@ namespace Neos.IdentityServer.MultiFactor
                 OTPProvider.PinRequired = false;
 
                 ExternalProvider.Enabled = false;
-                ExternalProvider.EnrollWizard = true;
+                ExternalProvider.EnrollWizard = false;
                 ExternalProvider.PinRequired = false;
                 ExternalProvider.Company = "Contoso";
-                ExternalProvider.FullQualifiedImplementation = "Neos.IdentityServer.Multifactor.SMS.NeosSMSProvider, Neos.IdentityServer.Multifactor.SMS.Azure, Version=2.3.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2";
+                ExternalProvider.FullQualifiedImplementation = string.Empty;
                 ExternalProvider.IsTwoWay = false;
                 ExternalProvider.Sha1Salt = "0x1230456789ABCDEF";
-                ExternalProvider.Parameters.Data = "LICENSE_KEY = AZURELICKEY, GROUP_KEY = 01234567891011121314151617181920, CERT_THUMBPRINT = " + Thumbprint.Demo;
+                ExternalProvider.Parameters.Data = string.Empty;
 
                 AzureProvider.TenantId = "contoso.onmicrosoft.com";
                 AzureProvider.ThumbPrint = Thumbprint.Demo;
@@ -356,7 +356,6 @@ namespace Neos.IdentityServer.MultiFactor
                 MailProvider.Enabled = true;
                 MailProvider.EnrollWizard = true;
                 MailProvider.PinRequired = false;
-
             }
         }
 
@@ -430,13 +429,15 @@ namespace Neos.IdentityServer.MultiFactor
             if (this.ExternalProvider != null)
             {
                 if (ExternalProvider.FullQualifiedImplementation.ToLower().StartsWith("neos.identityserver.multifactor.sms.smscall"))
+                    ExternalProvider.FullQualifiedImplementation = "Neos.IdentityServer.Multifactor.SMS.smscall, Neos.IdentityServer.Multifactor.SMS.Azure, Version=2.3.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2";
+                if (ExternalProvider.FullQualifiedImplementation.ToLower().StartsWith("neos.identityserver.multifactor.sms.neossmsprovider"))
                     ExternalProvider.FullQualifiedImplementation = "Neos.IdentityServer.Multifactor.SMS.NeosSMSProvider, Neos.IdentityServer.Multifactor.SMS.Azure, Version=2.3.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2";
                 if (string.IsNullOrEmpty(this.ExternalProvider.Company))
                     this.ExternalProvider.Company = "Contoso";
                 if (string.IsNullOrEmpty(this.ExternalProvider.Sha1Salt))
                     this.ExternalProvider.Sha1Salt = "0x1230456789ABCDEF";
-                if (this.ExternalProvider.Parameters.Length == 0)
-                    ExternalProvider.Parameters.Data = "LICENSE_KEY = AZURELICKEY, GROUP_KEY = 01234567891011121314151617181920, CERT_THUMBPRINT = " + Thumbprint.Demo;
+                if (string.IsNullOrEmpty(this.ExternalProvider.Parameters.Data))
+                    ExternalProvider.Parameters.Data = "LICENSE_KEY = LICENCE, GROUP_KEY = 01234567891011121314151617181920, CERT_THUMBPRINT = " + Thumbprint.Demo;
             }
             if (this.AzureProvider != null)
             {

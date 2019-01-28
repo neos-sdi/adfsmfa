@@ -104,9 +104,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Neos.IdentityServer.MultiFactor.Provider.cs" />
-    <None Include="app.config">
-      <SubType>Designer</SubType>
-    </None>
     <None Include="Neos.IdentityServer.pfx" />
   </ItemGroup>
   <ItemGroup>
@@ -119,9 +116,6 @@
     <Content Include="SQL\mfa-db.sql" />
     <Content Include="SQL\mfa-secretkey-db-Encrypted.sql" />
     <Content Include="SQL\mfa-secretkey-db.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Neos.IdentityServer.Common\Neos.IdentityServer.MultiFactor.Common.csproj">

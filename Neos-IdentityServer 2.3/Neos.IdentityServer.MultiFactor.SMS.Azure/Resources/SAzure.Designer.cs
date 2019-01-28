@@ -61,51 +61,6 @@ namespace Neos.IdentityServer.MultiFactor.SMS.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Enter the verification code for your mobile application..
-        /// </summary>
-        internal static string HtmlPRVUseApp {
-            get {
-                return ResourceManager.GetString("HtmlPRVUseApp", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à We sent an email containing a verification code..
-        /// </summary>
-        internal static string HtmlPRVUseEmail {
-            get {
-                return ResourceManager.GetString("HtmlPRVUseEmail", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à We sent an SMS containing a verification code. {0}.
-        /// </summary>
-        internal static string HtmlPRVUsePhone {
-            get {
-                return ResourceManager.GetString("HtmlPRVUsePhone", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à (data is transmitted over internet).
-        /// </summary>
-        internal static string HtmlPRVWarnOverNetwork {
-            get {
-                return ResourceManager.GetString("HtmlPRVWarnOverNetwork", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à (authentication is performed by Microsoft).
-        /// </summary>
-        internal static string HtmlPRVWarnThirdParty {
-            get {
-                return ResourceManager.GetString("HtmlPRVWarnThirdParty", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Recherche une chaîne localisée semblable à Use &lt;$otp$&gt; as the security code fr the account {0}.
         /// </summary>
         internal static string SMSMessage {

@@ -125,16 +125,6 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Error invalid email format : 
-        ///{0}.
-        /// </summary>
-        internal static string ErrorInvalidEmail {
-            get {
-                return ResourceManager.GetString("ErrorInvalidEmail", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Recherche une chaîne localisée semblable à Invalid identification, please restart your session..
         /// </summary>
         internal static string ErrorInvalidIdentificationRestart {
@@ -209,15 +199,6 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Default PIN value must be changed !.
-        /// </summary>
-        internal static string ErrorPinDefault {
-            get {
-                return ResourceManager.GetString("ErrorPinDefault", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Recherche une chaîne localisée semblable à Invalid PIN length, {0} numbers required !.
         /// </summary>
         internal static string ErrorPinLength {
@@ -232,15 +213,6 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         internal static string ErrorPinValue {
             get {
                 return ResourceManager.GetString("ErrorPinValue", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Warning ! the user {0} has choosen to connect via a procedure with an untrusted email address : {1}. This email must be set in the standard registration procedure, this is not the case. Perhaps that the email validation option was not active when the user has registered. This is not a normal condition ! Please, investigate, it&apos;s maybe a legitim connection..
-        /// </summary>
-        internal static string ErrorRegistrationEmptyEmail {
-            get {
-                return ResourceManager.GetString("ErrorRegistrationEmptyEmail", resourceCulture);
             }
         }
         
