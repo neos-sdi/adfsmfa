@@ -134,6 +134,6 @@
     <value>98, 13</value>
   </data>
   <data name="EmailPrompt.Text" xml:space="preserve">
-    <value>Adresse email :  {0}</value>
+    <value>Email :</value>
   </data>
 </root>

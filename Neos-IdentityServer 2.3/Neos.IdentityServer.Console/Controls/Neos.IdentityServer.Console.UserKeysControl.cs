@@ -85,12 +85,12 @@ namespace Neos.IdentityServer.Console
 
                 if (string.IsNullOrEmpty(_email))
                 {
-                    this.EmailPrompt.Text = "Adresse email : ";
+                    this.EmailPrompt.Text = "Email : ";
                     _emailnotset = true;
                 }
                 else
                 {
-                    this.EmailPrompt.Text = string.Format("Adresse email : {0}", _email);
+                    this.EmailPrompt.Text = string.Format("Email : {0}", _email);
                     _emailnotset = false;
                 }
                 if (!string.IsNullOrEmpty(_secretkey))

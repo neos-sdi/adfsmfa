@@ -1745,6 +1745,8 @@ namespace Neos.IdentityServer.MultiFactor
                 return null;
             string lupn = upn.ToLower();
             string full = StripKeyPrefix(ReadKey(lupn));
+            if (string.IsNullOrEmpty(full))
+                return null;
             if (full.Length > MAX_PROBE_LEN)
                 return Base32.Encode(full.Substring(0, MAX_PROBE_LEN));
             else
@@ -1760,6 +1762,8 @@ namespace Neos.IdentityServer.MultiFactor
                 return null;
             string lupn = upn.ToLower();
             string full = StripKeyPrefix(ReadKey(lupn));
+            if (string.IsNullOrEmpty(full))
+                return null;
             if (full.Length > MAX_PROBE_LEN)
                 return full.Substring(0, MAX_PROBE_LEN);
             else
