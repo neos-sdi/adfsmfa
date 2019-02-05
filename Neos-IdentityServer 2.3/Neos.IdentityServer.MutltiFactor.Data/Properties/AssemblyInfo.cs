@@ -49,7 +49,7 @@ using System.Resources;
 //      Révision
 //
 [assembly: AssemblyVersion("2.3.0.0")]
-[assembly: AssemblyFileVersion("2.3.0.1001")]
+[assembly: AssemblyFileVersion("2.3.0.1002")]
 [assembly: AssemblyInformationalVersion("2.3.0.0")]
 [assembly: NeutralResourcesLanguageAttribute("")]
 

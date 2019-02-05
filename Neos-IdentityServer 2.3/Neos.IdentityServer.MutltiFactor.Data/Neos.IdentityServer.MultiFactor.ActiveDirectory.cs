@@ -149,10 +149,12 @@ namespace Neos.IdentityServer.MultiFactor.Data
         public override Registration SetUserRegistration(Registration reg, bool resetkey = true, bool caninsert = true, bool disableoninsert = false)
         {
             if (!HasRegistration(reg.UPN))
+            {
                 if (caninsert)
                     return AddUserRegistration(reg, resetkey, false);
                 else
                     return GetUserRegistration(reg.UPN);
+            }
             try
             {
                 using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUPN(_host, reg.UPN))
@@ -217,10 +219,12 @@ namespace Neos.IdentityServer.MultiFactor.Data
         public override Registration AddUserRegistration(Registration reg, bool resetkey = false, bool canupdate = true, bool disableoninsert = false)
         {
             if (HasRegistration(reg.UPN))
+            {
                 if (canupdate)
                     return SetUserRegistration(reg, resetkey, false);
                 else
                     return GetUserRegistration(reg.UPN);
+            }
             try
             {
                 using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUPN(_host, reg.UPN))

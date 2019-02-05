@@ -125,10 +125,12 @@ namespace Neos.IdentityServer.MultiFactor.Data
         public override Registration SetUserRegistration(Registration reg, bool resetkey = false, bool caninsert = true, bool disableoninsert = false)
         {
             if (!SQLUtils.HasRegistration(_host, reg.UPN))
+            {
                 if (caninsert)
                     return AddUserRegistration(reg, resetkey, false);
                 else
                     return GetUserRegistration(reg.UPN);
+            }
             string request;
             if (disableoninsert)
                request = "UPDATE REGISTRATIONS SET MAILADDRESS = @MAILADDRESS, PHONENUMBER = @PHONENUMBER, PIN=@PIN, METHOD=@METHOD, OVERRIDE=@OVERRIDE, WHERE UPN=@UPN";
@@ -202,11 +204,12 @@ namespace Neos.IdentityServer.MultiFactor.Data
         public override Registration AddUserRegistration(Registration reg, bool resetkey = true, bool canupdate = true, bool disableoninsert = false)
         {
             if (SQLUtils.HasRegistration(_host, reg.UPN))
+            {
                 if (canupdate)
                     return SetUserRegistration(reg, resetkey, false);
                 else
                     return GetUserRegistration(reg.UPN);
-
+            }
             string request = "INSERT INTO REGISTRATIONS (UPN, SECRETKEY, MAILADDRESS, PHONENUMBER, PIN, ENABLED, METHOD, OVERRIDE) VALUES (@UPN, @SECRETKEY, @MAILADDRESS, @PHONENUMBER, @PIN, @ENABLED, @METHOD, @OVERRIDE)";
 
             SqlConnection con = new SqlConnection(_connectionstring);

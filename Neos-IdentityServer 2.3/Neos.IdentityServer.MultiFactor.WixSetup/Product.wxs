@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" >
-  <Product Id="a23dd485-5365-4d82-8309-103494000001" Name="Neos MFA Provider for ADFS 2012 R2/2016/2019" Language="1033" Version="2.3.0.1001" Manufacturer="Neos-SDI" UpgradeCode="a23dd485-5365-4d82-8309-103495000001" >
+  <Product Id="a23dd485-5365-4d82-8309-103494000001" Name="Neos MFA Provider for ADFS 2012 R2/2016/2019" Language="1033" Version="2.3.0.1002" Manufacturer="Neos-SDI" UpgradeCode="a23dd485-5365-4d82-8309-103495000001" >
 
     <Package InstallerVersion="500" Compressed="yes" InstallScope="perMachine" InstallPrivileges="elevated" Platform="x64" Description="Multi-Factor Authentication for ADFS 2012r2 / 2016 / 2019" />
 
@@ -193,7 +193,7 @@
       </Component>
       <Component Id="GACDeployment38" Guid="E7173CAB-E43F-4A07-0220-018000006138" Win64="yes" Directory="LOCALEFR" DiskId="1" >
         <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.SAS.Azure.fr.resources.dll"  Name="Neos.IdentityServer.MultiFactor.SAS.Azure.resources.dll" Source="$(var.Neos.IdentityServer.MultiFactor.SAS.Azure.TargetDir)fr\Neos.IdentityServer.MultiFactor.SAS.Azure.resources.dll" Vital="no" />
-      </Component>
+      </Component>    
     </ComponentGroup>
   </Fragment>
   

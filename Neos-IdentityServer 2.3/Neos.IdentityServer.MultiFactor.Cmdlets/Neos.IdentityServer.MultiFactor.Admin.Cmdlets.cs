@@ -303,6 +303,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     /// <example>
     ///   <para>Update a specific user.</para>
     ///   <para>Set-MFAUsers -Identity user@domain.com -Email user@mailbox.com -Phone 0606050403 -Method Code</para> 
+    ///   <para>Set-MFAUsers -Identity user@domain.com -Email user@mailbox.com -Phone 0606050403 -PIN 2451 -Method Code -ResetKey</para> 
     /// </example>
     /// <example>
     ///   <para>Update users and reset SecretKey.</para>
@@ -317,7 +318,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         private string _phonenumber = string.Empty;
         private PSPreferredMethod _method = PSPreferredMethod.None;
         private bool _enabled = true;
-        private bool _email = false;
+        private bool _emailfornewkey = false;
         private int _pincode = -1;
         private bool _resetkey = false;
 
@@ -338,7 +339,6 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <para type="description">email address of the updated users.</para>
         /// </summary>
         [Parameter(Mandatory = false, ParameterSetName = "Identity")]
-        [Parameter(ParameterSetName = "Data")]
         [Alias("Email")]
         public string MailAddress
         {
@@ -350,7 +350,6 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <para type="description">phone number of the updated users.</para>
         /// </summary>
         [Parameter(Mandatory = false, ParameterSetName = "Identity")]
-        [Parameter(ParameterSetName = "Data")]
         [Alias("Phone")]
         public string PhoneNumber
         {
@@ -374,7 +373,6 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <para type="description">Pin code of selected users.</para>
         /// </summary>
         [Parameter(ParameterSetName = "Identity")]
-        [Parameter(ParameterSetName = "Data")]
         public int Pin
         {
             get { return _pincode; }
@@ -393,14 +391,14 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         }
 
         /// <summary>
-        /// <para type="description">EmailForNewKey allow email when create a new Key for MFA.</para>
+        /// <para type="description">EmailForNewKey allow email when updating Key for MFA.</para>
         /// </summary>
         [Parameter(ParameterSetName = "Identity")]
         [Parameter(ParameterSetName = "Data")]
         public SwitchParameter EmailForNewKey
         {
-            get { return _email; }
-            set { _email = value; }
+            get { return _emailfornewkey; }
+            set { _emailfornewkey = value; }
         }
 
         /// <summary>
@@ -490,7 +488,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                             this.Host.UI.WriteWarningLine(string.Format(errors_strings.ErrorPhoneNotProvided, reg.UPN));
 
                         ManagementService.Initialize(this.Host, true);
-                        PSRegistration ret = (PSRegistration)ManagementService.SetUserRegistration((Registration)reg, this.ResetKey, true, this.EmailForNewKey);
+                        PSRegistration ret = (PSRegistration)ManagementService.SetUserRegistration((Registration)reg, this.ResetKey, false, this.EmailForNewKey);
 
                         if (ret != null)
                         {
@@ -526,6 +524,8 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     /// <example>
     ///   <para>Add a specific user.</para>
     ///   <para>Add-MFAUsers -Identity user@domain.com -Email user@mailbox.com -Phone 0606050403 -Method Code</para> 
+    ///   <para>Add-MFAUsers -Identity user@domain.com -Email user@mailbox.com -Phone 0606050403 -PIN 2451 -Method Code -NoNewKey</para> 
+    ///   <para>Add-MFAUsers $users -Method Code -NNewKey</para> 
     /// </example>
     [Cmdlet(VerbsCommon.Add, "MFAUsers", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Identity")]
     public sealed class AddMFAUser : MFACmdlet
@@ -536,7 +536,8 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         private PSPreferredMethod _method = PSPreferredMethod.None;
         private int _pincode = -1;
         private bool _enabled = true;
-        private bool _email = false;
+        private bool _emailfornewkey = false;
+        private bool _nonewkey = false;
 
         PSRegistration[] _data = null;
 
@@ -577,6 +578,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <para type="description">MFA Method for the new users.</para>
         /// </summary>
         [Parameter(ParameterSetName = "Identity")]
+        [Parameter(ParameterSetName = "Data")]
         [ValidateSet("Choose", "Code", "Email", "External", "Azure")]
         public PSPreferredMethod Method
         {
@@ -588,7 +590,6 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <para type="description">Pin code of selected users.</para>
         /// </summary>
         [Parameter(ParameterSetName = "Identity")]
-        [Parameter(ParameterSetName = "Data")]
         public int Pin
         {
             get { return _pincode; }
@@ -599,6 +600,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <para type="description">Enabled status for the new users.</para>
         /// </summary>
         [Parameter(ParameterSetName = "Identity")]
+        [Parameter(ParameterSetName = "Data")]
         public SwitchParameter Enabled
         {
             get { return _enabled; }
@@ -606,13 +608,25 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         }
 
         /// <summary>
+        /// <para type="description">Regenerate a new secret key for the selected users.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [Parameter(ParameterSetName = "Data")]
+        public SwitchParameter NoNewKey
+        {
+            get { return _nonewkey; }
+            set { _nonewkey = value; }
+        }
+
+        /// <summary>
         /// <para type="description">EmailForNewKey allow Key email when create a new Key for MFA.</para>
         /// </summary>
         [Parameter(ParameterSetName = "Identity")]
+        [Parameter(ParameterSetName = "Data")]
         public SwitchParameter EmailForNewKey
         {
-            get { return _email; }
-            set { _email = value; }
+            get { return _emailfornewkey; }
+            set { _emailfornewkey = value; }
         }
 
         /// <summary>
@@ -693,7 +707,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                             this.Host.UI.WriteWarningLine(string.Format(errors_strings.ErrorPhoneNotProvided, reg.UPN));
 
                         ManagementService.Initialize(this.Host, true);
-                        PSRegistration ret = (PSRegistration)ManagementService.AddUserRegistration((Registration)reg, false, true, this.EmailForNewKey);
+                        PSRegistration ret = (PSRegistration)ManagementService.AddUserRegistration((Registration)reg, !this.NoNewKey, false, this.EmailForNewKey);
 
                         if (ret != null)
                         {

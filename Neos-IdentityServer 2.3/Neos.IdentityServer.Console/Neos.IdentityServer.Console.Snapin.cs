@@ -92,8 +92,8 @@ namespace Neos.IdentityServer.Console
             {
                 if (persistenceData != null)
                 {
-//                    try
-//                    {
+                    try
+                    {
                         MMCPersistenceData data = (MMCPersistenceData)persistenceData;
                         MMCService.Filter = data.Filter;
                         if (data.Language == 0)
@@ -110,11 +110,11 @@ namespace Neos.IdentityServer.Console
                                 CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo(data.Language);
                                 BuildNodes(false);
                             }
-//                    }
-//                    catch (SerializationException)
-//                    {
+                    }
+                    catch (SerializationException)
+                    {
                         //nothing 
-//                    }
+                    }
                 }
             }
             catch (Exception ex)
