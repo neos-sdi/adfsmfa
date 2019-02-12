@@ -1437,7 +1437,10 @@ namespace Neos.IdentityServer.MultiFactor
         KeySizeDefault = 0,
         KeySize512 = 1,
         KeySize1024 = 2,
-        KeySize2048 = 3
+        KeySize2048 = 3,
+        KeySize128 = 4,
+        KeySize256 = 5,
+        KeySize384 = 6
     }
 
     /// <summary>

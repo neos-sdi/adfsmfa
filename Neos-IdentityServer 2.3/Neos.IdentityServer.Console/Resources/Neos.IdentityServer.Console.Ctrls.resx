@@ -339,6 +339,9 @@
   <data name="CTRLINVALIDVALUE" xml:space="preserve">
     <value>Invalid value, must be between {0} and {1}.</value>
   </data>
+  <data name="CTRLMUSTACTIVATESVC" xml:space="preserve">
+    <value>Operation aborted ! your must start the local ADFS service !</value>
+  </data>
   <data name="CTRLNULLOREMPTYERROR" xml:space="preserve">
     <value>Null or empty values are not allowed.</value>
   </data>

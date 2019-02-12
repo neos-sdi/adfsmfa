@@ -123,10 +123,13 @@ namespace Neos.IdentityServer.Console.Controls
                     _panel.BackColor = Color.Orange;
                     break;
                 case ServiceOperationStatus.OperationRunning:
-                    _panel.BackColor = Color.Green;
+                    if (ManagementService.ADFSManager.IsRunning(this._host.FQDN))
+                        _panel.BackColor = Color.Green;
+                    else
+                        _panel.BackColor = Color.DarkGray;
                     break;
                 case ServiceOperationStatus.OperationStopped:
-                    _panel.BackColor = Color.Red;
+                    _panel.BackColor = Color.DarkGray;
                     break;
                 default:
                     _panel.BackColor = Color.Yellow;
@@ -150,7 +153,10 @@ namespace Neos.IdentityServer.Console.Controls
                     _panel.BackColor = Color.Orange;
                     break;
                 case ConfigOperationStatus.ConfigLoaded:
-                    _panel.BackColor = Color.Green;
+                    if (ManagementService.ADFSManager.IsRunning(this._host.FQDN))
+                        _panel.BackColor = Color.Green;
+                    else
+                        _panel.BackColor = Color.DarkGray;
                     break;
                 case ConfigOperationStatus.ConfigIsDirty:
                     _panel.BackColor = Color.DarkOrange;
@@ -250,7 +256,7 @@ namespace Neos.IdentityServer.Console.Controls
                 this.Controls.Add(tblRestart);
 
                 tblstartstop = new LinkLabel();
-                if (ManagementService.ADFSManager.ServicesStatus == ServiceOperationStatus.OperationRunning)
+                if (ManagementService.ADFSManager.IsRunning(this._host.FQDN))
                     tblstartstop.Text = res.CRTLADFSSTOPSERVICES;
                 else
                     tblstartstop.Text = res.CRTLADFSSTARTSERVICES;
@@ -302,7 +308,7 @@ namespace Neos.IdentityServer.Console.Controls
                 lblcurrentversion.Text = "Version : " + _host.CurrentVersion;
                 lblBuild.Text = "Build : " + _host.CurrentBuild.ToString();
                 tblRestart.Text = res.CRTLADFSRESTARTSERVICES;
-                if (ManagementService.ADFSManager.ServicesStatus == ServiceOperationStatus.OperationRunning)
+                if (ManagementService.ADFSManager.IsRunning(this._host.FQDN))
                     tblstartstop.Text = res.CRTLADFSSTOPSERVICES;
                 else
                     tblstartstop.Text = res.CRTLADFSSTARTSERVICES;
@@ -331,7 +337,7 @@ namespace Neos.IdentityServer.Console.Controls
         /// </summary>
         private void UpdateLabels(ServiceOperationStatus status)
         {
-            if (ManagementService.ADFSManager.ServicesStatus == ServiceOperationStatus.OperationRunning)
+            if (ManagementService.ADFSManager.IsRunning(this._host.FQDN))
             {
                 tblstartstop.Text = res.CRTLADFSSTOPSERVICES;
                 tblstartstop.Tag = true;
@@ -348,10 +354,10 @@ namespace Neos.IdentityServer.Console.Controls
         /// </summary>
         private void tblstartstopLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            if (ManagementService.ADFSManager.ServicesStatus == ServiceOperationStatus.OperationRunning)
+            if (ManagementService.ADFSManager.IsRunning(this._host.FQDN))
             {
                 ManagementService.ADFSManager.StopService(_host.FQDN);
-                (sender as LinkLabel).Text = res.CRTLADFSRESTARTSERVICES;
+                (sender as LinkLabel).Text = res.CRTLADFSSTARTSERVICES;
             }
             else
             {
@@ -874,6 +880,7 @@ namespace Neos.IdentityServer.Console.Controls
     public partial class ConfigurationControl : Panel, IMMCRefreshData
     {
         private ServiceViewControl _view;
+        private NamespaceSnapInBase _snapin;
         private Panel _panel;
         private Panel _txtpanel;
         private Label lblFarmActive;
@@ -884,13 +891,15 @@ namespace Neos.IdentityServer.Console.Controls
         private Label lblFarmBehavior;
         private Label lbloptions;
         private Label lblSecurity;
-        private Label lblcutompwd; 
+        private Label lblcutompwd;
+        private LinkLabel tblconfigure;
 
         /// <summary>
         /// ConfigurationControl Constructor
         /// </summary>
-        public ConfigurationControl(ServiceViewControl view)
+        public ConfigurationControl(ServiceViewControl view, NamespaceSnapInBase snap)
         {
+            _snapin = snap;
             _panel = new Panel();
             _txtpanel = new Panel();
             _view = view;
@@ -949,7 +958,16 @@ namespace Neos.IdentityServer.Console.Controls
                     _panel.BackColor = Color.Orange;
                     break;
                 case ConfigOperationStatus.ConfigLoaded:
-                    _panel.BackColor = Color.Green;
+                    if (ManagementService.ADFSManager.IsMFAProviderEnabled(null))
+                    {
+                        _panel.BackColor = Color.Green;
+                        lblFarmActive.Text = "Active : True";
+                    }
+                    else
+                    {
+                        _panel.BackColor = Color.DarkGray;
+                        lblFarmActive.Text = "Active : False";
+                    }
                     break;
                 case ConfigOperationStatus.ConfigIsDirty:
                     _panel.BackColor = Color.DarkOrange;
@@ -961,7 +979,6 @@ namespace Neos.IdentityServer.Console.Controls
                     _panel.BackColor = Color.Yellow;
                     break;
             }
-            UpdateLabels(status);
             return;
         }
 
@@ -994,14 +1011,14 @@ namespace Neos.IdentityServer.Console.Controls
 
                 // first col
                 lblIsInitialized = new Label();
-                lblIsInitialized.Text = "Initialized : " + Config.Hosts.ADFSFarm.IsInitialized.ToString();
+                lblIsInitialized.Text = "Initialized : " + ManagementService.ADFSManager.IsFarmConfigured().ToString();
                 lblIsInitialized.Left = 10;
                 lblIsInitialized.Top = 10;
                 lblIsInitialized.Width = 200;
                 _txtpanel.Controls.Add(lblIsInitialized);
 
                 lblFarmActive = new Label();
-                lblFarmActive.Text = "Active : " + (ManagementService.ADFSManager.ConfigurationStatus != ConfigOperationStatus.ConfigStopped).ToString();
+                lblFarmActive.Text = "Active : " + ManagementService.ADFSManager.IsMFAProviderEnabled(null).ToString();
                 lblFarmActive.Left = 10;
                 lblFarmActive.Top = 32;
                 lblFarmActive.Width = 200;
@@ -1085,21 +1102,18 @@ namespace Neos.IdentityServer.Console.Controls
                 else
                     lblcutompwd.Text = "";
 
-                if (ManagementService.ADFSManager.IsRunning())
-                {
-                    LinkLabel tblconfigure = new LinkLabel();
-                    if (ManagementService.ADFSManager.ConfigurationStatus != ConfigOperationStatus.ConfigStopped)
-                        tblconfigure.Text = res.CTRLADFSDEACTIVATEMFA;
-                    else
-                        tblconfigure.Text = res.CTRLADFSACTIVATEMFA;
-                    tblconfigure.Left = 20;
-                    tblconfigure.Top = 80;
-                    tblconfigure.Width = 400;
-                    tblconfigure.LinkClicked += tblconfigureLinkClicked;
-                    tblconfigure.TabIndex = 0;
-                    tblconfigure.TabStop = true;
-                    this.Controls.Add(tblconfigure);
-                }
+                tblconfigure = new LinkLabel();
+                if (ManagementService.ADFSManager.IsMFAProviderEnabled(null))
+                    tblconfigure.Text = res.CTRLADFSDEACTIVATEMFA;
+                else
+                    tblconfigure.Text = res.CTRLADFSACTIVATEMFA;
+                tblconfigure.Left = 20;
+                tblconfigure.Top = 80;
+                tblconfigure.Width = 400;
+                tblconfigure.LinkClicked += tblconfigureLinkClicked;
+                tblconfigure.TabIndex = 0;
+                tblconfigure.TabStop = true;
+                this.Controls.Add(tblconfigure);
             }
             finally
             {
@@ -1120,8 +1134,8 @@ namespace Neos.IdentityServer.Console.Controls
             _view.CausesValidation = false;
             try
             {
-                lblIsInitialized.Text = "Initialized : " + Config.Hosts.ADFSFarm.IsInitialized.ToString();
-                lblFarmActive.Text = "Active : " + (ManagementService.ADFSManager.ConfigurationStatus != ConfigOperationStatus.ConfigStopped).ToString();
+                lblIsInitialized.Text = "Initialized : " + ManagementService.ADFSManager.IsFarmConfigured().ToString();
+                lblFarmActive.Text = "Active : " + ManagementService.ADFSManager.IsMFAProviderEnabled(null).ToString();
                 lblIdentifier.Text = "Identifier : " + Config.Hosts.ADFSFarm.FarmIdentifier;
                 lbladmincontact.Text = "Administrative contact : " + Config.AdminContact;
                 if (Config.UseActiveDirectory)
@@ -1158,6 +1172,11 @@ namespace Neos.IdentityServer.Console.Controls
                     lblcutompwd.Text = "Use custom change password feature";
                 else
                     lblcutompwd.Text = "";
+
+                if (ManagementService.ADFSManager.IsMFAProviderEnabled(null))
+                    tblconfigure.Text = res.CTRLADFSDEACTIVATEMFA;
+                else
+                    tblconfigure.Text = res.CTRLADFSACTIVATEMFA;
             }
             finally
             {
@@ -1173,15 +1192,28 @@ namespace Neos.IdentityServer.Console.Controls
         /// </summary>
         private void tblconfigureLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            if (ManagementService.ADFSManager.ConfigurationStatus != ConfigOperationStatus.ConfigStopped)
+            try
             {
-                ManagementService.ADFSManager.DisableMFAProvider(null);
-                (sender as LinkLabel).Text = res.CTRLADFSACTIVATEMFA;
+                if (!ManagementService.ADFSManager.IsRunning())
+                    throw new Exception(res.CTRLMUSTACTIVATESVC);
+                if (ManagementService.ADFSManager.IsMFAProviderEnabled(null))
+                {
+                    ManagementService.ADFSManager.DisableMFAProvider(null);
+                    (sender as LinkLabel).Text = res.CTRLADFSACTIVATEMFA;
+                }
+                else
+                {
+                    ManagementService.ADFSManager.EnableMFAProvider(null);
+                    (sender as LinkLabel).Text = res.CTRLADFSDEACTIVATEMFA;
+                }
             }
-            else
+            catch (Exception ex)
             {
-                ManagementService.ADFSManager.EnableMFAProvider(null);
-                (sender as LinkLabel).Text = res.CTRLADFSDEACTIVATEMFA;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
+                messageBoxParameters.Text = ex.Message;
+                messageBoxParameters.Buttons = MessageBoxButtons.OK;
+                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
 
@@ -1192,14 +1224,6 @@ namespace Neos.IdentityServer.Console.Controls
         {
             if (_txtpanel != null)
                 _txtpanel.Width = this.Width - 20;
-        }
-
-        /// <summary>
-        /// UpdateLabels method implmentation
-        /// </summary>
-        private void UpdateLabels(ConfigOperationStatus status)
-        {
-            lblFarmActive.Text = "Active : " + (ManagementService.ADFSManager.ConfigurationStatus != ConfigOperationStatus.ConfigStopped).ToString();
         }
     }
 
@@ -1305,7 +1329,7 @@ namespace Neos.IdentityServer.Console.Controls
                     _panel.BackColor = Color.Orange;
                     break;
                 case ConfigOperationStatus.ConfigLoaded:
-                    _panel.BackColor = Color.Green;
+                     _panel.BackColor = Color.Green;
                     break;
                 case ConfigOperationStatus.ConfigIsDirty:
                     _panel.BackColor = Color.DarkOrange;
@@ -2803,7 +2827,7 @@ namespace Neos.IdentityServer.Console.Controls
                 txtCheckdateAttribute.Left = 210;
                 txtCheckdateAttribute.Top = 332;
                 txtCheckdateAttribute.Width = 600;
-                txtCheckdateAttribute.Enabled = Config.UseActiveDirectory;
+                txtCheckdateAttribute.Enabled = false;
                 txtCheckdateAttribute.Validating += CheckDateAttributeValidating;
                 txtCheckdateAttribute.Validated += CheckDateAttributeValidated;
                 _txtpanel.Controls.Add(txtCheckdateAttribute);
@@ -2820,7 +2844,7 @@ namespace Neos.IdentityServer.Console.Controls
                 txtTOTPAttribute.Left = 210;
                 txtTOTPAttribute.Top = 363;
                 txtTOTPAttribute.Width = 600;
-                txtTOTPAttribute.Enabled = Config.UseActiveDirectory;
+                txtTOTPAttribute.Enabled = false;
                 txtTOTPAttribute.Validating += TOTPAttributeValidating;
                 txtTOTPAttribute.Validated += TOTPAttributeValidated;
                 _txtpanel.Controls.Add(txtTOTPAttribute);
@@ -2991,37 +3015,37 @@ namespace Neos.IdentityServer.Console.Controls
                     errors.SetError(txtUserName, "");
                     errors.SetError(txtPassword, "");
 
-                    if (!ManagementService.CheckADDSAttribute(txtDomainName.Text, txtUserName.Text, txtPassword.Text, txtOverrideMethodAttribute.Text))
+                    if (!ManagementService.CheckADDSAttribute(txtDomainName.Text, txtUserName.Text, txtPassword.Text, txtOverrideMethodAttribute.Text, false))
                         errors.SetError(txtOverrideMethodAttribute, res.CTRLADATOVERRIDEERROR);
                     else
                         errors.SetError(txtOverrideMethodAttribute, "");
 
-                    if (!ManagementService.CheckADDSAttribute(txtDomainName.Text, txtUserName.Text, txtPassword.Text, txtEnabledAttribute.Text))
+                    if (!ManagementService.CheckADDSAttribute(txtDomainName.Text, txtUserName.Text, txtPassword.Text, txtEnabledAttribute.Text, false))
                         errors.SetError(txtEnabledAttribute, res.CTRLADATENABLEDERROR);
                     else
                         errors.SetError(txtEnabledAttribute, "");
 
-                    if (!ManagementService.CheckADDSAttribute(txtDomainName.Text, txtUserName.Text, txtPassword.Text, txtKeyAttribute.Text))
+                    if (!ManagementService.CheckADDSAttribute(txtDomainName.Text, txtUserName.Text, txtPassword.Text, txtKeyAttribute.Text, false))
                         errors.SetError(txtKeyAttribute, res.CTRLADATTKEYERROR);
                     else
                         errors.SetError(txtKeyAttribute, "");
 
-                    if (!ManagementService.CheckADDSAttribute(txtDomainName.Text, txtUserName.Text, txtPassword.Text, txtMailAttribute.Text))
+                    if (!ManagementService.CheckADDSAttribute(txtDomainName.Text, txtUserName.Text, txtPassword.Text, txtMailAttribute.Text, true))
                         errors.SetError(txtMailAttribute, res.CTRLADATTEMAILERROR);
                     else
                         errors.SetError(txtMailAttribute, "");
 
-                    if (!ManagementService.CheckADDSAttribute(txtDomainName.Text, txtUserName.Text, txtPassword.Text, txtMethodAttribute.Text))
+                    if (!ManagementService.CheckADDSAttribute(txtDomainName.Text, txtUserName.Text, txtPassword.Text, txtMethodAttribute.Text, false))
                         errors.SetError(txtMethodAttribute, res.CTRLADATMETHODERROR);
                     else
                         errors.SetError(txtMethodAttribute, "");
 
-                    if (!ManagementService.CheckADDSAttribute(txtDomainName.Text, txtUserName.Text, txtPassword.Text, txtPhoneAttribute.Text))
+                    if (!ManagementService.CheckADDSAttribute(txtDomainName.Text, txtUserName.Text, txtPassword.Text, txtPhoneAttribute.Text, true))
                         errors.SetError(txtPhoneAttribute, res.CTRLADATTPHONEERROR);
                     else
                         errors.SetError(txtPhoneAttribute, "");
 
-                    if (!ManagementService.CheckADDSAttribute(txtDomainName.Text, txtUserName.Text, txtPassword.Text, txtPinAttribute.Text))
+                    if (!ManagementService.CheckADDSAttribute(txtDomainName.Text, txtUserName.Text, txtPassword.Text, txtPinAttribute.Text, false))
                         errors.SetError(txtPinAttribute, res.CTRLADATPINERROR);
                     else
                         errors.SetError(txtPinAttribute, "");
@@ -3278,7 +3302,7 @@ namespace Neos.IdentityServer.Console.Controls
                 if (txtKeyAttribute.Modified)
                 {
                     ManagementService.ADFSManager.SetDirty(true);
-                    if (!ManagementService.CheckADDSAttribute(txtDomainName.Text, txtUserName.Text, txtPassword.Text, txtKeyAttribute.Text))
+                    if (!ManagementService.CheckADDSAttribute(txtDomainName.Text, txtUserName.Text, txtPassword.Text, txtKeyAttribute.Text, false))
                         throw new Exception(res.CTRLADATTKEYERROR);
                     Config.Hosts.ActiveDirectoryHost.keyAttribute = txtKeyAttribute.Text;
                     errors.SetError(txtKeyAttribute, "");
@@ -3331,7 +3355,7 @@ namespace Neos.IdentityServer.Console.Controls
                 if (txtMailAttribute.Modified)
                 {
                     ManagementService.ADFSManager.SetDirty(true);
-                    if (!ManagementService.CheckADDSAttribute(txtDomainName.Text, txtUserName.Text, txtPassword.Text, txtMailAttribute.Text))
+                    if (!ManagementService.CheckADDSAttribute(txtDomainName.Text, txtUserName.Text, txtPassword.Text, txtMailAttribute.Text, true))
                        throw new Exception(res.CTRLADATTEMAILERROR);
                     Config.Hosts.ActiveDirectoryHost.mailAttribute = txtMailAttribute.Text;
                     errors.SetError(txtMailAttribute, "");
@@ -3383,7 +3407,7 @@ namespace Neos.IdentityServer.Console.Controls
                 if (txtPhoneAttribute.Modified)
                 {
                     ManagementService.ADFSManager.SetDirty(true);
-                    if (!ManagementService.CheckADDSAttribute(txtDomainName.Text, txtUserName.Text, txtPassword.Text, txtPhoneAttribute.Text))
+                    if (!ManagementService.CheckADDSAttribute(txtDomainName.Text, txtUserName.Text, txtPassword.Text, txtPhoneAttribute.Text, true))
                         throw new Exception(res.CTRLADATTPHONEERROR);
                     Config.Hosts.ActiveDirectoryHost.phoneAttribute = txtPhoneAttribute.Text;
                     errors.SetError(txtPhoneAttribute, "");
@@ -3434,7 +3458,7 @@ namespace Neos.IdentityServer.Console.Controls
                 if (txtMethodAttribute.Modified)
                 {
                     ManagementService.ADFSManager.SetDirty(true);
-                    if (!ManagementService.CheckADDSAttribute(txtDomainName.Text, txtUserName.Text, txtPassword.Text, txtMethodAttribute.Text))
+                    if (!ManagementService.CheckADDSAttribute(txtDomainName.Text, txtUserName.Text, txtPassword.Text, txtMethodAttribute.Text, false))
                         throw new Exception(res.CTRLADATMETHODERROR);
                     Config.Hosts.ActiveDirectoryHost.methodAttribute = txtMethodAttribute.Text;
                     errors.SetError(txtMethodAttribute, "");
@@ -3485,7 +3509,7 @@ namespace Neos.IdentityServer.Console.Controls
                 if (txtOverrideMethodAttribute.Modified)
                 {
                     ManagementService.ADFSManager.SetDirty(true);
-                    if (!ManagementService.CheckADDSAttribute(txtDomainName.Text, txtUserName.Text, txtPassword.Text, txtOverrideMethodAttribute.Text))
+                    if (!ManagementService.CheckADDSAttribute(txtDomainName.Text, txtUserName.Text, txtPassword.Text, txtOverrideMethodAttribute.Text, false))
                         throw new Exception(res.CTRLADATOVERRIDEERROR);
                     Config.Hosts.ActiveDirectoryHost.overridemethodAttribute = txtOverrideMethodAttribute.Text;
                     errors.SetError(txtOverrideMethodAttribute, "");
@@ -3536,7 +3560,7 @@ namespace Neos.IdentityServer.Console.Controls
                   if (txtPinAttribute.Modified)
                   {
                       ManagementService.ADFSManager.SetDirty(true);
-                      if (!ManagementService.CheckADDSAttribute(txtDomainName.Text, txtUserName.Text, txtPassword.Text, txtPinAttribute.Text))
+                      if (!ManagementService.CheckADDSAttribute(txtDomainName.Text, txtUserName.Text, txtPassword.Text, txtPinAttribute.Text, false))
                           throw new Exception(res.CTRLADATPINERROR);
                       Config.Hosts.ActiveDirectoryHost.pinattribute = txtPinAttribute.Text;
                       errors.SetError(txtPinAttribute, "");
@@ -3695,7 +3719,7 @@ namespace Neos.IdentityServer.Console.Controls
                 if (txtEnabledAttribute.Modified)
                 {
                     ManagementService.ADFSManager.SetDirty(true);
-                    if (!ManagementService.CheckADDSAttribute(txtDomainName.Text, txtUserName.Text, txtPassword.Text, txtEnabledAttribute.Text))
+                    if (!ManagementService.CheckADDSAttribute(txtDomainName.Text, txtUserName.Text, txtPassword.Text, txtEnabledAttribute.Text, false))
                         throw new Exception(res.CTRLADATENABLEDERROR);
                     Config.Hosts.ActiveDirectoryHost.totpEnabledAttribute = txtEnabledAttribute.Text;
                     errors.SetError(txtEnabledAttribute, "");

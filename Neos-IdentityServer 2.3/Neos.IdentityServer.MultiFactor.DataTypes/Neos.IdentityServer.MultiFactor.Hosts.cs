@@ -1582,7 +1582,7 @@ namespace Neos.IdentityServer.MultiFactor
         private string _TOTPEnabled = "msDS-cloudExtensionAttribute18";
         private int _maxrows = 10000;
         private  bool _isbinded = false;
-        private List<ADDSHostForest> _forests = new List<ADDSHostForest>();   
+        private List<ADDSHostForest> _forests = new List<ADDSHostForest>();
 
         /// <summary>
         /// ADDSHost constructor

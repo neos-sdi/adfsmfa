@@ -65,6 +65,15 @@ namespace Neos.IdentityServer.Multifactor.Keys
             _repos = new CustomKeysRepositoryService(_cfg);
             switch (_ksize)
             {
+                case KeySizeMode.KeySize128:
+                    MAX_PROBE_LEN = 16;
+                    break;
+                case KeySizeMode.KeySize256:
+                    MAX_PROBE_LEN = 32;
+                    break;
+                case KeySizeMode.KeySize384:
+                    MAX_PROBE_LEN = 48;
+                    break;
                 case KeySizeMode.KeySize512:
                     MAX_PROBE_LEN = 64;
                     break;

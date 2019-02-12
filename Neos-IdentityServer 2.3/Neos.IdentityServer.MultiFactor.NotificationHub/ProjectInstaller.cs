@@ -23,7 +23,7 @@ using System.Configuration.Install;
 using System.Diagnostics;
 using System.Linq;
 
-namespace Neos.IdentityServer.MultiFactor
+namespace Neos.IdentityServer.MultiFactor.NotificationHub
 {
     [RunInstaller(true)]
     public partial class ProjectInstaller : System.Configuration.Install.Installer

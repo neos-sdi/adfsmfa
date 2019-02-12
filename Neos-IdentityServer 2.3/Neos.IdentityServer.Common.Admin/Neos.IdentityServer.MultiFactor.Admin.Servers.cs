@@ -74,7 +74,6 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         private ConfigOperationStatus _configstatus;
 
         private MFAConfig _config = null;
-        private MailSlotServer _mailslotsrv = null;
 
         #region Constructors
         /// <summary>
@@ -112,10 +111,6 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                     if (!dontthrow)
                         throw e;
                 }
-                _mailslotsrv = new MailSlotServer(mailslothost);
-                _mailslotsrv.MailSlotMessageArrived += MailSlotMessageArrived;
-                _mailslotsrv.AllowToSelf = true;
-                _mailslotsrv.Start();
             }
             catch (Exception e)
             {
@@ -124,22 +119,22 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             }
         }
 
+        public void OnServiceStatusChanged(ServiceOperationStatus status, string servername, Exception Ex = null)
+        {
+            this.ServiceStatusChanged(this, status, servername, Ex);
+        }
+
+        public void OnConfigurationStatusChanged(ConfigOperationStatus status, Exception Ex = null)
+        {
+            this.ConfigurationStatusChanged(this, status, Ex);
+        }
+
         /// <summary>
         /// MailSlotMessageArrived method implmentation
         /// </summary>
         private void MailSlotMessageArrived(MailSlotServer maislotserver, MailSlotMessage message)
         {
-            if (message.Operation == 0xAA) 
-            {
-                _config = null;
-                EnsureConfiguration(null); // Force Reload Configuration
-                _mailslotsrv.AllowedMachines.Clear();
-                foreach (ADFSServerHost svr in Config.Hosts.ADFSFarm.Servers)
-                {
-                    _mailslotsrv.AllowedMachines.Add(svr.MachineName);
-                }
-            }
-            else if (message.Operation == 0x10)
+            if (message.Operation == 0x10)
             {
                 ServicesStatus = ServiceOperationStatus.OperationRunning;
                 this.ServiceStatusChanged(this, ServicesStatus, message.Text);
@@ -160,15 +155,6 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 this.ServiceStatusChanged(this, ServicesStatus, message.Text);
             }
         }
-
-        /// <summary>
-        /// MailslotServer property
-        /// </summary>
-        public MailSlotServer MailslotServer
-        {
-            get { return _mailslotsrv; }
-        }
-
         #endregion
 
         #region Utility Methods and events
@@ -549,7 +535,11 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 EnsureLocalService();
                 _config = CFGUtilities.ReadConfiguration(Host);
                 _config.IsDirty = false;
+#if hardcheck
                 if (this.IsMFAProviderEnabled(Host))
+#else
+                if (_config != null)
+#endif
                     this.ConfigurationStatusChanged(this, ConfigOperationStatus.ConfigLoaded);
                 else
                     this.ConfigurationStatusChanged(this, ConfigOperationStatus.ConfigStopped);
@@ -578,11 +568,11 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 EnsureLocalService();
                 _config.IsDirty = false;
                 CFGUtilities.WriteConfiguration(Host, _config);
+                this.ConfigurationStatusChanged(this, ConfigOperationStatus.ConfigSaved);
                 using (MailSlotClient mailslot = new MailSlotClient())
                 {
                     mailslot.SendNotification(0xAA);
                 }
-                this.ConfigurationStatusChanged(this, ConfigOperationStatus.ConfigSaved);
             }
             catch (Exception ex)
             {
@@ -618,7 +608,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
 
                     Pipeline pipeline = SPRunSpace.CreatePipeline();
                     Command exportcmd = new Command("Register-AdfsAuthenticationProvider", false);
-                    CommandParameter NParam = new CommandParameter("Name", "MultifactorAuthenticationProvider");
+                    CommandParameter NParam = new CommandParameter("Name", "MultiFactorAuthenticationProvider");
                     exportcmd.Parameters.Add(NParam);
                     CommandParameter TParam = new CommandParameter("TypeName", "Neos.IdentityServer.MultiFactor.AuthenticationProvider, Neos.IdentityServer.MultiFactor, Version=2.3.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2");
                     exportcmd.Parameters.Add(TParam);
@@ -661,7 +651,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
 
                 Pipeline pipeline = SPRunSpace.CreatePipeline();
                 Command exportcmd = new Command("UnRegister-AdfsAuthenticationProvider", false);
-                CommandParameter NParam = new CommandParameter("Name", "MultifactorAuthenticationProvider");
+                CommandParameter NParam = new CommandParameter("Name", "MultiFactorAuthenticationProvider");
                 exportcmd.Parameters.Add(NParam);
                 CommandParameter CParam = new CommandParameter("Confirm", false);
                 exportcmd.Parameters.Add(CParam);
@@ -702,7 +692,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
 
                 Pipeline pipeline = SPRunSpace.CreatePipeline();
                 Command exportcmd = new Command("Export-AdfsAuthenticationProviderConfigurationData", false);
-                CommandParameter NParam = new CommandParameter("Name", "MultifactorAuthenticationProvider");
+                CommandParameter NParam = new CommandParameter("Name", "MultiFactorAuthenticationProvider");
                 exportcmd.Parameters.Add(NParam);
                 CommandParameter PParam = new CommandParameter("FilePath", pth);
                 exportcmd.Parameters.Add(PParam);
@@ -736,7 +726,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
 
                 Pipeline pipeline = SPRunSpace.CreatePipeline();
                 Command exportcmd = new Command("Import-AdfsAuthenticationProviderConfigurationData", false);
-                CommandParameter NParam = new CommandParameter("Name", "MultifactorAuthenticationProvider");
+                CommandParameter NParam = new CommandParameter("Name", "MultiFactorAuthenticationProvider");
                 exportcmd.Parameters.Add(NParam);
                 CommandParameter PParam = new CommandParameter("FilePath", importfile);
                 exportcmd.Parameters.Add(PParam);
@@ -795,7 +785,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 }
                 if (!found)
                 {
-                    lst.Add("MultifactorAuthenticationProvider");
+                    lst.Add("MultiFactorAuthenticationProvider");
                     Pipeline pipeline2 = SPRunSpace.CreatePipeline();
                     Command exportcmd2 = new Command("Set-AdfsGlobalAuthenticationPolicy", false);
                     pipeline2.Commands.Add(exportcmd2);
@@ -1337,6 +1327,27 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <summary>
         /// RegisterADFSComputer method implementation
         /// </summary>        
+        public void RegisterADFSComputer(PSHost Host, string servername)
+        {
+            EnsureConfiguration(Host);
+            try
+            {
+                using (MailSlotClient mailslot = new MailSlotClient("CP1", true))
+                {
+                    mailslot.Text = Dns.GetHostEntry(servername).HostName;
+                    mailslot.SendNotification(0x10);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return;
+        }
+
+        /// <summary>
+        /// RegisterADFSComputer method implementation
+        /// </summary>        
         public ADFSServerHost RegisterADFSComputer(PSHost Host)
         {
             ADFSServerHost result = null;
@@ -1357,12 +1368,12 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <summary>
         /// UnRegisterADFSComputer method implementation
         /// </summary>
-        public void UnRegisterADFSComputer(PSHost Host)
+        public void UnRegisterADFSComputer(PSHost Host, string servername)
         {
             EnsureConfiguration(Host);
             try
             {
-                string fqdn = Dns.GetHostEntry("LocalHost").HostName;
+                string fqdn = Dns.GetHostEntry(servername).HostName;
                 ADFSFarm.Servers.RemoveAll(c => c.FQDN.ToLower() == fqdn.ToLower());
                 SetDirty(true);
                 WriteConfiguration(Host);

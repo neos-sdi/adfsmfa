@@ -727,6 +727,15 @@ namespace Neos.IdentityServer.Console.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Operation aborted ! your must start the local ADFS service !.
+        /// </summary>
+        internal static string CTRLMUSTACTIVATESVC {
+            get {
+                return ResourceManager.GetString("CTRLMUSTACTIVATESVC", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Null or empty values are not allowed..
         /// </summary>
         internal static string CTRLNULLOREMPTYERROR {

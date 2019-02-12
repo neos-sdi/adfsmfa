@@ -314,7 +314,22 @@ namespace MFA
         /// <summary>
         /// <para type="description">KeySize2048, 2048 bytes length for encryption and 2048 bytes for display</para>
         /// </summary>
-        KeySize2048 = 3
+        KeySize2048 = 3,
+
+        /// <summary>
+        /// <para type="description">KeySize128, 2048 bytes length for encryption and 128 bytes for display</para>
+        /// </summary>
+        KeySize128 = 4,
+
+        /// <summary>
+        /// <para type="description">KeySize256, 2048 bytes length for encryption and 256 bytes for display</para>
+        /// </summary>
+        KeySize256 = 5,
+
+        /// <summary>
+        /// <para type="description">KeySize384, 2048 bytes length for encryption and 384 bytes for display</para>
+        /// </summary>
+        KeySize384 = 6
     }
 
     /// <summary>

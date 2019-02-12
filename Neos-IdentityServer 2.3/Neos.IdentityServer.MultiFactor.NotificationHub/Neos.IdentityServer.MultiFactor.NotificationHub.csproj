@@ -59,6 +59,10 @@
     <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Core" />
     <Reference Include="System.Management" />
+    <Reference Include="System.Management.Automation, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Windows\Microsoft.NET\assembly\GAC_MSIL\System.Management.Automation\v4.0_3.0.0.0__31bf3856ad364e35\System.Management.Automation.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -73,6 +77,7 @@
     <Compile Include="Neos.IdentityServer.HubService.Designer.cs">
       <DependentUpon>Neos.IdentityServer.HubService.cs</DependentUpon>
     </Compile>
+    <Compile Include="Neos.IdentityService.HubService.FarmUtils.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="ProjectInstaller.cs">
       <SubType>Component</SubType>
@@ -95,6 +100,18 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Neos.IdentityServer.Common.Admin\Neos.IdentityServer.MultiFactor.Administration.csproj">
+      <Project>{bb08dc85-4e6e-4220-a0fc-01bfb6c468f6}</Project>
+      <Name>Neos.IdentityServer.MultiFactor.Administration</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Neos.IdentityServer.Common\Neos.IdentityServer.MultiFactor.Common.csproj">
+      <Project>{15b3e0d2-6217-493a-a690-158c497f5318}</Project>
+      <Name>Neos.IdentityServer.MultiFactor.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Neos.IdentityServer.MultiFactor.DataTypes\Neos.IdentityServer.MultiFactor.DataTypes.csproj">
+      <Project>{9b735255-31a8-4ff5-a918-fc47d4a95f38}</Project>
+      <Name>Neos.IdentityServer.MultiFactor.DataTypes</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Neos.IdentityServer.MultiFactor.Notifications\Neos.IdentityServer.MultiFactor.Notifications.csproj">
       <Project>{8a7bc531-d51b-4cd3-a904-3c96746cf847}</Project>
       <Name>Neos.IdentityServer.MultiFactor.Notifications</Name>

@@ -29,6 +29,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     using Neos.IdentityServer.MultiFactor;
     using System.Collections.ObjectModel;
     using MFA;
+    using System.Net;
 
     /// <summary>
     /// MFACmdlet class
@@ -54,6 +55,21 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 return null;
             }
         }
+
+        /// <summary>
+        /// BeginProcessing method implementation
+        /// </summary>
+        protected override void BeginProcessing()
+        {
+            base.BeginProcessing();
+            Type type = this.GetType();
+            object[] atts = type.GetCustomAttributes(typeof(PrimaryServerRequiredAttribute), true);
+            if (atts.Length > 0)
+            {
+                ManagementService.VerifyPrimaryServer();
+            }
+        }
+
     }
  
     #region Cmdlets region
@@ -1066,6 +1082,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     /// </example>
     [Cmdlet(VerbsCommon.Get, "MFAFarmInformation", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Medium, RemotingCapability = RemotingCapability.None)]
     [OutputType(typeof(ADFSFarmHost))]
+    [PrimaryServerRequired]
     public sealed class GetMFAFarmInformation : MFACmdlet
     {
 
@@ -1129,9 +1146,21 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     ///   <para>Register-MFAComputer</para>
     /// </example>
     [Cmdlet(VerbsLifecycle.Register, "MFAComputer", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
-    [OutputType(typeof(ADFSServerHost))]
+    [PrimaryServerRequired]
     public sealed class RegisterMFAComputer : MFACmdlet
     {
+        private string _servername;
+
+        /// <summary>
+        /// <para type="description">Server Name to add in MFA farm.</para>
+        /// </summary>
+        [Parameter(Mandatory = true, Position = 0, ParameterSetName = "Data")]
+        public string ServerName
+        {
+            get { return _servername; }
+            set { _servername = value; }
+        }
+
         /// <summary>
         /// BeginProcessing method implementation
         /// </summary>
@@ -1157,8 +1186,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             {
                 PSHost hh = GetHostForVerbose();
                 ADFSServiceManager svc = ManagementService.ADFSManager;
-                ADFSServerHost props = (ADFSServerHost)svc.RegisterADFSComputer(hh);
-                this.WriteObject(props);
+                svc.RegisterADFSComputer(hh, ServerName);
             }
             catch (Exception ex)
             {
@@ -1178,8 +1206,21 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     ///   <para>UnRegister-MFAComputer</para>
     /// </example>
     [Cmdlet(VerbsLifecycle.Unregister, "MFAComputer", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
+    [PrimaryServerRequired]
     public sealed class UnRegisterMFAComputer : MFACmdlet
     {
+        private string _servername;
+
+        /// <summary>
+        /// <para type="description">Server Name to add in MFA farm.</para>
+        /// </summary>
+        [Parameter(Mandatory = true, Position = 0, ParameterSetName = "Data")]
+        public string ServerName
+        {
+            get { return _servername; }
+            set { _servername = value; }
+        }
+
         /// <summary>
         /// BeginProcessing method implementation
         /// </summary>
@@ -1205,7 +1246,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             {
                 PSHost hh = GetHostForVerbose();
                 ADFSServiceManager svc = ManagementService.ADFSManager;
-                svc.UnRegisterADFSComputer(hh);
+                svc.UnRegisterADFSComputer(hh, ServerName);
             }
             catch (Exception ex)
             {
@@ -1225,6 +1266,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     /// </example>
     [Cmdlet(VerbsCommon.Get, "MFAComputers", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Medium, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Identity")]
     [OutputType(typeof(ADFSServerHost))]
+    [PrimaryServerRequired]
     public sealed class GetMFAComputers : MFACmdlet
     {
         string _identity = string.Empty;
@@ -1340,6 +1382,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     ///   <para>Restart-MFAComputerServices myadfsserver.domain.com</para>
     /// </example>
     [Cmdlet(VerbsLifecycle.Restart, "MFAComputerServices", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Identity")]
+    [PrimaryServerRequired]
     public sealed class RestartMFAComputer : MFACmdlet
     {
         string _identity = string.Empty;
@@ -1413,6 +1456,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     ///   <para>Restart-MFAFarmServices</para>
     /// </example>
     [Cmdlet(VerbsLifecycle.Restart, "MFAFarmServices", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Identity")]
+    [PrimaryServerRequired]
     public sealed class RestartMFAFarm : MFACmdlet
     {
         /// <summary>
@@ -1482,6 +1526,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     ///   <para>Upgrade from previous versions, a copy of the current version is saved in spécified backup file </para>
     /// </example>
     [Cmdlet(VerbsLifecycle.Register, "MFASystem", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
+    [PrimaryServerRequired]
     public sealed class RegisterMFASystem : MFACmdlet, IDynamicParameters
     {
         private BackupFilePathDynamicParameters Dyn;
@@ -1636,6 +1681,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     ///   <para>Update MFA configuration with the specified file. Activation and Restart of services is available. </para>
     /// </example>
     [Cmdlet("Import", "MFASystemConfiguration", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
+    [PrimaryServerRequired]
     public sealed class ImportMFASystemConfiguration : MFACmdlet
     {
         /// <summary>
@@ -1720,6 +1766,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     ///   <para>Export current MFA configuration to the specified file.</para>
     /// </example>
     [Cmdlet("Export", "MFASystemConfiguration", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
+    [PrimaryServerRequired]
     public sealed class ExportMFASystemConfiguration : MFACmdlet
     {
         /// <summary>
@@ -1784,6 +1831,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     ///   <para>Unregister MFA System, a copy of the current version is saved in spécified backup file </para>
     /// </example>
     [Cmdlet(VerbsLifecycle.Unregister, "MFASystem", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
+    [PrimaryServerRequired]
     public sealed class UnRegisterMFASystem : MFACmdlet
     {
         /// <summary>
@@ -1856,6 +1904,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     ///   <para>Enable MFA configuration from ADFS. </para>
     /// </example>
     [Cmdlet(VerbsLifecycle.Enable, "MFASystem", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Medium, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
+    [PrimaryServerRequired]
     public sealed class EnableMFASystem : MFACmdlet
     {
         /// <summary>
@@ -1905,6 +1954,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     ///   <para>Disable MFA configuration from ADFS. </para>
     /// </example>
     [Cmdlet(VerbsLifecycle.Disable, "MFASystem", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Medium, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
+    [PrimaryServerRequired]
     public sealed class DisableMFASystem : MFACmdlet
     {
         /// <summary>
@@ -1958,6 +2008,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     ///   <para>Create a new certificate for RSA User keys with specific duration.</para>
     /// </example>
     [Cmdlet(VerbsLifecycle.Install, "MFACertificate", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
+    [PrimaryServerRequired]
     public sealed class InstallMFACertificate : MFACmdlet
     {
         private int _duration = 5;
@@ -2119,6 +2170,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     ///   <para>Get MFA configuration options, modity values and finally Update configuration.</para>
     /// </example>
     [Cmdlet(VerbsCommon.Set, "MFAConfig", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
+    [PrimaryServerRequired]
     public sealed class SetMFAConfig : MFACmdlet
     {
         private PSConfig _config;
@@ -2183,6 +2235,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     ///   <para>Change policy template for MFA configuration</para>
     /// </example>
     [Cmdlet(VerbsCommon.Set, "MFAPolicyTemplate", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
+    [PrimaryServerRequired]
     public sealed class SetMFATemplateMode : MFACmdlet
     {
         private PSTemplateMode _template;
@@ -2208,6 +2261,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             base.BeginProcessing();
             try
             {
+                ManagementService.Initialize(this.Host, true);
                 _config = new FlatConfig();
                 _config.Load(this.Host);
                 _target = (FlatTemplateMode)_template;
@@ -2258,6 +2312,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     ///   <para>Change policy template for MFA configuration</para>
     /// </example>
     [Cmdlet(VerbsCommon.Set, "MFAThemeMode", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
+    [PrimaryServerRequired]
     public sealed class SetMFAThemeMode : MFACmdlet, IDynamicParameters
     {
         private PSUIKind _kind = PSUIKind.Default;
@@ -2309,6 +2364,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             base.BeginProcessing();
             try
             {
+                ManagementService.Initialize(this.Host, true);
                 _config = new FlatConfig();
                 _config.Load(this.Host);
             }
@@ -2457,6 +2513,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     ///   <para>Set MFA SQL configuration options, modity values and finally Update configuration.</para>
     /// </example>
     [Cmdlet(VerbsCommon.Set, "MFAConfigSQL", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
+    [PrimaryServerRequired]
     public sealed class SetMFAConfigSQL : MFACmdlet
     {
         private PSConfigSQL _config;
@@ -2596,6 +2653,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     ///   <para>Set MFA ADDS configuration options, modity values and finally Update configuration.</para>
     /// </example>
     [Cmdlet(VerbsCommon.Set, "MFAConfigADDS", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
+    [PrimaryServerRequired]
     public sealed class SetMFAConfigADDS : MFACmdlet
     {
         private PSConfigADDS _config;
@@ -2802,6 +2860,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     ///   <para>Set-MFAProvider -ProviderType email $cfg</para>
     /// </example>
     [Cmdlet(VerbsCommon.Set, "MFAProvider", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
+    [PrimaryServerRequired]
     public sealed class SetMFAProvider : MFACmdlet, IDynamicParameters
     {
         private TOTPDynamicParameters _target0;
@@ -3061,6 +3120,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     ///   <para>Set MFA Secret Keys configuration options, modity values and finally Update configuration.</para>
     /// </example>
     [Cmdlet(VerbsCommon.Set, "MFAConfigKeys", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
+    [PrimaryServerRequired]
     public sealed class SetMFAConfigKeys : MFACmdlet
     {
         private PSConfigKeys _config;
@@ -3133,6 +3193,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     ///   <para>Create a new database for MFA, grant rights to the specified account</para>
     /// </example>
     [Cmdlet(VerbsCommon.New, "MFADatabase", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
+    [PrimaryServerRequired]
     public sealed class NewMFADatabase : MFACmdlet, IDynamicParameters
     {
         private string _servername;
@@ -3285,6 +3346,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     ///   <para>Create a new database for MFA Secret Keys, grant rights to the specified account</para>
     /// </example>
     [Cmdlet(VerbsCommon.New, "MFASecretKeysDatabase", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
+    [PrimaryServerRequired]
     public sealed class NewMFASecretKeysDatabase : MFACmdlet, IDynamicParameters
     {
         private string _servername;
@@ -3845,5 +3907,97 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         }
     }
 
-    #endregion  
+    #endregion 
+
+    #region Firewall Rules
+    /// <summary>
+    /// <para type="synopsis">Set basic Firewall rules for MFA inter servers communication.</para>
+    /// <para type="description">Set basic Firewall rules for MFA inter servers communication.</para>
+    /// </summary>
+    /// <example>
+    ///   <para>Set-MFAFirewallRules</para>
+    ///   <para>Set-MFAFirewallRules -ComputersAllowed '172.16.0.1, 172.17.0.50'</para>
+    /// </example>
+    [Cmdlet(VerbsCommon.Set, "MFAFirewallRules", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
+    public sealed class SetMFAFirewallRules : MFACmdlet
+    {
+        private string _computers;
+
+        /// <summary>
+        /// <para type="description">Computers Allowed va firewall inbound rules and outbound rules.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Data")]
+        public string ComputersAllowed
+        {
+            get { return _computers; }
+            set { _computers = value; }
+        }
+
+        /// <summary>
+        /// BeginProcessing method implementation
+        /// </summary>
+        protected override void BeginProcessing()
+        {
+            base.BeginProcessing();
+            if (string.IsNullOrEmpty(_computers))
+            {
+                try
+                {
+                    ManagementService.Initialize(this.Host, true);
+                    _computers = string.Empty;
+                    foreach (ADFSServerHost cp in ManagementService.ADFSManager.ADFSFarm.Servers)
+                    {
+                        IPHostEntry ips = Dns.GetHostEntry(cp.MachineName);
+                        foreach(IPAddress ip in ips.AddressList)
+                        {
+                            if (ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+                                _computers += ip.MapToIPv4().ToString() + ",";
+                        }
+                    }
+                    _computers = _computers.Remove(_computers.Length-1, 1);
+                }
+                catch (Exception ex)
+                {
+                    this.ThrowTerminatingError(new ErrorRecord(ex, "4023", ErrorCategory.OperationStopped, this));
+                }
+            }
+        }
+
+        /// <summary>
+        /// ProcessRecord method override
+        /// </summary>
+        protected override void ProcessRecord()
+        {
+            if (ShouldProcess("MFA Firewall Rules Configuration"))
+            {
+                try
+                {
+                    ManagementService.RemoveFirewallRules();
+                    ManagementService.AddFirewallRules(_computers);
+                    this.WriteVerbose(infos_strings.InfosConfigUpdated);
+                }
+                catch (Exception ex)
+                {
+                    this.ThrowTerminatingError(new ErrorRecord(ex, "4024", ErrorCategory.OperationStopped, this));
+                }
+            }
+        }
+    }
+    #endregion
+
+    #region Attribute
+    /// <summary>
+    /// <para type="synopsis">Attribute for Primary Server required for Cmdlets in MFA System.</para>
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Class)]
+    public class PrimaryServerRequiredAttribute : Attribute
+    {
+        /// <summary>
+        /// PrimaryServerRequiredAttribute constructor
+        /// </summary>
+        public PrimaryServerRequiredAttribute()
+        {
+        }
+    }
+    #endregion
 }

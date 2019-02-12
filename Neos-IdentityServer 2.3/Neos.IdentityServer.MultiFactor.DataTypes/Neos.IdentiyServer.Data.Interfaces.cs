@@ -40,7 +40,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
     public interface IDataRepositoryADDSConnection
     {
         bool CheckConnection(string domainname, string username, string password);
-        bool CheckAttribute(string domainname, string username, string password, string attributename);
+        bool CheckAttribute(string domainname, string username, string password, string attributename, bool checkmultivalued);
     }
 
     public interface IDataRepositorySQLConnection

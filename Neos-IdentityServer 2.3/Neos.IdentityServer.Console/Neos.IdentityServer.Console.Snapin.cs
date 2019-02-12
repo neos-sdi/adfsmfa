@@ -51,6 +51,7 @@ namespace Neos.IdentityServer.Console
         private ScopeNode ServiceAzureNode;
        // private ScopeNode ServiceSecurityNode;
         private ScopeNode UsersNode;
+        private bool IsPrimary = true;
 
         /// <summary>
         /// Constructor.
@@ -67,6 +68,14 @@ namespace Neos.IdentityServer.Console
         {
             try
             {
+                try
+                {
+                    ManagementService.VerifyPrimaryServer();
+                }
+                catch 
+                {
+                    IsPrimary = false;
+                }
                 ManagementService.Initialize(true);
                 BuildNodes();
             }
@@ -78,9 +87,18 @@ namespace Neos.IdentityServer.Console
                 msgp.Buttons = MessageBoxButtons.OK;
                 msgp.Icon = MessageBoxIcon.Error;
                 this.Console.ShowDialog(msgp);
-                this.RootNode.Children.Clear();
+                if (this.RootNode != null)
+                    this.RootNode.Children.Clear();
             }
             base.OnInitialize();
+        }
+
+        /// <summary>
+        /// IsPrimaryServer property
+        /// </summary>
+        public bool IsPrimaryServer
+        {
+            get { return IsPrimary; }
         }
 
         /// <summary>
@@ -168,104 +186,107 @@ namespace Neos.IdentityServer.Console
                 this.RootNode.ViewDescriptions.Add(fvr);
                 this.RootNode.ViewDescriptions.DefaultIndex = 0;
 
-                // Service Node
-                this.ServiceNode = new ServiceScopeNode();
-                FormViewDescription fvc = new FormViewDescription();
-                fvc.DisplayName = "MFA Platform Service";
-                fvc.ControlType = typeof(ServiceViewControl);
-                fvc.ViewType = typeof(ServiceFormView);
-                this.ServiceNode.ViewDescriptions.Add(fvc);
-                this.ServiceNode.ViewDescriptions.DefaultIndex = 0;
-
-                // General Scope
-                this.ServiceGeneralNode = new ServiceGeneralScopeNode();
-                FormViewDescription fvs = new FormViewDescription();
-                fvs.DisplayName = "MFA Platform General Properties";
-                fvs.ControlType = typeof(GeneralViewControl);
-                fvs.ViewType = typeof(GeneralFormView);
-                this.ServiceGeneralNode.ViewDescriptions.Add(fvs);
-                this.ServiceGeneralNode.ViewDescriptions.DefaultIndex = 0;
-
-                // ADDS Scope
-                this.ServiceADDSNode = new ServiceADDSScopeNode();
-                FormViewDescription fadds = new FormViewDescription();
-                fadds.DisplayName = "MFA Platform Active Directory Properties";
-                fadds.ControlType = typeof(ADDSViewControl);
-                fadds.ViewType = typeof(ServiceADDSFormView);
-                this.ServiceADDSNode.ViewDescriptions.Add(fadds);
-                this.ServiceADDSNode.ViewDescriptions.DefaultIndex = 0;
-
-                // SQL Scope
-                this.ServiceSQLNode = new ServiceSQLScopeNode();
-                FormViewDescription fsql = new FormViewDescription();
-                fsql.DisplayName = "MFA Platform SQL Server Properties";
-                fsql.ControlType = typeof(SQLViewControl);
-                fsql.ViewType = typeof(ServiceSQLFormView);
-                this.ServiceSQLNode.ViewDescriptions.Add(fsql);
-                this.ServiceSQLNode.ViewDescriptions.DefaultIndex = 0;
-
-                // Providers Scope
-                this.ServiceProvidersNode = new ServiceProvidersScopeNode();
-                FormViewDescription fprov = new FormViewDescription();
-                fprov.DisplayName = "MFA Providers";
-                fprov.ControlType = typeof(ProvidersViewControl);
-                fprov.ViewType = typeof(ServiceProvidersFormView);
-                this.ServiceProvidersNode.ViewDescriptions.Add(fprov);
-                this.ServiceProvidersNode.ViewDescriptions.DefaultIndex = 0;
-
-                ManagementService.EnsureService();
-                RuntimeAuthProvider.LoadProviders(ManagementService.Config);
-
-                IExternalProvider prv0 = RuntimeAuthProvider.GetProviderInstance(PreferredMethod.Code);
-                if (prv0 != null)
+                if (IsPrimary)
                 {
-                    // TOTP Scope
-                    this.ServiceTOTPNode = new ServiceSecurityScopeNode();
-                    FormViewDescription ftotp = new FormViewDescription();
-                    ftotp.DisplayName = "MFA Platform TOTP Properties";
-                    ftotp.ControlType = typeof(ServiceSecurityViewControl);
-                    ftotp.ViewType = typeof(ServiceSecurityFormView);
-                    this.ServiceTOTPNode.ViewDescriptions.Add(ftotp);
-                    this.ServiceTOTPNode.ViewDescriptions.DefaultIndex = 0;
-                }
+                    // Service Node
+                    this.ServiceNode = new ServiceScopeNode();
+                    FormViewDescription fvc = new FormViewDescription();
+                    fvc.DisplayName = "MFA Platform Service";
+                    fvc.ControlType = typeof(ServiceViewControl);
+                    fvc.ViewType = typeof(ServiceFormView);
+                    this.ServiceNode.ViewDescriptions.Add(fvc);
+                    this.ServiceNode.ViewDescriptions.DefaultIndex = 0;
 
-                IExternalProvider prv1 = RuntimeAuthProvider.GetProviderInstance(PreferredMethod.Email);
-                if (prv1 != null)
-                {
-                    // SMTP Scope
-                    this.ServiceSMTPNode = new ServiceSMTPScopeNode();
-                    FormViewDescription fsmtp = new FormViewDescription();
-                    fsmtp.DisplayName = "MFA Platform SMTP Properties";
-                    fsmtp.ControlType = typeof(SMTPViewControl);
-                    fsmtp.ViewType = typeof(ServiceSMTPFormView);
-                    this.ServiceSMTPNode.ViewDescriptions.Add(fsmtp);
-                    this.ServiceSMTPNode.ViewDescriptions.DefaultIndex = 0;
-                }
+                    // General Scope
+                    this.ServiceGeneralNode = new ServiceGeneralScopeNode();
+                    FormViewDescription fvs = new FormViewDescription();
+                    fvs.DisplayName = "MFA Platform General Properties";
+                    fvs.ControlType = typeof(GeneralViewControl);
+                    fvs.ViewType = typeof(GeneralFormView);
+                    this.ServiceGeneralNode.ViewDescriptions.Add(fvs);
+                    this.ServiceGeneralNode.ViewDescriptions.DefaultIndex = 0;
 
-                IExternalProvider prv2 = RuntimeAuthProvider.GetProviderInstance(PreferredMethod.External);
-                if (prv2 != null)
-                {
-                    // SMS Scope
-                    this.ServiceSMSNode = new ServicePhoneScopeNode();
-                    FormViewDescription fsms = new FormViewDescription();
-                    fsms.DisplayName = "MFA Platform SMS Properties";
-                    fsms.ControlType = typeof(SMSViewControl);
-                    fsms.ViewType = typeof(ServiceSMSFormView);
-                    this.ServiceSMSNode.ViewDescriptions.Add(fsms);
-                    this.ServiceSMSNode.ViewDescriptions.DefaultIndex = 0;
-                }
+                    // ADDS Scope
+                    this.ServiceADDSNode = new ServiceADDSScopeNode();
+                    FormViewDescription fadds = new FormViewDescription();
+                    fadds.DisplayName = "MFA Platform Active Directory Properties";
+                    fadds.ControlType = typeof(ADDSViewControl);
+                    fadds.ViewType = typeof(ServiceADDSFormView);
+                    this.ServiceADDSNode.ViewDescriptions.Add(fadds);
+                    this.ServiceADDSNode.ViewDescriptions.DefaultIndex = 0;
 
-                IExternalProvider prv3 = RuntimeAuthProvider.GetProviderInstance(PreferredMethod.Azure);
-                if (prv3 != null)
-                {
-                    // Azure Scope
-                    this.ServiceAzureNode = new ServiceAzureScopeNode();
-                    FormViewDescription faz = new FormViewDescription();
-                    faz.DisplayName = "MFA Platform SMS Properties";
-                    faz.ControlType = typeof(AzureViewControl);
-                    faz.ViewType = typeof(ServiceAzureFormView);
-                    this.ServiceAzureNode.ViewDescriptions.Add(faz);
-                    this.ServiceAzureNode.ViewDescriptions.DefaultIndex = 0;
+                    // SQL Scope
+                    this.ServiceSQLNode = new ServiceSQLScopeNode();
+                    FormViewDescription fsql = new FormViewDescription();
+                    fsql.DisplayName = "MFA Platform SQL Server Properties";
+                    fsql.ControlType = typeof(SQLViewControl);
+                    fsql.ViewType = typeof(ServiceSQLFormView);
+                    this.ServiceSQLNode.ViewDescriptions.Add(fsql);
+                    this.ServiceSQLNode.ViewDescriptions.DefaultIndex = 0;
+
+                    // Providers Scope
+                    this.ServiceProvidersNode = new ServiceProvidersScopeNode();
+                    FormViewDescription fprov = new FormViewDescription();
+                    fprov.DisplayName = "MFA Providers";
+                    fprov.ControlType = typeof(ProvidersViewControl);
+                    fprov.ViewType = typeof(ServiceProvidersFormView);
+                    this.ServiceProvidersNode.ViewDescriptions.Add(fprov);
+                    this.ServiceProvidersNode.ViewDescriptions.DefaultIndex = 0;
+
+                    ManagementService.EnsureService();
+                    RuntimeAuthProvider.LoadProviders(ManagementService.Config);
+
+                    IExternalProvider prv0 = RuntimeAuthProvider.GetProviderInstance(PreferredMethod.Code);
+                    if (prv0 != null)
+                    {
+                        // TOTP Scope
+                        this.ServiceTOTPNode = new ServiceSecurityScopeNode();
+                        FormViewDescription ftotp = new FormViewDescription();
+                        ftotp.DisplayName = "MFA Platform TOTP Properties";
+                        ftotp.ControlType = typeof(ServiceSecurityViewControl);
+                        ftotp.ViewType = typeof(ServiceSecurityFormView);
+                        this.ServiceTOTPNode.ViewDescriptions.Add(ftotp);
+                        this.ServiceTOTPNode.ViewDescriptions.DefaultIndex = 0;
+                    }
+
+                    IExternalProvider prv1 = RuntimeAuthProvider.GetProviderInstance(PreferredMethod.Email);
+                    if (prv1 != null)
+                    {
+                        // SMTP Scope
+                        this.ServiceSMTPNode = new ServiceSMTPScopeNode();
+                        FormViewDescription fsmtp = new FormViewDescription();
+                        fsmtp.DisplayName = "MFA Platform SMTP Properties";
+                        fsmtp.ControlType = typeof(SMTPViewControl);
+                        fsmtp.ViewType = typeof(ServiceSMTPFormView);
+                        this.ServiceSMTPNode.ViewDescriptions.Add(fsmtp);
+                        this.ServiceSMTPNode.ViewDescriptions.DefaultIndex = 0;
+                    }
+
+                    IExternalProvider prv2 = RuntimeAuthProvider.GetProviderInstance(PreferredMethod.External);
+                    if (prv2 != null)
+                    {
+                        // SMS Scope
+                        this.ServiceSMSNode = new ServicePhoneScopeNode();
+                        FormViewDescription fsms = new FormViewDescription();
+                        fsms.DisplayName = "MFA Platform SMS Properties";
+                        fsms.ControlType = typeof(SMSViewControl);
+                        fsms.ViewType = typeof(ServiceSMSFormView);
+                        this.ServiceSMSNode.ViewDescriptions.Add(fsms);
+                        this.ServiceSMSNode.ViewDescriptions.DefaultIndex = 0;
+                    }
+
+                    IExternalProvider prv3 = RuntimeAuthProvider.GetProviderInstance(PreferredMethod.Azure);
+                    if (prv3 != null)
+                    {
+                        // Azure Scope
+                        this.ServiceAzureNode = new ServiceAzureScopeNode();
+                        FormViewDescription faz = new FormViewDescription();
+                        faz.DisplayName = "MFA Platform SMS Properties";
+                        faz.ControlType = typeof(AzureViewControl);
+                        faz.ViewType = typeof(ServiceAzureFormView);
+                        this.ServiceAzureNode.ViewDescriptions.Add(faz);
+                        this.ServiceAzureNode.ViewDescriptions.DefaultIndex = 0;
+                    }
                 }
 
                 // Users Scope
@@ -277,19 +298,22 @@ namespace Neos.IdentityServer.Console
                 this.UsersNode.ViewDescriptions.Add(fvu);
                 this.UsersNode.ViewDescriptions.DefaultIndex = 0;
 
-                this.RootNode.Children.Add(this.ServiceNode);
-                this.RootNode.Children.Add(this.ServiceGeneralNode);
-                this.RootNode.Children.Add(this.ServiceADDSNode);
-                this.RootNode.Children.Add(this.ServiceSQLNode);
-                this.RootNode.Children.Add(this.ServiceProvidersNode);
-                if (this.ServiceTOTPNode!=null)
-                    this.ServiceProvidersNode.Children.Add(this.ServiceTOTPNode);
-                if (this.ServiceSMTPNode != null)
-                    this.ServiceProvidersNode.Children.Add(this.ServiceSMTPNode);
-                if (this.ServiceSMSNode != null)
-                    this.ServiceProvidersNode.Children.Add(this.ServiceSMSNode);
-                if (this.ServiceAzureNode != null)
-                    this.ServiceProvidersNode.Children.Add(this.ServiceAzureNode);
+                if (IsPrimary)
+                {
+                    this.RootNode.Children.Add(this.ServiceNode);
+                    this.RootNode.Children.Add(this.ServiceGeneralNode);
+                    this.RootNode.Children.Add(this.ServiceADDSNode);
+                    this.RootNode.Children.Add(this.ServiceSQLNode);
+                    this.RootNode.Children.Add(this.ServiceProvidersNode);
+                    if (this.ServiceTOTPNode != null)
+                        this.ServiceProvidersNode.Children.Add(this.ServiceTOTPNode);
+                    if (this.ServiceSMTPNode != null)
+                        this.ServiceProvidersNode.Children.Add(this.ServiceSMTPNode);
+                    if (this.ServiceSMSNode != null)
+                        this.ServiceProvidersNode.Children.Add(this.ServiceSMSNode);
+                    if (this.ServiceAzureNode != null)
+                        this.ServiceProvidersNode.Children.Add(this.ServiceAzureNode);
+                }
                 this.RootNode.Children.Add(this.UsersNode);
 
                 this.IsModified = true;
@@ -308,15 +332,18 @@ namespace Neos.IdentityServer.Console
         public void RefreshUI()
         {
             ((RefreshableScopeNode)this.RootNode).RefreshUI();
-            ((RefreshableScopeNode)this.ServiceNode).RefreshUI();
-            ((RefreshableScopeNode)this.ServiceGeneralNode).RefreshUI();
-            ((RefreshableScopeNode)this.ServiceADDSNode).RefreshUI();
-            ((RefreshableScopeNode)this.ServiceSQLNode).RefreshUI();
-            ((RefreshableScopeNode)this.ServiceProvidersNode).RefreshUI();
-            ((RefreshableScopeNode)this.ServiceTOTPNode).RefreshUI();
-            ((RefreshableScopeNode)this.ServiceSMTPNode).RefreshUI();
-            ((RefreshableScopeNode)this.ServiceSMSNode).RefreshUI();
-            ((RefreshableScopeNode)this.ServiceAzureNode).RefreshUI();
+          //  if (IsPrimary)
+          //  {
+                ((RefreshableScopeNode)this.ServiceNode).RefreshUI();
+                ((RefreshableScopeNode)this.ServiceGeneralNode).RefreshUI();
+                ((RefreshableScopeNode)this.ServiceADDSNode).RefreshUI();
+                ((RefreshableScopeNode)this.ServiceSQLNode).RefreshUI();
+                ((RefreshableScopeNode)this.ServiceProvidersNode).RefreshUI();
+                ((RefreshableScopeNode)this.ServiceTOTPNode).RefreshUI();
+                ((RefreshableScopeNode)this.ServiceSMTPNode).RefreshUI();
+                ((RefreshableScopeNode)this.ServiceSMSNode).RefreshUI();
+                ((RefreshableScopeNode)this.ServiceAzureNode).RefreshUI();
+          //  }
             ((RefreshableScopeNode)this.UsersNode).RefreshUI();
         }
     }

@@ -1,4 +1,4 @@
-﻿namespace Neos.IdentityServer.MultiFactor
+﻿namespace Neos.IdentityServer.MultiFactor.NotificationHub
 {
     partial class ProjectInstaller
     {

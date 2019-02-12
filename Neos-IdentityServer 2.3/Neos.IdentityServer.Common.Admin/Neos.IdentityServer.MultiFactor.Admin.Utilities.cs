@@ -26,6 +26,9 @@ using Neos.IdentityServer.MultiFactor;
 using Neos.IdentityServer.MultiFactor.Administration.Resources;
 using System.Runtime.CompilerServices;
 using Neos.IdentityServer.MultiFactor.Data;
+using System.Management.Automation.Runspaces;
+using System.Collections.ObjectModel;
+using System.Collections.Generic;
 
 
 namespace Neos.IdentityServer.MultiFactor.Administration
@@ -37,6 +40,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     internal static class ManagementService
     {
         private static ADFSServiceManager _manager = null;
+        private static MailSlotServer _mailslotsrv = null;
 
         private static DataFilterObject _filter = new DataFilterObject();
         private static DataPagingObject _paging = new DataPagingObject();
@@ -105,6 +109,14 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         }
 
         /// <summary>
+        /// MailslotServer property implementation
+        /// </summary>
+        internal static MailSlotServer MailslotServer
+        {
+            get { return _mailslotsrv; }
+        }
+
+        /// <summary>
         /// Initialize method 
         /// </summary>
         internal static void Initialize(bool loadconfig = false)
@@ -122,6 +134,14 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 _manager = new ADFSServiceManager();
                 _manager.Initialize();
             }
+            if (_mailslotsrv == null)
+            {
+                _mailslotsrv = new MailSlotServer("MGT");
+                MailslotServer.MailSlotMessageArrived += MailSlotMessageArrived;
+                MailslotServer.AllowToSelf = true;
+                MailslotServer.Start();
+            }
+
             if (loadconfig)
             {
                 try
@@ -138,6 +158,43 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                     EventLog.WriteEntry(EventLogSource, string.Format(SErrors.ErrorLoadingMFAConfiguration, ex.Message), EventLogEntryType.Error, 30900);
                     throw ex;
                 }
+            }
+        }
+
+        /// <summary>
+        /// MailSlotMessageArrived method implmentation
+        /// </summary>
+        private static void MailSlotMessageArrived(MailSlotServer maislotserver, MailSlotMessage message)
+        {
+            if (message.Operation == 0xAA)
+            {
+                ADFSManager.Config = null;
+                ADFSManager.EnsureLocalConfiguration(null); // Force Reload Configuration
+                MailslotServer.AllowedMachines.Clear();
+                foreach (ADFSServerHost svr in Config.Hosts.ADFSFarm.Servers)
+                {
+                    MailslotServer.AllowedMachines.Add(svr.MachineName);
+                }
+            }
+            else if (message.Operation == 0x10)
+            {
+                ADFSManager.ServicesStatus = ServiceOperationStatus.OperationRunning;
+                ADFSManager.OnServiceStatusChanged(ADFSManager.ServicesStatus, message.Text);
+            }
+            else if (message.Operation == 0x11)
+            {
+                ADFSManager.ServicesStatus = ServiceOperationStatus.OperationStopped;
+                ADFSManager.OnServiceStatusChanged(ADFSManager.ServicesStatus, message.Text);
+            }
+            else if (message.Operation == 0x12)
+            {
+                ADFSManager.ServicesStatus = ServiceOperationStatus.OperationPending;
+                ADFSManager.OnServiceStatusChanged(ADFSManager.ServicesStatus, message.Text);
+            }
+            else if (message.Operation == 0x19)
+            {
+                ADFSManager.ServicesStatus = ServiceOperationStatus.OperationInError;
+                ADFSManager.OnServiceStatusChanged(ADFSManager.ServicesStatus, message.Text);
             }
         }
 
@@ -252,10 +309,10 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <summary>
         /// CheckADDSAttribute method implmentation
         /// </summary>
-        internal static bool CheckADDSAttribute(string domainname, string username, string password, string attributename)
+        internal static bool CheckADDSAttribute(string domainname, string username, string password, string attributename, bool checkmultivalued)
         {
             EnsureService();
-            return RuntimeRepository.CheckADDSAttribute(Config, domainname, username, password, attributename);
+            return RuntimeRepository.CheckADDSAttribute(Config, domainname, username, password, attributename, checkmultivalued);
         }
 
         /// <summary>
@@ -276,6 +333,107 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             return RuntimeRepository.CheckKeysConnection(Config, connectionstring);
         }
 
+        /// <summary>
+        /// VerifyPrimaryServer method implementation
+        /// </summary>
+        internal static void VerifyPrimaryServer()
+        {
+            Runspace SPRunSpace = null;
+            PowerShell SPPowerShell = null;
+            try
+            {
+                RunspaceConfiguration SPRunConfig = RunspaceConfiguration.Create();
+                SPRunSpace = RunspaceFactory.CreateRunspace(SPRunConfig);
+
+                SPPowerShell = PowerShell.Create();
+                SPPowerShell.Runspace = SPRunSpace;
+                SPRunSpace.Open();
+
+                Pipeline pipeline = SPRunSpace.CreatePipeline();
+                Command exportcmd = new Command("(Get-AdfsSyncProperties).Role", true);
+                pipeline.Commands.Add(exportcmd);
+                Collection<PSObject> PSOutput = pipeline.Invoke();
+                foreach (var result in PSOutput)
+                {
+                    if (!result.BaseObject.ToString().ToLower().Equals("primarycomputer"))
+                        throw new InvalidOperationException("PS0033: This Cmdlet cannot be executed from a secondary server !");
+                }
+            }
+            finally
+            {
+                if (SPRunSpace != null)
+                    SPRunSpace.Close();
+            }
+        }
+
+        /// <summary>
+        /// RemoveFirewallRules method implementation
+        /// </summary>
+        internal static void RemoveFirewallRules()
+        {
+            Runspace SPRunSpace = null;
+            PowerShell SPPowerShell = null;
+            try
+            {
+                RunspaceConfiguration SPRunConfig = RunspaceConfiguration.Create();
+                SPRunSpace = RunspaceFactory.CreateRunspace(SPRunConfig);
+
+                SPPowerShell = PowerShell.Create();
+                SPPowerShell.Runspace = SPRunSpace;
+                SPRunSpace.Open();
+
+                Pipeline pipeline = SPRunSpace.CreatePipeline();
+                Command rulein1 = new Command("Remove-NetFirewallRule -Name 'MFAIN1' ", true);
+                Command rulein2 = new Command("Remove-NetFirewallRule -Name 'MFAIN2' ", true);
+                Command ruleout1 = new Command("Remove-NetFirewallRule -Name 'MFAOUT1' ", true);
+                Command ruleout2 = new Command("Remove-NetFirewallRule -Name 'MFAOUT2' ", true);
+                pipeline.Commands.Add(rulein1);
+                pipeline.Commands.Add(rulein2);
+                pipeline.Commands.Add(ruleout1);
+                pipeline.Commands.Add(ruleout2);
+                pipeline.Invoke();
+            }
+            finally
+            {
+                if (SPRunSpace != null)
+                    SPRunSpace.Close();
+            }
+        }
+
+        /// <summary>
+        /// AddFirewallRules method implmentation
+        /// </summary>
+        /// <param name="lst"></param>
+        internal static void AddFirewallRules(string computers)
+        {
+            Runspace SPRunSpace = null;
+            PowerShell SPPowerShell = null;
+            try
+            {
+                RunspaceConfiguration SPRunConfig = RunspaceConfiguration.Create();
+                SPRunSpace = RunspaceFactory.CreateRunspace(SPRunConfig);
+
+                SPPowerShell = PowerShell.Create();
+                SPPowerShell.Runspace = SPRunSpace;
+                SPRunSpace.Open();
+
+                Pipeline pipeline = SPRunSpace.CreatePipeline();
+                Command rulein1  = new Command("New-NetFirewallRule -Name 'MFAIN1' -DisplayName 'MFA IN Notification Service UDP' -Group 'MFA' -Profile @('Domain') -Direction Inbound -Action Allow -Protocol UDP -LocalPort @('137', '138') -RemoteAddress " + computers, true);
+                Command rulein2 = new Command("New-NetFirewallRule -Name 'MFAIN2'  -DisplayName 'MFA IN Notification Service TCP' -Group 'MFA' -Profile @('Domain') -Direction Inbound -Action Allow -Protocol TCP -LocalPort @('139', '445') -RemoteAddress " + computers, true);
+                Command ruleout1 = new Command("New-NetFirewallRule -Name 'MFAOUT1'  -DisplayName 'MFA OUT Notification Service UDP' -Group 'MFA' -Profile @('Domain') -Direction Outbound -Action Allow -Protocol UDP -LocalPort @('137', '138') -RemoteAddress " + computers, true);
+                Command ruleout2 = new Command("New-NetFirewallRule -Name 'MFAOUT2'  -DisplayName 'MFA OUT Notification Service TCP' -Group 'MFA' -Profile @('Domain') -Direction Outbound -Action Allow -Protocol TCP -LocalPort @('139', '445') -RemoteAddress " + computers, true);
+                pipeline.Commands.Add(rulein1);
+                pipeline.Commands.Add(rulein2);
+                pipeline.Commands.Add(ruleout1);
+                pipeline.Commands.Add(ruleout2);
+                pipeline.Invoke();
+            }
+            finally
+            {
+                if (SPRunSpace != null)
+                    SPRunSpace.Close();
+            }
+        }
     }
 
     public static class ADFSManagementRights

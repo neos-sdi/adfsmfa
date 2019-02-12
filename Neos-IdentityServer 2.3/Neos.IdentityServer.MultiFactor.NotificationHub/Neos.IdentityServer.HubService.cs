@@ -1,4 +1,5 @@
-﻿//******************************************************************************************************************************************************************************************//
+﻿using Neos.IdentityServer.MultiFactor.Administration;
+//******************************************************************************************************************************************************************************************//
 // Copyright (c) 2019 Neos-Sdi (http://www.neos-sdi.com)                                                                                                                                    //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
@@ -21,15 +22,17 @@ using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using System.ServiceProcess;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Neos.IdentityServer.MultiFactor
+namespace Neos.IdentityServer.MultiFactor.NotificationHub
 {
     public partial class MFANOTIFHUB : ServiceBase
     {
         private MailSlotServerManager _mailslotsmgr = new MailSlotServerManager();
+        private MailSlotServer _mailslotsrv = new MailSlotServer("CP1");
 
         public MFANOTIFHUB()
         {
@@ -97,6 +100,73 @@ namespace Neos.IdentityServer.MultiFactor
         }
 
         /// <summary>
+        /// MailSlotMessageArrived implementation
+        /// </summary>
+        private void MailSlotMessageArrived(MailSlotServer maislotserver, MailSlotMessage message)
+        {
+            if (message.ApplicationName == "CP1")
+            {
+                switch (message.Operation)
+                {
+                    case 0x10:
+                        if (IsLocalMessage(message))
+                        {
+
+                            this.EventLog.WriteEntry(string.Format("Server Information REQUEST To {0}", message.Text), EventLogEntryType.SuccessAudit, 10000);
+                            using (MailSlotClient mailslot = new MailSlotClient("CP1"))
+                            {
+                                mailslot.Text = Dns.GetHostEntry(message.Text).HostName.ToLower();
+                                mailslot.SendNotification(0x11);
+                            }
+                        }
+                        break;
+                    case 0x11:
+                        if (!IsLocalMessage(message))
+                        {
+                            string localname = Dns.GetHostEntry("localhost").HostName.ToLower();
+                            if (localname.ToLower().Equals(message.Text.ToLower()))
+                            {
+                                this.EventLog.WriteEntry(string.Format("Server Information RECEIVED for {0}", message.Text), EventLogEntryType.SuccessAudit, 10000);
+                                using (MailSlotClient mailslot = new MailSlotClient("CP1"))
+                                {
+                                    FarmUtilities reg = new FarmUtilities();
+                                    mailslot.Text = reg.InitServerNodeConfiguration();
+                                    mailslot.SendNotification(0x12);
+                                }
+                            }
+                        }
+                        break;
+                    case 0x12:
+                        if (!IsLocalMessage(message))
+                        {
+                            FarmUtilities reg = new FarmUtilities();
+                            ADFSServerHost host = reg.UnPackServerNodeConfiguration(message.Text);
+
+                            ManagementService.EnsureService();
+                            int i = ManagementService.ADFSManager.ADFSFarm.Servers.FindIndex(c => c.FQDN.ToLower() == host.FQDN.ToLower());
+                            if (i < 0)
+                                ManagementService.ADFSManager.ADFSFarm.Servers.Add(host);
+                            else
+                                ManagementService.ADFSManager.ADFSFarm.Servers[i] = host;
+
+                            ManagementService.ADFSManager.SetDirty(true);
+                            ManagementService.ADFSManager.WriteConfiguration(null);
+
+                            this.EventLog.WriteEntry(string.Format("Server Information RESPONSE : {0}", message.Text), EventLogEntryType.SuccessAudit, 10000);
+                        }
+                        break;
+                }
+            }
+        }
+
+        private bool IsLocalMessage(MailSlotMessage message)
+        {
+            string local = Dns.GetHostName().ToUpper();
+            string remote = message.MachineName.ToUpper();
+            return local.StartsWith(remote);
+        }
+
+        /// <summary>
         /// OnStart event
         /// </summary>
         protected override void OnStart(string[] args)
@@ -104,6 +174,10 @@ namespace Neos.IdentityServer.MultiFactor
             Trace.WriteLine("MFANOTIFHUB:Start MailSlot Manager " + _mailslotsmgr.ApplicationName);
             _mailslotsmgr.Start();
             _mailslotsmgr.MailSlotSystemMessageArrived += MailSlotSystemMessageArrived;
+
+            _mailslotsrv.MailSlotMessageArrived += MailSlotMessageArrived;
+            _mailslotsrv.Start();
+
             Trace.WriteLine("MFANOTIFHUB:Start ADFS Service");
             StartADFSService();
             this.EventLog.WriteEntry("Le service a démarré avec succès.",  EventLogEntryType.Information, 0); 
@@ -117,8 +191,10 @@ namespace Neos.IdentityServer.MultiFactor
             Trace.WriteLine("MFANOTIFHUB:Stop ADFS Service");
             StopADFSService();
             _mailslotsmgr.MailSlotSystemMessageArrived -= MailSlotSystemMessageArrived;
+            _mailslotsrv.MailSlotMessageArrived -= MailSlotMessageArrived;
             Trace.WriteLine("MFANOTIFHUB:Stop MailSlot Manager " + _mailslotsmgr.ApplicationName);
             _mailslotsmgr.Stop();
+            _mailslotsrv.Stop();
             this.EventLog.WriteEntry("Le service s'est arrêté avec succès.",  EventLogEntryType.Information, 1);
         }
 

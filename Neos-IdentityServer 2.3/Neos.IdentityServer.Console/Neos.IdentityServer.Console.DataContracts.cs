@@ -212,9 +212,12 @@ namespace Neos.IdentityServer.Console
         public MMCSecurityKeySizeist()
         {
             this.Add(new MMCSecurityKeySizeItem() { ID = KeySizeMode.KeySizeDefault, Label = "DEFAULT (1024 bits length)" });
-            this.Add(new MMCSecurityKeySizeItem() { ID = KeySizeMode.KeySize512, Label = "512 (512 bits length)" });
+            this.Add(new MMCSecurityKeySizeItem() { ID = KeySizeMode.KeySize512,  Label = " 512 ( 512 bits length)" });
             this.Add(new MMCSecurityKeySizeItem() { ID = KeySizeMode.KeySize1024, Label = "1024 (1024 bits length)" });
             this.Add(new MMCSecurityKeySizeItem() { ID = KeySizeMode.KeySize2048, Label = "2048 (2048 bits length)" });
+            this.Add(new MMCSecurityKeySizeItem() { ID = KeySizeMode.KeySize128,  Label = " 128 ( 128 bits length)" });
+            this.Add(new MMCSecurityKeySizeItem() { ID = KeySizeMode.KeySize256,  Label = " 256 ( 256 bits length)" });
+            this.Add(new MMCSecurityKeySizeItem() { ID = KeySizeMode.KeySize384,  Label = " 384 ( 384 bits length)" });
         }
     }
 

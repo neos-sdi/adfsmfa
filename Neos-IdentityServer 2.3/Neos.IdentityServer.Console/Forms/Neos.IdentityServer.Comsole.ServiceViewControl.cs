@@ -103,7 +103,7 @@ namespace Neos.IdentityServer.Console
             this.SuspendLayout();
             try
             {
-                ControlInstance = new ConfigurationControl(this);
+                ControlInstance = new ConfigurationControl(this, this.SnapIn);
                 this.tableLayoutPanel.Controls.Add(ControlInstance, 0, 1);
 
                 bool isconfigured = ManagementService.ADFSManager.IsFarmConfigured();

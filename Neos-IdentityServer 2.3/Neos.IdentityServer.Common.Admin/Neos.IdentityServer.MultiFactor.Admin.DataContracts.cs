@@ -417,19 +417,19 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             MFAConfig cfg = ManagementService.Config;
             ADDSHost adds = cfg.Hosts.ActiveDirectoryHost;
             cfg.IsDirty = IsDirty;
-            if (!ManagementService.CheckADDSAttribute(DomainAddress, Account, Password, KeyAttribute))
+            if (!ManagementService.CheckADDSAttribute(DomainAddress, Account, Password, KeyAttribute, false))
                 throw new ArgumentException(string.Format("Attribute {0} not found in forest schema !", KeyAttribute));
-            if (!ManagementService.CheckADDSAttribute(DomainAddress, Account, Password, MailAttribute))
+            if (!ManagementService.CheckADDSAttribute(DomainAddress, Account, Password, MailAttribute, true))
                 throw new ArgumentException(string.Format("Attribute {0} not found in forest schema !", MailAttribute));
-            if (!ManagementService.CheckADDSAttribute(DomainAddress, Account, Password, PhoneAttribute))
+            if (!ManagementService.CheckADDSAttribute(DomainAddress, Account, Password, PhoneAttribute, true))
                 throw new ArgumentException(string.Format("Attribute {0} not found in forest schema !", PhoneAttribute));
-            if (!ManagementService.CheckADDSAttribute(DomainAddress, Account, Password, MethodAttribute))
+            if (!ManagementService.CheckADDSAttribute(DomainAddress, Account, Password, MethodAttribute, false))
                 throw new ArgumentException(string.Format("Attribute {0} not found in forest schema !", MethodAttribute));
-            if (!ManagementService.CheckADDSAttribute(DomainAddress, Account, Password, OverrideMethodAttribute))
+            if (!ManagementService.CheckADDSAttribute(DomainAddress, Account, Password, OverrideMethodAttribute, false))
                 throw new ArgumentException(string.Format("Attribute {0} not found in forest schema !", OverrideMethodAttribute));
-            if (!ManagementService.CheckADDSAttribute(DomainAddress, Account, Password, PinAttribute))
+            if (!ManagementService.CheckADDSAttribute(DomainAddress, Account, Password, PinAttribute, false))
                 throw new ArgumentException(string.Format("Attribute {0} not found in forest schema !", PinAttribute));
-            if (!ManagementService.CheckADDSAttribute(DomainAddress, Account, Password, EnabledAttribute))
+            if (!ManagementService.CheckADDSAttribute(DomainAddress, Account, Password, EnabledAttribute, false))
                 throw new ArgumentException(string.Format("Attribute {0} not found in forest schema !", EnabledAttribute));
             adds.Account = Account;
             adds.Password = Password;

@@ -55,7 +55,7 @@ namespace Neos.IdentityServer.MultiFactor
         private string _appname = string.Empty;
         private string _machinename = string.Empty;
         private int _processid = 0;
-        private int _scanduration = 3000;
+        private int _scanduration = 300;
         private bool _localonly = false;
         private bool _multiinstance = true;
         private bool _allowtoself = false;
@@ -241,21 +241,28 @@ namespace Neos.IdentityServer.MultiFactor
         {
             while (_mailslot != null)
             {
-                if (_canceltokensource.Token.IsCancellationRequested)
-                    return;
-                _messages.Clear();
-                if (internalReadMailslot())
+                try
                 {
-                    foreach (T message in _messages)
+                    if (_canceltokensource.Token.IsCancellationRequested)
+                        return;
+                    _messages.Clear();
+                    if (internalReadMailslot())
                     {
-                        if (!_canceltokensource.Token.IsCancellationRequested)
+                        foreach (T message in _messages)
                         {
-                            DoOnMessage(message);
+                            if (!_canceltokensource.Token.IsCancellationRequested)
+                            {
+                                DoOnMessage(message);
+                            }
                         }
                     }
+                    if (!_canceltokensource.Token.IsCancellationRequested)
+                        Thread.Sleep(_scanduration);
                 }
-                if (!_canceltokensource.Token.IsCancellationRequested)
-                    Thread.Sleep(_scanduration);
+                catch (Exception ex)
+                {
+                    LogForSlots.WriteEntry(ex.Message, EventLogEntryType.Error, 9999);
+                }
             }
         }
 
@@ -414,20 +421,27 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         protected override void DoOnMessage(MailSlotMessage message)
         {
-            if (CheckAllowedMachines(message.MachineName))
-            { 
-                switch (message.Operation)
-                { 
-                    case 0xFE:
-                        if (IsStarted)
-                            Stop();
-                        Start();
-                        this.MailSlotMessageArrived(this, message);
-                        break;
-                    default:
-                        this.MailSlotMessageArrived(this, message);
-                        break;
+            try
+            {
+                if (CheckAllowedMachines(message.MachineName))
+                {
+                    switch (message.Operation)
+                    {
+                        case 0xFE:
+                            if (IsStarted)
+                                Stop();
+                            Start();
+                            this.MailSlotMessageArrived(this, message);
+                            break;
+                        default:
+                            this.MailSlotMessageArrived(this, message);
+                            break;
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                LogForSlots.WriteEntry(ex.Message, EventLogEntryType.Error, 9999);
             }
         }
 
@@ -513,7 +527,7 @@ namespace Neos.IdentityServer.MultiFactor
                                 }
                             }
                         }
-                    }
+                   }
                 }
             }
             else
@@ -828,6 +842,10 @@ namespace Neos.IdentityServer.MultiFactor
                 bool succeeded = NativeMethod.WriteFile(_mailslot, bMessage, cbMessageBytes, out cbBytesWritten, IntPtr.Zero);
                 if (!succeeded || cbMessageBytes != cbBytesWritten)
                     throw new Win32Exception(Marshal.GetLastWin32Error());
+            }
+            catch (Exception ex)
+            {
+                LogForSlots.WriteEntry(ex.Message, EventLogEntryType.Error, 9999);
             }
             finally
             {
@@ -1247,8 +1265,8 @@ namespace Neos.IdentityServer.MultiFactor
             {
                 if (!string.IsNullOrEmpty(_text))
                 {
-                    if (_text.Length > 64)
-                        return _text.Substring(0, 64);
+                    if (_text.Length > 320)
+                        return _text.Substring(0, 320);
                     else
                         return _text.Substring(0, _text.Length);
                 }
@@ -1259,8 +1277,8 @@ namespace Neos.IdentityServer.MultiFactor
             {
                 if (!string.IsNullOrEmpty(value))
                 {
-                    if (value.Length > 64)
-                        _text = value.Substring(0, 64);
+                    if (value.Length > 320)
+                        _text = value.Substring(0, 320);
                     else
                         _text = value.Substring(0, value.Length);
                 }
@@ -1319,7 +1337,7 @@ namespace Neos.IdentityServer.MultiFactor
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 16)]
         public string MachineName;
 
-        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 65)]
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 320)]
         public string Text;
     }
 
@@ -1511,6 +1529,34 @@ namespace Neos.IdentityServer.MultiFactor
         [DllImport("advapi32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool ConvertStringSecurityDescriptorToSecurityDescriptor(string sddlSecurityDescriptor, int sddlRevision, out SafeLocalMemHandle pSecurityDescriptor, IntPtr securityDescriptorSize);
+    }
+    #endregion
+
+    #region LogForSlots
+    /// <summary>
+    /// Log class
+    /// </summary>
+    public static class LogForSlots
+    {
+        private const string EventLogSource = "ADFS MFA Service";
+        private const string EventLogGroup = "Application";
+
+        /// <summary>
+        /// Log constructor
+        /// </summary>
+        static LogForSlots()
+        {
+            if (!EventLog.SourceExists(LogForSlots.EventLogSource))
+                EventLog.CreateEventSource(LogForSlots.EventLogSource, LogForSlots.EventLogGroup);
+        }
+
+        /// <summary>
+        /// WriteEntry method implementation
+        /// </summary>
+        public static void WriteEntry(string message, EventLogEntryType type, int eventID)
+        {
+            EventLog.WriteEntry(EventLogSource, message, type, eventID);
+        }
     }
     #endregion
 }

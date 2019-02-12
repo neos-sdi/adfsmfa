@@ -810,10 +810,10 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// CheckADDSAttribute method implmentation
         /// </summary>
-        internal static bool CheckADDSAttribute(MFAConfig config,  string domainname, string username, string password, string attributename)
+        internal static bool CheckADDSAttribute(MFAConfig config,  string domainname, string username, string password, string attributename, bool checkmultivalued)
         {
             DataRepositoryService dt = GetDataRepository(config, Data.DataRepositoryKind.ADDS);
-            return (dt as IDataRepositoryADDSConnection).CheckAttribute(domainname, username, password, attributename);
+            return (dt as IDataRepositoryADDSConnection).CheckAttribute(domainname, username, password, attributename, checkmultivalued);
         }
 
         /// <summary>
@@ -1652,6 +1652,15 @@ namespace Neos.IdentityServer.MultiFactor
                 _repos = new SQLKeysRepositoryService(_config);
             switch (_ksize)
             {
+                case KeySizeMode.KeySize128:
+                    MAX_PROBE_LEN = 16;
+                    break;
+                case KeySizeMode.KeySize256:
+                    MAX_PROBE_LEN = 32;
+                    break;
+                case KeySizeMode.KeySize384:
+                    MAX_PROBE_LEN = 48;
+                    break;
                 case KeySizeMode.KeySize512:
                     MAX_PROBE_LEN = 64;
                     break;
@@ -2534,6 +2543,7 @@ namespace Neos.IdentityServer.MultiFactor
             }
         }
     }
+
     #region ADFS Version
     internal class RegistryVersion
     {
@@ -2544,7 +2554,7 @@ namespace Neos.IdentityServer.MultiFactor
         private int _currentMajorVersionNumber;
         private int _currentMinorVersionNumber;
 
-        internal RegistryVersion()
+        public RegistryVersion()
         {
             RegistryKey rk = Registry.LocalMachine.OpenSubKey("Software\\Microsoft\\Windows NT\\CurrentVersion");
 
@@ -2605,6 +2615,29 @@ namespace Neos.IdentityServer.MultiFactor
         public bool IsWindows2012R2
         {
             get { return ((this.CurrentMajorVersionNumber == 0) && ((this.CurrentBuild >= 9600) && (this.CurrentBuild < 14393))); }
+        }
+
+        public string VersionAsString()
+        {
+            string tmp = string.Empty;
+            tmp += CurrentBuild.ToString()+";";
+            tmp += CurrentMajorVersionNumber.ToString()+";";
+            tmp += CurrentMinorVersionNumber.ToString() + ";";
+            tmp += InstallationType + ";";
+            tmp += ProductName + ";";
+            tmp += CurrentVersion + ";";
+            return tmp;
+        }
+
+        public void VersionFromString(string str)
+        {
+            string[] values = str.Split(';');
+            CurrentBuild = Convert.ToInt32(values[0]);
+            CurrentMajorVersionNumber = Convert.ToInt32(values[1]);
+            CurrentMinorVersionNumber = Convert.ToInt32(values[2]);
+            InstallationType = values[3];
+            ProductName = values[4];
+            CurrentVersion = values[5];
         }
     }
     #endregion
