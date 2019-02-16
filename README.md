@@ -20,7 +20,9 @@ This extension works with Active Directory or an SQL Server Database for storing
 ## Downloads
 * <https://github.com/neos-sdi/adfsmfa/releases>
 
-## Neos-Sdi
+___
+![Neos Logo](logo.png)
+
 Neos-SDI is a global business and technology consulting firm that leads organizations toward innovative growth faster through the identification, application and support of inspired technology solutions. By leveraging our unique methodologies, we are able to help our clients envision the unique ways technology can be successfully applied to their business. Our envisioning sessions are intended to inspire the use of technology in differentiated ways in order to optimize our client's potential for growth. Founded in Paris in 2001, the source of Neos-SDI’s success is attributed to over 150 certified consultants, and 14 gold and two silver Microsoft Partner competencies; making Neos-SDI one of the top 10 Microsoft Partners worldwide.
 
 Feel free to follow our projects on github
@@ -28,6 +30,7 @@ Feel free to follow our projects on github
 Multi-Factor Authentication for ADFS (this one) : <https://github.com/neos-sdi/adfsmfa>
 
 SharePoint Identity Service Application (Claim Provider for SharePoint 2013/2016) : <https://github.com/neos-sdi/spidentityservice>
+___
 ## Features
 * Localized UI French/English/Spanish
 * Run with ADFS 2012 R2, 2016 and 2019
