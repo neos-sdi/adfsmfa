@@ -41,6 +41,7 @@ namespace Neos.IdentityServer.MultiFactor.Samples
     public class QuizProviderSample : BaseExternalProvider
     {
         private bool _isinitialized = false;
+        private bool IsAsync;
 
         /// <summary>
         /// Kind property implementation
@@ -88,7 +89,6 @@ namespace Neos.IdentityServer.MultiFactor.Samples
         public override bool AllowEnrollment
         {
             get { return false; }
-            set { }
         }
 
         /// <summary>
@@ -537,8 +537,9 @@ namespace Neos.IdentityServer.MultiFactor.Samples
                         ExternalProviderParams param = externalsystem as ExternalProviderParams;
                         Enabled = param.Enabled;
                         PinRequired = param.PinRequired;
-                        AllowEnrollment = param.EnrollWizard;
+                        WizardEnabled = param.EnrollWizard;
                         ForceEnrollment = param.ForceWizard;
+                        IsAsync = param.Data.IsTwoWay;
                         _isinitialized = true;
                         return;
                     }
@@ -617,7 +618,7 @@ namespace Neos.IdentityServer.MultiFactor.Samples
             switch (method)
             {
                 case AuthenticationResponseKind.Sample1:
-                    result.IsDefault = true;
+                    result.IsDefault = !IsAsync;
                     result.RequiredPin = false;
                     result.IsRemote = false;
                     result.IsTwoWay = false;
@@ -628,7 +629,7 @@ namespace Neos.IdentityServer.MultiFactor.Samples
                     result.Method = MultiFactor.AuthenticationResponseKind.Sample1;
                     break;
                 case AuthenticationResponseKind.Sample2Async:
-                    result.IsDefault = false;
+                    result.IsDefault = IsAsync;
                     result.RequiredPin = false;
                     result.IsRemote = true;
                     result.IsTwoWay = true;

@@ -282,9 +282,6 @@
     <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.LDAPWizard.resx">
       <DependentUpon>Neos.IdentityServer.Console.LDAPWizard.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.RootViewControl.es.resx">
-      <DependentUpon>Neos.IdentityServer.Console.RootViewControl.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.RootViewControl.fr.resx">
       <DependentUpon>Neos.IdentityServer.Console.RootViewControl.cs</DependentUpon>
     </EmbeddedResource>

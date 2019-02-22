@@ -522,7 +522,7 @@ namespace Neos.IdentityServer.Console.Controls
                 chkProviderEnabled.Text = res.CTRLPROVACTIVE;
 
                 chkProviderEnabled.Checked = _provider.Enabled;
-                chkProviderEnabled.Enabled = _provider.AllowDisable;
+                chkProviderEnabled.Enabled = (_provider.Enabled && _provider.AllowDisable);
                 chkProviderEnabled.Left = 510;
                 chkProviderEnabled.Top = 10;
                 chkProviderEnabled.Width = 300;
@@ -531,8 +531,11 @@ namespace Neos.IdentityServer.Console.Controls
 
                 chkProviderEnroll = new CheckBox();
                 chkProviderEnroll.Text = res.CTRLPROVWIZARD;
-                chkProviderEnroll.Checked = _provider.AllowEnrollment;
-                chkProviderEnroll.Enabled = _provider.Enabled;
+                if (_provider.AllowEnrollment)
+                    chkProviderEnroll.Checked = _provider.WizardEnabled;
+                else
+                    chkProviderEnroll.Checked = false;
+                chkProviderEnroll.Enabled = (_provider.Enabled && _provider.AllowEnrollment);
                 if (_kind==PreferredMethod.Azure)
                 {
                     chkProviderEnroll.Checked = false;
@@ -584,10 +587,14 @@ namespace Neos.IdentityServer.Console.Controls
                 chkProviderPin.Text = res.CTRLPROVPIN;
 
                 chkProviderEnabled.Checked = _provider.Enabled;
-                chkProviderEnabled.Enabled = _provider.AllowDisable;
+                chkProviderEnabled.Enabled = (_provider.Enabled && _provider.AllowDisable);
 
-                chkProviderEnroll.Checked = _provider.AllowEnrollment;
-                chkProviderEnroll.Enabled = _provider.Enabled;
+                if (_provider.AllowEnrollment)
+                    chkProviderEnroll.Checked = _provider.WizardEnabled;
+                else
+                    chkProviderEnroll.Checked = false;
+                chkProviderEnroll.Enabled = (_provider.Enabled && _provider.AllowEnrollment);
+
                 if (_kind == PreferredMethod.Azure)
                 {
                     chkProviderEnroll.Checked = false;
@@ -598,6 +605,7 @@ namespace Neos.IdentityServer.Console.Controls
             }
             finally
             {
+                UpdateLayoutConfigStatus(ManagementService.ADFSManager.ConfigurationStatus);
                 _view.AutoValidate = AutoValidate.EnableAllowFocusChange;
                 _view.CausesValidation = true;
                 this.ResumeLayout();
@@ -3124,7 +3132,8 @@ namespace Neos.IdentityServer.Console.Controls
                 {
                     Config.UseActiveDirectory = chkUseADDS.Checked;
                     ManagementService.ADFSManager.SetDirty(true);
-                    UpdateControlsLayouts(Config.UseActiveDirectory);
+                    DoRefreshData();
+                   // UpdateControlsLayouts(Config.UseActiveDirectory);
                 }
             }
             catch (Exception ex)

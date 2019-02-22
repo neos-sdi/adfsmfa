@@ -47,7 +47,6 @@ namespace Neos.IdentityServer.MultiFactor.Common
         private int TOTPShadows = 2;
         private HashMode Algorithm = HashMode.SHA1;
         private bool _isinitialized = false;
-        private bool _allowenrollment = true;
         private ForceWizardMode _forceenrollment = ForceWizardMode.Disabled;
 
         /// <summary>
@@ -104,8 +103,7 @@ namespace Neos.IdentityServer.MultiFactor.Common
         /// </summary>
         public override bool AllowEnrollment
         {
-            get { return _allowenrollment; }
-            set { _allowenrollment = value; }
+            get { return true; }
         }
 
         /// <summary>
@@ -299,7 +297,7 @@ namespace Neos.IdentityServer.MultiFactor.Common
                         TOTPShadows = param.TOTPShadows;
                         Algorithm = param.Algorithm;
                         Enabled = param.Enabled;
-                        AllowEnrollment = param.EnrollWizard;
+                        WizardEnabled = param.EnrollWizard;
                         ForceEnrollment = param.ForceWizard;
                         PinRequired = param.PinRequired;
                         _isinitialized = true;

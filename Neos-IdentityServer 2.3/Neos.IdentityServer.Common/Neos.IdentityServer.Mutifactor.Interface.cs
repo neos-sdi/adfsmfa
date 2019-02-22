@@ -47,12 +47,13 @@ namespace Neos.IdentityServer.MultiFactor
     public interface IExternalProvider
     {
         PreferredMethod Kind { get; }
+        bool AllowDisable { get; }
+        bool AllowOverride { get; }
+        bool AllowEnrollment { get; }
         bool Enabled { get; set; }
         bool PinRequired { get; set; }
-        bool AllowDisable { get; }
+        bool WizardEnabled { get; set; }
         bool IsInitialized { get; }
-        bool AllowOverride { get; }
-        bool AllowEnrollment { get; set; }
         ForceWizardMode ForceEnrollment { get; set; }
         bool IsTwoWayByDefault  { get; }
         string Name { get; }

@@ -90,7 +90,6 @@ namespace Neos.IdentityServer.MultiFactor.SAS
         public override bool AllowEnrollment
         {
             get { return false; }
-            set { }
         }
 
         /// <summary>
@@ -420,7 +419,7 @@ namespace Neos.IdentityServer.MultiFactor.SAS
                         CompanyName = az.CompanyName;
                         Enabled = az.Enabled;
                         PinRequired = az.PinRequired;
-                        AllowEnrollment = az.EnrollWizard;
+                        WizardEnabled = az.EnrollWizard;
                         ForceEnrollment = az.ForceWizard;
                         _isinitialized = true;
                         return;

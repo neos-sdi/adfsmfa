@@ -59,11 +59,12 @@ namespace Neos.IdentityServer.MultiFactor.Common
     {
         private bool _enabled;
         private bool _pinenabled = false;
+        private bool _wizenabled = true;
         public abstract PreferredMethod Kind { get; }
         public abstract bool IsInitialized { get; }
         public abstract bool AllowDisable { get; }
         public abstract bool AllowOverride { get; }
-        public abstract bool AllowEnrollment { get; set; }
+        public abstract bool AllowEnrollment { get; }
         public abstract ForceWizardMode ForceEnrollment { get; set; }
         public abstract string Name { get; }
         public abstract string Description { get; }
@@ -94,8 +95,20 @@ namespace Neos.IdentityServer.MultiFactor.Common
         /// </summary>
         public virtual bool Enabled
         {
-            get { return _enabled; }
-            set { _enabled = value; }
+            get 
+            {
+                if (!AllowDisable)
+                    return true;
+                else
+                    return _enabled; 
+            }
+            set 
+            {
+                if (!AllowDisable)
+                    _enabled = true;
+                else
+                    _enabled = value; 
+            }
         }
 
         /// <summary>
@@ -105,6 +118,27 @@ namespace Neos.IdentityServer.MultiFactor.Common
         {
             get { return _pinenabled; }
             set { _pinenabled = value; }
+        }
+
+        /// <summary>
+        /// WizardEnabled property implmentation
+        /// </summary>
+        public virtual bool WizardEnabled
+        {
+            get 
+            {
+                if (!AllowEnrollment)
+                    return false;
+                else
+                    return _wizenabled; 
+            }
+            set 
+            {
+                if (!AllowEnrollment)
+                    _wizenabled = false;
+                else
+                    _wizenabled = value; 
+            }
         }
 
         /// <summary>
@@ -425,7 +459,6 @@ namespace Neos.IdentityServer.MultiFactor.Common
         private int TOTPShadows = 2;
         private HashMode Algorithm = HashMode.SHA1;
         private bool _isinitialized = false;
-        private bool _allowenrollment = true;
         private ForceWizardMode _forceenrollment = ForceWizardMode.Disabled;
 
         /// <summary>
@@ -482,8 +515,7 @@ namespace Neos.IdentityServer.MultiFactor.Common
         /// </summary>
         public override bool AllowEnrollment 
         {
-            get { return _allowenrollment; }
-            set { _allowenrollment = value; }
+            get { return true; }
         }
 
         /// <summary>
@@ -676,8 +708,9 @@ namespace Neos.IdentityServer.MultiFactor.Common
                         OTPProviderParams param = externalsystem as OTPProviderParams;
                         TOTPShadows = param.TOTPShadows;
                         Algorithm = param.Algorithm;
+
                         Enabled = param.Enabled;
-                        AllowEnrollment = param.EnrollWizard;
+                        WizardEnabled = param.EnrollWizard;
                         ForceEnrollment = param.ForceWizard;
                         PinRequired = param.PinRequired;
                         _isinitialized = true;
@@ -820,7 +853,6 @@ namespace Neos.IdentityServer.MultiFactor.Common
         private ExternalOTPProvider Data = null;
         private IExternalOTPProvider _sasprovider;
         private bool _isinitialized = false;
-        private bool _allowenrollment = true;
         private ForceWizardMode _forceenrollment = ForceWizardMode.Disabled;
 
         /// <summary>
@@ -866,8 +898,7 @@ namespace Neos.IdentityServer.MultiFactor.Common
         /// </summary>
         public override bool AllowEnrollment
         {
-            get { return _allowenrollment; }
-            set { _allowenrollment = value; }
+            get { return true; }
         }
 
         /// <summary>
@@ -1094,7 +1125,7 @@ namespace Neos.IdentityServer.MultiFactor.Common
                         _sasprovider = LoadLegacyExternalProvider(Data.FullQualifiedImplementation);
 
                         Enabled = param.Enabled;
-                        AllowEnrollment = param.EnrollWizard;
+                        WizardEnabled = param.EnrollWizard;
                         ForceEnrollment = param.ForceWizard;
                         PinRequired = param.PinRequired;
                         _isinitialized = true;
@@ -1235,7 +1266,6 @@ namespace Neos.IdentityServer.MultiFactor.Common
     {
         private bool _isinitialized = false;
         private MailProvider Data;
-        private bool _allowenrollment = true;
         private ForceWizardMode _forceenrollment = ForceWizardMode.Disabled;
 
         /// <summary>
@@ -1275,8 +1305,7 @@ namespace Neos.IdentityServer.MultiFactor.Common
         /// </summary>
         public override bool AllowEnrollment
         {
-            get { return _allowenrollment; }
-            set { _allowenrollment = value; }
+            get { return true; }
         }
 
         /// <summary>
@@ -1473,7 +1502,7 @@ namespace Neos.IdentityServer.MultiFactor.Common
                         MailProviderParams param = externalsystem as MailProviderParams;
                         Data = param.Data;
                         Enabled = param.Enabled;
-                        AllowEnrollment = param.EnrollWizard;
+                        WizardEnabled = param.EnrollWizard;
                         ForceEnrollment = param.ForceWizard;
                         PinRequired = param.PinRequired;
                         _isinitialized = true;
@@ -1576,7 +1605,6 @@ namespace Neos.IdentityServer.MultiFactor.Common
     public class NeosPlugExternalProvider : BaseExternalProvider
     {
         private bool _isinitialized = false;
-        private bool _allowenrollment = false;
         private ForceWizardMode _forceenrollment = ForceWizardMode.Disabled;
 
 
@@ -1635,8 +1663,7 @@ namespace Neos.IdentityServer.MultiFactor.Common
         /// </summary>
         public override bool AllowEnrollment
         {
-            get { return _allowenrollment; }
-            set { _allowenrollment = false; }
+            get { return false; }
         }
 
         /// <summary>
@@ -1835,7 +1862,7 @@ namespace Neos.IdentityServer.MultiFactor.Common
                     {
                         ExternalProviderParams param = externalsystem as ExternalProviderParams;
                         Enabled = false;
-                        AllowEnrollment = false;
+                        WizardEnabled = false;
                         ForceEnrollment = ForceWizardMode.Disabled;
                         PinRequired = false;
                         _isinitialized = true;

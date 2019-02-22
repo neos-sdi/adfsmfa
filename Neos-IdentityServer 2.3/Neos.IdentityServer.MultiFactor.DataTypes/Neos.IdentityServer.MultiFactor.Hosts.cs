@@ -325,6 +325,8 @@ namespace Neos.IdentityServer.MultiFactor
                 OTPProvider.Algorithm = HashMode.SHA1;
                 OTPProvider.EnrollWizard = true;
                 OTPProvider.PinRequired = false;
+                OTPProvider.Parameters.Data = string.Empty;
+                OTPProvider.FullQualifiedImplementation = string.Empty;
 
                 ExternalProvider.Enabled = false;
                 ExternalProvider.EnrollWizard = false;
@@ -334,6 +336,7 @@ namespace Neos.IdentityServer.MultiFactor
                 ExternalProvider.IsTwoWay = false;
                 ExternalProvider.Sha1Salt = "0x1230456789ABCDEF";
                 ExternalProvider.Parameters.Data = string.Empty;
+                ExternalProvider.FullQualifiedImplementation = string.Empty;
 
                 AzureProvider.TenantId = "contoso.onmicrosoft.com";
                 AzureProvider.ThumbPrint = Thumbprint.Demo;
@@ -356,6 +359,8 @@ namespace Neos.IdentityServer.MultiFactor
                 MailProvider.Enabled = true;
                 MailProvider.EnrollWizard = true;
                 MailProvider.PinRequired = false;
+                MailProvider.FullQualifiedImplementation = string.Empty;
+                MailProvider.Parameters.Data = string.Empty;
             }
         }
 

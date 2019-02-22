@@ -1062,7 +1062,7 @@ namespace Neos.IdentityServer.MultiFactor
                 else if ((usercontext.FirstChoiceMethod != PreferredMethod.Choose) && (usercontext.FirstChoiceMethod != PreferredMethod.None))
                 {
                     IExternalProvider prov = RuntimeAuthProvider.GetProvider(usercontext.FirstChoiceMethod);
-                    if ((prov != null) && ((prov.AllowEnrollment) && (prov.ForceEnrollment!=ForceWizardMode.Disabled)))
+                    if ((prov != null) && ((prov.WizardEnabled) && (prov.ForceEnrollment!=ForceWizardMode.Disabled)))
                     {
                         if (usercontext.FirstChoiceMethod != usercontext.PreferredMethod)
                         {
@@ -2328,27 +2328,29 @@ namespace Neos.IdentityServer.MultiFactor
                     return new Claim("http://schemas.microsoft.com/ws/2008/06/identity/claims/authenticationmethod", "http://schemas.microsoft.com/ws/2012/12/authmethod/windowshello");
                 case AuthenticationResponseKind.FIDO:
                     return new Claim("http://schemas.microsoft.com/ws/2008/06/identity/claims/authenticationmethod", "http://schemas.microsoft.com/ws/2012/12/authmethod/fido");
+
                 // Azure
                 case AuthenticationResponseKind.SmsOneWayOTPplusPin:
-                    return new Claim("http://schemas.microsoft.com/ws/2008/06/identity/claims/authenticationmethod", "http://schemas.microsoft.com/ws/2012/12/authmethod/smsotp");
                 case AuthenticationResponseKind.SmsOneWayOTP:
                     return new Claim("http://schemas.microsoft.com/ws/2008/06/identity/claims/authenticationmethod", "http://schemas.microsoft.com/ws/2012/12/authmethod/smsotp");
                 case AuthenticationResponseKind.SmsTwoWayOTPplusPin:
-                    return new Claim("http://schemas.microsoft.com/ws/2008/06/identity/claims/authenticationmethod", "http://schemas.microsoft.com/ws/2012/12/authmethod/smsreply");
                 case AuthenticationResponseKind.SmsTwoWayOTP:
                     return new Claim("http://schemas.microsoft.com/ws/2008/06/identity/claims/authenticationmethod", "http://schemas.microsoft.com/ws/2012/12/authmethod/smsreply");
                 case AuthenticationResponseKind.VoiceTwoWayMobilePlusPin:
-                    return new Claim("http://schemas.microsoft.com/ws/2008/06/identity/claims/authenticationmethod", "http://schemas.microsoft.com/ws/2012/12/authmethod/phoneconfirmation");
                 case AuthenticationResponseKind.VoiceTwoWayMobile:
-                    return new Claim("http://schemas.microsoft.com/ws/2008/06/identity/claims/authenticationmethod", "http://schemas.microsoft.com/ws/2012/12/authmethod/phoneconfirmation");
                 case AuthenticationResponseKind.VoiceTwoWayOfficePlusPin:
-                    return new Claim("http://schemas.microsoft.com/ws/2008/06/identity/claims/authenticationmethod", "http://schemas.microsoft.com/ws/2012/12/authmethod/phoneconfirmation");
                 case AuthenticationResponseKind.VoiceTwoWayOffice:
-                    return new Claim("http://schemas.microsoft.com/ws/2008/06/identity/claims/authenticationmethod", "http://schemas.microsoft.com/ws/2012/12/authmethod/phoneconfirmation");
                 case AuthenticationResponseKind.VoiceTwoWayAlternateMobilePlusPin:
-                    return new Claim("http://schemas.microsoft.com/ws/2008/06/identity/claims/authenticationmethod", "http://schemas.microsoft.com/ws/2012/12/authmethod/phoneconfirmation");
                 case AuthenticationResponseKind.VoiceTwoWayAlternateMobile:
                     return new Claim("http://schemas.microsoft.com/ws/2008/06/identity/claims/authenticationmethod", "http://schemas.microsoft.com/ws/2012/12/authmethod/phoneconfirmation");
+                // Quiz for fun
+                case AuthenticationResponseKind.Sample1: 
+                case AuthenticationResponseKind.Sample2:
+                case AuthenticationResponseKind.Sample3:
+                case AuthenticationResponseKind.Sample1Async:
+                case AuthenticationResponseKind.Sample2Async:
+                case AuthenticationResponseKind.Sample3Async:
+                    return new Claim("http://schemas.microsoft.com/ws/2008/06/identity/claims/authenticationmethod", "http://schemas.microsoft.com/ws/2012/12/authmethod/otp");
                 default:
                     return new Claim("http://schemas.microsoft.com/ws/2008/06/identity/claims/authenticationmethod", "http://schemas.microsoft.com/ws/2012/12/authmethod/none");
             }
@@ -2518,7 +2520,7 @@ namespace Neos.IdentityServer.MultiFactor
                 return false;
             if (Config.UserFeatures.CanManageOptions() || Config.UserFeatures.CanManagePassword())
                 return true;
-            if (Config.UserFeatures.CanEnrollDevices() && (prov.AllowEnrollment))
+            if (Config.UserFeatures.CanEnrollDevices() && (prov.WizardEnabled))
                return true;
             return false;
         }
@@ -2534,7 +2536,7 @@ namespace Neos.IdentityServer.MultiFactor
                 return false;
             if (!Config.UserFeatures.CanAccessOptions())
                 return false;
-            if (Config.UserFeatures.CanEnrollDevices() && (prov.AllowEnrollment))
+            if (Config.UserFeatures.CanEnrollDevices() && (prov.WizardEnabled))
                return true;
             return false;
         }

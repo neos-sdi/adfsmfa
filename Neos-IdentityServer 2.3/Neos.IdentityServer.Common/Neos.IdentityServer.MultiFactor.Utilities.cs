@@ -225,7 +225,12 @@ namespace Neos.IdentityServer.MultiFactor
             if (string.IsNullOrEmpty(AssemblyFulldescription))
                 return null;
             Assembly assembly = Assembly.Load(Utilities.ParseAssembly(AssemblyFulldescription));
+            if (assembly == null)
+                return null;
+
             Type _typetoload = assembly.GetType(Utilities.ParseType(AssemblyFulldescription));
+            if (_typetoload == null)
+                return null;
 
             if (_typetoload.IsClass && !_typetoload.IsAbstract && _typetoload.GetInterface("IExternalProvider") != null)
                 return (IExternalProvider)Activator.CreateInstance(_typetoload, true); // Allow Calling internal Constructors
@@ -241,7 +246,12 @@ namespace Neos.IdentityServer.MultiFactor
             if (string.IsNullOrEmpty(AssemblyFulldescription))
                 return false;
             Assembly assembly = Assembly.Load(Utilities.ParseAssembly(AssemblyFulldescription));
+            if (assembly == null)
+                return false;
+
             Type _typetoload = assembly.GetType(Utilities.ParseType(AssemblyFulldescription));
+            if (_typetoload == null)
+                return false;
 
             if (_typetoload.IsClass && !_typetoload.IsAbstract && _typetoload.GetInterface("IExternalProvider") != null)
                 return false;

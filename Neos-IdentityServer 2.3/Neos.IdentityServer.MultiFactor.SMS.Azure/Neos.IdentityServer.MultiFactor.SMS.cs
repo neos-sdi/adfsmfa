@@ -43,7 +43,6 @@ namespace Neos.IdentityServer.Multifactor.SMS
     {
         private ExternalOTPProvider Data = null;
         private bool _isinitialized = false;
-        private bool _allowenrollment = true;
         private ForceWizardMode _forceenrollment = ForceWizardMode.Disabled;
 
         /// <summary>
@@ -89,8 +88,7 @@ namespace Neos.IdentityServer.Multifactor.SMS
         /// </summary>
         public override bool AllowEnrollment
         {
-            get { return _allowenrollment; }
-            set { _allowenrollment = value; }
+            get { return true; }
         }
 
         /// <summary>
@@ -319,7 +317,7 @@ namespace Neos.IdentityServer.Multifactor.SMS
                         Data = param.Data;
 
                         Enabled = param.Enabled;
-                        AllowEnrollment = param.EnrollWizard;
+                        WizardEnabled = param.EnrollWizard;
                         ForceEnrollment = param.ForceWizard;
                         PinRequired = param.PinRequired;
                         _isinitialized = true;

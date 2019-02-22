@@ -421,9 +421,9 @@ namespace Neos.IdentityServer.MultiFactor
                 if (!string.IsNullOrEmpty(prov.GetAccountManagementUrl(usercontext)))
                 {
                     result += "</br>";
-                    result += "<input type=\"checkbox\" id=\"manageaccount\" name=\"manageaccount\" > " + prov.GetUIAccountManagementLabel(usercontext)+ "/>";
+                    result += "<input type=\"checkbox\" id=\"manageaccount\" name=\"manageaccount\" /> " + prov.GetUIAccountManagementLabel(usercontext) + "</br>";
                 }
-                result += "<br />";
+                result += "</br>";
             }
             else
             {   // PIN Code
@@ -660,9 +660,9 @@ namespace Neos.IdentityServer.MultiFactor
                 }
                 if (!string.IsNullOrEmpty(prov.GetAccountManagementUrl(usercontext)))
                 {
-                    result += "<input type=\"checkbox\" id=\"manageaccount\" name=\"manageaccount\" > " + prov.GetUIAccountManagementLabel(usercontext) + "<br />";
+                    result += "<input type=\"checkbox\" id=\"manageaccount\" name=\"manageaccount\" /> " + prov.GetUIAccountManagementLabel(usercontext) + "</br>";
                 }
-                result += "<br />";
+                result += "</br>";
             }
             else
             {

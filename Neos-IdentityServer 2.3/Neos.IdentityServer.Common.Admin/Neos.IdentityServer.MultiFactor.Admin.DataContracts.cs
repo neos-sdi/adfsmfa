@@ -579,19 +579,19 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     }
 
     [Serializable]
-    public class FlatOTPProvider
+    public abstract class FlatBaseProvider
     {
+        private XmlCDataSection _cdata;
         public bool IsDirty { get; set; }
         public bool Enabled { get; set; }
         public bool EnrollWizard { get; set; }
-        public ForceWizardMode ForceWizard { get; set; }
-        public HashMode Algorithm { get; set; }
-        public int TOTPShadows { get; set; }
-        public OTPWizardOptions WizardOptions { get; set; }
         public bool PinRequired { get; set; }
+        public ForceWizardMode ForceWizard { get; set; }
         public string FullQualifiedImplementation { get; set; }
-        private XmlCDataSection _cdata;
 
+        /// <summary>
+        /// Parameters property
+        /// </summary>
         public XmlCDataSection Parameters
         {
             get
@@ -614,15 +614,53 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             }
         }
 
+        public abstract PreferredMethod Kind { get; }
+        public abstract void Load(PSHost host);
+        public abstract void Update(PSHost host);
+
+        /// <summary>
+        /// CkeckUpdate method implementation
+        /// </summary>
+        public virtual void CheckUpdates(PSHost host)
+        {
+            IExternalProvider prov = RuntimeAuthProvider.GetProviderInstance(Kind);
+            if (prov != null)
+            {
+                if ((!prov.AllowDisable) && (!this.Enabled))
+                    throw new Exception("This Provider cannot be Disabled !");
+                if ((!prov.AllowEnrollment) && (this.EnrollWizard)) 
+                    throw new Exception("This Provider do not support Wizards !");
+            }
+        }
+    }
+
+    [Serializable]
+    public class FlatOTPProvider: FlatBaseProvider
+    {
+        public HashMode Algorithm { get; set; }
+        public int TOTPShadows { get; set; }
+        public OTPWizardOptions WizardOptions { get; set; }
+
+        /// <summary>
+        /// Kind  Property
+        /// </summary>
+        public override PreferredMethod Kind 
+        { 
+            get 
+            { 
+                return PreferredMethod.Code; 
+            } 
+        }
+
         /// <summary>
         /// Update method implmentation
         /// </summary>
-        public void Load(PSHost host)
+        public override void Load(PSHost host)
         {
             ManagementService.Initialize(host, true);
             MFAConfig cfg = ManagementService.Config;
             OTPProvider otp = cfg.OTPProvider;
-            this.IsDirty = cfg.IsDirty;
+            this.IsDirty = cfg.IsDirty;            
             this.Enabled = otp.Enabled;
             this.EnrollWizard = otp.EnrollWizard;
             this.ForceWizard = otp.ForceWizard;
@@ -637,12 +675,13 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <summary>
         /// Update method implmentation
         /// </summary>
-        public void Update(PSHost host)
+        public override void Update(PSHost host)
         {
             ManagementService.Initialize(host, true);
             MFAConfig cfg = ManagementService.Config;
             OTPProvider otp = cfg.OTPProvider;
             cfg.IsDirty = true;
+            CheckUpdates(host);
             otp.Enabled = this.Enabled;
             otp.EnrollWizard = this.EnrollWizard;
             otp.ForceWizard = this.ForceWizard;
@@ -657,24 +696,29 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     }
 
     [Serializable]
-    public class FlatExternalProvider
+    public class FlatExternalProvider: FlatBaseProvider
     {
-        public bool IsDirty { get; set; }
-        public bool Enabled { get; set; }
-        public bool EnrollWizard { get; set; }
-        public ForceWizardMode ForceWizard { get; set; }
         public string Company { get; set; }
         public string Sha1Salt { get; set; }
-        public string FullQualifiedImplementation  { get; set; }
-        public bool PinRequired { get; set; }
-        public string Parameters  { get; set; }
         public bool IsTwoWay  { get; set; }
         public int Timeout  { get; set; }
 
         /// <summary>
+        /// Kind  Property
+        /// </summary>
+        public override PreferredMethod Kind
+        {
+            get
+            {
+                return PreferredMethod.External;
+            }
+        }
+
+
+        /// <summary>
         /// Update method implmentation
         /// </summary>
-        public void Load(PSHost host)
+        public override void Load(PSHost host)
         {
             ManagementService.Initialize(host, true);
             MFAConfig cfg = ManagementService.Config;
@@ -689,18 +733,19 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             this.Sha1Salt = otp.Sha1Salt;
             this.Timeout = otp.Timeout;
             this.PinRequired = otp.PinRequired;
-            this.Parameters = otp.Parameters.InnerText;
+            this.Parameters = otp.Parameters;
         }
 
         /// <summary>
         /// Update method implmentation
         /// </summary>
-        public void Update(PSHost host)
+        public override void Update(PSHost host)
         {
             ManagementService.Initialize(host, true);
             MFAConfig cfg = ManagementService.Config;
             ExternalOTPProvider otp = cfg.ExternalProvider;
             cfg.IsDirty = true;
+            CheckUpdates(host);
             otp.Enabled = this.Enabled;
             otp.EnrollWizard = this.EnrollWizard;
             otp.ForceWizard = this.ForceWizard;
@@ -709,27 +754,33 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             otp.IsTwoWay = this.IsTwoWay;
             otp.Sha1Salt = this.Sha1Salt;
             otp.Timeout = this.Timeout;
-            otp.Parameters.InnerText = this.Parameters;
+            otp.Parameters = this.Parameters;
             otp.PinRequired = this.PinRequired;
             ManagementService.ADFSManager.WriteConfiguration(host);
         }
     }
 
     [Serializable]
-    public class FlatAzureProvider
+    public class FlatAzureProvider: FlatBaseProvider
     {
-        public bool IsDirty { get; set; }
-        public bool Enabled { get; set; }
-        public bool EnrollWizard { get; set; }
-        public ForceWizardMode ForceWizard { get; set; }
         public string TenantId { get; set; }
         public string ThumbPrint { get; set; }
-        public bool PinRequired { get; set; }
+
+        /// <summary>
+        /// Kind  Property
+        /// </summary>
+        public override PreferredMethod Kind
+        {
+            get
+            {
+                return PreferredMethod.Azure;
+            }
+        }
 
         /// <summary>
         /// Update method implmentation
         /// </summary>
-        public void Load(PSHost host)
+        public override void Load(PSHost host)
         {
             ManagementService.Initialize(host, true);
             MFAConfig cfg = ManagementService.Config;
@@ -746,15 +797,17 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <summary>
         /// Update method implmentation
         /// </summary>
-        public void Update(PSHost host)
+        public override void Update(PSHost host)
         {
             ManagementService.Initialize(host, true);
             MFAConfig cfg = ManagementService.Config;
             AzureProvider otp = cfg.AzureProvider;
             cfg.IsDirty = true;
-            otp.Enabled = this.Enabled;
-            otp.EnrollWizard = this.EnrollWizard;
-            otp.ForceWizard = this.ForceWizard;
+            CheckUpdates(host);
+            otp.Enabled = Enabled;
+            otp.EnrollWizard = false;
+            otp.ForceWizard = ForceWizardMode.Disabled;
+            otp.PinRequired = false;
             otp.TenantId = this.TenantId;
             otp.ThumbPrint = this.ThumbPrint;
             otp.PinRequired = this.PinRequired;
@@ -763,50 +816,20 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     }
 
     [Serializable]
-    public class FlatConfigMail
+    public class FlatConfigMail: FlatBaseProvider
     {
-        public bool IsDirty { get; set; }
-        public bool Enabled { get; set; }
-        public bool EnrollWizard { get; set; }
-        public ForceWizardMode ForceWizard { get; set; }
         public string From { get; set; }
         public string UserName { get; set; }
         public string Password { get; set; }
         public string Host { get; set; }
         public int Port { get; set; }
         public bool UseSSL { get; set; }
-        public bool PinRequired { get; set; }
         public string Company { get; set; }
         public bool Anonymous { get; set; }
-        public string FullQualifiedImplementation { get; set; }
-        private XmlCDataSection _cdata;
         public FlatConfigMailBlockedDomains BlockedDomains { get; set; }
         public List<FlatConfigMailFileName> MailOTPContent { get; set; }
         public List<FlatConfigMailFileName> MailAdminContent { get; set; }
         public List<FlatConfigMailFileName> MailKeyContent { get; set; }
-
-
-        public XmlCDataSection Parameters
-        {
-            get
-            {
-                if (_cdata == null)
-                {
-                    XmlDocument doc = new XmlDocument();
-                    _cdata = doc.CreateCDataSection(null);
-                }
-                return _cdata;
-            }
-            set
-            {
-                if (_cdata == null)
-                {
-                    XmlDocument doc = new XmlDocument();
-                    _cdata = doc.CreateCDataSection(null);
-                }
-                _cdata.Data = value.Data;
-            }
-        }
 
         public FlatConfigMail()
         {
@@ -817,9 +840,21 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         }
 
         /// <summary>
+        /// Kind  Property
+        /// </summary>
+        public override PreferredMethod Kind
+        {
+            get
+            {
+                return PreferredMethod.Email;
+            }
+        }
+
+
+        /// <summary>
         /// Update method implmentation
         /// </summary>
-        public void Load(PSHost host)
+        public override void Load(PSHost host)
         {
             ManagementService.Initialize(host, true);
             MFAConfig cfg = ManagementService.Config;
@@ -866,12 +901,13 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <summary>
         /// Update method implmentation
         /// </summary>
-        public void Update(PSHost host)
+        public override void Update(PSHost host)
         {
             ManagementService.Initialize(host, true);
             MFAConfig cfg = ManagementService.Config;
             MailProvider mail = cfg.MailProvider;
-            cfg.IsDirty = IsDirty;
+            cfg.IsDirty = true;
+            CheckUpdates(host);
             mail.Enabled = Enabled;
             mail.EnrollWizard = EnrollWizard;
             mail.ForceWizard = ForceWizard;
@@ -911,7 +947,6 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             ManagementService.ADFSManager.WriteConfiguration(host);
         }
     }
-
 
     [Serializable]
     public class FlatConfigMailBlockedDomains

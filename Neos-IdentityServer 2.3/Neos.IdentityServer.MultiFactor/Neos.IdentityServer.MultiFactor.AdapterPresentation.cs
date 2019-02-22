@@ -333,7 +333,7 @@ namespace Neos.IdentityServer.MultiFactor
                     if (prov.AllowOverride)
                     {
                         ov = prov.GetOverrideMethod(usercontext);
-                        result += "<input id=\"optiongroup\" name=\"optionitem\" type=\"radio\" value=\"Default\" checked=\"checked\" /> " + prov.GetUIDefaultChoiceLabel(usercontext) + "</br>";
+                        result += "<input id=\"optiongroup\" name=\"optionitem\" type=\"radio\" value=\"Default\" checked=\"checked\" /> " + prov.GetUIDefaultChoiceLabel(usercontext) + "</br></br>";
                     }
                     int i = 1;
                     foreach (AvailableAuthenticationMethod met in lst)
@@ -377,9 +377,9 @@ namespace Neos.IdentityServer.MultiFactor
                 if (!string.IsNullOrEmpty(prov.GetAccountManagementUrl(usercontext)))
                 {
                     result += "</br>";
-                    result += "<input type=\"checkbox\" id=\"manageaccount\" name=\"manageaccount\" > " + prov.GetUIAccountManagementLabel(usercontext) + "/>";
+                    result += "<input type=\"checkbox\" id=\"manageaccount\" name=\"manageaccount\" /> " + prov.GetUIAccountManagementLabel(usercontext) + "</br>";
                 }
-                result += "<br />";
+                result += "</br>";
             }
             else
             {   // PIN Code
@@ -622,9 +622,9 @@ namespace Neos.IdentityServer.MultiFactor
                 if (!string.IsNullOrEmpty(prov.GetAccountManagementUrl(usercontext)))
                 {
                     result += "</br>";
-                    result += "<input type=\"checkbox\" id=\"manageaccount\" name=\"manageaccount\" > " + prov.GetUIAccountManagementLabel(usercontext) + "<br />";
+                    result += "<input type=\"checkbox\" id=\"manageaccount\" name=\"manageaccount\" /> " + prov.GetUIAccountManagementLabel(usercontext) + "</br>";
                 }
-                result += "<br />";
+                result += "</br>";
             }
             else
             {   // PIN Code

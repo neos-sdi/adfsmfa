@@ -716,6 +716,45 @@ namespace MFA
     }
     #endregion
 
+    #region PSConfigBaseProvider
+    /// <summary>
+    /// PSConfigBaseProvider class
+    /// <para type="synopsis">configuration properties in MFA System.</para>
+    /// </summary>
+    public abstract class PSConfigBaseProvider
+    {
+        /// <summary>
+        /// <para type="description">Provider Enabled property.</para>
+        /// </summary>
+        public bool Enabled { get; set; }
+
+        /// <summary>
+        /// <para type="description">Provider Enrollment Wizard Enabled property.</para>
+        /// </summary>
+        public bool EnrollWizard { get; set; }
+
+        /// <summary>
+        /// <para type="description">Provider Force Wizard if user dosen't complete during signing.</para>
+        /// </summary>
+        public PSForceWizardMode ForceWizard { get; set; }
+
+        /// <summary>
+        /// <para type="description">Set if additionnal verification with PIN (locally administered) must be done.</para>
+        /// </summary>
+        public bool PinRequired { get; set; }
+
+        /// <summary>
+        /// <para type="description">Full qualified implementation class for replacing default provider.</para>
+        /// </summary>
+        public string FullQualifiedImplementation { get; set; }
+
+        /// <summary>
+        /// <para type="description">Full qualified implementation parameters for replacing default provider.</para>
+        /// </summary>
+        public string Parameters { get; set; }
+    }
+    #endregion
+
     #region PSConfigTOTPProvider
     /// <summary>
     /// PSConfigTOTPProvider class
@@ -723,23 +762,8 @@ namespace MFA
     /// <para type="description">provided for TOTP MFA.</para>
     /// <para type="description">Typically this component is used with authenticator applications, Notification and more.</para>
     /// </summary>
-    public class PSConfigTOTPProvider
+    public class PSConfigTOTPProvider: PSConfigBaseProvider
     {
-        /// <summary>
-        /// <para type="description">TOTP Provider Enabled property.</para>
-        /// </summary>
-        public bool Enabled { get; set; }
-
-        /// <summary>
-        /// <para type="description">TOTP Provider Enrollment Wizard Enabled property.</para>
-        /// </summary>
-        public bool EnrollWizard { get; set; }
-
-        /// <summary>
-        /// <para type="description">TOTP Provider Force Wizard if user dosen't complete during signing.</para>
-        /// </summary>
-        public PSForceWizardMode ForceWizard { get; set; }
-
         /// <summary>
         /// <para type="description">TOTP Provider Shadow codes. 2 by default</para>
         /// </summary>
@@ -751,24 +775,9 @@ namespace MFA
         public PSHashMode Algorithm { get; set; }
 
         /// <summary>
-        /// <para type="description">Set if additionnal verification with PIN (locally administered) must be done.</para>
-        /// </summary>
-        public bool PinRequired { get; set; }
-
-        /// <summary>
         /// <para type="description">Set TOP Wizard Application list enabled/ disabled.</para>
         /// </summary>
         public PSOTPWizardOptions WizardOptions { get; set; }
-
-        /// <summary>
-        /// <para type="description">Full qualified implementation class for replacing default otp provider.</para>
-        /// </summary>
-        public string FullQualifiedImplementation { get; set; }
-
-        /// <summary>
-        /// <para type="description">Full qualified implementation parameters for replacing default otp provider.</para>
-        /// </summary>
-        public string Parameters { get; set; }
 
         /// <summary>
         /// explicit operator from PSConfigTOTPProvider
@@ -829,23 +838,8 @@ namespace MFA
     /// <example>
     ///   <para>Get-MFAConfigMail</para>
     /// </example>
-    public class PSConfigMailProvider
+    public class PSConfigMailProvider: PSConfigBaseProvider
     {
-        /// <summary>
-        /// <para type="description">Mail Provider Enabled property.</para>
-        /// </summary>
-        public bool Enabled { get; set; }
-
-        /// <summary>
-        /// <para type="description">Mail Provider Enrollment Wizard Enabled property.</para>
-        /// </summary>
-        public bool EnrollWizard { get; set; }
-
-        /// <summary>
-        /// <para type="description">Mail Provider Force Wizard if user dosen't complete during signing.</para>
-        /// </summary>
-        public PSForceWizardMode ForceWizard { get; set; }
-
         /// <summary>
         /// <para type="description">Mail from property.</para>
         /// </summary>
@@ -882,24 +876,9 @@ namespace MFA
         public string Company { get; set; }
 
         /// <summary>
-        /// <para type="description">indicate if IN validation is required with Mail.</para>
-        /// </summary>
-        public bool PinRequired { get; set; }
-
-        /// <summary>
         /// <para type="description">indicate if connetion is Anonymous.</para>
         /// </summary>
         public bool Anonymous { get; set; }
-
-        /// <summary>
-        /// <para type="description">Full qualified implementation class for replacing default mail provider.</para>
-        /// </summary>
-        public string FullQualifiedImplementation { get; set; }
-
-        /// <summary>
-        /// <para type="description">Full qualified implementation parameters for replacing default mail provider.</para>
-        /// </summary>
-        public string Parameters { get; set; }
 
         /// <summary>
         /// <para type="description">List of domains that are not allowed.</para>
@@ -1229,23 +1208,8 @@ namespace MFA
     /// <para type="description">Samples are provided for Azure and custom.</para>
     /// <para type="description">Typically this component is used when sending SMS, you can use your own SMS gateway.</para>
     /// </summary>
-    public class PSConfigExternalProvider
+    public class PSConfigExternalProvider: PSConfigBaseProvider
     {
-        /// <summary>
-        /// <para type="description">External Provider Enabled property.</para>
-        /// </summary>
-        public bool Enabled { get; set; }
-
-        /// <summary>
-        /// <para type="description">External Provider Enrollment Wizard Enabled property.</para>
-        /// </summary>
-        public bool EnrollWizard { get; set; }
-
-        /// <summary>
-        /// <para type="description">External Provider Force Wizard if user dosen't complete during signing.</para>
-        /// </summary>
-        public MFA.PSForceWizardMode ForceWizard { get; set; }
-
         /// <summary>
         /// <para type="description">your company name, can be used to format External message sent to user.</para>
         /// </summary>
@@ -1257,24 +1221,9 @@ namespace MFA
         public string Sha1Salt { get; set; }
 
         /// <summary>
-        /// <para type="description">Full qualified assembly ref that implements IExternalOTPProvider, see sample implementation of Neos.IdentityServer.Multifactor.SMS.SMSCall</para>
-        /// </summary>
-        public string FullQualifiedImplementation { get; set; }
-
-        /// <summary>
-        /// <para type="description">Specify your own parameters, values stored as CData, set it as string with Parameters = "myparameters"</para>
-        /// </summary>
-        public string Parameters { get; set; }
-
-        /// <summary>
         /// <para type="description">Pass parameter to your implemented provider, indicating if the mode is Request/Response</para>
         /// </summary>
         public bool IsTwoWay { get; set; }
-
-        /// <summary>
-        /// <para type="description">indicate if IN validation is required with Mail.</para>
-        /// </summary>
-        public bool PinRequired { get; set; }
 
         /// <summary>
         /// <para type="description">TimeOut Before cancelling operation</para>
@@ -1300,7 +1249,7 @@ namespace MFA
                 target.Sha1Salt = otp.Sha1Salt;
                 target.Timeout = otp.Timeout;
                 target.PinRequired = otp.PinRequired;
-                target.Parameters = otp.Parameters;
+                target.Parameters = otp.Parameters.InnerText;
                 return target;
             }
         }
@@ -1325,7 +1274,7 @@ namespace MFA
                 target.Sha1Salt = otp.Sha1Salt;
                 target.Timeout = otp.Timeout;
                 target.PinRequired = otp.PinRequired;
-                target.Parameters = otp.Parameters;
+                target.Parameters.InnerText = otp.Parameters;
                 return target;
             }
         }
@@ -1340,23 +1289,8 @@ namespace MFA
     /// <para type="description">Typically this component is used when sending SMS, Notification and more.</para>
     /// <para type="description">Note : everthing is managed by Microsoft MFA Remotely.</para>
     /// </summary>
-    public class PSConfigAzureProvider
+    public class PSConfigAzureProvider: PSConfigBaseProvider
     {
-        /// <summary>
-        /// <para type="description">Azure Provider Enabled property.</para>
-        /// </summary>
-        public bool Enabled { get; set; }
-
-        /// <summary>
-        /// <para type="description">Azure Provider Enrollment Wizard Enabled property.</para>
-        /// </summary>
-        public bool EnrollWizard { get; set; }
-
-        /// <summary>
-        /// <para type="description">Azure Provider Force Wizard if user dosen't complete during signing.</para>
-        /// </summary>
-        public MFA.PSForceWizardMode ForceWizard { get; set; }
-
         /// <summary>
         /// <para type="description">your Azure/o365 tenantId / tenant name.</para>
         /// </summary>
@@ -1368,12 +1302,7 @@ namespace MFA
         public string Thumbprint { get; set; }
 
         /// <summary>
-        /// <para type="description">Set if additionnal verification with PIN (locally administered) must be done.</para>
-        /// </summary>
-        public bool PinRequired { get; set; }
-
-        /// <summary>
-        /// explicit operator from MMCKeysConfig
+        /// explicit operator from PSConfigAzureProvider
         /// </summary>
         public static explicit operator PSConfigAzureProvider(FlatAzureProvider otp)
         {
@@ -1388,6 +1317,8 @@ namespace MFA
                 target.EnrollWizard = false;
                 target.ForceWizard = MFA.PSForceWizardMode.Disabled;
                 target.PinRequired = otp.PinRequired;
+                target.FullQualifiedImplementation = otp.FullQualifiedImplementation;
+                target.Parameters = otp.Parameters.InnerText;
                 return target;
             }
         }
@@ -1409,6 +1340,8 @@ namespace MFA
                 target.EnrollWizard = false;
                 target.ForceWizard = ForceWizardMode.Disabled;
                 target.PinRequired = otp.PinRequired;
+                target.FullQualifiedImplementation = otp.FullQualifiedImplementation;
+                target.Parameters.InnerText = otp.Parameters;
                 return target;
             }
         }
