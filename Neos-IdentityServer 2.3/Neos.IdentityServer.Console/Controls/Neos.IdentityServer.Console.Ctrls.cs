@@ -3033,7 +3033,7 @@ namespace Neos.IdentityServer.Console.Controls
                     else
                         errors.SetError(txtEnabledAttribute, "");
 
-                    if (!ManagementService.CheckADDSAttribute(txtDomainName.Text, txtUserName.Text, txtPassword.Text, txtKeyAttribute.Text, false))
+                    if (!ManagementService.CheckADDSAttribute(txtDomainName.Text, txtUserName.Text, txtPassword.Text, txtKeyAttribute.Text, true))
                         errors.SetError(txtKeyAttribute, res.CTRLADATTKEYERROR);
                     else
                         errors.SetError(txtKeyAttribute, "");
@@ -3311,7 +3311,7 @@ namespace Neos.IdentityServer.Console.Controls
                 if (txtKeyAttribute.Modified)
                 {
                     ManagementService.ADFSManager.SetDirty(true);
-                    if (!ManagementService.CheckADDSAttribute(txtDomainName.Text, txtUserName.Text, txtPassword.Text, txtKeyAttribute.Text, false))
+                    if (!ManagementService.CheckADDSAttribute(txtDomainName.Text, txtUserName.Text, txtPassword.Text, txtKeyAttribute.Text, true))
                         throw new Exception(res.CTRLADATTKEYERROR);
                     Config.Hosts.ActiveDirectoryHost.keyAttribute = txtKeyAttribute.Text;
                     errors.SetError(txtKeyAttribute, "");

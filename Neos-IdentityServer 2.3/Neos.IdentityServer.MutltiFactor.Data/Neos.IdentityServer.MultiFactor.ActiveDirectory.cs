@@ -26,6 +26,7 @@ using System.Security.Principal;
 
 namespace Neos.IdentityServer.MultiFactor.Data
 {
+    #region ADDS Service
     internal class ADDSDataRepositoryService : DataRepositoryService, IDataRepositoryADDSConnection
     {
         private ADDSHost _host;
@@ -43,157 +44,8 @@ namespace Neos.IdentityServer.MultiFactor.Data
             _host = host;
             _deliverywindow = deliverywindow;
             _host.Bind();
-            _mailismulti = IsMultivaluedAttribute(_host.DomainName, _host.Account, _host.Password, _host.mailAttribute);
-            _phoneismulti = IsMultivaluedAttribute(_host.DomainName, _host.Account, _host.Password, _host.phoneAttribute);
-        }
-
-        /// <summary>
-        /// GetMultiValued method implementation
-        /// </summary>
-        private string GetMultiValued(PropertyValueCollection props, bool ismultivalued)
-        {
-            if (props == null)
-                return null;
-            if (!ismultivalued)
-            {
-                if (props.Value != null)
-                    return props.Value as string;
-                else
-                    return null;
-            }
-            else
-            {
-                switch (props.Count)
-                {
-                    case 0:
-                        return null;
-                    case 1:
-                        if (props.Value == null)
-                            return null;
-                        if (props.Value is string)
-                        {
-                            string so = props.Value as string;
-                            if (HasSetMultiValued(so))
-                                return SetMultiValuedHeader(so, false);
-                            else
-                                return so; // Allow return of original value, because only one value. after update an new value wil be tagged
-                        }
-                        break;
-                    default:
-                        foreach (object o2 in props)
-                        {
-                            if (o2 == null)
-                                continue;
-                            if (o2 is string)
-                            {
-                                string so2 = o2 as string;
-                                if (HasSetMultiValued(so2))
-                                    return SetMultiValuedHeader(so2, false);
-                            }
-                        }
-                        break;
-                }
-            }
-            return null;
-        }
-
-        /// <summary>
-        /// SetMultiValued method implementation
-        /// </summary>
-        private void SetMultiValued(PropertyValueCollection props, bool ismultivalued, string value)
-        {
-            if (props == null)
-                return;
-            if (!ismultivalued)
-            {
-                if (string.IsNullOrEmpty(value))
-                    props.Clear();
-                else
-                    props.Value = value;
-            }
-            else
-            {
-                switch (props.Count)
-                {
-                    case 0:
-                        if (!string.IsNullOrEmpty(value))
-                           props.Add(SetMultiValuedHeader(value));
-                        break;
-                    case 1:
-                        if (props.Value == null)
-                            return;
-                        if (props.Value is string)
-                        {
-                            string so = props.Value as string;
-                            if (string.IsNullOrEmpty(value))
-                            {
-                                props.Remove(so);  // Clean value anyway
-                                return;
-                            }
-                            if (HasSetMultiValued(so))
-                               props.Value = SetMultiValuedHeader(value);
-                            else
-                                props.Add(SetMultiValuedHeader(value));
-                        }                       
-                        break;
-                    default:
-                        int j = props.Count;
-                        for (int i = 0; i < j; i++)
-                        {
-                            if (props[i] != null)
-                            {
-                                if (props[i] is string)
-                                {
-                                    string so2 = props[i] as string;
-                                    if (HasSetMultiValued(so2))
-                                    {
-                                        if (string.IsNullOrEmpty(value))
-                                            props.Remove(so2);
-                                        else
-                                            props[i] = SetMultiValuedHeader(value);
-                                        return;
-                                    }
-                                }
-                            }
-                        }
-                        if (!string.IsNullOrEmpty(value))
-                            props.Add(SetMultiValuedHeader(value)); // Add tagged value if not null
-                        break;
-                }
-            }
-        }
-
-        /// <summary>
-        /// HasSetMultiValued method implementation
-        /// </summary>
-        private bool HasSetMultiValued(string value)
-        {
-            if (value == null)
-                return false;
-            return (value.ToLower().StartsWith("mfa:"));
-        }
-
-        /// <summary>
-        /// SetMultiValuedHeader method implementation
-        /// </summary>
-        private string SetMultiValuedHeader(string value, bool addheader = true)
-        {
-            if (string.IsNullOrEmpty(value))
-                return null;
-            if (addheader)
-            {
-                if (HasSetMultiValued(value))
-                    return value;
-                else
-                    return "mfa:" + value;
-            }
-            else
-            {
-                if (!HasSetMultiValued(value))
-                    return value;
-                else
-                    return value.Replace("mfa:", "");
-            }
+            _mailismulti = ADDSUtils.IsMultivaluedAttribute(_host.DomainName, _host.Account, _host.Password, _host.mailAttribute);
+            _phoneismulti = ADDSUtils.IsMultivaluedAttribute(_host.DomainName, _host.Account, _host.Password, _host.phoneAttribute);
         }
 
         /// <summary>
@@ -229,14 +81,14 @@ namespace Neos.IdentityServer.MultiFactor.Data
                                 {
                                     reg.ID = new Guid((byte[])DirEntry.Properties["objectGUID"].Value).ToString();
                                     reg.UPN = DirEntry.Properties["userPrincipalName"].Value.ToString();
-                                    if (GetMultiValued(DirEntry.Properties[_host.mailAttribute], _mailismulti) != null)
+                                    if (ADDSUtils.GetMultiValued(DirEntry.Properties[_host.mailAttribute], _mailismulti) != null)
                                     {
-                                        reg.MailAddress = GetMultiValued(DirEntry.Properties[_host.mailAttribute], _mailismulti);
+                                        reg.MailAddress = ADDSUtils.GetMultiValued(DirEntry.Properties[_host.mailAttribute], _mailismulti);
                                         reg.IsRegistered = true;
                                     }
-                                    if (GetMultiValued(DirEntry.Properties[_host.phoneAttribute], _phoneismulti) != null)
+                                    if (ADDSUtils.GetMultiValued(DirEntry.Properties[_host.phoneAttribute], _phoneismulti) != null)
                                     {
-                                        reg.PhoneNumber = GetMultiValued(DirEntry.Properties[_host.phoneAttribute], _phoneismulti);
+                                        reg.PhoneNumber = ADDSUtils.GetMultiValued(DirEntry.Properties[_host.phoneAttribute], _phoneismulti);
                                         reg.IsRegistered = true;
                                     }
 
@@ -331,8 +183,8 @@ namespace Neos.IdentityServer.MultiFactor.Data
                         {
                             using (DirectoryEntry DirEntry = ADDSUtils.GetDirectoryEntry(_host, sr))
                             {
-                                SetMultiValued(DirEntry.Properties[_host.mailAttribute], _mailismulti, reg.MailAddress);
-                                SetMultiValued(DirEntry.Properties[_host.phoneAttribute], _phoneismulti, reg.PhoneNumber);
+                                ADDSUtils.SetMultiValued(DirEntry.Properties[_host.mailAttribute], _mailismulti, reg.MailAddress);
+                                ADDSUtils.SetMultiValued(DirEntry.Properties[_host.phoneAttribute], _phoneismulti, reg.PhoneNumber);
 
                                 if (!disableoninsert) // disable change if not explicitely done
                                 {
@@ -401,8 +253,8 @@ namespace Neos.IdentityServer.MultiFactor.Data
                         {
                             using (DirectoryEntry DirEntry = ADDSUtils.GetDirectoryEntry(_host, sr))
                             {
-                                 SetMultiValued(DirEntry.Properties[_host.mailAttribute], _mailismulti, reg.MailAddress);
-                                 SetMultiValued(DirEntry.Properties[_host.phoneAttribute], _phoneismulti, reg.PhoneNumber);
+                                ADDSUtils.SetMultiValued(DirEntry.Properties[_host.mailAttribute], _mailismulti, reg.MailAddress);
+                                ADDSUtils.SetMultiValued(DirEntry.Properties[_host.phoneAttribute], _phoneismulti, reg.PhoneNumber);
 
                                 if (!disableoninsert) // disable change if not explicitely done
                                 {
@@ -466,8 +318,8 @@ namespace Neos.IdentityServer.MultiFactor.Data
                         {
                             using (DirectoryEntry DirEntry = ADDSUtils.GetDirectoryEntry(_host, sr))
                             {
-                                SetMultiValued(DirEntry.Properties[_host.mailAttribute], _mailismulti, string.Empty);
-                                SetMultiValued(DirEntry.Properties[_host.phoneAttribute], _phoneismulti, string.Empty);
+                                ADDSUtils.SetMultiValued(DirEntry.Properties[_host.mailAttribute], _mailismulti, string.Empty);
+                                ADDSUtils.SetMultiValued(DirEntry.Properties[_host.phoneAttribute], _phoneismulti, string.Empty);
                                 DirEntry.Properties[_host.totpEnabledAttribute].Clear();
                                 DirEntry.Properties[_host.methodAttribute].Clear();
                                 DirEntry.Properties[_host.overridemethodAttribute].Clear();
@@ -733,14 +585,14 @@ namespace Neos.IdentityServer.MultiFactor.Data
                                             {
                                                 reg.ID = new Guid((byte[])DirEntry.Properties["objectGUID"].Value).ToString();
                                                 reg.UPN = DirEntry.Properties["userPrincipalName"].Value.ToString();
-                                                if (GetMultiValued(DirEntry.Properties[_host.mailAttribute], _mailismulti) != null)
+                                                if (ADDSUtils.GetMultiValued(DirEntry.Properties[_host.mailAttribute], _mailismulti) != null)
                                                 {
-                                                    reg.MailAddress = GetMultiValued(DirEntry.Properties[_host.mailAttribute], _mailismulti);
+                                                    reg.MailAddress = ADDSUtils.GetMultiValued(DirEntry.Properties[_host.mailAttribute], _mailismulti);
                                                     reg.IsRegistered = true;
                                                 }
-                                                if (GetMultiValued(DirEntry.Properties[_host.phoneAttribute], _phoneismulti) != null)
+                                                if (ADDSUtils.GetMultiValued(DirEntry.Properties[_host.phoneAttribute], _phoneismulti) != null)
                                                 {
-                                                    reg.PhoneNumber = GetMultiValued(DirEntry.Properties[_host.phoneAttribute], _phoneismulti);
+                                                    reg.PhoneNumber = ADDSUtils.GetMultiValued(DirEntry.Properties[_host.phoneAttribute], _phoneismulti);
                                                     reg.IsRegistered = true;
                                                 }
                                                 if (DirEntry.Properties[_host.methodAttribute].Value != null)
@@ -858,14 +710,14 @@ namespace Neos.IdentityServer.MultiFactor.Data
                                         reg.ID = new Guid((byte[])DirEntry.Properties["objectGUID"].Value).ToString();
                                         reg.UPN = DirEntry.Properties["userPrincipalName"].Value.ToString();
 
-                                        if (GetMultiValued(DirEntry.Properties[_host.mailAttribute], _mailismulti) != null)
+                                        if (ADDSUtils.GetMultiValued(DirEntry.Properties[_host.mailAttribute], _mailismulti) != null)
                                         {
-                                            reg.MailAddress = GetMultiValued(DirEntry.Properties[_host.mailAttribute], _mailismulti);
+                                            reg.MailAddress = ADDSUtils.GetMultiValued(DirEntry.Properties[_host.mailAttribute], _mailismulti);
                                             reg.IsRegistered = true;
                                         }
-                                        if (GetMultiValued(DirEntry.Properties[_host.phoneAttribute], _phoneismulti) != null)
+                                        if (ADDSUtils.GetMultiValued(DirEntry.Properties[_host.phoneAttribute], _phoneismulti) != null)
                                         {
-                                            reg.PhoneNumber = GetMultiValued(DirEntry.Properties[_host.phoneAttribute], _phoneismulti);
+                                            reg.PhoneNumber = ADDSUtils.GetMultiValued(DirEntry.Properties[_host.phoneAttribute], _phoneismulti);
                                             reg.IsRegistered = true;
                                         }
 
@@ -1030,9 +882,9 @@ namespace Neos.IdentityServer.MultiFactor.Data
                                         if (DirEntry.Properties["objectGUID"].Value != null)
                                         {
 
-                                            if (GetMultiValued(DirEntry.Properties[_host.mailAttribute], _mailismulti) != null)
+                                            if (ADDSUtils.GetMultiValued(DirEntry.Properties[_host.mailAttribute], _mailismulti) != null)
                                                 IsRegistered = true;
-                                            if (GetMultiValued(DirEntry.Properties[_host.phoneAttribute], _phoneismulti) != null)
+                                            if (ADDSUtils.GetMultiValued(DirEntry.Properties[_host.phoneAttribute], _phoneismulti) != null)
                                                 IsRegistered = true;
 
                                             if (DirEntry.Properties[_host.methodAttribute].Value != null)
@@ -1236,9 +1088,9 @@ namespace Neos.IdentityServer.MultiFactor.Data
                         {
                             if (DirEntry.Properties["objectGUID"].Value != null)
                             {
-                                if (GetMultiValued(DirEntry.Properties[_host.mailAttribute], _mailismulti) != null)
+                                if (ADDSUtils.GetMultiValued(DirEntry.Properties[_host.mailAttribute], _mailismulti) != null)
                                     return true;
-                                if (GetMultiValued(DirEntry.Properties[_host.phoneAttribute], _phoneismulti) != null)
+                                if (ADDSUtils.GetMultiValued(DirEntry.Properties[_host.phoneAttribute], _phoneismulti) != null)
                                     return true;
                                 if (DirEntry.Properties[_host.methodAttribute].Value != null)
                                     return true;
@@ -1317,56 +1169,21 @@ namespace Neos.IdentityServer.MultiFactor.Data
             }
             return false;
         }
+     }
+    #endregion
 
-        /// <summary>
-        /// IsMultivaluedAttribute method implmentation
-        /// </summary>
-        public bool IsMultivaluedAttribute(string domainname, string username, string password, string attributename)
-        {
-            DirectoryContext ctx = null;
-            if (!string.IsNullOrEmpty(domainname))
-            {
-                if (!string.IsNullOrEmpty(username) || !string.IsNullOrEmpty(password))
-                    ctx = new DirectoryContext(DirectoryContextType.Domain, domainname, username, password);
-                else
-                    ctx = new DirectoryContext(DirectoryContextType.Domain, domainname);
-            }
-            else
-            {
-                if (!string.IsNullOrEmpty(username) || !string.IsNullOrEmpty(password))
-                    ctx = new DirectoryContext(DirectoryContextType.Domain, username, password);
-                else
-                    ctx = new DirectoryContext(DirectoryContextType.Domain);
-            }
-            if (ctx != null)
-            {
-                using (Domain dom = Domain.GetDomain(ctx))
-                {
-                    using (Forest forest = dom.Forest)
-                    {
-                        var userClass = forest.Schema.FindClass("user");
-                        foreach (ActiveDirectorySchemaProperty property in userClass.GetAllProperties())
-                        {
-                            if (property.Name.Equals(attributename))
-                                return !property.IsSingleValued;
-                        }
-                    }
-                }
-            }
-            return false;
-        }
-    }
-
-     internal class ADDSKeysRepositoryService: KeysRepositoryService
+    #region ADDS Keys Service
+    internal class ADDSKeysRepositoryService: KeysRepositoryService
      {
-         ADDSHost _host;
-
+        private ADDSHost _host;
+        private bool _keysismulti = false;
         /// <summary>
          /// ADDSKeysRepositoryService constructor
         /// </summary>
         public ADDSKeysRepositoryService(MFAConfig cfg)
         {
             _host = cfg.Hosts.ActiveDirectoryHost;
+            _keysismulti = ADDSUtils.IsMultivaluedAttribute(_host.DomainName, _host.Account, _host.Password, _host.keyAttribute);
         }
 
          #region Keys Management
@@ -1396,8 +1213,8 @@ namespace Neos.IdentityServer.MultiFactor.Data
                              {
                                  if (DirEntry.Properties["objectGUID"].Value != null)
                                  {
-                                     if (DirEntry.Properties[_host.keyAttribute].Value != null)
-                                         ret = DirEntry.Properties[_host.keyAttribute].Value.ToString();
+                                     if (ADDSUtils.GetMultiValued(DirEntry.Properties[_host.mailAttribute], _keysismulti) != null)
+                                         ret = ADDSUtils.GetMultiValued(DirEntry.Properties[_host.mailAttribute], _keysismulti);
                                  }
                                  else
                                      return string.Empty;
@@ -1436,7 +1253,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                          {
                              using (DirectoryEntry DirEntry = ADDSUtils.GetDirectoryEntry(_host, sr))
                              {
-                                 DirEntry.Properties[_host.keyAttribute].Value = secretkey;
+                                 ADDSUtils.SetMultiValued(DirEntry.Properties[_host.keyAttribute], _keysismulti, secretkey);
                                  DirEntry.CommitChanges();
                                  ret = secretkey;
                              };
@@ -1519,9 +1336,10 @@ namespace Neos.IdentityServer.MultiFactor.Data
 
          }
          #endregion       
+    }
+    #endregion
 
-     }
-
+    #region ADDS Utils
     internal static class ADDSUtils
     {
         #region Private methods
@@ -1661,5 +1479,196 @@ namespace Neos.IdentityServer.MultiFactor.Data
             return entry;
         }
         #endregion
+
+        #region MultiValued Properties
+        /// <summary>
+        /// GetMultiValued method implementation
+        /// </summary>
+        internal static string GetMultiValued(PropertyValueCollection props, bool ismultivalued)
+        {
+            if (props == null)
+                return null;
+            if (!ismultivalued)
+            {
+                if (props.Value != null)
+                    return props.Value as string;
+                else
+                    return null;
+            }
+            else
+            {
+                switch (props.Count)
+                {
+                    case 0:
+                        return null;
+                    case 1:
+                        if (props.Value == null)
+                            return null;
+                        if (props.Value is string)
+                        {
+                            string so = props.Value as string;
+                            if (HasSetMultiValued(so))
+                                return SetMultiValuedHeader(so, false);
+                            else
+                                return so; // Allow return of original value, because only one value. after update an new value wil be tagged
+                        }
+                        break;
+                    default:
+                        foreach (object o2 in props)
+                        {
+                            if (o2 == null)
+                                continue;
+                            if (o2 is string)
+                            {
+                                string so2 = o2 as string;
+                                if (HasSetMultiValued(so2))
+                                    return SetMultiValuedHeader(so2, false);
+                            }
+                        }
+                        break;
+                }
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// SetMultiValued method implementation
+        /// </summary>
+        internal static void SetMultiValued(PropertyValueCollection props, bool ismultivalued, string value)
+        {
+            if (props == null)
+                return;
+            if (!ismultivalued)
+            {
+                if (string.IsNullOrEmpty(value))
+                    props.Clear();
+                else
+                    props.Value = value;
+            }
+            else
+            {
+                switch (props.Count)
+                {
+                    case 0:
+                        if (!string.IsNullOrEmpty(value))
+                            props.Add(SetMultiValuedHeader(value));
+                        break;
+                    case 1:
+                        if (props.Value == null)
+                            return;
+                        if (props.Value is string)
+                        {
+                            string so = props.Value as string;
+                            if (string.IsNullOrEmpty(value))
+                            {
+                                props.Remove(so);  // Clean value anyway
+                                return;
+                            }
+                            if (HasSetMultiValued(so))
+                                props.Value = SetMultiValuedHeader(value);
+                            else
+                                props.Add(SetMultiValuedHeader(value));
+                        }
+                        break;
+                    default:
+                        int j = props.Count;
+                        for (int i = 0; i < j; i++)
+                        {
+                            if (props[i] != null)
+                            {
+                                if (props[i] is string)
+                                {
+                                    string so2 = props[i] as string;
+                                    if (HasSetMultiValued(so2))
+                                    {
+                                        if (string.IsNullOrEmpty(value))
+                                            props.Remove(so2);
+                                        else
+                                            props[i] = SetMultiValuedHeader(value);
+                                        return;
+                                    }
+                                }
+                            }
+                        }
+                        if (!string.IsNullOrEmpty(value))
+                            props.Add(SetMultiValuedHeader(value)); // Add tagged value if not null
+                        break;
+                }
+            }
+        }
+
+        /// <summary>
+        /// HasSetMultiValued method implementation
+        /// </summary>
+        private static bool HasSetMultiValued(string value)
+        {
+            if (value == null)
+                return false;
+            return (value.ToLower().StartsWith("mfa:"));
+        }
+
+        /// <summary>
+        /// SetMultiValuedHeader method implementation
+        /// </summary>
+        private static string SetMultiValuedHeader(string value, bool addheader = true)
+        {
+            if (string.IsNullOrEmpty(value))
+                return null;
+            if (addheader)
+            {
+                if (HasSetMultiValued(value))
+                    return value;
+                else
+                    return "mfa:" + value;
+            }
+            else
+            {
+                if (!HasSetMultiValued(value))
+                    return value;
+                else
+                    return value.Replace("mfa:", "");
+            }
+        }
+
+        /// <summary>
+        /// IsMultivaluedAttribute method implmentation
+        /// </summary>
+        internal static bool IsMultivaluedAttribute(string domainname, string username, string password, string attributename)
+        {
+            DirectoryContext ctx = null;
+            if (!string.IsNullOrEmpty(domainname))
+            {
+                if (!string.IsNullOrEmpty(username) || !string.IsNullOrEmpty(password))
+                    ctx = new DirectoryContext(DirectoryContextType.Domain, domainname, username, password);
+                else
+                    ctx = new DirectoryContext(DirectoryContextType.Domain, domainname);
+            }
+            else
+            {
+                if (!string.IsNullOrEmpty(username) || !string.IsNullOrEmpty(password))
+                    ctx = new DirectoryContext(DirectoryContextType.Domain, username, password);
+                else
+                    ctx = new DirectoryContext(DirectoryContextType.Domain);
+            }
+            if (ctx != null)
+            {
+                using (Domain dom = Domain.GetDomain(ctx))
+                {
+                    using (Forest forest = dom.Forest)
+                    {
+                        var userClass = forest.Schema.FindClass("user");
+                        foreach (ActiveDirectorySchemaProperty property in userClass.GetAllProperties())
+                        {
+                            if (property.Name.Equals(attributename))
+                                return !property.IsSingleValued;
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+
+        #endregion
     }
+    #endregion
 }

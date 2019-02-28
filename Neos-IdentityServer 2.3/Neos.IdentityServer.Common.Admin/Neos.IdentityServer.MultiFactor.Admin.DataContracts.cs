@@ -417,7 +417,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             MFAConfig cfg = ManagementService.Config;
             ADDSHost adds = cfg.Hosts.ActiveDirectoryHost;
             cfg.IsDirty = IsDirty;
-            if (!ManagementService.CheckADDSAttribute(DomainAddress, Account, Password, KeyAttribute, false))
+            if (!ManagementService.CheckADDSAttribute(DomainAddress, Account, Password, KeyAttribute, true))
                 throw new ArgumentException(string.Format("Attribute {0} not found in forest schema !", KeyAttribute));
             if (!ManagementService.CheckADDSAttribute(DomainAddress, Account, Password, MailAttribute, true))
                 throw new ArgumentException(string.Format("Attribute {0} not found in forest schema !", MailAttribute));
