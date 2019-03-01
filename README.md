@@ -16,7 +16,7 @@ This extension, allow to use second factor with secondary email code transmissio
 This extension works with Active Directory or an SQL Server Database for storing secret keys.
 
 ## Installation & Documentation
-* <https://github.com/neos-sdi/adfsmfa/wiki/Documentation>
+* <https://github.com/neos-sdi/adfsmfa/wiki/Home>
 ## Downloads
 * <https://github.com/neos-sdi/adfsmfa/releases>
 
