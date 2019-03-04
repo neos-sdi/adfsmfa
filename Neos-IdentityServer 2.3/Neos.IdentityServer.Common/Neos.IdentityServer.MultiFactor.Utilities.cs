@@ -1308,14 +1308,19 @@ namespace Neos.IdentityServer.MultiFactor
                     _isloaded = true;
                     break;
                 case SecretKeyFormat.CUSTOM:
-                    _manager = Utilities.LoadExternalKeyManagerWrapper(cfg.KeysConfig.ExternalKeyManager.FullQualifiedImplementation);
-                    if (_manager == null)
-                        IsLoaded = false;
-                    else
+                    if (!string.IsNullOrEmpty(cfg.KeysConfig.ExternalKeyManager.FullQualifiedImplementation))
                     {
-                        _manager.Initialize(cfg);
-                        _isloaded = true;
+                        _manager = Utilities.LoadExternalKeyManagerWrapper(cfg.KeysConfig.ExternalKeyManager.FullQualifiedImplementation);
+                        if (_manager == null)
+                            IsLoaded = false;
+                        else
+                        {
+                            _manager.Initialize(cfg);
+                            _isloaded = true;
+                        }
                     }
+                    else
+                        IsLoaded = false;
                     break;
                 default:
                     throw new NotImplementedException("CUSTOM SecretKeyManager not found !");
@@ -1424,6 +1429,7 @@ namespace Neos.IdentityServer.MultiFactor
         {
             return _manager.HasKeyPrefix(key);
         }
+
     }
 
     /// <summary>

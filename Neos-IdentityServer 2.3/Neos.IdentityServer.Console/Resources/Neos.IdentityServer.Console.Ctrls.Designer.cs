@@ -727,6 +727,15 @@ namespace Neos.IdentityServer.Console.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à (*) Supports multi-valued properties.
+        /// </summary>
+        internal static string CTRLMULTVALUED {
+            get {
+                return ResourceManager.GetString("CTRLMULTVALUED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Operation aborted ! your must start the local ADFS service !.
         /// </summary>
         internal static string CTRLMUSTACTIVATESVC {

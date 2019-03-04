@@ -339,6 +339,9 @@
   <data name="CTRLINVALIDVALUE" xml:space="preserve">
     <value>Invalid value, must be between {0} and {1}.</value>
   </data>
+  <data name="CTRLMULTVALUED" xml:space="preserve">
+    <value>(*) Supports multi-valued properties</value>
+  </data>
   <data name="CTRLMUSTACTIVATESVC" xml:space="preserve">
     <value>Operation aborted ! your must start the local ADFS service !</value>
   </data>

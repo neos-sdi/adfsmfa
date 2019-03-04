@@ -2538,6 +2538,7 @@ namespace Neos.IdentityServer.Console.Controls
         private Label lblPassword;
         private Label lblUserName;
         private Label lblDomainName;
+        private Label lblMultivalued;
 
 
         /// <summary>
@@ -2630,17 +2631,17 @@ namespace Neos.IdentityServer.Console.Controls
             try
             {
                 this.Dock = DockStyle.Top;
-                this.Height = 585;
+                this.Height = 625;
                 this.Width = 512;
                 this.Margin = new Padding(30, 5, 30, 5);
 
                 _panel.Width = 20;
-                _panel.Height = 471;
+                _panel.Height = 511;
                 this.Controls.Add(_panel);
 
                 _txtpanel.Left = 20;
                 _txtpanel.Width = this.Width - 20;
-                _txtpanel.Height = 471;
+                _txtpanel.Height = 511;
                 _txtpanel.BackColor = System.Drawing.SystemColors.Control;
                 this.Controls.Add(_txtpanel);
 
@@ -2722,7 +2723,7 @@ namespace Neos.IdentityServer.Console.Controls
                 _txtpanel.Controls.Add(lblAttributes);
 
                 lblKeyAttribute = new Label();
-                lblKeyAttribute.Text = res.CTRLADATTKEY + " : ";
+                lblKeyAttribute.Text = res.CTRLADATTKEY + " (*) : ";
                 lblKeyAttribute.Left = 50;
                 lblKeyAttribute.Top = 150;
                 lblKeyAttribute.Width = 150;
@@ -2739,7 +2740,7 @@ namespace Neos.IdentityServer.Console.Controls
                 _txtpanel.Controls.Add(txtKeyAttribute);
 
                 lblMailAttribute = new Label();
-                lblMailAttribute.Text = res.CTRLADATTMAIL + " : ";
+                lblMailAttribute.Text = res.CTRLADATTMAIL + " (*) : ";
                 lblMailAttribute.Left = 50;
                 lblMailAttribute.Top = 181;
                 lblMailAttribute.Width = 150;
@@ -2756,7 +2757,7 @@ namespace Neos.IdentityServer.Console.Controls
                 _txtpanel.Controls.Add(txtMailAttribute);
 
                 lblPhoneAttribute = new Label();
-                lblPhoneAttribute.Text = res.CTRLADATTPHONE + " : ";
+                lblPhoneAttribute.Text = res.CTRLADATTPHONE + " (*) : ";
                 lblPhoneAttribute.Left = 50;
                 lblPhoneAttribute.Top = 212;
                 lblPhoneAttribute.Width = 150;
@@ -2892,11 +2893,18 @@ namespace Neos.IdentityServer.Console.Controls
                 txtMaxRows.Validated += MaxRowsValidated;
                 _txtpanel.Controls.Add(txtMaxRows);
 
+                lblMultivalued = new Label();
+                lblMultivalued.Text = res.CTRLMULTVALUED;
+                lblMultivalued.Left = 50;
+                lblMultivalued.Top = 475;
+                lblMultivalued.Width = 350;
+                _txtpanel.Controls.Add(lblMultivalued);
+
 
                 tblSaveConfig = new LinkLabel();
                 tblSaveConfig.Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPESAVE;
                 tblSaveConfig.Left = 20;
-                tblSaveConfig.Top = 481;
+                tblSaveConfig.Top = 525;
                 tblSaveConfig.Width = 80;
                 tblSaveConfig.LinkClicked += SaveConfigLinkClicked;
                 tblSaveConfig.TabStop = true;
@@ -2905,7 +2913,7 @@ namespace Neos.IdentityServer.Console.Controls
                 tblCancelConfig = new LinkLabel();
                 tblCancelConfig.Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPECANCEL;
                 tblCancelConfig.Left = 110;
-                tblCancelConfig.Top = 481;
+                tblCancelConfig.Top = 525;
                 tblCancelConfig.Width = 80;
                 tblCancelConfig.LinkClicked += CancelConfigLinkClicked;
                 tblCancelConfig.TabStop = true;
@@ -2984,9 +2992,9 @@ namespace Neos.IdentityServer.Console.Controls
                 lblValiditydateAttribute.Text = res.CTRLADATTPIN + " : ";
                 lblCreatedateAttribute.Text = res.CTRLADATTOVERRIDE + " : ";
                 lblMethodAttribute.Text = res.CTRLADATTMETHOD + " : ";
-                lblPhoneAttribute.Text = res.CTRLADATTPHONE + " : ";
-                lblMailAttribute.Text = res.CTRLADATTMAIL + " : ";
-                lblKeyAttribute.Text = res.CTRLADATTKEY + " : ";
+                lblPhoneAttribute.Text = res.CTRLADATTPHONE + " (*) : ";
+                lblMailAttribute.Text = res.CTRLADATTMAIL + " (*) : ";
+                lblKeyAttribute.Text = res.CTRLADATTKEY + " (*) : ";
                 lblAttributes.Text = res.CTRLADATTRIBUTES + " : ";
                 lblPassword.Text = res.CTRLADPASSWORD + " : ";
                 lblUserName.Text = res.CTRLADACCOUNT + " : ";

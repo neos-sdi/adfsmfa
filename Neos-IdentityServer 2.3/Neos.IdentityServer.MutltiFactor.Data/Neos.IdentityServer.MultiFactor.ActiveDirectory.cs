@@ -1213,8 +1213,8 @@ namespace Neos.IdentityServer.MultiFactor.Data
                              {
                                  if (DirEntry.Properties["objectGUID"].Value != null)
                                  {
-                                     if (ADDSUtils.GetMultiValued(DirEntry.Properties[_host.mailAttribute], _keysismulti) != null)
-                                         ret = ADDSUtils.GetMultiValued(DirEntry.Properties[_host.mailAttribute], _keysismulti);
+                                     if (ADDSUtils.GetMultiValued(DirEntry.Properties[_host.keyAttribute], _keysismulti) != null)
+                                         ret = ADDSUtils.GetMultiValued(DirEntry.Properties[_host.keyAttribute], _keysismulti);
                                  }
                                  else
                                      return string.Empty;
