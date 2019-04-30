@@ -1,0 +1,121 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{BB08DC85-4E6E-4220-A0FC-01BFB6C468F6}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Neos.IdentityServer.MultiFactor.Administration</RootNamespace>
+    <AssemblyName>Neos.IdentityServer.MultiFactor.Administration</AssemblyName>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;out</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>Neos.IdentityServer.pfx</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <PropertyGroup />
+  <PropertyGroup>
+    <Win32Resource>
+    </Win32Resource>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.DirectoryServices" />
+    <Reference Include="System.DirectoryServices.AccountManagement" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Management.Automation, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Windows\Microsoft.NET\assembly\GAC_MSIL\System.Management.Automation\v4.0_3.0.0.0__31bf3856ad364e35\System.Management.Automation.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.ServiceProcess" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Neos.IdentityServer.Multifactor.Admin.Interface.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Neos.IdentityServer.MultiFactor.Admin.Servers.cs" />
+    <Compile Include="Neos.IdentityServer.MultiFactor.Admin.DataContracts.cs" />
+    <Compile Include="Neos.IdentityServer.MultiFactor.Admin.Utilities.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Resources\SErrors.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SErrors.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Neos.IdentityServer.pfx" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Neos.IdentityServer.Common\Neos.IdentityServer.MultiFactor.Common.csproj">
+      <Project>{15b3e0d2-6217-493a-a690-158c497f5318}</Project>
+      <Name>Neos.IdentityServer.MultiFactor.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Neos.IdentityServer.MultiFactor.DataTypes\Neos.IdentityServer.MultiFactor.DataTypes.csproj">
+      <Project>{9b735255-31a8-4ff5-a918-fc47d4a95f38}</Project>
+      <Name>Neos.IdentityServer.MultiFactor.DataTypes</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Neos.IdentityServer.MultiFactor.Notifications\Neos.IdentityServer.MultiFactor.Notifications.csproj">
+      <Project>{8a7bc531-d51b-4cd3-a904-3c96746cf847}</Project>
+      <Name>Neos.IdentityServer.MultiFactor.Notifications</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Neos.IdentityServer.QrCodeNet\Neos.IdentityServer.MultiFactor.QRCodeNet.csproj">
+      <Project>{aa3fd0c4-5577-4327-8486-aa4f5903db9b}</Project>
+      <Name>Neos.IdentityServer.MultiFactor.QRCodeNet</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\SErrors.fr.resx" />
+    <EmbeddedResource Include="Resources\SErrors.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>SErrors.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

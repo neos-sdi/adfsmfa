@@ -717,7 +717,7 @@ namespace Neos.IdentityServer.MultiFactor
                 result += "<a class=\"actionLink\" href=\"#\" id=\"chgopt\" name=\"chgopt\" onclick=\"return SetLinkTitle(selectoptionsForm, '1')\"; style=\"cursor: pointer;\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlChangeConfiguration") + "</a>";
                 showdonut = RuntimeAuthProvider.IsProviderAvailable(usercontext, PreferredMethod.Azure);
             }
-            if (Provider.Config.UserFeatures.CanManagePassword())
+            if (Provider.Config.UserFeatures.CanManagePassword() && RuntimeRepository.CanChangePassword(usercontext.UPN))
             {
                 if (!Provider.Config.CustomUpdatePassword)
                     result += "<a class=\"actionLink\" href=\"/adfs/portal/updatepassword?username=" + usercontext.UPN + "\" id=\"chgpwd\" name=\"chgpwd\"; style=\"cursor: pointer;\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlChangePassword") + "</a>";

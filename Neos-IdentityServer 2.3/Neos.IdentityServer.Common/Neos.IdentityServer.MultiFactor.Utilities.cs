@@ -894,6 +894,22 @@ namespace Neos.IdentityServer.MultiFactor
                 }
             }
         }
+        /// <summary>
+        /// CanChangePassword method implmentation
+        /// </summary>
+        internal static bool CanChangePassword(string username)
+        {
+            ADDSForestUtils utl = new ADDSForestUtils();
+            string dns = utl.GetForestDNSForUPN(username);
+            using (var ctx = new PrincipalContext(ContextType.Domain, dns))
+            {
+                UserPrincipal  user = UserPrincipal.FindByIdentity(ctx, IdentityType.UserPrincipalName, username);
+                if (user == null)
+                    return false;
+            }
+            return true;
+        }
+
         #endregion
 
         #region Keys management

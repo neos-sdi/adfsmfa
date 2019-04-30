@@ -3188,8 +3188,8 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     ///   <para>When using SQL Server 2016 (and up) Always encrypted columsn</para>
     ///   <para>New-MFADatabase -ServerName SQLServer\Instance -DatabaseName MFAKeysDatabase -UserName Domain\ADFSaccount -Encrypted</para>
     ///   <para>New-MFADatabase -ServerName SQLServer\Instance -DatabaseName MFAKeysDatabase -UserName Domain\ADFSaccount -Encrypted -EncryptedKeyName mykey</para>
-    ///   <para>New-MFADatabase -ServerName SQLServer\Instance -DatabaseName MFAKeysDatabase -UserName Domain\ADFSManagedAccount$ -Encripted -ReuseCertificate -ThumPrint 0123456789ABCDEF...</para>
-    ///   <para>New-MFADatabase -ServerName SQLServer\Instance -DatabaseName MFAKeysDatabase -UserName Domain\ADFSManagedAccount$ -Encripted -ReuseCertificate -ThumPrint 0123456789ABCDEF... -encryptedkeyname mykey</para>
+    ///   <para>New-MFADatabase -ServerName SQLServer\Instance -DatabaseName MFAKeysDatabase -UserName Domain\ADFSManagedAccount$ -Encrypted -ReuseCertificate -ThumbPrint 0123456789ABCDEF...</para>
+    ///   <para>New-MFADatabase -ServerName SQLServer\Instance -DatabaseName MFAKeysDatabase -UserName Domain\ADFSManagedAccount$ -Encrypted -ReuseCertificate -ThumbPrint 0123456789ABCDEF... -EncryptedKeyName mykey</para>
     ///   <para>Create a new database for MFA, grant rights to the specified account</para>
     /// </example>
     [Cmdlet(VerbsCommon.New, "MFADatabase", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
@@ -3339,8 +3339,8 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     ///   <para>When using SQL Server 2016 (and up) Always encrypted columsn</para>
     ///   <para>New-MFASecretKeysDatabase -ServerName SQLServer\Instance -DatabaseName MFAKeysDatabase -UserName Domain\ADFSaccount -Encrypted</para>
     ///   <para>New-MFASecretKeysDatabase -ServerName SQLServer\Instance -DatabaseName MFAKeysDatabase -UserName Domain\ADFSaccount -Encrypted -EncryptedKeyName mykey</para>
-    ///   <para>New-MFASecretKeysDatabase -ServerName SQLServer\Instance -DatabaseName MFAKeysDatabase -UserName Domain\ADFSManagedAccount$ -Encripted -ReuseCertificate -ThumPrint 0123456789ABCDEF...</para>
-    ///   <para>New-MFASecretKeysDatabase -ServerName SQLServer\Instance -DatabaseName MFAKeysDatabase -UserName Domain\ADFSManagedAccount$ -Encripted -ReuseCertificate -ThumPrint 0123456789ABCDEF... -encryptedkeyname mykey</para>
+    ///   <para>New-MFASecretKeysDatabase -ServerName SQLServer\Instance -DatabaseName MFAKeysDatabase -UserName Domain\ADFSManagedAccount$ -Encrypted -ReuseCertificate -ThumbPrint 0123456789ABCDEF...</para>
+    ///   <para>New-MFASecretKeysDatabase -ServerName SQLServer\Instance -DatabaseName MFAKeysDatabase -UserName Domain\ADFSManagedAccount$ -Encrypted -ReuseCertificate -ThumbPrint 0123456789ABCDEF... -EncryptedKeyName mykey</para>
     ///   <para></para>
     ///   <para>(Get-MFAConfigKeys).KeyFormat must be equal to CUSTOM to be effective</para>
     ///   <para>Create a new database for MFA Secret Keys, grant rights to the specified account</para>
@@ -3863,7 +3863,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             set 
             { 
                 if (value<1)
-                    _duration = 1;
+                    _duration = 5;
                 else
                     _duration = value;
             }
