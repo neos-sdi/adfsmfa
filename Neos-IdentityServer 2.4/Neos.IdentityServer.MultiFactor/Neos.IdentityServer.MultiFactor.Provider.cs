@@ -75,6 +75,7 @@ namespace Neos.IdentityServer.MultiFactor
             {
                 AuthenticationContext usercontext = new AuthenticationContext(context);
                 usercontext.CurrentRetries = 0;
+                usercontext.NeedNotification = false;
                 switch (usercontext.UIMode)
                 {
                     case ProviderPageMode.PreSet:
@@ -570,9 +571,7 @@ namespace Neos.IdentityServer.MultiFactor
 
                             UpdateProviderOverrideOption(usercontext, context, proofData);
                             RuntimeRepository.SetUserRegistration(Config, (Registration)usercontext, usercontext.KeyStatus!=SecretKeyStatus.Success);
-
-                            MailUtilities.SendNotificationByEmail(Config, (Registration)usercontext, Config.MailProvider, Resources.Culture);
-
+                            usercontext.NeedNotification = true;
                             ValidateProviderManagementUrl(usercontext, context, proofData);
 
                             usercontext.UIMode = ProviderPageMode.SelectOptions;
@@ -582,7 +581,7 @@ namespace Neos.IdentityServer.MultiFactor
                     case 2:  // Cancel   
                         {
                             ValidateProviderManagementUrl(usercontext, context, proofData);
-
+                            usercontext.NeedNotification = true;
                             usercontext.UIMode = ProviderPageMode.SelectOptions;
                             result = new AdapterPresentation(this, context);
                             break;
@@ -982,6 +981,7 @@ namespace Neos.IdentityServer.MultiFactor
             claims = new Claim[] { GetAuthMethodClaim(usercontext.SelectedMethod) };
             IAdapterPresentation result = null;
             usercontext.KeyChanged = false;
+            usercontext.NeedNotification = true;
             if (_config.CustomUpdatePassword)
             {
                 try
@@ -1054,6 +1054,9 @@ namespace Neos.IdentityServer.MultiFactor
                         return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorInvalidIdentificationRestart"), ProviderPageMode.DefinitiveError);
                     }
                 }
+                if (usercontext.NeedNotification)
+                    MailUtilities.SendNotificationByEmail(Config, (Registration)usercontext, Config.MailProvider, Resources.Culture);
+
                 usercontext.KeyChanged = false;
                 claims = new Claim[] { GetAuthMethodClaim(usercontext.SelectedMethod) };
                 if (usercontext.ShowOptions)
@@ -1107,6 +1110,9 @@ namespace Neos.IdentityServer.MultiFactor
             ResourcesLocale Resources = new ResourcesLocale(context.Lcid);
             try
             {
+                if (usercontext.NeedNotification)
+                    MailUtilities.SendNotificationByEmail(Config, (Registration)usercontext, Config.MailProvider, Resources.Culture);
+
                 int btnclicked = Convert.ToInt32(proofData.Properties["btnclicked"].ToString());
                 ProviderPageMode lnk = usercontext.TargetUIMode;
                 if (btnclicked == 1)
@@ -1459,6 +1465,7 @@ namespace Neos.IdentityServer.MultiFactor
                 switch (btnclicked)
                 {
                     case 1:  // Cancel
+                        usercontext.NeedNotification = true;
                         if (usercontext.TargetUIMode == ProviderPageMode.Registration)
                         {
                             usercontext.UIMode = ProviderPageMode.Registration;
@@ -1479,6 +1486,7 @@ namespace Neos.IdentityServer.MultiFactor
                     case 2: // Next Button
                         usercontext.WizPageID = 1;
                         usercontext.KeyStatus = SecretKeyStatus.Success;
+                        usercontext.NeedNotification = true;
                         return new AdapterPresentation(this, context);
                     case 3: // Code verification
                         try
@@ -1523,7 +1531,7 @@ namespace Neos.IdentityServer.MultiFactor
                                 if (forcesave)
                                 {
                                     RuntimeRepository.SetUserRegistration(Config, (Registration)usercontext, usercontext.KeyStatus != SecretKeyStatus.Success);
-                                    MailUtilities.SendNotificationByEmail(Config, (Registration)usercontext, Config.MailProvider, Resources.Culture);
+                                    usercontext.NeedNotification = true;
                                     usercontext.UIMode = ProviderPageMode.EnrollOTPAndSave;
                                 }
                                 else
@@ -1599,8 +1607,10 @@ namespace Neos.IdentityServer.MultiFactor
                 {
                     case 0:
                         usercontext.WizPageID = 0; // Get Email
+                        usercontext.NeedNotification = true;
                         return new AdapterPresentation(this, context);
                     case 1:  // Cancel
+                        usercontext.NeedNotification = true;
                         if (usercontext.TargetUIMode == ProviderPageMode.Registration)
                         {
                             usercontext.UIMode = ProviderPageMode.Registration;
@@ -1677,7 +1687,7 @@ namespace Neos.IdentityServer.MultiFactor
                                 if (forcesave)
                                 {
                                     RuntimeRepository.SetUserRegistration(Config, (Registration)usercontext, false);
-                                    MailUtilities.SendNotificationByEmail(Config, (Registration)usercontext, Config.MailProvider, Resources.Culture);
+                                    usercontext.NeedNotification = true;                                 
                                     usercontext.UIMode = ProviderPageMode.EnrollEmailAndSave;
                                 }
                                 else
@@ -1758,8 +1768,10 @@ namespace Neos.IdentityServer.MultiFactor
                 {
                     case 0: // Next Button
                         usercontext.WizPageID = 0; // Goto Donut
+                        usercontext.NeedNotification = true;
                         return new AdapterPresentation(this, context);
                     case 1:  // Cancel
+                        usercontext.NeedNotification = true;
                         if (usercontext.TargetUIMode == ProviderPageMode.Registration)
                         {
                             usercontext.UIMode = ProviderPageMode.Registration;
@@ -1866,7 +1878,7 @@ namespace Neos.IdentityServer.MultiFactor
                                 if (forcesave)
                                 {
                                     RuntimeRepository.SetUserRegistration(Config, (Registration)usercontext, false);
-                                    MailUtilities.SendNotificationByEmail(Config, (Registration)usercontext, Config.MailProvider, Resources.Culture);
+                                    usercontext.NeedNotification = true;
                                     usercontext.UIMode = ProviderPageMode.EnrollPhoneAndSave;
                                 }
                                 else
@@ -1953,6 +1965,7 @@ namespace Neos.IdentityServer.MultiFactor
                 switch (btnclicked)
                 {
                     case 1:  // Cancel
+                        usercontext.NeedNotification = true;
                         if (usercontext.TargetUIMode == ProviderPageMode.Registration)
                         {
                             usercontext.UIMode = ProviderPageMode.Registration;
@@ -1972,6 +1985,7 @@ namespace Neos.IdentityServer.MultiFactor
                     case 2: // Next Button
                         try
                         {
+                            usercontext.NeedNotification = true;
                             usercontext.WizPageID = 2;
                             ValidateUserPin(usercontext, context, proofData, Resources, true);
                             return new AdapterPresentation(this, context);
@@ -2023,7 +2037,7 @@ namespace Neos.IdentityServer.MultiFactor
                                 if (forcesave)
                                 {
                                     RuntimeRepository.SetUserRegistration(Config, (Registration)usercontext, false);
-                                    MailUtilities.SendNotificationByEmail(Config, (Registration)usercontext, Config.MailProvider, Resources.Culture);
+                                    usercontext.NeedNotification = true;
                                     usercontext.UIMode = ProviderPageMode.EnrollPinAndSave;
                                 }
                                 else

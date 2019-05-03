@@ -95,15 +95,6 @@ namespace Neos.IdentityServer.MultiFactor
             this.KeyStatus = SecretKeyStatus.Success;
         }
 
-      /*  /// <summary>
-        /// AuthCtx property
-        /// </summary>
-        [XmlIgnore]
-        public IAuthenticationContext AuthCtx
-        {
-            get { return _context; }
-        }
-        */
 
         /// <summary>
         /// ID property implementation
@@ -146,6 +137,28 @@ namespace Neos.IdentityServer.MultiFactor
                     _context.Data["_authctxupn"] = value;
                 else
                     _context.Data.Add("_authctxupn", value);
+            }
+        }
+
+        /// <summary>
+        /// NeedNotification property implementation
+        /// </summary>
+        [XmlAttribute("NeedNotification")]
+        public bool NeedNotification
+        {
+            get
+            {
+                if (_context.Data.ContainsKey("_authctxneednotif") && _context.Data["_authctxneednotif"] != null)
+                    return (bool)_context.Data["_authctxneednotif"];
+                else
+                    return false;
+            }
+            set
+            {
+                if (_context.Data.ContainsKey("_authctxneednotif"))
+                    _context.Data["_authctxneednotif"] = value;
+                else
+                    _context.Data.Add("_authctxneednotif", value);
             }
         }
 
