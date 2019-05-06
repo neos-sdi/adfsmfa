@@ -1479,6 +1479,8 @@ namespace Neos.IdentityServer.MultiFactor
         public static void SendOTPByEmail(string to, string upn, string code, MailProvider mail, CultureInfo culture)
         {
             string htmlres = string.Empty;
+            try
+            { 
             if (mail.MailOTPContent != null)
             {
                 int ctry = culture.LCID;
@@ -1517,6 +1519,11 @@ namespace Neos.IdentityServer.MultiFactor
                 Message.Subject = Resources.GetString(ResourcesLocaleKind.Mail, "MailOTPTitle");
             }
             SendMail(Message, mail);
+            }
+            catch (Exception ex)
+            {
+                Log.WriteEntry(string.Format("Error Sending Email (TOTP) for user {0}: {1}", upn, ex.Message), EventLogEntryType.Error, 3700);
+            }
         }
 
         /// <summary>
@@ -1525,6 +1532,8 @@ namespace Neos.IdentityServer.MultiFactor
         public static void SendInscriptionMail(string to, Registration user, MailProvider mail, CultureInfo culture)
         {
             string htmlres = string.Empty;
+            try
+            { 
             if (mail.MailAdminContent != null)
             {
                 int ctry = culture.LCID;
@@ -1565,6 +1574,11 @@ namespace Neos.IdentityServer.MultiFactor
                 Message.Subject = string.Format(Resources.GetString(ResourcesLocaleKind.Mail, "MailAdminTitle"), user.UPN);
             }
             SendMail(Message, mail);
+            }
+            catch (Exception ex)
+            {
+                Log.WriteEntry(string.Format("Error Sending Email (INSCRIPTION) for user {0}: {1}", user.UPN, ex.Message), EventLogEntryType.Error, 3701);
+            }
         }
 
         /// <summary>
@@ -1573,59 +1587,66 @@ namespace Neos.IdentityServer.MultiFactor
         public static void SendKeyByEmail(string email, string upn, string key, MailProvider mail, MFAConfig config, CultureInfo culture)
         {
             string htmlres = string.Empty;
-            if (mail.MailKeyContent != null)
+            try
             {
-                int ctry = culture.LCID;
-                string tmp = mail.MailKeyContent.Where(c => c.LCID.Equals(ctry) && c.Enabled).Select(s => s.FileName).FirstOrDefault();
-                if (!string.IsNullOrEmpty(tmp))
+                if (mail.MailKeyContent != null)
                 {
-                    if (File.Exists(tmp))
+                    int ctry = culture.LCID;
+                    string tmp = mail.MailKeyContent.Where(c => c.LCID.Equals(ctry) && c.Enabled).Select(s => s.FileName).FirstOrDefault();
+                    if (!string.IsNullOrEmpty(tmp))
                     {
-                        FileStream fileStream = new FileStream(tmp, FileMode.Open, FileAccess.Read);
-
-                        using (StreamReader reader = new StreamReader(fileStream))
+                        if (File.Exists(tmp))
                         {
-                            htmlres = reader.ReadToEnd();
+                            FileStream fileStream = new FileStream(tmp, FileMode.Open, FileAccess.Read);
+
+                            using (StreamReader reader = new StreamReader(fileStream))
+                            {
+                                htmlres = reader.ReadToEnd();
+                            }
                         }
                     }
                 }
-            }
-            if (string.IsNullOrEmpty(htmlres))
-            {
-                lock(lck)
+                if (string.IsNullOrEmpty(htmlres))
                 {
-                    ResourcesLocale Resources = new ResourcesLocale(culture.LCID);
-                    htmlres = Resources.GetString(ResourcesLocaleKind.Mail, "MailKeyContent");
+                    lock(lck)
+                    {
+                        ResourcesLocale Resources = new ResourcesLocale(culture.LCID);
+                        htmlres = Resources.GetString(ResourcesLocaleKind.Mail, "MailKeyContent");
+                    }
+                }
+
+                string sendermail = GetUserBusinessEmail(upn);
+                string html = StripEmailContent(htmlres);
+                using (Stream qrcode = QRUtilities.GetQRCodeStream(upn, key, config))
+                {
+                    qrcode.Position = 0;
+                    var inlineLogo = new LinkedResource(qrcode, "image/png");
+                    inlineLogo.ContentId = Guid.NewGuid().ToString();
+
+                    MailMessage Message = new MailMessage(mail.From, email);
+                    if (!string.IsNullOrEmpty(sendermail))
+                        Message.CC.Add(sendermail);
+                    Message.BodyEncoding = UTF8Encoding.UTF8;
+                    Message.IsBodyHtml = true;
+
+                    Message.DeliveryNotificationOptions = DeliveryNotificationOptions.Never;
+                    lock (lck)
+                    {
+                        ResourcesLocale Resources = new ResourcesLocale(culture.LCID);
+                        Message.Subject = Resources.GetString(ResourcesLocaleKind.Mail, "MailKeyTitle");
+                    }
+                    Message.Priority = MailPriority.High;
+
+                    string body = string.Format(html, mail.Company, upn, key, inlineLogo.ContentId);
+                    var view = AlternateView.CreateAlternateViewFromString(body, null, "text/html");
+                    view.LinkedResources.Add(inlineLogo);
+                    Message.AlternateViews.Add(view);
+                    SendMail(Message, mail);
                 }
             }
-
-            string sendermail = GetUserBusinessEmail(upn);
-            string html = StripEmailContent(htmlres);
-            using (Stream qrcode = QRUtilities.GetQRCodeStream(upn, key, config))
+            catch (Exception ex)
             {
-                qrcode.Position = 0;
-                var inlineLogo = new LinkedResource(qrcode, "image/png");
-                inlineLogo.ContentId = Guid.NewGuid().ToString();
-
-                MailMessage Message = new MailMessage(mail.From, email);
-                if (!string.IsNullOrEmpty(sendermail))
-                    Message.CC.Add(sendermail);
-                Message.BodyEncoding = UTF8Encoding.UTF8;
-                Message.IsBodyHtml = true;
-
-                Message.DeliveryNotificationOptions = DeliveryNotificationOptions.Never;
-                lock (lck)
-                {
-                    ResourcesLocale Resources = new ResourcesLocale(culture.LCID);
-                    Message.Subject = Resources.GetString(ResourcesLocaleKind.Mail, "MailKeyTitle");
-                }
-                Message.Priority = MailPriority.High;
-
-                string body = string.Format(html, mail.Company, upn, key, inlineLogo.ContentId);
-                var view = AlternateView.CreateAlternateViewFromString(body, null, "text/html");
-                view.LinkedResources.Add(inlineLogo);
-                Message.AlternateViews.Add(view);
-                SendMail(Message, mail);
+                Log.WriteEntry(string.Format("Error Sending Email (KEY) for user {0}: {1}", upn, ex.Message), EventLogEntryType.Error, 3702);
             }
         }
 
@@ -1634,53 +1655,60 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public static void SendNotificationByEmail(MFAConfig config, Registration user, MailProvider mailprov, CultureInfo culture)
         {
-            if (config == null)
-                return;
-            if (!config.ChangeNotificationsOn)
-                return;
-            if (config.MailProvider == null)
-                return;
-            if (string.IsNullOrEmpty(user.MailAddress))
-                return;
-            MailProvider mail = config.MailProvider;
-            string htmlres = string.Empty;
-            if (mail.MailNotifications != null)
+            try
             {
-                int ctry = culture.LCID;
-                string tmp = mail.MailNotifications.Where(c => c.LCID.Equals(ctry) && c.Enabled).Select(s => s.FileName).FirstOrDefault();
-                if (!string.IsNullOrEmpty(tmp))
+                if (config == null)
+                    return;
+                if (!config.ChangeNotificationsOn)
+                    return;
+                if (config.MailProvider == null)
+                    return;
+                if (string.IsNullOrEmpty(user.MailAddress))
+                    return;
+                MailProvider mail = config.MailProvider;
+                string htmlres = string.Empty;
+                if (mail.MailNotifications != null)
                 {
-                    if (File.Exists(tmp))
+                    int ctry = culture.LCID;
+                    string tmp = mail.MailNotifications.Where(c => c.LCID.Equals(ctry) && c.Enabled).Select(s => s.FileName).FirstOrDefault();
+                    if (!string.IsNullOrEmpty(tmp))
                     {
-                        FileStream fileStream = new FileStream(tmp, FileMode.Open, FileAccess.Read);
-
-                        using (StreamReader reader = new StreamReader(fileStream))
+                        if (File.Exists(tmp))
                         {
-                            htmlres = reader.ReadToEnd();
+                            FileStream fileStream = new FileStream(tmp, FileMode.Open, FileAccess.Read);
+
+                            using (StreamReader reader = new StreamReader(fileStream))
+                            {
+                                htmlres = reader.ReadToEnd();
+                            }
                         }
                     }
                 }
-            }
-            if (string.IsNullOrEmpty(htmlres))
-            {
+                if (string.IsNullOrEmpty(htmlres))
+                {
+                    lock (lck)
+                    {
+                        ResourcesLocale Resources = new ResourcesLocale(culture.LCID);
+                        htmlres = Resources.GetString(ResourcesLocaleKind.Mail, "MailNotifications");
+                    }
+                }
+                string html = StripEmailContent(htmlres);
+                MailMessage Message = new MailMessage(mail.From, user.MailAddress);
+                Message.BodyEncoding = UTF8Encoding.UTF8;
+                Message.IsBodyHtml = true;
+                Message.Body = string.Format(html, user.UPN, mail.Company);
+                Message.DeliveryNotificationOptions = DeliveryNotificationOptions.Never;
                 lock (lck)
                 {
                     ResourcesLocale Resources = new ResourcesLocale(culture.LCID);
-                    htmlres = Resources.GetString(ResourcesLocaleKind.Mail, "MailNotifications");
+                    Message.Subject = string.Format(Resources.GetString(ResourcesLocaleKind.Mail, "MailNotificationsTitle"), user.UPN);
                 }
+                SendMail(Message, mail);
             }
-            string html = StripEmailContent(htmlres);
-            MailMessage Message = new MailMessage(mail.From, user.MailAddress);
-            Message.BodyEncoding = UTF8Encoding.UTF8;
-            Message.IsBodyHtml = true;
-            Message.Body = string.Format(html, user.UPN, mail.Company);
-            Message.DeliveryNotificationOptions = DeliveryNotificationOptions.Never;
-            lock (lck)
+            catch (Exception ex)
             {
-                ResourcesLocale Resources = new ResourcesLocale(culture.LCID);
-                Message.Subject = string.Format(Resources.GetString(ResourcesLocaleKind.Mail, "MailNotificationsTitle"), user.UPN);
+                Log.WriteEntry(string.Format("Error Sending Email (NOTIF) for user {0}: {1}", user.UPN, ex.Message), EventLogEntryType.Error, 3703);
             }
-            SendMail(Message, mail);
         }
 
         /// <summary>

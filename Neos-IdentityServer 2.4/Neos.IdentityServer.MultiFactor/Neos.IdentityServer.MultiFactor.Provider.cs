@@ -75,7 +75,7 @@ namespace Neos.IdentityServer.MultiFactor
             {
                 AuthenticationContext usercontext = new AuthenticationContext(context);
                 usercontext.CurrentRetries = 0;
-                usercontext.NeedNotification = false;
+                usercontext.NotificationSent = false;
                 switch (usercontext.UIMode)
                 {
                     case ProviderPageMode.PreSet:
@@ -580,7 +580,6 @@ namespace Neos.IdentityServer.MultiFactor
                     case 2:  // Cancel   
                         {
                             ValidateProviderManagementUrl(usercontext, context, proofData);
-                            usercontext.NeedNotification = true;
                             usercontext.UIMode = ProviderPageMode.SelectOptions;
                             result = new AdapterPresentation(this, context);
                             break;
@@ -778,7 +777,6 @@ namespace Neos.IdentityServer.MultiFactor
                             break;
                         }
                 }
-                usercontext.NeedNotification = false; // No Notification on incription
             }
             catch (Exception ex)
             {
@@ -988,7 +986,9 @@ namespace Neos.IdentityServer.MultiFactor
                     string btnclick = proofData.Properties["btnclicked"].ToString();
                     if (btnclick == "1")
                     {
-                        usercontext.NeedNotification = true;
+                        if (!usercontext.NotificationSent)
+                            MailUtilities.SendNotificationByEmail(Config, (Registration)usercontext, Config.MailProvider, Resources.Culture);
+                        usercontext.NotificationSent = true;
                         if (newpass.Equals(cnfpass))
                         {
                             try
@@ -1051,8 +1051,6 @@ namespace Neos.IdentityServer.MultiFactor
                         return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorInvalidIdentificationRestart"), ProviderPageMode.DefinitiveError);
                     }
                 }
-                if (usercontext.NeedNotification)
-                    MailUtilities.SendNotificationByEmail(Config, (Registration)usercontext, Config.MailProvider, Resources.Culture);
 
                 usercontext.KeyChanged = false;
                 claims = new Claim[] { GetAuthMethodClaim(usercontext.SelectedMethod) };
@@ -1107,9 +1105,6 @@ namespace Neos.IdentityServer.MultiFactor
             ResourcesLocale Resources = new ResourcesLocale(context.Lcid);
             try
             {
-                if (usercontext.NeedNotification)
-                    MailUtilities.SendNotificationByEmail(Config, (Registration)usercontext, Config.MailProvider, Resources.Culture);
-
                 int btnclicked = Convert.ToInt32(proofData.Properties["btnclicked"].ToString());
                 ProviderPageMode lnk = usercontext.TargetUIMode;
                 if (btnclicked == 1)
@@ -1480,7 +1475,6 @@ namespace Neos.IdentityServer.MultiFactor
 
                         return new AdapterPresentation(this, context);
                     case 2: // Next Button
-                        usercontext.NeedNotification = true;
                         usercontext.WizPageID = 1;
                         usercontext.KeyStatus = SecretKeyStatus.Success;
                         return new AdapterPresentation(this, context);
@@ -1490,6 +1484,9 @@ namespace Neos.IdentityServer.MultiFactor
                             usercontext.SelectedMethod = AuthenticationResponseKind.PhoneAppOTP;
                             if ((int)AuthenticationResponseKind.Error == prov.PostAuthenticationRequest(usercontext))
                             {
+                                if (!usercontext.NotificationSent)
+                                    MailUtilities.SendNotificationByEmail(Config, (Registration)usercontext, Config.MailProvider, Resources.Culture);
+                                usercontext.NotificationSent = true;                       
                                 usercontext.WizPageID = 4;
                                 if (forcesave)
                                     usercontext.UIMode = ProviderPageMode.EnrollOTPAndSave;
@@ -1624,7 +1621,6 @@ namespace Neos.IdentityServer.MultiFactor
                     case 2: // Next Button
                         try
                         {
-                            usercontext.NeedNotification = true;
                             usercontext.WizPageID = 1; // Goto Donut
                             ValidateUserEmail(usercontext, context, proofData, Resources, true);
                             return new AdapterPresentation(this, context);
@@ -1645,6 +1641,9 @@ namespace Neos.IdentityServer.MultiFactor
                             usercontext.SelectedMethod = AuthenticationResponseKind.EmailOTP;
                             if ((int)AuthenticationResponseKind.Error == prov.PostAuthenticationRequest(usercontext))
                             {
+                                if (!usercontext.NotificationSent)
+                                    MailUtilities.SendNotificationByEmail(Config, (Registration)usercontext, Config.MailProvider, Resources.Culture);
+                                usercontext.NotificationSent = true;
                                 usercontext.WizPageID = 4;
                                 if (forcesave)
                                     usercontext.UIMode = ProviderPageMode.EnrollEmailAndSave;
@@ -1682,7 +1681,6 @@ namespace Neos.IdentityServer.MultiFactor
                                 if (forcesave)
                                 {
                                     RuntimeRepository.SetUserRegistration(Config, (Registration)usercontext, false);
-                                   // usercontext.NeedNotification = true;                                 
                                     usercontext.UIMode = ProviderPageMode.EnrollEmailAndSave;
                                 }
                                 else
@@ -1784,9 +1782,11 @@ namespace Neos.IdentityServer.MultiFactor
                     case 2: // Next Button
                         try
                         {
-                            usercontext.NeedNotification = true;
                             usercontext.WizPageID = 1; // Goto Donut
                             ValidateUserPhone(usercontext, context, proofData, Resources, true);
+                            if (!usercontext.NotificationSent)
+                                MailUtilities.SendNotificationByEmail(Config, (Registration)usercontext, Config.MailProvider, Resources.Culture);
+                            usercontext.NotificationSent = true;
                             return new AdapterPresentation(this, context);
                         }
                         catch (Exception ex)
@@ -1978,7 +1978,9 @@ namespace Neos.IdentityServer.MultiFactor
                     case 2: // Next Button
                         try
                         {
-                            usercontext.NeedNotification = true;
+                            if (!usercontext.NotificationSent)
+                                MailUtilities.SendNotificationByEmail(Config, (Registration)usercontext, Config.MailProvider, Resources.Culture);
+                            usercontext.NotificationSent = true;
                             usercontext.WizPageID = 2;
                             ValidateUserPin(usercontext, context, proofData, Resources, true);
                             return new AdapterPresentation(this, context);

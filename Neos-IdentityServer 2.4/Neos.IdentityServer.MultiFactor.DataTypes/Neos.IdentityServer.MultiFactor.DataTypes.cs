@@ -141,24 +141,24 @@ namespace Neos.IdentityServer.MultiFactor
         }
 
         /// <summary>
-        /// NeedNotification property implementation
+        /// NotificationSent property implementation
         /// </summary>
-        [XmlAttribute("NeedNotification")]
-        public bool NeedNotification
+        [XmlAttribute("NotificationSent")]
+        public bool NotificationSent
         {
             get
             {
-                if (_context.Data.ContainsKey("_authctxneednotif") && _context.Data["_authctxneednotif"] != null)
-                    return (bool)_context.Data["_authctxneednotif"];
+                if (_context.Data.ContainsKey("_authctxnotifsent") && _context.Data["_authctxneednotifsent"] != null)
+                    return (bool)_context.Data["_authctxnotifsent"];
                 else
                     return false;
             }
             set
             {
-                if (_context.Data.ContainsKey("_authctxneednotif"))
-                    _context.Data["_authctxneednotif"] = value;
+                if (_context.Data.ContainsKey("_authctxneednotifsent"))
+                    _context.Data["_authctxneednotifsent"] = value;
                 else
-                    _context.Data.Add("_authctxneednotif", value);
+                    _context.Data.Add("_authctxneednotifsent", value);
             }
         }
 
