@@ -571,7 +571,6 @@ namespace Neos.IdentityServer.MultiFactor
 
                             UpdateProviderOverrideOption(usercontext, context, proofData);
                             RuntimeRepository.SetUserRegistration(Config, (Registration)usercontext, usercontext.KeyStatus!=SecretKeyStatus.Success);
-                            usercontext.NeedNotification = true;
                             ValidateProviderManagementUrl(usercontext, context, proofData);
 
                             usercontext.UIMode = ProviderPageMode.SelectOptions;
@@ -663,14 +662,11 @@ namespace Neos.IdentityServer.MultiFactor
             ResourcesLocale Resources = new ResourcesLocale(context.Lcid);
             claims = new Claim[] { GetAuthMethodClaim(usercontext.SelectedMethod) };
             IAdapterPresentation result = null;
+            usercontext.Enabled = false;
             usercontext.KeyChanged = false;
             try
             {
                 int btnclicked = Convert.ToInt32(proofData.Properties["btnclicked"].ToString());
-
-                usercontext.Enabled = false;
-                usercontext.KeyChanged = false;
-
                 switch (btnclicked)
                 {
                     case 1:  // OK
@@ -782,6 +778,7 @@ namespace Neos.IdentityServer.MultiFactor
                             break;
                         }
                 }
+                usercontext.NeedNotification = false; // No Notification on incription
             }
             catch (Exception ex)
             {
@@ -981,7 +978,6 @@ namespace Neos.IdentityServer.MultiFactor
             claims = new Claim[] { GetAuthMethodClaim(usercontext.SelectedMethod) };
             IAdapterPresentation result = null;
             usercontext.KeyChanged = false;
-            usercontext.NeedNotification = true;
             if (_config.CustomUpdatePassword)
             {
                 try
@@ -992,6 +988,7 @@ namespace Neos.IdentityServer.MultiFactor
                     string btnclick = proofData.Properties["btnclicked"].ToString();
                     if (btnclick == "1")
                     {
+                        usercontext.NeedNotification = true;
                         if (newpass.Equals(cnfpass))
                         {
                             try
@@ -1465,7 +1462,6 @@ namespace Neos.IdentityServer.MultiFactor
                 switch (btnclicked)
                 {
                     case 1:  // Cancel
-                        usercontext.NeedNotification = true;
                         if (usercontext.TargetUIMode == ProviderPageMode.Registration)
                         {
                             usercontext.UIMode = ProviderPageMode.Registration;
@@ -1484,9 +1480,9 @@ namespace Neos.IdentityServer.MultiFactor
 
                         return new AdapterPresentation(this, context);
                     case 2: // Next Button
+                        usercontext.NeedNotification = true;
                         usercontext.WizPageID = 1;
                         usercontext.KeyStatus = SecretKeyStatus.Success;
-                        usercontext.NeedNotification = true;
                         return new AdapterPresentation(this, context);
                     case 3: // Code verification
                         try
@@ -1531,7 +1527,7 @@ namespace Neos.IdentityServer.MultiFactor
                                 if (forcesave)
                                 {
                                     RuntimeRepository.SetUserRegistration(Config, (Registration)usercontext, usercontext.KeyStatus != SecretKeyStatus.Success);
-                                    usercontext.NeedNotification = true;
+                                //    usercontext.NeedNotification = true;
                                     usercontext.UIMode = ProviderPageMode.EnrollOTPAndSave;
                                 }
                                 else
@@ -1607,10 +1603,8 @@ namespace Neos.IdentityServer.MultiFactor
                 {
                     case 0:
                         usercontext.WizPageID = 0; // Get Email
-                        usercontext.NeedNotification = true;
                         return new AdapterPresentation(this, context);
                     case 1:  // Cancel
-                        usercontext.NeedNotification = true;
                         if (usercontext.TargetUIMode == ProviderPageMode.Registration)
                         {
                             usercontext.UIMode = ProviderPageMode.Registration;
@@ -1630,6 +1624,7 @@ namespace Neos.IdentityServer.MultiFactor
                     case 2: // Next Button
                         try
                         {
+                            usercontext.NeedNotification = true;
                             usercontext.WizPageID = 1; // Goto Donut
                             ValidateUserEmail(usercontext, context, proofData, Resources, true);
                             return new AdapterPresentation(this, context);
@@ -1687,7 +1682,7 @@ namespace Neos.IdentityServer.MultiFactor
                                 if (forcesave)
                                 {
                                     RuntimeRepository.SetUserRegistration(Config, (Registration)usercontext, false);
-                                    usercontext.NeedNotification = true;                                 
+                                   // usercontext.NeedNotification = true;                                 
                                     usercontext.UIMode = ProviderPageMode.EnrollEmailAndSave;
                                 }
                                 else
@@ -1767,11 +1762,9 @@ namespace Neos.IdentityServer.MultiFactor
                 switch (btnclicked)
                 {
                     case 0: // Next Button
-                        usercontext.WizPageID = 0; // Goto Donut
-                        usercontext.NeedNotification = true;
+                        usercontext.WizPageID = 0; 
                         return new AdapterPresentation(this, context);
                     case 1:  // Cancel
-                        usercontext.NeedNotification = true;
                         if (usercontext.TargetUIMode == ProviderPageMode.Registration)
                         {
                             usercontext.UIMode = ProviderPageMode.Registration;
@@ -1791,6 +1784,7 @@ namespace Neos.IdentityServer.MultiFactor
                     case 2: // Next Button
                         try
                         {
+                            usercontext.NeedNotification = true;
                             usercontext.WizPageID = 1; // Goto Donut
                             ValidateUserPhone(usercontext, context, proofData, Resources, true);
                             return new AdapterPresentation(this, context);
@@ -1878,7 +1872,7 @@ namespace Neos.IdentityServer.MultiFactor
                                 if (forcesave)
                                 {
                                     RuntimeRepository.SetUserRegistration(Config, (Registration)usercontext, false);
-                                    usercontext.NeedNotification = true;
+                                  //  usercontext.NeedNotification = true;
                                     usercontext.UIMode = ProviderPageMode.EnrollPhoneAndSave;
                                 }
                                 else
@@ -1965,7 +1959,6 @@ namespace Neos.IdentityServer.MultiFactor
                 switch (btnclicked)
                 {
                     case 1:  // Cancel
-                        usercontext.NeedNotification = true;
                         if (usercontext.TargetUIMode == ProviderPageMode.Registration)
                         {
                             usercontext.UIMode = ProviderPageMode.Registration;
@@ -2037,7 +2030,7 @@ namespace Neos.IdentityServer.MultiFactor
                                 if (forcesave)
                                 {
                                     RuntimeRepository.SetUserRegistration(Config, (Registration)usercontext, false);
-                                    usercontext.NeedNotification = true;
+                                  // usercontext.NeedNotification = true;
                                     usercontext.UIMode = ProviderPageMode.EnrollPinAndSave;
                                 }
                                 else
