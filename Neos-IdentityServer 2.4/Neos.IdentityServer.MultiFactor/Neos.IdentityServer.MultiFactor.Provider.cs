@@ -987,8 +987,10 @@ namespace Neos.IdentityServer.MultiFactor
                     if (btnclick == "1")
                     {
                         if (!usercontext.NotificationSent)
+                        {
                             MailUtilities.SendNotificationByEmail(Config, (Registration)usercontext, Config.MailProvider, Resources.Culture);
-                        usercontext.NotificationSent = true;
+                            usercontext.NotificationSent = true;
+                        }
                         if (newpass.Equals(cnfpass))
                         {
                             try
@@ -1485,8 +1487,10 @@ namespace Neos.IdentityServer.MultiFactor
                             if ((int)AuthenticationResponseKind.Error == prov.PostAuthenticationRequest(usercontext))
                             {
                                 if (!usercontext.NotificationSent)
+                                {
                                     MailUtilities.SendNotificationByEmail(Config, (Registration)usercontext, Config.MailProvider, Resources.Culture);
-                                usercontext.NotificationSent = true;                       
+                                    usercontext.NotificationSent = true;
+                                }
                                 usercontext.WizPageID = 4;
                                 if (forcesave)
                                     usercontext.UIMode = ProviderPageMode.EnrollOTPAndSave;
@@ -1641,9 +1645,11 @@ namespace Neos.IdentityServer.MultiFactor
                             usercontext.SelectedMethod = AuthenticationResponseKind.EmailOTP;
                             if ((int)AuthenticationResponseKind.Error == prov.PostAuthenticationRequest(usercontext))
                             {
-                                if (!usercontext.NotificationSent)
+                                if (!usercontext.NotificationSent) 
+                                {
                                     MailUtilities.SendNotificationByEmail(Config, (Registration)usercontext, Config.MailProvider, Resources.Culture);
-                                usercontext.NotificationSent = true;
+                                    usercontext.NotificationSent = true;
+                                }
                                 usercontext.WizPageID = 4;
                                 if (forcesave)
                                     usercontext.UIMode = ProviderPageMode.EnrollEmailAndSave;
@@ -1784,9 +1790,11 @@ namespace Neos.IdentityServer.MultiFactor
                         {
                             usercontext.WizPageID = 1; // Goto Donut
                             ValidateUserPhone(usercontext, context, proofData, Resources, true);
-                            if (!usercontext.NotificationSent)
+                            if (!usercontext.NotificationSent) 
+                            {
                                 MailUtilities.SendNotificationByEmail(Config, (Registration)usercontext, Config.MailProvider, Resources.Culture);
-                            usercontext.NotificationSent = true;
+                                usercontext.NotificationSent = true;
+                            }
                             return new AdapterPresentation(this, context);
                         }
                         catch (Exception ex)
@@ -1979,8 +1987,10 @@ namespace Neos.IdentityServer.MultiFactor
                         try
                         {
                             if (!usercontext.NotificationSent)
+                            {
                                 MailUtilities.SendNotificationByEmail(Config, (Registration)usercontext, Config.MailProvider, Resources.Culture);
-                            usercontext.NotificationSent = true;
+                                usercontext.NotificationSent = true;
+                            }
                             usercontext.WizPageID = 2;
                             ValidateUserPin(usercontext, context, proofData, Resources, true);
                             return new AdapterPresentation(this, context);

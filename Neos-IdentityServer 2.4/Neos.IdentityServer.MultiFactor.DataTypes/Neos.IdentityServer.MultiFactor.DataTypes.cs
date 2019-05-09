@@ -148,17 +148,17 @@ namespace Neos.IdentityServer.MultiFactor
         {
             get
             {
-                if (_context.Data.ContainsKey("_authctxnotifsent") && _context.Data["_authctxneednotifsent"] != null)
+                if (_context.Data.ContainsKey("_authctxnotifsent") && _context.Data["_authctxnotifsent"] != null)
                     return (bool)_context.Data["_authctxnotifsent"];
                 else
                     return false;
             }
             set
             {
-                if (_context.Data.ContainsKey("_authctxneednotifsent"))
-                    _context.Data["_authctxneednotifsent"] = value;
+                if (_context.Data.ContainsKey("_authctxnotifsent"))
+                    _context.Data["_authctxnotifsent"] = value;
                 else
-                    _context.Data.Add("_authctxneednotifsent", value);
+                    _context.Data.Add("_authctxnotifsent", value);
             }
         }
 
