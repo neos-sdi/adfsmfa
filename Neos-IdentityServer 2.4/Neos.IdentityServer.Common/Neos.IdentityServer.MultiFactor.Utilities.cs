@@ -1515,8 +1515,14 @@ namespace Neos.IdentityServer.MultiFactor
             Message.DeliveryNotificationOptions = DeliveryNotificationOptions.Never;
             lock(lck)
             {
-                ResourcesLocale Resources = new ResourcesLocale(culture.LCID);
-                Message.Subject = Resources.GetString(ResourcesLocaleKind.Mail, "MailOTPTitle");
+                Group titlegrp = Regex.Match(html, @"\<title\b[^>]*\>\s*(?<Title>[\s\S]*?)\</title\>", RegexOptions.IgnoreCase).Groups["Title"];
+                if (titlegrp != null)
+                    Message.Subject = titlegrp.Value;
+                if (Message.Subject == string.Empty)
+                {
+                    ResourcesLocale Resources = new ResourcesLocale(culture.LCID);
+                    Message.Subject = Resources.GetString(ResourcesLocaleKind.Mail, "MailOTPTitle");
+                }
             }
             SendMail(Message, mail);
             }
@@ -1570,8 +1576,14 @@ namespace Neos.IdentityServer.MultiFactor
             Message.DeliveryNotificationOptions = DeliveryNotificationOptions.Never;
             lock (lck)
             {
-                ResourcesLocale Resources = new ResourcesLocale(culture.LCID);
-                Message.Subject = string.Format(Resources.GetString(ResourcesLocaleKind.Mail, "MailAdminTitle"), user.UPN);
+                Group titlegrp = Regex.Match(html, @"\<title\b[^>]*\>\s*(?<Title>[\s\S]*?)\</title\>", RegexOptions.IgnoreCase).Groups["Title"];
+                if (titlegrp != null)
+                    Message.Subject = titlegrp.Value;
+                if (Message.Subject == string.Empty)
+                {
+                    ResourcesLocale Resources = new ResourcesLocale(culture.LCID);
+                    Message.Subject = string.Format(Resources.GetString(ResourcesLocaleKind.Mail, "MailAdminTitle"), user.UPN);
+                }
             }
             SendMail(Message, mail);
             }
@@ -1632,8 +1644,14 @@ namespace Neos.IdentityServer.MultiFactor
                     Message.DeliveryNotificationOptions = DeliveryNotificationOptions.Never;
                     lock (lck)
                     {
-                        ResourcesLocale Resources = new ResourcesLocale(culture.LCID);
-                        Message.Subject = Resources.GetString(ResourcesLocaleKind.Mail, "MailKeyTitle");
+                        Group titlegrp = Regex.Match(html, @"\<title\b[^>]*\>\s*(?<Title>[\s\S]*?)\</title\>", RegexOptions.IgnoreCase).Groups["Title"];
+                        if (titlegrp != null)
+                            Message.Subject = titlegrp.Value;
+                        if (Message.Subject == string.Empty)
+                        {
+                            ResourcesLocale Resources = new ResourcesLocale(culture.LCID);
+                            Message.Subject = Resources.GetString(ResourcesLocaleKind.Mail, "MailKeyTitle");
+                        }
                     }
                     Message.Priority = MailPriority.High;
 
@@ -1700,8 +1718,14 @@ namespace Neos.IdentityServer.MultiFactor
                 Message.DeliveryNotificationOptions = DeliveryNotificationOptions.Never;
                 lock (lck)
                 {
-                    ResourcesLocale Resources = new ResourcesLocale(culture.LCID);
-                    Message.Subject = string.Format(Resources.GetString(ResourcesLocaleKind.Mail, "MailNotificationsTitle"), user.UPN);
+                    Group titlegrp = Regex.Match(html, @"\<title\b[^>]*\>\s*(?<Title>[\s\S]*?)\</title\>", RegexOptions.IgnoreCase).Groups["Title"];
+                    if (titlegrp != null)
+                        Message.Subject = titlegrp.Value;
+                    if (Message.Subject==string.Empty)
+                    {
+                        ResourcesLocale Resources = new ResourcesLocale(culture.LCID);
+                        Message.Subject = string.Format(Resources.GetString(ResourcesLocaleKind.Mail, "MailNotificationsTitle"), user.UPN);
+                    }
                 }
                 SendMail(Message, mail);
             }

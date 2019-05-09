@@ -1479,6 +1479,11 @@ namespace Neos.IdentityServer.MultiFactor
                     case 2: // Next Button
                         usercontext.WizPageID = 1;
                         usercontext.KeyStatus = SecretKeyStatus.Success;
+                        if (!usercontext.NotificationSent)
+                        {
+                            MailUtilities.SendNotificationByEmail(Config, (Registration)usercontext, Config.MailProvider, Resources.Culture);
+                            usercontext.NotificationSent = true;
+                        }
                         return new AdapterPresentation(this, context);
                     case 3: // Code verification
                         try
@@ -1486,11 +1491,6 @@ namespace Neos.IdentityServer.MultiFactor
                             usercontext.SelectedMethod = AuthenticationResponseKind.PhoneAppOTP;
                             if ((int)AuthenticationResponseKind.Error == prov.PostAuthenticationRequest(usercontext))
                             {
-                                if (!usercontext.NotificationSent)
-                                {
-                                    MailUtilities.SendNotificationByEmail(Config, (Registration)usercontext, Config.MailProvider, Resources.Culture);
-                                    usercontext.NotificationSent = true;
-                                }
                                 usercontext.WizPageID = 4;
                                 if (forcesave)
                                     usercontext.UIMode = ProviderPageMode.EnrollOTPAndSave;
@@ -1627,6 +1627,11 @@ namespace Neos.IdentityServer.MultiFactor
                         {
                             usercontext.WizPageID = 1; // Goto Donut
                             ValidateUserEmail(usercontext, context, proofData, Resources, true);
+                            if (!usercontext.NotificationSent)
+                            {
+                                MailUtilities.SendNotificationByEmail(Config, (Registration)usercontext, Config.MailProvider, Resources.Culture);
+                                usercontext.NotificationSent = true;
+                            }
                             return new AdapterPresentation(this, context);
                         }
                         catch (Exception ex)
@@ -1645,11 +1650,6 @@ namespace Neos.IdentityServer.MultiFactor
                             usercontext.SelectedMethod = AuthenticationResponseKind.EmailOTP;
                             if ((int)AuthenticationResponseKind.Error == prov.PostAuthenticationRequest(usercontext))
                             {
-                                if (!usercontext.NotificationSent) 
-                                {
-                                    MailUtilities.SendNotificationByEmail(Config, (Registration)usercontext, Config.MailProvider, Resources.Culture);
-                                    usercontext.NotificationSent = true;
-                                }
                                 usercontext.WizPageID = 4;
                                 if (forcesave)
                                     usercontext.UIMode = ProviderPageMode.EnrollEmailAndSave;
@@ -1658,7 +1658,7 @@ namespace Neos.IdentityServer.MultiFactor
                                 return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelVERIFYOTPError"), false);
                             }
                             else
-                            {
+                            { 
                                 usercontext.WizPageID = 2;
                                 if (forcesave)
                                     usercontext.UIMode = ProviderPageMode.EnrollEmailAndSave;
