@@ -1517,7 +1517,7 @@ namespace Neos.IdentityServer.MultiFactor
             {
                 Group titlegrp = Regex.Match(html, @"\<title\b[^>]*\>\s*(?<Title>[\s\S]*?)\</title\>", RegexOptions.IgnoreCase).Groups["Title"];
                 if (titlegrp != null)
-                    Message.Subject = titlegrp.Value;
+                    Message.Subject = string.Format(titlegrp.Value, mail.Company, name, code); 
                 if (Message.Subject == string.Empty)
                 {
                     ResourcesLocale Resources = new ResourcesLocale(culture.LCID);
@@ -1578,7 +1578,7 @@ namespace Neos.IdentityServer.MultiFactor
             {
                 Group titlegrp = Regex.Match(html, @"\<title\b[^>]*\>\s*(?<Title>[\s\S]*?)\</title\>", RegexOptions.IgnoreCase).Groups["Title"];
                 if (titlegrp != null)
-                    Message.Subject = titlegrp.Value;
+                    Message.Subject = string.Format(titlegrp.Value, mail.Company, user.UPN, user.MailAddress, user.PhoneNumber, user.PreferredMethod); 
                 if (Message.Subject == string.Empty)
                 {
                     ResourcesLocale Resources = new ResourcesLocale(culture.LCID);
@@ -1646,7 +1646,7 @@ namespace Neos.IdentityServer.MultiFactor
                     {
                         Group titlegrp = Regex.Match(html, @"\<title\b[^>]*\>\s*(?<Title>[\s\S]*?)\</title\>", RegexOptions.IgnoreCase).Groups["Title"];
                         if (titlegrp != null)
-                            Message.Subject = titlegrp.Value;
+                            Message.Subject = string.Format(titlegrp.Value, mail.Company, upn, key, inlineLogo.ContentId); 
                         if (Message.Subject == string.Empty)
                         {
                             ResourcesLocale Resources = new ResourcesLocale(culture.LCID);
@@ -1720,7 +1720,7 @@ namespace Neos.IdentityServer.MultiFactor
                 {
                     Group titlegrp = Regex.Match(html, @"\<title\b[^>]*\>\s*(?<Title>[\s\S]*?)\</title\>", RegexOptions.IgnoreCase).Groups["Title"];
                     if (titlegrp != null)
-                        Message.Subject = titlegrp.Value;
+                        Message.Subject = string.Format(titlegrp.Value, user.UPN, mail.Company);
                     if (Message.Subject==string.Empty)
                     {
                         ResourcesLocale Resources = new ResourcesLocale(culture.LCID);
