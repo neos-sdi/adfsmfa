@@ -89,8 +89,8 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     /// </example>
     /// <example>
     ///   <para>get all users registered with MFA whose the upn start with "neos", including disabled, display result count.</para>
-    ///   <para>Get-MFAUsers -FilterValue neos* -FilterOperator StartWith -IncludeDisabled -ShowCount</para>
-    ///   <para>Get-MFAUsers -Value neos* -Operator StartWith -All -ShowCount -SortOrder UserName</para>
+    ///   <para>Get-MFAUsers -FilterValue neos -FilterOperator StartWith -IncludeDisabled -ShowCount</para>
+    ///   <para>Get-MFAUsers -Value neos -Operator StartWith -All -ShowCount -SortOrder UserName</para>
     /// </example>
     [Cmdlet(VerbsCommon.Get, "MFAUsers", SupportsShouldProcess = true, SupportsPaging = false, ConfirmImpact = ConfirmImpact.Medium, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Identity")]
     [OutputType(typeof(PSRegistration[]))]

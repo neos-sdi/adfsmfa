@@ -235,7 +235,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         public string DefaultCountryCode { get; set; }
         public string AdminContact { get; set; }
         public UserFeaturesOptions UserFeatures { get; set; }
-        public ConfigAdvertising AdvertisingDays { get; set; }
+        public FlatConfigAdvertising AdvertisingDays { get; set; }
         public ADFSUserInterfaceKind UiKind { get; set; }
 
         /// <summary>
@@ -259,7 +259,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             ChangeNotificationsOn = cfg.ChangeNotificationsOn;
             AdminContact = cfg.AdminContact;
             UserFeatures = cfg.UserFeatures;
-            AdvertisingDays = cfg.AdvertisingDays;
+            AdvertisingDays = (FlatConfigAdvertising)cfg.AdvertisingDays;
             UseUIPaginated = cfg.UseUIPaginated;
             UiKind = cfg.UiKind;
         }
@@ -285,7 +285,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             cfg.DefaultCountryCode = DefaultCountryCode;
             cfg.AdminContact = AdminContact;
             cfg.UserFeatures = UserFeatures;
-            cfg.AdvertisingDays = AdvertisingDays;
+            cfg.AdvertisingDays = (ConfigAdvertising)AdvertisingDays;
             cfg.UiKind = UiKind;
             cfg.UseUIPaginated = UseUIPaginated;
             ManagementService.ADFSManager.WriteConfiguration(host);
@@ -1092,6 +1092,31 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 return null;
             else
                 return new FlatConfigMailFileName(file.LCID, file.FileName, file.Enabled);
+        }
+    }
+
+    [Serializable]
+    public class FlatConfigAdvertising
+    {
+        public uint FirstDay { get; set; }
+        public uint LastDay { get; set; }
+        public bool OnFire { get; set; }
+
+        public static explicit operator ConfigAdvertising(FlatConfigAdvertising adv)
+        {
+            ConfigAdvertising cfg = new ConfigAdvertising();
+            cfg.FirstDay = adv.FirstDay;
+            cfg.LastDay = adv.LastDay;
+            return cfg;
+        }
+
+        public static explicit operator FlatConfigAdvertising(ConfigAdvertising adv)
+        {
+            FlatConfigAdvertising cfg = new FlatConfigAdvertising();
+            cfg.FirstDay = adv.FirstDay;
+            cfg.LastDay = adv.LastDay;
+            cfg.OnFire = adv.OnFire;
+            return cfg;
         }
     }
 }

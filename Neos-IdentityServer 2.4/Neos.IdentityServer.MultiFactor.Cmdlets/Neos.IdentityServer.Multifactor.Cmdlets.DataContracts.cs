@@ -261,7 +261,7 @@ namespace MFA
         /// <summary>
         /// <para type="description">Policy attributes for warnings to users.</para>
         /// </summary>
-        public ConfigAdvertising AdvertisingDays { get; set; }
+        public PSAdvertising AdvertisingDays { get; set; }
 
         /// <summary>
         /// implicit conversion to PSConfig
@@ -285,7 +285,7 @@ namespace MFA
                 psconfig.KeepMySelectedOptionOn = config.KeepMySelectedOptionOn;
                 psconfig.ChangeNotificationsOn = config.ChangeNotificationsOn;
                 psconfig.UserFeatures = (PSUserFeaturesOptions)config.UserFeatures;
-                psconfig.AdvertisingDays = config.AdvertisingDays;
+                psconfig.AdvertisingDays = (PSAdvertising)config.AdvertisingDays;
                 psconfig.UseUIPaginated = config.UseUIPaginated;
                 psconfig.UiKind = (PSUIKind)config.UiKind;
                 return psconfig;
@@ -315,11 +315,59 @@ namespace MFA
                 config.KeepMySelectedOptionOn = psconfig.KeepMySelectedOptionOn;
                 config.ChangeNotificationsOn = psconfig.ChangeNotificationsOn;
                 config.UserFeatures = (UserFeaturesOptions)psconfig.UserFeatures;
-                config.AdvertisingDays = psconfig.AdvertisingDays;
+                config.AdvertisingDays = (FlatConfigAdvertising)psconfig.AdvertisingDays;
                 config.UseUIPaginated = psconfig.UseUIPaginated;
                 config.UiKind = (ADFSUserInterfaceKind)psconfig.UiKind;
                 return config;
             }
+        }
+    }
+
+    /// <summary>
+    /// PSAdvertising class
+    /// <para type="synopsis">Main configuration properties in MFA System.</para>
+    /// <para type="description">Range of days during which users are invited to register.</para>
+    /// </summary>
+    /// <example>
+    ///   <para>$cfg = Get-MFAConfig</para>
+    ///   <para>$cfg.AdvertisingDays.FirstDay = 12</para>
+    ///   <para>$cfg.AdvertisingDays.FirstDay = 25</para>
+    ///   <para>Set-MFAConfig $cfg</para> 
+    /// </example>
+
+    public class PSAdvertising
+    {
+        /// <summary>
+        /// <para type="description">First Day for advertising.</para>
+        /// </summary>
+        public uint FirstDay { get; set; }
+
+        /// <summary>
+        /// <para type="description">Last Day for advertising.</para>
+        /// </summary>
+        public uint LastDay { get; set; }
+
+        /// <summary>
+        /// <para type="description">OnFire.</para>
+        /// </summary>
+        public bool OnFire { get; set; }
+
+        public static explicit operator PSAdvertising(FlatConfigAdvertising adv)
+        {
+            PSAdvertising cfg = new PSAdvertising();
+            cfg.FirstDay = adv.FirstDay;
+            cfg.LastDay = adv.LastDay;
+            cfg.OnFire = adv.OnFire;
+            return cfg;
+        }
+
+        public static explicit operator FlatConfigAdvertising(PSAdvertising adv)
+        {
+            FlatConfigAdvertising cfg = new FlatConfigAdvertising();
+            cfg.FirstDay = adv.FirstDay;
+            cfg.LastDay = adv.LastDay;
+            cfg.OnFire = adv.OnFire;
+            return cfg;
         }
     }
     #endregion
