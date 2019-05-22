@@ -55,6 +55,8 @@ namespace Neos.IdentityServer.MultiFactor.SAS
         {
             if (File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles)+@"\MFA\ResourceSet" + @"\" + resourcename + "." + Culture.TwoLetterISOLanguageName + ".resources"))
                 return ResourceManager.CreateFileBasedResourceManager(resourcename, Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + @"\MFA\ResourceSet", null);
+            else if (File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + @"\MFA\ResourceSet" + @"\" + resourcename + "." + Culture.Name + ".resources"))
+                return ResourceManager.CreateFileBasedResourceManager(resourcename, Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + @"\MFA\ResourceSet", null);
             else
                 return new ResourceManager(resourcename, typeof(ResourcesLocale).Assembly);
         }

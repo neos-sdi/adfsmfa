@@ -352,6 +352,9 @@ namespace MFA
         /// </summary>
         public bool OnFire { get; set; }
 
+        /// <summary>
+        /// <para type="description">explicit operator.</para>
+        /// </summary>
         public static explicit operator PSAdvertising(FlatConfigAdvertising adv)
         {
             PSAdvertising cfg = new PSAdvertising();
@@ -361,6 +364,9 @@ namespace MFA
             return cfg;
         }
 
+        /// <summary>
+        /// <para type="description">explicit operator.</para>
+        /// </summary>
         public static explicit operator FlatConfigAdvertising(PSAdvertising adv)
         {
             FlatConfigAdvertising cfg = new FlatConfigAdvertising();
