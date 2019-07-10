@@ -267,23 +267,10 @@ namespace Neos.IdentityServer.MultiFactor
     [XmlRoot("MFAConfig")]
     public class MFAConfig
     {
-        private bool _isdirty = false;
         private string _country = "fr";
-        private int _deliveryWindow = 300;
-        private int _pinlength = 4;
-        private int _defaultpin = 0;
-        private bool _kmsoo = true;
         private int _maxretries = 3;
-        private bool _useuipaginated = false;
-        private bool _changenotifs = true;
-
-        private bool _useActiveDirectory = true;
-        private bool _customUpdatePassword = true;
-        private UserFeaturesOptions _userFeatures = (UserFeaturesOptions.AllowDisabled | UserFeaturesOptions.AllowUnRegistered | UserFeaturesOptions.AllowManageOptions | UserFeaturesOptions.AllowChangePassword | UserFeaturesOptions.AllowEnrollment); // Default Mode
-        private ConfigAdvertising _advertising = new ConfigAdvertising(1, 31);
         private string _issuer;
-        private ADFSUserInterfaceKind _adfsuikind = ADFSUserInterfaceKind.Default;
-       
+        private ADFSUserInterfaceKind _adfsuikind = ADFSUserInterfaceKind.Default;      
 
         /// <summary>
         /// Constructor
@@ -309,7 +296,7 @@ namespace Neos.IdentityServer.MultiFactor
         {
             if (initializedefaults)
             {
-                _isdirty = false;
+                IsDirty = false;
                 DeliveryWindow = 300;
                 Issuer = "MFA";
                 PinLength = 4;
@@ -388,7 +375,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public void UpgradeDefaults()
         {
-            _isdirty = false;
+            IsDirty = false;
             if (DeliveryWindow <= 0)
                 DeliveryWindow = 300;
             if (PinLength <= 0)
@@ -473,46 +460,22 @@ namespace Neos.IdentityServer.MultiFactor
         }
 
         [XmlIgnore]
-        public bool IsDirty
-        {
-            get { return _isdirty; }
-            set { _isdirty = value; }
-        }
+        public bool IsDirty { get; set; } = false;
 
         [XmlAttribute("DeliveryWindow")]
-        public int DeliveryWindow
-        {
-            get { return _deliveryWindow; }
-            set { _deliveryWindow = value; }
-        }
+        public int DeliveryWindow { get; set; } = 300;
 
         [XmlAttribute("PinLength")]
-        public int PinLength
-        {
-            get { return _pinlength; }
-            set { _pinlength = value; }
-        }
+        public int PinLength { get; set; } = 4;
 
         [XmlAttribute("DefaultPin")]
-        public int DefaultPin
-        {
-            get { return _defaultpin; }
-            set { _defaultpin = value; }
-        }
+        public int DefaultPin { get; set; } = 0;
 
         [XmlAttribute("KMSOO")]
-        public bool KeepMySelectedOptionOn 
-        {
-            get { return _kmsoo; }
-            set { _kmsoo = value; }
-        }
+        public bool KeepMySelectedOptionOn { get; set; } = true;
 
         [XmlAttribute("ChangeNotificationsOn")]
-        public bool ChangeNotificationsOn
-        {
-            get { return _changenotifs; }
-            set { _changenotifs = value; }
-        }
+        public bool ChangeNotificationsOn { get; set; } = true;
 
         [XmlAttribute("MaxRetries")]
         public int MaxRetries
@@ -549,18 +512,10 @@ namespace Neos.IdentityServer.MultiFactor
         }
 
         [XmlAttribute("UseActiveDirectory")]
-        public bool UseActiveDirectory
-        {
-            get { return _useActiveDirectory; }
-            set { _useActiveDirectory = value; }
-        }
+        public bool UseActiveDirectory { get; set; } = true;
 
         [XmlAttribute("CustomUpdatePassword")]
-        public bool CustomUpdatePassword
-        {
-            get { return _customUpdatePassword; }
-            set { _customUpdatePassword = value; }
-        }
+        public bool CustomUpdatePassword { get; set; } = true;
 
         [XmlAttribute("DefaultCountryCode")]
         public string DefaultCountryCode
@@ -585,18 +540,24 @@ namespace Neos.IdentityServer.MultiFactor
         }
 
         [XmlAttribute("UserFeatures")]
-        public UserFeaturesOptions UserFeatures
-        {
-            get { return _userFeatures; }
-            set { _userFeatures = value; }
-        }
+        public UserFeaturesOptions UserFeatures { get; set; } = UserFeaturesOptions.AllowDisabled | UserFeaturesOptions.AllowUnRegistered | UserFeaturesOptions.AllowManageOptions | UserFeaturesOptions.AllowChangePassword | UserFeaturesOptions.AllowEnrollment;
 
         [XmlElement("ActivationAdvertising")]
-        public ConfigAdvertising AdvertisingDays
+        public ConfigAdvertising AdvertisingDays { get; set; } = new ConfigAdvertising(1, 31);
+
+        [XmlElement("UiKind")]
+        public ADFSUserInterfaceKind UiKind
         {
-            get { return _advertising; }
-            set { _advertising = value; }
+            get { return _adfsuikind; }
+            set { _adfsuikind = value; }
         }
+
+        [XmlElement("UseUIPaginated")]
+        public bool UseUIPaginated { get; set; } = false;
+
+        [XmlElement("LastUpdated")]
+        public DateTime LastUpdated { get; set; }
+
 
         [XmlElement("Hosts")]
         public Hosts Hosts
@@ -639,21 +600,6 @@ namespace Neos.IdentityServer.MultiFactor
             get;
             set;
         }
-
-        [XmlElement("UiKind")]
-        public ADFSUserInterfaceKind UiKind
-        {
-            get { return _adfsuikind; }
-            set { _adfsuikind = value; }
-        }
-
-        [XmlElement("UseUIPaginated")]
-        public bool UseUIPaginated
-        {
-            get { return _useuipaginated; }
-            set { _useuipaginated = value; }
-        }
-
     }
     #endregion
 
@@ -670,7 +616,6 @@ namespace Neos.IdentityServer.MultiFactor
         private ExternalKeyManagerConfig _ckeymgr;
         private int _validity = 5;
         private SecretKeyVersion _keyversion = SecretKeyVersion.V2;
-        private string _xorsecret = string.Empty;
 
         [XmlAttribute("KeyGenerator")]
         public KeyGeneratorMode KeyGenerator
@@ -696,8 +641,8 @@ namespace Neos.IdentityServer.MultiFactor
         [XmlAttribute("XORSecret")]
         public string XORSecret
         {
-            get { return _xorsecret; }
-            set { _xorsecret = value; }
+            get { return XORUtilities.XORKey; }
+            set { XORUtilities.XORKey = value; }
         }
 
         [XmlAttribute("CertificateThumbprint")]
@@ -885,6 +830,7 @@ namespace Neos.IdentityServer.MultiFactor
             PinRequired = prov.PinRequired;
             EnrollWizard = prov.EnrollWizard;
             ForceWizard = prov.ForceWizard;
+            SendDeliveryNotifications = prov.DeliveryNotifications;
         }
 
         public MailProvider Data { get; set; }
@@ -892,6 +838,7 @@ namespace Neos.IdentityServer.MultiFactor
         public override bool PinRequired { get; set; }
         public override bool EnrollWizard { get; set; }
         public override ForceWizardMode ForceWizard { get; set; }
+        public bool SendDeliveryNotifications { get; set; }
     }
 
     /// <summary>
@@ -1157,43 +1104,36 @@ namespace Neos.IdentityServer.MultiFactor
     /// </summary>
     public class MailProvider
     {
-        private string _comp = "your company description";
-        private bool _requiredpin = false;
-        private bool _enabled = true;
-        private bool _enrollwizard = true;
-        private ForceWizardMode _forcewizard = ForceWizardMode.Disabled;
-        private bool _anonymous = false;
-        private string _class;
         private XmlCDataSection _cdata;
         private List<string> _blocked = new List<string>();
 
         [XmlAttribute("Enabled")]
         public bool Enabled
         {
-            get { return _enabled; }
-            set { _enabled = value; }
-        }
+            get;
+            set;
+        } = true;
 
         [XmlAttribute("PinRequired")]
         public bool PinRequired
         {
-            get { return _requiredpin; }
-            set { _requiredpin = value; }
-        }
+            get;
+            set;
+        } = false;
 
         [XmlAttribute("EnrollWizard")]
         public bool EnrollWizard
         {
-            get { return _enrollwizard; }
-            set { _enrollwizard = value; }
-        }
+            get;
+            set;
+        } = true;
 
         [XmlAttribute("ForceWizard")]
         public ForceWizardMode ForceWizard
         {
-            get { return _forcewizard; }
-            set { _forcewizard = value; }
-        }
+            get;
+            set;
+        } = ForceWizardMode.Disabled;
 
         [XmlAttribute("from")]
         public string From
@@ -1219,9 +1159,9 @@ namespace Neos.IdentityServer.MultiFactor
         [XmlAttribute("anonymous")]
         public bool Anonymous
         {
-            get { return _anonymous; }
-            set { _anonymous = value; }
-        }
+            get;
+            set;
+        } = false;
 
         [XmlAttribute("host")]
         public string Host
@@ -1242,14 +1182,21 @@ namespace Neos.IdentityServer.MultiFactor
         {
             get;
             set;
-        }
+        } = false;
 
         [XmlAttribute("Company")]
         public string Company
         {
-            get { return _comp; }
-            set { _comp = value; }
-        }
+            get;
+            set;
+        } = "your company description";
+
+        [XmlAttribute("deliverynotifications")]
+        public bool DeliveryNotifications
+        {
+            get;
+            set;
+        } = false;
 
         [XmlArray("BlockedDomains")]
         [XmlArrayItem("Domain", Type = typeof(string))]
@@ -1294,8 +1241,8 @@ namespace Neos.IdentityServer.MultiFactor
         [XmlAttribute("FullQualifiedImplementation")]
         public string FullQualifiedImplementation
         {
-            get { return _class; }
-            set { _class = value; }
+            get;
+            set;
         }
 
         [XmlElement("Parameters", typeof(XmlCDataSection))]

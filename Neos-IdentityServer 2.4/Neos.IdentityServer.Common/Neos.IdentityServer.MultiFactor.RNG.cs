@@ -38,7 +38,7 @@ namespace Neos.IdentityServer.MultiFactor.Common
         private KeysRepositoryService _repos = null;
         private int MAX_PROBE_LEN = 0;
         private SecretKeyVersion _version = SecretKeyVersion.V2;
-        private string _xorsecret = Utilities.DefaultXORSecret;
+        private string _xorsecret = XORUtilities.XORKey;
 
         /// <summary>
         /// RNGKeyManager constructor

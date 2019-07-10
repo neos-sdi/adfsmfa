@@ -74,8 +74,6 @@ namespace Neos.IdentityServer.MultiFactor
             try
             {
                 AuthenticationContext usercontext = new AuthenticationContext(context);
-                usercontext.CurrentRetries = 0;
-                usercontext.NotificationSent = false;
                 switch (usercontext.UIMode)
                 {
                     case ProviderPageMode.PreSet:
@@ -149,6 +147,9 @@ namespace Neos.IdentityServer.MultiFactor
                 if (reg != null) // User Is Registered
                 {
                     AuthenticationContext usercontext = new AuthenticationContext(context, reg);
+                    usercontext.LogonDate = DateTime.Now;
+                    usercontext.CurrentRetries = 0;
+                    usercontext.NotificationSent = false;
                     if (usercontext.Enabled)
                     {
                         if (usercontext.KeyStatus == SecretKeyStatus.NoKey)
@@ -192,6 +193,9 @@ namespace Neos.IdentityServer.MultiFactor
                 else //Not registered
                 {
                     AuthenticationContext usercontext = new AuthenticationContext(context);
+                    usercontext.LogonDate = DateTime.Now;
+                    usercontext.CurrentRetries = 0;
+                    usercontext.NotificationSent = false;
                     usercontext.UPN = upn;
 
                     if (Config.UserFeatures.IsAdministrative()) // Error : administrative Only Registration
@@ -270,11 +274,6 @@ namespace Neos.IdentityServer.MultiFactor
                          }
 
                          RuntimeRepository.MailslotServer.MailSlotMessageArrived += this.OnMessageArrived;
-                         RuntimeRepository.MailslotServer.AllowedMachines.Clear();
-                         foreach(ADFSServerHost svr in Config.Hosts.ADFSFarm.Servers)
-                         {
-                             RuntimeRepository.MailslotServer.AllowedMachines.Add(svr.MachineName);
-                         }
                          RuntimeRepository.MailslotServer.Start();
                          Trace.TraceInformation(String.Format("AuthenticationProvider:OnAuthenticationPipelineLoad Duration : {0}", (DateTime.Now - st).ToString()));
                      }
@@ -433,8 +432,7 @@ namespace Neos.IdentityServer.MultiFactor
                         usercontext.UIMode = ProviderPageMode.Locking;
                         return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorInvalidIdentificationRestart"), ProviderPageMode.DefinitiveError);
                     }
-                    usercontext.CurrentRetries++;
-                    if(DateTime.Now.ToUniversalTime() > usercontext.SessionDate.AddSeconds(Convert.ToDouble(Config.DeliveryWindow)).ToUniversalTime())
+                    if(DateTime.Now.ToUniversalTime() > usercontext.LogonDate.AddSeconds(Convert.ToDouble(Config.DeliveryWindow)).ToUniversalTime())
                     {
                         usercontext.UIMode = ProviderPageMode.Locking;
                         return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorValidationTimeWindowElapsed"), ProviderPageMode.DefinitiveError);
@@ -461,7 +459,14 @@ namespace Neos.IdentityServer.MultiFactor
                                     }
                                 }
                             }
+                            if (!Utilities.CheckForReplay(Config, usercontext,  request))
+                            {
+                                usercontext.CurrentRetries = int.MaxValue;
+                                usercontext.UIMode = ProviderPageMode.Locking;
+                                return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorInvalidIdentificationRestart"), ProviderPageMode.DefinitiveError);
+                            }
                             claims = new Claim[] { GetAuthMethodClaim(usercontext.SelectedMethod) };
+
                             if (options)
                             {
                                 usercontext.UIMode = ProviderPageMode.SelectOptions;
@@ -1254,7 +1259,6 @@ namespace Neos.IdentityServer.MultiFactor
                 }
                 else if (usercontext.IsTwoWay)
                 {
-                    usercontext.CurrentRetries++;
                     callres = PostAuthenticationRequest(usercontext);
                     if (callres == (int)AuthenticationResponseKind.Error)
                     {
@@ -1312,6 +1316,7 @@ namespace Neos.IdentityServer.MultiFactor
                             return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorSendingToastInformationRetry"), false);
                         }
                     }
+                  //  usercontext.CurrentRetries++;
                 }
                 result = new AdapterPresentation(this, context);
             }
@@ -1453,8 +1458,7 @@ namespace Neos.IdentityServer.MultiFactor
             try
             {
                 int btnclicked = Convert.ToInt32(proofData.Properties["btnclicked"].ToString());
-                usercontext.KeyChanged = false;
-                IExternalProvider prov = RuntimeAuthProvider.GetProvider(PreferredMethod.Code);
+                usercontext.KeyChanged = false;                
 
                 switch (btnclicked)
                 {
@@ -1489,7 +1493,7 @@ namespace Neos.IdentityServer.MultiFactor
                         try
                         {
                             usercontext.SelectedMethod = AuthenticationResponseKind.PhoneAppOTP;
-                            if ((int)AuthenticationResponseKind.Error == prov.PostAuthenticationRequest(usercontext))
+                            if ((int)AuthenticationResponseKind.Error == PostAuthenticationRequest(usercontext, PreferredMethod.Code))
                             {
                                 usercontext.WizPageID = 4;
                                 if (forcesave)
@@ -1520,7 +1524,7 @@ namespace Neos.IdentityServer.MultiFactor
                     case 4: // Code validation
                         string totp = proofData.Properties["totp"].ToString();
                         usercontext.SelectedMethod = AuthenticationResponseKind.PhoneAppOTP;
-                        if ((int)AuthenticationResponseKind.Error != prov.SetAuthenticationResult(usercontext, totp))
+                        if ((int)AuthenticationResponseKind.Error != SetAuthenticationResult(usercontext, totp))
                         {
                             try
                             {
@@ -1648,7 +1652,7 @@ namespace Neos.IdentityServer.MultiFactor
                         {
                             ValidateUserEmail(usercontext, context, proofData, Resources, true);
                             usercontext.SelectedMethod = AuthenticationResponseKind.EmailOTP;
-                            if ((int)AuthenticationResponseKind.Error == prov.PostAuthenticationRequest(usercontext))
+                            if ((int)AuthenticationResponseKind.Error == PostAuthenticationRequest(usercontext, PreferredMethod.Email))
                             {
                                 usercontext.WizPageID = 4;
                                 if (forcesave)
@@ -1761,7 +1765,6 @@ namespace Neos.IdentityServer.MultiFactor
             {
                 int btnclicked = Convert.ToInt32(proofData.Properties["btnclicked"].ToString());
                 usercontext.KeyChanged = false;
-                IExternalProvider prov = RuntimeAuthProvider.GetProvider(PreferredMethod.External);
 
                 switch (btnclicked)
                 {
@@ -1811,13 +1814,14 @@ namespace Neos.IdentityServer.MultiFactor
                         {
                             ValidateUserPhone(usercontext, context, proofData, Resources, true);
                             AuthenticationResponseKind kd = AuthenticationResponseKind.Default;
+                            IExternalProvider prov = RuntimeAuthProvider.GetProvider(PreferredMethod.External);
                             if (prov.IsTwoWayByDefault)
                                 kd = AuthenticationResponseKind.SmsTwoWayOTP;
                             else
                                 kd = AuthenticationResponseKind.SmsOneWayOTP;
                             if (prov.SetSelectedAuthenticationMethod(usercontext, kd))
                             { 
-                                int callres = prov.PostAuthenticationRequest(usercontext);
+                                int callres = PostAuthenticationRequest(usercontext, PreferredMethod.External);
                                 if (callres == (int)AuthenticationResponseKind.Error)
                                 {
                                     usercontext.WizPageID = 4;
@@ -1839,7 +1843,7 @@ namespace Neos.IdentityServer.MultiFactor
                                     }
                                     else
                                     {
-                                        if ((int)AuthenticationResponseKind.Error != prov.SetAuthenticationResult(usercontext, string.Empty))
+                                        if ((int)AuthenticationResponseKind.Error != SetAuthenticationResult(usercontext, string.Empty, PreferredMethod.External))
                                             usercontext.WizPageID = 3;
                                         else
                                             usercontext.WizPageID = 4;
@@ -1872,7 +1876,7 @@ namespace Neos.IdentityServer.MultiFactor
                         }
                     case 4: // Code Validation
                         string totp = proofData.Properties["totp"].ToString();
-                        if ((int)AuthenticationResponseKind.Error != prov.SetAuthenticationResult(usercontext, totp))
+                        if ((int)AuthenticationResponseKind.Error != SetAuthenticationResult(usercontext, totp, PreferredMethod.External))
                         {
                             try
                             {
@@ -1880,7 +1884,6 @@ namespace Neos.IdentityServer.MultiFactor
                                 if (forcesave)
                                 {
                                     RuntimeRepository.SetUserRegistration(Config, (Registration)usercontext, false);
-                                  //  usercontext.NeedNotification = true;
                                     usercontext.UIMode = ProviderPageMode.EnrollPhoneAndSave;
                                 }
                                 else
@@ -1962,7 +1965,6 @@ namespace Neos.IdentityServer.MultiFactor
             {
                 int btnclicked = Convert.ToInt32(proofData.Properties["btnclicked"].ToString());
                 usercontext.KeyChanged = false;
-                IExternalProvider prov = RuntimeAuthProvider.GetProvider(PreferredMethod.Code);
 
                 switch (btnclicked)
                 {
@@ -2334,25 +2336,52 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// PostAuthenticationRequest method implementation
         /// </summary>
-        private int PostAuthenticationRequest(AuthenticationContext usercontext)
+        private int PostAuthenticationRequest(AuthenticationContext usercontext, PreferredMethod method = PreferredMethod.None)
         {
-            IExternalProvider provider = RuntimeAuthProvider.GetAuthenticationProvider(Config, usercontext);
-            if ((provider != null) && (provider.Enabled))
-                return provider.PostAuthenticationRequest(usercontext);
-            else
+            try
+            {
+                IExternalProvider provider = null;
+                if (method == PreferredMethod.None)
+                    provider = RuntimeAuthProvider.GetAuthenticationProvider(Config, usercontext);
+                else
+                    provider = RuntimeAuthProvider.GetProvider(method);
+
+                if ((provider != null) && (provider.Enabled))
+                    return provider.PostAuthenticationRequest(usercontext);
+                else
+                    return (int)AuthenticationResponseKind.Error;
+            }
+            catch (Exception ex)
+            {
+                Log.WriteEntry(string.Format("PostAuthenticationRequest Error {0} \r\n {1} \r\n {2}", usercontext.UPN, ex.Message, ex.StackTrace), EventLogEntryType.Error, 800);
                 return (int)AuthenticationResponseKind.Error;
+            }
         }
 
         /// <summary>
         /// SetAuthenticationResult method implementation
         /// </summary>
-        public int SetAuthenticationResult(AuthenticationContext usercontext, string totp)
+        public int SetAuthenticationResult(AuthenticationContext usercontext, string totp, PreferredMethod method = PreferredMethod.None)
         {
-            IExternalProvider provider = RuntimeAuthProvider.GetAuthenticationProvider(Config, usercontext);
-            if ((provider != null) && (provider.Enabled))
-                return provider.SetAuthenticationResult(usercontext, totp);
-            else
+            usercontext.CurrentRetries++;
+            try
+            {
+                IExternalProvider provider = null;
+                if (method == PreferredMethod.None)
+                    provider = RuntimeAuthProvider.GetAuthenticationProvider(Config, usercontext);
+                else
+                    provider = RuntimeAuthProvider.GetProvider(method);
+
+                if ((provider != null) && (provider.Enabled))
+                    return provider.SetAuthenticationResult(usercontext, totp);
+                else
+                    return (int)AuthenticationResponseKind.Error;
+            }
+            catch (Exception ex)
+            {
+                Log.WriteEntry(string.Format("SetAuthenticationResult Error {0} \r\n {1} \r\n {2}", usercontext.UPN, ex.Message, ex.StackTrace), EventLogEntryType.Error, 800);
                 return (int)AuthenticationResponseKind.Error;
+            }
         }
         #endregion
 
@@ -2378,11 +2407,19 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         private int PostInscriptionRequest(AuthenticationContext usercontext, Registration registration)
         {
-            IExternalAdminProvider _provider = RuntimeAuthProvider.GetAdministrativeProvider(Config);
-            if (_provider != null)
-                return _provider.PostInscriptionRequest(usercontext);
-            else
+            try
+            {
+                IExternalAdminProvider _provider = RuntimeAuthProvider.GetAdministrativeProvider(Config);
+                if (_provider != null)
+                    return _provider.PostInscriptionRequest(usercontext);
+                else
+                    return (int)AuthenticationResponseKind.Error;
+            }
+            catch (Exception ex)
+            {
+                Log.WriteEntry(string.Format("PostInscriptionRequest Error {0} \r\n {1} \r\n {2}", usercontext.UPN, ex.Message, ex.StackTrace), EventLogEntryType.Error, 800);
                 return (int)AuthenticationResponseKind.Error;
+            }
         }
 
         /// <summary>
@@ -2390,11 +2427,20 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public int SetInscriptionResult(AuthenticationContext usercontext, Registration registration)
         {
-            IExternalAdminProvider _provider = RuntimeAuthProvider.GetAdministrativeProvider(Config);
-            if (_provider != null)
-                return _provider.SetInscriptionResult(usercontext);
-            else
+            try
+            {
+
+                IExternalAdminProvider _provider = RuntimeAuthProvider.GetAdministrativeProvider(Config);
+                if (_provider != null)
+                    return _provider.SetInscriptionResult(usercontext);
+                else
+                    return (int)AuthenticationResponseKind.Error;
+            }
+            catch (Exception ex)
+            {
+                Log.WriteEntry(string.Format("SetInscriptionResult Error {0} \r\n {1} \r\n {2}", usercontext.UPN, ex.Message, ex.StackTrace), EventLogEntryType.Error, 800);
                 return (int)AuthenticationResponseKind.Error;
+            }
         }
         #endregion
 
@@ -2420,11 +2466,19 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         private int PostSecretKeyRequest(AuthenticationContext usercontext)
         {
-            IExternalAdminProvider _provider = RuntimeAuthProvider.GetAdministrativeProvider(Config);
-            if (_provider != null)
-                return _provider.PostSecretKeyRequest(usercontext);
-            else
+            try
+            {
+                IExternalAdminProvider _provider = RuntimeAuthProvider.GetAdministrativeProvider(Config);
+                if (_provider != null)
+                    return _provider.PostSecretKeyRequest(usercontext);
+                else
+                    return (int)AuthenticationResponseKind.Error;
+            }
+            catch (Exception ex)
+            {
+                Log.WriteEntry(string.Format("PostSecretKeyRequest Error {0} \r\n {1} \r\n {2}", usercontext.UPN, ex.Message, ex.StackTrace), EventLogEntryType.Error, 800);
                 return (int)AuthenticationResponseKind.Error;
+            }
         }
 
         /// <summary>
@@ -2432,11 +2486,19 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public int SetSecretKeyResult(AuthenticationContext usercontext)
         {
-            IExternalAdminProvider _provider = RuntimeAuthProvider.GetAdministrativeProvider(Config);
-            if (_provider != null)
-                return _provider.SetSecretKeyResult(usercontext);
-            else
+            try
+            {
+                IExternalAdminProvider _provider = RuntimeAuthProvider.GetAdministrativeProvider(Config);
+                if (_provider != null)
+                    return _provider.SetSecretKeyResult(usercontext);
+                else
+                    return (int)AuthenticationResponseKind.Error;
+            }
+            catch (Exception ex)
+            {
+                Log.WriteEntry(string.Format("SetSecretKeyResult Error {0} \r\n {1} \r\n {2}", usercontext.UPN, ex.Message, ex.StackTrace), EventLogEntryType.Error, 800);
                 return (int)AuthenticationResponseKind.Error;
+            }
         }
         #endregion
 
@@ -2604,19 +2666,18 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         private void OnMessageArrived(MailSlotServer maislotserver, MailSlotMessage message)
         {
-            if (message.Operation == 0xAA)
+            if (message.Operation == (byte)NotificationsKind.ConfigurationReload)
             {
                 Trace.TraceInformation("AuthenticationProvider:Configuration changed !");
                 _config = CFGUtilities.ReadConfiguration();
+                string computer = message.Text;
+                if (string.IsNullOrEmpty(computer))
+                    computer = Environment.MachineName;
+                else
+                    computer = computer.Replace("$", "");
                 Trace.TraceInformation("AuthenticationProvider:Configuration loaded !");
                 ResourcesLocale Resources = new ResourcesLocale(CultureInfo.CurrentCulture.LCID);
-                Log.WriteEntry(string.Format(Resources.GetString(ResourcesLocaleKind.Informations, "InfosConfigurationReloaded"), message.MachineName), EventLogEntryType.Warning, 9999);
-
-                RuntimeRepository.MailslotServer.AllowedMachines.Clear();
-                foreach (ADFSServerHost svr in Config.Hosts.ADFSFarm.Servers)
-                {
-                    RuntimeRepository.MailslotServer.AllowedMachines.Add(svr.MachineName);
-                }
+                Log.WriteEntry(string.Format(Resources.GetString(ResourcesLocaleKind.Informations, "InfosConfigurationReloaded"), computer), EventLogEntryType.Warning, 9999);
             }
         }
 

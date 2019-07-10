@@ -19,7 +19,7 @@ namespace Neos.IdentityServer.Console.Resources {
     // à l'aide d'un outil, tel que ResGen ou Visual Studio.
     // Pour ajouter ou supprimer un membre, modifiez votre fichier .ResX, puis réexécutez ResGen
     // avec l'option /str ou régénérez votre projet VS.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Neos_IdentityServer_Console_Ctrls {
@@ -1047,6 +1047,15 @@ namespace Neos.IdentityServer.Console.Resources {
         internal static string CTRLSMTPCOMPANY {
             get {
                 return ResourceManager.GetString("CTRLSMTPCOMPANY", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Delivery Notifications (errors).
+        /// </summary>
+        internal static string CTRLSMTPDELIVERYNOTIFICATIONS {
+            get {
+                return ResourceManager.GetString("CTRLSMTPDELIVERYNOTIFICATIONS", resourceCulture);
             }
         }
         

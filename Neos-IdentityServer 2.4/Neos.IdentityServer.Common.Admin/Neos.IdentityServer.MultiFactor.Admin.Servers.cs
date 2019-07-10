@@ -134,22 +134,22 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// </summary>
         private void MailSlotMessageArrived(MailSlotServer maislotserver, MailSlotMessage message)
         {
-            if (message.Operation == 0x10)
+            if (message.Operation == (byte)NotificationsKind.ServiceStatusRunning)
             {
                 ServicesStatus = ServiceOperationStatus.OperationRunning;
                 this.ServiceStatusChanged(this, ServicesStatus, message.Text);
             }
-            else if (message.Operation == 0x11)
+            else if (message.Operation == (byte)NotificationsKind.ServiceStatusStopped)
             {
                 ServicesStatus = ServiceOperationStatus.OperationStopped;
                 this.ServiceStatusChanged(this, ServicesStatus, message.Text);
             }
-            else if (message.Operation == 0x12)
+            else if (message.Operation == (byte)NotificationsKind.ServiceStatusPending)
             {
                 ServicesStatus = ServiceOperationStatus.OperationPending;
                 this.ServiceStatusChanged(this, ServicesStatus, message.Text);
             }
-            else if (message.Operation == 0x19)
+            else if (message.Operation == (byte)NotificationsKind.ServiceStatusInError)
             {
                 ServicesStatus = ServiceOperationStatus.OperationInError;
                 this.ServiceStatusChanged(this, ServicesStatus, message.Text);
@@ -446,7 +446,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 using (MailSlotClient mailslot = new MailSlotClient("MGT"))
                 {
                     mailslot.Text = servername;
-                    mailslot.SendNotification(0x12);
+                    mailslot.SendNotification(NotificationsKind.ServiceStatusPending);
                 }
                 this.ServiceStatusChanged(this, ServiceOperationStatus.OperationPending, servername);
                 if (ADFSController.Status != ServiceControllerStatus.Running)
@@ -456,7 +456,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 using (MailSlotClient mailslot = new MailSlotClient("MGT"))
                 {
                     mailslot.Text = servername;
-                    mailslot.SendNotification(0x10);
+                    mailslot.SendNotification(NotificationsKind.ServiceStatusRunning);
                 }
                 return true;
             }
@@ -466,7 +466,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 using (MailSlotClient mailslot = new MailSlotClient("MGT"))
                 {
                     mailslot.Text = servername;
-                    mailslot.SendNotification(0x19);
+                    mailslot.SendNotification(NotificationsKind.ServiceStatusInError);
                 }
                 return false;
             }
@@ -492,7 +492,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 using (MailSlotClient mailslot = new MailSlotClient("MGT"))
                 {
                     mailslot.Text = servername;
-                    mailslot.SendNotification(0x12);
+                    mailslot.SendNotification(NotificationsKind.ServiceStatusPending);
                 }
                 this.ServiceStatusChanged(this, ServiceOperationStatus.OperationPending, servername);
                 if (ADFSController.Status != ServiceControllerStatus.Stopped)
@@ -502,7 +502,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 using (MailSlotClient mailslot = new MailSlotClient("MGT"))
                 {
                     mailslot.Text = servername;
-                    mailslot.SendNotification(0x11);
+                    mailslot.SendNotification(NotificationsKind.ServiceStatusRunning);
                 }
                 return true;
             }
@@ -512,7 +512,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 using (MailSlotClient mailslot = new MailSlotClient("MGT"))
                 {
                     mailslot.Text = servername;
-                    mailslot.SendNotification(0x19);
+                    mailslot.SendNotification(NotificationsKind.ServiceStatusInError);
                 }
                 return false;
             }
@@ -571,7 +571,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 this.ConfigurationStatusChanged(this, ConfigOperationStatus.ConfigSaved);
                 using (MailSlotClient mailslot = new MailSlotClient())
                 {
-                    mailslot.SendNotification(0xAA);
+                    mailslot.SendNotification(NotificationsKind.ConfigurationReload);
                 }
             }
             catch (Exception ex)
@@ -1231,7 +1231,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 internalImportConfiguration(Host, importfile);
                 using (MailSlotClient mailslot = new MailSlotClient())
                 {
-                    mailslot.SendNotification(0xAA);
+                    mailslot.SendNotification(NotificationsKind.ConfigurationReload);
                 }
                 this.ConfigurationStatusChanged(this, ConfigOperationStatus.ConfigSaved);
                 _config = ReadConfiguration(Host);
@@ -1288,7 +1288,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             internalActivateConfiguration(Host);
             using (MailSlotClient mailslot = new MailSlotClient())
             {
-                mailslot.SendNotification(0xAA);
+                mailslot.SendNotification(NotificationsKind.ConfigurationReload);
             }
         }
 
@@ -1306,7 +1306,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             this.ConfigurationStatusChanged(this, ConfigOperationStatus.ConfigStopped);
             using (MailSlotClient mailslot = new MailSlotClient())
             {
-                mailslot.SendNotification(0xAA);
+                mailslot.SendNotification(NotificationsKind.ConfigurationReload);
             }
         }
 
@@ -1332,10 +1332,10 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             EnsureConfiguration(Host);
             try
             {
-                using (MailSlotClient mailslot = new MailSlotClient("CP1", true))
+                using (MailSlotClient mailslot = new MailSlotClient("CP1"))
                 {
                     mailslot.Text = Dns.GetHostEntry(servername).HostName;
-                    mailslot.SendNotification(0x10);
+                    mailslot.SendNotification(NotificationsKind.ServiceStatusRunning);
                 }
             }
             catch (Exception ex)

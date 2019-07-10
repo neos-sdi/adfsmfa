@@ -868,6 +868,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         public bool UseSSL { get; set; }
         public string Company { get; set; }
         public bool Anonymous { get; set; }
+        public bool DeliveryNotifications { get; set; }
         public FlatConfigMailBlockedDomains BlockedDomains { get; set; }
         public List<FlatConfigMailFileName> MailOTPContent { get; set; }
         public List<FlatConfigMailFileName> MailAdminContent { get; set; }
@@ -916,6 +917,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             Company = mail.Company;
             PinRequired = mail.PinRequired;
             Anonymous = mail.Anonymous;
+            DeliveryNotifications = mail.DeliveryNotifications;
             FullQualifiedImplementation = mail.FullQualifiedImplementation;
             Parameters = mail.Parameters.Data;
 
@@ -970,6 +972,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             mail.Company = Company;
             mail.PinRequired = PinRequired;
             mail.Anonymous = Anonymous;
+            mail.DeliveryNotifications = DeliveryNotifications;
             mail.FullQualifiedImplementation = FullQualifiedImplementation;
             mail.Parameters.Data = Parameters;
 

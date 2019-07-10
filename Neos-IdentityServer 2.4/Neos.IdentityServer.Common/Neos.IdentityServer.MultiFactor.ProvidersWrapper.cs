@@ -1318,6 +1318,15 @@ namespace Neos.IdentityServer.MultiFactor.Common
         }
 
         /// <summary>
+        /// DeliveryNotifications implementation
+        /// </summary>
+        public bool DeliveryNotifications
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
         /// Name property implementation
         /// </summary>
         public override string Name
@@ -1505,6 +1514,7 @@ namespace Neos.IdentityServer.MultiFactor.Common
                         WizardEnabled = param.EnrollWizard;
                         ForceEnrollment = param.ForceWizard;
                         PinRequired = param.PinRequired;
+                        DeliveryNotifications = param.SendDeliveryNotifications;
                         _isinitialized = true;
                         return;
                     }

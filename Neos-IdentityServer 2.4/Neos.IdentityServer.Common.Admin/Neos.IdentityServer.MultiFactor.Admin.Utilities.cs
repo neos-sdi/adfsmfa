@@ -166,32 +166,27 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// </summary>
         private static void MailSlotMessageArrived(MailSlotServer maislotserver, MailSlotMessage message)
         {
-            if (message.Operation == 0xAA)
+            if (message.Operation == (byte)NotificationsKind.ConfigurationReload)
             {
                 ADFSManager.Config = null;
                 ADFSManager.EnsureLocalConfiguration(null); // Force Reload Configuration
-                MailslotServer.AllowedMachines.Clear();
-                foreach (ADFSServerHost svr in Config.Hosts.ADFSFarm.Servers)
-                {
-                    MailslotServer.AllowedMachines.Add(svr.MachineName);
-                }
             }
-            else if (message.Operation == 0x10)
+            else if (message.Operation == (byte)NotificationsKind.ServiceStatusRunning)
             {
                 ADFSManager.ServicesStatus = ServiceOperationStatus.OperationRunning;
                 ADFSManager.OnServiceStatusChanged(ADFSManager.ServicesStatus, message.Text);
             }
-            else if (message.Operation == 0x11)
+            else if (message.Operation == (byte)NotificationsKind.ServiceStatusStopped)
             {
                 ADFSManager.ServicesStatus = ServiceOperationStatus.OperationStopped;
                 ADFSManager.OnServiceStatusChanged(ADFSManager.ServicesStatus, message.Text);
             }
-            else if (message.Operation == 0x12)
+            else if (message.Operation == (byte)NotificationsKind.ServiceStatusPending)
             {
                 ADFSManager.ServicesStatus = ServiceOperationStatus.OperationPending;
                 ADFSManager.OnServiceStatusChanged(ADFSManager.ServicesStatus, message.Text);
             }
-            else if (message.Operation == 0x19)
+            else if (message.Operation == (byte)NotificationsKind.ServiceStatusInError)
             {
                 ADFSManager.ServicesStatus = ServiceOperationStatus.OperationInError;
                 ADFSManager.OnServiceStatusChanged(ADFSManager.ServicesStatus, message.Text);

@@ -527,6 +527,28 @@ namespace Neos.IdentityServer.MultiFactor
         }
 
         /// <summary>
+        /// LogonDate property implementation
+        /// </summary>
+        [XmlAttribute("LogonDate")]
+        public DateTime LogonDate
+        {
+            get
+            {
+                if (_context.Data.ContainsKey("_authctxlogondate") && _context.Data["_authctxlogondate"] != null)
+                    return (DateTime)_context.Data["_authctxlogondate"];
+                else
+                    return DateTime.MinValue;
+            }
+            set
+            {
+                if (_context.Data.ContainsKey("_authctxlogondate"))
+                    _context.Data["_authctxlogondate"] = (DateTime)value;
+                else
+                    _context.Data.Add("_authctxlogondate", (DateTime)value);
+            }
+        }
+
+        /// <summary>
         /// ActivityId 
         /// </summary>
         [XmlAttribute("ActivityId")]
@@ -1441,6 +1463,20 @@ namespace Neos.IdentityServer.MultiFactor
     }
 
     /// <summary>
+    /// NotificationsKind
+    /// </summary>
+    [Serializable]
+    public enum NotificationsKind: byte
+    {
+        None = 0x00,
+        ConfigurationReload = 0xAA,
+        ServiceStatusRunning = 0x10,
+        ServiceStatusStopped = 0x11,
+        ServiceStatusPending = 0x12,
+        ServiceStatusInError = 0x19
+    }
+
+    /// <summary>
     /// OTPWizardOptions
     /// </summary>
     [Serializable, Flags]
@@ -1537,6 +1573,26 @@ namespace Neos.IdentityServer.MultiFactor
     {
         Default = 0,
         Default2019 = 1
+    }
+
+    /// <summary>
+    /// XORUtilities class
+    /// </summary>
+    public static class XORUtilities
+    {
+        static string _defaultxor = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+        static string _xorkey = _defaultxor;
+        public static string XORKey
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(_xorkey))
+                    return _defaultxor;
+                else
+                    return _xorkey;
+            }
+            set { _xorkey = value; }
+        }
     }
 
     /// <summary>

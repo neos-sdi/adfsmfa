@@ -447,6 +447,9 @@
   <data name="CTRLSMTPCOMPANY" xml:space="preserve">
     <value>Company Name</value>
   </data>
+  <data name="CTRLSMTPDELIVERYNOTIFICATIONS" xml:space="preserve">
+    <value>Delivery Notifications (errors)</value>
+  </data>
   <data name="CTRLSMTPFROM" xml:space="preserve">
     <value>Administrative contact (from)</value>
   </data>

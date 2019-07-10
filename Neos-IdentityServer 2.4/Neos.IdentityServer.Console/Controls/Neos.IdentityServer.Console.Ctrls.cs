@@ -4872,6 +4872,7 @@ namespace Neos.IdentityServer.Console.Controls
         private TextBox txtAccount;
         private TextBox txtPassword;
         private CheckBox chkAnonymous;
+        private CheckBox chkDeliveryNotifications;
         private Button btnConnect;
         private LinkLabel tblCancelConfig;
         private LinkLabel tblSaveConfig;
@@ -5126,10 +5127,19 @@ namespace Neos.IdentityServer.Console.Controls
                 chkAnonymous.CheckedChanged += AnonymousChecked;
                 _txtpanel.Controls.Add(chkAnonymous);
 
+                chkDeliveryNotifications = new CheckBox();
+                chkDeliveryNotifications.Text = res.CTRLSMTPDELIVERYNOTIFICATIONS;
+                chkDeliveryNotifications.Checked = Config.MailProvider.DeliveryNotifications;
+                chkDeliveryNotifications.Left = 10;
+                chkDeliveryNotifications.Top = 264;
+                chkDeliveryNotifications.Width = 250;
+                chkDeliveryNotifications.CheckedChanged += DeliveryNotificationsChecked;
+                _txtpanel.Controls.Add(chkDeliveryNotifications);
+
                 btnConnect = new Button();
                 btnConnect.Text = res.CTRLSMTPTEST;
                 btnConnect.Left = 480;
-                btnConnect.Top = 270;
+                btnConnect.Top = 285;
                 btnConnect.Width = 150;
                 btnConnect.Click += btnConnectClick;
                 _txtpanel.Controls.Add(btnConnect);
@@ -5198,10 +5208,13 @@ namespace Neos.IdentityServer.Console.Controls
 
                 chkAnonymous.Checked = Config.MailProvider.Anonymous;
 
+                chkDeliveryNotifications.Checked = Config.MailProvider.DeliveryNotifications;
+
                 tblSaveConfig.Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPESAVE;
                 tblCancelConfig.Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPECANCEL;
                 btnConnect.Text = res.CTRLSMTPTEST;
                 chkAnonymous.Text = res.CTRLSMTPANONYMOUS;
+                chkDeliveryNotifications.Text = res.CTRLSMTPDELIVERYNOTIFICATIONS;
                 lblPassword.Text = res.CTRLSMTPPASSWORD + " : ";
                 lblAccount.Text = res.CTRLSMTPACCOUNT + " : ";
                 lblidentify.Text = res.CTRLSMTPIDENTIFICATION;
@@ -5616,6 +5629,28 @@ namespace Neos.IdentityServer.Console.Controls
             catch (Exception ex)
             {
                 errors.SetError(chkAnonymous, ex.Message);
+            }
+        }
+        #endregion
+
+        #region DeliveryNotificationsChecked
+        /// <summary>
+        /// DeliveryNotificationsChecked method implementation
+        /// </summary>
+        private void DeliveryNotificationsChecked(object sender, EventArgs e)
+        {
+            try
+            {
+                if (_view.AutoValidate != AutoValidate.Disable)
+                {
+                    ManagementService.ADFSManager.SetDirty(true);
+                    Config.MailProvider.DeliveryNotifications = chkDeliveryNotifications.Checked;
+                    errors.SetError(chkDeliveryNotifications, "");
+                }
+            }
+            catch (Exception ex)
+            {
+                errors.SetError(chkDeliveryNotifications, ex.Message);
             }
         }
         #endregion

@@ -47,6 +47,7 @@ using System.Web;
 
 namespace Neos.IdentityServer.MultiFactor
 {
+    #region RuntimeAuthProvider
     /// <summary>
     /// RuntimeAuthProvider
     /// </summary>
@@ -521,7 +522,9 @@ namespace Neos.IdentityServer.MultiFactor
             return false;
         }
     }
+    #endregion
 
+    #region RuntimeRepository
     /// <summary>
     /// RepositoryService class implementation
     /// </summary>
@@ -726,89 +729,6 @@ namespace Neos.IdentityServer.MultiFactor
             return client.GetUserRegistrationsCount(filter);
         }
 
-        /*
-        /// <summary>
-        /// ImportUsers method implementation
-        /// </summary>
-        internal static void ImportADDSUsers(MFAConfig cfg, string ldappath, bool enable)  // TO BE REMOVED
-        {
-            string filename = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles)+"\\MFA\\adimport_"+DateTime.UtcNow.ToFileTimeUtc().ToString()+".log";
-            TraceListener listen = InitializeTrace(filename);
-            try
-            {
-                Trace.WriteLine("");
-                Trace.WriteLine(string.Format("Importing for AD : {0}", ldappath));
-                Trace.Indent();
-                Trace.WriteLine("Querying users from AD");
-                ADDSHost h = cfg.Hosts.ActiveDirectoryHost;
-                DataRepositoryService client = new ADDSDataRepositoryService(h, cfg.DeliveryWindow);
-                RegistrationList lst = client.GetImportUserRegistrations(h.DomainName, h.Account, h.Password, ldappath, null, null, null, null);
-                Trace.WriteLine(string.Format("Querying return {0} users from AD", lst.Count.ToString()));
-                DataRepositoryService client2 = null;
-                if (cfg.UseActiveDirectory)
-                {
-                    Trace.WriteLine("");
-                    Trace.WriteLine("Importing ADDS Mode");
-                    Trace.Indent();
-                    client2 = new ADDSDataRepositoryService(cfg.Hosts.ActiveDirectoryHost, cfg.DeliveryWindow);
-                }
-                else
-                {
-                    Trace.WriteLine("");
-                    Trace.WriteLine("Importing SQL Mode");
-                    Trace.Indent();
-                    client2 = new SQLDataRepositoryService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow);
-                }
-                client2.OnKeyDataEvent += KeyDataEvent;
-                foreach (Registration reg in lst)
-                {
-                    if (enable)
-                        reg.Enabled = true;
-                    if (!client2.HasRegistration(reg.UPN))
-                    {
-                        Trace.TraceInformation(string.Format("Importing user {0} from AD", reg.UPN));
-                        client2.AddUserRegistration(reg);
-                        Trace.TraceInformation(string.Format("User {0} Imported in MFA", reg.UPN));
-                    }
-                    else
-                        Trace.TraceWarning(string.Format("User {0} always exists in MFA, import canceled", reg.UPN));
-                }
-            }
-            catch (Exception ex)
-            {
-                Trace.TraceError(string.Format("Error importing from AD \r\r {0}",ex.Message));
-            }
-            finally
-            {
-                Trace.Unindent();
-                FinalizeTrace(listen);
-            }
-        }
-
-        /// <summary>
-        /// InitializeTrace method implementation
-        /// </summary>
-        private static TraceListener InitializeTrace(string filename)
-        {
-            DefaultTraceListener listen = new DefaultTraceListener();
-            listen.Name = "MFATrace";
-            Trace.Listeners.Add(listen);
-            listen.TraceOutputOptions = TraceOptions.DateTime;
-            listen.LogFileName = filename;
-            return listen;
-        }
-
-        /// <summary>
-        /// FinalizeTrace method implmentation
-        /// </summary>
-        private static void FinalizeTrace(TraceListener listen)
-        {
-            Trace.Flush();
-            Trace.Close();
-            listen.Close();
-            Trace.Listeners.Remove("MFATrace");
-        } */
-
         /// <summary>
         /// CheckADDSConnection method implmentation
         /// </summary>
@@ -946,8 +866,10 @@ namespace Neos.IdentityServer.MultiFactor
             return KeysManager.RemoveKey(upn);
         }
         #endregion    
-    }    
+    }
+    #endregion
 
+    #region TOTP Utils
     /// <summary>
     /// OTPGenerator static class
     /// </summary>
@@ -1315,7 +1237,9 @@ namespace Neos.IdentityServer.MultiFactor
             return str; 
         }
     }
+    #endregion
 
+    #region KeysManager
     /// <summary>
     /// KeysManager static class
     /// </summary>
@@ -1442,7 +1366,9 @@ namespace Neos.IdentityServer.MultiFactor
             return _manager.ValidateKey(upn);
         }
     }
+    #endregion
 
+    #region Mail Utilities
     /// <summary>
     /// MailUtilities class
     /// </summary>
@@ -1481,54 +1407,65 @@ namespace Neos.IdentityServer.MultiFactor
             string htmlres = string.Empty;
             try
             { 
-            if (mail.MailOTPContent != null)
-            {
-                int ctry = culture.LCID;
-                string tmp = mail.MailOTPContent.Where(c => c.LCID.Equals(ctry) && c.Enabled).Select(s => s.FileName).FirstOrDefault();
-                if (!string.IsNullOrEmpty(tmp))
+                if (mail.MailOTPContent != null)
                 {
-                    if (File.Exists(tmp))
+                    int ctry = culture.LCID;
+                    string tmp = mail.MailOTPContent.Where(c => c.LCID.Equals(ctry) && c.Enabled).Select(s => s.FileName).FirstOrDefault();
+                    if (!string.IsNullOrEmpty(tmp))
                     {
-                        FileStream fileStream = new FileStream(tmp, FileMode.Open, FileAccess.Read);
-
-                        using (StreamReader reader = new StreamReader(fileStream))
+                        if (File.Exists(tmp))
                         {
-                            htmlres = reader.ReadToEnd();
+                            FileStream fileStream = new FileStream(tmp, FileMode.Open, FileAccess.Read);
+
+                            using (StreamReader reader = new StreamReader(fileStream))
+                            {
+                                htmlres = reader.ReadToEnd();
+                            }
                         }
                     }
                 }
-            }
-            if (string.IsNullOrEmpty(htmlres))
-            {
-                lock(lck)
+                if (string.IsNullOrEmpty(htmlres))
                 {
-                    ResourcesLocale Resources = new ResourcesLocale(culture.LCID);
-                    htmlres = Resources.GetString(ResourcesLocaleKind.Mail, "MailOTPContent");
+                    lock(lck)
+                    {
+                        ResourcesLocale Resources = new ResourcesLocale(culture.LCID);
+                        htmlres = Resources.GetString(ResourcesLocaleKind.Mail, "MailOTPContent");
+                    }
                 }
-            }
-            string html = StripEmailContent(htmlres);
-            string name = upn.Remove(2, upn.IndexOf('@') - 2).Insert(2, "*********");
-            MailMessage Message = new MailMessage(mail.From, to);
-            Message.BodyEncoding = UTF8Encoding.UTF8;
-            Message.IsBodyHtml = true;
-            Message.Body = string.Format(html, mail.Company, name, code);
-            Message.DeliveryNotificationOptions = DeliveryNotificationOptions.Never;
-            lock(lck)
-            {
-                Group titlegrp = Regex.Match(html, @"\<title\b[^>]*\>\s*(?<Title>[\s\S]*?)\</title\>", RegexOptions.IgnoreCase).Groups["Title"];
-                if (titlegrp != null)
-                    Message.Subject = string.Format(titlegrp.Value, mail.Company, name, code); 
-                if (Message.Subject == string.Empty)
+                string html = StripEmailContent(htmlres);
+                string name = upn.Remove(2, upn.IndexOf('@') - 2).Insert(2, "*********");
+                MailMessage Message = new MailMessage(mail.From, to);
+                Message.BodyEncoding = UTF8Encoding.UTF8;
+                Message.IsBodyHtml = true;
+                Message.Body = string.Format(html, mail.Company, name, code);
+
+                if (mail.DeliveryNotifications)
+                    Message.DeliveryNotificationOptions = DeliveryNotificationOptions.OnFailure | DeliveryNotificationOptions.Delay;
+                else
+                    Message.DeliveryNotificationOptions = DeliveryNotificationOptions.Never;
+
+                lock (lck)
                 {
-                    ResourcesLocale Resources = new ResourcesLocale(culture.LCID);
-                    Message.Subject = Resources.GetString(ResourcesLocaleKind.Mail, "MailOTPTitle");
+                    Group titlegrp = Regex.Match(html, @"\<title\b[^>]*\>\s*(?<Title>[\s\S]*?)\</title\>", RegexOptions.IgnoreCase).Groups["Title"];
+                    if (titlegrp != null)
+                        Message.Subject = string.Format(titlegrp.Value, mail.Company, name, code); 
+                    if (Message.Subject == string.Empty)
+                    {
+                        ResourcesLocale Resources = new ResourcesLocale(culture.LCID);
+                        Message.Subject = Resources.GetString(ResourcesLocaleKind.Mail, "MailOTPTitle");
+                    }
                 }
+                SendMail(Message, mail);
             }
-            SendMail(Message, mail);
+            catch (SmtpException sm)
+            {
+                Log.WriteEntry(string.Format("Error Sending Email (TOTP) for user {0} with status code {1} : {2}", upn, sm.StatusCode.ToString(), sm.Message), EventLogEntryType.Error, 3700);
+                throw sm;
             }
             catch (Exception ex)
             {
                 Log.WriteEntry(string.Format("Error Sending Email (TOTP) for user {0}: {1}", upn, ex.Message), EventLogEntryType.Error, 3700);
+                throw ex;
             }
         }
 
@@ -1540,52 +1477,61 @@ namespace Neos.IdentityServer.MultiFactor
             string htmlres = string.Empty;
             try
             { 
-            if (mail.MailAdminContent != null)
-            {
-                int ctry = culture.LCID;
-                string tmp = mail.MailAdminContent.Where(c => c.LCID.Equals(ctry) && c.Enabled).Select(s => s.FileName).FirstOrDefault();
-                if (!string.IsNullOrEmpty(tmp))
+                if (mail.MailAdminContent != null)
                 {
-                    if (File.Exists(tmp))
+                    int ctry = culture.LCID;
+                    string tmp = mail.MailAdminContent.Where(c => c.LCID.Equals(ctry) && c.Enabled).Select(s => s.FileName).FirstOrDefault();
+                    if (!string.IsNullOrEmpty(tmp))
                     {
-                        FileStream fileStream = new FileStream(tmp, FileMode.Open, FileAccess.Read);
-
-                        using (StreamReader reader = new StreamReader(fileStream))
+                        if (File.Exists(tmp))
                         {
-                            htmlres = reader.ReadToEnd();
+                            FileStream fileStream = new FileStream(tmp, FileMode.Open, FileAccess.Read);
+
+                            using (StreamReader reader = new StreamReader(fileStream))
+                            {
+                                htmlres = reader.ReadToEnd();
+                            }
                         }
                     }
                 }
-            }
-            if (string.IsNullOrEmpty(htmlres))
-            {
+                if (string.IsNullOrEmpty(htmlres))
+                {
+                    lock (lck)
+                    {
+                        ResourcesLocale Resources = new ResourcesLocale(culture.LCID);
+                        htmlres = Resources.GetString(ResourcesLocaleKind.Mail, "MailAdminContent");
+                    }
+                }
+                string sendermail = GetUserBusinessEmail(user.UPN);
+                string html = StripEmailContent(htmlres);
+                MailMessage Message = new MailMessage(mail.From, to);
+                if (!string.IsNullOrEmpty(sendermail))
+                    Message.CC.Add(sendermail);
+                Message.BodyEncoding = UTF8Encoding.UTF8;
+                Message.IsBodyHtml = true;
+                Message.Body = string.Format(htmlres, mail.Company, user.UPN, user.MailAddress, user.PhoneNumber, user.PreferredMethod);
+
+                if (mail.DeliveryNotifications)
+                    Message.DeliveryNotificationOptions = DeliveryNotificationOptions.OnFailure | DeliveryNotificationOptions.Delay;
+                else
+                    Message.DeliveryNotificationOptions = DeliveryNotificationOptions.Never;
+
                 lock (lck)
                 {
-                    ResourcesLocale Resources = new ResourcesLocale(culture.LCID);
-                    htmlres = Resources.GetString(ResourcesLocaleKind.Mail, "MailAdminContent");
+                    Group titlegrp = Regex.Match(html, @"\<title\b[^>]*\>\s*(?<Title>[\s\S]*?)\</title\>", RegexOptions.IgnoreCase).Groups["Title"];
+                    if (titlegrp != null)
+                        Message.Subject = string.Format(titlegrp.Value, mail.Company, user.UPN, user.MailAddress, user.PhoneNumber, user.PreferredMethod); 
+                    if (Message.Subject == string.Empty)
+                    {
+                        ResourcesLocale Resources = new ResourcesLocale(culture.LCID);
+                        Message.Subject = string.Format(Resources.GetString(ResourcesLocaleKind.Mail, "MailAdminTitle"), user.UPN);
+                    }
                 }
+                SendMail(Message, mail);
             }
-            string sendermail = GetUserBusinessEmail(user.UPN);
-            string html = StripEmailContent(htmlres);
-            MailMessage Message = new MailMessage(mail.From, to);
-            if (!string.IsNullOrEmpty(sendermail))
-                Message.CC.Add(sendermail);
-            Message.BodyEncoding = UTF8Encoding.UTF8;
-            Message.IsBodyHtml = true;
-            Message.Body = string.Format(htmlres, mail.Company, user.UPN, user.MailAddress, user.PhoneNumber, user.PreferredMethod);
-            Message.DeliveryNotificationOptions = DeliveryNotificationOptions.Never;
-            lock (lck)
+            catch (SmtpException sm)
             {
-                Group titlegrp = Regex.Match(html, @"\<title\b[^>]*\>\s*(?<Title>[\s\S]*?)\</title\>", RegexOptions.IgnoreCase).Groups["Title"];
-                if (titlegrp != null)
-                    Message.Subject = string.Format(titlegrp.Value, mail.Company, user.UPN, user.MailAddress, user.PhoneNumber, user.PreferredMethod); 
-                if (Message.Subject == string.Empty)
-                {
-                    ResourcesLocale Resources = new ResourcesLocale(culture.LCID);
-                    Message.Subject = string.Format(Resources.GetString(ResourcesLocaleKind.Mail, "MailAdminTitle"), user.UPN);
-                }
-            }
-            SendMail(Message, mail);
+                Log.WriteEntry(string.Format("Error Sending Email (INSCRIPTION) for user {0} with status code {1} : {2}", user.UPN, sm.StatusCode.ToString(), sm.Message), EventLogEntryType.Error, 3700);
             }
             catch (Exception ex)
             {
@@ -1641,7 +1587,11 @@ namespace Neos.IdentityServer.MultiFactor
                     Message.BodyEncoding = UTF8Encoding.UTF8;
                     Message.IsBodyHtml = true;
 
-                    Message.DeliveryNotificationOptions = DeliveryNotificationOptions.Never;
+                    if (mail.DeliveryNotifications)
+                        Message.DeliveryNotificationOptions = DeliveryNotificationOptions.OnFailure | DeliveryNotificationOptions.Delay;
+                    else
+                        Message.DeliveryNotificationOptions = DeliveryNotificationOptions.Never;
+
                     lock (lck)
                     {
                         Group titlegrp = Regex.Match(html, @"\<title\b[^>]*\>\s*(?<Title>[\s\S]*?)\</title\>", RegexOptions.IgnoreCase).Groups["Title"];
@@ -1661,6 +1611,10 @@ namespace Neos.IdentityServer.MultiFactor
                     Message.AlternateViews.Add(view);
                     SendMail(Message, mail);
                 }
+            }
+            catch (SmtpException sm)
+            {
+                Log.WriteEntry(string.Format("Error Sending Email (KEY) for user {0} with status code {1} : {2}", upn, sm.StatusCode.ToString(), sm.Message), EventLogEntryType.Error, 3700);
             }
             catch (Exception ex)
             {
@@ -1715,7 +1669,12 @@ namespace Neos.IdentityServer.MultiFactor
                 Message.BodyEncoding = UTF8Encoding.UTF8;
                 Message.IsBodyHtml = true;
                 Message.Body = string.Format(html, user.UPN, mail.Company);
-                Message.DeliveryNotificationOptions = DeliveryNotificationOptions.Never;
+
+                if (mail.DeliveryNotifications)
+                    Message.DeliveryNotificationOptions = DeliveryNotificationOptions.OnFailure | DeliveryNotificationOptions.Delay;
+                else
+                    Message.DeliveryNotificationOptions = DeliveryNotificationOptions.Never;
+
                 lock (lck)
                 {
                     Group titlegrp = Regex.Match(html, @"\<title\b[^>]*\>\s*(?<Title>[\s\S]*?)\</title\>", RegexOptions.IgnoreCase).Groups["Title"];
@@ -1728,6 +1687,10 @@ namespace Neos.IdentityServer.MultiFactor
                     }
                 }
                 SendMail(Message, mail);
+            }
+            catch (SmtpException sm)
+            {
+                Log.WriteEntry(string.Format("Error Sending Email (NOTIF) for user {0} with status code {1} : {2}", user.UPN, sm.StatusCode.ToString(), sm.Message), EventLogEntryType.Error, 3700);
             }
             catch (Exception ex)
             {
@@ -1785,7 +1748,9 @@ namespace Neos.IdentityServer.MultiFactor
         }
         #endregion
     }
+    #endregion
 
+    #region QR Utilities
     /// <summary>
     /// QRUtilities static class
     /// </summary>
@@ -1877,7 +1842,9 @@ namespace Neos.IdentityServer.MultiFactor
         }
         #endregion
     }
+    #endregion
 
+    #region XmlConfigSerializer
     /// <summary>
     /// XmlConfigSerializer class
     /// </summary>
@@ -1923,16 +1890,33 @@ namespace Neos.IdentityServer.MultiFactor
             Log.WriteEntry("Xml Serialization error : Unknow Object : " + e.UnreferencedId + " of Type (" + e.UnreferencedObject.GetType().ToString() + ")", EventLogEntryType.Error, 703);
         }
     }
+    #endregion
 
+    #region Configuration Utilities
     /// <summary>
     /// CFGUtilities class
     /// </summary>
     internal static class CFGUtilities
     {
+        internal static string configcachedir = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\MFA\\Config\\config.db";
+
+        #region ReadConfiguration
         /// <summary>
         /// ReadConfiguration method implementation
         /// </summary>
         internal static MFAConfig ReadConfiguration(PSHost Host = null)
+        {
+
+            MFAConfig config = ReadConfigurationFromCache();
+            if (config == null)
+                config = ReadConfigurationFromDatabase(Host);
+            return config;
+        }
+
+        /// <summary>
+        /// ReadConfigurationFromDatabase method implementation
+        /// </summary>
+        internal static MFAConfig ReadConfigurationFromDatabase(PSHost Host = null)
         {
             MFAConfig config = null;
             Runspace SPRunSpace = null;
@@ -1984,15 +1968,61 @@ namespace Neos.IdentityServer.MultiFactor
         }
 
         /// <summary>
+        /// ReadConfigurationFromCache method implementation
+        /// </summary>
+        internal static MFAConfig ReadConfigurationFromCache()
+        {
+            MFAConfig config = null;
+            if (!File.Exists(CFGUtilities.configcachedir))
+                return null;
+            XmlConfigSerializer xmlserializer = new XmlConfigSerializer(typeof(MFAConfig));
+            using (FileStream fs = new FileStream(CFGUtilities.configcachedir, FileMode.Open, FileAccess.Read))
+            {
+                byte[] bytes = new byte[fs.Length];
+                int n = fs.Read(bytes, 0, (int)fs.Length);
+                fs.Close();
+
+                using (MemoryStream ms = new MemoryStream(XOREncryptOrDecrypt(bytes, XORUtilities.XORKey)))
+                {
+                    using (StreamReader reader = new StreamReader(ms))
+                    {
+                        config = (MFAConfig)xmlserializer.Deserialize(ms);
+                        if ((!config.OTPProvider.Enabled) && (!config.MailProvider.Enabled) && (!config.ExternalProvider.Enabled) && (!config.AzureProvider.Enabled))
+                            config.OTPProvider.Enabled = true;   // always let an active option eg : aplication in this case
+                        KeysManager.Initialize(config);  // Important
+                        RuntimeAuthProvider.LoadProviders(config);
+                    }
+                }
+            }
+            return config;
+        }
+        #endregion
+
+        #region WriteConfiguration
+        /// <summary>
         /// WriteConfiguration method implementation
         /// </summary>
         internal static MFAConfig WriteConfiguration(PSHost Host, MFAConfig config)
+        {
+            MFAConfig cfg = WriteConfigurationToDatabase(Host, config);
+            if (cfg != null)
+            {
+                WriteConfigurationToCache(cfg);
+            }
+            return config;
+        }
+
+        /// <summary>
+        /// WriteConfigurationToDatabase method implementation
+        /// </summary>
+        private static MFAConfig WriteConfigurationToDatabase(PSHost Host, MFAConfig config)
         {
             Runspace SPRunSpace = null;
             PowerShell SPPowerShell = null;
             string pth = Path.GetTempPath() + Path.GetRandomFileName();
             try
             {
+                config.LastUpdated = DateTime.UtcNow;
                 FileStream stm = new FileStream(pth, FileMode.CreateNew, FileAccess.ReadWrite);
                 XmlConfigSerializer xmlserializer = new XmlConfigSerializer(typeof(MFAConfig));
                 stm.Position = 0;
@@ -2031,14 +2061,124 @@ namespace Neos.IdentityServer.MultiFactor
             }
             return config;
         }
-    }
 
+        /// <summary>
+        /// WriteConfigurationToCache method implementation
+        /// </summary>
+        private static MFAConfig WriteConfigurationToCache(MFAConfig config)
+        {
+            XmlConfigSerializer xmlserializer = new XmlConfigSerializer(typeof(MFAConfig));
+            MemoryStream stm = new MemoryStream();
+            using (StreamReader reader = new StreamReader(stm))
+            {
+                xmlserializer.Serialize(stm, config);
+                stm.Position = 0;
+                byte[] byt = XOREncryptOrDecrypt(stm.ToArray(), XORUtilities.XORKey);
+                using (FileStream fs = new FileStream(CFGUtilities.configcachedir, FileMode.Create, FileAccess.ReadWrite))
+                {
+                    fs.Write(byt, 0, byt.Length);
+                    fs.Close();
+                }
+                return config;
+            }
+        }
+        #endregion
+
+        #region Informations
+        /// <summary>
+        /// IsWIDConfiguration method implmentation
+        /// </summary>
+        internal static bool IsWIDConfiguration(PSHost host = null)
+        {
+            Runspace SPRunSpace = null;
+            PowerShell SPPowerShell = null;
+            string nodetype = string.Empty;
+            try
+            {
+                RunspaceConfiguration SPRunConfig = RunspaceConfiguration.Create();
+                SPRunSpace = RunspaceFactory.CreateRunspace(SPRunConfig);
+
+                SPPowerShell = PowerShell.Create();
+                SPPowerShell.Runspace = SPRunSpace;
+                SPRunSpace.Open();
+
+                Pipeline pipeline = SPRunSpace.CreatePipeline();
+                Command exportcmd = new Command("(Get-AdfsProperties).ArtifactDbConnection", true);
+                pipeline.Commands.Add(exportcmd);
+                Collection<PSObject> PSOutput = pipeline.Invoke();
+                foreach (var result in PSOutput)
+                {
+                    string cnxstring = result.BaseObject.ToString();
+                    return cnxstring.ToLower().Contains("##wid");
+                }
+            }
+            finally
+            {
+                if (SPRunSpace != null)
+                    SPRunSpace.Close();
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// IsPrimaryComputer method implmentation
+        /// </summary>
+        internal static bool IsPrimaryComputer(PSHost host = null)
+        {
+            Runspace SPRunSpace = null;
+            PowerShell SPPowerShell = null;
+            string nodetype = string.Empty;
+            try
+            {
+                RunspaceConfiguration SPRunConfig = RunspaceConfiguration.Create();
+                SPRunSpace = RunspaceFactory.CreateRunspace(SPRunConfig);
+
+                SPPowerShell = PowerShell.Create();
+                SPPowerShell.Runspace = SPRunSpace;
+                SPRunSpace.Open();
+
+                Pipeline pipeline = SPRunSpace.CreatePipeline();
+                Command exportcmd = new Command("(Get-AdfsSyncProperties).Role", true);
+                pipeline.Commands.Add(exportcmd);
+                Collection<PSObject> PSOutput = pipeline.Invoke();
+                foreach (var result in PSOutput)
+                {
+                    nodetype = result.BaseObject.ToString();
+                    break;
+                }
+            }
+            finally
+            {
+                if (SPRunSpace != null)
+                    SPRunSpace.Close();
+            }
+            return nodetype.ToLower().Equals("primarycomputer");
+        }
+
+        /// <summary>
+        /// XOREncryptOrDecrypt method
+        /// </summary>
+        internal static byte[] XOREncryptOrDecrypt(byte[] value, string secret)
+        {
+            byte[] xor = new byte[value.Length];
+            for (int i = 0; i < value.Length; i++)
+            {
+                xor[i] = (byte)(value[i] ^ secret[i % secret.Length]);
+            }
+            return xor;
+        }
+        #endregion
+    }
+    #endregion
+
+    #region Utilities
     /// <summary>
     /// Utilities class
     /// </summary>
     public static class Utilities
     {
-        public static string DefaultXORSecret = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+        public static string XORKey = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+
         /// <summary>
         /// GetRandomOTP  method implementation
         /// </summary>
@@ -2061,6 +2201,26 @@ namespace Neos.IdentityServer.MultiFactor
             MailUtilities.SendOTPByEmail(reg.MailAddress, reg.UPN, otpres.ToString("D"), mail, culture);
             ctx.Notification = (int)AuthenticationResponseKind.EmailOTP;
             return otpres;
+        }
+
+        /// <summary>
+        /// CheckForReplay method implementation
+        /// </summary>
+        internal static bool CheckForReplay(MFAConfig config, AuthenticationContext usercontext, HttpListenerRequest request)
+        {
+            return true;
+            NamedPipeClientReplayRecord rec = new NamedPipeClientReplayRecord()
+            {
+                UserIPAdress = request.RemoteEndPoint.Address,
+                UserIPPort = request.RemoteEndPoint.Port,
+                UserMaxRetries = config.MaxRetries,
+                DeliveryWindow = config.DeliveryWindow,
+                UserName = usercontext.UPN,
+                UserLogon = usercontext.LogonDate,
+                UserCurrentRetries = usercontext.CurrentRetries
+            };
+            PipeReplayClient client = new PipeReplayClient();
+            return client.CheckForReplay(rec);
         }
 
         /// <summary>
@@ -2240,7 +2400,7 @@ namespace Neos.IdentityServer.MultiFactor
 			        Regex.Replace(phone.Substring(0, phone.Length - 4), "[0-9]", "x"),	phone.Substring(phone.Length - 4)
 		        });
 
-               /* if (string.IsNullOrEmpty(phone))
+                /* if (string.IsNullOrEmpty(phone))
                     return "* ** ** ** **";
                 else
                     return "* ** ** ** " + phone.Substring(phone.Length - 2, 2); */
@@ -2318,6 +2478,7 @@ namespace Neos.IdentityServer.MultiFactor
             }
         }
     }
+    #endregion
 
     #region ADFS Version
     internal class RegistryVersion

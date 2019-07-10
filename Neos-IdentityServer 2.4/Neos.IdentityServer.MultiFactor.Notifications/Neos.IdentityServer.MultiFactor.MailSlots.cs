@@ -29,15 +29,10 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
 using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Formatters.Binary;
 using System.Security;
 using System.Security.Permissions;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -52,11 +47,9 @@ namespace Neos.IdentityServer.MultiFactor
         private SECURITY_ATTRIBUTES _securityattr = null;
         private List<T> _messages = new List<T>();
         private CancellationTokenSource _canceltokensource = null;
-        private string _appname = string.Empty;
-        private string _machinename = string.Empty;
-        private int _processid = 0;
-        private int _scanduration = 300;
-        private bool _localonly = false;
+        private readonly string _appname = string.Empty;
+        private readonly int _processid = 0;
+        private readonly int _scanduration = 300;
         private bool _multiinstance = true;
         private bool _allowtoself = false;
         private Task _task = null;
@@ -65,21 +58,19 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// constructor implementation
         /// </summary>
-        public BaseMailSlotServer(bool multiinstance = false, bool localonly = true, int scanduration = 3000)
+        public BaseMailSlotServer(bool multiinstance = false, int scanduration = 3000)
         {
             Process process = Process.GetCurrentProcess();
             _processid = process.Id;
             _appname = "MGR";
-            _machinename = Environment.MachineName;
             _scanduration = scanduration;
-            _localonly = localonly;
             _multiinstance = multiinstance;
         }
 
         /// <summary>
         /// Constructor implementation
         /// </summary>
-        public BaseMailSlotServer(string appname, bool multiinstance = true, bool localonly = true, int scanduration = 3000):this(multiinstance, localonly, scanduration)
+        public BaseMailSlotServer(string appname, bool multiinstance = true, int scanduration = 3000):this(multiinstance, scanduration)
         {
             _appname = appname;
         }
@@ -87,7 +78,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// Constructor implementation
         /// </summary>
-        public BaseMailSlotServer(string appname, int processid, bool multiinstance = true, bool localonly = false, int scanduration = 3000):this(appname, multiinstance, localonly, scanduration)
+        public BaseMailSlotServer(string appname, int processid, bool multiinstance = true, int scanduration = 3000):this(appname, multiinstance, scanduration)
         {
             _processid = processid;
         }
@@ -142,14 +133,6 @@ namespace Neos.IdentityServer.MultiFactor
         }
 
         /// <summary>
-        /// MachineNname property
-        /// </summary>
-        public string MachineName
-        {
-            get { return _machinename; }
-        }
-
-        /// <summary>
         /// ScanDuration property
         /// </summary>
         public int ScanDuration
@@ -163,19 +146,6 @@ namespace Neos.IdentityServer.MultiFactor
         protected abstract string MailSlotName
         {
             get;
-        }
-
-        /// <summary>
-        /// LocalOnly property
-        /// </summary>
-        public bool LocalOnly
-        {
-            get { return _localonly; }
-            set 
-            {
-                if (_mailslot == null)
-                    _localonly = value; 
-            }
         }
 
         /// <summary>
@@ -246,7 +216,7 @@ namespace Neos.IdentityServer.MultiFactor
                     if (_canceltokensource.Token.IsCancellationRequested)
                         return;
                     _messages.Clear();
-                    if (internalReadMailslot())
+                    if (InternalReadMailslot())
                     {
                         foreach (T message in _messages)
                         {
@@ -259,21 +229,23 @@ namespace Neos.IdentityServer.MultiFactor
                     if (!_canceltokensource.Token.IsCancellationRequested)
                         Thread.Sleep(_scanduration);
                 }
+                catch (ThreadAbortException ex)
+                {
+                    throw ex;
+                }
                 catch (Exception ex)
                 {
-                    LogForSlots.WriteEntry(ex.Message, EventLogEntryType.Error, 9999);
+                    LogForSlots.WriteEntry("MailSlot Server Loop Error ("+ApplicationName+"): "+ex.Message, EventLogEntryType.Error, 9999);
                 }
             }
         }
 
         /// <summary>
-        /// ReadMailslot method implementation
+        /// InternalReadMailslot method implementation
         /// </summary>
-        private bool internalReadMailslot()
+        private bool InternalReadMailslot()
         {
-            int cbMessageBytes = 0;
             int cbBytesRead = 0;
-            int cMessages = 0;
             int nMessageId = 0;
 
             bool succeeded = false;
@@ -281,36 +253,44 @@ namespace Neos.IdentityServer.MultiFactor
                 return succeeded;
 
             _messages.Clear();
-            succeeded = NativeMethod.GetMailslotInfo(_mailslot, IntPtr.Zero, out cbMessageBytes, out cMessages, IntPtr.Zero);
-            if (!succeeded)
-                throw new Win32Exception(Marshal.GetLastWin32Error());
-            if (cbMessageBytes == MAILSLOT_NO_MESSAGE)
-                return succeeded;
-            while (cMessages != 0)
+            try
             {
-                nMessageId++;
-                byte[] bBuffer = new byte[cbMessageBytes];
-                succeeded = NativeMethod.ReadFile(_mailslot, bBuffer, cbMessageBytes, out cbBytesRead, IntPtr.Zero);
+                succeeded = NativeMethod.GetMailslotInfo(_mailslot, IntPtr.Zero, out int cbMessageBytes, out int cMessages, IntPtr.Zero);
                 if (!succeeded)
                     throw new Win32Exception(Marshal.GetLastWin32Error());
-
-                if (bBuffer[0] == 0xFF)
+                if (cbMessageBytes == MAILSLOT_NO_MESSAGE)
+                    return succeeded;
+                while (cMessages != 0)
                 {
-                    RawSerializer<MailSlotDispatcherMessageStruct> bf = new RawSerializer<MailSlotDispatcherMessageStruct>();
-                    dynamic flatted = bf.Deserialize(bBuffer);
-                    _messages.Add(flatted);
+                    nMessageId++;
+                    byte[] bBuffer = new byte[cbMessageBytes];
+                    succeeded = NativeMethod.ReadFile(_mailslot, bBuffer, cbMessageBytes, out cbBytesRead, IntPtr.Zero);
+                    if (!succeeded)
+                        throw new Win32Exception(Marshal.GetLastWin32Error());
 
-                }
-                if (bBuffer[0] == 0xEE)
-                {
-                    RawSerializer<MailSlotMessageStruct> bf = new RawSerializer<MailSlotMessageStruct>();
-                    dynamic flatted = bf.Deserialize(bBuffer);
-                    _messages.Add(flatted);
-                }
+                    if (bBuffer[0] == 0xFF)
+                    {
+                        RawSerializer<MailSlotDispatcherMessageStruct> bf = new RawSerializer<MailSlotDispatcherMessageStruct>();
+                        dynamic flatted = bf.Deserialize(bBuffer);
+                        _messages.Add(flatted);
 
-                succeeded = NativeMethod.GetMailslotInfo(_mailslot, IntPtr.Zero, out cbMessageBytes, out cMessages, IntPtr.Zero);
-                if (!succeeded)
-                    throw new Win32Exception(Marshal.GetLastWin32Error());
+                    }
+                    if (bBuffer[0] == 0xEE)
+                    {
+                        RawSerializer<MailSlotMessageStruct> bf = new RawSerializer<MailSlotMessageStruct>();
+                        dynamic flatted = bf.Deserialize(bBuffer);
+                        _messages.Add(flatted);
+                    }
+
+                    succeeded = NativeMethod.GetMailslotInfo(_mailslot, IntPtr.Zero, out cbMessageBytes, out cMessages, IntPtr.Zero);
+                    if (!succeeded)
+                        throw new Win32Exception(Marshal.GetLastWin32Error());
+                }
+            }
+            catch (Exception ex)
+            {
+                LogForSlots.WriteEntry("MailSlot Server Read Error (" + ApplicationName + "): " + ex.Message, EventLogEntryType.Error, 9999);
+                throw ex;
             }
             return succeeded;
         }
@@ -355,8 +335,7 @@ namespace Neos.IdentityServer.MultiFactor
                 "(A;OICI;GA;;;EA)" +       // Allow full control to enterprise admins
                 "(A;OICI;GA;;;NS)";        // Allow full control to network services
 
-            SafeLocalMemHandle pSecurityDescriptor = null;
-            if (!NativeMethod.ConvertStringSecurityDescriptorToSecurityDescriptor(sddl, 1, out pSecurityDescriptor, IntPtr.Zero))
+            if (!NativeMethod.ConvertStringSecurityDescriptorToSecurityDescriptor(sddl, 1, out SafeLocalMemHandle pSecurityDescriptor, IntPtr.Zero))
             {
                 throw new Win32Exception();
             }
@@ -375,12 +354,11 @@ namespace Neos.IdentityServer.MultiFactor
     {
         public delegate void MailSlotMessageEvent(MailSlotServer maislotserver, MailSlotMessage message);
         public event MailSlotMessageEvent MailSlotMessageArrived;
-        private List<string> _allowedmachines = new List<string>();
 
         /// <summary>
         /// Constructor implementation
         /// </summary>
-        public MailSlotServer(string appname, bool multiinstance = true, bool localonly = false, int scanduration = 3000): base(appname, multiinstance, localonly, scanduration)
+        public MailSlotServer(string appname, bool multiinstance = true, int scanduration = 3000): base(appname, multiinstance, scanduration)
         {
         }
 
@@ -399,7 +377,7 @@ namespace Neos.IdentityServer.MultiFactor
         {
             using (MailSlotClientDispatcher mailslot = new MailSlotClientDispatcher())
             {
-                mailslot.Register(this.MachineName, this.ApplicationName, this.ProcessID, this.MultiInstance, this.LocalOnly, this.AllowToSelf);
+                mailslot.Register(this.ApplicationName, this.ProcessID, this.MultiInstance, this.AllowToSelf);
             }
             base.Start();
         }
@@ -412,7 +390,7 @@ namespace Neos.IdentityServer.MultiFactor
             base.Stop();
             using (MailSlotClientDispatcher mailslot = new MailSlotClientDispatcher())
             {
-                mailslot.UnRegister(this.MachineName, this.ApplicationName, this.ProcessID, this.MultiInstance, this.LocalOnly, this.AllowToSelf);
+                mailslot.UnRegister(this.ApplicationName, this.ProcessID, this.MultiInstance, this.AllowToSelf);
             }
         }
 
@@ -423,47 +401,25 @@ namespace Neos.IdentityServer.MultiFactor
         {
             try
             {
-                if (CheckAllowedMachines(message.MachineName))
+                switch (message.Operation)
                 {
-                    switch (message.Operation)
-                    {
-                        case 0xFE:
-                            if (IsStarted)
-                                Stop();
-                            Start();
-                            this.MailSlotMessageArrived(this, message);
-                            break;
-                        default:
-                            this.MailSlotMessageArrived(this, message);
-                            break;
-                    }
+                    case 0xFE:
+                        if (IsStarted)
+                            Stop();
+                        Start();
+                        this.MailSlotMessageArrived(this, message);
+                        break;
+                    default:
+                        this.MailSlotMessageArrived(this, message);
+                        break;
                 }
             }
             catch (Exception ex)
             {
-                LogForSlots.WriteEntry(ex.Message, EventLogEntryType.Error, 9999);
+                LogForSlots.WriteEntry("MailSlot Server Error : "+ex.Message, EventLogEntryType.Error, 9999);
             }
         }
-
-        /// <summary>
-        /// AllowedMachines property
-        /// </summary>
-        public List<string> AllowedMachines
-        {
-            get { return _allowedmachines; }
-        }
-
-        /// <summary>
-        /// CheckAllowedMachines method implmentation
-        /// </summary>
-        private bool CheckAllowedMachines(string machine)
-        {
-            if (this.AllowedMachines.Count == 0)
-                return true;
-            string res = this.AllowedMachines.FirstOrDefault<string>(C => machine.ToLower().Equals(C.ToLower()));
-            return !string.IsNullOrEmpty(res);
-        }
-
+       
         /// <summary>
         /// Dispose method implementation
         /// </summary>
@@ -473,7 +429,7 @@ namespace Neos.IdentityServer.MultiFactor
             {
                 using (MailSlotClientDispatcher mailslot = new MailSlotClientDispatcher())
                 {
-                    mailslot.UnRegister(this.MachineName, this.ApplicationName, this.ProcessID, this.MultiInstance, this.LocalOnly, this.AllowToSelf);
+                    mailslot.UnRegister(this.ApplicationName, this.ProcessID, this.MultiInstance, this.AllowToSelf);
                 }
             }
             base.Dispose(disposing);
@@ -490,7 +446,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// Constructor implementation
         /// </summary>
-        public MailSlotServerDispatcher(MailSlotServerManager manager, string appname, int processid, int scanduration = 3000) : base(appname, processid, true, false, scanduration) 
+        public MailSlotServerDispatcher(MailSlotServerManager manager, string appname, int processid, int scanduration = 3000) : base(appname, processid, true, scanduration) 
         {
             _manager = manager;
         } 
@@ -518,11 +474,11 @@ namespace Neos.IdentityServer.MultiFactor
                         {
                             if (message.ApplicationName.ToLower().Equals(msg.ApplicationName.ToLower()) || message.IsBroadcast)
                             {
-                                using (MailSlotClientForwarder mailslotcli = new MailSlotClientForwarder(msg.ApplicationName, msg.TargetID, msg.Local))
+                                using (MailSlotClientForwarder mailslotcli = new MailSlotClientForwarder(msg.ApplicationName, msg.TargetID))
                                 {
-                                    if (!((message.SenderID == msg.TargetID) && (message.MachineName.ToLower().Equals(msg.MachineName.ToLower()))))
+                                    if (!(message.SenderID == msg.TargetID))
                                         mailslotcli.ForwardNotification(message);
-                                    else if ((msg.AllowToSelf) && (message.SenderID == msg.TargetID) && (message.MachineName.ToLower().Equals(msg.MachineName.ToLower())))
+                                    else if ((msg.AllowToSelf) && (message.SenderID == msg.TargetID))
                                         mailslotcli.ForwardNotification(message);
                                 }
                             }
@@ -536,11 +492,11 @@ namespace Neos.IdentityServer.MultiFactor
                 {
                     if (message.ApplicationName.ToLower().Equals(msg.ApplicationName.ToLower()))
                     {
-                        using (MailSlotClientForwarder mailslotcli = new MailSlotClientForwarder(msg.ApplicationName, msg.TargetID, msg.Local))
+                        using (MailSlotClientForwarder mailslotcli = new MailSlotClientForwarder(msg.ApplicationName, msg.TargetID))
                         {
-                            if (!((message.SenderID == msg.TargetID) && (message.MachineName.ToLower().Equals(msg.MachineName.ToLower()))))
+                            if (!(message.SenderID == msg.TargetID))
                                 mailslotcli.ForwardNotification(message);
-                            else if ((msg.AllowToSelf) && (message.SenderID == msg.TargetID) && (message.MachineName.ToLower().Equals(msg.MachineName.ToLower())))
+                            else if ((msg.AllowToSelf) && (message.SenderID == msg.TargetID))
                                 mailslotcli.ForwardNotification(message);
                         }
                     }
@@ -563,11 +519,6 @@ namespace Neos.IdentityServer.MultiFactor
             bool Ok = true;
             foreach(MailSlotDispatcherMessage msg in _instances)
             {
-                if ((message.Local) && (!message.MachineName.ToLower().Equals(msg.MachineName.ToLower())))
-                {
-                    Ok = false;
-                    break;
-                }
                 if ((!message.MultiInstance) && (message.ApplicationName.ToLower().Equals(msg.ApplicationName.ToLower())))
                 {
                     Ok = false;
@@ -589,7 +540,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public int RemoveInstance(MailSlotDispatcherMessage message)
         {
-            _instances.RemoveAll(C => message.ApplicationName.ToLower().Equals(C.ApplicationName.ToLower()) && (message.TargetID == C.TargetID) && (message.MachineName.ToLower().Equals(C.MachineName.ToLower())));
+            _instances.RemoveAll(C => message.ApplicationName.ToLower().Equals(C.ApplicationName.ToLower()) && (message.TargetID == C.TargetID));
             return _instances.Count;
         }
 
@@ -602,7 +553,7 @@ namespace Neos.IdentityServer.MultiFactor
             {
                 using (MailSlotClientDispatcher mailslot = new MailSlotClientDispatcher())
                 {
-                    mailslot.UnRegister(this.MachineName, this.ApplicationName, this.ProcessID, this.MultiInstance, this.LocalOnly, this.AllowToSelf);
+                    mailslot.UnRegister(this.ApplicationName, this.ProcessID, this.MultiInstance, this.AllowToSelf);
                 }
             }
             base.Dispose(disposing);
@@ -622,9 +573,9 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// Constructor implementation
         /// </summary>
-        public MailSlotServerManager(int scanduration = 3000): base(false, true, scanduration) 
+        public MailSlotServerManager(int scanduration = 3000): base(false, scanduration) 
         {
-            _broadcast = new MailSlotServer("BDC", false, true, scanduration);
+            _broadcast = new MailSlotServer("BDC", false, scanduration);
         }
 
         /// <summary>
@@ -682,45 +633,42 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         protected override void DoOnMessage(MailSlotDispatcherMessage message)
         {
-            if (message.MachineName.ToLower().Equals(this.MachineName.ToLower()))
+            MailSlotServerDispatcher mdisp = null;
+            switch (message.Operation)
             {
-                MailSlotServerDispatcher mdisp = null;
-                switch (message.Operation)
+                case 0xF0:
                 {
-                    case 0xF0:
+                    int index = this._mailslotlst.FindIndex(c => (c.ApplicationName.Equals(message.ApplicationName)));
+                    if (index < 0)
                     {
-                        int index = this._mailslotlst.FindIndex(c => (c.ApplicationName.Equals(message.ApplicationName)));
-                        if (index < 0)
-                        {
-                            mdisp = new MailSlotServerDispatcher(this, message.ApplicationName, this.ProcessID);
-                            _mailslotlst.Add(mdisp);
-                            mdisp.Start();
-                        }
-                        else
-                            mdisp = _mailslotlst[index];
-                        mdisp.AddInstance(message);
-                        break;
+                        mdisp = new MailSlotServerDispatcher(this, message.ApplicationName, this.ProcessID);
+                        _mailslotlst.Add(mdisp);
+                        mdisp.Start();
                     }
-                    case 0xF1:
+                    else
+                        mdisp = _mailslotlst[index];
+                    mdisp.AddInstance(message);
+                    break;
+                }
+                case 0xF1:
+                {
+                    int index = this._mailslotlst.FindIndex(c => (c.ApplicationName.Equals(message.ApplicationName)));
+                    if (index >= 0)
                     {
-                        int index = this._mailslotlst.FindIndex(c => (c.ApplicationName.Equals(message.ApplicationName)));
-                        if (index >= 0)
-                        {
-                            mdisp = _mailslotlst[index];
+                        mdisp = _mailslotlst[index];
 
-                            if (mdisp.RemoveInstance(message) <= 0)
-                            {
-                                mdisp.Stop();
-                                _mailslotlst.Remove(mdisp);
-                            }
+                        if (mdisp.RemoveInstance(message) <= 0)
+                        {
+                            mdisp.Stop();
+                            _mailslotlst.Remove(mdisp);
                         }
-                        break;
                     }
-                    case 0xFF:
-                    {
-                        DumpMailSlotServers(message);
-                        break;
-                    }
+                    break;
+                }
+                case 0xFF:
+                {
+                    DumpMailSlotServers(message);
+                    break;
                 }
             }
         }
@@ -749,7 +697,6 @@ namespace Neos.IdentityServer.MultiFactor
         private SafeMailslotHandle _mailslot = null;
         private string _appname = string.Empty;
         private string _machinename = string.Empty;
-        private bool _localonly = false;
         private int _processid = 0;
 
         public BaseMailSlotClient()
@@ -809,15 +756,6 @@ namespace Neos.IdentityServer.MultiFactor
         }
 
         /// <summary>
-        /// LocalOnly property
-        /// </summary>
-        public bool LocalOnly
-        {
-            get { return _localonly; }
-            set { _localonly = value; }
-        }
-
-        /// <summary>
         /// MailSlotName property
         /// </summary>
         protected abstract string MailSlotName { get; }
@@ -845,7 +783,7 @@ namespace Neos.IdentityServer.MultiFactor
             }
             catch (Exception ex)
             {
-                LogForSlots.WriteEntry(ex.Message, EventLogEntryType.Error, 9999);
+                LogForSlots.WriteEntry("MailSlot Client Write Error ("+ ApplicationName +") :" + ex.Message, EventLogEntryType.Error, 9999);
             }
             finally
             {
@@ -884,14 +822,13 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// Constructor implmentation
         /// </summary>
-        public MailSlotClient(string appname = null, bool localonly = false):base()
+        public MailSlotClient(string appname = null):base()
         {
             if (appname == null)
                 appname = "BDC";
             if (appname.ToUpper().Equals("MGR"))
                throw new ArgumentException("parameter cannot be equal to MGR or BDC", appname);
             ApplicationName = appname.ToUpper();
-            LocalOnly = localonly;
         }
 
         /// <summary>
@@ -910,10 +847,7 @@ namespace Neos.IdentityServer.MultiFactor
         {
             get 
             {
-               if (LocalOnly)
-                    return @"\\.\mailslot\mfa\cfg_" + ApplicationName;
-                else
-                    return @"\\*\mailslot\mfa\cfg_" + ApplicationName; 
+                return @"\\.\mailslot\mfa\cfg_" + ApplicationName;
             } 
         }
 
@@ -928,15 +862,16 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// SendNotification method implmentation
         /// </summary>
-        public virtual void SendNotification(byte operation = 0)
+        public virtual void SendNotification(NotificationsKind operation = 0)
         {
-            MailSlotMessage message = new MailSlotMessage();
-            message.Operation = operation;
-            message.ApplicationName = this.ApplicationName;
-            message.MachineName = this.MachineName;
-            message.TimeStamp = DateTime.Now;
-            message.SenderID = ProcessID;
-            message.Text = Text;
+            MailSlotMessage message = new MailSlotMessage
+            {
+                Operation = (byte)operation,
+                ApplicationName = this.ApplicationName,
+                TimeStamp = DateTime.Now,
+                SenderID = ProcessID,
+                Text = Text
+            };
             WriteMailslot(message);
         }
     }
@@ -952,10 +887,7 @@ namespace Neos.IdentityServer.MultiFactor
         {
             get 
             { 
-                if (LocalOnly)
-                    return @"\\.\mailslot\mfa\dispatcher";
-                else
-                    return @"\\*\mailslot\mfa\dispatcher";
+                return @"\\.\mailslot\mfa\dispatcher";
             }
         }
 
@@ -970,32 +902,32 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// Register method implementation
         /// </summary>
-        public void Register(string machine, string application, int processid, bool multiinstance, bool localonly, bool allowtoself)
+        public void Register(string application, int processid, bool multiinstance, bool allowtoself)
         {
-            MailSlotDispatcherMessage msg = new MailSlotDispatcherMessage();
-            msg.MachineName = machine;
-            msg.ApplicationName = application;
-            msg.TargetID = processid;
-            msg.Operation = 0xF0;
-            msg.MultiInstance = multiinstance;
-            msg.Local = localonly;
-            msg.AllowToSelf = allowtoself;
+            MailSlotDispatcherMessage msg = new MailSlotDispatcherMessage
+            {
+                ApplicationName = application,
+                TargetID = processid,
+                Operation = 0xF0,
+                MultiInstance = multiinstance,
+                AllowToSelf = allowtoself
+            };
             WriteMailslot(msg);
         }
 
         /// <summary>
         /// UnRegister method implmentation
         /// </summary>
-        public void UnRegister(string machine, string application, int processid, bool multiinstance, bool localonly, bool allowtoself)
+        public void UnRegister(string application, int processid, bool multiinstance, bool allowtoself)
         {
-            MailSlotDispatcherMessage msg = new MailSlotDispatcherMessage();
-            msg.MachineName = machine;
-            msg.ApplicationName = application;
-            msg.TargetID = processid;
-            msg.Operation = 0xF1;
-            msg.MultiInstance = multiinstance;
-            msg.Local = localonly;
-            msg.AllowToSelf = allowtoself;
+            MailSlotDispatcherMessage msg = new MailSlotDispatcherMessage
+            {
+                ApplicationName = application,
+                TargetID = processid,
+                Operation = 0xF1,
+                MultiInstance = multiinstance,
+                AllowToSelf = allowtoself
+            };
             WriteMailslot(msg);
         }
 
@@ -1004,13 +936,13 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public virtual void SendNotification(byte operation = 0)
         {
-            MailSlotDispatcherMessage message = new MailSlotDispatcherMessage();
-            message.Operation = operation;
-            message.ApplicationName = "MGR"; // this.ApplicationName;
-            message.MachineName = this.MachineName;
-            message.Local = true;
-            message.MultiInstance = false;
-            message.AllowToSelf = false;
+            MailSlotDispatcherMessage message = new MailSlotDispatcherMessage
+            {
+                Operation = operation,
+                ApplicationName = "MGR", // this.ApplicationName;
+                MultiInstance = false,
+                AllowToSelf = false
+            };
             WriteMailslot(message);
         }
 
@@ -1024,11 +956,10 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// MailSlotClientForwarder constructor
         /// </summary>
-        public MailSlotClientForwarder(string appname, int processid, bool localonly = false)
+        public MailSlotClientForwarder(string appname, int processid)
         {
             ApplicationName = appname;
             ProcessID = processid;
-            LocalOnly = LocalOnly;
         }
 
         /// <summary>
@@ -1038,10 +969,7 @@ namespace Neos.IdentityServer.MultiFactor
         {
             get 
             {
-                if (LocalOnly)
-                    return @"\\.\mailslot\mfa\cfg_" + ApplicationName + @"_" + ProcessID.ToString();
-                else
-                    return @"\\*\mailslot\mfa\cfg_" + ApplicationName + @"_" + ProcessID.ToString();
+                return @"\\.\mailslot\mfa\cfg_" + ApplicationName + @"_" + ProcessID.ToString();
             }
         }
 
@@ -1068,39 +996,12 @@ namespace Neos.IdentityServer.MultiFactor
     #region MailSlot Messages
     public class BaseMailSlotMessage<T>
     {
-        private string _machinename;
         private string _appname;
 
         /// <summary>
         /// Operation property implmentation
         /// </summary>
         public byte Operation { get; set; }
-
-        /// <summary>
-        /// MachineName property implmentation
-        /// </summary>
-        public string MachineName
-        {
-            get
-            {
-                if (_machinename.Length > 15)
-                    return _machinename.Substring(0, 15);
-                else
-                    return _machinename.Substring(0, _machinename.Length);
-            }
-            set
-            {
-                if (value != null)
-                {
-                    if (value.Length > 15)
-                        _machinename = value.Substring(0, 15);
-                    else
-                        _machinename = value.Substring(0, value.Length);
-                }
-                else
-                    _machinename = string.Empty;
-            }
-        }
 
         /// <summary>
         /// ApplicationName property implementation
@@ -1167,9 +1068,7 @@ namespace Neos.IdentityServer.MultiFactor
             flatted.Operation = data.Operation;
             flatted.TargetID = data.TargetID;
             flatted.MultiInstance = data.MultiInstance;
-            flatted.Local = data.Local;
             flatted.AllowToSelf = data.AllowToSelf;
-            flatted.MachineName = data.MachineName;
             flatted.ApplicationName = data.ApplicationName;
             return flatted;
         }
@@ -1179,20 +1078,19 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public static implicit operator MailSlotDispatcherMessage(MailSlotDispatcherMessageStruct data)
         {
-            MailSlotDispatcherMessage msg = new MailSlotDispatcherMessage();
-            msg.Operation = data.Operation;
-            msg.TargetID = data.TargetID;
-            msg.MultiInstance = data.MultiInstance;
-            msg.Local = data.Local;
-            msg.AllowToSelf = data.AllowToSelf;
-            msg.MachineName = data.MachineName;
-            msg.ApplicationName = data.ApplicationName;
+            MailSlotDispatcherMessage msg = new MailSlotDispatcherMessage
+            {
+                Operation = data.Operation,
+                TargetID = data.TargetID,
+                MultiInstance = data.MultiInstance,
+                AllowToSelf = data.AllowToSelf,
+                ApplicationName = data.ApplicationName
+            };
             return msg;
         }
 
         public int TargetID { get; set; }
         public bool MultiInstance { get; set; }
-        public bool Local { get; set; }
         public bool AllowToSelf { get; set; }
     }
 
@@ -1235,7 +1133,6 @@ namespace Neos.IdentityServer.MultiFactor
             flatted.Operation = data.Operation;
             flatted.SenderID = data.SenderID;
             flatted.TimeStamp = data.TimeStamp;
-            flatted.MachineName = data.MachineName;
             flatted.ApplicationName = data.ApplicationName;
             flatted.Text = data.Text;
             return flatted;
@@ -1246,13 +1143,14 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public static implicit operator MailSlotMessage(MailSlotMessageStruct data)
         {
-            MailSlotMessage msg = new MailSlotMessage();
-            msg.Operation = data.Operation;
-            msg.SenderID = data.SenderID;
-            msg.TimeStamp = data.TimeStamp;
-            msg.MachineName = data.MachineName;
-            msg.ApplicationName = data.ApplicationName;
-            msg.Text = data.Text;
+            MailSlotMessage msg = new MailSlotMessage
+            {
+                Operation = data.Operation,
+                SenderID = data.SenderID,
+                TimeStamp = data.TimeStamp,
+                ApplicationName = data.ApplicationName,
+                Text = data.Text
+            };
             return msg;
         }
 
@@ -1309,15 +1207,10 @@ namespace Neos.IdentityServer.MultiFactor
 
         public bool MultiInstance;
 
-        public bool Local;
-
         public bool AllowToSelf;
 
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 4)]
         public string ApplicationName;
-
-        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 16)]
-        public string MachineName;
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -1333,9 +1226,6 @@ namespace Neos.IdentityServer.MultiFactor
 
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 4)]
         public string ApplicationName;
-
-        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 16)]
-        public string MachineName;
 
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 320)]
         public string Text;
@@ -1540,6 +1430,7 @@ namespace Neos.IdentityServer.MultiFactor
     {
         private const string EventLogSource = "ADFS MFA Service";
         private const string EventLogGroup = "Application";
+        private static bool logenabled = true;
 
         /// <summary>
         /// Log constructor
@@ -1550,12 +1441,19 @@ namespace Neos.IdentityServer.MultiFactor
                 EventLog.CreateEventSource(LogForSlots.EventLogSource, LogForSlots.EventLogGroup);
         }
 
+        public static bool LogEnabled
+        {
+            get { return logenabled; }
+            set { logenabled = value; }
+        }
+
         /// <summary>
         /// WriteEntry method implementation
         /// </summary>
         public static void WriteEntry(string message, EventLogEntryType type, int eventID)
         {
-            EventLog.WriteEntry(EventLogSource, message, type, eventID);
+            if (LogEnabled)
+                EventLog.WriteEntry(EventLogSource, message, type, eventID);
         }
     }
     #endregion

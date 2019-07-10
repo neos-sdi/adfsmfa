@@ -35,7 +35,7 @@ namespace Neos.IdentityServer.MultiFactor.Common
         private KeySizeMode _ksize = KeySizeMode.KeySize1024;
         private KeysRepositoryService _repos = null;
         private int MAX_PROBE_LEN = 0;
-        private string _xorsecret = Utilities.DefaultXORSecret;
+        private string _xorsecret = XORUtilities.XORKey;
 
         /// <summary>
         /// RSAKeyManager constructor

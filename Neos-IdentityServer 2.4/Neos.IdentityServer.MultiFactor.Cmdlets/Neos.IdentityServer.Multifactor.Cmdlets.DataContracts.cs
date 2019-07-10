@@ -956,6 +956,11 @@ namespace MFA
         public bool Anonymous { get; set; }
 
         /// <summary>
+        /// <para type="description">if your want Delivery Failures, Delayed delivery or nothing (default).</para>
+        /// </summary>
+        public bool DeliveryNotifications { get; set; }
+
+        /// <summary>
         /// <para type="description">List of domains that are not allowed.</para>
         /// </summary>
         public PSConfigMailBlockedDomains BlockedDomains { get; set; }
@@ -1014,6 +1019,7 @@ namespace MFA
                 psconfig.Company = mails.Company;
                 psconfig.PinRequired = mails.PinRequired;
                 psconfig.Anonymous = mails.Anonymous;
+                psconfig.DeliveryNotifications = mails.DeliveryNotifications;
                 psconfig.FullQualifiedImplementation = mails.FullQualifiedImplementation;
                 psconfig.Parameters = mails.Parameters;
 
@@ -1070,6 +1076,7 @@ namespace MFA
                 psconfig.Company = mails.Company;
                 psconfig.PinRequired = mails.PinRequired;
                 psconfig.Anonymous = mails.Anonymous;
+                psconfig.DeliveryNotifications = mails.DeliveryNotifications;
                 psconfig.FullQualifiedImplementation = mails.FullQualifiedImplementation;
                 psconfig.Parameters = mails.Parameters;
 
