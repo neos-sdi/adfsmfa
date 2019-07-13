@@ -2209,6 +2209,7 @@ namespace Neos.IdentityServer.MultiFactor
         internal static bool CheckForReplay(MFAConfig config, AuthenticationContext usercontext, HttpListenerRequest request)
         {
             return true;
+#if forreplay
             NamedPipeClientReplayRecord rec = new NamedPipeClientReplayRecord()
             {
                 UserIPAdress = request.RemoteEndPoint.Address,
@@ -2221,6 +2222,7 @@ namespace Neos.IdentityServer.MultiFactor
             };
             PipeReplayClient client = new PipeReplayClient();
             return client.CheckForReplay(rec);
+#endif
         }
 
         /// <summary>
@@ -2478,9 +2480,9 @@ namespace Neos.IdentityServer.MultiFactor
             }
         }
     }
-    #endregion
+#endregion
 
-    #region ADFS Version
+#region ADFS Version
     internal class RegistryVersion
     {
         private string _currentVersion;
@@ -2576,5 +2578,5 @@ namespace Neos.IdentityServer.MultiFactor
             CurrentVersion = values[5];
         }
     }
-    #endregion
+#endregion
 }

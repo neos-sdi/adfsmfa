@@ -824,7 +824,7 @@ namespace Neos.IdentityServer.MultiFactor
             if (RuntimeAuthProvider.IsProviderAvailableForUser(usercontext, PreferredMethod.Email))
             {
                 result += "<input id=\"opt3\" name=\"opt\" type=\"radio\" value=\"2\" onchange=\"ChooseMethodChanged()\" " + ((method == PreferredMethod.Email) ? "checked=\"checked\"> " : "> ") + RuntimeAuthProvider.GetProvider(PreferredMethod.Email).GetUIChoiceLabel(usercontext) + "<br />";
-                result += "<div style=\"text-indent: 20px;\"><i>" + usercontext.MailAddress + "</i></div><br/>";
+                result += "<div style=\"text-indent: 20px;\"><i>" + Utilities.StripEmailAddress(usercontext.MailAddress) + "</i></div><br/>";
             }
 
             if (RuntimeAuthProvider.IsProviderAvailableForUser(usercontext, PreferredMethod.External))

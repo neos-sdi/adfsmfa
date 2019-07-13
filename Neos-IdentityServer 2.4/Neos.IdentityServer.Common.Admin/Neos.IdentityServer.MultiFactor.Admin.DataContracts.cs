@@ -97,7 +97,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             options = options.Remove(UserFeaturesOptions.AdministrativeMode);
             options = options.Add(UserFeaturesOptions.AllowProvideInformations);   // Allow only provide informations
             return options;
-        }
+        } 
 
         /// <summary>
         /// SetMFANotRequired method implementation
@@ -144,7 +144,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             options = options.Remove(UserFeaturesOptions.AdministrativeMode);
             options = options.Add(UserFeaturesOptions.AllowProvideInformations);    // Allow User to register
             return options;
-        }
+        } 
 
         /// <summary>
         /// SetUnManagedRegistration method implementation

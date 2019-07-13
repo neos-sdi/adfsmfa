@@ -37,9 +37,11 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
         private MailSlotServerManager _mailslotsmgr = new MailSlotServerManager();
         private MailSlotServer _mailslotmfa = new MailSlotServer("NOT"); // And Broadcast
         private PipeServer _pipeserver = new PipeServer();
-        private PipeServer _pipereplay = new PipeServer();
+#if forreplay
+        private PipeReplayServer _pipereplay = new PipeReplayServer();
+#endif
 
-        #region Service override methods
+#region Service override methods
         public MFANOTIFHUB()
         {
             Trace.TraceInformation("MFANOTIFHUB:InitializeComponent");
@@ -59,7 +61,13 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
             _pipeserver.Proofkey = XORUtilities.XORKey;
             _pipeserver.OnMessage += PipeServerOnMessage;
             _pipeserver.OnDecrypt += PipeOnDecrypt;
-            _pipeserver.OnEncrypt += PipeOnEncrypt;            
+            _pipeserver.OnEncrypt += PipeOnEncrypt;
+#if forreplay
+            _pipereplay.Proofkey = XORUtilities.XORKey;
+            _pipereplay.OnMessage += PipeReplayServerOnMessage;
+            _pipereplay.OnDecrypt += PipeOnDecrypt;
+            _pipereplay.OnEncrypt += PipeOnEncrypt;
+#endif
         }
 
         /// <summary>
@@ -79,6 +87,9 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
             try
             {
                 _pipeserver.Start();
+#if forreplay
+                _pipereplay.Start();
+#endif
             }
             catch (Exception e)
             {
@@ -105,6 +116,9 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
             _mailslotmfa.MailSlotMessageArrived -= MFAMailSlotMessageArrived;
             try
             {
+#if forreplay
+                _pipereplay.Stop();
+#endif
                 _pipeserver.Stop();
             }
             catch (Exception e)
@@ -113,9 +127,9 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
             }
             this.EventLog.WriteEntry("Le service s'est arrêté avec succès.", EventLogEntryType.Information, 1);
         }
-        #endregion
+#endregion
 
-        #region Properties
+#region Properties
         /// <summary>
         /// ADFSServers List property
         /// </summary>
@@ -124,9 +138,9 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
             get { return _adfsservers; }
 
         }
-        #endregion
+#endregion
 
-        #region Private Methods
+#region Private Methods
         /// <summary>
         /// BuildADFSServersList method implementation
         /// </summary>
@@ -139,9 +153,9 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
                 _adfsservers.Add(host.MachineName);
             }
         }
-        #endregion
+#endregion
 
-        #region System MailSlots Events
+#region System MailSlots Events
         /// <summary>
         /// MailSlotSystemMessageArrived implementation
         /// </summary>
@@ -238,9 +252,9 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
                 }
             }
         }
-        #endregion
+#endregion
 
-        #region Named Pipes Methods /events
+#region Named Pipes Methods /events
         /// <summary>
         /// MFAMailSlotMessageArrived implementation
         /// </summary>
@@ -317,9 +331,17 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
                 }
             }
         }
-        #endregion
 
-        #region Encryption/Decryption
+        /// <summary>
+        /// PipeReplayServerOnMessage method implementation
+        /// </summary>
+        private void PipeReplayServerOnMessage(IPAddress userIPAdress, int userIPPort, int userCurrentRetries, int userMaxRetries, int deliveryWindow, DateTime userLogon, string userName)
+        {
+
+        }
+#endregion
+
+#region Encryption/Decryption
         /// <summary>
         /// PipeOnDecrypt method implementation
         /// </summary>
@@ -337,9 +359,9 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
             byte[] byt = CFGUtilities.XOREncryptOrDecrypt(System.Text.Encoding.UTF8.GetBytes(clearvalue), Utilities.XORKey);
             return System.Convert.ToBase64String(byt);
         }
-        #endregion
+#endregion
 
-        #region ADFS Service
+#region ADFS Service
         /// <summary>
         /// StartADFSService method implementation
         /// </summary>
@@ -387,6 +409,6 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
                 ADFSController.Close();
             }
         }
-        #endregion
+#endregion
     }
 }

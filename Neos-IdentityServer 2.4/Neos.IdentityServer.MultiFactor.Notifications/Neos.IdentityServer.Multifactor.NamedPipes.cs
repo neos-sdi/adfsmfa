@@ -19,6 +19,7 @@ namespace Neos.IdentityServer.MultiFactor
     public delegate string OnNamedPipeEncryptEvent(string clearvalue);
     public delegate string OnNamedPipeDecryptEvent(string cryptedvalue);
     public delegate void OnNamedPipeMessageEvent(NotificationsKind notif, string username, string application, string value);
+    public delegate void OnNamedPipeReplayEvent(IPAddress userIPAdress, int userIPPort, int userCurrentRetries, int userMaxRetries, int deliveryWindow, DateTime userLogon, string userName);
 
     /// <summary>
     /// PipeServer class implementation
@@ -246,6 +247,7 @@ namespace Neos.IdentityServer.MultiFactor
         }
     }
 
+#if forreplay
     /// <summary>
     /// PipeServer class implementation
     /// </summary>
@@ -254,11 +256,11 @@ namespace Neos.IdentityServer.MultiFactor
         private NamedPipeServerStream ConfigPipeServer;
         private static int numthreads = 1;
         private bool MustExit = false;
-        private NamedPipeNotificationRecord _result;
+        private NamedPipeClientNotificationReplayRecord _result;
 
         public event OnNamedPipeEncryptEvent OnEncrypt;
         public event OnNamedPipeDecryptEvent OnDecrypt;
-        public event OnNamedPipeMessageEvent OnMessage;
+        public event OnNamedPipeReplayEvent OnMessage;
 
 
         /// <summary>
@@ -285,7 +287,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// Result property implementation
         /// </summary>
-        public NamedPipeNotificationRecord Result { get => _result; set => _result = value; }
+        public NamedPipeClientNotificationReplayRecord Result { get => _result; set => _result = value; }
 
         /// <summary>
         /// Start method implementation
@@ -380,9 +382,9 @@ namespace Neos.IdentityServer.MultiFactor
                         if (this.OnDecrypt(ss.ReadString()) == this.Proofkey)
                         {
                             ss.WriteString(this.OnEncrypt(Proofkey));
-                            NamedPipeNotificationRecord xdata = ByteArrayToObject(ss.ReadData());
+                            NamedPipeClientReplayRecord xdata = ByteArrayToObject(ss.ReadData());
 
-                            Result = new NamedPipeNotificationRecord(xdata.Kind, xdata.Application, this.OnDecrypt(xdata.Message));
+                            Result = new NamedPipeClientNotificationReplayRecord(xdata.UserIPAdress, xdata.UserIPPort, xdata.UserCurrentRetries, xdata.UserMaxRetries, xdata.DeliveryWindow, xdata.UserLogon, this.OnDecrypt(xdata.UserName));
                             string username = ConfigPipeServer.GetImpersonationUserName();
                             ExcuteInClientContext(username);
                         }
@@ -410,13 +412,13 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// ByteArrayToObject method implementation
         /// </summary>
-        private NamedPipeNotificationRecord ByteArrayToObject(byte[] arrBytes)
+        private NamedPipeClientReplayRecord ByteArrayToObject(byte[] arrBytes)
         {
             MemoryStream memStream = new MemoryStream();
             BinaryFormatter binForm = new BinaryFormatter();
             memStream.Write(arrBytes, 0, arrBytes.Length);
             memStream.Seek(0, SeekOrigin.Begin);
-            NamedPipeNotificationRecord obj = (NamedPipeNotificationRecord)binForm.Deserialize(memStream);
+            NamedPipeClientReplayRecord obj = (NamedPipeClientReplayRecord)binForm.Deserialize(memStream);
             return obj;
         }
 
@@ -427,7 +429,7 @@ namespace Neos.IdentityServer.MultiFactor
         {
             if (this.OnMessage == null)
                 return;
-            this.OnMessage(Result.Kind, username, Result.Application, Result.Message);
+            this.OnMessage(Result.UserIPAdress, Result.UserIPPort, Result.UserCurrentRetries, Result.UserMaxRetries, Result.DeliveryWindow, Result.UserLogon, Result.UserName);
         }
 
         /// <summary>
@@ -471,7 +473,7 @@ namespace Neos.IdentityServer.MultiFactor
             return DomainSID.AccountDomainSid;
         }
     }
-
+#endif
 
     /// <summary>
     /// PipeClient class implmentation
@@ -634,6 +636,7 @@ namespace Neos.IdentityServer.MultiFactor
         }
     }
 
+#if forreplay
     /// <summary>
     /// PipeReplayClient class implmentation
     /// </summary>
@@ -710,12 +713,26 @@ namespace Neos.IdentityServer.MultiFactor
                     OnDecrypt += PipeClientOnDecrypt;
                 if (this.OnEncrypt == null)
                     OnEncrypt += PipeClientOnEncrypt;
-                for (int i = 0; i < _servers.Count; i++)
+                NamedPipeClientStream ConfigPipeClient = new NamedPipeClientStream(".", "adfsmfareplayserver", PipeDirection.InOut, PipeOptions.None, TokenImpersonationLevel.Impersonation);
+                try
                 {
-                    Thread tstreams = new Thread(PipeClientConfigThread);
-                    rec.ClientStream = new NamedPipeClientStream(_servers[i], "adfsmfareplayserver", PipeDirection.InOut, PipeOptions.None, TokenImpersonationLevel.Impersonation);
-                    _pipestreams.Add(rec);
-                    tstreams.Start();
+                    ConfigPipeClient.Connect();
+                    PipeStreamData ss = new PipeStreamData(ConfigPipeClient);
+                    ss.WriteString(this.OnEncrypt(Proofkey));
+                    if (this.OnDecrypt(ss.ReadString()) == Proofkey)
+                    {
+                        NamedPipeClientNotificationReplayRecord xdata = new NamedPipeClientNotificationReplayRecord(rec.UserIPAdress, rec.UserIPPort, rec.UserCurrentRetries, rec.UserMaxRetries, rec.DeliveryWindow, rec.UserLogon, this.OnEncrypt(rec.UserName));
+                        ss.WriteData(ObjectToByteArray(xdata));
+                    }
+                }
+                catch (IOException e)
+                {
+                    LogForSlots.WriteEntry("PipeClient Error : " + e.Message, EventLogEntryType.Error, 8888);
+                    ConfigPipeClient.Close();
+                }
+                finally
+                {
+                    ConfigPipeClient.Close();
                 }
             }
             catch (Exception e)
@@ -744,7 +761,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// PipeClientConfigThread method implmentation
         /// </summary>
-        private void PipeClientConfigThread(object data)
+     /*   private void PipeClientConfigThread(object data)
         {
             int threadId = Thread.CurrentThread.ManagedThreadId;
             NamedPipeClientStream ConfigPipeClient = _pipestreams[0].ClientStream;
@@ -756,8 +773,9 @@ namespace Neos.IdentityServer.MultiFactor
                 ss.WriteString(this.OnEncrypt(Proofkey));
                 if (this.OnDecrypt(ss.ReadString()) == Proofkey)
                 {
-               //     NamedPipeNotificationRecord xdata = new NamedPipeNotificationRecord(Kind, Appli, this.OnEncrypt(Message));
-               //     ss.WriteData(ObjectToByteArray(xdata));
+                    NamedPipeClientReplayRecord param = _pipestreams[0];
+                    NamedPipeClientNotificationReplayRecord xdata = new NamedPipeClientNotificationReplayRecord(param.UserIPAdress, param.UserIPPort, param.UserCurrentRetries, param.UserMaxRetries, param.DeliveryWindow, param.UserLogon, this.OnEncrypt(param.UserName));
+                    ss.WriteData(ObjectToByteArray(xdata));
                 }
             }
             catch (IOException e)
@@ -769,12 +787,12 @@ namespace Neos.IdentityServer.MultiFactor
             {
                 ConfigPipeClient.Close();
             }
-        }
+        } */
 
         /// <summary>
         /// ObjectToByteArray method implementation
         /// </summary>
-        private byte[] ObjectToByteArray(NamedPipeNotificationRecord obj)
+        private byte[] ObjectToByteArray(NamedPipeClientNotificationReplayRecord obj)
         {
             BinaryFormatter bf = new BinaryFormatter();
             using (MemoryStream ms = new MemoryStream())
@@ -784,6 +802,7 @@ namespace Neos.IdentityServer.MultiFactor
             }
         }
     }
+#endif
 
     /// <summary>
     /// PipeStreamData class implementation
@@ -800,7 +819,7 @@ namespace Neos.IdentityServer.MultiFactor
             this.ioStream = ioStream;
         }
 
-        #region Strings methods
+#region Strings methods
         /// <summary>
         /// ReadString ReadData method implementation
         /// </summary>
@@ -833,9 +852,9 @@ namespace Neos.IdentityServer.MultiFactor
             ioStream.Flush();
             return outBuffer.Length + 2;
         }
-        #endregion
+#endregion
 
-        #region Bytes methods
+#region Bytes methods
         /// <summary>
         /// ReadData ReadData method implementation
         /// </summary>
@@ -866,7 +885,7 @@ namespace Neos.IdentityServer.MultiFactor
             ioStream.Flush();
             return outBuffer.Length + 2;
         }
-        #endregion
+#endregion
     }
 
     /// <summary>
@@ -880,6 +899,24 @@ namespace Neos.IdentityServer.MultiFactor
         public NotificationsKind NotificationsKind;
         public string Message;
         public NamedPipeClientStream ClientStream;
+    }
+
+    /// <summary>
+    /// NamedPipeNotificationRecord class implementation
+    /// </summary>
+    [Serializable]
+    public struct NamedPipeNotificationRecord
+    {
+        public string Application;
+        public NotificationsKind Kind;
+        public string Message;
+
+        public NamedPipeNotificationRecord(NotificationsKind kind, String application, string msg)
+        {
+            Application = application;
+            Kind = kind;
+            Message = msg;
+        }
     }
 
     /// <summary>
@@ -901,17 +938,25 @@ namespace Neos.IdentityServer.MultiFactor
     /// NamedPipeNotificationRecord class implementation
     /// </summary>
     [Serializable]
-    public struct NamedPipeNotificationRecord
+    public struct NamedPipeClientNotificationReplayRecord
     {
-        public string Application;
-        public NotificationsKind Kind;
-        public string Message;
+        public IPAddress UserIPAdress;
+        public int UserIPPort;
+        public int UserCurrentRetries;
+        public int UserMaxRetries;
+        public int DeliveryWindow;
+        public DateTime UserLogon;
+        public string UserName;
 
-        public NamedPipeNotificationRecord(NotificationsKind kind, String application, string msg)
+        public NamedPipeClientNotificationReplayRecord(IPAddress userIPAdress, int userIPPort, int userCurrentRetries, int userMaxRetries, int deliveryWindow, DateTime userLogon, string userName)
         {
-            Application = application;
-            Kind = kind;
-            Message = msg;
+            UserIPAdress = userIPAdress;
+            UserIPPort = userIPPort;
+            UserCurrentRetries = userCurrentRetries;
+            UserMaxRetries = userMaxRetries;
+            DeliveryWindow = deliveryWindow;
+            UserLogon = userLogon;
+            UserName = userName;
         }
     }
 }

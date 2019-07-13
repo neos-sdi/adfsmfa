@@ -1524,7 +1524,7 @@ namespace Neos.IdentityServer.MultiFactor
                     case 4: // Code validation
                         string totp = proofData.Properties["totp"].ToString();
                         usercontext.SelectedMethod = AuthenticationResponseKind.PhoneAppOTP;
-                        if ((int)AuthenticationResponseKind.Error != SetAuthenticationResult(usercontext, totp))
+                        if ((int)AuthenticationResponseKind.Error != SetAuthenticationResult(usercontext, totp, PreferredMethod.Code))
                         {
                             try
                             {
@@ -1602,7 +1602,7 @@ namespace Neos.IdentityServer.MultiFactor
             {
                 int btnclicked = Convert.ToInt32(proofData.Properties["btnclicked"].ToString());
                 usercontext.KeyChanged = false;
-                IExternalProvider prov = RuntimeAuthProvider.GetProvider(PreferredMethod.Email);
+              //  IExternalProvider prov = RuntimeAuthProvider.GetProvider(PreferredMethod.Email);
 
                 switch (btnclicked)
                 {
@@ -1683,7 +1683,7 @@ namespace Neos.IdentityServer.MultiFactor
                     case 4: // Code Validation
                         string totp = proofData.Properties["totp"].ToString();
                         usercontext.SelectedMethod = AuthenticationResponseKind.EmailOTP;
-                        if ((int)AuthenticationResponseKind.Error != prov.SetAuthenticationResult(usercontext, totp))
+                        if ((int)AuthenticationResponseKind.Error != SetAuthenticationResult(usercontext, totp, PreferredMethod.Email))
                         {
                             try
                             {
