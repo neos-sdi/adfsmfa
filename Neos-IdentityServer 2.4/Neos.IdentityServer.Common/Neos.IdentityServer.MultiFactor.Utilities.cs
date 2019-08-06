@@ -298,6 +298,33 @@ namespace Neos.IdentityServer.MultiFactor
         }
 
         /// <summary>
+        /// GetActiveProvidersCount method implementation
+        /// </summary>
+        internal static int GetActiveProvidersCount()
+        {
+            int i = 0;
+            foreach (IExternalProvider pp in _lst.Values)
+            {
+                if (pp.Enabled)
+                    i++;
+            }
+            return i;
+        }
+
+        /// <summary>
+        /// GetFirstActiveProvider method implementation
+        /// </summary>
+        internal static IExternalProvider GetFirstActiveProvider()
+        {
+            foreach (IExternalProvider pp in _lst.Values)
+            {
+                if (pp.Enabled)
+                    return pp;
+            }
+            return null;
+        }
+
+        /// <summary>
         /// GetProviderInstance method provider
         /// </summary>
         internal static IExternalProvider GetProviderInstance(PreferredMethod method)

@@ -318,6 +318,9 @@
   <data name="CTRLGLPOLICY" xml:space="preserve">
     <value>Politique de sécurité (modéle)</value>
   </data>
+  <data name="CTRLGLPROVIDER" xml:space="preserve">
+    <value>Fournisseur par défaut</value>
+  </data>
   <data name="CTRLGLREFRESH" xml:space="preserve">
     <value>Fréquence de rafraichissement (en millisecondes)</value>
   </data>

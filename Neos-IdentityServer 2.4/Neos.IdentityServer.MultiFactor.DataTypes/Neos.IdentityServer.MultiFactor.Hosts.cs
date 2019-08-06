@@ -36,7 +36,7 @@ namespace Neos.IdentityServer.MultiFactor
         Free = 0,                        // (UserFeaturesOptions.BypassDisabled | UserFeaturesOptions.BypassUnRegistered | UserFeaturesOptions.AllowManageOptions | UserFeaturesOptions.AllowChangePassword);
         Open = 1,                        // (UserFeaturesOptions.BypassDisabled | UserFeaturesOptions.AllowUnRegistered | UserFeaturesOptions.AllowManageOptions | UserFeaturesOptions.AllowChangePassword);
         Default = 2,                     // (UserFeaturesOptions.AllowDisabled | UserFeaturesOptions.AllowUnRegistered | UserFeaturesOptions.AllowManageOptions | UserFeaturesOptions.AllowChangePassword);
-        Mixed = 3,                       // (UserFeaturesOptions.AllowManageOptions | UserFeaturesOptions.AllowChangePassword);
+        Mixed = 3,                       // (UserFeaturesOptions.AllowManageOptions | UserFeaturesOptions.AllowChangePassword | UserFeaturesOptions.AllowEnrollment);
         Managed = 4,                     // (UserFeaturesOptions.BypassDisabled | UserFeaturesOptions.AllowUnRegistered | UserFeaturesOptions.AllowProvideInformations | UserFeaturesOptions.AllowChangePassword);
         Strict = 5,                      // (UserFeaturesOptions.AllowProvideInformations);
         Administrative = 6,              // (UserFeaturesOptions.AdministrativeMode);
@@ -185,6 +185,166 @@ namespace Neos.IdentityServer.MultiFactor
             return options.HasFlag(UserFeaturesOptions.AllowEnrollment);
         }
         #endregion
+
+        #region MFA Policies
+        /// <summary>
+        /// GetPolicyTemplate method implementation
+        /// </summary>
+        public static UserTemplateMode GetPolicyTemplate(this UserFeaturesOptions options)
+        {
+            if (options == (UserFeaturesOptions.BypassDisabled | UserFeaturesOptions.BypassUnRegistered | UserFeaturesOptions.AllowManageOptions | UserFeaturesOptions.AllowChangePassword | UserFeaturesOptions.AllowEnrollment))
+                return UserTemplateMode.Free;
+            else if (options == (UserFeaturesOptions.BypassDisabled | UserFeaturesOptions.AllowUnRegistered | UserFeaturesOptions.AllowManageOptions | UserFeaturesOptions.AllowChangePassword | UserFeaturesOptions.AllowEnrollment))
+                return UserTemplateMode.Open;
+            else if (options == (UserFeaturesOptions.AllowDisabled | UserFeaturesOptions.AllowUnRegistered | UserFeaturesOptions.AllowManageOptions | UserFeaturesOptions.AllowChangePassword | UserFeaturesOptions.AllowEnrollment))
+                return UserTemplateMode.Default;
+            else if (options == (UserFeaturesOptions.AllowManageOptions | UserFeaturesOptions.AllowChangePassword | UserFeaturesOptions.AllowEnrollment))
+                return UserTemplateMode.Mixed;
+            else if (options == (UserFeaturesOptions.BypassDisabled | UserFeaturesOptions.AllowUnRegistered | UserFeaturesOptions.AllowProvideInformations | UserFeaturesOptions.AllowChangePassword))
+                return UserTemplateMode.Managed;
+            else if (options == (UserFeaturesOptions.AllowProvideInformations | UserFeaturesOptions.AdministrativeMode))
+                return UserTemplateMode.Strict;
+            else if (options == (UserFeaturesOptions.AdministrativeMode))
+                return UserTemplateMode.Administrative;
+            else
+                return UserTemplateMode.Custom;
+        }
+
+        /// <summary>
+        /// SetPolicyTemplate method implementation
+        /// </summary>
+        public static UserFeaturesOptions SetPolicyTemplate(this UserFeaturesOptions options, UserTemplateMode template)
+        {
+            switch (template)
+            {
+                case UserTemplateMode.Free:
+                    options = (UserFeaturesOptions.BypassDisabled | UserFeaturesOptions.BypassUnRegistered | UserFeaturesOptions.AllowManageOptions | UserFeaturesOptions.AllowChangePassword | UserFeaturesOptions.AllowEnrollment);
+                    break;
+                case UserTemplateMode.Open:
+                    options = (UserFeaturesOptions.BypassDisabled | UserFeaturesOptions.AllowUnRegistered | UserFeaturesOptions.AllowManageOptions | UserFeaturesOptions.AllowChangePassword | UserFeaturesOptions.AllowEnrollment);
+                    break;
+                case UserTemplateMode.Default:
+                    options = (UserFeaturesOptions.AllowDisabled | UserFeaturesOptions.AllowUnRegistered | UserFeaturesOptions.AllowManageOptions | UserFeaturesOptions.AllowChangePassword | UserFeaturesOptions.AllowEnrollment);
+                    break;
+                case UserTemplateMode.Mixed:
+                    options = (UserFeaturesOptions.AllowManageOptions | UserFeaturesOptions.AllowChangePassword | UserFeaturesOptions.AllowEnrollment);
+                    break;
+                case UserTemplateMode.Managed:
+                    options = (UserFeaturesOptions.BypassDisabled | UserFeaturesOptions.AllowUnRegistered | UserFeaturesOptions.AllowProvideInformations | UserFeaturesOptions.AllowChangePassword);
+                    break;
+                case UserTemplateMode.Strict:
+                    options = (UserFeaturesOptions.AllowProvideInformations | UserFeaturesOptions.AdministrativeMode);
+                    break;
+                case UserTemplateMode.Administrative:
+                    options = (UserFeaturesOptions.AdministrativeMode);
+                    break;
+                default:
+                    options = (UserFeaturesOptions.AllowDisabled | UserFeaturesOptions.AllowUnRegistered);
+                    break;
+            }
+            return options;
+        }
+        #endregion
+
+        /// <summary>
+        /// Add method implementation
+        /// </summary>
+        public static UserFeaturesOptions Add(this UserFeaturesOptions options, UserFeaturesOptions toadd)
+        {
+            options |= toadd;
+            return options;
+        }
+
+        /// <summary>
+        /// Remove method implmentation
+        /// </summary>
+        public static UserFeaturesOptions Remove(this UserFeaturesOptions options, UserFeaturesOptions toremove)
+        {
+            options &= ~toremove;
+            return options;
+        }
+
+        /// <summary>
+        /// Clear method implmentation
+        /// </summary>
+        public static UserFeaturesOptions Clear(this UserFeaturesOptions options)
+        {
+            options = UserFeaturesOptions.NoSet;
+            return options;
+        }
+
+
+        /// <summary>
+        /// SetMFARequired method implementation
+        /// </summary>
+        public static UserFeaturesOptions SetMFARequired(this UserFeaturesOptions options)
+        {
+            options = options.Remove(UserFeaturesOptions.BypassDisabled);
+            options = options.Remove(UserFeaturesOptions.AllowDisabled);
+            options = options.Add(UserFeaturesOptions.AdministrativeMode); // Admin only
+            return options;
+        }
+
+        /// <summary>
+        /// SetMFAAllowed method implementation
+        /// </summary>
+        public static UserFeaturesOptions SetMFAAllowed(this UserFeaturesOptions options)
+        {
+            options = options.Remove(UserFeaturesOptions.BypassDisabled);
+            options = options.Remove(UserFeaturesOptions.AdministrativeMode);
+            options = options.Add(UserFeaturesOptions.AllowDisabled); // Allow Disable Only
+            return options;
+        }
+
+
+        /// <summary>
+        /// SetMFANotRequired method implementation
+        /// </summary>
+        public static UserFeaturesOptions SetMFANotRequired(this UserFeaturesOptions options)
+        {
+            options = options.Remove(UserFeaturesOptions.AdministrativeMode);
+            options = options.Remove(UserFeaturesOptions.AllowDisabled);
+            options = options.Add(UserFeaturesOptions.BypassDisabled); // Allow Bypass Only  
+            return options;
+        }
+
+        #region Registration options
+        /// <summary>
+        /// SetAdministrativeRegistration method implementation
+        /// </summary>
+        public static UserFeaturesOptions SetAdministrativeRegistration(this UserFeaturesOptions options)
+        {
+            options = options.Remove(UserFeaturesOptions.BypassUnRegistered);
+            options = options.Remove(UserFeaturesOptions.AllowUnRegistered);
+            options = options.Add(UserFeaturesOptions.AllowProvideInformations);   // Allow only provide informations
+            options = options.Add(UserFeaturesOptions.AdministrativeMode); // Admin only
+            return options;
+        }
+
+        /// <summary>
+        /// SetSelfRegistration method implementation
+        /// </summary>
+        public static UserFeaturesOptions SetSelfRegistration(this UserFeaturesOptions options)
+        {
+            options = options.Remove(UserFeaturesOptions.AllowProvideInformations);
+            options = options.Remove(UserFeaturesOptions.AdministrativeMode);
+            options = options.Remove(UserFeaturesOptions.BypassUnRegistered);
+            options = options.Add(UserFeaturesOptions.AllowUnRegistered);    // Allow User to register
+            return options;
+        }
+
+        /// <summary>
+        /// SetUnManagedRegistration method implementation
+        /// </summary>
+        public static UserFeaturesOptions SetUnManagedRegistration(this UserFeaturesOptions options)
+        {
+            options = options.Remove(UserFeaturesOptions.AdministrativeMode);
+            options = options.Remove(UserFeaturesOptions.AllowProvideInformations);
+            options = options.Remove(UserFeaturesOptions.AllowUnRegistered);
+            options = options.Add(UserFeaturesOptions.BypassUnRegistered);   // Allow Unregistered
+            return options;
+        }
+        #endregion
     }
 
     public class ConfigAdvertising
@@ -301,8 +461,9 @@ namespace Neos.IdentityServer.MultiFactor
                 Issuer = "MFA";
                 PinLength = 4;
                 DefaultPin = 0;
-                MaxRetries = 1;
+                MaxRetries = 3;
                 UiKind = ADFSUserInterfaceKind.Default;
+                DefaultProviderMethod = PreferredMethod.Choose;
                 UseUIPaginated = false;
 
                 UseActiveDirectory = true;
@@ -394,6 +555,7 @@ namespace Neos.IdentityServer.MultiFactor
             if (string.IsNullOrEmpty(AdminContact))
                 AdminContact = "adminmfa@contoso.com";
             UiKind = ADFSUserInterfaceKind.Default;
+            DefaultProviderMethod = PreferredMethod.Choose;
             UseUIPaginated = false;
             UserFeatures = (UserFeaturesOptions.AllowDisabled | UserFeaturesOptions.AllowUnRegistered | UserFeaturesOptions.AllowManageOptions | UserFeaturesOptions.AllowChangePassword);
 
@@ -476,6 +638,9 @@ namespace Neos.IdentityServer.MultiFactor
 
         [XmlAttribute("ChangeNotificationsOn")]
         public bool ChangeNotificationsOn { get; set; } = true;
+
+        [XmlAttribute("DefaultProviderMethod")]
+        public PreferredMethod DefaultProviderMethod { get; set; } = PreferredMethod.Choose;
 
         [XmlAttribute("MaxRetries")]
         public int MaxRetries

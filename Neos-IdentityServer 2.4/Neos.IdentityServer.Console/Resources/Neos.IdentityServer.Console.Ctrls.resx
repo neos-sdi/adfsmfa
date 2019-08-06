@@ -318,6 +318,9 @@
   <data name="CTRLGLPOLICY" xml:space="preserve">
     <value>Security Policy (model)</value>
   </data>
+  <data name="CTRLGLPROVIDER" xml:space="preserve">
+    <value>Default User Provider</value>
+  </data>
   <data name="CTRLGLREFRESH" xml:space="preserve">
     <value>Refresh rate (in milliseconds)</value>
   </data>

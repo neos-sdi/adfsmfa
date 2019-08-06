@@ -664,6 +664,15 @@ namespace Neos.IdentityServer.Console.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Default User Provider.
+        /// </summary>
+        internal static string CTRLGLPROVIDER {
+            get {
+                return ResourceManager.GetString("CTRLGLPROVIDER", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Refresh rate (in milliseconds).
         /// </summary>
         internal static string CTRLGLREFRESH {

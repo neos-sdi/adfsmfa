@@ -234,6 +234,11 @@ namespace MFA
         public bool ChangeNotificationsOn { get; set; }
 
         /// <summary>
+        /// <para type="description">Default provider when User method equals "Choose".</para>
+        /// </summary>
+        public PSPreferredMethod DefaultProviderMethod { get; set; }
+
+        /// <summary>
         /// <para type="description">Default contry code, used for SMS calls .</para>
         /// </summary>
         public string DefaultCountryCode { get; set; }
@@ -284,6 +289,7 @@ namespace MFA
                 psconfig.CustomUpdatePassword = config.CustomUpdatePassword;
                 psconfig.KeepMySelectedOptionOn = config.KeepMySelectedOptionOn;
                 psconfig.ChangeNotificationsOn = config.ChangeNotificationsOn;
+                psconfig.DefaultProviderMethod = (PSPreferredMethod)config.DefaultProviderMethod;
                 psconfig.UserFeatures = (PSUserFeaturesOptions)config.UserFeatures;
                 psconfig.AdvertisingDays = (PSAdvertising)config.AdvertisingDays;
                 psconfig.UseUIPaginated = config.UseUIPaginated;
@@ -314,6 +320,7 @@ namespace MFA
                 config.UseActiveDirectory = psconfig.UseActiveDirectory;
                 config.KeepMySelectedOptionOn = psconfig.KeepMySelectedOptionOn;
                 config.ChangeNotificationsOn = psconfig.ChangeNotificationsOn;
+                config.DefaultProviderMethod = (PreferredMethod)psconfig.DefaultProviderMethod;
                 config.UserFeatures = (UserFeaturesOptions)psconfig.UserFeatures;
                 config.AdvertisingDays = (FlatConfigAdvertising)psconfig.AdvertisingDays;
                 config.UseUIPaginated = psconfig.UseUIPaginated;

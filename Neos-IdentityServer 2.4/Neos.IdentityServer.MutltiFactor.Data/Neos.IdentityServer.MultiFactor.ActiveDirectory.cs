@@ -502,144 +502,152 @@ namespace Neos.IdentityServer.MultiFactor.Data
             {
                 foreach (ADDSHostForest f in _host.Forests)
                 {
-                    using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntry(_host, f))
+                    try
                     {
-                        using (DirectorySearcher dsusr = new DirectorySearcher(rootdir, qryldap))
+                        using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntry(_host, f))
                         {
-                            dsusr.PropertiesToLoad.Clear();
-                            dsusr.PropertiesToLoad.Add("objectGUID");
-                            dsusr.PropertiesToLoad.Add("userPrincipalName");
-                            dsusr.PropertiesToLoad.Add("whenCreated");
-                            dsusr.PropertiesToLoad.Add(_host.mailAttribute);
-                            dsusr.PropertiesToLoad.Add(_host.phoneAttribute);
-                            dsusr.PropertiesToLoad.Add(_host.methodAttribute);
-                            dsusr.PropertiesToLoad.Add(_host.overridemethodAttribute);
-                            dsusr.PropertiesToLoad.Add(_host.pinattribute);
-                            dsusr.PropertiesToLoad.Add(_host.totpEnabledAttribute);
-                            dsusr.SizeLimit = _host.MaxRows;
-
-                            switch (order.Column)
+                            using (DirectorySearcher dsusr = new DirectorySearcher(rootdir, qryldap))
                             {
-                                case DataOrderField.UserName:
-                                    dsusr.Sort.PropertyName = "userPrincipalName";
-                                    break;
-                                case DataOrderField.Email:
-                                    dsusr.Sort.PropertyName = _host.mailAttribute;
-                                    break;
-                                case DataOrderField.Phone:
-                                    dsusr.Sort.PropertyName = _host.phoneAttribute;
-                                    break;
-                                default:
-                                    dsusr.Sort.PropertyName = "objectGUID";
-                                    break;
-                            }
-                            dsusr.Sort.Direction = order.Direction;
+                                dsusr.PropertiesToLoad.Clear();
+                                dsusr.PropertiesToLoad.Add("objectGUID");
+                                dsusr.PropertiesToLoad.Add("userPrincipalName");
+                                dsusr.PropertiesToLoad.Add("whenCreated");
+                                dsusr.PropertiesToLoad.Add(_host.mailAttribute);
+                                dsusr.PropertiesToLoad.Add(_host.phoneAttribute);
+                                dsusr.PropertiesToLoad.Add(_host.methodAttribute);
+                                dsusr.PropertiesToLoad.Add(_host.overridemethodAttribute);
+                                dsusr.PropertiesToLoad.Add(_host.pinattribute);
+                                dsusr.PropertiesToLoad.Add(_host.totpEnabledAttribute);
+                                dsusr.SizeLimit = _host.MaxRows;
 
-                            DirectoryVirtualListView lstv = null;
-                            DirectoryVirtualListViewContext ctx = new DirectoryVirtualListViewContext();
-                            int virtualListCount = int.MaxValue;
-                            if (paging.isActive)
-                            {
-                                int pg = paging.PageSize;
-                                int of = (((paging.CurrentPage - 1) * paging.PageSize) + 1);
-                                lstv = new DirectoryVirtualListView(0, pg - 1, of, ctx);
-                                dsusr.VirtualListView = lstv;
-                                virtualListCount = pg;
-
-                            }
-                            SearchResultCollection src = dsusr.FindAll();
-                            if (src != null)
-                            {
-                                if ((!paging.IsRecurse) && (src.Count == 1) && (paging.isActive))
+                                switch (order.Column)
                                 {
-                                    DataPagingObject xpaging = new DataPagingObject();
-                                    xpaging.PageSize = paging.PageSize;
-                                    xpaging.CurrentPage = paging.CurrentPage - 1;
-                                    xpaging.IsRecurse = true;
-                                    if (xpaging.CurrentPage > 0)
+                                    case DataOrderField.UserName:
+                                        dsusr.Sort.PropertyName = "userPrincipalName";
+                                        break;
+                                    case DataOrderField.Email:
+                                        dsusr.Sort.PropertyName = _host.mailAttribute;
+                                        break;
+                                    case DataOrderField.Phone:
+                                        dsusr.Sort.PropertyName = _host.phoneAttribute;
+                                        break;
+                                    default:
+                                        dsusr.Sort.PropertyName = "objectGUID";
+                                        break;
+                                }
+                                dsusr.Sort.Direction = order.Direction;
+
+                                DirectoryVirtualListView lstv = null;
+                                DirectoryVirtualListViewContext ctx = new DirectoryVirtualListViewContext();
+                                int virtualListCount = int.MaxValue;
+                                if (paging.isActive)
+                                {
+                                    int pg = paging.PageSize;
+                                    int of = (((paging.CurrentPage - 1) * paging.PageSize) + 1);
+                                    lstv = new DirectoryVirtualListView(0, pg - 1, of, ctx);
+                                    dsusr.VirtualListView = lstv;
+                                    virtualListCount = pg;
+
+                                }
+                                SearchResultCollection src = dsusr.FindAll();
+                                if (src != null)
+                                {
+                                    if ((!paging.IsRecurse) && (src.Count == 1) && (paging.isActive))
                                     {
-                                        RegistrationList verif = GetUserRegistrations(filter, order, xpaging);
-                                        foreach (Registration reg in verif)
+                                        DataPagingObject xpaging = new DataPagingObject();
+                                        xpaging.PageSize = paging.PageSize;
+                                        xpaging.CurrentPage = paging.CurrentPage - 1;
+                                        xpaging.IsRecurse = true;
+                                        if (xpaging.CurrentPage > 0)
                                         {
-                                            using (DirectoryEntry DirEntry = ADDSUtils.GetDirectoryEntry(_host, src[0]))
+                                            RegistrationList verif = GetUserRegistrations(filter, order, xpaging);
+                                            foreach (Registration reg in verif)
                                             {
-                                                string theID = new Guid((byte[])DirEntry.Properties["objectGUID"].Value).ToString();
-                                                if (reg.ID == theID)
+                                                using (DirectoryEntry DirEntry = ADDSUtils.GetDirectoryEntry(_host, src[0]))
                                                 {
-                                                    return registrations; // empty
+                                                    string theID = new Guid((byte[])DirEntry.Properties["objectGUID"].Value).ToString();
+                                                    if (reg.ID == theID)
+                                                    {
+                                                        return registrations; // empty
+                                                    }
                                                 }
                                             }
                                         }
                                     }
-                                }
-                                int i = 0;
-                                foreach (SearchResult sr in src)
-                                {
-                                    if (i < virtualListCount)
+                                    int i = 0;
+                                    foreach (SearchResult sr in src)
                                     {
-                                        i++;
-                                        Registration reg = new Registration();
-                                        using (DirectoryEntry DirEntry = ADDSUtils.GetDirectoryEntry(_host, sr))
+                                        if (i < virtualListCount)
                                         {
-                                            if (DirEntry.Properties["objectGUID"].Value != null)
+                                            i++;
+                                            Registration reg = new Registration();
+                                            using (DirectoryEntry DirEntry = ADDSUtils.GetDirectoryEntry(_host, sr))
                                             {
-                                                reg.ID = new Guid((byte[])DirEntry.Properties["objectGUID"].Value).ToString();
-                                                reg.UPN = DirEntry.Properties["userPrincipalName"].Value.ToString();
-                                                if (ADDSUtils.GetMultiValued(DirEntry.Properties[_host.mailAttribute], _mailismulti) != null)
+                                                if (DirEntry.Properties["objectGUID"].Value != null)
                                                 {
-                                                    reg.MailAddress = ADDSUtils.GetMultiValued(DirEntry.Properties[_host.mailAttribute], _mailismulti);
-                                                    reg.IsRegistered = true;
-                                                }
-                                                if (ADDSUtils.GetMultiValued(DirEntry.Properties[_host.phoneAttribute], _phoneismulti) != null)
-                                                {
-                                                    reg.PhoneNumber = ADDSUtils.GetMultiValued(DirEntry.Properties[_host.phoneAttribute], _phoneismulti);
-                                                    reg.IsRegistered = true;
-                                                }
-                                                if (DirEntry.Properties[_host.methodAttribute].Value != null)
-                                                {
-                                                    reg.PreferredMethod = (PreferredMethod)Enum.Parse(typeof(PreferredMethod), DirEntry.Properties[_host.methodAttribute].Value.ToString(), true);
-                                                    if (reg.PreferredMethod != PreferredMethod.Choose)
+                                                    reg.ID = new Guid((byte[])DirEntry.Properties["objectGUID"].Value).ToString();
+                                                    reg.UPN = DirEntry.Properties["userPrincipalName"].Value.ToString();
+                                                    if (ADDSUtils.GetMultiValued(DirEntry.Properties[_host.mailAttribute], _mailismulti) != null)
+                                                    {
+                                                        reg.MailAddress = ADDSUtils.GetMultiValued(DirEntry.Properties[_host.mailAttribute], _mailismulti);
                                                         reg.IsRegistered = true;
-                                                }
-                                                if (DirEntry.Properties[_host.overridemethodAttribute].Value != null)
-                                                {
-                                                    try
-                                                    {
-                                                        reg.OverrideMethod = DirEntry.Properties[_host.overridemethodAttribute].Value.ToString();
                                                     }
-                                                    catch
+                                                    if (ADDSUtils.GetMultiValued(DirEntry.Properties[_host.phoneAttribute], _phoneismulti) != null)
                                                     {
-                                                        reg.OverrideMethod = string.Empty;
+                                                        reg.PhoneNumber = ADDSUtils.GetMultiValued(DirEntry.Properties[_host.phoneAttribute], _phoneismulti);
+                                                        reg.IsRegistered = true;
                                                     }
-                                                }
-                                                else reg.OverrideMethod = string.Empty;
+                                                    if (DirEntry.Properties[_host.methodAttribute].Value != null)
+                                                    {
+                                                        reg.PreferredMethod = (PreferredMethod)Enum.Parse(typeof(PreferredMethod), DirEntry.Properties[_host.methodAttribute].Value.ToString(), true);
+                                                        if (reg.PreferredMethod != PreferredMethod.Choose)
+                                                            reg.IsRegistered = true;
+                                                    }
+                                                    if (DirEntry.Properties[_host.overridemethodAttribute].Value != null)
+                                                    {
+                                                        try
+                                                        {
+                                                            reg.OverrideMethod = DirEntry.Properties[_host.overridemethodAttribute].Value.ToString();
+                                                        }
+                                                        catch
+                                                        {
+                                                            reg.OverrideMethod = string.Empty;
+                                                        }
+                                                    }
+                                                    else reg.OverrideMethod = string.Empty;
 
-                                                if (DirEntry.Properties[_host.pinattribute].Value != null)
-                                                {
-                                                    try
+                                                    if (DirEntry.Properties[_host.pinattribute].Value != null)
                                                     {
-                                                        reg.PIN = Convert.ToInt32(DirEntry.Properties[_host.pinattribute].Value);
+                                                        try
+                                                        {
+                                                            reg.PIN = Convert.ToInt32(DirEntry.Properties[_host.pinattribute].Value);
+                                                        }
+                                                        catch
+                                                        {
+                                                            reg.PIN = 0;
+                                                        }
                                                     }
-                                                    catch
-                                                    {
-                                                        reg.PIN = 0;
-                                                    }
-                                                }
-                                                else reg.PIN = 0;
+                                                    else reg.PIN = 0;
 
-                                                if (DirEntry.Properties[_host.totpEnabledAttribute].Value != null)
-                                                {
-                                                    reg.Enabled = bool.Parse(DirEntry.Properties[_host.totpEnabledAttribute].Value.ToString());
-                                                    reg.IsRegistered = true;
+                                                    if (DirEntry.Properties[_host.totpEnabledAttribute].Value != null)
+                                                    {
+                                                        reg.Enabled = bool.Parse(DirEntry.Properties[_host.totpEnabledAttribute].Value.ToString());
+                                                        reg.IsRegistered = true;
+                                                    }
+                                                    if (reg.IsRegistered)
+                                                        registrations.Add(reg);
                                                 }
-                                                if (reg.IsRegistered)
-                                                    registrations.Add(reg);
-                                            }
-                                        };
+                                            };
+                                        }
                                     }
                                 }
                             }
                         }
+                    }
+                    catch (Exception ex)
+                    {
+                        DataLog.WriteEntry(ex.Message, System.Diagnostics.EventLogEntryType.Error, 5001);
+                        DataLog.WriteEntry("Forest ADDS : " + f.ForestDNS + " discarded !!!", System.Diagnostics.EventLogEntryType.Error, 5001);
                     }
                 }
             }
@@ -862,73 +870,81 @@ namespace Neos.IdentityServer.MultiFactor.Data
             {
                 foreach (ADDSHostForest f in _host.Forests)
                 {
-                    using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntry(_host, f))
+                    try
                     {
-                        using (DirectorySearcher dsusr = new DirectorySearcher(rootdir, qryldap))
+                        using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntry(_host, f))
                         {
-                            dsusr.PropertiesToLoad.Clear();
-                            dsusr.PropertiesToLoad.Add("objectGUID");
-                            dsusr.SizeLimit = _host.MaxRows;
-                            // filtrer IsRegistered
-                            SearchResultCollection src = dsusr.FindAll();
-                            if (src != null)
+                            using (DirectorySearcher dsusr = new DirectorySearcher(rootdir, qryldap))
                             {
-                                foreach (SearchResult sr in src)
+                                dsusr.PropertiesToLoad.Clear();
+                                dsusr.PropertiesToLoad.Add("objectGUID");
+                                dsusr.SizeLimit = _host.MaxRows;
+                                // filtrer IsRegistered
+                                SearchResultCollection src = dsusr.FindAll();
+                                if (src != null)
                                 {
-                                    Registration reg = new Registration();
-                                    using (DirectoryEntry DirEntry = ADDSUtils.GetDirectoryEntry(_host, sr))
+                                    foreach (SearchResult sr in src)
                                     {
-                                        bool IsRegistered = false;
-                                        if (DirEntry.Properties["objectGUID"].Value != null)
+                                        Registration reg = new Registration();
+                                        using (DirectoryEntry DirEntry = ADDSUtils.GetDirectoryEntry(_host, sr))
                                         {
-
-                                            if (ADDSUtils.GetMultiValued(DirEntry.Properties[_host.mailAttribute], _mailismulti) != null)
-                                                IsRegistered = true;
-                                            if (ADDSUtils.GetMultiValued(DirEntry.Properties[_host.phoneAttribute], _phoneismulti) != null)
-                                                IsRegistered = true;
-
-                                            if (DirEntry.Properties[_host.methodAttribute].Value != null)
+                                            bool IsRegistered = false;
+                                            if (DirEntry.Properties["objectGUID"].Value != null)
                                             {
-                                                PreferredMethod PreferredMethod = (PreferredMethod)Enum.Parse(typeof(PreferredMethod), DirEntry.Properties[_host.methodAttribute].Value.ToString(), true);
-                                                if (PreferredMethod != PreferredMethod.Choose)
+
+                                                if (ADDSUtils.GetMultiValued(DirEntry.Properties[_host.mailAttribute], _mailismulti) != null)
                                                     IsRegistered = true;
-                                            }
-                                            if (DirEntry.Properties[_host.overridemethodAttribute].Value != null)
-                                            {
-                                                try
-                                                {
-                                                    reg.OverrideMethod = DirEntry.Properties[_host.overridemethodAttribute].Value.ToString();
-                                                }
-                                                catch
-                                                {
-                                                    reg.OverrideMethod = string.Empty;
-                                                }
-                                            }
-                                            else reg.OverrideMethod = string.Empty;
+                                                if (ADDSUtils.GetMultiValued(DirEntry.Properties[_host.phoneAttribute], _phoneismulti) != null)
+                                                    IsRegistered = true;
 
-                                            if (DirEntry.Properties[_host.pinattribute].Value != null)
-                                            {
-                                                try
+                                                if (DirEntry.Properties[_host.methodAttribute].Value != null)
                                                 {
-                                                    reg.PIN = Convert.ToInt32(DirEntry.Properties[_host.pinattribute].Value);
+                                                    PreferredMethod PreferredMethod = (PreferredMethod)Enum.Parse(typeof(PreferredMethod), DirEntry.Properties[_host.methodAttribute].Value.ToString(), true);
+                                                    if (PreferredMethod != PreferredMethod.Choose)
+                                                        IsRegistered = true;
                                                 }
-                                                catch
+                                                if (DirEntry.Properties[_host.overridemethodAttribute].Value != null)
                                                 {
-                                                    reg.PIN = 0;
+                                                    try
+                                                    {
+                                                        reg.OverrideMethod = DirEntry.Properties[_host.overridemethodAttribute].Value.ToString();
+                                                    }
+                                                    catch
+                                                    {
+                                                        reg.OverrideMethod = string.Empty;
+                                                    }
                                                 }
-                                            }
-                                            else reg.PIN = 0;
+                                                else reg.OverrideMethod = string.Empty;
 
-                                            if (DirEntry.Properties[_host.totpEnabledAttribute].Value != null)
-                                                IsRegistered = true;
-                                            if (IsRegistered)
-                                                count++;
-                                        }
-                                    };
+                                                if (DirEntry.Properties[_host.pinattribute].Value != null)
+                                                {
+                                                    try
+                                                    {
+                                                        reg.PIN = Convert.ToInt32(DirEntry.Properties[_host.pinattribute].Value);
+                                                    }
+                                                    catch
+                                                    {
+                                                        reg.PIN = 0;
+                                                    }
+                                                }
+                                                else reg.PIN = 0;
+
+                                                if (DirEntry.Properties[_host.totpEnabledAttribute].Value != null)
+                                                    IsRegistered = true;
+                                                if (IsRegistered)
+                                                    count++;
+                                            }
+                                        };
+                                    }
+
                                 }
-                                
                             }
                         }
+                    }
+                    catch (Exception ex)
+                    {
+                        DataLog.WriteEntry(ex.Message, System.Diagnostics.EventLogEntryType.Error, 5001);
+                        DataLog.WriteEntry("Forest ADDS : "+f.ForestDNS+" discarded !!!" , System.Diagnostics.EventLogEntryType.Error, 5001);
                     }
                 }
                 return count;

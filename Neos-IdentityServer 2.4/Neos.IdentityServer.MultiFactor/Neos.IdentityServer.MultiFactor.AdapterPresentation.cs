@@ -167,7 +167,8 @@ namespace Neos.IdentityServer.MultiFactor
             result += "<input id=\"authMethod\" type=\"hidden\" name=\"AuthMethod\" value=\"%AuthMethod%\"/>";
             result += "<input id=\"lnk\" type=\"hidden\" name=\"lnk\" value=\"0\"/>";
             result += "<input id=\"continueButton\" type=\"submit\" class=\"submit\" name=\"Continue\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMConnexion") + "\" /></br></br>";
-            result += "<a class=\"actionLink\" href=\"#\" id=\"nocode\" name=\"nocode\" onclick=\"return SetLinkData(IdentificationForm, '3')\"; style=\"cursor: pointer;\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMNoCode") + "</a>";
+            if (RuntimeAuthProvider.GetActiveProvidersCount()>1)
+                result += "<a class=\"actionLink\" href=\"#\" id=\"nocode\" name=\"nocode\" onclick=\"return SetLinkData(IdentificationForm, '3')\"; style=\"cursor: pointer;\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMNoCode") + "</a>";
             result += GetFormHtmlMessageZone(usercontext);
             result += "</form>";
             return result;
@@ -384,7 +385,8 @@ namespace Neos.IdentityServer.MultiFactor
                 }
             }
 
-            result += GetPartHtmlSelectMethod(usercontext);
+            if (Provider.Config.KeepMySelectedOptionOn)
+                result += GetPartHtmlSelectMethod(usercontext);
 
             if (!Provider.Config.UserFeatures.IsMFARequired() && !Provider.Config.UserFeatures.IsMFAMixed())
                 result += "<input id=\"disablemfa\" type=\"checkbox\" name=\"disablemfa\" /> " + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMDisableMFA") + "</br>";
@@ -627,9 +629,10 @@ namespace Neos.IdentityServer.MultiFactor
                 }
             }
 
-            result += GetPartHtmlSelectMethod2(usercontext);
+            if (Provider.Config.KeepMySelectedOptionOn)
+                result += GetPartHtmlSelectMethod2(usercontext);
 
-            if (!Provider.Config.UserFeatures.IsMFARequired())
+            if (!Provider.Config.UserFeatures.IsMFARequired() && !Provider.Config.UserFeatures.IsMFAMixed())
                 result += "<input id=\"disablemfa\" type=\"checkbox\" name=\"disablemfa\" /> " + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMDisableMFA") + "</br>";
 
             result += "</br>";

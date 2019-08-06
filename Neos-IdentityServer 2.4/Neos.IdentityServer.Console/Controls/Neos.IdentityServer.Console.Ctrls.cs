@@ -522,7 +522,7 @@ namespace Neos.IdentityServer.Console.Controls
                 chkProviderEnabled.Text = res.CTRLPROVACTIVE;
 
                 chkProviderEnabled.Checked = _provider.Enabled;
-                chkProviderEnabled.Enabled = (_provider.Enabled && _provider.AllowDisable);
+                chkProviderEnabled.Enabled = (_provider.AllowDisable);
                 chkProviderEnabled.Left = 510;
                 chkProviderEnabled.Top = 10;
                 chkProviderEnabled.Width = 300;
@@ -587,7 +587,7 @@ namespace Neos.IdentityServer.Console.Controls
                 chkProviderPin.Text = res.CTRLPROVPIN;
 
                 chkProviderEnabled.Checked = _provider.Enabled;
-                chkProviderEnabled.Enabled = (_provider.Enabled && _provider.AllowDisable);
+                chkProviderEnabled.Enabled = (_provider.AllowDisable);
 
                 if (_provider.AllowEnrollment)
                     chkProviderEnroll.Checked = _provider.WizardEnabled;
@@ -713,15 +713,25 @@ namespace Neos.IdentityServer.Console.Controls
                 {
                     case PreferredMethod.Code:
                         Config.OTPProvider.Enabled = chkProviderEnabled.Checked;
+                        chkProviderEnroll.Enabled = Config.OTPProvider.Enabled;
+                        chkProviderPin.Enabled = Config.OTPProvider.Enabled;
                         break;
                     case PreferredMethod.Email:
                         Config.MailProvider.Enabled = chkProviderEnabled.Checked;
+                        chkProviderEnroll.Enabled = Config.MailProvider.Enabled;
+                        chkProviderPin.Enabled = Config.MailProvider.Enabled;
+
                         break;
                     case PreferredMethod.External:
                         Config.ExternalProvider.Enabled = chkProviderEnabled.Checked;
+                        chkProviderEnroll.Enabled = Config.ExternalProvider.Enabled;
+                        chkProviderPin.Enabled = Config.ExternalProvider.Enabled;
+
                         break;
                     case PreferredMethod.Azure:
                         Config.AzureProvider.Enabled = chkProviderEnabled.Checked;
+                        chkProviderEnroll.Enabled = false;
+                        chkProviderPin.Enabled = Config.AzureProvider.Enabled;
                         break;
                 }
                 ManagementService.ADFSManager.SetDirty(true);
@@ -1240,6 +1250,7 @@ namespace Neos.IdentityServer.Console.Controls
         private NamespaceSnapInBase _snapin;
         private Panel _panel;
         private Panel _txtpanel;
+        private bool unlocked = false;
 
         // Controls
         private TextBox txtIssuer;
@@ -1284,6 +1295,8 @@ namespace Neos.IdentityServer.Console.Controls
         private Label endADVLabel;
         private LinkLabel tblSaveConfig;
         private LinkLabel tblCancelConfig;
+        private ComboBox cbConfigProvider;
+        private Label lblConfigProvider;
 
 
         /// <summary>
@@ -1441,6 +1454,26 @@ namespace Neos.IdentityServer.Console.Controls
                 txtCountryCode.Validating += CountryCodeValidating;
                 txtCountryCode.Validated += CountryCodeValidated;
                 _txtpanel.Controls.Add(txtCountryCode);
+
+                lblConfigProvider = new Label();
+                lblConfigProvider.Text = res.CTRLGLPROVIDER + " : ";
+                lblConfigProvider.Left = 530;
+                lblConfigProvider.Top = 83;
+                lblConfigProvider.Width = 150;
+                _txtpanel.Controls.Add(lblConfigProvider);
+
+                MMCProviersList xlst = new MMCProviersList();
+                cbConfigProvider = new ComboBox();
+                cbConfigProvider.DropDownStyle = ComboBoxStyle.DropDownList;
+                cbConfigProvider.Left = 690;
+                cbConfigProvider.Top = 79;
+                cbConfigProvider.Width = 80;
+                _txtpanel.Controls.Add(cbConfigProvider);
+
+                cbConfigProvider.DataSource = xlst;
+                cbConfigProvider.ValueMember = "ID";
+                cbConfigProvider.DisplayMember = "Label";
+                cbConfigProvider.SelectedIndexChanged += SelectedProviderChanged;
 
                 lblDeliveryWindow = new Label();
                 lblDeliveryWindow.Text = res.CTRLGLDELVERY + " : ";
@@ -1707,7 +1740,7 @@ namespace Neos.IdentityServer.Console.Controls
             finally
             {
                 UpdateLayoutConfigStatus(ManagementService.ADFSManager.ConfigurationStatus);
-                AdjustPolicyTemplate();
+                AdjustComboboxTemplates();
                 ValidateData();
                 _view.CausesValidation = true;
                 _view.AutoValidate = AutoValidate.EnableAllowFocusChange;
@@ -1737,6 +1770,7 @@ namespace Neos.IdentityServer.Console.Controls
                 lblAdminContact.Text = res.CTRLGLCONTACT + " : ";
                 lblContryCode.Text = res.CTRLGLCONTRYCODE + " : ";
                 lblDeliveryWindow.Text = res.CTRLGLDELVERY + " : ";
+                lblConfigProvider.Text = res.CTRLGLPROVIDER + " : ";
                 lblMaxRetries.Text = res.CTRLDLGMAXRETRIES + " : ";
                 lblConfigTemplate.Text = res.CTRLGLPOLICY + " : ";
                 rdioMFALabel.Text = res.CTRLGLMFASTATUS;
@@ -1762,7 +1796,7 @@ namespace Neos.IdentityServer.Console.Controls
             finally
             {
                 UpdateLayoutConfigStatus(ManagementService.ADFSManager.ConfigurationStatus);
-                AdjustPolicyTemplate();
+                AdjustComboboxTemplates();
                 ValidateData();
                 _view.CausesValidation = true;
                 _view.AutoValidate = AutoValidate.EnableAllowFocusChange;
@@ -1823,44 +1857,33 @@ namespace Neos.IdentityServer.Console.Controls
         /// </summary>
         private void SelectedPolicyTemplateChanged(object sender, EventArgs e)
         {
-            UserTemplateMode currenttmp = GetPolicyTemplate();
-            SetPolicyTemplate(currenttmp);
+            SetPolicyTemplate();
+        }
+
+        /// <summary>
+        /// SelectedProviderChanged method implementation
+        /// </summary>
+        private void SelectedProviderChanged(object sender, EventArgs e)
+        {
+            MMCProviderItem itm = (MMCProviderItem)cbConfigProvider.SelectedItem;
+            Config.DefaultProviderMethod = itm.ID;
+            if (_view.AutoValidate != AutoValidate.Disable)
+                ManagementService.ADFSManager.SetDirty(true);
         }
 
         /// <summary>
         /// SetPolicyTemplate method implmentation
         /// </summary>
-        private void SetPolicyTemplate(UserTemplateMode template)
+        private void SetPolicyTemplate()
         {
+            unlocked = false;
+            MMCTemplateModeItem itm = (MMCTemplateModeItem)cbConfigTemplate.SelectedItem;
+            Config.UserFeatures = Config.UserFeatures.SetPolicyTemplate(itm.ID);
+            if (itm.ID==UserTemplateMode.Custom)
+                unlocked = true;
+            UpdateLayoutPolicyComponents(unlocked);
             if (_view.AutoValidate != AutoValidate.Disable)
-            {
-                bool unlocked = false;
-                int currentidx = cbConfigTemplate.Items.IndexOf(template);
-                int newidx = cbConfigTemplate.SelectedIndex;
-              //  if (currentidx == newidx)
-              //      return;
-                if (newidx == cbConfigTemplate.Items.IndexOf(UserTemplateMode.Free))
-                    Config.UserFeatures = Config.UserFeatures.SetPolicyTemplate(UserTemplateMode.Free);
-                else if (newidx == cbConfigTemplate.Items.IndexOf(UserTemplateMode.Open))
-                    Config.UserFeatures = Config.UserFeatures.SetPolicyTemplate(UserTemplateMode.Open);
-                else if (newidx == cbConfigTemplate.Items.IndexOf(UserTemplateMode.Default))
-                    Config.UserFeatures = Config.UserFeatures.SetPolicyTemplate(UserTemplateMode.Default);
-                else if (newidx == cbConfigTemplate.Items.IndexOf(UserTemplateMode.Mixed))
-                    Config.UserFeatures = Config.UserFeatures.SetPolicyTemplate(UserTemplateMode.Mixed);
-                else if (newidx == cbConfigTemplate.Items.IndexOf(UserTemplateMode.Managed))
-                    Config.UserFeatures = Config.UserFeatures.SetPolicyTemplate(UserTemplateMode.Managed);
-                else if (newidx == cbConfigTemplate.Items.IndexOf(UserTemplateMode.Strict))
-                    Config.UserFeatures = Config.UserFeatures.SetPolicyTemplate(UserTemplateMode.Strict);
-                else if (newidx == cbConfigTemplate.Items.IndexOf(UserTemplateMode.Administrative))
-                    Config.UserFeatures = Config.UserFeatures.SetPolicyTemplate(UserTemplateMode.Administrative);
-                else
-                {
-                    unlocked = true;
-                    Config.UserFeatures = Config.UserFeatures.SetPolicyTemplate(UserTemplateMode.Custom);
-                }
-                UpdateLayoutPolicyComponents(unlocked);
                 ManagementService.ADFSManager.SetDirty(true);
-            }
         }
 
         /// <summary>
@@ -1868,20 +1891,26 @@ namespace Neos.IdentityServer.Console.Controls
         /// </summary>
         private UserTemplateMode GetPolicyTemplate()
         {
-            return Config.UserFeatures.GetPolicyTemplate();
+            if (unlocked)
+                return UserTemplateMode.Custom;
+            else
+                return Config.UserFeatures.GetPolicyTemplate();
         }
 
         /// <summary>
-        /// AdjustPolicyTemplate method implmentation
+        /// AdjustComboboxTemplates method implmentation
         /// </summary>
-        private void AdjustPolicyTemplate()
+        private void AdjustComboboxTemplates()
         {
-            bool unlocked = false;
+            unlocked = false;
             UserTemplateMode template = Config.UserFeatures.GetPolicyTemplate();
             cbConfigTemplate.SelectedIndex = cbConfigTemplate.Items.IndexOf(template);
             if (template == UserTemplateMode.Custom)
                 unlocked = true;
             UpdateLayoutPolicyComponents(unlocked);
+
+            PreferredMethod method = Config.DefaultProviderMethod;
+            cbConfigProvider.SelectedIndex = cbConfigProvider.Items.IndexOf(method);
         }
         
         /// <summary>
@@ -1925,7 +1954,7 @@ namespace Neos.IdentityServer.Console.Controls
                     rdioMFAAllowed.Enabled = true;
                     rdioMFANotRequired.Enabled = true;
                     rdioREGAdmin.Enabled = true;
-                    rdioREGUser.Enabled = (Config.UserFeatures.IsRegistrationAllowed() || Config.UserFeatures.IsRegistrationMixed());
+                    rdioREGUser.Enabled = true;  
                     rdioREGUnManaged.Enabled = true;
                     chkAllowManageOptions.Enabled = true;
                     chkAllowEnrollment.Enabled = true;
@@ -2039,7 +2068,7 @@ namespace Neos.IdentityServer.Console.Controls
                     if (rdioMFANotRequired.Checked)
                     {
                         Config.UserFeatures = Config.UserFeatures.SetMFANotRequired();
-                        rdioREGUser.Enabled = true;
+                      //  rdioREGUser.Enabled = true;
                         txtADVStart.Enabled = Config.UserFeatures.IsAdvertisable();
                         txtADVEnd.Enabled = Config.UserFeatures.IsAdvertisable();
                         ManagementService.ADFSManager.SetDirty(true);
@@ -2068,7 +2097,7 @@ namespace Neos.IdentityServer.Console.Controls
                     if (rdioMFAAllowed.Checked)
                     {
                         Config.UserFeatures = Config.UserFeatures.SetMFAAllowed();
-                        rdioREGUser.Enabled = true;
+                      //  rdioREGUser.Enabled = true;
                         txtADVStart.Enabled = Config.UserFeatures.IsAdvertisable();
                         txtADVEnd.Enabled = Config.UserFeatures.IsAdvertisable();
                         ManagementService.ADFSManager.SetDirty(true);
@@ -2099,7 +2128,7 @@ namespace Neos.IdentityServer.Console.Controls
                         Config.UserFeatures = Config.UserFeatures.SetMFARequired();
                         if (rdioREGUser.Checked)
                             rdioREGAdmin.Checked = true;
-                        rdioREGUser.Enabled = false;
+                       // rdioREGUser.Enabled = false;
                         txtADVStart.Enabled = Config.UserFeatures.IsAdvertisable();
                         txtADVEnd.Enabled = Config.UserFeatures.IsAdvertisable();
                         ManagementService.ADFSManager.SetDirty(true);

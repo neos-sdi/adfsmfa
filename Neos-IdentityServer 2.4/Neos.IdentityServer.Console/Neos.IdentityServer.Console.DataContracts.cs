@@ -175,6 +175,51 @@ namespace Neos.IdentityServer.Console
     }
 
     /// <summary>
+    /// MMCProviderItem class
+    /// </summary>
+    public class MMCProviderItem
+    {
+        public PreferredMethod ID { get; set; }
+        public String Label { get; set; }
+
+        public override int GetHashCode()
+        {
+            return ID.GetHashCode();
+        }
+
+        public override bool Equals(object obj)
+        {
+            PreferredMethod paramobj = PreferredMethod.Choose;
+            if (obj is PreferredMethod)
+                paramobj = (PreferredMethod)obj;
+            else if (obj is MMCProviderItem)
+                paramobj = ((MMCProviderItem)obj).ID;
+            else
+                return false;
+            if (paramobj == this.ID)
+                return true;
+            else
+                return false;
+        }
+    }
+
+    /// <summary>
+    /// MMCProviersList class implémentation
+    /// </summary>
+    public class MMCProviersList : BindingList<MMCProviderItem>
+    {
+        public MMCProviersList()
+        {
+            this.Add(new MMCProviderItem() { ID = PreferredMethod.Choose, Label = "Choose" });
+            this.Add(new MMCProviderItem() { ID = PreferredMethod.Code, Label = "Code" });
+            this.Add(new MMCProviderItem() { ID = PreferredMethod.Email, Label = "Email" });
+            this.Add(new MMCProviderItem() { ID = PreferredMethod.External, Label = "External" });
+            this.Add(new MMCProviderItem() { ID = PreferredMethod.Azure, Label = "Azure" });
+            this.Add(new MMCProviderItem() { ID = PreferredMethod.Biometrics, Label = "Biometrics" });
+        }
+    }
+
+    /// <summary>
     /// MMCSecurityFormatItem class implémentation
     /// </summary>
     public class MMCSecurityFormatItem

@@ -86,9 +86,7 @@ namespace Neos.IdentityServer.MultiFactor
                         else if (Config.UserFeatures.IsMFARequired())
                         {
                             if (usercontext.TargetUIMode == ProviderPageMode.Invitation)
-                            {
                                 result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorAccountNotEnabled"), ProviderPageMode.DefinitiveError);
-                            }
                             else
                                 result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorAccountNoAccess"), ProviderPageMode.DefinitiveError);
                         }
@@ -116,8 +114,33 @@ namespace Neos.IdentityServer.MultiFactor
                             result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorAccountNotEnabled"), ProviderPageMode.DefinitiveError);
                         break;
                     default:
-                       // if ((HookOptionParameter(request)) && (Config.UserFeatures.CanManageOptions() || Config.UserFeatures.CanManagePassword()))
-                        if ((HookOptionParameter(request)) && (Config.UserFeatures.CanAccessOptions()))
+                        // Do not Select method if only on provider
+                        if ((usercontext.UIMode == ProviderPageMode.ChooseMethod) && (usercontext.PreferredMethod==PreferredMethod.Choose)) 
+                        {
+                            if (RuntimeAuthProvider.GetActiveProvidersCount()<=1)
+                            {
+                                IExternalProvider pp = RuntimeAuthProvider.GetFirstActiveProvider();
+                                usercontext.UIMode = ProviderPageMode.SendAuthRequest;
+                                if (pp == null)
+                                {
+                                    if (Config.DefaultProviderMethod != PreferredMethod.Choose)
+                                        usercontext.PreferredMethod = Config.DefaultProviderMethod;
+                                    else
+                                        usercontext.PreferredMethod = PreferredMethod.Code;
+                                }
+                                else
+                                    usercontext.PreferredMethod = pp.Kind;
+                            }
+                            else
+                            {
+                                if (Config.DefaultProviderMethod != PreferredMethod.Choose)
+                                {
+                                    usercontext.UIMode = ProviderPageMode.SendAuthRequest;
+                                    usercontext.PreferredMethod = Config.DefaultProviderMethod;
+                                }
+                            }
+                        }
+                        else if ((HookOptionParameter(request)) && (Config.UserFeatures.CanAccessOptions()))
                             usercontext.UIMode = ProviderPageMode.SelectOptions;
                         result = new AdapterPresentation(this, context);
                         break;
@@ -150,7 +173,7 @@ namespace Neos.IdentityServer.MultiFactor
                     usercontext.LogonDate = DateTime.Now;
                     usercontext.CurrentRetries = 0;
                     usercontext.NotificationSent = false;
-                    if (usercontext.Enabled)
+                    if (usercontext.Enabled) // Enabled
                     {
                         if (usercontext.KeyStatus == SecretKeyStatus.NoKey)
                         {
@@ -559,7 +582,11 @@ namespace Neos.IdentityServer.MultiFactor
                     case 1:  // OK
                         {
                             string error = string.Empty;
-                            int page = Convert.ToInt32(proofData.Properties["selectopt"].ToString());
+                            int page = 0;
+                            if (proofData.Properties.ContainsKey("selectopt"))
+                                page = Convert.ToInt32(proofData.Properties["selectopt"].ToString());
+                            else
+                                page = (int)Config.DefaultProviderMethod;
                             try
                             {
                                 ValidateUserOptions(usercontext, context, proofData, Resources, page, true, true);
@@ -676,7 +703,11 @@ namespace Neos.IdentityServer.MultiFactor
                     case 1:  // OK
                         {
                             string error = string.Empty;
-                            int page = Convert.ToInt32(proofData.Properties["selectopt"].ToString());
+                            int page = 0;
+                            if (proofData.Properties.ContainsKey("selectopt"))
+                                page = Convert.ToInt32(proofData.Properties["selectopt"].ToString());
+                            else
+                                page = (int)Config.DefaultProviderMethod;
                             try
                             {
                                 ValidateUserOptions(usercontext, context, proofData, Resources, page, true, true);
@@ -1532,7 +1563,6 @@ namespace Neos.IdentityServer.MultiFactor
                                 if (forcesave)
                                 {
                                     RuntimeRepository.SetUserRegistration(Config, (Registration)usercontext, usercontext.KeyStatus != SecretKeyStatus.Success);
-                                //    usercontext.NeedNotification = true;
                                     usercontext.UIMode = ProviderPageMode.EnrollOTPAndSave;
                                 }
                                 else

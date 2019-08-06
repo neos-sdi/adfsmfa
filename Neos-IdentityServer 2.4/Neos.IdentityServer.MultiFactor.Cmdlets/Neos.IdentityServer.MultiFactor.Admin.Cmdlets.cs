@@ -2518,7 +2518,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             {
                 try
                 {
-                    _config.SetTemplate(this.Host, _target);
+                    _config.SetPolicyTemplate(this.Host, _target);
                     this.WriteVerbose(infos_strings.InfosConfigUpdated);
                 }
                 catch (Exception ex)
