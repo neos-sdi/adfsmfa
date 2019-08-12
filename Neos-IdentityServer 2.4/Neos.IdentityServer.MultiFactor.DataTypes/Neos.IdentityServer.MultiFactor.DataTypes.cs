@@ -1469,11 +1469,12 @@ namespace Neos.IdentityServer.MultiFactor
     public enum NotificationsKind: byte
     {
         None = 0x00,
-        ConfigurationReload = 0xAA,
+        ConfigurationReload  = 0xAA,
         ServiceStatusRunning = 0x10,
         ServiceStatusStopped = 0x11,
         ServiceStatusPending = 0x12,
-        ServiceStatusInError = 0x19
+        ServiceStatusInError = 0x19,
+        ServiceServerInformation = 0xAB
     }
 
     /// <summary>

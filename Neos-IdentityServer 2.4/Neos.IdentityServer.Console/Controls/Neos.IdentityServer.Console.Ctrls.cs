@@ -170,11 +170,17 @@ namespace Neos.IdentityServer.Console.Controls
             }
         }
 
+        /// <summary>
+        /// Host property implementation
+        /// </summary>
+        public ADFSServerHost Host
+        {
+            get { return _host; }
+        }
 
         /// <summary>
         /// DoCreateControls method implementation
         /// </summary>
-        /// <param name="isrunning"></param>
         private void DoCreateControls()
         {
             this.SuspendLayout();
@@ -1078,13 +1084,13 @@ namespace Neos.IdentityServer.Console.Controls
                 lbloptions = new Label();
                 lbloptions.Text = "Options : ";
                 if (Config.OTPProvider.Enabled)
-                    lbloptions.Text = "TOPT ";
+                    lbloptions.Text += "TOPT ";
                 if (Config.MailProvider.Enabled)
-                    lbloptions.Text = "EMAILS ";
+                    lbloptions.Text += "EMAILS ";
                 if (Config.ExternalProvider.Enabled)
-                    lbloptions.Text = "SMS ";
+                    lbloptions.Text += "SMS ";
                 if (Config.AzureProvider.Enabled)
-                    lbloptions.Text = "AZURE ";
+                    lbloptions.Text += "AZURE ";
 
                 lbloptions.Left = 550;
                 lbloptions.Top = 10;

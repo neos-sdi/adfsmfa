@@ -202,7 +202,7 @@
     <value>Nouvelle clé</value>
   </data>
   <data name="HtmlLabelWREGOTP" xml:space="preserve">
-    <value>Vous devez avoir installé une application d'authentification telle que Microsoft Authenticator, Google Authenticator sur votre device avant pouvoir continuer et enregistrer votre compte</value>
+    <value>Vous devez avoir installé une application d'authentification telle que Microsoft Authenticator, Google Authenticator sur votre device avant de pouvoir continuer et enregistrer votre compte.</value>
   </data>
   <data name="HtmlLabelWREGOTPWarning" xml:space="preserve">
     <value>En poursuivant, votre clé actuelle sera invalidée et réinitialisée.</value>

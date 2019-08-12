@@ -55,7 +55,17 @@ namespace Neos.IdentityServer.Console
         public void Initialize(FormView view)
         {
             FormView = (ServiceFormView)view;
+            ManagementService.ADFSManager.ConfigurationStatusChanged += ConfigurationStatusChanged;
             OnInitialize();
+        }
+
+        private void ConfigurationStatusChanged(ADFSServiceManager mgr, ConfigOperationStatus status, Exception ex = null)
+        {
+            if (IsNotifsEnabled())
+            {
+                if (this.InvokeRequired)
+                    ReloadData();
+            }
         }
 
         #region Properties
@@ -103,6 +113,11 @@ namespace Neos.IdentityServer.Console
             this.SuspendLayout();
             try
             {
+                ComponentResourceManager resources = new ComponentResourceManager(typeof(ServiceViewControl));
+                this.label1.Text = resources.GetString("label1.Text");
+                this.label2.Text = resources.GetString("label2.Text");
+                this.label3.Text = resources.GetString("label3.Text");
+
                 ControlInstance = new ConfigurationControl(this, this.SnapIn);
                 this.tableLayoutPanel.Controls.Add(ControlInstance, 0, 1);
 
@@ -151,6 +166,51 @@ namespace Neos.IdentityServer.Console
                     foreach (ADFSServerControl srv in _lst)
                     {
                         ((IMMCRefreshData)srv).DoRefreshData();
+                    }
+                }
+            }
+            finally
+            {
+                _notifenabled = true;
+                this.Cursor = Cursors.Default;
+                this.ResumeLayout();
+            }
+        }
+
+        /// <summary>
+        /// ReloadData method implementation
+        /// </summary>
+        internal void ReloadData()
+        {
+            this.SuspendLayout();
+            this.Cursor = Cursors.WaitCursor;
+            _notifenabled = false;
+            try
+            {
+                ComponentResourceManager resources = new ComponentResourceManager(typeof(ServiceViewControl));
+                this.label1.Text = resources.GetString("label1.Text");
+                this.label2.Text = resources.GetString("label2.Text");
+                this.label3.Text = resources.GetString("label3.Text");
+
+                ((IMMCRefreshData)ControlInstance).DoRefreshData();
+                bool isconfigured = ManagementService.ADFSManager.IsFarmConfigured();
+                if (isconfigured)
+                {
+                    foreach (ADFSServerControl srv in _lst)
+                    {
+                        this.tableLayoutPanel.Controls.Remove(srv);
+                    }
+                    _lst.Clear();
+
+                    int i = 3;
+                    MFAConfig cfg = CFGUtilities.ReadConfiguration(null);
+                    foreach (ADFSServerHost srv in cfg.Hosts.ADFSFarm.Servers)
+                    {
+                        bool isok = ManagementService.ADFSManager.IsRunning(srv.FQDN);
+                        ADFSServerControl crt = new ADFSServerControl(this, srv, isok);
+                        _lst.Add(crt);
+                        this.tableLayoutPanel.Invoke((MethodInvoker)delegate { this.tableLayoutPanel.Controls.Add(crt, 0, i); });
+                        i++;
                     }
                 }
             }

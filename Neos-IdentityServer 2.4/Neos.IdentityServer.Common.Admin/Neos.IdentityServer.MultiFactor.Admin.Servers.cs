@@ -571,6 +571,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 this.ConfigurationStatusChanged(this, ConfigOperationStatus.ConfigSaved);
                 using (MailSlotClient mailslot = new MailSlotClient())
                 {
+                    mailslot.Text = Environment.MachineName;
                     mailslot.SendNotification(NotificationsKind.ConfigurationReload);
                 }
             }
@@ -1229,12 +1230,16 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             try
             {
                 internalImportConfiguration(Host, importfile);
+                _config = CFGUtilities.ReadConfigurationFromDatabase(Host);
+                _config.IsDirty = false;
+                CFGUtilities.WriteConfigurationToCache(_config);
                 using (MailSlotClient mailslot = new MailSlotClient())
                 {
+                    mailslot.Text = Environment.MachineName;
                     mailslot.SendNotification(NotificationsKind.ConfigurationReload);
                 }
                 this.ConfigurationStatusChanged(this, ConfigOperationStatus.ConfigSaved);
-                _config = ReadConfiguration(Host);
+                // _config = ReadConfiguration(Host);
                 if (KeysManager.IsLoaded)
                 {
                     if (activate)
@@ -1288,6 +1293,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             internalActivateConfiguration(Host);
             using (MailSlotClient mailslot = new MailSlotClient())
             {
+                mailslot.Text = Environment.MachineName;
                 mailslot.SendNotification(NotificationsKind.ConfigurationReload);
             }
         }
@@ -1306,6 +1312,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             this.ConfigurationStatusChanged(this, ConfigOperationStatus.ConfigStopped);
             using (MailSlotClient mailslot = new MailSlotClient())
             {
+                mailslot.Text = Environment.MachineName;
                 mailslot.SendNotification(NotificationsKind.ConfigurationReload);
             }
         }
@@ -1332,10 +1339,10 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             EnsureConfiguration(Host);
             try
             {
-                using (MailSlotClient mailslot = new MailSlotClient("CP1"))
+                using (MailSlotClient mailslot = new MailSlotClient("NOT")) // Ask NotifyHub to register and broadcast notification for new server
                 {
-                    mailslot.Text = Dns.GetHostEntry(servername).HostName;
-                    mailslot.SendNotification(NotificationsKind.ServiceStatusRunning);
+                    mailslot.Text = servername;
+                    mailslot.SendNotification(NotificationsKind.ServiceServerInformation);
                 }
             }
             catch (Exception ex)
@@ -1343,26 +1350,6 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 throw ex;
             }
             return;
-        }
-
-        /// <summary>
-        /// RegisterADFSComputer method implementation
-        /// </summary>        
-        public ADFSServerHost RegisterADFSComputer(PSHost Host)
-        {
-            ADFSServerHost result = null;
-            EnsureConfiguration(Host);
-            try
-            {
-                result = InitServerNodeConfiguration(Host);
-                SetDirty(true);
-                WriteConfiguration(Host);
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-            return result;
         }
 
         /// <summary>
@@ -1376,7 +1363,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 string fqdn = Dns.GetHostEntry(servername).HostName;
                 ADFSFarm.Servers.RemoveAll(c => c.FQDN.ToLower() == fqdn.ToLower());
                 SetDirty(true);
-                WriteConfiguration(Host);
+                WriteConfiguration(Host); // Save, Notification and Sync
             }
             catch (Exception ex)
             {

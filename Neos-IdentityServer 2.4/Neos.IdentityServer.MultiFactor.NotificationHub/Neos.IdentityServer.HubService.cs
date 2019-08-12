@@ -32,16 +32,15 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
 {
     public partial class MFANOTIFHUB : ServiceBase
     {
-       
         private List<string> _adfsservers = new List<string>();
         private MailSlotServerManager _mailslotsmgr = new MailSlotServerManager();
         private MailSlotServer _mailslotmfa = new MailSlotServer("NOT"); // And Broadcast
         private PipeServer _pipeserver = new PipeServer();
-#if forreplay
-        private PipeReplayServer _pipereplay = new PipeReplayServer();
-#endif
 
-#region Service override methods
+        #region Service override methods
+        /// <summary>
+        /// Constructor Override
+        /// </summary>
         public MFANOTIFHUB()
         {
             Trace.TraceInformation("MFANOTIFHUB:InitializeComponent");
@@ -58,16 +57,12 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
             this.EventLog.Log = "Application";
             Trace.WriteLine("MFANOTIFHUB:Start MailSlot Manager " + _mailslotsmgr.ApplicationName);
             LogForSlots.LogEnabled = false;
+
             _pipeserver.Proofkey = XORUtilities.XORKey;
-            _pipeserver.OnMessage += PipeServerOnMessage;
+            _pipeserver.OnReloadConfiguration += DoOnReceiveConfiguration;
+            _pipeserver.OnRequestServerConfiguration += DoOnReceiveServerConfiguration;
             _pipeserver.OnDecrypt += PipeOnDecrypt;
             _pipeserver.OnEncrypt += PipeOnEncrypt;
-#if forreplay
-            _pipereplay.Proofkey = XORUtilities.XORKey;
-            _pipereplay.OnMessage += PipeReplayServerOnMessage;
-            _pipereplay.OnDecrypt += PipeOnDecrypt;
-            _pipereplay.OnEncrypt += PipeOnEncrypt;
-#endif
         }
 
         /// <summary>
@@ -76,10 +71,9 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
         protected override void OnStart(string[] args)
         {
             _mailslotsmgr.Start();
-            _mailslotsmgr.MailSlotSystemMessageArrived += MailSlotSystemMessageArrived;
 
             _mailslotmfa.Start();
-            _mailslotmfa.MailSlotMessageArrived += MFAMailSlotMessageArrived;
+            _mailslotmfa.MailSlotMessageArrived += SyncMailSlotMessages;
 
             Trace.WriteLine("MFANOTIFHUB:Start ADFS Service");
 
@@ -87,9 +81,6 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
             try
             {
                 _pipeserver.Start();
-#if forreplay
-                _pipereplay.Start();
-#endif
             }
             catch (Exception e)
             {
@@ -110,15 +101,11 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
             StopADFSService();
 
             _mailslotsmgr.Stop();
-            _mailslotsmgr.MailSlotSystemMessageArrived -= MailSlotSystemMessageArrived;
 
             _mailslotmfa.Stop();
-            _mailslotmfa.MailSlotMessageArrived -= MFAMailSlotMessageArrived;
+            _mailslotmfa.MailSlotMessageArrived -= SyncMailSlotMessages;
             try
             {
-#if forreplay
-                _pipereplay.Stop();
-#endif
                 _pipeserver.Stop();
             }
             catch (Exception e)
@@ -127,9 +114,9 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
             }
             this.EventLog.WriteEntry("Le service s'est arrêté avec succès.", EventLogEntryType.Information, 1);
         }
-#endregion
+        #endregion
 
-#region Properties
+        #region Properties
         /// <summary>
         /// ADFSServers List property
         /// </summary>
@@ -138,9 +125,9 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
             get { return _adfsservers; }
 
         }
-#endregion
+        #endregion
 
-#region Private Methods
+        #region Private Methods
         /// <summary>
         /// BuildADFSServersList method implementation
         /// </summary>
@@ -153,195 +140,178 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
                 _adfsservers.Add(host.MachineName);
             }
         }
-#endregion
+        #endregion
 
-#region System MailSlots Events
-        /// <summary>
-        /// MailSlotSystemMessageArrived implementation
-        /// </summary>
-        private void MailSlotSystemMessageArrived(MailSlotServerDispatcher mailslotserver)
-        {
-            try
-            {
-                StringBuilder bld = new StringBuilder();
-                Process srvprocess = Process.GetProcessById(mailslotserver.ProcessID);
-                bld.AppendLine(string.Format("Host Message Hub : {0} ", Environment.MachineName + "\\" + srvprocess.ProcessName));
-                bld.AppendLine("-----------------------------------------------------------------------");
-                bld.AppendLine(string.Format("Process ID : {0} ", mailslotserver.ProcessID));
-                bld.AppendLine(string.Format("Machine Name: {0} ", Environment.MachineName));
-                bld.AppendLine(string.Format("Application Name : {0} ", mailslotserver.ApplicationName));
-                bld.AppendLine(string.Format("Multi Instances : {0} ", mailslotserver.MultiInstance.ToString()));
-                bld.AppendLine(string.Format("Is Started : {0} ", mailslotserver.IsStarted.ToString()));
-                bld.AppendLine(string.Format("Allow to Self : {0} ", mailslotserver.AllowToSelf.ToString()));
-                bld.AppendLine(string.Format("Scan Duration : {0} ", mailslotserver.ScanDuration.ToString()));
-                bld.AppendLine();
-                foreach (MailSlotDispatcherMessage msg in mailslotserver.Instances)
-                {
-                    try
-                    {
-                        Process msgprocess = Process.GetProcessById(msg.TargetID);
-                        bld.AppendLine(string.Format("Mailslot Process : {0} ", Environment.MachineName + "\\" + msgprocess.ProcessName));
-                    }
-                    catch (Exception E)
-                    {
-                        bld.AppendLine(string.Format("Mailslot Process : {0} ", Environment.MachineName + "\\Unknown Process"));
-                        bld.AppendLine(E.Message);
-                    }
-                    bld.AppendLine("-----------------------------------------------------------------------");
-                    bld.AppendLine(string.Format("Process ID : {0} ", msg.TargetID));
-                    bld.AppendLine(string.Format("Machine Name: {0} ", Environment.MachineName));
-                    bld.AppendLine(string.Format("Application Name : {0} ", msg.ApplicationName));
-                    bld.AppendLine(string.Format("Multi Instances : {0} ", msg.MultiInstance.ToString()));
-                    bld.AppendLine(string.Format("Allow to Self : {0} ", msg.AllowToSelf.ToString()));
-                    bld.AppendLine();
-                }
-                this.EventLog.WriteEntry(bld.ToString(), EventLogEntryType.SuccessAudit, 10000);
-            }
-            catch (Exception ex)
-            {
-                this.EventLog.WriteEntry(ex.Message, EventLogEntryType.FailureAudit, 10000);
-            }
-        }
-
-        /// <summary>
-        /// MailSlotMessageArrived implementation
-        /// </summary>
-        private void MailSlotMessageArrived(MailSlotServer maislotserver, MailSlotMessage message)
-        {
-            if (message.ApplicationName == "CP1")
-            {
-                switch (message.Operation)
-                {
-                    case (byte)NotificationsKind.ServiceStatusRunning:
-                        this.EventLog.WriteEntry(string.Format("Server Information REQUEST To {0}", message.Text), EventLogEntryType.SuccessAudit, 10000);
-                        using (MailSlotClient mailslot = new MailSlotClient("CP1"))
-                        {
-                            mailslot.Text = Dns.GetHostEntry(message.Text).HostName.ToLower();
-                            mailslot.SendNotification(NotificationsKind.ServiceStatusStopped);
-                        }
-                        break;
-                    case (byte)NotificationsKind.ServiceStatusStopped:
-                        string localname = Dns.GetHostEntry("localhost").HostName.ToLower();
-                        if (localname.ToLower().Equals(message.Text.ToLower()))
-                        {
-                            this.EventLog.WriteEntry(string.Format("Server Information RECEIVED for {0}", message.Text), EventLogEntryType.SuccessAudit, 10000);
-                            using (MailSlotClient mailslot = new MailSlotClient("CP1"))
-                            {
-                                FarmUtilities xreg = new FarmUtilities();
-                                mailslot.Text = xreg.InitServerNodeConfiguration();
-                                mailslot.SendNotification(NotificationsKind.ServiceStatusPending);
-                            }
-                        }
-                        break;
-                    case (byte)NotificationsKind.ServiceStatusPending :
-                        FarmUtilities reg = new FarmUtilities();
-                        ADFSServerHost host = reg.UnPackServerNodeConfiguration(message.Text);
-
-                        ManagementService.EnsureService();
-                        int i = ManagementService.ADFSManager.ADFSFarm.Servers.FindIndex(c => c.FQDN.ToLower() == host.FQDN.ToLower());
-                        if (i < 0)
-                            ManagementService.ADFSManager.ADFSFarm.Servers.Add(host);
-                        else
-                            ManagementService.ADFSManager.ADFSFarm.Servers[i] = host;
-
-                        ManagementService.ADFSManager.SetDirty(true);
-                        ManagementService.ADFSManager.WriteConfiguration(null);
-
-                        this.EventLog.WriteEntry(string.Format("Server Information RESPONSE : {0}", message.Text), EventLogEntryType.SuccessAudit, 10000);
-                        break;
-                }
-            }
-        }
-#endregion
-
-#region Named Pipes Methods /events
+        #region Named Pipes Methods / events
         /// <summary>
         /// MFAMailSlotMessageArrived implementation
         /// </summary>
-        private void MFAMailSlotMessageArrived(MailSlotServer maislotserver, MailSlotMessage message)
+        private void SyncMailSlotMessages(MailSlotServer maislotserver, MailSlotMessage message)
         {
-            if (_adfsservers.Count == 0)
-                BuildADFSServersList();
+            if (message.Operation == (byte)NotificationsKind.ConfigurationReload) // Configuration Reload
+                DoOnSendConfiguration();
+            else if (message.Operation == (byte)NotificationsKind.ServiceServerInformation)
+                DoOnRequestServerConfiguration(message.Text);
+        }
 
-            if (message.ApplicationName == "BDC")
+        #region Add Server Configuration
+        /// <summary>
+        /// DoOnRequestServerConfiguration method implementation (Client)
+        /// </summary>
+        private void DoOnRequestServerConfiguration(string servername)
+        {
+            if (CFGUtilities.IsPrimaryComputer())
             {
+                List<string> lst = new List<string>() { servername };
+                PipeClient pipe = new PipeClient(Utilities.XORKey, lst);
+                pipe.OnEncrypt += PipeOnEncrypt;
+                pipe.OnDecrypt += PipeOnDecrypt;
+
+                string req = Environment.MachineName;
+                NamedPipeRegistryRecord reg = pipe.DoRequestServerConfiguration(req);
+                UpgradeServersConfig(reg);
+            }
+            return;
+        }
+
+        /// <summary>
+        /// UpgradeServersConfig method implementation (Client)
+        /// </summary>
+        private void UpgradeServersConfig(NamedPipeRegistryRecord reg)
+        {
+            NamedPipeRegistryRecord rec = FarmUtilities.InitServerNodeConfiguration(reg);
+
+            MFAConfig cfg = CFGUtilities.ReadConfiguration(null);
+            ADFSServerHost svr = null;
+            if (cfg.Hosts.ADFSFarm.Servers.Exists(s => s.FQDN.ToLower().Equals(rec.FQDN.ToLower())))
+            {
+                svr = cfg.Hosts.ADFSFarm.Servers.Find(s => s.FQDN.ToLower().Equals(rec.FQDN.ToLower()));
+                cfg.Hosts.ADFSFarm.Servers.Remove(svr);
+            }
+            svr = new ADFSServerHost();
+            svr.FQDN = rec.FQDN;
+            svr.CurrentVersion = rec.CurrentVersion;
+            svr.CurrentBuild = rec.CurrentBuild;
+            svr.CurrentMajorVersionNumber = rec.CurrentMajorVersionNumber;
+            svr.CurrentMinorVersionNumber = rec.CurrentMinorVersionNumber;
+            svr.InstallationType = rec.InstallationType;
+            svr.ProductName = rec.ProductName;
+            svr.NodeType = rec.NodeType;
+            svr.BehaviorLevel = rec.BehaviorLevel;
+            svr.HeartbeatTmeStamp = rec.HeartbeatTimestamp;
+            cfg.Hosts.ADFSFarm.Servers.Add(svr);
+            CFGUtilities.WriteConfiguration(null, cfg);
+
+            using (MailSlotClient mailslot = new MailSlotClient())
+            {
+                mailslot.Text = Environment.MachineName;
+                mailslot.SendNotification(NotificationsKind.ConfigurationReload);
+            }
+        }
+
+        /// <summary>
+        /// DoOnReceiveServerConfiguration method implementation (Server)
+        /// </summary>
+        private NamedPipeRegistryRecord DoOnReceiveServerConfiguration(string requestor)
+        {
+            RegistryVersion reg = new RegistryVersion();
+            NamedPipeRegistryRecord rec = default(NamedPipeRegistryRecord);
+            rec.FQDN = Dns.GetHostEntry("LocalHost").HostName;
+            rec.CurrentVersion = reg.CurrentVersion;
+            rec.CurrentBuild = reg.CurrentBuild;
+            rec.CurrentMajorVersionNumber = reg.CurrentMajorVersionNumber;
+            rec.CurrentMinorVersionNumber = reg.CurrentMinorVersionNumber;
+            rec.InstallationType = reg.InstallationType;
+            rec.ProductName = reg.ProductName;
+            rec.IsWindows2012R2 = reg.IsWindows2012R2;
+            rec.IsWindows2016 = reg.IsWindows2016;
+            rec.IsWindows2019 = reg.IsWindows2019;
+            rec.NodeType = FarmUtilities.InitServerNodeType();
+            return rec;
+        }
+
+        #endregion
+
+        #region Configuration Cache management
+        /// <summary>
+        /// DoOnSendConfiguration method implementation (Client)
+        /// </summary>
+        private void DoOnSendConfiguration()
+        {
+            if (CFGUtilities.IsPrimaryComputer())
+            {
+                if (_adfsservers.Count == 0)
+                    BuildADFSServersList();
+
                 PipeClient pipe = new PipeClient(Utilities.XORKey, ADFSServers);
-                if (message.Operation == (byte)NotificationsKind.ConfigurationReload)
+                pipe.OnEncrypt += PipeOnEncrypt;
+                pipe.OnDecrypt += PipeOnDecrypt;
+
+                byte[] byt = ReadConfigurationForCache();
+                string msg = Convert.ToBase64String(byt, 0, byt.Length);
+                string req = Environment.MachineName;
+                if (!pipe.DoReloadConfiguration(req, msg))
                 {
-                    pipe.OnEncrypt += PipeOnEncrypt;
-                    pipe.OnDecrypt += PipeOnDecrypt;
-                    if (CFGUtilities.IsWIDConfiguration())
-                    {
-                        if (CFGUtilities.IsPrimaryComputer())
-                        {
-                            MFAConfig config = CFGUtilities.ReadConfiguration();
-                            XmlConfigSerializer xmlserializer = new XmlConfigSerializer(typeof(MFAConfig));
-                            MemoryStream stm = new MemoryStream();
-                            using (StreamReader reader = new StreamReader(stm))
-                            {
-                                xmlserializer.Serialize(stm, config);
-                                stm.Position = 0;
-                                byte[] byt = CFGUtilities.XOREncryptOrDecrypt(stm.ToArray(), Utilities.XORKey);
-                                string msg = Convert.ToBase64String(byt, 0, byt.Length);
-                                pipe.SendMessage(NotificationsKind.ConfigurationReload, "BDC", msg);
-                            }
-                        }
-                    }
-                    else
-                        pipe.SendMessage((NotificationsKind)message.Operation, message.ApplicationName, message.Text);
+                    this.EventLog.WriteEntry("Some Servers configuration where not updated ! Wait for WID synchro !", EventLogEntryType.Warning, 10000);
                 }
             }
         }
 
         /// <summary>
-        /// PipeServerOnMessage method implementation
+        /// DoOnReceiveConfiguration method implementation (Server)
         /// </summary>
-        private void PipeServerOnMessage(NotificationsKind notif, string username, string application, string value)
+        private bool DoOnReceiveConfiguration(string requestor, string value)
         {
-            if (application.ToUpper().Equals("BDC"))
+            try
             {
-                if (notif == NotificationsKind.ConfigurationReload)
-                {
-                    try
-                    {
-                        byte[] byt = Convert.FromBase64String(value); // do not decrypt 
-                        using (FileStream fs = new FileStream(CFGUtilities.configcachedir, FileMode.Create, FileAccess.ReadWrite))
-                        {
-                            fs.Write(byt, 0, byt.Length);
-                            fs.Close();
-                        }
-                    }
-                    finally
-                    {
-
-                    }
-                }
+                WriteConfigurationToCache(value);
                 using (MailSlotClient mailslot = new MailSlotClient())
                 {
-                    mailslot.Text = username;
-                    mailslot.SendNotification(notif);
+                    mailslot.Text = requestor;
+                    mailslot.SendNotification(NotificationsKind.ConfigurationReload);
                 }
             }
-            else
+            catch (Exception ex)
             {
-                using (MailSlotClient mailslot = new MailSlotClient(application))
-                {
-                    mailslot.Text = value;
-                    mailslot.SendNotification(notif);
-                }
+                this.EventLog.WriteEntry("Error when writing Confoguration cache ! "+ex.Message, EventLogEntryType.Error, 10000);
+                return false;
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// ReadConfigurationForCache method implementation
+        /// </summary>
+        private byte[] ReadConfigurationForCache()
+        {
+            MFAConfig config = CFGUtilities.ReadConfiguration();
+            XmlConfigSerializer xmlserializer = new XmlConfigSerializer(typeof(MFAConfig));
+            MemoryStream stm = new MemoryStream();
+            using (StreamReader reader = new StreamReader(stm))
+            {
+                xmlserializer.Serialize(stm, config);
+                stm.Position = 0;
+                return CFGUtilities.XOREncryptOrDecrypt(stm.ToArray(), Utilities.XORKey);
             }
         }
 
         /// <summary>
-        /// PipeReplayServerOnMessage method implementation
+        /// WriteConfigurationToCache method implementation
         /// </summary>
-        private void PipeReplayServerOnMessage(IPAddress userIPAdress, int userIPPort, int userCurrentRetries, int userMaxRetries, int deliveryWindow, DateTime userLogon, string userName)
+        private void WriteConfigurationToCache(string value)
         {
-
+            byte[] byt = Convert.FromBase64String(value); // do not decrypt 
+            using (FileStream fs = new FileStream(CFGUtilities.configcachedir, FileMode.Create, FileAccess.ReadWrite))
+            {
+                fs.Write(byt, 0, byt.Length);
+                fs.Close();
+            }
         }
-#endregion
+        #endregion
 
-#region Encryption/Decryption
+        #endregion
+
+        #region Encryption/Decryption
         /// <summary>
         /// PipeOnDecrypt method implementation
         /// </summary>
@@ -361,7 +331,7 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
         }
 #endregion
 
-#region ADFS Service
+        #region ADFS Service
         /// <summary>
         /// StartADFSService method implementation
         /// </summary>
@@ -409,6 +379,6 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
                 ADFSController.Close();
             }
         }
-#endregion
+        #endregion
     }
 }

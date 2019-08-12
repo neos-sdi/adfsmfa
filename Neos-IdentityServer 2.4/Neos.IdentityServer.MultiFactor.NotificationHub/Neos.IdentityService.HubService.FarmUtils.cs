@@ -10,18 +10,17 @@ using System.Threading.Tasks;
 
 namespace Neos.IdentityServer.MultiFactor.NotificationHub
 {
-    internal class FarmUtilities
+    internal static class FarmUtilities
     {
         #region Servers Configuration
         /// <summary>
         /// InitFarmNodeConfiguration method implementation
         /// </summary>        
-        public string InitServerNodeConfiguration()
+        public static NamedPipeRegistryRecord InitServerNodeConfiguration(NamedPipeRegistryRecord reg)
         {
-            string result = null;
+            NamedPipeRegistryRecord result = default(NamedPipeRegistryRecord);
             try
             {
-                RegistryVersion reg = new RegistryVersion();
                 if (reg.IsWindows2019)
                     result = InitServerNodeConfiguration2019(reg);
                 else if (reg.IsWindows2016)
@@ -37,35 +36,9 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
         }
 
         /// <summary>
-        /// UnPackServerNodeConfiguration method implementation
-        /// </summary>
-        public ADFSServerHost UnPackServerNodeConfiguration(string data)
-        {
-            ADFSServerHost host = new ADFSServerHost();
-            string[] ps = data.Split('|');
-            RegistryVersion reg = new RegistryVersion();
-            reg.VersionFromString(ps[0]);
-
-            host.CurrentBuild = reg.CurrentBuild;
-            host.CurrentMajorVersionNumber = reg.CurrentMajorVersionNumber;
-            host.CurrentMinorVersionNumber = reg.CurrentMinorVersionNumber;
-            host.CurrentVersion = reg.CurrentVersion;
-            host.InstallationType = reg.InstallationType;
-            host.ProductName = reg.ProductName;
-
-            string[] px = ps[1].Split(';');
-            host.FQDN = px[0];
-            host.BehaviorLevel = Convert.ToInt32(px[1]);
-            host.HeartbeatTmeStamp = Convert.ToDateTime(px[2]);
-            host.NodeType = px[3];
-
-            return host;
-        }
-
-        /// <summary>
         /// InitServerNodeConfiguration2012 method implementation
         /// </summary>
-        private string InitServerNodeConfiguration2012(RegistryVersion reg)
+        public static string InitServerNodeType()
         {
             string nodetype = string.Empty;
             Runspace SPRunSpace = null;
@@ -94,22 +67,25 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
                 if (SPRunSpace != null)
                     SPRunSpace.Close();
             }
+            return nodetype;
+        }
 
-            string result = reg.VersionAsString();
-            result += "|";
-            result += Dns.GetHostEntry("LocalHost").HostName + ";";
-            result += "1;";
-            result += new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, DateTime.Now.Hour, DateTime.Now.Minute, 0, DateTimeKind.Local)+";";
-            result += nodetype + ";";
-            return result;
+        /// <summary>
+        /// InitServerNodeConfiguration2012 method implementation
+        /// </summary>
+        private static NamedPipeRegistryRecord InitServerNodeConfiguration2012(NamedPipeRegistryRecord reg)
+        {
+            reg.MachineName = GetMachineName(reg.FQDN);
+            reg.BehaviorLevel = 1;
+            reg.HeartbeatTimestamp = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, DateTime.Now.Hour, DateTime.Now.Minute, 0, DateTimeKind.Local);
+            return reg;
         }
 
         /// <summary>
         /// InitServerNodeConfiguration2016 method implementation
         /// </summary>
-        private string InitServerNodeConfiguration2016(RegistryVersion reg)
+        private static NamedPipeRegistryRecord InitServerNodeConfiguration2016(NamedPipeRegistryRecord reg)
         {
-            string result = string.Empty;
             Runspace SPRunSpace = null;
             PowerShell SPPowerShell = null;
             try
@@ -128,12 +104,14 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
                 Collection<PSObject> PSOutput = pipeline.Invoke();
                 foreach (var item in PSOutput)
                 {
-                    result = reg.VersionAsString();
-                    result += "|";
-                    result += item.Members["FQDN"].Value.ToString() + ";";
-                    result += item.Members["BehaviorLevel"].Value.ToString()+";";
-                    result += item.Members["HeartbeatTimeStamp"].Value.ToString()+";";
-                    result += item.Members["NodeType"].Value.ToString()+";";
+                    if (reg.FQDN.ToLower().Equals(item.Members["FQDN"].Value.ToString().ToLower()))
+                    { 
+                        reg.FQDN = item.Members["FQDN"].Value.ToString();
+                        reg.MachineName = GetMachineName(reg.FQDN);
+                        reg.BehaviorLevel = Convert.ToInt32(item.Members["BehaviorLevel"].Value);
+                        reg.HeartbeatTimestamp = Convert.ToDateTime(item.Members["HeartbeatTimeStamp"].Value);
+                        break;
+                    }
                 }
             }
             finally
@@ -141,15 +119,14 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
                 if (SPRunSpace != null)
                     SPRunSpace.Close();
             }
-            return result;
+            return reg;
         }
 
         /// <summary>
         /// InitServerNodeConfiguration2019 method implementation
         /// </summary>
-        private string InitServerNodeConfiguration2019(RegistryVersion reg)
+        private static NamedPipeRegistryRecord InitServerNodeConfiguration2019(NamedPipeRegistryRecord reg)
         {
-            string result = string.Empty;
             Runspace SPRunSpace = null;
             PowerShell SPPowerShell = null;
             try
@@ -168,12 +145,14 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
                 Collection<PSObject> PSOutput = pipeline.Invoke();
                 foreach (var item in PSOutput)
                 {
-                    result = reg.VersionAsString();
-                    result += "|";
-                    result += item.Members["FQDN"].Value.ToString() + ";";
-                    result += item.Members["BehaviorLevel"].Value.ToString() + ";";
-                    result += item.Members["HeartbeatTimeStamp"].Value.ToString() + ";";
-                    result += item.Members["NodeType"].Value.ToString() + ";";
+                    if (reg.FQDN.ToLower().Equals(item.Members["FQDN"].Value.ToString().ToLower()))
+                    {
+                        reg.FQDN = item.Members["FQDN"].Value.ToString();
+                        reg.MachineName = GetMachineName(reg.FQDN);
+                        reg.BehaviorLevel = Convert.ToInt32(item.Members["BehaviorLevel"].Value);
+                        reg.HeartbeatTimestamp = Convert.ToDateTime(item.Members["HeartbeatTimeStamp"].Value);
+                        break;
+                    }
                 }
             }
             finally
@@ -181,10 +160,10 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
                 if (SPRunSpace != null)
                     SPRunSpace.Close();
             }
-            return result;
+            return reg;
         }
 
-        private string GetMachineName(string FQDN)
+        private static string GetMachineName(string FQDN)
         {
             string[] svr = FQDN.Split('.');
             if (svr.Length >= 1)

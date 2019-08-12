@@ -2042,7 +2042,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// WriteConfigurationToDatabase method implementation
         /// </summary>
-        private static MFAConfig WriteConfigurationToDatabase(PSHost Host, MFAConfig config)
+        internal static MFAConfig WriteConfigurationToDatabase(PSHost Host, MFAConfig config)
         {
             Runspace SPRunSpace = null;
             PowerShell SPPowerShell = null;
@@ -2092,7 +2092,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// WriteConfigurationToCache method implementation
         /// </summary>
-        private static MFAConfig WriteConfigurationToCache(MFAConfig config)
+        internal static MFAConfig WriteConfigurationToCache(MFAConfig config)
         {
             XmlConfigSerializer xmlserializer = new XmlConfigSerializer(typeof(MFAConfig));
             MemoryStream stm = new MemoryStream();
