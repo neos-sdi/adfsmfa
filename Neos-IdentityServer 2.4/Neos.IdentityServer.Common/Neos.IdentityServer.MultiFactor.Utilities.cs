@@ -2344,7 +2344,7 @@ namespace Neos.IdentityServer.MultiFactor
             try
             {
                 string dom = GetEmailDomain(email);
-                foreach(string s in blocked)
+                foreach (string s in blocked)
                 {
                     if (dom.ToLower().EndsWith(s))
                         return false;
@@ -2379,6 +2379,17 @@ namespace Neos.IdentityServer.MultiFactor
                 Log.WriteEntry(ex.Message, EventLogEntryType.Error, 800);
                 throw ex;
             }
+        }   
+     
+        /// <summary>
+        /// StripDisplayKey method implmentation
+        /// </summary>
+        public static string StripDisplayKey(string dkey)
+        {
+            if ((dkey != null) && (dkey.Length >= 5))
+                return dkey.Substring(0, 5) + " ... (truncated for security reasons) ... ";
+            else
+                return " ... (invalid key) ... ";
         }
 
         /// <summary>
@@ -2426,17 +2437,33 @@ namespace Neos.IdentityServer.MultiFactor
             {
                 return string.Format(CultureInfo.InvariantCulture, "{0}{1}", new object[]
 		        {
-			        Regex.Replace(phone.Substring(0, phone.Length - 4), "[0-9]", "x"),	phone.Substring(phone.Length - 4)
+			        Regex.Replace(phone.Substring(0, phone.Length - 2), "[0-9]", "x"),
+                    phone.Substring(phone.Length - 2)
 		        });
-
-                /* if (string.IsNullOrEmpty(phone))
-                    return "* ** ** ** **";
-                else
-                    return "* ** ** ** " + phone.Substring(phone.Length - 2, 2); */
             }
             catch
             {
                 return "* ** ** ** **";
+            }
+        }
+
+        /// <summary>
+        /// StripPhoneNumer method
+        /// </summary>
+        public static string StripPinCode(int ipin)
+        {
+            try
+            {
+                string pin = ipin.ToString();
+                return string.Format(CultureInfo.InvariantCulture, "{0}{1}", new object[]
+                {
+                    Regex.Replace(pin.Substring(0, pin.Length - 1), "[0-9]", "x"),
+                    pin.Substring(pin.Length - 1)
+                });
+            }
+            catch
+            {
+                return "****";
             }
         }
 

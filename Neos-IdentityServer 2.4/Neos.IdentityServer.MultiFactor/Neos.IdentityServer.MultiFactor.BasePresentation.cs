@@ -160,7 +160,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public virtual AuthenticationContext Context
         {
-            get; 
+            get;
             internal set;
         }
 
@@ -178,7 +178,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public virtual bool UseUIPaginated
         {
-            get; 
+            get;
             internal set;
         }
 
@@ -232,29 +232,29 @@ namespace Neos.IdentityServer.MultiFactor
         protected virtual string GetFormPreRenderHtmlCSS(AuthenticationContext usercontext, bool removetag = false)
         {
             string result = string.Empty;
-            result += "#wizardMessage, #wizardMessage2, #wizardMessage3 {"; 
-            result += "box-sizing: border-box;"; 
-            result += "color: rgb(38, 38, 38);"; 
-            result += "direction: ltr;"; 
-            result += "display: block;"; 
-            result += "font-family: \"Segoe UI Webfont\", -apple-system, \"Helvetica Neue\", \"Lucida Grande\", Roboto, Ebrima, \"Nirmala UI\", Gadugi, \"Segoe Xbox Symbol\", \"Segoe UI Symbol\", \"Meiryo UI\", \"Khmer UI\", Tunga, \"Lao UI\", Raavi, \"Iskoola Pota\", Latha, Leelawadee, \"Microsoft YaHei UI\", \"Microsoft JhengHei UI\", \"Malgun Gothic\", \"Estrangelo Edessa\", \"Microsoft Himalaya\", \"Microsoft New Tai Lue\", \"Microsoft PhagsPa\", \"Microsoft Tai Le\", \"Microsoft Yi Baiti\", \"Mongolian Baiti\", \"MV Boli\", \"Myanmar Text\", \"Cambria Math\";"; 
-            result += "font-weight: 300;"; 
-            result += "font-size: 1.7em;"; 
-            result += "height: auto;"; 
-            result += "line-height: 28px;"; 
-            result += "margin-bottom: 16px;"; 
-            result += "margin-left: -2px;"; 
-            result += "margin-right: -2px;"; 
-            result += "margin-top: 16px;"; 
-            result += "padding-bottom: 0px;"; 
-            result += "padding-left: 0px;"; 
-            result += "padding-right: 0px;"; 
-            result += "padding-top: 0px;"; 
-            result += "text-align: left;"; 
-            result += "text-size-adjust: 100%;"; 
-            result += "width: 342px;"; 
-            result += "background-color: transparent;"; 
-            result += "}"  + "\r\n";
+            result += "#wizardMessage, #wizardMessage2, #wizardMessage3 {";
+            result += "box-sizing: border-box;";
+            result += "color: rgb(38, 38, 38);";
+            result += "direction: ltr;";
+            result += "display: block;";
+            result += "font-family: \"Segoe UI Webfont\", -apple-system, \"Helvetica Neue\", \"Lucida Grande\", Roboto, Ebrima, \"Nirmala UI\", Gadugi, \"Segoe Xbox Symbol\", \"Segoe UI Symbol\", \"Meiryo UI\", \"Khmer UI\", Tunga, \"Lao UI\", Raavi, \"Iskoola Pota\", Latha, Leelawadee, \"Microsoft YaHei UI\", \"Microsoft JhengHei UI\", \"Malgun Gothic\", \"Estrangelo Edessa\", \"Microsoft Himalaya\", \"Microsoft New Tai Lue\", \"Microsoft PhagsPa\", \"Microsoft Tai Le\", \"Microsoft Yi Baiti\", \"Mongolian Baiti\", \"MV Boli\", \"Myanmar Text\", \"Cambria Math\";";
+            result += "font-weight: 300;";
+            result += "font-size: 1.7em;";
+            result += "height: auto;";
+            result += "line-height: 28px;";
+            result += "margin-bottom: 16px;";
+            result += "margin-left: -2px;";
+            result += "margin-right: -2px;";
+            result += "margin-top: 16px;";
+            result += "padding-bottom: 0px;";
+            result += "padding-left: 0px;";
+            result += "padding-right: 0px;";
+            result += "padding-top: 0px;";
+            result += "text-align: left;";
+            result += "text-size-adjust: 100%;";
+            result += "width: 342px;";
+            result += "background-color: transparent;";
+            result += "}" + "\r\n";
             if (!removetag)
                 return "<style>" + result + "</style>";
             return result + "\r\n";
@@ -693,20 +693,8 @@ namespace Neos.IdentityServer.MultiFactor
 
             return result;
         }
-#endregion
-
-        #region Utils
-        /// <summary>
-        /// StripDisplayKey method implmentation
-        /// </summary>
-        internal string StripDisplayKey(string dkey)
-        {
-            if ((dkey != null) && (dkey.Length >= 5))
-                return dkey.Substring(0, 5) + " ... (truncated for security reasons) ... ";
-            else
-                return " ... (invalid key) ... ";
-        }
         #endregion
+
     }
 
     public class AdapterPresentation : BasePresentation
