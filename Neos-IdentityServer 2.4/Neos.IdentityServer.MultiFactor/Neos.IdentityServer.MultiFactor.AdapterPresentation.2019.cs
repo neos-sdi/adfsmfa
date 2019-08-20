@@ -253,34 +253,34 @@ namespace Neos.IdentityServer.MultiFactor
 
             if (RuntimeAuthProvider.IsUIElementRequired(usercontext, RequiredMethodElements.EmailParameterRequired))
             {
-                result += "if ((email) && (email.value==''))";
+                result += "if ((email) && (email.value=='') && (email.placeholder==''))";
                 result += "{";
-                result += "err.innerHTML = \"" + Resources.GetString(ResourcesLocaleKind.Validation, "ValidIncorrectEmail") + "\";";
-                result += "return false;";
+                result += "   err.innerHTML = \":1:" + Resources.GetString(ResourcesLocaleKind.Validation, "ValidIncorrectEmail") + "\";";
+                result += "   return false;";
                 result += "}";
                 result += "if ((email) && (email.value!==''))";
                 result += "{";
-                result += "if (!email.value.match(mailformat))";
-                result += "{";
-                result += "err.innerHTML = \"" + Resources.GetString(ResourcesLocaleKind.Validation, "ValidIncorrectEmail") + "\";";
-                result += "return false;";
-                result += "}";
+                result += "   if (!email.value.match(mailformat))";
+                result += "   {";
+                result += "      err.innerHTML = \":2:" + Resources.GetString(ResourcesLocaleKind.Validation, "ValidIncorrectEmail") + "\";";
+                result += "      return false;";
+                result += "   }";
                 result += "}";
             }
             if (RuntimeAuthProvider.IsUIElementRequired(usercontext, RequiredMethodElements.PhoneParameterRequired))
             {
-                result += "if ((phone) && (phone.value==''))";
+                result += "if ((phone) && (phone.value=='') && (phone.placeholder==''))";
                 result += "{";
-                result += "err.innerHTML = \"" + Resources.GetString(ResourcesLocaleKind.Validation, "ValidIncorrectPhoneNumber") + "\";";
-                result += "return false;";
+                result += "   err.innerHTML = \"" + Resources.GetString(ResourcesLocaleKind.Validation, "ValidIncorrectPhoneNumber") + "\";";
+                result += "   return false;";
                 result += "}";
                 result += "if ((phone) && (phone.value!==''))";
                 result += "{";
-                result += "if (!phone.value.match(phoneformat) && !phone.value.match(phoneformat10) && !phone.value.match(phoneformatus) )";
-                result += "{";
-                result += "err.innerHTML = \"" + Resources.GetString(ResourcesLocaleKind.Validation, "ValidIncorrectPhoneNumber") + "\";";
-                result += "return false;";
-                result += "}";
+                result += "   if (!phone.value.match(phoneformat) && !phone.value.match(phoneformat10) && !phone.value.match(phoneformatus) )";
+                result += "   {";
+                result += "      err.innerHTML = \"" + Resources.GetString(ResourcesLocaleKind.Validation, "ValidIncorrectPhoneNumber") + "\";";
+                result += "      return false;";
+                result += "   }";
                 result += "}";
             }
             result += "}";
@@ -357,12 +357,12 @@ namespace Neos.IdentityServer.MultiFactor
                 if ((prov.IsUIElementRequired(usercontext, RequiredMethodElements.EmailParameterRequired)))
                 {
                     result += "<b><div class=\"fieldMargin\">" + prov.GetUICFGLabel(usercontext) + "</div></b>";
-                    result += "<input id=\"email\" name=\"email\" type=\"text\" readonly=\"true\" placeholder=\"Personal Email Address\" class=\"" + (UseUIPaginated ? "text textPaginated fullWidth" : "text fullWidth") + "\" style=\"background-color: #F0F0F0\" value=\"" + Utilities.StripEmailAddress(usercontext.MailAddress) + "\"/></br>";
+                    result += "<input id=\"email\" name=\"email\" type=\"text\" readonly=\"true\" placeholder=\"" + Utilities.StripEmailAddress(usercontext.MailAddress) + "\" class=\"" + (UseUIPaginated ? "text textPaginated fullWidth" : "text fullWidth") + "\" style=\"background-color: #F0F0F0\" /></br>";
                 }
                 if ((prov.IsUIElementRequired(usercontext, RequiredMethodElements.PhoneParameterRequired)))
                 {
                     result += "<b><div class=\"fieldMargin\">" + prov.GetUICFGLabel(usercontext) + "</div></b>";
-                    result += "<input id=\"phone\" name=\"phone\" type=\"text\" readonly=\"true\" placeholder=\"Phone Number\" class=\"" + (UseUIPaginated ? "text textPaginated fullWidth" : "text fullWidth") + "\" style=\"background-color: #F0F0F0\" value=\"" + Utilities.StripPhoneNumber(usercontext.PhoneNumber) + "\"/></br>";
+                    result += "<input id=\"phone\" name=\"phone\" type=\"text\" readonly=\"true\" placeholder=\"" + Utilities.StripPhoneNumber(usercontext.PhoneNumber) + "\" class=\"" + (UseUIPaginated ? "text textPaginated fullWidth" : "text fullWidth") + "\" style=\"background-color: #F0F0F0\" /></br>";
                 }
 
                 List<AvailableAuthenticationMethod> lst = prov.GetAuthenticationMethods(usercontext);
@@ -422,9 +422,9 @@ namespace Neos.IdentityServer.MultiFactor
                 {
                     result += "<b><div class=\"fieldMargin\">" + BaseExternalProvider.GetPINLabel(usercontext) + " : </div></b>";
                     if (usercontext.PinCode > 0)
-                        result += "<input id=\"pincode\" name=\"pincode\" type=\"text\" readonly=\"true\" placeholder=\"Pin Code\" class=\"" + (UseUIPaginated ? "text textPaginated fullWidth" : "text fullWidth") + "\" style=\"background-color: #F0F0F0\" value=\"" + Utilities.StripPinCode(usercontext.PinCode) + "\"/></br>";
+                        result += "<input id=\"pincode\" name=\"pincode\" type=\"text\" readonly=\"true\" placeholder=\"" + Utilities.StripPinCode(usercontext.PinCode) + "\" class=\"" + (UseUIPaginated ? "text textPaginated fullWidth" : "text fullWidth") + "\" style=\"background-color: #F0F0F0\" /></br>";
                     else
-                        result += "<input id=\"pincode\" name=\"pincode\" type=\"text\" readonly=\"true\" placeholder=\"PIN Code\" class=\"" + (UseUIPaginated ? "text textPaginated fullWidth" : "text fullWidth") + "\" style=\"background-color: #F0F0F0\" value=\"" + Utilities.StripPinCode(Provider.Config.DefaultPin) + "\"/></br>";
+                        result += "<input id=\"pincode\" name=\"pincode\" type=\"text\" readonly=\"true\" placeholder=\"" + Utilities.StripPinCode(Provider.Config.DefaultPin) + "\" class=\"" + (UseUIPaginated ? "text textPaginated fullWidth" : "text fullWidth") + "\" style=\"background-color: #F0F0F0\" /></br>";
                     result += "</br>";
                     result += "<a class=\"actionLink\" href=\"#\" id=\"enrollpin\" name=\"enrollpin\" onclick=\"fnlinkclicked(registrationForm, 7)\" style=\"cursor: pointer;\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlEnrollPinCode") + "</a>";
                     result += "</br>";
@@ -490,37 +490,34 @@ namespace Neos.IdentityServer.MultiFactor
 
             if (RuntimeAuthProvider.IsUIElementRequired(usercontext, RequiredMethodElements.EmailParameterRequired))
             {
-                result += "if (email)";
+                result += "if ((email) && (email.value=='') && (email.placeholder==''))";
                 result += "{";
-                result += "if (email.value == '')";
-                result += "{";
-                result += "err.innerHTML = \"" + Resources.GetString(ResourcesLocaleKind.Validation, "ValidIncorrectEmail") + "\";";
-                result += "return false;";
+                result += "   err.innerHTML = \":1:" + Resources.GetString(ResourcesLocaleKind.Validation, "ValidIncorrectEmail") + "\";";
+                result += "   return false;";
                 result += "}";
-                result += "if (email.value !== '')";
+                result += "if ((email) && (email.value !== ''))";
                 result += "{";
-                result += "if (!email.value.match(mailformat))";
-                result += "{";
-                result += "err.innerHTML = \"" + Resources.GetString(ResourcesLocaleKind.Validation, "ValidIncorrectEmail") + "\";";
-                result += "return false;";
-                result += "}";
-                result += "}";
+                result += "   if (!email.value.match(mailformat))";
+                result += "   {";
+                result += "      err.innerHTML = \":2:" + Resources.GetString(ResourcesLocaleKind.Validation, "ValidIncorrectEmail") + "\";";
+                result += "      return false;";
+                result += "   }";
                 result += "}";
             }
             if (RuntimeAuthProvider.IsUIElementRequired(usercontext, RequiredMethodElements.PhoneParameterRequired))
             {
-                result += "if ((phone) && (phone.value==''))";
+                result += "if ((phone) && (phone.value=='') && phone.placeholder==''))";
                 result += "{";
-                result += "err.innerHTML = \"" + Resources.GetString(ResourcesLocaleKind.Validation, "ValidIncorrectPhoneNumber") + "\";";
-                result += "return false;";
+                result += "   err.innerHTML = \"" + Resources.GetString(ResourcesLocaleKind.Validation, "ValidIncorrectPhoneNumber") + "\";";
+                result += "   return false;";
                 result += "}";
                 result += "if ((phone) && (phone.value!==''))";
                 result += "{";
-                result += "if (!phone.value.match(phoneformat) && !phone.value.match(phoneformat10) && !phone.value.match(phoneformatus) )";
-                result += "{";
-                result += "err.innerHTML = \"" + Resources.GetString(ResourcesLocaleKind.Validation, "ValidIncorrectPhoneNumber") + "\";";
-                result += "return false;";
-                result += "}";
+                result += "   if (!phone.value.match(phoneformat) && !phone.value.match(phoneformat10) && !phone.value.match(phoneformatus) )";
+                result += "   {";
+                result += "      err.innerHTML = \"" + Resources.GetString(ResourcesLocaleKind.Validation, "ValidIncorrectPhoneNumber") + "\";";
+                result += "      return false;";
+                result += "   }";
                 result += "}";
             }
             result += "}";
@@ -595,12 +592,12 @@ namespace Neos.IdentityServer.MultiFactor
                 if ((prov.IsUIElementRequired(usercontext, RequiredMethodElements.EmailParameterRequired)))
                 {
                     result += "<b><div class=\"fieldMargin\">" + prov.GetUICFGLabel(usercontext) + "</div></b>";
-                    result += "<input id=\"email\" name=\"email\" type=\"text\" readonly=\"true\" placeholder=\"Personal Email Address\" class=\"" + (UseUIPaginated ? "text textPaginated fullWidth" : "text fullWidth") + "\" style=\"background-color: #F0F0F0\" value=\"" + Utilities.StripEmailAddress(usercontext.MailAddress) + "\"/></br>";
+                    result += "<input id=\"email\" name=\"email\" type=\"text\" readonly=\"true\" placeholder=\"" + Utilities.StripEmailAddress(usercontext.MailAddress) + "\" class=\"" + (UseUIPaginated ? "text textPaginated fullWidth" : "text fullWidth") + "\" style=\"background-color: #F0F0F0\" /></br>";
                 }
                 if ((prov.IsUIElementRequired(usercontext, RequiredMethodElements.PhoneParameterRequired)))
                 {
                     result += "<b><div class=\"fieldMargin\">" + prov.GetUICFGLabel(usercontext) + "</div></b>";
-                    result += "<input id=\"phone\" name=\"phone\" type=\"text\" readonly=\"true\" placeholder=\"Phone Number\" class=\"" + (UseUIPaginated ? "text textPaginated fullWidth" : "text fullWidth") + "\" style=\"background-color: #F0F0F0\" value=\"" + Utilities.StripPhoneNumber(usercontext.PhoneNumber) + "\"/></br>";
+                    result += "<input id=\"phone\" name=\"phone\" type=\"text\" readonly=\"true\" placeholder=\"" + Utilities.StripPhoneNumber(usercontext.PhoneNumber) + "\" class=\"" + (UseUIPaginated ? "text textPaginated fullWidth" : "text fullWidth") + "\" style=\"background-color: #F0F0F0\" /></br>";
                 }
 
                 List<AvailableAuthenticationMethod> lst = prov.GetAuthenticationMethods(usercontext);
@@ -1642,7 +1639,7 @@ namespace Neos.IdentityServer.MultiFactor
                 result += "{";
                 result += "return true;";
                 result += "}";
-                result += "if ((email) && (email.value==''))";
+                result += "if ((email) && (email.value=='') && (email.placeholder==''))";
                 result += "{";
                 result += "err.innerHTML = \"" + Resources.GetString(ResourcesLocaleKind.Validation, "ValidIncorrectEmail") + "\";";
                 result += "return false;";
@@ -1811,7 +1808,7 @@ namespace Neos.IdentityServer.MultiFactor
                 result += "{";
                 result += "return true;";
                 result += "}";
-                result += "if ((phone) && (phone.value==''))";
+                result += "if ((phone) && (phone.value=='') && (phone.placeholder==''))";
                 result += "{";
                 result += "err.innerHTML = \"" + Resources.GetString(ResourcesLocaleKind.Validation, "ValidIncorrectPhoneNumber") + "\";";
                 result += "return false;";
@@ -2008,7 +2005,7 @@ namespace Neos.IdentityServer.MultiFactor
                 result += "{";
                 result += "return true;";
                 result += "}";
-                result += "if ((pincode) && (pincode.value==''))";
+                result += "if ((pincode) && (pincode.value=='') && (pincode.placeholder==''))";
                 result += "{";
                 result += "err.innerHTML = \"" + Resources.GetString(ResourcesLocaleKind.Validation, "ValidIncorrectPinCode") + "\";";
                 result += "return false;";

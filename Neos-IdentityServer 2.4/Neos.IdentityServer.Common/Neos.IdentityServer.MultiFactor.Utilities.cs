@@ -2443,7 +2443,7 @@ namespace Neos.IdentityServer.MultiFactor
             }
             catch
             {
-                return "* ** ** ** **";
+                return string.Empty;
             }
         }
 

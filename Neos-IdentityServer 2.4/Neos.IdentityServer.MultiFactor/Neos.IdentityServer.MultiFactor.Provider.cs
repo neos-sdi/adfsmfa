@@ -2215,7 +2215,11 @@ namespace Neos.IdentityServer.MultiFactor
             {
                 string email = string.Empty;
                 if (proofData.Properties.ContainsKey("email"))
+                {
                     email = proofData.Properties["email"].ToString();
+                    if (string.IsNullOrEmpty(email))
+                        email = usercontext.MailAddress;
+                }
                 else
                     email = usercontext.MailAddress;
                 ValidateEmail(email, Resources, checkempty);
@@ -2232,7 +2236,11 @@ namespace Neos.IdentityServer.MultiFactor
             {
                 string phone = string.Empty;
                 if (proofData.Properties.ContainsKey("phone"))
+                {
                     phone = proofData.Properties["phone"].ToString();
+                    if (string.IsNullOrEmpty(phone))
+                        phone = usercontext.PhoneNumber;
+                }
                 else
                     phone = usercontext.PhoneNumber;
                 ValidatePhoneNumber(phone, Resources, checkempty);
@@ -2249,7 +2257,11 @@ namespace Neos.IdentityServer.MultiFactor
             {
                 string strpin = string.Empty;
                 if (proofData.Properties.ContainsKey("pincode"))
+                {
                     strpin = proofData.Properties["pincode"].ToString();
+                    if (string.IsNullOrEmpty(strpin))
+                        strpin = usercontext.PinCode.ToString();
+                }
                 else
                     strpin = usercontext.PinCode.ToString();
                 ValidatePINCode(strpin, Resources, checkempty);
