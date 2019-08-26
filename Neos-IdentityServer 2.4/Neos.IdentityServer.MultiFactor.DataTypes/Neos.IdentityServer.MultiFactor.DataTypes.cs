@@ -1474,7 +1474,9 @@ namespace Neos.IdentityServer.MultiFactor
         ServiceStatusStopped = 0x11,
         ServiceStatusPending = 0x12,
         ServiceStatusInError = 0x19,
-        ServiceServerInformation = 0xAB
+        ServiceServerInformation = 0xAB,
+        ServiceClientReplayInformation = 0xAC,
+        ServiceServerReplayInformation = 0xAD
     }
 
     /// <summary>

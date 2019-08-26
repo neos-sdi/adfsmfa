@@ -31,6 +31,13 @@ using System.DirectoryServices.ActiveDirectory;
 namespace Neos.IdentityServer.MultiFactor
 {
     #region MFAConfig
+    public enum ReplayLevel
+    {
+        Disabled = 0,
+        Intermediate = 1,
+        Full = 2
+    }
+
     public enum UserTemplateMode
     {
         Free = 0,                        // (UserFeaturesOptions.BypassDisabled | UserFeaturesOptions.BypassUnRegistered | UserFeaturesOptions.AllowManageOptions | UserFeaturesOptions.AllowChangePassword);
@@ -464,6 +471,7 @@ namespace Neos.IdentityServer.MultiFactor
                 MaxRetries = 3;
                 UiKind = ADFSUserInterfaceKind.Default;
                 DefaultProviderMethod = PreferredMethod.Choose;
+                ReplayLevel = ReplayLevel.Disabled;
                 UseUIPaginated = false;
 
                 UseActiveDirectory = true;
@@ -556,6 +564,7 @@ namespace Neos.IdentityServer.MultiFactor
                 AdminContact = "adminmfa@contoso.com";
             UiKind = ADFSUserInterfaceKind.Default;
             DefaultProviderMethod = PreferredMethod.Choose;
+            ReplayLevel = ReplayLevel.Disabled;
             UseUIPaginated = false;
             UserFeatures = (UserFeaturesOptions.AllowDisabled | UserFeaturesOptions.AllowUnRegistered | UserFeaturesOptions.AllowManageOptions | UserFeaturesOptions.AllowChangePassword);
 
@@ -723,6 +732,9 @@ namespace Neos.IdentityServer.MultiFactor
         [XmlElement("LastUpdated")]
         public DateTime LastUpdated { get; set; }
 
+
+        [XmlElement("ReplayLevel")]
+        public ReplayLevel ReplayLevel { get; set; } = ReplayLevel.Disabled;
 
         [XmlElement("Hosts")]
         public Hosts Hosts

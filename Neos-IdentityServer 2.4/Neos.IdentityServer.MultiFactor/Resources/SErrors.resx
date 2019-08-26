@@ -171,6 +171,9 @@
   <data name="ErrorPinValue" xml:space="preserve">
     <value>Invalid PIN value !</value>
   </data>
+  <data name="ErrorReplayToken" xml:space="preserve">
+    <value>Error on autehntification process ! One Time Password has been played before </value>
+  </data>
   <data name="ErrorSendingToastInformation" xml:space="preserve">
     <value>Error when sending identification request !</value>
   </data>

@@ -50,6 +50,31 @@ namespace MFA
     }
 
     /// <summary>
+    /// PSReplayLevel
+    /// <para type="synopsis">MFA TOTP Replay feature (Disabled, Intermediate, Full).</para>
+    /// <para type="description">Disabled : Replay feature is disabled (default).</para>
+    /// <para type="description">Intermediate : TOTP Replay is active, except fomr the same machine.</para>
+    /// <para type="description">Full : TOTP Replay is fully active (more secure).</para>
+    /// </summary>    
+    public enum PSReplayLevel
+    {
+        /// <summary>
+        /// <para type="description">Replay feature is disabled (default)</para>
+        /// </summary>
+        Disabled = 0,
+
+        /// <summary>
+        /// <para type="description">TOTP Replay is active, except from the same machine.</para>
+        /// </summary>
+        Intermediate = 1,
+
+        /// <summary>
+        /// <para type="description">TOTP Replay is fully active (more secure).</para>
+        /// </summary>
+        Full = 2
+    }
+
+    /// <summary>
     /// PSSecretKeyFormat
     /// <para type="synopsis">MFA TOTP key generation mode (RNG, RSA and CUSTOM.</para>
     /// <para type="description">RND (Random,Number Generator) Strong generator for numbers, From 128 bytes to 512 bytes. can be stored in ADDS or SQL default MFA Database.</para>

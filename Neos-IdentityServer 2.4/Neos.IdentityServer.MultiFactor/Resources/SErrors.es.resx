@@ -171,6 +171,9 @@
   <data name="ErrorPinValue" xml:space="preserve">
     <value>Código PIN inválido !</value>
   </data>
+  <data name="ErrorReplayToken" xml:space="preserve">
+    <value />
+  </data>
   <data name="ErrorSendingToastInformation" xml:space="preserve">
     <value>error durante la transmisión de la petición de identificación !
 </value>
@@ -180,5 +183,8 @@
   </data>
   <data name="ErrorValidationTimeWindowElapsed" xml:space="preserve">
     <value>Ventana de validación agotado.</value>
+  </data>
+  <data name="String1" xml:space="preserve">
+    <value>¡Error en el proceso de autenticación! One Time Password se ha jugado antes</value>
   </data>
 </root>

@@ -195,7 +195,7 @@ namespace MFA
         /// <summary>
         /// <para type="description">Number of allowed retry allowed (default 3)..</para>
         /// </summary>
-        public int MaxRetries { get; set; }  
+        public int MaxRetries { get; set; }
 
         /// <summary>
         /// <para type="description">Required PIN length wehen using aditionnal control with personal PIN.</para>
@@ -237,6 +237,11 @@ namespace MFA
         /// <para type="description">Default provider when User method equals "Choose".</para>
         /// </summary>
         public PSPreferredMethod DefaultProviderMethod { get; set; }
+
+        /// <summary>
+        /// <para type="description">TOTP Replay Level feature.</para>
+        /// </summary>
+        public PSReplayLevel ReplayLevel { get; set; }
 
         /// <summary>
         /// <para type="description">Default contry code, used for SMS calls .</para>
@@ -290,6 +295,7 @@ namespace MFA
                 psconfig.KeepMySelectedOptionOn = config.KeepMySelectedOptionOn;
                 psconfig.ChangeNotificationsOn = config.ChangeNotificationsOn;
                 psconfig.DefaultProviderMethod = (PSPreferredMethod)config.DefaultProviderMethod;
+                psconfig.ReplayLevel = (PSReplayLevel)config.ReplayLevel;
                 psconfig.UserFeatures = (PSUserFeaturesOptions)config.UserFeatures;
                 psconfig.AdvertisingDays = (PSAdvertising)config.AdvertisingDays;
                 psconfig.UseUIPaginated = config.UseUIPaginated;
@@ -321,6 +327,7 @@ namespace MFA
                 config.KeepMySelectedOptionOn = psconfig.KeepMySelectedOptionOn;
                 config.ChangeNotificationsOn = psconfig.ChangeNotificationsOn;
                 config.DefaultProviderMethod = (PreferredMethod)psconfig.DefaultProviderMethod;
+                config.ReplayLevel = (ReplayLevel)psconfig.ReplayLevel;
                 config.UserFeatures = (UserFeaturesOptions)psconfig.UserFeatures;
                 config.AdvertisingDays = (FlatConfigAdvertising)psconfig.AdvertisingDays;
                 config.UseUIPaginated = psconfig.UseUIPaginated;

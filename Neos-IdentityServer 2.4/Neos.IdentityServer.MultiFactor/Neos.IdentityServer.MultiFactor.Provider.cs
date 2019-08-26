@@ -483,11 +483,11 @@ namespace Neos.IdentityServer.MultiFactor
                                     }
                                 }
                             }
-                            if (!Utilities.CheckForReplay(Config, usercontext,  request))
+                            if (!Utilities.CheckForReplay(Config, usercontext,  request, Convert.ToInt32(totp)))
                             {
                                 usercontext.CurrentRetries = int.MaxValue;
                                 usercontext.UIMode = ProviderPageMode.Locking;
-                                return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorInvalidIdentificationRestart"), ProviderPageMode.DefinitiveError);
+                                return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorReplayToken"), ProviderPageMode.DefinitiveError);
                             }
                             claims = new Claim[] { GetAuthMethodClaim(usercontext.SelectedMethod) };
 

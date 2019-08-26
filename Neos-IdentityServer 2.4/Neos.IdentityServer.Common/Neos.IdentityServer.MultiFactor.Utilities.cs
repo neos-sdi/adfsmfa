@@ -20,7 +20,6 @@ using Neos.IdentityServer.MultiFactor.Common;
 using Neos.IdentityServer.MultiFactor.Data;
 using Neos.IdentityServer.MultiFactor.QrEncoding;
 using Neos.IdentityServer.MultiFactor.QrEncoding.Windows.Render;
-using Neos.IdentityServer.MultiFactor.Common.Resources;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -40,9 +39,9 @@ using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Web;
 using System.Windows.Threading;
 using System.Xml.Serialization;
-using System.Web;
 
 
 namespace Neos.IdentityServer.MultiFactor
@@ -2233,23 +2232,21 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// CheckForReplay method implementation
         /// </summary>
-        internal static bool CheckForReplay(MFAConfig config, AuthenticationContext usercontext, HttpListenerRequest request)
+        internal static bool CheckForReplay(MFAConfig config, AuthenticationContext usercontext, HttpListenerRequest request, int totp)
         {
-            return true;
-#if forreplay
-            NamedPipeClientReplayRecord rec = new NamedPipeClientReplayRecord()
+            NamedPipeReplayRecord rec = new NamedPipeReplayRecord()
             {
-                UserIPAdress = request.RemoteEndPoint.Address,
-                UserIPPort = request.RemoteEndPoint.Port,
-                UserMaxRetries = config.MaxRetries,
-                DeliveryWindow = config.DeliveryWindow,
+                MustDispatch = true,
+                ReplayLevel = config.ReplayLevel,
+                Totp = totp,
+                UserIPAdress = request.RemoteEndPoint.Address.ToString(),
                 UserName = usercontext.UPN,
                 UserLogon = usercontext.LogonDate,
-                UserCurrentRetries = usercontext.CurrentRetries
+                DeliveryWindow = config.DeliveryWindow              
             };
-            PipeReplayClient client = new PipeReplayClient();
-            return client.CheckForReplay(rec);
-#endif
+            List<string> lst = new List<string>() { Environment.MachineName };
+            PipeClient client = new PipeClient(Utilities.XORKey, lst);
+            return client.DoCheckForReplay(rec);
         }
 
         /// <summary>

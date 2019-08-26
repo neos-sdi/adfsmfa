@@ -217,6 +217,15 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Error on autehntification process ! One Time Password has been played before .
+        /// </summary>
+        internal static string ErrorReplayToken {
+            get {
+                return ResourceManager.GetString("ErrorReplayToken", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Error when sending identification request !.
         /// </summary>
         internal static string ErrorSendingToastInformation {

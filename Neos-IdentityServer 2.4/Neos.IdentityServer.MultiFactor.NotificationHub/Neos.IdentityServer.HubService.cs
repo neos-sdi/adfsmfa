@@ -1,5 +1,4 @@
-﻿using Neos.IdentityServer.MultiFactor.Administration;
-//******************************************************************************************************************************************************************************************//
+﻿//******************************************************************************************************************************************************************************************//
 // Copyright (c) 2019 Neos-Sdi (http://www.neos-sdi.com)                                                                                                                                    //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
@@ -19,14 +18,11 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.ServiceProcess;
-using System.Text;
-using System.Threading.Tasks;
+using Neos.IdentityServer.MultiFactor.Administration;
 
 namespace Neos.IdentityServer.MultiFactor.NotificationHub
 {
@@ -36,6 +32,7 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
         private MailSlotServerManager _mailslotsmgr = new MailSlotServerManager();
         private MailSlotServer _mailslotmfa = new MailSlotServer("NOT"); // And Broadcast
         private PipeServer _pipeserver = new PipeServer();
+        private ReplayManager _replaymgr = new ReplayManager();
 
         #region Service override methods
         /// <summary>
@@ -61,8 +58,8 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
             _pipeserver.Proofkey = XORUtilities.XORKey;
             _pipeserver.OnReloadConfiguration += DoOnReceiveConfiguration;
             _pipeserver.OnRequestServerConfiguration += DoOnReceiveServerConfiguration;
-            _pipeserver.OnDecrypt += PipeOnDecrypt;
-            _pipeserver.OnEncrypt += PipeOnEncrypt;
+            _pipeserver.OnCheckForReplay += DoOnCheckForReplay;
+            _pipeserver.OnCheckForRemoteReplay += DoOnCheckForRemoteReplay;
         }
 
         /// <summary>
@@ -81,6 +78,7 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
             try
             {
                 _pipeserver.Start();
+                _replaymgr.Start();
             }
             catch (Exception e)
             {
@@ -107,6 +105,7 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
             try
             {
                 _pipeserver.Stop();
+                _replaymgr.Close();
             }
             catch (Exception e)
             {
@@ -140,9 +139,7 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
                 _adfsservers.Add(host.MachineName);
             }
         }
-        #endregion
 
-        #region Named Pipes Methods / events
         /// <summary>
         /// MFAMailSlotMessageArrived implementation
         /// </summary>
@@ -152,7 +149,12 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
                 DoOnSendConfiguration();
             else if (message.Operation == (byte)NotificationsKind.ServiceServerInformation)
                 DoOnRequestServerConfiguration(message.Text);
+           /* else if (message.Operation == (byte)NotificationsKind.ServiceClientReplayInformation)
+            { }
+            else if (message.Operation == (byte)NotificationsKind.ServiceServerReplayInformation)
+            { } */
         }
+        #endregion
 
         #region Add Server Configuration
         /// <summary>
@@ -164,8 +166,6 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
             {
                 List<string> lst = new List<string>() { servername };
                 PipeClient pipe = new PipeClient(Utilities.XORKey, lst);
-                pipe.OnEncrypt += PipeOnEncrypt;
-                pipe.OnDecrypt += PipeOnDecrypt;
 
                 string req = Environment.MachineName;
                 NamedPipeRegistryRecord reg = pipe.DoRequestServerConfiguration(req);
@@ -244,8 +244,6 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
                     BuildADFSServersList();
 
                 PipeClient pipe = new PipeClient(Utilities.XORKey, ADFSServers);
-                pipe.OnEncrypt += PipeOnEncrypt;
-                pipe.OnDecrypt += PipeOnDecrypt;
 
                 byte[] byt = ReadConfigurationForCache();
                 string msg = Convert.ToBase64String(byt, 0, byt.Length);
@@ -309,27 +307,29 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
         }
         #endregion
 
+        #region Replay management
+        /// <summary>
+        /// DoOnCheckForReplay method implementation (Server)
+        /// </summary>
+        private bool DoOnCheckForReplay(NamedPipeNotificationReplayRecord record)
+        {
+            return _replaymgr.AddToReplay(record);
+        }
+
+        /// <summary>
+        /// DoOnCheckForRemoteReplay method implementation (Server)
+        /// </summary>
+        private bool DoOnCheckForRemoteReplay(NamedPipeNotificationReplayRecord record)
+        {
+            if (_adfsservers.Count == 0)
+                BuildADFSServersList();
+
+            PipeClient pipe = new PipeClient(Utilities.XORKey, this.ADFSServers, true);
+
+            return pipe.DoCheckForRemoteReplay(record);
+        }
+
         #endregion
-
-        #region Encryption/Decryption
-        /// <summary>
-        /// PipeOnDecrypt method implementation
-        /// </summary>
-        private string PipeOnDecrypt(string cryptedvalue)
-        {
-            byte[] byt = CFGUtilities.XOREncryptOrDecrypt(System.Convert.FromBase64String(cryptedvalue), Utilities.XORKey);
-            return System.Text.Encoding.UTF8.GetString(byt);
-        }
-
-        /// <summary>
-        /// PipeOnEncrypt method implementation
-        /// </summary>
-        private string PipeOnEncrypt(string clearvalue)
-        {
-            byte[] byt = CFGUtilities.XOREncryptOrDecrypt(System.Text.Encoding.UTF8.GetBytes(clearvalue), Utilities.XORKey);
-            return System.Convert.ToBase64String(byt);
-        }
-#endregion
 
         #region ADFS Service
         /// <summary>

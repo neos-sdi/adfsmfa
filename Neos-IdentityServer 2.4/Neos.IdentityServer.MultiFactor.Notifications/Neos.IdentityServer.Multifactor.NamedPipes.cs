@@ -1,4 +1,21 @@
-﻿using System;
+﻿//******************************************************************************************************************************************************************************************//
+// Copyright (c) 2019 Neos-Sdi (http://www.neos-sdi.com)                                                                                                                                    //                        
+//                                                                                                                                                                                          //
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
+// to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
+// and to permit persons to whom the Software is furnished to do so, subject to the following conditions:                                                                                   //
+//                                                                                                                                                                                          //
+// The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.                                                           //
+//                                                                                                                                                                                          //
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,                                      //
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,                            //
+// WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                               //
+//                                                                                                                                                                                          //
+// https://adfsmfa.codeplex.com                                                                                                                                                             //
+// https://github.com/neos-sdi/adfsmfa                                                                                                                                                      //
+//                                                                                                                                                                                          //
+//******************************************************************************************************************************************************************************************//
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.DirectoryServices;
@@ -20,7 +37,7 @@ namespace Neos.IdentityServer.MultiFactor
     public delegate string OnNamedPipeDecryptEvent(string cryptedvalue);
     public delegate bool OnReloadConfigurationEvent(string requestor, string value);
     public delegate NamedPipeRegistryRecord OnRequestServerConfigurationEvent(string requestor);
-    public delegate void OnNamedPipeReplayEvent(IPAddress userIPAdress, int userIPPort, int userCurrentRetries, int userMaxRetries, int deliveryWindow, DateTime userLogon, string userName);
+    public delegate bool OnCheckForReplayEvent(NamedPipeNotificationReplayRecord record);
 
     /// <summary>
     /// PipeServer class implementation
@@ -35,6 +52,8 @@ namespace Neos.IdentityServer.MultiFactor
         public event OnNamedPipeDecryptEvent OnDecrypt;
         public event OnReloadConfigurationEvent OnReloadConfiguration;
         public event OnRequestServerConfigurationEvent OnRequestServerConfiguration;
+        public event OnCheckForReplayEvent OnCheckForReplay;
+        public event OnCheckForReplayEvent OnCheckForRemoteReplay;
 
 
         /// <summary>
@@ -123,7 +142,8 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         private string PipeServerOnEncrypt(string clearvalue)
         {
-            return clearvalue;
+            byte[] byt = DefaultEncrypt.XOREncryptOrDecrypt(System.Text.Encoding.UTF8.GetBytes(clearvalue), Proofkey);
+            return System.Convert.ToBase64String(byt);
         }
 
         /// <summary>
@@ -131,7 +151,8 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         private string PipeServerOnDecrypt(string cryptedvalue)
         {
-            return cryptedvalue;
+            byte[] byt = DefaultEncrypt.XOREncryptOrDecrypt(System.Convert.FromBase64String(cryptedvalue), Proofkey);
+            return System.Text.Encoding.UTF8.GetString(byt);
         }
 
         /// <summary>
@@ -171,6 +192,30 @@ namespace Neos.IdentityServer.MultiFactor
                                 {
                                     reg = OnRequestServerConfiguration(encrypted.Requestor);
                                     ss.WriteData(ObjectToByteArray<NamedPipeRegistryRecord>(reg));
+                                }
+                            }
+                            else if (obj is NamedPipeNotificationReplayRecord)
+                            {
+                                NamedPipeNotificationReplayRecord encrypted = (NamedPipeNotificationReplayRecord)obj;
+                                bool b = false;
+                                if (OnCheckForReplay != null)
+                                {
+                                    b = OnCheckForReplay(encrypted);
+                                    if ((b) && (encrypted.MustDispatch))
+                                    {
+                                        bool c = false;
+                                        if (OnCheckForRemoteReplay != null)
+                                        {
+                                            c = OnCheckForRemoteReplay(encrypted);
+                                            ss.WriteData(ObjectToByteArray<bool>(c));
+                                        }
+                                        else
+                                            ss.WriteData(ObjectToByteArray<bool>(b));
+                                    }
+                                    else if ((b) && (!encrypted.MustDispatch))
+                                        ss.WriteData(ObjectToByteArray<bool>(true));
+                                    else
+                                        ss.WriteData(ObjectToByteArray<bool>(false));
                                 }
                             }
                         }
@@ -269,6 +314,7 @@ namespace Neos.IdentityServer.MultiFactor
         private List<string> _servers = new List<string>();
 
         public event OnNamedPipeEncryptEvent OnEncrypt;
+
         public event OnNamedPipeDecryptEvent OnDecrypt;
 
         /// <summary>
@@ -298,9 +344,12 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// PipeClient Constructor
         /// </summary>
-        public PipeClient(string key, List<string> servers) : this(key)
+        public PipeClient(string key, List<string> servers, bool removelocal = false) : this(key)
         {
-            Servers = servers;
+            if (removelocal)
+                Servers = servers;
+            else
+                _servers = servers;
         }
 
         /// <summary>
@@ -438,11 +487,125 @@ namespace Neos.IdentityServer.MultiFactor
         }
 
         /// <summary>
+        /// DoCheckForReplay method implementation
+        /// </summary>
+        public bool DoCheckForReplay(NamedPipeReplayRecord requestor)
+        {
+            try
+            {
+                if (OnDecrypt == null)
+                    OnDecrypt += PipeClientOnDecrypt;
+                if (OnEncrypt == null)
+                    OnEncrypt += PipeClientOnEncrypt;
+
+                Task<bool> task = null;
+
+                NamedPipeClientStream ClientStream = new NamedPipeClientStream(_servers[0], "adfsmfaconfig", PipeDirection.InOut, PipeOptions.None, TokenImpersonationLevel.Impersonation);
+                task = Task<bool>.Factory.StartNew(() =>
+                {
+                    try
+                    {
+                        ClientStream.Connect();
+                        PipeStreamData ss = new PipeStreamData(ClientStream);
+                        ss.WriteString(OnEncrypt(Proofkey));
+                        if (OnDecrypt(ss.ReadString()) == Proofkey)
+                        {
+                            NamedPipeNotificationReplayRecord xdata = new NamedPipeNotificationReplayRecord(requestor);
+                            ss.WriteData(ObjectToByteArray(xdata));
+                            return ByteArrayToObject<bool>(ss.ReadData());
+                        }
+                    }
+                    catch (IOException e)
+                    {
+                        LogForSlots.WriteEntry("PipeClient Error : " + e.Message, EventLogEntryType.Error, 8888);
+                        ClientStream.Close();
+                    }
+                    finally
+                    {
+                        ClientStream.Close();
+                    }
+                    return false;
+                });
+                task.Wait();
+                return task.Result;
+            }
+            catch (Exception e)
+            {
+                LogForSlots.WriteEntry("PipeClient Error : " + e.Message, EventLogEntryType.Error, 8888);
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// DoCheckForRemoteReplay method implementation
+        /// </summary>
+        public bool DoCheckForRemoteReplay(NamedPipeNotificationReplayRecord record)
+        {
+            try
+            {
+                if (_servers.Count > 0)
+                {
+                    if (OnDecrypt == null)
+                        OnDecrypt += PipeClientOnDecrypt;
+                    if (OnEncrypt == null)
+                        OnEncrypt += PipeClientOnEncrypt;
+
+                    record.MustDispatch = false;
+
+                    Task<bool>[] tasks = new Task<bool>[_servers.Count];
+                    for (int i = 0; i <= _servers.Count-1; i++)
+                    {
+                        string servername = _servers[i];
+                        tasks[i] = Task<bool>.Factory.StartNew((svr) =>
+                        {
+                            NamedPipeClientStream ClientStream = new NamedPipeClientStream(svr.ToString(), "adfsmfaconfig", PipeDirection.InOut, PipeOptions.None, TokenImpersonationLevel.Impersonation);
+                            try
+                            {
+                                ClientStream.Connect();
+                                PipeStreamData ss = new PipeStreamData(ClientStream);
+                                ss.WriteString(OnEncrypt(Proofkey));
+                                if (OnDecrypt(ss.ReadString()) == Proofkey)
+                                {
+                                    ss.WriteData(ObjectToByteArray(record));
+                                    return ByteArrayToObject<bool>(ss.ReadData());
+                                }
+                            }
+                            catch (IOException e)
+                            {
+                                LogForSlots.WriteEntry("PipeClient Error : " + e.Message, EventLogEntryType.Error, 8888);
+                                ClientStream.Close();
+                            }
+                            finally
+                            {
+                                ClientStream.Close();
+                            }
+                            return false;
+                        }, servername);
+                    }
+                    Task.WaitAll(tasks);
+                    foreach (Task<bool> ts in tasks)
+                    {
+                        if (!ts.Result)
+                            return false;
+                    }
+                }
+                return true;
+            }
+            catch (Exception e)
+            {
+                LogForSlots.WriteEntry("PipeClient Error : " + e.Message, EventLogEntryType.Error, 8888);
+                return false;
+            }
+        }
+
+
+        /// <summary>
         /// PipeClientOnEncrypt method implementation
         /// </summary>
         private string PipeClientOnEncrypt(string clearvalue)
         {
-            return clearvalue;
+            byte[] byt = DefaultEncrypt.XOREncryptOrDecrypt(System.Text.Encoding.UTF8.GetBytes(clearvalue), Proofkey);
+            return System.Convert.ToBase64String(byt);
         }
 
         /// <summary>
@@ -450,7 +613,8 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         private string PipeClientOnDecrypt(string cryptedvalue)
         {
-            return cryptedvalue;
+            byte[] byt = DefaultEncrypt.XOREncryptOrDecrypt(System.Convert.FromBase64String(cryptedvalue), Proofkey);
+            return System.Text.Encoding.UTF8.GetString(byt);
         }
 
         /// <summary>
@@ -564,6 +728,22 @@ namespace Neos.IdentityServer.MultiFactor
         #endregion
     }
 
+    internal static class DefaultEncrypt
+    {
+        /// <summary>
+        /// XOREncryptOrDecrypt method
+        /// </summary>
+        internal static byte[] XOREncryptOrDecrypt(byte[] value, string secret)
+        {
+            byte[] xor = new byte[value.Length];
+            for (int i = 0; i < value.Length; i++)
+            {
+                xor[i] = (byte)(value[i] ^ secret[i % secret.Length]);
+            }
+            return xor;
+        }
+    }
+
     /// <summary>
     /// NamedPipeRegistryRecord struct implementation
     /// </summary>
@@ -620,41 +800,41 @@ namespace Neos.IdentityServer.MultiFactor
     /// <summary>
     /// NamedPipeClientReplayRecord class implementation
     /// </summary>
-    public struct NamedPipeClientReplayRecord
+    [Serializable]
+    public struct NamedPipeReplayRecord
     {
-        public IPAddress UserIPAdress;
-        public int UserIPPort;
-        public int UserCurrentRetries;
-        public int UserMaxRetries;
-        public int DeliveryWindow;
-        public DateTime UserLogon;
+        public bool MustDispatch;
+        public int Totp;
+        public ReplayLevel ReplayLevel;
+        public string UserIPAdress;
         public string UserName;
-        public NamedPipeClientStream ClientStream;
+        public DateTime UserLogon;
+        public int DeliveryWindow;
     }
 
     /// <summary>
-    /// NamedPipeNotificationRecord class implementation
+    /// NamedPipeNotificationReplayRecord class implementation
     /// </summary>
     [Serializable]
-    public struct NamedPipeClientNotificationReplayRecord
+    public struct NamedPipeNotificationReplayRecord
     {
-        public IPAddress UserIPAdress;
-        public int UserIPPort;
-        public int UserCurrentRetries;
-        public int UserMaxRetries;
-        public int DeliveryWindow;
-        public DateTime UserLogon;
+        public bool MustDispatch;
+        public int Totp;
+        public ReplayLevel ReplayLevel;
+        public string UserIPAdress;
         public string UserName;
+        public DateTime UserLogon;
+        public int DeliveryWindow;
 
-        public NamedPipeClientNotificationReplayRecord(IPAddress userIPAdress, int userIPPort, int userCurrentRetries, int userMaxRetries, int deliveryWindow, DateTime userLogon, string userName)
+        public NamedPipeNotificationReplayRecord(NamedPipeReplayRecord record)
         {
-            UserIPAdress = userIPAdress;
-            UserIPPort = userIPPort;
-            UserCurrentRetries = userCurrentRetries;
-            UserMaxRetries = userMaxRetries;
-            DeliveryWindow = deliveryWindow;
-            UserLogon = userLogon;
-            UserName = userName;
+            MustDispatch = record.MustDispatch;
+            Totp = record.Totp;
+            ReplayLevel = record.ReplayLevel;
+            UserIPAdress = record.UserIPAdress;
+            UserLogon = record.UserLogon;
+            UserName = record.UserName;
+            DeliveryWindow = record.DeliveryWindow;
         }
     }
 }
