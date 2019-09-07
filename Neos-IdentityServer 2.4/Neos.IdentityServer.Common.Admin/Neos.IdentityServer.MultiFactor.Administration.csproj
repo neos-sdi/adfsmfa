@@ -97,6 +97,7 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\SErrors.fr.resx" />
+    <EmbeddedResource Include="Resources\SErrors.it.resx" />
     <EmbeddedResource Include="Resources\SErrors.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>SErrors.Designer.cs</LastGenOutput>
