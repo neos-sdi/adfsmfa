@@ -82,6 +82,7 @@
   <ItemGroup>
     <EmbeddedResource Include="Resources\SSAS.fr.resx" />
     <EmbeddedResource Include="Resources\SSAS.es.resx" />
+    <EmbeddedResource Include="Resources\SSAS.it.resx" />
     <EmbeddedResource Include="Resources\SSAS.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>SSAS.Designer.cs</LastGenOutput>

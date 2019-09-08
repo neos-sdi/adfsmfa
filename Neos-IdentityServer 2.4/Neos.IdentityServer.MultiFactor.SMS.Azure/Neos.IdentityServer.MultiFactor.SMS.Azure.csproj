@@ -76,6 +76,9 @@
     <EmbeddedResource Include="Resources\SAzure.fr.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Resources\SAzure.it.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Resources\SAzure.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>SAzure.Designer.cs</LastGenOutput>
@@ -83,6 +86,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\SHtml.es.resx" />
     <EmbeddedResource Include="Resources\SHtml.fr.resx" />
+    <EmbeddedResource Include="Resources\SHtml.it.resx" />
     <EmbeddedResource Include="Resources\SHtml.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>SHtml.Designer.cs</LastGenOutput>

@@ -138,10 +138,16 @@
     <EmbeddedResource Include="Resources\SErrors.fr.resx">
       <LastGenOutput>errors_strings.fr.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="Resources\SErrors.it.resx">
+      <LastGenOutput>errors_strings.it.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="Resources\SHtml.es.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\SHtml.fr.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\SHtml.it.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\SHtml.resx">
@@ -156,6 +162,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\SInfos.es.resx" />
     <EmbeddedResource Include="Resources\SInfos.fr.resx" />
+    <EmbeddedResource Include="Resources\SInfos.it.resx" />
     <EmbeddedResource Include="Resources\SErrors.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>SErrors.Designer.cs</LastGenOutput>
@@ -170,12 +177,16 @@
     <EmbeddedResource Include="Resources\STitle.fr.resx">
       <LastGenOutput>title_strings.fr.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="Resources\STitle.it.resx">
+      <LastGenOutput>title_strings.it.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="Resources\STitle.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>STitle.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\SCheck.es.resx" />
     <EmbeddedResource Include="Resources\SCheck.fr.resx" />
+    <EmbeddedResource Include="Resources\SCheck.it.resx" />
     <EmbeddedResource Include="Resources\SCheck.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>SCheck.Designer.cs</LastGenOutput>

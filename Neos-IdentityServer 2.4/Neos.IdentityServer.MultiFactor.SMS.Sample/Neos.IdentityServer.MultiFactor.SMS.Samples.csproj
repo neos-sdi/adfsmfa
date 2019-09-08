@@ -70,6 +70,7 @@
   <ItemGroup>
     <EmbeddedResource Include="Resources\SMS_strings.es.resx" />
     <EmbeddedResource Include="Resources\SMS_strings.fr.resx" />
+    <EmbeddedResource Include="Resources\SMS_strings.it.resx" />
     <EmbeddedResource Include="Resources\SMS_strings.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>SMS_strings.Designer.cs</LastGenOutput>

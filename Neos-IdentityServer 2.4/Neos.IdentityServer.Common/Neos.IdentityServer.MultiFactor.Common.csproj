@@ -126,8 +126,10 @@
       <LastGenOutput>CSErrors.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\CSErrors.fr.resx" />
+    <EmbeddedResource Include="Resources\CSErrors.it.resx" />
     <EmbeddedResource Include="Resources\CSHtml.es.resx" />
     <EmbeddedResource Include="Resources\CSHtml.fr.resx" />
+    <EmbeddedResource Include="Resources\CSHtml.it.resx" />
     <EmbeddedResource Include="Resources\CSHtml.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>CSHtml.Designer.cs</LastGenOutput>
@@ -137,6 +139,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\CSMail.fr.resx">
       <LastGenOutput>mail_strings.fr.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\CSMail.it.resx">
+      <LastGenOutput>mail_strings.it.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\CSMail.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
