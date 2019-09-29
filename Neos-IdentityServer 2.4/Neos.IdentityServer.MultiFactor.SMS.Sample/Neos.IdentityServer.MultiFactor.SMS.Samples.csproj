@@ -37,14 +37,6 @@
     <AssemblyOriginatorKeyFile>Neos.IdentityServer.pfx</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Neos.IdentityServer.MultiFactor.Common, Version=2.0.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\DLL\Neos.IdentityServer.MultiFactor.Common.dll</HintPath>
-    </Reference>
-    <Reference Include="Neos.IdentityServer.MultiFactor.DataTypes, Version=2.0.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\DLL\Neos.IdentityServer.MultiFactor.DataTypes.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -75,6 +67,16 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>SMS_strings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Neos.IdentityServer.Common\Neos.IdentityServer.MultiFactor.Common.csproj">
+      <Project>{15b3e0d2-6217-493a-a690-158c497f5318}</Project>
+      <Name>Neos.IdentityServer.MultiFactor.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Neos.IdentityServer.MultiFactor.DataTypes\Neos.IdentityServer.MultiFactor.DataTypes.csproj">
+      <Project>{9b735255-31a8-4ff5-a918-fc47d4a95f38}</Project>
+      <Name>Neos.IdentityServer.MultiFactor.DataTypes</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

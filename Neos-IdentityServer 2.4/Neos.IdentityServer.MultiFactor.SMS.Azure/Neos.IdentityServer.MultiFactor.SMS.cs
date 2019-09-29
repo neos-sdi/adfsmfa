@@ -567,5 +567,13 @@ namespace Neos.IdentityServer.Multifactor.SMS
             else
                 return (int)AuthenticationResponseKind.Error;
         }
+
+        /// <summary>
+        /// GetCodeWithExternalSystem method implementation for Azure MFA 
+        /// </summary>
+        public AuthenticationResponseKind GetCodeWithExternalSystem(Registration reg, ExternalOTPProvider externalsys, CultureInfo culture, out int otp)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

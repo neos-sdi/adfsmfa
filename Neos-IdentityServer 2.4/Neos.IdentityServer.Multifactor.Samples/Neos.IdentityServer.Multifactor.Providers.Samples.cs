@@ -703,6 +703,22 @@ namespace Neos.IdentityServer.MultiFactor.Samples
             else
                 return (int)AuthenticationResponseKind.Error;  // return error
         }
+
+        /// <summary>
+        /// GetCodeWithExternalSystem method implementation for Azure MFA 
+        /// </summary>
+        public AuthenticationResponseKind GetCodeWithExternalSystem(Registration reg, ExternalOTPProvider externalsys, CultureInfo culture, out int otp)
+        {
+            // Compute and send your TOTP code and return his value if everything goes right
+            if (true)
+            {
+                otp = 1230;
+                return AuthenticationResponseKind.SmsOTP;
+            }
+            else
+                return AuthenticationResponseKind.Error;  // return error
+        }
+
 #pragma warning restore 162
     }
 }

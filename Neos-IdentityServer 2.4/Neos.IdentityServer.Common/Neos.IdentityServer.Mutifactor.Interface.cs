@@ -30,6 +30,7 @@ namespace Neos.IdentityServer.MultiFactor
     public interface IExternalOTPProvider
     {
         int GetUserCodeWithExternalSystem(string upn, string phonenumber, string email, ExternalOTPProvider externalsys, CultureInfo culture);
+        AuthenticationResponseKind GetCodeWithExternalSystem(Registration reg, ExternalOTPProvider externalsys, CultureInfo culture, out int otp);
     }
 
     /// <summary>

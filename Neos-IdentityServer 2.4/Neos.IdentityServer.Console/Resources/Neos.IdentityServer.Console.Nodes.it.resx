@@ -159,6 +159,12 @@
   <data name="ROOTLANGUAGEFRDESC" xml:space="preserve">
     <value>Modifica le impostazioni cultura dell'interfaccia utente a Francese (1036)</value>
   </data>
+  <data name="ROOTLANGUAGEIT" xml:space="preserve">
+    <value>Italiano</value>
+  </data>
+  <data name="ROOTLANGUAGEITDESC" xml:space="preserve">
+    <value>Modifica le impostazioni cultura dell'interfaccia utente a Italiano (1040)</value>
+  </data>
   <data name="ROOTLANGUAGEUS" xml:space="preserve">
     <value>Stati Uniti d'America</value>
   </data>

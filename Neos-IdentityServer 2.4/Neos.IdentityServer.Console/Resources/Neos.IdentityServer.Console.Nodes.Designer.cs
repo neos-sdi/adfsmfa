@@ -187,6 +187,24 @@ namespace Neos.IdentityServer.Console.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Italian.
+        /// </summary>
+        public static string ROOTLANGUAGEIT {
+            get {
+                return ResourceManager.GetString("ROOTLANGUAGEIT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Change the culture of the user interface in Italian (1040).
+        /// </summary>
+        public static string ROOTLANGUAGEITDESC {
+            get {
+                return ResourceManager.GetString("ROOTLANGUAGEITDESC", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à United States.
         /// </summary>
         public static string ROOTLANGUAGEUS {

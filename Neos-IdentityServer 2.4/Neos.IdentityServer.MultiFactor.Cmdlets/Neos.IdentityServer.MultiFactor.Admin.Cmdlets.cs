@@ -197,21 +197,28 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// </summary>
         public object GetDynamicParameters()
         {
-            ManagementService.Initialize(this.Host, true);
-            if (!ManagementService.Config.UseActiveDirectory) 
+            try
             {
-                if (ManagementService.Config.Hosts.SQLServerHost.IsAlwaysEncrypted) 
+                ManagementService.Initialize(this.Host, true);
+                if (!ManagementService.Config.UseActiveDirectory)
                 {
-                    if (_filter.FilterField == DataFilterField.UserName)
-                        return new PSDataFieldMixedParameters(_filter, _order, this.Host);
+                    if (ManagementService.Config.Hosts.SQLServerHost.IsAlwaysEncrypted)
+                    {
+                        if (_filter.FilterField == DataFilterField.UserName)
+                            return new PSDataFieldMixedParameters(_filter, _order, this.Host);
+                        else
+                            return new PSDataFieldCryptedParameters(_filter, _order, this.Host);
+                    }
                     else
-                        return new PSDataFieldCryptedParameters(_filter, _order, this.Host);
+                        return new PSDataFieldParameters(_filter, _order, this.Host);
                 }
                 else
                     return new PSDataFieldParameters(_filter, _order, this.Host);
             }
-            else
-                return new PSDataFieldParameters(_filter, _order, this.Host);
+            catch
+            {
+                return null;
+            }
         }
 
 

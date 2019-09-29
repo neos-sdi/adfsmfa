@@ -159,6 +159,12 @@
   <data name="ROOTLANGUAGEFRDESC" xml:space="preserve">
     <value>Changer la culture de l'interface utilisateur en français (1036)</value>
   </data>
+  <data name="ROOTLANGUAGEIT" xml:space="preserve">
+    <value>Italien</value>
+  </data>
+  <data name="ROOTLANGUAGEITDESC" xml:space="preserve">
+    <value>Changer la culture de l'interface utilisateur en italien (1040)</value>
+  </data>
   <data name="ROOTLANGUAGEUS" xml:space="preserve">
     <value>Anglais</value>
   </data>

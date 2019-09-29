@@ -479,6 +479,7 @@
     <Content Include="ResFiles\user_on32.bmp" />
     <Content Include="SnapMMC\HowToLocalize.txt" />
     <Content Include="SnapMMC\import.xml" />
+    <Content Include="SnapMMC\ResGen.exe" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

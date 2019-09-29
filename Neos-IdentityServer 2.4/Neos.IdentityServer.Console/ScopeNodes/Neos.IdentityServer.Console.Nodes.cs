@@ -80,6 +80,7 @@ namespace Neos.IdentityServer.Console
             Microsoft.ManagementConsole.ActionGroup importgrp = new Microsoft.ManagementConsole.ActionGroup(res.ROOTCHANGELANGUAGE, res.ROOTCHANGELANGUAGEDESC, -1, "LCID_GROUP");
             importgrp.Items.Add(new Microsoft.ManagementConsole.Action(res.ROOTLANGUAGEFR, res.ROOTLANGUAGEFRDESC, -1, "LCID_FR"));
             importgrp.Items.Add(new Microsoft.ManagementConsole.Action(res.ROOTLANGUAGEUS, res.ROOTLANGUAGEUSDESC, -1, "LCID_US"));
+            importgrp.Items.Add(new Microsoft.ManagementConsole.Action(res.ROOTLANGUAGEIT, res.ROOTLANGUAGEITDESC, -1, "LCID_IT"));
             this.ActionsPaneItems.Add(importgrp);
             this.HelpTopic = string.Empty;
         }
@@ -104,6 +105,9 @@ namespace Neos.IdentityServer.Console
                     break;
                 case "LCID_US":
                     CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo(1033); 
+                    break;
+                case "LCID_IT":
+                    CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo(1040);
                     break;
             }
             ((ADFSSnapIn)this.SnapIn).RefreshUI();
@@ -144,6 +148,11 @@ namespace Neos.IdentityServer.Console
                             {
                                 ((Microsoft.ManagementConsole.Action)itms).DisplayName = res.ROOTLANGUAGEUS;
                                 ((Microsoft.ManagementConsole.Action)itms).Description = res.ROOTLANGUAGEUSDESC;
+                            }
+                            else if ((string)((Microsoft.ManagementConsole.Action)itms).Tag == "LCID_IT")
+                            {
+                                ((Microsoft.ManagementConsole.Action)itms).DisplayName = res.ROOTLANGUAGEIT;
+                                ((Microsoft.ManagementConsole.Action)itms).Description = res.ROOTLANGUAGEITDESC;
                             }
                         }
                     }

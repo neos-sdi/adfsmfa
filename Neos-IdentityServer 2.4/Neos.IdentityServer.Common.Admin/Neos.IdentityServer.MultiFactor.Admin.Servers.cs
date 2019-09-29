@@ -1138,8 +1138,8 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             }
             if ((_config != null) && (upgrade))
                 _config.UpgradeDefaults();
-            else if ((!upgrade) && (IsFarmConfigured()))
-                return false;
+          /*  else if ((!upgrade) && (IsFarmConfigured()))
+                return false; */
 
             if ((_config != null) && (upgrade))
                 internalExportConfiguration(host, filepath);

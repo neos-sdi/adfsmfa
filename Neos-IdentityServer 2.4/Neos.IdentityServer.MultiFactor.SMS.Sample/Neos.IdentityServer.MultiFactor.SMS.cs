@@ -35,7 +35,7 @@ using System.Diagnostics;
 
 namespace Neos.IdentityServer.MultiFactor.SMS
 {
-    public class SMSCall : IExternalOTPProvider, IExternalOTPProvider2
+    public class SMSCall : IExternalOTPProvider
     {
         /// <summary>
         /// GetUserCodeWithExternalSystem method implementation for Azure MFA 
@@ -59,12 +59,12 @@ namespace Neos.IdentityServer.MultiFactor.SMS
                 if (SMSRuntime.Authenticate(Params, out errorId, externalsys.Timeout))
                     return Convert.ToInt32(otp);
                 else
-                    return (int)NotificationStatus.Error;
+                    return (int)AuthenticationResponseKind.Error;
             }
             catch (Exception ex)
             {
                 Log.WriteEntry("SMS SendMessage : \r" + ex.Message, EventLogEntryType.Error, 10000);
-                return (int)NotificationStatus.Error;
+                return (int)AuthenticationResponseKind.Error;
             }
 
         }
@@ -72,7 +72,7 @@ namespace Neos.IdentityServer.MultiFactor.SMS
         /// <summary>
         /// GetCodeWithExternalSystem method implmentation
         /// </summary>
-        public NotificationStatus GetCodeWithExternalSystem(Registration reg, ExternalOTPProvider externalsys, CultureInfo culture, out int otp)
+        public AuthenticationResponseKind GetCodeWithExternalSystem(Registration reg, ExternalOTPProvider externalsys, CultureInfo culture, out int otp)
         {
             SMS_strings.Culture = culture;
             SMSRuntime.Initialize(externalsys);
@@ -92,19 +92,19 @@ namespace Neos.IdentityServer.MultiFactor.SMS
                 if (SMSRuntime.Authenticate(Params, out errorId, externalsys.Timeout))
                 {
                     otp = zotp;
-                    return NotificationStatus.ResponseSMSOTP;
+                    return AuthenticationResponseKind.SmsOTP;
                 }
                 else
                 {
                     otp = 0;
-                    return NotificationStatus.Error;
+                    return AuthenticationResponseKind.Error;
                 }
             }
             catch (Exception ex)
             {
                 Log.WriteEntry("SMS SendMessage : \r" + ex.Message, EventLogEntryType.Error, 10000);
                 otp = 0;
-                return NotificationStatus.Error;
+                return AuthenticationResponseKind.Error;
             }
         }
 
