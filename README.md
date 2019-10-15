@@ -32,7 +32,7 @@ Multi-Factor Authentication for ADFS (this one) : <https://github.com/neos-sdi/a
 SharePoint Identity Service Application (Claim Provider for SharePoint 2013/2016) : <https://github.com/neos-sdi/spidentityservice>
 ___
 ## Features
-* Localized UI French/English/Spanish
+* Localized UI French/English/Spanish/Italian
 * Run with ADFS 2012 R2, 2016 and 2019
 * Enable self-registration
 * Enable self-registration with QR code (using component from  George Mamaladze and his team <https://qrcodenet.codeplex.com> Great Work !)
