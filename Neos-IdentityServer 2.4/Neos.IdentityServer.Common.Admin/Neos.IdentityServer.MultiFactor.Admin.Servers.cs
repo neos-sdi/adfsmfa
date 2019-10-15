@@ -109,13 +109,13 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 catch (Exception e)
                 {
                     if (!dontthrow)
-                        throw e;
+                       throw e;
                 }
             }
             catch (Exception e)
             {
                 if (!dontthrow)
-                    throw e;
+                   throw e;
             }
         }
 
@@ -1138,7 +1138,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             }
             if ((_config != null) && (upgrade))
                 _config.UpgradeDefaults();
-          /*  else if ((!upgrade) && (IsFarmConfigured()))
+           /* else if ((!upgrade) && (IsFarmConfigured()))
                 return false; */
 
             if ((_config != null) && (upgrade))

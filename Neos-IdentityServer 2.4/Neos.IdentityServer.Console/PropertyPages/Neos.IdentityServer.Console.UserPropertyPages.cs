@@ -254,70 +254,89 @@ namespace Neos.IdentityServer.Console
         /// </summary>
         private bool CanApplyDataChanges(Registration registration)
         {
-            bool result = false;
+            bool result = true;
             if (registration.IsApplied)
-                return true;
-            if (string.IsNullOrEmpty(registration.UPN))
+                return result;
+            IExternalProvider prov1 = RuntimeAuthProvider.GetProvider(PreferredMethod.Code);
+            if ((prov1.Enabled) && (prov1.IsRequired))
             {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = res.PPAGEVALIDUSER;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
-                ParentSheet.ShowDialog(messageBoxParameters);
-                ParentSheet.SetActivePage(0);
-            }
-            else if (string.IsNullOrEmpty(MMCService.GetEncodedUserKey(registration.UPN)))
-            {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = res.PPAGEVALIDKEY;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
-                ParentSheet.ShowDialog(messageBoxParameters);
-                ParentSheet.SetActivePage(1);
-            }
-            else if (string.IsNullOrEmpty(registration.MailAddress))
-            {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = res.PPAGEVALIDMAIL;
-                messageBoxParameters.Buttons = MessageBoxButtons.YesNo;
-                messageBoxParameters.Icon = MessageBoxIcon.Warning;
-                if (ParentSheet.ShowDialog(messageBoxParameters) == DialogResult.Yes)
-                    result = true;
-                else
+                if (string.IsNullOrEmpty(registration.UPN))
+                {
+                    MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
+                    messageBoxParameters.Text = res.PPAGEVALIDUSER;
+                    messageBoxParameters.Buttons = MessageBoxButtons.OK;
+                    messageBoxParameters.Icon = MessageBoxIcon.Error;
+                    ParentSheet.ShowDialog(messageBoxParameters);
                     ParentSheet.SetActivePage(0);
+                    result = false;
+                }
+                else if (string.IsNullOrEmpty(MMCService.GetEncodedUserKey(registration.UPN)))
+                {
+                    MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
+                    messageBoxParameters.Text = res.PPAGEVALIDKEY;
+                    messageBoxParameters.Buttons = MessageBoxButtons.OK;
+                    messageBoxParameters.Icon = MessageBoxIcon.Error;
+                    ParentSheet.ShowDialog(messageBoxParameters);
+                    ParentSheet.SetActivePage(1);
+                    result = false;
+                }
             }
-            else if (!MMCService.IsValidEmail(registration.MailAddress))
+            IExternalProvider prov2 = RuntimeAuthProvider.GetProvider(PreferredMethod.Email);
+            if ((prov2.Enabled) && (prov2.IsRequired))
             {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = res.PPAGEINVALIDMAIL;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
-                ParentSheet.ShowDialog(messageBoxParameters);
-                ParentSheet.SetActivePage(0);
-            }
-            else if (string.IsNullOrEmpty(registration.PhoneNumber))
-            {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = res.PPAGEVALIDPHONE;
-                messageBoxParameters.Buttons = MessageBoxButtons.YesNo;
-                messageBoxParameters.Icon = MessageBoxIcon.Warning;
-                if (ParentSheet.ShowDialog(messageBoxParameters) == DialogResult.Yes)
-                    result = true;
-                else
+                if (string.IsNullOrEmpty(registration.MailAddress))
+                {
+                    MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
+                    messageBoxParameters.Text = res.PPAGEVALIDMAIL;
+                    messageBoxParameters.Buttons = MessageBoxButtons.YesNo;
+                    messageBoxParameters.Icon = MessageBoxIcon.Warning;
+                    if (ParentSheet.ShowDialog(messageBoxParameters) == DialogResult.Yes)
+                        result = true;
+                    else
+                    {
+                        result = false;
+                        ParentSheet.SetActivePage(0);
+                    }
+                }
+                else if (!MMCService.IsValidEmail(registration.MailAddress))
+                {
+                    MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
+                    messageBoxParameters.Text = res.PPAGEINVALIDMAIL;
+                    messageBoxParameters.Buttons = MessageBoxButtons.OK;
+                    messageBoxParameters.Icon = MessageBoxIcon.Error;
+                    ParentSheet.ShowDialog(messageBoxParameters);
                     ParentSheet.SetActivePage(0);
+                    result = false;
+                }
             }
-            else if (!MMCService.IsValidPhone(registration.PhoneNumber))
+            IExternalProvider prov3 = RuntimeAuthProvider.GetProvider(PreferredMethod.External);
+            if ((prov3.Enabled) && (prov3.IsRequired))
             {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = res.PPAGEINVALIDPHONE;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
-                ParentSheet.ShowDialog(messageBoxParameters);
-                ParentSheet.SetActivePage(0);
-            }
-            else
-            {
-                result = true;
+                if (string.IsNullOrEmpty(registration.PhoneNumber))
+                {
+                    MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
+                    messageBoxParameters.Text = res.PPAGEVALIDPHONE;
+                    messageBoxParameters.Buttons = MessageBoxButtons.YesNo;
+                    messageBoxParameters.Icon = MessageBoxIcon.Warning;
+                    if (ParentSheet.ShowDialog(messageBoxParameters) == DialogResult.Yes)
+                        result = true;
+                    else
+                    {
+                        result = false;
+                        ParentSheet.SetActivePage(0);
+                    }
+
+                }
+                else if (!MMCService.IsValidPhone(registration.PhoneNumber))
+                {
+                    MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
+                    messageBoxParameters.Text = res.PPAGEINVALIDPHONE;
+                    messageBoxParameters.Buttons = MessageBoxButtons.OK;
+                    messageBoxParameters.Icon = MessageBoxIcon.Error;
+                    ParentSheet.ShowDialog(messageBoxParameters);
+                    ParentSheet.SetActivePage(0);
+                    result = false;
+                }
             }
             return result;
         }

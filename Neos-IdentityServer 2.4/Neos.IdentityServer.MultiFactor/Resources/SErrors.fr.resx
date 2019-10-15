@@ -117,20 +117,23 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ErrorAccountActivate" xml:space="preserve">
+    <value>L'accès à cette application nécessite une authentification supplémentaire. &lt;br&gt;&lt;br&gt;Cliquez sur "Activer" pour activer votre compte ou Cliquez sur "Continuer".</value>
+  </data>
   <data name="ErrorAccountAdminAuthorized" xml:space="preserve">
-    <value>Accès autorisé ! l'authentification supplémentaire n'est pas encore activée. Veuillez contacter vos administrateurs.</value>
+    <value>Accès autorisé ! l'authentification supplémentaire n'est pas encore activée.&lt;br&gt;&lt;br&gt;Veuillez contacter vos administrateurs.</value>
   </data>
   <data name="ErrorAccountAdminNotEnabled" xml:space="preserve">
-    <value>Accès non autorisé ! l'authentification supplémentaire n'est pas encore activée. Veuillez contacter vos administrateurs.</value>
+    <value>Accès non autorisé ! l'authentification supplémentaire n'est pas encore activée.&lt;br&gt;&lt;br&gt;Veuillez contacter vos administrateurs.</value>
   </data>
   <data name="ErrorAccountAuthorized" xml:space="preserve">
-    <value>L'accès à cette application nécessite une authentification supplémentaire. Pour lancer la configuration d’authentification supplémentaire, cliquez sur "Changer mes options".</value>
+    <value>L'accès à cette application nécessite une authentification supplémentaire. &lt;br&gt;&lt;br&gt;Cliquez sur "Enregistrement"  pour continuer.</value>
   </data>
   <data name="ErrorAccountNoAccess" xml:space="preserve">
-    <value>Accès non autorisé ! Veuillez contacter vos administrateurs.</value>
+    <value>Accès non autorisé !&lt;br&gt;&lt;br&gt;Veuillez contacter vos administrateurs.</value>
   </data>
   <data name="ErrorAccountNotEnabled" xml:space="preserve">
-    <value>L'accès à cette application nécessite une authentification supplémentaire qui n'est pas activé à cet instant. Pour lancer la configuration d’authentification supplémentaire, cliquez sur "Demande d'inscription".</value>
+    <value>L'accès à cette application nécessite une authentification supplémentaire qui n'est pas activé à cet instant.&lt;br&gt;&lt;br&gt;cliquez sur "Demande d'inscription".</value>
   </data>
   <data name="ErrorAuthenticating" xml:space="preserve">
     <value>Erreur durant le processus d'identification ! 

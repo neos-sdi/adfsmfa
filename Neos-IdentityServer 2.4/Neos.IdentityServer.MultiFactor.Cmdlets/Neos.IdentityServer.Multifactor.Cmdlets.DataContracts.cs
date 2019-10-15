@@ -833,6 +833,11 @@ namespace MFA
         public bool PinRequired { get; set; }
 
         /// <summary>
+        /// <para type="description">Force users to use this provider (mandatory for registration or not).</para>
+        /// </summary>
+        public bool IsRequired { get; set; }
+
+        /// <summary>
         /// <para type="description">Full qualified implementation class for replacing default provider.</para>
         /// </summary>
         public string FullQualifiedImplementation { get; set; }
@@ -879,6 +884,7 @@ namespace MFA
             {
                 PSConfigTOTPProvider target = new PSConfigTOTPProvider();
                 target.Enabled = otp.Enabled;
+                target.IsRequired = otp.IsRequired;
                 target.EnrollWizard = otp.EnrollWizard;
                 target.ForceWizard = (PSForceWizardMode)otp.ForceWizard;
                 target.TOTPShadows = otp.TOTPShadows;
@@ -903,6 +909,7 @@ namespace MFA
                 FlatOTPProvider target = new FlatOTPProvider();
                 target.IsDirty = true;
                 target.Enabled = otp.Enabled;
+                target.IsRequired = otp.IsRequired;
                 target.EnrollWizard = otp.EnrollWizard;
                 target.ForceWizard = (ForceWizardMode)otp.ForceWizard;
                 target.TOTPShadows = otp.TOTPShadows;
@@ -975,6 +982,11 @@ namespace MFA
         public bool DeliveryNotifications { get; set; }
 
         /// <summary>
+        /// <para type="description">List of domains that are only allowed.</para>
+        /// </summary>
+        public PSConfigMailAllowedDomains AllowedDomains { get; set; }
+
+        /// <summary>
         /// <para type="description">List of domains that are not allowed.</para>
         /// </summary>
         public PSConfigMailBlockedDomains BlockedDomains { get; set; }
@@ -1005,6 +1017,7 @@ namespace MFA
         public PSConfigMailProvider()
         {
             this.BlockedDomains = new PSConfigMailBlockedDomains();
+            this.AllowedDomains = new PSConfigMailAllowedDomains();
             this.MailOTP = new PSConfigMailFileNames();
             this.MailInscription = new PSConfigMailFileNames();
             this.MailSecureKey = new PSConfigMailFileNames();
@@ -1022,6 +1035,7 @@ namespace MFA
             {
                 PSConfigMailProvider psconfig = new PSConfigMailProvider();
                 psconfig.Enabled = mails.Enabled;
+                psconfig.IsRequired = mails.IsRequired;
                 psconfig.EnrollWizard =  mails.EnrollWizard;
                 psconfig.ForceWizard = (PSForceWizardMode)mails.ForceWizard;
                 psconfig.From = mails.From;
@@ -1036,6 +1050,12 @@ namespace MFA
                 psconfig.DeliveryNotifications = mails.DeliveryNotifications;
                 psconfig.FullQualifiedImplementation = mails.FullQualifiedImplementation;
                 psconfig.Parameters = mails.Parameters;
+
+                psconfig.AllowedDomains.Domains.Clear();
+                foreach (string itm in mails.AllowedDomains.Domains)
+                {
+                    psconfig.AllowedDomains.AddDomain(itm);
+                }
 
                 psconfig.BlockedDomains.Domains.Clear();
                 foreach (string itm in mails.BlockedDomains.Domains)
@@ -1079,6 +1099,7 @@ namespace MFA
                 FlatConfigMail psconfig = new FlatConfigMail();
                 psconfig.IsDirty = true;
                 psconfig.Enabled = mails.Enabled;
+                psconfig.IsRequired = mails.IsRequired;
                 psconfig.EnrollWizard = mails.EnrollWizard;
                 psconfig.ForceWizard = (ForceWizardMode)mails.ForceWizard;
                 psconfig.From = mails.From;
@@ -1093,6 +1114,12 @@ namespace MFA
                 psconfig.DeliveryNotifications = mails.DeliveryNotifications;
                 psconfig.FullQualifiedImplementation = mails.FullQualifiedImplementation;
                 psconfig.Parameters = mails.Parameters;
+
+                psconfig.AllowedDomains.Clear();
+                foreach (string itm in mails.AllowedDomains.Domains)
+                {
+                    psconfig.AllowedDomains.AddDomain(itm);
+                }
 
                 psconfig.BlockedDomains.Clear();
                 foreach (string itm in mails.BlockedDomains.Domains)
@@ -1311,6 +1338,61 @@ namespace MFA
         }
     }
 
+    /// <summary>
+    /// PSConfigMailAllowedDomains class
+    /// <para type="synopsis">Mail allowed domains only collection used in MFA System.</para>
+    /// <para type="description">Mail allowed domains only collection registered with MFA.</para>
+    /// </summary>
+    public class PSConfigMailAllowedDomains
+    {
+        private List<string> _list = new List<string>();
+
+        /// <summary>
+        /// <para type="description">AllowedDomains property.</para>
+        /// </summary>
+        public List<string> Domains
+        {
+            get
+            {
+                return _list;
+            }
+        }
+
+        /// <summary>
+        /// AddDomain method implmentation
+        /// </summary>
+        public void AddDomain(string domainname)
+        {
+            try
+            {
+                if (_list.Contains(domainname.ToLower()))
+                    throw new Exception("Domain is already int blocked list !");
+                _list.Add(domainname.ToLower());
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error Adding blocked domain !", ex);
+            }
+        }
+
+        /// <summary>
+        /// RemoveDomain method implmentation
+        /// </summary>
+        public void RemoveDomain(string domainname)
+        {
+            try
+            {
+                if (!_list.Contains(domainname.ToLower()))
+                    throw new Exception("Domain not found int blocked list !");
+                int i = _list.IndexOf(domainname.ToLower());
+                _list.RemoveAt(i);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error removing blocked domain !", ex);
+            }
+        }
+    }
     #endregion
 
     #region PSConfigExternalProvider
@@ -1353,6 +1435,7 @@ namespace MFA
             {
                 PSConfigExternalProvider target = new PSConfigExternalProvider();
                 target.Enabled = otp.Enabled;
+                target.IsRequired = otp.IsRequired;
                 target.EnrollWizard = otp.EnrollWizard;
                 target.ForceWizard = (MFA.PSForceWizardMode)otp.ForceWizard;
                 target.Company = otp.Company;
@@ -1378,6 +1461,7 @@ namespace MFA
                 FlatExternalProvider target = new FlatExternalProvider();
                 target.IsDirty = true;
                 target.Enabled = otp.Enabled;
+                target.IsRequired = otp.IsRequired;
                 target.EnrollWizard = otp.EnrollWizard;
                 target.ForceWizard = (ForceWizardMode)otp.ForceWizard;
                 target.Company = otp.Company;
@@ -1426,6 +1510,7 @@ namespace MFA
                 target.TenantId = otp.TenantId;
                 target.Thumbprint = otp.ThumbPrint;
                 target.Enabled = otp.Enabled;
+                target.IsRequired = otp.IsRequired;
                 target.EnrollWizard = false;
                 target.ForceWizard = MFA.PSForceWizardMode.Disabled;
                 target.PinRequired = otp.PinRequired;
@@ -1449,6 +1534,7 @@ namespace MFA
                 target.TenantId = otp.TenantId;
                 target.ThumbPrint = otp.Thumbprint;
                 target.Enabled = otp.Enabled;
+                target.IsRequired = otp.IsRequired;
                 target.EnrollWizard = false;
                 target.ForceWizard = ForceWizardMode.Disabled;
                 target.PinRequired = otp.PinRequired;

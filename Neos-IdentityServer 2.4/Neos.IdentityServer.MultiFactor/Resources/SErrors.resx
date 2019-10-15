@@ -117,20 +117,23 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ErrorAccountActivate" xml:space="preserve">
+    <value>Access to this application requires additional authentication. &lt;br&gt; &lt;br&gt; Click "Activate" to activate your account or Click "Continue".</value>
+  </data>
   <data name="ErrorAccountAdminAuthorized" xml:space="preserve">
     <value>Authorized access ! additional authentication is not activated yet. Please contact your administrators.</value>
   </data>
   <data name="ErrorAccountAdminNotEnabled" xml:space="preserve">
-    <value>Unauthorized access! additional authentication is not activated yet. Please contact your administrators.</value>
+    <value>Unauthorized access! additional authentication is not yet activated. &lt;br&gt;&lt;br&gt;Please contact your administrators.</value>
   </data>
   <data name="ErrorAccountAuthorized" xml:space="preserve">
-    <value>Access to this application requires additional authentication. To initate additional authentication setup press "Change my options"</value>
+    <value>Access to this application requires additional authentication. &lt;br&gt; &lt;br&gt; Click on "Registration" to continue.</value>
   </data>
   <data name="ErrorAccountNoAccess" xml:space="preserve">
     <value>Unauthorized access ! Please contact your administrators</value>
   </data>
   <data name="ErrorAccountNotEnabled" xml:space="preserve">
-    <value>Access to this application requires additional authentication that is not enabled at this time. To start the additional authentication configuration, click on "Inscription Request".</value>
+    <value>Access to this application requires additional authentication that is not activated at this time. &lt;br&gt; &lt;br&gt; click on "Registration Request".</value>
   </data>
   <data name="ErrorAuthenticating" xml:space="preserve">
     <value>Error on authentication process ! 

@@ -107,8 +107,11 @@
     <None Include="Neos.IdentityServer.pfx" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\cmno32.png" />
+    <None Include="Resources\cmok32.png" />
     <Content Include="Resources\crouge.jpg" />
     <Content Include="Resources\cvert.jpg" />
+    <None Include="Resources\google.png" />
     <Content Include="Resources\p_authy2.png" />
     <Content Include="Resources\p_googleauthenticator.png" />
     <Content Include="Resources\p_msAuthenticator.png" />
@@ -132,24 +135,21 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Resources\SCheck.it.resx" />
     <EmbeddedResource Include="Resources\SErrors.es.resx">
       <LastGenOutput>errors_strings.es.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\SErrors.fr.resx">
       <LastGenOutput>errors_strings.fr.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="Resources\SErrors.it.resx">
-      <LastGenOutput>errors_strings.it.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\SErrors.it.resx" />
     <EmbeddedResource Include="Resources\SHtml.es.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\SHtml.fr.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Resources\SHtml.it.resx">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\SHtml.it.resx" />
     <EmbeddedResource Include="Resources\SHtml.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>SHtml.Designer.cs</LastGenOutput>
@@ -162,35 +162,35 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\SInfos.es.resx" />
     <EmbeddedResource Include="Resources\SInfos.fr.resx" />
-    <EmbeddedResource Include="Resources\SInfos.it.resx" />
     <EmbeddedResource Include="Resources\SErrors.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>SErrors.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="Resources\SInfos.it.resx" />
     <EmbeddedResource Include="Resources\SInfos.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>SInfos.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="Resources\STitle.de.resx" />
     <EmbeddedResource Include="Resources\STitle.es.resx">
       <LastGenOutput>title_strings.es.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\STitle.fr.resx">
       <LastGenOutput>title_strings.fr.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="Resources\STitle.it.resx">
-      <LastGenOutput>title_strings.it.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\STitle.it.resx" />
+    <EmbeddedResource Include="Resources\STitle.nl.resx" />
     <EmbeddedResource Include="Resources\STitle.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>STitle.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\SCheck.es.resx" />
     <EmbeddedResource Include="Resources\SCheck.fr.resx" />
-    <EmbeddedResource Include="Resources\SCheck.it.resx" />
     <EmbeddedResource Include="Resources\SCheck.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>SCheck.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="Resources\STitle.ru.resx" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

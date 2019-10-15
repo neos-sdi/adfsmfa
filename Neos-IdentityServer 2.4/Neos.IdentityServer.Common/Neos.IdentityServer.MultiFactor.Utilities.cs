@@ -53,6 +53,7 @@ namespace Neos.IdentityServer.MultiFactor
     internal static class RuntimeAuthProvider
     {
         private static Dictionary<PreferredMethod, IExternalProvider> _lst = new Dictionary<PreferredMethod, IExternalProvider>();
+
         /// <summary>
         /// GetAuthenticationProvider method implementation
         /// </summary>
@@ -92,6 +93,7 @@ namespace Neos.IdentityServer.MultiFactor
                     }
                     break;
                 case PreferredMethod.Email:
+                    System.Diagnostics.Debugger.Launch();
                     provider = GetProviderInstance(ctx.PreferredMethod);
                     if (provider == null)
                     {
@@ -297,6 +299,20 @@ namespace Neos.IdentityServer.MultiFactor
         }
 
         /// <summary>
+        /// GeActiveProvidersList method implementation
+        /// </summary>
+        internal static List<IExternalProvider> GeActiveProvidersList()
+        {
+            List<IExternalProvider> temp = new List<IExternalProvider>();
+            foreach (IExternalProvider pp in _lst.Values)
+            {
+                if (pp.Enabled)
+                    temp.Add(pp);
+            }
+            return temp;
+        }
+
+        /// <summary>
         /// GetActiveProvidersCount method implementation
         /// </summary>
         internal static int GetActiveProvidersCount()
@@ -431,6 +447,7 @@ namespace Neos.IdentityServer.MultiFactor
                         }
                         break;
                     case PreferredMethod.Email:
+                        System.Diagnostics.Debugger.Launch();
                         provider = GetProviderInstance(meth);
                         if (provider == null)
                         {
@@ -2008,7 +2025,7 @@ namespace Neos.IdentityServer.MultiFactor
                 int n = fs.Read(bytes, 0, (int)fs.Length);
                 fs.Close();
 
-                using (MemoryStream ms = new MemoryStream(XOREncryptOrDecrypt(bytes, XORUtilities.XORKey)))
+                using (MemoryStream ms = new MemoryStream(XORUtilities.XOREncryptOrDecrypt(bytes, XORUtilities.XORKey)))
                 {
                     using (StreamReader reader = new StreamReader(ms))
                     {
@@ -2099,7 +2116,7 @@ namespace Neos.IdentityServer.MultiFactor
             {
                 xmlserializer.Serialize(stm, config);
                 stm.Position = 0;
-                byte[] byt = XOREncryptOrDecrypt(stm.ToArray(), XORUtilities.XORKey);
+                byte[] byt = XORUtilities.XOREncryptOrDecrypt(stm.ToArray(), XORUtilities.XORKey);
                 using (FileStream fs = new FileStream(CFGUtilities.configcachedir, FileMode.Create, FileAccess.ReadWrite))
                 {
                     fs.Write(byt, 0, byt.Length);
@@ -2180,19 +2197,6 @@ namespace Neos.IdentityServer.MultiFactor
             }
             return nodetype.ToLower().Equals("primarycomputer");
         }
-
-        /// <summary>
-        /// XOREncryptOrDecrypt method
-        /// </summary>
-        internal static byte[] XOREncryptOrDecrypt(byte[] value, string secret)
-        {
-            byte[] xor = new byte[value.Length];
-            for (int i = 0; i < value.Length; i++)
-            {
-                xor[i] = (byte)(value[i] ^ secret[i % secret.Length]);
-            }
-            return xor;
-        }
         #endregion
     }
     #endregion
@@ -2203,7 +2207,7 @@ namespace Neos.IdentityServer.MultiFactor
     /// </summary>
     public static class Utilities
     {
-        public static string XORKey = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+       // public static string XORKey = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
 
         /// <summary>
         /// GetRandomOTP  method implementation
@@ -2236,7 +2240,7 @@ namespace Neos.IdentityServer.MultiFactor
         {
             NamedPipeReplayRecord rec = new NamedPipeReplayRecord()
             {
-                MustDispatch = true,
+                MustDispatch = (config.Hosts.ADFSFarm.Servers.Count>1),
                 ReplayLevel = config.ReplayLevel,
                 Totp = totp,
                 UserIPAdress = request.RemoteEndPoint.Address.ToString(),
@@ -2245,7 +2249,7 @@ namespace Neos.IdentityServer.MultiFactor
                 DeliveryWindow = config.DeliveryWindow              
             };
             List<string> lst = new List<string>() { Environment.MachineName };
-            PipeClient client = new PipeClient(Utilities.XORKey, lst);
+            PipeClient client = new PipeClient(XORUtilities.XORKey, lst);
             return client.DoCheckForReplay(rec);
         }
 
@@ -2336,14 +2340,32 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// ValidateEmail method implementation
         /// </summary>
-        public static bool ValidateEmail(string email, List<string> blocked, bool checkempty = false)
+        public static bool ValidateEmail(string email, List<string> allowed, List<string> blocked, bool checkempty = false)
         {
             try
             {
                 string dom = GetEmailDomain(email);
-                foreach (string s in blocked)
+
+                if (allowed.Count > 0)
                 {
-                    if (dom.ToLower().EndsWith(s))
+                    bool isallowed = false;
+                    foreach (string s in allowed)
+                    {
+                        if (dom.ToLower().EndsWith(s))
+                            isallowed = true;
+                    }
+                    if (!isallowed)
+                        return false;
+                }
+                else if (blocked.Count > 0)
+                {
+                    bool isblocked = false;
+                    foreach (string s in blocked)
+                    {
+                        if (dom.ToLower().EndsWith(s))
+                            isblocked = true;
+                    }
+                    if (isblocked)
                         return false;
                 }
                 return ValidateEmail(email, checkempty);
@@ -2488,6 +2510,97 @@ namespace Neos.IdentityServer.MultiFactor
                 hash = BitConverter.ToString(md5.ComputeHash(Encoding.UTF8.GetBytes(value)));
             }
             return hash.Replace("-", String.Empty); 
+        }
+
+        /// <summary>
+        /// CanCancelWizard method implementation
+        /// </summary>
+        public static bool CanCancelWizard(AuthenticationContext usercontext, IExternalProvider prov, ProviderPageMode mode)
+        {
+            switch (usercontext.WizContext)
+            {
+                case WizardContextMode.Invitation:
+                case WizardContextMode.Registration:
+                    return false;
+                case WizardContextMode.ForceWizard:
+                    if ((usercontext.UIMode == mode) && (prov.ForceEnrollment == ForceWizardMode.Strict))
+                        return false;
+                    else
+                        return true;
+                default:
+                    return true;               
+            }
+        }
+        
+        /// <summary>
+        /// FindNextWizardToPlay method implementation
+        /// </summary>
+        public static PreferredMethod FindNextWizardToPlay(AuthenticationContext usercontext, ref bool isrequired)
+        {
+            PreferredMethod current = usercontext.EnrollPageID;
+            int v = (int)current;
+            v++;
+            current = (PreferredMethod)v;
+            switch (current)
+            {
+                case PreferredMethod.Choose:
+                    goto case PreferredMethod.Code;
+                case PreferredMethod.Code:
+                    IExternalProvider prov1 = RuntimeAuthProvider.GetProvider(PreferredMethod.Code);
+                    if ((prov1 != null) && (prov1.Enabled))
+                    {
+                        isrequired = prov1.IsRequired;
+                        usercontext.EnrollPageID = PreferredMethod.Code;
+                        return PreferredMethod.Code;
+                    }
+                    else
+                        goto case PreferredMethod.Email;
+                case PreferredMethod.Email:
+                    IExternalProvider prov2 = RuntimeAuthProvider.GetProvider(PreferredMethod.Email);
+                    if ((prov2 != null) && (prov2.Enabled))
+                    {
+                        isrequired = prov2.IsRequired;
+                        usercontext.EnrollPageID = PreferredMethod.Email;
+                        return PreferredMethod.Email;
+                    }
+                    else
+                        goto case PreferredMethod.External;
+                case PreferredMethod.External:
+                    IExternalProvider prov3 = RuntimeAuthProvider.GetProvider(PreferredMethod.External);
+                    if ((prov3 != null) && (prov3.Enabled))
+                    {
+                        isrequired = prov3.IsRequired;
+                        usercontext.EnrollPageID = PreferredMethod.External;
+                        return PreferredMethod.External;
+                    }
+                    else
+                        goto case PreferredMethod.Azure;
+                case PreferredMethod.Azure:
+                    goto case PreferredMethod.Biometrics;
+                case PreferredMethod.Biometrics:
+                    IExternalProvider prov4 = RuntimeAuthProvider.GetProvider(PreferredMethod.Biometrics);
+                    if ((prov4 != null) && (prov4.Enabled))
+                    {
+                        isrequired = prov4.IsRequired;
+                        usercontext.EnrollPageID = PreferredMethod.Biometrics;
+                        return PreferredMethod.Biometrics;
+                    }
+                    else
+                        goto case PreferredMethod.Pin;
+                case PreferredMethod.Pin:
+                    if (RuntimeAuthProvider.IsPinCodeRequired(usercontext))
+                    {
+                        isrequired = true;
+                        usercontext.EnrollPageID = PreferredMethod.Pin;
+                        return PreferredMethod.Pin;
+                    }
+                    else
+                        goto case PreferredMethod.None;
+                case PreferredMethod.None:
+                default:
+                    usercontext.EnrollPageID = PreferredMethod.Choose;
+                    return PreferredMethod.None;
+            }
         }
     }
 

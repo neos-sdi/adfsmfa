@@ -54,6 +54,14 @@ namespace Neos.IdentityServer.Multifactor.SMS
         }
 
         /// <summary>
+        /// IsBuiltIn property implementation
+        /// </summary>
+        public override bool IsBuiltIn
+        {
+            get { return true; }
+        }
+
+        /// <summary>
         /// IsInitialized property implementation
         /// </summary>
         public override bool IsInitialized
@@ -140,6 +148,15 @@ namespace Neos.IdentityServer.Multifactor.SMS
         {
             ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
             return Resources.GetString(ResourcesLocaleKind.Html, "SMSUIWIZLabel");
+        }
+
+        /// <summary>
+        /// GetWizardLinkLabel method implementation
+        /// </summary>
+        public override string GetWizardLinkLabel(AuthenticationContext ctx)
+        {
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
+            return Resources.GetString(ResourcesLocaleKind.Html, "SMSWIZEnroll");
         }
 
         /// <summary>
@@ -247,6 +264,24 @@ namespace Neos.IdentityServer.Multifactor.SMS
         }
 
         /// <summary>
+        /// GetUIEnrollmentTaskLabel method implementation
+        /// </summary>
+        public override string GetUIEnrollmentTaskLabel(AuthenticationContext ctx)
+        {
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
+            return Resources.GetString(ResourcesLocaleKind.Html, "SMSUIEnrollTaskLabel");
+        }
+
+        /// <summary>
+        /// GetUIEnrollValidatedLabel method implementation
+        /// </summary>
+        public override string GetUIEnrollValidatedLabel(AuthenticationContext ctx)
+        {
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
+            return Resources.GetString(ResourcesLocaleKind.Html, "SMSUIEnrollValidatedLabel");
+        }
+
+        /// <summary>
         /// GetUIAccountManagementLabel method implementation
         /// </summary>
         public override string GetUIAccountManagementLabel(AuthenticationContext ctx)
@@ -317,6 +352,7 @@ namespace Neos.IdentityServer.Multifactor.SMS
                         Data = param.Data;
 
                         Enabled = param.Enabled;
+                        IsRequired = param.IsRequired;
                         WizardEnabled = param.EnrollWizard;
                         ForceEnrollment = param.ForceWizard;
                         PinRequired = param.PinRequired;

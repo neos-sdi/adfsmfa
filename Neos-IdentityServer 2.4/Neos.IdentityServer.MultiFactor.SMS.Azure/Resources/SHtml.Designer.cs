@@ -88,6 +88,24 @@ namespace Neos.IdentityServer.MultiFactor.SMS.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Account verified&lt;br&gt;&lt;br&gt;Now you can use your mail address to authenticate.
+        /// </summary>
+        internal static string MAILUIEnrollValidatedLabel {
+            get {
+                return ResourceManager.GetString("MAILUIEnrollValidatedLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Account verified&lt;br&gt;&lt;br&gt;Now you can use your app to authenticate.
+        /// </summary>
+        internal static string OTPUIEnrollValidatedLabel {
+            get {
+                return ResourceManager.GetString("OTPUIEnrollValidatedLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Phone number.
         /// </summary>
         internal static string SMSUICFGLabel {
@@ -129,6 +147,24 @@ namespace Neos.IdentityServer.MultiFactor.SMS.Resources {
         internal static string SMSUIConfigLabel2 {
             get {
                 return ResourceManager.GetString("SMSUIConfigLabel2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Provide a mobile phone number.
+        /// </summary>
+        internal static string SMSUIEnrollTaskLabel {
+            get {
+                return ResourceManager.GetString("SMSUIEnrollTaskLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Account verified&lt;br&gt;&lt;br&gt;Now you can use your mobile phone to authenticate.
+        /// </summary>
+        internal static string SMSUIEnrollValidatedLabel {
+            get {
+                return ResourceManager.GetString("SMSUIEnrollValidatedLabel", resourceCulture);
             }
         }
         
@@ -183,6 +219,15 @@ namespace Neos.IdentityServer.MultiFactor.SMS.Resources {
         internal static string SMSUIWIZLabel {
             get {
                 return ResourceManager.GetString("SMSUIWIZLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Enroll my phone.
+        /// </summary>
+        internal static string SMSWIZEnroll {
+            get {
+                return ResourceManager.GetString("SMSWIZEnroll", resourceCulture);
             }
         }
     }

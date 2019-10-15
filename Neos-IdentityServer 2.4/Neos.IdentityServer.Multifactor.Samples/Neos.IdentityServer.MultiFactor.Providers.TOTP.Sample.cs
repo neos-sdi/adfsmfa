@@ -75,6 +75,14 @@ namespace Neos.IdentityServer.MultiFactor.Common
         }
 
         /// <summary>
+        /// IsBuiltIn property implementation
+        /// </summary>
+        public override bool IsBuiltIn
+        {
+            get { return false; }
+        }
+
+        /// <summary>
         /// CanBeDisabled property implementation
         /// </summary>
         public override bool AllowDisable
@@ -144,6 +152,15 @@ namespace Neos.IdentityServer.MultiFactor.Common
         /// GetWizardUILabel method implementation
         /// </summary>
         public override string GetWizardUILabel(AuthenticationContext ctx)
+        {
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
+            return Resources.GetString(ResourcesLocaleKind.Html, "OTPUIWIZLabel");
+        }
+
+        /// <summary>
+        /// GetWizardLinkLabel method implementation
+        /// </summary>
+        public override string GetWizardLinkLabel(AuthenticationContext ctx)
         {
             ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
             return Resources.GetString(ResourcesLocaleKind.Html, "OTPUIWIZLabel");
@@ -233,6 +250,24 @@ namespace Neos.IdentityServer.MultiFactor.Common
         public override string GetUIAccountManagementLabel(AuthenticationContext ctx)
         {
             return string.Empty;
+        }
+
+        /// <summary>
+        /// GetUIEnrollmentTaskLabel method implementation
+        /// </summary>
+        public override string GetUIEnrollmentTaskLabel(AuthenticationContext ctx)
+        {
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
+            return Resources.GetString(ResourcesLocaleKind.Html, "OTPUIEnrollTaskLabel");
+        }
+
+        /// <summary>
+        /// GetUIEnrollValidatedLabel method implementation
+        /// </summary>
+        public override string GetUIEnrollValidatedLabel(AuthenticationContext ctx)
+        {
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
+            return Resources.GetString(ResourcesLocaleKind.Html, "OTPUIEnrollValidatedLabel");
         }
 
         /// <summary>

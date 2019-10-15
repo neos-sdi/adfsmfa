@@ -236,16 +236,10 @@
     <EmbeddedResource Include="Controls\Neos.IdentityServer.Console.UserCommonPropsControl.fr.resx">
       <DependentUpon>Neos.IdentityServer.Console.UserCommonPropsControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\Neos.IdentityServer.Console.UserCommonPropsControl.it.resx">
-      <DependentUpon>Neos.IdentityServer.Console.UserCommonPropsControl.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Controls\Neos.IdentityServer.Console.UserCommonPropsControl.resx">
       <DependentUpon>Neos.IdentityServer.Console.UserCommonPropsControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\Neos.IdentityServer.Console.UserKeysControl.fr.resx">
-      <DependentUpon>Neos.IdentityServer.Console.UserKeysControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Controls\Neos.IdentityServer.Console.UserKeysControl.it.resx">
       <DependentUpon>Neos.IdentityServer.Console.UserKeysControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\Neos.IdentityServer.Console.UserKeysControl.resx">
@@ -255,16 +249,10 @@
     <EmbeddedResource Include="Controls\Neos.IdentityServer.Console.UserPropsControl.fr.resx">
       <DependentUpon>Neos.IdentityServer.Console.UserPropsControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\Neos.IdentityServer.Console.UserPropsControl.it.resx">
-      <DependentUpon>Neos.IdentityServer.Console.UserPropsControl.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Controls\Neos.IdentityServer.Console.UserPropsControl.resx">
       <DependentUpon>Neos.IdentityServer.Console.UserPropsControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Neos.IdentityServer.Comsole.ServiceViewControl.fr.resx">
-      <DependentUpon>Neos.IdentityServer.Comsole.ServiceViewControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Neos.IdentityServer.Comsole.ServiceViewControl.it.resx">
       <DependentUpon>Neos.IdentityServer.Comsole.ServiceViewControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Neos.IdentityServer.Comsole.ServiceViewControl.resx">
@@ -273,16 +261,10 @@
     <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.ADDSViewControl.fr.resx">
       <DependentUpon>Neos.IdentityServer.Console.ADDSViewControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.ADDSViewControl.it.resx">
-      <DependentUpon>Neos.IdentityServer.Console.ADDSViewControl.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.ADDSViewControl.resx">
       <DependentUpon>Neos.IdentityServer.Console.ADDSViewControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.DatabaseWizard.fr.resx">
-      <DependentUpon>Neos.IdentityServer.Console.DatabaseWizard.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.DatabaseWizard.it.resx">
       <DependentUpon>Neos.IdentityServer.Console.DatabaseWizard.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.DatabaseWizard.resx">
@@ -291,25 +273,16 @@
     <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.GeneralViewControl.fr.resx">
       <DependentUpon>Neos.IdentityServer.Console.GeneralViewControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.GeneralViewControl.it.resx">
-      <DependentUpon>Neos.IdentityServer.Console.GeneralViewControl.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.GeneralViewControl.resx">
       <DependentUpon>Neos.IdentityServer.Console.GeneralViewControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.LDAPWizard.fr.resx">
       <DependentUpon>Neos.IdentityServer.Console.LDAPWizard.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.LDAPWizard.it.resx">
-      <DependentUpon>Neos.IdentityServer.Console.LDAPWizard.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.LDAPWizard.resx">
       <DependentUpon>Neos.IdentityServer.Console.LDAPWizard.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.RootViewControl.fr.resx">
-      <DependentUpon>Neos.IdentityServer.Console.RootViewControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.RootViewControl.it.resx">
       <DependentUpon>Neos.IdentityServer.Console.RootViewControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.RootViewControl.resx">
@@ -321,25 +294,16 @@
     <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.AzureViewControl.fr.resx">
       <DependentUpon>Neos.IdentityServer.Console.AzureViewControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.AzureViewControl.it.resx">
-      <DependentUpon>Neos.IdentityServer.Console.AzureViewControl.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.AzureViewControl.resx">
       <DependentUpon>Neos.IdentityServer.Console.AzureViewControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SMSViewControl.fr.resx">
       <DependentUpon>Neos.IdentityServer.Console.SMSViewControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SMSViewControl.it.resx">
-      <DependentUpon>Neos.IdentityServer.Console.SMSViewControl.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SMSViewControl.resx">
       <DependentUpon>Neos.IdentityServer.Console.SMSViewControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.ProvidersViewControl.fr.resx">
-      <DependentUpon>Neos.IdentityServer.Console.ProvidersViewControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.ProvidersViewControl.it.resx">
       <DependentUpon>Neos.IdentityServer.Console.ProvidersViewControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.ProvidersViewControl.resx">
@@ -349,16 +313,10 @@
       <DependentUpon>Neos.IdentityServer.Console.SMTPViewControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SMTPViewControl.it.resx">
-      <DependentUpon>Neos.IdentityServer.Console.SMTPViewControl.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SMTPViewControl.resx">
       <DependentUpon>Neos.IdentityServer.Console.SMTPViewControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SQLViewControl.fr.resx">
-      <DependentUpon>Neos.IdentityServer.Console.SQLViewControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SQLViewControl.it.resx">
       <DependentUpon>Neos.IdentityServer.Console.SQLViewControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SQLViewControl.resx">
@@ -367,23 +325,14 @@
     <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.UserFilterWizard.fr.resx">
       <DependentUpon>Neos.IdentityServer.Console.UserFilterWizard.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.UserFilterWizard.it.resx">
-      <DependentUpon>Neos.IdentityServer.Console.UserFilterWizard.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.UserFilterWizard.resx">
       <DependentUpon>Neos.IdentityServer.Console.UserFilterWizard.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.UsersViewControl.fr.resx">
       <DependentUpon>Neos.IdentityServer.Console.UsersViewControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.UsersViewControl.it.resx">
-      <DependentUpon>Neos.IdentityServer.Console.UsersViewControl.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.UsersViewControl.resx">
       <DependentUpon>Neos.IdentityServer.Console.UsersViewControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityViewControl.it.resx">
-      <DependentUpon>Neos.IdentityServer.Console.SecurityViewControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityViewControl.resx">
       <DependentUpon>Neos.IdentityServer.Console.SecurityViewControl.cs</DependentUpon>
@@ -412,6 +361,7 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Neos.IdentityServer.Console.Nodes.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.Snapin.it.resx" />
     <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.Snapin.resx">
       <SubType>Designer</SubType>
       <Generator>PublicResXFileCodeGenerator</Generator>
@@ -479,7 +429,6 @@
     <Content Include="ResFiles\user_on32.bmp" />
     <Content Include="SnapMMC\HowToLocalize.txt" />
     <Content Include="SnapMMC\import.xml" />
-    <Content Include="SnapMMC\ResGen.exe" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

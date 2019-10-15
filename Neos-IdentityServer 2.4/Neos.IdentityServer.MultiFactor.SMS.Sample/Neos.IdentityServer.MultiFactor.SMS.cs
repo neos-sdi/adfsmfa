@@ -97,14 +97,14 @@ namespace Neos.IdentityServer.MultiFactor.SMS
                 else
                 {
                     otp = 0;
-                    return AuthenticationResponseKind.Error;
+                    return (int)AuthenticationResponseKind.Error;
                 }
             }
             catch (Exception ex)
             {
                 Log.WriteEntry("SMS SendMessage : \r" + ex.Message, EventLogEntryType.Error, 10000);
                 otp = 0;
-                return AuthenticationResponseKind.Error;
+                return (int)AuthenticationResponseKind.Error;
             }
         }
 

@@ -117,22 +117,28 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ActivationPageTitle" xml:space="preserve">
+    <value>Activación requerida</value>
+  </data>
   <data name="InvitationPageTitle" xml:space="preserve">
-    <value>Opciones de configuración</value>
+    <value>Se requiere inscripción</value>
+  </data>
+  <data name="ManageOptionsPageTitle" xml:space="preserve">
+    <value>Configuración de opciones</value>
   </data>
   <data name="MustUseCodePageTitle" xml:space="preserve">
-    <value>Debe utilizar un código de seguridad para validar su identidad. Cómo le gustaría su código ?</value>
+    <value>Debe usar un código de seguridad para validar su identidad. ¿Cómo desea recibir su código?</value>
   </data>
   <data name="PasswordPageTitle" xml:space="preserve">
-    <value>Cambio de contraseña</value>
+    <value>Cambio de contraseñas</value>
   </data>
   <data name="RegistrationPageTitle" xml:space="preserve">
-    <value>Opciones de configuración</value>
+    <value>Se requiere inscripción</value>
   </data>
   <data name="TitlePageTitle" xml:space="preserve">
-    <value>Autenticación de múltiples factores</value>
+    <value>Autenticación multifactor</value>
   </data>
   <data name="TitleRedirecting" xml:space="preserve">
-    <value>Redirigiendo ...</value>
+    <value>Redirección en curso ...</value>
   </data>
 </root>

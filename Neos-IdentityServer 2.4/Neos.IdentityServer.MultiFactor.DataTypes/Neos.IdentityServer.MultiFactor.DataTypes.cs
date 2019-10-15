@@ -703,7 +703,7 @@ namespace Neos.IdentityServer.MultiFactor
                 if (_context.Data.ContainsKey("_authctxselectedmethod") && _context.Data["_authctxselectedmethod"] != null)
                     return (AuthenticationResponseKind)_context.Data["_authctxselectedmethod"];
                 else
-                    return (int)AuthenticationResponseKind.Error;
+                    return AuthenticationResponseKind.Error;
             }
             set
             {
@@ -737,28 +737,6 @@ namespace Neos.IdentityServer.MultiFactor
         }
 
         /// <summary>
-        /// PageId property implementation
-        /// </summary>
-        [XmlAttribute("PageID")]
-        public int PageID 
-        { 
-            get
-            {
-                if (_context.Data.ContainsKey("_authctxpageid") && _context.Data["_authctxpageid"] != null)
-                    return Convert.ToInt32(_context.Data["_authctxpageid"]);
-                else
-                    return 0;
-            }
-            set
-            {
-                if (_context.Data.ContainsKey("_authctxpageid"))
-                    _context.Data["_authctxpageid"] = (int)value;
-                else
-                    _context.Data.Add("_authctxpageid", (int)value);
-            }
-        }
-
-        /// <summary>
         /// WizPageID property implementation
         /// </summary>
         [XmlAttribute("WizPageID")]
@@ -777,6 +755,72 @@ namespace Neos.IdentityServer.MultiFactor
                     _context.Data["_authctxwizpageid"] = (int)value;
                 else
                     _context.Data.Add("_authctxwizpageid", (int)value);
+            }
+        }
+
+        /// <summary>
+        /// EnrollPageID property implementation
+        /// </summary>
+        [XmlAttribute("EnrollPageID")]
+        public PreferredMethod EnrollPageID
+        {
+            get
+            {
+                if (_context.Data.ContainsKey("_authctxenrollpageid") && _context.Data["_authctxenrollpageid"] != null)
+                    return (PreferredMethod)_context.Data["_authctxenrollpageid"];
+                else
+                    return PreferredMethod.Choose;
+            }
+            set
+            {
+                if (_context.Data.ContainsKey("_authctxenrollpageid"))
+                    _context.Data["_authctxenrollpageid"] = (int)value;
+                else
+                    _context.Data.Add("_authctxenrollpageid", (int)value);
+            }
+        }
+
+        /// <summary>
+        /// EnrollPageStatus property implementation
+        /// </summary>
+        [XmlAttribute("EnrollPageStatus")]
+        public EnrollPageStatus EnrollPageStatus
+        {
+            get
+            {
+                if (_context.Data.ContainsKey("_authctxenrollpagest") && _context.Data["_authctxenrollpagest"] != null)
+                    return (EnrollPageStatus)_context.Data["_authctxenrollpagest"];
+                else
+                    return EnrollPageStatus.Start;
+            }
+            set
+            {
+                if (_context.Data.ContainsKey("_authctxenrollpagest"))
+                    _context.Data["_authctxenrollpagest"] = (int)value;
+                else
+                    _context.Data.Add("_authctxenrollpagest", (int)value);
+            }
+        }
+
+        /// <summary>
+        /// WizContext property implementation
+        /// </summary>
+        [XmlAttribute("WizContext")]
+        public WizardContextMode WizContext
+        {
+            get
+            {
+                if (_context.Data.ContainsKey("_authctxwizcontext") && _context.Data["_authctxwizcontext"] != null)
+                    return (WizardContextMode)_context.Data["_authctxwizcontext"];
+                else
+                    return WizardContextMode.ManageOptions;
+            }
+            set
+            {
+                if (_context.Data.ContainsKey("_authctxwizcontext"))
+                    _context.Data["_authctxwizcontext"] = (int)value;
+                else
+                    _context.Data.Add("_authctxwizcontext", (int)value);
             }
         }
 
@@ -1519,8 +1563,22 @@ namespace Neos.IdentityServer.MultiFactor
     }
 
     /// <summary>
+    /// WizardContextMode
+    /// </summary>
+    [Serializable]
+    public enum WizardContextMode
+    {
+        ManageOptions = 0,
+        Registration = 1,
+        Invitation = 2,
+        DirectWizards = 3,
+        ForceWizard = 4
+    }
+
+    /// <summary>
     /// ProviderPageMode
     /// </summary>
+    [Serializable]
     public enum ProviderPageMode
     {
         Locking = 0,
@@ -1528,29 +1586,21 @@ namespace Neos.IdentityServer.MultiFactor
         Identification = 2,
         Registration = 3,
         Invitation = 4,
-        SelectOptions = 5,
-        ChooseMethod = 6,
-        ChangePassword = 7,
-        ShowQRCode = 8,
-        SendAuthRequest = 9,
-        SendAdministrativeRequest = 10,
-        SendKeyRequest = 11,
-        PreSet = 12,
-        EnrollOTP = 13,
-        EnrollBiometrics = 14,
-        EnrollEmail = 15,
-        EnrollPhone = 16,
-        EnrollPin = 17,
-        EnrollOTPAndSave = 23,
-        EnrollBiometricsAndSave = 24,
-        EnrollEmailAndSave = 25,
-        EnrollPhoneAndSave = 26,
-        EnrollPinAndSave = 27,
-        EnrollOTPForce = 33,
-        EnrollBiometricsForce = 34,
-        EnrollEmailForce = 35,
-        EnrollPhoneForce = 36,
-        EnrollPinForce = 37,
+        Activation = 5,
+        SelectOptions = 6,
+        ChooseMethod = 7,
+        ChangePassword = 8,
+        ShowQRCode = 9,
+        SendAuthRequest = 10,
+        SendAdministrativeRequest = 11,
+        SendKeyRequest = 12,
+        PreSet = 13,
+        EnrollOTP = 14,
+        EnrollBiometrics = 15,
+        EnrollEmail = 16,
+        EnrollPhone = 17,
+        EnrollPin = 18,
+        ManageOptions = 63,
         None = 64,
         DefinitiveError = 128
     }
@@ -1558,6 +1608,7 @@ namespace Neos.IdentityServer.MultiFactor
     /// <summary>
     /// PreferredMethod
     /// </summary>
+    [Serializable]
     public enum PreferredMethod
     {
         Choose = 0,
@@ -1566,12 +1617,26 @@ namespace Neos.IdentityServer.MultiFactor
         External = 3,
         Azure = 4,
         Biometrics = 5,
-        None = 6
+        Pin = 6,
+        None = 7
+    }
+
+    /// <summary>
+    /// EnrollPageStatus
+    /// </summary>
+    [Serializable]
+    public enum EnrollPageStatus
+    {
+        Start = 0,
+        Run = 1,
+        Stop = 2,
+        NewStep = 3
     }
 
     /// <summary>
     /// ADFSUserInterfaceKind
     /// </summary>
+    [Serializable]
     public enum ADFSUserInterfaceKind
     {
         Default = 0,
@@ -1585,6 +1650,10 @@ namespace Neos.IdentityServer.MultiFactor
     {
         static string _defaultxor = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
         static string _xorkey = _defaultxor;
+
+        /// <summary>
+        /// XORKey property
+        /// </summary>
         public static string XORKey
         {
             get
@@ -1595,6 +1664,21 @@ namespace Neos.IdentityServer.MultiFactor
                     return _xorkey;
             }
             set { _xorkey = value; }
+        }
+
+        /// <summary>
+        /// XOREncryptOrDecrypt method
+        /// </summary>
+        public static byte[] XOREncryptOrDecrypt(byte[] value, string secret)
+        {
+            if (string.IsNullOrEmpty(secret))
+                secret = XORKey;
+            byte[] xor = new byte[value.Length];
+            for (int i = 0; i < value.Length; i++)
+            {
+                xor[i] = (byte)(value[i] ^ secret[i % secret.Length]);
+            }
+            return xor;
         }
     }
 

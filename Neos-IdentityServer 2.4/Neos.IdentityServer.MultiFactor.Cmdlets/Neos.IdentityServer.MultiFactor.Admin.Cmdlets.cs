@@ -742,9 +742,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                             reg.PIN = this.Pin;
                         reg.Enabled = this.Enabled;
 
-                        if (string.IsNullOrEmpty(reg.MailAddress) && ManagementService.Config.MailProvider.Enabled)
+                        if (string.IsNullOrEmpty(reg.MailAddress) && ManagementService.Config.MailProvider.Enabled && ManagementService.Config.MailProvider.IsRequired)
                            this.Host.UI.WriteWarningLine(string.Format(errors_strings.ErrorEmailNotProvided, reg.UPN));
-                        if (string.IsNullOrEmpty(reg.PhoneNumber) && ManagementService.Config.ExternalProvider.Enabled)
+                        if (string.IsNullOrEmpty(reg.PhoneNumber) && ManagementService.Config.ExternalProvider.Enabled && ManagementService.Config.ExternalProvider.IsRequired)
                             this.Host.UI.WriteWarningLine(string.Format(errors_strings.ErrorPhoneNotProvided, reg.UPN));
 
                         ManagementService.Initialize(this.Host, true);
@@ -961,9 +961,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                             reg.PIN = this.Pin;
                         reg.Enabled = this.Enabled; 
 
-                        if (string.IsNullOrEmpty(reg.MailAddress) && ManagementService.Config.MailProvider.Enabled)
+                        if (string.IsNullOrEmpty(reg.MailAddress) && ManagementService.Config.MailProvider.Enabled && ManagementService.Config.MailProvider.IsRequired)
                             this.Host.UI.WriteWarningLine(string.Format(errors_strings.ErrorEmailNotProvided, reg.UPN));
-                        if (string.IsNullOrEmpty(reg.PhoneNumber) && ManagementService.Config.ExternalProvider.Enabled)
+                        if (string.IsNullOrEmpty(reg.PhoneNumber) && ManagementService.Config.ExternalProvider.Enabled && ManagementService.Config.ExternalProvider.IsRequired)
                             this.Host.UI.WriteWarningLine(string.Format(errors_strings.ErrorPhoneNotProvided, reg.UPN));
 
                         ManagementService.Initialize(this.Host, true);

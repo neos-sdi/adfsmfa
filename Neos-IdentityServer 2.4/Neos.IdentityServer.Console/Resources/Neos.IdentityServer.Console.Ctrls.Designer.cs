@@ -592,7 +592,7 @@ namespace Neos.IdentityServer.Console.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Administrative - Registration made by the support.
+        ///   Recherche une chaîne localisée semblable à Administrative - Registration verified by support.
         /// </summary>
         internal static string CTRLGLMFAREGISTER1 {
             get {
@@ -615,6 +615,15 @@ namespace Neos.IdentityServer.Console.Resources {
         internal static string CTRLGLMFAREGISTER3 {
             get {
                 return ResourceManager.GetString("CTRLGLMFAREGISTER3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Mandatory - Registration made by support.
+        /// </summary>
+        internal static string CTRLGLMFAREGISTER4 {
+            get {
+                return ResourceManager.GetString("CTRLGLMFAREGISTER4", resourceCulture);
             }
         }
         
@@ -786,6 +795,15 @@ namespace Neos.IdentityServer.Console.Resources {
         internal static string CTRLPROVPIN {
             get {
                 return ResourceManager.GetString("CTRLPROVPIN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Required.
+        /// </summary>
+        internal static string CTRLPROVREQUIRED {
+            get {
+                return ResourceManager.GetString("CTRLPROVREQUIRED", resourceCulture);
             }
         }
         

@@ -161,6 +161,12 @@
     <value>Envoyer un email sur mon adresse personnelle {0}</value>
     <comment>Envoyer un email sur mon adresse personnelle {0}</comment>
   </data>
+  <data name="MAILUIEnrollTaskLabel" xml:space="preserve">
+    <value>Fournir une adresse mail personnelle</value>
+  </data>
+  <data name="MAILUIEnrollValidatedLabel" xml:space="preserve">
+    <value>Compte validé&lt;br&gt;&lt;br&gt;Vous pouvez utiliser votre adresse mail pour vous authentifier</value>
+  </data>
   <data name="MAILUIListChoiceLabel" xml:space="preserve">
     <value>Recevoir un email sur mon adresse personnelle</value>
     <comment>Recevoir un email sur mon adresse personnelle</comment>
@@ -180,6 +186,9 @@
   <data name="MAILUIWIZLabel" xml:space="preserve">
     <value>Enregistrer votre Email</value>
   </data>
+  <data name="MAILWIZEnroll" xml:space="preserve">
+    <value>Enregistrer mon adresse email personnelle</value>
+  </data>
   <data name="OTPUICFGLabel" xml:space="preserve">
     <value>Code d'accès à usage unique</value>
     <comment>Code d'accès à usage unique</comment>
@@ -192,8 +201,14 @@
     <value>Utiliser mon application d'authentification</value>
     <comment>Utiliser mon application d'authentification</comment>
   </data>
+  <data name="OTPUIEnrollTaskLabel" xml:space="preserve">
+    <value>Paramétrer une application d'authentification</value>
+  </data>
+  <data name="OTPUIEnrollValidatedLabel" xml:space="preserve">
+    <value>Compte validé&lt;br&gt;&lt;br&gt;Vous pouvez utiliser votre application pour vous authentifier</value>
+  </data>
   <data name="OTPUIListChoiceLabel" xml:space="preserve">
-    <value>Utiliser votre application d'authentification</value>
+    <value>Utiliser mon application d'authentification</value>
     <comment>Utiliser votre application d'authentification</comment>
   </data>
   <data name="OTPUIListOptionLabel" xml:space="preserve">
@@ -210,6 +225,9 @@
   </data>
   <data name="OTPUIWIZLabel" xml:space="preserve">
     <value>Enregistrer votre Application</value>
+  </data>
+  <data name="OTPWIZEnroll" xml:space="preserve">
+    <value>Enregistrer mon application d'authentification</value>
   </data>
   <data name="SMSUICFGLabel" xml:space="preserve">
     <value>Numéro de téléphone</value>
@@ -231,6 +249,12 @@
     <value>Message texte sur mon téléphone mobile {0}</value>
     <comment>Message texte sur mon téléphone mobile {0}</comment>
   </data>
+  <data name="SMSUIEnrollTaskLabel" xml:space="preserve">
+    <value>Fournir un N° de mobile</value>
+  </data>
+  <data name="SMSUIEnrollValidatedLabel" xml:space="preserve">
+    <value>Compte validé&lt;br&gt;&lt;br&gt;Vous pouvez utiliser votre téléphone mobile pour vous authentifier</value>
+  </data>
   <data name="SMSUIListChoiceLabel" xml:space="preserve">
     <value>Recevoir un message sur mon téléphone mobile</value>
     <comment>Recevoir un message sur mon téléphone mobile</comment>
@@ -249,5 +273,8 @@
   </data>
   <data name="SMSUIWIZLabel" xml:space="preserve">
     <value>Enregistrer votre téléphone</value>
+  </data>
+  <data name="SMSWIZEnroll" xml:space="preserve">
+    <value>Enregistrer mon téléphone</value>
   </data>
 </root>

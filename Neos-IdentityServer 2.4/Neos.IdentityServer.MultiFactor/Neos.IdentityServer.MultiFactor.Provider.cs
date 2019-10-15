@@ -81,41 +81,11 @@ namespace Neos.IdentityServer.MultiFactor
                         usercontext.UIMode = GetAuthenticationContextRequest(usercontext);
                         result = new AdapterPresentation(this, context);
                         break;
-                    case ProviderPageMode.Locking:  // Only for locking mode
-                        if (usercontext.TargetUIMode == ProviderPageMode.DefinitiveError)
-                            result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorAccountNoAccess"), ProviderPageMode.DefinitiveError);
-                        else if (Config.UserFeatures.IsMFARequired())
-                        {
-                            if (usercontext.TargetUIMode == ProviderPageMode.Invitation)
-                                result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorAccountNotEnabled"), ProviderPageMode.DefinitiveError);
-                            else
-                                result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorAccountNoAccess"), ProviderPageMode.DefinitiveError);
-                        }
-                        else if (Config.UserFeatures.IsMFAAllowed())
-                        {
-                            if (Config.UserFeatures.IsAdvertisable() && (Config.AdvertisingDays.OnFire))
-                                result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorAccountAuthorized"), ProviderPageMode.Bypass);
-                            else
-                            {
-                                usercontext.UIMode = ProviderPageMode.Bypass;
-                                result = new AdapterPresentation(this, context);
-                            }
-                        }
-                        else if (Config.UserFeatures.IsRegistrationAllowed())
-                        {
-                            if (Config.UserFeatures.IsAdvertisable() && (Config.AdvertisingDays.OnFire))
-                                result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorAccountAuthorized"), ProviderPageMode.Bypass);
-                            else
-                            {
-                                usercontext.UIMode = ProviderPageMode.Bypass;
-                                result = new AdapterPresentation(this, context);
-                            }
-                        }
-                        else
-                            result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorAccountNotEnabled"), ProviderPageMode.DefinitiveError);
+                    case ProviderPageMode.Locking:  
+                        result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorAccountNoAccess"), ProviderPageMode.DefinitiveError);
                         break;
                     default:
-                        // Do not Select method if only on provider
+                        // Do not Select method if only one provider
                         if ((usercontext.UIMode == ProviderPageMode.ChooseMethod) && (usercontext.PreferredMethod==PreferredMethod.Choose)) 
                         {
                             if (RuntimeAuthProvider.GetActiveProvidersCount()<=1)
@@ -171,11 +141,11 @@ namespace Neos.IdentityServer.MultiFactor
                 if (reg != null) // User Is Registered
                 {
                     AuthenticationContext usercontext = new AuthenticationContext(context, reg);
-                    usercontext.LogonDate = DateTime.Now;
-                    usercontext.CurrentRetries = 0;
-                    usercontext.NotificationSent = false;
                     if (usercontext.Enabled) // Enabled
                     {
+                        usercontext.LogonDate = DateTime.Now;
+                        usercontext.CurrentRetries = 0;
+                        usercontext.NotificationSent = false;
                         if (usercontext.KeyStatus == SecretKeyStatus.NoKey)
                         {
                             if (Config.UserFeatures.CanManageOptions())
@@ -190,20 +160,35 @@ namespace Neos.IdentityServer.MultiFactor
                     }
                     else // Not enabled
                     {
-                        if (Config.UserFeatures.IsMFARequired())
-                            usercontext.UIMode = ProviderPageMode.Locking;
-                        else if (Config.UserFeatures.IsMFANotRequired())
+                        usercontext.LogonDate = DateTime.Now;
+                        usercontext.CurrentRetries = 0;
+                        usercontext.NotificationSent = false;
+                        usercontext.UPN = upn;
+                        usercontext.Enabled = false;
+                        usercontext.PreferredMethod = Config.DefaultProviderMethod;
+
+                        if (Config.UserFeatures.IsMFANotRequired())
                         {
-                            if (usercontext.KeyStatus == SecretKeyStatus.NoKey)
-                                usercontext.PreferredMethod = PreferredMethod.Choose;
                             usercontext.UIMode = ProviderPageMode.Bypass;
+                            usercontext.TargetUIMode = ProviderPageMode.None;
                         }
                         else if (Config.UserFeatures.IsMFAAllowed())
                         {
-                            if (usercontext.KeyStatus == SecretKeyStatus.NoKey)
-                                usercontext.PreferredMethod = PreferredMethod.Choose;
+                            if (Config.AdvertisingDays.OnFire)
+                            {
+                                usercontext.UIMode = ProviderPageMode.Activation;
+                                usercontext.TargetUIMode = ProviderPageMode.None;
+                            }
+                            else
+                            {
+                                usercontext.UIMode = ProviderPageMode.Bypass;
+                                usercontext.TargetUIMode = ProviderPageMode.None;
+                            }
+                        }
+                        else if (Config.UserFeatures.IsMFARequired())
+                        {
+                            usercontext.TargetUIMode = ProviderPageMode.DefinitiveError;
                             usercontext.UIMode = ProviderPageMode.Locking;
-                            usercontext.TargetUIMode = ProviderPageMode.None;
                         }
                         else
                         {
@@ -221,37 +206,64 @@ namespace Neos.IdentityServer.MultiFactor
                     usercontext.CurrentRetries = 0;
                     usercontext.NotificationSent = false;
                     usercontext.UPN = upn;
+                    usercontext.Enabled = false;
+                    usercontext.PreferredMethod = Config.DefaultProviderMethod;
 
-                    if (Config.UserFeatures.IsAdministrative()) // Error : administrative Only Registration
+                    if (Config.UserFeatures.IsAdministrative())                   // Error : administrative Only Registration
                     {
                         usercontext.UIMode = ProviderPageMode.Locking;
                         usercontext.TargetUIMode = ProviderPageMode.DefinitiveError;
                     }
-                    else if (Config.UserFeatures.IsRegistrationRequired())  // Provide Information
-                    {
-                        usercontext.PreferredMethod = PreferredMethod.Choose;
-                        usercontext.Enabled = false;
-                        usercontext.UIMode = ProviderPageMode.Locking;
-                        usercontext.TargetUIMode = ProviderPageMode.Invitation;
+                    else if (Config.UserFeatures.IsStrict())                      // Provide Information : Invitation
+                    { 
+                        usercontext.UIMode = ProviderPageMode.Invitation;
+                        usercontext.TargetUIMode = ProviderPageMode.None;
                     }
-                    else if (Config.UserFeatures.IsRegistrationAllowed())  // Provide Registration
+                    else if (Config.UserFeatures.IsManaged())                      // Provide Information : Invitation
                     {
-                        usercontext.PreferredMethod = PreferredMethod.Choose;
-                        usercontext.Enabled = true;
-                        usercontext.UIMode = ProviderPageMode.Locking;
-                        usercontext.TargetUIMode = ProviderPageMode.Registration;
+                        if (Config.UserFeatures.IsAdvertisable() && (Config.AdvertisingDays.OnFire))
+                        {
+                            usercontext.UIMode = ProviderPageMode.Invitation;
+                            usercontext.TargetUIMode = ProviderPageMode.None;
+                        }
+                        else
+                        {
+                            usercontext.UIMode = ProviderPageMode.Bypass;
+                            usercontext.TargetUIMode = ProviderPageMode.None;
+                        }
                     }
-                    else if (Config.UserFeatures.IsRegistrationNotRequired()) // Bypass registration / Information
+                    else if (Config.UserFeatures.IsRegistrationRequired())        // Provide Information : Invitation
                     {
-                        usercontext.PreferredMethod = PreferredMethod.Choose;
-                        usercontext.Enabled = false;
+                        usercontext.UIMode = ProviderPageMode.Invitation;
+                        usercontext.TargetUIMode = ProviderPageMode.None;
+                    }
+                    else if (Config.UserFeatures.IsRegistrationMixed())           // Provide Registration
+                    {
+                        usercontext.UIMode = ProviderPageMode.Registration;
+                        usercontext.TargetUIMode = ProviderPageMode.None;
+                    }
+                    else if (Config.UserFeatures.IsRegistrationAllowed())         // Provide Registration
+                    {
+                        if (Config.UserFeatures.IsAdvertisable() && (Config.AdvertisingDays.OnFire))
+                        {
+                            usercontext.UIMode = ProviderPageMode.Registration;
+                            usercontext.TargetUIMode = ProviderPageMode.None;
+                        }
+                        else
+                        {
+                            usercontext.UIMode = ProviderPageMode.Bypass;
+                            usercontext.TargetUIMode = ProviderPageMode.None;
+                        }
+                    }
+                    else if (Config.UserFeatures.IsRegistrationNotRequired())     // Bypass 
+                    {
                         usercontext.UIMode = ProviderPageMode.Bypass;
                         usercontext.TargetUIMode = ProviderPageMode.None;
                     }
-                    else
+                    else                                                          // Error
                     {
-                        usercontext.TargetUIMode = ProviderPageMode.DefinitiveError;
                         usercontext.UIMode = ProviderPageMode.Locking;
+                        usercontext.TargetUIMode = ProviderPageMode.DefinitiveError;
                     }
                     Trace.TraceInformation(String.Format("AuthenticationProvider:IsAvailableForUser (Not Registered) Duration : {0}", (DateTime.Now - st).ToString()));
                     return true;
@@ -333,9 +345,9 @@ namespace Neos.IdentityServer.MultiFactor
             return null; // Do not present an adapter let default adfs error handling
         }
 
-		/// <summary>
+        /// <summary>
         /// TryEndAuthentication method implementation
-		/// </summary>
+        /// </summary>
         public IAdapterPresentation TryEndAuthentication(IAuthenticationContext context, IProofData proofData, System.Net.HttpListenerRequest request, out System.Security.Claims.Claim[] claims)
         {
             claims = null;
@@ -350,10 +362,19 @@ namespace Neos.IdentityServer.MultiFactor
                     result = TryIdentification(usercontext, context, proofData, request, out claims);
                     break;
                 case ProviderPageMode.Registration: // User self registration and enable
+                    usercontext.WizContext = WizardContextMode.Registration;
                     result = TryRegistration(usercontext, context, proofData, request, out claims);
                     break;
                 case ProviderPageMode.Invitation: // admministrative user registration and let disabled
+                    usercontext.WizContext = WizardContextMode.Invitation;
                     result = TryInvitation(usercontext, context, proofData, request, out claims);
+                    break;
+                case ProviderPageMode.Activation: // Ask to enable
+                    result = TryActivation(usercontext, context, proofData, request, out claims);
+                    break;
+                case ProviderPageMode.ManageOptions: // Manage Options
+                    usercontext.WizContext = WizardContextMode.ManageOptions;
+                    result = TryManageOptions(usercontext, context, proofData, request, out claims);
                     break;
                 case ProviderPageMode.SelectOptions:
                     result = TrySelectOptions(usercontext, context, proofData, request, out claims);
@@ -397,46 +418,17 @@ namespace Neos.IdentityServer.MultiFactor
                 case ProviderPageMode.EnrollPin:
                     result = TryEnrollPinCode(usercontext, context, proofData, request, out claims);
                     break;
-                case ProviderPageMode.EnrollOTPAndSave:
-                    result = TryEnrollOTP(usercontext, context, proofData, request, out claims, true);
-                    break;
-                case ProviderPageMode.EnrollEmailAndSave:
-                    result = TryEnrollEmail(usercontext, context, proofData, request, out claims, true);
-                    break;
-                case ProviderPageMode.EnrollPhoneAndSave:
-                    result = TryEnrollPhone(usercontext, context, proofData, request, out claims, true);
-                    break;
-                case ProviderPageMode.EnrollBiometricsAndSave:
-                    result = TryEnrollBio(usercontext, context, proofData, request, out claims, true);
-                    break;
-                case ProviderPageMode.EnrollPinAndSave:
-                    result = TryEnrollPinCode(usercontext, context, proofData, request, out claims, true);
-                    break;
-                case ProviderPageMode.EnrollOTPForce:
-                    result = TryEnrollOTP(usercontext, context, proofData, request, out claims, true);
-                    break;
-                case ProviderPageMode.EnrollEmailForce:
-                    result = TryEnrollEmail(usercontext, context, proofData, request, out claims, true);
-                    break;
-                case ProviderPageMode.EnrollPhoneForce:
-                    result = TryEnrollPhone(usercontext, context, proofData, request, out claims, true);
-                    break;
-                case ProviderPageMode.EnrollBiometricsForce:
-                    result = TryEnrollBio(usercontext, context, proofData, request, out claims, true);
-                    break;
-                case ProviderPageMode.EnrollPinForce:
-                    result = TryEnrollPinCode(usercontext, context, proofData, request, out claims, true);
-                    break;
             }
             return result;
         }
+        #endregion
 
+        #region IAuthenticationAdapter custom implementation
         /// <summary>
         /// TryIdentification method implementation
         /// </summary>
         private IAdapterPresentation TryIdentification(AuthenticationContext usercontext, IAuthenticationContext context, IProofData proofData, System.Net.HttpListenerRequest request, out System.Security.Claims.Claim[] claims)
         {
-            #region Identification
             ResourcesLocale Resources = new ResourcesLocale(context.Lcid);
             claims = null;
             IAdapterPresentation result = null;
@@ -506,16 +498,20 @@ namespace Neos.IdentityServer.MultiFactor
                                         switch (usercontext.FirstChoiceMethod)
                                         {
                                             case PreferredMethod.Code:
-                                                usercontext.UIMode = ProviderPageMode.EnrollOTPForce;
+                                                usercontext.WizContext = WizardContextMode.ForceWizard;
+                                                usercontext.UIMode = ProviderPageMode.EnrollOTP;
                                                 break;
                                             case PreferredMethod.Email:
-                                                usercontext.UIMode = ProviderPageMode.EnrollEmailForce;
+                                                usercontext.WizContext = WizardContextMode.ForceWizard;
+                                                usercontext.UIMode = ProviderPageMode.EnrollEmail;
                                                 break;
                                             case PreferredMethod.External:
-                                                usercontext.UIMode = ProviderPageMode.EnrollPhoneForce;
+                                                usercontext.WizContext = WizardContextMode.ForceWizard;
+                                                usercontext.UIMode = ProviderPageMode.EnrollPhone;
                                                 break;
                                             case PreferredMethod.Biometrics:
-                                                usercontext.UIMode = ProviderPageMode.EnrollBiometricsForce;
+                                                usercontext.WizContext = WizardContextMode.ForceWizard;
+                                                usercontext.UIMode = ProviderPageMode.EnrollBiometrics;
                                                 break;
                                         }
                                         return new AdapterPresentation(this, context);
@@ -557,15 +553,13 @@ namespace Neos.IdentityServer.MultiFactor
                 throw new ExternalAuthenticationException(usercontext.UPN + " : " + ex.Message, context);
             }
             return result;
-            #endregion
         }
 
         /// <summary>
-        /// TryRegistration method implementation
+        /// TryManageOptions method implementation
         /// </summary>
-        private IAdapterPresentation TryRegistration(AuthenticationContext usercontext, IAuthenticationContext context, IProofData proofData, System.Net.HttpListenerRequest request, out System.Security.Claims.Claim[] claims)
+        private IAdapterPresentation TryManageOptions(AuthenticationContext usercontext, IAuthenticationContext context, IProofData proofData, System.Net.HttpListenerRequest request, out System.Security.Claims.Claim[] claims)
         {
-            #region Registration
             ResourcesLocale Resources = new ResourcesLocale(context.Lcid);
             claims = new Claim[] { GetAuthMethodClaim(usercontext.SelectedMethod) };
             IAdapterPresentation result = null;
@@ -583,36 +577,28 @@ namespace Neos.IdentityServer.MultiFactor
                     case 1:  // OK
                         {
                             string error = string.Empty;
-                            int page = 0;
                             if (proofData.Properties.ContainsKey("selectopt"))
-                                page = Convert.ToInt32(proofData.Properties["selectopt"].ToString());
-                            else
-                                page = (int)Config.DefaultProviderMethod;
+                            {
+                                PreferredMethod m = (PreferredMethod)Convert.ToInt32(proofData.Properties["selectopt"].ToString());
+
+                                usercontext.PreferredMethod = m;
+                            }
                             try
                             {
-                                ValidateUserOptions(usercontext, context, proofData, Resources, page, true, true);
+                                ValidateUserOptions(usercontext, context, proofData, Resources, true);
                             }
                             catch (Exception ex)
                             {
                                 error = ex.Message;
-                                usercontext.PageID = page;
                                 return new AdapterPresentation(this, context, ex.Message, false);
                             }
-
-                            usercontext.PreferredMethod = (PreferredMethod)page;
-                            usercontext.UIMode = ProviderPageMode.SelectOptions;
-
-                            UpdateProviderOverrideOption(usercontext, context, proofData);
-                            RuntimeRepository.SetUserRegistration(Config, (Registration)usercontext, usercontext.KeyStatus!=SecretKeyStatus.Success);
-                            ValidateProviderManagementUrl(usercontext, context, proofData);
-
+                            RuntimeRepository.SetUserRegistration(Config, (Registration)usercontext, usercontext.KeyStatus != SecretKeyStatus.Success);
                             usercontext.UIMode = ProviderPageMode.SelectOptions;
                             result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Informations, "InfosConfigurationModified"));
                             break;
                         }
                     case 2:  // Cancel   
                         {
-                            ValidateProviderManagementUrl(usercontext, context, proofData);
                             usercontext.UIMode = ProviderPageMode.SelectOptions;
                             result = new AdapterPresentation(this, context);
                             break;
@@ -621,60 +607,347 @@ namespace Neos.IdentityServer.MultiFactor
                         {
                             usercontext.WizPageID = 0;
                             usercontext.UIMode = ProviderPageMode.EnrollOTP;
-                            result = new AdapterPresentation(this, context, ProviderPageMode.Registration);
+                            result = new AdapterPresentation(this, context, ProviderPageMode.ManageOptions);
                             break;
                         }
                     case 4:
                         {
                             usercontext.WizPageID = 0;
                             usercontext.UIMode = ProviderPageMode.EnrollEmail;
-                            result = new AdapterPresentation(this, context, ProviderPageMode.Registration);
+                            result = new AdapterPresentation(this, context, ProviderPageMode.ManageOptions);
                             break;
                         }
                     case 5:
                         {
-                            UpdateSMSProviderSelectedAuthenticationMethod(usercontext, context, proofData);
                             usercontext.WizPageID = 0;
                             usercontext.UIMode = ProviderPageMode.EnrollPhone;
-                            result = new AdapterPresentation(this, context, ProviderPageMode.Registration);
+                            result = new AdapterPresentation(this, context, ProviderPageMode.ManageOptions);
                             break;
                         }
                     case 6:
                         {
                             usercontext.WizPageID = 0;
                             usercontext.UIMode = ProviderPageMode.EnrollBiometrics;
-                            result = new AdapterPresentation(this, context, ProviderPageMode.Registration);
+                            result = new AdapterPresentation(this, context, ProviderPageMode.ManageOptions);
                             break;
                         }
                     case 7:
                         {
                             usercontext.WizPageID = 0;
                             usercontext.UIMode = ProviderPageMode.EnrollPin;
-                            result = new AdapterPresentation(this, context, ProviderPageMode.Registration);
+                            result = new AdapterPresentation(this, context, ProviderPageMode.ManageOptions);
                             break;
                         }
                     default: // Option frame changed
                         {
                             string error = string.Empty;
-                            int page = Convert.ToInt32(proofData.Properties["selectpage"].ToString());
                             try
                             {
-                                ValidateUserOptions(usercontext, context, proofData, Resources, page, true);
-                                UpdateProviderOverrideOption(usercontext, context, proofData);
+                                ValidateUserOptions(usercontext, context, proofData, Resources, true);
                             }
                             catch (Exception ex)
                             {
                                 error = ex.Message;
-                            } 
-
-                            usercontext.PageID = page;
-                            usercontext.UIMode = ProviderPageMode.Registration;
+                            }
+                            usercontext.UIMode = ProviderPageMode.ManageOptions;
                             if (string.IsNullOrEmpty(error))
                                 result = new AdapterPresentation(this, context);
                             else
                                 result = new AdapterPresentation(this, context, error, false);
                             break;
                         }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new ExternalAuthenticationException(usercontext.UPN + " : " + ex.Message, context);
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// TryRegistration method implementation
+        /// </summary>
+        private IAdapterPresentation TryRegistration(AuthenticationContext usercontext, IAuthenticationContext context, IProofData proofData, System.Net.HttpListenerRequest request, out System.Security.Claims.Claim[] claims)
+        {
+            ResourcesLocale Resources = new ResourcesLocale(context.Lcid);
+            claims = new Claim[] { GetAuthMethodClaim(usercontext.SelectedMethod) };
+            IAdapterPresentation result = null;
+            usercontext.KeyChanged = false;
+            try
+            {
+                int isprovider = Convert.ToInt32(proofData.Properties["isprovider"].ToString());
+                int btnclicked = Convert.ToInt32(proofData.Properties["btnclicked"].ToString());
+                bool skipwizard = (btnclicked==6);
+                usercontext.KeyChanged = false;
+                switch (isprovider)
+                {
+                    case (int)PreferredMethod.Choose:
+                        {
+                            if (btnclicked == 1) // Initial Cancel Registration
+                            {
+                                usercontext.UIMode = ProviderPageMode.Bypass;
+                                result = new AdapterPresentation(this, context);
+                            }
+                            else if (btnclicked == 2)
+                            {
+                                usercontext.EnrollPageStatus = EnrollPageStatus.Run;
+                                usercontext.UIMode = ProviderPageMode.Registration;
+                                result = new AdapterPresentation(this, context);
+                            }
+                            else if (btnclicked == 3) // OK
+                            {
+                                usercontext.UIMode = ProviderPageMode.Registration;
+                                usercontext.EnrollPageStatus = EnrollPageStatus.Stop;
+                                result = new AdapterPresentation(this, context);
+                            }
+                            else if (btnclicked == 5)
+                            {
+                                usercontext.UIMode = ProviderPageMode.Bypass;
+                                usercontext.Enabled = true;
+                                RuntimeRepository.SetUserRegistration(Config, (Registration)usercontext, usercontext.KeyStatus != SecretKeyStatus.Success);
+                                result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Informations, "InfosConfigurationModified"));
+                            }
+                            else if (btnclicked == 6)
+                            {
+                                usercontext.UIMode = ProviderPageMode.Registration;
+                                usercontext.EnrollPageStatus = EnrollPageStatus.Run;
+                                result = new AdapterPresentation(this, context);
+                            }
+                            else if (btnclicked == 7)
+                            {
+                                usercontext.UIMode = ProviderPageMode.Locking;
+                                result = new AdapterPresentation(this, context, ProviderPageMode.DefinitiveError);
+                            }
+                            break;
+                        }
+                    case (int)PreferredMethod.Code:
+                        {
+                            usercontext.WizPageID = 0;
+                            usercontext.UIMode = ProviderPageMode.EnrollOTP;
+                            result = new AdapterPresentation(this, context, ProviderPageMode.Registration);
+                            break;
+                        }
+                    case (int)PreferredMethod.Email:
+                        {
+                            usercontext.WizPageID = 0;
+                            if (skipwizard) // Skip
+                            {
+                                usercontext.UIMode = ProviderPageMode.Registration;
+                                usercontext.EnrollPageID = PreferredMethod.Email;
+                                result = new AdapterPresentation(this, context);
+                            }
+                            else
+                            {
+                                usercontext.UIMode = ProviderPageMode.EnrollEmail;
+                                result = new AdapterPresentation(this, context, ProviderPageMode.Registration);
+                            }
+                            break;
+                        }
+                    case (int)PreferredMethod.External:
+                        {
+                            usercontext.WizPageID = 0;
+                            if (skipwizard) // Skip
+                            {
+                                usercontext.UIMode = ProviderPageMode.Registration;
+                                usercontext.EnrollPageID = PreferredMethod.External;
+                                result = new AdapterPresentation(this, context);
+                            }
+                            else
+                            {
+                                usercontext.UIMode = ProviderPageMode.EnrollPhone;
+                                result = new AdapterPresentation(this, context, ProviderPageMode.Registration);
+                            }
+                            break;
+                        }
+                    case (int)PreferredMethod.Biometrics:
+                        {
+                            usercontext.WizPageID = 0;
+                            if (skipwizard) // Skip
+                            {
+                                usercontext.UIMode = ProviderPageMode.Registration;
+                                usercontext.EnrollPageID = PreferredMethod.Biometrics;
+                                result = new AdapterPresentation(this, context);
+                            }
+                            else
+                            {
+                                usercontext.UIMode = ProviderPageMode.EnrollBiometrics;
+                                result = new AdapterPresentation(this, context, ProviderPageMode.Registration);
+                            }
+                            break;
+                        }
+                    case (int)PreferredMethod.Pin:
+                        {
+                            usercontext.WizPageID = 0;
+                            if (skipwizard) // Skip
+                            {
+                                usercontext.UIMode = ProviderPageMode.Registration;
+                                usercontext.EnrollPageID = PreferredMethod.Pin;
+                                result = new AdapterPresentation(this, context);
+                            }
+                            else
+                            {
+                                usercontext.UIMode = ProviderPageMode.EnrollPin;
+                                result = new AdapterPresentation(this, context, ProviderPageMode.Registration);
+                            }
+                            break;
+                        }
+                    case (int)PreferredMethod.None:
+                        usercontext.UIMode = ProviderPageMode.Registration;
+                        usercontext.EnrollPageStatus = EnrollPageStatus.Stop;
+                        result = new AdapterPresentation(this, context);
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new ExternalAuthenticationException(usercontext.UPN + " : " + ex.Message, context);
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// TryInvitation method implementation
+        /// </summary>
+        private IAdapterPresentation TryInvitation(AuthenticationContext usercontext, IAuthenticationContext context, IProofData proofData, System.Net.HttpListenerRequest request, out System.Security.Claims.Claim[] claims)
+        {
+            ResourcesLocale Resources = new ResourcesLocale(context.Lcid);
+            claims = new Claim[] { GetAuthMethodClaim(usercontext.SelectedMethod) };
+            IAdapterPresentation result = null;
+            usercontext.KeyChanged = false;
+            try
+            {
+                int isprovider = Convert.ToInt32(proofData.Properties["isprovider"].ToString());
+                int btnclicked = Convert.ToInt32(proofData.Properties["btnclicked"].ToString());
+                bool skipwizard = (btnclicked == 6);
+                usercontext.KeyChanged = false;
+                switch (isprovider)
+                {
+                    case (int)PreferredMethod.Choose:
+                        {
+                            if (btnclicked == 1) // Continue 
+                            {
+                                usercontext.UIMode = ProviderPageMode.Bypass;
+                                result = new AdapterPresentation(this, context, ProviderPageMode.DefinitiveError);
+                            }
+                            else if (btnclicked == 2)
+                            {
+                                usercontext.EnrollPageStatus = EnrollPageStatus.Run;
+                                usercontext.UIMode = ProviderPageMode.Invitation;
+                                result = new AdapterPresentation(this, context);
+                            }
+                            else if (btnclicked == 3) // OK
+                            {
+                                usercontext.UIMode = ProviderPageMode.Invitation;
+                                usercontext.EnrollPageStatus = EnrollPageStatus.Stop;
+                                result = new AdapterPresentation(this, context);
+                            }
+                            else if (btnclicked == 5)
+                            {
+                                usercontext.UIMode = ProviderPageMode.Bypass;
+                                usercontext.Enabled = false;
+                                RuntimeRepository.SetUserRegistration(Config, (Registration)usercontext, usercontext.KeyStatus != SecretKeyStatus.Success);
+
+                                if (Config.UserFeatures.InformationsRequired())
+                                {
+                                    usercontext.UIMode = ProviderPageMode.SendAdministrativeRequest;
+                                    result = new AdapterPresentation(this, context);
+                                }
+                                else
+                                {
+                                    usercontext.UIMode = ProviderPageMode.Locking;
+                                    result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorAccountNotEnabled"), ProviderPageMode.DefinitiveError);
+                                }
+                            }
+                            else if (btnclicked == 6)
+                            {
+                                usercontext.UIMode = ProviderPageMode.Invitation;
+                                usercontext.EnrollPageStatus = EnrollPageStatus.Run;
+                                result = new AdapterPresentation(this, context);
+                            }
+                            else if (btnclicked == 7) // Quit Invitation 
+                            {
+                                usercontext.UIMode = ProviderPageMode.Locking;
+                                result = new AdapterPresentation(this, context, ProviderPageMode.DefinitiveError);
+                            }
+                            break;
+                        }
+                    case (int)PreferredMethod.Code:
+                        {
+                            usercontext.WizPageID = 0;
+                            usercontext.UIMode = ProviderPageMode.EnrollOTP;
+                            result = new AdapterPresentation(this, context, ProviderPageMode.Invitation);
+                            break;
+                        }
+                    case (int)PreferredMethod.Email:
+                        {
+                            usercontext.WizPageID = 0;
+                            if (skipwizard) // Skip
+                            {
+                                usercontext.UIMode = ProviderPageMode.Invitation;
+                                usercontext.EnrollPageID = PreferredMethod.Email;
+                                result = new AdapterPresentation(this, context);
+                            }
+                            else
+                            {
+                                usercontext.UIMode = ProviderPageMode.EnrollEmail;
+                                result = new AdapterPresentation(this, context, ProviderPageMode.Invitation);
+                            }
+                            break;
+                        }
+                    case (int)PreferredMethod.External:
+                        {
+                            usercontext.WizPageID = 0;
+                            if (skipwizard) // Skip
+                            {
+                                usercontext.UIMode = ProviderPageMode.Invitation;
+                                usercontext.EnrollPageID = PreferredMethod.External;
+                                result = new AdapterPresentation(this, context);
+                            }
+                            else
+                            {
+                                usercontext.UIMode = ProviderPageMode.EnrollPhone;
+                                result = new AdapterPresentation(this, context, ProviderPageMode.Invitation);
+                            }
+                            break;
+                        }
+                    case (int)PreferredMethod.Biometrics:
+                        {
+                            usercontext.WizPageID = 0;
+                            if (skipwizard) // Skip
+                            {
+                                usercontext.UIMode = ProviderPageMode.Invitation;
+                                usercontext.EnrollPageID = PreferredMethod.Biometrics;
+                                result = new AdapterPresentation(this, context);
+                            }
+                            else
+                            {
+                                usercontext.UIMode = ProviderPageMode.EnrollBiometrics;
+                                result = new AdapterPresentation(this, context, ProviderPageMode.Invitation);
+                            }
+                            break;
+                        }
+                    case (int)PreferredMethod.Pin:
+                        {
+                            usercontext.WizPageID = 0;
+                            if (skipwizard) // Skip
+                            {
+                                usercontext.UIMode = ProviderPageMode.Invitation;
+                                usercontext.EnrollPageID = PreferredMethod.Pin;
+                                result = new AdapterPresentation(this, context);
+                            }
+                            else
+                            {
+                                usercontext.UIMode = ProviderPageMode.EnrollPin;
+                                result = new AdapterPresentation(this, context, ProviderPageMode.Invitation);
+                            }
+                            break;
+                        }
+                    case (int)PreferredMethod.None:
+                        usercontext.UIMode = ProviderPageMode.Invitation;
+                        usercontext.EnrollPageStatus = EnrollPageStatus.Stop;
+                        result = new AdapterPresentation(this, context);
+                        break;
                 }
             }
             catch (Exception ex)
@@ -688,139 +961,26 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// TryInvitation method implementation
         /// </summary>
-        private IAdapterPresentation TryInvitation(AuthenticationContext usercontext, IAuthenticationContext context, IProofData proofData, System.Net.HttpListenerRequest request, out System.Security.Claims.Claim[] claims)
+        private IAdapterPresentation TryActivation(AuthenticationContext usercontext, IAuthenticationContext context, IProofData proofData, System.Net.HttpListenerRequest request, out System.Security.Claims.Claim[] claims)
         {
             #region Invitation
             ResourcesLocale Resources = new ResourcesLocale(context.Lcid);
             claims = new Claim[] { GetAuthMethodClaim(usercontext.SelectedMethod) };
             IAdapterPresentation result = null;
-            usercontext.Enabled = false;
             usercontext.KeyChanged = false;
             try
             {
                 int btnclicked = Convert.ToInt32(proofData.Properties["btnclicked"].ToString());
-                switch (btnclicked)
-                {
-                    case 1:  // OK
-                        {
-                            string error = string.Empty;
-                            int page = 0;
-                            if (proofData.Properties.ContainsKey("selectopt"))
-                                page = Convert.ToInt32(proofData.Properties["selectopt"].ToString());
-                            else
-                                page = (int)Config.DefaultProviderMethod;
-                            try
-                            {
-                                ValidateUserOptions(usercontext, context, proofData, Resources, page, true, true);
-                            }
-                            catch (Exception ex)
-                            {
-                                error = ex.Message;
-                                usercontext.PageID = page;
-                                return new AdapterPresentation(this, context, ex.Message, false);
-                            }
-
-                            usercontext.PreferredMethod = (PreferredMethod)page;
-
-                            UpdateProviderOverrideOption(usercontext, context, proofData);
-                            RuntimeRepository.SetUserRegistration(Config, (Registration)usercontext, usercontext.KeyStatus!=SecretKeyStatus.Success);
-                            ValidateProviderManagementUrl(usercontext, context, proofData);
-
-                            if (Config.UserFeatures.IsRegistrationRequired())
-                            {
-                                usercontext.UIMode = ProviderPageMode.SendAdministrativeRequest;
-                                result = new AdapterPresentation(this, context);
-                            }
-                            else
-                            {
-                                usercontext.UIMode = ProviderPageMode.Locking;
-                                if (Config.UserFeatures.IsMFAAllowed() || Config.UserFeatures.IsRegistrationAllowed())
-                                    result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorAccountAuthorized"), ProviderPageMode.Bypass);
-                                else
-                                    result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorAccountNotEnabled"), ProviderPageMode.DefinitiveError);
-                            }
-                            break;
-                        }
-                    case 2:  // Cancel   
-                        {
-                            ValidateProviderManagementUrl(usercontext, context, proofData);
-                            if (usercontext.TargetUIMode == ProviderPageMode.Bypass)
-                            {
-                                usercontext.UIMode = ProviderPageMode.Locking;
-                                result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorAccountAuthorized"), ProviderPageMode.Bypass);
-                            }
-                            else
-                            {
-                                usercontext.UIMode = ProviderPageMode.Locking;
-                                result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorAccountNoAccess"), ProviderPageMode.DefinitiveError);
-                            }
-                            break;
-                        }
-                    case 3:
-                        {
-                            usercontext.WizPageID = 0;
-                            usercontext.UIMode = ProviderPageMode.EnrollOTP;
-                            result = new AdapterPresentation(this, context, ProviderPageMode.Invitation);
-                            break;
-                        }
-                    case 4:
-                        {
-                            usercontext.WizPageID = 0;
-                            usercontext.UIMode = ProviderPageMode.EnrollEmail;
-                            result = new AdapterPresentation(this, context, ProviderPageMode.Invitation);
-                            break;
-                        }
-                    case 5:
-                        {
-                            UpdateSMSProviderSelectedAuthenticationMethod(usercontext, context, proofData);
-                            usercontext.WizPageID = 0;
-                            usercontext.UIMode = ProviderPageMode.EnrollPhone;
-                            result = new AdapterPresentation(this, context, ProviderPageMode.Invitation);
-                            break;
-                        }
-                    case 6:
-                        {
-                            usercontext.WizPageID = 0;
-                            usercontext.UIMode = ProviderPageMode.EnrollBiometrics;
-                            result = new AdapterPresentation(this, context, ProviderPageMode.Invitation);
-                            break;
-                        }
-                    case 7:
-                        {
-                            usercontext.WizPageID = 0;
-                            usercontext.UIMode = ProviderPageMode.EnrollPin;
-                            result = new AdapterPresentation(this, context, ProviderPageMode.Invitation);
-                            break;
-                        }
-                    default: // Option frame changed
-                        {
-                            int page = Convert.ToInt32(proofData.Properties["selectpage"].ToString());
-                            string error = string.Empty;
-                            try
-                            {
-                                ValidateUserOptions(usercontext, context, proofData, Resources, page, true);
-                            }
-                            catch (Exception ex)
-                            {
-                                error = ex.Message;
-                            } 
-
-                            usercontext.PageID = page;
-                            usercontext.UIMode = ProviderPageMode.Invitation;
-                            if (string.IsNullOrEmpty(error))
-                                result = new AdapterPresentation(this, context);
-                            else
-                                result = new AdapterPresentation(this, context, error, false);
-                            break;
-                        }
-                }
+                usercontext.UIMode = ProviderPageMode.Bypass;
+                if (btnclicked == 2) // Enable account 
+                    RuntimeRepository.EnableUserRegistration(Config, (Registration)usercontext);
+                result = new AdapterPresentation(this, context);
             }
             catch (Exception ex)
             {
                 throw new ExternalAuthenticationException(usercontext.UPN + " : " + ex.Message, context);
             }
             return result;
-            #endregion
         }
 
         /// <summary>
@@ -848,28 +1008,32 @@ namespace Neos.IdentityServer.MultiFactor
                         switch (lnk)
                         {
                             case 1:
-                                usercontext.UIMode = ProviderPageMode.Registration;
+                                usercontext.UIMode = ProviderPageMode.ManageOptions;
                                 break;
                             case 2:
                                 usercontext.UIMode = ProviderPageMode.ChangePassword;
                                 break;
                             case 3:
-                                usercontext.UIMode = ProviderPageMode.EnrollOTPAndSave;
+                                usercontext.WizContext = WizardContextMode.DirectWizards;
+                                usercontext.UIMode = ProviderPageMode.EnrollOTP;
                                 break;
                             case 4:
-                                usercontext.UIMode = ProviderPageMode.EnrollBiometricsAndSave;
+                                usercontext.WizContext = WizardContextMode.DirectWizards;
+                                usercontext.UIMode = ProviderPageMode.EnrollBiometrics;
                                 break;
                             case 5:
-                                usercontext.UIMode = ProviderPageMode.EnrollEmailAndSave;
+                                usercontext.WizContext = WizardContextMode.DirectWizards;
+                                usercontext.UIMode = ProviderPageMode.EnrollEmail;
                                 break;
                             case 6:
-                                usercontext.UIMode = ProviderPageMode.EnrollPhoneAndSave;
+                                usercontext.WizContext = WizardContextMode.DirectWizards;
+                                usercontext.UIMode = ProviderPageMode.EnrollPhone;
                                 break;
                             case 7:
-                                usercontext.UIMode = ProviderPageMode.EnrollPinAndSave;
+                                usercontext.WizContext = WizardContextMode.DirectWizards;
+                                usercontext.UIMode = ProviderPageMode.EnrollPin;
                                 break;
                         }
-                        usercontext.PageID = 0;  
                         usercontext.WizPageID = 0;
                         result = new AdapterPresentation(this, context);
                     }
@@ -1109,16 +1273,20 @@ namespace Neos.IdentityServer.MultiFactor
                             switch (usercontext.FirstChoiceMethod)
                             {
                                 case PreferredMethod.Code:
-                                    usercontext.UIMode = ProviderPageMode.EnrollOTPForce;
+                                    usercontext.WizContext = WizardContextMode.ForceWizard;
+                                    usercontext.UIMode = ProviderPageMode.EnrollOTP;
                                     break;
                                 case PreferredMethod.Email:
-                                    usercontext.UIMode = ProviderPageMode.EnrollEmailForce;
+                                    usercontext.WizContext = WizardContextMode.ForceWizard;
+                                    usercontext.UIMode = ProviderPageMode.EnrollEmail;
                                     break;
                                 case PreferredMethod.External:
-                                    usercontext.UIMode = ProviderPageMode.EnrollPhoneForce;
+                                    usercontext.WizContext = WizardContextMode.ForceWizard;
+                                    usercontext.UIMode = ProviderPageMode.EnrollPhone;
                                     break;
                                 case PreferredMethod.Biometrics:
-                                    usercontext.UIMode = ProviderPageMode.EnrollBiometricsForce;
+                                    usercontext.WizContext = WizardContextMode.ForceWizard;
+                                    usercontext.UIMode = ProviderPageMode.EnrollBiometrics;
                                     break;
                             }
                             return new AdapterPresentation(this, context);
@@ -1144,76 +1312,16 @@ namespace Neos.IdentityServer.MultiFactor
             ResourcesLocale Resources = new ResourcesLocale(context.Lcid);
             try
             {
-                int btnclicked = Convert.ToInt32(proofData.Properties["btnclicked"].ToString());
                 ProviderPageMode lnk = usercontext.TargetUIMode;
-                if (btnclicked == 1)
+                switch (lnk)
                 {
-                    switch (lnk)
-                    {
-                        case ProviderPageMode.DefinitiveError:
-                            string msg = usercontext.UIMessage;
-                            throw new Exception(msg);
-                        default:
-                            usercontext.UIMode = usercontext.TargetUIMode;
-                            result = new AdapterPresentation(this, context, usercontext.UIMessage);
-                            break;
-                    }
-                }
-                else if (btnclicked == 2) // Invitation
-                {
-                    if (Config.UserFeatures.IsRegistrationRequired())
-                    {
-                        usercontext.UIMode = ProviderPageMode.Invitation;
-                        result = new AdapterPresentation(this, context);
-                    }
-                    else if (usercontext.TargetUIMode == ProviderPageMode.Bypass)
-                    {
-                        if (Config.UserFeatures.IsAdministrative())
-                            result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorAccountAdminAuthorized"), ProviderPageMode.DefinitiveError);
-                        else
-                            result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorAccountAuthorized"), ProviderPageMode.Bypass);
-                    }
-                    else if (usercontext.TargetUIMode == ProviderPageMode.DefinitiveError)
-                        result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorAccountNotEnabled"), ProviderPageMode.DefinitiveError);
-                }
-                else if (btnclicked == 3)  // Registration
-                {
-                    if (Config.UserFeatures.IsRegistrationAllowed())
-                    {
-                        usercontext.UIMode = ProviderPageMode.Registration;
-                        result = new AdapterPresentation(this, context);
-                    }
-                    else if (Config.UserFeatures.IsRegistrationMixed())
-                    {
-                        usercontext.UIMode = ProviderPageMode.Registration;
-                        result = new AdapterPresentation(this, context);
-                    }
-                    else if (usercontext.TargetUIMode == ProviderPageMode.Bypass)
-                    {
-                        if (Config.UserFeatures.IsAdministrative())
-                            result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorAccountAdminAuthorized"), ProviderPageMode.DefinitiveError);
-                        else
-                            result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorAccountAuthorized"), ProviderPageMode.Bypass);
-                    }
-                    else if (usercontext.TargetUIMode == ProviderPageMode.DefinitiveError)
-                        result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorAccountNotEnabled"), ProviderPageMode.DefinitiveError);
-                }
-                else if (btnclicked == 4)  // Enable / Disable Allowed
-                {
-                    if (Config.UserFeatures.IsMFAAllowed() && usercontext.IsRegistered)
-                    {
-                        usercontext.UIMode = ProviderPageMode.Registration;
-                        result = new AdapterPresentation(this, context);
-                    }
-                    else if (usercontext.TargetUIMode == ProviderPageMode.Bypass)
-                    {
-                        if (Config.UserFeatures.IsAdministrative())
-                            result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorAccountAdminAuthorized"), ProviderPageMode.DefinitiveError);
-                        else
-                            result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorAccountAuthorized"), ProviderPageMode.Bypass);
-                    }
-                    else if (usercontext.TargetUIMode == ProviderPageMode.DefinitiveError)
-                        result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorAccountNotEnabled"), ProviderPageMode.DefinitiveError);
+                    case ProviderPageMode.DefinitiveError:
+                        string msg = usercontext.UIMessage;
+                        throw new Exception(msg);
+                    default:
+                        usercontext.UIMode = usercontext.TargetUIMode;
+                        result = new AdapterPresentation(this, context, usercontext.UIMessage);
+                        break;
                 }
             }
             catch (Exception ex)
@@ -1388,13 +1496,13 @@ namespace Neos.IdentityServer.MultiFactor
 
                     if (Config.UserFeatures.IsMFANotRequired() || Config.UserFeatures.IsMFAAllowed()) // Bypass
                     {
-                        usercontext.UIMode = ProviderPageMode.Locking;
+                        usercontext.UIMode = ProviderPageMode.Bypass;
                         result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorAccountAuthorized"), ProviderPageMode.Bypass);
                     }
                     else  // Error Not Enabled
                     {
-                        usercontext.UIMode = ProviderPageMode.Invitation; 
-                        result = new AdapterPresentation(this, context);
+                        usercontext.UIMode = ProviderPageMode.Locking; 
+                        result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Html, "ErrorAccountNotEnabled"), ProviderPageMode.DefinitiveError);
                     }
                 }
                 else // Error
@@ -1462,7 +1570,7 @@ namespace Neos.IdentityServer.MultiFactor
                 usercontext.KeyChanged = false;
                 if (usercontext.Enabled)
                 {
-                    usercontext.UIMode = ProviderPageMode.Registration;
+                    usercontext.UIMode = ProviderPageMode.ManageOptions;
                 }
                 else
                 {
@@ -1481,7 +1589,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// TryEnrollOTP implementation
         /// </summary>
-        private IAdapterPresentation TryEnrollOTP(AuthenticationContext usercontext, IAuthenticationContext context, IProofData proofData, System.Net.HttpListenerRequest request, out Claim[] claims, bool forcesave = false)
+        private IAdapterPresentation TryEnrollOTP(AuthenticationContext usercontext, IAuthenticationContext context, IProofData proofData, System.Net.HttpListenerRequest request, out Claim[] claims)
         {
             ResourcesLocale Resources = new ResourcesLocale(context.Lcid);
             claims = new Claim[] { GetAuthMethodClaim(usercontext.SelectedMethod) };
@@ -1490,7 +1598,9 @@ namespace Neos.IdentityServer.MultiFactor
             try
             {
                 int btnclicked = Convert.ToInt32(proofData.Properties["btnclicked"].ToString());
-                usercontext.KeyChanged = false;                
+                object rem = null;
+                bool remember = proofData.Properties.TryGetValue("remember", out rem);
+                usercontext.KeyChanged = false;
 
                 switch (btnclicked)
                 {
@@ -1498,23 +1608,26 @@ namespace Neos.IdentityServer.MultiFactor
                         if (usercontext.TargetUIMode == ProviderPageMode.Registration)
                         {
                             usercontext.UIMode = ProviderPageMode.Registration;
-                            usercontext.TargetUIMode = ProviderPageMode.Bypass;
                         }
                         else if (usercontext.TargetUIMode == ProviderPageMode.Invitation)
                         {
                             usercontext.UIMode = ProviderPageMode.Invitation;
-                            if (Config.UserFeatures.IsMFARequired())
-                                usercontext.TargetUIMode = ProviderPageMode.Locking;
-                            else
-                                usercontext.TargetUIMode = ProviderPageMode.Bypass;
                         }
-                        else 
+                        else if (usercontext.TargetUIMode == ProviderPageMode.ManageOptions)
+                        {
+                            usercontext.UIMode = ProviderPageMode.ManageOptions;
+                        }
+                        else
                             usercontext.UIMode = ProviderPageMode.SelectOptions;
 
                         return new AdapterPresentation(this, context);
                     case 2: // Next Button
                         usercontext.WizPageID = 1;
                         usercontext.KeyStatus = SecretKeyStatus.Success;
+                        if (remember)
+                            usercontext.PreferredMethod = PreferredMethod.Code;
+                        SetProviderOverrideOption(usercontext, context, proofData, PreferredMethod.Code);
+                        ValidateProviderManagementUrl(usercontext, context, proofData, PreferredMethod.Code);
                         if (!usercontext.NotificationSent)
                         {
                             MailUtilities.SendNotificationByEmail(Config, (Registration)usercontext, Config.MailProvider, Resources.Culture);
@@ -1524,59 +1637,52 @@ namespace Neos.IdentityServer.MultiFactor
                     case 3: // Code verification
                         try
                         {
-                            usercontext.SelectedMethod = AuthenticationResponseKind.PhoneAppOTP;
                             if ((int)AuthenticationResponseKind.Error == PostAuthenticationRequest(usercontext, PreferredMethod.Code))
                             {
                                 usercontext.WizPageID = 4;
-                                if (forcesave)
-                                    usercontext.UIMode = ProviderPageMode.EnrollOTPAndSave;
-                                else
-                                    usercontext.UIMode = ProviderPageMode.EnrollOTP;
+                                usercontext.UIMode = ProviderPageMode.EnrollOTP;
                                 return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelVERIFYOTPError"), false);
                             }
                             else
                             {
                                 usercontext.WizPageID = 2;
-                                if (forcesave)
-                                    usercontext.UIMode = ProviderPageMode.EnrollOTPAndSave;
-                                else
-                                    usercontext.UIMode = ProviderPageMode.EnrollOTP;
+                                usercontext.UIMode = ProviderPageMode.EnrollOTP;
                                 return new AdapterPresentation(this, context);
                             }
                         }
                         catch (Exception ex)
                         {
-                            if (forcesave)
-                                usercontext.UIMode = ProviderPageMode.EnrollOTPAndSave;
-                            else
-                                usercontext.UIMode = ProviderPageMode.EnrollOTP;
+                            usercontext.UIMode = ProviderPageMode.EnrollOTP;
                             usercontext.WizPageID = 0;
                             return new AdapterPresentation(this, context, ex.Message, false);
                         }
                     case 4: // Code validation
                         string totp = proofData.Properties["totp"].ToString();
-                        usercontext.SelectedMethod = AuthenticationResponseKind.PhoneAppOTP;
                         if ((int)AuthenticationResponseKind.Error != SetAuthenticationResult(usercontext, totp, PreferredMethod.Code))
                         {
                             try
                             {
                                 ValidateUserKey(usercontext, context, proofData, Resources, true);
-                                if (forcesave)
-                                {
+                                if (usercontext.WizContext==WizardContextMode.DirectWizards)
                                     RuntimeRepository.SetUserRegistration(Config, (Registration)usercontext, usercontext.KeyStatus != SecretKeyStatus.Success);
-                                    usercontext.UIMode = ProviderPageMode.EnrollOTPAndSave;
+                                else if (usercontext.WizContext == WizardContextMode.Registration)
+                                {
+                                    usercontext.EnrollPageID = PreferredMethod.Code;
+                                    usercontext.UIMode = ProviderPageMode.Registration;
+                                }
+                                else if (usercontext.WizContext == WizardContextMode.Invitation)
+                                {
+                                    usercontext.EnrollPageID = PreferredMethod.Code;
+                                    usercontext.UIMode = ProviderPageMode.Invitation;
                                 }
                                 else
                                     usercontext.UIMode = ProviderPageMode.EnrollOTP;
                                 usercontext.WizPageID = 3;
-                                return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelVERIFYOTPSuccess"), true);
+                                return new AdapterPresentation(this, context, RuntimeAuthProvider.GetProvider(PreferredMethod.Code).GetUIEnrollValidatedLabel(usercontext), true);
                             }
                             catch (Exception)
                             {
-                                if (forcesave)
-                                    usercontext.UIMode = ProviderPageMode.EnrollOTPAndSave;
-                                else
-                                    usercontext.UIMode = ProviderPageMode.EnrollOTP;
+                                usercontext.UIMode = ProviderPageMode.EnrollOTP;
                                 usercontext.WizPageID = 4;
                                 return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelVERIFYOTPError"), false);
                             }
@@ -1584,10 +1690,7 @@ namespace Neos.IdentityServer.MultiFactor
                         else
                         {
                             usercontext.WizPageID = 4;
-                            if (forcesave)
-                                usercontext.UIMode = ProviderPageMode.EnrollOTPAndSave;
-                            else
-                                usercontext.UIMode = ProviderPageMode.EnrollOTP;
+                            usercontext.UIMode = ProviderPageMode.EnrollOTP;
                             return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelVERIFYOTPError"), false);
                         }
                 }
@@ -1609,10 +1712,7 @@ namespace Neos.IdentityServer.MultiFactor
                 }
                 else
                 {
-                    if (forcesave)
-                        usercontext.UIMode = ProviderPageMode.EnrollOTPAndSave;
-                    else
-                        usercontext.UIMode = ProviderPageMode.EnrollOTP;
+                    usercontext.UIMode = ProviderPageMode.EnrollOTP;
                     usercontext.WizPageID = 0;
                 }
                 return new AdapterPresentation(this, context, ex.Message, false);
@@ -1623,17 +1723,18 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// TryEnrollEmail implementation
         /// </summary>
-        private IAdapterPresentation TryEnrollEmail(AuthenticationContext usercontext, IAuthenticationContext context, IProofData proofData, System.Net.HttpListenerRequest request, out Claim[] claims, bool forcesave = false)
+        private IAdapterPresentation TryEnrollEmail(AuthenticationContext usercontext, IAuthenticationContext context, IProofData proofData, System.Net.HttpListenerRequest request, out Claim[] claims)
         {
             ResourcesLocale Resources = new ResourcesLocale(context.Lcid);
             claims = new Claim[] { GetAuthMethodClaim(usercontext.SelectedMethod) };
 
             usercontext.FirstChoiceMethod = PreferredMethod.Choose;
             try
-            {
+            {                               
                 int btnclicked = Convert.ToInt32(proofData.Properties["btnclicked"].ToString());
+                object rem = null;
+                bool remember = proofData.Properties.TryGetValue("remember", out rem);
                 usercontext.KeyChanged = false;
-              //  IExternalProvider prov = RuntimeAuthProvider.GetProvider(PreferredMethod.Email);
 
                 switch (btnclicked)
                 {
@@ -1644,15 +1745,14 @@ namespace Neos.IdentityServer.MultiFactor
                         if (usercontext.TargetUIMode == ProviderPageMode.Registration)
                         {
                             usercontext.UIMode = ProviderPageMode.Registration;
-                            usercontext.TargetUIMode = ProviderPageMode.Bypass;
                         }
                         else if (usercontext.TargetUIMode == ProviderPageMode.Invitation)
                         {
                             usercontext.UIMode = ProviderPageMode.Invitation;
-                            if (Config.UserFeatures.IsMFARequired())
-                                usercontext.TargetUIMode = ProviderPageMode.Locking;
-                            else
-                                usercontext.TargetUIMode = ProviderPageMode.Bypass;
+                        }
+                        else if (usercontext.TargetUIMode == ProviderPageMode.ManageOptions)
+                        {
+                            usercontext.UIMode = ProviderPageMode.ManageOptions;
                         }
                         else
                             usercontext.UIMode = ProviderPageMode.SelectOptions;
@@ -1662,6 +1762,10 @@ namespace Neos.IdentityServer.MultiFactor
                         {
                             usercontext.WizPageID = 1; // Goto Donut
                             ValidateUserEmail(usercontext, context, proofData, Resources, true);
+                            if (remember)
+                                usercontext.PreferredMethod = PreferredMethod.Email;
+                            SetProviderOverrideOption(usercontext, context, proofData, PreferredMethod.Email);
+                            ValidateProviderManagementUrl(usercontext, context, proofData, PreferredMethod.Email);
                             if (!usercontext.NotificationSent)
                             {
                                 MailUtilities.SendNotificationByEmail(Config, (Registration)usercontext, Config.MailProvider, Resources.Culture);
@@ -1671,10 +1775,7 @@ namespace Neos.IdentityServer.MultiFactor
                         }
                         catch (Exception ex)
                         {
-                            if (forcesave)
-                                usercontext.UIMode = ProviderPageMode.EnrollEmailAndSave;
-                            else
-                                usercontext.UIMode = ProviderPageMode.EnrollEmail;
+                            usercontext.UIMode = ProviderPageMode.EnrollEmail;
                             usercontext.WizPageID = 0;
                             return new AdapterPresentation(this, context, ex.Message, false);
                         }
@@ -1682,59 +1783,99 @@ namespace Neos.IdentityServer.MultiFactor
                         try
                         {
                             ValidateUserEmail(usercontext, context, proofData, Resources, true);
-                            usercontext.SelectedMethod = AuthenticationResponseKind.EmailOTP;
-                            if ((int)AuthenticationResponseKind.Error == PostAuthenticationRequest(usercontext, PreferredMethod.Email))
+                            IExternalProvider prov = RuntimeAuthProvider.GetProvider(PreferredMethod.Email);
+                            AuthenticationResponseKind kd = prov.GetOverrideMethod(usercontext);
+                            
+                            if (prov.SetSelectedAuthenticationMethod(usercontext, kd, true))
                             {
-                                usercontext.WizPageID = 4;
-                                if (forcesave)
-                                    usercontext.UIMode = ProviderPageMode.EnrollEmailAndSave;
-                                else
+                                int callres = PostAuthenticationRequest(usercontext, PreferredMethod.Email);
+                                if (callres == (int)AuthenticationResponseKind.Error)
+                                {
+                                    usercontext.WizPageID = 4;
                                     usercontext.UIMode = ProviderPageMode.EnrollEmail;
-                                return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelVERIFYOTPError"), false);
+                                    return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelVERIFYOTPError"), false);
+                                }
+                                else
+                                {
+                                    if (!usercontext.IsRemote) // ???
+                                    {
+                                        usercontext.WizPageID = 2;
+                                    }
+                                    else if (!usercontext.IsTwoWay)
+                                    {
+                                        usercontext.WizPageID = 2;
+                                    }
+                                    else
+                                    {
+                                        // Not very usefull for email provider, because OneWay transmission, but if you implement an IExternalProvider of Email Kind, you can make it TwoWay 
+                                        if ((int)AuthenticationResponseKind.Error != SetAuthenticationResult(usercontext, string.Empty, PreferredMethod.Email))
+                                        {
+                                            if (usercontext.WizContext == WizardContextMode.DirectWizards)
+                                                RuntimeRepository.SetUserRegistration(Config, (Registration)usercontext, false);
+                                            else if (usercontext.WizContext == WizardContextMode.Registration)
+                                            {
+                                                usercontext.EnrollPageID = PreferredMethod.Email;
+                                                usercontext.UIMode = ProviderPageMode.Registration;
+                                            }
+                                            else if (usercontext.WizContext == WizardContextMode.Invitation)
+                                            {
+                                                usercontext.EnrollPageID = PreferredMethod.Email;
+                                                usercontext.UIMode = ProviderPageMode.Invitation;
+                                            }
+                                            else
+                                                usercontext.UIMode = ProviderPageMode.EnrollEmail;
+                                            usercontext.WizPageID = 3;
+                                        }
+                                        else
+                                        {
+                                            usercontext.UIMode = ProviderPageMode.EnrollEmail;
+                                            usercontext.WizPageID = 4;
+                                        }
+                                    }
+                                    return new AdapterPresentation(this, context, RuntimeAuthProvider.GetProvider(PreferredMethod.Email).GetUIEnrollValidatedLabel(usercontext), true);
+                                }
                             }
                             else
-                            { 
-                                usercontext.WizPageID = 2;
-                                if (forcesave)
-                                    usercontext.UIMode = ProviderPageMode.EnrollEmailAndSave;
-                                else
-                                    usercontext.UIMode = ProviderPageMode.EnrollEmail;
-                                return new AdapterPresentation(this, context);
+                            {
+                                usercontext.WizPageID = 4;
+                                usercontext.UIMode = ProviderPageMode.EnrollEmail;
+                                return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelVERIFYOTPError"), false);
                             }
                         }
                         catch (Exception ex)
                         {
-                            if (forcesave)
-                                usercontext.UIMode = ProviderPageMode.EnrollEmailAndSave;
-                            else
-                                usercontext.UIMode = ProviderPageMode.EnrollEmail;
+                            usercontext.UIMode = ProviderPageMode.EnrollEmail;
                             usercontext.WizPageID = 0;
                             return new AdapterPresentation(this, context, ex.Message, false);
                         }
                     case 4: // Code Validation
                         string totp = proofData.Properties["totp"].ToString();
-                        usercontext.SelectedMethod = AuthenticationResponseKind.EmailOTP;
+
                         if ((int)AuthenticationResponseKind.Error != SetAuthenticationResult(usercontext, totp, PreferredMethod.Email))
                         {
                             try
                             {
                                 ValidateUserEmail(usercontext, context, proofData, Resources, true);
-                                if (forcesave)
-                                {
+                                if (usercontext.WizContext == WizardContextMode.DirectWizards)
                                     RuntimeRepository.SetUserRegistration(Config, (Registration)usercontext, false);
-                                    usercontext.UIMode = ProviderPageMode.EnrollEmailAndSave;
+                                else if (usercontext.WizContext == WizardContextMode.Registration)
+                                {
+                                    usercontext.EnrollPageID = PreferredMethod.Email;
+                                    usercontext.UIMode = ProviderPageMode.Registration;
+                                }
+                                else if (usercontext.WizContext == WizardContextMode.Invitation)
+                                {
+                                    usercontext.EnrollPageID = PreferredMethod.Email;
+                                    usercontext.UIMode = ProviderPageMode.Invitation;
                                 }
                                 else
                                     usercontext.UIMode = ProviderPageMode.EnrollEmail;
                                 usercontext.WizPageID = 3;
-                                return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelVERIFYOTPSuccess"), true);
+                                return new AdapterPresentation(this, context, RuntimeAuthProvider.GetProvider(PreferredMethod.Email).GetUIEnrollValidatedLabel(usercontext), true);
                             }
                             catch (Exception)
                             {
-                                if (forcesave)
-                                    usercontext.UIMode = ProviderPageMode.EnrollEmailAndSave;
-                                else
-                                    usercontext.UIMode = ProviderPageMode.EnrollEmail;
+                                usercontext.UIMode = ProviderPageMode.EnrollEmail;
                                 usercontext.WizPageID = 4;
                                 Registration reg = RuntimeRepository.GetUserRegistration(Config, usercontext.UPN); // Rollback
                                 usercontext.MailAddress = reg.MailAddress;
@@ -1744,10 +1885,7 @@ namespace Neos.IdentityServer.MultiFactor
                         else
                         {
                             usercontext.WizPageID = 4;
-                            if (forcesave)
-                                usercontext.UIMode = ProviderPageMode.EnrollEmailAndSave;
-                            else
-                                usercontext.UIMode = ProviderPageMode.EnrollEmail;
+                            usercontext.UIMode = ProviderPageMode.EnrollEmail;
                             Registration reg = RuntimeRepository.GetUserRegistration(Config, usercontext.UPN); // Rollback
                             usercontext.MailAddress = reg.MailAddress;
                             return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelVERIFYOTPError"), false);
@@ -1771,10 +1909,7 @@ namespace Neos.IdentityServer.MultiFactor
                 }
                 else
                 {
-                    if (forcesave)
-                        usercontext.UIMode = ProviderPageMode.EnrollEmailAndSave;
-                    else
-                        usercontext.UIMode = ProviderPageMode.EnrollEmail;
+                    usercontext.UIMode = ProviderPageMode.EnrollEmail;
                     usercontext.WizPageID = 0;
                 }
                 return new AdapterPresentation(this, context, ex.Message, false);
@@ -1785,7 +1920,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// TryEnrollPhone implementation
         /// </summary>
-        private IAdapterPresentation TryEnrollPhone(AuthenticationContext usercontext, IAuthenticationContext context, IProofData proofData, System.Net.HttpListenerRequest request, out Claim[] claims, bool forcesave = false)
+        private IAdapterPresentation TryEnrollPhone(AuthenticationContext usercontext, IAuthenticationContext context, IProofData proofData, System.Net.HttpListenerRequest request, out Claim[] claims)
         {
             ResourcesLocale Resources = new ResourcesLocale(context.Lcid);
             claims = new Claim[] { GetAuthMethodClaim(usercontext.SelectedMethod) };
@@ -1795,6 +1930,8 @@ namespace Neos.IdentityServer.MultiFactor
             try
             {
                 int btnclicked = Convert.ToInt32(proofData.Properties["btnclicked"].ToString());
+                object rem = null;
+                bool remember = proofData.Properties.TryGetValue("remember", out rem);
                 usercontext.KeyChanged = false;
 
                 switch (btnclicked)
@@ -1806,24 +1943,27 @@ namespace Neos.IdentityServer.MultiFactor
                         if (usercontext.TargetUIMode == ProviderPageMode.Registration)
                         {
                             usercontext.UIMode = ProviderPageMode.Registration;
-                            usercontext.TargetUIMode = ProviderPageMode.Bypass;
                         }
                         else if (usercontext.TargetUIMode == ProviderPageMode.Invitation)
                         {
                             usercontext.UIMode = ProviderPageMode.Invitation;
-                            if (Config.UserFeatures.IsMFARequired())
-                                usercontext.TargetUIMode = ProviderPageMode.Locking;
-                            else
-                                usercontext.TargetUIMode = ProviderPageMode.Bypass;
+                        }
+                        else if (usercontext.TargetUIMode == ProviderPageMode.ManageOptions)
+                        {
+                            usercontext.UIMode = ProviderPageMode.ManageOptions;
                         }
                         else
-                            usercontext.UIMode = ProviderPageMode.SelectOptions;
+                            usercontext.UIMode = ProviderPageMode.SelectOptions;                        
                         return new AdapterPresentation(this, context);
                     case 2: // Next Button
                         try
                         {
                             usercontext.WizPageID = 1; // Goto Donut
                             ValidateUserPhone(usercontext, context, proofData, Resources, true);
+                            if (remember)
+                                usercontext.PreferredMethod = PreferredMethod.External;
+                            SetProviderOverrideOption(usercontext, context, proofData, PreferredMethod.External);
+                            ValidateProviderManagementUrl(usercontext, context, proofData, PreferredMethod.External);
                             if (!usercontext.NotificationSent) 
                             {
                                 MailUtilities.SendNotificationByEmail(Config, (Registration)usercontext, Config.MailProvider, Resources.Culture);
@@ -1833,10 +1973,7 @@ namespace Neos.IdentityServer.MultiFactor
                         }
                         catch (Exception ex)
                         {
-                            if (forcesave)
-                                usercontext.UIMode = ProviderPageMode.EnrollPhoneAndSave;
-                            else
-                                usercontext.UIMode = ProviderPageMode.EnrollPhone;
+                            usercontext.UIMode = ProviderPageMode.EnrollPhone;
                             usercontext.WizPageID = 0;
                             return new AdapterPresentation(this, context, ex.Message, false);
                         }
@@ -1844,22 +1981,15 @@ namespace Neos.IdentityServer.MultiFactor
                         try
                         {
                             ValidateUserPhone(usercontext, context, proofData, Resources, true);
-                            AuthenticationResponseKind kd = AuthenticationResponseKind.Default;
                             IExternalProvider prov = RuntimeAuthProvider.GetProvider(PreferredMethod.External);
-                            if (prov.IsTwoWayByDefault)
-                                kd = AuthenticationResponseKind.SmsTwoWayOTP;
-                            else
-                                kd = AuthenticationResponseKind.SmsOneWayOTP;
-                            if (prov.SetSelectedAuthenticationMethod(usercontext, kd))
+                            AuthenticationResponseKind kd = prov.GetOverrideMethod(usercontext);
+                            if (prov.SetSelectedAuthenticationMethod(usercontext, kd, true))
                             { 
                                 int callres = PostAuthenticationRequest(usercontext, PreferredMethod.External);
                                 if (callres == (int)AuthenticationResponseKind.Error)
                                 {
                                     usercontext.WizPageID = 4;
-                                    if (forcesave)
-                                        usercontext.UIMode = ProviderPageMode.EnrollPhoneAndSave;
-                                    else
-                                        usercontext.UIMode = ProviderPageMode.EnrollPhone;
+                                    usercontext.UIMode = ProviderPageMode.EnrollPhone;
                                     return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelVERIFYOTPError"), false);
                                 }
                                 else
@@ -1875,33 +2005,42 @@ namespace Neos.IdentityServer.MultiFactor
                                     else
                                     {
                                         if ((int)AuthenticationResponseKind.Error != SetAuthenticationResult(usercontext, string.Empty, PreferredMethod.External))
+                                        {
+                                            if (usercontext.WizContext == WizardContextMode.DirectWizards)
+                                                RuntimeRepository.SetUserRegistration(Config, (Registration)usercontext, false);
+                                            else if (usercontext.WizContext == WizardContextMode.Registration)
+                                            {
+                                                usercontext.EnrollPageID = PreferredMethod.External;
+                                                usercontext.UIMode = ProviderPageMode.Registration;
+                                            }
+                                            else if (usercontext.WizContext == WizardContextMode.Invitation)
+                                            {
+                                                usercontext.EnrollPageID = PreferredMethod.External;
+                                                usercontext.UIMode = ProviderPageMode.Invitation;
+                                            }
+                                            else
+                                                usercontext.UIMode = ProviderPageMode.EnrollPhone;
                                             usercontext.WizPageID = 3;
+                                        }
                                         else
+                                        {
+                                            usercontext.UIMode = ProviderPageMode.EnrollPhone;
                                             usercontext.WizPageID = 4;
+                                        }
                                     }
-                                    if (forcesave)
-                                        usercontext.UIMode = ProviderPageMode.EnrollPhoneAndSave;
-                                    else
-                                        usercontext.UIMode = ProviderPageMode.EnrollPhone;
-                                    return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelVERIFYOTPSuccess"), true);
+                                    return new AdapterPresentation(this, context, RuntimeAuthProvider.GetProvider(PreferredMethod.External).GetUIEnrollValidatedLabel(usercontext), true);
                                 }
                             }
                             else
                             {
                                 usercontext.WizPageID = 4;
-                                if (forcesave)
-                                    usercontext.UIMode = ProviderPageMode.EnrollPhoneAndSave;
-                                else
-                                    usercontext.UIMode = ProviderPageMode.EnrollPhone;
+                                usercontext.UIMode = ProviderPageMode.EnrollPhone;
                                 return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelVERIFYOTPError"), false);
                             }
                         }
                         catch (Exception ex)
                         {
-                            if (forcesave)
-                                usercontext.UIMode = ProviderPageMode.EnrollPhoneAndSave;
-                            else
-                                usercontext.UIMode = ProviderPageMode.EnrollPhone;
+                            usercontext.UIMode = ProviderPageMode.EnrollPhone;
                             usercontext.WizPageID = 0;
                             return new AdapterPresentation(this, context, ex.Message, false);
                         }
@@ -1912,23 +2051,26 @@ namespace Neos.IdentityServer.MultiFactor
                             try
                             {
                                 ValidateUserPhone(usercontext, context, proofData, Resources, true);
-                                if (forcesave)
+                                if (usercontext.WizContext==WizardContextMode.DirectWizards)
+                                   RuntimeRepository.SetUserRegistration(Config, (Registration)usercontext, false);
+                                else if (usercontext.WizContext == WizardContextMode.Registration)
                                 {
-                                    RuntimeRepository.SetUserRegistration(Config, (Registration)usercontext, false);
-                                    usercontext.UIMode = ProviderPageMode.EnrollPhoneAndSave;
+                                    usercontext.EnrollPageID = PreferredMethod.External;
+                                    usercontext.UIMode = ProviderPageMode.Registration;
+                                }
+                                else if (usercontext.WizContext == WizardContextMode.Invitation)
+                                {
+                                    usercontext.EnrollPageID = PreferredMethod.External;
+                                    usercontext.UIMode = ProviderPageMode.Invitation;
                                 }
                                 else
                                     usercontext.UIMode = ProviderPageMode.EnrollPhone;
-
                                 usercontext.WizPageID = 3;
-                                return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelVERIFYOTPSuccess"), true);
+                                return new AdapterPresentation(this, context, RuntimeAuthProvider.GetProvider(PreferredMethod.External).GetUIEnrollValidatedLabel(usercontext), true);
                             }
                             catch (Exception)
                             {
-                                if (forcesave)
-                                    usercontext.UIMode = ProviderPageMode.EnrollPhoneAndSave;
-                                else
-                                    usercontext.UIMode = ProviderPageMode.EnrollPhone;
+                                usercontext.UIMode = ProviderPageMode.EnrollPhone;
                                 usercontext.WizPageID = 4;
                                 Registration reg = RuntimeRepository.GetUserRegistration(Config, usercontext.UPN); // Rollback
                                 usercontext.PhoneNumber = reg.PhoneNumber;
@@ -1938,10 +2080,7 @@ namespace Neos.IdentityServer.MultiFactor
                         else
                         {
                             usercontext.WizPageID = 4;
-                            if (forcesave)
-                                usercontext.UIMode = ProviderPageMode.EnrollPhoneAndSave;
-                            else
-                                usercontext.UIMode = ProviderPageMode.EnrollPhone;
+                            usercontext.UIMode = ProviderPageMode.EnrollPhone;
                             Registration reg = RuntimeRepository.GetUserRegistration(Config, usercontext.UPN); // Rollback
                             usercontext.PhoneNumber = reg.PhoneNumber;
                             return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelVERIFYOTPError"), false);
@@ -1965,10 +2104,7 @@ namespace Neos.IdentityServer.MultiFactor
                 }
                 else
                 {
-                    if (forcesave)
-                        usercontext.UIMode = ProviderPageMode.EnrollPhoneAndSave;
-                    else
-                        usercontext.UIMode = ProviderPageMode.EnrollPhone;
+                    usercontext.UIMode = ProviderPageMode.EnrollPhone;
                     usercontext.WizPageID = 0;
                 }
                 return new AdapterPresentation(this, context, ex.Message, false);
@@ -1979,7 +2115,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// TryEnrollBio implementation
         /// </summary>
-        private IAdapterPresentation TryEnrollBio(AuthenticationContext usercontext, IAuthenticationContext context, IProofData proofData, System.Net.HttpListenerRequest request, out Claim[] claims, bool forcesave = false)
+        private IAdapterPresentation TryEnrollBio(AuthenticationContext usercontext, IAuthenticationContext context, IProofData proofData, System.Net.HttpListenerRequest request, out Claim[] claims)
         {
             throw new NotImplementedException();
         }
@@ -1987,7 +2123,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// TryEnrollPinCode implementation
         /// </summary>
-        private IAdapterPresentation TryEnrollPinCode(AuthenticationContext usercontext, IAuthenticationContext context, IProofData proofData, System.Net.HttpListenerRequest request, out Claim[] claims, bool forcesave = false)
+        private IAdapterPresentation TryEnrollPinCode(AuthenticationContext usercontext, IAuthenticationContext context, IProofData proofData, System.Net.HttpListenerRequest request, out Claim[] claims)
         {
             ResourcesLocale Resources = new ResourcesLocale(context.Lcid);
             claims = new Claim[] { GetAuthMethodClaim(usercontext.SelectedMethod) };
@@ -2003,15 +2139,14 @@ namespace Neos.IdentityServer.MultiFactor
                         if (usercontext.TargetUIMode == ProviderPageMode.Registration)
                         {
                             usercontext.UIMode = ProviderPageMode.Registration;
-                            usercontext.TargetUIMode = ProviderPageMode.Bypass;
                         }
                         else if (usercontext.TargetUIMode == ProviderPageMode.Invitation)
                         {
                             usercontext.UIMode = ProviderPageMode.Invitation;
-                            if (Config.UserFeatures.IsMFARequired())
-                                usercontext.TargetUIMode = ProviderPageMode.Locking;
-                            else
-                                usercontext.TargetUIMode = ProviderPageMode.Bypass;
+                        }
+                        else if (usercontext.TargetUIMode == ProviderPageMode.ManageOptions)
+                        {
+                            usercontext.UIMode = ProviderPageMode.ManageOptions;
                         }
                         else
                             usercontext.UIMode = ProviderPageMode.SelectOptions;
@@ -2025,16 +2160,14 @@ namespace Neos.IdentityServer.MultiFactor
                                 usercontext.NotificationSent = true;
                             }
                             usercontext.WizPageID = 2;
+                            if (usercontext.PinCode <= 0)
+                                usercontext.PinCode = Config.DefaultPin;
                             ValidateUserPin(usercontext, context, proofData, Resources, true);
                             return new AdapterPresentation(this, context);
                         }
                         catch (Exception ex)
                         {
-                            if (forcesave)
-                                usercontext.UIMode = ProviderPageMode.EnrollPinAndSave;
-                            else
-                                usercontext.UIMode = ProviderPageMode.EnrollPin;
-
+                            usercontext.UIMode = ProviderPageMode.EnrollPin;
                             usercontext.WizPageID = 0;
                             return new AdapterPresentation(this, context, ex.Message, false);
                         }
@@ -2045,19 +2178,13 @@ namespace Neos.IdentityServer.MultiFactor
                             if (usercontext.PinCode != totp)
                             {
                                 usercontext.WizPageID = 4;
-                                if (forcesave)
-                                    usercontext.UIMode = ProviderPageMode.EnrollPinAndSave;
-                                else
-                                    usercontext.UIMode = ProviderPageMode.EnrollPin;
+                                usercontext.UIMode = ProviderPageMode.EnrollPin;
                                 return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelVERIFYOTPError"), false);
                             }
                             else
                             {
                                 usercontext.WizPageID = 3;
-                                if (forcesave)
-                                    usercontext.UIMode = ProviderPageMode.EnrollPinAndSave;
-                                else
-                                    usercontext.UIMode = ProviderPageMode.EnrollPin;
+                                usercontext.UIMode = ProviderPageMode.EnrollPin;
                                 return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelVERIFYOTPSuccess"), true);
                             }
                         }
@@ -2067,16 +2194,23 @@ namespace Neos.IdentityServer.MultiFactor
                         }
                     case 4: // Code validation
                         int totp2 = Convert.ToInt32(proofData.Properties["pincode"]);                           
-                        if (usercontext.PinCode != totp2)
+                        if (usercontext.PinCode == totp2)
                         {
                             try
                             {
-                                ValidatePINCode(totp2.ToString(), Resources, true);
-                                if (forcesave)
-                                {
+                               // ValidatePINCode(totp2.ToString(), Resources, true);
+                                ValidateUserPin(usercontext, context, proofData, Resources, true);
+                                if (usercontext.WizContext == WizardContextMode.DirectWizards)
                                     RuntimeRepository.SetUserRegistration(Config, (Registration)usercontext, false);
-                                  // usercontext.NeedNotification = true;
-                                    usercontext.UIMode = ProviderPageMode.EnrollPinAndSave;
+                                else if (usercontext.WizContext == WizardContextMode.Registration)
+                                {
+                                    usercontext.EnrollPageID = PreferredMethod.Pin;
+                                    usercontext.UIMode = ProviderPageMode.Registration;
+                                }
+                                else if (usercontext.WizContext == WizardContextMode.Invitation)
+                                {
+                                    usercontext.EnrollPageID = PreferredMethod.Pin;
+                                    usercontext.UIMode = ProviderPageMode.Invitation;
                                 }
                                 else
                                     usercontext.UIMode = ProviderPageMode.EnrollPin;
@@ -2085,10 +2219,7 @@ namespace Neos.IdentityServer.MultiFactor
                             }
                             catch (Exception)
                             {
-                                if (forcesave)
-                                    usercontext.UIMode = ProviderPageMode.EnrollPinAndSave;
-                                else
-                                    usercontext.UIMode = ProviderPageMode.EnrollPin;
+                                usercontext.UIMode = ProviderPageMode.EnrollPin;
                                 Registration reg = RuntimeRepository.GetUserRegistration(Config, usercontext.UPN); // Rollback
                                 usercontext.PinCode = reg.PIN;
                                 return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelVERIFYOTPError"), false);
@@ -2097,10 +2228,7 @@ namespace Neos.IdentityServer.MultiFactor
                         else
                         {
                             usercontext.WizPageID = 4;
-                            if (forcesave)
-                                usercontext.UIMode = ProviderPageMode.EnrollPinAndSave;
-                            else
-                                usercontext.UIMode = ProviderPageMode.EnrollPin;
+                            usercontext.UIMode = ProviderPageMode.EnrollPin;
                             Registration reg = RuntimeRepository.GetUserRegistration(Config, usercontext.UPN); // Rollback
                             usercontext.PinCode = reg.PIN;
                             return new  AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelVERIFYOTPError"), false);
@@ -2124,71 +2252,25 @@ namespace Neos.IdentityServer.MultiFactor
                 }
                 else
                 {
-                    if (forcesave)
-                        usercontext.UIMode = ProviderPageMode.EnrollPinAndSave;
-                    else
-                        usercontext.UIMode = ProviderPageMode.EnrollPin;
+                    usercontext.UIMode = ProviderPageMode.EnrollPin;
                     usercontext.WizPageID = 1;
                 }
                 return new AdapterPresentation(this, context, ex.Message, false);
             }
             return null;
         }
+        #endregion
 
+        #region private methods
         /// <summary>
         /// ValidateUserOptions method implementation
         /// </summary>
-        private void ValidateUserOptions(AuthenticationContext usercontext, IAuthenticationContext context, IProofData proofData, ResourcesLocale Resources, int page, bool checkempty = false, bool validation = false)
+        private void ValidateUserOptions(AuthenticationContext usercontext, IAuthenticationContext context, IProofData proofData, ResourcesLocale Resources, bool checkempty = false)
         {
-            if (validation)
-            {
-                switch (page)
-                {
-                    case 0: // TOTP Key
-                        ValidateUserKey(usercontext, context, proofData, Resources, checkempty);
-                        ValidateUserEmail(usercontext, context, proofData, Resources, checkempty);
-                        ValidateUserPhone(usercontext, context, proofData, Resources, checkempty);
-                        ValidateUserPin(usercontext, context, proofData, Resources, checkempty);
-                        break;
-                    case 1: // Email
-                        ValidateUserEmail(usercontext, context, proofData, Resources, checkempty);
-                        ValidateUserKey(usercontext, context, proofData, Resources, checkempty);
-                        ValidateUserPhone(usercontext, context, proofData, Resources, checkempty);
-                        ValidateUserPin(usercontext, context, proofData, Resources, checkempty);
-
-                        break;
-                    case 2: // Phone
-                        ValidateUserPhone(usercontext, context, proofData, Resources, checkempty);
-                        ValidateUserKey(usercontext, context, proofData, Resources, checkempty);
-                        ValidateUserEmail(usercontext, context, proofData, Resources, checkempty);
-                        ValidateUserPin(usercontext, context, proofData, Resources, checkempty);
-                        break;
-                    case 5: //pin code
-                        ValidateUserPin(usercontext, context, proofData, Resources, checkempty);
-                        ValidateUserKey(usercontext, context, proofData, Resources, checkempty);
-                        ValidateUserEmail(usercontext, context, proofData, Resources, checkempty);
-                        ValidateUserPhone(usercontext, context, proofData, Resources, checkempty);
-                        break;
-                }
-            }
-            else
-            {
-                switch (page)
-                {
-                    case 0: // TOTP Key
-                        ValidateUserKey(usercontext, context, proofData, Resources, checkempty);
-                        break;
-                    case 1: // Email
-                        ValidateUserEmail(usercontext, context, proofData, Resources, checkempty);
-                        break;
-                    case 2: // Phone
-                        ValidateUserPhone(usercontext, context, proofData, Resources, checkempty);
-                        break;
-                    case 5: //pin code
-                        ValidateUserPin(usercontext, context, proofData, Resources, checkempty);
-                        break;
-                }
-            }
+            ValidateUserKey(usercontext, context, proofData, Resources, checkempty);
+            ValidateUserEmail(usercontext, context, proofData, Resources, checkempty);
+            ValidateUserPhone(usercontext, context, proofData, Resources, checkempty);
+            ValidateUserPin(usercontext, context, proofData, Resources, checkempty);
         }
 
         /// <summary>
@@ -2196,8 +2278,8 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         private void ValidateUserKey(AuthenticationContext usercontext, IAuthenticationContext context, IProofData proofData, ResourcesLocale Resources, bool checkempty = false)
         {
-
-            if (RuntimeAuthProvider.IsUIElementRequired(usercontext, RequiredMethodElements.KeyParameterRequired))
+            IExternalProvider prov = RuntimeAuthProvider.GetProviderInstance(PreferredMethod.Code);
+            if ((prov.Enabled) && (prov.IsRequired) && (prov.IsUIElementRequired(usercontext, RequiredMethodElements.KeyParameterRequired)))
             {
                 string displaykey = string.Empty;
 
@@ -2211,7 +2293,8 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         private void ValidateUserEmail(AuthenticationContext usercontext, IAuthenticationContext context, IProofData proofData, ResourcesLocale Resources, bool checkempty = false)
         {
-            if (RuntimeAuthProvider.IsUIElementRequired(usercontext, RequiredMethodElements.EmailParameterRequired))
+            IExternalProvider prov = RuntimeAuthProvider.GetProviderInstance(PreferredMethod.Email);
+            if ((prov.Enabled) && (prov.IsUIElementRequired(usercontext, RequiredMethodElements.EmailParameterRequired)))
             {
                 string email = string.Empty;
                 if (proofData.Properties.ContainsKey("email"))
@@ -2222,7 +2305,8 @@ namespace Neos.IdentityServer.MultiFactor
                 }
                 else
                     email = usercontext.MailAddress;
-                ValidateEmail(email, Resources, checkempty);
+                if ((prov.Enabled) && (prov.IsRequired))
+                    ValidateEmail(email, Resources, checkempty);
                 usercontext.MailAddress = email;
             }
         }
@@ -2232,9 +2316,10 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         private void ValidateUserPhone(AuthenticationContext usercontext, IAuthenticationContext context, IProofData proofData, ResourcesLocale Resources, bool checkempty = false)
         {
-            if (RuntimeAuthProvider.IsUIElementRequired(usercontext, RequiredMethodElements.PhoneParameterRequired))
+            string phone = string.Empty;
+            IExternalProvider prov = RuntimeAuthProvider.GetProviderInstance(PreferredMethod.External);
+            if ((prov.Enabled) && (prov.IsUIElementRequired(usercontext, RequiredMethodElements.PhoneParameterRequired)))
             {
-                string phone = string.Empty;
                 if (proofData.Properties.ContainsKey("phone"))
                 {
                     phone = proofData.Properties["phone"].ToString();
@@ -2243,7 +2328,8 @@ namespace Neos.IdentityServer.MultiFactor
                 }
                 else
                     phone = usercontext.PhoneNumber;
-                ValidatePhoneNumber(phone, Resources, checkempty);
+                if ((prov.Enabled) && (prov.IsRequired))
+                    ValidatePhoneNumber(phone, Resources, checkempty);
                 usercontext.PhoneNumber = phone;
             }
         }
@@ -2253,7 +2339,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         private void ValidateUserPin(AuthenticationContext usercontext, IAuthenticationContext context, IProofData proofData, ResourcesLocale Resources, bool checkempty = false)
         {
-            if (RuntimeAuthProvider.IsUIElementRequired(usercontext, RequiredMethodElements.PinParameterRequired))
+            if (RuntimeAuthProvider.IsPinCodeRequired(usercontext))
             {
                 string strpin = string.Empty;
                 if (proofData.Properties.ContainsKey("pincode"))
@@ -2272,21 +2358,24 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// ValidateAzureUrl method implementation
         /// </summary>
-        private void ValidateProviderManagementUrl(AuthenticationContext ctx, IAuthenticationContext context, IProofData proofData)
+        private void ValidateProviderManagementUrl(AuthenticationContext ctx, IAuthenticationContext context, IProofData proofData, PreferredMethod pageid)
         {
             if (proofData.Properties.ContainsKey("manageaccount"))
             {
                 object rem = null;
                 bool mgtaccount = proofData.Properties.TryGetValue("manageaccount", out rem);
-                switch (ctx.PageID)
+                switch (pageid)
                 {
-                    case 1: // Email IsMethodElementRequired
+                    case PreferredMethod.Code: // TOTP
+                        ctx.AccountManagementUrl = RuntimeAuthProvider.GetProvider(PreferredMethod.Code).GetAccountManagementUrl(ctx);
+                        break;
+                    case PreferredMethod.Email: // Email IsMethodElementRequired
                         ctx.AccountManagementUrl = RuntimeAuthProvider.GetProvider(PreferredMethod.Email).GetAccountManagementUrl(ctx);
                         break;
-                    case 2: // external API
+                    case PreferredMethod.External: // external API
                         ctx.AccountManagementUrl = RuntimeAuthProvider.GetProvider(PreferredMethod.External).GetAccountManagementUrl(ctx);
                         break;
-                    case 3: // Azure MFA
+                    case PreferredMethod.Azure: // Azure MFA
                         ctx.AccountManagementUrl = RuntimeAuthProvider.GetProvider(PreferredMethod.Azure).GetAccountManagementUrl(ctx);
                         break;
                 }
@@ -2297,9 +2386,9 @@ namespace Neos.IdentityServer.MultiFactor
         }
 
         /// <summary>
-        /// UpdateProviderOverrideOption method implementation
+        /// SetProviderOverrideOption method implementation
         /// </summary>
-        private void UpdateProviderOverrideOption(AuthenticationContext usercontext, IAuthenticationContext context, IProofData proofData)
+        private void SetProviderOverrideOption(AuthenticationContext usercontext, IAuthenticationContext context, IProofData proofData, PreferredMethod method)
         {
 
             if (proofData.Properties.ContainsKey("optionitem"))
@@ -2309,53 +2398,42 @@ namespace Neos.IdentityServer.MultiFactor
                 if (chk)
                 {
                     AuthenticationResponseKind kind = (AuthenticationResponseKind)Enum.Parse(typeof(AuthenticationResponseKind), rem.ToString());
-                    switch (usercontext.PageID)
+                    switch (method)
                     {
-                        case 1: // Email IsMethodElementRequired
+                        case PreferredMethod.Code: // Otp
+                            RuntimeAuthProvider.GetProvider(PreferredMethod.Code).SetOverrideMethod(usercontext, kind);
+                            break;
+                        case PreferredMethod.Email: // Email 
                             RuntimeAuthProvider.GetProvider(PreferredMethod.Email).SetOverrideMethod(usercontext, kind);
                             break;
-                        case 2: // external API
+                        case PreferredMethod.External: // External API
+                            switch (kind)
+                            {
+                                case AuthenticationResponseKind.SmsOTP:
+                                case AuthenticationResponseKind.SmsOneWayOTP:
+                                case AuthenticationResponseKind.SmsOneWayOTPplusPin:
+                                    kind = AuthenticationResponseKind.SmsOneWayOTP;
+                                    break;
+                                case AuthenticationResponseKind.SmsTwoWayOTP:
+                                case AuthenticationResponseKind.SmsTwoWayOTPplusPin:
+                                    kind = AuthenticationResponseKind.SmsTwoWayOTP;
+                                    break;
+                                default:
+                                    if (RuntimeAuthProvider.GetProvider(PreferredMethod.External).IsTwoWayByDefault)
+                                        kind = AuthenticationResponseKind.SmsTwoWayOTP;
+                                    else
+                                        kind = AuthenticationResponseKind.SmsOneWayOTP;
+                                    break;
+                            }
                             RuntimeAuthProvider.GetProvider(PreferredMethod.External).SetOverrideMethod(usercontext, kind);
                             break;
-                        case 3: // Azure MFA
+                        case PreferredMethod.Azure: // Azure MFA
                             RuntimeAuthProvider.GetProvider(PreferredMethod.Azure).SetOverrideMethod(usercontext, kind);
                             break;
                     }
                 }
             }
             return;
-        }
-
-        /// <summary>
-        /// UpdateSMSProviderSelectedAuthenticationMethod method implementation
-        /// </summary>
-        private void UpdateSMSProviderSelectedAuthenticationMethod(AuthenticationContext usercontext, IAuthenticationContext context, IProofData proofData)
-        {
-            object rem = null;
-            bool chk = proofData.Properties.TryGetValue("optionitem", out rem);
-            if (chk)
-            {
-                IExternalProvider prov = RuntimeAuthProvider.GetProvider(PreferredMethod.External);
-                AuthenticationResponseKind kind = (AuthenticationResponseKind)Enum.Parse(typeof(AuthenticationResponseKind), rem.ToString());
-                switch (kind)
-                {
-                    case AuthenticationResponseKind.SmsOTP:
-                    case AuthenticationResponseKind.SmsOneWayOTP:
-                    case AuthenticationResponseKind.SmsOneWayOTPplusPin:
-                        prov.SetSelectedAuthenticationMethod(usercontext, AuthenticationResponseKind.SmsOneWayOTP, true);
-                        break;
-                    case AuthenticationResponseKind.SmsTwoWayOTP:
-                    case AuthenticationResponseKind.SmsTwoWayOTPplusPin:
-                        prov.SetSelectedAuthenticationMethod(usercontext, AuthenticationResponseKind.SmsTwoWayOTP, true);
-                        break;
-                    default:
-                        if (prov.IsTwoWayByDefault)
-                           prov.SetSelectedAuthenticationMethod(usercontext, AuthenticationResponseKind.SmsTwoWayOTP);
-                        else
-                           prov.SetSelectedAuthenticationMethod(usercontext, AuthenticationResponseKind.SmsOneWayOTP);
-                        break;
-                }
-            }
         }
         #endregion
 
@@ -2472,7 +2550,6 @@ namespace Neos.IdentityServer.MultiFactor
         {
             try
             {
-
                 IExternalAdminProvider _provider = RuntimeAuthProvider.GetAdministrativeProvider(Config);
                 if (_provider != null)
                     return _provider.SetInscriptionResult(usercontext);
@@ -2485,7 +2562,7 @@ namespace Neos.IdentityServer.MultiFactor
                 return (int)AuthenticationResponseKind.Error;
             }
         }
-        #endregion
+#endregion
 
         #region Secret Key Provider
         /// <summary>
@@ -2543,9 +2620,9 @@ namespace Neos.IdentityServer.MultiFactor
                 return (int)AuthenticationResponseKind.Error;
             }
         }
-        #endregion
+#endregion
 
-        #region Private Methods
+        #region Other Private Methods
         /// <summary>
         /// GetAuthMethodClaim method implementation
         /// </summary>
@@ -2602,44 +2679,13 @@ namespace Neos.IdentityServer.MultiFactor
         }
 
         /// <summary>
-        /// ValidateUser method implementation
-        /// </summary>
-        private void ValidateUser(AuthenticationContext usercontext)
-        {
-            if (!KeysManager.ValidateKey(usercontext.UPN))
-                throw new CryptographicException(string.Format("SECURTY ERROR : Invalid Key for User {0}", usercontext.UPN));
-            Registration reg = RuntimeRepository.GetUserRegistration(Config, usercontext.UPN);
-            if (reg == null)
-                throw new Exception(string.Format("SECURTY ERROR : Invalid user {0}", usercontext.UPN));
-            if (RuntimeAuthProvider.IsProviderAvailableForUser(usercontext, PreferredMethod.Email))
-            {
-                if (string.IsNullOrEmpty(reg.MailAddress))
-                    throw new Exception(string.Format("SECURTY ERROR : Invalid user mail address {0}", usercontext.UPN));
-                if (string.IsNullOrEmpty(usercontext.MailAddress))
-                    throw new Exception(string.Format("SECURTY ERROR : Invalid user mail address {0}", usercontext.UPN));
-                if (!reg.MailAddress.ToLower().Equals(usercontext.MailAddress.ToLower()))
-                    throw new Exception(string.Format("SECURTY ERROR : Invalid user mail address {0}", usercontext.UPN));
-            }
-            if (RuntimeAuthProvider.IsProviderAvailable(usercontext, PreferredMethod.External))
-            {
-                if (string.IsNullOrEmpty(reg.PhoneNumber))
-                    throw new Exception(string.Format("SECURTY ERROR : Invalid user phone number {0}", usercontext.UPN));
-                if (string.IsNullOrEmpty(usercontext.PhoneNumber))
-                    throw new Exception(string.Format("SECURTY ERROR : Invalid user phone number {0}", usercontext.UPN));
-                if (!reg.PhoneNumber.ToLower().Equals(usercontext.PhoneNumber.ToLower()))
-                    throw new Exception(string.Format("SECURTY ERROR : Invalid user phone number {0}", usercontext.UPN));
-            }
-            return;
-        }
-
-        /// <summary>
         /// ValidateEmail method implementation
         /// </summary>
         private void ValidateEmail(string email, ResourcesLocale Resources, bool checkempty = false)
         {
             try
             {
-                if (!Utilities.ValidateEmail(email, Config.MailProvider.BlockedDomains, checkempty))
+                if (!Utilities.ValidateEmail(email, Config.MailProvider.AllowedDomains, Config.MailProvider.BlockedDomains, checkempty))
                     throw new Exception(Resources.GetString(ResourcesLocaleKind.Errors, "ErrorEmailException"));
                 else
                     return;
@@ -2807,6 +2853,5 @@ namespace Neos.IdentityServer.MultiFactor
             return Config.KeepMySelectedOptionOn;
         }
         #endregion
-
     }
 }

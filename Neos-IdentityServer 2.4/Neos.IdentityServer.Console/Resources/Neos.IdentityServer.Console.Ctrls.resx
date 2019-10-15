@@ -295,13 +295,16 @@
     <value>User Registration</value>
   </data>
   <data name="CTRLGLMFAREGISTER1" xml:space="preserve">
-    <value>Administrative - Registration made by the support</value>
+    <value>Administrative - Registration verified by support</value>
   </data>
   <data name="CTRLGLMFAREGISTER2" xml:space="preserve">
     <value>User - Registration made by the user</value>
   </data>
   <data name="CTRLGLMFAREGISTER3" xml:space="preserve">
     <value>Unmanaged - Contact Support</value>
+  </data>
+  <data name="CTRLGLMFAREGISTER4" xml:space="preserve">
+    <value>Mandatory - Registration made by support</value>
   </data>
   <data name="CTRLGLMFASTATUS" xml:space="preserve">
     <value>MFA Status</value>
@@ -359,6 +362,9 @@
   </data>
   <data name="CTRLPROVPIN" xml:space="preserve">
     <value>Pin code required</value>
+  </data>
+  <data name="CTRLPROVREQUIRED" xml:space="preserve">
+    <value>Required</value>
   </data>
   <data name="CTRLPROVWIZARD" xml:space="preserve">
     <value>Enrollement Wizard</value>

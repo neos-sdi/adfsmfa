@@ -15,6 +15,7 @@
 // https://github.com/neos-sdi/adfsmfa                                                                                                                                                      //
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
+#define smallsvr
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -22,8 +23,6 @@ using System.DirectoryServices;
 using System.DirectoryServices.ActiveDirectory;
 using System.IO;
 using System.IO.Pipes;
-using System.Linq;
-using System.Net;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Security.AccessControl;
 using System.Security.Principal;
@@ -35,6 +34,9 @@ namespace Neos.IdentityServer.MultiFactor
 {
     public delegate string OnNamedPipeEncryptEvent(string clearvalue);
     public delegate string OnNamedPipeDecryptEvent(string cryptedvalue);
+    public delegate byte[] OnNamedPipeEncryptBytesEvent(byte[] clearvalue);
+    public delegate byte[] OnNamedPipeDecryptBytesEvent(byte[] cryptedvalue);
+
     public delegate bool OnReloadConfigurationEvent(string requestor, string value);
     public delegate NamedPipeRegistryRecord OnRequestServerConfigurationEvent(string requestor);
     public delegate bool OnCheckForReplayEvent(NamedPipeNotificationReplayRecord record);
@@ -45,11 +47,18 @@ namespace Neos.IdentityServer.MultiFactor
     public class PipeServer
     {
         private NamedPipeServerStream ConfigPipeServer;
+#if smallsvr
         private static int numthreads = 1;
+#else
+        private static int numthreads = 4;
+#endif
         private bool MustExit = false;
 
         public event OnNamedPipeEncryptEvent OnEncrypt;
         public event OnNamedPipeDecryptEvent OnDecrypt;
+        public event OnNamedPipeEncryptBytesEvent OnEncryptBytes;
+        public event OnNamedPipeDecryptBytesEvent OnDecryptBytes;
+
         public event OnReloadConfigurationEvent OnReloadConfiguration;
         public event OnRequestServerConfigurationEvent OnRequestServerConfiguration;
         public event OnCheckForReplayEvent OnCheckForReplay;
@@ -86,23 +95,28 @@ namespace Neos.IdentityServer.MultiFactor
                 OnDecrypt += PipeServerOnDecrypt;
             if (this.OnEncrypt == null)
                 OnEncrypt += PipeServerOnEncrypt;
+            if (this.OnDecryptBytes == null)
+                OnDecryptBytes += PipeServerOnDecryptBytes;
+            if (this.OnEncryptBytes == null)
+                OnEncryptBytes += PipeServerOnEncryptBytes;
+
             try
             {
                 PipeSecurity pipeSecurity = CreatePipeServerSecurity();
                 ConfigPipeServer = new NamedPipeServerStream("adfsmfaconfig", PipeDirection.InOut, numthreads, PipeTransmissionMode.Message, PipeOptions.None, 0x4000, 0x4000, pipeSecurity, HandleInheritability.Inheritable, PipeAccessRights.ChangePermissions);
 
-                Thread[] threadservers = new Thread[numthreads];
+                Thread[] tasks = new Thread[numthreads];
 
                 for (int i = 0; i < numthreads; i++)
                 {
-                    threadservers[i] = new Thread(PipeServerConfigThread);
-                    threadservers[i].Start();
+                    tasks[i] = new Thread(PipeServerConfigThread);
+                    tasks[i].Start();
                 }
                 Thread.Sleep(250);
             }
             catch (Exception ex )
             {
-                LogForSlots.WriteEntry("PipeServer Start Error : " + ex.Message, EventLogEntryType.Error, 8888);
+                LogForSlots.WriteEntry("PipeServer Start Error : " + ex.Message, EventLogEntryType.Error, 8880);
             }
         }
 
@@ -122,7 +136,7 @@ namespace Neos.IdentityServer.MultiFactor
             }
             catch (Exception ex)
             {
-                LogForSlots.WriteEntry("PipeServer Stop Error : " + ex.Message, EventLogEntryType.Error, 8888);
+                LogForSlots.WriteEntry("PipeServer Stop Error : " + ex.Message, EventLogEntryType.Error, 8880);
                 if (ConfigPipeServer != null)
                     ConfigPipeServer.Close();
             }
@@ -142,7 +156,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         private string PipeServerOnEncrypt(string clearvalue)
         {
-            byte[] byt = DefaultEncrypt.XOREncryptOrDecrypt(System.Text.Encoding.UTF8.GetBytes(clearvalue), Proofkey);
+            byte[] byt = XORUtilities.XOREncryptOrDecrypt(System.Text.Encoding.UTF8.GetBytes(clearvalue), Proofkey);
             return System.Convert.ToBase64String(byt);
         }
 
@@ -151,14 +165,30 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         private string PipeServerOnDecrypt(string cryptedvalue)
         {
-            byte[] byt = DefaultEncrypt.XOREncryptOrDecrypt(System.Convert.FromBase64String(cryptedvalue), Proofkey);
+            byte[] byt = XORUtilities.XOREncryptOrDecrypt(System.Convert.FromBase64String(cryptedvalue), Proofkey);
             return System.Text.Encoding.UTF8.GetString(byt);
+        }
+
+        /// <summary>
+        /// PipeServerOnEncryptBytes method implementation
+        /// </summary>
+        private byte[] PipeServerOnEncryptBytes(byte[] clearvalue)
+        {
+            return XORUtilities.XOREncryptOrDecrypt(clearvalue, Proofkey);
+        }
+
+        /// <summary>
+        /// PipeServerOnDecryptBytes method implementation
+        /// </summary>
+        private byte[] PipeServerOnDecryptBytes(byte[] cryptedvalue)
+        {
+            return XORUtilities.XOREncryptOrDecrypt(cryptedvalue, Proofkey); 
         }
 
         /// <summary>
         /// PipeServerConfigThread method implmentation
         /// </summary>
-        private void PipeServerConfigThread(object data)
+        private void PipeServerConfigThread()
         {
             int threadId = Thread.CurrentThread.ManagedThreadId;
             try
@@ -172,7 +202,7 @@ namespace Neos.IdentityServer.MultiFactor
                         if (OnDecrypt(ss.ReadString()) == this.Proofkey)
                         {
                             ss.WriteString(this.OnEncrypt(Proofkey));
-                            object obj = ByteArrayToObject<object>(ss.ReadData());
+                            object obj = ByteArrayToObject<object>(OnDecryptBytes(ss.ReadData()));
 
                             if (obj is NamedPipeReloadConfigRecord)
                             {
@@ -180,8 +210,8 @@ namespace Neos.IdentityServer.MultiFactor
                                 bool b = false;
                                 if (OnReloadConfiguration != null)
                                 {
-                                    b = OnReloadConfiguration(encrypted.Requestor, OnDecrypt(encrypted.Message));
-                                    ss.WriteData(ObjectToByteArray<bool>(b));
+                                    b = OnReloadConfiguration(encrypted.Requestor, encrypted.Message);
+                                    ss.WriteData(OnEncryptBytes(ObjectToByteArray<bool>(b)));
                                 }
                             }
                             else if (obj is NamedPipeServerConfigRecord)
@@ -191,7 +221,7 @@ namespace Neos.IdentityServer.MultiFactor
                                 if (OnRequestServerConfiguration != null)
                                 {
                                     reg = OnRequestServerConfiguration(encrypted.Requestor);
-                                    ss.WriteData(ObjectToByteArray<NamedPipeRegistryRecord>(reg));
+                                    ss.WriteData(OnEncryptBytes(ObjectToByteArray<NamedPipeRegistryRecord>(reg)));
                                 }
                             }
                             else if (obj is NamedPipeNotificationReplayRecord)
@@ -207,22 +237,22 @@ namespace Neos.IdentityServer.MultiFactor
                                         if (OnCheckForRemoteReplay != null)
                                         {
                                             c = OnCheckForRemoteReplay(encrypted);
-                                            ss.WriteData(ObjectToByteArray<bool>(c));
+                                            ss.WriteData(OnEncryptBytes(ObjectToByteArray<bool>(c)));
                                         }
                                         else
-                                            ss.WriteData(ObjectToByteArray<bool>(b));
+                                            ss.WriteData(OnEncryptBytes(ObjectToByteArray<bool>(b)));
                                     }
                                     else if ((b) && (!encrypted.MustDispatch))
-                                        ss.WriteData(ObjectToByteArray<bool>(true));
+                                        ss.WriteData(OnEncryptBytes(ObjectToByteArray<bool>(true)));
                                     else
-                                        ss.WriteData(ObjectToByteArray<bool>(false));
+                                        ss.WriteData(OnEncryptBytes(ObjectToByteArray<bool>(false)));
                                 }
                             }
                         }
                     }
                     catch (IOException e)
                     {
-                        LogForSlots.WriteEntry("PipeServer Error : " + e.Message, EventLogEntryType.Error, 8888);
+                        LogForSlots.WriteEntry("PipeServer Error : " + e.Message, EventLogEntryType.Error, 8880);
                         ConfigPipeServer.Close();
                     }
                     finally
@@ -314,8 +344,10 @@ namespace Neos.IdentityServer.MultiFactor
         private List<string> _servers = new List<string>();
 
         public event OnNamedPipeEncryptEvent OnEncrypt;
-
         public event OnNamedPipeDecryptEvent OnDecrypt;
+        public event OnNamedPipeEncryptBytesEvent OnEncryptBytes;
+        public event OnNamedPipeDecryptBytesEvent OnDecryptBytes;
+
 
         /// <summary>
         /// PipeClient Constructor
@@ -385,38 +417,47 @@ namespace Neos.IdentityServer.MultiFactor
                     OnDecrypt += PipeClientOnDecrypt;
                 if (OnEncrypt == null)
                     OnEncrypt += PipeClientOnEncrypt;
+                if (OnDecryptBytes == null)
+                    OnDecryptBytes += PipeClientOnDecryptBytes;
+                if (OnEncryptBytes == null)
+                    OnEncryptBytes += PipeClientOnEncryptBytes;
 
                 Task<bool>[] taskArray = new Task<bool>[_servers.Count];
 
                 for (int i = 0; i < taskArray.Length; i++)
                 {
-                    NamedPipeClientStream ClientStream = new NamedPipeClientStream(_servers[i], "adfsmfaconfig", PipeDirection.InOut, PipeOptions.None, TokenImpersonationLevel.Impersonation);
-
-                    taskArray[i] = Task<bool>.Factory.StartNew(() =>
+                    string servername = _servers[i];
+                    taskArray[i] = Task<bool>.Factory.StartNew((svr) =>
                     {
+                        NamedPipeClientStream ClientStream = new NamedPipeClientStream(svr.ToString(), "adfsmfaconfig", PipeDirection.InOut, PipeOptions.None, TokenImpersonationLevel.Impersonation);
                         try
                         {
-                            ClientStream.Connect();
+                            ClientStream.Connect(3000);
                             PipeStreamData ss = new PipeStreamData(ClientStream);
                             ss.WriteString(OnEncrypt(Proofkey));
                             if (OnDecrypt(ss.ReadString()) == Proofkey)
                             {
-                                NamedPipeReloadConfigRecord xdata = new NamedPipeReloadConfigRecord(requestor, OnEncrypt(value));
-                                ss.WriteData(ObjectToByteArray(xdata));
-                                return ByteArrayToObject<bool>(ss.ReadData());
+                                NamedPipeReloadConfigRecord xdata = new NamedPipeReloadConfigRecord(requestor, value);
+                                ss.WriteData(OnEncryptBytes(ObjectToByteArray(xdata)));
+                                return ByteArrayToObject<bool>(OnDecryptBytes(ss.ReadData()));
                             }
                         }
                         catch (IOException e)
                         {
-                            LogForSlots.WriteEntry("PipeClient Error : " + e.Message, EventLogEntryType.Error, 8888);
-                            ClientStream.Close();
+                            LogForSlots.WriteEntry("PipeClient Error : " + e.Message, EventLogEntryType.Error, 8810);
+                            return false;
+                        }
+                        catch (TimeoutException e)
+                        {
+                            LogForSlots.WriteEntry("PipeClient Error : " + e.Message, EventLogEntryType.Error, 8811);
+                            return false;
                         }
                         finally
                         {
                             ClientStream.Close();
                         }
                         return false;
-                    });
+                    }, servername);
                 }
                 Task.WaitAll(taskArray);
                 for (int i = 0; i < taskArray.Length; i++)
@@ -430,7 +471,7 @@ namespace Neos.IdentityServer.MultiFactor
             }
             catch (Exception e)
             {
-                LogForSlots.WriteEntry("PipeClient Error : " + e.Message, EventLogEntryType.Error, 8888);
+                LogForSlots.WriteEntry("PipeClient Error : " + e.Message, EventLogEntryType.Error, 8889);
                 return false;
             }
             return true;
@@ -447,41 +488,47 @@ namespace Neos.IdentityServer.MultiFactor
                     OnDecrypt += PipeClientOnDecrypt;
                 if (OnEncrypt == null)
                     OnEncrypt += PipeClientOnEncrypt;
+                if (OnDecryptBytes == null)
+                    OnDecryptBytes += PipeClientOnDecryptBytes;
+                if (OnEncryptBytes == null)
+                    OnEncryptBytes += PipeClientOnEncryptBytes;
 
-                Task<NamedPipeRegistryRecord>task = null;
-
-                NamedPipeClientStream ClientStream = new NamedPipeClientStream(_servers[0], "adfsmfaconfig", PipeDirection.InOut, PipeOptions.None, TokenImpersonationLevel.Impersonation);
-                task = Task<NamedPipeRegistryRecord>.Factory.StartNew(() =>
+                string servername = _servers[0];
+                Task<NamedPipeRegistryRecord> task = Task<NamedPipeRegistryRecord>.Factory.StartNew((svr) =>
                 {
+                    NamedPipeClientStream ClientStream = new NamedPipeClientStream(svr.ToString(), "adfsmfaconfig", PipeDirection.InOut, PipeOptions.None, TokenImpersonationLevel.Impersonation);
                     try
                     {
-                        ClientStream.Connect();
+                        ClientStream.Connect(10000);
                         PipeStreamData ss = new PipeStreamData(ClientStream);
                         ss.WriteString(OnEncrypt(Proofkey));
                         if (OnDecrypt(ss.ReadString()) == Proofkey)
                         {
                             NamedPipeServerConfigRecord xdata = new NamedPipeServerConfigRecord(requestor);
-                            ss.WriteData(ObjectToByteArray(xdata));
-                            return ByteArrayToObject<NamedPipeRegistryRecord>(ss.ReadData());
+                            ss.WriteData(OnEncryptBytes(ObjectToByteArray(xdata)));
+                            return ByteArrayToObject<NamedPipeRegistryRecord>(OnDecryptBytes(ss.ReadData()));
                         }
                     }
                     catch (IOException e)
                     {
-                        LogForSlots.WriteEntry("PipeClient Error : " + e.Message, EventLogEntryType.Error, 8888);
-                        ClientStream.Close();
+                        LogForSlots.WriteEntry("PipeClient Error : " + e.Message, EventLogEntryType.Error, 8870);
+                    }
+                    catch (TimeoutException e)
+                    {
+                        LogForSlots.WriteEntry("PipeClient Error : " + e.Message, EventLogEntryType.Error, 8871);
                     }
                     finally
                     {
                         ClientStream.Close();
                     }
                     return default(NamedPipeRegistryRecord);
-                });               
+                }, servername);               
                 task.Wait();
                 return task.Result;
             }
             catch (Exception e)
             {
-                LogForSlots.WriteEntry("PipeClient Error : " + e.Message, EventLogEntryType.Error, 8888);
+                LogForSlots.WriteEntry("PipeClient Error : " + e.Message, EventLogEntryType.Error, 8889);
                 return default(NamedPipeRegistryRecord);
             }
         }
@@ -497,41 +544,49 @@ namespace Neos.IdentityServer.MultiFactor
                     OnDecrypt += PipeClientOnDecrypt;
                 if (OnEncrypt == null)
                     OnEncrypt += PipeClientOnEncrypt;
+                if (OnDecryptBytes == null)
+                    OnDecryptBytes += PipeClientOnDecryptBytes;
+                if (OnEncryptBytes == null)
+                    OnEncryptBytes += PipeClientOnEncryptBytes;
 
-                Task<bool> task = null;
-
-                NamedPipeClientStream ClientStream = new NamedPipeClientStream(_servers[0], "adfsmfaconfig", PipeDirection.InOut, PipeOptions.None, TokenImpersonationLevel.Impersonation);
-                task = Task<bool>.Factory.StartNew(() =>
+                string servername = _servers[0];
+                Task<bool> task = Task<bool>.Factory.StartNew((svr) =>
                 {
+                    NamedPipeClientStream ClientStream = new NamedPipeClientStream(svr.ToString(), "adfsmfaconfig", PipeDirection.InOut, PipeOptions.None, TokenImpersonationLevel.Impersonation);
                     try
                     {
-                        ClientStream.Connect();
+                        ClientStream.Connect(3000);
                         PipeStreamData ss = new PipeStreamData(ClientStream);
                         ss.WriteString(OnEncrypt(Proofkey));
                         if (OnDecrypt(ss.ReadString()) == Proofkey)
                         {
                             NamedPipeNotificationReplayRecord xdata = new NamedPipeNotificationReplayRecord(requestor);
-                            ss.WriteData(ObjectToByteArray(xdata));
-                            return ByteArrayToObject<bool>(ss.ReadData());
+                            ss.WriteData(OnEncryptBytes(ObjectToByteArray(xdata)));
+                            return ByteArrayToObject<bool>(OnDecryptBytes(ss.ReadData()));
                         }
                     }
                     catch (IOException e)
                     {
-                        LogForSlots.WriteEntry("PipeClient Error : " + e.Message, EventLogEntryType.Error, 8888);
-                        ClientStream.Close();
+                        LogForSlots.WriteEntry("PipeClient Error : " + e.Message, EventLogEntryType.Error, 8881);
+                        return true;
+                    }
+                    catch (TimeoutException e)
+                    {
+                        LogForSlots.WriteEntry("PipeClient Error : " + e.Message, EventLogEntryType.Error, 8882);
+                        return true;
                     }
                     finally
                     {
                         ClientStream.Close();
                     }
                     return false;
-                });
+                }, servername);
                 task.Wait();
                 return task.Result;
             }
             catch (Exception e)
             {
-                LogForSlots.WriteEntry("PipeClient Error : " + e.Message, EventLogEntryType.Error, 8888);
+                LogForSlots.WriteEntry("PipeClient Error : " + e.Message, EventLogEntryType.Error, 8889);
                 return false;
             }
         }
@@ -549,6 +604,10 @@ namespace Neos.IdentityServer.MultiFactor
                         OnDecrypt += PipeClientOnDecrypt;
                     if (OnEncrypt == null)
                         OnEncrypt += PipeClientOnEncrypt;
+                    if (OnDecryptBytes == null)
+                        OnDecryptBytes += PipeClientOnDecryptBytes;
+                    if (OnEncryptBytes == null)
+                        OnEncryptBytes += PipeClientOnEncryptBytes;
 
                     record.MustDispatch = false;
 
@@ -561,19 +620,24 @@ namespace Neos.IdentityServer.MultiFactor
                             NamedPipeClientStream ClientStream = new NamedPipeClientStream(svr.ToString(), "adfsmfaconfig", PipeDirection.InOut, PipeOptions.None, TokenImpersonationLevel.Impersonation);
                             try
                             {
-                                ClientStream.Connect();
+                                ClientStream.Connect(10000);
                                 PipeStreamData ss = new PipeStreamData(ClientStream);
                                 ss.WriteString(OnEncrypt(Proofkey));
                                 if (OnDecrypt(ss.ReadString()) == Proofkey)
                                 {
-                                    ss.WriteData(ObjectToByteArray(record));
-                                    return ByteArrayToObject<bool>(ss.ReadData());
+                                    ss.WriteData(OnEncryptBytes(ObjectToByteArray(record)));
+                                    return ByteArrayToObject<bool>(OnDecryptBytes(ss.ReadData()));
                                 }
                             }
                             catch (IOException e)
                             {
-                                LogForSlots.WriteEntry("PipeClient Error : " + e.Message, EventLogEntryType.Error, 8888);
-                                ClientStream.Close();
+                                LogForSlots.WriteEntry("PipeClient Error : " + e.Message, EventLogEntryType.Error, 8861);
+                                return true;
+                            }
+                            catch (TimeoutException e)
+                            {
+                                LogForSlots.WriteEntry("PipeClient Error : " + e.Message, EventLogEntryType.Error, 8862);
+                                return true;
                             }
                             finally
                             {
@@ -593,7 +657,7 @@ namespace Neos.IdentityServer.MultiFactor
             }
             catch (Exception e)
             {
-                LogForSlots.WriteEntry("PipeClient Error : " + e.Message, EventLogEntryType.Error, 8888);
+                LogForSlots.WriteEntry("PipeClient Error : " + e.Message, EventLogEntryType.Error, 8889);
                 return false;
             }
         }
@@ -604,7 +668,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         private string PipeClientOnEncrypt(string clearvalue)
         {
-            byte[] byt = DefaultEncrypt.XOREncryptOrDecrypt(System.Text.Encoding.UTF8.GetBytes(clearvalue), Proofkey);
+            byte[] byt = XORUtilities.XOREncryptOrDecrypt(System.Text.Encoding.UTF8.GetBytes(clearvalue), Proofkey);
             return System.Convert.ToBase64String(byt);
         }
 
@@ -613,9 +677,26 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         private string PipeClientOnDecrypt(string cryptedvalue)
         {
-            byte[] byt = DefaultEncrypt.XOREncryptOrDecrypt(System.Convert.FromBase64String(cryptedvalue), Proofkey);
+            byte[] byt = XORUtilities.XOREncryptOrDecrypt(System.Convert.FromBase64String(cryptedvalue), Proofkey);
             return System.Text.Encoding.UTF8.GetString(byt);
         }
+
+        /// <summary>
+        /// PipeClientOnDecryptBytes method implementation
+        /// </summary>
+        private byte[] PipeClientOnDecryptBytes(byte[] cryptedvalue)
+        {
+            return XORUtilities.XOREncryptOrDecrypt(cryptedvalue, Proofkey);
+        }
+
+        /// <summary>
+        /// PipeClientOnEncryptBytes method implementation
+        /// </summary>
+        private byte[] PipeClientOnEncryptBytes(byte[] clearvalue)
+        {
+            return XORUtilities.XOREncryptOrDecrypt(clearvalue, Proofkey);
+        }
+
 
         /// <summary>
         /// ObjectToByteArray method implementation
@@ -659,7 +740,7 @@ namespace Neos.IdentityServer.MultiFactor
             this.ioStream = ioStream;
         }
 
-        #region Strings methods
+#region Strings methods
         /// <summary>
         /// ReadString ReadData method implementation
         /// </summary>
@@ -692,9 +773,9 @@ namespace Neos.IdentityServer.MultiFactor
             ioStream.Flush();
             return outBuffer.Length + 2;
         }
-        #endregion
+#endregion
 
-        #region Bytes methods
+#region Bytes methods
         /// <summary>
         /// ReadData ReadData method implementation
         /// </summary>
@@ -725,23 +806,7 @@ namespace Neos.IdentityServer.MultiFactor
             ioStream.Flush();
             return outBuffer.Length + 2;
         }
-        #endregion
-    }
-
-    internal static class DefaultEncrypt
-    {
-        /// <summary>
-        /// XOREncryptOrDecrypt method
-        /// </summary>
-        internal static byte[] XOREncryptOrDecrypt(byte[] value, string secret)
-        {
-            byte[] xor = new byte[value.Length];
-            for (int i = 0; i < value.Length; i++)
-            {
-                xor[i] = (byte)(value[i] ^ secret[i % secret.Length]);
-            }
-            return xor;
-        }
+#endregion
     }
 
     /// <summary>

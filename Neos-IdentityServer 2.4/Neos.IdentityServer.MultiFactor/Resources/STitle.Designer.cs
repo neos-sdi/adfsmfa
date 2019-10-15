@@ -61,6 +61,15 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Activation required.
+        /// </summary>
+        internal static string ActivationPageTitle {
+            get {
+                return ResourceManager.GetString("ActivationPageTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Configuration Options.
         /// </summary>
         internal static string InvitationPageTitle {

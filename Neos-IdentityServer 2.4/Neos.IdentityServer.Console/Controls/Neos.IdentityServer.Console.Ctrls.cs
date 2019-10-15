@@ -400,6 +400,7 @@ namespace Neos.IdentityServer.Console.Controls
         private ErrorProvider errors;
         private CheckBox chkProviderEnabled;
         private CheckBox chkProviderEnroll;
+        private CheckBox chkProviderRequired;
         private CheckBox chkProviderPin;
         private Label lblProviderDesc;
 
@@ -498,17 +499,17 @@ namespace Neos.IdentityServer.Console.Controls
                 _provider = RuntimeAuthProvider.GetProviderInstance(this._kind);
 
                 this.Dock = DockStyle.Top;
-                this.Height = 75;
+                this.Height = 95;
                 this.Width = 760;
                 this.Margin = new Padding(30, 5, 30, 5);
 
                 _panel.Width = 20;
-                _panel.Height = 75;
+                _panel.Height = 95;
                 this.Controls.Add(_panel);
 
                 _txtpanel.Left = 20;
                 _txtpanel.Width = this.Width - 100;
-                _txtpanel.Height = 95;
+                _txtpanel.Height = 105;
                 _txtpanel.BackColor = System.Drawing.SystemColors.Control;
                 this.Controls.Add(_txtpanel);
 
@@ -535,6 +536,17 @@ namespace Neos.IdentityServer.Console.Controls
                 chkProviderEnabled.CheckedChanged += chkProviderChanged;
                 _txtpanel.Controls.Add(chkProviderEnabled);
 
+                chkProviderRequired = new CheckBox();
+                chkProviderRequired.Text = res.CTRLPROVREQUIRED;
+
+                chkProviderRequired.Checked = _provider.IsRequired;
+                chkProviderRequired.Enabled = (_provider.AllowDisable);
+                chkProviderRequired.Left = 510;
+                chkProviderRequired.Top = 30;
+                chkProviderRequired.Width = 300;
+                chkProviderRequired.CheckedChanged += chkProviderRequiredChanged;
+                _txtpanel.Controls.Add(chkProviderRequired);
+
                 chkProviderEnroll = new CheckBox();
                 chkProviderEnroll.Text = res.CTRLPROVWIZARD;
                 if (_provider.AllowEnrollment)
@@ -546,9 +558,11 @@ namespace Neos.IdentityServer.Console.Controls
                 {
                     chkProviderEnroll.Checked = false;
                     chkProviderEnroll.Enabled = false;
+                    chkProviderRequired.Checked = false;
+                    chkProviderRequired.Enabled = false;
                 }
                 chkProviderEnroll.Left = 510;
-                chkProviderEnroll.Top = 30;
+                chkProviderEnroll.Top = 50;
                 chkProviderEnroll.Width = 300;
                 chkProviderEnroll.CheckedChanged += chkProviderEnrollChanged;
                 _txtpanel.Controls.Add(chkProviderEnroll);
@@ -558,7 +572,7 @@ namespace Neos.IdentityServer.Console.Controls
                 chkProviderPin.Checked = _provider.PinRequired;
                 chkProviderPin.Enabled = _provider.Enabled;
                 chkProviderPin.Left = 510;
-                chkProviderPin.Top = 50;
+                chkProviderPin.Top = 70;
                 chkProviderPin.Width = 300;
                 chkProviderPin.CheckedChanged += chkProviderPinChanged;
                 _txtpanel.Controls.Add(chkProviderPin);
@@ -589,11 +603,13 @@ namespace Neos.IdentityServer.Console.Controls
 
                 lblProviderDesc.Text = _provider.Description;
                 chkProviderEnabled.Text = res.CTRLPROVACTIVE;
+                chkProviderRequired.Text = res.CTRLPROVREQUIRED;
                 chkProviderEnroll.Text = res.CTRLPROVWIZARD;
                 chkProviderPin.Text = res.CTRLPROVPIN;
 
                 chkProviderEnabled.Checked = _provider.Enabled;
                 chkProviderEnabled.Enabled = (_provider.AllowDisable);
+                chkProviderRequired.Enabled = (_provider.AllowDisable);
 
                 if (_provider.AllowEnrollment)
                     chkProviderEnroll.Checked = _provider.WizardEnabled;
@@ -605,6 +621,8 @@ namespace Neos.IdentityServer.Console.Controls
                 {
                     chkProviderEnroll.Checked = false;
                     chkProviderEnroll.Enabled = false;
+                    chkProviderRequired.Checked = false;
+                    chkProviderRequired.Enabled = false;
                 }
                 chkProviderPin.Checked = _provider.PinRequired;
                 chkProviderPin.Enabled = _provider.Enabled;
@@ -756,6 +774,57 @@ namespace Neos.IdentityServer.Console.Controls
                 this.Cursor = Cursors.Default;
             }
         }
+
+        /// <summary>
+        /// chkProviderRequiredChanged method implementation
+        /// </summary>
+        private void chkProviderRequiredChanged(object sender, EventArgs e)
+        {
+            this.Cursor = Cursors.WaitCursor;
+            try
+            {
+                switch (_kind)
+                {
+                    case PreferredMethod.Code:
+                        Config.OTPProvider.IsRequired = chkProviderRequired.Checked;
+                        chkProviderEnroll.Enabled = Config.OTPProvider.Enabled;
+                        chkProviderPin.Enabled = Config.OTPProvider.Enabled;
+                        break;
+                    case PreferredMethod.Email:
+                        Config.MailProvider.IsRequired = chkProviderRequired.Checked;
+                        chkProviderEnroll.Enabled = Config.MailProvider.Enabled;
+                        chkProviderPin.Enabled = Config.MailProvider.Enabled;
+
+                        break;
+                    case PreferredMethod.External:
+                        Config.ExternalProvider.IsRequired = chkProviderRequired.Checked;
+                        chkProviderEnroll.Enabled = Config.ExternalProvider.Enabled;
+                        chkProviderPin.Enabled = Config.ExternalProvider.Enabled;
+
+                        break;
+                    case PreferredMethod.Azure:
+                        Config.AzureProvider.IsRequired = chkProviderRequired.Checked;
+                        chkProviderEnroll.Enabled = false;
+                        chkProviderPin.Enabled = Config.AzureProvider.Enabled;
+                        break;
+                }
+                ManagementService.ADFSManager.SetDirty(true);
+            }
+            catch (Exception ex)
+            {
+                errors.SetError(chkProviderEnabled, ex.Message);
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
+                messageBoxParameters.Text = ex.Message;
+                messageBoxParameters.Buttons = MessageBoxButtons.OK;
+                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                this._snapin.Console.ShowDialog(messageBoxParameters);
+            }
+            finally
+            {
+                this.Cursor = Cursors.Default;
+            }
+        }
+
     }
 
     public partial class MFAProvidersValidationControl : Panel, IMMCRefreshData
@@ -1256,7 +1325,7 @@ namespace Neos.IdentityServer.Console.Controls
         private NamespaceSnapInBase _snapin;
         private Panel _panel;
         private Panel _txtpanel;
-        private bool unlocked = false;
+        private bool iscustom = false;
 
         // Controls
         private TextBox txtIssuer;
@@ -1272,6 +1341,7 @@ namespace Neos.IdentityServer.Console.Controls
         private RadioButton rdioREGAdmin;
         private RadioButton rdioREGUser;
         private RadioButton rdioREGUnManaged;
+        private RadioButton rdioREGREquired;
         private CheckBox chkAllowManageOptions;
         private CheckBox chkAllowChangePassword;
         private CheckBox chkAllowEnrollment;
@@ -1303,6 +1373,8 @@ namespace Neos.IdentityServer.Console.Controls
         private LinkLabel tblCancelConfig;
         private ComboBox cbConfigProvider;
         private Label lblConfigProvider;
+        private bool lockevents;
+        
 
 
         /// <summary>
@@ -1395,17 +1467,17 @@ namespace Neos.IdentityServer.Console.Controls
             try
             {
                 this.Dock = DockStyle.Top;
-                this.Height = 570;
+                this.Height = 590;
                 this.Width = 512;
                 this.Margin = new Padding(30, 5, 30, 5);
 
                 _panel.Width = 20;
-                _panel.Height = 450;
+                _panel.Height = 470;
                 this.Controls.Add(_panel);
 
                 _txtpanel.Left = 20;
                 _txtpanel.Width = this.Width - 20;
-                _txtpanel.Height = 450;
+                _txtpanel.Height = 470;
                 _txtpanel.BackColor = System.Drawing.SystemColors.Control;
                 this.Controls.Add(_txtpanel);
 
@@ -1578,8 +1650,8 @@ namespace Neos.IdentityServer.Console.Controls
                 _panelregmfa = new Panel();
                 _panelregmfa.Left = 0;
                 _panelregmfa.Top = 300;
-                _panelregmfa.Height = 115;
-                _panelregmfa.Width = 300;
+                _panelregmfa.Height = 135;
+                _panelregmfa.Width = 320;
                 _txtpanel.Controls.Add(_panelregmfa);
 
                 rdioREGLabel = new Label();
@@ -1612,6 +1684,14 @@ namespace Neos.IdentityServer.Console.Controls
                 rdioREGUnManaged.Width = 300;
                 rdioREGUnManaged.CheckedChanged += REGUnManagedCheckedChanged;
                 _panelregmfa.Controls.Add(rdioREGUnManaged);
+
+                rdioREGREquired = new RadioButton();
+                rdioREGREquired.Text = res.CTRLGLMFAREGISTER4;
+                rdioREGREquired.Left = 30;
+                rdioREGREquired.Top = 104;
+                rdioREGREquired.Width = 300;
+                rdioREGREquired.CheckedChanged += REGUAdministrativeCheckedChanged;
+                _panelregmfa.Controls.Add(rdioREGREquired);
 
                 ////
                 _paneloptmfa = new Panel();
@@ -1725,7 +1805,7 @@ namespace Neos.IdentityServer.Console.Controls
                 tblSaveConfig = new LinkLabel();
                 tblSaveConfig.Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPESAVE;
                 tblSaveConfig.Left = 20;
-                tblSaveConfig.Top = 465;
+                tblSaveConfig.Top = 485;
                 tblSaveConfig.Width = 80;
                 tblSaveConfig.LinkClicked += SaveConfigLinkClicked;
                 tblSaveConfig.TabStop = true;
@@ -1734,7 +1814,7 @@ namespace Neos.IdentityServer.Console.Controls
                 tblCancelConfig = new LinkLabel();
                 tblCancelConfig.Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPECANCEL;
                 tblCancelConfig.Left = 110;
-                tblCancelConfig.Top = 465;
+                tblCancelConfig.Top = 485;
                 tblCancelConfig.Width = 80;
                 tblCancelConfig.LinkClicked += CancelConfigLinkClicked;
                 tblCancelConfig.TabStop = true;
@@ -1787,6 +1867,7 @@ namespace Neos.IdentityServer.Console.Controls
                 rdioREGAdmin.Text = res.CTRLGLMFAREGISTER1;
                 rdioREGUser.Text = res.CTRLGLMFAREGISTER2;
                 rdioREGUnManaged.Text = res.CTRLGLMFAREGISTER3;
+                rdioREGREquired.Text = res.CTRLGLMFAREGISTER4;  
                 optCFGLabel.Text = res.CTRLGLMANAGEOPTS;
                 chkAllowManageOptions.Text = res.CTRLGLMANAGEOPTIONS;
                 chkAllowEnrollment.Text = res.CTRLGLENROLLWIZ;
@@ -1882,12 +1963,14 @@ namespace Neos.IdentityServer.Console.Controls
         /// </summary>
         private void SetPolicyTemplate()
         {
-            unlocked = false;
             MMCTemplateModeItem itm = (MMCTemplateModeItem)cbConfigTemplate.SelectedItem;
             Config.UserFeatures = Config.UserFeatures.SetPolicyTemplate(itm.ID);
-            if (itm.ID==UserTemplateMode.Custom)
-                unlocked = true;
-            UpdateLayoutPolicyComponents(unlocked);
+            iscustom = (itm.ID == UserTemplateMode.Custom);
+            if ((itm.ID != UserTemplateMode.Administrative) && (itm.ID != UserTemplateMode.Custom))
+                Config.KeepMySelectedOptionOn = true;
+            else
+                Config.KeepMySelectedOptionOn = false;
+            UpdateLayoutPolicyComponents(itm.ID);
             if (_view.AutoValidate != AutoValidate.Disable)
                 ManagementService.ADFSManager.SetDirty(true);
         }
@@ -1897,7 +1980,7 @@ namespace Neos.IdentityServer.Console.Controls
         /// </summary>
         private UserTemplateMode GetPolicyTemplate()
         {
-            if (unlocked)
+            if (iscustom)
                 return UserTemplateMode.Custom;
             else
                 return Config.UserFeatures.GetPolicyTemplate();
@@ -1908,12 +1991,9 @@ namespace Neos.IdentityServer.Console.Controls
         /// </summary>
         private void AdjustComboboxTemplates()
         {
-            unlocked = false;
             UserTemplateMode template = Config.UserFeatures.GetPolicyTemplate();
             cbConfigTemplate.SelectedIndex = cbConfigTemplate.Items.IndexOf(template);
-            if (template == UserTemplateMode.Custom)
-                unlocked = true;
-            UpdateLayoutPolicyComponents(unlocked);
+            UpdateLayoutPolicyComponents(template);
 
             PreferredMethod method = Config.DefaultProviderMethod;
             cbConfigProvider.SelectedIndex = cbConfigProvider.Items.IndexOf(method);
@@ -1922,76 +2002,289 @@ namespace Neos.IdentityServer.Console.Controls
         /// <summary>
         /// UpdateLayoutPolicyComponents method implmentation
         /// </summary>
-        private void UpdateLayoutPolicyComponents(bool unlocked)
+        private void UpdateLayoutPolicyComponents(UserTemplateMode mode)
         {
+            lockevents = true;
             try
             {
-                rdioMFARequired.Checked = (Config.UserFeatures.IsMFARequired() || Config.UserFeatures.IsMFAMixed());
-                rdioMFAAllowed.Checked = Config.UserFeatures.IsMFAAllowed();
-                rdioMFANotRequired.Checked = Config.UserFeatures.IsMFANotRequired();
+                rdioMFARequired.Enabled = false;
+                rdioMFAAllowed.Enabled = false;
+                rdioMFANotRequired.Enabled = false;
 
-                rdioREGAdmin.Checked = Config.UserFeatures.IsRegistrationRequired();
-                rdioREGUser.Checked = (Config.UserFeatures.IsRegistrationAllowed() || Config.UserFeatures.IsRegistrationMixed());
-                rdioREGUnManaged.Checked = Config.UserFeatures.IsRegistrationNotRequired();
+                rdioREGAdmin.Enabled = false;
+                rdioREGUnManaged.Enabled = false;
+                rdioREGUser.Enabled = false;
+                rdioREGREquired.Enabled = false;
 
-                chkAllowManageOptions.Checked = Config.UserFeatures.CanManageOptions();
-                chkAllowEnrollment.Checked = Config.UserFeatures.CanEnrollDevices();
-                chkAllowChangePassword.Checked = Config.UserFeatures.CanManagePassword();
-                chkAllowKMSOO.Checked = Config.KeepMySelectedOptionOn;
-                chkAllowNotifications.Checked = Config.ChangeNotificationsOn;
-
-                if (!unlocked)
+                switch (mode)
                 {
-                    rdioMFARequired.Enabled = rdioMFARequired.Checked;
-                    rdioMFAAllowed.Enabled = rdioMFAAllowed.Checked;
-                    rdioMFANotRequired.Enabled = rdioMFANotRequired.Checked;
-                    rdioREGAdmin.Enabled = rdioREGAdmin.Checked;
-                    rdioREGUser.Enabled = rdioREGUser.Checked;
-                    rdioREGUnManaged.Enabled = rdioREGUnManaged.Checked;
-                    chkAllowManageOptions.Enabled = false;
-                    chkAllowEnrollment.Enabled = false;
-                    chkAllowChangePassword.Enabled = false;
-                    chkAllowKMSOO.Enabled = true;
-                    chkAllowNotifications.Enabled = true;
+                    case UserTemplateMode.Free:
+                        rdioMFARequired.Checked = false;
+                        rdioMFAAllowed.Checked = false;
+                        rdioMFANotRequired.Checked = true;
+
+                        rdioREGAdmin.Checked = false;
+                        rdioREGUser.Checked = false;
+                        rdioREGREquired.Checked = true;
+                        rdioREGUnManaged.Checked = true;
+
+                        chkAllowManageOptions.Checked = true;
+                        chkAllowEnrollment.Checked = true;
+                        chkAllowChangePassword.Checked = true;
+                        chkAllowKMSOO.Checked = Config.KeepMySelectedOptionOn;
+                        chkAllowNotifications.Checked = Config.ChangeNotificationsOn;
+
+                        chkAllowManageOptions.Enabled = false;
+                        chkAllowEnrollment.Enabled = false;
+                        chkAllowChangePassword.Enabled = false;
+                        chkAllowKMSOO.Enabled = false;
+                        chkAllowNotifications.Enabled = true;
+
+                        txtADVStart.Enabled = false;
+                        txtADVEnd.Enabled = false;
+
+                        break;
+                    case UserTemplateMode.Open:
+                        rdioMFARequired.Checked = false;
+                        rdioMFAAllowed.Checked = false;
+                        rdioREGREquired.Checked = true;
+                        rdioMFANotRequired.Checked = true;
+
+                        rdioREGAdmin.Checked = false;
+                        rdioREGUnManaged.Checked = false;
+                        rdioREGUser.Checked = true;
+
+                        chkAllowManageOptions.Checked = true;
+                        chkAllowEnrollment.Checked = true;
+                        chkAllowChangePassword.Checked = true;
+                        chkAllowKMSOO.Checked = Config.KeepMySelectedOptionOn;
+                        chkAllowNotifications.Checked = Config.ChangeNotificationsOn;
+
+                        chkAllowManageOptions.Enabled = false;
+                        chkAllowEnrollment.Enabled = false;
+                        chkAllowChangePassword.Enabled = false;
+                        chkAllowKMSOO.Enabled = false;
+                        chkAllowNotifications.Enabled = true;
+
+                        txtADVStart.Enabled = true;
+                        txtADVEnd.Enabled = true;
+
+                        break;
+                    case UserTemplateMode.Default:
+                        rdioMFARequired.Checked = false;
+                        rdioMFANotRequired.Checked = false;
+                        rdioREGREquired.Checked = true;
+                        rdioMFAAllowed.Checked = true;
+
+                        rdioREGAdmin.Checked = false;
+                        rdioREGUnManaged.Checked = false;
+                        rdioREGUser.Checked = true;
+
+                        chkAllowManageOptions.Checked = true;
+                        chkAllowEnrollment.Checked = true;
+                        chkAllowChangePassword.Checked = true;
+                        chkAllowKMSOO.Checked = Config.KeepMySelectedOptionOn;
+                        chkAllowNotifications.Checked = Config.ChangeNotificationsOn;
+
+                        chkAllowManageOptions.Enabled = false;
+                        chkAllowEnrollment.Enabled = false;
+                        chkAllowChangePassword.Enabled = false;
+                        chkAllowKMSOO.Enabled = false;
+                        chkAllowNotifications.Enabled = true;
+
+                        txtADVStart.Enabled = true;
+                        txtADVEnd.Enabled = true;
+
+                        break;
+                    case UserTemplateMode.Mixed:
+                        rdioMFANotRequired.Checked = false;
+                        rdioMFAAllowed.Checked = false;
+                        rdioREGREquired.Checked = true;
+                        rdioMFARequired.Checked = true;
+
+                        rdioREGAdmin.Checked = false;
+                        rdioREGUnManaged.Checked = false;
+                        rdioREGUser.Checked = true;
+
+                        chkAllowManageOptions.Checked = true;
+                        chkAllowEnrollment.Checked = true;
+                        chkAllowChangePassword.Checked = true;
+                        chkAllowKMSOO.Checked = Config.KeepMySelectedOptionOn;
+                        chkAllowNotifications.Checked = Config.ChangeNotificationsOn;
+
+                        chkAllowManageOptions.Enabled = false;
+                        chkAllowEnrollment.Enabled = false;
+                        chkAllowChangePassword.Enabled = false;
+                        chkAllowKMSOO.Enabled = false;
+                        chkAllowNotifications.Enabled = true;
+
+                        txtADVStart.Enabled = false;
+                        txtADVEnd.Enabled = false;
+                        break;
+                    case UserTemplateMode.Managed:
+                        rdioMFAAllowed.Checked = false;
+                        rdioMFARequired.Checked = false;
+                        rdioMFANotRequired.Checked = true;
+
+                        rdioREGUnManaged.Checked = false;
+                        rdioREGUser.Checked = false;
+                        rdioREGREquired.Checked = true;
+                        rdioREGAdmin.Checked = true;
+
+                        chkAllowManageOptions.Checked = false;
+                        chkAllowEnrollment.Checked = false;
+                        chkAllowChangePassword.Checked = true;
+                        chkAllowKMSOO.Checked = Config.KeepMySelectedOptionOn;
+                        chkAllowNotifications.Checked = Config.ChangeNotificationsOn;
+
+                        chkAllowManageOptions.Enabled = false;
+                        chkAllowEnrollment.Enabled = false;
+                        chkAllowChangePassword.Enabled = false;
+                        chkAllowKMSOO.Enabled = false;
+                        chkAllowNotifications.Enabled = true;
+
+                        txtADVStart.Enabled = false;
+                        txtADVEnd.Enabled = false;
+
+                        break;
+                    case UserTemplateMode.Strict:
+                        rdioMFAAllowed.Checked = false;
+                        rdioMFANotRequired.Checked = false;
+                        rdioMFARequired.Checked = true;
+
+                        rdioREGUnManaged.Checked = false;
+                        rdioREGUser.Checked = false;
+                        rdioREGREquired.Checked = true;
+                        rdioREGAdmin.Checked = true;
+
+                        chkAllowManageOptions.Checked = false;
+                        chkAllowEnrollment.Checked = false;
+                        chkAllowChangePassword.Checked = false;
+                        chkAllowKMSOO.Checked = Config.KeepMySelectedOptionOn;
+                        chkAllowNotifications.Checked = Config.ChangeNotificationsOn;
+
+                        chkAllowManageOptions.Enabled = false;
+                        chkAllowEnrollment.Enabled = false;
+                        chkAllowChangePassword.Enabled = false;
+                        chkAllowKMSOO.Enabled = false;
+                        chkAllowNotifications.Enabled = true;
+
+                        txtADVStart.Enabled = false;
+                        txtADVEnd.Enabled = false;
+
+                        break;
+                    case UserTemplateMode.Administrative:
+                        rdioMFAAllowed.Checked = false;
+                        rdioMFANotRequired.Checked = false;
+                        rdioMFARequired.Checked = true;
+
+                        rdioREGUser.Checked = false;
+                        rdioREGAdmin.Checked = false;
+                        rdioREGUnManaged.Checked = false;
+                        rdioREGREquired.Checked = true;
+
+                        chkAllowManageOptions.Checked = false;
+                        chkAllowEnrollment.Checked = false;
+                        chkAllowChangePassword.Checked = false;
+                        chkAllowKMSOO.Checked = false;
+                        chkAllowNotifications.Checked = Config.ChangeNotificationsOn;
+
+                        chkAllowManageOptions.Enabled = false;
+                        chkAllowEnrollment.Enabled = false;
+                        chkAllowChangePassword.Enabled = false;
+                        chkAllowKMSOO.Enabled = false;
+                        chkAllowNotifications.Enabled = true;
+
+                        txtADVStart.Enabled = false;
+                        txtADVEnd.Enabled = false;
+
+                        break;
+                    default:
+
+                        rdioMFARequired.Checked = Config.UserFeatures.IsMFARequired();
+                        rdioMFANotRequired.Checked = Config.UserFeatures.IsMFANotRequired();
+                        rdioMFAAllowed.Checked = Config.UserFeatures.IsMFAAllowed(); 
+
+                        rdioREGAdmin.Checked = Config.UserFeatures.IsRegistrationRequired();
+                        rdioREGUnManaged.Checked = Config.UserFeatures.IsRegistrationNotRequired();
+                        rdioREGUser.Checked = Config.UserFeatures.IsRegistrationAllowed();
+                        rdioREGREquired.Checked = Config.UserFeatures.IsAdministrative();
+
+                        chkAllowManageOptions.Checked = Config.UserFeatures.HasFlag(UserFeaturesOptions.AllowManageOptions); 
+                        chkAllowEnrollment.Checked = Config.UserFeatures.HasFlag(UserFeaturesOptions.AllowEnrollment);
+                        chkAllowChangePassword.Checked = Config.UserFeatures.HasFlag(UserFeaturesOptions.AllowChangePassword);
+                        chkAllowKMSOO.Checked = Config.KeepMySelectedOptionOn;
+                        chkAllowNotifications.Checked = Config.ChangeNotificationsOn;
+
+                        rdioMFARequired.Enabled = true;
+                        rdioMFAAllowed.Enabled = true;
+                        rdioMFANotRequired.Enabled = true;
+
+                        rdioREGAdmin.Enabled = true;
+                        rdioREGUnManaged.Enabled = true;
+                        rdioREGUser.Enabled = true;
+                        rdioREGREquired.Enabled = true;
+
+                        chkAllowManageOptions.Enabled = true;
+                        chkAllowEnrollment.Enabled = true;
+                        chkAllowChangePassword.Enabled = true;
+                        chkAllowKMSOO.Enabled = true;
+                        chkAllowNotifications.Enabled = true;
+
+                        txtADVStart.Enabled = true;
+                        txtADVEnd.Enabled = true;
+                        break;
                 }
-                else
-                {
-                    rdioMFARequired.Enabled = true;
-                    rdioMFAAllowed.Enabled = true;
-                    rdioMFANotRequired.Enabled = true;
-                    rdioREGAdmin.Enabled = true;
-                    rdioREGUser.Enabled = true;  
-                    rdioREGUnManaged.Enabled = true;
-                    chkAllowManageOptions.Enabled = true;
-                    chkAllowEnrollment.Enabled = true;
-                    chkAllowChangePassword.Enabled = true;
-                    chkAllowKMSOO.Enabled = true;
-                    chkAllowNotifications.Enabled = true;
-                }
-                txtADVStart.Enabled = Config.UserFeatures.IsAdvertisable();
-                txtADVEnd.Enabled = Config.UserFeatures.IsAdvertisable();
             }
             finally
             {
-
+                lockevents = false;
             }
         }
 
         #region Features mgmt
         /// <summary>
+        /// REGUAdministrativeCheckedChanged event
+        /// </summary>
+        private void REGUAdministrativeCheckedChanged(object sender, EventArgs e)
+        {
+            if (lockevents)
+                return;
+            try
+            {
+                if (_view.AutoValidate != AutoValidate.Disable)
+                {
+                    if (rdioREGREquired.Checked)
+                    {
+                        Config.UserFeatures = Config.UserFeatures.MMCSetMandatoryRegistration();
+                        ManagementService.ADFSManager.SetDirty(true);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
+                messageBoxParameters.Text = ex.Message;
+                messageBoxParameters.Buttons = MessageBoxButtons.OK;
+                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                this._snapin.Console.ShowDialog(messageBoxParameters);
+            }
+        }
+
+        /// <summary>
         /// REGUnManagedCheckedChanged event
         /// </summary>
         private void REGUnManagedCheckedChanged(object sender, EventArgs e)
         {
+            if (lockevents)
+                return;
             try
             {
                 if (_view.AutoValidate != AutoValidate.Disable)
                 {
                     if (rdioREGUnManaged.Checked)
                     {
-                        Config.UserFeatures = Config.UserFeatures.SetUnManagedRegistration();
-                        txtADVStart.Enabled = Config.UserFeatures.IsAdvertisable();
-                        txtADVEnd.Enabled = Config.UserFeatures.IsAdvertisable();
+                        Config.UserFeatures = Config.UserFeatures.MMCSetUnManagedRegistration();
                         ManagementService.ADFSManager.SetDirty(true);
                     }
                 }
@@ -2011,15 +2304,15 @@ namespace Neos.IdentityServer.Console.Controls
         /// </summary>
         private void REGUserCheckedChanged(object sender, EventArgs e)
         {
+            if (lockevents)
+                return;
             try
             {
                 if (_view.AutoValidate != AutoValidate.Disable)
                 {
                     if (rdioREGUser.Checked)
                     {
-                        Config.UserFeatures = Config.UserFeatures.SetSelfRegistration();
-                        txtADVStart.Enabled = Config.UserFeatures.IsAdvertisable();
-                        txtADVEnd.Enabled = Config.UserFeatures.IsAdvertisable();
+                        Config.UserFeatures = Config.UserFeatures.MMCSetSelfRegistration();
                         ManagementService.ADFSManager.SetDirty(true);
                     }
                 }
@@ -2039,15 +2332,15 @@ namespace Neos.IdentityServer.Console.Controls
         /// </summary>
         private void REGAdminCheckedChanged(object sender, EventArgs e)
         {
+            if (lockevents)
+                return;
             try
             {
                 if (_view.AutoValidate != AutoValidate.Disable)
                 {
                     if (rdioREGAdmin.Checked)
                     {
-                        Config.UserFeatures = Config.UserFeatures.SetAdministrativeRegistration();
-                        txtADVStart.Enabled = Config.UserFeatures.IsAdvertisable();
-                        txtADVEnd.Enabled = Config.UserFeatures.IsAdvertisable();
+                        Config.UserFeatures = Config.UserFeatures.MMCSetAdministrativeRegistration();
                         ManagementService.ADFSManager.SetDirty(true);
                     }
                 }
@@ -2067,16 +2360,15 @@ namespace Neos.IdentityServer.Console.Controls
         /// </summary>
         private void MFANotRequiredCheckedChanged(object sender, EventArgs e)
         {
+            if (lockevents)
+                return;
             try
             {
                 if (_view.AutoValidate != AutoValidate.Disable)
                 {
                     if (rdioMFANotRequired.Checked)
                     {
-                        Config.UserFeatures = Config.UserFeatures.SetMFANotRequired();
-                      //  rdioREGUser.Enabled = true;
-                        txtADVStart.Enabled = Config.UserFeatures.IsAdvertisable();
-                        txtADVEnd.Enabled = Config.UserFeatures.IsAdvertisable();
+                        Config.UserFeatures = Config.UserFeatures.MMCSetMFANotRequired();
                         ManagementService.ADFSManager.SetDirty(true);
                     }
                 }
@@ -2096,16 +2388,15 @@ namespace Neos.IdentityServer.Console.Controls
         /// </summary>
         private void MFAAllowedCheckedChanged(object sender, EventArgs e)
         {
+            if (lockevents)
+                return;
             try
             {
                 if (_view.AutoValidate != AutoValidate.Disable)
                 {
                     if (rdioMFAAllowed.Checked)
                     {
-                        Config.UserFeatures = Config.UserFeatures.SetMFAAllowed();
-                      //  rdioREGUser.Enabled = true;
-                        txtADVStart.Enabled = Config.UserFeatures.IsAdvertisable();
-                        txtADVEnd.Enabled = Config.UserFeatures.IsAdvertisable();
+                        Config.UserFeatures = Config.UserFeatures.MMCSetMFAAllowed();
                         ManagementService.ADFSManager.SetDirty(true);
                     }
                 }
@@ -2125,18 +2416,15 @@ namespace Neos.IdentityServer.Console.Controls
         /// </summary>
         private void MFARequiredCheckedChanged(object sender, EventArgs e)
         {
+            if (lockevents)
+                return;
             try
             {
                 if (_view.AutoValidate != AutoValidate.Disable)
                 {
                     if (rdioMFARequired.Checked)
                     {
-                        Config.UserFeatures = Config.UserFeatures.SetMFARequired();
-                        if (rdioREGUser.Checked)
-                            rdioREGAdmin.Checked = true;
-                       // rdioREGUser.Enabled = false;
-                        txtADVStart.Enabled = Config.UserFeatures.IsAdvertisable();
-                        txtADVEnd.Enabled = Config.UserFeatures.IsAdvertisable();
+                        Config.UserFeatures = Config.UserFeatures.MMCSetMFARequired();
                         ManagementService.ADFSManager.SetDirty(true);
                     }
                 }
@@ -2156,7 +2444,9 @@ namespace Neos.IdentityServer.Console.Controls
         /// </summary>
         private void AllowChangePasswordCheckedChanged(object sender, EventArgs e)
         {
-            try 
+            if (lockevents)
+                return;
+            try
             {
                 if (_view.AutoValidate != AutoValidate.Disable)
                 {
@@ -2182,6 +2472,8 @@ namespace Neos.IdentityServer.Console.Controls
         /// </summary>
         private void AllowManageOptionsCheckedChanged(object sender, EventArgs e)
         {
+            if (lockevents)
+                return;
             try
             {
                 if (_view.AutoValidate != AutoValidate.Disable)
@@ -2208,6 +2500,8 @@ namespace Neos.IdentityServer.Console.Controls
         /// </summary>
         private void AllowEnrollmentWizardCheckedChanged(object sender, EventArgs e)
         {
+            if (lockevents)
+                return;
             try
             {
                 if (_view.AutoValidate != AutoValidate.Disable)
@@ -2234,6 +2528,8 @@ namespace Neos.IdentityServer.Console.Controls
         /// </summary>
         private void AllowKMSOOCheckedChanged(object sender, EventArgs e)
         {
+            if (lockevents)
+                return;
             try
             {
                 if (_view.AutoValidate != AutoValidate.Disable)
@@ -2257,6 +2553,8 @@ namespace Neos.IdentityServer.Console.Controls
         /// </summary>
         private void AllowNotificationsCheckedChanged(object sender, EventArgs e)
         {
+            if (lockevents)
+                return;
             try
             {
                 if (_view.AutoValidate != AutoValidate.Disable)
@@ -2282,6 +2580,8 @@ namespace Neos.IdentityServer.Console.Controls
         /// </summary>
         private void ADVEndValueChanged(object sender, EventArgs e)
         {
+            if (lockevents)
+                return;
             try
             {
                 if (_view.AutoValidate != AutoValidate.Disable)
@@ -2302,6 +2602,8 @@ namespace Neos.IdentityServer.Console.Controls
         /// </summary>
         private void ADVStartValueChanged(object sender, EventArgs e)
         {
+            if (lockevents)
+                return;
             try
             {
                 if (_view.AutoValidate != AutoValidate.Disable)

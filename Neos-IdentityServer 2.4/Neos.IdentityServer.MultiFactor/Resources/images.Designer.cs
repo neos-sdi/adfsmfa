@@ -73,6 +73,26 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap cmno32 {
+            get {
+                object obj = ResourceManager.GetObject("cmno32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap cmok32 {
+            get {
+                object obj = ResourceManager.GetObject("cmok32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap crouge {
             get {
                 object obj = ResourceManager.GetObject("crouge", resourceCulture);
@@ -96,6 +116,16 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         internal static System.Drawing.Bitmap google {
             get {
                 object obj = ResourceManager.GetObject("google", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap googlelogo {
+            get {
+                object obj = ResourceManager.GetObject("googlelogo", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

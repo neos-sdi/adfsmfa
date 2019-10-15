@@ -131,6 +131,10 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             MFAConfig cfg = ManagementService.Config;
             UserTemplateMode md = (UserTemplateMode)mode;
             cfg.UserFeatures = cfg.UserFeatures.SetPolicyTemplate(md);
+            if (md != UserTemplateMode.Administrative)
+                cfg.KeepMySelectedOptionOn = true;
+            else
+                cfg.KeepMySelectedOptionOn = false;
             ManagementService.ADFSManager.WriteConfiguration(host);
         }
 
@@ -445,6 +449,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         private string _cdata;
         public bool IsDirty { get; set; }
         public bool Enabled { get; set; }
+        public bool IsRequired { get; set; }
         public bool EnrollWizard { get; set; }
         public bool PinRequired { get; set; }
         public ForceWizardMode ForceWizard { get; set; }
@@ -513,6 +518,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             OTPProvider otp = cfg.OTPProvider;
             this.IsDirty = cfg.IsDirty;            
             this.Enabled = otp.Enabled;
+            this.IsRequired = otp.IsRequired;
             this.EnrollWizard = otp.EnrollWizard;
             this.ForceWizard = otp.ForceWizard;
             this.Algorithm = otp.Algorithm;
@@ -534,6 +540,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             cfg.IsDirty = true;
             CheckUpdates(host);
             otp.Enabled = this.Enabled;
+            otp.IsRequired = this.IsRequired;
             otp.EnrollWizard = this.EnrollWizard;
             otp.ForceWizard = this.ForceWizard;
             otp.Algorithm = this.Algorithm;
@@ -576,6 +583,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             ExternalOTPProvider otp = cfg.ExternalProvider;
             this.IsDirty = cfg.IsDirty;
             this.Enabled = otp.Enabled;
+            this.IsRequired = otp.IsRequired;
             this.EnrollWizard = otp.EnrollWizard;
             this.ForceWizard = otp.ForceWizard;
             this.Company = otp.Company;
@@ -598,6 +606,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             cfg.IsDirty = true;
             CheckUpdates(host);
             otp.Enabled = this.Enabled;
+            otp.IsRequired = this.IsRequired;
             otp.EnrollWizard = this.EnrollWizard;
             otp.ForceWizard = this.ForceWizard;
             otp.Company = this.Company;
@@ -678,6 +687,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         public string Company { get; set; }
         public bool Anonymous { get; set; }
         public bool DeliveryNotifications { get; set; }
+        public FlatConfigMailAllowedDomains AllowedDomains { get; set; }
         public FlatConfigMailBlockedDomains BlockedDomains { get; set; }
         public List<FlatConfigMailFileName> MailOTPContent { get; set; }
         public List<FlatConfigMailFileName> MailAdminContent { get; set; }
@@ -691,6 +701,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             this.MailKeyContent = new List<FlatConfigMailFileName>();
             this.MailNotifications = new List<FlatConfigMailFileName>();
             this.BlockedDomains = new FlatConfigMailBlockedDomains();
+            this.AllowedDomains = new FlatConfigMailAllowedDomains();
         }
 
         /// <summary>
@@ -729,6 +740,12 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             DeliveryNotifications = mail.DeliveryNotifications;
             FullQualifiedImplementation = mail.FullQualifiedImplementation;
             Parameters = mail.Parameters.Data;
+
+            AllowedDomains.Clear();
+            foreach (string itm in mail.AllowedDomains)
+            {
+                AllowedDomains.AddDomain(itm);
+            }
 
             BlockedDomains.Clear();
             foreach (string itm in mail.BlockedDomains)
@@ -785,6 +802,12 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             mail.FullQualifiedImplementation = FullQualifiedImplementation;
             mail.Parameters.Data = Parameters;
 
+            mail.AllowedDomains.Clear();
+            foreach (string itm in AllowedDomains.Domains)
+            {
+                mail.AllowedDomains.Add(itm);
+            }
+
             mail.BlockedDomains.Clear();
             foreach (string itm in BlockedDomains.Domains)
             {
@@ -840,6 +863,66 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             _list.Clear();
         }
         
+        /// <summary>
+        /// AddDomain method implmentation
+        /// </summary>
+        public void AddDomain(string domainname)
+        {
+            try
+            {
+                if (_list.Contains(domainname.ToLower()))
+                    throw new Exception("Domain is already int blocked list !");
+                _list.Add(domainname.ToLower());
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error Adding blocked domain !", ex);
+            }
+        }
+
+        /// <summary>
+        /// RemoveDomain method implmentation
+        /// </summary>
+        public void RemoveDomain(string domainname)
+        {
+            try
+            {
+                if (!_list.Contains(domainname.ToLower()))
+                    throw new Exception("Domain not found int blocked list !");
+                int i = _list.IndexOf(domainname.ToLower());
+                _list.RemoveAt(i);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error removing blocked domain !", ex);
+            }
+        }
+    }
+
+    [Serializable]
+    public class FlatConfigMailAllowedDomains
+    {
+        private List<string> _list = new List<string>();
+
+        /// <summary>
+        /// <para type="description">AllowedDomains property.</para>
+        /// </summary>
+        public List<string> Domains
+        {
+            get
+            {
+                return _list;
+            }
+        }
+
+        /// <summary>
+        /// Clear method implmentation
+        /// </summary>
+        public void Clear()
+        {
+            _list.Clear();
+        }
+
         /// <summary>
         /// AddDomain method implmentation
         /// </summary>

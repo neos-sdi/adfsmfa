@@ -76,9 +76,7 @@
     <EmbeddedResource Include="Resources\SAzure.fr.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Resources\SAzure.it.resx">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\SAzure.it.resx" />
     <EmbeddedResource Include="Resources\SAzure.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>SAzure.Designer.cs</LastGenOutput>

@@ -97,6 +97,15 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Default authentication mode.
+        /// </summary>
+        internal static string HtmlCHOOSEOptionRemember2 {
+            get {
+                return ResourceManager.GetString("HtmlCHOOSEOptionRemember2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Send Code.
         /// </summary>
         internal static string HtmlCHOOSEOptionSendCode {
@@ -156,6 +165,15 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         internal static string HtmlEnrollPinCode {
             get {
                 return ResourceManager.GetString("HtmlEnrollPinCode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Set up a PIN.
+        /// </summary>
+        internal static string HtmlEnrollPinTaskLabel {
+            get {
+                return ResourceManager.GetString("HtmlEnrollPinTaskLabel", resourceCulture);
             }
         }
         
@@ -279,7 +297,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Verification.
+        ///   Recherche une chaîne localisée semblable à Continue.
         /// </summary>
         internal static string HtmlLabelWVERIFYOTP {
             get {
@@ -360,11 +378,30 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Let me choose the best option.
+        ///   Recherche une chaîne localisée semblable à Choose the default option.
         /// </summary>
         internal static string HtmlREGOptionChooseBest {
             get {
                 return ResourceManager.GetString("HtmlREGOptionChooseBest", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Activate.
+        /// </summary>
+        internal static string HtmlUIActivate {
+            get {
+                return ResourceManager.GetString("HtmlUIActivate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à &lt;br/&gt;
+        ///Click &quot;Continue&quot;.
+        /// </summary>
+        internal static string HtmlUIEnrollContinue {
+            get {
+                return ResourceManager.GetString("HtmlUIEnrollContinue", resourceCulture);
             }
         }
         
@@ -378,7 +415,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Code verification.
+        ///   Recherche une chaîne localisée semblable à Verify.
         /// </summary>
         internal static string HtmlUIMCheck {
             get {
@@ -455,6 +492,42 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         internal static string HtmlUIMRecordNewKey {
             get {
                 return ResourceManager.GetString("HtmlUIMRecordNewKey", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à You must :.
+        /// </summary>
+        internal static string HtmlUIMustPrepareLabel {
+            get {
+                return ResourceManager.GetString("HtmlUIMustPrepareLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Next.
+        /// </summary>
+        internal static string HtmlUINext {
+            get {
+                return ResourceManager.GetString("HtmlUINext", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Pin code.
+        /// </summary>
+        internal static string HtmlUIPinOptionLabel {
+            get {
+                return ResourceManager.GetString("HtmlUIPinOptionLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Informations provided:.
+        /// </summary>
+        internal static string HtmlUIResultLabel {
+            get {
+                return ResourceManager.GetString("HtmlUIResultLabel", resourceCulture);
             }
         }
     }

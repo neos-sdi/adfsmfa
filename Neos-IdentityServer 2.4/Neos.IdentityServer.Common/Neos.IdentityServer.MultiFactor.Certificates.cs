@@ -78,20 +78,6 @@ namespace Neos.IdentityServer.MultiFactor
         protected abstract void Dispose(bool disposing);
 
         /// <summary>
-        /// XOREncryptOrDecrypt method
-        /// </summary>
-        protected byte[] XOREncryptOrDecrypt(byte[] value)
-        {
-            byte[] xor = new byte[value.Length];
-
-            for (int i = 0; i < value.Length; i++)
-            {
-                xor[i] = (byte)(value[i] ^ _xorsecret[i % _xorsecret.Length]);
-            }
-            return xor;
-        }
-
-        /// <summary>
         /// Dispose IDispose method implementation
         /// </summary>
         public void Dispose()
@@ -240,8 +226,6 @@ namespace Neos.IdentityServer.MultiFactor
     /// </summary>
     public class RSAEncryption: BaseEncryption
     {
-        
-
         /// <summary>
         /// Constructor
         /// </summary>
@@ -278,7 +262,7 @@ namespace Neos.IdentityServer.MultiFactor
                 else
                     encryptedBytes = ((RSACryptoServiceProvider)key).Encrypt(plainBytes, true);
 
-                return XOREncryptOrDecrypt(encryptedBytes);
+                return XORUtilities.XOREncryptOrDecrypt(encryptedBytes, this.XORSecret);
             }
             catch (Exception ex)
             {
@@ -297,7 +281,7 @@ namespace Neos.IdentityServer.MultiFactor
                 if (Certificate == null)
                     throw new Exception("Invalid decryption certificate !");
 
-                byte[] decryptedBytes = XOREncryptOrDecrypt(encryptedBytes);
+                byte[] decryptedBytes = XORUtilities.XOREncryptOrDecrypt(encryptedBytes, this.XORSecret);
                 byte[] fulldecryptedBytes = null;
 
                 var key = Certificate.GetRSAPrivateKey();
@@ -389,7 +373,7 @@ namespace Neos.IdentityServer.MultiFactor
                 if (string.IsNullOrEmpty(username))
                     throw new Exception("Invalid encryption context !");
                 byte[] plainBytes = GenerateKey(username);
-                return XOREncryptOrDecrypt(plainBytes);
+                return XORUtilities.XOREncryptOrDecrypt(plainBytes, this.XORSecret);
             }
             catch (Exception ex)
             {
@@ -408,7 +392,7 @@ namespace Neos.IdentityServer.MultiFactor
                 if (encryptedBytes == null)
                     throw new Exception("Invalid decryption context !");
 
-                byte[] decryptedBytes = XOREncryptOrDecrypt(encryptedBytes);
+                byte[] decryptedBytes = XORUtilities.XOREncryptOrDecrypt(encryptedBytes, XORUtilities.XORKey);
                 int size = GetSizeFromMode(_mode);
                 byte[] userbuff = new byte[decryptedBytes.Length - size];
                 Buffer.BlockCopy(decryptedBytes, size, userbuff, 0, decryptedBytes.Length - size);

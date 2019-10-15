@@ -85,7 +85,7 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
                 this.EventLog.WriteEntry(string.Format("Pipe Server Error on Start : {0}.", e.Message), EventLogEntryType.Error, 1000);
             }
             LogForSlots.LogEnabled = true;
-            this.EventLog.WriteEntry("Le service a démarré avec succès.", EventLogEntryType.Information, 0);
+            this.EventLog.WriteEntry("Service was started successfully.", EventLogEntryType.Information, 0);
         }
 
         /// <summary>
@@ -111,7 +111,7 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
             {
                 this.EventLog.WriteEntry(string.Format("Pipe Server Error on Close : {0}.", e.Message), EventLogEntryType.Error, 1000);
             }
-            this.EventLog.WriteEntry("Le service s'est arrêté avec succès.", EventLogEntryType.Information, 1);
+            this.EventLog.WriteEntry("Service was stopped successfully.", EventLogEntryType.Information, 1);
         }
         #endregion
 
@@ -149,10 +149,6 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
                 DoOnSendConfiguration();
             else if (message.Operation == (byte)NotificationsKind.ServiceServerInformation)
                 DoOnRequestServerConfiguration(message.Text);
-           /* else if (message.Operation == (byte)NotificationsKind.ServiceClientReplayInformation)
-            { }
-            else if (message.Operation == (byte)NotificationsKind.ServiceServerReplayInformation)
-            { } */
         }
         #endregion
 
@@ -165,7 +161,7 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
             if (CFGUtilities.IsPrimaryComputer())
             {
                 List<string> lst = new List<string>() { servername };
-                PipeClient pipe = new PipeClient(Utilities.XORKey, lst);
+                PipeClient pipe = new PipeClient(XORUtilities.XORKey, lst);
 
                 string req = Environment.MachineName;
                 NamedPipeRegistryRecord reg = pipe.DoRequestServerConfiguration(req);
@@ -243,7 +239,7 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
                 if (_adfsservers.Count == 0)
                     BuildADFSServersList();
 
-                PipeClient pipe = new PipeClient(Utilities.XORKey, ADFSServers);
+                PipeClient pipe = new PipeClient(XORUtilities.XORKey, ADFSServers, true);
 
                 byte[] byt = ReadConfigurationForCache();
                 string msg = Convert.ToBase64String(byt, 0, byt.Length);
@@ -289,7 +285,7 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
             {
                 xmlserializer.Serialize(stm, config);
                 stm.Position = 0;
-                return CFGUtilities.XOREncryptOrDecrypt(stm.ToArray(), Utilities.XORKey);
+                return XORUtilities.XOREncryptOrDecrypt(stm.ToArray(), XORUtilities.XORKey);
             }
         }
 
@@ -324,8 +320,7 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
             if (_adfsservers.Count == 0)
                 BuildADFSServersList();
 
-            PipeClient pipe = new PipeClient(Utilities.XORKey, this.ADFSServers, true);
-
+            PipeClient pipe = new PipeClient(XORUtilities.XORKey, this.ADFSServers, true);
             return pipe.DoCheckForRemoteReplay(record);
         }
 

@@ -18,11 +18,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Neos.IdentityServer.MultiFactor;
 
 namespace Neos.IdentityServer.MultiFactor.NotificationHub
 {
@@ -86,7 +83,7 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
                     {
                         lock (_lock)
                         {
-                            _lst.RemoveAll(s => s.UserLogon.AddSeconds(s.DeliveryWindow) < DateTime.Now);  // adjust correctly delay -> datetime must bes passed in record, not only logon time
+                            _lst.RemoveAll(s => s.UserLogon.AddSeconds(s.DeliveryWindow) < DateTime.Now);  
                         }
                         Thread.Sleep(new TimeSpan(0, 0, 1, 0)); // every minute
                     }

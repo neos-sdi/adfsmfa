@@ -48,9 +48,11 @@ namespace Neos.IdentityServer.MultiFactor
     public interface IExternalProvider
     {
         PreferredMethod Kind { get; }
+        bool IsBuiltIn { get; }
         bool AllowDisable { get; }
         bool AllowOverride { get; }
         bool AllowEnrollment { get; }
+        bool IsRequired { get; set; }
         bool Enabled { get; set; }
         bool PinRequired { get; set; }
         bool WizardEnabled { get; set; }
@@ -61,6 +63,7 @@ namespace Neos.IdentityServer.MultiFactor
         string Description { get; }
         string GetUILabel(AuthenticationContext ctx);
         string GetWizardUILabel(AuthenticationContext ctx);
+        string GetWizardLinkLabel(AuthenticationContext ctx);
         string GetUICFGLabel(AuthenticationContext ctx);
         string GetUIMessage(AuthenticationContext ctx);
         string GetUIListOptionLabel(AuthenticationContext ctx);
@@ -71,22 +74,20 @@ namespace Neos.IdentityServer.MultiFactor
         string GetUIWarningThirdPartyLabel(AuthenticationContext ctx);
         string GetUIDefaultChoiceLabel(AuthenticationContext ctx);
         string GetUIAccountManagementLabel(AuthenticationContext ctx);
+        string GetUIEnrollmentTaskLabel(AuthenticationContext ctx);
+        string GetUIEnrollValidatedLabel(AuthenticationContext ctx);
         string GetAccountManagementUrl(AuthenticationContext ctx);
-
         void Initialize(BaseProviderParams externalsystem);
         int PostAuthenticationRequest(AuthenticationContext ctx);
         int SetAuthenticationResult(AuthenticationContext ctx, string result);
-
         void GetAuthenticationContext(AuthenticationContext ctx);
         AvailableAuthenticationMethod GetSelectedAuthenticationMethod(AuthenticationContext ctx);
         bool SetSelectedAuthenticationMethod(AuthenticationContext ctx, AuthenticationResponseKind method, bool updateoverride = false);
         AvailableAuthenticationMethod GetDefaultAuthenticationMethod(AuthenticationContext ctx);
         List<AvailableAuthenticationMethod> GetAuthenticationMethods(AuthenticationContext ctx);
-
         bool IsAvailable(AuthenticationContext ctx);
         bool IsAvailableForUser(AuthenticationContext ctx);
         bool IsUIElementRequired(AuthenticationContext ctx, RequiredMethodElements element);
-
         AuthenticationResponseKind GetOverrideMethod(AuthenticationContext ctx);
         void SetOverrideMethod(AuthenticationContext ctx, AuthenticationResponseKind kind);
     }

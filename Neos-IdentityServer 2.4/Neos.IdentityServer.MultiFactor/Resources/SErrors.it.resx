@@ -117,20 +117,23 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ErrorAccountActivate" xml:space="preserve">
+    <value>L'accesso a questa applicazione richiede un'autenticazione aggiuntiva. &lt;br&gt; &lt;br&gt; Fai clic su "Attiva" per attivare il tuo account o fai clic su "Continua".</value>
+  </data>
   <data name="ErrorAccountAdminAuthorized" xml:space="preserve">
     <value>Accesso autorizzato. L'autenticazione aggiuntiva non è ancora attiva. Contatta gli amministratori.</value>
   </data>
   <data name="ErrorAccountAdminNotEnabled" xml:space="preserve">
-    <value>Accesso non autorizzato. L'autenticazione aggiuntiva non è ancora attiva. Contatta gli amministratori.</value>
+    <value>Accesso non autorizzato! l'autenticazione aggiuntiva non è ancora stata attivata. &lt;br&gt; &lt;br&gt; Contatta i tuoi amministratori.</value>
   </data>
   <data name="ErrorAccountAuthorized" xml:space="preserve">
-    <value>L'accesso a quest'applicazione richiede un'autenticazione aggiuntiva. Per impostarla, fai clic su "Modifica opzioni".</value>
+    <value>L'accesso a questa applicazione richiede un'autenticazione aggiuntiva. &lt;br&gt; &lt;br&gt; Fai clic su "Registrazione" per continuare.</value>
   </data>
   <data name="ErrorAccountNoAccess" xml:space="preserve">
     <value>Accesso non autorizzato. Contatta gli amministratori.</value>
   </data>
   <data name="ErrorAccountNotEnabled" xml:space="preserve">
-    <value>L'accesso a quest'applicazione richiede un'autenticazione aggiuntiva che attualmente non è abilitata. Per impostarla, fai clic su "Richiedi iscrizione".</value>
+    <value>L'accesso a questa applicazione richiede un'ulteriore autenticazione che al momento non è attivata. &lt;br&gt; &lt;br&gt; fai clic su "Richiesta di registrazione".</value>
   </data>
   <data name="ErrorAuthenticating" xml:space="preserve">
     <value>Errore di autenticazione. 

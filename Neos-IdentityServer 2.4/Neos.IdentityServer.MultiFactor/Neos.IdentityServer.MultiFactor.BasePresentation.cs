@@ -277,6 +277,12 @@ namespace Neos.IdentityServer.MultiFactor
                 case ProviderPageMode.Invitation: // admministrative user registration and let disabled
                     result = GetFormHtmlInvitation(Context);
                     break;
+                case ProviderPageMode.Activation: // Try to enable
+                    result = GetFormHtmlActivation(Context);
+                    break;
+                case ProviderPageMode.ManageOptions: 
+                    result = GetFormHtmlManageOptions(Context);
+                    break;
                 case ProviderPageMode.SelectOptions:
                     result = GetFormHtmlSelectOptions(Context);
                     break;
@@ -305,28 +311,18 @@ namespace Neos.IdentityServer.MultiFactor
                     result = GetFormHtmlSendKeyRequest(Context);
                     break;
                 case ProviderPageMode.EnrollOTP:
-                case ProviderPageMode.EnrollOTPAndSave:
-                case ProviderPageMode.EnrollOTPForce:
                     result = GetFormHtmlEnrollOTP(Context);
                     break;
                 case ProviderPageMode.EnrollEmail:
-                case ProviderPageMode.EnrollEmailAndSave:
-                case ProviderPageMode.EnrollEmailForce:
                     result = GetFormHtmlEnrollEmail(Context);
                     break;
                 case ProviderPageMode.EnrollPhone:
-                case ProviderPageMode.EnrollPhoneAndSave:
-                case ProviderPageMode.EnrollPhoneForce:
                     result = GetFormHtmlEnrollPhone(Context);
                     break;
                 case ProviderPageMode.EnrollBiometrics:
-                case ProviderPageMode.EnrollBiometricsAndSave:
-                case ProviderPageMode.EnrollBiometricsForce:
                     result = GetFormHtmlEnrollBio(Context);
                     break;
                 case ProviderPageMode.EnrollPin:
-                case ProviderPageMode.EnrollPinAndSave:
-                case ProviderPageMode.EnrollPinForce:
                     result = GetFormHtmlEnrollPinCode(Context);
                     break;
             }
@@ -338,36 +334,37 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public virtual string GetFormPreRenderHtml(int lcid)
         {
-            string result = string.Empty;
+            string result = GetFormPreRenderHtmlCSS(Context); 
             switch (Context.UIMode)
             {
                 case ProviderPageMode.Identification:
-                    result = GetFormPreRenderHtmlCSS(Context);
                     result += GetFormPreRenderHtmlIdentification(Context);
                     break;
                 case ProviderPageMode.Registration: // User self registration and enable
-                    result = GetFormPreRenderHtmlCSS(Context);
                     result += GetFormPreRenderHtmlRegistration(Context);
                     break;
                 case ProviderPageMode.Invitation: // admministrative user registration and let disabled
-                    result = GetFormPreRenderHtmlCSS(Context);
                     result += GetFormPreRenderHtmlInvitation(Context);
                     break;
+                case ProviderPageMode.Activation: // Activation
+                    result += GetFormPreRenderHtmlActivation(Context);
+                    break;
+                case ProviderPageMode.ManageOptions: 
+                    result += GetFormPreRenderHtmlManageOptions(Context);
+                    break;
                 case ProviderPageMode.SelectOptions:
-                    result = GetFormPreRenderHtmlSelectOptions(Context);
+                    result += GetFormPreRenderHtmlSelectOptions(Context);
                     break;
                 case ProviderPageMode.ChooseMethod:
-                    result = GetFormPreRenderHtmlChooseMethod(Context);
+                    result += GetFormPreRenderHtmlChooseMethod(Context);
                     break;
                 case ProviderPageMode.ChangePassword:
-                    result = GetFormPreRenderHtmlCSS(Context);
                     result += GetFormPreRenderHtmlChangePassword(Context);
                     break;
                 case ProviderPageMode.Bypass:
-                    result = GetFormPreRenderHtmlBypass(Context);
+                    result += GetFormPreRenderHtmlBypass(Context);
                     break;
                 case ProviderPageMode.Locking:
-                    result = GetFormPreRenderHtmlCSS(Context);
                     result += GetFormPreRenderHtmlLocking(Context);
                     break;
                 case ProviderPageMode.ShowQRCode:
@@ -383,33 +380,18 @@ namespace Neos.IdentityServer.MultiFactor
                     result = GetFormPreRenderHtmlSendKeyRequest(Context);
                     break;
                 case ProviderPageMode.EnrollOTP:
-                case ProviderPageMode.EnrollOTPAndSave:
-                case ProviderPageMode.EnrollOTPForce:
-                    result = GetFormPreRenderHtmlCSS(Context);
                     result += GetFormPreRenderHtmlEnrollOTP(Context);
                     break;
                 case ProviderPageMode.EnrollEmail:
-                case ProviderPageMode.EnrollEmailAndSave:
-                case ProviderPageMode.EnrollEmailForce:
-                    result = GetFormPreRenderHtmlCSS(Context);
                     result += GetFormPreRenderHtmlEnrollEmail(Context);
                     break;
                 case ProviderPageMode.EnrollPhone:
-                case ProviderPageMode.EnrollPhoneAndSave:
-                case ProviderPageMode.EnrollPhoneForce:
-                    result = GetFormPreRenderHtmlCSS(Context);
                     result += GetFormPreRenderHtmlEnrollPhone(Context);
                     break;
                 case ProviderPageMode.EnrollBiometrics:
-                case ProviderPageMode.EnrollBiometricsAndSave:
-                case ProviderPageMode.EnrollBiometricsForce:
-                    result = GetFormPreRenderHtmlCSS(Context);
                     result += GetFormPreRenderHtmlEnrollBio(Context);
                     break;
                 case ProviderPageMode.EnrollPin:
-                case ProviderPageMode.EnrollPinAndSave:
-                case ProviderPageMode.EnrollPinForce:
-                    result = GetFormPreRenderHtmlCSS(Context);
                     result += GetFormPreRenderHtmlEnrollPinCode(Context);
                     break;
             }
@@ -428,6 +410,12 @@ namespace Neos.IdentityServer.MultiFactor
 
         public abstract string GetFormPreRenderHtmlInvitation(AuthenticationContext usercontext);
         public abstract string GetFormHtmlInvitation(AuthenticationContext usercontext);
+
+        public abstract string GetFormPreRenderHtmlActivation(AuthenticationContext usercontext);
+        public abstract string GetFormHtmlActivation(AuthenticationContext usercontext);
+
+        public abstract string GetFormPreRenderHtmlManageOptions(AuthenticationContext usercontext);
+        public abstract string GetFormHtmlManageOptions(AuthenticationContext usercontext);
 
         public abstract string GetFormPreRenderHtmlSelectOptions(AuthenticationContext usercontext);
         public abstract string GetFormHtmlSelectOptions(AuthenticationContext usercontext);
@@ -909,6 +897,22 @@ namespace Neos.IdentityServer.MultiFactor
         }
 
         /// <summary>
+        /// GetFormPreRenderHtmlManageOptions implementation
+        /// </summary>
+        public override string GetFormPreRenderHtmlManageOptions(AuthenticationContext usercontext)
+        {
+            return _adapter.GetFormPreRenderHtmlManageOptions(usercontext);
+        }
+
+        /// <summary>
+        /// GetFormHtmlManageOptions implementation
+        /// </summary>
+        public override string GetFormHtmlManageOptions(AuthenticationContext usercontext)
+        {
+            return _adapter.GetFormHtmlManageOptions(usercontext);
+        }
+
+        /// <summary>
         /// GetFormPreRenderHtmlRegistration implementation
         /// </summary>
         public override string GetFormPreRenderHtmlRegistration(AuthenticationContext usercontext)
@@ -938,6 +942,22 @@ namespace Neos.IdentityServer.MultiFactor
         public override string GetFormHtmlInvitation(AuthenticationContext usercontext)
         {
             return _adapter.GetFormHtmlInvitation(usercontext);
+        }
+
+        /// <summary>
+        /// GetFormPreRenderHtmlActivation implementation
+        /// </summary>
+        public override string GetFormPreRenderHtmlActivation(AuthenticationContext usercontext)
+        {
+            return _adapter.GetFormPreRenderHtmlActivation(usercontext);
+        }
+
+        /// <summary>
+        /// GetFormHtmlActivation implementation
+        /// </summary>
+        public override string GetFormHtmlActivation(AuthenticationContext usercontext)
+        {
+            return _adapter.GetFormHtmlActivation(usercontext);
         }
 
         /// <summary>

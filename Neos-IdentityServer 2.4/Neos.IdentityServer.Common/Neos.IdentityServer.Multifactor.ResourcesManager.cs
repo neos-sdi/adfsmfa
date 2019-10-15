@@ -55,13 +55,15 @@ namespace Neos.IdentityServer.MultiFactor.Common
 
         private ResourceManager GetResourceManager(string resourcename)
         {
-            if (File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles)+@"\MFA\ResourceSet" + @"\" + resourcename + "." + Culture.TwoLetterISOLanguageName + ".resources"))
+            if (File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + @"\MFA\ResourceSet" + @"\" + resourcename + "." + Culture.Name + ".resources"))
                 return ResourceManager.CreateFileBasedResourceManager(resourcename, Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + @"\MFA\ResourceSet", null);
-            else if (File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + @"\MFA\ResourceSet" + @"\" + resourcename + "." + Culture.Name + ".resources"))
+            else if (File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + @"\MFA\ResourceSet" + @"\" + resourcename + "." + Culture.TwoLetterISOLanguageName + ".resources"))
                 return ResourceManager.CreateFileBasedResourceManager(resourcename, Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + @"\MFA\ResourceSet", null);
             else if (File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + @"\MFA\ResourceSet" + @"\" + resourcename + ".en-us.resources"))
                 return ResourceManager.CreateFileBasedResourceManager(resourcename, Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + @"\MFA\ResourceSet", null);
             else if (File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + @"\MFA\ResourceSet" + @"\" + resourcename + ".en.resources"))
+                return ResourceManager.CreateFileBasedResourceManager(resourcename, Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + @"\MFA\ResourceSet", null);
+            else if (File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + @"\MFA\ResourceSet" + @"\" + resourcename + ".resources"))
                 return ResourceManager.CreateFileBasedResourceManager(resourcename, Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + @"\MFA\ResourceSet", null);
             else
                 return new ResourceManager(resourcename, typeof(ResourcesLocale).Assembly);

@@ -126,6 +126,12 @@
   <data name="GLOBALWarnThirdParty" xml:space="preserve">
     <value>(l'autenticazione è eseguita da una terza parte)</value>
   </data>
+  <data name="MAILUIEnrollValidatedLabel" xml:space="preserve">
+    <value>Account convalidato&lt;br&gt;&lt;br&gt;È possibile utilizzare il proprio indirizzo e-mail per l'autenticazione</value>
+  </data>
+  <data name="OTPUIEnrollValidatedLabel" xml:space="preserve">
+    <value>Account convalidato&lt;br&gt;&lt;br&gt;&lt;br&gt;È possibile usare l'app per autenticarsi</value>
+  </data>
   <data name="SMSUICFGLabel" xml:space="preserve">
     <value>Numero di telefono</value>
   </data>
@@ -140,6 +146,12 @@
   </data>
   <data name="SMSUIConfigLabel2" xml:space="preserve">
     <value>SMS sul mio telefono cellulare {0}</value>
+  </data>
+  <data name="SMSUIEnrollTaskLabel" xml:space="preserve">
+    <value>Fornire un numero di telefono cellulare</value>
+  </data>
+  <data name="SMSUIEnrollValidatedLabel" xml:space="preserve">
+    <value>Account convalidato&lt;br&gt;&lt;br&gt;È possibile utilizzare il telefono cellulare per autenticarsi</value>
   </data>
   <data name="SMSUIListChoiceLabel" xml:space="preserve">
     <value>Ricevi un SMS inviato al mio telefono cellulare</value>
@@ -157,6 +169,9 @@
     <value>Immettere il codice</value>
   </data>
   <data name="SMSUIWIZLabel" xml:space="preserve">
+    <value>Registra il tuo telefono cellulare</value>
+  </data>
+  <data name="SMSWIZEnroll" xml:space="preserve">
     <value>Registra il tuo telefono cellulare</value>
   </data>
 </root>

@@ -40,14 +40,15 @@ namespace Neos.IdentityServer.MultiFactor
 
     public enum UserTemplateMode
     {
-        Free = 0,                        // (UserFeaturesOptions.BypassDisabled | UserFeaturesOptions.BypassUnRegistered | UserFeaturesOptions.AllowManageOptions | UserFeaturesOptions.AllowChangePassword);
-        Open = 1,                        // (UserFeaturesOptions.BypassDisabled | UserFeaturesOptions.AllowUnRegistered | UserFeaturesOptions.AllowManageOptions | UserFeaturesOptions.AllowChangePassword);
-        Default = 2,                     // (UserFeaturesOptions.AllowDisabled | UserFeaturesOptions.AllowUnRegistered | UserFeaturesOptions.AllowManageOptions | UserFeaturesOptions.AllowChangePassword);
-        Mixed = 3,                       // (UserFeaturesOptions.AllowManageOptions | UserFeaturesOptions.AllowChangePassword | UserFeaturesOptions.AllowEnrollment);
-        Managed = 4,                     // (UserFeaturesOptions.BypassDisabled | UserFeaturesOptions.AllowUnRegistered | UserFeaturesOptions.AllowProvideInformations | UserFeaturesOptions.AllowChangePassword);
-        Strict = 5,                      // (UserFeaturesOptions.AllowProvideInformations);
-        Administrative = 6,              // (UserFeaturesOptions.AdministrativeMode);
-        Custom = 7                       // Empty 
+
+        Free = 0,                   // (UserFeaturesOptions.BypassDisabled | UserFeaturesOptions.BypassUnRegistered | UserFeaturesOptions.AllowManageOptions | UserFeaturesOptions.AllowChangePassword | UserFeaturesOptions.AllowEnrollment)
+        Open = 1,                   // (UserFeaturesOptions.BypassDisabled | UserFeaturesOptions.AllowUnRegistered | UserFeaturesOptions.AllowManageOptions | UserFeaturesOptions.AllowChangePassword | UserFeaturesOptions.AllowEnrollment)
+        Default = 2,                // (UserFeaturesOptions.AllowDisabled | UserFeaturesOptions.AllowUnRegistered | UserFeaturesOptions.AllowManageOptions | UserFeaturesOptions.AllowChangePassword | UserFeaturesOptions.AllowEnrollment)
+        Mixed = 3,                  // (UserFeaturesOptions.AllowManageOptions | UserFeaturesOptions.AllowChangePassword | UserFeaturesOptions.AllowEnrollment)
+        Managed = 4,                // (UserFeaturesOptions.BypassDisabled | UserFeaturesOptions.AllowUnRegistered | UserFeaturesOptions.AllowProvideInformations | UserFeaturesOptions.AllowChangePassword)
+        Strict = 5,                 // (UserFeaturesOptions.AllowProvideInformations | UserFeaturesOptions.AdministrativeMode)
+        Administrative = 6,         // (UserFeaturesOptions.AdministrativeMode);
+        Custom = 7                  // Custom
     }
 
     [Flags]
@@ -83,13 +84,31 @@ namespace Neos.IdentityServer.MultiFactor
             return options.HasFlag(UserFeaturesOptions.AdministrativeMode) && options.HasFlag(UserFeaturesOptions.AllowProvideInformations);
         }
 
+        /// <summary>
+        /// IsManaged method implementation
+        /// </summary>
+        public static bool IsManaged(this UserFeaturesOptions options)
+        {
+            return !options.HasFlag(UserFeaturesOptions.AdministrativeMode) && (options.HasFlag(UserFeaturesOptions.AllowProvideInformations) && options.HasFlag(UserFeaturesOptions.AllowUnRegistered));
+        }
+
+        /// <summary>
+        /// IsMixed method implementation
+        /// </summary>
+        public static bool IsMixed(this UserFeaturesOptions options)
+        {
+            return (!options.HasFlag(UserFeaturesOptions.BypassDisabled) && !options.HasFlag(UserFeaturesOptions.AllowDisabled) && !options.HasFlag(UserFeaturesOptions.AllowProvideInformations) && !options.HasFlag(UserFeaturesOptions.AdministrativeMode));
+        }
+
+
         #region MFA Enabled
         /// <summary>
         /// IsMFARequired method implementation
         /// </summary>
         public static bool IsMFARequired(this UserFeaturesOptions options)
         {
-            return (options.HasFlag(UserFeaturesOptions.AdministrativeMode));
+            return (!options.HasFlag(UserFeaturesOptions.AllowDisabled) && !options.HasFlag(UserFeaturesOptions.BypassDisabled));
+           // return (options.HasFlag(UserFeaturesOptions.AdministrativeMode));
         }
 
         /// <summary>
@@ -119,11 +138,19 @@ namespace Neos.IdentityServer.MultiFactor
 
         #region MFA Registration
         /// <summary>
+        /// InformationsRequired method implementation
+        /// </summary>
+        public static bool InformationsRequired(this UserFeaturesOptions options)
+        {
+            return options.HasFlag(UserFeaturesOptions.AllowProvideInformations);
+        }
+
+        /// <summary>
         /// IsRegistraitonRequired method implementation
         /// </summary>
         public static bool IsRegistrationRequired(this UserFeaturesOptions options)
         {
-            return options.HasFlag(UserFeaturesOptions.AllowProvideInformations);
+            return (!options.HasFlag(UserFeaturesOptions.AllowUnRegistered) && !options.HasFlag(UserFeaturesOptions.BypassUnRegistered) && (options.HasFlag(UserFeaturesOptions.AllowProvideInformations)));            
         }
 
         /// <summary>
@@ -245,13 +272,12 @@ namespace Neos.IdentityServer.MultiFactor
                 case UserTemplateMode.Administrative:
                     options = (UserFeaturesOptions.AdministrativeMode);
                     break;
-                default:
+                case UserTemplateMode.Custom:
                     options = (UserFeaturesOptions.AllowDisabled | UserFeaturesOptions.AllowUnRegistered);
                     break;
             }
             return options;
         }
-        #endregion
 
         /// <summary>
         /// Add method implementation
@@ -279,59 +305,75 @@ namespace Neos.IdentityServer.MultiFactor
             options = UserFeaturesOptions.NoSet;
             return options;
         }
+        #endregion
 
-
+        #region MMC Enable Options
         /// <summary>
         /// SetMFARequired method implementation
         /// </summary>
-        public static UserFeaturesOptions SetMFARequired(this UserFeaturesOptions options)
+        public static UserFeaturesOptions MMCSetMFARequired(this UserFeaturesOptions options)
         {
             options = options.Remove(UserFeaturesOptions.BypassDisabled);
             options = options.Remove(UserFeaturesOptions.AllowDisabled);
-            options = options.Add(UserFeaturesOptions.AdministrativeMode); // Admin only
+           // options = options.Add(UserFeaturesOptions.AdministrativeMode); // Admin only
             return options;
         }
 
         /// <summary>
-        /// SetMFAAllowed method implementation
+        /// MMCSetMFAAllowed method implementation
         /// </summary>
-        public static UserFeaturesOptions SetMFAAllowed(this UserFeaturesOptions options)
+        public static UserFeaturesOptions MMCSetMFAAllowed(this UserFeaturesOptions options)
         {
             options = options.Remove(UserFeaturesOptions.BypassDisabled);
-            options = options.Remove(UserFeaturesOptions.AdministrativeMode);
+           // options = options.Remove(UserFeaturesOptions.AdministrativeMode);
             options = options.Add(UserFeaturesOptions.AllowDisabled); // Allow Disable Only
             return options;
         }
 
 
         /// <summary>
-        /// SetMFANotRequired method implementation
+        /// MMCSetMFANotRequired method implementation
         /// </summary>
-        public static UserFeaturesOptions SetMFANotRequired(this UserFeaturesOptions options)
+        public static UserFeaturesOptions MMCSetMFANotRequired(this UserFeaturesOptions options)
         {
-            options = options.Remove(UserFeaturesOptions.AdministrativeMode);
+           // options = options.Remove(UserFeaturesOptions.AdministrativeMode);
             options = options.Remove(UserFeaturesOptions.AllowDisabled);
             options = options.Add(UserFeaturesOptions.BypassDisabled); // Allow Bypass Only  
             return options;
         }
+        #endregion
 
-        #region Registration options
+        #region MMC Registration options
+        /// <summary>
+        /// MMCSetMandatoryRegistration method implementation
+        /// </summary>
+        public static UserFeaturesOptions MMCSetMandatoryRegistration(this UserFeaturesOptions options)
+        {
+
+            options = options.Remove(UserFeaturesOptions.BypassUnRegistered);
+            options = options.Remove(UserFeaturesOptions.AllowUnRegistered);
+            options = options.Remove(UserFeaturesOptions.AllowProvideInformations);
+            options = options.Add(UserFeaturesOptions.AdministrativeMode);
+            return options;
+        }
+
+
         /// <summary>
         /// SetAdministrativeRegistration method implementation
         /// </summary>
-        public static UserFeaturesOptions SetAdministrativeRegistration(this UserFeaturesOptions options)
+        public static UserFeaturesOptions MMCSetAdministrativeRegistration(this UserFeaturesOptions options)
         {
             options = options.Remove(UserFeaturesOptions.BypassUnRegistered);
             options = options.Remove(UserFeaturesOptions.AllowUnRegistered);
+            options = options.Add(UserFeaturesOptions.AdministrativeMode);
             options = options.Add(UserFeaturesOptions.AllowProvideInformations);   // Allow only provide informations
-            options = options.Add(UserFeaturesOptions.AdministrativeMode); // Admin only
             return options;
         }
 
         /// <summary>
-        /// SetSelfRegistration method implementation
+        /// MMCSetSelfRegistration method implementation
         /// </summary>
-        public static UserFeaturesOptions SetSelfRegistration(this UserFeaturesOptions options)
+        public static UserFeaturesOptions MMCSetSelfRegistration(this UserFeaturesOptions options)
         {
             options = options.Remove(UserFeaturesOptions.AllowProvideInformations);
             options = options.Remove(UserFeaturesOptions.AdministrativeMode);
@@ -341,14 +383,14 @@ namespace Neos.IdentityServer.MultiFactor
         }
 
         /// <summary>
-        /// SetUnManagedRegistration method implementation
+        /// MMCSetUnManagedRegistration method implementation
         /// </summary>
-        public static UserFeaturesOptions SetUnManagedRegistration(this UserFeaturesOptions options)
+        public static UserFeaturesOptions MMCSetUnManagedRegistration(this UserFeaturesOptions options)
         {
+            options = options.Add(UserFeaturesOptions.BypassUnRegistered);   
             options = options.Remove(UserFeaturesOptions.AdministrativeMode);
             options = options.Remove(UserFeaturesOptions.AllowProvideInformations);
             options = options.Remove(UserFeaturesOptions.AllowUnRegistered);
-            options = options.Add(UserFeaturesOptions.BypassUnRegistered);   // Allow Unregistered
             return options;
         }
         #endregion
@@ -496,6 +538,7 @@ namespace Neos.IdentityServer.MultiFactor
                 KeysConfig.ExternalKeyManager.ThumbPrint = Thumbprint.Empty;
 
                 OTPProvider.Enabled = true;
+                OTPProvider.IsRequired = true;
                 OTPProvider.TOTPShadows = 2;
                 OTPProvider.Algorithm = HashMode.SHA1;
                 OTPProvider.EnrollWizard = true;
@@ -503,7 +546,22 @@ namespace Neos.IdentityServer.MultiFactor
                 OTPProvider.Parameters.Data = string.Empty;
                 OTPProvider.FullQualifiedImplementation = string.Empty;
 
+                MailProvider.From = "sender.email@contoso.com";
+                MailProvider.UserName = "user.name@contoso.com";
+                MailProvider.Password = "yourpass";
+                MailProvider.Host = "smtp.contoso.com";
+                MailProvider.Port = 587;
+                MailProvider.UseSSL = true;
+                MailProvider.Company = "Contoso";
+                MailProvider.Enabled = true;
+                MailProvider.IsRequired = true;
+                MailProvider.EnrollWizard = true;
+                MailProvider.PinRequired = false;
+                MailProvider.FullQualifiedImplementation = string.Empty;
+                MailProvider.Parameters.Data = string.Empty;
+
                 ExternalProvider.Enabled = false;
+                ExternalProvider.IsRequired = false;
                 ExternalProvider.EnrollWizard = false;
                 ExternalProvider.PinRequired = false;
                 ExternalProvider.Company = "Contoso";
@@ -516,6 +574,7 @@ namespace Neos.IdentityServer.MultiFactor
                 AzureProvider.TenantId = "contoso.onmicrosoft.com";
                 AzureProvider.ThumbPrint = Thumbprint.Demo;
                 AzureProvider.Enabled = false;
+                AzureProvider.IsRequired = false;
                 AzureProvider.EnrollWizard = false;
                 AzureProvider.PinRequired = false;
 
@@ -523,19 +582,6 @@ namespace Neos.IdentityServer.MultiFactor
                 Hosts.SQLServerHost.IsAlwaysEncrypted = false;
                 Hosts.SQLServerHost.ThumbPrint = Thumbprint.Demo;
                 Hosts.SQLServerHost.MaxRows = 10000;
-
-                MailProvider.From = "sender.email@contoso.com";
-                MailProvider.UserName = "user.name@contoso.com";
-                MailProvider.Password = "yourpass";
-                MailProvider.Host = "smtp.contoso.com";
-                MailProvider.Port = 587;
-                MailProvider.UseSSL = true;
-                MailProvider.Company = "Contoso";
-                MailProvider.Enabled = true;
-                MailProvider.EnrollWizard = true;
-                MailProvider.PinRequired = false;
-                MailProvider.FullQualifiedImplementation = string.Empty;
-                MailProvider.Parameters.Data = string.Empty;
             }
         }
 
@@ -951,6 +997,7 @@ namespace Neos.IdentityServer.MultiFactor
         public abstract bool Enabled { get; set; }
         public abstract bool PinRequired { get; set; }
         public abstract bool EnrollWizard { get; set; }
+        public abstract bool IsRequired { get; set; }
         public abstract ForceWizardMode ForceWizard { get; set; }
     }
 
@@ -973,6 +1020,7 @@ namespace Neos.IdentityServer.MultiFactor
             this.TOTPShadows = prov.TOTPShadows;
             this.Algorithm = prov.Algorithm;
             this.Enabled = prov.Enabled;
+            this.IsRequired = prov.IsRequired;
             this.PinRequired = prov.PinRequired;
             this.EnrollWizard = prov.EnrollWizard;
             this.ForceWizard = prov.ForceWizard;
@@ -982,6 +1030,7 @@ namespace Neos.IdentityServer.MultiFactor
         public int TOTPShadows { get; set; }
         public HashMode Algorithm { get; set; }
         public override bool Enabled { get; set; }
+        public override bool IsRequired { get; set; }
         public override bool PinRequired { get; set; }
         public override bool EnrollWizard { get; set; }
         public override ForceWizardMode ForceWizard { get; set; }
@@ -1004,6 +1053,7 @@ namespace Neos.IdentityServer.MultiFactor
         {
             Data = prov;
             Enabled = prov.Enabled;
+            IsRequired = prov.IsRequired;
             PinRequired = prov.PinRequired;
             EnrollWizard = prov.EnrollWizard;
             ForceWizard = prov.ForceWizard;
@@ -1012,6 +1062,7 @@ namespace Neos.IdentityServer.MultiFactor
 
         public MailProvider Data { get; set; }
         public override bool Enabled { get; set; }
+        public override bool IsRequired { get; set; }
         public override bool PinRequired { get; set; }
         public override bool EnrollWizard { get; set; }
         public override ForceWizardMode ForceWizard { get; set; }
@@ -1034,7 +1085,8 @@ namespace Neos.IdentityServer.MultiFactor
         public ExternalProviderParams(ExternalOTPProvider prov): base()
         {
             Data = prov;
-            Enabled = prov.Enabled; 
+            Enabled = prov.Enabled;
+            IsRequired = prov.IsRequired;
             PinRequired = prov.PinRequired;
             EnrollWizard = prov.EnrollWizard;
             ForceWizard = prov.ForceWizard;
@@ -1042,6 +1094,7 @@ namespace Neos.IdentityServer.MultiFactor
 
         public ExternalOTPProvider Data { get; set; }
         public override bool Enabled { get; set; }
+        public override bool IsRequired { get; set; }
         public override bool PinRequired { get; set; }
         public override bool EnrollWizard { get; set; }
         public override ForceWizardMode ForceWizard { get; set; }
@@ -1066,6 +1119,7 @@ namespace Neos.IdentityServer.MultiFactor
             this.ADFSIdentifier = adfsid;
             this.CompanyName = company;
             this.Enabled = prov.Enabled;
+            this.IsRequired = prov.IsRequired;
             this.PinRequired = prov.PinRequired;
             this.EnrollWizard = false;
             this.ForceWizard = ForceWizardMode.Disabled;
@@ -1075,6 +1129,7 @@ namespace Neos.IdentityServer.MultiFactor
         public string ADFSIdentifier { get; set; }
         public string CompanyName { get; set; }
         public override bool Enabled { get; set; }
+        public override bool IsRequired { get; set; }
         public override bool PinRequired { get; set; }
         public override bool EnrollWizard { get; set; }
         public override ForceWizardMode ForceWizard { get; set; }
@@ -1087,65 +1142,31 @@ namespace Neos.IdentityServer.MultiFactor
     /// </summary>
     public class ExternalOTPProvider
     {
-        private string _comp = "your company description";
-        private string _class;
         private XmlCDataSection _cdata;
-        private string _sha1 = "0x123456789";
-        private bool _istwoway = false;
-        private int _timeout = 300;
-        private bool _requiredpin = false;
-        private bool _enabled = true;
-        private bool _enrollwizard = true;
-        private ForceWizardMode _forcewizard = ForceWizardMode.Disabled;
 
         [XmlAttribute("Enabled")]
-        public bool Enabled
-        {
-            get { return _enabled; }
-            set { _enabled = value; }
-        }
+        public bool Enabled { get; set; } = true;
 
         [XmlAttribute("PinRequired")]
-        public bool PinRequired
-        {
-            get { return _requiredpin; }
-            set { _requiredpin = value; }
-        }
+        public bool PinRequired { get; set; } = false;
+
+        [XmlAttribute("IsRequired")]
+        public bool IsRequired { get; set; } = false;
 
         [XmlAttribute("EnrollWizard")]
-        public bool EnrollWizard
-        {
-            get { return _enrollwizard; }
-            set { _enrollwizard = value; }
-        }
+        public bool EnrollWizard { get; set; } = true;
 
         [XmlAttribute("ForceWizard")]
-        public ForceWizardMode ForceWizard
-        {
-            get { return _forcewizard; }
-            set { _forcewizard = value; }
-        }
+        public ForceWizardMode ForceWizard { get; set; } = ForceWizardMode.Disabled;
 
         [XmlAttribute("Company")]
-        public string Company
-        {
-            get { return _comp; }
-            set { _comp = value; }
-        }
+        public string Company { get; set; } = "your company description";
 
         [XmlAttribute("Sha1Salt")]
-        public string Sha1Salt
-        {
-            get { return _sha1; }
-            set { _sha1 = value; }
-        }
+        public string Sha1Salt { get; set; } = "0x123456789";
 
         [XmlAttribute("FullQualifiedImplementation")]
-        public string FullQualifiedImplementation
-        {
-            get { return _class; }
-            set { _class = value; }
-        }
+        public string FullQualifiedImplementation { get; set; }
 
         [XmlElement("Parameters", typeof(XmlCDataSection))]
         public XmlCDataSection Parameters
@@ -1171,18 +1192,10 @@ namespace Neos.IdentityServer.MultiFactor
         }
 
         [XmlAttribute("IsTwoWay")]
-        public bool IsTwoWay
-        {
-            get { return _istwoway; }
-            set { _istwoway = value; }
-        }
+        public bool IsTwoWay { get; set; } = false;
 
         [XmlAttribute("Timeout")]
-        public int Timeout
-        {
-            get { return _timeout; }
-            set { _timeout = value; }
-        }
+        public int Timeout { get; set; } = 300;
     }
     #endregion
 
@@ -1192,63 +1205,31 @@ namespace Neos.IdentityServer.MultiFactor
     /// </summary>
     public class AzureProvider
     {
-        private string _tenantid = "yourcompany.onnmicrosoft.com";
-        private string _thumbprint = Thumbprint.Demo;
-        private bool _requiredpin = false;
-        private bool _enabled = false;
-        private bool _enrollwizard = false;
-        private string _class;
         private XmlCDataSection _cdata;
-        private ForceWizardMode _forcewizard = ForceWizardMode.Disabled;
 
         [XmlAttribute("Enabled")]
-        public bool Enabled
-        {
-            get { return _enabled; }
-            set { _enabled = value; }
-        }
+        public bool Enabled { get; set; } = false;
 
         [XmlAttribute("PinRequired")]
-        public bool PinRequired
-        {
-            get { return _requiredpin; }
-            set { _requiredpin = value; }
-        }
+        public bool PinRequired { get; set; } = false;
+
+        [XmlAttribute("IsRequired")]
+        public bool IsRequired { get; set; } = false;
 
         [XmlAttribute("EnrollWizard")]
-        public bool EnrollWizard
-        {
-            get { return _enrollwizard; }
-            set { _enrollwizard = value; }
-        }
+        public bool EnrollWizard { get; set; } = false;
 
         [XmlAttribute("ForceWizard")]
-        public ForceWizardMode ForceWizard
-        {
-            get { return _forcewizard; }
-            set { _forcewizard = value; }
-        }
+        public ForceWizardMode ForceWizard { get; set; } = ForceWizardMode.Disabled;
 
         [XmlAttribute("TenantId")]
-        public string TenantId
-        {
-            get { return _tenantid; }
-            set { _tenantid = value; }
-        }
+        public string TenantId { get; set; } = "yourcompany.onnmicrosoft.com";
 
         [XmlAttribute("ThumbPrint")]
-        public string ThumbPrint
-        {
-            get { return _thumbprint; }
-            set { _thumbprint = value; }
-        }
+        public string ThumbPrint { get; set; } = Thumbprint.Demo;
 
         [XmlAttribute("FullQualifiedImplementation")]
-        public string FullQualifiedImplementation
-        {
-            get { return _class; }
-            set { _class = value; }
-        }
+        public string FullQualifiedImplementation { get; set; }
 
         [XmlElement("Parameters", typeof(XmlCDataSection))]
         public XmlCDataSection Parameters
@@ -1296,7 +1277,14 @@ namespace Neos.IdentityServer.MultiFactor
         {
             get;
             set;
-        } = false;
+        } = true;
+
+        [XmlAttribute("IsRequired")]
+        public bool IsRequired
+        {
+            get;
+            set;
+        } = true;
 
         [XmlAttribute("EnrollWizard")]
         public bool EnrollWizard
@@ -1383,6 +1371,14 @@ namespace Neos.IdentityServer.MultiFactor
             set;
         }
 
+        [XmlArray("AllowedDomains")]
+        [XmlArrayItem("Domain", Type = typeof(string))]
+        public List<string> AllowedDomains
+        {
+            get;
+            set;
+        }
+
         [XmlArray("MailOTP")]
         [XmlArrayItem("Template", Type = typeof(SendMailFileName))]
         public List<SendMailFileName> MailOTPContent
@@ -1453,71 +1449,34 @@ namespace Neos.IdentityServer.MultiFactor
     /// </summary>
     public class OTPProvider
     {
-        private bool _requiredpin = false;
-        private bool _enabled = true;
-        private bool _enrollwizard = true;
-        private ForceWizardMode _forcewizard = ForceWizardMode.Disabled;
-        private int _totpShadows = 2;
-        private HashMode _algorithm = HashMode.SHA1;
-        private OTPWizardOptions _otpwizardoptions = OTPWizardOptions.All;
-        private string _class;
         private XmlCDataSection _cdata;
 
         [XmlAttribute("Enabled")]
-        public bool Enabled
-        {
-            get { return _enabled; }
-            set { _enabled = value; }
-        }
+        public bool Enabled { get; set; } = true;
 
         [XmlAttribute("PinRequired")]
-        public bool PinRequired
-        {
-            get { return _requiredpin; }
-            set { _requiredpin = value; }
-        }
+        public bool PinRequired { get; set; } = false;
+
+        [XmlAttribute("IsRequired")]
+        public bool IsRequired { get; set; } = true;
 
         [XmlAttribute("EnrollWizard")]
-        public bool EnrollWizard
-        {
-            get { return _enrollwizard; }
-            set { _enrollwizard = value; }
-        }
+        public bool EnrollWizard { get; set; } = true;
 
         [XmlAttribute("ForceWizard")]
-        public ForceWizardMode ForceWizard
-        {
-            get { return _forcewizard; }
-            set { _forcewizard = value; }
-        }
+        public ForceWizardMode ForceWizard { get; set; } = ForceWizardMode.Disabled;
 
         [XmlAttribute("TOTPShadows")]
-        public int TOTPShadows
-        {
-            get { return _totpShadows; }
-            set { _totpShadows = value; }
-        }
+        public int TOTPShadows { get; set; } = 2;
 
         [XmlAttribute("Algorithm")]
-        public HashMode Algorithm
-        {
-            get { return _algorithm; }
-            set { _algorithm = value; }
-        }
+        public HashMode Algorithm { get; set; } = HashMode.SHA1;
 
         [XmlAttribute("WizardOptions")]
-        public OTPWizardOptions WizardOptions
-        {
-            get { return _otpwizardoptions; }
-            set { _otpwizardoptions = value; }
-        }
+        public OTPWizardOptions WizardOptions { get; set; } = OTPWizardOptions.All;
 
         [XmlAttribute("FullQualifiedImplementation")]
-        public string FullQualifiedImplementation
-        {
-            get { return _class; }
-            set { _class = value; }
-        }
+        public string FullQualifiedImplementation { get; set; }
 
         [XmlElement("Parameters", typeof(XmlCDataSection))]
         public XmlCDataSection Parameters

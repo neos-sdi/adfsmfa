@@ -118,27 +118,27 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ActivationPageTitle" xml:space="preserve">
-    <value>Activation requise</value>
+    <value>Activering vereist</value>
   </data>
   <data name="InvitationPageTitle" xml:space="preserve">
-    <value>Enregistrement requis</value>
+    <value>Registratie vereist</value>
   </data>
   <data name="ManageOptionsPageTitle" xml:space="preserve">
-    <value>Configuration des options</value>
+    <value>Opties instellen</value>
   </data>
   <data name="MustUseCodePageTitle" xml:space="preserve">
-    <value>Vous devez utiliser un code de sécurité pour valider votre identité. Comment souhaitez-vous recevoir votre code ?</value>
+    <value>U moet een beveiligingscode gebruiken om uw identiteit te valideren. Hoe wilt u uw code ontvangen?</value>
   </data>
   <data name="PasswordPageTitle" xml:space="preserve">
-    <value>Changement de mot de passe</value>
+    <value>Wijzigen wachtwoorde</value>
   </data>
   <data name="RegistrationPageTitle" xml:space="preserve">
-    <value>Enregistrement requis</value>
+    <value>Registratie vereist</value>
   </data>
   <data name="TitlePageTitle" xml:space="preserve">
-    <value>Authentification Multi-Facteur</value>
+    <value>Multi-factor Authentication</value>
   </data>
   <data name="TitleRedirecting" xml:space="preserve">
-    <value>Redirection en cours ...</value>
+    <value>Omleiding aan de gang...</value>
   </data>
 </root>

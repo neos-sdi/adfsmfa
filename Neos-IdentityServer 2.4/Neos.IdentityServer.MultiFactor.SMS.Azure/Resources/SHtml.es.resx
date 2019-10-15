@@ -125,6 +125,12 @@
     <value>(autenticación es realizada por un tercero)</value>
     <comment>(l'authentification est réalisée par un tiers)</comment>
   </data>
+  <data name="MAILUIEnrollValidatedLabel" xml:space="preserve">
+    <value>Cuenta validada&lt;br&gt;&lt;br&gt;Puede usar su dirección de correo electrónico para autenticarse</value>
+  </data>
+  <data name="OTPUIEnrollValidatedLabel" xml:space="preserve">
+    <value>Cuenta validada&lt;br&gt;&lt;br&gt;Puede usar la aplicación para autenticarse</value>
+  </data>
   <data name="SMSUICFGLabel" xml:space="preserve">
     <value>Número de teléfono</value>
     <comment>Numéro de téléphone</comment>
@@ -144,6 +150,12 @@
   <data name="SMSUIConfigLabel2" xml:space="preserve">
     <value>Mensaje de texto en mi teléfono móvil {0}</value>
     <comment>Message texte sur mon téléphone mobile {0}</comment>
+  </data>
+  <data name="SMSUIEnrollTaskLabel" xml:space="preserve">
+    <value>Proporcione un número de teléfono móvil</value>
+  </data>
+  <data name="SMSUIEnrollValidatedLabel" xml:space="preserve">
+    <value>Cuenta validada&lt;br&gt;&lt;br&gt;Puede utilizar su teléfono móvil para autenticarse</value>
   </data>
   <data name="SMSUIListChoiceDefaultLabel" xml:space="preserve">
     <value>Usar la opción predeterminada</value>
@@ -171,5 +183,8 @@
   </data>
   <data name="SMSUIWIZLabel" xml:space="preserve">
     <value>Inscribe tu móvil</value>
+  </data>
+  <data name="SMSWIZEnroll" xml:space="preserve">
+    <value>Registra mi teléfono</value>
   </data>
 </root>

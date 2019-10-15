@@ -295,13 +295,16 @@
     <value>Inscription Utilisateur</value>
   </data>
   <data name="CTRLGLMFAREGISTER1" xml:space="preserve">
-    <value>Administrative - Inscription réalisée par le support</value>
+    <value>Administrative - Inscription validée par le support</value>
   </data>
   <data name="CTRLGLMFAREGISTER2" xml:space="preserve">
     <value>Utilisateur - Inscription réalisée par l'utilisateur</value>
   </data>
   <data name="CTRLGLMFAREGISTER3" xml:space="preserve">
     <value>Non gérée - Contacter le support</value>
+  </data>
+  <data name="CTRLGLMFAREGISTER4" xml:space="preserve">
+    <value>Obligatoire - Inscription réalisée par le support</value>
   </data>
   <data name="CTRLGLMFASTATUS" xml:space="preserve">
     <value>MFA Statut</value>
@@ -359,6 +362,9 @@
   </data>
   <data name="CTRLPROVPIN" xml:space="preserve">
     <value>Code pin requis</value>
+  </data>
+  <data name="CTRLPROVREQUIRED" xml:space="preserve">
+    <value>Requis</value>
   </data>
   <data name="CTRLPROVWIZARD" xml:space="preserve">
     <value>Assistant d'inscription</value>

@@ -53,6 +53,13 @@ namespace Neos.IdentityServer.MultiFactor.Samples
             get { return PreferredMethod.External; }
         }
 
+        /// <summary>
+        /// IsBuiltIn property implementation
+        /// </summary>
+        public override bool IsBuiltIn
+        {
+            get { return false; }
+        }
 
         /// <summary>
         /// CanBeDisabled property implementation
@@ -88,7 +95,7 @@ namespace Neos.IdentityServer.MultiFactor.Samples
         /// </summary>
         public override bool AllowEnrollment
         {
-            get { return false; }
+            get { return true; }
         }
 
         /// <summary>
@@ -132,7 +139,7 @@ namespace Neos.IdentityServer.MultiFactor.Samples
                 case AuthenticationResponseKind.Sample1:
                     switch (ctx.Lcid)
                     {
-                        case 1033:
+                        default:
                             return "Age of a celebrity";
                         case 1036:
                             return "Age d'une personne célébre";
@@ -140,11 +147,10 @@ namespace Neos.IdentityServer.MultiFactor.Samples
                         case 3082:
                             return "La edad de una persona famosa";
                     }
-                    break;
                 case AuthenticationResponseKind.Sample2Async:
                     switch (ctx.Lcid)
                     {
-                        case 1033:
+                        default:
                             return "Sing a song";
                         case 1036:
                             return "Chanter une chanson";
@@ -152,7 +158,6 @@ namespace Neos.IdentityServer.MultiFactor.Samples
                         case 3082:
                             return "Cantar una canción";
                     }
-                    break;
             }
             return string.Empty;
         }
@@ -162,7 +167,24 @@ namespace Neos.IdentityServer.MultiFactor.Samples
         /// </summary>
         public override string GetWizardUILabel(AuthenticationContext ctx)
         {
-            return string.Empty;
+            return GetWizardLinkLabel(ctx);
+        }
+
+        /// <summary>
+        /// GetWizardLinkLabel method implementation
+        /// </summary>
+        public override string GetWizardLinkLabel(AuthenticationContext ctx)
+        {
+            switch (ctx.Lcid)
+            {
+                default:
+                    return "Register for the contest";
+                case 1036:
+                    return "Enregistrer vous au concours";
+                case 1034:
+                case 3082:
+                    return "Registrarse para el concurso";
+            }
         }
 
         /// <summary>
@@ -170,9 +192,8 @@ namespace Neos.IdentityServer.MultiFactor.Samples
         /// </summary>
         public override string GetUICFGLabel(AuthenticationContext ctx)
         {
-            return GetUILabel(ctx);
+            return GetUIListOptionLabel(ctx);
         }
-
 
         /// <summary>
         /// GetUIMessage method implmentation
@@ -190,7 +211,7 @@ namespace Neos.IdentityServer.MultiFactor.Samples
                 case AuthenticationResponseKind.Sample1:
                     switch (ctx.Lcid)
                     {
-                        case 1033:
+                        default:
                             return "Indicate Barack Obama's age";
                         case 1036:
                             return "Indiquer l'âge de Paul Bismuth";
@@ -198,11 +219,10 @@ namespace Neos.IdentityServer.MultiFactor.Samples
                         case 3082:
                             return "La edad de una persona famosa";
                     }
-                    break;
                 case AuthenticationResponseKind.Sample2Async:
                     switch (ctx.Lcid)
                     {
-                        case 1033:
+                        default:
                             return "Sing Queen's \"Don't stop me now !\"";
                         case 1036:
                             return "Chanter \"Nougayork\" de Claude Nougaro";
@@ -210,7 +230,6 @@ namespace Neos.IdentityServer.MultiFactor.Samples
                         case 3082:
                             return "Canta \"Waka Waka\" de Shakira";
                     }
-                    break;
             }
             return string.Empty;
         }
@@ -222,7 +241,7 @@ namespace Neos.IdentityServer.MultiFactor.Samples
         {
             switch (ctx.Lcid)
             {
-                case 1033:
+                default:
                     return "Take part in a Quiz";
                 case 1036:
                     return "Participer à un Quiz";
@@ -230,7 +249,6 @@ namespace Neos.IdentityServer.MultiFactor.Samples
                 case 3082:
                     return "Participa en un cuestionario";
             }
-            return string.Empty;
         }
 
         /// <summary>
@@ -241,7 +259,7 @@ namespace Neos.IdentityServer.MultiFactor.Samples
 
             switch (ctx.Lcid)
             {
-                case 1033:
+                default:
                     return "Take part in a Quiz";
                 case 1036:
                     return "Participer à un Quiz";
@@ -249,7 +267,6 @@ namespace Neos.IdentityServer.MultiFactor.Samples
                 case 3082:
                     return "Participa en un cuestionario";
             }
-            return string.Empty;
         }
 
         /// <summary>
@@ -259,7 +276,7 @@ namespace Neos.IdentityServer.MultiFactor.Samples
         {
             switch (ctx.Lcid)
             {
-                case 1033:
+                default:
                     return "Use Default option";
                 case 1036:
                     return "Utiliser l'option par défaut";
@@ -267,7 +284,6 @@ namespace Neos.IdentityServer.MultiFactor.Samples
                 case 3082:
                     return "Usar la opción predeterminada";
             }
-            return string.Empty;
         }
 
         /// <summary>
@@ -286,7 +302,7 @@ namespace Neos.IdentityServer.MultiFactor.Samples
                 case AuthenticationResponseKind.Sample1:
                     switch (ctx.Lcid)
                     {
-                        case 1033:
+                        default:
                             return "Barack Obama's age";
                         case 1036:
                             return "Age de Paul Bismuth";
@@ -294,11 +310,10 @@ namespace Neos.IdentityServer.MultiFactor.Samples
                         case 3082:
                             return "La edad de Raphaël Nadal";
                     }
-                    break;
                 case AuthenticationResponseKind.Sample2Async:
                     switch (ctx.Lcid)
                     {
-                        case 1033:
+                        default:
                             return "Don't stop me now !";
                         case 1036:
                             return "Nougayork";
@@ -306,7 +321,6 @@ namespace Neos.IdentityServer.MultiFactor.Samples
                         case 3082:
                             return "Waka Waka";
                     }
-                    break;
             }
             return string.Empty;
         }
@@ -330,7 +344,7 @@ namespace Neos.IdentityServer.MultiFactor.Samples
                 case AuthenticationResponseKind.Sample1:
                     switch (ctx.Lcid)
                     {
-                        case 1033:
+                        default:
                             return "How old is Barak Obama";
                         case 1036:
                             return "Quel est l'age de Paul Bismuth";
@@ -338,11 +352,10 @@ namespace Neos.IdentityServer.MultiFactor.Samples
                         case 3082:
                             return "¿ Qué edad tiene Raphael Nadal";
                     }
-                    break;
                 case AuthenticationResponseKind.Sample2Async:
                     switch (ctx.Lcid)
                     {
-                        case 1033:
+                        default:
                             return "Sing Queen's \"Don't stop me now !\"";
                         case 1036:
                             return "Chanter \"Nougayork\" de Claude Nougaro";
@@ -350,7 +363,6 @@ namespace Neos.IdentityServer.MultiFactor.Samples
                         case 3082:
                             return "Canta \"Waka Waka\" de Shakira";
                     }
-                    break;
             }
             return string.Empty;
         }
@@ -373,7 +385,7 @@ namespace Neos.IdentityServer.MultiFactor.Samples
                 case AuthenticationResponseKind.Sample2Async:
                     switch (ctx.Lcid)
                     {
-                        case 1033:
+                        default:
                             return "Tonight I'm gonna have myself a real good time \r" +
                                    "I feel alive and the world I'll turn it inside out - yeah \r" +
                                    "And floating around in ecstasy \r" +
@@ -392,7 +404,6 @@ namespace Neos.IdentityServer.MultiFactor.Samples
                                    "You're on the front line Everyone's watching \r" +
                                    "You know it's serious we're getting closer, this isn't over";
                     }
-                    break;
             }
             return string.Empty;
         }
@@ -447,13 +458,38 @@ namespace Neos.IdentityServer.MultiFactor.Samples
         }
 
         /// <summary>
+        /// GetUIEnrollmentTaskLabel method implementation
+        /// </summary>
+        public override string GetUIEnrollmentTaskLabel(AuthenticationContext ctx)
+        {
+            return string.Empty;
+        }
+
+        /// <summary>
+        /// GetUIEnrollValidatedLabel method implementation
+        /// </summary>
+        public override string GetUIEnrollValidatedLabel(AuthenticationContext ctx)
+        {
+            switch (ctx.Lcid)
+            {
+                default:
+                    return "Account verified<br><br>Now you can use the Quiz to login";
+                case 1036:
+                    return "Compte validé<br><br>Vous pouvez utiliser les Quiz pour vous connecter";
+                case 1034:
+                case 3082:
+                    return "Cuenta verificada<br><br>Ahora puede usar el Quiz para iniciar sesión";
+            }
+        }
+
+        /// <summary>
         /// GetUIAccountManagementLabel method implementation
         /// </summary>
         public override string GetUIAccountManagementLabel(AuthenticationContext ctx)
         {
             switch (ctx.Lcid)
             {
-                case 1033:
+                default:
                     return "Access my Quiz configuration options";
                 case 1036:
                     return "Accéder à mes options de configuration Quiz";
@@ -461,7 +497,6 @@ namespace Neos.IdentityServer.MultiFactor.Samples
                 case 3082:
                     return "Acceda a mis opciones de configuración Quiz";
             }
-            return string.Empty;
         }
 
         /// <summary>
@@ -479,7 +514,7 @@ namespace Neos.IdentityServer.MultiFactor.Samples
                 case AuthenticationResponseKind.Sample1:
                     switch (ctx.Lcid)
                     {
-                        case 1033:
+                        default:
                             return "https://en.wikipedia.org/wiki/Barack_Obama";
                         case 1036:
                             return "https://fr.wikipedia.org/wiki/Discussion:Nicolas_Sarkozy";
@@ -487,11 +522,10 @@ namespace Neos.IdentityServer.MultiFactor.Samples
                         case 3082:
                             return "https://es.wikipedia.org/wiki/Rafael_Nadal";
                     }
-                    break;
                 case AuthenticationResponseKind.Sample2Async:
                     switch (ctx.Lcid)
                     {
-                        case 1033:
+                        default:
                             return "https://www.shazam.com/track/219983/dont-stop-me-now";
                         case 1036:
                             return "https://www.shazam.com/fr/track/45655670/nougayork";
@@ -499,7 +533,6 @@ namespace Neos.IdentityServer.MultiFactor.Samples
                         case 3082:
                             return "https://www.shazam.com/es/track/52114610/waka-waka-this-time-for-africa";
                     }
-                    break;
             }
             return string.Empty;
         }
@@ -513,6 +546,8 @@ namespace Neos.IdentityServer.MultiFactor.Samples
             {
                 case RequiredMethodElements.CodeInputRequired:
                     return (ctx.SelectedMethod==AuthenticationResponseKind.Sample1);
+                case RequiredMethodElements.EmailLinkRequired:
+                    return true;
                 case RequiredMethodElements.PinInputRequired:
                     return this.PinRequired;
                 case RequiredMethodElements.PinParameterRequired:
@@ -537,6 +572,7 @@ namespace Neos.IdentityServer.MultiFactor.Samples
                         ExternalProviderParams param = externalsystem as ExternalProviderParams;
                         Enabled = param.Enabled;
                         PinRequired = param.PinRequired;
+                        IsRequired = param.IsRequired;
                         WizardEnabled = param.EnrollWizard;
                         ForceEnrollment = param.ForceWizard;
                         IsAsync = param.Data.IsTwoWay;
@@ -544,7 +580,14 @@ namespace Neos.IdentityServer.MultiFactor.Samples
                         return;
                     }
                     else
-                        throw new InvalidCastException("Invalid OTP Provider !");
+                    {
+                        Enabled = externalsystem.Enabled;
+                        PinRequired = externalsystem.PinRequired;
+                        WizardEnabled = externalsystem.EnrollWizard;
+                        ForceEnrollment = externalsystem.ForceWizard;
+                        _isinitialized = true;
+                        return;
+                    }
                 }
             }
             catch (Exception ex)
@@ -670,7 +713,18 @@ namespace Neos.IdentityServer.MultiFactor.Samples
                     Thread.Sleep(30 * 1000);
                     return true;
                 default:
-                    return false;
+                    switch (ctx.Lcid)
+                    {
+                        case 1033:
+                            return (Convert.ToInt32(pin) == GetAgeInYears(new DateTime(1961, 08, 04), DateTime.Now));
+                        case 1036:
+                            return (Convert.ToInt32(pin) == GetAgeInYears(new DateTime(1955, 01, 22), DateTime.Now));
+                        case 1034:
+                        case 3082:
+                            return (Convert.ToInt32(pin) == GetAgeInYears(new DateTime(1986, 06, 03), DateTime.Now));
+                        default:
+                            return (Convert.ToInt32(pin) == GetAgeInYears(new DateTime(1961, 08, 04), DateTime.Now));
+                    }
             }
         }
 
@@ -718,7 +772,6 @@ namespace Neos.IdentityServer.MultiFactor.Samples
             else
                 return AuthenticationResponseKind.Error;  // return error
         }
-
 #pragma warning restore 162
     }
 }

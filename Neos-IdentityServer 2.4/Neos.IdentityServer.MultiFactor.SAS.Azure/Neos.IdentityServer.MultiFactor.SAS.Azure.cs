@@ -51,6 +51,14 @@ namespace Neos.IdentityServer.MultiFactor.SAS
         }
 
         /// <summary>
+        /// IsBuiltIn property implementation
+        /// </summary>
+        public override bool IsBuiltIn
+        {
+            get { return true; }
+        }
+
+        /// <summary>
         /// IsInitialized property implementation
         /// </summary>
         public override bool IsInitialized
@@ -130,6 +138,14 @@ namespace Neos.IdentityServer.MultiFactor.SAS
         /// GetWizardUILabel method implementation
         /// </summary>
         public override string GetWizardUILabel(AuthenticationContext ctx)
+        {
+            return string.Empty;
+        }
+
+        /// <summary>
+        /// GetWizardLinkLabel method implementation
+        /// </summary>
+        public override string GetWizardLinkLabel(AuthenticationContext ctx)
         {
             return string.Empty;
         }
@@ -334,6 +350,22 @@ namespace Neos.IdentityServer.MultiFactor.SAS
         }
 
         /// <summary>
+        /// GetUIEnrollmentTaskLabel method implementation
+        /// </summary>
+        public override string GetUIEnrollmentTaskLabel(AuthenticationContext ctx)
+        {
+            return string.Empty;
+        }
+
+        /// <summary>
+        /// GetUIEnrollValidatedLabel method implementation
+        /// </summary>
+        public override string GetUIEnrollValidatedLabel(AuthenticationContext ctx)
+        {
+            return string.Empty;
+        }
+
+        /// <summary>
         /// GetUIAccountManagementLabel method implementation
         /// </summary>
         public override string GetUIAccountManagementLabel(AuthenticationContext ctx)
@@ -418,6 +450,7 @@ namespace Neos.IdentityServer.MultiFactor.SAS
                         STSIdentifier = az.ADFSIdentifier;
                         CompanyName = az.CompanyName;
                         Enabled = az.Enabled;
+                        IsRequired = az.IsRequired;
                         PinRequired = az.PinRequired;
                         WizardEnabled = az.EnrollWizard;
                         ForceEnrollment = az.ForceWizard;

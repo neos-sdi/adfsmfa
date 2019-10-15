@@ -61,6 +61,15 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Access to this application requires additional authentication. &lt;br&gt; &lt;br&gt; Click &quot;Activate&quot; to activate your account or Click &quot;Continue&quot;..
+        /// </summary>
+        internal static string ErrorAccountActivate {
+            get {
+                return ResourceManager.GetString("ErrorAccountActivate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Authorized access ! additional authentication is not activated yet. Please contact your administrators..
         /// </summary>
         internal static string ErrorAccountAdminAuthorized {
@@ -70,7 +79,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Unauthorized access! additional authentication is not activated yet. Please contact your administrators..
+        ///   Recherche une chaîne localisée semblable à Unauthorized access! additional authentication is not yet activated. &lt;br&gt;&lt;br&gt;Please contact your administrators..
         /// </summary>
         internal static string ErrorAccountAdminNotEnabled {
             get {
@@ -79,7 +88,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Access to this application requires additional authentication. To initate additional authentication setup press &quot;Change my options&quot;.
+        ///   Recherche une chaîne localisée semblable à Access to this application requires additional authentication. &lt;br&gt; &lt;br&gt; Click on &quot;Registration&quot; to continue..
         /// </summary>
         internal static string ErrorAccountAuthorized {
             get {
@@ -97,7 +106,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Access to this application requires additional authentication that is not enabled at this time. To start the additional authentication configuration, click on &quot;Inscription Request&quot;..
+        ///   Recherche une chaîne localisée semblable à Access to this application requires additional authentication that is not activated at this time. &lt;br&gt; &lt;br&gt; click on &quot;Registration Request&quot;..
         /// </summary>
         internal static string ErrorAccountNotEnabled {
             get {

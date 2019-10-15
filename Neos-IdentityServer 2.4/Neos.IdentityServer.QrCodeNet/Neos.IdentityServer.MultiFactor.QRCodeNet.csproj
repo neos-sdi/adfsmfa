@@ -178,6 +178,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Neos.IdentityServer.pfx" />
+    <None Include="tempsignature.snk" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

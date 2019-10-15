@@ -60,7 +60,9 @@ namespace Neos.IdentityServer.MultiFactor.Common
         private bool _enabled;
         private bool _pinenabled = false;
         private bool _wizenabled = true;
+
         public abstract PreferredMethod Kind { get; }
+        public abstract bool IsBuiltIn { get; }
         public abstract bool IsInitialized { get; }
         public abstract bool AllowDisable { get; }
         public abstract bool AllowOverride { get; }
@@ -71,6 +73,7 @@ namespace Neos.IdentityServer.MultiFactor.Common
 
         public abstract string GetUILabel(AuthenticationContext ctx);
         public abstract string GetWizardUILabel(AuthenticationContext ctx);
+        public abstract string GetWizardLinkLabel(AuthenticationContext ctx);
         public abstract string GetUICFGLabel(AuthenticationContext ctx);
         public abstract string GetUIMessage(AuthenticationContext ctx);
         public abstract string GetUIListOptionLabel(AuthenticationContext ctx);
@@ -81,6 +84,8 @@ namespace Neos.IdentityServer.MultiFactor.Common
         public abstract string GetUIWarningThirdPartyLabel(AuthenticationContext ctx);
         public abstract string GetUIDefaultChoiceLabel(AuthenticationContext ctx);
         public abstract string GetUIAccountManagementLabel(AuthenticationContext ctx);
+        public abstract string GetUIEnrollmentTaskLabel(AuthenticationContext ctx);
+        public abstract string GetUIEnrollValidatedLabel(AuthenticationContext ctx);
         public abstract string GetAccountManagementUrl(AuthenticationContext ctx);
         public abstract bool IsAvailable(AuthenticationContext ctx);
         public abstract bool IsAvailableForUser(AuthenticationContext ctx);
@@ -147,6 +152,15 @@ namespace Neos.IdentityServer.MultiFactor.Common
         public virtual bool IsTwoWayByDefault
         {
             get { return false; }
+        }
+
+        /// <summary>
+        /// IsRequired property implementation
+        /// </summary>
+        public virtual bool IsRequired
+        {
+            get;
+            set;
         }
 
         /// <summary>
@@ -279,7 +293,7 @@ namespace Neos.IdentityServer.MultiFactor.Common
             {
                 foreach (AvailableAuthenticationMethod current in lst)
                 {
-                    if (current.Method == method)
+                    if( (current.Method == method) || (current.IsDefault && (method==AuthenticationResponseKind.Default)))
                     {
                         ctx.IsRemote = current.IsRemote;
                         ctx.IsSendBack = current.IsSendBack;
@@ -374,7 +388,7 @@ namespace Neos.IdentityServer.MultiFactor.Common
                             return res;
                     }
                 }
-                return AuthenticationResponseKind.Error;
+                return AuthenticationResponseKind.Default;
             }
             catch // Bad Data
             {
@@ -459,6 +473,7 @@ namespace Neos.IdentityServer.MultiFactor.Common
         private int TOTPShadows = 2;
         private HashMode Algorithm = HashMode.SHA1;
         private bool _isinitialized = false;
+        private bool _isrequired = true;
         private ForceWizardMode _forceenrollment = ForceWizardMode.Disabled;
 
         /// <summary>
@@ -477,13 +492,29 @@ namespace Neos.IdentityServer.MultiFactor.Common
             get { return 6; }
         }
 
-
         /// <summary>
         /// Kind property implementation
         /// </summary>
         public override PreferredMethod Kind 
         {
             get { return PreferredMethod.Code; }
+        }
+
+        /// <summary>
+        /// IsBuiltIn property implementation
+        /// </summary>
+        public override bool IsBuiltIn
+        {
+            get { return true; }
+        }
+
+        /// <summary>
+        /// IsRequired property implementation
+        /// </summary>
+        public override bool IsRequired
+        {
+            get { return _isrequired; }
+            set { _isrequired = value; }
         }
 
         /// <summary>
@@ -559,6 +590,15 @@ namespace Neos.IdentityServer.MultiFactor.Common
         {
             ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
             return Resources.GetString(ResourcesLocaleKind.Html, "OTPUIWIZLabel");
+        }
+
+        /// <summary>
+        /// GetWizardLinkLabel method implementation
+        /// </summary>
+        public override string GetWizardLinkLabel(AuthenticationContext ctx)
+        {
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
+            return Resources.GetString(ResourcesLocaleKind.Html, "OTPWIZEnroll");
         }
 
         /// <summary>
@@ -640,6 +680,24 @@ namespace Neos.IdentityServer.MultiFactor.Common
         }
 
         /// <summary>
+        /// GetUIEnrollmentTaskLabel method implementation
+        /// </summary>
+        public override string GetUIEnrollmentTaskLabel(AuthenticationContext ctx)
+        {
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
+            return Resources.GetString(ResourcesLocaleKind.Html, "OTPUIEnrollTaskLabel");
+        }
+
+        /// <summary>
+        /// GetUIEnrollValidatedLabel method implementation
+        /// </summary>
+        public override string GetUIEnrollValidatedLabel(AuthenticationContext ctx)
+        {
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
+            return Resources.GetString(ResourcesLocaleKind.Html, "OTPUIEnrollValidatedLabel");
+        }
+
+        /// <summary>
         /// GetUIAccountManagementLabel method implementation
         /// </summary>
         public override string GetUIAccountManagementLabel(AuthenticationContext ctx)
@@ -710,6 +768,7 @@ namespace Neos.IdentityServer.MultiFactor.Common
                         Algorithm = param.Algorithm;
 
                         Enabled = param.Enabled;
+                        IsRequired = param.IsRequired;
                         WizardEnabled = param.EnrollWizard;
                         ForceEnrollment = param.ForceWizard;
                         PinRequired = param.PinRequired;
@@ -864,6 +923,14 @@ namespace Neos.IdentityServer.MultiFactor.Common
         }
 
         /// <summary>
+        /// IsBuiltIn property implementation
+        /// </summary>
+        public override bool IsBuiltIn
+        {
+            get { return true; }
+        }
+
+        /// <summary>
         /// IsInitialized property implmentation
         /// </summary>
         public override bool IsInitialized
@@ -950,6 +1017,15 @@ namespace Neos.IdentityServer.MultiFactor.Common
         {
             ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
             return Resources.GetString(ResourcesLocaleKind.Html, "SMSUIWIZLabel");
+        }
+
+        /// <summary>
+        /// GetWizardLinkLabel method implementation
+        /// </summary>
+        public override string GetWizardLinkLabel(AuthenticationContext ctx)
+        {
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
+            return Resources.GetString(ResourcesLocaleKind.Html, "SMSWIZEnroll");
         }
 
         /// <summary>
@@ -1053,6 +1129,24 @@ namespace Neos.IdentityServer.MultiFactor.Common
         }
 
         /// <summary>
+        /// GetUIEnrollmentTaskLabel method implementation
+        /// </summary>
+        public override string GetUIEnrollmentTaskLabel(AuthenticationContext ctx)
+        {
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
+            return Resources.GetString(ResourcesLocaleKind.Html, "SMSUIEnrollTaskLabel");
+        }
+
+        /// <summary>
+        /// GetUIEnrollValidatedLabel method implementation
+        /// </summary>
+        public override string GetUIEnrollValidatedLabel(AuthenticationContext ctx)
+        {
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
+            return Resources.GetString(ResourcesLocaleKind.Html, "SMSUIEnrollValidatedLabel");
+        }
+
+        /// <summary>
         /// GetUIAccountManagementLabel method implementation
         /// </summary>
         public override string GetUIAccountManagementLabel(AuthenticationContext ctx)
@@ -1125,6 +1219,7 @@ namespace Neos.IdentityServer.MultiFactor.Common
                         _sasprovider = LoadLegacyExternalProvider(Data.FullQualifiedImplementation);
 
                         Enabled = param.Enabled;
+                        IsRequired = param.IsRequired;
                         WizardEnabled = param.EnrollWizard;
                         ForceEnrollment = param.ForceWizard;
                         PinRequired = param.PinRequired;
@@ -1265,6 +1360,7 @@ namespace Neos.IdentityServer.MultiFactor.Common
     public class NeosMailProvider: BaseExternalProvider
     {
         private bool _isinitialized = false;
+        private bool _isrequired = true;
         private MailProvider Data;
         private ForceWizardMode _forceenrollment = ForceWizardMode.Disabled;
 
@@ -1274,6 +1370,23 @@ namespace Neos.IdentityServer.MultiFactor.Common
         public override PreferredMethod Kind
         {
             get { return PreferredMethod.Email; }
+        }
+
+        /// <summary>
+        /// IsBuiltIn property implementation
+        /// </summary>
+        public override bool IsBuiltIn
+        {
+            get { return true; }
+        }
+
+        /// <summary>
+        /// IsRequired property implementation
+        /// </summary>
+        public override bool IsRequired
+        {
+            get { return _isrequired; }
+            set { _isrequired = value; }
         }
 
         /// <summary>
@@ -1361,6 +1474,15 @@ namespace Neos.IdentityServer.MultiFactor.Common
         }
 
         /// <summary>
+        /// GetWizardLinkLabel method implementation
+        /// </summary>
+        public override string GetWizardLinkLabel(AuthenticationContext ctx)
+        {
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
+            return Resources.GetString(ResourcesLocaleKind.Html, "MAILWIZEnroll");
+        }
+
+        /// <summary>
         /// GetUICFGLabel method implementation
         /// </summary>
         public override string GetUICFGLabel(AuthenticationContext ctx)
@@ -1443,6 +1565,24 @@ namespace Neos.IdentityServer.MultiFactor.Common
         }
 
         /// <summary>
+        /// GetUIEnrollmentTaskLabel method implementation
+        /// </summary>
+        public override string GetUIEnrollmentTaskLabel(AuthenticationContext ctx)
+        {
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
+            return Resources.GetString(ResourcesLocaleKind.Html, "MAILUIEnrollTaskLabel");
+        }
+
+        /// <summary>
+        /// GetUIEnrollValidatedLabel method implementation
+        /// </summary>
+        public override string GetUIEnrollValidatedLabel(AuthenticationContext ctx)
+        {
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
+            return Resources.GetString(ResourcesLocaleKind.Html, "MAILUIEnrollValidatedLabel");
+        }
+
+        /// <summary>
         /// GetUIAccountManagementLabel method implementation
         /// </summary>
         public override string GetUIAccountManagementLabel(AuthenticationContext ctx)
@@ -1511,6 +1651,7 @@ namespace Neos.IdentityServer.MultiFactor.Common
                         MailProviderParams param = externalsystem as MailProviderParams;
                         Data = param.Data;
                         Enabled = param.Enabled;
+                        IsRequired = param.IsRequired;
                         WizardEnabled = param.EnrollWizard;
                         ForceEnrollment = param.ForceWizard;
                         PinRequired = param.PinRequired;
@@ -1645,6 +1786,14 @@ namespace Neos.IdentityServer.MultiFactor.Common
         }
 
         /// <summary>
+        /// IsBuiltIn property implementation
+        /// </summary>
+        public override bool IsBuiltIn
+        {
+            get { return false; }
+        }
+
+        /// <summary>
         /// IsInitialized property implmentation
         /// </summary>
         public override bool IsInitialized
@@ -1725,6 +1874,15 @@ namespace Neos.IdentityServer.MultiFactor.Common
         {
             ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
             return Resources.GetString(ResourcesLocaleKind.Html, "SMSUIWIZLabel");
+        }
+
+        /// <summary>
+        /// GetWizardLinkLabel method implementation
+        /// </summary>
+        public override string GetWizardLinkLabel(AuthenticationContext ctx)
+        {
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
+            return Resources.GetString(ResourcesLocaleKind.Html, "SMSWIZEnroll");
         }
 
         /// <summary>
@@ -1819,6 +1977,22 @@ namespace Neos.IdentityServer.MultiFactor.Common
         }
 
         /// <summary>
+        /// GetUIEnrollmentTaskLabel method implementation
+        /// </summary>
+        public override string GetUIEnrollmentTaskLabel(AuthenticationContext ctx)
+        {
+            return string.Empty;
+        }
+
+        /// <summary>
+        /// GetUIEnrollValidatedLabel method implementation
+        /// </summary>
+        public override string GetUIEnrollValidatedLabel(AuthenticationContext ctx)
+        {
+            return string.Empty;
+        }
+
+        /// <summary>
         /// GetUIAccountManagementLabel method implementation
         /// </summary>
         public override string GetUIAccountManagementLabel(AuthenticationContext ctx)
@@ -1872,6 +2046,7 @@ namespace Neos.IdentityServer.MultiFactor.Common
                     {
                         ExternalProviderParams param = externalsystem as ExternalProviderParams;
                         Enabled = false;
+                        IsRequired = false;
                         WizardEnabled = false;
                         ForceEnrollment = ForceWizardMode.Disabled;
                         PinRequired = false;
@@ -2114,8 +2289,6 @@ namespace Neos.IdentityServer.MultiFactor.Common
             Registration reg = (Registration)ctx;
             if (reg == null)
                 throw new Exception(string.Format("SECURTY ERROR : Invalid user {0}", ctx.UPN));
-            if (string.IsNullOrEmpty(reg.MailAddress))
-                throw new Exception(string.Format("SECURTY ERROR : Invalid user mail address {0}", ctx.UPN));
         }
     }
 }

@@ -117,20 +117,23 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ErrorAccountActivate" xml:space="preserve">
+    <value>El acceso a esta aplicación requiere autenticación adicional. &lt;br&gt; &lt;br&gt; Haga clic en "Activar" para activar su cuenta o haga clic en "Continuar".</value>
+  </data>
   <data name="ErrorAccountAdminAuthorized" xml:space="preserve">
     <value>Acceso permitido ! La autenticación adicional no está activada todavía. Por favor, póngase en contacto con sus administradores.</value>
   </data>
   <data name="ErrorAccountAdminNotEnabled" xml:space="preserve">
-    <value>Acceso no autorizado ! La autenticación adicional no está activada todavía. Por favor, póngase en contacto con sus administradores.</value>
+    <value>¡Acceso no autorizado ! la autenticación adicional aún no está activada. &lt;br&gt;&lt;br&gt;Póngase en contacto con sus administradores.</value>
   </data>
   <data name="ErrorAccountAuthorized" xml:space="preserve">
-    <value>El acceso a esta aplicación requiere autenticación adicional. Para iniciar la configuración de autenticación adicional, presione "Cambiar mis opciones"</value>
+    <value>El acceso a esta aplicación requiere autenticación adicional. &lt;br&gt; &lt;br&gt; Haga clic en "Registro" para continuar.</value>
   </data>
   <data name="ErrorAccountNoAccess" xml:space="preserve">
     <value>El acceso no autorizado ! Por favor, póngase en contacto con los administradores</value>
   </data>
   <data name="ErrorAccountNotEnabled" xml:space="preserve">
-    <value>El acceso a esta aplicación requiere una autenticación adicional que no está habilitada en este momento. Para iniciar la configuración de autenticación adicional, haga clic en "Solicitud de registro".</value>
+    <value>El acceso a esta aplicación requiere autenticación adicional que no está activada en este momento. &lt;br&gt; &lt;br&gt; haga clic en "Solicitud de registro".</value>
   </data>
   <data name="ErrorAuthenticating" xml:space="preserve">
     <value>Error durante el proceso de identificación.
@@ -172,7 +175,7 @@
     <value>Código PIN inválido !</value>
   </data>
   <data name="ErrorReplayToken" xml:space="preserve">
-    <value />
+    <value>¡Error en el proceso de autenticación! One Time Password se ha jugado antes</value>
   </data>
   <data name="ErrorSendingToastInformation" xml:space="preserve">
     <value>error durante la transmisión de la petición de identificación !
@@ -183,8 +186,5 @@
   </data>
   <data name="ErrorValidationTimeWindowElapsed" xml:space="preserve">
     <value>Ventana de validación agotado.</value>
-  </data>
-  <data name="String1" xml:space="preserve">
-    <value>¡Error en el proceso de autenticación! One Time Password se ha jugado antes</value>
   </data>
 </root>

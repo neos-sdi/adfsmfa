@@ -74,7 +74,7 @@ namespace Neos.IdentityServer.MultiFactor
         {
             string result = string.Empty;
 
-            result += "#buttonquit {";
+            result += "#buttonquit, #gotoinscription {";
             result += "border:none;";
             result += "background-color:rgb(232, 17, 35);";
             result += "min-width:120px;";
@@ -175,11 +175,11 @@ namespace Neos.IdentityServer.MultiFactor
         }
         #endregion
 
-        #region Registration
+        #region ManageOptions
         /// <summary>
-        /// GetFormPreRenderHtmlRegistration implementation
+        /// GetFormPreRenderHtmlManageOptions implementation
         /// </summary>
-        public override string GetFormPreRenderHtmlRegistration(AuthenticationContext usercontext)
+        public override string GetFormPreRenderHtmlManageOptions(AuthenticationContext usercontext)
         {
             string reg = @"/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,})+$/";
             string pho = @"/^\+(?:[0-9] ?){6,14}[0-9]$/";
@@ -188,7 +188,7 @@ namespace Neos.IdentityServer.MultiFactor
 
             string result = "<script type='text/javascript'>" + "\r\n";
 
-            result += "function ValidateRegistration(frm)";
+            result += "function ValidateOptions(frm)";
             result += "{";
             result += "var mailformat = " + reg + " ;";
             result += "var phoneformat = " + pho + " ;";
@@ -258,139 +258,52 @@ namespace Neos.IdentityServer.MultiFactor
             result += "</script>" + "\r\n";
             return result;
         }
+
         /// <summary>
-        /// GetFormHtmlRegistration implementation
+        /// GetFormHtmlManageOptions implementation
         /// </summary>
-        public override string GetFormHtmlRegistration(AuthenticationContext usercontext)
+        public override string GetFormHtmlManageOptions(AuthenticationContext usercontext)
         {
             string result = string.Empty;
-            result += "<form method=\"post\" id=\"registrationForm\" autocomplete=\"off\" onsubmit=\"return ValidateRegistration(this)\" >";
-            result += "<div id=\"wizardMessage\" class=\"groupMargin\">" + Resources.GetString(ResourcesLocaleKind.Titles, "RegistrationPageTitle") + "</div>";
+            result += "<form method=\"post\" id=\"OptionsForm\" autocomplete=\"off\" onsubmit=\"return ValidateOptions(this)\" >";
+            result += "<div id=\"wizardMessage\" class=\"groupMargin\">" + Resources.GetString(ResourcesLocaleKind.Titles, "ManageOptionsPageTitle") + "</div>";
 
-            result += GetPartHtmlPagingMethod(usercontext);
-
-            IExternalProvider prov = null;
-            switch (usercontext.PageID)
+            IExternalProvider prov1 = RuntimeAuthProvider.GetProvider(PreferredMethod.Code);
+            if ((prov1 != null) && (prov1.Enabled) && prov1.IsUIElementRequired(usercontext, RequiredMethodElements.OTPLinkRequired))
             {
-                case 1: // Email IsMethodElementRequired
-                    prov = RuntimeAuthProvider.GetProvider(PreferredMethod.Email);
-                    break;
-                case 2: // external API
-                    prov = RuntimeAuthProvider.GetProvider(PreferredMethod.External);
-                    break;
-                case 3: // Azure MFA
-                    prov = RuntimeAuthProvider.GetProvider(PreferredMethod.Azure);
-                    break;
-                case 4: // Biometrics
-                    prov = RuntimeAuthProvider.GetProvider(PreferredMethod.Biometrics);
-                    break;
-                case 5: // Pin Code
-                    prov = null;
-                    break;
-                default: // Authentication Application
-                    prov = RuntimeAuthProvider.GetProvider(PreferredMethod.Code);
-                    break;
+                result += "<a class=\"actionLink\" href=\"#\" id=\"enrollopt\" name=\"enrollopt\" onclick=\"fnlinkclicked(OptionsForm, 3)\" style=\"cursor: pointer;\">" + prov1.GetWizardLinkLabel(usercontext) + "</a>";
             }
-
-            if ((prov != null) && (prov.Enabled))
+            IExternalProvider prov2 = RuntimeAuthProvider.GetProvider(PreferredMethod.Email);
+            if ((prov2 != null) && (prov2.Enabled) && prov2.IsUIElementRequired(usercontext, RequiredMethodElements.EmailLinkRequired))
             {
-                if ((prov.IsUIElementRequired(usercontext, RequiredMethodElements.KeyParameterRequired)))
-                {
-                    string displaykey = string.Empty;
-                    if (usercontext.KeyStatus == SecretKeyStatus.Success)
-                    {
-                        displaykey = KeysManager.EncodedKey(usercontext.UPN);
-                    }
-                    result += "<div class=\"fieldMargin smallText\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlREGLabelAppKey") + "</div>";
-                    result += "<input id=\"secretkey\" name=\"secretkey\" type=\"text\" readonly=\"true\" placeholder=\"DisplayKey\" class=\"text fullWidth\" style=\"background-color: #F0F0F0\" value=\"" + Utilities.StripDisplayKey(displaykey) + "\"/></br>";
-                }
-                if ((prov.IsUIElementRequired(usercontext, RequiredMethodElements.EmailParameterRequired)))
-                {
-                    result += "<div class=\"fieldMargin smallText\">" + prov.GetUICFGLabel(usercontext) + " : </div>";
-                    result += "<input id=\"email\" name=\"email\" type=\"text\" readonly=\"true\" placeholder=\"" + Utilities.StripEmailAddress(usercontext.MailAddress) + "\" class=\"text fullWidth\" style=\"background-color: #F0F0F0\" /></br>";
-                }
-                if ((prov.IsUIElementRequired(usercontext, RequiredMethodElements.PhoneParameterRequired)))
-                {
-                    result += "<div class=\"fieldMargin smallText\">" + prov.GetUICFGLabel(usercontext) + " : </div>";
-                    result += "<input id=\"phone\" name=\"phone\" type=\"text\" readonly=\"true\" placeholder=\"" + Utilities.StripPhoneNumber(usercontext.PhoneNumber) + "\" class=\"text fullWidth\" style=\"background-color: #F0F0F0\" /></br>";
-                }
-
-                List<AvailableAuthenticationMethod> lst = prov.GetAuthenticationMethods(usercontext);
-                if (lst.Count > 1)
-                {
-                    AuthenticationResponseKind ov = AuthenticationResponseKind.Error;
-                    if (prov.AllowOverride)
-                    {
-                        ov = prov.GetOverrideMethod(usercontext);
-                        result += "<input id=\"optiongroup\" name=\"optionitem\" type=\"radio\" value=\"Default\" checked=\"checked\" /> " + prov.GetUIDefaultChoiceLabel(usercontext) + "</br></br>";
-                    }
-                    int i = 1;
-                    foreach (AvailableAuthenticationMethod met in lst)
-                    {
-                        if (ov != AuthenticationResponseKind.Error)
-                        {
-                            if (met.Method == ov)
-                                result += "<input id=\"optiongroup" + i.ToString() + "\" name=\"optionitem\" type=\"radio\" value=\"" + met.Method.ToString() + "\" checked=\"checked\" /> " + prov.GetUIChoiceLabel(usercontext, met) + "</br>";
-                            else
-                                result += "<input id=\"optiongroup" + i.ToString() + "\" name=\"optionitem\" type=\"radio\" value=\"" + met.Method.ToString() + "\" /> " + prov.GetUIChoiceLabel(usercontext, met) + "</br>";
-                        }
-                        else
-                            result += "<input id=\"optiongroup" + i.ToString() + "\" name=\"optionitem\" type=\"radio\" value=\"" + met.Method.ToString() + "\" /> " + prov.GetUIChoiceLabel(usercontext, met) + "</br>";
-                        i++;
-                    }
-                }
-                else if (lst.Count <=0)
-                {
-                    result += "<div class=\"fieldMargin error smallText\">No options available for " + prov.Description + "</div></br>";
-                }
-                if ((prov.IsUIElementRequired(usercontext, RequiredMethodElements.KeyParameterRequired)))
-                {
-                    result += "</br>";
-                    result += "<a class=\"actionLink\" href=\"#\" id=\"enrollopt\" name=\"enrollopt\" onclick=\"fnlinkclicked(registrationForm, 3)\"; style=\"cursor: pointer;\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlEnrollOTP") + "</a>";
-                }
-                if ((prov.IsUIElementRequired(usercontext, RequiredMethodElements.EmailParameterRequired)))
-                {
-                    result += "</br>";
-                    result += "<a class=\"actionLink\" href=\"#\" id=\"enrollemail\" name=\"enrollemail\" onclick=\"fnlinkclicked(registrationForm, 4)\"; style=\"cursor: pointer;\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlEnrollEmail") + "</a>";
-                }
-                if ((prov.IsUIElementRequired(usercontext, RequiredMethodElements.PhoneParameterRequired)))
-                {
-                    result += "</br>";
-                    result += "<a class=\"actionLink\" href=\"#\" id=\"enrollphone\" name=\"enrollphone\" onclick=\"fnlinkclicked(registrationForm, 5)\"; style=\"cursor: pointer;\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlEnrollPhone") + "</a>";
-                }
-                if ((prov.IsUIElementRequired(usercontext, RequiredMethodElements.BiometricParameterRequired)))
-                {
-                    result += "</br>";
-                    result += "<a class=\"actionLink\" href=\"#\" id=\"enrollbio\" name=\"enrollbio\" onclick=\"fnlinkclicked(registrationForm, 6)\"; style=\"cursor: pointer;\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlEnrollBiometrics") + "</a>";
-                }
-                if (!string.IsNullOrEmpty(prov.GetAccountManagementUrl(usercontext)))
-                {
-                    result += "</br>";
-                    result += "<input type=\"checkbox\" id=\"manageaccount\" name=\"manageaccount\" /> " + prov.GetUIAccountManagementLabel(usercontext) + "</br>";
-                }
-                result += "</br>";
+                result += "<a class=\"actionLink\" href=\"#\" id=\"enrollemail\" name=\"enrollemail\" onclick=\"fnlinkclicked(OptionsForm, 4)\" style=\"cursor: pointer;\">" + prov2.GetWizardLinkLabel(usercontext) + "</a>";
             }
-            else
-            {   // PIN Code
-                if (RuntimeAuthProvider.IsPinCodeRequired(usercontext))
-                {
-                    result += "<div class=\"fieldMargin smallText\">" + BaseExternalProvider.GetPINLabel(usercontext) + " : </div>";
-                    if (usercontext.PinCode>0)
-                        result += "<input id=\"pincode\" name=\"pincode\" type=\"password\" readonly=\"true\" placeholder=\"" + Utilities.StripPinCode(usercontext.PinCode) + "\" class=\"text fullWidth\" style=\"background-color: #F0F0F0\" /></br>";
-                    else
-                        result += "<input id=\"pincode\" name=\"pincode\" type=\"password\" readonly=\"true\" placeholder=\"" + Utilities.StripPinCode(Provider.Config.DefaultPin) + "\" class=\"text fullWidth\" style=\"background-color: #F0F0F0\" /></br>";
-                    result += "</br>";
-                    result += "<a class=\"actionLink\" href=\"#\" id=\"enrollpin\" name=\"enrollpin\" onclick=\"fnlinkclicked(registrationForm, 7)\"; style=\"cursor: pointer;\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlEnrollPinCode") + "</a>";
-                    result += "</br>";
-                }
+            IExternalProvider prov3 = RuntimeAuthProvider.GetProvider(PreferredMethod.External);
+            if ((prov3 != null) && (prov3.Enabled) && prov3.IsUIElementRequired(usercontext, RequiredMethodElements.PhoneLinkRequired))
+            {
+                result += "<a class=\"actionLink\" href=\"#\" id=\"enrollphone\" name=\"enrollphone\" onclick=\"fnlinkclicked(OptionsForm, 5)\" style=\"cursor: pointer;\">" + prov3.GetWizardLinkLabel(usercontext) + "</a>";
             }
+            IExternalProvider prov4 = RuntimeAuthProvider.GetProvider(PreferredMethod.Biometrics);
+            if ((prov4 != null) && (prov4.Enabled) && prov4.IsUIElementRequired(usercontext, RequiredMethodElements.BiometricParameterRequired))
+            {
+                result += "<a class=\"actionLink\" href=\"#\" id=\"enrollbio\" name=\"enrollbio\" onclick=\"fnlinkclicked(OptionsForm, 6)\" style=\"cursor: pointer;\">" + prov4.GetWizardLinkLabel(usercontext) + "</a>";
+            }
+            if (RuntimeAuthProvider.IsPinCodeRequired(usercontext))
+            {
+                result += "<a class=\"actionLink\" href=\"#\" id=\"enrollpin\" name=\"enrollpin\" onclick=\"fnlinkclicked(OptionsForm, 7)\" style=\"cursor: pointer;\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlEnrollPinCode") + "</a>";
+            }
+            result += "</br>";
 
             if (Provider.Config.KeepMySelectedOptionOn)
+            {
                 result += GetPartHtmlSelectMethod(usercontext);
-
+                result += "</br>";
+            }
             if (!Provider.Config.UserFeatures.IsMFARequired() && !Provider.Config.UserFeatures.IsMFAMixed())
-                result += "<input id=\"disablemfa\" type=\"checkbox\" name=\"disablemfa\" /> " + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMDisableMFA") + "</br>";
-
+            {
+                result += "<input id=\"disablemfa\" type=\"checkbox\" name=\"disablemfa\" /> " + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMDisableMFA");
+                result += "</br>";
+            }
             result += "</br>";
             result += "<input id=\"context\" type=\"hidden\" name=\"Context\" value=\"%Context%\"/>";
             result += "<input id=\"authMethod\" type=\"hidden\" name=\"AuthMethod\" value=\"%AuthMethod%\"/>";
@@ -415,83 +328,194 @@ namespace Neos.IdentityServer.MultiFactor
         }
         #endregion
 
+        #region Registration
+        /// <summary>
+        /// GetFormPreRenderHtmlRegistration implementation
+        /// </summary>
+        public override string GetFormPreRenderHtmlRegistration(AuthenticationContext usercontext)
+        {
+            string result = "<script type='text/javascript'>" + "\r\n";
+
+            result += "function OnRefreshPost(frm)";
+            result += "{";
+            result += "   document.getElementById('registrationForm').submit();";
+            result += "   return true;";
+            result += "}";
+
+            result += "function fnbtnclicked(id)";
+            result += "{";
+            result += "   var lnk = document.getElementById('btnclicked');";
+            result += "   lnk.value = id;";
+            result += "}" + "\r\n";
+
+            result += "</script>" + "\r\n";
+            return result;
+        }
+
+        /// <summary>
+        /// GetFormHtmlRegistration implementation
+        /// </summary>
+        public override string GetFormHtmlRegistration(AuthenticationContext usercontext)
+        {
+            string result = string.Empty;
+            bool IsRequired = true;
+            PreferredMethod m = PreferredMethod.Choose;
+            if (usercontext.EnrollPageStatus == EnrollPageStatus.Run)
+            {
+                m = Utilities.FindNextWizardToPlay(usercontext, ref IsRequired);
+                if (m != PreferredMethod.None)
+                    usercontext.EnrollPageStatus = EnrollPageStatus.NewStep;
+                else
+                {
+                    result = "<script type='text/javascript'>" + "\r\n";
+                    result += "if (window.addEventListener)";
+                    result += "{";
+                    result += "   window.addEventListener('load', OnRefreshPost, false);";
+                    result += "}";
+                    result += "else if (window.attachEvent)";
+                    result += "{";
+                    result += "   window.attachEvent('onload', OnRefreshPost);";
+                    result += "}";
+                    result += "\r\n";
+                    result += "</script>" + "\r\n";
+                }
+            }
+            result += "<form method=\"post\" id=\"registrationForm\" autocomplete=\"off\" >";
+
+            switch (usercontext.EnrollPageStatus)
+            {
+                case EnrollPageStatus.Start:
+                    result += "<div id=\"wizardMessage\" class=\"groupMargin\">" + Resources.GetString(ResourcesLocaleKind.Titles, "RegistrationPageTitle") + "</div>";
+                    result += "<div id=\"pwdMessage\" class=\"fieldMargin smallText\">" + Resources.GetString(ResourcesLocaleKind.Errors, "ErrorAccountAuthorized") + "</div></br>";
+                    List<IExternalProvider> lst = RuntimeAuthProvider.GeActiveProvidersList();
+                    if (lst.Count > 0)
+                    {
+                        result += "<div id=\"xMessage\" class=\"fieldMargin smallText\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMustPrepareLabel") + "</div>";
+                        foreach (IExternalProvider itm in lst)
+                        {
+                            if (itm.IsRequired)
+                                result += "<div id=\"reqvalue\" class=\"fieldMargin smallText\">- " + itm.GetUIEnrollmentTaskLabel(usercontext) + "</div>";
+                            else
+                                result += "<div id=\"reqvalue\" class=\"fieldMargin smallText\">- " + itm.GetUIEnrollmentTaskLabel(usercontext) + " (*)" + "</div>";
+                        }
+                        if (RuntimeAuthProvider.IsPinCodeRequired(usercontext))
+                            result += "<div id=\"reqvalue\" class=\"fieldMargin smallText\">- " + Resources.GetString(ResourcesLocaleKind.Html, "HtmlEnrollPinTaskLabel") + "</div>";
+                        result += "</br>";
+                    }
+
+                    result += "<table><tr>";
+                    result += "<td>";
+                    result += "<input id=\"gotoregistration\" type=\"submit\" class=\"submit\" name=\"cancel\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMGoToRegistration") + "\" onclick=\"fnbtnclicked(2)\"/>";
+                    result += "</td>";
+                    result += "<td style=\"width: 15px\" />";
+                    if (!Provider.Config.UserFeatures.IsRegistrationMixed())
+                    {
+                        result += "<td>";
+                        result += "<input id=\"continueButton\" type=\"submit\" class=\"submit\" name=\"Continue\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMConnexion") + "\" onclick=\"fnbtnclicked(1)\" />";
+                        result += "</td>";
+                    }
+                    result += "</tr></table>";
+                    break;
+                case EnrollPageStatus.NewStep:
+                    if (m != PreferredMethod.Pin)
+                    {
+                        IExternalProvider prov = RuntimeAuthProvider.GetProviderInstance(m);
+                        result += "<div id=\"wizardMessage\" class=\"groupMargin\">" + prov.GetWizardUILabel(usercontext) + "</div>";
+                        result += "<div id=\"pwdMessage\" class=\"fieldMargin smallText\">" + prov.GetUIEnrollmentTaskLabel(usercontext) + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIEnrollContinue") + "</div></br>";
+                        result += "<table><tr>";
+                        result += "<td>";
+                        result += "<input id=\"continueButton\" type=\"submit\" class=\"submit\" name=\"Continue\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelWVERIFYOTP") + "\" onclick=\"fnbtnclicked(2)\" />";
+                        result += "</td>";
+                        result += "<td style=\"width: 15px\" />";
+                        if ((prov.Enabled) && (!prov.IsRequired))
+                        {
+                            result += "<td>";
+                            result += "<input id=\"skipoption\" type=\"submit\" class=\"submit\" name=\"skipoption\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUINext") + "\" onclick=\"fnbtnclicked(6)\"/>";
+                            result += "</td>";
+                        }
+                        result += "</tr></table>";
+                    }
+                    else
+                    {   // Pin Code not provider
+                        result += "<div id=\"wizardMessage\" class=\"groupMargin\">" + BaseExternalProvider.GetPINWizardUILabel(usercontext) + "</div>";
+                        result += "<div id=\"pwdMessage\" class=\"fieldMargin smallText\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlEnrollPinTaskLabel") + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIEnrollContinue") + "</div></br>";
+                        result += "<table><tr>";
+                        result += "<td>";
+                        result += "<input id=\"continueButton\" type=\"submit\" class=\"submit\" name=\"Continue\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelWVERIFYOTP") + "\" onclick=\"fnbtnclicked(2)\" />";
+                        result += "</td>";
+                        result += "</tr></table>";
+                    }
+                    break;
+                case EnrollPageStatus.Stop:
+                    result += "</br>";
+                    result += "<p style=\"text-align:center\"><img id=\"msgreen\" src=\"data:image/png;base64," + Convert.ToBase64String(images.cvert.ToByteArray(ImageFormat.Jpeg)) + "\"/></p></br></br>";
+                    result += "<div id=\"lbl\" class=\"fieldMargin smallText\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelVERIFYOTPSuccess") + "</div></br>";
+                    List<IExternalProvider> lst2 = RuntimeAuthProvider.GeActiveProvidersList();
+                    if (lst2.Count > 0)
+                    {
+                        result += "<div id=\"xMessage\" class=\"fieldMargin smallText\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIResultLabel") + "</div>";
+                        foreach (IExternalProvider itm in lst2)
+                        {
+                            string value = string.Empty;
+                            switch (itm.Kind)
+                            {
+                                default:
+                                case PreferredMethod.Code:
+                                    if (usercontext.KeyStatus == SecretKeyStatus.Success)
+                                        value = "OK";
+                                    else
+                                        value = "<empty>";
+                                    break;
+                                case PreferredMethod.Email:
+                                    value = Utilities.StripEmailAddress(usercontext.MailAddress);
+                                    break;
+                                case PreferredMethod.External:
+                                    value = Utilities.StripPhoneNumber(usercontext.PhoneNumber);
+                                    break;
+                            }
+
+                            if (itm.IsRequired)
+                                result += "<div id=\"reqvalue\" class=\"fieldMargin smallText\">- " + itm.GetUIListOptionLabel(usercontext) + " : " + value + "</div>";
+                            else
+                                result += "<div id=\"reqvalue\" class=\"fieldMargin smallText\">- " + itm.GetUIListOptionLabel(usercontext) + " (*) : " + value + "</div>";
+                        }
+                        if (RuntimeAuthProvider.IsPinCodeRequired(usercontext))
+                            result += "<div id=\"reqvalue\" class=\"fieldMargin smallText\">- " + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIPinOptionLabel") + " : " + Utilities.StripPinCode(usercontext.PinCode) + "</div>";
+                        result += "</br>";
+                    }
+                    result += "<input id=\"finishButton\" type=\"submit\" class=\"submit\" name=\"finishButton\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelVERIFYOTPOK") + "\" onclick=\"fnbtnclicked(5)\" />";
+                    result += "</br>";
+                    break;
+            }
+
+            result += "<input id=\"isprovider\" type=\"hidden\" name=\"isprovider\" value=\"" + (int)m + "\" />";
+            result += "<input id=\"btnclicked\" type=\"hidden\" name=\"btnclicked\" value=\"0\" />";
+            result += "<input id=\"context\" type=\"hidden\" name=\"Context\" value=\"%Context%\"/>";
+            result += "<input id=\"authMethod\" type=\"hidden\" name=\"AuthMethod\" value=\"%AuthMethod%\"/>";
+
+            result += "</form>";
+            return result;
+        }
+        #endregion
+
         #region Invitation
         /// <summary>
         /// GetFormPreRenderHtmlInvitation implementation
         /// </summary>
         public override string GetFormPreRenderHtmlInvitation(AuthenticationContext usercontext)
         {
-            string reg = @"/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,})+$/";
-            string pho = @"/^\+(?:[0-9] ?){6,14}[0-9]$/";
-            string pho10 = @"/^\d{10}$/";
-            string phous = @"/^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/";
-
             string result = "<script type='text/javascript'>" + "\r\n";
 
-            result += "function ValidateInvitation(frm)" + "\r\n";
+            result += "function OnRefreshPost(frm)";
             result += "{";
-            result += "var mailformat = " + reg + " ;";
-            result += "var phoneformat = " + pho + " ;";
-            result += "var phoneformat10 = " + pho10 + " ;";
-            result += "var phoneformatus = " + phous + " ;";
-            result += "var email = document.getElementById('email');";
-            result += "var phone = document.getElementById('phone');";
-            result += "var err = document.getElementById('errorText');";
-
-            result += "var lnk = document.getElementById('btnclicked');";
-            result += "if (lnk.value=='1')";
-            result += "{";
-
-            if (RuntimeAuthProvider.IsUIElementRequired(usercontext, RequiredMethodElements.EmailParameterRequired))
-            {
-                result += "if ((email) && (email.value=='') && (email.placeholder==''))";
-                result += "{";
-                result += "   err.innerHTML = \"" + Resources.GetString(ResourcesLocaleKind.Validation, "ValidIncorrectEmail") + "\";";
-                result += "   return false;";
-                result += "}";
-                result += "if ((email) && (email.value!==''))";
-                result += "{";
-                result += "   if (!email.value.match(mailformat))";
-                result += "   {";
-                result += "      err.innerHTML = \"" + Resources.GetString(ResourcesLocaleKind.Validation, "ValidIncorrectEmail") + "\";";
-                result += "      return false;";
-                result += "   }";
-                result += "}";
-            }
-            if (RuntimeAuthProvider.IsUIElementRequired(usercontext, RequiredMethodElements.PhoneParameterRequired))
-            {
-                result += "if ((phone) && (phone.value=='') && (phone.placeholder==''))";
-                result += "{";
-                result += "   err.innerHTML = \"" + Resources.GetString(ResourcesLocaleKind.Validation, "ValidIncorrectPhoneNumber") + "\";";
-                result += "   return false;";
-                result += "}";
-                result += "if ((phone) && (phone.value!==''))";
-                result += "{";
-                result += "   if (!phone.value.match(phoneformat) && !phone.value.match(phoneformat10) && !phone.value.match(phoneformatus) )";
-                result += "   {";
-                result += "      err.innerHTML = \"" + Resources.GetString(ResourcesLocaleKind.Validation, "ValidIncorrectPhoneNumber") + "\";";
-                result += "      return false;";
-                result += "   }";
-                result += "}";
-            }
+            result += "   document.getElementById('invitationForm').submit();";
+            result += "   return true;";
             result += "}";
-            result += "err.innerHTML = \"\";";
-            result += "return true;";
-            result += "}" + "\r\n";
-
-            result += "function fnlinkclicked(frm, id)";
-            result += "{";
-            result += "var lnk = document.getElementById('btnclicked');";
-            result += "lnk.value = id;";
-            result += "frm.submit();";
-            result += "return true;";
-            result += "}" + "\r\n";
 
             result += "function fnbtnclicked(id)";
             result += "{";
-            result += "var lnk = document.getElementById('btnclicked');";
-            result += "lnk.value = id;";
-            result += "return true;";
+            result += "   var lnk = document.getElementById('btnclicked');";
+            result += "   lnk.value = id;";
             result += "}" + "\r\n";
 
             result += "</script>" + "\r\n";
@@ -504,152 +528,204 @@ namespace Neos.IdentityServer.MultiFactor
         public override string GetFormHtmlInvitation(AuthenticationContext usercontext)
         {
             string result = string.Empty;
-
-            result += "<form method=\"post\" id=\"invitationForm\" autocomplete=\"off\" onsubmit=\"return ValidateInvitation(this)\" >";
-            result += "<div id=\"wizardMessage\" class=\"groupMargin\">" + Resources.GetString(ResourcesLocaleKind.Titles, "InvitationPageTitle") + "</div>";
-
-            result += GetPartHtmlPagingMethod(usercontext);
-        
-            IExternalProvider prov = null;
-            switch (usercontext.PageID)
+            bool IsRequired = true;
+            PreferredMethod m = PreferredMethod.Choose;
+            if (usercontext.EnrollPageStatus == EnrollPageStatus.Run)
             {
-                case 1: // Email IsMethodElementRequired
-                    prov = RuntimeAuthProvider.GetProvider(PreferredMethod.Email);
-                    break;
-                case 2: // external API
-                    prov = RuntimeAuthProvider.GetProvider(PreferredMethod.External);
-                    break;
-                case 3: // Azure MFA
-                    prov = RuntimeAuthProvider.GetProvider(PreferredMethod.Azure);
-                    break;
-                case 4: // Biometrics
-                    prov = RuntimeAuthProvider.GetProvider(PreferredMethod.Biometrics);
-                    break;
-                case 5: // Pin Code
-                    prov = null;
-                    break;
-                default: // Authentication Application
-                    prov = RuntimeAuthProvider.GetProvider(PreferredMethod.Code);
-                    break;
+                m = Utilities.FindNextWizardToPlay(usercontext, ref IsRequired);
+                if (m != PreferredMethod.None)
+                    usercontext.EnrollPageStatus = EnrollPageStatus.NewStep;
+                else
+                {
+                    result = "<script type='text/javascript'>" + "\r\n";
+                    result += "if (window.addEventListener)";
+                    result += "{";
+                    result += "   window.addEventListener('load', OnRefreshPost, false);";
+                    result += "}";
+                    result += "else if (window.attachEvent)";
+                    result += "{";
+                    result += "   window.attachEvent('onload', OnRefreshPost);";
+                    result += "}";
+                    result += "\r\n";
+                    result += "</script>" + "\r\n";
+                }
             }
+            result += "<form method=\"post\" id=\"invitationForm\" autocomplete=\"off\" >";
 
-            if ((prov != null) && (prov.Enabled))
+            switch (usercontext.EnrollPageStatus)
             {
-                if ((prov.IsUIElementRequired(usercontext, RequiredMethodElements.KeyParameterRequired)))
-                {
-                    string displaykey = string.Empty;
-                    if (usercontext.KeyStatus == SecretKeyStatus.Success)
+                case EnrollPageStatus.Start:
+                    result += "<div id=\"wizardMessage\" class=\"groupMargin\">" + Resources.GetString(ResourcesLocaleKind.Titles, "InvitationPageTitle") + "</div>";
+                    result += "<div id=\"pwdMessage\" class=\"fieldMargin smallText\">" + Resources.GetString(ResourcesLocaleKind.Errors, "ErrorAccountNotEnabled") + "</div></br>";
+                    List<IExternalProvider> lst = RuntimeAuthProvider.GeActiveProvidersList();
+                    if (lst.Count > 0)
                     {
-                        displaykey = KeysManager.EncodedKey(usercontext.UPN);
-                    }
-                    result += "<div class=\"fieldMargin smallText\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlREGLabelAppKey") + "</div>";
-                    result += "<input id=\"secretkey\" name=\"secretkey\" type=\"text\" readonly=\"true\" placeholder=\"DisplayKey\" class=\"text fullWidth\" style=\"background-color: #F0F0F0\" value=\"" + Utilities.StripDisplayKey(displaykey) + "\"/></br></br>";
-                }
-                if ((prov.IsUIElementRequired(usercontext, RequiredMethodElements.EmailParameterRequired)))
-                {
-                    result += "<div class=\"fieldMargin smallText\">" + prov.GetUICFGLabel(usercontext) + " : </div>";
-                    result += "<input id=\"email\" name=\"email\" type=\"text\" readonly=\"true\" placeholder=\"Personal Email Address\" class=\"text fullWidth\" style=\"background-color: #F0F0F0\" value=\"" + Utilities.StripEmailAddress(usercontext.MailAddress) + "\"/></br></br>";
-                }
-                if ((prov.IsUIElementRequired(usercontext, RequiredMethodElements.PhoneParameterRequired)))
-                {
-                    result += "<div class=\"fieldMargin smallText\">" + prov.GetUICFGLabel(usercontext) + " : </div>";
-                    result += "<input id=\"phone\" name=\"phone\" type=\"text\" readonly=\"true\" placeholder=\"Phone Number\" class=\"text fullWidth\" style=\"background-color: #F0F0F0\" value=\"" + Utilities.StripPhoneNumber(usercontext.PhoneNumber) + "\"/></br></br>";
-                }
-
-                List<AvailableAuthenticationMethod> lst = prov.GetAuthenticationMethods(usercontext);
-                if (lst.Count > 1)
-                {
-                    AuthenticationResponseKind ov = AuthenticationResponseKind.Error;
-                    if (prov.AllowOverride)
-                    {
-                        ov = prov.GetOverrideMethod(usercontext);
-                        result += "<input id=\"optiongroup\" name=\"optionitem\" type=\"radio\" value=\"Error\" checked=\"checked\" /> " + prov.GetUIDefaultChoiceLabel(usercontext) + "</br>";
-                    }
-                    int i = 1;
-                    foreach (AvailableAuthenticationMethod met in lst)
-                    {
-                        if (ov != AuthenticationResponseKind.Error)
+                        result += "<div id=\"xMessage\" class=\"fieldMargin smallText\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMustPrepareLabel") + "</div>";
+                        foreach (IExternalProvider itm in lst)
                         {
-                            if (met.Method == ov)
-                                result += "<input id=\"optiongroup" + i.ToString() + "\" name=\"optionitem\" type=\"radio\" value=\"" + met.Method.ToString() + "\" checked=\"checked\" /> " + prov.GetUIChoiceLabel(usercontext, met) + "</br>";
+                            if (itm.IsRequired)
+                                result += "<div id=\"reqvalue\" class=\"fieldMargin smallText\">- " + itm.GetUIEnrollmentTaskLabel(usercontext) + "</div>";
                             else
-                                result += "<input id=\"optiongroup" + i.ToString() + "\" name=\"optionitem\" type=\"radio\" value=\"" + met.Method.ToString() + "\" /> " + prov.GetUIChoiceLabel(usercontext, met) + "</br>";
+                                result += "<div id=\"reqvalue\" class=\"fieldMargin smallText\">- " + itm.GetUIEnrollmentTaskLabel(usercontext) + " (*)" + "</div>";
                         }
-                        else
-                            result += "<input id=\"optiongroup" + i.ToString() + "\" name=\"optionitem\" type=\"radio\" value=\"" + met.Method.ToString() + "\" /> " + prov.GetUIChoiceLabel(usercontext, met) + "</br>";
-                        i++;
+                        if (RuntimeAuthProvider.IsPinCodeRequired(usercontext))
+                            result += "<div id=\"reqvalue\" class=\"fieldMargin smallText\">- " + Resources.GetString(ResourcesLocaleKind.Html, "HtmlEnrollPinTaskLabel") + "</div>";
+                        result += "</br>";
                     }
-                }
-                else if (lst.Count <= 0)
-                {
-                    result += "<div class=\"fieldMargin error smallText\">No options available for " + prov.Description + "</div></br>";
-                }
-                if ((prov.IsUIElementRequired(usercontext, RequiredMethodElements.KeyParameterRequired)))
-                {
-                    result += "</br>";
-                    result += "<a class=\"actionLink\" href=\"#\" id=\"enrollopt\" name=\"enrollopt\" onclick=\"fnlinkclicked(invitationForm, 3)\"; style=\"cursor: pointer;\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlEnrollOTP") + "</a>";
-                }
-                if ((prov.IsUIElementRequired(usercontext, RequiredMethodElements.EmailParameterRequired)))
-                {
-                    result += "</br>";
-                    result += "<a class=\"actionLink\" href=\"#\" id=\"enrollemail\" name=\"enrollemail\" onclick=\"fnlinkclicked(invitationForm, 4)\"; style=\"cursor: pointer;\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlEnrollEmail") + "</a>";
-                }
-                if ((prov.IsUIElementRequired(usercontext, RequiredMethodElements.PhoneParameterRequired)))
-                {
-                    result += "</br>";
-                    result += "<a class=\"actionLink\" href=\"#\" id=\"enrollphone\" name=\"enrollphone\" onclick=\"fnlinkclicked(invitationForm, 5)\"; style=\"cursor: pointer;\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlEnrollPhone") + "</a>";
-                }
-                if ((prov.IsUIElementRequired(usercontext, RequiredMethodElements.BiometricParameterRequired)))
-                {
-                    result += "</br>";
-                    result += "<a class=\"actionLink\" href=\"#\" id=\"enrollbio\" name=\"enrollbio\" onclick=\"fnlinkclicked(invitationForm, 6)\"; style=\"cursor: pointer;\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlEnrollBiometrics") + "</a>";
-                }
-                if (!string.IsNullOrEmpty(prov.GetAccountManagementUrl(usercontext)))
-                {
-                    result += "</br>";
-                    result += "<input type=\"checkbox\" id=\"manageaccount\" name=\"manageaccount\" /> " + prov.GetUIAccountManagementLabel(usercontext) + "</br>";
-                }
-                result += "</br>";
-            }
-            else
-            {   // PIN Code
-                if (RuntimeAuthProvider.IsPinCodeRequired(usercontext))
-                {
-                    result += "<div class=\"fieldMargin smallText\">" + BaseExternalProvider.GetPINLabel(usercontext) + " : </div>";
-                    if (usercontext.PinCode > 0)
-                        result += "<input id=\"pincode\" name=\"pincode\" type=\"text\" readonly=\"true\" placeholder=\"Pin Code\" class=\"text fullWidth\" style=\"background-color: #F0F0F0\" value=\"" + Utilities.StripPinCode(usercontext.PinCode) + "\"/></br>";
+                    result += "<table><tr>";
+                    if (Provider.Config.UserFeatures.IsManaged())
+                    {
+                        result += "<td>";
+                        result += "<input id=\"gotoinscription2\" type=\"submit\" class=\"submit\" name=\"gotoinscription2\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMGotoInscription") + "\" onclick=\"fnbtnclicked(2)\"/>";
+                        result += "</td>";
+                        result += "<td style=\"width: 15px\" />";
+                        result += "<td>";
+                        result += "<input id=\"continueButton\" type=\"submit\" class=\"submit\" name=\"continueButton\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMConnexion") + "\" onclick=\"fnbtnclicked(1)\" />";
+                        result += "</td>";
+                    }
                     else
-                        result += "<input id=\"pincode\" name=\"pincode\" type=\"text\" readonly=\"true\" placeholder=\"PIN Code\" class=\"text fullWidth\" style=\"background-color: #F0F0F0\" value=\"" + Utilities.StripPinCode(Provider.Config.DefaultPin) + "\"/></br>";
+                    {
+                        result += "<td>";
+                        result += "<input id=\"gotoinscription\" type=\"submit\" class=\"submit\" name=\"gotoinscription\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMGotoInscription") + "\" onclick=\"fnbtnclicked(2)\"/>";
+                        result += "</td>";
+                    }
+                    result += "</tr></table>";
+                    break;
+                case EnrollPageStatus.NewStep:
+                    if (m != PreferredMethod.Pin)
+                    {
+                        IExternalProvider prov = RuntimeAuthProvider.GetProviderInstance(m);
+                        result += "<div id=\"wizardMessage\" class=\"groupMargin\">" + prov.GetWizardUILabel(usercontext) + "</div>";
+                        result += "<div id=\"pwdMessage\" class=\"fieldMargin smallText\">" + prov.GetUIEnrollmentTaskLabel(usercontext) + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIEnrollContinue") + "</div></br>";
+                        result += "<table><tr>";
+                        result += "<td>";
+                        result += "<input id=\"continueButton\" type=\"submit\" class=\"submit\" name=\"Continue\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelWVERIFYOTP") + "\" onclick=\"fnbtnclicked(2)\" />";
+                        result += "</td>";
+                        result += "<td style=\"width: 15px\" />";
+                        if ((prov.Enabled) && (!prov.IsRequired))
+                        {
+                            result += "<td>";
+                            result += "<input id=\"skipoption\" type=\"submit\" class=\"submit\" name=\"skipoption\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUINext") + "\" onclick=\"fnbtnclicked(6)\"/>";
+                            result += "</td>";
+                        }
+                        result += "</tr></table>";
+                    }
+                    else
+                    {   // Pin Code not provider
+                        result += "<div id=\"wizardMessage\" class=\"groupMargin\">" + BaseExternalProvider.GetPINWizardUILabel(usercontext) + "</div>";
+                        result += "<div id=\"pwdMessage\" class=\"fieldMargin smallText\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlEnrollPinTaskLabel") + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIEnrollContinue") + "</div></br>";
+                        result += "<table><tr>";
+                        result += "<td>";
+                        result += "<input id=\"continueButton\" type=\"submit\" class=\"submit\" name=\"Continue\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelWVERIFYOTP") + "\" onclick=\"fnbtnclicked(2)\" />";
+                        result += "</td>";
+                        result += "</tr></table>";
+                    }
+                    break;
+                case EnrollPageStatus.Stop:
                     result += "</br>";
-                    result += "<a class=\"actionLink\" href=\"#\" id=\"enrollpin\" name=\"enrollpin\" onclick=\"fnlinkclicked(invitationForm, 7)\"; style=\"cursor: pointer;\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlEnrollPinCode") + "</a>";
+                    result += "<p style=\"text-align:center\"><img id=\"msgreen\" src=\"data:image/png;base64," + Convert.ToBase64String(images.cvert.ToByteArray(ImageFormat.Jpeg)) + "\"/></p></br></br>";
+                    result += "<div id=\"lbl\" class=\"fieldMargin smallText\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelVERIFYOTPSuccess") + "</div></br>";
+                    List<IExternalProvider> lst2 = RuntimeAuthProvider.GeActiveProvidersList();
+                    if (lst2.Count > 0)
+                    {
+                        result += "<div id=\"xMessage\" class=\"fieldMargin smallText\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIResultLabel") + "</div>";
+                        foreach (IExternalProvider itm in lst2)
+                        {
+                            string value = string.Empty;
+                            switch (itm.Kind)
+                            {
+                                default:
+                                case PreferredMethod.Code:
+                                    if (usercontext.KeyStatus == SecretKeyStatus.Success)
+                                        value = "OK";
+                                    else
+                                        value = "<empty>";
+                                    break;
+                                case PreferredMethod.Email:
+                                    value = Utilities.StripEmailAddress(usercontext.MailAddress);
+                                    break;
+                                case PreferredMethod.External:
+                                    value = Utilities.StripPhoneNumber(usercontext.PhoneNumber);
+                                    break;
+                            }
+
+                            if (itm.IsRequired)
+                                result += "<div id=\"reqvalue\" class=\"fieldMargin smallText\">- " + itm.GetUIListOptionLabel(usercontext) + " : " + value + "</div>";
+                            else
+                                result += "<div id=\"reqvalue\" class=\"fieldMargin smallText\">- " + itm.GetUIListOptionLabel(usercontext) + " (*) : " + value + "</div>";
+                        }
+                        if (RuntimeAuthProvider.IsPinCodeRequired(usercontext))
+                            result += "<div id=\"reqvalue\" class=\"fieldMargin smallText\">- " + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIPinOptionLabel") + " : " + Utilities.StripPinCode(usercontext.PinCode) + "</div>";
+                        result += "</br>";
+                    }
+                    result += "<input id=\"finishButton\" type=\"submit\" class=\"submit\" name=\"finishButton\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelVERIFYOTPOK") + "\" onclick=\"fnbtnclicked(5)\" />";
                     result += "</br>";
-                }
+                    break;
             }
 
-            if (Provider.Config.KeepMySelectedOptionOn)
-                result += GetPartHtmlSelectMethod2(usercontext);
-
-            if (!Provider.Config.UserFeatures.IsMFARequired() && !Provider.Config.UserFeatures.IsMFAMixed())
-                result += "<input id=\"disablemfa\" type=\"checkbox\" name=\"disablemfa\" /> " + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMDisableMFA") + "</br>";
-
-            result += "</br>";
+            result += "<input id=\"isprovider\" type=\"hidden\" name=\"isprovider\" value=\"" + (int)m + "\" />";
+            result += "<input id=\"btnclicked\" type=\"hidden\" name=\"btnclicked\" value=\"0\" />";
             result += "<input id=\"context\" type=\"hidden\" name=\"Context\" value=\"%Context%\"/>";
             result += "<input id=\"authMethod\" type=\"hidden\" name=\"AuthMethod\" value=\"%AuthMethod%\"/>";
 
-            result += "<input id=\"btnclicked\" type=\"hidden\" name=\"btnclicked\" value=\"0\" />";
+            result += "</form>";
+            return result;
+        }
+        #endregion
+
+        #region Activation
+        /// <summary>
+        /// GetFormPreRenderHtmlActivation implementation
+        /// </summary>
+        public override string GetFormPreRenderHtmlActivation(AuthenticationContext usercontext)
+        {
+            string result = "<script type='text/javascript'>" + "\r\n";
+
+            result += "function OnRefreshPost(frm)";
+            result += "{";
+            result += "   document.getElementById('activationForm').submit();";
+            result += "   return true;";
+            result += "}";
+
+            result += "function fnbtnclicked(id)";
+            result += "{";
+            result += "   var lnk = document.getElementById('btnclicked');";
+            result += "   lnk.value = id;";
+            result += "}" + "\r\n";
+
+            result += "</script>" + "\r\n";
+            return result;
+
+        }
+
+        /// <summary>
+        /// GetFormHtmlActivation implementation
+        /// </summary>
+        public override string GetFormHtmlActivation(AuthenticationContext usercontext)
+        {
+            string result = string.Empty;
+            result += "<form method=\"post\" id=\"activationForm\" autocomplete=\"off\" >";
+
+            result += "<div id=\"wizardMessage\" class=\"groupMargin\">" + Resources.GetString(ResourcesLocaleKind.Titles, "ActivationPageTitle") + "</div>";
+            result += "<div id=\"pwdMessage\" class=\"groupMargin\">" + Resources.GetString(ResourcesLocaleKind.Errors, "ErrorAccountActivate") + "</div></br>";
 
             result += "<table><tr>";
             result += "<td>";
-            result += "<input id=\"saveButton\" type=\"submit\" class=\"submit\" name=\"continue\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlINSRequest") + "\" onclick=\"fnbtnclicked(1)\" />";
+            result += "<input id=\"activateButton\" type=\"submit\" class=\"submit\" name=\"activateButton\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIActivate") + "\" onclick=\"fnbtnclicked(2)\"/>";
             result += "</td>";
             result += "<td style=\"width: 15px\" />";
             result += "<td>";
-            result += "<input id=\"mfa-cancelButton\" type=\"submit\" class=\"submit\" name=\"cancel\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlPWDCancel") + "\" onclick=\"fnbtnclicked(2)\" />";
+            result += "<input id=\"continueButton\" type=\"submit\" class=\"submit\" name=\"continueButton\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelWVERIFYOTP") + "\" onclick=\"fnbtnclicked(1)\" />";
             result += "</td>";
             result += "</tr></table>";
-            result += GetFormHtmlMessageZone(usercontext);
+
+            result += "<input id=\"btnclicked\" type=\"hidden\" name=\"btnclicked\" value=\"0\" />";
+            result += "<input id=\"context\" type=\"hidden\" name=\"Context\" value=\"%Context%\"/>";
+            result += "<input id=\"authMethod\" type=\"hidden\" name=\"AuthMethod\" value=\"%AuthMethod%\"/>";
+
             result += "</form>";
             return result;
+
         }
         #endregion
 
@@ -719,7 +795,7 @@ namespace Neos.IdentityServer.MultiFactor
                     if (prov.PinRequired)
                         WantPin = true;
                     if (Provider.HasStrictAccessToOptions(prov))
-                        result += "<a class=\"actionLink\" href=\"#\" id=\"enrollopt\" name=\"enrollopt\" onclick=\"return SetLinkTitle(selectoptionsForm, '3')\"; style=\"cursor: pointer;\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlEnrollOTP") + "</a>";
+                        result += "<a class=\"actionLink\" href=\"#\" id=\"enrollopt\" name=\"enrollopt\" onclick=\"return SetLinkTitle(selectoptionsForm, '3')\"; style=\"cursor: pointer;\">" + prov.GetWizardLinkLabel(usercontext) + "</a>";
                 }
                 if (RuntimeAuthProvider.IsUIElementRequired(usercontext, RequiredMethodElements.BiometricLinkRequired))
                 {
@@ -735,7 +811,7 @@ namespace Neos.IdentityServer.MultiFactor
                     if (prov.PinRequired)
                         WantPin = true;
                     if (Provider.HasStrictAccessToOptions(prov))
-                        result += "<a class=\"actionLink\" href=\"#\" id=\"enrollemail\" name=\"enrollemail\" onclick=\"return SetLinkTitle(selectoptionsForm, '5')\"; style=\"cursor: pointer;\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlEnrollEmail") + "</a>";
+                        result += "<a class=\"actionLink\" href=\"#\" id=\"enrollemail\" name=\"enrollemail\" onclick=\"return SetLinkTitle(selectoptionsForm, '5')\"; style=\"cursor: pointer;\">" + prov.GetWizardLinkLabel(usercontext) + "</a>";
                 }
                 if (RuntimeAuthProvider.IsUIElementRequired(usercontext, RequiredMethodElements.PhoneLinkRequired))
                 {
@@ -743,7 +819,7 @@ namespace Neos.IdentityServer.MultiFactor
                     if (prov.PinRequired)
                         WantPin = true;
                     if (Provider.HasStrictAccessToOptions(prov))
-                        result += "<a class=\"actionLink\" href=\"#\" id=\"enrollphone\" name=\"enrollphone\" onclick=\"return SetLinkTitle(selectoptionsForm, '6')\"; style=\"cursor: pointer;\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlEnrollPhone") + "</a>";
+                        result += "<a class=\"actionLink\" href=\"#\" id=\"enrollphone\" name=\"enrollphone\" onclick=\"return SetLinkTitle(selectoptionsForm, '6')\"; style=\"cursor: pointer;\">" + prov.GetWizardLinkLabel(usercontext) + "</a>";
                 }
                 if (RuntimeAuthProvider.IsUIElementRequired(usercontext, RequiredMethodElements.PinLinkRequired))
                 {
@@ -759,7 +835,7 @@ namespace Neos.IdentityServer.MultiFactor
             result += "<input id=\"authMethod\" type=\"hidden\" name=\"AuthMethod\" value=\"%AuthMethod%\"/>";
             result += "<input id=\"btnclicked\" type=\"hidden\" name=\"btnclicked\" value=\"0\" />";
             result += "<input id=\"lnk\" type=\"hidden\" name=\"lnk\" value=\"0\"/>";
-            result += "<input id=\"saveButton\" type=\"submit\" class=\"submit\" name=\"cancel\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMConnexion") + "\" onclick=\"fnbtnclicked()\"/>";
+            result += "<input id=\"saveButton\" type=\"submit\" class=\"submit\" name=\"saveButton\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMConnexion") + "\" onclick=\"fnbtnclicked()\"/>";
             if (showdonut)
             {
                 result += "</br></br></br>";
@@ -824,13 +900,19 @@ namespace Neos.IdentityServer.MultiFactor
             if (RuntimeAuthProvider.IsProviderAvailableForUser(usercontext, PreferredMethod.Email))
             {
                 result += "<input id=\"opt3\" name=\"opt\" type=\"radio\" value=\"2\" onchange=\"ChooseMethodChanged()\" " + ((method == PreferredMethod.Email) ? "checked=\"checked\"> " : "> ") + RuntimeAuthProvider.GetProvider(PreferredMethod.Email).GetUIChoiceLabel(usercontext) + "<br/>";
-                result += "<div style=\"text-indent: 20px;\"><i>" + Utilities.StripEmailAddress(usercontext.MailAddress) + "</i></div><br/>";
+                if (RuntimeAuthProvider.GetProvider(PreferredMethod.Email).IsBuiltIn)
+                    result += "<div style=\"text-indent: 20px;\"><i>" + Utilities.StripEmailAddress(usercontext.MailAddress) + "</i></div><br/>";
+                else
+                    result += "<br/>";
             }
 
             if (RuntimeAuthProvider.IsProviderAvailableForUser(usercontext, PreferredMethod.External))
             {
                result += "<input id=\"opt2\" name=\"opt\" type=\"radio\" value=\"1\" onchange=\"ChooseMethodChanged()\" " + ((method == PreferredMethod.External) ? "checked=\"checked\"> " : "> ") + RuntimeAuthProvider.GetProvider(PreferredMethod.External).GetUIChoiceLabel(usercontext) + "<br/>";
-               result += "<div style=\"text-indent: 20px;\"><i>" + Utilities.StripPhoneNumber(usercontext.PhoneNumber) + "</i></div><br/>";
+               if (RuntimeAuthProvider.GetProvider(PreferredMethod.External).IsBuiltIn)
+                  result += "<div style=\"text-indent: 20px;\"><i>" + Utilities.StripPhoneNumber(usercontext.PhoneNumber) + "</i></div><br/>";
+                else
+                    result += "<br/>";
             }
 
             if (RuntimeAuthProvider.IsProviderAvailableForUser(usercontext, PreferredMethod.Azure))
@@ -840,7 +922,8 @@ namespace Neos.IdentityServer.MultiFactor
 
             result += "<br/>";
             if (Provider.KeepMySelectedOptionOn())
-                result += "<input id=\"remember\" type=\"checkbox\" name=\"Remember\" checked=\"true\" > " + Resources.GetString(ResourcesLocaleKind.Html, "HtmlCHOOSEOptionRemember") + "<br /><br />";
+                result += "<input id=\"remember\" type=\"checkbox\" name=\"Remember\" checked=\"true\" > " + Resources.GetString(ResourcesLocaleKind.Html, "HtmlCHOOSEOptionRemember") + "<br/>";
+            result += "<br/>";
             result += "<input id=\"context\" type=\"hidden\" name=\"Context\" value=\"%Context%\">";
             result += "<input id=\"authMethod\" type=\"hidden\" name=\"AuthMethod\" value=\"%AuthMethod%\">";
             result += "<input id=\"btnclicked\" type=\"hidden\" name=\"btnclicked\" value=\"0\" />";
@@ -1019,6 +1102,8 @@ namespace Neos.IdentityServer.MultiFactor
         {
             IExternalProvider prov = RuntimeAuthProvider.GetProvider(usercontext.PreferredMethod);
             bool needinput = ((usercontext.IsTwoWay) && (prov != null) && (prov.IsUIElementRequired(usercontext, RequiredMethodElements.PinParameterRequired)));
+            if ((usercontext.WizContext == WizardContextMode.Registration) || (usercontext.WizContext == WizardContextMode.Invitation)) // do not ask after registration/Invitation Enrollment process
+                needinput = false;
 
             string result = string.Empty;
             result += "<script type='text/javascript'>" + "\r\n";
@@ -1043,11 +1128,13 @@ namespace Neos.IdentityServer.MultiFactor
             {
                 result += "<form method=\"post\" id=\"bypassForm\" autocomplete=\"off\" title=\"PIN Confirmation\" >";
                 result += "<div class=\"fieldMargin smallText\">" + BaseExternalProvider.GetPINLabel(usercontext) + " : </div>";
-                result += "<input id=\"pincode\" name=\"pincode\" type=\"password\" placeholder=\"PIN Number\" class=\"text fullWidth\" /></br>";
+                result += "<input id=\"pincode\" name=\"pincode\" type=\"password\" placeholder=\"PIN\" class=\"text fullWidth\" /></br>";
                 result += "<div class=\"fieldMargin smallText\">" + BaseExternalProvider.GetPINMessage(usercontext) + "</div></br>";
+                result += "<input id=\"continueButton\" type=\"submit\" class=\"submit\" name=\"continueButton\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMConnexion") + "\" /></br></br>";
+
                 result += "<input id=\"context\" type=\"hidden\" name=\"Context\" value=\"%Context%\"/>";
                 result += "<input id=\"authMethod\" type=\"hidden\" name=\"AuthMethod\" value=\"%AuthMethod%\"/>";
-                result += "<input id=\"continueButton\" type=\"submit\" class=\"submit\" name=\"Continue\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMConnexion") + "\" /></br></br>";
+
             }
             else
             {
@@ -1087,60 +1174,30 @@ namespace Neos.IdentityServer.MultiFactor
         {
             string result = "<form method=\"post\" id=\"lockingForm\" autocomplete=\"off\">";
 
-            result += "<input id=\"context\" type=\"hidden\" name=\"Context\" value=\"%Context%\"/>";
-            result += "<input id=\"authMethod\" type=\"hidden\" name=\"AuthMethod\" value=\"%AuthMethod%\"/>";
-            result += "<input id=\"btnclicked\" type=\"hidden\" name=\"btnclicked\" value=\"1\" />";
-
             if (!usercontext.IsRegistered)
             {
                 if (Provider.Config.UserFeatures.IsRegistrationRequired())
                 {
-                    result += "<div id=\"pwdMessage\" class=\"groupMargin\">" + Resources.GetString(ResourcesLocaleKind.Errors, "ErrorAccountNotEnabled") + "</div></br>";
+                    result += "<div id=\"pwdMessage\" class=\"groupMargin\">" + Resources.GetString(ResourcesLocaleKind.Errors, "ErrorAccountAdminNotEnabled") + "</div></br>";
                     result += "<table><tr>";
                     result += "<td>";
-                    result += "<input id=\"buttonquit\" type=\"submit\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMQuit") + "\" onClick=\"fnbtnclicked(1)\" />";
-                    result += "</td>";
-                    result += "<td style=\"width: 15px\" />";
-                    result += "<td>";
-                    result += "<input id=\"GoToRegButton\" type=\"submit\" class=\"submit\" name=\"cancel\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMGotoInscription") + "\" onClick=\"fnbtnclicked(2)\"/>";
+                    result += "<input id=\"buttonquit\" type=\"submit\"  value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMQuit") + "\" onClick=\"fnbtnclicked(1)\" />";
                     result += "</td>";
                     result += "</tr></table>";
                 }
-                else if ((Provider.Config.UserFeatures.IsRegistrationAllowed() && (Provider.Config.AdvertisingDays.OnFire)) || (Provider.Config.UserFeatures.IsRegistrationMixed()))
+                else
                 {
-                    result += "<div id=\"pwdMessage\" class=\"groupMargin\">" + Resources.GetString(ResourcesLocaleKind.Errors, "ErrorAccountAuthorized") + "</div></br>";
+                    result += GetFormHtmlMessageZone(usercontext);
+                    result += "<br/>";
                     result += "<table><tr>";
-                    if (!Provider.Config.UserFeatures.IsRegistrationMixed())
-                    {
-                        result += "<td>";
-                        result += "<input id=\"continueButton\" type=\"submit\" class=\"submit\" name=\"Continue\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMConnexion") + "\" onClick=\"fnbtnclicked(1)\" />";
-                        result += "</td>";
-                        result += "<td style=\"width: 15px\" />";
-                    }
                     result += "<td>";
-                    result += "<input id=\"GoToRegButton\" type=\"submit\" class=\"submit\" name=\"cancel\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMGoToRegistration") + "\" onClick=\"fnbtnclicked(3)\"/>";
+                    result += "<input id=\"buttonquit\" type=\"submit\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMQuit") + "\" onClick=\"fnbtnclicked(1)\" />";
                     result += "</td>";
                     result += "</tr></table>";
                 }
             }
             else if (!usercontext.Enabled)
             {
-                if ((Provider.Config.UserFeatures.IsMFAAllowed() && (Provider.Config.AdvertisingDays.OnFire)) || (Provider.Config.UserFeatures.IsMFAMixed()))
-                {
-                    result += "<div id=\"pwdMessage\" class=\"groupMargin\">" + Resources.GetString(ResourcesLocaleKind.Errors, "ErrorAccountAuthorized") + "</div></br>";
-                    result += "<table><tr>";
-                    if (!Provider.Config.UserFeatures.IsMFAMixed())
-                    {
-                        result += "<td>";
-                        result += "<input id=\"continueButton\" type=\"submit\" class=\"submit\" name=\"Continue\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMConnexion") + "\" onClick=\"fnbtnclicked(1)\" />";
-                        result += "</td>";
-                        result += "<td style=\"width: 15px\" />";
-                    }
-                    result += "<td>";
-                    result += "<input id=\"GoToRegButton\" type=\"submit\" class=\"submit\" name=\"cancel\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMGoToRegistration") + "\" onClick=\"fnbtnclicked(4)\"/>";
-                    result += "</td>";
-                    result += "</tr></table>";
-                }
                 if (Provider.Config.UserFeatures.IsMFARequired())
                 {
                     result += "<div id=\"pwdMessage\" class=\"groupMargin\">" + Resources.GetString(ResourcesLocaleKind.Errors, "ErrorAccountAdminNotEnabled") + "</div></br>";
@@ -1148,8 +1205,15 @@ namespace Neos.IdentityServer.MultiFactor
                     result += "<td>";
                     result += "<input id=\"buttonquit\" type=\"submit\"  value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMQuit") + "\" onClick=\"fnbtnclicked(1)\" />";
                     result += "</td>";
-                    result += "<td style=\"width: 15px\" />";
+                    result += "</tr></table>";
+                }
+                else
+                {
+                    result += GetFormHtmlMessageZone(usercontext);
+                    result += "<br/>";
+                    result += "<table><tr>";
                     result += "<td>";
+                    result += "<input id=\"buttonquit\" type=\"submit\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMQuit") + "\" onClick=\"fnbtnclicked(1)\" />";
                     result += "</td>";
                     result += "</tr></table>";
                 }
@@ -1157,15 +1221,17 @@ namespace Neos.IdentityServer.MultiFactor
             else
             {
                 result += GetFormHtmlMessageZone(usercontext);
+                result += "<br/>";
                 result += "<table><tr>";
                 result += "<td>";
                 result += "<input id=\"buttonquit\" type=\"submit\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMQuit") + "\" onClick=\"fnbtnclicked(1)\" />";
                 result += "</td>";
-                result += "<td style=\"width: 15px\" />";
-                result += "<td>";
-                result += "</td>";
                 result += "</tr></table>";
             }
+
+            result += "<input id=\"context\" type=\"hidden\" name=\"Context\" value=\"%Context%\"/>";
+            result += "<input id=\"authMethod\" type=\"hidden\" name=\"AuthMethod\" value=\"%AuthMethod%\"/>";
+            result += "<input id=\"btnclicked\" type=\"hidden\" name=\"btnclicked\" value=\"1\" />";
             result += "</form>";
             return result;
         }
@@ -1411,16 +1477,27 @@ namespace Neos.IdentityServer.MultiFactor
             switch (usercontext.WizPageID)
             {
                 case 0:
+                    int pos = 0;
                     result += "<div id=\"wizardMessage\" class=\"groupMargin\">" + prov.GetWizardUILabel(usercontext) + "</div>";
                     result += "<div class=\"fieldMargin smallText\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelWREGOTP") + "</div></br>";
                     result += "<table>";
+                    result += "  <tr>";
+                    result += "    <th width=\"60px\" />";
+                    result += "    <th width=\"34px\" />";
+                    result += "    <th width=\"82px\" />";
+                    result += "    <th width=\"60px\" />";
+                    result += "    <th width=\"34px\" />";
+                    result += "    <th width=\"82px\" />";
+                    result += "  </tr>";
                     if (!Provider.Config.OTPProvider.WizardOptions.HasFlag(OTPWizardOptions.NoMicrosoftAuthenticator))
                     {
-                        result += " <tr>";
+                        pos++;
+                        if (pos % 2 == 1)
+                            result += " <tr>";
                         result += "  <td>";
                         result += "   <img id=\"ms\" src=\"data:image/png;base64," + Convert.ToBase64String(images.microsoft.ToByteArray(ImageFormat.Png)) + "\"/>";
                         result += "  </td>";
-                        result += "  <td> ";
+                        result += "  <td colspan=\"2\"> ";
                         result += "    <table>";
                         result += "      <tr>";
                         result += "        <td>&nbsp</td>";
@@ -1442,15 +1519,18 @@ namespace Neos.IdentityServer.MultiFactor
                         result += "      </tr>";
                         result += "    </table";
                         result += "  </td>";
-                        result += " </tr>";
+                        if (pos % 2 == 0)
+                            result += " </tr>";
                     }
                     if (!Provider.Config.OTPProvider.WizardOptions.HasFlag(OTPWizardOptions.NoGoogleAuthenticator))
                     {
-                        result += " <tr>";
+                        pos++;
+                        if (pos % 2 == 1)
+                            result += " <tr>";
                         result += "  <td>";
                         result += "    <img id=\"gl\" src=\"data:image/png;base64," + Convert.ToBase64String(images.google.ToByteArray(ImageFormat.Png)) + "\"/>";
                         result += "  </td>";
-                        result += "  <td> ";
+                        result += "  <td colspan=\"2\"> ";
                         result += "    <table>";
                         result += "      <tr>";
                         result += "        <td>&nbsp</td>";
@@ -1470,15 +1550,18 @@ namespace Neos.IdentityServer.MultiFactor
                         result += "      </tr>";
                         result += "    </table";
                         result += "  </td>";
-                        result += " </tr>";
+                        if (pos % 2 == 0)
+                            result += " </tr>";
                     }
                     if (!Provider.Config.OTPProvider.WizardOptions.HasFlag(OTPWizardOptions.NoAuthyAuthenticator))
                     {
-                        result += " <tr>";
+                        pos++;
+                        if (pos % 2 == 1)
+                            result += " <tr>";
                         result += "  <td>";
                         result += "    <img id=\"at\" src=\"data:image/png;base64," + Convert.ToBase64String(images.authy2.ToByteArray(ImageFormat.Png)) + "\"/>";
                         result += "  </td>";
-                        result += "  <td> ";
+                        result += "  <td colspan=\"2\">";
                         result += "    <table";
                         result += "      <tr>";
                         result += "        <td>&nbsp</td>";
@@ -1498,26 +1581,67 @@ namespace Neos.IdentityServer.MultiFactor
                         result += "      </tr>";
                         result += "    </table";
                         result += "  </td>";
-                        result += " </tr>";
+                        if (pos % 2 == 0)
+                            result += " </tr>";
                     }
-                    result += "</table></br>";
-
                     if (!Provider.Config.OTPProvider.WizardOptions.HasFlag(OTPWizardOptions.NoGooglSearch))
-                       result += "<div class=\"fieldMargin smallText\"><label for=\"\"><a href=\"https://www.google.fr/search?q=Authenticator+apps&oq=Authenticator+apps\" target=\"blank\">Or Search Google</a>" + "</div>";
+                    {
+                        pos++;
+                        if (pos % 2 == 1)
+                            result += " <tr>";
+                        result += "  <td colspan=\"2\" >";
+                        result += "    <img id=\"at\" src=\"data:image/png;base64," + Convert.ToBase64String(images.googlelogo.ToByteArray(ImageFormat.Png)) + "\"/>";
+                        result += "  </td>";
+                        result += "  <td> ";
+                        result += "    <table";
+                        result += "      <tr>";
+                        result += "        <td>&nbsp</td>";
+                        result += "        <td>&nbsp</td>";
+                        result += "      </tr>";
+                        result += "      <tr>";
+                        result += "        <td>&nbsp</td>";
+                        result += "        <td colspan=\"2\">";
+                        result += "          <a href=\"https://www.google.fr/search?q=Authenticator+apps&oq=Authenticator+apps\" target=\"blank\">Search...</a>";
+                        result += "        </td>";
+                        result += "      </tr>";
+                        result += "      <tr>";
+                        result += "        <td>&nbsp</td>";
+                        result += "        <td>";
+                        result += "        </td>";
+                        result += "      </tr>";
+                        result += "    </table";
+                        result += "  </td>";
+                        if (pos % 2 == 0)
+                            result += " </tr>";
+                    }
+                    result += "</table>";
 
-                    result += "<p class=\"error\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelWREGOTPWarning") + "</p></br>";
+                    if (Provider.KeepMySelectedOptionOn())
+                    {
+                        Registration reg = RuntimeRepository.GetUserRegistration(Provider.Config, usercontext.UPN);
+                        result += "<br/>";
+                        if (reg!=null)
+                            result += "<input id=\"remember\" type=\"checkbox\" name=\"Remember\" " + ((reg.PreferredMethod == PreferredMethod.Code) ? "checked=\"checked\"> " : "> ") + Resources.GetString(ResourcesLocaleKind.Html, "HtmlCHOOSEOptionRemember2") + "<br/>";
+                        else
+                            result += "<input id=\"remember\" type=\"checkbox\" name=\"Remember\" checked=\"checked\"> " + Resources.GetString(ResourcesLocaleKind.Html, "HtmlCHOOSEOptionRemember2") + "<br/>";
+                    }
+                    if (!string.IsNullOrEmpty(prov.GetAccountManagementUrl(usercontext)))
+                    {
+                        result += "</br>";
+                        result += "<input type=\"checkbox\" id=\"manageaccount\" name=\"manageaccount\" /> " + prov.GetUIAccountManagementLabel(usercontext) + "</br>";
+                    }
+                    result += "<br/>";
 
                     result += "<table><tr>";
                     result += "<td>";
-                    result += "<input id=\"nextButton\" type=\"submit\" class=\"submit\" name=\"nextButton\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMRecordNewKey") + "\" onclick=\"fnbtnclicked(2)\" />";                    
+                    result += "<input id=\"nextButton\" type=\"submit\" class=\"submit\" name=\"nextButton\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMRecordNewKey") + "\" onclick=\"fnbtnclicked(2)\" />";
                     result += "</td>";
                     result += "<td style=\"width: 15px\" />";
                     result += "<td>";
-                    if ((usercontext.UIMode != ProviderPageMode.EnrollOTPForce) || ((usercontext.UIMode == ProviderPageMode.EnrollOTPForce) && (prov.ForceEnrollment != ForceWizardMode.Strict)))
+                    if (Utilities.CanCancelWizard(usercontext, prov, ProviderPageMode.EnrollOTP))
                         result += "<input id=\"mfa-cancelButton\" type=\"submit\" class=\"submit\" name=\"cancel\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlPWDCancel") + "\" onclick=\"fnbtnclicked(1)\" />";
                     result += "</td>";
                     result += "</tr></table>";
-                   // result += GetFormHtmlMessageZone(usercontext);
                     break;
                 case 1: // Always Reset the Key
                     KeysManager.NewKey(usercontext.UPN);
@@ -1525,7 +1649,8 @@ namespace Neos.IdentityServer.MultiFactor
 
                     result += "<div id=\"wizardMessage\" class=\"groupMargin\">" + prov.GetWizardUILabel(usercontext) + "</div>";
                     result += "<div class=\"fieldMargin smallText\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelWRQRCode") + "</div></br>";
-                    result += "<input id=\"secretkey\" name=\"secretkey\" type=\"text\" readonly=\"true\" placeholder=\"DisplayKey\" class=\"text fullWidth\" style=\"background-color: #F0F0F0\" value=\"" + Utilities.StripDisplayKey(displaykey) + "\"/></br></br>";
+                    if (prov.IsUIElementRequired(usercontext, RequiredMethodElements.KeyParameterRequired))
+                        result += "<input id=\"secretkey\" name=\"secretkey\" type=\"text\" readonly=\"true\" placeholder=\"DisplayKey\" class=\"text fullWidth\" style=\"background-color: #F0F0F0\" value=\"" + Utilities.StripDisplayKey(displaykey) + "\"/></br></br>";
                     result += "<p style=\"text-align:center\"><img id=\"qr\" src=\"data:image/png;base64," + Provider.GetQRCodeString(usercontext) + "\"/></p></br>";
                     result += "<input id=\"nextButton\" type=\"submit\" class=\"submit\" name=\"nextButton\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelWVERIFYOTP") + "\" onclick=\"fnbtnclicked(3)\" />";                    
                     break;
@@ -1539,33 +1664,35 @@ namespace Neos.IdentityServer.MultiFactor
                     result += "</td>";
                     result += "<td style=\"width: 15px\" />";
                     result += "<td>";
-                    if ((usercontext.UIMode != ProviderPageMode.EnrollEmailForce) || ((usercontext.UIMode == ProviderPageMode.EnrollEmailForce) && (prov.ForceEnrollment != ForceWizardMode.Strict)))
+                    if (Utilities.CanCancelWizard(usercontext, prov, ProviderPageMode.EnrollOTP))
                         result += "<input id=\"mfa-cancelButton\" type=\"submit\" class=\"submit\" name=\"cancel\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlPWDCancel") + "\" onclick=\"fnbtnclicked(1)\" />";
                     result += "</td>";
                     result += "</tr></table>";
                     break;
                 case 3: // Successfull test
                     result += "</br>";
-                    result += "<p style=\"text-align:center\"><img id=\"msgreen\" src=\"data:image/png;base64," + Convert.ToBase64String(images.cvert.ToByteArray(ImageFormat.Jpeg)) + "\"/></p></br></br>";
+                    result += GetFormHtmlMessageZone(usercontext);
+                    result += "</br>";
                     result += "<input id=\"finishButton\" type=\"submit\" class=\"submit\" name=\"finishButton\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelVERIFYOTPOK") + "\" onclick=\"fnbtnclicked(1)\" />";
                     result += "</br>";
                     result += GetFormHtmlMessageZone(usercontext);
                     break;
                 case 4: // Wrong result test
                     result += "</br>";
-                    result += "<p style=\"text-align:center\"><img id=\"msred\" src=\"data:image/png;base64," + Convert.ToBase64String(images.crouge.ToByteArray(ImageFormat.Jpeg)) + "\"/></p></br></br>";
+                    result += GetFormHtmlMessageZone(usercontext);
+                    result += "</br>";
                     result += "<table><tr>";
                     result += "<td>";
                     result += "<input id=\"priorButton\" type=\"submit\" class=\"submit\" name=\"priorButton\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelVERIFYOTPPRIOR") + "\" onclick=\"fnbtnclicked(2)\" />";
                     result += "</td>";
                     result += "<td style=\"width: 15px\" />";
                     result += "<td>";
-                    if ((usercontext.UIMode != ProviderPageMode.EnrollOTPForce) || ((usercontext.UIMode == ProviderPageMode.EnrollOTPForce) && (prov.ForceEnrollment != ForceWizardMode.Strict)))
+                    if (Utilities.CanCancelWizard(usercontext, prov, ProviderPageMode.EnrollOTP))
                         result += "<input id=\"mfa-cancelButton\" type=\"submit\" class=\"submit\" name=\"cancel\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlPWDCancel") + "\" onclick=\"fnbtnclicked(1)\" />";
                     result += "</td>";
                     result += "</tr></table>";
                     result += "</br>";
-                    result += GetFormHtmlMessageZone(usercontext);
+
                     break;
             }
 
@@ -1602,20 +1729,20 @@ namespace Neos.IdentityServer.MultiFactor
 
                 result += "if ((canceled) && (canceled.value==1))";
                 result += "{";
-                result += "return true;";
+                result += "   return true;";
                 result += "}";
                 result += "if ((email) && (email.value=='') && (email.placeholder==''))";
                 result += "{";
-                result += "err.innerHTML = \"" + Resources.GetString(ResourcesLocaleKind.Validation, "ValidIncorrectEmail") + "\";";
-                result += "return false;";
+                result += "   err.innerHTML = \"" + Resources.GetString(ResourcesLocaleKind.Validation, "ValidIncorrectEmail") + "\";";
+                result += "   return false;";
                 result += "}";
                 result += "if ((email) && (email.value!==''))";
                 result += "{";
-                result += "if (!email.value.match(mailformat))";
-                result += "{";
-                result += "err.innerHTML = \"" + Resources.GetString(ResourcesLocaleKind.Validation, "ValidIncorrectEmail") + "\";";
-                result += "return false;";
-                result += "}";
+                result += "   if (!email.value.match(mailformat))";
+                result += "   {";
+                result += "      err.innerHTML = \"" + Resources.GetString(ResourcesLocaleKind.Validation, "ValidIncorrectEmail") + "\";";
+                result += "      return false;";
+                result += "   }";
                 result += "}";
                 result += "err.innerHTML = \"\";";
             }
@@ -1670,8 +1797,49 @@ namespace Neos.IdentityServer.MultiFactor
             {
                 case 0: // Get User email
                     result += "<div id=\"wizardMessage\" class=\"groupMargin\">" + prov.GetWizardUILabel(usercontext) + "</div>";
-                    result += "<div class=\"fieldMargin smallText\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelWREmail") + "</div></br>";
-                    result += "<input id=\"email\" name=\"email\" type=\"text\" placeholder=\""+ Utilities.StripEmailAddress(usercontext.MailAddress) +"\" class=\"text fullWidth\" /></br>";
+                    if (prov.IsUIElementRequired(usercontext, RequiredMethodElements.EmailParameterRequired))
+                    {
+                        result += "<div class=\"fieldMargin smallText\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelWREmail") + "</div></br>";
+                        result += "<input id=\"email\" name=\"email\" type=\"text\" placeholder=\"" + Utilities.StripEmailAddress(usercontext.MailAddress) + "\" class=\"text fullWidth\" /></br>";
+                    }
+                    List<AvailableAuthenticationMethod> lst = prov.GetAuthenticationMethods(usercontext);
+                    if (lst.Count > 1)
+                    {
+                        AuthenticationResponseKind ov = AuthenticationResponseKind.Error;
+                        if (prov.AllowOverride)
+                        {
+                            ov = prov.GetOverrideMethod(usercontext);
+                            result += "<input id=\"optiongroup\" name=\"optionitem\" type=\"radio\" value=\"Default\" checked=\"checked\" /> " + prov.GetUIDefaultChoiceLabel(usercontext) + "</br>";
+                        }
+                        int i = 1;
+                        foreach (AvailableAuthenticationMethod met in lst)
+                        {
+                            if (ov != AuthenticationResponseKind.Error)
+                            {
+                                if (met.Method == ov)
+                                    result += "<input id=\"optiongroup" + i.ToString() + "\" name=\"optionitem\" type=\"radio\" value=\"" + met.Method.ToString() + "\" checked=\"checked\" /> " + prov.GetUIChoiceLabel(usercontext, met) + "</br>";
+                                else
+                                    result += "<input id=\"optiongroup" + i.ToString() + "\" name=\"optionitem\" type=\"radio\" value=\"" + met.Method.ToString() + "\" /> " + prov.GetUIChoiceLabel(usercontext, met) + "</br>";
+                            }
+                            else
+                                result += "<input id=\"optiongroup" + i.ToString() + "\" name=\"optionitem\" type=\"radio\" value=\"" + met.Method.ToString() + "\" /> " + prov.GetUIChoiceLabel(usercontext, met) + "</br>";
+                            i++;
+                        }
+                    }
+                    if (Provider.KeepMySelectedOptionOn())
+                    {
+                        Registration reg = RuntimeRepository.GetUserRegistration(Provider.Config, usercontext.UPN);
+                        result += "</br>";
+                        if (reg!=null)
+                            result += "<input id=\"remember\" type=\"checkbox\" name=\"Remember\"" + (reg.PreferredMethod == PreferredMethod.Email ? " checked=\"checked\"" : "\"\"") + "\" > " + Resources.GetString(ResourcesLocaleKind.Html, "HtmlCHOOSEOptionRemember2") + "<br/>";
+                        else
+                            result += "<input id=\"remember\" type=\"checkbox\" name=\"Remember\" > " + Resources.GetString(ResourcesLocaleKind.Html, "HtmlCHOOSEOptionRemember2") + "<br/>";
+                    }
+                    if (!string.IsNullOrEmpty(prov.GetAccountManagementUrl(usercontext)))
+                    {
+                        result += "</br>";
+                        result += "<input type=\"checkbox\" id=\"manageaccount\" name=\"manageaccount\" /> " + prov.GetUIAccountManagementLabel(usercontext) + "</br>";
+                    }
                     result += "</br>";
                     result += "<table><tr>";
                     result += "<td>";
@@ -1679,7 +1847,7 @@ namespace Neos.IdentityServer.MultiFactor
                     result += "</td>";
                     result += "<td style=\"width: 15px\" />";
                     result += "<td>";
-                    if ((usercontext.UIMode != ProviderPageMode.EnrollEmailForce) || ((usercontext.UIMode == ProviderPageMode.EnrollEmailForce) && (prov.ForceEnrollment != ForceWizardMode.Strict)))
+                    if (Utilities.CanCancelWizard(usercontext, prov, ProviderPageMode.EnrollEmail))
                         result += "<input id=\"mfa-cancelButton\" type=\"submit\" class=\"submit\" name=\"cancel\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlPWDCancel") + "\" onclick=\"fnbtnclicked(1)\" />";
                     result += "</td>";
                     result += "</tr></table>";
@@ -1704,7 +1872,7 @@ namespace Neos.IdentityServer.MultiFactor
                     result += "</td>";
                     result += "<td style=\"width: 15px\" />";
                     result += "<td>";
-                    if ((usercontext.UIMode != ProviderPageMode.EnrollEmailForce) || ((usercontext.UIMode == ProviderPageMode.EnrollEmailForce) && (prov.ForceEnrollment != ForceWizardMode.Strict)))
+                    if (Utilities.CanCancelWizard(usercontext, prov, ProviderPageMode.EnrollEmail))
                         result += "<input id=\"mfa-cancelButton\" type=\"submit\" class=\"submit\" name=\"cancel\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlPWDCancel") + "\" onclick=\"fnbtnclicked(1)\" />";
                     result += "</td>";
                     result += "</tr></table>";
@@ -1712,26 +1880,26 @@ namespace Neos.IdentityServer.MultiFactor
                     break;
                 case 3: // Successfull test
                     result += "</br>";
-                    result += "<p style=\"text-align:center\"><img id=\"msgreen\" src=\"data:image/png;base64," + Convert.ToBase64String(images.cvert.ToByteArray(ImageFormat.Jpeg)) + "\"/></p></br></br>";
+                    result += GetFormHtmlMessageZone(usercontext);
+                    result += "</br>";
                     result += "<input id=\"finishButton\" type=\"submit\" class=\"submit\" name=\"finishButton\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelVERIFYOTPOK") + "\" onclick=\"fnbtnclicked(1)\" />";
                     result += "</br>";
-                    result += GetFormHtmlMessageZone(usercontext);
                     break;
                 case 4: // Wrong result test
                     result += "</br>";
-                    result += "<p style=\"text-align:center\"><img id=\"msred\" src=\"data:image/png;base64," + Convert.ToBase64String(images.crouge.ToByteArray(ImageFormat.Jpeg)) + "\"/></p></br></br>";
+                    result += GetFormHtmlMessageZone(usercontext);
+                    result += "</br>";
                     result += "<table><tr>";
                     result += "<td>";
                     result += "<input id=\"priorButton\" type=\"submit\" class=\"submit\" name=\"priorButton\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelVERIFYOTPPRIOR") + "\" onclick=\"fnbtnclicked(0)\" />";
                     result += "</td>";
                     result += "<td style=\"width: 15px\" />";
                     result += "<td>";
-                    if ((usercontext.UIMode != ProviderPageMode.EnrollEmailForce) || ((usercontext.UIMode == ProviderPageMode.EnrollEmailForce) && (prov.ForceEnrollment != ForceWizardMode.Strict)))
+                    if (Utilities.CanCancelWizard(usercontext, prov, ProviderPageMode.EnrollEmail))
                         result += "<input id=\"mfa-cancelButton\" type=\"submit\" class=\"submit\" name=\"cancel\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlPWDCancel") + "\" onclick=\"fnbtnclicked(1)\" />";
                     result += "</td>";
                     result += "</tr></table>";
                     result += "</br>";
-                    result += GetFormHtmlMessageZone(usercontext);
                     break;
             }
 
@@ -1770,20 +1938,22 @@ namespace Neos.IdentityServer.MultiFactor
 
                 result += "if ((canceled) && (canceled.value==1))";
                 result += "{";
-                result += "return true;";
+                result += "   return true;";
                 result += "}";
+
                 result += "if ((phone) && (phone.value=='') && (phone.placeholder==''))";
                 result += "{";
-                result += "err.innerHTML = \"" + Resources.GetString(ResourcesLocaleKind.Validation, "ValidIncorrectPhoneNumber") + "\";";
-                result += "return false;";
+                result += "   err.innerHTML = \"" + Resources.GetString(ResourcesLocaleKind.Validation, "ValidIncorrectPhoneNumber") + "\";";
+                result += "   return false;";
                 result += "}";
+
                 result += "if ((phone) && (phone.value!==''))";
                 result += "{";
-                result += "if (!phone.value.match(phoneformat) && !phone.value.match(phoneformat10) && !phone.value.match(phoneformatus) )";
-                result += "{";
-                result += "err.innerHTML = \"" + Resources.GetString(ResourcesLocaleKind.Validation, "ValidIncorrectPhoneNumber") + "\";";
-                result += "return false;";
-                result += "}";
+                result += "   if (!phone.value.match(phoneformat) && !phone.value.match(phoneformat10) && !phone.value.match(phoneformatus) )";
+                result += "   {";
+                result += "      err.innerHTML = \"" + Resources.GetString(ResourcesLocaleKind.Validation, "ValidIncorrectPhoneNumber") + "\";";
+                result += "      return false;";
+                result += "   }";
                 result += "}";
                 result += "err.innerHTML = \"\";";
             }
@@ -1793,32 +1963,32 @@ namespace Neos.IdentityServer.MultiFactor
 
             result += "function OnRefreshPost(frm)";
             result += "{";
-            result += "ChangeTitle();";
-            result += "fnbtnclicked(3);";
-            result += "document.getElementById('enrollphoneForm').submit();";
-            result += "return true;";
+            result += "   ChangeTitle();";
+            result += "   fnbtnclicked(3);";
+            result += "   document.getElementById('enrollphoneForm').submit();";
+            result += "   return true;";
             result += "}";
             result += "\r\n";
 
             result += "function fnbtnclicked(id)";
             result += "{";
-            result += "var lnk = document.getElementById('btnclicked');";
-            result += "lnk.value = id;";
-            result += "return true;";
+            result += "   var lnk = document.getElementById('btnclicked');";
+            result += "   lnk.value = id;";
+            result += "   return true;";
             result += "}";
             result += "\r\n";
 
             result += "function ChangeTitle()";
             result += "{";
-            result += "var title = document.getElementById('mfaGreetingDescription');";
-            result += "if (title)";
-            result += "{";
+            result += "   var title = document.getElementById('mfaGreetingDescription');";
+            result += "   if (title)";
+            result += "   {";
             if (usercontext.TargetUIMode == ProviderPageMode.Registration)
-                result += "title.innerHTML = \"<b>" + Resources.GetString(ResourcesLocaleKind.Titles, "RegistrationPageTitle") + "</b>\";";
+                result += "      title.innerHTML = \"<b>" + Resources.GetString(ResourcesLocaleKind.Titles, "RegistrationPageTitle") + "</b>\";";
             else if (usercontext.TargetUIMode == ProviderPageMode.Invitation)
-                result += "title.innerHTML = \"<b>" + Resources.GetString(ResourcesLocaleKind.Titles, "InvitationPageTitle") + "</b>\";";
-            result += "}";
-            result += "return true;";
+                result += "      title.innerHTML = \"<b>" + Resources.GetString(ResourcesLocaleKind.Titles, "InvitationPageTitle") + "</b>\";";
+            result += "   }";
+            result += "   return true;";
             result += "}";
             result += "\r\n";
 
@@ -1853,8 +2023,51 @@ namespace Neos.IdentityServer.MultiFactor
             {
                 case 0: // Get User Phone number
                     result += "<div id=\"wizardMessage\" class=\"groupMargin\">" + prov.GetWizardUILabel(usercontext) + "</div>";
-                    result += "<div class=\"fieldMargin smallText\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelWRPhone") + "</div></br>";
-                    result += "<input id=\"phone\" name=\"phone\" type=\"text\" placeholder=\"" + Utilities.StripPhoneNumber(usercontext.PhoneNumber) + "\" class=\"text fullWidth\" /></br>";
+                    if (prov.IsUIElementRequired(usercontext, RequiredMethodElements.PhoneParameterRequired))
+                    {
+                        result += "<div class=\"fieldMargin smallText\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelWRPhone") + "</div></br>";
+                        result += "<input id=\"phone\" name=\"phone\" type=\"text\" placeholder=\"" + Utilities.StripPhoneNumber(usercontext.PhoneNumber) + "\" class=\"text fullWidth\" /></br>";
+                    }
+                    List<AvailableAuthenticationMethod> lst = prov.GetAuthenticationMethods(usercontext);
+                    if (lst.Count > 1)
+                    {
+                        AuthenticationResponseKind ov = AuthenticationResponseKind.Error;
+                        if (prov.AllowOverride)
+                        {
+                            ov = prov.GetOverrideMethod(usercontext);
+                            result += "<input id=\"optiongroup\" name=\"optionitem\" type=\"radio\" value=\"Default\" checked=\"checked\" /> " + prov.GetUIDefaultChoiceLabel(usercontext) + "</br>";
+                        }
+                        int i = 1;
+                        foreach (AvailableAuthenticationMethod met in lst)
+                        {
+                            if (ov != AuthenticationResponseKind.Error)
+                            {
+                                if (met.Method == ov)
+                                    result += "<input id=\"optiongroup" + i.ToString() + "\" name=\"optionitem\" type=\"radio\" value=\"" + met.Method.ToString() + "\" checked=\"checked\" /> " + prov.GetUIChoiceLabel(usercontext, met) + "</br>";
+                                else
+                                    result += "<input id=\"optiongroup" + i.ToString() + "\" name=\"optionitem\" type=\"radio\" value=\"" + met.Method.ToString() + "\" /> " + prov.GetUIChoiceLabel(usercontext, met) + "</br>";
+                            }
+                            else
+                                result += "<input id=\"optiongroup" + i.ToString() + "\" name=\"optionitem\" type=\"radio\" value=\"" + met.Method.ToString() + "\" /> " + prov.GetUIChoiceLabel(usercontext, met) + "</br>";
+                            i++;
+                        }
+                    }
+
+                    if (Provider.KeepMySelectedOptionOn())
+                    {
+                        Registration reg = RuntimeRepository.GetUserRegistration(Provider.Config, usercontext.UPN);
+                        result += "</br>";
+                        if (reg!=null)
+                            result += "<input id=\"remember\" type=\"checkbox\" name=\"Remember\"" + (reg.PreferredMethod == PreferredMethod.External ? " checked=\"checked\"" : "\"\"") + "\" > " + Resources.GetString(ResourcesLocaleKind.Html, "HtmlCHOOSEOptionRemember2") + "<br/>";
+                        else
+                            result += "<input id=\"remember\" type=\"checkbox\" name=\"Remember\" > " + Resources.GetString(ResourcesLocaleKind.Html, "HtmlCHOOSEOptionRemember2") + "<br/>";
+                    }
+                    if (!string.IsNullOrEmpty(prov.GetAccountManagementUrl(usercontext)))
+                    {
+                        result += "</br>";
+                        result += "<input type=\"checkbox\" id=\"manageaccount\" name=\"manageaccount\" /> " + prov.GetUIAccountManagementLabel(usercontext) + "</br>";
+                    }
+
                     result += "</br>";
                     result += "<table><tr>";
                     result += "<td>";
@@ -1862,7 +2075,7 @@ namespace Neos.IdentityServer.MultiFactor
                     result += "</td>";
                     result += "<td style=\"width: 15px\" />";
                     result += "<td>";
-                    if ((usercontext.UIMode != ProviderPageMode.EnrollPhoneForce) || ((usercontext.UIMode == ProviderPageMode.EnrollPhoneForce) && (prov.ForceEnrollment != ForceWizardMode.Strict)))
+                    if (Utilities.CanCancelWizard(usercontext, prov, ProviderPageMode.EnrollPhone))
                         result += "<input id=\"mfa-cancelButton\" type=\"submit\" class=\"submit\" name=\"cancel\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlPWDCancel") + "\" onclick=\"fnbtnclicked(1)\" />";
                     result += "</td>";
                     result += "</tr></table>";
@@ -1887,36 +2100,35 @@ namespace Neos.IdentityServer.MultiFactor
                     result += "</td>";
                     result += "<td style=\"width: 15px\" />";
                     result += "<td>";
-                    if ((usercontext.UIMode != ProviderPageMode.EnrollPhoneForce) || ((usercontext.UIMode == ProviderPageMode.EnrollPhoneForce) && (prov.ForceEnrollment != ForceWizardMode.Strict)))
+                    if (Utilities.CanCancelWizard(usercontext, prov, ProviderPageMode.EnrollPhone))
                         result += "<input id=\"mfa-cancelButton\" type=\"submit\" class=\"submit\" name=\"cancel\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlPWDCancel") + "\" onclick=\"fnbtnclicked(1)\" />";
                     result += "</td>";
                     result += "</tr></table>";
                     break;
                 case 3: // Successfull test
                     result += "</br>";
-                    result += "<p style=\"text-align:center\"><img id=\"msgreen\" src=\"data:image/png;base64," + Convert.ToBase64String(images.cvert.ToByteArray(ImageFormat.Jpeg)) + "\"/></p></br></br>";
+                    result += GetFormHtmlMessageZone(usercontext);
+                    result += "</br>";
                     result += "<input id=\"finishButton\" type=\"submit\" class=\"submit\" name=\"finishButton\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelVERIFYOTPOK") + "\" onclick=\"fnbtnclicked(1)\" />";
                     result += "</br>";
-                    result += GetFormHtmlMessageZone(usercontext);
                     break;
                 case 4: // Wrong result test
                     result += "</br>";
-                    result += "<p style=\"text-align:center\"><img id=\"msred\" src=\"data:image/png;base64," + Convert.ToBase64String(images.crouge.ToByteArray(ImageFormat.Jpeg)) + "\"/></p></br></br>";
+                    result += GetFormHtmlMessageZone(usercontext);
+                    result += "</br>";
                     result += "<table><tr>";
                     result += "<td>";
                     result += "<input id=\"priorButton\" type=\"submit\" class=\"submit\" name=\"priorButton\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelVERIFYOTPPRIOR") + "\" onclick=\"fnbtnclicked(0)\" />";
                     result += "</td>";
                     result += "<td style=\"width: 15px\" />";
                     result += "<td>";
-                    if ((usercontext.UIMode != ProviderPageMode.EnrollOTPForce) || ((usercontext.UIMode == ProviderPageMode.EnrollOTPForce) && (prov.ForceEnrollment != ForceWizardMode.Strict)))
+                    if (Utilities.CanCancelWizard(usercontext, prov, ProviderPageMode.EnrollPhone))
                         result += "<input id=\"mfa-cancelButton\" type=\"submit\" class=\"submit\" name=\"cancel\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlPWDCancel") + "\" onclick=\"fnbtnclicked(1)\" />";
                     result += "</td>";
                     result += "</tr></table>";
                     result += "</br>";
-                    result += GetFormHtmlMessageZone(usercontext);
                     break;
             }
-
             result += "<input id=\"context\" type=\"hidden\" name=\"Context\" value=\"%Context%\"/>";
             result += "<input id=\"authMethod\" type=\"hidden\" name=\"AuthMethod\" value=\"%AuthMethod%\"/>";
             result += "<input id=\"btnclicked\" type=\"hidden\" name=\"btnclicked\" value=\"1\" />";
@@ -1952,7 +2164,8 @@ namespace Neos.IdentityServer.MultiFactor
         {
             string result = string.Empty;
 
-            string reg = @"/([0-9]{4,4})/";  // ICI : Check length
+            string pl = Provider.Config.PinLength.ToString();
+            string reg = @"/([0-9]{"+pl+","+pl+"})/";  
 
             result += "<script type=\"text/javascript\">" + "\r\n";
 
@@ -2018,46 +2231,49 @@ namespace Neos.IdentityServer.MultiFactor
                     result += "</td>";
                     result += "<td style=\"width: 15px\" />";
                     result += "<td>";
-                    result += "<input id=\"mfa-cancelButton\" type=\"submit\" class=\"submit\" name=\"cancel\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlPWDCancel") + "\" onclick=\"fnbtnclicked(1)\" />";
+                    if (Utilities.CanCancelWizard(usercontext, null, ProviderPageMode.EnrollPin))
+                        result += "<input id=\"mfa-cancelButton\" type=\"submit\" class=\"submit\" name=\"cancel\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlPWDCancel") + "\" onclick=\"fnbtnclicked(1)\" />";
                     result += "</td>";
                     result += "</tr></table>";
                     result += GetFormHtmlMessageZone(usercontext);
                     break;
                 case 2: // Code verification
                     result += "<div id=\"wizardMessage\" class=\"groupMargin\">" + BaseExternalProvider.GetPINLabel(usercontext) + "</div>";
-                    result += "<input id=\"pincode\" name=\"pincode\" type=\"password\" placeholder=\"PIN Code\" class=\"text fullWidth\" autofocus=\"autofocus\" /></br>";
+                    result += "<input id=\"pincode\" name=\"pincode\" type=\"password\" placeholder=\"PIN\" class=\"text fullWidth\" autofocus=\"autofocus\" /></br>";
                     result += "<div class=\"fieldMargin smallText\">" + BaseExternalProvider.GetPINMessage(usercontext) + "</div></br>";
                     result += "<table><tr>";
                     result += "<td>";
-                    result += "<input id=\"checkButton\" type=\"submit\" class=\"submit\" name=\"checkButton\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMCheck") + "\" onclick=\"fnbtnclicked(3)\" />";
+                    result += "<input id=\"checkButton\" type=\"submit\" class=\"submit\" name=\"checkButton\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMCheck") + "\" onclick=\"fnbtnclicked(4)\" />";
                     result += "</td>";
                     result += "<td style=\"width: 15px\" />";
                     result += "<td>";
-                    result += "<input id=\"mfa-cancelButton\" type=\"submit\" class=\"submit\" name=\"cancel\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlPWDCancel") + "\" onclick=\"fnbtnclicked(1)\" />";
+                    if (Utilities.CanCancelWizard(usercontext, null, ProviderPageMode.EnrollPin))
+                        result += "<input id=\"mfa-cancelButton\" type=\"submit\" class=\"submit\" name=\"cancel\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlPWDCancel") + "\" onclick=\"fnbtnclicked(1)\" />";
                     result += "</td>";
                     result += "</tr></table>";
                     break;
                 case 3: // Successfull test
                     result += "</br>";
-                    result += "<p style=\"text-align:center\"><img id=\"msgreen\" src=\"data:image/png;base64," + Convert.ToBase64String(images.cvert.ToByteArray(ImageFormat.Jpeg)) + "\"/></p></br></br>";
+                    result += GetFormHtmlMessageZone(usercontext);
+                    result += "</br>";
                     result += "<input id=\"finishButton\" type=\"submit\" class=\"submit\" name=\"finishButton\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelVERIFYOTPOK") + "\" onclick=\"fnbtnclicked(1)\" />";
                     result += "</br>";
-                    result += GetFormHtmlMessageZone(usercontext);
                     break;
                 case 4: // Wrong result test
                     result += "</br>";
-                    result += "<p style=\"text-align:center\"><img id=\"msred\" src=\"data:image/png;base64," + Convert.ToBase64String(images.crouge.ToByteArray(ImageFormat.Jpeg)) + "\"/></p></br></br>";
+                    result += GetFormHtmlMessageZone(usercontext);
+                    result += "</br>";
                     result += "<table><tr>";
                     result += "<td>";
                     result += "<input id=\"priorButton\" type=\"submit\" class=\"submit\" name=\"priorButton\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelVERIFYOTPPRIOR") + "\" onclick=\"fnbtnclicked(2)\" />";
                     result += "</td>";
                     result += "<td style=\"width: 15px\" />";
                     result += "<td>";
-                    result += "<input id=\"mfa-cancelButton\" type=\"submit\" class=\"submit\" name=\"cancel\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlPWDCancel") + "\" onclick=\"fnbtnclicked(1)\" />";
+                    if (Utilities.CanCancelWizard(usercontext, null, ProviderPageMode.EnrollPin))
+                        result += "<input id=\"mfa-cancelButton\" type=\"submit\" class=\"submit\" name=\"cancel\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlPWDCancel") + "\" onclick=\"fnbtnclicked(1)\" />";
                     result += "</td>";
                     result += "</tr></table>";
-                    result += "</br>";
-                    result += GetFormHtmlMessageZone(usercontext);
+                    result += "</br>";                   
                     break;
             }
 
@@ -2069,77 +2285,6 @@ namespace Neos.IdentityServer.MultiFactor
             return result;
         }
         #endregion
-
-        #region Html Parts
-        /// <summary>
-        /// GetPartHtmlPagingMethod method ipmplmentation
-        /// </summary>
-        private string GetPartHtmlPagingMethod(AuthenticationContext usercontext)
-        {
-            bool showpin = false;
-            string result = string.Empty;
-            result += "<div class=\"fieldMargin smallText\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlREGAccessPageMethods") + "</div>";
-            result += "<select id=\"selectpage\" name=\"selectpage\" role=\"combobox\"  required=\"required\" contenteditable=\"false\" class=\"text fullWidth\" onchange=\"this.form.submit()\">";
-
-            IExternalProvider prov = null;
-            IExternalProvider lastprov = null;
-            prov = RuntimeAuthProvider.GetProvider(PreferredMethod.Code);
-            if ((prov!=null) && (prov.IsAvailable(usercontext)))
-            {
-                result += "<option value=\"0\" " + ((usercontext.PageID == 0) ? "selected=\"true\"> " : "> ") + prov.GetUIListOptionLabel(usercontext) + "</option>";
-                if (prov.PinRequired)
-                {
-                    showpin = true;
-                    lastprov = prov;
-                }
-            }
-            prov = RuntimeAuthProvider.GetProvider(PreferredMethod.Email);
-            if ((prov!=null) && (prov.IsAvailable(usercontext)))
-            {
-                result += "<option value=\"1\" " + ((usercontext.PageID == 1) ? "selected=\"true\"> " : "> ") + prov.GetUIListOptionLabel(usercontext) + "</option>";
-                if (prov.PinRequired)
-                {
-                    showpin = true;
-                    lastprov = prov;
-                }
-            }
-            prov = RuntimeAuthProvider.GetProvider(PreferredMethod.External);
-            if ((prov!=null) && (prov.IsAvailable(usercontext)))
-            { 
-                result += "<option value=\"2\" " + ((usercontext.PageID == 2) ? "selected=\"true\"> " : "> ") + prov.GetUIListOptionLabel(usercontext) + "</option>";
-                if (prov.PinRequired)
-                {
-                    showpin = true;
-                    lastprov = prov;
-                }
-            }
-            prov = RuntimeAuthProvider.GetProvider(PreferredMethod.Azure);
-            if ((prov!=null) && (prov.IsAvailable(usercontext)))
-            {
-                result += "<option value=\"3\" " + ((usercontext.PageID == 3) ? "selected=\"true\"> " : "> ") + prov.GetUIListOptionLabel(usercontext) + "</option>";
-                if (prov.PinRequired)
-                {
-                    showpin = true;
-                    lastprov = prov;
-                }
-            }
-            prov = RuntimeAuthProvider.GetProvider(PreferredMethod.Biometrics);
-            if ((prov!=null) && (prov.IsAvailable(usercontext)))
-            {
-                result += "<option value=\"4\" " + ((usercontext.PageID == 4) ? "selected=\"true\"> " : "> ") + prov.GetUIListOptionLabel(usercontext) + "</option>";
-                if (prov.PinRequired)
-                {
-                    showpin = true;
-                    lastprov = prov;
-                }
-            }
-            if ((showpin) && (lastprov!=null))
-            {
-                result += "<option value=\"5\" " + ((usercontext.PageID == 5) ? "selected=\"true\"> " : "> ") + BaseExternalProvider.GetPINLabel(usercontext) + "</option>";
-            }
-            result += "</select></br></br>";
-            return result;
-        }
 
         /// <summary>
         /// GetPartHtmlSelectMethod method ipmplmentation
@@ -2153,7 +2298,7 @@ namespace Neos.IdentityServer.MultiFactor
             else
                 method = reg.PreferredMethod;
             string result = string.Empty;
-            result += "<div class=\"fieldMargin smallText\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlREGAccessMethod") + "</div>";
+            result += "<b><div class=\"fieldMargin\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlREGAccessMethod") + "</div></b>";
             result += "<select id=\"selectopt\" name=\"selectopt\" role=\"combobox\"  required=\"required\" contenteditable=\"false\" class=\"text fullWidth\" >";
 
             result += "<option value=\"0\" " + ((method == PreferredMethod.Choose) ? "selected=\"true\"> " : "> ") + Resources.GetString(ResourcesLocaleKind.Html, "HtmlREGOptionChooseBest") + "</option>";
@@ -2177,42 +2322,5 @@ namespace Neos.IdentityServer.MultiFactor
             return result;
         }
 
-        /// <summary>
-        /// GetPartHtmlSelectMethod2 method ipmplmentation
-        /// </summary>
-        private string GetPartHtmlSelectMethod2(AuthenticationContext usercontext)
-        {
-            Registration reg = RuntimeRepository.GetUserRegistration(Provider.Config, usercontext.UPN);
-            PreferredMethod method = PreferredMethod.None;
-            if (reg == null)
-                method = usercontext.PreferredMethod;
-            else
-                method = reg.PreferredMethod;
-            string result = string.Empty;
-            result += "<div class=\"fieldMargin smallText\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlREGAccessMethod") + "</div>";
-            result += "<select id=\"selectopt\" name=\"selectopt\" role=\"combobox\"  required=\"required\" contenteditable=\"false\" class=\"text fullWidth\" >";
-
-            result += "<option value=\"0\" " + ((method == PreferredMethod.Choose) ? "selected=\"true\"> " : "> ") + Resources.GetString(ResourcesLocaleKind.Html, "HtmlREGOptionChooseBest") + "</option>";
-
-            if (RuntimeAuthProvider.IsProviderAvailable(usercontext, PreferredMethod.Code))
-                result += "<option value=\"1\" " + ((method == PreferredMethod.Code) ? "selected=\"true\"> " : "> ") + RuntimeAuthProvider.GetProvider(PreferredMethod.Code).GetUIListChoiceLabel(usercontext) + "</option>";
-
-            if (RuntimeAuthProvider.IsProviderAvailable(usercontext, PreferredMethod.Email))
-                result += "<option value=\"2\" " + ((method == PreferredMethod.Email) ? "selected=\"true\"> " : "> ") + RuntimeAuthProvider.GetProvider(PreferredMethod.Email).GetUIListChoiceLabel(usercontext) + "</option>";
-
-            if (RuntimeAuthProvider.IsProviderAvailable(usercontext, PreferredMethod.External))
-                result += "<option value=\"3\" " + ((method == PreferredMethod.External) ? "selected=\"true\"> " : "> ") + RuntimeAuthProvider.GetProvider(PreferredMethod.External).GetUIListChoiceLabel(usercontext) + "</option>";
-
-            if (RuntimeAuthProvider.IsProviderAvailable(usercontext, PreferredMethod.Azure))
-                result += "<option value=\"4\" " + ((method == PreferredMethod.Azure) ? "selected=\"true\">" : ">") + RuntimeAuthProvider.GetProvider(PreferredMethod.Azure).GetUIListChoiceLabel(usercontext) + "</option>";
-
-            if (RuntimeAuthProvider.IsProviderAvailable(usercontext, PreferredMethod.Biometrics))
-                result += "<option value=\"5\" " + ((method == PreferredMethod.Biometrics) ? "selected=\"true\">" : ">") + RuntimeAuthProvider.GetProvider(PreferredMethod.Biometrics).GetUIListChoiceLabel(usercontext) + "</option>";
-
-            result += "</select></br>";
-            return result;
-        }
-
-        #endregion
     }
 }

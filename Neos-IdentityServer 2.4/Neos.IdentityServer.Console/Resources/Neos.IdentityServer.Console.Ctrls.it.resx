@@ -295,13 +295,16 @@
     <value>Registrazione utente</value>
   </data>
   <data name="CTRLGLMFAREGISTER1" xml:space="preserve">
-    <value>Amministrativa - Registrazione eseguita dal personale di supporto</value>
+    <value>Amministrativa - Registrazione convalidato dal personale di supporto</value>
   </data>
   <data name="CTRLGLMFAREGISTER2" xml:space="preserve">
     <value>Utente - Registrazione eseguita dall'utente</value>
   </data>
   <data name="CTRLGLMFAREGISTER3" xml:space="preserve">
     <value>Non gestita - È necessario contattare il supporto</value>
+  </data>
+  <data name="CTRLGLMFAREGISTER4" xml:space="preserve">
+    <value>Obbligatorio: registrazione effettuata il supporto</value>
   </data>
   <data name="CTRLGLMFASTATUS" xml:space="preserve">
     <value>Stato autenticazione a più fattori</value>
