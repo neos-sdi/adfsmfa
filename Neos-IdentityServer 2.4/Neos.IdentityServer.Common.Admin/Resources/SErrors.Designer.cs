@@ -79,7 +79,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Error loading MFA Configuration ! \r {0}.
+        ///   Recherche une chaîne localisée semblable à Error loading MFA Configuration ! {0}.
         /// </summary>
         internal static string ErrorLoadingMFAConfiguration {
             get {

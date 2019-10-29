@@ -118,12 +118,12 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="InfosConfigurationModified" xml:space="preserve">
-    <value>Configuración actualizado satisfactoriamente !</value>
+    <value>La configuración se actualizó correctamente !</value>
   </data>
   <data name="InfosConfigurationReloaded" xml:space="preserve">
-    <value>Configuración de carga ! solicitud {0}</value>
+    <value>Configuración cargada ! invoqued por : {0}</value>
   </data>
   <data name="InfosPasswordModified" xml:space="preserve">
-    <value>Contraseña cambiada con éxito !</value>
+    <value>Contraseña modificada !</value>
   </data>
 </root>

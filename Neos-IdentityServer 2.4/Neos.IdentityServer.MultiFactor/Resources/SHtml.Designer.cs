@@ -451,7 +451,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Change my options.
+        ///   Recherche une chaîne localisée semblable à Registration.
         /// </summary>
         internal static string HtmlUIMGoToRegistration {
             get {
@@ -523,7 +523,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Informations provided:.
+        ///   Recherche une chaîne localisée semblable à Informations provided :.
         /// </summary>
         internal static string HtmlUIResultLabel {
             get {

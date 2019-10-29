@@ -123,6 +123,9 @@
   <data name="USERSFRMACTIVATEDESC" xml:space="preserve">
     <value>Abilita l'autenticazione a più fattori per l'utente selezionato.</value>
   </data>
+  <data name="USERSFRMADECTIVATEDESC" xml:space="preserve">
+    <value>Disattivare l'autenticazione a più fattori per l'utente selezionato.</value>
+  </data>
   <data name="USERSFRMCONFIRMDELETE" xml:space="preserve">
     <value>Vuoi veramente eliminare quest'elemento?</value>
   </data>

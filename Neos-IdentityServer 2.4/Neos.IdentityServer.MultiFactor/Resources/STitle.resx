@@ -123,6 +123,9 @@
   <data name="InvitationPageTitle" xml:space="preserve">
     <value>Configuration Options</value>
   </data>
+  <data name="ManageOptionsPageTitle" xml:space="preserve">
+    <value>Setting up options</value>
+  </data>
   <data name="MustUseCodePageTitle" xml:space="preserve">
     <value>You must use a security code to confirm your identity. How do you want to receive your code ? </value>
   </data>

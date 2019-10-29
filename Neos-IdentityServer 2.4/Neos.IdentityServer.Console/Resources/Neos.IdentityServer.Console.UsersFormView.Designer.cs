@@ -79,6 +79,15 @@ namespace Neos.IdentityServer.Console.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Turn off MFA for the selected user..
+        /// </summary>
+        internal static string USERSFRMADECTIVATEDESC {
+            get {
+                return ResourceManager.GetString("USERSFRMADECTIVATEDESC", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Do you really want to delete this item?.
         /// </summary>
         internal static string USERSFRMCONFIRMDELETE {

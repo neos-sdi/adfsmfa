@@ -1,0 +1,558 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="CRTLADFSRESTARTFARMSERVICES" xml:space="preserve">
+    <value>Alle Federation-Services opnieuw starten</value>
+  </data>
+  <data name="CRTLADFSRESTARTSERVICES" xml:space="preserve">
+    <value>Federation-Services opnieuw opstarten</value>
+  </data>
+  <data name="CRTLADFSSTARTSERVICES" xml:space="preserve">
+    <value>Federation-Services starten</value>
+  </data>
+  <data name="CRTLADFSSTOPSERVICES" xml:space="preserve">
+    <value>Federation-Services stoppen</value>
+  </data>
+  <data name="CTRGLMANAGEREG" xml:space="preserve">
+    <value>Registratie meldingen</value>
+  </data>
+  <data name="CTRGLMANAGEREGEND" xml:space="preserve">
+    <value>Einde</value>
+  </data>
+  <data name="CTRGLMANAGEREGSTART" xml:space="preserve">
+    <value>Start</value>
+  </data>
+  <data name="CTRLADACCOUNT" xml:space="preserve">
+    <value>Toegangs account</value>
+  </data>
+  <data name="CTRLADATCHECKDATEERROR" xml:space="preserve">
+    <value>Kenmerk toegevoegd niet geldig voor verificatie datum!</value>
+  </data>
+  <data name="CTRLADATENABLEDERROR" xml:space="preserve">
+    <value>VOEGT kenmerk niet geldig voor ingeschakeld!</value>
+  </data>
+  <data name="CTRLADATMETHODERROR" xml:space="preserve">
+    <value>VOEGT kenmerk niet geldig voor methode!</value>
+  </data>
+  <data name="CTRLADATOVERRIDEERROR" xml:space="preserve">
+    <value>VOEGT kenmerk niet geldig voor de specifieke methode!</value>
+  </data>
+  <data name="CTRLADATPINERROR" xml:space="preserve">
+    <value>VOEGT kenmerk niet geldig voor PIN-code!</value>
+  </data>
+  <data name="CTRLADATTACCOUNT" xml:space="preserve">
+    <value>Ongeldige account toevoegen!</value>
+  </data>
+  <data name="CTRLADATTCODE" xml:space="preserve">
+    <value>TOTP-verificatiecode</value>
+  </data>
+  <data name="CTRLADATTDOMAIN" xml:space="preserve">
+    <value>Ongeldig domein adres toegevoegd!</value>
+  </data>
+  <data name="CTRLADATTEMAILERROR" xml:space="preserve">
+    <value>VOEGT kenmerk niet geldig voor e-mailadres!</value>
+  </data>
+  <data name="CTRLADATTKEY" xml:space="preserve">
+    <value>Geheime sleutel</value>
+  </data>
+  <data name="CTRLADATTKEYERROR" xml:space="preserve">
+    <value>VOEGT kenmerk niet geldig voor geheime sleutel!</value>
+  </data>
+  <data name="CTRLADATTMAIL" xml:space="preserve">
+    <value>E-mailadres</value>
+  </data>
+  <data name="CTRLADATTMETHOD" xml:space="preserve">
+    <value>Standaard MFA-methode</value>
+  </data>
+  <data name="CTRLADATTOTPERROR" xml:space="preserve">
+    <value>Kenmerk toegevoegd niet geldig voor TOTP!</value>
+  </data>
+  <data name="CTRLADATTOVERRIDE" xml:space="preserve">
+    <value>Sciciific MFA-methode</value>
+  </data>
+  <data name="CTRLADATTPASSWORD" xml:space="preserve">
+    <value>Ongeldig wachtwoord toevoegen!</value>
+  </data>
+  <data name="CTRLADATTPHONE" xml:space="preserve">
+    <value>Mobiele telefoon</value>
+  </data>
+  <data name="CTRLADATTPHONEERROR" xml:space="preserve">
+    <value>VOEGT kenmerk niet geldig voor telefoonnummer!</value>
+  </data>
+  <data name="CTRLADATTPIN" xml:space="preserve">
+    <value>Pin</value>
+  </data>
+  <data name="CTRLADATTRIBUTES" xml:space="preserve">
+    <value>Active Directory-kenmerken vertalen</value>
+  </data>
+  <data name="CTRLADATTSTATUS" xml:space="preserve">
+    <value>Activeringsstatus van gebruiker</value>
+  </data>
+  <data name="CTRLADATTVALIDATION" xml:space="preserve">
+    <value>TOTP controledatum</value>
+  </data>
+  <data name="CTRLADATTVALIDITY" xml:space="preserve">
+    <value>ToTP geldigheidsdatum</value>
+  </data>
+  <data name="CTRLADATVALIDITYDATEERROR" xml:space="preserve">
+    <value>Kenmerk toegevoegd niet geldig voor geldigheidsdatum!</value>
+  </data>
+  <data name="CTRLADCONNECTIONERROR" xml:space="preserve">
+    <value>Kan geen verbinding maken op het forest/domein toevoegen!</value>
+  </data>
+  <data name="CTRLADCONNECTIONOK" xml:space="preserve">
+    <value>Verbinding op voegt forest/operationele gebied!</value>
+  </data>
+  <data name="CTRLADDOMAIN" xml:space="preserve">
+    <value>Domeinnaam</value>
+  </data>
+  <data name="CTRLADFSACTIVATEMFA" xml:space="preserve">
+    <value>MFA activeren</value>
+  </data>
+  <data name="CTRLADFSDEACTIVATEMFA" xml:space="preserve">
+    <value>MFA uitschakelen</value>
+  </data>
+  <data name="CTRLADPASSWORD" xml:space="preserve">
+    <value>Wachtwoord</value>
+  </data>
+  <data name="CTRLADTEST" xml:space="preserve">
+    <value>Testen</value>
+  </data>
+  <data name="CTRLADUSEADDS" xml:space="preserve">
+    <value>De Active Directory-configuratie gebruiken</value>
+  </data>
+  <data name="CTRLAZURETENANTID" xml:space="preserve">
+    <value>Holding Azure</value>
+  </data>
+  <data name="CTRLAZURETHUMPRINT" xml:space="preserve">
+    <value>Azure certificaat afdrukken</value>
+  </data>
+  <data name="CTRLCANCEL" xml:space="preserve">
+    <value>Annuleren</value>
+  </data>
+  <data name="CTRLDLGMAXRETRIES" xml:space="preserve">
+    <value>Aantal toegestane proeven</value>
+  </data>
+  <data name="CTRLGLALLOWGOOGLESEARCH" xml:space="preserve">
+    <value>Google zoeken weergeven</value>
+  </data>
+  <data name="CTRLGLCOMANYNAME" xml:space="preserve">
+    <value>Bedrijfsnaam</value>
+  </data>
+  <data name="CTRLGLCONTACT" xml:space="preserve">
+    <value>Administratief contact (e-mail)</value>
+  </data>
+  <data name="CTRLGLCONTRYCODE" xml:space="preserve">
+    <value>Landcode standaard</value>
+  </data>
+  <data name="CTRLGLDELVERY" xml:space="preserve">
+    <value>Validatie tijd (in seconden)</value>
+  </data>
+  <data name="CTRLGLENROLLWIZ" xml:space="preserve">
+    <value>Opname assistenten</value>
+  </data>
+  <data name="CTRLGLHASH" xml:space="preserve">
+    <value>Hash-algoritme</value>
+  </data>
+  <data name="CTRLGLINVALIDEMAILCONTACT" xml:space="preserve">
+    <value>Ongeldige e-mail indeling voor administratief contact!</value>
+  </data>
+  <data name="CTRLGLMANAGEKMSOO" xml:space="preserve">
+    <value>De gebruiker kan de standaardprovider selecteren</value>
+  </data>
+  <data name="CTRLGLMANAGENOTIFS" xml:space="preserve">
+    <value>Gebruikers waarschuwen na wijzigingen</value>
+  </data>
+  <data name="CTRLGLMANAGEOPTIONS" xml:space="preserve">
+    <value>Beheer van gebruikersopties</value>
+  </data>
+  <data name="CTRLGLMANAGEOPTS" xml:space="preserve">
+    <value>Opties beheer</value>
+  </data>
+  <data name="CTRLGLMANAGEPWD" xml:space="preserve">
+    <value>Wachtwoordbeheer</value>
+  </data>
+  <data name="CTRLGLMAXCODES" xml:space="preserve">
+    <value>Geschiedenis van geautoriseerde codes</value>
+  </data>
+  <data name="CTRLGLMFAREGISTER" xml:space="preserve">
+    <value>Gebruikersregistratie</value>
+  </data>
+  <data name="CTRLGLMFAREGISTER1" xml:space="preserve">
+    <value>Administratieve-registratie gevalideerd door de steun</value>
+  </data>
+  <data name="CTRLGLMFAREGISTER2" xml:space="preserve">
+    <value>Gebruiker-gebruiker-gemaakt registratie</value>
+  </data>
+  <data name="CTRLGLMFAREGISTER3" xml:space="preserve">
+    <value>Ondersteuning voor onbeheerde contact personen</value>
+  </data>
+  <data name="CTRLGLMFAREGISTER4" xml:space="preserve">
+    <value>Verplichte registratie door de media</value>
+  </data>
+  <data name="CTRLGLMFASTATUS" xml:space="preserve">
+    <value>MFA-status</value>
+  </data>
+  <data name="CTRLGLMFASTATUS1" xml:space="preserve">
+    <value>Verplicht-MFA kan niet worden uitgeschakeld</value>
+  </data>
+  <data name="CTRLGLMFASTATUS2" xml:space="preserve">
+    <value>Optioneel-MFA kan worden uitgeschakeld in opties</value>
+  </data>
+  <data name="CTRLGLMFASTATUS3" xml:space="preserve">
+    <value>Niet verplicht</value>
+  </data>
+  <data name="CTRLGLPOLICY" xml:space="preserve">
+    <value>Beveiligingsbeleid (gemiddeld)</value>
+  </data>
+  <data name="CTRLGLPROVIDER" xml:space="preserve">
+    <value>Standaardprovider</value>
+  </data>
+  <data name="CTRLGLREFRESH" xml:space="preserve">
+    <value>Frequentie van koeling (in milliseconden)</value>
+  </data>
+  <data name="CTRLGLREPLAY" xml:space="preserve">
+    <value>Niveau van replay-bescherming</value>
+  </data>
+  <data name="CTRLGLSHOWAUTHY" xml:space="preserve">
+    <value>Authy-verificator weergeven</value>
+  </data>
+  <data name="CTRLGLSHOWGOOGLE" xml:space="preserve">
+    <value>Google Authenticator weergeven</value>
+  </data>
+  <data name="CTRLGLSHOWMICROSOFT" xml:space="preserve">
+    <value>Microsoft Authenticator weergeven</value>
+  </data>
+  <data name="CTRLGLUSEAPPS" xml:space="preserve">
+    <value>Verificatie-apps gebruiken (Google Authenticator, Microsoft Authenticator)</value>
+  </data>
+  <data name="CTRLGLUSEMAILS" xml:space="preserve">
+    <value>E-mail meldingen gebruiken</value>
+  </data>
+  <data name="CTRLGLUSESMS" xml:space="preserve">
+    <value>SMS-meldingen gebruiken</value>
+  </data>
+  <data name="CTRLGLUSEUSERLANGS" xml:space="preserve">
+    <value>Browser talen gebruiken</value>
+  </data>
+  <data name="CTRLINVALIDVALUE" xml:space="preserve">
+    <value>De waarde is niet geldig. Het moet tussen {0} en {1} liggen.</value>
+  </data>
+  <data name="CTRLMULTVALUED" xml:space="preserve">
+    <value>(*) Ondersteunt eigenschappen met meerdere waarden</value>
+  </data>
+  <data name="CTRLMUSTACTIVATESVC" xml:space="preserve">
+    <value>Operatie geannuleerd! U moet de lokale ADFS-service activeren om dit te doen!</value>
+  </data>
+  <data name="CTRLNULLOREMPTYERROR" xml:space="preserve">
+    <value>Nul of lege waarden zijn niet toegestaan.</value>
+  </data>
+  <data name="CTRLPROVACTIVE" xml:space="preserve">
+    <value>Actieve</value>
+  </data>
+  <data name="CTRLPROVPIN" xml:space="preserve">
+    <value>Pine code vereist</value>
+  </data>
+  <data name="CTRLPROVREQUIRED" xml:space="preserve">
+    <value>Vereist</value>
+  </data>
+  <data name="CTRLPROVWIZARD" xml:space="preserve">
+    <value>Registratie-assistent</value>
+  </data>
+  <data name="CTRLPROVWIZARDSTRICT" xml:space="preserve">
+    <value>De assistent geforceerd als deze niet is voltooid</value>
+  </data>
+  <data name="CTRLSAVE" xml:space="preserve">
+    <value>om op te nemen</value>
+  </data>
+  <data name="CTRLSECASSEMBLY" xml:space="preserve">
+    <value>Volledige klasse</value>
+  </data>
+  <data name="CTRLSECCERTIFDURATION" xml:space="preserve">
+    <value>Geldigheid</value>
+  </data>
+  <data name="CTRLSECCERTIFICATES" xml:space="preserve">
+    <value>Certificaten</value>
+  </data>
+  <data name="CTRLSECINVALIDCERT" xml:space="preserve">
+    <value>Certificaat niet gevonden!</value>
+  </data>
+  <data name="CTRLSECINVALIDEXTERROR" xml:space="preserve">
+    <value>Ongeldige extensie! Kan niet worden opgeladen!</value>
+  </data>
+  <data name="CTRLSECKEYGEN" xml:space="preserve">
+    <value>Lengte van gegenereerde sleutel</value>
+  </data>
+  <data name="CTRLSECKEYLENGTH" xml:space="preserve">
+    <value>Maximale sleutellengte</value>
+  </data>
+  <data name="CTRLSECKEYMODE" xml:space="preserve">
+    <value>Beveiligingssleutel modus</value>
+  </data>
+  <data name="CTRLSECLIBLABEL" xml:space="preserve">
+    <value>Versie van de versleutelings bibliotheek</value>
+  </data>
+  <data name="CTRLSECNEWCERT" xml:space="preserve">
+    <value>Nieuw certificaat</value>
+  </data>
+  <data name="CTRLSECNEWCERTCREATED" xml:space="preserve">
+    <value>Certificaat correct gemaakt! U moet het nieuwe certificaat {0} op alle andere AD FS-servers implementeren.</value>
+  </data>
+  <data name="CTRLSECNEWCRYPTEDDATABASE" xml:space="preserve">
+    <value>Een versleutelde database maken</value>
+  </data>
+  <data name="CTRLSECNEWDATABASE" xml:space="preserve">
+    <value>Een database maken</value>
+  </data>
+  <data name="CTRLSECPARAMS" xml:space="preserve">
+    <value>Instellingen</value>
+  </data>
+  <data name="CTRLSECRSAGENERATE" xml:space="preserve">
+    <value>Bevestig het maken van een nieuw certificaat voor MFA? Waarschuwing: alle bestaande sleutels worden ongeldig verklaard!</value>
+  </data>
+  <data name="CTRLSECTHUMPRINT" xml:space="preserve">
+    <value>Stempel van het certificaat</value>
+  </data>
+  <data name="CTRLSECWARNING" xml:space="preserve">
+    <value>Aandacht! Als u deze waarden wijzigt, worden alle huidige sleutels ongeldig</value>
+  </data>
+  <data name="CTRLSECWIZARD" xml:space="preserve">
+    <value>Opties voor check-in Assistant</value>
+  </data>
+  <data name="CTRLSECWIZTITLE" xml:space="preserve">
+    <value>Een nieuwe database maken</value>
+  </data>
+  <data name="CTRLSECXORLABEL" xml:space="preserve">
+    <value>Geheime zin</value>
+  </data>
+  <data name="CTRLSMSASSEMBLY" xml:space="preserve">
+    <value>Volledige klasse</value>
+  </data>
+  <data name="CTRLSMSASYNCCALL" xml:space="preserve">
+    <value>Asynchrone aanroepen</value>
+  </data>
+  <data name="CTRLSMSCOMPANY" xml:space="preserve">
+    <value>Bedrijfsnaam</value>
+  </data>
+  <data name="CTRLSMSIVALIDEXTERROR" xml:space="preserve">
+    <value>Ongeldige extensie! Kan niet worden opgeladen!</value>
+  </data>
+  <data name="CTRLSMSPARAMS" xml:space="preserve">
+    <value>Instellingen</value>
+  </data>
+  <data name="CTRLSMSSHA1" xml:space="preserve">
+    <value>SHA1 supplement</value>
+  </data>
+  <data name="CTRLSMSTIMEOUT" xml:space="preserve">
+    <value>Time-out</value>
+  </data>
+  <data name="CTRLSMTPACCOUNT" xml:space="preserve">
+    <value>Verbindings account</value>
+  </data>
+  <data name="CTRLSMTPANONYMOUS" xml:space="preserve">
+    <value>Anonieme</value>
+  </data>
+  <data name="CTRLSMTPCOMPANY" xml:space="preserve">
+    <value>Bedrijfsnaam</value>
+  </data>
+  <data name="CTRLSMTPDELIVERYNOTIFICATIONS" xml:space="preserve">
+    <value>Bezorgings meldingen (fouten)</value>
+  </data>
+  <data name="CTRLSMTPFROM" xml:space="preserve">
+    <value>Administratief contact (van)</value>
+  </data>
+  <data name="CTRLSMTPIDENTIFICATION" xml:space="preserve">
+    <value>Identificatie</value>
+  </data>
+  <data name="CTRLSMTPMAILERROR" xml:space="preserve">
+    <value>Ongeldig e-mail formaat!</value>
+  </data>
+  <data name="CTRLSMTPMESSAGEOK" xml:space="preserve">
+    <value>Test bericht verzonden naar</value>
+  </data>
+  <data name="CTRLSMTPPASSWORD" xml:space="preserve">
+    <value>Wachtwoord</value>
+  </data>
+  <data name="CTRLSMTPPORT" xml:space="preserve">
+    <value>Poort</value>
+  </data>
+  <data name="CTRLSMTPPORTERROR" xml:space="preserve">
+    <value>Poort ongeldig!</value>
+  </data>
+  <data name="CTRLSMTPSERVER" xml:space="preserve">
+    <value>E-mail server</value>
+  </data>
+  <data name="CTRLSMTPSERVERADDRESS" xml:space="preserve">
+    <value>Server adres</value>
+  </data>
+  <data name="CTRLSMTPTEST" xml:space="preserve">
+    <value>Testen</value>
+  </data>
+  <data name="CTRLSQLCONNECTERROR" xml:space="preserve">
+    <value>Kan geen verbinding maken met de SQL MFA-database!</value>
+  </data>
+  <data name="CTRLSQLCONNECTOK" xml:space="preserve">
+    <value>Maak verbinding met de operationele SQL-database!</value>
+  </data>
+  <data name="CTRLSQLCONNECTSTR" xml:space="preserve">
+    <value>Verbindings keten</value>
+  </data>
+  <data name="CTRLSQLCONNECTSTRERROR" xml:space="preserve">
+    <value>Ongeldige SQL-verbindings keten!</value>
+  </data>
+  <data name="CTRLSQLCREATECRYPTEDDB" xml:space="preserve">
+    <value>Een versleutelde MFA-database maken</value>
+  </data>
+  <data name="CTRLSQLCREATEDB" xml:space="preserve">
+    <value>Een MFA-database maken</value>
+  </data>
+  <data name="CTRLSQLCRYPTUSING" xml:space="preserve">
+    <value>Gebruik de functie ' altijd versleuteld ' (SQL Server 2016)</value>
+  </data>
+  <data name="CTRLSQLENCRYPTNAME" xml:space="preserve">
+    <value>Naam van de SQL-sleutel</value>
+  </data>
+  <data name="CTRLSQLINVALIDCERTERROR" xml:space="preserve">
+    <value>Ongeldig certificaat {0}</value>
+  </data>
+  <data name="CTRLSQLMAXROWS" xml:space="preserve">
+    <value>Maximum aantal regels</value>
+  </data>
+  <data name="CTRLSQLMAXROWSERROR" xml:space="preserve">
+    <value>{0} Het is niet geldig! de waarde moet liggen tussen 1000 en 1.000.000</value>
+  </data>
+  <data name="CTRLSQLNEWDBCREATED" xml:space="preserve">
+    <value>MFA-database {0} is gemaakt</value>
+  </data>
+  <data name="CTRLSQLNEWDBCREATED2" xml:space="preserve">
+    <value>MFA-database {0} is gemaakt ' U moet het nieuwe certificaat o{1} p alle andere AD FS-servers implementeren.</value>
+  </data>
+  <data name="CTRLSQLREUSECERT" xml:space="preserve">
+    <value>Het certificaat opnieuw gebruiken</value>
+  </data>
+  <data name="CTRLSQLTEST" xml:space="preserve">
+    <value>Testen</value>
+  </data>
+  <data name="CTRLSQLTHUMBPRINT" xml:space="preserve">
+    <value>Certificaat afdrukken</value>
+  </data>
+  <data name="CTRLSQLUSING" xml:space="preserve">
+    <value>De SQL Server-configuratie gebruiken</value>
+  </data>
+</root>

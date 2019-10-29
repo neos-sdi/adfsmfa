@@ -151,7 +151,19 @@ namespace Neos.IdentityServer.MultiFactor.Common.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à &lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.01 Transitional//EN&quot; &quot;http://www.w3.org/TR/html4/loose.dtd&quot;&gt; &lt;html&gt; &lt;head&gt; &lt;title&gt;&lt;/title&gt; &lt;base target=&quot;_blank&quot;&gt; &lt;/head&gt; &lt;body&gt; &lt;table dir=&quot;ltr&quot;&gt; &lt;tr&gt; &lt;td id=&quot;i1&quot; style=&quot;padding:0;font-family:&apos;Segoe UI Semibold&apos;, &apos;Segoe UI Bold&apos;, &apos;Segoe UI&apos;, &apos;Helvetica Neue Medium&apos;, Arial, sans-serif;font-size:17px;color:#707070;&quot;&gt;{0} account&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt; &lt;td id=&quot;i2&quot; style=&quot;padding:0;font-family:&apos;Segoe UI Light&apos;, &apos;Segoe UI&apos;, &apos;Helvetica Neue Medium&apos;, Arial, sans-serif;font-size:4 [le reste de la chaîne a été tronqué]&quot;;.
+        ///   Recherche une chaîne localisée semblable à &lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.01 Transitional//EN&quot; &quot;http://www.w3.org/TR/html4/loose.dtd&quot;&gt; 
+        ///&lt;html&gt; 
+        /// &lt;head&gt; 
+        ///  &lt;title&gt;&lt;/title&gt; 
+        ///  &lt;base target=&quot;_blank&quot;&gt; 
+        /// &lt;/head&gt; 
+        /// &lt;body&gt; 
+        ///  &lt;table dir=&quot;ltr&quot;&gt; 
+        ///   &lt;tr&gt; 
+        ///    &lt;td id=&quot;i1&quot; style=&quot;padding:0;font-family:&apos;Segoe UI Semibold&apos;, &apos;Segoe UI Bold&apos;, &apos;Segoe UI&apos;, &apos;Helvetica Neue Medium&apos;, Arial, sans-serif;font-size:17px;color:#707070;&quot;&gt;{0} account&lt;/td&gt; 
+        ///   &lt;/tr&gt; 
+        ///   &lt;tr&gt; 
+        ///    &lt;td id=&quot;i2&quot; style=&quot;padding:0;font-family:&apos;Segoe UI Light&apos;, &apos;Segoe UI&apos;, &apos;Hel [le reste de la chaîne a été tronqué]&quot;;.
         /// </summary>
         public static string MailOTPContent {
             get {

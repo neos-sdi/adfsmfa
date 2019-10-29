@@ -120,40 +120,130 @@
   <metadata name="MethodSource.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
-  <data name="UserName.Text" xml:space="preserve">
-    <value>Nom</value>
-  </data>
   <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="UserName.Width" type="System.Int32, mscorlib">
-    <value>200</value>
-  </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="listUsers.Location" type="System.Drawing.Point, System.Drawing">
-    <value>107, 26</value>
+  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
+    <value>6, 13</value>
   </data>
-  <data name="listUsers.Size" type="System.Drawing.Size, System.Drawing">
-    <value>327, 112</value>
+  <data name="&gt;&gt;$this.Name" xml:space="preserve">
+    <value>UserCommonPropertiesControl</value>
   </data>
-  <data name="listUsers.TabIndex" type="System.Int32, mscorlib">
+  <data name="$this.Size" type="System.Drawing.Size, System.Drawing">
+    <value>489, 461</value>
+  </data>
+  <data name="&gt;&gt;$this.Type" xml:space="preserve">
+    <value>System.Windows.Forms.UserControl, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="BTNReinit.Location" type="System.Drawing.Point, System.Drawing">
+    <value>201, 282</value>
+  </data>
+  <data name="&gt;&gt;BTNReinit.Name" xml:space="preserve">
+    <value>BTNReinit</value>
+  </data>
+  <data name="&gt;&gt;BTNReinit.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="BTNReinit.Size" type="System.Drawing.Size, System.Drawing">
+    <value>247, 23</value>
+  </data>
+  <data name="BTNReinit.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="BTNReinit.Text" xml:space="preserve">
+    <value>Reset all keys</value>
+  </data>
+  <data name="&gt;&gt;BTNReinit.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;BTNReinit.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
-  <data name="&gt;&gt;listUsers.Name" xml:space="preserve">
-    <value>listUsers</value>
+  <data name="BTNSendByMail.Location" type="System.Drawing.Point, System.Drawing">
+    <value>201, 329</value>
   </data>
-  <data name="&gt;&gt;listUsers.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ListView, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="&gt;&gt;BTNSendByMail.Name" xml:space="preserve">
+    <value>BTNSendByMail</value>
   </data>
-  <data name="&gt;&gt;listUsers.Parent" xml:space="preserve">
+  <data name="&gt;&gt;BTNSendByMail.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="BTNSendByMail.Size" type="System.Drawing.Size, System.Drawing">
+    <value>247, 23</value>
+  </data>
+  <data name="BTNSendByMail.TabIndex" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <data name="BTNSendByMail.Text" xml:space="preserve">
+    <value>Send the keys by email</value>
+  </data>
+  <data name="&gt;&gt;BTNSendByMail.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;BTNSendByMail.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="cbEnabled.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="cbEnabled.Location" type="System.Drawing.Point, System.Drawing">
+    <value>106, 193</value>
+  </data>
+  <data name="&gt;&gt;cbEnabled.Name" xml:space="preserve">
+    <value>cbEnabled</value>
+  </data>
+  <data name="&gt;&gt;cbEnabled.Parent" xml:space="preserve">
     <value>UserInfo</value>
   </data>
-  <data name="&gt;&gt;listUsers.ZOrder" xml:space="preserve">
-    <value>0</value>
+  <data name="cbEnabled.Size" type="System.Drawing.Size, System.Drawing">
+    <value>152, 17</value>
+  </data>
+  <data name="cbEnabled.TabIndex" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <data name="cbEnabled.Text" xml:space="preserve">
+    <value>MFA Active Authentication</value>
+  </data>
+  <data name="&gt;&gt;cbEnabled.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;cbEnabled.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="CBMethod.Location" type="System.Drawing.Point, System.Drawing">
+    <value>106, 153</value>
+  </data>
+  <data name="&gt;&gt;CBMethod.Name" xml:space="preserve">
+    <value>CBMethod</value>
+  </data>
+  <data name="&gt;&gt;CBMethod.Parent" xml:space="preserve">
+    <value>UserInfo</value>
+  </data>
+  <data name="CBMethod.Size" type="System.Drawing.Size, System.Drawing">
+    <value>328, 21</value>
+  </data>
+  <data name="CBMethod.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="&gt;&gt;CBMethod.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;CBMethod.ZOrder" xml:space="preserve">
+    <value>2</value>
   </data>
   <data name="label1.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
   <data name="label1.Location" type="System.Drawing.Point, System.Drawing">
     <value>19, 135</value>
+  </data>
+  <data name="&gt;&gt;label1.Name" xml:space="preserve">
+    <value>label1</value>
+  </data>
+  <data name="&gt;&gt;label1.Parent" xml:space="preserve">
+    <value>UserInfo</value>
   </data>
   <data name="label1.Size" type="System.Drawing.Size, System.Drawing">
     <value>67, 39</value>
@@ -166,95 +256,47 @@
 method
 selected :</value>
   </data>
-  <data name="&gt;&gt;label1.Name" xml:space="preserve">
-    <value>label1</value>
-  </data>
   <data name="&gt;&gt;label1.Type" xml:space="preserve">
     <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;label1.Parent" xml:space="preserve">
-    <value>UserInfo</value>
   </data>
   <data name="&gt;&gt;label1.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
-  <data name="CBMethod.Location" type="System.Drawing.Point, System.Drawing">
-    <value>106, 153</value>
+  <data name="listUsers.Location" type="System.Drawing.Point, System.Drawing">
+    <value>107, 26</value>
   </data>
-  <data name="CBMethod.Size" type="System.Drawing.Size, System.Drawing">
-    <value>328, 21</value>
+  <data name="&gt;&gt;listUsers.Name" xml:space="preserve">
+    <value>listUsers</value>
   </data>
-  <data name="CBMethod.TabIndex" type="System.Int32, mscorlib">
-    <value>2</value>
-  </data>
-  <data name="&gt;&gt;CBMethod.Name" xml:space="preserve">
-    <value>CBMethod</value>
-  </data>
-  <data name="&gt;&gt;CBMethod.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;CBMethod.Parent" xml:space="preserve">
+  <data name="&gt;&gt;listUsers.Parent" xml:space="preserve">
     <value>UserInfo</value>
   </data>
-  <data name="&gt;&gt;CBMethod.ZOrder" xml:space="preserve">
-    <value>2</value>
+  <data name="listUsers.Size" type="System.Drawing.Size, System.Drawing">
+    <value>327, 112</value>
   </data>
-  <data name="cbEnabled.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
+  <data name="listUsers.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
   </data>
-  <data name="cbEnabled.Location" type="System.Drawing.Point, System.Drawing">
-    <value>106, 193</value>
+  <data name="&gt;&gt;listUsers.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ListView, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="cbEnabled.Size" type="System.Drawing.Size, System.Drawing">
-    <value>152, 17</value>
+  <data name="&gt;&gt;listUsers.ZOrder" xml:space="preserve">
+    <value>0</value>
   </data>
-  <data name="cbEnabled.TabIndex" type="System.Int32, mscorlib">
-    <value>3</value>
+  <data name="&gt;&gt;MethodSource.Name" xml:space="preserve">
+    <value>MethodSource</value>
   </data>
-  <data name="cbEnabled.Text" xml:space="preserve">
-    <value>MFA Active Authentication</value>
-  </data>
-  <data name="&gt;&gt;cbEnabled.Name" xml:space="preserve">
-    <value>cbEnabled</value>
-  </data>
-  <data name="&gt;&gt;cbEnabled.Type" xml:space="preserve">
-    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;cbEnabled.Parent" xml:space="preserve">
-    <value>UserInfo</value>
-  </data>
-  <data name="&gt;&gt;cbEnabled.ZOrder" xml:space="preserve">
-    <value>3</value>
-  </data>
-  <data name="UserNamesPrompt.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="UserNamesPrompt.Location" type="System.Drawing.Point, System.Drawing">
-    <value>16, 26</value>
-  </data>
-  <data name="UserNamesPrompt.Size" type="System.Drawing.Size, System.Drawing">
-    <value>51, 13</value>
-  </data>
-  <data name="UserNamesPrompt.TabIndex" type="System.Int32, mscorlib">
-    <value>3</value>
-  </data>
-  <data name="UserNamesPrompt.Text" xml:space="preserve">
-    <value>User List:</value>
-  </data>
-  <data name="&gt;&gt;UserNamesPrompt.Name" xml:space="preserve">
-    <value>UserNamesPrompt</value>
-  </data>
-  <data name="&gt;&gt;UserNamesPrompt.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;UserNamesPrompt.Parent" xml:space="preserve">
-    <value>UserInfo</value>
-  </data>
-  <data name="&gt;&gt;UserNamesPrompt.ZOrder" xml:space="preserve">
-    <value>4</value>
+  <data name="&gt;&gt;MethodSource.Type" xml:space="preserve">
+    <value>System.Windows.Forms.BindingSource, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="UserInfo.Location" type="System.Drawing.Point, System.Drawing">
     <value>14, 18</value>
+  </data>
+  <data name="&gt;&gt;UserInfo.Name" xml:space="preserve">
+    <value>UserInfo</value>
+  </data>
+  <data name="&gt;&gt;UserInfo.Parent" xml:space="preserve">
+    <value>$this</value>
   </data>
   <data name="UserInfo.Size" type="System.Drawing.Size, System.Drawing">
     <value>456, 227</value>
@@ -265,91 +307,49 @@ selected :</value>
   <data name="UserInfo.Text" xml:space="preserve">
     <value>Users informations</value>
   </data>
-  <data name="&gt;&gt;UserInfo.Name" xml:space="preserve">
-    <value>UserInfo</value>
-  </data>
   <data name="&gt;&gt;UserInfo.Type" xml:space="preserve">
     <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;UserInfo.Parent" xml:space="preserve">
-    <value>$this</value>
   </data>
   <data name="&gt;&gt;UserInfo.ZOrder" xml:space="preserve">
     <value>2</value>
   </data>
-  <data name="BTNReinit.Location" type="System.Drawing.Point, System.Drawing">
-    <value>201, 282</value>
-  </data>
-  <data name="BTNReinit.Size" type="System.Drawing.Size, System.Drawing">
-    <value>247, 23</value>
-  </data>
-  <data name="BTNReinit.TabIndex" type="System.Int32, mscorlib">
-    <value>2</value>
-  </data>
-  <data name="BTNReinit.Text" xml:space="preserve">
-    <value>Reset all keys</value>
-  </data>
-  <data name="&gt;&gt;BTNReinit.Name" xml:space="preserve">
-    <value>BTNReinit</value>
-  </data>
-  <data name="&gt;&gt;BTNReinit.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;BTNReinit.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;BTNReinit.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="BTNSendByMail.Location" type="System.Drawing.Point, System.Drawing">
-    <value>201, 329</value>
-  </data>
-  <data name="BTNSendByMail.Size" type="System.Drawing.Size, System.Drawing">
-    <value>247, 23</value>
-  </data>
-  <data name="BTNSendByMail.TabIndex" type="System.Int32, mscorlib">
-    <value>3</value>
-  </data>
-  <data name="BTNSendByMail.Text" xml:space="preserve">
-    <value>Send the keys by email</value>
-  </data>
-  <data name="&gt;&gt;BTNSendByMail.Name" xml:space="preserve">
-    <value>BTNSendByMail</value>
-  </data>
-  <data name="&gt;&gt;BTNSendByMail.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;BTNSendByMail.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;BTNSendByMail.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>True</value>
-  </metadata>
-  <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
-    <value>6, 13</value>
-  </data>
-  <data name="$this.Size" type="System.Drawing.Size, System.Drawing">
-    <value>489, 461</value>
-  </data>
-  <data name="&gt;&gt;MethodSource.Name" xml:space="preserve">
-    <value>MethodSource</value>
-  </data>
-  <data name="&gt;&gt;MethodSource.Type" xml:space="preserve">
-    <value>System.Windows.Forms.BindingSource, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
   <data name="&gt;&gt;UserName.Name" xml:space="preserve">
     <value>UserName</value>
+  </data>
+  <data name="UserName.Text" xml:space="preserve">
+    <value>Name</value>
   </data>
   <data name="&gt;&gt;UserName.Type" xml:space="preserve">
     <value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;$this.Name" xml:space="preserve">
-    <value>UserCommonPropertiesControl</value>
+  <data name="UserName.Width" type="System.Int32, mscorlib">
+    <value>200</value>
   </data>
-  <data name="&gt;&gt;$this.Type" xml:space="preserve">
-    <value>System.Windows.Forms.UserControl, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="UserNamesPrompt.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="UserNamesPrompt.Location" type="System.Drawing.Point, System.Drawing">
+    <value>16, 26</value>
+  </data>
+  <data name="&gt;&gt;UserNamesPrompt.Name" xml:space="preserve">
+    <value>UserNamesPrompt</value>
+  </data>
+  <data name="&gt;&gt;UserNamesPrompt.Parent" xml:space="preserve">
+    <value>UserInfo</value>
+  </data>
+  <data name="UserNamesPrompt.Size" type="System.Drawing.Size, System.Drawing">
+    <value>51, 13</value>
+  </data>
+  <data name="UserNamesPrompt.TabIndex" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <data name="UserNamesPrompt.Text" xml:space="preserve">
+    <value>User List:</value>
+  </data>
+  <data name="&gt;&gt;UserNamesPrompt.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;UserNamesPrompt.ZOrder" xml:space="preserve">
+    <value>4</value>
   </data>
 </root>

@@ -124,7 +124,7 @@
     <value>Service ADFS indisponible !</value>
   </data>
   <data name="ErrorLoadingMFAConfiguration" xml:space="preserve">
-    <value>Erreur lors du chargement de la configuration MFA ! \ {0}</value>
+    <value>Erreur lors du chargement de la configuration MFA ! {0}</value>
   </data>
   <data name="ErrorMFAFarmAlreadyInitialized" xml:space="preserve">
     <value>MFA System est initialisé ! vous devez exécuter la commande PowerShell « UnRegister-MFASytem » si vous voulez réinitialiser la configurations complète de MFA</value>

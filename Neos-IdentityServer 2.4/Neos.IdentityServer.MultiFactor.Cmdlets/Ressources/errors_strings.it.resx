@@ -118,30 +118,30 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ErrorAddingUser" xml:space="preserve">
-    <value>Errore durante l'aggiunta dell'utente "{0}":\r{1}</value>
+    <value>Errore durante l'aggiunta dell'utente {0} {1}</value>
   </data>
   <data name="ErrorComputerNotFound" xml:space="preserve">
-    <value>Computer "{0}" non trovato.</value>
+    <value>Computer {0} non trovato.</value>
   </data>
   <data name="ErrorDeletingUser" xml:space="preserve">
-    <value>Errore durante l'eliminazione dell'utente "{0}":\r{1}</value>
+    <value>Errore durante l'eliminazione dell'utente {0} {1}</value>
   </data>
   <data name="ErrorEmailNotProvided" xml:space="preserve">
-    <value>Indirizzo di posta elettronica non fornito per l'utente "{0}".</value>
+    <value>Indirizzo di posta elettronica non fornito per l'utente {0}.</value>
   </data>
   <data name="ErrorInvalidServerName" xml:space="preserve">
     <value>Nome server non valido: devi specificare l'FQDN del server.</value>
   </data>
   <data name="ErrorPhoneNotProvided" xml:space="preserve">
-    <value>Numero di telefono non fornito per l'utente "{0}".</value>
+    <value>Numero di telefono non fornito per l'utente {0}.</value>
   </data>
   <data name="ErrorUpdatingUser" xml:space="preserve">
-    <value>Errore durante l'aggiornamento dell'utente "{0}":\r{1}</value>
+    <value>Errore durante l'aggiornamento dell'utente {0} {1}</value>
   </data>
   <data name="ErrorUserExists" xml:space="preserve">
-    <value>L'utente "{0}" esiste.</value>
+    <value>L'utente {0} esiste.</value>
   </data>
   <data name="ErrorUserNotFound" xml:space="preserve">
-    <value>Utente "{0}" non trovato.</value>
+    <value>Utente {0} non trovato.</value>
   </data>
 </root>

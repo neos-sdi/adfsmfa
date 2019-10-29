@@ -49,7 +49,10 @@ namespace Neos.IdentityServer.Console
         private ScopeNode ServiceSMTPNode;
         private ScopeNode ServiceSMSNode;
         private ScopeNode ServiceAzureNode;
-       // private ScopeNode ServiceSecurityNode;
+        private ScopeNode ServiceSecurityNode;
+        private ScopeNode ServiceRNGNode;
+        private ScopeNode ServiceRSANode;
+        private ScopeNode ServiceRSAXNode;
         private ScopeNode UsersNode;
         private bool IsPrimary = true;
 
@@ -224,6 +227,42 @@ namespace Neos.IdentityServer.Console
                     this.ServiceSQLNode.ViewDescriptions.Add(fsql);
                     this.ServiceSQLNode.ViewDescriptions.DefaultIndex = 0;
 
+                    // Security Scope
+                    this.ServiceSecurityNode = new ServiceSecurityRootScopeNode();
+                    FormViewDescription fsec = new FormViewDescription();
+                    fsec.DisplayName = "Security Features";
+                    fsec.ControlType = typeof(ServiceSecurityRootViewControl);
+                    fsec.ViewType = typeof(ServiceSecurityRootFormView);
+                    this.ServiceSecurityNode.ViewDescriptions.Add(fsec);
+                    this.ServiceSecurityNode.ViewDescriptions.DefaultIndex = 0;
+
+                    // RNG
+                    this.ServiceRNGNode = new ServiceSecurityRNGScopeNode();
+                    FormViewDescription frng = new FormViewDescription();
+                    frng.DisplayName = "RGN Ramdom Number Generator";
+                    frng.ControlType = typeof(ServiceSecurityRNGViewControl);
+                    frng.ViewType = typeof(ServiceSecurityRNGFormView);
+                    this.ServiceRNGNode.ViewDescriptions.Add(frng);
+                    this.ServiceRNGNode.ViewDescriptions.DefaultIndex = 0;
+
+                    // RSA
+                    this.ServiceRSANode = new ServiceSecurityRSAScopeNode();
+                    FormViewDescription frsa = new FormViewDescription();
+                    frsa.DisplayName = "RSA Key Generator";
+                    frsa.ControlType = typeof(ServiceSecurityRSAViewControl);
+                    frsa.ViewType = typeof(ServiceSecurityRSAFormView);
+                    this.ServiceRSANode.ViewDescriptions.Add(frsa);
+                    this.ServiceRSANode.ViewDescriptions.DefaultIndex = 0;
+
+                    // RSA CUST
+                    this.ServiceRSAXNode = new ServiceSecurityRSAXScopeNode();
+                    FormViewDescription frsax = new FormViewDescription();
+                    frsax.DisplayName = "RSA Extended Key Generator";
+                    frsax.ControlType = typeof(ServiceSecurityRSAXViewControl);
+                    frsax.ViewType = typeof(ServiceSecurityRSAXFormView);
+                    this.ServiceRSAXNode.ViewDescriptions.Add(frsax);
+                    this.ServiceRSAXNode.ViewDescriptions.DefaultIndex = 0;
+
                     // Providers Scope
                     this.ServiceProvidersNode = new ServiceProvidersScopeNode();
                     FormViewDescription fprov = new FormViewDescription();
@@ -304,6 +343,12 @@ namespace Neos.IdentityServer.Console
                     this.RootNode.Children.Add(this.ServiceGeneralNode);
                     this.RootNode.Children.Add(this.ServiceADDSNode);
                     this.RootNode.Children.Add(this.ServiceSQLNode);
+
+                    this.RootNode.Children.Add(this.ServiceSecurityNode);
+                    this.ServiceSecurityNode.Children.Add(this.ServiceRNGNode);
+                    this.ServiceSecurityNode.Children.Add(this.ServiceRSANode);
+                    this.ServiceSecurityNode.Children.Add(this.ServiceRSAXNode);
+
                     this.RootNode.Children.Add(this.ServiceProvidersNode);
                     if (this.ServiceTOTPNode != null)
                         this.ServiceProvidersNode.Children.Add(this.ServiceTOTPNode);
@@ -332,18 +377,22 @@ namespace Neos.IdentityServer.Console
         public void RefreshUI()
         {
             ((RefreshableScopeNode)this.RootNode).RefreshUI();
-          //  if (IsPrimary)
-          //  {
+            if (IsPrimary)
+            {
                 ((RefreshableScopeNode)this.ServiceNode).RefreshUI();
                 ((RefreshableScopeNode)this.ServiceGeneralNode).RefreshUI();
                 ((RefreshableScopeNode)this.ServiceADDSNode).RefreshUI();
                 ((RefreshableScopeNode)this.ServiceSQLNode).RefreshUI();
+                ((RefreshableScopeNode)this.ServiceSecurityNode).RefreshUI();
+                ((RefreshableScopeNode)this.ServiceRNGNode).RefreshUI();
+                ((RefreshableScopeNode)this.ServiceRSANode).RefreshUI();
+                ((RefreshableScopeNode)this.ServiceRSAXNode).RefreshUI();
                 ((RefreshableScopeNode)this.ServiceProvidersNode).RefreshUI();
                 ((RefreshableScopeNode)this.ServiceTOTPNode).RefreshUI();
                 ((RefreshableScopeNode)this.ServiceSMTPNode).RefreshUI();
                 ((RefreshableScopeNode)this.ServiceSMSNode).RefreshUI();
                 ((RefreshableScopeNode)this.ServiceAzureNode).RefreshUI();
-          //  }
+            }
             ((RefreshableScopeNode)this.UsersNode).RefreshUI();
         }
     }

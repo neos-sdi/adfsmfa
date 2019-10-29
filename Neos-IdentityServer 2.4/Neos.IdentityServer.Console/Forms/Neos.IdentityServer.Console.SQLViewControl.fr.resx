@@ -118,11 +118,11 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="label3.Size" type="System.Drawing.Size, System.Drawing">
-    <value>279, 13</value>
+  <data name="label1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>347, 24</value>
   </data>
-  <data name="label3.Text" xml:space="preserve">
-    <value>Configuration de la bases de données pour MFA</value>
+  <data name="label1.Text" xml:space="preserve">
+    <value>Paramètres de configuration SQL Server</value>
   </data>
   <data name="label2.Size" type="System.Drawing.Size, System.Drawing">
     <value>251, 13</value>
@@ -130,11 +130,11 @@
   <data name="label2.Text" xml:space="preserve">
     <value>Configuration des paramètres SQL Server pour MFA</value>
   </data>
-  <data name="label1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>347, 24</value>
+  <data name="label3.Size" type="System.Drawing.Size, System.Drawing">
+    <value>279, 13</value>
   </data>
-  <data name="label1.Text" xml:space="preserve">
-    <value>Paramètres de configuration SQL Server</value>
+  <data name="label3.Text" xml:space="preserve">
+    <value>Configuration de la bases de données pour MFA</value>
   </data>
   <data name="SQLVALIDSAVE" xml:space="preserve">
     <value>Annuler les modifications et recharger les données ?</value>

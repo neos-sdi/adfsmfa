@@ -117,42 +117,18 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="CancelBtn.Text" xml:space="preserve">
-    <value>Annuler</value>
-  </data>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="$this.Text" xml:space="preserve">
     <value>SQL Mode : Création de la base de données</value>
   </data>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="CancelBtn.Text" xml:space="preserve">
+    <value>Annuler</value>
+  </data>
   <data name="cbWindows.Size" type="System.Drawing.Size, System.Drawing">
     <value>146, 17</value>
   </data>
   <data name="cbWindows.Text" xml:space="preserve">
     <value>Authentification Windows</value>
-  </data>
-  <data name="label4.Size" type="System.Drawing.Size, System.Drawing">
-    <value>77, 13</value>
-  </data>
-  <data name="label4.Text" xml:space="preserve">
-    <value>Mot de passe :</value>
-  </data>
-  <data name="label3.Size" type="System.Drawing.Size, System.Drawing">
-    <value>188, 13</value>
-  </data>
-  <data name="label3.Text" xml:space="preserve">
-    <value>Compte d'accès à la base de données</value>
-  </data>
-  <data name="label2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>146, 13</value>
-  </data>
-  <data name="label2.Text" xml:space="preserve">
-    <value>Nom de la base de données :</value>
-  </data>
-  <data name="label1.Text" xml:space="preserve">
-    <value>Instance SQL Server : </value>
-  </data>
-  <data name="groupBox1.Text" xml:space="preserve">
-    <value>Paramètres de création</value>
   </data>
   <data name="DBWIZACCOUNTREQUIRED" xml:space="preserve">
     <value>Compte d'accès à la base de données requis !</value>
@@ -165,5 +141,29 @@
   </data>
   <data name="DBWIZPASSREQUIRED" xml:space="preserve">
     <value>Mot de passe requis !</value>
+  </data>
+  <data name="groupBox1.Text" xml:space="preserve">
+    <value>Paramètres de création</value>
+  </data>
+  <data name="label1.Text" xml:space="preserve">
+    <value>Instance SQL Server : </value>
+  </data>
+  <data name="label2.Size" type="System.Drawing.Size, System.Drawing">
+    <value>146, 13</value>
+  </data>
+  <data name="label2.Text" xml:space="preserve">
+    <value>Nom de la base de données :</value>
+  </data>
+  <data name="label3.Size" type="System.Drawing.Size, System.Drawing">
+    <value>188, 13</value>
+  </data>
+  <data name="label3.Text" xml:space="preserve">
+    <value>Compte d'accès à la base de données</value>
+  </data>
+  <data name="label4.Size" type="System.Drawing.Size, System.Drawing">
+    <value>77, 13</value>
+  </data>
+  <data name="label4.Text" xml:space="preserve">
+    <value>Mot de passe :</value>
   </data>
 </root>

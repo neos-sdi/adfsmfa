@@ -127,7 +127,7 @@
     <value>Настройка параметров</value>
   </data>
   <data name="MustUseCodePageTitle" xml:space="preserve">
-    <value>Для проверки личности необходимо использовать код безопасности. Как вы хотите получить свой код ?</value>
+    <value>Вы должны использовать защитный код для подтверждения вашей личности. Как бы вы хотели получить свой код?</value>
   </data>
   <data name="PasswordPageTitle" xml:space="preserve">
     <value>Изменение паролей</value>

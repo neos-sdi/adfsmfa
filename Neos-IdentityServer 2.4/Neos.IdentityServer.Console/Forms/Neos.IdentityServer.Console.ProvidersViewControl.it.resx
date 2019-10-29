@@ -193,7 +193,7 @@
     <value>1</value>
   </data>
   <data name="label1.Text" xml:space="preserve">
-    <value>Configurazione provider autenticazione a più fattori</value>
+    <value>Provider autenticazione a più fattori</value>
   </data>
   <data name="panel1.Location" type="System.Drawing.Point, System.Drawing">
     <value>0, 0</value>

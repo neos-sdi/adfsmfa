@@ -121,24 +121,24 @@
     <value>Aktivierung erforderlich</value>
   </data>
   <data name="InvitationPageTitle" xml:space="preserve">
-    <value>Anmeldung erforderlich</value>
+    <value>Konfigurationsoptionen</value>
   </data>
   <data name="ManageOptionsPageTitle" xml:space="preserve">
     <value>Einrichten von Optionen</value>
   </data>
   <data name="MustUseCodePageTitle" xml:space="preserve">
-    <value>Sie müssen einen Sicherheitscode verwenden, um Ihre Identität zu überprüfen. Wie möchten Sie Ihren Code erhalten ?</value>
+    <value>Sie müssen einen Sicherheitscode verwenden, um Ihre Identität zu bestätigen. Wie möchten Sie Ihren Code erhalten?</value>
   </data>
   <data name="PasswordPageTitle" xml:space="preserve">
-    <value>Ändern von Kennwörtern</value>
+    <value>Passwort-Aktualisierung</value>
   </data>
   <data name="RegistrationPageTitle" xml:space="preserve">
-    <value>Anmeldung erforderlich</value>
+    <value>Konfigurationsoptionen</value>
   </data>
   <data name="TitlePageTitle" xml:space="preserve">
-    <value>Multi-Factor-Authentifizierung</value>
+    <value>Multi-Faktor-Authentifizierung</value>
   </data>
   <data name="TitleRedirecting" xml:space="preserve">
-    <value>Umleitung im Gange ...</value>
+    <value>Umleiten...</value>
   </data>
 </root>

@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Neos.IdentityServer.MultiFactor</RootNamespace>
     <AssemblyName>Neos.IdentityServer.MultiFactor</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -135,7 +135,15 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Resources\SCheck.de.resx" />
     <EmbeddedResource Include="Resources\SCheck.it.resx" />
+    <EmbeddedResource Include="Resources\SCheck.nl.resx" />
+    <EmbeddedResource Include="Resources\SCheck.pl.resx" />
+    <EmbeddedResource Include="Resources\SCheck.pt.resx" />
+    <EmbeddedResource Include="Resources\SCheck.ro.resx" />
+    <EmbeddedResource Include="Resources\SCheck.ru.resx" />
+    <EmbeddedResource Include="Resources\SCheck.sv.resx" />
+    <EmbeddedResource Include="Resources\SErrors.de.resx" />
     <EmbeddedResource Include="Resources\SErrors.es.resx">
       <LastGenOutput>errors_strings.es.Designer.cs</LastGenOutput>
     </EmbeddedResource>
@@ -143,6 +151,17 @@
       <LastGenOutput>errors_strings.fr.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\SErrors.it.resx" />
+    <EmbeddedResource Include="Resources\SErrors.nl.resx" />
+    <EmbeddedResource Include="Resources\SErrors.pl.resx" />
+    <EmbeddedResource Include="Resources\SErrors.pt.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\SErrors.ro.resx" />
+    <EmbeddedResource Include="Resources\SErrors.ru.resx" />
+    <EmbeddedResource Include="Resources\SErrors.sv.resx" />
+    <EmbeddedResource Include="Resources\SHtml.de.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Resources\SHtml.es.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -150,6 +169,11 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\SHtml.it.resx" />
+    <EmbeddedResource Include="Resources\SHtml.nl.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\SHtml.pl.resx" />
+    <EmbeddedResource Include="Resources\SHtml.pt.resx" />
     <EmbeddedResource Include="Resources\SHtml.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>SHtml.Designer.cs</LastGenOutput>
@@ -160,6 +184,12 @@
       <LastGenOutput>images.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Resources\SHtml.ro.resx" />
+    <EmbeddedResource Include="Resources\SHtml.ru.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\SHtml.sv.resx" />
+    <EmbeddedResource Include="Resources\SInfos.de.resx" />
     <EmbeddedResource Include="Resources\SInfos.es.resx" />
     <EmbeddedResource Include="Resources\SInfos.fr.resx" />
     <EmbeddedResource Include="Resources\SErrors.resx">
@@ -167,10 +197,16 @@
       <LastGenOutput>SErrors.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\SInfos.it.resx" />
+    <EmbeddedResource Include="Resources\SInfos.nl.resx" />
+    <EmbeddedResource Include="Resources\SInfos.pl.resx" />
+    <EmbeddedResource Include="Resources\SInfos.pt.resx" />
     <EmbeddedResource Include="Resources\SInfos.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>SInfos.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="Resources\SInfos.ro.resx" />
+    <EmbeddedResource Include="Resources\SInfos.ru.resx" />
+    <EmbeddedResource Include="Resources\SInfos.sv.resx" />
     <EmbeddedResource Include="Resources\STitle.de.resx" />
     <EmbeddedResource Include="Resources\STitle.es.resx">
       <LastGenOutput>title_strings.es.Designer.cs</LastGenOutput>
@@ -180,6 +216,8 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\STitle.it.resx" />
     <EmbeddedResource Include="Resources\STitle.nl.resx" />
+    <EmbeddedResource Include="Resources\STitle.pl.resx" />
+    <EmbeddedResource Include="Resources\STitle.pt.resx" />
     <EmbeddedResource Include="Resources\STitle.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>STitle.Designer.cs</LastGenOutput>
@@ -190,7 +228,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>SCheck.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="Resources\STitle.ro.resx" />
     <EmbeddedResource Include="Resources\STitle.ru.resx" />
+    <EmbeddedResource Include="Resources\STitle.sv.resx" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

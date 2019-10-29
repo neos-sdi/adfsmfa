@@ -17,6 +17,7 @@ using System.Reflection;
 using System.Resources;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Runtime.Versioning;
 using System.Windows;
 
 [assembly: AssemblyTitle("Neos.IdentityServer.QrCodeNet.Encoder")]
@@ -29,9 +30,11 @@ using System.Windows;
 [assembly: Guid("46f0d5b0-3954-4f7e-94dc-4d2757f22441")]
 
 [assembly: AssemblyVersion("2.4.0.0")]
-[assembly: AssemblyFileVersion("2.4.4720.1000")]
+[assembly: AssemblyFileVersion("2.4.4720.2000")]
 [assembly: AssemblyInformationalVersion("2.4.0.0")]
+[assembly: NeutralResourcesLanguageAttribute("en")]
 
+/*
 [assembly: ThemeInfo(
     ResourceDictionaryLocation.None, //where theme specific resource dictionaries are located
     //(used if a resource is not found in the page, 
@@ -40,4 +43,4 @@ using System.Windows;
     //(used if a resource is not found in the page, 
     // app, or any theme specific resource dictionaries)
 )]
-
+*/

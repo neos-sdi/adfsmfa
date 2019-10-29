@@ -118,30 +118,30 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ErrorAddingUser" xml:space="preserve">
-    <value>Error adding user "{0}" \r {1}</value>
+    <value>Error adding user {0} {1}</value>
   </data>
   <data name="ErrorComputerNotFound" xml:space="preserve">
-    <value>Computer "{0}" not found !</value>
+    <value>Computer {0} not found !</value>
   </data>
   <data name="ErrorDeletingUser" xml:space="preserve">
-    <value>Error deleting user "{0}" \r {1}</value>
+    <value>Error deleting user {0} {1}</value>
   </data>
   <data name="ErrorEmailNotProvided" xml:space="preserve">
-    <value>Email address not provided for user "{0}" !</value>
+    <value>Email address not provided for user {0} !</value>
   </data>
   <data name="ErrorInvalidServerName" xml:space="preserve">
     <value>Invalid server name : you must specify server FQDN ! </value>
   </data>
   <data name="ErrorPhoneNotProvided" xml:space="preserve">
-    <value>Phone number not provided for user "{0}" !</value>
+    <value>Phone number not provided for user {0} !</value>
   </data>
   <data name="ErrorUpdatingUser" xml:space="preserve">
-    <value>Error updating user "{0}" \r {1}</value>
+    <value>Error updating user {0} {1}</value>
   </data>
   <data name="ErrorUserExists" xml:space="preserve">
-    <value>User "{0}" Exists !</value>
+    <value>User {0} Exists !</value>
   </data>
   <data name="ErrorUserNotFound" xml:space="preserve">
-    <value>User "{0}" not found !</value>
+    <value>User {0} not found !</value>
   </data>
 </root>

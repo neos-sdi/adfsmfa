@@ -118,73 +118,72 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ErrorAccountActivate" xml:space="preserve">
-    <value>El acceso a esta aplicación requiere autenticación adicional. &lt;br&gt; &lt;br&gt; Haga clic en "Activar" para activar su cuenta o haga clic en "Continuar".</value>
+    <value>El acceso a esta aplicación requiere autenticación adicional. &lt;br&gt;&lt;br&gt;Haga clic en "Activar" para activar su cuenta o haga clic en "Continuar".</value>
   </data>
   <data name="ErrorAccountAdminAuthorized" xml:space="preserve">
-    <value>Acceso permitido ! La autenticación adicional no está activada todavía. Por favor, póngase en contacto con sus administradores.</value>
+    <value>¡Acceso autorizado ! autenticación adicional aún no está activada. Póngase en contacto con sus administradores.</value>
   </data>
   <data name="ErrorAccountAdminNotEnabled" xml:space="preserve">
-    <value>¡Acceso no autorizado ! la autenticación adicional aún no está activada. &lt;br&gt;&lt;br&gt;Póngase en contacto con sus administradores.</value>
+    <value>¡Acceso no autorizado! autenticación adicional aún no está activada. &lt;br&gt;&lt;br&gt; Póngase en contacto con sus administradores.</value>
   </data>
   <data name="ErrorAccountAuthorized" xml:space="preserve">
-    <value>El acceso a esta aplicación requiere autenticación adicional. &lt;br&gt; &lt;br&gt; Haga clic en "Registro" para continuar.</value>
+    <value>El acceso a esta aplicación requiere autenticación adicional. &lt;br&gt;&lt;br&gt;Haga clic en "Registro" para continuar.</value>
   </data>
   <data name="ErrorAccountNoAccess" xml:space="preserve">
-    <value>El acceso no autorizado ! Por favor, póngase en contacto con los administradores</value>
+    <value>¡Acceso no autorizado ! Póngase en contacto con sus administradores</value>
   </data>
   <data name="ErrorAccountNotEnabled" xml:space="preserve">
-    <value>El acceso a esta aplicación requiere autenticación adicional que no está activada en este momento. &lt;br&gt; &lt;br&gt; haga clic en "Solicitud de registro".</value>
+    <value>El acceso a esta aplicación requiere autenticación adicional que no está activada en este momento. &lt;br&gt;&lt;br&gt; clic en "Solicitud de registro".</value>
   </data>
   <data name="ErrorAuthenticating" xml:space="preserve">
-    <value>Error durante el proceso de identificación.
+    <value>Error en el proceso de autenticación ! 
 {0}</value>
   </data>
   <data name="ErrorEmailException" xml:space="preserve">
-    <value>Formato de email incorrecto !</value>
+    <value>Formato no válido de correo electrónico !</value>
   </data>
   <data name="ErrorInvalidIdentificationRestart" xml:space="preserve">
-    <value>Identificación incorrecta, reiniciar la sesión.</value>
+    <value>Identificación no válida, reinicie su sesión.</value>
   </data>
   <data name="ErrorInvalidIdentificationRetry" xml:space="preserve">
-    <value>Identificación incorrecta, por favor intente nuevamente.</value>
+    <value>Identificación incorrecta, inténtelo de nuevo.</value>
   </data>
   <data name="ErrorInvalidKey" xml:space="preserve">
-    <value>Clave invalida !</value>
+    <value>Clave secreta no válida !</value>
   </data>
   <data name="ErrorInvalidPassword" xml:space="preserve">
-    <value>Operación cancelada, contraseña incorrecta !</value>
+    <value>Operación cancelada, contraseña no válida !</value>
   </data>
   <data name="ErrorInvalidPhoneException" xml:space="preserve">
-    <value>número de teléfono incorrecto !</value>
+    <value>Número de teléfono incorrecto !</value>
   </data>
   <data name="ErrorLoadingConfigurationFile" xml:space="preserve">
-    <value>Error al cargar el archivo de configuración :
+    <value>Error al cargar el archivo de configuración: 
 {0}</value>
   </data>
   <data name="ErrorLoadingConfigurationFileNotFound" xml:space="preserve">
-    <value>Error al cargar el archivo de configuración: no encontrado !</value>
+    <value>Error al cargar el archivo de configuración : No encontrado !</value>
   </data>
   <data name="ErrorLoadingUserRegistration" xml:space="preserve">
-    <value>Error al cargar el perfil de usuario.
+    <value>Error al cargar el registro de usuarios ! 
 {0}</value>
   </data>
   <data name="ErrorPinLength" xml:space="preserve">
-    <value>La longitud del código PIN no es válida, ¡ se requieren {0} dígitos !</value>
+    <value>Longitud de PIN no válida, números de la clase {0}, se requieren los números !</value>
   </data>
   <data name="ErrorPinValue" xml:space="preserve">
-    <value>Código PIN inválido !</value>
+    <value>Valor PIN no válido !</value>
   </data>
   <data name="ErrorReplayToken" xml:space="preserve">
-    <value>¡Error en el proceso de autenticación! One Time Password se ha jugado antes</value>
+    <value>Error en el proceso de autehntificación ! Una vez se ha reproducido la contraseña antes</value>
   </data>
   <data name="ErrorSendingToastInformation" xml:space="preserve">
-    <value>error durante la transmisión de la petición de identificación !
-</value>
+    <value>Error al enviar la solicitud de identificación !</value>
   </data>
   <data name="ErrorSendingToastInformationRetry" xml:space="preserve">
-    <value>¡Error durante la identificación! ¡nueva prueba en progreso!</value>
+    <value>Error al enviar la solicitud de identificación ! ¡Reintentando!</value>
   </data>
   <data name="ErrorValidationTimeWindowElapsed" xml:space="preserve">
-    <value>Ventana de validación agotado.</value>
+    <value>Tiempo de validación de ventana transcurrido.</value>
   </data>
 </root>

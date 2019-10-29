@@ -69,12 +69,14 @@ namespace Neos.IdentityServer.MultiFactor
         public IAdapterPresentation BeginAuthentication(System.Security.Claims.Claim identityClaim, System.Net.HttpListenerRequest request, IAuthenticationContext context)
         {
             DateTime st = DateTime.Now;
-            ResourcesLocale Resources = new ResourcesLocale(context.Lcid);
+            AuthenticationContext usercontext = new AuthenticationContext(context);
+            if (this.Config.UseOfUserLanguages)
+                Utilities.PatchUserLcid(usercontext, request.UserLanguages);
+            ResourcesLocale Resources = new ResourcesLocale(usercontext.Lcid);
 
             IAdapterPresentation result = null;
             try
             {
-                AuthenticationContext usercontext = new AuthenticationContext(context);
                 switch (usercontext.UIMode)
                 {
                     case ProviderPageMode.PreSet:
@@ -291,8 +293,8 @@ namespace Neos.IdentityServer.MultiFactor
         public void OnAuthenticationPipelineLoad(IAuthenticationMethodConfigData configData)
         {
              DateTime st = DateTime.Now;
-             ResourcesLocale Resources = new ResourcesLocale(CultureInfo.CurrentUICulture.LCID);
-             if (configData.Data != null)
+            ResourcesLocale Resources = new ResourcesLocale(CultureInfo.CurrentUICulture.LCID);
+            if (configData.Data != null)
              {
                  if (_config == null)
                  {
@@ -429,7 +431,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         private IAdapterPresentation TryIdentification(AuthenticationContext usercontext, IAuthenticationContext context, IProofData proofData, System.Net.HttpListenerRequest request, out System.Security.Claims.Claim[] claims)
         {
-            ResourcesLocale Resources = new ResourcesLocale(context.Lcid);
+            ResourcesLocale Resources = new ResourcesLocale(usercontext.Lcid);
             claims = null;
             IAdapterPresentation result = null;
             usercontext.KeyChanged = false;
@@ -560,7 +562,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         private IAdapterPresentation TryManageOptions(AuthenticationContext usercontext, IAuthenticationContext context, IProofData proofData, System.Net.HttpListenerRequest request, out System.Security.Claims.Claim[] claims)
         {
-            ResourcesLocale Resources = new ResourcesLocale(context.Lcid);
+            ResourcesLocale Resources = new ResourcesLocale(usercontext.Lcid);
             claims = new Claim[] { GetAuthMethodClaim(usercontext.SelectedMethod) };
             IAdapterPresentation result = null;
             usercontext.KeyChanged = false;
@@ -670,7 +672,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         private IAdapterPresentation TryRegistration(AuthenticationContext usercontext, IAuthenticationContext context, IProofData proofData, System.Net.HttpListenerRequest request, out System.Security.Claims.Claim[] claims)
         {
-            ResourcesLocale Resources = new ResourcesLocale(context.Lcid);
+            ResourcesLocale Resources = new ResourcesLocale(usercontext.Lcid);
             claims = new Claim[] { GetAuthMethodClaim(usercontext.SelectedMethod) };
             IAdapterPresentation result = null;
             usercontext.KeyChanged = false;
@@ -811,7 +813,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         private IAdapterPresentation TryInvitation(AuthenticationContext usercontext, IAuthenticationContext context, IProofData proofData, System.Net.HttpListenerRequest request, out System.Security.Claims.Claim[] claims)
         {
-            ResourcesLocale Resources = new ResourcesLocale(context.Lcid);
+            ResourcesLocale Resources = new ResourcesLocale(usercontext.Lcid);
             claims = new Claim[] { GetAuthMethodClaim(usercontext.SelectedMethod) };
             IAdapterPresentation result = null;
             usercontext.KeyChanged = false;
@@ -964,7 +966,7 @@ namespace Neos.IdentityServer.MultiFactor
         private IAdapterPresentation TryActivation(AuthenticationContext usercontext, IAuthenticationContext context, IProofData proofData, System.Net.HttpListenerRequest request, out System.Security.Claims.Claim[] claims)
         {
             #region Invitation
-            ResourcesLocale Resources = new ResourcesLocale(context.Lcid);
+            ResourcesLocale Resources = new ResourcesLocale(usercontext.Lcid);
             claims = new Claim[] { GetAuthMethodClaim(usercontext.SelectedMethod) };
             IAdapterPresentation result = null;
             usercontext.KeyChanged = false;
@@ -1058,7 +1060,7 @@ namespace Neos.IdentityServer.MultiFactor
         private IAdapterPresentation TryChooseMethod(AuthenticationContext usercontext, IAuthenticationContext context, IProofData proofData, System.Net.HttpListenerRequest request, out System.Security.Claims.Claim[] claims)
         {
             #region Choose method
-            ResourcesLocale Resources = new ResourcesLocale(context.Lcid);
+            ResourcesLocale Resources = new ResourcesLocale(usercontext.Lcid);
             claims = null;
             IAdapterPresentation result = null;
             usercontext.KeyChanged = false;
@@ -1173,7 +1175,7 @@ namespace Neos.IdentityServer.MultiFactor
         private IAdapterPresentation TryChangePassword(AuthenticationContext usercontext, IAuthenticationContext context, IProofData proofData, System.Net.HttpListenerRequest request, out System.Security.Claims.Claim[] claims)
         {
             #region Change Password
-            ResourcesLocale Resources = new ResourcesLocale(context.Lcid);
+            ResourcesLocale Resources = new ResourcesLocale(usercontext.Lcid);
             claims = new Claim[] { GetAuthMethodClaim(usercontext.SelectedMethod) };
             IAdapterPresentation result = null;
             usercontext.KeyChanged = false;
@@ -1237,7 +1239,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         private IAdapterPresentation TryBypass(AuthenticationContext usercontext, IAuthenticationContext context, IProofData proofData, System.Net.HttpListenerRequest request, out System.Security.Claims.Claim[] claims)
         {
-            ResourcesLocale Resources = new ResourcesLocale(context.Lcid);
+            ResourcesLocale Resources = new ResourcesLocale(usercontext.Lcid);
             claims = new Claim[] { GetAuthMethodClaim(usercontext.SelectedMethod) };
             CheckOptionsCookie(usercontext, request);
             try
@@ -1309,7 +1311,7 @@ namespace Neos.IdentityServer.MultiFactor
             #region Locking
             claims = new Claim[] { GetAuthMethodClaim(usercontext.SelectedMethod) };
             IAdapterPresentation result = null;
-            ResourcesLocale Resources = new ResourcesLocale(context.Lcid);
+            ResourcesLocale Resources = new ResourcesLocale(usercontext.Lcid);
             try
             {
                 ProviderPageMode lnk = usercontext.TargetUIMode;
@@ -1338,7 +1340,7 @@ namespace Neos.IdentityServer.MultiFactor
         private IAdapterPresentation TrySendCodeRequest(AuthenticationContext usercontext, IAuthenticationContext context, IProofData proofData, System.Net.HttpListenerRequest request, out System.Security.Claims.Claim[] claims)
         {
             #region Requesting Code
-            ResourcesLocale Resources = new ResourcesLocale(context.Lcid);
+            ResourcesLocale Resources = new ResourcesLocale(usercontext.Lcid);
             claims = new Claim[] { GetAuthMethodClaim(usercontext.SelectedMethod) };
             IAdapterPresentation result = null;
             try
@@ -1474,7 +1476,7 @@ namespace Neos.IdentityServer.MultiFactor
         private IAdapterPresentation TrySendAdministrativeRequest(AuthenticationContext usercontext, IAuthenticationContext context, IProofData proofData, System.Net.HttpListenerRequest request, out System.Security.Claims.Claim[] claims)
         {
             #region Invitation Request
-            ResourcesLocale Resources = new ResourcesLocale(context.Lcid);
+            ResourcesLocale Resources = new ResourcesLocale(usercontext.Lcid);
             claims = new Claim[] { GetAuthMethodClaim(usercontext.SelectedMethod) };
             IAdapterPresentation result = null;
             try
@@ -1525,7 +1527,7 @@ namespace Neos.IdentityServer.MultiFactor
         private IAdapterPresentation TrySendKeyRequest(AuthenticationContext usercontext, IAuthenticationContext context, IProofData proofData, System.Net.HttpListenerRequest request, out System.Security.Claims.Claim[] claims)
         {
             #region Sendkey Request
-            ResourcesLocale Resources = new ResourcesLocale(context.Lcid);
+            ResourcesLocale Resources = new ResourcesLocale(usercontext.Lcid);
             claims = new Claim[] { GetAuthMethodClaim(usercontext.SelectedMethod) };
             IAdapterPresentation result = null;
             try
@@ -1591,7 +1593,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         private IAdapterPresentation TryEnrollOTP(AuthenticationContext usercontext, IAuthenticationContext context, IProofData proofData, System.Net.HttpListenerRequest request, out Claim[] claims)
         {
-            ResourcesLocale Resources = new ResourcesLocale(context.Lcid);
+            ResourcesLocale Resources = new ResourcesLocale(usercontext.Lcid);
             claims = new Claim[] { GetAuthMethodClaim(usercontext.SelectedMethod) };
 
             usercontext.FirstChoiceMethod = PreferredMethod.Choose;
@@ -1725,7 +1727,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         private IAdapterPresentation TryEnrollEmail(AuthenticationContext usercontext, IAuthenticationContext context, IProofData proofData, System.Net.HttpListenerRequest request, out Claim[] claims)
         {
-            ResourcesLocale Resources = new ResourcesLocale(context.Lcid);
+            ResourcesLocale Resources = new ResourcesLocale(usercontext.Lcid);
             claims = new Claim[] { GetAuthMethodClaim(usercontext.SelectedMethod) };
 
             usercontext.FirstChoiceMethod = PreferredMethod.Choose;
@@ -1922,7 +1924,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         private IAdapterPresentation TryEnrollPhone(AuthenticationContext usercontext, IAuthenticationContext context, IProofData proofData, System.Net.HttpListenerRequest request, out Claim[] claims)
         {
-            ResourcesLocale Resources = new ResourcesLocale(context.Lcid);
+            ResourcesLocale Resources = new ResourcesLocale(usercontext.Lcid);
             claims = new Claim[] { GetAuthMethodClaim(usercontext.SelectedMethod) };
 
             usercontext.KeyChanged = false;
@@ -2125,9 +2127,8 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         private IAdapterPresentation TryEnrollPinCode(AuthenticationContext usercontext, IAuthenticationContext context, IProofData proofData, System.Net.HttpListenerRequest request, out Claim[] claims)
         {
-            ResourcesLocale Resources = new ResourcesLocale(context.Lcid);
+            ResourcesLocale Resources = new ResourcesLocale(usercontext.Lcid);
             claims = new Claim[] { GetAuthMethodClaim(usercontext.SelectedMethod) };
-
             try
             {
                 int btnclicked = Convert.ToInt32(proofData.Properties["btnclicked"].ToString());
@@ -2765,7 +2766,7 @@ namespace Neos.IdentityServer.MultiFactor
                 else
                     computer = computer.Replace("$", "");
                 Trace.TraceInformation("AuthenticationProvider:Configuration loaded !");
-                ResourcesLocale Resources = new ResourcesLocale(CultureInfo.CurrentCulture.LCID);
+                ResourcesLocale Resources = new ResourcesLocale(CultureInfo.CurrentUICulture.LCID);
                 Log.WriteEntry(string.Format(Resources.GetString(ResourcesLocaleKind.Informations, "InfosConfigurationReloaded"), computer), EventLogEntryType.Warning, 9999);
             }
         }

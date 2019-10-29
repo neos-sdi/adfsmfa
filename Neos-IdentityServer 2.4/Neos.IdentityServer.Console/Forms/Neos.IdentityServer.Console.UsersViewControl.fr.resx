@@ -117,8 +117,11 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="uPNDataGridViewTextBoxColumn.HeaderText" xml:space="preserve">
-    <value>Utilisateur</value>
+  <data name="creationDateDataGridViewTextBoxColumn.HeaderText" xml:space="preserve">
+    <value>Créé</value>
+  </data>
+  <data name="enabledDataGridViewCheckBoxColumn.HeaderText" xml:space="preserve">
+    <value>Actif</value>
   </data>
   <data name="mailAddressDataGridViewTextBoxColumn.HeaderText" xml:space="preserve">
     <value>E-mail</value>
@@ -126,13 +129,10 @@
   <data name="phoneNumberDataGridViewTextBoxColumn.HeaderText" xml:space="preserve">
     <value>Téléphone</value>
   </data>
-  <data name="creationDateDataGridViewTextBoxColumn.HeaderText" xml:space="preserve">
-    <value>Créé</value>
-  </data>
   <data name="preferredMethodDataGridViewTextBoxColumn.HeaderText" xml:space="preserve">
     <value>Méthode</value>
   </data>
-  <data name="enabledDataGridViewCheckBoxColumn.HeaderText" xml:space="preserve">
-    <value>Actif</value>
+  <data name="uPNDataGridViewTextBoxColumn.HeaderText" xml:space="preserve">
+    <value>Utilisateur</value>
   </data>
 </root>

@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Neos.IdentityServer.MultiFactor.Administration</RootNamespace>
     <AssemblyName>Neos.IdentityServer.MultiFactor.Administration</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -96,12 +96,20 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Resources\SErrors.de.resx" />
+    <EmbeddedResource Include="Resources\SErrors.es.resx" />
     <EmbeddedResource Include="Resources\SErrors.fr.resx" />
     <EmbeddedResource Include="Resources\SErrors.it.resx" />
+    <EmbeddedResource Include="Resources\SErrors.nl.resx" />
+    <EmbeddedResource Include="Resources\SErrors.pl.resx" />
+    <EmbeddedResource Include="Resources\SErrors.pt.resx" />
     <EmbeddedResource Include="Resources\SErrors.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>SErrors.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="Resources\SErrors.ro.resx" />
+    <EmbeddedResource Include="Resources\SErrors.ru.resx" />
+    <EmbeddedResource Include="Resources\SErrors.sv.resx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

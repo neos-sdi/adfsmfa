@@ -327,6 +327,9 @@
   <data name="CTRLGLREFRESH" xml:space="preserve">
     <value>Refresh rate (in milliseconds)</value>
   </data>
+  <data name="CTRLGLREPLAY" xml:space="preserve">
+    <value>Replay Protection Level</value>
+  </data>
   <data name="CTRLGLSHOWAUTHY" xml:space="preserve">
     <value>Show Authy Authenticator</value>
   </data>
@@ -344,6 +347,9 @@
   </data>
   <data name="CTRLGLUSESMS" xml:space="preserve">
     <value>Use SMS notifications</value>
+  </data>
+  <data name="CTRLGLUSEUSERLANGS" xml:space="preserve">
+    <value>Use browser languages</value>
   </data>
   <data name="CTRLINVALIDVALUE" xml:space="preserve">
     <value>Invalid value, must be between {0} and {1}.</value>
@@ -399,6 +405,9 @@
   <data name="CTRLSECKEYMODE" xml:space="preserve">
     <value>Security Key Mode</value>
   </data>
+  <data name="CTRLSECLIBLABEL" xml:space="preserve">
+    <value>Encryption Library version</value>
+  </data>
   <data name="CTRLSECNEWCERT" xml:space="preserve">
     <value>New certificate</value>
   </data>
@@ -420,11 +429,17 @@
   <data name="CTRLSECTHUMPRINT" xml:space="preserve">
     <value>Certificate thumbprint</value>
   </data>
+  <data name="CTRLSECWARNING" xml:space="preserve">
+    <value>Warning ! Changing these values will invalidate all current keys</value>
+  </data>
   <data name="CTRLSECWIZARD" xml:space="preserve">
     <value>Registration wizard options</value>
   </data>
   <data name="CTRLSECWIZTITLE" xml:space="preserve">
     <value>Create a new SQL database</value>
+  </data>
+  <data name="CTRLSECXORLABEL" xml:space="preserve">
+    <value>Passphrase</value>
   </data>
   <data name="CTRLSMSASSEMBLY" xml:space="preserve">
     <value>Implementation (full class)</value>

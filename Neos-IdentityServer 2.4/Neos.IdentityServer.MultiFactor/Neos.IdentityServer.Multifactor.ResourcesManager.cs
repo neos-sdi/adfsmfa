@@ -15,6 +15,7 @@
 // https://github.com/neos-sdi/adfsmfa                                                                                                                                                      //
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
+using Microsoft.IdentityServer.Web.Authentication.External;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -39,9 +40,9 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// ResourceManager constructor
         /// </summary>
-        public ResourcesLocale(int lcid)
+        public ResourcesLocale(int Lcid)
         {
-            resourceCulture = new CultureInfo(lcid);
+            resourceCulture = new CultureInfo(Lcid);
         }
 
         /// <summary>

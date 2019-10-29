@@ -143,7 +143,7 @@ namespace Neos.IdentityServer.MultiFactor
             IExternalProvider prov = RuntimeAuthProvider.GetProvider(usercontext.PreferredMethod);
             if ((prov != null) && (prov.IsUIElementRequired(usercontext, RequiredMethodElements.CodeInputRequired)))
             {
-                result += "<div class=\"fieldMargin smallText\">" + prov.GetUILabel(usercontext) + "</div>";
+                result += "<div id=\"wizardMessage\" class=\"groupMargin\">" + prov.GetUILabel(usercontext) + "</div>";
                 result += "<input id=\"totp\" name=\"totp\" type=\"password\" placeholder=\"Code\" class=\"text fullWidth\" autofocus=\"autofocus\" /></br>";
                 result += "<div class=\"fieldMargin smallText\">" + prov.GetUIMessage(usercontext) + "</div></br>";
                 if (!string.IsNullOrEmpty(prov.GetUIWarningThirdPartyLabel(usercontext)) && (usercontext.IsSendBack))
@@ -151,7 +151,7 @@ namespace Neos.IdentityServer.MultiFactor
             }
             if ((prov != null) && (prov.IsUIElementRequired(usercontext, RequiredMethodElements.PinParameterRequired)))
             {
-                result += "<div class=\"fieldMargin smallText\">" + BaseExternalProvider.GetPINLabel(usercontext) + "</div>";
+                result += "<div id=\"wizardMessage2\" class=\"groupMargin\">" + BaseExternalProvider.GetPINLabel(usercontext) + "</div>";
                 result += "<input id=\"pincode\" name=\"pincode\" type=\"password\" placeholder=\"PIN Number\" class=\"text fullWidth\" /></br>";
                 result += "<div class=\"fieldMargin smallText\">" + BaseExternalProvider.GetPINMessage(usercontext) + "</div></br>";
             }

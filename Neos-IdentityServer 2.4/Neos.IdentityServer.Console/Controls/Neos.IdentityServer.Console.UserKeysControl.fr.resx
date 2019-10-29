@@ -117,23 +117,23 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="BTNSendByMail.Text" xml:space="preserve">
     <value>Envoyer la clé par mail</value>
   </data>
   <data name="clearkeyBtn.Text" xml:space="preserve">
     <value>Effacer la Clé</value>
   </data>
-  <data name="newkeyBtn.Text" xml:space="preserve">
-    <value>Nouvelle Clé</value>
-  </data>
-  <data name="groupBoxKey.Text" xml:space="preserve">
-    <value>Clé Secrète</value>
-  </data>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="EmailPrompt.Size" type="System.Drawing.Size, System.Drawing">
     <value>98, 13</value>
   </data>
   <data name="EmailPrompt.Text" xml:space="preserve">
     <value>Email :</value>
+  </data>
+  <data name="groupBoxKey.Text" xml:space="preserve">
+    <value>Clé Secrète</value>
+  </data>
+  <data name="newkeyBtn.Text" xml:space="preserve">
+    <value>Nouvelle Clé</value>
   </data>
 </root>

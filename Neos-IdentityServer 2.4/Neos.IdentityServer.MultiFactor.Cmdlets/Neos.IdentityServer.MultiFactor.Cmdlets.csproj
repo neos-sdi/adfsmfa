@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Neos.IdentityServer.MultiFactor.Cmdlets</RootNamespace>
     <AssemblyName>Neos.IdentityServer.MultiFactor.Cmdlets</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
     <NuGetPackageImportStamp>
@@ -94,18 +94,35 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Ressources\errors_strings.de.resx" />
+    <EmbeddedResource Include="Ressources\errors_strings.es.resx" />
     <EmbeddedResource Include="Ressources\errors_strings.fr.resx" />
     <EmbeddedResource Include="Ressources\errors_strings.it.resx" />
+    <EmbeddedResource Include="Ressources\errors_strings.nl.resx" />
+    <EmbeddedResource Include="Ressources\errors_strings.pl.resx" />
+    <EmbeddedResource Include="Ressources\errors_strings.pt.resx" />
     <EmbeddedResource Include="Ressources\errors_strings.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>errors_strings.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Ressources\errors_strings.ro.resx" />
+    <EmbeddedResource Include="Ressources\errors_strings.ru.resx" />
+    <EmbeddedResource Include="Ressources\errors_strings.sv.resx" />
+    <EmbeddedResource Include="Ressources\infos_strings.de.resx" />
+    <EmbeddedResource Include="Ressources\infos_strings.es.resx" />
     <EmbeddedResource Include="Ressources\infos_strings.fr.resx" />
     <EmbeddedResource Include="Ressources\infos_strings.it.resx" />
+    <EmbeddedResource Include="Ressources\infos_strings.nl.resx" />
+    <EmbeddedResource Include="Ressources\infos_strings.pl.resx" />
+    <EmbeddedResource Include="Ressources\infos_strings.pt.resx" />
     <EmbeddedResource Include="Ressources\infos_strings.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>infos_strings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="Ressources\infos_strings.ro.resx" />
+    <EmbeddedResource Include="Ressources\infos_strings.ru.resx" />
+    <EmbeddedResource Include="Ressources\infos_strings.sv.resx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

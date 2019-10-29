@@ -122,11 +122,11 @@
     <comment>Numéro de téléphone</comment>
   </data>
   <data name="GLOBALListChoiceDefaultLabel" xml:space="preserve">
-    <value>Use la opción predeterminada de Azure</value>
+    <value>Usar la opción predeterminada de Azure</value>
     <comment>Utiliser l'option Azure par défaut</comment>
   </data>
   <data name="GLOBALListChoiceLabel" xml:space="preserve">
-    <value>Usar las opciones de autenticación de Azure</value>
+    <value>Usar opciones de autenticación de Azure</value>
     <comment>Utiliser les options d'authentification Azure</comment>
   </data>
   <data name="GLOBALListOptionLabel" xml:space="preserve">
@@ -138,30 +138,30 @@
     <comment>Accéder à mes options de configuration Azure</comment>
   </data>
   <data name="GLOBALOTPLabel" xml:space="preserve">
-    <value>Código de acceso de uso único</value>
+    <value>Código de acceso de un solo uso</value>
     <comment>Code d'accès à usage unique</comment>
   </data>
   <data name="GLOBALWarnOverNetwork" xml:space="preserve">
-    <value>(Los datos se transmiten en Internet)</value>
+    <value>(los datos se transmiten a través de Internet)</value>
     <comment>(Les données sont transmises sur internet)</comment>
   </data>
   <data name="GLOBALWarnThirdParty" xml:space="preserve">
-    <value>(la autenticación es hecha por Microsoft)</value>
+    <value>(la autenticación la realiza Microsoft)</value>
     <comment>(l'authentification est réalisée par Microsoft)</comment>
   </data>
   <data name="GLOBALWIZLabel" xml:space="preserve">
-    <value>Registre tu móvil</value>
+    <value>Inscriba su móvil</value>
   </data>
   <data name="NOTIFChoiceLabel" xml:space="preserve">
-    <value>Enviar una notificación en mi móvil (MS)</value>
+    <value>Enviar una notificación a mi móvil (MS)</value>
     <comment>Envoyer une notification sur mon mobile (MS)</comment>
   </data>
   <data name="NOTIFConfigLabel" xml:space="preserve">
-    <value>Notificación en su aplicación de autenticación</value>
+    <value>Notificación en la aplicación de autenticación</value>
     <comment>Notification sur votre application d'authentification</comment>
   </data>
   <data name="NOTIFMessage" xml:space="preserve">
-    <value>Hemos enviado una notificación a su dispositivo móvil. Respuesta para continuar</value>
+    <value>Hemos enviado una notificación a su dispositivo móvil. Respuesta para continuar.</value>
     <comment>Nous avons envoyé une notification à votre appareil mobile. Répondez pour continuer.</comment>
   </data>
   <data name="OTPChoiceLabel" xml:space="preserve">
@@ -169,15 +169,15 @@
     <comment>Utiliser mon application d'authentification (MS)</comment>
   </data>
   <data name="OTPConfigLabel" xml:space="preserve">
-    <value>Usa tu aplicación de autenticación</value>
+    <value>Utilice la aplicación de autenticación</value>
     <comment>Utiliser votre application d'authentification</comment>
   </data>
   <data name="OTPMessage" xml:space="preserve">
-    <value>Ingrese el código de verificación para su aplicación móvil.</value>
+    <value>Introduzca el código de verificación de su aplicación móvil.</value>
     <comment>Entrez le code de vérification de votre application mobile.</comment>
   </data>
   <data name="SMSChoiceLabel" xml:space="preserve">
-    <value>Enviar un mensaje en mi móvil (MS)</value>
+    <value>Enviar un código a mi móvil (MS)</value>
     <comment>Envoyer un message sur mon mobile (MS)</comment>
   </data>
   <data name="SMSConfigLabel" xml:space="preserve">
@@ -189,55 +189,55 @@
     <comment>Message texte sur mon téléphone mobile {0}</comment>
   </data>
   <data name="SMSMessage" xml:space="preserve">
-    <value>Enviamos un mensaje de texto con un código de verificación.</value>
+    <value>Enviamos un SMS que contiene un código de verificación. {0}</value>
     <comment>Nous avons envoyé un SMS contenant un code de vérification. {0}</comment>
   </data>
   <data name="VOICE1ChoiceLabel" xml:space="preserve">
-    <value>Llamar a mi teléfono móvil (MS)</value>
+    <value>Llame a mi teléfono móvil (MS)</value>
     <comment>Appeler mon téléphone mobile (MS)</comment>
   </data>
   <data name="VOICE1ConfigLabel" xml:space="preserve">
-    <value>Llamada de voz en mi móvil</value>
+    <value>Llamada de voz en tu móvil</value>
     <comment>Appel vocal sur mon mobile</comment>
   </data>
   <data name="VOICE1ConfigLabel2" xml:space="preserve">
-    <value>Llamada de voz en mi móvil {0}</value>
+    <value>Llamada de voz en tu móvil {0}</value>
     <comment>Appel vocal sur mon mobile {0}</comment>
   </data>
   <data name="VOICE1Message" xml:space="preserve">
-    <value>Llamamos a su teléfono {0}. Respuesta para continuar</value>
+    <value>Llamamos a su teléfono {0}. Responde para continuar.</value>
     <comment>Nous appelons votre téléphone {0}. Répondez pour continuer.</comment>
   </data>
   <data name="VOICE2ChoiceLabel" xml:space="preserve">
-    <value>Llamar a mi teléfono secundario (MS)</value>
+    <value>Llame a mi teléfono secundario (MS)</value>
     <comment>Appeler mon téléphone secondaire (MS)</comment>
   </data>
   <data name="VOICE2ConfigLabel" xml:space="preserve">
-    <value>Llamada de voz en mi teléfono secundario</value>
+    <value>Llamada de voz en mi teléfono móvil secundario</value>
     <comment>Appel vocal sur mon téléphone secondaire</comment>
   </data>
   <data name="VOICE2ConfigLabel2" xml:space="preserve">
-    <value>Llamada de voz en mi teléfono secundario {0}</value>
+    <value>Llamada de voz en mi teléfono móvil secundario {0}</value>
     <comment>Appel vocal sur mon téléphone secondaire {0}</comment>
   </data>
   <data name="VOICE2Message" xml:space="preserve">
-    <value>Llamamos a su teléfono secundario {0}. Respuesta para continuar</value>
+    <value>Llamamos a su teléfono secundario {0} Respuesta para continuar.</value>
     <comment>Nous appelons votre téléphone secondaire {0}. Répondez pour continuer.</comment>
   </data>
   <data name="VOICE3ChoiceLabel" xml:space="preserve">
-    <value>Llamar a mi teléfono de negocios (MS)</value>
+    <value>Llame a mi teléfono de oficina (MS)</value>
     <comment>Appeler mon téléphone professionnel (MS)</comment>
   </data>
   <data name="VOICE3ConfigLabel" xml:space="preserve">
-    <value>Llamada de voz en mi teléfono de negocios</value>
+    <value>Llamada de voz en el teléfono de su oficina</value>
     <comment>Appel vocal sur mon téléphone professionnel</comment>
   </data>
   <data name="VOICE3ConfigLabel2" xml:space="preserve">
-    <value>Llamada de voz en mi teléfono de negocios {0}</value>
+    <value>Llamada de voz en el teléfono de su oficina {0}</value>
     <comment>Appel vocal sur mon téléphone professionnel {0}</comment>
   </data>
   <data name="VOICE3Message" xml:space="preserve">
-    <value>Llamamos a su teléfono comercial {0}. Respuesta para continuar</value>
+    <value>Llamamos al teléfono de su oficina {0}. Responde para continuar.</value>
     <comment>Nous appelons votre téléphone professionnel {0}. Répondez pour continuer.</comment>
   </data>
 </root>

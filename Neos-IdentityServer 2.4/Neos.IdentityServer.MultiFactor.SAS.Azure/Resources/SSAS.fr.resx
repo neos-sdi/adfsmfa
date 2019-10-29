@@ -141,6 +141,9 @@
   <data name="GLOBALWarnThirdParty" xml:space="preserve">
     <value>(l'authentification est réalisée par Microsoft)</value>
   </data>
+  <data name="GLOBALWIZLabel" xml:space="preserve">
+    <value>Enregistrer votre téléphone mobile</value>
+  </data>
   <data name="NOTIFChoiceLabel" xml:space="preserve">
     <value>Envoyer une notification sur mon mobile (MS)</value>
   </data>

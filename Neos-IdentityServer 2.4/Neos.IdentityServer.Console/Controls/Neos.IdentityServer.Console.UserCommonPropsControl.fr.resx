@@ -118,6 +118,18 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="BTNReinit.Text" xml:space="preserve">
+    <value>Réinitialiser toutes les clés</value>
+  </data>
+  <data name="BTNSendByMail.Text" xml:space="preserve">
+    <value>Envoyer les clés par mail</value>
+  </data>
+  <data name="cbEnabled.Size" type="System.Drawing.Size, System.Drawing">
+    <value>157, 17</value>
+  </data>
+  <data name="cbEnabled.Text" xml:space="preserve">
+    <value>Authentification MFA Active</value>
+  </data>
   <data name="label1.Size" type="System.Drawing.Size, System.Drawing">
     <value>76, 39</value>
   </data>
@@ -127,25 +139,16 @@ d'identification
 séléctionnée : 
 </value>
   </data>
-  <data name="cbEnabled.Size" type="System.Drawing.Size, System.Drawing">
-    <value>157, 17</value>
+  <data name="UserInfo.Text" xml:space="preserve">
+    <value>Informations Utilisateurs</value>
   </data>
-  <data name="cbEnabled.Text" xml:space="preserve">
-    <value>Authentification MFA Active</value>
+  <data name="UserName.Text" xml:space="preserve">
+    <value>Nom</value>
   </data>
   <data name="UserNamesPrompt.Size" type="System.Drawing.Size, System.Drawing">
     <value>89, 13</value>
   </data>
   <data name="UserNamesPrompt.Text" xml:space="preserve">
     <value>Liste Utilisateurs :</value>
-  </data>
-  <data name="UserInfo.Text" xml:space="preserve">
-    <value>Informations Utilisateurs</value>
-  </data>
-  <data name="BTNReinit.Text" xml:space="preserve">
-    <value>Réinitialiser toutes les clés</value>
-  </data>
-  <data name="BTNSendByMail.Text" xml:space="preserve">
-    <value>Envoyer les clés par mail</value>
   </data>
 </root>

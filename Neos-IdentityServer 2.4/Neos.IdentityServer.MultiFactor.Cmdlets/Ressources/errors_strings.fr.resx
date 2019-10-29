@@ -118,30 +118,30 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ErrorAddingUser" xml:space="preserve">
-    <value>Erreur lors de l'ajout de "{0}" \r {1}</value>
+    <value>Erreur lors de l'ajout de {0} {1}</value>
   </data>
   <data name="ErrorComputerNotFound" xml:space="preserve">
-    <value>Ordinateur "{0}" non trouvé !</value>
+    <value>Ordinateur {0} non trouvé !</value>
   </data>
   <data name="ErrorDeletingUser" xml:space="preserve">
-    <value>Erreur lors de la suppression de "{0}" \r {1}</value>
+    <value>Erreur lors de la suppression de {0} {1}</value>
   </data>
   <data name="ErrorEmailNotProvided" xml:space="preserve">
-    <value>Adresse e-mail non fournie pour l'utilisateur "{0}" !</value>
+    <value>Adresse e-mail non fournie pour l'utilisateur {0} !</value>
   </data>
   <data name="ErrorInvalidServerName" xml:space="preserve">
     <value>Serveur incorrect : vous devez spécifier le FQDN !</value>
   </data>
   <data name="ErrorPhoneNotProvided" xml:space="preserve">
-    <value>Numéro de téléphone non fourni pour l'utilisateur "{0}" !</value>
+    <value>Numéro de téléphone non fourni pour l'utilisateur {0} !</value>
   </data>
   <data name="ErrorUpdatingUser" xml:space="preserve">
-    <value>Erreur lors de la mise à jour de "{0}" \r {1}</value>
+    <value>Erreur lors de la mise à jour de {0} {1}</value>
   </data>
   <data name="ErrorUserExists" xml:space="preserve">
-    <value>Utilisateur "{0}" existe déjà !</value>
+    <value>Utilisateur {0} existe déjà !</value>
   </data>
   <data name="ErrorUserNotFound" xml:space="preserve">
-    <value>Utilisateur "{0}" non trouvé !</value>
+    <value>Utilisateur {0} non trouvé !</value>
   </data>
 </root>

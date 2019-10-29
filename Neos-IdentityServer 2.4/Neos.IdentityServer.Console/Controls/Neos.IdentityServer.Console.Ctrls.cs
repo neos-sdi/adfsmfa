@@ -824,7 +824,6 @@ namespace Neos.IdentityServer.Console.Controls
                 this.Cursor = Cursors.Default;
             }
         }
-
     }
 
     public partial class MFAProvidersValidationControl : Panel, IMMCRefreshData
@@ -1331,8 +1330,6 @@ namespace Neos.IdentityServer.Console.Controls
         private TextBox txtIssuer;
         private TextBox txtAdminContact;
         private TextBox txtCountryCode;
-        private TextBox txtDeliveryWindow;
-        private TextBox txtMaxRetries;
         private ComboBox cbConfigTemplate;
 
         private RadioButton rdioMFARequired;
@@ -1360,8 +1357,6 @@ namespace Neos.IdentityServer.Console.Controls
         private Label lblIssuer;
         private Label lblAdminContact;
         private Label lblContryCode;
-        private Label lblDeliveryWindow;
-        private Label lblMaxRetries;
         private Label lblConfigTemplate;
         private Label rdioMFALabel;
         private Label rdioREGLabel;
@@ -1374,7 +1369,8 @@ namespace Neos.IdentityServer.Console.Controls
         private ComboBox cbConfigProvider;
         private Label lblConfigProvider;
         private bool lockevents;
-        
+        private CheckBox chkUseUserLanguages;
+
 
 
         /// <summary>
@@ -1553,42 +1549,6 @@ namespace Neos.IdentityServer.Console.Controls
                 cbConfigProvider.DisplayMember = "Label";
                 cbConfigProvider.SelectedIndexChanged += SelectedProviderChanged;
 
-                lblDeliveryWindow = new Label();
-                lblDeliveryWindow.Text = res.CTRLGLDELVERY + " : ";
-                lblDeliveryWindow.Left = 10;
-                lblDeliveryWindow.Top = 115;
-                lblDeliveryWindow.Width = 200;
-                _txtpanel.Controls.Add(lblDeliveryWindow);
-
-                txtDeliveryWindow = new TextBox();
-                txtDeliveryWindow.Text = Config.DeliveryWindow.ToString();
-                txtDeliveryWindow.Left = 210;
-                txtDeliveryWindow.Top = 111;
-                txtDeliveryWindow.Width = 60;
-                txtDeliveryWindow.MaxLength = 4;
-                txtDeliveryWindow.TextAlign = HorizontalAlignment.Center;
-                txtDeliveryWindow.Validating += DeliveryWindowValidating;
-                txtDeliveryWindow.Validated += DeliveryWindowValidated;
-                _txtpanel.Controls.Add(txtDeliveryWindow);
-
-                lblMaxRetries = new Label();
-                lblMaxRetries.Text = res.CTRLDLGMAXRETRIES + " : ";
-                lblMaxRetries.Left = 530;
-                lblMaxRetries.Top = 115;
-                lblMaxRetries.Width = 150;
-                _txtpanel.Controls.Add(lblMaxRetries);
-
-                txtMaxRetries = new TextBox();
-                txtMaxRetries.Text = Config.MaxRetries.ToString();
-                txtMaxRetries.Left = 690;
-                txtMaxRetries.Top = 111;
-                txtMaxRetries.Width = 40;
-                txtMaxRetries.MaxLength = 2;
-                txtMaxRetries.Validating += MaxRetriesValidating;
-                txtMaxRetries.Validated += MaxRetriesValidated;
-                txtMaxRetries.TextAlign = HorizontalAlignment.Center;
-                _txtpanel.Controls.Add(txtMaxRetries);
-
                 lblConfigTemplate = new Label();
                 lblConfigTemplate.Text = res.CTRLGLPOLICY + " : ";
                 lblConfigTemplate.Left = 10;
@@ -1697,7 +1657,7 @@ namespace Neos.IdentityServer.Console.Controls
                 _paneloptmfa = new Panel();
                 _paneloptmfa.Left = 530;
                 _paneloptmfa.Top = 198;
-                _paneloptmfa.Height = 150;
+                _paneloptmfa.Height = 190;
                 _paneloptmfa.Width = 400;
                 _txtpanel.Controls.Add(_paneloptmfa);
 
@@ -1748,10 +1708,19 @@ namespace Neos.IdentityServer.Console.Controls
                 chkAllowNotifications.CheckedChanged += AllowNotificationsCheckedChanged;
                 _paneloptmfa.Controls.Add(chkAllowNotifications);
 
+                chkUseUserLanguages = new CheckBox();
+                chkUseUserLanguages.Text = res.CTRLGLUSEUSERLANGS;
+                chkUseUserLanguages.Checked = Config.UseOfUserLanguages;
+                chkUseUserLanguages.Left = 20;
+                chkUseUserLanguages.Top = 154;
+                chkUseUserLanguages.Width = 400;
+                chkUseUserLanguages.CheckedChanged += UseUserlanguagesCheckedChanged;
+                _paneloptmfa.Controls.Add(chkUseUserLanguages);
+
                 //////
                 _paneladvmfa = new Panel();
                 _paneladvmfa.Left = 530;
-                _paneladvmfa.Top = 365;
+                _paneladvmfa.Top = 385;
                 _paneladvmfa.Height = 100;
                 _paneladvmfa.Width = 325;
                 _txtpanel.Controls.Add(_paneladvmfa);
@@ -1847,17 +1816,14 @@ namespace Neos.IdentityServer.Console.Controls
                 txtIssuer.Text = Config.Issuer;
                 txtAdminContact.Text = Config.AdminContact;
                 txtCountryCode.Text = Config.DefaultCountryCode;
-                txtDeliveryWindow.Text = Config.DeliveryWindow.ToString();
-                txtMaxRetries.Text = Config.MaxRetries.ToString();
                 txtADVStart.Value = Config.AdvertisingDays.FirstDay;
                 txtADVEnd.Value = Config.AdvertisingDays.LastDay;
+                chkUseUserLanguages.Checked = Config.UseOfUserLanguages;
 
                 lblIssuer.Text = res.CTRLGLCOMANYNAME + " : ";
                 lblAdminContact.Text = res.CTRLGLCONTACT + " : ";
                 lblContryCode.Text = res.CTRLGLCONTRYCODE + " : ";
-                lblDeliveryWindow.Text = res.CTRLGLDELVERY + " : ";
                 lblConfigProvider.Text = res.CTRLGLPROVIDER + " : ";
-                lblMaxRetries.Text = res.CTRLDLGMAXRETRIES + " : ";
                 lblConfigTemplate.Text = res.CTRLGLPOLICY + " : ";
                 rdioMFALabel.Text = res.CTRLGLMFASTATUS;
                 rdioMFARequired.Text = res.CTRLGLMFASTATUS1;
@@ -1873,7 +1839,8 @@ namespace Neos.IdentityServer.Console.Controls
                 chkAllowEnrollment.Text = res.CTRLGLENROLLWIZ;
                 chkAllowChangePassword.Text = res.CTRLGLMANAGEPWD;
                 chkAllowKMSOO.Text = res.CTRLGLMANAGEKMSOO;
-                chkAllowNotifications.Text = res.CTRLGLMANAGENOTIFS; 
+                chkAllowNotifications.Text = res.CTRLGLMANAGENOTIFS;
+                chkUseUserLanguages.Text = res.CTRLGLUSEUSERLANGS;
                 optADVLabel.Text = res.CTRGLMANAGEREG;
                 beginADVLabel.Text = res.CTRGLMANAGEREGSTART + " :";
                 endADVLabel.Text = res.CTRGLMANAGEREGEND + " :";
@@ -1896,22 +1863,6 @@ namespace Neos.IdentityServer.Console.Controls
         /// </summary>
         private void ValidateData()
         {
-            int refr = Convert.ToInt32(txtDeliveryWindow.Text);
-            if (string.IsNullOrEmpty(txtDeliveryWindow.Text))
-                errors.SetError(txtDeliveryWindow, res.CTRLNULLOREMPTYERROR);
-            else if ((refr < 60) || (refr > 600))
-                errors.SetError(txtDeliveryWindow, string.Format(res.CTRLINVALIDVALUE, "60", "600"));
-            else
-                errors.SetError(txtDeliveryWindow, "");
-
-            int ref2 = Convert.ToInt32(txtMaxRetries.Text);
-            if (string.IsNullOrEmpty(txtMaxRetries.Text))
-                errors.SetError(txtMaxRetries, res.CTRLNULLOREMPTYERROR);
-            else if ((ref2 < 1) || (ref2 > 12))
-                errors.SetError(txtMaxRetries, string.Format(res.CTRLINVALIDVALUE, "1", "12"));
-            else
-                errors.SetError(txtMaxRetries, "");
-
             if (string.IsNullOrEmpty(txtCountryCode.Text))
                 errors.SetError(txtCountryCode, res.CTRLNULLOREMPTYERROR);
             else
@@ -2571,7 +2522,32 @@ namespace Neos.IdentityServer.Console.Controls
                 messageBoxParameters.Icon = MessageBoxIcon.Error;
                 this._snapin.Console.ShowDialog(messageBoxParameters);
             }
-        }       
+        }
+
+        /// <summary>
+        /// UseUserlanguagesCheckedChanged method implementation
+        /// </summary>
+        private void UseUserlanguagesCheckedChanged(object sender, EventArgs e)
+        {
+            if (lockevents)
+                return;
+            try
+            {
+                if (_view.AutoValidate != AutoValidate.Disable)
+                {
+                    Config.UseOfUserLanguages = chkUseUserLanguages.Checked;
+                    ManagementService.ADFSManager.SetDirty(true);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
+                messageBoxParameters.Text = ex.Message;
+                messageBoxParameters.Buttons = MessageBoxButtons.OK;
+                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                this._snapin.Console.ShowDialog(messageBoxParameters);
+            }
+        }
         #endregion
 
         #region Advertising
@@ -2616,104 +2592,6 @@ namespace Neos.IdentityServer.Console.Controls
             catch (Exception ex)
             {
                 errors.SetError(txtADVStart, ex.Message);
-            }
-        }
-        #endregion
-
-        #region DeliveryWindow
-        /// <summary>
-        /// DeliveryWindowValidating method implementation
-        /// </summary>
-        private void DeliveryWindowValidating(object sender, CancelEventArgs e)
-        {
-            try
-            {
-                if (txtDeliveryWindow.Modified)
-                {
-                    ManagementService.ADFSManager.SetDirty(true);
-                    int refr = Convert.ToInt32(txtDeliveryWindow.Text);
-                    if (string.IsNullOrEmpty(txtDeliveryWindow.Text))
-                        throw new Exception(res.CTRLNULLOREMPTYERROR);
-                    if ((refr < 60) || (refr > 600))
-                        throw new Exception(string.Format(res.CTRLINVALIDVALUE, "60", "600"));
-                    Config.DeliveryWindow = refr;
-                    errors.SetError(txtDeliveryWindow, "");
-                }
-            }
-            catch (Exception ex)
-            {
-                e.Cancel = true;
-                errors.SetError(txtDeliveryWindow, ex.Message);
-            }
-        }
-
-        /// <summary>
-        /// DeliveryWindowValidated method implementation
-        /// </summary>
-        private void DeliveryWindowValidated(object sender, EventArgs e)
-        {
-            try
-            {
-                Config.DeliveryWindow = Convert.ToInt32(txtDeliveryWindow.Text);
-                ManagementService.ADFSManager.SetDirty(true);
-                errors.SetError(txtDeliveryWindow, "");
-            }
-            catch (Exception ex)
-            {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
-                this._snapin.Console.ShowDialog(messageBoxParameters);
-            }
-        }
-        #endregion
-
-        #region MaxRetries
-        /// <summary>
-        /// MaxRetriesValidating method implementation
-        /// </summary>
-        private void MaxRetriesValidating(object sender, CancelEventArgs e)
-        {
-            try
-            {
-                if (txtMaxRetries.Modified)
-                {
-                    ManagementService.ADFSManager.SetDirty(true);
-                    int refr = Convert.ToInt32(txtMaxRetries.Text);
-                    if (string.IsNullOrEmpty(txtMaxRetries.Text))
-                        throw new Exception(res.CTRLNULLOREMPTYERROR);
-                    if ((refr < 1) || (refr > 12))
-                        throw new Exception(string.Format(res.CTRLINVALIDVALUE, "1", "12"));
-                    Config.MaxRetries = refr;
-                    errors.SetError(txtMaxRetries, "");
-                }
-            }
-            catch (Exception ex)
-            {
-                e.Cancel = true;
-                errors.SetError(txtMaxRetries, ex.Message);
-            }
-        }
-
-        /// <summary>
-        /// MaxRetriesValidated method implementation
-        /// </summary>
-        private void MaxRetriesValidated(object sender, EventArgs e)
-        {
-            try
-            {
-                ManagementService.ADFSManager.SetDirty(true);
-                Config.MaxRetries = Convert.ToInt32(txtMaxRetries.Text);
-                errors.SetError(txtMaxRetries, "");
-            }
-            catch (Exception ex)
-            {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
-                this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
         #endregion
@@ -7077,6 +6955,9 @@ namespace Neos.IdentityServer.Console.Controls
         }
     }
 
+    /// <summary>
+    /// SecurityConfigurationControl class imlementation
+    /// </summary>
     public partial class SecurityConfigurationControl : Panel, IMMCRefreshData
     {
         private NamespaceSnapInBase _snapin;
@@ -7090,41 +6971,14 @@ namespace Neos.IdentityServer.Console.Controls
         private TextBox txtHashAlgo;
         private ComboBox cbFormat;
         private ComboBox cbKeySize;
-        private Panel _panelRNG;
-        private ComboBox cbKeyMode;
-        private Panel _panelCERT;
-        private NumericUpDown txtCERTDuration;
-        private Panel _panelRSA;
-        private TextBox txtRSAThumb;
-        private Button btnRSACert;
-        private Panel _panelCUSTOM;
-        private TextBox txtDLLCUST;
-        private TextBox txtParams;
-        private Button btnCUSTOMDB;
         private Panel _panelWiz;
         private CheckBox chkAllowMicrosoft;
         private CheckBox chkAllowGoogle;
         private CheckBox chkAllowAuthy;
         private CheckBox chkAllowSearch;
-        private CheckBox chkUseAlwaysEncryptSQL;
-        private TextBox txtEncryptKeyName;
-        private NumericUpDown txtCertificateDuration;
-        private CheckBox chkReuseCertificate;
-        private TextBox txtCertificateThumbPrint;
-        private Button btnCreateCryptedDB;
-        private TextBox txtConnectionString;
         private LinkLabel tblSaveConfig;
         private LinkLabel tblCancelConfig;
-        private Label lblCertificateThumbPrint;
-        private Label lblCertificateDuration;
-        private Label lblEncryptKeyName;
-        private Label lblParams;
-        private Label lblConnectionString;
-        private Label lblDLL;
-        private Label lblRSAKey;
-        private Label lblCERTDuration;
-        private Label lblCERT;
-        private Label lblRNGKey;
+
         private Label lblTOTPWizard;
         private Label lblMaxKeyLen;
         private Label lblSecMode;
@@ -7226,17 +7080,17 @@ namespace Neos.IdentityServer.Console.Controls
                 _view.RefreshProviderInformation();
 
                 this.Dock = DockStyle.Top;
-                this.Height = 783;
+                this.Height = 250;
                 this.Width = 1050;
                 this.Margin = new Padding(30, 5, 30, 5);
 
                 _panel.Width = 20;
-                _panel.Height = 741;
+                _panel.Height = 220;
                 this.Controls.Add(_panel);
 
                 _txtpanel.Left = 20;
                 _txtpanel.Width = this.Width - 20;
-                _txtpanel.Height = 741;
+                _txtpanel.Height = 220;
                 _txtpanel.BackColor = System.Drawing.SystemColors.Control;
                 this.Controls.Add(_txtpanel);
 
@@ -7368,273 +7222,11 @@ namespace Neos.IdentityServer.Console.Controls
                 chkAllowSearch.Width = 300;
                 chkAllowSearch.CheckedChanged += AllowSearchGoogleCheckedChanged;
                 _panelWiz.Controls.Add(chkAllowSearch);
-
-                _panelRNG = new Panel();
-                _panelRNG.Left = 0;
-                _panelRNG.Top = 171;
-                _panelRNG.Height = 60;
-                _panelRNG.Width = 400;
-                _txtpanel.Controls.Add(_panelRNG);
-
-                Label lblRNG = new Label();
-                lblRNG.Text = "RNG (Random Number Generator)";
-                lblRNG.Left = 10;
-                lblRNG.Top = 0;
-                lblRNG.Width = 250;
-                _panelRNG.Controls.Add(lblRNG);
-
-                lblRNGKey = new Label();
-                lblRNGKey.Text = res.CTRLSECKEYGEN+" : ";
-                lblRNGKey.Left = 30;
-                lblRNGKey.Top = 27;
-                lblRNGKey.Width = 140;
-                _panelRNG.Controls.Add(lblRNGKey);
-
-                MMCSecurityKeyGeneratorList lgens = new MMCSecurityKeyGeneratorList();
-                cbKeyMode = new ComboBox();
-                cbKeyMode.DropDownStyle = ComboBoxStyle.DropDownList;
-                cbKeyMode.Left = 180;
-                cbKeyMode.Top = 25;
-                cbKeyMode.Width = 80;
-                _panelRNG.Controls.Add(cbKeyMode);
-
-                cbKeyMode.DataSource = lgens;
-                cbKeyMode.ValueMember = "ID";
-                cbKeyMode.DisplayMember = "Label";
-                cbKeyMode.SelectedValue = Config.KeysConfig.KeyGenerator;
-                cbKeyMode.SelectedIndexChanged += SelectedKeyGenChanged;
-
-                _panelCERT = new Panel();
-                _panelCERT.Left = 0;
-                _panelCERT.Top = 236;
-                _panelCERT.Height = 50;
-                _panelCERT.Width = 400;
-                _txtpanel.Controls.Add(_panelCERT);
-
-                lblCERT = new Label();
-                lblCERT.Text = res.CTRLSECCERTIFICATES;
-                lblCERT.Left = 10;
-                lblCERT.Top = 0;
-                lblCERT.Width = 250;
-                _panelCERT.Controls.Add(lblCERT);
-
-                lblCERTDuration = new Label();
-                lblCERTDuration.Text = res.CTRLSECCERTIFDURATION+" : ";
-                lblCERTDuration.Left = 30;
-                lblCERTDuration.Top = 27;
-                lblCERTDuration.Width = 140;
-                _panelCERT.Controls.Add(lblCERTDuration);
-
-                txtCERTDuration = new NumericUpDown();
-                txtCERTDuration.Left = 180;
-                txtCERTDuration.Top = 24;
-                txtCERTDuration.Width = 50;
-                txtCERTDuration.TextAlign = HorizontalAlignment.Center;
-                txtCERTDuration.Value = Config.KeysConfig.CertificateValidity;
-                txtCERTDuration.Minimum = new decimal(new int[] { 1, 0, 0, 0});
-                txtCERTDuration.Maximum = new decimal(new int[] { 9999, 0, 0, 0 });
-                txtCERTDuration.ValueChanged += CertValidityChanged;
-                _panelCERT.Controls.Add(txtCERTDuration);
-
-                _panelRSA = new Panel();
-                _panelRSA.Left = 0;
-                _panelRSA.Top = 306;
-                _panelRSA.Height = 50;
-                _panelRSA.Width = 1050;
-                _txtpanel.Controls.Add(_panelRSA);
-
-                Label lblRSA = new Label();
-                lblRSA.Text = "RSA (Rivest Shamir Adleman)";
-                lblRSA.Left = 10;
-                lblRSA.Top = 0;
-                lblRSA.Width = 250;
-                _panelRSA.Controls.Add(lblRSA);
-
-                lblRSAKey = new Label();
-                lblRSAKey.Text = res.CTRLSECTHUMPRINT+" : ";
-                lblRSAKey.Left = 30;
-                lblRSAKey.Top = 27;
-                lblRSAKey.Width = 140;
-                _panelRSA.Controls.Add(lblRSAKey);
-
-                txtRSAThumb = new TextBox();
-                if (!string.IsNullOrEmpty(Config.KeysConfig.CertificateThumbprint))
-                    txtRSAThumb.Text = Config.KeysConfig.CertificateThumbprint.ToUpper();
-                txtRSAThumb.Left = 180;
-                txtRSAThumb.Top = 23;
-                txtRSAThumb.Width = 300;
-                txtRSAThumb.Validating += RSAThumbValidating;
-                txtRSAThumb.Validated += RSAThumbValidated;
-                _panelRSA.Controls.Add(txtRSAThumb);
-
-                btnRSACert = new Button();
-                btnRSACert.Text = res.CTRLSECNEWCERT;
-                btnRSACert.Left = 680;
-                btnRSACert.Top = 21;
-                btnRSACert.Width = 250;
-                btnRSACert.Click += btnRSACertClick;
-                _panelRSA.Controls.Add(btnRSACert);
-
-                _panelCUSTOM = new Panel();
-                _panelCUSTOM.Left = 0;
-                _panelCUSTOM.Top = 381;
-                _panelCUSTOM.Height = 791;
-                _panelCUSTOM.Width = 1050;
-                _txtpanel.Controls.Add(_panelCUSTOM);
-
-                Label lblRSACUST = new Label();
-                lblRSACUST.Text = "RSA CUSTOM (One certificate per user)";
-                lblRSACUST.Left = 10;
-                lblRSACUST.Top = 0;
-                lblRSACUST.Width = 250;
-                _panelCUSTOM.Controls.Add(lblRSACUST);
-
-                lblDLL = new Label();
-                lblDLL.Text = res.CTRLSECASSEMBLY+" : ";
-                lblDLL.Left = 30;
-                lblDLL.Top = 27;
-                lblDLL.Width = 150;
-                _panelCUSTOM.Controls.Add(lblDLL);
-
-                txtDLLCUST = new TextBox();
-                txtDLLCUST.Text = Config.KeysConfig.ExternalKeyManager.FullQualifiedImplementation;
-                txtDLLCUST.Left = 180;
-                txtDLLCUST.Top = 23;
-                txtDLLCUST.Width = 820;
-                txtDLLCUST.Validating += DLLValidating;
-                txtDLLCUST.Validated += DLLValidated;
-                _panelCUSTOM.Controls.Add(txtDLLCUST);
-
-                lblConnectionString = new Label();
-                lblConnectionString.Text = res.CTRLSQLCONNECTSTR + " : ";
-                lblConnectionString.Left = 30;
-                lblConnectionString.Top = 58;
-                lblConnectionString.Width = 150;
-                _panelCUSTOM.Controls.Add(lblConnectionString);
-
-                txtConnectionString = new TextBox();
-                txtConnectionString.Text = Config.KeysConfig.ExternalKeyManager.ConnectionString;
-                txtConnectionString.Left = 180;
-                txtConnectionString.Top = 54;
-                txtConnectionString.Width = 820;
-                txtConnectionString.Enabled = !Config.UseActiveDirectory;
-                txtConnectionString.Validating += ConnectionStringValidating;
-                txtConnectionString.Validated += ConnectionStringValidated;
-                _panelCUSTOM.Controls.Add(txtConnectionString);
-
-                lblParams = new Label();
-                lblParams.Text = res.CTRLSECPARAMS+" : ";
-                lblParams.Left = 30;
-                lblParams.Top = 85;
-                lblParams.Width = 150;
-                _panelCUSTOM.Controls.Add(lblParams);
-
-                txtParams = new TextBox();
-                txtParams.Text = Config.KeysConfig.ExternalKeyManager.Parameters.Data;
-                txtParams.Left = 180;
-                txtParams.Top = 85;
-                txtParams.Width = 820;
-                txtParams.Height = 60;
-                txtParams.Multiline = true;
-                txtParams.Validating += ParamsValidating;
-                txtParams.Validated += ParamsValidated;
-                _panelCUSTOM.Controls.Add(txtParams);
-
-                btnCUSTOMDB = new Button();
-                btnCUSTOMDB.Text = res.CTRLSECNEWDATABASE;
-                btnCUSTOMDB.Left = 680;
-                btnCUSTOMDB.Top = 160;
-                btnCUSTOMDB.Width = 250;
-                btnCUSTOMDB.Click += btnCUSTOMDBClick;
-                _panelCUSTOM.Controls.Add(btnCUSTOMDB);
-
-                chkUseAlwaysEncryptSQL = new CheckBox();
-                chkUseAlwaysEncryptSQL.Text = res.CTRLSQLCRYPTUSING;
-                chkUseAlwaysEncryptSQL.Checked = Config.KeysConfig.ExternalKeyManager.IsAlwaysEncrypted;
-                chkUseAlwaysEncryptSQL.Enabled = !Config.UseActiveDirectory;
-                chkUseAlwaysEncryptSQL.Left = 10;
-                chkUseAlwaysEncryptSQL.Top = 161;
-                chkUseAlwaysEncryptSQL.Width = 450;
-                chkUseAlwaysEncryptSQL.CheckedChanged += UseSQLCryptCheckedChanged;
-                _panelCUSTOM.Controls.Add(chkUseAlwaysEncryptSQL);
-
-                lblEncryptKeyName = new Label();
-                lblEncryptKeyName.Text = res.CTRLSQLENCRYPTNAME + " : ";
-                lblEncryptKeyName.Left = 50;
-                lblEncryptKeyName.Top = 192;
-                lblEncryptKeyName.Width = 150;
-                _panelCUSTOM.Controls.Add(lblEncryptKeyName);
-
-                txtEncryptKeyName = new TextBox();
-                txtEncryptKeyName.Text = Config.KeysConfig.ExternalKeyManager.KeyName;
-                txtEncryptKeyName.Left = 210;
-                txtEncryptKeyName.Top = 188;
-                txtEncryptKeyName.Width = 100;
-                txtEncryptKeyName.Enabled = Config.KeysConfig.ExternalKeyManager.IsAlwaysEncrypted;
-                txtEncryptKeyName.Validating += EncryptKeyNameValidating;
-                txtEncryptKeyName.Validated += EncryptKeyNameValidated;
-                _panelCUSTOM.Controls.Add(txtEncryptKeyName);
-
-                lblCertificateDuration = new Label();
-                lblCertificateDuration.Text = res.CTRLSECCERTIFDURATION + " : ";
-                lblCertificateDuration.Left = 50;
-                lblCertificateDuration.Top = 223;
-                lblCertificateDuration.Width = 150;
-                _panelCUSTOM.Controls.Add(lblCertificateDuration);
-
-                txtCertificateDuration = new NumericUpDown();
-                txtCertificateDuration.Left = 210;
-                txtCertificateDuration.Top = 219;
-                txtCertificateDuration.Width = 50;
-                txtCertificateDuration.TextAlign = HorizontalAlignment.Center;
-                txtCertificateDuration.Value = Config.KeysConfig.ExternalKeyManager.CertificateValidity;
-                txtCertificateDuration.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
-                txtCertificateDuration.Maximum = new decimal(new int[] { 9999, 0, 0, 0 });
-                txtCertificateDuration.ValueChanged += CertCryptValidityChanged;
-                txtCertificateDuration.Enabled = Config.KeysConfig.ExternalKeyManager.IsAlwaysEncrypted;
-                _panelCUSTOM.Controls.Add(txtCertificateDuration);
-
-                chkReuseCertificate = new CheckBox();
-                chkReuseCertificate.Text = res.CTRLSQLREUSECERT;
-                chkReuseCertificate.Checked = Config.KeysConfig.ExternalKeyManager.CertReuse;
-                chkReuseCertificate.Enabled = Config.KeysConfig.ExternalKeyManager.IsAlwaysEncrypted;
-                chkReuseCertificate.Left = 50;
-                chkReuseCertificate.Top = 254;
-                chkReuseCertificate.Width = 450;
-                chkReuseCertificate.CheckedChanged += UseSQLReuseCertCheckedChanged;
-                _panelCUSTOM.Controls.Add(chkReuseCertificate);
-
-                lblCertificateThumbPrint = new Label();
-                lblCertificateThumbPrint.Text = res.CTRLSQLTHUMBPRINT + " : ";
-                lblCertificateThumbPrint.Left = 100;
-                lblCertificateThumbPrint.Top = 285;
-                lblCertificateThumbPrint.Width = 150;
-                _panelCUSTOM.Controls.Add(lblCertificateThumbPrint);
-
-                txtCertificateThumbPrint = new TextBox();
-                if (!string.IsNullOrEmpty(Config.KeysConfig.ExternalKeyManager.ThumbPrint))
-                    txtCertificateThumbPrint.Text = Config.KeysConfig.ExternalKeyManager.ThumbPrint.ToUpper();
-                txtCertificateThumbPrint.Left = 260;
-                txtCertificateThumbPrint.Top = 281;
-                txtCertificateThumbPrint.Width = 300;
-                txtCertificateThumbPrint.Enabled = (Config.KeysConfig.ExternalKeyManager.IsAlwaysEncrypted && Config.KeysConfig.ExternalKeyManager.CertReuse);
-                txtCertificateThumbPrint.Validating += CertificateThumbPrintValidating;
-                txtCertificateThumbPrint.Validated += CertificateThumbPrintValidated;
-                _panelCUSTOM.Controls.Add(txtCertificateThumbPrint);
-
-                btnCreateCryptedDB = new Button();
-                btnCreateCryptedDB.Text = res.CTRLSECNEWCRYPTEDDATABASE;
-                btnCreateCryptedDB.Left = 680;
-                btnCreateCryptedDB.Top = 312;
-                btnCreateCryptedDB.Width = 250;
-                btnCreateCryptedDB.Enabled = Config.KeysConfig.ExternalKeyManager.IsAlwaysEncrypted;
-                btnCreateCryptedDB.Click += btnCUSTOMCRYPTEDDBClick;
-                _panelCUSTOM.Controls.Add(btnCreateCryptedDB);
           
                 tblSaveConfig = new LinkLabel();
                 tblSaveConfig.Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPESAVE;
                 tblSaveConfig.Left = 20;
-                tblSaveConfig.Top = 751;
+                tblSaveConfig.Top = 230;
                 tblSaveConfig.Width = 80;
                 tblSaveConfig.LinkClicked += SaveConfigLinkClicked;
                 tblSaveConfig.TabStop = true;
@@ -7643,7 +7235,7 @@ namespace Neos.IdentityServer.Console.Controls
                 tblCancelConfig = new LinkLabel();
                 tblCancelConfig.Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPECANCEL;
                 tblCancelConfig.Left = 110;
-                tblCancelConfig.Top = 751;
+                tblCancelConfig.Top = 230;
                 tblCancelConfig.Width = 80;
                 tblCancelConfig.LinkClicked += CancelConfigLinkClicked;
                 tblCancelConfig.TabStop = true;
@@ -7690,57 +7282,9 @@ namespace Neos.IdentityServer.Console.Controls
 
                 cbKeySize.SelectedValue = Config.KeysConfig.KeySize;
 
-                cbKeyMode.SelectedValue = Config.KeysConfig.KeyGenerator;
-
-                txtCERTDuration.Value = Config.KeysConfig.CertificateValidity;
-
-                if (!string.IsNullOrEmpty(Config.KeysConfig.CertificateThumbprint))
-                    txtRSAThumb.Text = Config.KeysConfig.CertificateThumbprint.ToUpper();
-                else
-                    txtRSAThumb.Text = string.Empty;
-
-                txtDLLCUST.Text = Config.KeysConfig.ExternalKeyManager.FullQualifiedImplementation;
-                txtConnectionString.Text = Config.KeysConfig.ExternalKeyManager.ConnectionString;
-                txtParams.Text = Config.KeysConfig.ExternalKeyManager.Parameters.Data;
-
-                chkUseAlwaysEncryptSQL.Checked = Config.KeysConfig.ExternalKeyManager.IsAlwaysEncrypted;
-
-                txtEncryptKeyName.Text = Config.KeysConfig.ExternalKeyManager.KeyName;
-                txtEncryptKeyName.Enabled = Config.KeysConfig.ExternalKeyManager.IsAlwaysEncrypted;
-
-                txtCertificateDuration.Value = Config.KeysConfig.ExternalKeyManager.CertificateValidity;
-                txtCertificateDuration.Enabled = Config.KeysConfig.ExternalKeyManager.IsAlwaysEncrypted;
-
-                chkReuseCertificate.Checked = Config.KeysConfig.ExternalKeyManager.CertReuse;
-                chkReuseCertificate.Enabled = Config.KeysConfig.ExternalKeyManager.IsAlwaysEncrypted;
-
-                if (!string.IsNullOrEmpty(Config.KeysConfig.ExternalKeyManager.ThumbPrint))
-                    txtCertificateThumbPrint.Text = Config.KeysConfig.ExternalKeyManager.ThumbPrint.ToUpper();
-                else
-                    txtCertificateThumbPrint.Text = string.Empty;
-
-                txtCertificateThumbPrint.Enabled = (Config.KeysConfig.ExternalKeyManager.IsAlwaysEncrypted && Config.KeysConfig.ExternalKeyManager.CertReuse);
-
-                btnCreateCryptedDB.Enabled = Config.KeysConfig.ExternalKeyManager.IsAlwaysEncrypted;
-
                 tblSaveConfig.Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPESAVE;
                 tblCancelConfig.Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPECANCEL;
 
-                btnCreateCryptedDB.Text = res.CTRLSECNEWCRYPTEDDATABASE;
-                lblCertificateThumbPrint.Text = res.CTRLSQLTHUMBPRINT + " : ";
-                chkReuseCertificate.Text = res.CTRLSQLREUSECERT;
-                lblCertificateDuration.Text = res.CTRLSECCERTIFDURATION + " : ";
-                lblEncryptKeyName.Text = res.CTRLSQLENCRYPTNAME + " : ";
-                chkUseAlwaysEncryptSQL.Text = res.CTRLSQLCRYPTUSING;
-                btnCUSTOMDB.Text = res.CTRLSECNEWDATABASE;
-                lblParams.Text = res.CTRLSECPARAMS + " : ";
-                lblConnectionString.Text = res.CTRLSQLCONNECTSTR + " : ";
-                lblDLL.Text = res.CTRLSECASSEMBLY + " : ";
-                btnRSACert.Text = res.CTRLSECNEWCERT;
-                lblRSAKey.Text = res.CTRLSECTHUMPRINT + " : ";
-                lblCERTDuration.Text = res.CTRLSECCERTIFDURATION + " : ";
-                lblCERT.Text = res.CTRLSECCERTIFICATES;
-                lblRNGKey.Text = res.CTRLSECKEYGEN + " : ";
                 chkAllowSearch.Text = res.CTRLGLALLOWGOOGLESEARCH;
                 chkAllowAuthy.Text = res.CTRLGLSHOWAUTHY;
                 chkAllowGoogle.Text = res.CTRLGLSHOWGOOGLE;
@@ -7791,59 +7335,6 @@ namespace Neos.IdentityServer.Console.Controls
                 errors.SetError(txtTOTPShadows, ex.Message);
             }
 
-            if (txtRSAThumb.Enabled)
-            {
-                if (string.IsNullOrEmpty(txtRSAThumb.Text))
-                    errors.SetError(txtRSAThumb, res.CTRLNULLOREMPTYERROR);
-                else if (!ManagementService.ADFSManager.CheckCertificate(txtRSAThumb.Text))
-                    errors.SetError(txtRSAThumb, res.CTRLSECINVALIDCERT);
-                else
-                    errors.SetError(txtRSAThumb, "");
-            }
-            else
-                errors.SetError(txtRSAThumb, "");
-
-            if (string.IsNullOrEmpty(txtDLLCUST.Text))
-                errors.SetError(txtDLLCUST, res.CTRLNULLOREMPTYERROR);
-            else if (!AssemblyParser.CheckKeysAssembly(txtDLLCUST.Text))
-                errors.SetError(txtDLLCUST, res.CTRLSECINVALIDEXTERROR);
-            else
-                errors.SetError(txtDLLCUST, "");
-
-            if (txtConnectionString.Enabled)
-            {
-                if (!ManagementService.CheckKeysConnection(txtConnectionString.Text))
-                    errors.SetError(txtConnectionString, res.CTRLSQLCONNECTSTRERROR);
-                else
-                    errors.SetError(txtConnectionString, "");
-            }
-            else
-                errors.SetError(txtConnectionString, "");
-
-            if (txtEncryptKeyName.Enabled)
-            {
-                if (string.IsNullOrEmpty(txtEncryptKeyName.Text))
-                    errors.SetError(txtEncryptKeyName, res.CTRLNULLOREMPTYERROR);
-                else
-                    errors.SetError(txtEncryptKeyName, "");
-            }
-            else
-                errors.SetError(txtEncryptKeyName, "");
-
-            if ((chkUseAlwaysEncryptSQL.Checked) && (chkReuseCertificate.Checked))
-            {
-                if (txtCertificateThumbPrint.Enabled)
-                {
-                    if (!ManagementService.ADFSManager.CheckCertificate(txtCertificateThumbPrint.Text))
-                        errors.SetError(txtCertificateThumbPrint, String.Format(res.CTRLSQLINVALIDCERTERROR, txtCertificateThumbPrint.Text));
-                    else
-                        errors.SetError(txtCertificateThumbPrint, "");
-                }
-                else
-                    errors.SetError(txtCertificateThumbPrint, "");
-            }
-            else
-                errors.SetError(txtCertificateThumbPrint, "");
         }
 
         /// <summary>
@@ -7856,49 +7347,6 @@ namespace Neos.IdentityServer.Console.Controls
             _UpdateControlsLayouts = true;
             try
             {
-                switch ((SecretKeyFormat)cbFormat.SelectedValue)
-                {
-                    case SecretKeyFormat.RNG:
-                        this._panelRSA.Enabled = false;
-                        this._panelCUSTOM.Enabled = false;
-                        this._panelRNG.Enabled = true;
-                        this._panelCERT.Enabled = false;
-                        break;
-                    case SecretKeyFormat.RSA:
-                        this._panelRSA.Enabled = true;
-                        this._panelCUSTOM.Enabled = false;
-                        this._panelRNG.Enabled = false;
-                        this._panelCERT.Enabled = true;
-                        break;
-                    case SecretKeyFormat.CUSTOM:
-                        this._panelRSA.Enabled = false;
-                        this._panelCUSTOM.Enabled = true;
-                        this._panelRNG.Enabled = false;
-                        this._panelCERT.Enabled = false;
-                        break;
-                }
-                if (_panelCUSTOM.Enabled)
-                {
-                    if (chkUseAlwaysEncryptSQL.Checked)
-                    {
-                        this.txtEncryptKeyName.Enabled = true;
-                        this.txtCertificateDuration.Enabled = true;
-                        this.chkReuseCertificate.Enabled = true;
-                        if (this.chkReuseCertificate.Checked)
-                            this.txtCertificateThumbPrint.Enabled = true;
-                        else
-                            this.txtCertificateThumbPrint.Enabled = false;
-                        this.btnCreateCryptedDB.Enabled = true;
-                    }
-                    else
-                    {
-                        this.txtEncryptKeyName.Enabled = false;
-                        this.txtCertificateDuration.Enabled = false;
-                        this.chkReuseCertificate.Enabled = false;
-                        this.txtCertificateThumbPrint.Enabled = false;
-                        this.btnCreateCryptedDB.Enabled = false;
-                    }
-                }
             }
             finally
             {
@@ -8070,6 +7518,970 @@ namespace Neos.IdentityServer.Console.Controls
             }
         }
 
+        #region Wizard Options
+        /// <summary>
+        /// AllowSearchGoogleCheckedChanged method implementation
+        /// </summary>
+        private void AllowSearchGoogleCheckedChanged(object sender, EventArgs e)
+        {
+            this.Cursor = Cursors.Default;
+            try
+            {
+                if (_view.AutoValidate != AutoValidate.Disable)
+                {
+                    ManagementService.ADFSManager.SetDirty(true);
+                    if (!chkAllowSearch.Checked)
+                        Config.OTPProvider.WizardOptions |= OTPWizardOptions.NoGooglSearch;
+                    else
+                        Config.OTPProvider.WizardOptions &= ~OTPWizardOptions.NoGooglSearch;
+                    errors.SetError(chkAllowSearch, "");
+                }
+            }
+            catch (Exception ex)
+            {
+                errors.SetError(chkAllowSearch, ex.Message);
+            }
+            finally
+            {
+                this.Cursor = Cursors.Default;
+            }
+        }
+
+        /// <summary>
+        /// AllowAuthyCheckedChanged method implementation
+        /// </summary>
+        private void AllowAuthyCheckedChanged(object sender, EventArgs e)
+        {
+            this.Cursor = Cursors.WaitCursor;
+            try
+            {
+                if (_view.AutoValidate != AutoValidate.Disable)
+                {
+                    ManagementService.ADFSManager.SetDirty(true);
+                    if (!chkAllowAuthy.Checked)
+                        Config.OTPProvider.WizardOptions |= OTPWizardOptions.NoAuthyAuthenticator;
+                    else
+                        Config.OTPProvider.WizardOptions &= ~OTPWizardOptions.NoAuthyAuthenticator;
+                    errors.SetError(chkAllowAuthy, "");
+                }
+            }
+            catch (Exception ex)
+            {
+                errors.SetError(chkAllowAuthy, ex.Message);
+            }
+            finally
+            {
+                this.Cursor = Cursors.Default;
+            }
+        }
+
+        /// <summary>
+        /// AllowGoogleCheckedChanged method implementation
+        /// </summary>
+        private void AllowGoogleCheckedChanged(object sender, EventArgs e)
+        {
+            this.Cursor = Cursors.WaitCursor;
+            try
+            {
+                if (_view.AutoValidate != AutoValidate.Disable)
+                {
+                    ManagementService.ADFSManager.SetDirty(true);
+                    if (!chkAllowGoogle.Checked)
+                        Config.OTPProvider.WizardOptions |= OTPWizardOptions.NoGoogleAuthenticator;
+                    else
+                        Config.OTPProvider.WizardOptions &= ~OTPWizardOptions.NoGoogleAuthenticator;
+                    errors.SetError(chkAllowGoogle, "");
+                }
+            }
+            catch (Exception ex)
+            {
+                errors.SetError(chkAllowGoogle, ex.Message);
+            }
+            finally
+            {
+                this.Cursor = Cursors.Default;
+            }
+        }
+
+        /// <summary>
+        /// AllowMicrosoftCheckedChanged method implementation
+        /// </summary>
+        private void AllowMicrosoftCheckedChanged(object sender, EventArgs e)
+        {
+            this.Cursor = Cursors.WaitCursor;
+            try
+            {
+                if (_view.AutoValidate != AutoValidate.Disable)
+                {
+                    ManagementService.ADFSManager.SetDirty(true);
+                    if (!chkAllowMicrosoft.Checked)
+                        Config.OTPProvider.WizardOptions |= OTPWizardOptions.NoMicrosoftAuthenticator;
+                    else
+                        Config.OTPProvider.WizardOptions &= ~OTPWizardOptions.NoMicrosoftAuthenticator;
+                    errors.SetError(chkAllowMicrosoft, "");
+                }
+            }
+            catch (Exception ex)
+            {
+                errors.SetError(chkAllowMicrosoft, ex.Message);
+            }
+            finally
+            {
+                this.Cursor = Cursors.Default;
+            }
+        }
+        #endregion
+
+        /// <summary>
+        /// SaveConfigLinkClicked event
+        /// </summary>
+        private void SaveConfigLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            if (_view != null)
+               _view.SaveData();
+        }
+
+        /// <summary>
+        /// CancelConfigLinkClicked event
+        /// </summary>
+        private void CancelConfigLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            if (_view != null)
+                _view.CancelData();
+        }
+    }
+
+    /// <summary>
+    /// SecurityConfigurationRNGControl class imlementation
+    /// </summary>
+    public partial class SecurityConfigurationRootControl : Panel, IMMCRefreshData
+    {
+        private NamespaceSnapInBase _snapin;
+        private Panel _panel;
+        private Panel _txtpanel;
+        private ServiceSecurityRootViewControl _view;
+        private bool _UpdateControlsLayouts;
+        private ErrorProvider errors;
+        private LinkLabel tblSaveConfig;
+        private LinkLabel tblCancelConfig;
+
+        private TextBox txtDeliveryWindow;
+        private TextBox txtMaxRetries;
+        private Label lblDeliveryWindow;
+        private Label lblMaxRetries;
+        private Label lblReplayLevel;
+        private ComboBox cbReplayLevel;
+        private ComboBox cbLibVersion;
+        private Label lblLibVersion;
+        private TextBox txtXORValue;
+        private Label lblXORValue;
+        private Label lblWarning;
+
+        /// <summary>
+        /// ConfigurationControl Constructor
+        /// </summary>
+        public SecurityConfigurationRootControl(ServiceSecurityRootViewControl view, NamespaceSnapInBase snap)
+        {
+            _view = view;
+            _snapin = snap;
+            _panel = new Panel();
+            _txtpanel = new Panel();
+            BackColor = System.Drawing.SystemColors.Window;
+            AutoSize = false;
+        }
+
+        /// <summary>
+        /// OnCreateControl method override
+        /// </summary>
+        protected override void OnCreateControl()
+        {
+            base.OnCreateControl();
+            ManagementService.ADFSManager.ConfigurationStatusChanged += ConfigurationStatusChanged;
+            DoCreateControls();
+        }
+
+        /// <summary>
+        /// ConfigurationStatusChanged method implementation
+        /// </summary>
+        internal void ConfigurationStatusChanged(ADFSServiceManager mgr, ConfigOperationStatus status, Exception ex = null)
+        {
+            UpdateLayoutConfigStatus(status);
+            if (_view.IsNotifsEnabled())
+            {
+                if (status == ConfigOperationStatus.ConfigLoaded)
+                    DoRefreshData();
+            }
+            else
+                _panel.Refresh();
+        }
+
+        /// <summary>
+        /// UpdateLayoutConfigStatus method implementation
+        /// </summary>
+        private void UpdateLayoutConfigStatus(ConfigOperationStatus status)
+        {
+            switch (status)
+            {
+                case ConfigOperationStatus.ConfigInError:
+                    _panel.BackColor = Color.DarkRed;
+                    break;
+                case ConfigOperationStatus.ConfigSaved:
+                    _panel.BackColor = Color.Orange;
+                    break;
+                case ConfigOperationStatus.ConfigLoaded:
+                    _panel.BackColor = Color.Green;
+                    IExternalProvider _provider = RuntimeAuthProvider.GetProviderInstance(PreferredMethod.Code);
+                    if (!_provider.Enabled)
+                        _panel.BackColor = Color.DarkGray;
+                    break;
+                case ConfigOperationStatus.ConfigIsDirty:
+                    _panel.BackColor = Color.DarkOrange;
+                    break;
+                case ConfigOperationStatus.ConfigStopped:
+                    _panel.BackColor = Color.DarkGray;
+                    break;
+                default:
+                    _panel.BackColor = Color.Yellow;
+                    break;
+            }
+            return;
+        }
+
+        /// <summary>
+        /// Config property
+        /// </summary>
+        public MFAConfig Config
+        {
+            get
+            {
+                ManagementService.ADFSManager.EnsureLocalConfiguration();
+                return ManagementService.ADFSManager.Config;
+            }
+        }
+
+        /// <summary>
+        /// Initialize method implementation
+        /// </summary>
+        private void DoCreateControls()
+        {
+            this.SuspendLayout();
+            _view.AutoValidate = AutoValidate.Disable;
+            _view.CausesValidation = false;
+            try
+            {
+                _view.RefreshProviderInformation();
+
+                this.Dock = DockStyle.Top;
+                this.Height = 230;
+                this.Width = 600;
+                this.Margin = new Padding(30, 5, 30, 5);
+
+                _panel.Width = 20;
+                _panel.Height = 200;
+                this.Controls.Add(_panel);
+
+                _txtpanel.Left = 20;
+                _txtpanel.Width = this.Width - 20;
+                _txtpanel.Height = 200;
+                _txtpanel.BackColor = System.Drawing.SystemColors.Control;
+                this.Controls.Add(_txtpanel);
+
+                lblDeliveryWindow = new Label();
+                lblDeliveryWindow.Text = res.CTRLGLDELVERY + " : ";
+                lblDeliveryWindow.Left = 10;
+                lblDeliveryWindow.Top = 20;
+                lblDeliveryWindow.Width = 200;
+                _txtpanel.Controls.Add(lblDeliveryWindow);
+
+                txtDeliveryWindow = new TextBox();
+                txtDeliveryWindow.Text = Config.DeliveryWindow.ToString();
+                txtDeliveryWindow.Left = 260;
+                txtDeliveryWindow.Top = 16;
+                txtDeliveryWindow.Width = 60;
+                txtDeliveryWindow.MaxLength = 4;
+                txtDeliveryWindow.TextAlign = HorizontalAlignment.Center;
+                txtDeliveryWindow.Validating += DeliveryWindowValidating;
+                txtDeliveryWindow.Validated += DeliveryWindowValidated;
+                _txtpanel.Controls.Add(txtDeliveryWindow);
+
+                lblMaxRetries = new Label();
+                lblMaxRetries.Text = res.CTRLDLGMAXRETRIES + " : ";
+                lblMaxRetries.Left = 440;
+                lblMaxRetries.Top = 20;
+                lblMaxRetries.Width = 150;
+                _txtpanel.Controls.Add(lblMaxRetries);
+
+                txtMaxRetries = new TextBox();
+                txtMaxRetries.Text = Config.MaxRetries.ToString();
+                txtMaxRetries.Left = 600;
+                txtMaxRetries.Top = 16;
+                txtMaxRetries.Width = 40;
+                txtMaxRetries.MaxLength = 2;
+                txtMaxRetries.Validating += MaxRetriesValidating;
+                txtMaxRetries.Validated += MaxRetriesValidated;
+                txtMaxRetries.TextAlign = HorizontalAlignment.Center;
+                _txtpanel.Controls.Add(txtMaxRetries);
+
+                lblReplayLevel = new Label();
+                lblReplayLevel.Text = res.CTRLGLREPLAY + " : ";
+                lblReplayLevel.Left = 10;
+                lblReplayLevel.Top = 57;
+                lblReplayLevel.Width = 180;
+                _txtpanel.Controls.Add(lblReplayLevel);
+
+                MMCReplayModeList lst = new MMCReplayModeList();
+                cbReplayLevel = new ComboBox();
+                cbReplayLevel.DropDownStyle = ComboBoxStyle.DropDownList;
+                cbReplayLevel.Left = 260;
+                cbReplayLevel.Top = 53;
+                cbReplayLevel.Width = 130;
+                _txtpanel.Controls.Add(cbReplayLevel);
+
+                cbReplayLevel.DataSource = lst;
+                cbReplayLevel.ValueMember = "ID";
+                cbReplayLevel.DisplayMember = "Label";
+                cbReplayLevel.SelectedValue = Config.ReplayLevel;
+                cbReplayLevel.SelectedIndexChanged += SelectedReplayLevelChanged;
+
+                lblLibVersion = new Label();
+                lblLibVersion.Text = res.CTRLSECLIBLABEL +"(*)"+ " : ";
+                lblLibVersion.Left = 10;
+                lblLibVersion.Top = 104;
+                lblLibVersion.Width = 250;
+                _txtpanel.Controls.Add(lblLibVersion);
+
+                MMCLibVersionList lst2 = new MMCLibVersionList();
+                cbLibVersion = new ComboBox();
+                cbLibVersion.DropDownStyle = ComboBoxStyle.DropDownList;
+                cbLibVersion.Left = 260;
+                cbLibVersion.Top = 100;
+                cbLibVersion.Width = 50;
+                _txtpanel.Controls.Add(cbLibVersion);
+
+                cbLibVersion.DataSource = lst2;
+                cbLibVersion.ValueMember = "ID";
+                cbLibVersion.DisplayMember = "Label";
+                cbLibVersion.SelectedValue = Config.KeysConfig.KeyVersion;
+                cbLibVersion.SelectedIndexChanged += SelectedLibVersionChanged;
+
+                lblXORValue = new Label();
+                lblXORValue.Text = res.CTRLSECXORLABEL + "(*)" + " : ";
+                lblXORValue.Left = 10;
+                lblXORValue.Top = 141;
+                lblXORValue.Width = 250;
+                _txtpanel.Controls.Add(lblXORValue);
+
+                txtXORValue = new TextBox();
+                txtXORValue.Text = Config.KeysConfig.XORSecret;
+                txtXORValue.Left = 260;
+                txtXORValue.Top = 137;
+                txtXORValue.Width = 300;
+                txtXORValue.PasswordChar = '*';
+                txtXORValue.Validating += XORValueValidating;
+                txtXORValue.Validated += XORValueValidated;
+                _txtpanel.Controls.Add(txtXORValue);
+
+
+                lblWarning = new Label();
+                lblWarning.Text = "(*) "+ res.CTRLSECWARNING;
+                lblWarning.Left = 10;
+                lblWarning.Top = 178;
+                lblWarning.Width = 500;
+                _txtpanel.Controls.Add(lblWarning);
+
+                tblSaveConfig = new LinkLabel();
+                tblSaveConfig.Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPESAVE;
+                tblSaveConfig.Left = 20;
+                tblSaveConfig.Top = 210;
+                tblSaveConfig.Width = 80;
+                tblSaveConfig.LinkClicked += SaveConfigLinkClicked;
+                tblSaveConfig.TabStop = true;
+                this.Controls.Add(tblSaveConfig);
+
+                tblCancelConfig = new LinkLabel();
+                tblCancelConfig.Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPECANCEL;
+                tblCancelConfig.Left = 110;
+                tblCancelConfig.Top = 210;
+                tblCancelConfig.Width = 80;
+                tblCancelConfig.LinkClicked += CancelConfigLinkClicked;
+                tblCancelConfig.TabStop = true;
+                this.Controls.Add(tblCancelConfig);
+
+                errors = new ErrorProvider(_view);
+                errors.BlinkStyle = ErrorBlinkStyle.NeverBlink;
+            }
+            finally
+            {
+                UpdateLayoutConfigStatus(ManagementService.ADFSManager.ConfigurationStatus);
+                UpdateControlsLayouts();
+                ValidateData();
+                _view.AutoValidate = AutoValidate.EnableAllowFocusChange;
+                _view.CausesValidation = true;
+                this.ResumeLayout();
+            }
+        }
+
+        /// <summary>
+        /// DoRefreshData method implmentation
+        /// </summary>
+        public void DoRefreshData()
+        {
+            this.SuspendLayout();
+            _view.AutoValidate = AutoValidate.Disable;
+            _view.CausesValidation = false;
+            try
+            {
+                lblDeliveryWindow.Text = res.CTRLGLDELVERY + " : ";
+                lblMaxRetries.Text = res.CTRLDLGMAXRETRIES + " : ";
+                lblReplayLevel.Text = res.CTRLGLREPLAY + " : ";
+                lblLibVersion.Text = res.CTRLSECLIBLABEL + "(*)" + " : ";
+                lblXORValue.Text = res.CTRLSECXORLABEL + "(*)" + " : ";
+                lblWarning.Text = "(*) " + res.CTRLSECWARNING;
+
+                txtDeliveryWindow.Text = Config.DeliveryWindow.ToString();
+                txtMaxRetries.Text = Config.MaxRetries.ToString();
+                cbReplayLevel.SelectedValue = Config.ReplayLevel;
+                cbLibVersion.SelectedValue = Config.KeysConfig.KeyVersion;
+                txtXORValue.Text = Config.KeysConfig.XORSecret;
+
+                tblSaveConfig.Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPESAVE;
+                tblCancelConfig.Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPECANCEL;
+            }
+            finally
+            {
+                UpdateLayoutConfigStatus(ManagementService.ADFSManager.ConfigurationStatus);
+                UpdateControlsLayouts();
+                ValidateData();
+                _view.AutoValidate = AutoValidate.EnableAllowFocusChange;
+                _view.CausesValidation = true;
+                this.ResumeLayout();
+            }
+        }
+
+        /// <summary>
+        /// IsValidData
+        /// </summary>
+        private void ValidateData()
+        {
+            int refr = Convert.ToInt32(txtDeliveryWindow.Text);
+            if (string.IsNullOrEmpty(txtDeliveryWindow.Text))
+                errors.SetError(txtDeliveryWindow, res.CTRLNULLOREMPTYERROR);
+            else if ((refr < 60) || (refr > 600))
+                errors.SetError(txtDeliveryWindow, string.Format(res.CTRLINVALIDVALUE, "60", "600"));
+            else
+                errors.SetError(txtDeliveryWindow, "");
+
+            if (string.IsNullOrEmpty(txtXORValue.Text))
+                errors.SetError(txtXORValue, res.CTRLNULLOREMPTYERROR);
+            else
+                errors.SetError(txtXORValue, "");
+
+            int ref2 = Convert.ToInt32(txtMaxRetries.Text);
+            if (string.IsNullOrEmpty(txtMaxRetries.Text))
+                errors.SetError(txtMaxRetries, res.CTRLNULLOREMPTYERROR);
+            else if ((ref2 < 1) || (ref2 > 12))
+                errors.SetError(txtMaxRetries, string.Format(res.CTRLINVALIDVALUE, "1", "12"));
+            else
+                errors.SetError(txtMaxRetries, "");
+        }
+
+        /// <summary>
+        /// UpdateControlsLayouts method implementation
+        /// </summary>
+        private void UpdateControlsLayouts()
+        {
+            if (_UpdateControlsLayouts)
+                return;
+            _UpdateControlsLayouts = true;
+            try
+            {
+                if (Config.KeysConfig.KeyVersion != SecretKeyVersion.V2)
+                    txtXORValue.Enabled = false;
+                else
+                    txtXORValue.Enabled = true;
+            }
+            finally
+            {
+                _UpdateControlsLayouts = false;
+            }
+        }
+
+
+        /// <summary>
+        /// OnResize method implmentation
+        /// </summary>
+        protected override void OnResize(EventArgs eventargs)
+        {
+            if (_txtpanel != null)
+                _txtpanel.Width = this.Width - 20;
+        }
+
+        #region DeliveryWindow
+        /// <summary>
+        /// DeliveryWindowValidating method implementation
+        /// </summary>
+        private void DeliveryWindowValidating(object sender, CancelEventArgs e)
+        {
+            try
+            {
+                if (txtDeliveryWindow.Modified)
+                {
+                    ManagementService.ADFSManager.SetDirty(true);
+                    int refr = Convert.ToInt32(txtDeliveryWindow.Text);
+                    if (string.IsNullOrEmpty(txtDeliveryWindow.Text))
+                        throw new Exception(res.CTRLNULLOREMPTYERROR);
+                    if ((refr < 60) || (refr > 600))
+                        throw new Exception(string.Format(res.CTRLINVALIDVALUE, "60", "600"));
+                    Config.DeliveryWindow = refr;
+                    errors.SetError(txtDeliveryWindow, "");
+                }
+            }
+            catch (Exception ex)
+            {
+                e.Cancel = true;
+                errors.SetError(txtDeliveryWindow, ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// DeliveryWindowValidated method implementation
+        /// </summary>
+        private void DeliveryWindowValidated(object sender, EventArgs e)
+        {
+            try
+            {
+                Config.DeliveryWindow = Convert.ToInt32(txtDeliveryWindow.Text);
+                ManagementService.ADFSManager.SetDirty(true);
+                errors.SetError(txtDeliveryWindow, "");
+            }
+            catch (Exception ex)
+            {
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
+                messageBoxParameters.Text = ex.Message;
+                messageBoxParameters.Buttons = MessageBoxButtons.OK;
+                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                this._snapin.Console.ShowDialog(messageBoxParameters);
+            }
+        }
+        #endregion
+
+        #region MaxRetries
+        /// <summary>
+        /// MaxRetriesValidating method implementation
+        /// </summary>
+        private void MaxRetriesValidating(object sender, CancelEventArgs e)
+        {
+            try
+            {
+                if (txtMaxRetries.Modified)
+                {
+                    ManagementService.ADFSManager.SetDirty(true);
+                    int refr = Convert.ToInt32(txtMaxRetries.Text);
+                    if (string.IsNullOrEmpty(txtMaxRetries.Text))
+                        throw new Exception(res.CTRLNULLOREMPTYERROR);
+                    if ((refr < 1) || (refr > 12))
+                        throw new Exception(string.Format(res.CTRLINVALIDVALUE, "1", "12"));
+                    Config.MaxRetries = refr;
+                    errors.SetError(txtMaxRetries, "");
+                }
+            }
+            catch (Exception ex)
+            {
+                e.Cancel = true;
+                errors.SetError(txtMaxRetries, ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// MaxRetriesValidated method implementation
+        /// </summary>
+        private void MaxRetriesValidated(object sender, EventArgs e)
+        {
+            try
+            {
+                ManagementService.ADFSManager.SetDirty(true);
+                Config.MaxRetries = Convert.ToInt32(txtMaxRetries.Text);
+                errors.SetError(txtMaxRetries, "");
+            }
+            catch (Exception ex)
+            {
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
+                messageBoxParameters.Text = ex.Message;
+                messageBoxParameters.Buttons = MessageBoxButtons.OK;
+                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                this._snapin.Console.ShowDialog(messageBoxParameters);
+            }
+        }
+        #endregion
+
+        /// <summary>
+        /// SelectedReplayLevelChanged method implementation
+        /// </summary>
+        private void SelectedReplayLevelChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                if (_view.AutoValidate != AutoValidate.Disable)
+                {
+                    Config.ReplayLevel = (ReplayLevel)cbReplayLevel.SelectedValue;
+                    ManagementService.ADFSManager.SetDirty(true);
+                    UpdateControlsLayouts();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
+                messageBoxParameters.Text = ex.Message;
+                messageBoxParameters.Buttons = MessageBoxButtons.OK;
+                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                this._snapin.Console.ShowDialog(messageBoxParameters);
+            }
+        }
+
+        /// <summary>
+        /// SelectedLibVersionChanged method implementation
+        /// </summary>
+        private void SelectedLibVersionChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                if (_view.AutoValidate != AutoValidate.Disable)
+                {
+                    Config.KeysConfig.KeyVersion = (SecretKeyVersion)cbLibVersion.SelectedValue;
+                    ManagementService.ADFSManager.SetDirty(true);
+                    UpdateControlsLayouts();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
+                messageBoxParameters.Text = ex.Message;
+                messageBoxParameters.Buttons = MessageBoxButtons.OK;
+                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                this._snapin.Console.ShowDialog(messageBoxParameters);
+            }
+        }
+
+        /// <summary>
+        /// XORValueValidated method implementation
+        /// </summary>
+        private void XORValueValidated(object sender, EventArgs e)
+        {
+            try
+            {
+                ManagementService.ADFSManager.SetDirty(true);
+                Config.KeysConfig.XORSecret = txtXORValue.Text;
+                errors.SetError(txtXORValue, "");
+            }
+            catch (Exception ex)
+            {
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
+                messageBoxParameters.Text = ex.Message;
+                messageBoxParameters.Buttons = MessageBoxButtons.OK;
+                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                this._snapin.Console.ShowDialog(messageBoxParameters);
+            }
+        }
+
+        /// <summary>
+        /// XORValueValidating method implementation
+        /// </summary>
+        private void XORValueValidating(object sender, CancelEventArgs e)
+        {
+            try
+            {
+                if (txtXORValue.Modified)
+                {
+                    ManagementService.ADFSManager.SetDirty(true);
+                    if (string.IsNullOrEmpty(txtXORValue.Text))
+                        throw new Exception(res.CTRLNULLOREMPTYERROR);
+                    Config.KeysConfig.XORSecret = txtXORValue.Text;
+                    errors.SetError(txtXORValue, "");
+                }
+            }
+            catch (Exception ex)
+            {
+                e.Cancel = true;
+                errors.SetError(txtXORValue, ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// SaveConfigLinkClicked event
+        /// </summary>
+        private void SaveConfigLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            if (_view != null)
+                _view.SaveData();
+        }
+
+        /// <summary>
+        /// CancelConfigLinkClicked event
+        /// </summary>
+        private void CancelConfigLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            if (_view != null)
+                _view.CancelData();
+        }
+    }
+
+    /// <summary>
+    /// SecurityConfigurationRNGControl class imlementation
+    /// </summary>
+    public partial class SecurityConfigurationRNGControl : Panel, IMMCRefreshData
+    {
+        private NamespaceSnapInBase _snapin;
+        private Panel _panel;
+        private Panel _txtpanel;
+        private ServiceSecurityRNGViewControl _view;
+        private bool _UpdateControlsLayouts;
+        private ErrorProvider errors;
+
+        private LinkLabel tblSaveConfig;
+        private LinkLabel tblCancelConfig;
+        private Panel _panelRNG;
+        private Label lblRNGKey;
+        private ComboBox cbKeyMode;
+
+        /// <summary>
+        /// ConfigurationControl Constructor
+        /// </summary>
+        public SecurityConfigurationRNGControl(ServiceSecurityRNGViewControl view, NamespaceSnapInBase snap)
+        {
+            _view = view;
+            _snapin = snap;
+            _panel = new Panel();
+            _txtpanel = new Panel();
+            BackColor = System.Drawing.SystemColors.Window;
+            AutoSize = false;
+        }
+
+        /// <summary>
+        /// OnCreateControl method override
+        /// </summary>
+        protected override void OnCreateControl()
+        {
+            base.OnCreateControl();
+            ManagementService.ADFSManager.ConfigurationStatusChanged += ConfigurationStatusChanged;
+            DoCreateControls();
+        }
+
+        /// <summary>
+        /// ConfigurationStatusChanged method implementation
+        /// </summary>
+        internal void ConfigurationStatusChanged(ADFSServiceManager mgr, ConfigOperationStatus status, Exception ex = null)
+        {
+            UpdateLayoutConfigStatus(status);
+            if (_view.IsNotifsEnabled())
+            {
+                if (status == ConfigOperationStatus.ConfigLoaded)
+                    DoRefreshData();
+            }
+            else
+                _panel.Refresh();
+        }
+
+        /// <summary>
+        /// UpdateLayoutConfigStatus method implementation
+        /// </summary>
+        private void UpdateLayoutConfigStatus(ConfigOperationStatus status)
+        {
+            switch (status)
+            {
+                case ConfigOperationStatus.ConfigInError:
+                    _panel.BackColor = Color.DarkRed;
+                    break;
+                case ConfigOperationStatus.ConfigSaved:
+                    _panel.BackColor = Color.Orange;
+                    break;
+                case ConfigOperationStatus.ConfigLoaded:
+                    _panel.BackColor = Color.Green;
+                    IExternalProvider _provider = RuntimeAuthProvider.GetProviderInstance(PreferredMethod.Code);
+                    if (!_provider.Enabled)
+                        _panel.BackColor = Color.DarkGray;
+                    break;
+                case ConfigOperationStatus.ConfigIsDirty:
+                    _panel.BackColor = Color.DarkOrange;
+                    break;
+                case ConfigOperationStatus.ConfigStopped:
+                    _panel.BackColor = Color.DarkGray;
+                    break;
+                default:
+                    _panel.BackColor = Color.Yellow;
+                    break;
+            }
+            return;
+        }
+
+        /// <summary>
+        /// Config property
+        /// </summary>
+        public MFAConfig Config
+        {
+            get
+            {
+                ManagementService.ADFSManager.EnsureLocalConfiguration();
+                return ManagementService.ADFSManager.Config;
+            }
+        }
+
+        /// <summary>
+        /// Initialize method implementation
+        /// </summary>
+        private void DoCreateControls()
+        {
+            this.SuspendLayout();
+            _view.AutoValidate = AutoValidate.Disable;
+            _view.CausesValidation = false;
+            try
+            {
+                _view.RefreshProviderInformation();
+
+                this.Dock = DockStyle.Top;
+                this.Height = 100;
+                this.Width = 400;
+                this.Margin = new Padding(30, 5, 30, 5);
+
+                _panel.Width = 20;
+                _panel.Height = 70;
+                this.Controls.Add(_panel);
+
+                _txtpanel.Left = 20;
+                _txtpanel.Width = this.Width - 20;
+                _txtpanel.Height = 70;
+                _txtpanel.BackColor = System.Drawing.SystemColors.Control;
+                this.Controls.Add(_txtpanel);
+
+                _panelRNG = new Panel();
+                _panelRNG.Left = 0;
+                _panelRNG.Top = 10;
+                _panelRNG.Height = 60;
+                _panelRNG.Width = 400;
+                _txtpanel.Controls.Add(_panelRNG);
+
+                Label lblRNG = new Label();
+                lblRNG.Text = "RNG (Random Number Generator)";
+                lblRNG.Left = 10;
+                lblRNG.Top = 0;
+                lblRNG.Width = 250;
+                _panelRNG.Controls.Add(lblRNG);
+
+                lblRNGKey = new Label();
+                lblRNGKey.Text = res.CTRLSECKEYGEN + " : ";
+                lblRNGKey.Left = 30;
+                lblRNGKey.Top = 27;
+                lblRNGKey.Width = 140;
+                _panelRNG.Controls.Add(lblRNGKey);
+
+                MMCSecurityKeyGeneratorList lgens = new MMCSecurityKeyGeneratorList();
+                cbKeyMode = new ComboBox();
+                cbKeyMode.DropDownStyle = ComboBoxStyle.DropDownList;
+                cbKeyMode.Left = 180;
+                cbKeyMode.Top = 25;
+                cbKeyMode.Width = 80;
+                _panelRNG.Controls.Add(cbKeyMode);
+
+                cbKeyMode.DataSource = lgens;
+                cbKeyMode.ValueMember = "ID";
+                cbKeyMode.DisplayMember = "Label";
+                cbKeyMode.SelectedValue = Config.KeysConfig.KeyGenerator;
+                cbKeyMode.SelectedIndexChanged += SelectedKeyGenChanged;
+
+                tblSaveConfig = new LinkLabel();
+                tblSaveConfig.Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPESAVE;
+                tblSaveConfig.Left = 20;
+                tblSaveConfig.Top = 80;
+                tblSaveConfig.Width = 80;
+                tblSaveConfig.LinkClicked += SaveConfigLinkClicked;
+                tblSaveConfig.TabStop = true;
+                this.Controls.Add(tblSaveConfig);
+
+                tblCancelConfig = new LinkLabel();
+                tblCancelConfig.Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPECANCEL;
+                tblCancelConfig.Left = 110;
+                tblCancelConfig.Top = 80;
+                tblCancelConfig.Width = 80;
+                tblCancelConfig.LinkClicked += CancelConfigLinkClicked;
+                tblCancelConfig.TabStop = true;
+                this.Controls.Add(tblCancelConfig);
+
+                errors = new ErrorProvider(_view);
+                errors.BlinkStyle = ErrorBlinkStyle.NeverBlink;
+            }
+            finally
+            {
+                UpdateLayoutConfigStatus(ManagementService.ADFSManager.ConfigurationStatus);
+                UpdateControlsLayouts();
+                ValidateData();
+                _view.AutoValidate = AutoValidate.EnableAllowFocusChange;
+                _view.CausesValidation = true;
+                this.ResumeLayout();
+            }
+        }
+
+        /// <summary>
+        /// DoRefreshData method implmentation
+        /// </summary>
+        public void DoRefreshData()
+        {
+            this.SuspendLayout();
+            _view.AutoValidate = AutoValidate.Disable;
+            _view.CausesValidation = false;
+            try
+            {
+                cbKeyMode.SelectedValue = Config.KeysConfig.KeyGenerator;
+
+                tblSaveConfig.Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPESAVE;
+                tblCancelConfig.Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPECANCEL;
+                lblRNGKey.Text = res.CTRLSECKEYLENGTH + " : ";
+
+            }
+            finally
+            {
+                UpdateLayoutConfigStatus(ManagementService.ADFSManager.ConfigurationStatus);
+                UpdateControlsLayouts();
+                ValidateData();
+                _view.AutoValidate = AutoValidate.EnableAllowFocusChange;
+                _view.CausesValidation = true;
+                this.ResumeLayout();
+            }
+        }
+
+        /// <summary>
+        /// IsValidData
+        /// </summary>
+        private void ValidateData()
+        {
+
+        }
+
+        /// <summary>
+        /// UpdateControlsLayouts method implementation
+        /// </summary>
+        private void UpdateControlsLayouts()
+        {
+            if (_UpdateControlsLayouts)
+                return;
+            _UpdateControlsLayouts = true;
+            try
+            {
+            }
+            finally
+            {
+                _UpdateControlsLayouts = false;
+            }
+        }
+
+
+        /// <summary>
+        /// OnResize method implmentation
+        /// </summary>
+        protected override void OnResize(EventArgs eventargs)
+        {
+            if (_txtpanel != null)
+                _txtpanel.Width = this.Width - 20;
+        }
+
         /// <summary>
         /// SelectedKeyGenChanged method
         /// </summary>
@@ -8093,6 +8505,328 @@ namespace Neos.IdentityServer.Console.Controls
                 this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
+
+        /// <summary>
+        /// SaveConfigLinkClicked event
+        /// </summary>
+        private void SaveConfigLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            if (_view != null)
+                _view.SaveData();
+        }
+
+        /// <summary>
+        /// CancelConfigLinkClicked event
+        /// </summary>
+        private void CancelConfigLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            if (_view != null)
+                _view.CancelData();
+        }
+    }
+
+    /// <summary>
+    /// SecurityConfigurationRSAControl class imlementation
+    /// </summary>
+    public partial class SecurityConfigurationRSAControl : Panel, IMMCRefreshData
+    {
+        private NamespaceSnapInBase _snapin;
+        private Panel _panel;
+        private Panel _txtpanel;
+        private ServiceSecurityRSAViewControl _view;
+        private bool _UpdateControlsLayouts;
+        private ErrorProvider errors;
+
+        private NumericUpDown txtCERTDuration;
+        private Panel _panelRSA;
+        private TextBox txtRSAThumb;
+        private Button btnRSACert;
+
+        private LinkLabel tblSaveConfig;
+        private LinkLabel tblCancelConfig;
+        private Label lblRSAKey;
+        private Label lblCERTDuration;
+
+
+        /// <summary>
+        /// ConfigurationControl Constructor
+        /// </summary>
+        public SecurityConfigurationRSAControl(ServiceSecurityRSAViewControl view, NamespaceSnapInBase snap)
+        {
+            _view = view;
+            _snapin = snap;
+            _panel = new Panel();
+            _txtpanel = new Panel();
+            BackColor = System.Drawing.SystemColors.Window;
+            AutoSize = false;
+        }
+
+        /// <summary>
+        /// OnCreateControl method override
+        /// </summary>
+        protected override void OnCreateControl()
+        {
+            base.OnCreateControl();
+            ManagementService.ADFSManager.ConfigurationStatusChanged += ConfigurationStatusChanged;
+            DoCreateControls();
+        }
+
+        /// <summary>
+        /// ConfigurationStatusChanged method implementation
+        /// </summary>
+        internal void ConfigurationStatusChanged(ADFSServiceManager mgr, ConfigOperationStatus status, Exception ex = null)
+        {
+            UpdateLayoutConfigStatus(status);
+            if (_view.IsNotifsEnabled())
+            {
+                if (status == ConfigOperationStatus.ConfigLoaded)
+                    DoRefreshData();
+            }
+            else
+                _panel.Refresh();
+        }
+
+        /// <summary>
+        /// UpdateLayoutConfigStatus method implementation
+        /// </summary>
+        private void UpdateLayoutConfigStatus(ConfigOperationStatus status)
+        {
+            switch (status)
+            {
+                case ConfigOperationStatus.ConfigInError:
+                    _panel.BackColor = Color.DarkRed;
+                    break;
+                case ConfigOperationStatus.ConfigSaved:
+                    _panel.BackColor = Color.Orange;
+                    break;
+                case ConfigOperationStatus.ConfigLoaded:
+                    _panel.BackColor = Color.Green;
+                    IExternalProvider _provider = RuntimeAuthProvider.GetProviderInstance(PreferredMethod.Code);
+                    if (!_provider.Enabled)
+                        _panel.BackColor = Color.DarkGray;
+                    break;
+                case ConfigOperationStatus.ConfigIsDirty:
+                    _panel.BackColor = Color.DarkOrange;
+                    break;
+                case ConfigOperationStatus.ConfigStopped:
+                    _panel.BackColor = Color.DarkGray;
+                    break;
+                default:
+                    _panel.BackColor = Color.Yellow;
+                    break;
+            }
+            return;
+        }
+
+        /// <summary>
+        /// Config property
+        /// </summary>
+        public MFAConfig Config
+        {
+            get
+            {
+                ManagementService.ADFSManager.EnsureLocalConfiguration();
+                return ManagementService.ADFSManager.Config;
+            }
+        }
+
+        /// <summary>
+        /// Initialize method implementation
+        /// </summary>
+        private void DoCreateControls()
+        {
+            this.SuspendLayout();
+            _view.AutoValidate = AutoValidate.Disable;
+            _view.CausesValidation = false;
+            try
+            {
+               // _view.RefreshProviderInformation();
+
+                this.Dock = DockStyle.Top;
+                this.Height = 150;
+                this.Width = 1050;
+                this.Margin = new Padding(30, 5, 30, 5);
+
+                _panel.Width = 20;
+                _panel.Height = 110;
+                this.Controls.Add(_panel);
+
+                _txtpanel.Left = 20;
+                _txtpanel.Width = this.Width - 20;
+                _txtpanel.Height = 110;
+                _txtpanel.BackColor = System.Drawing.SystemColors.Control;
+                this.Controls.Add(_txtpanel);
+
+                _panelRSA = new Panel();
+                _panelRSA.Left = 0;
+                _panelRSA.Top = 10;
+                _panelRSA.Height = 100;
+                _panelRSA.Width = 1050;
+                _txtpanel.Controls.Add(_panelRSA);
+
+                Label lblRSA = new Label();
+                lblRSA.Text = "RSA (Rivest Shamir Adleman)";
+                lblRSA.Left = 10;
+                lblRSA.Top = 0;
+                lblRSA.Width = 250;
+                _panelRSA.Controls.Add(lblRSA);
+
+                lblCERTDuration = new Label();
+                lblCERTDuration.Text = res.CTRLSECCERTIFDURATION + " : ";
+                lblCERTDuration.Left = 30;
+                lblCERTDuration.Top = 27;
+                lblCERTDuration.Width = 140;
+                _panelRSA.Controls.Add(lblCERTDuration);
+
+                txtCERTDuration = new NumericUpDown();
+                txtCERTDuration.Left = 180;
+                txtCERTDuration.Top = 24;
+                txtCERTDuration.Width = 50;
+                txtCERTDuration.TextAlign = HorizontalAlignment.Center;
+                txtCERTDuration.Value = Config.KeysConfig.CertificateValidity;
+                txtCERTDuration.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
+                txtCERTDuration.Maximum = new decimal(new int[] { 9999, 0, 0, 0 });
+                txtCERTDuration.ValueChanged += CertValidityChanged;
+                _panelRSA.Controls.Add(txtCERTDuration);
+
+
+                lblRSAKey = new Label();
+                lblRSAKey.Text = res.CTRLSECTHUMPRINT + " : ";
+                lblRSAKey.Left = 30;
+                lblRSAKey.Top = 59;
+                lblRSAKey.Width = 140;
+                _panelRSA.Controls.Add(lblRSAKey);
+
+                txtRSAThumb = new TextBox();
+                if (!string.IsNullOrEmpty(Config.KeysConfig.CertificateThumbprint))
+                    txtRSAThumb.Text = Config.KeysConfig.CertificateThumbprint.ToUpper();
+                txtRSAThumb.Left = 180;
+                txtRSAThumb.Top = 55;
+                txtRSAThumb.Width = 300;
+                txtRSAThumb.Validating += RSAThumbValidating;
+                txtRSAThumb.Validated += RSAThumbValidated;
+                _panelRSA.Controls.Add(txtRSAThumb);
+
+                btnRSACert = new Button();
+                btnRSACert.Text = res.CTRLSECNEWCERT;
+                btnRSACert.Left = 680;
+                btnRSACert.Top = 53;
+                btnRSACert.Width = 250;
+                btnRSACert.Click += btnRSACertClick;
+                _panelRSA.Controls.Add(btnRSACert);
+
+
+                tblSaveConfig = new LinkLabel();
+                tblSaveConfig.Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPESAVE;
+                tblSaveConfig.Left = 20;
+                tblSaveConfig.Top = 120;
+                tblSaveConfig.Width = 80;
+                tblSaveConfig.LinkClicked += SaveConfigLinkClicked;
+                tblSaveConfig.TabStop = true;
+                this.Controls.Add(tblSaveConfig);
+
+                tblCancelConfig = new LinkLabel();
+                tblCancelConfig.Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPECANCEL;
+                tblCancelConfig.Left = 110;
+                tblCancelConfig.Top = 120;
+                tblCancelConfig.Width = 80;
+                tblCancelConfig.LinkClicked += CancelConfigLinkClicked;
+                tblCancelConfig.TabStop = true;
+                this.Controls.Add(tblCancelConfig);
+
+                errors = new ErrorProvider(_view);
+                errors.BlinkStyle = ErrorBlinkStyle.NeverBlink;
+            }
+            finally
+            {
+                UpdateLayoutConfigStatus(ManagementService.ADFSManager.ConfigurationStatus);
+                UpdateControlsLayouts();
+                ValidateData();
+                _view.AutoValidate = AutoValidate.EnableAllowFocusChange;
+                _view.CausesValidation = true;
+                this.ResumeLayout();
+            }
+        }
+
+        /// <summary>
+        /// DoRefreshData method implmentation
+        /// </summary>
+        public void DoRefreshData()
+        {
+            this.SuspendLayout();
+            _view.AutoValidate = AutoValidate.Disable;
+            _view.CausesValidation = false;
+            try
+            {
+                txtCERTDuration.Value = Config.KeysConfig.CertificateValidity;
+
+                if (!string.IsNullOrEmpty(Config.KeysConfig.CertificateThumbprint))
+                    txtRSAThumb.Text = Config.KeysConfig.CertificateThumbprint.ToUpper();
+                else
+                    txtRSAThumb.Text = string.Empty;
+
+                tblSaveConfig.Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPESAVE;
+                tblCancelConfig.Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPECANCEL;
+
+                btnRSACert.Text = res.CTRLSECNEWCERT;
+                lblRSAKey.Text = res.CTRLSECTHUMPRINT + " : ";
+                lblCERTDuration.Text = res.CTRLSECCERTIFDURATION + " : ";
+            }
+            finally
+            {
+                UpdateLayoutConfigStatus(ManagementService.ADFSManager.ConfigurationStatus);
+                UpdateControlsLayouts();
+                ValidateData();
+                _view.AutoValidate = AutoValidate.EnableAllowFocusChange;
+                _view.CausesValidation = true;
+                this.ResumeLayout();
+            }
+        }
+
+        /// <summary>
+        /// IsValidData
+        /// </summary>
+        private void ValidateData()
+        {
+            if (txtRSAThumb.Enabled)
+            {
+                if (string.IsNullOrEmpty(txtRSAThumb.Text))
+                    errors.SetError(txtRSAThumb, res.CTRLNULLOREMPTYERROR);
+                else if (!ManagementService.ADFSManager.CheckCertificate(txtRSAThumb.Text))
+                    errors.SetError(txtRSAThumb, res.CTRLSECINVALIDCERT);
+                else
+                    errors.SetError(txtRSAThumb, "");
+            }
+            else
+                errors.SetError(txtRSAThumb, "");
+        }
+
+        /// <summary>
+        /// UpdateControlsLayouts method implementation
+        /// </summary>
+        private void UpdateControlsLayouts()
+        {
+            if (_UpdateControlsLayouts)
+                return;
+            _UpdateControlsLayouts = true;
+            try
+            {
+            }
+            finally
+            {
+                _UpdateControlsLayouts = false;
+            }
+        }
+
+
+        /// <summary>
+        /// OnResize method implmentation
+        /// </summary>
+        protected override void OnResize(EventArgs eventargs)
+        {
+            if (_txtpanel != null)
+                _txtpanel.Width = this.Width - 20;
+        }        
 
         /// <summary>
         /// CertValidityChanged method 
@@ -8166,6 +8900,551 @@ namespace Neos.IdentityServer.Console.Controls
                 messageBoxParameters.Icon = MessageBoxIcon.Error;
                 this._snapin.Console.ShowDialog(messageBoxParameters);
             }
+        }
+
+        /// <summary>
+        /// btnRSACertClick method implmentation
+        /// </summary>
+        private void btnRSACertClick(object sender, EventArgs e)
+        {
+            try
+            {
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
+                messageBoxParameters.Text = res.CTRLSECRSAGENERATE;
+                messageBoxParameters.Buttons = MessageBoxButtons.OKCancel;
+                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                bool result = (this._snapin.Console.ShowDialog(messageBoxParameters) == DialogResult.OK);
+                Cursor curs = this.Cursor;
+                try
+                {
+                    this.Cursor = Cursors.WaitCursor;
+                    if (result)
+                    {
+                        this.txtRSAThumb.Text = ManagementService.ADFSManager.RegisterNewRSACertificate(null, Config.KeysConfig.CertificateValidity);
+
+                        MessageBoxParameters messageBoxParameters2 = new MessageBoxParameters();
+                        messageBoxParameters2.Text = string.Format(res.CTRLSECNEWCERTCREATED, this.txtRSAThumb.Text);
+                        messageBoxParameters2.Buttons = MessageBoxButtons.OK;
+                        messageBoxParameters2.Icon = MessageBoxIcon.Information;
+                        this._snapin.Console.ShowDialog(messageBoxParameters2);
+
+                    }
+                }
+                finally
+                {
+                    this.Cursor = curs;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
+                messageBoxParameters.Text = ex.Message;
+                messageBoxParameters.Buttons = MessageBoxButtons.OK;
+                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                this._snapin.Console.ShowDialog(messageBoxParameters);
+            }
+        }
+
+        /// <summary>
+        /// SaveConfigLinkClicked event
+        /// </summary>
+        private void SaveConfigLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            if (_view != null)
+                _view.SaveData();
+        }
+
+        /// <summary>
+        /// CancelConfigLinkClicked event
+        /// </summary>
+        private void CancelConfigLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            if (_view != null)
+                _view.CancelData();
+        }
+    }
+
+    /// <summary>
+    /// SecurityConfigurationRSAControl class imlementation
+    /// </summary>
+    public partial class SecurityConfigurationRSAXControl : Panel, IMMCRefreshData
+    {
+        private NamespaceSnapInBase _snapin;
+        private Panel _panel;
+        private Panel _txtpanel;
+        private ServiceSecurityRSAXViewControl _view;
+        private bool _UpdateControlsLayouts;
+        private ErrorProvider errors;
+
+
+        private Panel _panelCUSTOM;
+        private TextBox txtDLLCUST;
+        private TextBox txtParams;
+        private Button btnCUSTOMDB;
+        private CheckBox chkUseAlwaysEncryptSQL;
+        private TextBox txtEncryptKeyName;
+        private NumericUpDown txtCertificateDuration;
+        private CheckBox chkReuseCertificate;
+        private TextBox txtCertificateThumbPrint;
+        private Button btnCreateCryptedDB;
+        private TextBox txtConnectionString;
+        private LinkLabel tblSaveConfig;
+        private LinkLabel tblCancelConfig;
+        private Label lblCertificateThumbPrint;
+        private Label lblCertificateDuration;
+        private Label lblEncryptKeyName;
+        private Label lblParams;
+        private Label lblConnectionString;
+        private Label lblDLL;
+
+        /// <summary>
+        /// ConfigurationControl Constructor
+        /// </summary>
+        public SecurityConfigurationRSAXControl(ServiceSecurityRSAXViewControl view, NamespaceSnapInBase snap)
+        {
+            _view = view;
+            _snapin = snap;
+            _panel = new Panel();
+            _txtpanel = new Panel();
+            BackColor = System.Drawing.SystemColors.Window;
+            AutoSize = false;
+        }
+
+        /// <summary>
+        /// OnCreateControl method override
+        /// </summary>
+        protected override void OnCreateControl()
+        {
+            base.OnCreateControl();
+            ManagementService.ADFSManager.ConfigurationStatusChanged += ConfigurationStatusChanged;
+            DoCreateControls();
+        }
+
+        /// <summary>
+        /// ConfigurationStatusChanged method implementation
+        /// </summary>
+        internal void ConfigurationStatusChanged(ADFSServiceManager mgr, ConfigOperationStatus status, Exception ex = null)
+        {
+            UpdateLayoutConfigStatus(status);
+            if (_view.IsNotifsEnabled())
+            {
+                if (status == ConfigOperationStatus.ConfigLoaded)
+                    DoRefreshData();
+            }
+            else
+                _panel.Refresh();
+        }
+
+        /// <summary>
+        /// UpdateLayoutConfigStatus method implementation
+        /// </summary>
+        private void UpdateLayoutConfigStatus(ConfigOperationStatus status)
+        {
+            switch (status)
+            {
+                case ConfigOperationStatus.ConfigInError:
+                    _panel.BackColor = Color.DarkRed;
+                    break;
+                case ConfigOperationStatus.ConfigSaved:
+                    _panel.BackColor = Color.Orange;
+                    break;
+                case ConfigOperationStatus.ConfigLoaded:
+                    _panel.BackColor = Color.Green;
+                    IExternalProvider _provider = RuntimeAuthProvider.GetProviderInstance(PreferredMethod.Code);
+                    if (!_provider.Enabled)
+                        _panel.BackColor = Color.DarkGray;
+                    break;
+                case ConfigOperationStatus.ConfigIsDirty:
+                    _panel.BackColor = Color.DarkOrange;
+                    break;
+                case ConfigOperationStatus.ConfigStopped:
+                    _panel.BackColor = Color.DarkGray;
+                    break;
+                default:
+                    _panel.BackColor = Color.Yellow;
+                    break;
+            }
+            return;
+        }
+
+        /// <summary>
+        /// Config property
+        /// </summary>
+        public MFAConfig Config
+        {
+            get
+            {
+                ManagementService.ADFSManager.EnsureLocalConfiguration();
+                return ManagementService.ADFSManager.Config;
+            }
+        }
+
+        /// <summary>
+        /// Initialize method implementation
+        /// </summary>
+        private void DoCreateControls()
+        {
+            this.SuspendLayout();
+            _view.AutoValidate = AutoValidate.Disable;
+            _view.CausesValidation = false;
+            try
+            {
+               // _view.RefreshProviderInformation();
+
+                this.Dock = DockStyle.Top;
+                this.Height = 410;
+                this.Width = 1050;
+                this.Margin = new Padding(30, 5, 30, 5);
+
+                _panel.Width = 20;
+                _panel.Height = 330;
+                this.Controls.Add(_panel);
+
+                _txtpanel.Left = 20;
+                _txtpanel.Width = this.Width - 20;
+                _txtpanel.Height = 330;
+                _txtpanel.BackColor = System.Drawing.SystemColors.Control;
+                this.Controls.Add(_txtpanel);
+
+                _panelCUSTOM = new Panel();
+                _panelCUSTOM.Left = 0;
+                _panelCUSTOM.Top = 10;
+                _panelCUSTOM.Height = 320;
+                _panelCUSTOM.Width = 1050;
+                _txtpanel.Controls.Add(_panelCUSTOM);
+
+                Label lblRSACUST = new Label();
+                lblRSACUST.Text = "RSA CUSTOM (One certificate per user)";
+                lblRSACUST.Left = 10;
+                lblRSACUST.Top = 0;
+                lblRSACUST.Width = 250;
+                _panelCUSTOM.Controls.Add(lblRSACUST);
+
+                lblDLL = new Label();
+                lblDLL.Text = res.CTRLSECASSEMBLY + " : ";
+                lblDLL.Left = 30;
+                lblDLL.Top = 27;
+                lblDLL.Width = 150;
+                _panelCUSTOM.Controls.Add(lblDLL);
+
+                txtDLLCUST = new TextBox();
+                txtDLLCUST.Text = Config.KeysConfig.ExternalKeyManager.FullQualifiedImplementation;
+                txtDLLCUST.Left = 180;
+                txtDLLCUST.Top = 23;
+                txtDLLCUST.Width = 820;
+                txtDLLCUST.Validating += DLLValidating;
+                txtDLLCUST.Validated += DLLValidated;
+                _panelCUSTOM.Controls.Add(txtDLLCUST);
+
+                lblConnectionString = new Label();
+                lblConnectionString.Text = res.CTRLSQLCONNECTSTR + " : ";
+                lblConnectionString.Left = 30;
+                lblConnectionString.Top = 58;
+                lblConnectionString.Width = 150;
+                _panelCUSTOM.Controls.Add(lblConnectionString);
+
+                txtConnectionString = new TextBox();
+                txtConnectionString.Text = Config.KeysConfig.ExternalKeyManager.ConnectionString;
+                txtConnectionString.Left = 180;
+                txtConnectionString.Top = 54;
+                txtConnectionString.Width = 820;
+                txtConnectionString.Enabled = !Config.UseActiveDirectory;
+                txtConnectionString.Validating += ConnectionStringValidating;
+                txtConnectionString.Validated += ConnectionStringValidated;
+                _panelCUSTOM.Controls.Add(txtConnectionString);
+
+                lblParams = new Label();
+                lblParams.Text = res.CTRLSECPARAMS + " : ";
+                lblParams.Left = 30;
+                lblParams.Top = 85;
+                lblParams.Width = 150;
+                _panelCUSTOM.Controls.Add(lblParams);
+
+                txtParams = new TextBox();
+                txtParams.Text = Config.KeysConfig.ExternalKeyManager.Parameters.Data;
+                txtParams.Left = 180;
+                txtParams.Top = 85;
+                txtParams.Width = 820;
+                txtParams.Height = 60;
+                txtParams.Multiline = true;
+                txtParams.Validating += ParamsValidating;
+                txtParams.Validated += ParamsValidated;
+                _panelCUSTOM.Controls.Add(txtParams);
+
+                btnCUSTOMDB = new Button();
+                btnCUSTOMDB.Text = res.CTRLSECNEWDATABASE;
+                btnCUSTOMDB.Left = 680;
+                btnCUSTOMDB.Top = 160;
+                btnCUSTOMDB.Width = 250;
+                btnCUSTOMDB.Click += btnCUSTOMDBClick;
+                _panelCUSTOM.Controls.Add(btnCUSTOMDB);
+
+                chkUseAlwaysEncryptSQL = new CheckBox();
+                chkUseAlwaysEncryptSQL.Text = res.CTRLSQLCRYPTUSING;
+                chkUseAlwaysEncryptSQL.Checked = Config.KeysConfig.ExternalKeyManager.IsAlwaysEncrypted;
+                chkUseAlwaysEncryptSQL.Enabled = !Config.UseActiveDirectory;
+                chkUseAlwaysEncryptSQL.Left = 10;
+                chkUseAlwaysEncryptSQL.Top = 161;
+                chkUseAlwaysEncryptSQL.Width = 450;
+                chkUseAlwaysEncryptSQL.CheckedChanged += UseSQLCryptCheckedChanged;
+                _panelCUSTOM.Controls.Add(chkUseAlwaysEncryptSQL);
+
+                lblEncryptKeyName = new Label();
+                lblEncryptKeyName.Text = res.CTRLSQLENCRYPTNAME + " : ";
+                lblEncryptKeyName.Left = 50;
+                lblEncryptKeyName.Top = 192;
+                lblEncryptKeyName.Width = 150;
+                _panelCUSTOM.Controls.Add(lblEncryptKeyName);
+
+                txtEncryptKeyName = new TextBox();
+                txtEncryptKeyName.Text = Config.KeysConfig.ExternalKeyManager.KeyName;
+                txtEncryptKeyName.Left = 210;
+                txtEncryptKeyName.Top = 188;
+                txtEncryptKeyName.Width = 100;
+                txtEncryptKeyName.Enabled = Config.KeysConfig.ExternalKeyManager.IsAlwaysEncrypted;
+                txtEncryptKeyName.Validating += EncryptKeyNameValidating;
+                txtEncryptKeyName.Validated += EncryptKeyNameValidated;
+                _panelCUSTOM.Controls.Add(txtEncryptKeyName);
+
+                lblCertificateDuration = new Label();
+                lblCertificateDuration.Text = res.CTRLSECCERTIFDURATION + " : ";
+                lblCertificateDuration.Left = 50;
+                lblCertificateDuration.Top = 223;
+                lblCertificateDuration.Width = 150;
+                _panelCUSTOM.Controls.Add(lblCertificateDuration);
+
+                txtCertificateDuration = new NumericUpDown();
+                txtCertificateDuration.Left = 210;
+                txtCertificateDuration.Top = 219;
+                txtCertificateDuration.Width = 50;
+                txtCertificateDuration.TextAlign = HorizontalAlignment.Center;
+                txtCertificateDuration.Value = Config.KeysConfig.ExternalKeyManager.CertificateValidity;
+                txtCertificateDuration.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
+                txtCertificateDuration.Maximum = new decimal(new int[] { 9999, 0, 0, 0 });
+                txtCertificateDuration.ValueChanged += CertCryptValidityChanged;
+                txtCertificateDuration.Enabled = Config.KeysConfig.ExternalKeyManager.IsAlwaysEncrypted;
+                _panelCUSTOM.Controls.Add(txtCertificateDuration);
+
+                chkReuseCertificate = new CheckBox();
+                chkReuseCertificate.Text = res.CTRLSQLREUSECERT;
+                chkReuseCertificate.Checked = Config.KeysConfig.ExternalKeyManager.CertReuse;
+                chkReuseCertificate.Enabled = Config.KeysConfig.ExternalKeyManager.IsAlwaysEncrypted;
+                chkReuseCertificate.Left = 50;
+                chkReuseCertificate.Top = 254;
+                chkReuseCertificate.Width = 450;
+                chkReuseCertificate.CheckedChanged += UseSQLReuseCertCheckedChanged;
+                _panelCUSTOM.Controls.Add(chkReuseCertificate);
+
+                lblCertificateThumbPrint = new Label();
+                lblCertificateThumbPrint.Text = res.CTRLSQLTHUMBPRINT + " : ";
+                lblCertificateThumbPrint.Left = 100;
+                lblCertificateThumbPrint.Top = 285;
+                lblCertificateThumbPrint.Width = 150;
+                _panelCUSTOM.Controls.Add(lblCertificateThumbPrint);
+
+                txtCertificateThumbPrint = new TextBox();
+                if (!string.IsNullOrEmpty(Config.KeysConfig.ExternalKeyManager.ThumbPrint))
+                    txtCertificateThumbPrint.Text = Config.KeysConfig.ExternalKeyManager.ThumbPrint.ToUpper();
+                txtCertificateThumbPrint.Left = 260;
+                txtCertificateThumbPrint.Top = 281;
+                txtCertificateThumbPrint.Width = 300;
+                txtCertificateThumbPrint.Enabled = (Config.KeysConfig.ExternalKeyManager.IsAlwaysEncrypted && Config.KeysConfig.ExternalKeyManager.CertReuse);
+                txtCertificateThumbPrint.Validating += CertificateThumbPrintValidating;
+                txtCertificateThumbPrint.Validated += CertificateThumbPrintValidated;
+                _panelCUSTOM.Controls.Add(txtCertificateThumbPrint);
+
+                btnCreateCryptedDB = new Button();
+                btnCreateCryptedDB.Text = res.CTRLSECNEWCRYPTEDDATABASE;
+                btnCreateCryptedDB.Left = 680;
+                btnCreateCryptedDB.Top = 281;
+                btnCreateCryptedDB.Width = 250;
+                btnCreateCryptedDB.Enabled = Config.KeysConfig.ExternalKeyManager.IsAlwaysEncrypted;
+                btnCreateCryptedDB.Click += btnCUSTOMCRYPTEDDBClick;
+                _panelCUSTOM.Controls.Add(btnCreateCryptedDB);
+
+                tblSaveConfig = new LinkLabel();
+                tblSaveConfig.Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPESAVE;
+                tblSaveConfig.Left = 20;
+                tblSaveConfig.Top = 340;
+                tblSaveConfig.Width = 80;
+                tblSaveConfig.LinkClicked += SaveConfigLinkClicked;
+                tblSaveConfig.TabStop = true;
+                this.Controls.Add(tblSaveConfig);
+
+                tblCancelConfig = new LinkLabel();
+                tblCancelConfig.Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPECANCEL;
+                tblCancelConfig.Left = 110;
+                tblCancelConfig.Top = 340;
+                tblCancelConfig.Width = 80;
+                tblCancelConfig.LinkClicked += CancelConfigLinkClicked;
+                tblCancelConfig.TabStop = true;
+                this.Controls.Add(tblCancelConfig);
+
+                errors = new ErrorProvider(_view);
+                errors.BlinkStyle = ErrorBlinkStyle.NeverBlink;
+            }
+            finally
+            {
+                UpdateLayoutConfigStatus(ManagementService.ADFSManager.ConfigurationStatus);
+                UpdateControlsLayouts();
+                ValidateData();
+                _view.AutoValidate = AutoValidate.EnableAllowFocusChange;
+                _view.CausesValidation = true;
+                this.ResumeLayout();
+            }
+        }
+
+        /// <summary>
+        /// DoRefreshData method implmentation
+        /// </summary>
+        public void DoRefreshData()
+        {
+            this.SuspendLayout();
+            _view.AutoValidate = AutoValidate.Disable;
+            _view.CausesValidation = false;
+            try
+            {
+                txtDLLCUST.Text = Config.KeysConfig.ExternalKeyManager.FullQualifiedImplementation;
+                txtConnectionString.Text = Config.KeysConfig.ExternalKeyManager.ConnectionString;
+                txtParams.Text = Config.KeysConfig.ExternalKeyManager.Parameters.Data;
+
+                chkUseAlwaysEncryptSQL.Checked = Config.KeysConfig.ExternalKeyManager.IsAlwaysEncrypted;
+
+                txtEncryptKeyName.Text = Config.KeysConfig.ExternalKeyManager.KeyName;
+                txtEncryptKeyName.Enabled = Config.KeysConfig.ExternalKeyManager.IsAlwaysEncrypted;
+
+                txtCertificateDuration.Value = Config.KeysConfig.ExternalKeyManager.CertificateValidity;
+                txtCertificateDuration.Enabled = Config.KeysConfig.ExternalKeyManager.IsAlwaysEncrypted;
+
+                chkReuseCertificate.Checked = Config.KeysConfig.ExternalKeyManager.CertReuse;
+                chkReuseCertificate.Enabled = Config.KeysConfig.ExternalKeyManager.IsAlwaysEncrypted;
+
+                if (!string.IsNullOrEmpty(Config.KeysConfig.ExternalKeyManager.ThumbPrint))
+                    txtCertificateThumbPrint.Text = Config.KeysConfig.ExternalKeyManager.ThumbPrint.ToUpper();
+                else
+                    txtCertificateThumbPrint.Text = string.Empty;
+
+                txtCertificateThumbPrint.Enabled = (Config.KeysConfig.ExternalKeyManager.IsAlwaysEncrypted && Config.KeysConfig.ExternalKeyManager.CertReuse);
+
+                btnCreateCryptedDB.Enabled = Config.KeysConfig.ExternalKeyManager.IsAlwaysEncrypted;
+
+                tblSaveConfig.Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPESAVE;
+                tblCancelConfig.Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPECANCEL;
+
+                btnCreateCryptedDB.Text = res.CTRLSECNEWCRYPTEDDATABASE;
+                lblCertificateThumbPrint.Text = res.CTRLSQLTHUMBPRINT + " : ";
+                chkReuseCertificate.Text = res.CTRLSQLREUSECERT;
+                lblCertificateDuration.Text = res.CTRLSECCERTIFDURATION + " : ";
+                lblEncryptKeyName.Text = res.CTRLSQLENCRYPTNAME + " : ";
+                chkUseAlwaysEncryptSQL.Text = res.CTRLSQLCRYPTUSING;
+                btnCUSTOMDB.Text = res.CTRLSECNEWDATABASE;
+                lblParams.Text = res.CTRLSECPARAMS + " : ";
+                lblConnectionString.Text = res.CTRLSQLCONNECTSTR + " : ";
+                lblDLL.Text = res.CTRLSECASSEMBLY + " : ";
+            }
+            finally
+            {
+                UpdateLayoutConfigStatus(ManagementService.ADFSManager.ConfigurationStatus);
+                UpdateControlsLayouts();
+                ValidateData();
+                _view.AutoValidate = AutoValidate.EnableAllowFocusChange;
+                _view.CausesValidation = true;
+                this.ResumeLayout();
+            }
+        }
+
+        /// <summary>
+        /// IsValidData
+        /// </summary>
+        private void ValidateData()
+        {
+            if (string.IsNullOrEmpty(txtDLLCUST.Text))
+                errors.SetError(txtDLLCUST, res.CTRLNULLOREMPTYERROR);
+            else if (!AssemblyParser.CheckKeysAssembly(txtDLLCUST.Text))
+                errors.SetError(txtDLLCUST, res.CTRLSECINVALIDEXTERROR);
+            else
+                errors.SetError(txtDLLCUST, "");
+
+            if (txtConnectionString.Enabled)
+            {
+                if (!ManagementService.CheckKeysConnection(txtConnectionString.Text))
+                    errors.SetError(txtConnectionString, res.CTRLSQLCONNECTSTRERROR);
+                else
+                    errors.SetError(txtConnectionString, "");
+            }
+            else
+                errors.SetError(txtConnectionString, "");
+
+            if (txtEncryptKeyName.Enabled)
+            {
+                if (string.IsNullOrEmpty(txtEncryptKeyName.Text))
+                    errors.SetError(txtEncryptKeyName, res.CTRLNULLOREMPTYERROR);
+                else
+                    errors.SetError(txtEncryptKeyName, "");
+            }
+            else
+                errors.SetError(txtEncryptKeyName, "");
+
+            if ((chkUseAlwaysEncryptSQL.Checked) && (chkReuseCertificate.Checked))
+            {
+                if (txtCertificateThumbPrint.Enabled)
+                {
+                    if (!ManagementService.ADFSManager.CheckCertificate(txtCertificateThumbPrint.Text))
+                        errors.SetError(txtCertificateThumbPrint, String.Format(res.CTRLSQLINVALIDCERTERROR, txtCertificateThumbPrint.Text));
+                    else
+                        errors.SetError(txtCertificateThumbPrint, "");
+                }
+                else
+                    errors.SetError(txtCertificateThumbPrint, "");
+            }
+            else
+                errors.SetError(txtCertificateThumbPrint, "");
+        }
+
+        /// <summary>
+        /// UpdateControlsLayouts method implementation
+        /// </summary>
+        private void UpdateControlsLayouts()
+        {
+            if (_UpdateControlsLayouts)
+                return;
+            _UpdateControlsLayouts = true;
+            try
+            {
+                if (chkUseAlwaysEncryptSQL.Checked)
+                {
+                    this.txtEncryptKeyName.Enabled = true;
+                    this.txtCertificateDuration.Enabled = true;
+                    this.chkReuseCertificate.Enabled = true;
+                    if (this.chkReuseCertificate.Checked)
+                        this.txtCertificateThumbPrint.Enabled = true;
+                    else
+                        this.txtCertificateThumbPrint.Enabled = false;
+                    this.btnCreateCryptedDB.Enabled = true;
+                }
+                else
+                {
+                    this.txtEncryptKeyName.Enabled = false;
+                    this.txtCertificateDuration.Enabled = false;
+                    this.chkReuseCertificate.Enabled = false;
+                    this.txtCertificateThumbPrint.Enabled = false;
+                    this.btnCreateCryptedDB.Enabled = false;
+                }
+            }
+            finally
+            {
+                _UpdateControlsLayouts = false;
+            }
+        }
+
+
+        /// <summary>
+        /// OnResize method implmentation
+        /// </summary>
+        protected override void OnResize(EventArgs eventargs)
+        {
+            if (_txtpanel != null)
+                _txtpanel.Width = this.Width - 20;
         }
 
         /// <summary>
@@ -8304,163 +9583,6 @@ namespace Neos.IdentityServer.Console.Controls
                 Config.KeysConfig.ExternalKeyManager.Parameters.Data = txtParams.Text;
                 ManagementService.ADFSManager.SetDirty(true);
                 errors.SetError(txtParams, "");
-            }
-            catch (Exception ex)
-            {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
-                this._snapin.Console.ShowDialog(messageBoxParameters);
-            }
-        }
-
-        #region Wizard Options
-        /// <summary>
-        /// AllowSearchGoogleCheckedChanged method implementation
-        /// </summary>
-        private void AllowSearchGoogleCheckedChanged(object sender, EventArgs e)
-        {
-            this.Cursor = Cursors.Default;
-            try
-            {
-                if (_view.AutoValidate != AutoValidate.Disable)
-                {
-                    ManagementService.ADFSManager.SetDirty(true);
-                    if (!chkAllowSearch.Checked)
-                        Config.OTPProvider.WizardOptions |= OTPWizardOptions.NoGooglSearch;
-                    else
-                        Config.OTPProvider.WizardOptions &= ~OTPWizardOptions.NoGooglSearch;
-                    errors.SetError(chkAllowSearch, "");
-                }
-            }
-            catch (Exception ex)
-            {
-                errors.SetError(chkAllowSearch, ex.Message);
-            }
-            finally
-            {
-                this.Cursor = Cursors.Default;
-            }
-        }
-
-        /// <summary>
-        /// AllowAuthyCheckedChanged method implementation
-        /// </summary>
-        private void AllowAuthyCheckedChanged(object sender, EventArgs e)
-        {
-            this.Cursor = Cursors.WaitCursor;
-            try
-            {
-                if (_view.AutoValidate != AutoValidate.Disable)
-                {
-                    ManagementService.ADFSManager.SetDirty(true);
-                    if (!chkAllowAuthy.Checked)
-                        Config.OTPProvider.WizardOptions |= OTPWizardOptions.NoAuthyAuthenticator;
-                    else
-                        Config.OTPProvider.WizardOptions &= ~OTPWizardOptions.NoAuthyAuthenticator;
-                    errors.SetError(chkAllowAuthy, "");
-                }
-            }
-            catch (Exception ex)
-            {
-                errors.SetError(chkAllowAuthy, ex.Message);
-            }
-            finally
-            {
-                this.Cursor = Cursors.Default;
-            }
-        }
-
-        /// <summary>
-        /// AllowGoogleCheckedChanged method implementation
-        /// </summary>
-        private void AllowGoogleCheckedChanged(object sender, EventArgs e)
-        {
-            this.Cursor = Cursors.WaitCursor;
-            try
-            {
-                if (_view.AutoValidate != AutoValidate.Disable)
-                {
-                    ManagementService.ADFSManager.SetDirty(true);
-                    if (!chkAllowGoogle.Checked)
-                        Config.OTPProvider.WizardOptions |= OTPWizardOptions.NoGoogleAuthenticator;
-                    else
-                        Config.OTPProvider.WizardOptions &= ~OTPWizardOptions.NoGoogleAuthenticator;
-                    errors.SetError(chkAllowGoogle, "");
-                }
-            }
-            catch (Exception ex)
-            {
-                errors.SetError(chkAllowGoogle, ex.Message);
-            }
-            finally
-            {
-                this.Cursor = Cursors.Default;
-            }
-        }
-
-        /// <summary>
-        /// AllowMicrosoftCheckedChanged method implementation
-        /// </summary>
-        private void AllowMicrosoftCheckedChanged(object sender, EventArgs e)
-        {
-            this.Cursor = Cursors.WaitCursor;
-            try
-            {
-                if (_view.AutoValidate != AutoValidate.Disable)
-                {
-                    ManagementService.ADFSManager.SetDirty(true);
-                    if (!chkAllowMicrosoft.Checked)
-                        Config.OTPProvider.WizardOptions |= OTPWizardOptions.NoMicrosoftAuthenticator;
-                    else
-                        Config.OTPProvider.WizardOptions &= ~OTPWizardOptions.NoMicrosoftAuthenticator;
-                    errors.SetError(chkAllowMicrosoft, "");
-                }
-            }
-            catch (Exception ex)
-            {
-                errors.SetError(chkAllowMicrosoft, ex.Message);
-            }
-            finally
-            {
-                this.Cursor = Cursors.Default;
-            }
-        }
-        #endregion
-
-        /// <summary>
-        /// btnRSACertClick method implmentation
-        /// </summary>
-        private void btnRSACertClick(object sender, EventArgs e)
-        {
-            try
-            {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = res.CTRLSECRSAGENERATE;
-                messageBoxParameters.Buttons = MessageBoxButtons.OKCancel;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
-                bool result = (this._snapin.Console.ShowDialog(messageBoxParameters) == DialogResult.OK);
-                Cursor curs = this.Cursor;
-                try
-                {
-                    this.Cursor = Cursors.WaitCursor;
-                    if (result)
-                    {
-                        this.txtRSAThumb.Text = ManagementService.ADFSManager.RegisterNewRSACertificate(null, Config.KeysConfig.CertificateValidity);
-
-                        MessageBoxParameters messageBoxParameters2 = new MessageBoxParameters();
-                        messageBoxParameters2.Text = string.Format(res.CTRLSECNEWCERTCREATED, this.txtRSAThumb.Text);
-                        messageBoxParameters2.Buttons = MessageBoxButtons.OK;
-                        messageBoxParameters2.Icon = MessageBoxIcon.Information;
-                        this._snapin.Console.ShowDialog(messageBoxParameters2);
-
-                    }
-                }
-                finally
-                {
-                    this.Cursor = curs;
-                }
             }
             catch (Exception ex)
             {
@@ -8762,7 +9884,7 @@ namespace Neos.IdentityServer.Console.Controls
         private void SaveConfigLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             if (_view != null)
-               _view.SaveData();
+                _view.SaveData();
         }
 
         /// <summary>
@@ -8774,7 +9896,6 @@ namespace Neos.IdentityServer.Console.Controls
                 _view.CancelData();
         }
     }
-
     internal static class AssemblyParser
     {
         /// <summary>

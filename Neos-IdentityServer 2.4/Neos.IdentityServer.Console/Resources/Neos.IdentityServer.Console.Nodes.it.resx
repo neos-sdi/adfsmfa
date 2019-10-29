@@ -147,6 +147,12 @@
   <data name="ROOTCHANGELANGUAGEDESC" xml:space="preserve">
     <value>Modifica le impostazioni cultura dell'interfaccia utente</value>
   </data>
+  <data name="ROOTLANGUAGEDE" xml:space="preserve">
+    <value>Tedesco</value>
+  </data>
+  <data name="ROOTLANGUAGEDEDESC" xml:space="preserve">
+    <value>Modificare le impostazioni cultura dell'interfaccia utente in tedesco (1031)</value>
+  </data>
   <data name="ROOTLANGUAGEES" xml:space="preserve">
     <value>Spagna</value>
   </data>
@@ -165,17 +171,65 @@
   <data name="ROOTLANGUAGEITDESC" xml:space="preserve">
     <value>Modifica le impostazioni cultura dell'interfaccia utente a Italiano (1040)</value>
   </data>
+  <data name="ROOTLANGUAGENL" xml:space="preserve">
+    <value>Olandese</value>
+  </data>
+  <data name="ROOTLANGUAGENLDESC" xml:space="preserve">
+    <value>Modifica delle impostazioni cultura dell'interfaccia utente in olandese (1043)</value>
+  </data>
+  <data name="ROOTLANGUAGEPL" xml:space="preserve">
+    <value>Polacco</value>
+  </data>
+  <data name="ROOTLANGUAGEPLDESC" xml:space="preserve">
+    <value>Modificare le impostazioni cultura dell'interfaccia utente in polacco (1045)</value>
+  </data>
+  <data name="ROOTLANGUAGEPT" xml:space="preserve">
+    <value>Portoghese</value>
+  </data>
+  <data name="ROOTLANGUAGEPTDESC" xml:space="preserve">
+    <value>Modifica delle impostazioni cultura dell'interfaccia utente in portoghese (2070)</value>
+  </data>
+  <data name="ROOTLANGUAGERO" xml:space="preserve">
+    <value>Rumeno</value>
+  </data>
+  <data name="ROOTLANGUAGERODESC" xml:space="preserve">
+    <value>Modificare la cultura dell'interfaccia utente in rumeno (1048)</value>
+  </data>
+  <data name="ROOTLANGUAGERU" xml:space="preserve">
+    <value>Russo</value>
+  </data>
+  <data name="ROOTLANGUAGERUDESC" xml:space="preserve">
+    <value>Modificare le impostazioni cultura dell'interfaccia utente in russo (1049)</value>
+  </data>
+  <data name="ROOTLANGUAGESV" xml:space="preserve">
+    <value>Svedese</value>
+  </data>
+  <data name="ROOTLANGUAGESVDESC" xml:space="preserve">
+    <value>Modificare la cultura dell'interfaccia utente in svedese (1053)</value>
+  </data>
   <data name="ROOTLANGUAGEUS" xml:space="preserve">
-    <value>Stati Uniti d'America</value>
+    <value>Inglese</value>
   </data>
   <data name="ROOTLANGUAGEUSDESC" xml:space="preserve">
     <value>Modifica le impostazioni cultura dell'interfaccia utente a Inglese (1033)</value>
   </data>
   <data name="ROOTSCOPENODEDESC" xml:space="preserve">
-    <value>Autenticazione a più fattori</value>
+    <value>MFA</value>
   </data>
   <data name="SECURITYSCOPENODEDESC" xml:space="preserve">
     <value>Configurazione di sicurezza</value>
+  </data>
+  <data name="SECURITYSCOPERNG" xml:space="preserve">
+    <value>RNG (random number generator)</value>
+  </data>
+  <data name="SECURITYSCOPEROOT" xml:space="preserve">
+    <value>Configurazione della sicurezza</value>
+  </data>
+  <data name="SECURITYSCOPERSA" xml:space="preserve">
+    <value>RSA Certificato</value>
+  </data>
+  <data name="SECURITYSCOPERSAX" xml:space="preserve">
+    <value>RSA Certificati per utente</value>
   </data>
   <data name="SERVICESCOPENODEDESC" xml:space="preserve">
     <value>Stato servizi</value>

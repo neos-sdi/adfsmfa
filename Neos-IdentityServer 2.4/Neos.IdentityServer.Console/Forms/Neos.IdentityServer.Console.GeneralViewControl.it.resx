@@ -163,7 +163,7 @@
     <value>2</value>
   </data>
   <data name="label2.Text" xml:space="preserve">
-    <value>Gestione impostazioni generali autenticazione a più fattori</value>
+    <value>Gestione delle impostazioni di configurazione dell'autenticazione a più fattori principale</value>
   </data>
   <data name="label1.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -184,7 +184,7 @@
     <value>1</value>
   </data>
   <data name="label1.Text" xml:space="preserve">
-    <value>Impostazioni generali servizi</value>
+    <value>Impostazioni generali dei servizi</value>
   </data>
   <data name="panelGlobal.Location" type="System.Drawing.Point, System.Drawing">
     <value>0, 0</value>
@@ -238,6 +238,6 @@
     <value>800, 539</value>
   </data>
   <data name="GLVALIDSAVE" xml:space="preserve">
-    <value>Annullare le modifiche e ricaricare i dati?</value>
+    <value>Annullare le modifiche e ricaricare i dati ?</value>
   </data>
 </root>

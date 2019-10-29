@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="GLOBALListChoiceDefaultLabel" xml:space="preserve">
+    <value>Usar la opción predeterminada</value>
+  </data>
   <data name="GLOBALWarnOverNetwork" xml:space="preserve">
     <value>(datos se transmiten en Internet)</value>
     <comment>(Les données sont transmises sur internet)</comment>
@@ -156,10 +159,6 @@
   </data>
   <data name="SMSUIEnrollValidatedLabel" xml:space="preserve">
     <value>Cuenta validada&lt;br&gt;&lt;br&gt;Puede utilizar su teléfono móvil para autenticarse</value>
-  </data>
-  <data name="SMSUIListChoiceDefaultLabel" xml:space="preserve">
-    <value>Usar la opción predeterminada</value>
-    <comment>Utiliser l'option par défaut</comment>
   </data>
   <data name="SMSUIListChoiceLabel" xml:space="preserve">
     <value>Recibe un mensaje en mi teléfono móvil</value>

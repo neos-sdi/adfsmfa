@@ -117,47 +117,32 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="InfosRecordsCount" xml:space="preserve">
-    <value>Records count : {0}</value>
-  </data>
-  <data name="InfosRSACertificateChanged" xml:space="preserve">
-    <value>MFA certificate {0} correctly updated ! You must deploy this certificate on all others ADFS servers.</value>
-  </data>
-  <data name="InfosSystemAlreadyInitialized" xml:space="preserve">
-    <value>MFA is already initialized ! you must run "UnRegister-MFASytem" PowerShell Cmdlet if you want to reinitialize ALL the MFA configuration</value>
-  </data>
-  <data name="InfosSystemRegistered" xml:space="preserve">
-    <value>MFA System correctly registered ! </value>
-  </data>
-  <data name="InfosSystemUnRegistered" xml:space="preserve">
-    <value>MFA System correctly unconfigured !</value>
-  </data>
-  <data name="InfosUserAdded" xml:space="preserve">
-    <value>User "{0}" added !</value>
-  </data>
-  <data name="InfosUserDeleted" xml:space="preserve">
-    <value>User "{0}" deleted !</value>
-  </data>
-  <data name="InfosUserHasNewKey" xml:space="preserve">
-    <value>User "{0}" has a new Enryption key !</value>
-  </data>
-  <data name="InfosUserUpdated" xml:space="preserve">
-    <value>User "{0}" updated !</value>
-  </data>
   <data name="InfoAllKeyWillbeReset" xml:space="preserve">
     <value>All RSA keys will be invalidated ! Continue (Y/N)</value>
   </data>
   <data name="InfosAllServicesRestarted" xml:space="preserve">
     <value>All Farm Services Restarted !</value>
   </data>
-  <data name="InfosServerServicesRestarted" xml:space="preserve">
-    <value>Services on server "{0}" Restarted !</value>
-  </data>
   <data name="InfosConfigUpdated" xml:space="preserve">
     <value>MFA Configuration updated !</value>
   </data>
   <data name="InfosDatabaseCreated" xml:space="preserve">
-    <value>Database "{0}" created !</value>
+    <value>Database {0} created !</value>
+  </data>
+  <data name="InfosRecordsCount" xml:space="preserve">
+    <value>Records count : {0}</value>
+  </data>
+  <data name="InfosRSACertificateChanged" xml:space="preserve">
+    <value>MFA certificate {0} correctly updated ! You must deploy this certificate on all others ADFS servers.</value>
+  </data>
+  <data name="InfosServerServicesRestarted" xml:space="preserve">
+    <value>Services on server {0} Restarted !</value>
+  </data>
+  <data name="InfosSQLCertificateChanged" xml:space="preserve">
+    <value>SQL certificate {0} correctly updated ! You must deploy this certificate on all others ADFS servers.</value>
+  </data>
+  <data name="InfosSystemAlreadyInitialized" xml:space="preserve">
+    <value>MFA is already initialized ! you must run "UnRegister-MFASytem" PowerShell Cmdlet if you want to reinitialize ALL the MFA configuration</value>
   </data>
   <data name="InfosSystemExported" xml:space="preserve">
     <value>MFA Configuration correctly exported to file {0} !</value>
@@ -168,8 +153,23 @@
   <data name="InfosSystemInInvalidState" xml:space="preserve">
     <value>MFA Configuration Import with errors !</value>
   </data>
-  <data name="InfosSQLCertificateChanged" xml:space="preserve">
-    <value>SQL certificate {0} correctly updated ! You must deploy this certificate on all others ADFS servers.</value>
+  <data name="InfosSystemRegistered" xml:space="preserve">
+    <value>MFA System correctly registered ! </value>
+  </data>
+  <data name="InfosSystemUnRegistered" xml:space="preserve">
+    <value>MFA System correctly unconfigured !</value>
+  </data>
+  <data name="InfosUserAdded" xml:space="preserve">
+    <value>User {0} added !</value>
+  </data>
+  <data name="InfosUserDeleted" xml:space="preserve">
+    <value>User {0} deleted !</value>
+  </data>
+  <data name="InfosUserHasNewKey" xml:space="preserve">
+    <value>User {0} has a new Enryption key !</value>
+  </data>
+  <data name="InfosUserUpdated" xml:space="preserve">
+    <value>User {0} updated !</value>
   </data>
   <data name="InfosWarningAboutTheme" xml:space="preserve">
     <value>CAUTION ! your theme must be fully compatible (js, css, etc...) with the UI you choose : {0}</value>

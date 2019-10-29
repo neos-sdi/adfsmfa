@@ -691,6 +691,15 @@ namespace Neos.IdentityServer.Console.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Replay Protection Level.
+        /// </summary>
+        internal static string CTRLGLREPLAY {
+            get {
+                return ResourceManager.GetString("CTRLGLREPLAY", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Show Authy Authenticator.
         /// </summary>
         internal static string CTRLGLSHOWAUTHY {
@@ -741,6 +750,15 @@ namespace Neos.IdentityServer.Console.Resources {
         internal static string CTRLGLUSESMS {
             get {
                 return ResourceManager.GetString("CTRLGLUSESMS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Use browser languages.
+        /// </summary>
+        internal static string CTRLGLUSEUSERLANGS {
+            get {
+                return ResourceManager.GetString("CTRLGLUSEUSERLANGS", resourceCulture);
             }
         }
         
@@ -907,6 +925,15 @@ namespace Neos.IdentityServer.Console.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Encryption Library version.
+        /// </summary>
+        internal static string CTRLSECLIBLABEL {
+            get {
+                return ResourceManager.GetString("CTRLSECLIBLABEL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à New certificate.
         /// </summary>
         internal static string CTRLSECNEWCERT {
@@ -970,6 +997,15 @@ namespace Neos.IdentityServer.Console.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Warning ! Changing these values will invalidate all current keys.
+        /// </summary>
+        internal static string CTRLSECWARNING {
+            get {
+                return ResourceManager.GetString("CTRLSECWARNING", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Registration wizard options.
         /// </summary>
         internal static string CTRLSECWIZARD {
@@ -984,6 +1020,15 @@ namespace Neos.IdentityServer.Console.Resources {
         internal static string CTRLSECWIZTITLE {
             get {
                 return ResourceManager.GetString("CTRLSECWIZTITLE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Passphrase.
+        /// </summary>
+        internal static string CTRLSECXORLABEL {
+            get {
+                return ResourceManager.GetString("CTRLSECXORLABEL", resourceCulture);
             }
         }
         

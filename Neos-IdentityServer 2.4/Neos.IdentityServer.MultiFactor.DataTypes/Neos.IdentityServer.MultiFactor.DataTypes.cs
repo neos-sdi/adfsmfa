@@ -471,14 +471,24 @@ namespace Neos.IdentityServer.MultiFactor
         }
 
         /// <summary>
-        /// TargetUIMode property
+        /// UserLcid 
         /// </summary>
         [XmlAttribute("Lcid")]
         public int Lcid
         {
             get
             {
-                return _context.Lcid;
+                if (_context.Data.ContainsKey("_authctxuserlcid") && _context.Data["_authctxuserlcid"] != null)
+                    return Convert.ToInt32(_context.Data["_authctxuserlcid"]);
+                else
+                    return _context.Lcid;
+            }
+            set
+            {
+                if (_context.Data.ContainsKey("_authctxuserlcid"))
+                    _context.Data["_authctxuserlcid"] = value;
+                else
+                    _context.Data.Add("_authctxuserlcid", value);
             }
         }
 

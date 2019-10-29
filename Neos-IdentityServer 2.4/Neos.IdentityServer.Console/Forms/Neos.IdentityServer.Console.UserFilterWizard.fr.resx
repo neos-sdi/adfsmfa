@@ -117,24 +117,12 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="$this.Text" xml:space="preserve">
+    <value>Filtrer les Utilisateurs</value>
+  </data>
   <data name="BTNCancel.Text" xml:space="preserve">
     <value>Annuler</value>
-  </data>
-  <data name="GBFilters.Text" xml:space="preserve">
-    <value>Critères de filtrage</value>
-  </data>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="cbNull.Size" type="System.Drawing.Size, System.Drawing">
-    <value>160, 17</value>
-  </data>
-  <data name="cbNull.Text" xml:space="preserve">
-    <value>Rechercher une valeur nulle</value>
-  </data>
-  <data name="label4.Size" type="System.Drawing.Size, System.Drawing">
-    <value>128, 13</value>
-  </data>
-  <data name="label4.Text" xml:space="preserve">
-    <value>Méthode d'identification : </value>
   </data>
   <data name="CBEnabledOnly.Size" type="System.Drawing.Size, System.Drawing">
     <value>163, 17</value>
@@ -142,17 +130,14 @@
   <data name="CBEnabledOnly.Text" xml:space="preserve">
     <value>Utilisateurs actifs uniquement</value>
   </data>
-  <data name="label3.Size" type="System.Drawing.Size, System.Drawing">
-    <value>43, 13</value>
+  <data name="cbNull.Size" type="System.Drawing.Size, System.Drawing">
+    <value>160, 17</value>
   </data>
-  <data name="label3.Text" xml:space="preserve">
-    <value>Valeur :</value>
+  <data name="cbNull.Text" xml:space="preserve">
+    <value>Rechercher une valeur nulle</value>
   </data>
-  <data name="label2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>60, 13</value>
-  </data>
-  <data name="label2.Text" xml:space="preserve">
-    <value>Opérateur :</value>
+  <data name="GBFilters.Text" xml:space="preserve">
+    <value>Critères de filtrage</value>
   </data>
   <data name="label1.Size" type="System.Drawing.Size, System.Drawing">
     <value>57, 13</value>
@@ -160,7 +145,22 @@
   <data name="label1.Text" xml:space="preserve">
     <value>Propiétés :</value>
   </data>
-  <data name="$this.Text" xml:space="preserve">
-    <value>Filtrer les Utilisateurs</value>
+  <data name="label2.Size" type="System.Drawing.Size, System.Drawing">
+    <value>60, 13</value>
+  </data>
+  <data name="label2.Text" xml:space="preserve">
+    <value>Opérateur :</value>
+  </data>
+  <data name="label3.Size" type="System.Drawing.Size, System.Drawing">
+    <value>43, 13</value>
+  </data>
+  <data name="label3.Text" xml:space="preserve">
+    <value>Valeur :</value>
+  </data>
+  <data name="label4.Size" type="System.Drawing.Size, System.Drawing">
+    <value>128, 13</value>
+  </data>
+  <data name="label4.Text" xml:space="preserve">
+    <value>Méthode d'identification : </value>
   </data>
 </root>

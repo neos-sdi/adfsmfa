@@ -175,6 +175,89 @@ namespace Neos.IdentityServer.Console
     }
 
     /// <summary>
+    /// MMCReplayModeItem class
+    /// </summary>
+    public class MMCReplayModeItem
+    {
+        public ReplayLevel ID { get; set; }
+        public String Label { get; set; }
+
+        public override int GetHashCode()
+        {
+            return ID.GetHashCode();
+        }
+
+        public override bool Equals(object obj)
+        {
+            ReplayLevel paramobj = ReplayLevel.Disabled;
+            if (obj is UserTemplateMode)
+                paramobj = (ReplayLevel)obj;
+            else if (obj is MMCReplayModeItem)
+                paramobj = ((MMCReplayModeItem)obj).ID;
+            else
+                return false;
+            if (paramobj == this.ID)
+                return true;
+            else
+                return false;
+        }
+    }
+
+    /// <summary>
+    /// MMCReplayModeList class implémentation
+    /// </summary>
+    public class MMCReplayModeList : BindingList<MMCReplayModeItem>
+    {
+        public MMCReplayModeList()
+        {
+            this.Add(new MMCReplayModeItem() { ID = ReplayLevel.Disabled, Label = "Disabled" });
+            this.Add(new MMCReplayModeItem() { ID = ReplayLevel.Intermediate, Label = "Intermediate" });
+            this.Add(new MMCReplayModeItem() { ID = ReplayLevel.Full, Label = "Full" });
+        }
+    }
+
+    /// <summary>
+    /// MMCLibVersionItem class
+    /// </summary>
+    public class MMCLibVersionItem
+    {
+        public SecretKeyVersion ID { get; set; }
+        public String Label { get; set; }
+
+        public override int GetHashCode()
+        {
+            return ID.GetHashCode();
+        }
+
+        public override bool Equals(object obj)
+        {
+            SecretKeyVersion paramobj = SecretKeyVersion.V2;
+            if (obj is MMCLibVersionItem)
+                paramobj = ((MMCLibVersionItem)obj).ID;
+            else
+                return false;
+            if (paramobj == this.ID)
+                return true;
+            else
+                return false;
+        }
+    }
+
+
+    /// <summary>
+    /// MMCReplayModeList class implémentation
+    /// </summary>
+    public class MMCLibVersionList : BindingList<MMCLibVersionItem>
+    {
+        public MMCLibVersionList()
+        {
+            this.Add(new MMCLibVersionItem() { ID = SecretKeyVersion.V1, Label = "V1" });
+            this.Add(new MMCLibVersionItem() { ID = SecretKeyVersion.V2, Label = "V2" });
+            // this.Add(new MMCLibVersionItem() { ID = SecretKeyVersion.V3, Label = "V3" });  // For No Future
+        }
+    }
+
+    /// <summary>
     /// MMCProviderItem class
     /// </summary>
     public class MMCProviderItem

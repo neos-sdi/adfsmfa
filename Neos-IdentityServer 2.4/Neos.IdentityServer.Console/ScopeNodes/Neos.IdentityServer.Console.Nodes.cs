@@ -80,7 +80,15 @@ namespace Neos.IdentityServer.Console
             Microsoft.ManagementConsole.ActionGroup importgrp = new Microsoft.ManagementConsole.ActionGroup(res.ROOTCHANGELANGUAGE, res.ROOTCHANGELANGUAGEDESC, -1, "LCID_GROUP");
             importgrp.Items.Add(new Microsoft.ManagementConsole.Action(res.ROOTLANGUAGEFR, res.ROOTLANGUAGEFRDESC, -1, "LCID_FR"));
             importgrp.Items.Add(new Microsoft.ManagementConsole.Action(res.ROOTLANGUAGEUS, res.ROOTLANGUAGEUSDESC, -1, "LCID_US"));
+            importgrp.Items.Add(new Microsoft.ManagementConsole.Action(res.ROOTLANGUAGEES, res.ROOTLANGUAGEESDESC, -1, "LCID_ES"));
             importgrp.Items.Add(new Microsoft.ManagementConsole.Action(res.ROOTLANGUAGEIT, res.ROOTLANGUAGEITDESC, -1, "LCID_IT"));
+            importgrp.Items.Add(new Microsoft.ManagementConsole.Action(res.ROOTLANGUAGEDE, res.ROOTLANGUAGEDEDESC, -1, "LCID_DE"));
+            importgrp.Items.Add(new Microsoft.ManagementConsole.Action(res.ROOTLANGUAGENL, res.ROOTLANGUAGENLDESC, -1, "LCID_NL"));
+            importgrp.Items.Add(new Microsoft.ManagementConsole.Action(res.ROOTLANGUAGEPT, res.ROOTLANGUAGEPTDESC, -1, "LCID_PT"));
+            importgrp.Items.Add(new Microsoft.ManagementConsole.Action(res.ROOTLANGUAGERU, res.ROOTLANGUAGERUDESC, -1, "LCID_RU"));
+            importgrp.Items.Add(new Microsoft.ManagementConsole.Action(res.ROOTLANGUAGERO, res.ROOTLANGUAGERODESC, -1, "LCID_RO"));
+            importgrp.Items.Add(new Microsoft.ManagementConsole.Action(res.ROOTLANGUAGEPL, res.ROOTLANGUAGEPLDESC, -1, "LCID_PL"));
+            importgrp.Items.Add(new Microsoft.ManagementConsole.Action(res.ROOTLANGUAGESV, res.ROOTLANGUAGESVDESC, -1, "LCID_SV"));
             this.ActionsPaneItems.Add(importgrp);
             this.HelpTopic = string.Empty;
         }
@@ -106,9 +114,34 @@ namespace Neos.IdentityServer.Console
                 case "LCID_US":
                     CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo(1033); 
                     break;
+                case "LCID_ES":
+                    CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo(1034);
+                    break;
                 case "LCID_IT":
                     CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo(1040);
                     break;
+                case "LCID_DE":
+                    CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo(1031);
+                    break;
+                case "LCID_NL":
+                    CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo(1043);
+                    break;
+                case "LCID_PT":
+                    CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo(2070);
+                    break;
+                case "LCID_RU":
+                    CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo(1049);
+                    break;
+                case "LCID_RO":
+                    CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo(1048);
+                    break;
+                case "LCID_PL":
+                    CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo(1045);
+                    break;
+                case "LCID_SV":
+                    CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo(1053);
+                    break;
+
             }
             ((ADFSSnapIn)this.SnapIn).RefreshUI();
         }
@@ -149,10 +182,50 @@ namespace Neos.IdentityServer.Console
                                 ((Microsoft.ManagementConsole.Action)itms).DisplayName = res.ROOTLANGUAGEUS;
                                 ((Microsoft.ManagementConsole.Action)itms).Description = res.ROOTLANGUAGEUSDESC;
                             }
+                            else if ((string)((Microsoft.ManagementConsole.Action)itms).Tag == "LCID_ES")
+                            {
+                                ((Microsoft.ManagementConsole.Action)itms).DisplayName = res.ROOTLANGUAGEES;
+                                ((Microsoft.ManagementConsole.Action)itms).Description = res.ROOTLANGUAGEESDESC;
+                            }
                             else if ((string)((Microsoft.ManagementConsole.Action)itms).Tag == "LCID_IT")
                             {
                                 ((Microsoft.ManagementConsole.Action)itms).DisplayName = res.ROOTLANGUAGEIT;
                                 ((Microsoft.ManagementConsole.Action)itms).Description = res.ROOTLANGUAGEITDESC;
+                            }
+                            else if ((string)((Microsoft.ManagementConsole.Action)itms).Tag == "LCID_DE")
+                            {
+                                ((Microsoft.ManagementConsole.Action)itms).DisplayName = res.ROOTLANGUAGEDE;
+                                ((Microsoft.ManagementConsole.Action)itms).Description = res.ROOTLANGUAGEDEDESC;
+                            }
+                            else if ((string)((Microsoft.ManagementConsole.Action)itms).Tag == "LCID_NL")
+                            {
+                                ((Microsoft.ManagementConsole.Action)itms).DisplayName = res.ROOTLANGUAGENL;
+                                ((Microsoft.ManagementConsole.Action)itms).Description = res.ROOTLANGUAGENLDESC;
+                            }
+                            else if ((string)((Microsoft.ManagementConsole.Action)itms).Tag == "LCID_PT")
+                            {
+                                ((Microsoft.ManagementConsole.Action)itms).DisplayName = res.ROOTLANGUAGEPT;
+                                ((Microsoft.ManagementConsole.Action)itms).Description = res.ROOTLANGUAGEPTDESC;
+                            }
+                            else if ((string)((Microsoft.ManagementConsole.Action)itms).Tag == "LCID_RU")
+                            {
+                                ((Microsoft.ManagementConsole.Action)itms).DisplayName = res.ROOTLANGUAGERU;
+                                ((Microsoft.ManagementConsole.Action)itms).Description = res.ROOTLANGUAGERUDESC;
+                            }
+                            else if ((string)((Microsoft.ManagementConsole.Action)itms).Tag == "LCID_RO")
+                            {
+                                ((Microsoft.ManagementConsole.Action)itms).DisplayName = res.ROOTLANGUAGERO;
+                                ((Microsoft.ManagementConsole.Action)itms).Description = res.ROOTLANGUAGERODESC;
+                            }
+                            else if ((string)((Microsoft.ManagementConsole.Action)itms).Tag == "LCID_PL")
+                            {
+                                ((Microsoft.ManagementConsole.Action)itms).DisplayName = res.ROOTLANGUAGEPL;
+                                ((Microsoft.ManagementConsole.Action)itms).Description = res.ROOTLANGUAGEPLDESC;
+                            }
+                            else if ((string)((Microsoft.ManagementConsole.Action)itms).Tag == "LCID_SV")
+                            {
+                                ((Microsoft.ManagementConsole.Action)itms).DisplayName = res.ROOTLANGUAGESV;
+                                ((Microsoft.ManagementConsole.Action)itms).Description = res.ROOTLANGUAGESVDESC;
                             }
                         }
                     }
@@ -994,7 +1067,7 @@ namespace Neos.IdentityServer.Console
     }
 
     /// <summary>
-    /// ServiceStatusScopeNode class
+    /// ServiceSecurityScopeNode class
     /// </summary>
     public class ServiceSecurityScopeNode: RefreshableScopeNode
     {
@@ -1069,6 +1142,442 @@ namespace Neos.IdentityServer.Console
         {
             IExternalProvider prv = RuntimeAuthProvider.GetProviderInstance(PreferredMethod.Code);
             this.DisplayName = prv.Description;
+        }
+
+        /// <summary>
+        /// RefreshActions method
+        /// </summary>
+        public override void RefreshActions()
+        {
+            foreach (ActionsPaneItem itm in this.ActionsPaneItems)
+            {
+                if (itm is Microsoft.ManagementConsole.Action)
+                {
+                    if ((string)((Microsoft.ManagementConsole.Action)itm).Tag == "SaveConfig")
+                    {
+                        ((Microsoft.ManagementConsole.Action)itm).DisplayName = res.GENERALSCOPESAVE;
+                        ((Microsoft.ManagementConsole.Action)itm).Description = res.GENERALSCOPESAVEDESC;
+                    }
+                    else if ((string)((Microsoft.ManagementConsole.Action)itm).Tag == "CancelConfig")
+                    {
+                        ((Microsoft.ManagementConsole.Action)itm).DisplayName = res.GENERALSCOPECANCEL;
+                        ((Microsoft.ManagementConsole.Action)itm).Description = res.GENERALSCOPECANCELDESC;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// RefreshForms method
+        /// </summary>
+        public override void RefreshForms()
+        {
+            if (this.SecurityFormView != null)
+                this.SecurityFormView.Refresh();
+        }
+    }
+
+    /// <summary>
+    /// ServiceSecurityRNGScopeNode class
+    /// </summary>
+    public class ServiceSecurityRootScopeNode : RefreshableScopeNode
+    {
+        internal ServiceSecurityRootFormView SecurityFormView;
+        private Microsoft.ManagementConsole.Action SaveConfig;
+        private Microsoft.ManagementConsole.Action CancelConfig;
+
+
+        /// <summary>
+        /// Constructor implementation
+        /// </summary>
+        public ServiceSecurityRootScopeNode() : base(true)
+        {
+            this.DisplayName = res.SECURITYSCOPEROOT;
+            this.LanguageIndependentName = "Security Configuration";
+
+            SaveConfig = new Microsoft.ManagementConsole.Action(res.GENERALSCOPESAVE, res.GENERALSCOPESAVEDESC, -1, "SaveConfig");
+            CancelConfig = new Microsoft.ManagementConsole.Action(res.GENERALSCOPECANCEL, res.GENERALSCOPECANCELDESC, -1, "CancelConfig");
+
+            this.ActionsPaneHelpItems.Clear();
+            this.ActionsPaneItems.Clear();
+            this.EnabledStandardVerbs = StandardVerbs.Refresh;
+
+            this.ActionsPaneItems.Add(SaveConfig);
+            this.ActionsPaneItems.Add(new Microsoft.ManagementConsole.ActionSeparator());
+            this.ActionsPaneItems.Add(CancelConfig);
+            this.HelpTopic = string.Empty;
+        }
+
+        /// <summary>
+        /// OnExpand method implementation
+        /// </summary>
+        /// <param name="status"></param>
+        protected override void OnExpand(AsyncStatus status)
+        {
+            base.OnExpand(status);
+        }
+
+        /// <summary>
+        /// OnRefresh method implmentattion
+        /// </summary>
+        protected override void OnRefresh(AsyncStatus status)
+        {
+            base.OnRefresh(status);
+            if (this.SecurityFormView != null)
+                this.SecurityFormView.Refresh();
+        }
+
+        /// <summary>
+        /// OnAction method implmentation
+        /// </summary>
+        protected override void OnAction(Microsoft.ManagementConsole.Action action, AsyncStatus status)
+        {
+            switch ((string)action.Tag)
+            {
+                case "SaveConfig":
+                    if (this.SecurityFormView != null)
+                        this.SecurityFormView.DoSave();
+                    break;
+                case "CancelConfig":
+                    if (this.SecurityFormView != null)
+                        this.SecurityFormView.DoCancel();
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// RefreshDescription method
+        /// </summary>
+        public override void RefreshDescription()
+        {
+            this.DisplayName = res.SECURITYSCOPEROOT;
+        }
+
+        /// <summary>
+        /// RefreshActions method
+        /// </summary>
+        public override void RefreshActions()
+        {
+            foreach (ActionsPaneItem itm in this.ActionsPaneItems)
+            {
+                if (itm is Microsoft.ManagementConsole.Action)
+                {
+                    if ((string)((Microsoft.ManagementConsole.Action)itm).Tag == "SaveConfig")
+                    {
+                        ((Microsoft.ManagementConsole.Action)itm).DisplayName = res.GENERALSCOPESAVE;
+                        ((Microsoft.ManagementConsole.Action)itm).Description = res.GENERALSCOPESAVEDESC;
+                    }
+                    else if ((string)((Microsoft.ManagementConsole.Action)itm).Tag == "CancelConfig")
+                    {
+                        ((Microsoft.ManagementConsole.Action)itm).DisplayName = res.GENERALSCOPECANCEL;
+                        ((Microsoft.ManagementConsole.Action)itm).Description = res.GENERALSCOPECANCELDESC;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// RefreshForms method
+        /// </summary>
+        public override void RefreshForms()
+        {
+            if (this.SecurityFormView != null)
+                this.SecurityFormView.Refresh();
+        }
+    }
+
+    /// <summary>
+    /// ServiceSecurityRNGScopeNode class
+    /// </summary>
+    public class ServiceSecurityRNGScopeNode : RefreshableScopeNode
+    {
+        internal ServiceSecurityRNGFormView SecurityFormView;
+        private Microsoft.ManagementConsole.Action SaveConfig;
+        private Microsoft.ManagementConsole.Action CancelConfig;
+
+
+        /// <summary>
+        /// Constructor implementation
+        /// </summary>
+        public ServiceSecurityRNGScopeNode() : base(true)
+        {
+            this.DisplayName = res.SECURITYSCOPERNG;
+            this.LanguageIndependentName = "RNG (random number generator)";
+
+            SaveConfig = new Microsoft.ManagementConsole.Action(res.GENERALSCOPESAVE, res.GENERALSCOPESAVEDESC, -1, "SaveConfig");
+            CancelConfig = new Microsoft.ManagementConsole.Action(res.GENERALSCOPECANCEL, res.GENERALSCOPECANCELDESC, -1, "CancelConfig");
+
+            this.ActionsPaneHelpItems.Clear();
+            this.ActionsPaneItems.Clear();
+            this.EnabledStandardVerbs = StandardVerbs.Refresh;
+
+            this.ActionsPaneItems.Add(SaveConfig);
+            this.ActionsPaneItems.Add(new Microsoft.ManagementConsole.ActionSeparator());
+            this.ActionsPaneItems.Add(CancelConfig);
+            this.HelpTopic = string.Empty;
+        }
+
+        /// <summary>
+        /// OnExpand method implementation
+        /// </summary>
+        /// <param name="status"></param>
+        protected override void OnExpand(AsyncStatus status)
+        {
+            base.OnExpand(status);
+        }
+
+        /// <summary>
+        /// OnRefresh method implmentattion
+        /// </summary>
+        protected override void OnRefresh(AsyncStatus status)
+        {
+            base.OnRefresh(status);
+            if (this.SecurityFormView != null)
+                this.SecurityFormView.Refresh();
+        }
+
+        /// <summary>
+        /// OnAction method implmentation
+        /// </summary>
+        protected override void OnAction(Microsoft.ManagementConsole.Action action, AsyncStatus status)
+        {
+            switch ((string)action.Tag)
+            {
+                case "SaveConfig":
+                    if (this.SecurityFormView != null)
+                        this.SecurityFormView.DoSave();
+                    break;
+                case "CancelConfig":
+                    if (this.SecurityFormView != null)
+                        this.SecurityFormView.DoCancel();
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// RefreshDescription method
+        /// </summary>
+        public override void RefreshDescription()
+        {
+            this.DisplayName = res.SECURITYSCOPERNG;
+        }
+
+        /// <summary>
+        /// RefreshActions method
+        /// </summary>
+        public override void RefreshActions()
+        {
+            foreach (ActionsPaneItem itm in this.ActionsPaneItems)
+            {
+                if (itm is Microsoft.ManagementConsole.Action)
+                {
+                    if ((string)((Microsoft.ManagementConsole.Action)itm).Tag == "SaveConfig")
+                    {
+                        ((Microsoft.ManagementConsole.Action)itm).DisplayName = res.GENERALSCOPESAVE;
+                        ((Microsoft.ManagementConsole.Action)itm).Description = res.GENERALSCOPESAVEDESC;
+                    }
+                    else if ((string)((Microsoft.ManagementConsole.Action)itm).Tag == "CancelConfig")
+                    {
+                        ((Microsoft.ManagementConsole.Action)itm).DisplayName = res.GENERALSCOPECANCEL;
+                        ((Microsoft.ManagementConsole.Action)itm).Description = res.GENERALSCOPECANCELDESC;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// RefreshForms method
+        /// </summary>
+        public override void RefreshForms()
+        {
+            if (this.SecurityFormView != null)
+                this.SecurityFormView.Refresh();
+        }
+    }
+
+    /// <summary>
+    /// ServiceSecurityRSAScopeNode class
+    /// </summary>
+    public class ServiceSecurityRSAScopeNode : RefreshableScopeNode
+    {
+        internal ServiceSecurityRSAFormView SecurityFormView;
+        private Microsoft.ManagementConsole.Action SaveConfig;
+        private Microsoft.ManagementConsole.Action CancelConfig;
+
+
+        /// <summary>
+        /// Constructor implementation
+        /// </summary>
+        public ServiceSecurityRSAScopeNode() : base(true)
+        {
+            this.DisplayName = res.SECURITYSCOPERSA;
+            this.LanguageIndependentName = "RSA Certificate";
+
+            SaveConfig = new Microsoft.ManagementConsole.Action(res.GENERALSCOPESAVE, res.GENERALSCOPESAVEDESC, -1, "SaveConfig");
+            CancelConfig = new Microsoft.ManagementConsole.Action(res.GENERALSCOPECANCEL, res.GENERALSCOPECANCELDESC, -1, "CancelConfig");
+
+            this.ActionsPaneHelpItems.Clear();
+            this.ActionsPaneItems.Clear();
+            this.EnabledStandardVerbs = StandardVerbs.Refresh;
+
+            this.ActionsPaneItems.Add(SaveConfig);
+            this.ActionsPaneItems.Add(new Microsoft.ManagementConsole.ActionSeparator());
+            this.ActionsPaneItems.Add(CancelConfig);
+            this.HelpTopic = string.Empty;
+        }
+
+        /// <summary>
+        /// OnExpand method implementation
+        /// </summary>
+        /// <param name="status"></param>
+        protected override void OnExpand(AsyncStatus status)
+        {
+            base.OnExpand(status);
+        }
+
+        /// <summary>
+        /// OnRefresh method implmentattion
+        /// </summary>
+        protected override void OnRefresh(AsyncStatus status)
+        {
+            base.OnRefresh(status);
+            if (this.SecurityFormView != null)
+                this.SecurityFormView.Refresh();
+        }
+
+        /// <summary>
+        /// OnAction method implmentation
+        /// </summary>
+        protected override void OnAction(Microsoft.ManagementConsole.Action action, AsyncStatus status)
+        {
+            switch ((string)action.Tag)
+            {
+                case "SaveConfig":
+                    if (this.SecurityFormView != null)
+                        this.SecurityFormView.DoSave();
+                    break;
+                case "CancelConfig":
+                    if (this.SecurityFormView != null)
+                        this.SecurityFormView.DoCancel();
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// RefreshDescription method
+        /// </summary>
+        public override void RefreshDescription()
+        {
+            this.DisplayName = res.SECURITYSCOPERSA;
+        }
+
+        /// <summary>
+        /// RefreshActions method
+        /// </summary>
+        public override void RefreshActions()
+        {
+            foreach (ActionsPaneItem itm in this.ActionsPaneItems)
+            {
+                if (itm is Microsoft.ManagementConsole.Action)
+                {
+                    if ((string)((Microsoft.ManagementConsole.Action)itm).Tag == "SaveConfig")
+                    {
+                        ((Microsoft.ManagementConsole.Action)itm).DisplayName = res.GENERALSCOPESAVE;
+                        ((Microsoft.ManagementConsole.Action)itm).Description = res.GENERALSCOPESAVEDESC;
+                    }
+                    else if ((string)((Microsoft.ManagementConsole.Action)itm).Tag == "CancelConfig")
+                    {
+                        ((Microsoft.ManagementConsole.Action)itm).DisplayName = res.GENERALSCOPECANCEL;
+                        ((Microsoft.ManagementConsole.Action)itm).Description = res.GENERALSCOPECANCELDESC;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// RefreshForms method
+        /// </summary>
+        public override void RefreshForms()
+        {
+            if (this.SecurityFormView != null)
+                this.SecurityFormView.Refresh();
+        }
+    }
+
+    /// <summary>
+    /// ServiceSecurityRSAXScopeNode class
+    /// </summary>
+    public class ServiceSecurityRSAXScopeNode : RefreshableScopeNode
+    {
+        internal ServiceSecurityRSAXFormView SecurityFormView;
+        private Microsoft.ManagementConsole.Action SaveConfig;
+        private Microsoft.ManagementConsole.Action CancelConfig;
+
+
+        /// <summary>
+        /// Constructor implementation
+        /// </summary>
+        public ServiceSecurityRSAXScopeNode() : base(true)
+        {
+            this.DisplayName = res.SECURITYSCOPERSAX;
+            this.LanguageIndependentName = "RSA Certificates per user";
+
+            SaveConfig = new Microsoft.ManagementConsole.Action(res.GENERALSCOPESAVE, res.GENERALSCOPESAVEDESC, -1, "SaveConfig");
+            CancelConfig = new Microsoft.ManagementConsole.Action(res.GENERALSCOPECANCEL, res.GENERALSCOPECANCELDESC, -1, "CancelConfig");
+
+            this.ActionsPaneHelpItems.Clear();
+            this.ActionsPaneItems.Clear();
+            this.EnabledStandardVerbs = StandardVerbs.Refresh;
+
+            this.ActionsPaneItems.Add(SaveConfig);
+            this.ActionsPaneItems.Add(new Microsoft.ManagementConsole.ActionSeparator());
+            this.ActionsPaneItems.Add(CancelConfig);
+            this.HelpTopic = string.Empty;
+        }
+
+        /// <summary>
+        /// OnExpand method implementation
+        /// </summary>
+        /// <param name="status"></param>
+        protected override void OnExpand(AsyncStatus status)
+        {
+            base.OnExpand(status);
+        }
+
+        /// <summary>
+        /// OnRefresh method implmentattion
+        /// </summary>
+        protected override void OnRefresh(AsyncStatus status)
+        {
+            base.OnRefresh(status);
+            if (this.SecurityFormView != null)
+                this.SecurityFormView.Refresh();
+        }
+
+        /// <summary>
+        /// OnAction method implmentation
+        /// </summary>
+        protected override void OnAction(Microsoft.ManagementConsole.Action action, AsyncStatus status)
+        {
+            switch ((string)action.Tag)
+            {
+                case "SaveConfig":
+                    if (this.SecurityFormView != null)
+                        this.SecurityFormView.DoSave();
+                    break;
+                case "CancelConfig":
+                    if (this.SecurityFormView != null)
+                        this.SecurityFormView.DoCancel();
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// RefreshDescription method
+        /// </summary>
+        public override void RefreshDescription()
+        {
+            this.DisplayName = res.SECURITYSCOPERSAX;
         }
 
         /// <summary>

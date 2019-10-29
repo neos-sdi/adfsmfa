@@ -147,11 +147,17 @@
   <data name="ROOTCHANGELANGUAGEDESC" xml:space="preserve">
     <value>Change the culture of the user interface</value>
   </data>
+  <data name="ROOTLANGUAGEDE" xml:space="preserve">
+    <value>German</value>
+  </data>
+  <data name="ROOTLANGUAGEDEDESC" xml:space="preserve">
+    <value>Change the culture of the user interface in German (1031)</value>
+  </data>
   <data name="ROOTLANGUAGEES" xml:space="preserve">
-    <value>Spain</value>
+    <value>Spanish</value>
   </data>
   <data name="ROOTLANGUAGEESDESC" xml:space="preserve">
-    <value>Change the user interface culture in Spanish (3082)</value>
+    <value>Change the user interface culture in Spanish (1034/3082)</value>
   </data>
   <data name="ROOTLANGUAGEFR" xml:space="preserve">
     <value>French</value>
@@ -165,8 +171,44 @@
   <data name="ROOTLANGUAGEITDESC" xml:space="preserve">
     <value>Change the culture of the user interface in Italian (1040)</value>
   </data>
+  <data name="ROOTLANGUAGENL" xml:space="preserve">
+    <value>Dutch</value>
+  </data>
+  <data name="ROOTLANGUAGENLDESC" xml:space="preserve">
+    <value>Changing the user interface culture in Dutch (1043)</value>
+  </data>
+  <data name="ROOTLANGUAGEPL" xml:space="preserve">
+    <value>Polish</value>
+  </data>
+  <data name="ROOTLANGUAGEPLDESC" xml:space="preserve">
+    <value>Change the culture of the user interface in Polish (1045)</value>
+  </data>
+  <data name="ROOTLANGUAGEPT" xml:space="preserve">
+    <value>Portuguese</value>
+  </data>
+  <data name="ROOTLANGUAGEPTDESC" xml:space="preserve">
+    <value>Changing the user interface culture in Portuguese (2070)</value>
+  </data>
+  <data name="ROOTLANGUAGERO" xml:space="preserve">
+    <value>Romanian</value>
+  </data>
+  <data name="ROOTLANGUAGERODESC" xml:space="preserve">
+    <value>Change the culture of the user interface in Romanian (1048)</value>
+  </data>
+  <data name="ROOTLANGUAGERU" xml:space="preserve">
+    <value>Russian</value>
+  </data>
+  <data name="ROOTLANGUAGERUDESC" xml:space="preserve">
+    <value>Change the culture of the user interface in Russian (1049)</value>
+  </data>
+  <data name="ROOTLANGUAGESV" xml:space="preserve">
+    <value>Swedish</value>
+  </data>
+  <data name="ROOTLANGUAGESVDESC" xml:space="preserve">
+    <value>Change the culture of the user interface in Swedish (1053)</value>
+  </data>
   <data name="ROOTLANGUAGEUS" xml:space="preserve">
-    <value>United States</value>
+    <value>English</value>
   </data>
   <data name="ROOTLANGUAGEUSDESC" xml:space="preserve">
     <value>Change the culture of the user interface in English (1033)</value>
@@ -176,6 +218,18 @@
   </data>
   <data name="SECURITYSCOPENODEDESC" xml:space="preserve">
     <value>Security configuration</value>
+  </data>
+  <data name="SECURITYSCOPERNG" xml:space="preserve">
+    <value>RNG (random number generator)</value>
+  </data>
+  <data name="SECURITYSCOPEROOT" xml:space="preserve">
+    <value>Security Configuration</value>
+  </data>
+  <data name="SECURITYSCOPERSA" xml:space="preserve">
+    <value>RSA Certificate</value>
+  </data>
+  <data name="SECURITYSCOPERSAX" xml:space="preserve">
+    <value>RSA Certificates per user</value>
   </data>
   <data name="SERVICESCOPENODEDESC" xml:space="preserve">
     <value>Services status</value>

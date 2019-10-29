@@ -19,6 +19,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Resources;
+using System.Runtime.Versioning;
 
 // Les informations générales relatives à un assembly dépendent de 
 // l'ensemble d'attributs suivant. Changez les valeurs de ces attributs pour modifier les informations
@@ -51,6 +52,7 @@ using System.Resources;
 // en utilisant '*', comme indiqué ci-dessous :
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("2.4.0.0")]
-[assembly: AssemblyFileVersion("2.4.4720.1000")]
+[assembly: AssemblyFileVersion("2.4.4720.2000")]
 [assembly: AssemblyInformationalVersion("2.4.0.0")]
-[assembly: NeutralResourcesLanguageAttribute("")]
+[assembly: NeutralResourcesLanguageAttribute("en")]
+

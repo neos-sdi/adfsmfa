@@ -88,7 +88,7 @@ namespace Neos.IdentityServer.MultiFactor.Cmdlets.Ressources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Database &quot;{0}&quot; created !.
+        ///   Recherche une chaîne localisée semblable à Database {0} created !.
         /// </summary>
         internal static string InfosDatabaseCreated {
             get {
@@ -115,7 +115,7 @@ namespace Neos.IdentityServer.MultiFactor.Cmdlets.Ressources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Services on server &quot;{0}&quot; Restarted !.
+        ///   Recherche une chaîne localisée semblable à Services on server {0} Restarted !.
         /// </summary>
         internal static string InfosServerServicesRestarted {
             get {
@@ -187,7 +187,7 @@ namespace Neos.IdentityServer.MultiFactor.Cmdlets.Ressources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à User &quot;{0}&quot; added !.
+        ///   Recherche une chaîne localisée semblable à User {0} added !.
         /// </summary>
         internal static string InfosUserAdded {
             get {
@@ -196,7 +196,7 @@ namespace Neos.IdentityServer.MultiFactor.Cmdlets.Ressources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à User &quot;{0}&quot; deleted !.
+        ///   Recherche une chaîne localisée semblable à User {0} deleted !.
         /// </summary>
         internal static string InfosUserDeleted {
             get {
@@ -205,7 +205,7 @@ namespace Neos.IdentityServer.MultiFactor.Cmdlets.Ressources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à User &quot;{0}&quot; has a new Enryption key !.
+        ///   Recherche une chaîne localisée semblable à User {0} has a new Enryption key !.
         /// </summary>
         internal static string InfosUserHasNewKey {
             get {
@@ -214,7 +214,7 @@ namespace Neos.IdentityServer.MultiFactor.Cmdlets.Ressources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à User &quot;{0}&quot; updated !.
+        ///   Recherche une chaîne localisée semblable à User {0} updated !.
         /// </summary>
         internal static string InfosUserUpdated {
             get {

@@ -15,6 +15,7 @@
 // https://github.com/neos-sdi/adfsmfa                                                                                                                                                      //
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
+using Microsoft.IdentityServer.Web.Authentication.External;
 using Microsoft.Win32;
 using Neos.IdentityServer.MultiFactor.Common;
 using Neos.IdentityServer.MultiFactor.Data;
@@ -908,7 +909,8 @@ namespace Neos.IdentityServer.MultiFactor
         {
             return KeysManager.RemoveKey(upn);
         }
-        #endregion    
+
+        #endregion
     }
     #endregion
 
@@ -2600,6 +2602,18 @@ namespace Neos.IdentityServer.MultiFactor
                 default:
                     usercontext.EnrollPageID = PreferredMethod.Choose;
                     return PreferredMethod.None;
+            }
+        }
+
+        /// <summary>
+        /// PatchUserLcid method implementation
+        /// </summary>
+        public static void PatchUserLcid(AuthenticationContext ctx, string[] userlanguages = null)
+        {
+            if (userlanguages != null)
+            {
+                CultureInfo cult = new CultureInfo(userlanguages[0]);
+                ctx.Lcid = cult.LCID;
             }
         }
     }

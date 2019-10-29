@@ -118,17 +118,8 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="label3.Size" type="System.Drawing.Size, System.Drawing">
-    <value>134, 13</value>
-  </data>
-  <data name="label3.Text" xml:space="preserve">
-    <value>Paramètres généraux  </value>
-  </data>
-  <data name="label2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>273, 13</value>
-  </data>
-  <data name="label2.Text" xml:space="preserve">
-    <value>Gestion des principaux paramètres de configuration MFA</value>
+  <data name="GLVALIDSAVE" xml:space="preserve">
+    <value>Annuler les modifications et recharger les données ?</value>
   </data>
   <data name="label1.Size" type="System.Drawing.Size, System.Drawing">
     <value>301, 24</value>
@@ -136,7 +127,16 @@
   <data name="label1.Text" xml:space="preserve">
     <value>Paramètres généraux des services</value>
   </data>
-  <data name="GLVALIDSAVE" xml:space="preserve">
-    <value>Annuler les modifications et recharger les données ?</value>
+  <data name="label2.Size" type="System.Drawing.Size, System.Drawing">
+    <value>273, 13</value>
+  </data>
+  <data name="label2.Text" xml:space="preserve">
+    <value>Gestion des principaux paramètres de configuration MFA</value>
+  </data>
+  <data name="label3.Size" type="System.Drawing.Size, System.Drawing">
+    <value>134, 13</value>
+  </data>
+  <data name="label3.Text" xml:space="preserve">
+    <value>Paramètres généraux  </value>
   </data>
 </root>

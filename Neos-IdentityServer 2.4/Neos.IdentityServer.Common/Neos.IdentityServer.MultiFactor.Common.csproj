@@ -13,7 +13,7 @@
     <AssemblyName>Neos.IdentityServer.MultiFactor.Common</AssemblyName>
     <ProjectTypeGuids>{3D9AD99F-2412-4246-B90B-4EAA41C64699};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <StartArguments>/client:"WcfTestClient.exe"</StartArguments>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
     <WcfConfigValidationEnabled>True</WcfConfigValidationEnabled>
     <XsdCodeGenEnabled>True</XsdCodeGenEnabled>
     <FileUpgradeFlags>
@@ -120,20 +120,35 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Resources\CSErrors.de.resx" />
     <EmbeddedResource Include="Resources\CSErrors.es.resx" />
     <EmbeddedResource Include="Resources\CSErrors.it.resx" />
+    <EmbeddedResource Include="Resources\CSErrors.nl.resx" />
+    <EmbeddedResource Include="Resources\CSErrors.pl.resx" />
+    <EmbeddedResource Include="Resources\CSErrors.pt.resx" />
     <EmbeddedResource Include="Resources\CSErrors.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>CSErrors.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\CSErrors.fr.resx" />
+    <EmbeddedResource Include="Resources\CSErrors.ro.resx" />
+    <EmbeddedResource Include="Resources\CSErrors.ru.resx" />
+    <EmbeddedResource Include="Resources\CSErrors.sv.resx" />
+    <EmbeddedResource Include="Resources\CSHtml.de.resx" />
     <EmbeddedResource Include="Resources\CSHtml.es.resx" />
     <EmbeddedResource Include="Resources\CSHtml.fr.resx" />
     <EmbeddedResource Include="Resources\CSHtml.it.resx" />
+    <EmbeddedResource Include="Resources\CSHtml.nl.resx" />
+    <EmbeddedResource Include="Resources\CSHtml.pl.resx" />
+    <EmbeddedResource Include="Resources\CSHtml.pt.resx" />
     <EmbeddedResource Include="Resources\CSHtml.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>CSHtml.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="Resources\CSHtml.ro.resx" />
+    <EmbeddedResource Include="Resources\CSHtml.ru.resx" />
+    <EmbeddedResource Include="Resources\CSHtml.sv.resx" />
+    <EmbeddedResource Include="Resources\CSMail.de.resx" />
     <EmbeddedResource Include="Resources\CSMail.es.resx">
       <LastGenOutput>mail_strings.es.Designer.cs</LastGenOutput>
     </EmbeddedResource>
@@ -141,10 +156,16 @@
       <LastGenOutput>mail_strings.fr.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\CSMail.it.resx" />
+    <EmbeddedResource Include="Resources\CSMail.nl.resx" />
+    <EmbeddedResource Include="Resources\CSMail.pl.resx" />
+    <EmbeddedResource Include="Resources\CSMail.pt.resx" />
     <EmbeddedResource Include="Resources\CSMail.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>CSMail.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="Resources\CSMail.ro.resx" />
+    <EmbeddedResource Include="Resources\CSMail.ru.resx" />
+    <EmbeddedResource Include="Resources\CSMail.sv.resx" />
   </ItemGroup>
   <ItemGroup>
     <COMReference Include="CERTENROLLLib">

@@ -124,7 +124,7 @@
     <value>Servizio ADFS non disponibile.</value>
   </data>
   <data name="ErrorLoadingMFAConfiguration" xml:space="preserve">
-    <value>Caricamento configurazione autenticazione a più fattori non riuscito.\r{0}</value>
+    <value>Caricamento configurazione autenticazione a più fattori non riuscito.{0}</value>
   </data>
   <data name="ErrorMFAFarmAlreadyInitialized" xml:space="preserve">
     <value>L'autenticazione a più fattori è già stata inizializzata. Devi eseguire la cmdlet PowerShell "UnRegister-MFASystem" per reimpostare completamente la configurazione dell'autenticazione a più fattori.</value>

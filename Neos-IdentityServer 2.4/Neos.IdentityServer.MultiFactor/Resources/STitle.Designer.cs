@@ -79,6 +79,15 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Setting up options.
+        /// </summary>
+        internal static string ManageOptionsPageTitle {
+            get {
+                return ResourceManager.GetString("ManageOptionsPageTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à You must use a security code to confirm your identity. How do you want to receive your code ? .
         /// </summary>
         internal static string MustUseCodePageTitle {

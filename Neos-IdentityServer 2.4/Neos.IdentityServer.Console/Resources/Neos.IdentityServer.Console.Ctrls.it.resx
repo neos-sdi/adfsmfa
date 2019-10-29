@@ -327,6 +327,9 @@
   <data name="CTRLGLREFRESH" xml:space="preserve">
     <value>Velocità di aggiornamento (millisecondi)</value>
   </data>
+  <data name="CTRLGLREPLAY" xml:space="preserve">
+    <value>Replay Livello di protezione</value>
+  </data>
   <data name="CTRLGLSHOWAUTHY" xml:space="preserve">
     <value>Visualizza app di autenticazione Authy</value>
   </data>
@@ -345,6 +348,9 @@
   <data name="CTRLGLUSESMS" xml:space="preserve">
     <value>Usa notifiche tramite SMS</value>
   </data>
+  <data name="CTRLGLUSEUSERLANGS" xml:space="preserve">
+    <value>Utilizzare le lingue del browser</value>
+  </data>
   <data name="CTRLINVALIDVALUE" xml:space="preserve">
     <value>Valore non valido, dev'essere compreso fra {0} e {1}.</value>
   </data>
@@ -362,6 +368,9 @@
   </data>
   <data name="CTRLPROVPIN" xml:space="preserve">
     <value>Codice PIN richiesto</value>
+  </data>
+  <data name="CTRLPROVREQUIRED" xml:space="preserve">
+    <value>Obbligatorio</value>
   </data>
   <data name="CTRLPROVWIZARD" xml:space="preserve">
     <value>Procedura guidata registrazione</value>
@@ -396,6 +405,9 @@
   <data name="CTRLSECKEYMODE" xml:space="preserve">
     <value>Modalità sicurezza chiave</value>
   </data>
+  <data name="CTRLSECLIBLABEL" xml:space="preserve">
+    <value>Versione della libreria di crittografia</value>
+  </data>
   <data name="CTRLSECNEWCERT" xml:space="preserve">
     <value>Nuovo certificato</value>
   </data>
@@ -417,11 +429,17 @@
   <data name="CTRLSECTHUMPRINT" xml:space="preserve">
     <value>Identificazione personale certificato</value>
   </data>
+  <data name="CTRLSECWARNING" xml:space="preserve">
+    <value>Attenzione ! La modifica di questi valori invaliderà tutte le chiavi correnti</value>
+  </data>
   <data name="CTRLSECWIZARD" xml:space="preserve">
     <value>Opzioni procedura guidata registrazione</value>
   </data>
   <data name="CTRLSECWIZTITLE" xml:space="preserve">
     <value>Crea un nuovo database SQL</value>
+  </data>
+  <data name="CTRLSECXORLABEL" xml:space="preserve">
+    <value>Frase d'accesso</value>
   </data>
   <data name="CTRLSMSASSEMBLY" xml:space="preserve">
     <value>Implementazione (classe completa)</value>

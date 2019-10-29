@@ -48,7 +48,7 @@ namespace Neos.IdentityServer.MultiFactor
             this.IsPermanentFailure = false; // (this.Context.TargetUIMode == ProviderPageMode.DefinitiveError);
             this.IsMessage = true; // (this.Context.TargetUIMode != ProviderPageMode.DefinitiveError);
             this.DisableOptions = false;
-            this.Resources = new ResourcesLocale(context.Lcid);
+            this.Resources = new ResourcesLocale(Context.Lcid);
         }
 
         /// <summary>
@@ -62,7 +62,7 @@ namespace Neos.IdentityServer.MultiFactor
             this.IsPermanentFailure = (this.Context.TargetUIMode == ProviderPageMode.DefinitiveError);
             this.IsMessage = (this.Context.TargetUIMode != ProviderPageMode.DefinitiveError);
             this.DisableOptions = false;
-            this.Resources = new ResourcesLocale(context.Lcid);
+            this.Resources = new ResourcesLocale(Context.Lcid);
         }
 
         /// <summary>
@@ -76,7 +76,7 @@ namespace Neos.IdentityServer.MultiFactor
             this.IsPermanentFailure = (this.Context.TargetUIMode == ProviderPageMode.DefinitiveError);
             this.IsMessage = ismessage;
             this.DisableOptions = false;
-            this.Resources = new ResourcesLocale(context.Lcid);
+            this.Resources = new ResourcesLocale(Context.Lcid);
         }
 
         /// <summary>
@@ -91,7 +91,7 @@ namespace Neos.IdentityServer.MultiFactor
             this.IsPermanentFailure = (this.Context.TargetUIMode == ProviderPageMode.DefinitiveError);
             this.IsMessage = (this.Context.TargetUIMode != ProviderPageMode.DefinitiveError);
             this.DisableOptions = false;
-            this.Resources = new ResourcesLocale(context.Lcid);
+            this.Resources = new ResourcesLocale(Context.Lcid);
         }
 
         /// <summary>
@@ -106,7 +106,7 @@ namespace Neos.IdentityServer.MultiFactor
             this.IsPermanentFailure = (this.Context.TargetUIMode == ProviderPageMode.DefinitiveError);
             this.IsMessage = (this.Context.TargetUIMode != ProviderPageMode.DefinitiveError);
             this.DisableOptions = disableoptions;
-            this.Resources = new ResourcesLocale(context.Lcid);
+            this.Resources = new ResourcesLocale(Context.Lcid);
         }
 
         #region Properties
@@ -261,6 +261,43 @@ namespace Neos.IdentityServer.MultiFactor
         }
 
         /// <summary>
+        /// GetFormPreRenderHtmlHeader method implementation
+        /// </summary>
+        protected virtual string GetFormPreRenderHtmlHeader(AuthenticationContext usercontext)
+        {
+            string result = "<script type='text/javascript'>" + "\r\n";
+            result += "function RemoveADFSHtmlHeader()" + "\r\n";
+            result += "{" + "\r\n";
+            result += "   var title = document.getElementById('mfaGreetingDescription');" + "\r\n";
+            result += "   if (title)" + "\r\n";
+            result += "   {" + "\r\n";
+            result += "      title.style.display = \"none\";" + "\r\n";
+            result += "   }" + "\r\n";
+            result += "   return true;" + "\r\n";
+            result += "}" + "\r\n";
+            result += "</script>" + "\r\n";
+            return result;
+        }
+
+        /// <summary>
+        /// GetFormPreRenderHtmlHeader method implementation
+        /// </summary>
+        protected virtual string GetFormRenderHtmlHeader(AuthenticationContext usercontext)
+        {
+            string result = "<script type=\"text/javascript\">" + "\r\n";
+            result += "if (window.addEventListener)" + "\r\n";
+            result += "{" + "\r\n";
+            result += "   window.addEventListener('load', RemoveADFSHtmlHeader, false);" + "\r\n";
+            result += "}" + "\r\n";
+            result += "else if (window.attachEvent)" + "\r\n";
+            result += "{" + "\r\n";
+            result += "   window.attachEvent('onload', RemoveADFSHtmlHeader);" + "\r\n";
+            result += "}" + "\r\n";
+            result += "</script>" + "\r\n";
+
+            return result;
+        }
+        /// <summary>
         /// IAdapterPresentationForm GetFormHtml implementation
         /// </summary>
         public virtual string GetFormHtml(int lcid)
@@ -269,61 +306,79 @@ namespace Neos.IdentityServer.MultiFactor
             switch (Context.UIMode)
             {
                 case ProviderPageMode.Identification:
-                    result = GetFormHtmlIdentification(Context);
+                    result += GetFormRenderHtmlHeader(Context);
+                    result += GetFormHtmlIdentification(Context);
                     break;
                 case ProviderPageMode.Registration: // User self registration and enable
-                    result = GetFormHtmlRegistration(Context);
+                    result += GetFormRenderHtmlHeader(Context);
+                    result += GetFormHtmlRegistration(Context);
                     break;
                 case ProviderPageMode.Invitation: // admministrative user registration and let disabled
-                    result = GetFormHtmlInvitation(Context);
+                    result += GetFormRenderHtmlHeader(Context);
+                    result += GetFormHtmlInvitation(Context);
                     break;
                 case ProviderPageMode.Activation: // Try to enable
-                    result = GetFormHtmlActivation(Context);
+                    result += GetFormRenderHtmlHeader(Context);
+                    result += GetFormHtmlActivation(Context);
                     break;
-                case ProviderPageMode.ManageOptions: 
-                    result = GetFormHtmlManageOptions(Context);
+                case ProviderPageMode.ManageOptions:
+                    result += GetFormRenderHtmlHeader(Context);
+                    result += GetFormHtmlManageOptions(Context);
                     break;
                 case ProviderPageMode.SelectOptions:
-                    result = GetFormHtmlSelectOptions(Context);
+                    result += GetFormRenderHtmlHeader(Context);
+                    result += GetFormHtmlSelectOptions(Context);
                     break;
                 case ProviderPageMode.ChooseMethod:
-                    result = GetFormHtmlChooseMethod(Context);
+                    result += GetFormRenderHtmlHeader(Context);
+                    result += GetFormHtmlChooseMethod(Context);
                     break;
                 case ProviderPageMode.ChangePassword:
-                    result = GetFormHtmlChangePassword(Context);
+                    result += GetFormRenderHtmlHeader(Context);
+                    result += GetFormHtmlChangePassword(Context);
                     break;
                 case ProviderPageMode.Bypass:
-                    result = GetFormHtmlBypass(Context);
+                    result += GetFormHtmlBypass(Context);
                     break;
                 case ProviderPageMode.Locking:
-                    result = GetFormHtmlLocking(Context);
+                    result += GetFormRenderHtmlHeader(Context);
+                    result += GetFormHtmlLocking(Context);
                     break;
                 case ProviderPageMode.ShowQRCode:
-                    result = GetFormHtmlShowQRCode(Context);
+                    result += GetFormRenderHtmlHeader(Context);
+                    result += GetFormHtmlShowQRCode(Context);
                     break;
                 case ProviderPageMode.SendAuthRequest:
-                    result = GetFormHtmlSendCodeRequest(Context);
+                    result += GetFormRenderHtmlHeader(Context);
+                    result += GetFormHtmlSendCodeRequest(Context);
                     break;
                 case ProviderPageMode.SendAdministrativeRequest:
-                    result = GetFormHtmlSendAdministrativeRequest(Context);
+                    result += GetFormRenderHtmlHeader(Context);
+                    result += GetFormHtmlSendAdministrativeRequest(Context);
                     break;
                 case ProviderPageMode.SendKeyRequest:
-                    result = GetFormHtmlSendKeyRequest(Context);
+                    result += GetFormRenderHtmlHeader(Context);
+                    result += GetFormHtmlSendKeyRequest(Context);
                     break;
                 case ProviderPageMode.EnrollOTP:
-                    result = GetFormHtmlEnrollOTP(Context);
+                    result += GetFormRenderHtmlHeader(Context);
+                    result += GetFormHtmlEnrollOTP(Context);
                     break;
                 case ProviderPageMode.EnrollEmail:
-                    result = GetFormHtmlEnrollEmail(Context);
+                    result += GetFormRenderHtmlHeader(Context);
+                    result += GetFormHtmlEnrollEmail(Context);
                     break;
                 case ProviderPageMode.EnrollPhone:
-                    result = GetFormHtmlEnrollPhone(Context);
+                    result += GetFormRenderHtmlHeader(Context);
+                    result += GetFormHtmlEnrollPhone(Context);
                     break;
                 case ProviderPageMode.EnrollBiometrics:
-                    result = GetFormHtmlEnrollBio(Context);
+                    result += GetFormRenderHtmlHeader(Context);
+                    result += GetFormHtmlEnrollBio(Context);
                     break;
                 case ProviderPageMode.EnrollPin:
-                    result = GetFormHtmlEnrollPinCode(Context);
+                    result += GetFormRenderHtmlHeader(Context);
+                    result += GetFormHtmlEnrollPinCode(Context);
                     break;
             }
             return result;
@@ -334,64 +389,82 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public virtual string GetFormPreRenderHtml(int lcid)
         {
-            string result = GetFormPreRenderHtmlCSS(Context); 
+            string result = GetFormPreRenderHtmlCSS(Context);
             switch (Context.UIMode)
             {
                 case ProviderPageMode.Identification:
+                    result += GetFormPreRenderHtmlHeader(Context);
                     result += GetFormPreRenderHtmlIdentification(Context);
                     break;
                 case ProviderPageMode.Registration: // User self registration and enable
+                    result += GetFormPreRenderHtmlHeader(Context);
                     result += GetFormPreRenderHtmlRegistration(Context);
                     break;
                 case ProviderPageMode.Invitation: // admministrative user registration and let disabled
+                    result += GetFormPreRenderHtmlHeader(Context);
                     result += GetFormPreRenderHtmlInvitation(Context);
                     break;
                 case ProviderPageMode.Activation: // Activation
+                    result += GetFormPreRenderHtmlHeader(Context);
                     result += GetFormPreRenderHtmlActivation(Context);
                     break;
-                case ProviderPageMode.ManageOptions: 
+                case ProviderPageMode.ManageOptions:
+                    result += GetFormPreRenderHtmlHeader(Context);
                     result += GetFormPreRenderHtmlManageOptions(Context);
                     break;
                 case ProviderPageMode.SelectOptions:
+                    result += GetFormPreRenderHtmlHeader(Context);
                     result += GetFormPreRenderHtmlSelectOptions(Context);
                     break;
                 case ProviderPageMode.ChooseMethod:
+                    result += GetFormPreRenderHtmlHeader(Context);
                     result += GetFormPreRenderHtmlChooseMethod(Context);
                     break;
                 case ProviderPageMode.ChangePassword:
+                    result += GetFormPreRenderHtmlHeader(Context);
                     result += GetFormPreRenderHtmlChangePassword(Context);
                     break;
                 case ProviderPageMode.Bypass:
                     result += GetFormPreRenderHtmlBypass(Context);
                     break;
                 case ProviderPageMode.Locking:
+                    result += GetFormPreRenderHtmlHeader(Context);
                     result += GetFormPreRenderHtmlLocking(Context);
                     break;
                 case ProviderPageMode.ShowQRCode:
+                    result += GetFormPreRenderHtmlHeader(Context);
                     result = GetFormPreRenderHtmlShowQRCode(Context);
                     break;
                 case ProviderPageMode.SendAuthRequest:
+                    result += GetFormPreRenderHtmlHeader(Context);
                     result = GetFormPreRenderHtmlSendCodeRequest(Context);
                     break;
                 case ProviderPageMode.SendAdministrativeRequest:
+                    result += GetFormPreRenderHtmlHeader(Context);
                     result = GetFormPreRenderHtmlSendAdministrativeRequest(Context);
                     break;
                 case ProviderPageMode.SendKeyRequest:
+                    result += GetFormPreRenderHtmlHeader(Context);
                     result = GetFormPreRenderHtmlSendKeyRequest(Context);
                     break;
                 case ProviderPageMode.EnrollOTP:
+                    result += GetFormPreRenderHtmlHeader(Context);
                     result += GetFormPreRenderHtmlEnrollOTP(Context);
                     break;
                 case ProviderPageMode.EnrollEmail:
+                    result += GetFormPreRenderHtmlHeader(Context);
                     result += GetFormPreRenderHtmlEnrollEmail(Context);
                     break;
                 case ProviderPageMode.EnrollPhone:
+                    result += GetFormPreRenderHtmlHeader(Context);
                     result += GetFormPreRenderHtmlEnrollPhone(Context);
                     break;
                 case ProviderPageMode.EnrollBiometrics:
+                    result += GetFormPreRenderHtmlHeader(Context);
                     result += GetFormPreRenderHtmlEnrollBio(Context);
                     break;
                 case ProviderPageMode.EnrollPin:
+                    result += GetFormPreRenderHtmlHeader(Context);
                     result += GetFormPreRenderHtmlEnrollPinCode(Context);
                     break;
             }

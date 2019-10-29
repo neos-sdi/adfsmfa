@@ -123,6 +123,9 @@
   <data name="USERSFRMACTIVATEDESC" xml:space="preserve">
     <value>Enable MFA for the selected user.</value>
   </data>
+  <data name="USERSFRMADECTIVATEDESC" xml:space="preserve">
+    <value>Turn off MFA for the selected user.</value>
+  </data>
   <data name="USERSFRMCONFIRMDELETE" xml:space="preserve">
     <value>Do you really want to delete this item?</value>
   </data>

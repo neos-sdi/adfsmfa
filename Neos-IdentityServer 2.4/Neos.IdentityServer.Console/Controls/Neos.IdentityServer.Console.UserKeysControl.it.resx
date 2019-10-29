@@ -129,7 +129,7 @@
     <value>4</value>
   </data>
   <data name="BTNSendByMail.Text" xml:space="preserve">
-    <value>Invia la chiave tramite posta elettronica</value>
+    <value>Inviare la chiave tramite posta elettronica</value>
   </data>
   <data name="clearkeyBtn.Location" type="System.Drawing.Point, System.Drawing">
     <value>19, 142</value>
@@ -141,7 +141,7 @@
     <value>2</value>
   </data>
   <data name="clearkeyBtn.Text" xml:space="preserve">
-    <value>Pulisci chiave</value>
+    <value>Cancella chiave</value>
   </data>
   <data name="newkeyBtn.Location" type="System.Drawing.Point, System.Drawing">
     <value>145, 142</value>
@@ -177,7 +177,7 @@
     <value>7</value>
   </data>
   <data name="groupBoxKey.Text" xml:space="preserve">
-    <value>Chiave segreta</value>
+    <value>Chiave Segreta</value>
   </data>
   <data name="EmailPrompt.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -192,7 +192,7 @@
     <value>8</value>
   </data>
   <data name="EmailPrompt.Text" xml:space="preserve">
-    <value>Indirizzo di posta elettronica:</value>
+    <value>Posta elettronica:</value>
   </data>
   <data name="qrCodeGraphic.Location" type="System.Drawing.Point, System.Drawing">
     <value>17, 26</value>

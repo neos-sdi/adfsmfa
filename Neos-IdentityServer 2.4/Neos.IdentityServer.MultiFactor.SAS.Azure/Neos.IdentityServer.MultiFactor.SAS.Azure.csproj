@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Neos.IdentityServer.MultiFactor.SAS</RootNamespace>
     <AssemblyName>Neos.IdentityServer.MultiFactor.SAS.Azure</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -80,13 +80,20 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Resources\SSAS.de.resx" />
     <EmbeddedResource Include="Resources\SSAS.fr.resx" />
     <EmbeddedResource Include="Resources\SSAS.es.resx" />
     <EmbeddedResource Include="Resources\SSAS.it.resx" />
+    <EmbeddedResource Include="Resources\SSAS.nl.resx" />
+    <EmbeddedResource Include="Resources\SSAS.pl.resx" />
+    <EmbeddedResource Include="Resources\SSAS.pt.resx" />
     <EmbeddedResource Include="Resources\SSAS.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>SSAS.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="Resources\SSAS.ro.resx" />
+    <EmbeddedResource Include="Resources\SSAS.ru.resx" />
+    <EmbeddedResource Include="Resources\SSAS.sv.resx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

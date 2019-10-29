@@ -151,7 +151,25 @@ namespace Neos.IdentityServer.Console.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Spain.
+        ///   Recherche une chaîne localisée semblable à German.
+        /// </summary>
+        public static string ROOTLANGUAGEDE {
+            get {
+                return ResourceManager.GetString("ROOTLANGUAGEDE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Change the culture of the user interface in German (1031).
+        /// </summary>
+        public static string ROOTLANGUAGEDEDESC {
+            get {
+                return ResourceManager.GetString("ROOTLANGUAGEDEDESC", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Spanish.
         /// </summary>
         public static string ROOTLANGUAGEES {
             get {
@@ -160,7 +178,7 @@ namespace Neos.IdentityServer.Console.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Change the user interface culture in Spanish (3082).
+        ///   Recherche une chaîne localisée semblable à Change the user interface culture in Spanish (1034/3082).
         /// </summary>
         public static string ROOTLANGUAGEESDESC {
             get {
@@ -205,7 +223,115 @@ namespace Neos.IdentityServer.Console.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à United States.
+        ///   Recherche une chaîne localisée semblable à Dutch.
+        /// </summary>
+        public static string ROOTLANGUAGENL {
+            get {
+                return ResourceManager.GetString("ROOTLANGUAGENL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Changing the user interface culture in Dutch (1043).
+        /// </summary>
+        public static string ROOTLANGUAGENLDESC {
+            get {
+                return ResourceManager.GetString("ROOTLANGUAGENLDESC", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Polish.
+        /// </summary>
+        public static string ROOTLANGUAGEPL {
+            get {
+                return ResourceManager.GetString("ROOTLANGUAGEPL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Change the culture of the user interface in Polish (1045).
+        /// </summary>
+        public static string ROOTLANGUAGEPLDESC {
+            get {
+                return ResourceManager.GetString("ROOTLANGUAGEPLDESC", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Portuguese.
+        /// </summary>
+        public static string ROOTLANGUAGEPT {
+            get {
+                return ResourceManager.GetString("ROOTLANGUAGEPT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Changing the user interface culture in Portuguese (2070).
+        /// </summary>
+        public static string ROOTLANGUAGEPTDESC {
+            get {
+                return ResourceManager.GetString("ROOTLANGUAGEPTDESC", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Romanian.
+        /// </summary>
+        public static string ROOTLANGUAGERO {
+            get {
+                return ResourceManager.GetString("ROOTLANGUAGERO", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Change the culture of the user interface in Romanian (1048).
+        /// </summary>
+        public static string ROOTLANGUAGERODESC {
+            get {
+                return ResourceManager.GetString("ROOTLANGUAGERODESC", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Russian.
+        /// </summary>
+        public static string ROOTLANGUAGERU {
+            get {
+                return ResourceManager.GetString("ROOTLANGUAGERU", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Change the culture of the user interface in Russian (1049).
+        /// </summary>
+        public static string ROOTLANGUAGERUDESC {
+            get {
+                return ResourceManager.GetString("ROOTLANGUAGERUDESC", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Swedish.
+        /// </summary>
+        public static string ROOTLANGUAGESV {
+            get {
+                return ResourceManager.GetString("ROOTLANGUAGESV", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Change the culture of the user interface in Swedish (1053).
+        /// </summary>
+        public static string ROOTLANGUAGESVDESC {
+            get {
+                return ResourceManager.GetString("ROOTLANGUAGESVDESC", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à English.
         /// </summary>
         public static string ROOTLANGUAGEUS {
             get {
@@ -237,6 +363,42 @@ namespace Neos.IdentityServer.Console.Resources {
         public static string SECURITYSCOPENODEDESC {
             get {
                 return ResourceManager.GetString("SECURITYSCOPENODEDESC", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à RNG (random number generator).
+        /// </summary>
+        public static string SECURITYSCOPERNG {
+            get {
+                return ResourceManager.GetString("SECURITYSCOPERNG", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Security Configuration.
+        /// </summary>
+        public static string SECURITYSCOPEROOT {
+            get {
+                return ResourceManager.GetString("SECURITYSCOPEROOT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à RSA Certificate.
+        /// </summary>
+        public static string SECURITYSCOPERSA {
+            get {
+                return ResourceManager.GetString("SECURITYSCOPERSA", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à RSA Certificates per user.
+        /// </summary>
+        public static string SECURITYSCOPERSAX {
+            get {
+                return ResourceManager.GetString("SECURITYSCOPERSAX", resourceCulture);
             }
         }
         

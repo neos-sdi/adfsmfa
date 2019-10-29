@@ -117,47 +117,32 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="InfosRecordsCount" xml:space="preserve">
-    <value>Numero record: {0}</value>
-  </data>
-  <data name="InfosRSACertificateChanged" xml:space="preserve">
-    <value>Certificato per l'autenticazione a più fattori {0} aggiornato correttamente. Devi distribuire questo certificato su tutti gli altri server ADFS.</value>
-  </data>
-  <data name="InfosSystemAlreadyInitialized" xml:space="preserve">
-    <value>L'autenticazione a più fattori è già stata inizializzata. Devi eseguire la cmdlet PowerShell "UnRegister-MFASystem" per reimpostare completamente la configurazione dell'autenticazione a più fattori.</value>
-  </data>
-  <data name="InfosSystemRegistered" xml:space="preserve">
-    <value>Sistema di autenticazione a più fattori registrato correttamente.</value>
-  </data>
-  <data name="InfosSystemUnRegistered" xml:space="preserve">
-    <value>Configurazione del sistema di autenticazione a più fattori rimossa correttamente.</value>
-  </data>
-  <data name="InfosUserAdded" xml:space="preserve">
-    <value>Utente "{0}" aggiunto.</value>
-  </data>
-  <data name="InfosUserDeleted" xml:space="preserve">
-    <value>Utente "{0}" eliminato.</value>
-  </data>
-  <data name="InfosUserHasNewKey" xml:space="preserve">
-    <value>L'utente "{0}" ha una nuova chiave di criptazione.</value>
-  </data>
-  <data name="InfosUserUpdated" xml:space="preserve">
-    <value>Utente "{0}" aggiornato.</value>
-  </data>
   <data name="InfoAllKeyWillbeReset" xml:space="preserve">
     <value>Tutte le chiavi RSA saranno invalidate! Continuare (Y/N)?</value>
   </data>
   <data name="InfosAllServicesRestarted" xml:space="preserve">
     <value>Tutti i servizi della farm sono stati riavviati.</value>
   </data>
-  <data name="InfosServerServicesRestarted" xml:space="preserve">
-    <value>Servizi riavviati sul server "{0}".</value>
-  </data>
   <data name="InfosConfigUpdated" xml:space="preserve">
     <value>Configurazione autenticazione a più fattori aggiornata.</value>
   </data>
   <data name="InfosDatabaseCreated" xml:space="preserve">
     <value>Database "{0}" creato.</value>
+  </data>
+  <data name="InfosRecordsCount" xml:space="preserve">
+    <value>Numero record: {0}</value>
+  </data>
+  <data name="InfosRSACertificateChanged" xml:space="preserve">
+    <value>Certificato per l'autenticazione a più fattori {0} aggiornato correttamente. Devi distribuire questo certificato su tutti gli altri server ADFS.</value>
+  </data>
+  <data name="InfosServerServicesRestarted" xml:space="preserve">
+    <value>Servizi riavviati sul server {0}.</value>
+  </data>
+  <data name="InfosSQLCertificateChanged" xml:space="preserve">
+    <value>Certificato SQL {0} aggiornato correttamente. Devi distribuire questo certificato su tutti gli altri server ADFS.</value>
+  </data>
+  <data name="InfosSystemAlreadyInitialized" xml:space="preserve">
+    <value>L'autenticazione a più fattori è già stata inizializzata. Devi eseguire la cmdlet PowerShell "UnRegister-MFASystem" per reimpostare completamente la configurazione dell'autenticazione a più fattori.</value>
   </data>
   <data name="InfosSystemExported" xml:space="preserve">
     <value>Configurazione del sistema di autenticazione a più fattori esportata correttamente sul file {0}.</value>
@@ -168,8 +153,23 @@
   <data name="InfosSystemInInvalidState" xml:space="preserve">
     <value>Configurazione del sistema di autenticazione a più fattori importata con errori.</value>
   </data>
-  <data name="InfosSQLCertificateChanged" xml:space="preserve">
-    <value>Certificato SQL {0} aggiornato correttamente. Devi distribuire questo certificato su tutti gli altri server ADFS.</value>
+  <data name="InfosSystemRegistered" xml:space="preserve">
+    <value>Sistema di autenticazione a più fattori registrato correttamente.</value>
+  </data>
+  <data name="InfosSystemUnRegistered" xml:space="preserve">
+    <value>Configurazione del sistema di autenticazione a più fattori rimossa correttamente.</value>
+  </data>
+  <data name="InfosUserAdded" xml:space="preserve">
+    <value>Utente {0} aggiunto.</value>
+  </data>
+  <data name="InfosUserDeleted" xml:space="preserve">
+    <value>Utente {0} eliminato.</value>
+  </data>
+  <data name="InfosUserHasNewKey" xml:space="preserve">
+    <value>L'utente {0} ha una nuova chiave di criptazione.</value>
+  </data>
+  <data name="InfosUserUpdated" xml:space="preserve">
+    <value>Utente {0} aggiornato.</value>
   </data>
   <data name="InfosWarningAboutTheme" xml:space="preserve">
     <value>ATTENZIONE! Il tema prescelto dev'essere completamente compatibile (JS, CSS, ecc.) con l'interfaccia utente scelta: {0}</value>

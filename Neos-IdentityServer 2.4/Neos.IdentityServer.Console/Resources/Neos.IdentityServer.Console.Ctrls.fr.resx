@@ -327,6 +327,9 @@
   <data name="CTRLGLREFRESH" xml:space="preserve">
     <value>Fréquence de rafraichissement (en millisecondes)</value>
   </data>
+  <data name="CTRLGLREPLAY" xml:space="preserve">
+    <value>Replay Protection Level</value>
+  </data>
   <data name="CTRLGLSHOWAUTHY" xml:space="preserve">
     <value>Afficher Authy Authenticator</value>
   </data>
@@ -344,6 +347,9 @@
   </data>
   <data name="CTRLGLUSESMS" xml:space="preserve">
     <value>Utiliser les notifications par SMS</value>
+  </data>
+  <data name="CTRLGLUSEUSERLANGS" xml:space="preserve">
+    <value>Utiliser les langages du navigateur</value>
   </data>
   <data name="CTRLINVALIDVALUE" xml:space="preserve">
     <value>La valeur n'est pas valide. Elle doit être comprise entre {0} et {1}.</value>
@@ -399,6 +405,9 @@
   <data name="CTRLSECKEYMODE" xml:space="preserve">
     <value>Mode de clé de sécurité</value>
   </data>
+  <data name="CTRLSECLIBLABEL" xml:space="preserve">
+    <value>Version de la bibliothèque de chiffrement</value>
+  </data>
   <data name="CTRLSECNEWCERT" xml:space="preserve">
     <value>Nouveau certificat</value>
   </data>
@@ -420,11 +429,17 @@
   <data name="CTRLSECTHUMPRINT" xml:space="preserve">
     <value>Empreinte du certificat</value>
   </data>
+  <data name="CTRLSECWARNING" xml:space="preserve">
+    <value>Attention ! Changer ces valeurs invalidera toutes les clés actuelles</value>
+  </data>
   <data name="CTRLSECWIZARD" xml:space="preserve">
     <value>Options assistant d'enregistrement</value>
   </data>
   <data name="CTRLSECWIZTITLE" xml:space="preserve">
     <value>Créer une nouvelle base de données</value>
+  </data>
+  <data name="CTRLSECXORLABEL" xml:space="preserve">
+    <value>Phrase secrète</value>
   </data>
   <data name="CTRLSMSASSEMBLY" xml:space="preserve">
     <value>Implémentation (full class)</value>

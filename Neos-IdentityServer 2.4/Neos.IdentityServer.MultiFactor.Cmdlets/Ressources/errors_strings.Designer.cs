@@ -61,7 +61,7 @@ namespace Neos.IdentityServer.MultiFactor.Cmdlets.Ressources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Error adding user &quot;{0}&quot; \r {1}.
+        ///   Recherche une chaîne localisée semblable à Error adding user {0} {1}.
         /// </summary>
         internal static string ErrorAddingUser {
             get {
@@ -70,7 +70,7 @@ namespace Neos.IdentityServer.MultiFactor.Cmdlets.Ressources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Computer &quot;{0}&quot; not found !.
+        ///   Recherche une chaîne localisée semblable à Computer {0} not found !.
         /// </summary>
         internal static string ErrorComputerNotFound {
             get {
@@ -79,7 +79,7 @@ namespace Neos.IdentityServer.MultiFactor.Cmdlets.Ressources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Error deleting user &quot;{0}&quot; \r {1}.
+        ///   Recherche une chaîne localisée semblable à Error deleting user {0} {1}.
         /// </summary>
         internal static string ErrorDeletingUser {
             get {
@@ -88,7 +88,7 @@ namespace Neos.IdentityServer.MultiFactor.Cmdlets.Ressources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Email address not provided for user &quot;{0}&quot; !.
+        ///   Recherche une chaîne localisée semblable à Email address not provided for user {0} !.
         /// </summary>
         internal static string ErrorEmailNotProvided {
             get {
@@ -106,7 +106,7 @@ namespace Neos.IdentityServer.MultiFactor.Cmdlets.Ressources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Phone number not provided for user &quot;{0}&quot; !.
+        ///   Recherche une chaîne localisée semblable à Phone number not provided for user {0} !.
         /// </summary>
         internal static string ErrorPhoneNotProvided {
             get {
@@ -115,7 +115,7 @@ namespace Neos.IdentityServer.MultiFactor.Cmdlets.Ressources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Error updating user &quot;{0}&quot; \r {1}.
+        ///   Recherche une chaîne localisée semblable à Error updating user {0} {1}.
         /// </summary>
         internal static string ErrorUpdatingUser {
             get {
@@ -124,7 +124,7 @@ namespace Neos.IdentityServer.MultiFactor.Cmdlets.Ressources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à User &quot;{0}&quot; Exists !.
+        ///   Recherche une chaîne localisée semblable à User {0} Exists !.
         /// </summary>
         internal static string ErrorUserExists {
             get {
@@ -133,7 +133,7 @@ namespace Neos.IdentityServer.MultiFactor.Cmdlets.Ressources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à User &quot;{0}&quot; not found !.
+        ///   Recherche une chaîne localisée semblable à User {0} not found !.
         /// </summary>
         internal static string ErrorUserNotFound {
             get {

@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Neos.IdentityServer.MultiFactor.SMS</RootNamespace>
     <AssemblyName>Neos.IdentityServer.MultiFactor.SMS.Samples</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -60,13 +60,20 @@
     <None Include="Neos.IdentityServer.pfx" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Resources\SMS_strings.de.resx" />
     <EmbeddedResource Include="Resources\SMS_strings.es.resx" />
     <EmbeddedResource Include="Resources\SMS_strings.fr.resx" />
     <EmbeddedResource Include="Resources\SMS_strings.it.resx" />
+    <EmbeddedResource Include="Resources\SMS_strings.nl.resx" />
+    <EmbeddedResource Include="Resources\SMS_strings.pl.resx" />
+    <EmbeddedResource Include="Resources\SMS_strings.pt.resx" />
     <EmbeddedResource Include="Resources\SMS_strings.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>SMS_strings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="Resources\SMS_strings.ro.resx" />
+    <EmbeddedResource Include="Resources\SMS_strings.ru.resx" />
+    <EmbeddedResource Include="Resources\SMS_strings.sv.resx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Neos.IdentityServer.Common\Neos.IdentityServer.MultiFactor.Common.csproj">

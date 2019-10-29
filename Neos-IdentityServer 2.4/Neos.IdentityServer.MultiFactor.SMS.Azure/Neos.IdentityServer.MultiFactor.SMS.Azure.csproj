@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Neos.IdentityServer.MultiFactor.SMS</RootNamespace>
     <AssemblyName>Neos.IdentityServer.MultiFactor.SMS.Azure</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -70,6 +70,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Resources\SAzure.de.resx" />
     <EmbeddedResource Include="Resources\SAzure.es.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -77,18 +78,31 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\SAzure.it.resx" />
+    <EmbeddedResource Include="Resources\SAzure.nl.resx" />
+    <EmbeddedResource Include="Resources\SAzure.pl.resx" />
+    <EmbeddedResource Include="Resources\SAzure.pt.resx" />
     <EmbeddedResource Include="Resources\SAzure.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>SAzure.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Resources\SAzure.ro.resx" />
+    <EmbeddedResource Include="Resources\SAzure.ru.resx" />
+    <EmbeddedResource Include="Resources\SAzure.sv.resx" />
+    <EmbeddedResource Include="Resources\SHtml.de.resx" />
     <EmbeddedResource Include="Resources\SHtml.es.resx" />
     <EmbeddedResource Include="Resources\SHtml.fr.resx" />
     <EmbeddedResource Include="Resources\SHtml.it.resx" />
+    <EmbeddedResource Include="Resources\SHtml.nl.resx" />
+    <EmbeddedResource Include="Resources\SHtml.pl.resx" />
+    <EmbeddedResource Include="Resources\SHtml.pt.resx" />
     <EmbeddedResource Include="Resources\SHtml.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>SHtml.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="Resources\SHtml.ro.resx" />
+    <EmbeddedResource Include="Resources\SHtml.ru.resx" />
+    <EmbeddedResource Include="Resources\SHtml.sv.resx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Neos.IdentityServer.Common\Neos.IdentityServer.MultiFactor.Common.csproj">
