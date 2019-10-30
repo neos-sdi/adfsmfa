@@ -42,7 +42,14 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public ResourcesLocale(int Lcid)
         {
-            resourceCulture = new CultureInfo(Lcid);
+            try
+            {
+                resourceCulture = new CultureInfo(Lcid);
+            }
+            catch (CultureNotFoundException)
+            {
+                resourceCulture = new CultureInfo("en");
+            }
         }
 
         /// <summary>

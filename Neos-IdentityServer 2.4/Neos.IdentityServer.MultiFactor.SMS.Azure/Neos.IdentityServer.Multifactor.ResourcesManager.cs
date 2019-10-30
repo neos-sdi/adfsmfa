@@ -38,7 +38,14 @@ namespace Neos.IdentityServer.Multifactor.SMS
         /// </summary>
         public ResourcesLocale(int lcid)
         {
-            resourceCulture = new CultureInfo(lcid);
+            try
+            {
+                resourceCulture = new CultureInfo(lcid);
+            }
+            catch (CultureNotFoundException)
+            {
+                resourceCulture = new CultureInfo("en");
+            }
         }
 
         /// <summary>

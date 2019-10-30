@@ -2608,12 +2608,28 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// PatchUserLcid method implementation
         /// </summary>
-        public static void PatchUserLcid(AuthenticationContext ctx, string[] userlanguages = null)
+        public static void PatchUserLcid(AuthenticationContext ctx, string[] userlanguages)
         {
-            if (userlanguages != null)
+            try
             {
-                CultureInfo cult = new CultureInfo(userlanguages[0]);
-                ctx.Lcid = cult.LCID;
+                foreach(string st in userlanguages)
+                {
+                    try
+                    {
+                        string[] dec = st.Split(';');
+                        CultureInfo cult = new CultureInfo(dec[0]);
+                        ctx.Lcid = cult.LCID;
+                        break;
+                    }
+                    catch (CultureNotFoundException)
+                    {
+                        continue;
+                    }
+                }
+            }
+            catch
+            {
+                ctx.Lcid = new CultureInfo("en").LCID;
             }
         }
     }
