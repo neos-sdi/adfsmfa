@@ -59,6 +59,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         public bool ChangeNotificationsOn { get; set; }         
         public PreferredMethod DefaultProviderMethod { get; set; }
         public ReplayLevel ReplayLevel { get; set; }
+        public bool UseOfUserLanguages { get; set; }
         public string DefaultCountryCode { get; set; }
         public string AdminContact { get; set; }
         public UserFeaturesOptions UserFeatures { get; set; }
@@ -85,6 +86,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             KeepMySelectedOptionOn = cfg.KeepMySelectedOptionOn;
             ChangeNotificationsOn = cfg.ChangeNotificationsOn;
             DefaultProviderMethod = cfg.DefaultProviderMethod;
+            UseOfUserLanguages = cfg.UseOfUserLanguages;
             ReplayLevel = cfg.ReplayLevel;
             AdminContact = cfg.AdminContact;
             UserFeatures = cfg.UserFeatures;
@@ -112,6 +114,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             cfg.KeepMySelectedOptionOn = KeepMySelectedOptionOn;
             cfg.ChangeNotificationsOn = ChangeNotificationsOn;
             cfg.DefaultProviderMethod = DefaultProviderMethod;
+            cfg.UseOfUserLanguages = UseOfUserLanguages;
             cfg.ReplayLevel = ReplayLevel;
             cfg.DefaultCountryCode = DefaultCountryCode;
             cfg.AdminContact = AdminContact;

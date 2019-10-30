@@ -239,6 +239,11 @@ namespace MFA
         public PSPreferredMethod DefaultProviderMethod { get; set; }
 
         /// <summary>
+        /// <para type="description">Use of User's browser laguages instead or standard localization features.</para>
+        /// </summary>
+        public bool UseOfUserLanguages { get; set; }
+
+        /// <summary>
         /// <para type="description">TOTP Replay Level feature.</para>
         /// </summary>
         public PSReplayLevel ReplayLevel { get; set; }
@@ -294,6 +299,7 @@ namespace MFA
                 psconfig.CustomUpdatePassword = config.CustomUpdatePassword;
                 psconfig.KeepMySelectedOptionOn = config.KeepMySelectedOptionOn;
                 psconfig.ChangeNotificationsOn = config.ChangeNotificationsOn;
+                psconfig.UseOfUserLanguages = config.UseOfUserLanguages;
                 psconfig.DefaultProviderMethod = (PSPreferredMethod)config.DefaultProviderMethod;
                 psconfig.ReplayLevel = (PSReplayLevel)config.ReplayLevel;
                 psconfig.UserFeatures = (PSUserFeaturesOptions)config.UserFeatures;
@@ -326,6 +332,7 @@ namespace MFA
                 config.UseActiveDirectory = psconfig.UseActiveDirectory;
                 config.KeepMySelectedOptionOn = psconfig.KeepMySelectedOptionOn;
                 config.ChangeNotificationsOn = psconfig.ChangeNotificationsOn;
+                config.UseOfUserLanguages = psconfig.UseOfUserLanguages;
                 config.DefaultProviderMethod = (PreferredMethod)psconfig.DefaultProviderMethod;
                 config.ReplayLevel = (ReplayLevel)psconfig.ReplayLevel;
                 config.UserFeatures = (UserFeaturesOptions)psconfig.UserFeatures;
