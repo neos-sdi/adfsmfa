@@ -94,7 +94,6 @@ namespace Neos.IdentityServer.MultiFactor
                     }
                     break;
                 case PreferredMethod.Email:
-                    System.Diagnostics.Debugger.Launch();
                     provider = GetProviderInstance(ctx.PreferredMethod);
                     if (provider == null)
                     {
@@ -308,7 +307,10 @@ namespace Neos.IdentityServer.MultiFactor
             foreach (IExternalProvider pp in _lst.Values)
             {
                 if (pp.Enabled)
-                    temp.Add(pp);
+                {
+                    if (!(pp is NeosPlugExternalProvider))
+                        temp.Add(pp);
+                }
             }
             return temp;
         }
@@ -322,7 +324,10 @@ namespace Neos.IdentityServer.MultiFactor
             foreach (IExternalProvider pp in _lst.Values)
             {
                 if (pp.Enabled)
-                    i++;
+                {
+                    if (!(pp is NeosPlugExternalProvider))
+                        i++;
+                }
             }
             return i;
         }
@@ -335,7 +340,10 @@ namespace Neos.IdentityServer.MultiFactor
             foreach (IExternalProvider pp in _lst.Values)
             {
                 if (pp.Enabled)
-                    return pp;
+                {
+                    if (!(pp is NeosPlugExternalProvider))
+                        return pp;
+                }
             }
             return null;
         }
@@ -356,19 +364,19 @@ namespace Neos.IdentityServer.MultiFactor
         internal static bool IsProviderAvailable(AuthenticationContext ctx, PreferredMethod method)
         {
             IExternalProvider prov = GetProvider(method);
-            if (prov == null)
+            if ((prov == null) || (prov is NeosPlugExternalProvider))
                 return false;
             else
                 return prov.IsAvailable(ctx);
         }
 
         /// <summary>
-        /// GetProvider method provider
+        /// IsProviderAvailableForUser method provider
         /// </summary>
         internal static bool IsProviderAvailableForUser(AuthenticationContext ctx, PreferredMethod method)
         {
             IExternalProvider prov = GetProvider(method);
-            if (prov == null)
+            if ((prov == null) || (prov is NeosPlugExternalProvider))
                 return false;
             else
             {
@@ -382,13 +390,13 @@ namespace Neos.IdentityServer.MultiFactor
         }
 
         /// <summary>
-        /// GetProvider method provider
+        /// IsPinCodeRequired method provider
         /// </summary>
         internal static bool IsPinCodeRequired(AuthenticationContext ctx)
         {
             foreach (IExternalProvider prov in Providers.Values)
             {
-                if (prov == null)
+                if ((prov == null) || (prov is NeosPlugExternalProvider))
                     return false;
                 else
                 {
@@ -448,7 +456,6 @@ namespace Neos.IdentityServer.MultiFactor
                         }
                         break;
                     case PreferredMethod.Email:
-                        System.Diagnostics.Debugger.Launch();
                         provider = GetProviderInstance(meth);
                         if (provider == null)
                         {
@@ -2569,7 +2576,7 @@ namespace Neos.IdentityServer.MultiFactor
                         goto case PreferredMethod.External;
                 case PreferredMethod.External:
                     IExternalProvider prov3 = RuntimeAuthProvider.GetProvider(PreferredMethod.External);
-                    if ((prov3 != null) && (prov3.Enabled))
+                    if ((prov3 != null) && (prov3.Enabled) && (!(prov3 is NeosPlugExternalProvider)))
                     {
                         isrequired = prov3.IsRequired;
                         usercontext.EnrollPageID = PreferredMethod.External;

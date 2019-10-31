@@ -293,7 +293,7 @@ namespace Neos.IdentityServer.MultiFactor
         public void OnAuthenticationPipelineLoad(IAuthenticationMethodConfigData configData)
         {
              DateTime st = DateTime.Now;
-            ResourcesLocale Resources = new ResourcesLocale(CultureInfo.CurrentUICulture.LCID);
+            ResourcesLocale Resources = new ResourcesLocale(CultureInfo.InstalledUICulture.LCID);
             if (configData.Data != null)
              {
                  if (_config == null)
@@ -2766,7 +2766,7 @@ namespace Neos.IdentityServer.MultiFactor
                 else
                     computer = computer.Replace("$", "");
                 Trace.TraceInformation("AuthenticationProvider:Configuration loaded !");
-                ResourcesLocale Resources = new ResourcesLocale(CultureInfo.CurrentUICulture.LCID);
+                ResourcesLocale Resources = new ResourcesLocale(CultureInfo.InstalledUICulture.LCID);
                 Log.WriteEntry(string.Format(Resources.GetString(ResourcesLocaleKind.Informations, "InfosConfigurationReloaded"), computer), EventLogEntryType.Warning, 9999);
             }
         }

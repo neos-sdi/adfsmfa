@@ -1863,8 +1863,7 @@ namespace Neos.IdentityServer.MultiFactor.Common
         /// </summary>
         public override string GetUILabel(AuthenticationContext ctx)
         {
-            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
-            return Resources.GetString(ResourcesLocaleKind.Html, "SMSUIOTPLabel");
+            return string.Empty;
         }
 
         /// <summary>
@@ -1872,8 +1871,7 @@ namespace Neos.IdentityServer.MultiFactor.Common
         /// </summary>
         public override string GetWizardUILabel(AuthenticationContext ctx)
         {
-            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
-            return Resources.GetString(ResourcesLocaleKind.Html, "SMSUIWIZLabel");
+            return string.Empty;
         }
 
         /// <summary>
@@ -1881,8 +1879,7 @@ namespace Neos.IdentityServer.MultiFactor.Common
         /// </summary>
         public override string GetWizardLinkLabel(AuthenticationContext ctx)
         {
-            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
-            return Resources.GetString(ResourcesLocaleKind.Html, "SMSWIZEnroll");
+            return string.Empty;
         }
 
         /// <summary>
@@ -1890,8 +1887,7 @@ namespace Neos.IdentityServer.MultiFactor.Common
         /// </summary>
         public override string GetUICFGLabel(AuthenticationContext ctx)
         {
-            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
-            return Resources.GetString(ResourcesLocaleKind.Html, "SMSUICFGLabel");
+            return string.Empty;
         }
 
         /// <summary>
@@ -1899,8 +1895,7 @@ namespace Neos.IdentityServer.MultiFactor.Common
         /// </summary>
         public override string GetUIMessage(AuthenticationContext ctx)
         {
-            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
-            return string.Format(Resources.GetString(ResourcesLocaleKind.Html, "SMSUIMessage"), string.Empty);
+            return string.Empty;
         }
 
         /// <summary>
@@ -1908,8 +1903,7 @@ namespace Neos.IdentityServer.MultiFactor.Common
         /// </summary>
         public override string GetUIListOptionLabel(AuthenticationContext ctx)
         {
-            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
-            return Resources.GetString(ResourcesLocaleKind.Html, "SMSUIListOptionLabel");
+            return string.Empty;
         }
 
         /// <summary>
@@ -1917,8 +1911,7 @@ namespace Neos.IdentityServer.MultiFactor.Common
         /// </summary>
         public override string GetUIListChoiceLabel(AuthenticationContext ctx)
         {
-            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
-            return Resources.GetString(ResourcesLocaleKind.Html, "SMSUIListChoiceLabel");
+            return string.Empty;
         }
 
         /// <summary>
@@ -1926,8 +1919,7 @@ namespace Neos.IdentityServer.MultiFactor.Common
         /// </summary>
         public override string GetUIConfigLabel(AuthenticationContext ctx)
         {
-            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
-            return Resources.GetString(ResourcesLocaleKind.Html, "SMSUIConfigLabel");
+            return string.Empty;
         }
 
         /// <summary>
@@ -1935,8 +1927,7 @@ namespace Neos.IdentityServer.MultiFactor.Common
         /// </summary>
         public override string GetUIChoiceLabel(AuthenticationContext ctx, AvailableAuthenticationMethod method = null)
         {
-            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
-            return Resources.GetString(ResourcesLocaleKind.Html, "SMSUIChoiceLabel");
+            return string.Empty;
         }
 
         /// <summary>
@@ -1944,8 +1935,7 @@ namespace Neos.IdentityServer.MultiFactor.Common
         /// </summary>
         public override string GetUIWarningInternetLabel(AuthenticationContext ctx)
         {
-            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
-            return Resources.GetString(ResourcesLocaleKind.Html, "GLOBALWarnOverNetwork");
+            return string.Empty;
         }
 
         /// <summary>
@@ -1953,13 +1943,7 @@ namespace Neos.IdentityServer.MultiFactor.Common
         /// </summary>
         public override string GetUIWarningThirdPartyLabel(AuthenticationContext ctx)
         {
-            if (ctx.IsTwoWay)
-            {
-                ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
-                return Resources.GetString(ResourcesLocaleKind.Html, "GLOBALWarnThirdParty");
-            }
-            else
-                return string.Empty;
+            return string.Empty;
         }
 
         /// <summary>
@@ -1967,13 +1951,7 @@ namespace Neos.IdentityServer.MultiFactor.Common
         /// </summary>
         public override string GetUIDefaultChoiceLabel(AuthenticationContext ctx)
         {
-            if (ctx.IsTwoWay)
-            {
-                ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
-                return Resources.GetString(ResourcesLocaleKind.Html, "GLOBALListChoiceDefaultLabel");
-            }
-            else
-                return string.Empty;
+            return string.Empty;
         }
 
         /// <summary>

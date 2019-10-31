@@ -479,7 +479,6 @@ namespace Neos.IdentityServer.MultiFactor
         private string _country = "fr";
         private int _maxretries = 3;
         private string _issuer;
-        private int _forcedlcid = 0;
         private bool _userlanguages = true;
         private ADFSUserInterfaceKind _adfsuikind = ADFSUserInterfaceKind.Default;      
 
@@ -827,13 +826,6 @@ namespace Neos.IdentityServer.MultiFactor
         {
             get;
             set;
-        }
-
-        [XmlElement("ForcedLcid")]
-        public int ForcedLcid
-        {
-            get { return _forcedlcid; }
-            set { _forcedlcid = value; }
         }
     }
     #endregion
