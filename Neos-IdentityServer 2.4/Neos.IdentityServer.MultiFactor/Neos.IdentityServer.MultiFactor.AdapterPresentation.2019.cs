@@ -381,7 +381,7 @@ namespace Neos.IdentityServer.MultiFactor
                     List<IExternalProvider> lst = RuntimeAuthProvider.GeActiveProvidersList();
                     if (lst.Count > 0)
                     {
-                        result += "<div id=\"xMessage\" class=\"groupMargin\">" + Resources.GetString(ResourcesLocaleKind.Errors, "HtmlUIMustPrepareLabel") + "</div>";
+                        result += "<div id=\"xMessage\" class=\"groupMargin\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMustPrepareLabel") + "</div>";
                         foreach (IExternalProvider itm in lst)
                         {
                             if (itm.IsRequired)
