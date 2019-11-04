@@ -129,9 +129,6 @@
   <data name="GLOBALListOptionLabel" xml:space="preserve">
     <value>Параметры аутентификации Azure</value>
   </data>
-  <data name="GLOBALManagement" xml:space="preserve">
-    <value>Доступ к опциям конфигурации Azure</value>
-  </data>
   <data name="GLOBALOTPLabel" xml:space="preserve">
     <value>Код доступа к единому использованию</value>
   </data>
@@ -145,7 +142,7 @@
     <value>Зарегистрируйте свой мобильный</value>
   </data>
   <data name="NOTIFChoiceLabel" xml:space="preserve">
-    <value>Отправить уведомление на мой мобильный телефон (MS)</value>
+    <value>Отправить уведомление на мой мобильный телефон (Azure)</value>
   </data>
   <data name="NOTIFConfigLabel" xml:space="preserve">
     <value>Уведомление о приложении проверки подлинности</value>
@@ -154,7 +151,7 @@
     <value>Мы отправили уведомление на ваше мобильное устройство. Ответ на продолжение.</value>
   </data>
   <data name="OTPChoiceLabel" xml:space="preserve">
-    <value>Используйте мое приложение проверки подлинности (MS)</value>
+    <value>Используйте мое приложение проверки подлинности (Azure)</value>
   </data>
   <data name="OTPConfigLabel" xml:space="preserve">
     <value>Используйте приложение проверки подлинности</value>
@@ -163,7 +160,7 @@
     <value>Введите код проверки для мобильного приложения.</value>
   </data>
   <data name="SMSChoiceLabel" xml:space="preserve">
-    <value>Отправить код на мой мобильный телефон (MS)</value>
+    <value>Отправить код на мой мобильный телефон (Azure)</value>
   </data>
   <data name="SMSConfigLabel" xml:space="preserve">
     <value>Текстовое сообщение на моем мобильном телефоне</value>
@@ -175,7 +172,7 @@
     <value>Мы отправили SMS, содержащий код проверки. {0}</value>
   </data>
   <data name="VOICE1ChoiceLabel" xml:space="preserve">
-    <value>Позвоните на мой мобильный телефон (MS)</value>
+    <value>Позвоните на мой мобильный телефон (Azure)</value>
   </data>
   <data name="VOICE1ConfigLabel" xml:space="preserve">
     <value>Голосовой вызов на свой мобильный</value>
@@ -187,7 +184,7 @@
     <value>Мы звоним на ваш телефон {0} Ответ на продолжение.</value>
   </data>
   <data name="VOICE2ChoiceLabel" xml:space="preserve">
-    <value>Позвоните на мой вторичный телефон (MS)</value>
+    <value>Позвоните на мой вторичный телефон (Azure)</value>
   </data>
   <data name="VOICE2ConfigLabel" xml:space="preserve">
     <value>Голосовой звонок на мой вторичный мобильный телефон</value>
@@ -199,7 +196,7 @@
     <value>Мы звоним на ваш дополнительный телефон {0}. Ответьте, чтобы продолжить.</value>
   </data>
   <data name="VOICE3ChoiceLabel" xml:space="preserve">
-    <value>Позвоните по моему офису телефона (MS)</value>
+    <value>Позвоните по моему офису телефона (Azure)</value>
   </data>
   <data name="VOICE3ConfigLabel" xml:space="preserve">
     <value>Голосовой звонок на вашем офисном телефоне</value>
@@ -209,5 +206,8 @@
   </data>
   <data name="VOICE3Message" xml:space="preserve">
     <value>Мы звоним на ваш рабочий телефон {0}. Ответьте, чтобы продолжить.</value>
+  </data>
+  <data name="GLOBALManagement" xml:space="preserve">
+    <value>Зарегистрируйте параметры Azure</value>
   </data>
 </root>

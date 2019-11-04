@@ -129,9 +129,6 @@
   <data name="GLOBALListOptionLabel" xml:space="preserve">
     <value>Opțiuni de autentificare Azure</value>
   </data>
-  <data name="GLOBALManagement" xml:space="preserve">
-    <value>Accesați opțiunile de configurare Azure</value>
-  </data>
   <data name="GLOBALOTPLabel" xml:space="preserve">
     <value>Cod de acces de unică folosință</value>
   </data>
@@ -145,7 +142,7 @@
     <value>Înscrieți telefonul mobil</value>
   </data>
   <data name="NOTIFChoiceLabel" xml:space="preserve">
-    <value>Trimiteți o notificare către telefonul meu mobil (MS)</value>
+    <value>Trimiteți o notificare către telefonul meu mobil (Azure)</value>
   </data>
   <data name="NOTIFConfigLabel" xml:space="preserve">
     <value>Notificarea aplicației de autentificare</value>
@@ -154,7 +151,7 @@
     <value>Am trimis o notificare pe dispozitivul mobil. Răspuns pentru a continua.</value>
   </data>
   <data name="OTPChoiceLabel" xml:space="preserve">
-    <value>Utilizarea aplicației mele de autentificare (MS)</value>
+    <value>Utilizarea aplicației mele de autentificare (Azure)</value>
   </data>
   <data name="OTPConfigLabel" xml:space="preserve">
     <value>Utilizați aplicația de autentificare</value>
@@ -163,7 +160,7 @@
     <value>Introdu codul de verificare pentru aplicația ta mobilă.</value>
   </data>
   <data name="SMSChoiceLabel" xml:space="preserve">
-    <value>Trimite un cod de la meu mobil (MS)</value>
+    <value>Trimite un cod de la meu mobil (Azure)</value>
   </data>
   <data name="SMSConfigLabel" xml:space="preserve">
     <value>Mesaj text pe telefonul meu mobil</value>
@@ -175,7 +172,7 @@
     <value>Am trimis un SMS care conține un cod de verificare. {0}</value>
   </data>
   <data name="VOICE1ChoiceLabel" xml:space="preserve">
-    <value>Sună-mi telefonul mobil (MS)</value>
+    <value>Sună-mi telefonul mobil (Azure)</value>
   </data>
   <data name="VOICE1ConfigLabel" xml:space="preserve">
     <value>Apel vocal pe telefonul mobil</value>
@@ -187,7 +184,7 @@
     <value>Vă sunăm telefonul {0}. Răspuns pentru a continua.</value>
   </data>
   <data name="VOICE2ChoiceLabel" xml:space="preserve">
-    <value>Suna telefonul meu secundar (MS)</value>
+    <value>Suna telefonul meu secundar (Azure)</value>
   </data>
   <data name="VOICE2ConfigLabel" xml:space="preserve">
     <value>Apel vocal pe telefonul meu secundar mobil</value>
@@ -199,7 +196,7 @@
     <value>Noi numim telefonul secundar {0}. Răspuns pentru a continua.</value>
   </data>
   <data name="VOICE3ChoiceLabel" xml:space="preserve">
-    <value>Sunați la biroul meu de telefon (MS)</value>
+    <value>Sunați la biroul meu de telefon (Azure)</value>
   </data>
   <data name="VOICE3ConfigLabel" xml:space="preserve">
     <value>Apel vocal pe telefonul biroului dvs.</value>
@@ -209,5 +206,8 @@
   </data>
   <data name="VOICE3Message" xml:space="preserve">
     <value>Vă sunăm la telefonul de la birou {0}. Răspuns pentru a continua.</value>
+  </data>
+  <data name="GLOBALManagement" xml:space="preserve">
+    <value>Înscrierea opțiunilor Azure</value>
   </data>
 </root>

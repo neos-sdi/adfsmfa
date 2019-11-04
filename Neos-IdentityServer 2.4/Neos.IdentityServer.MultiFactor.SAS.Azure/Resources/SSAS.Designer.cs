@@ -97,7 +97,7 @@ namespace Neos.IdentityServer.MultiFactor.SAS.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Access my Azure configuration options.
+        ///   Recherche une chaîne localisée semblable à Enroll my Azure options.
         /// </summary>
         internal static string GLOBALManagement {
             get {
@@ -142,7 +142,7 @@ namespace Neos.IdentityServer.MultiFactor.SAS.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Send a notification to my mobile (MS).
+        ///   Recherche une chaîne localisée semblable à Send a notification to my mobile (Azure).
         /// </summary>
         internal static string NOTIFChoiceLabel {
             get {
@@ -169,7 +169,7 @@ namespace Neos.IdentityServer.MultiFactor.SAS.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Use my authentication application (MS).
+        ///   Recherche une chaîne localisée semblable à Use my authentication application (Azure).
         /// </summary>
         internal static string OTPChoiceLabel {
             get {
@@ -196,7 +196,7 @@ namespace Neos.IdentityServer.MultiFactor.SAS.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Send a code to my mobile (MS).
+        ///   Recherche une chaîne localisée semblable à Send a code to my mobile (Azure).
         /// </summary>
         internal static string SMSChoiceLabel {
             get {
@@ -232,7 +232,7 @@ namespace Neos.IdentityServer.MultiFactor.SAS.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Call my mobile phone (MS).
+        ///   Recherche une chaîne localisée semblable à Call my mobile phone (Azure).
         /// </summary>
         internal static string VOICE1ChoiceLabel {
             get {
@@ -268,7 +268,7 @@ namespace Neos.IdentityServer.MultiFactor.SAS.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Call my secondary phone (MS).
+        ///   Recherche une chaîne localisée semblable à Call my secondary phone (Azure).
         /// </summary>
         internal static string VOICE2ChoiceLabel {
             get {
@@ -304,7 +304,7 @@ namespace Neos.IdentityServer.MultiFactor.SAS.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Call my office phone (MS).
+        ///   Recherche une chaîne localisée semblable à Call my office phone (Azure).
         /// </summary>
         internal static string VOICE3ChoiceLabel {
             get {

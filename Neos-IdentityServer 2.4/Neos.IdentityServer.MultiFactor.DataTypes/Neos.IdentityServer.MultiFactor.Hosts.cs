@@ -479,7 +479,6 @@ namespace Neos.IdentityServer.MultiFactor
         private string _country = "fr";
         private int _maxretries = 3;
         private string _issuer;
-        private bool _userlanguages = true;
         private ADFSUserInterfaceKind _adfsuikind = ADFSUserInterfaceKind.Default;      
 
         /// <summary>
@@ -1125,7 +1124,7 @@ namespace Neos.IdentityServer.MultiFactor
             this.Enabled = prov.Enabled;
             this.IsRequired = prov.IsRequired;
             this.PinRequired = prov.PinRequired;
-            this.EnrollWizard = false;
+            this.EnrollWizard = prov.EnrollWizard;
             this.ForceWizard = ForceWizardMode.Disabled;
         }
 

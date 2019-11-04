@@ -134,7 +134,7 @@
     <comment>Options d'authentification Azure</comment>
   </data>
   <data name="GLOBALManagement" xml:space="preserve">
-    <value>Acceda a mis opciones de configuración de Azure</value>
+    <value>Inscribir mis opciones de Azure</value>
     <comment>Accéder à mes options de configuration Azure</comment>
   </data>
   <data name="GLOBALOTPLabel" xml:space="preserve">
@@ -153,7 +153,7 @@
     <value>Inscriba su móvil</value>
   </data>
   <data name="NOTIFChoiceLabel" xml:space="preserve">
-    <value>Enviar una notificación a mi móvil (MS)</value>
+    <value>Enviar una notificación a mi móvil (Azure)</value>
     <comment>Envoyer une notification sur mon mobile (MS)</comment>
   </data>
   <data name="NOTIFConfigLabel" xml:space="preserve">
@@ -165,7 +165,7 @@
     <comment>Nous avons envoyé une notification à votre appareil mobile. Répondez pour continuer.</comment>
   </data>
   <data name="OTPChoiceLabel" xml:space="preserve">
-    <value>Usar mi aplicación de autenticación (MS)</value>
+    <value>Usar mi aplicación de autenticación (Azure)</value>
     <comment>Utiliser mon application d'authentification (MS)</comment>
   </data>
   <data name="OTPConfigLabel" xml:space="preserve">
@@ -177,7 +177,7 @@
     <comment>Entrez le code de vérification de votre application mobile.</comment>
   </data>
   <data name="SMSChoiceLabel" xml:space="preserve">
-    <value>Enviar un código a mi móvil (MS)</value>
+    <value>Enviar un código a mi móvil (Azure)</value>
     <comment>Envoyer un message sur mon mobile (MS)</comment>
   </data>
   <data name="SMSConfigLabel" xml:space="preserve">
@@ -193,7 +193,7 @@
     <comment>Nous avons envoyé un SMS contenant un code de vérification. {0}</comment>
   </data>
   <data name="VOICE1ChoiceLabel" xml:space="preserve">
-    <value>Llame a mi teléfono móvil (MS)</value>
+    <value>Llame a mi teléfono móvil (Azure)</value>
     <comment>Appeler mon téléphone mobile (MS)</comment>
   </data>
   <data name="VOICE1ConfigLabel" xml:space="preserve">
@@ -209,7 +209,7 @@
     <comment>Nous appelons votre téléphone {0}. Répondez pour continuer.</comment>
   </data>
   <data name="VOICE2ChoiceLabel" xml:space="preserve">
-    <value>Llame a mi teléfono secundario (MS)</value>
+    <value>Llame a mi teléfono secundario (Azure)</value>
     <comment>Appeler mon téléphone secondaire (MS)</comment>
   </data>
   <data name="VOICE2ConfigLabel" xml:space="preserve">
@@ -225,7 +225,7 @@
     <comment>Nous appelons votre téléphone secondaire {0}. Répondez pour continuer.</comment>
   </data>
   <data name="VOICE3ChoiceLabel" xml:space="preserve">
-    <value>Llame a mi teléfono de oficina (MS)</value>
+    <value>Llame a mi teléfono de oficina (Azure)</value>
     <comment>Appeler mon téléphone professionnel (MS)</comment>
   </data>
   <data name="VOICE3ConfigLabel" xml:space="preserve">

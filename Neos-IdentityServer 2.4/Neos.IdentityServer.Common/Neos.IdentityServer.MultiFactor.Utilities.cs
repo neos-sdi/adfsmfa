@@ -94,6 +94,7 @@ namespace Neos.IdentityServer.MultiFactor
                     }
                     break;
                 case PreferredMethod.Email:
+                    System.Diagnostics.Debugger.Launch();
                     provider = GetProviderInstance(ctx.PreferredMethod);
                     if (provider == null)
                     {
@@ -456,6 +457,7 @@ namespace Neos.IdentityServer.MultiFactor
                         }
                         break;
                     case PreferredMethod.Email:
+                        System.Diagnostics.Debugger.Launch();
                         provider = GetProviderInstance(meth);
                         if (provider == null)
                         {

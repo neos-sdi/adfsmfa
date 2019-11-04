@@ -129,9 +129,6 @@
   <data name="GLOBALListOptionLabel" xml:space="preserve">
     <value>Alternativ för Azure-autentisering</value>
   </data>
-  <data name="GLOBALManagement" xml:space="preserve">
-    <value>Komma åt mina Azure-konfigurationsalternativ</value>
-  </data>
   <data name="GLOBALOTPLabel" xml:space="preserve">
     <value>Åtkomstkod för engångsbruk</value>
   </data>
@@ -145,7 +142,7 @@
     <value>Registrera din mobil</value>
   </data>
   <data name="NOTIFChoiceLabel" xml:space="preserve">
-    <value>Skicka ett meddelande till min mobil (MS)</value>
+    <value>Skicka ett meddelande till min mobil (Azure)</value>
   </data>
   <data name="NOTIFConfigLabel" xml:space="preserve">
     <value>Meddelande om ditt autentiseringsprogram</value>
@@ -154,7 +151,7 @@
     <value>Vi har skickat ett meddelande till din mobila enhet. Svar för att fortsätta.</value>
   </data>
   <data name="OTPChoiceLabel" xml:space="preserve">
-    <value>Använd mitt autentiseringsprogram (MS)</value>
+    <value>Använd mitt autentiseringsprogram (Azure)</value>
   </data>
   <data name="OTPConfigLabel" xml:space="preserve">
     <value>Använd ditt autentiseringsprogram</value>
@@ -163,7 +160,7 @@
     <value>Ange verifieringskoden för din mobil applikation.</value>
   </data>
   <data name="SMSChoiceLabel" xml:space="preserve">
-    <value>Skicka en kod till min mobil (MS)</value>
+    <value>Skicka en kod till min mobil (Azure)</value>
   </data>
   <data name="SMSConfigLabel" xml:space="preserve">
     <value>Textmeddelande på min mobiltelefon</value>
@@ -175,7 +172,7 @@
     <value>Vi skickade ett SMS med en verifieringskod. {0}</value>
   </data>
   <data name="VOICE1ChoiceLabel" xml:space="preserve">
-    <value>Ring min mobiltelefon (MS)</value>
+    <value>Ring min mobiltelefon (Azure)</value>
   </data>
   <data name="VOICE1ConfigLabel" xml:space="preserve">
     <value>Röstsamtal på din mobil</value>
@@ -187,7 +184,7 @@
     <value>Vi anropar din telefon {0}. Svar för att fortsätta.</value>
   </data>
   <data name="VOICE2ChoiceLabel" xml:space="preserve">
-    <value>Ring min sekundära telefon (MS)</value>
+    <value>Ring min sekundära telefon (Azure)</value>
   </data>
   <data name="VOICE2ConfigLabel" xml:space="preserve">
     <value>Röstsamtal på min sekundära mobiltelefon</value>
@@ -199,7 +196,7 @@
     <value>Vi anropar din sekundära telefon {0}. Svar för att fortsätta.</value>
   </data>
   <data name="VOICE3ChoiceLabel" xml:space="preserve">
-    <value>Ring min kontors telefon (MS)</value>
+    <value>Ring min kontors telefon (Azure)</value>
   </data>
   <data name="VOICE3ConfigLabel" xml:space="preserve">
     <value>Röstsamtal på din kontors telefon</value>
@@ -209,5 +206,8 @@
   </data>
   <data name="VOICE3Message" xml:space="preserve">
     <value>Vi anropar din Office-telefon {0}. Svar för att fortsätta.</value>
+  </data>
+  <data name="GLOBALManagement" xml:space="preserve">
+    <value>Registrera mina Azure-alternativ</value>
   </data>
 </root>

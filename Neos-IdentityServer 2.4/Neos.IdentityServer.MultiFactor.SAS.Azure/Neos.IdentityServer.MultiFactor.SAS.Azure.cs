@@ -15,19 +15,13 @@
 // https://github.com/neos-sdi/adfsmfa                                                                                                                                                      //
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
+// #define azuretest
+using Neos.IdentityServer.MultiFactor.Common;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Neos.IdentityServer.MultiFactor;
 using System.Globalization;
-using Microsoft.IdentityServer.Web.Authentication.External;
-using System.Diagnostics;
 using System.IO;
 using System.Threading;
-using res = Neos.IdentityServer.MultiFactor.SAS.Resources;
-using Neos.IdentityServer.MultiFactor.Common;
 
 namespace Neos.IdentityServer.MultiFactor.SAS
 {
@@ -97,7 +91,7 @@ namespace Neos.IdentityServer.MultiFactor.SAS
         /// </summary>
         public override bool AllowEnrollment
         {
-            get { return false; }
+            get { return true; }
         }
 
         /// <summary>
@@ -394,8 +388,13 @@ namespace Neos.IdentityServer.MultiFactor.SAS
             }
             catch (Exception)
             {
+#if !azuretest
                 Enabled = false;
                 return false;
+#else
+                Enabled = true;
+                return true;
+#endif
             }
         }
 
@@ -410,7 +409,11 @@ namespace Neos.IdentityServer.MultiFactor.SAS
             }
             catch
             {
-                return false;
+#if !azuretest
+                return false;  
+#else
+                return true;
+#endif
             }
         }
 
@@ -423,6 +426,8 @@ namespace Neos.IdentityServer.MultiFactor.SAS
             {
                 case RequiredMethodElements.CodeInputRequired:
                     return !ctx.IsTwoWay;
+                case RequiredMethodElements.AzureInputRequired:
+                    return true;
                 case RequiredMethodElements.PinInputRequired:
                     return this.PinRequired;
                 case RequiredMethodElements.PinParameterRequired:
@@ -515,8 +520,8 @@ namespace Neos.IdentityServer.MultiFactor.SAS
             else
             {
                 result = new List<AvailableAuthenticationMethod>();
+#if !azuretest
                 GetAvailableAuthenticationMethodsResponse authMethods = GetAzureAvailableAuthenticationMethods(ctx);
-
                 foreach (AuthenticationMethod current in authMethods.AuthenticationMethods)
                 {
                     AvailableAuthenticationMethod item = GetAuthenticationMethodProperties(current);
@@ -526,13 +531,26 @@ namespace Neos.IdentityServer.MultiFactor.SAS
                         result.Add(item);
                     }
                 }
+#else
+                AuthenticationMethod current1 = new AuthenticationMethod() { Id = "OneWaySMS", IsDefault = true};
+                current1.Properties.Add("MobilePhone", "+33 123123456");
+                AuthenticationMethod current2 = new AuthenticationMethod() { Id = "TwoWaySMS", IsDefault = false };
+                current2.Properties.Add("MobilePhone", "+33 123123456");
+                AvailableAuthenticationMethod item1 = GetAuthenticationMethodProperties(current1);
+                item1.IsDefault = current1.IsDefault;
+                result.Add(item1);
+                AvailableAuthenticationMethod item2 = GetAuthenticationMethodProperties(current2);
+                item2.IsDefault = current2.IsDefault;
+                result.Add(item2);
+#endif
                 if (result.Count > 0)
                     SaveSessionData(this.Kind, ctx, result);
+
             }
             return result;
         }
 
-        #region Private methods
+#region Private methods
         /// <summary>
         /// GetAuthenticationMethod method implementation
         /// </summary>
@@ -681,9 +699,9 @@ namespace Neos.IdentityServer.MultiFactor.SAS
                     return string.Empty;
             }
         }
-        #endregion
+#endregion
 
-        #region Azure Calls
+#region Azure Calls
         /// <summary>
         /// GetAzureAvailableAuthenticationMethods method implementation
         /// </summary>
@@ -784,6 +802,6 @@ namespace Neos.IdentityServer.MultiFactor.SAS
             return ctx.SelectedMethod;
         }
 
-        #endregion
+#endregion
     }
 }

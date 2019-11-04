@@ -129,9 +129,6 @@
   <data name="GLOBALListOptionLabel" xml:space="preserve">
     <value>Opties voor Azure-verificatie</value>
   </data>
-  <data name="GLOBALManagement" xml:space="preserve">
-    <value>Toegang tot mijn Azure-configuratieopties</value>
-  </data>
   <data name="GLOBALOTPLabel" xml:space="preserve">
     <value>Toegangscode voor eenmalig gebruik</value>
   </data>
@@ -145,7 +142,7 @@
     <value>Uw mobiele telefoon inschrijven</value>
   </data>
   <data name="NOTIFChoiceLabel" xml:space="preserve">
-    <value>Een melding sturen naar mijn mobiele telefoon (MS)</value>
+    <value>Een melding sturen naar mijn mobiele telefoon (Azure)</value>
   </data>
   <data name="NOTIFConfigLabel" xml:space="preserve">
     <value>Melding op uw verificatie toepassing</value>
@@ -154,7 +151,7 @@
     <value>We hebben een melding naar uw mobiele apparaat gestuurd. Antwoord om door te gaan.</value>
   </data>
   <data name="OTPChoiceLabel" xml:space="preserve">
-    <value>Mijn verificatie toepassing gebruiken (MS)</value>
+    <value>Mijn verificatie toepassing gebruiken (Azure)</value>
   </data>
   <data name="OTPConfigLabel" xml:space="preserve">
     <value>Uw verificatie toepassing gebruiken</value>
@@ -163,7 +160,7 @@
     <value>Voer de verificatiecode voor uw mobiele toepassing in.</value>
   </data>
   <data name="SMSChoiceLabel" xml:space="preserve">
-    <value>Een code naar mijn mobiele telefoon (MS) sturen</value>
+    <value>Een code naar mijn mobiele telefoon (Azure) sturen</value>
   </data>
   <data name="SMSConfigLabel" xml:space="preserve">
     <value>Tekstbericht op mijn mobiele telefoon</value>
@@ -175,7 +172,7 @@
     <value>We stuurden een SMS met een verificatiecode. {0}</value>
   </data>
   <data name="VOICE1ChoiceLabel" xml:space="preserve">
-    <value>Bel mijn mobiele telefoon (MS)</value>
+    <value>Bel mijn mobiele telefoon (Azure)</value>
   </data>
   <data name="VOICE1ConfigLabel" xml:space="preserve">
     <value>Spraakoproep op uw mobiele telefoon</value>
@@ -187,7 +184,7 @@
     <value>We bellen uw telefoon {0}. Antwoord om door te gaan.</value>
   </data>
   <data name="VOICE2ChoiceLabel" xml:space="preserve">
-    <value>Bel mijn secundaire telefoon (MS)</value>
+    <value>Bel mijn secundaire telefoon (Azure)</value>
   </data>
   <data name="VOICE2ConfigLabel" xml:space="preserve">
     <value>Spraakoproep op mijn secundaire mobiele telefoon</value>
@@ -199,7 +196,7 @@
     <value>We noemen uw secundaire telefoon {0}. Antwoord om door te gaan.</value>
   </data>
   <data name="VOICE3ChoiceLabel" xml:space="preserve">
-    <value>Bel mijn kantoor telefoon (MS)</value>
+    <value>Bel mijn kantoor telefoon (Azure)</value>
   </data>
   <data name="VOICE3ConfigLabel" xml:space="preserve">
     <value>Spraakoproep op uw kantoor telefoon</value>
@@ -209,5 +206,8 @@
   </data>
   <data name="VOICE3Message" xml:space="preserve">
     <value>We bellen uw Office-telefoon {0}. Antwoord om door te gaan.</value>
+  </data>
+  <data name="GLOBALManagement" xml:space="preserve">
+    <value>Mijn Azure-opties inschrijven</value>
   </data>
 </root>

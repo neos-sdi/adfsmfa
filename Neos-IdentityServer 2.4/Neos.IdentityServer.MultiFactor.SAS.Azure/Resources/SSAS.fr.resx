@@ -130,7 +130,7 @@
     <value>Options d'authentification Azure</value>
   </data>
   <data name="GLOBALManagement" xml:space="preserve">
-    <value>Accéder à mes options de configuration Azure</value>
+    <value>Enregistrer mes options Azure</value>
   </data>
   <data name="GLOBALOTPLabel" xml:space="preserve">
     <value>Code d'accès à usage unique</value>
@@ -145,7 +145,7 @@
     <value>Enregistrer votre téléphone mobile</value>
   </data>
   <data name="NOTIFChoiceLabel" xml:space="preserve">
-    <value>Envoyer une notification sur mon mobile (MS)</value>
+    <value>Envoyer une notification sur mon mobile (Azure)</value>
   </data>
   <data name="NOTIFConfigLabel" xml:space="preserve">
     <value>Notification sur votre application d'authentification</value>
@@ -154,7 +154,7 @@
     <value>Nous avons envoyé une notification à votre appareil mobile. Répondez pour continuer.</value>
   </data>
   <data name="OTPChoiceLabel" xml:space="preserve">
-    <value>Utiliser une application d'authentification (MS)</value>
+    <value>Utiliser une application d'authentification (Azure)</value>
   </data>
   <data name="OTPConfigLabel" xml:space="preserve">
     <value>Utiliser votre application d'authentification</value>
@@ -163,7 +163,7 @@
     <value>Entrez le code de vérification de votre application mobile.</value>
   </data>
   <data name="SMSChoiceLabel" xml:space="preserve">
-    <value>Envoyer un message sur mon mobile (MS)</value>
+    <value>Envoyer un message sur mon mobile (Azure)</value>
   </data>
   <data name="SMSConfigLabel" xml:space="preserve">
     <value>Message texte sur mon téléphone mobile</value>
@@ -175,7 +175,7 @@
     <value>Nous avons envoyé un SMS contenant un code de vérification. {0}</value>
   </data>
   <data name="VOICE1ChoiceLabel" xml:space="preserve">
-    <value>Appeler mon téléphone mobile (MS)</value>
+    <value>Appeler mon téléphone mobile (Azure)</value>
   </data>
   <data name="VOICE1ConfigLabel" xml:space="preserve">
     <value>Appel vocal sur mon mobile</value>
@@ -187,7 +187,7 @@
     <value>Nous appelons votre téléphone {0}. Répondez pour continuer.</value>
   </data>
   <data name="VOICE2ChoiceLabel" xml:space="preserve">
-    <value>Appeler mon téléphone secondaire (MS)</value>
+    <value>Appeler mon téléphone secondaire (Azure)</value>
   </data>
   <data name="VOICE2ConfigLabel" xml:space="preserve">
     <value>Appel vocal sur mon téléphone secondaire</value>

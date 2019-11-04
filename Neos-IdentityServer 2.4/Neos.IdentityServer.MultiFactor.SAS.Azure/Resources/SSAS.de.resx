@@ -129,9 +129,6 @@
   <data name="GLOBALListOptionLabel" xml:space="preserve">
     <value>Azure-Authentifizierungsoptionen</value>
   </data>
-  <data name="GLOBALManagement" xml:space="preserve">
-    <value>Zugriff auf meine Azure-Konfigurationsoptionen</value>
-  </data>
   <data name="GLOBALOTPLabel" xml:space="preserve">
     <value>Single-Use-Zugangscode</value>
   </data>
@@ -145,7 +142,7 @@
     <value>Registrieren Sie Ihr Handy</value>
   </data>
   <data name="NOTIFChoiceLabel" xml:space="preserve">
-    <value>Senden einer Benachrichtigung an mein Mobiltelefon (MS)</value>
+    <value>Senden einer Benachrichtigung an mein Mobiltelefon (Azure)</value>
   </data>
   <data name="NOTIFConfigLabel" xml:space="preserve">
     <value>Benachrichtigung über Ihre Authentifizierungsanwendung</value>
@@ -154,7 +151,7 @@
     <value>Wir haben eine Benachrichtigung an Ihr mobiles Gerät gesendet. Antwort, um fortzufahren.</value>
   </data>
   <data name="OTPChoiceLabel" xml:space="preserve">
-    <value>Meine Authentifizierungsanwendung (MS) verwenden</value>
+    <value>Meine Authentifizierungsanwendung (Azure) verwenden</value>
   </data>
   <data name="OTPConfigLabel" xml:space="preserve">
     <value>Verwenden Sie Ihre Authentifizierungsanwendung</value>
@@ -163,7 +160,7 @@
     <value>Geben Sie den Bestätigungscode für Ihre mobile Anwendung ein.</value>
   </data>
   <data name="SMSChoiceLabel" xml:space="preserve">
-    <value>Senden eines Codes an mein Handy (MS)</value>
+    <value>Senden eines Codes an mein Handy (Azure)</value>
   </data>
   <data name="SMSConfigLabel" xml:space="preserve">
     <value>Textnachricht auf meinem Mobiltelefon</value>
@@ -175,7 +172,7 @@
     <value>Wir haben eine SMS mit einem Verifizierungscode gesendet. {0}</value>
   </data>
   <data name="VOICE1ChoiceLabel" xml:space="preserve">
-    <value>Rufen Sie mein Mobiltelefon (MS)</value>
+    <value>Rufen Sie mein Mobiltelefon (Azure)</value>
   </data>
   <data name="VOICE1ConfigLabel" xml:space="preserve">
     <value>Sprachanruf auf Ihrem Handy</value>
@@ -187,7 +184,7 @@
     <value>Wir rufen Ihr Telefon an {0}. Antworten Sie, um fortzufahren.</value>
   </data>
   <data name="VOICE2ChoiceLabel" xml:space="preserve">
-    <value>Rufen Sie mein sekundäres Telefon (MS)</value>
+    <value>Rufen Sie mein sekundäres Telefon (Azure)</value>
   </data>
   <data name="VOICE2ConfigLabel" xml:space="preserve">
     <value>Sprachanruf auf meinem sekundären Mobiltelefon</value>
@@ -199,7 +196,7 @@
     <value>Wir rufen Ihr sekundäres Telefon an {0} Antwort, um fortzufahren.</value>
   </data>
   <data name="VOICE3ChoiceLabel" xml:space="preserve">
-    <value>Rufen Sie mein Bürotelefon (MS)</value>
+    <value>Rufen Sie mein Bürotelefon (Azure)</value>
   </data>
   <data name="VOICE3ConfigLabel" xml:space="preserve">
     <value>Sprachanruf auf Ihrem Bürotelefon</value>
@@ -209,5 +206,8 @@
   </data>
   <data name="VOICE3Message" xml:space="preserve">
     <value>Wir rufen Ihr Bürotelefon an {0}. Antworten Sie, um fortzufahren.</value>
+  </data>
+  <data name="GLOBALManagement" xml:space="preserve">
+    <value>Meine Azure-Optionen registrieren</value>
   </data>
 </root>

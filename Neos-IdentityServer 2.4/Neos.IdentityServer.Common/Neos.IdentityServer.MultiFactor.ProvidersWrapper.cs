@@ -38,6 +38,7 @@ namespace Neos.IdentityServer.MultiFactor.Common
         CodeInputRequired = 1,
         PinInputRequired = 2,
         BiometricInputRequired = 3,
+        AzureInputRequired = 4,
         // registration
         KeyParameterRequired = 10,
         EmailParameterRequired = 11,

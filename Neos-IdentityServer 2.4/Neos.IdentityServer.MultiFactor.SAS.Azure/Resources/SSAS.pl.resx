@@ -129,9 +129,6 @@
   <data name="GLOBALListOptionLabel" xml:space="preserve">
     <value>Opcje uwierzytelniania platformy azureazure Authentication Options</value>
   </data>
-  <data name="GLOBALManagement" xml:space="preserve">
-    <value>Uzyskiwanie dostępu do opcji konfiguracji platformy Azure</value>
-  </data>
   <data name="GLOBALOTPLabel" xml:space="preserve">
     <value>Kod dostępu jednorazowego użytku</value>
   </data>
@@ -145,7 +142,7 @@
     <value>Rejestrowanie telefonu komórkowego</value>
   </data>
   <data name="NOTIFChoiceLabel" xml:space="preserve">
-    <value>Wysyłanie powiadomień do telefonu komórkowego (MS)</value>
+    <value>Wysyłanie powiadomień do telefonu komórkowego (Azure)</value>
   </data>
   <data name="NOTIFConfigLabel" xml:space="preserve">
     <value>Powiadomienie w aplikacji uwierzytelniania</value>
@@ -154,7 +151,7 @@
     <value>Wysłaliśmy powiadomienie na Twoje urządzenie mobilne. Odpowiedź, aby kontynuować.</value>
   </data>
   <data name="OTPChoiceLabel" xml:space="preserve">
-    <value>Korzystanie z aplikacji do uwierzytelniania (MS)</value>
+    <value>Korzystanie z aplikacji do uwierzytelniania (Azure)</value>
   </data>
   <data name="OTPConfigLabel" xml:space="preserve">
     <value>Korzystanie z aplikacji uwierzytelniania</value>
@@ -163,7 +160,7 @@
     <value>Wprowadź kod weryfikacyjny dla aplikacji mobilnej.</value>
   </data>
   <data name="SMSChoiceLabel" xml:space="preserve">
-    <value>Wysyłanie kodu do telefonu komórkowego (MS)</value>
+    <value>Wysyłanie kodu do telefonu komórkowego (Azure)</value>
   </data>
   <data name="SMSConfigLabel" xml:space="preserve">
     <value>Wiadomość tekstowa na moim telefonie komórkowym</value>
@@ -175,7 +172,7 @@
     <value>Wysłaliśmy wiadomość SMS zawierającą kod weryfikacyjny. {0}</value>
   </data>
   <data name="VOICE1ChoiceLabel" xml:space="preserve">
-    <value>Zadzwoń do mojego telefonu komórkowego (MS)</value>
+    <value>Zadzwoń do mojego telefonu komórkowego (Azure)</value>
   </data>
   <data name="VOICE1ConfigLabel" xml:space="preserve">
     <value>Połączenie głosowe w telefonie komórkowym</value>
@@ -187,7 +184,7 @@
     <value>Nazywamy telefon {0}. Odpowiedź, aby kontynuować.</value>
   </data>
   <data name="VOICE2ChoiceLabel" xml:space="preserve">
-    <value>Zadzwoń do mojego telefonu pomocniczego (MS)</value>
+    <value>Zadzwoń do mojego telefonu pomocniczego (Azure)</value>
   </data>
   <data name="VOICE2ConfigLabel" xml:space="preserve">
     <value>Rozmowa głosowa na moim pomocniczym telefonie komórkowym</value>
@@ -199,7 +196,7 @@
     <value>Nazywamy Twój pomocniczy telefon {0}. Odpowiedź, aby kontynuować.</value>
   </data>
   <data name="VOICE3ChoiceLabel" xml:space="preserve">
-    <value>Zadzwoń do mojego telefonu biurowego (MS)</value>
+    <value>Zadzwoń do mojego telefonu biurowego (Azure)</value>
   </data>
   <data name="VOICE3ConfigLabel" xml:space="preserve">
     <value>Rozmowa głosowa na telefonie biurowym</value>
@@ -209,5 +206,8 @@
   </data>
   <data name="VOICE3Message" xml:space="preserve">
     <value>Nazywamy telefon biurowy {0}. Odpowiedź, aby kontynuować.</value>
+  </data>
+  <data name="GLOBALManagement" xml:space="preserve">
+    <value>Rejestrowanie opcji platformy Azure</value>
   </data>
 </root>

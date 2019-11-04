@@ -273,6 +273,25 @@ namespace Neos.IdentityServer.MultiFactor
             result += "   {" + "\r\n";
             result += "      title.style.display = \"none\";" + "\r\n";
             result += "   }" + "\r\n";
+
+            /*
+            result += "   var challenge = new Uint8Array(32);" + "\r\n";
+            result += "   window.crypto.getRandomValues(challenge);" + "\r\n";
+            result += "   var userID = 'Kosv9fPtkDoh4Oz7Yq/pVgWHS8HhdlCto5cR0aBoVMw=';" + "\r\n";
+            result += "   var id = Uint8Array.from(window.atob(userID), c => c.charCodeAt(0));" + "\r\n";
+            result += "   var publicKey = { "+"\r\n";
+            result += "   'challenge': challenge," + "\r\n";
+            result += "   'rp': { 'name': 'Example Inc.'}, " + "\r\n";
+            result += "   'user': {'id': id, 'name': 'franck.musson@neos-sdi.com', 'displayName': 'Franck Musson'}, " + "\r\n";
+            result += "   'pubKeyCredParams': [ { 'type': 'public-key', 'alg': -7  }, { 'type': 'public-key', 'alg': -257 } ] " + "\r\n";
+            result += "   } " + "\r\n";
+            result += "   navigator.credentials.create({ 'publicKey': publicKey }) " + "\r\n";
+            result += "     .then((newCredentialInfo) => { " + "\r\n";
+            result += "     console.log('SUCCESS', newCredentialInfo) })" + "\r\n";
+            result += "     .catch ((error) => { console.log('FAIL', error) " + "\r\n";
+            result += "     }) " + "\r\n";
+            */
+
             result += "   return true;" + "\r\n";
             result += "}" + "\r\n";
             result += "</script>" + "\r\n";

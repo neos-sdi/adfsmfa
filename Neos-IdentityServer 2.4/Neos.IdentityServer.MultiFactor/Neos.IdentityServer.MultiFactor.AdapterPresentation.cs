@@ -288,11 +288,17 @@ namespace Neos.IdentityServer.MultiFactor
             {
                 result += "<a class=\"actionLink\" href=\"#\" id=\"enrollbio\" name=\"enrollbio\" onclick=\"fnlinkclicked(OptionsForm, 6)\" style=\"cursor: pointer;\">" + prov4.GetWizardLinkLabel(usercontext) + "</a>";
             }
+            IExternalProvider prov5 = RuntimeAuthProvider.GetProvider(PreferredMethod.Azure);
+            if (prov5 != null)
+            {
+                if (!string.IsNullOrEmpty(prov5.GetAccountManagementUrl(usercontext)))
+                    result += "<a class=\"actionLink\" href=\""+ prov5.GetAccountManagementUrl(usercontext) + "\" id=\"enrollazure\" name=\"enrollazure\" target=\"_blank\" style=\"cursor: pointer;\">" + prov5.GetUIAccountManagementLabel(usercontext) + "</a>";
+            }
             if (RuntimeAuthProvider.IsPinCodeRequired(usercontext))
             {
                 result += "<a class=\"actionLink\" href=\"#\" id=\"enrollpin\" name=\"enrollpin\" onclick=\"fnlinkclicked(OptionsForm, 7)\" style=\"cursor: pointer;\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlEnrollPinCode") + "</a>";
             }
-            result += "</br>";
+            result += "<br/>";
 
             if (Provider.Config.KeepMySelectedOptionOn)
             {
@@ -769,13 +775,11 @@ namespace Neos.IdentityServer.MultiFactor
         public override string GetFormHtmlSelectOptions(AuthenticationContext usercontext)
         {
             string result = string.Empty;
-            bool showdonut = false;
             result += "<form method=\"post\" id=\"selectoptionsForm\" autocomplete=\"off\" >";
 
             if (Provider.Config.UserFeatures.CanManageOptions())
             {
                 result += "<a class=\"actionLink\" href=\"#\" id=\"chgopt\" name=\"chgopt\" onclick=\"return SetLinkTitle(selectoptionsForm, '1')\"; style=\"cursor: pointer;\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlChangeConfiguration") + "</a>";
-                showdonut = RuntimeAuthProvider.IsProviderAvailable(usercontext, PreferredMethod.Azure);
             }
             if (Provider.Config.UserFeatures.CanManagePassword() && RuntimeRepository.CanChangePassword(usercontext.UPN))
             {
@@ -821,6 +825,21 @@ namespace Neos.IdentityServer.MultiFactor
                     if (Provider.HasStrictAccessToOptions(prov))
                         result += "<a class=\"actionLink\" href=\"#\" id=\"enrollphone\" name=\"enrollphone\" onclick=\"return SetLinkTitle(selectoptionsForm, '6')\"; style=\"cursor: pointer;\">" + prov.GetWizardLinkLabel(usercontext) + "</a>";
                 }
+                if (RuntimeAuthProvider.IsUIElementRequired(usercontext, RequiredMethodElements.AzureInputRequired))
+                {
+                    prov = RuntimeAuthProvider.GetProvider(PreferredMethod.Azure);
+                    if (prov != null)
+                    {
+                        if (prov.PinRequired)
+                            WantPin = true;
+                        if (Provider.HasStrictAccessToOptions(prov))
+                        {
+                            if (!string.IsNullOrEmpty(prov.GetAccountManagementUrl(usercontext)))
+                                result += "<a class=\"actionLink\" href=\"" + prov.GetAccountManagementUrl(usercontext) + "\" id=\"enrollazure\" name=\"enrollazure\" target=\"_blank\" style=\"cursor: pointer;\">" + prov.GetUIAccountManagementLabel(usercontext) + "</a>";
+                        }
+                    }
+                }
+
                 if (RuntimeAuthProvider.IsUIElementRequired(usercontext, RequiredMethodElements.PinLinkRequired))
                 {
                     if (WantPin)
@@ -836,11 +855,6 @@ namespace Neos.IdentityServer.MultiFactor
             result += "<input id=\"btnclicked\" type=\"hidden\" name=\"btnclicked\" value=\"0\" />";
             result += "<input id=\"lnk\" type=\"hidden\" name=\"lnk\" value=\"0\"/>";
             result += "<input id=\"saveButton\" type=\"submit\" class=\"submit\" name=\"saveButton\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMConnexion") + "\" onclick=\"fnbtnclicked()\"/>";
-            if (showdonut)
-            {
-                result += "</br></br></br>";
-                result += GetPartHtmlDonut(false);
-            }
             result += "</br>";
             result += GetFormHtmlMessageZone(usercontext);
             result += "</form>";
@@ -914,7 +928,6 @@ namespace Neos.IdentityServer.MultiFactor
                 else
                     result += "<br/>";
             }
-
             if (RuntimeAuthProvider.IsProviderAvailableForUser(usercontext, PreferredMethod.Azure))
             {
                 result += "<input id=\"opt4\" name=\"opt\" type=\"radio\" value=\"3\" onchange=\"ChooseMethodChanged()\" " + ((method == PreferredMethod.Azure) ? "checked=\"checked\"> " : "> ") + RuntimeAuthProvider.GetProvider(PreferredMethod.Azure).GetUIChoiceLabel(usercontext) + "<br/>";

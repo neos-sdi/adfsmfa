@@ -556,8 +556,8 @@ namespace Neos.IdentityServer.Console.Controls
                 chkProviderEnroll.Enabled = (_provider.Enabled && _provider.AllowEnrollment);
                 if (_kind==PreferredMethod.Azure)
                 {
-                    chkProviderEnroll.Checked = false;
-                    chkProviderEnroll.Enabled = false;
+                   // chkProviderEnroll.Checked = false;
+                   // chkProviderEnroll.Enabled = false;
                     chkProviderRequired.Checked = false;
                     chkProviderRequired.Enabled = false;
                 }
@@ -619,8 +619,8 @@ namespace Neos.IdentityServer.Console.Controls
 
                 if (_kind == PreferredMethod.Azure)
                 {
-                    chkProviderEnroll.Checked = false;
-                    chkProviderEnroll.Enabled = false;
+                   // chkProviderEnroll.Checked = false;
+                   // chkProviderEnroll.Enabled = false;
                     chkProviderRequired.Checked = false;
                     chkProviderRequired.Enabled = false;
                 }
@@ -705,7 +705,7 @@ namespace Neos.IdentityServer.Console.Controls
                         Config.ExternalProvider.EnrollWizard = chkProviderEnroll.Checked;
                         break;
                     case PreferredMethod.Azure:
-                        Config.AzureProvider.EnrollWizard = false;
+                        Config.AzureProvider.EnrollWizard = chkProviderEnroll.Checked;
                         break;
                 }
                 ManagementService.ADFSManager.SetDirty(true);
@@ -754,7 +754,7 @@ namespace Neos.IdentityServer.Console.Controls
                         break;
                     case PreferredMethod.Azure:
                         Config.AzureProvider.Enabled = chkProviderEnabled.Checked;
-                        chkProviderEnroll.Enabled = false;
+                        chkProviderEnroll.Enabled = Config.AzureProvider.Enabled;
                         chkProviderPin.Enabled = Config.AzureProvider.Enabled;
                         break;
                 }

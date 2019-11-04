@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" >
-  <Product Id="a23dd485-5365-4d82-8309-103494000001" Name="Neos MFA Provider for ADFS 2012 R2/2016/2019" Language="1033" Version="2.4.4720.2000" Manufacturer="Neos-SDI" UpgradeCode="a23dd485-5365-4d82-8309-103495000001" >
+  <Product Id="a23dd485-5365-4d82-8309-103494000001" Name="Neos MFA Provider for ADFS 2012 R2/2016/2019" Language="1033" Version="2.4.4720.3000" Manufacturer="Neos-SDI" UpgradeCode="a23dd485-5365-4d82-8309-103495000001" >
 
     <Package InstallerVersion="500" Compressed="yes" InstallScope="perMachine" InstallPrivileges="elevated" Platform="x64" Description="Multi-Factor Authentication for ADFS 2012r2 / 2016 / 2019" />
 
@@ -59,6 +59,11 @@
     <Feature Id="KeysFeature" Title="adfsmfa RSA Keys Sample" Description="Neos Identity Service RAS Keys API" InstallDefault="local" TypicalDefault="install" Level="1" >
       <ComponentGroupRef Id="Neos.IdentityServer.MultiFactor.Keys" />
     </Feature>
+
+    <!--
+    <Feature Id="WebAuthNFeature" Title="adfsmfa WebAuthN Biometric Provider" Description="adfsmfa WebAuthN Biometric API" InstallDefault="local" TypicalDefault="install" Level="1" >
+      <ComponentGroupRef Id="Neos.IdentityServer.MultiFactor.WebAuthN" />
+    </Feature> -->
 
     <Binary Id='CustomAction.CA' SourceFile="$(var.Neos.IdentityServer.Deployment.TargetDir)Neos.IdentityServer.Deployment.CA.dll" />
     <CustomAction Id="xInstallService" BinaryKey='CustomAction.CA' DllEntry="InstallService" Execute="commit" Impersonate="no" />
@@ -226,7 +231,6 @@
                   <CreateFolder/>
                 </Component>
               </Directory>
-
             </Directory>
           </Directory>          
         </Directory>
@@ -450,7 +454,20 @@
 
     </ComponentGroup>
   </Fragment>
-  
+
+  <!--
+  <Fragment>
+    <ComponentGroup Id="Neos.IdentityServer.MultiFactor.WebAuthN">
+      <Component Id="GACDeployment600" Guid="E7173CAB-E43F-4A07-1962-018000006600" Win64="yes" Directory="AssemblyFolder" DiskId="1" >
+        <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.WebAuthN.dll"  Name="Neos.IdentityServer.MultiFactor.WebAuthN.dll" Source="$(var.Neos.IdentityServer.MultiFactor.WebAuthN.TargetPath)" Vital="yes"/>
+      </Component>
+
+      <Component Id="GACDeployment601" Guid="E7173CAB-E43F-4A07-1962-018000006601" Win64="yes" Directory="AssemblyFolder" DiskId="1" >
+        <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.WebAuthN.Common.dll"  Name="Neos.IdentityServer.MultiFactor.WebAuthN.Common.dll" Source="$(var.Neos.IdentityServer.MultiFactor.WebAuthN.Common.TargetPath)" Vital="yes"/>
+      </Component>
+    </ComponentGroup>
+  </Fragment> -->
+      
   <Fragment>
       <ComponentGroup Id="Neos.IdentityServer.MultiFactor.Notifications" Directory="INSTALLFOLDER">
         <Component Id="GACDeployment450" Guid="E7173CAB-E43F-4A07-1962-018000006450" Win64="yes"  DiskId="1"  >

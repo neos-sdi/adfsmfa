@@ -30,7 +30,7 @@ using System.Windows;
 [assembly: Guid("46f0d5b0-3954-4f7e-94dc-4d2757f22441")]
 
 [assembly: AssemblyVersion("2.4.0.0")]
-[assembly: AssemblyFileVersion("2.4.4720.2000")]
+[assembly: AssemblyFileVersion("2.4.4720.3000")]
 [assembly: AssemblyInformationalVersion("2.4.0.0")]
 [assembly: NeutralResourcesLanguageAttribute("en")]
 
