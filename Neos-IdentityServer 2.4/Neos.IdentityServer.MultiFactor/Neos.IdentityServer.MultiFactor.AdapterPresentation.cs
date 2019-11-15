@@ -1688,7 +1688,6 @@ namespace Neos.IdentityServer.MultiFactor
                     result += "</br>";
                     result += "<input id=\"finishButton\" type=\"submit\" class=\"submit\" name=\"finishButton\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelVERIFYOTPOK") + "\" onclick=\"fnbtnclicked(1)\" />";
                     result += "</br>";
-                    result += GetFormHtmlMessageZone(usercontext);
                     break;
                 case 4: // Wrong result test
                     result += "</br>";
@@ -1705,7 +1704,6 @@ namespace Neos.IdentityServer.MultiFactor
                     result += "</td>";
                     result += "</tr></table>";
                     result += "</br>";
-
                     break;
             }
 

@@ -851,57 +851,52 @@ namespace Neos.IdentityServer.MultiFactor.Common
         /// </summary>
         private bool CheckPin(AuthenticationContext usercontext, int pin)
         {
-            if (usercontext.SelectedMethod == AuthenticationResponseKind.PhoneAppOTP)  // Using a TOTP Application (Microsoft Authnetication, Google Authentication, etc...)
-            {
-                foreach (HashMode algo in Enum.GetValues(typeof(HashMode)))
-                {
-                    if (algo <= Algorithm)
-                    {
-                        if (TOTPShadows <= 0)
-                        {
-                            if (!KeysManager.ValidateKey(usercontext.UPN))
-                                throw new CryptographicException(string.Format("SECURTY ERROR : Invalid Key for User {0}", usercontext.UPN));
-                            byte[] encodedkey = KeysManager.ProbeKey(usercontext.UPN);
-                            DateTime call = DateTime.UtcNow;
-                            OTPGenerator gen = new OTPGenerator(encodedkey, usercontext.UPN, call, algo, this.Duration, this.Digits);  // eg : TOTP code
-                            gen.ComputeOTP(call);
-                            return (Convert.ToInt32(pin) == Convert.ToInt32(gen.Digits));
-                        }
-                        else
-                        {   // Current TOTP
-                            if (!KeysManager.ValidateKey(usercontext.UPN))
-                                throw new CryptographicException(string.Format("SECURTY ERROR : Invalid Key for User {0}", usercontext.UPN));
-                            byte[] encodedkey = KeysManager.ProbeKey(usercontext.UPN);
-                            DateTime tcall = DateTime.UtcNow;
-                            OTPGenerator gen = new OTPGenerator(encodedkey, usercontext.UPN, tcall, algo, this.Duration, this.Digits);  // eg : TOTP code
-                            gen.ComputeOTP(tcall);
-                            if (pin == Convert.ToInt32(gen.Digits))
-                                return true;
-                            // TOTP with Shadow (current - x latest)
-                            for (int i = 1; i <= TOTPShadows; i++)
-                            {
-                                DateTime call = tcall.AddSeconds(-(i * this.Duration));
-                                OTPGenerator gen2 = new OTPGenerator(encodedkey, usercontext.UPN, call, algo, this.Duration, this.Digits);  // eg : TOTP code
-                                gen2.ComputeOTP(call);
-                                if (pin == Convert.ToInt32(gen2.Digits))
-                                    return true;
-                            }
-                            // TOTP with Shadow (current + x latest) - not possible. but can be usefull if time sync is not adequate
-                            for (int i = 1; i <= TOTPShadows; i++)
-                            {
-                                DateTime call = tcall.AddSeconds(i * this.Duration);
-                                OTPGenerator gen3 = new OTPGenerator(encodedkey, usercontext.UPN, call, algo, this.Duration, this.Digits);  // eg : TOTP code
-                                gen3.ComputeOTP(call);
-                                if (pin == Convert.ToInt32(gen3.Digits))
-                                    return true;
-                            }
-                        }
-                    }
-                }
-                return false;
-            }
-            else
-                return false;
+			foreach (HashMode algo in Enum.GetValues(typeof(HashMode)))
+			{
+				if (algo <= Algorithm)
+				{
+					if (TOTPShadows <= 0)
+					{
+						if (!KeysManager.ValidateKey(usercontext.UPN))
+							throw new CryptographicException(string.Format("SECURTY ERROR : Invalid Key for User {0}", usercontext.UPN));
+						byte[] encodedkey = KeysManager.ProbeKey(usercontext.UPN);
+						DateTime call = DateTime.UtcNow;
+						OTPGenerator gen = new OTPGenerator(encodedkey, usercontext.UPN, call, algo, this.Duration, this.Digits);  // eg : TOTP code
+						gen.ComputeOTP(call);
+						return (Convert.ToInt32(pin) == Convert.ToInt32(gen.Digits));
+					}
+					else
+					{   // Current TOTP
+						if (!KeysManager.ValidateKey(usercontext.UPN))
+							throw new CryptographicException(string.Format("SECURTY ERROR : Invalid Key for User {0}", usercontext.UPN));
+						byte[] encodedkey = KeysManager.ProbeKey(usercontext.UPN);
+						DateTime tcall = DateTime.UtcNow;
+						OTPGenerator gen = new OTPGenerator(encodedkey, usercontext.UPN, tcall, algo, this.Duration, this.Digits);  // eg : TOTP code
+						gen.ComputeOTP(tcall);
+						if (pin == Convert.ToInt32(gen.Digits))
+							return true;
+						// TOTP with Shadow (current - x latest)
+						for (int i = 1; i <= TOTPShadows; i++)
+						{
+							DateTime call = tcall.AddSeconds(-(i * this.Duration));
+							OTPGenerator gen2 = new OTPGenerator(encodedkey, usercontext.UPN, call, algo, this.Duration, this.Digits);  // eg : TOTP code
+							gen2.ComputeOTP(call);
+							if (pin == Convert.ToInt32(gen2.Digits))
+								return true;
+						}
+						// TOTP with Shadow (current + x latest) - not possible. but can be usefull if time sync is not adequate
+						for (int i = 1; i <= TOTPShadows; i++)
+						{
+							DateTime call = tcall.AddSeconds(i * this.Duration);
+							OTPGenerator gen3 = new OTPGenerator(encodedkey, usercontext.UPN, call, algo, this.Duration, this.Digits);  // eg : TOTP code
+							gen3.ComputeOTP(call);
+							if (pin == Convert.ToInt32(gen3.Digits))
+								return true;
+						}
+					}
+				}
+			}
+			return false;
         }
     }
 
