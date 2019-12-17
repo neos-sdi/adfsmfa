@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.28307.645
+VisualStudioVersion = 15.0.28307.329
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Neos.IdentityServer.MultiFactor.Administration", "Neos.IdentityServer.Common.Admin\Neos.IdentityServer.MultiFactor.Administration.csproj", "{BB08DC85-4E6E-4220-A0FC-01BFB6C468F6}"
 EndProject
@@ -40,7 +40,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Neos.IdentityServer.MultiFa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Neos.IdentityServer.MultiFactor.Samples", "Neos.IdentityServer.Multifactor.Samples\Neos.IdentityServer.MultiFactor.Samples.csproj", "{C773C4C7-4B95-4836-B770-66E9DD3F42F3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Neos.IdentityServer.MultiFactor.SMS.Samples", "Neos.IdentityServer.MultiFactor.SMS.Sample\Neos.IdentityServer.MultiFactor.SMS.Samples.csproj", "{6D65424F-DA38-4B03-9873-EAD0A46708F4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NTN-SNR.IdentityServer.MultiFactor.SMS", "NTN-SNR.IdentityServer.MultiFactor.SMS\NTN-SNR.IdentityServer.MultiFactor.SMS.csproj", "{6D65424F-DA38-4B03-9873-EAD0A46708F4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -225,8 +225,8 @@ Global
 		{713C4D81-3780-4D5A-A691-878F48ECA43C}.Debug|x86.Build.0 = Debug|x86
 		{713C4D81-3780-4D5A-A691-878F48ECA43C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{713C4D81-3780-4D5A-A691-878F48ECA43C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{713C4D81-3780-4D5A-A691-878F48ECA43C}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{713C4D81-3780-4D5A-A691-878F48ECA43C}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{713C4D81-3780-4D5A-A691-878F48ECA43C}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{713C4D81-3780-4D5A-A691-878F48ECA43C}.Release|Mixed Platforms.Build.0 = Release|x86
 		{713C4D81-3780-4D5A-A691-878F48ECA43C}.Release|Win32.ActiveCfg = Release|x86
 		{713C4D81-3780-4D5A-A691-878F48ECA43C}.Release|Win32.Build.0 = Release|x86
 		{713C4D81-3780-4D5A-A691-878F48ECA43C}.Release|x64.ActiveCfg = Release|x86
@@ -310,24 +310,26 @@ Global
 		{6D65424F-DA38-4B03-9873-EAD0A46708F4}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
 		{6D65424F-DA38-4B03-9873-EAD0A46708F4}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
 		{6D65424F-DA38-4B03-9873-EAD0A46708F4}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{6D65424F-DA38-4B03-9873-EAD0A46708F4}.Debug|Win32.Build.0 = Debug|Any CPU
 		{6D65424F-DA38-4B03-9873-EAD0A46708F4}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{6D65424F-DA38-4B03-9873-EAD0A46708F4}.Debug|x64.Build.0 = Debug|Any CPU
 		{6D65424F-DA38-4B03-9873-EAD0A46708F4}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{6D65424F-DA38-4B03-9873-EAD0A46708F4}.Debug|x86.Build.0 = Debug|Any CPU
 		{6D65424F-DA38-4B03-9873-EAD0A46708F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6D65424F-DA38-4B03-9873-EAD0A46708F4}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6D65424F-DA38-4B03-9873-EAD0A46708F4}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{6D65424F-DA38-4B03-9873-EAD0A46708F4}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{6D65424F-DA38-4B03-9873-EAD0A46708F4}.Release|Win32.ActiveCfg = Release|Any CPU
+		{6D65424F-DA38-4B03-9873-EAD0A46708F4}.Release|Win32.Build.0 = Release|Any CPU
 		{6D65424F-DA38-4B03-9873-EAD0A46708F4}.Release|x64.ActiveCfg = Release|Any CPU
+		{6D65424F-DA38-4B03-9873-EAD0A46708F4}.Release|x64.Build.0 = Release|Any CPU
 		{6D65424F-DA38-4B03-9873-EAD0A46708F4}.Release|x86.ActiveCfg = Release|Any CPU
+		{6D65424F-DA38-4B03-9873-EAD0A46708F4}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		RESX_PrefixTranslations = False
-		SolutionGuid = {EFE1ED88-4DDF-47BF-9854-96829760B905}
-		RESX_AutoCreateNewLanguageFiles = True
-		RESX_ConfirmAddLanguageFile = False
-		RESX_SortFileContentOnSave = True
+		SolutionGuid = {0A227451-7DA8-4A2D-BED4-C2ED59370850}
 	EndGlobalSection
 EndGlobal

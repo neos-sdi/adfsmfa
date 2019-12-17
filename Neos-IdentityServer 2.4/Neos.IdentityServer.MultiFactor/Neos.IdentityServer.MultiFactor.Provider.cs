@@ -1458,7 +1458,7 @@ namespace Neos.IdentityServer.MultiFactor
                             return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorSendingToastInformationRetry"), false);
                         }
                     }
-                  //  usercontext.CurrentRetries++;
+                    // usercontext.CurrentRetries++;
                 }
                 result = new AdapterPresentation(this, context);
             }

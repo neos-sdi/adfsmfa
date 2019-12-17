@@ -1,0 +1,4 @@
+UPN;EMAIL;MOBILE;METHOD;ENABLED
+user1@contoso.com;email1@gmail.com;601020304;Choose;true
+user2@contoso.com;email2@live.com;601020304;Choose;true
+user3@contoso.com;;601020304;Code;true
