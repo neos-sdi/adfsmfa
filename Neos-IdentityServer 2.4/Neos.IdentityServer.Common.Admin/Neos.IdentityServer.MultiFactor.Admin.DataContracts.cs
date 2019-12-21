@@ -483,6 +483,8 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         public virtual void CheckUpdates(PSHost host)
         {
             IExternalProvider prov = RuntimeAuthProvider.GetProviderInstance(Kind);
+            if (prov == null)
+                return;
             if (prov.Name.Equals("Neos.Provider.Plug.External"))
                 return;
             if (prov != null)
