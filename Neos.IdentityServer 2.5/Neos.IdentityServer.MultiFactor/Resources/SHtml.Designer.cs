@@ -243,6 +243,15 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Add a biometric device.
+        /// </summary>
+        internal static string HtmlLabelWRAddBiometrics {
+            get {
+                return ResourceManager.GetString("HtmlLabelWRAddBiometrics", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à You must activate your biometric device (fingerprint, facial recognition, NFC, etc.) to confirm your identity..
         /// </summary>
         internal static string HtmlLabelWRBiometrics {
@@ -275,6 +284,15 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         internal static string HtmlLabelWREmail {
             get {
                 return ResourceManager.GetString("HtmlLabelWREmail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Manage your biometrics devices. Select add, replace or delete individual devices..
+        /// </summary>
+        internal static string HtmlLabelWRManageBiometrics {
+            get {
+                return ResourceManager.GetString("HtmlLabelWRManageBiometrics", resourceCulture);
             }
         }
         

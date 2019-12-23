@@ -150,4 +150,10 @@
   <data name="BIOUIEnrollValidatedLabel" xml:space="preserve">
     <value>Проверка учетной записи &lt;br&gt;&lt;br&gt;Вы можете использовать ваше биометрическое устройство для аутентификации</value>
   </data>
+  <data name="BIOUIEnrollManageLinkLabel" xml:space="preserve">
+    <value>Управляйте моими биометрическими устройствами</value>
+  </data>
+  <data name="BIOUIEnrollDeleteLinkLabel" xml:space="preserve">
+    <value>Удалить это устройство</value>
+  </data>
 </root>

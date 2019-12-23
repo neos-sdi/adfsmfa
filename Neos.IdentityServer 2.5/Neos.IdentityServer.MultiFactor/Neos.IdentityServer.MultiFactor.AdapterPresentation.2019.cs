@@ -2289,7 +2289,51 @@ namespace Neos.IdentityServer.MultiFactor
             result += "   var lnk = document.getElementById('btnclicked');" + CR;
             result += "   lnk.value = id;" + CR;
             result += "   return true;" + CR;
-            result += "}";
+            result += "}" + CR;
+            result += CR;
+
+            result += "function fnlnkclicked(frm, id)" + CR;
+            result += "{" + CR;
+            result += "   var lnk = document.getElementById('btnclicked');" + CR;
+            result += "   lnk.value = id;" + CR;
+            result += "   frm.submit();" + CR;
+            result += "   return true;" + CR;
+            result += "}" + CR;
+            result += CR;
+
+            result += "function fn2lnkclicked(frm, id)" + CR;
+            result += "{" + CR;
+            result += "   var delbio = document.getElementById('delbio');" + CR;
+            result += "   if (!delbio)" + CR;
+            result += "   {" + CR;
+            result += "      return false;" + CR;
+            result += "   }";
+            result += "   if (delbio.style.color===\"grey\")" + CR;
+            result += "   {" + CR;
+            result += "      return false;" + CR;
+            result += "   }";
+            result += "   var lnk = document.getElementById('btnclicked');" + CR;
+            result += "   lnk.value = id;" + CR;
+            result += "   frm.submit();" + CR;
+            result += "   return true;" + CR;
+            result += "}" + CR;
+            result += CR;
+
+            result += "function SetLinkState(value, aaguid)" + CR;
+            result += "{" + CR;
+            result += "   var delbio = document.getElementById('delbio');" + CR;
+            result += "   if (value)" + CR;
+            result += "   {" + CR;
+            result += "     delbio.style.color = \"blue\";" + CR;
+            result += "     delbio.style.cursor = \"pointer\";" + CR;
+            result += "   }";
+            result += "   else" + CR;
+            result += "   {" + CR;
+            result += "     delbio.style.color = \"gray\";" + CR;
+            result += "     delbio.style.cursor = \"default\";" + CR;
+            result += "   }" + CR;
+            result += "   return true;" + CR;
+            result += "}" + CR;
             result += CR;
 
             result += "function SetJsError(message)" + CR;
@@ -2300,7 +2344,7 @@ namespace Neos.IdentityServer.MultiFactor
             result += "   err.value = message;" + CR;
             result += "   document.getElementById('enrollbiometricsForm').submit();" + CR;
             result += "   return true;" + CR;
-            result += "}";
+            result += "}" + CR;
             result += CR;
 
             if (usercontext.WizPageID == 1)
@@ -2338,21 +2382,28 @@ namespace Neos.IdentityServer.MultiFactor
             prov.GetAuthenticationContext(usercontext);
             switch (usercontext.WizPageID)
             {
-                case 0: // Get User Phone number
+                case 0: 
                     result += "<div id=\"wizardMessage\" class=\"groupMargin\">" + prov.GetWizardUILabel(usercontext) + "</div>";
                     if (prov.IsUIElementRequired(usercontext, RequiredMethodElements.BiometricParameterRequired))
                     {
                         List<WebAuthNCredentialInformation> creds = web.GetUserStoredCredentials(usercontext);
                         result += "<div class=\"fieldMargin smallText\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelWRBiometrics") + "</div><br/>";
-                        result += "<input id=\"optiongroup0\" name=\"optionitem\" type=\"radio\" value=\"" +Guid.Empty.ToString()+ "\" checked=\"checked\" /> Ajouter un dispositif biométrique<br/>";
+                        result += "<input id=\"optiongroup0\" name=\"optionitem\" type=\"radio\" value=\"" +Guid.Empty.ToString()+ "\" checked=\"checked\" /> " + Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelWRAddBiometrics") +"<br/>";
+                        int i = 1;
                         if (creds.Count > 0)
                         {
-                            int i = 1;
                             foreach (WebAuthNCredentialInformation cr in creds)
                             {
-                                result += "<input id=\"optiongroup" + i.ToString() + "\" name=\"optionitem\" type=\"radio\" value=\"" + cr.AaGuid.ToString() + "\" />" +" <b>"+ cr.CredType+"</b> " + cr.RegDate.ToString() + "<br/>";
+                                if (i <= 2)
+                                   result += "<input id=\"optiongroup" + i.ToString() + "\" name=\"optionitem\" type=\"radio\" value=\"" + cr.AaGuid.ToString() + "\" /> <b>" + cr.CredType + "</b> " + cr.RegDate.ToString() + "<br/>";
                                 i++;
+
                             }
+                        }
+                        if (i > 1)
+                        {
+                           // result += "<br/>";
+                            result += "<a class=\"actionLink\" href=\"#\" id=\"morebio\" name=\"morebio\" onclick=\"fnlnkclicked(enrollbiometricsForm, 7)\" >" + web.GetManageLinkLabel(usercontext) + "</a>";
                         }
                     }
 
@@ -2382,7 +2433,6 @@ namespace Neos.IdentityServer.MultiFactor
                         result += "<input id=\"mfa-cancelButton\" type=\"submit\" class=\"submit\" name=\"cancel\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlPWDCancel") + "\" onclick=\"fnbtnclicked(1)\" />";
                     result += "</td>";
                     result += "</tr></table>";
-                    result += GetFormHtmlMessageZone(usercontext);
                     break;
                 case 1:
                     result += "<br/>";
@@ -2438,6 +2488,38 @@ namespace Neos.IdentityServer.MultiFactor
                     result += "</td>";
                     result += "</tr></table>";
                     result += "<br/>";
+                    break;
+                case 5: // Manage credentials list
+                    if (prov.IsUIElementRequired(usercontext, RequiredMethodElements.BiometricParameterRequired))
+                    {
+                        List<WebAuthNCredentialInformation> creds = web.GetUserStoredCredentials(usercontext);
+                        result += "<div class=\"fieldMargin smallText\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelWRManageBiometrics") + "</div><br/>";
+                        if (creds.Count<10)
+                            result += "<input id=\"optiongroup0\" name=\"optionitem\" type=\"radio\" value=\"" + Guid.Empty.ToString() + "\" checked=\"checked\" onchange=\"SetLinkState(false, '" + Guid.Empty.ToString() + "')\" /> " + Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelWRAddBiometrics") +"<br/>";
+                        int i = 1;
+                        if (creds.Count > 0)
+                        {
+                            foreach (WebAuthNCredentialInformation cr in creds)
+                            {
+                                if (i <= 10)
+                                    result += "<input id=\"optiongroup" + i.ToString() + "\" name=\"optionitem\" type=\"radio\" value=\"" + cr.AaGuid.ToString() + "\" onchange=\"SetLinkState(true, '" + cr.AaGuid.ToString() + "')\" /> <b>" + cr.CredType + "</b> " + cr.RegDate.ToString() + "<br/>";
+                                i++;
+                            }
+                        }
+                       // result += "<br/>";
+                        result += "<a class=\"actionLink\" href=\"#\" id=\"delbio\" name=\"delbio\"  onclick=\"fn2lnkclicked(enrollbiometricsForm, 8)\" style=\"cursor: default; color:grey;\"> "+ web.GetDeleteLinkLabel(usercontext) +"</a>";
+                        result += "<br/>";
+                        result += "<table><tr>";
+                        result += "<td>";
+                        result += "<input id=\"nextButton\" type=\"submit\" class=\"submit\" name=\"nextButton\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelWVERIFYOTP") + "\" onclick=\"fnbtnclicked(2)\" />";
+                        result += "</td>";
+                        result += "<td style=\"width: 15px\" />";
+                        result += "<td>";
+                        if (Utilities.CanCancelWizard(usercontext, prov, ProviderPageMode.EnrollBiometrics))
+                            result += "<input id=\"mfa-cancelButton\" type=\"submit\" class=\"submit\" name=\"cancel\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlPWDCancel") + "\" onclick=\"fnbtnclicked(1)\" />";
+                        result += "</td>";
+                        result += "</tr></table>";
+                    }
                     break;
             }
             result += "<input id=\"context\" type=\"hidden\" name=\"Context\" value=\"%Context%\"/>";

@@ -279,4 +279,10 @@ Puteți încerca din nou operațiunea selectând "Previous".</value>
     <value>Contul tău este validat! &lt;br&gt;
 Veți putea utiliza validarea MFA în viitor.</value>
   </data>
+  <data name="HtmlLabelWRManageBiometrics" xml:space="preserve">
+    <value>Gestionați-vă dispozitivele biometrice. Selectați adăugarea, înlocuirea sau ștergerea dispozitivelor individuale.!</value>
+  </data>
+  <data name="HtmlLabelWRAddBiometrics" xml:space="preserve">
+    <value>Adăugați un dispozitiv biometric</value>
+  </data>
 </root>

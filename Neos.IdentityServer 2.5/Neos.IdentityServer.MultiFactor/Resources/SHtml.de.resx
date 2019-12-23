@@ -279,4 +279,10 @@ Sie können den Vorgang erneut versuchen, indem Sie "Vorherige" auswählen.</val
     <value>Ihr Konto wird validiert ! &lt;br&gt;
 Sie können die MFA-Validierung in Zukunft verwenden.</value>
   </data>
+  <data name="HtmlLabelWRManageBiometrics" xml:space="preserve">
+    <value>Verwalten Sie Ihre Biometriegeräte. Wählen Sie Hinzufügen, Ersetzen oder Löschen einzelner Geräte.!</value>
+  </data>
+  <data name="HtmlLabelWRAddBiometrics" xml:space="preserve">
+    <value>Fügen Sie ein biometrisches Gerät hinzu</value>
+  </data>
 </root>

@@ -127,6 +127,12 @@
   <data name="BIOUIConfigLabel" xml:space="preserve">
     <value>Use my biometric device</value>
   </data>
+  <data name="BIOUIEnrollDeleteLinkLabel" xml:space="preserve">
+    <value>Delete this device</value>
+  </data>
+  <data name="BIOUIEnrollManageLinkLabel" xml:space="preserve">
+    <value>Manage my biometrics devices</value>
+  </data>
   <data name="BIOUIEnrollTaskLabel" xml:space="preserve">
     <value>Register a biometric device</value>
   </data>

@@ -150,4 +150,10 @@
   <data name="BIOUIEnrollValidatedLabel" xml:space="preserve">
     <value>Account geverifieerd &lt;br&gt; &lt;br&gt; u uw biometrische apparaat gebruiken om te verifiëren</value>
   </data>
+  <data name="BIOUIEnrollManageLinkLabel" xml:space="preserve">
+    <value>Beheer mijn biometrische apparaten</value>
+  </data>
+  <data name="BIOUIEnrollDeleteLinkLabel" xml:space="preserve">
+    <value>Verwijder dit apparaat</value>
+  </data>
 </root>

@@ -279,4 +279,10 @@ Du kan prova åtgärden igen genom att välja "föregående".</value>
     <value>Ditt konto har validerats! &lt;br&gt;
 Du kommer att kunna använda MFA validering i framtiden.</value>
   </data>
+  <data name="HtmlLabelWRManageBiometrics" xml:space="preserve">
+    <value>Hantera dina biometriska enheter. Välj lägg till, byt ut eller ta bort enskilda enheter.!</value>
+  </data>
+  <data name="HtmlLabelWRAddBiometrics" xml:space="preserve">
+    <value>Lägg till en biometrisk enhet</value>
+  </data>
 </root>

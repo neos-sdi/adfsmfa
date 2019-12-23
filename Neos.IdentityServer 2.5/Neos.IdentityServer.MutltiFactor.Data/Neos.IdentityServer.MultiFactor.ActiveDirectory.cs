@@ -1273,8 +1273,10 @@ namespace Neos.IdentityServer.MultiFactor.Data
                                 WebAuthNPublicKeySerialization ser = new WebAuthNPublicKeySerialization(_host);
                                 MFAUserCredential cred = ser.DeserializeCredentials(s, user.Name);
                                 if (cred.AaGuid.Equals(aaguid))
+                                { 
                                     result = cred;
-                                break;
+                                    break;
+                                }
                             }
                         }
                     }

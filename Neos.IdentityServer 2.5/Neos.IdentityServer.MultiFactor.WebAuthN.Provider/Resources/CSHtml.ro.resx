@@ -150,4 +150,10 @@
   <data name="BIOUIEnrollValidatedLabel" xml:space="preserve">
     <value>Cont verificat &lt;br&gt; &lt;br&gt; puteți utiliza dispozitivul biometric pentru autentificarea</value>
   </data>
+  <data name="BIOUIEnrollManageLinkLabel" xml:space="preserve">
+    <value>Gestionați-mi dispozitivele biometrice</value>
+  </data>
+  <data name="BIOUIEnrollDeleteLinkLabel" xml:space="preserve">
+    <value>Ștergeți acest dispozitiv</value>
+  </data>
 </root>

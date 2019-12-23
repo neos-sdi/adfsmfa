@@ -96,6 +96,8 @@ namespace Neos.IdentityServer.MultiFactor
 
     public interface IWebAuthNProvider
     {
+        string GetManageLinkLabel(AuthenticationContext ctx);
+        string GetDeleteLinkLabel(AuthenticationContext ctx);
         List<WebAuthNCredentialInformation> GetUserStoredCredentials(AuthenticationContext ctx);
         void RemoveUserStoredCredentials(AuthenticationContext ctx, string aaguid);
     }

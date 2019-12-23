@@ -88,6 +88,24 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Delete this device.
+        /// </summary>
+        internal static string BIOUIEnrollDeleteLinkLabel {
+            get {
+                return ResourceManager.GetString("BIOUIEnrollDeleteLinkLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Manage my biometrics devices.
+        /// </summary>
+        internal static string BIOUIEnrollManageLinkLabel {
+            get {
+                return ResourceManager.GetString("BIOUIEnrollManageLinkLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Register a biometric device.
         /// </summary>
         internal static string BIOUIEnrollTaskLabel {

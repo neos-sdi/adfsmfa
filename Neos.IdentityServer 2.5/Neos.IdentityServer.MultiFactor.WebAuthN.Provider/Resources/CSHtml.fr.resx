@@ -150,4 +150,10 @@
   <data name="BIOUIEnrollValidatedLabel" xml:space="preserve">
     <value>Compte vérifié &lt;br&gt;&lt;br&gt;Vous pouvez utiliser votre dispositif  biométrique pour vous authentifier</value>
   </data>
+  <data name="BIOUIEnrollManageLinkLabel" xml:space="preserve">
+    <value>Gérez mes appareils biométriques</value>
+  </data>
+  <data name="BIOUIEnrollDeleteLinkLabel" xml:space="preserve">
+    <value>Supprimez cet appareil</value>
+  </data>
 </root>

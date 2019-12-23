@@ -278,4 +278,10 @@ U de bewerking opnieuw proberen door vorige te selecteren.</value>
     <value>Uw account is gevalideerd! &lt;br&gt;
 U in de toekomst MFA-validatie gebruiken.</value>
   </data>
+  <data name="HtmlLabelWRManageBiometrics" xml:space="preserve">
+    <value>Beheer uw biometrische apparaten. Selecteer toevoegen, vervangen of verwijderen van afzonderlijke apparaten.!</value>
+  </data>
+  <data name="HtmlLabelWRAddBiometrics" xml:space="preserve">
+    <value>Voeg een biometrisch apparaat toe</value>
+  </data>
 </root>

@@ -2345,6 +2345,13 @@ namespace Neos.IdentityServer.MultiFactor
                         {
                             ReleaseAuthenticationData(usercontext, PreferredMethod.Biometrics);
                         }
+                    case 7:
+                        usercontext.WizPageID = 5;
+                        return new AdapterPresentation(this, context);
+                    case 8:
+                        SetBiometricProviderKeyManagementOption(usercontext, context, proofData);
+                        usercontext.WizPageID = 0;
+                        return new AdapterPresentation(this, context);
                 }
             }
             catch (Exception ex)

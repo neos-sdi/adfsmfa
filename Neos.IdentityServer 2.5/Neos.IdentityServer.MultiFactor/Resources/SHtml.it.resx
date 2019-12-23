@@ -278,4 +278,10 @@
     <value>Il tuo account è convalidato! &lt;br&gt;
 In futuro sarà possibile utilizzare la convalida MFA.</value>
   </data>
+  <data name="HtmlLabelWRManageBiometrics" xml:space="preserve">
+    <value>Gestisci i tuoi dispositivi biometrici. Selezionare Aggiungi, Sostituisci o Elimina singoli dispositivi.!</value>
+  </data>
+  <data name="HtmlLabelWRAddBiometrics" xml:space="preserve">
+    <value>Aggiungi un dispositivo biometrico</value>
+  </data>
 </root>

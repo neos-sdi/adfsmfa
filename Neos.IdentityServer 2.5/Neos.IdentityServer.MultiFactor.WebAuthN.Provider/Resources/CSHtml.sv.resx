@@ -150,4 +150,10 @@
   <data name="BIOUIEnrollValidatedLabel" xml:space="preserve">
     <value>Konto verifierad &lt;br&gt; &lt;br&gt; du kan använda din biometriska enhet för att autentisera</value>
   </data>
+  <data name="BIOUIEnrollManageLinkLabel" xml:space="preserve">
+    <value>Hantera mina biometriska enheter</value>
+  </data>
+  <data name="BIOUIEnrollDeleteLinkLabel" xml:space="preserve">
+    <value>Radera den här enheten</value>
+  </data>
 </root>

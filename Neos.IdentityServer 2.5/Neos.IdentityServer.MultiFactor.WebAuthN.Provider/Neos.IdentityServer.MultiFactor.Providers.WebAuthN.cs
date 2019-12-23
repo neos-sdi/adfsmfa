@@ -472,6 +472,21 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
 
         #region IWebAuthNProvider
         /// <summary>
+        /// GetManageLinkLabel method implementation
+        /// </summary>
+        public string GetManageLinkLabel(AuthenticationContext ctx)
+        {
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
+            return Resources.GetString(ResourcesLocaleKind.Html, "BIOUIEnrollManageLinkLabel");
+        }
+
+        public string GetDeleteLinkLabel(AuthenticationContext ctx)
+        {
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
+            return Resources.GetString(ResourcesLocaleKind.Html, "BIOUIEnrollDeleteLinkLabel");
+        }
+
+        /// <summary>
         /// GetUserStoredCredentials method implementation
         /// </summary>
         public List<WebAuthNCredentialInformation> GetUserStoredCredentials(AuthenticationContext ctx)
@@ -525,7 +540,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
                 MFAWebAuthNUser user = RuntimeRepository.GetUser(Config, ctx.UPN);
                 if (user != null)
                 {
-                    var existingKeys = RuntimeRepository.GetCredentialsByUser(Config, user).Select(c => c.Descriptor).ToList();
+                    List<MFAPublicKeyCredentialDescriptor> existingKeys = RuntimeRepository.GetCredentialsByUser(Config, user).Select(c => c.Descriptor).ToList();
 
                     // 3. Create options
                     AuthenticatorSelection authenticatorSelection = new AuthenticatorSelection

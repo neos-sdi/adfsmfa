@@ -279,4 +279,10 @@ Puede volver a intentar la operación seleccionando "Anterior".</value>
     <value>Su cuenta está validada ! &lt;br&gt;
 Podrá utilizar la validación de MFA en el futuro.</value>
   </data>
+  <data name="HtmlLabelWRManageBiometrics" xml:space="preserve">
+    <value>Administre sus dispositivos biométricos. Seleccione agregar, reemplazar o eliminar dispositivos individuales.</value>
+  </data>
+  <data name="HtmlLabelWRAddBiometrics" xml:space="preserve">
+    <value>Añadir un dispositivo biométrico</value>
+  </data>
 </root>

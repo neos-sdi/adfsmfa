@@ -279,4 +279,10 @@
     <value>Ваша учетная запись проверена! &lt;br&gt;
 Вы сможете использовать проверку МИД в будущем.</value>
   </data>
+  <data name="HtmlLabelWRManageBiometrics" xml:space="preserve">
+    <value>Управляйте своими биометрическими устройствами. Выберите добавить, заменить или удалить отдельные устройства.!</value>
+  </data>
+  <data name="HtmlLabelWRAddBiometrics" xml:space="preserve">
+    <value>Добавьте биометрическое устройство</value>
+  </data>
 </root>

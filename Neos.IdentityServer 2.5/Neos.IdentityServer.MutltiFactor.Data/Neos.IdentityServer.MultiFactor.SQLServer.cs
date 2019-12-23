@@ -823,8 +823,10 @@ namespace Neos.IdentityServer.MultiFactor.Data
                         string publickey = rd.GetString(2);
                         MFAUserCredential cred = ser.DeserializeCredentials(publickey, username);
                         if (cred.AaGuid.Equals(aaguid))
+                        {
                             result = cred;
-                        break;
+                            break;
+                        }
                     }
                 }
                 catch (Exception ex)

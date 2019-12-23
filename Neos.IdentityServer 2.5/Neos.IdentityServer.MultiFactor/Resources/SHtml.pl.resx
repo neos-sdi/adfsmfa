@@ -279,4 +279,10 @@ Możesz spróbować operacji ponownie, wybierając "poprzedni".</value>
     <value>Twoje konto jest weryfikowane! &lt;br&gt;
 Będzie można użyć weryfikacji MFA w przyszłości.</value>
   </data>
+  <data name="HtmlLabelWRManageBiometrics" xml:space="preserve">
+    <value>Zarządzaj swoimi urządzeniami biometrycznymi. Wybierz dodaj, zamień lub usuń poszczególne urządzenia.!</value>
+  </data>
+  <data name="HtmlLabelWRAddBiometrics" xml:space="preserve">
+    <value>Dodaj urządzenie biometryczne</value>
+  </data>
 </root>
