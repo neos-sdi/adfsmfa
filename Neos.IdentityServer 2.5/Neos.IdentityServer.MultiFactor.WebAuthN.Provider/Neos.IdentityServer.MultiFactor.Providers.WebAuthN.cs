@@ -502,24 +502,26 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
             {
                 WebAuthNCredentialInformation itm = new WebAuthNCredentialInformation()
                 {
+                    CredentialID = HexaEncoding.GetHexStringFromByteArray(st.Descriptor.Id),
                     AaGuid = st.AaGuid,
                     CredType = st.CredType,
                     RegDate = st.RegDate,
+                    SignatureCounter = st.SignatureCounter
                 };
                 if (st.Descriptor.Type != null)
                     itm.Type = EnumExtensions.ToEnumMemberValue(st.Descriptor.Type.Value);
                 wcreds.Add(itm);
             }
-            return wcreds;
+            return wcreds.OrderByDescending(c => c.RegDate).ToList<WebAuthNCredentialInformation>();
         }
 
         /// <summary>
         /// RemoveUserStoredCredentials method implementation
         /// </summary>
-        public void RemoveUserStoredCredentials(AuthenticationContext ctx, string aaguid)
+        public void RemoveUserStoredCredentials(AuthenticationContext ctx, string credentialid)
         {
             MFAWebAuthNUser user = RuntimeRepository.GetUser(Config, ctx.UPN);
-            RuntimeRepository.RemoveUserCredential(Config, user, aaguid);
+            RuntimeRepository.RemoveUserCredential(Config, user, credentialid);
         }
 
         /// <summary>

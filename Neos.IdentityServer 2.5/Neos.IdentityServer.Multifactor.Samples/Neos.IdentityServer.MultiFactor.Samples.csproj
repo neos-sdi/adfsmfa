@@ -52,6 +52,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="AtsoundTS.pfx" />
     <None Include="Neos.IdentityServer.pfx" />
   </ItemGroup>
   <ItemGroup>

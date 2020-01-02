@@ -66,6 +66,8 @@ namespace Neos.IdentityServer.MultiFactor.Data
             {
                 case 16:
                     return CheckSum128(username);
+                case 20:
+                    return CheckSum160(username);
                 case 32:
                     return CheckSum256(username);
                 case 48:
@@ -75,6 +77,41 @@ namespace Neos.IdentityServer.MultiFactor.Data
                 default:
                     return CheckSum128(username);
             }
+        }
+
+        /// <summary>
+        /// EncodeByteArray 
+        /// </summary>
+        public static byte[] EncodeByteArray(int challengesize, byte[] data)
+        {
+            switch (challengesize)
+            {
+                case 16:
+                    return CheckSum128(data);
+                case 20:
+                    return CheckSum160(data);
+                case 32:
+                    return CheckSum256(data);
+                case 48:
+                    return CheckSum384(data);
+                case 64:
+                    return CheckSum512(data);
+                default:
+                    return CheckSum128(data);
+            }
+        }
+
+        /// <summary>
+        /// CheckSum128 method implementation
+        /// </summary>
+        public static byte[] CheckSum128(byte[] value)
+        {
+            byte[] hash = null;
+            using (System.Security.Cryptography.MD5 md5 = System.Security.Cryptography.MD5Cng.Create())
+            {
+                hash = md5.ComputeHash(value);
+            }
+            return hash;
         }
 
         /// <summary>
@@ -91,14 +128,66 @@ namespace Neos.IdentityServer.MultiFactor.Data
         }
 
         /// <summary>
+        /// CheckSum160 method implementation
+        /// </summary>
+        public static byte[] CheckSum160(byte[] value)
+        {
+            byte[] hash = null;
+            using (System.Security.Cryptography.SHA1 sha1 = System.Security.Cryptography.SHA1Cng.Create())
+            {
+                hash = sha1.ComputeHash(value);
+            }
+            return hash;
+        }
+
+        /// <summary>
+        /// CheckSum160 method implementation
+        /// </summary>
+        public static byte[] CheckSum160(string value)
+        {
+            byte[] hash = null;
+            using (System.Security.Cryptography.SHA1 sha1 = System.Security.Cryptography.SHA1Cng.Create())
+            {
+                hash = sha1.ComputeHash(Encoding.UTF8.GetBytes(value));
+            }
+            return hash;
+        }
+
+        /// <summary>
+        /// CheckSum256 method implementation
+        /// </summary>
+        public static byte[] CheckSum256(byte[] value)
+        {
+            byte[] hash = null;
+            using (System.Security.Cryptography.SHA256 sha256 = System.Security.Cryptography.SHA256Cng.Create())
+            {
+                hash = sha256.ComputeHash(value);
+            }
+            return hash;
+        }
+
+        /// <summary>
         /// CheckSum256 method implementation
         /// </summary>
         public static byte[] CheckSum256(string value)
         {
             byte[] hash = null;
-            using (System.Security.Cryptography.SHA256 sha256 = System.Security.Cryptography.SHA256Managed.Create())
+            using (System.Security.Cryptography.SHA256 sha256 = System.Security.Cryptography.SHA256.Create())
             {
                 hash = sha256.ComputeHash(Encoding.UTF8.GetBytes(value));
+            }
+            return hash;
+        }
+
+        /// <summary>
+        /// CheckSum384 method implementation
+        /// </summary>
+        public static byte[] CheckSum384(byte[] value)
+        {
+            byte[] hash = null;
+            using (System.Security.Cryptography.SHA384 sha384 = System.Security.Cryptography.SHA384Cng.Create())
+            {
+                hash = sha384.ComputeHash(value);
             }
             return hash;
         }
@@ -119,6 +208,19 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// <summary>
         /// CheckSum512 method implementation
         /// </summary>
+        public static byte[] CheckSum512(byte[] value)
+        {
+            byte[] hash = null;
+            using (System.Security.Cryptography.SHA512 sha512 = System.Security.Cryptography.SHA512Cng.Create())
+            {
+                hash = sha512.ComputeHash(value);
+            }
+            return hash;
+        }
+
+        /// <summary>
+        /// CheckSum512 method implementation
+        /// </summary>
         public static byte[] CheckSum512(string value)
         {
             byte[] hash = null;
@@ -127,6 +229,35 @@ namespace Neos.IdentityServer.MultiFactor.Data
                 hash = sha512.ComputeHash(Encoding.UTF8.GetBytes(value));
             }
             return hash;
+        }
+    }
+
+    public static class HexaEncoding
+    {
+        /// <summary>
+        /// GetByteArrayFromHexString method
+        /// </summary>
+        public static byte[] GetByteArrayFromHexString(String value)
+        {
+            int len = value.Length;
+            byte[] bytes = new byte[len / 2];
+            for (int i = 0; i < len; i += 2)
+                bytes[i / 2] = Convert.ToByte(value.Substring(i, 2), 16);
+            return bytes;
+        }
+
+        /// <summary>
+        /// GetHexStringFromByteArray method
+        /// </summary>
+        public static string GetHexStringFromByteArray(byte[] data)
+        {
+            int len = data.Length;
+            StringBuilder builder = new StringBuilder(len * 2);
+            foreach (byte b in data)
+            {
+                builder.AppendFormat("{0:x2}", b);
+            }
+            return builder.ToString().ToUpper();
         }
     }
 

@@ -1184,8 +1184,8 @@ namespace Neos.IdentityServer.MultiFactor.Data
         public List<MFAWebAuthNUser> GetUsersByCredentialId(MFAWebAuthNUser user, byte[] credentialId)
         {
             List<MFAWebAuthNUser> _users = new List<MFAWebAuthNUser>();
-            List<MFAUserCredential> _lst = GetCredentialsByUser(user);
-            var cred = _lst.Where(c => c.Descriptor.Id.SequenceEqual(credentialId)).FirstOrDefault();
+            string credsid = HexaEncoding.GetHexStringFromByteArray(credentialId);
+            MFAUserCredential cred = GetCredentialByCredentialId(user, credsid);
             if (cred != null)
                 _users.Add(user);
             return _users;
@@ -1242,16 +1242,17 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// <summary>
         /// GetCredentialById method implementation
         /// </summary>
-        public MFAUserCredential GetCredentialById(MFAWebAuthNUser user, byte[] id)
+        public MFAUserCredential GetCredentialById(MFAWebAuthNUser user, byte[] credentialId)
         {
-            List<MFAUserCredential> _lst = GetCredentialsByUser(user);
-            return _lst.Where(c => c.Descriptor.Id.SequenceEqual(id)).FirstOrDefault();
+            string credsid = HexaEncoding.GetHexStringFromByteArray(credentialId);
+            MFAUserCredential cred = GetCredentialByCredentialId(user, credsid);
+            return cred;
         }
 
         /// <summary>
-        /// GetCredentialsByUser method implementation
+        /// GetCredentialByCredentialId method implementation
         /// </summary>
-        public MFAUserCredential GetCredentialByUserWithAAGuid(MFAWebAuthNUser user, Guid aaguid)
+        public MFAUserCredential GetCredentialByCredentialId(MFAWebAuthNUser user, string  credentialid)
         {
             MFAUserCredential result = null;
             try
@@ -1272,7 +1273,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                             {
                                 WebAuthNPublicKeySerialization ser = new WebAuthNPublicKeySerialization(_host);
                                 MFAUserCredential cred = ser.DeserializeCredentials(s, user.Name);
-                                if (cred.AaGuid.Equals(aaguid))
+                                if (HexaEncoding.GetHexStringFromByteArray(cred.Descriptor.Id).Equals(credentialid))
                                 { 
                                     result = cred;
                                     break;
@@ -1295,9 +1296,14 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// </summary>
         public void UpdateCounter(MFAWebAuthNUser user, byte[] credentialId, uint counter)
         {
-            List<MFAUserCredential> _lst = GetCredentialsByUser(user);
-            var cred = _lst.Where(c => c.Descriptor.Id.SequenceEqual(credentialId)).FirstOrDefault();
-            cred.SignatureCounter = counter;
+            string credsid = HexaEncoding.GetHexStringFromByteArray(credentialId);
+            MFAUserCredential cred = GetCredentialByCredentialId(user, credsid);
+
+            if (cred != null)
+            {
+                cred.SignatureCounter = counter;
+                SetUserCredential(user, cred);
+            }
         }
 
         /// <summary>
@@ -1341,9 +1347,63 @@ namespace Neos.IdentityServer.MultiFactor.Data
         }
 
         /// <summary>
+        /// SetUserCredential method implementation
+        /// </summary>
+        public bool SetUserCredential(MFAWebAuthNUser user, MFAUserCredential credential)
+        {
+            credential.UserId = user.Id;
+            WebAuthNPublicKeySerialization ser = new WebAuthNPublicKeySerialization(_host);
+            string newvalue = ser.SerializeCredentials(credential, user.Name);
+            try
+            {
+                using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUPN(_host, user.Name))
+                {
+                    string qryldap = "(&(objectCategory=user)(objectClass=user)(userprincipalname=" + user.Name + ")(!(userAccountControl:1.2.840.113556.1.4.803:=2)))";
+                    using (DirectorySearcher dsusr = new DirectorySearcher(rootdir, qryldap))
+                    {
+                        dsusr.PropertiesToLoad.Add("userPrincipalName");
+                        dsusr.PropertiesToLoad.Add(_host.PublicKeyCredentialAttribute);
+
+                        SearchResult sr = dsusr.FindOne();
+                        if (sr != null)
+                        {
+                            using (DirectoryEntry DirEntry = ADDSUtils.GetDirectoryEntry(_host, sr))
+                            {
+                                bool updated = false;
+                                ResultPropertyValueCollection pcoll = sr.Properties[_host.PublicKeyCredentialAttribute];
+
+                                for (int i = 0; i < pcoll.Count; i++)
+                                {
+                                    string s = pcoll[i].ToString();
+                                    MFAUserCredential usr = ser.DeserializeCredentials(s, user.Name);
+                                    if (usr.Descriptor.Id.SequenceEqual(credential.Descriptor.Id))
+                                    {
+                                        DirEntry.Properties[_host.PublicKeyCredentialAttribute][i] = newvalue;
+                                        updated = true;
+                                        break;
+                                    }
+                                }
+                                if (updated)
+                                    DirEntry.CommitChanges();
+                            }
+                            return true;
+                        }
+                        else
+                            return false;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                DataLog.WriteEntry(ex.Message, System.Diagnostics.EventLogEntryType.Error, 5000);
+                throw new Exception(ex.Message);
+            }
+        }
+
+        /// <summary>
         /// RemoveUserCredential method implementation
         /// </summary>
-        public bool RemoveUserCredential(MFAWebAuthNUser user, string aaguid)
+        public bool RemoveUserCredential(MFAWebAuthNUser user, string credentialid)
         {
             try
             {
@@ -1364,7 +1424,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                             {
                                 WebAuthNPublicKeySerialization ser = new WebAuthNPublicKeySerialization(_host);
                                 MFAUserCredential usr = ser.DeserializeCredentials(s, user.Name);
-                                if (usr.AaGuid.Equals(new Guid(aaguid)))
+                                if (HexaEncoding.GetHexStringFromByteArray(usr.Descriptor.Id).Equals(credentialid))
                                 {
                                     idtodelete = s;
                                     break;

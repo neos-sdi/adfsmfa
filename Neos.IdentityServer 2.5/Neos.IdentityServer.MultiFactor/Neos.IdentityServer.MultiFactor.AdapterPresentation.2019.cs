@@ -15,17 +15,12 @@
 // https://github.com/neos-sdi/adfsmfa                                                                                                                                                      //
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
-using System;
 using Microsoft.IdentityServer.Web.Authentication.External;
-using Neos.IdentityServer.MultiFactor.Resources;
-using Neos.IdentityServer.MultiFactor;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Imaging;
 using Neos.IdentityServer.MultiFactor.Common;
-using System.Web;
-using System.Web.Security.AntiXss;
-using System.Net;
+using Neos.IdentityServer.MultiFactor.Resources;
+using System;
+using System.Collections.Generic;
+using System.Drawing.Imaging;
 
 namespace Neos.IdentityServer.MultiFactor
 {
@@ -2395,14 +2390,14 @@ namespace Neos.IdentityServer.MultiFactor
                             foreach (WebAuthNCredentialInformation cr in creds)
                             {
                                 if (i <= 2)
-                                   result += "<input id=\"optiongroup" + i.ToString() + "\" name=\"optionitem\" type=\"radio\" value=\"" + cr.AaGuid.ToString() + "\" /> <b>" + cr.CredType + "</b> " + cr.RegDate.ToString() + "<br/>";
+                                   result += "<input id=\"optiongroup" + i.ToString() + "\" name=\"optionitem\" type=\"radio\" value=\"" + cr.CredentialID + "\" /> <b>" + cr.CredType + "</b> " + cr.RegDate.ToString() + " <b>(" + cr.SignatureCounter.ToString() + ")</b><br/>";
+                                if (i == 3)
+                                    result += "<p style = \"text-indent:20px;\" >More...</p>";
                                 i++;
-
                             }
                         }
                         if (i > 1)
                         {
-                           // result += "<br/>";
                             result += "<a class=\"actionLink\" href=\"#\" id=\"morebio\" name=\"morebio\" onclick=\"fnlnkclicked(enrollbiometricsForm, 7)\" >" + web.GetManageLinkLabel(usercontext) + "</a>";
                         }
                     }
@@ -2502,12 +2497,11 @@ namespace Neos.IdentityServer.MultiFactor
                             foreach (WebAuthNCredentialInformation cr in creds)
                             {
                                 if (i <= 10)
-                                    result += "<input id=\"optiongroup" + i.ToString() + "\" name=\"optionitem\" type=\"radio\" value=\"" + cr.AaGuid.ToString() + "\" onchange=\"SetLinkState(true, '" + cr.AaGuid.ToString() + "')\" /> <b>" + cr.CredType + "</b> " + cr.RegDate.ToString() + "<br/>";
+                                    result += "<input id=\"optiongroup" + i.ToString() + "\" name=\"optionitem\" type=\"radio\" value=\"" + cr.CredentialID + "\" onchange=\"SetLinkState(true, '" + cr.CredentialID + "')\" /> <b>" + cr.CredType + "</b> " + cr.RegDate.ToString() +" <b>(" + cr.SignatureCounter.ToString() + ")</b> <br/>";
                                 i++;
                             }
+                            result += "<a class=\"actionLink\" href=\"#\" id=\"delbio\" name=\"delbio\"  onclick=\"fn2lnkclicked(enrollbiometricsForm, 8)\" style=\"cursor: default; color:grey;\"> " + web.GetDeleteLinkLabel(usercontext) + "</a>";
                         }
-                       // result += "<br/>";
-                        result += "<a class=\"actionLink\" href=\"#\" id=\"delbio\" name=\"delbio\"  onclick=\"fn2lnkclicked(enrollbiometricsForm, 8)\" style=\"cursor: default; color:grey;\"> "+ web.GetDeleteLinkLabel(usercontext) +"</a>";
                         result += "<br/>";
                         result += "<table><tr>";
                         result += "<td>";

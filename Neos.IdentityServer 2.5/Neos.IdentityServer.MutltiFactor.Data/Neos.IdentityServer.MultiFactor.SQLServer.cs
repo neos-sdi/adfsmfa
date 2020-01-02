@@ -726,9 +726,10 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// </summary>
         public List<MFAWebAuthNUser> GetUsersByCredentialId(MFAWebAuthNUser user, byte[] credentialId)
         {
-            List<MFAWebAuthNUser> _users = new List<MFAWebAuthNUser>();
-            List<MFAUserCredential> _lst = GetCredentialsByUser(user);
-            var cred = _lst.Where(c => c.Descriptor.Id.SequenceEqual(credentialId)).FirstOrDefault();
+           List<MFAWebAuthNUser> _users = new List<MFAWebAuthNUser>();
+            string credsid = HexaEncoding.GetHexStringFromByteArray(credentialId);
+            MFAUserCredential cred = GetCredentialByCredentialId(user, credsid);
+
             if (cred != null)
                 _users.Add(user);
             return _users;
@@ -742,11 +743,11 @@ namespace Neos.IdentityServer.MultiFactor.Data
             List<MFAUserCredential> _lst = new List<MFAUserCredential>();
             try
             {
-                string request = "SELECT ID, UPN, PUBLICKEY FROM KEYDESCS WHERE UPN=@UPN";
+                string request = "SELECT ID, UPN, CREDENTIALID, PUBLICKEY FROM KEYDESCS WHERE UPN=@UPN";
                 SqlConnection con = new SqlConnection(_connectionstring);
                 SqlCommand sql = new SqlCommand(request, con);
 
-                SqlParameter prm = new SqlParameter("@UPN", SqlDbType.VarChar);
+                SqlParameter prm = new SqlParameter("@UPN", SqlDbType.VarChar, 256);
                 sql.Parameters.Add(prm);
                 prm.Value = user.Name;
 
@@ -759,7 +760,8 @@ namespace Neos.IdentityServer.MultiFactor.Data
                     {
                         long sqlid = rd.GetInt64(0);
                         string username = rd.GetString(1);
-                        string publickey = rd.GetString(2);
+                        string credential = rd.GetString(2);
+                        string publickey = rd.GetString(3);
                         MFAUserCredential cred = ser.DeserializeCredentials(publickey, username);
                         _lst.Add(cred);
                     }
@@ -789,44 +791,46 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// <summary>
         /// GetCredentialById method implementation
         /// </summary>
-        public MFAUserCredential GetCredentialById(MFAWebAuthNUser user, byte[] id)
+        public MFAUserCredential GetCredentialById(MFAWebAuthNUser user, byte[] credentialId)
         {
-            List<MFAUserCredential> _lst = GetCredentialsByUser(user);
-            return _lst.Where(c => c.Descriptor.Id.SequenceEqual(id)).FirstOrDefault();
+            string credsid = HexaEncoding.GetHexStringFromByteArray(credentialId);
+            MFAUserCredential cred = GetCredentialByCredentialId(user, credsid);
+            return cred;
         }
 
         /// <summary>
-        /// GetCredentialsByUser method implementation
+        /// GetCredentialByCredentialId method implementation
         /// </summary>
-        public MFAUserCredential GetCredentialByUserWithAAGuid(MFAWebAuthNUser user, Guid aaguid)
+        public MFAUserCredential GetCredentialByCredentialId(MFAWebAuthNUser user, string credentialid)
         {
             MFAUserCredential result = null;
             try
             {
-                string request = "SELECT ID, UPN, PUBLICKEY FROM KEYDESCS WHERE UPN=@UPN";
+                string request = "SELECT ID, UPN, CREDENTIALID, PUBLICKEY FROM KEYDESCS WHERE UPN=@UPN AND CREDENTIALID=@CREDENTIALID;";
                 SqlConnection con = new SqlConnection(_connectionstring);
                 SqlCommand sql = new SqlCommand(request, con);
 
-                SqlParameter prm = new SqlParameter("@UPN", SqlDbType.VarChar);
-                sql.Parameters.Add(prm);
-                prm.Value = user.Name;
+                SqlParameter prm1 = new SqlParameter("@UPN", SqlDbType.VarChar, 256);
+                sql.Parameters.Add(prm1);
+                prm1.Value = user.Name;
+
+                SqlParameter prm2 = new SqlParameter("@CREDENTIALID", SqlDbType.VarChar, 256);
+                sql.Parameters.Add(prm2);
+                prm2.Value = credentialid;
 
                 WebAuthNPublicKeySerialization ser = new WebAuthNPublicKeySerialization();
                 con.Open();
                 try
                 {
                     SqlDataReader rd = sql.ExecuteReader();
-                    while (rd.Read())
+                    if (rd.Read())
                     {
                         long sqlid = rd.GetInt64(0);
                         string username = rd.GetString(1);
-                        string publickey = rd.GetString(2);
+                        string credential = rd.GetString(2);
+                        string publickey = rd.GetString(3);
                         MFAUserCredential cred = ser.DeserializeCredentials(publickey, username);
-                        if (cred.AaGuid.Equals(aaguid))
-                        {
-                            result = cred;
-                            break;
-                        }
+                        result = cred;
                     }
                 }
                 catch (Exception ex)
@@ -853,9 +857,13 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// </summary>
         public void UpdateCounter(MFAWebAuthNUser user, byte[] credentialId, uint counter)
         {
-            List<MFAUserCredential> _lst = GetCredentialsByUser(user);
-            var cred = _lst.Where(c => c.Descriptor.Id.SequenceEqual(credentialId)).FirstOrDefault();
-            cred.SignatureCounter = counter;
+            string credsid = HexaEncoding.GetHexStringFromByteArray(credentialId);
+            MFAUserCredential cred = GetCredentialByCredentialId(user, credsid);
+            if (cred != null)
+            {
+                cred.SignatureCounter = counter;
+                SetUserCredential(user, cred);
+            }
         }
 
         /// <summary>
@@ -866,19 +874,73 @@ namespace Neos.IdentityServer.MultiFactor.Data
             credential.UserId = user.Id;
             WebAuthNPublicKeySerialization ser = new WebAuthNPublicKeySerialization();
             string value = ser.SerializeCredentials(credential, user.Name);
+            string credsid = HexaEncoding.GetHexStringFromByteArray(credential.Descriptor.Id);
             try
             {
-                string request = "INSERT INTO KEYDESCS (UPN, PUBLICKEY) VALUES (@UPN, @PUBLICKEY)";
+                string request = "INSERT INTO KEYDESCS (UPN, CREDENTIALID, PUBLICKEY) VALUES (@UPN, @CREDENTIALID, @PUBLICKEY);";
                 SqlConnection con = new SqlConnection(_connectionstring);
                 SqlCommand sql = new SqlCommand(request, con);
 
-                SqlParameter prm1 = new SqlParameter("@UPN", SqlDbType.VarChar);
+                SqlParameter prm1 = new SqlParameter("@UPN", SqlDbType.VarChar, 256);
                 sql.Parameters.Add(prm1);
                 prm1.Value = user.Name;
 
-                SqlParameter prm2 = new SqlParameter("@PUBLICKEY", SqlDbType.VarChar, 8000);
+                SqlParameter prm2 = new SqlParameter("@CREDENTIALID", SqlDbType.VarChar, 256);
                 sql.Parameters.Add(prm2);
-                prm2.Value = value;
+                prm2.Value = credsid;
+
+                SqlParameter prm3 = new SqlParameter("@PUBLICKEY", SqlDbType.VarChar, 8000);
+                sql.Parameters.Add(prm3);
+                prm3.Value = value;
+
+                con.Open();
+                try
+                {
+                    int res = sql.ExecuteNonQuery();
+                    if (res == 1)
+                        return true;
+                    else
+                        return false;
+                }
+                finally
+                {
+                    con.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                DataLog.WriteEntry(ex.Message, System.Diagnostics.EventLogEntryType.Error, 5000);
+                throw new Exception(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// SetUserCredential method implementation
+        /// </summary>
+        public bool SetUserCredential(MFAWebAuthNUser user, MFAUserCredential credential)
+        {
+            credential.UserId = user.Id;
+            WebAuthNPublicKeySerialization ser = new WebAuthNPublicKeySerialization();
+            string newcredid = ser.SerializeCredentials(credential, user.Name);
+            string credsid = HexaEncoding.GetHexStringFromByteArray(credential.Descriptor.Id);
+            try
+            {
+
+                string request = "UPDATE KEYDESCS SET PUBLICKEY = @PUBLICKEY WHERE UPN=@UPN AND CREDENTIALID=@CREDENTIALID;";
+                SqlConnection con = new SqlConnection(_connectionstring);
+                SqlCommand sql = new SqlCommand(request, con);
+
+                SqlParameter prm1 = new SqlParameter("@UPN", SqlDbType.VarChar, 256);
+                sql.Parameters.Add(prm1);
+                prm1.Value = user.Name;
+
+                SqlParameter prm2 = new SqlParameter("@CREDENTIALID", SqlDbType.VarChar, 256);
+                sql.Parameters.Add(prm2);
+                prm2.Value = credsid;
+
+                SqlParameter prm3 = new SqlParameter("@PUBLICKEY", SqlDbType.VarChar, 8000);
+                sql.Parameters.Add(prm3);
+                prm3.Value = newcredid;
 
                 con.Open();
                 try
@@ -904,53 +966,35 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// <summary>
         /// RemoveCredentialToUser method implementation
         /// </summary>
-        public bool RemoveUserCredential(MFAWebAuthNUser user, string aaguid)
+        public bool RemoveUserCredential(MFAWebAuthNUser user, string credentialid)
         {
             try
             {
-                MFAUserCredential credential = GetCredentialByUserWithAAGuid(user, new Guid(aaguid));
-                if (credential != null)
+                string request = "DELETE FROM KEYDESCS WHERE UPN=@UPN AND CREDENTIALID=@CREDENTIALID;";
+                SqlConnection con = new SqlConnection(_connectionstring);
+                SqlCommand sql = new SqlCommand(request, con);
+
+                SqlParameter prm1 = new SqlParameter("@UPN", SqlDbType.VarChar, 256);
+                sql.Parameters.Add(prm1);
+                prm1.Value = user.Name;
+
+                SqlParameter prm2 = new SqlParameter("@CREDENTIALID", SqlDbType.VarChar, 256);
+                sql.Parameters.Add(prm2);
+                prm2.Value = credentialid;
+
+                con.Open();
+                try
                 {
-                    credential.UserId = user.Id;
-                    WebAuthNPublicKeySerialization ser = new WebAuthNPublicKeySerialization();
-                    string value = ser.SerializeCredentials(credential, user.Name);
-                    try
-                    {
-
-                        string request = "DELETE FROM KEYDESCS WHERE UPN=@UPN AND PUBLICKEY=@PUBLICKEY;";
-                        SqlConnection con = new SqlConnection(_connectionstring);
-                        SqlCommand sql = new SqlCommand(request, con);
-
-                        SqlParameter prm1 = new SqlParameter("@UPN", SqlDbType.VarChar);
-                        sql.Parameters.Add(prm1);
-                        prm1.Value = user.Name;
-
-                        SqlParameter prm2 = new SqlParameter("@PUBLICKEY", SqlDbType.VarChar, 8000);
-                        sql.Parameters.Add(prm2);
-                        prm2.Value = value;
-
-                        con.Open();
-                        try
-                        {
-                            int res = sql.ExecuteNonQuery();
-                            if (res == 1)
-                                return true;
-                            else
-                                return false;
-                        }
-                        finally
-                        {
-                            con.Close();
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        DataLog.WriteEntry(ex.Message, System.Diagnostics.EventLogEntryType.Error, 5000);
-                        throw new Exception(ex.Message);
-                    }
+                    int res = sql.ExecuteNonQuery();
+                    if (res == 1)
+                        return true;
+                    else
+                        return false;
                 }
-                else
-                    return false;
+                finally
+                {
+                    con.Close();
+                }
             }
             catch (Exception ex)
             {

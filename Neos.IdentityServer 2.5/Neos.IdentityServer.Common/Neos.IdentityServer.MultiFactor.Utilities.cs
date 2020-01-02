@@ -930,14 +930,14 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// RemoveUserCredential method implementation
         /// </summary>
-        internal static void RemoveUserCredential(MFAConfig cfg, MFAWebAuthNUser user, string aaguid)
+        internal static void RemoveUserCredential(MFAConfig cfg, MFAWebAuthNUser user, string credentialid)
         {
             IWebAuthNDataRepositoryService client = null;
             if (cfg.UseActiveDirectory)
                 client = new ADDSDataRepositoryService(cfg.Hosts.ActiveDirectoryHost, cfg.DeliveryWindow) as IWebAuthNDataRepositoryService;
             else
                 client = new SQLDataRepositoryService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow) as IWebAuthNDataRepositoryService;
-            client.RemoveUserCredential(user, aaguid);
+            client.RemoveUserCredential(user, credentialid);
         }
 
         /// <summary>
@@ -2955,10 +2955,12 @@ namespace Neos.IdentityServer.MultiFactor
         {
         }
 
+        public string CredentialID { get; set; }
         public string CredType { get; set; }
         public DateTime RegDate { get; set; }
         public Guid AaGuid { get; set; }
         public string Type { get; set; }
+        public uint SignatureCounter { get; set; }
     }
     #endregion
 }

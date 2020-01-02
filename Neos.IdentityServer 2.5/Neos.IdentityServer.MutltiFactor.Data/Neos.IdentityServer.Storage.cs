@@ -19,31 +19,6 @@ namespace Neos.IdentityServer.MultiFactor.Data
         }
 
         /// <summary>
-        /// GetByteArrayFromHexString method
-        /// </summary>
-        private byte[] GetByteArrayFromHexString(String value)
-        {
-            int NumberChars = value.Length;
-            byte[] bytes = new byte[NumberChars / 2];
-            for (int i = 0; i < NumberChars; i += 2)
-                bytes[i / 2] = Convert.ToByte(value.Substring(i, 2), 16);
-            return bytes;
-        }
-
-        /// <summary>
-        /// GetHexStringFromByteArray method
-        /// </summary>
-        private string GetHexStringFromByteArray(byte[] data)
-        {
-            StringBuilder builder = new StringBuilder(data.Length * 2);
-            foreach (byte b in data)
-            {
-                builder.AppendFormat("{0:x2}", b);
-            }
-            return builder.ToString().ToUpper();
-        }
-
-        /// <summary>
         /// SerializeCredentials method implementation
         /// </summary>
         internal string SerializeCredentials(MFAUserCredential creds, string username)
@@ -51,6 +26,8 @@ namespace Neos.IdentityServer.MultiFactor.Data
             MemoryStream stream = new MemoryStream();
             BinaryWriter writer = new BinaryWriter(stream);
 
+            writer.Write(creds.Descriptor.Id.Length) ;
+            writer.Write(creds.Descriptor.Id, 0, creds.Descriptor.Id.Length);
             writer.Write(creds.UserId.Length);
             writer.Write(creds.UserId, 0, creds.UserId.Length);
             writer.Write(creds.PublicKey.Length);
@@ -61,9 +38,8 @@ namespace Neos.IdentityServer.MultiFactor.Data
             writer.Write(creds.CredType);
             writer.Write(creds.RegDate.ToBinary());
             writer.Write(creds.AaGuid.ToByteArray());
+
             writer.Write((byte)creds.Descriptor.Type.Value);
-            writer.Write(creds.Descriptor.Id.Length);
-            writer.Write(creds.Descriptor.Id, 0, creds.Descriptor.Id.Length);
             if (creds.Descriptor.Transports != null)
             {
                 writer.Write(creds.Descriptor.Transports.Length);
@@ -74,13 +50,15 @@ namespace Neos.IdentityServer.MultiFactor.Data
             }
             else
                 writer.Write(0);
-            string Descriptor = GetHexStringFromByteArray(stream.ToArray());
+            string Descriptor = HexaEncoding.GetHexStringFromByteArray(stream.ToArray());
+
             string distinguishedName = string.Empty;
             if (_host != null)
                 distinguishedName = GetMFAdistinguishedName(username);
             else
                 distinguishedName = username;
-            return string.Format("B:{0}:{1}:{2}", Descriptor.Length.ToString(), Descriptor, distinguishedName);
+
+            return string.Format("B:{0}:{1}:{2}", (Descriptor.Length).ToString(), Descriptor, distinguishedName);
         }
 
         /// <summary>
@@ -98,10 +76,12 @@ namespace Neos.IdentityServer.MultiFactor.Data
             if (!distinguishedName.ToLower().Equals(values[3].ToString().ToLower()))
                 throw new SecurityException("Invalid Key for user " + username);
 
-            byte[] bytes = GetByteArrayFromHexString(value);
+            byte[] bytes = HexaEncoding.GetByteArrayFromHexString(value);
             MemoryStream stream = new MemoryStream(bytes);
             BinaryReader reader = new BinaryReader(stream);
 
+            int test = reader.ReadInt32();
+            byte[] _DescId = reader.ReadBytes(test);
             byte[] _Userid = reader.ReadBytes(reader.ReadInt32());
             byte[] _PublicKey = reader.ReadBytes(reader.ReadInt32());
             byte[] _UserHandle = reader.ReadBytes(reader.ReadInt32());
@@ -109,10 +89,10 @@ namespace Neos.IdentityServer.MultiFactor.Data
             string _CredType = reader.ReadString();
             DateTime _RegDate = DateTime.FromBinary(reader.ReadInt64());
             Guid _AaGuid = new Guid(reader.ReadBytes(16));
-            MFAPublicKeyCredentialType? _DescType = (MFAPublicKeyCredentialType)reader.ReadByte();
-            byte[] _DescId = reader.ReadBytes(reader.ReadInt32());
-            int DescTransportCount = reader.ReadInt32();
 
+            MFAPublicKeyCredentialType? _DescType = (MFAPublicKeyCredentialType)reader.ReadByte();
+
+            int DescTransportCount = reader.ReadInt32();
             MFAAuthenticatorTransport[] _DescTransport = null;
             if (DescTransportCount > 0)
             {

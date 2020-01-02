@@ -69,10 +69,11 @@ namespace Neos.IdentityServer.MultiFactor.Data
         List<MFAUserCredential> GetCredentialsByUser(MFAWebAuthNUser user);       
         List<MFAUserCredential> GetCredentialsByUserHandle(MFAWebAuthNUser user, byte[] userHandle);
         MFAUserCredential GetCredentialById(MFAWebAuthNUser user, byte[] id);
-        MFAUserCredential GetCredentialByUserWithAAGuid(MFAWebAuthNUser user, Guid aaguid);
+        MFAUserCredential GetCredentialByCredentialId(MFAWebAuthNUser user, string credentialid);
         void UpdateCounter(MFAWebAuthNUser user, byte[] credentialId, uint counter);
         bool AddUserCredential(MFAWebAuthNUser user, MFAUserCredential credential);
-        bool RemoveUserCredential(MFAWebAuthNUser user, string aaguid);
+        bool SetUserCredential(MFAWebAuthNUser user, MFAUserCredential credential);
+        bool RemoveUserCredential(MFAWebAuthNUser user, string credentialId);
         List<MFAWebAuthNUser> GetUsersByCredentialId(MFAWebAuthNUser user, byte[] credentialId);
     }
 
