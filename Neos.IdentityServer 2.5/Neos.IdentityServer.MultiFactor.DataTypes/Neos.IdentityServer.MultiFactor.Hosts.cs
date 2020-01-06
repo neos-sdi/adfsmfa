@@ -588,6 +588,7 @@ namespace Neos.IdentityServer.MultiFactor
                 WebAuthNProvider.IsRequired = false;
                 WebAuthNProvider.EnrollWizard = true;
                 WebAuthNProvider.PinRequired = false;
+                WebAuthNProvider.DirectLogin = true;
 
                 Hosts.SQLServerHost.ConnectionString = "Password=yourpassword;Persist Security Info=True;User ID=yoursqlusername;Initial Catalog=yourdatabasename;Data Source=yoursqlserver\\yourinstance";
                 Hosts.SQLServerHost.IsAlwaysEncrypted = false;
@@ -685,6 +686,8 @@ namespace Neos.IdentityServer.MultiFactor
                 if (string.IsNullOrEmpty(this.AzureProvider.ThumbPrint))
                     this.AzureProvider.ThumbPrint = Thumbprint.Demo;
             }
+
+
         }
 
         [XmlIgnore]
@@ -1181,6 +1184,7 @@ namespace Neos.IdentityServer.MultiFactor
             this.ForceWizard = prov.ForceWizard;
             this.Configuration = prov.Configuration;
             this.Options = prov.Options;
+            this.DirectLogin = prov.DirectLogin;
         }
 
         public MFAConfig Config { get; set; }
@@ -1189,6 +1193,7 @@ namespace Neos.IdentityServer.MultiFactor
         public override bool IsRequired { get; set; }
         public override bool PinRequired { get; set; }
         public override bool EnrollWizard { get; set; }
+        public bool DirectLogin { get; set; }
         public override ForceWizardMode ForceWizard { get; set; }
         public WebAuthNProviderConfig Configuration { get; set; } = new WebAuthNProviderConfig();
         public WebAuthNProviderOptions Options { get; set; } = new WebAuthNProviderOptions();
@@ -1502,6 +1507,9 @@ namespace Neos.IdentityServer.MultiFactor
 
         [XmlAttribute("ForceWizard")]
         public ForceWizardMode ForceWizard { get; set; } = ForceWizardMode.Disabled;
+
+        [XmlAttribute("DirectLogin")]
+        public bool DirectLogin { get; set; } = true;
 
         [XmlElement("Configuration", typeof(WebAuthNProviderConfig))]
         public WebAuthNProviderConfig Configuration
@@ -1967,6 +1975,47 @@ namespace Neos.IdentityServer.MultiFactor
 
         [XmlAttribute("MaxRows")]
         public int MaxRows { get; set; } = 10000;
+
+        /// <summary>
+        /// ApplyAttributesTemplate method implementation
+        /// </summary>
+        public void ApplyAttributesTemplate(ADDSTemplateKind kind)
+        {
+            switch (kind)
+            {
+                case ADDSTemplateKind.AllSchemaVersions:
+                    KeyAttribute = "msDS-cloudExtensionAttribute10";
+                    MailAttribute = "msDS-cloudExtensionAttribute11";
+                    PhoneAttribute = "msDS-cloudExtensionAttribute12";
+                    PinAttribute = "msDS-cloudExtensionAttribute15";
+                    MethodAttribute = "msDS-cloudExtensionAttribute13";
+                    OverrideMethodAttribute = "msDS-cloudExtensionAttribute14";
+                    TotpEnabledAttribute = "msDS-cloudExtensionAttribute18";
+                    PublicKeyCredentialAttribute = "otherMailBox";
+
+                    break;
+                case ADDSTemplateKind.Windows2016Schemaversion:
+                    KeyAttribute = "msDS-cloudExtensionAttribute10";
+                    MailAttribute  = "msDS-cloudExtensionAttribute11";
+                    PhoneAttribute  = "msDS-cloudExtensionAttribute12";
+                    PinAttribute  = "msDS-cloudExtensionAttribute15";
+                    MethodAttribute  = "msDS-cloudExtensionAttribute13";
+                    OverrideMethodAttribute = "msDS-cloudExtensionAttribute14";
+                    TotpEnabledAttribute  = "msDS-cloudExtensionAttribute18";
+                    PublicKeyCredentialAttribute  = "msDS-KeyCredentialLink"; 
+                    break;
+                case ADDSTemplateKind.MFASchemaVersion:
+                    KeyAttribute = "MFA-TOTPKey";
+                    MailAttribute = "MFA-TOTPEmail";
+                    PhoneAttribute = "MFA-TOTPExternal";
+                    PinAttribute = "MFA-PIN";
+                    MethodAttribute = "MFA-Method";
+                    OverrideMethodAttribute = "MFA-SpecificMethod";
+                    TotpEnabledAttribute = "MFA-Enabled";
+                    PublicKeyCredentialAttribute = "MFA-KeyCredentialLink";
+                    break;
+            }
+        }
     }
 
     /// <summary>

@@ -603,4 +603,16 @@
   <data name="CTRLMUSTMULTVALUED" xml:space="preserve">
     <value>(**) ¡Requiere propiedad de cadena de valores múltiples</value>
   </data>
+  <data name="CTRLWEBAUTHNAUTOLOGIN" xml:space="preserve">
+    <value>Conexión rápida</value>
+  </data>
+  <data name="CTRLADTEMPLATE2016" xml:space="preserve">
+    <value>Esquema ADDS 2016++</value>
+  </data>
+  <data name="CTRLADTEMPLATEBASE" xml:space="preserve">
+    <value>Valor predeterminado del esquema ADDS</value>
+  </data>
+  <data name="CTRLADTEMPLATEMFA" xml:space="preserve">
+    <value>Esquema ADDS MFA</value>
+  </data>
 </root>

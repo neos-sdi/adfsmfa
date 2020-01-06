@@ -132,17 +132,19 @@ namespace MFA
                 return null;
             else
             {
-                PSRegistration psnode = new PSRegistration();
-                psnode.ID = registration.ID;
-                psnode.UPN = registration.UPN;
-                psnode.MailAddress = registration.MailAddress;
-                psnode.PhoneNumber = registration.PhoneNumber;
-                psnode.IsRegistered = registration.IsRegistered;
-                psnode.Enabled = registration.Enabled;
-                psnode.PreferredMethod = (PSPreferredMethod)registration.PreferredMethod;
-                psnode.OverrideMethod = registration.OverrideMethod;
-                psnode.PIN = registration.PIN;
-                psnode.IsApplied = registration.IsApplied;
+                PSRegistration psnode = new PSRegistration
+                {
+                    ID = registration.ID,
+                    UPN = registration.UPN,
+                    MailAddress = registration.MailAddress,
+                    PhoneNumber = registration.PhoneNumber,
+                    IsRegistered = registration.IsRegistered,
+                    Enabled = registration.Enabled,
+                    PreferredMethod = (PSPreferredMethod)registration.PreferredMethod,
+                    OverrideMethod = registration.OverrideMethod,
+                    PIN = registration.PIN,
+                    IsApplied = registration.IsApplied
+                };
                 return psnode;
             }
         }
@@ -156,17 +158,19 @@ namespace MFA
                 return null;
             else
             {
-                MFAUser registration = new MFAUser();
-                registration.ID = psnode.ID;
-                registration.UPN = psnode.UPN;
-                registration.MailAddress = psnode.MailAddress;
-                registration.PhoneNumber = psnode.PhoneNumber;
-                registration.IsRegistered = psnode.IsRegistered;
-                registration.Enabled = psnode.Enabled;
-                registration.PreferredMethod = (PreferredMethod)psnode.PreferredMethod;
-                registration.OverrideMethod = psnode.OverrideMethod;
-                registration.PIN = psnode.PIN;
-                registration.IsApplied = psnode.IsApplied;
+                MFAUser registration = new MFAUser
+                {
+                    ID = psnode.ID,
+                    UPN = psnode.UPN,
+                    MailAddress = psnode.MailAddress,
+                    PhoneNumber = psnode.PhoneNumber,
+                    IsRegistered = psnode.IsRegistered,
+                    Enabled = psnode.Enabled,
+                    PreferredMethod = (PreferredMethod)psnode.PreferredMethod,
+                    OverrideMethod = psnode.OverrideMethod,
+                    PIN = psnode.PIN,
+                    IsApplied = psnode.IsApplied
+                };
                 return registration;
             }
         }
@@ -287,25 +291,27 @@ namespace MFA
                 return null;
             else
             {
-                PSConfig psconfig = new PSConfig();
-                psconfig.AdminContact = config.AdminContact;
-                psconfig.DefaultCountryCode = config.DefaultCountryCode;
-                psconfig.DeliveryWindow = config.DeliveryWindow;
-                psconfig.MaxRetries = config.MaxRetries;
-                psconfig.Issuer = config.Issuer;
-                psconfig.DefaultPin = config.DefaultPin;
-                psconfig.PinLength = config.PinLength;
-                psconfig.UseActiveDirectory = config.UseActiveDirectory;
-                psconfig.CustomUpdatePassword = config.CustomUpdatePassword;
-                psconfig.KeepMySelectedOptionOn = config.KeepMySelectedOptionOn;
-                psconfig.ChangeNotificationsOn = config.ChangeNotificationsOn;
-                psconfig.UseOfUserLanguages = config.UseOfUserLanguages;
-                psconfig.DefaultProviderMethod = (PSPreferredMethod)config.DefaultProviderMethod;
-                psconfig.ReplayLevel = (PSReplayLevel)config.ReplayLevel;
-                psconfig.UserFeatures = (PSUserFeaturesOptions)config.UserFeatures;
-                psconfig.AdvertisingDays = (PSAdvertising)config.AdvertisingDays;
-                psconfig.UseUIPaginated = config.UseUIPaginated;
-                psconfig.UiKind = (PSUIKind)config.UiKind;
+                PSConfig psconfig = new PSConfig
+                {
+                    AdminContact = config.AdminContact,
+                    DefaultCountryCode = config.DefaultCountryCode,
+                    DeliveryWindow = config.DeliveryWindow,
+                    MaxRetries = config.MaxRetries,
+                    Issuer = config.Issuer,
+                    DefaultPin = config.DefaultPin,
+                    PinLength = config.PinLength,
+                    UseActiveDirectory = config.UseActiveDirectory,
+                    CustomUpdatePassword = config.CustomUpdatePassword,
+                    KeepMySelectedOptionOn = config.KeepMySelectedOptionOn,
+                    ChangeNotificationsOn = config.ChangeNotificationsOn,
+                    UseOfUserLanguages = config.UseOfUserLanguages,
+                    DefaultProviderMethod = (PSPreferredMethod)config.DefaultProviderMethod,
+                    ReplayLevel = (PSReplayLevel)config.ReplayLevel,
+                    UserFeatures = (PSUserFeaturesOptions)config.UserFeatures,
+                    AdvertisingDays = (PSAdvertising)config.AdvertisingDays,
+                    UseUIPaginated = config.UseUIPaginated,
+                    UiKind = (PSUIKind)config.UiKind
+                };
                 return psconfig;
             }
         }
@@ -319,26 +325,28 @@ namespace MFA
                 return null;
             else
             {
-                FlatConfig config = new FlatConfig();
-                config.AdminContact = psconfig.AdminContact;
-                config.CustomUpdatePassword = psconfig.CustomUpdatePassword;
-                config.DefaultCountryCode = psconfig.DefaultCountryCode;
-                config.DeliveryWindow = psconfig.DeliveryWindow;
-                config.MaxRetries = psconfig.MaxRetries;
-                config.IsDirty = true;
-                config.Issuer = psconfig.Issuer;
-                config.DefaultPin = psconfig.DefaultPin;
-                config.PinLength = psconfig.PinLength;
-                config.UseActiveDirectory = psconfig.UseActiveDirectory;
-                config.KeepMySelectedOptionOn = psconfig.KeepMySelectedOptionOn;
-                config.ChangeNotificationsOn = psconfig.ChangeNotificationsOn;
-                config.UseOfUserLanguages = psconfig.UseOfUserLanguages;
-                config.DefaultProviderMethod = (PreferredMethod)psconfig.DefaultProviderMethod;
-                config.ReplayLevel = (ReplayLevel)psconfig.ReplayLevel;
-                config.UserFeatures = (UserFeaturesOptions)psconfig.UserFeatures;
-                config.AdvertisingDays = (FlatConfigAdvertising)psconfig.AdvertisingDays;
-                config.UseUIPaginated = psconfig.UseUIPaginated;
-                config.UiKind = (ADFSUserInterfaceKind)psconfig.UiKind;
+                FlatConfig config = new FlatConfig
+                {
+                    AdminContact = psconfig.AdminContact,
+                    CustomUpdatePassword = psconfig.CustomUpdatePassword,
+                    DefaultCountryCode = psconfig.DefaultCountryCode,
+                    DeliveryWindow = psconfig.DeliveryWindow,
+                    MaxRetries = psconfig.MaxRetries,
+                    IsDirty = true,
+                    Issuer = psconfig.Issuer,
+                    DefaultPin = psconfig.DefaultPin,
+                    PinLength = psconfig.PinLength,
+                    UseActiveDirectory = psconfig.UseActiveDirectory,
+                    KeepMySelectedOptionOn = psconfig.KeepMySelectedOptionOn,
+                    ChangeNotificationsOn = psconfig.ChangeNotificationsOn,
+                    UseOfUserLanguages = psconfig.UseOfUserLanguages,
+                    DefaultProviderMethod = (PreferredMethod)psconfig.DefaultProviderMethod,
+                    ReplayLevel = (ReplayLevel)psconfig.ReplayLevel,
+                    UserFeatures = (UserFeaturesOptions)psconfig.UserFeatures,
+                    AdvertisingDays = (FlatConfigAdvertising)psconfig.AdvertisingDays,
+                    UseUIPaginated = psconfig.UseUIPaginated,
+                    UiKind = (ADFSUserInterfaceKind)psconfig.UiKind
+                };
                 return config;
             }
         }
@@ -456,14 +464,16 @@ namespace MFA
                 return null;
             else
             {
-                PSConfigSQL psconfigsql = new PSConfigSQL();
-                psconfigsql.ConnectionString = sqlconfig.ConnectionString;
-                psconfigsql.MaxRows = sqlconfig.MaxRows;
-                psconfigsql.IsAlwaysEncrypted = sqlconfig.IsAlwaysEncrypted;
-                psconfigsql.ThumbPrint = sqlconfig.ThumbPrint;
-                psconfigsql.KeyName = sqlconfig.KeyName;
-                psconfigsql.CertReuse = sqlconfig.CertReuse;
-                psconfigsql.CertificateValidity = sqlconfig.CertificateValidity;
+                PSConfigSQL psconfigsql = new PSConfigSQL
+                {
+                    ConnectionString = sqlconfig.ConnectionString,
+                    MaxRows = sqlconfig.MaxRows,
+                    IsAlwaysEncrypted = sqlconfig.IsAlwaysEncrypted,
+                    ThumbPrint = sqlconfig.ThumbPrint,
+                    KeyName = sqlconfig.KeyName,
+                    CertReuse = sqlconfig.CertReuse,
+                    CertificateValidity = sqlconfig.CertificateValidity
+                };
                 return psconfigsql;
             }
         }
@@ -477,15 +487,17 @@ namespace MFA
                 return null;
             else
             {
-                FlatConfigSQL config = new FlatConfigSQL();
-                config.IsDirty = true;
-                config.ConnectionString = psconfig.ConnectionString;
-                config.MaxRows = psconfig.MaxRows;
-                config.IsAlwaysEncrypted = psconfig.IsAlwaysEncrypted;
-                config.ThumbPrint = psconfig.ThumbPrint;
-                config.KeyName = psconfig.KeyName;
-                config.CertReuse = psconfig.CertReuse;
-                config.CertificateValidity = psconfig.CertificateValidity;
+                FlatConfigSQL config = new FlatConfigSQL
+                {
+                    IsDirty = true,
+                    ConnectionString = psconfig.ConnectionString,
+                    MaxRows = psconfig.MaxRows,
+                    IsAlwaysEncrypted = psconfig.IsAlwaysEncrypted,
+                    ThumbPrint = psconfig.ThumbPrint,
+                    KeyName = psconfig.KeyName,
+                    CertReuse = psconfig.CertReuse,
+                    CertificateValidity = psconfig.CertificateValidity
+                };
                 return config;
             }
         }
@@ -573,19 +585,21 @@ namespace MFA
                 return null;
             else
             {
-                PSConfigADDS psconfigadds = new PSConfigADDS();
-                psconfigadds.Account = addsconfig.Account;
-                psconfigadds.Password = addsconfig.Password;
-                psconfigadds.DomainAddress = addsconfig.DomainAddress;
-                psconfigadds.KeyAttribute = addsconfig.KeyAttribute;
-                psconfigadds.MailAttribute = addsconfig.MailAttribute;
-                psconfigadds.PhoneAttribute = addsconfig.PhoneAttribute;
-                psconfigadds.MethodAttribute = addsconfig.MethodAttribute;
-                psconfigadds.OverrideMethodAttribute = addsconfig.OverrideMethodAttribute;
-                psconfigadds.PinAttribute = addsconfig.PinAttribute;
-                psconfigadds.EnabledAttribute = addsconfig.EnabledAttribute;
-                psconfigadds.PublicKeyCredentialAttribute = addsconfig.PublicKeyCredentialAttribute;
-                psconfigadds.MaxRows = addsconfig.MaxRows;
+                PSConfigADDS psconfigadds = new PSConfigADDS
+                {
+                    Account = addsconfig.Account,
+                    Password = addsconfig.Password,
+                    DomainAddress = addsconfig.DomainAddress,
+                    KeyAttribute = addsconfig.KeyAttribute,
+                    MailAttribute = addsconfig.MailAttribute,
+                    PhoneAttribute = addsconfig.PhoneAttribute,
+                    MethodAttribute = addsconfig.MethodAttribute,
+                    OverrideMethodAttribute = addsconfig.OverrideMethodAttribute,
+                    PinAttribute = addsconfig.PinAttribute,
+                    EnabledAttribute = addsconfig.EnabledAttribute,
+                    PublicKeyCredentialAttribute = addsconfig.PublicKeyCredentialAttribute,
+                    MaxRows = addsconfig.MaxRows
+                };
                 return psconfigadds;
             }
         }
@@ -599,20 +613,22 @@ namespace MFA
                 return null;
             else
             {
-                FlatConfigADDS config = new FlatConfigADDS();
-                config.IsDirty = true;
-                config.Account = psconfig.Account;
-                config.Password = psconfig.Password;
-                config.DomainAddress = psconfig.DomainAddress;
-                config.KeyAttribute = psconfig.KeyAttribute;
-                config.MailAttribute = psconfig.MailAttribute;
-                config.PhoneAttribute = psconfig.PhoneAttribute;
-                config.MethodAttribute = psconfig.MethodAttribute;
-                config.OverrideMethodAttribute = psconfig.OverrideMethodAttribute;
-                config.PinAttribute = psconfig.PinAttribute;
-                config.EnabledAttribute = psconfig.EnabledAttribute;
-                config.PublicKeyCredentialAttribute = psconfig.PublicKeyCredentialAttribute;
-                config.MaxRows = psconfig.MaxRows;
+                FlatConfigADDS config = new FlatConfigADDS
+                {
+                    IsDirty = true,
+                    Account = psconfig.Account,
+                    Password = psconfig.Password,
+                    DomainAddress = psconfig.DomainAddress,
+                    KeyAttribute = psconfig.KeyAttribute,
+                    MailAttribute = psconfig.MailAttribute,
+                    PhoneAttribute = psconfig.PhoneAttribute,
+                    MethodAttribute = psconfig.MethodAttribute,
+                    OverrideMethodAttribute = psconfig.OverrideMethodAttribute,
+                    PinAttribute = psconfig.PinAttribute,
+                    EnabledAttribute = psconfig.EnabledAttribute,
+                    PublicKeyCredentialAttribute = psconfig.PublicKeyCredentialAttribute,
+                    MaxRows = psconfig.MaxRows
+                };
                 return config;
             }
         }
@@ -687,15 +703,17 @@ namespace MFA
                 return null;
             else
             {
-                PSConfigKeys target = new PSConfigKeys();
-                target.CertificateThumbprint = mgr.CertificateThumbprint;
-                target.CertificateValidity = mgr.CertificateValidity;
-                target.KeysFormat = (PSSecretKeyFormat)mgr.KeysFormat;
-                target.KeyGenerator = (PSKeyGeneratorMode)mgr.KeyGenerator;
-                target.LibVersion = (PSSecretKeyVersion)mgr.LibVersion;
-                target.KeySize = (PSKeySizeMode)mgr.KeySize;
-                target.ExternalKeyManager = (PSExternalKeyManager)mgr.ExternalKeyManager;
-                target.XORSecret = mgr.XORSecret;
+                PSConfigKeys target = new PSConfigKeys
+                {
+                    CertificateThumbprint = mgr.CertificateThumbprint,
+                    CertificateValidity = mgr.CertificateValidity,
+                    KeysFormat = (PSSecretKeyFormat)mgr.KeysFormat,
+                    KeyGenerator = (PSKeyGeneratorMode)mgr.KeyGenerator,
+                    LibVersion = (PSSecretKeyVersion)mgr.LibVersion,
+                    KeySize = (PSKeySizeMode)mgr.KeySize,
+                    ExternalKeyManager = (PSExternalKeyManager)mgr.ExternalKeyManager,
+                    XORSecret = mgr.XORSecret
+                };
                 return target;
             }
         }
@@ -709,16 +727,18 @@ namespace MFA
                 return null;
             else
             {
-                FlatKeysConfig target = new FlatKeysConfig();
-                target.IsDirty = true;
-                target.CertificateThumbprint = mgr.CertificateThumbprint;
-                target.CertificateValidity = mgr.CertificateValidity;
-                target.KeysFormat = (SecretKeyFormat)mgr.KeysFormat;
-                target.KeyGenerator = (KeyGeneratorMode)mgr.KeyGenerator;
-                target.LibVersion = (SecretKeyVersion)mgr.LibVersion;
-                target.KeySize = (KeySizeMode)mgr.KeySize;
-                target.ExternalKeyManager = (FlatExternalKeyManager)mgr.ExternalKeyManager;
-                target.XORSecret = mgr.XORSecret;
+                FlatKeysConfig target = new FlatKeysConfig
+                {
+                    IsDirty = true,
+                    CertificateThumbprint = mgr.CertificateThumbprint,
+                    CertificateValidity = mgr.CertificateValidity,
+                    KeysFormat = (SecretKeyFormat)mgr.KeysFormat,
+                    KeyGenerator = (KeyGeneratorMode)mgr.KeyGenerator,
+                    LibVersion = (SecretKeyVersion)mgr.LibVersion,
+                    KeySize = (KeySizeMode)mgr.KeySize,
+                    ExternalKeyManager = (FlatExternalKeyManager)mgr.ExternalKeyManager,
+                    XORSecret = mgr.XORSecret
+                };
                 return target;
             }
         }
@@ -896,17 +916,19 @@ namespace MFA
                 return null;
             else
             {
-                PSConfigTOTPProvider target = new PSConfigTOTPProvider();
-                target.Enabled = otp.Enabled;
-                target.IsRequired = otp.IsRequired;
-                target.EnrollWizard = otp.EnrollWizard;
-                target.ForceWizard = (PSForceWizardMode)otp.ForceWizard;
-                target.TOTPShadows = otp.TOTPShadows;
-                target.Algorithm = (MFA.PSHashMode)otp.Algorithm; 
-                target.PinRequired = otp.PinRequired;
-                target.WizardOptions = (PSOTPWizardOptions)otp.WizardOptions;
-                target.FullQualifiedImplementation = otp.FullQualifiedImplementation;
-                target.Parameters = otp.Parameters;
+                PSConfigTOTPProvider target = new PSConfigTOTPProvider
+                {
+                    Enabled = otp.Enabled,
+                    IsRequired = otp.IsRequired,
+                    EnrollWizard = otp.EnrollWizard,
+                    ForceWizard = (PSForceWizardMode)otp.ForceWizard,
+                    TOTPShadows = otp.TOTPShadows,
+                    Algorithm = (MFA.PSHashMode)otp.Algorithm,
+                    PinRequired = otp.PinRequired,
+                    WizardOptions = (PSOTPWizardOptions)otp.WizardOptions,
+                    FullQualifiedImplementation = otp.FullQualifiedImplementation,
+                    Parameters = otp.Parameters
+                };
                 return target;
             }
         }
@@ -920,18 +942,20 @@ namespace MFA
                 return null;
             else
             {
-                FlatOTPProvider target = new FlatOTPProvider();
-                target.IsDirty = true;
-                target.Enabled = otp.Enabled;
-                target.IsRequired = otp.IsRequired;
-                target.EnrollWizard = otp.EnrollWizard;
-                target.ForceWizard = (ForceWizardMode)otp.ForceWizard;
-                target.TOTPShadows = otp.TOTPShadows;
-                target.Algorithm = (HashMode)otp.Algorithm;
-                target.PinRequired = otp.PinRequired;
-                target.WizardOptions = (OTPWizardOptions)otp.WizardOptions;
-                target.FullQualifiedImplementation = otp.FullQualifiedImplementation;
-                target.Parameters = otp.Parameters;
+                FlatOTPProvider target = new FlatOTPProvider
+                {
+                    IsDirty = true,
+                    Enabled = otp.Enabled,
+                    IsRequired = otp.IsRequired,
+                    EnrollWizard = otp.EnrollWizard,
+                    ForceWizard = (ForceWizardMode)otp.ForceWizard,
+                    TOTPShadows = otp.TOTPShadows,
+                    Algorithm = (HashMode)otp.Algorithm,
+                    PinRequired = otp.PinRequired,
+                    WizardOptions = (OTPWizardOptions)otp.WizardOptions,
+                    FullQualifiedImplementation = otp.FullQualifiedImplementation,
+                    Parameters = otp.Parameters
+                };
                 return target;
             }
         }
@@ -1047,23 +1071,25 @@ namespace MFA
                 return null;
             else
             {
-                PSConfigMailProvider psconfig = new PSConfigMailProvider();
-                psconfig.Enabled = mails.Enabled;
-                psconfig.IsRequired = mails.IsRequired;
-                psconfig.EnrollWizard =  mails.EnrollWizard;
-                psconfig.ForceWizard = (PSForceWizardMode)mails.ForceWizard;
-                psconfig.From = mails.From;
-                psconfig.UserName = mails.UserName;
-                psconfig.Password = mails.Password;
-                psconfig.Host = mails.Host;
-                psconfig.Port = mails.Port;
-                psconfig.UseSSL = mails.UseSSL;
-                psconfig.Company = mails.Company;
-                psconfig.PinRequired = mails.PinRequired;
-                psconfig.Anonymous = mails.Anonymous;
-                psconfig.DeliveryNotifications = mails.DeliveryNotifications;
-                psconfig.FullQualifiedImplementation = mails.FullQualifiedImplementation;
-                psconfig.Parameters = mails.Parameters;
+                PSConfigMailProvider psconfig = new PSConfigMailProvider
+                {
+                    Enabled = mails.Enabled,
+                    IsRequired = mails.IsRequired,
+                    EnrollWizard = mails.EnrollWizard,
+                    ForceWizard = (PSForceWizardMode)mails.ForceWizard,
+                    From = mails.From,
+                    UserName = mails.UserName,
+                    Password = mails.Password,
+                    Host = mails.Host,
+                    Port = mails.Port,
+                    UseSSL = mails.UseSSL,
+                    Company = mails.Company,
+                    PinRequired = mails.PinRequired,
+                    Anonymous = mails.Anonymous,
+                    DeliveryNotifications = mails.DeliveryNotifications,
+                    FullQualifiedImplementation = mails.FullQualifiedImplementation,
+                    Parameters = mails.Parameters
+                };
 
                 psconfig.AllowedDomains.Domains.Clear();
                 foreach (string itm in mails.AllowedDomains.Domains)
@@ -1110,24 +1136,26 @@ namespace MFA
                 return null;
             else
             {
-                FlatConfigMail psconfig = new FlatConfigMail();
-                psconfig.IsDirty = true;
-                psconfig.Enabled = mails.Enabled;
-                psconfig.IsRequired = mails.IsRequired;
-                psconfig.EnrollWizard = mails.EnrollWizard;
-                psconfig.ForceWizard = (ForceWizardMode)mails.ForceWizard;
-                psconfig.From = mails.From;
-                psconfig.UserName = mails.UserName;
-                psconfig.Password = mails.Password;
-                psconfig.Host = mails.Host;
-                psconfig.Port = mails.Port;
-                psconfig.UseSSL = mails.UseSSL;
-                psconfig.Company = mails.Company;
-                psconfig.PinRequired = mails.PinRequired;
-                psconfig.Anonymous = mails.Anonymous;
-                psconfig.DeliveryNotifications = mails.DeliveryNotifications;
-                psconfig.FullQualifiedImplementation = mails.FullQualifiedImplementation;
-                psconfig.Parameters = mails.Parameters;
+                FlatConfigMail psconfig = new FlatConfigMail
+                {
+                    IsDirty = true,
+                    Enabled = mails.Enabled,
+                    IsRequired = mails.IsRequired,
+                    EnrollWizard = mails.EnrollWizard,
+                    ForceWizard = (ForceWizardMode)mails.ForceWizard,
+                    From = mails.From,
+                    UserName = mails.UserName,
+                    Password = mails.Password,
+                    Host = mails.Host,
+                    Port = mails.Port,
+                    UseSSL = mails.UseSSL,
+                    Company = mails.Company,
+                    PinRequired = mails.PinRequired,
+                    Anonymous = mails.Anonymous,
+                    DeliveryNotifications = mails.DeliveryNotifications,
+                    FullQualifiedImplementation = mails.FullQualifiedImplementation,
+                    Parameters = mails.Parameters
+                };
 
                 psconfig.AllowedDomains.Clear();
                 foreach (string itm in mails.AllowedDomains.Domains)
@@ -1447,18 +1475,20 @@ namespace MFA
                 return null;
             else
             {
-                PSConfigExternalProvider target = new PSConfigExternalProvider();
-                target.Enabled = otp.Enabled;
-                target.IsRequired = otp.IsRequired;
-                target.EnrollWizard = otp.EnrollWizard;
-                target.ForceWizard = (MFA.PSForceWizardMode)otp.ForceWizard;
-                target.Company = otp.Company;
-                target.FullQualifiedImplementation = otp.FullQualifiedImplementation;
-                target.IsTwoWay = otp.IsTwoWay;
-                target.Sha1Salt = otp.Sha1Salt;
-                target.Timeout = otp.Timeout;
-                target.PinRequired = otp.PinRequired;
-                target.Parameters = otp.Parameters;
+                PSConfigExternalProvider target = new PSConfigExternalProvider
+                {
+                    Enabled = otp.Enabled,
+                    IsRequired = otp.IsRequired,
+                    EnrollWizard = otp.EnrollWizard,
+                    ForceWizard = (MFA.PSForceWizardMode)otp.ForceWizard,
+                    Company = otp.Company,
+                    FullQualifiedImplementation = otp.FullQualifiedImplementation,
+                    IsTwoWay = otp.IsTwoWay,
+                    Sha1Salt = otp.Sha1Salt,
+                    Timeout = otp.Timeout,
+                    PinRequired = otp.PinRequired,
+                    Parameters = otp.Parameters
+                };
                 return target;
             }
         }
@@ -1472,19 +1502,21 @@ namespace MFA
                 return null;
             else
             {
-                FlatExternalProvider target = new FlatExternalProvider();
-                target.IsDirty = true;
-                target.Enabled = otp.Enabled;
-                target.IsRequired = otp.IsRequired;
-                target.EnrollWizard = otp.EnrollWizard;
-                target.ForceWizard = (ForceWizardMode)otp.ForceWizard;
-                target.Company = otp.Company;
-                target.FullQualifiedImplementation = otp.FullQualifiedImplementation;
-                target.IsTwoWay = otp.IsTwoWay;
-                target.Sha1Salt = otp.Sha1Salt;
-                target.Timeout = otp.Timeout;
-                target.PinRequired = otp.PinRequired;
-                target.Parameters = otp.Parameters;
+                FlatExternalProvider target = new FlatExternalProvider
+                {
+                    IsDirty = true,
+                    Enabled = otp.Enabled,
+                    IsRequired = otp.IsRequired,
+                    EnrollWizard = otp.EnrollWizard,
+                    ForceWizard = (ForceWizardMode)otp.ForceWizard,
+                    Company = otp.Company,
+                    FullQualifiedImplementation = otp.FullQualifiedImplementation,
+                    IsTwoWay = otp.IsTwoWay,
+                    Sha1Salt = otp.Sha1Salt,
+                    Timeout = otp.Timeout,
+                    PinRequired = otp.PinRequired,
+                    Parameters = otp.Parameters
+                };
                 return target;
             }
         }
@@ -1520,16 +1552,18 @@ namespace MFA
                 return null;
             else
             {
-                PSConfigAzureProvider target = new PSConfigAzureProvider();
-                target.TenantId = otp.TenantId;
-                target.Thumbprint = otp.ThumbPrint;
-                target.Enabled = otp.Enabled;
-                target.IsRequired = otp.IsRequired;
-                target.EnrollWizard = false;
-                target.ForceWizard = MFA.PSForceWizardMode.Disabled;
-                target.PinRequired = otp.PinRequired;
-                target.FullQualifiedImplementation = otp.FullQualifiedImplementation;
-                target.Parameters = otp.Parameters;
+                PSConfigAzureProvider target = new PSConfigAzureProvider
+                {
+                    TenantId = otp.TenantId,
+                    Thumbprint = otp.ThumbPrint,
+                    Enabled = otp.Enabled,
+                    IsRequired = otp.IsRequired,
+                    EnrollWizard = false,
+                    ForceWizard = MFA.PSForceWizardMode.Disabled,
+                    PinRequired = otp.PinRequired,
+                    FullQualifiedImplementation = otp.FullQualifiedImplementation,
+                    Parameters = otp.Parameters
+                };
                 return target;
             }
         }
@@ -1543,17 +1577,19 @@ namespace MFA
                 return null;
             else
             {
-                FlatAzureProvider target = new FlatAzureProvider();
-                target.IsDirty = true;
-                target.TenantId = otp.TenantId;
-                target.ThumbPrint = otp.Thumbprint;
-                target.Enabled = otp.Enabled;
-                target.IsRequired = otp.IsRequired;
-                target.EnrollWizard = false;
-                target.ForceWizard = ForceWizardMode.Disabled;
-                target.PinRequired = otp.PinRequired;
-                target.FullQualifiedImplementation = otp.FullQualifiedImplementation;
-                target.Parameters = otp.Parameters;
+                FlatAzureProvider target = new FlatAzureProvider
+                {
+                    IsDirty = true,
+                    TenantId = otp.TenantId,
+                    ThumbPrint = otp.Thumbprint,
+                    Enabled = otp.Enabled,
+                    IsRequired = otp.IsRequired,
+                    EnrollWizard = false,
+                    ForceWizard = ForceWizardMode.Disabled,
+                    PinRequired = otp.PinRequired,
+                    FullQualifiedImplementation = otp.FullQualifiedImplementation,
+                    Parameters = otp.Parameters
+                };
                 return target;
             }
         }
@@ -1569,6 +1605,11 @@ namespace MFA
     /// </summary>
     public class PSConfigBiometricProvider : PSConfigBaseProvider
     {
+        /// <summary>
+        /// <para type="description">When Biometrics is default method, authentication directly called a first time</para>
+        /// </summary>
+        public bool DirectLogin { get; set; }
+
         /// <summary>
         /// <para type="description">Timeout property (in milliseconds).</para>
         /// </summary>
@@ -1653,30 +1694,33 @@ namespace MFA
                 return null;
             else
             {
-                PSConfigBiometricProvider target = new PSConfigBiometricProvider();
-                target.Enabled = otp.Enabled;
-                target.IsRequired = otp.IsRequired;
-                target.EnrollWizard = otp.EnrollWizard;
-                target.ForceWizard = (PSForceWizardMode)otp.ForceWizard;
-                target.PinRequired = otp.PinRequired;
-                target.FullQualifiedImplementation = otp.FullQualifiedImplementation;
-                target.Parameters = otp.Parameters;
+                PSConfigBiometricProvider target = new PSConfigBiometricProvider
+                {
+                    Enabled = otp.Enabled,
+                    IsRequired = otp.IsRequired,
+                    EnrollWizard = otp.EnrollWizard,
+                    ForceWizard = (PSForceWizardMode)otp.ForceWizard,
+                    PinRequired = otp.PinRequired,
+                    DirectLogin = otp.DirectLogin,
+                    FullQualifiedImplementation = otp.FullQualifiedImplementation,
+                    Parameters = otp.Parameters,
 
-                target.Timeout = otp.Timeout;
-                target.TimestampDriftTolerance = otp.TimestampDriftTolerance;
-                target.ChallengeSize = otp.ChallengeSize;
-                target.ServerDomain = otp.ServerDomain;
-                target.ServerName = otp.ServerName;
-                target.ServerIcon = otp.ServerIcon;
-                target.Origin = otp.Origin;
-                target.AuthenticatorAttachment = (PSAuthenticatorAttachmentKind)otp.AuthenticatorAttachment;
-                target.AttestationConveyancePreference = (PSAttestationConveyancePreferenceKind)otp.AttestationConveyancePreference;
-                target.UserVerificationRequirement = (PSUserVerificationRequirementKind)otp.UserVerificationRequirement;
-                target.Extensions = otp.Extensions;
-                target.UserVerificationIndex = otp.UserVerificationIndex;
-                target.Location = otp.Location;
-                target.UserVerificationMethod = otp.UserVerificationMethod;
-                target.RequireResidentKey = otp.RequireResidentKey;
+                    Timeout = otp.Timeout,
+                    TimestampDriftTolerance = otp.TimestampDriftTolerance,
+                    ChallengeSize = otp.ChallengeSize,
+                    ServerDomain = otp.ServerDomain,
+                    ServerName = otp.ServerName,
+                    ServerIcon = otp.ServerIcon,
+                    Origin = otp.Origin,
+                    AuthenticatorAttachment = (PSAuthenticatorAttachmentKind)otp.AuthenticatorAttachment,
+                    AttestationConveyancePreference = (PSAttestationConveyancePreferenceKind)otp.AttestationConveyancePreference,
+                    UserVerificationRequirement = (PSUserVerificationRequirementKind)otp.UserVerificationRequirement,
+                    Extensions = otp.Extensions,
+                    UserVerificationIndex = otp.UserVerificationIndex,
+                    Location = otp.Location,
+                    UserVerificationMethod = otp.UserVerificationMethod,
+                    RequireResidentKey = otp.RequireResidentKey
+                };
                 return target;
             }
         }
@@ -1690,31 +1734,34 @@ namespace MFA
                 return null;
             else
             {
-                FlatBiometricProvider target = new FlatBiometricProvider();
-                target.IsDirty = true;
-                target.Enabled = otp.Enabled;
-                target.IsRequired = otp.IsRequired;
-                target.EnrollWizard = otp.EnrollWizard;
-                target.ForceWizard = (ForceWizardMode)otp.ForceWizard;
-                target.PinRequired = otp.PinRequired;
-                target.FullQualifiedImplementation = otp.FullQualifiedImplementation;
-                target.Parameters = otp.Parameters;
+                FlatBiometricProvider target = new FlatBiometricProvider
+                {
+                    IsDirty = true,
+                    Enabled = otp.Enabled,
+                    IsRequired = otp.IsRequired,
+                    EnrollWizard = otp.EnrollWizard,
+                    ForceWizard = (ForceWizardMode)otp.ForceWizard,
+                    PinRequired = otp.PinRequired,
+                    DirectLogin = otp.DirectLogin,
+                    FullQualifiedImplementation = otp.FullQualifiedImplementation,
+                    Parameters = otp.Parameters,
 
-                target.Timeout = otp.Timeout;
-                target.TimestampDriftTolerance = otp.TimestampDriftTolerance;
-                target.ChallengeSize = otp.ChallengeSize;
-                target.ServerDomain = otp.ServerDomain;
-                target.ServerName = otp.ServerName;
-                target.ServerIcon = otp.ServerIcon;
-                target.Origin = otp.Origin;
-                target.AuthenticatorAttachment = (FlatAuthenticatorAttachmentKind)otp.AuthenticatorAttachment;
-                target.AttestationConveyancePreference = (FlatAttestationConveyancePreferenceKind)otp.AttestationConveyancePreference;
-                target.UserVerificationRequirement = (FlatUserVerificationRequirementKind)otp.UserVerificationRequirement;
-                target.Extensions = otp.Extensions;
-                target.UserVerificationIndex = otp.UserVerificationIndex;
-                target.Location = otp.Location;
-                target.UserVerificationMethod = otp.UserVerificationMethod;
-                target.RequireResidentKey = otp.RequireResidentKey;
+                    Timeout = otp.Timeout,
+                    TimestampDriftTolerance = otp.TimestampDriftTolerance,
+                    ChallengeSize = otp.ChallengeSize,
+                    ServerDomain = otp.ServerDomain,
+                    ServerName = otp.ServerName,
+                    ServerIcon = otp.ServerIcon,
+                    Origin = otp.Origin,
+                    AuthenticatorAttachment = (FlatAuthenticatorAttachmentKind)otp.AuthenticatorAttachment,
+                    AttestationConveyancePreference = (FlatAttestationConveyancePreferenceKind)otp.AttestationConveyancePreference,
+                    UserVerificationRequirement = (FlatUserVerificationRequirementKind)otp.UserVerificationRequirement,
+                    Extensions = otp.Extensions,
+                    UserVerificationIndex = otp.UserVerificationIndex,
+                    Location = otp.Location,
+                    UserVerificationMethod = otp.UserVerificationMethod,
+                    RequireResidentKey = otp.RequireResidentKey
+                };
                 return target;
             }
         }

@@ -703,6 +703,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         public string ServerName { get; set; }
         public string ServerIcon { get; set; }
         public string Origin { get; set; }
+        public bool DirectLogin { get; set; }
         public FlatAuthenticatorAttachmentKind AuthenticatorAttachment { get; set; }
         public FlatAttestationConveyancePreferenceKind AttestationConveyancePreference { get; set; }
         public FlatUserVerificationRequirementKind UserVerificationRequirement { get; set; }
@@ -736,6 +737,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             this.IsRequired = otp.IsRequired;
             this.EnrollWizard = otp.EnrollWizard;
             this.ForceWizard = otp.ForceWizard;
+            this.DirectLogin = otp.DirectLogin;
             this.PinRequired = otp.PinRequired;
             this.FullQualifiedImplementation = otp.FullQualifiedImplementation;
             this.Parameters = otp.Parameters.Data;
@@ -767,10 +769,11 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             WebAuthNProvider otp = cfg.WebAuthNProvider;
             cfg.IsDirty = true;
             CheckUpdates(host);
-            otp.Enabled = Enabled;
-            otp.EnrollWizard = EnrollWizard;
-            otp.ForceWizard = ForceWizard;
-            otp.IsRequired = IsRequired;
+            otp.Enabled = this.Enabled;
+            otp.EnrollWizard = this.EnrollWizard;
+            otp.ForceWizard = this.ForceWizard;
+            otp.IsRequired = this.IsRequired;
+            otp.DirectLogin = this.DirectLogin;
             otp.PinRequired = this.PinRequired;
             otp.FullQualifiedImplementation = this.FullQualifiedImplementation;
             otp.Parameters.Data = this.Parameters;

@@ -412,6 +412,33 @@ namespace Neos.IdentityServer.Console.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à ADDS Schema 2016++.
+        /// </summary>
+        internal static string CTRLADTEMPLATE2016 {
+            get {
+                return ResourceManager.GetString("CTRLADTEMPLATE2016", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à ADDS Schema default.
+        /// </summary>
+        internal static string CTRLADTEMPLATEBASE {
+            get {
+                return ResourceManager.GetString("CTRLADTEMPLATEBASE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à ADDS Schema MFA.
+        /// </summary>
+        internal static string CTRLADTEMPLATEMFA {
+            get {
+                return ResourceManager.GetString("CTRLADTEMPLATEMFA", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Test.
         /// </summary>
         internal static string CTRLADTEST {
@@ -1398,6 +1425,15 @@ namespace Neos.IdentityServer.Console.Resources {
         internal static string CTRLWEBAUTHNATTACHEMENT {
             get {
                 return ResourceManager.GetString("CTRLWEBAUTHNATTACHEMENT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Fast Login.
+        /// </summary>
+        internal static string CTRLWEBAUTHNAUTOLOGIN {
+            get {
+                return ResourceManager.GetString("CTRLWEBAUTHNAUTOLOGIN", resourceCulture);
             }
         }
         

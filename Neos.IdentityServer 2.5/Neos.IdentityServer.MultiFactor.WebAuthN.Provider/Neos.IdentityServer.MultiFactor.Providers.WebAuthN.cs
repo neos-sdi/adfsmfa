@@ -26,6 +26,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
             get { return _config; }
             set { _config = value; }
         }
+        public bool DirectLogin { get; private set; }
         public int ChallengeSize { get; private set; }
         public string ConveyancePreference { get; private set; }
         public string Attachement { get; private set; }
@@ -333,6 +334,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
                         WizardEnabled = param.EnrollWizard;
                         ForceEnrollment = param.ForceWizard;
                         PinRequired = param.PinRequired;
+                        DirectLogin = param.DirectLogin;
                         ConveyancePreference = param.Options.AttestationConveyancePreference;
                         Attachement = param.Options.AuthenticatorAttachment;
                         Extentions = param.Options.Extensions;
@@ -418,6 +420,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
             ctx.PreferredMethod = ctx.PreferredMethod;
             ctx.SelectedMethod = result.Method;
             ctx.ExtraInfos = result.ExtraInfos;
+            ctx.DirectLogin = this.DirectLogin;
         }
 
         /// <summary>

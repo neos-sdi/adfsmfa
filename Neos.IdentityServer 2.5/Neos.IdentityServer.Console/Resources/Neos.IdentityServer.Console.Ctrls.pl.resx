@@ -603,4 +603,16 @@
   <data name="CTRLMUSTMULTVALUED" xml:space="preserve">
     <value>(**) Wymagaj właściwości łańcucha o wielu wartościach</value>
   </data>
+  <data name="CTRLWEBAUTHNAUTOLOGIN" xml:space="preserve">
+    <value>Szybkie połączenie</value>
+  </data>
+  <data name="CTRLADTEMPLATE2016" xml:space="preserve">
+    <value>DODAJE schematu 2016 ++</value>
+  </data>
+  <data name="CTRLADTEMPLATEBASE" xml:space="preserve">
+    <value>DODAJE domyślny schemat</value>
+  </data>
+  <data name="CTRLADTEMPLATEMFA" xml:space="preserve">
+    <value>DODAJE MFA schematu</value>
+  </data>
 </root>

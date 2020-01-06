@@ -2963,6 +2963,9 @@ namespace Neos.IdentityServer.Console.Controls
         private Label lblMultivalued;
         private Label lblPublicKeyAttribute;
         private Label lblMustMultivalued;
+        private Button btnTemplateBase;
+        private Button btnTemplate2016;
+        private Button btnTemplateMFA;
 
 
         /// <summary>
@@ -3058,212 +3061,258 @@ namespace Neos.IdentityServer.Console.Controls
             try
             {
                 this.Dock = DockStyle.Top;
-                this.Height = 625;
+                this.Height = 670;
                 this.Width = 512;
                 this.Margin = new Padding(30, 5, 30, 5);
 
                 _panel.Width = 20;
-                _panel.Height = 511;
+                _panel.Height = 550;
                 this.Controls.Add(_panel);
 
                 _txtpanel.Left = 20;
                 _txtpanel.Width = this.Width - 20;
-                _txtpanel.Height = 511;
+                _txtpanel.Height = 550;
                 _txtpanel.BackColor = System.Drawing.SystemColors.Control;
                 this.Controls.Add(_txtpanel);
 
-                chkUseADDS = new CheckBox();
-                chkUseADDS.Text = res.CTRLADUSEADDS;
-                chkUseADDS.Checked = Config.UseActiveDirectory;
-                chkUseADDS.Left = 10;
-                chkUseADDS.Top = 19;
-                chkUseADDS.Width = 450;
+                chkUseADDS = new CheckBox
+                {
+                    Text = res.CTRLADUSEADDS,
+                    Checked = Config.UseActiveDirectory,
+                    Left = 10,
+                    Top = 19,
+                    Width = 450
+                };
                 chkUseADDS.CheckedChanged += UseADDSCheckedChanged;
                 _txtpanel.Controls.Add(chkUseADDS);
 
-                lblDomainName = new Label();
-                lblDomainName.Text = res.CTRLADDOMAIN + " : ";
-                lblDomainName.Left = 50;
-                lblDomainName.Top = 51;
-                lblDomainName.Width = 150;
+                lblDomainName = new Label
+                {
+                    Text = res.CTRLADDOMAIN + " : ",
+                    Left = 50,
+                    Top = 51,
+                    Width = 150
+                };
                 _txtpanel.Controls.Add(lblDomainName);
 
-                txtDomainName = new TextBox();
-                txtDomainName.Text = Config.Hosts.ActiveDirectoryHost.DomainAddress;
-                txtDomainName.Left = 210;
-                txtDomainName.Top = 47;
-                txtDomainName.Width = 230;
-                txtDomainName.Enabled = Config.UseActiveDirectory;
+                txtDomainName = new TextBox
+                {
+                    Text = Config.Hosts.ActiveDirectoryHost.DomainAddress,
+                    Left = 210,
+                    Top = 47,
+                    Width = 230,
+                    Enabled = Config.UseActiveDirectory
+                };
                 txtDomainName.Validating += DomainNameValidating;
                 txtDomainName.Validated += DomainNameValidated;
                 _txtpanel.Controls.Add(txtDomainName);
 
-                lblUserName = new Label();
-                lblUserName.Text = res.CTRLADACCOUNT + " : ";
-                lblUserName.Left = 480;
-                lblUserName.Top = 51;
-                lblUserName.Width = 100;
+                lblUserName = new Label
+                {
+                    Text = res.CTRLADACCOUNT + " : ",
+                    Left = 480,
+                    Top = 51,
+                    Width = 100
+                };
                 _txtpanel.Controls.Add(lblUserName);
 
-                txtUserName = new TextBox();
-                txtUserName.Text = Config.Hosts.ActiveDirectoryHost.Account;
-                txtUserName.Left = 580;
-                txtUserName.Top = 47;
-                txtUserName.Width = 230;
-                txtUserName.Enabled = Config.UseActiveDirectory;
+                txtUserName = new TextBox
+                {
+                    Text = Config.Hosts.ActiveDirectoryHost.Account,
+                    Left = 580,
+                    Top = 47,
+                    Width = 230,
+                    Enabled = Config.UseActiveDirectory
+                };
                 txtUserName.Validating += UserNameValidating;
                 txtUserName.Validated += UserNameValidated;
                 _txtpanel.Controls.Add(txtUserName);
 
-                lblPassword = new Label();
-                lblPassword.Text = res.CTRLADPASSWORD + " : ";
-                lblPassword.Left = 480;
-                lblPassword.Top = 82;
-                lblPassword.Width = 85;
+                lblPassword = new Label
+                {
+                    Text = res.CTRLADPASSWORD + " : ",
+                    Left = 480,
+                    Top = 82,
+                    Width = 85
+                };
                 _txtpanel.Controls.Add(lblPassword);
 
-                txtPassword = new TextBox();
-                txtPassword.Text = Config.Hosts.ActiveDirectoryHost.Password;
-                txtPassword.Left = 580;
-                txtPassword.Top = 78;
-                txtPassword.Width = 230;
-                txtPassword.PasswordChar = '*';
-                txtPassword.Enabled = Config.UseActiveDirectory;
+                txtPassword = new TextBox
+                {
+                    Text = Config.Hosts.ActiveDirectoryHost.Password,
+                    Left = 580,
+                    Top = 78,
+                    Width = 230,
+                    PasswordChar = '*',
+                    Enabled = Config.UseActiveDirectory
+                };
                 txtPassword.Validating += PasswordValidating;
                 txtPassword.Validated += PasswordValidated;
                 _txtpanel.Controls.Add(txtPassword);
 
-                btnConnect = new Button();
-                btnConnect.Text = res.CTRLADTEST;
-                btnConnect.Left = 580;
-                btnConnect.Top = 109;
-                btnConnect.Width = 230;
-                btnConnect.Enabled = Config.UseActiveDirectory;
+                btnConnect = new Button
+                {
+                    Text = res.CTRLADTEST,
+                    Left = 580,
+                    Top = 109,
+                    Width = 230,
+                    Enabled = Config.UseActiveDirectory
+                };
                 btnConnect.Click += BtnConnectClick;
                 _txtpanel.Controls.Add(btnConnect);
 
-                lblAttributes = new Label();
-                lblAttributes.Text = res.CTRLADATTRIBUTES + " : ";
-                lblAttributes.Left = 30;
-                lblAttributes.Top = 119;
-                lblAttributes.Width = 300;
+                lblAttributes = new Label
+                {
+                    Text = res.CTRLADATTRIBUTES + " : ",
+                    Left = 30,
+                    Top = 119,
+                    Width = 300
+                };
                 _txtpanel.Controls.Add(lblAttributes);
 
-                lblKeyAttribute = new Label();
-                lblKeyAttribute.Text = res.CTRLADATTKEY + " (*) : ";
-                lblKeyAttribute.Left = 50;
-                lblKeyAttribute.Top = 150;
-                lblKeyAttribute.Width = 150;
+                lblKeyAttribute = new Label
+                {
+                    Text = res.CTRLADATTKEY + " (*) : ",
+                    Left = 50,
+                    Top = 150,
+                    Width = 150
+                };
                 _txtpanel.Controls.Add(lblKeyAttribute);
 
-                txtKeyAttribute = new TextBox();
-                txtKeyAttribute.Text = Config.Hosts.ActiveDirectoryHost.KeyAttribute;
-                txtKeyAttribute.Left = 210;
-                txtKeyAttribute.Top = 146;
-                txtKeyAttribute.Width = 600;
-                txtKeyAttribute.Enabled = Config.UseActiveDirectory;
+                txtKeyAttribute = new TextBox
+                {
+                    Text = Config.Hosts.ActiveDirectoryHost.KeyAttribute,
+                    Left = 210,
+                    Top = 146,
+                    Width = 600,
+                    Enabled = Config.UseActiveDirectory
+                };
                 txtKeyAttribute.Validating += KeyAttributeValidating;
                 txtKeyAttribute.Validated += KeyAttributeValidated;
                 _txtpanel.Controls.Add(txtKeyAttribute);
 
-                lblMailAttribute = new Label();
-                lblMailAttribute.Text = res.CTRLADATTMAIL + " (*) : ";
-                lblMailAttribute.Left = 50;
-                lblMailAttribute.Top = 181;
-                lblMailAttribute.Width = 150;
+                lblMailAttribute = new Label
+                {
+                    Text = res.CTRLADATTMAIL + " (*) : ",
+                    Left = 50,
+                    Top = 181,
+                    Width = 150
+                };
                 _txtpanel.Controls.Add(lblMailAttribute);
 
-                txtMailAttribute = new TextBox();
-                txtMailAttribute.Text = Config.Hosts.ActiveDirectoryHost.MailAttribute;
-                txtMailAttribute.Left = 210;
-                txtMailAttribute.Top = 177;
-                txtMailAttribute.Width = 600;
-                txtMailAttribute.Enabled = Config.UseActiveDirectory;
+                txtMailAttribute = new TextBox
+                {
+                    Text = Config.Hosts.ActiveDirectoryHost.MailAttribute,
+                    Left = 210,
+                    Top = 177,
+                    Width = 600,
+                    Enabled = Config.UseActiveDirectory
+                };
                 txtMailAttribute.Validating += MailAttributeValidating;
                 txtMailAttribute.Validated += MailAttributeValidated;
                 _txtpanel.Controls.Add(txtMailAttribute);
 
-                lblPhoneAttribute = new Label();
-                lblPhoneAttribute.Text = res.CTRLADATTPHONE + " (*) : ";
-                lblPhoneAttribute.Left = 50;
-                lblPhoneAttribute.Top = 212;
-                lblPhoneAttribute.Width = 150;
+                lblPhoneAttribute = new Label
+                {
+                    Text = res.CTRLADATTPHONE + " (*) : ",
+                    Left = 50,
+                    Top = 212,
+                    Width = 150
+                };
                 _txtpanel.Controls.Add(lblPhoneAttribute);
 
-                txtPhoneAttribute = new TextBox();
-                txtPhoneAttribute.Text = Config.Hosts.ActiveDirectoryHost.PhoneAttribute;
-                txtPhoneAttribute.Left = 210;
-                txtPhoneAttribute.Top = 208;
-                txtPhoneAttribute.Width = 600;
-                txtPhoneAttribute.Enabled = Config.UseActiveDirectory;
+                txtPhoneAttribute = new TextBox
+                {
+                    Text = Config.Hosts.ActiveDirectoryHost.PhoneAttribute,
+                    Left = 210,
+                    Top = 208,
+                    Width = 600,
+                    Enabled = Config.UseActiveDirectory
+                };
                 txtPhoneAttribute.Validating += PhoneAttributeValidating;
                 txtPhoneAttribute.Validated += PhoneAttributeValidated;
                 _txtpanel.Controls.Add(txtPhoneAttribute);
 
-                lblMethodAttribute = new Label();
-                lblMethodAttribute.Text = res.CTRLADATTMETHOD + " : ";
-                lblMethodAttribute.Left = 50;
-                lblMethodAttribute.Top = 243;
-                lblMethodAttribute.Width = 150;
+                lblMethodAttribute = new Label
+                {
+                    Text = res.CTRLADATTMETHOD + " : ",
+                    Left = 50,
+                    Top = 243,
+                    Width = 150
+                };
                 _txtpanel.Controls.Add(lblMethodAttribute);
 
-                txtMethodAttribute = new TextBox();
-                txtMethodAttribute.Text = Config.Hosts.ActiveDirectoryHost.MethodAttribute;
-                txtMethodAttribute.Left = 210;
-                txtMethodAttribute.Top = 239;
-                txtMethodAttribute.Width = 600;
-                txtMethodAttribute.Enabled = Config.UseActiveDirectory;
+                txtMethodAttribute = new TextBox
+                {
+                    Text = Config.Hosts.ActiveDirectoryHost.MethodAttribute,
+                    Left = 210,
+                    Top = 239,
+                    Width = 600,
+                    Enabled = Config.UseActiveDirectory
+                };
                 txtMethodAttribute.Validating += MethodAttributeValidating;
                 txtMethodAttribute.Validated += MethodAttributeValidated;
                 _txtpanel.Controls.Add(txtMethodAttribute);
 
-                lblCreatedateAttribute = new Label();
-                lblCreatedateAttribute.Text = res.CTRLADATTOVERRIDE + " : ";
-                lblCreatedateAttribute.Left = 50;
-                lblCreatedateAttribute.Top = 274;
-                lblCreatedateAttribute.Width = 150;
+                lblCreatedateAttribute = new Label
+                {
+                    Text = res.CTRLADATTOVERRIDE + " : ",
+                    Left = 50,
+                    Top = 274,
+                    Width = 150
+                };
                 _txtpanel.Controls.Add(lblCreatedateAttribute);
 
-                txtOverrideMethodAttribute = new TextBox();
-                txtOverrideMethodAttribute.Text = Config.Hosts.ActiveDirectoryHost.OverrideMethodAttribute;
-                txtOverrideMethodAttribute.Left = 210;
-                txtOverrideMethodAttribute.Top = 270;
-                txtOverrideMethodAttribute.Width = 600;
-                txtOverrideMethodAttribute.Enabled = Config.UseActiveDirectory;
+                txtOverrideMethodAttribute = new TextBox
+                {
+                    Text = Config.Hosts.ActiveDirectoryHost.OverrideMethodAttribute,
+                    Left = 210,
+                    Top = 270,
+                    Width = 600,
+                    Enabled = Config.UseActiveDirectory
+                };
                 txtOverrideMethodAttribute.Validating += OverrideMethodAttributeValidating;
                 txtOverrideMethodAttribute.Validated += OverrideMethodAttributeValidated;
                 _txtpanel.Controls.Add(txtOverrideMethodAttribute);
 
-                lblValiditydateAttribute = new Label();
-                lblValiditydateAttribute.Text = res.CTRLADATTPIN + " : ";
-                lblValiditydateAttribute.Left = 50;
-                lblValiditydateAttribute.Top = 305;
-                lblValiditydateAttribute.Width = 150;
+                lblValiditydateAttribute = new Label
+                {
+                    Text = res.CTRLADATTPIN + " : ",
+                    Left = 50,
+                    Top = 305,
+                    Width = 150
+                };
                 _txtpanel.Controls.Add(lblValiditydateAttribute);
 
-                txtPinAttribute = new TextBox();
-                txtPinAttribute.Text = Config.Hosts.ActiveDirectoryHost.PinAttribute;
-                txtPinAttribute.Left = 210;
-                txtPinAttribute.Top = 301;
-                txtPinAttribute.Width = 600;
-                txtPinAttribute.Enabled = Config.UseActiveDirectory;
+                txtPinAttribute = new TextBox
+                {
+                    Text = Config.Hosts.ActiveDirectoryHost.PinAttribute,
+                    Left = 210,
+                    Top = 301,
+                    Width = 600,
+                    Enabled = Config.UseActiveDirectory
+                };
                 txtPinAttribute.Validating += PinAttributeValidating;
                 txtPinAttribute.Validated += PinAttributeValidated;
                 _txtpanel.Controls.Add(txtPinAttribute);
 
-                lblPublicKeyAttribute = new Label();
-                lblPublicKeyAttribute.Text = res.CTRLADATTPUBLICKEY + " (**) : ";
-                lblPublicKeyAttribute.Left = 50;
-                lblPublicKeyAttribute.Top = 336;
-                lblPublicKeyAttribute.Width = 150;
+                lblPublicKeyAttribute = new Label
+                {
+                    Text = res.CTRLADATTPUBLICKEY + " (**) : ",
+                    Left = 50,
+                    Top = 336,
+                    Width = 150
+                };
                 _txtpanel.Controls.Add(lblPublicKeyAttribute);
 
-                txtPublicKeyAttribute = new TextBox();
-                txtPublicKeyAttribute.Text = Config.Hosts.ActiveDirectoryHost.PublicKeyCredentialAttribute;
-                txtPublicKeyAttribute.Left = 210;
-                txtPublicKeyAttribute.Top = 332;
-                txtPublicKeyAttribute.Width = 600;
-                txtPublicKeyAttribute.Enabled = Config.UseActiveDirectory;
+                txtPublicKeyAttribute = new TextBox
+                {
+                    Text = Config.Hosts.ActiveDirectoryHost.PublicKeyCredentialAttribute,
+                    Left = 210,
+                    Top = 332,
+                    Width = 600,
+                    Enabled = Config.UseActiveDirectory
+                };
                 txtPublicKeyAttribute.Validating += CheckPublicKeyAttributeValidating;
                 txtPublicKeyAttribute.Validated += CheckPublicKeyAttributeValidated;
                 _txtpanel.Controls.Add(txtPublicKeyAttribute);
@@ -3275,56 +3324,100 @@ namespace Neos.IdentityServer.Console.Controls
                   lblTOTPAttribute.Width = 150;
                   _txtpanel.Controls.Add(lblTOTPAttribute); */
 
-                txtTOTPAttribute = new TextBox();
-                txtTOTPAttribute.Text = "Not Used";
-                txtTOTPAttribute.Left = 210;
-                txtTOTPAttribute.Top = 363;
-                txtTOTPAttribute.Width = 600;
-                txtTOTPAttribute.Enabled = false;
+                txtTOTPAttribute = new TextBox
+                {
+                    Text = "Not Used",
+                    Left = 210,
+                    Top = 363,
+                    Width = 600,
+                    Enabled = false
+                };
                 txtTOTPAttribute.Validating += TOTPAttributeValidating;
                 txtTOTPAttribute.Validated += TOTPAttributeValidated;
                 _txtpanel.Controls.Add(txtTOTPAttribute);
 
-                lblEnableAttribute = new Label();
-                lblEnableAttribute.Text = res.CTRLADATTSTATUS + " : ";
-                lblEnableAttribute.Left = 50;
-                lblEnableAttribute.Top = 398;
-                lblEnableAttribute.Width = 150;
+                lblEnableAttribute = new Label
+                {
+                    Text = res.CTRLADATTSTATUS + " : ",
+                    Left = 50,
+                    Top = 398,
+                    Width = 150
+                };
                 _txtpanel.Controls.Add(lblEnableAttribute);
 
-                txtEnabledAttribute = new TextBox();
-                txtEnabledAttribute.Text = Config.Hosts.ActiveDirectoryHost.TotpEnabledAttribute;
-                txtEnabledAttribute.Left = 210;
-                txtEnabledAttribute.Top = 394;
-                txtEnabledAttribute.Width = 600;
-                txtEnabledAttribute.Enabled = Config.UseActiveDirectory;
+                txtEnabledAttribute = new TextBox
+                {
+                    Text = Config.Hosts.ActiveDirectoryHost.TotpEnabledAttribute,
+                    Left = 210,
+                    Top = 394,
+                    Width = 600,
+                    Enabled = Config.UseActiveDirectory
+                };
                 txtEnabledAttribute.Validating += EnabledAttributeValidating;
                 txtEnabledAttribute.Validated += EnabledAttributeValidated;
                 _txtpanel.Controls.Add(txtEnabledAttribute);
 
-                lblMaxRows = new Label();
-                lblMaxRows.Text = res.CTRLSQLMAXROWS + " : ";
-                lblMaxRows.Left = 50;
-                lblMaxRows.Top = 429;
-                lblMaxRows.Width = 150;
+                lblMaxRows = new Label
+                {
+                    Text = res.CTRLSQLMAXROWS + " : ",
+                    Left = 50,
+                    Top = 429,
+                    Width = 150
+                };
                 _txtpanel.Controls.Add(lblMaxRows);
 
-                txtMaxRows = new TextBox();
-                txtMaxRows.Text = Config.Hosts.ActiveDirectoryHost.MaxRows.ToString();
-                txtMaxRows.Left = 210;
-                txtMaxRows.Top = 425;
-                txtMaxRows.Width = 50;
-                txtMaxRows.TextAlign = HorizontalAlignment.Right;
-                txtMaxRows.Enabled = Config.UseActiveDirectory;
+                txtMaxRows = new TextBox
+                {
+                    Text = Config.Hosts.ActiveDirectoryHost.MaxRows.ToString(),
+                    Left = 210,
+                    Top = 425,
+                    Width = 50,
+                    TextAlign = HorizontalAlignment.Right,
+                    Enabled = Config.UseActiveDirectory
+                };
                 txtMaxRows.Validating += MaxRowsValidating;
                 txtMaxRows.Validated += MaxRowsValidated;
                 _txtpanel.Controls.Add(txtMaxRows);
+
+
+                btnTemplateBase = new Button
+                {
+                    Text = res.CTRLADTEMPLATEBASE,
+                    Left = 210,
+                    Top = 465,
+                    Width = 150,
+                    Enabled = Config.UseActiveDirectory
+                };
+                btnTemplateBase.Click += BtnTemplateBaseClick;
+                _txtpanel.Controls.Add(btnTemplateBase);
+
+                btnTemplate2016 = new Button
+                {
+                    Text = res.CTRLADTEMPLATE2016,
+                    Left = 400,
+                    Top = 465,
+                    Width = 150,
+                    Enabled = Config.UseActiveDirectory
+                };
+                btnTemplate2016.Click += BtnTemplate2016Click;
+                _txtpanel.Controls.Add(btnTemplate2016);
+
+                btnTemplateMFA = new Button
+                {
+                    Text = res.CTRLADTEMPLATEMFA,
+                    Left = 590,
+                    Top = 465,
+                    Width = 150,
+                    Enabled = Config.UseActiveDirectory
+                };
+                btnTemplateMFA.Click += BtnTemplateMFAClick;
+                _txtpanel.Controls.Add(btnTemplateMFA);
 
                 lblMultivalued = new Label()
                 {
                     Text = res.CTRLMULTVALUED,
                     Left = 50,
-                    Top = 465,
+                    Top = 500,
                     Width = 350
                 };
                 _txtpanel.Controls.Add(lblMultivalued);
@@ -3333,27 +3426,31 @@ namespace Neos.IdentityServer.Console.Controls
                 {
                     Text = res.CTRLMUSTMULTVALUED,
                     Left = 50,
-                    Top = 489,
+                    Top = 525,
                     Width = 350
                 };
                 _txtpanel.Controls.Add(lblMustMultivalued);
 
-                tblSaveConfig = new LinkLabel();
-                tblSaveConfig.Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPESAVE;
-                tblSaveConfig.Left = 20;
-                tblSaveConfig.Top = 525;
-                tblSaveConfig.Width = 80;
+                tblSaveConfig = new LinkLabel
+                {
+                    Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPESAVE,
+                    Left = 20,
+                    Top = 560,
+                    Width = 80,
+                    TabStop = true
+                };
                 tblSaveConfig.LinkClicked += SaveConfigLinkClicked;
-                tblSaveConfig.TabStop = true;
                 this.Controls.Add(tblSaveConfig);
 
-                tblCancelConfig = new LinkLabel();
-                tblCancelConfig.Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPECANCEL;
-                tblCancelConfig.Left = 110;
-                tblCancelConfig.Top = 525;
-                tblCancelConfig.Width = 80;
+                tblCancelConfig = new LinkLabel
+                {
+                    Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPECANCEL,
+                    Left = 110,
+                    Top = 560,
+                    Width = 80,
+                    TabStop = true
+                };
                 tblCancelConfig.LinkClicked += CancelConfigLinkClicked;
-                tblCancelConfig.TabStop = true;
                 this.Controls.Add(tblCancelConfig);
 
                 errors = new ErrorProvider(_view);
@@ -3438,6 +3535,9 @@ namespace Neos.IdentityServer.Console.Controls
                 lblUserName.Text = res.CTRLADACCOUNT + " : ";
                 lblDomainName.Text = res.CTRLADDOMAIN + " : ";
                 btnConnect.Text = res.CTRLADTEST;
+                btnTemplateBase.Text = res.CTRLADTEMPLATEBASE;
+                btnTemplate2016.Text = res.CTRLADTEMPLATE2016;
+                btnTemplateMFA.Text = res.CTRLADTEMPLATEMFA;
                 chkUseADDS.Text = res.CTRLADUSEADDS;
                 lblMultivalued.Text = res.CTRLMULTVALUED;
                 lblMustMultivalued.Text = res.CTRLMUSTMULTVALUED;
@@ -3559,6 +3659,9 @@ namespace Neos.IdentityServer.Console.Controls
                 txtPublicKeyAttribute.Enabled = isenabled;
                 txtMaxRows.Enabled = isenabled;
                 btnConnect.Enabled = isenabled;
+                btnTemplateBase.Enabled = isenabled;
+                btnTemplate2016.Enabled = isenabled;
+                btnTemplateMFA.Enabled = isenabled;
             }
             finally
             {
@@ -3587,15 +3690,16 @@ namespace Neos.IdentityServer.Console.Controls
                     Config.UseActiveDirectory = chkUseADDS.Checked;
                     ManagementService.ADFSManager.SetDirty(true);
                     DoRefreshData();
-                   // UpdateControlsLayouts(Config.UseActiveDirectory);
                 }
             }
             catch (Exception ex)
             {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
                 this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
@@ -3900,10 +4004,12 @@ namespace Neos.IdentityServer.Console.Controls
             }
             catch (Exception ex)
             {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
                 this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
@@ -4011,7 +4117,7 @@ namespace Neos.IdentityServer.Console.Controls
         }
         #endregion
 
-        #region ValidityDateAttribute
+        #region PinAttribute
         /// <summary>
         /// PinAttributeValidating method implementation
         /// </summary>
@@ -4063,7 +4169,7 @@ namespace Neos.IdentityServer.Console.Controls
 
         #endregion
 
-        #region CheckPublicKeyAttribute
+        #region PublicKeyAttribute
         /// <summary>
         /// CheckPublicKeyAttributeValidating method implementation
         /// </summary>
@@ -4292,23 +4398,131 @@ namespace Neos.IdentityServer.Console.Controls
                         Icon = MessageBoxIcon.Error
                     };
                     this._snapin.Console.ShowDialog(messageBoxParameters);
-
                 }
                 else
                 {
-                    MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                    messageBoxParameters.Text = res.CTRLADCONNECTIONOK;
-                    messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                    messageBoxParameters.Icon = MessageBoxIcon.Information;
+                    MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                    {
+                        Text = res.CTRLADCONNECTIONOK,
+                        Buttons = MessageBoxButtons.OK,
+                        Icon = MessageBoxIcon.Information
+                    };
                     this._snapin.Console.ShowDialog(messageBoxParameters);
                 }
             }
             catch (Exception ex)
             {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
+                this._snapin.Console.ShowDialog(messageBoxParameters);
+            }
+        }
+
+        /// <summary>
+        /// BtnTemplateMFAClick method implementation
+        /// </summary>
+        private void BtnTemplateMFAClick(object sender, EventArgs e)
+        {
+            try
+            {
+                if (ManagementService.SetADDSAttributesTemplate(ADDSTemplateKind.MFASchemaVersion))
+                {
+                    ManagementService.ADFSManager.SetDirty(true);
+                    DoRefreshData();
+                }
+                else
+                {
+                    MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                    {
+                        Text = res.CTRLADCONNECTIONERROR,
+                        Buttons = MessageBoxButtons.OK,
+                        Icon = MessageBoxIcon.Error
+                    };
+                    this._snapin.Console.ShowDialog(messageBoxParameters);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
+                this._snapin.Console.ShowDialog(messageBoxParameters);
+            }
+        }
+
+        /// <summary>
+        /// BtnTemplate2016Click method implementation
+        /// </summary>
+        private void BtnTemplate2016Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (ManagementService.SetADDSAttributesTemplate(ADDSTemplateKind.Windows2016Schemaversion))
+                {
+                    ManagementService.ADFSManager.SetDirty(true);
+                    DoRefreshData();
+                }
+                else
+                {
+                    MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                    {
+                        Text = res.CTRLADCONNECTIONERROR,
+                        Buttons = MessageBoxButtons.OK,
+                        Icon = MessageBoxIcon.Error
+                    };
+                    this._snapin.Console.ShowDialog(messageBoxParameters);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
+                this._snapin.Console.ShowDialog(messageBoxParameters);
+            }
+        }
+
+        /// <summary>
+        /// BtnTemplateBaseClick method implementation
+        /// </summary>
+        private void BtnTemplateBaseClick(object sender, EventArgs e)
+        {
+            try
+            {
+                if (ManagementService.SetADDSAttributesTemplate(ADDSTemplateKind.AllSchemaVersions))
+                {
+                    ManagementService.ADFSManager.SetDirty(true);
+                    DoRefreshData();
+                }
+                else
+                {
+                    MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                    {
+                        Text = res.CTRLADCONNECTIONERROR,
+                        Buttons = MessageBoxButtons.OK,
+                        Icon = MessageBoxIcon.Error
+                    };
+                    this._snapin.Console.ShowDialog(messageBoxParameters);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
                 this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
@@ -7892,6 +8106,7 @@ namespace Neos.IdentityServer.Console.Controls
         private TextBox txtServerUri;
         private Label lblChallengeSize;
         private ComboBox cbChallengeSize;
+        private CheckBox chkAutologin;
 
         /// <summary>
         /// ConfigurationControl Constructor
@@ -8002,129 +8217,168 @@ namespace Neos.IdentityServer.Console.Controls
                 _txtpanel.BackColor = System.Drawing.SystemColors.Control;
                 this.Controls.Add(_txtpanel);
 
-                lblTimeOut = new Label();
-                lblTimeOut.Text = res.CTRLWEBAUTHNTIMEOUT + " : ";
-                lblTimeOut.Left = 10;
-                lblTimeOut.Top = 20;
-                lblTimeOut.Width = 180;
+                lblTimeOut = new Label
+                {
+                    Text = res.CTRLWEBAUTHNTIMEOUT + " : ",
+                    Left = 10,
+                    Top = 20,
+                    Width = 180
+                };
                 _txtpanel.Controls.Add(lblTimeOut);
 
-                txtTimeOut = new TextBox();
-                txtTimeOut.Text = Config.WebAuthNProvider.Configuration.Timeout.ToString();
-                txtTimeOut.Left = 190;
-                txtTimeOut.Top = 16;
-                txtTimeOut.Width = 60;
-                txtTimeOut.MaxLength = 6;
-                txtTimeOut.TextAlign = HorizontalAlignment.Center;
+                txtTimeOut = new TextBox
+                {
+                    Text = Config.WebAuthNProvider.Configuration.Timeout.ToString(),
+                    Left = 190,
+                    Top = 16,
+                    Width = 60,
+                    MaxLength = 6,
+                    TextAlign = HorizontalAlignment.Center
+                };
                 txtTimeOut.Validating += TimeOutValidating;
                 txtTimeOut.Validated += TimeOutValidated;
                 _txtpanel.Controls.Add(txtTimeOut);
 
-                lblDriftTolerance = new Label();
-                lblDriftTolerance.Text = res.CTRLWEBAUTHNDRIFTTOLERANCE + " : ";
-                lblDriftTolerance.Left = 10;
-                lblDriftTolerance.Top = 54;
-                lblDriftTolerance.Width = 180;
+
+                chkAutologin = new CheckBox
+                {
+                    Text = res.CTRLWEBAUTHNAUTOLOGIN,
+                    Checked = Config.WebAuthNProvider.DirectLogin,
+                    Left = 350,
+                    Top = 20,
+                    Width = 150
+                };
+                chkAutologin.CheckedChanged += ChkchkAutologinChanged;
+                _txtpanel.Controls.Add(chkAutologin);
+
+                lblDriftTolerance = new Label
+                {
+                    Text = res.CTRLWEBAUTHNDRIFTTOLERANCE + " : ",
+                    Left = 10,
+                    Top = 54,
+                    Width = 180
+                };
                 _txtpanel.Controls.Add(lblDriftTolerance);
 
-                txtDriftTolerance = new TextBox();
-                txtDriftTolerance.Text = Config.WebAuthNProvider.Configuration.TimestampDriftTolerance.ToString();
-                txtDriftTolerance.Left = 190;
-                txtDriftTolerance.Top = 50;
-                txtDriftTolerance.Width = 60;
-                txtDriftTolerance.MaxLength = 6;
-                txtDriftTolerance.TextAlign = HorizontalAlignment.Center;
+                txtDriftTolerance = new TextBox
+                {
+                    Text = Config.WebAuthNProvider.Configuration.TimestampDriftTolerance.ToString(),
+                    Left = 190,
+                    Top = 50,
+                    Width = 60,
+                    MaxLength = 6,
+                    TextAlign = HorizontalAlignment.Center
+                };
                 txtDriftTolerance.Validating += DriftToleranceValidating;
                 txtDriftTolerance.Validated += DriftToleranceValidated;
                 _txtpanel.Controls.Add(txtDriftTolerance);
 
-                lblServerDomain = new Label();
-                lblServerDomain.Text = res.CTRLWEBAUTHNSERVERDOMAIN + " : ";
-                lblServerDomain.Left = 10;
-                lblServerDomain.Top = 88; 
-                lblServerDomain.Width = 180;
+                lblServerDomain = new Label
+                {
+                    Text = res.CTRLWEBAUTHNSERVERDOMAIN + " : ",
+                    Left = 10,
+                    Top = 88,
+                    Width = 180
+                };
                 _txtpanel.Controls.Add(lblServerDomain);
 
-                txtServerDomain = new TextBox();
-                txtServerDomain.Text = Config.WebAuthNProvider.Configuration.ServerDomain;
-                txtServerDomain.Left = 190;
-                txtServerDomain.Top = 84;
-                txtServerDomain.Width = 300;
+                txtServerDomain = new TextBox
+                {
+                    Text = Config.WebAuthNProvider.Configuration.ServerDomain,
+                    Left = 190,
+                    Top = 84,
+                    Width = 300
+                };
                 txtServerDomain.Validating += ServerDomainValidating;
                 txtServerDomain.Validated += ServerDomainValidated;
                 _txtpanel.Controls.Add(txtServerDomain);
 
-                lblServerName = new Label();
-                lblServerName.Text = res.CTRLWEBAUTHNSERVERNAME + " : ";
-                lblServerName.Left = 10;
-                lblServerName.Top = 122;
-                lblServerName.Width = 180;
+                lblServerName = new Label
+                {
+                    Text = res.CTRLWEBAUTHNSERVERNAME + " : ",
+                    Left = 10,
+                    Top = 122,
+                    Width = 180
+                };
                 _txtpanel.Controls.Add(lblServerName);
 
-                txtServerName = new TextBox();
-                txtServerName.Text = Config.WebAuthNProvider.Configuration.ServerName;
-                txtServerName.Left = 190;
-                txtServerName.Top = 118;
-                txtServerName.Width = 300;
+                txtServerName = new TextBox
+                {
+                    Text = Config.WebAuthNProvider.Configuration.ServerName,
+                    Left = 190,
+                    Top = 118,
+                    Width = 300
+                };
                 txtServerName.Validating += ServerNameValidating;
                 txtServerName.Validated += ServerNameValidated;
                 _txtpanel.Controls.Add(txtServerName);
 
-                lblServerUri = new Label();
-                lblServerUri.Text = res.CTRLWEBAUTHNSERVERURL + " : ";
-                lblServerUri.Left = 10;
-                lblServerUri.Top = 156;
-                lblServerUri.Width = 180;
+                lblServerUri = new Label
+                {
+                    Text = res.CTRLWEBAUTHNSERVERURL + " : ",
+                    Left = 10,
+                    Top = 156,
+                    Width = 180
+                };
                 _txtpanel.Controls.Add(lblServerUri);
 
-                txtServerUri = new TextBox();
-                txtServerUri.Text = Config.WebAuthNProvider.Configuration.Origin;
-                txtServerUri.Left = 190;
-                txtServerUri.Top = 152;
-                txtServerUri.Width = 300;
+                txtServerUri = new TextBox
+                {
+                    Text = Config.WebAuthNProvider.Configuration.Origin,
+                    Left = 190,
+                    Top = 152,
+                    Width = 300
+                };
                 txtServerUri.Validating += ServerUriValidating;
                 txtServerUri.Validated += ServerUriValidated;
                 _txtpanel.Controls.Add(txtServerUri);
 
 
-                lblChallengeSize = new Label();
-                lblChallengeSize.Text = res.CTRLWEBAUTHNCHALLENGE + " : ";
-                lblChallengeSize.Left = 10;
-                lblChallengeSize.Top = 190;
-                lblChallengeSize.Width = 180;
+                lblChallengeSize = new Label
+                {
+                    Text = res.CTRLWEBAUTHNCHALLENGE + " : ",
+                    Left = 10,
+                    Top = 190,
+                    Width = 180
+                };
                 _txtpanel.Controls.Add(lblChallengeSize);
 
                 MMCChallengeSizeList lst = new MMCChallengeSizeList();
-                cbChallengeSize = new ComboBox();
-                cbChallengeSize.DropDownStyle = ComboBoxStyle.DropDownList;
-                cbChallengeSize.Left = 190;
-                cbChallengeSize.Top = 186;
-                cbChallengeSize.Width = 130;
+                cbChallengeSize = new ComboBox
+                {
+                    DropDownStyle = ComboBoxStyle.DropDownList,
+                    Left = 190,
+                    Top = 186,
+                    Width = 130,
+                    DataSource = lst,
+                    ValueMember = "ID",
+                    DisplayMember = "Label",
+                    SelectedValue = Config.WebAuthNProvider.Configuration.ChallengeSize,
+                };
+                cbChallengeSize.SelectedIndexChanged += SelectedChallengeSizeChanged;
                 _txtpanel.Controls.Add(cbChallengeSize);
 
-                cbChallengeSize.DataSource = lst;
-                cbChallengeSize.ValueMember = "ID";
-                cbChallengeSize.DisplayMember = "Label";
-                cbChallengeSize.SelectedValue = Config.WebAuthNProvider.Configuration.ChallengeSize;
-                cbChallengeSize.SelectedIndexChanged += SelectedChallengeSizeChanged;
 
-
-                tblSaveConfig = new LinkLabel();
-                tblSaveConfig.Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPESAVE;
-                tblSaveConfig.Left = 20;
-                tblSaveConfig.Top = 230;
-                tblSaveConfig.Width = 80;
+                tblSaveConfig = new LinkLabel
+                {
+                    Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPESAVE,
+                    Left = 20,
+                    Top = 230,
+                    Width = 80,
+                    TabStop = true
+                };
                 tblSaveConfig.LinkClicked += SaveConfigLinkClicked;
-                tblSaveConfig.TabStop = true;
                 this.Controls.Add(tblSaveConfig);
 
-                tblCancelConfig = new LinkLabel();
-                tblCancelConfig.Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPECANCEL;
-                tblCancelConfig.Left = 110;
-                tblCancelConfig.Top = 230;
-                tblCancelConfig.Width = 80;
+                tblCancelConfig = new LinkLabel
+                {
+                    Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPECANCEL,
+                    Left = 110,
+                    Top = 230,
+                    Width = 80,
+                    TabStop = true
+                };
                 tblCancelConfig.LinkClicked += CancelConfigLinkClicked;
-                tblCancelConfig.TabStop = true;
                 this.Controls.Add(tblCancelConfig);
 
                 errors = new ErrorProvider(_view);
@@ -8160,6 +8414,7 @@ namespace Neos.IdentityServer.Console.Controls
                 lblChallengeSize.Text = res.CTRLWEBAUTHNCHALLENGE + " : ";
 
                 txtTimeOut.Text = Config.WebAuthNProvider.Configuration.Timeout.ToString();
+                chkAutologin.Text = res.CTRLWEBAUTHNAUTOLOGIN;
                 txtDriftTolerance.Text = Config.WebAuthNProvider.Configuration.TimestampDriftTolerance.ToString();
                 txtServerDomain.Text = Config.WebAuthNProvider.Configuration.ServerDomain;
                 txtServerName.Text = Config.WebAuthNProvider.Configuration.ServerName;
@@ -8275,10 +8530,12 @@ namespace Neos.IdentityServer.Console.Controls
             }
             catch (Exception ex)
             {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
                 this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
@@ -8324,10 +8581,12 @@ namespace Neos.IdentityServer.Console.Controls
             }
             catch (Exception ex)
             {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
                 this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
@@ -8370,10 +8629,12 @@ namespace Neos.IdentityServer.Console.Controls
             }
             catch (Exception ex)
             {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
                 this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
@@ -8416,10 +8677,12 @@ namespace Neos.IdentityServer.Console.Controls
             }
             catch (Exception ex)
             {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
                 this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
@@ -8462,10 +8725,12 @@ namespace Neos.IdentityServer.Console.Controls
             }
             catch (Exception ex)
             {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
                 this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
@@ -8487,10 +8752,38 @@ namespace Neos.IdentityServer.Console.Controls
             }
             catch (Exception ex)
             {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
+                this._snapin.Console.ShowDialog(messageBoxParameters);
+            }
+        }
+
+        /// <summary>
+        /// ChkchkAutologinChanged method implementation
+        /// </summary>
+        private void ChkchkAutologinChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                if (_view.AutoValidate != AutoValidate.Disable)
+                {
+                    Config.WebAuthNProvider.DirectLogin = chkAutologin.Checked;
+                    ManagementService.ADFSManager.SetDirty(true);
+                    UpdateControlsLayouts();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
                 this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
@@ -8674,16 +8967,14 @@ namespace Neos.IdentityServer.Console.Controls
                     DropDownStyle = ComboBoxStyle.DropDownList,
                     Left = 300,
                     Top = 16,
-                    Width = 150
+                    Width = 150,
+                    DataSource = lst1,
+                    ValueMember = "ID",
+                    DisplayMember = "Label",
+                    SelectedValue = Config.WebAuthNProvider.Options.AuthenticatorAttachment
                 };
-                _txtpanel.Controls.Add(cbAttachement);
-
-                cbAttachement.DataSource = lst1;
-                cbAttachement.ValueMember = "ID";
-                cbAttachement.DisplayMember = "Label";
-                cbAttachement.SelectedValue = Config.WebAuthNProvider.Options.AuthenticatorAttachment;
                 cbAttachement.SelectedIndexChanged += SelectedAttachementChanged;
-
+                _txtpanel.Controls.Add(cbAttachement);
 
                 lblConveyance = new Label
                 {
@@ -8700,15 +8991,14 @@ namespace Neos.IdentityServer.Console.Controls
                     DropDownStyle = ComboBoxStyle.DropDownList,
                     Left = 300,
                     Top = 50,
-                    Width = 150
+                    Width = 150,
+                    DataSource = lst2,
+                    ValueMember = "ID",
+                    DisplayMember = "Label",
+                    SelectedValue = Config.WebAuthNProvider.Options.AttestationConveyancePreference
                 };
-                _txtpanel.Controls.Add(cbConveyance);
-
-                cbConveyance.DataSource = lst2;
-                cbConveyance.ValueMember = "ID";
-                cbConveyance.DisplayMember = "Label";
-                cbConveyance.SelectedValue = Config.WebAuthNProvider.Options.AttestationConveyancePreference;
                 cbConveyance.SelectedIndexChanged += SelectedConveyanceChanged;
+                _txtpanel.Controls.Add(cbConveyance);
 
 
                 lblUserVerification = new Label
@@ -8726,15 +9016,14 @@ namespace Neos.IdentityServer.Console.Controls
                     DropDownStyle = ComboBoxStyle.DropDownList,
                     Left = 300,
                     Top = 84,
-                    Width = 150
+                    Width = 150,
+                    DataSource = lst3,
+                    ValueMember = "ID",
+                    DisplayMember = "Label",
+                    SelectedValue = Config.WebAuthNProvider.Options.UserVerificationRequirement
                 };
-                _txtpanel.Controls.Add(cbUserVerification);
-
-                cbUserVerification.DataSource = lst3;
-                cbUserVerification.ValueMember = "ID";
-                cbUserVerification.DisplayMember = "Label";
-                cbUserVerification.SelectedValue = Config.WebAuthNProvider.Options.UserVerificationRequirement;
                 cbUserVerification.SelectedIndexChanged += SelectedUserVerificationChanged;
+                _txtpanel.Controls.Add(cbUserVerification);
 
                 chkExtensions = new CheckBox
                 {

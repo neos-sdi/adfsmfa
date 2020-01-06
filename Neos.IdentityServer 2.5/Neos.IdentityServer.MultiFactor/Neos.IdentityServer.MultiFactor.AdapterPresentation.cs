@@ -1364,6 +1364,13 @@ namespace Neos.IdentityServer.MultiFactor
             result += "}" + CR;
             result += CR;
 
+            result += "function OnAutoPost(frm)" + CR;
+            result += "{" + CR;
+            result += "   LoginWebAuthN(frm);" + CR;
+            result += "   return true;" + CR;
+            result += "}" + CR;
+            result += CR;
+
             result += "function SetJsError(message)" + CR;
             result += "{" + CR;
             result += "   var lnk = document.getElementById('btnclicked');" + CR;
@@ -1421,11 +1428,17 @@ namespace Neos.IdentityServer.MultiFactor
             string result = "<script type='text/javascript'>" + CR;
             result += "if (window.addEventListener)" + CR;
             result += "{" + CR;
-            result += "   window.addEventListener('submit', LoginWebAuthN, false);" + CR;
+            if (usercontext.DirectLogin)
+                result += "   window.addEventListener('load', OnAutoPost, false);" + CR;
+            else
+                result += "   window.addEventListener('submit', LoginWebAuthN, false);" + CR;
             result += "}" + CR;
             result += "else if (window.attachEvent)" + CR;
             result += "{" + CR;
-            result += "   window.attachEvent('submit', LoginWebAuthN);" + CR;
+            if (usercontext.DirectLogin)
+                result += "   window.attachEvent('load', OnAutoPost);" + CR;
+            else
+                result += "   window.attachEvent('submit', LoginWebAuthN);" + CR;
             result += "}" + CR;
             result += CR + CR;
             result += "</script>" + CR; 
@@ -1448,18 +1461,20 @@ namespace Neos.IdentityServer.MultiFactor
             result += "<br/>";
             result += "<div class=\"fieldMargin smallText\">" + prov.GetUIMessage(usercontext) + "</div>";
             result += "<br/>";
-            if (Provider.Config.UserFeatures.CanAccessOptions())
+            if (!usercontext.DirectLogin)
             {
-                result += "<input id=\"useroptions\" type=\"checkbox\" name=\"useroptions\" onclick=\"SetOptions(refreshbiometricForm)\"; /> " + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMAccessOptions");
-                result += "<script>";
-                result += "   document.cookie = 'showoptions=;expires=Thu, 01 Jan 1970 00:00:01 GMT;path=/adfs/'";
-                result += "</script>";
-                result += "<br/><br/><br/>";
+                if (Provider.Config.UserFeatures.CanAccessOptions())
+                {
+                    result += "<input id=\"useroptions\" type=\"checkbox\" name=\"useroptions\" onclick=\"SetOptions(refreshbiometricForm)\"; /> " + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMAccessOptions");
+                    result += "<script>";
+                    result += "   document.cookie = 'showoptions=;expires=Thu, 01 Jan 1970 00:00:01 GMT;path=/adfs/'";
+                    result += "</script>";
+                    result += "<br/><br/><br/>";
+                }
+                result += "<input id=\"signin\" type=\"submit\" class=\"submit\" name=\"signin\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMConnexion") + "\" /><br/><br/>";
+                result += "<a class=\"actionLink\" href=\"#\" id=\"nocode\" name=\"nocode\" onclick=\"return SetLinkTitle(refreshbiometricForm, '3')\"; style=\"cursor: pointer;\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMNoCode") + "</a>";
+                result += "<input id=\"lnk\" type=\"hidden\" name=\"lnk\" value=\"0\"/>";
             }
-            result += "<input id=\"signin\" type=\"submit\" class=\"submit\" name=\"signin\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMConnexion") + "\" /><br/><br/>";
-            result += "<a class=\"actionLink\" href=\"#\" id=\"nocode\" name=\"nocode\" onclick=\"return SetLinkTitle(refreshbiometricForm, '3')\"; style=\"cursor: pointer;\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMNoCode") + "</a>";
-            result += "<input id=\"lnk\" type=\"hidden\" name=\"lnk\" value=\"0\"/>";
-
             result += GetFormHtmlMessageZone(usercontext);
 
             result += "<input id=\"context\" type=\"hidden\" name=\"Context\" value=\"%Context%\"/>";

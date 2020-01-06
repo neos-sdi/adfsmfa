@@ -1381,6 +1381,7 @@ namespace Neos.IdentityServer.MultiFactor
             #region Requesting Code
             ResourcesLocale Resources = new ResourcesLocale(usercontext.Lcid);
             claims = new Claim[] { GetAuthMethodClaim(usercontext.SelectedMethod) };
+            usercontext.DirectLogin = false;
             IAdapterPresentation result = null;
             try
             {

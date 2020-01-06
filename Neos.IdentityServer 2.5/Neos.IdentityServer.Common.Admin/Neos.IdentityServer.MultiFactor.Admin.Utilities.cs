@@ -311,6 +311,23 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         }
 
         /// <summary>
+        /// SetADDSAttributesTemplate method implementation
+        /// </summary>
+        internal static bool SetADDSAttributesTemplate(ADDSTemplateKind kind)
+        {
+            try
+            {
+                EnsureService();
+                Config.Hosts.ActiveDirectoryHost.ApplyAttributesTemplate(kind);
+                return true;
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
         /// CheckADDSAttribute method implmentation
         /// </summary>
         internal static bool CheckSQLConnection(string connectionstring)

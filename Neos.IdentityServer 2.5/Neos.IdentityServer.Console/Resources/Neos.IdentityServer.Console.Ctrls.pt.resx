@@ -603,4 +603,16 @@
   <data name="CTRLMUSTMULTVALUED" xml:space="preserve">
     <value>(**) Exigir propriedade de string com valores múltiplos</value>
   </data>
+  <data name="CTRLWEBAUTHNAUTOLOGIN" xml:space="preserve">
+    <value>Conexão rápida</value>
+  </data>
+  <data name="CTRLADTEMPLATE2016" xml:space="preserve">
+    <value>ADICIONA Schema 2016++</value>
+  </data>
+  <data name="CTRLADTEMPLATEBASE" xml:space="preserve">
+    <value>ADICIONA inadimplência do Esquema</value>
+  </data>
+  <data name="CTRLADTEMPLATEMFA" xml:space="preserve">
+    <value>ADICIONA MFA Schema</value>
+  </data>
 </root>

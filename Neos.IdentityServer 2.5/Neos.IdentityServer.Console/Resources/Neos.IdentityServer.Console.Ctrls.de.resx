@@ -142,19 +142,19 @@
     <value>Access-Konto</value>
   </data>
   <data name="CTRLADATCHECKDATEERROR" xml:space="preserve">
-    <value>ADDS-Attribut für Überprüfungsdatum ungültig!</value>
+    <value>ADDS-Attribut für Überprüfungsdatum ungültig</value>
   </data>
   <data name="CTRLADATENABLEDERROR" xml:space="preserve">
-    <value>ADDS-Attribut nicht gültig für Aktiviert!</value>
+    <value>ADDS-Attribut nicht gültig für Aktiviert</value>
   </data>
   <data name="CTRLADATMETHODERROR" xml:space="preserve">
-    <value>ADDS-Attribut nicht gültig für Methode!</value>
+    <value>ADDS-Attribut nicht gültig für Methode</value>
   </data>
   <data name="CTRLADATOVERRIDEERROR" xml:space="preserve">
-    <value>ADDS-Attribut für die jeweilige Methode nicht gültig!</value>
+    <value>ADDS-Attribut für die jeweilige Methode nicht gültig</value>
   </data>
   <data name="CTRLADATPINERROR" xml:space="preserve">
-    <value>ADDS-Attribut nicht gültig für PIN-Code!</value>
+    <value>ADDS-Attribut nicht gültig für PIN-Code</value>
   </data>
   <data name="CTRLADATTACCOUNT" xml:space="preserve">
     <value>INvalid ADDS-Konto!</value>
@@ -166,13 +166,13 @@
     <value>INvalid ADDS-Domänenadresse!</value>
   </data>
   <data name="CTRLADATTEMAILERROR" xml:space="preserve">
-    <value>ADDS-Attribut nicht gültig für E-Mail-Adresse!</value>
+    <value>ADDS-Attribut nicht gültig für E-Mail-Adresse</value>
   </data>
   <data name="CTRLADATTKEY" xml:space="preserve">
     <value>Geheimschlüssel</value>
   </data>
   <data name="CTRLADATTKEYERROR" xml:space="preserve">
-    <value>ADDS-Attribut nicht gültig für geheimen Schlüssel!</value>
+    <value>ADDS-Attribut nicht gültig für geheimen Schlüssel</value>
   </data>
   <data name="CTRLADATTMAIL" xml:space="preserve">
     <value>E-Mail-Adresse</value>
@@ -181,19 +181,19 @@
     <value>Standard-MFA-Methode</value>
   </data>
   <data name="CTRLADATTOTPERROR" xml:space="preserve">
-    <value>ADDS-Attribut nicht gültig für TOTP!</value>
+    <value>ADDS-Attribut nicht gültig für TOTP</value>
   </data>
   <data name="CTRLADATTOVERRIDE" xml:space="preserve">
     <value>Wissenschaftliche MFA-Methode</value>
   </data>
   <data name="CTRLADATTPASSWORD" xml:space="preserve">
-    <value>INvalid ADDS-Passwort!</value>
+    <value>INvalid ADDS-Passwort</value>
   </data>
   <data name="CTRLADATTPHONE" xml:space="preserve">
     <value>mobiltelefon</value>
   </data>
   <data name="CTRLADATTPHONEERROR" xml:space="preserve">
-    <value>ADDS-Attribut nicht gültig für Telefonnummer!</value>
+    <value>ADDS-Attribut nicht gültig für Telefonnummer</value>
   </data>
   <data name="CTRLADATTPIN" xml:space="preserve">
     <value>nadel</value>
@@ -211,13 +211,13 @@
     <value>ToTP-Gültigkeitsdatum</value>
   </data>
   <data name="CTRLADATVALIDITYDATEERROR" xml:space="preserve">
-    <value>ADDS-Attribut nicht gültig für Gültigkeitsdatum!</value>
+    <value>ADDS-Attribut nicht gültig für Gültigkeitsdatum</value>
   </data>
   <data name="CTRLADCONNECTIONERROR" xml:space="preserve">
-    <value>Die Domäne Gesamtstruktur/ADDS kann keine Verbindung herstellen!</value>
+    <value>Die Domäne Gesamtstruktur/ADDS kann keine Verbindung herstellen</value>
   </data>
   <data name="CTRLADCONNECTIONOK" xml:space="preserve">
-    <value>Anschluss auf ADDS Wald / Betriebsgebiet!</value>
+    <value>Anschluss auf ADDS Wald / Betriebsgebiet</value>
   </data>
   <data name="CTRLADDOMAIN" xml:space="preserve">
     <value>domainname</value>
@@ -268,7 +268,7 @@
     <value>Hashalgorithmus</value>
   </data>
   <data name="CTRLGLINVALIDEMAILCONTACT" xml:space="preserve">
-    <value>Ungültiges E-Mail-Format für administrative Ne-Informationen!</value>
+    <value>Ungültiges E-Mail-Format für administrative Ne-Informationen</value>
   </data>
   <data name="CTRLGLMANAGEKMSOO" xml:space="preserve">
     <value>Der Benutzer kann den Standardanbieter auswählen</value>
@@ -355,7 +355,7 @@
     <value>(*) Unterstützt mehrwertige Eigenschaften</value>
   </data>
   <data name="CTRLMUSTACTIVATESVC" xml:space="preserve">
-    <value>Betrieb abgebrochen! Dazu müssen Sie den lokalen ADFS-Dienst aktivieren!</value>
+    <value>Betrieb abgebrochen! Dazu müssen Sie den lokalen ADFS-Dienst aktivieren</value>
   </data>
   <data name="CTRLNULLOREMPTYERROR" xml:space="preserve">
     <value>Null- oder leere Werte sind nicht zulässig.</value>
@@ -391,7 +391,7 @@
     <value>Zertifikat nicht gefunden!</value>
   </data>
   <data name="CTRLSECINVALIDEXTERROR" xml:space="preserve">
-    <value>Ungültige Erweiterung! Kann nicht aufgeladen werden!</value>
+    <value>Ungültige Erweiterung! Kann nicht aufgeladen werden</value>
   </data>
   <data name="CTRLSECKEYGEN" xml:space="preserve">
     <value>Länge des generierten Schlüssels</value>
@@ -442,7 +442,7 @@
     <value>Firmenname</value>
   </data>
   <data name="CTRLSMSIVALIDEXTERROR" xml:space="preserve">
-    <value>Ungültige Erweiterung! Kann nicht aufgeladen werden!</value>
+    <value>Ungültige Erweiterung! Kann nicht aufgeladen werden</value>
   </data>
   <data name="CTRLSMSPARAMS" xml:space="preserve">
     <value>Einstellungen</value>
@@ -472,7 +472,7 @@
     <value>Identifizierung</value>
   </data>
   <data name="CTRLSMTPMAILERROR" xml:space="preserve">
-    <value>Ungültiges E-Mail-Format!</value>
+    <value>Ungültiges E-Mail-Format</value>
   </data>
   <data name="CTRLSMTPMESSAGEOK" xml:space="preserve">
     <value>Testnachricht, die an</value>
@@ -496,7 +496,7 @@
     <value>zum Testen</value>
   </data>
   <data name="CTRLSQLCONNECTERROR" xml:space="preserve">
-    <value>Es kann keine Verbindung mit der SQL MFA-Datenbank hergestellt werden!</value>
+    <value>Es kann keine Verbindung mit der SQL MFA-Datenbank hergestellt werden</value>
   </data>
   <data name="CTRLSQLCONNECTOK" xml:space="preserve">
     <value>Stellen Sie eine Verbindung mit der operativen SQL-Datenbank her!</value>
@@ -505,7 +505,7 @@
     <value>Verbindungskette</value>
   </data>
   <data name="CTRLSQLCONNECTSTRERROR" xml:space="preserve">
-    <value>Ungültige SQL-Verbindungskette!</value>
+    <value>Ungültige SQL-Verbindungskette</value>
   </data>
   <data name="CTRLSQLCREATECRYPTEDDB" xml:space="preserve">
     <value>Erstellen einer verschlüsselten MFA-Datenbank</value>
@@ -602,5 +602,17 @@
   </data>
   <data name="CTRLMUSTMULTVALUED" xml:space="preserve">
     <value>(**) Benötige mehrwertige String-Eigenschaft</value>
+  </data>
+  <data name="CTRLWEBAUTHNAUTOLOGIN" xml:space="preserve">
+    <value>Schnellverbindung</value>
+  </data>
+  <data name="CTRLADTEMPLATE2016" xml:space="preserve">
+    <value>ADDS-Schema 2016++</value>
+  </data>
+  <data name="CTRLADTEMPLATEBASE" xml:space="preserve">
+    <value>ADDS-Schema-Standard</value>
+  </data>
+  <data name="CTRLADTEMPLATEMFA" xml:space="preserve">
+    <value>ADDS Schema MFA</value>
   </data>
 </root>

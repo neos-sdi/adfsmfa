@@ -603,4 +603,16 @@
   <data name="CTRLMUSTMULTVALUED" xml:space="preserve">
     <value>(**) Richiedi proprietà stringa a più valori</value>
   </data>
+  <data name="CTRLWEBAUTHNAUTOLOGIN" xml:space="preserve">
+    <value>Connessione rapida</value>
+  </data>
+  <data name="CTRLADTEMPLATE2016" xml:space="preserve">
+    <value>Schema ADDS 2016</value>
+  </data>
+  <data name="CTRLADTEMPLATEBASE" xml:space="preserve">
+    <value>Impostazione predefinita dello schema ADDS</value>
+  </data>
+  <data name="CTRLADTEMPLATEMFA" xml:space="preserve">
+    <value>Autenticazione a più fattori dello schema ADDS</value>
+  </data>
 </root>

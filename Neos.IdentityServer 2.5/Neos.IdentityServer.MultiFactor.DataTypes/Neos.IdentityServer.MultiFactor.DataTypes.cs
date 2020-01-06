@@ -837,6 +837,29 @@ namespace Neos.IdentityServer.MultiFactor
         }
 
         /// <summary>
+        /// DirectLogin property implementation
+        /// </summary>
+        [XmlAttribute("DirectLogin")]
+        public bool DirectLogin
+        {
+            get
+            {
+                if (_context.Data.ContainsKey("_authctxdirectlogin") && _context.Data["_authctxdirectlogin"] != null)
+                    return (bool)_context.Data["_authctxdirectlogin"];
+                else
+                    return true;
+            }
+            set
+            {
+                if (_context.Data.ContainsKey("_authctxdirectlogin"))
+                    _context.Data["_authctxdirectlogin"] = value;
+                else
+                    _context.Data.Add("_authctxdirectlogin", value);
+            }
+        }
+
+
+        /// <summary>
         /// AccountManagementUrl property implementation
         /// </summary>
         [XmlAttribute("AccountManagementUrl")]
@@ -1697,6 +1720,17 @@ namespace Neos.IdentityServer.MultiFactor
     {
         Default = 0,
         Default2019 = 1
+    }
+
+    /// <summary>
+    /// ADDSTemplateKind
+    /// </summary>
+    [Serializable]
+    public enum ADDSTemplateKind
+    {
+        AllSchemaVersions = 0,
+        Windows2016Schemaversion = 1,
+        MFASchemaVersion = 2
     }
 
     /// <summary>

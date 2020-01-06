@@ -234,6 +234,15 @@
   <data name="CTRLADPASSWORD" xml:space="preserve">
     <value>Password</value>
   </data>
+  <data name="CTRLADTEMPLATE2016" xml:space="preserve">
+    <value>ADDS Schema 2016++</value>
+  </data>
+  <data name="CTRLADTEMPLATEBASE" xml:space="preserve">
+    <value>ADDS Schema default</value>
+  </data>
+  <data name="CTRLADTEMPLATEMFA" xml:space="preserve">
+    <value>ADDS Schema MFA</value>
+  </data>
   <data name="CTRLADTEST" xml:space="preserve">
     <value>Test</value>
   </data>
@@ -563,6 +572,9 @@
   </data>
   <data name="CTRLWEBAUTHNATTACHEMENT" xml:space="preserve">
     <value>Authenticator Attachement</value>
+  </data>
+  <data name="CTRLWEBAUTHNAUTOLOGIN" xml:space="preserve">
+    <value>Fast Login</value>
   </data>
   <data name="CTRLWEBAUTHNCHALLENGE" xml:space="preserve">
     <value>Challenge Size</value>
