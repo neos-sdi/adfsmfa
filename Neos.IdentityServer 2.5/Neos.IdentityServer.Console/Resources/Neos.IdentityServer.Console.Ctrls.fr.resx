@@ -615,4 +615,13 @@
   <data name="CTRLADTEMPLATEMFA" xml:space="preserve">
     <value>ADDS Schema MFA</value>
   </data>
+  <data name="CTRLADTEMPLATE2016ERROR" xml:space="preserve">
+    <value>Erreur lors du chargement du modèle "2016", vous devez mettre à jour manuellement vos attributs !</value>
+  </data>
+  <data name="CTRLADTEMPLATEBASEERROR" xml:space="preserve">
+    <value>Erreur lors du chargement du modèle "Par défaut", vous devez mettre à jour manuellement vos attributs !</value>
+  </data>
+  <data name="CTRLADTEMPLATEMFAERROR" xml:space="preserve">
+    <value>Erreur lors du chargement "MFA" modèle, vous devez mettre à jour manuellement vos attributs!</value>
+  </data>
 </root>

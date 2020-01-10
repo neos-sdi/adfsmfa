@@ -554,7 +554,7 @@ namespace MFA
         /// <summary>
         /// <para type="description">ADDS attribute name used to store user preferred method (Code, Phone, Mail) (default msDS-cloudExtensionAttribute13).</para>
         /// </summary>
-        internal string OverrideMethodAttribute { get; set; }
+        public string OverrideMethodAttribute { get; set; }
 
         /// <summary>
         /// <para type="description">ADDS attribute name used to store user status with MFA (default msDS-cloudExtensionAttribute18).</para>
@@ -632,6 +632,15 @@ namespace MFA
                 return config;
             }
         }
+
+        /// <summary>
+        /// SetADDSAttributesTemplate method implementation
+        /// </summary>
+        public static void SetADDSAttributesTemplate(PSADDSTemplateKind kind)
+        {
+            ManagementService.SetADDSAttributesTemplate((ADDSTemplateKind)kind, true);
+        }
+
     }
     #endregion
 

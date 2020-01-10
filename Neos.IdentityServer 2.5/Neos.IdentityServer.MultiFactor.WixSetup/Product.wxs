@@ -351,6 +351,9 @@
         <File KeyPath="no" Id="mfa.db.upgrade.sql"  Name="mfa-db-upgrade.sql" Source="$(var.Neos.IdentityServer.MultiFactor.ProjectDir)SQL\mfa-db-upgrade.sql" Vital="yes" />
         <File KeyPath="no" Id="mfa.db.encrypted.upgrade.sql"  Name="mfa-db-encrypted-upgrade.sql" Source="$(var.Neos.IdentityServer.MultiFactor.ProjectDir)SQL\mfa-db-encrypted-upgrade.sql" Vital="yes" />
       </Component>
+      <Component Id="GACDeployment123" Guid="E7173CAB-E43F-4A07-1962-018000008017" Win64="yes"  Directory="ADDSFOLDER" DiskId="1" >
+        <File KeyPath="yes" Id="mfa.schema.ldf"  Name="mfa-schema.ldf" Source="$(var.Neos.IdentityServer.MultiFactor.ProjectDir)ADDS\mfa.schema.ldf" Vital="yes" />
+      </Component>
     </ComponentGroup>
   </Fragment>
 

@@ -615,4 +615,13 @@
   <data name="CTRLADTEMPLATEMFA" xml:space="preserve">
     <value>DODAJE MFA schematu</value>
   </data>
+  <data name="CTRLADTEMPLATE2016ERROR" xml:space="preserve">
+    <value>Błąd podczas ładowania "2016" szablon, należy zaktualizować ręcznie swoje atrybuty !</value>
+  </data>
+  <data name="CTRLADTEMPLATEBASEERROR" xml:space="preserve">
+    <value>Błąd podczas ładowania "default" szablon, należy zaktualizować ręcznie swoje atrybuty !</value>
+  </data>
+  <data name="CTRLADTEMPLATEMFAERROR" xml:space="preserve">
+    <value>Błąd podczas ładowania "MFA" szablon, należy zaktualizować ręcznie swoje atrybuty!</value>
+  </data>
 </root>

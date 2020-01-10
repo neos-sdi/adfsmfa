@@ -421,6 +421,15 @@ namespace Neos.IdentityServer.Console.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Error when loading &quot;2016&quot; template, you must update manually your attributes !.
+        /// </summary>
+        internal static string CTRLADTEMPLATE2016ERROR {
+            get {
+                return ResourceManager.GetString("CTRLADTEMPLATE2016ERROR", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à ADDS Schema default.
         /// </summary>
         internal static string CTRLADTEMPLATEBASE {
@@ -430,11 +439,29 @@ namespace Neos.IdentityServer.Console.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Error when loading &quot;Default&quot; template, you must update manually your attributes !.
+        /// </summary>
+        internal static string CTRLADTEMPLATEBASEERROR {
+            get {
+                return ResourceManager.GetString("CTRLADTEMPLATEBASEERROR", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à ADDS Schema MFA.
         /// </summary>
         internal static string CTRLADTEMPLATEMFA {
             get {
                 return ResourceManager.GetString("CTRLADTEMPLATEMFA", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Error when loading &quot;MFA&quot; template, you must update manually your attributes !.
+        /// </summary>
+        internal static string CTRLADTEMPLATEMFAERROR {
+            get {
+                return ResourceManager.GetString("CTRLADTEMPLATEMFAERROR", resourceCulture);
             }
         }
         

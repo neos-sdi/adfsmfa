@@ -75,6 +75,31 @@ namespace MFA
     }
 
     /// <summary>
+    /// PSADDSTemplateKind
+    /// <para type="synopsis">Kind of the attributes list template (SchemaAll, Schema2016, SchemaMFA).</para>
+    /// <para type="description">SchemaAll : Schema template compatible with all ADDS 2012 and up Schema versions.</para>
+    /// <para type="description">Schema2016 : Schema template compatible with all ADDS 2016 and up Schema versions (87).</para>
+    /// <para type="description">SchemaMFA : Custom Schema template for MFA, yoy must modify Shecma with supplied LDIF scripts.</para>
+    /// </summary>    
+    public enum PSADDSTemplateKind
+    {
+        /// <summary>
+        /// <para type="description">Schema template compatible with all ADDS 2012 and up Schema versions</para>
+        /// </summary>
+        SchemaAll = 0,
+
+        /// <summary>
+        /// <para type="description">Schema template compatible with all ADDS 2016 and up Schema versions (87)</para>
+        /// </summary>
+        Schema2016 = 1,
+
+        /// <summary>
+        /// <para type="description">Custom Schema template for MFA, yoy must modify Shecma with supplied LDIF scripts</para>
+        /// </summary>
+        SchemaMFA = 2
+    }
+
+    /// <summary>
     /// PSSecretKeyFormat
     /// <para type="synopsis">MFA TOTP key generation mode (RNG, RSA and CUSTOM.</para>
     /// <para type="description">RND (Random,Number Generator) Strong generator for numbers, From 128 bytes to 512 bytes. can be stored in ADDS or SQL default MFA Database.</para>

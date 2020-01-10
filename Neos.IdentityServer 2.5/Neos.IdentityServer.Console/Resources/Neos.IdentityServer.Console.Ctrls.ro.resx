@@ -615,4 +615,13 @@
   <data name="CTRLADTEMPLATEMFA" xml:space="preserve">
     <value>ADAUGĂ schema MFA</value>
   </data>
+  <data name="CTRLADTEMPLATE2016ERROR" xml:space="preserve">
+    <value>Eroare la încărcarea șablonului "2016", trebuie să actualizați manual atributele !</value>
+  </data>
+  <data name="CTRLADTEMPLATEBASEERROR" xml:space="preserve">
+    <value>Eroare la încărcarea șablonului "default", trebuie să actualizați manual atributele !</value>
+  </data>
+  <data name="CTRLADTEMPLATEMFAERROR" xml:space="preserve">
+    <value>Eroare la încărcarea "MFA" șablon, trebuie să actualizați manual atributele !</value>
+  </data>
 </root>

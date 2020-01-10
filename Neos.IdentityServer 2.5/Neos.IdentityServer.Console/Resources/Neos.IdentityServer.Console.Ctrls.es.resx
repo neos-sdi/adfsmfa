@@ -615,4 +615,13 @@
   <data name="CTRLADTEMPLATEMFA" xml:space="preserve">
     <value>Esquema ADDS MFA</value>
   </data>
+  <data name="CTRLADTEMPLATE2016ERROR" xml:space="preserve">
+    <value>Error al cargar la plantilla "2016", debe actualizar manualmente los atributos !</value>
+  </data>
+  <data name="CTRLADTEMPLATEBASEERROR" xml:space="preserve">
+    <value>Error al cargar la plantilla "Predeterminado", debe actualizar manualmente los atributos !</value>
+  </data>
+  <data name="CTRLADTEMPLATEMFAERROR" xml:space="preserve">
+    <value>Error al cargar la plantilla "MFA", debe actualizar manualmente los atributos !</value>
+  </data>
 </root>

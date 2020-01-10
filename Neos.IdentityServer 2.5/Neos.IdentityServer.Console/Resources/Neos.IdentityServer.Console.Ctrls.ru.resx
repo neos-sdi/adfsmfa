@@ -615,4 +615,13 @@
   <data name="CTRLADTEMPLATEMFA" xml:space="preserve">
     <value>ДОБАВЛЯЕТ Схема МИД</value>
   </data>
+  <data name="CTRLADTEMPLATE2016ERROR" xml:space="preserve">
+    <value>Ошибка при загрузке шаблона "2016" должна вручную обновлять атрибуты !</value>
+  </data>
+  <data name="CTRLADTEMPLATEBASEERROR" xml:space="preserve">
+    <value>Ошибка при загрузке шаблона "Default", вы должны обновить вручную атрибуты !</value>
+  </data>
+  <data name="CTRLADTEMPLATEMFAERROR" xml:space="preserve">
+    <value>Ошибка при загрузке шаблона "MFA", вы должны обновить вручную атрибуты !</value>
+  </data>
 </root>

@@ -615,4 +615,13 @@
   <data name="CTRLADTEMPLATEMFA" xml:space="preserve">
     <value>Lägger till schema MFA</value>
   </data>
+  <data name="CTRLADTEMPLATE2016ERROR" xml:space="preserve">
+    <value>Fel vid inläsning av "2016" mall måste du uppdatera manuellt dina attribut !</value>
+  </data>
+  <data name="CTRLADTEMPLATEBASEERROR" xml:space="preserve">
+    <value>Fel vid inläsning av "default"-mall måste du uppdatera manuellt dina attribut !</value>
+  </data>
+  <data name="CTRLADTEMPLATEMFAERROR" xml:space="preserve">
+    <value>Fel vid inläsning av "MFA"-mall måste du uppdatera manuellt dina attribut !</value>
+  </data>
 </root>

@@ -237,11 +237,20 @@
   <data name="CTRLADTEMPLATE2016" xml:space="preserve">
     <value>ADDS Schema 2016++</value>
   </data>
+  <data name="CTRLADTEMPLATE2016ERROR" xml:space="preserve">
+    <value>Error when loading "2016" template, you must update manually your attributes !</value>
+  </data>
   <data name="CTRLADTEMPLATEBASE" xml:space="preserve">
     <value>ADDS Schema default</value>
   </data>
+  <data name="CTRLADTEMPLATEBASEERROR" xml:space="preserve">
+    <value>Error when loading "Default" template, you must update manually your attributes !</value>
+  </data>
   <data name="CTRLADTEMPLATEMFA" xml:space="preserve">
     <value>ADDS Schema MFA</value>
+  </data>
+  <data name="CTRLADTEMPLATEMFAERROR" xml:space="preserve">
+    <value>Error when loading "MFA" template, you must update manually your attributes !</value>
   </data>
   <data name="CTRLADTEST" xml:space="preserve">
     <value>Test</value>

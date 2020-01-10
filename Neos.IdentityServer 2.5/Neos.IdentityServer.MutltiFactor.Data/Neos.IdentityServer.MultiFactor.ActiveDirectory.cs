@@ -489,7 +489,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                 }
                 if (filter.EnabledOnly)
                 {
-                    qryldap += "(" + _host.TotpEnabledAttribute + "=" + true.ToString() + ")";
+                    qryldap += "(" + _host.TotpEnabledAttribute + "=" + true.ToString().ToUpper() + ")";
                 }
                 qryldap += "(!(userAccountControl:1.2.840.113556.1.4.803:=2))";
             }
@@ -677,7 +677,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                 {
                     string qryldap = "(&(objectCategory=user)(objectClass=user)(userprincipalname=*)";
                     if (enabledonly)
-                        qryldap += "(" + _host.TotpEnabledAttribute + "=" + true.ToString() + ")";
+                        qryldap += "(" + _host.TotpEnabledAttribute + "=" + true.ToString().ToUpper() + ")";
                     qryldap += "(!(userAccountControl:1.2.840.113556.1.4.803:=2))";
                     qryldap += ")";
 
@@ -859,7 +859,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                 }
                 if (filter.EnabledOnly)
                 {
-                    qryldap += "(" + _host.TotpEnabledAttribute + "=" + true.ToString() + ")";
+                    qryldap += "(" + _host.TotpEnabledAttribute + "=" + true.ToString().ToUpper() + ")";
                 }
                 qryldap += "(!(userAccountControl:1.2.840.113556.1.4.803:=2))";
             }

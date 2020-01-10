@@ -615,4 +615,13 @@
   <data name="CTRLADTEMPLATEMFA" xml:space="preserve">
     <value>VOEGT schema MFA</value>
   </data>
+  <data name="CTRLADTEMPLATE2016ERROR" xml:space="preserve">
+    <value>Fout bij het laden van de sjabloon "2016", moet u handmatig uw attributen bijwerken !</value>
+  </data>
+  <data name="CTRLADTEMPLATEBASEERROR" xml:space="preserve">
+    <value>Fout bij het laden van de "default" template, moet u handmatig uw attributen updaten !</value>
+  </data>
+  <data name="CTRLADTEMPLATEMFAERROR" xml:space="preserve">
+    <value>Fout bij het laden van "MFA"-sjabloon, moet u handmatig uw kenmerken bijwerken !</value>
+  </data>
 </root>

@@ -701,6 +701,10 @@ namespace Neos.IdentityServer.Console.Controls
                     case PreferredMethod.Azure:
                         Config.AzureProvider.PinRequired = chkProviderPin.Checked;
                         break;
+                    case PreferredMethod.Biometrics:
+                        Config.WebAuthNProvider.PinRequired = chkProviderPin.Checked;
+                        break;
+
                 }
                 ManagementService.ADFSManager.SetDirty(true);
             }
@@ -742,6 +746,9 @@ namespace Neos.IdentityServer.Console.Controls
                         break;
                     case PreferredMethod.Azure:
                         Config.AzureProvider.EnrollWizard = chkProviderEnroll.Checked;
+                        break;
+                    case PreferredMethod.Biometrics:
+                        Config.WebAuthNProvider.EnrollWizard = chkProviderEnroll.Checked;
                         break;
                 }
                 ManagementService.ADFSManager.SetDirty(true);
@@ -795,6 +802,12 @@ namespace Neos.IdentityServer.Console.Controls
                         chkProviderEnroll.Enabled = Config.AzureProvider.Enabled;
                         chkProviderPin.Enabled = Config.AzureProvider.Enabled;
                         break;
+                    case PreferredMethod.Biometrics:
+                        Config.WebAuthNProvider.Enabled = chkProviderEnabled.Checked;
+                        chkProviderEnroll.Enabled = Config.WebAuthNProvider.Enabled;
+                        chkProviderPin.Enabled = Config.WebAuthNProvider.Enabled;
+                        break;
+
                 }
                 ManagementService.ADFSManager.SetDirty(true);
             }
@@ -846,6 +859,11 @@ namespace Neos.IdentityServer.Console.Controls
                         Config.AzureProvider.IsRequired = chkProviderRequired.Checked;
                         chkProviderEnroll.Enabled = false;
                         chkProviderPin.Enabled = Config.AzureProvider.Enabled;
+                        break;
+                    case PreferredMethod.Biometrics:
+                        Config.WebAuthNProvider.IsRequired = chkProviderRequired.Checked;
+                        chkProviderEnroll.Enabled = Config.WebAuthNProvider.Enabled;
+                        chkProviderPin.Enabled = Config.WebAuthNProvider.Enabled;
                         break;
                 }
                 ManagementService.ADFSManager.SetDirty(true);
@@ -3172,7 +3190,7 @@ namespace Neos.IdentityServer.Console.Controls
 
                 lblKeyAttribute = new Label
                 {
-                    Text = res.CTRLADATTKEY + " (*) : ",
+                    Text = res.CTRLADATTKEY + " : ",
                     Left = 50,
                     Top = 150,
                     Width = 150
@@ -3528,7 +3546,7 @@ namespace Neos.IdentityServer.Console.Controls
                 lblMethodAttribute.Text = res.CTRLADATTMETHOD + " : ";
                 lblPhoneAttribute.Text = res.CTRLADATTPHONE + " (*) : ";
                 lblMailAttribute.Text = res.CTRLADATTMAIL + " (*) : ";
-                lblKeyAttribute.Text = res.CTRLADATTKEY + " (*) : ";
+                lblKeyAttribute.Text = res.CTRLADATTKEY + " : ";
                 lblAttributes.Text = res.CTRLADATTRIBUTES + " : ";
                 lblPublicKeyAttribute.Text = res.CTRLADATTPUBLICKEY + " (**) : ";
                 lblPassword.Text = res.CTRLADPASSWORD + " : ";
@@ -4438,7 +4456,7 @@ namespace Neos.IdentityServer.Console.Controls
                 {
                     MessageBoxParameters messageBoxParameters = new MessageBoxParameters
                     {
-                        Text = res.CTRLADCONNECTIONERROR,
+                        Text = res.CTRLADTEMPLATEMFAERROR,
                         Buttons = MessageBoxButtons.OK,
                         Icon = MessageBoxIcon.Error
                     };
@@ -4449,7 +4467,7 @@ namespace Neos.IdentityServer.Console.Controls
             {
                 MessageBoxParameters messageBoxParameters = new MessageBoxParameters
                 {
-                    Text = ex.Message,
+                    Text = res.CTRLADTEMPLATEMFAERROR + "\r\n" + ex.Message,
                     Buttons = MessageBoxButtons.OK,
                     Icon = MessageBoxIcon.Error
                 };
@@ -4473,7 +4491,7 @@ namespace Neos.IdentityServer.Console.Controls
                 {
                     MessageBoxParameters messageBoxParameters = new MessageBoxParameters
                     {
-                        Text = res.CTRLADCONNECTIONERROR,
+                        Text = res.CTRLADTEMPLATE2016ERROR,
                         Buttons = MessageBoxButtons.OK,
                         Icon = MessageBoxIcon.Error
                     };
@@ -4484,7 +4502,7 @@ namespace Neos.IdentityServer.Console.Controls
             {
                 MessageBoxParameters messageBoxParameters = new MessageBoxParameters
                 {
-                    Text = ex.Message,
+                    Text = res.CTRLADTEMPLATE2016ERROR + "\r\n" + ex.Message,
                     Buttons = MessageBoxButtons.OK,
                     Icon = MessageBoxIcon.Error
                 };
@@ -4508,7 +4526,7 @@ namespace Neos.IdentityServer.Console.Controls
                 {
                     MessageBoxParameters messageBoxParameters = new MessageBoxParameters
                     {
-                        Text = res.CTRLADCONNECTIONERROR,
+                        Text = res.CTRLADTEMPLATEBASEERROR,
                         Buttons = MessageBoxButtons.OK,
                         Icon = MessageBoxIcon.Error
                     };
@@ -4519,14 +4537,13 @@ namespace Neos.IdentityServer.Console.Controls
             {
                 MessageBoxParameters messageBoxParameters = new MessageBoxParameters
                 {
-                    Text = ex.Message,
+                    Text = res.CTRLADTEMPLATEBASEERROR + "\r\n" + ex.Message,
                     Buttons = MessageBoxButtons.OK,
                     Icon = MessageBoxIcon.Error
                 };
                 this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
-
 
         /// <summary>
         /// SaveConfigLinkClicked event

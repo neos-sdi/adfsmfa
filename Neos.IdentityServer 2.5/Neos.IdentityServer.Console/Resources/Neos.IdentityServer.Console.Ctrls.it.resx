@@ -615,4 +615,13 @@
   <data name="CTRLADTEMPLATEMFA" xml:space="preserve">
     <value>Autenticazione a più fattori dello schema ADDS</value>
   </data>
+  <data name="CTRLADTEMPLATE2016ERROR" xml:space="preserve">
+    <value>Errore durante il caricamento del modello "2016", è necessario aggiornare manualmente gli attributi !</value>
+  </data>
+  <data name="CTRLADTEMPLATEBASEERROR" xml:space="preserve">
+    <value>Errore durante il caricamento del modello "Predefinito", è necessario aggiornare manualmente gli attributi !</value>
+  </data>
+  <data name="CTRLADTEMPLATEMFAERROR" xml:space="preserve">
+    <value>Errore durante il caricamento del modello "MFA", è necessario aggiornare manualmente gli attributi !</value>
+  </data>
 </root>

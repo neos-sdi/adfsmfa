@@ -3698,8 +3698,6 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     [PrimaryServerRequired]
     public sealed class UpgradeMFADatabase : MFACmdlet
     {
-        private string _servername;
-        private string _databasename;
         private PSConfigSQL _config;
 
         /// <summary>
@@ -3707,22 +3705,14 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "Data")]
         [ValidateNotNullOrEmpty()]
-        public string ServerName
-        {
-            get { return _servername; }
-            set { _servername = value; }
-        }
+        public string ServerName { get; set; }
 
         /// <summary>
         /// <para type="description">Name of the SQL Database, if database exists an error is thrown.</para>
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "Data")]
         [ValidateNotNullOrEmpty()]
-        public string DatabaseName
-        {
-            get { return _databasename; }
-            set { _databasename = value; }
-        }
+        public string DatabaseName { get; set; }
 
         /// <summary>
         /// BeginProcessing method implementation
@@ -3787,7 +3777,6 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     [PrimaryServerRequired]
     public sealed class NewMFASecretKeysDatabase : MFACmdlet, IDynamicParameters
     {
-        private string _servername;
         private string _databasename;
         private string _username;
         private string _password;
@@ -3799,11 +3788,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "Data")]
         [ValidateNotNullOrEmpty()]
-        public string ServerName
-        {
-            get { return _servername; }
-            set { _servername = value; }
-        }
+        public string ServerName { get; set; }
 
         /// <summary>
         /// <para type="description">Name of the SQL Database, if database exists an error is thrown.</para>
@@ -4421,6 +4406,45 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             }
         }
     }
+    #endregion
+
+    #region ADDS Template
+    /// <summary>
+    /// <para type="synopsis">Set basic Firewall rules for MFA inter servers communication.</para>
+    /// <para type="description">Set basic Firewall rules for MFA inter servers communication.</para>
+    /// </summary>
+    /// <example>
+    ///   <para>Set-MFAActiveDirectoryTemplate -Kind MFA:: </para>
+    /// </example>
+    [Cmdlet(VerbsCommon.Set, "MFAActiveDirectoryTemplate", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
+    public sealed class MFAActiveDirectoryTemplate : MFACmdlet
+    {
+        /// <summary>
+        /// <para type="description">Template type for ADDS Attributes configuration.</para>
+        /// </summary>
+        [Parameter(Mandatory = true, ParameterSetName = "Data")]
+        public PSADDSTemplateKind Kind { get; set; } = PSADDSTemplateKind.SchemaAll;
+
+        /// <summary>
+        /// ProcessRecord method override
+        /// </summary>
+        protected override void ProcessRecord()
+        {
+            if (ShouldProcess("ADDS Attributes template Configuration"))
+            {
+                try
+                {
+                    PSConfigADDS.SetADDSAttributesTemplate(Kind);
+                    this.WriteVerbose(infos_strings.InfosConfigUpdated);
+                }
+                catch (Exception ex)
+                {
+                    this.ThrowTerminatingError(new ErrorRecord(ex, "4025", ErrorCategory.OperationStopped, this));
+                }
+            }
+        }
+    }
+
     #endregion
 
     #region Attribute

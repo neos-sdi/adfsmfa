@@ -1971,7 +1971,13 @@ namespace Neos.IdentityServer.MultiFactor
         public string TotpEnabledAttribute { get; set; } = "msDS-cloudExtensionAttribute18";
 
         [XmlAttribute("publickeyAttribute")]
-        public string PublicKeyCredentialAttribute { get; set; } = "msDS-KeyCredentialLink";   // or otherMailBox
+        public string PublicKeyCredentialAttribute { get; set; } = "msDS-KeyCredentialLink";
+
+        [XmlAttribute("ClientCertificateAttribute")]
+        public string ClientCertificateAttribute { get; set; } = "msDS-cloudExtensionAttribute16";
+
+        [XmlAttribute("RSACertificateAttribute")]
+        public string RSACertificateAttribute { get;  set; } = "msDS-cloudExtensionAttribute17";
 
         [XmlAttribute("MaxRows")]
         public int MaxRows { get; set; } = 10000;
@@ -1991,6 +1997,8 @@ namespace Neos.IdentityServer.MultiFactor
                     MethodAttribute = "msDS-cloudExtensionAttribute13";
                     OverrideMethodAttribute = "msDS-cloudExtensionAttribute14";
                     TotpEnabledAttribute = "msDS-cloudExtensionAttribute18";
+                    ClientCertificateAttribute = "msDS-cloudExtensionAttribute16";
+                    RSACertificateAttribute = "msDS-cloudExtensionAttribute17";
                     PublicKeyCredentialAttribute = "otherMailBox";
 
                     break;
@@ -2002,17 +2010,21 @@ namespace Neos.IdentityServer.MultiFactor
                     MethodAttribute  = "msDS-cloudExtensionAttribute13";
                     OverrideMethodAttribute = "msDS-cloudExtensionAttribute14";
                     TotpEnabledAttribute  = "msDS-cloudExtensionAttribute18";
-                    PublicKeyCredentialAttribute  = "msDS-KeyCredentialLink"; 
+                    ClientCertificateAttribute = "msDS-cloudExtensionAttribute16";
+                    RSACertificateAttribute = "msDS-cloudExtensionAttribute17";
+                    PublicKeyCredentialAttribute = "msDS-KeyCredentialLink"; 
                     break;
                 case ADDSTemplateKind.MFASchemaVersion:
                     KeyAttribute = "MFA-TOTPKey";
                     MailAttribute = "MFA-TOTPEmail";
                     PhoneAttribute = "MFA-TOTPExternal";
-                    PinAttribute = "MFA-PIN";
-                    MethodAttribute = "MFA-Method";
+                    PinAttribute = "MFA-PinCode";
+                    MethodAttribute = "MFA-SelectedMethod";
                     OverrideMethodAttribute = "MFA-SpecificMethod";
-                    TotpEnabledAttribute = "MFA-Enabled";
-                    PublicKeyCredentialAttribute = "MFA-KeyCredentialLink";
+                    TotpEnabledAttribute = "MFA-EnabledStatus";
+                    PublicKeyCredentialAttribute = "MFA-WebAuthNCredential";
+                    ClientCertificateAttribute = "MFA-ClientCertificate";
+                    RSACertificateAttribute = "MFA-RSACertificate";
                     break;
             }
         }

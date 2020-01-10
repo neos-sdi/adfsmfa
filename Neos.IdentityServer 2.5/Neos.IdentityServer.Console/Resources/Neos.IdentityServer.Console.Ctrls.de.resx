@@ -615,4 +615,13 @@
   <data name="CTRLADTEMPLATEMFA" xml:space="preserve">
     <value>ADDS Schema MFA</value>
   </data>
+  <data name="CTRLADTEMPLATE2016ERROR" xml:space="preserve">
+    <value>Fehler beim Laden der Vorlage "2016", Sie müssen Ihre Attribute manuell aktualisieren !</value>
+  </data>
+  <data name="CTRLADTEMPLATEBASEERROR" xml:space="preserve">
+    <value>Fehler beim Laden der Vorlage "Standard", Sie müssen Ihre Attribute manuell aktualisieren !</value>
+  </data>
+  <data name="CTRLADTEMPLATEMFAERROR" xml:space="preserve">
+    <value>Fehler beim Laden der Vorlage "MFA", Sie müssen Ihre Attribute manuell aktualisieren !</value>
+  </data>
 </root>

@@ -313,12 +313,17 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <summary>
         /// SetADDSAttributesTemplate method implementation
         /// </summary>
-        internal static bool SetADDSAttributesTemplate(ADDSTemplateKind kind)
+        internal static bool SetADDSAttributesTemplate(ADDSTemplateKind kind, bool updatecfg = false)
         {
             try
             {
-                EnsureService();
-                Config.Hosts.ActiveDirectoryHost.ApplyAttributesTemplate(kind);
+                Initialize(null, true);
+                ADFSManager.EnsureLocalService();
+                ADFSManager.Config.Hosts.ActiveDirectoryHost.ApplyAttributesTemplate(kind);
+                if (updatecfg)
+                {
+                    ADFSManager.WriteConfiguration(null);
+                }
                 return true;
             }
             catch (Exception e)
