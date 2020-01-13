@@ -33,22 +33,23 @@ SharePoint Identity Service Application (Claim Provider for SharePoint 2013/2016
 ___
 ## Features
 * Localized UI French/English/Spanish/Italian/German/Dutch/Portuguese/Polish/Swedish/Romanian/Russian
+* TOTP, Email, Phone, Biometric, Azure Providers for MFA
 * Run with ADFS 2012 R2, 2016 and 2019
-* Enable self-registration
-* Enable self-registration with QR code (using component from  George Mamaladze and his team <https://qrcodenet.codeplex.com> Great Work !)
-* Enable custom change password.
 * Secret Keys length (Guid, 128, 256, 384 & 512 bytes) RNG generator
 * Secret Keys RSA encryption length (2048 bytes) RSA
 * Can use ADDS customizable attributes or Custom SQL-Server Database
 * Can send TOTP code by email (customizable template in resources)
 * Can send TOTP code by sms (customizable and extensible with API)
 * Can send TOTP code using Authenticator Apps like MS Authenticator, Google Authentication and more
+* Biometric authentication (WebAuthN/FIDO2) (using component from Anders Åberg, Alex Seigler and others <https://github.com/abergs/fido2-net-lib> Great Work !)
+* Enable self-registration
+* Enable self-registration with QR code (using component from  George Mamaladze and his team <https://qrcodenet.codeplex.com> Great Work !)
+* Enable custom change password.
 * Can work with ADDS multi-forests with trust relationships when using ADDS Storage mode
 * Can work with LDAP 3.0 Providers (ADFS2016/2019) when using SQL Storage mode
 * Full sample for Azure MFA (additional configuration tasks and costs implied)
 * Developers can easily extend this component for other verification modes (Azure MFA, RSA,…) with the IExternalProvider, IExternalOTPProvider (deprecated), ISecretKeyManager interfaces
 * Full support for ADFS 2019 themes
-* Biometric authentication (WebAuthN) for version 2.5
 
 ## Remarks
 * Due to security, solution must be signed in Visual Studio with a certificate .pfx
