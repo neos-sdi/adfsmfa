@@ -77,6 +77,7 @@
     <Compile Include="Neos.IdentityServer.MultiFactor.ProvidersWrapper.cs" />
     <Compile Include="Neos.IdentityServer.Multifactor.ResourcesManager.cs" />
     <Compile Include="Neos.IdentityServer.MultiFactor.RNG.cs" />
+    <Compile Include="Neos.IdentityServer.MultiFactor.RSA2.cs" />
     <Compile Include="Neos.IdentityServer.MultiFactor.RSA.cs" />
     <Compile Include="Neos.IdentityServer.MultiFactor.Utilities.cs" />
     <Compile Include="Neos.IdentityServer.Mutifactor.Interface.cs" />

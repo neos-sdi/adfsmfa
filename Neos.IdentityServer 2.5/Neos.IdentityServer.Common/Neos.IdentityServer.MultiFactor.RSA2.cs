@@ -1,19 +1,17 @@
-﻿using Neos.IdentityServer.MultiFactor;
-using Neos.IdentityServer.MultiFactor.Data;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
+using Neos.IdentityServer.MultiFactor.Data;
+using System.Diagnostics;
 
-namespace Neos.IdentityServer.Multifactor.Keys
+namespace Neos.IdentityServer.MultiFactor.Common
 {
     /// <summary>
-    /// DBKeyManagerCreator class
+    /// RSAKeyManagerCreator class
     /// </summary>
-    internal class DBKeyManagerCreator: ISecretKeyManagerCreator
+    internal class RSA2KeyManagerCreator : ISecretKeyManagerCreator
     {
         /// <summary>
         /// CreateKeyManager method
@@ -21,20 +19,17 @@ namespace Neos.IdentityServer.Multifactor.Keys
         public ISecretKeyManager CreateInstance(SecretKeyVersion version)
         {
             if (version == SecretKeyVersion.V2)
-                return new DBKeyManager.RSADBKeyManagerV2();
+                return new RSA2KeyManager.RSA2KeyManagerV2();
             else
-                return new DBKeyManager.RSADBKeyManagerV1();
+                return new RSA2KeyManager.RSA2KeyManagerV1();
         }
     }
 
     /// <summary>
-    /// DBKeyManager class
+    /// RSAKeyManager class
     /// </summary>
-    internal abstract class DBKeyManager : ISecretKeyManager, IDataRepositorySQLConnection
+    internal abstract class RSA2KeyManager : ISecretKeyManager
     {
-        private string _connectionstring;
-        private string _dataparameters;
-        private int _validity;
         private MFAConfig _config = null;
         private KeySizeMode _ksize = KeySizeMode.KeySize1024;
         private KeysRepositoryService _repos = null;
@@ -42,12 +37,12 @@ namespace Neos.IdentityServer.Multifactor.Keys
         private string _xorsecret = XORUtilities.XORKey;
 
         /// <summary>
-        /// DBKeyManager constructor
+        /// RSA2KeyManager constructor
         /// limit creation by KeyManager
         /// </summary>
-        protected DBKeyManager()
+        protected RSA2KeyManager()
         {
-            Trace.TraceInformation("DBKeyManager()");
+            Trace.TraceInformation("RSA2KeyManager()");
         }
 
         /// <summary>
@@ -56,13 +51,13 @@ namespace Neos.IdentityServer.Multifactor.Keys
         public void Initialize(MFAConfig config)
         {
             _config = config;
-            _connectionstring = config.KeysConfig.ExternalKeyManager.ConnectionString;
-            _dataparameters = config.KeysConfig.ExternalKeyManager.Parameters.Data;
-            _validity = config.KeysConfig.CertificateValidity;
             _ksize = config.KeysConfig.KeySize;
             if (!string.IsNullOrEmpty(config.KeysConfig.XORSecret))
                 _xorsecret = config.KeysConfig.XORSecret;
-            _repos = new DBKeysRepositoryService(_config);
+            if (_config.UseActiveDirectory)
+                _repos = new ADDSKeysRepositoryService(_config);
+            else
+                _repos = new SQLKeysRepositoryService(_config);
             switch (_ksize)
             {
                 case KeySizeMode.KeySize128:
@@ -102,7 +97,7 @@ namespace Neos.IdentityServer.Multifactor.Keys
         /// </summary>
         public string Prefix
         {
-            get { return "custom://"; }
+            get { return "rsa2://"; }
         }
 
         /// <summary>
@@ -112,15 +107,6 @@ namespace Neos.IdentityServer.Multifactor.Keys
         {
             get { return _xorsecret; }
         }
-
-        /// <summary>
-        /// CheckConnection method implementation
-        /// </summary>
-        public bool CheckConnection(string connectionstring)
-        {
-            return (KeysStorage as IDataRepositorySQLConnection).CheckConnection(connectionstring);
-        }
-
 
         #region Storage Methods
         /// <summary>
@@ -155,8 +141,8 @@ namespace Neos.IdentityServer.Multifactor.Keys
 
         #endregion
 
-        #region RSAKeyManagerV1
-        internal class RSADBKeyManagerV1 : DBKeyManager
+        #region RSA2KeyManagerV1
+        internal class RSA2KeyManagerV1 : RSA2KeyManager
         {
             /// <summary>
             /// NewKey method implementation
@@ -166,18 +152,16 @@ namespace Neos.IdentityServer.Multifactor.Keys
                 if (string.IsNullOrEmpty(upn))
                     return null;
                 string lupn = upn.ToLower();
-                string strcert = string.Empty;
 
                 byte[] crypted = null;
-                using (var prov = new Encryption(_xorsecret))
+                using (var prov = new RSAEncryption(_xorsecret))
                 {
-                    prov.Certificate = KeysStorage.CreateCertificate(lupn, _validity, out strcert, false);
                     crypted = prov.Encrypt(lupn);
                     if (crypted == null)
                         return null;
                 }
                 string outkey = AddKeyPrefix(System.Convert.ToBase64String(crypted));
-                return KeysStorage.NewUserKey(lupn, outkey, strcert);
+                return KeysStorage.NewUserKey(lupn, outkey);
             }
 
             #region Crypting V1 methods
@@ -215,8 +199,6 @@ namespace Neos.IdentityServer.Multifactor.Keys
                         byte[] crypted = System.Convert.FromBase64CharArray(xkey.ToCharArray(), 0, xkey.Length);
                         if (crypted == null)
                             return false;
-
-                        prov.Certificate = KeysStorage.GetUserCertificate(lupn, false);
                         byte[] cleared = prov.Decrypt(crypted, lupn);
 
                         if (cleared == null)
@@ -295,8 +277,8 @@ namespace Neos.IdentityServer.Multifactor.Keys
         }
         #endregion
 
-        #region RSAKeyManagerV2
-        internal class RSADBKeyManagerV2 : DBKeyManager
+        #region RSA2KeyManagerV2
+        internal class RSA2KeyManagerV2 : RSA2KeyManager
         {
             /// <summary>
             /// NewKey method implementation
@@ -306,17 +288,16 @@ namespace Neos.IdentityServer.Multifactor.Keys
                 if (string.IsNullOrEmpty(upn))
                     return null;
                 string lupn = upn.ToLower();
-                string strcert = string.Empty;
+
                 byte[] crypted = null;
                 using (var prov = new RSAEncryption(_xorsecret))
                 {
-                    prov.Certificate = KeysStorage.CreateCertificate(lupn, _validity, out strcert, true);
                     crypted = prov.Encrypt(lupn);
                     if (crypted == null)
                         return null;
                 }
                 string outkey = AddStorageInfos(crypted);
-                return KeysStorage.NewUserKey(lupn, outkey, strcert);
+                return KeysStorage.NewUserKey(lupn, outkey);
             }
 
             #region Crypting methods
@@ -339,7 +320,6 @@ namespace Neos.IdentityServer.Multifactor.Keys
                     if (crypted == null)
                         return null;
 
-                    prov.Certificate = KeysStorage.GetUserCertificate(lupn, true);
                     cleared = prov.Decrypt(crypted, lupn);
                     if (cleared == null)
                         return null;
@@ -372,8 +352,6 @@ namespace Neos.IdentityServer.Multifactor.Keys
                         byte[] crypted = StripStorageInfos(key);
                         if (crypted == null)
                             return false;
-
-                        prov.Certificate = KeysStorage.GetUserCertificate(lupn, true);
                         byte[] cleared = prov.Decrypt(crypted, lupn);
 
                         if (cleared == null)
@@ -408,8 +386,6 @@ namespace Neos.IdentityServer.Multifactor.Keys
                     byte[] crypted = StripStorageInfos(key);
                     if (crypted == null)
                         return null;
-
-                    prov.Certificate = KeysStorage.GetUserCertificate(lupn, true);
                     probed = prov.Decrypt(crypted, lupn);
                     if (probed == null)
                         return null;

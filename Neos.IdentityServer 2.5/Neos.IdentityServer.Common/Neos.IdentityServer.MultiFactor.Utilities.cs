@@ -1505,6 +1505,11 @@ namespace Neos.IdentityServer.MultiFactor
                     _manager.Initialize(cfg);
                     _isloaded = true;
                     break;
+                case SecretKeyFormat.RSA2:
+                    _manager = new RSA2KeyManagerCreator().CreateInstance(cfg.KeysConfig.KeyVersion);
+                    _manager.Initialize(cfg);
+                    _isloaded = true;
+                    break;
                 case SecretKeyFormat.CUSTOM:
                     if (!string.IsNullOrEmpty(cfg.KeysConfig.ExternalKeyManager.FullQualifiedImplementation))
                     {
