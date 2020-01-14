@@ -326,6 +326,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         public int CertificateValidity  { get; set; }
         public FlatExternalKeyManager ExternalKeyManager  { get; set; }
         public string XORSecret { get; set; }
+        public bool CertificatePerUser { get; set; }
 
         /// <summary>
         /// Update method implmentation
@@ -338,6 +339,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             IsDirty = cfg.IsDirty;
             this.CertificateThumbprint = keys.CertificateThumbprint;
             this.CertificateValidity = keys.CertificateValidity;
+            this.CertificatePerUser = keys.CertificatePerUser;
             this.KeysFormat = keys.KeyFormat;
             this.KeyGenerator = keys.KeyGenerator;
             this.LibVersion = keys.KeyVersion;
@@ -357,6 +359,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             cfg.IsDirty = true;
             keys.CertificateThumbprint = this.CertificateThumbprint;
             keys.CertificateValidity = this.CertificateValidity;
+            keys.CertificatePerUser = this.CertificatePerUser;
             keys.KeyFormat = this.KeysFormat;
             keys.KeyGenerator = this.KeyGenerator;
             keys.KeyVersion = this.LibVersion;

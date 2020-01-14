@@ -156,11 +156,11 @@
   <data name="CTRLADATPINERROR" xml:space="preserve">
     <value>Invalid ADDS attribute for pin code !</value>
   </data>
+  <data name="CTRLADATRSACERTERROR" xml:space="preserve">
+    <value>Invalid ADDS attribute for RSA certificate !</value>
+  </data>
   <data name="CTRLADATTACCOUNT" xml:space="preserve">
     <value>Invalid ADDS account !</value>
-  </data>
-  <data name="CTRLADATTCODE" xml:space="preserve">
-    <value>TOTP Verification code</value>
   </data>
   <data name="CTRLADATTDOMAIN" xml:space="preserve">
     <value>Invalid ADDS domain address !</value>
@@ -179,9 +179,6 @@
   </data>
   <data name="CTRLADATTMETHOD" xml:space="preserve">
     <value>Default MFA method</value>
-  </data>
-  <data name="CTRLADATTOTPERROR" xml:space="preserve">
-    <value>Invalid ADDS attribute for TOTP !</value>
   </data>
   <data name="CTRLADATTOVERRIDE" xml:space="preserve">
     <value>Override MFA method</value>
@@ -203,6 +200,9 @@
   </data>
   <data name="CTRLADATTRIBUTES" xml:space="preserve">
     <value>Active Directory Attributes Settings</value>
+  </data>
+  <data name="CTRLADATTRSACERT" xml:space="preserve">
+    <value>RSA User Certificate </value>
   </data>
   <data name="CTRLADATTSTATUS" xml:space="preserve">
     <value>User activation status</value>
@@ -241,7 +241,7 @@
     <value>Error when loading "2016" template, you must update manually your attributes !</value>
   </data>
   <data name="CTRLADTEMPLATEBASE" xml:space="preserve">
-    <value>ADDS Schema default</value>
+    <value>ADDS Schema 2012--</value>
   </data>
   <data name="CTRLADTEMPLATEBASEERROR" xml:space="preserve">
     <value>Error when loading "Default" template, you must update manually your attributes !</value>
@@ -413,6 +413,9 @@
   </data>
   <data name="CTRLSECCERTIFICATES" xml:space="preserve">
     <value>Certificates</value>
+  </data>
+  <data name="CTRLSECCERTPERUSER" xml:space="preserve">
+    <value>Use one certificate per user</value>
   </data>
   <data name="CTRLSECINVALIDCERT" xml:space="preserve">
     <value>Certificate not found !</value>

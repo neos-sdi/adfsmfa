@@ -166,4 +166,7 @@
   <data name="label4.Text" xml:space="preserve">
     <value>Mot de passe :</value>
   </data>
+  <data name="OKBtn.Text" xml:space="preserve">
+    <value>D'accord</value>
+  </data>
 </root>

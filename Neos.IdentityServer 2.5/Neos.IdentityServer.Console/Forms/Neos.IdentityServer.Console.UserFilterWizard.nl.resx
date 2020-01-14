@@ -144,4 +144,7 @@
   <data name="label4.Text" xml:space="preserve">
     <value>Identificatiemethode:</value>
   </data>
+  <data name="BTNOk.Text" xml:space="preserve">
+    <value>OK</value>
+  </data>
 </root>

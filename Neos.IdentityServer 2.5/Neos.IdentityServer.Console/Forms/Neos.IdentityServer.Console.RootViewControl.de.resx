@@ -117,31 +117,35 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="USERSFRMACTIVATE" xml:space="preserve">
-    <value>Activar</value>
+  <data name="GlobalViewlabel.Text" xml:space="preserve">
+    <value>Übersicht</value>
   </data>
-  <data name="USERSFRMACTIVATEDESC" xml:space="preserve">
-    <value>Habilite MFA para el usuario seleccionado.</value>
+  <data name="GlobalViewLabelText.Text" xml:space="preserve">
+    <value>Die MFA-Erweiterung für ADFS 2012R2 / 2016 / 2019 ermöglicht die verwendungsfreien Multi-Faktor-Authentifizierung (2FA) ohne zusätzliche Kosten</value>
   </data>
-  <data name="USERSFRMADECTIVATEDESC" xml:space="preserve">
-    <value>Desactive MFA para el usuario seleccionado.</value>
+  <data name="linkLabel1.Text" xml:space="preserve">
+    <value>http://www.neos-sdi.com</value>
   </data>
-  <data name="USERSFRMCONFIRMDELETE" xml:space="preserve">
-    <value>¿Realmente desea eliminar este elemento?</value>
+  <data name="linkLabel2.Text" xml:space="preserve">
+    <value>https://adfsmfa.codeplex.com</value>
   </data>
-  <data name="USERSFRMDEACTIVATE" xml:space="preserve">
-    <value>Desactivar</value>
+  <data name="linkLabel3.Text" xml:space="preserve">
+    <value>https://github.com/neos-sdi/adfsmfa/releases</value>
   </data>
-  <data name="USERSFRMPROPERTIES" xml:space="preserve">
-    <value>Propiedades</value>
-  </data>
-  <data name="USERSFRMPROPERTIESDESC" xml:space="preserve">
-    <value>Propiedades del usuario</value>
-  </data>
-  <data name="USERSFRMSLECTMULTIPLE" xml:space="preserve">
-    <value>Selección múltiple</value>
-  </data>
-  <data name="USERSFRMDEACTIVATEDESC" xml:space="preserve">
-    <value>Deshabilite MFA para el usuario seleccionado.</value>
+  <data name="richTextBox1.Text" xml:space="preserve">
+    <value>Copyright (c) 2019 Neos-Sdi (http://www.neos-sdi.com)                                                                                                                                    
+                                                                                                                                                                                          
+Die Genehmigung wird hiermit kostenlos jedem Personen erteilt, die eine Kopie dieser Software und der zugehörigen Dokumentationsdateien (die "Software") erhalten.                                       
+die Software ohne Einschränkung zu handeln, einschließlich, aber nicht beschränkt auf die Rechte zur Nutzung, Kopie, Änderung, Zusammenführung, Veröffentlichung, Verteilung, Unterlizenzierung und/oder zum Verkauf von Kopien der Software,   
+und Personen, denen die Software zur Ergebracht wird, dies unter folgenden Bedingungen zu gestatten:                                                                                   
+                                                                                                                                                                                          
+Der oben genannte Copyright-Hinweis und dieser Genehmigungshinweis sind in allen Kopien oder wesentlichen Teilen der Software enthalten.                                                          
+                                                                                                                                                                                          
+DIE SOFTWARE WIRD "WIE BESEHEN", OHNE GEWÄHRLEISTUNG JEGLICHER ART, AUSDRÜCKLICH ODER STILLSCHWEIGEND, EINSCHLIEßLICH, ABER NICHT BESCHRÄNKT AUF DIE GEWÄHRLEISTUNG DER MARKTGÄNGLICHKEIT, ZUR VERFÜGUNG GESTELLT.                                      
+FITNESS FÜR EINE PARTICULAR PURPOSE UND NONINFRINGEMENT. IN KEINEM FALL HAFTEN DIE AUTOREN ODER URHEBERRECHTSINHABER FÜR ANSPRÜCHE, SCHÄDEN ODER ANDERE                            
+IN EINER AKTION VON CONTRACT, TORT ODER OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE ODER THE USE ODER OTHER DEALINGS IN THE SOFTWARE.                               
+                                                                                                                                                                                          
+https://adfsmfa.codeplex.com                                                                                                                                                             
+https://github.com/neos-sdi/adfsmfa</value>
   </data>
 </root>

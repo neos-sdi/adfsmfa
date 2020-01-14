@@ -123,4 +123,7 @@
   <data name="SMSVALIDSAVE" xml:space="preserve">
     <value>Czy anulować zmiany i przeładować dane?</value>
   </data>
+  <data name="ProviderTitle.Text" xml:space="preserve">
+    <value>Konfiguracja {0}</value>
+  </data>
 </root>

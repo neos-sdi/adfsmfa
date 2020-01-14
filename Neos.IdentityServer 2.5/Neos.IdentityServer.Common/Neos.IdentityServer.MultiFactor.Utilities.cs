@@ -1501,12 +1501,10 @@ namespace Neos.IdentityServer.MultiFactor
                     _isloaded = true;
                     break;
                 case SecretKeyFormat.RSA:
-                    _manager = new RSAKeyManagerCreator().CreateInstance(cfg.KeysConfig.KeyVersion);
-                    _manager.Initialize(cfg);
-                    _isloaded = true;
-                    break;
-                case SecretKeyFormat.RSA2:
-                    _manager = new RSA2KeyManagerCreator().CreateInstance(cfg.KeysConfig.KeyVersion);
+                    if (!cfg.KeysConfig.CertificatePerUser)
+                        _manager = new RSAKeyManagerCreator().CreateInstance(cfg.KeysConfig.KeyVersion);
+                    else
+                        _manager = new RSA2KeyManagerCreator().CreateInstance(cfg.KeysConfig.KeyVersion);
                     _manager.Initialize(cfg);
                     _isloaded = true;
                     break;
@@ -2689,33 +2687,6 @@ namespace Neos.IdentityServer.MultiFactor
                 return "****";
             }
         }
-
-        /// <summary>
-        /// CheckSum method implementation
-        /// </summary>
-        public static byte[] CheckSum(string value)
-        {
-            byte[] hash = null;
-            using (System.Security.Cryptography.MD5 md5 = System.Security.Cryptography.MD5.Create())
-            {
-                hash = md5.ComputeHash(Encoding.UTF8.GetBytes(value));
-            }
-            return hash;
-        }
-
-        /// <summary>
-        /// CheckSum method implementation
-        /// </summary>
-        public static string CheckSumAsString(string value)
-        {
-            string hash = null;
-            using (System.Security.Cryptography.MD5 md5 = System.Security.Cryptography.MD5.Create())
-            {
-                hash = BitConverter.ToString(md5.ComputeHash(Encoding.UTF8.GetBytes(value)));
-            }
-            return hash.Replace("-", String.Empty);
-        }
-
 
         /// <summary>
         /// CanCancelWizard method implementation

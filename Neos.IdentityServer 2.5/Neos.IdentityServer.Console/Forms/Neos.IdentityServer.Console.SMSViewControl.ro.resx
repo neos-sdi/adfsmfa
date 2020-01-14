@@ -123,4 +123,7 @@
   <data name="SMSVALIDSAVE" xml:space="preserve">
     <value>Anulați modificările și Reîncărcați datele?</value>
   </data>
+  <data name="ProviderTitle.Text" xml:space="preserve">
+    <value>Configurarea {0}</value>
+  </data>
 </root>

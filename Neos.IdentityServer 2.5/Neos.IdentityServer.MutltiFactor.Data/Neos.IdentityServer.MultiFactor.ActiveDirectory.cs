@@ -1561,8 +1561,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                              {
                                  if (DirEntry.Properties["objectGUID"].Value != null)
                                  {
-                                     if (ADDSUtils.GetMultiValued(DirEntry.Properties[_host.KeyAttribute], _keysismulti) != null)
-                                         ret = ADDSUtils.GetMultiValued(DirEntry.Properties[_host.KeyAttribute], _keysismulti);
+                                    ret = DirEntry.Properties[_host.KeyAttribute].Value.ToString();
                                  }
                                  else
                                      return string.Empty;
@@ -1582,7 +1581,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
          /// <summary>
          /// NewUserKey method implmentation
          /// </summary>
-         public override string NewUserKey(string upn, string secretkey, string cert = null)
+         public override string NewUserKey(string upn, string secretkey, X509Certificate2 cert = null)
          {
              string ret = string.Empty;
              try
@@ -1601,7 +1600,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                          {
                              using (DirectoryEntry DirEntry = ADDSUtils.GetDirectoryEntry(_host, sr))
                              {
-                                 ADDSUtils.SetMultiValued(DirEntry.Properties[_host.KeyAttribute], _keysismulti, secretkey);
+                                 DirEntry.Properties[_host.KeyAttribute].Value = secretkey;
                                  DirEntry.CommitChanges();
                                  ret = secretkey;
                              };
@@ -1643,6 +1642,9 @@ namespace Neos.IdentityServer.MultiFactor.Data
                                  if (DirEntry.Properties["objectGUID"].Value != null)
                                  {
                                      DirEntry.Properties[_host.KeyAttribute].Clear();
+                                     DirEntry.Properties[_host.RSACertificateAttribute].Clear();
+                                     PropertyValueCollection props = DirEntry.Properties[_host.PublicKeyCredentialAttribute];
+                                     props.Clear();
                                      DirEntry.CommitChanges();
                                      ret = true;
                                  }
@@ -1670,9 +1672,8 @@ namespace Neos.IdentityServer.MultiFactor.Data
          /// <summary>
          /// CreateCertificate implementation
          /// </summary>
-         public override X509Certificate2 CreateCertificate(string upn, int validity, out string strcert, bool generatepassword = false)
+         public override X509Certificate2 CreateCertificate(string upn, int validity, bool generatepassword = false)
          {
-             strcert = null;
              return null;
          }
 
@@ -1697,6 +1698,275 @@ namespace Neos.IdentityServer.MultiFactor.Data
     }
     #endregion
 
+    #region ADDS Keys2 Service
+    internal class ADDSKeys2RepositoryService : KeysRepositoryService
+    {
+        private ADDSHost _host;
+        private readonly bool _keysisbinary = false;
+        /// <summary>
+        /// ADDSKeysRepositoryService constructor
+        /// </summary>
+        public ADDSKeys2RepositoryService(MFAConfig cfg)
+        {
+            _host = cfg.Hosts.ActiveDirectoryHost;
+            _keysisbinary = ADDSUtils.IsBinaryAttribute(_host.DomainName, _host.Account, _host.Password, _host.RSACertificateAttribute);
+        }
+
+        #region Keys Management
+        /// <summary>
+        /// GetUserKey method implmentation
+        /// </summary>
+        public override string GetUserKey(string upn)
+        {
+            string ret = string.Empty;
+            try
+            {
+                using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUPN(_host, upn))
+                {
+                    string qryldap = string.Empty;
+                    qryldap = "(&(objectCategory=user)(objectClass=user)(userprincipalname=" + upn + ")(" + _host.KeyAttribute + "=*)(!(userAccountControl:1.2.840.113556.1.4.803:=2)))";
+                    using (DirectorySearcher dsusr = new DirectorySearcher(rootdir, qryldap))
+                    {
+                        dsusr.PropertiesToLoad.Clear();
+                        dsusr.PropertiesToLoad.Add("objectGUID");
+                        dsusr.PropertiesToLoad.Add("userPrincipalName");
+                        dsusr.PropertiesToLoad.Add(_host.KeyAttribute);
+
+                        SearchResult sr = dsusr.FindOne();
+                        if (sr != null)
+                        {
+                            using (DirectoryEntry DirEntry = ADDSUtils.GetDirectoryEntry(_host, sr))
+                            {
+                                if (DirEntry.Properties["objectGUID"].Value != null)
+                                {
+                                    ret = DirEntry.Properties[_host.KeyAttribute].Value.ToString();
+                                }
+                                else
+                                    return string.Empty;
+                            };
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                DataLog.WriteEntry(ex.Message, System.Diagnostics.EventLogEntryType.Error, 5000);
+                throw new Exception(ex.Message);
+            }
+            return ret;
+        }
+
+        /// <summary>
+        /// NewUserKey method implmentation
+        /// </summary>
+        public override string NewUserKey(string upn, string secretkey, X509Certificate2 cert = null)
+        {
+            string ret = string.Empty;
+            try
+            {
+                using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUPN(_host, upn))
+                {
+                    string qryldap = "(&(objectCategory=user)(objectClass=user)(userprincipalname=" + upn + ")(!(userAccountControl:1.2.840.113556.1.4.803:=2)))";
+                    using (DirectorySearcher dsusr = new DirectorySearcher(rootdir, qryldap))
+                    {
+                        dsusr.PropertiesToLoad.Clear();
+                        dsusr.PropertiesToLoad.Add("userPrincipalName");
+                        dsusr.PropertiesToLoad.Add(_host.KeyAttribute);
+                        dsusr.PropertiesToLoad.Add(_host.RSACertificateAttribute);
+
+                        SearchResult sr = dsusr.FindOne();
+                        if (sr != null)
+                        {
+                            using (DirectoryEntry DirEntry = ADDSUtils.GetDirectoryEntry(_host, sr))
+                            {
+                                DirEntry.Properties[_host.KeyAttribute].Value = secretkey;
+                                byte[] data = cert.Export(X509ContentType.Pfx, CheckSumEncoding.CheckSumAsString(upn));
+                                if (_keysisbinary)
+                                    DirEntry.Properties[_host.RSACertificateAttribute].Value = data;
+                                else
+                                    DirEntry.Properties[_host.RSACertificateAttribute].Value = Convert.ToBase64String(data);
+                                DirEntry.CommitChanges();
+                                ret = secretkey;
+                            };
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                DataLog.WriteEntry(ex.Message, System.Diagnostics.EventLogEntryType.Error, 5000);
+                throw new Exception(ex.Message);
+            }
+            return ret;
+        }
+
+        /// <summary>
+        /// RemoveUserKey method implmentation
+        /// </summary>
+        public override bool RemoveUserKey(string upn)
+        {
+            bool ret = false;
+            try
+            {
+                using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUPN(_host, upn))
+                {
+                    string qryldap = "(&(objectCategory=user)(objectClass=user)(userprincipalname=" + upn + ")(!(userAccountControl:1.2.840.113556.1.4.803:=2)))";
+                    using (DirectorySearcher dsusr = new DirectorySearcher(rootdir, qryldap))
+                    {
+                        dsusr.PropertiesToLoad.Clear();
+                        dsusr.PropertiesToLoad.Add("objectGUID");
+                        dsusr.PropertiesToLoad.Add("userPrincipalName");
+                        dsusr.PropertiesToLoad.Add(_host.KeyAttribute);
+                        dsusr.PropertiesToLoad.Add(_host.RSACertificateAttribute);
+
+                        SearchResult sr = dsusr.FindOne();
+                        if (sr != null)
+                        {
+                            using (DirectoryEntry DirEntry = ADDSUtils.GetDirectoryEntry(_host, sr))
+                            {
+                                if (DirEntry.Properties["objectGUID"].Value != null)
+                                {
+                                    DirEntry.Properties[_host.KeyAttribute].Clear();
+                                    DirEntry.Properties[_host.RSACertificateAttribute].Clear();
+                                    PropertyValueCollection props = DirEntry.Properties[_host.PublicKeyCredentialAttribute];
+                                    props.Clear();
+                                    DirEntry.CommitChanges();
+                                    ret = true;
+                                }
+                            };
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                DataLog.WriteEntry(ex.Message, System.Diagnostics.EventLogEntryType.Error, 5000);
+                throw new Exception(ex.Message);
+            }
+            return ret;
+        }
+
+        /// <summary>
+        /// GetUserCertificate implementation
+        /// </summary>
+        public override X509Certificate2 GetUserCertificate(string upn, bool generatepassword = false)
+        {
+            try
+            {
+                using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUPN(_host, upn))
+                {
+                    string qryldap = "(&(objectCategory=user)(objectClass=user)(userprincipalname=" + upn + ")(!(userAccountControl:1.2.840.113556.1.4.803:=2)))";
+                    using (DirectorySearcher dsusr = new DirectorySearcher(rootdir, qryldap))
+                    {
+                        dsusr.PropertiesToLoad.Clear();
+                        dsusr.PropertiesToLoad.Add("objectGUID");
+                        dsusr.PropertiesToLoad.Add("userPrincipalName");
+                        dsusr.PropertiesToLoad.Add(_host.KeyAttribute);
+                        dsusr.PropertiesToLoad.Add(_host.RSACertificateAttribute);
+
+                        SearchResult sr = dsusr.FindOne();
+                        if (sr != null)
+                        {
+                            string pass = string.Empty;
+                            if (generatepassword)
+                               pass = CheckSumEncoding.CheckSumAsString(upn);
+                            using (DirectoryEntry DirEntry = ADDSUtils.GetDirectoryEntry(_host, sr))
+                            {
+                                if (DirEntry.Properties["objectGUID"].Value != null)
+                                {
+                                    if (_keysisbinary)
+                                    {
+                                        byte[] b = (Byte[])DirEntry.Properties[_host.RSACertificateAttribute].Value;
+                                        return new X509Certificate2(b, pass, X509KeyStorageFlags.Exportable | X509KeyStorageFlags.PersistKeySet);
+                                    }
+                                    else
+                                    {
+                                        string b = DirEntry.Properties[_host.RSACertificateAttribute].Value.ToString();
+                                        return new X509Certificate2(Convert.FromBase64String(b), pass, X509KeyStorageFlags.Exportable | X509KeyStorageFlags.PersistKeySet);
+                                    }
+                                }
+                            };
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                DataLog.WriteEntry(ex.Message, System.Diagnostics.EventLogEntryType.Error, 5000);
+                throw new Exception(ex.Message);
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// CreateCertificate implementation
+        /// </summary>
+        public override X509Certificate2 CreateCertificate(string upn, int validity, bool generatepassword = false)
+        {
+            string pass = string.Empty;
+            string strcert = string.Empty;
+            if (generatepassword)
+                pass = CheckSumEncoding.CheckSumAsString(upn);
+            strcert = Certs.CreateSelfSignedCertificateAsString(upn.ToLower(), validity, pass);
+            X509Certificate2 cert = new X509Certificate2(Convert.FromBase64String(strcert), pass, X509KeyStorageFlags.Exportable | X509KeyStorageFlags.PersistKeySet);
+            if (Certs.RemoveSelfSignedCertificate(cert))
+                return cert;
+            else
+                return null;
+        }
+
+
+        /// <summary>
+        /// HasStoredKey method implmentation 
+        /// </summary>
+        public override bool HasStoredKey(string upn)
+        {
+            try
+            {
+                using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUPN(_host, upn))
+                {
+                    string qryldap = "(&(objectCategory=user)(objectClass=user)(userprincipalname=" + upn + ")(!(userAccountControl:1.2.840.113556.1.4.803:=2)))";
+                    using (DirectorySearcher dsusr = new DirectorySearcher(rootdir, qryldap))
+                    {
+                        dsusr.PropertiesToLoad.Clear();
+                        dsusr.PropertiesToLoad.Add("objectGUID");
+                        dsusr.PropertiesToLoad.Add("userPrincipalName");
+                        dsusr.PropertiesToLoad.Add(_host.RSACertificateAttribute);
+
+                        SearchResult sr = dsusr.FindOne();
+                        if (sr != null)
+                        {
+                            using (DirectoryEntry DirEntry = ADDSUtils.GetDirectoryEntry(_host, sr))
+                            {
+                                if (DirEntry.Properties["objectGUID"].Value != null)
+                                {
+                                    return (DirEntry.Properties[_host.RSACertificateAttribute].Value != null);
+                                }
+                            };
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                DataLog.WriteEntry(ex.Message, System.Diagnostics.EventLogEntryType.Error, 5000);
+                throw new Exception(ex.Message);
+            }
+            return false;
+
+        }
+
+        /// <summary>
+        /// HasStoredCertificate method implmentation
+        /// </summary>
+        public override bool HasStoredCertificate(string upn)
+        {
+            return true;
+
+        }
+        #endregion
+    }
+    #endregion
     #region ADDS Utils
     internal static class ADDSUtils
     {
@@ -2027,6 +2297,47 @@ namespace Neos.IdentityServer.MultiFactor.Data
             }
             return false;
         }
+
+        /// <summary>
+        /// IsBinaryAttribute method implmentation
+        /// </summary>
+        internal static bool IsBinaryAttribute(string domainname, string username, string password, string attributename)
+        {
+            DirectoryContext ctx = null;
+            if (!string.IsNullOrEmpty(domainname))
+            {
+                if (!string.IsNullOrEmpty(username) || !string.IsNullOrEmpty(password))
+                    ctx = new DirectoryContext(DirectoryContextType.Domain, domainname, username, password);
+                else
+                    ctx = new DirectoryContext(DirectoryContextType.Domain, domainname);
+            }
+            else
+            {
+                if (!string.IsNullOrEmpty(username) || !string.IsNullOrEmpty(password))
+                    ctx = new DirectoryContext(DirectoryContextType.Domain, username, password);
+                else
+                    ctx = new DirectoryContext(DirectoryContextType.Domain);
+            }
+            if (ctx != null)
+            {
+                using (Domain dom = Domain.GetDomain(ctx))
+                {
+                    using (Forest forest = dom.Forest)
+                    {
+                        ActiveDirectorySchemaProperty property = forest.Schema.FindProperty(attributename);
+                        if (property != null)
+                        {
+                            if (property.Syntax.Equals(ActiveDirectorySyntax.OctetString))
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+
         #endregion
     }
     #endregion

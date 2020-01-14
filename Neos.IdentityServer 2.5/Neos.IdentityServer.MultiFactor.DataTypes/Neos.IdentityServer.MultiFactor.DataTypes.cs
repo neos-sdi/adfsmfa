@@ -1545,8 +1545,7 @@ namespace Neos.IdentityServer.MultiFactor
     {
         RNG = 0,
         RSA = 1,
-        CUSTOM = 2,
-        RSA2 = 3
+        CUSTOM = 2
     }
 
     /// <summary>

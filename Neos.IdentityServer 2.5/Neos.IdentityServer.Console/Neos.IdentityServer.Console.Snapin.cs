@@ -53,7 +53,6 @@ namespace Neos.IdentityServer.Console
         private ScopeNode ServiceSecurityNode;
         private ScopeNode ServiceRNGNode;
         private ScopeNode ServiceRSANode;
-        private ScopeNode ServiceRSAXNode;
         private ScopeNode ServiceWebAuthNNode;
         private ScopeNode UsersNode;
         private bool IsPrimary = true;
@@ -258,13 +257,13 @@ namespace Neos.IdentityServer.Console
                     this.ServiceRSANode.ViewDescriptions.DefaultIndex = 0;
 
                     // RSA CUST
-                    this.ServiceRSAXNode = new ServiceSecurityRSAXScopeNode();
+                   /* this.ServiceRSAXNode = new ServiceSecurityRSAXScopeNode();
                     FormViewDescription frsax = new FormViewDescription();
                     frsax.DisplayName = "RSA Extended Key Generator";
                     frsax.ControlType = typeof(ServiceSecurityRSAXViewControl);
                     frsax.ViewType = typeof(ServiceSecurityRSAXFormView);
                     this.ServiceRSAXNode.ViewDescriptions.Add(frsax);
-                    this.ServiceRSAXNode.ViewDescriptions.DefaultIndex = 0;
+                    this.ServiceRSAXNode.ViewDescriptions.DefaultIndex = 0; */
 
                     // WebAuthN
                     this.ServiceWebAuthNNode = new ServiceSecurityWebAuthNScopeNode();
@@ -372,7 +371,6 @@ namespace Neos.IdentityServer.Console
                     this.RootNode.Children.Add(this.ServiceSecurityNode);
                     this.ServiceSecurityNode.Children.Add(this.ServiceRNGNode);
                     this.ServiceSecurityNode.Children.Add(this.ServiceRSANode);
-                    this.ServiceSecurityNode.Children.Add(this.ServiceRSAXNode);
                     this.ServiceSecurityNode.Children.Add(this.ServiceWebAuthNNode);
 
                     this.RootNode.Children.Add(this.ServiceProvidersNode);
@@ -414,7 +412,6 @@ namespace Neos.IdentityServer.Console
                 ((RefreshableScopeNode)this.ServiceSecurityNode).RefreshUI();
                 ((RefreshableScopeNode)this.ServiceRNGNode).RefreshUI();
                 ((RefreshableScopeNode)this.ServiceRSANode).RefreshUI();
-                ((RefreshableScopeNode)this.ServiceRSAXNode).RefreshUI();
                 ((RefreshableScopeNode)this.ServiceWebAuthNNode).RefreshUI();
                 ((RefreshableScopeNode)this.ServiceProvidersNode).RefreshUI();
                 ((RefreshableScopeNode)this.ServiceTOTPNode).RefreshUI();

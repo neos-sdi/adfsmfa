@@ -31,6 +31,7 @@ using System.Security.Cryptography.X509Certificates;
 using Neos.IdentityServer.MultiFactor;
 using System.IO;
 using System.Runtime.Serialization;
+using Neos.IdentityServer.MultiFactor.Data;
 
 namespace Neos.IdentityServer.MultiFactor.SAS
 {

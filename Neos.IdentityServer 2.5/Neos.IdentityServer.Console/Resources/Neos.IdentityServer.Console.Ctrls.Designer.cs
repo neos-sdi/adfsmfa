@@ -178,20 +178,20 @@ namespace Neos.IdentityServer.Console.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Invalid ADDS attribute for RSA certificate !.
+        /// </summary>
+        internal static string CTRLADATRSACERTERROR {
+            get {
+                return ResourceManager.GetString("CTRLADATRSACERTERROR", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Invalid ADDS account !.
         /// </summary>
         internal static string CTRLADATTACCOUNT {
             get {
                 return ResourceManager.GetString("CTRLADATTACCOUNT", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à TOTP Verification code.
-        /// </summary>
-        internal static string CTRLADATTCODE {
-            get {
-                return ResourceManager.GetString("CTRLADATTCODE", resourceCulture);
             }
         }
         
@@ -246,15 +246,6 @@ namespace Neos.IdentityServer.Console.Resources {
         internal static string CTRLADATTMETHOD {
             get {
                 return ResourceManager.GetString("CTRLADATTMETHOD", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Invalid ADDS attribute for TOTP !.
-        /// </summary>
-        internal static string CTRLADATTOTPERROR {
-            get {
-                return ResourceManager.GetString("CTRLADATTOTPERROR", resourceCulture);
             }
         }
         
@@ -318,6 +309,15 @@ namespace Neos.IdentityServer.Console.Resources {
         internal static string CTRLADATTRIBUTES {
             get {
                 return ResourceManager.GetString("CTRLADATTRIBUTES", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à RSA User Certificate .
+        /// </summary>
+        internal static string CTRLADATTRSACERT {
+            get {
+                return ResourceManager.GetString("CTRLADATTRSACERT", resourceCulture);
             }
         }
         
@@ -430,7 +430,7 @@ namespace Neos.IdentityServer.Console.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à ADDS Schema default.
+        ///   Recherche une chaîne localisée semblable à ADDS Schema 2012--.
         /// </summary>
         internal static string CTRLADTEMPLATEBASE {
             get {
@@ -948,6 +948,15 @@ namespace Neos.IdentityServer.Console.Resources {
         internal static string CTRLSECCERTIFICATES {
             get {
                 return ResourceManager.GetString("CTRLSECCERTIFICATES", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Use one certificate per user.
+        /// </summary>
+        internal static string CTRLSECCERTPERUSER {
+            get {
+                return ResourceManager.GetString("CTRLSECCERTPERUSER", resourceCulture);
             }
         }
         

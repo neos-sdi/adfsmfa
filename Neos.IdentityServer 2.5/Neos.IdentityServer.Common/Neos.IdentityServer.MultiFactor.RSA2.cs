@@ -18,10 +18,7 @@ namespace Neos.IdentityServer.MultiFactor.Common
         /// </summary>
         public ISecretKeyManager CreateInstance(SecretKeyVersion version)
         {
-            if (version == SecretKeyVersion.V2)
-                return new RSA2KeyManager.RSA2KeyManagerV2();
-            else
-                return new RSA2KeyManager.RSA2KeyManagerV1();
+            return new RSA2KeyManager.RSA2KeyManagerV2();
         }
     }
 
@@ -34,6 +31,7 @@ namespace Neos.IdentityServer.MultiFactor.Common
         private KeySizeMode _ksize = KeySizeMode.KeySize1024;
         private KeysRepositoryService _repos = null;
         private int MAX_PROBE_LEN = 0;
+        private int _validity;
         private string _xorsecret = XORUtilities.XORKey;
 
         /// <summary>
@@ -52,12 +50,13 @@ namespace Neos.IdentityServer.MultiFactor.Common
         {
             _config = config;
             _ksize = config.KeysConfig.KeySize;
+            _validity = config.KeysConfig.CertificateValidity;
             if (!string.IsNullOrEmpty(config.KeysConfig.XORSecret))
                 _xorsecret = config.KeysConfig.XORSecret;
             if (_config.UseActiveDirectory)
-                _repos = new ADDSKeysRepositoryService(_config);
+                _repos = new ADDSKeys2RepositoryService(_config);
             else
-                _repos = new SQLKeysRepositoryService(_config);
+                _repos = new SQLKeys2RepositoryService(_config);
             switch (_ksize)
             {
                 case KeySizeMode.KeySize128:
@@ -140,143 +139,7 @@ namespace Neos.IdentityServer.MultiFactor.Common
         public abstract bool ValidateKey(string upn); 
 
         #endregion
-
-        #region RSA2KeyManagerV1
-        internal class RSA2KeyManagerV1 : RSA2KeyManager
-        {
-            /// <summary>
-            /// NewKey method implementation
-            /// </summary>
-            public override string NewKey(string upn)
-            {
-                if (string.IsNullOrEmpty(upn))
-                    return null;
-                string lupn = upn.ToLower();
-
-                byte[] crypted = null;
-                using (var prov = new RSAEncryption(_xorsecret))
-                {
-                    crypted = prov.Encrypt(lupn);
-                    if (crypted == null)
-                        return null;
-                }
-                string outkey = AddKeyPrefix(System.Convert.ToBase64String(crypted));
-                return KeysStorage.NewUserKey(lupn, outkey);
-            }
-
-            #region Crypting V1 methods
-            /// <summary>
-            /// EncodedKey method implementation
-            /// </summary>
-            public override string EncodedKey(string upn)
-            {
-                if (string.IsNullOrEmpty(upn))
-                    return null;
-                string lupn = upn.ToLower();
-                string full = StripKeyPrefix(ReadKey(lupn));
-                if (string.IsNullOrEmpty(full))
-                    return null;
-                if (full.Length > MAX_PROBE_LEN)
-                    return Base32.Encode(full.Substring(0, MAX_PROBE_LEN));
-                else
-                    return Base32.Encode(full);
-            }
-
-            /// <summary>
-            /// ValidateKeyV1 method implmentation
-            /// </summary>
-            public override bool ValidateKey(string upn)
-            {
-                if (string.IsNullOrEmpty(upn))
-                    return false;
-                string lupn = upn.ToLower();
-                string key = ReadKey(lupn);
-                if (HasKeyPrefix(key))
-                {
-                    using (var prov = new Encryption(_xorsecret))
-                    {
-                        string xkey = StripKeyPrefix(key);
-                        byte[] crypted = System.Convert.FromBase64CharArray(xkey.ToCharArray(), 0, xkey.Length);
-                        if (crypted == null)
-                            return false;
-                        byte[] cleared = prov.Decrypt(crypted, lupn);
-
-                        if (cleared == null)
-                            return false; // Key corrupted
-                        if (prov.CheckSum == null)
-                            return false; // Key corrupted
-                        if (prov.CheckSum.SequenceEqual(Utilities.CheckSum(lupn)))
-                            return true;  // OK RSA
-                        else
-                            return false; // Key corrupted
-                    }
-                }
-                else
-                    return false;
-            }
-
-            /// <summary>
-            /// ProbeKeyV1 method implmentation
-            /// </summary>
-            public override byte[] ProbeKey(string upn)
-            {
-                if (string.IsNullOrEmpty(upn))
-                    return null;
-                string lupn = upn.ToLower();
-                string full = StripKeyPrefix(ReadKey(lupn));
-                if (string.IsNullOrEmpty(full))
-                    return null;
-                if (full.Length > MAX_PROBE_LEN)
-                {
-                    byte[] bytes = new byte[MAX_PROBE_LEN * sizeof(char)];
-                    Buffer.BlockCopy(full.ToCharArray(), 0, bytes, 0, bytes.Length);
-                    return bytes;
-                }
-                else
-                {
-                    byte[] bytes = new byte[full.Length * sizeof(char)];
-                    Buffer.BlockCopy(full.ToCharArray(), 0, bytes, 0, bytes.Length);
-                    return bytes;
-                }
-            }
-
-            // <summary>
-            /// StripKeyPrefix method implementation
-            /// </summary>
-            private string StripKeyPrefix(string key)
-            {
-                if (string.IsNullOrEmpty(key))
-                    return null;
-                if (key.StartsWith(this.Prefix))
-                    key = key.Replace(this.Prefix, "");
-                return key;
-            }
-
-            /// <summary>
-            /// AddKeyPrefix method implementation
-            /// </summary>
-            private string AddKeyPrefix(string key)
-            {
-                if (string.IsNullOrEmpty(key))
-                    return null;
-                if (!key.StartsWith(this.Prefix))
-                    key = this.Prefix + key;
-                return key;
-            }
-
-            /// <summary>
-            /// HasKeyPrefix method implementation
-            /// </summary>
-            private bool HasKeyPrefix(string key)
-            {
-                if (string.IsNullOrEmpty(key))
-                    return false;
-                return key.StartsWith(this.Prefix);
-            }
-            #endregion
-        }
-        #endregion
-
+ 
         #region RSA2KeyManagerV2
         internal class RSA2KeyManagerV2 : RSA2KeyManager
         {
@@ -292,12 +155,13 @@ namespace Neos.IdentityServer.MultiFactor.Common
                 byte[] crypted = null;
                 using (var prov = new RSAEncryption(_xorsecret))
                 {
+                    prov.Certificate = KeysStorage.CreateCertificate(lupn, _validity, true);
                     crypted = prov.Encrypt(lupn);
                     if (crypted == null)
                         return null;
+                    string outkey = AddStorageInfos(crypted);
+                    return KeysStorage.NewUserKey(lupn, outkey, prov.Certificate);
                 }
-                string outkey = AddStorageInfos(crypted);
-                return KeysStorage.NewUserKey(lupn, outkey);
             }
 
             #region Crypting methods
@@ -319,7 +183,7 @@ namespace Neos.IdentityServer.MultiFactor.Common
                     byte[] crypted = StripStorageInfos(key);
                     if (crypted == null)
                         return null;
-
+                    prov.Certificate = KeysStorage.GetUserCertificate(lupn, true);
                     cleared = prov.Decrypt(crypted, lupn);
                     if (cleared == null)
                         return null;
@@ -352,13 +216,15 @@ namespace Neos.IdentityServer.MultiFactor.Common
                         byte[] crypted = StripStorageInfos(key);
                         if (crypted == null)
                             return false;
+
+                        prov.Certificate = KeysStorage.GetUserCertificate(lupn, true);
                         byte[] cleared = prov.Decrypt(crypted, lupn);
 
                         if (cleared == null)
                             return false; // Key corrupted
                         if (prov.CheckSum == null)
                             return false; // Key corrupted
-                        if (prov.CheckSum.SequenceEqual(Utilities.CheckSum(lupn)))
+                        if (prov.CheckSum.SequenceEqual(CheckSumEncoding.CheckSum(lupn)))
                             return true;  // OK RSA
                         else
                             return false; // Key corrupted
@@ -386,6 +252,8 @@ namespace Neos.IdentityServer.MultiFactor.Common
                     byte[] crypted = StripStorageInfos(key);
                     if (crypted == null)
                         return null;
+
+                    prov.Certificate = KeysStorage.GetUserCertificate(lupn, true);
                     probed = prov.Decrypt(crypted, lupn);
                     if (probed == null)
                         return null;

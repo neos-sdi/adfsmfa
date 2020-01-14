@@ -231,4 +231,7 @@
   <data name="&gt;&gt;tableLayoutPanel.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
+  <data name="ProviderTitle" xml:space="preserve">
+    <value>Configuration for {0}</value>
+  </data>
 </root>

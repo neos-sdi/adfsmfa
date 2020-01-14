@@ -153,4 +153,7 @@
   <data name="label4.Text" xml:space="preserve">
     <value>Lösenord:</value>
   </data>
+  <data name="OKBtn.Text" xml:space="preserve">
+    <value>Okej</value>
+  </data>
 </root>

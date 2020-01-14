@@ -159,9 +159,6 @@
   <data name="CTRLADATTACCOUNT" xml:space="preserve">
     <value>INvalid adiciona conta!</value>
   </data>
-  <data name="CTRLADATTCODE" xml:space="preserve">
-    <value>Código de verificação totp</value>
-  </data>
   <data name="CTRLADATTDOMAIN" xml:space="preserve">
     <value>INvalid adiciona endereço de domínio!</value>
   </data>
@@ -179,9 +176,6 @@
   </data>
   <data name="CTRLADATTMETHOD" xml:space="preserve">
     <value>Método Padrão de MFA</value>
-  </data>
-  <data name="CTRLADATTOTPERROR" xml:space="preserve">
-    <value>Adiciona atributo não válido para TOTP!</value>
   </data>
   <data name="CTRLADATTOVERRIDE" xml:space="preserve">
     <value>Método Sciciific do MFA</value>
@@ -607,13 +601,13 @@
     <value>Conexão rápida</value>
   </data>
   <data name="CTRLADTEMPLATE2016" xml:space="preserve">
-    <value>ADICIONA Schema 2016++</value>
+    <value>ADDS Schema 2016++</value>
   </data>
   <data name="CTRLADTEMPLATEBASE" xml:space="preserve">
-    <value>ADICIONA inadimplência do Esquema</value>
+    <value>ADDS Schema 2012--</value>
   </data>
   <data name="CTRLADTEMPLATEMFA" xml:space="preserve">
-    <value>ADICIONA MFA Schema</value>
+    <value>ADDS Schema MFA</value>
   </data>
   <data name="CTRLADTEMPLATE2016ERROR" xml:space="preserve">
     <value>Erro ao carregar o modelo "2016", você deve atualizar manualmente seus atributos !</value>
@@ -623,5 +617,14 @@
   </data>
   <data name="CTRLADTEMPLATEMFAERROR" xml:space="preserve">
     <value>Erro ao carregar o modelo "MFA", você deve atualizar manualmente seus atributos !</value>
+  </data>
+  <data name="CTRLSECCERTPERUSER" xml:space="preserve">
+    <value>Use um certificado por usuário</value>
+  </data>
+  <data name="CTRLADATTRSACERT" xml:space="preserve">
+    <value>Certificado de usuário RSA</value>
+  </data>
+  <data name="CTRLADATRSACERTERROR" xml:space="preserve">
+    <value>Inválido adiciona atributo para certificado RSA !</value>
   </data>
 </root>

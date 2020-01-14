@@ -166,18 +166,17 @@ namespace Neos.IdentityServer.Multifactor.Keys
                 if (string.IsNullOrEmpty(upn))
                     return null;
                 string lupn = upn.ToLower();
-                string strcert = string.Empty;
 
                 byte[] crypted = null;
                 using (var prov = new Encryption(_xorsecret))
                 {
-                    prov.Certificate = KeysStorage.CreateCertificate(lupn, _validity, out strcert, false);
+                    prov.Certificate = KeysStorage.CreateCertificate(lupn, _validity, false);
                     crypted = prov.Encrypt(lupn);
                     if (crypted == null)
                         return null;
+                    string outkey = AddKeyPrefix(System.Convert.ToBase64String(crypted));
+                    return KeysStorage.NewUserKey(lupn, outkey, prov.Certificate);
                 }
-                string outkey = AddKeyPrefix(System.Convert.ToBase64String(crypted));
-                return KeysStorage.NewUserKey(lupn, outkey, strcert);
             }
 
             #region Crypting V1 methods
@@ -223,7 +222,7 @@ namespace Neos.IdentityServer.Multifactor.Keys
                             return false; // Key corrupted
                         if (prov.CheckSum == null)
                             return false; // Key corrupted
-                        if (prov.CheckSum.SequenceEqual(Utilities.CheckSum(lupn)))
+                        if (prov.CheckSum.SequenceEqual(CheckSumEncoding.CheckSum(lupn)))
                             return true;  // OK RSA
                         else
                             return false; // Key corrupted
@@ -306,17 +305,16 @@ namespace Neos.IdentityServer.Multifactor.Keys
                 if (string.IsNullOrEmpty(upn))
                     return null;
                 string lupn = upn.ToLower();
-                string strcert = string.Empty;
                 byte[] crypted = null;
                 using (var prov = new RSAEncryption(_xorsecret))
                 {
-                    prov.Certificate = KeysStorage.CreateCertificate(lupn, _validity, out strcert, true);
+                    prov.Certificate = KeysStorage.CreateCertificate(lupn, _validity, true);
                     crypted = prov.Encrypt(lupn);
                     if (crypted == null)
                         return null;
+                    string outkey = AddStorageInfos(crypted);
+                    return KeysStorage.NewUserKey(lupn, outkey, prov.Certificate);
                 }
-                string outkey = AddStorageInfos(crypted);
-                return KeysStorage.NewUserKey(lupn, outkey, strcert);
             }
 
             #region Crypting methods
@@ -380,7 +378,7 @@ namespace Neos.IdentityServer.Multifactor.Keys
                             return false; // Key corrupted
                         if (prov.CheckSum == null)
                             return false; // Key corrupted
-                        if (prov.CheckSum.SequenceEqual(Utilities.CheckSum(lupn)))
+                        if (prov.CheckSum.SequenceEqual(CheckSumEncoding.CheckSum(lupn)))
                             return true;  // OK RSA
                         else
                             return false; // Key corrupted

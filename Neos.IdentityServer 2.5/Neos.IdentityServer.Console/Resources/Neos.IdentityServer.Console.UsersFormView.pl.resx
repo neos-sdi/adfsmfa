@@ -141,4 +141,7 @@
   <data name="USERSFRMSLECTMULTIPLE" xml:space="preserve">
     <value>Wybór wielokrotny</value>
   </data>
+  <data name="USERSFRMDEACTIVATEDESC" xml:space="preserve">
+    <value>Wyłącz MFA dla wybranego użytkownika.</value>
+  </data>
 </root>

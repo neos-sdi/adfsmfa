@@ -85,7 +85,7 @@ namespace Neos.IdentityServer.Multifactor.Keys
         /// <summary>
         /// NewUserKey method implmentation
         /// </summary>
-        public override string NewUserKey(string upn, string secretkey, string cert)
+        public override string NewUserKey(string upn, string secretkey, X509Certificate2 cert)
         {
             if (HasStoredKey(upn.ToLower()))
                 return DoUpdateUserKey(upn.ToLower(), secretkey, cert);
@@ -163,7 +163,7 @@ namespace Neos.IdentityServer.Multifactor.Keys
         {
             string pass = string.Empty;
             if (generatepassword)
-                pass = Utilities.CheckSumAsString(upn);
+                pass = CheckSumEncoding.CheckSumAsString(upn);
             string request = "SELECT CERTIFICATE FROM KEYS WHERE UPN=@UPN";
             SqlConnection con = new SqlConnection(_connectionstring);
             SqlCommand sql = new SqlCommand(request, con);
@@ -198,11 +198,12 @@ namespace Neos.IdentityServer.Multifactor.Keys
         /// <summary>
         /// CreateCertificate method implmentation
         /// </summary>
-        public override X509Certificate2 CreateCertificate(string upn, int validity, out string strcert, bool generatepassword = false)
+        public override X509Certificate2 CreateCertificate(string upn, int validity, bool generatepassword = false)
         {
             string pass = string.Empty;
+            string strcert = string.Empty;
             if (generatepassword)
-                pass = Utilities.CheckSumAsString(upn);
+                pass = CheckSumEncoding.CheckSumAsString(upn);
             strcert = Certs.CreateSelfSignedCertificateAsString(upn.ToLower(), validity, pass);
             X509Certificate2 cert = new X509Certificate2(Convert.FromBase64String(strcert), pass, X509KeyStorageFlags.Exportable | X509KeyStorageFlags.PersistKeySet);
             if (Certs.RemoveSelfSignedCertificate(cert))
@@ -252,7 +253,7 @@ namespace Neos.IdentityServer.Multifactor.Keys
         /// <summary>
         /// InsertStoredKey method implementation
         /// </summary>
-        private string DoInsertUserKey(string upn, string secretkey, string certificate)
+        private string DoInsertUserKey(string upn, string secretkey, X509Certificate2 certificate)
         {
             string request = "INSERT INTO KEYS (UPN, SECRETKEY, CERTIFICATE) VALUES (@UPN, @SECRETKEY, @CERTIFICATE)";
 
@@ -269,7 +270,7 @@ namespace Neos.IdentityServer.Multifactor.Keys
 
             SqlParameter pcert = new SqlParameter("@CERTIFICATE", SqlDbType.VarChar, 8000);
             sql.Parameters.Add(pcert);
-            pcert.Value = certificate;
+            pcert.Value = Convert.ToBase64String(certificate.Export(X509ContentType.Pfx, CheckSumEncoding.CheckSumAsString(upn)));
 
             con.Open();
             try
@@ -291,7 +292,7 @@ namespace Neos.IdentityServer.Multifactor.Keys
         /// <summary>
         /// UpdateStoredKey method implementation
         /// </summary>
-        private string DoUpdateUserKey(string upn, string secretkey, string certificate)
+        private string DoUpdateUserKey(string upn, string secretkey, X509Certificate2 certificate)
         {
             string request = "UPDATE KEYS SET SECRETKEY = @SECRETKEY, CERTIFICATE = @CERTIFICATE WHERE UPN=@UPN";
 
@@ -308,7 +309,8 @@ namespace Neos.IdentityServer.Multifactor.Keys
 
             SqlParameter pcert = new SqlParameter("@CERTIFICATE", SqlDbType.VarChar, 8000);
             sql.Parameters.Add(pcert);
-            pcert.Value = certificate;
+            pcert.Value = Convert.ToBase64String(certificate.Export(X509ContentType.Pfx, CheckSumEncoding.CheckSumAsString(upn)));
+
             con.Open();
             try
             {

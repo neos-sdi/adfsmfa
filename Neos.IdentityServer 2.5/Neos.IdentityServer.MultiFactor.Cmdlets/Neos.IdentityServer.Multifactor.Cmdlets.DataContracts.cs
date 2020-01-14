@@ -685,6 +685,11 @@ namespace MFA
         public string CertificateThumbprint { get; set; }
 
         /// <summary>
+        /// <para type="description">Use a distinct certificate for each user when using KeyFormat==RSA. each certificate is deployed on ADDS or SQL Database</para>
+        /// </summary>
+        public bool CertificatePerUser { get; set; }
+
+        /// <summary>
         /// <para type="description">Certificate validity duration in Years (5 by default)</para>
         /// </summary>
         public int CertificateValidity { get; set; }
@@ -716,6 +721,7 @@ namespace MFA
                 {
                     CertificateThumbprint = mgr.CertificateThumbprint,
                     CertificateValidity = mgr.CertificateValidity,
+                    CertificatePerUser = mgr.CertificatePerUser,
                     KeysFormat = (PSSecretKeyFormat)mgr.KeysFormat,
                     KeyGenerator = (PSKeyGeneratorMode)mgr.KeyGenerator,
                     LibVersion = (PSSecretKeyVersion)mgr.LibVersion,
@@ -741,6 +747,7 @@ namespace MFA
                     IsDirty = true,
                     CertificateThumbprint = mgr.CertificateThumbprint,
                     CertificateValidity = mgr.CertificateValidity,
+                    CertificatePerUser = mgr.CertificatePerUser,
                     KeysFormat = (SecretKeyFormat)mgr.KeysFormat,
                     KeyGenerator = (KeyGeneratorMode)mgr.KeyGenerator,
                     LibVersion = (SecretKeyVersion)mgr.LibVersion,

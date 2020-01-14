@@ -207,7 +207,7 @@ namespace Neos.IdentityServer.MultiFactor.Common
                             return false; // Key corrupted
                         if (prov.CheckSum == null)
                             return false; // Key corrupted
-                        if (prov.CheckSum.SequenceEqual(Utilities.CheckSum(lupn)))
+                        if (prov.CheckSum.SequenceEqual(CheckSumEncoding.CheckSum(lupn)))
                             return true;  // OK RSA
                         else
                             return false; // Key corrupted
@@ -360,7 +360,7 @@ namespace Neos.IdentityServer.MultiFactor.Common
                             return false; // Key corrupted
                         if (prov.CheckSum == null)
                             return false; // Key corrupted
-                        if (prov.CheckSum.SequenceEqual(Utilities.CheckSum(lupn)))
+                        if (prov.CheckSum.SequenceEqual(CheckSumEncoding.CheckSum(lupn)))
                             return true;  // OK RSA
                         else
                             return false; // Key corrupted

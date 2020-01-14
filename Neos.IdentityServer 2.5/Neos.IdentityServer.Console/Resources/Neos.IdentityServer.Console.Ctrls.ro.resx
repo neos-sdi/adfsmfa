@@ -159,9 +159,6 @@
   <data name="CTRLADATTACCOUNT" xml:space="preserve">
     <value>Cont adaugă nevalid!</value>
   </data>
-  <data name="CTRLADATTCODE" xml:space="preserve">
-    <value>Codul de verificare TOTP</value>
-  </data>
   <data name="CTRLADATTDOMAIN" xml:space="preserve">
     <value>INvalid adaugă adresa de domeniu!</value>
   </data>
@@ -179,9 +176,6 @@
   </data>
   <data name="CTRLADATTMETHOD" xml:space="preserve">
     <value>Metodă implicită MFA</value>
-  </data>
-  <data name="CTRLADATTOTPERROR" xml:space="preserve">
-    <value>ADAUGĂ atributul nu este valid pentru TOTP!</value>
   </data>
   <data name="CTRLADATTOVERRIDE" xml:space="preserve">
     <value>Metoda MFA sciciific</value>
@@ -607,13 +601,13 @@
     <value>Conexiune rapidă</value>
   </data>
   <data name="CTRLADTEMPLATE2016" xml:space="preserve">
-    <value>ADAUGĂ schema 2016 ++</value>
+    <value>ADDS schema 2016++</value>
   </data>
   <data name="CTRLADTEMPLATEBASE" xml:space="preserve">
-    <value>ADAUGĂ schema implicită</value>
+    <value>ADDS Schema 2012--</value>
   </data>
   <data name="CTRLADTEMPLATEMFA" xml:space="preserve">
-    <value>ADAUGĂ schema MFA</value>
+    <value>ADDS Schema MFA</value>
   </data>
   <data name="CTRLADTEMPLATE2016ERROR" xml:space="preserve">
     <value>Eroare la încărcarea șablonului "2016", trebuie să actualizați manual atributele !</value>
@@ -623,5 +617,14 @@
   </data>
   <data name="CTRLADTEMPLATEMFAERROR" xml:space="preserve">
     <value>Eroare la încărcarea "MFA" șablon, trebuie să actualizați manual atributele !</value>
+  </data>
+  <data name="CTRLSECCERTPERUSER" xml:space="preserve">
+    <value>Utilizarea unui certificat pentru fiecare utilizator</value>
+  </data>
+  <data name="CTRLADATTRSACERT" xml:space="preserve">
+    <value>Certificat de utilizator RSA</value>
+  </data>
+  <data name="CTRLADATRSACERTERROR" xml:space="preserve">
+    <value>Atributul adaugă nevalid pentru certificatul RSA!</value>
   </data>
 </root>

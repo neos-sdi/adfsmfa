@@ -53,7 +53,7 @@ using System.Runtime.Versioning;
 // en utilisant '*', comme indiqué ci-dessous :
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("2.5.0.0")]
-[assembly: AssemblyFileVersion("2.5.0.0006")]
+[assembly: AssemblyFileVersion("2.5.1.0000")]
 [assembly: AssemblyInformationalVersion("2.5.0.0")]
 [assembly: NeutralResourcesLanguageAttribute("en")]
 

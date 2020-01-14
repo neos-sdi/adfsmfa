@@ -172,10 +172,10 @@ namespace Neos.IdentityServer.MultiFactor.Data
     public abstract class KeysRepositoryService
     {
         public abstract string GetUserKey(string upn);
-        public abstract string NewUserKey(string upn, string secretkey, string cert = null);
+        public abstract string NewUserKey(string upn, string secretkey, X509Certificate2 cert = null);
         public abstract bool RemoveUserKey(string upn);
         public abstract X509Certificate2 GetUserCertificate(string upn, bool generatepassword = false);
-        public abstract X509Certificate2 CreateCertificate(string upn, int validity, out string strcert, bool generatepassword = false);
+        public abstract X509Certificate2 CreateCertificate(string upn, int validity, bool generatepassword = false);
         public abstract bool HasStoredKey(string upn);
         public abstract bool HasStoredCertificate(string upn);
     }

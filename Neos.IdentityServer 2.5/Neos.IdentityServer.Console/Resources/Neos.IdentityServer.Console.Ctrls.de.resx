@@ -159,9 +159,6 @@
   <data name="CTRLADATTACCOUNT" xml:space="preserve">
     <value>INvalid ADDS-Konto!</value>
   </data>
-  <data name="CTRLADATTCODE" xml:space="preserve">
-    <value>TOTP-Verifizierungscode</value>
-  </data>
   <data name="CTRLADATTDOMAIN" xml:space="preserve">
     <value>INvalid ADDS-Domänenadresse!</value>
   </data>
@@ -179,9 +176,6 @@
   </data>
   <data name="CTRLADATTMETHOD" xml:space="preserve">
     <value>Standard-MFA-Methode</value>
-  </data>
-  <data name="CTRLADATTOTPERROR" xml:space="preserve">
-    <value>ADDS-Attribut nicht gültig für TOTP</value>
   </data>
   <data name="CTRLADATTOVERRIDE" xml:space="preserve">
     <value>Wissenschaftliche MFA-Methode</value>
@@ -610,7 +604,7 @@
     <value>ADDS-Schema 2016++</value>
   </data>
   <data name="CTRLADTEMPLATEBASE" xml:space="preserve">
-    <value>ADDS-Schema-Standard</value>
+    <value>ADDS Schema 2012--</value>
   </data>
   <data name="CTRLADTEMPLATEMFA" xml:space="preserve">
     <value>ADDS Schema MFA</value>
@@ -623,5 +617,14 @@
   </data>
   <data name="CTRLADTEMPLATEMFAERROR" xml:space="preserve">
     <value>Fehler beim Laden der Vorlage "MFA", Sie müssen Ihre Attribute manuell aktualisieren !</value>
+  </data>
+  <data name="CTRLSECCERTPERUSER" xml:space="preserve">
+    <value>Verwenden eines Zertifikats pro Benutzer</value>
+  </data>
+  <data name="CTRLADATTRSACERT" xml:space="preserve">
+    <value>RSA-Benutzerzertifikat</value>
+  </data>
+  <data name="CTRLADATRSACERTERROR" xml:space="preserve">
+    <value>Ungültiges ADDS-Attribut für RSA-Zertifikat !</value>
   </data>
 </root>

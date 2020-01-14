@@ -141,4 +141,7 @@
   <data name="USERSFRMSLECTMULTIPLE" xml:space="preserve">
     <value>Flera val</value>
   </data>
+  <data name="USERSFRMDEACTIVATEDESC" xml:space="preserve">
+    <value>Inaktivera MFA för den valda användaren.</value>
+  </data>
 </root>

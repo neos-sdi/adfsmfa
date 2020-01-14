@@ -371,4 +371,35 @@
         P84nwVVURV8aifx/9ic9Ui6DBiMAAAAASUVORK5CYII=
 </value>
   </data>
+  <data name="GlobalViewlabel.Text" xml:space="preserve">
+    <value>Visión general</value>
+  </data>
+  <data name="GlobalViewLabelText.Text" xml:space="preserve">
+    <value>La extensión MFA para ADFS 2012R2 / 2016 / 2019 permite utilizar la autenticación multifactor (2FA) sin costo adicional</value>
+  </data>
+  <data name="linkLabel1.Text" xml:space="preserve">
+    <value>http://www.neos-sdi.com</value>
+  </data>
+  <data name="linkLabel2.Text" xml:space="preserve">
+    <value>https://adfsmfa.codeplex.com</value>
+  </data>
+  <data name="linkLabel3.Text" xml:space="preserve">
+    <value>https://github.com/neos-sdi/adfsmfa/releases</value>
+  </data>
+  <data name="richTextBox1.Text" xml:space="preserve">
+    <value>Copyright (c) 2019 Neos-Sdi (http://www.neos-sdi.com)                                                                                                                                    
+                                                                                                                                                                                          
+Por la presente se concede permiso, de forma gratuita, a cualquier persona que obtenga una copia de este software y los archivos de documentación asociados (el "Software"),                                       
+para tratar en el Software sin restricciones, incluidos, entre otros, los derechos de uso, copia, modificación, fusión, publicación, distribución, sublicencia y/o venta de copias del Software,   
+y permitir que las personas a las que se proporciona el Software lo hagan, con sujeción a las siguientes condiciones:                                                                                   
+                                                                                                                                                                                          
+El aviso de copyright anterior y este aviso de permiso se incluirán en todas las copias o partes sustanciales del Software.                                                          
+                                                                                                                                                                                          
+EL SOFTWARE SE PROPORCIONA "TAL CUAL", SIN GARANTIA DE NINGUNA TIPO, EXPRESA O IMPLICA, INCLUYENDO, PERO NO LIMITADO A LAS GARANTIAS DE COMERCIABILIDAD,                                      
+IDONEIDAD PARA UN FIN PARTICULAR Y NO INFRACCIóN. EN NINGUNA CASO LOS AUTORES O PROPIETARIOS DE DERECHOS DE COPYRIGHT SE RESPONSABILIZAN POR NINGUNA RECLAMO, DAños U OTRA RESPONSABILIDAD,                            
+YA SEA EN UNA ACCION DE CONTRATO, TORT U OTRA FORMA, QUE SURJA DE, FUERA O EN RELACIóN CON EL SOFTWARE O EL USO U OTROS TRATAMIENTOS EN EL SOFTWARE.                               
+                                                                                                                                                                                          
+https://adfsmfa.codeplex.com                                                                                                                                                             
+https://github.com/neos-sdi/adfsmfa</value>
+  </data>
 </root>

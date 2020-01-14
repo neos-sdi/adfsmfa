@@ -480,7 +480,6 @@ namespace Neos.IdentityServer.MultiFactor
         private string _country = "fr";
         private int _maxretries = 3;
         private string _issuer;
-        private ADFSUserInterfaceKind _adfsuikind = ADFSUserInterfaceKind.Default;      
 
         /// <summary>
         /// Constructor
@@ -534,6 +533,7 @@ namespace Neos.IdentityServer.MultiFactor
                 KeysConfig.KeyFormat = SecretKeyFormat.RNG;
                 KeysConfig.KeySize = KeySizeMode.KeySize1024;
                 KeysConfig.CertificateThumbprint = Thumbprint.Empty;
+                KeysConfig.CertificatePerUser = false;
                 KeysConfig.ExternalKeyManager.FullQualifiedImplementation = "Neos.IdentityServer.Multifactor.Keys.DBKeyManagerCreator, Neos.IdentityServer.Multifactor.Keys.Sample, Version=2.5.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2";
                 KeysConfig.ExternalKeyManager.Parameters.Data = "your parameters here !";
                 KeysConfig.ExternalKeyManager.ConnectionString = "Persist Security Info=False;Integrated Security=SSPI;Initial Catalog=yourdatabase;Data Source=yourserverinstance";
@@ -654,6 +654,7 @@ namespace Neos.IdentityServer.MultiFactor
                 KeysConfig.KeyGenerator = KeyGeneratorMode.ClientSecret512;
                 KeysConfig.KeyFormat = SecretKeyFormat.RNG;
                 KeysConfig.KeySize = KeySizeMode.KeySize1024;
+                KeysConfig.CertificatePerUser = false;
                 if (!Thumbprint.IsValid(this.KeysConfig.CertificateThumbprint))
                     KeysConfig.CertificateThumbprint = Thumbprint.Empty;
                 if (this.KeysConfig.ExternalKeyManager != null)
@@ -783,11 +784,7 @@ namespace Neos.IdentityServer.MultiFactor
         public ConfigAdvertising AdvertisingDays { get; set; } = new ConfigAdvertising(1, 31);
 
         [XmlElement("UiKind")]
-        public ADFSUserInterfaceKind UiKind
-        {
-            get { return _adfsuikind; }
-            set { _adfsuikind = value; }
-        }
+        public ADFSUserInterfaceKind UiKind { get; set; } = ADFSUserInterfaceKind.Default;
 
         [XmlElement("UseUIPaginated")]
         public bool UseUIPaginated { get; set; } = false;
@@ -857,34 +854,16 @@ namespace Neos.IdentityServer.MultiFactor
     /// </summary>
     public class KeysManagerConfig
     {
-        private SecretKeyFormat _keyformat = SecretKeyFormat.RSA;
-        private KeyGeneratorMode _fgen = KeyGeneratorMode.ClientSecret512;
-        private KeySizeMode _ksize = KeySizeMode.KeySize1024;
         private string _thumbprint;
-        private ExternalKeyManagerConfig _ckeymgr;
-        private int _validity = 5;
-        private SecretKeyVersion _keyversion = SecretKeyVersion.V2;
 
         [XmlAttribute("KeyGenerator")]
-        public KeyGeneratorMode KeyGenerator
-        {
-            get { return _fgen; }
-            set { _fgen = value; }
-        }
+        public KeyGeneratorMode KeyGenerator { get; set; } = KeyGeneratorMode.ClientSecret512;
 
         [XmlAttribute("KeyFormat")]
-        public SecretKeyFormat KeyFormat
-        {
-            get { return _keyformat; }
-            set { _keyformat = value; }
-        }
+        public SecretKeyFormat KeyFormat { get; set; } = SecretKeyFormat.RSA;
 
         [XmlAttribute("KeyVersion")]
-        public SecretKeyVersion KeyVersion
-        {
-            get { return _keyversion; }
-            set { _keyversion = value; }
-        }
+        public SecretKeyVersion KeyVersion { get; set; } = SecretKeyVersion.V2;
 
         [XmlAttribute("XORSecret")]
         public string XORSecret
@@ -892,6 +871,9 @@ namespace Neos.IdentityServer.MultiFactor
             get { return XORUtilities.XORKey; }
             set { XORUtilities.XORKey = value; }
         }
+
+        [XmlAttribute("CertificatePerUser")]
+        public bool CertificatePerUser { get; set; } = false;
 
         [XmlAttribute("CertificateThumbprint")]
         public string CertificateThumbprint
@@ -907,25 +889,13 @@ namespace Neos.IdentityServer.MultiFactor
         }
 
         [XmlAttribute("CertificateValidity")]
-        public int CertificateValidity
-        {
-            get { return _validity; }
-            set { _validity = value; }
-        }
+        public int CertificateValidity { get; set; } = 5;
 
         [XmlAttribute("KeySize")]
-        public KeySizeMode KeySize
-        {
-            get { return _ksize; }
-            set { _ksize = value; }
-        }
+        public KeySizeMode KeySize { get; set; } = KeySizeMode.KeySize1024;
 
         [XmlElement("ExternalKeyManager")]
-        public ExternalKeyManagerConfig ExternalKeyManager
-        {
-            get { return _ckeymgr; }
-            set { _ckeymgr = value; }
-        }
+        public ExternalKeyManagerConfig ExternalKeyManager { get; set; }
     }
 
     public class ExternalKeyManagerConfig

@@ -159,9 +159,6 @@
   <data name="CTRLADATTACCOUNT" xml:space="preserve">
     <value>Nieprawidłowe konto dodane!</value>
   </data>
-  <data name="CTRLADATTCODE" xml:space="preserve">
-    <value>Kod weryfikacyjny TOTP</value>
-  </data>
   <data name="CTRLADATTDOMAIN" xml:space="preserve">
     <value>Nieprawidłowy dodaje adres domeny!</value>
   </data>
@@ -179,9 +176,6 @@
   </data>
   <data name="CTRLADATTMETHOD" xml:space="preserve">
     <value>Domyślna metoda MFA</value>
-  </data>
-  <data name="CTRLADATTOTPERROR" xml:space="preserve">
-    <value>Atrybut dodaje nie jest prawidłowy dla TOTP!</value>
   </data>
   <data name="CTRLADATTOVERRIDE" xml:space="preserve">
     <value>Metoda sciciific MFA</value>
@@ -607,13 +601,13 @@
     <value>Szybkie połączenie</value>
   </data>
   <data name="CTRLADTEMPLATE2016" xml:space="preserve">
-    <value>DODAJE schematu 2016 ++</value>
+    <value>ADDS schematu 2016++</value>
   </data>
   <data name="CTRLADTEMPLATEBASE" xml:space="preserve">
-    <value>DODAJE domyślny schemat</value>
+    <value>ADDS Schema 2012--</value>
   </data>
   <data name="CTRLADTEMPLATEMFA" xml:space="preserve">
-    <value>DODAJE MFA schematu</value>
+    <value>ADDS Schema MFA</value>
   </data>
   <data name="CTRLADTEMPLATE2016ERROR" xml:space="preserve">
     <value>Błąd podczas ładowania "2016" szablon, należy zaktualizować ręcznie swoje atrybuty !</value>
@@ -623,5 +617,14 @@
   </data>
   <data name="CTRLADTEMPLATEMFAERROR" xml:space="preserve">
     <value>Błąd podczas ładowania "MFA" szablon, należy zaktualizować ręcznie swoje atrybuty!</value>
+  </data>
+  <data name="CTRLSECCERTPERUSER" xml:space="preserve">
+    <value>Użyj jednego certyfikatu na użytkownika</value>
+  </data>
+  <data name="CTRLADATTRSACERT" xml:space="preserve">
+    <value>Certyfikat użytkownika RSA</value>
+  </data>
+  <data name="CTRLADATRSACERTERROR" xml:space="preserve">
+    <value>Nieprawidłowy atrybut dodaje dla certyfikatu RSA!</value>
   </data>
 </root>

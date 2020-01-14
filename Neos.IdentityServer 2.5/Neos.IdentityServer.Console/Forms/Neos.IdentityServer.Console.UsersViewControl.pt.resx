@@ -135,4 +135,10 @@
   <data name="uPNDataGridViewTextBoxColumn.HeaderText" xml:space="preserve">
     <value>Usuário</value>
   </data>
+  <data name="iDDataGridViewTextBoxColumn.HeaderText" xml:space="preserve">
+    <value>Id</value>
+  </data>
+  <data name="secretKeyDataGridViewTextBoxColumn.HeaderText" xml:space="preserve">
+    <value>SecretKey SecretKey</value>
+  </data>
 </root>

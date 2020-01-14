@@ -123,4 +123,7 @@
   <data name="SMSVALIDSAVE" xml:space="preserve">
     <value>Отмена изменений и перезагрузка данных?</value>
   </data>
+  <data name="ProviderTitle.Text" xml:space="preserve">
+    <value>Конфигурация для {0}</value>
+  </data>
 </root>

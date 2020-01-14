@@ -54,7 +54,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
             SqlConnection con = new SqlConnection(_connectionstring);
             SqlCommand sql = new SqlCommand(request, con);
 
-            SqlParameter prm = new SqlParameter("@UPN", SqlDbType.VarChar);
+            SqlParameter prm = new SqlParameter("@UPN", SqlDbType.VarChar, 256);
             sql.Parameters.Add(prm);
             prm.Value = upn;
 
@@ -152,7 +152,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                 prm6.Value = reg.Enabled;
             }
 
-            SqlParameter prm7 = new SqlParameter("@UPN", SqlDbType.VarChar);
+            SqlParameter prm7 = new SqlParameter("@UPN", SqlDbType.VarChar, 256);
             sql.Parameters.Add(prm7);
             prm7.Value = reg.UPN;
             con.Open();
@@ -190,7 +190,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
             SqlConnection con = new SqlConnection(_connectionstring);
             SqlCommand sql = new SqlCommand(request, con);
 
-            SqlParameter prm1 = new SqlParameter("@UPN", SqlDbType.VarChar);
+            SqlParameter prm1 = new SqlParameter("@UPN", SqlDbType.VarChar, 256);
             sql.Parameters.Add(prm1);
             prm1.Value = reg.UPN;
 
@@ -264,7 +264,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
             SqlConnection con = new SqlConnection(_connectionstring);
             SqlCommand sql = new SqlCommand(request, con);
 
-            SqlParameter prm = new SqlParameter("@UPN", SqlDbType.VarChar);
+            SqlParameter prm = new SqlParameter("@UPN", SqlDbType.VarChar, 256);
             sql.Parameters.Add(prm);
             prm.Value = reg.UPN;
             con.Open();
@@ -297,7 +297,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
             SqlConnection con = new SqlConnection(_connectionstring);
             SqlCommand sql = new SqlCommand(request, con);
 
-            SqlParameter prm5 = new SqlParameter("@UPN", SqlDbType.VarChar);
+            SqlParameter prm5 = new SqlParameter("@UPN", SqlDbType.VarChar, 256);
             sql.Parameters.Add(prm5);
             prm5.Value = reg.UPN;
             con.Open();
@@ -331,7 +331,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
             SqlConnection con = new SqlConnection(_connectionstring);
             SqlCommand sql = new SqlCommand(request, con);
 
-            SqlParameter prm5 = new SqlParameter("@UPN", SqlDbType.VarChar);
+            SqlParameter prm5 = new SqlParameter("@UPN", SqlDbType.VarChar, 256);
             sql.Parameters.Add(prm5);
             prm5.Value = reg.UPN;
             con.Open();
@@ -1060,7 +1060,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
             SqlConnection con = new SqlConnection(_connectionstring);
             SqlCommand sql = new SqlCommand(request, con);
 
-            SqlParameter prm = new SqlParameter("@UPN", SqlDbType.VarChar);
+            SqlParameter prm = new SqlParameter("@UPN", SqlDbType.VarChar, 256);
             sql.Parameters.Add(prm);
             prm.Value = upn;
 
@@ -1092,7 +1092,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// <summary>
         /// NewUserKey method implmentation
         /// </summary>
-        public override string NewUserKey(string upn, string secretkey, string cert = null)
+        public override string NewUserKey(string upn, string secretkey, X509Certificate2 cert = null)
         {
             if (SQLUtils.IsMFAUserRegistered(_host, upn.ToLower()))
                 return DoUpdateUserKey(upn.ToLower(), secretkey);
@@ -1105,27 +1105,47 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// </summary>
         public override bool RemoveUserKey(string upn)
         {
-            string request = "UPDATE REGISTRATIONS SET SECRETKEY = NULL WHERE UPN=@UPN";
+            string request1 = "UPDATE REGISTRATIONS SET SECRETKEY = NULL WHERE UPN=@UPN";
+            string request2 = "DELETE FROM KEYS WHERE UPN=@UPN AND KIND=1";
+            string request3 = "DELETE FROM KEYDESCS WHERE UPN=@UPN";
 
             SqlConnection con = new SqlConnection(_connectionstring);
-            SqlCommand sql = new SqlCommand(request, con);
-
-            SqlParameter prm2 = new SqlParameter("@UPN", SqlDbType.VarChar, 8000);
-            sql.Parameters.Add(prm2);
-            prm2.Value = upn.ToLower();
             con.Open();
+            SqlTransaction trans = con.BeginTransaction();
             try
             {
-                int res = sql.ExecuteNonQuery();
-                return (res == 1);
+
+                SqlCommand sql1 = new SqlCommand(request1, con, trans);
+                SqlCommand sql2 = new SqlCommand(request2, con, trans);
+                SqlCommand sql3 = new SqlCommand(request3, con, trans);
+
+                SqlParameter prm1 = new SqlParameter("@UPN", SqlDbType.VarChar, 256);
+                sql1.Parameters.Add(prm1);
+                prm1.Value = upn.ToLower();
+
+                SqlParameter prm2 = new SqlParameter("@UPN", SqlDbType.VarChar, 256);
+                sql2.Parameters.Add(prm2);
+                prm2.Value = upn.ToLower();
+
+                SqlParameter prm3 = new SqlParameter("@UPN", SqlDbType.VarChar, 256);
+                sql3.Parameters.Add(prm3);
+                prm3.Value = upn.ToLower();
+
+
+                int res1 = sql1.ExecuteNonQuery();
+                int res2 = sql2.ExecuteNonQuery();
+                int res3 = sql3.ExecuteNonQuery();
+                return (res1 == 1);
             }
             catch (Exception ex)
             {
                 DataLog.WriteEntry(ex.Message, System.Diagnostics.EventLogEntryType.Error, 5000);
+                trans.Rollback();
                 throw new Exception(ex.Message);
             }
             finally
             {
+                trans.Commit();
                 con.Close();
             }
         }
@@ -1141,9 +1161,8 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// <summary>
         /// CreateCertificate implementation
         /// </summary>
-        public override X509Certificate2 CreateCertificate(string upn, int validity, out string strcert, bool generatepassword = false)
+        public override X509Certificate2 CreateCertificate(string upn, int validity, bool generatepassword = false)
         {
-            strcert = null;
             return null;
         }
 
@@ -1182,7 +1201,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
             else
                 prm1.Value = secretkey;
 
-            SqlParameter prm2 = new SqlParameter("@UPN", SqlDbType.VarChar);
+            SqlParameter prm2 = new SqlParameter("@UPN", SqlDbType.VarChar, 256);
             sql.Parameters.Add(prm2);
             prm2.Value = upn.ToLower();
             con.Open();
@@ -1219,7 +1238,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
             else
                 prm1.Value = secretkey;
 
-            SqlParameter prm2 = new SqlParameter("@UPN", SqlDbType.VarChar);
+            SqlParameter prm2 = new SqlParameter("@UPN", SqlDbType.VarChar, 256);
             sql.Parameters.Add(prm2);
             prm2.Value = upn;
             con.Open();
@@ -1234,6 +1253,358 @@ namespace Neos.IdentityServer.MultiFactor.Data
             }
             finally
             {
+                con.Close();
+            }
+            return secretkey;
+        }
+        #endregion
+
+        /// <summary>
+        /// CheckConnection method implementation
+        /// </summary>
+        public bool CheckConnection(string connectionstring)
+        {
+            SqlConnection con;
+            if (string.IsNullOrEmpty(connectionstring))
+                return false;
+            if (!connectionstring.ToLower().Contains("connection timeout="))
+                connectionstring += ";Connection Timeout=2";
+            con = new SqlConnection(connectionstring);
+            try
+            {
+                con.Open();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            finally
+            {
+                con.Close();
+            }
+        }
+    }
+    #endregion
+
+    #region SQL Keys2 Repository
+    internal class SQLKeys2RepositoryService : KeysRepositoryService, IDataRepositorySQLConnection
+    {
+        private SQLServerHost _host;
+        private readonly string _connectionstring;
+
+        /// <summary>
+        /// ADDSKeysRepositoryService constructor
+        /// </summary>
+        public SQLKeys2RepositoryService(MFAConfig cfg)
+        {
+            _host = cfg.Hosts.SQLServerHost;
+            _connectionstring = _host.ConnectionString;
+        }
+
+        #region Key Management
+        /// <summary>
+        /// GetUserKey method implmentation
+        /// </summary>
+        public override string GetUserKey(string upn)
+        {
+            string request = "SELECT SECRETKEY FROM REGISTRATIONS WHERE UPN=@UPN";
+            SqlConnection con = new SqlConnection(_connectionstring);
+            SqlCommand sql = new SqlCommand(request, con);
+
+            SqlParameter prm = new SqlParameter("@UPN", SqlDbType.VarChar, 256);
+            sql.Parameters.Add(prm);
+            prm.Value = upn;
+
+            string ret = string.Empty;
+            con.Open();
+            try
+            {
+                SqlDataReader rd = sql.ExecuteReader();
+                if (rd.Read())
+                {
+                    if (!rd.IsDBNull(0))
+                        ret = rd.GetString(0);
+                    return ret;
+                }
+                else
+                    return null;
+            }
+            catch (Exception ex)
+            {
+                DataLog.WriteEntry(ex.Message, System.Diagnostics.EventLogEntryType.Error, 5000);
+                throw new Exception(ex.Message);
+            }
+            finally
+            {
+                con.Close();
+            }
+        }
+
+        /// <summary>
+        /// NewUserKey method implmentation
+        /// </summary>
+        public override string NewUserKey(string upn, string secretkey, X509Certificate2 cert = null)
+        {
+            if (SQLUtils.IsMFAUserRegistered(_host, upn.ToLower()))
+                return DoUpdateUserKey(upn.ToLower(), secretkey, cert);
+            else
+                return DoInsertUserKey(upn.ToLower(), secretkey, cert);
+        }
+
+        /// <summary>
+        /// RemoveUserKey method implmentation
+        /// </summary>
+        public override bool RemoveUserKey(string upn)
+        {
+            string request1 = "UPDATE REGISTRATIONS SET SECRETKEY = NULL WHERE UPN=@UPN";
+            string request2 = "DELETE FROM KEYS WHERE UPN=@UPN AND KIND=1";
+            string request3 = "DELETE FROM KEYDESCS WHERE UPN=@UPN";
+
+            SqlConnection con = new SqlConnection(_connectionstring);
+            con.Open();
+            SqlTransaction trans = con.BeginTransaction();
+            try
+            {
+
+                SqlCommand sql1 = new SqlCommand(request1, con, trans);
+                SqlCommand sql2 = new SqlCommand(request2, con, trans);
+                SqlCommand sql3 = new SqlCommand(request3, con, trans);
+
+                SqlParameter prm1 = new SqlParameter("@UPN", SqlDbType.VarChar, 256);
+                sql1.Parameters.Add(prm1);
+                prm1.Value = upn.ToLower();
+
+                SqlParameter prm2 = new SqlParameter("@UPN", SqlDbType.VarChar, 256);
+                sql2.Parameters.Add(prm2);
+                prm2.Value = upn.ToLower();
+
+                SqlParameter prm3 = new SqlParameter("@UPN", SqlDbType.VarChar, 256);
+                sql3.Parameters.Add(prm3);
+                prm3.Value = upn.ToLower();
+
+
+                int res1 = sql1.ExecuteNonQuery();
+                int res2 = sql2.ExecuteNonQuery();
+                int res3 = sql3.ExecuteNonQuery();
+                return ((res1 == 1) && (res2 == 1));
+            }
+            catch (Exception ex)
+            {
+                DataLog.WriteEntry(ex.Message, System.Diagnostics.EventLogEntryType.Error, 5000);
+                trans.Rollback();
+                throw new Exception(ex.Message);
+            }
+            finally
+            {
+                trans.Commit();
+                con.Close();
+            }
+        }
+
+        /// <summary>
+        /// GetUserCertificate implementation
+        /// </summary>
+        public override X509Certificate2 GetUserCertificate(string upn, bool generatepassword = false)
+        {
+            string request = "SELECT CERTIFICATE FROM KEYS WHERE UPN=@UPN AND KIND=1";
+            SqlConnection con = new SqlConnection(_connectionstring);
+            SqlCommand sql = new SqlCommand(request, con);
+
+            SqlParameter prm = new SqlParameter("@UPN", SqlDbType.VarChar, 256);
+            sql.Parameters.Add(prm);
+            prm.Value = upn;
+
+            string ret = string.Empty;
+            con.Open();
+            try
+            {
+                SqlDataReader rd = sql.ExecuteReader();
+                if (rd.Read())
+                {
+                    string pass = string.Empty;
+                    if (generatepassword)
+                        pass = CheckSumEncoding.CheckSumAsString(upn);
+                    if (!rd.IsDBNull(0))
+                    {
+                        string strcert = rd.GetString(0);
+                        X509Certificate2 cert = new X509Certificate2(Convert.FromBase64String(strcert), pass, X509KeyStorageFlags.Exportable | X509KeyStorageFlags.PersistKeySet);
+                        return cert;
+                    }
+                    else
+                        return null;
+                }
+                else
+                    return null;
+            }
+            catch (Exception ex)
+            {
+                DataLog.WriteEntry(ex.Message, System.Diagnostics.EventLogEntryType.Error, 5000);
+                throw new Exception(ex.Message);
+            }
+            finally
+            {
+                con.Close();
+            }
+        }
+
+        /// <summary>
+        /// CreateCertificate implementation
+        /// </summary>
+        public override X509Certificate2 CreateCertificate(string upn, int validity, bool generatepassword = false)
+        {
+            string pass = string.Empty;
+            string strcert = string.Empty;
+            if (generatepassword)
+                pass = CheckSumEncoding.CheckSumAsString(upn);
+            strcert = Certs.CreateSelfSignedCertificateAsString(upn.ToLower(), validity, pass);
+            X509Certificate2 cert = new X509Certificate2(Convert.FromBase64String(strcert), pass, X509KeyStorageFlags.Exportable | X509KeyStorageFlags.PersistKeySet);
+            if (Certs.RemoveSelfSignedCertificate(cert))
+                return cert;
+            else
+                return null;
+        }
+
+        /// <summary>
+        /// HasStoredKey implementation
+        /// </summary>
+        public override bool HasStoredKey(string upn)
+        {
+            string request = "SELECT CERTIFICATE FROM KEYS WHERE UPN=@UPN AND KIND=1";
+            SqlConnection con = new SqlConnection(_connectionstring);
+            SqlCommand sql = new SqlCommand(request, con);
+
+            SqlParameter prm = new SqlParameter("@UPN", SqlDbType.VarChar, 256);
+            sql.Parameters.Add(prm);
+            prm.Value = upn;
+
+            string ret = string.Empty;
+            con.Open();
+            try
+            {
+                SqlDataReader rd = sql.ExecuteReader();
+                if (rd.Read())
+                {
+                    return (!rd.IsDBNull(0));
+                }
+                else
+                    return false;
+            }
+            catch (Exception ex)
+            {
+                DataLog.WriteEntry(ex.Message, System.Diagnostics.EventLogEntryType.Error, 5000);
+                throw new Exception(ex.Message);
+            }
+            finally
+            {
+                con.Close();
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// HasStoredCertificate method implmentation
+        /// </summary>
+        public override bool HasStoredCertificate(string upn)
+        {
+            return true;
+        }
+        #endregion
+
+        #region private methods
+        /// <summary>
+        /// DoUpdateUserKey method implmentation
+        /// </summary>
+        private string DoUpdateUserKey(string upn, string secretkey, X509Certificate2 certificate)
+        {
+            string request1 = "UPDATE REGISTRATIONS SET SECRETKEY = @SECRETKEY WHERE UPN=@UPN";
+            string request2 = "UPDATE KEYS SET CERTIFICATE = @CERTIFICATE WHERE UPN=@UPN AND KIND=1";
+
+            SqlConnection con = new SqlConnection(_connectionstring);
+            con.Open();
+            SqlTransaction trans = con.BeginTransaction();
+            try
+            {
+                SqlCommand sql1 = new SqlCommand(request1, con, trans);
+                SqlCommand sql2 = new SqlCommand(request2, con, trans);
+
+                SqlParameter prm1 = new SqlParameter("@SECRETKEY", SqlDbType.VarChar, 8000);
+                sql1.Parameters.Add(prm1);
+                prm1.Value = secretkey;              
+
+                SqlParameter prm2 = new SqlParameter("@UPN", SqlDbType.VarChar, 256);
+                sql1.Parameters.Add(prm2);
+                prm2.Value = upn.ToLower();
+
+                SqlParameter prm3 = new SqlParameter("@CERTIFICATE", SqlDbType.VarChar, 8000);
+                sql2.Parameters.Add(prm3);
+                prm3.Value = Convert.ToBase64String(certificate.Export(X509ContentType.Pfx, CheckSumEncoding.CheckSumAsString(upn)));
+
+                SqlParameter prm4 = new SqlParameter("@UPN", SqlDbType.VarChar, 256);
+                sql2.Parameters.Add(prm4);
+                prm4.Value = upn.ToLower();
+
+                int res1 = sql1.ExecuteNonQuery();
+                int res2 = sql2.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                DataLog.WriteEntry(ex.Message, System.Diagnostics.EventLogEntryType.Error, 5000);
+                trans.Rollback();
+                throw new Exception(ex.Message);
+            }
+            finally
+            {
+                trans.Commit();
+                con.Close();
+            }
+            return secretkey;
+        }
+
+        /// <summary>
+        /// DoUpdateUserKey method implmentation
+        /// </summary>
+        private string DoInsertUserKey(string upn, string secretkey, X509Certificate2 certificate)
+        {
+            string request1 = "INSERT INTO REGISTRATIONS (UPN, SECRETKEY, METHOD, OVERRIDE, PIN, ENABLED) VALUES (@UPN, @SECRETKEY, 0, null, 0, 1)";
+            string request2 = "INSERT INTO KEYS (UPN, CERTIFICATE, KIND) VALUES (@UPN, @CERTIFICATE, 1)";
+
+            SqlConnection con = new SqlConnection(_connectionstring);
+            con.Open();
+            SqlTransaction trans = con.BeginTransaction();
+            try
+            {
+                SqlCommand sql1 = new SqlCommand(request1, con, trans);
+                SqlCommand sql2 = new SqlCommand(request2, con, trans);
+
+                SqlParameter prm1 = new SqlParameter("@SECRETKEY", SqlDbType.VarChar, 8000);
+                sql1.Parameters.Add(prm1);
+                prm1.Value = secretkey;
+                
+                SqlParameter prm2 = new SqlParameter("@UPN", SqlDbType.VarChar, 256);
+                sql1.Parameters.Add(prm2);
+                prm2.Value = upn.ToLower();
+
+                SqlParameter prm3 = new SqlParameter("@CERTIFICATE", SqlDbType.VarChar, 8000);
+                sql2.Parameters.Add(prm3);
+                prm3.Value = Convert.ToBase64String(certificate.Export(X509ContentType.Pfx, CheckSumEncoding.CheckSumAsString(upn)));
+
+                SqlParameter prm4 = new SqlParameter("@UPN", SqlDbType.VarChar, 256);
+                sql2.Parameters.Add(prm4);
+                prm4.Value = upn.ToLower();
+
+                int res1 = sql1.ExecuteNonQuery();
+                int res2 = sql2.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                DataLog.WriteEntry(ex.Message, System.Diagnostics.EventLogEntryType.Error, 5000);
+                trans.Rollback();
+                throw new Exception(ex.Message);
+            }
+            finally
+            {
+                trans.Commit();
                 con.Close();
             }
             return secretkey;

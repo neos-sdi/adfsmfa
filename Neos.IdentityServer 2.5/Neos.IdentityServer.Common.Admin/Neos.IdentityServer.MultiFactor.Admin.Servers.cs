@@ -29,6 +29,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.ServiceProcess;
 using System.Data.SqlClient;
 using System.Security.Cryptography;
+using Neos.IdentityServer.MultiFactor.Data;
 
 namespace Neos.IdentityServer.MultiFactor.Administration
 {

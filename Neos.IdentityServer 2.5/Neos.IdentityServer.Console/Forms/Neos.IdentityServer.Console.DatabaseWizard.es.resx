@@ -153,4 +153,7 @@
   <data name="label4.Text" xml:space="preserve">
     <value>Contraseña:</value>
   </data>
+  <data name="OKBtn.Text" xml:space="preserve">
+    <value>De acuerdo</value>
+  </data>
 </root>

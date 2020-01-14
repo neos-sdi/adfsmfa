@@ -123,4 +123,7 @@
   <data name="SMSVALIDSAVE" xml:space="preserve">
     <value>Vill du avbryta ändringar och ladda om data?</value>
   </data>
+  <data name="ProviderTitle.Text" xml:space="preserve">
+    <value>Set-up för {0}</value>
+  </data>
 </root>

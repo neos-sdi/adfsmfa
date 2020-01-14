@@ -630,7 +630,16 @@
     <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.ProvidersViewControl.sv.resx">
       <DependentUpon>Neos.IdentityServer.Console.ProvidersViewControl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.RootViewControl.de.resx">
+      <DependentUpon>Neos.IdentityServer.Console.RootViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.RootViewControl.es.resx">
+      <DependentUpon>Neos.IdentityServer.Console.RootViewControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.RootViewControl.fr.resx">
+      <DependentUpon>Neos.IdentityServer.Console.RootViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.RootViewControl.it.resx">
       <DependentUpon>Neos.IdentityServer.Console.RootViewControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.RootViewControl.nl.resx">

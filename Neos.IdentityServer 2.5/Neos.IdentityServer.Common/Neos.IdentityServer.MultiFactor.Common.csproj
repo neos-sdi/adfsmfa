@@ -168,17 +168,6 @@
     <EmbeddedResource Include="Resources\CSMail.ru.resx" />
     <EmbeddedResource Include="Resources\CSMail.sv.resx" />
   </ItemGroup>
-  <ItemGroup>
-    <COMReference Include="CERTENROLLLib">
-      <Guid>{728AB348-217D-11DA-B2A4-000E7BBB2B09}</Guid>
-      <VersionMajor>1</VersionMajor>
-      <VersionMinor>0</VersionMinor>
-      <Lcid>0</Lcid>
-      <WrapperTool>tlbimp</WrapperTool>
-      <Isolated>False</Isolated>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </COMReference>
-  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <VSToolsPath Condition="'$(VSToolsPath)' == '' and '$(VisualStudioVersion)' != '' and '$(VisualStudioVersion)' != '11.0'">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

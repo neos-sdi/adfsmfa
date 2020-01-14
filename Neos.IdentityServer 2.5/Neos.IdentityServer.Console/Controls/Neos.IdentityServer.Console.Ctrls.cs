@@ -36,6 +36,7 @@ using System.Diagnostics;
 using Neos.IdentityServer.Console.Resources;
 using System.Text.RegularExpressions;
 using Neos.IdentityServer.MultiFactor.Common;
+using Neos.IdentityServer.MultiFactor.Data;
 
 namespace Neos.IdentityServer.Console.Controls
 {
@@ -2958,7 +2959,7 @@ namespace Neos.IdentityServer.Console.Controls
         private TextBox txtMethodAttribute;
         private TextBox txtOverrideMethodAttribute;
         private TextBox txtPinAttribute;
-        private TextBox txtTOTPAttribute;
+        private TextBox txtRSACertAttribute;
         private TextBox txtEnabledAttribute;
         private TextBox txtPublicKeyAttribute;
         private TextBox txtMaxRows;
@@ -2984,6 +2985,7 @@ namespace Neos.IdentityServer.Console.Controls
         private Button btnTemplateBase;
         private Button btnTemplate2016;
         private Button btnTemplateMFA;
+        private Label lblRSACertAttribute;
 
 
         /// <summary>
@@ -3335,24 +3337,26 @@ namespace Neos.IdentityServer.Console.Controls
                 txtPublicKeyAttribute.Validated += CheckPublicKeyAttributeValidated;
                 _txtpanel.Controls.Add(txtPublicKeyAttribute);
 
-                /*  Label lblTOTPAttribute = new Label();
-                  lblTOTPAttribute.Text = res.CTRLADATTCODE+" : ";
-                  lblTOTPAttribute.Left = 50;
-                  lblTOTPAttribute.Top = 367;
-                  lblTOTPAttribute.Width = 150;
-                  _txtpanel.Controls.Add(lblTOTPAttribute); */
-
-                txtTOTPAttribute = new TextBox
+                lblRSACertAttribute = new Label
                 {
-                    Text = "Not Used",
+                    Text = res.CTRLADATTRSACERT + " : ",
+                    Left = 50,
+                    Top = 367,
+                    Width = 150
+                };
+                _txtpanel.Controls.Add(lblRSACertAttribute); 
+
+                txtRSACertAttribute = new TextBox
+                {
+                    Text = Config.Hosts.ActiveDirectoryHost.RSACertificateAttribute,
                     Left = 210,
                     Top = 363,
                     Width = 600,
-                    Enabled = false
+                    Enabled = Config.UseActiveDirectory
                 };
-                txtTOTPAttribute.Validating += TOTPAttributeValidating;
-                txtTOTPAttribute.Validated += TOTPAttributeValidated;
-                _txtpanel.Controls.Add(txtTOTPAttribute);
+                txtRSACertAttribute.Validating += RSACertAttributeValidating;
+                txtRSACertAttribute.Validated += RSACertAttributeValidated;
+                _txtpanel.Controls.Add(txtRSACertAttribute);
 
                 lblEnableAttribute = new Label
                 {
@@ -3528,8 +3532,8 @@ namespace Neos.IdentityServer.Console.Controls
                 txtPublicKeyAttribute.Text = Config.Hosts.ActiveDirectoryHost.PublicKeyCredentialAttribute;
                 txtPublicKeyAttribute.Enabled = Config.UseActiveDirectory;
 
-                txtTOTPAttribute.Text = "Not Used";
-                txtTOTPAttribute.Enabled = false;
+                txtRSACertAttribute.Text = Config.Hosts.ActiveDirectoryHost.RSACertificateAttribute;
+                txtRSACertAttribute.Enabled = Config.UseActiveDirectory;
 
                 txtEnabledAttribute.Text = Config.Hosts.ActiveDirectoryHost.TotpEnabledAttribute;
                 txtEnabledAttribute.Enabled = Config.UseActiveDirectory;
@@ -3549,7 +3553,7 @@ namespace Neos.IdentityServer.Console.Controls
                 lblKeyAttribute.Text = res.CTRLADATTKEY + " : ";
                 lblAttributes.Text = res.CTRLADATTRIBUTES + " : ";
                 lblPublicKeyAttribute.Text = res.CTRLADATTPUBLICKEY + " (**) : ";
-                lblPassword.Text = res.CTRLADPASSWORD + " : ";
+                lblRSACertAttribute.Text = res.CTRLADATTRSACERT + " : ";
                 lblUserName.Text = res.CTRLADACCOUNT + " : ";
                 lblDomainName.Text = res.CTRLADDOMAIN + " : ";
                 btnConnect.Text = res.CTRLADTEST;
@@ -3599,7 +3603,7 @@ namespace Neos.IdentityServer.Console.Controls
                     else
                         errors.SetError(txtEnabledAttribute, "");
 
-                    if (!ManagementService.CheckADDSAttribute(txtDomainName.Text, txtUserName.Text, txtPassword.Text, txtKeyAttribute.Text, 1))
+                    if (!ManagementService.CheckADDSAttribute(txtDomainName.Text, txtUserName.Text, txtPassword.Text, txtKeyAttribute.Text, 0))
                         errors.SetError(txtKeyAttribute, res.CTRLADATTKEYERROR);
                     else
                         errors.SetError(txtKeyAttribute, "");
@@ -3629,6 +3633,11 @@ namespace Neos.IdentityServer.Console.Controls
                     else
                         errors.SetError(txtPublicKeyAttribute, "");
 
+                    if (!ManagementService.CheckADDSAttribute(txtDomainName.Text, txtUserName.Text, txtPassword.Text, txtRSACertAttribute.Text, 0))
+                        errors.SetError(txtRSACertAttribute, res.CTRLADATRSACERTERROR);
+                    else
+                        errors.SetError(txtRSACertAttribute, "");
+
                     int maxrows = Convert.ToInt32(txtMaxRows.Text);
                     if ((maxrows < 1000) || (maxrows > 1000000))
                         errors.SetError(txtMaxRows, String.Format(res.CTRLSQLMAXROWSERROR, maxrows));
@@ -3648,6 +3657,7 @@ namespace Neos.IdentityServer.Console.Controls
                 errors.SetError(txtMethodAttribute, "");
                 errors.SetError(txtPhoneAttribute, "");
                 errors.SetError(txtPinAttribute, "");
+                errors.SetError(txtRSACertAttribute, "");
                 errors.SetError(txtPublicKeyAttribute, "");
                 errors.SetError(txtMaxRows, "");
             }
@@ -3672,7 +3682,7 @@ namespace Neos.IdentityServer.Console.Controls
                 txtMailAttribute.Enabled = isenabled;
                 txtMethodAttribute.Enabled = isenabled;
                 txtPhoneAttribute.Enabled = isenabled;
-                txtTOTPAttribute.Enabled = isenabled;
+                txtRSACertAttribute.Enabled = isenabled;
                 txtPinAttribute.Enabled = isenabled;
                 txtPublicKeyAttribute.Enabled = isenabled;
                 txtMaxRows.Enabled = isenabled;
@@ -4242,30 +4252,30 @@ namespace Neos.IdentityServer.Console.Controls
         }
         #endregion
 
-        #region TOTPAttribute
+        #region RSACertAttribute
         /// <summary>
-        /// TOTPAttributeValidating method implementation
+        /// RSACertAttributeValidating method implementation
         /// </summary>
-        private void TOTPAttributeValidating(object sender, CancelEventArgs e)
+        private void RSACertAttributeValidating(object sender, CancelEventArgs e)
         {
             this.Cursor = Cursors.WaitCursor;
             try
             {
-               /* if (txtTOTPAttribute.Modified)
+                if (txtRSACertAttribute.Modified)
                 {
-                    Config.Hosts.ActiveDirectoryHost.totpAttribute = txtTOTPAttribute.Text;
+                    Config.Hosts.ActiveDirectoryHost.RSACertificateAttribute = txtRSACertAttribute.Text;
                     ManagementService.ADFSManager.SetDirty(true);
                 }
-                if (!ManagementService.CheckRepositoryAttribute(txtTOTPAttribute.Text, 1))
+                if (!ManagementService.CheckADDSAttribute(txtDomainName.Text, txtUserName.Text, txtPassword.Text, txtRSACertAttribute.Text, 1))
                 {
                     e.Cancel = true;
-                    errors.SetError(txtTOTPAttribute, res.CTRLADATTOTPERROR);
-                } */
+                    errors.SetError(txtRSACertAttribute, res.CTRLADATRSACERTERROR);
+                }
             }
             catch (Exception ex)
             {
                 e.Cancel = true;
-                errors.SetError(txtTOTPAttribute, ex.Message);
+                errors.SetError(txtRSACertAttribute, ex.Message);
             }
             finally
             {
@@ -4274,15 +4284,15 @@ namespace Neos.IdentityServer.Console.Controls
         }
 
         /// <summary>
-        /// TOTPAttributeValidated method implmentation
+        /// RSACertAttributeValidated method implmentation
         /// </summary>
-        private void TOTPAttributeValidated(object sender, EventArgs e)
+        private void RSACertAttributeValidated(object sender, EventArgs e)
         {
             try
             {
-                /*  Config.Hosts.ActiveDirectoryHost.totpAttribute = txtTOTPAttribute.Text;
-                    ManagementService.ADFSManager.SetDirty(true); 
-                    errors.SetError(txtTOTPAttribute, ""); */
+                  Config.Hosts.ActiveDirectoryHost.RSACertificateAttribute = txtRSACertAttribute.Text;
+                  ManagementService.ADFSManager.SetDirty(true); 
+                  errors.SetError(txtRSACertAttribute, ""); 
             }
             catch (Exception ex)
             {
@@ -10294,6 +10304,7 @@ namespace Neos.IdentityServer.Console.Controls
 
         private LinkLabel tblSaveConfig;
         private LinkLabel tblCancelConfig;
+        private CheckBox chkUseOneCertPerUser;
         private Label lblRSAKey;
         private Label lblCERTDuration;
 
@@ -10393,24 +10404,24 @@ namespace Neos.IdentityServer.Console.Controls
                // _view.RefreshProviderInformation();
 
                 this.Dock = DockStyle.Top;
-                this.Height = 150;
+                this.Height = 175;
                 this.Width = 1050;
                 this.Margin = new Padding(30, 5, 30, 5);
 
                 _panel.Width = 20;
-                _panel.Height = 110;
+                _panel.Height = 135;
                 this.Controls.Add(_panel);
 
                 _txtpanel.Left = 20;
                 _txtpanel.Width = this.Width - 20;
-                _txtpanel.Height = 110;
+                _txtpanel.Height = 135;
                 _txtpanel.BackColor = System.Drawing.SystemColors.Control;
                 this.Controls.Add(_txtpanel);
 
                 _panelRSA = new Panel();
                 _panelRSA.Left = 0;
                 _panelRSA.Top = 10;
-                _panelRSA.Height = 100;
+                _panelRSA.Height = 135;
                 _panelRSA.Width = 1050;
                 _txtpanel.Controls.Add(_panelRSA);
 
@@ -10439,11 +10450,20 @@ namespace Neos.IdentityServer.Console.Controls
                 txtCERTDuration.ValueChanged += CertValidityChanged;
                 _panelRSA.Controls.Add(txtCERTDuration);
 
+                chkUseOneCertPerUser = new CheckBox();
+                chkUseOneCertPerUser.Text = res.CTRLSECCERTPERUSER;
+                chkUseOneCertPerUser.Checked = Config.KeysConfig.CertificatePerUser;
+                chkUseOneCertPerUser.Left = 30;
+                chkUseOneCertPerUser.Top = 56;
+                chkUseOneCertPerUser.Width = 450;
+                chkUseOneCertPerUser.CheckedChanged += UseOneCertPerUserCheckedChanged;
+                _panelRSA.Controls.Add(chkUseOneCertPerUser);
+
 
                 lblRSAKey = new Label();
                 lblRSAKey.Text = res.CTRLSECTHUMPRINT + " : ";
                 lblRSAKey.Left = 30;
-                lblRSAKey.Top = 59;
+                lblRSAKey.Top = 93;
                 lblRSAKey.Width = 140;
                 _panelRSA.Controls.Add(lblRSAKey);
 
@@ -10451,8 +10471,9 @@ namespace Neos.IdentityServer.Console.Controls
                 if (!string.IsNullOrEmpty(Config.KeysConfig.CertificateThumbprint))
                     txtRSAThumb.Text = Config.KeysConfig.CertificateThumbprint.ToUpper();
                 txtRSAThumb.Left = 180;
-                txtRSAThumb.Top = 55;
+                txtRSAThumb.Top = 90;
                 txtRSAThumb.Width = 300;
+                txtRSAThumb.Enabled = !Config.KeysConfig.CertificatePerUser;
                 txtRSAThumb.Validating += RSAThumbValidating;
                 txtRSAThumb.Validated += RSAThumbValidated;
                 _panelRSA.Controls.Add(txtRSAThumb);
@@ -10460,8 +10481,9 @@ namespace Neos.IdentityServer.Console.Controls
                 btnRSACert = new Button();
                 btnRSACert.Text = res.CTRLSECNEWCERT;
                 btnRSACert.Left = 680;
-                btnRSACert.Top = 53;
+                btnRSACert.Top = 88;
                 btnRSACert.Width = 250;
+                btnRSACert.Enabled = !Config.KeysConfig.CertificatePerUser;
                 btnRSACert.Click += BtnRSACertClick;
                 _panelRSA.Controls.Add(btnRSACert);
 
@@ -10469,7 +10491,7 @@ namespace Neos.IdentityServer.Console.Controls
                 tblSaveConfig = new LinkLabel();
                 tblSaveConfig.Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPESAVE;
                 tblSaveConfig.Left = 20;
-                tblSaveConfig.Top = 120;
+                tblSaveConfig.Top = 145;
                 tblSaveConfig.Width = 80;
                 tblSaveConfig.LinkClicked += SaveConfigLinkClicked;
                 tblSaveConfig.TabStop = true;
@@ -10478,7 +10500,7 @@ namespace Neos.IdentityServer.Console.Controls
                 tblCancelConfig = new LinkLabel();
                 tblCancelConfig.Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPECANCEL;
                 tblCancelConfig.Left = 110;
-                tblCancelConfig.Top = 120;
+                tblCancelConfig.Top = 145;
                 tblCancelConfig.Width = 80;
                 tblCancelConfig.LinkClicked += CancelConfigLinkClicked;
                 tblCancelConfig.TabStop = true;
@@ -10509,6 +10531,7 @@ namespace Neos.IdentityServer.Console.Controls
             try
             {
                 txtCERTDuration.Value = Config.KeysConfig.CertificateValidity;
+                chkUseOneCertPerUser.Checked = Config.KeysConfig.CertificatePerUser;
 
                 if (!string.IsNullOrEmpty(Config.KeysConfig.CertificateThumbprint))
                     txtRSAThumb.Text = Config.KeysConfig.CertificateThumbprint.ToUpper();
@@ -10518,9 +10541,13 @@ namespace Neos.IdentityServer.Console.Controls
                 tblSaveConfig.Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPESAVE;
                 tblCancelConfig.Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPECANCEL;
 
+                chkUseOneCertPerUser.Text = res.CTRLSECCERTPERUSER;
                 btnRSACert.Text = res.CTRLSECNEWCERT;
                 lblRSAKey.Text = res.CTRLSECTHUMPRINT + " : ";
                 lblCERTDuration.Text = res.CTRLSECCERTIFDURATION + " : ";
+
+                txtRSAThumb.Enabled = !Config.KeysConfig.CertificatePerUser;
+                btnRSACert.Enabled = !Config.KeysConfig.CertificatePerUser;
             }
             finally
             {
@@ -10561,13 +10588,14 @@ namespace Neos.IdentityServer.Console.Controls
             _UpdateControlsLayouts = true;
             try
             {
+                txtRSAThumb.Enabled = !Config.KeysConfig.CertificatePerUser;
+                btnRSACert.Enabled = !Config.KeysConfig.CertificatePerUser;
             }
             finally
             {
                 _UpdateControlsLayouts = false;
             }
         }
-
 
         /// <summary>
         /// OnResize method implmentation
@@ -10598,6 +10626,27 @@ namespace Neos.IdentityServer.Console.Controls
                 messageBoxParameters.Buttons = MessageBoxButtons.OK;
                 messageBoxParameters.Icon = MessageBoxIcon.Error;
                 this._snapin.Console.ShowDialog(messageBoxParameters);
+            }
+        }
+
+        /// <summary>
+        /// UseOneCertPerUserCheckedChanged method 
+        /// </summary>
+        private void UseOneCertPerUserCheckedChanged(object sender, EventArgs e)
+        {
+            if (_view.AutoValidate != AutoValidate.Disable)
+            {
+                try
+                {
+                    ManagementService.ADFSManager.SetDirty(true);
+                    Config.KeysConfig.CertificatePerUser = chkUseOneCertPerUser.Checked;
+                    UpdateControlsLayouts();
+                    errors.SetError(chkUseOneCertPerUser, "");
+                }
+                catch (Exception ex)
+                {
+                    errors.SetError(chkUseOneCertPerUser, ex.Message);
+                }
             }
         }
 
