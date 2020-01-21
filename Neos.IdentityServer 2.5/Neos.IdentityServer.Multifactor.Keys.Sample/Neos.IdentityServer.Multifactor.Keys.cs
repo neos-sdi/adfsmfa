@@ -179,7 +179,7 @@ namespace Neos.IdentityServer.Multifactor.Keys
                 if (rd.Read())
                 {
                     string strcert = rd.GetString(0);
-                    return new X509Certificate2(Convert.FromBase64String(strcert), pass, X509KeyStorageFlags.Exportable | X509KeyStorageFlags.PersistKeySet);
+                    return new X509Certificate2(Convert.FromBase64String(strcert), pass, X509KeyStorageFlags.Exportable); // | X509KeyStorageFlags.PersistKeySet);
                 }
                 else
                     return null;
@@ -204,12 +204,7 @@ namespace Neos.IdentityServer.Multifactor.Keys
             string strcert = string.Empty;
             if (generatepassword)
                 pass = CheckSumEncoding.CheckSumAsString(upn);
-            strcert = Certs.CreateSelfSignedCertificateAsString(upn.ToLower(), validity, pass);
-            X509Certificate2 cert = new X509Certificate2(Convert.FromBase64String(strcert), pass, X509KeyStorageFlags.Exportable | X509KeyStorageFlags.PersistKeySet);
-            if (Certs.RemoveSelfSignedCertificate(cert))
-                return cert;
-            else
-                return null;
+            return Certs.CreateRSAEncryptionCertificateForUser(upn.ToLower(), validity, pass);
         }
 
         /// <summary>
@@ -284,6 +279,7 @@ namespace Neos.IdentityServer.Multifactor.Keys
             }
             finally
             {
+                certificate.Reset();
                 con.Close();
             }
             return secretkey;
@@ -323,6 +319,7 @@ namespace Neos.IdentityServer.Multifactor.Keys
             }
             finally
             {
+                certificate.Reset();
                 con.Close();
             }
             return secretkey;

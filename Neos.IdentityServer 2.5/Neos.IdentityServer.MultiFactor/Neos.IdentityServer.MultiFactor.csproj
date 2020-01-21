@@ -112,6 +112,9 @@
     <None Include="Resources\cmok32.png" />
     <None Include="Resources\biometrics.png" />
     <None Include="Resources\biometrics.gif" />
+    <Content Include="ADDS\MFA.SCHEMA.HITRUST.LDF">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="ADDS\MFA.SCHEMA.EXTERNE.LDF">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

@@ -151,6 +151,7 @@ namespace Neos.IdentityServer.MultiFactor.SAS
                 X509Certificate2 azureCertificate = Certs.GetCertificate(this._thumbprint, StoreLocation.LocalMachine);
                 this._clientAssertion = new ADAL.ClientAssertionCertificate(this._clientId, azureCertificate);
                 this._certTimestamp = DateTime.Now.ToUniversalTime();
+                azureCertificate.Reset();
             }
             catch (Exception ex)
             {

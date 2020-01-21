@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" >
-  <Product Id="a23dd485-5365-4d82-8309-103494000001" Name="Neos MFA Provider for ADFS 2012 R2/2016/2019" Language="1033" Version="2.5.1.0000" Manufacturer="Neos-SDI" UpgradeCode="a23dd485-5365-4d82-8309-103495000001" >
+  <Product Id="a23dd485-5365-4d82-8309-103494000001" Name="Neos MFA Provider for ADFS 2012 R2/2016/2019" Language="1033" Version="2.5.4720.0000" Manufacturer="Neos-SDI" UpgradeCode="a23dd485-5365-4d82-8309-103495000001" >
 
     <Package InstallerVersion="500" Compressed="yes" InstallScope="perMachine" InstallPrivileges="elevated" Platform="x64" Description="Multi-Factor Authentication for ADFS 2012r2/2016/2019" />
 
@@ -352,7 +352,8 @@
         <File KeyPath="no" Id="mfa.db.encrypted.upgrade.sql"  Name="mfa-db-encrypted-upgrade.sql" Source="$(var.Neos.IdentityServer.MultiFactor.ProjectDir)SQL\mfa-db-encrypted-upgrade.sql" Vital="yes" />
       </Component>
       <Component Id="GACDeployment123" Guid="E7173CAB-E43F-4A07-1962-018000008017" Win64="yes"  Directory="ADDSFOLDER" DiskId="1" >
-        <File KeyPath="yes" Id="mfa.schema.ldf"  Name="mfa-schema.ldf" Source="$(var.Neos.IdentityServer.MultiFactor.ProjectDir)ADDS\mfa.schema.ldf" Vital="yes" />
+        <File KeyPath="yes" Id="mfa.schema.hitrust.ldf"  Name="mfa-schema.hitrust.ldf" Source="$(var.Neos.IdentityServer.MultiFactor.ProjectDir)ADDS\mfa.schema.hitrust.ldf" Vital="yes" />
+        <File KeyPath="no" Id="mfa.schema.ldf"  Name="mfa-schema.ldf" Source="$(var.Neos.IdentityServer.MultiFactor.ProjectDir)ADDS\mfa.schema.ldf" Vital="yes" />
       </Component>
     </ComponentGroup>
   </Fragment>
@@ -473,8 +474,6 @@
       <Component Id="GACDeployment410" Guid="E7173CAB-E43F-4A07-1962-01800000640A" Win64="yes" Directory="LOCALESV" DiskId="1" >
         <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.SAS.Azure.sv.resources.dll"  Name="Neos.IdentityServer.MultiFactor.SAS.Azure.resources.dll" Source="$(var.Neos.IdentityServer.MultiFactor.SAS.Azure.TargetDir)sv\Neos.IdentityServer.MultiFactor.SAS.Azure.resources.dll" Vital="no" />
       </Component>
-
-
     </ComponentGroup>
   </Fragment>
 
@@ -484,7 +483,6 @@
       <Component Id="GACDeployment600" Guid="E7173CAB-E43F-4A07-1962-018000006600" Win64="yes" Directory="AssemblyFolder" DiskId="1" >
         <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.WebAuthN.Provider.dll"  Name="Neos.IdentityServer.MultiFactor.WebAuthN.Provider.dll" Source="$(var.Neos.IdentityServer.MultiFactor.WebAuthN.Provider.TargetPath)" Vital="yes"/>
       </Component>
-
       <Component Id="GACDeployment601" Guid="E7173CAB-E43F-4A07-1962-018000006601" Win64="yes" Directory="LOCALEES" DiskId="1" >
         <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.WebAuthN.Provider.es.resources.dll"  Name="Neos.IdentityServer.MultiFactor.WebAuthN.Provider.resources.dll" Source="$(var.Neos.IdentityServer.MultiFactor.WebAuthN.Provider.TargetDir)es\Neos.IdentityServer.MultiFactor.WebAuthN.Provider.resources.dll" Vital="no" />
       </Component>

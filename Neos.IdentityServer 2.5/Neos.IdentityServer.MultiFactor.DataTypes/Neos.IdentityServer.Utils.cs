@@ -1,11 +1,33 @@
-﻿using CERTENROLLLib;
+﻿//******************************************************************************************************************************************************************************************//
+// Copyright (c) 2019 Neos-Sdi (http://www.neos-sdi.com)                                                                                                                                    //                        
+//                                                                                                                                                                                          //
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
+// to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
+// and to permit persons to whom the Software is furnished to do so, subject to the following conditions:                                                                                   //
+//                                                                                                                                                                                          //
+// The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.                                                           //
+//                                                                                                                                                                                          //
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,                                      //
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,                            //
+// WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                               //
+//                                                                                                                                                                                          //
+// https://adfsmfa.codeplex.com                                                                                                                                                             //
+// https://github.com/neos-sdi/adfsmfa                                                                                                                                                      //
+//                                                                                                                                                                                          //
+//******************************************************************************************************************************************************************************************//
+using CERTENROLLLib;
+using Microsoft.Win32;
 using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.DirectoryServices.AccountManagement;
+using System.Management.Automation;
+using System.Management.Automation.Runspaces;
+using System.Runtime.InteropServices;
 using System.Security;
 using System.Security.Cryptography.X509Certificates;
+using System.Security.Principal;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Neos.IdentityServer.MultiFactor.Data
 {
@@ -14,6 +36,13 @@ namespace Neos.IdentityServer.MultiFactor.Data
     /// </summary>
     public static class Certs
     {
+        static readonly string ADFSAccountSID = GetADFSAccountSID();
+        static readonly string ADFSServiceSID = GetADFSServiceSID();
+        static string ADFSAdminGroupSID;
+        static string _admingroupname = GetADFSDelegateServiceAdministration(); 
+        static bool _admingroupexists = true;
+        static bool _admingrouploaded = false;
+
         /// <summary>
         /// GetCertificate method implementation
         /// </summary>
@@ -45,38 +74,14 @@ namespace Neos.IdentityServer.MultiFactor.Data
         }
 
         /// <summary>
-        /// CreateSelfSignedCertificate method implementation
-        /// </summary>
-        public static X509Certificate2 CreateSelfSignedCertificate(string subjectName, int years)
-        {
-            string cert = InternalCreateSelfSignedCertificate(subjectName, years);
-            // instantiate the target class with the PKCS#12 data (and the empty password)
-            X509Certificate2 x509 = new X509Certificate2(Convert.FromBase64String(cert), "", X509KeyStorageFlags.Exportable | X509KeyStorageFlags.PersistKeySet);
-            CleanSelfSignedCertificate(x509);
-            return x509;
-        }
-
-        /// <summary>
-        /// CreateSelfSignedCertificateForSQLEncryption method implementation
-        /// </summary>
-        public static X509Certificate2 CreateSelfSignedCertificateForSQLEncryption(string subjectName, int years)
-        {
-            string cert = InternalCreateSelfSignedCertificateForSQL(subjectName, years);
-            // instantiate the target class with the PKCS#12 data (and the empty password)
-            X509Certificate2 x509 = new X509Certificate2(Convert.FromBase64String(cert), "", X509KeyStorageFlags.Exportable | X509KeyStorageFlags.PersistKeySet);
-            CleanSelfSignedCertificate(x509);
-            return x509;
-        }
-
-        /// <summary>
         /// RemoveSelfSignedCertificate method implmentation
         /// </summary>
-        public static bool RemoveSelfSignedCertificate(X509Certificate2 cert)
+        private static bool RemoveSelfSignedCertificate(X509Certificate2 cert, StoreLocation location = StoreLocation.LocalMachine)
         {
             if (cert != null)
             {
-                X509Store store1 = new X509Store(StoreName.My, StoreLocation.LocalMachine);
-                X509Store store2 = new X509Store(StoreName.CertificateAuthority, StoreLocation.LocalMachine);
+                X509Store store1 = new X509Store(StoreName.My, location);
+                X509Store store2 = new X509Store(StoreName.CertificateAuthority, location);
                 store1.Open(OpenFlags.MaxAllowed);
                 store2.Open(OpenFlags.MaxAllowed);
                 try
@@ -86,12 +91,14 @@ namespace Neos.IdentityServer.MultiFactor.Data
                     foreach (X509Certificate2 x509 in findCollection1)
                     {
                         store1.Remove(x509);
+                        x509.Reset();
                     }
                     X509Certificate2Collection collection2 = (X509Certificate2Collection)store2.Certificates;
                     X509Certificate2Collection findCollection2 = (X509Certificate2Collection)collection2.Find(X509FindType.FindByThumbprint, cert.Thumbprint, false);
                     foreach (X509Certificate2 x509 in findCollection2)
                     {
                         store2.Remove(x509);
+                        x509.Reset();
                     }
                     return true;
                 }
@@ -112,11 +119,11 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// <summary>
         /// CleanSelfSignedCertificate method implmentation
         /// </summary>
-        public static bool CleanSelfSignedCertificate(X509Certificate2 cert)
+        private static bool CleanSelfSignedCertificate(X509Certificate2 cert, StoreLocation location = StoreLocation.LocalMachine)
         {
             if (cert != null)
             {
-                X509Store store = new X509Store(StoreName.CertificateAuthority, StoreLocation.LocalMachine);
+                X509Store store = new X509Store(StoreName.CertificateAuthority, location);
                 store.Open(OpenFlags.MaxAllowed);
                 try
                 {
@@ -125,6 +132,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                     foreach (X509Certificate2 x509 in findCollection2)
                     {
                         store.Remove(x509);
+                        x509.Reset();
                     }
                     return true;
                 }
@@ -142,31 +150,57 @@ namespace Neos.IdentityServer.MultiFactor.Data
         }
 
         /// <summary>
-        /// CreateSelfSignedCertificateAsString method implementation
+        /// CreateRSACertificate method implementation
         /// </summary>
-        public static string CreateSelfSignedCertificateAsString(string subjectName, int years, string pwd = "")
+        public static X509Certificate2 CreateRSACertificate(string subjectName, int years)
         {
-            return InternalCreateSelfSignedCertificate(subjectName, years, pwd);
+            string strcert = InternalCreateRSACertificate(subjectName, years);
+            X509Certificate2 x509 = new X509Certificate2(Convert.FromBase64String(strcert), "", X509KeyStorageFlags.Exportable);
+            CleanSelfSignedCertificate(x509, StoreLocation.LocalMachine);
+            if (CleanSelfSignedCertificate(x509, StoreLocation.LocalMachine))
+                return x509;
+            else
+                return null;
         }
 
         /// <summary>
-        /// CreateSelfSignedCertificateForSQLAsString method implementation
+        /// CreateRSACertificateForSQLEncryption method implementation
         /// </summary>
-        public static string CreateSelfSignedCertificateForSQLAsString(string subjectName, int years, string pwd = "")
+        public static X509Certificate2 CreateRSACertificateForSQLEncryption(string subjectName, int years)
         {
-            return InternalCreateSelfSignedCertificateForSQL(subjectName, years, pwd);
+            string strcert = InternalCreateSQLCertificate(subjectName, years);
+            X509Certificate2 x509 = new X509Certificate2(Convert.FromBase64String(strcert), "", X509KeyStorageFlags.Exportable);
+            if (CleanSelfSignedCertificate(x509, StoreLocation.LocalMachine))
+                return x509;
+            else
+                return null;
+        }
+
+
+        /// <summary>
+        /// CreateRSAEncryptionCertificateForUser method implementation
+        /// </summary>
+        public static X509Certificate2 CreateRSAEncryptionCertificateForUser(string subjectName, int years, string pwd = "")
+        {
+            string strcert = InternalCreateUserRSACertificate(subjectName, years, pwd);
+            X509Certificate2 cert = new X509Certificate2(Convert.FromBase64String(strcert), pwd, X509KeyStorageFlags.Exportable);
+            if (Certs.RemoveSelfSignedCertificate(cert, StoreLocation.CurrentUser))
+                return cert;
+            else
+                return null;
         }
 
         /// <summary>
-        /// InternalCreateSelfSignedCertificate method implementation
+        /// InternalCreateRSACertificate method implementation
         /// </summary>
         [SuppressUnmanagedCodeSecurity]
-        private static string InternalCreateSelfSignedCertificate(string subjectName, int years, string pwd = "")
+        private static string InternalCreateRSACertificate(string subjectName, int years)
         {
-
-            var dn = new CX500DistinguishedName();
-            var neos = new CX500DistinguishedName();
-            dn.Encode("CN=" + subjectName, X500NameFlags.XCN_CERT_NAME_STR_NONE);
+            string base64encoded = string.Empty;
+            string grpsid = GetADFSAdminsGroupSID();
+            CX500DistinguishedName dn = new CX500DistinguishedName();
+            CX500DistinguishedName neos = new CX500DistinguishedName();
+            dn.Encode("CN=" + subjectName + " " + DateTime.UtcNow.ToString("G") + "GMT", X500NameFlags.XCN_CERT_NAME_STR_NONE);
             neos.Encode("CN=MFA RSA Keys Certificate", X500NameFlags.XCN_CERT_NAME_STR_NONE);
 
             CX509PrivateKey privateKey = new CX509PrivateKey();
@@ -174,122 +208,376 @@ namespace Neos.IdentityServer.MultiFactor.Data
             privateKey.MachineContext = true;
             privateKey.Length = 2048;
             privateKey.KeySpec = X509KeySpec.XCN_AT_KEYEXCHANGE; // use is not limited
-            privateKey.ExportPolicy = X509PrivateKeyExportFlags.XCN_NCRYPT_ALLOW_PLAINTEXT_EXPORT_FLAG | X509PrivateKeyExportFlags.XCN_NCRYPT_ALLOW_EXPORT_FLAG | X509PrivateKeyExportFlags.XCN_NCRYPT_ALLOW_ARCHIVING_FLAG | X509PrivateKeyExportFlags.XCN_NCRYPT_ALLOW_PLAINTEXT_ARCHIVING_FLAG;
-            privateKey.SecurityDescriptor = "D:PAI(A;;0xd01f01ff;;;SY)(A;;0xd01f01ff;;;BA)(A;;0x80120089;;;NS)";
-            privateKey.Create();
+            privateKey.ExportPolicy = X509PrivateKeyExportFlags.XCN_NCRYPT_ALLOW_EXPORT_FLAG;
+            privateKey.KeyUsage = X509PrivateKeyUsageFlags.XCN_NCRYPT_ALLOW_DECRYPT_FLAG;
+            privateKey.SecurityDescriptor = "D:(A;;FA;;;SY)(A;;FA;;;BA)(A;;FA;;;" + ADFSServiceSID + ")(A;;FA;;;" + ADFSAccountSID + ")";
+            if (!string.IsNullOrEmpty(grpsid))
+                privateKey.SecurityDescriptor += "(A;;FA;;;" + ADFSAdminGroupSID + ")";
+            try
+            {
+                privateKey.Create();
+                CObjectId hashobj = new CObjectId();
+                hashobj.InitializeFromAlgorithmName(ObjectIdGroupId.XCN_CRYPT_HASH_ALG_OID_GROUP_ID,
+                                                    ObjectIdPublicKeyFlags.XCN_CRYPT_OID_INFO_PUBKEY_ANY,
+                                                    AlgorithmFlags.AlgorithmFlagsNone, "SHA256");
 
-            var hashobj = new CObjectId();
-            hashobj.InitializeFromAlgorithmName(ObjectIdGroupId.XCN_CRYPT_HASH_ALG_OID_GROUP_ID,
-                                                ObjectIdPublicKeyFlags.XCN_CRYPT_OID_INFO_PUBKEY_ANY,
-                                                AlgorithmFlags.AlgorithmFlagsNone, "SHA256");
+                CObjectId oid = new CObjectId();
+                // oid.InitializeFromValue("1.3.6.1.5.5.7.3.1"); // SSL server  
+                oid.InitializeFromValue("1.3.6.1.4.1.311.80.1"); // Encryption
 
-            var oid = new CObjectId();
-            oid.InitializeFromValue("1.3.6.1.5.5.7.3.1"); // SSL server
-            var oidlist = new CObjectIds();
-            oidlist.Add(oid);
+                CObjectIds oidlist = new CObjectIds();
+                oidlist.Add(oid);
 
-            var coid = new CObjectId();
-            coid.InitializeFromValue("1.3.6.1.5.5.7.3.2"); // Client auth
-            oidlist.Add(coid);
+                CObjectId coid = new CObjectId();
+                // coid.InitializeFromValue("1.3.6.1.5.5.7.3.2"); // Client auth
+                coid.InitializeFromValue("1.3.6.1.5.5.7.3.3"); // Signature
+                oidlist.Add(coid);
 
-            var eku = new CX509ExtensionEnhancedKeyUsage();
-            eku.InitializeEncode(oidlist);
+                CX509ExtensionEnhancedKeyUsage eku = new CX509ExtensionEnhancedKeyUsage();
+                eku.InitializeEncode(oidlist);
 
-            // Create the self signing request
-            var cert = new CX509CertificateRequestCertificate();
-            cert.InitializeFromPrivateKey(X509CertificateEnrollmentContext.ContextAdministratorForceMachine, privateKey, "");
-            cert.Subject = dn;
-            cert.Issuer = neos;
-            cert.NotBefore = DateTime.Now.AddDays(-10);
+                // Create the self signing request
+                CX509CertificateRequestCertificate certreq = new CX509CertificateRequestCertificate();
+                certreq.InitializeFromPrivateKey(X509CertificateEnrollmentContext.ContextMachine, privateKey, "");
+                certreq.Subject = dn;
+                certreq.Issuer = neos;
+                certreq.NotBefore = DateTime.Now.AddDays(-10);
 
-            cert.NotAfter = DateTime.Now.AddYears(years);
-            cert.X509Extensions.Add((CX509Extension)eku); // add the EKU
-            cert.HashAlgorithm = hashobj; // Specify the hashing algorithm
-            cert.Encode(); // encode the certificate
+                certreq.NotAfter = DateTime.Now.AddYears(years);
+                certreq.X509Extensions.Add((CX509Extension)eku); // add the EKU
+                certreq.HashAlgorithm = hashobj; // Specify the hashing algorithm
+                certreq.Encode(); // encode the certificate
 
-            // Do the final enrollment process
-            var enroll = new CX509Enrollment();
-            enroll.InitializeFromRequest(cert); // load the certificate
-            enroll.CertificateFriendlyName = subjectName; // Optional: add a friendly name
+                // Do the final enrollment process
+                CX509Enrollment enroll = new CX509Enrollment();
+                enroll.InitializeFromRequest(certreq); // load the certificate
+                enroll.CertificateFriendlyName = subjectName; // Optional: add a friendly name
 
-            string csr = enroll.CreateRequest(); // Output the request in base64
+                string csr = enroll.CreateRequest(); // Output the request in base64
 
-            // and install it back as the response
-            enroll.InstallResponse(InstallResponseRestrictionFlags.AllowUntrustedCertificate, csr, EncodingType.XCN_CRYPT_STRING_BASE64, "");
+                // and install it back as the response
+                enroll.InstallResponse(InstallResponseRestrictionFlags.AllowUntrustedCertificate, csr, EncodingType.XCN_CRYPT_STRING_BASE64, "");
 
-            // output a base64 encoded PKCS#12 so we can import it back to the .Net security classes
-            var base64encoded = enroll.CreatePFX(pwd, PFXExportOptions.PFXExportChainWithRoot);
-
+                // output a base64 encoded PKCS#12 so we can import it back to the .Net security classes
+                base64encoded = enroll.CreatePFX("", PFXExportOptions.PFXExportChainWithRoot);
+            }
+            catch (Exception ex)
+            {
+                privateKey.Delete();
+                throw ex;
+            }
+            finally
+            {
+                // DO nothing, certificate Key is stored in the system
+            }
             return base64encoded;
         }
 
         /// <summary>
-        /// InternalCreateSelfSignedCertificate method implementation
+        /// InternalCreateUserRSACertificate method implementation
         /// </summary>
         [SuppressUnmanagedCodeSecurity]
-        private static string InternalCreateSelfSignedCertificateForSQL(string keyName, int years, string pwd = "")
+        private static string InternalCreateUserRSACertificate(string subjectName, int years, string pwd = "")
         {
+            string base64encoded = string.Empty;
+            string grpsid = GetADFSAdminsGroupSID();
+            CX500DistinguishedName dn = new CX500DistinguishedName();
+            CX500DistinguishedName neos = new CX500DistinguishedName();
+            dn.Encode("CN=" + subjectName, X500NameFlags.XCN_CERT_NAME_STR_NONE);
+            neos.Encode("CN=MFA RSA Keys Certificate", X500NameFlags.XCN_CERT_NAME_STR_NONE);
+                        
+            CX509PrivateKey privateKey = new CX509PrivateKey();
+            privateKey.ProviderName = "Microsoft RSA SChannel Cryptographic Provider";
+            privateKey.MachineContext = false;
+            privateKey.Length = 2048;
+            privateKey.KeySpec = X509KeySpec.XCN_AT_KEYEXCHANGE; // use is not limited
+            privateKey.ExportPolicy = X509PrivateKeyExportFlags.XCN_NCRYPT_ALLOW_EXPORT_FLAG;
+            privateKey.SecurityDescriptor = "D:(A;;FA;;;SY)(A;;FA;;;BA)(A;;FA;;;" + ADFSAccountSID + ")(A;;FA;;;" + ADFSServiceSID + ")";
+            if (!string.IsNullOrEmpty(grpsid))
+                privateKey.SecurityDescriptor += "(A;;FA;;;" + ADFSAdminGroupSID + ")";
+            try
+            {
+                privateKey.Create();
+                CObjectId hashobj = new CObjectId();
+                hashobj.InitializeFromAlgorithmName(ObjectIdGroupId.XCN_CRYPT_HASH_ALG_OID_GROUP_ID,
+                                                    ObjectIdPublicKeyFlags.XCN_CRYPT_OID_INFO_PUBKEY_ANY,
+                                                    AlgorithmFlags.AlgorithmFlagsNone, "SHA256");
 
-            var dn = new CX500DistinguishedName();
-            var neos = new CX500DistinguishedName();
-            dn.Encode("CN=" + keyName, X500NameFlags.XCN_CERT_NAME_STR_NONE);
+                CObjectId oid = new CObjectId();
+                // oid.InitializeFromValue("1.3.6.1.5.5.7.3.1"); // SSL server  
+                oid.InitializeFromValue("1.3.6.1.4.1.311.80.1"); // Encryption
+
+                CObjectIds oidlist = new CObjectIds();
+                oidlist.Add(oid);
+
+                CObjectId coid = new CObjectId();
+                // coid.InitializeFromValue("1.3.6.1.5.5.7.3.2"); // Client auth
+                coid.InitializeFromValue("1.3.6.1.5.5.7.3.3"); // Signature
+                oidlist.Add(coid);
+
+                CX509ExtensionEnhancedKeyUsage eku = new CX509ExtensionEnhancedKeyUsage();
+                eku.InitializeEncode(oidlist);
+
+                // Create the self signing request
+                CX509CertificateRequestCertificate certreq = new CX509CertificateRequestCertificate();
+                certreq.InitializeFromPrivateKey(X509CertificateEnrollmentContext.ContextUser, privateKey, "");
+                certreq.Subject = dn;
+                certreq.Issuer = neos;
+                certreq.NotBefore = DateTime.Now.AddDays(-10);
+
+                certreq.NotAfter = DateTime.Now.AddYears(years);
+                certreq.X509Extensions.Add((CX509Extension)eku); // add the EKU
+                certreq.HashAlgorithm = hashobj; // Specify the hashing algorithm
+                certreq.Encode(); // encode the certificate
+
+                // Do the final enrollment process
+                CX509Enrollment enroll = new CX509Enrollment();
+                enroll.InitializeFromRequest(certreq); // load the certificate
+                enroll.CertificateFriendlyName = subjectName; // Optional: add a friendly name
+
+                string csr = enroll.CreateRequest(); // Output the request in base64
+
+                // and install it back as the response
+                enroll.InstallResponse(InstallResponseRestrictionFlags.AllowUntrustedCertificate, csr, EncodingType.XCN_CRYPT_STRING_BASE64, "");
+
+                // output a base64 encoded PKCS#12 so we can import it back to the .Net security classes
+                base64encoded = enroll.CreatePFX(pwd, PFXExportOptions.PFXExportChainWithRoot);
+            }
+            catch (Exception ex)
+            {
+                privateKey.Delete();
+                throw ex;
+            }
+            finally
+            {
+               privateKey.Delete(); // Remove Stored elsewhere
+            }
+            return base64encoded;
+        }
+
+        /// <summary>
+        /// InternalCreateSQLCertificate method implementation
+        /// </summary>
+        [SuppressUnmanagedCodeSecurity]
+        private static string InternalCreateSQLCertificate(string subjectName, int years, string pwd = "")
+        {
+            string base64encoded = string.Empty;
+            string grpsid = GetADFSAdminsGroupSID();
+            CX500DistinguishedName dn = new CX500DistinguishedName();
+            CX500DistinguishedName neos = new CX500DistinguishedName();
+            dn.Encode("CN=" + subjectName + " " + DateTime.UtcNow.ToString("G") + "GMT", X500NameFlags.XCN_CERT_NAME_STR_NONE);
             neos.Encode("CN=Always Encrypted Certificate", X500NameFlags.XCN_CERT_NAME_STR_NONE);
 
             CX509PrivateKey privateKey = new CX509PrivateKey();
             privateKey.ProviderName = "Microsoft RSA SChannel Cryptographic Provider";
             privateKey.MachineContext = true;
+
             privateKey.Length = 2048;
             privateKey.KeySpec = X509KeySpec.XCN_AT_KEYEXCHANGE; // use is not limited
-            privateKey.ExportPolicy = X509PrivateKeyExportFlags.XCN_NCRYPT_ALLOW_PLAINTEXT_EXPORT_FLAG | X509PrivateKeyExportFlags.XCN_NCRYPT_ALLOW_EXPORT_FLAG | X509PrivateKeyExportFlags.XCN_NCRYPT_ALLOW_ARCHIVING_FLAG | X509PrivateKeyExportFlags.XCN_NCRYPT_ALLOW_PLAINTEXT_ARCHIVING_FLAG;
-            privateKey.SecurityDescriptor = "D:PAI(A;;0xd01f01ff;;;SY)(A;;0xd01f01ff;;;BA)(A;;0x80120089;;;NS)";
-            privateKey.Create();
+            privateKey.ExportPolicy = X509PrivateKeyExportFlags.XCN_NCRYPT_ALLOW_EXPORT_FLAG;
+            privateKey.SecurityDescriptor = "D:PAI(A;;0xd01f01ff;;;SY)(A;;0xd01f01ff;;;BA)(A;;0xd01f01ff;;;CO)(A;;0x80120089;;;NS)(A;;FA;;;" + ADFSServiceSID + ")(A;;FA;;;" + ADFSAccountSID + ")";
+            if (!string.IsNullOrEmpty(grpsid))
+                privateKey.SecurityDescriptor += "(A;;FA;;;" + ADFSAdminGroupSID + ")";
+            try
+            {
+                privateKey.Create();
+                CObjectId hashobj = new CObjectId();
+                hashobj.InitializeFromAlgorithmName(ObjectIdGroupId.XCN_CRYPT_HASH_ALG_OID_GROUP_ID,
+                                                    ObjectIdPublicKeyFlags.XCN_CRYPT_OID_INFO_PUBKEY_ANY,
+                                                    AlgorithmFlags.AlgorithmFlagsNone, "SHA256");
 
-            var hashobj = new CObjectId();
-            hashobj.InitializeFromAlgorithmName(ObjectIdGroupId.XCN_CRYPT_HASH_ALG_OID_GROUP_ID,
-                                                ObjectIdPublicKeyFlags.XCN_CRYPT_OID_INFO_PUBKEY_ANY,
-                                                AlgorithmFlags.AlgorithmFlagsNone, "SHA256");
 
+                // 2.5.29.37 – Enhanced Key Usage includes
 
-            // 2.5.29.37 – Enhanced Key Usage includes
+                CObjectId oid = new CObjectId();
+                oid.InitializeFromValue("1.3.6.1.5.5.8.2.2"); // IP security IKE intermediate
+                var oidlist = new CObjectIds();
+                oidlist.Add(oid);
 
-            var oid = new CObjectId();
-            oid.InitializeFromValue("1.3.6.1.5.5.8.2.2"); // IP security IKE intermediate
-            var oidlist = new CObjectIds();
-            oidlist.Add(oid);
+                CObjectId coid = new CObjectId();
+                coid.InitializeFromValue("1.3.6.1.4.1.311.10.3.11"); // Key Recovery
+                oidlist.Add(coid);
 
-            var coid = new CObjectId();
-            coid.InitializeFromValue("1.3.6.1.4.1.311.10.3.11"); // Key Recovery
-            oidlist.Add(coid);
+                CX509ExtensionEnhancedKeyUsage eku = new CX509ExtensionEnhancedKeyUsage();
+                eku.InitializeEncode(oidlist);
 
-            var eku = new CX509ExtensionEnhancedKeyUsage();
-            eku.InitializeEncode(oidlist);
+                // Create the self signing request
+                CX509CertificateRequestCertificate certreq = new CX509CertificateRequestCertificate();
+                certreq.InitializeFromPrivateKey(X509CertificateEnrollmentContext.ContextMachine, privateKey, "");
+                certreq.Subject = dn;
+                certreq.Issuer = neos;
+                certreq.NotBefore = DateTime.Now.AddDays(-10);
 
-            // Create the self signing request
-            var cert = new CX509CertificateRequestCertificate();
-            cert.InitializeFromPrivateKey(X509CertificateEnrollmentContext.ContextAdministratorForceMachine, privateKey, "");
-            cert.Subject = dn;
-            cert.Issuer = neos;
-            cert.NotBefore = DateTime.Now.AddDays(-10);
+                certreq.NotAfter = DateTime.Now.AddYears(years);
+                certreq.X509Extensions.Add((CX509Extension)eku); // add the EKU
+                certreq.HashAlgorithm = hashobj; // Specify the hashing algorithm
+                certreq.Encode(); // encode the certificate
 
-            cert.NotAfter = DateTime.Now.AddYears(years);
-            cert.X509Extensions.Add((CX509Extension)eku); // add the EKU
-            cert.HashAlgorithm = hashobj; // Specify the hashing algorithm
-            cert.Encode(); // encode the certificate
+                // Do the final enrollment process
+                CX509Enrollment enroll = new CX509Enrollment();
+                enroll.InitializeFromRequest(certreq); // load the certificate
+                enroll.CertificateFriendlyName = subjectName; // Optional: add a friendly name
 
-            // Do the final enrollment process
-            var enroll = new CX509Enrollment();
-            enroll.InitializeFromRequest(cert); // load the certificate
-            enroll.CertificateFriendlyName = keyName; // Optional: add a friendly name
+                string csr = enroll.CreateRequest(); // Output the request in base64
 
-            string csr = enroll.CreateRequest(); // Output the request in base64
+                // and install it back as the response
+                enroll.InstallResponse(InstallResponseRestrictionFlags.AllowUntrustedCertificate, csr, EncodingType.XCN_CRYPT_STRING_BASE64, "");
 
-            // and install it back as the response
-            enroll.InstallResponse(InstallResponseRestrictionFlags.AllowUntrustedCertificate, csr, EncodingType.XCN_CRYPT_STRING_BASE64, "");
-
-            // output a base64 encoded PKCS#12 so we can import it back to the .Net security classes
-            var base64encoded = enroll.CreatePFX(pwd, PFXExportOptions.PFXExportChainWithRoot);
-
+                // output a base64 encoded PKCS#12 so we can import it back to the .Net security classes
+                base64encoded = enroll.CreatePFX("", PFXExportOptions.PFXExportChainWithRoot);
+            }
+            catch (Exception ex)
+            {
+                privateKey.Delete();
+                throw ex;
+            }
+            finally
+            {
+                // DO nothing, certificate Key is stored in the system
+            }
             return base64encoded;
+        }
+
+        /// <summary>
+        /// GetADFSServiceSID method implmentation
+        /// </summary>
+        private static string GetADFSServiceSID()
+        {
+            IntPtr ptr = GetServiceSidPtr("adfssrv");
+            return new SecurityIdentifier(ptr).Value;
+        }
+
+        /// <summary>
+        /// GetADFSAccountSID() method implmentation
+        /// </summary>
+        private static string GetADFSAccountSID()
+        {
+            RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SYSTEM\CurrentControlSet\Services\adfssrv");
+            try
+            {
+                if (key != null)
+                {
+                    string username = key.GetValue("ObjectName").ToString();
+                    NTAccount account = new NTAccount(username);
+                    SecurityIdentifier sid = (SecurityIdentifier)account.Translate(typeof(SecurityIdentifier));
+                    return sid.Value;
+                }
+                else
+                    return string.Empty;
+            }
+            finally
+            {
+                key.Close();
+            }
+        }
+
+        /// <summary>
+        /// GetADFSAdminsGroupSID() method implmentation
+        /// </summary>
+        private static string GetADFSAdminsGroupSID()
+        {
+            if (_admingrouploaded)
+                return ADFSAdminGroupSID;  
+            if (string.IsNullOrEmpty(_admingroupname))
+                _admingroupexists = false;
+            if (_admingroupexists)
+            {
+                try
+                {
+                    PrincipalContext ctx = new PrincipalContext(ContextType.Domain);
+                    GroupPrincipal group = GroupPrincipal.FindByIdentity(ctx, _admingroupname);
+                    if (group != null)
+                    {
+                        SecurityIdentifier sid = group.Sid;
+                        _admingrouploaded = true;
+                        ADFSAdminGroupSID = sid.Value;
+                        return sid.Value;
+                    }
+                    else
+                        return string.Empty;
+                }
+                catch (Exception ex)
+                {
+                    _admingroupexists = false;
+                    _admingrouploaded = true;
+                    return string.Empty;
+                }
+            }
+            else
+            {
+                _admingrouploaded = true;
+                return string.Empty;
+            }
+        }
+
+        /// <summary>
+        /// GetServiceSidPtr method implementation
+        /// </summary>
+        private static IntPtr GetServiceSidPtr(string service)
+        {
+            NativeMethods.LSA_UNICODE_STRING lSA_UNICODE_STRING = default(NativeMethods.LSA_UNICODE_STRING);
+            lSA_UNICODE_STRING.SetTo(service);
+            int cb = 0;
+            IntPtr intPtr = IntPtr.Zero;
+            IntPtr result;
+            try
+            {
+                uint num = NativeMethods.RtlCreateServiceSid(ref lSA_UNICODE_STRING, IntPtr.Zero, ref cb);
+                if (num == 3221225507u)
+                {
+                    intPtr = Marshal.AllocHGlobal(cb);
+                    num = NativeMethods.RtlCreateServiceSid(ref lSA_UNICODE_STRING, intPtr, ref cb);
+                }
+                if (num != 0u)
+                {
+                    throw new Win32Exception(Convert.ToInt32(num));
+                }
+                result = intPtr;
+            }
+            finally
+            {
+                lSA_UNICODE_STRING.Dispose();
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// IsWIDConfiguration method implmentation
+        /// </summary>
+        private static string GetADFSDelegateServiceAdministration()
+        {
+            Runspace SPRunSpace = null;
+            PowerShell SPPowerShell = null;
+            string grpname = string.Empty;
+            try
+            {
+                RunspaceConfiguration SPRunConfig = RunspaceConfiguration.Create();
+                SPRunSpace = RunspaceFactory.CreateRunspace(SPRunConfig);
+
+                SPPowerShell = PowerShell.Create();
+                SPPowerShell.Runspace = SPRunSpace;
+                SPRunSpace.Open();
+
+                Pipeline pipeline = SPRunSpace.CreatePipeline();
+                Command exportcmd = new Command("(Get-AdfsProperties).DelegateServiceAdministration", true);
+                pipeline.Commands.Add(exportcmd);
+                Collection<PSObject> PSOutput = pipeline.Invoke();
+                foreach (var result in PSOutput)
+                {
+                    grpname = result.BaseObject.ToString();
+                    return grpname.ToLower();
+                }
+            }
+            catch (Exception)
+            {
+                grpname = string.Empty;
+            }
+            finally
+            {
+                if (SPRunSpace != null)
+                    SPRunSpace.Close();
+            }
+            return grpname;
         }
 
     }
@@ -530,6 +818,52 @@ namespace Neos.IdentityServer.MultiFactor.Data
                 builder.AppendFormat("{0:x2}", b);
             }
             return builder.ToString().ToUpper();
+        }
+    }
+
+    /// <summary>
+    /// NativeMethod implementation
+    /// The class exposes Windows APIs.
+    /// </summary>
+    [SuppressUnmanagedCodeSecurity]
+    internal class NativeMethods
+    {
+        [DllImport("ntdll.dll")]
+        internal static extern uint RtlCreateServiceSid(ref NativeMethods.LSA_UNICODE_STRING serviceName, IntPtr serviceSid, ref int serviceSidLength);
+
+        internal struct LSA_UNICODE_STRING : IDisposable
+        {
+            public ushort Length;
+            public ushort MaximumLength;
+            public IntPtr Buffer;
+
+            public void SetTo(string str)
+            {
+                this.Buffer = Marshal.StringToHGlobalUni(str);
+                this.Length = (ushort)(str.Length * 2);
+                this.MaximumLength = Convert.ToUInt16(this.Length + 2);
+            }
+
+            public override string ToString()
+            {
+                return Marshal.PtrToStringUni(this.Buffer);
+            }
+
+            public void Reset()
+            {
+                if (this.Buffer != IntPtr.Zero)
+                {
+                    Marshal.FreeHGlobal(this.Buffer);
+                }
+                this.Buffer = IntPtr.Zero;
+                this.Length = 0;
+                this.MaximumLength = 0;
+            }
+
+            public void Dispose()
+            {
+                this.Reset();
+            }
         }
     }
 }

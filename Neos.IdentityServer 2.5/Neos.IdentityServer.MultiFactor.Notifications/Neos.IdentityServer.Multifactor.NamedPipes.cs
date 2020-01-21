@@ -304,8 +304,10 @@ namespace Neos.IdentityServer.MultiFactor
             SecurityIdentifier id1 = new SecurityIdentifier(WellKnownSidType.LocalSystemSid, null);
             SecurityIdentifier id2 = new SecurityIdentifier(WellKnownSidType.LocalServiceSid, null);
             SecurityIdentifier id3 = new SecurityIdentifier(WellKnownSidType.AccountDomainAdminsSid, dom);
-            SecurityIdentifier id4 = new SecurityIdentifier(WellKnownSidType.NetworkServiceSid, null);
-            SecurityIdentifier id5 = new SecurityIdentifier(WellKnownSidType.WorldSid, null);
+            SecurityIdentifier id4 = new SecurityIdentifier(WellKnownSidType.BuiltinAdministratorsSid, null);
+            SecurityIdentifier id5 = new SecurityIdentifier(WellKnownSidType.NetworkServiceSid, null);
+            SecurityIdentifier id6 = new SecurityIdentifier(WellKnownSidType.WorldSid, null);
+            SecurityIdentifier id7 = new SecurityIdentifier(WellKnownSidType.AccountDomainUsersSid, dom);
 
             // Allow Everyone read and write access to the pipe. 
             pipeSecurity.SetAccessRule(new PipeAccessRule(id1, PipeAccessRights.ReadWrite, AccessControlType.Allow));
@@ -313,6 +315,8 @@ namespace Neos.IdentityServer.MultiFactor
             pipeSecurity.SetAccessRule(new PipeAccessRule(id3, PipeAccessRights.ReadWrite, AccessControlType.Allow));
             pipeSecurity.SetAccessRule(new PipeAccessRule(id4, PipeAccessRights.ReadWrite, AccessControlType.Allow));
             pipeSecurity.SetAccessRule(new PipeAccessRule(id5, PipeAccessRights.ReadWrite, AccessControlType.Allow));
+            pipeSecurity.SetAccessRule(new PipeAccessRule(id6, PipeAccessRights.ReadWrite, AccessControlType.Allow));
+            pipeSecurity.SetAccessRule(new PipeAccessRule(id7, PipeAccessRights.ReadWrite, AccessControlType.Allow));
             return pipeSecurity;
         }
 

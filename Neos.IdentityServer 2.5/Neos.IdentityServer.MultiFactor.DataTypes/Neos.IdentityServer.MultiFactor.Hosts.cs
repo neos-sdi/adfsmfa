@@ -28,6 +28,7 @@ using Microsoft.IdentityServer.Web.Authentication.External;
 using System.Web;
 using System.DirectoryServices.ActiveDirectory;
 using Neos.IdentityServer.MultiFactor.Data;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Neos.IdentityServer.MultiFactor
 {
@@ -900,63 +901,28 @@ namespace Neos.IdentityServer.MultiFactor
 
     public class ExternalKeyManagerConfig
     {
-        private string _class;
-        private bool _encrypted = false;
-        private string _thumbprint;
         private XmlCDataSection _cdata;
-        private string _keyname = "adfsmfa";
-        private bool _certreuse = false;
-        private int _certvalidity = 15;
-        private string _connectionstring;
 
         [XmlAttribute("FullQualifiedImplementation")]
-        public string FullQualifiedImplementation
-        {
-            get { return _class; }
-            set { _class = value; }
-        }
+        public string FullQualifiedImplementation { get; set; }
 
         [XmlAttribute("ConnectionString")]
-        public string ConnectionString
-        {
-            get { return _connectionstring; }
-            set { _connectionstring = value; }
-        }
+        public string ConnectionString { get; set; }
 
         [XmlAttribute("IsAlwaysEncrypted")]
-        public bool IsAlwaysEncrypted
-        {
-            get { return _encrypted; }
-            set { _encrypted = value; }
-        }
+        public bool IsAlwaysEncrypted { get; set; } = false;
 
         [XmlAttribute("ThumbPrint")]
-        public string ThumbPrint
-        {
-            get { return _thumbprint; }
-            set { _thumbprint = value; }
-        }
+        public string ThumbPrint { get; set; }
 
         [XmlAttribute("KeyName")]
-        public string KeyName
-        {
-            get { return _keyname; }
-            set { _keyname = value; }
-        }
+        public string KeyName { get; set; } = "adfsmfa";
 
         [XmlAttribute("CertReuse")]
-        public bool CertReuse 
-        { 
-            get { return _certreuse; }
-            set { _certreuse = value; }
-        }
+        public bool CertReuse { get; set; } = false;
 
         [XmlAttribute("CertificateValidity")]
-        public int CertificateValidity 
-        {
-            get { return _certvalidity; }
-            set { _certvalidity = value; } 
-        }
+        public int CertificateValidity { get; set; } = 15;
 
         [XmlElement("Parameters", typeof(XmlCDataSection))]
         public XmlCDataSection Parameters

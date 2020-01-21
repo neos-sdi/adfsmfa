@@ -1008,9 +1008,11 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <summary>
         /// CheckCertificate metnod implementation
         /// </summary>
-        internal bool CheckCertificate(string thumbprint)
+        internal bool CheckCertificate(string thumbprint, StoreLocation location = StoreLocation.LocalMachine)
         {
-            X509Certificate2 cert = Certs.GetCertificate(thumbprint, StoreLocation.LocalMachine);
+            X509Certificate2 cert = Certs.GetCertificate(thumbprint, location);
+            if (cert!=null)
+                cert.Reset();
             return (cert != null);
         }
 
@@ -1019,46 +1021,13 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// </summary>
         private string internalRegisterNewRSACertificate(PSHost Host, int years)
         {
-            X509Certificate2 cert = Certs.CreateSelfSignedCertificate("MFA RSA Keys", years);
+            X509Certificate2 cert = Certs.CreateRSACertificate("MFA RSA Keys", years);
             if (cert != null)
             {
                 string thumbprint = cert.Thumbprint;
                 if (Host != null)
                     Host.UI.WriteVerboseLine(DateTime.Now.ToLongTimeString() + " MFA Certificate \"" + thumbprint + "\" Created for using with RSA keys");
-              /*  Runspace SPRunSpace = null;
-                PowerShell SPPowerShell = null;
-                try
-                {
-                    RunspaceConfiguration SPRunConfig = RunspaceConfiguration.Create();
-                    SPRunSpace = RunspaceFactory.CreateRunspace(SPRunConfig);
-
-                    SPPowerShell = PowerShell.Create();
-                    SPPowerShell.Runspace = SPRunSpace;
-                    SPRunSpace.Open();
-
-                    Pipeline pipeline = SPRunSpace.CreatePipeline();
-                    Command exportcmd = new Command("Add-AdfsCertificate -CertificateType \"Token-Decrypting\" -Thumbprint \""+thumbprint+"\"", true);
-                    pipeline.Commands.Add(exportcmd);
-
-                    Collection<PSObject> PSOutput = pipeline.Invoke();
-                    if (Host != null)
-                        Host.UI.WriteVerboseLine(DateTime.Now.ToLongTimeString() + " MFA Certificate \"" + thumbprint + "\" Added to ADFS Decrypting Certificates list");
-                }
-                catch (CmdletInvocationException) // if Rollover is enabled cannot add 
-                {
-                    if (Host != null)
-                        Host.UI.WriteWarningLine(DateTime.Now.ToLongTimeString() + " Error adding certificate \"" + thumbprint + "\" to ADFS Decrypting Certificates list, your must do it manually !");
-                }
-                catch (Exception)
-                {
-                    if (Host != null)
-                        Host.UI.WriteWarningLine(DateTime.Now.ToLongTimeString() + " Error adding certificate \"" + thumbprint + "\" to ADFS Decrypting Certificates list, your must do it manually !");
-                }
-                finally
-                {
-                    if (SPRunSpace != null)
-                        SPRunSpace.Close();
-                } */
+                cert.Reset();
                 return thumbprint;
             }
             else
@@ -1070,46 +1039,13 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// </summary>
         private string internalRegisterNewSQLCertificate(PSHost Host, int years, string keyname)
         {
-            X509Certificate2 cert = Certs.CreateSelfSignedCertificateForSQLEncryption("MFA SQL Key : "+keyname, years);
+            X509Certificate2 cert = Certs.CreateRSACertificateForSQLEncryption("MFA SQL Key : " + keyname, years);
             if (cert != null)
             {
                 string thumbprint = cert.Thumbprint;
                 if (Host != null)
                     Host.UI.WriteVerboseLine(DateTime.Now.ToLongTimeString() + " MFA Certificate \"" + thumbprint + "\" Created for using with SQL keys");
-              /*  Runspace SPRunSpace = null;
-                PowerShell SPPowerShell = null;
-                try
-                {
-                    RunspaceConfiguration SPRunConfig = RunspaceConfiguration.Create();
-                    SPRunSpace = RunspaceFactory.CreateRunspace(SPRunConfig);
-
-                    SPPowerShell = PowerShell.Create();
-                    SPPowerShell.Runspace = SPRunSpace;
-                    SPRunSpace.Open();
-
-                    Pipeline pipeline = SPRunSpace.CreatePipeline();
-                    Command exportcmd = new Command("Add-AdfsCertificate -CertificateType \"Token-Decrypting\" -Thumbprint \"" + thumbprint + "\"", true);
-                    pipeline.Commands.Add(exportcmd);
-
-                    Collection<PSObject> PSOutput = pipeline.Invoke();
-                    if (Host != null)
-                        Host.UI.WriteVerboseLine(DateTime.Now.ToLongTimeString() + " SQL Certificate \"" + thumbprint + "\" Added to ADFS Decrypting Certificates list");
-                }
-                catch (CmdletInvocationException) // if Rollover is enabled cannot add 
-                {
-                    if (Host != null)
-                        Host.UI.WriteWarningLine(DateTime.Now.ToLongTimeString() + " Error adding certificate \"" + thumbprint + "\" to ADFS Decrypting Certificates list, your must do it manually !");
-                }
-                catch (Exception)
-                {
-                    if (Host != null)
-                        Host.UI.WriteWarningLine(DateTime.Now.ToLongTimeString() + " Error adding certificate \"" + thumbprint + "\" to ADFS Decrypting Certificates list, your must do it manually !");
-                }
-                finally
-                {
-                    if (SPRunSpace != null)
-                        SPRunSpace.Close();
-                } */
+                cert.Reset();
                 return thumbprint;
             }
             else

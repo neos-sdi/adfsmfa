@@ -1428,7 +1428,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                     if (!rd.IsDBNull(0))
                     {
                         string strcert = rd.GetString(0);
-                        X509Certificate2 cert = new X509Certificate2(Convert.FromBase64String(strcert), pass, X509KeyStorageFlags.Exportable | X509KeyStorageFlags.PersistKeySet);
+                        X509Certificate2 cert = new X509Certificate2(Convert.FromBase64String(strcert), pass, X509KeyStorageFlags.Exportable); // | X509KeyStorageFlags.PersistKeySet);
                         return cert;
                     }
                     else
@@ -1457,12 +1457,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
             string strcert = string.Empty;
             if (generatepassword)
                 pass = CheckSumEncoding.CheckSumAsString(upn);
-            strcert = Certs.CreateSelfSignedCertificateAsString(upn.ToLower(), validity, pass);
-            X509Certificate2 cert = new X509Certificate2(Convert.FromBase64String(strcert), pass, X509KeyStorageFlags.Exportable | X509KeyStorageFlags.PersistKeySet);
-            if (Certs.RemoveSelfSignedCertificate(cert))
-                return cert;
-            else
-                return null;
+            return Certs.CreateRSAEncryptionCertificateForUser(upn.ToLower(), validity, pass);
         }
 
         /// <summary>
@@ -1555,6 +1550,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
             }
             finally
             {
+                certificate.Reset();
                 trans.Commit();
                 con.Close();
             }
@@ -1604,6 +1600,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
             }
             finally
             {
+                certificate.Reset();
                 trans.Commit();
                 con.Close();
             }

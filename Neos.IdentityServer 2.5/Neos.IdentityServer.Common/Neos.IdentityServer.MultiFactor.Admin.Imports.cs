@@ -1,25 +1,31 @@
-﻿using Neos.IdentityServer.MultiFactor.Data;
+﻿//******************************************************************************************************************************************************************************************//
+// Copyright (c) 2019 Neos-Sdi (http://www.neos-sdi.com)                                                                                                                                    //                        
+//                                                                                                                                                                                          //
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
+// to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
+// and to permit persons to whom the Software is furnished to do so, subject to the following conditions:                                                                                   //
+//                                                                                                                                                                                          //
+// The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.                                                           //
+//                                                                                                                                                                                          //
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,                                      //
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,                            //
+// WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                               //
+//                                                                                                                                                                                          //
+// https://adfsmfa.codeplex.com                                                                                                                                                             //
+// https://github.com/neos-sdi/adfsmfa                                                                                                                                                      //
+//                                                                                                                                                                                          //
+//******************************************************************************************************************************************************************************************//
+using Neos.IdentityServer.MultiFactor.Data;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Linq;
 
 namespace Neos.IdentityServer.MultiFactor.Administration
 {
     public class ImportUsersBase
     {
-        private  MFAConfig _config;
-        private bool _forcenewKey = false;
-        private bool _sendemail = false;
-        private int _recordcount = 0;
-        private int _errorscount = 0;
-        private bool _disableall = false;
-        private bool _nologfile = false;
-
         /// <summary>
         /// ImportUsersBase constructor
         /// </summary>
@@ -39,72 +45,44 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <summary>
         /// Config property
         /// </summary>
-        public MFAConfig Config
-        {
-            get { return _config; }
-            set {_config = value; }
-        }
+        public MFAConfig Config { get; set; }
 
         /// <summary>
         /// ForceNewKey property
         /// </summary>
-        public bool ForceNewKey
-        {
-            get { return _forcenewKey; }
-            set { _forcenewKey = value; }
-        }
+        public bool ForceNewKey { get; set; } = false;
 
         /// <summary>
         /// ForceNewKey property
         /// </summary>
-        public bool SendEmail
-        {
-            get { return _sendemail; }
-            set { _sendemail = value; }
-        }
+        public bool SendEmail { get; set; } = false;
 
         /// <summary>
         /// DisableAll property
         /// </summary>
-        public bool DisableAll
-        {
-            get { return _disableall; }
-            set { _disableall = value; }
-        }
+        public bool DisableAll { get; set; } = false;
 
         /// <summary>
         /// DisableAll property
         /// </summary>
-        public bool NoLogFile
-        {
-            get { return _nologfile; }
-            set { _nologfile = value; }
-        }
+        public bool NoLogFile { get; set; } = false;
 
         /// <summary>
         /// RecordsCount property
         /// </summary>
-        public int RecordsCount
-        {
-            get { return _recordcount; }
-            set { _recordcount = value; }
-        }
+        public int RecordsCount { get; set; } = 0;
 
         /// <summary>
         /// ErrorsCount property
         /// </summary>
-        public int ErrorsCount
-        {
-            get { return _errorscount; }
-            set { _errorscount = value; }
-        }
+        public int ErrorsCount { get; set; } = 0;
 
         /// <summary>
         /// RecordsImported property
         /// </summary>
         public int RecordsImported
         {
-            get { return _recordcount - _errorscount; }
+            get { return RecordsCount - ErrorsCount; }
         }
 
         /// <summary>
@@ -212,7 +190,8 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 if (string.IsNullOrEmpty(Password))
                     Password = adht.Password;
 
-                DataRepositoryService client = new ADDSDataRepositoryService(adht, Config.DeliveryWindow);
+                // DataRepositoryService client = new ADDSDataRepositoryService(adht, Config.DeliveryWindow);
+                DataRepositoryService client = new ADDSDataRepositoryService(Config.Hosts.ActiveDirectoryHost, Config.Hosts.ActiveDirectoryHost.Account, Config.Hosts.ActiveDirectoryHost.Password, Config.DeliveryWindow);
                 Trace.WriteLine("");
                 Trace.WriteLine(string.Format("Importing for AD : {0}", LDAPPath));
                 Trace.Indent();
@@ -226,7 +205,8 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                     Trace.WriteLine("");
                     Trace.WriteLine("Importing ADDS Mode");
                     Trace.Indent();
-                    client2 = new ADDSDataRepositoryService(Config.Hosts.ActiveDirectoryHost, Config.DeliveryWindow);
+                    // client2 = new ADDSDataRepositoryService(Config.Hosts.ActiveDirectoryHost, Config.DeliveryWindow);
+                    client2 = new ADDSDataRepositoryService(Config.Hosts.ActiveDirectoryHost, Config.Hosts.ActiveDirectoryHost.Account, Config.Hosts.ActiveDirectoryHost.Password, Config.DeliveryWindow);
                 }
                 else
                 {

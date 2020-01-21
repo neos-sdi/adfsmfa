@@ -99,7 +99,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Neos.IdentityServer.MultiFactor.Certificates.cs" />
+    <Compile Include="Neos.IdentityServer.MultiFactor.Encryption.cs" />
     <None Include="Neos.IdentityServer.pfx" />
   </ItemGroup>
   <ItemGroup>

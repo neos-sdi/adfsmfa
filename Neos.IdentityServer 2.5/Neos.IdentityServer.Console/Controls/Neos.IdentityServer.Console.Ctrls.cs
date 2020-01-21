@@ -634,6 +634,7 @@ namespace Neos.IdentityServer.Console.Controls
 
                 chkProviderEnabled.Checked = _provider.Enabled;
                 chkProviderEnabled.Enabled = (_provider.AllowDisable);
+                chkProviderRequired.Checked = _provider.IsRequired;
                 chkProviderRequired.Enabled = (_provider.AllowDisable);
 
                 if (_provider.AllowEnrollment)
@@ -707,7 +708,8 @@ namespace Neos.IdentityServer.Console.Controls
                         break;
 
                 }
-                ManagementService.ADFSManager.SetDirty(true);
+                if (_view.AutoValidate != AutoValidate.Disable)
+                    ManagementService.ADFSManager.SetDirty(true);
             }
             catch (Exception ex)
             {
@@ -752,7 +754,8 @@ namespace Neos.IdentityServer.Console.Controls
                         Config.WebAuthNProvider.EnrollWizard = chkProviderEnroll.Checked;
                         break;
                 }
-                ManagementService.ADFSManager.SetDirty(true);
+                if (_view.AutoValidate != AutoValidate.Disable)
+                    ManagementService.ADFSManager.SetDirty(true);
             }
             catch (Exception ex)
             {
@@ -810,7 +813,8 @@ namespace Neos.IdentityServer.Console.Controls
                         break;
 
                 }
-                ManagementService.ADFSManager.SetDirty(true);
+                if (_view.AutoValidate != AutoValidate.Disable)
+                    ManagementService.ADFSManager.SetDirty(true);
             }
             catch (Exception ex)
             {
@@ -867,7 +871,8 @@ namespace Neos.IdentityServer.Console.Controls
                         chkProviderPin.Enabled = Config.WebAuthNProvider.Enabled;
                         break;
                 }
-                ManagementService.ADFSManager.SetDirty(true);
+                if (_view.AutoValidate != AutoValidate.Disable)
+                    ManagementService.ADFSManager.SetDirty(true);
             }
             catch (Exception ex)
             {
