@@ -3562,7 +3562,7 @@ namespace Neos.IdentityServer.Console.Controls
                 txtMaxRows.Enabled = Config.UseActiveDirectory;
 
                 btnTemplateBase.Enabled = Config.UseActiveDirectory;
-                btnTemplateBase.Enabled = Config.UseActiveDirectory;
+                btnTemplate2016.Enabled = Config.UseActiveDirectory;
                 btnTemplateMFA.Enabled = Config.UseActiveDirectory;
 
                 tblSaveConfig.Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPESAVE;
