@@ -429,9 +429,9 @@ namespace Neos.IdentityServer.Console
     {
         public MMCSecurityFormatList()
         {
-            this.Add(new MMCSecurityFormatItem() { ID = SecretKeyFormat.RNG, Label = "RNG (random key generator)" });
-            this.Add(new MMCSecurityFormatItem() { ID = SecretKeyFormat.RSA, Label = "RSA (Certificate)" });
-            this.Add(new MMCSecurityFormatItem() { ID = SecretKeyFormat.CUSTOM, Label = "RSA CUSTOM (Certificate per user)" });
+            this.Add(new MMCSecurityFormatItem() { ID = SecretKeyFormat.RNG, Label = "RNG (Random Number Generator)" });
+            this.Add(new MMCSecurityFormatItem() { ID = SecretKeyFormat.RSA, Label = "RSA (Certificate(s))" });
+            this.Add(new MMCSecurityFormatItem() { ID = SecretKeyFormat.CUSTOM, Label = "CUSTOM (External API PowerShell)" });
         }
     }
 

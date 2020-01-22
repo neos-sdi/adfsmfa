@@ -249,15 +249,18 @@ namespace Neos.IdentityServer.Console
     public class ServiceScopeNode : RefreshableScopeNode
     {
         internal ServiceFormView serviceFormView;
+        private Microsoft.ManagementConsole.Action LocalCertMgmt;
 
         public ServiceScopeNode(): base(true)
         {
             this.DisplayName = res.SERVICESCOPENODEDESC;
             this.LanguageIndependentName = "MFA Service";
-
+            LocalCertMgmt = new Microsoft.ManagementConsole.Action(res.GENERALSCOPECERTS, res.GENERALSCOPECERTSDESC, -1, "ManageCerts");
             this.ActionsPaneHelpItems.Clear();
             this.ActionsPaneItems.Clear();
             this.EnabledStandardVerbs = StandardVerbs.Refresh;
+            this.ActionsPaneItems.Add(LocalCertMgmt);
+            this.ActionsPaneItems.Add(new Microsoft.ManagementConsole.ActionSeparator());
             this.HelpTopic = string.Empty;
         }
 
@@ -280,6 +283,20 @@ namespace Neos.IdentityServer.Console
         }
 
         /// <summary>
+        /// OnAction method implmentation
+        /// </summary>
+        protected override void OnAction(Microsoft.ManagementConsole.Action action, AsyncStatus status)
+        {
+            switch ((string)action.Tag)
+            {
+                case "ManageCerts":
+                    if (this.LocalCertMgmt != null)
+                        this.serviceFormView.ManageCerts();
+                    break;
+            }
+        }
+
+        /// <summary>
         /// RefreshDescription method
         /// </summary>
         public override void RefreshDescription()
@@ -292,7 +309,17 @@ namespace Neos.IdentityServer.Console
         /// </summary>
         public override void RefreshActions()
         {
-
+            foreach (ActionsPaneItem itm in this.ActionsPaneItems)
+            {
+                if (itm is Microsoft.ManagementConsole.Action)
+                {
+                    if ((string)((Microsoft.ManagementConsole.Action)itm).Tag == "ManageCerts")
+                    {
+                        ((Microsoft.ManagementConsole.Action)itm).DisplayName = res.GENERALSCOPECERTS;
+                        ((Microsoft.ManagementConsole.Action)itm).Description = res.GENERALSCOPECERTSDESC;
+                    }
+                }
+            }
         }
 
         /// <summary>

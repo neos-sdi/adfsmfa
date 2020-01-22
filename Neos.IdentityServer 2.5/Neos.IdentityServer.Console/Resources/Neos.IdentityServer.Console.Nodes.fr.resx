@@ -318,4 +318,10 @@
   <data name="WEBAUTHNSCOPEDESC" xml:space="preserve">
     <value>WebAuthN biométrie</value>
   </data>
+  <data name="GENERALSCOPECERTS" xml:space="preserve">
+    <value>Sécurité des certificats MFA</value>
+  </data>
+  <data name="GENERALSCOPECERTSDESC" xml:space="preserve">
+    <value>Gérez la liste de contrôle d'accès des clés privées du certificat sur le serveur courant</value>
+  </data>
 </root>

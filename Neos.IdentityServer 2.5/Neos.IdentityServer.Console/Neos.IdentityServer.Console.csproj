@@ -226,6 +226,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Neos.IdentityServer.Console.Nodes.resx</DependentUpon>
     </Compile>
+    <Compile Include="Resources\Neos.IdentityServer.Console.ServiceFormView.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Neos.IdentityServer.Console.ServiceFormView.resx</DependentUpon>
+    </Compile>
     <Compile Include="Resources\Neos.IdentityServer.Console.Snapin.Designer.cs">
       <DependentUpon>Neos.IdentityServer.Console.Snapin.resx</DependentUpon>
       <DesignTime>True</DesignTime>
@@ -1108,6 +1113,20 @@
     <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.Nodes.ro.resx" />
     <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.Nodes.ru.resx" />
     <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.Nodes.sv.resx" />
+    <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.ServiceFormView.de.resx" />
+    <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.ServiceFormView.es.resx" />
+    <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.ServiceFormView.fr.resx" />
+    <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.ServiceFormView.it.resx" />
+    <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.ServiceFormView.nl.resx" />
+    <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.ServiceFormView.pl.resx" />
+    <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.ServiceFormView.pt.resx" />
+    <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.ServiceFormView.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Neos.IdentityServer.Console.ServiceFormView.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.ServiceFormView.ro.resx" />
+    <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.ServiceFormView.ru.resx" />
+    <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.ServiceFormView.sv.resx" />
     <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.Snapin.resx">
       <SubType>Designer</SubType>
       <Generator>PublicResXFileCodeGenerator</Generator>

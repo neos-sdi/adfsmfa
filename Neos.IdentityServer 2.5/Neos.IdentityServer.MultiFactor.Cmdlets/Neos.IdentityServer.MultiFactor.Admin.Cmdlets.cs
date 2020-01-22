@@ -2010,7 +2010,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     ///   <para>Export current MFA configuration to the specified file.</para>
     /// </example>
     [Cmdlet("Export", "MFASystemConfiguration", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
-    [PrimaryServerRequired]
+   // [PrimaryServerRequired]
     public sealed class ExportMFASystemConfiguration : MFACmdlet
     {
         /// <summary>
@@ -4339,7 +4339,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     /// </summary>
     /// <example>
     ///   <para>Set-MFAFirewallRules</para>
-    ///   <para>Set-MFAFirewallRules -ComputersAllowed '172.16.0.1, 172.17.0.50'</para>
+    ///   <para>Set-MFAFirewallRules -ComputersAllowed '172.16.100.1, 172.16.100.2'</para>
     /// </example>
     [Cmdlet(VerbsCommon.Set, "MFAFirewallRules", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
     public sealed class SetMFAFirewallRules : MFACmdlet
@@ -4417,7 +4417,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     ///   <para>Set-MFAActiveDirectoryTemplate -Kind MFA:: </para>
     /// </example>
     [Cmdlet(VerbsCommon.Set, "MFAActiveDirectoryTemplate", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
-    public sealed class MFAActiveDirectoryTemplate : MFACmdlet
+    public sealed class SetMFAActiveDirectoryTemplate : MFACmdlet
     {
         /// <summary>
         /// <para type="description">Template type for ADDS Attributes configuration.</para>
@@ -4440,6 +4440,74 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 catch (Exception ex)
                 {
                     this.ThrowTerminatingError(new ErrorRecord(ex, "4025", ErrorCategory.OperationStopped, this));
+                }
+            }
+        }
+    }
+
+    #endregion
+
+    #region Certificates Management
+    /// <summary>
+    /// <para type="synopsis">Update Acces Control List for MFA Certificates stored in LocalMachine Store. Usefull after you deploy an cetificate in ADFS Farm</para>
+    /// <para type="description">Update Acces Control List for MFA Certificates stored in LocalMachine Store and optionnally remove all orphaned privatekeys. Usefull after you deploy an cetificate in ADFS Farm</para>
+    /// </summary>
+    /// <example>
+    ///   <para>Update-MFACertificatesAcessControlList</para>
+    ///   <para>Update-MFACertificatesAcessControlList -CleanOrphaned'</para>
+    /// </example>
+    [Cmdlet("Update", "MFACertificatesAcessControlList", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
+    public sealed class UpdatetMFACertificatesAcessControlList : MFACmdlet
+    {
+        private bool _option;
+
+        /// <summary>
+        /// <para type="description">Perform cleaning of orphaned private keys (this occurs when you delete a certificate from LocalMachine store.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Data")]
+        public SwitchParameter CleanOrphaned
+        {
+            get { return _option; }
+            set { _option = value; }
+        }
+
+        /// <summary>
+        /// BeginProcessing method implementation
+        /// </summary>
+        protected override void BeginProcessing()
+        {
+            base.BeginProcessing();
+            try
+            {
+                ManagementService.Initialize(this.Host, true);
+            }
+            catch (Exception ex)
+            {
+                this.ThrowTerminatingError(new ErrorRecord(ex, "4023", ErrorCategory.OperationStopped, this));
+            }
+        }
+
+        /// <summary>
+        /// ProcessRecord method override
+        /// </summary>
+        protected override void ProcessRecord()
+        {
+            if (ShouldProcess("MFA Certificates ACL Update"))
+            {
+                try
+                {
+                    ManagementService.UpdateCertificatesACL();
+                    this.Host.UI.WriteLine(ConsoleColor.Green, this.Host.UI.RawUI.BackgroundColor, infos_strings.InfosCertsACLUpdated); 
+                    if (CleanOrphaned)
+                    {
+                        int res = ManagementService.CleanOrphanedPrivateKeys();
+                        this.Host.UI.WriteLine(ConsoleColor.Green, this.Host.UI.RawUI.BackgroundColor, string.Format(infos_strings.InfosOrphanedDeleted + " : {0}", res));
+                    }
+                    this.WriteVerbose(infos_strings.InfosConfigUpdated);
+                }
+                catch (Exception ex)
+                {
+                    this.ThrowTerminatingError(new ErrorRecord(ex, "4024", ErrorCategory.OperationStopped, this));
                 }
             }
         }

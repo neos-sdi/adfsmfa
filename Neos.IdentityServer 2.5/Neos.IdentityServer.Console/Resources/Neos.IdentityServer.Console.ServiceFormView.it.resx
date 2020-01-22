@@ -117,70 +117,16 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="InfoAllKeyWillbeReset" xml:space="preserve">
-    <value>Alle RSA-Schlüssel werden ungültig! Weiter (Y/N)</value>
+  <data name="CERTIFICATESCLEANMSG" xml:space="preserve">
+    <value>Eliminare le chiavi private orfane ?</value>
   </data>
-  <data name="InfosAllServicesRestarted" xml:space="preserve">
-    <value>Alle Farm Dienste neu gestartet !</value>
+  <data name="CERTIFICATESSECURITYMSG" xml:space="preserve">
+    <value>Aggiornare i certificati MFA Elenco controllo accessi ?</value>
   </data>
-  <data name="InfosConfigUpdated" xml:space="preserve">
-    <value>MFA-Konfiguration aktualisiert !</value>
+  <data name="CERTIFICATESSECURITYMSGRESULT" xml:space="preserve">
+    <value>Elenco controllo accessi aggiornato per tutti i certificati MFA !</value>
   </data>
-  <data name="InfosDatabaseCreated" xml:space="preserve">
-    <value>Datenbank {0} erstellt !</value>
-  </data>
-  <data name="InfosRecordsCount" xml:space="preserve">
-    <value>Anzahl der Datensätze : {0}</value>
-  </data>
-  <data name="InfosRSACertificateChanged" xml:space="preserve">
-    <value>MFA-Zertifikat {0} korrekt aktualisiert ! Sie müssen dieses Zertifikat auf allen anderen ADFS-Servern bereitstellen.</value>
-  </data>
-  <data name="InfosServerServicesRestarted" xml:space="preserve">
-    <value>Dienste auf Server {0} Neu gestartet !</value>
-  </data>
-  <data name="InfosSQLCertificateChanged" xml:space="preserve">
-    <value>SQL-Zertifikat {0} korrekt aktualisiert ! Sie müssen dieses Zertifikat auf allen anderen ADFS-Servern bereitstellen.</value>
-  </data>
-  <data name="InfosSystemExported" xml:space="preserve">
-    <value>MFA-Konfiguration korrekt in Datei {0} exportiert !</value>
-  </data>
-  <data name="InfosSystemImported" xml:space="preserve">
-    <value>MFA-Konfiguration korrekt aus Datei {0} importiert !</value>
-  </data>
-  <data name="InfosSystemInInvalidState" xml:space="preserve">
-    <value>MFA-Konfiguration Import mit Fehlern !</value>
-  </data>
-  <data name="InfosSystemRegistered" xml:space="preserve">
-    <value>MFA System korrekt registriert !</value>
-  </data>
-  <data name="InfosSystemUnRegistered" xml:space="preserve">
-    <value>MFA-System korrekt unkonfiguriert !</value>
-  </data>
-  <data name="InfosUserAdded" xml:space="preserve">
-    <value>User {0} hinzugefügt !</value>
-  </data>
-  <data name="InfosUserDeleted" xml:space="preserve">
-    <value>User {0} gelöscht !</value>
-  </data>
-  <data name="InfosUserHasNewKey" xml:space="preserve">
-    <value>User {0} hat einen neuen Enryption-Schlüssel !</value>
-  </data>
-  <data name="InfosUserUpdated" xml:space="preserve">
-    <value>User {0} aktualisiert !</value>
-  </data>
-  <data name="InfosWarningAboutTheme" xml:space="preserve">
-    <value>vorsicht! Ihr Thema muss vollständig kompatibel sein (js, css, etc...) mit der benutzeroberfläche, die Sie wählen: {0}</value>
-  </data>
-  <data name="InfosDatabaseUpgraded" xml:space="preserve">
-    <value>Datenbank {0} aktualisiert !</value>
-  </data>
-  <data name="InfosSystemAlreadyInitialized" xml:space="preserve">
-    <value>MFA ist bereits initialisiert ! Sie müssen das PowerShell-Cmdlet "UnRegister-MFASystem ausführen, wenn Sie die gesamte MFA-Konfiguration neu initialisieren möchten !</value>
-  </data>
-  <data name="InfosCertsACLUpdated" xml:space="preserve">
-    <value>Zugriffssteuerungsliste für alle MFA-Zertifikate aktualisiert !</value>
-  </data>
-  <data name="InfosOrphanedDeleted" xml:space="preserve">
-    <value>Anzahl gelöschter verwaister privater Schlüssel</value>
+  <data name="CERTIFICATESCLEANMSGCOUNT" xml:space="preserve">
+    <value>Numero di chiavi private orfane cancellate</value>
   </data>
 </root>

@@ -27,6 +27,7 @@ using System.Diagnostics;
 using Microsoft.ManagementConsole.Advanced;
 using System.Windows.Forms;
 using System.Threading;
+using res = Neos.IdentityServer.Console.Resources.Neos_IdentityServer_Console_ServiceFormView;
 
 namespace Neos.IdentityServer.Console
 {
@@ -72,6 +73,84 @@ namespace Neos.IdentityServer.Console
         {
             if (serviceControl != null)
                 serviceControl.RefreshData();
+        }
+
+        internal void ManageCerts()
+        {
+            MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+            {
+                Caption = "Multi-Factor Authentication",
+                Buttons = MessageBoxButtons.YesNo,
+                DefaultButton = MessageBoxDefaultButton.Button1,
+                Icon = MessageBoxIcon.Question,
+                Text = res.CERTIFICATESSECURITYMSG
+            };
+            if (this.SnapIn.Console.ShowDialog(messageBoxParameters)==DialogResult.Yes)
+            {
+                try
+                {
+                    if (ManagementService.UpdateCertificatesACL())
+                    {
+                        MessageBoxParameters messageBoxParametersResult = new MessageBoxParameters
+                        {
+                            Caption = "Multi-Factor Authentication",
+                            Buttons = MessageBoxButtons.OK,
+                            DefaultButton = MessageBoxDefaultButton.Button1,
+                            Icon = MessageBoxIcon.Information,
+                            Text = res.CERTIFICATESSECURITYMSGRESULT
+                        };
+                        this.SnapIn.Console.ShowDialog(messageBoxParametersResult);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBoxParameters messageBoxParametersError = new MessageBoxParameters
+                    {
+                        Caption = "Multi-Factor Authentication Error",
+                        Buttons = MessageBoxButtons.OK,
+                        DefaultButton = MessageBoxDefaultButton.Button1,
+                        Icon = MessageBoxIcon.Error,
+                        Text = ex.Message
+                    };
+                    this.SnapIn.Console.ShowDialog(messageBoxParametersError);
+                }
+            }
+            MessageBoxParameters messageBoxParameters2 = new MessageBoxParameters
+            {
+                Caption = "Multi-Factor Authentication",
+                Buttons = MessageBoxButtons.YesNo,
+                DefaultButton = MessageBoxDefaultButton.Button1,
+                Icon = MessageBoxIcon.Question,
+                Text = res.CERTIFICATESCLEANMSG
+            };
+            if (this.SnapIn.Console.ShowDialog(messageBoxParameters2)==DialogResult.Yes)
+            {
+                try
+                {
+                    int nb = ManagementService.CleanOrphanedPrivateKeys();
+                    MessageBoxParameters messageBoxParametersResult = new MessageBoxParameters
+                    {
+                        Caption = "Multi-Factor Authentication",
+                        Buttons = MessageBoxButtons.OK,
+                        DefaultButton = MessageBoxDefaultButton.Button1,
+                        Icon = MessageBoxIcon.Information,
+                        Text = string.Format(res.CERTIFICATESCLEANMSGCOUNT + " : {0}", nb)
+                    };
+                    this.SnapIn.Console.ShowDialog(messageBoxParametersResult);
+                }
+                catch (Exception ex)
+                {
+                    MessageBoxParameters messageBoxParametersError = new MessageBoxParameters
+                    {
+                        Caption = "Multi-Factor Authentication Error",
+                        Buttons = MessageBoxButtons.OK,
+                        DefaultButton = MessageBoxDefaultButton.Button1,
+                        Icon = MessageBoxIcon.Error,
+                        Text = ex.Message
+                    };
+                    this.SnapIn.Console.ShowDialog(messageBoxParametersError);
+                }
+            }
         }
     }
 }

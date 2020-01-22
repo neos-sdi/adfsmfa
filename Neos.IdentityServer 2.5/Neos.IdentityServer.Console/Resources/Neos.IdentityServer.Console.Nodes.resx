@@ -129,6 +129,12 @@
   <data name="GENERALSCOPECANCELDESC" xml:space="preserve">
     <value>Cancel updates</value>
   </data>
+  <data name="GENERALSCOPECERTS" xml:space="preserve">
+    <value>MFA Certificates Security</value>
+  </data>
+  <data name="GENERALSCOPECERTSDESC" xml:space="preserve">
+    <value>Manage certificate's priva keys Access Control List on current server</value>
+  </data>
   <data name="GENERALSCOPENODEDESC" xml:space="preserve">
     <value>Global parameters</value>
   </data>

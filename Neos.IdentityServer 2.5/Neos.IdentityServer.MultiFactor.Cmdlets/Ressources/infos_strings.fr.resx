@@ -177,4 +177,10 @@
   <data name="InfosSystemAlreadyInitialized" xml:space="preserve">
     <value>MFA est déjà initialisé! vous devez exécuter la cmdlet PowerShell "UnRegister-MFASystem" si vous souhaitez réinitialiser TOUTE la configuration MFA !</value>
   </data>
+  <data name="InfosCertsACLUpdated" xml:space="preserve">
+    <value>Liste de contrôle d'accès mise à jour pour tous les certificats MFA !</value>
+  </data>
+  <data name="InfosOrphanedDeleted" xml:space="preserve">
+    <value>Nombre de clés privées orphelines supprimées</value>
+  </data>
 </root>

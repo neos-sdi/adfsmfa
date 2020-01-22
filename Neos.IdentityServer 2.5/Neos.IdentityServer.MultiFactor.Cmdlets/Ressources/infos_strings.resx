@@ -177,4 +177,10 @@
   <data name="InfosDatabaseUpgraded" xml:space="preserve">
     <value>Database {0} upgraded !</value>
   </data>
+  <data name="InfosCertsACLUpdated" xml:space="preserve">
+    <value>Access Control List updated for all MFA certificates !</value>
+  </data>
+  <data name="InfosOrphanedDeleted" xml:space="preserve">
+    <value>Number of deleted orphaned private keys</value>
+  </data>
 </root>

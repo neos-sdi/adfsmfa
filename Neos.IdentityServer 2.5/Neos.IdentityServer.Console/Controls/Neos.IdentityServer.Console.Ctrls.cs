@@ -1241,6 +1241,8 @@ namespace Neos.IdentityServer.Console.Controls
                     lbloptions.Text += "SMS ";
                 if (Config.AzureProvider.Enabled)
                     lbloptions.Text += "AZURE ";
+                if (Config.WebAuthNProvider.Enabled)
+                    lbloptions.Text += "BIOMETRICS ";
 
                 lbloptions.Left = 550;
                 lbloptions.Top = 10;
@@ -1251,7 +1253,10 @@ namespace Neos.IdentityServer.Console.Controls
                 switch (Config.KeysConfig.KeyFormat)
                 {
                     case SecretKeyFormat.RSA:
-                        lblSecurity.Text = "Security : RSA   " + Config.KeysConfig.CertificateThumbprint;
+                        if (Config.KeysConfig.CertificatePerUser)
+                            lblSecurity.Text = "Security : RSA per User";
+                        else
+                            lblSecurity.Text = "Security : RSA  " + Config.KeysConfig.CertificateThumbprint;
                         break;
                     case SecretKeyFormat.CUSTOM:
                         lblSecurity.Text = "Security : RSA CUSTOM";
@@ -1289,6 +1294,7 @@ namespace Neos.IdentityServer.Console.Controls
                 tblconfigure.LinkClicked += TblconfigureLinkClicked;
                 tblconfigure.TabIndex = 0;
                 tblconfigure.TabStop = true;
+                tblconfigure.Enabled = ManagementService.ADFSManager.IsPrimaryServer();
                 this.Controls.Add(tblconfigure);
             }
             finally
@@ -1331,11 +1337,17 @@ namespace Neos.IdentityServer.Console.Controls
                     lbloptions.Text += "SMS ";
                 if (Config.AzureProvider.Enabled)
                     lbloptions.Text += "AZURE ";
+                if (Config.WebAuthNProvider.Enabled)
+                    lbloptions.Text += "BIOMETRICS ";
+
 
                 switch (Config.KeysConfig.KeyFormat)
                 {
                     case SecretKeyFormat.RSA:
-                        lblSecurity.Text = "Security : RSA   " + Config.KeysConfig.CertificateThumbprint;
+                        if (Config.KeysConfig.CertificatePerUser)
+                            lblSecurity.Text = "Security : RSA per User";
+                        else
+                            lblSecurity.Text = "Security : RSA  " + Config.KeysConfig.CertificateThumbprint;
                         break;
                     case SecretKeyFormat.CUSTOM:
                         lblSecurity.Text = "Security : RSA CUSTOM";
@@ -1353,6 +1365,7 @@ namespace Neos.IdentityServer.Console.Controls
                     tblconfigure.Text = res.CTRLADFSDEACTIVATEMFA;
                 else
                     tblconfigure.Text = res.CTRLADFSACTIVATEMFA;
+                tblconfigure.Enabled = ManagementService.ADFSManager.IsPrimaryServer();
             }
             finally
             {
@@ -1370,6 +1383,8 @@ namespace Neos.IdentityServer.Console.Controls
         {
             try
             {
+                if (!ManagementService.ADFSManager.IsPrimaryServer())
+                    return;
                 if (!ManagementService.ADFSManager.IsRunning())
                     throw new Exception(res.CTRLMUSTACTIVATESVC);
                 if (ManagementService.ADFSManager.IsMFAProviderEnabled(null))
@@ -3545,6 +3560,10 @@ namespace Neos.IdentityServer.Console.Controls
 
                 txtMaxRows.Text = Config.Hosts.ActiveDirectoryHost.MaxRows.ToString();
                 txtMaxRows.Enabled = Config.UseActiveDirectory;
+
+                btnTemplateBase.Enabled = Config.UseActiveDirectory;
+                btnTemplateBase.Enabled = Config.UseActiveDirectory;
+                btnTemplateMFA.Enabled = Config.UseActiveDirectory;
 
                 tblSaveConfig.Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPESAVE;
                 tblCancelConfig.Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPECANCEL;

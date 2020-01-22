@@ -97,6 +97,24 @@ namespace Neos.IdentityServer.Console.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à MFA Certificates Security.
+        /// </summary>
+        public static string GENERALSCOPECERTS {
+            get {
+                return ResourceManager.GetString("GENERALSCOPECERTS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Manage certificate&apos;s priva keys Access Control List on current server.
+        /// </summary>
+        public static string GENERALSCOPECERTSDESC {
+            get {
+                return ResourceManager.GetString("GENERALSCOPECERTSDESC", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Global parameters.
         /// </summary>
         public static string GENERALSCOPENODEDESC {

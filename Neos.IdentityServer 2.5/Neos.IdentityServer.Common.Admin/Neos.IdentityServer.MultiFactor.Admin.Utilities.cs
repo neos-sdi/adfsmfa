@@ -451,6 +451,38 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                     SPRunSpace.Close();
             }
         }
+
+        /// <summary>
+        /// UpdateCertificatesACL method implementation
+        /// </summary>
+        internal static bool UpdateCertificatesACL()
+        {
+            EnsureService();
+            try
+            {
+                return Certs.UpdateCertificatesACL();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        /// <summary>
+        /// CleanOrphanedPrivateKeys method implmentation
+        /// </summary>
+        internal static int CleanOrphanedPrivateKeys()
+        {
+            EnsureService();
+            try
+            {
+                return Certs.CleanOrphanedPrivateKeys();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
     }
 
     public static class ADFSManagementRights

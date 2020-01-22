@@ -79,6 +79,15 @@ namespace Neos.IdentityServer.MultiFactor.Cmdlets.Ressources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Access Control List updated for all MFA certificates !.
+        /// </summary>
+        internal static string InfosCertsACLUpdated {
+            get {
+                return ResourceManager.GetString("InfosCertsACLUpdated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à MFA Configuration updated !.
         /// </summary>
         internal static string InfosConfigUpdated {
@@ -102,6 +111,15 @@ namespace Neos.IdentityServer.MultiFactor.Cmdlets.Ressources {
         internal static string InfosDatabaseUpgraded {
             get {
                 return ResourceManager.GetString("InfosDatabaseUpgraded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Number of deleted orphaned private keys.
+        /// </summary>
+        internal static string InfosOrphanedDeleted {
+            get {
+                return ResourceManager.GetString("InfosOrphanedDeleted", resourceCulture);
             }
         }
         

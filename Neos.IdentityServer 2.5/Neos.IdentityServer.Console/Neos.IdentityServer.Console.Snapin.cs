@@ -86,11 +86,13 @@ namespace Neos.IdentityServer.Console
             }
             catch (Exception ex)
             {
-                MessageBoxParameters msgp = new MessageBoxParameters();
-                msgp.Caption = "MFA Error";
-                msgp.Text = ex.Message;
-                msgp.Buttons = MessageBoxButtons.OK;
-                msgp.Icon = MessageBoxIcon.Error;
+                MessageBoxParameters msgp = new MessageBoxParameters
+                {
+                    Caption = "MFA Error",
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
                 this.Console.ShowDialog(msgp);
                 if (this.RootNode != null)
                     this.RootNode.Children.Clear();
@@ -191,17 +193,17 @@ namespace Neos.IdentityServer.Console
                 this.RootNode.ViewDescriptions.Add(fvr);
                 this.RootNode.ViewDescriptions.DefaultIndex = 0;
 
+                // Service Node
+                this.ServiceNode = new ServiceScopeNode();
+                FormViewDescription fvc = new FormViewDescription();
+                fvc.DisplayName = "MFA Platform Service";
+                fvc.ControlType = typeof(ServiceViewControl);
+                fvc.ViewType = typeof(ServiceFormView);
+                this.ServiceNode.ViewDescriptions.Add(fvc);
+                this.ServiceNode.ViewDescriptions.DefaultIndex = 0;
+
                 if (IsPrimary)
                 {
-                    // Service Node
-                    this.ServiceNode = new ServiceScopeNode();
-                    FormViewDescription fvc = new FormViewDescription();
-                    fvc.DisplayName = "MFA Platform Service";
-                    fvc.ControlType = typeof(ServiceViewControl);
-                    fvc.ViewType = typeof(ServiceFormView);
-                    this.ServiceNode.ViewDescriptions.Add(fvc);
-                    this.ServiceNode.ViewDescriptions.DefaultIndex = 0;
-
                     // General Scope
                     this.ServiceGeneralNode = new ServiceGeneralScopeNode();
                     FormViewDescription fvs = new FormViewDescription();
@@ -361,9 +363,9 @@ namespace Neos.IdentityServer.Console
                 this.UsersNode.ViewDescriptions.Add(fvu);
                 this.UsersNode.ViewDescriptions.DefaultIndex = 0;
 
+                this.RootNode.Children.Add(this.ServiceNode);
                 if (IsPrimary)
                 {
-                    this.RootNode.Children.Add(this.ServiceNode);
                     this.RootNode.Children.Add(this.ServiceGeneralNode);
                     this.RootNode.Children.Add(this.ServiceADDSNode);
                     this.RootNode.Children.Add(this.ServiceSQLNode);
@@ -403,9 +405,9 @@ namespace Neos.IdentityServer.Console
         public void RefreshUI()
         {
             ((RefreshableScopeNode)this.RootNode).RefreshUI();
+            ((RefreshableScopeNode)this.ServiceNode).RefreshUI();
             if (IsPrimary)
             {
-                ((RefreshableScopeNode)this.ServiceNode).RefreshUI();
                 ((RefreshableScopeNode)this.ServiceGeneralNode).RefreshUI();
                 ((RefreshableScopeNode)this.ServiceADDSNode).RefreshUI();
                 ((RefreshableScopeNode)this.ServiceSQLNode).RefreshUI();

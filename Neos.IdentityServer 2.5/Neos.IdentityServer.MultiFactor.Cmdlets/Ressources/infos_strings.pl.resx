@@ -177,4 +177,10 @@
   <data name="InfosSystemAlreadyInitialized" xml:space="preserve">
     <value>MFA zostało już zainicjowane! musisz uruchomić Cmdlet PowerShell "UnRegister-MFASystem", jeśli chcesz ponownie zainicjować WSZYSTKĄ konfigurację MFA !</value>
   </data>
+  <data name="InfosCertsACLUpdated" xml:space="preserve">
+    <value>Zaktualizowano listę kontroli dostępu dla wszystkich certyfikatów MFA !</value>
+  </data>
+  <data name="InfosOrphanedDeleted" xml:space="preserve">
+    <value>Liczba usuniętych osieroconych kluczy prywatnych</value>
+  </data>
 </root>

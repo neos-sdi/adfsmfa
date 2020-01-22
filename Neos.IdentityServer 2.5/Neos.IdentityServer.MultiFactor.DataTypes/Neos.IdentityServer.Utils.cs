@@ -21,10 +21,13 @@ using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.DirectoryServices.AccountManagement;
+using System.IO;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
 using System.Runtime.InteropServices;
 using System.Security;
+using System.Security.AccessControl;
+using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Principal;
 using System.Text;
@@ -200,7 +203,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
             string grpsid = GetADFSAdminsGroupSID();
             CX500DistinguishedName dn = new CX500DistinguishedName();
             CX500DistinguishedName neos = new CX500DistinguishedName();
-            dn.Encode("CN=" + subjectName + " " + DateTime.UtcNow.ToString("G") + "GMT", X500NameFlags.XCN_CERT_NAME_STR_NONE);
+            dn.Encode("CN=" + subjectName + " " + DateTime.UtcNow.ToString("G") + " GMT", X500NameFlags.XCN_CERT_NAME_STR_NONE);
             neos.Encode("CN=MFA RSA Keys Certificate", X500NameFlags.XCN_CERT_NAME_STR_NONE);
 
             CX509PrivateKey privateKey = new CX509PrivateKey();
@@ -365,7 +368,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
             string grpsid = GetADFSAdminsGroupSID();
             CX500DistinguishedName dn = new CX500DistinguishedName();
             CX500DistinguishedName neos = new CX500DistinguishedName();
-            dn.Encode("CN=" + subjectName + " " + DateTime.UtcNow.ToString("G") + "GMT", X500NameFlags.XCN_CERT_NAME_STR_NONE);
+            dn.Encode("CN=" + subjectName + " " + DateTime.UtcNow.ToString("G") + " GMT", X500NameFlags.XCN_CERT_NAME_STR_NONE);
             neos.Encode("CN=Always Encrypted Certificate", X500NameFlags.XCN_CERT_NAME_STR_NONE);
 
             CX509PrivateKey privateKey = new CX509PrivateKey();
@@ -375,7 +378,8 @@ namespace Neos.IdentityServer.MultiFactor.Data
             privateKey.Length = 2048;
             privateKey.KeySpec = X509KeySpec.XCN_AT_KEYEXCHANGE; // use is not limited
             privateKey.ExportPolicy = X509PrivateKeyExportFlags.XCN_NCRYPT_ALLOW_EXPORT_FLAG;
-            privateKey.SecurityDescriptor = "D:PAI(A;;0xd01f01ff;;;SY)(A;;0xd01f01ff;;;BA)(A;;0xd01f01ff;;;CO)(A;;0x80120089;;;NS)(A;;FA;;;" + ADFSServiceSID + ")(A;;FA;;;" + ADFSAccountSID + ")";
+            // privateKey.SecurityDescriptor = "D:PAI(A;;0xd01f01ff;;;SY)(A;;0xd01f01ff;;;BA)(A;;0xd01f01ff;;;CO)(A;;0x80120089;;;NS)(A;;FA;;;" + ADFSServiceSID + ")(A;;FA;;;" + ADFSAccountSID + ")";
+            privateKey.SecurityDescriptor = "D:PAI(A;;0xd01f01ff;;;SY)(A;;0xd01f01ff;;;BA)(A;;0xd01f01ff;;;CO)(A;;FA;;;" + ADFSServiceSID + ")(A;;FA;;;" + ADFSAccountSID + ")";
             if (!string.IsNullOrEmpty(grpsid))
                 privateKey.SecurityDescriptor += "(A;;FA;;;" + ADFSAdminGroupSID + ")";
             try
@@ -436,6 +440,133 @@ namespace Neos.IdentityServer.MultiFactor.Data
                 // DO nothing, certificate Key is stored in the system
             }
             return base64encoded;
+        }
+
+        /// <summary>
+        /// HasAssociatedCertificate method implementation
+        /// </summary>
+        private static bool HasAssociatedCertificate(string filename)
+        {
+            X509Store store = new X509Store(StoreName.My, StoreLocation.LocalMachine);
+            store.Open(OpenFlags.MaxAllowed);
+            try
+            {
+                X509Certificate2Collection collection2 = (X509Certificate2Collection)store.Certificates;
+                foreach (X509Certificate2 x509 in collection2)
+                {
+                    try
+                    {
+                        string cntName = string.Empty;
+                        RSA rsakey = (RSACng)x509.GetRSAPrivateKey();
+                        if (rsakey is RSACng)
+                        {
+                            cntName = ((RSACng)rsakey).Key.UniqueName;
+                        }
+                        else if (rsakey is RSACryptoServiceProvider)
+                        {
+                            cntName = ((RSACryptoServiceProvider)rsakey).CspKeyContainerInfo.UniqueKeyContainerName;
+                        }
+                        if (filename.ToLower().Equals(cntName.ToLower()))
+                            return true;
+                    }
+                    catch (Exception)
+                    {
+                        continue;
+                    }
+
+                }
+                return false;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                store.Close();
+            }
+        }
+
+        /// <summary>
+        /// CleanOrphanedPrivateKeys method implementation
+        /// </summary>
+        public static int CleanOrphanedPrivateKeys()
+        {
+            int result = 0;
+            string dirpath = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\Microsoft\Crypto\RSA\MachineKeys\";
+            DirectoryInfo dir = new DirectoryInfo(dirpath);
+
+            foreach (FileInfo fi in dir.GetFiles())
+            {
+                if (!HasAssociatedCertificate(fi.Name))
+                {
+                    fi.Delete();
+                    result++;
+                }
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// UpdateCertificatesACL method implementation
+        /// </summary>
+        public static bool UpdateCertificatesACL()
+        {
+            string groupsid = GetADFSAdminsGroupSID();
+            X509Store store = new X509Store(StoreName.My, StoreLocation.LocalMachine);
+            store.Open(OpenFlags.MaxAllowed);
+            try
+            {
+                X509Certificate2Collection collection2 = (X509Certificate2Collection)store.Certificates;
+                foreach (X509Certificate2 x509 in collection2)
+                {
+                    if (x509.Subject.ToLower().StartsWith("cn=mfa rsa keys") || x509.Subject.ToLower().StartsWith("cn=mfa sql key"))
+                    {
+                        string fileName = string.Empty;
+                        RSA rsakey = (RSACng)x509.GetRSAPrivateKey();
+                        if (rsakey is RSACng)
+                        {
+                            fileName = ((RSACng)rsakey).Key.UniqueName;
+                        }
+                        else if (rsakey is RSACryptoServiceProvider)
+                        {
+                            fileName = ((RSACryptoServiceProvider)rsakey).CspKeyContainerInfo.UniqueKeyContainerName;
+                        }
+                        if (!string.IsNullOrEmpty(fileName))
+                        {
+                            string fullpath = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData)+@"\Microsoft\Crypto\RSA\MachineKeys\"+fileName;
+
+                            FileSecurity fSecurity = File.GetAccessControl(fullpath, AccessControlSections.Access);
+
+                            SecurityIdentifier localsys = new SecurityIdentifier(WellKnownSidType.LocalSystemSid, null);
+                            fSecurity.AddAccessRule(new FileSystemAccessRule(localsys, FileSystemRights.FullControl, AccessControlType.Allow));
+
+                            SecurityIdentifier localacc = new SecurityIdentifier(WellKnownSidType.BuiltinAdministratorsSid, null);
+                            fSecurity.AddAccessRule(new FileSystemAccessRule(localacc, FileSystemRights.FullControl, AccessControlType.Allow));
+
+                            SecurityIdentifier adfsacc = new SecurityIdentifier(ADFSAccountSID);
+                            fSecurity.AddAccessRule(new FileSystemAccessRule(adfsacc, FileSystemRights.FullControl, AccessControlType.Allow));
+
+                            SecurityIdentifier adfsserv = new SecurityIdentifier(ADFSServiceSID);
+                            fSecurity.AddAccessRule(new FileSystemAccessRule(adfsserv, FileSystemRights.FullControl, AccessControlType.Allow));
+
+                            SecurityIdentifier adfsgroup = new SecurityIdentifier(groupsid);
+                            fSecurity.AddAccessRule(new FileSystemAccessRule(adfsgroup, FileSystemRights.FullControl, AccessControlType.Allow));
+
+                            File.SetAccessControl(fullpath, fSecurity);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                store.Close();
+            }
+            return true;
         }
 
         /// <summary>

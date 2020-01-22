@@ -177,4 +177,10 @@
   <data name="InfosSystemAlreadyInitialized" xml:space="preserve">
     <value>МИД уже инициализирован! вы должны запустить командлет PowerShell "UnRegister-MFASystem", если вы хотите переинициализировать ВСЕ настройки MFA !</value>
   </data>
+  <data name="InfosCertsACLUpdated" xml:space="preserve">
+    <value>Список контроля доступа обновлен для всех сертификатов MFA !</value>
+  </data>
+  <data name="InfosOrphanedDeleted" xml:space="preserve">
+    <value>Количество удаленных потерянных личных ключей</value>
+  </data>
 </root>
