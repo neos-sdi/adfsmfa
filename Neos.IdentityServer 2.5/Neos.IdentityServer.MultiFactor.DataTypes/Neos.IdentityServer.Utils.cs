@@ -550,9 +550,11 @@ namespace Neos.IdentityServer.MultiFactor.Data
                             SecurityIdentifier adfsserv = new SecurityIdentifier(ADFSServiceSID);
                             fSecurity.AddAccessRule(new FileSystemAccessRule(adfsserv, FileSystemRights.FullControl, AccessControlType.Allow));
 
-                            SecurityIdentifier adfsgroup = new SecurityIdentifier(groupsid);
-                            fSecurity.AddAccessRule(new FileSystemAccessRule(adfsgroup, FileSystemRights.FullControl, AccessControlType.Allow));
-
+                            if (!string.IsNullOrEmpty(groupsid))
+                            {
+                                SecurityIdentifier adfsgroup = new SecurityIdentifier(groupsid);
+                                fSecurity.AddAccessRule(new FileSystemAccessRule(adfsgroup, FileSystemRights.FullControl, AccessControlType.Allow));
+                            }
                             File.SetAccessControl(fullpath, fSecurity);
                         }
                     }
