@@ -412,6 +412,15 @@ namespace Neos.IdentityServer.Console.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Active Directory &quot;SuperUser&quot; Credentials.
+        /// </summary>
+        internal static string CTRLADSUPERACCOUNT {
+            get {
+                return ResourceManager.GetString("CTRLADSUPERACCOUNT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à ADDS Schema 2016++.
         /// </summary>
         internal static string CTRLADTEMPLATE2016 {
@@ -471,6 +480,15 @@ namespace Neos.IdentityServer.Console.Resources {
         internal static string CTRLADTEST {
             get {
                 return ResourceManager.GetString("CTRLADTEST", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à General Security Properties.
+        /// </summary>
+        internal static string CTRLADTITLECONFIG {
+            get {
+                return ResourceManager.GetString("CTRLADTITLECONFIG", resourceCulture);
             }
         }
         
@@ -1452,6 +1470,24 @@ namespace Neos.IdentityServer.Console.Resources {
         internal static string CTRLSQLUSING {
             get {
                 return ResourceManager.GetString("CTRLSQLUSING", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Use Active Directory.
+        /// </summary>
+        internal static string CTRLSTUSEADDS {
+            get {
+                return ResourceManager.GetString("CTRLSTUSEADDS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Use SQL Server.
+        /// </summary>
+        internal static string CTRLSTUSESQL {
+            get {
+                return ResourceManager.GetString("CTRLSTUSESQL", resourceCulture);
             }
         }
         

@@ -627,4 +627,16 @@
   <data name="CTRLADATRSACERTERROR" xml:space="preserve">
     <value>Atributul adaugă nevalid pentru certificatul RSA!</value>
   </data>
+  <data name="CTRLADSUPERACCOUNT" xml:space="preserve">
+    <value>Active Directory "SuperUser" Credențiale</value>
+  </data>
+  <data name="CTRLADTITLECONFIG" xml:space="preserve">
+    <value>Proprietăți generale de securitate</value>
+  </data>
+  <data name="CTRLSTUSEADDS" xml:space="preserve">
+    <value>Director Activ</value>
+  </data>
+  <data name="CTRLSTUSESQL" xml:space="preserve">
+    <value>Se utilizează SQL Server</value>
+  </data>
 </root>

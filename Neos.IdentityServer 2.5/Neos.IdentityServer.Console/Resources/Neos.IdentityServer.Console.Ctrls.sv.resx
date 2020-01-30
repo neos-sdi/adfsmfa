@@ -627,4 +627,16 @@
   <data name="CTRLADATRSACERTERROR" xml:space="preserve">
     <value>Ogiltigt lägger till attribut för RSA-certifikat!</value>
   </data>
+  <data name="CTRLADSUPERACCOUNT" xml:space="preserve">
+    <value>Intygsinformation för Active Directory "SuperUser"</value>
+  </data>
+  <data name="CTRLADTITLECONFIG" xml:space="preserve">
+    <value>Allmänna säkerhetsegenskaper</value>
+  </data>
+  <data name="CTRLSTUSEADDS" xml:space="preserve">
+    <value>Använd Active Directory</value>
+  </data>
+  <data name="CTRLSTUSESQL" xml:space="preserve">
+    <value>Använd SQL Server</value>
+  </data>
 </root>

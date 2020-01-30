@@ -324,4 +324,7 @@
   <data name="GENERALSCOPECERTSDESC" xml:space="preserve">
     <value>Hantera certifikats privata nycklar Access Control List på nuvarande server</value>
   </data>
+  <data name="STORAGESCOPENODEDESC" xml:space="preserve">
+    <value>Lagringskonfiguration</value>
+  </data>
 </root>

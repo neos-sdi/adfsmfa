@@ -1095,34 +1095,58 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// ChangePassword method implmentation
         /// </summary>
-        internal static void ChangePassword(string username, string oldpassword, string newpassword)
+        internal static void ChangePassword(MFAConfig cfg, string username, string oldpassword, string newpassword)
         {
             ADDSForestUtils utl = new ADDSForestUtils();
             string dns = utl.GetForestDNSForUPN(username);
-            using (var ctx = new PrincipalContext(ContextType.Domain, dns))
+            if ((!string.IsNullOrEmpty(cfg.Hosts.ActiveDirectoryHost.Account)) && (!string.IsNullOrEmpty(cfg.Hosts.ActiveDirectoryHost.Password)))
             {
-                using (var user = UserPrincipal.FindByIdentity(ctx, IdentityType.UserPrincipalName, username))
+                using (var ctx = new PrincipalContext(ContextType.Domain, dns, cfg.Hosts.ActiveDirectoryHost.Account, cfg.Hosts.ActiveDirectoryHost.Password))
                 {
-                    user.ChangePassword(oldpassword, newpassword);
+                    using (var user = UserPrincipal.FindByIdentity(ctx, IdentityType.UserPrincipalName, username))
+                    {
+                        user.ChangePassword(oldpassword, newpassword);
+                    }
+                }
+            }
+            else
+            {
+                using (var ctx = new PrincipalContext(ContextType.Domain, dns))
+                {
+                    using (var user = UserPrincipal.FindByIdentity(ctx, IdentityType.UserPrincipalName, username))
+                    {
+                        user.ChangePassword(oldpassword, newpassword);
+                    }
                 }
             }
         }
         /// <summary>
         /// CanChangePassword method implmentation
         /// </summary>
-        internal static bool CanChangePassword(string username)
+        internal static bool CanChangePassword(MFAConfig cfg, string username)
         {
             ADDSForestUtils utl = new ADDSForestUtils();
             string dns = utl.GetForestDNSForUPN(username);
-            using (var ctx = new PrincipalContext(ContextType.Domain, dns))
+            if ((!string.IsNullOrEmpty(cfg.Hosts.ActiveDirectoryHost.Account)) && (!string.IsNullOrEmpty(cfg.Hosts.ActiveDirectoryHost.Password)))
             {
-                UserPrincipal user = UserPrincipal.FindByIdentity(ctx, IdentityType.UserPrincipalName, username);
-                if (user == null)
-                    return false;
+                using (var ctx = new PrincipalContext(ContextType.Domain, dns, cfg.Hosts.ActiveDirectoryHost.Account, cfg.Hosts.ActiveDirectoryHost.Password))
+                {
+                    UserPrincipal user = UserPrincipal.FindByIdentity(ctx, IdentityType.UserPrincipalName, username);
+                    if (user == null)
+                        return false;
+                }
+            }
+            else
+            {
+                using (var ctx = new PrincipalContext(ContextType.Domain, dns))
+                {
+                    UserPrincipal user = UserPrincipal.FindByIdentity(ctx, IdentityType.UserPrincipalName, username);
+                    if (user == null)
+                        return false;
+                }
             }
             return true;
         }
-
         #endregion
     }
     #endregion
@@ -2180,7 +2204,6 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         internal static MFAConfig ReadConfiguration(PSHost Host = null)
         {
-
             MFAConfig config = ReadConfigurationFromCache();
             if (config == null)
                 config = ReadConfigurationFromDatabase(Host);
@@ -2229,6 +2252,12 @@ namespace Neos.IdentityServer.MultiFactor
                     config = (MFAConfig)xmlserializer.Deserialize(stm);
                     if ((!config.OTPProvider.Enabled) && (!config.MailProvider.Enabled) && (!config.ExternalProvider.Enabled) && (!config.AzureProvider.Enabled))
                         config.OTPProvider.Enabled = true;   // always let an active option eg : aplication in this case
+                    using (AESEncryption AES = new AESEncryption())
+                    {
+                        config.Hosts.ActiveDirectoryHost.Password = AES.Decrypt(config.Hosts.ActiveDirectoryHost.Password);
+                        config.MailProvider.Password = AES.Decrypt(config.MailProvider.Password);
+                    };
+                    Certs.InitializeAccountsSID(config.Hosts.ActiveDirectoryHost.DomainName, config.Hosts.ActiveDirectoryHost.Account, config.Hosts.ActiveDirectoryHost.Password);
                     KeysManager.Initialize(config);  // Important
                     RuntimeAuthProvider.LoadProviders(config);
                 }
@@ -2263,6 +2292,12 @@ namespace Neos.IdentityServer.MultiFactor
                         config = (MFAConfig)xmlserializer.Deserialize(ms);
                         if ((!config.OTPProvider.Enabled) && (!config.MailProvider.Enabled) && (!config.ExternalProvider.Enabled) && (!config.AzureProvider.Enabled))
                             config.OTPProvider.Enabled = true;   // always let an active option eg : aplication in this case
+                        using (AESEncryption AES = new AESEncryption())
+                        {
+                            config.Hosts.ActiveDirectoryHost.Password = AES.Decrypt(config.Hosts.ActiveDirectoryHost.Password);
+                            config.MailProvider.Password = AES.Decrypt(config.MailProvider.Password);
+                        };
+                        Certs.InitializeAccountsSID(config.Hosts.ActiveDirectoryHost.DomainName, config.Hosts.ActiveDirectoryHost.Account, config.Hosts.ActiveDirectoryHost.Password);
                         KeysManager.Initialize(config);  // Important
                         RuntimeAuthProvider.LoadProviders(config);
                     }
@@ -2281,7 +2316,7 @@ namespace Neos.IdentityServer.MultiFactor
             MFAConfig cfg = WriteConfigurationToDatabase(Host, config);
             if (cfg != null)
             {
-                WriteConfigurationToCache(cfg);
+                WriteConfigurationToCache(cfg, false);
             }
             return config;
         }
@@ -2289,13 +2324,21 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// WriteConfigurationToDatabase method implementation
         /// </summary>
-        internal static MFAConfig WriteConfigurationToDatabase(PSHost Host, MFAConfig config)
+        internal static MFAConfig WriteConfigurationToDatabase(PSHost Host, MFAConfig config, bool encrypt = true)
         {
             Runspace SPRunSpace = null;
             PowerShell SPPowerShell = null;
             string pth = Path.GetTempPath() + Path.GetRandomFileName();
             try
             {
+                if (encrypt)
+                {
+                    using (AESEncryption AES = new AESEncryption())
+                    {
+                        config.Hosts.ActiveDirectoryHost.Password = AES.Encrypt(config.Hosts.ActiveDirectoryHost.Password);
+                        config.MailProvider.Password = AES.Encrypt(config.MailProvider.Password);
+                    };
+                }
                 config.LastUpdated = DateTime.UtcNow;
                 FileStream stm = new FileStream(pth, FileMode.CreateNew, FileAccess.ReadWrite);
                 XmlConfigSerializer xmlserializer = new XmlConfigSerializer(typeof(MFAConfig));
@@ -2339,8 +2382,16 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// WriteConfigurationToCache method implementation
         /// </summary>
-        internal static MFAConfig WriteConfigurationToCache(MFAConfig config)
+        internal static MFAConfig WriteConfigurationToCache(MFAConfig config, bool encrypt = true)
         {
+            if (encrypt)
+            {
+                using (AESEncryption AES = new AESEncryption())
+                {
+                    config.Hosts.ActiveDirectoryHost.Password = AES.Encrypt(config.Hosts.ActiveDirectoryHost.Password);
+                    config.MailProvider.Password = AES.Encrypt(config.MailProvider.Password);
+                };
+            }
             XmlConfigSerializer xmlserializer = new XmlConfigSerializer(typeof(MFAConfig));
             MemoryStream stm = new MemoryStream();
             using (StreamReader reader = new StreamReader(stm))

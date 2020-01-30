@@ -29,7 +29,7 @@ using System.Runtime.Versioning;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Neos-Sdi")]
 [assembly: AssemblyProduct("Microsoft.IdentityServer.MultiFactor.DataTypes")]
-[assembly: AssemblyCopyright("Copyright Neos-Sdi © 2019")]
+[assembly: AssemblyCopyright("Copyright Neos-Sdi © 2020")]
 [assembly: AssemblyTrademark("Neos-Sdi")]
 [assembly: AssemblyCulture("")]
 
@@ -50,7 +50,7 @@ using System.Runtime.Versioning;
 //      Révision
 //
 [assembly: AssemblyVersion("2.5.0.0")]
-[assembly: AssemblyFileVersion("2.5.4720.1000")]
+[assembly: AssemblyFileVersion("2.5.4720.2000")]
 [assembly: AssemblyInformationalVersion("2.5.0.0")]
 [assembly: NeutralResourcesLanguageAttribute("en")]
 

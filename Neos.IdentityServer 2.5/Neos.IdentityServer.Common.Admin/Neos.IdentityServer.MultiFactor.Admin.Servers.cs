@@ -1677,7 +1677,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             {
                 cnx2.Close();
             }
-            FlatConfigSQL  cf = new FlatConfigSQL();
+            FlatSQLStore cf = new FlatSQLStore();
             cf.Load(host);
             if (!string.IsNullOrEmpty(_password))
                 cf.ConnectionString = "Persist Security Info=True;User ID="+ _username+";Password="+_password+";Initial Catalog=" + _databasename + ";Data Source=" + _servername;
@@ -1694,7 +1694,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// </summary>
         public string UpgradeMFADatabase(PSHost host, string servername, string databasename)
         {
-            FlatConfigSQL cf = new FlatConfigSQL();
+            FlatSQLStore cf = new FlatSQLStore();
             cf.Load(host);
             bool encrypt = cf.IsAlwaysEncrypted;
             string sqlscript = string.Empty;
@@ -1812,7 +1812,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 cnx3.Close();
             }
 
-            FlatConfigSQL cf = new FlatConfigSQL();
+            FlatSQLStore cf = new FlatSQLStore();
             cf.Load(host);
             if (!string.IsNullOrEmpty(_password))
                 cf.ConnectionString = "Persist Security Info=True;User ID=" + _username + ";Password=" + _password + ";Initial Catalog=" + _databasename + ";Data Source=" + _servername +";Column Encryption Setting=enabled";
@@ -1903,7 +1903,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             {
                 cnx2.Close();
             }
-            FlatExternalKeyManager cf = new FlatExternalKeyManager();
+            FlatCustomSecurity cf = new FlatCustomSecurity();
             cf.Load(host);
             if (!string.IsNullOrEmpty(_password))
                 cf.ConnectionString = "Persist Security Info=True;User ID=" + _username + ";Password=" + _password + ";Initial Catalog=" + _databasename + ";Data Source=" + _servername;
@@ -2003,7 +2003,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 cnx3.Close();
             }
 
-            FlatExternalKeyManager cf = new FlatExternalKeyManager();
+            FlatCustomSecurity cf = new FlatCustomSecurity();
             cf.Load(host);
             if (!string.IsNullOrEmpty(_password))
                 cf.ConnectionString = "Persist Security Info=True;User ID=" + _username + ";Password=" + _password + ";Initial Catalog=" + _databasename + ";Data Source=" + _servername + ";Column Encryption Setting=enabled";

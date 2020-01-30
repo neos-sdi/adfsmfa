@@ -627,4 +627,16 @@
   <data name="CTRLADATRSACERTERROR" xml:space="preserve">
     <value>Nieprawidłowy atrybut dodaje dla certyfikatu RSA!</value>
   </data>
+  <data name="CTRLADSUPERACCOUNT" xml:space="preserve">
+    <value>Poświadczenia "SuperUser" usługi Active Directory</value>
+  </data>
+  <data name="CTRLADTITLECONFIG" xml:space="preserve">
+    <value>Ogólne właściwości bezpieczeństwa</value>
+  </data>
+  <data name="CTRLSTUSEADDS" xml:space="preserve">
+    <value>Użyj usługi Active Directory</value>
+  </data>
+  <data name="CTRLSTUSESQL" xml:space="preserve">
+    <value>Użyj programu SQL Server</value>
+  </data>
 </root>

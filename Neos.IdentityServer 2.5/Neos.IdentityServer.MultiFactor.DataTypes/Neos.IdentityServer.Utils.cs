@@ -39,12 +39,9 @@ namespace Neos.IdentityServer.MultiFactor.Data
     /// </summary>
     public static class Certs
     {
-        static readonly string ADFSAccountSID = GetADFSAccountSID();
-        static readonly string ADFSServiceSID = GetADFSServiceSID();
-        static string ADFSAdminGroupSID;
-        static string _admingroupname = GetADFSDelegateServiceAdministration(); 
-        static bool _admingroupexists = true;
-        static bool _admingrouploaded = false;
+        static string ADFSAccountSID = string.Empty;
+        static string ADFSServiceSID = string.Empty;
+        static string ADFSAdminGroupSID = string.Empty;
 
         /// <summary>
         /// GetCertificate method implementation
@@ -200,7 +197,6 @@ namespace Neos.IdentityServer.MultiFactor.Data
         private static string InternalCreateRSACertificate(string subjectName, int years)
         {
             string base64encoded = string.Empty;
-            string grpsid = GetADFSAdminsGroupSID();
             CX500DistinguishedName dn = new CX500DistinguishedName();
             CX500DistinguishedName neos = new CX500DistinguishedName();
             dn.Encode("CN=" + subjectName + " " + DateTime.UtcNow.ToString("G") + " GMT", X500NameFlags.XCN_CERT_NAME_STR_NONE);
@@ -213,8 +209,12 @@ namespace Neos.IdentityServer.MultiFactor.Data
             privateKey.KeySpec = X509KeySpec.XCN_AT_KEYEXCHANGE; // use is not limited
             privateKey.ExportPolicy = X509PrivateKeyExportFlags.XCN_NCRYPT_ALLOW_EXPORT_FLAG;
             privateKey.KeyUsage = X509PrivateKeyUsageFlags.XCN_NCRYPT_ALLOW_DECRYPT_FLAG;
-            privateKey.SecurityDescriptor = "D:(A;;FA;;;SY)(A;;FA;;;BA)(A;;FA;;;" + ADFSServiceSID + ")(A;;FA;;;" + ADFSAccountSID + ")";
-            if (!string.IsNullOrEmpty(grpsid))
+            privateKey.SecurityDescriptor = "D:(A;;FA;;;SY)(A;;FA;;;BA)";
+            if (!string.IsNullOrEmpty(ADFSServiceSID))
+                privateKey.SecurityDescriptor += "(A;;FA;;;" + ADFSServiceSID + ")";
+            if (!string.IsNullOrEmpty(ADFSAccountSID))
+                privateKey.SecurityDescriptor += "(A;;FA;;;" + ADFSAccountSID + ")";
+            if (!string.IsNullOrEmpty(ADFSAdminGroupSID))
                 privateKey.SecurityDescriptor += "(A;;FA;;;" + ADFSAdminGroupSID + ")";
             try
             {
@@ -283,7 +283,6 @@ namespace Neos.IdentityServer.MultiFactor.Data
         private static string InternalCreateUserRSACertificate(string subjectName, int years, string pwd = "")
         {
             string base64encoded = string.Empty;
-            string grpsid = GetADFSAdminsGroupSID();
             CX500DistinguishedName dn = new CX500DistinguishedName();
             CX500DistinguishedName neos = new CX500DistinguishedName();
             dn.Encode("CN=" + subjectName, X500NameFlags.XCN_CERT_NAME_STR_NONE);
@@ -295,8 +294,12 @@ namespace Neos.IdentityServer.MultiFactor.Data
             privateKey.Length = 2048;
             privateKey.KeySpec = X509KeySpec.XCN_AT_KEYEXCHANGE; // use is not limited
             privateKey.ExportPolicy = X509PrivateKeyExportFlags.XCN_NCRYPT_ALLOW_EXPORT_FLAG;
-            privateKey.SecurityDescriptor = "D:(A;;FA;;;SY)(A;;FA;;;BA)(A;;FA;;;" + ADFSAccountSID + ")(A;;FA;;;" + ADFSServiceSID + ")";
-            if (!string.IsNullOrEmpty(grpsid))
+            privateKey.SecurityDescriptor = "D:(A;;FA;;;SY)(A;;FA;;;BA)";
+            if (!string.IsNullOrEmpty(ADFSServiceSID))
+                privateKey.SecurityDescriptor += "(A;;FA;;;" + ADFSServiceSID + ")";
+            if (!string.IsNullOrEmpty(ADFSAccountSID))
+                privateKey.SecurityDescriptor += "(A;;FA;;;" + ADFSAccountSID + ")";
+            if (!string.IsNullOrEmpty(ADFSAdminGroupSID))
                 privateKey.SecurityDescriptor += "(A;;FA;;;" + ADFSAdminGroupSID + ")";
             try
             {
@@ -365,7 +368,6 @@ namespace Neos.IdentityServer.MultiFactor.Data
         private static string InternalCreateSQLCertificate(string subjectName, int years, string pwd = "")
         {
             string base64encoded = string.Empty;
-            string grpsid = GetADFSAdminsGroupSID();
             CX500DistinguishedName dn = new CX500DistinguishedName();
             CX500DistinguishedName neos = new CX500DistinguishedName();
             dn.Encode("CN=" + subjectName + " " + DateTime.UtcNow.ToString("G") + " GMT", X500NameFlags.XCN_CERT_NAME_STR_NONE);
@@ -378,9 +380,12 @@ namespace Neos.IdentityServer.MultiFactor.Data
             privateKey.Length = 2048;
             privateKey.KeySpec = X509KeySpec.XCN_AT_KEYEXCHANGE; // use is not limited
             privateKey.ExportPolicy = X509PrivateKeyExportFlags.XCN_NCRYPT_ALLOW_EXPORT_FLAG;
-            // privateKey.SecurityDescriptor = "D:PAI(A;;0xd01f01ff;;;SY)(A;;0xd01f01ff;;;BA)(A;;0xd01f01ff;;;CO)(A;;0x80120089;;;NS)(A;;FA;;;" + ADFSServiceSID + ")(A;;FA;;;" + ADFSAccountSID + ")";
-            privateKey.SecurityDescriptor = "D:PAI(A;;0xd01f01ff;;;SY)(A;;0xd01f01ff;;;BA)(A;;0xd01f01ff;;;CO)(A;;FA;;;" + ADFSServiceSID + ")(A;;FA;;;" + ADFSAccountSID + ")";
-            if (!string.IsNullOrEmpty(grpsid))
+            privateKey.SecurityDescriptor = "D:PAI(A;;0xd01f01ff;;;SY)(A;;0xd01f01ff;;;BA)(A;;0xd01f01ff;;;CO)";
+            if (!string.IsNullOrEmpty(ADFSServiceSID))
+                privateKey.SecurityDescriptor += "(A;;FA;;;" + ADFSServiceSID + ")";
+            if (!string.IsNullOrEmpty(ADFSAccountSID))
+                privateKey.SecurityDescriptor += "(A;;FA;;;" + ADFSAccountSID + ")";
+            if (!string.IsNullOrEmpty(ADFSAdminGroupSID))
                 privateKey.SecurityDescriptor += "(A;;FA;;;" + ADFSAdminGroupSID + ")";
             try
             {
@@ -512,7 +517,6 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// </summary>
         public static bool UpdateCertificatesACL()
         {
-            string groupsid = GetADFSAdminsGroupSID();
             X509Store store = new X509Store(StoreName.My, StoreLocation.LocalMachine);
             store.Open(OpenFlags.MaxAllowed);
             try
@@ -544,15 +548,19 @@ namespace Neos.IdentityServer.MultiFactor.Data
                             SecurityIdentifier localacc = new SecurityIdentifier(WellKnownSidType.BuiltinAdministratorsSid, null);
                             fSecurity.AddAccessRule(new FileSystemAccessRule(localacc, FileSystemRights.FullControl, AccessControlType.Allow));
 
-                            SecurityIdentifier adfsacc = new SecurityIdentifier(ADFSAccountSID);
-                            fSecurity.AddAccessRule(new FileSystemAccessRule(adfsacc, FileSystemRights.FullControl, AccessControlType.Allow));
-
-                            SecurityIdentifier adfsserv = new SecurityIdentifier(ADFSServiceSID);
-                            fSecurity.AddAccessRule(new FileSystemAccessRule(adfsserv, FileSystemRights.FullControl, AccessControlType.Allow));
-
-                            if (!string.IsNullOrEmpty(groupsid))
+                            if (!string.IsNullOrEmpty(ADFSAccountSID))
                             {
-                                SecurityIdentifier adfsgroup = new SecurityIdentifier(groupsid);
+                                SecurityIdentifier adfsacc = new SecurityIdentifier(ADFSAccountSID);
+                                fSecurity.AddAccessRule(new FileSystemAccessRule(adfsacc, FileSystemRights.FullControl, AccessControlType.Allow));
+                            }
+                            if (!string.IsNullOrEmpty(ADFSServiceSID))
+                            {
+                                SecurityIdentifier adfsserv = new SecurityIdentifier(ADFSServiceSID);
+                                fSecurity.AddAccessRule(new FileSystemAccessRule(adfsserv, FileSystemRights.FullControl, AccessControlType.Allow));
+                            }
+                            if (!string.IsNullOrEmpty(ADFSAdminGroupSID))
+                            {
+                                SecurityIdentifier adfsgroup = new SecurityIdentifier(ADFSAdminGroupSID);
                                 fSecurity.AddAccessRule(new FileSystemAccessRule(adfsgroup, FileSystemRights.FullControl, AccessControlType.Allow));
                             }
                             File.SetAccessControl(fullpath, fSecurity);
@@ -571,19 +579,33 @@ namespace Neos.IdentityServer.MultiFactor.Data
             return true;
         }
 
+        public static void InitializeAccountsSID(string domain, string account, string password)
+        {
+            ADFSAccountSID = GetADFSAccountSID(domain, account, password);
+            ADFSServiceSID = GetADFSServiceSID();
+            ADFSAdminGroupSID = GetADFSAdminsGroupSID(domain, account, password);
+        }
+
         /// <summary>
         /// GetADFSServiceSID method implmentation
         /// </summary>
         private static string GetADFSServiceSID()
         {
-            IntPtr ptr = GetServiceSidPtr("adfssrv");
-            return new SecurityIdentifier(ptr).Value;
+            try
+            {
+                IntPtr ptr = GetServiceSidPtr("adfssrv");
+                return new SecurityIdentifier(ptr).Value;
+            }
+            catch (Exception)
+            {
+                return string.Empty;
+            }
         }
 
         /// <summary>
         /// GetADFSAccountSID() method implmentation
         /// </summary>
-        private static string GetADFSAccountSID()
+        private static string GetADFSAccountSID(string domain, string account, string password)
         {
             RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SYSTEM\CurrentControlSet\Services\adfssrv");
             try
@@ -591,12 +613,27 @@ namespace Neos.IdentityServer.MultiFactor.Data
                 if (key != null)
                 {
                     string username = key.GetValue("ObjectName").ToString();
-                    NTAccount account = new NTAccount(username);
-                    SecurityIdentifier sid = (SecurityIdentifier)account.Translate(typeof(SecurityIdentifier));
-                    return sid.Value;
+                    SecurityIdentifier sid;
+                    NTAccount ntaccount;
+                    try
+                    {
+                        ntaccount = new NTAccount(domain, username);
+                        sid = (SecurityIdentifier)ntaccount.Translate(typeof(SecurityIdentifier));
+                        return sid.Value;
+                    }
+                    catch (Exception)
+                    {
+                        ntaccount = new NTAccount(username);
+                        sid = (SecurityIdentifier)ntaccount.Translate(typeof(SecurityIdentifier));
+                        return sid.Value;
+                    }
                 }
                 else
                     return string.Empty;
+            }
+            catch (Exception)
+            {
+                return string.Empty;
             }
             finally
             {
@@ -607,38 +644,33 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// <summary>
         /// GetADFSAdminsGroupSID() method implmentation
         /// </summary>
-        private static string GetADFSAdminsGroupSID()
-        {
-            if (_admingrouploaded)
-                return ADFSAdminGroupSID;  
-            if (string.IsNullOrEmpty(_admingroupname))
-                _admingroupexists = false;
-            if (_admingroupexists)
+        private static string GetADFSAdminsGroupSID(string domain, string account, string password)
+        {                   
+            try
             {
-                try
+                string admingroupname = GetADFSDelegateServiceAdministration();
+                if (!string.IsNullOrEmpty(admingroupname))
                 {
-                    PrincipalContext ctx = new PrincipalContext(ContextType.Domain);
-                    GroupPrincipal group = GroupPrincipal.FindByIdentity(ctx, _admingroupname);
+                    PrincipalContext ctx;
+                    if (!string.IsNullOrEmpty(account))
+                       ctx = new PrincipalContext(ContextType.Domain, domain, account, password);
+                    else
+                        ctx = new PrincipalContext(ContextType.Domain, domain);
+                    GroupPrincipal group = GroupPrincipal.FindByIdentity(ctx, admingroupname);
                     if (group != null)
                     {
                         SecurityIdentifier sid = group.Sid;
-                        _admingrouploaded = true;
                         ADFSAdminGroupSID = sid.Value;
                         return sid.Value;
                     }
                     else
                         return string.Empty;
                 }
-                catch (Exception ex)
-                {
-                    _admingroupexists = false;
-                    _admingrouploaded = true;
+                else
                     return string.Empty;
-                }
             }
-            else
+            catch (Exception)
             {
-                _admingrouploaded = true;
                 return string.Empty;
             }
         }

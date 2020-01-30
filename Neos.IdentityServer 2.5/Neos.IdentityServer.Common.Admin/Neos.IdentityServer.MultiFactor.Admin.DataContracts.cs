@@ -42,30 +42,27 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         Administrative = 6,              // (UserFeaturesOptions.AdministrativeMode);
         Custom = 7                       // Empty 
     }
-  
-    [Serializable]
+
+    #region FlatConfig
+    /// <summary>
+    /// FlatConfig class implmentation
+    /// </summary>
     public class FlatConfig
     {
-        public bool UseUIPaginated;
         public bool IsDirty { get; set; }
-        public int DeliveryWindow { get; set; }
-        public int MaxRetries { get; set; }
-        public int PinLength { get; set; }
-        public int DefaultPin { get; set; }
         public string Issuer { get; set; }
-        public bool UseActiveDirectory { get; set; }
+        public string AdminContact { get; set; }
+        public string DefaultCountryCode { get; set; }
+        public PreferredMethod DefaultProviderMethod { get; set; }
+        public UserFeaturesOptions UserFeatures { get; set; }
         public bool CustomUpdatePassword { get; set; }
         public bool KeepMySelectedOptionOn { get; set; }
-        public bool ChangeNotificationsOn { get; set; }         
-        public PreferredMethod DefaultProviderMethod { get; set; }
-        public ReplayLevel ReplayLevel { get; set; }
+        public bool ChangeNotificationsOn { get; set; }
         public bool UseOfUserLanguages { get; set; }
-        public string DefaultCountryCode { get; set; }
-        public string AdminContact { get; set; }
-        public UserFeaturesOptions UserFeatures { get; set; }
-        public FlatConfigAdvertising AdvertisingDays { get; set; }
+        public FlatAdvertising AdvertisingDays { get; set; }
         public ADFSUserInterfaceKind UiKind { get; set; }
-
+        public bool UseUIPaginated;    
+        
         /// <summary>
         /// Update method implmentation
         /// </summary>
@@ -73,24 +70,17 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         {
             ManagementService.Initialize(host, true);
             MFAConfig cfg = ManagementService.Config;
-            AdminContact = cfg.AdminContact;
             IsDirty = cfg.IsDirty;
-            DeliveryWindow = cfg.DeliveryWindow;
-            MaxRetries = cfg.MaxRetries;
-            DefaultPin = cfg.DefaultPin;
-            PinLength = cfg.PinLength;
+            AdminContact = cfg.AdminContact;
             Issuer = cfg.Issuer;
-            UseActiveDirectory = cfg.UseActiveDirectory;
-            CustomUpdatePassword = cfg.CustomUpdatePassword;
             DefaultCountryCode = cfg.DefaultCountryCode;
+            DefaultProviderMethod = cfg.DefaultProviderMethod;
+            UserFeatures = cfg.UserFeatures;
+            CustomUpdatePassword = cfg.CustomUpdatePassword;
             KeepMySelectedOptionOn = cfg.KeepMySelectedOptionOn;
             ChangeNotificationsOn = cfg.ChangeNotificationsOn;
-            DefaultProviderMethod = cfg.DefaultProviderMethod;
-            UseOfUserLanguages = cfg.UseOfUserLanguages;
-            ReplayLevel = cfg.ReplayLevel;
-            AdminContact = cfg.AdminContact;
-            UserFeatures = cfg.UserFeatures;
-            AdvertisingDays = (FlatConfigAdvertising)cfg.AdvertisingDays;
+            UseOfUserLanguages = cfg.UseOfUserLanguages;           
+            AdvertisingDays = (FlatAdvertising)cfg.AdvertisingDays;
             UseUIPaginated = cfg.UseUIPaginated;
             UiKind = cfg.UiKind;
         }
@@ -102,26 +92,19 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         {
             ManagementService.Initialize(host, true);
             MFAConfig cfg = ManagementService.Config;
-            cfg.AdminContact = AdminContact;
             cfg.IsDirty = IsDirty;
-            cfg.DeliveryWindow = DeliveryWindow;
-            cfg.MaxRetries = MaxRetries;
-            cfg.DefaultPin = DefaultPin;
-            cfg.PinLength = PinLength;
+            cfg.AdminContact = AdminContact;
             cfg.Issuer = Issuer;
-            cfg.UseActiveDirectory = UseActiveDirectory;
+            cfg.DefaultCountryCode = DefaultCountryCode;
+            cfg.DefaultProviderMethod = DefaultProviderMethod;
+            cfg.UserFeatures = UserFeatures;
             cfg.CustomUpdatePassword = CustomUpdatePassword;
             cfg.KeepMySelectedOptionOn = KeepMySelectedOptionOn;
             cfg.ChangeNotificationsOn = ChangeNotificationsOn;
-            cfg.DefaultProviderMethod = DefaultProviderMethod;
             cfg.UseOfUserLanguages = UseOfUserLanguages;
-            cfg.ReplayLevel = ReplayLevel;
-            cfg.DefaultCountryCode = DefaultCountryCode;
-            cfg.AdminContact = AdminContact;
-            cfg.UserFeatures = UserFeatures;
             cfg.AdvertisingDays = (ConfigAdvertising)AdvertisingDays;
-            cfg.UiKind = UiKind;
             cfg.UseUIPaginated = UseUIPaginated;
+            cfg.UiKind = cfg.UiKind;
             ManagementService.ADFSManager.WriteConfiguration(host);
         }
 
@@ -179,19 +162,23 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             ManagementService.ADFSManager.WriteConfiguration(host);
         }
     }
+    #endregion
 
-    [Serializable]
-    public class FlatConfigSQL
+    #region FlatSQLStore
+    /// <summary>
+    /// FlatSQLStore class implementation
+    /// </summary>
+    public class FlatSQLStore
     {
-        public string KeyName { get; set; }
-        public int CertificateValidity { get; set; }
         public bool IsDirty { get; set; }
+        public bool Active { get; set; }
         public string ConnectionString { get; set; }
-        public int MaxRows { get; set; }
         public bool IsAlwaysEncrypted { get; set; }
+        public int CertificateValidity { get; set; }
         public string ThumbPrint { get; set; }
+        public string KeyName { get; set; }
         public bool CertReuse { get; set; }
-
+        public int MaxRows { get; set; }
         /// <summary>
         /// Update method implmentation
         /// </summary>
@@ -201,13 +188,15 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             MFAConfig cfg = ManagementService.Config;
             SQLServerHost sql = cfg.Hosts.SQLServerHost;
             IsDirty = cfg.IsDirty;
+            Active = !cfg.UseActiveDirectory;
             ConnectionString = sql.ConnectionString;
-            MaxRows = sql.MaxRows;
             IsAlwaysEncrypted = sql.IsAlwaysEncrypted;
-            ThumbPrint = sql.ThumbPrint;
-            KeyName = sql.KeyName;
-            CertReuse = sql.CertReuse;
             CertificateValidity = sql.CertificateValidity;
+            ThumbPrint = sql.ThumbPrint;
+            CertReuse = sql.CertReuse;
+            KeyName = sql.KeyName;
+            MaxRows = sql.MaxRows;
+           
         }
 
         /// <summary>
@@ -221,24 +210,27 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             cfg.IsDirty = IsDirty;
             if (!ManagementService.CheckSQLConnection(ConnectionString))
                 throw new ArgumentException(string.Format("Invalid ConnectionString {0} !", ConnectionString));
+            cfg.UseActiveDirectory = !Active;
             sql.ConnectionString = ConnectionString;
-            sql.MaxRows = MaxRows;
             sql.IsAlwaysEncrypted = IsAlwaysEncrypted;
-            sql.ThumbPrint = ThumbPrint;
-            sql.KeyName = KeyName;
-            sql.CertReuse = CertReuse;
             sql.CertificateValidity = CertificateValidity;
+            sql.ThumbPrint = ThumbPrint;
+            sql.CertReuse = CertReuse;
+            sql.KeyName = KeyName;     
+            sql.MaxRows = MaxRows;
             ManagementService.ADFSManager.WriteConfiguration(host);
         }
     }
+    #endregion
 
-    [Serializable]
-    public class FlatConfigADDS
+    #region FlatADDSStore
+    /// <summary>
+    /// FlatADDSStore class implementation
+    /// </summary>
+    public class FlatADDSStore
     {
         public bool IsDirty { get; set; }
-        public string DomainAddress { get; set; }
-        public string Account { get; set; }
-        public string Password { get; set; }
+        public bool Active { get; set; }
         public string KeyAttribute { get; set; }
         public string MailAttribute { get; set; }
         public string PhoneAttribute { get; set; }
@@ -247,6 +239,8 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         public string PinAttribute { get; set; }
         public string EnabledAttribute { get; set; }
         public string PublicKeyCredentialAttribute { get; set; }
+        public string ClientCertificateAttribute { get; set; }
+        public string RSACertificateAttribute { get; set; }
         public int MaxRows { get; set; }
 
         /// <summary>
@@ -258,9 +252,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             MFAConfig cfg = ManagementService.Config;
             ADDSHost adds = cfg.Hosts.ActiveDirectoryHost;
             IsDirty = cfg.IsDirty;
-            Account = adds.Account;
-            Password = adds.Password;
-            DomainAddress = adds.DomainAddress;
+            Active = cfg.UseActiveDirectory;
             KeyAttribute = adds.KeyAttribute;
             MailAttribute = adds.MailAttribute;
             PhoneAttribute = adds.PhoneAttribute;
@@ -269,6 +261,8 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             PinAttribute = adds.PinAttribute;
             EnabledAttribute = adds.TotpEnabledAttribute;
             PublicKeyCredentialAttribute = adds.PublicKeyCredentialAttribute;
+            ClientCertificateAttribute = adds.ClientCertificateAttribute;
+            RSACertificateAttribute = adds.RSACertificateAttribute;
             MaxRows = adds.MaxRows;
         }
 
@@ -281,26 +275,27 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             MFAConfig cfg = ManagementService.Config;
             ADDSHost adds = cfg.Hosts.ActiveDirectoryHost;
             cfg.IsDirty = IsDirty;
-            if (!ManagementService.CheckADDSAttribute(DomainAddress, Account, Password, KeyAttribute, 1))
+            if (!ManagementService.CheckADDSAttribute(adds.DomainAddress, adds.Account, adds.Password, KeyAttribute, 1))
                 throw new ArgumentException(string.Format("Attribute {0} not found in forest schema !", KeyAttribute));
-            if (!ManagementService.CheckADDSAttribute(DomainAddress, Account, Password, MailAttribute, 1))
+            if (!ManagementService.CheckADDSAttribute(adds.DomainAddress, adds.Account, adds.Password, MailAttribute, 1))
                 throw new ArgumentException(string.Format("Attribute {0} not found in forest schema !", MailAttribute));
-            if (!ManagementService.CheckADDSAttribute(DomainAddress, Account, Password, PhoneAttribute, 1))
+            if (!ManagementService.CheckADDSAttribute(adds.DomainAddress, adds.Account, adds.Password, PhoneAttribute, 1))
                 throw new ArgumentException(string.Format("Attribute {0} not found in forest schema !", PhoneAttribute));
-            if (!ManagementService.CheckADDSAttribute(DomainAddress, Account, Password, MethodAttribute, 0))
+            if (!ManagementService.CheckADDSAttribute(adds.DomainAddress, adds.Account, adds.Password, MethodAttribute, 0))
                 throw new ArgumentException(string.Format("Attribute {0} not found in forest schema !", MethodAttribute));
-            if (!ManagementService.CheckADDSAttribute(DomainAddress, Account, Password, OverrideMethodAttribute, 0))
+            if (!ManagementService.CheckADDSAttribute(adds.DomainAddress, adds.Account, adds.Password, OverrideMethodAttribute, 0))
                 throw new ArgumentException(string.Format("Attribute {0} not found in forest schema !", OverrideMethodAttribute));
-            if (!ManagementService.CheckADDSAttribute(DomainAddress, Account, Password, PinAttribute, 0))
+            if (!ManagementService.CheckADDSAttribute(adds.DomainAddress, adds.Account, adds.Password, PinAttribute, 0))
                 throw new ArgumentException(string.Format("Attribute {0} not found in forest schema !", PinAttribute));
-            if (!ManagementService.CheckADDSAttribute(DomainAddress, Account, Password, EnabledAttribute, 0))
+            if (!ManagementService.CheckADDSAttribute(adds.DomainAddress, adds.Account, adds.Password, EnabledAttribute, 0))
                 throw new ArgumentException(string.Format("Attribute {0} not found in forest schema !", EnabledAttribute));
-            if (!ManagementService.CheckADDSAttribute(DomainAddress, Account, Password, PublicKeyCredentialAttribute, 2))
+            if (!ManagementService.CheckADDSAttribute(adds.DomainAddress, adds.Account, adds.Password, PublicKeyCredentialAttribute, 2))
                 throw new ArgumentException(string.Format("Attribute {0} not found in forest schema !", PublicKeyCredentialAttribute));
+            if (!ManagementService.CheckADDSAttribute(adds.DomainAddress, adds.Account, adds.Password, ClientCertificateAttribute, 0))
+                throw new ArgumentException(string.Format("Attribute {0} not found in forest schema !", ClientCertificateAttribute));
+            if (!ManagementService.CheckADDSAttribute(adds.DomainAddress, adds.Account, adds.Password, RSACertificateAttribute, 0))
+                throw new ArgumentException(string.Format("Attribute {0} not found in forest schema !", RSACertificateAttribute));
 
-            adds.Account = Account;
-            adds.Password = Password;
-            adds.DomainAddress = DomainAddress;
             adds.KeyAttribute = KeyAttribute;
             adds.MailAttribute = MailAttribute;
             adds.PhoneAttribute = PhoneAttribute;
@@ -309,24 +304,93 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             adds.PinAttribute = PinAttribute;
             adds.TotpEnabledAttribute = EnabledAttribute;
             adds.PublicKeyCredentialAttribute = PublicKeyCredentialAttribute;
+            ClientCertificateAttribute = adds.ClientCertificateAttribute;
+            RSACertificateAttribute = adds.RSACertificateAttribute;
             adds.MaxRows = MaxRows;
             ManagementService.ADFSManager.WriteConfiguration(host);
         }
     }
+    #endregion
 
-    [Serializable]
-    public class FlatKeysConfig
+    #region FlatSecurity
+    /// <summary>
+    /// FlatSecurity class implementation
+    /// </summary>
+    public class FlatSecurity
     {
         public bool IsDirty { get; set; }
-        public KeyGeneratorMode KeyGenerator  { get; set; }
-        public KeySizeMode KeySize { get; set; }
-        public SecretKeyFormat KeysFormat  { get; set; }
+        public int DeliveryWindow { get; set; }
+        public int MaxRetries { get; set; }
+        public ReplayLevel ReplayLevel { get; set; }
         public SecretKeyVersion LibVersion { get; set; }
-        public string CertificateThumbprint  { get; set; }
-        public int CertificateValidity  { get; set; }
-        public FlatExternalKeyManager ExternalKeyManager  { get; set; }
         public string XORSecret { get; set; }
-        public bool CertificatePerUser { get; set; }
+        public int PinLength { get; set; }
+        public int DefaultPin { get; set; }
+        public string DomainAddress { get; set; }
+        public string Account { get; set; }
+        public string Password { get; set; }
+
+        /// <summary>
+        /// Update method implmentation
+        /// </summary>
+        public void Load(PSHost host)
+        {
+            ManagementService.Initialize(host, true);
+            MFAConfig cfg = ManagementService.Config;
+            KeysManagerConfig keys = cfg.KeysConfig;
+            ADDSHost adds = cfg.Hosts.ActiveDirectoryHost;
+            IsDirty = cfg.IsDirty;
+            DeliveryWindow = cfg.DeliveryWindow;
+            MaxRetries = cfg.MaxRetries;
+            ReplayLevel = cfg.ReplayLevel;
+            LibVersion = keys.KeyVersion;
+            PinLength = cfg.PinLength;
+            DefaultPin = cfg.DefaultPin;
+            DomainAddress = adds.DomainAddress;
+            Account = adds.Account;
+            using (AESEncryption AES = new AESEncryption())
+            {
+                Password = AES.Encrypt(adds.Password);
+                XORSecret = AES.Encrypt(keys.XORSecret);
+            };
+        }
+
+        /// <summary>
+        /// Update method implmentation
+        /// </summary>
+        public void Update(PSHost host)
+        {
+            ManagementService.Initialize(host, true);
+            MFAConfig cfg = ManagementService.Config;
+            KeysManagerConfig keys = cfg.KeysConfig;
+            ADDSHost adds = cfg.Hosts.ActiveDirectoryHost;
+            cfg.IsDirty = true;
+            cfg.DeliveryWindow = this.DeliveryWindow;
+            cfg.MaxRetries = this.MaxRetries;
+            cfg.ReplayLevel = this.ReplayLevel;
+            keys.KeyVersion = this.LibVersion;
+            cfg.PinLength = cfg.PinLength;
+            cfg.DefaultPin = cfg.DefaultPin;
+            adds.DomainAddress = this.DomainAddress;
+            adds.Account = this.Account;
+            using (AESEncryption AES = new AESEncryption())
+            {
+                adds.Password = AES.Decrypt(Password);
+                keys.XORSecret = AES.Decrypt(XORSecret);
+            };
+            ManagementService.ADFSManager.WriteConfiguration(host);
+        }
+    }
+    #endregion
+
+    #region FlatRngSecurity
+    /// <summary>
+    /// FlatRngSecurity class implementation
+    /// </summary>
+    public class FlatRngSecurity
+    {
+        public bool IsDirty { get; set; }
+        public KeyGeneratorMode KeyGenerator { get; set; }
 
         /// <summary>
         /// Update method implmentation
@@ -337,15 +401,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             MFAConfig cfg = ManagementService.Config;
             KeysManagerConfig keys = cfg.KeysConfig;
             IsDirty = cfg.IsDirty;
-            this.CertificateThumbprint = keys.CertificateThumbprint;
-            this.CertificateValidity = keys.CertificateValidity;
-            this.CertificatePerUser = keys.CertificatePerUser;
-            this.KeysFormat = keys.KeyFormat;
-            this.KeyGenerator = keys.KeyGenerator;
-            this.LibVersion = keys.KeyVersion;
-            this.KeySize = keys.KeySize;
-            this.XORSecret = keys.XORSecret;
-            this.ExternalKeyManager = (FlatExternalKeyManager)keys.ExternalKeyManager;
+            KeyGenerator = keys.KeyGenerator;
         }
 
         /// <summary>
@@ -357,32 +413,130 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             MFAConfig cfg = ManagementService.Config;
             KeysManagerConfig keys = cfg.KeysConfig;
             cfg.IsDirty = true;
-            keys.CertificateThumbprint = this.CertificateThumbprint;
-            keys.CertificateValidity = this.CertificateValidity;
-            keys.CertificatePerUser = this.CertificatePerUser;
-            keys.KeyFormat = this.KeysFormat;
-            keys.KeyGenerator = this.KeyGenerator;
-            keys.KeyVersion = this.LibVersion;
-            keys.KeySize = this.KeySize;
-            keys.XORSecret = this.XORSecret;
-            keys.ExternalKeyManager = (ExternalKeyManagerConfig)this.ExternalKeyManager;
+            keys.KeyGenerator = KeyGenerator;
             ManagementService.ADFSManager.WriteConfiguration(host);
         }
     }
+    #endregion
 
-    [Serializable]
-    public class FlatExternalKeyManager
+    #region FlatRsaSecurity
+    /// <summary>
+    /// FlatRngSecurity class implementation
+    /// </summary>
+    public class FlatRsaSecurity
+    {
+        public bool IsDirty { get; set; }
+        public int CertificateValidity { get; set; }
+        public bool CertificatePerUser { get; set; }
+        public string CertificateThumbprint { get; set; }
+
+
+        /// <summary>
+        /// Update method implmentation
+        /// </summary>
+        public void Load(PSHost host)
+        {
+            ManagementService.Initialize(host, true);
+            MFAConfig cfg = ManagementService.Config;
+            KeysManagerConfig keys = cfg.KeysConfig;
+            IsDirty = cfg.IsDirty;
+            CertificateValidity = keys.CertificateValidity;
+            CertificatePerUser = keys.CertificatePerUser;
+            CertificateThumbprint = keys.CertificateThumbprint;
+        }
+
+        /// <summary>
+        /// Update method implmentation
+        /// </summary>
+        public void Update(PSHost host)
+        {
+            ManagementService.Initialize(host, true);
+            MFAConfig cfg = ManagementService.Config;
+            KeysManagerConfig keys = cfg.KeysConfig;
+            ADDSHost adds = cfg.Hosts.ActiveDirectoryHost;
+            cfg.IsDirty = true;
+            keys.CertificateValidity = CertificateValidity;
+            keys.CertificatePerUser = CertificatePerUser;
+            keys.CertificateThumbprint = CertificateThumbprint;
+            ManagementService.ADFSManager.WriteConfiguration(host);
+        }
+    }
+    #endregion
+
+    #region FlatBiometricSecurity
+    /// <summary>
+    /// FlatBiometricSecurity class implementation
+    /// </summary>
+    public class FlatBiometricSecurity 
+    {
+        public bool IsDirty { get; set; }
+        public FlatAuthenticatorAttachmentKind AuthenticatorAttachment { get; set; }
+        public FlatAttestationConveyancePreferenceKind AttestationConveyancePreference { get; set; }
+        public FlatUserVerificationRequirementKind UserVerificationRequirement { get; set; }
+        public bool Extensions { get; set; }
+        public bool UserVerificationIndex { get; set; }
+        public bool Location { get; set; }
+        public bool UserVerificationMethod { get; set; }
+        public bool RequireResidentKey { get; set; }
+
+        /// <summary>
+        /// Update method implmentation
+        /// </summary>
+        public void Load(PSHost host)
+        {
+            ManagementService.Initialize(host, true);
+            MFAConfig cfg = ManagementService.Config;
+            WebAuthNProvider otp = cfg.WebAuthNProvider;
+            this.IsDirty = cfg.IsDirty;
+            this.AuthenticatorAttachment = otp.Options.AuthenticatorAttachment.FromAuthenticatorAttachmentValue();
+            this.AttestationConveyancePreference = otp.Options.AttestationConveyancePreference.FromAttestationConveyancePreferenceValue();
+            this.UserVerificationRequirement = otp.Options.UserVerificationRequirement.FromUserVerificationRequirementValue();
+            this.Extensions = otp.Options.Extensions;
+            this.UserVerificationIndex = otp.Options.UserVerificationIndex;
+            this.Location = otp.Options.Location;
+            this.UserVerificationMethod = otp.Options.UserVerificationMethod;
+            this.RequireResidentKey = otp.Options.RequireResidentKey; 
+        }
+
+        /// <summary>
+        /// Update method implmentation
+        /// </summary>
+        public void Update(PSHost host)
+        {
+            ManagementService.Initialize(host, true);
+            MFAConfig cfg = ManagementService.Config;
+            WebAuthNProvider otp = cfg.WebAuthNProvider;
+            cfg.IsDirty = true;
+            otp.Options.AuthenticatorAttachment = this.AuthenticatorAttachment.ToAuthenticatorAttachmentValue();
+            otp.Options.AttestationConveyancePreference = this.AttestationConveyancePreference.ToAttestationConveyancePreferenceValue();
+            otp.Options.UserVerificationRequirement = this.UserVerificationRequirement.ToUserVerificationRequirementValue();
+            otp.Options.Extensions = this.Extensions;
+            otp.Options.UserVerificationIndex = this.UserVerificationIndex;
+            otp.Options.Location = this.Location;
+            otp.Options.UserVerificationMethod = this.UserVerificationMethod;
+            otp.Options.RequireResidentKey = this.RequireResidentKey;
+            ManagementService.ADFSManager.WriteConfiguration(host);
+        }
+    }
+    #endregion 
+
+
+    #region FlatCustomSecurity
+    /// <summary>
+    /// FlatCustomSecurity class
+    /// </summary>
+    public class FlatCustomSecurity
     {
         public string FullQualifiedImplementation { get; set; }
+        public string Parameters { get; set; }
         public string ConnectionString { get; set; }
         public bool IsAlwaysEncrypted { get; set; }
         public string KeyName { get; set; }
         public string ThumbPrint { get; set; }
         public int CertificateValidity { get; set; }
         public bool CertReuse { get; set; }
-        public string Parameters { get; set; }
 
-        public static explicit operator ExternalKeyManagerConfig(FlatExternalKeyManager mgr)
+        public static explicit operator ExternalKeyManagerConfig(FlatCustomSecurity mgr)
         {
             if (mgr == null)
                 return null;
@@ -403,13 +557,13 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             }
         }
 
-        public static explicit operator FlatExternalKeyManager(ExternalKeyManagerConfig mgr)
+        public static explicit operator FlatCustomSecurity(ExternalKeyManagerConfig mgr)
         {
             if (mgr == null)
                 return null;
             else
             {
-                FlatExternalKeyManager ret = new FlatExternalKeyManager
+                FlatCustomSecurity ret = new FlatCustomSecurity
                 {
                     FullQualifiedImplementation = mgr.FullQualifiedImplementation,
                     ConnectionString = mgr.ConnectionString,
@@ -458,8 +612,12 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             ManagementService.ADFSManager.WriteConfiguration(host);
         }
     }
+    #endregion
 
-    [Serializable]
+    #region FlatBaseProvider
+    /// <summary>
+    /// FlatBaseProvider class implementation
+    /// </summary>
     public abstract class FlatBaseProvider
     {
         private string _cdata;
@@ -469,7 +627,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         public bool EnrollWizard { get; set; }
         public bool PinRequired { get; set; }
         public ForceWizardMode ForceWizard { get; set; }
-        public string FullQualifiedImplementation { get; set; }
+        public string FullyQualifiedImplementation { get; set; }
 
         /// <summary>
         /// Parameters property
@@ -509,13 +667,19 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             }
         }
     }
+    #endregion
 
-    [Serializable]
-    public class FlatOTPProvider: FlatBaseProvider
+    #region FlatTOTPProvider
+    /// <summary>
+    /// FlatOTPProvider class implementation
+    /// </summary>
+    public class FlatTOTPProvider: FlatBaseProvider
     {
         public HashMode Algorithm { get; set; }
         public int TOTPShadows { get; set; }
         public OTPWizardOptions WizardOptions { get; set; }
+        public KeySizeMode KeySize { get; set; }
+        public SecretKeyFormat KeysFormat { get; set; }
 
         /// <summary>
         /// Kind  Property
@@ -544,8 +708,10 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             this.Algorithm = otp.Algorithm;
             this.TOTPShadows = otp.TOTPShadows;
             this.WizardOptions = otp.WizardOptions;
+            this.KeySize = cfg.KeysConfig.KeySize;
+            this.KeysFormat = cfg.KeysConfig.KeyFormat;
             this.PinRequired = otp.PinRequired;
-            this.FullQualifiedImplementation = otp.FullQualifiedImplementation;
+            this.FullyQualifiedImplementation = otp.FullQualifiedImplementation;
             this.Parameters = otp.Parameters.Data;
         }
 
@@ -566,14 +732,194 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             otp.Algorithm = this.Algorithm;
             otp.TOTPShadows = this.TOTPShadows;
             otp.WizardOptions = this.WizardOptions;
+            cfg.KeysConfig.KeySize = this.KeySize;
+            cfg.KeysConfig.KeyFormat = this.KeysFormat;
             otp.PinRequired = this.PinRequired;
-            otp.FullQualifiedImplementation = this.FullQualifiedImplementation;
+            otp.FullQualifiedImplementation = this.FullyQualifiedImplementation;
             otp.Parameters.Data = this.Parameters;
             ManagementService.ADFSManager.WriteConfiguration(host);
         }
     }
+    #endregion
 
-    [Serializable]
+    #region FlatMailProvider
+    /// <summary>
+    /// FlatMailProvider class implementation
+    /// </summary>
+    public class FlatMailProvider : FlatBaseProvider
+    {
+        public string From { get; set; }
+        public string UserName { get; set; }
+        public string Password { get; set; }
+        public string Host { get; set; }
+        public int Port { get; set; }
+        public bool UseSSL { get; set; }
+        public string Company { get; set; }
+        public bool Anonymous { get; set; }
+        public bool DeliveryNotifications { get; set; }
+        public FlatMailAllowedDomains AllowedDomains { get; set; }
+        public FlatMailBlockedDomains BlockedDomains { get; set; }
+        public List<FlatMailFileName> MailOTPContent { get; set; }
+        public List<FlatMailFileName> MailAdminContent { get; set; }
+        public List<FlatMailFileName> MailKeyContent { get; set; }
+        public List<FlatMailFileName> MailNotifications { get; set; }
+
+        public FlatMailProvider()
+        {
+            this.MailOTPContent = new List<FlatMailFileName>();
+            this.MailAdminContent = new List<FlatMailFileName>();
+            this.MailKeyContent = new List<FlatMailFileName>();
+            this.MailNotifications = new List<FlatMailFileName>();
+            this.BlockedDomains = new FlatMailBlockedDomains();
+            this.AllowedDomains = new FlatMailAllowedDomains();
+        }
+
+        /// <summary>
+        /// Kind  Property
+        /// </summary>
+        public override PreferredMethod Kind
+        {
+            get
+            {
+                return PreferredMethod.Email;
+            }
+        }
+
+
+        /// <summary>
+        /// Update method implmentation
+        /// </summary>
+        public override void Load(PSHost host)
+        {
+            ManagementService.Initialize(host, true);
+            MFAConfig cfg = ManagementService.Config;
+            MailProvider mail = cfg.MailProvider;
+            IsDirty = cfg.IsDirty;
+            Enabled = mail.Enabled;
+            EnrollWizard = mail.EnrollWizard;
+            ForceWizard = mail.ForceWizard;
+            From = mail.From;
+            UserName = mail.UserName;
+            using (AESEncryption AES = new AESEncryption())
+            {
+                Password = AES.Encrypt(mail.Password);
+            };
+            Host = mail.Host;
+            Port = mail.Port;
+            UseSSL = mail.UseSSL;
+            Company = mail.Company;
+            PinRequired = mail.PinRequired;
+            Anonymous = mail.Anonymous;
+            DeliveryNotifications = mail.DeliveryNotifications;
+            FullyQualifiedImplementation = mail.FullQualifiedImplementation;
+            Parameters = mail.Parameters.Data;
+
+            AllowedDomains.Clear();
+            foreach (string itm in mail.AllowedDomains)
+            {
+                AllowedDomains.AddDomain(itm);
+            }
+
+            BlockedDomains.Clear();
+            foreach (string itm in mail.BlockedDomains)
+            {
+                BlockedDomains.AddDomain(itm);
+            }
+
+            MailOTPContent.Clear();
+            foreach (SendMailFileName itm in mail.MailOTPContent)
+            {
+                MailOTPContent.Add((FlatMailFileName)itm);
+            }
+            MailAdminContent.Clear();
+            foreach (SendMailFileName itm in mail.MailAdminContent)
+            {
+                MailAdminContent.Add((FlatMailFileName)itm);
+            }
+            MailKeyContent.Clear();
+            foreach (SendMailFileName itm in mail.MailKeyContent)
+            {
+                MailKeyContent.Add((FlatMailFileName)itm);
+            }
+            MailNotifications.Clear();
+            foreach (SendMailFileName itm in mail.MailNotifications)
+            {
+                MailNotifications.Add((FlatMailFileName)itm);
+            }
+
+        }
+
+        /// <summary>
+        /// Update method implmentation
+        /// </summary>
+        public override void Update(PSHost host)
+        {
+            ManagementService.Initialize(host, true);
+            MFAConfig cfg = ManagementService.Config;
+            MailProvider mail = cfg.MailProvider;
+            cfg.IsDirty = true;
+            CheckUpdates(host);
+            mail.Enabled = Enabled;
+            mail.EnrollWizard = EnrollWizard;
+            mail.ForceWizard = ForceWizard;
+            mail.From = From;
+            mail.UserName = UserName;
+            using (AESEncryption AES = new AESEncryption())
+            {
+                mail.Password = AES.Decrypt(Password);
+            };
+            mail.Host = Host;
+            mail.Port = Port;
+            mail.UseSSL = UseSSL;
+            mail.Company = Company;
+            mail.PinRequired = PinRequired;
+            mail.Anonymous = Anonymous;
+            mail.DeliveryNotifications = DeliveryNotifications;
+            mail.FullQualifiedImplementation = FullyQualifiedImplementation;
+            mail.Parameters.Data = Parameters;
+
+            mail.AllowedDomains.Clear();
+            foreach (string itm in AllowedDomains.Domains)
+            {
+                mail.AllowedDomains.Add(itm);
+            }
+
+            mail.BlockedDomains.Clear();
+            foreach (string itm in BlockedDomains.Domains)
+            {
+                mail.BlockedDomains.Add(itm);
+            }
+
+            mail.MailOTPContent.Clear();
+            foreach (FlatMailFileName itm in MailOTPContent)
+            {
+                mail.MailOTPContent.Add((SendMailFileName)itm);
+            }
+            mail.MailAdminContent.Clear();
+            foreach (FlatMailFileName itm in MailAdminContent)
+            {
+                mail.MailAdminContent.Add((SendMailFileName)itm);
+            }
+            mail.MailKeyContent.Clear();
+            foreach (FlatMailFileName itm in MailKeyContent)
+            {
+                mail.MailKeyContent.Add((SendMailFileName)itm);
+            }
+            mail.MailNotifications.Clear();
+            foreach (FlatMailFileName itm in MailNotifications)
+            {
+                mail.MailNotifications.Add((SendMailFileName)itm);
+            }
+
+            ManagementService.ADFSManager.WriteConfiguration(host);
+        }
+    }
+    #endregion
+
+    #region FlatExternalProvider
+    /// <summary>
+    /// FlatExternalProvider class implementation
+    /// </summary>
     public class FlatExternalProvider: FlatBaseProvider
     {
         public string Company { get; set; }
@@ -607,7 +953,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             this.EnrollWizard = otp.EnrollWizard;
             this.ForceWizard = otp.ForceWizard;
             this.Company = otp.Company;
-            this.FullQualifiedImplementation = otp.FullQualifiedImplementation;
+            this.FullyQualifiedImplementation = otp.FullQualifiedImplementation;
             this.IsTwoWay = otp.IsTwoWay;
             this.Sha1Salt = otp.Sha1Salt;
             this.Timeout = otp.Timeout;
@@ -630,7 +976,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             otp.EnrollWizard = this.EnrollWizard;
             otp.ForceWizard = this.ForceWizard;
             otp.Company = this.Company;
-            otp.FullQualifiedImplementation = this.FullQualifiedImplementation;
+            otp.FullQualifiedImplementation = this.FullyQualifiedImplementation;
             otp.IsTwoWay = this.IsTwoWay;
             otp.Sha1Salt = this.Sha1Salt;
             otp.Timeout = this.Timeout;
@@ -639,8 +985,12 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             ManagementService.ADFSManager.WriteConfiguration(host);
         }
     }
+    #endregion
 
-    [Serializable]
+    #region FlatAzureProvider
+    /// <summary>
+    /// FlatAzureProvider class implementation
+    /// </summary>
     public class FlatAzureProvider: FlatBaseProvider
     {
         public string TenantId { get; set; }
@@ -695,8 +1045,12 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             ManagementService.ADFSManager.WriteConfiguration(host);
         }
     }
+    #endregion
 
-    [Serializable]
+    #region FlatBiometricProvider
+    /// <summary>
+    /// FlatBiometricProvider class implementation
+    /// </summary>
     public class FlatBiometricProvider : FlatBaseProvider
     {
         public uint Timeout { get; set; }
@@ -707,14 +1061,14 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         public string ServerIcon { get; set; }
         public string Origin { get; set; }
         public bool DirectLogin { get; set; }
-        public FlatAuthenticatorAttachmentKind AuthenticatorAttachment { get; set; }
+      /*  public FlatAuthenticatorAttachmentKind AuthenticatorAttachment { get; set; }
         public FlatAttestationConveyancePreferenceKind AttestationConveyancePreference { get; set; }
         public FlatUserVerificationRequirementKind UserVerificationRequirement { get; set; }
         public bool Extensions { get; set; }
         public bool UserVerificationIndex { get; set; }
         public bool Location { get; set; }
         public bool UserVerificationMethod { get; set; }
-        public bool RequireResidentKey { get; set; }
+        public bool RequireResidentKey { get; set; } */
 
         /// <summary>
         /// Kind  Property
@@ -742,7 +1096,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             this.ForceWizard = otp.ForceWizard;
             this.DirectLogin = otp.DirectLogin;
             this.PinRequired = otp.PinRequired;
-            this.FullQualifiedImplementation = otp.FullQualifiedImplementation;
+            this.FullyQualifiedImplementation = otp.FullQualifiedImplementation;
             this.Parameters = otp.Parameters.Data;
 
             this.Timeout = otp.Configuration.Timeout;
@@ -752,14 +1106,14 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             this.ServerName = otp.Configuration.ServerName;
             this.ServerIcon = otp.Configuration.ServerIcon;
             this.Origin = otp.Configuration.Origin;
-            this.AuthenticatorAttachment = otp.Options.AuthenticatorAttachment.FromAuthenticatorAttachmentValue();
+          /*  this.AuthenticatorAttachment = otp.Options.AuthenticatorAttachment.FromAuthenticatorAttachmentValue();
             this.AttestationConveyancePreference = otp.Options.AttestationConveyancePreference.FromAttestationConveyancePreferenceValue();
             this.UserVerificationRequirement = otp.Options.UserVerificationRequirement.FromUserVerificationRequirementValue();
             this.Extensions = otp.Options.Extensions;
             this.UserVerificationIndex = otp.Options.UserVerificationIndex;
             this.Location = otp.Options.Location;
             this.UserVerificationMethod = otp.Options.UserVerificationMethod;
-            this.RequireResidentKey = otp.Options.RequireResidentKey;
+            this.RequireResidentKey = otp.Options.RequireResidentKey; */
         }
 
         /// <summary>
@@ -778,7 +1132,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             otp.IsRequired = this.IsRequired;
             otp.DirectLogin = this.DirectLogin;
             otp.PinRequired = this.PinRequired;
-            otp.FullQualifiedImplementation = this.FullQualifiedImplementation;
+            otp.FullQualifiedImplementation = this.FullyQualifiedImplementation;
             otp.Parameters.Data = this.Parameters;
 
             otp.Configuration.Timeout = this.Timeout;
@@ -788,19 +1142,21 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             otp.Configuration.ServerName = this.ServerName;
             otp.Configuration.ServerIcon = this.ServerIcon;
             otp.Configuration.Origin = this.Origin;
-            otp.Options.AuthenticatorAttachment = this.AuthenticatorAttachment.ToAuthenticatorAttachmentValue();
+          /*  otp.Options.AuthenticatorAttachment = this.AuthenticatorAttachment.ToAuthenticatorAttachmentValue();
             otp.Options.AttestationConveyancePreference = this.AttestationConveyancePreference.ToAttestationConveyancePreferenceValue();
             otp.Options.UserVerificationRequirement = this.UserVerificationRequirement.ToUserVerificationRequirementValue();
             otp.Options.Extensions = this.Extensions;
             otp.Options.UserVerificationIndex = this.UserVerificationIndex;
             otp.Options.Location = this.Location;
             otp.Options.UserVerificationMethod = this.UserVerificationMethod;
-            otp.Options.RequireResidentKey = this.RequireResidentKey;
+            otp.Options.RequireResidentKey = this.RequireResidentKey; */
 
             ManagementService.ADFSManager.WriteConfiguration(host);
         }
     }
+    #endregion 
 
+    #region Biometrics Provider Classes
     /// <summary>
     /// FlatAuthenticatorAttachmentKind
     /// </summary>   
@@ -830,8 +1186,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         Required = 1,
         Discouraged = 2
     }
+    #endregion
 
-    #region Extension method for convertion
+    #region Extension methods for convertion
     /// <summary>
     /// FlatWebAuthNExtensions
     /// </summary>   
@@ -948,172 +1305,11 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     }
     #endregion
 
-    [Serializable]
-    public class FlatConfigMail: FlatBaseProvider
-    {
-        public string From { get; set; }
-        public string UserName { get; set; }
-        public string Password { get; set; }
-        public string Host { get; set; }
-        public int Port { get; set; }
-        public bool UseSSL { get; set; }
-        public string Company { get; set; }
-        public bool Anonymous { get; set; }
-        public bool DeliveryNotifications { get; set; }
-        public FlatConfigMailAllowedDomains AllowedDomains { get; set; }
-        public FlatConfigMailBlockedDomains BlockedDomains { get; set; }
-        public List<FlatConfigMailFileName> MailOTPContent { get; set; }
-        public List<FlatConfigMailFileName> MailAdminContent { get; set; }
-        public List<FlatConfigMailFileName> MailKeyContent { get; set; }
-        public List<FlatConfigMailFileName> MailNotifications { get; set; }
-
-        public FlatConfigMail()
-        {
-            this.MailOTPContent = new List<FlatConfigMailFileName>();
-            this.MailAdminContent = new List<FlatConfigMailFileName>();
-            this.MailKeyContent = new List<FlatConfigMailFileName>();
-            this.MailNotifications = new List<FlatConfigMailFileName>();
-            this.BlockedDomains = new FlatConfigMailBlockedDomains();
-            this.AllowedDomains = new FlatConfigMailAllowedDomains();
-        }
-
-        /// <summary>
-        /// Kind  Property
-        /// </summary>
-        public override PreferredMethod Kind
-        {
-            get
-            {
-                return PreferredMethod.Email;
-            }
-        }
-
-
-        /// <summary>
-        /// Update method implmentation
-        /// </summary>
-        public override void Load(PSHost host)
-        {
-            ManagementService.Initialize(host, true);
-            MFAConfig cfg = ManagementService.Config;
-            MailProvider mail = cfg.MailProvider;
-            IsDirty = cfg.IsDirty;
-            Enabled = mail.Enabled;
-            EnrollWizard = mail.EnrollWizard;
-            ForceWizard = mail.ForceWizard;
-            From = mail.From;
-            UserName = mail.UserName;
-            Password = mail.Password;
-            Host = mail.Host;
-            Port = mail.Port;
-            UseSSL = mail.UseSSL;
-            Company = mail.Company;
-            PinRequired = mail.PinRequired;
-            Anonymous = mail.Anonymous;
-            DeliveryNotifications = mail.DeliveryNotifications;
-            FullQualifiedImplementation = mail.FullQualifiedImplementation;
-            Parameters = mail.Parameters.Data;
-
-            AllowedDomains.Clear();
-            foreach (string itm in mail.AllowedDomains)
-            {
-                AllowedDomains.AddDomain(itm);
-            }
-
-            BlockedDomains.Clear();
-            foreach (string itm in mail.BlockedDomains)
-            {
-                BlockedDomains.AddDomain(itm);
-            }
-
-            MailOTPContent.Clear();
-            foreach (SendMailFileName itm in mail.MailOTPContent)
-            {
-                MailOTPContent.Add((FlatConfigMailFileName)itm);
-            }
-            MailAdminContent.Clear();
-            foreach (SendMailFileName itm in mail.MailAdminContent)
-            {
-                MailAdminContent.Add((FlatConfigMailFileName)itm);
-            }
-            MailKeyContent.Clear();
-            foreach (SendMailFileName itm in mail.MailKeyContent)
-            {
-                MailKeyContent.Add((FlatConfigMailFileName)itm);
-            }
-            MailNotifications.Clear();
-            foreach (SendMailFileName itm in mail.MailNotifications)
-            {
-                MailNotifications.Add((FlatConfigMailFileName)itm);
-            }
-
-        }
-
-        /// <summary>
-        /// Update method implmentation
-        /// </summary>
-        public override void Update(PSHost host)
-        {
-            ManagementService.Initialize(host, true);
-            MFAConfig cfg = ManagementService.Config;
-            MailProvider mail = cfg.MailProvider;
-            cfg.IsDirty = true;
-            CheckUpdates(host);
-            mail.Enabled = Enabled;
-            mail.EnrollWizard = EnrollWizard;
-            mail.ForceWizard = ForceWizard;
-            mail.From = From;
-            mail.UserName = UserName;
-            mail.Password = Password;
-            mail.Host = Host;
-            mail.Port = Port;
-            mail.UseSSL = UseSSL;
-            mail.Company = Company;
-            mail.PinRequired = PinRequired;
-            mail.Anonymous = Anonymous;
-            mail.DeliveryNotifications = DeliveryNotifications;
-            mail.FullQualifiedImplementation = FullQualifiedImplementation;
-            mail.Parameters.Data = Parameters;
-
-            mail.AllowedDomains.Clear();
-            foreach (string itm in AllowedDomains.Domains)
-            {
-                mail.AllowedDomains.Add(itm);
-            }
-
-            mail.BlockedDomains.Clear();
-            foreach (string itm in BlockedDomains.Domains)
-            {
-                mail.BlockedDomains.Add(itm);
-            }
-
-            mail.MailOTPContent.Clear();
-            foreach (FlatConfigMailFileName itm in MailOTPContent)
-            {
-                mail.MailOTPContent.Add((SendMailFileName)itm);
-            }
-            mail.MailAdminContent.Clear();
-            foreach (FlatConfigMailFileName itm in MailAdminContent)
-            {
-                mail.MailAdminContent.Add((SendMailFileName)itm);
-            }
-            mail.MailKeyContent.Clear();
-            foreach (FlatConfigMailFileName itm in MailKeyContent)
-            {
-                mail.MailKeyContent.Add((SendMailFileName)itm);
-            }
-            mail.MailNotifications.Clear();
-            foreach (FlatConfigMailFileName itm in MailNotifications)
-            {
-                mail.MailNotifications.Add((SendMailFileName)itm);
-            }
-
-            ManagementService.ADFSManager.WriteConfiguration(host);
-        }
-    }
-
-    [Serializable]
-    public class FlatConfigMailBlockedDomains
+    #region Mail Provider FileNames and Domains
+    /// <summary>
+    /// FlatMailBlockedDomains class implementation
+    /// </summary>      
+    public class FlatMailBlockedDomains
     {
         private List<string> _list = new List<string>();
 
@@ -1172,8 +1368,10 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         }
     }
 
-    [Serializable]
-    public class FlatConfigMailAllowedDomains
+    /// <summary>
+    /// FlatMailAllowedDomains class implementation
+    /// </summary>      
+    public class FlatMailAllowedDomains
     {
         private List<string> _list = new List<string>();
 
@@ -1232,21 +1430,23 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         }
     }
 
-    [Serializable]
-    public class FlatConfigMailFileName
+    /// <summary>
+    /// FlatMailFileName class implementation
+    /// </summary>      
+    public class FlatMailFileName
     {
         public int LCID { get; set; }
         public string FileName { get; set; }
         public bool Enabled { get; set; }
 
-        public FlatConfigMailFileName(int lcid, string filename, bool enabled = true)
+        public FlatMailFileName(int lcid, string filename, bool enabled = true)
         {
             this.LCID = lcid;
             this.FileName = filename;
             this.Enabled = enabled;
         }
 
-        public static explicit operator SendMailFileName(FlatConfigMailFileName file)
+        public static explicit operator SendMailFileName(FlatMailFileName file)
         {
             if (file == null)
                 return null;
@@ -1254,23 +1454,27 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 return new SendMailFileName(file.LCID, file.FileName, file.Enabled);
         }
 
-        public static explicit operator FlatConfigMailFileName(SendMailFileName file)
+        public static explicit operator FlatMailFileName(SendMailFileName file)
         {
             if (file == null)
                 return null;
             else
-                return new FlatConfigMailFileName(file.LCID, file.FileName, file.Enabled);
+                return new FlatMailFileName(file.LCID, file.FileName, file.Enabled);
         }
     }
+    #endregion
 
-    [Serializable]
-    public class FlatConfigAdvertising
+    #region Config Advertising Days
+    /// <summary>
+    /// FlatAdvertising class implementation
+    /// </summary>
+    public class FlatAdvertising
     {
         public uint FirstDay { get; set; }
         public uint LastDay { get; set; }
         public bool OnFire { get; set; }
 
-        public static explicit operator ConfigAdvertising(FlatConfigAdvertising adv)
+        public static explicit operator ConfigAdvertising(FlatAdvertising adv)
         {
             ConfigAdvertising cfg = new ConfigAdvertising
             {
@@ -1280,9 +1484,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             return cfg;
         }
 
-        public static explicit operator FlatConfigAdvertising(ConfigAdvertising adv)
+        public static explicit operator FlatAdvertising(ConfigAdvertising adv)
         {
-            FlatConfigAdvertising cfg = new FlatConfigAdvertising
+            FlatAdvertising cfg = new FlatAdvertising
             {
                 FirstDay = adv.FirstDay,
                 LastDay = adv.LastDay,
@@ -1291,4 +1495,5 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             return cfg;
         }
     }
+    #endregion
 }

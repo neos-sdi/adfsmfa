@@ -82,6 +82,11 @@ namespace Neos.IdentityServer.Console
             _isnotifsenabled = false;
             try
             {
+                ComponentResourceManager resources = new ComponentResourceManager(typeof(GeneralViewControl));
+                this.label1.Text = resources.GetString("label1.Text");
+                this.label2.Text = resources.GetString("label2.Text");
+                this.label3.Text = resources.GetString("label3.Text");
+
                 ManagementService.ADFSManager.ReadConfiguration(null);
                 ((IMMCRefreshData)ControlInstance).DoRefreshData();
             }

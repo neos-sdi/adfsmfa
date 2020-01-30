@@ -18,6 +18,7 @@
 // #define softemail
 using Microsoft.IdentityServer.Web.Authentication.External;
 using Neos.IdentityServer.MultiFactor.Common;
+using Neos.IdentityServer.MultiFactor.Data;
 using Neos.IdentityServer.MultiFactor.WebAuthN;
 using System;
 using System.Collections.Specialized;
@@ -312,10 +313,15 @@ namespace Neos.IdentityServer.MultiFactor
                              _config = (MFAConfig)xmlserializer.Deserialize(stm);
                              if ((!_config.OTPProvider.Enabled) && (!_config.MailProvider.Enabled) && (!_config.ExternalProvider.Enabled) && (!_config.AzureProvider.Enabled))
                                  _config.OTPProvider.Enabled = true;   // always let an active option eg : aplication in this case
-                             KeysManager.Initialize(_config);  // Always Bind KeysManager Otherwise this is made in CFGUtilities.ReadConfiguration
-                             RuntimeAuthProvider.LoadProviders(_config); // Load Available providers
+                            using (AESEncryption AES = new AESEncryption())
+                            {
+                                _config.Hosts.ActiveDirectoryHost.Password = AES.Decrypt(_config.Hosts.ActiveDirectoryHost.Password);
+                                _config.MailProvider.Password = AES.Decrypt(_config.MailProvider.Password);
+                            };
+                            Certs.InitializeAccountsSID(_config.Hosts.ActiveDirectoryHost.DomainName, _config.Hosts.ActiveDirectoryHost.Account, _config.Hosts.ActiveDirectoryHost.Password);
+                            KeysManager.Initialize(_config);  // Always Bind KeysManager Otherwise this is made in CFGUtilities.ReadConfiguration
+                            RuntimeAuthProvider.LoadProviders(_config); // Load Available providers
                          }
-
                          RuntimeRepository.MailslotServer.MailSlotMessageArrived += this.OnMessageArrived;
                          RuntimeRepository.MailslotServer.Start();
                          Trace.TraceInformation(String.Format("AuthenticationProvider:OnAuthenticationPipelineLoad Duration : {0}", (DateTime.Now - st).ToString()));
@@ -1239,7 +1245,7 @@ namespace Neos.IdentityServer.MultiFactor
                             try
                             {
                                 usercontext.UIMode = ProviderPageMode.SelectOptions;
-                                RuntimeRepository.ChangePassword(usercontext.UPN, oldpass, newpass);
+                                RuntimeRepository.ChangePassword(this.Config, usercontext.UPN, oldpass, newpass);
                                 result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Informations, "InfosPasswordModified"));
                             }
                             catch (Exception ex)

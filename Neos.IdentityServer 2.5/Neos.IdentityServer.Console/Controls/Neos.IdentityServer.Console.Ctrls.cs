@@ -37,6 +37,7 @@ using Neos.IdentityServer.Console.Resources;
 using System.Text.RegularExpressions;
 using Neos.IdentityServer.MultiFactor.Common;
 using Neos.IdentityServer.MultiFactor.Data;
+using Neos.IdentityServer.Console;
 
 namespace Neos.IdentityServer.Console.Controls
 {
@@ -1283,17 +1284,19 @@ namespace Neos.IdentityServer.Console.Controls
                 else
                     lblcutompwd.Text = "";
 
-                tblconfigure = new LinkLabel();
+                tblconfigure = new LinkLabel
+                {
+                    Left = 20,
+                    Top = 80,
+                    Width = 400,
+                    TabIndex = 0,
+                    TabStop = true
+                };
+                tblconfigure.LinkClicked += TblconfigureLinkClicked;
                 if (ManagementService.ADFSManager.IsMFAProviderEnabled(null))
                     tblconfigure.Text = res.CTRLADFSDEACTIVATEMFA;
                 else
                     tblconfigure.Text = res.CTRLADFSACTIVATEMFA;
-                tblconfigure.Left = 20;
-                tblconfigure.Top = 80;
-                tblconfigure.Width = 400;
-                tblconfigure.LinkClicked += TblconfigureLinkClicked;
-                tblconfigure.TabIndex = 0;
-                tblconfigure.TabStop = true;
                 tblconfigure.Enabled = ManagementService.ADFSManager.IsPrimaryServer();
                 this.Controls.Add(tblconfigure);
             }
@@ -2962,6 +2965,317 @@ namespace Neos.IdentityServer.Console.Controls
         }
     }
 
+    public partial class StorageConfigurationControl : Panel, IMMCRefreshData
+    {
+        private NamespaceSnapInBase _snapin;
+        private Panel _panel;
+        private Panel _txtpanel;
+        private StorageViewControl _view;
+        private bool _UpdateControlsLayouts;
+        private ErrorProvider errors;
+        private LinkLabel tblSaveConfig;
+        private LinkLabel tblCancelConfig;
+        private RadioButton rdioUseADDS;
+        private RadioButton rdioUseSQL;
+
+        /// <summary>
+        /// ConfigurationControl Constructor
+        /// </summary>
+        public StorageConfigurationControl(StorageViewControl view, NamespaceSnapInBase snap)
+        {
+            _view = view;
+            _snapin = snap;
+            _panel = new Panel();
+            _txtpanel = new Panel();
+            BackColor = System.Drawing.SystemColors.Window;
+            AutoSize = false;
+        }
+
+        /// <summary>
+        /// OnCreateControl method override
+        /// </summary>
+        protected override void OnCreateControl()
+        {
+            base.OnCreateControl();
+            ManagementService.ADFSManager.ConfigurationStatusChanged += ConfigurationStatusChanged;
+            DoCreateControls();
+        }
+
+        /// <summary>
+        /// ConfigurationStatusChanged method implementation
+        /// </summary>
+        internal void ConfigurationStatusChanged(ADFSServiceManager mgr, ConfigOperationStatus status, Exception ex = null)
+        {
+            UpdateLayoutConfigStatus(status);
+            if (_view.IsNotifsEnabled())
+            {
+                if (status == ConfigOperationStatus.ConfigLoaded)
+                    DoRefreshData();
+            }
+            else
+                _panel.Refresh();
+        }
+
+        /// <summary>
+        /// UpdateLayoutConfigStatus method implementation
+        /// </summary>
+        private void UpdateLayoutConfigStatus(ConfigOperationStatus status)
+        {
+            switch (status)
+            {
+                case ConfigOperationStatus.ConfigInError:
+                    _panel.BackColor = Color.DarkRed;
+                    break;
+                case ConfigOperationStatus.ConfigSaved:
+                    _panel.BackColor = Color.Orange;
+                    break;
+                case ConfigOperationStatus.ConfigLoaded:
+                    _panel.BackColor = Color.Green;
+                    break;
+                case ConfigOperationStatus.ConfigIsDirty:
+                    _panel.BackColor = Color.DarkOrange;
+                    break;
+                case ConfigOperationStatus.ConfigStopped:
+                    _panel.BackColor = Color.DarkGray;
+                    break;
+                default:
+                    _panel.BackColor = Color.Yellow;
+                    break;
+            }
+            return;
+        }
+
+        /// <summary>
+        /// Config property
+        /// </summary>
+        public MFAConfig Config
+        {
+            get
+            {
+                ManagementService.ADFSManager.EnsureLocalConfiguration();
+                return ManagementService.ADFSManager.Config;
+            }
+        }
+
+        /// <summary>
+        /// Initialize method implementation
+        /// </summary>
+        private void DoCreateControls()
+        {
+            this.SuspendLayout();
+            _view.AutoValidate = AutoValidate.Disable;
+            _view.CausesValidation = false;
+            try
+            {
+                this.Dock = DockStyle.Top;
+                this.Height = 170;
+                this.Width = 512;
+                this.Margin = new Padding(30, 5, 30, 5);
+
+                _panel.Width = 20;
+                _panel.Height = 85;
+                this.Controls.Add(_panel);
+
+                _txtpanel.Left = 20;
+                _txtpanel.Width = this.Width - 20;
+                _txtpanel.Height = 85;
+                _txtpanel.BackColor = System.Drawing.SystemColors.Control;
+                this.Controls.Add(_txtpanel);
+
+                rdioUseADDS = new RadioButton()
+                {
+                    Text = res.CTRLSTUSEADDS,                   
+                    Checked = Config.UseActiveDirectory,
+                    Left = 10,
+                    Top = 19,
+                    Width = 450
+                };
+                rdioUseADDS.CheckedChanged += UseADDSCheckedChanged;
+                _txtpanel.Controls.Add(rdioUseADDS);
+
+                rdioUseSQL = new RadioButton()
+                {
+                    Text = res.CTRLSTUSESQL,
+                    Checked = !Config.UseActiveDirectory,
+                    Left = 10,
+                    Top = 45,
+                    Width = 450
+                };
+                rdioUseSQL.CheckedChanged += UseSQLCheckedChanged;
+                _txtpanel.Controls.Add(rdioUseSQL);
+
+                tblSaveConfig = new LinkLabel
+                {
+                    Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPESAVE,
+                    Left = 20,
+                    Top = 95,
+                    Width = 80,
+                    TabStop = true
+                };
+                tblSaveConfig.LinkClicked += SaveConfigLinkClicked;
+                this.Controls.Add(tblSaveConfig);
+
+                tblCancelConfig = new LinkLabel
+                {
+                    Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPECANCEL,
+                    Left = 110,
+                    Top = 95,
+                    Width = 80,
+                    TabStop = true
+                };
+                tblCancelConfig.LinkClicked += CancelConfigLinkClicked;
+                this.Controls.Add(tblCancelConfig);
+
+                errors = new ErrorProvider(_view);
+                errors.BlinkStyle = ErrorBlinkStyle.NeverBlink;
+            }
+            finally
+            {
+                UpdateLayoutConfigStatus(ManagementService.ADFSManager.ConfigurationStatus);
+                ValidateData();
+                _view.CausesValidation = true;
+                _view.AutoValidate = AutoValidate.EnableAllowFocusChange;
+                this.ResumeLayout();
+            }
+        }
+
+        /// <summary>
+        /// DoRefreshData method implmentation
+        /// </summary>
+        public void DoRefreshData()
+        {
+            this.SuspendLayout();
+            _view.AutoValidate = AutoValidate.Disable;
+            _view.CausesValidation = false;
+            try
+            {
+                rdioUseADDS.Checked = Config.UseActiveDirectory;
+                rdioUseSQL.Checked = !Config.UseActiveDirectory;
+                tblSaveConfig.Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPESAVE;
+                tblCancelConfig.Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPECANCEL;
+                rdioUseADDS.Text = res.CTRLSTUSEADDS;
+                rdioUseSQL.Text = res.CTRLSTUSESQL;
+            }
+            finally
+            {
+                UpdateLayoutConfigStatus(ManagementService.ADFSManager.ConfigurationStatus);
+                ValidateData();
+                _view.CausesValidation = true;
+                _view.AutoValidate = AutoValidate.EnableAllowFocusChange;
+                this.ResumeLayout();
+            }
+        }
+
+        /// <summary>
+        /// ValidateData method implementation
+        /// </summary>
+        private void ValidateData()
+        {
+            if (rdioUseADDS.Checked)
+            {
+            }
+            else
+            {
+            }
+        }
+
+        /// <summary>
+        /// UpdateControlsLayouts method implementation
+        /// </summary>
+        private void UpdateControlsLayouts(bool isenabled)
+        {
+            if (_UpdateControlsLayouts)
+                return;
+            _UpdateControlsLayouts = true;
+            try
+            {
+            }
+            finally
+            {
+                _UpdateControlsLayouts = false;
+            }
+        }
+
+        /// <summary>
+        /// OnResize method implmentation
+        /// </summary>
+        protected override void OnResize(EventArgs eventargs)
+        {
+            if (_txtpanel != null)
+                _txtpanel.Width = this.Width - 20;
+        }
+
+        /// <summary>
+        /// UseAADDSCheckedChanged method implementation
+        /// </summary>
+        private void UseADDSCheckedChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                if (_view.AutoValidate != AutoValidate.Disable)
+                {
+                    Config.UseActiveDirectory = rdioUseADDS.Checked;
+                    ManagementService.ADFSManager.SetDirty(true);
+                    DoRefreshData();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
+                this._snapin.Console.ShowDialog(messageBoxParameters);
+            }
+        }
+
+        /// <summary>
+        /// UseSQLCheckedChanged method implementation
+        /// </summary>
+        private void UseSQLCheckedChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                if (_view.AutoValidate != AutoValidate.Disable)
+                {
+                    Config.UseActiveDirectory = !rdioUseSQL.Checked;
+                    ManagementService.ADFSManager.SetDirty(true);
+                    DoRefreshData();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
+                this._snapin.Console.ShowDialog(messageBoxParameters);
+            }
+        }
+
+        /// <summary>
+        /// SaveConfigLinkClicked event
+        /// </summary>
+        private void SaveConfigLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            if (_view != null)
+                _view.SaveData();
+        }
+
+        /// <summary>
+        /// CancelConfigLinkClicked event
+        /// </summary>
+        private void CancelConfigLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            if (_view != null)
+                _view.CancelData();
+        }
+    }
+
     public partial class ADDSConfigurationControl : Panel, IMMCRefreshData
     {
         private NamespaceSnapInBase _snapin;
@@ -2969,10 +3283,7 @@ namespace Neos.IdentityServer.Console.Controls
         private Panel _txtpanel;
         private ADDSViewControl _view;
         private CheckBox chkUseADDS;
-        private TextBox txtDomainName;
         private bool _UpdateControlsLayouts;
-        private TextBox txtUserName;
-        private TextBox txtPassword;
         private TextBox txtKeyAttribute;
         private TextBox txtMailAttribute;
         private TextBox txtPhoneAttribute;
@@ -2983,7 +3294,6 @@ namespace Neos.IdentityServer.Console.Controls
         private TextBox txtEnabledAttribute;
         private TextBox txtPublicKeyAttribute;
         private TextBox txtMaxRows;
-        private Button btnConnect;
         private ErrorProvider errors;
         private LinkLabel tblSaveConfig;
         private LinkLabel tblCancelConfig;
@@ -2996,9 +3306,6 @@ namespace Neos.IdentityServer.Console.Controls
         private Label lblMailAttribute;
         private Label lblKeyAttribute;
         private Label lblAttributes;
-        private Label lblPassword;
-        private Label lblUserName;
-        private Label lblDomainName;
         private Label lblMultivalued;
         private Label lblPublicKeyAttribute;
         private Label lblMustMultivalued;
@@ -3101,17 +3408,17 @@ namespace Neos.IdentityServer.Console.Controls
             try
             {
                 this.Dock = DockStyle.Top;
-                this.Height = 670;
+                this.Height = 550;
                 this.Width = 512;
                 this.Margin = new Padding(30, 5, 30, 5);
 
                 _panel.Width = 20;
-                _panel.Height = 550;
+                _panel.Height = 480;
                 this.Controls.Add(_panel);
 
                 _txtpanel.Left = 20;
                 _txtpanel.Width = this.Width - 20;
-                _txtpanel.Height = 550;
+                _txtpanel.Height = 480;
                 _txtpanel.BackColor = System.Drawing.SystemColors.Control;
                 this.Controls.Add(_txtpanel);
 
@@ -3126,86 +3433,11 @@ namespace Neos.IdentityServer.Console.Controls
                 chkUseADDS.CheckedChanged += UseADDSCheckedChanged;
                 _txtpanel.Controls.Add(chkUseADDS);
 
-                lblDomainName = new Label
-                {
-                    Text = res.CTRLADDOMAIN + " : ",
-                    Left = 50,
-                    Top = 51,
-                    Width = 150
-                };
-                _txtpanel.Controls.Add(lblDomainName);
-
-                txtDomainName = new TextBox
-                {
-                    Text = Config.Hosts.ActiveDirectoryHost.DomainAddress,
-                    Left = 210,
-                    Top = 47,
-                    Width = 230,
-                    Enabled = Config.UseActiveDirectory
-                };
-                txtDomainName.Validating += DomainNameValidating;
-                txtDomainName.Validated += DomainNameValidated;
-                _txtpanel.Controls.Add(txtDomainName);
-
-                lblUserName = new Label
-                {
-                    Text = res.CTRLADACCOUNT + " : ",
-                    Left = 480,
-                    Top = 51,
-                    Width = 100
-                };
-                _txtpanel.Controls.Add(lblUserName);
-
-                txtUserName = new TextBox
-                {
-                    Text = Config.Hosts.ActiveDirectoryHost.Account,
-                    Left = 580,
-                    Top = 47,
-                    Width = 230,
-                    Enabled = Config.UseActiveDirectory
-                };
-                txtUserName.Validating += UserNameValidating;
-                txtUserName.Validated += UserNameValidated;
-                _txtpanel.Controls.Add(txtUserName);
-
-                lblPassword = new Label
-                {
-                    Text = res.CTRLADPASSWORD + " : ",
-                    Left = 480,
-                    Top = 82,
-                    Width = 85
-                };
-                _txtpanel.Controls.Add(lblPassword);
-
-                txtPassword = new TextBox
-                {
-                    Text = Config.Hosts.ActiveDirectoryHost.Password,
-                    Left = 580,
-                    Top = 78,
-                    Width = 230,
-                    PasswordChar = '*',
-                    Enabled = Config.UseActiveDirectory
-                };
-                txtPassword.Validating += PasswordValidating;
-                txtPassword.Validated += PasswordValidated;
-                _txtpanel.Controls.Add(txtPassword);
-
-                btnConnect = new Button
-                {
-                    Text = res.CTRLADTEST,
-                    Left = 580,
-                    Top = 109,
-                    Width = 230,
-                    Enabled = Config.UseActiveDirectory
-                };
-                btnConnect.Click += BtnConnectClick;
-                _txtpanel.Controls.Add(btnConnect);
-
                 lblAttributes = new Label
                 {
                     Text = res.CTRLADATTRIBUTES + " : ",
                     Left = 30,
-                    Top = 119,
+                    Top = 50,
                     Width = 300
                 };
                 _txtpanel.Controls.Add(lblAttributes);
@@ -3214,7 +3446,7 @@ namespace Neos.IdentityServer.Console.Controls
                 {
                     Text = res.CTRLADATTKEY + " : ",
                     Left = 50,
-                    Top = 150,
+                    Top = 80,
                     Width = 150
                 };
                 _txtpanel.Controls.Add(lblKeyAttribute);
@@ -3223,7 +3455,7 @@ namespace Neos.IdentityServer.Console.Controls
                 {
                     Text = Config.Hosts.ActiveDirectoryHost.KeyAttribute,
                     Left = 210,
-                    Top = 146,
+                    Top = 76,
                     Width = 600,
                     Enabled = Config.UseActiveDirectory
                 };
@@ -3235,7 +3467,7 @@ namespace Neos.IdentityServer.Console.Controls
                 {
                     Text = res.CTRLADATTMAIL + " (*) : ",
                     Left = 50,
-                    Top = 181,
+                    Top = 111,
                     Width = 150
                 };
                 _txtpanel.Controls.Add(lblMailAttribute);
@@ -3244,7 +3476,7 @@ namespace Neos.IdentityServer.Console.Controls
                 {
                     Text = Config.Hosts.ActiveDirectoryHost.MailAttribute,
                     Left = 210,
-                    Top = 177,
+                    Top = 107,
                     Width = 600,
                     Enabled = Config.UseActiveDirectory
                 };
@@ -3256,7 +3488,7 @@ namespace Neos.IdentityServer.Console.Controls
                 {
                     Text = res.CTRLADATTPHONE + " (*) : ",
                     Left = 50,
-                    Top = 212,
+                    Top = 142,
                     Width = 150
                 };
                 _txtpanel.Controls.Add(lblPhoneAttribute);
@@ -3265,7 +3497,7 @@ namespace Neos.IdentityServer.Console.Controls
                 {
                     Text = Config.Hosts.ActiveDirectoryHost.PhoneAttribute,
                     Left = 210,
-                    Top = 208,
+                    Top = 138,
                     Width = 600,
                     Enabled = Config.UseActiveDirectory
                 };
@@ -3277,7 +3509,7 @@ namespace Neos.IdentityServer.Console.Controls
                 {
                     Text = res.CTRLADATTMETHOD + " : ",
                     Left = 50,
-                    Top = 243,
+                    Top = 173,
                     Width = 150
                 };
                 _txtpanel.Controls.Add(lblMethodAttribute);
@@ -3286,7 +3518,7 @@ namespace Neos.IdentityServer.Console.Controls
                 {
                     Text = Config.Hosts.ActiveDirectoryHost.MethodAttribute,
                     Left = 210,
-                    Top = 239,
+                    Top = 169,
                     Width = 600,
                     Enabled = Config.UseActiveDirectory
                 };
@@ -3298,7 +3530,7 @@ namespace Neos.IdentityServer.Console.Controls
                 {
                     Text = res.CTRLADATTOVERRIDE + " : ",
                     Left = 50,
-                    Top = 274,
+                    Top = 204,
                     Width = 150
                 };
                 _txtpanel.Controls.Add(lblCreatedateAttribute);
@@ -3307,7 +3539,7 @@ namespace Neos.IdentityServer.Console.Controls
                 {
                     Text = Config.Hosts.ActiveDirectoryHost.OverrideMethodAttribute,
                     Left = 210,
-                    Top = 270,
+                    Top = 200,
                     Width = 600,
                     Enabled = Config.UseActiveDirectory
                 };
@@ -3319,7 +3551,7 @@ namespace Neos.IdentityServer.Console.Controls
                 {
                     Text = res.CTRLADATTPIN + " : ",
                     Left = 50,
-                    Top = 305,
+                    Top = 235,
                     Width = 150
                 };
                 _txtpanel.Controls.Add(lblValiditydateAttribute);
@@ -3328,7 +3560,7 @@ namespace Neos.IdentityServer.Console.Controls
                 {
                     Text = Config.Hosts.ActiveDirectoryHost.PinAttribute,
                     Left = 210,
-                    Top = 301,
+                    Top = 231,
                     Width = 600,
                     Enabled = Config.UseActiveDirectory
                 };
@@ -3340,7 +3572,7 @@ namespace Neos.IdentityServer.Console.Controls
                 {
                     Text = res.CTRLADATTPUBLICKEY + " (**) : ",
                     Left = 50,
-                    Top = 336,
+                    Top = 266,
                     Width = 150
                 };
                 _txtpanel.Controls.Add(lblPublicKeyAttribute);
@@ -3349,7 +3581,7 @@ namespace Neos.IdentityServer.Console.Controls
                 {
                     Text = Config.Hosts.ActiveDirectoryHost.PublicKeyCredentialAttribute,
                     Left = 210,
-                    Top = 332,
+                    Top = 262,
                     Width = 600,
                     Enabled = Config.UseActiveDirectory
                 };
@@ -3361,7 +3593,7 @@ namespace Neos.IdentityServer.Console.Controls
                 {
                     Text = res.CTRLADATTRSACERT + " : ",
                     Left = 50,
-                    Top = 367,
+                    Top = 297,
                     Width = 150
                 };
                 _txtpanel.Controls.Add(lblRSACertAttribute); 
@@ -3370,7 +3602,7 @@ namespace Neos.IdentityServer.Console.Controls
                 {
                     Text = Config.Hosts.ActiveDirectoryHost.RSACertificateAttribute,
                     Left = 210,
-                    Top = 363,
+                    Top = 293,
                     Width = 600,
                     Enabled = Config.UseActiveDirectory
                 };
@@ -3382,7 +3614,7 @@ namespace Neos.IdentityServer.Console.Controls
                 {
                     Text = res.CTRLADATTSTATUS + " : ",
                     Left = 50,
-                    Top = 398,
+                    Top = 328,
                     Width = 150
                 };
                 _txtpanel.Controls.Add(lblEnableAttribute);
@@ -3391,7 +3623,7 @@ namespace Neos.IdentityServer.Console.Controls
                 {
                     Text = Config.Hosts.ActiveDirectoryHost.TotpEnabledAttribute,
                     Left = 210,
-                    Top = 394,
+                    Top = 324,
                     Width = 600,
                     Enabled = Config.UseActiveDirectory
                 };
@@ -3403,7 +3635,7 @@ namespace Neos.IdentityServer.Console.Controls
                 {
                     Text = res.CTRLSQLMAXROWS + " : ",
                     Left = 50,
-                    Top = 429,
+                    Top = 359,
                     Width = 150
                 };
                 _txtpanel.Controls.Add(lblMaxRows);
@@ -3412,7 +3644,7 @@ namespace Neos.IdentityServer.Console.Controls
                 {
                     Text = Config.Hosts.ActiveDirectoryHost.MaxRows.ToString(),
                     Left = 210,
-                    Top = 425,
+                    Top = 355,
                     Width = 50,
                     TextAlign = HorizontalAlignment.Right,
                     Enabled = Config.UseActiveDirectory
@@ -3426,7 +3658,7 @@ namespace Neos.IdentityServer.Console.Controls
                 {
                     Text = res.CTRLADTEMPLATEBASE,
                     Left = 210,
-                    Top = 465,
+                    Top = 395,
                     Width = 150,
                     Enabled = Config.UseActiveDirectory
                 };
@@ -3437,7 +3669,7 @@ namespace Neos.IdentityServer.Console.Controls
                 {
                     Text = res.CTRLADTEMPLATE2016,
                     Left = 400,
-                    Top = 465,
+                    Top = 395,
                     Width = 150,
                     Enabled = Config.UseActiveDirectory
                 };
@@ -3448,7 +3680,7 @@ namespace Neos.IdentityServer.Console.Controls
                 {
                     Text = res.CTRLADTEMPLATEMFA,
                     Left = 590,
-                    Top = 465,
+                    Top = 395,
                     Width = 150,
                     Enabled = Config.UseActiveDirectory
                 };
@@ -3459,7 +3691,7 @@ namespace Neos.IdentityServer.Console.Controls
                 {
                     Text = res.CTRLMULTVALUED,
                     Left = 50,
-                    Top = 500,
+                    Top = 430,
                     Width = 350
                 };
                 _txtpanel.Controls.Add(lblMultivalued);
@@ -3468,7 +3700,7 @@ namespace Neos.IdentityServer.Console.Controls
                 {
                     Text = res.CTRLMUSTMULTVALUED,
                     Left = 50,
-                    Top = 525,
+                    Top = 455,
                     Width = 350
                 };
                 _txtpanel.Controls.Add(lblMustMultivalued);
@@ -3477,7 +3709,7 @@ namespace Neos.IdentityServer.Console.Controls
                 {
                     Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPESAVE,
                     Left = 20,
-                    Top = 560,
+                    Top = 490,
                     Width = 80,
                     TabStop = true
                 };
@@ -3488,7 +3720,7 @@ namespace Neos.IdentityServer.Console.Controls
                 {
                     Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPECANCEL,
                     Left = 110,
-                    Top = 560,
+                    Top = 490,
                     Width = 80,
                     TabStop = true
                 };
@@ -3519,17 +3751,6 @@ namespace Neos.IdentityServer.Console.Controls
             try
             {
                 chkUseADDS.Checked = Config.UseActiveDirectory;
-
-                txtDomainName.Text = Config.Hosts.ActiveDirectoryHost.DomainAddress;
-                txtDomainName.Enabled = Config.UseActiveDirectory;
-
-                txtUserName.Text = Config.Hosts.ActiveDirectoryHost.Account;
-                txtUserName.Enabled = Config.UseActiveDirectory;
-
-                txtPassword.Text = Config.Hosts.ActiveDirectoryHost.Password;
-                txtPassword.Enabled = Config.UseActiveDirectory;
-
-                btnConnect.Enabled = Config.UseActiveDirectory;
 
                 txtKeyAttribute.Text = Config.Hosts.ActiveDirectoryHost.KeyAttribute;
                 txtKeyAttribute.Enabled = Config.UseActiveDirectory;
@@ -3578,9 +3799,6 @@ namespace Neos.IdentityServer.Console.Controls
                 lblAttributes.Text = res.CTRLADATTRIBUTES + " : ";
                 lblPublicKeyAttribute.Text = res.CTRLADATTPUBLICKEY + " (**) : ";
                 lblRSACertAttribute.Text = res.CTRLADATTRSACERT + " : ";
-                lblUserName.Text = res.CTRLADACCOUNT + " : ";
-                lblDomainName.Text = res.CTRLADDOMAIN + " : ";
-                btnConnect.Text = res.CTRLADTEST;
                 btnTemplateBase.Text = res.CTRLADTEMPLATEBASE;
                 btnTemplate2016.Text = res.CTRLADTEMPLATE2016;
                 btnTemplateMFA.Text = res.CTRLADTEMPLATEMFA;
@@ -3605,75 +3823,59 @@ namespace Neos.IdentityServer.Console.Controls
         {
             if (chkUseADDS.Checked)
             {
-                if (!ManagementService.CheckADDSConnection(txtDomainName.Text, txtUserName.Text, txtPassword.Text))
-                {
-                    errors.SetError(txtDomainName, res.CTRLADATTDOMAIN);
-                    errors.SetError(txtUserName, res.CTRLADATTACCOUNT);
-                    errors.SetError(txtPassword, res.CTRLADATTPASSWORD);
-                }
+                if (!ManagementService.CheckADDSAttribute(Config.Hosts.ActiveDirectoryHost.DomainName, Config.Hosts.ActiveDirectoryHost.Account, Config.Hosts.ActiveDirectoryHost.Password, txtOverrideMethodAttribute.Text, 0))
+                    errors.SetError(txtOverrideMethodAttribute, res.CTRLADATOVERRIDEERROR);
                 else
-                {
-                    errors.SetError(txtDomainName, "");
-                    errors.SetError(txtUserName, "");
-                    errors.SetError(txtPassword, "");
+                    errors.SetError(txtOverrideMethodAttribute, "");
 
-                    if (!ManagementService.CheckADDSAttribute(txtDomainName.Text, txtUserName.Text, txtPassword.Text, txtOverrideMethodAttribute.Text, 0))
-                        errors.SetError(txtOverrideMethodAttribute, res.CTRLADATOVERRIDEERROR);
-                    else
-                        errors.SetError(txtOverrideMethodAttribute, "");
+                if (!ManagementService.CheckADDSAttribute(Config.Hosts.ActiveDirectoryHost.DomainName, Config.Hosts.ActiveDirectoryHost.Account, Config.Hosts.ActiveDirectoryHost.Password, txtEnabledAttribute.Text, 0))
+                    errors.SetError(txtEnabledAttribute, res.CTRLADATENABLEDERROR);
+                else
+                    errors.SetError(txtEnabledAttribute, "");
 
-                    if (!ManagementService.CheckADDSAttribute(txtDomainName.Text, txtUserName.Text, txtPassword.Text, txtEnabledAttribute.Text, 0))
-                        errors.SetError(txtEnabledAttribute, res.CTRLADATENABLEDERROR);
-                    else
-                        errors.SetError(txtEnabledAttribute, "");
+                if (!ManagementService.CheckADDSAttribute(Config.Hosts.ActiveDirectoryHost.DomainName, Config.Hosts.ActiveDirectoryHost.Account, Config.Hosts.ActiveDirectoryHost.Password, txtKeyAttribute.Text, 0))
+                    errors.SetError(txtKeyAttribute, res.CTRLADATTKEYERROR);
+                else
+                    errors.SetError(txtKeyAttribute, "");
 
-                    if (!ManagementService.CheckADDSAttribute(txtDomainName.Text, txtUserName.Text, txtPassword.Text, txtKeyAttribute.Text, 0))
-                        errors.SetError(txtKeyAttribute, res.CTRLADATTKEYERROR);
-                    else
-                        errors.SetError(txtKeyAttribute, "");
+                if (!ManagementService.CheckADDSAttribute(Config.Hosts.ActiveDirectoryHost.DomainName, Config.Hosts.ActiveDirectoryHost.Account, Config.Hosts.ActiveDirectoryHost.Password, txtMailAttribute.Text, 1))
+                    errors.SetError(txtMailAttribute, res.CTRLADATTEMAILERROR);
+                else
+                    errors.SetError(txtMailAttribute, "");
 
-                    if (!ManagementService.CheckADDSAttribute(txtDomainName.Text, txtUserName.Text, txtPassword.Text, txtMailAttribute.Text, 1))
-                        errors.SetError(txtMailAttribute, res.CTRLADATTEMAILERROR);
-                    else
-                        errors.SetError(txtMailAttribute, "");
+                if (!ManagementService.CheckADDSAttribute(Config.Hosts.ActiveDirectoryHost.DomainName, Config.Hosts.ActiveDirectoryHost.Account, Config.Hosts.ActiveDirectoryHost.Password, txtMethodAttribute.Text, 0))
+                    errors.SetError(txtMethodAttribute, res.CTRLADATMETHODERROR);
+                else
+                    errors.SetError(txtMethodAttribute, "");
 
-                    if (!ManagementService.CheckADDSAttribute(txtDomainName.Text, txtUserName.Text, txtPassword.Text, txtMethodAttribute.Text, 0))
-                        errors.SetError(txtMethodAttribute, res.CTRLADATMETHODERROR);
-                    else
-                        errors.SetError(txtMethodAttribute, "");
+                if (!ManagementService.CheckADDSAttribute(Config.Hosts.ActiveDirectoryHost.DomainName, Config.Hosts.ActiveDirectoryHost.Account, Config.Hosts.ActiveDirectoryHost.Password, txtPhoneAttribute.Text, 1))
+                    errors.SetError(txtPhoneAttribute, res.CTRLADATTPHONEERROR);
+                else
+                    errors.SetError(txtPhoneAttribute, "");
 
-                    if (!ManagementService.CheckADDSAttribute(txtDomainName.Text, txtUserName.Text, txtPassword.Text, txtPhoneAttribute.Text, 1))
-                        errors.SetError(txtPhoneAttribute, res.CTRLADATTPHONEERROR);
-                    else
-                        errors.SetError(txtPhoneAttribute, "");
+                if (!ManagementService.CheckADDSAttribute(Config.Hosts.ActiveDirectoryHost.DomainName, Config.Hosts.ActiveDirectoryHost.Account, Config.Hosts.ActiveDirectoryHost.Password, txtPinAttribute.Text, 0))
+                    errors.SetError(txtPinAttribute, res.CTRLADATPINERROR);
+                else
+                    errors.SetError(txtPinAttribute, "");
 
-                    if (!ManagementService.CheckADDSAttribute(txtDomainName.Text, txtUserName.Text, txtPassword.Text, txtPinAttribute.Text, 0))
-                        errors.SetError(txtPinAttribute, res.CTRLADATPINERROR);
-                    else
-                        errors.SetError(txtPinAttribute, "");
+                if (!ManagementService.CheckADDSAttribute(Config.Hosts.ActiveDirectoryHost.DomainName, Config.Hosts.ActiveDirectoryHost.Account, Config.Hosts.ActiveDirectoryHost.Password, txtPublicKeyAttribute.Text, 2))
+                    errors.SetError(txtPublicKeyAttribute, res.CTRLADATTKEYERROR);
+                else
+                    errors.SetError(txtPublicKeyAttribute, "");
 
-                    if (!ManagementService.CheckADDSAttribute(txtDomainName.Text, txtUserName.Text, txtPassword.Text, txtPublicKeyAttribute.Text, 2))
-                        errors.SetError(txtPublicKeyAttribute, res.CTRLADATTKEYERROR);
-                    else
-                        errors.SetError(txtPublicKeyAttribute, "");
+                if (!ManagementService.CheckADDSAttribute(Config.Hosts.ActiveDirectoryHost.DomainName, Config.Hosts.ActiveDirectoryHost.Account, Config.Hosts.ActiveDirectoryHost.Password, txtRSACertAttribute.Text, 0))
+                    errors.SetError(txtRSACertAttribute, res.CTRLADATRSACERTERROR);
+                else
+                    errors.SetError(txtRSACertAttribute, "");
 
-                    if (!ManagementService.CheckADDSAttribute(txtDomainName.Text, txtUserName.Text, txtPassword.Text, txtRSACertAttribute.Text, 0))
-                        errors.SetError(txtRSACertAttribute, res.CTRLADATRSACERTERROR);
-                    else
-                        errors.SetError(txtRSACertAttribute, "");
-
-                    int maxrows = Convert.ToInt32(txtMaxRows.Text);
-                    if ((maxrows < 1000) || (maxrows > 1000000))
-                        errors.SetError(txtMaxRows, String.Format(res.CTRLSQLMAXROWSERROR, maxrows));
-                    else
-                        errors.SetError(txtMaxRows, "");
-                }
+                int maxrows = Convert.ToInt32(txtMaxRows.Text);
+                if ((maxrows < 1000) || (maxrows > 1000000))
+                    errors.SetError(txtMaxRows, String.Format(res.CTRLSQLMAXROWSERROR, maxrows));
+                else
+                    errors.SetError(txtMaxRows, "");
             }
             else
             {
-                errors.SetError(txtDomainName, "");
-                errors.SetError(txtUserName, "");
-                errors.SetError(txtPassword, "");
                 errors.SetError(txtOverrideMethodAttribute, "");
                 errors.SetError(txtEnabledAttribute, "");
                 errors.SetError(txtKeyAttribute, "");
@@ -3697,9 +3899,6 @@ namespace Neos.IdentityServer.Console.Controls
             _UpdateControlsLayouts = true;
             try
             {
-                txtDomainName.Enabled = isenabled;
-                txtUserName.Enabled = isenabled;
-                txtPassword.Enabled = isenabled;
                 txtOverrideMethodAttribute.Enabled = isenabled;
                 txtEnabledAttribute.Enabled = isenabled;
                 txtKeyAttribute.Enabled = isenabled;
@@ -3710,7 +3909,6 @@ namespace Neos.IdentityServer.Console.Controls
                 txtPinAttribute.Enabled = isenabled;
                 txtPublicKeyAttribute.Enabled = isenabled;
                 txtMaxRows.Enabled = isenabled;
-                btnConnect.Enabled = isenabled;
                 btnTemplateBase.Enabled = isenabled;
                 btnTemplate2016.Enabled = isenabled;
                 btnTemplateMFA.Enabled = isenabled;
@@ -3756,159 +3954,6 @@ namespace Neos.IdentityServer.Console.Controls
             }
         }
 
-        #region DomainName
-        /// <summary>
-        /// DomainNameValidating method implementation
-        /// </summary>
-        private void DomainNameValidating(object sender, CancelEventArgs e)
-        {
-            this.Cursor = Cursors.WaitCursor;
-            try
-            {
-                if (txtDomainName.Modified)
-                {
-                    ManagementService.ADFSManager.SetDirty(true);
-                    if (!ManagementService.CheckADDSConnection(txtDomainName.Text, txtUserName.Text, txtPassword.Text))
-                        throw new Exception(res.CTRLADATTDOMAIN);
-                    Config.Hosts.ActiveDirectoryHost.DomainAddress = txtDomainName.Text;
-                    errors.SetError(txtDomainName, "");
-                }
-            }
-            catch (Exception)
-            {
-                e.Cancel = true;
-                errors.SetError(txtDomainName, res.CTRLADATTDOMAIN);
-            }
-            finally
-            {
-                this.Cursor = Cursors.Default;
-            }
-        }
-
-        /// <summary>
-        /// DomainNameValidated method implmentation
-        /// </summary>
-        private void DomainNameValidated(object sender, EventArgs e)
-        {
-            try
-            {
-                Config.Hosts.ActiveDirectoryHost.DomainAddress = txtDomainName.Text;
-                ManagementService.ADFSManager.SetDirty(true);
-                errors.SetError(txtDomainName, "");
-            }
-            catch (Exception ex)
-            {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
-                this._snapin.Console.ShowDialog(messageBoxParameters);
-            }
-        }
-        #endregion
-
-        #region Username
-        /// <summary>
-        /// UserNameValidating method implementation
-        /// </summary>
-        private void UserNameValidating(object sender, CancelEventArgs e)
-        {
-            this.Cursor = Cursors.WaitCursor;
-            try
-            {
-                if (txtUserName.Modified)
-                {
-                    ManagementService.ADFSManager.SetDirty(true);
-                    if (!ManagementService.CheckADDSConnection(txtDomainName.Text, txtUserName.Text, txtPassword.Text))
-                       throw new Exception(res.CTRLADATTACCOUNT);
-                    Config.Hosts.ActiveDirectoryHost.Account = txtUserName.Text;
-                    errors.SetError(txtUserName, "");
-                }
-            }
-            catch (Exception)
-            {
-                e.Cancel = true;
-                errors.SetError(txtUserName, res.CTRLADATTACCOUNT);
-            }
-            finally
-            {
-                this.Cursor = Cursors.Default;
-            }
-        }
-
-        /// <summary>
-        /// UserNameValidated method implementation
-        /// </summary>
-        private void UserNameValidated(object sender, EventArgs e)
-        {
-            try
-            {
-                Config.Hosts.ActiveDirectoryHost.Account = txtUserName.Text;
-                ManagementService.ADFSManager.SetDirty(true);
-                errors.SetError(txtUserName, "");
-            }
-            catch (Exception ex)
-            {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
-                this._snapin.Console.ShowDialog(messageBoxParameters);
-            }
-        }
-        #endregion
-
-        #region Password
-        /// <summary>
-        /// UserNameValidating method implementation
-        /// </summary>
-        private void PasswordValidating(object sender, CancelEventArgs e)
-        {
-            this.Cursor = Cursors.WaitCursor;
-            try
-            {
-                if (txtPassword.Modified)
-                {
-                    ManagementService.ADFSManager.SetDirty(true);
-                    if (!ManagementService.CheckADDSConnection(txtDomainName.Text, txtUserName.Text, txtPassword.Text))
-                        throw new Exception(res.CTRLADATTPASSWORD);
-                    Config.Hosts.ActiveDirectoryHost.Password = txtPassword.Text;
-                    errors.SetError(txtPassword, "");
-                }
-            }
-            catch (Exception)
-            {
-                e.Cancel = true;
-                errors.SetError(txtPassword, res.CTRLADATTPASSWORD);
-            }
-            finally
-            {
-                this.Cursor = Cursors.Default;
-            }
-        }
-
-        /// <summary>
-        /// PasswordValidated method implementation
-        /// </summary>
-        private void PasswordValidated(object sender, EventArgs e)
-        {
-            try
-            {
-                Config.Hosts.ActiveDirectoryHost.Password = txtPassword.Text;
-                ManagementService.ADFSManager.SetDirty(true);
-                errors.SetError(txtPassword, "");
-            }
-            catch (Exception ex)
-            {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
-                this._snapin.Console.ShowDialog(messageBoxParameters);
-            }
-        }
-        #endregion
-
         #region KeyAttribute
         /// <summary>
         /// KeyAttributeValidating method implementation
@@ -3921,7 +3966,7 @@ namespace Neos.IdentityServer.Console.Controls
                 if (txtKeyAttribute.Modified)
                 {
                     ManagementService.ADFSManager.SetDirty(true);
-                    if (!ManagementService.CheckADDSAttribute(txtDomainName.Text, txtUserName.Text, txtPassword.Text, txtKeyAttribute.Text, 1))
+                    if (!ManagementService.CheckADDSAttribute(Config.Hosts.ActiveDirectoryHost.DomainName, Config.Hosts.ActiveDirectoryHost.Account, Config.Hosts.ActiveDirectoryHost.Password, txtKeyAttribute.Text, 1))
                         throw new Exception(res.CTRLADATTKEYERROR);
                     Config.Hosts.ActiveDirectoryHost.KeyAttribute = txtKeyAttribute.Text;
                     errors.SetError(txtKeyAttribute, "");
@@ -3974,7 +4019,7 @@ namespace Neos.IdentityServer.Console.Controls
                 if (txtMailAttribute.Modified)
                 {
                     ManagementService.ADFSManager.SetDirty(true);
-                    if (!ManagementService.CheckADDSAttribute(txtDomainName.Text, txtUserName.Text, txtPassword.Text, txtMailAttribute.Text, 1))
+                    if (!ManagementService.CheckADDSAttribute(Config.Hosts.ActiveDirectoryHost.DomainName, Config.Hosts.ActiveDirectoryHost.Account, Config.Hosts.ActiveDirectoryHost.Password, txtMailAttribute.Text, 1))
                        throw new Exception(res.CTRLADATTEMAILERROR);
                     Config.Hosts.ActiveDirectoryHost.MailAttribute = txtMailAttribute.Text;
                     errors.SetError(txtMailAttribute, "");
@@ -4026,7 +4071,7 @@ namespace Neos.IdentityServer.Console.Controls
                 if (txtPhoneAttribute.Modified)
                 {
                     ManagementService.ADFSManager.SetDirty(true);
-                    if (!ManagementService.CheckADDSAttribute(txtDomainName.Text, txtUserName.Text, txtPassword.Text, txtPhoneAttribute.Text, 1))
+                    if (!ManagementService.CheckADDSAttribute(Config.Hosts.ActiveDirectoryHost.DomainName, Config.Hosts.ActiveDirectoryHost.Account, Config.Hosts.ActiveDirectoryHost.Password, txtPhoneAttribute.Text, 1))
                         throw new Exception(res.CTRLADATTPHONEERROR);
                     Config.Hosts.ActiveDirectoryHost.PhoneAttribute = txtPhoneAttribute.Text;
                     errors.SetError(txtPhoneAttribute, "");
@@ -4079,7 +4124,7 @@ namespace Neos.IdentityServer.Console.Controls
                 if (txtMethodAttribute.Modified)
                 {
                     ManagementService.ADFSManager.SetDirty(true);
-                    if (!ManagementService.CheckADDSAttribute(txtDomainName.Text, txtUserName.Text, txtPassword.Text, txtMethodAttribute.Text, 0))
+                    if (!ManagementService.CheckADDSAttribute(Config.Hosts.ActiveDirectoryHost.DomainName, Config.Hosts.ActiveDirectoryHost.Account, Config.Hosts.ActiveDirectoryHost.Password, txtMethodAttribute.Text, 0))
                         throw new Exception(res.CTRLADATMETHODERROR);
                     Config.Hosts.ActiveDirectoryHost.MethodAttribute = txtMethodAttribute.Text;
                     errors.SetError(txtMethodAttribute, "");
@@ -4130,7 +4175,7 @@ namespace Neos.IdentityServer.Console.Controls
                 if (txtOverrideMethodAttribute.Modified)
                 {
                     ManagementService.ADFSManager.SetDirty(true);
-                    if (!ManagementService.CheckADDSAttribute(txtDomainName.Text, txtUserName.Text, txtPassword.Text, txtOverrideMethodAttribute.Text, 0))
+                    if (!ManagementService.CheckADDSAttribute(Config.Hosts.ActiveDirectoryHost.DomainName, Config.Hosts.ActiveDirectoryHost.Account, Config.Hosts.ActiveDirectoryHost.Password, txtOverrideMethodAttribute.Text, 0))
                         throw new Exception(res.CTRLADATTKEYERROR);
                     Config.Hosts.ActiveDirectoryHost.OverrideMethodAttribute = txtOverrideMethodAttribute.Text;
                     errors.SetError(txtOverrideMethodAttribute, "");
@@ -4181,7 +4226,7 @@ namespace Neos.IdentityServer.Console.Controls
                   if (txtPinAttribute.Modified)
                   {
                       ManagementService.ADFSManager.SetDirty(true);
-                      if (!ManagementService.CheckADDSAttribute(txtDomainName.Text, txtUserName.Text, txtPassword.Text, txtPinAttribute.Text, 0))
+                      if (!ManagementService.CheckADDSAttribute(Config.Hosts.ActiveDirectoryHost.DomainName, Config.Hosts.ActiveDirectoryHost.Account, Config.Hosts.ActiveDirectoryHost.Password, txtPinAttribute.Text, 0))
                           throw new Exception(res.CTRLADATPINERROR);
                       Config.Hosts.ActiveDirectoryHost.PinAttribute = txtPinAttribute.Text;
                       errors.SetError(txtPinAttribute, "");
@@ -4237,7 +4282,7 @@ namespace Neos.IdentityServer.Console.Controls
                     Config.Hosts.ActiveDirectoryHost.PublicKeyCredentialAttribute = txtPublicKeyAttribute.Text;
                     errors.SetError(txtPublicKeyAttribute, "");
                 }
-                if (!ManagementService.CheckADDSAttribute(txtDomainName.Text, txtUserName.Text, txtPassword.Text, txtPublicKeyAttribute.Text, 2))
+                if (!ManagementService.CheckADDSAttribute(Config.Hosts.ActiveDirectoryHost.DomainName, Config.Hosts.ActiveDirectoryHost.Account, Config.Hosts.ActiveDirectoryHost.Password, txtPublicKeyAttribute.Text, 2))
                  {
                      e.Cancel = true;
                      errors.SetError(txtPublicKeyAttribute, res.CTRLADATTKEYERROR);
@@ -4290,7 +4335,7 @@ namespace Neos.IdentityServer.Console.Controls
                     Config.Hosts.ActiveDirectoryHost.RSACertificateAttribute = txtRSACertAttribute.Text;
                     ManagementService.ADFSManager.SetDirty(true);
                 }
-                if (!ManagementService.CheckADDSAttribute(txtDomainName.Text, txtUserName.Text, txtPassword.Text, txtRSACertAttribute.Text, 1))
+                if (!ManagementService.CheckADDSAttribute(Config.Hosts.ActiveDirectoryHost.DomainName, Config.Hosts.ActiveDirectoryHost.Account, Config.Hosts.ActiveDirectoryHost.Password, txtRSACertAttribute.Text, 1))
                 {
                     e.Cancel = true;
                     errors.SetError(txtRSACertAttribute, res.CTRLADATRSACERTERROR);
@@ -4342,7 +4387,7 @@ namespace Neos.IdentityServer.Console.Controls
                 if (txtEnabledAttribute.Modified)
                 {
                     ManagementService.ADFSManager.SetDirty(true);
-                    if (!ManagementService.CheckADDSAttribute(txtDomainName.Text, txtUserName.Text, txtPassword.Text, txtEnabledAttribute.Text, 0))
+                    if (!ManagementService.CheckADDSAttribute(Config.Hosts.ActiveDirectoryHost.DomainName, Config.Hosts.ActiveDirectoryHost.Account, Config.Hosts.ActiveDirectoryHost.Password, txtEnabledAttribute.Text, 0))
                         throw new Exception(res.CTRLADATENABLEDERROR);
                     Config.Hosts.ActiveDirectoryHost.TotpEnabledAttribute = txtEnabledAttribute.Text;
                     errors.SetError(txtEnabledAttribute, "");
@@ -4434,46 +4479,7 @@ namespace Neos.IdentityServer.Console.Controls
         }
         #endregion
 
-        /// <summary>
-        /// btnConnectClick method implmentation
-        /// </summary>
-        private void BtnConnectClick(object sender, EventArgs e)
-        {
-            try
-            {
-                if (!ManagementService.CheckADDSConnection(txtDomainName.Text, txtUserName.Text, txtPassword.Text))
-                {
-                    MessageBoxParameters messageBoxParameters = new MessageBoxParameters
-                    {
-                        Text = res.CTRLADCONNECTIONERROR,
-                        Buttons = MessageBoxButtons.OK,
-                        Icon = MessageBoxIcon.Error
-                    };
-                    this._snapin.Console.ShowDialog(messageBoxParameters);
-                }
-                else
-                {
-                    MessageBoxParameters messageBoxParameters = new MessageBoxParameters
-                    {
-                        Text = res.CTRLADCONNECTIONOK,
-                        Buttons = MessageBoxButtons.OK,
-                        Icon = MessageBoxIcon.Information
-                    };
-                    this._snapin.Console.ShowDialog(messageBoxParameters);
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
-                {
-                    Text = ex.Message,
-                    Buttons = MessageBoxButtons.OK,
-                    Icon = MessageBoxIcon.Error
-                };
-                this._snapin.Console.ShowDialog(messageBoxParameters);
-            }
-        }
-
+        #region ADDS Templates
         /// <summary>
         /// BtnTemplateMFAClick method implementation
         /// </summary>
@@ -4578,6 +4584,7 @@ namespace Neos.IdentityServer.Console.Controls
                 this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
+        #endregion
 
         /// <summary>
         /// SaveConfigLinkClicked event
@@ -4733,164 +4740,200 @@ namespace Neos.IdentityServer.Console.Controls
                 _txtpanel.BackColor = System.Drawing.SystemColors.Control;
                 this.Controls.Add(_txtpanel);
 
-                chkUseSQL = new CheckBox();
-                chkUseSQL.Text = res.CTRLSQLUSING;
-                chkUseSQL.Checked = !Config.UseActiveDirectory;
-                chkUseSQL.Left = 10;
-                chkUseSQL.Top = 19;
-                chkUseSQL.Width = 450;
+                chkUseSQL = new CheckBox
+                {
+                    Text = res.CTRLSQLUSING,
+                    Checked = !Config.UseActiveDirectory,
+                    Left = 10,
+                    Top = 19,
+                    Width = 450
+                };
                 chkUseSQL.CheckedChanged += UseSQLCheckedChanged;
                 _txtpanel.Controls.Add(chkUseSQL);
 
-                lblConnectionString = new Label();
-                lblConnectionString.Text = res.CTRLSQLCONNECTSTR + " : ";
-                lblConnectionString.Left = 50;
-                lblConnectionString.Top = 51;
-                lblConnectionString.Width = 150;
+                lblConnectionString = new Label
+                {
+                    Text = res.CTRLSQLCONNECTSTR + " : ",
+                    Left = 50,
+                    Top = 51,
+                    Width = 150
+                };
                 _txtpanel.Controls.Add(lblConnectionString);
 
-                txtConnectionString = new TextBox();
-                txtConnectionString.Text = Config.Hosts.SQLServerHost.ConnectionString;
-                txtConnectionString.Left = 210;
-                txtConnectionString.Top = 47;
-                txtConnectionString.Width = 700;
-                txtConnectionString.Enabled = !Config.UseActiveDirectory;
+                txtConnectionString = new TextBox
+                {
+                    Text = Config.Hosts.SQLServerHost.ConnectionString,
+                    Left = 210,
+                    Top = 47,
+                    Width = 700,
+                    Enabled = !Config.UseActiveDirectory
+                };
                 txtConnectionString.Validating += ConnectionStringValidating;
                 txtConnectionString.Validated += ConnectionStringValidated;
                 _txtpanel.Controls.Add(txtConnectionString);
 
-                lblMaxRows = new Label();
-                lblMaxRows.Text = res.CTRLSQLMAXROWS + " : ";
-                lblMaxRows.Left = 50;
-                lblMaxRows.Top = 82;
-                lblMaxRows.Width = 150;
+                lblMaxRows = new Label
+                {
+                    Text = res.CTRLSQLMAXROWS + " : ",
+                    Left = 50,
+                    Top = 82,
+                    Width = 150
+                };
                 _txtpanel.Controls.Add(lblMaxRows);
 
-                txtMaxRows = new TextBox();
-                txtMaxRows.Text = Config.Hosts.SQLServerHost.MaxRows.ToString();
-                txtMaxRows.Left = 210;
-                txtMaxRows.Top = 78;
-                txtMaxRows.Width = 50;
-                txtMaxRows.TextAlign = HorizontalAlignment.Right;
-                txtMaxRows.Enabled = !Config.UseActiveDirectory;
+                txtMaxRows = new TextBox
+                {
+                    Text = Config.Hosts.SQLServerHost.MaxRows.ToString(),
+                    Left = 210,
+                    Top = 78,
+                    Width = 50,
+                    TextAlign = HorizontalAlignment.Right,
+                    Enabled = !Config.UseActiveDirectory
+                };
                 txtMaxRows.Validating += MaxRowsValidating;
                 txtMaxRows.Validated += MaxRowsValidated;
                 _txtpanel.Controls.Add(txtMaxRows);
 
-                btnConnect = new Button();
-                btnConnect.Text = res.CTRLSQLTEST;
-                btnConnect.Left = 680;
-                btnConnect.Top = 82;
-                btnConnect.Width = 230;
-                btnConnect.Enabled = !Config.UseActiveDirectory;
+                btnConnect = new Button
+                {
+                    Text = res.CTRLSQLTEST,
+                    Left = 680,
+                    Top = 82,
+                    Width = 230,
+                    Enabled = !Config.UseActiveDirectory
+                };
                 btnConnect.Click += BtnConnectClick;
                 _txtpanel.Controls.Add(btnConnect);
 
-                btnCreateDB = new Button();
-                btnCreateDB.Text = res.CTRLSQLCREATEDB;
-                btnCreateDB.Left = 680;
-                btnCreateDB.Top = 113;
-                btnCreateDB.Width = 230;
-                btnCreateDB.Enabled = !Config.UseActiveDirectory;
+                btnCreateDB = new Button
+                {
+                    Text = res.CTRLSQLCREATEDB,
+                    Left = 680,
+                    Top = 113,
+                    Width = 230,
+                    Enabled = !Config.UseActiveDirectory
+                };
                 btnCreateDB.Click += BtnCreateDBClick;
                 _txtpanel.Controls.Add(btnCreateDB);
 
-                chkUseAlwaysEncryptSQL = new CheckBox();
-                chkUseAlwaysEncryptSQL.Text = res.CTRLSQLCRYPTUSING;
-                chkUseAlwaysEncryptSQL.Checked = Config.Hosts.SQLServerHost.IsAlwaysEncrypted;
-                chkUseAlwaysEncryptSQL.Enabled = !Config.UseActiveDirectory;
-                chkUseAlwaysEncryptSQL.Left = 10;
-                chkUseAlwaysEncryptSQL.Top = 144;
-                chkUseAlwaysEncryptSQL.Width = 450;
+                chkUseAlwaysEncryptSQL = new CheckBox
+                {
+                    Text = res.CTRLSQLCRYPTUSING,
+                    Checked = Config.Hosts.SQLServerHost.IsAlwaysEncrypted,
+                    Enabled = !Config.UseActiveDirectory,
+                    Left = 10,
+                    Top = 144,
+                    Width = 450
+                };
                 chkUseAlwaysEncryptSQL.CheckedChanged += UseSQLCryptCheckedChanged;
                 _txtpanel.Controls.Add(chkUseAlwaysEncryptSQL);
 
-                lblEncryptKeyName = new Label();
-                lblEncryptKeyName.Text = res.CTRLSQLENCRYPTNAME + " : ";
-                lblEncryptKeyName.Left = 50;
-                lblEncryptKeyName.Top = 175;
-                lblEncryptKeyName.Width = 150;
+                lblEncryptKeyName = new Label
+                {
+                    Text = res.CTRLSQLENCRYPTNAME + " : ",
+                    Left = 50,
+                    Top = 175,
+                    Width = 150
+                };
                 _txtpanel.Controls.Add(lblEncryptKeyName);
 
-                txtEncryptKeyName = new TextBox();
-                txtEncryptKeyName.Text = Config.Hosts.SQLServerHost.KeyName;
-                txtEncryptKeyName.Left = 210;
-                txtEncryptKeyName.Top = 171;
-                txtEncryptKeyName.Width = 100;
-                txtEncryptKeyName.Enabled = (!Config.UseActiveDirectory && Config.Hosts.SQLServerHost.IsAlwaysEncrypted);
+                txtEncryptKeyName = new TextBox
+                {
+                    Text = Config.Hosts.SQLServerHost.KeyName,
+                    Left = 210,
+                    Top = 171,
+                    Width = 100,
+                    Enabled = (!Config.UseActiveDirectory && Config.Hosts.SQLServerHost.IsAlwaysEncrypted)
+                };
                 txtEncryptKeyName.Validating += EncryptKeyNameValidating;
                 txtEncryptKeyName.Validated += EncryptKeyNameValidated;
                 _txtpanel.Controls.Add(txtEncryptKeyName);
 
-                lblCertificateDuration = new Label();
-                lblCertificateDuration.Text = res.CTRLSECCERTIFDURATION + " : ";
-                lblCertificateDuration.Left = 50;
-                lblCertificateDuration.Top = 206;
-                lblCertificateDuration.Width = 150;
+                lblCertificateDuration = new Label
+                {
+                    Text = res.CTRLSECCERTIFDURATION + " : ",
+                    Left = 50,
+                    Top = 206,
+                    Width = 150
+                };
                 _txtpanel.Controls.Add(lblCertificateDuration);
 
-                txtCertificateDuration = new NumericUpDown();
-                txtCertificateDuration.Left = 210;
-                txtCertificateDuration.Top = 202;
-                txtCertificateDuration.Width = 50;
-                txtCertificateDuration.TextAlign = HorizontalAlignment.Center;
-                txtCertificateDuration.Value = Config.Hosts.SQLServerHost.CertificateValidity;
-                txtCertificateDuration.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
-                txtCertificateDuration.Maximum = new decimal(new int[] { 9999, 0, 0, 0 });
+                txtCertificateDuration = new NumericUpDown
+                {
+                    Left = 210,
+                    Top = 202,
+                    Width = 50,
+                    TextAlign = HorizontalAlignment.Center,
+                    Value = Config.Hosts.SQLServerHost.CertificateValidity,
+                    Minimum = new decimal(new int[] { 1, 0, 0, 0 }),
+                    Maximum = new decimal(new int[] { 9999, 0, 0, 0 })
+                };
                 txtCertificateDuration.ValueChanged += CertValidityValueChanged;
                 txtCertificateDuration.Enabled = (!Config.UseActiveDirectory && Config.Hosts.SQLServerHost.IsAlwaysEncrypted);
                 _txtpanel.Controls.Add(txtCertificateDuration);
 
-                chkReuseCertificate = new CheckBox();
-                chkReuseCertificate.Text = res.CTRLSQLREUSECERT;
-                chkReuseCertificate.Checked = Config.Hosts.SQLServerHost.CertReuse;
-                chkReuseCertificate.Enabled = (!Config.UseActiveDirectory && Config.Hosts.SQLServerHost.IsAlwaysEncrypted);
-                chkReuseCertificate.Left = 50;
-                chkReuseCertificate.Top = 233;
-                chkReuseCertificate.Width = 450;
+                chkReuseCertificate = new CheckBox
+                {
+                    Text = res.CTRLSQLREUSECERT,
+                    Checked = Config.Hosts.SQLServerHost.CertReuse,
+                    Enabled = (!Config.UseActiveDirectory && Config.Hosts.SQLServerHost.IsAlwaysEncrypted),
+                    Left = 50,
+                    Top = 233,
+                    Width = 450
+                };
                 chkReuseCertificate.CheckedChanged += UseSQLReuseCertCheckedChanged;
                 _txtpanel.Controls.Add(chkReuseCertificate);
 
-                lblCertificateThumbPrint = new Label();
-                lblCertificateThumbPrint.Text = res.CTRLSQLTHUMBPRINT + " : ";
-                lblCertificateThumbPrint.Left = 100;
-                lblCertificateThumbPrint.Top = 264;
-                lblCertificateThumbPrint.Width = 150;
+                lblCertificateThumbPrint = new Label
+                {
+                    Text = res.CTRLSQLTHUMBPRINT + " : ",
+                    Left = 100,
+                    Top = 264,
+                    Width = 150
+                };
                 _txtpanel.Controls.Add(lblCertificateThumbPrint);
 
-                txtCertificateThumbPrint = new TextBox();
-                txtCertificateThumbPrint.Text = Config.Hosts.SQLServerHost.ThumbPrint;
-                txtCertificateThumbPrint.Left = 260;
-                txtCertificateThumbPrint.Top = 260;
-                txtCertificateThumbPrint.Width = 300;
-                txtCertificateThumbPrint.Enabled = (!Config.UseActiveDirectory && Config.Hosts.SQLServerHost.IsAlwaysEncrypted && Config.Hosts.SQLServerHost.CertReuse);
+                txtCertificateThumbPrint = new TextBox
+                {
+                    Text = Config.Hosts.SQLServerHost.ThumbPrint,
+                    Left = 260,
+                    Top = 260,
+                    Width = 300,
+                    Enabled = (!Config.UseActiveDirectory && Config.Hosts.SQLServerHost.IsAlwaysEncrypted && Config.Hosts.SQLServerHost.CertReuse)
+                };
                 txtCertificateThumbPrint.Validating += CertificateThumbPrintValidating;
                 txtCertificateThumbPrint.Validated += CertificateThumbPrintValidated;
                 _txtpanel.Controls.Add(txtCertificateThumbPrint);
 
-                btnCreateCryptedDB = new Button();
-                btnCreateCryptedDB.Text = res.CTRLSQLCREATECRYPTEDDB;
-                btnCreateCryptedDB.Left = 680;
-                btnCreateCryptedDB.Top = 322;
-                btnCreateCryptedDB.Width = 230;
-                btnCreateCryptedDB.Enabled = (!Config.UseActiveDirectory && Config.Hosts.SQLServerHost.IsAlwaysEncrypted);
+                btnCreateCryptedDB = new Button
+                {
+                    Text = res.CTRLSQLCREATECRYPTEDDB,
+                    Left = 680,
+                    Top = 322,
+                    Width = 230,
+                    Enabled = (!Config.UseActiveDirectory && Config.Hosts.SQLServerHost.IsAlwaysEncrypted)
+                };
                 btnCreateCryptedDB.Click += BtnCreateCryptedDBClick;
                 _txtpanel.Controls.Add(btnCreateCryptedDB);
 
-                tblSaveConfig = new LinkLabel();
-                tblSaveConfig.Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPESAVE;
-                tblSaveConfig.Left = 20;
-                tblSaveConfig.Top = 372;
-                tblSaveConfig.Width = 80;
+                tblSaveConfig = new LinkLabel
+                {
+                    Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPESAVE,
+                    Left = 20,
+                    Top = 372,
+                    Width = 80
+                };
                 tblSaveConfig.LinkClicked += SaveConfigLinkClicked;
                 tblSaveConfig.TabStop = true;
                 this.Controls.Add(tblSaveConfig);
 
-                tblCancelConfig = new LinkLabel();
-                tblCancelConfig.Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPECANCEL;
-                tblCancelConfig.Left = 110;
-                tblCancelConfig.Top = 372;
-                tblCancelConfig.Width = 80;
+                tblCancelConfig = new LinkLabel
+                {
+                    Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPECANCEL,
+                    Left = 110,
+                    Top = 372,
+                    Width = 80
+                };
                 tblCancelConfig.LinkClicked += CancelConfigLinkClicked;
                 tblCancelConfig.TabStop = true;
                 this.Controls.Add(tblCancelConfig);
@@ -7611,19 +7654,24 @@ namespace Neos.IdentityServer.Console.Controls
                 txtHashAlgo.Validated += HashAlgoValidated;
                 _txtpanel.Controls.Add(txtHashAlgo);
 
-                lblSecMode = new Label();
-                lblSecMode.Text = res.CTRLSECKEYMODE+" : ";
-                lblSecMode.Left = 10;
-                lblSecMode.Top = 100;
-                lblSecMode.Width = 150;
+                lblSecMode = new Label()
+                {
+                    Text = res.CTRLSECKEYMODE + " : ",
+                    Left = 10,
+                    Top = 100,
+                    Width = 150
+                };
                 _txtpanel.Controls.Add(lblSecMode);
 
                 MMCSecurityFormatList lst = new MMCSecurityFormatList();
-                cbFormat = new ComboBox();
-                cbFormat.DropDownStyle = ComboBoxStyle.DropDownList;
-                cbFormat.Left = 180;
-                cbFormat.Top = 96;
-                cbFormat.Width = 200;
+
+                cbFormat = new ComboBox()
+                {
+                    DropDownStyle = ComboBoxStyle.DropDownList,
+                    Left = 180,
+                    Top = 96,
+                    Width = 200,
+                };
                 _txtpanel.Controls.Add(cbFormat);
 
                 cbFormat.DataSource = lst;
@@ -7633,18 +7681,20 @@ namespace Neos.IdentityServer.Console.Controls
                 cbFormat.SelectedIndexChanged += SelectedFormatChanged;
 
                 lblMaxKeyLen = new Label();
-                lblMaxKeyLen.Text = res.CTRLSECKEYLENGTH+" : ";
+                lblMaxKeyLen.Text = res.CTRLSECKEYLENGTH + " : ";
                 lblMaxKeyLen.Left = 10;
                 lblMaxKeyLen.Top = 132;
                 lblMaxKeyLen.Width = 150;
                 _txtpanel.Controls.Add(lblMaxKeyLen);
 
                 MMCSecurityKeySizeist lkeys = new MMCSecurityKeySizeist();
-                cbKeySize = new ComboBox();
-                cbKeySize.DropDownStyle = ComboBoxStyle.DropDownList;
-                cbKeySize.Left = 180;
-                cbKeySize.Top = 128;
-                cbKeySize.Width = 200;
+                cbKeySize = new ComboBox()
+                {
+                    DropDownStyle = ComboBoxStyle.DropDownList,
+                    Left = 180,
+                    Top = 128,
+                    Width = 200
+                };
                 _txtpanel.Controls.Add(cbKeySize);
 
                 cbKeySize.DataSource = lkeys;
@@ -8401,13 +8451,15 @@ namespace Neos.IdentityServer.Console.Controls
                     Left = 190,
                     Top = 186,
                     Width = 130,
-                    DataSource = lst,
-                    ValueMember = "ID",
-                    DisplayMember = "Label",
-                    SelectedValue = Config.WebAuthNProvider.Configuration.ChallengeSize,
                 };
-                cbChallengeSize.SelectedIndexChanged += SelectedChallengeSizeChanged;
                 _txtpanel.Controls.Add(cbChallengeSize);
+
+                cbChallengeSize.DataSource = lst;
+                cbChallengeSize.ValueMember = "ID";
+                cbChallengeSize.DisplayMember = "Label";
+                cbChallengeSize.SelectedValue = Config.WebAuthNProvider.Configuration.ChallengeSize;
+                cbChallengeSize.SelectedIndexChanged += SelectedChallengeSizeChanged;
+
 
 
                 tblSaveConfig = new LinkLabel
@@ -9018,14 +9070,16 @@ namespace Neos.IdentityServer.Console.Controls
                     DropDownStyle = ComboBoxStyle.DropDownList,
                     Left = 300,
                     Top = 16,
-                    Width = 150,
-                    DataSource = lst1,
-                    ValueMember = "ID",
-                    DisplayMember = "Label",
-                    SelectedValue = Config.WebAuthNProvider.Options.AuthenticatorAttachment
+                    Width = 150
                 };
-                cbAttachement.SelectedIndexChanged += SelectedAttachementChanged;
                 _txtpanel.Controls.Add(cbAttachement);
+
+                cbAttachement.DataSource = lst1;
+                cbAttachement.ValueMember = "ID";
+                cbAttachement.DisplayMember = "Label";
+                cbAttachement.SelectedValue = Config.WebAuthNProvider.Options.AuthenticatorAttachment;
+                cbAttachement.SelectedIndexChanged += SelectedAttachementChanged;
+
 
                 lblConveyance = new Label
                 {
@@ -9043,13 +9097,14 @@ namespace Neos.IdentityServer.Console.Controls
                     Left = 300,
                     Top = 50,
                     Width = 150,
-                    DataSource = lst2,
-                    ValueMember = "ID",
-                    DisplayMember = "Label",
-                    SelectedValue = Config.WebAuthNProvider.Options.AttestationConveyancePreference
                 };
-                cbConveyance.SelectedIndexChanged += SelectedConveyanceChanged;
                 _txtpanel.Controls.Add(cbConveyance);
+
+                cbConveyance.DataSource = lst2;
+                cbConveyance.ValueMember = "ID";
+                cbConveyance.DisplayMember = "Label";
+                cbConveyance.SelectedValue = Config.WebAuthNProvider.Options.AttestationConveyancePreference;
+                cbConveyance.SelectedIndexChanged += SelectedConveyanceChanged;
 
 
                 lblUserVerification = new Label
@@ -9068,13 +9123,13 @@ namespace Neos.IdentityServer.Console.Controls
                     Left = 300,
                     Top = 84,
                     Width = 150,
-                    DataSource = lst3,
-                    ValueMember = "ID",
-                    DisplayMember = "Label",
-                    SelectedValue = Config.WebAuthNProvider.Options.UserVerificationRequirement
                 };
-                cbUserVerification.SelectedIndexChanged += SelectedUserVerificationChanged;
                 _txtpanel.Controls.Add(cbUserVerification);
+                cbUserVerification.DataSource = lst3;
+                cbUserVerification.ValueMember = "ID";
+                cbUserVerification.DisplayMember = "Label";
+                cbUserVerification.SelectedValue = Config.WebAuthNProvider.Options.UserVerificationRequirement;
+                cbUserVerification.SelectedIndexChanged += SelectedUserVerificationChanged;
 
                 chkExtensions = new CheckBox
                 {
@@ -9460,6 +9515,15 @@ namespace Neos.IdentityServer.Console.Controls
         private TextBox txtXORValue;
         private Label lblXORValue;
         private Label lblWarning;
+        private Label lblDomainName;
+        private TextBox txtDomainName;
+        private Label lblUserName;
+        private TextBox txtUserName;
+        private Label lblPassword;
+        private TextBox txtPassword;
+        private Button btnConnect;
+        private Label lblADDSTitle;
+        private Label lblTitleConfig;
 
         /// <summary>
         /// ConfigurationControl Constructor
@@ -9556,69 +9620,92 @@ namespace Neos.IdentityServer.Console.Controls
                 _view.RefreshProviderInformation();
 
                 this.Dock = DockStyle.Top;
-                this.Height = 230;
+                this.Height = 390;
                 this.Width = 600;
                 this.Margin = new Padding(30, 5, 30, 5);
 
                 _panel.Width = 20;
-                _panel.Height = 200;
+                _panel.Height = 360;
                 this.Controls.Add(_panel);
 
                 _txtpanel.Left = 20;
                 _txtpanel.Width = this.Width - 20;
-                _txtpanel.Height = 200;
+                _txtpanel.Height = 360;
                 _txtpanel.BackColor = System.Drawing.SystemColors.Control;
                 this.Controls.Add(_txtpanel);
 
-                lblDeliveryWindow = new Label();
-                lblDeliveryWindow.Text = res.CTRLGLDELVERY + " : ";
-                lblDeliveryWindow.Left = 10;
-                lblDeliveryWindow.Top = 20;
-                lblDeliveryWindow.Width = 200;
+                lblTitleConfig = new Label
+                {
+                    Text = res.CTRLADTITLECONFIG,
+                    Left = 10,
+                    Top = 15,
+                    Width = 450
+                };
+                _txtpanel.Controls.Add(lblTitleConfig);
+
+
+                lblDeliveryWindow = new Label
+                {
+                    Text = res.CTRLGLDELVERY + " : ",
+                    Left = 50,
+                    Top = 50,
+                    Width = 200
+                };
                 _txtpanel.Controls.Add(lblDeliveryWindow);
 
-                txtDeliveryWindow = new TextBox();
-                txtDeliveryWindow.Text = Config.DeliveryWindow.ToString();
-                txtDeliveryWindow.Left = 260;
-                txtDeliveryWindow.Top = 16;
-                txtDeliveryWindow.Width = 60;
-                txtDeliveryWindow.MaxLength = 4;
-                txtDeliveryWindow.TextAlign = HorizontalAlignment.Center;
+                txtDeliveryWindow = new TextBox
+                {
+                    Text = Config.DeliveryWindow.ToString(),
+                    Left = 280,
+                    Top = 46,
+                    Width = 60,
+                    MaxLength = 4,
+                    TextAlign = HorizontalAlignment.Center,
+                };
                 txtDeliveryWindow.Validating += DeliveryWindowValidating;
                 txtDeliveryWindow.Validated += DeliveryWindowValidated;
                 _txtpanel.Controls.Add(txtDeliveryWindow);
 
-                lblMaxRetries = new Label();
-                lblMaxRetries.Text = res.CTRLDLGMAXRETRIES + " : ";
-                lblMaxRetries.Left = 440;
-                lblMaxRetries.Top = 20;
-                lblMaxRetries.Width = 150;
+                lblMaxRetries = new Label
+                {
+                    Text = res.CTRLDLGMAXRETRIES + " : ",
+                    Left = 450,
+                    Top = 50,
+                    TextAlign = ContentAlignment.TopRight,
+                    Width = 150
+                };
                 _txtpanel.Controls.Add(lblMaxRetries);
 
-                txtMaxRetries = new TextBox();
-                txtMaxRetries.Text = Config.MaxRetries.ToString();
-                txtMaxRetries.Left = 600;
-                txtMaxRetries.Top = 16;
-                txtMaxRetries.Width = 40;
-                txtMaxRetries.MaxLength = 2;
+                txtMaxRetries = new TextBox
+                {
+                    Text = Config.MaxRetries.ToString(),
+                    Left = 600,
+                    Top = 46,
+                    Width = 40,
+                    MaxLength = 2,
+                    TextAlign = HorizontalAlignment.Center
+                };
                 txtMaxRetries.Validating += MaxRetriesValidating;
                 txtMaxRetries.Validated += MaxRetriesValidated;
-                txtMaxRetries.TextAlign = HorizontalAlignment.Center;
                 _txtpanel.Controls.Add(txtMaxRetries);
 
-                lblReplayLevel = new Label();
-                lblReplayLevel.Text = res.CTRLGLREPLAY + " : ";
-                lblReplayLevel.Left = 10;
-                lblReplayLevel.Top = 57;
-                lblReplayLevel.Width = 180;
+                lblReplayLevel = new Label
+                {
+                    Text = res.CTRLGLREPLAY + " : ",
+                    Left = 50,
+                    Top = 87,
+                    Width = 180
+                };
                 _txtpanel.Controls.Add(lblReplayLevel);
 
                 MMCReplayModeList lst = new MMCReplayModeList();
-                cbReplayLevel = new ComboBox();
-                cbReplayLevel.DropDownStyle = ComboBoxStyle.DropDownList;
-                cbReplayLevel.Left = 260;
-                cbReplayLevel.Top = 53;
-                cbReplayLevel.Width = 130;
+                cbReplayLevel = new ComboBox
+                {
+                    DropDownStyle = ComboBoxStyle.DropDownList,
+                    Left = 280,
+                    Top = 83,
+                    Width = 130
+                };
                 _txtpanel.Controls.Add(cbReplayLevel);
 
                 cbReplayLevel.DataSource = lst;
@@ -9627,19 +9714,24 @@ namespace Neos.IdentityServer.Console.Controls
                 cbReplayLevel.SelectedValue = Config.ReplayLevel;
                 cbReplayLevel.SelectedIndexChanged += SelectedReplayLevelChanged;
 
-                lblLibVersion = new Label();
-                lblLibVersion.Text = res.CTRLSECLIBLABEL +"(*)"+ " : ";
-                lblLibVersion.Left = 10;
-                lblLibVersion.Top = 104;
-                lblLibVersion.Width = 250;
+                
+                lblLibVersion = new Label
+                {
+                    Text = res.CTRLSECLIBLABEL + "(*)" + " : ",
+                    Left = 50,
+                    Top = 134,
+                    Width = 225
+                };
                 _txtpanel.Controls.Add(lblLibVersion);
 
                 MMCLibVersionList lst2 = new MMCLibVersionList();
-                cbLibVersion = new ComboBox();
-                cbLibVersion.DropDownStyle = ComboBoxStyle.DropDownList;
-                cbLibVersion.Left = 260;
-                cbLibVersion.Top = 100;
-                cbLibVersion.Width = 50;
+                cbLibVersion = new ComboBox
+                {
+                    DropDownStyle = ComboBoxStyle.DropDownList,
+                    Left = 280,
+                    Top = 130,
+                    Width = 50,
+                };
                 _txtpanel.Controls.Add(cbLibVersion);
 
                 cbLibVersion.DataSource = lst2;
@@ -9648,47 +9740,138 @@ namespace Neos.IdentityServer.Console.Controls
                 cbLibVersion.SelectedValue = Config.KeysConfig.KeyVersion;
                 cbLibVersion.SelectedIndexChanged += SelectedLibVersionChanged;
 
-                lblXORValue = new Label();
-                lblXORValue.Text = res.CTRLSECXORLABEL + "(*)" + " : ";
-                lblXORValue.Left = 10;
-                lblXORValue.Top = 141;
-                lblXORValue.Width = 250;
+                lblXORValue = new Label
+                {
+                    Text = res.CTRLSECXORLABEL + "(*)" + " : ",
+                    Left = 50,
+                    Top = 171,
+                    Width = 200
+                };
                 _txtpanel.Controls.Add(lblXORValue);
 
-                txtXORValue = new TextBox();
-                txtXORValue.Text = Config.KeysConfig.XORSecret;
-                txtXORValue.Left = 260;
-                txtXORValue.Top = 137;
-                txtXORValue.Width = 300;
-                txtXORValue.PasswordChar = '*';
+                txtXORValue = new TextBox
+                {
+                    Text = Config.KeysConfig.XORSecret,
+                    Left = 280,
+                    Top = 167,
+                    Width = 300,
+                    PasswordChar = '*'
+                };
                 txtXORValue.Validating += XORValueValidating;
                 txtXORValue.Validated += XORValueValidated;
                 _txtpanel.Controls.Add(txtXORValue);
 
+                lblADDSTitle = new Label
+                {
+                    Text = res.CTRLADSUPERACCOUNT,
+                    Left = 10,
+                    Top = 210,
+                    Width = 450
+                };
+                _txtpanel.Controls.Add(lblADDSTitle);
 
-                lblWarning = new Label();
-                lblWarning.Text = "(*) "+ res.CTRLSECWARNING;
-                lblWarning.Left = 10;
-                lblWarning.Top = 178;
-                lblWarning.Width = 500;
+                lblDomainName = new Label
+                {
+                    Text = res.CTRLADDOMAIN + " : ",
+                    Left = 50,
+                    Top = 241,
+                    Width = 150
+                };
+                _txtpanel.Controls.Add(lblDomainName);
+
+                txtDomainName = new TextBox
+                {
+                    Text = Config.Hosts.ActiveDirectoryHost.DomainAddress,
+                    Left = 280,
+                    Top = 237,
+                    Width = 200
+                };
+                txtDomainName.Validating += DomainNameValidating;
+                txtDomainName.Validated += DomainNameValidated;
+                _txtpanel.Controls.Add(txtDomainName);
+
+                lblUserName = new Label
+                {
+                    Text = res.CTRLADACCOUNT + " : ",
+                    Left = 450,
+                    Top = 241,
+                    TextAlign = ContentAlignment.TopRight,
+                    Width = 150
+                };
+                _txtpanel.Controls.Add(lblUserName);
+
+                txtUserName = new TextBox
+                {
+                    Text = Config.Hosts.ActiveDirectoryHost.Account,
+                    Left = 600,
+                    Top = 237,
+                    Width = 250
+                };
+                txtUserName.Validating += UserNameValidating;
+                txtUserName.Validated += UserNameValidated;
+                _txtpanel.Controls.Add(txtUserName);
+
+                lblPassword = new Label
+                {
+                    Text = res.CTRLADPASSWORD + " : ",
+                    Left = 450,
+                    Top = 272,
+                    TextAlign = ContentAlignment.TopRight,
+                    Width = 150
+                };
+                _txtpanel.Controls.Add(lblPassword);
+
+                txtPassword = new TextBox
+                {
+                    Text = Config.Hosts.ActiveDirectoryHost.Password,
+                    Left = 600,
+                    Top = 268,
+                    Width = 250,
+                    PasswordChar = '*',
+                };
+                txtPassword.Validating += PasswordValidating;
+                txtPassword.Validated += PasswordValidated;
+                _txtpanel.Controls.Add(txtPassword);
+
+                btnConnect = new Button
+                {
+                    Text = res.CTRLADTEST,
+                    Left = 600,
+                    Top = 299,
+                    Width = 250,
+                };
+                btnConnect.Click += BtnConnectClick;
+                _txtpanel.Controls.Add(btnConnect);
+
+                lblWarning = new Label
+                {
+                    Text = "(*) " + res.CTRLSECWARNING,
+                    Left = 10,
+                    Top = 325,
+                    Width = 500
+                };
                 _txtpanel.Controls.Add(lblWarning);
 
-                tblSaveConfig = new LinkLabel();
-                tblSaveConfig.Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPESAVE;
-                tblSaveConfig.Left = 20;
-                tblSaveConfig.Top = 210;
-                tblSaveConfig.Width = 80;
+                tblSaveConfig = new LinkLabel
+                {
+                    Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPESAVE,
+                    Left = 20,
+                    Top = 370,
+                    Width = 80,
+                    TabStop = true
+                };
                 tblSaveConfig.LinkClicked += SaveConfigLinkClicked;
-                tblSaveConfig.TabStop = true;
                 this.Controls.Add(tblSaveConfig);
 
-                tblCancelConfig = new LinkLabel();
-                tblCancelConfig.Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPECANCEL;
-                tblCancelConfig.Left = 110;
-                tblCancelConfig.Top = 210;
-                tblCancelConfig.Width = 80;
+                tblCancelConfig = new LinkLabel
+                {
+                    Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPECANCEL,
+                    Left = 110,
+                    Top = 370,
+                    Width = 80,
+                    TabStop = true
+                };
                 tblCancelConfig.LinkClicked += CancelConfigLinkClicked;
-                tblCancelConfig.TabStop = true;
                 this.Controls.Add(tblCancelConfig);
 
                 errors = new ErrorProvider(_view);
@@ -9715,13 +9898,22 @@ namespace Neos.IdentityServer.Console.Controls
             _view.CausesValidation = false;
             try
             {
+                lblTitleConfig.Text = res.CTRLADTITLECONFIG;
+                lblDomainName.Text = res.CTRLADDOMAIN + " : ";
+                lblUserName.Text = res.CTRLADACCOUNT + " : ";
+                lblPassword.Text = res.CTRLADPASSWORD + " : ";
+                btnConnect.Text = res.CTRLADTEST;
                 lblDeliveryWindow.Text = res.CTRLGLDELVERY + " : ";
                 lblMaxRetries.Text = res.CTRLDLGMAXRETRIES + " : ";
                 lblReplayLevel.Text = res.CTRLGLREPLAY + " : ";
                 lblLibVersion.Text = res.CTRLSECLIBLABEL + "(*)" + " : ";
                 lblXORValue.Text = res.CTRLSECXORLABEL + "(*)" + " : ";
                 lblWarning.Text = "(*) " + res.CTRLSECWARNING;
+                lblADDSTitle.Text = res.CTRLADSUPERACCOUNT;
 
+                txtDomainName.Text = Config.Hosts.ActiveDirectoryHost.DomainAddress;
+                txtUserName.Text = Config.Hosts.ActiveDirectoryHost.Account;
+                txtPassword.Text = Config.Hosts.ActiveDirectoryHost.Password;
                 txtDeliveryWindow.Text = Config.DeliveryWindow.ToString();
                 txtMaxRetries.Text = Config.MaxRetries.ToString();
                 cbReplayLevel.SelectedValue = Config.ReplayLevel;
@@ -9747,6 +9939,18 @@ namespace Neos.IdentityServer.Console.Controls
         /// </summary>
         private void ValidateData()
         {
+            if (!ManagementService.CheckADDSConnection(txtDomainName.Text, txtUserName.Text, txtPassword.Text))
+            {
+                errors.SetError(txtDomainName, res.CTRLADATTDOMAIN);
+                errors.SetError(txtUserName, res.CTRLADATTACCOUNT);
+                errors.SetError(txtPassword, res.CTRLADATTPASSWORD);
+            }
+            else
+            {
+                errors.SetError(txtDomainName, "");
+                errors.SetError(txtUserName, "");
+                errors.SetError(txtPassword, "");
+            }
             int refr = Convert.ToInt32(txtDeliveryWindow.Text);
             if (string.IsNullOrEmpty(txtDeliveryWindow.Text))
                 errors.SetError(txtDeliveryWindow, res.CTRLNULLOREMPTYERROR);
@@ -9799,6 +10003,159 @@ namespace Neos.IdentityServer.Console.Controls
             if (_txtpanel != null)
                 _txtpanel.Width = this.Width - 20;
         }
+
+        #region DomainName
+        /// <summary>
+        /// DomainNameValidating method implementation
+        /// </summary>
+        private void DomainNameValidating(object sender, CancelEventArgs e)
+        {
+            this.Cursor = Cursors.WaitCursor;
+            try
+            {
+                if (txtDomainName.Modified)
+                {
+                    ManagementService.ADFSManager.SetDirty(true);
+                    if (!ManagementService.CheckADDSConnection(txtDomainName.Text, txtUserName.Text, txtPassword.Text))
+                        throw new Exception(res.CTRLADATTDOMAIN);
+                    Config.Hosts.ActiveDirectoryHost.DomainAddress = txtDomainName.Text;
+                    errors.SetError(txtDomainName, "");
+                }
+            }
+            catch (Exception)
+            {
+                e.Cancel = true;
+                errors.SetError(txtDomainName, res.CTRLADATTDOMAIN);
+            }
+            finally
+            {
+                this.Cursor = Cursors.Default;
+            }
+        }
+
+        /// <summary>
+        /// DomainNameValidated method implmentation
+        /// </summary>
+        private void DomainNameValidated(object sender, EventArgs e)
+        {
+            try
+            {
+                Config.Hosts.ActiveDirectoryHost.DomainAddress = txtDomainName.Text;
+                ManagementService.ADFSManager.SetDirty(true);
+                errors.SetError(txtDomainName, "");
+            }
+            catch (Exception ex)
+            {
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
+                messageBoxParameters.Text = ex.Message;
+                messageBoxParameters.Buttons = MessageBoxButtons.OK;
+                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                this._snapin.Console.ShowDialog(messageBoxParameters);
+            }
+        }
+        #endregion
+
+        #region Username
+        /// <summary>
+        /// UserNameValidating method implementation
+        /// </summary>
+        private void UserNameValidating(object sender, CancelEventArgs e)
+        {
+            this.Cursor = Cursors.WaitCursor;
+            try
+            {
+                if (txtUserName.Modified)
+                {
+                    ManagementService.ADFSManager.SetDirty(true);
+                    if (!ManagementService.CheckADDSConnection(txtDomainName.Text, txtUserName.Text, txtPassword.Text))
+                        throw new Exception(res.CTRLADATTACCOUNT);
+                    Config.Hosts.ActiveDirectoryHost.Account = txtUserName.Text;
+                    errors.SetError(txtUserName, "");
+                }
+            }
+            catch (Exception)
+            {
+                e.Cancel = true;
+                errors.SetError(txtUserName, res.CTRLADATTACCOUNT);
+            }
+            finally
+            {
+                this.Cursor = Cursors.Default;
+            }
+        }
+
+        /// <summary>
+        /// UserNameValidated method implementation
+        /// </summary>
+        private void UserNameValidated(object sender, EventArgs e)
+        {
+            try
+            {
+                Config.Hosts.ActiveDirectoryHost.Account = txtUserName.Text;
+                ManagementService.ADFSManager.SetDirty(true);
+                errors.SetError(txtUserName, "");
+            }
+            catch (Exception ex)
+            {
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
+                messageBoxParameters.Text = ex.Message;
+                messageBoxParameters.Buttons = MessageBoxButtons.OK;
+                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                this._snapin.Console.ShowDialog(messageBoxParameters);
+            }
+        }
+        #endregion
+
+        #region Password
+        /// <summary>
+        /// UserNameValidating method implementation
+        /// </summary>
+        private void PasswordValidating(object sender, CancelEventArgs e)
+        {
+            this.Cursor = Cursors.WaitCursor;
+            try
+            {
+                if (txtPassword.Modified)
+                {
+                    ManagementService.ADFSManager.SetDirty(true);
+                    if (!ManagementService.CheckADDSConnection(txtDomainName.Text, txtUserName.Text, txtPassword.Text))
+                        throw new Exception(res.CTRLADATTPASSWORD);
+                    Config.Hosts.ActiveDirectoryHost.Password = txtPassword.Text;
+                    errors.SetError(txtPassword, "");
+                }
+            }
+            catch (Exception)
+            {
+                e.Cancel = true;
+                errors.SetError(txtPassword, res.CTRLADATTPASSWORD);
+            }
+            finally
+            {
+                this.Cursor = Cursors.Default;
+            }
+        }
+
+        /// <summary>
+        /// PasswordValidated method implementation
+        /// </summary>
+        private void PasswordValidated(object sender, EventArgs e)
+        {
+            try
+            {
+                Config.Hosts.ActiveDirectoryHost.Password = txtPassword.Text;
+                ManagementService.ADFSManager.SetDirty(true);
+                errors.SetError(txtPassword, "");
+            }
+            catch (Exception ex)
+            {
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
+                messageBoxParameters.Text = ex.Message;
+                messageBoxParameters.Buttons = MessageBoxButtons.OK;
+                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                this._snapin.Console.ShowDialog(messageBoxParameters);
+            }
+        }
+        #endregion
 
         #region DeliveryWindow
         /// <summary>
@@ -9898,6 +10255,7 @@ namespace Neos.IdentityServer.Console.Controls
         }
         #endregion
 
+        #region ReplayLevel
         /// <summary>
         /// SelectedReplayLevelChanged method implementation
         /// </summary>
@@ -9921,7 +10279,9 @@ namespace Neos.IdentityServer.Console.Controls
                 this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
+        #endregion
 
+        #region LibVersion
         /// <summary>
         /// SelectedLibVersionChanged method implementation
         /// </summary>
@@ -9945,7 +10305,9 @@ namespace Neos.IdentityServer.Console.Controls
                 this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
+        #endregion
 
+        #region XORKey
         /// <summary>
         /// XORValueValidated method implementation
         /// </summary>
@@ -9987,6 +10349,47 @@ namespace Neos.IdentityServer.Console.Controls
             {
                 e.Cancel = true;
                 errors.SetError(txtXORValue, ex.Message);
+            }
+        }
+        #endregion
+
+        /// <summary>
+        /// btnConnectClick method implmentation
+        /// </summary>
+        private void BtnConnectClick(object sender, EventArgs e)
+        {
+            try
+            {
+                if (!ManagementService.CheckADDSConnection(txtDomainName.Text, txtUserName.Text, txtPassword.Text))
+                {
+                    MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                    {
+                        Text = res.CTRLADCONNECTIONERROR,
+                        Buttons = MessageBoxButtons.OK,
+                        Icon = MessageBoxIcon.Error
+                    };
+                    this._snapin.Console.ShowDialog(messageBoxParameters);
+                }
+                else
+                {
+                    MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                    {
+                        Text = res.CTRLADCONNECTIONOK,
+                        Buttons = MessageBoxButtons.OK,
+                        Icon = MessageBoxIcon.Information
+                    };
+                    this._snapin.Console.ShowDialog(messageBoxParameters);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
+                this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
 
@@ -10136,33 +10539,41 @@ namespace Neos.IdentityServer.Console.Controls
                 _txtpanel.BackColor = System.Drawing.SystemColors.Control;
                 this.Controls.Add(_txtpanel);
 
-                _panelRNG = new Panel();
-                _panelRNG.Left = 0;
-                _panelRNG.Top = 10;
-                _panelRNG.Height = 60;
-                _panelRNG.Width = 400;
+                _panelRNG = new Panel
+                {
+                    Left = 0,
+                    Top = 10,
+                    Height = 60,
+                    Width = 400
+                };
                 _txtpanel.Controls.Add(_panelRNG);
 
-                Label lblRNG = new Label();
-                lblRNG.Text = "RNG (Random Number Generator)";
-                lblRNG.Left = 10;
-                lblRNG.Top = 0;
-                lblRNG.Width = 250;
+                Label lblRNG = new Label
+                {
+                    Text = "RNG (Random Number Generator)",
+                    Left = 10,
+                    Top = 0,
+                    Width = 250
+                };
                 _panelRNG.Controls.Add(lblRNG);
 
-                lblRNGKey = new Label();
-                lblRNGKey.Text = res.CTRLSECKEYGEN + " : ";
-                lblRNGKey.Left = 30;
-                lblRNGKey.Top = 27;
-                lblRNGKey.Width = 140;
+                lblRNGKey = new Label
+                {
+                    Text = res.CTRLSECKEYGEN + " : ",
+                    Left = 30,
+                    Top = 27,
+                    Width = 140
+                };
                 _panelRNG.Controls.Add(lblRNGKey);
 
                 MMCSecurityKeyGeneratorList lgens = new MMCSecurityKeyGeneratorList();
-                cbKeyMode = new ComboBox();
-                cbKeyMode.DropDownStyle = ComboBoxStyle.DropDownList;
-                cbKeyMode.Left = 180;
-                cbKeyMode.Top = 25;
-                cbKeyMode.Width = 80;
+                cbKeyMode = new ComboBox()
+                {
+                    DropDownStyle = ComboBoxStyle.DropDownList,
+                    Left = 180,
+                    Top = 25,
+                    Width = 80
+                };
                 _panelRNG.Controls.Add(cbKeyMode);
 
                 cbKeyMode.DataSource = lgens;
@@ -10171,22 +10582,26 @@ namespace Neos.IdentityServer.Console.Controls
                 cbKeyMode.SelectedValue = Config.KeysConfig.KeyGenerator;
                 cbKeyMode.SelectedIndexChanged += SelectedKeyGenChanged;
 
-                tblSaveConfig = new LinkLabel();
-                tblSaveConfig.Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPESAVE;
-                tblSaveConfig.Left = 20;
-                tblSaveConfig.Top = 80;
-                tblSaveConfig.Width = 80;
+                tblSaveConfig = new LinkLabel
+                {
+                    Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPESAVE,
+                    Left = 20,
+                    Top = 80,
+                    Width = 80,
+                    TabStop = true
+                };
                 tblSaveConfig.LinkClicked += SaveConfigLinkClicked;
-                tblSaveConfig.TabStop = true;
                 this.Controls.Add(tblSaveConfig);
 
-                tblCancelConfig = new LinkLabel();
-                tblCancelConfig.Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPECANCEL;
-                tblCancelConfig.Left = 110;
-                tblCancelConfig.Top = 80;
-                tblCancelConfig.Width = 80;
+                tblCancelConfig = new LinkLabel
+                {
+                    Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPECANCEL,
+                    Left = 110,
+                    Top = 80,
+                    Width = 80,
+                    TabStop = true
+                };
                 tblCancelConfig.LinkClicked += CancelConfigLinkClicked;
-                tblCancelConfig.TabStop = true;
                 this.Controls.Add(tblCancelConfig);
 
                 errors = new ErrorProvider(_view);

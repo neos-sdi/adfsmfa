@@ -324,4 +324,7 @@
   <data name="GENERALSCOPECERTSDESC" xml:space="preserve">
     <value>Gestionați cheile priva ale certificatului Lista de control a accesului pe serverul curent</value>
   </data>
+  <data name="STORAGESCOPENODEDESC" xml:space="preserve">
+    <value>Configurare de stocare!</value>
+  </data>
 </root>

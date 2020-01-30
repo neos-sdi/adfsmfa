@@ -345,7 +345,7 @@ namespace Neos.IdentityServer.Console
         /// <summary>
         /// Constructor implementation
         /// </summary>
-        public ServiceGeneralScopeNode(): base(true)
+        public ServiceGeneralScopeNode() : base(true)
         {
             this.DisplayName = res.GENERALSCOPENODEDESC;
             this.LanguageIndependentName = "Generic MFA parmeters";
@@ -418,7 +418,7 @@ namespace Neos.IdentityServer.Console
                 {
                     if ((string)((Microsoft.ManagementConsole.Action)itm).Tag == "SaveConfig")
                     {
-                        ((Microsoft.ManagementConsole.Action)itm).DisplayName = res.GENERALSCOPESAVE; 
+                        ((Microsoft.ManagementConsole.Action)itm).DisplayName = res.GENERALSCOPESAVE;
                         ((Microsoft.ManagementConsole.Action)itm).Description = res.GENERALSCOPESAVEDESC;
                     }
                     else if ((string)((Microsoft.ManagementConsole.Action)itm).Tag == "CancelConfig")
@@ -437,6 +437,114 @@ namespace Neos.IdentityServer.Console
         {
             if (generalFormView != null)
                 generalFormView.Refresh();
+        }
+    }
+
+    /// <summary>
+    /// ServiceStorageScopeNode class
+    /// </summary>
+    public class ServiceStorageScopeNode : RefreshableScopeNode
+    {
+        internal ServiceStoreFormView storageFormView;
+        private Microsoft.ManagementConsole.Action SaveConfig;
+        private Microsoft.ManagementConsole.Action CancelConfig;
+
+
+        /// <summary>
+        /// Constructor implementation
+        /// </summary>
+        public ServiceStorageScopeNode() : base(true)
+        {
+            this.DisplayName = res.STORAGESCOPENODEDESC;
+            this.LanguageIndependentName = "MFA Storage Options";
+
+            SaveConfig = new Microsoft.ManagementConsole.Action(res.GENERALSCOPESAVE, res.GENERALSCOPESAVEDESC, -1, "SaveConfig");
+            CancelConfig = new Microsoft.ManagementConsole.Action(res.GENERALSCOPECANCEL, res.GENERALSCOPECANCELDESC, -1, "CancelConfig");
+
+            this.ActionsPaneHelpItems.Clear();
+            this.ActionsPaneItems.Clear();
+            this.EnabledStandardVerbs = StandardVerbs.Refresh;
+
+            this.ActionsPaneItems.Add(SaveConfig);
+            this.ActionsPaneItems.Add(new Microsoft.ManagementConsole.ActionSeparator());
+            this.ActionsPaneItems.Add(CancelConfig);
+            this.HelpTopic = string.Empty;
+        }
+
+        /// <summary>
+        /// OnExpand method implmentation
+        /// </summary>
+        protected override void OnExpand(AsyncStatus status)
+        {
+            base.OnExpand(status);
+        }
+
+        /// <summary>
+        /// OnRefresh method implmentattion
+        /// </summary>
+        protected override void OnRefresh(AsyncStatus status)
+        {
+            base.OnRefresh(status);
+            if (this.storageFormView != null)
+                this.storageFormView.Refresh();
+        }
+
+        /// <summary>
+        /// OnAction method implmentation
+        /// </summary>
+        protected override void OnAction(Microsoft.ManagementConsole.Action action, AsyncStatus status)
+        {
+            switch ((string)action.Tag)
+            {
+                case "SaveConfig":
+                    if (this.storageFormView != null)
+                        this.storageFormView.DoSave();
+                    break;
+                case "CancelConfig":
+                    if (this.storageFormView != null)
+                        this.storageFormView.DoCancel();
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// RefreshDescription method
+        /// </summary>
+        public override void RefreshDescription()
+        {
+            this.DisplayName = res.STORAGESCOPENODEDESC;
+        }
+
+        /// <summary>
+        /// RefreshActions method
+        /// </summary>
+        public override void RefreshActions()
+        {
+            foreach (ActionsPaneItem itm in this.ActionsPaneItems)
+            {
+                if (itm is Microsoft.ManagementConsole.Action)
+                {
+                    if ((string)((Microsoft.ManagementConsole.Action)itm).Tag == "SaveConfig")
+                    {
+                        ((Microsoft.ManagementConsole.Action)itm).DisplayName = res.GENERALSCOPESAVE;
+                        ((Microsoft.ManagementConsole.Action)itm).Description = res.GENERALSCOPESAVEDESC;
+                    }
+                    else if ((string)((Microsoft.ManagementConsole.Action)itm).Tag == "CancelConfig")
+                    {
+                        ((Microsoft.ManagementConsole.Action)itm).DisplayName = res.GENERALSCOPECANCEL;
+                        ((Microsoft.ManagementConsole.Action)itm).Description = res.GENERALSCOPECANCELDESC;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// RefreshForms method
+        /// </summary>
+        public override void RefreshForms()
+        {
+            if (storageFormView != null)
+                storageFormView.Refresh();
         }
     }
 
@@ -1331,7 +1439,7 @@ namespace Neos.IdentityServer.Console
         public ServiceSecurityRootScopeNode() : base(true)
         {
             this.DisplayName = res.SECURITYSCOPEROOT;
-            this.LanguageIndependentName = "Security Configuration";
+            this.LanguageIndependentName = "Security configuration";
 
             SaveConfig = new Microsoft.ManagementConsole.Action(res.GENERALSCOPESAVE, res.GENERALSCOPESAVEDESC, -1, "SaveConfig");
             CancelConfig = new Microsoft.ManagementConsole.Action(res.GENERALSCOPECANCEL, res.GENERALSCOPECANCELDESC, -1, "CancelConfig");

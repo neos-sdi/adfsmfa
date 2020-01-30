@@ -324,4 +324,7 @@
   <data name="GENERALSCOPECERTSDESC" xml:space="preserve">
     <value>Gestisci le chiavi priva del certificato Accedi alla lista di controllo sul server corrente</value>
   </data>
+  <data name="STORAGESCOPENODEDESC" xml:space="preserve">
+    <value>Configurazione dell'archiviazione</value>
+  </data>
 </root>

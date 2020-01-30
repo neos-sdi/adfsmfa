@@ -223,13 +223,13 @@
     <value>RNG (random number generator)</value>
   </data>
   <data name="SECURITYSCOPEROOT" xml:space="preserve">
-    <value>Configuration de la Sécurité</value>
+    <value>Configuration de la sécurité</value>
   </data>
   <data name="SECURITYSCOPERSA" xml:space="preserve">
-    <value>RSA Certificat</value>
+    <value>RSA certificat</value>
   </data>
   <data name="SECURITYSCOPERSAX" xml:space="preserve">
-    <value>RSA Certificats par utilisateur</value>
+    <value>RSA certificats par utilisateur</value>
   </data>
   <data name="SERVICESCOPENODEDESC" xml:space="preserve">
     <value>Etat des services</value>
@@ -313,7 +313,7 @@
     <value>Importer des utilisateurs dans MFA avec un ficher xml</value>
   </data>
   <data name="USERSSCOPENODEDESC" xml:space="preserve">
-    <value>Configuration Utilisateurs</value>
+    <value>Gestion des utilisateurs</value>
   </data>
   <data name="WEBAUTHNSCOPEDESC" xml:space="preserve">
     <value>WebAuthN biométrie</value>
@@ -323,5 +323,8 @@
   </data>
   <data name="GENERALSCOPECERTSDESC" xml:space="preserve">
     <value>Gérez la liste de contrôle d'accès des clés privées du certificat sur le serveur courant</value>
+  </data>
+  <data name="STORAGESCOPENODEDESC" xml:space="preserve">
+    <value>Configuration du stockage</value>
   </data>
 </root>

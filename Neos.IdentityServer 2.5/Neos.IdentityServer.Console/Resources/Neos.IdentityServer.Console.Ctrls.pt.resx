@@ -627,4 +627,16 @@
   <data name="CTRLADATRSACERTERROR" xml:space="preserve">
     <value>Inválido adiciona atributo para certificado RSA !</value>
   </data>
+  <data name="CTRLADSUPERACCOUNT" xml:space="preserve">
+    <value>Credenciais de "Superusuário" do Active Directory</value>
+  </data>
+  <data name="CTRLADTITLECONFIG" xml:space="preserve">
+    <value>Propriedades gerais de segurança</value>
+  </data>
+  <data name="CTRLSTUSEADDS" xml:space="preserve">
+    <value>Usar o Active Directory</value>
+  </data>
+  <data name="CTRLSTUSESQL" xml:space="preserve">
+    <value>Usar o SQL Server</value>
+  </data>
 </root>

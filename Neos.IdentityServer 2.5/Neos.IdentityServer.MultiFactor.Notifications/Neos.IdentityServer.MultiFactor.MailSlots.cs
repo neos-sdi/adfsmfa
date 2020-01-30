@@ -333,8 +333,8 @@ namespace Neos.IdentityServer.MultiFactor
                 "(A;OICI;GA;;;LS)" +       // Allow full control to local service
                 "(A;OICI;GA;;;DA)" +       // Allow full control to domain admins
                 "(A;OICI;GA;;;EA)" +       // Allow full control to enterprise admins
-                "(A;OICI;GA;;;NS)"; // +       // Allow full control to network services
-              //  "(A;OICI;GA;;;WD)";        // Allow full control to services
+                "(A;OICI;GA;;;NS)";        // Allow full control to network services
+
 
             if (!NativeMethod.ConvertStringSecurityDescriptorToSecurityDescriptor(sddl, 1, out SafeLocalMemHandle pSecurityDescriptor, IntPtr.Zero))
             {

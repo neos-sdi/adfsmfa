@@ -15,46 +15,79 @@
 // https://github.com/neos-sdi/adfsmfa                                                                                                                                                      //
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
-using System.Reflection;
-using System.Resources;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-using System.Runtime.Versioning;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Microsoft.ManagementConsole;
+using Neos.IdentityServer.MultiFactor;
+using Neos.IdentityServer.MultiFactor.Administration;
+using System.Diagnostics;
+using Microsoft.ManagementConsole.Advanced;
+using System.Windows.Forms;
+using System.Threading;
 
-// Les informations générales relatives à un assembly dépendent de 
-// l'ensemble d'attributs suivant. Changez les valeurs de ces attributs pour modifier les informations
-// associées à un assembly.
-[assembly: AssemblyTitle("Neos.IdentityServer.MultiFactor.Cmdlets")]
-[assembly: AssemblyDescription("Multi factor implementation for TOPT")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Neos-Sdi")]
-[assembly: AssemblyProduct("Neos.IdentityServer.MultiFactor.Cmdlets")]
-[assembly: AssemblyCopyright("Copyright Neos-Sdi © 2020")]
-[assembly: AssemblyTrademark("Neos-Sdi")]
-[assembly: AssemblyCulture("")]
+namespace Neos.IdentityServer.Console
+{
+    /// <summary>
+    /// StatusFormView Class
+    /// </summary>
+    public class ServiceStoreFormView : FormView
+    {
+        private ServiceStorageScopeNode storageScopeNode = null;
+        private StorageViewControl storageViewControl = null;
 
+        /// <summary>
+        /// ServiceStoreFormView constructor
+        /// </summary>
+        public ServiceStoreFormView()
+        {
 
-// L'affectation de la valeur false à ComVisible rend les types invisibles dans cet assembly 
-// aux composants COM.  Si vous devez accéder à un type dans cet assembly à partir de 
-// COM, affectez la valeur true à l'attribut ComVisible sur ce type.
-[assembly: ComVisible(false)]
+        }
 
-// Le GUID suivant est pour l'ID de la typelib si ce projet est exposé à COM
-[assembly: Guid("5a536423-7c64-4bb8-a920-f54c63dc6b20")]
+        /// <summary>
+        /// Initialize method override
+        /// </summary>
+        protected override void OnInitialize(AsyncStatus status)
+        {
+            storageViewControl = (StorageViewControl)this.Control;
+            storageScopeNode = (ServiceStorageScopeNode)this.ScopeNode;
+            storageScopeNode.storageFormView = this;
 
-// Les informations de version pour un assembly se composent des quatre valeurs suivantes :
-//
-//      Version principale
-//      Version secondaire 
-//      Numéro de build
-//      Révision
-//
-// Vous pouvez spécifier toutes les valeurs ou indiquer les numéros de build et de révision par défaut 
-// en utilisant '*', comme indiqué ci-dessous :
-// [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("2.5.0.0")]
-[assembly: AssemblyFileVersion("2.5.4720.2000")]
-[assembly: AssemblyInformationalVersion("2.5.0.0")]
-[assembly: NeutralResourcesLanguageAttribute("en")]
+            ActionsPaneItems.Clear();
+            SelectionData.ActionsPaneItems.Clear();
+            SelectionData.ActionsPaneHelpItems.Clear();
+            SelectionData.EnabledStandardVerbs = (StandardVerbs.Delete | StandardVerbs.Properties);
+            ModeActionsPaneItems.Clear();
+            base.OnInitialize(status);
+        }
 
+        /// <summary>
+        /// Refresh() method implementation
+        /// </summary>
+        internal void Refresh()
+        {
+            if (storageViewControl != null)
+                storageViewControl.RefreshData();
+        }
 
+        /// <summary>
+        /// DoCancel() method implementation
+        /// </summary>
+        internal void DoCancel()
+        {
+            if (storageViewControl != null)
+                storageViewControl.CancelData();
+        }
+
+        /// <summary>
+        /// DoSave() method implmentation
+        /// </summary>
+        internal void DoSave()
+        {
+            if (storageViewControl != null)
+                storageViewControl.SaveData();
+        }
+    }
+}

@@ -42,6 +42,7 @@ namespace Neos.IdentityServer.Console
     {
         private ScopeNode ServiceNode;
         private ScopeNode ServiceGeneralNode;
+        private ScopeNode ServiceStorageNode;
         private ScopeNode ServiceSQLNode;
         private ScopeNode ServiceADDSNode;
         private ScopeNode ServiceProvidersNode;
@@ -213,6 +214,15 @@ namespace Neos.IdentityServer.Console
                     this.ServiceGeneralNode.ViewDescriptions.Add(fvs);
                     this.ServiceGeneralNode.ViewDescriptions.DefaultIndex = 0;
 
+                    // Storage
+                    this.ServiceStorageNode = new ServiceStorageScopeNode();
+                    FormViewDescription fstore = new FormViewDescription();
+                    fstore.DisplayName = "MFA Platform Storage Properties";
+                    fstore.ControlType = typeof(StorageViewControl);
+                    fstore.ViewType = typeof(ServiceStoreFormView);
+                    this.ServiceStorageNode.ViewDescriptions.Add(fstore);
+                    this.ServiceStorageNode.ViewDescriptions.DefaultIndex = 0;
+
                     // ADDS Scope
                     this.ServiceADDSNode = new ServiceADDSScopeNode();
                     FormViewDescription fadds = new FormViewDescription();
@@ -367,8 +377,9 @@ namespace Neos.IdentityServer.Console
                 if (IsPrimary)
                 {
                     this.RootNode.Children.Add(this.ServiceGeneralNode);
-                    this.RootNode.Children.Add(this.ServiceADDSNode);
-                    this.RootNode.Children.Add(this.ServiceSQLNode);
+                    this.RootNode.Children.Add(this.ServiceStorageNode);
+                    this.ServiceStorageNode.Children.Add(this.ServiceADDSNode);
+                    this.ServiceStorageNode.Children.Add(this.ServiceSQLNode);
 
                     this.RootNode.Children.Add(this.ServiceSecurityNode);
                     this.ServiceSecurityNode.Children.Add(this.ServiceRNGNode);
@@ -409,6 +420,7 @@ namespace Neos.IdentityServer.Console
             if (IsPrimary)
             {
                 ((RefreshableScopeNode)this.ServiceGeneralNode).RefreshUI();
+                ((RefreshableScopeNode)this.ServiceStorageNode).RefreshUI();
                 ((RefreshableScopeNode)this.ServiceADDSNode).RefreshUI();
                 ((RefreshableScopeNode)this.ServiceSQLNode).RefreshUI();
                 ((RefreshableScopeNode)this.ServiceSecurityNode).RefreshUI();

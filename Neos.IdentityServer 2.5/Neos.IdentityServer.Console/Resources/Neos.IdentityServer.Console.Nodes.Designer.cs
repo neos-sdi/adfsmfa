@@ -394,7 +394,7 @@ namespace Neos.IdentityServer.Console.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Security Configuration.
+        ///   Recherche une chaîne localisée semblable à Security configuration.
         /// </summary>
         public static string SECURITYSCOPEROOT {
             get {
@@ -453,6 +453,15 @@ namespace Neos.IdentityServer.Console.Resources {
         public static string SQLSCOPENODEDESC {
             get {
                 return ResourceManager.GetString("SQLSCOPENODEDESC", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Storage Configuration.
+        /// </summary>
+        public static string STORAGESCOPENODEDESC {
+            get {
+                return ResourceManager.GetString("STORAGESCOPENODEDESC", resourceCulture);
             }
         }
         
@@ -529,7 +538,7 @@ namespace Neos.IdentityServer.Console.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Import Active Directory Users.
+        ///   Recherche une chaîne localisée semblable à Import Active Directory users.
         /// </summary>
         public static string USERSCOPEIMPORTADDS {
             get {

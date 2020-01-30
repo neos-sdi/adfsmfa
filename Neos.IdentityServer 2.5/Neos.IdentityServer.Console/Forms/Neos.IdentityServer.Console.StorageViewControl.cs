@@ -15,29 +15,33 @@
 // https://github.com/neos-sdi/adfsmfa                                                                                                                                                      //
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
-using Microsoft.ManagementConsole;
-using Neos.IdentityServer.Console.Controls;
-using Neos.IdentityServer.MultiFactor;
-using Neos.IdentityServer.MultiFactor.Administration;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
+using System.Data;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
+using Microsoft.ManagementConsole;
+using Neos.IdentityServer.MultiFactor.Administration;
+using Neos.IdentityServer.Console.Controls;
+using System.Threading;
+using Neos.IdentityServer.MultiFactor;
+using System.DirectoryServices;
+using Microsoft.ManagementConsole.Advanced;
 
 namespace Neos.IdentityServer.Console
 {
-    public partial class ServiceViewControl : UserControl, IFormViewControl, IMMCNotificationData
+    public partial class StorageViewControl : UserControl, IFormViewControl, IMMCNotificationData
     {
         private Control oldParent;
-        private ServiceFormView _frm = null;
-        private ConfigurationControl _ctrl = null;
-        private List<ADFSServerControl> _lst = new List<ADFSServerControl>();
-        private bool _notifenabled;
+        private ServiceStoreFormView _frm = null;
+        private StorageConfigurationControl _ctrl = null;
+        private bool _isnotifsenabled = true;
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        public ServiceViewControl()
+        public StorageViewControl()
         {
             InitializeComponent();
         }
@@ -47,17 +51,104 @@ namespace Neos.IdentityServer.Console
         /// </summary>
         public void Initialize(FormView view)
         {
-            FormView = (ServiceFormView)view;
-            ManagementService.ADFSManager.ConfigurationStatusChanged += ConfigurationStatusChanged;
+            FormView = (ServiceStoreFormView)view;
             OnInitialize();
         }
 
-        private void ConfigurationStatusChanged(ADFSServiceManager mgr, ConfigOperationStatus status, Exception ex = null)
+        /// <summary>
+        /// OnInitialize method
+        /// </summary>
+        protected virtual void OnInitialize()
         {
-            if (IsNotifsEnabled())
+            this.SuspendLayout();
+            try
             {
-                if (this.InvokeRequired)
-                    ReloadData();
+                ControlInstance = new StorageConfigurationControl(this, this.SnapIn);
+                this.tableLayoutPanel.Controls.Add(ControlInstance, 0, 1);
+            }
+            finally
+            {
+                this.ResumeLayout(true);
+            }
+        }
+
+        /// <summary>
+        /// RefreshData method implementation
+        /// </summary>
+        internal void RefreshData()
+        {
+            this.SuspendLayout();
+            this.Cursor = Cursors.WaitCursor;
+            _isnotifsenabled = false;
+            try
+            {
+                ComponentResourceManager resources = new ComponentResourceManager(typeof(StorageViewControl));
+                this.label1.Text = resources.GetString("label1.Text");
+                this.label2.Text = resources.GetString("label2.Text");
+                this.label3.Text = resources.GetString("label3.Text");
+
+                ManagementService.ADFSManager.ReadConfiguration(null);
+                ((IMMCRefreshData)ControlInstance).DoRefreshData();
+            }
+            finally
+            {
+                _isnotifsenabled = true;
+                this.Cursor = Cursors.Default;
+                this.ResumeLayout();
+            }
+        }
+
+        /// <summary>
+        /// CancelData method implementation
+        /// </summary>
+        internal void CancelData()
+        {
+            try
+            {
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
+                ComponentResourceManager resources = new ComponentResourceManager(typeof(StorageViewControl));
+                messageBoxParameters.Text = resources.GetString("GLVALIDSAVE");
+                messageBoxParameters.Buttons = MessageBoxButtons.YesNo;
+                messageBoxParameters.Icon = MessageBoxIcon.Question;
+                if (this.SnapIn.Console.ShowDialog(messageBoxParameters) == DialogResult.Yes)
+                   RefreshData();
+            }
+            catch (Exception ex)
+            {
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
+                messageBoxParameters.Text = ex.Message;
+                messageBoxParameters.Buttons = MessageBoxButtons.OK;
+                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                this.SnapIn.Console.ShowDialog(messageBoxParameters);
+            }
+        }
+
+        /// <summary>
+        /// SaveData method implementation
+        /// </summary>
+        internal void SaveData()
+        {
+            if (this.ValidateChildren())
+            {
+                this.Cursor = Cursors.WaitCursor;
+                _isnotifsenabled = false;
+                try
+                {
+                    ManagementService.ADFSManager.WriteConfiguration(null);
+                }
+                catch (Exception ex)
+                {
+                    MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
+                    messageBoxParameters.Text = ex.Message;
+                    messageBoxParameters.Buttons = MessageBoxButtons.OK;
+                    messageBoxParameters.Icon = MessageBoxIcon.Error;
+                    this.SnapIn.Console.ShowDialog(messageBoxParameters);
+                }
+                finally
+                {
+                    _isnotifsenabled = true;
+                    this.Cursor = Cursors.Default;
+                }
             }
         }
 
@@ -65,21 +156,17 @@ namespace Neos.IdentityServer.Console
         /// <summary>
         /// FormView property implementation
         /// </summary>
-        protected ServiceFormView FormView
+        protected ServiceStoreFormView FormView
         {
             get { return _frm; }
             private set { _frm = value; }
         }
 
-        /// <summary>
-        /// ControlInstance property implmentation
-        /// </summary>
-        protected ConfigurationControl ControlInstance
+        protected StorageConfigurationControl ControlInstance 
         {
             get { return _ctrl; }
-            private set { _ctrl = value; }
+            set { _ctrl = value; }
         }
-
         /// <summary>
         /// SnapIn method implementation
         /// </summary>
@@ -91,131 +178,9 @@ namespace Neos.IdentityServer.Console
         /// <summary>
         /// ScopeNode method implementation
         /// </summary>
-        protected ServiceScopeNode ScopeNode
+        protected ServiceStorageScopeNode ScopeNode
         {
-            get { return this.FormView.ScopeNode as ServiceScopeNode; }
-        }
-        #endregion
-
-        /// <summary>
-        /// OnInitialize method
-        /// </summary>
-        protected virtual void OnInitialize()
-        {
-            this.Cursor = Cursors.WaitCursor;
-            this.SuspendLayout();
-            try
-            {
-                ComponentResourceManager resources = new ComponentResourceManager(typeof(ServiceViewControl));
-                this.label1.Text = resources.GetString("label1.Text");
-                this.label2.Text = resources.GetString("label2.Text");
-                this.label3.Text = resources.GetString("label3.Text");
-                this.label4.Text = resources.GetString("label4.Text");
-
-                ControlInstance = new ConfigurationControl(this, this.SnapIn);
-                this.tableLayoutPanel.Controls.Add(ControlInstance, 0, 1);
-
-                bool isconfigured = ManagementService.ADFSManager.IsFarmConfigured();
-                _lst.Clear();
-                if (isconfigured)
-                {
-                    int i = 3;
-                    foreach (ADFSServerHost srv in ManagementService.ADFSManager.ADFSFarm.Servers)
-                    {
-                        bool isok = ManagementService.ADFSManager.IsRunning(srv.FQDN);
-                        ADFSServerControl crt = new ADFSServerControl(this, srv, isok);
-                        _lst.Add(crt);
-                        this.tableLayoutPanel.Controls.Add(crt, 0, i);
-                        i++;
-                    }
-                }
-            }
-            finally
-            {
-                this.ResumeLayout(true);
-                this.Cursor = Cursors.Default;
-            }
-        }
-
-        /// <summary>
-        /// RefreshData method implementation
-        /// </summary>
-        internal void RefreshData()
-        {
-            this.SuspendLayout();
-            this.Cursor = Cursors.WaitCursor;
-            _notifenabled = false;
-            try
-            {
-                ComponentResourceManager resources = new ComponentResourceManager(typeof(ServiceViewControl));
-                this.label1.Text = resources.GetString("label1.Text");
-                this.label2.Text = resources.GetString("label2.Text");
-                this.label3.Text = resources.GetString("label3.Text");
-                this.label4.Text = resources.GetString("label4.Text");
-
-                ManagementService.ADFSManager.ReadConfiguration(null);
-                ((IMMCRefreshData)ControlInstance).DoRefreshData();
-                bool isconfigured = ManagementService.ADFSManager.IsFarmConfigured();
-                if (isconfigured)
-                {
-                    foreach (ADFSServerControl srv in _lst)
-                    {
-                        ((IMMCRefreshData)srv).DoRefreshData();
-                    }
-                }
-            }
-            finally
-            {
-                _notifenabled = true;
-                this.Cursor = Cursors.Default;
-                this.ResumeLayout();
-            }
-        }
-
-        /// <summary>
-        /// ReloadData method implementation
-        /// </summary>
-        internal void ReloadData()
-        {
-            this.SuspendLayout();
-            this.Cursor = Cursors.WaitCursor;
-            _notifenabled = false;
-            try
-            {
-                ComponentResourceManager resources = new ComponentResourceManager(typeof(ServiceViewControl));
-                this.label1.Text = resources.GetString("label1.Text");
-                this.label2.Text = resources.GetString("label2.Text");
-                this.label3.Text = resources.GetString("label3.Text");
-                this.label4.Text = resources.GetString("label4.Text");
-
-                ((IMMCRefreshData)ControlInstance).DoRefreshData();
-                bool isconfigured = ManagementService.ADFSManager.IsFarmConfigured();
-                if (isconfigured)
-                {
-                    foreach (ADFSServerControl srv in _lst)
-                    {
-                        this.tableLayoutPanel.Controls.Remove(srv);
-                    }
-                    _lst.Clear();
-
-                    int i = 3;
-                    MFAConfig cfg = CFGUtilities.ReadConfiguration(null);
-                    foreach (ADFSServerHost srv in cfg.Hosts.ADFSFarm.Servers)
-                    {
-                        bool isok = ManagementService.ADFSManager.IsRunning(srv.FQDN);
-                        ADFSServerControl crt = new ADFSServerControl(this, srv, isok);
-                        _lst.Add(crt);
-                        this.tableLayoutPanel.Invoke((MethodInvoker)delegate { this.tableLayoutPanel.Controls.Add(crt, 0, i); });
-                        i++;
-                    }
-                }
-            }
-            finally
-            {
-                _notifenabled = true;
-                this.Cursor = Cursors.Default;
-                this.ResumeLayout();
-            }
+            get { return this.FormView.ScopeNode as ServiceStorageScopeNode; }
         }
 
         /// <summary>
@@ -226,10 +191,7 @@ namespace Neos.IdentityServer.Console
             if (Parent != null)
             {
                 if (!DesignMode)
-                {
                     Size = Parent.ClientSize;
-                    tableLayoutPanel.Size = Size;
-                }
                 Parent.SizeChanged += Parent_SizeChanged;
             }
             if (oldParent != null)
@@ -248,13 +210,14 @@ namespace Neos.IdentityServer.Console
             if (!DesignMode)
                 Size = Parent.ClientSize;
         }
-
+        #endregion         
+    
         /// <summary>
         /// IsNotifsEnabled method implementation
         /// </summary>
         public bool IsNotifsEnabled()
         {
-            return _notifenabled;
+            return _isnotifsenabled;
         }
     }
 }

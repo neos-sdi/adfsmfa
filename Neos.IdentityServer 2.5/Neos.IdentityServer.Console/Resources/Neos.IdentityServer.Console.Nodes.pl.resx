@@ -324,4 +324,7 @@
   <data name="GENERALSCOPECERTSDESC" xml:space="preserve">
     <value>Zarządzaj kluczami prywatnymi certyfikatu Lista kontroli dostępu na bieżącym serwerze</value>
   </data>
+  <data name="STORAGESCOPENODEDESC" xml:space="preserve">
+    <value>Konfiguracja magazynu</value>
+  </data>
 </root>

@@ -627,4 +627,16 @@
   <data name="CTRLADATRSACERTERROR" xml:space="preserve">
     <value>Attributo ADDS non valido per il certificato RSA !</value>
   </data>
+  <data name="CTRLADSUPERACCOUNT" xml:space="preserve">
+    <value>Credenziali "SuperUser" di Active Directory</value>
+  </data>
+  <data name="CTRLADTITLECONFIG" xml:space="preserve">
+    <value>Proprietà di sicurezza generali</value>
+  </data>
+  <data name="CTRLSTUSEADDS" xml:space="preserve">
+    <value>Usa Active Directory</value>
+  </data>
+  <data name="CTRLSTUSESQL" xml:space="preserve">
+    <value>Usa SQL Server</value>
+  </data>
 </root>

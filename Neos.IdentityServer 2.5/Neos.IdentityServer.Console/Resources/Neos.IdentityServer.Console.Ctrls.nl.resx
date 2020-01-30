@@ -627,4 +627,16 @@
   <data name="CTRLADATRSACERTERROR" xml:space="preserve">
     <value>Ongeldig kenmerk toegevoegd voor RSA-certificaat!</value>
   </data>
+  <data name="CTRLADSUPERACCOUNT" xml:space="preserve">
+    <value>Active Directory "SuperUser" referenties</value>
+  </data>
+  <data name="CTRLADTITLECONFIG" xml:space="preserve">
+    <value>Algemene beveiligingseigenschappen</value>
+  </data>
+  <data name="CTRLSTUSEADDS" xml:space="preserve">
+    <value>Active Directory gebruiken</value>
+  </data>
+  <data name="CTRLSTUSESQL" xml:space="preserve">
+    <value>SQL Server gebruiken</value>
+  </data>
 </root>

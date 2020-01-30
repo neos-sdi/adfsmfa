@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Management.Automation;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -8,8 +9,8 @@ namespace MFA
 {
     /// <summary>
     /// PSPreferredMethod
-    /// <para type="synopsis">MFA Preferred method (Choose, Code, Email, External, Azure),  if sibling Provider is active.</para>
-    /// <para type="description">MFA Preferred method (Choose, Code, Email, External, Azure).</para>
+    /// <para type="synopsis">MFA Preferred method (Choose, Code, Email, External, Azure, Biometrics),  if sibling Provider is active.</para>
+    /// <para type="description">MFA Preferred method (Choose, Code, Email, External, Azure, Biometrics).</para>
     /// </summary>    
     public enum PSPreferredMethod
     {
@@ -42,11 +43,52 @@ namespace MFA
         /// <para type="description">Biometrics, default mode for users is biometric authentication, based on WebAuthN specification (Not available, but coming soon).</para>
         /// </summary>
         Biometrics = 5,
+    }
+
+    /// <summary>
+    /// PSStoreMode
+    /// <para type="synopsis">MFA Store Kind (ADDS, SQL).</para>
+    /// <para type="description">ADDS : ADDSL Store.</para>
+    /// <para type="description">SQL : SQL Store.</para>
+    /// </summary>    
+    public enum PSStoreMode
+    {
+        /// <summary>
+        /// <para type="description">Active Directory Store</para>
+        /// </summary>
+        ADDS = 0,
 
         /// <summary>
-        /// <para type="description">None, must not be used.</para>
+        /// <para type="description">SQL Server Store.</para>
         /// </summary>
-        None = 6
+        SQL = 1
+    }
+
+    /// <summary>
+    /// PSSecurityMode
+    /// <para type="synopsis">MFA Security Kind (ROOT, RNG, RSA, CUSTOM).</para>
+    /// </summary>    
+    public enum PSSecurityMode
+    {
+        /// <summary>
+        /// <para type="description">Security parmaters for RNG Keys.</para>
+        /// </summary>
+        RNG = 0,
+
+        /// <summary>
+        /// <para type="description">Security parmaters for RSA Keys.</para>
+        /// </summary>
+        RSA = 1,
+
+        /// <summary>
+        /// <para type="description">Security parmaters for Biometrics.</para>
+        /// </summary>
+        BIOMETRIC = 2,
+
+        /// <summary>
+        /// <para type="description">Security parmaters for CUSTOM External Keys.</para>
+        /// </summary>
+        CUSTOM = 3
     }
 
     /// <summary>
@@ -356,11 +398,6 @@ namespace MFA
         /// <para type="description">ClientSecret512, 512 bytes length with RNG</para>
         /// </summary>
         ClientSecret512 = 4,
-
-        /// <summary>
-        /// <para type="description">Custom, Not used</para>
-        /// </summary>
-        Custom = 5
     }
 
     /// <summary>

@@ -234,6 +234,9 @@
   <data name="CTRLADPASSWORD" xml:space="preserve">
     <value>Password</value>
   </data>
+  <data name="CTRLADSUPERACCOUNT" xml:space="preserve">
+    <value>Active Directory "SuperUser" Credentials</value>
+  </data>
   <data name="CTRLADTEMPLATE2016" xml:space="preserve">
     <value>ADDS Schema 2016++</value>
   </data>
@@ -254,6 +257,9 @@
   </data>
   <data name="CTRLADTEST" xml:space="preserve">
     <value>Test</value>
+  </data>
+  <data name="CTRLADTITLECONFIG" xml:space="preserve">
+    <value>General Security Properties</value>
   </data>
   <data name="CTRLADUSEADDS" xml:space="preserve">
     <value>Use Active Directory Configuration</value>
@@ -581,6 +587,12 @@
   </data>
   <data name="CTRLSQLUSING" xml:space="preserve">
     <value>Use SQL Server configuration</value>
+  </data>
+  <data name="CTRLSTUSEADDS" xml:space="preserve">
+    <value>Use Active Directory</value>
+  </data>
+  <data name="CTRLSTUSESQL" xml:space="preserve">
+    <value>Use SQL Server</value>
   </data>
   <data name="CTRLWEBAUTHNATTACHEMENT" xml:space="preserve">
     <value>Authenticator Attachement</value>

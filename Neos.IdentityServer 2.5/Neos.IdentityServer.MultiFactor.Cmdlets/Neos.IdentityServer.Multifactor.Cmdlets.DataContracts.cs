@@ -24,6 +24,10 @@ namespace MFA
     using System.Xml;
     using Neos.IdentityServer.MultiFactor;
     using Neos.IdentityServer.MultiFactor.Administration;
+    using System.Management.Automation;
+    using System.Collections;
+    using System.Management.Automation.Language;
+    using System.Text;
 
     #region PSRegistration class
     /// <summary>
@@ -179,37 +183,22 @@ namespace MFA
 
     #region PSConfig
     /// <summary>
-    /// PSConfig class
+    /// PSGeneralConfiguration class
     /// <para type="synopsis">Main configuration properties in MFA System.</para>
     /// <para type="description">Represent Main configuration properties registered with MFA.</para>
     /// <para type="description">You can access, update each config property.</para>
     /// </summary>
     /// <example>
     ///   <para>$cfg = Get-MFAConfig</para>
-    ///   <para>$cfg.UseActiveDirectory = $true</para>
+    ///   <para>$cfg.UseOfUserLanguages = $true</para>
     ///   <para>Set-MFAConfig $cfg</para> 
     /// </example>
     public class PSConfig
     {
         /// <summary>
-        /// <para type="description">Max delay for the user to enter TOTP code (seconds 300 by default).</para>
+        /// <para type="description">Administrators email, used in administrative emails sent to users.</para>
         /// </summary>
-        public int DeliveryWindow { get; set; }
-
-        /// <summary>
-        /// <para type="description">Number of allowed retry allowed (default 3)..</para>
-        /// </summary>
-        public int MaxRetries { get; set; }
-
-        /// <summary>
-        /// <para type="description">Required PIN length wehen using aditionnal control with personal PIN.</para>
-        /// </summary>
-        public int PinLength { get; set; }
-
-        /// <summary>
-        /// <para type="description">Default value for user's PIN.</para>
-        /// </summary>
-        public int DefaultPin { get; set; }
+        public string AdminContact { get; set; }
 
         /// <summary>
         /// <para type="description">Issuer description (eg "my company").</para>
@@ -217,10 +206,19 @@ namespace MFA
         public string Issuer { get; set; }
 
         /// <summary>
-        /// <para type="description">If true, users metadata are stored in ADDS attributes see : Get-MFAConfigADDS.</para>
-        /// <para type="description">If true, users metadata are stored in SQL Server database see : Get-MFAConfigSQL and New-MFADatabase.</para>/// 
+        /// <para type="description">Default contry code, used for SMS calls .</para>
         /// </summary>
-        public bool UseActiveDirectory { get; set; }
+        public string DefaultCountryCode { get; set; }
+
+        /// <summary>
+        /// <para type="description">Default provider when User method equals "Choose".</para>
+        /// </summary>
+        public PSPreferredMethod DefaultProviderMethod { get; set; }
+
+        /// <summary>
+        /// <para type="description">Policy attributes for users management and registration.</para>
+        /// </summary>
+        public PSUserFeaturesOptions UserFeatures { get; set; }
 
         /// <summary>
         /// <para type="description">Use or not our implementation for changing user password,if not we are using /ADFS/Portal/updatepasswor.</para>
@@ -238,49 +236,24 @@ namespace MFA
         public bool ChangeNotificationsOn { get; set; }
 
         /// <summary>
-        /// <para type="description">Default provider when User method equals "Choose".</para>
-        /// </summary>
-        public PSPreferredMethod DefaultProviderMethod { get; set; }
-
-        /// <summary>
         /// <para type="description">Use of User's browser laguages instead or standard localization features.</para>
         /// </summary>
         public bool UseOfUserLanguages { get; set; }
 
         /// <summary>
-        /// <para type="description">TOTP Replay Level feature.</para>
+        /// <para type="description">Policy attributes for warnings to users.</para>
         /// </summary>
-        public PSReplayLevel ReplayLevel { get; set; }
-
-        /// <summary>
-        /// <para type="description">Default contry code, used for SMS calls .</para>
-        /// </summary>
-        public string DefaultCountryCode { get; set; }
-
-        /// <summary>
-        /// <para type="description">Administrators email, used in administrative emails sent to users.</para>
-        /// </summary>
-        public string AdminContact { get; set; }
-
-        /// <summary>
-        /// <para type="description">Policy attributes for users management and registration.</para>
-        /// </summary>
-        public PSUserFeaturesOptions UserFeatures { get; set; }
+        public PSAdvertisingDays AdvertisingDays { get; set; }
 
         /// <summary>
         /// <para type="description">Kind of ADFS's User Interface version.</para>
         /// </summary>
-        public PSUIKind UiKind { get; set; }
+        public PSUIKind UiKind { get; internal set; }
 
         /// <summary>
         /// <para type="description">Use ADFS 2019 paginated UI Styles.</para>
         /// </summary>
-        public bool UseUIPaginated { get; set; }
-
-        /// <summary>
-        /// <para type="description">Policy attributes for warnings to users.</para>
-        /// </summary>
-        public PSAdvertising AdvertisingDays { get; set; }
+        public bool UseUIPaginated { get; internal set; }
 
         /// <summary>
         /// implicit conversion to PSConfig
@@ -295,20 +268,14 @@ namespace MFA
                 {
                     AdminContact = config.AdminContact,
                     DefaultCountryCode = config.DefaultCountryCode,
-                    DeliveryWindow = config.DeliveryWindow,
-                    MaxRetries = config.MaxRetries,
                     Issuer = config.Issuer,
-                    DefaultPin = config.DefaultPin,
-                    PinLength = config.PinLength,
-                    UseActiveDirectory = config.UseActiveDirectory,
                     CustomUpdatePassword = config.CustomUpdatePassword,
                     KeepMySelectedOptionOn = config.KeepMySelectedOptionOn,
                     ChangeNotificationsOn = config.ChangeNotificationsOn,
                     UseOfUserLanguages = config.UseOfUserLanguages,
                     DefaultProviderMethod = (PSPreferredMethod)config.DefaultProviderMethod,
-                    ReplayLevel = (PSReplayLevel)config.ReplayLevel,
                     UserFeatures = (PSUserFeaturesOptions)config.UserFeatures,
-                    AdvertisingDays = (PSAdvertising)config.AdvertisingDays,
+                    AdvertisingDays = (PSAdvertisingDays)config.AdvertisingDays,
                     UseUIPaginated = config.UseUIPaginated,
                     UiKind = (PSUIKind)config.UiKind
                 };
@@ -327,23 +294,17 @@ namespace MFA
             {
                 FlatConfig config = new FlatConfig
                 {
+                    IsDirty = true,
                     AdminContact = psconfig.AdminContact,
                     CustomUpdatePassword = psconfig.CustomUpdatePassword,
                     DefaultCountryCode = psconfig.DefaultCountryCode,
-                    DeliveryWindow = psconfig.DeliveryWindow,
-                    MaxRetries = psconfig.MaxRetries,
-                    IsDirty = true,
                     Issuer = psconfig.Issuer,
-                    DefaultPin = psconfig.DefaultPin,
-                    PinLength = psconfig.PinLength,
-                    UseActiveDirectory = psconfig.UseActiveDirectory,
                     KeepMySelectedOptionOn = psconfig.KeepMySelectedOptionOn,
                     ChangeNotificationsOn = psconfig.ChangeNotificationsOn,
                     UseOfUserLanguages = psconfig.UseOfUserLanguages,
                     DefaultProviderMethod = (PreferredMethod)psconfig.DefaultProviderMethod,
-                    ReplayLevel = (ReplayLevel)psconfig.ReplayLevel,
                     UserFeatures = (UserFeaturesOptions)psconfig.UserFeatures,
-                    AdvertisingDays = (FlatConfigAdvertising)psconfig.AdvertisingDays,
+                    AdvertisingDays = (FlatAdvertising)psconfig.AdvertisingDays,
                     UseUIPaginated = psconfig.UseUIPaginated,
                     UiKind = (ADFSUserInterfaceKind)psconfig.UiKind
                 };
@@ -351,9 +312,11 @@ namespace MFA
             }
         }
     }
+    #endregion
 
+    #region PSAdvertisingDays
     /// <summary>
-    /// PSAdvertising class
+    /// PSAdvertisingDays class
     /// <para type="synopsis">Main configuration properties in MFA System.</para>
     /// <para type="description">Range of days during which users are invited to register.</para>
     /// </summary>
@@ -363,8 +326,7 @@ namespace MFA
     ///   <para>$cfg.AdvertisingDays.FirstDay = 25</para>
     ///   <para>Set-MFAConfig $cfg</para> 
     /// </example>
-
-    public class PSAdvertising
+    public class PSAdvertisingDays
     {
         /// <summary>
         /// <para type="description">First Day for advertising.</para>
@@ -384,9 +346,11 @@ namespace MFA
         /// <summary>
         /// <para type="description">explicit operator.</para>
         /// </summary>
-        public static explicit operator PSAdvertising(FlatConfigAdvertising adv)
+        public static explicit operator PSAdvertisingDays(FlatAdvertising adv)
         {
-            PSAdvertising cfg = new PSAdvertising();
+            if (adv == null)
+                return null;
+            PSAdvertisingDays cfg = new PSAdvertisingDays();
             cfg.FirstDay = adv.FirstDay;
             cfg.LastDay = adv.LastDay;
             cfg.OnFire = adv.OnFire;
@@ -396,28 +360,251 @@ namespace MFA
         /// <summary>
         /// <para type="description">explicit operator.</para>
         /// </summary>
-        public static explicit operator FlatConfigAdvertising(PSAdvertising adv)
+        public static explicit operator FlatAdvertising(PSAdvertisingDays adv)
         {
-            FlatConfigAdvertising cfg = new FlatConfigAdvertising();
+            if (adv == null)
+                return null;
+            FlatAdvertising cfg = new FlatAdvertising();
             cfg.FirstDay = adv.FirstDay;
             cfg.LastDay = adv.LastDay;
             cfg.OnFire = adv.OnFire;
             return cfg;
+
+        }
+
+        /// <summary>
+        /// <para type="description">explicit operator.</para>
+        /// </summary>
+        public static implicit operator PSAdvertisingDays(string advstr)
+        {
+            if (string.IsNullOrEmpty(advstr))
+                return null;
+            string rec = advstr.Replace("{", "").Replace("}", "");
+            string[] data = rec.Split(';');
+            List<KeyValuePair<string, UInt32>> pp = new List<KeyValuePair<string, uint>>();
+            foreach (string xx in data)
+            {
+                string[] tp = xx.Split('=');
+                if (tp.Length == 2)
+                    pp.Add(new KeyValuePair<string, UInt32>(tp[0].ToString().Trim(), Convert.ToUInt32(tp[1])));
+            }
+
+            if ((pp.Count == 0))
+                return null;
+            PSAdvertisingDays days = new PSAdvertisingDays();
+            foreach (KeyValuePair<string, UInt32> x in pp)
+            {
+                if (x.Key.ToLower().Equals("firstday"))
+                    days.FirstDay = Convert.ToUInt32(x.Value);
+                if (x.Key.ToLower().Equals("lastday"))
+                    days.LastDay = Convert.ToUInt32(x.Value);
+            }
+            days.OnFire = true;
+            return days;
+        }
+
+        /// <summary>
+        /// <para type="description">explicit operator.</para>
+        /// </summary>
+        public static implicit operator PSAdvertisingDays(ScriptBlock advstr)
+        {
+            if (advstr==null)
+                return null;
+            string rec = advstr.ToString().Replace("{", "").Replace("}", "");
+            string[] data = rec.Split(';');
+            List<KeyValuePair<string, UInt32>> pp = new List<KeyValuePair<string, uint>>(); 
+            foreach (string xx in data)
+            {
+                string[] tp = xx.Split('=');
+                if (tp.Length==2)
+                    pp.Add(new KeyValuePair<string, UInt32>(tp[0].ToString().Trim(), Convert.ToUInt32(tp[1])));                   
+            }
+
+            if ((pp.Count ==0))
+                return null;
+            PSAdvertisingDays days = new PSAdvertisingDays();
+            foreach (KeyValuePair<string, UInt32> x in pp)
+            {
+                if (x.Key.ToLower().Equals("firstday"))
+                    days.FirstDay = Convert.ToUInt32(x.Value);
+                if (x.Key.ToLower().Equals("lastday"))
+                    days.LastDay = Convert.ToUInt32(x.Value);
+            }
+            days.OnFire = true;
+            return days;
+        }
+
+        /// <summary>
+        /// <para type="description">ToString() override.</para>
+        /// </summary>
+        public override string ToString()
+        {
+            return "{FirstDay : " + this.FirstDay.ToString() + "; LastDay : " + this.LastDay.ToString() + "; OnFire : " + this.OnFire.ToString()+"}";
         }
     }
     #endregion
 
-    #region PSConfigSQL
+    #region PSBaseStore
     /// <summary>
-    /// PSConfigSQL class
+    ///   <para type="synopsis">ADDS / SQL common class.</para>
+    /// </summary>
+    /// <example>
+    ///   <para>Get-MFAStore -Store ADDS</para>
+    /// </example>
+    public class PSBaseStore
+    {
+        /// <summary>
+        /// <para type="description">If true, users metadata are stored in ADDS attributes or in SQL Database. see : Get-MFAStore -Store ADDS or Get-MFAStore -Store SQL.</para>
+        /// </summary>
+        public bool Active { get; set; }
+    }
+    #endregion
+
+    #region PSADDSStore
+    /// <summary>
+    /// PSADDSStore class
+    /// <para type="synopsis">ADDS configuration properties in MFA System.</para>
+    /// <para type="description">ADDS configuration properties registered with MFA.</para>
+    /// <para type="description">You can access, update attributes properties.</para>
+    /// </summary>
+    /// <example>
+    ///   <para>Get-MFAStore -Store ADDS</para>
+    /// </example>
+    public class PSADDSStore: PSBaseStore 
+    {
+        /// <summary>
+        /// <para type="description">ADDS attribute name user to store user secret key (default msDS-cloudExtensionAttribute10).</para>
+        /// </summary>
+        public string KeyAttribute { get; set; }
+
+        /// <summary>
+        /// <para type="description">ADDS attribute name used to store user custom mail address (default msDS-cloudExtensionAttribute11).</para>
+        /// </summary>
+        public string MailAttribute { get; set; }
+
+        /// <summary>
+        /// <para type="description">ADDS attribute name used to store user phone number (default msDS-cloudExtensionAttribute12).</para>
+        /// </summary>
+        public string PhoneAttribute { get; set; }
+
+        /// <summary>
+        /// <para type="description">ADDS attribute name used to store user preferred method (Code, Phone, Mail) (default msDS-cloudExtensionAttribute13).</para>
+        /// </summary>
+        public string MethodAttribute { get; set; }
+
+        /// <summary>
+        /// <para type="description">ADDS attribute name used to store user preferred method (Code, Phone, Mail) (default msDS-cloudExtensionAttribute14).</para>
+        /// </summary>
+        public string OverrideMethodAttribute { get; set; }
+
+        /// <summary>
+        /// <para type="description">ADDS attribute name used to store user status with MFA (default msDS-cloudExtensionAttribute18).</para>
+        /// </summary>
+        public string EnabledAttribute { get; set; }
+
+        /// <summary>
+        /// <para type="description">ADDS attribute name used to store user pin code (default msDS-cloudExtensionAttribute15).</para>
+        /// </summary>
+        public string PinAttribute { get; set; }
+
+        /// <summary>
+        /// <para type="description">ADDS attribute name used to store multiple user Public Keys Credential (recommended msDS-KeyCredentialLink or othetMailbox).</para>
+        /// </summary>
+        public string PublicKeyCredentialAttribute { get; set; }
+
+        /// <summary>
+        /// <para type="description">ADDS attribute name used to store Client Certificate (default msDS-cloudExtensionAttribute16).</para>
+        /// </summary>
+        public string ClientCertificateAttribute { get; set; }
+
+        /// <summary>
+        /// <para type="description">ADDS attribute name used to store RSA Certificate (default msDS-cloudExtensionAttribute17).</para>
+        /// </summary>
+        public string RSACertificateAttribute { get; set; }
+
+        /// <summary>
+        /// <para type="description">Get or Set the max rows limit used to access MFA Active Directory.</para>
+        /// </summary>
+        public int MaxRows { get; set; }
+
+        /// <summary>
+        /// implicit conversion 
+        /// </summary>
+        public static explicit operator PSADDSStore(FlatADDSStore addsconfig)
+        {
+            if (addsconfig == null)
+                return null;
+            else
+            {
+                PSADDSStore psconfigadds = new PSADDSStore
+                {
+                    Active = addsconfig.Active,
+                    KeyAttribute = addsconfig.KeyAttribute,
+                    MailAttribute = addsconfig.MailAttribute,
+                    PhoneAttribute = addsconfig.PhoneAttribute,
+                    MethodAttribute = addsconfig.MethodAttribute,
+                    OverrideMethodAttribute = addsconfig.OverrideMethodAttribute,
+                    PinAttribute = addsconfig.PinAttribute,
+                    EnabledAttribute = addsconfig.EnabledAttribute,
+                    PublicKeyCredentialAttribute = addsconfig.PublicKeyCredentialAttribute,
+                    ClientCertificateAttribute = addsconfig.ClientCertificateAttribute,
+                    RSACertificateAttribute = addsconfig.RSACertificateAttribute,
+                    MaxRows = addsconfig.MaxRows
+                };
+                return psconfigadds;
+            }
+        }
+
+        /// <summary>
+        /// implicit conversion 
+        /// </summary>
+        public static explicit operator FlatADDSStore(PSADDSStore psconfig)
+        {
+            if (psconfig == null)
+                return null;
+            else
+            {
+                FlatADDSStore config = new FlatADDSStore
+                {
+                    IsDirty = true,
+                    Active = psconfig.Active,
+                    KeyAttribute = psconfig.KeyAttribute,
+                    MailAttribute = psconfig.MailAttribute,
+                    PhoneAttribute = psconfig.PhoneAttribute,
+                    MethodAttribute = psconfig.MethodAttribute,
+                    OverrideMethodAttribute = psconfig.OverrideMethodAttribute,
+                    PinAttribute = psconfig.PinAttribute,
+                    EnabledAttribute = psconfig.EnabledAttribute,
+                    PublicKeyCredentialAttribute = psconfig.PublicKeyCredentialAttribute,
+                    ClientCertificateAttribute = psconfig.ClientCertificateAttribute,
+                    RSACertificateAttribute = psconfig.RSACertificateAttribute,
+                    MaxRows = psconfig.MaxRows
+                };
+                return config;
+            }
+        }
+
+        /// <summary>
+        /// SetADDSAttributesTemplate method implementation
+        /// </summary>
+        public static void SetADDSAttributesTemplate(PSADDSTemplateKind kind)
+        {
+            ManagementService.SetADDSAttributesTemplate((ADDSTemplateKind)kind, true);
+        }
+    }
+    #endregion
+
+    #region PSSQLStore
+    /// <summary>
+    /// PSSQLStore class
     /// <para type="synopsis">SQL configuration properties in MFA System.</para>
     /// <para type="description">SQL configuration properties registered with MFA.</para>
     /// <para type="description">You can access, update connectionString property.</para>
     /// </summary>
     /// <example>
-    ///   <para>Get-MFAConfigSQL</para>
+    ///   <para>Get-MFAStore -Store SQL</para>
     /// </example>
-    public class PSConfigSQL
+    public class PSSQLStore : PSBaseStore
     {
         /// <summary>
         /// <para type="description">Get or Set the connection string used to access MFA SQL Database.</para>
@@ -458,14 +645,15 @@ namespace MFA
         /// <summary>
         /// implicit conversion to PSConfig
         /// </summary>
-        public static explicit operator PSConfigSQL(FlatConfigSQL sqlconfig)
+        public static explicit operator PSSQLStore(FlatSQLStore sqlconfig)
         {
             if (sqlconfig == null)
                 return null;
             else
             {
-                PSConfigSQL psconfigsql = new PSConfigSQL
+                PSSQLStore psconfigsql = new PSSQLStore
                 {
+                    Active = sqlconfig.Active,
                     ConnectionString = sqlconfig.ConnectionString,
                     MaxRows = sqlconfig.MaxRows,
                     IsAlwaysEncrypted = sqlconfig.IsAlwaysEncrypted,
@@ -481,15 +669,16 @@ namespace MFA
         /// <summary>
         /// implicit conversion from PSConfig
         /// </summary>
-        public static explicit operator FlatConfigSQL(PSConfigSQL psconfig)
+        public static explicit operator FlatSQLStore(PSSQLStore psconfig)
         {
             if (psconfig == null)
                 return null;
             else
             {
-                FlatConfigSQL config = new FlatConfigSQL
+                FlatSQLStore config = new FlatSQLStore
                 {
                     IsDirty = true,
+                    Active = psconfig.Active,
                     ConnectionString = psconfig.ConnectionString,
                     MaxRows = psconfig.MaxRows,
                     IsAlwaysEncrypted = psconfig.IsAlwaysEncrypted,
@@ -504,18 +693,63 @@ namespace MFA
     }
     #endregion
 
-    #region PSConfigADDS
+    #region PSBaseSecurity
     /// <summary>
-    /// PSConfigADDS class
-    /// <para type="synopsis">ADDS configuration properties in MFA System.</para>
-    /// <para type="description">ADDS configuration properties registered with MFA.</para>
-    /// <para type="description">You can access, update attributes properties.</para>
+    /// PSBaseSecurity class implementation
     /// </summary>
-    /// <example>
-    ///   <para>Get-MFAConfigADDS</para>
-    /// </example>
-    public class PSConfigADDS
+    public abstract class PSBaseSecurity
     {
+    }
+    #endregion
+
+    #region PSSecurity
+    /// <summary>
+    /// PSSecurity class
+    /// <para type="synopsis">MFA Security Management.</para>
+    /// <para type="description">MFA Security Management.</para>
+    /// </summary>
+    public class PSSecurity: PSBaseSecurity
+    {
+        /// <summary>
+        /// <para type="description">Max delay for the user to enter TOTP code (seconds 300 by default).</para>
+        /// </summary>
+        public int DeliveryWindow { get; set; }
+
+        /// <summary>
+        /// <para type="description">Number of allowed retry allowed (default 3)..</para>
+        /// </summary>
+        public int MaxRetries { get; set; }
+
+        /// <summary>
+        /// <para type="description">TOTP Replay Level feature.</para>
+        /// </summary>
+        public PSReplayLevel ReplayLevel { get; set; }
+
+        /// <summary>
+        /// <para type="description">Used to Change the version of the encryption Library. V1 is the initial implementation but is less secure, you must migrate to V2</para>
+        /// </summary>
+        public PSSecretKeyVersion LibVersion { get; set; }
+
+        /// <summary>
+        /// <para type="description">String used for XOR operations in V2 LibVersion</para>
+        /// </summary>
+        public string XORSecret { get; set; }
+
+        /// <summary>
+        /// <para type="description">Required PIN length wehen using aditionnal control with personal PIN.</para>
+        /// </summary>
+        public int PinLength { get; set; }
+
+        /// <summary>
+        /// <para type="description">Default value for user's PIN.</para>
+        /// </summary>
+        public int DefaultPin { get; set; }
+
+        /// <summary>
+        /// <para type="description">Domain name to access (read/write) Active Directory (if ADFS account has rights you leave it blank).</para>
+        /// </summary>
+        public string DomainAddress { get; set; }
+
         /// <summary>
         /// <para type="description">Account name to access (read/write) Active Directory (if ADFS account has rights you leave it blank).</para>
         /// </summary>
@@ -526,208 +760,118 @@ namespace MFA
         /// </summary>
         public string Password { get; set; }
 
-        /// <summary>
-        /// <para type="description">Domain name to access (read/write) Active Directory (if ADFS account has rights you leave it blank).</para>
-        /// </summary>
-        public string DomainAddress { get; set; }
+        /*
+            /// <summary>
+            /// <para type="description">Used when RNG is selected, for choosing the size of the generated random number (128 to 512 bytes).</para> RNG
+            /// </summary>
+            public PSKeyGeneratorMode KeyGenerator { get; set; }
+
+
+
+            /// <summary>
+            /// <para type="description">Certificate Thumbprint when using KeyFormat==RSA. the certificate is deployed on all ADFS servers in Crypting Certificates store</para> RSA
+            /// </summary>
+            public string CertificateThumbprint { get; set; }
+
+            /// <summary>
+            /// <para type="description">Use a distinct certificate for each user when using KeyFormat==RSA. each certificate is deployed on ADDS or SQL Database</para> RSA
+            /// </summary>
+            public bool CertificatePerUser { get; set; }
+
+            /// <summary>
+            /// <para type="description">Certificate validity duration in Years (5 by default)</para> RSA
+            /// </summary>
+            public int CertificateValidity { get; set; }
+        */
+
+        /*           
+            /// <summary>
+            /// <para type="description">External key Manager when using CUSTOM Keyformat.</para> CUSTOM
+            /// <para type="description">You must specify an assembly reference and parameters.</para>
+            /// </summary>
+            public PSExternalKeyManager ExternalKeyManager { get; set; }
+        */
 
         /// <summary>
-        /// <para type="description">ADDS attribute name user to store user secret key (default msDS-cloudExtensionAttribute10).</para>
+        /// explicit operator from MMCKeysConfig
         /// </summary>
-        public string KeyAttribute { get; set; }
-
-        /// <summary>
-        /// <para type="description">ADDS attribute name used to store user custom mail address (default msDS-cloudExtensionAttribute11).</para>
-        /// </summary>
-        public string MailAttribute { get; set; }
-
-        /// <summary>
-        /// <para type="description">ADDS attribute name used to store user phone number (default msDS-cloudExtensionAttribute12).</para>
-        /// </summary>
-        public string PhoneAttribute { get; set; }
-
-        /// <summary>
-        /// <para type="description">ADDS attribute name used to store user preferred method (Code, Phone, Mail) (default msDS-cloudExtensionAttribute13).</para>
-        /// </summary>
-        public string MethodAttribute { get; set; }
-
-        /// <summary>
-        /// <para type="description">ADDS attribute name used to store user preferred method (Code, Phone, Mail) (default msDS-cloudExtensionAttribute13).</para>
-        /// </summary>
-        public string OverrideMethodAttribute { get; set; }
-
-        /// <summary>
-        /// <para type="description">ADDS attribute name used to store user status with MFA (default msDS-cloudExtensionAttribute18).</para>
-        /// </summary>
-        public string EnabledAttribute { get; set; }
-
-        /// <summary>
-        /// <para type="description">ADDS attribute name used to store user pin code (default msDS-cloudExtensionAttribute15).</para>
-        /// </summary>
-        public string PinAttribute { get; set; }
-
-        /// <summary>
-        /// <para type="description">ADDS attribute name used to store multiple user Public Keys Credential (recommended msDS-KeyCredentialLink or msDS-ExternalKey).</para>
-        /// </summary>
-        public string PublicKeyCredentialAttribute { get; set; }
-
-        /// <summary>
-        /// <para type="description">Get or Set the max rows limit used to access MFA Active Directory.</para>
-        /// </summary>
-        public int MaxRows { get; set; }
-
-        /// <summary>
-        /// implicit conversion to PSConfig
-        /// </summary>
-        public static explicit operator PSConfigADDS(FlatConfigADDS addsconfig)
+        public static explicit operator PSSecurity(FlatSecurity mgr)
         {
-            if (addsconfig == null)
+            if (mgr == null)
                 return null;
             else
             {
-                PSConfigADDS psconfigadds = new PSConfigADDS
+                PSSecurity target = new PSSecurity
                 {
-                    Account = addsconfig.Account,
-                    Password = addsconfig.Password,
-                    DomainAddress = addsconfig.DomainAddress,
-                    KeyAttribute = addsconfig.KeyAttribute,
-                    MailAttribute = addsconfig.MailAttribute,
-                    PhoneAttribute = addsconfig.PhoneAttribute,
-                    MethodAttribute = addsconfig.MethodAttribute,
-                    OverrideMethodAttribute = addsconfig.OverrideMethodAttribute,
-                    PinAttribute = addsconfig.PinAttribute,
-                    EnabledAttribute = addsconfig.EnabledAttribute,
-                    PublicKeyCredentialAttribute = addsconfig.PublicKeyCredentialAttribute,
-                    MaxRows = addsconfig.MaxRows
+                    DeliveryWindow = mgr.DeliveryWindow,
+                    MaxRetries = mgr.MaxRetries,
+                    ReplayLevel = (PSReplayLevel)mgr.ReplayLevel,
+                    LibVersion = (PSSecretKeyVersion)mgr.LibVersion,
+                    XORSecret = mgr.XORSecret,
+                    PinLength = mgr.PinLength,
+                    DefaultPin = mgr.DefaultPin,
+                    DomainAddress = mgr.DomainAddress,
+                    Account = mgr.Account,
+                    Password = mgr.Password,
                 };
-                return psconfigadds;
+                return target;
             }
         }
 
         /// <summary>
-        /// implicit conversion from PSConfig
+        /// explicit operator from MMCKeysConfig
         /// </summary>
-        public static explicit operator FlatConfigADDS(PSConfigADDS psconfig)
+        public static explicit operator FlatSecurity(PSSecurity mgr)
         {
-            if (psconfig == null)
+            if (mgr == null)
                 return null;
             else
             {
-                FlatConfigADDS config = new FlatConfigADDS
+                FlatSecurity target = new FlatSecurity
                 {
                     IsDirty = true,
-                    Account = psconfig.Account,
-                    Password = psconfig.Password,
-                    DomainAddress = psconfig.DomainAddress,
-                    KeyAttribute = psconfig.KeyAttribute,
-                    MailAttribute = psconfig.MailAttribute,
-                    PhoneAttribute = psconfig.PhoneAttribute,
-                    MethodAttribute = psconfig.MethodAttribute,
-                    OverrideMethodAttribute = psconfig.OverrideMethodAttribute,
-                    PinAttribute = psconfig.PinAttribute,
-                    EnabledAttribute = psconfig.EnabledAttribute,
-                    PublicKeyCredentialAttribute = psconfig.PublicKeyCredentialAttribute,
-                    MaxRows = psconfig.MaxRows
+                    DeliveryWindow = mgr.DeliveryWindow,
+                    MaxRetries = mgr.MaxRetries,
+                    ReplayLevel = (ReplayLevel)mgr.ReplayLevel,
+                    LibVersion = (SecretKeyVersion)mgr.LibVersion,
+                    XORSecret = mgr.XORSecret,
+                    PinLength = mgr.PinLength,
+                    DefaultPin = mgr.DefaultPin,
+                    DomainAddress = mgr.DomainAddress,
+                    Account = mgr.Account,
+                    Password = mgr.Password
                 };
-                return config;
+                return target;
             }
         }
-
-        /// <summary>
-        /// SetADDSAttributesTemplate method implementation
-        /// </summary>
-        public static void SetADDSAttributesTemplate(PSADDSTemplateKind kind)
-        {
-            ManagementService.SetADDSAttributesTemplate((ADDSTemplateKind)kind, true);
-        }
-
     }
     #endregion
 
-    #region PSConfigKeys
+    #region PSRngSecurity
     /// <summary>
-    /// PSKeysConfig class
-    /// <para type="synopsis">Secret key Management used in MFA System.</para>
-    /// <para type="description">Secret key Management registered with MFA.</para>
+    /// PSRngSecurity class
+    /// <para type="synopsis">MFA Security Management for RNG Keys.</para>
+    /// <para type="description">MFA Security Management for RNG Keys.</para>
     /// </summary>
-    public class PSConfigKeys
+    public class PSRngSecurity : PSBaseSecurity
     {
         /// <summary>
-        /// <para type="description">Used when RNG is selected, for choosing the size of the generated random number (128 to 512 bytes).</para>
+        /// <para type="description">Used when RNG is selected, for choosing the size of the generated random number (128 to 512 bytes).</para> 
         /// </summary>
         public PSKeyGeneratorMode KeyGenerator { get; set; }
 
         /// <summary>
-        /// <para type="description">Used to trim the key at a fixed size, when you use RSA the key is very long, and QRCode is often too big for TOTP Application (1024 is a good size, even if RSA key is 2048 bytes long).</para>
+        /// explicit operator from PSRNGSecurity
         /// </summary>
-        public PSKeySizeMode KeySize { get; set; }
-
-        /// <summary>
-        /// <para type="description">Type of generated Keys for users (RNG, RSA, CUSTOM RSA).</para>
-        /// <para type="description">Changing the key format, invalidate all the users secret keys previously used.</para>
-        /// <para type="description">RSA and RSA Custom are using Certificates. Custom RSA must Use Specific database to the keys and certs, one for each user, see New-MFASecretKeysDatabase cmdlet.</para>
-        /// </summary>
-        public PSSecretKeyFormat KeysFormat { get; set; }
-
-        /// <summary>
-        /// <para type="description">Used to Change the version of the encryption Library. V1 is the initial implementation but is less secure, you must migrate to V2</para>
-        /// </summary>
-        public PSSecretKeyVersion LibVersion { get; set; }
-
-        /// <summary>
-        /// <para type="description">String used for XOR operations in V2 LibVersion</para>
-        /// </summary>
-        public string XORSecret { get; set; } 
-
-        /// <summary>
-        /// <para type="description">Certificate Thumbprint when using KeyFormat==RSA. the certificate is deployed on all ADFS servers in Crypting Certificates store</para>
-        /// </summary>
-        public string CertificateThumbprint { get; set; }
-
-        /// <summary>
-        /// <para type="description">Use a distinct certificate for each user when using KeyFormat==RSA. each certificate is deployed on ADDS or SQL Database</para>
-        /// </summary>
-        public bool CertificatePerUser { get; set; }
-
-        /// <summary>
-        /// <para type="description">Certificate validity duration in Years (5 by default)</para>
-        /// </summary>
-        public int CertificateValidity { get; set; }
-
-        /// <summary>
-        /// <para type="description">External key Manager when using CUSTOM Keyformat.</para>
-        /// <para type="description">You must specify an assembly reference and parameters.</para>
-        /// </summary>
-        public PSExternalKeyManager ExternalKeyManager { get; set; }
-
-        /// <summary>
-        /// PSKeysConfig constructor
-        /// </summary>
-        public PSConfigKeys()
-        {
-            this.ExternalKeyManager = new PSExternalKeyManager();
-        }
-
-        /// <summary>
-        /// explicit operator from MMCKeysConfig
-        /// </summary>
-        public static explicit operator PSConfigKeys(FlatKeysConfig mgr)
+        public static explicit operator PSRngSecurity(FlatRngSecurity mgr)
         {
             if (mgr == null)
                 return null;
             else
             {
-                PSConfigKeys target = new PSConfigKeys
+                PSRngSecurity target = new PSRngSecurity
                 {
-                    CertificateThumbprint = mgr.CertificateThumbprint,
-                    CertificateValidity = mgr.CertificateValidity,
-                    CertificatePerUser = mgr.CertificatePerUser,
-                    KeysFormat = (PSSecretKeyFormat)mgr.KeysFormat,
-                    KeyGenerator = (PSKeyGeneratorMode)mgr.KeyGenerator,
-                    LibVersion = (PSSecretKeyVersion)mgr.LibVersion,
-                    KeySize = (PSKeySizeMode)mgr.KeySize,
-                    ExternalKeyManager = (PSExternalKeyManager)mgr.ExternalKeyManager,
-                    XORSecret = mgr.XORSecret
+                    KeyGenerator = (PSKeyGeneratorMode)mgr.KeyGenerator
                 };
                 return target;
             }
@@ -736,42 +880,204 @@ namespace MFA
         /// <summary>
         /// explicit operator from MMCKeysConfig
         /// </summary>
-        public static explicit operator FlatKeysConfig(PSConfigKeys mgr)
+        public static explicit operator FlatRngSecurity(PSRngSecurity mgr)
         {
             if (mgr == null)
                 return null;
             else
             {
-                FlatKeysConfig target = new FlatKeysConfig
+                FlatRngSecurity target = new FlatRngSecurity
                 {
                     IsDirty = true,
-                    CertificateThumbprint = mgr.CertificateThumbprint,
-                    CertificateValidity = mgr.CertificateValidity,
-                    CertificatePerUser = mgr.CertificatePerUser,
-                    KeysFormat = (SecretKeyFormat)mgr.KeysFormat,
-                    KeyGenerator = (KeyGeneratorMode)mgr.KeyGenerator,
-                    LibVersion = (SecretKeyVersion)mgr.LibVersion,
-                    KeySize = (KeySizeMode)mgr.KeySize,
-                    ExternalKeyManager = (FlatExternalKeyManager)mgr.ExternalKeyManager,
-                    XORSecret = mgr.XORSecret
+                    KeyGenerator = (KeyGeneratorMode)mgr.KeyGenerator
                 };
                 return target;
             }
         }
     }
+    #endregion
 
+    #region PSRsaSecurity
+    /// <summary>
+    /// PSRsaSecurity class
+    /// <para type="synopsis">MFA Security Management.</para>
+    /// <para type="description">MFA Security Management.</para>
+    /// </summary>
+    public class PSRsaSecurity : PSBaseSecurity
+    {
+        /// <summary>
+        /// <para type="description">Certificate validity duration in Years (5 by default)</para> 
+        /// </summary>
+        public int CertificateValidity { get; set; }
+
+        /// <summary>
+        /// <para type="description">Use a distinct certificate for each user when using KeyFormat==RSA. each certificate is deployed on ADDS or SQL Database</para> 
+        /// </summary>
+        public bool CertificatePerUser { get; set; }
+
+        /// <summary>
+        /// <para type="description">Certificate Thumbprint when using KeyFormat==RSA. the certificate is deployed on all ADFS servers in Crypting Certificates store</para> 
+        /// </summary>
+        public string CertificateThumbprint { get; set; }
+
+        /// <summary>
+        /// explicit operator from MMCKeysConfig
+        /// </summary>
+        public static explicit operator PSRsaSecurity(FlatRsaSecurity mgr)
+        {
+            if (mgr == null)
+                return null;
+            else
+            {
+                PSRsaSecurity target = new PSRsaSecurity
+                {
+                    CertificateValidity = mgr.CertificateValidity,
+                    CertificatePerUser = mgr.CertificatePerUser,
+                    CertificateThumbprint = mgr.CertificateThumbprint
+                };
+                return target;
+            }
+        }
+
+        /// <summary>
+        /// explicit operator from MMCKeysConfig
+        /// </summary>
+        public static explicit operator FlatRsaSecurity(PSRsaSecurity mgr)
+        {
+            if (mgr == null)
+                return null;
+            else
+            {
+                FlatRsaSecurity target = new FlatRsaSecurity
+                {
+                    IsDirty = true,
+                    CertificateValidity = mgr.CertificateValidity,
+                    CertificatePerUser = mgr.CertificatePerUser,
+                    CertificateThumbprint = mgr.CertificateThumbprint
+                };
+                return target;
+            }
+        }
+    }
+    #endregion
+
+    #region PSBiometricSecurity
+    /// <summary>
+    /// PSBiometricSecurity class
+    /// <para type="synopsis">MFA Security Management.</para>
+    /// <para type="description">MFA Security Management.</para>
+    /// </summary>
+    public class PSBiometricSecurity : PSBaseSecurity
+    {       
+        /// <summary>
+        /// <para type="description">Authenticator Attachment property (empty, Platform, Crossplatform).</para>
+        /// </summary>
+        public PSAuthenticatorAttachmentKind AuthenticatorAttachment { get; set; }
+
+        /// <summary>
+        /// <para type="description">Attestation Conveyance Preference property (None, Direct, Indirect).</para>
+        /// </summary>
+        public PSAttestationConveyancePreferenceKind AttestationConveyancePreference { get; set; }
+
+        /// <summary>
+        /// <para type="description">User Verification Requirement property (Preferred, Required, Discouraged).</para>
+        /// </summary>
+        public PSUserVerificationRequirementKind UserVerificationRequirement { get; set; }
+
+        /// <summary>
+        /// <para type="description">Extensions property (boolean) supports extensions ?.</para>
+        /// </summary>
+        public bool Extensions { get; set; }
+
+        /// <summary>
+        /// <para type="description">User Verification Index property (boolean).</para>
+        /// </summary>
+        public bool UserVerificationIndex { get; set; }
+
+        /// <summary>
+        /// <para type="description">Location property (boolean).</para>
+        /// </summary>
+        public bool Location { get; set; }
+
+        /// <summary>
+        /// <para type="description">User Verification Method property (boolean).</para>
+        /// </summary>
+        public bool UserVerificationMethod { get; set; }
+
+        /// <summary>
+        /// <para type="description">Require Resident Key property (boolean).</para>
+        /// </summary>
+        public bool RequireResidentKey { get; set; } 
+
+        /// <summary>
+        /// explicit operator from MMCKeysConfig
+        /// </summary>
+        public static explicit operator PSBiometricSecurity(FlatBiometricSecurity mgr)
+        {
+            if (mgr == null)
+                return null;
+            else
+            {
+                PSBiometricSecurity target = new PSBiometricSecurity
+                {
+                    AuthenticatorAttachment = (PSAuthenticatorAttachmentKind)mgr.AuthenticatorAttachment,
+                    AttestationConveyancePreference = (PSAttestationConveyancePreferenceKind)mgr.AttestationConveyancePreference,
+                    UserVerificationRequirement = (PSUserVerificationRequirementKind)mgr.UserVerificationRequirement,
+                    Extensions = mgr.Extensions,
+                    UserVerificationIndex = mgr.UserVerificationIndex,
+                    Location = mgr.Location,
+                    UserVerificationMethod = mgr.UserVerificationMethod,
+                    RequireResidentKey = mgr.RequireResidentKey 
+                };
+                return target;
+            }
+        }
+
+        /// <summary>
+        /// explicit operator from MMCKeysConfig
+        /// </summary>
+        public static explicit operator FlatBiometricSecurity(PSBiometricSecurity mgr)
+        {
+            if (mgr == null)
+                return null;
+            else
+            {
+                FlatBiometricSecurity target = new FlatBiometricSecurity
+                {
+                    IsDirty = true,
+                    AuthenticatorAttachment = (FlatAuthenticatorAttachmentKind)mgr.AuthenticatorAttachment,
+                    AttestationConveyancePreference = (FlatAttestationConveyancePreferenceKind)mgr.AttestationConveyancePreference,
+                    UserVerificationRequirement = (FlatUserVerificationRequirementKind)mgr.UserVerificationRequirement,
+                    Extensions = mgr.Extensions,
+                    UserVerificationIndex = mgr.UserVerificationIndex,
+                    Location = mgr.Location,
+                    UserVerificationMethod = mgr.UserVerificationMethod,
+                    RequireResidentKey = mgr.RequireResidentKey
+                };
+                return target;
+            }
+        }
+    }
+    #endregion
+
+    #region PSCustomSecurity
     /// <summary>
     /// PSExternalKeyManager class
     /// <para type="synopsis">Secret key Management used in MFA System.</para>
     /// <para type="description">Secret key Management registered with MFA.</para>
     /// <para type="description">You must specify an assembly an parametes.</para>
     /// </summary>
-    public class PSExternalKeyManager
+    public class PSCustomSecurity : PSBaseSecurity
     {
         /// <summary>
         /// <para type="description">Full qualified assembly ref that implements ISecretKeyManager, see sample implementation of Neos.IdentityServer.Multifactor.Keys.CustomKeyManager</para>
         /// </summary>
         public string FullQualifiedImplementation { get; set; }
+
+        /// <summary>
+        /// <para type="description">Specify your own parameters, values stored as CData, set it as string with Parameters = "myparameters"</para>
+        /// </summary>
+        public string Parameters { get; set; }
 
         /// <summary>
         /// <para type="description">Connection string to SQL Database, see sample implementation of Neos.IdentityServer.Multifactor.Keys.CustomKeyManager</para>
@@ -786,81 +1092,78 @@ namespace MFA
         /// <summary>
         /// <para type="description">ThumbPrint of encryption certificate, see sample implementation of Neos.IdentityServer.Multifactor.Keys.CustomKeyManager</para>
         /// </summary>
-        public string ThumbPrint { get; set; }
+        public string AECThumbPrint { get; set; }
 
         /// <summary>
         /// <para type="description">Name of the SQL Server encryption key (default adfsmfa)</para>
         /// </summary>
-        public string KeyName { get; set; }
+        public string AECKeyName { get; set; }
 
         /// <summary>
         /// <para type="description">ThumbPrint of encryption certificate, see sample implementation of Neos.IdentityServer.Multifactor.Keys.CustomKeyManager</para>
         /// </summary>
-        public int CertificateValidity { get; set; }
+        public int AECCertificateValidity { get; set; }
 
         /// <summary>
         /// <para type="description">if you want to reuse the same certificate ThumbPrint of encryption certificate. </para>
         /// </summary>
-        public bool CertReuse { get; set; }
-
-        /// <summary>
-        /// <para type="description">Specify your own parameters, values stored as CData, set it as string with Parameters = "myparameters"</para>
-        /// </summary>
-        public string Parameters { get; set; }
+        public bool AECCertificateReuse { get; set; }
 
         /// <summary>
         /// explicit operator 
         /// </summary>
-        public static explicit operator PSExternalKeyManager(FlatExternalKeyManager mgr)
+        public static explicit operator PSCustomSecurity(FlatCustomSecurity mgr)
         {
             if (mgr == null)
                 return null;
             else
             {
-                PSExternalKeyManager ret = new PSExternalKeyManager();
-                ret.FullQualifiedImplementation = mgr.FullQualifiedImplementation;
-                ret.ConnectionString = mgr.ConnectionString;
-                ret.IsAlwaysEncrypted = mgr.IsAlwaysEncrypted;
-                ret.KeyName = mgr.KeyName;
-                ret.CertificateValidity = mgr.CertificateValidity;
-                ret.CertReuse = mgr.CertReuse;
-                ret.ThumbPrint = mgr.ThumbPrint;
-                ret.Parameters = mgr.Parameters;
-
-                return ret;
+                PSCustomSecurity target = new PSCustomSecurity
+                {
+                    FullQualifiedImplementation = mgr.FullQualifiedImplementation,
+                    Parameters = mgr.Parameters,
+                    ConnectionString = mgr.ConnectionString,
+                    IsAlwaysEncrypted = mgr.IsAlwaysEncrypted,
+                    AECKeyName = mgr.KeyName,
+                    AECCertificateValidity = mgr.CertificateValidity,
+                    AECCertificateReuse = mgr.CertReuse,
+                    AECThumbPrint = mgr.ThumbPrint
+                };
+                return target;
             }
         }
 
         /// <summary>
         /// explicit operator 
         /// </summary>
-        public static explicit operator FlatExternalKeyManager(PSExternalKeyManager mgr)
+        public static explicit operator FlatCustomSecurity(PSCustomSecurity mgr)
         {
             if (mgr == null)
                 return null;
             else
             {
-                FlatExternalKeyManager ret = new FlatExternalKeyManager();
-                ret.FullQualifiedImplementation = mgr.FullQualifiedImplementation;
-                ret.ConnectionString = mgr.ConnectionString;
-                ret.IsAlwaysEncrypted = mgr.IsAlwaysEncrypted;
-                ret.KeyName = mgr.KeyName;
-                ret.CertificateValidity = mgr.CertificateValidity;
-                ret.CertReuse = mgr.CertReuse;
-                ret.ThumbPrint = mgr.ThumbPrint;
-                ret.Parameters = mgr.Parameters;
-                return ret;
+                FlatCustomSecurity target = new FlatCustomSecurity
+                {
+                    FullQualifiedImplementation = mgr.FullQualifiedImplementation,
+                    Parameters = mgr.Parameters,
+                    ConnectionString = mgr.ConnectionString,
+                    IsAlwaysEncrypted = mgr.IsAlwaysEncrypted,
+                    KeyName = mgr.AECKeyName,
+                    CertificateValidity = mgr.AECCertificateValidity,
+                    CertReuse = mgr.AECCertificateReuse,
+                    ThumbPrint = mgr.AECThumbPrint
+                };
+                return target;
             }
         }
     }
     #endregion
 
-    #region PSConfigBaseProvider
+    #region PSBaseProvider
     /// <summary>
-    /// PSConfigBaseProvider class
     /// <para type="synopsis">configuration properties in MFA System.</para>
     /// </summary>
-    public abstract class PSConfigBaseProvider
+    public abstract class PSBaseProvider
     {
         /// <summary>
         /// <para type="description">Provider Enabled property.</para>
@@ -899,14 +1202,14 @@ namespace MFA
     }
     #endregion
 
-    #region PSConfigTOTPProvider
+    #region PSTOTPProvider
     /// <summary>
-    /// PSConfigTOTPProvider class
+    /// PSTOTPProvider class
     /// <para type="synopsis">Parameters for TOTP Provider.</para>
     /// <para type="description">provided for TOTP MFA.</para>
     /// <para type="description">Typically this component is used with authenticator applications, Notification and more.</para>
     /// </summary>
-    public class PSConfigTOTPProvider: PSConfigBaseProvider
+    public class PSTOTPProvider: PSBaseProvider
     {
         /// <summary>
         /// <para type="description">TOTP Provider Shadow codes. 2 by default</para>
@@ -924,15 +1227,27 @@ namespace MFA
         public PSOTPWizardOptions WizardOptions { get; set; }
 
         /// <summary>
-        /// explicit operator from PSConfigTOTPProvider
+        /// <para type="description">Type of generated Keys for users (RNG, RSA, CUSTOM RSA).</para>
+        /// <para type="description">Changing the key format, invalidate all the users secret keys previously used.</para>
+        /// <para type="description">RSA and RSA Custom are using Certificates. Custom RSA must Use Specific database to the keys and certs, one for each user, see New-MFASecretKeysDatabase cmdlet.</para>
         /// </summary>
-        public static explicit operator PSConfigTOTPProvider(FlatOTPProvider otp)
+        public PSSecretKeyFormat KeysFormat { get; set; }
+
+        /// <summary>
+        /// <para type="description">Used to trim the key at a fixed size, when you use RSA the key is very long, and QRCode is often too big for TOTP Application (1024 is a good size, even if RSA key is 2048 bytes long).</para>
+        /// </summary>
+        public PSKeySizeMode KeySize { get; set; }
+
+        /// <summary>
+        /// explicit operator from PSTOTPProvider
+        /// </summary>
+        public static explicit operator PSTOTPProvider(FlatTOTPProvider otp)
         {
             if (otp == null)
                 return null;
             else
             {
-                PSConfigTOTPProvider target = new PSConfigTOTPProvider
+                PSTOTPProvider target = new PSTOTPProvider
                 {
                     Enabled = otp.Enabled,
                     IsRequired = otp.IsRequired,
@@ -942,7 +1257,9 @@ namespace MFA
                     Algorithm = (MFA.PSHashMode)otp.Algorithm,
                     PinRequired = otp.PinRequired,
                     WizardOptions = (PSOTPWizardOptions)otp.WizardOptions,
-                    FullQualifiedImplementation = otp.FullQualifiedImplementation,
+                    FullQualifiedImplementation = otp.FullyQualifiedImplementation,
+                    KeySize = (PSKeySizeMode)otp.KeySize,
+                    KeysFormat = (PSSecretKeyFormat)otp.KeysFormat,
                     Parameters = otp.Parameters
                 };
                 return target;
@@ -950,15 +1267,15 @@ namespace MFA
         }
 
         /// <summary>
-        /// explicit operator from MMCKeysConfig
+        /// explicit operator from FlatOTPProvider
         /// </summary>
-        public static explicit operator FlatOTPProvider(PSConfigTOTPProvider otp)
+        public static explicit operator FlatTOTPProvider(PSTOTPProvider otp)
         {
             if (otp == null)
                 return null;
             else
             {
-                FlatOTPProvider target = new FlatOTPProvider
+                FlatTOTPProvider target = new FlatTOTPProvider
                 {
                     IsDirty = true,
                     Enabled = otp.Enabled,
@@ -969,7 +1286,9 @@ namespace MFA
                     Algorithm = (HashMode)otp.Algorithm,
                     PinRequired = otp.PinRequired,
                     WizardOptions = (OTPWizardOptions)otp.WizardOptions,
-                    FullQualifiedImplementation = otp.FullQualifiedImplementation,
+                    KeySize = (KeySizeMode)otp.KeySize,
+                    KeysFormat = (SecretKeyFormat)otp.KeysFormat,
+                    FullyQualifiedImplementation = otp.FullQualifiedImplementation,
                     Parameters = otp.Parameters
                 };
                 return target;
@@ -978,17 +1297,17 @@ namespace MFA
     }
     #endregion
 
-    #region PSConfigMailProvider
+    #region PSMailProvider
     /// <summary>
-    /// PSConfigMail class
+    /// PSMailProvider class
     /// <para type="synopsis">SMTP configuration properties in MFA System.</para>
     /// <para type="description">SMTP/POP configuration properties registered with MFA.</para>
     /// <para type="description">You can access, update attributes properties.</para>
     /// </summary>
     /// <example>
-    ///   <para>Get-MFAConfigMail</para>
+    ///   <para>Get-MFAProvider -ProviderType Email</para>
     /// </example>
-    public class PSConfigMailProvider: PSConfigBaseProvider
+    public class PSMailProvider: PSBaseProvider
     {
         /// <summary>
         /// <para type="description">Mail from property.</para>
@@ -1038,56 +1357,56 @@ namespace MFA
         /// <summary>
         /// <para type="description">List of domains that are only allowed.</para>
         /// </summary>
-        public PSConfigMailAllowedDomains AllowedDomains { get; set; }
+        public PSMailAllowedDomains AllowedDomains { get; internal set; }
 
         /// <summary>
         /// <para type="description">List of domains that are not allowed.</para>
         /// </summary>
-        public PSConfigMailBlockedDomains BlockedDomains { get; set; }
+        public PSMailBlockedDomains BlockedDomains { get; internal set; }
 
         /// <summary>
         /// <para type="description">Custom mail templates.</para>
         /// </summary>
-        public PSConfigMailFileNames MailOTP { get; set; }
+        public PSMailFileNames MailOTP { get; internal set; }
 
         /// <summary>
         /// <para type="description">Custom mail templates.</para>
         /// </summary>
-        public PSConfigMailFileNames MailInscription { get; set; }
+        public PSMailFileNames MailInscription { get; internal set; }
 
         /// <summary>
         /// <para type="description">Custom mail templates.</para>
         /// </summary>
-        public PSConfigMailFileNames MailSecureKey { get; set; }
+        public PSMailFileNames MailSecureKey { get; internal set; }
 
         /// <summary>
         /// <para type="description">Custom mail templates.</para>
         /// </summary>
-        public PSConfigMailFileNames MailNotifications { get; set; }
-        
+        public PSMailFileNames MailNotifications { get; internal set; }
+
         /// <summary>
         /// Constructor
         /// </summary>
-        public PSConfigMailProvider()
+        public PSMailProvider()
         {
-            this.BlockedDomains = new PSConfigMailBlockedDomains();
-            this.AllowedDomains = new PSConfigMailAllowedDomains();
-            this.MailOTP = new PSConfigMailFileNames();
-            this.MailInscription = new PSConfigMailFileNames();
-            this.MailSecureKey = new PSConfigMailFileNames();
-            this.MailNotifications = new PSConfigMailFileNames();
+            this.BlockedDomains = new PSMailBlockedDomains();
+            this.AllowedDomains = new PSMailAllowedDomains();
+            this.MailOTP = new PSMailFileNames();
+            this.MailInscription = new PSMailFileNames();
+            this.MailSecureKey = new PSMailFileNames();
+            this.MailNotifications = new PSMailFileNames();
         }
 
         /// <summary>
         /// explicit conversion to PSConfigMail
         /// </summary>
-        public static explicit operator PSConfigMailProvider(FlatConfigMail mails)
+        public static explicit operator PSMailProvider(FlatMailProvider mails)
         {
             if (mails == null)
                 return null;
             else
             {
-                PSConfigMailProvider psconfig = new PSConfigMailProvider
+                PSMailProvider psconfig = new PSMailProvider
                 {
                     Enabled = mails.Enabled,
                     IsRequired = mails.IsRequired,
@@ -1103,7 +1422,7 @@ namespace MFA
                     PinRequired = mails.PinRequired,
                     Anonymous = mails.Anonymous,
                     DeliveryNotifications = mails.DeliveryNotifications,
-                    FullQualifiedImplementation = mails.FullQualifiedImplementation,
+                    FullQualifiedImplementation = mails.FullyQualifiedImplementation,
                     Parameters = mails.Parameters
                 };
 
@@ -1120,24 +1439,24 @@ namespace MFA
                 }
 
                 psconfig.MailOTP.Templates.Clear();
-                foreach (FlatConfigMailFileName itm in mails.MailOTPContent)
+                foreach (FlatMailFileName itm in mails.MailOTPContent)
                 {
-                    psconfig.MailOTP.Templates.Add((PSConfigMailFileName)itm);
+                    psconfig.MailOTP.Templates.Add((PSMailFileName)itm);
                 }
                 psconfig.MailInscription.Templates.Clear();
-                foreach (FlatConfigMailFileName itm in mails.MailAdminContent)
+                foreach (FlatMailFileName itm in mails.MailAdminContent)
                 {
-                    psconfig.MailInscription.Templates.Add((PSConfigMailFileName)itm);
+                    psconfig.MailInscription.Templates.Add((PSMailFileName)itm);
                 }
                 psconfig.MailSecureKey.Templates.Clear();
-                foreach (FlatConfigMailFileName itm in mails.MailKeyContent)
+                foreach (FlatMailFileName itm in mails.MailKeyContent)
                 {
-                    psconfig.MailSecureKey.Templates.Add((PSConfigMailFileName)itm);
+                    psconfig.MailSecureKey.Templates.Add((PSMailFileName)itm);
                 }
                 psconfig.MailNotifications.Templates.Clear();
-                foreach (FlatConfigMailFileName itm in mails.MailNotifications)
+                foreach (FlatMailFileName itm in mails.MailNotifications)
                 {
-                    psconfig.MailNotifications.Templates.Add((PSConfigMailFileName)itm);
+                    psconfig.MailNotifications.Templates.Add((PSMailFileName)itm);
                 }
                 return psconfig;
             }
@@ -1146,13 +1465,13 @@ namespace MFA
         /// <summary>
         /// explicit conversion from PSConfigMail
         /// </summary>
-        public static explicit operator FlatConfigMail(PSConfigMailProvider mails)
+        public static explicit operator FlatMailProvider(PSMailProvider mails)
         {
             if (mails == null)
                 return null;
             else
             {
-                FlatConfigMail psconfig = new FlatConfigMail
+                FlatMailProvider psconfig = new FlatMailProvider
                 {
                     IsDirty = true,
                     Enabled = mails.Enabled,
@@ -1169,7 +1488,7 @@ namespace MFA
                     PinRequired = mails.PinRequired,
                     Anonymous = mails.Anonymous,
                     DeliveryNotifications = mails.DeliveryNotifications,
-                    FullQualifiedImplementation = mails.FullQualifiedImplementation,
+                    FullyQualifiedImplementation = mails.FullQualifiedImplementation,
                     Parameters = mails.Parameters
                 };
 
@@ -1186,24 +1505,24 @@ namespace MFA
                 }
 
                 psconfig.MailOTPContent.Clear();
-                foreach (PSConfigMailFileName itm in mails.MailOTP.Templates)
+                foreach (PSMailFileName itm in mails.MailOTP.Templates)
                 {
-                    psconfig.MailOTPContent.Add((FlatConfigMailFileName)itm);
+                    psconfig.MailOTPContent.Add((FlatMailFileName)itm);
                 }
                 psconfig.MailAdminContent.Clear();
-                foreach (PSConfigMailFileName itm in mails.MailInscription.Templates)
+                foreach (PSMailFileName itm in mails.MailInscription.Templates)
                 {
-                    psconfig.MailAdminContent.Add((FlatConfigMailFileName)itm);
+                    psconfig.MailAdminContent.Add((FlatMailFileName)itm);
                 }
                 psconfig.MailKeyContent.Clear();
-                foreach (PSConfigMailFileName itm in mails.MailSecureKey.Templates)
+                foreach (PSMailFileName itm in mails.MailSecureKey.Templates)
                 {
-                    psconfig.MailKeyContent.Add((FlatConfigMailFileName)itm);
+                    psconfig.MailKeyContent.Add((FlatMailFileName)itm);
                 }
                 psconfig.MailNotifications.Clear();
-                foreach (PSConfigMailFileName itm in mails.MailNotifications.Templates)
+                foreach (PSMailFileName itm in mails.MailNotifications.Templates)
                 {
-                    psconfig.MailNotifications.Add((FlatConfigMailFileName)itm);
+                    psconfig.MailNotifications.Add((FlatMailFileName)itm);
                 }
                 return psconfig;
             }
@@ -1215,7 +1534,7 @@ namespace MFA
     /// <para type="synopsis">Mail custom templates used in MFA System.</para>
     /// <para type="description">Mail custom templates registered with MFA.</para>
     /// </summary>
-    public class PSConfigMailFileName
+    public class PSMailFileName
     {
         /// <summary>
         /// <para type="description">LCID (1033, 1034, 1036, 3082).</para>
@@ -1235,7 +1554,7 @@ namespace MFA
         /// <summary>
         /// Constructor
         /// </summary>
-        public PSConfigMailFileName(int lcid, string filename, bool enabled = true)
+        public PSMailFileName(int lcid, string filename, bool enabled = true)
         {
             this.LCID = lcid;
             this.FileName = filename;
@@ -1245,39 +1564,39 @@ namespace MFA
         /// <summary>
         /// explicit operator 
         /// </summary>
-        public static explicit operator PSConfigMailFileName(FlatConfigMailFileName file)
+        public static explicit operator PSMailFileName(FlatMailFileName file)
         {
             if (file == null)
                 return null;
             else
-                return new PSConfigMailFileName(file.LCID, file.FileName, file.Enabled);
+                return new PSMailFileName(file.LCID, file.FileName, file.Enabled);
         }
 
         /// <summary>
         /// explicit operator 
         /// </summary>
-        public static explicit operator FlatConfigMailFileName(PSConfigMailFileName file)
+        public static explicit operator FlatMailFileName(PSMailFileName file)
         {
             if (file == null)
                 return null;
             else
-                return new FlatConfigMailFileName(file.LCID, file.FileName, file.Enabled);
+                return new FlatMailFileName(file.LCID, file.FileName, file.Enabled);
         }
     }
 
     /// <summary>
-    /// PSConfigMailFileName class
+    /// PSMailFileName class
     /// <para type="synopsis">Mail custom templates collection used in MFA System.</para>
     /// <para type="description">Mail custom templates collection registered with MFA.</para>
     /// </summary>
-    public class PSConfigMailFileNames
+    public class PSMailFileNames
     {
-        private List<PSConfigMailFileName> _list = new List<PSConfigMailFileName>();
+        private List<PSMailFileName> _list = new List<PSMailFileName>();
 
         /// <summary>
         /// <para type="description">Templates property.</para>
         /// </summary>
-        public List<PSConfigMailFileName> Templates
+        public List<PSMailFileName> Templates
         {
             get
             {
@@ -1292,10 +1611,10 @@ namespace MFA
         {
             try
             {
-                PSConfigMailFileName item = (from it in _list where it.LCID == lcid select it).FirstOrDefault();
+                PSMailFileName item = (from it in _list where it.LCID == lcid select it).FirstOrDefault();
                 if (item!=null)
                     throw new Exception("Template already exists !");
-                _list.Add(new PSConfigMailFileName(lcid, filename, enabled));
+                _list.Add(new PSMailFileName(lcid, filename, enabled));
             }
             catch (Exception ex )
             {
@@ -1310,7 +1629,7 @@ namespace MFA
         {
             try
             {
-                PSConfigMailFileName item = (from it in _list where it.LCID == lcid select it).First();
+                PSMailFileName item = (from it in _list where it.LCID == lcid select it).First();
                 int i = _list.IndexOf(item);
                 item.FileName = filename;
                 item.Enabled = enabled;
@@ -1329,7 +1648,7 @@ namespace MFA
         {
             try
             {
-                PSConfigMailFileName item = (from it in _list where it.LCID == lcid select it).First();
+                PSMailFileName item = (from it in _list where it.LCID == lcid select it).First();
                 int i = _list.IndexOf(item);
                 _list.RemoveAt(i);
             }
@@ -1338,14 +1657,30 @@ namespace MFA
                 throw new Exception("Template dosen't exists !", ex);
             }
         }
+
+        /// <summary>
+        /// ToString method override
+        /// </summary>
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < _list.Count; i++)
+            {
+                PSMailFileName item = _list[i];
+                sb.Append(string.Format("{0} {1} File : {2}", item.Enabled, item.LCID, item.FileName));
+                if (i < _list.Count-1)
+                    sb.AppendLine();
+            }
+            return sb.ToString();
+        }
     }
 
     /// <summary>
-    /// PSConfigMailBlockedDomains class
+    /// PSMailBlockedDomains class
     /// <para type="synopsis">Mail blocked domains collection used in MFA System.</para>
     /// <para type="description">Mail blocked domains collection registered with MFA.</para>
     /// </summary>
-    public class PSConfigMailBlockedDomains
+    public class PSMailBlockedDomains
     {
         private List<string> _list = new List<string>();
 
@@ -1394,14 +1729,31 @@ namespace MFA
                 throw new Exception("Error removing blocked domain !", ex);
             }
         }
+
+        /// <summary>
+        /// ToString method override
+        /// </summary>
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < _list.Count; i++)
+            {
+                string item = _list[i];
+                sb.Append(item);
+                if (i < _list.Count - 1)
+                    sb.AppendLine();
+            }
+            return sb.ToString();
+        }
+
     }
 
     /// <summary>
-    /// PSConfigMailAllowedDomains class
+    /// PSMailAllowedDomains class
     /// <para type="synopsis">Mail allowed domains only collection used in MFA System.</para>
     /// <para type="description">Mail allowed domains only collection registered with MFA.</para>
     /// </summary>
-    public class PSConfigMailAllowedDomains
+    public class PSMailAllowedDomains
     {
         private List<string> _list = new List<string>();
 
@@ -1450,17 +1802,33 @@ namespace MFA
                 throw new Exception("Error removing blocked domain !", ex);
             }
         }
+
+        /// <summary>
+        /// ToString method override
+        /// </summary>
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < _list.Count; i++)
+            {
+                string item = _list[i];
+                sb.Append(item);
+                if (i < _list.Count - 1)
+                    sb.AppendLine();
+            }
+            return sb.ToString();
+        }
     }
     #endregion
 
-    #region PSConfigExternalProvider
+    #region PSExternalProvider
     /// <summary>
-    /// PSConfigExternalProvider class
+    /// PSExternalProvider class
     /// <para type="synopsis">Specify External OTP Provider, you must implement IExternalOTPProvider interface.</para>
     /// <para type="description">Samples are provided for Azure and custom.</para>
     /// <para type="description">Typically this component is used when sending SMS, you can use your own SMS gateway.</para>
     /// </summary>
-    public class PSConfigExternalProvider: PSConfigBaseProvider
+    public class PSExternalProvider: PSBaseProvider
     {
         /// <summary>
         /// <para type="description">your company name, can be used to format External message sent to user.</para>
@@ -1485,20 +1853,20 @@ namespace MFA
         /// <summary>
         /// explicit operator from MMCKeysConfig
         /// </summary>
-        public static explicit operator PSConfigExternalProvider(FlatExternalProvider otp)
+        public static explicit operator PSExternalProvider(FlatExternalProvider otp)
         {
             if (otp == null)
                 return null;
             else
             {
-                PSConfigExternalProvider target = new PSConfigExternalProvider
+                PSExternalProvider target = new PSExternalProvider
                 {
                     Enabled = otp.Enabled,
                     IsRequired = otp.IsRequired,
                     EnrollWizard = otp.EnrollWizard,
                     ForceWizard = (MFA.PSForceWizardMode)otp.ForceWizard,
                     Company = otp.Company,
-                    FullQualifiedImplementation = otp.FullQualifiedImplementation,
+                    FullQualifiedImplementation = otp.FullyQualifiedImplementation,
                     IsTwoWay = otp.IsTwoWay,
                     Sha1Salt = otp.Sha1Salt,
                     Timeout = otp.Timeout,
@@ -1512,7 +1880,7 @@ namespace MFA
         /// <summary>
         /// explicit operator from MMCKeysConfig
         /// </summary>
-        public static explicit operator FlatExternalProvider(PSConfigExternalProvider otp)
+        public static explicit operator FlatExternalProvider(PSExternalProvider otp)
         {
             if (otp == null)
                 return null;
@@ -1526,7 +1894,7 @@ namespace MFA
                     EnrollWizard = otp.EnrollWizard,
                     ForceWizard = (ForceWizardMode)otp.ForceWizard,
                     Company = otp.Company,
-                    FullQualifiedImplementation = otp.FullQualifiedImplementation,
+                    FullyQualifiedImplementation = otp.FullQualifiedImplementation,
                     IsTwoWay = otp.IsTwoWay,
                     Sha1Salt = otp.Sha1Salt,
                     Timeout = otp.Timeout,
@@ -1539,15 +1907,15 @@ namespace MFA
     }
     #endregion
 
-    #region PSConfigAzureProvider
+    #region PSAzureProvider
     /// <summary>
-    /// PSConfigAzureProvider class
+    /// PSAzureProvider class
     /// <para type="synopsis">Parameters for Azure MFA Provider.</para>
     /// <para type="description">provided for Azure MFA.</para>
     /// <para type="description">Typically this component is used when sending SMS, Notification and more.</para>
     /// <para type="description">Note : everthing is managed by Microsoft MFA Remotely.</para>
     /// </summary>
-    public class PSConfigAzureProvider: PSConfigBaseProvider
+    public class PSAzureProvider: PSBaseProvider
     {
         /// <summary>
         /// <para type="description">your Azure/o365 tenantId / tenant name.</para>
@@ -1562,13 +1930,13 @@ namespace MFA
         /// <summary>
         /// explicit operator from PSConfigAzureProvider
         /// </summary>
-        public static explicit operator PSConfigAzureProvider(FlatAzureProvider otp)
+        public static explicit operator PSAzureProvider(FlatAzureProvider otp)
         {
             if (otp == null)
                 return null;
             else
             {
-                PSConfigAzureProvider target = new PSConfigAzureProvider
+                PSAzureProvider target = new PSAzureProvider
                 {
                     TenantId = otp.TenantId,
                     Thumbprint = otp.ThumbPrint,
@@ -1577,7 +1945,7 @@ namespace MFA
                     EnrollWizard = false,
                     ForceWizard = MFA.PSForceWizardMode.Disabled,
                     PinRequired = otp.PinRequired,
-                    FullQualifiedImplementation = otp.FullQualifiedImplementation,
+                    FullQualifiedImplementation = otp.FullyQualifiedImplementation,
                     Parameters = otp.Parameters
                 };
                 return target;
@@ -1587,7 +1955,7 @@ namespace MFA
         /// <summary>
         /// explicit operator from MMCKeysConfig
         /// </summary>
-        public static explicit operator FlatAzureProvider(PSConfigAzureProvider otp)
+        public static explicit operator FlatAzureProvider(PSAzureProvider otp)
         {
             if (otp == null)
                 return null;
@@ -1603,7 +1971,7 @@ namespace MFA
                     EnrollWizard = false,
                     ForceWizard = ForceWizardMode.Disabled,
                     PinRequired = otp.PinRequired,
-                    FullQualifiedImplementation = otp.FullQualifiedImplementation,
+                    FullyQualifiedImplementation = otp.FullQualifiedImplementation,
                     Parameters = otp.Parameters
                 };
                 return target;
@@ -1612,175 +1980,127 @@ namespace MFA
     }
     #endregion
 
-    #region PSConfigBiometricProvider
+    #region PSBiometricProvider
     /// <summary>
-    /// PSConfigBiometricProvider class
+    /// PSBiometricProvider class
     /// <para type="synopsis">Parameters for Biometric MFA Provider.</para>
     /// <para type="description">provided Biometric MFA.</para>
     /// <para type="description">Typically this component is used when using fingerprint or face recognition.</para>
     /// </summary>
-    public class PSConfigBiometricProvider : PSConfigBaseProvider
+    public class PSBiometricProvider : PSBaseProvider
     {
         /// <summary>
-        /// <para type="description">When Biometrics is default method, authentication directly called a first time</para>
+        /// <para type="description">When Biometrics is default method, authentication directly called a first time</para> 3
         /// </summary>
         public bool DirectLogin { get; set; }
 
         /// <summary>
-        /// <para type="description">Timeout property (in milliseconds).</para>
+        /// <para type="description">Timeout property (in milliseconds).</para> 
         /// </summary>
         public uint Timeout { get; set; }
 
         /// <summary>
-        /// <para type="description">Timestamp Drift Tolerance property (in milliseconds).</para>
+        /// <para type="description">Timestamp Drift Tolerance property (in milliseconds).</para> 
         /// </summary>
         public int TimestampDriftTolerance { get; set; }
 
         /// <summary>
         /// <para type="description">Challenge Size property (16, 32, 48, 64 bytes) (128, 256, 384, 512 bits).</para>
         /// </summary>
-        public int ChallengeSize { get; set; }
+        public int ChallengeSize { get; set; } 
 
         /// <summary>
-        /// <para type="description">Server Domain property.</para>
+        /// <para type="description">Server Domain property.</para> 
         /// </summary>
         public string ServerDomain { get; set; }
 
         /// <summary>
-        /// <para type="description">Server Name property.</para>
+        /// <para type="description">Server Name property.</para> 
         /// </summary>
         public string ServerName { get; set; }
 
         /// <summary>
-        /// <para type="description">Server Icon property (url).</para>
+        /// <para type="description">Server Icon property (url).</para> 
         /// </summary>
-        public string ServerIcon { get; set; }
+        public string ServerIcon { get; set; } 
 
         /// <summary>
         /// <para type="description">Server Uri property (url).</para>
         /// </summary>
         public string Origin { get; set; }
 
-        /// <summary>
-        /// <para type="description">Authenticator Attachment property (empty, Platform, Crossplatform).</para>
-        /// </summary>
-        public PSAuthenticatorAttachmentKind AuthenticatorAttachment { get; set; }
-
-        /// <summary>
-        /// <para type="description">Attestation Conveyance Preference property (None, Direct, Indirect).</para>
-        /// </summary>
-        public PSAttestationConveyancePreferenceKind AttestationConveyancePreference { get; set; }
-
-        /// <summary>
-        /// <para type="description">User Verification Requirement property (Preferred, Required, Discouraged).</para>
-        /// </summary>
-        public PSUserVerificationRequirementKind UserVerificationRequirement { get; set; }
-
-        /// <summary>
-        /// <para type="description">Extensions property (boolean) supports extensions ?.</para>
-        /// </summary>
-        public bool Extensions { get; set; }
-
-        /// <summary>
-        /// <para type="description">User Verification Index property (boolean).</para>
-        /// </summary>
-        public bool UserVerificationIndex { get; set; }
-
-        /// <summary>
-        /// <para type="description">Location property (boolean).</para>
-        /// </summary>
-        public bool Location { get; set; }
-
-        /// <summary>
-        /// <para type="description">User Verification Method property (boolean).</para>
-        /// </summary>
-        public bool UserVerificationMethod { get; set; }
-
-        /// <summary>
-        /// <para type="description">Require Resident Key property (boolean).</para>
-        /// </summary>
-        public bool RequireResidentKey { get; set; }
-
-        /// <summary>
-        /// explicit operator from PSConfigBiometricProvider
-        /// </summary>
-        public static explicit operator PSConfigBiometricProvider(FlatBiometricProvider otp)
+    /// <summary>
+    /// explicit operator from PSConfigBiometricProvider
+    /// </summary>
+    public static explicit operator PSBiometricProvider(FlatBiometricProvider otp)
+    {
+        if (otp == null)
+            return null;
+        else
         {
-            if (otp == null)
-                return null;
-            else
+            PSBiometricProvider target = new PSBiometricProvider
             {
-                PSConfigBiometricProvider target = new PSConfigBiometricProvider
-                {
-                    Enabled = otp.Enabled,
-                    IsRequired = otp.IsRequired,
-                    EnrollWizard = otp.EnrollWizard,
-                    ForceWizard = (PSForceWizardMode)otp.ForceWizard,
-                    PinRequired = otp.PinRequired,
-                    DirectLogin = otp.DirectLogin,
-                    FullQualifiedImplementation = otp.FullQualifiedImplementation,
-                    Parameters = otp.Parameters,
+                Enabled = otp.Enabled,
+                IsRequired = otp.IsRequired,
+                EnrollWizard = otp.EnrollWizard,
+                ForceWizard = (PSForceWizardMode)otp.ForceWizard,
+                PinRequired = otp.PinRequired,
+                DirectLogin = otp.DirectLogin,
+                FullQualifiedImplementation = otp.FullyQualifiedImplementation,
+                Parameters = otp.Parameters,
 
-                    Timeout = otp.Timeout,
-                    TimestampDriftTolerance = otp.TimestampDriftTolerance,
-                    ChallengeSize = otp.ChallengeSize,
-                    ServerDomain = otp.ServerDomain,
-                    ServerName = otp.ServerName,
-                    ServerIcon = otp.ServerIcon,
-                    Origin = otp.Origin,
-                    AuthenticatorAttachment = (PSAuthenticatorAttachmentKind)otp.AuthenticatorAttachment,
-                    AttestationConveyancePreference = (PSAttestationConveyancePreferenceKind)otp.AttestationConveyancePreference,
-                    UserVerificationRequirement = (PSUserVerificationRequirementKind)otp.UserVerificationRequirement,
-                    Extensions = otp.Extensions,
-                    UserVerificationIndex = otp.UserVerificationIndex,
-                    Location = otp.Location,
-                    UserVerificationMethod = otp.UserVerificationMethod,
-                    RequireResidentKey = otp.RequireResidentKey
-                };
-                return target;
-            }
-        }
-
-        /// <summary>
-        /// explicit operator for FlatBiometricProvider
-        /// </summary>
-        public static explicit operator FlatBiometricProvider(PSConfigBiometricProvider otp)
-        {
-            if (otp == null)
-                return null;
-            else
-            {
-                FlatBiometricProvider target = new FlatBiometricProvider
-                {
-                    IsDirty = true,
-                    Enabled = otp.Enabled,
-                    IsRequired = otp.IsRequired,
-                    EnrollWizard = otp.EnrollWizard,
-                    ForceWizard = (ForceWizardMode)otp.ForceWizard,
-                    PinRequired = otp.PinRequired,
-                    DirectLogin = otp.DirectLogin,
-                    FullQualifiedImplementation = otp.FullQualifiedImplementation,
-                    Parameters = otp.Parameters,
-
-                    Timeout = otp.Timeout,
-                    TimestampDriftTolerance = otp.TimestampDriftTolerance,
-                    ChallengeSize = otp.ChallengeSize,
-                    ServerDomain = otp.ServerDomain,
-                    ServerName = otp.ServerName,
-                    ServerIcon = otp.ServerIcon,
-                    Origin = otp.Origin,
-                    AuthenticatorAttachment = (FlatAuthenticatorAttachmentKind)otp.AuthenticatorAttachment,
-                    AttestationConveyancePreference = (FlatAttestationConveyancePreferenceKind)otp.AttestationConveyancePreference,
-                    UserVerificationRequirement = (FlatUserVerificationRequirementKind)otp.UserVerificationRequirement,
-                    Extensions = otp.Extensions,
-                    UserVerificationIndex = otp.UserVerificationIndex,
-                    Location = otp.Location,
-                    UserVerificationMethod = otp.UserVerificationMethod,
-                    RequireResidentKey = otp.RequireResidentKey
-                };
-                return target;
-            }
+                Timeout = otp.Timeout,
+                TimestampDriftTolerance = otp.TimestampDriftTolerance,
+                ChallengeSize = otp.ChallengeSize,
+                ServerDomain = otp.ServerDomain,
+                ServerName = otp.ServerName,
+                ServerIcon = otp.ServerIcon,
+                Origin = otp.Origin,
+            };
+            return target;
         }
     }
-    #endregion
+
+    /// <summary>
+    /// explicit operator for FlatBiometricProvider
+    /// </summary>
+    public static explicit operator FlatBiometricProvider(PSBiometricProvider otp)
+    {
+        if (otp == null)
+            return null;
+        else
+        {
+            FlatBiometricProvider target = new FlatBiometricProvider
+            {
+                IsDirty = true,
+                Enabled = otp.Enabled,
+                IsRequired = otp.IsRequired,
+                EnrollWizard = otp.EnrollWizard,
+                ForceWizard = (ForceWizardMode)otp.ForceWizard,
+                PinRequired = otp.PinRequired,
+                DirectLogin = otp.DirectLogin,
+                FullyQualifiedImplementation = otp.FullQualifiedImplementation,
+                Parameters = otp.Parameters,
+
+                Timeout = otp.Timeout,
+                TimestampDriftTolerance = otp.TimestampDriftTolerance,
+                ChallengeSize = otp.ChallengeSize,
+                ServerDomain = otp.ServerDomain,
+                ServerName = otp.ServerName,
+                ServerIcon = otp.ServerIcon,
+                Origin = otp.Origin,
+                /*  AuthenticatorAttachment = (FlatAuthenticatorAttachmentKind)otp.AuthenticatorAttachment,
+                AttestationConveyancePreference = (FlatAttestationConveyancePreferenceKind)otp.AttestationConveyancePreference,
+                UserVerificationRequirement = (FlatUserVerificationRequirementKind)otp.UserVerificationRequirement,
+                Extensions = otp.Extensions,
+                UserVerificationIndex = otp.UserVerificationIndex,
+                Location = otp.Location,
+                UserVerificationMethod = otp.UserVerificationMethod,
+                RequireResidentKey = otp.RequireResidentKey */
+            };
+            return target;
+        }
+    }
+}
+#endregion
 }

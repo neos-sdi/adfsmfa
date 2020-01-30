@@ -118,10 +118,10 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ADDSSCOPENODEDESC" xml:space="preserve">
-    <value>Active Directory-Setup</value>
+    <value>Active Directory setup</value>
   </data>
   <data name="AZURESCOPENODEDESC" xml:space="preserve">
-    <value>Azure-Setup</value>
+    <value>Azure setup</value>
   </data>
   <data name="GENERALSCOPECANCEL" xml:space="preserve">
     <value>Abzubrechen</value>
@@ -235,16 +235,16 @@
     <value>Stand der Dienstleistungen</value>
   </data>
   <data name="SMSSCOPENODEDESC" xml:space="preserve">
-    <value>SMS-Einrichtung</value>
+    <value>SMS einrichtung</value>
   </data>
   <data name="SMTPSCOPENODEDESC" xml:space="preserve">
-    <value>SMTP-Einrichtung</value>
+    <value>SMTP einrichtung</value>
   </data>
   <data name="SQLSCOPENODEDESC" xml:space="preserve">
-    <value>SQLServer-Konfiguration</value>
+    <value>SQLServer konfiguration</value>
   </data>
   <data name="TOTPSCOPENODEDESC" xml:space="preserve">
-    <value>TOTP-Konfiguration</value>
+    <value>TOTP konfiguration</value>
   </data>
   <data name="USERSCOPEADDUSER" xml:space="preserve">
     <value>Hinzufügen eines Benutzers</value>
@@ -295,7 +295,7 @@
     <value>Anzahl der importierten Benutzer: {0} Fehler: {1}</value>
   </data>
   <data name="USERSSCOPEIMPORTCSVINVALID" xml:space="preserve">
-    <value>Falsche csv-Datei!</value>
+    <value>Falsche csv-Datei !</value>
   </data>
   <data name="USERSSCOPEIMPORTCSVRESTITLE" xml:space="preserve">
     <value>CSV-Importergebnis</value>
@@ -316,12 +316,15 @@
     <value>Benutzerkonfiguration</value>
   </data>
   <data name="WEBAUTHNSCOPEDESC" xml:space="preserve">
-    <value>WebAuthN Biometrie</value>
+    <value>WebAuthN biometrics</value>
   </data>
   <data name="GENERALSCOPECERTS" xml:space="preserve">
     <value>MFA-Zertifikate Sicherheit</value>
   </data>
   <data name="GENERALSCOPECERTSDESC" xml:space="preserve">
     <value>Verwalten Sie die privaten Schlüssel des Zertifikats. Zugriffssteuerungsliste auf dem aktuellen Server</value>
+  </data>
+  <data name="STORAGESCOPENODEDESC" xml:space="preserve">
+    <value>Speicherkonfiguration</value>
   </data>
 </root>

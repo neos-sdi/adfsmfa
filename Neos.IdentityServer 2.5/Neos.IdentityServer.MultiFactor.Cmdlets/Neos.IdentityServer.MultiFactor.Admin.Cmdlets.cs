@@ -16,7 +16,8 @@
 // https://github.com/neos-sdi/adfsmfa                                                                                                                                                      //
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
-namespace Neos.IdentityServer.MultiFactor.Administration
+// namespace Neos.IdentityServer.MultiFactor.Administration
+namespace MFA
 {
     using System;
     using System.Collections.Generic;
@@ -25,16 +26,18 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     using System.Threading;
     using System.DirectoryServices;
     using Neos.IdentityServer.MultiFactor.Cmdlets.Ressources;
+    using Neos.IdentityServer.MultiFactor.Administration;
     using System.Management.Automation.Host;
     using Neos.IdentityServer.MultiFactor;
     using System.Collections.ObjectModel;
-    using MFA;
+    // using MFA;
     using System.Net;
+    using System.Runtime.Serialization;
 
     /// <summary>
     /// MFACmdlet class
     /// </summary>
-    public class MFACmdlet: PSCmdlet
+    public class MFACmdlet : PSCmdlet
     {
         /// <summary>
         /// GetHostForVerbose() method 
@@ -71,8 +74,8 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         }
 
     }
- 
-    #region Cmdlets region
+
+    #region Get-MFAUsers
     /// <summary>
     /// <para type="synopsis">Get MFA Users.</para>
     /// <para type="description">Get a collection of users registered with MFA.</para>
@@ -105,7 +108,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <summary>
         /// <para type="description">identity of the user to selected (upn).</para>
         /// </summary>
-        [Parameter(Mandatory = false, Position=0, ParameterSetName = "Identity")]
+        [Parameter(Mandatory = false, Position = 0, ParameterSetName = "Identity")]
         [ValidateNotNullOrEmpty()]
         public string Identity
         {
@@ -141,7 +144,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// </summary>
         [Parameter(ParameterSetName = "Data")]
         [Alias("Method")]
-        [ValidateSet("Choose", "Code", "Email", "External", "Azure")]
+        [ValidateSet("Choose", "Code", "Email", "External", "Azure", "Biometrics")]
         public PSPreferredMethod FilterMethod
         {
             get { return ((PSPreferredMethod)_filter.FilterMethod); }
@@ -334,7 +337,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// </summary>
         [Parameter(ParameterSetName = "Data")]
         [Alias("Field", "ATTR")]
-        public PSDataFilterField FilterField 
+        public PSDataFilterField FilterField
         {
             get
             {
@@ -424,7 +427,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                         this.Host.UI.WriteLine(ConsoleColor.Yellow, this.Host.UI.RawUI.BackgroundColor, "Filter Operator reset to Equal, When using Encrypted Columns (SQL2016) Only Equal and NotEqual operators are supported. This apply to Email and Phone");
                     }
                     FilterObject.FilterField = (DataFilterField)value;
-                } 
+                }
                 else
                     FilterObject.FilterField = (DataFilterField)value;
             }
@@ -550,7 +553,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         }
 
     }
+    #endregion
 
+    #region Set-MFAUsers
     /// <summary>
     /// <para type="synopsis">Update MFA Users.</para>
     /// <para type="description">Update a collection of users registered with MFA.</para>
@@ -576,7 +581,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         private string _identity = string.Empty;
         private string _mailaddress = string.Empty;
         private string _phonenumber = string.Empty;
-        private PSPreferredMethod _method = PSPreferredMethod.None;
+        private PSPreferredMethod _method = PSPreferredMethod.Choose;
         private bool _enabled = true;
         private bool _emailfornewkey = false;
         private int _pincode = -1;
@@ -622,7 +627,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// </summary>
         [Parameter(ParameterSetName = "Identity")]
         [Parameter(ParameterSetName = "Data")]
-        [ValidateSet("Choose", "Code", "Email", "External", "Azure")]
+        [ValidateSet("Choose", "Code", "Email", "External", "Azure", "Biometrics")]
         public PSPreferredMethod Method
         {
             get { return _method; }
@@ -736,14 +741,14 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                             reg.MailAddress = this.MailAddress;
                         if (PhoneNumber != string.Empty)
                             reg.PhoneNumber = this.PhoneNumber;
-                        if (this.Method != PSPreferredMethod.None)
+                        if (this.Method != PSPreferredMethod.Choose)
                             reg.PreferredMethod = this.Method;
                         if (this.Pin > -1)
                             reg.PIN = this.Pin;
                         reg.Enabled = this.Enabled;
 
                         if (string.IsNullOrEmpty(reg.MailAddress) && ManagementService.Config.MailProvider.Enabled && ManagementService.Config.MailProvider.IsRequired)
-                           this.Host.UI.WriteWarningLine(string.Format(errors_strings.ErrorEmailNotProvided, reg.UPN));
+                            this.Host.UI.WriteWarningLine(string.Format(errors_strings.ErrorEmailNotProvided, reg.UPN));
                         if (string.IsNullOrEmpty(reg.PhoneNumber) && ManagementService.Config.ExternalProvider.Enabled && ManagementService.Config.ExternalProvider.IsRequired)
                             this.Host.UI.WriteWarningLine(string.Format(errors_strings.ErrorPhoneNotProvided, reg.UPN));
 
@@ -771,7 +776,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 prog.RecordType = ProgressRecordType.Completed;
         }
     }
+    #endregion
 
+    #region Add-MFAUsers
     /// <summary>
     /// <para type="synopsis">Add MFA Users.</para>
     /// <para type="description">Add user(s) to MFA System.</para>
@@ -793,7 +800,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         private string _identity = string.Empty;
         private string _mailaddress = string.Empty;
         private string _phonenumber = string.Empty;
-        private PSPreferredMethod _method = PSPreferredMethod.None;
+        private PSPreferredMethod _method = PSPreferredMethod.Choose;
         private int _pincode = -1;
         private bool _enabled = true;
         private bool _emailfornewkey = false;
@@ -839,7 +846,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// </summary>
         [Parameter(ParameterSetName = "Identity")]
         [Parameter(ParameterSetName = "Data")]
-        [ValidateSet("Choose", "Code", "Email", "External", "Azure")]
+        [ValidateSet("Choose", "Code", "Email", "External", "Azure", "Biometrics")]
         public PSPreferredMethod Method
         {
             get { return _method; }
@@ -955,11 +962,11 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                             reg.MailAddress = this.MailAddress;
                         if (PhoneNumber != string.Empty)
                             reg.PhoneNumber = this.PhoneNumber;
-                        if (this.Method != PSPreferredMethod.None)
+                        if (this.Method != PSPreferredMethod.Choose)
                             reg.PreferredMethod = this.Method;
                         if (this.Pin > -1)
                             reg.PIN = this.Pin;
-                        reg.Enabled = this.Enabled; 
+                        reg.Enabled = this.Enabled;
 
                         if (string.IsNullOrEmpty(reg.MailAddress) && ManagementService.Config.MailProvider.Enabled && ManagementService.Config.MailProvider.IsRequired)
                             this.Host.UI.WriteWarningLine(string.Format(errors_strings.ErrorEmailNotProvided, reg.UPN));
@@ -989,7 +996,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 prog.RecordType = ProgressRecordType.Completed;
         }
     }
+    #endregion
 
+    #region Remove-MFAUsers
     /// <summary>
     /// <para type="synopsis">Delete MFA Users.</para>
     /// <para type="description">Remove user(s) from MFA System.</para>
@@ -1096,7 +1105,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 prog.RecordType = ProgressRecordType.Completed;
         }
     }
+    #endregion
 
+    #region Enable-MFAUsers
     /// <summary>
     /// <para type="synopsis">Enable MFA Users.</para>
     /// <para type="description">Enable user(s) in MFA System.</para>
@@ -1120,7 +1131,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <summary>
         /// <para type="description">identity of the user to be enabled (upn).</para>
         /// </summary>
-        [Parameter(Mandatory = true, Position=0, ParameterSetName="Identity")]
+        [Parameter(Mandatory = true, Position = 0, ParameterSetName = "Identity")]
         [ValidateNotNullOrEmpty()]
         public string Identity
         {
@@ -1131,7 +1142,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <summary>
         /// <para type="description">Collection of users to be enabled for MFA (must be registered before with Add-MFAUsers.</para>
         /// </summary>
-        [Parameter(Mandatory = true, Position=0, ParameterSetName="Data", ValueFromPipeline = true, DontShow = true)]
+        [Parameter(Mandatory = true, Position = 0, ParameterSetName = "Data", ValueFromPipeline = true, DontShow = true)]
         [ValidateNotNullOrEmpty()]
         public PSRegistration[] Data
         {
@@ -1205,7 +1216,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 prog.RecordType = ProgressRecordType.Completed;
         }
     }
+    #endregion
 
+    #region Disable-MFAUsers
     /// <summary>
     /// <para type="synopsis">Disable MFA Users.</para>
     /// <para type="description">Disable user(s) in MFA System.</para>
@@ -1229,7 +1242,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <summary>
         /// <para type="description">identity of the user to be disabled (upn).</para>
         /// </summary>
-        [Parameter(Mandatory = true, Position = 0, ParameterSetName="Identity")]
+        [Parameter(Mandatory = true, Position = 0, ParameterSetName = "Identity")]
         [ValidateNotNullOrEmpty()]
         public string Identity
         {
@@ -1278,7 +1291,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         {
             if (_data == null)
                 return;
-            int i= 0;
+            int i = 0;
             ProgressRecord prog = null;
             if (_data.Length >= 10)
             {
@@ -1314,7 +1327,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 prog.RecordType = ProgressRecordType.Completed;
         }
     }
+    #endregion
 
+    #region Get-MFAFarmInformation
     /// <summary>
     /// <para type="synopsis">Get MFA Farm Informations.</para>
     /// <para type="description">Get MFA farm Informations.</para>
@@ -1376,7 +1391,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             base.EndProcessing();
         }
     }
+    #endregion
 
+    #region Register-MFAComputer
     /// <summary>
     /// <para type="synopsis">Register MFA Computer.</para>
     /// <para type="description">Regiter an ADFS server from your farm.</para>
@@ -1387,7 +1404,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     /// <para type="description">This Cmdlet does not support remoting.</para>
     /// </summary>
     /// <example>
-    ///   <para>Register-MFAComputer</para>
+    ///   <para>Register-MFAComputer -ServerName otheradfs.domain.com</para>
     /// </example>
     [Cmdlet(VerbsLifecycle.Register, "MFAComputer", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
     [PrimaryServerRequired]
@@ -1438,7 +1455,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             }
         }
     }
+    #endregion
 
+    #region UnRegister-MFAComputer
     /// <summary>
     /// <para type="synopsis">UnRegister MFA Computer.</para>
     /// <para type="description">UnRegiter an ADFS server from your farm.</para>
@@ -1486,7 +1505,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// </summary>
         protected override void ProcessRecord()
         {
-            try 
+            try
             {
                 PSHost hh = GetHostForVerbose();
                 ADFSServiceManager svc = ManagementService.ADFSManager;
@@ -1498,7 +1517,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             }
         }
     }
+    #endregion
 
+    #region Get-MFAComputers
     /// <summary>
     /// <para type="synopsis">Get MFA Computers.</para>
     /// <para type="description">Get ADFS Computers properties.</para>
@@ -1573,7 +1594,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                             break;
                         }
                     }
-                    if (computer==null)
+                    if (computer == null)
                         throw new Exception(string.Format(errors_strings.ErrorComputerNotFound, this.Identity));
                     _list = new ADFSServerHost[] { computer };
                 }
@@ -1616,7 +1637,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             base.EndProcessing();
         }
     }
+    #endregion
 
+    #region Restart-MFAComputerServices
     /// <summary>
     /// <para type="synopsis">Restart MFA Computer services.</para>
     /// <para type="description">Restart ADFS Services for one ADFS Computer.</para>
@@ -1674,7 +1697,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                     if (!svc.RestartServer(hh, this.Identity))
                         this.Host.UI.WriteWarningLine(errors_strings.ErrorInvalidServerName);
                     else
-                        this.Host.UI.WriteLine(ConsoleColor.Green, this.Host.UI.RawUI.BackgroundColor, string.Format(infos_strings.InfosServerServicesRestarted , this.Identity));
+                        this.Host.UI.WriteLine(ConsoleColor.Green, this.Host.UI.RawUI.BackgroundColor, string.Format(infos_strings.InfosServerServicesRestarted, this.Identity));
                 }
             }
             catch (Exception ex)
@@ -1691,7 +1714,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             base.EndProcessing();
         }
     }
+    #endregion
 
+    #region Restart-MFAFarmServices
     /// <summary>
     /// <para type="synopsis">Restart MFA Farm Computers services.</para>
     /// <para type="description">Restart ADFS Services for all of the ADFS Computer in the Farm.</para>
@@ -1748,7 +1773,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             base.EndProcessing();
         }
     }
+    #endregion
 
+    #region Register-MFASystem
     /// <summary>
     /// <para type="synopsis">Register Configuration for MFA.</para>
     /// <para type="description">Register MFA components with ADFS. Activate it, Set Certificates and User Keys format (RNG, RSA, CUSTOM)</para>
@@ -1819,7 +1846,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         public PSSecretKeyFormat KeysFormat
         {
             get { return _fmt; }
-            set { _fmt = value;}
+            set { _fmt = value; }
         }
 
         /// <summary>
@@ -1868,9 +1895,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// </summary>
         protected override void ProcessRecord()
         {
-            try 
+            try
             {
-                if (ShouldProcess("Register-MFASystem", "Changing Keyformat invalidate all users keys ! When choosing CUSTOM KeyFormat, additional steps are required (Set-MFAConfigkeys and New-MFASecretKeysDatabase)" ))
+                if (ShouldProcess("Register-MFASystem", "Changing Keyformat invalidate all users keys ! When choosing CUSTOM KeyFormat, additional steps are required (Set-MFAConfigkeys and New-MFASecretKeysDatabase)"))
                 {
                     PSHost hh = GetHostForVerbose();
                     ADFSServiceManager svc = ManagementService.ADFSManager;
@@ -1883,9 +1910,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                     }
                     else
                         if (svc.RegisterMFAProvider(hh, this.Activate, this.RestartFarm, false, null, (Neos.IdentityServer.MultiFactor.SecretKeyFormat)this.KeysFormat, this.RSACertificateDuration))
-                            this.Host.UI.WriteLine(ConsoleColor.Green, this.Host.UI.RawUI.BackgroundColor, String.Format(infos_strings.InfosSystemRegistered));
-                        else
-                            this.Host.UI.WriteLine(ConsoleColor.Yellow, this.Host.UI.RawUI.BackgroundColor, String.Format(infos_strings.InfosSystemAlreadyInitialized));
+                        this.Host.UI.WriteLine(ConsoleColor.Green, this.Host.UI.RawUI.BackgroundColor, String.Format(infos_strings.InfosSystemRegistered));
+                    else
+                        this.Host.UI.WriteLine(ConsoleColor.Yellow, this.Host.UI.RawUI.BackgroundColor, String.Format(infos_strings.InfosSystemAlreadyInitialized));
                 }
             }
             catch (Exception ex)
@@ -1911,7 +1938,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             set;
         }
     }
+    #endregion
 
+    #region Import-MFASystemConfiguration
     /// <summary>
     /// <para type="synopsis">Update MFA Configuration with a configuration file.</para>
     /// <para type="description">Update Configuration of MFA components. Activate it</para>
@@ -2000,7 +2029,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             }
         }
     }
+    #endregion
 
+    #region Export-MFASystemConfiguration
     /// <summary>
     /// <para type="synopsis">Save current MFA Configuration to a file.</para>
     /// <para type="description">Save current Configuration of MFA components</para>
@@ -2010,7 +2041,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     ///   <para>Export current MFA configuration to the specified file.</para>
     /// </example>
     [Cmdlet("Export", "MFASystemConfiguration", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
-   // [PrimaryServerRequired]
+    // [PrimaryServerRequired]
     public sealed class ExportMFASystemConfiguration : MFACmdlet
     {
         /// <summary>
@@ -2061,7 +2092,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             }
         }
     }
+    #endregion
 
+    #region UnRegister-MFASystem
     /// <summary>
     /// <para type="synopsis">UnRegister Configuration for MFA.</para>
     /// <para type="description">UnRegister MFA components from ADFS. DeActivate it</para>
@@ -2138,7 +2171,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             }
         }
     }
+    #endregion
 
+    #region Enable-MFASystem
     /// <summary>
     /// <para type="synopsis">Enable MFA.</para>
     /// <para type="description">Enable MFA System (if initialized)</para>
@@ -2188,7 +2223,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             }
         }
     }
+    #endregion
 
+    #region Disable-MFASystem
     /// <summary>
     /// <para type="synopsis">Disable MFA.</para>
     /// <para type="description">Disable MFA System (if initialized)</para>
@@ -2238,101 +2275,16 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             }
         }
     }
+    #endregion
 
-    /// <summary>
-    /// <para type="synopsis">Install RSA Certificate.</para>
-    /// <para type="description">Install a new RSA Certificate for MFA.</para>
-    /// </summary>
-    /// <example>
-    ///   <para>Install-MFACertificate</para>
-    ///   <para>Create a new certificate for RSA User keys.</para>
-    /// </example>
-    /// <example>
-    ///   <para>Install-MFACertificate -RSACertificateDuration 10 -RestartFarm</para>
-    ///   <para>Create a new certificate for RSA User keys with specific duration.</para>
-    /// </example>
-    [Cmdlet(VerbsLifecycle.Install, "MFACertificate", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
-    [PrimaryServerRequired]
-    public sealed class InstallMFACertificate : MFACmdlet
-    {
-        private int _duration = 5;
-        private SwitchParameter _restart = true;
-
-        /// <summary>
-        /// RSACertificateDuration property
-        /// <para type="description">Duration for the new certificate (Years)</para>
-        /// </summary>
-        [Parameter(ParameterSetName = "Data")]
-        public int RSACertificateDuration
-        {
-            get { return _duration; }
-            set { _duration = value; }
-        }
-
-        /// <summary>
-        /// <para type="description">Restart Farm Services</para>
-        /// RestartFarm property
-        /// </summary>
-        [Parameter(ParameterSetName = "Data")]
-        public SwitchParameter RestartFarm
-        {
-            get { return _restart; }
-            set { _restart = value;}
-        }
-
-        /// <summary>
-        /// BeginProcessing method implementation
-        /// </summary>
-        protected override void BeginProcessing()
-        {
-            base.BeginProcessing();
-            try
-            {
-                ManagementService.Initialize(this.Host, true);
-            }
-            catch (Exception ex)
-            {
-                this.ThrowTerminatingError(new ErrorRecord(ex, "3019", ErrorCategory.OperationStopped, this));
-            }
-        }
-
-        /// <summary>
-        /// ProcessRecord method override
-        /// </summary>
-        protected override void ProcessRecord()
-        {
-            try
-            {
-                if (ShouldProcess("Install-MFACertificate"))
-                {
-                    Collection<ChoiceDescription> col = new Collection<ChoiceDescription>();
-                    ChoiceDescription c1 = new ChoiceDescription("&Yes") ;
-                    ChoiceDescription c2 = new ChoiceDescription("&No") ;
-                    col.Add(c1);
-                    col.Add(c2);
-                    if (this.Host.UI.PromptForChoice("Install-MFACertificate", infos_strings.InfoAllKeyWillbeReset, col, 1) == 0)
-                    {
-                        PSHost hh = GetHostForVerbose();
-                        ADFSServiceManager svc = ManagementService.ADFSManager;
-                        string thumb = svc.RegisterNewRSACertificate(hh, this.RSACertificateDuration, this.RestartFarm);
-                        this.Host.UI.WriteLine(ConsoleColor.Green, this.Host.UI.RawUI.BackgroundColor, String.Format(infos_strings.InfosRSACertificateChanged, thumb));
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                this.ThrowTerminatingError(new ErrorRecord(ex, "3020", ErrorCategory.OperationStopped, this));
-            }
-        }
-    }
-
+    #region Get-MFAConfig
     /// <summary>
     /// <para type="synopsis">Get Configuration.</para>
     /// <para type="description">Get main configuration options.</para>
     /// </summary>
     /// <example>
     ///   <para>Get-MFAConfig</para>
-    ///   <para>Display MFA configuration</para>
+    ///   <para>Display MFA general configuration</para>
     /// </example>
     /// <example>
     ///   <para>$cfg = Get-MFAConfig</para>
@@ -2343,6 +2295,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     public sealed class GetMFAConfig : MFACmdlet
     {
         private PSConfig _config;
+
         /// <summary>
         /// BeginProcessing method implementation
         /// </summary>
@@ -2351,7 +2304,6 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             base.BeginProcessing();
             try
             {
-
                 FlatConfig cf = new FlatConfig();
                 cf.Load(this.Host);
                 _config = (PSConfig)cf;
@@ -2378,7 +2330,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         {
             try
             {
-                if (ShouldProcess("MFA Configuration"))
+                if (ShouldProcess("MFA General Configuration"))
                 {
                     WriteObject(_config);
                 }
@@ -2398,20 +2350,22 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             base.StopProcessing();
         }
     }
+    #endregion
 
+    #region Set-MFAConfig
     /// <summary>
-    /// <para type="synopsis">Get Configuration.</para>
-    /// <para type="description">Get main configuration options.</para>
+    /// <para type="synopsis">Set General Configuration.</para>
+    /// <para type="description">Set main configuration options.</para>
     /// </summary>
     /// <example>
-    ///   <para>Set-MFAConfig -Config $cfg</para>
-    ///   <para>Update MFA configuration</para>
-    /// </example>
-    /// <example>
+    ///   <para>** Using PowserShell Variables</para>
     ///   <para>$cfg = Get-MFAConfig</para>
     ///   <para>$cfg.DefaultCountryCode = "us"</para>
     ///   <para>Set-MFAConfig $cfg</para>
-    ///   <para>Get MFA configuration options, modity values and finally Update configuration.</para>
+    /// </example>
+    /// <example>
+    ///   <para>** Using configuration options with completion.</para>
+    ///   <para>Set-MFAConfig -AdminContact username@domainname -UserFeatures AdministrativeMode, AllowEnrollment, AllowProvideInformations</para>
     /// </example>
     [Cmdlet(VerbsCommon.Set, "MFAConfig", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
     [PrimaryServerRequired]
@@ -2419,16 +2373,180 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     {
         private PSConfig _config;
         private FlatConfig _target;
+        private string _admincontact;
+        private string _issuer;
+        private string _defaultcountrycode;
+        private PSPreferredMethod _defaultprovidermethod;
+        private PSUserFeaturesOptions _userfeatures;
+        private bool _customupdatepassword;
+        private bool _keepmyselectedoptionon;
+        private bool _changenotificationson;
+        private bool _useofuserlanguages;
+        private PSAdvertisingDays _advertisingdays;
+        private bool _admincontactchanged = false;
+        private bool _issuerchanged = false;
+        private bool _defaultcountrycodechanged = false;
+        private bool _defaultprovidermethodchanged = false;
+        private bool _userfeatureschanged = false;
+        private bool _customupdatepasswordchanged = false;
+        private bool _keepmyselectedoptiononchanged = false;
+        private bool _changenotificationsonchanged = false;
+        private bool _useofuserlanguageschanged = false;
+        private bool _advertisingdayschanged = false;
 
         /// <summary>
         /// <para type="description">Config parameter, a variable of type PSConfig.</para>
         /// </summary>
-        [Parameter(Mandatory = true, Position = 0, ParameterSetName = "Data", ValueFromPipeline = true)]
+        [Parameter(Mandatory = true, Position = 0, ParameterSetName = "Data", ValueFromPipeline = true, DontShow = true)]
         [ValidateNotNullOrEmpty()]
         public PSConfig Config
         {
             get { return _config; }
             set { _config = value; }
+        }
+
+        /// <summary>
+        /// <para type="description">Administrators email, used in administrative emails sent to users.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public string AdminContact
+        {
+            get { return _admincontact; }
+            set
+            {
+                _admincontact = value;
+                _admincontactchanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Issuer description (eg "my company").</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public string Issuer
+        {
+            get { return _issuer; }
+            set
+            {
+                _issuer = value;
+                _issuerchanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Default contry code, used for SMS calls .</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public string DefaultCountryCode
+        {
+            get { return _defaultcountrycode; }
+            set
+            {
+                _defaultcountrycode = value;
+                _defaultcountrycodechanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Default provider when User method equals "Choose".</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateSet("Choose", "Code", "Email", "External", "Azure", "Biometrics")]
+        public PSPreferredMethod DefaultProviderMethod
+        {
+            get { return _defaultprovidermethod; }
+            set
+            {
+                _defaultprovidermethod = value;
+                _defaultprovidermethodchanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Policy attributes for users management and registration.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        public PSUserFeaturesOptions UserFeatures
+        {
+            get { return _userfeatures; }
+            set
+            {
+                _userfeatures = value;
+                _userfeatureschanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Use or not our implementation for changing user password,if not we are using /ADFS/Portal/updatepasswor.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        public bool CustomUpdatePassword
+        {
+            get { return _customupdatepassword; }
+            set
+            {
+                _customupdatepassword = value;
+                _customupdatepasswordchanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Let user to change the default MFA provider for later use.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        public bool KeepMySelectedOptionOn
+        {
+            get { return _keepmyselectedoptionon; }
+            set
+            {
+                _keepmyselectedoptionon = value;
+                _keepmyselectedoptiononchanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Send email notifications when a user update his configuration.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        public bool ChangeNotificationsOn
+        {
+            get { return _changenotificationson; }
+            set
+            {
+                _changenotificationson = value;
+                _changenotificationsonchanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Use of User's browser laguages instead or standard localization features.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        public bool UseOfUserLanguages
+        {
+            get { return _useofuserlanguages; }
+            set
+            {
+                _useofuserlanguages = value;
+                _useofuserlanguageschanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Policy attributes for warnings to users.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        public PSAdvertisingDays AdvertisingDays
+        {
+            get { return _advertisingdays; }
+            set
+            {
+                _advertisingdays = value;
+                _advertisingdayschanged = true;
+            }
         }
 
         /// <summary>
@@ -2448,6 +2566,39 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                     this.ThrowTerminatingError(new ErrorRecord(ex, "3023", ErrorCategory.OperationStopped, this));
                 }
             }
+            else
+            {
+                try
+                {
+                    ManagementService.Initialize(this.Host, true);
+                    _target = new FlatConfig();
+                    _target.Load(this.Host);
+                    if (!string.IsNullOrEmpty(AdminContact) && _admincontactchanged)
+                        _target.AdminContact = this.AdminContact;
+                    if (!string.IsNullOrEmpty(Issuer) && _issuerchanged)
+                        _target.Issuer = this.Issuer;
+                    if (!string.IsNullOrEmpty(DefaultCountryCode) && _defaultcountrycodechanged)
+                        _target.DefaultCountryCode = this.DefaultCountryCode;
+                    if ((_target.DefaultProviderMethod != (PreferredMethod)this.DefaultProviderMethod) && _defaultprovidermethodchanged)
+                        _target.DefaultProviderMethod = (PreferredMethod)this.DefaultProviderMethod;
+                    if ((_target.UserFeatures != (UserFeaturesOptions)this.UserFeatures) && _userfeatureschanged)
+                        _target.UserFeatures = (UserFeaturesOptions)this.UserFeatures;
+                    if ((_target.CustomUpdatePassword != this.CustomUpdatePassword) && _customupdatepasswordchanged)
+                        _target.CustomUpdatePassword = this.CustomUpdatePassword;
+                    if ((_target.KeepMySelectedOptionOn != this.KeepMySelectedOptionOn) && _keepmyselectedoptiononchanged)
+                        _target.KeepMySelectedOptionOn = this.KeepMySelectedOptionOn;
+                    if ((_target.ChangeNotificationsOn != this.ChangeNotificationsOn) && _changenotificationsonchanged)
+                        _target.ChangeNotificationsOn = this.ChangeNotificationsOn;
+                    if ((_target.UseOfUserLanguages != this.UseOfUserLanguages) && _useofuserlanguageschanged)
+                        _target.UseOfUserLanguages = this.UseOfUserLanguages;
+                    if (_advertisingdayschanged && (_target.AdvertisingDays != (FlatAdvertising)this.AdvertisingDays))
+                        _target.AdvertisingDays = (FlatAdvertising)this.AdvertisingDays;
+                }
+                catch (Exception ex)
+                {
+                    this.ThrowTerminatingError(new ErrorRecord(ex, "3023", ErrorCategory.OperationStopped, this));
+                }
+            }
         }
 
         /// <summary>
@@ -2455,10 +2606,11 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// </summary>
         protected override void ProcessRecord()
         {
-            if (ShouldProcess("MFA Configuration"))
+            if (ShouldProcess("Set MFA General Configuration"))
             {
                 try
                 {
+
                     _target.Update(this.Host);
                     this.WriteVerbose(infos_strings.InfosConfigUpdated);
                 }
@@ -2469,7 +2621,3130 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             }
         }
     }
+    #endregion
 
+    #region Get-MFAStore
+    /// <summary>
+    /// <para type="synopsis">Get MFA Store Configuration.</para>
+    /// <para type="description">Get MFA Store configuration options.</para>
+    /// <para type="description"></para>
+    /// </summary>
+    /// <example>
+    ///   <para>Get-MFAStore -Store ADDS</para>
+    ///   <para>Get-MFAStore -Store SQL</para>
+    /// </example>
+    /// <example>
+    ///   <para>$c = Get-MFAStore -Store ADDS</para>
+    ///   <para>$c = Get-MFAStore -Store SQL</para>
+    /// </example>
+    [Cmdlet(VerbsCommon.Get, "MFAStore", SupportsShouldProcess = true, SupportsPaging = false, ConfirmImpact = ConfirmImpact.Medium, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
+    [OutputType(typeof(PSADDSStore), typeof(PSSQLStore))]
+    public sealed class GetMFAStore : MFACmdlet
+    {
+        private PSADDSStore _config0;
+        private PSSQLStore _config1;
+
+        /// <summary>
+        /// <para type="description">Store Configuration mode, (ADDS, SQL) Required.</para>
+        /// </summary>
+        [Parameter(Mandatory = true, Position = 0, ParameterSetName = "Data", ValueFromPipeline = true)]
+        [ValidateSet("ADDS", "SQL")]
+        public PSStoreMode Store { get; set; } = PSStoreMode.ADDS;
+
+        /// <summary>
+        /// BeginProcessing method implementation
+        /// </summary>
+        protected override void BeginProcessing()
+        {
+            base.BeginProcessing();
+            try
+            {
+                switch (Store)
+                {
+                    case PSStoreMode.ADDS:
+                        FlatADDSStore cf0 = new FlatADDSStore();
+                        cf0.Load(this.Host);
+                        _config0 = (PSADDSStore)cf0;
+                        break;
+                    case PSStoreMode.SQL:
+                        FlatSQLStore cf1 = new FlatSQLStore();
+                        cf1.Load(this.Host);
+                        _config1 = (PSSQLStore)cf1;
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                this.ThrowTerminatingError(new ErrorRecord(ex, "3021", ErrorCategory.OperationStopped, this));
+            }
+        }
+
+        /// <summary>
+        /// ProcessInternalRecord method override
+        /// </summary>
+        protected override void ProcessRecord()
+        {
+            try
+            {
+                if (ShouldProcess("MFA Store Configuration"))
+                {
+                    switch (Store)
+                    {
+                        case PSStoreMode.ADDS:
+                            WriteObject(_config0);
+                            break;
+                        case PSStoreMode.SQL:
+                            WriteObject(_config1);
+                            break;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                this.ThrowTerminatingError(new ErrorRecord(ex, "3022", ErrorCategory.OperationStopped, this));
+            }
+        }
+
+        /// <summary>
+        /// StopProcessing method implementation
+        /// </summary>
+        protected override void StopProcessing()
+        {
+            _config0 = null;
+            _config1 = null;
+            base.StopProcessing();
+        }
+
+        /// <summary>
+        /// EndProcessing method implementation
+        /// </summary>
+        protected override void EndProcessing()
+        {
+            _config0 = null;
+            _config1 = null;
+            base.EndProcessing();
+        }
+    }
+    #endregion
+
+    #region Set-MFAStore
+    /// <summary>
+    /// <para type="synopsis">Set MFA Store Configuration.</para>
+    /// <para type="description">Set MFA Store configuration options.</para>
+    /// </summary>
+    /// <example>
+    ///   <para>** Using PowserShell Variables</para>
+    ///   <para>$cfg = Get-MFAStore -Store ADDS</para>
+    ///   <para>$cfg.Active = $false</para>
+    ///   <para>Set-MFAStore -Store ADDS $cfg</para>
+    /// </example>
+    /// <example>
+    ///   <para>** Using auto completion</para>
+    ///   <para>Set-MFAStore -Store ADDS -Active $true -MaxRows 10000 -UserFeatures</para>
+    /// </example>
+    /// <example>
+    ///   <para>** Using PowserShell Variables</para>
+    ///   <para>$cfg = Get-MFAStore -Store SQL</para>
+    ///   <para>$cfg.MaxRows = 5000</para>
+    ///   <para>Set-MFAStore -Store SQL $cfg</para>
+    /// </example>
+    /// <example>
+    ///   <para>** Using auto completion</para>
+    ///   <para>Set-MFAStore -Store SQL -Active $false -MaxRows 10000 -ConnectionString = "your connect string"</para>
+    /// </example>
+    [Cmdlet(VerbsCommon.Set, "MFAStore", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
+    [PrimaryServerRequired]
+    public sealed class SetMFAStore : MFACmdlet, IDynamicParameters
+    {
+        private ADDSStoreDynamicParameters _config0;
+        private SQLStoreDynamicParameters _config1;
+
+        private PSStoreMode _store = PSStoreMode.ADDS;
+        private PSBaseStore _config;
+        private bool _configchanged = false;
+        private FlatADDSStore _target0;
+        private FlatSQLStore _target1;
+
+
+        /// <summary>
+        /// <para type="description">Store Configuration mode, (ADDS, SQL) Required.</para>
+        /// </summary>
+        [Parameter(Mandatory = true, Position = 0, ParameterSetName = "Data")]
+        [Parameter(Mandatory = true, Position = 0, ParameterSetName = "Identity")]
+        [ValidateRange(PSStoreMode.ADDS, PSStoreMode.SQL)]
+        public PSStoreMode Store
+        {
+            get { return _store; }
+            set { _store = value; }
+        }
+
+        /// <summary>
+        /// <para type="description">Config parameter, a variable of type PSConfigSQL.</para>
+        /// </summary>
+        [Parameter(Mandatory = true, Position = 1, ParameterSetName = "Data", ValueFromPipeline = true, DontShow = true)]
+        [ValidateNotNullOrEmpty()]
+        public PSBaseStore Config
+        {
+            get { return _config; }
+            set
+            {
+                _config = value;
+                _configchanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Set the value of Provider configuration.</para>
+        /// GetDynamicParameters implementation
+        /// </summary>
+        public object GetDynamicParameters()
+        {
+            if (!_configchanged)
+            {
+                switch (Store)
+                {
+                    case PSStoreMode.ADDS:
+                        _config0 = new ADDSStoreDynamicParameters();
+                        return _config0;
+                    case PSStoreMode.SQL:
+                        _config1 = new SQLStoreDynamicParameters();
+                        return _config1;
+                }
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// BeginProcessing method override
+        /// </summary>
+        protected override void BeginProcessing()
+        {
+            base.BeginProcessing();
+            try
+            {
+                if (!_configchanged)
+                {
+                    ManagementService.Initialize(this.Host, true);
+                    switch (Store)
+                    {
+                        case PSStoreMode.ADDS:
+                            _target0 = new FlatADDSStore();
+                            _target0.Load(this.Host);
+                            if (_config0.ActiveChanged)
+                                _target0.Active = _config0.Active;
+                            if (!string.IsNullOrEmpty(_config0.KeyAttribute) && _config0.KeyAttributeChanged)
+                                _target0.KeyAttribute = _config0.KeyAttribute;
+                            if (!string.IsNullOrEmpty(_config0.MailAttribute) && _config0.MailAttributeChanged)
+                                _target0.MailAttribute =_config0.MailAttribute;
+                            if (!string.IsNullOrEmpty(_config0.PhoneAttribute) && _config0.PhoneAttributeChanged)
+                                _target0.PhoneAttribute = _config0.PhoneAttribute;
+                            if (!string.IsNullOrEmpty(_config0.MethodAttribute) && _config0.MethodAttributeChanged)
+                                _target0.MethodAttribute = _config0.MethodAttribute;
+                            if (!string.IsNullOrEmpty(_config0.OverrideMethodAttribute) && _config0.OverrideMethodAttributeChanged)
+                                _target0.OverrideMethodAttribute = _config0.OverrideMethodAttribute;
+                            if (!string.IsNullOrEmpty(_config0.EnabledAttribute) && _config0.EnabledAttributeChanged)
+                                _target0.EnabledAttribute = _config0.EnabledAttribute;
+                            if (!string.IsNullOrEmpty(_config0.PinAttribute) && _config0.PinAttributeChanged)
+                                _target0.PinAttribute = _config0.PinAttribute;
+                            if (!string.IsNullOrEmpty(_config0.PublicKeyCredentialAttribute) && _config0.PublicKeyCredentialAttributeChanged)
+                                _target0.PublicKeyCredentialAttribute = _config0.PublicKeyCredentialAttribute;
+                            if (!string.IsNullOrEmpty(_config0.ClientCertificateAttribute) && _config0.ClientCertificateAttributeChanged)
+                                _target0.ClientCertificateAttribute = _config0.ClientCertificateAttribute;
+                            if (!string.IsNullOrEmpty(_config0.RSACertificateAttribute) && _config0.RSACertificateAttributeChanged)
+                                _target0.RSACertificateAttribute = _config0.RSACertificateAttribute;
+                            if (_config0.MaxRowsChanged)
+                                _target0.MaxRows = _config0.MaxRows;
+                            break;
+                        case PSStoreMode.SQL:
+                            _target1 = new FlatSQLStore();
+                            _target1.Load(this.Host);
+                            if (_config1.ActiveChanged)
+                                _target1.Active = _config1.Active;
+                            if (_config1.MaxRowsChanged)
+                                _target1.MaxRows = _config1.MaxRows;
+                            if (!string.IsNullOrEmpty(_config1.ConnectionString) && _config1.ConnectionStringChanged)
+                                _target1.ConnectionString = _config1.ConnectionString;
+                            if (_config1.IsAlwaysEncryptedChanged)
+                                _target1.IsAlwaysEncrypted = _config1.IsAlwaysEncrypted;
+                            if (!string.IsNullOrEmpty(_config1.AECCertificateThumbPrint) && _config1.AECCertificateThumbPrintChanged)
+                                _target1.ThumbPrint = _config1.AECCertificateThumbPrint;
+                            if (_config1.AECCertificateValidityChanged)
+                                _target1.CertificateValidity = _config1.AECCertificateValidity;
+                            if (_config1.AECCertificateReuseChanged)
+                                _target1.CertReuse = _config1.AECCertificateReuse;
+                            if (!string.IsNullOrEmpty(_config1.AECCryptoKeyName) && _config1.AECCryptoKeyNameChanged)
+                                _target1.KeyName = _config1.AECCryptoKeyName;
+                            break;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                this.ThrowTerminatingError(new ErrorRecord(ex, "3023", ErrorCategory.OperationStopped, this));
+            }
+        }
+
+        /// <summary>
+        /// ProcessRecord method override
+        /// </summary>
+        protected override void ProcessRecord()
+        {
+            if (ShouldProcess("MFA Store Configuration"))
+            {
+                try
+                {
+                    if (_configchanged)
+                    {
+                        switch (Store)
+                        {
+                            case PSStoreMode.ADDS:
+                                if (Config is PSADDSStore)
+                                    ((FlatADDSStore)((PSADDSStore)Config)).Update(this.Host);
+                                else
+                                    throw new Exception("Invalid DataStore Type !");
+                                break;
+                            case PSStoreMode.SQL:
+                                if (Config is PSSQLStore)
+                                    ((FlatSQLStore)((PSSQLStore)Config)).Update(this.Host);
+                                else
+                                    throw new Exception("Invalid DataStore  Type !");
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        switch (Store)
+                        {
+                            case PSStoreMode.ADDS:
+                                if (_target0 != null) 
+                                    _target0.Update(this.Host);
+                                else
+                                    throw new Exception("Invalid ADDS DataStore Type !");
+                                break;
+                            case PSStoreMode.SQL:
+                                if (_target1 != null)
+                                    _target1.Update(this.Host);
+                                else
+                                    throw new Exception("Invalid SQL DataStore  Type !");
+                                break;
+                        }
+                    }
+                    this.WriteVerbose(infos_strings.InfosConfigUpdated);
+                }
+                catch (Exception ex)
+                {
+                    this.ThrowTerminatingError(new ErrorRecord(ex, "3024", ErrorCategory.OperationStopped, this));
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// <para type="description">Set TOTP Provider configuration data.</para>
+    /// </summary>
+    public class ADDSStoreDynamicParameters
+    {
+        private bool _active;
+        private string _keyattribute;
+        private string _mailattribute;
+        private string _phoneattribute;
+        private string _methodattribute;
+        private string _overridemethodattribute;
+        private string _enabledattribute;
+        private string _pinattribute;
+        private string _publickeycredentialattribute;
+        private string _clientcertificateattribute;
+        private string _rsacertificateattribute;
+        private int _maxrows = 10000;
+
+        internal bool ActiveChanged { get; private set; } = false;
+        internal bool KeyAttributeChanged { get; private set; } = false;
+        internal bool MailAttributeChanged { get; private set; } = false;
+        internal bool PhoneAttributeChanged { get; private set; } = false;
+        internal bool MethodAttributeChanged { get; private set; } = false;
+        internal bool OverrideMethodAttributeChanged { get; private set; } = false;
+        internal bool EnabledAttributeChanged { get; private set; } = false;
+        internal bool PinAttributeChanged { get; private set; } = false;
+        internal bool PublicKeyCredentialAttributeChanged { get; private set; } = false;
+        internal bool ClientCertificateAttributeChanged { get; private set; } = false;
+        internal bool RSACertificateAttributeChanged { get; private set; } = false;
+        internal bool MaxRowsChanged { get; private set; } = false;
+
+        /// <summary>
+        /// <para type="description">If true, users metadata are stored in ADDS attributes.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public bool Active
+        {
+            get { return _active; }
+            set
+            {
+                _active = value;
+                ActiveChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">ADDS attribute name user to store user secret key (default msDS-cloudExtensionAttribute10).</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public string KeyAttribute
+        {
+            get { return _keyattribute; }
+            set
+            {
+                _keyattribute = value;
+                KeyAttributeChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">ADDS attribute name used to store user custom mail address (default msDS-cloudExtensionAttribute11).</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public string MailAttribute
+        {
+            get { return _mailattribute; }
+            set
+            {
+                _mailattribute = value;
+                MailAttributeChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">ADDS attribute name used to store user phone number (default msDS-cloudExtensionAttribute12).</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public string PhoneAttribute
+        {
+            get { return _phoneattribute; }
+            set
+            {
+                _phoneattribute = value;
+                PhoneAttributeChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">ADDS attribute name used to store user preferred method (Code, Phone, Mail) (default msDS-cloudExtensionAttribute13).</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public string MethodAttribute
+        {
+            get { return _methodattribute; }
+            set
+            {
+                _methodattribute = value;
+                MethodAttributeChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">ADDS attribute name used to store user preferred method (Code, Phone, Mail) (default msDS-cloudExtensionAttribute14).</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public string OverrideMethodAttribute
+        {
+            get { return _overridemethodattribute; }
+            set
+            {
+                _overridemethodattribute = value;
+                OverrideMethodAttributeChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">ADDS attribute name used to store user status with MFA (default msDS-cloudExtensionAttribute18).</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public string EnabledAttribute
+        {
+            get { return _enabledattribute; }
+            set
+            {
+                _enabledattribute = value;
+                EnabledAttributeChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">ADDS attribute name used to store user pin code (default msDS-cloudExtensionAttribute15).</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public string PinAttribute
+        {
+            get { return _pinattribute; }
+            set
+            {
+                _pinattribute = value;
+                PinAttributeChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">ADDS attribute name used to store multiple user Public Keys Credential (recommended msDS-KeyCredentialLink or othetMailbox).</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public string PublicKeyCredentialAttribute
+        {
+            get { return _publickeycredentialattribute; }
+            set
+            {
+                _publickeycredentialattribute = value;
+                PublicKeyCredentialAttributeChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">ADDS attribute name used to store Client Certificate (default msDS-cloudExtensionAttribute16).</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public string ClientCertificateAttribute
+        {
+            get { return _clientcertificateattribute; }
+            set
+            {
+                _clientcertificateattribute = value;
+                ClientCertificateAttributeChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">ADDS attribute name used to store RSA Certificate (default msDS-cloudExtensionAttribute17).</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public string RSACertificateAttribute
+        {
+            get { return _rsacertificateattribute; }
+            set
+            {
+                _rsacertificateattribute = value;
+                RSACertificateAttributeChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">ADDS attribute name used to store RSA Certificate (default msDS-cloudExtensionAttribute17).</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateRange(-1, 1000000)]
+        public int MaxRows
+        {
+            get { return _maxrows; }
+            set
+            {
+                _maxrows = value;
+                MaxRowsChanged = true;
+            }
+        }
+    }
+
+    /// <summary>
+    /// <para type="description">Set value for SQL Store.</para>
+    /// </summary>
+    public class SQLStoreDynamicParameters
+    {
+        private bool _active;
+        private int _maxrows;
+        private string _connectionstring;
+        private string _aeccertificatethumbprint;
+        private bool _isalwaysencrypted;
+        private int _certificatevalidity;
+        private bool _certificatereuse;
+        private string _cryptokeyname;
+
+        internal bool ActiveChanged { get; private set; } = false;
+        internal bool MaxRowsChanged { get; private set; } = false;
+        internal bool ConnectionStringChanged { get; private set; } = false;
+        internal bool IsAlwaysEncryptedChanged { get; private set; } = false;
+        internal bool AECCertificateThumbPrintChanged { get; private set; } = false;
+        internal bool AECCertificateValidityChanged { get; private set; } = false;
+        internal bool AECCertificateReuseChanged { get; private set; }
+        internal bool AECCryptoKeyNameChanged { get; private set; }
+
+
+
+        /// <summary>
+        /// <para type="description">If true, users metadata are stored in SQL database.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public bool Active
+        {
+            get { return _active; }
+            set
+            {
+                _active = value;
+                ActiveChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Get or Set the connection string used to access MFA SQL Database.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public string ConnectionString
+        {
+            get { return _connectionstring; }
+            set
+            {
+                _connectionstring = value;
+                ConnectionStringChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Get or Set the max rows limit used to access MFA SQL Database.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateRange(-1, 1000000)]
+        public int MaxRows
+        {
+            get { return _maxrows; }
+            set
+            {
+                _maxrows = value;
+                MaxRowsChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Get or Set the SQLServer 2016 and up Always Encrypted feature. default = false.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public bool IsAlwaysEncrypted
+        {
+            get { return _isalwaysencrypted; }
+            set
+            {
+                _isalwaysencrypted = value;
+                IsAlwaysEncryptedChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Get or Set the validity of the generated certificate (in years, 5 per default).</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateRange(1, 100)]
+        public int AECCertificateValidity
+        {
+            get { return _certificatevalidity; }
+            set
+            {
+                _certificatevalidity = value;
+                AECCertificateValidityChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Get or Set the SQLServer 2016 and up Always Encrypted feature Thumprint.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public string AECCertificateThumbPrint
+        {
+            get { return _aeccertificatethumbprint; }
+            set
+            {
+                _aeccertificatethumbprint = value;
+                AECCertificateThumbPrintChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Get or Set the indicating if we are reusing an existing certificate.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public bool AECCertificateReuse
+        {
+            get { return _certificatereuse; }
+            set
+            {
+                _certificatereuse = value;
+                AECCertificateReuseChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Get or Set the SQLServer 2016 crypting key name.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public string AECCryptoKeyName
+        {
+            get { return _cryptokeyname; }
+            set
+            {
+                _cryptokeyname = value;
+                AECCryptoKeyNameChanged = true;
+            }
+        }
+    }
+    #endregion
+
+    #region Set-MFAActiveDirectoryTemplate
+    /// <summary>
+    /// <para type="synopsis">Set basic Firewall rules for MFA inter servers communication.</para>
+    /// <para type="description">Set basic Firewall rules for MFA inter servers communication.</para>
+    /// </summary>
+    /// <example>
+    ///   <para>Set-MFAActiveDirectoryTemplate -Kind SchemaAll | Schema2016 | SchemaMFA </para>
+    /// </example>
+    [Cmdlet(VerbsCommon.Set, "MFAActiveDirectoryTemplate", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
+    public sealed class SetMFAActiveDirectoryTemplate : MFACmdlet
+    {
+        /// <summary>
+        /// <para type="description">Template type for ADDS Attributes configuration.</para>
+        /// </summary>
+        [Parameter(Mandatory = true, ParameterSetName = "Data")]
+        public PSADDSTemplateKind Kind { get; set; } = PSADDSTemplateKind.SchemaAll;
+
+        /// <summary>
+        /// ProcessRecord method override
+        /// </summary>
+        protected override void ProcessRecord()
+        {
+            if (ShouldProcess("ADDS Attributes template Configuration"))
+            {
+                try
+                {
+                    PSADDSStore.SetADDSAttributesTemplate(Kind);
+                    this.WriteVerbose(infos_strings.InfosConfigUpdated);
+                }
+                catch (Exception ex)
+                {
+                    this.ThrowTerminatingError(new ErrorRecord(ex, "4025", ErrorCategory.OperationStopped, this));
+                }
+            }
+        }
+    }
+
+    #endregion
+
+
+    #region Get-MFAProvider
+    /// <summary>
+    ///     <para type="synopsis">Get MFA Provider Configuration.</para>
+    ///     <para type="description">Get MFA Provider configuration options.</para>
+    ///     <para type="description"></para>
+    /// </summary>
+    /// <example>
+    ///     <para>Get-MFAProvider -ProviderType External</para>
+    ///     <para>Get MFA Provider configuration for (Code, Email, External, Azure, Biometrics)</para>
+    /// </example>
+    [Cmdlet(VerbsCommon.Get, "MFAProvider", SupportsShouldProcess = true, SupportsPaging = false, ConfirmImpact = ConfirmImpact.Medium, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
+    [OutputType(typeof(PSTOTPProvider), typeof(PSMailProvider), typeof(PSExternalProvider), typeof(PSAzureProvider), typeof(PSBiometricProvider))]
+    public sealed class GetMFAProvider : MFACmdlet
+    {
+        private PSTOTPProvider _config0;
+        private PSMailProvider _config1;
+        private PSExternalProvider _config2;
+        private PSAzureProvider _config3;
+        private PSBiometricProvider _config4;
+
+        /// <summary>
+        /// <para type="description">Provider Type parameter, (Code, Email, External, Azure, Biometrics) Required.</para>
+        /// </summary>
+        [Parameter(Mandatory = true, Position = 0, ParameterSetName = "Data", ValueFromPipeline = true)]
+        [ValidateSet("Code", "Email", "External", "Azure", "Biometrics", IgnoreCase = true)]
+        public PSProviderType ProviderType { get; set; } = PSProviderType.Code;
+
+        /// <summary>
+        /// BeginProcessing method implementation
+        /// </summary>
+        protected override void BeginProcessing()
+        {
+            base.BeginProcessing();
+            try
+            {
+                switch (ProviderType)
+                {
+                    case PSProviderType.Code:
+                        FlatTOTPProvider cf0 = new FlatTOTPProvider();
+                        cf0.Load(this.Host);
+                        _config0 = (PSTOTPProvider)cf0;
+                        break;
+                    case PSProviderType.Email:
+                        FlatMailProvider cf1 = new FlatMailProvider();
+                        cf1.Load(this.Host);
+                        _config1 = (PSMailProvider)cf1;
+                        break;
+                    case PSProviderType.External:
+                        FlatExternalProvider cf2 = new FlatExternalProvider();
+                        cf2.Load(this.Host);
+                        _config2 = (PSExternalProvider)cf2;
+                        break;
+                    case PSProviderType.Azure:
+                        FlatAzureProvider cf3 = new FlatAzureProvider();
+                        cf3.Load(this.Host);
+                        _config3 = (PSAzureProvider)cf3;
+                        break;
+                    case PSProviderType.Biometrics:
+                        FlatBiometricProvider cf4 = new FlatBiometricProvider();
+                        cf4.Load(this.Host);
+                        _config4 = (PSBiometricProvider)cf4;
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                this.ThrowTerminatingError(new ErrorRecord(ex, "3021", ErrorCategory.OperationStopped, this));
+            }
+        }
+
+        /// <summary>
+        /// EndProcessing method implementation
+        /// </summary>
+        protected override void EndProcessing()
+        {
+            _config0 = null;
+            _config1 = null;
+            _config2 = null;
+            _config3 = null;
+            _config4 = null;
+            base.EndProcessing();
+        }
+
+        /// <summary>
+        /// ProcessInternalRecord method override
+        /// </summary>
+        protected override void ProcessRecord()
+        {
+            try
+            {
+                if (ShouldProcess("MFA Mails Configuration"))
+                {
+                    switch (ProviderType)
+                    {
+                        case PSProviderType.Code:
+                            WriteObject(_config0);
+                            break;
+                        case PSProviderType.Email:
+                            WriteObject(_config1);
+                            break;
+                        case PSProviderType.External:
+                            WriteObject(_config2);
+                            break;
+                        case PSProviderType.Azure:
+                            WriteObject(_config3);
+                            break;
+                        case PSProviderType.Biometrics:
+                            WriteObject(_config4);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                this.ThrowTerminatingError(new ErrorRecord(ex, "3022", ErrorCategory.OperationStopped, this));
+            }
+        }
+
+        /// <summary>
+        /// StopProcessing method implementation
+        /// </summary>
+        protected override void StopProcessing()
+        {
+            _config0 = null;
+            _config1 = null;
+            _config2 = null;
+            _config3 = null;
+            _config4 = null;
+            base.StopProcessing();
+        }
+    }
+    #endregion
+
+    #region Set-MFAProvider
+    /// <summary>
+    /// <para type="synopsis">Set MFA Provider Configuration.</para>
+    /// <para type="description">Set MFA Provider configuration options.</para>
+    /// </summary>
+    /// <example>
+    ///   <para>Set-MFAProvider -ProviderType Code -Data $cfg</para>
+    /// </example>
+    /// <example>
+    ///   <para>$cfg = Get-MFAProvider -ProviderType email</para>
+    ///   <para>$cfg.Host = smtp.office365.com</para>
+    ///   <para>Set-MFAProvider Email $cfg</para>
+    /// </example>
+    /// <example>
+    ///   <para></para>
+    ///   <para>$cfg = Get-MFAProvider -ProviderType email</para>
+    ///   <para>$cfg.MailOTP.Templates</para>
+    ///   <para>$cfg.MailOTP.AddTemplate(1036, "c:\temp\mytemplate.html")</para>
+    ///   <para>$cfg.MailOTP.SetTemplate(1033, "c:\temp\mytemplate2.html")</para>
+    ///   <para>$cfg.MailOTP.RemoveTemplate(1033)</para>
+    ///   <para>Set-MFAProvider -ProviderType email $cfg</para>
+    /// </example>
+    /// <example>
+    ///   <para>Set-MFAProvider -ProviderType email -UserName user@domain.com -Password p@ssw0rd</para>
+    /// </example>
+    [Cmdlet(VerbsCommon.Set, "MFAProvider", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
+    [PrimaryServerRequired]
+    public sealed class SetMFAProvider : MFACmdlet, IDynamicParameters
+    {
+        private TOTPDynamicParameters _config0;
+        private MailDynamicParameters _config1;
+        private ExternalDynamicParameters _config2;
+        private AzureDynamicParameters _config3;
+        private BiometricDynamicParameters _config4;
+
+        private FlatTOTPProvider _target0;
+        private FlatMailProvider _target1;
+        private FlatExternalProvider _target2;
+        private FlatAzureProvider _target3;
+        private FlatBiometricProvider _target4;
+        private PSBaseProvider _config;
+
+        private bool ConfigChanged { get; set; }
+
+        /// <summary>
+        /// <para type="description">Provider Type parameter, (Code, Email, External, Azure, Biometrics) Required.</para>
+        /// </summary>
+        [Parameter(Mandatory = true, Position = 0, ParameterSetName = "Data", ValueFromPipeline = true)]
+        [Parameter(Mandatory = true, Position = 0, ParameterSetName = "Identity")]
+        [ValidateRange(PSProviderType.Code, PSProviderType.Biometrics)]
+        public PSProviderType ProviderType { get; set; } = PSProviderType.Code;
+
+        /// <summary>
+        /// <para type="description">Config parameter, a variable of type PSConfigSQL.</para>
+        /// </summary>
+        [Parameter(Mandatory = true, Position = 1, ParameterSetName = "Data", ValueFromPipeline = true, DontShow = true)]
+        [ValidateNotNullOrEmpty()]
+        public PSBaseProvider Config
+        {
+            get { return _config; }
+            set
+            {
+                _config = value;
+                ConfigChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Set the value of Provider configuration.</para>
+        /// GetDynamicParameters implementation
+        /// </summary>
+        public object GetDynamicParameters()
+        {
+            if (!ConfigChanged)
+            {
+
+                switch (ProviderType)
+                {
+                    case PSProviderType.Code:
+                        _config0 = new TOTPDynamicParameters();
+                        return _config0;
+                    case PSProviderType.Email:
+                        _config1 = new MailDynamicParameters();
+                        return _config1;
+                    case PSProviderType.External:
+                        _config2 = new ExternalDynamicParameters();
+                        return _config2;
+                    case PSProviderType.Azure:
+                        _config3 = new AzureDynamicParameters();
+                        return _config3;
+                    case PSProviderType.Biometrics:
+                        _config4 = new BiometricDynamicParameters();
+                        return _config4;
+
+                    default:
+                        break;
+                }
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// BeginProcessing method override
+        /// </summary>
+        protected override void BeginProcessing()
+        {
+            base.BeginProcessing();
+            try
+            {
+                if (!ConfigChanged)
+                {
+                    ManagementService.Initialize(this.Host, true);
+                    switch (ProviderType)
+                    {
+                        case PSProviderType.Code:
+                            _target0 = new FlatTOTPProvider();
+                            _target0.Load(this.Host);
+                            if (_config0.EnabledChanged)
+                                _target0.Enabled = _config0.Enabled;
+                            if (_config0.ForceWizardChanged)
+                                _target0.ForceWizard = (ForceWizardMode)_config0.ForceWizard;
+                            if (_config0.EnrollWizardChanged)
+                                _target0.EnrollWizard = _config0.EnrollWizard;
+                            if (_config0.IsRequiredChanged)
+                                _target0.IsRequired = _config0.IsRequired;
+                            if (_config0.PinRequiredChanged)
+                                _target0.PinRequired = _config0.PinRequired;
+                            if (_config0.FullyQualifiedImplementationChanged)
+                                _target0.FullyQualifiedImplementation= _config0.FullyQualifiedImplementation;
+                            if (_config0.ParametersChanged)
+                                _target0.Parameters = _config0.Parameters;
+
+                            if (_config0.WizardOptionsChanged)
+                                _target0.WizardOptions = (OTPWizardOptions)_config0.WizardOptions;
+                            if (_config0.AlgorithmChanged)
+                                _target0.Algorithm = (HashMode)_config0.Algorithm;
+                            if (_config0.TOTPShadowsChanged)
+                                _target0.TOTPShadows = _config0.TOTPShadows;
+                            if (_config0.KeySizeModeChanged)
+                                _target0.KeySize = (KeySizeMode)_config0.KeySize;
+                            if (_config0.SecretFormatChanged)
+                                _target0.KeysFormat = (SecretKeyFormat)_config0.KeysFormat;
+                            break;
+                        case PSProviderType.Email:
+                            _target1 = new FlatMailProvider();
+                            _target1.Load(this.Host);
+                            if (_config1.EnabledChanged)
+                                _target1.Enabled = _config1.Enabled;
+                            if (_config1.ForceWizardChanged)
+                                _target1.ForceWizard = (ForceWizardMode)_config1.ForceWizard;
+                            if (_config1.EnrollWizardChanged)
+                                _target1.EnrollWizard = _config1.EnrollWizard;
+                            if (_config1.IsRequiredChanged)
+                                _target1.IsRequired = _config1.IsRequired;
+                            if (_config1.PinRequiredChanged)
+                                _target1.PinRequired = _config1.PinRequired;
+                            if (_config1.FullyQualifiedImplementationChanged)
+                                _target1.FullyQualifiedImplementation = _config1.FullyQualifiedImplementation;
+                            if (_config1.ParametersChanged)
+                                _target1.Parameters = _config1.Parameters;
+
+                            if (_config1.FromChanged)
+                                _target1.From = _config1.From;
+                            if (_config1.UserNameChanged)
+                                _target1.UserName = _config1.UserName;
+                            if (_config1.PasswordChanged)
+                                _target1.Password = _config1.Password;
+                            if (_config1.HostChanged)
+                                _target1.Host = _config1.Host;
+                            if (_config1.PortChanged)
+                                _target1.Port = _config1.Port;
+                            if (_config1.UseSSLChanged)
+                                _target1.UseSSL = _config1.UseSSL;
+                            if (_config1.CompanyChanged)
+                                _target1.Company = _config1.Company;
+                            if (_config1.AnonymousChanged)
+                                _target1.Anonymous = _config1.Anonymous;
+                            if (_config1.DeliveryNotificationsChanged)
+                                _target1.DeliveryNotifications = _config1.DeliveryNotifications;
+                            break;
+                        case PSProviderType.External:
+                            _target2 = new FlatExternalProvider();
+                            _target2.Load(this.Host);
+                            if (_config2.EnabledChanged)
+                                _target2.Enabled = _config2.Enabled;
+                            if (_config2.ForceWizardChanged)
+                                _target2.ForceWizard = (ForceWizardMode)_config2.ForceWizard;
+                            if (_config2.EnrollWizardChanged)
+                                _target2.EnrollWizard = _config2.EnrollWizard;
+                            if (_config2.IsRequiredChanged)
+                                _target2.IsRequired = _config2.IsRequired;
+                            if (_config2.PinRequiredChanged)
+                                _target2.PinRequired = _config2.PinRequired;
+                            if (_config2.FullyQualifiedImplementationChanged)
+                                _target2.FullyQualifiedImplementation = _config2.FullyQualifiedImplementation;
+                            if (_config2.ParametersChanged)
+                                _target2.Parameters = _config2.Parameters;
+
+                            if (_config2.CompanyChanged)
+                                _target2.Company = _config2.Company;
+                            if (_config2.Sha1SaltChanged)
+                                _target2.Sha1Salt = _config2.Sha1Salt;
+                            if (_config2.IsTwoWayChanged)
+                                _target2.IsTwoWay = _config2.IsTwoWay;
+                            if (_config2.TimeOutChanged)
+                                _target2.Timeout = _config2.Timeout;
+                            break;
+                        case PSProviderType.Azure:
+                            _target3 = new FlatAzureProvider();
+                            _target3.Load(this.Host);
+                            if (_config3.EnabledChanged)
+                                _target3.Enabled = _config3.Enabled;
+                            if (_config3.ForceWizardChanged)
+                                _target3.ForceWizard = (ForceWizardMode)_config3.ForceWizard;
+                            if (_config3.EnrollWizardChanged)
+                                _target3.EnrollWizard = _config3.EnrollWizard;
+                            if (_config3.IsRequiredChanged)
+                                _target3.IsRequired = _config3.IsRequired;
+                            if (_config3.PinRequiredChanged)
+                                _target3.PinRequired = _config3.PinRequired;
+                            if (_config3.FullyQualifiedImplementationChanged)
+                                _target3.FullyQualifiedImplementation = _config3.FullyQualifiedImplementation;
+                            if (_config3.ParametersChanged)
+                                _target3.Parameters = _config3.Parameters;
+
+                            if (_config3.TenantIdChanged)
+                                _target3.TenantId = _config3.TenantId;
+                            if (_config3.ThumbPrintChanged)
+                                _target3.ThumbPrint = _config3.Thumbprint;
+                            break;
+                        case PSProviderType.Biometrics:
+                            _target4 = new FlatBiometricProvider();
+                            _target4.Load(this.Host);
+                            if (_config4.EnabledChanged)
+                                _target4.Enabled = _config4.Enabled;
+                            if (_config4.ForceWizardChanged)
+                                _target4.ForceWizard = (ForceWizardMode)_config4.ForceWizard;
+                            if (_config4.EnrollWizardChanged)
+                                _target4.EnrollWizard = _config4.EnrollWizard;
+                            if (_config4.IsRequiredChanged)
+                                _target4.IsRequired = _config4.IsRequired;
+                            if (_config4.PinRequiredChanged)
+                                _target4.PinRequired = _config4.PinRequired;
+                            if (_config4.FullyQualifiedImplementationChanged)
+                                _target4.FullyQualifiedImplementation = _config4.FullyQualifiedImplementation;
+                            if (_config4.ParametersChanged)
+                                _target4.Parameters = _config4.Parameters;
+
+                            if (_config4.ChallengeSizeChanged)
+                                _target4.ChallengeSize = _config4.ChallengeSize;
+                            if (_config4.OriginChanged)
+                                _target4.Origin = _config4.Origin;
+                            if (_config4.ServerNameChanged)
+                                _target4.ServerName = _config4.ServerName;
+                            if (_config4.ServerDomainChanged)
+                                _target4.ServerDomain = _config4.ServerDomain;
+                            if (_config4.DirectLoginChanged)
+                                _target4.DirectLogin = _config4.DirectLogin;
+                            if (_config4.TimeToleranceChanged)
+                                _target4.TimestampDriftTolerance = _config4.TimestampDriftTolerance;
+                            if (_config4.TimeoutChanged)
+                                _target4.Timeout = _config4.Timeout;
+                            break;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                this.ThrowTerminatingError(new ErrorRecord(ex, "3023", ErrorCategory.OperationStopped, this));
+            }
+        }
+
+        /// <summary>
+        /// ProcessRecord method override
+        /// </summary>
+        protected override void ProcessRecord()
+        {
+            const string error = "Invalid Provider Type !";
+            if (ShouldProcess("MFA Providers Configuration"))
+            {
+                try
+                {
+                    if (ConfigChanged)
+                    {
+                        switch (ProviderType)
+                        {
+                            case PSProviderType.Code:
+                                if (Config is PSTOTPProvider)
+                                    ((FlatTOTPProvider)((PSTOTPProvider)Config)).Update(this.Host);
+                                else
+                                    throw new Exception(error);
+                                break;
+                            case PSProviderType.Email:
+                                if (Config is PSMailProvider)
+                                    ((FlatMailProvider)((PSMailProvider)Config)).Update(this.Host);
+                                else
+                                    throw new Exception(error);
+
+                                break;
+                            case PSProviderType.External:
+                                if (Config is PSExternalProvider)
+                                    ((FlatExternalProvider)((PSExternalProvider)Config)).Update(this.Host);
+                                else
+                                    throw new Exception(error);
+
+                                break;
+                            case PSProviderType.Azure:
+                                if (Config is PSAzureProvider)
+                                    ((FlatAzureProvider)((PSAzureProvider)Config)).Update(this.Host);
+                                else
+                                    throw new Exception(error);
+
+                                break;
+                            case PSProviderType.Biometrics:
+                                if (Config is PSBiometricProvider)
+                                    ((FlatBiometricProvider)((PSBiometricProvider)Config)).Update(this.Host);
+                                else
+                                    throw new Exception(error);
+                                break;
+                            default:
+                                throw new Exception(error);
+                        }
+                    }
+                    else
+                    {
+                        switch (ProviderType)
+                        {
+                            case PSProviderType.Code:
+                                if (_target0 != null)
+                                    _target0.Update(this.Host);
+                                else
+                                    throw new Exception(error);
+                                break;
+                            case PSProviderType.Email:
+                                if (_target1 != null)
+                                    _target1.Update(this.Host);
+                                else
+                                    throw new Exception(error);
+                                break;
+                            case PSProviderType.External:
+                                if (_target2 != null)
+                                    _target2.Update(this.Host);
+                                else
+                                    throw new Exception(error);
+                                break;
+                            case PSProviderType.Azure:
+                                if (_target3 != null)
+                                    _target3.Update(this.Host);
+                                else
+                                    throw new Exception(error);
+                                break;
+                            case PSProviderType.Biometrics:
+                                if (_target4 != null)
+                                    _target4.Update(this.Host);
+                                else
+                                    throw new Exception(error);
+                                break;
+                            default:
+                                throw new Exception(error);
+                        }
+                    }
+                    this.WriteVerbose(infos_strings.InfosConfigUpdated);
+                }
+                catch (Exception ex)
+                {
+                    this.ThrowTerminatingError(new ErrorRecord(ex, "3024", ErrorCategory.OperationStopped, this));
+                }
+            }
+        }
+
+        /// <summary>
+        /// EndProcessing method implementation
+        /// </summary>
+        protected override void EndProcessing()
+        {
+            _config0 = null;
+            _config1 = null;
+            _config2 = null;
+            _config3 = null;
+            _config4 = null;
+            base.EndProcessing();
+        }
+
+        /// <summary>
+        /// StopProcessing method implementation
+        /// </summary>
+        protected override void StopProcessing()
+        {
+            _config0 = null;
+            _config1 = null;
+            _config2 = null;
+            _config3 = null;
+            _config4 = null;
+            base.StopProcessing();
+        }
+    }
+
+    /// <summary>
+    /// <para type="description">Set TOTP Provider configuration data.</para>
+    /// </summary>
+    public class TOTPDynamicParameters
+    {
+        private bool _enabled = true;
+        private bool _enrollwizard = true;
+        private ForceWizardMode _forcewizard = ForceWizardMode.Disabled;
+        private bool _pinrequired = false;
+        private bool _isrequired = false;
+        private string _fullyqualifiedimplementation;
+        private string _parameters;
+        private int _totpshadows = 2;
+        private PSHashMode _algorithm = PSHashMode.SHA1;
+        private PSOTPWizardOptions _wizardoptions = PSOTPWizardOptions.All;
+        private PSSecretKeyFormat _secretformat = PSSecretKeyFormat.RNG;
+        private PSKeySizeMode _keysizemode = PSKeySizeMode.KeySizeDefault;
+
+        internal bool AlgorithmChanged { get; private set; }
+        internal bool TOTPShadowsChanged { get; private set; }
+        internal bool ParametersChanged { get; private set; }
+        internal bool FullyQualifiedImplementationChanged { get; private set; }
+        internal bool IsRequiredChanged { get; private set; }
+        internal bool PinRequiredChanged { get; private set; }
+        internal bool ForceWizardChanged { get; private set; }
+        internal bool EnabledChanged { get; private set; }
+        internal bool EnrollWizardChanged { get; private set; }
+        internal bool WizardOptionsChanged { get; private set; }      
+
+        internal bool KeySizeModeChanged { get; private set; }
+        internal bool SecretFormatChanged { get; private set; }
+
+        /// <summary>
+        /// <para type="description">Provider Enabled property.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public bool Enabled
+        {
+            get { return _enabled; }
+            set
+            {
+                _enabled = value;
+                EnabledChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Provider Enrollment Wizard Enabled property.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public bool EnrollWizard
+        {
+            get { return _enrollwizard; }
+            set
+            {
+                _enrollwizard = value;
+                EnrollWizardChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Provider Force Wizard if user dosen't complete during signing.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateSet("Disabled", "Enabled", "Strict", IgnoreCase = true)]
+        public ForceWizardMode ForceWizard
+        {
+            get { return _forcewizard; }
+            set
+            {
+                _forcewizard = value;
+                ForceWizardChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Force users to use this provider (mandatory for registration or not).</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public bool IsRequired
+        {
+            get { return _isrequired; }
+            set
+            {
+                _isrequired = value;
+                IsRequiredChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Set if additionnal verification with PIN (locally administered) must be done.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public bool PinRequired
+        {
+            get { return _pinrequired; }
+            set
+            {
+                _pinrequired = value;
+                PinRequiredChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Full qualified implementation class for replacing default provider.</para>
+        /// </summary>       
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public string FullyQualifiedImplementation
+        {
+            get { return _fullyqualifiedimplementation; }
+            set
+            {
+                _fullyqualifiedimplementation = value;
+                FullyQualifiedImplementationChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Full qualified implementation parameters for replacing default provider.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public string Parameters
+        {
+            get { return _parameters; }
+            set
+            {
+                _parameters = value;
+                ParametersChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">TOTP Provider Shadow codes. 2 by default</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateRange(1, 10)]
+        public int TOTPShadows
+        {
+            get { return _totpshadows; }
+            set
+            {
+                _totpshadows = value;
+                TOTPShadowsChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">TOTP Provider Hash algorithm. SHA1 by default</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateSet("SHA1", "SHA256", "SHA384", "SHA512", IgnoreCase = true)]
+        public PSHashMode Algorithm
+        {
+            get { return _algorithm; }
+            set
+            {
+                _algorithm = value;
+                AlgorithmChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Set TOP Wizard Application list enabled/ disabled.</para>
+        ///         /// <summary>
+        /// <para type="description">All, all links are displayed.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateSet("All", "NoMicrosoftAuthenticator", "NoGoogleAuthenticator", "NoAuthyAuthenticator", "NoGooglSearch", IgnoreCase = true)]
+        public PSOTPWizardOptions WizardOptions
+        {
+            get { return _wizardoptions; }
+            set
+            {
+                _wizardoptions = value;
+                WizardOptionsChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Type of generated Keys for users (RNG, RSA, CUSTOM RSA).</para>
+        /// <para type="description">Changing the key format, invalidate all the users secret keys previously used.</para>
+        /// <para type="description">RSA and RSA Custom are using Certificates. Custom RSA must Use Specific database to the keys and certs, one for each user, see New-MFASecretKeysDatabase cmdlet.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateSet("RNG", "RSA", "CUSTOM", IgnoreCase = true)]
+        public PSSecretKeyFormat KeysFormat
+        {
+            get { return _secretformat; }
+            set
+            {
+                _secretformat = value;
+                SecretFormatChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Used to trim the key at a fixed size, when you use RSA the key is very long, and QRCode is often too big for TOTP Application (1024 is a good size, even if RSA key is 2048 bytes long).</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateSet("KeySizeDefault", "KeySize128", "KeySize256", "KeySize384", "KeySize512", "KeySize1024", "KeySize2048", IgnoreCase = true)]
+        public PSKeySizeMode KeySize
+        {
+            get { return _keysizemode; }
+            set
+            {
+                _keysizemode = value;
+                KeySizeModeChanged = true;
+            }
+        }
+    }
+
+    /// <summary>
+    /// <para type="description">Set Mail Provider configuration data.</para>
+    /// </summary>
+    public class MailDynamicParameters
+    {
+        private bool _enabled;
+        private bool _enrollwizard;
+        private ForceWizardMode _forcewizard = ForceWizardMode.Disabled;
+        private bool _pinrequired;
+        private bool _isrequired;
+        private string _fullyqualifiedimplementation;
+        private string _parameters;
+
+        private string _from;
+        private string _username;
+        private string _password;
+        private string _host;
+        private int _port;
+        private bool _usessl;
+        private string _company;
+        private bool _anonymous;
+        private bool _deliverynotifications;
+
+        internal bool DeliveryNotificationsChanged { get; private set; }
+        internal bool AnonymousChanged { get; private set; }
+        internal bool CompanyChanged { get; private set; }
+        internal bool UseSSLChanged { get; private set; }
+        internal bool PortChanged { get; private set; }
+        internal bool HostChanged { get; private set; }
+        internal bool PasswordChanged { get; private set; }
+        internal bool UserNameChanged { get; private set; }
+        internal bool FromChanged { get; private set; }
+        internal bool ParametersChanged { get; private set; }
+        internal bool FullyQualifiedImplementationChanged { get; private set; }
+        internal bool IsRequiredChanged { get; private set; }
+        internal bool PinRequiredChanged { get; private set; }
+        internal bool ForceWizardChanged { get; private set; }
+        internal bool EnabledChanged { get; private set; }
+        internal bool EnrollWizardChanged { get; private set; }
+
+        /// <summary>
+        /// <para type="description">Provider Enabled property.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public bool Enabled
+        {
+            get { return _enabled; }
+            set
+            {
+                _enabled = value;
+                EnabledChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Provider Enrollment Wizard Enabled property.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public bool EnrollWizard
+        {
+            get { return _enrollwizard; }
+            set
+            {
+                _enrollwizard = value;
+                EnrollWizardChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Provider Force Wizard if user dosen't complete during signing.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateSet("Disabled", "Enabled", "Strict", IgnoreCase = true)]
+        public ForceWizardMode ForceWizard
+        {
+            get { return _forcewizard; }
+            set
+            {
+                _forcewizard = value;
+                ForceWizardChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Force users to use this provider (mandatory for registration or not).</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public bool IsRequired
+        {
+            get { return _isrequired; }
+            set
+            {
+                _isrequired = value;
+                IsRequiredChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Set if additionnal verification with PIN (locally administered) must be done.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public bool PinRequired
+        {
+            get { return _pinrequired; }
+            set
+            {
+                _pinrequired = value;
+                PinRequiredChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Full qualified implementation class for replacing default provider.</para>
+        /// </summary>       
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public string FullyQualifiedImplementation
+        {
+            get { return _fullyqualifiedimplementation; }
+            set
+            {
+                _fullyqualifiedimplementation = value;
+                FullyQualifiedImplementationChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Full qualified implementation parameters for replacing default provider.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public string Parameters
+        {
+            get { return _parameters; }
+            set
+            {
+                _parameters = value;
+                ParametersChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Mail from property.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public string From
+        {
+            get { return _from; }
+            set
+            {
+                _from = value;
+                FromChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Account Name used to access Mail platform.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public string UserName
+        {
+            get { return _username; }
+            set
+            {
+                _username = value;
+                UserNameChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Password used with Username to access Mail platform.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public string Password
+        {
+            get { return _password; }
+            set
+            {
+                _password = value;
+                PasswordChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Mail platform Host eg : smtp.office365.com.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public string Host
+        {
+            get { return _host; }
+            set
+            {
+                _host = value;
+                HostChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Mail platform IP Port eg : 587.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateRange(1, 65535)]
+        public int Port
+        {
+            get { return _port; }
+            set
+            {
+                _port = value;
+                PortChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Mail platform SSL option.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public bool UseSSL
+        {
+            get { return _usessl; }
+            set
+            {
+                _usessl = value;
+                UseSSLChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Your company description, tis is used in default mails contents.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public string Company
+        {
+            get { return _company; }
+            set
+            {
+                _company = value;
+                CompanyChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">indicate if connetion is Anonymous.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public bool Anonymous
+        {
+            get { return _anonymous; }
+            set
+            {
+                _anonymous = value;
+                AnonymousChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">if your want Delivery Failures, Delayed delivery or nothing (default).</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public bool DeliveryNotifications
+        {
+            get { return _deliverynotifications; }
+            set
+            {
+                _deliverynotifications = value;
+                DeliveryNotificationsChanged = true;
+            }
+        }
+    }
+
+    /// <summary>
+    /// <para type="description">Set External Provider configuration data.</para>
+    /// </summary>
+    public class ExternalDynamicParameters
+    {
+        private bool _enabled;
+        private bool _enrollwizard;
+        private ForceWizardMode _forcewizard = ForceWizardMode.Disabled;
+        private bool _pinrequired;
+        private bool _isrequired;
+        private string _fullyqualifiedimplementation;
+        private string _parameters;
+        private string _company;
+        private string _sha1salt;
+        private bool _istwoway;
+        private int _timeout;
+
+        internal bool TimeOutChanged { get; private set; }
+        internal bool IsTwoWayChanged { get; private set; }
+        internal bool Sha1SaltChanged { get; private set; }
+        internal bool CompanyChanged { get; private set; }
+        internal bool ParametersChanged { get; private set; }
+        internal bool FullyQualifiedImplementationChanged { get; private set; }
+        internal bool IsRequiredChanged { get; private set; }
+        internal bool PinRequiredChanged { get; private set; }
+        internal bool ForceWizardChanged { get; private set; }
+        internal bool EnabledChanged { get; private set; }
+        internal bool EnrollWizardChanged { get; private set; }
+
+        /// <summary>
+        /// <para type="description">Provider Enabled property.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public bool Enabled
+        {
+            get { return _enabled; }
+            set
+            {
+                _enabled = value;
+                EnabledChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Provider Enrollment Wizard Enabled property.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public bool EnrollWizard
+        {
+            get { return _enrollwizard; }
+            set
+            {
+                _enrollwizard = value;
+                EnrollWizardChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Provider Force Wizard if user dosen't complete during signing.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateSet("Disabled", "Enabled", "Strict", IgnoreCase = true)]
+        public ForceWizardMode ForceWizard
+        {
+            get { return _forcewizard; }
+            set
+            {
+                _forcewizard = value;
+                ForceWizardChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Force users to use this provider (mandatory for registration or not).</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public bool IsRequired
+        {
+            get { return _isrequired; }
+            set
+            {
+                _isrequired = value;
+                IsRequiredChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Set if additionnal verification with PIN (locally administered) must be done.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public bool PinRequired
+        {
+            get { return _pinrequired; }
+            set
+            {
+                _pinrequired = value;
+                PinRequiredChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Full qualified implementation class for replacing default provider.</para>
+        /// </summary>       
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public string FullyQualifiedImplementation
+        {
+            get { return _fullyqualifiedimplementation; }
+            set
+            {
+                _fullyqualifiedimplementation = value;
+                FullyQualifiedImplementationChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Full qualified implementation parameters for replacing default provider.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public string Parameters
+        {
+            get { return _parameters; }
+            set
+            {
+                _parameters = value;
+                ParametersChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">your company name, can be used to format External message sent to user.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public string Company
+        {
+            get { return _company; }
+            set
+            {
+                _company = value;
+                CompanyChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Optional Salt value, if your gateway support this feature.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public string Sha1Salt
+        {
+            get { return _sha1salt; }
+            set
+            {
+                _sha1salt = value;
+                Sha1SaltChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Pass parameter to your implemented provider, indicating if the mode is Request/Response</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public bool IsTwoWay
+        {
+            get { return _istwoway; }
+            set
+            {
+                _istwoway = value;
+                IsTwoWayChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">TimeOut Before cancelling operation</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateRange(30, 600)]
+        public int Timeout
+        {
+            get { return _timeout; }
+            set
+            {
+                _timeout = value;
+                TimeOutChanged = true;
+            }
+        }
+    }
+
+    /// <summary>
+    /// <para type="description">Set Azure Provider configuration data.</para>
+    /// </summary>
+    public class AzureDynamicParameters
+    {
+        private bool _enabled;
+        private bool _enrollwizard;
+        private ForceWizardMode _forcewizard = ForceWizardMode.Disabled;
+        private bool _pinrequired;
+        private bool _isrequired;
+        private string _fullyqualifiedimplementation;
+        private string _parameters;
+        private string _tenantid;
+        private string _thumbprint;
+
+        internal bool ThumbPrintChanged { get; private set; }
+        internal bool TenantIdChanged { get; private set; }
+        internal bool ParametersChanged { get; private set; }
+        internal bool FullyQualifiedImplementationChanged { get; private set; }
+        internal bool IsRequiredChanged { get; private set; }
+        internal bool PinRequiredChanged { get; private set; }
+        internal bool ForceWizardChanged { get; private set; }
+        internal bool EnabledChanged { get; private set; }
+        internal bool EnrollWizardChanged { get; private set; }
+
+        /// <summary>
+        /// <para type="description">Provider Enabled property.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public bool Enabled
+        {
+            get { return _enabled; }
+            set
+            {
+                _enabled = value;
+                EnabledChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Provider Enrollment Wizard Enabled property.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public bool EnrollWizard
+        {
+            get { return _enrollwizard; }
+            set
+            {
+                _enrollwizard = value;
+                EnrollWizardChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Provider Force Wizard if user dosen't complete during signing.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateSet("Disabled", "Enabled", "Strict", IgnoreCase = true)]
+        public ForceWizardMode ForceWizard
+        {
+            get { return _forcewizard; }
+            set
+            {
+                _forcewizard = value;
+                ForceWizardChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Force users to use this provider (mandatory for registration or not).</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public bool IsRequired
+        {
+            get { return _isrequired; }
+            set
+            {
+                _isrequired = value;
+                IsRequiredChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Set if additionnal verification with PIN (locally administered) must be done.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public bool PinRequired
+        {
+            get { return _pinrequired; }
+            set
+            {
+                _pinrequired = value;
+                PinRequiredChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Full qualified implementation class for replacing default provider.</para>
+        /// </summary>       
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public string FullyQualifiedImplementation
+        {
+            get { return _fullyqualifiedimplementation; }
+            set
+            {
+                _fullyqualifiedimplementation = value;
+                FullyQualifiedImplementationChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Full qualified implementation parameters for replacing default provider.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public string Parameters
+        {
+            get { return _parameters; }
+            set
+            {
+                _parameters = value;
+                ParametersChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">your Azure/o365 tenantId / tenant name.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public string TenantId
+        {
+            get { return _tenantid; }
+            set
+            {
+                _tenantid = value;
+                TenantIdChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Thumbprint of the Azure cetificate (Done when configuring Azure MFA.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public string Thumbprint
+        {
+            get { return _thumbprint; }
+            set
+            {
+                _thumbprint = value;
+                ThumbPrintChanged = true;
+            }
+        }
+    }
+
+    /// <summary>
+    /// <para type="description">Set Biometric Provider configuration data.</para>
+    /// </summary>
+    public class BiometricDynamicParameters
+    {
+        private bool _enabled;
+        private bool _enrollwizard;
+        private ForceWizardMode _forcewizard = ForceWizardMode.Disabled;
+        private bool _pinrequired;
+        private bool _isrequired;
+        private string _fullyqualifiedimplementation;
+        private string _parameters;
+        private uint _timeout;        
+        private int _timetolerance;
+        private bool _directlogin;
+        private string _serverdomain;
+        private string _servername;
+        private string _url;
+        private int _challengsize;
+
+        internal bool ChallengeSizeChanged { get; private set; }
+        internal bool OriginChanged { get; private set; }
+        internal bool ServerNameChanged { get; private set; }
+        internal bool ServerDomainChanged { get; private set; }
+        internal bool DirectLoginChanged { get; private set; }
+        internal bool TimeToleranceChanged { get; private set; }
+        internal bool TimeoutChanged { get; private set; }
+        internal bool ParametersChanged { get; private set; }
+        internal bool FullyQualifiedImplementationChanged { get; private set; }
+        internal bool IsRequiredChanged { get; private set; }
+        internal bool PinRequiredChanged { get; private set; }
+        internal bool ForceWizardChanged { get; private set; }
+        internal bool EnabledChanged { get; private set; }
+        internal bool EnrollWizardChanged { get; private set; }
+
+        /// <summary>
+        /// <para type="description">Provider Enabled property.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public bool Enabled
+        {
+            get { return _enabled; }
+            set
+            {
+                _enabled = value;
+                EnabledChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Provider Enrollment Wizard Enabled property.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public bool EnrollWizard
+        {
+            get { return _enrollwizard; }
+            set
+            {
+                _enrollwizard = value;
+                EnrollWizardChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Provider Force Wizard if user dosen't complete during signing.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateSet("Disabled", "Enabled", "Strict", IgnoreCase = true)]
+        public ForceWizardMode ForceWizard
+        {
+            get { return _forcewizard; }
+            set
+            {
+                _forcewizard = value;
+                ForceWizardChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Force users to use this provider (mandatory for registration or not).</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public bool IsRequired
+        {
+            get { return _isrequired; }
+            set
+            {
+                _isrequired = value;
+                IsRequiredChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Set if additionnal verification with PIN (locally administered) must be done.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public bool PinRequired
+        {
+            get { return _pinrequired; }
+            set
+            {
+                _pinrequired = value;
+                PinRequiredChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Full qualified implementation class for replacing default provider.</para>
+        /// </summary>       
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public string FullyQualifiedImplementation
+        {
+            get { return _fullyqualifiedimplementation; }
+            set
+            {
+                _fullyqualifiedimplementation = value;
+                FullyQualifiedImplementationChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Full qualified implementation parameters for replacing default provider.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public string Parameters
+        {
+            get { return _parameters; }
+            set
+            {
+                _parameters = value;
+                ParametersChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Timeout property (in milliseconds).</para> 
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateRange(10000, 600000)]
+        public uint Timeout
+        {
+            get { return _timeout; }
+            set
+            {
+                _timeout = value;
+                TimeoutChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Timestamp Drift Tolerance property (in miliseconds).</para> 
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateRange(0, 600000)]
+        public int TimestampDriftTolerance
+        {
+            get { return _timetolerance; }
+            set
+            {
+                _timetolerance = value;
+                TimeToleranceChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">When Biometrics is default method, authentication directly called a first time</para> 
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public bool DirectLogin
+        {
+            get { return _directlogin; }
+            set
+            {
+                _directlogin = value;
+                DirectLoginChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Server Domain property.</para> 
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public string ServerDomain
+        {
+            get { return _serverdomain; }
+            set
+            {
+                _serverdomain = value;
+                ServerDomainChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Server Name property.</para> 
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public string ServerName
+        {
+            get { return _servername; }
+            set
+            {
+                _servername = value;
+                ServerNameChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Server Uri property (url).</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public string Origin
+        {
+            get { return _url; }
+            set
+            {
+                _url = value;
+                OriginChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Challenge Size property (16, 32, 48, 64 bytes) (128, 256, 384, 512 bits).</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateSet("16", "32", "48","64")]
+        public int ChallengeSize
+        {
+            get { return _challengsize; }
+            set
+            {
+                _challengsize = value;
+                ChallengeSizeChanged = true;
+            }
+        }
+    }
+    #endregion
+
+    #region Get-MFAConfigKeys
+    /// <summary>
+    /// <para type="synopsis">Get MFA Security Configuration.</para>
+    /// <para type="description">Get MFA Security configuration options.</para>
+    /// </summary>
+    /// <example>
+    ///   <para>Get-MFASecurity</para>
+    /// </example>
+    /// <example>
+    ///  <para>Get-MFASecurity -Kind RSA</para>
+    ///  <para>$c = Get-MFASecurity -Kind BIOMETRIC</para>
+    /// </example>
+    [Cmdlet(VerbsCommon.Get, "MFASecurity", SupportsShouldProcess = true, SupportsPaging = false, ConfirmImpact = ConfirmImpact.Medium, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
+    [OutputType(typeof(PSSecurity), typeof(PSRngSecurity), typeof(PSRsaSecurity), typeof(PSCustomSecurity), typeof(PSBiometricSecurity))]
+    public sealed class GetMFAScurity : MFACmdlet
+    {
+        private PSBaseSecurity _config;
+        private PSRngSecurity _config0;
+        private PSRsaSecurity _config1;
+        private PSBiometricSecurity _config2;
+        private PSCustomSecurity _config3;
+        private PSSecurityMode _securitymode = PSSecurityMode.RNG;
+        internal bool SecurityModeChanged { get; private set; } = false;
+
+        /// <summary>
+        /// <para type="description">Provider Type parameter, (RNG, RSA, CUSTOM).</para>
+        /// </summary>
+        [Parameter(Position = 0, ParameterSetName = "Data", ValueFromPipeline = true)]
+        [ValidateSet("RNG", "RSA", "BIOMETRIC", "CUSTOM", IgnoreCase = true)]
+        public PSSecurityMode Kind
+        {
+            get
+            {
+                return _securitymode;
+            }
+            set
+            {
+                _securitymode = value;
+                SecurityModeChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// BeginProcessing method implementation
+        /// </summary>
+        protected override void BeginProcessing()
+        {
+            base.BeginProcessing();
+            try
+            {
+                if (!SecurityModeChanged)
+                {
+                    FlatSecurity cf = new FlatSecurity();
+                    cf.Load(this.Host);
+                    _config = (PSSecurity)cf;
+                }
+                else
+                {
+                    switch (Kind)
+                    {
+                        case PSSecurityMode.RNG:
+                            FlatRngSecurity cf0 = new FlatRngSecurity();
+                            cf0.Load(this.Host);
+                            _config0 = (PSRngSecurity)cf0;
+                            break;
+                        case PSSecurityMode.RSA:
+                            FlatRsaSecurity cf1 = new FlatRsaSecurity();
+                            cf1.Load(this.Host);
+                            _config1 = (PSRsaSecurity)cf1;
+                            break;
+                        case PSSecurityMode.BIOMETRIC:
+                            FlatBiometricSecurity cf2 = new FlatBiometricSecurity();
+                            cf2.Load(this.Host);
+                            _config2 = (PSBiometricSecurity)cf2;
+                            break;
+                        case PSSecurityMode.CUSTOM:
+                            FlatCustomSecurity cf3 = new FlatCustomSecurity();
+                            cf3.Load(this.Host);
+                            _config3 = (PSCustomSecurity)cf3;
+                            break;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                this.ThrowTerminatingError(new ErrorRecord(ex, "3021", ErrorCategory.OperationStopped, this));
+            }
+        }
+
+        /// <summary>
+        /// ProcessInternalRecord method override
+        /// </summary>
+        protected override void ProcessRecord()
+        {
+            try
+            {
+                if (ShouldProcess("MFA Secure Keys Configuration"))
+                {
+                    if (!SecurityModeChanged)
+                        WriteObject(_config);
+                    else
+                    {
+                        switch (Kind)
+                        {
+                            case PSSecurityMode.RNG:
+                                WriteObject(_config0);
+                                break;
+                            case PSSecurityMode.RSA:
+                                WriteObject(_config1);
+                                break;
+                            case PSSecurityMode.BIOMETRIC:
+                                WriteObject(_config2);
+                                break;
+                            case PSSecurityMode.CUSTOM:
+                                WriteObject(_config3);
+                                break;
+                        }
+                    }
+                        
+                }
+            }
+            catch (Exception ex)
+            {
+                this.ThrowTerminatingError(new ErrorRecord(ex, "3022", ErrorCategory.OperationStopped, this));
+            }
+        }
+
+        /// <summary>
+        /// StopProcessing method implementation
+        /// </summary>
+        protected override void StopProcessing()
+        {
+            _config3 = null;
+            _config2 = null;
+            _config1 = null;
+            _config0 = null;
+            _config = null;
+            base.StopProcessing();
+        }
+
+        /// <summary>
+        /// EndProcessing method implementation
+        /// </summary>
+        protected override void EndProcessing()
+        {
+            _config3 = null;
+            _config2 = null;
+            _config1 = null;
+            _config0 = null;
+            _config = null;
+            base.EndProcessing();
+        }
+
+    }
+    #endregion
+
+    #region Set-MFAConfigKeys
+    /// <summary>
+    /// <para type="synopsis">Set Secret Keys Configuration.</para>
+    /// <para type="description">Set Secret Keys configuration options.</para>
+    /// </summary>
+    /// <example>
+    ///   <para>Set-MFAConfigKeys -Config $cfg</para>
+    /// </example>
+    /// <example>
+    ///   <para>$cfg = Get-MFASecurity -Kind RSA</para>
+    ///   <para>$cfg.CertificatePerUser = $true</para>
+    ///   <para>Set-MFAConfigKeys $cfg</para>
+    /// </example>
+    [Cmdlet(VerbsCommon.Set, "MFASecurity", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
+    [PrimaryServerRequired]
+    public sealed class SetMFASecurity : MFACmdlet, IDynamicParameters
+    {
+        private PSBaseSecurity _config;
+
+        private SECRNGDynamicParameters _config1;
+        private SECRSADynamicParameters _config2;
+        private SECBIOMETRICDynamicParameters _config3;
+        private SECCUSTOMDynamicParameters _config4;
+
+        private FlatSecurity _target;
+        private FlatRngSecurity _target1;
+        private FlatRsaSecurity _target2;
+        private FlatBiometricSecurity _target3;
+        private FlatCustomSecurity _target4;
+
+        internal bool ConfigChanged { get; private set; }
+
+        /// <summary>
+        /// <para type="description">Provider Type parameter, (RNG, RSA, BIOMETRIC, CUSTOM).</para>
+        /// </summary>
+        [Parameter(Position = 0, ParameterSetName = "Data", ValueFromPipeline = true)]
+        [Parameter(Mandatory = true, Position = 0, ParameterSetName = "Identity")]
+        [ValidateSet("RNG", "RSA", "BIOMETRIC", "CUSTOM")]
+        public PSSecurityMode Kind { get; set; } = PSSecurityMode.RNG;
+
+        /// <summary>
+        /// <para type="description">Config parameter, a variable of type PSSecurity.</para>
+        /// </summary>
+        [Parameter(Mandatory = true, Position = 1, ParameterSetName = "Data", ValueFromPipeline = true, DontShow = true)]
+        [ValidateNotNullOrEmpty()]
+        public PSBaseSecurity Config
+        {
+            get { return _config; }
+            set
+            {
+
+                _config = value;
+                ConfigChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Set the value of Provider configuration.</para>
+        /// GetDynamicParameters implementation
+        /// </summary>
+        public object GetDynamicParameters()
+        {
+            if (!ConfigChanged)
+            {
+                switch (Kind)
+                {
+                    case PSSecurityMode.RNG:
+                        _config1 = new SECRNGDynamicParameters();
+                        return _config1;
+                    case PSSecurityMode.RSA:
+                        _config2 = new SECRSADynamicParameters();
+                        return _config2;
+                    case PSSecurityMode.BIOMETRIC:
+                        _config3 = new SECBIOMETRICDynamicParameters();
+                        return _config3;
+                    case PSSecurityMode.CUSTOM:
+                        _config4 = new SECCUSTOMDynamicParameters();
+                        return _config4;
+                    default:
+                        break;
+                }
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// BeginProcessing method override
+        /// </summary>
+        protected override void BeginProcessing()
+        {
+            base.BeginProcessing();
+            try
+            {
+                if (!ConfigChanged)
+                {
+                    ManagementService.Initialize(this.Host, true);
+                    switch (Kind)
+                    {
+                        case PSSecurityMode.RNG:
+                            _target1 = new FlatRngSecurity();
+                            _target1.Load(this.Host);
+                            if (_config1.KeyGeneratorChanged)
+                                _target1.KeyGenerator = (KeyGeneratorMode)_config1.KeyGenerator;
+                            break;
+                        case PSSecurityMode.RSA:
+                            _target2 = new FlatRsaSecurity();
+                            _target2.Load(this.Host);
+                            if (_config2.CertificatePerUserChanged)
+                                _target2.CertificatePerUser = _config2.CertificatePerUser;
+                            if (_config2.CertificateThumbprintChanged)
+                                _target2.CertificateThumbprint = _config2.CertificateThumbprint;
+                            if (_config2.CertificateValidityChanged)
+                                _target2.CertificateValidity= _config2.CertificateValidity;
+                            break;
+                        case PSSecurityMode.BIOMETRIC:
+                            _target3 = new FlatBiometricSecurity();
+                            _target3.Load(this.Host);
+                            if (_config3.AttestationConveyancePreferenceChanged)
+                                _target3.AttestationConveyancePreference = (FlatAttestationConveyancePreferenceKind)_config3.AttestationConveyancePreference;
+                            if (_config3.AuthenticatorAttachmentChanged)
+                                _target3.AuthenticatorAttachment = (FlatAuthenticatorAttachmentKind)_config3.AuthenticatorAttachment;
+                            if (_config3.UserVerificationRequirementChanged)
+                                _target3.UserVerificationRequirement = (FlatUserVerificationRequirementKind)_config3.UserVerificationRequirement;
+                            if (_config3.ExtensionsChanged)
+                                _target3.Extensions = _config3.Extensions;
+                            if (_config3.LocationChanged)
+                                _target3.Location = _config3.Location;
+                            if (_config3.RequireResidentKeyChanged)
+                                _target3.RequireResidentKey = _config3.RequireResidentKey;
+                            if (_config3.UserVerificationIndexChanged)
+                                _target3.UserVerificationIndex = _config3.UserVerificationIndex;
+                            if (_config3.UserVerificationMethodChanged)
+                                _target3.UserVerificationMethod = _config3.UserVerificationMethod;
+                            break;
+                        case PSSecurityMode.CUSTOM:
+                            _target4 = new FlatCustomSecurity();
+                            _target4.Load(this.Host);
+                            if (_config4.AECCertificateReuseChanged)
+                                _target4.CertReuse = _config4.AECCertificateReuse;
+                            if (_config4.AECCertificateValidityChanged)
+                                _target4.CertificateValidity = _config4.AECCertificateValidity;
+                            if (_config4.AECKeyNameChanged)
+                                _target4.KeyName = _config4.AECKeyName;
+                            if (_config4.AECThumbPrintChanged)
+                                _target4.ThumbPrint = _config4.AECThumbPrint;
+                            if (_config4.ConnectionStringChanged)
+                                _target4.ConnectionString = _config4.ConnectionString;
+                            if (_config4.FullQualifiedImplementationChanged)
+                                _target4.FullQualifiedImplementation = _config4.FullQualifiedImplementation;
+                            if (_config4.IsAlwaysEncryptedChanged)
+                                _target4.IsAlwaysEncrypted = _config4.IsAlwaysEncrypted;
+                            if (_config4.ParametersChanged)
+                                _target4.Parameters = _config4.Parameters;
+                            break;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                this.ThrowTerminatingError(new ErrorRecord(ex, "3023", ErrorCategory.OperationStopped, this));
+            }
+        }
+
+        /// <summary>
+        /// ProcessRecord method override
+        /// </summary>
+        protected override void ProcessRecord()
+        {
+            const string error = "Invalid Security Type !";
+            if (ShouldProcess("MFA Providers Configuration"))
+            {
+                try
+                {
+                    if (ConfigChanged)
+                    {
+                        switch (Kind)
+                        {
+                            case PSSecurityMode.RNG:
+                                if (Config is PSRngSecurity)
+                                    ((FlatRngSecurity)((PSRngSecurity)Config)).Update(this.Host);
+                                else
+                                    throw new Exception(error);
+                                break;
+                            case PSSecurityMode.RSA:
+                                if (Config is PSRsaSecurity)
+                                    ((FlatRsaSecurity)((PSRsaSecurity)Config)).Update(this.Host);
+                                else
+                                    throw new Exception(error);
+
+                                break;
+                            case PSSecurityMode.BIOMETRIC:
+                                if (Config is PSBiometricSecurity)
+                                    ((FlatBiometricSecurity)((PSBiometricSecurity)Config)).Update(this.Host);
+                                else
+                                    throw new Exception(error);
+
+                                break;
+                            case PSSecurityMode.CUSTOM:
+                                if (Config is PSCustomSecurity)
+                                    ((FlatCustomSecurity)((PSCustomSecurity)Config)).Update(this.Host);
+                                else
+                                    throw new Exception(error);
+
+                                break;
+                            default:
+                                throw new Exception(error);
+                        }
+                    }
+                    else
+                    {
+                        switch (Kind)
+                        {
+                            case PSSecurityMode.RNG:
+                                if (_target1 != null)
+                                    _target1.Update(this.Host);
+                                else
+                                    throw new Exception(error);
+                                break;
+                            case PSSecurityMode.RSA:
+                                if (_target2 != null)
+                                    _target2.Update(this.Host);
+                                else
+                                    throw new Exception(error);
+                                break;
+                            case PSSecurityMode.BIOMETRIC:
+                                if (_target3 != null)
+                                    _target3.Update(this.Host);
+                                else
+                                    throw new Exception(error);
+                                break;
+                            case PSSecurityMode.CUSTOM:
+                                if (_target4 != null)
+                                    _target4.Update(this.Host);
+                                else
+                                    throw new Exception(error);
+                                break;
+                            default:
+                                throw new Exception(error);
+                        }
+                    }
+                    this.WriteVerbose(infos_strings.InfosConfigUpdated);
+                }
+                catch (Exception ex)
+                {
+                    this.ThrowTerminatingError(new ErrorRecord(ex, "3024", ErrorCategory.OperationStopped, this));
+                }
+            }
+        }
+    }
+    internal class SECCUSTOMDynamicParameters
+    {
+        private string _fullqualifiedimplementation;
+        private string _parameters;
+        private string _connectionstring;
+        private bool _isalwaysencrypted;
+        private string _aecthumbprint;
+        private string _aeckeyname;
+        private int _aeccertvalidity;
+        private bool _aeccertreuse;
+
+        internal bool AECCertificateReuseChanged { get; private set; }
+        internal bool AECCertificateValidityChanged { get; private set; }
+        internal bool AECKeyNameChanged { get; private set; }
+        internal bool AECThumbPrintChanged { get; private set; }
+        internal bool IsAlwaysEncryptedChanged { get; private set; }
+        internal bool ConnectionStringChanged { get; private set; }
+        internal bool ParametersChanged { get; private set; }
+        internal bool FullQualifiedImplementationChanged { get; private set; }
+
+        /// <summary>
+        /// <para type="description">Full qualified assembly ref that implements ISecretKeyManager, see sample implementation of Neos.IdentityServer.Multifactor.Keys.CustomKeyManager</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public string FullQualifiedImplementation
+        {
+            get { return _fullqualifiedimplementation; }
+            set
+            {
+                _fullqualifiedimplementation = value;
+                FullQualifiedImplementationChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Specify your own parameters, values stored as CData, set it as string with Parameters = "myparameters"</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public string Parameters
+        {
+            get { return _parameters; }
+            set
+            {
+                _parameters = value;
+                ParametersChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Connection string to SQL Database, see sample implementation of Neos.IdentityServer.Multifactor.Keys.CustomKeyManager</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public string ConnectionString
+        {
+            get { return _connectionstring; }
+            set
+            {
+                _connectionstring = value;
+                ConnectionStringChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Encrypted, information for KeyManager about encrypting his data</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public bool IsAlwaysEncrypted
+        {
+            get { return _isalwaysencrypted; }
+            set
+            {
+                _isalwaysencrypted = value;
+                IsAlwaysEncryptedChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">ThumbPrint of encryption certificate, see sample implementation of Neos.IdentityServer.Multifactor.Keys.CustomKeyManager</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public string AECThumbPrint
+        {
+            get { return _aecthumbprint; }
+            set
+            {
+                _aecthumbprint = value;
+                AECThumbPrintChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Name of the SQL Server encryption key (default adfsmfa)</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public string AECKeyName
+        {
+            get { return _aeckeyname; }
+            set
+            {
+                _aeckeyname = value;
+                AECKeyNameChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">ThumbPrint of encryption certificate, see sample implementation of Neos.IdentityServer.Multifactor.Keys.CustomKeyManager</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public int AECCertificateValidity
+        {
+            get { return _aeccertvalidity; }
+            set
+            {
+                _aeccertvalidity = value;
+                AECCertificateValidityChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">if you want to reuse the same certificate ThumbPrint of encryption certificate. </para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public bool AECCertificateReuse
+        {
+            get { return _aeccertreuse; }
+            set
+            {
+                _aeccertreuse = value;
+                AECCertificateReuseChanged = true;
+            }
+        }
+    }
+
+    internal class SECBIOMETRICDynamicParameters
+    {
+        private PSAuthenticatorAttachmentKind _authenticatorattachment;
+        private PSAttestationConveyancePreferenceKind _attestationconveyancepreference;
+        private PSUserVerificationRequirementKind _userverificationrequirement;
+        private bool _extensions;
+        private bool _userverificationindex;
+        private bool _location;
+        private bool _userverificationmethod;
+        private bool _requireresidentkey;
+
+        internal bool RequireResidentKeyChanged { get; private set; }
+        internal bool UserVerificationMethodChanged { get; private set; }
+        internal bool LocationChanged { get; private set; }
+        internal bool UserVerificationIndexChanged { get; private set; }
+        internal bool ExtensionsChanged { get; private set; }
+        internal bool UserVerificationRequirementChanged { get; private set; }
+        internal bool AttestationConveyancePreferenceChanged { get; private set; }
+        internal bool AuthenticatorAttachmentChanged { get; private set; }
+
+        /// <summary>
+        /// <para type="description">Authenticator Attachment property (empty, Platform, Crossplatform).</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public PSAuthenticatorAttachmentKind AuthenticatorAttachment
+        {
+            get { return _authenticatorattachment; }
+            set
+            {
+                _authenticatorattachment = value;
+                AuthenticatorAttachmentChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Attestation Conveyance Preference property (None, Direct, Indirect).</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public PSAttestationConveyancePreferenceKind AttestationConveyancePreference
+        {
+            get { return _attestationconveyancepreference; }
+            set
+            {
+                _attestationconveyancepreference = value;
+                AttestationConveyancePreferenceChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">User Verification Requirement property (Preferred, Required, Discouraged).</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public PSUserVerificationRequirementKind UserVerificationRequirement
+        {
+            get { return _userverificationrequirement; }
+            set
+            {
+                _userverificationrequirement = value;
+                UserVerificationRequirementChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Extensions property (boolean) supports extensions ?.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public bool Extensions
+        {
+            get { return _extensions; }
+            set
+            {
+                _extensions = value;
+                ExtensionsChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">User Verification Index property (boolean).</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public bool UserVerificationIndex
+        {
+            get { return _userverificationindex; }
+            set
+            {
+                _userverificationindex = value;
+                UserVerificationIndexChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Location property (boolean).</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public bool Location 
+        {
+            get { return _location; }
+            set
+            {
+                _location = value;
+                LocationChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">User Verification Method property (boolean).</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public bool UserVerificationMethod
+        {
+            get { return _userverificationmethod; }
+            set
+            {
+                _userverificationmethod = value;
+                UserVerificationMethodChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Require Resident Key property (boolean).</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public bool RequireResidentKey
+        {
+            get { return _requireresidentkey; }
+            set
+            {
+                _requireresidentkey = value;
+                RequireResidentKeyChanged = true;
+            }
+        }
+    }
+
+    internal class SECRSADynamicParameters
+    {
+        private int _certvalidity;
+        private bool _certperuser;
+        private string _thumbprint;
+
+        internal bool CertificateThumbprintChanged { get; private set; }
+        internal bool CertificatePerUserChanged { get; private set; }
+        internal bool CertificateValidityChanged { get; private set; }
+
+        /// <summary>
+        /// <para type="description">Certificate validity duration in Years (5 by default)</para> 
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public int CertificateValidity
+        {
+            get { return _certvalidity; }
+            set
+            {
+                _certvalidity = value;
+                CertificateValidityChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Use a distinct certificate for each user when using KeyFormat==RSA. each certificate is deployed on ADDS or SQL Database</para> 
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public bool CertificatePerUser
+        {
+            get { return _certperuser; }
+            set
+            {
+                _certperuser = value;
+                CertificatePerUserChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Certificate Thumbprint when using KeyFormat==RSA. the certificate is deployed on all ADFS servers in Crypting Certificates store</para> 
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public string CertificateThumbprint
+        {
+            get { return _thumbprint; }
+            set
+            {
+                _thumbprint = value;
+                CertificateThumbprintChanged = true;
+            }
+        }
+    }
+
+    /// <summary>
+    /// SECRNGDynamicParameters class implementation
+    /// </summary>
+    internal class SECRNGDynamicParameters
+    {
+        private PSKeyGeneratorMode _keygenerator;
+        internal bool KeyGeneratorChanged { get; private set; }
+
+        /// <summary>
+        /// <para type="description">Used when RNG is selected, for choosing the size of the generated random number (128 to 512 bytes).</para> 
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public PSKeyGeneratorMode KeyGenerator
+        {
+            get { return _keygenerator; }
+            set
+            {
+                _keygenerator = value;
+                KeyGeneratorChanged = true;
+            }
+        }
+    }
+
+    #endregion
+
+
+    #region Set-MFAPolicyTemplate
     /// <summary>
     /// <para type="synopsis">Set Policy Template.</para>
     /// <para type="description">Set Policy template, for managing security features like ChangePassword, Auto-registration and more.</para>
@@ -2544,7 +5819,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             base.StopProcessing();
         }
     }
+    #endregion
 
+    #region Set-MFAThemeMode
     /// <summary>
     /// <para type="synopsis">Set ADFS Theme.</para>
     /// <para type="description">Set ADFS Theme.</para>
@@ -2654,16 +5931,34 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         }
     }
 
+    /// <summary>
+    /// <para type="description">Set MFA Themes Options for Ui 2019.</para>
+    /// </summary>
+    public class MFAThemeModeDynamicParameters
+    {
+        private bool _usepaginated = false;
 
+        /// <summary>
+        /// <para type="description">Set the value for ADFS 2019 paginated mode.</para>
+        /// Paginated property
+        /// </summary>
+        [Parameter(Mandatory = false)]
+        public SwitchParameter Paginated
+        {
+            get { return _usepaginated; }
+            set { _usepaginated = value; }
+        }
+    }
+    #endregion
+
+    #region Set-MFAEncryptionVersion
     /// <summary>
     /// <para type="synopsis">Set ADFS Theme.</para>
     /// <para type="description">Set ADFS Theme.</para>
     /// </summary>
     /// <example>
-    ///   <para>Set-MFAThemeMode -UIKind Default -Theme yourcompatibletheme</para>
-    ///   <para>Set-MFAThemeMode -UIKind Default2019 -Theme yourcompatibletheme</para>
-    ///   <para>Set-MFAThemeMode -UIKind Default2019 -Theme yourcompatibletheme -Paginated</para>
-    ///   <para>Change policy template for MFA configuration</para>
+    ///   <para>Set-MFAEncryptionVersion -Version V2</para>
+    ///   <para>Change encryption Librairy Version for MFA configuration</para>
     /// </example>
     [Cmdlet(VerbsCommon.Set, "MFAEncryptionVersion", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
     [PrimaryServerRequired]
@@ -2729,811 +6024,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             base.StopProcessing();
         }
     }
+    #endregion
 
-    /// <summary>
-    /// <para type="description">Set MFA Themes Options for Ui 2019.</para>
-    /// </summary>
-    public class MFAThemeModeDynamicParameters
-    {
-        private bool _usepaginated = false;
-
-        /// <summary>
-        /// <para type="description">Set the value for ADFS 2019 paginated mode.</para>
-        /// Paginated property
-        /// </summary>
-        [Parameter(Mandatory = false)]
-        public SwitchParameter Paginated 
-        {
-            get { return _usepaginated; }
-            set { _usepaginated=value; } 
-        }
-    }
-
-    /// <summary>
-    /// <para type="synopsis">Get SQL Configuration.</para>
-    /// <para type="description">Get SQL configuration (UseActiveDirectory==false).</para>
-    /// </summary>
-    /// <example>
-    ///   <para>Get-MFAConfigSQL</para>
-    ///   <para>Get MFA configuration when using SQL Database</para>
-    /// </example>
-    [Cmdlet(VerbsCommon.Get, "MFAConfigSQL", SupportsShouldProcess = true, SupportsPaging = false, ConfirmImpact = ConfirmImpact.Medium, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
-    [OutputType(typeof(PSConfigSQL))]
-    public sealed class GetMFAConfigSQL : MFACmdlet
-    {
-        private PSConfigSQL _config;
-        /// <summary>
-        /// BeginProcessing method implementation
-        /// </summary>
-        protected override void BeginProcessing()
-        {
-            base.BeginProcessing();
-            try
-            {
-
-                FlatConfigSQL cf = new FlatConfigSQL();
-                cf.Load(this.Host);
-                _config = (PSConfigSQL)cf;
-            }
-            catch (Exception ex)
-            {
-                this.ThrowTerminatingError(new ErrorRecord(ex, "3021", ErrorCategory.OperationStopped, this));
-            }
-        }
-
-        /// <summary>
-        /// EndProcessing method implementation
-        /// </summary>
-        protected override void EndProcessing()
-        {
-            _config = null;
-            base.EndProcessing();
-        }
-
-        /// <summary>
-        /// ProcessInternalRecord method override
-        /// </summary>
-        protected override void ProcessRecord()
-        {
-            try
-            {
-                if (ShouldProcess("MFA SQL Configuration"))
-                {
-                    WriteObject(_config);
-                }
-            }
-            catch (Exception ex)
-            {
-                this.ThrowTerminatingError(new ErrorRecord(ex, "3022", ErrorCategory.OperationStopped, this));
-            }
-        }
-
-        /// <summary>
-        /// StopProcessing method implementation
-        /// </summary>
-        protected override void StopProcessing()
-        {
-            _config = null;
-            base.StopProcessing();
-        }
-    }
-
-    /// <summary>
-    /// <para type="synopsis">Set SQL Configuration.</para>
-    /// <para type="description">Set SQL configuration (UseActiveDirectory==false).</para>
-    /// </summary>
-    /// <example>
-    ///   <para>Set-MFAConfigSQL -Config $cfg</para>
-    ///   <para>Set MFA configuration when using SQL Database</para>
-    /// </example>
-    /// <example>
-    ///   <para>$cfg = Get-MFAConfigSQL</para>
-    ///   <para>$cfg.connectionString = "your SQL connection string"</para>
-    ///   <para>Set-MFAConfigSQL $cfg</para>
-    ///   <para>Set MFA SQL configuration options, modity values and finally Update configuration.</para>
-    /// </example>
-    [Cmdlet(VerbsCommon.Set, "MFAConfigSQL", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
-    [PrimaryServerRequired]
-    public sealed class SetMFAConfigSQL : MFACmdlet
-    {
-        private PSConfigSQL _config;
-        private FlatConfigSQL _target;
-
-        /// <summary>
-        /// <para type="description">Config parameter, a variable of type PSConfigSQL.</para>
-        /// </summary>
-        [Parameter(Mandatory = true, Position = 0, ParameterSetName = "Data", ValueFromPipeline = true)]
-        [ValidateNotNullOrEmpty()]
-        public PSConfigSQL Config
-        {
-            get { return _config; }
-            set { _config = value; }
-        }
-
-        /// <summary>
-        /// BeginProcessing method implementation
-        /// </summary>
-        protected override void BeginProcessing()
-        {
-            base.BeginProcessing();
-            if (_config != null)
-            {
-                try
-                {
-                    _target = (FlatConfigSQL)_config;
-                }
-                catch (Exception ex)
-                {
-                    this.ThrowTerminatingError(new ErrorRecord(ex, "3023", ErrorCategory.OperationStopped, this));
-                }
-            }
-        }
-
-        /// <summary>
-        /// ProcessRecord method override
-        /// </summary>
-        protected override void ProcessRecord()
-        {
-            if (ShouldProcess("MFA SQL Configuration"))
-            {
-                try
-                {
-                    _target.Update(this.Host);
-                    this.WriteVerbose(infos_strings.InfosConfigUpdated);
-                }
-                catch (Exception ex)
-                {
-                    this.ThrowTerminatingError(new ErrorRecord(ex, "3024", ErrorCategory.OperationStopped, this));
-                }
-            }
-        }
-    }
-
-    /// <summary>
-    /// <para type="synopsis">Get Active Directory Configuration.</para>
-    /// <para type="description">Get ADDS configuration (UseActiveDirectory==true).</para>
-    /// </summary>
-    /// <example>
-    ///   <para>Get-MFAConfigADDS</para>
-    ///   <para>Get MFA configuration when using Active Directory</para>
-    /// </example>
-    [Cmdlet(VerbsCommon.Get, "MFAConfigADDS", SupportsShouldProcess = true, SupportsPaging = false, ConfirmImpact = ConfirmImpact.Medium, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
-    [OutputType(typeof(PSConfigADDS))]
-    public sealed class GetMFAConfigADDS : MFACmdlet
-    {
-        private PSConfigADDS _config;
-        /// <summary>
-        /// BeginProcessing method implementation
-        /// </summary>
-        protected override void BeginProcessing()
-        {
-            base.BeginProcessing();
-            try
-            {
-
-                FlatConfigADDS cf = new FlatConfigADDS();
-                cf.Load(this.Host);
-                _config = (PSConfigADDS)cf;
-            }
-            catch (Exception ex)
-            {
-                this.ThrowTerminatingError(new ErrorRecord(ex, "3021", ErrorCategory.OperationStopped, this));
-            }
-        }
-
-        /// <summary>
-        /// EndProcessing method implementation
-        /// </summary>
-        protected override void EndProcessing()
-        {
-            _config = null;
-            base.EndProcessing();
-        }
-
-        /// <summary>
-        /// ProcessInternalRecord method override
-        /// </summary>
-        protected override void ProcessRecord()
-        {
-            try
-            {
-                if (ShouldProcess("MFA ADDS Configuration"))
-                {
-                    WriteObject(_config);
-                }
-            }
-            catch (Exception ex)
-            {
-                this.ThrowTerminatingError(new ErrorRecord(ex, "3022", ErrorCategory.OperationStopped, this));
-            }
-        }
-
-        /// <summary>
-        /// StopProcessing method implementation
-        /// </summary>
-        protected override void StopProcessing()
-        {
-            _config = null;
-            base.StopProcessing();
-        }
-    }
-
-    /// <summary>
-    /// <para type="synopsis">Set Active Directory Configuration.</para>
-    /// <para type="description">Set SQL configuration (UseActiveDirectory==true).</para>
-    /// </summary>
-    /// <example>
-    ///   <para>Set-MFAConfigADDS -Config $cfg</para>
-    ///   <para>Set MFA configuration when using Active Directory</para>
-    /// </example>
-    /// <example>
-    ///   <para>$cfg = Get-MFAConfigADDS</para>
-    ///   <para>$cfg.MailAttribute = "your ADDS mail attibute"</para>
-    ///   <para>Set-MFAConfigADDS $cfg</para>
-    ///   <para>Set MFA ADDS configuration options, modity values and finally Update configuration.</para>
-    /// </example>
-    [Cmdlet(VerbsCommon.Set, "MFAConfigADDS", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
-    [PrimaryServerRequired]
-    public sealed class SetMFAConfigADDS : MFACmdlet
-    {
-        private PSConfigADDS _config;
-        private FlatConfigADDS _target;
-
-        /// <summary>
-        /// <para type="description">Config parameter, a variable of type PSConfigADDS.</para>
-        /// </summary>
-        [Parameter(Mandatory = true, Position = 0, ParameterSetName = "Data", ValueFromPipeline = true)]
-        [ValidateNotNullOrEmpty()]
-        public PSConfigADDS Config
-        {
-            get { return _config; }
-            set { _config = value; }
-        }
-
-        /// <summary>
-        /// BeginProcessing method implementation
-        /// </summary>
-        protected override void BeginProcessing()
-        {
-            base.BeginProcessing();
-            if (_config != null)
-            {
-                try
-                {
-                    _target = (FlatConfigADDS)_config;
-                }
-                catch (Exception ex)
-                {
-                    this.ThrowTerminatingError(new ErrorRecord(ex, "3023", ErrorCategory.OperationStopped, this));
-                }
-            }
-        }
-
-        /// <summary>
-        /// ProcessRecord method override
-        /// </summary>
-        protected override void ProcessRecord()
-        {
-            if (ShouldProcess("MFA ADDS Configuration"))
-            {
-                try
-                {
-                    _target.Update(this.Host);
-                    this.WriteVerbose(infos_strings.InfosConfigUpdated);
-                }
-                catch (Exception ex)
-                {
-                    this.ThrowTerminatingError(new ErrorRecord(ex, "3024", ErrorCategory.OperationStopped, this));
-                }
-            }
-        }
-    }
-
-    /// <summary>
-    /// <para type="synopsis">Get MFA Provider Configuration.</para>
-    /// <para type="description">Get MFA Provider configuration options.</para>
-    /// <para type="description"></para>
-    /// </summary>
-    /// <example>
-    ///   <para>Get-MFAProvider -ProviderType External</para>
-    ///   <para>Get MFA Provider configuration for (Code, Email, External, Azure, Biometrics)</para>
-    /// </example>
-    [Cmdlet(VerbsCommon.Get, "MFAProvider", SupportsShouldProcess = true, SupportsPaging = false, ConfirmImpact = ConfirmImpact.Medium, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
-    public sealed class GetMFAProvider : MFACmdlet
-    {
-        private PSConfigTOTPProvider _config0;
-        private PSConfigMailProvider _config1;
-        private PSConfigExternalProvider _config2;
-        private PSConfigAzureProvider _config3;
-        private PSConfigBiometricProvider _config4;
-
-        private PSProviderType _providertype = PSProviderType.Code;
-
-        /// <summary>
-        /// <para type="description">Provider Type parameter, (Code, Email, External, Azure, Biometrics) Required.</para>
-        /// </summary>
-        [Parameter(Mandatory = true, Position = 0, ParameterSetName = "Data", ValueFromPipeline = true)]
-        [ValidateRange(PSProviderType.Code, PSProviderType.Biometrics)]
-        public PSProviderType ProviderType
-        {
-            get { return _providertype; }
-            set { _providertype = value; }
-        }
-
-        /// <summary>
-        /// BeginProcessing method implementation
-        /// </summary>
-        protected override void BeginProcessing()
-        {
-            base.BeginProcessing();
-            try
-            {
-                switch (ProviderType)
-                {
-                    case PSProviderType.Code:
-                        FlatOTPProvider cf0 = new FlatOTPProvider();
-                        cf0.Load(this.Host);
-                        _config0 = (PSConfigTOTPProvider)cf0;
-                        break;
-                    case PSProviderType.Email:
-                        FlatConfigMail cf1 = new FlatConfigMail();
-                        cf1.Load(this.Host);
-                        _config1 = (PSConfigMailProvider)cf1;
-                        break;
-                    case PSProviderType.External:
-                        FlatExternalProvider cf2 = new FlatExternalProvider();
-                        cf2.Load(this.Host); 
-                        _config2 = (PSConfigExternalProvider)cf2;
-                        break;
-                    case PSProviderType.Azure:
-                        FlatAzureProvider cf3 = new FlatAzureProvider();
-                        cf3.Load(this.Host);
-                        _config3 = (PSConfigAzureProvider)cf3;
-                        break;
-                    case PSProviderType.Biometrics:
-                        FlatBiometricProvider cf4 = new FlatBiometricProvider();
-                        cf4.Load(this.Host);
-                        _config4 = (PSConfigBiometricProvider)cf4;
-                        break;
-
-                    default:
-                        break;
-                }
-            }
-            catch (Exception ex)
-            {
-                this.ThrowTerminatingError(new ErrorRecord(ex, "3021", ErrorCategory.OperationStopped, this));
-            }
-        }
-
-        /// <summary>
-        /// EndProcessing method implementation
-        /// </summary>
-        protected override void EndProcessing()
-        {
-            _config0 = null;
-            _config1 = null;
-            _config2 = null;
-            _config3 = null;
-            _config4 = null;
-            base.EndProcessing();
-        }
-
-        /// <summary>
-        /// ProcessInternalRecord method override
-        /// </summary>
-        protected override void ProcessRecord()
-        {
-            try
-            {
-                if (ShouldProcess("MFA Mails Configuration"))
-                {
-                    switch (ProviderType)
-                    {
-                        case PSProviderType.Code:
-                            WriteObject(_config0);
-                            break;
-                        case PSProviderType.Email:
-                            WriteObject(_config1);
-                            break;
-                        case PSProviderType.External:
-                            WriteObject(_config2);
-                            break;
-                        case PSProviderType.Azure:
-                            WriteObject(_config3);
-                            break;
-                        case PSProviderType.Biometrics:
-                            WriteObject(_config4);
-                            break;
-                        default:
-                            break;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                this.ThrowTerminatingError(new ErrorRecord(ex, "3022", ErrorCategory.OperationStopped, this));
-            }
-        }
-
-        /// <summary>
-        /// StopProcessing method implementation
-        /// </summary>
-        protected override void StopProcessing()
-        {
-            _config0 = null;
-            _config1 = null;
-            _config2 = null;
-            _config3 = null;
-            _config4 = null;
-            base.StopProcessing();
-        }
-    }
-
-    /// <summary>
-    /// <para type="synopsis">Set MFA Provider Configuration.</para>
-    /// <para type="description">Set MFA Provider configuration options.</para>
-    /// </summary>
-    /// <example>
-    ///   <para>Set-MFAProvider -ProviderType Code -Data $cfg</para>
-    /// </example>
-    /// <example>
-    ///   <para>$cfg = Get-MFAProvider -ProviderType email</para>
-    ///   <para>$cfg.Host = smtp.office365.com</para>
-    ///   <para>Set-MFAProvider Email $cfg</para>
-    /// </example>
-    /// <example>
-    ///   <para></para>
-    ///   <para>$cfg = Get-MFAProvider -ProviderType email</para>
-    ///   <para>$cfg.MailOTP.Templates</para>
-    ///   <para>$cfg.MailOTP.AddTemplate(1036, "c:\temp\mytemplate.html")</para>
-    ///   <para>$cfg.MailOTP.SetTemplate(1033, "c:\temp\mytemplate2.html")</para>
-    ///   <para>$cfg.MailOTP.RemoveTemplate(1033)</para>
-    ///   <para>Set-MFAProvider -ProviderType email $cfg</para>
-    /// </example>
-    [Cmdlet(VerbsCommon.Set, "MFAProvider", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
-    [PrimaryServerRequired]
-    public sealed class SetMFAProvider : MFACmdlet, IDynamicParameters
-    {
-        private TOTPDynamicParameters _target0;
-        private MailDynamicParameters _target1;
-        private ExternalDynamicParameters _target2;
-        private AzureDynamicParameters _target3;
-        private BiometricDynamicParameters _target4;
-
-        private PSProviderType _providertype = PSProviderType.Code;
-
-        /// <summary>
-        /// <para type="description">Provider Type parameter, (Code, Email, External, Azure, Biometrics) Required.</para>
-        /// </summary>
-        [Parameter(Mandatory = true, Position = 0, ParameterSetName = "Data", ValueFromPipeline = true)]
-        [ValidateRange(PSProviderType.Code, PSProviderType.Biometrics)]
-        public PSProviderType ProviderType
-        {
-            get { return _providertype; }
-            set { _providertype = value; }
-        }
-
-        /// <summary>
-        /// <para type="description">Set the value of Provider configuration.</para>
-        /// GetDynamicParameters implementation
-        /// </summary>
-        public object GetDynamicParameters()
-        {
-            switch (ProviderType)
-            {
-                case PSProviderType.Code:
-                    _target0 = new TOTPDynamicParameters();
-                    return _target0;
-                case PSProviderType.Email:
-                    _target1 = new MailDynamicParameters();
-                    return _target1;
-                case PSProviderType.External:
-                    _target2 = new ExternalDynamicParameters();
-                    return _target2;
-                case PSProviderType.Azure:
-                    _target3 = new AzureDynamicParameters();
-                    return _target3;
-                case PSProviderType.Biometrics:
-                    _target4 = new BiometricDynamicParameters();
-                    return _target4;
-
-                default:
-                    break;
-            }
-            return null;
-        }
-
-        /// <summary>
-        /// ProcessRecord method override
-        /// </summary>
-        protected override void ProcessRecord()
-        {
-            if (ShouldProcess("MFA Providers Configuration"))
-            {
-                try
-                {
-                    switch (ProviderType)
-                    {
-                        case PSProviderType.Code:
-                            if ((_target0.Data) is PSConfigTOTPProvider)
-                                ((FlatOTPProvider)(_target0.Data)).Update(this.Host);
-                            else
-                                throw new Exception("Invalid Profider Type !");
-                            break;
-                        case PSProviderType.Email:
-                            if ((_target1.Data) is PSConfigMailProvider)
-                                ((FlatConfigMail)(_target1.Data)).Update(this.Host);
-                            else
-                                throw new Exception("Invalid Profider Type !");
-                            break;
-                        case PSProviderType.External:
-                            if ((_target2.Data) is PSConfigExternalProvider)
-                                ((FlatExternalProvider)(_target2.Data)).Update(this.Host);
-                            else
-                                throw new Exception("Invalid Profider Type !");
-                            break;
-                        case PSProviderType.Azure:
-                            if ((_target3.Data) is PSConfigAzureProvider)
-                                ((FlatAzureProvider)(_target3.Data)).Update(this.Host);
-                            else
-                                throw new Exception("Invalid Profider Type !");
-                            break;
-                        case PSProviderType.Biometrics:
-                            if ((_target4.Data) is PSConfigBiometricProvider)
-                                ((FlatBiometricProvider)(_target4.Data)).Update(this.Host);
-                            else
-                                throw new Exception("Invalid Profider Type !");
-                            break;
-                        default:
-                            break;
-                    }
-                    this.WriteVerbose(infos_strings.InfosConfigUpdated);
-                }
-                catch (Exception ex)
-                {
-                    this.ThrowTerminatingError(new ErrorRecord(ex, "3024", ErrorCategory.OperationStopped, this));
-                }
-            }
-        }
-
-        /// <summary>
-        /// EndProcessing method implementation
-        /// </summary>
-        protected override void EndProcessing()
-        {
-            _target0 = null;
-            _target1 = null;
-            _target2 = null;
-            _target3 = null;
-            _target4 = null;
-            base.EndProcessing();
-        }
-
-        /// <summary>
-        /// StopProcessing method implementation
-        /// </summary>
-        protected override void StopProcessing()
-        {
-            _target0 = null;
-            _target1 = null;
-            _target2 = null;
-            _target3 = null;
-            _target4 = null;
-            base.StopProcessing();
-        }
-    }
-
-    /// <summary>
-    /// <para type="description">Set TOTP Provider configuration data.</para>
-    /// </summary>
-    public class TOTPDynamicParameters
-    {
-        /// <summary>
-        /// <para type="description">Set the value of TOTP Provider.</para>
-        /// Data property
-        /// </summary>
-        [Parameter(Mandatory = true, Position = 1, ParameterSetName = "Data", ValueFromPipeline = true)]
-        public PSConfigTOTPProvider Data { get; set; }
-    }
-
-    /// <summary>
-    /// <para type="description">Set Mail Provider configuration data.</para>
-    /// </summary>
-    public class MailDynamicParameters
-    {
-        /// <summary>
-        /// <para type="description">Set the value of Email Provider.</para>
-        /// Data property
-        /// </summary>
-        [Parameter(Mandatory = true, Position = 1, ParameterSetName = "Data", ValueFromPipeline = true)]
-        public PSConfigMailProvider Data { get; set; }
-    }
-
-    /// <summary>
-    /// <para type="description">Set External Provider configuration data.</para>
-    /// </summary>
-    public class ExternalDynamicParameters
-    {
-        /// <summary>
-        /// <para type="description">Set the value of SMS provider.</para>
-        /// Data property
-        /// </summary>
-        [Parameter(Mandatory = true, Position = 1, ParameterSetName = "Data", ValueFromPipeline = true)]
-        public PSConfigExternalProvider Data { get; set; }
-    }
-
-    /// <summary>
-    /// <para type="description">Set Azure Provider configuration data.</para>
-    /// </summary>
-    public class AzureDynamicParameters
-    {
-        /// <summary>
-        /// <para type="description">Set the value of Azure provider.</para>
-        /// Data property
-        /// </summary>
-        [Parameter(Mandatory = true, Position = 1, ParameterSetName = "Data", ValueFromPipeline = true)]
-        public PSConfigAzureProvider Data { get; set; }
-    }
-
-    /// <summary>
-    /// <para type="description">Set Biometric Provider configuration data.</para>
-    /// </summary>
-    public class BiometricDynamicParameters
-    {
-        /// <summary>
-        /// <para type="description">Set the value of Azure provider.</para>
-        /// Data property
-        /// </summary>
-        [Parameter(Mandatory = true, Position = 1, ParameterSetName = "Data", ValueFromPipeline = true)]
-        public PSConfigBiometricProvider Data { get; set; }
-    }
-
-    /// <summary>
-    /// <para type="synopsis">Get Secret keys Configuration.</para>
-    /// <para type="description">Get Secret keys configuration options.</para>
-    /// </summary>
-    /// <example>
-    ///   <para>Get-MFAConfigKeys</para>
-    ///   <para>Get MFA Secret Key configuration options</para>
-    /// </example>
-    /// <example>
-    ///  <para>(Get-MFAConfigKeys).ExternalKeyManager.FullQualifiedImplementation</para>
-    ///  <para>(Get-MFAConfigKeys).ExternalKeyManager.Parameters</para>
-    /// </example>
-    [Cmdlet(VerbsCommon.Get, "MFAConfigKeys", SupportsShouldProcess = true, SupportsPaging = false, ConfirmImpact = ConfirmImpact.Medium, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
-    [OutputType(typeof(PSConfigKeys))]
-    public sealed class GetMFAConfigKeys : MFACmdlet
-    {
-        private PSConfigKeys _config;
-
-        /// <summary>
-        /// BeginProcessing method implementation
-        /// </summary>
-        protected override void BeginProcessing()
-        {
-            base.BeginProcessing();
-            try
-            {
-
-                FlatKeysConfig cf = new FlatKeysConfig();
-                cf.Load(this.Host);
-                _config = (PSConfigKeys)cf;
-            }
-            catch (Exception ex)
-            {
-                this.ThrowTerminatingError(new ErrorRecord(ex, "3021", ErrorCategory.OperationStopped, this));
-            }
-        }
-
-        /// <summary>
-        /// EndProcessing method implementation
-        /// </summary>
-        protected override void EndProcessing()
-        {
-            _config = null;
-            base.EndProcessing();
-        }
-
-        /// <summary>
-        /// ProcessInternalRecord method override
-        /// </summary>
-        protected override void ProcessRecord()
-        {
-            try
-            {
-                if (ShouldProcess("MFA Secure Keys Configuration"))
-                {
-                    WriteObject(_config);
-                }
-            }
-            catch (Exception ex)
-            {
-                this.ThrowTerminatingError(new ErrorRecord(ex, "3022", ErrorCategory.OperationStopped, this));
-            }
-        }
-
-        /// <summary>
-        /// StopProcessing method implementation
-        /// </summary>
-        protected override void StopProcessing()
-        {
-            _config = null;
-            base.StopProcessing();
-        }
-    }
-
-    /// <summary>
-    /// <para type="synopsis">Set Secret Keys Configuration.</para>
-    /// <para type="description">Set Secret Keys configuration options.</para>
-    /// </summary>
-    /// <example>
-    ///   <para>Set-MFAConfigKeys -Config $cfg</para>
-    ///   <para>Set MFA Secret Keys configuration</para>
-    /// </example>
-    /// <example>
-    ///   <para>$cfg = Get-MFAConfigKeys</para>
-    ///   <para>$cfg.KeyFormat = [MFA.PSSecretKeyFormat]::RSA</para>
-    ///   <para>Set-MFAConfigKeys $cfg</para>
-    ///   <para>Set MFA Secret Keys configuration options, modity values and finally Update configuration.</para>
-    /// </example>
-    [Cmdlet(VerbsCommon.Set, "MFAConfigKeys", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
-    [PrimaryServerRequired]
-    public sealed class SetMFAConfigKeys : MFACmdlet
-    {
-        private PSConfigKeys _config;
-        private FlatKeysConfig _target;
-
-        /// <summary>
-        /// <para type="description">Config parameter, a variable of type PSKeyConfig.</para>
-        /// </summary>
-        [Parameter(Mandatory = true, Position = 0, ParameterSetName = "Data", ValueFromPipeline = true)]
-        [ValidateNotNullOrEmpty()]
-        public PSConfigKeys Config
-        {
-            get { return _config; }
-            set { _config = value; }
-        }
-
-        /// <summary>
-        /// BeginProcessing method implementation
-        /// </summary>
-        protected override void BeginProcessing()
-        {
-            base.BeginProcessing();
-            if (_config != null)
-            {
-                try
-                {
-                    _target = (FlatKeysConfig)_config;
-                }
-                catch (Exception ex)
-                {
-                    this.ThrowTerminatingError(new ErrorRecord(ex, "3023", ErrorCategory.OperationStopped, this));
-                }
-            }
-        }
-
-        /// <summary>
-        /// ProcessRecord method override
-        /// </summary>
-        protected override void ProcessRecord()
-        {
-            if (ShouldProcess("MFA Secure Keys Configuration"))
-            {
-                try
-                {
-                    _target.Update(this.Host);
-                    this.WriteVerbose(infos_strings.InfosConfigUpdated);
-                }
-                catch (Exception ex)
-                {
-                    this.ThrowTerminatingError(new ErrorRecord(ex, "3024", ErrorCategory.OperationStopped, this));
-                }
-            }
-        }
-    }
-
+    #region New-MFADatabase
     /// <summary>
     /// <para type="synopsis">Create a new SQL Database for MFA.</para>
     /// <para type="description">Create a new SQL Database for MFA Configuration (UseActiveDirectory==false).</para>
@@ -3559,7 +6052,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         private string _username;
         private string _password;
         private SQLEncryptedDatabaseDynamicParameters Dyn;
-        private PSConfigSQL _config;
+        private PSSQLStore _config;
 
         /// <summary>
         /// <para type="description">SQL ServerName, you must include Instance if needed eg : server\instance.</para>
@@ -3637,9 +6130,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             try
             {
                 ManagementService.Initialize(this.Host, true);
-                FlatConfigSQL cf = new FlatConfigSQL();
+                FlatSQLStore cf = new FlatSQLStore();
                 cf.Load(this.Host);
-                _config = (PSConfigSQL)cf;
+                _config = (PSSQLStore)cf;
             }
             catch (Exception ex)
             {
@@ -3684,7 +6177,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             }
         }
     }
+    #endregion
 
+    #region Upgrade-MFADatabase
     /// <summary>
     /// <para type="synopsis">Create a new SQL Database for MFA.</para>
     /// <para type="description">Create a new SQL Database for MFA Configuration (UseActiveDirectory==false).</para>
@@ -3698,7 +6193,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     [PrimaryServerRequired]
     public sealed class UpgradeMFADatabase : MFACmdlet
     {
-        private PSConfigSQL _config;
+        private PSSQLStore _config;
 
         /// <summary>
         /// <para type="description">SQL ServerName, you must include Instance if needed eg : server\instance.</para>
@@ -3723,9 +6218,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             try
             {
                 ManagementService.Initialize(this.Host, true);
-                FlatConfigSQL cf = new FlatConfigSQL();
+                FlatSQLStore cf = new FlatSQLStore();
                 cf.Load(this.Host);
-                _config = (PSConfigSQL)cf;
+                _config = (PSSQLStore)cf;
             }
             catch (Exception ex)
             {
@@ -3754,7 +6249,98 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             }
         }
     }
+    #endregion
 
+    #region Install-MFACertificate
+    /// <summary>
+    /// <para type="synopsis">Install RSA Certificate.</para>
+    /// <para type="description">Install a new RSA Certificate for MFA.</para>
+    /// </summary>
+    /// <example>
+    ///   <para>Install-MFACertificate</para>
+    ///   <para>Create a new certificate for RSA User keys.</para>
+    /// </example>
+    /// <example>
+    ///   <para>Install-MFACertificate -RSACertificateDuration 10 -RestartFarm</para>
+    ///   <para>Create a new certificate for RSA User keys with specific duration.</para>
+    /// </example>
+    [Cmdlet(VerbsLifecycle.Install, "MFACertificate", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
+    [PrimaryServerRequired]
+    public sealed class InstallMFACertificate : MFACmdlet
+    {
+        private int _duration = 5;
+        private SwitchParameter _restart = true;
+
+        /// <summary>
+        /// RSACertificateDuration property
+        /// <para type="description">Duration for the new certificate (Years)</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Data")]
+        public int RSACertificateDuration
+        {
+            get { return _duration; }
+            set { _duration = value; }
+        }
+
+        /// <summary>
+        /// <para type="description">Restart Farm Services</para>
+        /// RestartFarm property
+        /// </summary>
+        [Parameter(ParameterSetName = "Data")]
+        public SwitchParameter RestartFarm
+        {
+            get { return _restart; }
+            set { _restart = value; }
+        }
+
+        /// <summary>
+        /// BeginProcessing method implementation
+        /// </summary>
+        protected override void BeginProcessing()
+        {
+            base.BeginProcessing();
+            try
+            {
+                ManagementService.Initialize(this.Host, true);
+            }
+            catch (Exception ex)
+            {
+                this.ThrowTerminatingError(new ErrorRecord(ex, "3019", ErrorCategory.OperationStopped, this));
+            }
+        }
+
+        /// <summary>
+        /// ProcessRecord method override
+        /// </summary>
+        protected override void ProcessRecord()
+        {
+            try
+            {
+                if (ShouldProcess("Install-MFACertificate"))
+                {
+                    Collection<ChoiceDescription> col = new Collection<ChoiceDescription>();
+                    ChoiceDescription c1 = new ChoiceDescription("&Yes");
+                    ChoiceDescription c2 = new ChoiceDescription("&No");
+                    col.Add(c1);
+                    col.Add(c2);
+                    if (this.Host.UI.PromptForChoice("Install-MFACertificate", infos_strings.InfoAllKeyWillbeReset, col, 1) == 0)
+                    {
+                        PSHost hh = GetHostForVerbose();
+                        ADFSServiceManager svc = ManagementService.ADFSManager;
+                        string thumb = svc.RegisterNewRSACertificate(hh, this.RSACertificateDuration, this.RestartFarm);
+                        this.Host.UI.WriteLine(ConsoleColor.Green, this.Host.UI.RawUI.BackgroundColor, String.Format(infos_strings.InfosRSACertificateChanged, thumb));
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                this.ThrowTerminatingError(new ErrorRecord(ex, "3020", ErrorCategory.OperationStopped, this));
+            }
+        }
+    }
+    #endregion
+
+    #region New-MFASecretKeysDatabase
     /// <summary>
     /// <para type="synopsis">Create a new SQL Database for storing RSA keys and certificates.</para>
     /// <para type="description">Create a new SQL Database for storing RSA keys and certificates, can be used with ADDS and SQL configuration.</para>
@@ -3781,7 +6367,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         private string _username;
         private string _password;
         private SQLEncryptedDatabaseDynamicParameters Dyn;
-        private PSConfigSQL _config;
+        private PSSQLStore _config;
 
         /// <summary>
         /// <para type="description">SQL ServerName, you must include Instance if needed eg : server\instance.</para>
@@ -3855,9 +6441,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             try
             {
                 ManagementService.Initialize(this.Host, true);
-                FlatConfigSQL cf = new FlatConfigSQL();
+                FlatSQLStore cf = new FlatSQLStore();
                 cf.Load(this.Host);
-                _config = (PSConfigSQL)cf;
+                _config = (PSSQLStore)cf;
             }
             catch (Exception ex)
             {
@@ -3902,7 +6488,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             }
         }
     }
+    #endregion
 
+    #region Import-MFAUsersCSV
     /// <summary>
     /// <para type="synopsis">Imports users from CSV file in MFA System.</para>
     /// <para type="description">Imports users from CSV file in MFA System, can be used with ADDS and SQL configuration.</para>
@@ -3993,7 +6581,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             }
         }
     }
+    #endregion
 
+    #region Import-MFAUsersXML
     /// <summary>
     /// <para type="synopsis">Imports users from XML file in MFA System.</para>
     /// <para type="description">Imports users from XML file in MFA System, can be used with ADDS and SQL configuration.</para>
@@ -4084,7 +6674,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             }
         }
     }
+    #endregion
 
+    #region Import-MFAUsersADDS
     /// <summary>
     /// <para type="synopsis">Imports users from ADDS in MFA System.</para>
     /// <para type="description">Imports users from ADDS in MFA System, can be used with ADDS and SQL configuration.</para>
@@ -4407,57 +6999,18 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         }
     }
     #endregion
-
-    #region ADDS Template
-    /// <summary>
-    /// <para type="synopsis">Set basic Firewall rules for MFA inter servers communication.</para>
-    /// <para type="description">Set basic Firewall rules for MFA inter servers communication.</para>
-    /// </summary>
-    /// <example>
-    ///   <para>Set-MFAActiveDirectoryTemplate -Kind MFA:: </para>
-    /// </example>
-    [Cmdlet(VerbsCommon.Set, "MFAActiveDirectoryTemplate", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
-    public sealed class SetMFAActiveDirectoryTemplate : MFACmdlet
-    {
-        /// <summary>
-        /// <para type="description">Template type for ADDS Attributes configuration.</para>
-        /// </summary>
-        [Parameter(Mandatory = true, ParameterSetName = "Data")]
-        public PSADDSTemplateKind Kind { get; set; } = PSADDSTemplateKind.SchemaAll;
-
-        /// <summary>
-        /// ProcessRecord method override
-        /// </summary>
-        protected override void ProcessRecord()
-        {
-            if (ShouldProcess("ADDS Attributes template Configuration"))
-            {
-                try
-                {
-                    PSConfigADDS.SetADDSAttributesTemplate(Kind);
-                    this.WriteVerbose(infos_strings.InfosConfigUpdated);
-                }
-                catch (Exception ex)
-                {
-                    this.ThrowTerminatingError(new ErrorRecord(ex, "4025", ErrorCategory.OperationStopped, this));
-                }
-            }
-        }
-    }
-
-    #endregion
-
+    
     #region Certificates Management
     /// <summary>
     /// <para type="synopsis">Update Acces Control List for MFA Certificates stored in LocalMachine Store. Usefull after you deploy an cetificate in ADFS Farm</para>
     /// <para type="description">Update Acces Control List for MFA Certificates stored in LocalMachine Store and optionnally remove all orphaned privatekeys. Usefull after you deploy an cetificate in ADFS Farm</para>
     /// </summary>
     /// <example>
-    ///   <para>Update-MFACertificatesAcessControlList</para>
-    ///   <para>Update-MFACertificatesAcessControlList -CleanOrphaned'</para>
+    ///   <para>Update-MFACertificatesAccessControlList</para>
+    ///   <para>Update-MFACertificatesAccessControlList -CleanOrphaned'</para>
     /// </example>
-    [Cmdlet("Update", "MFACertificatesAcessControlList", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
-    public sealed class UpdatetMFACertificatesAcessControlList : MFACmdlet
+    [Cmdlet("Update", "MFACertificatesAccessControlList", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
+    public sealed class UpdatetMFACertificatesAccessControlList : MFACmdlet
     {
         private bool _option;
 
@@ -4530,4 +7083,5 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         }
     }
     #endregion
+
 }

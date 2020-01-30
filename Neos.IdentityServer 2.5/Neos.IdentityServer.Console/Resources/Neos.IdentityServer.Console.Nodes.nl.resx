@@ -324,4 +324,7 @@
   <data name="GENERALSCOPECERTSDESC" xml:space="preserve">
     <value>Beheer priva sleutels certificaat Toegangscontrolelijst op huidige server</value>
   </data>
+  <data name="STORAGESCOPENODEDESC" xml:space="preserve">
+    <value>Opslagconfiguratie</value>
+  </data>
 </root>

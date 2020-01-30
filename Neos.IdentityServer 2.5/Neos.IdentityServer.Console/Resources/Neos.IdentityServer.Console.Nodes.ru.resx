@@ -324,4 +324,7 @@
   <data name="GENERALSCOPECERTSDESC" xml:space="preserve">
     <value>Управляйте сертификатами priva keys Access Control List на текущем сервере</value>
   </data>
+  <data name="STORAGESCOPENODEDESC" xml:space="preserve">
+    <value>Конфигурация хранилища</value>
+  </data>
 </root>

@@ -105,6 +105,12 @@
     <Compile Include="Forms\Neos.IdentityServer.Console.DatabaseWizard.Designer.cs">
       <DependentUpon>Neos.IdentityServer.Console.DatabaseWizard.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\Neos.IdentityServer.Console.StorageViewControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\Neos.IdentityServer.Console.StorageViewControl.Designer.cs">
+      <DependentUpon>Neos.IdentityServer.Console.StorageViewControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\Neos.IdentityServer.Console.GeneralViewControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -263,6 +269,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Views\Neos.IdentityServer.Console.ADDSFormView.cs" />
     <Compile Include="Views\Neos.IdentityServer.Console.BiometricsFormView.cs" />
+    <Compile Include="Views\Neos.IdentityServer.Console.StorageFormView.cs" />
     <Compile Include="Views\Neos.IdentityServer.Console.SecurityRootFormView.cs" />
     <Compile Include="Views\Neos.IdentityServer.Console.SecurityWebAuthNFormView.cs" />
     <Compile Include="Views\Neos.IdentityServer.Console.SecurityRSAXFormView.cs" />
@@ -508,6 +515,40 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.DatabaseWizard.sv.resx">
       <DependentUpon>Neos.IdentityServer.Console.DatabaseWizard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.StorageViewControl.de.resx">
+      <DependentUpon>Neos.IdentityServer.Console.StorageViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.StorageViewControl.es.resx">
+      <DependentUpon>Neos.IdentityServer.Console.StorageViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.StorageViewControl.fr.resx">
+      <DependentUpon>Neos.IdentityServer.Console.StorageViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.StorageViewControl.it.resx">
+      <DependentUpon>Neos.IdentityServer.Console.StorageViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.StorageViewControl.nl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.StorageViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.StorageViewControl.pl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.StorageViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.StorageViewControl.pt.resx">
+      <DependentUpon>Neos.IdentityServer.Console.StorageViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.StorageViewControl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.StorageViewControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.StorageViewControl.ro.resx">
+      <DependentUpon>Neos.IdentityServer.Console.StorageViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.StorageViewControl.ru.resx">
+      <DependentUpon>Neos.IdentityServer.Console.StorageViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.StorageViewControl.sv.resx">
+      <DependentUpon>Neos.IdentityServer.Console.StorageViewControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.GeneralViewControl.de.resx">
       <DependentUpon>Neos.IdentityServer.Console.GeneralViewControl.cs</DependentUpon>
