@@ -22,6 +22,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.ServiceProcess;
+using System.Threading;
 using Neos.IdentityServer.MultiFactor.Administration;
 
 namespace Neos.IdentityServer.MultiFactor.NotificationHub
@@ -55,11 +56,12 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
             Trace.WriteLine("MFANOTIFHUB:Start MailSlot Manager " + _mailslotsmgr.ApplicationName);
             LogForSlots.LogEnabled = false;
 
-            _pipeserver.Proofkey = XORUtilities.XORKey;
             _pipeserver.OnReloadConfiguration += DoOnReceiveConfiguration;
+            _pipeserver.OnClearConfigurationCache += DoOnReceiveClearConfiguration;
             _pipeserver.OnRequestServerConfiguration += DoOnReceiveServerConfiguration;
             _pipeserver.OnCheckForReplay += DoOnCheckForReplay;
             _pipeserver.OnCheckForRemoteReplay += DoOnCheckForRemoteReplay;
+
         }
 
         /// <summary>
@@ -67,6 +69,7 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
         /// </summary>
         protected override void OnStart(string[] args)
         {
+            bool IsInstalling = false;
             _mailslotsmgr.Start();
 
             _mailslotmfa.Start();
@@ -77,8 +80,20 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
             StartADFSService();
             try
             {
-                _pipeserver.Start();
-                _replaymgr.Start();
+                if (args.Length>0)
+                {
+                    IsInstalling = (args[0].ToLower().Equals("install"));
+                }
+                try
+                {
+                    _pipeserver.Proofkey = XORUtilities.XORKey;
+                    _pipeserver.Start();
+                    _replaymgr.Start();
+                }
+                catch (Exception)  // No Config
+                {
+
+                }
             }
             catch (Exception e)
             {
@@ -147,6 +162,10 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
         {
             if (message.Operation == (byte)NotificationsKind.ConfigurationReload) // Configuration Reload
                 DoOnSendConfiguration();
+            else if (message.Operation == (byte)NotificationsKind.ConfigurationCreated) 
+                DoOnSendConfiguration();
+            else if (message.Operation == (byte)NotificationsKind.ConfigurationDeleted) // Configuration cache clear
+                DoOnClearConfiguration();
             else if (message.Operation == (byte)NotificationsKind.ServiceServerInformation)
                 DoOnRequestServerConfiguration(message.Text);
         }
@@ -301,6 +320,50 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
                 fs.Close();
             }
         }
+
+        #endregion
+
+        #region Configuration Cache Clear
+        /// <summary>
+        /// DoOnCreateConfiguration method implementation (Client)
+        /// </summary>
+        private void DoOnClearConfiguration()
+        {
+            if (CFGUtilities.IsPrimaryComputer())
+            {
+                if (_adfsservers.Count == 0)
+                    BuildADFSServersList();
+
+                PipeClient pipe = new PipeClient(XORUtilities.XORKey, ADFSServers, true);
+                string req = Environment.MachineName;
+                if (!pipe.DoClearConfigurationCache(req))
+                {
+                    this.EventLog.WriteEntry("Configuration cahe cannot be cleared !", EventLogEntryType.Warning, 10000);
+                }
+            }
+        }
+
+        /// <summary>
+        /// private bool DoOnReceiveClearConfiguration(string requestor) method implementation (Server)
+        /// </summary>
+        private bool DoOnReceiveClearConfiguration(string requestor)
+        {
+            try
+            {
+                File.Delete(CFGUtilities.configcachedir);
+                using (MailSlotClient mailslot = new MailSlotClient())
+                {
+                    mailslot.Text = requestor;
+                    mailslot.SendNotification(NotificationsKind.ConfigurationReload);
+                }
+            }
+            catch (Exception ex)
+            {
+                this.EventLog.WriteEntry("Error when writing Confoguration cache ! " + ex.Message, EventLogEntryType.Error, 10000);
+                return false;
+            }
+            return true;
+        }
         #endregion
 
         #region Replay management
@@ -336,9 +399,11 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
             try
             {
                 ADFSController = new ServiceController("adfssrv");
-                if (ADFSController.Status != ServiceControllerStatus.Running)
+                if ((ADFSController.Status != ServiceControllerStatus.Running) && (ADFSController.Status != ServiceControllerStatus.StartPending))
+                {
                     ADFSController.Start();
-                ADFSController.WaitForStatus(ServiceControllerStatus.Running, new TimeSpan(0, 1, 0));
+                    ADFSController.WaitForStatus(ServiceControllerStatus.Running, new TimeSpan(0, 1, 0));
+                }
             }
             catch (Exception e)
             {
@@ -360,9 +425,11 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
             try
             {
                 ADFSController = new ServiceController("adfssrv");
-                if (ADFSController.Status != ServiceControllerStatus.Stopped)
+                if ((ADFSController.Status != ServiceControllerStatus.Stopped) && (ADFSController.Status != ServiceControllerStatus.StopPending))
+                {
                     ADFSController.Stop();
-                ADFSController.WaitForStatus(ServiceControllerStatus.Stopped, new TimeSpan(0, 1, 0));
+                    ADFSController.WaitForStatus(ServiceControllerStatus.Stopped, new TimeSpan(0, 1, 0));
+                }
             }
             catch (Exception e)
             {

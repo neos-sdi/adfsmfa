@@ -350,10 +350,12 @@ namespace MFA
         {
             if (adv == null)
                 return null;
-            PSAdvertisingDays cfg = new PSAdvertisingDays();
-            cfg.FirstDay = adv.FirstDay;
-            cfg.LastDay = adv.LastDay;
-            cfg.OnFire = adv.OnFire;
+            PSAdvertisingDays cfg = new PSAdvertisingDays
+            {
+                FirstDay = adv.FirstDay,
+                LastDay = adv.LastDay,
+                OnFire = adv.OnFire
+            };
             return cfg;
         }
 
@@ -364,10 +366,12 @@ namespace MFA
         {
             if (adv == null)
                 return null;
-            FlatAdvertising cfg = new FlatAdvertising();
-            cfg.FirstDay = adv.FirstDay;
-            cfg.LastDay = adv.LastDay;
-            cfg.OnFire = adv.OnFire;
+            FlatAdvertising cfg = new FlatAdvertising
+            {
+                FirstDay = adv.FirstDay,
+                LastDay = adv.LastDay,
+                OnFire = adv.OnFire
+            };
             return cfg;
 
         }

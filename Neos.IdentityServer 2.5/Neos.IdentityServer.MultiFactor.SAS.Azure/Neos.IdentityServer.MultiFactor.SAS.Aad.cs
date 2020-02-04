@@ -179,8 +179,7 @@ namespace Neos.IdentityServer.MultiFactor.SAS
                 httpWebRequest.AllowAutoRedirect = true;
                 httpWebRequest.Proxy = null;
 
-                if (httpRequestModifier != null)
-                    httpRequestModifier(httpWebRequest);
+                httpRequestModifier?.Invoke(httpWebRequest);
 
                 Stream streamRequest;
                 streamRequest = httpWebRequest.GetRequestStream();

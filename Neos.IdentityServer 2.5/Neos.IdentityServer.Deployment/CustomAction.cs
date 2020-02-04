@@ -23,6 +23,7 @@ using System.ServiceProcess;
 using System.Diagnostics;
 using System.IO;
 using System.Collections;
+using System.Threading;
 
 namespace Neos.IdentityServer.Deployment
 {
@@ -196,9 +197,11 @@ namespace Neos.IdentityServer.Deployment
             try
             {
                 ADFSController = new ServiceController("mfanotifhub");
-                if (ADFSController.Status != ServiceControllerStatus.Running)
-                    ADFSController.Start();
-                ADFSController.WaitForStatus(ServiceControllerStatus.Running, new TimeSpan(0, 1, 0));
+                if ((ADFSController.Status != ServiceControllerStatus.Running) && (ADFSController.Status != ServiceControllerStatus.StartPending))
+                {
+                    ADFSController.Start(new string[] {"Install"});
+                    ADFSController.WaitForStatus(ServiceControllerStatus.Running, new TimeSpan(0, 1, 0));
+                }
             }
             catch (Exception)
             {
@@ -219,9 +222,11 @@ namespace Neos.IdentityServer.Deployment
             try
             {
                 ADFSController = new ServiceController("mfanotifhub");
-                if (ADFSController.Status != ServiceControllerStatus.Stopped)
+                if ((ADFSController.Status != ServiceControllerStatus.Stopped) && (ADFSController.Status != ServiceControllerStatus.StopPending))
+                {
                     ADFSController.Stop();
-                ADFSController.WaitForStatus(ServiceControllerStatus.Stopped, new TimeSpan(0, 1, 0));
+                    ADFSController.WaitForStatus(ServiceControllerStatus.Stopped, new TimeSpan(0, 1, 0));
+                }
             }
             catch (Exception)
             {

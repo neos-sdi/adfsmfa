@@ -1593,6 +1593,8 @@ namespace Neos.IdentityServer.MultiFactor
     {
         None = 0x00,
         ConfigurationReload  = 0xAA,
+        ConfigurationCreated = 0xAB,
+        ConfigurationDeleted = 0xAC,
         ServiceStatusRunning = 0x10,
         ServiceStatusStopped = 0x11,
         ServiceStatusPending = 0x12,

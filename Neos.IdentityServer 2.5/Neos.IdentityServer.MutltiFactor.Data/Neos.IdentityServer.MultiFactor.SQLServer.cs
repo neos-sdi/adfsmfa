@@ -1494,7 +1494,6 @@ namespace Neos.IdentityServer.MultiFactor.Data
             {
                 con.Close();
             }
-            return false;
         }
 
         /// <summary>

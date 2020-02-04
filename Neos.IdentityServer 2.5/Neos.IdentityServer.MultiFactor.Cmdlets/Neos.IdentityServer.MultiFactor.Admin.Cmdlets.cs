@@ -317,7 +317,7 @@ namespace MFA
     {
         private DataFilterObject FilterObject;
         private DataOrderObject OrderObject;
-        private PSHost Host;
+        private readonly PSHost Host;
 
         /// <summary>
         /// PSDataFieldParameters constructor
@@ -391,7 +391,7 @@ namespace MFA
     {
         private DataFilterObject FilterObject;
         private DataOrderObject OrderObject;
-        private PSHost Host;
+        private readonly PSHost Host;
 
         /// <summary>
         /// PSDataFieldMixedParameters constructor
@@ -485,7 +485,7 @@ namespace MFA
     {
         private DataFilterObject FilterObject;
         private DataOrderObject OrderObject;
-        private PSHost Host;
+        private readonly PSHost Host;
 
         /// <summary>
         /// PSDataFieldCryptedParameters constructor
@@ -720,9 +720,11 @@ namespace MFA
             ProgressRecord prog = null;
             if (_data.Length >= 10)
             {
-                prog = new ProgressRecord(this.GetHashCode(), "Set-MFAUsers", "Operation running");
-                prog.PercentComplete = 0;
-                prog.RecordType = ProgressRecordType.Processing;
+                prog = new ProgressRecord(this.GetHashCode(), "Set-MFAUsers", "Operation running")
+                {
+                    PercentComplete = 0,
+                    RecordType = ProgressRecordType.Processing
+                };
             }
             foreach (PSRegistration reg in _data)
             {
@@ -922,8 +924,10 @@ namespace MFA
 
                     if (res != null)
                         throw new Exception(string.Format(errors_strings.ErrorUserExists, this.Identity));
-                    res = new PSRegistration();
-                    res.UPN = Identity;
+                    res = new PSRegistration
+                    {
+                        UPN = Identity
+                    };
                     Data = new PSRegistration[] { res };
                 }
                 catch (Exception ex)
@@ -942,9 +946,11 @@ namespace MFA
             ProgressRecord prog = null;
             if (_data.Length >= 10)
             {
-                prog = new ProgressRecord(this.GetHashCode(), "Add-MFAUsers", "Operation running");
-                prog.PercentComplete = 0;
-                prog.RecordType = ProgressRecordType.Processing;
+                prog = new ProgressRecord(this.GetHashCode(), "Add-MFAUsers", "Operation running")
+                {
+                    PercentComplete = 0,
+                    RecordType = ProgressRecordType.Processing
+                };
             }
             foreach (PSRegistration reg in _data)
             {
@@ -1073,9 +1079,11 @@ namespace MFA
             ProgressRecord prog = null;
             if (_data.Length >= 10)
             {
-                prog = new ProgressRecord(this.GetHashCode(), "Remove-MFAUsers", "Operation running");
-                prog.PercentComplete = 0;
-                prog.RecordType = ProgressRecordType.Processing;
+                prog = new ProgressRecord(this.GetHashCode(), "Remove-MFAUsers", "Operation running")
+                {
+                    PercentComplete = 0,
+                    RecordType = ProgressRecordType.Processing
+                };
             }
             foreach (PSRegistration reg in _data)
             {
@@ -1183,9 +1191,11 @@ namespace MFA
             ProgressRecord prog = null;
             if (_data.Length >= 10)
             {
-                prog = new ProgressRecord(this.GetHashCode(), "Enable-MFAUsers", "Operation running");
-                prog.PercentComplete = 0;
-                prog.RecordType = ProgressRecordType.Processing;
+                prog = new ProgressRecord(this.GetHashCode(), "Enable-MFAUsers", "Operation running")
+                {
+                    PercentComplete = 0,
+                    RecordType = ProgressRecordType.Processing
+                };
             }
             foreach (PSRegistration reg in _data)
             {
@@ -1295,9 +1305,11 @@ namespace MFA
             ProgressRecord prog = null;
             if (_data.Length >= 10)
             {
-                prog = new ProgressRecord(this.GetHashCode(), "Disable-MFAUsers", "Operation running");
-                prog.PercentComplete = 0;
-                prog.RecordType = ProgressRecordType.Processing;
+                prog = new ProgressRecord(this.GetHashCode(), "Disable-MFAUsers", "Operation running")
+                {
+                    PercentComplete = 0,
+                    RecordType = ProgressRecordType.Processing
+                };
             }
             foreach (PSRegistration reg in _data)
             {
@@ -1778,102 +1790,16 @@ namespace MFA
     #region Register-MFASystem
     /// <summary>
     /// <para type="synopsis">Register Configuration for MFA.</para>
-    /// <para type="description">Register MFA components with ADFS. Activate it, Set Certificates and User Keys format (RNG, RSA, CUSTOM)</para>
+    /// <para type="description">Register MFA components with ADFS. Activate it</para>
     /// </summary>
     /// <example>
     ///   <para>Register-MFASystem</para>
     ///   <para>Create a new empty configuration for MFA. You must complete configuration with other CmdLets</para>
     /// </example>
-    /// <example>
-    ///   <para>Register-MFASystem -Activate -RestartFarm -KeysFormat RSA -RSACertificateDuration 10</para>
-    ///   <para>Create a new empty configuration for MFA. Activation and Restart of services. Key Format is set to RSA with a cetificate for 10 Years</para>
-    /// </example>
-    /// <example>
-    ///   <para>Register-MFASystem -Activate -RestartFarm -KeysFormat CUSTOM -RSACertificateDuration 10</para>
-    ///   <para>Create a new empty configuration for MFA. Activation and Restart of services. Key Format is set to RSA CUSTOM with a cetificate for 10 Years, you must create a database for storing user keys and certificates with New-MFASecretKeysDatabase Cmdlet</para>
-    /// </example>
-    /// <example>
-    ///   <para>Register-MFASystem -Activate -RestartFarm -AllowUpgrade -BackupFilePath c:\temp\myconfig 1.2.xml</para>
-    ///   <para>Upgrade from previous versions, a copy of the current version is saved in spécified backup file </para>
-    /// </example>
     [Cmdlet(VerbsLifecycle.Register, "MFASystem", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
     [PrimaryServerRequired]
-    public sealed class RegisterMFASystem : MFACmdlet, IDynamicParameters
+    public sealed class RegisterMFASystem : MFACmdlet
     {
-        private BackupFilePathDynamicParameters Dyn;
-        private PSSecretKeyFormat _fmt = PSSecretKeyFormat.RNG;
-        private int _duration = 5;
-
-        /// <summary>
-        /// <para type="description">Active MFA as Provider in ADFS, User will be prompted for 2FA immediately.</para>
-        /// Activate property
-        /// </summary>
-        [Parameter(ParameterSetName = "Data")]
-        public SwitchParameter Activate
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// <para type="description">Restart all Farm ADFS services after registration.</para>
-        /// RestartFarm property
-        /// </summary>
-        [Parameter(ParameterSetName = "Data")]
-        public SwitchParameter RestartFarm
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// <para type="description">Upgrade configuration parameters only, prior configuration is not lost.</para>
-        /// AllowUpgrade property
-        /// </summary>
-        [Parameter(ParameterSetName = "Data")]
-        public SwitchParameter AllowUpgrade
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// <para type="description">Change the Users SecretKey format (RNG, RSA, CUSTOM).</para>
-        /// KeysFormat property
-        /// </summary>
-        [Parameter(ParameterSetName = "Data")]
-        [ValidateSet("RNG", "RSA", "CUSTOM")]
-        public PSSecretKeyFormat KeysFormat
-        {
-            get { return _fmt; }
-            set { _fmt = value; }
-        }
-
-        /// <summary>
-        /// <para type="description">Set the cerfificate(s) validity duration.</para>
-        /// RSACertificateDuration property
-        /// </summary>
-        [Parameter(ParameterSetName = "Data")]
-        public int RSACertificateDuration
-        {
-            get { return _duration; }
-            set { _duration = value; }
-        }
-
-        /// <summary>
-        /// <para type="description">Set the name of the backup file.</para>
-        /// GetDynamicParameters implementation
-        /// </summary>
-        public object GetDynamicParameters()
-        {
-            if (AllowUpgrade)
-            {
-                Dyn = new BackupFilePathDynamicParameters();
-                return Dyn;
-            }
-            return null;
-        }
-
         /// <summary>
         /// BeginProcessing method implementation
         /// </summary>
@@ -1897,19 +1823,11 @@ namespace MFA
         {
             try
             {
-                if (ShouldProcess("Register-MFASystem", "Changing Keyformat invalidate all users keys ! When choosing CUSTOM KeyFormat, additional steps are required (Set-MFAConfigkeys and New-MFASecretKeysDatabase)"))
+                if (ShouldProcess("Register-MFASystem", "Register MFA System with ADFS"))
                 {
                     PSHost hh = GetHostForVerbose();
                     ADFSServiceManager svc = ManagementService.ADFSManager;
-                    if (this.AllowUpgrade)
-                    {
-                        if (svc.RegisterMFAProvider(hh, this.Activate, this.RestartFarm, true, Dyn.BackupFilePath, (Neos.IdentityServer.MultiFactor.SecretKeyFormat)this.KeysFormat, this.RSACertificateDuration))
-                            this.Host.UI.WriteLine(ConsoleColor.Green, this.Host.UI.RawUI.BackgroundColor, String.Format(infos_strings.InfosSystemRegistered));
-                        else
-                            this.Host.UI.WriteLine(ConsoleColor.Yellow, this.Host.UI.RawUI.BackgroundColor, String.Format(infos_strings.InfosSystemAlreadyInitialized));
-                    }
-                    else
-                        if (svc.RegisterMFAProvider(hh, this.Activate, this.RestartFarm, false, null, (Neos.IdentityServer.MultiFactor.SecretKeyFormat)this.KeysFormat, this.RSACertificateDuration))
+                    if (svc.RegisterMFAProvider(hh))
                         this.Host.UI.WriteLine(ConsoleColor.Green, this.Host.UI.RawUI.BackgroundColor, String.Format(infos_strings.InfosSystemRegistered));
                     else
                         this.Host.UI.WriteLine(ConsoleColor.Yellow, this.Host.UI.RawUI.BackgroundColor, String.Format(infos_strings.InfosSystemAlreadyInitialized));
@@ -1919,23 +1837,6 @@ namespace MFA
             {
                 this.ThrowTerminatingError(new ErrorRecord(ex, "3012", ErrorCategory.OperationStopped, this));
             }
-        }
-    }
-
-    /// <summary>
-    /// <para type="description">Set the name of the backup file.</para>
-    /// </summary>
-    public class BackupFilePathDynamicParameters
-    {
-        /// <summary>
-        /// <para type="description">Set the name of the backup file.</para>
-        /// BackupFileName property
-        /// </summary>
-        [Parameter(ParameterSetName = "Data", Mandatory = true)]
-        public string BackupFilePath
-        {
-            get;
-            set;
         }
     }
     #endregion
@@ -2103,36 +2004,10 @@ namespace MFA
     ///   <para>UnRegister-MFASystem</para>
     ///   <para>Remove MFA configuration from ADFS. </para>
     /// </example>
-    /// <example>
-    ///   <para>UnRegister-MFASystem -RestartFarm -BackupFilePath c:\temp\myconfig 2.0.xml</para>
-    ///   <para>Unregister MFA System, a copy of the current version is saved in spécified backup file </para>
-    /// </example>
     [Cmdlet(VerbsLifecycle.Unregister, "MFASystem", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
     [PrimaryServerRequired]
     public sealed class UnRegisterMFASystem : MFACmdlet
     {
-        /// <summary>
-        /// <para type="description">Set the name of the backup file.</para>
-        /// BackupFileName property
-        /// </summary>
-        [Parameter(Mandatory = true, ParameterSetName = "Data")]
-        public string BackupFilePath
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// <para type="description">Restart all Farm ADFS services after un-registration.</para>
-        /// RestartFarm property
-        /// </summary>
-        [Parameter(ParameterSetName = "Data")]
-        public SwitchParameter RestartFarm
-        {
-            get;
-            set;
-        }
-
         /// <summary>
         /// BeginProcessing method implementation
         /// </summary>
@@ -2160,9 +2035,10 @@ namespace MFA
                 {
                     PSHost hh = GetHostForVerbose();
                     ADFSServiceManager svc = ManagementService.ADFSManager;
-                    svc.UnRegisterMFAProvider(hh, this.BackupFilePath, this.RestartFarm);
-                    this.Host.UI.WriteLine(ConsoleColor.Green, this.Host.UI.RawUI.BackgroundColor, String.Format(infos_strings.InfosSystemUnRegistered));
-
+                    if (svc.UnRegisterMFAProvider(hh))
+                        this.Host.UI.WriteLine(ConsoleColor.Green, this.Host.UI.RawUI.BackgroundColor, String.Format(infos_strings.InfosSystemUnRegistered));
+                    else
+                        this.Host.UI.WriteLine(ConsoleColor.Yellow, this.Host.UI.RawUI.BackgroundColor, String.Format(infos_strings.InfosSystemUnRegistered));
                 }
             }
             catch (Exception ex)
@@ -4042,7 +3918,6 @@ namespace MFA
 
         /// <summary>
         /// <para type="description">Set TOP Wizard Application list enabled/ disabled.</para>
-        ///         /// <summary>
         /// <para type="description">All, all links are displayed.</para>
         /// </summary>
         [Parameter(ParameterSetName = "Identity")]
@@ -5154,7 +5029,6 @@ namespace MFA
         private SECBIOMETRICDynamicParameters _config3;
         private SECCUSTOMDynamicParameters _config4;
 
-        private FlatSecurity _target;
         private FlatRngSecurity _target1;
         private FlatRsaSecurity _target2;
         private FlatBiometricSecurity _target3;
@@ -6564,12 +6438,14 @@ namespace MFA
             {
                 try
                 {
-                    ImportUsersCSV imp = new ImportUsersCSV(ManagementService.ADFSManager.Config);
-                    imp.FileName = this.LitteralPath;
-                    imp.ForceNewKey = this.NewKey;
-                    imp.SendEmail = this.SendEmail;
-                    imp.DisableAll = this.DisableAll;
-                    imp.NoLogFile = this.NoLogFile;
+                    ImportUsersCSV imp = new ImportUsersCSV(ManagementService.ADFSManager.Config)
+                    {
+                        FileName = this.LitteralPath,
+                        ForceNewKey = this.NewKey,
+                        SendEmail = this.SendEmail,
+                        DisableAll = this.DisableAll,
+                        NoLogFile = this.NoLogFile
+                    };
                     this.Host.UI.WriteLine(string.Format("Import Users Starting {0}", DateTime.Now.ToString()));
                     imp.DoImport();
                     this.Host.UI.WriteLine(string.Format("Import Users Finished {0} Users Imported : {1} Errors {2}", DateTime.Now.ToString(), imp.RecordsImported.ToString(), imp.ErrorsCount.ToString()));
@@ -6657,12 +6533,14 @@ namespace MFA
             {
                 try
                 {
-                    ImportUsersXML imp = new ImportUsersXML(ManagementService.ADFSManager.Config);
-                    imp.FileName = this.LitteralPath;
-                    imp.ForceNewKey = this.NewKey;
-                    imp.SendEmail = this.SendEmail;
-                    imp.DisableAll = this.DisableAll;
-                    imp.NoLogFile = this.NoLogFile;
+                    ImportUsersXML imp = new ImportUsersXML(ManagementService.ADFSManager.Config)
+                    {
+                        FileName = this.LitteralPath,
+                        ForceNewKey = this.NewKey,
+                        SendEmail = this.SendEmail,
+                        DisableAll = this.DisableAll,
+                        NoLogFile = this.NoLogFile
+                    };
                     this.Host.UI.WriteLine(string.Format("Import Users Starting {0}", DateTime.Now.ToString()));
                     imp.DoImport();
                     this.Host.UI.WriteLine(string.Format("Import Users Finished {0} Users Imported : {1} Errors {2}", DateTime.Now.ToString(), imp.RecordsImported.ToString(), imp.ErrorsCount.ToString()));
@@ -6800,20 +6678,22 @@ namespace MFA
             {
                 try
                 {
-                    ImportUsersADDS imp = new ImportUsersADDS(ManagementService.ADFSManager.Config);
-                    imp.ForceNewKey = this.NewKey;
-                    imp.SendEmail = this.SendEmail;
-                    imp.DisableAll = this.DisableAll;
-                    imp.NoLogFile = this.NoLogFile;
-                    imp.CreatedSince = this.CreatedSince;
-                    imp.ModifiedSince = this.ModifiedSince;
-                    imp.DomainName = this.DomainName;
-                    imp.LDAPPath = this.LDAPPath;
-                    imp.MailAttribute = this.MailAttributes;
-                    imp.PhoneAttribute = this.PhoneAttribute;
-                    imp.Method = (PreferredMethod)this.Method;
-                    imp.UserName = this.UserName;
-                    imp.Password = this.Password;
+                    ImportUsersADDS imp = new ImportUsersADDS(ManagementService.ADFSManager.Config)
+                    {
+                        ForceNewKey = this.NewKey,
+                        SendEmail = this.SendEmail,
+                        DisableAll = this.DisableAll,
+                        NoLogFile = this.NoLogFile,
+                        CreatedSince = this.CreatedSince,
+                        ModifiedSince = this.ModifiedSince,
+                        DomainName = this.DomainName,
+                        LDAPPath = this.LDAPPath,
+                        MailAttribute = this.MailAttributes,
+                        PhoneAttribute = this.PhoneAttribute,
+                        Method = (PreferredMethod)this.Method,
+                        UserName = this.UserName,
+                        Password = this.Password
+                    };
 
                     this.Host.UI.WriteLine(string.Format("Import Users Starting {0}", DateTime.Now.ToString()));
                     imp.DoImport();

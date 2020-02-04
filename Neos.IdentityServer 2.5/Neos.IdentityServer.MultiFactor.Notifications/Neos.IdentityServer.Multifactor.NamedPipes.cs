@@ -16,6 +16,7 @@
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
 #define smallsvr
+using Neos.IdentityServer.MultiFactor.Data;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -38,6 +39,7 @@ namespace Neos.IdentityServer.MultiFactor
     public delegate byte[] OnNamedPipeDecryptBytesEvent(byte[] cryptedvalue);
 
     public delegate bool OnReloadConfigurationEvent(string requestor, string value);
+    public delegate bool OnClearConfigurationCacheEvent(string requestor);
     public delegate NamedPipeRegistryRecord OnRequestServerConfigurationEvent(string requestor);
     public delegate bool OnCheckForReplayEvent(NamedPipeNotificationReplayRecord record);
 
@@ -48,9 +50,9 @@ namespace Neos.IdentityServer.MultiFactor
     {
         private NamedPipeServerStream ConfigPipeServer;
 #if smallsvr
-        private static int numthreads = 1;
+        private static readonly int numthreads = 1;
 #else
-        private static int numthreads = 4;
+        private static readonly int numthreads = 4;
 #endif
         private bool MustExit = false;
 
@@ -60,10 +62,10 @@ namespace Neos.IdentityServer.MultiFactor
         public event OnNamedPipeDecryptBytesEvent OnDecryptBytes;
 
         public event OnReloadConfigurationEvent OnReloadConfiguration;
+        public event OnClearConfigurationCacheEvent OnClearConfigurationCache;
         public event OnRequestServerConfigurationEvent OnRequestServerConfiguration;
         public event OnCheckForReplayEvent OnCheckForReplay;
         public event OnCheckForReplayEvent OnCheckForRemoteReplay;
-
 
         /// <summary>
         /// PipeServer constructor
@@ -85,6 +87,11 @@ namespace Neos.IdentityServer.MultiFactor
         /// Proofkey property implementation
         /// </summary>
         public string Proofkey { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Config property implementation
+        /// </summary>
+        public MFAConfig Config { get; set; }
 
         /// <summary>
         /// Start method implementation
@@ -214,6 +221,16 @@ namespace Neos.IdentityServer.MultiFactor
                                     ss.WriteData(OnEncryptBytes(ObjectToByteArray<bool>(b)));
                                 }
                             }
+                            if (obj is NamedPipeClearConfigRecord)
+                            {
+                                NamedPipeClearConfigRecord encrypted = (NamedPipeClearConfigRecord)obj;
+                                bool b = false;
+                                if (OnClearConfigurationCache != null)
+                                {
+                                    b = OnClearConfigurationCache(encrypted.Requestor);
+                                    ss.WriteData(OnEncryptBytes(ObjectToByteArray<bool>(b)));
+                                }
+                            }
                             else if (obj is NamedPipeServerConfigRecord)
                             {
                                 NamedPipeServerConfigRecord encrypted = (NamedPipeServerConfigRecord)obj;
@@ -226,11 +243,10 @@ namespace Neos.IdentityServer.MultiFactor
                             }
                             else if (obj is NamedPipeNotificationReplayRecord)
                             {
-                                NamedPipeNotificationReplayRecord encrypted = (NamedPipeNotificationReplayRecord)obj;
-                                bool b = false;
                                 if (OnCheckForReplay != null)
                                 {
-                                    b = OnCheckForReplay(encrypted);
+                                    NamedPipeNotificationReplayRecord encrypted = (NamedPipeNotificationReplayRecord)obj;
+                                    bool b = OnCheckForReplay(encrypted);
                                     if ((b) && (encrypted.MustDispatch))
                                     {
                                         bool c = false;
@@ -300,23 +316,32 @@ namespace Neos.IdentityServer.MultiFactor
         private PipeSecurity CreatePipeServerSecurity()
         {
             SecurityIdentifier dom = GetDomainSid();
+            if (Config==null)
+                Certs.InitializeAccountsSID(string.Empty, string.Empty, string.Empty);
+            else
+                Certs.InitializeAccountsSID(Config.Hosts.ActiveDirectoryHost.DomainName, Config.Hosts.ActiveDirectoryHost.Account, Config.Hosts.ActiveDirectoryHost.Password);
             PipeSecurity pipeSecurity = new PipeSecurity();
             SecurityIdentifier id1 = new SecurityIdentifier(WellKnownSidType.LocalSystemSid, null);
-            SecurityIdentifier id2 = new SecurityIdentifier(WellKnownSidType.LocalServiceSid, null);
+            SecurityIdentifier id2 = new SecurityIdentifier(Certs.ADFSServiceSID);
             SecurityIdentifier id3 = new SecurityIdentifier(WellKnownSidType.AccountDomainAdminsSid, dom);
             SecurityIdentifier id4 = new SecurityIdentifier(WellKnownSidType.BuiltinAdministratorsSid, null);
             SecurityIdentifier id5 = new SecurityIdentifier(WellKnownSidType.NetworkServiceSid, null);
             SecurityIdentifier id6 = new SecurityIdentifier(WellKnownSidType.WorldSid, null);
-            SecurityIdentifier id7 = new SecurityIdentifier(WellKnownSidType.AccountDomainUsersSid, dom);
+            SecurityIdentifier id7 = new SecurityIdentifier(Certs.ADFSAccountSID);
+            SecurityIdentifier id8 = null;
+            if (!string.IsNullOrEmpty(Certs.ADFSAdminGroupSID))
+                id8 = new SecurityIdentifier(Certs.ADFSAdminGroupSID);
 
             // Allow Everyone read and write access to the pipe. 
-            pipeSecurity.SetAccessRule(new PipeAccessRule(id1, PipeAccessRights.ReadWrite, AccessControlType.Allow));
-            pipeSecurity.SetAccessRule(new PipeAccessRule(id2, PipeAccessRights.ReadWrite, AccessControlType.Allow));
-            pipeSecurity.SetAccessRule(new PipeAccessRule(id3, PipeAccessRights.ReadWrite, AccessControlType.Allow));
-            pipeSecurity.SetAccessRule(new PipeAccessRule(id4, PipeAccessRights.ReadWrite, AccessControlType.Allow));
+            pipeSecurity.SetAccessRule(new PipeAccessRule(id1, PipeAccessRights.FullControl, AccessControlType.Allow));
+            pipeSecurity.SetAccessRule(new PipeAccessRule(id2, PipeAccessRights.FullControl, AccessControlType.Allow));
+            pipeSecurity.SetAccessRule(new PipeAccessRule(id3, PipeAccessRights.FullControl, AccessControlType.Allow));
+            pipeSecurity.SetAccessRule(new PipeAccessRule(id4, PipeAccessRights.FullControl, AccessControlType.Allow));
             pipeSecurity.SetAccessRule(new PipeAccessRule(id5, PipeAccessRights.ReadWrite, AccessControlType.Allow));
             pipeSecurity.SetAccessRule(new PipeAccessRule(id6, PipeAccessRights.ReadWrite, AccessControlType.Allow));
-            pipeSecurity.SetAccessRule(new PipeAccessRule(id7, PipeAccessRights.ReadWrite, AccessControlType.Allow));
+            pipeSecurity.SetAccessRule(new PipeAccessRule(id7, PipeAccessRights.FullControl, AccessControlType.Allow));
+            if (id8!=null)
+                pipeSecurity.SetAccessRule(new PipeAccessRule(id8, PipeAccessRights.FullControl, AccessControlType.Allow));
             return pipeSecurity;
         }
 
@@ -479,6 +504,78 @@ namespace Neos.IdentityServer.MultiFactor
                 return false;
             }
             return true;
+        }
+
+        /// <summary>
+        /// DoClearConfigurationCache method implmentation
+        /// </summary>
+        public bool DoClearConfigurationCache(string requestor)
+        {
+            try
+            {
+                if (OnDecrypt == null)
+                    OnDecrypt += PipeClientOnDecrypt;
+                if (OnEncrypt == null)
+                    OnEncrypt += PipeClientOnEncrypt;
+                if (OnDecryptBytes == null)
+                    OnDecryptBytes += PipeClientOnDecryptBytes;
+                if (OnEncryptBytes == null)
+                    OnEncryptBytes += PipeClientOnEncryptBytes;
+
+                Task<bool>[] taskArray = new Task<bool>[_servers.Count];
+
+                for (int i = 0; i < taskArray.Length; i++)
+                {
+                    string servername = _servers[i];
+                    taskArray[i] = Task<bool>.Factory.StartNew((svr) =>
+                    {
+                        NamedPipeClientStream ClientStream = new NamedPipeClientStream(svr.ToString(), "adfsmfaconfig", PipeDirection.InOut, PipeOptions.None, TokenImpersonationLevel.Impersonation);
+                        try
+                        {
+                            ClientStream.Connect(3000);
+                            PipeStreamData ss = new PipeStreamData(ClientStream);
+                            ss.WriteString(OnEncrypt(Proofkey));
+                            if (OnDecrypt(ss.ReadString()) == Proofkey)
+                            {
+                                NamedPipeClearConfigRecord xdata = new NamedPipeClearConfigRecord(requestor);
+                                ss.WriteData(OnEncryptBytes(ObjectToByteArray(xdata)));
+                                return ByteArrayToObject<bool>(OnDecryptBytes(ss.ReadData()));
+                            }
+                        }
+                        catch (IOException e)
+                        {
+                            LogForSlots.WriteEntry("PipeClient Error : " + e.Message, EventLogEntryType.Error, 8810);
+                            return false;
+                        }
+                        catch (TimeoutException e)
+                        {
+                            LogForSlots.WriteEntry("PipeClient Error : " + e.Message, EventLogEntryType.Error, 8811);
+                            return false;
+                        }
+                        finally
+                        {
+                            ClientStream.Close();
+                        }
+                        return false;
+                    }, servername);
+                }
+                Task.WaitAll(taskArray);
+                for (int i = 0; i < taskArray.Length; i++)
+                {
+                    Task<bool> tsk = taskArray[i];
+                    if (tsk == null)
+                        return false;
+                    if (!tsk.Result)
+                        return false;
+                }
+            }
+            catch (Exception e)
+            {
+                LogForSlots.WriteEntry("PipeClient Error : " + e.Message, EventLogEntryType.Error, 8889);
+                return false;
+            }
+            return true;
+
         }
 
         /// <summary>
@@ -848,6 +945,20 @@ namespace Neos.IdentityServer.MultiFactor
         public NamedPipeReloadConfigRecord(string requestor, string message)
         {
             Message = message;
+            Requestor = requestor;
+        }
+    }
+
+    /// <summary>
+    /// NamedPipeClearConfigRecord class implementation
+    /// </summary>
+    [Serializable]
+    public struct NamedPipeClearConfigRecord
+    {
+        public string Requestor;
+
+        public NamedPipeClearConfigRecord(string requestor)
+        {
             Requestor = requestor;
         }
     }

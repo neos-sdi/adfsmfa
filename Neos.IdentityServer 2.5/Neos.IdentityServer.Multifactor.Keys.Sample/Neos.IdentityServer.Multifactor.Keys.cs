@@ -34,8 +34,8 @@ namespace Neos.IdentityServer.Multifactor.Keys
     /// </summary>
     internal class DBKeysRepositoryService : KeysRepositoryService, IDataRepositorySQLConnection
     {
-        string _connectionstring;
-        string _dataparameters;
+        readonly string _connectionstring;
+        readonly string _dataparameters;
 
         /// <summary>
         /// ADDSKeysRepositoryService constructor

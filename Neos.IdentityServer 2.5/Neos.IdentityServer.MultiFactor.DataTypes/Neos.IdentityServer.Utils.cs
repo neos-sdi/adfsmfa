@@ -39,9 +39,9 @@ namespace Neos.IdentityServer.MultiFactor.Data
     /// </summary>
     public static class Certs
     {
-        static string ADFSAccountSID = string.Empty;
-        static string ADFSServiceSID = string.Empty;
-        static string ADFSAdminGroupSID = string.Empty;
+        public static string ADFSAccountSID = string.Empty;
+        public static string ADFSServiceSID = string.Empty;
+        public static string ADFSAdminGroupSID = string.Empty;
 
         /// <summary>
         /// GetCertificate method implementation
@@ -202,14 +202,16 @@ namespace Neos.IdentityServer.MultiFactor.Data
             dn.Encode("CN=" + subjectName + " " + DateTime.UtcNow.ToString("G") + " GMT", X500NameFlags.XCN_CERT_NAME_STR_NONE);
             neos.Encode("CN=MFA RSA Keys Certificate", X500NameFlags.XCN_CERT_NAME_STR_NONE);
 
-            CX509PrivateKey privateKey = new CX509PrivateKey();
-            privateKey.ProviderName = "Microsoft RSA SChannel Cryptographic Provider";
-            privateKey.MachineContext = true;
-            privateKey.Length = 2048;
-            privateKey.KeySpec = X509KeySpec.XCN_AT_KEYEXCHANGE; // use is not limited
-            privateKey.ExportPolicy = X509PrivateKeyExportFlags.XCN_NCRYPT_ALLOW_EXPORT_FLAG;
-            privateKey.KeyUsage = X509PrivateKeyUsageFlags.XCN_NCRYPT_ALLOW_DECRYPT_FLAG;
-            privateKey.SecurityDescriptor = "D:(A;;FA;;;SY)(A;;FA;;;BA)";
+            CX509PrivateKey privateKey = new CX509PrivateKey
+            {
+                ProviderName = "Microsoft RSA SChannel Cryptographic Provider",
+                MachineContext = true,
+                Length = 2048,
+                KeySpec = X509KeySpec.XCN_AT_KEYEXCHANGE, // use is not limited
+                ExportPolicy = X509PrivateKeyExportFlags.XCN_NCRYPT_ALLOW_EXPORT_FLAG,
+                KeyUsage = X509PrivateKeyUsageFlags.XCN_NCRYPT_ALLOW_DECRYPT_FLAG,
+                SecurityDescriptor = "D:(A;;FA;;;SY)(A;;FA;;;BA)"
+            };
             if (!string.IsNullOrEmpty(ADFSServiceSID))
                 privateKey.SecurityDescriptor += "(A;;FA;;;" + ADFSServiceSID + ")";
             if (!string.IsNullOrEmpty(ADFSAccountSID))
@@ -228,8 +230,10 @@ namespace Neos.IdentityServer.MultiFactor.Data
                 // oid.InitializeFromValue("1.3.6.1.5.5.7.3.1"); // SSL server  
                 oid.InitializeFromValue("1.3.6.1.4.1.311.80.1"); // Encryption
 
-                CObjectIds oidlist = new CObjectIds();
-                oidlist.Add(oid);
+                CObjectIds oidlist = new CObjectIds
+                {
+                    oid
+                };
 
                 CObjectId coid = new CObjectId();
                 // coid.InitializeFromValue("1.3.6.1.5.5.7.3.2"); // Client auth
@@ -287,14 +291,16 @@ namespace Neos.IdentityServer.MultiFactor.Data
             CX500DistinguishedName neos = new CX500DistinguishedName();
             dn.Encode("CN=" + subjectName, X500NameFlags.XCN_CERT_NAME_STR_NONE);
             neos.Encode("CN=MFA RSA Keys Certificate", X500NameFlags.XCN_CERT_NAME_STR_NONE);
-                        
-            CX509PrivateKey privateKey = new CX509PrivateKey();
-            privateKey.ProviderName = "Microsoft RSA SChannel Cryptographic Provider";
-            privateKey.MachineContext = false;
-            privateKey.Length = 2048;
-            privateKey.KeySpec = X509KeySpec.XCN_AT_KEYEXCHANGE; // use is not limited
-            privateKey.ExportPolicy = X509PrivateKeyExportFlags.XCN_NCRYPT_ALLOW_EXPORT_FLAG;
-            privateKey.SecurityDescriptor = "D:(A;;FA;;;SY)(A;;FA;;;BA)";
+
+            CX509PrivateKey privateKey = new CX509PrivateKey
+            {
+                ProviderName = "Microsoft RSA SChannel Cryptographic Provider",
+                MachineContext = false,
+                Length = 2048,
+                KeySpec = X509KeySpec.XCN_AT_KEYEXCHANGE, // use is not limited
+                ExportPolicy = X509PrivateKeyExportFlags.XCN_NCRYPT_ALLOW_EXPORT_FLAG,
+                SecurityDescriptor = "D:(A;;FA;;;SY)(A;;FA;;;BA)"
+            };
             if (!string.IsNullOrEmpty(ADFSServiceSID))
                 privateKey.SecurityDescriptor += "(A;;FA;;;" + ADFSServiceSID + ")";
             if (!string.IsNullOrEmpty(ADFSAccountSID))
@@ -313,8 +319,10 @@ namespace Neos.IdentityServer.MultiFactor.Data
                 // oid.InitializeFromValue("1.3.6.1.5.5.7.3.1"); // SSL server  
                 oid.InitializeFromValue("1.3.6.1.4.1.311.80.1"); // Encryption
 
-                CObjectIds oidlist = new CObjectIds();
-                oidlist.Add(oid);
+                CObjectIds oidlist = new CObjectIds
+                {
+                    oid
+                };
 
                 CObjectId coid = new CObjectId();
                 // coid.InitializeFromValue("1.3.6.1.5.5.7.3.2"); // Client auth
@@ -373,14 +381,16 @@ namespace Neos.IdentityServer.MultiFactor.Data
             dn.Encode("CN=" + subjectName + " " + DateTime.UtcNow.ToString("G") + " GMT", X500NameFlags.XCN_CERT_NAME_STR_NONE);
             neos.Encode("CN=Always Encrypted Certificate", X500NameFlags.XCN_CERT_NAME_STR_NONE);
 
-            CX509PrivateKey privateKey = new CX509PrivateKey();
-            privateKey.ProviderName = "Microsoft RSA SChannel Cryptographic Provider";
-            privateKey.MachineContext = true;
+            CX509PrivateKey privateKey = new CX509PrivateKey
+            {
+                ProviderName = "Microsoft RSA SChannel Cryptographic Provider",
+                MachineContext = true,
 
-            privateKey.Length = 2048;
-            privateKey.KeySpec = X509KeySpec.XCN_AT_KEYEXCHANGE; // use is not limited
-            privateKey.ExportPolicy = X509PrivateKeyExportFlags.XCN_NCRYPT_ALLOW_EXPORT_FLAG;
-            privateKey.SecurityDescriptor = "D:PAI(A;;0xd01f01ff;;;SY)(A;;0xd01f01ff;;;BA)(A;;0xd01f01ff;;;CO)";
+                Length = 2048,
+                KeySpec = X509KeySpec.XCN_AT_KEYEXCHANGE, // use is not limited
+                ExportPolicy = X509PrivateKeyExportFlags.XCN_NCRYPT_ALLOW_EXPORT_FLAG,
+                SecurityDescriptor = "D:PAI(A;;0xd01f01ff;;;SY)(A;;0xd01f01ff;;;BA)(A;;0xd01f01ff;;;CO)"
+            };
             if (!string.IsNullOrEmpty(ADFSServiceSID))
                 privateKey.SecurityDescriptor += "(A;;FA;;;" + ADFSServiceSID + ")";
             if (!string.IsNullOrEmpty(ADFSAccountSID))
@@ -400,8 +410,10 @@ namespace Neos.IdentityServer.MultiFactor.Data
 
                 CObjectId oid = new CObjectId();
                 oid.InitializeFromValue("1.3.6.1.5.5.8.2.2"); // IP security IKE intermediate
-                var oidlist = new CObjectIds();
-                oidlist.Add(oid);
+                var oidlist = new CObjectIds
+                {
+                    oid
+                };
 
                 CObjectId coid = new CObjectId();
                 coid.InitializeFromValue("1.3.6.1.4.1.311.10.3.11"); // Key Recovery
@@ -524,7 +536,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                 X509Certificate2Collection collection2 = (X509Certificate2Collection)store.Certificates;
                 foreach (X509Certificate2 x509 in collection2)
                 {
-                    if (x509.Subject.ToLower().StartsWith("cn=mfa rsa keys") || x509.Subject.ToLower().StartsWith("cn=mfa sql key"))
+                   // if (x509.Subject.ToLower().StartsWith("cn=mfa rsa keys") || x509.Subject.ToLower().StartsWith("cn=mfa sql key"))
                     {
                         string fileName = string.Empty;
                         RSA rsakey = (RSACng)x509.GetRSAPrivateKey();

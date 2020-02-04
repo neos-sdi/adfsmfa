@@ -249,7 +249,7 @@ namespace Neos.IdentityServer.Console
     public class ServiceScopeNode : RefreshableScopeNode
     {
         internal ServiceFormView serviceFormView;
-        private Microsoft.ManagementConsole.Action LocalCertMgmt;
+        private readonly Microsoft.ManagementConsole.Action LocalCertMgmt;
 
         public ServiceScopeNode(): base(true)
         {
@@ -338,8 +338,8 @@ namespace Neos.IdentityServer.Console
     public class ServiceGeneralScopeNode : RefreshableScopeNode
     {
         internal GeneralFormView generalFormView;
-        private Microsoft.ManagementConsole.Action SaveConfig;
-        private Microsoft.ManagementConsole.Action CancelConfig;
+        private readonly Microsoft.ManagementConsole.Action SaveConfig;
+        private readonly Microsoft.ManagementConsole.Action CancelConfig;
 
 
         /// <summary>
@@ -446,8 +446,8 @@ namespace Neos.IdentityServer.Console
     public class ServiceStorageScopeNode : RefreshableScopeNode
     {
         internal ServiceStoreFormView storageFormView;
-        private Microsoft.ManagementConsole.Action SaveConfig;
-        private Microsoft.ManagementConsole.Action CancelConfig;
+        private readonly Microsoft.ManagementConsole.Action SaveConfig;
+        private readonly Microsoft.ManagementConsole.Action CancelConfig;
 
 
         /// <summary>
@@ -554,8 +554,8 @@ namespace Neos.IdentityServer.Console
     public class ServiceADDSScopeNode: RefreshableScopeNode
     {
         internal ServiceADDSFormView ADDSFormView;
-        private Microsoft.ManagementConsole.Action SaveConfig;
-        private Microsoft.ManagementConsole.Action CancelConfig;
+        private readonly Microsoft.ManagementConsole.Action SaveConfig;
+        private readonly Microsoft.ManagementConsole.Action CancelConfig;
 
         /// <summary>
         /// Constructor implementation
@@ -662,8 +662,8 @@ namespace Neos.IdentityServer.Console
     public class ServiceSQLScopeNode : RefreshableScopeNode
     {
         internal ServiceSQLFormView SQLFormView;
-        private Microsoft.ManagementConsole.Action SaveConfig;
-        private Microsoft.ManagementConsole.Action CancelConfig;
+        private readonly Microsoft.ManagementConsole.Action SaveConfig;
+        private readonly Microsoft.ManagementConsole.Action CancelConfig;
 
 
         /// <summary>
@@ -771,8 +771,8 @@ namespace Neos.IdentityServer.Console
     public class ServiceProvidersScopeNode : RefreshableScopeNode
     {
         internal ServiceProvidersFormView ProvidersFormView;
-        private Microsoft.ManagementConsole.Action SaveConfig;
-        private Microsoft.ManagementConsole.Action CancelConfig;
+        private readonly Microsoft.ManagementConsole.Action SaveConfig;
+        private readonly Microsoft.ManagementConsole.Action CancelConfig;
 
 
         /// <summary>
@@ -879,8 +879,8 @@ namespace Neos.IdentityServer.Console
     public class ServiceSMTPScopeNode: RefreshableScopeNode
     {
         internal ServiceSMTPFormView SMTPFormView;
-        private Microsoft.ManagementConsole.Action SaveConfig;
-        private Microsoft.ManagementConsole.Action CancelConfig;
+        private readonly Microsoft.ManagementConsole.Action SaveConfig;
+        private readonly Microsoft.ManagementConsole.Action CancelConfig;
 
 
         /// <summary>
@@ -989,8 +989,8 @@ namespace Neos.IdentityServer.Console
     public class ServicePhoneScopeNode: RefreshableScopeNode
     {
         internal ServiceSMSFormView SMSFormView;
-        private Microsoft.ManagementConsole.Action SaveConfig;
-        private Microsoft.ManagementConsole.Action CancelConfig;
+        private readonly Microsoft.ManagementConsole.Action SaveConfig;
+        private readonly Microsoft.ManagementConsole.Action CancelConfig;
 
         /// <summary>
         /// Constructor implementation
@@ -1098,8 +1098,8 @@ namespace Neos.IdentityServer.Console
     public class ServiceAzureScopeNode : RefreshableScopeNode
     {
         internal ServiceAzureFormView AzureFormView;
-        private Microsoft.ManagementConsole.Action SaveConfig;
-        private Microsoft.ManagementConsole.Action CancelConfig;
+        private readonly Microsoft.ManagementConsole.Action SaveConfig;
+        private readonly Microsoft.ManagementConsole.Action CancelConfig;
 
         /// <summary>
         /// Constructor implementation
@@ -1207,8 +1207,8 @@ namespace Neos.IdentityServer.Console
     public class ServiceTOTPScopeNode: RefreshableScopeNode
     {
         internal ServiceTOTPFormView SecurityFormView;
-        private Microsoft.ManagementConsole.Action SaveConfig;
-        private Microsoft.ManagementConsole.Action CancelConfig;
+        private readonly Microsoft.ManagementConsole.Action SaveConfig;
+        private readonly Microsoft.ManagementConsole.Action CancelConfig;
 
 
         /// <summary>
@@ -1318,8 +1318,8 @@ namespace Neos.IdentityServer.Console
     public class ServiceBiometricsScopeNode : RefreshableScopeNode
     {
         internal ServiceBiometricsFormView BiometricsFormView;
-        private Microsoft.ManagementConsole.Action SaveConfig;
-        private Microsoft.ManagementConsole.Action CancelConfig;
+        private readonly Microsoft.ManagementConsole.Action SaveConfig;
+        private readonly Microsoft.ManagementConsole.Action CancelConfig;
 
 
         /// <summary>
@@ -1429,8 +1429,8 @@ namespace Neos.IdentityServer.Console
     public class ServiceSecurityRootScopeNode : RefreshableScopeNode
     {
         internal ServiceSecurityRootFormView SecurityFormView;
-        private Microsoft.ManagementConsole.Action SaveConfig;
-        private Microsoft.ManagementConsole.Action CancelConfig;
+        private readonly Microsoft.ManagementConsole.Action SaveConfig;
+        private readonly Microsoft.ManagementConsole.Action CancelConfig;
 
 
         /// <summary>
@@ -1538,8 +1538,8 @@ namespace Neos.IdentityServer.Console
     public class ServiceSecurityRNGScopeNode : RefreshableScopeNode
     {
         internal ServiceSecurityRNGFormView SecurityFormView;
-        private Microsoft.ManagementConsole.Action SaveConfig;
-        private Microsoft.ManagementConsole.Action CancelConfig;
+        private readonly Microsoft.ManagementConsole.Action SaveConfig;
+        private readonly Microsoft.ManagementConsole.Action CancelConfig;
 
 
         /// <summary>
@@ -1647,8 +1647,8 @@ namespace Neos.IdentityServer.Console
     public class ServiceSecurityRSAScopeNode : RefreshableScopeNode
     {
         internal ServiceSecurityRSAFormView SecurityFormView;
-        private Microsoft.ManagementConsole.Action SaveConfig;
-        private Microsoft.ManagementConsole.Action CancelConfig;
+        private readonly Microsoft.ManagementConsole.Action SaveConfig;
+        private readonly Microsoft.ManagementConsole.Action CancelConfig;
 
 
         /// <summary>
@@ -1756,8 +1756,8 @@ namespace Neos.IdentityServer.Console
     public class ServiceSecurityRSAXScopeNode : RefreshableScopeNode
     {
         internal ServiceSecurityRSAXFormView SecurityFormView;
-        private Microsoft.ManagementConsole.Action SaveConfig;
-        private Microsoft.ManagementConsole.Action CancelConfig;
+        private readonly Microsoft.ManagementConsole.Action SaveConfig;
+        private readonly Microsoft.ManagementConsole.Action CancelConfig;
 
 
         /// <summary>
@@ -1865,8 +1865,8 @@ namespace Neos.IdentityServer.Console
     public class ServiceSecurityWebAuthNScopeNode : RefreshableScopeNode
     {
         internal ServiceSecurityWebAuthNFormView SecurityFormView;
-        private Microsoft.ManagementConsole.Action SaveConfig;
-        private Microsoft.ManagementConsole.Action CancelConfig;
+        private readonly Microsoft.ManagementConsole.Action SaveConfig;
+        private readonly Microsoft.ManagementConsole.Action CancelConfig;
 
 
         /// <summary>
@@ -1976,8 +1976,8 @@ namespace Neos.IdentityServer.Console
         internal UsersFormView usersFormView;
 
         private Microsoft.ManagementConsole.Action ClearFilterUser;
-        private Microsoft.ManagementConsole.Action FilterUser;
-        private Microsoft.ManagementConsole.Action AddUser;
+        private readonly Microsoft.ManagementConsole.Action FilterUser;
+        private readonly Microsoft.ManagementConsole.Action AddUser;
 
         /// <summary>
         /// Constructor implementation
@@ -2185,17 +2185,21 @@ namespace Neos.IdentityServer.Console
                 bool result = (this.usersFormView.SnapIn.Console.ShowDialog(Wizard) == DialogResult.OK);
                 if (result)
                 {
-                    ImportUsersCSV imp = new ImportUsersCSV(ManagementService.ADFSManager.Config);
-                    imp.FileName = Wizard.FileName;
-                    imp.ForceNewKey = false;
-                    imp.SendEmail = false;
+                    ImportUsersCSV imp = new ImportUsersCSV(ManagementService.ADFSManager.Config)
+                    {
+                        FileName = Wizard.FileName,
+                        ForceNewKey = false,
+                        SendEmail = false
+                    };
                     imp.DoImport();
 
-                    MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                    messageBoxParameters.Caption = res.USERSSCOPEIMPORTCSVRESTITLE;
-                    messageBoxParameters.Text = string.Format(res.USERSSCOPEIMPORTCSVCOUNT, imp.RecordsImported.ToString(), imp.ErrorsCount.ToString());
-                    messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                    messageBoxParameters.Icon = MessageBoxIcon.Information;
+                    MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                    {
+                        Caption = res.USERSSCOPEIMPORTCSVRESTITLE,
+                        Text = string.Format(res.USERSSCOPEIMPORTCSVCOUNT, imp.RecordsImported.ToString(), imp.ErrorsCount.ToString()),
+                        Buttons = MessageBoxButtons.OK,
+                        Icon = MessageBoxIcon.Information
+                    };
                     this.usersFormView.SnapIn.Console.ShowDialog(messageBoxParameters);
                     if (this.usersFormView != null)
                         this.usersFormView.Refresh(true, true);
@@ -2203,10 +2207,12 @@ namespace Neos.IdentityServer.Console
             }
             catch (Exception ex)
             {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
                 this.usersFormView.SnapIn.Console.ShowDialog(messageBoxParameters);
             }
 
@@ -2226,17 +2232,21 @@ namespace Neos.IdentityServer.Console
                 bool result = (this.usersFormView.SnapIn.Console.ShowDialog(Wizard) == DialogResult.OK);
                 if (result)
                 {
-                    ImportUsersXML imp = new ImportUsersXML(ManagementService.ADFSManager.Config);
-                    imp.FileName = Wizard.FileName;
-                    imp.ForceNewKey = false;
-                    imp.SendEmail = false;
+                    ImportUsersXML imp = new ImportUsersXML(ManagementService.ADFSManager.Config)
+                    {
+                        FileName = Wizard.FileName,
+                        ForceNewKey = false,
+                        SendEmail = false
+                    };
                     imp.DoImport();
 
-                    MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                    messageBoxParameters.Caption = res.USERSSCOPEIMPORTXMLRESTITLE;
-                    messageBoxParameters.Text = string.Format(res.USERSSCOPEIMPORTXMLCOUNT, imp.RecordsImported.ToString(), imp.ErrorsCount.ToString());
-                    messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                    messageBoxParameters.Icon = MessageBoxIcon.Information;
+                    MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                    {
+                        Caption = res.USERSSCOPEIMPORTXMLRESTITLE,
+                        Text = string.Format(res.USERSSCOPEIMPORTXMLCOUNT, imp.RecordsImported.ToString(), imp.ErrorsCount.ToString()),
+                        Buttons = MessageBoxButtons.OK,
+                        Icon = MessageBoxIcon.Information
+                    };
                     this.usersFormView.SnapIn.Console.ShowDialog(messageBoxParameters);
                     if (this.usersFormView != null)
                         this.usersFormView.Refresh(true, true);
@@ -2244,10 +2254,12 @@ namespace Neos.IdentityServer.Console
             }
             catch (Exception ex)
             {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
                 this.usersFormView.SnapIn.Console.ShowDialog(messageBoxParameters);
             }
         }
@@ -2263,11 +2275,13 @@ namespace Neos.IdentityServer.Console
                 bool result = (this.SnapIn.Console.ShowDialog(Wizard) == DialogResult.OK);
                 if (result)
                 {
-                    ImportUsersADDS imp = new ImportUsersADDS(ManagementService.ADFSManager.Config);
-                    imp.LDAPPath = Wizard.LDAPQuery.Text;
-                    imp.ForceNewKey = false;
-                    imp.SendEmail = false;
-                    imp.DisableAll = Wizard.checkBoxDisable.Checked;
+                    ImportUsersADDS imp = new ImportUsersADDS(ManagementService.ADFSManager.Config)
+                    {
+                        LDAPPath = Wizard.LDAPQuery.Text,
+                        ForceNewKey = false,
+                        SendEmail = false,
+                        DisableAll = Wizard.checkBoxDisable.Checked
+                    };
 
                     imp.DoImport();
 
@@ -2277,10 +2291,12 @@ namespace Neos.IdentityServer.Console
             }
             catch (Exception ex)
             {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
                 this.SnapIn.Console.ShowDialog(messageBoxParameters);
             }
         }

@@ -194,17 +194,17 @@ namespace Neos.IdentityServer.Console
                 this.RootNode.ViewDescriptions.Add(fvr);
                 this.RootNode.ViewDescriptions.DefaultIndex = 0;
 
-                // Service Node
-                this.ServiceNode = new ServiceScopeNode();
-                FormViewDescription fvc = new FormViewDescription();
-                fvc.DisplayName = "MFA Platform Service";
-                fvc.ControlType = typeof(ServiceViewControl);
-                fvc.ViewType = typeof(ServiceFormView);
-                this.ServiceNode.ViewDescriptions.Add(fvc);
-                this.ServiceNode.ViewDescriptions.DefaultIndex = 0;
-
                 if (IsPrimary)
                 {
+                    // Service Node
+                    this.ServiceNode = new ServiceScopeNode();
+                    FormViewDescription fvc = new FormViewDescription();
+                    fvc.DisplayName = "MFA Platform Service";
+                    fvc.ControlType = typeof(ServiceViewControl);
+                    fvc.ViewType = typeof(ServiceFormView);
+                    this.ServiceNode.ViewDescriptions.Add(fvc);
+                    this.ServiceNode.ViewDescriptions.DefaultIndex = 0;
+
                     // General Scope
                     this.ServiceGeneralNode = new ServiceGeneralScopeNode();
                     FormViewDescription fvs = new FormViewDescription();
@@ -373,9 +373,10 @@ namespace Neos.IdentityServer.Console
                 this.UsersNode.ViewDescriptions.Add(fvu);
                 this.UsersNode.ViewDescriptions.DefaultIndex = 0;
 
-                this.RootNode.Children.Add(this.ServiceNode);
+
                 if (IsPrimary)
                 {
+                    this.RootNode.Children.Add(this.ServiceNode);
                     this.RootNode.Children.Add(this.ServiceGeneralNode);
                     this.RootNode.Children.Add(this.ServiceStorageNode);
                     this.ServiceStorageNode.Children.Add(this.ServiceADDSNode);

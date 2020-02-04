@@ -146,10 +146,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Neos.IdentityServer.MultiFactor.SMS.Azure\Neos.IdentityServer.MultiFactor.SMS.Azure.csproj">
-      <Project>{2e81e6eb-21c0-419e-a4ca-bc87332c5e3b}</Project>
-      <Name>Neos.IdentityServer.MultiFactor.SMS.Azure</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Neos.IdentityServer.MultiFactor.WebAuthN.Common\Neos.IdentityServer.MultiFactor.WebAuthN.Common.csproj">
       <Project>{3bac37f8-8cfb-4e07-b51e-2e652852655b}</Project>
       <Name>Neos.IdentityServer.MultiFactor.WebAuthN.Common</Name>

@@ -38,8 +38,8 @@ namespace Neos.IdentityServer.Console
     {
         private IUserPropertiesDataObject userPropertiesControl = null;
         private UsersFormView usersFormView = null;
-        private bool isnew = false;
-        private string seed = 0.ToString();
+        private readonly bool isnew = false;
+        private readonly string seed = 0.ToString();
 
         /// <summary>
         /// Constructor.
@@ -216,8 +216,10 @@ namespace Neos.IdentityServer.Console
                 if (registrations == null)
                 {
                     registrations = new MFAUserList();
-                    MFAUser reg = new MFAUser();
-                    reg.Enabled = true;
+                    MFAUser reg = new MFAUser
+                    {
+                        Enabled = true
+                    };
                     registrations.Add(reg);
                 }
                 shareddata.SetData(registrations);
@@ -241,8 +243,10 @@ namespace Neos.IdentityServer.Console
                 if (registrations == null)
                 {
                     registrations = new MFAUserList();
-                    MFAUser reg = new MFAUser();
-                    reg.Enabled = true;
+                    MFAUser reg = new MFAUser
+                    {
+                        Enabled = true
+                    };
                     registrations.Add(reg);
                 }
             }
@@ -264,20 +268,24 @@ namespace Neos.IdentityServer.Console
                 {
                     if (string.IsNullOrEmpty(registration.UPN))
                     {
-                        MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                        messageBoxParameters.Text = res.PPAGEVALIDUSER;
-                        messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                        messageBoxParameters.Icon = MessageBoxIcon.Error;
+                        MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                        {
+                            Text = res.PPAGEVALIDUSER,
+                            Buttons = MessageBoxButtons.OK,
+                            Icon = MessageBoxIcon.Error
+                        };
                         ParentSheet.ShowDialog(messageBoxParameters);
                         ParentSheet.SetActivePage(0);
                         result = false;
                     }
                     else if (string.IsNullOrEmpty(MMCService.GetEncodedUserKey(registration.UPN)))
                     {
-                        MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                        messageBoxParameters.Text = res.PPAGEVALIDKEY;
-                        messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                        messageBoxParameters.Icon = MessageBoxIcon.Error;
+                        MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                        {
+                            Text = res.PPAGEVALIDKEY,
+                            Buttons = MessageBoxButtons.OK,
+                            Icon = MessageBoxIcon.Error
+                        };
                         ParentSheet.ShowDialog(messageBoxParameters);
                         ParentSheet.SetActivePage(1);
                         result = false;
@@ -291,10 +299,12 @@ namespace Neos.IdentityServer.Console
                 {
                     if (string.IsNullOrEmpty(registration.MailAddress))
                     {
-                        MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                        messageBoxParameters.Text = res.PPAGEVALIDMAIL;
-                        messageBoxParameters.Buttons = MessageBoxButtons.YesNo;
-                        messageBoxParameters.Icon = MessageBoxIcon.Warning;
+                        MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                        {
+                            Text = res.PPAGEVALIDMAIL,
+                            Buttons = MessageBoxButtons.YesNo,
+                            Icon = MessageBoxIcon.Warning
+                        };
                         if (ParentSheet.ShowDialog(messageBoxParameters) == DialogResult.Yes)
                             result = true;
                         else
@@ -305,10 +315,12 @@ namespace Neos.IdentityServer.Console
                     }
                     else if (!MMCService.IsValidEmail(registration.MailAddress))
                     {
-                        MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                        messageBoxParameters.Text = res.PPAGEINVALIDMAIL;
-                        messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                        messageBoxParameters.Icon = MessageBoxIcon.Error;
+                        MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                        {
+                            Text = res.PPAGEINVALIDMAIL,
+                            Buttons = MessageBoxButtons.OK,
+                            Icon = MessageBoxIcon.Error
+                        };
                         ParentSheet.ShowDialog(messageBoxParameters);
                         ParentSheet.SetActivePage(0);
                         result = false;
@@ -322,10 +334,12 @@ namespace Neos.IdentityServer.Console
                 {
                     if (string.IsNullOrEmpty(registration.PhoneNumber))
                     {
-                        MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                        messageBoxParameters.Text = res.PPAGEVALIDPHONE;
-                        messageBoxParameters.Buttons = MessageBoxButtons.YesNo;
-                        messageBoxParameters.Icon = MessageBoxIcon.Warning;
+                        MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                        {
+                            Text = res.PPAGEVALIDPHONE,
+                            Buttons = MessageBoxButtons.YesNo,
+                            Icon = MessageBoxIcon.Warning
+                        };
                         if (ParentSheet.ShowDialog(messageBoxParameters) == DialogResult.Yes)
                             result = true;
                         else
@@ -337,10 +351,12 @@ namespace Neos.IdentityServer.Console
                     }
                     else if (!MMCService.IsValidPhone(registration.PhoneNumber))
                     {
-                        MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                        messageBoxParameters.Text = res.PPAGEINVALIDPHONE;
-                        messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                        messageBoxParameters.Icon = MessageBoxIcon.Error;
+                        MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                        {
+                            Text = res.PPAGEINVALIDPHONE,
+                            Buttons = MessageBoxButtons.OK,
+                            Icon = MessageBoxIcon.Error
+                        };
                         ParentSheet.ShowDialog(messageBoxParameters);
                         ParentSheet.SetActivePage(0);
                         result = false;
