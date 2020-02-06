@@ -344,7 +344,7 @@ namespace Neos.IdentityServer.MultiFactor
     /// </summary>
     public class RNGEncryption : BaseEncryption
     {
-        KeyGeneratorMode _mode = KeyGeneratorMode.ClientSecret128;
+        readonly KeyGeneratorMode _mode = KeyGeneratorMode.ClientSecret128;
 
         /// <summary>
         /// Constructor
@@ -462,9 +462,9 @@ namespace Neos.IdentityServer.MultiFactor
     /// </summary>
     public class AESEncryption : IDisposable
     {
-        private byte[] IV = { 113, 23, 93, 174, 155, 66, 179, 82, 90, 101, 110, 102, 213, 124, 51, 62 };
-        private byte[] Hdr = { 0x17, 0xD3, 0xF4, 0x29 };
-        private byte[] AESKey;
+        private readonly byte[] IV = { 113, 23, 93, 174, 155, 66, 179, 82, 90, 101, 110, 102, 213, 124, 51, 62 };
+        private readonly byte[] Hdr = { 0x17, 0xD3, 0xF4, 0x29 };
+        private readonly byte[] AESKey;
 
         /// <summary>
         /// AESEncryption constructor

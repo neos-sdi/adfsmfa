@@ -70,6 +70,15 @@ namespace Neos.IdentityServer.MultiFactor.Cmdlets.Ressources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à ADFS Certificate correctly created ! You must deploy this certificate on all ADFS servers..
+        /// </summary>
+        internal static string InfosADFSCertificateChanged {
+            get {
+                return ResourceManager.GetString("InfosADFSCertificateChanged", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à All Farm Services Restarted !.
         /// </summary>
         internal static string InfosAllServicesRestarted {

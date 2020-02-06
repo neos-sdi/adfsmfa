@@ -722,4 +722,22 @@ namespace MFA
         /// </summary>
         Discouraged = 2
     }
+
+    /// <summary>
+    /// PSStoreMode
+    /// <para type="synopsis">MFA ADFS certificate Kind (Signing, DecryptingSQL).</para>
+    /// </summary>    
+    public enum PSADFSCertificateKind
+    {
+        /// <summary>
+        /// <para type="description">Signing Certificate.</para>
+        /// </summary>
+        Signing = 0,
+
+        /// <summary>
+        /// <para type="description">Decrypting certificate.</para>
+        /// </summary>
+        Decrypting = 1
+    }
+
 }

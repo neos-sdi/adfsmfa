@@ -183,4 +183,7 @@
   <data name="InfosOrphanedDeleted" xml:space="preserve">
     <value>Aantal verwijderde zwevende privésleutels</value>
   </data>
+  <data name="InfosADFSCertificateChanged" xml:space="preserve">
+    <value>ADFS-certificaat correct gemaakt ! U moet dit certificaat op alle ADFS-servers implementeren.</value>
+  </data>
 </root>

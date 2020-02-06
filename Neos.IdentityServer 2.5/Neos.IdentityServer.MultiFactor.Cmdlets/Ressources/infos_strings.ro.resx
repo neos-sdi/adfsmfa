@@ -183,4 +183,7 @@
   <data name="InfosOrphanedDeleted" xml:space="preserve">
     <value>Număr de chei private orfane șterse</value>
   </data>
+  <data name="InfosADFSCertificateChanged" xml:space="preserve">
+    <value>Certificatul ADFS creat corect ! Trebuie să implementați acest certificat pe toate serverele ADFS.!</value>
+  </data>
 </root>

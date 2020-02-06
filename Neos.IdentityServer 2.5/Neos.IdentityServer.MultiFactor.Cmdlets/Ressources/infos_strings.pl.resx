@@ -183,4 +183,7 @@
   <data name="InfosOrphanedDeleted" xml:space="preserve">
     <value>Liczba usuniętych osieroconych kluczy prywatnych</value>
   </data>
+  <data name="InfosADFSCertificateChanged" xml:space="preserve">
+    <value>Certyfikat ADFS poprawnie utworzony ! Musisz wdrożyć ten certyfikat na wszystkich serwerach ADFS.</value>
+  </data>
 </root>

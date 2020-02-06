@@ -183,4 +183,7 @@
   <data name="InfosOrphanedDeleted" xml:space="preserve">
     <value>Antal borttagna föräldralösa privata nycklar</value>
   </data>
+  <data name="InfosADFSCertificateChanged" xml:space="preserve">
+    <value>ADFS-certifikat korrekt skapat ! Du måste distribuera detta certifikat på alla ADFS-servrar.</value>
+  </data>
 </root>

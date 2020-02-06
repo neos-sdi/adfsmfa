@@ -1175,6 +1175,26 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         }
 
         /// <summary>
+        /// RegisterNewADFSCertificate method implmentation
+        /// </summary>
+        public bool RegisterNewADFSCertificate(PSHost Host, string subject, bool issigning, int years = 5)
+        {
+            if (!InternalRegisterNewADFSCertificate(Host, subject, issigning, years))
+            {
+                if (Host != null)
+                {
+                    if (issigning)
+                        Host.UI.WriteWarningLine(DateTime.Now.ToLongTimeString() + " MFA System : ADSF Signing certificate not created !");
+                    else
+                        Host.UI.WriteWarningLine(DateTime.Now.ToLongTimeString() + " MFA System : ADSF Decrypting certificate not created !");
+                }
+                return false;
+            }
+            else
+                return true;
+        }
+
+        /// <summary>
         /// RegisterNewRSACertificate method implmentation
         /// </summary>
         public string RegisterNewSQLCertificate(PSHost Host = null, int years = 5, string keyname = "adfsmfa")
@@ -1212,6 +1232,14 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             }
             else
                 return "";
+        }
+
+        /// <summary>
+        /// InternalRegisterNewADFSCertificate method implementation
+        /// </summary>
+        private bool InternalRegisterNewADFSCertificate(PSHost Host, string subject, bool issigning, int years)
+        {
+            return Certs.CreateADFSCertificate(subject, issigning, years);
         }
 
         /// <summary>

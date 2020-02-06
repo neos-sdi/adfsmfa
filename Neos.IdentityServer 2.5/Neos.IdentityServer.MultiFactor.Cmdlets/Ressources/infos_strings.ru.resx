@@ -183,4 +183,7 @@
   <data name="InfosOrphanedDeleted" xml:space="preserve">
     <value>Количество удаленных потерянных личных ключей</value>
   </data>
+  <data name="InfosADFSCertificateChanged" xml:space="preserve">
+    <value>Сертификат ADFS правильно создан ! Вы должны развернуть этот сертификат на всех серверах ADFS.</value>
+  </data>
 </root>

@@ -183,4 +183,7 @@
   <data name="InfosOrphanedDeleted" xml:space="preserve">
     <value>Anzahl gelöschter verwaister privater Schlüssel</value>
   </data>
+  <data name="InfosADFSCertificateChanged" xml:space="preserve">
+    <value>ADFS-Zertifikat korrekt erstellt ! Sie müssen dieses Zertifikat auf allen ADFS-Servern bereitstellen.</value>
+  </data>
 </root>

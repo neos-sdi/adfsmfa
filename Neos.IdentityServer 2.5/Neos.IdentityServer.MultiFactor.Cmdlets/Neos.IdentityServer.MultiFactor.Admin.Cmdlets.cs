@@ -6214,6 +6214,82 @@ namespace MFA
     }
     #endregion
 
+    #region Install-MFACertificate
+    /// <summary>
+    /// <para type="synopsis">Install RSA Certificate.</para>
+    /// <para type="description">Install a new RSA Certificate for MFA.</para>
+    /// </summary>
+    /// <example>
+    ///   <para>Install-MFACertificate</para>
+    ///   <para>Create a new certificate for RSA User keys.</para>
+    /// </example>
+    /// <example>
+    ///   <para>Install-MFACertificate -RSACertificateDuration 10 -RestartFarm</para>
+    ///   <para>Create a new certificate for RSA User keys with specific duration.</para>
+    /// </example>
+    [Cmdlet(VerbsLifecycle.Install, "MFACertificateForADFS", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
+    [PrimaryServerRequired]
+    public sealed class InstallMFACertificateForADFS : MFACmdlet
+    {
+        /// <summary>
+        /// Subject property
+        /// <para type="description">Subject of the certificate</para>
+        /// </summary>
+        [Parameter(Mandatory = true, ParameterSetName = "Data")]
+        public string Subject { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Kind property
+        /// <para type="description">Kind  of the certificate</para>
+        /// </summary>
+        [Parameter(Mandatory = true, ParameterSetName = "Data")]
+        public PSADFSCertificateKind Kind { get; set; } = PSADFSCertificateKind.Signing;
+
+        /// <summary>
+        /// CertificateDuration property
+        /// <para type="description">Duration for the new certificate (Years)</para>
+        /// </summary>
+        [Parameter(Mandatory = true, ParameterSetName = "Data")]
+        public int CertificateDuration { get; set; } = 5;
+
+        /// <summary>
+        /// BeginProcessing method implementation
+        /// </summary>
+        protected override void BeginProcessing()
+        {
+            base.BeginProcessing();
+            try
+            {
+                ManagementService.Initialize(this.Host, true);
+            }
+            catch (Exception ex)
+            {
+                this.ThrowTerminatingError(new ErrorRecord(ex, "3019", ErrorCategory.OperationStopped, this));
+            }
+        }
+
+        /// <summary>
+        /// ProcessRecord method override
+        /// </summary>
+        protected override void ProcessRecord()
+        {
+            try
+            {
+                if (ShouldProcess("Install-MFACertificateForADFS"))
+                {
+                    PSHost hh = GetHostForVerbose();
+                    ADFSServiceManager svc = ManagementService.ADFSManager;
+                    if (svc.RegisterNewADFSCertificate(hh, this.Subject, (this.Kind==PSADFSCertificateKind.Signing), this.CertificateDuration))
+                        this.Host.UI.WriteLine(ConsoleColor.Green, this.Host.UI.RawUI.BackgroundColor, infos_strings.InfosADFSCertificateChanged);
+                }
+            }
+            catch (Exception ex)
+            {
+                this.ThrowTerminatingError(new ErrorRecord(ex, "3020", ErrorCategory.OperationStopped, this));
+            }
+        }
+    }
+    #endregion
     #region New-MFASecretKeysDatabase
     /// <summary>
     /// <para type="synopsis">Create a new SQL Database for storing RSA keys and certificates.</para>
