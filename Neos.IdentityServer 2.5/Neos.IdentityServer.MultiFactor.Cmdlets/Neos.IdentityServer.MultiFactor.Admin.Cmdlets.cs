@@ -6959,26 +6959,19 @@ namespace MFA
     #region Certificates Management
     /// <summary>
     /// <para type="synopsis">Update Acces Control List for MFA Certificates stored in LocalMachine Store. Usefull after you deploy an cetificate in ADFS Farm</para>
-    /// <para type="description">Update Acces Control List for MFA Certificates stored in LocalMachine Store and optionnally remove all orphaned privatekeys. Usefull after you deploy an cetificate in ADFS Farm</para>
+    /// <para type="description">Update Acces Control List for MFA Certificates stored in LocalMachine Store. Usefull after you deploy an cetificate in ADFS Farm</para>
     /// </summary>
     /// <example>
     ///   <para>Update-MFACertificatesAccessControlList</para>
-    ///   <para>Update-MFACertificatesAccessControlList -CleanOrphaned'</para>
     /// </example>
     [Cmdlet("Update", "MFACertificatesAccessControlList", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
     public sealed class UpdatetMFACertificatesAccessControlList : MFACmdlet
     {
-        private bool _option;
-
         /// <summary>
-        /// <para type="description">Perform cleaning of orphaned private keys (this occurs when you delete a certificate from LocalMachine store.</para>
+        /// <para type="description">MFACertificatesOnly, Update ACL on MFA generated certs only.</para>
         /// </summary>
         [Parameter(ParameterSetName = "Data")]
-        public SwitchParameter CleanOrphaned
-        {
-            get { return _option; }
-            set { _option = value; }
-        }
+        public SwitchParameter MFACertificatesOnly { get; set; }
 
         /// <summary>
         /// BeginProcessing method implementation
@@ -7005,14 +6998,8 @@ namespace MFA
             {
                 try
                 {
-                    ManagementService.UpdateCertificatesACL();
-                    this.Host.UI.WriteLine(ConsoleColor.Green, this.Host.UI.RawUI.BackgroundColor, infos_strings.InfosCertsACLUpdated); 
-                    if (CleanOrphaned)
-                    {
-                        int res = ManagementService.CleanOrphanedPrivateKeys();
-                        this.Host.UI.WriteLine(ConsoleColor.Green, this.Host.UI.RawUI.BackgroundColor, string.Format(infos_strings.InfosOrphanedDeleted + " : {0}", res));
-                    }
-                    this.WriteVerbose(infos_strings.InfosConfigUpdated);
+                    if (ManagementService.UpdateCertificatesACL(MFACertificatesOnly.IsPresent))
+                        this.Host.UI.WriteLine(ConsoleColor.Green, this.Host.UI.RawUI.BackgroundColor, infos_strings.InfosCertsACLUpdated); 
                 }
                 catch (Exception ex)
                 {
@@ -7022,6 +7009,57 @@ namespace MFA
         }
     }
 
+    /// <summary>
+    /// <para type="synopsis">Remove private keys found in C:\ProgramData\Microsoft\Crypto\RSA\MachineKeys that are not linked with a valid certificate</para>
+    /// <para type="description">Remove private keys found in C:\ProgramData\Microsoft\Crypto\RSA\MachineKeys that are not linked with a valid certificate</para>
+    /// </summary>
+    /// <example>
+    ///   <para>Remove-MFACertificatesOrphanedPrivateKeys</para>
+    /// </example>
+    [Cmdlet(VerbsCommon.Remove, "MFACertificatesOrphanedPrivateKeys", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
+    public sealed class RemoveMFACertificatesOrphanedPrivateKeys : MFACmdlet
+    {
+        /// <summary>
+        /// <para type="description">MFACertificatesOnly, Clean Orphaned private keys for MFA generated certs only.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Data")]
+        public SwitchParameter MFACertificatesOnly { get; set; }
+
+        /// <summary>
+        /// BeginProcessing method implementation
+        /// </summary>
+        protected override void BeginProcessing()
+        {
+            base.BeginProcessing();
+            try
+            {
+                ManagementService.Initialize(this.Host, true);
+            }
+            catch (Exception ex)
+            {
+                this.ThrowTerminatingError(new ErrorRecord(ex, "4023", ErrorCategory.OperationStopped, this));
+            }
+        }
+
+        /// <summary>
+        /// ProcessRecord method override
+        /// </summary>
+        protected override void ProcessRecord()
+        {
+            if (ShouldProcess("MFA Remove Certificates orphaned private keys"))
+            {
+                try
+                {
+                    int res = ManagementService.CleanOrphanedPrivateKeys(MFACertificatesOnly.IsPresent);
+                    this.Host.UI.WriteLine(ConsoleColor.Green, this.Host.UI.RawUI.BackgroundColor, string.Format(infos_strings.InfosOrphanedDeleted + " : {0}", res));
+                }
+                catch (Exception ex)
+                {
+                    this.ThrowTerminatingError(new ErrorRecord(ex, "4024", ErrorCategory.OperationStopped, this));
+                }
+            }
+        }
+    }
     #endregion
 
     #region Attribute

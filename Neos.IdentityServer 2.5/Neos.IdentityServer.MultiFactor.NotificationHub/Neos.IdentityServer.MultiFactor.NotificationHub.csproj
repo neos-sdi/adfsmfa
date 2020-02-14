@@ -79,6 +79,7 @@
       <DependentUpon>Neos.IdentityServer.HubService.cs</DependentUpon>
     </Compile>
     <Compile Include="Neos.IdentityServer.HubService.FarmUtils.cs" />
+    <Compile Include="Neos.IdentityServer.HubService.Cleanup.cs" />
     <Compile Include="Neos.IdentityServer.HubService.Replay.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="ProjectInstaller.cs">

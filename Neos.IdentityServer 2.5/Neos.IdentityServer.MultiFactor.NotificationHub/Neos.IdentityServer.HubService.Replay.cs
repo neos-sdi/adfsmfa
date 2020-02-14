@@ -18,6 +18,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.ServiceProcess;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -26,10 +28,11 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
     internal class ReplayManager
     {
         private List<NamedPipeNotificationReplayRecord> _lst = new List<NamedPipeNotificationReplayRecord>();
-        private object _lock = new object();
+        private readonly object _lock = new object();
         private Task _cleanup = null;
         private CancellationTokenSource _canceller = null;
         private bool _mustexit = false;
+        private ServiceBase _service;
 
         /// <summary>
         /// Static constructor implementation
@@ -45,27 +48,34 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
         internal bool AddToReplay(NamedPipeNotificationReplayRecord record)
         {
             bool exist = false;
-            if (record.ReplayLevel == ReplayLevel.Disabled)
-                return true;
-            else if (record.ReplayLevel == ReplayLevel.Intermediate)
+            try
             {
-                lock (_lock)
+                if (record.ReplayLevel == ReplayLevel.Disabled)
+                    return true;
+                else if (record.ReplayLevel == ReplayLevel.Intermediate)
                 {
-                    exist = _lst.Exists(s => (s.UserName.ToLower().Equals(record.UserName.ToLower())) && (s.Totp == record.Totp) && (!s.UserIPAdress.Equals(record.UserIPAdress)));
-                    if (!exist)
-                        _lst.Add(record);
+                    lock (_lock)
+                    {
+                        exist = _lst.Exists(s => (s.UserName.ToLower().Equals(record.UserName.ToLower())) && (s.Totp == record.Totp) && (!s.UserIPAdress.Equals(record.UserIPAdress)));
+                        if (!exist)
+                            _lst.Add(record);
+                        return !exist;
+                    }
                 }
-                return !exist;
+                else if (record.ReplayLevel == ReplayLevel.Full)
+                {
+                    lock (_lock)
+                    {
+                        exist = _lst.Exists(s => (s.UserName.ToLower().Equals(record.UserName.ToLower())) && (s.Totp == record.Totp));
+                        if (!exist)
+                            _lst.Add(record);
+                        return !exist;
+                    }
+                }
             }
-            else if (record.ReplayLevel == ReplayLevel.Full)
+            catch (Exception ex)
             {
-                lock (_lock)
-                {
-                    exist = _lst.Exists(s => (s.UserName.ToLower().Equals(record.UserName.ToLower())) && (s.Totp == record.Totp));
-                    if (!exist)
-                        _lst.Add(record);
-                }
-                return !exist;
+                _service.EventLog.WriteEntry(string.Format("error on replay registration method : {0}.", ex.Message), EventLogEntryType.Error, 1011);
             }
             return false;
         }
@@ -83,7 +93,9 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
                     {
                         lock (_lock)
                         {
-                            _lst.RemoveAll(s => s.UserLogon.AddSeconds(s.DeliveryWindow) < DateTime.Now);  
+                            int res = _lst.RemoveAll(s => s.UserLogon.AddSeconds(s.DeliveryWindow) < DateTime.Now);
+                            if (res > 0)
+                                Trace.WriteLine(string.Format("{0} Replay entries removed from checklist.", res));
                         }
                         Thread.Sleep(new TimeSpan(0, 0, 1, 0)); // every minute
                     }
@@ -92,6 +104,10 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
                         _mustexit = true;
                         return;
                     }
+                    catch (Exception ex)
+                    {
+                        _service.EventLog.WriteEntry(string.Format("error on replay cleanup method : {0}.", ex.Message), EventLogEntryType.Error, 1011);
+                    }
                 }
             }
         }
@@ -99,8 +115,9 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
         /// <summary>
         /// Start method implementation
         /// </summary>
-        internal void Start()
+        internal void Start(ServiceBase svc)
         {
+            _service = svc;
             _mustexit = false;
             _canceller = new CancellationTokenSource();
             _cleanup = Task.Factory.StartNew(new Action(CleanUpMethod), _canceller.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);

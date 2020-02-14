@@ -43,6 +43,12 @@ namespace Neos.IdentityServer.MultiFactor.Data
         public static string ADFSAccountSID = string.Empty;
         public static string ADFSServiceSID = string.Empty;
         public static string ADFSAdminGroupSID = string.Empty;
+        private static RegistryVersion _RegistryVersion;
+
+        static Certs()
+        {
+            _RegistryVersion = new RegistryVersion();
+        }
 
         /// <summary>
         /// GetCertificate method implementation
@@ -178,7 +184,11 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// </summary>
         public static X509Certificate2 CreateRSACertificate(string subjectName, int years)
         {
-            string strcert = InternalCreateRSACertificate(subjectName, years);
+            string strcert = string.Empty;
+            if (_RegistryVersion.IsWindows2012R2)
+                strcert = InternalCreateRSACertificate2012R2(subjectName, years);
+            else
+                strcert = InternalCreateRSACertificate(subjectName, years);
             X509Certificate2 x509 = new X509Certificate2(Convert.FromBase64String(strcert), "", X509KeyStorageFlags.Exportable | X509KeyStorageFlags.EphemeralKeySet);
             if (CleanSelfSignedCertificate(x509, StoreLocation.LocalMachine))
                 return x509;
@@ -191,7 +201,11 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// </summary>
         public static X509Certificate2 CreateRSACertificateForSQLEncryption(string subjectName, int years)
         {
-            string strcert = InternalCreateSQLCertificate(subjectName, years);
+            string strcert = string.Empty;
+            if (_RegistryVersion.IsWindows2012R2)
+                strcert = InternalCreateSQLCertificate2012R2(subjectName, years);
+            else
+                strcert = InternalCreateSQLCertificate(subjectName, years);
             X509Certificate2 x509 = new X509Certificate2(Convert.FromBase64String(strcert), "", X509KeyStorageFlags.Exportable | X509KeyStorageFlags.EphemeralKeySet);
             if (CleanSelfSignedCertificate(x509, StoreLocation.LocalMachine))
                 return x509;
@@ -205,7 +219,11 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// </summary>
         public static X509Certificate2 CreateRSAEncryptionCertificateForUser(string subjectName, int years, string pwd = "")
         {
-            string strcert = InternalCreateUserRSACertificate(subjectName, years, pwd);
+            string strcert = string.Empty;
+            if (_RegistryVersion.IsWindows2012R2)
+                strcert = InternalCreateUserRSACertificate2012R2(subjectName, years, pwd);
+            else
+                strcert = InternalCreateUserRSACertificate(subjectName, years, pwd);
             X509Certificate2 cert = new X509Certificate2(Convert.FromBase64String(strcert), pwd, X509KeyStorageFlags.Exportable | X509KeyStorageFlags.EphemeralKeySet);
             if (Certs.RemoveSelfSignedCertificate(cert, StoreLocation.CurrentUser))
                 return cert;
@@ -213,6 +231,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                 return null;
         }
 
+        #region Windows 2016 & 2019
         /// <summary>
         /// InternalCreateRSACertificate method implementation
         /// </summary>
@@ -491,13 +510,18 @@ namespace Neos.IdentityServer.MultiFactor.Data
             string base64encoded = string.Empty;
             CX500DistinguishedName dn = new CX500DistinguishedName();
             CX500DistinguishedName neos = new CX500DistinguishedName();
+
             dn.Encode("CN=" + subjectName , X500NameFlags.XCN_CERT_NAME_STR_NONE);
             neos.Encode("CN="+ subjectName , X500NameFlags.XCN_CERT_NAME_STR_NONE);
 
             CX509PrivateKey privateKey = new CX509PrivateKey
             {
-                ProviderName = "Microsoft RSA SChannel Cryptographic Provider",
-               // ProviderName = "Microsoft Strong Cryptographic Provider",
+              ProviderName = "Microsoft RSA SChannel Cryptographic Provider",
+            // ProviderName = "Microsoft Software Key Storage Provider",
+            // ProviderName = "Microsoft Enhanced Cryptographic Provider v1.0",
+            // ProviderName = "Microsoft Strong Cryptographic Provider",
+            // ProviderName = "Microsoft Base Cryptographic Provider v1.0",
+            // ProviderName = "Microsoft Enhanced RSA and AES Cryptographic Provider",
                 MachineContext = true,
                 Length = 2048,
                 KeySpec = X509KeySpec.XCN_AT_KEYEXCHANGE, // use is not limited
@@ -517,11 +541,366 @@ namespace Neos.IdentityServer.MultiFactor.Data
             try
             {
                 privateKey.Create();
+
+                CObjectId hashobj = new CObjectId();
+                hashobj.InitializeFromAlgorithmName(ObjectIdGroupId.XCN_CRYPT_HASH_ALG_OID_GROUP_ID, ObjectIdPublicKeyFlags.XCN_CRYPT_OID_INFO_PUBKEY_ANY, AlgorithmFlags.AlgorithmFlagsNone, "SHA256");
+                CObjectIds oidlist = new CObjectIds();
+                if (!issigning)
+                {
+                    CObjectId oid = new CObjectId();
+                    oid.InitializeFromValue("1.3.6.1.4.1.311.80.1"); // Encryption
+                    oidlist.Add(oid);
+                }
+                else
+                {
+                    CObjectId coid = new CObjectId();
+                    coid.InitializeFromValue("1.3.6.1.5.5.7.3.3"); // Signature
+                    oidlist.Add(coid);
+                }
+
+                CX509ExtensionEnhancedKeyUsage eku = new CX509ExtensionEnhancedKeyUsage();
+                eku.InitializeEncode(oidlist);
+
+                // Create the self signing request
+                CX509CertificateRequestCertificate certreq = new CX509CertificateRequestCertificate();
+                certreq.InitializeFromPrivateKey(X509CertificateEnrollmentContext.ContextMachine, privateKey, "");
+                certreq.Subject = dn;
+                certreq.Issuer = neos;
+                certreq.NotBefore = DateTime.Now.AddDays(-10);
+
+                certreq.NotAfter = DateTime.Now.AddYears(years);
+                certreq.X509Extensions.Add((CX509Extension)eku); // add the EKU
+                certreq.HashAlgorithm = hashobj; // Specify the hashing algorithm
+                certreq.Encode(); // encode the certificate
+
+                // Do the final enrollment process
+                CX509Enrollment enroll = new CX509Enrollment();
+                enroll.InitializeFromRequest(certreq); // load the certificate
+                enroll.CertificateFriendlyName = subjectName; // Optional: add a friendly name
+
+                string csr = enroll.CreateRequest(); // Output the request in base64
+
+                // and install it back as the response
+                enroll.InstallResponse(InstallResponseRestrictionFlags.AllowUntrustedCertificate, csr, EncodingType.XCN_CRYPT_STRING_BASE64, "");
+
+                // output a base64 encoded PKCS#12 so we can import it back to the .Net security classes
+                base64encoded = enroll.CreatePFX("", PFXExportOptions.PFXExportEEOnly);
+            }
+            catch (Exception ex)
+            {
+                privateKey.Delete();
+                throw ex;
+            }
+            finally
+            {
+                // DO nothing, certificate Key is stored in the system
+            }
+            return base64encoded;
+        }
+        #endregion
+
+        #region Windows 2012R2
+        /// <summary>
+        /// InternalCreateRSACertificate2012R2 method implementation
+        /// </summary>
+        [SuppressUnmanagedCodeSecurity]
+        private static string InternalCreateRSACertificate2012R2(string subjectName, int years)
+        {
+            string base64encoded = string.Empty;
+            CX500DistinguishedName dn = new CX500DistinguishedName();
+            CX500DistinguishedName neos = new CX500DistinguishedName();
+            dn.Encode("CN=" + subjectName + " " + DateTime.UtcNow.ToString("G") + " GMT", X500NameFlags.XCN_CERT_NAME_STR_NONE);
+            neos.Encode("CN=MFA RSA Keys Certificate", X500NameFlags.XCN_CERT_NAME_STR_NONE);
+
+            IX509PrivateKey privateKey = (IX509PrivateKey)Activator.CreateInstance(Type.GetTypeFromProgID("X509Enrollment.CX509PrivateKey"));
+            privateKey.ProviderName = "Microsoft RSA SChannel Cryptographic Provider";
+            privateKey.MachineContext = true;
+            privateKey.Length = 2048;
+            privateKey.KeySpec = X509KeySpec.XCN_AT_KEYEXCHANGE; // use is not limited
+            privateKey.ExportPolicy = X509PrivateKeyExportFlags.XCN_NCRYPT_ALLOW_EXPORT_FLAG;
+            privateKey.SecurityDescriptor = "D:(A;;FA;;;SY)(A;;FA;;;BA)";
+
+            if (!string.IsNullOrEmpty(ADFSServiceSID))
+                privateKey.SecurityDescriptor += "(A;;FA;;;" + ADFSServiceSID + ")";
+            if (!string.IsNullOrEmpty(ADFSAccountSID))
+                privateKey.SecurityDescriptor += "(A;;FA;;;" + ADFSAccountSID + ")";
+            if (!string.IsNullOrEmpty(ADFSAdminGroupSID))
+                privateKey.SecurityDescriptor += "(A;;FA;;;" + ADFSAdminGroupSID + ")";
+            try
+            {
+                privateKey.Create();
                 CObjectId hashobj = new CObjectId();
                 hashobj.InitializeFromAlgorithmName(ObjectIdGroupId.XCN_CRYPT_HASH_ALG_OID_GROUP_ID,
                                                     ObjectIdPublicKeyFlags.XCN_CRYPT_OID_INFO_PUBKEY_ANY,
                                                     AlgorithmFlags.AlgorithmFlagsNone, "SHA256");
 
+                CObjectId oid = new CObjectId();
+                // oid.InitializeFromValue("1.3.6.1.5.5.7.3.1"); // SSL server  
+                oid.InitializeFromValue("1.3.6.1.4.1.311.80.1"); // Encryption
+
+                CObjectIds oidlist = new CObjectIds
+                {
+                    oid
+                };
+
+                CObjectId coid = new CObjectId();
+                // coid.InitializeFromValue("1.3.6.1.5.5.7.3.2"); // Client auth
+                coid.InitializeFromValue("1.3.6.1.5.5.7.3.3"); // Signature
+                oidlist.Add(coid);
+
+                CX509ExtensionEnhancedKeyUsage eku = new CX509ExtensionEnhancedKeyUsage();
+                eku.InitializeEncode(oidlist);
+
+                // Create the self signing request
+                CX509CertificateRequestCertificate certreq = new CX509CertificateRequestCertificate();
+                certreq.InitializeFromPrivateKey(X509CertificateEnrollmentContext.ContextMachine, privateKey, "");
+                certreq.Subject = dn;
+                certreq.Issuer = neos;
+                certreq.NotBefore = DateTime.Now.AddDays(-10);
+
+                certreq.NotAfter = DateTime.Now.AddYears(years);
+                certreq.X509Extensions.Add((CX509Extension)eku); // add the EKU
+                certreq.HashAlgorithm = hashobj; // Specify the hashing algorithm
+                certreq.Encode(); // encode the certificate
+
+                // Do the final enrollment process
+                CX509Enrollment enroll = new CX509Enrollment();
+                enroll.InitializeFromRequest(certreq); // load the certificate
+                enroll.CertificateFriendlyName = subjectName; // Optional: add a friendly name
+
+                string csr = enroll.CreateRequest(); // Output the request in base64
+
+                // and install it back as the response
+                enroll.InstallResponse(InstallResponseRestrictionFlags.AllowUntrustedCertificate, csr, EncodingType.XCN_CRYPT_STRING_BASE64, "");
+
+                // output a base64 encoded PKCS#12 so we can import it back to the .Net security classes
+                base64encoded = enroll.CreatePFX("", PFXExportOptions.PFXExportChainWithRoot);
+            }
+            catch (Exception ex)
+            {
+                privateKey.Delete();
+                throw ex;
+            }
+            finally
+            {
+                // DO nothing, certificate Key is stored in the system
+            }
+            return base64encoded;
+        }
+
+        /// <summary>
+        /// InternalCreateUserRSACertificate2012R2 method implementation
+        /// </summary>
+        [SuppressUnmanagedCodeSecurity]
+        private static string InternalCreateUserRSACertificate2012R2(string subjectName, int years, string pwd = "")
+        {
+            string base64encoded = string.Empty;
+            CX500DistinguishedName dn = new CX500DistinguishedName();
+            CX500DistinguishedName neos = new CX500DistinguishedName();
+            dn.Encode("CN=" + subjectName, X500NameFlags.XCN_CERT_NAME_STR_NONE);
+            neos.Encode("CN=MFA RSA Keys Certificate", X500NameFlags.XCN_CERT_NAME_STR_NONE);
+
+            IX509PrivateKey privateKey = (IX509PrivateKey)Activator.CreateInstance(Type.GetTypeFromProgID("X509Enrollment.CX509PrivateKey"));
+            privateKey.ProviderName = "Microsoft RSA SChannel Cryptographic Provider";
+            privateKey.MachineContext = false;
+            privateKey.Length = 2048;
+            privateKey.KeySpec = X509KeySpec.XCN_AT_KEYEXCHANGE; // use is not limited
+            privateKey.ExportPolicy = X509PrivateKeyExportFlags.XCN_NCRYPT_ALLOW_EXPORT_FLAG;
+            privateKey.SecurityDescriptor = "D:(A;;FA;;;SY)(A;;FA;;;BA)";
+
+            if (!string.IsNullOrEmpty(ADFSServiceSID))
+                privateKey.SecurityDescriptor += "(A;;FA;;;" + ADFSServiceSID + ")";
+            if (!string.IsNullOrEmpty(ADFSAccountSID))
+                privateKey.SecurityDescriptor += "(A;;FA;;;" + ADFSAccountSID + ")";
+            if (!string.IsNullOrEmpty(ADFSAdminGroupSID))
+                privateKey.SecurityDescriptor += "(A;;FA;;;" + ADFSAdminGroupSID + ")";
+            try
+            {
+                privateKey.Create();
+                CObjectId hashobj = new CObjectId();
+                hashobj.InitializeFromAlgorithmName(ObjectIdGroupId.XCN_CRYPT_HASH_ALG_OID_GROUP_ID,
+                                                    ObjectIdPublicKeyFlags.XCN_CRYPT_OID_INFO_PUBKEY_ANY,
+                                                    AlgorithmFlags.AlgorithmFlagsNone, "SHA256");
+
+                CObjectId oid = new CObjectId();
+                // oid.InitializeFromValue("1.3.6.1.5.5.7.3.1"); // SSL server  
+                oid.InitializeFromValue("1.3.6.1.4.1.311.80.1"); // Encryption
+
+                CObjectIds oidlist = new CObjectIds
+                {
+                    oid
+                };
+
+                CObjectId coid = new CObjectId();
+                // coid.InitializeFromValue("1.3.6.1.5.5.7.3.2"); // Client auth
+                coid.InitializeFromValue("1.3.6.1.5.5.7.3.3"); // Signature
+                oidlist.Add(coid);
+
+                CX509ExtensionEnhancedKeyUsage eku = new CX509ExtensionEnhancedKeyUsage();
+                eku.InitializeEncode(oidlist);
+
+                // Create the self signing request
+                CX509CertificateRequestCertificate certreq = new CX509CertificateRequestCertificate();
+                certreq.InitializeFromPrivateKey(X509CertificateEnrollmentContext.ContextUser, privateKey, "");
+                certreq.Subject = dn;
+                certreq.Issuer = neos;
+                certreq.NotBefore = DateTime.Now.AddDays(-10);
+
+                certreq.NotAfter = DateTime.Now.AddYears(years);
+                certreq.X509Extensions.Add((CX509Extension)eku); // add the EKU
+                certreq.HashAlgorithm = hashobj; // Specify the hashing algorithm
+                certreq.Encode(); // encode the certificate
+
+                // Do the final enrollment process
+                CX509Enrollment enroll = new CX509Enrollment();
+                enroll.InitializeFromRequest(certreq); // load the certificate
+                enroll.CertificateFriendlyName = subjectName; // Optional: add a friendly name
+
+                string csr = enroll.CreateRequest(); // Output the request in base64
+
+                // and install it back as the response
+                enroll.InstallResponse(InstallResponseRestrictionFlags.AllowUntrustedCertificate, csr, EncodingType.XCN_CRYPT_STRING_BASE64, "");
+
+                // output a base64 encoded PKCS#12 so we can import it back to the .Net security classes
+                base64encoded = enroll.CreatePFX(pwd, PFXExportOptions.PFXExportChainWithRoot);
+            }
+            catch (Exception ex)
+            {
+                privateKey.Delete();
+                throw ex;
+            }
+            finally
+            {
+                privateKey.Delete(); // Remove Stored elsewhere
+            }
+            return base64encoded;
+        }
+
+        /// <summary>
+        /// InternalCreateSQLCertificate method implementation
+        /// </summary>
+        [SuppressUnmanagedCodeSecurity]
+        private static string InternalCreateSQLCertificate2012R2(string subjectName, int years, string pwd = "")
+        {
+            string base64encoded = string.Empty;
+            CX500DistinguishedName dn = new CX500DistinguishedName();
+            CX500DistinguishedName neos = new CX500DistinguishedName();
+            dn.Encode("CN=" + subjectName + " " + DateTime.UtcNow.ToString("G") + " GMT", X500NameFlags.XCN_CERT_NAME_STR_NONE);
+            neos.Encode("CN=Always Encrypted Certificate", X500NameFlags.XCN_CERT_NAME_STR_NONE);
+
+            IX509PrivateKey privateKey = (IX509PrivateKey)Activator.CreateInstance(Type.GetTypeFromProgID("X509Enrollment.CX509PrivateKey"));
+            privateKey.ProviderName = "Microsoft RSA SChannel Cryptographic Provider";
+            privateKey.MachineContext = true;
+            privateKey.Length = 2048;
+            privateKey.KeySpec = X509KeySpec.XCN_AT_KEYEXCHANGE; // use is not limited
+            privateKey.ExportPolicy = X509PrivateKeyExportFlags.XCN_NCRYPT_ALLOW_EXPORT_FLAG;
+            privateKey.SecurityDescriptor = "D:(A;;FA;;;SY)(A;;FA;;;BA)";
+
+            if (!string.IsNullOrEmpty(ADFSServiceSID))
+                privateKey.SecurityDescriptor += "(A;;FA;;;" + ADFSServiceSID + ")";
+            if (!string.IsNullOrEmpty(ADFSAccountSID))
+                privateKey.SecurityDescriptor += "(A;;FA;;;" + ADFSAccountSID + ")";
+            if (!string.IsNullOrEmpty(ADFSAdminGroupSID))
+                privateKey.SecurityDescriptor += "(A;;FA;;;" + ADFSAdminGroupSID + ")";
+            try
+            {
+                privateKey.Create();
+                CObjectId hashobj = new CObjectId();
+                hashobj.InitializeFromAlgorithmName(ObjectIdGroupId.XCN_CRYPT_HASH_ALG_OID_GROUP_ID,
+                                                    ObjectIdPublicKeyFlags.XCN_CRYPT_OID_INFO_PUBKEY_ANY,
+                                                    AlgorithmFlags.AlgorithmFlagsNone, "SHA256");
+
+
+                // 2.5.29.37 – Enhanced Key Usage includes
+
+                CObjectId oid = new CObjectId();
+                oid.InitializeFromValue("1.3.6.1.5.5.8.2.2"); // IP security IKE intermediate
+                var oidlist = new CObjectIds
+                {
+                    oid
+                };
+
+                CObjectId coid = new CObjectId();
+                coid.InitializeFromValue("1.3.6.1.4.1.311.10.3.11"); // Key Recovery
+                oidlist.Add(coid);
+
+                CX509ExtensionEnhancedKeyUsage eku = new CX509ExtensionEnhancedKeyUsage();
+                eku.InitializeEncode(oidlist);
+
+                // Create the self signing request
+                CX509CertificateRequestCertificate certreq = new CX509CertificateRequestCertificate();
+                certreq.InitializeFromPrivateKey(X509CertificateEnrollmentContext.ContextMachine, privateKey, "");
+                certreq.Subject = dn;
+                certreq.Issuer = neos;
+                certreq.NotBefore = DateTime.Now.AddDays(-10);
+
+                certreq.NotAfter = DateTime.Now.AddYears(years);
+                certreq.X509Extensions.Add((CX509Extension)eku); // add the EKU
+                certreq.HashAlgorithm = hashobj; // Specify the hashing algorithm
+                certreq.Encode(); // encode the certificate
+
+                // Do the final enrollment process
+                CX509Enrollment enroll = new CX509Enrollment();
+                enroll.InitializeFromRequest(certreq); // load the certificate
+                enroll.CertificateFriendlyName = subjectName; // Optional: add a friendly name
+
+                string csr = enroll.CreateRequest(); // Output the request in base64
+
+                // and install it back as the response
+                enroll.InstallResponse(InstallResponseRestrictionFlags.AllowUntrustedCertificate, csr, EncodingType.XCN_CRYPT_STRING_BASE64, "");
+
+                // output a base64 encoded PKCS#12 so we can import it back to the .Net security classes
+                base64encoded = enroll.CreatePFX("", PFXExportOptions.PFXExportChainWithRoot);
+            }
+            catch (Exception ex)
+            {
+                privateKey.Delete();
+                throw ex;
+            }
+            finally
+            {
+                // DO nothing, certificate Key is stored in the system
+            }
+            return base64encoded;
+        }
+
+        /// <summary>
+        /// InternalCreateADFSCertificate method implementation
+        /// </summary>
+        [SuppressUnmanagedCodeSecurity]
+        private static string InternalCreateADFSCertificate2012R2(string subjectName, bool issigning, int years)
+        {
+            string base64encoded = string.Empty;
+            CX500DistinguishedName dn = new CX500DistinguishedName();
+            CX500DistinguishedName neos = new CX500DistinguishedName();
+
+            dn.Encode("CN=" + subjectName, X500NameFlags.XCN_CERT_NAME_STR_NONE);
+            neos.Encode("CN=" + subjectName, X500NameFlags.XCN_CERT_NAME_STR_NONE);
+
+            IX509PrivateKey privateKey = (IX509PrivateKey)Activator.CreateInstance(Type.GetTypeFromProgID("X509Enrollment.CX509PrivateKey"));
+            privateKey.ProviderName = "Microsoft RSA SChannel Cryptographic Provider";
+            privateKey.MachineContext = true;
+            privateKey.Length = 2048;
+            privateKey.KeySpec = X509KeySpec.XCN_AT_KEYEXCHANGE; // use is not limited
+            privateKey.ExportPolicy = X509PrivateKeyExportFlags.XCN_NCRYPT_ALLOW_EXPORT_FLAG;
+            privateKey.SecurityDescriptor = "D:(A;;FA;;;SY)(A;;FA;;;BA)";
+
+            if (issigning)
+                privateKey.KeyUsage = X509PrivateKeyUsageFlags.XCN_NCRYPT_ALLOW_SIGNING_FLAG;
+            else
+                privateKey.KeyUsage = X509PrivateKeyUsageFlags.XCN_NCRYPT_ALLOW_DECRYPT_FLAG;
+            if (!string.IsNullOrEmpty(ADFSServiceSID))
+                privateKey.SecurityDescriptor += "(A;;FA;;;" + ADFSServiceSID + ")";
+            if (!string.IsNullOrEmpty(ADFSAccountSID))
+                privateKey.SecurityDescriptor += "(A;;FA;;;" + ADFSAccountSID + ")";
+            if (!string.IsNullOrEmpty(ADFSAdminGroupSID))
+                privateKey.SecurityDescriptor += "(A;;FA;;;" + ADFSAdminGroupSID + ")";
+            try
+            {
+                privateKey.Create();
+
+                CObjectId hashobj = new CObjectId();
+                hashobj.InitializeFromAlgorithmName(ObjectIdGroupId.XCN_CRYPT_HASH_ALG_OID_GROUP_ID, ObjectIdPublicKeyFlags.XCN_CRYPT_OID_INFO_PUBKEY_ANY, AlgorithmFlags.AlgorithmFlagsNone, "SHA256");
                 CObjectIds oidlist = new CObjectIds();
                 if (!issigning)
                 {
@@ -576,10 +955,12 @@ namespace Neos.IdentityServer.MultiFactor.Data
             return base64encoded;
         }
 
+        #endregion
+
         /// <summary>
         /// HasAssociatedCertificate method implementation
         /// </summary>
-        private static bool HasAssociatedCertificate(string filename)
+        private static bool HasAssociatedCertificate(string filename, bool onlymfacerts = false)
         {
             X509Store store = new X509Store(StoreName.My, StoreLocation.LocalMachine);
             store.Open(OpenFlags.MaxAllowed);
@@ -588,16 +969,25 @@ namespace Neos.IdentityServer.MultiFactor.Data
                 X509Certificate2Collection collection2 = (X509Certificate2Collection)store.Certificates;
                 foreach (X509Certificate2 x509 in collection2)
                 {
+                    bool doit = !onlymfacerts;
                     try
                     {
-                        string cntName = string.Empty;
-                        var rsakey = x509.GetRSAPrivateKey();
-                        if (rsakey is RSACng)
-                            cntName = ((RSACng)rsakey).Key.UniqueName;
-                        else if (rsakey is RSACryptoServiceProvider)
-                            cntName = ((RSACryptoServiceProvider)rsakey).CspKeyContainerInfo.UniqueKeyContainerName;
-                        if (filename.ToLower().Equals(cntName.ToLower()))
-                            return true;
+                        if (onlymfacerts)
+                        {
+                            if ((!x509.Subject.ToLower().StartsWith("cn=mfa rsa keys") && (!x509.Subject.ToLower().StartsWith("cn=mfa sql key"))))
+                                return true;
+                        }
+                        if (doit)
+                        {
+                            string cntName = string.Empty;
+                            var rsakey = x509.GetRSAPrivateKey();
+                            if (rsakey is RSACng)
+                                cntName = ((RSACng)rsakey).Key.UniqueName;
+                            else if (rsakey is RSACryptoServiceProvider)
+                                cntName = ((RSACryptoServiceProvider)rsakey).CspKeyContainerInfo.UniqueKeyContainerName;
+                            if (filename.ToLower().Equals(cntName.ToLower()))
+                                return true;
+                        }
                     }
                     catch (Exception)
                     {
@@ -619,13 +1009,13 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// <summary>
         /// CleanOrphanedPrivateKeys method implementation
         /// </summary>
-        public static int CleanOrphanedPrivateKeys()
+        public static int CleanOrphanedPrivateKeys(bool onlymfacerts = false)
         {
             int result = 0;
             List<string> paths = new List<string>()
             {
                 Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\Microsoft\Crypto\RSA\MachineKeys\",
-                Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData)+@"\Microsoft\Crypto\Keys\"
+                Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\Microsoft\Crypto\Keys\"
             };
             foreach (string pth in paths)
             {
@@ -635,7 +1025,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                 {
                     try
                     {
-                        if (!HasAssociatedCertificate(fi.Name))
+                        if (!HasAssociatedCertificate(fi.Name, onlymfacerts))
                         {
                             fi.Delete();
                             result++;
@@ -650,7 +1040,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// <summary>
         /// UpdateCertificatesACL method implementation
         /// </summary>
-        public static bool UpdateCertificatesACL()
+        public static bool UpdateCertificatesACL(bool onlymfacerts = false)
         {
             X509Store store = new X509Store(StoreName.My, StoreLocation.LocalMachine);
             store.Open(OpenFlags.MaxAllowed);
@@ -659,29 +1049,38 @@ namespace Neos.IdentityServer.MultiFactor.Data
                 X509Certificate2Collection collection2 = (X509Certificate2Collection)store.Certificates;
                 foreach (X509Certificate2 x509 in collection2)
                 {
+                    bool doit = !onlymfacerts;
                     string fileName = string.Empty;
                     try
                     {
-                        var rsakey = x509.GetRSAPrivateKey();
-                        if (rsakey is RSACng)
+                        if (onlymfacerts)
                         {
-                            fileName = ((RSACng)rsakey).Key.UniqueName;
+                            if ((!x509.Subject.ToLower().StartsWith("cn=mfa rsa keys") && (!x509.Subject.ToLower().StartsWith("cn=mfa sql key"))))
+                                doit = false;
                         }
-                        else if (rsakey is RSACryptoServiceProvider)
+                        if (doit)
                         {
-                            fileName = ((RSACryptoServiceProvider)rsakey).CspKeyContainerInfo.UniqueKeyContainerName;
-                        }
-                        if (!string.IsNullOrEmpty(fileName))
-                        {
-                            string keysfullpath = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\Microsoft\Crypto\Keys\" + fileName;
-                            string machinefullpath = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\Microsoft\Crypto\RSA\MachineKeys\" + fileName;
-                            if (File.Exists(keysfullpath))
-                                InternalUpdateACLs(keysfullpath);
-                            if (File.Exists(machinefullpath))
-                                InternalUpdateACLs(machinefullpath);
+                            var rsakey = x509.GetRSAPrivateKey();
+                            if (rsakey is RSACng)
+                            {
+                                fileName = ((RSACng)rsakey).Key.UniqueName;
+                            }
+                            else if (rsakey is RSACryptoServiceProvider)
+                            {
+                                fileName = ((RSACryptoServiceProvider)rsakey).CspKeyContainerInfo.UniqueKeyContainerName;
+                            }
+                            if (!string.IsNullOrEmpty(fileName))
+                            {
+                                string keysfullpath = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\Microsoft\Crypto\Keys\" + fileName;
+                                string machinefullpath = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\Microsoft\Crypto\RSA\MachineKeys\" + fileName;
+                                if (File.Exists(keysfullpath))
+                                    InternalUpdateACLs(keysfullpath);
+                                if (File.Exists(machinefullpath))
+                                    InternalUpdateACLs(machinefullpath);
+                            }
                         }
                     }
-                    catch{ }
+                    catch { }
                 }
             }
             catch (Exception ex)
@@ -1181,4 +1580,78 @@ namespace Neos.IdentityServer.MultiFactor.Data
             }
         }
     }
+
+    #region ADFS Version
+    internal class RegistryVersion
+    {
+        /// <summary>
+        /// RegistryVersion constructor
+        /// </summary>
+        public RegistryVersion()
+        {
+            RegistryKey rk = Registry.LocalMachine.OpenSubKey("Software\\Microsoft\\Windows NT\\CurrentVersion");
+
+            CurrentVersion = Convert.ToString(rk.GetValue("CurrentVersion"));
+            ProductName = Convert.ToString(rk.GetValue("ProductName"));
+            InstallationType = Convert.ToString(rk.GetValue("InstallationType"));
+            CurrentBuild = Convert.ToInt32(rk.GetValue("CurrentBuild"));
+            CurrentMajorVersionNumber = Convert.ToInt32(rk.GetValue("CurrentMajorVersionNumber"));
+            CurrentMinorVersionNumber = Convert.ToInt32(rk.GetValue("CurrentMinorVersionNumber"));
+        }
+
+        /// <summary>
+        /// CurrentVersion property implementation
+        /// </summary>
+        public string CurrentVersion { get; set; }
+
+        /// <summary>
+        /// ProductName property implementation
+        /// </summary>
+        public string ProductName { get; set; }
+
+        /// <summary>
+        /// InstallationType property implementation
+        /// </summary>
+        public string InstallationType { get; set; }
+
+        /// <summary>
+        /// CurrentBuild property implementation
+        /// </summary>
+        public int CurrentBuild { get; set; }
+
+        /// <summary>
+        /// CurrentMajorVersionNumber property implementation
+        /// </summary>
+        public int CurrentMajorVersionNumber { get; set; }
+
+        /// <summary>
+        /// CurrentMinorVersionNumber property implementation
+        /// </summary>
+        public int CurrentMinorVersionNumber { get; set; }
+
+        /// <summary>
+        /// IsWindows2019 property implementation
+        /// </summary>
+        public bool IsWindows2019
+        {
+            get { return ((this.CurrentMajorVersionNumber == 10) && (this.CurrentBuild >= 17763)); }
+        }
+
+        /// <summary>
+        /// IsWindows2016 property implementation
+        /// </summary>
+        public bool IsWindows2016
+        {
+            get { return ((this.CurrentMajorVersionNumber == 10) && ((this.CurrentBuild >= 14393) && (this.CurrentBuild < 17763))); }
+        }
+
+        /// <summary>
+        /// IsWindows2012R2 property implementation
+        /// </summary>
+        public bool IsWindows2012R2
+        {
+            get { return ((this.CurrentMajorVersionNumber == 0) && ((this.CurrentBuild >= 9600) && (this.CurrentBuild < 14393))); }
+        }
+    }
+    #endregion
 }

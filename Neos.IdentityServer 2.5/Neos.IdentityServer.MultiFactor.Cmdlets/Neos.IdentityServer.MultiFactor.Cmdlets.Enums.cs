@@ -67,6 +67,7 @@ namespace MFA
     /// <summary>
     /// PSSecurityMode
     /// <para type="synopsis">MFA Security Kind (ROOT, RNG, RSA, CUSTOM).</para>
+    /// <para type="description">MFA Security Kind (ROOT, RNG, RSA, CUSTOM).</para>
     /// </summary>    
     public enum PSSecurityMode
     {
@@ -352,7 +353,7 @@ namespace MFA
     /// <summary>
     /// PSUIKind
     /// <para type="synopsis">Kind of ADFS's User Interface version</para>
-    /// <para type="synopsis">Kind of ADFS's User Interface version (ADFS 2019 or Older with Custome Themes</para>
+    /// <para type="description">Kind of ADFS's User Interface version (ADFS 2019 or Older with Custome Themes</para>
     /// </summary>
     public enum PSUIKind
     {
@@ -724,8 +725,9 @@ namespace MFA
     }
 
     /// <summary>
-    /// PSStoreMode
-    /// <para type="synopsis">MFA ADFS certificate Kind (Signing, DecryptingSQL).</para>
+    /// PSADFSCertificateKind
+    /// <para type="synopsis">MFA ADFS certificate Kind (Signing, Decrypting).</para>
+    /// /// <para type="description">MFA ADFS certificate Kind (Signing, Decrypting).</para>
     /// </summary>    
     public enum PSADFSCertificateKind
     {

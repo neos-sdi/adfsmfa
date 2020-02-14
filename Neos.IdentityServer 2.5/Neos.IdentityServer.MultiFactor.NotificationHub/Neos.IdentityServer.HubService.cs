@@ -34,6 +34,7 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
         private MailSlotServer _mailslotmfa = new MailSlotServer("NOT"); // And Broadcast
         private PipeServer _pipeserver = new PipeServer();
         private ReplayManager _replaymgr = new ReplayManager();
+        private CleanUpManager _cleanupmgr = new CleanUpManager();
 
         #region Service override methods
         /// <summary>
@@ -88,7 +89,8 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
                 {
                     _pipeserver.Proofkey = XORUtilities.XORKey;
                     _pipeserver.Start();
-                    _replaymgr.Start();
+                    _replaymgr.Start(this);
+                    _cleanupmgr.Start(this);
                 }
                 catch (Exception)  // No Config
                 {
@@ -121,6 +123,7 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
             {
                 _pipeserver.Stop();
                 _replaymgr.Close();
+                _cleanupmgr.Close();
             }
             catch (Exception e)
             {
@@ -203,17 +206,19 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
                 svr = cfg.Hosts.ADFSFarm.Servers.Find(s => s.FQDN.ToLower().Equals(rec.FQDN.ToLower()));
                 cfg.Hosts.ADFSFarm.Servers.Remove(svr);
             }
-            svr = new ADFSServerHost();
-            svr.FQDN = rec.FQDN;
-            svr.CurrentVersion = rec.CurrentVersion;
-            svr.CurrentBuild = rec.CurrentBuild;
-            svr.CurrentMajorVersionNumber = rec.CurrentMajorVersionNumber;
-            svr.CurrentMinorVersionNumber = rec.CurrentMinorVersionNumber;
-            svr.InstallationType = rec.InstallationType;
-            svr.ProductName = rec.ProductName;
-            svr.NodeType = rec.NodeType;
-            svr.BehaviorLevel = rec.BehaviorLevel;
-            svr.HeartbeatTmeStamp = rec.HeartbeatTimestamp;
+            svr = new ADFSServerHost
+            {
+                FQDN = rec.FQDN,
+                CurrentVersion = rec.CurrentVersion,
+                CurrentBuild = rec.CurrentBuild,
+                CurrentMajorVersionNumber = rec.CurrentMajorVersionNumber,
+                CurrentMinorVersionNumber = rec.CurrentMinorVersionNumber,
+                InstallationType = rec.InstallationType,
+                ProductName = rec.ProductName,
+                NodeType = rec.NodeType,
+                BehaviorLevel = rec.BehaviorLevel,
+                HeartbeatTmeStamp = rec.HeartbeatTimestamp
+            };
             cfg.Hosts.ADFSFarm.Servers.Add(svr);
             CFGUtilities.WriteConfiguration(null, cfg);
 

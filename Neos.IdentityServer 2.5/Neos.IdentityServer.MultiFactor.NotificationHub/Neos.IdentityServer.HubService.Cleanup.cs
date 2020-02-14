@@ -15,81 +15,92 @@
 // https://github.com/neos-sdi/adfsmfa                                                                                                                                                      //
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
+
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.ManagementConsole;
-using Neos.IdentityServer.MultiFactor;
-using Neos.IdentityServer.MultiFactor.Administration;
 using System.Diagnostics;
-using Microsoft.ManagementConsole.Advanced;
-using System.Windows.Forms;
+using System.ServiceProcess;
 using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.Win32;
+using Neos.IdentityServer.MultiFactor.Data;
 
-namespace Neos.IdentityServer.Console
+namespace Neos.IdentityServer.MultiFactor.NotificationHub
 {
-    /// <summary>
-    /// ServiceProvidersFormView Class
-    /// </summary>
-    public class ServiceProvidersFormView : FormView
+    internal class CleanUpManager
     {
-        private ServiceProvidersScopeNode provScopeNode = null;
-        private ProvidersViewControl ProvidersControl = null;
+        private Task _cleanup = null;
+        private CancellationTokenSource _canceller = null;
+        private bool _mustexit = false;
+        private readonly bool _onlymfacerts = false;
+        private readonly int _minutes = 5;
+        private readonly bool _cleanupenable = true;
+        private ServiceBase _service;
 
         /// <summary>
-        /// ServiceProvidersFormView constructor
+        /// Static constructor implementation
         /// </summary>
-        public ServiceProvidersFormView()
+        internal CleanUpManager()
         {
-
+            RegistryKey rk = Registry.LocalMachine.OpenSubKey("Software\\MFA");
+            _cleanupenable = Convert.ToBoolean(rk.GetValue("EnablePrivateKeysCleanUp"));
+            _minutes = Convert.ToInt32(rk.GetValue("PrivateKeysCleanUpDelay"));
+            _onlymfacerts = Convert.ToBoolean(rk.GetValue("LimitPrivateKeysCleanUp"));
         }
 
         /// <summary>
-        /// Initialize method override
+        /// Background CleanUp method
         /// </summary>
-        protected override void OnInitialize(AsyncStatus status)
+        private void CleanUpMethod()
         {
-            ProvidersControl = (ProvidersViewControl)this.Control;
-            provScopeNode = (ServiceProvidersScopeNode)this.ScopeNode;
-            provScopeNode.ProvidersFormView = this;
-
-            ActionsPaneItems.Clear();
-            SelectionData.ActionsPaneItems.Clear();
-            SelectionData.ActionsPaneHelpItems.Clear();
-            SelectionData.EnabledStandardVerbs = (StandardVerbs.Delete | StandardVerbs.Properties);
-            ModeActionsPaneItems.Clear();
-
-            base.OnInitialize(status);
+            using (_canceller.Token.Register(Thread.CurrentThread.Abort))
+            {
+                while (!_mustexit)
+                {
+                    try
+                    {
+                        int res = Certs.CleanOrphanedPrivateKeys(_onlymfacerts);
+                        if (res > 0)
+                            _service.EventLog.WriteEntry(string.Format("{0} orphaned certificates private keys deleted.", res), EventLogEntryType.Error, 1010);
+                        Thread.Sleep(new TimeSpan(0, 0, _minutes, 0)); 
+                    }
+                    catch (ThreadAbortException)
+                    {
+                        _mustexit = true;
+                        return;
+                    }
+                    catch (Exception ex)
+                    {
+                        _service.EventLog.WriteEntry(string.Format("error on CleanUp Keys : {0}.", ex.Message), EventLogEntryType.Error, 1011);
+                    }
+                }
+            }
         }
 
         /// <summary>
-        /// Refresh() method implementation
+        /// Start method implementation
         /// </summary>
-        internal void Refresh()
+        internal void Start(ServiceBase svc)
         {
-            if (ProvidersControl != null)
-                ProvidersControl.RefreshData();
+            if (!_cleanupenable)
+            {
+                _mustexit = true;
+                return;
+            }
+            _service = svc;
+            _mustexit = false;
+            _canceller = new CancellationTokenSource();
+            _cleanup = Task.Factory.StartNew(new Action(CleanUpMethod), _canceller.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
         }
 
         /// <summary>
-        /// DoCancel() method implementation
+        /// Close method implementation
         /// </summary>
-        internal void DoCancel()
+        internal void Close()
         {
-            if (ProvidersControl != null)
-                ProvidersControl.CancelData();
+            _mustexit = true;
+            if (_canceller!=null)
+                _canceller.Cancel();
         }
-
-        /// <summary>
-        /// DoSave() method implmentation
-        /// </summary>
-        internal void DoSave()
-        {
-            if (ProvidersControl != null)
-                ProvidersControl.SaveData();
-        }
-
     }
 }

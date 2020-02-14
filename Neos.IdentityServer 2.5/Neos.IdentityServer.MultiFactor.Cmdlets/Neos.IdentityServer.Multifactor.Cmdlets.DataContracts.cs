@@ -451,6 +451,7 @@ namespace MFA
     #region PSBaseStore
     /// <summary>
     ///   <para type="synopsis">ADDS / SQL common class.</para>
+    ///   <para type="description">ADDS / SQL base class.</para>
     /// </summary>
     /// <example>
     ///   <para>Get-MFAStore -Store ADDS</para>
@@ -468,8 +469,7 @@ namespace MFA
     /// <summary>
     /// PSADDSStore class
     /// <para type="synopsis">ADDS configuration properties in MFA System.</para>
-    /// <para type="description">ADDS configuration properties registered with MFA.</para>
-    /// <para type="description">You can access, update attributes properties.</para>
+    /// <para type="description">ADDS configuration properties registered with MFA.You can access, update attributes properties.</para>
     /// </summary>
     /// <example>
     ///   <para>Get-MFAStore -Store ADDS</para>
@@ -602,8 +602,7 @@ namespace MFA
     /// <summary>
     /// PSSQLStore class
     /// <para type="synopsis">SQL configuration properties in MFA System.</para>
-    /// <para type="description">SQL configuration properties registered with MFA.</para>
-    /// <para type="description">You can access, update connectionString property.</para>
+    /// <para type="description">SQL configuration properties registered with MFA. You can access, update connectionString property.</para>
     /// </summary>
     /// <example>
     ///   <para>Get-MFAStore -Store SQL</para>
@@ -700,6 +699,7 @@ namespace MFA
     #region PSBaseSecurity
     /// <summary>
     /// PSBaseSecurity class implementation
+    /// <para type="description">Base Security Class.</para>
     /// </summary>
     public abstract class PSBaseSecurity
     {
@@ -1166,6 +1166,7 @@ namespace MFA
     #region PSBaseProvider
     /// <summary>
     /// <para type="synopsis">configuration properties in MFA System.</para>
+    /// <para type="description">base class for different configuration properties in MFA System.</para>
     /// </summary>
     public abstract class PSBaseProvider
     {

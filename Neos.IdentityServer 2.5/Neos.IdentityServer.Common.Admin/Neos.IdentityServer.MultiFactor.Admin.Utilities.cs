@@ -455,12 +455,12 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <summary>
         /// UpdateCertificatesACL method implementation
         /// </summary>
-        internal static bool UpdateCertificatesACL()
+        internal static bool UpdateCertificatesACL(bool onlymfacerts = false)
         {
             EnsureService();
             try
             {
-                return Certs.UpdateCertificatesACL();
+                return Certs.UpdateCertificatesACL(onlymfacerts);
             }
             catch (Exception ex)
             {
@@ -471,12 +471,12 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <summary>
         /// CleanOrphanedPrivateKeys method implmentation
         /// </summary>
-        internal static int CleanOrphanedPrivateKeys()
+        internal static int CleanOrphanedPrivateKeys(bool onlymfacerts = false)
         {
             EnsureService();
             try
             {
-                return Certs.CleanOrphanedPrivateKeys();
+                return Certs.CleanOrphanedPrivateKeys(onlymfacerts);
             }
             catch (Exception ex)
             {

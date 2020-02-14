@@ -21,7 +21,7 @@ using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Linq;
 using Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor;
-using Microsoft.IdentityModel.Logging;
+// using Microsoft.IdentityModel.Logging;
 
 namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
 {
@@ -33,7 +33,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
             : base(attStmt, authenticatorData, clientDataHash)
         {
             _driftTolerance = driftTolerance;
-            Identity​Model​Event​Source.ShowPII = true;
+           // Identity​Model​Event​Source.ShowPII = true;
         }
 
         public override void Verify()
