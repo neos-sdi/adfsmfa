@@ -32,9 +32,9 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
         private Task _cleanup = null;
         private CancellationTokenSource _canceller = null;
         private bool _mustexit = false;
-        private readonly bool _onlymfacerts = false;
+        private readonly bool _onlymfacerts = true;
         private readonly int _minutes = 5;
-        private readonly bool _cleanupenable = true;
+        private readonly bool _cleanupenable = false;
         private ServiceBase _service;
 
         /// <summary>

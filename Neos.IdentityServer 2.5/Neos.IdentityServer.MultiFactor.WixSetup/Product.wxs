@@ -661,9 +661,9 @@
           <Icon Id="Microsoft_201.ico" SourceFile="$(var.Neos.IdentityServer.Console.NativeResources.ProjectDir)Microsoft_201.ico" />
         </Shortcut>
         <RegistryValue Root="HKCU" Key="Software\MFA" Name="installed" Type="integer" Value="1" KeyPath="yes" />
-        <RegistryValue Root="HKLM" Key="Software\MFA" Name="EnablePrivateKeysCleanUp" Type="integer" Value="1" />
+        <RegistryValue Root="HKLM" Key="Software\MFA" Name="EnablePrivateKeysCleanUp" Type="integer" Value="0" />
         <RegistryValue Root="HKLM" Key="Software\MFA" Name="PrivateKeysCleanUpDelay" Type="integer" Value="5" />
-        <RegistryValue Root="HKLM" Key="Software\MFA" Name="LimitPrivateKeysCleanUp" Type="integer" Value="0" />
+        <RegistryValue Root="HKLM" Key="Software\MFA" Name="LimitPrivateKeysCleanUp" Type="integer" Value="1" />
       </Component>
     </ComponentGroup>
   </Fragment> 
