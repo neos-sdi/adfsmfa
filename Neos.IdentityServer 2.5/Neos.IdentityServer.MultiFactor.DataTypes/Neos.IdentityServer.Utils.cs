@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2019 Neos-Sdi (http://www.neos-sdi.com)                                                                                                                                    //                        
+// Copyright (c) 2020 Neos-Sdi (http://www.neos-sdi.com)                                                                                                                                    //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -161,10 +161,14 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// </summary>
         public static bool CreateADFSCertificate(string subjectName, bool issigning, int years)
         {
-            string strcert = InternalCreateADFSCertificate(subjectName, issigning, years);
+            string strcert = string.Empty;
             X509Certificate2 x509 = null;
             try
             {
+                if (_RegistryVersion.IsWindows2012R2)
+                    strcert = InternalCreateADFSCertificate2012R2(subjectName, issigning, years);
+                else
+                    strcert = InternalCreateADFSCertificate(subjectName, issigning, years);
                 x509 = new X509Certificate2(Convert.FromBase64String(strcert), "", X509KeyStorageFlags.Exportable | X509KeyStorageFlags.EphemeralKeySet);
                 CleanSelfSignedCertificate(x509, StoreLocation.LocalMachine);
                 return true;
@@ -312,7 +316,8 @@ namespace Neos.IdentityServer.MultiFactor.Data
             }
             catch (Exception ex)
             {
-                privateKey.Delete();
+                if (privateKey != null)
+                    privateKey.Delete();
                 throw ex;
             }
             finally
@@ -401,12 +406,14 @@ namespace Neos.IdentityServer.MultiFactor.Data
             }
             catch (Exception ex)
             {
-                privateKey.Delete();
+                if (privateKey!=null)
+                    privateKey.Delete();
                 throw ex;
             }
             finally
             {
-               privateKey.Delete(); // Remove Stored elsewhere
+                if (privateKey != null)
+                    privateKey.Delete(); // Remove Stored elsewhere
             }
             return base64encoded;
         }
@@ -491,7 +498,8 @@ namespace Neos.IdentityServer.MultiFactor.Data
             }
             catch (Exception ex)
             {
-                privateKey.Delete();
+                if (privateKey!=null)
+                    privateKey.Delete();
                 throw ex;
             }
             finally
@@ -511,17 +519,9 @@ namespace Neos.IdentityServer.MultiFactor.Data
             CX500DistinguishedName dn = new CX500DistinguishedName();
             CX500DistinguishedName neos = new CX500DistinguishedName();
 
-            dn.Encode("CN=" + subjectName , X500NameFlags.XCN_CERT_NAME_STR_NONE);
-            neos.Encode("CN="+ subjectName , X500NameFlags.XCN_CERT_NAME_STR_NONE);
-
             CX509PrivateKey privateKey = new CX509PrivateKey
             {
-              ProviderName = "Microsoft RSA SChannel Cryptographic Provider",
-            // ProviderName = "Microsoft Software Key Storage Provider",
-            // ProviderName = "Microsoft Enhanced Cryptographic Provider v1.0",
-            // ProviderName = "Microsoft Strong Cryptographic Provider",
-            // ProviderName = "Microsoft Base Cryptographic Provider v1.0",
-            // ProviderName = "Microsoft Enhanced RSA and AES Cryptographic Provider",
+                ProviderName = "Microsoft Enhanced Cryptographic Provider v1.0",
                 MachineContext = true,
                 Length = 2048,
                 KeySpec = X509KeySpec.XCN_AT_KEYEXCHANGE, // use is not limited
@@ -550,12 +550,16 @@ namespace Neos.IdentityServer.MultiFactor.Data
                     CObjectId oid = new CObjectId();
                     oid.InitializeFromValue("1.3.6.1.4.1.311.80.1"); // Encryption
                     oidlist.Add(oid);
+                    dn.Encode("CN=ADFS Encrypt - " + subjectName, X500NameFlags.XCN_CERT_NAME_STR_NONE);
+                    neos.Encode("CN=ADFS Encrypt - " + subjectName, X500NameFlags.XCN_CERT_NAME_STR_NONE);
                 }
                 else
                 {
                     CObjectId coid = new CObjectId();
                     coid.InitializeFromValue("1.3.6.1.5.5.7.3.3"); // Signature
                     oidlist.Add(coid);
+                    dn.Encode("CN=ADFS Sign - " + subjectName, X500NameFlags.XCN_CERT_NAME_STR_NONE);
+                    neos.Encode("CN=ADFS Sign - " + subjectName, X500NameFlags.XCN_CERT_NAME_STR_NONE);
                 }
 
                 CX509ExtensionEnhancedKeyUsage eku = new CX509ExtensionEnhancedKeyUsage();
@@ -588,7 +592,8 @@ namespace Neos.IdentityServer.MultiFactor.Data
             }
             catch (Exception ex)
             {
-                privateKey.Delete();
+                if (privateKey!=null)
+                    privateKey.Delete();
                 throw ex;
             }
             finally
@@ -678,7 +683,8 @@ namespace Neos.IdentityServer.MultiFactor.Data
             }
             catch (Exception ex)
             {
-                privateKey.Delete();
+                if (privateKey!=null)
+                    privateKey.Delete();
                 throw ex;
             }
             finally
@@ -766,12 +772,14 @@ namespace Neos.IdentityServer.MultiFactor.Data
             }
             catch (Exception ex)
             {
-                privateKey.Delete();
+                if (privateKey!=null)
+                    privateKey.Delete();
                 throw ex;
             }
             finally
             {
-                privateKey.Delete(); // Remove Stored elsewhere
+                if (privateKey != null)
+                    privateKey.Delete(); // Remove Stored elsewhere
             }
             return base64encoded;
         }
@@ -854,7 +862,8 @@ namespace Neos.IdentityServer.MultiFactor.Data
             }
             catch (Exception ex)
             {
-                privateKey.Delete();
+                if (privateKey!=null)
+                    privateKey.Delete();
                 throw ex;
             }
             finally
@@ -874,11 +883,8 @@ namespace Neos.IdentityServer.MultiFactor.Data
             CX500DistinguishedName dn = new CX500DistinguishedName();
             CX500DistinguishedName neos = new CX500DistinguishedName();
 
-            dn.Encode("CN=" + subjectName, X500NameFlags.XCN_CERT_NAME_STR_NONE);
-            neos.Encode("CN=" + subjectName, X500NameFlags.XCN_CERT_NAME_STR_NONE);
-
             IX509PrivateKey privateKey = (IX509PrivateKey)Activator.CreateInstance(Type.GetTypeFromProgID("X509Enrollment.CX509PrivateKey"));
-            privateKey.ProviderName = "Microsoft RSA SChannel Cryptographic Provider";
+            privateKey.ProviderName = "Microsoft Enhanced Cryptographic Provider v1.0";
             privateKey.MachineContext = true;
             privateKey.Length = 2048;
             privateKey.KeySpec = X509KeySpec.XCN_AT_KEYEXCHANGE; // use is not limited
@@ -907,12 +913,16 @@ namespace Neos.IdentityServer.MultiFactor.Data
                     CObjectId oid = new CObjectId();
                     oid.InitializeFromValue("1.3.6.1.4.1.311.80.1"); // Encryption
                     oidlist.Add(oid);
+                    dn.Encode("CN=ADFS Encrypt - " + subjectName, X500NameFlags.XCN_CERT_NAME_STR_NONE);
+                    neos.Encode("CN=ADFS Encrypt - " + subjectName, X500NameFlags.XCN_CERT_NAME_STR_NONE);
                 }
                 else
                 {
                     CObjectId coid = new CObjectId();
                     coid.InitializeFromValue("1.3.6.1.5.5.7.3.3"); // Signature
                     oidlist.Add(coid);
+                    dn.Encode("CN=ADFS Sign - " + subjectName, X500NameFlags.XCN_CERT_NAME_STR_NONE);
+                    neos.Encode("CN=ADFS Sign - " + subjectName, X500NameFlags.XCN_CERT_NAME_STR_NONE);
                 }
 
                 CX509ExtensionEnhancedKeyUsage eku = new CX509ExtensionEnhancedKeyUsage();
@@ -945,7 +955,8 @@ namespace Neos.IdentityServer.MultiFactor.Data
             }
             catch (Exception ex)
             {
-                privateKey.Delete();
+                if (privateKey!=null)
+                    privateKey.Delete();
                 throw ex;
             }
             finally
@@ -954,13 +965,26 @@ namespace Neos.IdentityServer.MultiFactor.Data
             }
             return base64encoded;
         }
-
         #endregion
 
         /// <summary>
+        /// KeyMgtOptions
+        /// </summary>
+        [Flags]
+        public enum KeyMgtOptions
+        {
+            AllCerts = 0x0,
+            MFACerts = 0x1,
+            ADFSCerts = 0x2,
+            SSLCerts = 0x4
+        }
+
+
+        #region Orphaned Keys
+        /// <summary>
         /// HasAssociatedCertificate method implementation
         /// </summary>
-        private static bool HasAssociatedCertificate(string filename, bool onlymfacerts = false)
+        private static bool HasAssociatedCertificate(string filename)
         {
             X509Store store = new X509Store(StoreName.My, StoreLocation.LocalMachine);
             store.Open(OpenFlags.MaxAllowed);
@@ -969,25 +993,16 @@ namespace Neos.IdentityServer.MultiFactor.Data
                 X509Certificate2Collection collection2 = (X509Certificate2Collection)store.Certificates;
                 foreach (X509Certificate2 x509 in collection2)
                 {
-                    bool doit = !onlymfacerts;
                     try
                     {
-                        if (onlymfacerts)
-                        {
-                            if ((!x509.Subject.ToLower().StartsWith("cn=mfa rsa keys") && (!x509.Subject.ToLower().StartsWith("cn=mfa sql key"))))
-                                return true;
-                        }
-                        if (doit)
-                        {
-                            string cntName = string.Empty;
-                            var rsakey = x509.GetRSAPrivateKey();
-                            if (rsakey is RSACng)
-                                cntName = ((RSACng)rsakey).Key.UniqueName;
-                            else if (rsakey is RSACryptoServiceProvider)
-                                cntName = ((RSACryptoServiceProvider)rsakey).CspKeyContainerInfo.UniqueKeyContainerName;
-                            if (filename.ToLower().Equals(cntName.ToLower()))
-                                return true;
-                        }
+                        string cntName = string.Empty;
+                        var rsakey = x509.GetRSAPrivateKey();
+                        if (rsakey is RSACng)
+                            cntName = ((RSACng)rsakey).Key.UniqueName;
+                        else if (rsakey is RSACryptoServiceProvider)
+                            cntName = ((RSACryptoServiceProvider)rsakey).CspKeyContainerInfo.UniqueKeyContainerName;
+                        if (filename.ToLower().Equals(cntName.ToLower()))
+                            return true;
                     }
                     catch (Exception)
                     {
@@ -1009,13 +1024,13 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// <summary>
         /// CleanOrphanedPrivateKeys method implementation
         /// </summary>
-        public static int CleanOrphanedPrivateKeys(bool onlymfacerts = false)
+        public static int CleanOrphanedPrivateKeys()
         {
             int result = 0;
             List<string> paths = new List<string>()
             {
                 Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\Microsoft\Crypto\RSA\MachineKeys\",
-                Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\Microsoft\Crypto\Keys\"
+               // Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\Microsoft\Crypto\Keys\"
             };
             foreach (string pth in paths)
             {
@@ -1025,7 +1040,9 @@ namespace Neos.IdentityServer.MultiFactor.Data
                 {
                     try
                     {
-                        if (!HasAssociatedCertificate(fi.Name, onlymfacerts))
+                        if (fi.Name.ToLower().StartsWith("f686aace6942fb7f7ceb231212eef4a4_"))  // RDP Key do not drop anyway
+                            continue;
+                        if (!HasAssociatedCertificate(fi.Name))
                         {
                             fi.Delete();
                             result++;
@@ -1036,11 +1053,13 @@ namespace Neos.IdentityServer.MultiFactor.Data
             }
             return result;
         }
+        #endregion
 
+        #region ACLs
         /// <summary>
         /// UpdateCertificatesACL method implementation
         /// </summary>
-        public static bool UpdateCertificatesACL(bool onlymfacerts = false)
+        public static bool UpdateCertificatesACL(KeyMgtOptions options = KeyMgtOptions.AllCerts)
         {
             X509Store store = new X509Store(StoreName.My, StoreLocation.LocalMachine);
             store.Open(OpenFlags.MaxAllowed);
@@ -1049,14 +1068,24 @@ namespace Neos.IdentityServer.MultiFactor.Data
                 X509Certificate2Collection collection2 = (X509Certificate2Collection)store.Certificates;
                 foreach (X509Certificate2 x509 in collection2)
                 {
-                    bool doit = !onlymfacerts;
                     string fileName = string.Empty;
                     try
                     {
-                        if (onlymfacerts)
+                        bool doit = options.Equals(KeyMgtOptions.AllCerts);
+                        if (options.HasFlag(KeyMgtOptions.MFACerts))
                         {
-                            if ((!x509.Subject.ToLower().StartsWith("cn=mfa rsa keys") && (!x509.Subject.ToLower().StartsWith("cn=mfa sql key"))))
-                                doit = false;
+                            if (x509.Subject.ToLower().StartsWith("cn=mfa rsa keys") || x509.Subject.ToLower().StartsWith("cn=mfa sql key"))
+                                doit = true;
+                        }
+                        if (options.HasFlag(KeyMgtOptions.ADFSCerts))
+                        {
+                            if (x509.Subject.ToLower().StartsWith("cn=adfs"))
+                                doit = true;
+                        }
+                        if (options.HasFlag(KeyMgtOptions.SSLCerts))
+                        {
+                            if (x509.Subject.ToLower().StartsWith("cn=*."))
+                                doit = true;
                         }
                         if (doit)
                         {
@@ -1071,16 +1100,18 @@ namespace Neos.IdentityServer.MultiFactor.Data
                             }
                             if (!string.IsNullOrEmpty(fileName))
                             {
-                                string keysfullpath = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\Microsoft\Crypto\Keys\" + fileName;
+                              //  string keysfullpath = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\Microsoft\Crypto\Keys\" + fileName;
                                 string machinefullpath = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\Microsoft\Crypto\RSA\MachineKeys\" + fileName;
-                                if (File.Exists(keysfullpath))
-                                    InternalUpdateACLs(keysfullpath);
+                              //  if (File.Exists(keysfullpath))
+                              //      InternalUpdateACLs(keysfullpath);
                                 if (File.Exists(machinefullpath))
                                     InternalUpdateACLs(machinefullpath);
                             }
                         }
                     }
-                    catch { }
+                    catch
+                    {
+                    }
                 }
             }
             catch (Exception ex)
@@ -1124,7 +1155,9 @@ namespace Neos.IdentityServer.MultiFactor.Data
             }
             File.SetAccessControl(fullpath, fSecurity);
         }
+        #endregion
 
+        #region SIDs
         /// <summary>
         /// InitializeAccountsSID method implementation
         /// </summary>
@@ -1294,8 +1327,55 @@ namespace Neos.IdentityServer.MultiFactor.Data
             return grpname;
         }
 
+        /// <summary>
+        /// NativeMethod implementation
+        /// The class exposes Windows APIs.
+        /// </summary>
+        [SuppressUnmanagedCodeSecurity]
+        internal class NativeMethods
+        {
+            [DllImport("ntdll.dll")]
+            internal static extern uint RtlCreateServiceSid(ref NativeMethods.LSA_UNICODE_STRING serviceName, IntPtr serviceSid, ref int serviceSidLength);
+
+            internal struct LSA_UNICODE_STRING : IDisposable
+            {
+                public ushort Length;
+                public ushort MaximumLength;
+                public IntPtr Buffer;
+
+                public void SetTo(string str)
+                {
+                    this.Buffer = Marshal.StringToHGlobalUni(str);
+                    this.Length = (ushort)(str.Length * 2);
+                    this.MaximumLength = Convert.ToUInt16(this.Length + 2);
+                }
+
+                public override string ToString()
+                {
+                    return Marshal.PtrToStringUni(this.Buffer);
+                }
+
+                public void Reset()
+                {
+                    if (this.Buffer != IntPtr.Zero)
+                    {
+                        Marshal.FreeHGlobal(this.Buffer);
+                    }
+                    this.Buffer = IntPtr.Zero;
+                    this.Length = 0;
+                    this.MaximumLength = 0;
+                }
+
+                public void Dispose()
+                {
+                    this.Reset();
+                }
+            }
+        }
+        #endregion 
     }
 
+    #region Encoding
     /// <summary>
     /// CheckSumEncoding class implementation
     /// </summary>
@@ -1534,52 +1614,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
             return builder.ToString().ToUpper();
         }
     }
-
-    /// <summary>
-    /// NativeMethod implementation
-    /// The class exposes Windows APIs.
-    /// </summary>
-    [SuppressUnmanagedCodeSecurity]
-    internal class NativeMethods
-    {
-        [DllImport("ntdll.dll")]
-        internal static extern uint RtlCreateServiceSid(ref NativeMethods.LSA_UNICODE_STRING serviceName, IntPtr serviceSid, ref int serviceSidLength);
-
-        internal struct LSA_UNICODE_STRING : IDisposable
-        {
-            public ushort Length;
-            public ushort MaximumLength;
-            public IntPtr Buffer;
-
-            public void SetTo(string str)
-            {
-                this.Buffer = Marshal.StringToHGlobalUni(str);
-                this.Length = (ushort)(str.Length * 2);
-                this.MaximumLength = Convert.ToUInt16(this.Length + 2);
-            }
-
-            public override string ToString()
-            {
-                return Marshal.PtrToStringUni(this.Buffer);
-            }
-
-            public void Reset()
-            {
-                if (this.Buffer != IntPtr.Zero)
-                {
-                    Marshal.FreeHGlobal(this.Buffer);
-                }
-                this.Buffer = IntPtr.Zero;
-                this.Length = 0;
-                this.MaximumLength = 0;
-            }
-
-            public void Dispose()
-            {
-                this.Reset();
-            }
-        }
-    }
+    #endregion
 
     #region ADFS Version
     internal class RegistryVersion

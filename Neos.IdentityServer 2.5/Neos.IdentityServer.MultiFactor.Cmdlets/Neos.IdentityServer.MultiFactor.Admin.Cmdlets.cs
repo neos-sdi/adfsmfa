@@ -1,6 +1,5 @@
-﻿using Neos.IdentityServer.MultiFactor.Cmdlets;
-//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2019 Neos-Sdi (http://www.neos-sdi.com)                                                                                                                                    //                        
+﻿//******************************************************************************************************************************************************************************************//
+// Copyright (c) 2020 Neos-Sdi (http://www.neos-sdi.com)                                                                                                                                    //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -16,24 +15,19 @@
 // https://github.com/neos-sdi/adfsmfa                                                                                                                                                      //
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
-// namespace Neos.IdentityServer.MultiFactor.Administration
 namespace MFA
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Management.Automation;
-    using System.Threading;
-    using System.DirectoryServices;
-    using Neos.IdentityServer.MultiFactor.Cmdlets.Ressources;
-    using Neos.IdentityServer.MultiFactor.Administration;
-    using System.Management.Automation.Host;
     using Neos.IdentityServer.MultiFactor;
+    using Neos.IdentityServer.MultiFactor.Administration;
+    using Neos.IdentityServer.MultiFactor.Cmdlets.Ressources;
+    using System;
     using System.Collections.ObjectModel;
-    // using MFA;
+    using System.DirectoryServices;
+    using System.Management.Automation;
+    using System.Management.Automation.Host;
     using System.Net;
-    using System.Runtime.Serialization;
 
+    #region Cmdlet Base
     /// <summary>
     /// MFACmdlet class
     /// </summary>
@@ -74,6 +68,7 @@ namespace MFA
         }
 
     }
+    #endregion
 
     #region Get-MFAUsers
     /// <summary>
@@ -1854,7 +1849,7 @@ namespace MFA
     ///   <para>Import-MFASystemConfiguration -Activate -RestartFarm -ImportFilePath c:\temp\mysavedconfig.xml</para>
     ///   <para>Update MFA configuration with the specified file. Activation and Restart of services is available. </para>
     /// </example>
-    [Cmdlet("Import", "MFASystemConfiguration", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
+    [Cmdlet(VerbsData.Import, "MFASystemConfiguration", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
     [PrimaryServerRequired]
     public sealed class ImportMFASystemConfiguration : MFACmdlet
     {
@@ -1941,7 +1936,7 @@ namespace MFA
     ///   <para>Export-MFASystemConfiguration -ExportFilePath c:\temp\mysavedconfig.xml</para>
     ///   <para>Export current MFA configuration to the specified file.</para>
     /// </example>
-    [Cmdlet("Export", "MFASystemConfiguration", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
+    [Cmdlet(VerbsData.Export, "MFASystemConfiguration", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
     // [PrimaryServerRequired]
     public sealed class ExportMFASystemConfiguration : MFACmdlet
     {
@@ -3212,7 +3207,6 @@ namespace MFA
     }
 
     #endregion
-
 
     #region Get-MFAProvider
     /// <summary>
@@ -4849,7 +4843,7 @@ namespace MFA
     }
     #endregion
 
-    #region Get-MFAConfigKeys
+    #region Get-MFASecurity
     /// <summary>
     /// <para type="synopsis">Get MFA Security Configuration.</para>
     /// <para type="description">Get MFA Security configuration options.</para>
@@ -5005,7 +4999,7 @@ namespace MFA
     }
     #endregion
 
-    #region Set-MFAConfigKeys
+    #region Set-MFASecurity
     /// <summary>
     /// <para type="synopsis">Set Secret Keys Configuration.</para>
     /// <para type="description">Set Secret Keys configuration options.</para>
@@ -5617,7 +5611,6 @@ namespace MFA
 
     #endregion
 
-
     #region Set-MFAPolicyTemplate
     /// <summary>
     /// <para type="synopsis">Set Policy Template.</para>
@@ -6214,7 +6207,7 @@ namespace MFA
     }
     #endregion
 
-    #region Install-MFACertificate
+    #region Install-MFACertificateForADFS
     /// <summary>
     /// <para type="synopsis">Install RSA Certificate.</para>
     /// <para type="description">Install a new RSA Certificate for MFA.</para>
@@ -6290,6 +6283,7 @@ namespace MFA
         }
     }
     #endregion
+
     #region New-MFASecretKeysDatabase
     /// <summary>
     /// <para type="synopsis">Create a new SQL Database for storing RSA keys and certificates.</para>
@@ -6455,7 +6449,7 @@ namespace MFA
     ///   <para></para>
     ///   <para>DisableAll Status of Added users set to disabled</para>
     /// </example>
-    [Cmdlet("Import", "MFAUsersCSV", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Identity")]
+    [Cmdlet(VerbsData.Import, "MFAUsersCSV", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Identity")]
     public sealed class ImportMFAUsersCSV : MFACmdlet
     {
         /// <summary>
@@ -6550,7 +6544,7 @@ namespace MFA
     ///   <para></para>
     ///   <para>DisableAll Status of Added users set to disabled</para>
     /// </example>
-    [Cmdlet("Import", "MFAUsersXML", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Identity")]
+    [Cmdlet(VerbsData.Import, "MFAUsersXML", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Identity")]
     public sealed class ImportMFAUsersXML : MFACmdlet
     {
         /// <summary>
@@ -6647,7 +6641,7 @@ namespace MFA
     ///   <para></para>
     ///   <para>DisableAll Status of Added users set to disabled</para>
     /// </example>
-    [Cmdlet("Import", "MFAUsersADDS", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Identity")]
+    [Cmdlet(VerbsData.Import, "MFAUsersADDS", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Identity")]
     public sealed class ImportMFAUsersADDS : MFACmdlet
     {
         /// <summary>
@@ -6964,14 +6958,14 @@ namespace MFA
     /// <example>
     ///   <para>Update-MFACertificatesAccessControlList</para>
     /// </example>
-    [Cmdlet("Update", "MFACertificatesAccessControlList", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
+    [Cmdlet(VerbsData.Update, "MFACertificatesAccessControlList", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
     public sealed class UpdatetMFACertificatesAccessControlList : MFACmdlet
     {
         /// <summary>
-        /// <para type="description">MFACertificatesOnly, Update ACL on MFA generated certs only.</para>
+        /// <para type="description">Certificates Kind to check for updating private keys ACL (0 = All, 1 = MFA, 2 = ADFS, 4 = SSL.</para>
         /// </summary>
         [Parameter(ParameterSetName = "Data")]
-        public SwitchParameter MFACertificatesOnly { get; set; }
+        public PSKeyMgtOptions CertsKind { get; set; } = PSKeyMgtOptions.AllCerts;
 
         /// <summary>
         /// BeginProcessing method implementation
@@ -6998,7 +6992,7 @@ namespace MFA
             {
                 try
                 {
-                    if (ManagementService.UpdateCertificatesACL(MFACertificatesOnly.IsPresent))
+                    if (ManagementService.UpdateCertificatesACL((Neos.IdentityServer.MultiFactor.Data.Certs.KeyMgtOptions)CertsKind))
                         this.Host.UI.WriteLine(ConsoleColor.Green, this.Host.UI.RawUI.BackgroundColor, infos_strings.InfosCertsACLUpdated); 
                 }
                 catch (Exception ex)
@@ -7010,21 +7004,15 @@ namespace MFA
     }
 
     /// <summary>
-    /// <para type="synopsis">Remove private keys found in C:\ProgramData\Microsoft\Crypto\RSA\MachineKeys that are not linked with a valid certificate</para>
-    /// <para type="description">Remove private keys found in C:\ProgramData\Microsoft\Crypto\RSA\MachineKeys that are not linked with a valid certificate</para>
+    /// <para type="synopsis">Clear keys pairs found in C:\ProgramData\Microsoft\Crypto\RSA\MachineKeys that are not linked with a valid certificate</para>
+    /// <para type="description">Clear keys pairs found in C:\ProgramData\Microsoft\Crypto\RSA\MachineKeys that are not linked with a valid certificate</para>
     /// </summary>
     /// <example>
-    ///   <para>Remove-MFACertificatesOrphanedPrivateKeys</para>
+    ///   <para>Clear-MFAOrphanedRSAKeyPairs</para>
     /// </example>
-    [Cmdlet(VerbsCommon.Remove, "MFACertificatesOrphanedPrivateKeys", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
-    public sealed class RemoveMFACertificatesOrphanedPrivateKeys : MFACmdlet
+    [Cmdlet(VerbsCommon.Clear, "MFAOrphanedRSAKeyPairs", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
+    public sealed class ClearMFAOrphanedRSAKeyPairs : MFACmdlet
     {
-        /// <summary>
-        /// <para type="description">MFACertificatesOnly, Clean Orphaned private keys for MFA generated certs only.</para>
-        /// </summary>
-        [Parameter(ParameterSetName = "Data")]
-        public SwitchParameter MFACertificatesOnly { get; set; }
-
         /// <summary>
         /// BeginProcessing method implementation
         /// </summary>
@@ -7046,11 +7034,12 @@ namespace MFA
         /// </summary>
         protected override void ProcessRecord()
         {
-            if (ShouldProcess("MFA Remove Certificates orphaned private keys"))
+            string warn = @"This function is intrusive, you should only use it if the C:\ProgramData\ Microsoft\Crypto\RSA\MachineKeys directory is is filled with files. These problems are often related to improperly configured SSL certificates. before any operation you must imperatively hold an export of each certificate with its private key (.pfx) in order to be able to reinstall these certificates is needed.";
+            if (ShouldProcess("MFA Remove Certificates orphaned private keys", warn, "CAUTION !!!"))
             {
                 try
                 {
-                    int res = ManagementService.CleanOrphanedPrivateKeys(MFACertificatesOnly.IsPresent);
+                    int res = ManagementService.CleanOrphanedPrivateKeys();
                     this.Host.UI.WriteLine(ConsoleColor.Green, this.Host.UI.RawUI.BackgroundColor, string.Format(infos_strings.InfosOrphanedDeleted + " : {0}", res));
                 }
                 catch (Exception ex)

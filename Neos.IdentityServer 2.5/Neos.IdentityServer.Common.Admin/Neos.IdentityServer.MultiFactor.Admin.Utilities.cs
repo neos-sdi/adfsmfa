@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2019 Neos-Sdi (http://www.neos-sdi.com)                                                                                                                                    //                        
+// Copyright (c) 2020 Neos-Sdi (http://www.neos-sdi.com)                                                                                                                                    //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -39,13 +39,6 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     /// </summary>
     internal static class ManagementService
     {
-        private static ADFSServiceManager _manager = null;
-        private static MailSlotServer _mailslotsrv = null;
-
-        private static DataFilterObject _filter = new DataFilterObject();
-        private static DataPagingObject _paging = new DataPagingObject();
-        private static DataOrderObject _order = new DataOrderObject();
-
         private static string EventLogSource = "ADFS MFA Administration";
         private static string EventLogGroup = "Application";
 
@@ -70,51 +63,35 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <summary>
         /// Filter Property
         /// </summary>
-        internal static DataFilterObject Filter
-        {
-            get { return _filter; }
-            set { _filter = value;  }
-        }
+        internal static DataFilterObject Filter { get; set; } = new DataFilterObject();
 
         /// <summary>
         /// Paging Property
         /// </summary>
-        internal static DataPagingObject Paging
-        {
-            get { return _paging; }
-        }
+        internal static DataPagingObject Paging { get; } = new DataPagingObject();
 
         /// <summary>
         /// Order property
         /// </summary>
-        internal static DataOrderObject Order
-        {
-            get { return _order; }
-        }
+        internal static DataOrderObject Order { get; } = new DataOrderObject();
 
         /// <summary>
         /// ADFSManager property
         /// </summary>
-        internal static ADFSServiceManager ADFSManager
-        {
-            get { return _manager; }
-        }
+        internal static ADFSServiceManager ADFSManager { get; private set; } = null;
 
         /// <summary>
         /// Config property
         /// </summary>
         internal static MFAConfig Config
         {
-            get { return _manager.Config; }
+            get { return ADFSManager.Config; }
         }
 
         /// <summary>
         /// MailslotServer property implementation
         /// </summary>
-        internal static MailSlotServer MailslotServer
-        {
-            get { return _mailslotsrv; }
-        }
+        internal static MailSlotServer MailslotServer { get; private set; } = null;
 
         /// <summary>
         /// Initialize method 
@@ -129,14 +106,14 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// </summary>
         internal static void Initialize(PSHost host = null, bool loadconfig = false)
         {
-            if (_manager == null)
+            if (ADFSManager == null)
             {
-                _manager = new ADFSServiceManager();
-                _manager.Initialize();
+                ADFSManager = new ADFSServiceManager();
+                ADFSManager.Initialize();
             }
-            if (_mailslotsrv == null)
+            if (MailslotServer == null)
             {
-                _mailslotsrv = new MailSlotServer("MGT");
+                MailslotServer = new MailSlotServer("MGT");
                 MailslotServer.MailSlotMessageArrived += MailSlotMessageArrived;
                 MailslotServer.AllowToSelf = true;
                 MailslotServer.Start();
@@ -146,7 +123,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             {
                 try
                 {
-                    _manager.EnsureLocalConfiguration(host);
+                    ADFSManager.EnsureLocalConfiguration(host);
                 }
                 catch (CmdletInvocationException cm)
                 {
@@ -455,12 +432,12 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <summary>
         /// UpdateCertificatesACL method implementation
         /// </summary>
-        internal static bool UpdateCertificatesACL(bool onlymfacerts = false)
+        internal static bool UpdateCertificatesACL(Certs.KeyMgtOptions options = Certs.KeyMgtOptions.AllCerts)
         {
             EnsureService();
             try
             {
-                return Certs.UpdateCertificatesACL(onlymfacerts);
+                return Certs.UpdateCertificatesACL(options);
             }
             catch (Exception ex)
             {
@@ -471,12 +448,12 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <summary>
         /// CleanOrphanedPrivateKeys method implmentation
         /// </summary>
-        internal static int CleanOrphanedPrivateKeys(bool onlymfacerts = false)
+        internal static int CleanOrphanedPrivateKeys()
         {
             EnsureService();
             try
             {
-                return Certs.CleanOrphanedPrivateKeys(onlymfacerts);
+                return Certs.CleanOrphanedPrivateKeys();
             }
             catch (Exception ex)
             {

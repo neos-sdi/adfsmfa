@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2019 Neos-Sdi (http://www.neos-sdi.com)                                                                                                                                    //                        
+// Copyright (c) 2020 Neos-Sdi (http://www.neos-sdi.com)                                                                                                                                    //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -32,7 +32,6 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
         private Task _cleanup = null;
         private CancellationTokenSource _canceller = null;
         private bool _mustexit = false;
-        private readonly bool _onlymfacerts = true;
         private readonly int _minutes = 5;
         private readonly bool _cleanupenable = false;
         private ServiceBase _service;
@@ -43,9 +42,8 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
         internal CleanUpManager()
         {
             RegistryKey rk = Registry.LocalMachine.OpenSubKey("Software\\MFA");
-            _cleanupenable = Convert.ToBoolean(rk.GetValue("EnablePrivateKeysCleanUp"));
+            _cleanupenable = Convert.ToBoolean(rk.GetValue("PrivateKeysCleanUpEnabled"));
             _minutes = Convert.ToInt32(rk.GetValue("PrivateKeysCleanUpDelay"));
-            _onlymfacerts = Convert.ToBoolean(rk.GetValue("LimitPrivateKeysCleanUp"));
         }
 
         /// <summary>
@@ -59,7 +57,7 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
                 {
                     try
                     {
-                        int res = Certs.CleanOrphanedPrivateKeys(_onlymfacerts);
+                        int res = Certs.CleanOrphanedPrivateKeys();
                         if (res > 0)
                             _service.EventLog.WriteEntry(string.Format("{0} orphaned certificates private keys deleted.", res), EventLogEntryType.Error, 1010);
                         Thread.Sleep(new TimeSpan(0, 0, _minutes, 0)); 

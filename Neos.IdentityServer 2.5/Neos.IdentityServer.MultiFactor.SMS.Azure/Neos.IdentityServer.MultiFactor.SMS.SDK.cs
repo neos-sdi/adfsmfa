@@ -15,7 +15,7 @@
 // pf_auth.cs: An SDK for authenticating with PhoneFactor for .NET 2.0.                                                                                                                     //
 // version: 2.20                                                                                                                                                                            //
 //******************************************************************************************************************************************************************************************//
-// Copyright (c) 2019 Neos-Sdi (http://www.neos-sdi.com)                                                                                                                                    //                        
+// Copyright (c) 2020 Neos-Sdi (http://www.neos-sdi.com)                                                                                                                                    //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //

@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2019 Neos-Sdi (http://www.neos-sdi.com)                                                                                                                                    //                        
+// Copyright (c) 2020 Neos-Sdi (http://www.neos-sdi.com)                                                                                                                                    //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -1913,12 +1913,12 @@ namespace Neos.IdentityServer.MultiFactor.Data
                                     if (_keysisbinary)
                                     {
                                         byte[] b = (Byte[])DirEntry.Properties[_host.RSACertificateAttribute].Value;
-                                        return new X509Certificate2(b, pass, X509KeyStorageFlags.Exportable); // | X509KeyStorageFlags.PersistKeySet);
+                                        return new X509Certificate2(b, pass, X509KeyStorageFlags.Exportable | X509KeyStorageFlags.EphemeralKeySet); // | X509KeyStorageFlags.PersistKeySet);
                                     }
                                     else
                                     {
                                         string b = DirEntry.Properties[_host.RSACertificateAttribute].Value.ToString();
-                                        return new X509Certificate2(Convert.FromBase64String(b), pass, X509KeyStorageFlags.Exportable); // | X509KeyStorageFlags.PersistKeySet);
+                                        return new X509Certificate2(Convert.FromBase64String(b), pass, X509KeyStorageFlags.Exportable | X509KeyStorageFlags.EphemeralKeySet); // | X509KeyStorageFlags.PersistKeySet);
                                     }
                                 }
                             };

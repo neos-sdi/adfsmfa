@@ -742,4 +742,33 @@ namespace MFA
         Decrypting = 1
     }
 
+    /// <summary>
+    /// PSKeyMgtOptions
+    /// <para type="synopsis">Certificates Kind for ACLs.</para>
+    /// /// <para type="description">Certificates Kind for ACLs and cleaning orphaned keys.</para>
+    /// </summary>    
+
+    [Flags]
+    public enum PSKeyMgtOptions
+    {
+        /// <summary>
+        /// <para type="description">All Certificates checked.</para>
+        /// </summary>
+        AllCerts = 0x0,
+
+        /// <summary>
+        /// <para type="description">MFA specific Certificates checked.</para>
+        /// </summary>
+        MFACerts = 0x1,
+
+        /// <summary>
+        /// <para type="description">ADFS Certificates checked (subject beginning by "ADFS".</para>
+        /// </summary>
+        ADFSCerts = 0x2,
+
+        /// <summary>
+        /// <para type="description">Wilcard SSL Certificates checked (subject beginning by *. .</para>
+        /// </summary>
+        SSLCerts = 0x4
+    }
 }
