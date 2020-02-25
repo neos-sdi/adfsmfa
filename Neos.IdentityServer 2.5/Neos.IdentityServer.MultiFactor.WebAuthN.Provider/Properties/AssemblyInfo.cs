@@ -11,7 +11,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("Neos.IdentityServer.MultiFactor.WebAuthN.Provider")]
-[assembly: AssemblyCopyright("Copyright ©  2019")]
+[assembly: AssemblyCopyright("Copyright © 2020 Neos-Sdi")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

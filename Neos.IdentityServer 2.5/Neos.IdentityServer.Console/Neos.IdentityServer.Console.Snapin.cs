@@ -124,18 +124,36 @@ namespace Neos.IdentityServer.Console
                         MMCService.Filter = data.Filter;
                         if (data.Language == 0)
                         {
-                            if (CultureInfo.DefaultThreadCurrentUICulture != CultureInfo.InstalledUICulture)
+                            try
+                            {
+                                if (CultureInfo.DefaultThreadCurrentUICulture != CultureInfo.InstalledUICulture)
+                                {
+                                    CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.InstalledUICulture;
+                                    BuildNodes(false);
+                                }
+                            }
+                            catch (NullReferenceException ex)
                             {
                                 CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.InstalledUICulture;
                                 BuildNodes(false);
                             }
                         }
                         else
-                            if (CultureInfo.DefaultThreadCurrentUICulture != new CultureInfo(data.Language))
+                            try
                             {
-                                CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo(data.Language);
+
+                                if (CultureInfo.DefaultThreadCurrentUICulture != new CultureInfo(data.Language))
+                                {
+                                    CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo(data.Language);
+                                    BuildNodes(false);
+                                }
+                            }
+                            catch (NullReferenceException)
+                            {
+                                CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.InstalledUICulture;
                                 BuildNodes(false);
                             }
+
                     }
                     catch (SerializationException)
                     {
@@ -162,10 +180,17 @@ namespace Neos.IdentityServer.Console
             {
                 MMCPersistenceData data = new MMCPersistenceData();
                 data.Filter = MMCService.Filter;
-                if (CultureInfo.DefaultThreadCurrentUICulture.LCID == CultureInfo.InstalledUICulture.LCID)
-                    data.Language = 0;
-                else
-                    data.Language = CultureInfo.DefaultThreadCurrentUICulture.LCID;
+                try
+                {
+                    if (CultureInfo.DefaultThreadCurrentUICulture.LCID == CultureInfo.InstalledUICulture.LCID)
+                        data.Language = 0;
+                    else
+                        data.Language = CultureInfo.DefaultThreadCurrentUICulture.LCID;
+                }
+                catch (NullReferenceException)
+                {
+                    data.Language = CultureInfo.InstalledUICulture.LCID;
+                }
                 return (byte[])data;
             }
             catch (Exception ex)
@@ -417,9 +442,9 @@ namespace Neos.IdentityServer.Console
         public void RefreshUI()
         {
             ((RefreshableScopeNode)this.RootNode).RefreshUI();
-            ((RefreshableScopeNode)this.ServiceNode).RefreshUI();
             if (IsPrimary)
             {
+                ((RefreshableScopeNode)this.ServiceNode).RefreshUI();
                 ((RefreshableScopeNode)this.ServiceGeneralNode).RefreshUI();
                 ((RefreshableScopeNode)this.ServiceStorageNode).RefreshUI();
                 ((RefreshableScopeNode)this.ServiceADDSNode).RefreshUI();
