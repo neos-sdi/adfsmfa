@@ -1,4 +1,4 @@
-# Multi-Factor Authentication for ADFS 2012r2/2016/2019
+# Multi-Factor Authentication for ADFS 2019/20162012r2
 ___
 
 This project can help you to implement multi-factor authentication without requiring any additional provider.
