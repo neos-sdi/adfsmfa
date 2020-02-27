@@ -79,6 +79,12 @@ namespace Neos.IdentityServer.MultiFactor
             IAdapterPresentation result = null;
             try
             {
+                if (!request.IsAuthenticated)
+                {
+                    usercontext.IsPrimaryAuthContext = true;
+                    if ((!usercontext.Enabled) || (!usercontext.IsRegistered))
+                        usercontext.UIMode = ProviderPageMode.Locking;
+                }
                 switch (usercontext.UIMode)
                 {
                     case ProviderPageMode.PreSet:
@@ -976,7 +982,7 @@ namespace Neos.IdentityServer.MultiFactor
                 throw new ExternalAuthenticationException(usercontext.UPN + " : " + ex.Message, context);
             }
             return result;
-            #endregion
+
         }
 
         /// <summary>
@@ -1002,6 +1008,7 @@ namespace Neos.IdentityServer.MultiFactor
                 throw new ExternalAuthenticationException(usercontext.UPN + " : " + ex.Message, context);
             }
             return result;
+            #endregion
         }
 
         /// <summary>
@@ -1285,6 +1292,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         private IAdapterPresentation TryBypass(AuthenticationContext usercontext, IAuthenticationContext context, IProofData proofData, System.Net.HttpListenerRequest request, out System.Security.Claims.Claim[] claims)
         {
+            #region TryBypass
             ResourcesLocale Resources = new ResourcesLocale(usercontext.Lcid);
             claims = new Claim[] { GetAuthMethodClaim(usercontext.SelectedMethod) };
             CheckOptionsCookie(usercontext, request);
@@ -1346,6 +1354,7 @@ namespace Neos.IdentityServer.MultiFactor
                 throw new ExternalAuthenticationException(usercontext.UPN + " : " + ex.Message, context);
             }
             return null;
+            #endregion
         }
 
         /// <summary>

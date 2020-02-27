@@ -297,6 +297,28 @@ namespace Neos.IdentityServer.MultiFactor
         }
 
         /// <summary>
+        /// IsPrimaryAuthContext property implementation
+        /// </summary>
+        [XmlAttribute("IsPrimaryAuthContext")]
+        public bool IsPrimaryAuthContext
+        {
+            get
+            {
+                if (_context.Data.ContainsKey("_authctxisprimaryauthctx") && _context.Data["_authctxisprimaryauthctx"] != null)
+                    return (bool)_context.Data["_authctxisprimaryauthctx"];
+                else
+                    return false;
+            }
+            set
+            {
+                if (_context.Data.ContainsKey("_authctxisprimaryauthctx"))
+                    _context.Data["_authctxisprimaryauthctx"] = value;
+                else
+                    _context.Data.Add("_authctxisprimaryauthctx", value);
+            }
+        }
+
+        /// <summary>
         /// ShowOptions property implementation
         /// </summary>
         [XmlAttribute("ShowOptions")]

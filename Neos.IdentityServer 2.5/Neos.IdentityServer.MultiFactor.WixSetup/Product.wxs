@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" >
-  <Product Id="a23dd485-5365-4d82-8309-103494000001" Name="Neos MFA Provider for ADFS 2019/2016/2012 R2" Language="1033" Version="2.5.4720.7000" Manufacturer="Neos-SDI" UpgradeCode="a23dd485-5365-4d82-8309-103495000001" >
+  <Product Id="a23dd485-5365-4d82-8309-103494000001" Name="Neos MFA Provider for ADFS 2019/2016/2012 R2" Language="1033" Version="2.5.4720.8000" Manufacturer="Neos-SDI" UpgradeCode="a23dd485-5365-4d82-8309-103495000001" >
 
     <Package InstallerVersion="500" Compressed="yes" InstallScope="perMachine" InstallPrivileges="elevated" Platform="x64" Description="Multi-Factor Authentication for ADFS 2019/2016/2012 r2" />
 
@@ -62,7 +62,6 @@
     <Feature Id="KeysFeature" Title="adfsmfa RSA Keys Sample" Description="Neos Identity Service RAS Keys API" InstallDefault="local" TypicalDefault="install" Level="1" >
       <ComponentGroupRef Id="Neos.IdentityServer.MultiFactor.Keys" />
     </Feature>
-
     
     <Feature Id="WebAuthNFeature" Title="adfsmfa WebAuthN Biometric Provider" Description="adfsmfa WebAuthN Biometric API" InstallDefault="local" TypicalDefault="install" Level="1" >
       <ComponentGroupRef Id="Neos.IdentityServer.MultiFactor.WebAuthN" />
@@ -85,11 +84,9 @@
       <Custom Action="xUninstallService" After="InstallInitialize" >
         Installed AND NOT PATCH
       </Custom>
-    </InstallExecuteSequence>
-    
+    </InstallExecuteSequence>   
   </Product>
 
- 
   <Fragment>
 		<Directory Id="TARGETDIR" Name="SourceDir">
       <Directory Id="WindowsFolder" Name="Windows">
@@ -476,7 +473,6 @@
       </Component>
     </ComponentGroup>
   </Fragment>
-
   
   <Fragment>
     <ComponentGroup Id="Neos.IdentityServer.MultiFactor.WebAuthN">
@@ -660,8 +656,8 @@
         </Shortcut>
         <RegistryValue Root="HKCU" Key="Software\MFA" Name="installed" Type="integer" Value="1" KeyPath="yes" />
       </Component>
-      <Component Id="GACDeployment81" Guid="E7173CAB-E43F-4A07-0220-018000006181" Directory="INSTALLFOLDER" DiskId="1" Win64="yes" NeverOverwrite="yes">
-        <RegistryValue Root="HKLM" Key="Software\MFA" Name="PrivateKeysCleanUpEnabled" Type="integer" Value="0" KeyPath="yes"/>
+      <Component Id="GACDeployment81" Guid="E7173CAB-E43F-4A07-0220-018000006181" Directory="INSTALLFOLDER" DiskId="1" Win64="yes" NeverOverwrite="yes" KeyPath="yes" Permanent="yes">
+        <RegistryValue Root="HKLM" Key="Software\MFA" Name="PrivateKeysCleanUpEnabled" Type="integer" Value="0" />
         <RegistryValue Root="HKLM" Key="Software\MFA" Name="PrivateKeysCleanUpDelay" Type="integer" Value="20" />
       </Component>
     </ComponentGroup>

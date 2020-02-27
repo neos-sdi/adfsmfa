@@ -276,21 +276,24 @@ namespace Neos.IdentityServer.MultiFactor
             {
                 result += "<a class=\"actionLink\" href=\"#\" id=\"enrollbio\" name=\"enrollbio\" onclick=\"fnlinkclicked(OptionsForm, 6)\" style=\"cursor: pointer;\">" + prov4.GetWizardLinkLabel(usercontext) + "</a>";
             }
-            IExternalProvider prov2 = RuntimeAuthProvider.GetProvider(PreferredMethod.Email);
-            if ((prov2 != null) && (prov2.Enabled) && prov2.IsUIElementRequired(usercontext, RequiredMethodElements.EmailLinkRequired))
+            if (!usercontext.IsPrimaryAuthContext)
             {
-                result += "<a class=\"actionLink\" href=\"#\" id=\"enrollemail\" name=\"enrollemail\" onclick=\"fnlinkclicked(OptionsForm, 4)\" style=\"cursor: pointer;\">" + prov2.GetWizardLinkLabel(usercontext) + "</a>";
-            }
-            IExternalProvider prov3 = RuntimeAuthProvider.GetProvider(PreferredMethod.External);
-            if ((prov3 != null) && (prov3.Enabled) && prov3.IsUIElementRequired(usercontext, RequiredMethodElements.PhoneLinkRequired))
-            {
-                result += "<a class=\"actionLink\" href=\"#\" id=\"enrollphone\" name=\"enrollphone\" onclick=\"fnlinkclicked(OptionsForm, 5)\" style=\"cursor: pointer;\">" + prov3.GetWizardLinkLabel(usercontext) + "</a>";
-            }
-            IExternalProvider prov5 = RuntimeAuthProvider.GetProvider(PreferredMethod.Azure);
-            if (prov5 != null)
-            {
-                if (!string.IsNullOrEmpty(prov5.GetAccountManagementUrl(usercontext)))
-                    result += "<a class=\"actionLink\" href=\"" + prov5.GetAccountManagementUrl(usercontext) + "\" id=\"enrollazure\" name=\"enrollazure\" target=\"_blank\" style=\"cursor: pointer;\">" + prov5.GetUIAccountManagementLabel(usercontext) + "</a>";
+                IExternalProvider prov2 = RuntimeAuthProvider.GetProvider(PreferredMethod.Email);
+                if ((prov2 != null) && (prov2.Enabled) && prov2.IsUIElementRequired(usercontext, RequiredMethodElements.EmailLinkRequired))
+                {
+                    result += "<a class=\"actionLink\" href=\"#\" id=\"enrollemail\" name=\"enrollemail\" onclick=\"fnlinkclicked(OptionsForm, 4)\" style=\"cursor: pointer;\">" + prov2.GetWizardLinkLabel(usercontext) + "</a>";
+                }
+                IExternalProvider prov3 = RuntimeAuthProvider.GetProvider(PreferredMethod.External);
+                if ((prov3 != null) && (prov3.Enabled) && prov3.IsUIElementRequired(usercontext, RequiredMethodElements.PhoneLinkRequired))
+                {
+                    result += "<a class=\"actionLink\" href=\"#\" id=\"enrollphone\" name=\"enrollphone\" onclick=\"fnlinkclicked(OptionsForm, 5)\" style=\"cursor: pointer;\">" + prov3.GetWizardLinkLabel(usercontext) + "</a>";
+                }
+                IExternalProvider prov5 = RuntimeAuthProvider.GetProvider(PreferredMethod.Azure);
+                if (prov5 != null)
+                {
+                    if (!string.IsNullOrEmpty(prov5.GetAccountManagementUrl(usercontext)))
+                        result += "<a class=\"actionLink\" href=\"" + prov5.GetAccountManagementUrl(usercontext) + "\" id=\"enrollazure\" name=\"enrollazure\" target=\"_blank\" style=\"cursor: pointer;\">" + prov5.GetUIAccountManagementLabel(usercontext) + "</a>";
+                }
             }
             if (RuntimeAuthProvider.IsPinCodeRequired(usercontext))
             {
@@ -303,10 +306,14 @@ namespace Neos.IdentityServer.MultiFactor
                 result += GetPartHtmlSelectMethod(usercontext);
                 result += "<br/>";
             }
-            if (!Provider.Config.UserFeatures.IsMFARequired() && !Provider.Config.UserFeatures.IsMFAMixed())
+            if (!usercontext.IsPrimaryAuthContext)
             {
-                result += "<input id=\"disablemfa\" type=\"checkbox\" name=\"disablemfa\" /> " + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMDisableMFA");
-                result += "<br/>";
+
+                if (!Provider.Config.UserFeatures.IsMFARequired() && !Provider.Config.UserFeatures.IsMFAMixed())
+                {
+                    result += "<input id=\"disablemfa\" type=\"checkbox\" name=\"disablemfa\" /> " + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMDisableMFA");
+                    result += "<br/>";
+                }
             }
             result += "<br/>";
             result += "<input id=\"context\" type=\"hidden\" name=\"Context\" value=\"%Context%\"/>";
@@ -826,37 +833,40 @@ namespace Neos.IdentityServer.MultiFactor
                     if (Provider.HasStrictAccessToOptions(prov))
                         result += "<a class=\"actionLink\" href=\"#\" id=\"enrollbio\" name=\"enrollbio\" onclick=\"return SetLinkTitle(selectoptionsForm, '4')\"; style=\"cursor: pointer;\">" + prov.GetWizardLinkLabel(usercontext) + "</a>";
                 }
-                if (RuntimeAuthProvider.IsUIElementRequired(usercontext, RequiredMethodElements.EmailLinkRequired))
+                if (!usercontext.IsPrimaryAuthContext)
                 {
-                    prov = RuntimeAuthProvider.GetProvider(PreferredMethod.Email);
-                    if (prov.PinRequired)
-                        WantPin = true;
-                    if (Provider.HasStrictAccessToOptions(prov))
-                        result += "<a class=\"actionLink\" href=\"#\" id=\"enrollemail\" name=\"enrollemail\" onclick=\"return SetLinkTitle(selectoptionsForm, '5')\"; style=\"cursor: pointer;\">" + prov.GetWizardLinkLabel(usercontext) + "</a>";
-                }
-                if (RuntimeAuthProvider.IsUIElementRequired(usercontext, RequiredMethodElements.PhoneLinkRequired))
-                {
-                    prov = RuntimeAuthProvider.GetProvider(PreferredMethod.External);
-                    if (prov.PinRequired)
-                        WantPin = true;
-                    if (Provider.HasStrictAccessToOptions(prov))
-                        result += "<a class=\"actionLink\" href=\"#\" id=\"enrollphone\" name=\"enrollphone\" onclick=\"return SetLinkTitle(selectoptionsForm, '6')\"; style=\"cursor: pointer;\">" + prov.GetWizardLinkLabel(usercontext) + "</a>";
-                }
-                if (RuntimeAuthProvider.IsUIElementRequired(usercontext, RequiredMethodElements.AzureInputRequired))
-                {
-                    prov = RuntimeAuthProvider.GetProvider(PreferredMethod.Azure);
-                    if (prov != null)
+
+                    if (RuntimeAuthProvider.IsUIElementRequired(usercontext, RequiredMethodElements.EmailLinkRequired))
                     {
+                        prov = RuntimeAuthProvider.GetProvider(PreferredMethod.Email);
                         if (prov.PinRequired)
                             WantPin = true;
                         if (Provider.HasStrictAccessToOptions(prov))
+                            result += "<a class=\"actionLink\" href=\"#\" id=\"enrollemail\" name=\"enrollemail\" onclick=\"return SetLinkTitle(selectoptionsForm, '5')\"; style=\"cursor: pointer;\">" + prov.GetWizardLinkLabel(usercontext) + "</a>";
+                    }
+                    if (RuntimeAuthProvider.IsUIElementRequired(usercontext, RequiredMethodElements.PhoneLinkRequired))
+                    {
+                        prov = RuntimeAuthProvider.GetProvider(PreferredMethod.External);
+                        if (prov.PinRequired)
+                            WantPin = true;
+                        if (Provider.HasStrictAccessToOptions(prov))
+                            result += "<a class=\"actionLink\" href=\"#\" id=\"enrollphone\" name=\"enrollphone\" onclick=\"return SetLinkTitle(selectoptionsForm, '6')\"; style=\"cursor: pointer;\">" + prov.GetWizardLinkLabel(usercontext) + "</a>";
+                    }
+                    if (RuntimeAuthProvider.IsUIElementRequired(usercontext, RequiredMethodElements.AzureInputRequired))
+                    {
+                        prov = RuntimeAuthProvider.GetProvider(PreferredMethod.Azure);
+                        if (prov != null)
                         {
-                            if (!string.IsNullOrEmpty(prov.GetAccountManagementUrl(usercontext)))
-                                result += "<a class=\"actionLink\" href=\"" + prov.GetAccountManagementUrl(usercontext) + "\" id=\"enrollazure\" name=\"enrollazure\" target=\"_blank\" style=\"cursor: pointer;\">" + prov.GetUIAccountManagementLabel(usercontext) + "</a>";
+                            if (prov.PinRequired)
+                                WantPin = true;
+                            if (Provider.HasStrictAccessToOptions(prov))
+                            {
+                                if (!string.IsNullOrEmpty(prov.GetAccountManagementUrl(usercontext)))
+                                    result += "<a class=\"actionLink\" href=\"" + prov.GetAccountManagementUrl(usercontext) + "\" id=\"enrollazure\" name=\"enrollazure\" target=\"_blank\" style=\"cursor: pointer;\">" + prov.GetUIAccountManagementLabel(usercontext) + "</a>";
+                            }
                         }
                     }
                 }
-
                 if (RuntimeAuthProvider.IsUIElementRequired(usercontext, RequiredMethodElements.PinLinkRequired))
                 {
                     if (WantPin)
@@ -909,25 +919,28 @@ namespace Neos.IdentityServer.MultiFactor
             {
                 result += "<input id=\"opt1\" name=\"opt\" type=\"radio\" value=\"0\" " + (((method == PreferredMethod.Code) || (method == PreferredMethod.Choose)) ? "checked=\"checked\"> " : "> ") + RuntimeAuthProvider.GetProvider(PreferredMethod.Code).GetUIChoiceLabel(usercontext) + "<br/><br/>";
             }
-            if (RuntimeAuthProvider.IsProviderAvailableForUser(usercontext, PreferredMethod.Email))
+            if (!usercontext.IsPrimaryAuthContext)
             {
-                result += "<input id=\"opt2\" name=\"opt\" type=\"radio\" value=\"2\" " + ((method == PreferredMethod.Email) ? "checked=\"checked\"> " : "> ") + RuntimeAuthProvider.GetProvider(PreferredMethod.Email).GetUIChoiceLabel(usercontext) + "<br/>";
-                if (RuntimeAuthProvider.GetProvider(PreferredMethod.Email).IsBuiltIn)
-                    result += "<div style=\"text-indent: 20px;\"><i>" + Utilities.StripEmailAddress(usercontext.MailAddress) + "</i></div><br/>";
-                else
-                    result += "<br/>";
-            }
-            if (RuntimeAuthProvider.IsProviderAvailableForUser(usercontext, PreferredMethod.External))
-            {
-                result += "<input id=\"opt1\" name=\"opt\" type=\"radio\" value=\"1\" " + ((method == PreferredMethod.External) ? "checked=\"checked\"> " : "> ") + RuntimeAuthProvider.GetProvider(PreferredMethod.External).GetUIChoiceLabel(usercontext) + "<br/>";
-                if (RuntimeAuthProvider.GetProvider(PreferredMethod.External).IsBuiltIn)
-                    result += "<div style=\"text-indent: 20px;\"><i>" + Utilities.StripPhoneNumber(usercontext.PhoneNumber) + "</i></div><br/>";
-                else
-                    result += "<br/>";
-            }
-            if (RuntimeAuthProvider.IsProviderAvailableForUser(usercontext, PreferredMethod.Azure))
-            {
-                result += "<input id=\"opt3\" name=\"opt\" type=\"radio\" value=\"3\" " + ((method == PreferredMethod.Azure) ? "checked=\"checked\"> " : "> ") + RuntimeAuthProvider.GetProvider(PreferredMethod.Azure).GetUIChoiceLabel(usercontext) + "<br/><br/>";
+                if (RuntimeAuthProvider.IsProviderAvailableForUser(usercontext, PreferredMethod.Email))
+                {
+                    result += "<input id=\"opt2\" name=\"opt\" type=\"radio\" value=\"2\" " + ((method == PreferredMethod.Email) ? "checked=\"checked\"> " : "> ") + RuntimeAuthProvider.GetProvider(PreferredMethod.Email).GetUIChoiceLabel(usercontext) + "<br/>";
+                    if (RuntimeAuthProvider.GetProvider(PreferredMethod.Email).IsBuiltIn)
+                        result += "<div style=\"text-indent: 20px;\"><i>" + Utilities.StripEmailAddress(usercontext.MailAddress) + "</i></div><br/>";
+                    else
+                        result += "<br/>";
+                }
+                if (RuntimeAuthProvider.IsProviderAvailableForUser(usercontext, PreferredMethod.External))
+                {
+                    result += "<input id=\"opt1\" name=\"opt\" type=\"radio\" value=\"1\" " + ((method == PreferredMethod.External) ? "checked=\"checked\"> " : "> ") + RuntimeAuthProvider.GetProvider(PreferredMethod.External).GetUIChoiceLabel(usercontext) + "<br/>";
+                    if (RuntimeAuthProvider.GetProvider(PreferredMethod.External).IsBuiltIn)
+                        result += "<div style=\"text-indent: 20px;\"><i>" + Utilities.StripPhoneNumber(usercontext.PhoneNumber) + "</i></div><br/>";
+                    else
+                        result += "<br/>";
+                }
+                if (RuntimeAuthProvider.IsProviderAvailableForUser(usercontext, PreferredMethod.Azure))
+                {
+                    result += "<input id=\"opt3\" name=\"opt\" type=\"radio\" value=\"3\" " + ((method == PreferredMethod.Azure) ? "checked=\"checked\"> " : "> ") + RuntimeAuthProvider.GetProvider(PreferredMethod.Azure).GetUIChoiceLabel(usercontext) + "<br/><br/>";
+                }
             }
             if (RuntimeAuthProvider.IsProviderAvailableForUser(usercontext, PreferredMethod.Biometrics))
             {
@@ -2684,16 +2697,17 @@ namespace Neos.IdentityServer.MultiFactor
 
             if (RuntimeAuthProvider.IsProviderAvailableForUser(usercontext, PreferredMethod.Biometrics))
                 result += "<option value=\"5\" " + ((method == PreferredMethod.Biometrics) ? "selected=\"true\">" : ">") + RuntimeAuthProvider.GetProvider(PreferredMethod.Biometrics).GetUIListChoiceLabel(usercontext) + "</option>";
+            if (!usercontext.IsPrimaryAuthContext)
+            {
+                if (RuntimeAuthProvider.IsProviderAvailableForUser(usercontext, PreferredMethod.Email))
+                    result += "<option value=\"2\" " + ((method == PreferredMethod.Email) ? "selected=\"true\"> " : "> ") + RuntimeAuthProvider.GetProvider(PreferredMethod.Email).GetUIListChoiceLabel(usercontext) + "</option>";
 
-            if (RuntimeAuthProvider.IsProviderAvailableForUser(usercontext, PreferredMethod.Email))
-                result += "<option value=\"2\" " + ((method == PreferredMethod.Email) ? "selected=\"true\"> " : "> ") + RuntimeAuthProvider.GetProvider(PreferredMethod.Email).GetUIListChoiceLabel(usercontext) + "</option>";
+                if (RuntimeAuthProvider.IsProviderAvailableForUser(usercontext, PreferredMethod.External))
+                    result += "<option value=\"3\" " + ((method == PreferredMethod.External) ? "selected=\"true\"> " : "> ") + RuntimeAuthProvider.GetProvider(PreferredMethod.External).GetUIListChoiceLabel(usercontext) + "</option>";
 
-            if (RuntimeAuthProvider.IsProviderAvailableForUser(usercontext, PreferredMethod.External))
-                result += "<option value=\"3\" " + ((method == PreferredMethod.External) ? "selected=\"true\"> " : "> ") + RuntimeAuthProvider.GetProvider(PreferredMethod.External).GetUIListChoiceLabel(usercontext) + "</option>";
-
-            if (RuntimeAuthProvider.IsProviderAvailableForUser(usercontext, PreferredMethod.Azure))
-                result += "<option value=\"4\" " + ((method == PreferredMethod.Azure) ? "selected=\"true\">" : ">") + RuntimeAuthProvider.GetProvider(PreferredMethod.Azure).GetUIListChoiceLabel(usercontext) + "</option>";
-
+                if (RuntimeAuthProvider.IsProviderAvailableForUser(usercontext, PreferredMethod.Azure))
+                    result += "<option value=\"4\" " + ((method == PreferredMethod.Azure) ? "selected=\"true\">" : ">") + RuntimeAuthProvider.GetProvider(PreferredMethod.Azure).GetUIListChoiceLabel(usercontext) + "</option>";
+            }
             result += "</select><br/>";
             return result;
         }
