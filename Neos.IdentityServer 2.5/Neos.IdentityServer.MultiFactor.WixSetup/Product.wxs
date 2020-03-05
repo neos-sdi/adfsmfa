@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" >
-  <Product Id="a23dd485-5365-4d82-8309-103494000001" Name="Neos MFA Provider for ADFS 2019/2016/2012 R2" Language="1033" Version="2.5.4720.8000" Manufacturer="Neos-SDI" UpgradeCode="a23dd485-5365-4d82-8309-103495000001" >
+  <Product Id="a23dd485-5365-4d82-8309-103494000001" Name="Neos MFA Provider for ADFS 2019/2016/2012 R2" Language="1033" Version="2.5.4720.9000" Manufacturer="Neos-SDI" UpgradeCode="a23dd485-5365-4d82-8309-103495000001" >
 
     <Package InstallerVersion="500" Compressed="yes" InstallScope="perMachine" InstallPrivileges="elevated" Platform="x64" Description="Multi-Factor Authentication for ADFS 2019/2016/2012 r2" />
 
@@ -257,7 +257,7 @@
     <ComponentGroup Id="Neos.IdentityServer.MultiFactor.Core">
       <Component Id="GACDeployment000" Guid="E7173CAB-E43F-4A07-1962-018000006100" Win64="yes" Directory="AssemblyFolder" DiskId="1" >
         <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.dll"  Name="Neos.IdentityServer.MultiFactor.dll" Source="$(var.Neos.IdentityServer.MultiFactor.TargetPath)" Vital="yes"/>
-      </Component> 
+      </Component>
       <Component Id="GACDeployment001" Guid="E7173CAB-E43F-4A07-1962-018000006101" Win64="yes" Directory="LOCALEES" DiskId="1" >
         <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.es.resources.dll"  Name="Neos.IdentityServer.MultiFactor.resources.dll" Source="$(var.Neos.IdentityServer.MultiFactor.TargetDir)es\Neos.IdentityServer.MultiFactor.resources.dll" Vital="no" />
       </Component>
@@ -293,15 +293,15 @@
       <Component Id="GACDeployment100" Guid="E7173CAB-E43F-4A07-1962-018000007101" Win64="yes" Directory="AssemblyFolder" DiskId="1" >
         <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.DataTypes.dll"  Name="Neos.IdentityServer.MultiFactor.DataTypes.dll" Source="$(var.Neos.IdentityServer.MultiFactor.DataTypes.TargetPath)" Vital="yes" />
       </Component>
-      
+
       <Component Id="GACDeployment101" Guid="E7173CAB-E43F-4A07-1962-018000007102" Win64="yes" Directory="AssemblyFolder" DiskId="1" >
         <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.Data.dll"  Name="Neos.IdentityServer.MultiFactor.Data.dll" Source="$(var.Neos.IdentityServer.MultiFactor.Data.TargetPath)" Vital="yes" />
       </Component>
-      
+
       <Component Id="GACDeployment102" Guid="E7173CAB-E43F-4A07-1962-018000007103" Win64="yes" Directory="AssemblyFolder" DiskId="1" >
         <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.Common.dll"  Name="Neos.IdentityServer.MultiFactor.Common.dll" Source="$(var.Neos.IdentityServer.MultiFactor.Common.TargetPath)" Vital="yes" />
       </Component>
-      
+
       <Component Id="GACDeployment103" Guid="E7173CAB-E43F-4A07-1962-018000007104" Win64="yes" Directory="LOCALEES" DiskId="1" >
         <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.Common.es.resources.dll"  Name="Neos.IdentityServer.MultiFactor.Common.resources.dll" Source="$(var.Neos.IdentityServer.MultiFactor.Common.TargetDir)es\Neos.IdentityServer.MultiFactor.Common.resources.dll" Vital="no" />
       </Component>
@@ -333,13 +333,13 @@
         <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.Common.sv.resources.dll"  Name="Neos.IdentityServer.MultiFactor.Common.resources.dll" Source="$(var.Neos.IdentityServer.MultiFactor.Common.TargetDir)sv\Neos.IdentityServer.MultiFactor.Common.resources.dll" Vital="no" />
       </Component>
 
-
       <Component Id="GACDeployment120" Guid="E7173CAB-E43F-4A07-1962-018000008014" Win64="yes" Directory="AssemblyFolder" DiskId="1" >
         <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.Notifications.dll"  Name="Neos.IdentityServer.MultiFactor.Notifications.dll" Source="$(var.Neos.IdentityServer.MultiFactor.Notifications.TargetPath)" Vital="yes" />
-      </Component>     
+      </Component>
       <Component Id="GACDeployment121" Guid="E7173CAB-E43F-4A07-1962-018000008015" Win64="yes" Directory="AssemblyFolder" DiskId="1" >
         <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.QRCodeNet.dll"  Name="Neos.IdentityServer.MultiFactor.QRCodeNet.dll" Source="$(var.Neos.IdentityServer.MultiFactor.QRCodeNet.TargetPath)" Vital="yes" />
       </Component>
+
       <Component Id="GACDeployment122" Guid="E7173CAB-E43F-4A07-1962-018000008016" Win64="yes"  Directory="SQLFOLDER" DiskId="1" >
         <File KeyPath="yes" Id="mfa.db.sql"  Name="mfa-db.sql" Source="$(var.Neos.IdentityServer.MultiFactor.ProjectDir)SQL\mfa-db.sql" Vital="yes" />
         <File KeyPath="no" Id="mfa.db.encrypted.sql"  Name="mfa-db-encrypted.sql" Source="$(var.Neos.IdentityServer.MultiFactor.ProjectDir)SQL\mfa-db-encrypted.sql" Vital="yes" />
@@ -351,6 +351,13 @@
       <Component Id="GACDeployment123" Guid="E7173CAB-E43F-4A07-1962-018000008017" Win64="yes"  Directory="ADDSFOLDER" DiskId="1" >
         <File KeyPath="yes" Id="mfa.schema.hitrust.ldf"  Name="mfa-schema.hitrust.ldf" Source="$(var.Neos.IdentityServer.MultiFactor.ProjectDir)ADDS\mfa.schema.hitrust.ldf" Vital="yes" />
         <File KeyPath="no" Id="mfa.schema.ldf"  Name="mfa-schema.ldf" Source="$(var.Neos.IdentityServer.MultiFactor.ProjectDir)ADDS\mfa.schema.ldf" Vital="yes" />
+      </Component>
+
+      <Component Id="GACDeployment124" Guid="E7173CAB-E43F-4A07-1962-018000008018" Win64="yes" Directory="AssemblyFolder" DiskId="1" >
+        <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.ThreatDetection.dll"  Name="Neos.IdentityServer.MultiFactor.ThreatDetection.dll" Source="$(var.Neos.IdentityServer.MultiFactor.ThreatDetection.TargetPath)" Vital="yes" />
+      </Component>
+      <Component Id="GACDeployment125" Guid="E7173CAB-E43F-4A07-1962-018000008019" Win64="yes"  Directory="CONFIGFOLDER" DiskId="1" Permanent="yes">
+        <File KeyPath="yes" Id="threatconfig.db"  Name="threatconfig.db" Source="$(var.Neos.IdentityServer.MultiFactor.ProjectDir)ThreatDB\threatconfig.db" Vital="yes" />
       </Component>
     </ComponentGroup>
   </Fragment>

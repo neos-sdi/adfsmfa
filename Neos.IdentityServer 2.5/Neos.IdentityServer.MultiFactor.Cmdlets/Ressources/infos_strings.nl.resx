@@ -186,4 +186,22 @@
   <data name="InfosADFSCertificateChanged" xml:space="preserve">
     <value>ADFS-certificaat correct gemaakt ! U moet dit certificaat op alle ADFS-servers implementeren.</value>
   </data>
+  <data name="InfosThreatSystemRegistered" xml:space="preserve">
+    <value>MFA Threat System correct geregistreerd !</value>
+  </data>
+  <data name="InfosThreatSystemUnRegistered" xml:space="preserve">
+    <value>MFA Threat System correct niet geconfigureerd !</value>
+  </data>
+  <data name="InfosThreatSystemNotRegistered" xml:space="preserve">
+    <value>MFA Threat System is niet correct geregistreerd !</value>
+  </data>
+  <data name="InfosThreatSystemNotUnRegistered" xml:space="preserve">
+    <value>MFA Threat System was niet correct ongeconfigureerd !</value>
+  </data>
+  <data name="InfosThreatDataNotUpdated" xml:space="preserve">
+    <value>MFA Threat System Data is niet correct bijgewerkt !</value>
+  </data>
+  <data name="InfosThreatDataUpdated" xml:space="preserve">
+    <value>MFA Threat System Data correct bijgewerkt !</value>
+  </data>
 </root>

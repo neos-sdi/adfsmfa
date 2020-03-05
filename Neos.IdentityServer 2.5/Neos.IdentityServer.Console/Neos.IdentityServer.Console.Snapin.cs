@@ -132,7 +132,7 @@ namespace Neos.IdentityServer.Console
                                     BuildNodes(false);
                                 }
                             }
-                            catch (NullReferenceException ex)
+                            catch (NullReferenceException)
                             {
                                 CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.InstalledUICulture;
                                 BuildNodes(false);

@@ -266,7 +266,7 @@ namespace Neos.IdentityServer.MultiFactor
             {
                 result += "<a class=\"actionLink\" href=\"#\" id=\"enrollbio\" name=\"enrollbio\" onclick=\"fnlinkclicked(OptionsForm, 6)\" style=\"cursor: pointer;\">" + prov4.GetWizardLinkLabel(usercontext) + "</a>";
             }
-            if (!usercontext.IsPrimaryAuthContext)
+            if (!Provider.Config.IsPrimaryAuhentication)
             {
                 IExternalProvider prov2 = RuntimeAuthProvider.GetProvider(PreferredMethod.Email);
                 if ((prov2 != null) && (prov2.Enabled) && prov2.IsUIElementRequired(usercontext, RequiredMethodElements.EmailLinkRequired))
@@ -296,7 +296,7 @@ namespace Neos.IdentityServer.MultiFactor
                 result += GetPartHtmlSelectMethod(usercontext);
                 result += "<br/>";
             }
-            if (!usercontext.IsPrimaryAuthContext)
+            if (!Provider.Config.IsPrimaryAuhentication)
             {
                 if (!Provider.Config.UserFeatures.IsMFARequired() && !Provider.Config.UserFeatures.IsMFAMixed())
                 {
@@ -825,7 +825,7 @@ namespace Neos.IdentityServer.MultiFactor
                     if (Provider.HasStrictAccessToOptions(prov))
                         result += "<a class=\"actionLink\" href=\"#\" id=\"enrollbio\" name=\"enrollbio\" onclick=\"return SetLinkTitle(selectoptionsForm, '4')\" style=\"cursor: pointer;\">" + prov.GetWizardLinkLabel(usercontext) + "</a>";
                 }
-                if (!usercontext.IsPrimaryAuthContext)
+                if (!Provider.Config.IsPrimaryAuhentication)
                 {
                     if (RuntimeAuthProvider.IsUIElementRequired(usercontext, RequiredMethodElements.EmailLinkRequired))
                     {
@@ -913,7 +913,7 @@ namespace Neos.IdentityServer.MultiFactor
             {
                 result += "<input id=\"opt1\" name=\"opt\" type=\"radio\" value=\"0\" " + (((method == PreferredMethod.Code) || (method == PreferredMethod.Choose)) ? "checked=\"checked\"> " : "> ") + RuntimeAuthProvider.GetProvider(PreferredMethod.Code).GetUIChoiceLabel(usercontext) + "<br/><br/>";
             }
-            if (!usercontext.IsPrimaryAuthContext)
+            if (!Provider.Config.IsPrimaryAuhentication)
             {
                 if (RuntimeAuthProvider.IsProviderAvailableForUser(usercontext, PreferredMethod.Email))
                 {
@@ -2713,7 +2713,7 @@ namespace Neos.IdentityServer.MultiFactor
             if (RuntimeAuthProvider.IsProviderAvailableForUser(usercontext, PreferredMethod.Biometrics))
                 result += "<option value=\"5\" " + ((method == PreferredMethod.Biometrics) ? "selected=\"true\">" : ">") + RuntimeAuthProvider.GetProvider(PreferredMethod.Biometrics).GetUIListChoiceLabel(usercontext) + "</option>";
 
-            if (!usercontext.IsPrimaryAuthContext)
+            if (!Provider.Config.IsPrimaryAuhentication)
             {
                 if (RuntimeAuthProvider.IsProviderAvailableForUser(usercontext, PreferredMethod.Email))
                     result += "<option value=\"2\" " + ((method == PreferredMethod.Email) ? "selected=\"true\"> " : "> ") + RuntimeAuthProvider.GetProvider(PreferredMethod.Email).GetUIListChoiceLabel(usercontext) + "</option>";
@@ -2812,7 +2812,7 @@ namespace Neos.IdentityServer.MultiFactor
             result += "         makeCredentialOptions = " + usercontext.CredentialOptions + ";" + CR;
             result += "         makeCredentialOptions.challenge = coerceToArrayBuffer(makeCredentialOptions.challenge);" + CR;
             result += "         makeCredentialOptions.user.id = coerceToArrayBuffer(makeCredentialOptions.user.id);" + CR;
-            result += "         makeCredentialOptions.excludeCredentials = makeCredentialOptions.excludeCredentials.map((c) => {c.id = coerceToArrayBuffer(c.id); return c;});" + CR;
+            result += "         makeCredentialOptions.excludeCredentials = makeCredentialOptions.excludeCredentials.map((c) => {c.id = coerceToArrayBuffer(c.id); return c;} );" + CR;
             result += "         if (makeCredentialOptions.authenticatorSelection.authenticatorAttachment === null)" + CR;
             result += "            makeCredentialOptions.authenticatorSelection.authenticatorAttachment = undefined;" + CR;
             result += "      }" + CR;
@@ -2854,9 +2854,10 @@ namespace Neos.IdentityServer.MultiFactor
             result += "      let attestationObject = new Uint8Array(newCredential.response.attestationObject);" + CR;
             result += "      let clientDataJSON = new Uint8Array(newCredential.response.clientDataJSON);" + CR;
             result += "      let rawId = new Uint8Array(newCredential.rawId);" + CR;
-            result += "      const data = {id: newCredential.id, rawId: coerceToBase64Url(rawId), type: newCredential.type, " + CR;
+            result += "      const data = { id: newCredential.id, rawId: coerceToBase64Url(rawId), type: newCredential.type, " + CR;
             result += "         extensions: newCredential.getClientExtensionResults()," + CR;
-            result += "         response: { AttestationObject: coerceToBase64Url(attestationObject), clientDataJson: coerceToBase64Url(clientDataJSON)}};" + CR;
+            result += "         response: { AttestationObject: coerceToBase64Url(attestationObject), clientDataJson: coerceToBase64Url(clientDataJSON) }" + CR;
+            result += "      };" + CR;
             result += "      OnRefreshPost(3, data);" + CR;
             result += "   }" + CR;
             result += "   catch (e)" + CR;
@@ -2939,7 +2940,7 @@ namespace Neos.IdentityServer.MultiFactor
             result += "         rawId: coerceToBase64Url(rawId)," + CR;
             result += "         type: assertedCredential.type," + CR;
             result += "         extensions: assertedCredential.getClientExtensionResults()," + CR;
-            result += "         response: {authenticatorData: coerceToBase64Url(authData)," + CR;
+            result += "         response: { authenticatorData: coerceToBase64Url(authData)," + CR;
             result += "         clientDataJson: coerceToBase64Url(clientDataJSON)," + CR;
             result += "         signature: coerceToBase64Url(sig) }" + CR;
             result += "      };" + CR;

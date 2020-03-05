@@ -186,4 +186,22 @@
   <data name="InfosADFSCertificateChanged" xml:space="preserve">
     <value>ADFS Certificate correctly created ! You must deploy this certificate on all ADFS servers.</value>
   </data>
+  <data name="InfosThreatSystemRegistered" xml:space="preserve">
+    <value>MFA Threat System correctly registered ! </value>
+  </data>
+  <data name="InfosThreatSystemUnRegistered" xml:space="preserve">
+    <value>MFA Threat System correctly unconfigured !</value>
+  </data>
+  <data name="InfosThreatSystemNotRegistered" xml:space="preserve">
+    <value>MFA Threat System was not correctly registered ! </value>
+  </data>
+  <data name="InfosThreatSystemNotUnRegistered" xml:space="preserve">
+    <value>MFA Threat System was not correctly unconfigured !</value>
+  </data>
+  <data name="InfosThreatDataNotUpdated" xml:space="preserve">
+    <value>MFA Threat System Data was not correctly updated !</value>
+  </data>
+  <data name="InfosThreatDataUpdated" xml:space="preserve">
+    <value>MFA Threat System Data correctly updated !</value>
+  </data>
 </root>

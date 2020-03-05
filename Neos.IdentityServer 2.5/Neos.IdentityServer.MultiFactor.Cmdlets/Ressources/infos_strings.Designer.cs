@@ -223,6 +223,60 @@ namespace Neos.IdentityServer.MultiFactor.Cmdlets.Ressources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à MFA Threat System Data was not correctly updated !.
+        /// </summary>
+        internal static string InfosThreatDataNotUpdated {
+            get {
+                return ResourceManager.GetString("InfosThreatDataNotUpdated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à MFA Threat System Data correctly updated !.
+        /// </summary>
+        internal static string InfosThreatDataUpdated {
+            get {
+                return ResourceManager.GetString("InfosThreatDataUpdated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à MFA Threat System was not correctly registered ! .
+        /// </summary>
+        internal static string InfosThreatSystemNotRegistered {
+            get {
+                return ResourceManager.GetString("InfosThreatSystemNotRegistered", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à MFA Threat System was not correctly unconfigured !.
+        /// </summary>
+        internal static string InfosThreatSystemNotUnRegistered {
+            get {
+                return ResourceManager.GetString("InfosThreatSystemNotUnRegistered", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à MFA Threat System correctly registered ! .
+        /// </summary>
+        internal static string InfosThreatSystemRegistered {
+            get {
+                return ResourceManager.GetString("InfosThreatSystemRegistered", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à MFA Threat System correctly unconfigured !.
+        /// </summary>
+        internal static string InfosThreatSystemUnRegistered {
+            get {
+                return ResourceManager.GetString("InfosThreatSystemUnRegistered", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à User {0} added !.
         /// </summary>
         internal static string InfosUserAdded {

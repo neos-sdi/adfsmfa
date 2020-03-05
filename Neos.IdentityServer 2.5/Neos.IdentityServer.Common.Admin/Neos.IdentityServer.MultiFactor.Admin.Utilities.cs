@@ -361,6 +361,17 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         }
 
         /// <summary>
+        /// VerifyADFSServer2019 method implementation
+        /// </summary>
+        internal static void VerifyADFSServer2019()
+        {
+            RegistryVersion reg = new RegistryVersion();
+            if (!reg.IsWindows2019)
+               throw new InvalidOperationException("PS0033: This Cmdlet must be executed on Windows 2019 server and up only !");
+        }
+
+
+        /// <summary>
         /// RemoveFirewallRules method implementation
         /// </summary>
         internal static void RemoveFirewallRules()
@@ -459,6 +470,136 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             {
                 throw ex;
             }
+        }
+
+        /*
+        Register-AdfsThreatDetectionModule -Name "MFABlockPlugin" -TypeName "Neos.IdentityServer.Multifactor.ThreatAnalyzer, Neos.IdentityServer.Multifactor.ThreatDetection, Version=2.5.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2" -ConfigurationFilePath "C:\temp\mfa\authconfigdb.csv”
+        UnRegister-AdfsThreatDetectionModule -Name "MFABlockPlugin"
+
+        Import-AdfsThreatDetectionModuleConfiguration
+        */
+
+        /// <summary>
+        /// RegisterMFAThreatDetectionSystem method implementation
+        /// </summary>
+        internal static bool RegisterMFAThreatDetectionSystem(PSHost Host)
+        {
+            Runspace SPRunSpace = null;
+            PowerShell SPPowerShell = null;
+            string db = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + @"\MFA\Config\threatconfig.db";
+            try
+            {
+                RunspaceConfiguration SPRunConfig = RunspaceConfiguration.Create();
+                SPRunSpace = RunspaceFactory.CreateRunspace(SPRunConfig);
+
+                SPPowerShell = PowerShell.Create();
+                SPPowerShell.Runspace = SPRunSpace;
+                SPRunSpace.Open();
+
+                Pipeline pipeline = SPRunSpace.CreatePipeline();
+                Command exportcmd = new Command("Register-AdfsThreatDetectionModule", false);
+                CommandParameter NParam = new CommandParameter("Name", "MFABlockPlugin");
+                exportcmd.Parameters.Add(NParam);
+                CommandParameter TParam = new CommandParameter("TypeName", "Neos.IdentityServer.MultiFactor.ThreatAnalyzer, Neos.IdentityServer.MultiFactor.ThreatDetection, Version=2.5.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2");
+                exportcmd.Parameters.Add(TParam);
+                CommandParameter PParam = new CommandParameter("ConfigurationFilePath", db);
+                exportcmd.Parameters.Add(PParam);
+                pipeline.Commands.Add(exportcmd);
+                Collection<PSObject> PSOutput = pipeline.Invoke();
+                if (Host != null)
+                    Host.UI.WriteVerboseLine(DateTime.Now.ToLongTimeString() + " MFA Threat Detection : Registered");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                if (Host != null)
+                    Host.UI.WriteErrorLine(DateTime.Now.ToLongTimeString() + " MFA Threat Detection Error : " +ex.Message);
+            }
+            finally
+            {
+                if (SPRunSpace != null)
+                    SPRunSpace.Close();
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// UnRegisterMFAThreatDetectionSystem method implementation
+        /// </summary>
+        internal static bool UnRegisterMFAThreatDetectionSystem(PSHost Host)
+        {
+            Runspace SPRunSpace = null;
+            PowerShell SPPowerShell = null;
+            try
+            {
+                RunspaceConfiguration SPRunConfig = RunspaceConfiguration.Create();
+                SPRunSpace = RunspaceFactory.CreateRunspace(SPRunConfig);
+
+                SPPowerShell = PowerShell.Create();
+                SPPowerShell.Runspace = SPRunSpace;
+                SPRunSpace.Open();
+
+                Pipeline pipeline = SPRunSpace.CreatePipeline();
+                Command exportcmd = new Command("UnRegister-AdfsThreatDetectionModule", false);
+                CommandParameter NParam = new CommandParameter("Name", "MFABlockPlugin");
+                exportcmd.Parameters.Add(NParam);
+                pipeline.Commands.Add(exportcmd);
+                Collection<PSObject> PSOutput = pipeline.Invoke();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                if (Host != null)
+                    Host.UI.WriteErrorLine(DateTime.Now.ToLongTimeString() + " MFA Threat Detection Error : " + ex.Message);
+            }
+            finally
+            {
+                if (SPRunSpace != null)
+                    SPRunSpace.Close();
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// UpdateMFAThreatDetectionData method implementation
+        /// </summary>
+        internal static bool UpdateMFAThreatDetectionData(PSHost Host)
+        {
+            Runspace SPRunSpace = null;
+            PowerShell SPPowerShell = null;
+            string db = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + @"\MFA\Config\threatconfig.db";
+            try
+            {
+                RunspaceConfiguration SPRunConfig = RunspaceConfiguration.Create();
+                SPRunSpace = RunspaceFactory.CreateRunspace(SPRunConfig);
+
+                SPPowerShell = PowerShell.Create();
+                SPPowerShell.Runspace = SPRunSpace;
+                SPRunSpace.Open();
+
+                Pipeline pipeline = SPRunSpace.CreatePipeline();
+                Command exportcmd = new Command("Import-AdfsThreatDetectionModuleConfiguration", false);
+                CommandParameter NParam = new CommandParameter("Name", "MFABlockPlugin");
+                exportcmd.Parameters.Add(NParam);
+                CommandParameter PParam = new CommandParameter("ConfigurationFilePath", db);
+                exportcmd.Parameters.Add(PParam);
+                pipeline.Commands.Add(exportcmd);
+                Collection<PSObject> PSOutput = pipeline.Invoke();
+                if (Host != null)
+                    Host.UI.WriteVerboseLine(DateTime.Now.ToLongTimeString() + " MFA Threat Detection Data : Updated !");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                if (Host != null)
+                    Host.UI.WriteErrorLine(DateTime.Now.ToLongTimeString() + " MFA Threat Detection Data Error : " + ex.Message);
+            }
+            finally
+            {
+                if (SPRunSpace != null)
+                    SPRunSpace.Close();
+            }
+            return false;
         }
     }
 

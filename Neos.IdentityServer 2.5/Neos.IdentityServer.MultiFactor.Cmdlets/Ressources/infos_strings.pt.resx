@@ -186,4 +186,22 @@
   <data name="InfosADFSCertificateChanged" xml:space="preserve">
     <value>Certificado ADFS criado corretamente ! Você deve implantar este certificado em todos os servidores ADFS.</value>
   </data>
+  <data name="InfosThreatSystemRegistered" xml:space="preserve">
+    <value>Sistema MFA de ameaça registrado corretamente !</value>
+  </data>
+  <data name="InfosThreatSystemUnRegistered" xml:space="preserve">
+    <value>Sistema de Ameaças MFA corretamente desconfigurado !</value>
+  </data>
+  <data name="InfosThreatSystemNotRegistered" xml:space="preserve">
+    <value>O Sistema de Ameaças MFA não foi registrado corretamente !</value>
+  </data>
+  <data name="InfosThreatSystemNotUnRegistered" xml:space="preserve">
+    <value>O Sistema de Ameaças MFA não foi corretamente desconfigurado !</value>
+  </data>
+  <data name="InfosThreatDataNotUpdated" xml:space="preserve">
+    <value>Os dados do sistema de ameaças do MFA não foram atualizados corretamente !</value>
+  </data>
+  <data name="InfosThreatDataUpdated" xml:space="preserve">
+    <value>Dados do sistema de ameaças do MFA atualizados corretamente !</value>
+  </data>
 </root>

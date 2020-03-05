@@ -1261,9 +1261,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         }
 
         /// <summary>
-        /// RegisterMFAProvider method implmentation
+        /// RegisterMFASystem method implmentation
         /// </summary>
-        public bool RegisterMFAProvider(PSHost host)
+        public bool RegisterMFASystem(PSHost host)
         {
             if (Config != null)
                 return false;
@@ -1288,9 +1288,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         }
 
         /// <summary>
-        /// UnRegisterMFAProvider method implmentation
+        /// UnRegisterMFASystem method implmentation
         /// </summary>
-        public bool UnRegisterMFAProvider(PSHost Host)
+        public bool UnRegisterMFASystem(PSHost Host)
         {
             if (Config == null)
             {

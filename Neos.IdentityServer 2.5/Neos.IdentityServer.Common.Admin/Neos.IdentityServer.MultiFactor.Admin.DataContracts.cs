@@ -161,6 +161,17 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             cfg.KeysConfig.KeyVersion = (SecretKeyVersion)version;
             ManagementService.ADFSManager.WriteConfiguration(host);
         }
+
+        /// <summary>
+        /// SetPrimaryAuthenticationStatus method implementation
+        /// </summary>
+        internal void SetPrimaryAuthenticationStatus(PSHost host, bool enabled)
+        {
+            ManagementService.Initialize(true);
+            MFAConfig cfg = ManagementService.Config;
+            cfg.IsPrimaryAuhentication = enabled;
+            ManagementService.ADFSManager.WriteConfiguration(host);
+        }
     }
     #endregion
 

@@ -480,9 +480,7 @@ namespace Neos.IdentityServer.MultiFactor
         }
         #endregion
 
-        /// <summary>
-        /// GetFormPreRenderHtmlIdentification implementation
-        /// </summary>
+        #region Abstract methods
         public abstract string GetFormPreRenderHtmlIdentification(AuthenticationContext usercontext);
         public abstract string GetFormHtmlIdentification(AuthenticationContext usercontext);
 
@@ -538,6 +536,7 @@ namespace Neos.IdentityServer.MultiFactor
 
         public abstract string GetFormPreRenderHtmlEnrollPinCode(AuthenticationContext usercontext);
         public abstract string GetFormHtmlEnrollPinCode(AuthenticationContext usercontext);
+        #endregion
 
         #region QRCode
         /// <summary>
@@ -767,25 +766,36 @@ namespace Neos.IdentityServer.MultiFactor
         #endregion
 
         #region WebAuthN Support
+        /// <summary>
+        /// GetFormHtmlWebAuthNSupport method implementation
+        /// </summary>
         public virtual string GetFormHtmlWebAuthNSupport(AuthenticationContext usercontext)
         {
             string result = string.Empty;
-            result += "function detectWebAuthNSupport()" + "\r\n";
-            result += "{" + "\r\n";
-            result += "   if (window.PublicKeyCredential === undefined || typeof window.PublicKeyCredential !== \"function\")" + "\r\n";
-            result += "      return false;" + "\r\n";
-            result += "   else" + "\r\n";
-            result += "      return true;" + "\r\n";
-            result += "}" + "\r\n";
+            result += "function detectWebAuthNSupport()" + CR;
+            result += "{" + CR;
+            result += "      try" + CR;
+            result += "      {" + CR;
+            result += "         if (window.PublicKeyCredential === undefined || typeof window.PublicKeyCredential !== \"function\")" + CR;
+            result += "             return false;" + CR;
+            result += "         else" + CR;
+            result += "             return true;" + CR;
+            result += "      }" + CR;
+            result += "      catch (e)" + CR;
+            result += "      {" + CR;
+            result += "         SetJsError(e.message);" + CR;
+            result += "         return false;" + CR;
+            result += "      }" + CR;
+            result += "}" + CR;
             return result;
         }
-
         #endregion
     }
 
     public class AdapterPresentation : BasePresentation
     {
         private BasePresentation _adapter = null;
+
         #region Constructors
         /// <summary>
         /// Constructor implementation

@@ -181,63 +181,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public override string GetFormPreRenderHtmlManageOptions(AuthenticationContext usercontext)
         {
-          /*  string reg = @"/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,})+$/";
-            string pho = @"/^\+(?:[0-9] ?){6,14}[0-9]$/";
-            string pho10 = @"/^\d{10}$/";
-            string phous = @"/^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/"; */
-
             string result = "<script type='text/javascript'>" + CR;
-
-           /* result += "function ValidateOptions(frm)" + CR;
-            result += "{" + CR;
-            result += "   var mailformat = " + reg + " ;" + CR;
-            result += "   var phoneformat = " + pho + " ;" + CR;
-            result += "   var phoneformat10 = " + pho10 + " ;" + CR;
-            result += "   var phoneformatus = " + phous + " ;" + CR;
-            result += "   var email = document.getElementById('email');" + CR;
-            result += "   var phone = document.getElementById('phone');" + CR;
-            result += "   var err = document.getElementById('errorText');" + CR;
-            result += "   var lnk = document.getElementById('btnclicked');" + CR;
-            result += "   if (lnk.value=='1')" + CR;
-            result += "   {" + CR;
-            if (RuntimeAuthProvider.IsUIElementRequired(usercontext, RequiredMethodElements.EmailParameterRequired))
-            {
-                result += "if ((email) && (email.value=='') && (email.placeholder==''))" + CR;
-                result += "{" + CR;
-                result += "   err.innerHTML = \"" + Resources.GetString(ResourcesLocaleKind.Validation, "ValidIncorrectEmail") + "\";" + CR;
-                result += "   return false;" + CR;
-                result += "}" + CR;
-                result += "if ((email) && (email.value!==''))" + CR;
-                result += "{" + CR;
-                result += "   if (!email.value.match(mailformat))" + CR;
-                result += "   {" + CR;
-                result += "      err.innerHTML = \"" + Resources.GetString(ResourcesLocaleKind.Validation, "ValidIncorrectEmail") + "\";" + CR;
-                result += "      return false;" + CR;
-                result += "   }" + CR;
-                result += "}" + CR;
-            }
-            if (RuntimeAuthProvider.IsUIElementRequired(usercontext, RequiredMethodElements.PhoneParameterRequired))
-            {
-                result += "if ((phone) && (phone.value=='') && (phone.placeholder==''))" + CR;
-                result += "{" + CR;
-                result += "   err.innerHTML = \"" + Resources.GetString(ResourcesLocaleKind.Validation, "ValidIncorrectPhoneNumber") + "\";" + CR;
-                result += "   return false;" + CR;
-                result += "}" + CR;
-                result += "if ((phone) && (phone.value!==''))" + CR;
-                result += "{" + CR;
-                result += "   if (!phone.value.match(phoneformat) && !phone.value.match(phoneformat10) && !phone.value.match(phoneformatus) )" + CR;
-                result += "   {" + CR;
-                result += "      err.innerHTML = \"" + Resources.GetString(ResourcesLocaleKind.Validation, "ValidIncorrectPhoneNumber") + "\";" + CR;
-                result += "      return false;" + CR;
-                result += "   }" + CR;
-                result += "}" + CR;
-            }
-            result += "}" + CR;
-
-            result += "   err.innerHTML = \"\";" + CR;
-            result += "   return true;" + CR;
-            result += "}";
-            result += CR; */
 
             result += "function fnlinkclicked(frm, data)" + CR;
             result += "{" + CR;
@@ -276,7 +220,7 @@ namespace Neos.IdentityServer.MultiFactor
             {
                 result += "<a class=\"actionLink\" href=\"#\" id=\"enrollbio\" name=\"enrollbio\" onclick=\"fnlinkclicked(OptionsForm, 6)\" style=\"cursor: pointer;\">" + prov4.GetWizardLinkLabel(usercontext) + "</a>";
             }
-            if (!usercontext.IsPrimaryAuthContext)
+            if (!Provider.Config.IsPrimaryAuhentication)
             {
                 IExternalProvider prov2 = RuntimeAuthProvider.GetProvider(PreferredMethod.Email);
                 if ((prov2 != null) && (prov2.Enabled) && prov2.IsUIElementRequired(usercontext, RequiredMethodElements.EmailLinkRequired))
@@ -306,7 +250,7 @@ namespace Neos.IdentityServer.MultiFactor
                 result += GetPartHtmlSelectMethod(usercontext);
                 result += "<br/>";
             }
-            if (!usercontext.IsPrimaryAuthContext)
+            if (!Provider.Config.IsPrimaryAuhentication)
             {
 
                 if (!Provider.Config.UserFeatures.IsMFARequired() && !Provider.Config.UserFeatures.IsMFAMixed())
@@ -833,7 +777,7 @@ namespace Neos.IdentityServer.MultiFactor
                     if (Provider.HasStrictAccessToOptions(prov))
                         result += "<a class=\"actionLink\" href=\"#\" id=\"enrollbio\" name=\"enrollbio\" onclick=\"return SetLinkTitle(selectoptionsForm, '4')\"; style=\"cursor: pointer;\">" + prov.GetWizardLinkLabel(usercontext) + "</a>";
                 }
-                if (!usercontext.IsPrimaryAuthContext)
+                if (!Provider.Config.IsPrimaryAuhentication)
                 {
 
                     if (RuntimeAuthProvider.IsUIElementRequired(usercontext, RequiredMethodElements.EmailLinkRequired))
@@ -919,7 +863,7 @@ namespace Neos.IdentityServer.MultiFactor
             {
                 result += "<input id=\"opt1\" name=\"opt\" type=\"radio\" value=\"0\" " + (((method == PreferredMethod.Code) || (method == PreferredMethod.Choose)) ? "checked=\"checked\"> " : "> ") + RuntimeAuthProvider.GetProvider(PreferredMethod.Code).GetUIChoiceLabel(usercontext) + "<br/><br/>";
             }
-            if (!usercontext.IsPrimaryAuthContext)
+            if (!Provider.Config.IsPrimaryAuhentication)
             {
                 if (RuntimeAuthProvider.IsProviderAvailableForUser(usercontext, PreferredMethod.Email))
                 {
@@ -2697,7 +2641,7 @@ namespace Neos.IdentityServer.MultiFactor
 
             if (RuntimeAuthProvider.IsProviderAvailableForUser(usercontext, PreferredMethod.Biometrics))
                 result += "<option value=\"5\" " + ((method == PreferredMethod.Biometrics) ? "selected=\"true\">" : ">") + RuntimeAuthProvider.GetProvider(PreferredMethod.Biometrics).GetUIListChoiceLabel(usercontext) + "</option>";
-            if (!usercontext.IsPrimaryAuthContext)
+            if (!Provider.Config.IsPrimaryAuhentication)
             {
                 if (RuntimeAuthProvider.IsProviderAvailableForUser(usercontext, PreferredMethod.Email))
                     result += "<option value=\"2\" " + ((method == PreferredMethod.Email) ? "selected=\"true\"> " : "> ") + RuntimeAuthProvider.GetProvider(PreferredMethod.Email).GetUIListChoiceLabel(usercontext) + "</option>";
@@ -2793,7 +2737,7 @@ namespace Neos.IdentityServer.MultiFactor
             result += "      let makeCredentialOptions;" + CR;
             result += "      try" + CR;
             result += "      {" + CR;
-            result += "         makeCredentialOptions = " + usercontext.CredentialOptions + ";"+CR;
+            result += "         makeCredentialOptions = " + usercontext.CredentialOptions + ";" + CR;
             result += "         makeCredentialOptions.challenge = coerceToArrayBuffer(makeCredentialOptions.challenge);" + CR;
             result += "         makeCredentialOptions.user.id = coerceToArrayBuffer(makeCredentialOptions.user.id);" + CR;
             result += "         makeCredentialOptions.excludeCredentials = makeCredentialOptions.excludeCredentials.map((c) => {c.id = coerceToArrayBuffer(c.id); return c;});" + CR;
@@ -2840,7 +2784,8 @@ namespace Neos.IdentityServer.MultiFactor
             result += "      let rawId = new Uint8Array(newCredential.rawId);" + CR;
             result += "      const data = {id: newCredential.id, rawId: coerceToBase64Url(rawId), type: newCredential.type, " + CR;
             result += "         extensions: newCredential.getClientExtensionResults()," + CR;
-            result += "         response: { AttestationObject: coerceToBase64Url(attestationObject), clientDataJson: coerceToBase64Url(clientDataJSON)}};" + CR;
+            result += "         response: { AttestationObject: coerceToBase64Url(attestationObject), clientDataJson: coerceToBase64Url(clientDataJSON) }" + CR;
+            result += "      };" + CR;
             result += "      OnRefreshPost(3, data);" + CR;
             result += "   }" + CR;
             result += "   catch (e)" + CR;
@@ -2922,7 +2867,7 @@ namespace Neos.IdentityServer.MultiFactor
             result += "         rawId: coerceToBase64Url(rawId)," + CR;
             result += "         type: assertedCredential.type," + CR;
             result += "         extensions: assertedCredential.getClientExtensionResults()," + CR;
-            result += "         response: {authenticatorData: coerceToBase64Url(authData)," + CR;
+            result += "         response: { authenticatorData: coerceToBase64Url(authData)," + CR;
             result += "         clientDataJson: coerceToBase64Url(clientDataJSON)," + CR;
             result += "         signature: coerceToBase64Url(sig) }" + CR;
             result += "      };" + CR;

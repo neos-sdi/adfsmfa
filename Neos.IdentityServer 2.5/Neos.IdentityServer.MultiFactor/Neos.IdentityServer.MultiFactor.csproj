@@ -106,6 +106,7 @@
     <Compile Include="Neos.IdentityServer.MultiFactor.Provider.cs" />
     <None Include="app.config" />
     <None Include="Neos.IdentityServer.pfx" />
+    <None Include="ThreatDB\threatconfig.db" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\cmno32.png" />

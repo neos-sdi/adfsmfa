@@ -79,9 +79,8 @@ namespace Neos.IdentityServer.MultiFactor
             IAdapterPresentation result = null;
             try
             {
-                if (!request.IsAuthenticated)
+                if (Config.IsPrimaryAuhentication)
                 {
-                    usercontext.IsPrimaryAuthContext = true;
                     if ((!usercontext.Enabled) || (!usercontext.IsRegistered))
                         usercontext.UIMode = ProviderPageMode.Locking;
                 }

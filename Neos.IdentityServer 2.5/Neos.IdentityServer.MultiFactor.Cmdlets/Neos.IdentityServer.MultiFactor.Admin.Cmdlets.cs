@@ -65,6 +65,11 @@ namespace MFA
             {
                 ManagementService.VerifyPrimaryServer();
             }
+            object[] att2 = type.GetCustomAttributes(typeof(ADFS2019RequiredAttribute), true);
+            if (att2.Length > 0)
+            {
+                ManagementService.VerifyADFSServer2019();
+            }
         }
 
     }
@@ -1822,7 +1827,7 @@ namespace MFA
                 {
                     PSHost hh = GetHostForVerbose();
                     ADFSServiceManager svc = ManagementService.ADFSManager;
-                    if (svc.RegisterMFAProvider(hh))
+                    if (svc.RegisterMFASystem(hh))
                         this.Host.UI.WriteLine(ConsoleColor.Green, this.Host.UI.RawUI.BackgroundColor, String.Format(infos_strings.InfosSystemRegistered));
                     else
                         this.Host.UI.WriteLine(ConsoleColor.Yellow, this.Host.UI.RawUI.BackgroundColor, String.Format(infos_strings.InfosSystemAlreadyInitialized));
@@ -2030,7 +2035,7 @@ namespace MFA
                 {
                     PSHost hh = GetHostForVerbose();
                     ADFSServiceManager svc = ManagementService.ADFSManager;
-                    if (svc.UnRegisterMFAProvider(hh))
+                    if (svc.UnRegisterMFASystem(hh))
                         this.Host.UI.WriteLine(ConsoleColor.Green, this.Host.UI.RawUI.BackgroundColor, String.Format(infos_strings.InfosSystemUnRegistered));
                     else
                         this.Host.UI.WriteLine(ConsoleColor.Yellow, this.Host.UI.RawUI.BackgroundColor, String.Format(infos_strings.InfosSystemUnRegistered));
@@ -5770,7 +5775,7 @@ namespace MFA
             if (UIKind==PSUIKind.Default2019)
                 this.WriteWarning(string.Format(infos_strings.InfosWarningAboutTheme, "ADFS 2019"));
             else
-                this.WriteWarning(string.Format(infos_strings.InfosWarningAboutTheme, "ADFS 2012r2/2016/2019"));
+                this.WriteWarning(string.Format(infos_strings.InfosWarningAboutTheme, "ADFS 2019/2016/2012r2"));
             if (ShouldProcess("MFA Theme Configuration"))
             {
                 try
@@ -5829,7 +5834,7 @@ namespace MFA
     /// </example>
     [Cmdlet(VerbsCommon.Set, "MFAEncryptionVersion", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
     [PrimaryServerRequired]
-    public sealed class MFAEncryptionVersion : MFACmdlet
+    public sealed class SetMFAEncryptionVersion : MFACmdlet
     {
         private PSSecretKeyVersion _version = PSSecretKeyVersion.V2;
         private FlatConfig _config;
@@ -5889,6 +5894,231 @@ namespace MFA
         {
             _config = null;
             base.StopProcessing();
+        }
+    }
+    #endregion
+
+    #region Set-MFAPrimaryAuthenticationStatus
+    /// <summary>
+    /// <para type="synopsis">Set MFA Primary Authentication Status enabled/disabled (ADFS 2019 only).</para>
+    /// <para type="description">Set MFA Primary Authentication Status.</para>
+    /// </summary>
+    /// <example>
+    ///   <para>MFAPrimaryAuthenticationStatus $true</para>
+    /// </example>
+    [Cmdlet(VerbsCommon.Set, "MFAPrimaryAuthenticationStatus", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
+    [PrimaryServerRequired, ADFS2019Required]
+    public sealed class SetMFAPrimaryAuthenticationStatus : MFACmdlet
+    {
+        private FlatConfig _config;
+
+        /// <summary>
+        /// <para type="description">Set Primary Authentication Status.</para>
+        /// </summary>
+        [Parameter(Mandatory = true, Position = 0, ParameterSetName = "Data", ValueFromPipeline = false)]
+        public bool Enabled { get; set; } = false;
+
+        /// <summary>
+        /// BeginProcessing method implementation
+        /// </summary>
+        protected override void BeginProcessing()
+        {
+            base.BeginProcessing();
+            try
+            {
+                ManagementService.Initialize(this.Host, true);
+                _config = new FlatConfig();
+                _config.Load(this.Host);
+            }
+            catch (Exception ex)
+            {
+                this.ThrowTerminatingError(new ErrorRecord(ex, "3023", ErrorCategory.OperationStopped, this));
+            }
+        }
+
+        /// <summary>
+        /// ProcessRecord method override
+        /// </summary>
+        protected override void ProcessRecord()
+        {
+            if (ShouldProcess("MFA Primary Authentication Status Configuration"))
+            {
+                try
+                {
+                    _config.SetPrimaryAuthenticationStatus(this.Host, Enabled);
+                    this.WriteVerbose(infos_strings.InfosConfigUpdated);
+                }
+                catch (Exception ex)
+                {
+                    this.ThrowTerminatingError(new ErrorRecord(ex, "3024", ErrorCategory.OperationStopped, this));
+                }
+            }
+        }
+
+        /// <summary>
+        /// StopProcessing method implementation
+        /// </summary>
+        protected override void StopProcessing()
+        {
+            _config = null;
+            base.StopProcessing();
+        }
+    }
+    #endregion
+
+    #region Register-MFAPrimaryAuthentication
+    /// <summary>
+    /// <para type="synopsis">Register MFA threat detection system.</para>
+    /// <para type="description">Register MFA threat detection system. Activate it</para>
+    /// </summary>
+    /// <example>
+    ///   <para>Register-MFAThreatDetectionSystem</para>
+    ///   <para>Only available for ADFS 2019 and Up.</para>
+    /// </example>
+    [Cmdlet(VerbsLifecycle.Register, "MFAThreatDetectionSystem", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
+    [PrimaryServerRequired, ADFS2019Required]
+    public sealed class RegisterMFAThreatDetectionSystem : MFACmdlet
+    {
+        /// <summary>
+        /// BeginProcessing method implementation
+        /// </summary>
+        protected override void BeginProcessing()
+        {
+            base.BeginProcessing();
+            try
+            {
+                ManagementService.Initialize(this.Host, true);
+            }
+            catch (Exception ex)
+            {
+                this.ThrowTerminatingError(new ErrorRecord(ex, "3011", ErrorCategory.OperationStopped, this));
+            }
+        }
+
+        /// <summary>
+        /// ProcessRecord method override
+        /// </summary>
+        protected override void ProcessRecord()
+        {
+            try
+            {
+                if (ShouldProcess("Register-MFAThreatDetectionSystem", "Register MFA Threat Detection module for ADFS"))
+                {
+                    PSHost hh = GetHostForVerbose();
+                    if (ManagementService.RegisterMFAThreatDetectionSystem(hh))
+                        this.Host.UI.WriteLine(ConsoleColor.Green, this.Host.UI.RawUI.BackgroundColor, String.Format(infos_strings.InfosThreatSystemRegistered));
+                    else
+                        this.Host.UI.WriteLine(ConsoleColor.Yellow, this.Host.UI.RawUI.BackgroundColor, String.Format(infos_strings.InfosThreatSystemNotRegistered));
+                }
+            }
+            catch (Exception ex)
+            {
+                this.ThrowTerminatingError(new ErrorRecord(ex, "3012", ErrorCategory.OperationStopped, this));
+            }
+        }
+    }
+    #endregion
+
+    #region UnRegister-MFAThreatDetectionSystem
+    /// <summary>
+    /// <para type="synopsis">UnRegister MFA threat detection system.</para>
+    /// <para type="description">UnRegister MFA threat detection system. DeActivate it</para>
+    /// </summary>
+    /// <example>
+    ///   <para>UnRegister-MFAThreatDetectionSystem</para>
+    ///   <para>Only available for ADFS 2019 and Up.</para>    /// </example>
+    [Cmdlet(VerbsLifecycle.Unregister, "MFAThreatDetectionSystem", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
+    [PrimaryServerRequired, ADFS2019Required]
+    public sealed class UnRegisterMFAThreatDetectionSystem : MFACmdlet
+    {
+        /// <summary>
+        /// BeginProcessing method implementation
+        /// </summary>
+        protected override void BeginProcessing()
+        {
+            base.BeginProcessing();
+            try
+            {
+                ManagementService.Initialize(this.Host, true);
+            }
+            catch (Exception ex)
+            {
+                this.ThrowTerminatingError(new ErrorRecord(ex, "3013", ErrorCategory.OperationStopped, this));
+            }
+        }
+
+        /// <summary>
+        /// ProcessRecord method override
+        /// </summary>
+        protected override void ProcessRecord()
+        {
+            try
+            {
+                if (ShouldProcess("UnRegister-MFAThreatDetectionSystem", "UnRegister MFA Threat Detection module for ADFS"))
+                {
+                    PSHost hh = GetHostForVerbose();
+                    if (ManagementService.UnRegisterMFAThreatDetectionSystem(hh))
+                        this.Host.UI.WriteLine(ConsoleColor.Green, this.Host.UI.RawUI.BackgroundColor, String.Format(infos_strings.InfosThreatSystemUnRegistered));
+                    else
+                        this.Host.UI.WriteLine(ConsoleColor.Yellow, this.Host.UI.RawUI.BackgroundColor, String.Format(infos_strings.InfosThreatSystemNotUnRegistered));
+                }
+            }
+            catch (Exception ex)
+            {
+                this.ThrowTerminatingError(new ErrorRecord(ex, "3014", ErrorCategory.OperationStopped, this));
+            }
+        }
+    }
+    #endregion
+
+    #region Update-MFAThreatDetectionData
+    /// <summary>
+    /// <para type="synopsis">Update MFA threat detection data.</para>
+    /// <para type="description">Update MFA threat detection data.</para>
+    /// </summary>
+    /// <example>
+    ///   <para>Update-MFAThreatDetectionData</para>
+    ///   <para>Only available for ADFS 2019 and Up.</para>    /// </example>
+    [Cmdlet(VerbsData.Update, "MFAThreatDetectionData", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
+    [PrimaryServerRequired, ADFS2019Required]
+    public sealed class UpdateMFAThreatDetectionData : MFACmdlet
+    {
+        /// <summary>
+        /// BeginProcessing method implementation
+        /// </summary>
+        protected override void BeginProcessing()
+        {
+            base.BeginProcessing();
+            try
+            {
+                ManagementService.Initialize(this.Host, true);
+            }
+            catch (Exception ex)
+            {
+                this.ThrowTerminatingError(new ErrorRecord(ex, "3013", ErrorCategory.OperationStopped, this));
+            }
+        }
+
+        /// <summary>
+        /// ProcessRecord method override
+        /// </summary>
+        protected override void ProcessRecord()
+        {
+            try
+            {
+                if (ShouldProcess("Update-MFAThreatDetectionData", "Update MFA Threat Detection data for ADFS"))
+                {
+                    PSHost hh = GetHostForVerbose();
+                    if (ManagementService.UpdateMFAThreatDetectionData(hh))
+                        this.Host.UI.WriteLine(ConsoleColor.Green, this.Host.UI.RawUI.BackgroundColor, String.Format(infos_strings.InfosThreatDataUpdated));
+                    else
+                        this.Host.UI.WriteLine(ConsoleColor.Yellow, this.Host.UI.RawUI.BackgroundColor, String.Format(infos_strings.InfosThreatDataNotUpdated));
+                }
+            }
+            catch (Exception ex)
+            {
+                this.ThrowTerminatingError(new ErrorRecord(ex, "3014", ErrorCategory.OperationStopped, this));
+            }
         }
     }
     #endregion
@@ -7065,6 +7295,21 @@ namespace MFA
         {
         }
     }
+
+    /// <summary>
+    /// <para type="synopsis">Attribute for checking for ADFS 2019 version for Cmdlets in MFA System.</para>
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Class)]
+    public class ADFS2019RequiredAttribute : Attribute
+    {
+        /// <summary>
+        /// ADFS2019RequiredAttribute constructor
+        /// </summary>
+        public ADFS2019RequiredAttribute()
+        {
+
+        }
+    }  
     #endregion
 
 }

@@ -526,6 +526,7 @@ namespace Neos.IdentityServer.MultiFactor
                 CustomUpdatePassword = true;
                 KeepMySelectedOptionOn = true;
                 ChangeNotificationsOn = true;
+                IsPrimaryAuhentication = false;
                 DefaultCountryCode = "fr";
                 AdminContact = "adminmfa@contoso.com";
                 UserFeatures = (UserFeaturesOptions.AllowDisabled | UserFeaturesOptions.AllowUnRegistered | UserFeaturesOptions.AllowManageOptions | UserFeaturesOptions.AllowChangePassword | UserFeaturesOptions.AllowEnrollment);
@@ -625,6 +626,7 @@ namespace Neos.IdentityServer.MultiFactor
             DefaultProviderMethod = PreferredMethod.Choose;
             ReplayLevel = ReplayLevel.Disabled;
             UseUIPaginated = false;
+            IsPrimaryAuhentication = false;
             UserFeatures = (UserFeaturesOptions.AllowDisabled | UserFeaturesOptions.AllowUnRegistered | UserFeaturesOptions.AllowManageOptions | UserFeaturesOptions.AllowChangePassword);
 
             if (string.IsNullOrEmpty(Hosts.SQLServerHost.ConnectionString))
@@ -789,6 +791,9 @@ namespace Neos.IdentityServer.MultiFactor
 
         [XmlElement("UseUIPaginated")]
         public bool UseUIPaginated { get; set; } = false;
+
+        [XmlElement("IsPrimaryAuhentication")]
+        public bool IsPrimaryAuhentication { get; set; } = false;
 
         [XmlElement("LastUpdated")]
         public DateTime LastUpdated { get; set; }

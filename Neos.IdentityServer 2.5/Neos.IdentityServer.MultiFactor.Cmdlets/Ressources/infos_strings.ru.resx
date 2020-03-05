@@ -186,4 +186,22 @@
   <data name="InfosADFSCertificateChanged" xml:space="preserve">
     <value>Сертификат ADFS правильно создан ! Вы должны развернуть этот сертификат на всех серверах ADFS.</value>
   </data>
+  <data name="InfosThreatSystemRegistered" xml:space="preserve">
+    <value>Система угроз MFA правильно зарегистрирована !</value>
+  </data>
+  <data name="InfosThreatSystemUnRegistered" xml:space="preserve">
+    <value>Система MFA Threat правильно настроена !</value>
+  </data>
+  <data name="InfosThreatSystemNotRegistered" xml:space="preserve">
+    <value>MFA Угроза система не была правильно зарегистрирована !</value>
+  </data>
+  <data name="InfosThreatSystemNotUnRegistered" xml:space="preserve">
+    <value>MFA Угроза система не была правильно ненастроены !</value>
+  </data>
+  <data name="InfosThreatDataNotUpdated" xml:space="preserve">
+    <value>Данные системы угроз МИД не были правильно обновлены !</value>
+  </data>
+  <data name="InfosThreatDataUpdated" xml:space="preserve">
+    <value>Данные системы угроз МИД правильно обновлены !</value>
+  </data>
 </root>
