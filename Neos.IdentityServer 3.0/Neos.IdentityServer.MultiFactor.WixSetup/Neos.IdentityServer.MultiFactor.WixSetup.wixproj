@@ -1,0 +1,218 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" InitialTargets="EnsureWixToolsetInstalled" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>3.10</ProductVersion>
+    <ProjectGuid>dac67ed4-89fe-46cb-866d-c0cb52fc6115</ProjectGuid>
+    <SchemaVersion>2.0</SchemaVersion>
+    <OutputName>adfsmfa</OutputName>
+    <OutputType>Package</OutputType>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <OutputPath>bin\$(Configuration)\</OutputPath>
+    <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
+    <DefineConstants>
+    </DefineConstants>
+    <CompilerAdditionalOptions>
+    </CompilerAdditionalOptions>
+    <LinkerAdditionalOptions>
+    </LinkerAdditionalOptions>
+    <SuppressPdbOutput>True</SuppressPdbOutput>
+    <LeaveTemporaryFiles>True</LeaveTemporaryFiles>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <OutputPath>bin\$(Configuration)\</OutputPath>
+    <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
+    <DefineConstants>
+    </DefineConstants>
+    <OutputPath>bin\$(Platform)\$(Configuration)\</OutputPath>
+    <IntermediateOutputPath>obj\$(Platform)\$(Configuration)\</IntermediateOutputPath>
+    <SuppressPdbOutput>True</SuppressPdbOutput>
+    <LeaveTemporaryFiles>True</LeaveTemporaryFiles>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
+    <OutputPath>bin\$(Platform)\$(Configuration)\</OutputPath>
+    <IntermediateOutputPath>obj\$(Platform)\$(Configuration)\</IntermediateOutputPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Product.wxs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Neos.IdentityServer.Common.Admin\Neos.IdentityServer.MultiFactor.Administration.csproj">
+      <Name>Neos.IdentityServer.MultiFactor.Administration</Name>
+      <Project>{bb08dc85-4e6e-4220-a0fc-01bfb6c468f6}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLFOLDER</RefTargetDir>
+    </ProjectReference>
+    <ProjectReference Include="..\Neos.IdentityServer.Common\Neos.IdentityServer.MultiFactor.Common.csproj">
+      <Name>Neos.IdentityServer.MultiFactor.Common</Name>
+      <Project>{15b3e0d2-6217-493a-a690-158c497f5318}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLFOLDER</RefTargetDir>
+    </ProjectReference>
+    <ProjectReference Include="..\Neos.IdentityServer.Console.NativeResources\Win32Project1.vcxproj">
+      <Name>Neos.IdentityServer.Console.NativeResources</Name>
+      <Project>{c2740f84-46ef-449d-abf2-8268c9a4ce02}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLFOLDER</RefTargetDir>
+    </ProjectReference>
+    <ProjectReference Include="..\Neos.IdentityServer.Console\Neos.IdentityServer.Console.csproj">
+      <Name>Neos.IdentityServer.Console</Name>
+      <Project>{602e2a57-36af-4125-9a44-d893033339ff}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLFOLDER</RefTargetDir>
+    </ProjectReference>
+    <ProjectReference Include="..\Neos.IdentityServer.Deployment\Neos.IdentityServer.Deployment.csproj">
+      <Name>Neos.IdentityServer.Deployment</Name>
+      <Project>{713c4d81-3780-4d5a-a691-878f48eca43c}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLFOLDER</RefTargetDir>
+    </ProjectReference>
+    <ProjectReference Include="..\Neos.IdentityServer.MultiFactor.Cmdlets\Neos.IdentityServer.MultiFactor.Cmdlets.csproj">
+      <Name>Neos.IdentityServer.MultiFactor.Cmdlets</Name>
+      <Project>{0230474c-739a-4e0e-8460-53ccdee5038e}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLFOLDER</RefTargetDir>
+    </ProjectReference>
+    <ProjectReference Include="..\Neos.IdentityServer.MultiFactor.DataTypes\Neos.IdentityServer.MultiFactor.DataTypes.csproj">
+      <Name>Neos.IdentityServer.MultiFactor.DataTypes</Name>
+      <Project>{9b735255-31a8-4ff5-a918-fc47d4a95f38}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLFOLDER</RefTargetDir>
+    </ProjectReference>
+    <ProjectReference Include="..\Neos.IdentityServer.Multifactor.Keys.Sample\Neos.IdentityServer.Multifactor.Keys.Sample.csproj">
+      <Name>Neos.IdentityServer.Multifactor.Keys.Sample</Name>
+      <Project>{2c8e9d71-15f8-41b5-b4e4-f24036e3e8ac}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLFOLDER</RefTargetDir>
+    </ProjectReference>
+    <ProjectReference Include="..\Neos.IdentityServer.MultiFactor.NotificationHub\Neos.IdentityServer.MultiFactor.NotificationHub.csproj">
+      <Name>Neos.IdentityServer.MultiFactor.NotificationHub</Name>
+      <Project>{cdc9e4d1-379c-42b4-a28d-c7f833306e60}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLFOLDER</RefTargetDir>
+    </ProjectReference>
+    <ProjectReference Include="..\Neos.IdentityServer.MultiFactor.Notifications\Neos.IdentityServer.MultiFactor.Notifications.csproj">
+      <Name>Neos.IdentityServer.MultiFactor.Notifications</Name>
+      <Project>{8a7bc531-d51b-4cd3-a904-3c96746cf847}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLFOLDER</RefTargetDir>
+    </ProjectReference>
+    <ProjectReference Include="..\Neos.IdentityServer.Multifactor.Samples\Neos.IdentityServer.MultiFactor.Samples.csproj">
+      <Name>Neos.IdentityServer.MultiFactor.Samples</Name>
+      <Project>{c773c4c7-4b95-4836-b770-66e9dd3f42f3}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLFOLDER</RefTargetDir>
+    </ProjectReference>
+    <ProjectReference Include="..\Neos.IdentityServer.MultiFactor.SAS.Azure\Neos.IdentityServer.MultiFactor.SAS.Azure.csproj">
+      <Name>Neos.IdentityServer.MultiFactor.SAS.Azure</Name>
+      <Project>{e5f29a61-0e62-46aa-86b4-cb5587980490}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLFOLDER</RefTargetDir>
+    </ProjectReference>
+    <ProjectReference Include="..\Neos.IdentityServer.MultiFactor.SMS.Azure\Neos.IdentityServer.MultiFactor.SMS.Azure.csproj">
+      <Name>Neos.IdentityServer.MultiFactor.SMS.Azure</Name>
+      <Project>{2e81e6eb-21c0-419e-a4ca-bc87332c5e3b}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLFOLDER</RefTargetDir>
+    </ProjectReference>
+    <ProjectReference Include="..\Neos.IdentityServer.Multifactor.ThreatDetection\Neos.IdentityServer.MultiFactor.ThreatDetection.csproj">
+      <Name>Neos.IdentityServer.MultiFactor.ThreatDetection</Name>
+      <Project>{f8269f12-ac2b-4bdb-bec8-6036817376f4}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLFOLDER</RefTargetDir>
+    </ProjectReference>
+    <ProjectReference Include="..\Neos.IdentityServer.MultiFactor.WebAuthN.Common\Neos.IdentityServer.MultiFactor.WebAuthN.Common.csproj">
+      <Name>Neos.IdentityServer.MultiFactor.WebAuthN.Common</Name>
+      <Project>{3bac37f8-8cfb-4e07-b51e-2e652852655b}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLFOLDER</RefTargetDir>
+    </ProjectReference>
+    <ProjectReference Include="..\Neos.IdentityServer.MultiFactor.WebAuthN.Core\Neos.IdentityServer.MultiFactor.WebAuthN.Core.csproj">
+      <Name>Neos.IdentityServer.MultiFactor.WebAuthN.Core</Name>
+      <Project>{4ff1d08c-6886-4323-a82e-6f198acafef0}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLFOLDER</RefTargetDir>
+    </ProjectReference>
+    <ProjectReference Include="..\Neos.IdentityServer.MultiFactor.WebAuthN.Provider\Neos.IdentityServer.MultiFactor.WebAuthN.Provider.csproj">
+      <Name>Neos.IdentityServer.MultiFactor.WebAuthN.Provider</Name>
+      <Project>{4d0c01bf-2fd7-43c0-8650-99edecf4c939}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLFOLDER</RefTargetDir>
+    </ProjectReference>
+    <ProjectReference Include="..\Neos.IdentityServer.MultiFactor\Neos.IdentityServer.MultiFactor.csproj">
+      <Name>Neos.IdentityServer.MultiFactor</Name>
+      <Project>{9345809f-d53a-4527-b8dd-f815f5570fb3}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLFOLDER</RefTargetDir>
+    </ProjectReference>
+    <ProjectReference Include="..\Neos.IdentityServer.MutltiFactor.Data\Neos.IdentityServer.MultiFactor.Data.csproj">
+      <Name>Neos.IdentityServer.MultiFactor.Data</Name>
+      <Project>{5bc496b8-5b91-4d5f-99ad-66f958bf2de9}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLFOLDER</RefTargetDir>
+    </ProjectReference>
+    <ProjectReference Include="..\Neos.IdentityServer.QrCodeNet\Neos.IdentityServer.MultiFactor.QRCodeNet.csproj">
+      <Name>Neos.IdentityServer.MultiFactor.QRCodeNet</Name>
+      <Project>{aa3fd0c4-5577-4327-8486-aa4f5903db9b}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLFOLDER</RefTargetDir>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(WixTargetsPath)" Condition=" '$(WixTargetsPath)' != '' " />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\Wix.targets" Condition=" '$(WixTargetsPath)' == '' AND Exists('$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\Wix.targets') " />
+  <Target Name="EnsureWixToolsetInstalled" Condition=" '$(WixTargetsImported)' != 'true' ">
+    <Error Text="The WiX Toolset v3.11 (or newer) build tools must be installed to build this project. To download the WiX Toolset, see http://wixtoolset.org/Debugs/" />
+  </Target>
+  <!--
+	To modify your build process, add your task inside one of the targets below and uncomment it.
+	Other similar extension points exist, see Wix.targets.
+	<Target Name="BeforeBuild">
+	</Target>
+	<Target Name="AfterBuild">
+	</Target>
+	-->
+</Project>

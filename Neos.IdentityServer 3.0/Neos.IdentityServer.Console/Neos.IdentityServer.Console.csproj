@@ -1,0 +1,1308 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{602E2A57-36AF-4125-9A44-D893033339FF}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Neos.IdentityServer.Console</RootNamespace>
+    <AssemblyName>Neos.IdentityServer.Console</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>Neos.IdentityServer.pfx</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.ManagementConsole, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\MMC\v3.0\Microsoft.ManagementConsole.dll</HintPath>
+      <Private>True</Private>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="System" />
+    <Reference Include="System.Configuration.Install" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Design" />
+    <Reference Include="System.DirectoryServices" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.Management.Automation, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Windows\Microsoft.NET\assembly\GAC_MSIL\System.Management.Automation\v4.0_3.0.0.0__31bf3856ad364e35\System.Management.Automation.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Controls\Neos.IdentityServer.Console.Ctrls.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\Neos.IdentityServer.Console.UserCommonPropsControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\Neos.IdentityServer.Console.UserCommonPropsControl.Designer.cs">
+      <DependentUpon>Neos.IdentityServer.Console.UserCommonPropsControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Neos.IdentityServer.Console.UserKeysControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\Neos.IdentityServer.Console.UserKeysControl.Designer.cs">
+      <DependentUpon>Neos.IdentityServer.Console.UserKeysControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Neos.IdentityServer.Console.UserPropsControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\Neos.IdentityServer.Console.UserPropsControl.Designer.cs">
+      <DependentUpon>Neos.IdentityServer.Console.UserPropsControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Neos.IdentityServer.Comsole.ServiceViewControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\Neos.IdentityServer.Comsole.ServiceViewControl.Designer.cs">
+      <DependentUpon>Neos.IdentityServer.Comsole.ServiceViewControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Neos.IdentityServer.Console.ADDSViewControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\Neos.IdentityServer.Console.ADDSViewControl.Designer.cs">
+      <DependentUpon>Neos.IdentityServer.Console.ADDSViewControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Neos.IdentityServer.Console.DatabaseWizard.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Neos.IdentityServer.Console.DatabaseWizard.Designer.cs">
+      <DependentUpon>Neos.IdentityServer.Console.DatabaseWizard.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Neos.IdentityServer.Console.SecurityWSMANViewControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\Neos.IdentityServer.Console.SecurityWSMANViewControl.Designer.cs">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityWSMANViewControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Neos.IdentityServer.Console.StorageViewControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\Neos.IdentityServer.Console.StorageViewControl.Designer.cs">
+      <DependentUpon>Neos.IdentityServer.Console.StorageViewControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Neos.IdentityServer.Console.GeneralViewControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\Neos.IdentityServer.Console.GeneralViewControl.Designer.cs">
+      <DependentUpon>Neos.IdentityServer.Console.GeneralViewControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Neos.IdentityServer.Console.LDAPWizard.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Neos.IdentityServer.Console.LDAPWizard.Designer.cs">
+      <DependentUpon>Neos.IdentityServer.Console.LDAPWizard.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Neos.IdentityServer.Console.BiometricsViewControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\Neos.IdentityServer.Console.BiometricsViewControl.Designer.cs">
+      <DependentUpon>Neos.IdentityServer.Console.BiometricsViewControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Neos.IdentityServer.Console.RootViewControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\Neos.IdentityServer.Console.RootViewControl.Designer.cs">
+      <DependentUpon>Neos.IdentityServer.Console.RootViewControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Neos.IdentityServer.Console.AzureViewControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\Neos.IdentityServer.Console.AzureViewControl.Designer.cs">
+      <DependentUpon>Neos.IdentityServer.Console.AzureViewControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Neos.IdentityServer.Console.SecurityRootViewControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\Neos.IdentityServer.Console.SecurityRootViewControl.Designer.cs">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityRootViewControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Neos.IdentityServer.Console.SecurityRSAXViewControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\Neos.IdentityServer.Console.SecurityRSAXViewControl.Designer.cs">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityRSAXViewControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Neos.IdentityServer.Console.SecurityRSAViewControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\Neos.IdentityServer.Console.SecurityRSAViewControl.Designer.cs">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityRSAViewControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Neos.IdentityServer.Console.SecurityRNGViewControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\Neos.IdentityServer.Console.SecurityRNGViewControl.Designer.cs">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityRNGViewControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Neos.IdentityServer.Console.SecurityWebAuthNViewControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\Neos.IdentityServer.Console.SecurityWebAuthNViewControl.Designer.cs">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityWebAuthNViewControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Neos.IdentityServer.Console.SMSViewControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\Neos.IdentityServer.Console.SMSViewControl.Designer.cs">
+      <DependentUpon>Neos.IdentityServer.Console.SMSViewControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Neos.IdentityServer.Console.ProvidersViewControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\Neos.IdentityServer.Console.ProvidersViewControl.Designer.cs">
+      <DependentUpon>Neos.IdentityServer.Console.ProvidersViewControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Neos.IdentityServer.Console.SMTPViewControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\Neos.IdentityServer.Console.SMTPViewControl.Designer.cs">
+      <DependentUpon>Neos.IdentityServer.Console.SMTPViewControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Neos.IdentityServer.Console.SQLViewControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\Neos.IdentityServer.Console.SQLViewControl.Designer.cs">
+      <DependentUpon>Neos.IdentityServer.Console.SQLViewControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Neos.IdentityServer.Console.UsersViewControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\Neos.IdentityServer.Console.UsersViewControl.Designer.cs">
+      <DependentUpon>Neos.IdentityServer.Console.UsersViewControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Neos.IdentityServer.Console.OTPViewControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\Neos.IdentityServer.Console.OTPViewControl.Designer.cs">
+      <DependentUpon>Neos.IdentityServer.Console.OTPViewControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Neos.IdentityServer.Console.DataContracts.cs" />
+    <Compile Include="Neos.IdentityServer.Console.Utilities.cs" />
+    <Compile Include="PropertyPages\Neos.IdentityServer.Console.UserPropertyPages.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Resources\errors_strings.Designer.cs">
+      <DependentUpon>errors_strings.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Resources\Neos.IdentityServer.Console.Ctrls.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Neos.IdentityServer.Console.Ctrls.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\Neos.IdentityServer.Console.DataContracts.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Neos.IdentityServer.Console.DataContracts.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\Neos.IdentityServer.Console.Nodes.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Neos.IdentityServer.Console.Nodes.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\Neos.IdentityServer.Console.ServiceFormView.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Neos.IdentityServer.Console.ServiceFormView.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\Neos.IdentityServer.Console.Snapin.Designer.cs">
+      <DependentUpon>Neos.IdentityServer.Console.Snapin.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Include="Resources\Neos.IdentityServer.Console.UserPropertyPages.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Neos.IdentityServer.Console.UserPropertyPages.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\Neos.IdentityServer.Console.UsersFormView.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Neos.IdentityServer.Console.UsersFormView.resx</DependentUpon>
+    </Compile>
+    <Compile Include="ScopeNodes\Neos.IdentityServer.Console.Nodes.cs" />
+    <Compile Include="Forms\Neos.IdentityServer.Console.UserFilterWizard.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Neos.IdentityServer.Console.UserFilterWizard.Designer.cs">
+      <DependentUpon>Neos.IdentityServer.Console.UserFilterWizard.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Neos.IdentityServer.Console.Installer.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Neos.IdentityServer.Console.Installer.Designer.cs">
+      <DependentUpon>Neos.IdentityServer.Console.Installer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Neos.IdentityServer.Console.Snapin.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Views\Neos.IdentityServer.Console.ADDSFormView.cs" />
+    <Compile Include="Views\Neos.IdentityServer.Console.BiometricsFormView.cs" />
+    <Compile Include="Views\Neos.IdentityServer.Console.SecurityWSMANFormView.cs" />
+    <Compile Include="Views\Neos.IdentityServer.Console.StorageFormView.cs" />
+    <Compile Include="Views\Neos.IdentityServer.Console.SecurityRootFormView.cs" />
+    <Compile Include="Views\Neos.IdentityServer.Console.SecurityWebAuthNFormView.cs" />
+    <Compile Include="Views\Neos.IdentityServer.Console.SecurityRSAXFormView.cs" />
+    <Compile Include="Views\Neos.IdentityServer.Console.SecurityRSAFormView.cs" />
+    <Compile Include="Views\Neos.IdentityServer.Console.SecurityRNGFormView.cs" />
+    <Compile Include="Views\Neos.IdentityServer.Console.OTPFormView.cs" />
+    <Compile Include="Views\Neos.IdentityServer.Console.RootFormView.cs" />
+    <Compile Include="Views\Neos.IdentityServer.Console.ServiceFormView.cs" />
+    <Compile Include="Views\Neos.IdentityServer.Console.GeneralFormView.cs" />
+    <Compile Include="Views\Neos.IdentityServer.Console.AzureFormView.cs" />
+    <Compile Include="Views\Neos.IdentityServer.Console.SMSFormView.cs" />
+    <Compile Include="Views\Neos.IdentityServer.Console.ProvidersFormView.cs" />
+    <Compile Include="Views\Neos.IdentityServer.Console.SMTPFormView.cs" />
+    <Compile Include="Views\Neos.IdentityServer.Console.SQLFormView.cs" />
+    <Compile Include="Views\Neos.IdentityServer.Console.UsersFormView.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Controls\Neos.IdentityServer.Console.UserCommonPropsControl.de.resx">
+      <DependentUpon>Neos.IdentityServer.Console.UserCommonPropsControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Neos.IdentityServer.Console.UserCommonPropsControl.es.resx">
+      <DependentUpon>Neos.IdentityServer.Console.UserCommonPropsControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Neos.IdentityServer.Console.UserCommonPropsControl.fr.resx">
+      <DependentUpon>Neos.IdentityServer.Console.UserCommonPropsControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Neos.IdentityServer.Console.UserCommonPropsControl.it.resx">
+      <DependentUpon>Neos.IdentityServer.Console.UserCommonPropsControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Neos.IdentityServer.Console.UserCommonPropsControl.nl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.UserCommonPropsControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Neos.IdentityServer.Console.UserCommonPropsControl.pl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.UserCommonPropsControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Neos.IdentityServer.Console.UserCommonPropsControl.pt.resx">
+      <DependentUpon>Neos.IdentityServer.Console.UserCommonPropsControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Neos.IdentityServer.Console.UserCommonPropsControl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.UserCommonPropsControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Neos.IdentityServer.Console.UserCommonPropsControl.ro.resx">
+      <DependentUpon>Neos.IdentityServer.Console.UserCommonPropsControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Neos.IdentityServer.Console.UserCommonPropsControl.ru.resx">
+      <DependentUpon>Neos.IdentityServer.Console.UserCommonPropsControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Neos.IdentityServer.Console.UserCommonPropsControl.sv.resx">
+      <DependentUpon>Neos.IdentityServer.Console.UserCommonPropsControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Neos.IdentityServer.Console.UserKeysControl.de.resx">
+      <DependentUpon>Neos.IdentityServer.Console.UserKeysControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Neos.IdentityServer.Console.UserKeysControl.es.resx">
+      <DependentUpon>Neos.IdentityServer.Console.UserKeysControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Neos.IdentityServer.Console.UserKeysControl.fr.resx">
+      <DependentUpon>Neos.IdentityServer.Console.UserKeysControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Neos.IdentityServer.Console.UserKeysControl.it.resx">
+      <DependentUpon>Neos.IdentityServer.Console.UserKeysControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Neos.IdentityServer.Console.UserKeysControl.nl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.UserKeysControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Neos.IdentityServer.Console.UserKeysControl.pl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.UserKeysControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Neos.IdentityServer.Console.UserKeysControl.pt.resx">
+      <DependentUpon>Neos.IdentityServer.Console.UserKeysControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Neos.IdentityServer.Console.UserKeysControl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.UserKeysControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Neos.IdentityServer.Console.UserKeysControl.ro.resx">
+      <DependentUpon>Neos.IdentityServer.Console.UserKeysControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Neos.IdentityServer.Console.UserKeysControl.ru.resx">
+      <DependentUpon>Neos.IdentityServer.Console.UserKeysControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Neos.IdentityServer.Console.UserKeysControl.sv.resx">
+      <DependentUpon>Neos.IdentityServer.Console.UserKeysControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Neos.IdentityServer.Console.UserPropsControl.de.resx">
+      <DependentUpon>Neos.IdentityServer.Console.UserPropsControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Neos.IdentityServer.Console.UserPropsControl.es.resx">
+      <DependentUpon>Neos.IdentityServer.Console.UserPropsControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Neos.IdentityServer.Console.UserPropsControl.fr.resx">
+      <DependentUpon>Neos.IdentityServer.Console.UserPropsControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Neos.IdentityServer.Console.UserPropsControl.it.resx">
+      <DependentUpon>Neos.IdentityServer.Console.UserPropsControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Neos.IdentityServer.Console.UserPropsControl.nl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.UserPropsControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Neos.IdentityServer.Console.UserPropsControl.pl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.UserPropsControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Neos.IdentityServer.Console.UserPropsControl.pt.resx">
+      <DependentUpon>Neos.IdentityServer.Console.UserPropsControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Neos.IdentityServer.Console.UserPropsControl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.UserPropsControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Neos.IdentityServer.Console.UserPropsControl.ro.resx">
+      <DependentUpon>Neos.IdentityServer.Console.UserPropsControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Neos.IdentityServer.Console.UserPropsControl.ru.resx">
+      <DependentUpon>Neos.IdentityServer.Console.UserPropsControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Neos.IdentityServer.Console.UserPropsControl.sv.resx">
+      <DependentUpon>Neos.IdentityServer.Console.UserPropsControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Comsole.ServiceViewControl.de.resx">
+      <DependentUpon>Neos.IdentityServer.Comsole.ServiceViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Comsole.ServiceViewControl.es.resx">
+      <DependentUpon>Neos.IdentityServer.Comsole.ServiceViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Comsole.ServiceViewControl.fr.resx">
+      <DependentUpon>Neos.IdentityServer.Comsole.ServiceViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Comsole.ServiceViewControl.it.resx">
+      <DependentUpon>Neos.IdentityServer.Comsole.ServiceViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Comsole.ServiceViewControl.nl.resx">
+      <DependentUpon>Neos.IdentityServer.Comsole.ServiceViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Comsole.ServiceViewControl.pl.resx">
+      <DependentUpon>Neos.IdentityServer.Comsole.ServiceViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Comsole.ServiceViewControl.pt.resx">
+      <DependentUpon>Neos.IdentityServer.Comsole.ServiceViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Comsole.ServiceViewControl.resx">
+      <DependentUpon>Neos.IdentityServer.Comsole.ServiceViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Comsole.ServiceViewControl.ro.resx">
+      <DependentUpon>Neos.IdentityServer.Comsole.ServiceViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Comsole.ServiceViewControl.ru.resx">
+      <DependentUpon>Neos.IdentityServer.Comsole.ServiceViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Comsole.ServiceViewControl.sv.resx">
+      <DependentUpon>Neos.IdentityServer.Comsole.ServiceViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.ADDSViewControl.de.resx">
+      <DependentUpon>Neos.IdentityServer.Console.ADDSViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.ADDSViewControl.es.resx">
+      <DependentUpon>Neos.IdentityServer.Console.ADDSViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.ADDSViewControl.fr.resx">
+      <DependentUpon>Neos.IdentityServer.Console.ADDSViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.ADDSViewControl.it.resx">
+      <DependentUpon>Neos.IdentityServer.Console.ADDSViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.ADDSViewControl.nl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.ADDSViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.ADDSViewControl.pl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.ADDSViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.ADDSViewControl.pt.resx">
+      <DependentUpon>Neos.IdentityServer.Console.ADDSViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.ADDSViewControl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.ADDSViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.ADDSViewControl.ro.resx">
+      <DependentUpon>Neos.IdentityServer.Console.ADDSViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.ADDSViewControl.ru.resx">
+      <DependentUpon>Neos.IdentityServer.Console.ADDSViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.ADDSViewControl.sv.resx">
+      <DependentUpon>Neos.IdentityServer.Console.ADDSViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.AzureViewControl.de.resx">
+      <DependentUpon>Neos.IdentityServer.Console.AzureViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.AzureViewControl.es.resx">
+      <DependentUpon>Neos.IdentityServer.Console.AzureViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.AzureViewControl.it.resx">
+      <DependentUpon>Neos.IdentityServer.Console.AzureViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.AzureViewControl.nl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.AzureViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.AzureViewControl.pl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.AzureViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.AzureViewControl.pt.resx">
+      <DependentUpon>Neos.IdentityServer.Console.AzureViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.AzureViewControl.ro.resx">
+      <DependentUpon>Neos.IdentityServer.Console.AzureViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.AzureViewControl.ru.resx">
+      <DependentUpon>Neos.IdentityServer.Console.AzureViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.AzureViewControl.sv.resx">
+      <DependentUpon>Neos.IdentityServer.Console.AzureViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.DatabaseWizard.de.resx">
+      <DependentUpon>Neos.IdentityServer.Console.DatabaseWizard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.DatabaseWizard.es.resx">
+      <DependentUpon>Neos.IdentityServer.Console.DatabaseWizard.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.DatabaseWizard.fr.resx">
+      <DependentUpon>Neos.IdentityServer.Console.DatabaseWizard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.DatabaseWizard.it.resx">
+      <DependentUpon>Neos.IdentityServer.Console.DatabaseWizard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.DatabaseWizard.nl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.DatabaseWizard.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.DatabaseWizard.pl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.DatabaseWizard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.DatabaseWizard.pt.resx">
+      <DependentUpon>Neos.IdentityServer.Console.DatabaseWizard.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.DatabaseWizard.resx">
+      <DependentUpon>Neos.IdentityServer.Console.DatabaseWizard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.DatabaseWizard.ro.resx">
+      <DependentUpon>Neos.IdentityServer.Console.DatabaseWizard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.DatabaseWizard.ru.resx">
+      <DependentUpon>Neos.IdentityServer.Console.DatabaseWizard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.DatabaseWizard.sv.resx">
+      <DependentUpon>Neos.IdentityServer.Console.DatabaseWizard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityWSMANViewControl.de.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityWSMANViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityWSMANViewControl.es.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityWSMANViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityWSMANViewControl.fr.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityWSMANViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityWSMANViewControl.it.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityWSMANViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityWSMANViewControl.nl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityWSMANViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityWSMANViewControl.pl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityWSMANViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityWSMANViewControl.pt.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityWSMANViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityWSMANViewControl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityWSMANViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityWSMANViewControl.ro.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityWSMANViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityWSMANViewControl.ru.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityWSMANViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityWSMANViewControl.sv.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityWSMANViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.StorageViewControl.de.resx">
+      <DependentUpon>Neos.IdentityServer.Console.StorageViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.StorageViewControl.es.resx">
+      <DependentUpon>Neos.IdentityServer.Console.StorageViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.StorageViewControl.fr.resx">
+      <DependentUpon>Neos.IdentityServer.Console.StorageViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.StorageViewControl.it.resx">
+      <DependentUpon>Neos.IdentityServer.Console.StorageViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.StorageViewControl.nl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.StorageViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.StorageViewControl.pl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.StorageViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.StorageViewControl.pt.resx">
+      <DependentUpon>Neos.IdentityServer.Console.StorageViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.StorageViewControl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.StorageViewControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.StorageViewControl.ro.resx">
+      <DependentUpon>Neos.IdentityServer.Console.StorageViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.StorageViewControl.ru.resx">
+      <DependentUpon>Neos.IdentityServer.Console.StorageViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.StorageViewControl.sv.resx">
+      <DependentUpon>Neos.IdentityServer.Console.StorageViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.GeneralViewControl.de.resx">
+      <DependentUpon>Neos.IdentityServer.Console.GeneralViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.GeneralViewControl.es.resx">
+      <DependentUpon>Neos.IdentityServer.Console.GeneralViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.GeneralViewControl.fr.resx">
+      <DependentUpon>Neos.IdentityServer.Console.GeneralViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.GeneralViewControl.it.resx">
+      <DependentUpon>Neos.IdentityServer.Console.GeneralViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.GeneralViewControl.nl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.GeneralViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.GeneralViewControl.pl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.GeneralViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.GeneralViewControl.pt.resx">
+      <DependentUpon>Neos.IdentityServer.Console.GeneralViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.GeneralViewControl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.GeneralViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.GeneralViewControl.ro.resx">
+      <DependentUpon>Neos.IdentityServer.Console.GeneralViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.GeneralViewControl.ru.resx">
+      <DependentUpon>Neos.IdentityServer.Console.GeneralViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.GeneralViewControl.sv.resx">
+      <DependentUpon>Neos.IdentityServer.Console.GeneralViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.LDAPWizard.de.resx">
+      <DependentUpon>Neos.IdentityServer.Console.LDAPWizard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.LDAPWizard.es.resx">
+      <DependentUpon>Neos.IdentityServer.Console.LDAPWizard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.LDAPWizard.fr.resx">
+      <DependentUpon>Neos.IdentityServer.Console.LDAPWizard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.LDAPWizard.it.resx">
+      <DependentUpon>Neos.IdentityServer.Console.LDAPWizard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.LDAPWizard.nl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.LDAPWizard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.LDAPWizard.pl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.LDAPWizard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.LDAPWizard.pt.resx">
+      <DependentUpon>Neos.IdentityServer.Console.LDAPWizard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.LDAPWizard.resx">
+      <DependentUpon>Neos.IdentityServer.Console.LDAPWizard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.LDAPWizard.ro.resx">
+      <DependentUpon>Neos.IdentityServer.Console.LDAPWizard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.LDAPWizard.ru.resx">
+      <DependentUpon>Neos.IdentityServer.Console.LDAPWizard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.LDAPWizard.sv.resx">
+      <DependentUpon>Neos.IdentityServer.Console.LDAPWizard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.BiometricsViewControl.de.resx">
+      <DependentUpon>Neos.IdentityServer.Console.BiometricsViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.BiometricsViewControl.es.resx">
+      <DependentUpon>Neos.IdentityServer.Console.BiometricsViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.BiometricsViewControl.fr.resx">
+      <DependentUpon>Neos.IdentityServer.Console.BiometricsViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.BiometricsViewControl.it.resx">
+      <DependentUpon>Neos.IdentityServer.Console.BiometricsViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.BiometricsViewControl.nl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.BiometricsViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.BiometricsViewControl.pl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.BiometricsViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.BiometricsViewControl.pt.resx">
+      <DependentUpon>Neos.IdentityServer.Console.BiometricsViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.BiometricsViewControl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.BiometricsViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.BiometricsViewControl.ro.resx">
+      <DependentUpon>Neos.IdentityServer.Console.BiometricsViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.BiometricsViewControl.ru.resx">
+      <DependentUpon>Neos.IdentityServer.Console.BiometricsViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.BiometricsViewControl.sv.resx">
+      <DependentUpon>Neos.IdentityServer.Console.BiometricsViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.ProvidersViewControl.de.resx">
+      <DependentUpon>Neos.IdentityServer.Console.ProvidersViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.ProvidersViewControl.es.resx">
+      <DependentUpon>Neos.IdentityServer.Console.ProvidersViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.ProvidersViewControl.it.resx">
+      <DependentUpon>Neos.IdentityServer.Console.ProvidersViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.ProvidersViewControl.nl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.ProvidersViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.ProvidersViewControl.pl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.ProvidersViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.ProvidersViewControl.pt.resx">
+      <DependentUpon>Neos.IdentityServer.Console.ProvidersViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.ProvidersViewControl.ro.resx">
+      <DependentUpon>Neos.IdentityServer.Console.ProvidersViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.ProvidersViewControl.ru.resx">
+      <DependentUpon>Neos.IdentityServer.Console.ProvidersViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.ProvidersViewControl.sv.resx">
+      <DependentUpon>Neos.IdentityServer.Console.ProvidersViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.RootViewControl.de.resx">
+      <DependentUpon>Neos.IdentityServer.Console.RootViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.RootViewControl.es.resx">
+      <DependentUpon>Neos.IdentityServer.Console.RootViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.RootViewControl.fr.resx">
+      <DependentUpon>Neos.IdentityServer.Console.RootViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.RootViewControl.it.resx">
+      <DependentUpon>Neos.IdentityServer.Console.RootViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.RootViewControl.nl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.RootViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.RootViewControl.pl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.RootViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.RootViewControl.pt.resx">
+      <DependentUpon>Neos.IdentityServer.Console.RootViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.RootViewControl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.RootViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.RootViewControl.ro.resx">
+      <DependentUpon>Neos.IdentityServer.Console.RootViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.RootViewControl.ru.resx">
+      <DependentUpon>Neos.IdentityServer.Console.RootViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.RootViewControl.sv.resx">
+      <DependentUpon>Neos.IdentityServer.Console.RootViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRNGViewControl.de.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityRNGViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRNGViewControl.es.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityRNGViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRNGViewControl.it.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityRNGViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRNGViewControl.nl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityRNGViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRNGViewControl.pl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityRNGViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRNGViewControl.pt.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityRNGViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRNGViewControl.ro.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityRNGViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRNGViewControl.ru.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityRNGViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRNGViewControl.sv.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityRNGViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRootViewControl.de.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityRootViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRootViewControl.es.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityRootViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRootViewControl.fr.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityRootViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRootViewControl.it.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityRootViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRootViewControl.nl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityRootViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRootViewControl.pl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityRootViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRootViewControl.pt.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityRootViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRootViewControl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityRootViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRootViewControl.ro.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityRootViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRootViewControl.ru.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityRootViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRootViewControl.sv.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityRootViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRSAViewControl.de.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityRSAViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRSAViewControl.es.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityRSAViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRSAViewControl.it.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityRSAViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRSAViewControl.nl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityRSAViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRSAViewControl.pl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityRSAViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRSAViewControl.pt.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityRSAViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRSAViewControl.ro.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityRSAViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRSAViewControl.ru.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityRSAViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRSAViewControl.sv.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityRSAViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRSAXViewControl.de.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityRSAXViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRSAXViewControl.es.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityRSAXViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRSAXViewControl.fr.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityRSAXViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRSAXViewControl.it.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityRSAXViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRSAXViewControl.nl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityRSAXViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRSAXViewControl.pl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityRSAXViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRSAXViewControl.pt.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityRSAXViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRSAXViewControl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityRSAXViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRSAViewControl.fr.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityRSAViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRSAViewControl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityRSAViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRNGViewControl.fr.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityRNGViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRNGViewControl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityRNGViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRSAXViewControl.ro.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityRSAXViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRSAXViewControl.ru.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityRSAXViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRSAXViewControl.sv.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityRSAXViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.OTPViewControl.de.resx">
+      <DependentUpon>Neos.IdentityServer.Console.OTPViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.OTPViewControl.es.resx">
+      <DependentUpon>Neos.IdentityServer.Console.OTPViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.OTPViewControl.fr.resx">
+      <DependentUpon>Neos.IdentityServer.Console.OTPViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.AzureViewControl.fr.resx">
+      <DependentUpon>Neos.IdentityServer.Console.AzureViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.AzureViewControl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.AzureViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.OTPViewControl.it.resx">
+      <DependentUpon>Neos.IdentityServer.Console.OTPViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.OTPViewControl.nl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.OTPViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.OTPViewControl.pl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.OTPViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.OTPViewControl.pt.resx">
+      <DependentUpon>Neos.IdentityServer.Console.OTPViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.OTPViewControl.ro.resx">
+      <DependentUpon>Neos.IdentityServer.Console.OTPViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.OTPViewControl.ru.resx">
+      <DependentUpon>Neos.IdentityServer.Console.OTPViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.OTPViewControl.sv.resx">
+      <DependentUpon>Neos.IdentityServer.Console.OTPViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityWebAuthNViewControl.de.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityWebAuthNViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityWebAuthNViewControl.es.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityWebAuthNViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityWebAuthNViewControl.fr.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityWebAuthNViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityWebAuthNViewControl.it.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityWebAuthNViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityWebAuthNViewControl.nl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityWebAuthNViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityWebAuthNViewControl.pl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityWebAuthNViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityWebAuthNViewControl.pt.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityWebAuthNViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityWebAuthNViewControl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityWebAuthNViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityWebAuthNViewControl.ro.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityWebAuthNViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityWebAuthNViewControl.ru.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityWebAuthNViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityWebAuthNViewControl.sv.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityWebAuthNViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SMSViewControl.de.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SMSViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SMSViewControl.es.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SMSViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SMSViewControl.fr.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SMSViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SMSViewControl.it.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SMSViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SMSViewControl.nl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SMSViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SMSViewControl.pl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SMSViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SMSViewControl.pt.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SMSViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SMSViewControl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SMSViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.ProvidersViewControl.fr.resx">
+      <DependentUpon>Neos.IdentityServer.Console.ProvidersViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.ProvidersViewControl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.ProvidersViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SMSViewControl.ro.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SMSViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SMSViewControl.ru.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SMSViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SMSViewControl.sv.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SMSViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SMTPViewControl.de.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SMTPViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SMTPViewControl.es.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SMTPViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SMTPViewControl.fr.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SMTPViewControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SMTPViewControl.it.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SMTPViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SMTPViewControl.nl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SMTPViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SMTPViewControl.pl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SMTPViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SMTPViewControl.pt.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SMTPViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SMTPViewControl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SMTPViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SMTPViewControl.ro.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SMTPViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SMTPViewControl.ru.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SMTPViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SMTPViewControl.sv.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SMTPViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SQLViewControl.de.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SQLViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SQLViewControl.es.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SQLViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SQLViewControl.fr.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SQLViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SQLViewControl.it.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SQLViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SQLViewControl.nl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SQLViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SQLViewControl.pl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SQLViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SQLViewControl.pt.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SQLViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SQLViewControl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SQLViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SQLViewControl.ro.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SQLViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SQLViewControl.ru.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SQLViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SQLViewControl.sv.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SQLViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.UserFilterWizard.de.resx">
+      <DependentUpon>Neos.IdentityServer.Console.UserFilterWizard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.UserFilterWizard.es.resx">
+      <DependentUpon>Neos.IdentityServer.Console.UserFilterWizard.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.UserFilterWizard.fr.resx">
+      <DependentUpon>Neos.IdentityServer.Console.UserFilterWizard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.UserFilterWizard.it.resx">
+      <DependentUpon>Neos.IdentityServer.Console.UserFilterWizard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.UserFilterWizard.nl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.UserFilterWizard.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.UserFilterWizard.pl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.UserFilterWizard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.UserFilterWizard.pt.resx">
+      <DependentUpon>Neos.IdentityServer.Console.UserFilterWizard.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.UserFilterWizard.resx">
+      <DependentUpon>Neos.IdentityServer.Console.UserFilterWizard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.UserFilterWizard.ro.resx">
+      <DependentUpon>Neos.IdentityServer.Console.UserFilterWizard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.UserFilterWizard.ru.resx">
+      <DependentUpon>Neos.IdentityServer.Console.UserFilterWizard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.UserFilterWizard.sv.resx">
+      <DependentUpon>Neos.IdentityServer.Console.UserFilterWizard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.UsersViewControl.de.resx">
+      <DependentUpon>Neos.IdentityServer.Console.UsersViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.UsersViewControl.es.resx">
+      <DependentUpon>Neos.IdentityServer.Console.UsersViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.UsersViewControl.fr.resx">
+      <DependentUpon>Neos.IdentityServer.Console.UsersViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.UsersViewControl.it.resx">
+      <DependentUpon>Neos.IdentityServer.Console.UsersViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.UsersViewControl.nl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.UsersViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.UsersViewControl.pl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.UsersViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.UsersViewControl.pt.resx">
+      <DependentUpon>Neos.IdentityServer.Console.UsersViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.UsersViewControl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.UsersViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.OTPViewControl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.OTPViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.UsersViewControl.ro.resx">
+      <DependentUpon>Neos.IdentityServer.Console.UsersViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.UsersViewControl.ru.resx">
+      <DependentUpon>Neos.IdentityServer.Console.UsersViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.UsersViewControl.sv.resx">
+      <DependentUpon>Neos.IdentityServer.Console.UsersViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\errors_strings.de.resx" />
+    <EmbeddedResource Include="Resources\errors_strings.es.resx" />
+    <EmbeddedResource Include="Resources\errors_strings.fr.resx" />
+    <EmbeddedResource Include="Resources\errors_strings.it.resx" />
+    <EmbeddedResource Include="Resources\errors_strings.nl.resx" />
+    <EmbeddedResource Include="Resources\errors_strings.pl.resx" />
+    <EmbeddedResource Include="Resources\errors_strings.pt.resx" />
+    <EmbeddedResource Include="Resources\errors_strings.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>errors_strings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\errors_strings.ro.resx" />
+    <EmbeddedResource Include="Resources\errors_strings.ru.resx" />
+    <EmbeddedResource Include="Resources\errors_strings.sv.resx" />
+    <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.Ctrls.de.resx" />
+    <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.Ctrls.es.resx" />
+    <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.Ctrls.fr.resx" />
+    <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.Ctrls.it.resx" />
+    <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.Ctrls.nl.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.Ctrls.pl.resx" />
+    <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.Ctrls.pt.resx" />
+    <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.Ctrls.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Neos.IdentityServer.Console.Ctrls.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.Ctrls.ro.resx" />
+    <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.Ctrls.ru.resx" />
+    <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.Ctrls.sv.resx" />
+    <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.DataContracts.de.resx" />
+    <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.DataContracts.es.resx" />
+    <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.DataContracts.fr.resx" />
+    <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.DataContracts.it.resx" />
+    <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.DataContracts.nl.resx" />
+    <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.DataContracts.pl.resx" />
+    <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.DataContracts.pt.resx" />
+    <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.DataContracts.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Neos.IdentityServer.Console.DataContracts.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.DataContracts.ro.resx" />
+    <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.DataContracts.ru.resx" />
+    <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.DataContracts.sv.resx" />
+    <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.Nodes.de.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.Nodes.es.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.Nodes.fr.resx" />
+    <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.Nodes.it.resx" />
+    <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.Nodes.nl.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.Nodes.pl.resx" />
+    <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.Nodes.pt.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.Nodes.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Neos.IdentityServer.Console.Nodes.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.Nodes.ro.resx" />
+    <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.Nodes.ru.resx" />
+    <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.Nodes.sv.resx" />
+    <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.ServiceFormView.de.resx" />
+    <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.ServiceFormView.es.resx" />
+    <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.ServiceFormView.fr.resx" />
+    <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.ServiceFormView.it.resx" />
+    <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.ServiceFormView.nl.resx" />
+    <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.ServiceFormView.pl.resx" />
+    <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.ServiceFormView.pt.resx" />
+    <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.ServiceFormView.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Neos.IdentityServer.Console.ServiceFormView.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.ServiceFormView.ro.resx" />
+    <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.ServiceFormView.ru.resx" />
+    <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.ServiceFormView.sv.resx" />
+    <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.Snapin.resx">
+      <SubType>Designer</SubType>
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Neos.IdentityServer.Console.Snapin.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.UserPropertyPages.de.resx" />
+    <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.UserPropertyPages.es.resx" />
+    <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.UserPropertyPages.fr.resx" />
+    <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.UserPropertyPages.it.resx" />
+    <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.UserPropertyPages.nl.resx" />
+    <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.UserPropertyPages.pl.resx" />
+    <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.UserPropertyPages.pt.resx" />
+    <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.UserPropertyPages.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Neos.IdentityServer.Console.UserPropertyPages.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.UserPropertyPages.ro.resx" />
+    <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.UserPropertyPages.ru.resx" />
+    <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.UserPropertyPages.sv.resx" />
+    <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.UsersFormView.de.resx" />
+    <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.UsersFormView.es.resx" />
+    <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.UsersFormView.fr.resx" />
+    <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.UsersFormView.it.resx" />
+    <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.UsersFormView.nl.resx" />
+    <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.UsersFormView.pl.resx" />
+    <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.UsersFormView.pt.resx" />
+    <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.UsersFormView.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Neos.IdentityServer.Console.UsersFormView.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.UsersFormView.ro.resx" />
+    <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.UsersFormView.ru.resx" />
+    <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.UsersFormView.sv.resx" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Neos.IdentityServer.Common.Admin\Neos.IdentityServer.MultiFactor.Administration.csproj">
+      <Project>{bb08dc85-4e6e-4220-a0fc-01bfb6c468f6}</Project>
+      <Name>Neos.IdentityServer.MultiFactor.Administration</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Neos.IdentityServer.Common\Neos.IdentityServer.MultiFactor.Common.csproj">
+      <Project>{15b3e0d2-6217-493a-a690-158c497f5318}</Project>
+      <Name>Neos.IdentityServer.MultiFactor.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Neos.IdentityServer.MultiFactor.DataTypes\Neos.IdentityServer.MultiFactor.DataTypes.csproj">
+      <Project>{9b735255-31a8-4ff5-a918-fc47d4a95f38}</Project>
+      <Name>Neos.IdentityServer.MultiFactor.DataTypes</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Neos.IdentityServer.MultiFactor.Notifications\Neos.IdentityServer.MultiFactor.Notifications.csproj">
+      <Project>{8a7bc531-d51b-4cd3-a904-3c96746cf847}</Project>
+      <Name>Neos.IdentityServer.MultiFactor.Notifications</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Neos.IdentityServer.QrCodeNet\Neos.IdentityServer.MultiFactor.QRCodeNet.csproj">
+      <Project>{AA3FD0C4-5577-4327-8486-AA4F5903DB9B}</Project>
+      <Name>Neos.IdentityServer.MultiFactor.QRCodeNet</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Neos.IdentityServer.pfx" />
+    <None Include="Properties\DataSources\Neos.IdentityServer.MultiFactor.Admin.MMCRegistrationList.datasource" />
+    <None Include="Properties\DataSources\Neos.IdentityServer.MultiFactor.Admin.UsersFilterFieldList.datasource" />
+    <None Include="Properties\DataSources\Neos.IdentityServer.MultiFactor.Admin.UsersFilterOperatorList.datasource" />
+    <None Include="Properties\DataSources\Neos.IdentityServer.MultiFactor.Admin.UsersPreferredMethodList.datasource" />
+    <None Include="ResFiles\dsuiext_4126.ico" />
+    <None Include="SnapMMC\import.csv" />
+    <None Include="SnapMMC\MFA.msc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ResFiles\dsuiext_4129.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ResFiles\folder16.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ResFiles\folder32.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="ResFiles\user_off16.bmp" />
+    <Content Include="ResFiles\user_off32.bmp" />
+    <Content Include="ResFiles\user_on16.bmp" />
+    <Content Include="ResFiles\user_on32.bmp" />
+    <Content Include="SnapMMC\HowToLocalize.txt" />
+    <Content Include="SnapMMC\import.xml" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

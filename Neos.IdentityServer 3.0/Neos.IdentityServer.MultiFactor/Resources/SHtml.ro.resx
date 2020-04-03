@@ -1,0 +1,288 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="GLOBALListChoiceDefaultLabel" xml:space="preserve">
+    <value>Utilizarea opțiunii implicite</value>
+  </data>
+  <data name="HtmlChangeConfiguration" xml:space="preserve">
+    <value>Modificarea opțiunilor de configurare</value>
+  </data>
+  <data name="HtmlChangePassword" xml:space="preserve">
+    <value>Modificarea parolei</value>
+  </data>
+  <data name="HtmlCHOOSEOptionRemember" xml:space="preserve">
+    <value>Amintiți-vă selecția mea</value>
+  </data>
+  <data name="HtmlCHOOSEOptionRemember2" xml:space="preserve">
+    <value>Mod de autentificare implicit</value>
+  </data>
+  <data name="HtmlCHOOSEOptionSendCode" xml:space="preserve">
+    <value>Trimitere cod</value>
+  </data>
+  <data name="HtmlEnrollBiometric" xml:space="preserve">
+    <value>Înscrierea dispozitivului meu biometric</value>
+  </data>
+  <data name="HtmlEnrollBiometrics" xml:space="preserve">
+    <value>Înscrierea dispozitivului meu biometric</value>
+  </data>
+  <data name="HtmlEnrollEmail" xml:space="preserve">
+    <value>Înscrierea adresei mele personale de e-mail</value>
+  </data>
+  <data name="HtmlEnrollOTP" xml:space="preserve">
+    <value>Înscrierea aplicației mele de autentificare</value>
+  </data>
+  <data name="HtmlEnrollPhone" xml:space="preserve">
+    <value>Înscrierea telefonului meu</value>
+  </data>
+  <data name="HtmlEnrollPinCode" xml:space="preserve">
+    <value>Setarea codului PIN</value>
+  </data>
+  <data name="HtmlEnrollPinTaskLabel" xml:space="preserve">
+    <value>Configurarea unui cod PIN</value>
+  </data>
+  <data name="HtmlErrorRestartSession" xml:space="preserve">
+    <value>Identificare greșită, vă rugăm să reporniți sesiunea</value>
+  </data>
+  <data name="HtmlINSRequest" xml:space="preserve">
+    <value>Trimite cerere</value>
+  </data>
+  <data name="HtmlINSWaitRequest" xml:space="preserve">
+    <value>Trimiterea cererii de inscripționare prin e-mail către administratori</value>
+  </data>
+  <data name="HtmlLabelVERIFYOTPOK" xml:space="preserve">
+    <value>Termina</value>
+  </data>
+  <data name="HtmlLabelVERIFYOTPPRIOR" xml:space="preserve">
+    <value>Anterioare</value>
+  </data>
+  <data name="HtmlLabelWREGOTP" xml:space="preserve">
+    <value>Trebuie să aveți o aplicație de autentificare, ar fi Microsoft Authenticator, Google Authenticator instalat pe dispozitiv înainte de a putea continua și înregistra contul dvs.</value>
+  </data>
+  <data name="HtmlLabelWREGOTPWarning" xml:space="preserve">
+    <value>Continuând, cheia curentă va fi invalidată și reinițializată</value>
+  </data>
+  <data name="HtmlLabelWREmail" xml:space="preserve">
+    <value>Trebuie să introduci o adresă de e-mail pentru a confirma identificarea ta. Acest e-mail trebuie să fie accesibil fără a necesita verificarea întreprinderii (adresa de e-mail personală)</value>
+  </data>
+  <data name="HtmlLabelWRPhone" xml:space="preserve">
+    <value>Trebuie să introduceți numărul de telefon pentru a vă confirma identitatea. Acest telefon trebuie să fie accesibil.</value>
+  </data>
+  <data name="HtmlLabelWRPinCode" xml:space="preserve">
+    <value>Trebuie să introduceți un cod secret (4 cifre) pentru a vă valida identitatea. Asigurați-vă că nu folosiți codurile cardului bancar sau ale telefonului, precum și detaliile referitoare la data nașterii.</value>
+  </data>
+  <data name="HtmlLabelWRQRCode" xml:space="preserve">
+    <value>Scanați codul QR cu o aplicație TOTP precum Microsoft Authenticator, Google Authenticator pentru înregistrarea contului dvs.</value>
+  </data>
+  <data name="HtmlLabelWVERIFYOTP" xml:space="preserve">
+    <value>Continua</value>
+  </data>
+  <data name="HtmlPWDCancel" xml:space="preserve">
+    <value>Anula</value>
+  </data>
+  <data name="HtmlPWDLabelActual" xml:space="preserve">
+    <value>Parola curenta</value>
+  </data>
+  <data name="HtmlPWDLabelNew" xml:space="preserve">
+    <value>Parolă nouă</value>
+  </data>
+  <data name="HtmlPWDLabelNewConfirmation" xml:space="preserve">
+    <value>Confirmarea parolei</value>
+  </data>
+  <data name="HtmlPWDSave" xml:space="preserve">
+    <value>Salva</value>
+  </data>
+  <data name="HtmlREGAccessMethod" xml:space="preserve">
+    <value>Metodă de acces implicită</value>
+  </data>
+  <data name="HtmlREGAccessPageMethods" xml:space="preserve">
+    <value>Opțiuni de configurare</value>
+  </data>
+  <data name="HtmlREGLabelAppKey" xml:space="preserve">
+    <value>Cheie secretă</value>
+  </data>
+  <data name="HtmlREGOptionChooseBest" xml:space="preserve">
+    <value>Alegeți opțiunea implicită</value>
+  </data>
+  <data name="HtmlUIActivate" xml:space="preserve">
+    <value>Activa</value>
+  </data>
+  <data name="HtmlUIEnrollContinue" xml:space="preserve">
+    <value>&lt;br/&gt;
+Faceți clic pe "continuați"</value>
+  </data>
+  <data name="HtmlUIMAccessOptions" xml:space="preserve">
+    <value>Accesați opțiunile după autentificare</value>
+  </data>
+  <data name="HtmlUIMCheck" xml:space="preserve">
+    <value>Verifica</value>
+  </data>
+  <data name="HtmlUIMConnexion" xml:space="preserve">
+    <value>conectează-te</value>
+  </data>
+  <data name="HtmlUIMDisableMFA" xml:space="preserve">
+    <value>Dezactivați autentificarea multi-factor</value>
+  </data>
+  <data name="HtmlUIMGotoInscription" xml:space="preserve">
+    <value>Cerere Inscriptie</value>
+  </data>
+  <data name="HtmlUIMGoToRegistration" xml:space="preserve">
+    <value>Înregistrare</value>
+  </data>
+  <data name="HtmlUIMNoCode" xml:space="preserve">
+    <value>Nu am codul</value>
+  </data>
+  <data name="HtmlUIMOk" xml:space="preserve">
+    <value>Ok</value>
+  </data>
+  <data name="HtmlUIMQuit" xml:space="preserve">
+    <value>Renunţe</value>
+  </data>
+  <data name="HtmlUIMRecordNewKey" xml:space="preserve">
+    <value>Obțineți o cheie nouă</value>
+  </data>
+  <data name="HtmlUIMustPrepareLabel" xml:space="preserve">
+    <value>Trebuie să :</value>
+  </data>
+  <data name="HtmlUINext" xml:space="preserve">
+    <value>Următorul</value>
+  </data>
+  <data name="HtmlUIPinOptionLabel" xml:space="preserve">
+    <value>Cod PIN</value>
+  </data>
+  <data name="HtmlUIResultLabel" xml:space="preserve">
+    <value>Informatii furnizate:</value>
+  </data>
+  <data name="HtmlLabelWRBiometrics" xml:space="preserve">
+    <value>Trebuie să activați dispozitivul biometric (amprentă digitală, recunoaștere facială, NFC etc.) pentru a vă confirma identitatea.</value>
+  </data>
+  <data name="HtmlLabelVERIFYOTPError" xml:space="preserve">
+    <value>Contul tău nu este viteat! &lt;br&gt;
+Puteți încerca din nou operațiunea selectând "Previous".</value>
+  </data>
+  <data name="HtmlLabelVERIFYOTPSuccess" xml:space="preserve">
+    <value>Contul tău este validat! &lt;br&gt;
+Veți putea utiliza validarea MFA în viitor.</value>
+  </data>
+  <data name="HtmlLabelWRManageBiometrics" xml:space="preserve">
+    <value>Gestionați-vă dispozitivele biometrice. Selectați adăugarea, înlocuirea sau ștergerea dispozitivelor individuale.!</value>
+  </data>
+  <data name="HtmlLabelWRAddBiometrics" xml:space="preserve">
+    <value>Adăugați un dispozitiv biometric</value>
+  </data>
+</root>

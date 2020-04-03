@@ -1,0 +1,654 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="CRTLADFSRESTARTFARMSERVICES" xml:space="preserve">
+    <value>Reporniți toate serviciile de federalizare</value>
+  </data>
+  <data name="CRTLADFSRESTARTSERVICES" xml:space="preserve">
+    <value>Repornirea Federației servicii</value>
+  </data>
+  <data name="CRTLADFSSTARTSERVICES" xml:space="preserve">
+    <value>Pornirea serviciilor Federației</value>
+  </data>
+  <data name="CRTLADFSSTOPSERVICES" xml:space="preserve">
+    <value>Opriți serviciile Federației</value>
+  </data>
+  <data name="CTRGLMANAGEREG" xml:space="preserve">
+    <value>Notificări de înregistrare</value>
+  </data>
+  <data name="CTRGLMANAGEREGEND" xml:space="preserve">
+    <value>Sfârşitul</value>
+  </data>
+  <data name="CTRGLMANAGEREGSTART" xml:space="preserve">
+    <value>Începe</value>
+  </data>
+  <data name="CTRLADACCOUNT" xml:space="preserve">
+    <value>Cont de acces</value>
+  </data>
+  <data name="CTRLADATCHECKDATEERROR" xml:space="preserve">
+    <value>ADAUGĂ atributul nu este valid pentru data de verificare!</value>
+  </data>
+  <data name="CTRLADATENABLEDERROR" xml:space="preserve">
+    <value>ADAUGĂ atributul nu este valid pentru enabled!</value>
+  </data>
+  <data name="CTRLADATMETHODERROR" xml:space="preserve">
+    <value>ADAUGĂ atributul nu este valid pentru metoda!</value>
+  </data>
+  <data name="CTRLADATOVERRIDEERROR" xml:space="preserve">
+    <value>ADAUGĂ atributul nu este valid pentru metoda specifică!</value>
+  </data>
+  <data name="CTRLADATPINERROR" xml:space="preserve">
+    <value>ADAUGĂ atributul nu este valid pentru codul PIN!</value>
+  </data>
+  <data name="CTRLADATTACCOUNT" xml:space="preserve">
+    <value>Cont adaugă nevalid!</value>
+  </data>
+  <data name="CTRLADATTDOMAIN" xml:space="preserve">
+    <value>INvalid adaugă adresa de domeniu!</value>
+  </data>
+  <data name="CTRLADATTEMAILERROR" xml:space="preserve">
+    <value>ADAUGĂ atributul nu este valid pentru adresa de e-mail!</value>
+  </data>
+  <data name="CTRLADATTKEY" xml:space="preserve">
+    <value>Cheie secretă</value>
+  </data>
+  <data name="CTRLADATTKEYERROR" xml:space="preserve">
+    <value>ADAUGĂ atributul nu este valid pentru cheia secretă!</value>
+  </data>
+  <data name="CTRLADATTMAIL" xml:space="preserve">
+    <value>Adresa de email</value>
+  </data>
+  <data name="CTRLADATTMETHOD" xml:space="preserve">
+    <value>Metodă implicită MFA</value>
+  </data>
+  <data name="CTRLADATTOVERRIDE" xml:space="preserve">
+    <value>Metoda MFA sciciific</value>
+  </data>
+  <data name="CTRLADATTPASSWORD" xml:space="preserve">
+    <value>INvalid adaugă parola!</value>
+  </data>
+  <data name="CTRLADATTPHONE" xml:space="preserve">
+    <value>Telefon mobil</value>
+  </data>
+  <data name="CTRLADATTPHONEERROR" xml:space="preserve">
+    <value>ADAUGĂ atributul nu este valid pentru numărul de telefon!</value>
+  </data>
+  <data name="CTRLADATTPIN" xml:space="preserve">
+    <value>Pin</value>
+  </data>
+  <data name="CTRLADATTRIBUTES" xml:space="preserve">
+    <value>Traduceți atributele Active Directory</value>
+  </data>
+  <data name="CTRLADATTSTATUS" xml:space="preserve">
+    <value>Stare activare utilizator</value>
+  </data>
+  <data name="CTRLADATTVALIDATION" xml:space="preserve">
+    <value>Data auditului TOTP</value>
+  </data>
+  <data name="CTRLADATTVALIDITY" xml:space="preserve">
+    <value>Data validității ToTP</value>
+  </data>
+  <data name="CTRLADATVALIDITYDATEERROR" xml:space="preserve">
+    <value>ADAUGĂ atributul nu este valid pentru data de valabilitate!</value>
+  </data>
+  <data name="CTRLADCONNECTIONERROR" xml:space="preserve">
+    <value>Nu se poate conecta pe pădure/adaugă domeniu!</value>
+  </data>
+  <data name="CTRLADCONNECTIONOK" xml:space="preserve">
+    <value>Conexiune pe adaugă pădure/zona operațională!</value>
+  </data>
+  <data name="CTRLADDOMAIN" xml:space="preserve">
+    <value>Nume de domeniu</value>
+  </data>
+  <data name="CTRLADFSACTIVATEMFA" xml:space="preserve">
+    <value>Activare MFA</value>
+  </data>
+  <data name="CTRLADFSDEACTIVATEMFA" xml:space="preserve">
+    <value>Dezactivarea MFA</value>
+  </data>
+  <data name="CTRLADPASSWORD" xml:space="preserve">
+    <value>Parola</value>
+  </data>
+  <data name="CTRLADTEST" xml:space="preserve">
+    <value>pentru a testa</value>
+  </data>
+  <data name="CTRLADUSEADDS" xml:space="preserve">
+    <value>Utilizați configurația Active Directory</value>
+  </data>
+  <data name="CTRLAZURETENANTID" xml:space="preserve">
+    <value>Deținerea Azure</value>
+  </data>
+  <data name="CTRLAZURETHUMPRINT" xml:space="preserve">
+    <value>Imprimare certificat Azure</value>
+  </data>
+  <data name="CTRLCANCEL" xml:space="preserve">
+    <value>Anula</value>
+  </data>
+  <data name="CTRLDLGMAXRETRIES" xml:space="preserve">
+    <value>Numărul de încercări permise</value>
+  </data>
+  <data name="CTRLGLALLOWGOOGLESEARCH" xml:space="preserve">
+    <value>Vizualizare căutare Google</value>
+  </data>
+  <data name="CTRLGLCOMANYNAME" xml:space="preserve">
+    <value>Numele firmei</value>
+  </data>
+  <data name="CTRLGLCONTACT" xml:space="preserve">
+    <value>Contact administrativ (e-mail)</value>
+  </data>
+  <data name="CTRLGLCONTRYCODE" xml:space="preserve">
+    <value>Cod de țară în mod implicit</value>
+  </data>
+  <data name="CTRLGLDELVERY" xml:space="preserve">
+    <value>Timp de validare (în secunde)</value>
+  </data>
+  <data name="CTRLGLENROLLWIZ" xml:space="preserve">
+    <value>Asistenți de înregistrare</value>
+  </data>
+  <data name="CTRLGLHASH" xml:space="preserve">
+    <value>Algoritmul hash</value>
+  </data>
+  <data name="CTRLGLINVALIDEMAILCONTACT" xml:space="preserve">
+    <value>Format de e-mail nevalid pentru contactul administrativ!</value>
+  </data>
+  <data name="CTRLGLMANAGEKMSOO" xml:space="preserve">
+    <value>Utilizatorul poate selecta furnizorul implicit</value>
+  </data>
+  <data name="CTRLGLMANAGENOTIFS" xml:space="preserve">
+    <value>Notificarea utilizatorilor după modificări</value>
+  </data>
+  <data name="CTRLGLMANAGEOPTIONS" xml:space="preserve">
+    <value>User Options management</value>
+  </data>
+  <data name="CTRLGLMANAGEOPTS" xml:space="preserve">
+    <value>Opțiuni de management</value>
+  </data>
+  <data name="CTRLGLMANAGEPWD" xml:space="preserve">
+    <value>Gestionarea parolei</value>
+  </data>
+  <data name="CTRLGLMAXCODES" xml:space="preserve">
+    <value>Istoria codurilor autorizate</value>
+  </data>
+  <data name="CTRLGLMFAREGISTER" xml:space="preserve">
+    <value>Înregistrare utilizator</value>
+  </data>
+  <data name="CTRLGLMFAREGISTER1" xml:space="preserve">
+    <value>Înregistrare administrativă validată de sprijin</value>
+  </data>
+  <data name="CTRLGLMFAREGISTER2" xml:space="preserve">
+    <value>Înregistrare utilizator-făcut de utilizator</value>
+  </data>
+  <data name="CTRLGLMFAREGISTER3" xml:space="preserve">
+    <value>Asistență pentru unmanaged-contact</value>
+  </data>
+  <data name="CTRLGLMFAREGISTER4" xml:space="preserve">
+    <value>Obligatoriu-înregistrarea efectuată de către mass-media</value>
+  </data>
+  <data name="CTRLGLMFASTATUS" xml:space="preserve">
+    <value>Stare MFA</value>
+  </data>
+  <data name="CTRLGLMFASTATUS1" xml:space="preserve">
+    <value>Obligatoriu-MFA nu poate fi dezactivat</value>
+  </data>
+  <data name="CTRLGLMFASTATUS2" xml:space="preserve">
+    <value>Opțional-MFA poate fi dezactivat în Opțiuni</value>
+  </data>
+  <data name="CTRLGLMFASTATUS3" xml:space="preserve">
+    <value>Nu este necesar</value>
+  </data>
+  <data name="CTRLGLPOLICY" xml:space="preserve">
+    <value>Politica de securitate (moderată)</value>
+  </data>
+  <data name="CTRLGLPROVIDER" xml:space="preserve">
+    <value>Furnizor implicit</value>
+  </data>
+  <data name="CTRLGLREFRESH" xml:space="preserve">
+    <value>Frecvența de răcire (în milisecunde)</value>
+  </data>
+  <data name="CTRLGLREPLAY" xml:space="preserve">
+    <value>Nivel de protecție reluare</value>
+  </data>
+  <data name="CTRLGLSHOWAUTHY" xml:space="preserve">
+    <value>Afișare autentificator Authy</value>
+  </data>
+  <data name="CTRLGLSHOWGOOGLE" xml:space="preserve">
+    <value>Vizualizare Google Authenticator</value>
+  </data>
+  <data name="CTRLGLSHOWMICROSOFT" xml:space="preserve">
+    <value>Afișare Microsoft Authenticator</value>
+  </data>
+  <data name="CTRLGLUSEAPPS" xml:space="preserve">
+    <value>Utilizarea aplicațiilor de autentificare (Google Authenticator, Microsoft Authenticator)</value>
+  </data>
+  <data name="CTRLGLUSEMAILS" xml:space="preserve">
+    <value>Utilizarea notificărilor prin e-mail</value>
+  </data>
+  <data name="CTRLGLUSESMS" xml:space="preserve">
+    <value>Utilizarea notificărilor SMS</value>
+  </data>
+  <data name="CTRLGLUSEUSERLANGS" xml:space="preserve">
+    <value>Utilizarea limbilor browserului</value>
+  </data>
+  <data name="CTRLINVALIDVALUE" xml:space="preserve">
+    <value>Valoarea nu este validă. Trebuie să fie între {0} și {1}.</value>
+  </data>
+  <data name="CTRLMULTVALUED" xml:space="preserve">
+    <value>(*) Suportă proprietățile cu mai multe valori</value>
+  </data>
+  <data name="CTRLMUSTACTIVATESVC" xml:space="preserve">
+    <value>Operațiunea s-a anulat! Trebuie să activați serviciul local ADFS pentru a face acest lucru!</value>
+  </data>
+  <data name="CTRLNULLOREMPTYERROR" xml:space="preserve">
+    <value>Valorile zero sau goale nu sunt permise.</value>
+  </data>
+  <data name="CTRLPROVACTIVE" xml:space="preserve">
+    <value>Active</value>
+  </data>
+  <data name="CTRLPROVPIN" xml:space="preserve">
+    <value>Cod PIN necesar</value>
+  </data>
+  <data name="CTRLPROVREQUIRED" xml:space="preserve">
+    <value>Necesare</value>
+  </data>
+  <data name="CTRLPROVWIZARD" xml:space="preserve">
+    <value>Asistent de înregistrare</value>
+  </data>
+  <data name="CTRLPROVWIZARDSTRICT" xml:space="preserve">
+    <value>Forțați asistentul dacă nu este finalizat</value>
+  </data>
+  <data name="CTRLSAVE" xml:space="preserve">
+    <value>înregistra</value>
+  </data>
+  <data name="CTRLSECASSEMBLY" xml:space="preserve">
+    <value>Clasă completă</value>
+  </data>
+  <data name="CTRLSECCERTIFDURATION" xml:space="preserve">
+    <value>Valabilitate</value>
+  </data>
+  <data name="CTRLSECCERTIFICATES" xml:space="preserve">
+    <value>Certificate</value>
+  </data>
+  <data name="CTRLSECINVALIDCERT" xml:space="preserve">
+    <value>Certificatul nu a fost găsit!</value>
+  </data>
+  <data name="CTRLSECINVALIDEXTERROR" xml:space="preserve">
+    <value>Extensie nevalidă! Nu se poate percepe!</value>
+  </data>
+  <data name="CTRLSECKEYGEN" xml:space="preserve">
+    <value>Lungimea cheii generate</value>
+  </data>
+  <data name="CTRLSECKEYLENGTH" xml:space="preserve">
+    <value>Lungimea maximă a cheii</value>
+  </data>
+  <data name="CTRLSECKEYMODE" xml:space="preserve">
+    <value>Mod cheie de securitate</value>
+  </data>
+  <data name="CTRLSECLIBLABEL" xml:space="preserve">
+    <value>Versiune a bibliotecii de criptare</value>
+  </data>
+  <data name="CTRLSECNEWCERT" xml:space="preserve">
+    <value>Certificat nou</value>
+  </data>
+  <data name="CTRLSECNEWCRYPTEDDATABASE" xml:space="preserve">
+    <value>Crearea unei baze de date criptate</value>
+  </data>
+  <data name="CTRLSECNEWDATABASE" xml:space="preserve">
+    <value>Crearea unei baze de date</value>
+  </data>
+  <data name="CTRLSECPARAMS" xml:space="preserve">
+    <value>Setări</value>
+  </data>
+  <data name="CTRLSECRSAGENERATE" xml:space="preserve">
+    <value>Confirmați crearea unui nou certificat pentru MFA? Avertisment: toate cheile existente vor fi anulate!</value>
+  </data>
+  <data name="CTRLSECTHUMPRINT" xml:space="preserve">
+    <value>Ștampila certificatului</value>
+  </data>
+  <data name="CTRLSECWARNING" xml:space="preserve">
+    <value>Atenţia! Modificarea acestor valori va anula toate cheile curente</value>
+  </data>
+  <data name="CTRLSECWIZARD" xml:space="preserve">
+    <value>Opțiuni asistent Check-in</value>
+  </data>
+  <data name="CTRLSECWIZTITLE" xml:space="preserve">
+    <value>Crearea unei baze de date noi</value>
+  </data>
+  <data name="CTRLSECXORLABEL" xml:space="preserve">
+    <value>Fraza secretă</value>
+  </data>
+  <data name="CTRLSMSASSEMBLY" xml:space="preserve">
+    <value>Clasă completă</value>
+  </data>
+  <data name="CTRLSMSASYNCCALL" xml:space="preserve">
+    <value>Apeluri asincrone</value>
+  </data>
+  <data name="CTRLSMSCOMPANY" xml:space="preserve">
+    <value>Numele firmei</value>
+  </data>
+  <data name="CTRLSMSIVALIDEXTERROR" xml:space="preserve">
+    <value>Extensie nevalidă! Nu se poate percepe!</value>
+  </data>
+  <data name="CTRLSMSPARAMS" xml:space="preserve">
+    <value>Setări</value>
+  </data>
+  <data name="CTRLSMSSHA1" xml:space="preserve">
+    <value>Supliment SHA1</value>
+  </data>
+  <data name="CTRLSMSTIMEOUT" xml:space="preserve">
+    <value>Timp out</value>
+  </data>
+  <data name="CTRLSMTPACCOUNT" xml:space="preserve">
+    <value>Cont de conexiune</value>
+  </data>
+  <data name="CTRLSMTPANONYMOUS" xml:space="preserve">
+    <value>Anonim</value>
+  </data>
+  <data name="CTRLSMTPCOMPANY" xml:space="preserve">
+    <value>Numele firmei</value>
+  </data>
+  <data name="CTRLSMTPDELIVERYNOTIFICATIONS" xml:space="preserve">
+    <value>Notificări de livrare (erori)</value>
+  </data>
+  <data name="CTRLSMTPFROM" xml:space="preserve">
+    <value>Contact administrativ (de la)</value>
+  </data>
+  <data name="CTRLSMTPIDENTIFICATION" xml:space="preserve">
+    <value>Identificare</value>
+  </data>
+  <data name="CTRLSMTPMAILERROR" xml:space="preserve">
+    <value>Format de e-mail nevalid!</value>
+  </data>
+  <data name="CTRLSMTPMESSAGEOK" xml:space="preserve">
+    <value>Mesaj de test trimis la</value>
+  </data>
+  <data name="CTRLSMTPPASSWORD" xml:space="preserve">
+    <value>Parola</value>
+  </data>
+  <data name="CTRLSMTPPORT" xml:space="preserve">
+    <value>Port</value>
+  </data>
+  <data name="CTRLSMTPPORTERROR" xml:space="preserve">
+    <value>Port invalid!</value>
+  </data>
+  <data name="CTRLSMTPSERVER" xml:space="preserve">
+    <value>Server de e-mail</value>
+  </data>
+  <data name="CTRLSMTPSERVERADDRESS" xml:space="preserve">
+    <value>Adresă server</value>
+  </data>
+  <data name="CTRLSMTPTEST" xml:space="preserve">
+    <value>pentru a testa</value>
+  </data>
+  <data name="CTRLSQLCONNECTERROR" xml:space="preserve">
+    <value>Imposibil de conectat la baza de date SQL MFA!</value>
+  </data>
+  <data name="CTRLSQLCONNECTOK" xml:space="preserve">
+    <value>Conectați-vă la baza de date SQL operațională!</value>
+  </data>
+  <data name="CTRLSQLCONNECTSTR" xml:space="preserve">
+    <value>Lanț de conectare</value>
+  </data>
+  <data name="CTRLSQLCONNECTSTRERROR" xml:space="preserve">
+    <value>Lanț de conexiune SQL nevalid!</value>
+  </data>
+  <data name="CTRLSQLCREATECRYPTEDDB" xml:space="preserve">
+    <value>Crearea unei baze de date MFA criptate</value>
+  </data>
+  <data name="CTRLSQLCREATEDB" xml:space="preserve">
+    <value>Crearea unei baze de date MFA</value>
+  </data>
+  <data name="CTRLSQLCRYPTUSING" xml:space="preserve">
+    <value>Utilizați caracteristica "întotdeauna criptate" (SQL Server 2016)</value>
+  </data>
+  <data name="CTRLSQLENCRYPTNAME" xml:space="preserve">
+    <value>Numele cheii SQL</value>
+  </data>
+  <data name="CTRLSQLINVALIDCERTERROR" xml:space="preserve">
+    <value>Certificat nevalid {0}</value>
+  </data>
+  <data name="CTRLSQLMAXROWSERROR" xml:space="preserve">
+    <value>{0} Nu e valabilă! Valoarea trebuie să fie cuprinsă între 1000 și 1.000.000</value>
+  </data>
+  <data name="CTRLSQLREUSECERT" xml:space="preserve">
+    <value>Refolosire certificat</value>
+  </data>
+  <data name="CTRLSQLTEST" xml:space="preserve">
+    <value>pentru a testa</value>
+  </data>
+  <data name="CTRLSQLTHUMBPRINT" xml:space="preserve">
+    <value>Imprimarea certificatului</value>
+  </data>
+  <data name="CTRLSQLUSING" xml:space="preserve">
+    <value>Utilizați configurația SQL Server</value>
+  </data>
+  <data name="CTRLWEBAUTHNTIMEOUT" xml:space="preserve">
+    <value>Expirare (ms)</value>
+  </data>
+  <data name="CTRLWEBAUTHNDRIFTTOLERANCE" xml:space="preserve">
+    <value>Toleranța la Drift timestamp</value>
+  </data>
+  <data name="CTRLWEBAUTHNSERVERDOMAIN" xml:space="preserve">
+    <value>Domeniu server</value>
+  </data>
+  <data name="CTRLWEBAUTHNSERVERNAME" xml:space="preserve">
+    <value>Nume Server</value>
+  </data>
+  <data name="CTRLWEBAUTHNSERVERURL" xml:space="preserve">
+    <value>URL server</value>
+  </data>
+  <data name="CTRLWEBAUTHNCHALLENGE" xml:space="preserve">
+    <value>Dimensiune provocare</value>
+  </data>
+  <data name="CTRLSECNEWCERTCREATED" xml:space="preserve">
+    <value>Certificat creat cu succes! Trebuie să implementați certificat nou {0} pe toate celelalte servere ADFS</value>
+  </data>
+  <data name="CTRLSQLNEWDBCREATED" xml:space="preserve">
+    <value>Baza de date MFA {0} creată cu succes!</value>
+  </data>
+  <data name="CTRLSQLNEWDBCREATED2" xml:space="preserve">
+    <value>Baza de date MFA {0} creată cu succes! Trebuie să implementați certificat nou {1} pe toate celelalte servere ADFS</value>
+  </data>
+  <data name="CTRLWEBAUTHNATTACHEMENT" xml:space="preserve">
+    <value>Atașament autentificator</value>
+  </data>
+  <data name="CTRLWEBAUTHNCONVEYANCE" xml:space="preserve">
+    <value>Preferința de transmitere a atestării</value>
+  </data>
+  <data name="CTRLWEBAUTHNUSERVERFICATION" xml:space="preserve">
+    <value>Cerința de verificare a atestării utilizatorului</value>
+  </data>
+  <data name="CTRLSQLMAXROWS" xml:space="preserve">
+    <value>Rânduri maxime</value>
+  </data>
+  <data name="CTRLWEBAUTHNEXTENSIONS" xml:space="preserve">
+    <value>Extensii (authnSe)</value>
+  </data>
+  <data name="CTRLWEBAUTHNRESIDENTKEY" xml:space="preserve">
+    <value>Necesită rezident cheie</value>
+  </data>
+  <data name="CTRLWEBAUTHNUSERINDEX" xml:space="preserve">
+    <value>Indicele de verificare a utilizatorului (uvi)</value>
+  </data>
+  <data name="CTRLWEBAUTHNUSERLOCATION" xml:space="preserve">
+    <value>Locație utilizator</value>
+  </data>
+  <data name="CTRLWEBAUTHNUSERMETHOD" xml:space="preserve">
+    <value>Metoda de verificare a utilizatorului (UVM)</value>
+  </data>
+  <data name="CTRLADATTPUBLICKEY" xml:space="preserve">
+    <value>Cheia publică WebAuthN</value>
+  </data>
+  <data name="CTRLMUSTMULTVALUED" xml:space="preserve">
+    <value>(**) Solicitați proprietăți cu șiruri valorice multiple</value>
+  </data>
+  <data name="CTRLWEBAUTHNAUTOLOGIN" xml:space="preserve">
+    <value>Conexiune rapidă</value>
+  </data>
+  <data name="CTRLADTEMPLATE2016" xml:space="preserve">
+    <value>ADDS schema 2016++</value>
+  </data>
+  <data name="CTRLADTEMPLATEBASE" xml:space="preserve">
+    <value>ADDS Schema 2012--</value>
+  </data>
+  <data name="CTRLADTEMPLATEMFA" xml:space="preserve">
+    <value>ADDS Schema MFA</value>
+  </data>
+  <data name="CTRLADTEMPLATE2016ERROR" xml:space="preserve">
+    <value>Eroare la încărcarea șablonului "2016", trebuie să actualizați manual atributele !</value>
+  </data>
+  <data name="CTRLADTEMPLATEBASEERROR" xml:space="preserve">
+    <value>Eroare la încărcarea șablonului "default", trebuie să actualizați manual atributele !</value>
+  </data>
+  <data name="CTRLADTEMPLATEMFAERROR" xml:space="preserve">
+    <value>Eroare la încărcarea "MFA" șablon, trebuie să actualizați manual atributele !</value>
+  </data>
+  <data name="CTRLSECCERTPERUSER" xml:space="preserve">
+    <value>Utilizarea unui certificat pentru fiecare utilizator</value>
+  </data>
+  <data name="CTRLADATTRSACERT" xml:space="preserve">
+    <value>Certificat de utilizator RSA</value>
+  </data>
+  <data name="CTRLADATRSACERTERROR" xml:space="preserve">
+    <value>Atributul adaugă nevalid pentru certificatul RSA!</value>
+  </data>
+  <data name="CTRLADSUPERACCOUNT" xml:space="preserve">
+    <value>Active Directory "SuperUser" Credențiale</value>
+  </data>
+  <data name="CTRLADTITLECONFIG" xml:space="preserve">
+    <value>Proprietăți generale de securitate</value>
+  </data>
+  <data name="CTRLSTUSEADDS" xml:space="preserve">
+    <value>Director Activ</value>
+  </data>
+  <data name="CTRLSTUSESQL" xml:space="preserve">
+    <value>Se utilizează SQL Server</value>
+  </data>
+  <data name="CTRLSECWSMANPORT" xml:space="preserve">
+    <value>Port</value>
+  </data>
+  <data name="CTRLSECWSMANTIMEOUT" xml:space="preserve">
+    <value>Timeout</value>
+  </data>
+  <data name="CTRLSECWSMANAPPNAME" xml:space="preserve">
+    <value>Nume aplicație</value>
+  </data>
+  <data name="CTRLSECWSMANSHELLURI" xml:space="preserve">
+    <value>Coajă Uri</value>
+  </data>
+</root>
