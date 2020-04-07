@@ -41,9 +41,29 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
         /// </summary>
         internal CleanUpManager()
         {
-            RegistryKey rk = Registry.LocalMachine.OpenSubKey("Software\\MFA");
-            _cleanupenable = Convert.ToBoolean(rk.GetValue("PrivateKeysCleanUpEnabled"));
-            _minutes = Convert.ToInt32(rk.GetValue("PrivateKeysCleanUpDelay"));
+            try
+            {
+                RegistryKey rk = Registry.LocalMachine.OpenSubKey("Software\\MFA", true);
+
+                if (rk == null)
+                {
+                    rk = Registry.LocalMachine.CreateSubKey("Software\\MFA", true);
+                    rk.SetValue("PrivateKeysCleanUpEnabled", 0);
+                    rk.SetValue("PrivateKeysCleanUpDelay", 20);
+                    _cleanupenable = false;
+                    _minutes = 20;
+                }
+                else
+                {
+                    _cleanupenable = Convert.ToBoolean(rk.GetValue("PrivateKeysCleanUpEnabled"));
+                    _minutes = Convert.ToInt32(rk.GetValue("PrivateKeysCleanUpDelay"));
+                }
+            }
+            catch (Exception)
+            {
+                _cleanupenable = false;
+                _minutes = 20;
+            }
         }
 
         /// <summary>

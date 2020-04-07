@@ -1064,12 +1064,21 @@ namespace Neos.IdentityServer.MultiFactor.Data
             if (option == 0x01)  // Enable
             {
                 RegistryKey ek = Registry.LocalMachine.OpenSubKey("Software\\MFA", true);
+                if (ek == null)
+                {
+                    ek = Registry.LocalMachine.CreateSubKey("Software\\MFA", true);
+                }
                 ek.SetValue("PrivateKeysCleanUpEnabled", 1, RegistryValueKind.DWord);
                 ek.SetValue("PrivateKeysCleanUpDelay", delay, RegistryValueKind.DWord);
+
             }
             if (option == 0x02)  // Disable
             {
                 RegistryKey dk = Registry.LocalMachine.OpenSubKey("Software\\MFA", true);
+                if (dk == null)
+                {
+                    dk = Registry.LocalMachine.CreateSubKey("Software\\MFA", true);
+                }
                 dk.SetValue("PrivateKeysCleanUpEnabled", 0, RegistryValueKind.DWord);
             }
         }
