@@ -65,7 +65,6 @@ namespace Neos.IdentityServer.MultiFactor.Data
             MFAUser reg = null;
             try
             {
-               // using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUPN(_host, upn))
                 using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUPN(_host, _host.Account, _host.Password, upn))
                 {
                     string qryldap = "(&(objectCategory=user)(objectClass=user)(userprincipalname=" + upn + ")(!(userAccountControl:1.2.840.113556.1.4.803:=2)))";
@@ -80,6 +79,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                         dsusr.PropertiesToLoad.Add(_host.OverrideMethodAttribute);
                         dsusr.PropertiesToLoad.Add(_host.PinAttribute);
                         dsusr.PropertiesToLoad.Add(_host.TotpEnabledAttribute);
+                        dsusr.ReferralChasing = ReferralChasingOption.All;
 
                         SearchResult sr = dsusr.FindOne();
                         if (sr != null)
@@ -173,13 +173,11 @@ namespace Neos.IdentityServer.MultiFactor.Data
             }
             try
             {
-               // using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUPN(_host, reg.UPN))
                 using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUPN(_host, _host.Account, _host.Password, reg.UPN))
                 {
                     string qryldap = "(&(objectCategory=user)(objectClass=user)(userprincipalname=" + reg.UPN + ")(!(userAccountControl:1.2.840.113556.1.4.803:=2)))";
                     using (DirectorySearcher dsusr = new DirectorySearcher(rootdir, qryldap))
                     {
-                        dsusr.ReferralChasing = ReferralChasingOption.All;
                         dsusr.PropertiesToLoad.Clear();
                         dsusr.PropertiesToLoad.Add("userPrincipalName");
                         dsusr.PropertiesToLoad.Add(_host.MailAttribute);
@@ -188,6 +186,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                         dsusr.PropertiesToLoad.Add(_host.OverrideMethodAttribute);
                         dsusr.PropertiesToLoad.Add(_host.PinAttribute);
                         dsusr.PropertiesToLoad.Add(_host.TotpEnabledAttribute);
+                        dsusr.ReferralChasing = ReferralChasingOption.All;
 
                         SearchResult sr = dsusr.FindOne();
                         if (sr != null)
@@ -244,13 +243,11 @@ namespace Neos.IdentityServer.MultiFactor.Data
             }
             try
             {
-//                using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUPN(_host, reg.UPN))
                 using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUPN(_host, _host.Account, _host.Password, reg.UPN))
                 {
                     string qryldap = "(&(objectCategory=user)(objectClass=user)(userprincipalname=" + reg.UPN + ")(!(userAccountControl:1.2.840.113556.1.4.803:=2)))";
                     using (DirectorySearcher dsusr = new DirectorySearcher(rootdir, qryldap))
                     {
-                        dsusr.ReferralChasing = ReferralChasingOption.All;
                         dsusr.PropertiesToLoad.Add("objectGUID");
                         dsusr.PropertiesToLoad.Add("userPrincipalName");
                         dsusr.PropertiesToLoad.Add(_host.MailAttribute);
@@ -259,6 +256,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                         dsusr.PropertiesToLoad.Add(_host.OverrideMethodAttribute);
                         dsusr.PropertiesToLoad.Add(_host.PinAttribute);
                         dsusr.PropertiesToLoad.Add(_host.TotpEnabledAttribute);
+                        dsusr.ReferralChasing = ReferralChasingOption.All;
 
                         SearchResult sr = dsusr.FindOne();
                         if (sr != null)
@@ -310,7 +308,6 @@ namespace Neos.IdentityServer.MultiFactor.Data
                 throw new Exception("The user " + reg.UPN + " cannot be deleted ! \r User not found !");
             try
             {
-                // using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUPN(_host, reg.UPN))
                 using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUPN(_host, _host.Account, _host.Password, reg.UPN))
                 {
                     string qryldap = "(&(objectCategory=user)(objectClass=user)(userprincipalname=" + reg.UPN + ")(!(userAccountControl:1.2.840.113556.1.4.803:=2)))";
@@ -325,6 +322,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                         dsusr.PropertiesToLoad.Add(_host.OverrideMethodAttribute);
                         dsusr.PropertiesToLoad.Add(_host.PinAttribute);
                         dsusr.PropertiesToLoad.Add(_host.TotpEnabledAttribute);
+                        dsusr.ReferralChasing = ReferralChasingOption.All;
 
                         SearchResult sr = dsusr.FindOne();
                         if (sr != null)
@@ -362,7 +360,6 @@ namespace Neos.IdentityServer.MultiFactor.Data
                 throw new Exception("The user " + reg.UPN + " cannot be updated ! \r User not found !");
             try
             {
-               // using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUPN(_host, reg.UPN))
                 using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUPN(_host, _host.Account, _host.Password, reg.UPN))
                 {
                     string qryldap = "(&(objectCategory=user)(objectClass=user)(userprincipalname=" + reg.UPN + ")(!(userAccountControl:1.2.840.113556.1.4.803:=2)))";
@@ -371,6 +368,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                         dsusr.PropertiesToLoad.Add("objectGUID");
                         dsusr.PropertiesToLoad.Add("userPrincipalName");
                         dsusr.PropertiesToLoad.Add(_host.TotpEnabledAttribute);
+                        dsusr.ReferralChasing = ReferralChasingOption.All;
 
                         SearchResult sr = dsusr.FindOne();
                         if (sr != null)
@@ -401,7 +399,6 @@ namespace Neos.IdentityServer.MultiFactor.Data
                 throw new Exception("The user " + reg.UPN + " cannot be updated ! User not found !");
             try
             {
-               // using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUPN(_host, reg.UPN))
                 using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUPN(_host, _host.Account, _host.Password, reg.UPN))
                 {
                     string qryldap = "(&(objectCategory=user)(objectClass=user)(userprincipalname=" + reg.UPN + ")(!(userAccountControl:1.2.840.113556.1.4.803:=2)))";
@@ -410,6 +407,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                         dsusr.PropertiesToLoad.Add("objectGUID");
                         dsusr.PropertiesToLoad.Add("userPrincipalName");
                         dsusr.PropertiesToLoad.Add(_host.TotpEnabledAttribute);
+                        dsusr.ReferralChasing = ReferralChasingOption.All;
 
                         SearchResult sr = dsusr.FindOne();
                         if (sr != null)
@@ -534,6 +532,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                                 dsusr.PropertiesToLoad.Add(_host.PinAttribute);
                                 dsusr.PropertiesToLoad.Add(_host.TotpEnabledAttribute);
                                 dsusr.SizeLimit = _host.MaxRows;
+                                dsusr.ReferralChasing = ReferralChasingOption.All;
 
                                 switch (order.Column)
                                 {
@@ -551,112 +550,68 @@ namespace Neos.IdentityServer.MultiFactor.Data
                                         break;
                                 }
                                 dsusr.Sort.Direction = order.Direction;
-
-                                DirectoryVirtualListView lstv = null;
-                                DirectoryVirtualListViewContext ctx = new DirectoryVirtualListViewContext();
-                                int virtualListCount = int.MaxValue;
-                                if (paging.IsActive)
-                                {
-                                    int pg = paging.PageSize;
-                                    int of = (((paging.CurrentPage - 1) * paging.PageSize) + 1);
-                                    lstv = new DirectoryVirtualListView(0, pg - 1, of, ctx);
-                                    dsusr.VirtualListView = lstv;
-                                    virtualListCount = pg;
-
-                                }
                                 SearchResultCollection src = dsusr.FindAll();
-                                if (src != null)
+
+                                foreach (SearchResult sr in src)
                                 {
-                                    if ((!paging.IsRecurse) && (src.Count == 1) && (paging.IsActive))
+                                    MFAUser reg = new MFAUser();
+                                    using (DirectoryEntry DirEntry = ADDSUtils.GetDirectoryEntry(_host, sr))
                                     {
-                                        DataPagingObject xpaging = new DataPagingObject
+                                        if (DirEntry.Properties["objectGUID"].Value != null)
                                         {
-                                            PageSize = paging.PageSize,
-                                            CurrentPage = paging.CurrentPage - 1,
-                                            IsRecurse = true
-                                        };
-                                        if (xpaging.CurrentPage > 0)
-                                        {
-                                            MFAUserList verif = GetMFAUsers(filter, order, xpaging);
-                                            foreach (MFAUser reg in verif)
+                                            reg.ID = new Guid((byte[])DirEntry.Properties["objectGUID"].Value).ToString();
+                                            reg.UPN = DirEntry.Properties["userPrincipalName"].Value.ToString();
+                                            if (ADDSUtils.GetMultiValued(DirEntry.Properties[_host.MailAttribute], _mailismulti) != null)
                                             {
-                                                using (DirectoryEntry DirEntry = ADDSUtils.GetDirectoryEntry(_host, src[0]))
+                                                reg.MailAddress = ADDSUtils.GetMultiValued(DirEntry.Properties[_host.MailAttribute], _mailismulti);
+                                                reg.IsRegistered = true;
+                                            }
+                                            if (ADDSUtils.GetMultiValued(DirEntry.Properties[_host.PhoneAttribute], _phoneismulti) != null)
+                                            {
+                                                reg.PhoneNumber = ADDSUtils.GetMultiValued(DirEntry.Properties[_host.PhoneAttribute], _phoneismulti);
+                                                reg.IsRegistered = true;
+                                            }
+                                            if (DirEntry.Properties[_host.MethodAttribute].Value != null)
+                                            {
+                                                reg.PreferredMethod = (PreferredMethod)Enum.Parse(typeof(PreferredMethod), DirEntry.Properties[_host.MethodAttribute].Value.ToString(), true);
+                                                if (reg.PreferredMethod != PreferredMethod.Choose)
+                                                    reg.IsRegistered = true;
+                                            }
+                                            if (DirEntry.Properties[_host.OverrideMethodAttribute].Value != null)
+                                            {
+                                                try
                                                 {
-                                                    string theID = new Guid((byte[])DirEntry.Properties["objectGUID"].Value).ToString();
-                                                    if (reg.ID == theID)
-                                                    {
-                                                        return registrations; // empty
-                                                    }
+                                                    reg.OverrideMethod = DirEntry.Properties[_host.OverrideMethodAttribute].Value.ToString();
+                                                }
+                                                catch
+                                                {
+                                                    reg.OverrideMethod = string.Empty;
                                                 }
                                             }
-                                        }
-                                    }
-                                    int i = 0;
-                                    foreach (SearchResult sr in src)
-                                    {
-                                        if (i < virtualListCount)
-                                        {
-                                            i++;
-                                            MFAUser reg = new MFAUser();
-                                            using (DirectoryEntry DirEntry = ADDSUtils.GetDirectoryEntry(_host, sr))
+                                            else reg.OverrideMethod = string.Empty;
+
+                                            if (DirEntry.Properties[_host.PinAttribute].Value != null)
                                             {
-                                                if (DirEntry.Properties["objectGUID"].Value != null)
+                                                try
                                                 {
-                                                    reg.ID = new Guid((byte[])DirEntry.Properties["objectGUID"].Value).ToString();
-                                                    reg.UPN = DirEntry.Properties["userPrincipalName"].Value.ToString();
-                                                    if (ADDSUtils.GetMultiValued(DirEntry.Properties[_host.MailAttribute], _mailismulti) != null)
-                                                    {
-                                                        reg.MailAddress = ADDSUtils.GetMultiValued(DirEntry.Properties[_host.MailAttribute], _mailismulti);
-                                                        reg.IsRegistered = true;
-                                                    }
-                                                    if (ADDSUtils.GetMultiValued(DirEntry.Properties[_host.PhoneAttribute], _phoneismulti) != null)
-                                                    {
-                                                        reg.PhoneNumber = ADDSUtils.GetMultiValued(DirEntry.Properties[_host.PhoneAttribute], _phoneismulti);
-                                                        reg.IsRegistered = true;
-                                                    }
-                                                    if (DirEntry.Properties[_host.MethodAttribute].Value != null)
-                                                    {
-                                                        reg.PreferredMethod = (PreferredMethod)Enum.Parse(typeof(PreferredMethod), DirEntry.Properties[_host.MethodAttribute].Value.ToString(), true);
-                                                        if (reg.PreferredMethod != PreferredMethod.Choose)
-                                                            reg.IsRegistered = true;
-                                                    }
-                                                    if (DirEntry.Properties[_host.OverrideMethodAttribute].Value != null)
-                                                    {
-                                                        try
-                                                        {
-                                                            reg.OverrideMethod = DirEntry.Properties[_host.OverrideMethodAttribute].Value.ToString();
-                                                        }
-                                                        catch
-                                                        {
-                                                            reg.OverrideMethod = string.Empty;
-                                                        }
-                                                    }
-                                                    else reg.OverrideMethod = string.Empty;
-
-                                                    if (DirEntry.Properties[_host.PinAttribute].Value != null)
-                                                    {
-                                                        try
-                                                        {
-                                                            reg.PIN = Convert.ToInt32(DirEntry.Properties[_host.PinAttribute].Value);
-                                                        }
-                                                        catch
-                                                        {
-                                                            reg.PIN = 0;
-                                                        }
-                                                    }
-                                                    else reg.PIN = 0;
-
-                                                    if (DirEntry.Properties[_host.TotpEnabledAttribute].Value != null)
-                                                    {
-                                                        reg.Enabled = bool.Parse(DirEntry.Properties[_host.TotpEnabledAttribute].Value.ToString());
-                                                        reg.IsRegistered = true;
-                                                    }
-                                                    if (reg.IsRegistered)
-                                                        registrations.Add(reg);
+                                                    reg.PIN = Convert.ToInt32(DirEntry.Properties[_host.PinAttribute].Value);
                                                 }
-                                            };
+                                                catch
+                                                {
+                                                    reg.PIN = 0;
+                                                }
+                                            }
+                                            else reg.PIN = 0;
+
+                                            if (DirEntry.Properties[_host.TotpEnabledAttribute].Value != null)
+                                            {
+                                                reg.Enabled = bool.Parse(DirEntry.Properties[_host.TotpEnabledAttribute].Value.ToString());
+                                                reg.IsRegistered = true;
+                                            }
+                                            if (reg.IsRegistered)
+                                                registrations.Add(reg);
                                         }
-                                    }
+                                    };
                                 }
                             }
                         }
@@ -673,7 +628,45 @@ namespace Neos.IdentityServer.MultiFactor.Data
                 DataLog.WriteEntry(ex.Message, System.Diagnostics.EventLogEntryType.Error, 5000);
                 throw new Exception(ex.Message);
             }
-            return registrations;
+            return SortAndPageResults(registrations, order, paging);
+        }
+
+        /// <summary>
+        /// SortAndPageResults method implementation
+        /// </summary>
+        private MFAUserList SortAndPageResults(MFAUserList registrations, DataOrderObject order, DataPagingObject paging)
+        {
+            List<MFAUser> data = null;
+            if (paging.IsActive)
+                data = registrations.Skip<MFAUser>(((paging.CurrentPage - 1) * paging.PageSize)).Take<MFAUser>(paging.PageSize).ToList<MFAUser>();
+            else
+                data = registrations;
+            switch (order.Column)
+            {
+                case DataOrderField.ID:
+                    if (order.Direction==SortDirection.Ascending)
+                        return new MFAUserList(data.OrderBy(c => c.ID).ToList<MFAUser>());
+                    else
+                        return new MFAUserList(data.OrderByDescending(c => c.ID).ToList<MFAUser>());
+                case DataOrderField.UserName:
+                    if (order.Direction == SortDirection.Ascending)
+                        return new MFAUserList(data.OrderBy(c => c.UPN).ToList<MFAUser>());
+                    else
+                        return new MFAUserList(data.OrderByDescending(c => c.UPN).ToList<MFAUser>());
+                case DataOrderField.Email:
+                    if (order.Direction == SortDirection.Ascending)
+                        return new MFAUserList(data.OrderBy(c => c.MailAddress).ToList<MFAUser>());
+                    else
+                        return new MFAUserList(data.OrderByDescending(c => c.MailAddress).ToList<MFAUser>());
+                case DataOrderField.Phone:
+                    if (order.Direction == SortDirection.Ascending)
+                        return new MFAUserList(data.OrderBy(c => c.PhoneNumber).ToList<MFAUser>());
+                    else
+                        return new MFAUserList(data.OrderByDescending(c => c.PhoneNumber).ToList<MFAUser>());
+                case DataOrderField.None:
+                default:
+                    return new MFAUserList(data);
+            }
         }
 
         /// <summary>
@@ -686,7 +679,6 @@ namespace Neos.IdentityServer.MultiFactor.Data
             {
                 foreach (ADDSHostForest f in _host.Forests)
                 {
-                    // using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntry(_host))
                     using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntry(f.ForestDNS, _host.Account, _host.Password))
                     {
                         string qryldap = "(&(objectCategory=user)(objectClass=user)(userprincipalname=*)";
@@ -707,6 +699,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                             dsusr.PropertiesToLoad.Add(_host.PinAttribute);
                             dsusr.PropertiesToLoad.Add(_host.TotpEnabledAttribute);
                             dsusr.SizeLimit = _host.MaxRows;
+                            dsusr.ReferralChasing = ReferralChasingOption.All;
 
                             switch (order.Column)
                             {
@@ -801,7 +794,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                 DataLog.WriteEntry(ex.Message, System.Diagnostics.EventLogEntryType.Error, 5000);
                 throw new Exception(ex.Message);
             }
-            return registrations;
+            return SortAndPageResults(registrations, order, null); 
         }
 
         /// <summary>
@@ -893,7 +886,6 @@ namespace Neos.IdentityServer.MultiFactor.Data
                 {
                     try
                     {
-                        // using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntry(_host, f))
                         using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntry(f.ForestDNS, _host.Account, _host.Password))
                         {
                             {
@@ -902,6 +894,8 @@ namespace Neos.IdentityServer.MultiFactor.Data
                                     dsusr.PropertiesToLoad.Clear();
                                     dsusr.PropertiesToLoad.Add("objectGUID");
                                     dsusr.SizeLimit = _host.MaxRows;
+                                    dsusr.ReferralChasing = ReferralChasingOption.All;
+
                                     // filtrer IsRegistered
                                     SearchResultCollection src = dsusr.FindAll();
                                     if (src != null)
@@ -999,7 +993,6 @@ namespace Neos.IdentityServer.MultiFactor.Data
                     string qryldap = string.Empty;
                     qryldap  = "(&";
                     qryldap     += "(objectCategory=user)(objectClass=user)(userprincipalname=*)";
-                   // qryldap     += "(!(userAccountControl:1.2.840.113556.1.4.803:=2))";
                     if (created.HasValue)
                         qryldap += "(whenCreated>=" + created.Value.ToString("yyyyMMddHHmmss.0Z")+")";
                     if (modified.HasValue)
@@ -1012,6 +1005,8 @@ namespace Neos.IdentityServer.MultiFactor.Data
                         dsusr.PropertiesToLoad.Add("objectGUID");
                         dsusr.PropertiesToLoad.Add("userPrincipalName");
                         dsusr.PropertiesToLoad.Add("userAccountControl");
+                        dsusr.ReferralChasing = ReferralChasingOption.All;
+
                         if (!string.IsNullOrEmpty(mailattribute))
                             dsusr.PropertiesToLoad.Add(mailattribute);
                         else
@@ -1106,7 +1101,6 @@ namespace Neos.IdentityServer.MultiFactor.Data
         {
             try
             {
-               // using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUPN(_host, upn))
                 using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUPN(_host, _host.Account, _host.Password, upn))
                 {
                     string qryldap = "(&(objectCategory=user)(objectClass=user)(userprincipalname=" + upn + ")(!(userAccountControl:1.2.840.113556.1.4.803:=2)))";
@@ -1121,6 +1115,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                         dsusr.PropertiesToLoad.Add(_host.OverrideMethodAttribute);
                         dsusr.PropertiesToLoad.Add(_host.PinAttribute);
                         dsusr.PropertiesToLoad.Add(_host.TotpEnabledAttribute);
+                        dsusr.ReferralChasing = ReferralChasingOption.All;
 
                         SearchResult sr = dsusr.FindOne();
                         if (sr == null)
@@ -1164,7 +1159,6 @@ namespace Neos.IdentityServer.MultiFactor.Data
             MFAWebAuthNUser result = null;
             try
             {
-               // using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUPN(_host, username))
                 using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUPN(_host, _host.Account, _host.Password, username))
                 {
                     string qryldap = "(&(objectCategory=user)(objectClass=user)(userprincipalname=" + username + ")(!(userAccountControl:1.2.840.113556.1.4.803:=2)))";
@@ -1172,6 +1166,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                     {
                         dsusr.PropertiesToLoad.Add("objectGUID");
                         dsusr.PropertiesToLoad.Add("userPrincipalName");
+                        dsusr.ReferralChasing = ReferralChasingOption.All;
 
                         SearchResult sr = dsusr.FindOne();
                         if (sr != null)
@@ -1219,7 +1214,6 @@ namespace Neos.IdentityServer.MultiFactor.Data
             List<MFAUserCredential> _lst = new List<MFAUserCredential>();
             try
             {
-               // using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUPN(_host, user.Name))
                 using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUPN(_host, _host.Account, _host.Password, user.Name))
                 {
                     string qryldap = "(&(objectCategory=user)(objectClass=user)(userprincipalname=" + user.Name + ")(!(userAccountControl:1.2.840.113556.1.4.803:=2)))";
@@ -1227,6 +1221,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                     {
                         dsusr.PropertiesToLoad.Add("userPrincipalName");
                         dsusr.PropertiesToLoad.Add(_host.PublicKeyCredentialAttribute);
+                        dsusr.ReferralChasing = ReferralChasingOption.All;
 
                         SearchResult sr = dsusr.FindOne();
                         if (sr != null)
@@ -1278,7 +1273,6 @@ namespace Neos.IdentityServer.MultiFactor.Data
             MFAUserCredential result = null;
             try
             {
-               // using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUPN(_host, user.Name))
                 using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUPN(_host, _host.Account, _host.Password, user.Name))
                 {
                     string qryldap = "(&(objectCategory=user)(objectClass=user)(userprincipalname=" + user.Name + ")(!(userAccountControl:1.2.840.113556.1.4.803:=2)))";
@@ -1286,6 +1280,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                     {
                         dsusr.PropertiesToLoad.Add("userPrincipalName");
                         dsusr.PropertiesToLoad.Add(_host.PublicKeyCredentialAttribute);
+                        dsusr.ReferralChasing = ReferralChasingOption.All;
 
                         SearchResult sr = dsusr.FindOne();
                         if (sr != null)
@@ -1338,7 +1333,6 @@ namespace Neos.IdentityServer.MultiFactor.Data
             string value = ser.SerializeCredentials(credential, user.Name);
             try
             {
-               // using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUPN(_host, user.Name))
                 using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUPN(_host, _host.Account, _host.Password, user.Name))
                 {
                     string qryldap = "(&(objectCategory=user)(objectClass=user)(userprincipalname=" + user.Name + ")(!(userAccountControl:1.2.840.113556.1.4.803:=2)))";
@@ -1346,6 +1340,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                     {
                         dsusr.PropertiesToLoad.Add("userPrincipalName");
                         dsusr.PropertiesToLoad.Add(_host.PublicKeyCredentialAttribute);
+                        dsusr.ReferralChasing = ReferralChasingOption.All;
 
                         SearchResult sr = dsusr.FindOne();
                         if (sr != null)
@@ -1379,7 +1374,6 @@ namespace Neos.IdentityServer.MultiFactor.Data
             string newvalue = ser.SerializeCredentials(credential, user.Name);
             try
             {
-               // using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUPN(_host, user.Name))
                 using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUPN(_host, _host.Account, _host.Password, user.Name))
                 {
                     string qryldap = "(&(objectCategory=user)(objectClass=user)(userprincipalname=" + user.Name + ")(!(userAccountControl:1.2.840.113556.1.4.803:=2)))";
@@ -1387,6 +1381,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                     {
                         dsusr.PropertiesToLoad.Add("userPrincipalName");
                         dsusr.PropertiesToLoad.Add(_host.PublicKeyCredentialAttribute);
+                        dsusr.ReferralChasing = ReferralChasingOption.All;
 
                         SearchResult sr = dsusr.FindOne();
                         if (sr != null)
@@ -1438,6 +1433,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                     {
                         dsusr.PropertiesToLoad.Add("userPrincipalName");
                         dsusr.PropertiesToLoad.Add(_host.PublicKeyCredentialAttribute);
+                        dsusr.ReferralChasing = ReferralChasingOption.All;
 
                         SearchResult sr = dsusr.FindOne();
                         if (sr != null)
@@ -1567,7 +1563,6 @@ namespace Neos.IdentityServer.MultiFactor.Data
              string ret = string.Empty;
              try
              {
-               // using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUPN(_host, upn))
                 using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUPN(_host, _host.Account, _host.Password, upn))
                 {
                     string qryldap = string.Empty;
@@ -1578,6 +1573,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                         dsusr.PropertiesToLoad.Add("objectGUID");
                         dsusr.PropertiesToLoad.Add("userPrincipalName");
                         dsusr.PropertiesToLoad.Add(_host.KeyAttribute);
+                        dsusr.ReferralChasing = ReferralChasingOption.All;
 
                         SearchResult sr = dsusr.FindOne();
                         if (sr != null)
@@ -1611,7 +1607,6 @@ namespace Neos.IdentityServer.MultiFactor.Data
              string ret = string.Empty;
              try
              {
-               // using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUPN(_host, upn))
                 using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUPN(_host, _host.Account, _host.Password, upn))
                 {
                     string qryldap = "(&(objectCategory=user)(objectClass=user)(userprincipalname=" + upn + ")(!(userAccountControl:1.2.840.113556.1.4.803:=2)))";
@@ -1620,6 +1615,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                         dsusr.PropertiesToLoad.Clear();
                         dsusr.PropertiesToLoad.Add("userPrincipalName");
                         dsusr.PropertiesToLoad.Add(_host.KeyAttribute);
+                        dsusr.ReferralChasing = ReferralChasingOption.All;
 
                         SearchResult sr = dsusr.FindOne();
                         if (sr != null)
@@ -1650,7 +1646,6 @@ namespace Neos.IdentityServer.MultiFactor.Data
              bool ret = false;
              try
              {
-               // using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUPN(_host, upn))
                 using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUPN(_host, _host.Account, _host.Password, upn))
                 {
                     string qryldap = "(&(objectCategory=user)(objectClass=user)(userprincipalname=" + upn + ")(!(userAccountControl:1.2.840.113556.1.4.803:=2)))";
@@ -1660,6 +1655,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                         dsusr.PropertiesToLoad.Add("objectGUID");
                         dsusr.PropertiesToLoad.Add("userPrincipalName");
                         dsusr.PropertiesToLoad.Add(_host.KeyAttribute);
+                        dsusr.ReferralChasing = ReferralChasingOption.All;
 
                         SearchResult sr = dsusr.FindOne();
                         if (sr != null)
@@ -1748,7 +1744,6 @@ namespace Neos.IdentityServer.MultiFactor.Data
             string ret = string.Empty;
             try
             {
-               // using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUPN(_host, upn))
                 using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUPN(_host, _host.Account, _host.Password, upn))
                 {
                     string qryldap = string.Empty;
@@ -1759,6 +1754,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                         dsusr.PropertiesToLoad.Add("objectGUID");
                         dsusr.PropertiesToLoad.Add("userPrincipalName");
                         dsusr.PropertiesToLoad.Add(_host.KeyAttribute);
+                        dsusr.ReferralChasing = ReferralChasingOption.All;
 
                         SearchResult sr = dsusr.FindOne();
                         if (sr != null)
@@ -1800,6 +1796,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                         dsusr.PropertiesToLoad.Add("userPrincipalName");
                         dsusr.PropertiesToLoad.Add(_host.KeyAttribute);
                         dsusr.PropertiesToLoad.Add(_host.RSACertificateAttribute);
+                        dsusr.ReferralChasing = ReferralChasingOption.All;
 
                         SearchResult sr = dsusr.FindOne();
                         if (sr != null)
@@ -1842,7 +1839,6 @@ namespace Neos.IdentityServer.MultiFactor.Data
             bool ret = false;
             try
             {
-               // using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUPN(_host, upn))
                 using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUPN(_host, _host.Account, _host.Password, upn))
                 {
                     string qryldap = "(&(objectCategory=user)(objectClass=user)(userprincipalname=" + upn + ")(!(userAccountControl:1.2.840.113556.1.4.803:=2)))";
@@ -1853,6 +1849,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                         dsusr.PropertiesToLoad.Add("userPrincipalName");
                         dsusr.PropertiesToLoad.Add(_host.KeyAttribute);
                         dsusr.PropertiesToLoad.Add(_host.RSACertificateAttribute);
+                        dsusr.ReferralChasing = ReferralChasingOption.All;
 
                         SearchResult sr = dsusr.FindOne();
                         if (sr != null)
@@ -1888,7 +1885,6 @@ namespace Neos.IdentityServer.MultiFactor.Data
         {
             try
             {
-               // using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUPN(_host, upn))
                 using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUPN(_host, _host.Account, _host.Password, upn))
                 {
                     string qryldap = "(&(objectCategory=user)(objectClass=user)(userprincipalname=" + upn + ")(!(userAccountControl:1.2.840.113556.1.4.803:=2)))";
@@ -1899,6 +1895,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                         dsusr.PropertiesToLoad.Add("userPrincipalName");
                         dsusr.PropertiesToLoad.Add(_host.KeyAttribute);
                         dsusr.PropertiesToLoad.Add(_host.RSACertificateAttribute);
+                        dsusr.ReferralChasing = ReferralChasingOption.All;
 
                         SearchResult sr = dsusr.FindOne();
                         if (sr != null)
@@ -1954,7 +1951,6 @@ namespace Neos.IdentityServer.MultiFactor.Data
         {
             try
             {
-               // using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUPN(_host, upn))
                 using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUPN(_host, _host.Account, _host.Password, upn))
                 {
                     string qryldap = "(&(objectCategory=user)(objectClass=user)(userprincipalname=" + upn + ")(!(userAccountControl:1.2.840.113556.1.4.803:=2)))";
@@ -1964,6 +1960,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                         dsusr.PropertiesToLoad.Add("objectGUID");
                         dsusr.PropertiesToLoad.Add("userPrincipalName");
                         dsusr.PropertiesToLoad.Add(_host.RSACertificateAttribute);
+                        dsusr.ReferralChasing = ReferralChasingOption.All;
 
                         SearchResult sr = dsusr.FindOne();
                         if (sr != null)

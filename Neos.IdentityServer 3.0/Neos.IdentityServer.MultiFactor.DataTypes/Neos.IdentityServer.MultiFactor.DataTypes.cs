@@ -958,6 +958,10 @@ namespace Neos.IdentityServer.MultiFactor
     [Serializable]
     public class MFAUserList : List<MFAUser>
     {
+        public MFAUserList() { }
+
+        public MFAUserList(List<MFAUser> data):base(data) { }
+
         /// <summary>
         /// implicit conversion to byte array
         /// </summary>
@@ -1436,21 +1440,15 @@ namespace Neos.IdentityServer.MultiFactor
     {
         private int _currentpage = 0;
         private int _pagesize = 50;
-        private bool _isactive = false;
-        private bool _isrecurse = false;
 
         public void Clear()
         {
             _currentpage = 0;
             _pagesize = 50;
-            _isactive = false;
-            _isrecurse = false;
+            IsActive = false;
         }
 
-        public bool IsActive
-        {
-            get { return _isactive; }
-        }
+        public bool IsActive { get; private set; } = false;
 
         [XmlAttribute("CurrentPage")]
         public int CurrentPage
@@ -1461,7 +1459,7 @@ namespace Neos.IdentityServer.MultiFactor
                 if (value < 0)
                     value = 0;
                 _currentpage = value;
-                _isactive = _currentpage > 0;
+                IsActive = _currentpage > 0;
             }
         }
 
@@ -1479,12 +1477,6 @@ namespace Neos.IdentityServer.MultiFactor
                         _pagesize = value;
                 }
             }
-        }
-
-        public bool IsRecurse
-        {
-            get { return _isrecurse; }
-            set { _isrecurse = value; }
         }
     }
 

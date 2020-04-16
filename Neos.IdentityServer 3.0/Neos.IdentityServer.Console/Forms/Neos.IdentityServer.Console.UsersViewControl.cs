@@ -158,7 +158,7 @@ namespace Neos.IdentityServer.Console
                 _lst = MMCService.GetUsers();
                 if (clearselection)
                    this.GridView.RowCount = 0;
-                this.GridView.RowCount = MMCService.GetUsersCount(); 
+                this.GridView.RowCount = _lst.Count; // MMCService.GetUsersCount(); ICI
                 if (refreshgrid)
                     this.GridView.Refresh();
                 if (clearselection)

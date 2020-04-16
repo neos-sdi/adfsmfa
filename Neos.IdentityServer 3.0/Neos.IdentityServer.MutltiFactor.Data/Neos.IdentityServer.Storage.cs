@@ -137,6 +137,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                         dsusr.PropertiesToLoad.Add("userPrincipalName");
                         dsusr.PropertiesToLoad.Add("whenCreated");
                         dsusr.PropertiesToLoad.Add("distinguishedName");
+                        dsusr.ReferralChasing = ReferralChasingOption.All;
 
                         SearchResult sr = dsusr.FindOne();
                         if (sr != null)
