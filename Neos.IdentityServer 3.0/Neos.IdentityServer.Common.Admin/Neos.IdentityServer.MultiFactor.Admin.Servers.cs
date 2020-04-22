@@ -573,8 +573,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 }
                 try
                 {
-                    RunspaceConfiguration SPRunConfig = RunspaceConfiguration.Create();
-                    SPRunSpace = RunspaceFactory.CreateRunspace(SPRunConfig);
+                    SPRunSpace = RunspaceFactory.CreateRunspace();
 
                     SPPowerShell = PowerShell.Create();
                     SPPowerShell.Runspace = SPRunSpace;
@@ -618,8 +617,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             PowerShell SPPowerShell = null;
             try
             {
-                RunspaceConfiguration SPRunConfig = RunspaceConfiguration.Create();
-                SPRunSpace = RunspaceFactory.CreateRunspace(SPRunConfig);
+                SPRunSpace = RunspaceFactory.CreateRunspace();
 
                 SPPowerShell = PowerShell.Create();
                 SPPowerShell.Runspace = SPRunSpace;
@@ -661,8 +659,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 pth = backupfile;
             try
             {
-                RunspaceConfiguration SPRunConfig = RunspaceConfiguration.Create();
-                SPRunSpace = RunspaceFactory.CreateRunspace(SPRunConfig);
+                SPRunSpace = RunspaceFactory.CreateRunspace();
 
                 SPPowerShell = PowerShell.Create();
                 SPPowerShell.Runspace = SPRunSpace;
@@ -697,8 +694,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             PowerShell SPPowerShell = null;
             try
             {
-                RunspaceConfiguration SPRunConfig = RunspaceConfiguration.Create();
-                SPRunSpace = RunspaceFactory.CreateRunspace(SPRunConfig);
+                SPRunSpace = RunspaceFactory.CreateRunspace();
 
                 SPPowerShell = PowerShell.Create();
                 SPPowerShell.Runspace = SPRunSpace;
@@ -734,8 +730,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             bool found = false;
             try
             {
-                RunspaceConfiguration SPRunConfig = RunspaceConfiguration.Create();
-                SPRunSpace = RunspaceFactory.CreateRunspace(SPRunConfig);
+                SPRunSpace = RunspaceFactory.CreateRunspace();
 
                 SPPowerShell = PowerShell.Create();
                 SPPowerShell.Runspace = SPRunSpace;
@@ -797,8 +792,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             bool found = false;
             try
             {
-                RunspaceConfiguration SPRunConfig = RunspaceConfiguration.Create();
-                SPRunSpace = RunspaceFactory.CreateRunspace(SPRunConfig);
+                SPRunSpace = RunspaceFactory.CreateRunspace();
 
                 SPPowerShell = PowerShell.Create();
                 SPPowerShell.Runspace = SPRunSpace;
@@ -861,8 +855,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             bool found = false;
             try
             {
-                RunspaceConfiguration SPRunConfig = RunspaceConfiguration.Create();
-                SPRunSpace = RunspaceFactory.CreateRunspace(SPRunConfig);
+                SPRunSpace = RunspaceFactory.CreateRunspace();
 
                 SPPowerShell = PowerShell.Create();
                 SPPowerShell.Runspace = SPRunSpace;
@@ -910,8 +903,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 try
                 {
                     _isprimaryserverread = true;
-                    RunspaceConfiguration SPRunConfig = RunspaceConfiguration.Create();
-                    SPRunSpace = RunspaceFactory.CreateRunspace(SPRunConfig);
+                    SPRunSpace = RunspaceFactory.CreateRunspace();
 
                     SPPowerShell = PowerShell.Create();
                     SPPowerShell.Runspace = SPRunSpace;
@@ -961,8 +953,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             PowerShell SPPowerShell = null;
             try
             {
-                RunspaceConfiguration SPRunConfig = RunspaceConfiguration.Create();
-                SPRunSpace = RunspaceFactory.CreateRunspace(SPRunConfig);
+                SPRunSpace = RunspaceFactory.CreateRunspace();
 
                 SPPowerShell = PowerShell.Create();
                 SPPowerShell.Runspace = SPRunSpace;
@@ -970,26 +961,39 @@ namespace Neos.IdentityServer.MultiFactor.Administration
 
                 if (supports2019)
                 {
-                    Pipeline pipeline = SPRunSpace.CreatePipeline();
+                    Pipeline pipeline1 = SPRunSpace.CreatePipeline();
+
+                    Command exportcmd = new Command("(Get-AdfsGlobalAuthenticationPolicy).AdditionalAuthenticationProvider", true);
+                    pipeline1.Commands.Add(exportcmd);
+                    Collection<PSObject> PSOutput1 = pipeline1.Invoke();
+                    List<string> lst = new List<string>();
+                    foreach (var result in PSOutput1)
+                    {
+                        lst.Add(result.BaseObject.ToString());
+                    }
+
+                    Pipeline pipeline2 = SPRunSpace.CreatePipeline();
                     Command policycmd = new Command("Set-AdfsGlobalAuthenticationPolicy", false);
                     CommandParameter PParam = new CommandParameter("EnablePaginatedAuthenticationPages", paginated);
                     policycmd.Parameters.Add(PParam);
                     CommandParameter CParam = new CommandParameter("Force", true);
                     policycmd.Parameters.Add(CParam);
-                    pipeline.Commands.Add(policycmd);
+                    CommandParameter AParam = new CommandParameter("AdditionalAuthenticationProvider", lst);
+                    policycmd.Parameters.Add(AParam);
+                    pipeline2.Commands.Add(policycmd);
 
-                    Collection<PSObject> PSOutput = pipeline.Invoke();
+                    Collection<PSObject> PSOutput2 = pipeline2.Invoke();
                     if (Host != null)
                         Host.UI.WriteVerboseLine(DateTime.Now.ToLongTimeString() + " ADFS MFA Pagination : Changed");
                 }
 
-                Pipeline pipeline2 = SPRunSpace.CreatePipeline();
+                Pipeline pipeline3 = SPRunSpace.CreatePipeline();
                 Command themecmd = new Command("Set-AdfsWebConfig", false);
                 CommandParameter NParam = new CommandParameter("ActiveThemeName", themename);
                 themecmd.Parameters.Add(NParam);
-                pipeline2.Commands.Add(themecmd);
+                pipeline3.Commands.Add(themecmd);
 
-                Collection<PSObject> PSOutput2 = pipeline2.Invoke();
+                Collection<PSObject> PSOutput3 = pipeline3.Invoke();
                 if (Host != null)
                     Host.UI.WriteVerboseLine(DateTime.Now.ToLongTimeString() + " ADFS MFA Theme : Changed");
             }

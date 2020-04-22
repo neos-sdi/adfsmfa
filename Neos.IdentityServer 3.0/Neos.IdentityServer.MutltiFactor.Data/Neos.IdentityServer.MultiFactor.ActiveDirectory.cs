@@ -1996,6 +1996,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
         #endregion
     }
     #endregion
+
     #region ADDS Utils
     internal static class ADDSUtils
     {

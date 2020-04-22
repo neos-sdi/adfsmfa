@@ -147,7 +147,16 @@ namespace Neos.IdentityServer.Console
         /// </summary>
         public static void SendKeyByEmail(string email, string upn, string key)
         {
-            MailUtilities.SendKeyByEmail(email, upn, key, ManagementService.Config.MailProvider, ManagementService.Config, CultureInfo.CurrentUICulture);
+            CultureInfo info = null;
+            try
+            {
+                info = new CultureInfo(ManagementService.Config.DefaultCountryCode);
+            }
+            catch
+            {
+                info = CultureInfo.CurrentUICulture;
+            }
+            MailUtilities.SendKeyByEmail(email, upn, key, ManagementService.Config.MailProvider, ManagementService.Config, info);
         }
 
         /// <summary>

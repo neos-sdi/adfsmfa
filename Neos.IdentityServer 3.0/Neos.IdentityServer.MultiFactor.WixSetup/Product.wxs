@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" >
-  <Product Id="a23dd485-5365-4d82-8309-103494000001" Name="Neos MFA Provider for ADFS 2019/2016/2012 R2" Language="1033" Version="3.0.0.2" Manufacturer="Neos-SDI" UpgradeCode="a23dd485-5365-4d82-8309-103495000001" >
+  <Product Id="a23dd485-5365-4d82-8309-103494000001" Name="Neos MFA Provider for ADFS 2019/2016/2012 R2" Language="1033" Version="3.0.0.3" Manufacturer="Neos-SDI" UpgradeCode="a23dd485-5365-4d82-8309-103495000001" >
 
     <Package InstallerVersion="500" Compressed="yes" InstallScope="perMachine" InstallPrivileges="elevated" Platform="x64" Description="Multi-Factor Authentication for ADFS 2019/2016/2012 r2" />
 
@@ -69,10 +69,10 @@
 
     <Binary Id='CustomAction.CA' SourceFile="$(var.Neos.IdentityServer.Deployment.TargetDir)Neos.IdentityServer.Deployment.CA.dll" />
     <CustomAction Id="xInstallService" BinaryKey='CustomAction.CA' DllEntry="InstallService" Execute="commit" Impersonate="no" />
-    <CustomAction Id="xUninstallService" BinaryKey='CustomAction.CA' DllEntry="UnInstallService" Impersonate="no" />
+    <CustomAction Id="xUninstallService" BinaryKey='CustomAction.CA' DllEntry="UnInstallService" Execute="immediate" Impersonate="no" />
 
     <CustomAction Id="xStartService" BinaryKey='CustomAction.CA' DllEntry="StartService" Execute="commit" Impersonate="no"/>
-    <CustomAction Id="xStopService" BinaryKey='CustomAction.CA' DllEntry="StopService" Impersonate="no" />
+    <CustomAction Id="xStopService" BinaryKey='CustomAction.CA' DllEntry="StopService"  Execute="immediate" Impersonate="no" />
 
     <InstallExecuteSequence>
       <Custom Action="xInstallService" Before="InstallFinalize" >

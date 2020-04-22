@@ -2859,7 +2859,7 @@ namespace Neos.IdentityServer.MultiFactor
                                         select servers.FQDN.ToLower()).ToList<string>();
                     OK = client.Check(srv, message);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     replaymanager.UnInitialize();
                     return true;
@@ -2869,7 +2869,7 @@ namespace Neos.IdentityServer.MultiFactor
                     replaymanager.Close(client);
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return true;
             }
