@@ -89,6 +89,9 @@ namespace Neos.IdentityServer.Console
             importgrp.Items.Add(new Microsoft.ManagementConsole.Action(res.ROOTLANGUAGERO, res.ROOTLANGUAGERODESC, -1, "LCID_RO"));
             importgrp.Items.Add(new Microsoft.ManagementConsole.Action(res.ROOTLANGUAGEPL, res.ROOTLANGUAGEPLDESC, -1, "LCID_PL"));
             importgrp.Items.Add(new Microsoft.ManagementConsole.Action(res.ROOTLANGUAGESV, res.ROOTLANGUAGESVDESC, -1, "LCID_SV"));
+            importgrp.Items.Add(new Microsoft.ManagementConsole.Action(res.ROOTLANGUAGEDA, res.ROOTLANGUAGEDADESC, -1, "LCID_DA"));
+            importgrp.Items.Add(new Microsoft.ManagementConsole.Action(res.ROOTLANGUAGEJA, res.ROOTLANGUAGEJADESC, -1, "LCID_JA"));
+            importgrp.Items.Add(new Microsoft.ManagementConsole.Action(res.ROOTLANGUAGECA, res.ROOTLANGUAGECADESC, -1, "LCID_CA"));
             this.ActionsPaneItems.Add(importgrp);
             this.HelpTopic = string.Empty;
         }
@@ -141,7 +144,15 @@ namespace Neos.IdentityServer.Console
                 case "LCID_SV":
                     CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo(1053);
                     break;
-
+                case "LCID_DA":
+                    CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo(1030);
+                    break;
+                case "LCID_JA":
+                    CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo(1041);
+                    break;
+                case "LCID_CA":
+                    CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo(3084);
+                    break;
             }
             ((ADFSSnapIn)this.SnapIn).RefreshUI();
         }
@@ -226,6 +237,21 @@ namespace Neos.IdentityServer.Console
                             {
                                 ((Microsoft.ManagementConsole.Action)itms).DisplayName = res.ROOTLANGUAGESV;
                                 ((Microsoft.ManagementConsole.Action)itms).Description = res.ROOTLANGUAGESVDESC;
+                            }
+                            else if ((string)((Microsoft.ManagementConsole.Action)itms).Tag == "LCID_DA")
+                            {
+                                ((Microsoft.ManagementConsole.Action)itms).DisplayName = res.ROOTLANGUAGEDA;
+                                ((Microsoft.ManagementConsole.Action)itms).Description = res.ROOTLANGUAGEDADESC;
+                            }
+                            else if ((string)((Microsoft.ManagementConsole.Action)itms).Tag == "LCID_JA")
+                            {
+                                ((Microsoft.ManagementConsole.Action)itms).DisplayName = res.ROOTLANGUAGEJA;
+                                ((Microsoft.ManagementConsole.Action)itms).Description = res.ROOTLANGUAGEJADESC;
+                            }
+                            else if ((string)((Microsoft.ManagementConsole.Action)itms).Tag == "LCID_CA")
+                            {
+                                ((Microsoft.ManagementConsole.Action)itms).DisplayName = res.ROOTLANGUAGECA;
+                                ((Microsoft.ManagementConsole.Action)itms).Description = res.ROOTLANGUAGECADESC;
                             }
                         }
                     }

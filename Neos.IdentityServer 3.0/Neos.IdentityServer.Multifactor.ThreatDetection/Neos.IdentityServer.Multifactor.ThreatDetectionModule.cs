@@ -128,7 +128,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// EvaluatePreAuthentication method implentation for interface IPreAuthenticationThreatDetectionModule
         /// </summary>
-        public Task<ThrottleStatus> EvaluatePreAuthentication(ThreatDetectionLogger logger, RequestContext requestContext, SecurityContext securityContext, ProtocolContext protocolContext, IList<Claim> additionalClams)
+        public Task<ThrottleStatus> EvaluatePreAuthentication(ThreatDetectionLogger logger, RequestContext requestContext, SecurityContext securityContext, ProtocolContext protocolContext, IList<Claim> additionalClaims)
         {
             return Task.FromResult<ThrottleStatus>(ThrottleStatus.Allow);
         }
@@ -136,7 +136,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// EvaluatePostAuthentication method implentation for interface IPostAuthenticationThreatDetectionModule
         /// </summary>
-        public Task<RiskScore> EvaluatePostAuthentication(ThreatDetectionLogger logger, RequestContext requestContext, SecurityContext securityContext, ProtocolContext protocolContext, AuthenticationResult authenticationResult, IList<Claim> additionalClams)
+        public Task<RiskScore> EvaluatePostAuthentication(ThreatDetectionLogger logger, RequestContext requestContext, SecurityContext securityContext, ProtocolContext protocolContext, AuthenticationResult authenticationResult, IList<Claim> additionalClaims)
         {
             return Task.FromResult<RiskScore>(RiskScore.NotEvaluated);
         }

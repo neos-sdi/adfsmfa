@@ -1,0 +1,654 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="CRTLADFSRESTARTFARMSERVICES" xml:space="preserve">
+    <value>Genstart alle sammenslutningstjenester</value>
+  </data>
+  <data name="CRTLADFSRESTARTSERVICES" xml:space="preserve">
+    <value>Genstart fedeartion-tjenester</value>
+  </data>
+  <data name="CRTLADFSSTARTSERVICES" xml:space="preserve">
+    <value>Start tjenester til fedeartion</value>
+  </data>
+  <data name="CRTLADFSSTOPSERVICES" xml:space="preserve">
+    <value>Stop føderationtjenester</value>
+  </data>
+  <data name="CTRGLMANAGEREG" xml:space="preserve">
+    <value>Registreringsmeddelelser</value>
+  </data>
+  <data name="CTRGLMANAGEREGEND" xml:space="preserve">
+    <value>Slutningen</value>
+  </data>
+  <data name="CTRGLMANAGEREGSTART" xml:space="preserve">
+    <value>Starte</value>
+  </data>
+  <data name="CTRLADACCOUNT" xml:space="preserve">
+    <value>Få adgang til konto</value>
+  </data>
+  <data name="CTRLADATCHECKDATEERROR" xml:space="preserve">
+    <value>Ugyldig ATTRIBUT ADDS for kontroldato !</value>
+  </data>
+  <data name="CTRLADATENABLEDERROR" xml:space="preserve">
+    <value>Ugyldig adds-attribut for Enbaled !</value>
+  </data>
+  <data name="CTRLADATMETHODERROR" xml:space="preserve">
+    <value>Ugyldig ATTRIBUT I FORBINDELSE TIL IM I, for metoden !</value>
+  </data>
+  <data name="CTRLADATOVERRIDEERROR" xml:space="preserve">
+    <value>Ugyldig ATTRIBUT ADDS for en bestemt metode !</value>
+  </data>
+  <data name="CTRLADATPINERROR" xml:space="preserve">
+    <value>Ugyldig ATTRIBUT ADDS for pinkode !</value>
+  </data>
+  <data name="CTRLADATRSACERTERROR" xml:space="preserve">
+    <value>Ugyldig ATTRIBUT ADDS for RSA-certifikat !</value>
+  </data>
+  <data name="CTRLADATTACCOUNT" xml:space="preserve">
+    <value>Ugyldig TILFØJE-konto !</value>
+  </data>
+  <data name="CTRLADATTDOMAIN" xml:space="preserve">
+    <value>Ugyldig TILFØJER-domæneadresse !</value>
+  </data>
+  <data name="CTRLADATTEMAILERROR" xml:space="preserve">
+    <value>Ugyldig attributten ADDS for mailadressen !</value>
+  </data>
+  <data name="CTRLADATTKEY" xml:space="preserve">
+    <value>Hemmelig nøgle</value>
+  </data>
+  <data name="CTRLADATTKEYERROR" xml:space="preserve">
+    <value>Ugyldig attributten ADDS for Nøgle !</value>
+  </data>
+  <data name="CTRLADATTMAIL" xml:space="preserve">
+    <value>Dagens e-avis</value>
+  </data>
+  <data name="CTRLADATTMETHOD" xml:space="preserve">
+    <value>MfA-standardmetode</value>
+  </data>
+  <data name="CTRLADATTOVERRIDE" xml:space="preserve">
+    <value>Tilsidesæt MFA-metode</value>
+  </data>
+  <data name="CTRLADATTPASSWORD" xml:space="preserve">
+    <value>Ugyldig tilføjeadgangskode !</value>
+  </data>
+  <data name="CTRLADATTPHONE" xml:space="preserve">
+    <value>Mobiltelefon</value>
+  </data>
+  <data name="CTRLADATTPHONEERROR" xml:space="preserve">
+    <value>Ugyldig attributten ADDS for Telefonnummer !</value>
+  </data>
+  <data name="CTRLADATTPIN" xml:space="preserve">
+    <value>Pinkode</value>
+  </data>
+  <data name="CTRLADATTPUBLICKEY" xml:space="preserve">
+    <value>WebAuthN Offentlig nøgle</value>
+  </data>
+  <data name="CTRLADATTRIBUTES" xml:space="preserve">
+    <value>Indstillinger for Active Directory-attributter</value>
+  </data>
+  <data name="CTRLADATTRSACERT" xml:space="preserve">
+    <value>RSA-brugercertifikat</value>
+  </data>
+  <data name="CTRLADATTSTATUS" xml:space="preserve">
+    <value>Status for brugeraktivering</value>
+  </data>
+  <data name="CTRLADATTVALIDATION" xml:space="preserve">
+    <value>DATO FOR TOTP-bekræftelse</value>
+  </data>
+  <data name="CTRLADATTVALIDITY" xml:space="preserve">
+    <value>TOTP-gyldighedsdato</value>
+  </data>
+  <data name="CTRLADATVALIDITYDATEERROR" xml:space="preserve">
+    <value>Ugyldig ATTRIBUT ADDS for gyldighedsdato !</value>
+  </data>
+  <data name="CTRLADCONNECTIONERROR" xml:space="preserve">
+    <value>Der kan ikke oprettes forbindelse til ADDS forest/Domain !</value>
+  </data>
+  <data name="CTRLADCONNECTIONOK" xml:space="preserve">
+    <value>Forbindelse på TILFØJER Skov / Domæne operationelle !</value>
+  </data>
+  <data name="CTRLADDOMAIN" xml:space="preserve">
+    <value>Domænenavn</value>
+  </data>
+  <data name="CTRLADFSACTIVATEMFA" xml:space="preserve">
+    <value>Aktiver MFA</value>
+  </data>
+  <data name="CTRLADFSDEACTIVATEMFA" xml:space="preserve">
+    <value>Deaktiver MFA</value>
+  </data>
+  <data name="CTRLADPASSWORD" xml:space="preserve">
+    <value>Adgangskode</value>
+  </data>
+  <data name="CTRLADSUPERACCOUNT" xml:space="preserve">
+    <value>Legitimationsoplysninger til Active Directory "SuperUser"</value>
+  </data>
+  <data name="CTRLADTEMPLATE2016" xml:space="preserve">
+    <value>TILFØJER Skema 2016++</value>
+  </data>
+  <data name="CTRLADTEMPLATE2016ERROR" xml:space="preserve">
+    <value>Fejl ved indlæsning af skabelonen "2016", skal du opdatere dine attributter manuelt !</value>
+  </data>
+  <data name="CTRLADTEMPLATEBASE" xml:space="preserve">
+    <value>TILFØJER Skema 2012-</value>
+  </data>
+  <data name="CTRLADTEMPLATEBASEERROR" xml:space="preserve">
+    <value>Fejl ved indlæsning af skabelonen "Standard" skal du opdatere attributterne manuelt !</value>
+  </data>
+  <data name="CTRLADTEMPLATEMFA" xml:space="preserve">
+    <value>TILFØJER MfA for skema</value>
+  </data>
+  <data name="CTRLADTEMPLATEMFAERROR" xml:space="preserve">
+    <value>Fejl ved indlæsning af "MFA"-skabelonen skal du opdatere dine attributter manuelt !</value>
+  </data>
+  <data name="CTRLADTEST" xml:space="preserve">
+    <value>Test</value>
+  </data>
+  <data name="CTRLADTITLECONFIG" xml:space="preserve">
+    <value>Generelle sikkerhedsegenskaber</value>
+  </data>
+  <data name="CTRLADUSEADDS" xml:space="preserve">
+    <value>Brug af Active Directory-konfiguration</value>
+  </data>
+  <data name="CTRLAZURETENANTID" xml:space="preserve">
+    <value>Azure-lejer</value>
+  </data>
+  <data name="CTRLAZURETHUMPRINT" xml:space="preserve">
+    <value>Udskrift af Azure-certifikat</value>
+  </data>
+  <data name="CTRLCANCEL" xml:space="preserve">
+    <value>Annullere</value>
+  </data>
+  <data name="CTRLDLGMAXRETRIES" xml:space="preserve">
+    <value>Maks.</value>
+  </data>
+  <data name="CTRLGLALLOWGOOGLESEARCH" xml:space="preserve">
+    <value>Vis Google-søgning</value>
+  </data>
+  <data name="CTRLGLCOMANYNAME" xml:space="preserve">
+    <value>Firmanavn</value>
+  </data>
+  <data name="CTRLGLCONTACT" xml:space="preserve">
+    <value>Administrativ kontakt (e-mail)</value>
+  </data>
+  <data name="CTRLGLCONTRYCODE" xml:space="preserve">
+    <value>Standardlandekode</value>
+  </data>
+  <data name="CTRLGLDELVERY" xml:space="preserve">
+    <value>Valideringstid (i sekunder)</value>
+  </data>
+  <data name="CTRLGLENROLLWIZ" xml:space="preserve">
+    <value>Guiden Registrering</value>
+  </data>
+  <data name="CTRLGLHASH" xml:space="preserve">
+    <value>Hashalgoritmen</value>
+  </data>
+  <data name="CTRLGLINVALIDEMAILCONTACT" xml:space="preserve">
+    <value>Ugyldigt e-mail-format til administratorkontakt!</value>
+  </data>
+  <data name="CTRLGLMANAGEKMSOO" xml:space="preserve">
+    <value>Brugeren kan vælge standardudbyder</value>
+  </data>
+  <data name="CTRLGLMANAGENOTIFS" xml:space="preserve">
+    <value>Giv brugerne besked efter konfigurationsændringer</value>
+  </data>
+  <data name="CTRLGLMANAGEOPTIONS" xml:space="preserve">
+    <value>Indstillinger for brugeradministration</value>
+  </data>
+  <data name="CTRLGLMANAGEOPTS" xml:space="preserve">
+    <value>Administration af indstillinger</value>
+  </data>
+  <data name="CTRLGLMANAGEPWD" xml:space="preserve">
+    <value>Administration af adgangskoder</value>
+  </data>
+  <data name="CTRLGLMAXCODES" xml:space="preserve">
+    <value>Godkendt kodehistorik</value>
+  </data>
+  <data name="CTRLGLMFAREGISTER" xml:space="preserve">
+    <value>Brugerregistrering</value>
+  </data>
+  <data name="CTRLGLMFAREGISTER1" xml:space="preserve">
+    <value>Administration - Registrering verificeret af support</value>
+  </data>
+  <data name="CTRLGLMFAREGISTER2" xml:space="preserve">
+    <value>Bruger - Registrering foretaget af brugeren</value>
+  </data>
+  <data name="CTRLGLMFAREGISTER3" xml:space="preserve">
+    <value>Ikke-administreret - Kontakt support</value>
+  </data>
+  <data name="CTRLGLMFAREGISTER4" xml:space="preserve">
+    <value>Obligatorisk - Tilmelding foretaget af support</value>
+  </data>
+  <data name="CTRLGLMFASTATUS" xml:space="preserve">
+    <value>MFA-status</value>
+  </data>
+  <data name="CTRLGLMFASTATUS1" xml:space="preserve">
+    <value>Obligatorisk - MFA kan ikke deaktiveres</value>
+  </data>
+  <data name="CTRLGLMFASTATUS2" xml:space="preserve">
+    <value>Valgfrit - MFA kan deaktiveres i muligheder</value>
+  </data>
+  <data name="CTRLGLMFASTATUS3" xml:space="preserve">
+    <value>Ikke påkrævet</value>
+  </data>
+  <data name="CTRLGLPOLICY" xml:space="preserve">
+    <value>Sikkerhedspolitik (model)</value>
+  </data>
+  <data name="CTRLGLPROVIDER" xml:space="preserve">
+    <value>Standardbrugerudbyder</value>
+  </data>
+  <data name="CTRLGLREFRESH" xml:space="preserve">
+    <value>Opdateringshastighed (i millisekunder)</value>
+  </data>
+  <data name="CTRLGLREPLAY" xml:space="preserve">
+    <value>Bespil beskyttelse af omspil</value>
+  </data>
+  <data name="CTRLGLSHOWAUTHY" xml:space="preserve">
+    <value>Vis Authy Authenticator</value>
+  </data>
+  <data name="CTRLGLSHOWGOOGLE" xml:space="preserve">
+    <value>Vis Google Authenticator</value>
+  </data>
+  <data name="CTRLGLSHOWMICROSOFT" xml:space="preserve">
+    <value>Vis Microsoft Authenticator</value>
+  </data>
+  <data name="CTRLGLUSEAPPS" xml:space="preserve">
+    <value>Brug godkendelsesprogrammer (Google Authenticator, Microsoft Authenticator)</value>
+  </data>
+  <data name="CTRLGLUSEMAILS" xml:space="preserve">
+    <value>Brug mailnotifikationer</value>
+  </data>
+  <data name="CTRLGLUSESMS" xml:space="preserve">
+    <value>Brug SMS-beskeder</value>
+  </data>
+  <data name="CTRLGLUSEUSERLANGS" xml:space="preserve">
+    <value>Brug browsersprog</value>
+  </data>
+  <data name="CTRLINVALIDVALUE" xml:space="preserve">
+    <value>Ugyldig værdi, skal være mellem {0} og {1}.</value>
+  </data>
+  <data name="CTRLMULTVALUED" xml:space="preserve">
+    <value>(*) Understøtter strengegenskaber med flere værdier</value>
+  </data>
+  <data name="CTRLMUSTACTIVATESVC" xml:space="preserve">
+    <value>Handlingen blev afbrudt ! din skal starte den lokale ADFS service!</value>
+  </data>
+  <data name="CTRLMUSTMULTVALUED" xml:space="preserve">
+    <value>(**) Kræv strengegenskab med flere værdier</value>
+  </data>
+  <data name="CTRLNULLOREMPTYERROR" xml:space="preserve">
+    <value>Null- eller tomme værdier er ikke tilladt.</value>
+  </data>
+  <data name="CTRLPROVACTIVE" xml:space="preserve">
+    <value>Aktive</value>
+  </data>
+  <data name="CTRLPROVPIN" xml:space="preserve">
+    <value>Kræver pinkode</value>
+  </data>
+  <data name="CTRLPROVREQUIRED" xml:space="preserve">
+    <value>Kræves</value>
+  </data>
+  <data name="CTRLPROVWIZARD" xml:space="preserve">
+    <value>Guiden Enrollement</value>
+  </data>
+  <data name="CTRLPROVWIZARDSTRICT" xml:space="preserve">
+    <value>Gennemtving guiden, hvis den ikke er fuldført</value>
+  </data>
+  <data name="CTRLSAVE" xml:space="preserve">
+    <value>Gemme</value>
+  </data>
+  <data name="CTRLSECASSEMBLY" xml:space="preserve">
+    <value>Implementering (fuld klasse)</value>
+  </data>
+  <data name="CTRLSECCERTIFDURATION" xml:space="preserve">
+    <value>Gyldighedsperioden</value>
+  </data>
+  <data name="CTRLSECCERTIFICATES" xml:space="preserve">
+    <value>Certifikater</value>
+  </data>
+  <data name="CTRLSECCERTPERUSER" xml:space="preserve">
+    <value>Bruge ét certifikat pr. bruger</value>
+  </data>
+  <data name="CTRLSECINVALIDCERT" xml:space="preserve">
+    <value>Certifikatet blev ikke fundet !</value>
+  </data>
+  <data name="CTRLSECINVALIDEXTERROR" xml:space="preserve">
+    <value>Ugyldig udvidelse ! kan ikke indlæses !</value>
+  </data>
+  <data name="CTRLSECKEYGEN" xml:space="preserve">
+    <value>Genereret nøglelængde</value>
+  </data>
+  <data name="CTRLSECKEYLENGTH" xml:space="preserve">
+    <value>Maksimal nøglelængde</value>
+  </data>
+  <data name="CTRLSECKEYMODE" xml:space="preserve">
+    <value>Sikkerhedsnøgletilstand</value>
+  </data>
+  <data name="CTRLSECLIBLABEL" xml:space="preserve">
+    <value>Version af krypteringsbibliotek</value>
+  </data>
+  <data name="CTRLSECNEWCERT" xml:space="preserve">
+    <value>Nyt certifikat</value>
+  </data>
+  <data name="CTRLSECNEWCERTCREATED" xml:space="preserve">
+    <value>Certifikatet blev oprettet ! Du skal installere nye {0} på alle andre ADFS-servere</value>
+  </data>
+  <data name="CTRLSECNEWCRYPTEDDATABASE" xml:space="preserve">
+    <value>Oprette sql-krypteret database</value>
+  </data>
+  <data name="CTRLSECNEWDATABASE" xml:space="preserve">
+    <value>Opret SQL-database</value>
+  </data>
+  <data name="CTRLSECPARAMS" xml:space="preserve">
+    <value>Parametre</value>
+  </data>
+  <data name="CTRLSECRSAGENERATE" xml:space="preserve">
+    <value>Skal oprettelsen af et nyt certifikat til MFA bekræftes? \rForsigtig: Alle eksisterende nøgler bliver ugyldiggjort !</value>
+  </data>
+  <data name="CTRLSECTHUMPRINT" xml:space="preserve">
+    <value>Tommelfingeraftryk på certifikat</value>
+  </data>
+  <data name="CTRLSECWARNING" xml:space="preserve">
+    <value>Advarsel! Hvis du ændrer disse værdier, bliver alle aktuelle nøgler ugyldige</value>
+  </data>
+  <data name="CTRLSECWIZARD" xml:space="preserve">
+    <value>Indstillinger for guiden Registrering</value>
+  </data>
+  <data name="CTRLSECWIZTITLE" xml:space="preserve">
+    <value>Oprette en ny SQL-database</value>
+  </data>
+  <data name="CTRLSECWSMANAPPNAME" xml:space="preserve">
+    <value>Programnavn</value>
+  </data>
+  <data name="CTRLSECWSMANPORT" xml:space="preserve">
+    <value>Port</value>
+  </data>
+  <data name="CTRLSECWSMANSHELLURI" xml:space="preserve">
+    <value>Shell Uri</value>
+  </data>
+  <data name="CTRLSECWSMANTIMEOUT" xml:space="preserve">
+    <value>Timeout</value>
+  </data>
+  <data name="CTRLSECXORLABEL" xml:space="preserve">
+    <value>Adgangsudtryk</value>
+  </data>
+  <data name="CTRLSMSASSEMBLY" xml:space="preserve">
+    <value>Implementering (fuld klasse)</value>
+  </data>
+  <data name="CTRLSMSASYNCCALL" xml:space="preserve">
+    <value>Asynkrone opkald</value>
+  </data>
+  <data name="CTRLSMSCOMPANY" xml:space="preserve">
+    <value>Firmanavn</value>
+  </data>
+  <data name="CTRLSMSIVALIDEXTERROR" xml:space="preserve">
+    <value>Ugyldig udvidelse ! kan ikke indlæses !</value>
+  </data>
+  <data name="CTRLSMSPARAMS" xml:space="preserve">
+    <value>Parametre</value>
+  </data>
+  <data name="CTRLSMSSHA1" xml:space="preserve">
+    <value>SHA1 salt</value>
+  </data>
+  <data name="CTRLSMSTIMEOUT" xml:space="preserve">
+    <value>Time Out</value>
+  </data>
+  <data name="CTRLSMTPACCOUNT" xml:space="preserve">
+    <value>Forbindelseskonto</value>
+  </data>
+  <data name="CTRLSMTPANONYMOUS" xml:space="preserve">
+    <value>Anonym</value>
+  </data>
+  <data name="CTRLSMTPCOMPANY" xml:space="preserve">
+    <value>Firmanavn</value>
+  </data>
+  <data name="CTRLSMTPDELIVERYNOTIFICATIONS" xml:space="preserve">
+    <value>Meddelelser om levering (fejl)</value>
+  </data>
+  <data name="CTRLSMTPFROM" xml:space="preserve">
+    <value>Administrativ kontakt (fra)</value>
+  </data>
+  <data name="CTRLSMTPIDENTIFICATION" xml:space="preserve">
+    <value>Identifikation</value>
+  </data>
+  <data name="CTRLSMTPMAILERROR" xml:space="preserve">
+    <value>Ugyldigt e-mail-format !</value>
+  </data>
+  <data name="CTRLSMTPMESSAGEOK" xml:space="preserve">
+    <value>Testmeddelelse, der er sendt til</value>
+  </data>
+  <data name="CTRLSMTPPASSWORD" xml:space="preserve">
+    <value>Adgangskode</value>
+  </data>
+  <data name="CTRLSMTPPORT" xml:space="preserve">
+    <value>Port</value>
+  </data>
+  <data name="CTRLSMTPPORTERROR" xml:space="preserve">
+    <value>Ugyldigt portnummer !</value>
+  </data>
+  <data name="CTRLSMTPSERVER" xml:space="preserve">
+    <value>Mailserver</value>
+  </data>
+  <data name="CTRLSMTPSERVERADDRESS" xml:space="preserve">
+    <value>Serveradresse</value>
+  </data>
+  <data name="CTRLSMTPTEST" xml:space="preserve">
+    <value>Test</value>
+  </data>
+  <data name="CTRLSQLCONNECTERROR" xml:space="preserve">
+    <value>Der kan ikke oprettes forbindelse til MFA SQL-databasen!</value>
+  </data>
+  <data name="CTRLSQLCONNECTOK" xml:space="preserve">
+    <value>Forbindelse på MFA SQL Database er operativ !</value>
+  </data>
+  <data name="CTRLSQLCONNECTSTR" xml:space="preserve">
+    <value>Forbindelsesstreng</value>
+  </data>
+  <data name="CTRLSQLCONNECTSTRERROR" xml:space="preserve">
+    <value>Ugyldig SQL-forbindelsesstreng !</value>
+  </data>
+  <data name="CTRLSQLCREATECRYPTEDDB" xml:space="preserve">
+    <value>Opret MFA-krypteret database</value>
+  </data>
+  <data name="CTRLSQLCREATEDB" xml:space="preserve">
+    <value>Opret MFA-database</value>
+  </data>
+  <data name="CTRLSQLCRYPTUSING" xml:space="preserve">
+    <value>Brug altid krypteret funktion (SQL Server 2016 +)</value>
+  </data>
+  <data name="CTRLSQLENCRYPTNAME" xml:space="preserve">
+    <value>Navnet på krypteringsnøglen</value>
+  </data>
+  <data name="CTRLSQLINVALIDCERTERROR" xml:space="preserve">
+    <value>Ugyldig {0}</value>
+  </data>
+  <data name="CTRLSQLMAXROWS" xml:space="preserve">
+    <value>Maksimale rækker</value>
+  </data>
+  <data name="CTRLSQLMAXROWSERROR" xml:space="preserve">
+    <value>{0} er ikke gyldig! skal være mellem 1000 og 1000000</value>
+  </data>
+  <data name="CTRLSQLNEWDBCREATED" xml:space="preserve">
+    <value>MFA-databasen {0} oprettet!</value>
+  </data>
+  <data name="CTRLSQLNEWDBCREATED2" xml:space="preserve">
+    <value>MFA-databasen {0} oprettet! Du skal installere nye {1} på alle andre ADFS-servere</value>
+  </data>
+  <data name="CTRLSQLREUSECERT" xml:space="preserve">
+    <value>Genbrug certifikat</value>
+  </data>
+  <data name="CTRLSQLTEST" xml:space="preserve">
+    <value>Test</value>
+  </data>
+  <data name="CTRLSQLTHUMBPRINT" xml:space="preserve">
+    <value>Thumprint af certifikat</value>
+  </data>
+  <data name="CTRLSQLUSING" xml:space="preserve">
+    <value>Bruge SQL Server-konfiguration</value>
+  </data>
+  <data name="CTRLSTUSEADDS" xml:space="preserve">
+    <value>Brug af Active Directory</value>
+  </data>
+  <data name="CTRLSTUSESQL" xml:space="preserve">
+    <value>Brug af SQL Server</value>
+  </data>
+  <data name="CTRLWEBAUTHNATTACHEMENT" xml:space="preserve">
+    <value>Attachement af godkender</value>
+  </data>
+  <data name="CTRLWEBAUTHNAUTOLOGIN" xml:space="preserve">
+    <value>Hurtigt login</value>
+  </data>
+  <data name="CTRLWEBAUTHNCHALLENGE" xml:space="preserve">
+    <value>Udfordringsstørrelse</value>
+  </data>
+  <data name="CTRLWEBAUTHNCONVEYANCE" xml:space="preserve">
+    <value>Attestation Conveyance Præference</value>
+  </data>
+  <data name="CTRLWEBAUTHNDRIFTTOLERANCE" xml:space="preserve">
+    <value>Tidsstempeldrifttolerance</value>
+  </data>
+  <data name="CTRLWEBAUTHNEXTENSIONS" xml:space="preserve">
+    <value>Udvidelser (authnSe)</value>
+  </data>
+  <data name="CTRLWEBAUTHNRESIDENTKEY" xml:space="preserve">
+    <value>Kræv resident nøgle</value>
+  </data>
+  <data name="CTRLWEBAUTHNSERVERDOMAIN" xml:space="preserve">
+    <value>Serverdomæne</value>
+  </data>
+  <data name="CTRLWEBAUTHNSERVERNAME" xml:space="preserve">
+    <value>Servernavn</value>
+  </data>
+  <data name="CTRLWEBAUTHNSERVERURL" xml:space="preserve">
+    <value>Url-adresse til server</value>
+  </data>
+  <data name="CTRLWEBAUTHNTIMEOUT" xml:space="preserve">
+    <value>Timeout (ms)</value>
+  </data>
+  <data name="CTRLWEBAUTHNUSERINDEX" xml:space="preserve">
+    <value>Indeks til brugerbekræftelse (uvi)</value>
+  </data>
+  <data name="CTRLWEBAUTHNUSERLOCATION" xml:space="preserve">
+    <value>Brugerplacering</value>
+  </data>
+  <data name="CTRLWEBAUTHNUSERMETHOD" xml:space="preserve">
+    <value>Metode til brugerbekræftelse (uvm)</value>
+  </data>
+  <data name="CTRLWEBAUTHNUSERVERFICATION" xml:space="preserve">
+    <value>Krav til bekræftelse af brugerattestering</value>
+  </data>
+</root>

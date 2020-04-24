@@ -724,7 +724,16 @@ namespace Neos.IdentityServer.MultiFactor
                     if (!string.IsNullOrEmpty(newreg.MailAddress))
                     {
                         string qrcode = KeysManager.EncodedKey(newreg.UPN);
-                        MailUtilities.SendKeyByEmail(newreg.MailAddress, newreg.UPN, qrcode, cfg.MailProvider, cfg, CultureInfo.CurrentUICulture);
+                        CultureInfo info = null;
+                        try
+                        {
+                            info = new CultureInfo(cfg.DefaultCountryCode);
+                        }
+                        catch
+                        {
+                            info = CultureInfo.CurrentUICulture;
+                        }
+                        MailUtilities.SendKeyByEmail(newreg.MailAddress, newreg.UPN, qrcode, cfg.MailProvider, cfg, info);
                     }
                 }
             }
@@ -756,7 +765,16 @@ namespace Neos.IdentityServer.MultiFactor
                     if (!string.IsNullOrEmpty(newreg.MailAddress))
                     {
                         string qrcode = KeysManager.EncodedKey(newreg.UPN);
-                        MailUtilities.SendKeyByEmail(newreg.MailAddress, newreg.UPN, qrcode, cfg.MailProvider, cfg, CultureInfo.CurrentUICulture);
+                        CultureInfo info = null;
+                        try
+                        {
+                            info = new CultureInfo(cfg.DefaultCountryCode);
+                        }
+                        catch
+                        {
+                            info = CultureInfo.CurrentUICulture;
+                        }
+                        MailUtilities.SendKeyByEmail(newreg.MailAddress, newreg.UPN, qrcode, cfg.MailProvider, cfg, info);
                     }
                 }
             }

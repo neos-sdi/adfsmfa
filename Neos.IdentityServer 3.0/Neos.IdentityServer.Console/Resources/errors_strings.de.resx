@@ -139,6 +139,6 @@
     <value>Sensible E-Mails, die an den Benutzer gesendet werden</value>
   </data>
   <data name="InfosSendingMails" xml:space="preserve">
-    <value>E-Mail gesendet!</value>
+    <value>E-Mail gesendet !</value>
   </data>
 </root>

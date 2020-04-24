@@ -133,7 +133,6 @@
     <Content Include="Resources\p_msAuthenticator.png" />
     <None Include="Resources\WinHello.png" />
     <None Include="Resources\WinHello.gif" />
-    <None Include="Resources\WebAuthNRegister.txt" />
     <Content Include="SQL\mfa-db-Encrypted-upgrade.sql" />
     <Content Include="SQL\mfa-db-Encrypted.sql" />
     <Content Include="SQL\mfa-db-upgrade.sql" />
@@ -160,22 +159,31 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Resources\images.da.resx" />
+    <EmbeddedResource Include="Resources\images.fr-CA.resx" />
+    <EmbeddedResource Include="Resources\images.ja.resx" />
+    <EmbeddedResource Include="Resources\SCheck.da.resx" />
     <EmbeddedResource Include="Resources\SCheck.de.resx" />
+    <EmbeddedResource Include="Resources\SCheck.fr-CA.resx" />
     <EmbeddedResource Include="Resources\SCheck.it.resx" />
+    <EmbeddedResource Include="Resources\SCheck.ja.resx" />
     <EmbeddedResource Include="Resources\SCheck.nl.resx" />
     <EmbeddedResource Include="Resources\SCheck.pl.resx" />
     <EmbeddedResource Include="Resources\SCheck.pt.resx" />
     <EmbeddedResource Include="Resources\SCheck.ro.resx" />
     <EmbeddedResource Include="Resources\SCheck.ru.resx" />
     <EmbeddedResource Include="Resources\SCheck.sv.resx" />
+    <EmbeddedResource Include="Resources\SErrors.da.resx" />
     <EmbeddedResource Include="Resources\SErrors.de.resx" />
     <EmbeddedResource Include="Resources\SErrors.es.resx">
       <LastGenOutput>errors_strings.es.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="Resources\SErrors.fr-CA.resx" />
     <EmbeddedResource Include="Resources\SErrors.fr.resx">
       <LastGenOutput>errors_strings.fr.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\SErrors.it.resx" />
+    <EmbeddedResource Include="Resources\SErrors.ja.resx" />
     <EmbeddedResource Include="Resources\SErrors.nl.resx" />
     <EmbeddedResource Include="Resources\SErrors.pl.resx" />
     <EmbeddedResource Include="Resources\SErrors.pt.resx">
@@ -184,16 +192,19 @@
     <EmbeddedResource Include="Resources\SErrors.ro.resx" />
     <EmbeddedResource Include="Resources\SErrors.ru.resx" />
     <EmbeddedResource Include="Resources\SErrors.sv.resx" />
+    <EmbeddedResource Include="Resources\SHtml.da.resx" />
     <EmbeddedResource Include="Resources\SHtml.de.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\SHtml.es.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Resources\SHtml.fr-CA.resx" />
     <EmbeddedResource Include="Resources\SHtml.fr.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\SHtml.it.resx" />
+    <EmbeddedResource Include="Resources\SHtml.ja.resx" />
     <EmbeddedResource Include="Resources\SHtml.nl.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -214,14 +225,17 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\SHtml.sv.resx" />
+    <EmbeddedResource Include="Resources\SInfos.da.resx" />
     <EmbeddedResource Include="Resources\SInfos.de.resx" />
     <EmbeddedResource Include="Resources\SInfos.es.resx" />
+    <EmbeddedResource Include="Resources\SInfos.fr-CA.resx" />
     <EmbeddedResource Include="Resources\SInfos.fr.resx" />
     <EmbeddedResource Include="Resources\SErrors.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>SErrors.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\SInfos.it.resx" />
+    <EmbeddedResource Include="Resources\SInfos.ja.resx" />
     <EmbeddedResource Include="Resources\SInfos.nl.resx" />
     <EmbeddedResource Include="Resources\SInfos.pl.resx" />
     <EmbeddedResource Include="Resources\SInfos.pt.resx" />
@@ -232,14 +246,17 @@
     <EmbeddedResource Include="Resources\SInfos.ro.resx" />
     <EmbeddedResource Include="Resources\SInfos.ru.resx" />
     <EmbeddedResource Include="Resources\SInfos.sv.resx" />
+    <EmbeddedResource Include="Resources\STitle.da.resx" />
     <EmbeddedResource Include="Resources\STitle.de.resx" />
     <EmbeddedResource Include="Resources\STitle.es.resx">
       <LastGenOutput>title_strings.es.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="Resources\STitle.fr-CA.resx" />
     <EmbeddedResource Include="Resources\STitle.fr.resx">
       <LastGenOutput>title_strings.fr.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\STitle.it.resx" />
+    <EmbeddedResource Include="Resources\STitle.ja.resx" />
     <EmbeddedResource Include="Resources\STitle.nl.resx" />
     <EmbeddedResource Include="Resources\STitle.pl.resx" />
     <EmbeddedResource Include="Resources\STitle.pt.resx" />

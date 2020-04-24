@@ -339,4 +339,22 @@
   <data name="SECURITYSCOPEWSMANDESC" xml:space="preserve">
     <value>WsMan-configuratie</value>
   </data>
+  <data name="ROOTLANGUAGEDA" xml:space="preserve">
+    <value>Deens</value>
+  </data>
+  <data name="ROOTLANGUAGEDADESC" xml:space="preserve">
+    <value>Verander de cultuur van de gebruikersinterface in het Deens (1030)</value>
+  </data>
+  <data name="ROOTLANGUAGEJA" xml:space="preserve">
+    <value>Japans</value>
+  </data>
+  <data name="ROOTLANGUAGEJADESC" xml:space="preserve">
+    <value>Verander de cultuur van de gebruikersinterface naar japans (1041)</value>
+  </data>
+  <data name="ROOTLANGUAGECA" xml:space="preserve">
+    <value>Quebecers (Quebecers)</value>
+  </data>
+  <data name="ROOTLANGUAGECADESC" xml:space="preserve">
+    <value>Verander de cultuur van de gebruikersinterface naar Quebec (3084)</value>
+  </data>
 </root>

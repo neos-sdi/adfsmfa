@@ -159,6 +159,18 @@
   <data name="ROOTCHANGELANGUAGEDESC" xml:space="preserve">
     <value>Change the culture of the user interface</value>
   </data>
+  <data name="ROOTLANGUAGECA" xml:space="preserve">
+    <value>Quebecers</value>
+  </data>
+  <data name="ROOTLANGUAGECADESC" xml:space="preserve">
+    <value>Change the culture of the user interface to Quebec (3084)</value>
+  </data>
+  <data name="ROOTLANGUAGEDA" xml:space="preserve">
+    <value>Danish</value>
+  </data>
+  <data name="ROOTLANGUAGEDADESC" xml:space="preserve">
+    <value>Change the culture of the user interface in Danish (1030)</value>
+  </data>
   <data name="ROOTLANGUAGEDE" xml:space="preserve">
     <value>German</value>
   </data>
@@ -182,6 +194,12 @@
   </data>
   <data name="ROOTLANGUAGEITDESC" xml:space="preserve">
     <value>Change the culture of the user interface in Italian (1040)</value>
+  </data>
+  <data name="ROOTLANGUAGEJA" xml:space="preserve">
+    <value>Japanese</value>
+  </data>
+  <data name="ROOTLANGUAGEJADESC" xml:space="preserve">
+    <value>Change the culture of the user interface to Japanese (1041)</value>
   </data>
   <data name="ROOTLANGUAGENL" xml:space="preserve">
     <value>Dutch</value>

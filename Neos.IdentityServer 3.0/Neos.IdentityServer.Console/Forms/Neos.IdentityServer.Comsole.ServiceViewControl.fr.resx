@@ -134,7 +134,7 @@
     <value>173, 13</value>
   </data>
   <data name="label3.Text" xml:space="preserve">
-    <value>Etat de la configuration MFA </value>
+    <value>Etat de la configuration MFA</value>
   </data>
   <data name="label4.Size" type="System.Drawing.Size, System.Drawing">
     <value>141, 13</value>

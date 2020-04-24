@@ -125,9 +125,12 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Resources\CSErrors.da.resx" />
     <EmbeddedResource Include="Resources\CSErrors.de.resx" />
     <EmbeddedResource Include="Resources\CSErrors.es.resx" />
+    <EmbeddedResource Include="Resources\CSErrors.fr-CA.resx" />
     <EmbeddedResource Include="Resources\CSErrors.it.resx" />
+    <EmbeddedResource Include="Resources\CSErrors.ja.resx" />
     <EmbeddedResource Include="Resources\CSErrors.nl.resx" />
     <EmbeddedResource Include="Resources\CSErrors.pl.resx" />
     <EmbeddedResource Include="Resources\CSErrors.pt.resx" />
@@ -139,10 +142,13 @@
     <EmbeddedResource Include="Resources\CSErrors.ro.resx" />
     <EmbeddedResource Include="Resources\CSErrors.ru.resx" />
     <EmbeddedResource Include="Resources\CSErrors.sv.resx" />
+    <EmbeddedResource Include="Resources\CSHtml.da.resx" />
     <EmbeddedResource Include="Resources\CSHtml.de.resx" />
     <EmbeddedResource Include="Resources\CSHtml.es.resx" />
+    <EmbeddedResource Include="Resources\CSHtml.fr-CA.resx" />
     <EmbeddedResource Include="Resources\CSHtml.fr.resx" />
     <EmbeddedResource Include="Resources\CSHtml.it.resx" />
+    <EmbeddedResource Include="Resources\CSHtml.ja.resx" />
     <EmbeddedResource Include="Resources\CSHtml.nl.resx" />
     <EmbeddedResource Include="Resources\CSHtml.pl.resx" />
     <EmbeddedResource Include="Resources\CSHtml.pt.resx" />
@@ -153,14 +159,17 @@
     <EmbeddedResource Include="Resources\CSHtml.ro.resx" />
     <EmbeddedResource Include="Resources\CSHtml.ru.resx" />
     <EmbeddedResource Include="Resources\CSHtml.sv.resx" />
+    <EmbeddedResource Include="Resources\CSMail.da.resx" />
     <EmbeddedResource Include="Resources\CSMail.de.resx" />
     <EmbeddedResource Include="Resources\CSMail.es.resx">
       <LastGenOutput>mail_strings.es.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="Resources\CSMail.fr-CA.resx" />
     <EmbeddedResource Include="Resources\CSMail.fr.resx">
       <LastGenOutput>mail_strings.fr.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\CSMail.it.resx" />
+    <EmbeddedResource Include="Resources\CSMail.ja.resx" />
     <EmbeddedResource Include="Resources\CSMail.nl.resx" />
     <EmbeddedResource Include="Resources\CSMail.pl.resx" />
     <EmbeddedResource Include="Resources\CSMail.pt.resx" />

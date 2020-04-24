@@ -129,4 +129,7 @@
   <data name="CERTIFICATESCLEANMSGCOUNT" xml:space="preserve">
     <value>Anzahl gelöschter verwaister privater Schlüssel</value>
   </data>
+  <data name="RESTARTMFASERVICESMSG" xml:space="preserve">
+    <value>Starten Sie alle MFA- und ADFS-Dienste auf allen Servern der Farm neu ?</value>
+  </data>
 </root>

@@ -94,10 +94,13 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <EmbeddedResource Include="Resources\CSHtml.da.resx" />
     <EmbeddedResource Include="Resources\CSHtml.de.resx" />
     <EmbeddedResource Include="Resources\CSHtml.es.resx" />
+    <EmbeddedResource Include="Resources\CSHtml.fr-CA.resx" />
     <EmbeddedResource Include="Resources\CSHtml.fr.resx" />
     <EmbeddedResource Include="Resources\CSHtml.it.resx" />
+    <EmbeddedResource Include="Resources\CSHtml.ja.resx" />
     <EmbeddedResource Include="Resources\CSHtml.nl.resx" />
     <EmbeddedResource Include="Resources\CSHtml.pl.resx" />
     <EmbeddedResource Include="Resources\CSHtml.pt.resx">

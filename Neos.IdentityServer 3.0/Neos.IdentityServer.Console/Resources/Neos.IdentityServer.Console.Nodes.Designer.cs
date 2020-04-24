@@ -187,6 +187,42 @@ namespace Neos.IdentityServer.Console.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Quebecers.
+        /// </summary>
+        public static string ROOTLANGUAGECA {
+            get {
+                return ResourceManager.GetString("ROOTLANGUAGECA", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Change the culture of the user interface to Quebec (3084).
+        /// </summary>
+        public static string ROOTLANGUAGECADESC {
+            get {
+                return ResourceManager.GetString("ROOTLANGUAGECADESC", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Danish.
+        /// </summary>
+        public static string ROOTLANGUAGEDA {
+            get {
+                return ResourceManager.GetString("ROOTLANGUAGEDA", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Change the culture of the user interface in Danish (1030).
+        /// </summary>
+        public static string ROOTLANGUAGEDADESC {
+            get {
+                return ResourceManager.GetString("ROOTLANGUAGEDADESC", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à German.
         /// </summary>
         public static string ROOTLANGUAGEDE {
@@ -255,6 +291,24 @@ namespace Neos.IdentityServer.Console.Resources {
         public static string ROOTLANGUAGEITDESC {
             get {
                 return ResourceManager.GetString("ROOTLANGUAGEITDESC", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Japanese.
+        /// </summary>
+        public static string ROOTLANGUAGEJA {
+            get {
+                return ResourceManager.GetString("ROOTLANGUAGEJA", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Change the culture of the user interface to Japanese (1041).
+        /// </summary>
+        public static string ROOTLANGUAGEJADESC {
+            get {
+                return ResourceManager.GetString("ROOTLANGUAGEJADESC", resourceCulture);
             }
         }
         

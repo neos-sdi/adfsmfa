@@ -339,4 +339,22 @@
   <data name="SECURITYSCOPEWSMANDESC" xml:space="preserve">
     <value>Configuração WsMan</value>
   </data>
+  <data name="ROOTLANGUAGEDA" xml:space="preserve">
+    <value>Dinamarquês</value>
+  </data>
+  <data name="ROOTLANGUAGEDADESC" xml:space="preserve">
+    <value>Alterar a cultura da interface de usuário em dinamarquês (1030)</value>
+  </data>
+  <data name="ROOTLANGUAGEJA" xml:space="preserve">
+    <value>Japonês</value>
+  </data>
+  <data name="ROOTLANGUAGEJADESC" xml:space="preserve">
+    <value>Alterar a cultura da interface de usuário para japonês (1041)</value>
+  </data>
+  <data name="ROOTLANGUAGECA" xml:space="preserve">
+    <value>Quebequenses</value>
+  </data>
+  <data name="ROOTLANGUAGECADESC" xml:space="preserve">
+    <value>Alterar a cultura da interface de usuário para Quebec (3084)</value>
+  </data>
 </root>

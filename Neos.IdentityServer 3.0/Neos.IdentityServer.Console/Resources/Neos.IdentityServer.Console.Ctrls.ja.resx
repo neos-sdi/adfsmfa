@@ -1,0 +1,654 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="CRTLADFSRESTARTFARMSERVICES" xml:space="preserve">
+    <value>すべてのフェデレーション サービスを再開する</value>
+  </data>
+  <data name="CRTLADFSRESTARTSERVICES" xml:space="preserve">
+    <value>フェディアションサービスを再開する</value>
+  </data>
+  <data name="CRTLADFSSTARTSERVICES" xml:space="preserve">
+    <value>フェディアションサービスを開始する</value>
+  </data>
+  <data name="CRTLADFSSTOPSERVICES" xml:space="preserve">
+    <value>フェデレーション サービスの停止</value>
+  </data>
+  <data name="CTRGLMANAGEREG" xml:space="preserve">
+    <value>登録通知</value>
+  </data>
+  <data name="CTRGLMANAGEREGEND" xml:space="preserve">
+    <value>終わり</value>
+  </data>
+  <data name="CTRGLMANAGEREGSTART" xml:space="preserve">
+    <value>開始</value>
+  </data>
+  <data name="CTRLADACCOUNT" xml:space="preserve">
+    <value>アクセスアカウント</value>
+  </data>
+  <data name="CTRLADATCHECKDATEERROR" xml:space="preserve">
+    <value>チェック日付に対して無効な ADDS 属性です。</value>
+  </data>
+  <data name="CTRLADATENABLEDERROR" xml:space="preserve">
+    <value>エンバリードの ADDS 属性が無効です。</value>
+  </data>
+  <data name="CTRLADATMETHODERROR" xml:space="preserve">
+    <value>メソッドに対して無効な ADDS 属性です。</value>
+  </data>
+  <data name="CTRLADATOVERRIDEERROR" xml:space="preserve">
+    <value>特定のメソッドに対して無効な ADDS 属性です。</value>
+  </data>
+  <data name="CTRLADATPINERROR" xml:space="preserve">
+    <value>ピン コードに対して無効な ADDS 属性です。</value>
+  </data>
+  <data name="CTRLADATRSACERTERROR" xml:space="preserve">
+    <value>RSA 証明書に対して無効な ADDS 属性です。</value>
+  </data>
+  <data name="CTRLADATTACCOUNT" xml:space="preserve">
+    <value>無効な ADDS アカウントです。</value>
+  </data>
+  <data name="CTRLADATTDOMAIN" xml:space="preserve">
+    <value>無効な ADDS ドメイン アドレスです。</value>
+  </data>
+  <data name="CTRLADATTEMAILERROR" xml:space="preserve">
+    <value>電子メール アドレスに対して無効な ADDS 属性です。</value>
+  </data>
+  <data name="CTRLADATTKEY" xml:space="preserve">
+    <value>秘密鍵</value>
+  </data>
+  <data name="CTRLADATTKEYERROR" xml:space="preserve">
+    <value>キーに対して無効な ADDS 属性です。</value>
+  </data>
+  <data name="CTRLADATTMAIL" xml:space="preserve">
+    <value>電子メールの服装</value>
+  </data>
+  <data name="CTRLADATTMETHOD" xml:space="preserve">
+    <value>既定の MFA メソッド</value>
+  </data>
+  <data name="CTRLADATTOVERRIDE" xml:space="preserve">
+    <value>MFA メソッドをオーバーライドする</value>
+  </data>
+  <data name="CTRLADATTPASSWORD" xml:space="preserve">
+    <value>無効な ADDS パスワードです!</value>
+  </data>
+  <data name="CTRLADATTPHONE" xml:space="preserve">
+    <value>携帯電話</value>
+  </data>
+  <data name="CTRLADATTPHONEERROR" xml:space="preserve">
+    <value>電話番号に対して無効な ADDS 属性です。</value>
+  </data>
+  <data name="CTRLADATTPIN" xml:space="preserve">
+    <value>ピンコード</value>
+  </data>
+  <data name="CTRLADATTPUBLICKEY" xml:space="preserve">
+    <value>パブリック キー</value>
+  </data>
+  <data name="CTRLADATTRIBUTES" xml:space="preserve">
+    <value>アクティブ ディレクトリ属性の設定</value>
+  </data>
+  <data name="CTRLADATTRSACERT" xml:space="preserve">
+    <value>RSA ユーザー証明書</value>
+  </data>
+  <data name="CTRLADATTSTATUS" xml:space="preserve">
+    <value>ユーザーのアクティブ化の状態</value>
+  </data>
+  <data name="CTRLADATTVALIDATION" xml:space="preserve">
+    <value>TOTP 検証日</value>
+  </data>
+  <data name="CTRLADATTVALIDITY" xml:space="preserve">
+    <value>TOTP の有効期間</value>
+  </data>
+  <data name="CTRLADATVALIDITYDATEERROR" xml:space="preserve">
+    <value>有効日に対して無効な ADDS 属性です。</value>
+  </data>
+  <data name="CTRLADCONNECTIONERROR" xml:space="preserve">
+    <value>ADDS フォレスト/ドメインに接続できません。</value>
+  </data>
+  <data name="CTRLADCONNECTIONOK" xml:space="preserve">
+    <value>ADDS フォレスト/ドメインの操作上の接続 !</value>
+  </data>
+  <data name="CTRLADDOMAIN" xml:space="preserve">
+    <value>ドメイン名</value>
+  </data>
+  <data name="CTRLADFSACTIVATEMFA" xml:space="preserve">
+    <value>MFA を有効にする</value>
+  </data>
+  <data name="CTRLADFSDEACTIVATEMFA" xml:space="preserve">
+    <value>MFA を無効にする</value>
+  </data>
+  <data name="CTRLADPASSWORD" xml:space="preserve">
+    <value>パスワード</value>
+  </data>
+  <data name="CTRLADSUPERACCOUNT" xml:space="preserve">
+    <value>アクティブ ディレクトリ "スーパーユーザー" 資格情報</value>
+  </data>
+  <data name="CTRLADTEMPLATE2016" xml:space="preserve">
+    <value>スキーマ 2016++ を追加します。</value>
+  </data>
+  <data name="CTRLADTEMPLATE2016ERROR" xml:space="preserve">
+    <value>"2016" テンプレートを読み込むときにエラーが発生し、属性を手動で更新する必要があります!</value>
+  </data>
+  <data name="CTRLADTEMPLATEBASE" xml:space="preserve">
+    <value>スキーマ 2012 を追加する -</value>
+  </data>
+  <data name="CTRLADTEMPLATEBASEERROR" xml:space="preserve">
+    <value>「デフォルト」テンプレートをロードするときにエラーが発生し、属性を手動で更新する必要があります!</value>
+  </data>
+  <data name="CTRLADTEMPLATEMFA" xml:space="preserve">
+    <value>スキーマ MFA の追加</value>
+  </data>
+  <data name="CTRLADTEMPLATEMFAERROR" xml:space="preserve">
+    <value>"MFA" テンプレートを読み込むときにエラーが発生し、属性を手動で更新する必要があります!</value>
+  </data>
+  <data name="CTRLADTEST" xml:space="preserve">
+    <value>テスト</value>
+  </data>
+  <data name="CTRLADTITLECONFIG" xml:space="preserve">
+    <value>一般的なセキュリティ プロパティ</value>
+  </data>
+  <data name="CTRLADUSEADDS" xml:space="preserve">
+    <value>アクティブ ディレクトリ構成を使用する</value>
+  </data>
+  <data name="CTRLAZURETENANTID" xml:space="preserve">
+    <value>Azure テナント</value>
+  </data>
+  <data name="CTRLAZURETHUMPRINT" xml:space="preserve">
+    <value>Azure 証明書の拇印</value>
+  </data>
+  <data name="CTRLCANCEL" xml:space="preserve">
+    <value>キャンセル</value>
+  </data>
+  <data name="CTRLDLGMAXRETRIES" xml:space="preserve">
+    <value>最大再試行は許可されます</value>
+  </data>
+  <data name="CTRLGLALLOWGOOGLESEARCH" xml:space="preserve">
+    <value>グーグル検索を表示する</value>
+  </data>
+  <data name="CTRLGLCOMANYNAME" xml:space="preserve">
+    <value>会社名</value>
+  </data>
+  <data name="CTRLGLCONTACT" xml:space="preserve">
+    <value>管理上の連絡先 (電子メール)</value>
+  </data>
+  <data name="CTRLGLCONTRYCODE" xml:space="preserve">
+    <value>既定の国コード</value>
+  </data>
+  <data name="CTRLGLDELVERY" xml:space="preserve">
+    <value>検証時間 (秒)</value>
+  </data>
+  <data name="CTRLGLENROLLWIZ" xml:space="preserve">
+    <value>登録ウィザード</value>
+  </data>
+  <data name="CTRLGLHASH" xml:space="preserve">
+    <value>ハッシュ アルゴリズム</value>
+  </data>
+  <data name="CTRLGLINVALIDEMAILCONTACT" xml:space="preserve">
+    <value>管理者の連絡先に対して無効な電子メール形式 !</value>
+  </data>
+  <data name="CTRLGLMANAGEKMSOO" xml:space="preserve">
+    <value>ユーザーは既定のプロバイダーを選択できます。</value>
+  </data>
+  <data name="CTRLGLMANAGENOTIFS" xml:space="preserve">
+    <value>構成の変更後にユーザーに通知する</value>
+  </data>
+  <data name="CTRLGLMANAGEOPTIONS" xml:space="preserve">
+    <value>ユーザー管理オプション</value>
+  </data>
+  <data name="CTRLGLMANAGEOPTS" xml:space="preserve">
+    <value>オプション管理</value>
+  </data>
+  <data name="CTRLGLMANAGEPWD" xml:space="preserve">
+    <value>パスワード管理</value>
+  </data>
+  <data name="CTRLGLMAXCODES" xml:space="preserve">
+    <value>認証コード履歴</value>
+  </data>
+  <data name="CTRLGLMFAREGISTER" xml:space="preserve">
+    <value>ユーザー登録</value>
+  </data>
+  <data name="CTRLGLMFAREGISTER1" xml:space="preserve">
+    <value>管理 - サポートによって確認された登録</value>
+  </data>
+  <data name="CTRLGLMFAREGISTER2" xml:space="preserve">
+    <value>ユーザー - ユーザーによる登録</value>
+  </data>
+  <data name="CTRLGLMFAREGISTER3" xml:space="preserve">
+    <value>管理されていない - サポートに連絡する</value>
+  </data>
+  <data name="CTRLGLMFAREGISTER4" xml:space="preserve">
+    <value>必須 - サポートによる登録</value>
+  </data>
+  <data name="CTRLGLMFASTATUS" xml:space="preserve">
+    <value>MFA ステータス</value>
+  </data>
+  <data name="CTRLGLMFASTATUS1" xml:space="preserve">
+    <value>必須 - MFA を無効にすることはできません</value>
+  </data>
+  <data name="CTRLGLMFASTATUS2" xml:space="preserve">
+    <value>オプション - MFA はオプションで無効にできます。</value>
+  </data>
+  <data name="CTRLGLMFASTATUS3" xml:space="preserve">
+    <value>不要</value>
+  </data>
+  <data name="CTRLGLPOLICY" xml:space="preserve">
+    <value>セキュリティ ポリシー (モデル)</value>
+  </data>
+  <data name="CTRLGLPROVIDER" xml:space="preserve">
+    <value>既定のユーザー プロバイダー</value>
+  </data>
+  <data name="CTRLGLREFRESH" xml:space="preserve">
+    <value>リフレッシュ レート (ミリ秒)</value>
+  </data>
+  <data name="CTRLGLREPLAY" xml:space="preserve">
+    <value>リプレイ保護レベル</value>
+  </data>
+  <data name="CTRLGLSHOWAUTHY" xml:space="preserve">
+    <value>認証認証を表示する</value>
+  </data>
+  <data name="CTRLGLSHOWGOOGLE" xml:space="preserve">
+    <value>グーグル認証器を表示する</value>
+  </data>
+  <data name="CTRLGLSHOWMICROSOFT" xml:space="preserve">
+    <value>マイクロソフト認証システムを表示する</value>
+  </data>
+  <data name="CTRLGLUSEAPPS" xml:space="preserve">
+    <value>認証アプリケーションを使用する (Google 認証システム、マイクロソフト認証システム)</value>
+  </data>
+  <data name="CTRLGLUSEMAILS" xml:space="preserve">
+    <value>電子メール通知を使用する</value>
+  </data>
+  <data name="CTRLGLUSESMS" xml:space="preserve">
+    <value>SMS 通知を使用する</value>
+  </data>
+  <data name="CTRLGLUSEUSERLANGS" xml:space="preserve">
+    <value>ブラウザ言語を使用する</value>
+  </data>
+  <data name="CTRLINVALIDVALUE" xml:space="preserve">
+    <value>無効な値は、{0}と{1}の間でなければなりません。</value>
+  </data>
+  <data name="CTRLMULTVALUED" xml:space="preserve">
+    <value>(*)複数値の文字列プロパティをサポート</value>
+  </data>
+  <data name="CTRLMUSTACTIVATESVC" xml:space="preserve">
+    <value>操作が中止されました !ローカル ADFS サービスを開始する必要があります!</value>
+  </data>
+  <data name="CTRLMUSTMULTVALUED" xml:space="preserve">
+    <value>(**)複数値を持つ文字列プロパティを要求する</value>
+  </data>
+  <data name="CTRLNULLOREMPTYERROR" xml:space="preserve">
+    <value>Null 値または空の値は使用できません。</value>
+  </data>
+  <data name="CTRLPROVACTIVE" xml:space="preserve">
+    <value>アクティブ</value>
+  </data>
+  <data name="CTRLPROVPIN" xml:space="preserve">
+    <value>ピンコードが必要です</value>
+  </data>
+  <data name="CTRLPROVREQUIRED" xml:space="preserve">
+    <value>必須</value>
+  </data>
+  <data name="CTRLPROVWIZARD" xml:space="preserve">
+    <value>登録ウィザード</value>
+  </data>
+  <data name="CTRLPROVWIZARDSTRICT" xml:space="preserve">
+    <value>ウィザードが完了していない場合はウィザードを強制する</value>
+  </data>
+  <data name="CTRLSAVE" xml:space="preserve">
+    <value>保存</value>
+  </data>
+  <data name="CTRLSECASSEMBLY" xml:space="preserve">
+    <value>実装 (フルクラス)</value>
+  </data>
+  <data name="CTRLSECCERTIFDURATION" xml:space="preserve">
+    <value>有効期間</value>
+  </data>
+  <data name="CTRLSECCERTIFICATES" xml:space="preserve">
+    <value>証明 書</value>
+  </data>
+  <data name="CTRLSECCERTPERUSER" xml:space="preserve">
+    <value>ユーザーごとに 1 つの証明書を使用する</value>
+  </data>
+  <data name="CTRLSECINVALIDCERT" xml:space="preserve">
+    <value>証明書が見つかりません!</value>
+  </data>
+  <data name="CTRLSECINVALIDEXTERROR" xml:space="preserve">
+    <value>無効な拡張子です!ロードできません !</value>
+  </data>
+  <data name="CTRLSECKEYGEN" xml:space="preserve">
+    <value>生成されたキーの長さ</value>
+  </data>
+  <data name="CTRLSECKEYLENGTH" xml:space="preserve">
+    <value>最大キー長</value>
+  </data>
+  <data name="CTRLSECKEYMODE" xml:space="preserve">
+    <value>セキュリティ キー モード</value>
+  </data>
+  <data name="CTRLSECLIBLABEL" xml:space="preserve">
+    <value>暗号化ライブラリのバージョン</value>
+  </data>
+  <data name="CTRLSECNEWCERT" xml:space="preserve">
+    <value>新しい証明書</value>
+  </data>
+  <data name="CTRLSECNEWCERTCREATED" xml:space="preserve">
+    <value>証明書が正常に作成されました !他のすべての ADFS サーバーに新しい証明書{0}を展開する必要があります。</value>
+  </data>
+  <data name="CTRLSECNEWCRYPTEDDATABASE" xml:space="preserve">
+    <value>SQL 暗号化データベースの作成</value>
+  </data>
+  <data name="CTRLSECNEWDATABASE" xml:space="preserve">
+    <value>SQL データベースの作成</value>
+  </data>
+  <data name="CTRLSECPARAMS" xml:space="preserve">
+    <value>パラメーター</value>
+  </data>
+  <data name="CTRLSECRSAGENERATE" xml:space="preserve">
+    <value>MFA の新しい証明書の作成を確認する ?\r注意: 既存のキーはすべて無効になります!</value>
+  </data>
+  <data name="CTRLSECTHUMPRINT" xml:space="preserve">
+    <value>証明書の拇印</value>
+  </data>
+  <data name="CTRLSECWARNING" xml:space="preserve">
+    <value>警告！これらの値を変更すると、現在のすべてのキーが無効になります</value>
+  </data>
+  <data name="CTRLSECWIZARD" xml:space="preserve">
+    <value>登録ウィザードのオプション</value>
+  </data>
+  <data name="CTRLSECWIZTITLE" xml:space="preserve">
+    <value>新しい SQL データベースを作成する</value>
+  </data>
+  <data name="CTRLSECWSMANAPPNAME" xml:space="preserve">
+    <value>アプリケーション名</value>
+  </data>
+  <data name="CTRLSECWSMANPORT" xml:space="preserve">
+    <value>ポート</value>
+  </data>
+  <data name="CTRLSECWSMANSHELLURI" xml:space="preserve">
+    <value>シェルウリ</value>
+  </data>
+  <data name="CTRLSECWSMANTIMEOUT" xml:space="preserve">
+    <value>タイムアウト</value>
+  </data>
+  <data name="CTRLSECXORLABEL" xml:space="preserve">
+    <value>パスフレーズ</value>
+  </data>
+  <data name="CTRLSMSASSEMBLY" xml:space="preserve">
+    <value>実装 (フルクラス)</value>
+  </data>
+  <data name="CTRLSMSASYNCCALL" xml:space="preserve">
+    <value>非同期呼び出し</value>
+  </data>
+  <data name="CTRLSMSCOMPANY" xml:space="preserve">
+    <value>会社名</value>
+  </data>
+  <data name="CTRLSMSIVALIDEXTERROR" xml:space="preserve">
+    <value>無効な拡張子です!ロードできません !</value>
+  </data>
+  <data name="CTRLSMSPARAMS" xml:space="preserve">
+    <value>パラメーター</value>
+  </data>
+  <data name="CTRLSMSSHA1" xml:space="preserve">
+    <value>SHA1塩</value>
+  </data>
+  <data name="CTRLSMSTIMEOUT" xml:space="preserve">
+    <value>タイムアウト</value>
+  </data>
+  <data name="CTRLSMTPACCOUNT" xml:space="preserve">
+    <value>接続アカウント</value>
+  </data>
+  <data name="CTRLSMTPANONYMOUS" xml:space="preserve">
+    <value>匿名</value>
+  </data>
+  <data name="CTRLSMTPCOMPANY" xml:space="preserve">
+    <value>会社名</value>
+  </data>
+  <data name="CTRLSMTPDELIVERYNOTIFICATIONS" xml:space="preserve">
+    <value>配信通知 (エラー)</value>
+  </data>
+  <data name="CTRLSMTPFROM" xml:space="preserve">
+    <value>管理上の連絡先 (出身)</value>
+  </data>
+  <data name="CTRLSMTPIDENTIFICATION" xml:space="preserve">
+    <value>識別</value>
+  </data>
+  <data name="CTRLSMTPMAILERROR" xml:space="preserve">
+    <value>電子メール形式が無効です!</value>
+  </data>
+  <data name="CTRLSMTPMESSAGEOK" xml:space="preserve">
+    <value>テスト メッセージの送信先</value>
+  </data>
+  <data name="CTRLSMTPPASSWORD" xml:space="preserve">
+    <value>パスワード</value>
+  </data>
+  <data name="CTRLSMTPPORT" xml:space="preserve">
+    <value>ポート</value>
+  </data>
+  <data name="CTRLSMTPPORTERROR" xml:space="preserve">
+    <value>無効なポート番号 !</value>
+  </data>
+  <data name="CTRLSMTPSERVER" xml:space="preserve">
+    <value>メールサーバー</value>
+  </data>
+  <data name="CTRLSMTPSERVERADDRESS" xml:space="preserve">
+    <value>サーバー アドレス</value>
+  </data>
+  <data name="CTRLSMTPTEST" xml:space="preserve">
+    <value>テスト</value>
+  </data>
+  <data name="CTRLSQLCONNECTERROR" xml:space="preserve">
+    <value>MFA SQL データベースに接続できません 。</value>
+  </data>
+  <data name="CTRLSQLCONNECTOK" xml:space="preserve">
+    <value>MFA SQL データベースの接続が動作しています!</value>
+  </data>
+  <data name="CTRLSQLCONNECTSTR" xml:space="preserve">
+    <value>接続文字列</value>
+  </data>
+  <data name="CTRLSQLCONNECTSTRERROR" xml:space="preserve">
+    <value>無効な SQL 接続文字列 !</value>
+  </data>
+  <data name="CTRLSQLCREATECRYPTEDDB" xml:space="preserve">
+    <value>MFA 暗号化データベースの作成</value>
+  </data>
+  <data name="CTRLSQLCREATEDB" xml:space="preserve">
+    <value>MFA データベースの作成</value>
+  </data>
+  <data name="CTRLSQLCRYPTUSING" xml:space="preserve">
+    <value>常に暗号化された機能を使用する (SQL Server 2016 +)</value>
+  </data>
+  <data name="CTRLSQLENCRYPTNAME" xml:space="preserve">
+    <value>暗号化キーの名前</value>
+  </data>
+  <data name="CTRLSQLINVALIDCERTERROR" xml:space="preserve">
+    <value>無効な証明書{0}</value>
+  </data>
+  <data name="CTRLSQLMAXROWS" xml:space="preserve">
+    <value>最大行数</value>
+  </data>
+  <data name="CTRLSQLMAXROWSERROR" xml:space="preserve">
+    <value>{0}が無効です!1000 から 1000000 の間でなければなりません</value>
+  </data>
+  <data name="CTRLSQLNEWDBCREATED" xml:space="preserve">
+    <value>MFA データベース {0}作成が正常に完了しました !</value>
+  </data>
+  <data name="CTRLSQLNEWDBCREATED2" xml:space="preserve">
+    <value>MFA データベース {0}作成が正常に完了しました !新しい証明書{1}を他のすべての ADFS サーバーに展開する必要があります。</value>
+  </data>
+  <data name="CTRLSQLREUSECERT" xml:space="preserve">
+    <value>証明書の再利用</value>
+  </data>
+  <data name="CTRLSQLTEST" xml:space="preserve">
+    <value>テスト</value>
+  </data>
+  <data name="CTRLSQLTHUMBPRINT" xml:space="preserve">
+    <value>証明書のサンプリント</value>
+  </data>
+  <data name="CTRLSQLUSING" xml:space="preserve">
+    <value>SQL サーバー構成を使用する</value>
+  </data>
+  <data name="CTRLSTUSEADDS" xml:space="preserve">
+    <value>アクティブ ディレクトリを使用する</value>
+  </data>
+  <data name="CTRLSTUSESQL" xml:space="preserve">
+    <value>SQL サーバーを使用する</value>
+  </data>
+  <data name="CTRLWEBAUTHNATTACHEMENT" xml:space="preserve">
+    <value>オーセンティケータアタッチメント</value>
+  </data>
+  <data name="CTRLWEBAUTHNAUTOLOGIN" xml:space="preserve">
+    <value>高速ログイン</value>
+  </data>
+  <data name="CTRLWEBAUTHNCHALLENGE" xml:space="preserve">
+    <value>チャレンジサイズ</value>
+  </data>
+  <data name="CTRLWEBAUTHNCONVEYANCE" xml:space="preserve">
+    <value>構成証明の伝達の優先順位</value>
+  </data>
+  <data name="CTRLWEBAUTHNDRIFTTOLERANCE" xml:space="preserve">
+    <value>タイムスタンプドリフト許容値</value>
+  </data>
+  <data name="CTRLWEBAUTHNEXTENSIONS" xml:space="preserve">
+    <value>拡張機能 (認証)</value>
+  </data>
+  <data name="CTRLWEBAUTHNRESIDENTKEY" xml:space="preserve">
+    <value>常駐キーを要求する</value>
+  </data>
+  <data name="CTRLWEBAUTHNSERVERDOMAIN" xml:space="preserve">
+    <value>サーバードメイン</value>
+  </data>
+  <data name="CTRLWEBAUTHNSERVERNAME" xml:space="preserve">
+    <value>サーバー名</value>
+  </data>
+  <data name="CTRLWEBAUTHNSERVERURL" xml:space="preserve">
+    <value>サーバー URL</value>
+  </data>
+  <data name="CTRLWEBAUTHNTIMEOUT" xml:space="preserve">
+    <value>タイムアウト (ミリ秒)</value>
+  </data>
+  <data name="CTRLWEBAUTHNUSERINDEX" xml:space="preserve">
+    <value>ユーザー検証インデックス (uvi)</value>
+  </data>
+  <data name="CTRLWEBAUTHNUSERLOCATION" xml:space="preserve">
+    <value>ユーザーの場所</value>
+  </data>
+  <data name="CTRLWEBAUTHNUSERMETHOD" xml:space="preserve">
+    <value>ユーザー検証方法 (uvm)</value>
+  </data>
+  <data name="CTRLWEBAUTHNUSERVERFICATION" xml:space="preserve">
+    <value>ユーザーの構成証明の検証要件</value>
+  </data>
+</root>

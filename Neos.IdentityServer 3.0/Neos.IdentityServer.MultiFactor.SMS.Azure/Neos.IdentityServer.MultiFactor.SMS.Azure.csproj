@@ -70,14 +70,17 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Resources\SAzure.da.resx" />
     <EmbeddedResource Include="Resources\SAzure.de.resx" />
     <EmbeddedResource Include="Resources\SAzure.es.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Resources\SAzure.fr-CA.resx" />
     <EmbeddedResource Include="Resources\SAzure.fr.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\SAzure.it.resx" />
+    <EmbeddedResource Include="Resources\SAzure.ja.resx" />
     <EmbeddedResource Include="Resources\SAzure.nl.resx" />
     <EmbeddedResource Include="Resources\SAzure.pl.resx" />
     <EmbeddedResource Include="Resources\SAzure.pt.resx" />
@@ -89,10 +92,13 @@
     <EmbeddedResource Include="Resources\SAzure.ro.resx" />
     <EmbeddedResource Include="Resources\SAzure.ru.resx" />
     <EmbeddedResource Include="Resources\SAzure.sv.resx" />
+    <EmbeddedResource Include="Resources\SHtml.da.resx" />
     <EmbeddedResource Include="Resources\SHtml.de.resx" />
     <EmbeddedResource Include="Resources\SHtml.es.resx" />
+    <EmbeddedResource Include="Resources\SHtml.fr-CA.resx" />
     <EmbeddedResource Include="Resources\SHtml.fr.resx" />
     <EmbeddedResource Include="Resources\SHtml.it.resx" />
+    <EmbeddedResource Include="Resources\SHtml.ja.resx" />
     <EmbeddedResource Include="Resources\SHtml.nl.resx" />
     <EmbeddedResource Include="Resources\SHtml.pl.resx" />
     <EmbeddedResource Include="Resources\SHtml.pt.resx" />

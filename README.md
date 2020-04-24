@@ -7,7 +7,7 @@ You can download a fully functional solution or modify the source code to build 
 
 MFA helps secure user sign-ins for on-premise or cloud services beyond just a single password. With MFA, users are required to enter a confirmation code, which is send to their phones, email account or via an authenticator application (Microsoft authentication, Google Authentication)after correctly entering their passwords.
 
-**What I Know (password) and What I Hold (device) are the keys of MFA.**
+**What I Know (password) and What I Hold (device) or What I Am (biometrics) are the keys of MFA.**
 
 For example, if you user password is compromised by a hacker, he can’t activate your application (business email) because **You have** the code that can grant access to the app.
 
@@ -19,7 +19,7 @@ This extension works with Active Directory or an SQL Server Database for storing
 * <https://github.com/neos-sdi/adfsmfa/wiki/Home>
 ## Downloads
 * <https://github.com/neos-sdi/adfsmfa/releases>
-* <https://github.com/neos-sdi/adfsmfa/releases/download/3.0/adfsmfa.3.0.0.2.msi>
+* <https://github.com/neos-sdi/adfsmfa/releases/download/3.0/adfsmfa.3.0.0.10.msi>
 
 ___
 ![Neos Logo](logo.png)
@@ -33,7 +33,7 @@ Multi-Factor Authentication for ADFS (this one) : <https://github.com/neos-sdi/a
 SharePoint Identity Service Application (Claim Provider for SharePoint 2013/2016) : <https://github.com/neos-sdi/spidentityservice>
 ___
 ## Features
-* Localized UI French/English/Spanish/Italian/German/Dutch/Portuguese/Polish/Swedish/Romanian/Russian
+* Localized UI French/English/Spanish/Italian/German/Dutch/Portuguese/Polish/Swedish/Romanian/Russian/Danish/Japanese, Quebec
 * TOTP, Email, Phone, Biometric, Azure Providers for MFA
 * Run with ADFS 2012 R2, 2016 and 2019
 * Secret Keys length (Guid, 128, 256, 384 & 512 bytes) RNG generator
@@ -53,7 +53,7 @@ ___
 * Full support for ADFS 2019 themes
 
 ## Remarks
-* Due to security, solution must be signed in Visual Studio with a certificate .pfx
+* Due to security, Developers must sign their Visual Studio Solution with a certificate .pfx
 * You must deploy the solution on each of your ADFS servers, not on Proxy Servers.
 * To work with ADDS, the ADFS Service account must have read and write to users properties.
 * To work with SQL Server Database, you must deploy the database on a separate SQL Server (WID & replication is not supported)

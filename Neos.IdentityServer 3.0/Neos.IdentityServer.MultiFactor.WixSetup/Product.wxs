@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" >
-  <Product Id="a23dd485-5365-4d82-8309-103494000001" Name="Neos MFA Provider for ADFS 2019/2016/2012 R2" Language="1033" Version="3.0.0.3" Manufacturer="Neos-SDI" UpgradeCode="a23dd485-5365-4d82-8309-103495000001" >
+  <Product Id="a23dd485-5365-4d82-8309-103494000001" Name="Neos MFA Provider for ADFS 2019/2016/2012 R2" Language="1033" Version="3.0.0.10" Manufacturer="Neos-SDI" UpgradeCode="a23dd485-5365-4d82-8309-103495000001" >
 
     <Package InstallerVersion="500" Compressed="yes" InstallScope="perMachine" InstallPrivileges="elevated" Platform="x64" Description="Multi-Factor Authentication for ADFS 2019/2016/2012 r2" />
 
@@ -32,6 +32,9 @@
         <ComponentRef Id="MFARO"/>
         <ComponentRef Id="MFAPL"/>
         <ComponentRef Id="MFASV"/>
+        <ComponentRef Id="MFADA"/>
+        <ComponentRef Id="MFAJA"/>
+        <ComponentRef Id="MFACA"/>
         <ComponentRef Id="RESDIR"/>
         <ComponentRef Id="CONFIGDIR"/>
         <ComponentRef Id="SQLDIR"/>
@@ -52,6 +55,9 @@
       <ComponentRef Id="PSRO"/>
       <ComponentRef Id="PSPL"/>
       <ComponentRef Id="PSSV"/>
+      <ComponentRef Id="PSDA"/>
+      <ComponentRef Id="PSJA"/>
+      <ComponentRef Id="PSCA"/>
       <ComponentGroupRef Id="Neos.IdentityServer.MultiFactor.Cmdlets" />    
     </Feature>
 
@@ -101,6 +107,9 @@
           <Directory Id="LOCALERO" Name="ro"/>
           <Directory Id="LOCALEPL" Name="pl"/>
           <Directory Id="LOCALESV" Name="sv"/>
+          <Directory Id="LOCALEDA" Name="da"/>
+          <Directory Id="LOCALEJA" Name="ja"/>
+          <Directory Id="LOCALECA" Name="fr-CA"/>
         </Directory>
       </Directory>
       
@@ -163,6 +172,22 @@
               <CreateFolder/>
             </Component>
           </Directory>
+          <Directory Id="MFADA" Name="da">
+            <Component Id="MFADA" Guid="E7173CAB-E43F-AA07-1962-01800000690B" SharedDllRefCount="no" KeyPath="yes" NeverOverwrite="no" Permanent="no" Transitive="no" Win64="yes" >
+              <CreateFolder/>
+            </Component>
+          </Directory>
+          <Directory Id="MFAJA" Name="ja">
+            <Component Id="MFAJA" Guid="E7173CAB-E43F-AA07-1962-01800000690C" SharedDllRefCount="no" KeyPath="yes" NeverOverwrite="no" Permanent="no" Transitive="no" Win64="yes" >
+              <CreateFolder/>
+            </Component>
+          </Directory>          
+          <Directory Id="MFACA" Name="fr-CA">
+            <Component Id="MFACA" Guid="E7173CAB-E43F-AA07-1962-01800000690D" SharedDllRefCount="no" KeyPath="yes" NeverOverwrite="no" Permanent="no" Transitive="no" Win64="yes" >
+              <CreateFolder/>
+            </Component>
+          </Directory>          
+
 
           <Directory Id="RESFOLDER" Name="ResourceSet" >
             <Component Id="RESDIR" Guid="E7173CAB-E43F-AA07-1962-018000006990" SharedDllRefCount="no" KeyPath="yes" NeverOverwrite="no" Permanent="no" Transitive="no" Win64="yes" >
@@ -246,6 +271,21 @@
                   <CreateFolder/>
                 </Component>
               </Directory>
+              <Directory Id="PSDA" Name="da">
+                <Component Id="PSDA" Guid="E7173CAB-E43F-4A07-1962-01800000690B" SharedDllRefCount="no" KeyPath="yes" NeverOverwrite="no" Permanent="no" Transitive="no" Win64="yes" >
+                  <CreateFolder/>
+                </Component>
+              </Directory>
+              <Directory Id="PSJA" Name="ja">
+                <Component Id="PSJA" Guid="E7173CAB-E43F-4A07-1962-01800000690C" SharedDllRefCount="no" KeyPath="yes" NeverOverwrite="no" Permanent="no" Transitive="no" Win64="yes" >
+                  <CreateFolder/>
+                </Component>
+              </Directory>
+              <Directory Id="PSCA" Name="fr-CA">
+                <Component Id="PSCA" Guid="E7173CAB-E43F-4A07-1962-01800000690D" SharedDllRefCount="no" KeyPath="yes" NeverOverwrite="no" Permanent="no" Transitive="no" Win64="yes" >
+                  <CreateFolder/>
+                </Component>
+              </Directory>
             </Directory>
           </Directory>          
         </Directory>
@@ -288,6 +328,16 @@
       <Component Id="GACDeployment013" Guid="E7173CAB-E43F-4A07-1962-01800000610A" Win64="yes" Directory="LOCALESV" DiskId="1" >
         <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.sv.resources.dll"  Name="Neos.IdentityServer.MultiFactor.resources.dll" Source="$(var.Neos.IdentityServer.MultiFactor.TargetDir)sv\Neos.IdentityServer.MultiFactor.resources.dll" Vital="no" />
       </Component>
+      <Component Id="GACDeployment014" Guid="E7173CAB-E43F-4A07-1962-01800000610B" Win64="yes" Directory="LOCALEDA" DiskId="1" >
+        <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.da.resources.dll"  Name="Neos.IdentityServer.MultiFactor.resources.dll" Source="$(var.Neos.IdentityServer.MultiFactor.TargetDir)da\Neos.IdentityServer.MultiFactor.resources.dll" Vital="no" />
+      </Component>
+      <Component Id="GACDeployment015" Guid="E7173CAB-E43F-4A07-1962-01800000610C" Win64="yes" Directory="LOCALEJA" DiskId="1" >
+        <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.ja.resources.dll"  Name="Neos.IdentityServer.MultiFactor.resources.dll" Source="$(var.Neos.IdentityServer.MultiFactor.TargetDir)ja\Neos.IdentityServer.MultiFactor.resources.dll" Vital="no" />
+      </Component>
+      <Component Id="GACDeployment016" Guid="E7173CAB-E43F-4A07-1962-01800000610D" Win64="yes" Directory="LOCALECA" DiskId="1" >
+        <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.frCA.resources.dll"  Name="Neos.IdentityServer.MultiFactor.resources.dll" Source="$(var.Neos.IdentityServer.MultiFactor.TargetDir)fr-CA\Neos.IdentityServer.MultiFactor.resources.dll" Vital="no" />
+      </Component>
+
 
 
       <Component Id="GACDeployment100" Guid="E7173CAB-E43F-4A07-1962-018000007101" Win64="yes" Directory="AssemblyFolder" DiskId="1" >
@@ -332,6 +382,16 @@
       <Component Id="GACDeployment112" Guid="E7173CAB-E43F-4A07-1962-01800000710D" Win64="yes" Directory="LOCALESV" DiskId="1" >
         <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.Common.sv.resources.dll"  Name="Neos.IdentityServer.MultiFactor.Common.resources.dll" Source="$(var.Neos.IdentityServer.MultiFactor.Common.TargetDir)sv\Neos.IdentityServer.MultiFactor.Common.resources.dll" Vital="no" />
       </Component>
+      <Component Id="GACDeployment113" Guid="E7173CAB-E43F-4A07-1962-01800000710E" Win64="yes" Directory="LOCALEDA" DiskId="1" >
+        <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.Common.da.resources.dll"  Name="Neos.IdentityServer.MultiFactor.Common.resources.dll" Source="$(var.Neos.IdentityServer.MultiFactor.Common.TargetDir)da\Neos.IdentityServer.MultiFactor.Common.resources.dll" Vital="no" />
+      </Component>
+      <Component Id="GACDeployment114" Guid="E7173CAB-E43F-4A07-1962-01800000710F" Win64="yes" Directory="LOCALEJA" DiskId="1" >
+        <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.Common.ja.resources.dll"  Name="Neos.IdentityServer.MultiFactor.Common.resources.dll" Source="$(var.Neos.IdentityServer.MultiFactor.Common.TargetDir)ja\Neos.IdentityServer.MultiFactor.Common.resources.dll" Vital="no" />
+      </Component>
+      <Component Id="GACDeployment115" Guid="E7173CAB-E43F-4A07-1962-018000007110" Win64="yes" Directory="LOCALECA" DiskId="1" >
+        <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.Common.frCA.resources.dll"  Name="Neos.IdentityServer.MultiFactor.Common.resources.dll" Source="$(var.Neos.IdentityServer.MultiFactor.Common.TargetDir)fr-CA\Neos.IdentityServer.MultiFactor.Common.resources.dll" Vital="no" />
+      </Component>
+      
 
       <Component Id="GACDeployment120" Guid="E7173CAB-E43F-4A07-1962-018000008014" Win64="yes" Directory="AssemblyFolder" DiskId="1" >
         <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.Notifications.dll"  Name="Neos.IdentityServer.MultiFactor.Notifications.dll" Source="$(var.Neos.IdentityServer.MultiFactor.Notifications.TargetPath)" Vital="yes" />
@@ -397,6 +457,15 @@
       <Component Id="GACDeployment210" Guid="E7173CAB-E43F-4A07-1962-01800000620A" Win64="yes" Directory="LOCALESV" DiskId="1" >
         <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.Administration.sv.resources.dll"  Name="Neos.IdentityServer.MultiFactor.Administration.resources.dll" Source="$(var.Neos.IdentityServer.MultiFactor.Administration.TargetDir)sv\Neos.IdentityServer.MultiFactor.Administration.resources.dll" Vital="no" />
       </Component>
+      <Component Id="GACDeployment211" Guid="E7173CAB-E43F-4A07-1962-01800000620B" Win64="yes" Directory="LOCALEDA" DiskId="1" >
+        <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.Administration.da.resources.dll"  Name="Neos.IdentityServer.MultiFactor.Administration.resources.dll" Source="$(var.Neos.IdentityServer.MultiFactor.Administration.TargetDir)da\Neos.IdentityServer.MultiFactor.Administration.resources.dll" Vital="no" />
+      </Component>
+      <Component Id="GACDeployment212" Guid="E7173CAB-E43F-4A07-1962-01800000620C" Win64="yes" Directory="LOCALEJA" DiskId="1" >
+        <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.Administration.ja.resources.dll"  Name="Neos.IdentityServer.MultiFactor.Administration.resources.dll" Source="$(var.Neos.IdentityServer.MultiFactor.Administration.TargetDir)ja\Neos.IdentityServer.MultiFactor.Administration.resources.dll" Vital="no" />
+      </Component>      
+      <Component Id="GACDeployment213" Guid="E7173CAB-E43F-4A07-1962-01800000620D" Win64="yes" Directory="LOCALECA" DiskId="1" >
+        <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.Administration.frCA.resources.dll"  Name="Neos.IdentityServer.MultiFactor.Administration.resources.dll" Source="$(var.Neos.IdentityServer.MultiFactor.Administration.TargetDir)fr-CA\Neos.IdentityServer.MultiFactor.Administration.resources.dll" Vital="no" />
+      </Component>         
     </ComponentGroup>
   </Fragment>
 
@@ -439,7 +508,16 @@
       <Component Id="GACDeployment311" Guid="E7173CAB-E43F-4A07-1962-01800000630B" Win64="yes" Directory="LOCALESV" DiskId="1" >
         <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.SMS.Azure.sv.resources.dll"  Name="Neos.IdentityServer.MultiFactor.SMS.Azure.resources.dll" Source="$(var.Neos.IdentityServer.MultiFactor.SMS.Azure.TargetDir)sv\Neos.IdentityServer.MultiFactor.SMS.Azure.resources.dll" Vital="no" />
       </Component>
-
+      <Component Id="GACDeployment312" Guid="E7173CAB-E43F-4A07-1962-01800000630C" Win64="yes" Directory="LOCALEDA" DiskId="1" >
+        <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.SMS.Azure.da.resources.dll"  Name="Neos.IdentityServer.MultiFactor.SMS.Azure.resources.dll" Source="$(var.Neos.IdentityServer.MultiFactor.SMS.Azure.TargetDir)da\Neos.IdentityServer.MultiFactor.SMS.Azure.resources.dll" Vital="no" />
+      </Component>
+      <Component Id="GACDeployment313" Guid="E7173CAB-E43F-4A07-1962-01800000630D" Win64="yes" Directory="LOCALEJA" DiskId="1" >
+        <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.SMS.Azure.ja.resources.dll"  Name="Neos.IdentityServer.MultiFactor.SMS.Azure.resources.dll" Source="$(var.Neos.IdentityServer.MultiFactor.SMS.Azure.TargetDir)ja\Neos.IdentityServer.MultiFactor.SMS.Azure.resources.dll" Vital="no" />
+      </Component>
+      <Component Id="GACDeployment314" Guid="E7173CAB-E43F-4A07-1962-01800000630E" Win64="yes" Directory="LOCALECA" DiskId="1" >
+        <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.SMS.Azure.frCA.resources.dll"  Name="Neos.IdentityServer.MultiFactor.SMS.Azure.resources.dll" Source="$(var.Neos.IdentityServer.MultiFactor.SMS.Azure.TargetDir)fr-CA\Neos.IdentityServer.MultiFactor.SMS.Azure.resources.dll" Vital="no" />
+      </Component>
+      
 
       <Component Id="GACDeployment350" Guid="E7173CAB-E43F-4A07-1962-018000006350" Win64="yes" Directory="AssemblyFolder" DiskId="1" Permanent="yes" >
         <File Assembly=".net" KeyPath="yes" Id="libphonenumber_csharp_portable.dll"  Name="libphonenumber_csharp_portable.dll" Source="$(var.Neos.IdentityServer.MultiFactor.SMS.Azure.TargetDir)libphonenumber_csharp_portable.dll" />
@@ -478,6 +556,15 @@
       <Component Id="GACDeployment410" Guid="E7173CAB-E43F-4A07-1962-01800000640A" Win64="yes" Directory="LOCALESV" DiskId="1" >
         <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.SAS.Azure.sv.resources.dll"  Name="Neos.IdentityServer.MultiFactor.SAS.Azure.resources.dll" Source="$(var.Neos.IdentityServer.MultiFactor.SAS.Azure.TargetDir)sv\Neos.IdentityServer.MultiFactor.SAS.Azure.resources.dll" Vital="no" />
       </Component>
+      <Component Id="GACDeployment411" Guid="E7173CAB-E43F-4A07-1962-01800000640B" Win64="yes" Directory="LOCALEDA" DiskId="1" >
+        <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.SAS.Azure.da.resources.dll"  Name="Neos.IdentityServer.MultiFactor.SAS.Azure.resources.dll" Source="$(var.Neos.IdentityServer.MultiFactor.SAS.Azure.TargetDir)da\Neos.IdentityServer.MultiFactor.SAS.Azure.resources.dll" Vital="no" />
+      </Component>
+      <Component Id="GACDeployment412" Guid="E7173CAB-E43F-4A07-1962-01800000640C" Win64="yes" Directory="LOCALEJA" DiskId="1" >
+        <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.SAS.Azure.ja.resources.dll"  Name="Neos.IdentityServer.MultiFactor.SAS.Azure.resources.dll" Source="$(var.Neos.IdentityServer.MultiFactor.SAS.Azure.TargetDir)ja\Neos.IdentityServer.MultiFactor.SAS.Azure.resources.dll" Vital="no" />
+      </Component>
+      <Component Id="GACDeployment413" Guid="E7173CAB-E43F-4A07-1962-01800000640D" Win64="yes" Directory="LOCALECA" DiskId="1" >
+        <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.SAS.Azure.frCA.resources.dll"  Name="Neos.IdentityServer.MultiFactor.SAS.Azure.resources.dll" Source="$(var.Neos.IdentityServer.MultiFactor.SAS.Azure.TargetDir)fr-CA\Neos.IdentityServer.MultiFactor.SAS.Azure.resources.dll" Vital="no" />
+      </Component>    
     </ComponentGroup>
   </Fragment>
   
@@ -516,7 +603,17 @@
       <Component Id="GACDeployment60A" Guid="E7173CAB-E43F-4A07-1962-01800000660A" Win64="yes" Directory="LOCALESV" DiskId="1" >
         <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.WebAuthN.Provider.sv.resources.dll"  Name="Neos.IdentityServer.MultiFactor.WebAuthN.Provider.resources.dll" Source="$(var.Neos.IdentityServer.MultiFactor.WebAuthN.Provider.TargetDir)sv\Neos.IdentityServer.MultiFactor.WebAuthN.Provider.resources.dll" Vital="no" />
       </Component>
-
+      <Component Id="GACDeployment60B" Guid="E7173CAB-E43F-4A07-1962-01800000660B" Win64="yes" Directory="LOCALEDA" DiskId="1" >
+        <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.WebAuthN.Provider.da.resources.dll"  Name="Neos.IdentityServer.MultiFactor.WebAuthN.Provider.resources.dll" Source="$(var.Neos.IdentityServer.MultiFactor.WebAuthN.Provider.TargetDir)da\Neos.IdentityServer.MultiFactor.WebAuthN.Provider.resources.dll" Vital="no" />
+      </Component>
+      <Component Id="GACDeployment60C" Guid="E7173CAB-E43F-4A07-1962-01800000660C" Win64="yes" Directory="LOCALEJA" DiskId="1" >
+        <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.WebAuthN.Provider.ja.resources.dll"  Name="Neos.IdentityServer.MultiFactor.WebAuthN.Provider.resources.dll" Source="$(var.Neos.IdentityServer.MultiFactor.WebAuthN.Provider.TargetDir)ja\Neos.IdentityServer.MultiFactor.WebAuthN.Provider.resources.dll" Vital="no" />
+      </Component>      
+      <Component Id="GACDeployment60D" Guid="E7173CAB-E43F-4A07-1962-01800000660D" Win64="yes" Directory="LOCALECA" DiskId="1" >
+        <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.WebAuthN.Provider.frCA.resources.dll"  Name="Neos.IdentityServer.MultiFactor.WebAuthN.Provider.resources.dll" Source="$(var.Neos.IdentityServer.MultiFactor.WebAuthN.Provider.TargetDir)fr-CA\Neos.IdentityServer.MultiFactor.WebAuthN.Provider.resources.dll" Vital="no" />
+      </Component>      
+      
+      
       <Component Id="GACDeployment661" Guid="E7173CAB-E43F-4A07-1962-018000006661" Win64="yes" Directory="AssemblyFolder" DiskId="1" >
         <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.WebAuthN.Core.dll"  Name="Neos.IdentityServer.MultiFactor.WebAuthN.Core.dll" Source="$(var.Neos.IdentityServer.MultiFactor.WebAuthN.Core.TargetPath)" Vital="yes"/>
       </Component>
@@ -589,6 +686,15 @@
       <Component Id="GACDeployment510" Guid="E7173CAB-E43F-4A07-1962-01800000650A" Win64="yes" Directory="PSSV" DiskId="1"  >
         <File KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.Cmdlets.sv.resources.dll"  Name="Neos.IdentityServer.MultiFactor.Cmdlets.resources.dll" Source="$(var.Neos.IdentityServer.MultiFactor.Cmdlets.TargetDir)sv\Neos.IdentityServer.MultiFactor.Cmdlets.resources.dll" Vital="no" />
       </Component>
+      <Component Id="GACDeployment511" Guid="E7173CAB-E43F-4A07-1962-01800000650B" Win64="yes" Directory="PSDA" DiskId="1"  >
+        <File KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.Cmdlets.da.resources.dll"  Name="Neos.IdentityServer.MultiFactor.Cmdlets.resources.dll" Source="$(var.Neos.IdentityServer.MultiFactor.Cmdlets.TargetDir)da\Neos.IdentityServer.MultiFactor.Cmdlets.resources.dll" Vital="no" />
+      </Component>
+      <Component Id="GACDeployment512" Guid="E7173CAB-E43F-4A07-1962-01800000650C" Win64="yes" Directory="PSJA" DiskId="1"  >
+        <File KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.Cmdlets.ja.resources.dll"  Name="Neos.IdentityServer.MultiFactor.Cmdlets.resources.dll" Source="$(var.Neos.IdentityServer.MultiFactor.Cmdlets.TargetDir)ja\Neos.IdentityServer.MultiFactor.Cmdlets.resources.dll" Vital="no" />
+      </Component>      
+      <Component Id="GACDeployment513" Guid="E7173CAB-E43F-4A07-1962-01800000650D" Win64="yes" Directory="PSCA" DiskId="1"  >
+        <File KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.Cmdlets.frCA.resources.dll"  Name="Neos.IdentityServer.MultiFactor.Cmdlets.resources.dll" Source="$(var.Neos.IdentityServer.MultiFactor.Cmdlets.TargetDir)fr-CA\Neos.IdentityServer.MultiFactor.Cmdlets.resources.dll" Vital="no" />
+      </Component>          
     </ComponentGroup>
   </Fragment>
 
@@ -629,6 +735,15 @@
       <Component Id="GACDeployment70" Guid="E7173CAB-E43F-4A07-B5F1-01800000660A" Win64="yes" Directory="MFASV" DiskId="1" >
         <File KeyPath="yes" Id="Neos.IdentityServer.Console.sv.resources.dll"  Name="Neos.IdentityServer.Console.resources.dll" Source="$(var.Neos.IdentityServer.Console.TargetDir)sv\Neos.IdentityServer.Console.resources.dll" Vital="no" />
       </Component>
+      <Component Id="GACDeployment71" Guid="E7173CAB-E43F-4A07-B5F1-01800000660B" Win64="yes" Directory="MFADA" DiskId="1" >
+        <File KeyPath="yes" Id="Neos.IdentityServer.Console.da.resources.dll"  Name="Neos.IdentityServer.Console.resources.dll" Source="$(var.Neos.IdentityServer.Console.TargetDir)da\Neos.IdentityServer.Console.resources.dll" Vital="no" />
+      </Component>
+      <Component Id="GACDeployment72" Guid="E7173CAB-E43F-4A07-B5F1-01800000660C" Win64="yes" Directory="MFAJA" DiskId="1" >
+        <File KeyPath="yes" Id="Neos.IdentityServer.Console.ja.resources.dll"  Name="Neos.IdentityServer.Console.resources.dll" Source="$(var.Neos.IdentityServer.Console.TargetDir)ja\Neos.IdentityServer.Console.resources.dll" Vital="no" />
+      </Component>
+      <Component Id="GACDeployment73" Guid="E7173CAB-E43F-4A07-B5F1-01800000660D" Win64="yes" Directory="MFACA" DiskId="1" >
+        <File KeyPath="yes" Id="Neos.IdentityServer.Console.frCA.resources.dll"  Name="Neos.IdentityServer.Console.resources.dll" Source="$(var.Neos.IdentityServer.Console.TargetDir)fr-CA\Neos.IdentityServer.Console.resources.dll" Vital="no" />
+      </Component>      
 
       <Component Id="GACDeployment82" Guid="E7173CAB-E43F-4A07-B5F1-018000006662" Win64="yes" Directory="RESFOLDER" DiskId="1" >
         <File KeyPath="yes" Id="HowToLocalize.txt"  Name="HowToLocalize.txt" Source="$(var.Neos.IdentityServer.Console.ProjectDir)SnapMMC\HowToLocalize.txt" Vital="no" />
@@ -663,10 +778,6 @@
         </Shortcut>
         <RegistryValue Root="HKCU" Key="Software\MFA" Name="installed" Type="integer" Value="1" KeyPath="yes" />
       </Component>
-     <!-- <Component Id="GACDeployment81" Guid="E7173CAB-E43F-4A07-0220-018000006181" Directory="INSTALLFOLDER" DiskId="1" Win64="yes" NeverOverwrite="yes" KeyPath="yes" Permanent="yes">
-        <RegistryValue Root="HKLM" Key="Software\MFA" Name="PrivateKeysCleanUpEnabled" Type="integer" />
-        <RegistryValue Root="HKLM" Key="Software\MFA" Name="PrivateKeysCleanUpDelay" Type="integer" Value="20" />
-      </Component> -->
     </ComponentGroup>
   </Fragment> 
 </Wix>

@@ -80,10 +80,13 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Resources\SSAS.da.resx" />
     <EmbeddedResource Include="Resources\SSAS.de.resx" />
+    <EmbeddedResource Include="Resources\SSAS.fr-CA.resx" />
     <EmbeddedResource Include="Resources\SSAS.fr.resx" />
     <EmbeddedResource Include="Resources\SSAS.es.resx" />
     <EmbeddedResource Include="Resources\SSAS.it.resx" />
+    <EmbeddedResource Include="Resources\SSAS.ja.resx" />
     <EmbeddedResource Include="Resources\SSAS.nl.resx" />
     <EmbeddedResource Include="Resources\SSAS.pl.resx" />
     <EmbeddedResource Include="Resources\SSAS.pt.resx" />
