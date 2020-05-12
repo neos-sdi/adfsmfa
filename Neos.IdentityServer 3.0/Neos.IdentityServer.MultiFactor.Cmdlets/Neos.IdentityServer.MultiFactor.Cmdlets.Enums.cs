@@ -124,6 +124,37 @@ namespace MFA
     }
 
     /// <summary>
+    /// PSPasswordSync
+    /// <para type="synopsis">Kind of credential to update (SuperUser, Mail User, or System passphrase (for encryption).</para>
+    /// <para type="description">SuperUser : Change the SuperUser password.</para>
+    /// <para type="description">MailUser : Change the mail account password.</para>
+    /// <para type="description">SystemPassPhrase : Change Pass Phrase used for encryption.</para>
+    /// </summary>    
+    public enum PSPasswordSync
+    {
+        /// <summary>
+        /// <para type="description">Encrypt all credentials.</para>
+        /// </summary>
+        All = 0,
+
+        /// <summary>
+        /// <para type="description">Change the SuperUser password.</para>
+        /// </summary>
+        SuperUser = 1,
+
+        /// <summary>
+        /// <para type="description">Change the mail account password.</para>
+        /// </summary>
+        MailUser = 2,
+
+        /// <summary>
+        /// <para type="description">Change Pass Phrase used for encryption.</para>
+        /// </summary>
+        SystemPassPhrase = 3
+    }
+
+
+    /// <summary>
     /// PSADDSTemplateKind
     /// <para type="synopsis">Kind of the attributes list template (SchemaAll, Schema2016, SchemaMFA).</para>
     /// <para type="description">SchemaAll : Schema template compatible with all ADDS 2012 and up Schema versions.</para>

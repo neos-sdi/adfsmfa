@@ -122,166 +122,175 @@
 &lt;html&gt; 
     &lt;head&gt; 
         &lt;title&gt;&lt;/title&gt; 
-        &lt;base target = "_blank"&gt; 
+        &lt;base target="blank"&gt; 
     &lt;/head&gt; 
     &lt;body&gt; 
-        &lt;table dir = "ltr" &gt;
+        &lt;table dir="ltr"&gt;
             &lt;tr&gt;
-                &lt;td id = "i1" style = "padding: 0; font-family: ' Segoe UI Semibold ', ' Segoe UI Bold ', ' Segoe UI ', ' Helvetica Neue Medium ', Arial, sans-serif; font-size: 17px; color: #707070;"&gt;Account {0}&lt;/td&gt;
+                &lt;td id="i1" style="padding:0;font-family:'Segoe UI Semibold', 'Segoe UI Bold', 'Segoe UI', 'Helvetica Neue Medium', Arial, sans-serif;font-size:17px;color:#707070;"&gt;Account {0}&lt;/td&gt;
             &lt;/tr&gt; 
             &lt;tr&gt;
-                &lt;td id = "i2" style = "padding: 0; font-family: ' Segoe UI Light ',' Segoe UI ',' Helvetica Neue Medium ', Arial, sans-serif; font-size: 41px; color: #2672ec;"&gt;Gebruikersregistratie&lt;/td&gt;
+                &lt;td id="i2" style="padding:0;font-family:'Segoe UI Light', 'Segoe UI', 'Helvetica Neue Medium', Arial, sans-serif;font-size:41px;color:#2672ec;"&gt;Gebruikersregistratie&lt;/td&gt;
             &lt;/tr&gt;
             &lt;tr&gt;
-                &lt;td id = "i3" style = "padding: 0; padding-top: 25px; font-family: ' Segoe UI ', Tahoma, Verdana, Arial, sans-serif; font-size: 14px; color: #2a2a2a;" &gt;Om de veiligheid van uw account te verbeteren, hebben we de
+                &lt;td id="i3" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Om de beveiliging van uw account te verbeteren, hebben we de
 
-Multi-factor authenticatie mecanisme.&lt;/td&gt;
+Multi-Factor authenticatie mecanisme.&lt;/td&gt;
             &lt;/tr&gt;
             &lt;tr&gt;
-                &lt;td id = "i3a" style = "padding: 0; padding-top: 0px; font-family: ' Segoe UI ', Tahoma, Verdana, Arial, sans-serif; font-size:14px;color:#2a2a2a;" &gt;Deze veiligheidsfunctie moet door ons worden geactiveerd met behulp van
-Informatie die u ons zojuist hebt gegeven.&lt;/td&gt;
+                &lt;td id="i3a" style="padding:0;padding-top:0px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Deze veiligheidsfunctie moet door ons worden geactiveerd met behulp van
+Informatie die je ons net hebt gegeven.&lt;/td&gt;
             &lt;/tr&gt;
             &lt;tr&gt;
-                &lt;td id = "i4" style = "padding: 0; padding-top: 25px; font-family: ' Segoe UI ', Tahoma, Verdana, Arial, sans-serif; font-size:14px;color:#2a2a2a;" &gt;De informatie hieronder zal ons toelaten om uw identiteit te verifiëren. &lt;/td&gt;
+                &lt;td id="i4" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Via onderstaande informatie kunnen we uw identiteit verifiëren.&lt;/td&gt;
             &lt;/tr&gt;
             &lt;tr&gt;
-                &lt;td id = "i4" style = "padding: 0; padding-top: 15px; font-family: ' Segoe UI ', Tahoma, Verdana, Arial, sans-serif; font-size: 14px; color: #2a2a2a;" &gt;Gebruikersnaam : &lt;a dir = "ltr" id = "iAccount" class = "link" style = "color: #2672ec; text-decoration: none;"&gt; {1} &lt;/td&gt;
+                &lt;td id="i4" style="padding:0;padding-top:15px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Gebruikersnaam : &lt;a dir="ltr" id="iAccount" class="link" style="color:#2672ec;text-
+
+decoration:none;"&gt;{1}&lt;/a&gt;&lt;/td&gt;
             &lt;/tr&gt;
             &lt;tr&gt;
-                &lt;td id = "i5" style = "padding: 0; padding-top: 10px; font-family: ' Segoe UI ', Tahoma, Verdana, Arial, sans-serif; font-size: 14px; color: #2a2a2a;" &gt;Secundair e-mailadres : &lt;a dir = "ltr" id = "iEmail" class = "link" style = "color: #2672ec; text-decoration: none;" &gt; {2} &lt;/td&gt;
+                &lt;td id="i5" style="padding:0;padding-top:10px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Secundair e-mailadres : &lt;a dir="ltr" id="iEmail" class="link" style="color:#2672ec;text-decoration:none;"&gt;{2}&lt;/a&gt;&lt;/td&gt;
             &lt;/tr&gt;
             &lt;tr&gt;
-                &lt;td id = "i6" style = "padding: 0; padding-top: 10px; font-family: ' Segoe UI ', Tahoma, Verdana, Arial, sans-serif; font-size: 14px; color: #2a2a2a;" &gt;Mobiel telefoonnummer : &lt;a dir = "ltr" id = "iPhone" class = "link" style = "color: #2672ec; text-decoration: none;" &gt; {3} &lt;/td&gt;
+                &lt;td id="i6" style="padding:0;padding-top:10px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Mobiel telefoonnummer : &lt;a dir="ltr" id="iPhone" class="link" style="color:#2672ec;text-decoration:none;"&gt;{3}&lt;/a&gt;&lt;/td&gt;
             &lt;/tr&gt;
             &lt;tr&gt;
-                &lt;td id = "i7" style = "padding: 0; padding-top: 10px; font-family: ' Segoe UI ', Tahoma, Verdana, Arial, sans-serif; font-size: 14px; color: #2a2a2a;" &gt;Standaard authentificatie methode : &lt;a dir="ltr" id="iMethod" class="link" style="color:#2672ec;text-decoration:none;" &gt; {4} &lt;/td&gt;
+                &lt;td id="i7" style="padding:0;padding-top:10px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Standaardauthentificatiemethode : &lt;a dir="ltr" id="iMethod" class="link" style="color:#2672ec;text-decoration:none;"&gt;{4}&lt;/a&gt;&lt;/td&gt;
             &lt;/tr&gt;
             &lt;tr&gt;
-                &lt;td id = "i8" style = "padding: 0; padding-top: 25px; font-family: ' Segoe UI ', Tahoma, Verdana, Arial, sans-serif; font-size: 14px; color: #2a2a2a;" &gt;Regards, &lt;/td&gt;
+                &lt;td id="i8" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Betrekking&lt;/td&gt;
             &lt;/tr&gt;
             &lt;tr&gt;
-                &lt;td id = "i9" style = "padding: 0; font-family: ' Segoe UI ', Tahoma, Verdana, Arial, sans-serif; font-size: 14px; color: #2a2a2a;" &gt;Accounts team {0}&lt;/td&gt;
+                &lt;td id="i9" style="padding:0;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;{0} Accounts-team&lt;/td&gt;
             &lt;/tr&gt;
         &lt;/table&gt;
-         &lt;br/&gt; 
+         &lt;br /&gt; 
     &lt;/body&gt; 
 &lt;/html&gt;</value>
   </data>
   <data name="MailAdminTitle" xml:space="preserve">
-    <value>Administratieve aanvraag voor registratie van {0}</value>
+    <value>Administratief heronderzoek voor {0} registratie</value>
   </data>
   <data name="MailKeyContent" xml:space="preserve">
     <value>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"&gt; 
 &lt;html&gt; 
     &lt;head&gt; 
         &lt;title&gt;&lt;/title&gt; 
-&lt;base target="_blank"&gt; 
+        &lt;base target="blank"&gt; 
     &lt;/head&gt; 
     &lt;body&gt; 
-        &lt;table dir = "ltr"&gt;
+        &lt;table dir="ltr"&gt;
             &lt;tr&gt;
-                &lt;td id = "i1" style = "padding: 0; font-family: ' Segoe UI Semibold ', ' Segoe UI Bold ', ' Segoe UI ', ' Helvetica Neue Medium ', Arial, sans-serif; font-size: 17px; color: #707070;"&gt;Account {0} &lt;/td&gt;
+                &lt;td id="i1" style="padding:0;font-family:'Segoe UI Semibold', 'Segoe UI Bold', 'Segoe UI', 'Helvetica Neue Medium', Arial, sans-serif;font-size:17px;color:#707070;"&gt;Account {0}&lt;/td&gt;
             &lt;/tr&gt; 
             &lt;tr&gt;
-                &lt;td id = "i2" style = "padding: 0; font-family:'Segoe UI Light','Segoe UI','Helvetica Neue Medium', Arial, sans-serif; font-size:41px; color: #2672ec;"&gt;Beveiligingssleutel&lt;/td&gt;
+                &lt;td id="i2" style="padding:0;font-family:'Segoe UI Light', 'Segoe UI', 'Helvetica Neue Medium', Arial, sans-serif;font-size:41px;color:#2672ec;"&gt;Beveiligingssleutel&lt;/td&gt;
             &lt;/tr&gt;
             &lt;tr&gt;
-                &lt;td id = "i3" style = "padding: 0; padding-top: 25px; font-family: 'Segoe UI', Tahoma, Verdana, Arial, sans-serif; font-size: 14px; color: #2a2a2a;" &gt;Om de veiligheid van uw account te verbeteren, hebben we de verificatie geactiveerd in twee stappen zullen de onderstaande gegevens ons toelaten om uw identiteit te verifiëren.&lt;br&gt;U moet deze gegevens invoeren in uw verificatie toepassing.&lt;/td&gt;
+                &lt;td id="i3" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Om de beveiliging van uw account te verbeteren, hebben we de verificatie geactiveerd 
+
+in twee stappen, zal de onderstaande informatie ons toelaten om uw identiteit te verifiëren. U moet deze gegevens invoeren in uw verificatietoepassing.&lt;/td&gt;
             &lt;/tr&gt;
             &lt;tr&gt;
-                &lt;td id = "i3" style = "padding: 0; padding-top: 25px; font-family: 'Segoe UI', Tahoma, Verdana, Arial, sans-serif; font-size: 14px; color: #2a2a2a;"&gt;Gebruik de volgende beveiligingssleutel voor account {0} : &lt;a dir = "ltr" ID = "iAccount" Class = "link" Style = "Color: #2672ec; tekst-decoratie: geen;" &gt; {1}. &lt;/td&gt;
+                &lt;td id="i3" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Gebruik de volgende beveiligingssleutel voor account {0}: &lt;a dir="ltr" id="iAccount" class="link" style="color:#2672ec;text-decoration:none;"&gt;{1}.&lt;/a&gt;&lt;/td&gt;
             &lt;/tr&gt;
             &lt;tr&gt;
-                &lt;td id = "i4" style = "padding: 0; padding-top: 25px; font-family: 'Segoe UI', Tahoma, Verdana, Arial, sans-serif; font-size: 14px; color: #2a2a2a;" &gt;Beveiligingssleutel :&lt;span style = "font-family:'Segoe UI Bold','Segoe UI Semibold', 'Segoe UI', 'Helvetica Neue medium', Arial, sans-serif; font-size: 18px; font-weight:bold; color: #2a2a2a; " &gt; {2} &lt;/span&gt; &lt;/td&gt;
+                &lt;td id="i4" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Beveiligingssleutel : &lt;span style="font-family:'Segoe UI Bold', 'Segoe UI Semibold', 'Segoe 
+
+UI', 'Helvetica Neue Medium', Arial, sans-serif;font-size:18px;font-weight:bold;color:#2a2a2a;"&gt;{2}&lt;/span&gt;&lt;/td&gt;
             &lt;/tr&gt;
             &lt;tr&gt;
-                &lt;td id = "i5" style = "padding: 0; padding-top: 25px; font-family: 'Segoe UI', Tahoma, Verdana, Arial, sans-serif; font-size: 14px; color: #2a2a2a;" &gt;U ook de volgende QR-code scannen vanuit uw mobiele authenticatie-applicatie (Google Authenticator, Microsoft Authenticator).&lt;/td&gt;
+                &lt;td id="i5" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;U ook de volgende QR-code scannen vanuit uw mobiele verificatietoepassing 
+
+(Google Authenticator, Microsoft Authenticator).&lt;/td&gt;
             &lt;/tr&gt;
             &lt;tr&gt;
-                &lt;td id = "i6" style = "padding: 0; padding-top: 25px; font-family: 'Segoe UI', Tahoma, Verdana, Arial, sans-serif; font-size: 14px; color: #2a2a2a;" &gt; &lt;span Style = "font-family:'Segoe UI Bold', 'Segoe UI Semibold', 'Segoe UI', 'Helvetica Neue Medium', Arial, sans-serif;font-size:18px;font-weight:bold;color:#2a2a2a;"&gt; &lt;img id="qr" src="cid:{3}" /&gt;&lt;/span&gt; &lt;/td&gt;
+                &lt;td id="i6" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;&lt;span style="font-family:'Segoe UI Bold', 'Segoe UI Semibold', 'Segoe UI', 
+
+'Helvetica Neue Medium', Arial, sans-serif;font-size:18px;font-weight:bold;color:#2a2a2a;"&gt; &lt;img id="qr" src="cid:{3}" /&gt;&lt;/span&gt;&lt;/td&gt;
             &lt;/tr&gt;
             &lt;tr&gt;
-                &lt;td id = "i7" style = "padding: 0; padding-top: 25px; font-family: 'Segoe UI', Tahoma, Verdana, Arial, sans-serif; font-size: 14px; color: #2a2a2a;" &gt;deze e-mail is zeer vertrouwelijk, dus maak deze niet bekend. Als u twijfelt, neem dan contact op met het account team {0}, om u een nieuwe geheime sleutel te bieden. &lt;/td&gt;
+                &lt;td id="i7" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Deze e-mail is zeer vertrouwelijk, dus maak het niet bekend. Neem bij twijfel contact op met 
+
+het accountteam {0}, om u een nieuwe geheime sleutel te geven.&lt;/td&gt;
             &lt;/tr&gt;
             &lt;tr&gt;
-                &lt;td id = "i8" style = "padding: 0; padding-top: 25px; font-family: 'Segoe UI', Tahoma, Verdana, Arial, sans-serif; font-size: 14px; color: #2a2a2a;" &gt;Met vriendelijke groet, &lt;/td&gt;
+                &lt;td id="i8" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Hartelijke groeten&lt;/td&gt;
             &lt;/tr&gt;
             &lt;tr&gt;
-                &lt;td id = "i9" style = "padding: 0; font-family: 'Segoe UI', Tahoma, Verdana, Arial, sans-serif; font-size: 14px; color: #2a2a2a;" &gt;Accounts Team {0} &lt;/td&gt;
+                &lt;td id="i9" style="padding:0;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Het accountteam {0}&lt;/td&gt;
             &lt;/tr&gt;
         &lt;/table&gt;
-        &lt;br/&gt; 
+         &lt;br /&gt; 
     &lt;/body&gt; 
 &lt;/html&gt;</value>
   </data>
   <data name="MailKeyTitle" xml:space="preserve">
-    <value>Belangrijke beveiligingsinformatie</value>
+    <value>Beveiligingsinformatie</value>
   </data>
   <data name="MailNotifications" xml:space="preserve">
     <value>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"&gt;
 &lt;html&gt;
 &lt;head&gt;
-  &lt;title&gt;&lt;/title&gt;
-  &lt;base target="_blank"&gt;
+    &lt;title&gt;&lt;/title&gt;
+    &lt;base target="blank"&gt;
 &lt;/head&gt;
 &lt;body&gt;
-    &lt;table dir = "ltr"&gt;
+    &lt;table dir="ltr"&gt;
         &lt;tr&gt;
-            &lt;td id = "i2" style = "padding: 0; font-family: 'Segoe UI Light', 'Segoe UI', 'Helvetica Neue Medium', Arial, sans-serif; font-size: 41px; color: #2672ec;" &gt;uw beveiligingsgegevens zijn gewijzigd &lt;/td&gt;
+            &lt;td id="i2" style="padding:0;font-family:'Segoe UI Light', 'Segoe UI', 'Helvetica Neue Medium', Arial, sans-serif;font-size:41px;color:#2672ec;"&gt;Uw beveiligingsgegevens zijn gewijzigd&lt;/td&gt;
         &lt;/tr&gt;
         &lt;tr&gt;
-            &lt;td id = "i3" style = "padding: 0; padding-top: 25px; font-family: 'Segoe UI', Tahoma, Verdana, Arial, sans-serif; font-size: 14px; color: #2a2a2a;" &gt;{0}, is dat de verantwoordelijkheid voor deze wijzigingen? &lt;/td&gt;
+            &lt;td id="i3" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;We hebben een verzoek ontvangen om beveiligingsgegevens voor uw {0}-account te wijzigen. Als u geen wijzigingen hebt aangevraagd, neemt u contact op met uw helpdesk voor hulp of stelt u uw beveiligingsgegevens opnieuw in.&lt;/td&gt;
         &lt;/tr&gt;
         &lt;tr&gt;
-            &lt;td id = "i4" style = "padding: 0; padding-top: 25px; font-family: 'Segoe UI', Tahoma, Verdana, Arial, sans-serif; font-size: 14px; color: #2a2a2a;" &gt;We zullen u op de hoogte stellen wanneer uw beveiligingsinformatie wordt gewijzigd.&lt;br&gt; Als u niet om deze wijzigingen, neem contact op met uw beheerders of reset uw informatie. &lt;/td&gt;
+            &lt;td id="i7" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Hartelijke groeten&lt;/td&gt;
         &lt;/tr&gt;
         &lt;tr&gt;
-            &lt;td id = "i7" style = "padding: 0; padding-top: 25px; font-family: 'Segoe UI', Tahoma, Verdana, Arial, sans-serif; font-size: 14px; kleur: #2a2a2a;" &gt;Met vriendelijke groet, &lt;/td&gt;
-        &lt;/tr&gt;
-        &lt;tr&gt;
-            &lt;td id = "i8" style = "padding: 0; font-family: ' Segoe UI ', Tahoma, Verdana, Arial, sans-serif; font-size: 14px; color: #2a2a2a;" &gt;Accounts Team {1} &lt;/td&gt;
+            &lt;td id="i8" style="padding:0;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;{1} Accounts-team&lt;/td&gt;
         &lt;/tr&gt;
     &lt;/table&gt;
-    &lt;br/&gt;
+    &lt;br /&gt;
 &lt;/body&gt;
 &lt;/html&gt;</value>
   </data>
   <data name="MailNotificationsTitle" xml:space="preserve">
-    <value>Beveiligingswaarschuwing voor uw account {0}</value>
+    <value>Beveiligingswaarschuwing over uw {0}-account</value>
   </data>
   <data name="MailOTPContent" xml:space="preserve">
-    <value>&lt;! DOCTYPE HTML PUBLIC "-/W3C//DTD HTML 4,01 Overgangs waarde//EN" "http://www.w3.org/TR/html4/loose.dtd" &gt;
- &lt;html&gt; 
+    <value>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"&gt; 
+&lt;html&gt; 
  &lt;head&gt; 
-  &lt;title&gt;&lt;/title&gt;
-  &lt;base target = "_blank" &gt; 
+  &lt;title&gt;&lt;/title&gt; 
+  &lt;base target="blank"&gt; 
  &lt;/head&gt; 
  &lt;body&gt; 
-  &lt;table dir = "ltr" &gt; 
+  &lt;table dir="ltr"&gt; 
    &lt;tr&gt; 
-    &lt;td id = "I1" Style = "padding: 0; font-family: 'Segoe UI Semibold', 'Segoe UI Bold', 'Segoe UI', 'Helvetica Neue medium', Arial, sans-serif; font-size: 17px; color: #707070; " &gt; {0} Account &lt;/td&gt; 
-   &lt;/tr&gt; 
-   &lt;tr&gt;
-    &lt;td id = "i2" style = "padding: 0; font-family: 'Segoe UI Light', 'Segoe UI', 'Helvetica Neue Medium', Arial, sans-serif; font-size: 41px; color: #2672ec;" &gt;Beveiligings code &lt;/td&gt; 
-   &lt;/tr&gt;
-   &lt;tr&gt; 
-    &lt;td id = "i3" Style = "padding: 0; padding-Top: 25px; font-family: ' Segoe UI ', Tahoma, Verdana, Arial, Sans-Serif; font-size: 14px; color: #2a2a2a; " &gt;Gebruik deze beveiligingscode voor de account {0}: &lt;a dir = "ltr" id = "iAccount" class = "link" style = "color: #2672ec;text-decoration:none;" &gt; {1}. &lt;/td&gt;
-   &lt;/tr&gt;
-   &lt;tr&gt;
-    &lt;td id = "I4" Style = "padding: 0; padding-Top: 25px; font-family: 'Segoe UI', Tahoma, Verdana, Arial, Sans-Serif; font-size: 14px; color: #2a2a2a; "&gt;Beveiligings code: &lt;span style = "font-family: 'Segoe UI Bold ', 'Segoe UI Semibold', 'Segoe UI', 'Helvetica Neue Medium', Arial, sans-serif; font-size: 18px; font-weight:bold; color: #2a2a2a; "&gt; {2} &lt;/span&gt; &lt;/td&gt;
-   &lt;/tr&gt;
-   &lt;tr&gt;
-    &lt;td id =" i6 "Style =" padding: 0; padding-Top: 25px; font-family: 'Segoe UI', Tahoma, Verdana, Arial, Sans-Serif; font-size: 14px; color: #2a2a2a; " &gt;Als u nooit om een code vraagt, moet u deze e-mail negeren. Een andere gebruiker heeft mogelijk per ongeluk uw e-mailadres ingevoerd. &lt;/td&gt;
-   &lt;/tr&gt;
-   &lt;tr&gt;
-    &lt;td id = "i7" style = "padding: 0; padding-top: 25px; font-family: 'Segoe UI', Tahoma, Verdana, Arial, sans-serif; font-size: 14px; color: #2a2a2a;" &gt;Met vriendelijke groet, &lt;/td&gt;
+    &lt;td id="i1" style="padding:0;font-family:'Segoe UI Semibold', 'Segoe UI Bold', 'Segoe UI', 'Helvetica Neue Medium', Arial, sans-serif;font-size:17px;color:#707070;"&gt;{0} account&lt;/td&gt; 
    &lt;/tr&gt; 
    &lt;tr&gt; 
-    &lt;td id = "i8" Style = "padding: 0; font-family: 'Segoe UI', Tahoma, Verdana, Arial, Sans-Serif; font-size: 14px; color: #2a2a2a; " &gt;Accounts Team {0}&lt;/td&gt; 
+    &lt;td id="i2" style="padding:0;font-family:'Segoe UI Light', 'Segoe UI', 'Helvetica Neue Medium', Arial, sans-serif;font-size:41px;color:#2672ec;"&gt;Beveiligingscode&lt;/td&gt; 
    &lt;/tr&gt; 
-  &lt;/table&gt;
-  &lt;br/&gt;
- &lt;/body&gt;
+   &lt;tr&gt; 
+    &lt;td id="i3" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Gebruik deze beveiligingscode voor {0} account: &lt;a dir="ltr" id="iAccount" class="link" style="color:#2672ec;text-decoration:none;"&gt;{1}.&lt;/a&gt;&lt;/td&gt; 
+   &lt;/tr&gt; 
+   &lt;tr&gt; 
+    &lt;td id="i4" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Beveiligingscode : &lt;span style="font-family:'Segoe UI Bold', 'Segoe UI Semibold', 'Segoe UI', 'Helvetica Neue Medium', Arial, sans-serif;font-size:18px;font-weight:bold;color:#2a2a2a;"&gt;{2}&lt;/span&gt;&lt;/td&gt; 
+   &lt;/tr&gt; 
+   &lt;tr&gt; 
+    &lt;td id="i6" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Als u geen code hebt aangevraagd, u dit bericht negeren.&lt;/td&gt; 
+   &lt;/tr&gt; 
+   &lt;tr&gt; 
+    &lt;td id="i7" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Hartelijke groeten&lt;/td&gt; 
+    &lt;/tr&gt; 
+   &lt;tr&gt; 
+    &lt;td id="i8" style="padding:0;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;{0} Accounts-team&lt;/td&gt; 
+   &lt;/tr&gt; 
+  &lt;/table&gt; 
+  &lt;br /&gt; 
+ &lt;/body&gt; 
 &lt;/html&gt;</value>
   </data>
   <data name="MailOTPTitle" xml:space="preserve">

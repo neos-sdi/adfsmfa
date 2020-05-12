@@ -214,74 +214,71 @@
   <data name="MailKeyTitle" xml:space="preserve">
     <value>Informations clé de sécurité</value>
   </data>
-  <data name="MailNotifications" xml:space="preserve">
-    <value>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"&gt;
-&lt;html&gt;
- &lt;head&gt;
-  &lt;title&gt;&lt;/title&gt;
-  &lt;base target="_blank"&gt;
- &lt;/head&gt;
- &lt;body&gt;
-  &lt;table dir="ltr"&gt; 
-   &lt;tr&gt;
-    &lt;td id="i1" style="padding:0;font-family:'Segoe UI Light', 'Segoe UI', 'Helvetica Neue Medium', Arial, sans-serif;font-size:41px;color:#2672ec;"&gt;Vos informations de sécurité ont été modifiées&lt;/td&gt;
-   &lt;/tr&gt;
-   &lt;tr&gt; 
-    &lt;td id="i2" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;{0}, c'est bien vous qui êtes à l'origine de ces changements ?&lt;/td&gt;
-   &lt;/tr&gt; 
-   &lt;tr&gt; 
-    &lt;td id="i3" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Nous vous préviendrons lorsque vos informations de sécurité seront modifiées.&lt;br/&gt;Si vous n'avez pas demandé ces modifications , veuillez contacter vos administrateurs ou réinitialiser vos informations.&lt;/td&gt; 
-   &lt;/tr&gt; 
-   &lt;tr&gt; 
-    &lt;td id="i7" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Merci,&lt;/td&gt; 
-   &lt;/tr&gt; 
-   &lt;tr&gt; 
-    &lt;td id="i8" style="padding:0;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;L'équipe des comptes {1}&lt;/td&gt; 
-   &lt;/tr&gt; 
-  &lt;/table&gt; 
-  &lt;br /&gt;
- &lt;/body&gt;
-&lt;/html&gt;</value>
-  </data>
   <data name="MailNotificationsTitle" xml:space="preserve">
     <value>Alerte de sécurité concernant votre compte {0}</value>
   </data>
-  <data name="MailOTPContent" xml:space="preserve">
-    <value>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"&gt;
- &lt;html&gt; 
- &lt;head&gt; 
-  &lt;title&gt;&lt;/title&gt;
-  &lt;base target="_blank"&gt;
- &lt;/head&gt; 
- &lt;body&gt; 
-  &lt;table dir="ltr"&gt;
-   &lt;tr&gt;
-    &lt;td id="i1" style="padding:0;font-family:'Segoe UI Semibold', 'Segoe UI Bold', 'Segoe UI', 'Helvetica Neue Medium', Arial, sans-serif;font-size:17px;color:#707070;"&gt;Compte {0}&lt;/td&gt; 
-   &lt;/tr&gt; 
-   &lt;tr&gt; 
-    &lt;td id="i2" style="padding:0;font-family:'Segoe UI Light', 'Segoe UI', 'Helvetica Neue Medium', Arial, sans-serif;font-size:41px;color:#2672ec;"&gt;Code de sécurité&lt;/td&gt;
-   &lt;/tr&gt;
-   &lt;tr&gt;
-    &lt;td id="i3" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Utilisez le code de sécurité suivant pour le compte {0} : &lt;a dir="ltr" id="iAccount" class="link" style="color:#2672ec;text-decoration:none;" &gt; {1}. &lt;/td&gt; 
-   &lt;/tr&gt; 
-   &lt;tr&gt; 
-    &lt;td id="i4" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Code de sécurité : &lt;span style="font-family:'Segoe UI Bold', 'Segoe UI Semibold', 'Segoe UI', 'Helvetica Neue Medium', Arial, sans-serif;font-size:18px;font-weight:bold;color:#2a2a2a;"&gt; {2}&lt;/span&gt; &lt;/td&gt; 
-   &lt;/tr&gt;
-   &lt;tr&gt;
-    &lt;td id="i6" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Si vous n'avez demandé aucun code, vous devez ignorer cet e-mail. Un autre utilisateur a peut-être indiqué votre adresse e-mail par erreur.&lt;/td&gt; 
-   &lt;/tr&gt; 
-   &lt;tr&gt; 
-    &lt;td id="i7" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Merci,&lt;/td&gt; 
-   &lt;/tr&gt;
-   &lt;tr&gt; 
-    &lt;td id="i8" style="padding:0;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;L'équipe des comptes {0}&lt;/td&gt;
-   &lt;/tr&gt;
-  &lt;/table&gt;
-  &lt;br/&gt;
- &lt;/body&gt;
-&lt;/html&gt;</value>
-  </data>
   <data name="MailOTPTitle" xml:space="preserve">
     <value>Code de sécurité</value>
+  </data>
+  <data name="MailNotifications" xml:space="preserve">
+    <value>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;&lt;/title&gt;
+    &lt;base target="blank"&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;table dir="ltr"&gt;
+        &lt;tr&gt;
+            &lt;td id="i2" style="padding:0;font-family:'Segoe UI Light', 'Segoe UI', 'Helvetica Neue Medium', Arial, sans-serif;font-size:41px;color:#2672ec;"&gt;Vos informations de sécurité ont été modifiées&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td id="i3" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Nous avons reçu une demande de modification des informations de sécurité pour votre compte {0}. Si vous n’avez pas demandé de modifications, communiquez avec votre service d’assistance ou réinitialisez vos renseignements de sécurité.&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td id="i7" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Merci&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td id="i8" style="padding:0;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;L'équipe des comptes {1}&lt;/td&gt;
+        &lt;/tr&gt;
+    &lt;/table&gt;
+    &lt;br /&gt;
+&lt;/body&gt;
+&lt;/html&gt;</value>
+  </data>
+  <data name="MailOTPContent" xml:space="preserve">
+    <value>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"&gt; 
+&lt;html&gt; 
+ &lt;head&gt; 
+  &lt;title&gt;&lt;/title&gt; 
+  &lt;base target="blank"&gt; 
+ &lt;/head&gt; 
+ &lt;body&gt; 
+  &lt;table dir="ltr"&gt; 
+   &lt;tr&gt; 
+    &lt;td id="i1" style="padding:0;font-family:'Segoe UI Semibold', 'Segoe UI Bold', 'Segoe UI', 'Helvetica Neue Medium', Arial, sans-serif;font-size:17px;color:#707070;"&gt;compte {0}&lt;/td&gt; 
+   &lt;/tr&gt; 
+   &lt;tr&gt; 
+    &lt;td id="i2" style="padding:0;font-family:'Segoe UI Light', 'Segoe UI', 'Helvetica Neue Medium', Arial, sans-serif;font-size:41px;color:#2672ec;"&gt;Code de sécurité&lt;/td&gt; 
+   &lt;/tr&gt; 
+   &lt;tr&gt; 
+    &lt;td id="i3" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Utilisez ce code de sécurité pour le compte {0} : &lt;a dir="ltr" id="iAccount" class="link" style="color:#2672ec;text-decoration:none;"&gt;{1}.&lt;/a&gt;&lt;/td&gt; 
+   &lt;/tr&gt; 
+   &lt;tr&gt; 
+    &lt;td id="i4" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Code de sécurité : &lt;span style="font-family:'Segoe UI Bold', 'Segoe UI Semibold', 'Segoe UI', 'Helvetica Neue Medium', Arial, sans-serif;font-size:18px;font-weight:bold;color:#2a2a2a;"&gt;{2}&lt;/span&gt;&lt;/td&gt; 
+   &lt;/tr&gt; 
+   &lt;tr&gt; 
+    &lt;td id="i6" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Si vous n’avez pas demandé de code, vous pouvez ignorer ce message.&lt;/td&gt; 
+   &lt;/tr&gt; 
+   &lt;tr&gt; 
+    &lt;td id="i7" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Merci&lt;/td&gt; 
+    &lt;/tr&gt; 
+   &lt;tr&gt; 
+    &lt;td id="i8" style="padding:0;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;L'équipe des comptes {0}&lt;/td&gt; 
+   &lt;/tr&gt; 
+  &lt;/table&gt; 
+  &lt;br /&gt; 
+ &lt;/body&gt; 
+&lt;/html&gt;</value>
   </data>
 </root>

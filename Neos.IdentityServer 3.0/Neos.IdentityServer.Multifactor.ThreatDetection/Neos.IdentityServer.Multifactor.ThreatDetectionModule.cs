@@ -55,7 +55,7 @@ namespace Neos.IdentityServer.MultiFactor
             }
             catch (Exception ex)
             {
-                logger.WriteAdminLogErrorMessage(ex.ToString());
+                logger?.WriteAdminLogErrorMessage(ex.ToString());
                 throw;
             }
         }

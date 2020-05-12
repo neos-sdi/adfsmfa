@@ -222,4 +222,10 @@
   <data name="InfosADFSServicesRestarted" xml:space="preserve">
     <value>ADFS Service correctement redémarré sur le serveur {0} !</value>
   </data>
+  <data name="InfosCredentialsChanged" xml:space="preserve">
+    <value>Informations d’identification correctement mises à jour !</value>
+  </data>
+  <data name="InfosMailTemplateExported" xml:space="preserve">
+    <value>Modèles de courrier correctement exportés !</value>
+  </data>
 </root>

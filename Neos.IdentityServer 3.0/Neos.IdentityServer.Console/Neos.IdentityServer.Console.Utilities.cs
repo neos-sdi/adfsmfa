@@ -150,11 +150,11 @@ namespace Neos.IdentityServer.Console
             CultureInfo info = null;
             try
             {
-                info = new CultureInfo(ManagementService.Config.DefaultCountryCode);
+                info = CultureInfo.CurrentUICulture;
             }
             catch
             {
-                info = CultureInfo.CurrentUICulture;
+                info = new CultureInfo(ManagementService.Config.DefaultCountryCode);
             }
             MailUtilities.SendKeyByEmail(email, upn, key, ManagementService.Config.MailProvider, ManagementService.Config, info);
         }

@@ -15,6 +15,8 @@
 // https://github.com/neos-sdi/adfsmfa                                                                                                                                                      //
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
+using Neos.IdentityServer.MultiFactor.Cmdlets;
+
 namespace MFA
 {
     using Neos.IdentityServer.MultiFactor;
@@ -4965,30 +4967,39 @@ namespace MFA
         private FlatCustomSecurity _target4;
         private FlatWsManSecurity _target5;
 
-        internal bool ConfigChanged { get; private set; }
+        private PSSecurityMode _securitymode = PSSecurityMode.RNG;
+        internal bool SecurityModeChanged { get; private set; } = false;
+
 
         /// <summary>
         /// <para type="description">Provider Type parameter, (RNG, RSA, BIOMETRIC, CUSTOM, WSMAN).</para>
         /// </summary>
-        [Parameter(Position = 0, ParameterSetName = "Data", ValueFromPipeline = true)]
-        [Parameter(Mandatory = true, Position = 0, ParameterSetName = "Identity")]
-        [ValidateSet("RNG", "RSA", "BIOMETRIC", "CUSTOM", "WSMAN")]
-        public PSSecurityMode Kind { get; set; } = PSSecurityMode.RNG;
+        [Parameter(Position = 0, Mandatory = true, ParameterSetName = "Item", ValueFromPipeline = true)]
+        [ValidateSet("RNG", "RSA", "BIOMETRIC", "CUSTOM", "WSMAN")]   
+        public PSSecurityMode Kind
+        {
+            get
+            {
+                return _securitymode;
+            }
+            set
+            {
+                _securitymode = value;
+                SecurityModeChanged = true;
+            } 
+        }
+
 
         /// <summary>
         /// <para type="description">Config parameter, a variable of type PSSecurity.</para>
         /// </summary>
-        [Parameter(Mandatory = true, Position = 1, ParameterSetName = "Data", ValueFromPipeline = true, DontShow = true)]
+        [Parameter(Position = 0, Mandatory = true, ParameterSetName = "Data", ValueFromPipeline = true, DontShow = true)]
+        [Parameter(Position = 1, Mandatory = true, ParameterSetName = "Item", ValueFromPipeline = true, DontShow = true)]
         [ValidateNotNullOrEmpty()]
         public PSBaseSecurity Config
         {
             get { return _config; }
-            set
-            {
-
-                _config = value;
-                ConfigChanged = true;
-            }
+            set {_config = value; }
         }
 
         /// <summary>
@@ -4997,7 +5008,7 @@ namespace MFA
         /// </summary>
         public object GetDynamicParameters()
         {
-            if (!ConfigChanged)
+            if (SecurityModeChanged)
             {
                 switch (Kind)
                 {
@@ -5031,7 +5042,7 @@ namespace MFA
             base.BeginProcessing();
             try
             {
-                if (!ConfigChanged)
+                if (SecurityModeChanged)
                 {
                     ManagementService.Initialize(this.Host, true);
                     switch (Kind)
@@ -5123,7 +5134,7 @@ namespace MFA
             {
                 try
                 {
-                    if (ConfigChanged)
+                    if (SecurityModeChanged)
                     {
                         switch (Kind)
                         {
@@ -5165,41 +5176,7 @@ namespace MFA
                     }
                     else
                     {
-                        switch (Kind)
-                        {
-                            case PSSecurityMode.RNG:
-                                if (_target1 != null)
-                                    _target1.Update(this.Host);
-                                else
-                                    throw new Exception(error);
-                                break;
-                            case PSSecurityMode.RSA:
-                                if (_target2 != null)
-                                    _target2.Update(this.Host);
-                                else
-                                    throw new Exception(error);
-                                break;
-                            case PSSecurityMode.BIOMETRIC:
-                                if (_target3 != null)
-                                    _target3.Update(this.Host);
-                                else
-                                    throw new Exception(error);
-                                break;
-                            case PSSecurityMode.CUSTOM:
-                                if (_target4 != null)
-                                    _target4.Update(this.Host);
-                                else
-                                    throw new Exception(error);
-                                break;
-                            case PSSecurityMode.WSMAN:
-                                if (_target5 != null)
-                                    _target5.Update(this.Host);
-                                else
-                                    throw new Exception(error);
-                                break;
-                            default:
-                                throw new Exception(error);
-                        }
+                        ((FlatSecurity)((PSSecurity)Config)).Update(this.Host);
                     }
                     this.WriteVerbose(infos_strings.InfosConfigUpdated);
                 }
@@ -7393,7 +7370,7 @@ namespace MFA
         /// </summary>
         protected override void ProcessRecord()
         {
-            if (ShouldProcess("Send Notification to servers ? "))
+            if (ShouldProcess("Dispatch Refresh of Configuration Cache to servers ? "))
             {
                 try
                 {
@@ -7452,7 +7429,7 @@ namespace MFA
         /// </summary>
         protected override void ProcessRecord()
         {
-            if (ShouldProcess("Send Notification to servers ? "))
+            if (ShouldProcess("Dispatch New Configuration Cache to servers ? "))
             {
                 try
                 {
@@ -7511,12 +7488,140 @@ namespace MFA
         /// </summary>
         protected override void ProcessRecord()
         {
-            if (ShouldProcess("Send Notification to servers ? "))
+            if (ShouldProcess("Dispatch Delete of cConfiguration Cache ? "))
             {
                 try
                 {
                     ManagementService.BroadcastNotification((byte)NotificationsKind.ConfigurationDeleted, Message, Local.IsPresent);
                     this.Host.UI.WriteLine(ConsoleColor.Green, this.Host.UI.RawUI.BackgroundColor, infos_strings.InfosNotificationSend);
+                }
+                catch (Exception ex)
+                {
+                    this.ThrowTerminatingError(new ErrorRecord(ex, "4024", ErrorCategory.OperationStopped, this));
+                }
+            }
+        }
+    }
+    #endregion
+
+    #region Update-MFACredentials
+    /// <summary>
+    ///     <para type="synopsis">Update MFA Crrdentials</para>
+    ///     <para type="description">Change MFA Passwords and PassPhrase</para>
+    /// </summary>
+    /// <example>
+    ///     <para>Update-MFACredentials</para>
+    ///     <para>Update-MFACredentials -Kind SuperUser -Value mypassord</para>
+    /// </example>
+    [PrimaryServerRequired, AdministratorsRightsRequired]
+    [Cmdlet(VerbsData.Update, "MFACredentials", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Identity")]
+    public sealed class UpdateMFACredentials : MFACmdlet
+    {
+
+        /// <summary>
+        /// <para type="description">Credential Kind.</para>
+        /// </summary>
+        [Parameter(Mandatory = false, Position = 0, ParameterSetName = "Identity")]
+        [ValidateRange(PSPasswordSync.All, PSPasswordSync.SystemPassPhrase)]
+        public PSPasswordSync Kind { get; set; } = PSPasswordSync.All;
+
+        /// <summary>
+        /// <para type="description">Credential clear value.</para>
+        /// </summary>
+        [Parameter(Mandatory = false, Position = 1, ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public String Value { get; set; } = string.Empty;
+
+        /// <summary>
+        /// BeginProcessing method implementation
+        /// </summary>
+        protected override void BeginProcessing()
+        {
+            base.BeginProcessing();
+            try
+            {
+                ManagementService.Initialize(this.Host, false);
+            }
+            catch (Exception ex)
+            {
+                this.ThrowTerminatingError(new ErrorRecord(ex, "4032", ErrorCategory.OperationStopped, this));
+            }
+        }
+
+        /// <summary>
+        /// ProcessRecord method override
+        /// </summary>
+        protected override void ProcessRecord()
+        {
+            if (ShouldProcess("Change MFA Credentials ? "))
+            {
+                try
+                {
+                    ManagementService.SetMFACredentials(Host, (byte)Kind, Value);
+                    this.Host.UI.WriteLine(ConsoleColor.Green, this.Host.UI.RawUI.BackgroundColor, infos_strings.InfosCredentialsChanged);
+                }
+                catch (Exception ex)
+                {
+                    this.ThrowTerminatingError(new ErrorRecord(ex, "4024", ErrorCategory.OperationStopped, this));
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// CredValueDynamicParameters class implementation
+    /// </summary>
+    internal class CredValueDynamicParameters
+    {
+    }
+
+    #endregion
+
+    #region Export-MFAMailTemplates
+    /// <summary>
+    ///     <para type="synopsis">Export and Register Mail Templates as html files for a specific LCID</para>
+    ///     <para type="description">Export and Register Mail Templates as html files for a specific LCID</para>
+    /// </summary>
+    /// <example>
+    ///     <para>Export-MFAMailTemplates -LCID 1036</para>
+    /// </example>
+    [PrimaryServerRequired, AdministratorsRightsRequired]
+    [Cmdlet(VerbsData.Export, "MFAMailTemplates", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
+    public sealed class ExportMFAMailTemplates : MFACmdlet
+    {
+        /// <summary>
+        /// <para type="description">LCID.</para>
+        /// </summary>
+        [Parameter(Mandatory = false, ParameterSetName = "Data")]
+        public int LCID { get; set; } = 1033;
+
+        /// <summary>
+        /// BeginProcessing method implementation
+        /// </summary>
+        protected override void BeginProcessing()
+        {
+            base.BeginProcessing();
+            try
+            {
+                ManagementService.Initialize(this.Host, false);
+            }
+            catch (Exception ex)
+            {
+                this.ThrowTerminatingError(new ErrorRecord(ex, "4032", ErrorCategory.OperationStopped, this));
+            }
+        }
+
+        /// <summary>
+        /// ProcessRecord method override
+        /// </summary>
+        protected override void ProcessRecord()
+        {
+            if (ShouldProcess("Export Mail Templates for LCID "+LCID.ToString()+" ? "))
+            {
+                try
+                {
+                    ManagementService.ExportMFAMailTemplates(Host, LCID);
+                    this.Host.UI.WriteLine(ConsoleColor.Green, this.Host.UI.RawUI.BackgroundColor, infos_strings.InfosMailTemplateExported);
                 }
                 catch (Exception ex)
                 {
@@ -7572,5 +7677,4 @@ namespace MFA
         }
     }
     #endregion
-
 }

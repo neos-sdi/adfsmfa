@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" >
-  <Product Id="a23dd485-5365-4d82-8309-103494000001" Name="Neos MFA Provider for ADFS 2019/2016/2012 R2" Language="1033" Version="3.0.0.10" Manufacturer="Neos-SDI" UpgradeCode="a23dd485-5365-4d82-8309-103495000001" >
+  <Product Id="a23dd485-5365-4d82-8309-103494000001" Name="Neos MFA Provider for ADFS 2019/2016/2012 R2" Language="1033" Version="3.0.2005.0" Manufacturer="Neos-SDI" UpgradeCode="a23dd485-5365-4d82-8309-103495000001" >
 
     <Package InstallerVersion="500" Compressed="yes" InstallScope="perMachine" InstallPrivileges="elevated" Platform="x64" Description="Multi-Factor Authentication for ADFS 2019/2016/2012 r2" />
 
@@ -40,6 +40,7 @@
         <ComponentRef Id="SQLDIR"/>
         <ComponentRef Id="ADDSDIR"/>
         <ComponentRef Id="IMPORTSDIR"/>
+        <ComponentRef Id="MAILSDIR"/>
       </Feature>
     </Feature>
   
@@ -73,13 +74,14 @@
       <ComponentGroupRef Id="Neos.IdentityServer.MultiFactor.WebAuthN" />
     </Feature> 
 
+    
     <Binary Id='CustomAction.CA' SourceFile="$(var.Neos.IdentityServer.Deployment.TargetDir)Neos.IdentityServer.Deployment.CA.dll" />
     <CustomAction Id="xInstallService" BinaryKey='CustomAction.CA' DllEntry="InstallService" Execute="commit" Impersonate="no" />
-    <CustomAction Id="xUninstallService" BinaryKey='CustomAction.CA' DllEntry="UnInstallService" Execute="immediate" Impersonate="no" />
-
     <CustomAction Id="xStartService" BinaryKey='CustomAction.CA' DllEntry="StartService" Execute="commit" Impersonate="no"/>
-    <CustomAction Id="xStopService" BinaryKey='CustomAction.CA' DllEntry="StopService"  Execute="immediate" Impersonate="no" />
 
+    <CustomAction Id="xStopService" BinaryKey='CustomAction.CA' DllEntry="StopService"  Execute="immediate" Impersonate="no" />    
+    <CustomAction Id="xUninstallService" BinaryKey='CustomAction.CA' DllEntry="UnInstallService" Execute="immediate" Impersonate="no" />
+    
     <InstallExecuteSequence>
       <Custom Action="xInstallService" Before="InstallFinalize" >
         NOT Installed AND NOT PATCH
@@ -87,10 +89,15 @@
       <Custom Action="xStartService" After="xInstallService">
         NOT Installed AND NOT PATCH
       </Custom>
-      <Custom Action="xUninstallService" After="InstallInitialize" >
+    </InstallExecuteSequence>
+    <InstallExecuteSequence>
+      <Custom Action="xStopService" After="InstallInitialize" >
+        Installed AND NOT PATCH
+      </Custom>          
+      <Custom Action="xUninstallService" After="xStopService" >
         Installed AND NOT PATCH
       </Custom>
-    </InstallExecuteSequence>   
+    </InstallExecuteSequence>    
   </Product>
 
   <Fragment>
@@ -214,6 +221,12 @@
               <CreateFolder/>
             </Component>
           </Directory>
+          <Directory Id="MAILSFOLDER" Name="MailTemplates" >
+            <Component Id="MAILSDIR" Guid="E7173CAB-E43F-AA07-1962-018000006995" SharedDllRefCount="no" KeyPath="yes" NeverOverwrite="yes" Permanent="no" Transitive="no" Win64="yes" >
+              <CreateFolder/>
+            </Component>
+          </Directory>
+        
         </Directory>
         <Directory Id="WPS" Name="WindowsPowerShell">
           <Directory Id="MODS" Name="Modules">
@@ -643,10 +656,10 @@
   </Fragment>
       
   <Fragment>
-      <ComponentGroup Id="Neos.IdentityServer.MultiFactor.Notifications" Directory="INSTALLFOLDER">
-        <Component Id="GACDeployment450" Guid="E7173CAB-E43F-4A07-1962-018000006450" Win64="yes"  DiskId="1"  >
+      <ComponentGroup Id="Neos.IdentityServer.MultiFactor.Notifications" Directory="INSTALLFOLDER" >
+        <Component Id="GACDeployment450" Guid="E7173CAB-E43F-4A07-1962-018FF0006450" Win64="yes"  DiskId="1" >
           <File KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.NotificationHub.exe"  Name="Neos.IdentityServer.MultiFactor.NotificationHub.exe" Source="$(var.Neos.IdentityServer.MultiFactor.NotificationHub.TargetPath)" Vital="yes" />
-        </Component>
+        </Component>     
     </ComponentGroup>
   </Fragment>
   
@@ -767,7 +780,7 @@
       </Component>
     </ComponentGroup>
   </Fragment>
-
+    
   <Fragment>
     <ComponentGroup Id="Neos.IdentityServer.ShortCuts">
       <Component Id="GACDeployment80" Guid="E7173CAB-E43F-4A07-0220-018000006180" Directory="INSTALLFOLDER" DiskId="1" Win64="yes">

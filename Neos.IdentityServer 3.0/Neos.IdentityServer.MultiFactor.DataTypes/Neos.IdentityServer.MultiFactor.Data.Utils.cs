@@ -93,6 +93,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
 
             Forests.Clear();
             Forest currentforest = Forest.GetCurrentForest();
+
             ADDSForest root = new ADDSForest();
             root.IsRoot = true;
             root.ForestDNS = currentforest.Name;

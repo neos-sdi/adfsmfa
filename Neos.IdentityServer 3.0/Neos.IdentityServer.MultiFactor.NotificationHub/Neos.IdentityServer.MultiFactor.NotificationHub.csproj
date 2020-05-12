@@ -112,15 +112,6 @@
     <EmbeddedResource Include="Neos.IdentityServer.HubService.resx">
       <DependentUpon>Neos.IdentityServer.HubService.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ProjectInstaller.da.resx">
-      <DependentUpon>ProjectInstaller.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ProjectInstaller.fr-CA.resx">
-      <DependentUpon>ProjectInstaller.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ProjectInstaller.ja.resx">
-      <DependentUpon>ProjectInstaller.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="ProjectInstaller.resx">
       <DependentUpon>ProjectInstaller.cs</DependentUpon>
     </EmbeddedResource>

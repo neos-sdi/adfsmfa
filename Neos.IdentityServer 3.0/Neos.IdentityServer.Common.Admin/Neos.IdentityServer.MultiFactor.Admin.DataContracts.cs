@@ -359,10 +359,10 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             DefaultPin = cfg.DefaultPin;
             DomainAddress = adds.DomainAddress;
             Account = adds.Account;
-            using (AESEncryption AES = new AESEncryption())
+            using (AESEncryption MSIS = new AESEncryption())
             {
-                Password = AES.Encrypt(adds.Password);
-                XORSecret = AES.Encrypt(keys.XORSecret);
+                Password = MSIS.Encrypt(adds.Password);
+                XORSecret = MSIS.Encrypt(keys.XORSecret);
             };
         }
 
@@ -380,14 +380,14 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             cfg.MaxRetries = this.MaxRetries;
             cfg.ReplayLevel = this.ReplayLevel;
             keys.KeyVersion = this.LibVersion;
-            cfg.PinLength = cfg.PinLength;
-            cfg.DefaultPin = cfg.DefaultPin;
+            cfg.PinLength = this.PinLength;
+            cfg.DefaultPin = this.DefaultPin;
             adds.DomainAddress = this.DomainAddress;
             adds.Account = this.Account;
-            using (AESEncryption AES = new AESEncryption())
+            using (AESEncryption MSIS = new AESEncryption())
             {
-                adds.Password = AES.Decrypt(Password);
-                keys.XORSecret = AES.Decrypt(XORSecret);
+                adds.Password = MSIS.Decrypt(Password);
+                keys.XORSecret = MSIS.Decrypt(XORSecret);
             };
             ManagementService.ADFSManager.WriteConfiguration(host);
         }
@@ -531,7 +531,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     }
     #endregion 
 
-    #region FlatBiometricSecurity
+    #region FlatWsManSecurity
     /// <summary>
     /// FlatWsManSecurity class implementation
     /// </summary>
@@ -855,9 +855,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             ForceWizard = mail.ForceWizard;
             From = mail.From;
             UserName = mail.UserName;
-            using (AESEncryption AES = new AESEncryption())
+            using (AESEncryption MSIS = new AESEncryption())
             {
-                Password = AES.Encrypt(mail.Password);
+                Password = MSIS.Encrypt(mail.Password);
             };
             Host = mail.Host;
             Port = mail.Port;
@@ -901,7 +901,6 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             {
                 MailNotifications.Add((FlatMailFileName)itm);
             }
-
         }
 
         /// <summary>
@@ -919,9 +918,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             mail.ForceWizard = ForceWizard;
             mail.From = From;
             mail.UserName = UserName;
-            using (AESEncryption AES = new AESEncryption())
+            using (AESEncryption MSIS = new AESEncryption())
             {
-                mail.Password = AES.Decrypt(Password);
+                mail.Password = MSIS.Decrypt(Password);
             };
             mail.Host = Host;
             mail.Port = Port;

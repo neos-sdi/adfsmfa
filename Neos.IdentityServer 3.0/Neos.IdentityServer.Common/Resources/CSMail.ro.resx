@@ -122,164 +122,174 @@
 &lt;html&gt; 
     &lt;head&gt; 
         &lt;title&gt;&lt;/title&gt; 
-        &lt;base target="_blank"&gt; 
+        &lt;base target="blank"&gt; 
     &lt;/head&gt; 
     &lt;body&gt; 
-        &lt;table dir = "ltr"&gt;
+        &lt;table dir="ltr"&gt;
             &lt;tr&gt;
-                &lt;td id = "i1" style="padding:0;font-family:'Segoe UI Semibold', 'Segoe UI Bold', 'Segoe UI', 'Helvetica Neue Medium', Arial, sans-serif;font-size:17px;color:#707070;" &gt;Cont {0}&lt;/td&gt;
+                &lt;td id="i1" style="padding:0;font-family:'Segoe UI Semibold', 'Segoe UI Bold', 'Segoe UI', 'Helvetica Neue Medium', Arial, sans-serif;font-size:17px;color:#707070;"&gt;{0} cont&lt;/td&gt;
             &lt;/tr&gt; 
             &lt;tr&gt;
-                &lt;td id = "i2" style = "padding: 0; font-family: 'Segoe UI Light', 'Segoe UI', 'Helvetica Neue Medium', Arial, sans-serif; font-size: 41px; color: #2672ec;" &gt;Inregistrare utilizator &lt;/td&gt;
+                &lt;td id="i2" style="padding:0;font-family:'Segoe UI Light', 'Segoe UI', 'Helvetica Neue Medium', Arial, sans-serif;font-size:41px;color:#2672ec;"&gt;Înregistrareutilizator&lt;/td&gt;
             &lt;/tr&gt;
             &lt;tr&gt;
-                &lt;td id = "i3" style = "padding: 0; padding-top: 25px; font-famil
-    iy: 'Segoe UI', Tahoma, Verdana, Arial, sans-serif; font-size: 14px; color: #2a2a2a;" &gt;Pentru a îmbunătăți securitatea contului dvs., am activat Multi-factor de autentificare mecanismul. &lt;/td&gt;
+                &lt;td id="i3" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Pentru a îmbunătăți securitatea contului dvs., am activat
+
+Mecanism de autentificare multi-factor.&lt;/td&gt;
             &lt;/tr&gt;
             &lt;tr&gt;
-                &lt;td id = "i3a" style = "padding: 0; padding-top: 0px; font-famil
-    iy: 'Segoe UI', Tahoma, Verdana, Arial, sans-serif; font-size: 14px; color: #2a2a2a;" &gt;Această funcție de siguranță trebuie să fie activată de noi cu ajutorul Informația pe care tocmai ne-ai dat-o. &lt;/td&gt;
+                &lt;td id="i3a" style="padding:0;padding-top:0px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Această funcție de siguranță trebuie să fie activată de noi cu ajutorul
+Informațiile pe care tocmai ni le-ai dat.&lt;/td&gt;
             &lt;/tr&gt;
             &lt;tr&gt;
-                &lt;td id = "i4" style = "padding: 0; padding-top: 25px; font-family: 'Segoe UI', Tahoma, Verdana, Arial, sans-serif; font-size: 14px; color: #2a2a2a;" &gt;Informatiile de mai jos ne vor permite sa va verificam identitatea. &lt;/td&gt;
+                &lt;td id="i4" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Informațiile de mai jos ne vor permite să vă verificăm identitatea.&lt;/td&gt;
             &lt;/tr&gt;
             &lt;tr&gt;
-                &lt;td id = "i4" style = "padding: 0; padding-top: 15px; font-family: 'Segoe UI', Tahoma, Verdana, Arial, sans-serif; font-size: 14px; color: #2a2a2a;" &gt;Nume utilizator : &lt;a dir = "ltr" id = "iAccount" class = "link" style = "color: #2672ec; text-decoration:none;" &gt; {1} &lt;/td&gt;
+                &lt;td id="i4" style="padding:0;padding-top:15px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Nume utilizator : &lt;a dir="ltr" id="iAccount" class="link" style="color:#2672ec;text-
+
+decoration:none;"&gt;{1}&lt;/a&gt;&lt;/td&gt;
             &lt;/tr&gt;
             &lt;tr&gt;
-                &lt;td id = "i5" style = "padding: 0; padding-top: 10px; font-family: 'Segoe UI', Tahoma, Verdana, Arial, sans-serif; font-size: 14px; color: #2a2a2a;" &gt;Adresa de E-mail secundară :&lt;a dir = "ltr" id = "iEmail" class = "link" style = "color: #2672ec; text-decoration:none;" &gt; {2} &lt;/td&gt;
+                &lt;td id="i5" style="padding:0;padding-top:10px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Adresa de e-mail secundară: &lt;a dir="ltr" id="iEmail" class="link" style="color:#2672ec;text-decoration:none;"&gt;{2}&lt;/a&gt;&lt;/td&gt;
             &lt;/tr&gt;
             &lt;tr&gt;
-                &lt;td id = "i6" style = "padding: 0; padding-top: 10px; font-family: 'Segoe UI', Tahoma, Verdana, Arial, sans-serif; font-size: 14px; color: #2a2a2a;" &gt;Numar de telefon mobil :&lt;a dir = "ltr" id = "iPhone" class = "link" style = "color: #2672ec; text-decoration:none;" &gt; {3} &lt;/td&gt;
+                &lt;td id="i6" style="padding:0;padding-top:10px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Numărul de telefon mobil : &lt;a dir="ltr" id="iPhone" class="link" style="color:#2672ec;text-decoration:none;"&gt;{3}&lt;/a&gt;&lt;/td&gt;
             &lt;/tr&gt;
             &lt;tr&gt;
-                &lt;td id = "i7" style = "padding: 0; padding-top: 10px; font-family: 'Segoe UI', tahoma, verdana, Arial, sans-serif; font-size: 14px; color: #2a2a2a;" &gt;Implicit autentificare metoda : &lt;a dir = "ltr" id = "iMethod" class = "link" style = "color: #2672ec; text-decoration:none;" &gt; {4} &lt;/td&gt;
+                &lt;td id="i7" style="padding:0;padding-top:10px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Metoda de authentification implicită: &lt;a dir="ltr" id="iMethod" class="link" style="color:#2672ec;text-decoration:none;"&gt;{4}&lt;/a&gt;&lt;/td&gt;
             &lt;/tr&gt;
             &lt;tr&gt;
-                &lt;td id = "i8" style = "padding: 0; padding-top: 25px; font-family: 'Segoe UI', Tahoma, Verdana, Arial, sans-serif; font-size: 14px; color: #2a2a2a;" &gt;Ceea ce privește, &lt;/td&gt;
+                &lt;td id="i8" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Ceea ce privește,&lt;/td&gt;
             &lt;/tr&gt;
             &lt;tr&gt;
-                &lt;td id = "i9" style = "padding: 0; font-family: 'Segoe UI', Tahoma, Verdana, Arial, sans-serif; font-size: 14px; color: #2a2a2a;" &gt;{0} Conturi echipa &lt;/td&gt;
+                &lt;td id="i9" style="padding:0;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;{0} Conturi Echipa&lt;/td&gt;
             &lt;/tr&gt;
         &lt;/table&gt;
-        &lt;br/&gt; 
+         &lt;br /&gt; 
     &lt;/body&gt; 
 &lt;/html&gt;</value>
   </data>
   <data name="MailAdminTitle" xml:space="preserve">
-    <value>Resquest administrativ pentru înregistrarea {0}</value>
+    <value>Resquest administrative pentru înregistrarea {0}</value>
   </data>
   <data name="MailKeyContent" xml:space="preserve">
     <value>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"&gt; 
 &lt;html&gt; 
     &lt;head&gt; 
         &lt;title&gt;&lt;/title&gt; 
-        &lt;base target="_blank"&gt; 
+        &lt;base target="blank"&gt; 
     &lt;/head&gt; 
     &lt;body&gt; 
         &lt;table dir="ltr"&gt;
             &lt;tr&gt;
-                &lt;td id="i1" style="padding:0;font-family:'Segoe UI Semibold', 'Segoe UI Bold', 'Segoe UI', 'Helvetica Neue Medium', Arial, sans-serif;font-size:17px;color:#707070;"&gt;Cont {0}&lt;/td&gt;
+                &lt;td id="i1" style="padding:0;font-family:'Segoe UI Semibold', 'Segoe UI Bold', 'Segoe UI', 'Helvetica Neue Medium', Arial, sans-serif;font-size:17px;color:#707070;"&gt;{0} cont&lt;/td&gt;
             &lt;/tr&gt; 
             &lt;tr&gt;
-                &lt;td id="i2" style="padding:0;font-family:'Segoe UI Light', 'Segoe UI', 'Helvetica Neue Medium', Arial, sans-serif;font-size:41px;color:#2672ec;"&gt;Cheie de securitate &lt;/td&gt;
+                &lt;td id="i2" style="padding:0;font-family:'Segoe UI Light', 'Segoe UI', 'Helvetica Neue Medium', Arial, sans-serif;font-size:41px;color:#2672ec;"&gt;Cheie de securitate&lt;/td&gt;
             &lt;/tr&gt;
             &lt;tr&gt;
-                &lt;td id="i3" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Pentru a îmbunătăți securitatea contului dvs., am activat verificarea în doi pași, informațiile de mai jos ne vor permite să vă verificăm identitatea. Trebuie să introduceți aceste informații în aplicația de autentificare. &lt;/td&gt;
+                &lt;td id="i3" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Pentru a îmbunătăți securitatea contului dvs., am activat verificarea 
+
+în doi pași, informațiile de mai jos ne vor permite să vă verificăm identitatea. Trebuie să introduceți aceste informații în aplicația de autentificare.&lt;/td&gt;
             &lt;/tr&gt;
             &lt;tr&gt;
-                &lt;td id="i3" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Vă rugăm să utilizați următoarea cheie de securitate pentru contul {0}: &lt;a dir="ltr" id="iAccount" class="link" style="color:#2672ec;text-decoration:none;" &gt; {1}. &lt;/td&gt;
+                &lt;td id="i3" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Utilizați următoarea cheie de securitate pentru {0} de cont: &lt;a dir="ltr" id="iAccount" class="link" style="color:#2672ec;text-decoration:none;"&gt;{1}.&lt;/a&gt;&lt;/td&gt;
             &lt;/tr&gt;
             &lt;tr&gt;
-                &lt;td id="i4" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Cheie de securitate : &lt;span style="font-family:'Segoe UI Bold', 'Segoe UI Semibold', 'Segoe UI', 'Helvetica Neue Medium', Arial, sans-serif;font-size:18px;font-weight:bold;color:#2a2a2a;"&gt; {2}&lt;/span&gt; &lt;/td&gt;
+                &lt;td id="i4" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Cheie de securitate : &lt;span style="font-family:'Segoe UI Bold', 'Segoe UI Semibold', 'Segoe 
+
+UI', 'Helvetica Neue Medium', Arial, sans-serif;font-size:18px;font-weight:bold;color:#2a2a2a;"&gt;{2}&lt;/span&gt;&lt;/td&gt;
             &lt;/tr&gt;
             &lt;tr&gt;
-                &lt;td id="i5" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;De asemenea, puteți scana următorul cod QR din aplicația de autentificare mobilă (Google Authenticator, Microsoft Authenticator). &lt;/td&gt;
+                &lt;td id="i5" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;De asemenea, puteți scana următorul cod QR din aplicația de autentificare mobilă 
+
+(Google Authenticator, Microsoft Authenticator).&lt;/td&gt;
             &lt;/tr&gt;
             &lt;tr&gt;
-    &lt;td id="i6" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;&lt;span style="font-family:'Segoe UI Bold', 'Segoe UI Semibold', 'Segoe UI', 'Helvetica Neue Medium', Arial, sans-serif;font-size:18px;font-weight:bold;color:#2a2a2a;"&gt; &lt;img id="qr" src="cid:{3}" /&gt;&lt;/span&gt; &lt;/td&gt;
+                &lt;td id="i6" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;&lt;span style="font-family:'Segoe UI Bold', 'Segoe UI Semibold', 'Segoe UI', 
+
+'Helvetica Neue Medium', Arial, sans-serif;font-size:18px;font-weight:bold;color:#2a2a2a;"&gt; &lt;img id="qr" src="cid:{3}" /&gt;&lt;/span&gt;&lt;/td&gt;
             &lt;/tr&gt;
             &lt;tr&gt;
-                &lt;td id="i7" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Acest e-mail este foarte confidențial, așa că nu-l dezvăluie. Dacă aveți îndoieli, vă rugăm să contactați Echipa de conturi {0}, pentru a vă oferi o nouă cheie secretă. &lt;/td&gt;
+                &lt;td id="i7" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Acest e-mail este extrem de confidențial, așa că nu-l dezvălui. Dacă aveți îndoieli, vă rugăm să contactați 
+
+echipa de cont {0}, pentru a vă oferi o nouă cheie secretă.&lt;/td&gt;
             &lt;/tr&gt;
             &lt;tr&gt;
-                &lt;td id="i8" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Cele mai bune Salutari, &lt;/td&gt;
+                &lt;td id="i8" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Cele mai bune ceea ce privește,&lt;/td&gt;
             &lt;/tr&gt;
             &lt;tr&gt;
-                &lt;td id="i9" style="padding:0;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Echipa de conturi {0} &lt;/td&gt;
+                &lt;td id="i9" style="padding:0;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Echipa de conturi {0}&lt;/td&gt;
             &lt;/tr&gt;
         &lt;/table&gt;
-        &lt;br/&gt; 
+         &lt;br /&gt; 
     &lt;/body&gt; 
 &lt;/html&gt;</value>
   </data>
   <data name="MailKeyTitle" xml:space="preserve">
-    <value>Informatii de securitate</value>
+    <value>Informații de securitate</value>
   </data>
   <data name="MailNotifications" xml:space="preserve">
     <value>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"&gt;
 &lt;html&gt;
- &lt;head&gt;
-  &lt;title&gt;&lt;/title&gt;
-  &lt;base target="_blank"&gt;
- &lt;/head&gt;
- &lt;body&gt;
-  &lt;table dir="ltr"&gt; 
+&lt;head&gt;
+    &lt;title&gt;&lt;/title&gt;
+    &lt;base target="blank"&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;table dir="ltr"&gt;
         &lt;tr&gt;
-            &lt;td id="i1" style="padding:0;font-family:'Segoe UI Light', 'Segoe UI', 'Helvetica Neue Medium', Arial, sans-serif;font-size:41px;color:#2672ec;"&gt;Informatiile tale de securitate au fost schimbate &lt;/td&gt;
+            &lt;td id="i2" style="padding:0;font-family:'Segoe UI Light', 'Segoe UI', 'Helvetica Neue Medium', Arial, sans-serif;font-size:41px;color:#2672ec;"&gt;Informațiile de securitate au fost modificate&lt;/td&gt;
         &lt;/tr&gt;
         &lt;tr&gt;
-            &lt;td id="i2" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;{0}, tu ești cel responsabil pentru aceste schimbări? &lt;/td&gt;
+            &lt;td id="i3" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Am primit o solicitare de modificare a informațiilor de securitate pentru contul dumneavoastră {0}. Dacă nu ați solicitat modificări, contactați biroul de asistență pentru asistență sau resetați informațiile de securitate.&lt;/td&gt;
         &lt;/tr&gt;
         &lt;tr&gt;
-            &lt;td id="i3" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Vă vom notifica când informațiile de securitate vor fi schimbate. &lt;br/&gt; dacă nu ați solicitat aceste modificări, vă rugăm să contactați administratorii sau să resetați informațiile. &lt;/td&gt;
+            &lt;td id="i7" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Cele mai bune ceea ce privește,&lt;/td&gt;
         &lt;/tr&gt;
         &lt;tr&gt;
-            &lt;td id="i7" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Cele mai bune Salutari, &lt;/td&gt;
-        &lt;/tr&gt;
-        &lt;tr&gt;
-            &lt;td id="i8" style="padding:0;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;{1} conturi echipa &lt;/td&gt;
+            &lt;td id="i8" style="padding:0;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;{1} Conturi Echipa&lt;/td&gt;
         &lt;/tr&gt;
     &lt;/table&gt;
-    &lt;br/&gt;
+    &lt;br /&gt;
 &lt;/body&gt;
 &lt;/html&gt;</value>
   </data>
   <data name="MailNotificationsTitle" xml:space="preserve">
-    <value>Alertă de securitate despre contul {0}</value>
+    <value>Alertă de securitate cu privire la contul {0}</value>
   </data>
   <data name="MailOTPContent" xml:space="preserve">
-    <value>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"&gt;
- &lt;html&gt; 
+    <value>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"&gt; 
+&lt;html&gt; 
  &lt;head&gt; 
-  &lt;title&gt;&lt;/title&gt;
-  &lt;base target="_blank"&gt;
+  &lt;title&gt;&lt;/title&gt; 
+  &lt;base target="blank"&gt; 
  &lt;/head&gt; 
  &lt;body&gt; 
-  &lt;table dir="ltr"&gt;
-  &lt;tr&gt; 
-   &lt;td id="i1" style="padding:0;font-family:'Segoe UI Semibold', 'Segoe UI Bold', 'Segoe UI', 'Helvetica Neue Medium', Arial, sans-serif;font-size:17px;color:#707070;"&gt;Cont {0}&lt;/td&gt; 
-  &lt;/tr&gt; 
-  &lt;tr&gt; 
-   &lt;td id="i2" style="padding:0;font-family:'Segoe UI Light', 'Segoe UI', 'Helvetica Neue Medium', Arial, sans-serif;font-size:41px;color:#2672ec;"&gt;Codul de securitate &lt;/td&gt; 
-  &lt;/tr&gt; 
-  &lt;tr&gt; 
-   &lt;td id="i3" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Utilizați acest cod de securitate pentru contul {0} : &lt;a dir="ltr" id="iAccount" class="link" style="color:#2672ec;text-decoration:none;" &gt; {1}. &lt;/td&gt; 
-  &lt;/tr&gt; 
-  &lt;tr&gt; 
-   &lt;td id="i4" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Codul de securitate : &lt;span style="font-family:'Segoe UI Bold', 'Segoe UI Semibold', 'Segoe UI', 'Helvetica Neue Medium', Arial, sans-serif;font-size:18px;font-weight:bold;color:#2a2a2a;"&gt; {2}&lt;/span&gt; &lt;/td&gt; 
-  &lt;/tr&gt; 
-  &lt;tr&gt; 
-   &lt;td id="i6" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Dacă nu cereți nici un cod, trebuie să ignorați acest e-mail. Este posibil ca un alt utilizator să fi introdus în mod eronat adresa de e-mail. &lt;/td&gt; 
-  &lt;/tr&gt; 
-  &lt;tr&gt; 
-   &lt;td id="i7" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Cele mai bune urări, &lt;/td&gt; 
-  &lt;/tr&gt; 
-  &lt;tr&gt; 
-   &lt;td id="i8" style="padding:0;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;{0} Conturi Team &lt;/td&gt; 
-  &lt;/tr&gt; 
- &lt;/table&gt; 
- &lt;br/&gt; 
+  &lt;table dir="ltr"&gt; 
+   &lt;tr&gt; 
+    &lt;td id="i1" style="padding:0;font-family:'Segoe UI Semibold', 'Segoe UI Bold', 'Segoe UI', 'Helvetica Neue Medium', Arial, sans-serif;font-size:17px;color:#707070;"&gt;{0} cont&lt;/td&gt; 
+   &lt;/tr&gt; 
+   &lt;tr&gt; 
+    &lt;td id="i2" style="padding:0;font-family:'Segoe UI Light', 'Segoe UI', 'Helvetica Neue Medium', Arial, sans-serif;font-size:41px;color:#2672ec;"&gt;Cod de securitate&lt;/td&gt; 
+   &lt;/tr&gt; 
+   &lt;tr&gt; 
+    &lt;td id="i3" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Utilizați acest cod de securitate pentru contul {0}: &lt;a dir="ltr" id="iAccount" class="link" style="color:#2672ec;text-decoration:none;"&gt;{1}.&lt;/a&gt;&lt;/td&gt; 
+   &lt;/tr&gt; 
+   &lt;tr&gt; 
+    &lt;td id="i4" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Cod de securitate : &lt;span style="font-family:'Segoe UI Bold', 'Segoe UI Semibold', 'Segoe UI', 'Helvetica Neue Medium', Arial, sans-serif;font-size:18px;font-weight:bold;color:#2a2a2a;"&gt;{2}&lt;/span&gt;&lt;/td&gt; 
+   &lt;/tr&gt; 
+   &lt;tr&gt; 
+    &lt;td id="i6" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Dacă nu ați solicitat un cod, puteți ignora acest mesaj.&lt;/td&gt; 
+   &lt;/tr&gt; 
+   &lt;tr&gt; 
+    &lt;td id="i7" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Cele mai bune ceea ce privește,&lt;/td&gt; 
+    &lt;/tr&gt; 
+   &lt;tr&gt; 
+    &lt;td id="i8" style="padding:0;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;{0} Conturi Echipa&lt;/td&gt; 
+   &lt;/tr&gt; 
+  &lt;/table&gt; 
+  &lt;br /&gt; 
  &lt;/body&gt; 
 &lt;/html&gt;</value>
   </data>

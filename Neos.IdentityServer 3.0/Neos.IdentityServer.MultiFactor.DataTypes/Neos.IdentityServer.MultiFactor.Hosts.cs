@@ -1687,6 +1687,7 @@ namespace Neos.IdentityServer.MultiFactor
     /// </summary>
     public class SendMailFileName
     {
+        private CultureInfo info;
         /// <summary>
         /// constructor 
         /// </summary>
@@ -1700,19 +1701,37 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public SendMailFileName(int lcid, string filename, bool enabled = true)
         {
-            this.LCID = lcid;
+            this.info = new CultureInfo(lcid);
             this.FileName = filename;
             this.Enabled = enabled;
         }
 
         [XmlAttribute("LCID")]
-        public int LCID { get; set; }
+        public int LCID
+        {
+            get { return this.info.LCID; }
+            set { this.info = new CultureInfo(value); }
+        }
 
         [XmlAttribute("FileName")]
         public string FileName { get; set; }
 
         [XmlAttribute("Enabled")]
         public bool Enabled { get; set; }
+
+        public int ParentLCID
+        {
+            get
+            {
+                if (info == null)
+                    return 0;
+                if (info.Parent != null)
+                    return info.Parent.LCID;
+                else
+                    return 0;
+            }
+        }
+
     }
 
     /// <summary>

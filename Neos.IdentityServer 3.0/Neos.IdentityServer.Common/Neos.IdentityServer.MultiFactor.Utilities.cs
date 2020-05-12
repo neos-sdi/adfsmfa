@@ -26,6 +26,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.DirectoryServices.AccountManagement;
+using System.DirectoryServices.ActiveDirectory;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Globalization;
@@ -727,11 +728,11 @@ namespace Neos.IdentityServer.MultiFactor
                         CultureInfo info = null;
                         try
                         {
-                            info = new CultureInfo(cfg.DefaultCountryCode);
+                            info = CultureInfo.CurrentUICulture;
                         }
                         catch
                         {
-                            info = CultureInfo.CurrentUICulture;
+                            info = new CultureInfo(cfg.DefaultCountryCode);
                         }
                         MailUtilities.SendKeyByEmail(newreg.MailAddress, newreg.UPN, qrcode, cfg.MailProvider, cfg, info);
                     }
@@ -768,11 +769,11 @@ namespace Neos.IdentityServer.MultiFactor
                         CultureInfo info = null;
                         try
                         {
-                            info = new CultureInfo(cfg.DefaultCountryCode);
+                            info = CultureInfo.CurrentUICulture;
                         }
                         catch
                         {
-                            info = CultureInfo.CurrentUICulture;
+                            info = new CultureInfo(cfg.DefaultCountryCode);
                         }
                         MailUtilities.SendKeyByEmail(newreg.MailAddress, newreg.UPN, qrcode, cfg.MailProvider, cfg, info);
                     }
@@ -1688,13 +1689,14 @@ namespace Neos.IdentityServer.MultiFactor
     public static class MailUtilities
     {
         private static readonly object lck = 0;
+
         /// <summary>
         /// SetCultureInfo method implementation
         /// </summary>
-        internal static void SetCultureInfo(int lcid)
+       /* internal static void SetCultureInfo(int lcid)
         {
             ResourcesLocale Resources = new ResourcesLocale(lcid);
-        }
+        } */
 
         /// <summary>
         /// SendMail method implementation
@@ -1725,7 +1727,7 @@ namespace Neos.IdentityServer.MultiFactor
                 if (mail.MailOTPContent != null)
                 {
                     int ctry = culture.LCID;
-                    string tmp = mail.MailOTPContent.Where(c => c.LCID.Equals(ctry) && c.Enabled).Select(s => s.FileName).FirstOrDefault();
+                    string tmp = mail.MailOTPContent.Where(c => c.LCID.Equals(ctry) || c.ParentLCID.Equals(ctry) && c.Enabled).Select(s => s.FileName).FirstOrDefault();
                     if (!string.IsNullOrEmpty(tmp))
                     {
                         if (File.Exists(tmp))
@@ -1797,7 +1799,7 @@ namespace Neos.IdentityServer.MultiFactor
                 if (mail.MailAdminContent != null)
                 {
                     int ctry = culture.LCID;
-                    string tmp = mail.MailAdminContent.Where(c => c.LCID.Equals(ctry) && c.Enabled).Select(s => s.FileName).FirstOrDefault();
+                    string tmp = mail.MailAdminContent.Where(c => c.LCID.Equals(ctry) || c.ParentLCID.Equals(ctry) && c.Enabled).Select(s => s.FileName).FirstOrDefault();
                     if (!string.IsNullOrEmpty(tmp))
                     {
                         if (File.Exists(tmp))
@@ -1867,7 +1869,7 @@ namespace Neos.IdentityServer.MultiFactor
                 if (mail.MailKeyContent != null)
                 {
                     int ctry = culture.LCID;
-                    string tmp = mail.MailKeyContent.Where(c => c.LCID.Equals(ctry) && c.Enabled).Select(s => s.FileName).FirstOrDefault();
+                    string tmp = mail.MailKeyContent.Where(c => c.LCID.Equals(ctry) || c.ParentLCID.Equals(ctry) && c.Enabled).Select(s => s.FileName).FirstOrDefault();
                     if (!string.IsNullOrEmpty(tmp))
                     {
                         if (File.Exists(tmp))
@@ -1961,7 +1963,7 @@ namespace Neos.IdentityServer.MultiFactor
                 if (mail.MailNotifications != null)
                 {
                     int ctry = culture.LCID;
-                    string tmp = mail.MailNotifications.Where(c => c.LCID.Equals(ctry) && c.Enabled).Select(s => s.FileName).FirstOrDefault();
+                    string tmp = mail.MailNotifications.Where( c => c.LCID.Equals(ctry) || c.ParentLCID.Equals(ctry) && c.Enabled ).Select(s => s.FileName).FirstOrDefault();
                     if (!string.IsNullOrEmpty(tmp))
                     {
                         if (File.Exists(tmp))
@@ -2038,6 +2040,56 @@ namespace Neos.IdentityServer.MultiFactor
             {
                 return string.Empty;
             }
+        }
+
+        /// <summary>
+        /// ExportMailTemplates method implementation
+        /// </summary>
+        internal static void ExportMailTemplates(MFAConfig config, int lcid)
+        {
+            string htmlpath = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\MFA\\MailTemplates\\" + lcid.ToString();
+            ResourcesLocale Resources = new ResourcesLocale(lcid);
+            MailProvider mailprov = config.MailProvider;
+
+
+            string htmltemp1 = Resources.GetString(ResourcesLocaleKind.Mail, "MailOTPContent");
+            if (!string.IsNullOrEmpty(htmltemp1))
+            {
+                if (!Directory.Exists(htmlpath))
+                    Directory.CreateDirectory(htmlpath);  // Voir ACL
+                File.WriteAllText(htmlpath + "\\MailOTPContent.html", htmltemp1, Encoding.UTF8);
+                if (!mailprov.MailOTPContent.Exists(c => c.LCID.Equals(lcid)))
+                    mailprov.MailOTPContent.Add(new SendMailFileName(lcid, htmlpath + "\\MailOTPContent.html"));
+            }
+
+            string htmltemp2 = Resources.GetString(ResourcesLocaleKind.Mail, "MailKeyContent");
+            if (!string.IsNullOrEmpty(htmltemp2))
+            {
+                if (!Directory.Exists(htmlpath))
+                    Directory.CreateDirectory(htmlpath);  // Voir ACL
+                File.WriteAllText(htmlpath + "\\MailKeyContent.html", htmltemp2, Encoding.UTF8);
+                if (!mailprov.MailKeyContent.Exists(c => c.LCID.Equals(lcid)))
+                    mailprov.MailKeyContent.Add(new SendMailFileName(lcid, htmlpath + "\\MailKeyContent.html"));
+            }            
+            string htmltemp3 = Resources.GetString(ResourcesLocaleKind.Mail, "MailAdminContent");
+            if (!string.IsNullOrEmpty(htmltemp3))
+            {
+                if (!Directory.Exists(htmlpath))
+                    Directory.CreateDirectory(htmlpath);  // Voir ACL
+                File.WriteAllText(htmlpath + "\\MailAdminContent.html", htmltemp3, Encoding.UTF8);
+                if (!mailprov.MailAdminContent.Exists(c => c.LCID.Equals(lcid)))
+                    mailprov.MailAdminContent.Add(new SendMailFileName(lcid, htmlpath + "\\MailAdminContent.html"));
+            }
+            string htmltemp4 = Resources.GetString(ResourcesLocaleKind.Mail, "MailNotifications");
+            if (!string.IsNullOrEmpty(htmltemp4))
+            {
+                if (!Directory.Exists(htmlpath))
+                    Directory.CreateDirectory(htmlpath);  // Voir ACL
+                File.WriteAllText(htmlpath + "\\MailNotifications.html", htmltemp4, Encoding.UTF8);
+                if (!mailprov.MailNotifications.Exists(c => c.LCID.Equals(lcid)))
+                    mailprov.MailNotifications.Add(new SendMailFileName(lcid, htmlpath + "\\MailNotifications.html"));
+            }
+            return;
         }
 
         #region private methods
@@ -2215,6 +2267,20 @@ namespace Neos.IdentityServer.MultiFactor
     internal static class CFGUtilities
     {
         internal static string configcachedir = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\MFA\\Config\\config.db";
+        internal static byte[] configcachekey = null;
+
+        /// <summary>
+        /// CFGUtilities static constructor
+        /// </summary>
+        static CFGUtilities()
+        {
+            configcachekey = ReadConfigurationKey();
+        }
+
+        internal static byte[] Key
+        {
+            get { return configcachekey;  }
+        }
 
         #region ReadConfiguration
         /// <summary>
@@ -2222,9 +2288,24 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         internal static MFAConfig ReadConfiguration(PSHost Host = null)
         {
-            MFAConfig config = ReadConfigurationFromCache();
+            bool haserror = false;
+            MFAConfig config = null;
+            try
+            {
+                config = ReadConfigurationFromCache();
+            }
+            catch
+            {
+                haserror = true;
+                File.Delete(CFGUtilities.configcachedir);
+                config = null;
+            }
             if (config == null)
+            {
                 config = ReadConfigurationFromDatabase(Host);
+                if ((haserror) && (config!=null))
+                    WriteConfigurationToCache(config);
+            }
             return config;
         }
 
@@ -2271,10 +2352,11 @@ namespace Neos.IdentityServer.MultiFactor
                     config = (MFAConfig)xmlserializer.Deserialize(stm);
                     if ((!config.OTPProvider.Enabled) && (!config.MailProvider.Enabled) && (!config.ExternalProvider.Enabled) && (!config.AzureProvider.Enabled))
                         config.OTPProvider.Enabled = true;   // always let an active option eg : aplication in this case
-                    using (AESEncryption AES = new AESEncryption())
+                    using (AESEncryption MSIS = new AESEncryption())
                     {
-                        config.Hosts.ActiveDirectoryHost.Password = AES.Decrypt(config.Hosts.ActiveDirectoryHost.Password);
-                        config.MailProvider.Password = AES.Decrypt(config.MailProvider.Password);
+                        config.KeysConfig.XORSecret = MSIS.Decrypt(config.KeysConfig.XORSecret);
+                        config.Hosts.ActiveDirectoryHost.Password = MSIS.Decrypt(config.Hosts.ActiveDirectoryHost.Password);
+                        config.MailProvider.Password = MSIS.Decrypt(config.MailProvider.Password);
                     };
                     Certs.InitializeAccountsSID(config.Hosts.ActiveDirectoryHost.DomainName, config.Hosts.ActiveDirectoryHost.Account, config.Hosts.ActiveDirectoryHost.Password);
                     KeysManager.Initialize(config);  // Important
@@ -2300,27 +2382,86 @@ namespace Neos.IdentityServer.MultiFactor
             XmlConfigSerializer xmlserializer = new XmlConfigSerializer(typeof(MFAConfig));
             using (FileStream fs = new FileStream(CFGUtilities.configcachedir, FileMode.Open, FileAccess.Read))
             {
+
                 byte[] bytes = new byte[fs.Length];
                 int n = fs.Read(bytes, 0, (int)fs.Length);
                 fs.Close();
 
-                using (MemoryStream ms = new MemoryStream(XORUtilities.XOREncryptOrDecrypt(bytes, XORUtilities.UtilitiesKey)))
+                byte[] byt = null;
+                using (AESEncryption aes = new AESEncryption())
+                {
+                    byt = aes.Decrypt(bytes);
+                }
+
+                using (MemoryStream ms = new MemoryStream(byt))
                 {
                     using (StreamReader reader = new StreamReader(ms))
                     {
                         config = (MFAConfig)xmlserializer.Deserialize(ms);
                         if ((!config.OTPProvider.Enabled) && (!config.MailProvider.Enabled) && (!config.ExternalProvider.Enabled) && (!config.AzureProvider.Enabled))
                             config.OTPProvider.Enabled = true;   // always let an active option eg : aplication in this case
-                        using (AESEncryption AES = new AESEncryption())
+                        using (AESEncryption MSIS = new AESEncryption())
                         {
-                            config.Hosts.ActiveDirectoryHost.Password = AES.Decrypt(config.Hosts.ActiveDirectoryHost.Password);
-                            config.MailProvider.Password = AES.Decrypt(config.MailProvider.Password);
+                            config.KeysConfig.XORSecret = MSIS.Decrypt(config.KeysConfig.XORSecret);
+                            config.Hosts.ActiveDirectoryHost.Password = MSIS.Decrypt(config.Hosts.ActiveDirectoryHost.Password);
+                            config.MailProvider.Password = MSIS.Decrypt(config.MailProvider.Password);
                         };
                         Certs.InitializeAccountsSID(config.Hosts.ActiveDirectoryHost.DomainName, config.Hosts.ActiveDirectoryHost.Account, config.Hosts.ActiveDirectoryHost.Password);
                         KeysManager.Initialize(config);  // Important
                         RuntimeAuthProvider.LoadProviders(config);
                     }
                 }
+            }
+            return config;
+        }
+
+        /// <summary>
+        /// ReadConfigurationFromDatabase method implementation
+        /// </summary>
+        internal static MFAConfig ReadConfigurationFromADFSStore(PSHost Host = null)
+        {
+            MFAConfig config = null;
+            Runspace SPRunSpace = null;
+            PowerShell SPPowerShell = null;
+            string pth = Path.GetTempPath() + Path.GetRandomFileName();
+            try
+            {
+                try
+                {
+                    SPRunSpace = RunspaceFactory.CreateRunspace();
+
+                    SPPowerShell = PowerShell.Create();
+                    SPPowerShell.Runspace = SPRunSpace;
+                    SPRunSpace.Open();
+
+                    Pipeline pipeline = SPRunSpace.CreatePipeline();
+                    Command exportcmd = new Command("Export-AdfsAuthenticationProviderConfigurationData", false);
+                    CommandParameter NParam = new CommandParameter("Name", "MultifactorAuthenticationProvider");
+                    exportcmd.Parameters.Add(NParam);
+                    CommandParameter PParam = new CommandParameter("FilePath", pth);
+                    exportcmd.Parameters.Add(PParam);
+                    pipeline.Commands.Add(exportcmd);
+                    Collection<PSObject> PSOutput = pipeline.Invoke();
+                }
+                finally
+                {
+                    if (SPRunSpace != null)
+                        SPRunSpace.Close();
+                    if (SPPowerShell != null)
+                        SPPowerShell.Dispose();
+                }
+
+                FileStream stm = new FileStream(pth, FileMode.Open, FileAccess.Read);
+                XmlConfigSerializer xmlserializer = new XmlConfigSerializer(typeof(MFAConfig));
+                using (StreamReader reader = new StreamReader(stm))
+                {
+                    config = (MFAConfig)xmlserializer.Deserialize(stm);
+                }
+            }
+            finally
+            {
+                if (File.Exists(pth))
+                    File.Delete(pth);
             }
             return config;
         }
@@ -2352,10 +2493,11 @@ namespace Neos.IdentityServer.MultiFactor
             {
                 if (encrypt)
                 {
-                    using (AESEncryption AES = new AESEncryption())
+                    using (AESEncryption MSIS = new AESEncryption())
                     {
-                        config.Hosts.ActiveDirectoryHost.Password = AES.Encrypt(config.Hosts.ActiveDirectoryHost.Password);
-                        config.MailProvider.Password = AES.Encrypt(config.MailProvider.Password);
+                        config.KeysConfig.XORSecret = MSIS.Encrypt(config.KeysConfig.XORSecret);
+                        config.Hosts.ActiveDirectoryHost.Password = MSIS.Encrypt(config.Hosts.ActiveDirectoryHost.Password);
+                        config.MailProvider.Password = MSIS.Encrypt(config.MailProvider.Password);
                     };
                 }
                 config.LastUpdated = DateTime.UtcNow;
@@ -2406,10 +2548,11 @@ namespace Neos.IdentityServer.MultiFactor
         {
             if (encrypt)
             {
-                using (AESEncryption AES = new AESEncryption())
+                using (AESEncryption MSIS = new AESEncryption())
                 {
-                    config.Hosts.ActiveDirectoryHost.Password = AES.Encrypt(config.Hosts.ActiveDirectoryHost.Password);
-                    config.MailProvider.Password = AES.Encrypt(config.MailProvider.Password);
+                    config.KeysConfig.XORSecret = MSIS.Encrypt(config.KeysConfig.XORSecret);
+                    config.Hosts.ActiveDirectoryHost.Password = MSIS.Encrypt(config.Hosts.ActiveDirectoryHost.Password);
+                    config.MailProvider.Password = MSIS.Encrypt(config.MailProvider.Password);
                 };
             }
             XmlConfigSerializer xmlserializer = new XmlConfigSerializer(typeof(MFAConfig));
@@ -2418,7 +2561,11 @@ namespace Neos.IdentityServer.MultiFactor
             {
                 xmlserializer.Serialize(stm, config);
                 stm.Position = 0;
-                byte[] byt = XORUtilities.XOREncryptOrDecrypt(stm.ToArray(), XORUtilities.UtilitiesKey);
+                byte[] byt = null;
+                using (AESEncryption aes = new AESEncryption())
+                {
+                    byt = aes.Encrypt(stm.ToArray());
+                }
                 using (FileStream fs = new FileStream(CFGUtilities.configcachedir, FileMode.Create, FileAccess.ReadWrite))
                 {
                     fs.Write(byt, 0, byt.Length);
@@ -2426,6 +2573,28 @@ namespace Neos.IdentityServer.MultiFactor
                 }
                 return config;
             }
+        }
+        #endregion
+
+        #region Admin Key Reader
+        /// <summary>
+        /// ReadConfigurationKey method implmentation
+        /// </summary>
+        internal static byte[] ReadConfigurationKey()
+        {
+            if (configcachekey != null)
+                return configcachekey;
+
+            Domain dom = Domain.GetCurrentDomain();
+            Guid gd = dom.GetDirectoryEntry().Guid;
+
+            byte[] _key = new byte[32];
+            byte[] _gd = new byte[16];
+            Buffer.BlockCopy(gd.ToByteArray(), 0, _gd, 0, 16);
+            Buffer.BlockCopy(_gd, 0, _key, 0, 16);
+            Array.Reverse(_gd);
+            Buffer.BlockCopy(_gd, 0, _key, 16, 16);
+            return _key;
         }
         #endregion
 
@@ -2508,12 +2677,12 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// BroadcastNotification method implmentation
         /// </summary>
-        internal static void BroadcastNotification(MFAConfig cfg, NotificationsKind kind, string message, bool ispresent)
+        internal static void BroadcastNotification(MFAConfig cfg, NotificationsKind kind, string message, bool all)
         {
             if (string.IsNullOrEmpty(message))
                 message = Environment.MachineName;
             message = GetMachineName(message);
-            if (ispresent)
+            if (all)
             {
                 switch (kind)
                 {

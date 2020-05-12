@@ -103,7 +103,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                     if ((ADFSController.Status != ServiceControllerStatus.Running) && (ADFSController.Status != ServiceControllerStatus.StartPending))
                     {
                         ADFSController.Start();
-                        ADFSController.WaitForStatus(ServiceControllerStatus.Running, new TimeSpan(0, 0, 30));
+                        ADFSController.GetStatus();
+                        if (ADFSController.Status != ServiceControllerStatus.Running)
+                            ADFSController.WaitForStatus(ServiceControllerStatus.Running, new TimeSpan(0, 0, 30));
                     }
                 }
                 catch (Exception e)
@@ -436,11 +438,13 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                     ADFSController = new SvcController("adfssrv", servername);
                 this.ServiceStatusChanged(this, ServiceOperationStatus.OperationPending, servername);
                 ManagementService.BroadcastNotification((byte)NotificationsKind.ServiceStatusPending, servername);
-
+                ADFSController.GetStatus();
                 if ((ADFSController.Status != ServiceControllerStatus.Running) && (ADFSController.Status != ServiceControllerStatus.StartPending))
                 {
                     ADFSController.Start();
-                    ADFSController.WaitForStatus(ServiceControllerStatus.Running, new TimeSpan(0, 1, 0));
+                    ADFSController.GetStatus();
+                    if (ADFSController.Status != ServiceControllerStatus.Running)
+                        ADFSController.WaitForStatus(ServiceControllerStatus.Running, new TimeSpan(0, 1, 0));
                 }
                 this.ServiceStatusChanged(this, ServiceOperationStatus.OperationRunning, servername);
                 ManagementService.BroadcastNotification((byte)NotificationsKind.ServiceStatusRunning, servername);
@@ -477,11 +481,13 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                     ADFSController = new SvcController("adfssrv", servername);
                 this.ServiceStatusChanged(this, ServiceOperationStatus.OperationPending, servername);
                 ManagementService.BroadcastNotification((byte)NotificationsKind.ServiceStatusPending, servername);
-
+                ADFSController.GetStatus();
                 if ((ADFSController.Status != ServiceControllerStatus.Stopped) && (ADFSController.Status != ServiceControllerStatus.StopPending))
                 {
                     ADFSController.Stop();
-                    ADFSController.WaitForStatus(ServiceControllerStatus.Stopped, new TimeSpan(0, 1, 0));
+                    ADFSController.GetStatus();
+                    if (ADFSController.Status != ServiceControllerStatus.Stopped)
+                        ADFSController.WaitForStatus(ServiceControllerStatus.Stopped, new TimeSpan(0, 1, 0));
                 }
                 this.ServiceStatusChanged(this, ServiceOperationStatus.OperationStopped, servername);
                 ManagementService.BroadcastNotification((byte)NotificationsKind.ServiceStatusRunning, servername);
@@ -1163,11 +1169,11 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// </summary>
         public bool ImportMFAProviderConfiguration(PSHost Host, string importfile)
         {
-            if (Config == null)
+           /* if (Config == null)
             {
                 EnsureLocalService();
                 Config = ReadConfiguration(Host);
-            }
+            } */
             this.ConfigurationStatusChanged(this, ConfigOperationStatus.ConfigIsDirty);
             try
             {
@@ -1198,11 +1204,11 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// </summary>
         public void ExportMFAProviderConfiguration(PSHost Host, string exportfilepath)
         {
-            if (Config == null)
+           /* if (Config == null)
             {
                 EnsureConfiguration(Host);
                 Config = ReadConfiguration(Host);
-            }
+            } */
             InternalExportConfiguration(Host, exportfilepath);
         }
 

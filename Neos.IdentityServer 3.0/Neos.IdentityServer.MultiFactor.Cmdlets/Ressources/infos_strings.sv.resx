@@ -222,4 +222,10 @@
   <data name="InfosADFSServicesRestarted" xml:space="preserve">
     <value>ADFS-tjänsten startas om på servern {0} !</value>
   </data>
+  <data name="InfosCredentialsChanged" xml:space="preserve">
+    <value>Autentiseringsuppgifterna har uppdaterats korrekt !</value>
+  </data>
+  <data name="InfosMailTemplateExported" xml:space="preserve">
+    <value>E-postmallar har exporterats korrekt !</value>
+  </data>
 </root>

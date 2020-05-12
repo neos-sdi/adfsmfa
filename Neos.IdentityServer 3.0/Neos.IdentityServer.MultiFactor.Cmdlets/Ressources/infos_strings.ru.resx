@@ -222,4 +222,10 @@
   <data name="InfosADFSServicesRestarted" xml:space="preserve">
     <value>Служба ADFS правильно перезапустила на сервере {0}!</value>
   </data>
+  <data name="InfosCredentialsChanged" xml:space="preserve">
+    <value>Учетные данные правильно обновлены!</value>
+  </data>
+  <data name="InfosMailTemplateExported" xml:space="preserve">
+    <value>Шаблоны почты правильно экспортируются!</value>
+  </data>
 </root>

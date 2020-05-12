@@ -179,7 +179,9 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
                 if ((ADFSController.Status != ServiceControllerStatus.Running) && (ADFSController.Status != ServiceControllerStatus.StartPending))
                 {
                     ADFSController.Start();
-                    ADFSController.WaitForStatus(ServiceControllerStatus.Running, new TimeSpan(0, 1, 0));
+                    ADFSController.GetStatus();
+                    if (ADFSController.Status!=ServiceControllerStatus.Running)
+                        ADFSController.WaitForStatus(ServiceControllerStatus.Running, new TimeSpan(0, 1, 0));
                 }
             }
             catch (Exception e)
@@ -205,7 +207,9 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
                 if ((ADFSController.Status != ServiceControllerStatus.Stopped) && (ADFSController.Status != ServiceControllerStatus.StopPending))
                 {
                     ADFSController.Stop();
-                    ADFSController.WaitForStatus(ServiceControllerStatus.Stopped, new TimeSpan(0, 1, 0));
+                    ADFSController.GetStatus();
+                    if (ADFSController.Status != ServiceControllerStatus.Stopped)
+                        ADFSController.WaitForStatus(ServiceControllerStatus.Stopped, new TimeSpan(0, 1, 0));
                 }
             }
             catch (Exception e)

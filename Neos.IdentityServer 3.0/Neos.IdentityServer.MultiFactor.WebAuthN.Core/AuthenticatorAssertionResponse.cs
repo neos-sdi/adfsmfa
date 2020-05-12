@@ -54,7 +54,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
         public byte[] UserHandle { get; set; }
         public object CredentialId { get; private set; }
 
-        internal static AuthenticatorAssertionResponse Parse(AuthenticatorAssertionRawResponse rawResponse)
+        public static AuthenticatorAssertionResponse Parse(AuthenticatorAssertionRawResponse rawResponse)
         {
             var response = new AuthenticatorAssertionResponse(rawResponse.Response.ClientDataJson)
             {

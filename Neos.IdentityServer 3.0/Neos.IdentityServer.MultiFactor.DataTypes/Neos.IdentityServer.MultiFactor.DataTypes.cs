@@ -1868,15 +1868,6 @@ namespace Neos.IdentityServer.MultiFactor
         }
 
         /// <summary>
-        /// ConfigKey property
-        /// </summary>
-        public static string UtilitiesKey
-        {
-            get { return _defaultxor; }
-        }
-
-
-        /// <summary>
         /// XOREncryptOrDecrypt method
         /// </summary>
         public static byte[] XOREncryptOrDecrypt(byte[] value, string secret)

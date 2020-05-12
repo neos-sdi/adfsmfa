@@ -237,7 +237,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// </summary>
         public void Refresh()
         {
-            Open();
+            GetStatus();
         }
 
         /// <summary>
@@ -247,7 +247,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         {
             while (this.Status!=desiredStatus)
             {
-                Open();
+                GetStatus();
             }
         }
 
@@ -259,7 +259,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             TimeSpan duration = new TimeSpan(0, 0, 0);
             while (this.Status != desiredStatus)
             {
-                Open();
+                GetStatus();
                 Thread.Sleep(1000);
                 duration.Add(new TimeSpan(0, 0, 1));
                 if (timeout < duration)
@@ -268,7 +268,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         }
 
         #region Private methods
-        private void Open()
+        public void GetStatus()
         {
             Runspace SPRunSpace = null;
             PowerShell SPPowerShell = null;

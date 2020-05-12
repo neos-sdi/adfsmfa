@@ -408,25 +408,25 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <summary>
         /// BroadcastNotification method implmentation
         /// </summary>
-        internal static void BroadcastNotification(byte kind, string message, bool ispresent = true)
+        internal static void BroadcastNotification(byte kind, string message, bool all = true)
         {
-            BroadcastNotification(ADFSManager.Config, (NotificationsKind)kind, message, ispresent);
+            BroadcastNotification(ADFSManager.Config, (NotificationsKind)kind, message, all);
         }
 
         /// <summary>
         /// BroadcastNotification method implmentation
         /// </summary>
-        internal static void BroadcastNotification(MFAConfig config, byte kind, string message, bool ispresent = true)
+        internal static void BroadcastNotification(MFAConfig config, byte kind, string message, bool all = true)
         {
-            BroadcastNotification(config, (NotificationsKind)kind, message, ispresent);
+            BroadcastNotification(config, (NotificationsKind)kind, message, all);
         }
 
         /// <summary>
         /// BroadcastNotification method implmentation
         /// </summary>
-        internal static void BroadcastNotification(MFAConfig config, NotificationsKind kind, string message, bool ispresent = true)
+        internal static void BroadcastNotification(MFAConfig config, NotificationsKind kind, string message, bool all = true)
         {
-            CFGUtilities.BroadcastNotification(config, kind, message, ispresent);
+            CFGUtilities.BroadcastNotification(config, kind, message, all);
         }
 
         /// <summary>
@@ -1059,6 +1059,78 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                     SPPowerShell.Dispose();
             }
             return false;
+        }
+
+        /// <summary>
+        /// SetMFACredentials method implementation
+        /// </summary>
+        internal static void SetMFACredentials(PSHost host, byte kind, string value)
+        {
+            MFAConfig config = CFGUtilities.ReadConfigurationFromADFSStore(host);
+            if (config == null)
+                return;
+            switch (kind)
+            {
+                case 0x00:
+                    using (AESEncryption MSIS = new AESEncryption())
+                    {
+                        config.Hosts.ActiveDirectoryHost.Password = MSIS.Encrypt(config.Hosts.ActiveDirectoryHost.Password);
+                        config.MailProvider.Password = MSIS.Encrypt(config.MailProvider.Password);
+                        config.KeysConfig.XORSecret = MSIS.Encrypt(config.KeysConfig.XORSecret);
+                        if (!string.IsNullOrEmpty(value))
+                            host.UI.WriteWarningLine("Block Updates not allowed, values where only encrypted !");
+                    }
+                    break;
+                case 0x01:
+                    using (AESEncryption MSIS = new AESEncryption())
+                    {
+                        if (string.IsNullOrEmpty(value))
+                        {
+                            config.Hosts.ActiveDirectoryHost.Password = MSIS.Encrypt(config.Hosts.ActiveDirectoryHost.Password);
+                            host.UI.WriteWarningLine("Empty value not allowed, value was only encrypted !");
+                        }
+                        else
+                            config.Hosts.ActiveDirectoryHost.Password = MSIS.Encrypt(value);
+                    }
+                    break;
+                case 0x02:
+                    using (AESEncryption MSIS = new AESEncryption())
+                    {
+                        if (string.IsNullOrEmpty(value))
+                        {
+                            config.MailProvider.Password = MSIS.Encrypt(config.MailProvider.Password);
+                            host.UI.WriteWarningLine("Empty value not allowed, value was only encrypted !");
+                        }
+                        else
+                            config.MailProvider.Password = MSIS.Encrypt(value);
+                    }
+                    break;
+                case 0x03:
+                    using (AESEncryption MSIS = new AESEncryption())
+                    {
+                        if (string.IsNullOrEmpty(value))
+                        {
+                            config.KeysConfig.XORSecret = MSIS.Encrypt(config.KeysConfig.XORSecret);
+                            host.UI.WriteWarningLine("Empty value not allowed, value was only encrypted !");
+                        }
+                        else
+                            config.KeysConfig.XORSecret = MSIS.Encrypt(value);
+                    }
+                    break;
+            }
+            CFGUtilities.WriteConfigurationToDatabase(host, config, false);
+            CFGUtilities.BroadcastNotification(config, NotificationsKind.ConfigurationCreated, Environment.MachineName, true);
+        }
+
+        /// <summary>
+        /// ExportMFAMailTemplates method implementation
+        /// </summary>
+        internal static void ExportMFAMailTemplates(PSHost host, int lcid)
+        {
+            MFAConfig config = CFGUtilities.ReadConfiguration(host);
+            MailUtilities.ExportMailTemplates(config, lcid);
+            CFGUtilities.WriteConfiguration(host, config);
+            CFGUtilities.BroadcastNotification(config, NotificationsKind.ConfigurationReload, Environment.MachineName, true);
         }
         #endregion
     }

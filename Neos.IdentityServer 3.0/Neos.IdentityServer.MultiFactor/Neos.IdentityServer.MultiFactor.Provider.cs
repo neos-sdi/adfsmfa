@@ -318,10 +318,11 @@ namespace Neos.IdentityServer.MultiFactor
                              _config = (MFAConfig)xmlserializer.Deserialize(stm);
                              if ((!_config.OTPProvider.Enabled) && (!_config.MailProvider.Enabled) && (!_config.ExternalProvider.Enabled) && (!_config.AzureProvider.Enabled))
                                  _config.OTPProvider.Enabled = true;   // always let an active option eg : aplication in this case
-                            using (AESEncryption AES = new AESEncryption())
+                            using (AESEncryption MSIS = new AESEncryption())
                             {
-                                _config.Hosts.ActiveDirectoryHost.Password = AES.Decrypt(_config.Hosts.ActiveDirectoryHost.Password);
-                                _config.MailProvider.Password = AES.Decrypt(_config.MailProvider.Password);
+                                _config.KeysConfig.XORSecret = MSIS.Decrypt(_config.KeysConfig.XORSecret);
+                                _config.Hosts.ActiveDirectoryHost.Password = MSIS.Decrypt(_config.Hosts.ActiveDirectoryHost.Password);
+                                _config.MailProvider.Password = MSIS.Decrypt(_config.MailProvider.Password);
                             };
                             Certs.InitializeAccountsSID(_config.Hosts.ActiveDirectoryHost.DomainName, _config.Hosts.ActiveDirectoryHost.Account, _config.Hosts.ActiveDirectoryHost.Password);
                             KeysManager.Initialize(_config);  // Always Bind KeysManager Otherwise this is made in CFGUtilities.ReadConfiguration

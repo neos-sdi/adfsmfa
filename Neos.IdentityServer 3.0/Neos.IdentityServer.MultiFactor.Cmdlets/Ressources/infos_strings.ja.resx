@@ -222,4 +222,10 @@
   <data name="InfosADFSServicesRestarted" xml:space="preserve">
     <value>サーバー {0}で ADFS サービスが正常に再起動しました。</value>
   </data>
+  <data name="InfosCredentialsChanged" xml:space="preserve">
+    <value>資格情報が正しく更新されました !</value>
+  </data>
+  <data name="InfosMailTemplateExported" xml:space="preserve">
+    <value>メールテンプレートは正しくエクスポート!</value>
+  </data>
 </root>

@@ -151,6 +151,15 @@ namespace Neos.IdentityServer.MultiFactor.Cmdlets.Ressources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Credentials correctly updated !.
+        /// </summary>
+        internal static string InfosCredentialsChanged {
+            get {
+                return ResourceManager.GetString("InfosCredentialsChanged", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Database {0} created !.
         /// </summary>
         internal static string InfosDatabaseCreated {
@@ -165,6 +174,15 @@ namespace Neos.IdentityServer.MultiFactor.Cmdlets.Ressources {
         internal static string InfosDatabaseUpgraded {
             get {
                 return ResourceManager.GetString("InfosDatabaseUpgraded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Mail templates correctly exported !.
+        /// </summary>
+        internal static string InfosMailTemplateExported {
+            get {
+                return ResourceManager.GetString("InfosMailTemplateExported", resourceCulture);
             }
         }
         

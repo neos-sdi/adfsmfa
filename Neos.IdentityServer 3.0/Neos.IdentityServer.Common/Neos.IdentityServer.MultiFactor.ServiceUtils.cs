@@ -462,7 +462,11 @@ namespace Neos.IdentityServer.MultiFactor
                 byte[] unencryptedBytes = new byte[buffer.Count];
                 Array.Copy(buffer.Array, buffer.Offset, unencryptedBytes, 0, unencryptedBytes.Length);
 
-                byte[] cryptedBytes = XORUtilities.XOREncryptOrDecrypt(unencryptedBytes, XORUtilities.UtilitiesKey);              
+                byte[] cryptedBytes = null;
+                using (AESEncryption aes = new AESEncryption())
+                {
+                    cryptedBytes = aes.Encrypt(unencryptedBytes);
+                }
 
                 int totalLength = messageOffset + cryptedBytes.Length;
                 byte[] bufferManagerBuffer = bufferManager.TakeBuffer(totalLength);
@@ -483,7 +487,11 @@ namespace Neos.IdentityServer.MultiFactor
                 byte[] cryptedBytes = new byte[buffer.Count];
                 Array.Copy(buffer.Array, buffer.Offset, cryptedBytes, 0, cryptedBytes.Length);
 
-                byte[] unencryptedBytes = XORUtilities.XOREncryptOrDecrypt(cryptedBytes, XORUtilities.UtilitiesKey);
+                byte[] unencryptedBytes = null;
+                using (AESEncryption aes = new AESEncryption())
+                {
+                    unencryptedBytes = aes.Decrypt(cryptedBytes);
+                }
 
                 int totalLength = unencryptedBytes.Length + buffer.Offset;
                 byte[] bufferManagerBuffer = bufferManager.TakeBuffer(totalLength);
@@ -524,7 +532,13 @@ namespace Neos.IdentityServer.MultiFactor
             {
                 byte[] unencryptedBytes = new byte[stream.Length];
                 stream.Read(unencryptedBytes, 0, (int)stream.Length);
-                byte[] cryptedBytes = XORUtilities.XOREncryptOrDecrypt(unencryptedBytes, XORUtilities.UtilitiesKey);
+
+                byte[] cryptedBytes = null;
+                using (AESEncryption aes = new AESEncryption())
+                {
+                    cryptedBytes = aes.Encrypt(unencryptedBytes);
+                }
+
                 MemoryStream stm = new MemoryStream(cryptedBytes);
                 return innerEncoder.ReadMessage(stm, maxSizeOfHeaders);
             }
@@ -536,7 +550,11 @@ namespace Neos.IdentityServer.MultiFactor
             {
                 byte[] cryptedBytes = new byte[stream.Length];
                 stream.Read(cryptedBytes, 0, (int)stream.Length);
-                byte[] unencryptedBytes = XORUtilities.XOREncryptOrDecrypt(cryptedBytes, XORUtilities.UtilitiesKey);
+                byte[] unencryptedBytes = null;
+                using (AESEncryption aes = new AESEncryption())
+                {
+                    unencryptedBytes = aes.Decrypt(cryptedBytes);
+                }
                 MemoryStream stm = new MemoryStream(unencryptedBytes);
                 innerEncoder.WriteMessage(message, stm);
                 stream.Flush();

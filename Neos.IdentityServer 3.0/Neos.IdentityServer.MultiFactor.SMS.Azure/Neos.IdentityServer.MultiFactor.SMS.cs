@@ -527,7 +527,7 @@ namespace Neos.IdentityServer.Multifactor.SMS
             if (ctx.IsTwoWay)
             {
                 Params.SmsText = string.Format(Resources.GetString(ResourcesLocaleKind.Azure, "SMSTwoWayMessage"), externalsys.Company);
-                Params.Mode = PhoneFactor.MODE_SMS_TWO_WAY_OTP;
+                Params.Mode = PhoneFactor.MODE_SMS_TWO_WAY_OTP;               
             }
             else
             {
@@ -540,7 +540,7 @@ namespace Neos.IdentityServer.Multifactor.SMS
             string otp = string.Empty;
             if (PhoneFactor.Authenticate(Params, out otp, out callStatus, out errorId, externalsys.Timeout))
                 if (ctx.IsTwoWay)
-                    return (int)AuthenticationResponseKind.SmsTwoWayOTP;
+                    return (int)AuthenticationResponseKind.SmsTwoWayOTP;                   
                 else
                     return Convert.ToInt32(otp);
             else
