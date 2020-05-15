@@ -24,6 +24,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Collections;
 using System.Threading;
+using System.Windows.Forms;
 
 namespace Neos.IdentityServer.Deployment
 {
@@ -69,6 +70,7 @@ namespace Neos.IdentityServer.Deployment
         [CustomAction]
         public static ActionResult InstallService(Session session)
         {
+           // string path = session["ProgramFiles64Folder"];
             try
             {
                 try
@@ -80,10 +82,10 @@ namespace Neos.IdentityServer.Deployment
                     session.Log("Error registering EventLog entries : "+E.Message);
                 }
                 session.Log("Service Installing [mfanotifhub]");
-                internalInstallService(@"C:\Program Files\MFA\Neos.IdentityServer.MultiFactor.NotificationHub.exe");
+                internalInstallService(session, @"C:\Program Files\MFA\Neos.IdentityServer.MultiFactor.NotificationHub.exe");
                 session.Log("Service Installed [mfanotifhub]");
                 session.Log("Snapin Installing [Neos.IdentityServer.console]");
-                internalInstallSnapin(@"C:\Program Files\MFA\Neos.IdentityServer.Console.dll");
+                internalInstallSnapin(session, @"C:\Program Files\MFA\Neos.IdentityServer.Console.dll");
                 session.Log("Snapin Installed [Neos.IdentityServer.console]");
                 return ActionResult.Success;
             }
@@ -97,14 +99,16 @@ namespace Neos.IdentityServer.Deployment
         [CustomAction]
         public static ActionResult UnInstallService(Session session)
         {
+           // string path = session["ProgramFiles64Folder"];
             try
             {
                 session.Log("Service UnInstalling [mfanotifhub]");
-                internalUninstallService(@"C:\Program Files\MFA\Neos.IdentityServer.MultiFactor.NotificationHub.exe");
+                internalUninstallService(session, @"C:\Program Files\MFA\Neos.IdentityServer.MultiFactor.NotificationHub.exe");
                 session.Log("Service UnInstalled [mfanotifhub]");
                 session.Log("Snapin UnInstalling [Neos.IdentityServer.console]");
-                internalUninstallSnapin(@"C:\Program Files\MFA\Neos.IdentityServer.Console.dll");
+                internalUninstallSnapin(session, @"C:\Program Files\MFA\Neos.IdentityServer.Console.dll");
                 session.Log("Snapin UnInstalling [Neos.IdentityServer.console]");
+
                 return ActionResult.Success;
             }
             catch (Exception e)
@@ -112,32 +116,49 @@ namespace Neos.IdentityServer.Deployment
                 session.Log("Service error [mfanotifhub] : " + e.Message);
                 return ActionResult.Success;
             }
+            finally
+            {
+                try
+                {
+                    session.Log("Delete Cache config file");
+                    File.Delete(@"C:\Program Files\MFA\Config\Config.db");
+                }
+                catch { }
+            }
         }
 
-        public static void internalInstallService(string exeFilename)
+        public static void internalInstallService(Session session, string exeFilename)
         {
             if (!File.Exists(exeFilename))
-                return;
-            System.Configuration.Install.AssemblyInstaller installer = new System.Configuration.Install.AssemblyInstaller();
-            IDictionary mySavedState = new Hashtable();
+               return;
+            try
+            {
+                System.Configuration.Install.AssemblyInstaller installer = new System.Configuration.Install.AssemblyInstaller();
+                IDictionary mySavedState = new Hashtable();
 
-            string dir = Environment.GetEnvironmentVariable("TEMP", EnvironmentVariableTarget.Machine);
-            string file =  dir + "\\adfsmfa_service.log";
-            if (File.Exists(file))
+                string dir = Environment.GetEnvironmentVariable("TEMP", EnvironmentVariableTarget.Machine);
+                string file = dir + "\\adfsmfa_service.log";
                 File.Delete(file);
 
-            installer.UseNewContext = true;
-            installer.Path = exeFilename;
-            installer.CommandLine = new string[2] { string.Format("/logFile={0}", file), string.Format("/InstallStateDir={0}", dir) };
-            mySavedState.Clear();
-            installer.Install(mySavedState);
-            installer.Commit(mySavedState);
+                installer.UseNewContext = true;
+                installer.Path = exeFilename;
+                installer.CommandLine = new string[2] { string.Format("/logFile={0}", file), string.Format("/InstallStateDir={0}", dir) };
+                mySavedState.Clear();
+                installer.Install(mySavedState);
+                installer.Commit(mySavedState);
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
-        public static void internalUninstallService(string exeFilename)
+        public static void internalUninstallService(Session session, string exeFilename)
         {
             if (!File.Exists(exeFilename))
-                return;
+               return;
+            try
+            { 
             System.Configuration.Install.AssemblyInstaller installer = new System.Configuration.Install.AssemblyInstaller();
             IDictionary mySavedState = new Hashtable();
 
@@ -149,9 +170,14 @@ namespace Neos.IdentityServer.Deployment
             mySavedState.Clear();
 
             installer.Uninstall(mySavedState);
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
-        public static void internalInstallSnapin(string dllFilename)
+        public static void internalInstallSnapin(Session session, string dllFilename)
         {
             if (!File.Exists(dllFilename))
                 return;
@@ -160,8 +186,7 @@ namespace Neos.IdentityServer.Deployment
 
             string dir = Environment.GetEnvironmentVariable("TEMP", EnvironmentVariableTarget.Machine);
             string file = dir + "\\adfsmfa_snapin.log";
-            if (File.Exists(file))
-                File.Delete(file);
+            File.Delete(file);
 
             installer.UseNewContext = true;
             installer.Path = dllFilename;
@@ -171,7 +196,7 @@ namespace Neos.IdentityServer.Deployment
             installer.Commit(mySavedState);
         }
 
-        public static void internalUninstallSnapin(string dllFilename)
+        public static void internalUninstallSnapin(Session session, string dllFilename)
         {
             if (!File.Exists(dllFilename))
                 return;
@@ -261,6 +286,5 @@ namespace Neos.IdentityServer.Deployment
             if (!EventLog.SourceExists(NOTIFEventLogSource))
                 EventLog.CreateEventSource(NOTIFEventLogSource, EventLogGroup);
         }
-
     }
 }

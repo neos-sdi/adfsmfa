@@ -116,12 +116,6 @@
     <Content Include="ADDS\MFA.SCHEMA.HITRUST.LDF">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="ADDS\MFA.SCHEMA.EXTERNE.LDF">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="ADDS\MFA.SCHEMA.RSOFT.LDF">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="ADDS\MFA.SCHEMA.LDF">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

@@ -465,10 +465,18 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public override string Encrypt(string data)
         {
-            using (AES256Encryption enc = new AES256Encryption())
-            {
-                return enc.Encrypt(data);
+            try
+            { 
+                using (AES256Encryption enc = new AES256Encryption())
+                {
+                    return enc.Encrypt(data);
+                }
             }
+            catch
+            {
+                return data;
+            }
+
         }
 
         /// <summary>
@@ -476,9 +484,16 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public override byte[] Encrypt(byte[] data)
         {
-            using (AES256Encryption enc = new AES256Encryption())
+            try
             {
-                return enc.Encrypt(data);
+                using (AES256Encryption enc = new AES256Encryption())
+                {
+                    return enc.Encrypt(data);
+                }
+            }
+            catch
+            {
+                return data;
             }
         }
 
@@ -789,8 +804,8 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public override string Encrypt(string plainText)
         {
-            if (plainText == null || plainText.Length <= 0)
-                throw new ArgumentNullException("plainText");
+            if (string.IsNullOrEmpty(plainText))
+                return plainText;
             if (IsEncrypted(plainText))
                 return plainText;
             try
@@ -856,8 +871,8 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public override string Decrypt(string cipherText)
         {
-            if (cipherText == null || cipherText.Length <= 0)
-                throw new ArgumentNullException("cipherText");
+            if (string.IsNullOrEmpty(cipherText))
+                return cipherText;
             if (!IsEncrypted(cipherText))
                 return cipherText;
             try
@@ -891,7 +906,7 @@ namespace Neos.IdentityServer.MultiFactor
         public override byte[] Decrypt(byte[] cipherData)
         {
             if (cipherData == null || cipherData.Length <= 0)
-                throw new ArgumentNullException("cipherText");
+                throw new ArgumentNullException("cipherData");
             if (!IsEncrypted(cipherData))
                 return cipherData;
             try

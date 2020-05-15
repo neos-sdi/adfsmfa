@@ -2365,8 +2365,7 @@ namespace Neos.IdentityServer.MultiFactor
             }
             finally
             {
-                if (File.Exists(pth))
-                    File.Delete(pth);
+                File.Delete(pth);
             }
             return config;
         }
@@ -2460,8 +2459,7 @@ namespace Neos.IdentityServer.MultiFactor
             }
             finally
             {
-                if (File.Exists(pth))
-                    File.Delete(pth);
+                File.Delete(pth);
             }
             return config;
         }
@@ -2535,8 +2533,7 @@ namespace Neos.IdentityServer.MultiFactor
             }
             finally
             {
-                if (File.Exists(pth))
-                    File.Delete(pth);
+                File.Delete(pth);
             }
             return config;
         }

@@ -608,8 +608,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             }
             finally
             {
-                if (File.Exists(pth))
-                    File.Delete(pth);
+                File.Delete(pth);
             }
             return;
         }
