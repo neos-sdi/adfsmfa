@@ -25,12 +25,13 @@ using System.IO;
 using System.Collections;
 using System.Threading;
 using System.Windows.Forms;
+using Microsoft.Win32;
 
 namespace Neos.IdentityServer.Deployment
 {
     public class CustomActions
     {
-        [CustomAction]
+      //  [CustomAction]
         public static ActionResult StartService(Session session)
         {
             try
@@ -46,11 +47,11 @@ namespace Neos.IdentityServer.Deployment
             {
                 session.Log("Service error [mfanotifhub] : "+e.Message);
                 Trace.TraceInformation("Service error [mfanotifhub] : " + e.Message);
-                return ActionResult.Success;
+                return ActionResult.Failure;
             }
         }
 
-        [CustomAction]
+      //  [CustomAction]
         public static ActionResult StopService(Session session)
         {
             try
@@ -63,154 +64,228 @@ namespace Neos.IdentityServer.Deployment
             catch (Exception e)
             {
                 session.Log("Service error [mfanotifhub] : " + e.Message);
-                return ActionResult.Success;
+                return ActionResult.Failure;
             }
+        }
+
+        /// <summary>
+        /// GetInstallPath method implementation
+        /// Doing that, because with Wix Custom actions runs in 32 bits, and hangs in 64 Bits...
+        /// </summary>
+        private static string GetInstallPath(Session session)
+        {         
+            string baseDirectory = Path.GetPathRoot(Environment.GetFolderPath(Environment.SpecialFolder.System));
+            string programFiles = "Program Files";
+            string programFilesX86 = "Program Files (x86)";
+            if (Environment.Is64BitOperatingSystem)
+                return Path.Combine(baseDirectory, programFiles)+@"\MFA\";
+            else
+                return Path.Combine(baseDirectory, programFilesX86) + @"\MFA\";
         }
 
         [CustomAction]
         public static ActionResult InstallService(Session session)
         {
-           // string path = session["ProgramFiles64Folder"];
+
+            string path = string.Empty;
             try
             {
                 try
                 {
                     RegisterEventLogs();
+                    path = GetInstallPath(session);
                 }
-                catch (Exception E)
+                catch (Exception e)
                 {
-                    session.Log("Error registering EventLog entries : "+E.Message);
+                    session.Log(e.Message);
                 }
                 session.Log("Service Installing [mfanotifhub]");
-                internalInstallService(session, @"C:\Program Files\MFA\Neos.IdentityServer.MultiFactor.NotificationHub.exe");
+                internalInstallService(session, path + @"Neos.IdentityServer.MultiFactor.NotificationHub.exe");
                 session.Log("Service Installed [mfanotifhub]");
                 session.Log("Snapin Installing [Neos.IdentityServer.console]");
-                internalInstallSnapin(session, @"C:\Program Files\MFA\Neos.IdentityServer.Console.dll");
+                internalInstallSnapin(session, path + @"Neos.IdentityServer.Console.dll");
                 session.Log("Snapin Installed [Neos.IdentityServer.console]");
+                StartService(session);
                 return ActionResult.Success;
             }
             catch (Exception e)
             {
                 session.Log("Service error [mfanotifhub] : " + e.Message);
-                return ActionResult.Success;
+                return ActionResult.Failure;
             }
         }
 
         [CustomAction]
         public static ActionResult UnInstallService(Session session)
         {
-           // string path = session["ProgramFiles64Folder"];
+            string path = string.Empty;
             try
             {
+                try
+                {
+                    path = GetInstallPath(session);
+                }
+                catch (Exception e)
+                {
+                    session.Log(e.Message);
+                }
+                StopService(session);
                 session.Log("Service UnInstalling [mfanotifhub]");
-                internalUninstallService(session, @"C:\Program Files\MFA\Neos.IdentityServer.MultiFactor.NotificationHub.exe");
+                internalUninstallService(session, path + @"Neos.IdentityServer.MultiFactor.NotificationHub.exe");
                 session.Log("Service UnInstalled [mfanotifhub]");
                 session.Log("Snapin UnInstalling [Neos.IdentityServer.console]");
-                internalUninstallSnapin(session, @"C:\Program Files\MFA\Neos.IdentityServer.Console.dll");
-                session.Log("Snapin UnInstalling [Neos.IdentityServer.console]");
+                internalUninstallSnapin(session, path + @"Neos.IdentityServer.Console.dll");
+                session.Log("Snapin UnInstalled [Neos.IdentityServer.console]");
 
                 return ActionResult.Success;
             }
             catch (Exception e)
             {
                 session.Log("Service error [mfanotifhub] : " + e.Message);
-                return ActionResult.Success;
+                return ActionResult.Failure;
             }
             finally
             {
                 try
                 {
                     session.Log("Delete Cache config file");
-                    File.Delete(@"C:\Program Files\MFA\Config\Config.db");
+                    File.Delete(path + @"Config\Config.db");
                 }
-                catch { }
+                catch
+                {
+                }
             }
         }
 
-        public static void internalInstallService(Session session, string exeFilename)
+        /// <summary>
+        /// internalInstallService method implementation
+        /// </summary>
+        private static void internalInstallService(Session session, string exeFilename)
         {
             if (!File.Exists(exeFilename))
-               return;
+                throw new FileLoadException("Invalid FileName : " + exeFilename);
             try
             {
-                System.Configuration.Install.AssemblyInstaller installer = new System.Configuration.Install.AssemblyInstaller();
-                IDictionary mySavedState = new Hashtable();
+                IDictionary installstate = new Hashtable();
 
-                string dir = Environment.GetEnvironmentVariable("TEMP", EnvironmentVariableTarget.Machine);
-                string file = dir + "\\adfsmfa_service.log";
+                string dir = Path.GetDirectoryName(exeFilename);
+                string file = dir + "\\" + Path.GetFileNameWithoutExtension(exeFilename) + ".installLog";
                 File.Delete(file);
 
+                System.Configuration.Install.AssemblyInstaller installer = new System.Configuration.Install.AssemblyInstaller();
                 installer.UseNewContext = true;
                 installer.Path = exeFilename;
                 installer.CommandLine = new string[2] { string.Format("/logFile={0}", file), string.Format("/InstallStateDir={0}", dir) };
-                mySavedState.Clear();
-                installer.Install(mySavedState);
-                installer.Commit(mySavedState);
+
+                installer.Install(installstate);
+                installer.Commit(installstate); 
+
+               // System.Configuration.Install.ManagedInstallerClass.InstallHelper(new string[] { exeFilename });
+
+                string state = Path.GetFileNameWithoutExtension(exeFilename) + ".installState";
+                File.Delete(dir + "\\" + state);
             }
             catch (Exception e)
             {
-                MessageBox.Show(e.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                session.Log(e.Message);
+                throw e;
             }
         }
 
-        public static void internalUninstallService(Session session, string exeFilename)
+        /// <summary>
+        /// internalUninstallService method implementation
+        /// </summary>
+        private static void internalUninstallService(Session session, string exeFilename)
         {
             if (!File.Exists(exeFilename))
-               return;
+               throw new FileLoadException("Invalid FileName : " + exeFilename);
             try
-            { 
-            System.Configuration.Install.AssemblyInstaller installer = new System.Configuration.Install.AssemblyInstaller();
-            IDictionary mySavedState = new Hashtable();
+            {
+                string dir = Path.GetDirectoryName(exeFilename);
+                string file = dir + "\\" + Path.GetFileNameWithoutExtension(exeFilename) + ".installLog";
+                File.Delete(file);
 
-            string dir = Environment.GetEnvironmentVariable("TEMP", EnvironmentVariableTarget.Machine);
-            string file = dir + "\\adfsmfa_service.log";
-            installer.UseNewContext = true;
-            installer.Path = exeFilename;
-            installer.CommandLine = new string[2] { string.Format("/logFile={0}", file), string.Format("/InstallStateDir={0}", dir) };
-            mySavedState.Clear();
+                System.Configuration.Install.AssemblyInstaller installer = new System.Configuration.Install.AssemblyInstaller();
+                installer.UseNewContext = true;
+                installer.Path = exeFilename;
+                installer.CommandLine = new string[2] { string.Format("/logFile={0}", file), string.Format("/InstallStateDir={0}", dir) };
+                installer.Uninstall(new Hashtable()); 
 
-            installer.Uninstall(mySavedState);
+               // System.Configuration.Install.ManagedInstallerClass.InstallHelper(new string[] { "/u", exeFilename });
+
+                string state = Path.GetFileNameWithoutExtension(exeFilename) + ".installState";
+                File.Delete(dir + "\\" + state);
             }
             catch (Exception e)
             {
-                MessageBox.Show(e.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                session.Log(e.Message);
+                throw e;
             }
         }
 
-        public static void internalInstallSnapin(Session session, string dllFilename)
+        /// <summary>
+        /// internalInstallSnapin method implementation
+        /// </summary>
+        private static void internalInstallSnapin(Session session, string dllFilename)
         {
             if (!File.Exists(dllFilename))
-                return;
-            System.Configuration.Install.AssemblyInstaller installer = new System.Configuration.Install.AssemblyInstaller();
-            IDictionary mySavedState = new Hashtable();
+                throw new FileLoadException("Invalid FileName : " + dllFilename);
+            try
+            {
+                IDictionary installstate = new Hashtable();
 
-            string dir = Environment.GetEnvironmentVariable("TEMP", EnvironmentVariableTarget.Machine);
-            string file = dir + "\\adfsmfa_snapin.log";
-            File.Delete(file);
+                string dir = Path.GetDirectoryName(dllFilename);
+                string file = dir + "\\" + Path.GetFileNameWithoutExtension(dllFilename) + ".installLog";
+                File.Delete(file);
 
-            installer.UseNewContext = true;
-            installer.Path = dllFilename;
-            installer.CommandLine = new string[2] { string.Format("/logFile={0}", file), string.Format("/InstallStateDir={0}", dir) };
-            mySavedState.Clear();
-            installer.Install(mySavedState);
-            installer.Commit(mySavedState);
+                System.Configuration.Install.AssemblyInstaller installer = new System.Configuration.Install.AssemblyInstaller();
+                installer.UseNewContext = true;
+                installer.Path = dllFilename;
+                installer.CommandLine = new string[2] { string.Format("/logFile={0}", file), string.Format("/InstallStateDir={0}", dir) };
+                installer.Install(installstate);
+                installer.Commit(installstate); 
+
+              //  System.Configuration.Install.ManagedInstallerClass.InstallHelper(new string[] { dllFilename });
+
+                string state = Path.GetFileNameWithoutExtension(dllFilename) + ".installState";
+                File.Delete(dir + "\\" + state);
+            }
+            catch (Exception e)
+            {
+                session.Log(e.Message);
+                throw e;
+            }
         }
 
-        public static void internalUninstallSnapin(Session session, string dllFilename)
+        /// <summary>
+        /// internalUninstallSnapin method implementation
+        /// </summary>
+        private static void internalUninstallSnapin(Session session, string dllFilename)
         {
             if (!File.Exists(dllFilename))
-                return;
-            System.Configuration.Install.AssemblyInstaller installer = new System.Configuration.Install.AssemblyInstaller();
-            IDictionary mySavedState = new Hashtable();
+                throw new FileLoadException("Invalid FileName : " + dllFilename);
+            try
+            {
+                string dir = Path.GetDirectoryName(dllFilename);
+                string file = dir + "\\" + Path.GetFileNameWithoutExtension(dllFilename) + ".installLog";
+                File.Delete(file);
 
-            string dir = Environment.GetEnvironmentVariable("TEMP", EnvironmentVariableTarget.Machine);
-            string file = dir + "\\adfsmfa_snapin.log";
-            installer.UseNewContext = true;
-            installer.Path = dllFilename;
-            installer.CommandLine = new string[2] { string.Format("/logFile={0}", file), string.Format("/InstallStateDir={0}", dir) };
-            mySavedState.Clear();
+                System.Configuration.Install.AssemblyInstaller installer = new System.Configuration.Install.AssemblyInstaller();
+                installer.UseNewContext = true;
+                installer.Path = dllFilename;
+                installer.CommandLine = new string[2] { string.Format("/logFile={0}", file), string.Format("/InstallStateDir={0}", dir) };
+                installer.Uninstall(new Hashtable());
 
-            installer.Uninstall(mySavedState);
+               // System.Configuration.Install.ManagedInstallerClass.InstallHelper(new string[] { "/u", dllFilename });
+
+                string state = Path.GetFileNameWithoutExtension(dllFilename) + ".installState";
+                File.Delete(dir +"\\" + state);
+            }
+            catch (Exception e)
+            {
+                session.Log(e.Message);
+                throw e;
+            }
         }
 
         /// <summary>

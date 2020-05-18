@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" >
-  <Product Id="a23dd485-5365-4d82-8309-103494000001" Name="Neos MFA Provider for ADFS 2019/2016/2012 R2" Language="1033" Version="3.0.2005.1" Manufacturer="Neos-SDI" UpgradeCode="a23dd485-5365-4d82-8309-103495000001" >
+  <Product Id="a23dd485-5365-4d82-8309-103494000001" Name="Neos MFA Provider for ADFS 2019/2016/2012 R2" Language="1033" Version="3.0.2005.2" Manufacturer="Neos-SDI" UpgradeCode="a23dd485-5365-4d82-8309-103495000001" >
 
     <Package InstallerVersion="500" Compressed="yes" InstallScope="perMachine" InstallPrivileges="elevated" Platform="x64" Description="Multi-Factor Authentication for ADFS 2019/2016/2012 r2" />
 
@@ -8,7 +8,9 @@
                   DowngradeErrorMessage ="A later version of [ProductName] is already installed" 
                   Disallow="yes" AllowDowngrades="no"/>
         
-    <MediaTemplate EmbedCab="yes" CabinetTemplate="MFA{0}.cab" /> 
+    <MediaTemplate EmbedCab="yes" CabinetTemplate="MFA{0}.cab" />
+    <Icon Id="mfaicon.ico" SourceFile="$(var.Neos.IdentityServer.Console.NativeResources.ProjectDir)\Microsoft_201.ico"/>
+    <Property Id="ARPPRODUCTICON" Value="mfaicon.ico" />
     
 		<Feature Id="ProductFeature" Title="adfsmfa Core Components" Description="Neos Identity Service Core Components" InstallDefault="local" TypicalDefault="install" Level="1" >
       <ComponentGroupRef Id="Neos.IdentityServer.MultiFactor.Core" />
@@ -74,29 +76,27 @@
       <ComponentGroupRef Id="Neos.IdentityServer.MultiFactor.WebAuthN" />
     </Feature>
 
+    
+    
     <Binary Id='CustomAction.CA' SourceFile="$(var.Neos.IdentityServer.Deployment.TargetDir)Neos.IdentityServer.Deployment.CA.dll" />
     <CustomAction Id="xInstallService" BinaryKey='CustomAction.CA' DllEntry="InstallService" Execute="commit" Impersonate="no" />
-    <CustomAction Id="xStartService" BinaryKey='CustomAction.CA' DllEntry="StartService" Execute="commit" Impersonate="no"/>
-
-    <CustomAction Id="xStopService" BinaryKey='CustomAction.CA' DllEntry="StopService"  Execute="immediate" Impersonate="no" />    
-    <CustomAction Id="xUninstallService" BinaryKey='CustomAction.CA' DllEntry="UnInstallService" Execute="immediate" Impersonate="no" />
+    <CustomAction Id="xUninstallService" BinaryKey='CustomAction.CA' DllEntry="UnInstallService" Execute="deferred" Impersonate="no" />
     
-    <InstallExecuteSequence>
-      <Custom Action="xInstallService"  Before="InstallFinalize" >
-        NOT Installed AND NOT PATCH
-      </Custom>
-      <Custom Action="xStartService" After="xInstallService">
-        NOT Installed AND NOT PATCH
-      </Custom>
+    <InstallExecuteSequence>    
+      <Custom Action="xInstallService" Before="InstallFinalize" >
+        NOT Installed AND NOT PATCH        
+      </Custom>   
     </InstallExecuteSequence>
     <InstallExecuteSequence>
-      <Custom Action="xStopService" After="InstallInitialize" >
-        Installed AND NOT PATCH
-      </Custom>          
-      <Custom Action="xUninstallService" After="xStopService" >
+      <Custom Action="xUninstallService" After="InstallInitialize" >
         Installed AND NOT PATCH
       </Custom>
-    </InstallExecuteSequence>    
+    </InstallExecuteSequence> 
+    
+    <Condition Message="This installation requires admin privileges" >
+       Privileged
+    </Condition>
+
   </Product>
 
   <Fragment>
@@ -350,8 +350,6 @@
         <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.frCA.resources.dll"  Name="Neos.IdentityServer.MultiFactor.resources.dll" Source="$(var.Neos.IdentityServer.MultiFactor.TargetDir)fr-CA\Neos.IdentityServer.MultiFactor.resources.dll" Vital="no" />
       </Component>
 
-
-
       <Component Id="GACDeployment100" Guid="E7173CAB-E43F-4A07-1962-018000007101" Win64="yes" Directory="AssemblyFolder" DiskId="1" >
         <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.DataTypes.dll"  Name="Neos.IdentityServer.MultiFactor.DataTypes.dll" Source="$(var.Neos.IdentityServer.MultiFactor.DataTypes.TargetPath)" Vital="yes" />
       </Component>
@@ -402,8 +400,7 @@
       </Component>
       <Component Id="GACDeployment115" Guid="E7173CAB-E43F-4A07-1962-018000007110" Win64="yes" Directory="LOCALECA" DiskId="1" >
         <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.Common.frCA.resources.dll"  Name="Neos.IdentityServer.MultiFactor.Common.resources.dll" Source="$(var.Neos.IdentityServer.MultiFactor.Common.TargetDir)fr-CA\Neos.IdentityServer.MultiFactor.Common.resources.dll" Vital="no" />
-      </Component>
-      
+      </Component>     
 
       <Component Id="GACDeployment120" Guid="E7173CAB-E43F-4A07-1962-018000008014" Win64="yes" Directory="AssemblyFolder" DiskId="1" >
         <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.Notifications.dll"  Name="Neos.IdentityServer.MultiFactor.Notifications.dll" Source="$(var.Neos.IdentityServer.MultiFactor.Notifications.TargetPath)" Vital="yes" />

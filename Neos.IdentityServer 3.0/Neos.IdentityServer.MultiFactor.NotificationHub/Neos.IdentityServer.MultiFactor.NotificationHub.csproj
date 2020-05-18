@@ -100,15 +100,6 @@
     <None Include="Neos.IdentityServer.pfx" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Neos.IdentityServer.HubService.da.resx">
-      <DependentUpon>Neos.IdentityServer.HubService.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Neos.IdentityServer.HubService.fr-CA.resx">
-      <DependentUpon>Neos.IdentityServer.HubService.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Neos.IdentityServer.HubService.ja.resx">
-      <DependentUpon>Neos.IdentityServer.HubService.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Neos.IdentityServer.HubService.resx">
       <DependentUpon>Neos.IdentityServer.HubService.cs</DependentUpon>
     </EmbeddedResource>

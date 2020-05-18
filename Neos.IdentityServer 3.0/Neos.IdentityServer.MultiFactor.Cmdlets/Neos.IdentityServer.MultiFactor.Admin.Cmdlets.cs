@@ -7521,16 +7521,21 @@ namespace MFA
         /// <summary>
         /// <para type="description">Credential Kind.</para>
         /// </summary>
-        [Parameter(Mandatory = false, Position = 0, ParameterSetName = "Identity")]
+        [Parameter(Mandatory = true, Position = 0, ParameterSetName = "Identity")]
         [ValidateRange(PSPasswordSync.All, PSPasswordSync.SystemPassPhrase)]
         public PSPasswordSync Kind { get; set; } = PSPasswordSync.All;
 
         /// <summary>
-        /// <para type="description">Credential clear value.</para>
+        /// <para type="description">Credential/Password value.</para>
         /// </summary>
         [Parameter(Mandatory = false, Position = 1, ParameterSetName = "Identity")]
-        [ValidateNotNullOrEmpty()]
         public String Value { get; set; } = string.Empty;
+
+        /// <summary>
+        /// <para type="description">Clear Credential value or Reset XORKey to default.</para>
+        /// </summary>
+        [Parameter(Mandatory = false, Position = 2, ParameterSetName = "Identity")]
+        public SwitchParameter ClearCredential { get; set; }
 
         /// <summary>
         /// BeginProcessing method implementation
@@ -7557,7 +7562,7 @@ namespace MFA
             {
                 try
                 {
-                    ManagementService.SetMFACredentials(Host, (byte)Kind, Value);
+                    ManagementService.SetMFACredentials(Host, (byte)Kind, Value, ClearCredential.IsPresent);
                     this.Host.UI.WriteLine(ConsoleColor.Green, this.Host.UI.RawUI.BackgroundColor, infos_strings.InfosCredentialsChanged);
                 }
                 catch (Exception ex)

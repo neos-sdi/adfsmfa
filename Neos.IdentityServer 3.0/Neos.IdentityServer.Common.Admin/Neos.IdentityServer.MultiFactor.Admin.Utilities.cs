@@ -1064,7 +1064,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <summary>
         /// SetMFACredentials method implementation
         /// </summary>
-        internal static void SetMFACredentials(PSHost host, byte kind, string value)
+        internal static void SetMFACredentials(PSHost host, byte kind, string value, bool clearvalue = false)
         {
             MFAConfig config = CFGUtilities.ReadConfigurationFromADFSStore(host);
             if (config == null)
@@ -1074,47 +1074,85 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 case 0x00:
                     using (AESEncryption MSIS = new AESEncryption())
                     {
-                        config.Hosts.ActiveDirectoryHost.Password = MSIS.Encrypt(config.Hosts.ActiveDirectoryHost.Password);
-                        config.MailProvider.Password = MSIS.Encrypt(config.MailProvider.Password);
-                        config.KeysConfig.XORSecret = MSIS.Encrypt(config.KeysConfig.XORSecret);
-                        if (!string.IsNullOrEmpty(value))
-                            host.UI.WriteWarningLine("Block Updates not allowed, values where only encrypted !");
+                        if (clearvalue)
+                        {
+                            config.Hosts.ActiveDirectoryHost.Password = string.Empty;
+                            config.Hosts.ActiveDirectoryHost.Account = string.Empty;
+                            config.Hosts.ActiveDirectoryHost.DomainAddress = string.Empty;
+                            config.MailProvider.Password = string.Empty;
+                            config.MailProvider.UserName = string.Empty;
+                            config.MailProvider.Anonymous = true;
+                            config.KeysConfig.XORSecret = XORUtilities.DefaultKey;
+                        }
+                        else
+                        {
+                            config.Hosts.ActiveDirectoryHost.Password = MSIS.Encrypt(config.Hosts.ActiveDirectoryHost.Password);
+                            config.MailProvider.Password = MSIS.Encrypt(config.MailProvider.Password);
+                            config.KeysConfig.XORSecret = MSIS.Encrypt(config.KeysConfig.XORSecret);
+                            if (!string.IsNullOrEmpty(value))
+                                host.UI.WriteWarningLine("Block Updates not allowed, values where only encrypted !");
+                        }
                     }
                     break;
                 case 0x01:
                     using (AESEncryption MSIS = new AESEncryption())
                     {
-                        if (string.IsNullOrEmpty(value))
+                        if (clearvalue)
                         {
-                            config.Hosts.ActiveDirectoryHost.Password = MSIS.Encrypt(config.Hosts.ActiveDirectoryHost.Password);
-                            host.UI.WriteWarningLine("Empty value not allowed, value was only encrypted !");
+                            config.Hosts.ActiveDirectoryHost.Password = string.Empty;
+                            config.Hosts.ActiveDirectoryHost.Account = string.Empty;
+                            config.Hosts.ActiveDirectoryHost.DomainAddress = string.Empty;
                         }
                         else
-                            config.Hosts.ActiveDirectoryHost.Password = MSIS.Encrypt(value);
+                        { 
+                            if (string.IsNullOrEmpty(value))
+                            {
+                                config.Hosts.ActiveDirectoryHost.Password = MSIS.Encrypt(config.Hosts.ActiveDirectoryHost.Password);
+                                host.UI.WriteWarningLine("Empty value not allowed, value was only encrypted !");
+                            }
+                            else
+                                config.Hosts.ActiveDirectoryHost.Password = MSIS.Encrypt(value);
+                        }
                     }
                     break;
                 case 0x02:
                     using (AESEncryption MSIS = new AESEncryption())
                     {
-                        if (string.IsNullOrEmpty(value))
+                        if (clearvalue)
                         {
-                            config.MailProvider.Password = MSIS.Encrypt(config.MailProvider.Password);
-                            host.UI.WriteWarningLine("Empty value not allowed, value was only encrypted !");
+                            config.MailProvider.Password = string.Empty;
+                            config.MailProvider.UserName = string.Empty;
+                            config.MailProvider.Anonymous = true;
                         }
                         else
-                            config.MailProvider.Password = MSIS.Encrypt(value);
+                        {
+                            if (string.IsNullOrEmpty(value))
+                            {
+                                config.MailProvider.Password = MSIS.Encrypt(config.MailProvider.Password);
+                                host.UI.WriteWarningLine("Empty value not allowed, value was only encrypted !");
+                            }
+                            else
+                                config.MailProvider.Password = MSIS.Encrypt(value);
+                        }
                     }
                     break;
                 case 0x03:
                     using (AESEncryption MSIS = new AESEncryption())
                     {
-                        if (string.IsNullOrEmpty(value))
+                        if (clearvalue)
                         {
-                            config.KeysConfig.XORSecret = MSIS.Encrypt(config.KeysConfig.XORSecret);
-                            host.UI.WriteWarningLine("Empty value not allowed, value was only encrypted !");
+                            config.KeysConfig.XORSecret = XORUtilities.DefaultKey;
                         }
                         else
-                            config.KeysConfig.XORSecret = MSIS.Encrypt(value);
+                        {
+                            if (string.IsNullOrEmpty(value))
+                            {
+                                config.KeysConfig.XORSecret = MSIS.Encrypt(config.KeysConfig.XORSecret);
+                                host.UI.WriteWarningLine("Empty value not allowed, value was only encrypted !");
+                            }
+                            else
+                                config.KeysConfig.XORSecret = MSIS.Encrypt(value);
+                        }
                     }
                     break;
             }
