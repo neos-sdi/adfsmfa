@@ -205,7 +205,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Your account is not valided !&lt;br&gt;
+        ///   Recherche une chaîne localisée semblable à Your account is not validated !&lt;br&gt;
         ///You can try the operation again by selecting &quot;Previous&quot;..
         /// </summary>
         internal static string HtmlLabelVERIFYOTPError {

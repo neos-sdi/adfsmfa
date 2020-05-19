@@ -173,7 +173,7 @@
     <value>Недействительное значение PIN-кода!</value>
   </data>
   <data name="ErrorReplayToken" xml:space="preserve">
-    <value>Ошибка на autehntification процесс ! Один раз пароль был сыгран раньше</value>
+    <value>Ошибка во время аутентификации ! Один раз пароль был сыгран раньше</value>
   </data>
   <data name="ErrorSendingToastInformation" xml:space="preserve">
     <value>Ошибка при отправке запроса на идентификацию!</value>
