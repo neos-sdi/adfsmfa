@@ -166,7 +166,7 @@
     <value>Sending your inscription request via email to administrators</value>
   </data>
   <data name="HtmlLabelVERIFYOTPError" xml:space="preserve">
-    <value>Your account is not valided !&lt;br&gt;
+    <value>Your account is not validated !&lt;br&gt;
 You can try the operation again by selecting "Previous".</value>
   </data>
   <data name="HtmlLabelVERIFYOTPOK" xml:space="preserve">

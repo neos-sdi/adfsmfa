@@ -148,7 +148,7 @@
     <comment>Dispositif biométrique</comment>
   </data>
   <data name="BIOUIMessage" xml:space="preserve">
-    <value>Touch or Scan with you biometric device</value>
+    <value>Touch or Scan with your biometric device</value>
     <comment>Touchez ou numérisez avec votre dispositif biométrique</comment>
   </data>
   <data name="BIOUIOTPLabel" xml:space="preserve">

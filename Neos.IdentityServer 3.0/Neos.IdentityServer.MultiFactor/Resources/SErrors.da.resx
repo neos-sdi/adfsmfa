@@ -175,7 +175,7 @@
     <value>Ugyldig pinkodeværdi !</value>
   </data>
   <data name="ErrorReplayToken" xml:space="preserve">
-    <value>Fejl på autehntification proces ! Engangsadgangskoden er blevet afspillet før</value>
+    <value>Fejl ved godkendelsesprocedurer ! Engangsadgangskoden er blevet afspillet før</value>
   </data>
   <data name="ErrorSendingToastInformation" xml:space="preserve">
     <value>Der opstod en fejl under afsendelse af id-anmodning !</value>

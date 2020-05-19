@@ -175,7 +175,7 @@
     <value>Valor de PIN inválido!</value>
   </data>
   <data name="ErrorReplayToken" xml:space="preserve">
-    <value>Erro no processo de autehntification! Uma senha de tempo foi reproduzida antes</value>
+    <value>Erro no processo de autenticação! Uma senha de tempo foi reproduzida antes</value>
   </data>
   <data name="ErrorSendingToastInformation" xml:space="preserve">
     <value>Erro ao enviar pedido de identificação!</value>
