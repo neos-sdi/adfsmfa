@@ -105,6 +105,7 @@
   <ItemGroup>
     <Compile Include="Neos.IdentityServer.MultiFactor.Provider.cs" />
     <None Include="app.config" />
+    <None Include="Installer\License.rtf" />
     <None Include="Neos.IdentityServer.pfx" />
     <None Include="ThreatDB\threatconfig.db" />
   </ItemGroup>
@@ -119,6 +120,8 @@
     <Content Include="ADDS\MFA.SCHEMA.LDF">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Installer\Banner.bmp" />
+    <Content Include="Installer\Dialog.bmp" />
     <Content Include="Resources\crouge.jpg" />
     <Content Include="Resources\cvert.jpg" />
     <None Include="Resources\google.png" />

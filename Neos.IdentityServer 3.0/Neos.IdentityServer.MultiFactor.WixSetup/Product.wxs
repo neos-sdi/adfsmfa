@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" >
-  <Product Id="a23dd485-5365-4d82-8309-103494000001" Name="Neos MFA Provider for ADFS 2019/2016/2012 R2" Language="1033" Version="3.0.2005.2" Manufacturer="Neos-SDI" UpgradeCode="a23dd485-5365-4d82-8309-103495000001" >
+  <Product Id="a23dd485-5365-4d82-8309-103494000001" Name="MFA Provider for ADFS 2019/2016/2012 R2" Language="1033" Version="3.0.2005.3" Manufacturer="Neos-SDI" UpgradeCode="a23dd485-5365-4d82-8309-103495000001" >
 
-    <Package InstallerVersion="500" Compressed="yes" InstallScope="perMachine" InstallPrivileges="elevated" Platform="x64" Description="Multi-Factor Authentication for ADFS 2019/2016/2012 r2" />
+    <Package InstallerVersion="500" Compressed="yes" InstallScope="perMachine" InstallPrivileges="elevated" Platform="x64" Description="Multi-Factor Authentication for ADFS 2019/2016/2012R2" />
 
     <MajorUpgrade DisallowUpgradeErrorMessage="A later version of [ProductName] is already installed" 
                   DowngradeErrorMessage ="A later version of [ProductName] is already installed" 
                   Disallow="yes" AllowDowngrades="no"/>
         
+    <Property Id="ARPNOREPAIR" Value="yes" Secure="yes" /> 
+    
     <MediaTemplate EmbedCab="yes" CabinetTemplate="MFA{0}.cab" />
     <Icon Id="mfaicon.ico" SourceFile="$(var.Neos.IdentityServer.Console.NativeResources.ProjectDir)\Microsoft_201.ico"/>
     <Property Id="ARPPRODUCTICON" Value="mfaicon.ico" />
@@ -80,9 +82,9 @@
     
     <Binary Id='CustomAction.CA' SourceFile="$(var.Neos.IdentityServer.Deployment.TargetDir)Neos.IdentityServer.Deployment.CA.dll" />
     <CustomAction Id="xInstallService" BinaryKey='CustomAction.CA' DllEntry="InstallService" Execute="commit" Impersonate="no" />
-    <CustomAction Id="xUninstallService" BinaryKey='CustomAction.CA' DllEntry="UnInstallService" Execute="deferred" Impersonate="no" />
+    <CustomAction Id="xUninstallService" BinaryKey='CustomAction.CA' DllEntry="UnInstallService" Execute="deferred" Impersonate="no" /> 
     
-    <InstallExecuteSequence>    
+    <InstallExecuteSequence>       
       <Custom Action="xInstallService" Before="InstallFinalize" >
         NOT Installed AND NOT PATCH        
       </Custom>   
@@ -92,11 +94,21 @@
         Installed AND NOT PATCH
       </Custom>
     </InstallExecuteSequence> 
-    
     <Condition Message="This installation requires admin privileges" >
        Privileged
     </Condition>
+    <Condition Message="Repair not allowed, you must uninstall and reinstall" >
+       <![CDATA[REINSTALL=""]]>
+    </Condition>
 
+    <UIRef Id="WixUI_Minimal" />
+    <WixVariable Id="WixUILicenseRtf" Value="$(var.Neos.IdentityServer.MultiFactor.ProjectDir)Installer\License.rtf" />
+    <WixVariable Id="WixUIBannerBmp" Value="$(var.Neos.IdentityServer.MultiFactor.ProjectDir)Installer\banner.bmp" />
+    <WixVariable Id="WixUIDialogBmp" Value="$(var.Neos.IdentityServer.MultiFactor.ProjectDir)Installer\dialog.bmp" />   
+    <UI>
+       <ProgressText Action="xInstallService">Publishing Assemblies and Files</ProgressText>
+    </UI>
+  
   </Product>
 
   <Fragment>
@@ -712,7 +724,7 @@
       <Component Id="GACDeployment60" Guid="E7173CAB-E43F-4A07-B5F1-018000006600" Win64="yes" Directory="INSTALLFOLDER" DiskId="1" >
         <File KeyPath="yes" Id="Neos.IdentityServer.Console.dll"  Name="Neos.IdentityServer.Console.dll" Source="$(var.Neos.IdentityServer.Console.TargetPath)" Vital="yes"/>
         <File KeyPath="no" Id="mfa.msc"  Name="mfa.msc" Source="$(var.Neos.IdentityServer.Console.ProjectDir)SnapMMC\mfa.msc" Vital="yes" />
-        <File KeyPath="no" Id="Neos.IdentityServer.Console.NativeResources.dll"  Name="Neos.IdentityServer.Console.NativeResources.dll" Source="$(var.Neos.IdentityServer.Console.NativeResources.TargetPath)" Vital="yes" />
+        <File KeyPath="no" Id="Neos.IdentityServer.Console.NativeResources.dll"  Name="Neos.IdentityServer.Console.NativeResources.dll" Source="$(var.Neos.IdentityServer.Console.NativeResources.TargetPath)" Vital="yes" />      
       </Component>
       <Component Id="GACDeployment61" Guid="E7173CAB-E43F-4A07-B5F1-018000006601" Win64="yes" Directory="MFAFR" DiskId="1" >
         <File KeyPath="yes" Id="Neos.IdentityServer.Console.fr.resources.dll"  Name="Neos.IdentityServer.Console.resources.dll" Source="$(var.Neos.IdentityServer.Console.TargetDir)fr\Neos.IdentityServer.Console.resources.dll" Vital="no" />

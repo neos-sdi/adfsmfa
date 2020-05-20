@@ -26,45 +26,57 @@ using System.Collections;
 using System.Threading;
 using System.Windows.Forms;
 using Microsoft.Win32;
+using System.Linq;
+using System.Reflection;
+using Microsoft.ManagementConsole;
 
 namespace Neos.IdentityServer.Deployment
 {
     public class CustomActions
     {
-      //  [CustomAction]
-        public static ActionResult StartService(Session session)
+        /// <summary>
+        /// StartService method implementation
+        /// </summary>
+        public static bool StartService(Session session, string exeFileName)
         {
             try
             {
+                if (!File.Exists(exeFileName))
+                    return false;
                 session.Log("Service Starting [mfanotifhub]");
                 Trace.TraceInformation("Service Starting [mfanotifhub]");
                 internalStartService();
                 session.Log("Service Started [mfanotifhub]");
                 Trace.TraceInformation("Service Started [mfanotifhub]");
-                return ActionResult.Success;
+                return true;
             }
             catch (Exception e)
             {
                 session.Log("Service error [mfanotifhub] : "+e.Message);
                 Trace.TraceInformation("Service error [mfanotifhub] : " + e.Message);
-                return ActionResult.Failure;
+                return false;
             }
         }
 
-      //  [CustomAction]
-        public static ActionResult StopService(Session session)
+        /// <summary>
+        /// StopService method implementation
+        /// </summary>
+        public static bool StopService(Session session, string exeFileName)
         {
+            bool ret = false;
             try
             {
+                if (!File.Exists(exeFileName))
+                   return false;
                 session.Log("Service Stopping [mfanotifhub]");
-                internalStopService();
+                ret = internalStopService();
                 session.Log("Service Stopped [mfanotifhub]");
-                return ActionResult.Success;
+                return ret;
             }
             catch (Exception e)
             {
                 session.Log("Service error [mfanotifhub] : " + e.Message);
-                return ActionResult.Failure;
+                return false;
             }
         }
 
@@ -99,13 +111,28 @@ namespace Neos.IdentityServer.Deployment
                 {
                     session.Log(e.Message);
                 }
-                session.Log("Service Installing [mfanotifhub]");
-                internalInstallService(session, path + @"Neos.IdentityServer.MultiFactor.NotificationHub.exe");
-                session.Log("Service Installed [mfanotifhub]");
-                session.Log("Snapin Installing [Neos.IdentityServer.console]");
-                internalInstallSnapin(session, path + @"Neos.IdentityServer.Console.dll");
-                session.Log("Snapin Installed [Neos.IdentityServer.console]");
-                StartService(session);
+                if (!IsServiceInstalled(session, path + @"Neos.IdentityServer.MultiFactor.NotificationHub.exe"))
+                {
+                    session.Log("Service Installing [mfanotifhub]");
+                    session.Message(InstallMessage.ActionStart, new Record("callAddProgressInfo", "Install MFA Service", ""));
+                    internalInstallService(session, path + @"Neos.IdentityServer.MultiFactor.NotificationHub.exe");
+                    session.Log("Service Installed [mfanotifhub]");
+                    session.Message(InstallMessage.ActionStart, new Record("callAddProgressInfo", "MFA Service Installed", ""));
+                }
+                if (!IsSnapinInstalled(session, path + @"Neos.IdentityServer.Console.dll"))
+                { 
+                    session.Log("Snapin Installing [Neos.IdentityServer.console]");
+                    session.Message(InstallMessage.ActionStart, new Record("callAddProgressInfo", "Install MFA Admin Console", ""));
+                    internalInstallSnapin(session, path + @"Neos.IdentityServer.Console.dll");
+                    session.Log("Snapin Installed [Neos.IdentityServer.console]");
+                    session.Message(InstallMessage.ActionStart, new Record("callAddProgressInfo", "MFA Admin Console Installed", ""));
+                }
+                if (IsServiceInstalled(session, path + @"Neos.IdentityServer.MultiFactor.NotificationHub.exe"))
+                {
+                    session.Message(InstallMessage.ActionStart, new Record("callAddProgressInfo", "Starting MFA Service", ""));
+                    StartService(session, path + @"Neos.IdentityServer.MultiFactor.NotificationHub.exe");
+                    session.Message(InstallMessage.ActionStart, new Record("callAddProgressInfo", "Removing Backup Files", ""));
+                }
                 return ActionResult.Success;
             }
             catch (Exception e)
@@ -129,14 +156,21 @@ namespace Neos.IdentityServer.Deployment
                 {
                     session.Log(e.Message);
                 }
-                StopService(session);
-                session.Log("Service UnInstalling [mfanotifhub]");
-                internalUninstallService(session, path + @"Neos.IdentityServer.MultiFactor.NotificationHub.exe");
-                session.Log("Service UnInstalled [mfanotifhub]");
-                session.Log("Snapin UnInstalling [Neos.IdentityServer.console]");
-                internalUninstallSnapin(session, path + @"Neos.IdentityServer.Console.dll");
-                session.Log("Snapin UnInstalled [Neos.IdentityServer.console]");
-
+                if (IsServiceInstalled(session, path + @"Neos.IdentityServer.MultiFactor.NotificationHub.exe"))
+                {
+                    if (StopService(session, path + @"Neos.IdentityServer.MultiFactor.NotificationHub.exe"))
+                    {
+                        session.Log("Service UnInstalling [mfanotifhub]");
+                        internalUninstallService(session, path + @"Neos.IdentityServer.MultiFactor.NotificationHub.exe");
+                        session.Log("Service UnInstalled [mfanotifhub]");
+                    }
+                }
+                if (IsSnapinInstalled(session, path + @"Neos.IdentityServer.Console.dll"))
+                {
+                    session.Log("Snapin UnInstalling [Neos.IdentityServer.console]");
+                    internalUninstallSnapin(session, path + @"Neos.IdentityServer.Console.dll");
+                    session.Log("Snapin UnInstalled [Neos.IdentityServer.console]");
+                }
                 return ActionResult.Success;
             }
             catch (Exception e)
@@ -162,8 +196,6 @@ namespace Neos.IdentityServer.Deployment
         /// </summary>
         private static void internalInstallService(Session session, string exeFilename)
         {
-            if (!File.Exists(exeFilename))
-                throw new FileLoadException("Invalid FileName : " + exeFilename);
             try
             {
                 IDictionary installstate = new Hashtable();
@@ -179,8 +211,6 @@ namespace Neos.IdentityServer.Deployment
 
                 installer.Install(installstate);
                 installer.Commit(installstate); 
-
-               // System.Configuration.Install.ManagedInstallerClass.InstallHelper(new string[] { exeFilename });
 
                 string state = Path.GetFileNameWithoutExtension(exeFilename) + ".installState";
                 File.Delete(dir + "\\" + state);
@@ -197,8 +227,6 @@ namespace Neos.IdentityServer.Deployment
         /// </summary>
         private static void internalUninstallService(Session session, string exeFilename)
         {
-            if (!File.Exists(exeFilename))
-               throw new FileLoadException("Invalid FileName : " + exeFilename);
             try
             {
                 string dir = Path.GetDirectoryName(exeFilename);
@@ -210,8 +238,6 @@ namespace Neos.IdentityServer.Deployment
                 installer.Path = exeFilename;
                 installer.CommandLine = new string[2] { string.Format("/logFile={0}", file), string.Format("/InstallStateDir={0}", dir) };
                 installer.Uninstall(new Hashtable()); 
-
-               // System.Configuration.Install.ManagedInstallerClass.InstallHelper(new string[] { "/u", exeFilename });
 
                 string state = Path.GetFileNameWithoutExtension(exeFilename) + ".installState";
                 File.Delete(dir + "\\" + state);
@@ -228,8 +254,6 @@ namespace Neos.IdentityServer.Deployment
         /// </summary>
         private static void internalInstallSnapin(Session session, string dllFilename)
         {
-            if (!File.Exists(dllFilename))
-                throw new FileLoadException("Invalid FileName : " + dllFilename);
             try
             {
                 IDictionary installstate = new Hashtable();
@@ -244,8 +268,6 @@ namespace Neos.IdentityServer.Deployment
                 installer.CommandLine = new string[2] { string.Format("/logFile={0}", file), string.Format("/InstallStateDir={0}", dir) };
                 installer.Install(installstate);
                 installer.Commit(installstate); 
-
-              //  System.Configuration.Install.ManagedInstallerClass.InstallHelper(new string[] { dllFilename });
 
                 string state = Path.GetFileNameWithoutExtension(dllFilename) + ".installState";
                 File.Delete(dir + "\\" + state);
@@ -262,8 +284,6 @@ namespace Neos.IdentityServer.Deployment
         /// </summary>
         private static void internalUninstallSnapin(Session session, string dllFilename)
         {
-            if (!File.Exists(dllFilename))
-                throw new FileLoadException("Invalid FileName : " + dllFilename);
             try
             {
                 string dir = Path.GetDirectoryName(dllFilename);
@@ -275,8 +295,6 @@ namespace Neos.IdentityServer.Deployment
                 installer.Path = dllFilename;
                 installer.CommandLine = new string[2] { string.Format("/logFile={0}", file), string.Format("/InstallStateDir={0}", dir) };
                 installer.Uninstall(new Hashtable());
-
-               // System.Configuration.Install.ManagedInstallerClass.InstallHelper(new string[] { "/u", dllFilename });
 
                 string state = Path.GetFileNameWithoutExtension(dllFilename) + ".installState";
                 File.Delete(dir +"\\" + state);
@@ -291,7 +309,7 @@ namespace Neos.IdentityServer.Deployment
         /// <summary>
         /// internalStartService method implementation
         /// </summary>
-        private static void internalStartService()
+        private static bool internalStartService()
         {
             ServiceController ADFSController = null;
             try
@@ -302,10 +320,11 @@ namespace Neos.IdentityServer.Deployment
                     ADFSController.Start(new string[] {"Install"});
                     ADFSController.WaitForStatus(ServiceControllerStatus.Running, new TimeSpan(0, 1, 0));
                 }
+                return true;
             }
             catch (Exception)
             {
-                return;
+                return false;
             }
             finally
             {
@@ -316,7 +335,7 @@ namespace Neos.IdentityServer.Deployment
         /// <summary>
         /// internalStopService method implementation
         /// </summary>
-        private static void internalStopService()
+        private static bool internalStopService()
         {
             ServiceController ADFSController = null;
             try
@@ -327,15 +346,81 @@ namespace Neos.IdentityServer.Deployment
                     ADFSController.Stop();
                     ADFSController.WaitForStatus(ServiceControllerStatus.Stopped, new TimeSpan(0, 1, 0));
                 }
+                return true;
             }
             catch (Exception)
             {
-                return;
+                return false;
             }
             finally
             {
                 ADFSController.Close();
             }
+        }
+
+        /// <summary>
+        /// IsServiceInstalled method implementation
+        /// </summary>
+        private static bool IsServiceInstalled(Session session, string exeFilename)
+        {
+            if (!File.Exists(exeFilename))
+                return false;
+            else
+                return ServiceController.GetServices().Any(serviceController => serviceController.ServiceName.Equals("mfanotifhub"));
+        }
+
+        /// <summary>
+        /// IsSnapinInstalled method implementation
+        /// </summary>
+        private static bool IsSnapinInstalled(Session session, string dllFilename)
+        {
+            string xx = @"Neos.IdentityServer.Console.ADFSSnapIn, Neos.IdentityServer.Console, Version=3.0.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2";
+            if (!File.Exists(dllFilename))
+                return false;
+            else
+            {
+                RegistryKey rkey64 = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64);
+                try
+                {
+                    RegistryKey key = rkey64.OpenSubKey(@"Software\Microsoft\MMC\Snapins\FX:{9627F1F3-A6D2-4cf8-90A2-10F85A7A4EE7}", RegistryKeyPermissionCheck.ReadSubTree);
+                    try
+                    {
+                        object o = key.GetValue("Type");
+                        if (o != null)
+                        {
+                            Assembly assembly = Assembly.LoadFile(dllFilename);
+                            foreach (Type type in assembly.GetTypes())
+                            {
+                                if (type.IsDefined(typeof(SnapInSettingsAttribute)))
+                                {
+                                    SnapInSettingsAttribute attrib = (SnapInSettingsAttribute)type.GetCustomAttribute(typeof(SnapInSettingsAttribute), false);
+                                    if (attrib != null)
+                                    {
+                                        return (type.AssemblyQualifiedName.ToLower().Equals(xx.ToLower()));
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    catch
+                    {
+                        return false;
+                    }
+                    finally
+                    {
+                        key.Close();
+                    }
+                }
+                catch 
+                {
+                    return false;
+                }
+                finally
+                {
+                    rkey64.Close();
+                }
+            }
+            return false;
         }
 
         private static string EventLogSource = "ADFS MFA DataServices";
