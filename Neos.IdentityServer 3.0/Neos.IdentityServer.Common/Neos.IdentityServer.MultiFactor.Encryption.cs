@@ -113,9 +113,14 @@ namespace Neos.IdentityServer.MultiFactor
                     encryptedBytes = ((RSACryptoServiceProvider)key).Encrypt(plainBytes, true);
                 return encryptedBytes;
             }
+            catch (CryptographicException ce)
+            {
+                Log.WriteEntry(string.Format("(Encryption) : Crytographic error for user {1} \r {0} \r {2}", ce.Message, username, ce.StackTrace), System.Diagnostics.EventLogEntryType.Error, 0000);
+                return null;
+            }
             catch (Exception ex)
             {
-                Log.WriteEntry(string.Format("Crytograpphic Error for user {0} \r {1}", ex.Message, username), System.Diagnostics.EventLogEntryType.Error, 0000);
+                Log.WriteEntry(string.Format("(Encryption) : Encryption error for user {1} \r {0} \r {2}", ex.Message, username, ex.StackTrace), System.Diagnostics.EventLogEntryType.Error, 0000);
                 return null;
             }
         }
@@ -149,14 +154,14 @@ namespace Neos.IdentityServer.MultiFactor
                 this.CheckSum = CheckSumEncoding.CheckSum(outval); 
                 return bytes;
             }
-            catch (System.Security.Cryptography.CryptographicException ce)
+            catch (CryptographicException ce)
             {
-                Log.WriteEntry(string.Format("Crytograpphic Error for user {0} \r {1}", ce.Message, username), System.Diagnostics.EventLogEntryType.Error, 0000);
+                Log.WriteEntry(string.Format("(Encryption) : Crytographic error for user {1} \r {0} \r {2}", ce.Message, username, ce.StackTrace), System.Diagnostics.EventLogEntryType.Error, 0000);
                 return null;
             }
             catch (Exception ex)
             {
-                Log.WriteEntry(string.Format("Crytograpphic Error for user {0} \r {1}", ex.Message, username), System.Diagnostics.EventLogEntryType.Error, 0000);
+                Log.WriteEntry(string.Format("(Encryption) : Decryptionc error for user {1} \r {0} \r {2}", ex.Message, username, ex.StackTrace), System.Diagnostics.EventLogEntryType.Error, 0000);
                 return null;
             }
         }
@@ -248,9 +253,14 @@ namespace Neos.IdentityServer.MultiFactor
 
                 return XORUtilities.XOREncryptOrDecrypt(encryptedBytes, this.XORSecret);
             }
+            catch (CryptographicException ce)
+            {
+                Log.WriteEntry(string.Format("(RSAEncryption Encrypt) : Crytographic error for user  {1} \r {0} \r {2}", ce.Message, username, ce.StackTrace), System.Diagnostics.EventLogEntryType.Error, 0000);
+                return null;
+            }
             catch (Exception ex)
             {
-                Log.WriteEntry(string.Format("Crytograpphic Error for user {0} \r {1}", ex.Message, username), System.Diagnostics.EventLogEntryType.Error, 0000);
+                Log.WriteEntry(string.Format("(RSAEncryption Encrypt) : Encryption error for user  {1} \r {0} \r {2}", ex.Message, username, ex.StackTrace), System.Diagnostics.EventLogEntryType.Error, 0000);
                 return null;
             }
         }
@@ -285,14 +295,14 @@ namespace Neos.IdentityServer.MultiFactor
                 Buffer.BlockCopy(fulldecryptedBytes, 0, decryptedkey, 0, 128);
                 return decryptedkey;
             }
-            catch (System.Security.Cryptography.CryptographicException ce)
+            catch (CryptographicException ce)
             {
-                Log.WriteEntry(string.Format("Crytograpphic Error for user {0} \r {1}", ce.Message, username), System.Diagnostics.EventLogEntryType.Error, 0000);
+                Log.WriteEntry(string.Format("(RSAEncryption Decrypt) : Crytographic error for user  {1} \r {0} \r {2}", ce.Message, username, ce.StackTrace), System.Diagnostics.EventLogEntryType.Error, 0000);
                 return null;
             }
             catch (Exception ex)
             {
-                Log.WriteEntry(string.Format("Crytograpphic Error for user {0} \r {1}", ex.Message, username), System.Diagnostics.EventLogEntryType.Error, 0000);
+                Log.WriteEntry(string.Format("(RSAEncryption Decrypt) : Decryption error for user  {1} \r {0} \r {2}", ex.Message, username, ex.StackTrace), System.Diagnostics.EventLogEntryType.Error, 0000);
                 return null;
             }
         }
@@ -359,9 +369,14 @@ namespace Neos.IdentityServer.MultiFactor
                 byte[] plainBytes = GenerateKey(username);
                 return XORUtilities.XOREncryptOrDecrypt(plainBytes, this.XORSecret);
             }
+            catch (CryptographicException ce)
+            {
+                Log.WriteEntry(string.Format("(RNGEncryption Encrypt) : Crytographic Error for user  {1} \r {0} \r {2}", ce.Message, username, ce.StackTrace), System.Diagnostics.EventLogEntryType.Error, 0000);
+                return null;
+            }
             catch (Exception ex)
             {
-                Log.WriteEntry(string.Format("Crytograpphic Error for user {0} \r {1}", ex.Message, username), System.Diagnostics.EventLogEntryType.Error, 0000);
+                Log.WriteEntry(string.Format("(RNGEncryption Encrypt) : Encryption error for user  {1} \r {0} \r {2}", ex.Message, username, ex.StackTrace), System.Diagnostics.EventLogEntryType.Error, 0000);
                 return null;
             }
         }
@@ -386,14 +401,14 @@ namespace Neos.IdentityServer.MultiFactor
                 Buffer.BlockCopy(decryptedBytes, 0, decryptedkey, 0, size);
                 return decryptedkey;
             }
-            catch (System.Security.Cryptography.CryptographicException ce)
+            catch (CryptographicException ce)
             {
-                Log.WriteEntry(string.Format("Crytograpphic Error for user {0} \r {1}", ce.Message, username), System.Diagnostics.EventLogEntryType.Error, 0000);
+                Log.WriteEntry(string.Format("(RNGEncryption Decrypt) : Crytographic Error for user {1} \r {0} \r {2}", ce.Message, username, ce.StackTrace), System.Diagnostics.EventLogEntryType.Error, 0000);
                 return null;
             }
             catch (Exception ex)
             {
-                Log.WriteEntry(string.Format("Crytograpphic Error for user {0} \r {1}", ex.Message, username), System.Diagnostics.EventLogEntryType.Error, 0000);
+                Log.WriteEntry(string.Format("(RNGEncryption Decrypt) : Decryption Error for user {1} \r {0} \r {2}", ex.Message, username, ex.StackTrace), System.Diagnostics.EventLogEntryType.Error, 0000);
                 return null;
             }
         }

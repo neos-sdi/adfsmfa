@@ -32,7 +32,7 @@ using Microsoft.ManagementConsole;
 
 namespace Neos.IdentityServer.Deployment
 {
-    public class CustomActions
+    public partial class CustomActions
     {
         /// <summary>
         /// StartService method implementation
@@ -95,17 +95,60 @@ namespace Neos.IdentityServer.Deployment
                 return Path.Combine(baseDirectory, programFilesX86) + @"\MFA\";
         }
 
+        public static void ResetProgressBar(Session session, int totalStatements, string actionName, string actionDesc)
+        {
+            using (Record actionrecord = new Record(2))
+            {
+                actionrecord.SetString(1, actionName);
+                actionrecord.SetString(2, actionDesc);
+               // actionrecord.SetString(3, "[0]");
+                session.Message(InstallMessage.ActionStart, actionrecord);
+            }
+            Application.DoEvents();
+            using (Record record = new Record(4))
+            {
+                record.SetInteger(1, 0);
+                record.SetInteger(2, totalStatements-1);
+                record.SetInteger(3, 0);
+                record.SetInteger(4, 0);
+                session.Message(InstallMessage.Progress, record);
+            }
+            Application.DoEvents();
+            using (Record record2 = new Record(3))
+            {
+                record2.SetInteger(1, 1);
+                record2.SetInteger(2, 1);
+                record2.SetInteger(3, 1);
+                session.Message(InstallMessage.Progress, record2);
+            }
+            Application.DoEvents();
+        }
+
+        public static void ProgressBarMessage(Session session, string message)
+        {
+            using (Record actiondata = new Record(0))
+            {
+                actiondata.SetString(0, message);
+                session.Message(InstallMessage.ActionData, actiondata);
+                Application.DoEvents();
+                Thread.Sleep(1000);
+            }
+        }
+
         [CustomAction]
         public static ActionResult InstallService(Session session)
         {
-
+            const int iNumberItems = 5;
             string path = string.Empty;
+
             try
             {
+                ResetProgressBar(session, iNumberItems, "xInstallService", "Installing MFA Services...");
                 try
                 {
                     RegisterEventLogs();
                     path = GetInstallPath(session);
+                    ProgressBarMessage(session, "installtion paths and Evenlog sources");
                 }
                 catch (Exception e)
                 {
@@ -113,31 +156,26 @@ namespace Neos.IdentityServer.Deployment
                 }
                 if (!IsServiceInstalled(session, path + @"Neos.IdentityServer.MultiFactor.NotificationHub.exe"))
                 {
-                    session.Log("Service Installing [mfanotifhub]");
-                    session.Message(InstallMessage.ActionStart, new Record("callAddProgressInfo", "Install MFA Service", ""));
+                    ProgressBarMessage(session, "Installing MFA Service");
                     internalInstallService(session, path + @"Neos.IdentityServer.MultiFactor.NotificationHub.exe");
-                    session.Log("Service Installed [mfanotifhub]");
-                    session.Message(InstallMessage.ActionStart, new Record("callAddProgressInfo", "MFA Service Installed", ""));
                 }
+
                 if (!IsSnapinInstalled(session, path + @"Neos.IdentityServer.Console.dll"))
-                { 
-                    session.Log("Snapin Installing [Neos.IdentityServer.console]");
-                    session.Message(InstallMessage.ActionStart, new Record("callAddProgressInfo", "Install MFA Admin Console", ""));
+                {
+                    ProgressBarMessage(session, "Installing MFA Admin Console");
                     internalInstallSnapin(session, path + @"Neos.IdentityServer.Console.dll");
-                    session.Log("Snapin Installed [Neos.IdentityServer.console]");
-                    session.Message(InstallMessage.ActionStart, new Record("callAddProgressInfo", "MFA Admin Console Installed", ""));
                 }
                 if (IsServiceInstalled(session, path + @"Neos.IdentityServer.MultiFactor.NotificationHub.exe"))
                 {
-                    session.Message(InstallMessage.ActionStart, new Record("callAddProgressInfo", "Starting MFA Service", ""));
+                    ProgressBarMessage(session, "Starting MFA Service");
                     StartService(session, path + @"Neos.IdentityServer.MultiFactor.NotificationHub.exe");
-                    session.Message(InstallMessage.ActionStart, new Record("callAddProgressInfo", "Removing Backup Files", ""));
+                    ProgressBarMessage(session, "Removing Backup Files");
                 }
                 return ActionResult.Success;
             }
             catch (Exception e)
             {
-                session.Log("Service error [mfanotifhub] : " + e.Message);
+                session.Log(e.Message);
                 return ActionResult.Failure;
             }
         }
@@ -145,12 +183,16 @@ namespace Neos.IdentityServer.Deployment
         [CustomAction]
         public static ActionResult UnInstallService(Session session)
         {
+            const int iNumberItems = 5;
             string path = string.Empty;
+
             try
             {
+                ResetProgressBar(session, iNumberItems, "xUnInstallService", "UnInstalling MFA Services...");
                 try
                 {
                     path = GetInstallPath(session);
+                    ProgressBarMessage(session, "installtion paths");
                 }
                 catch (Exception e)
                 {
@@ -158,35 +200,35 @@ namespace Neos.IdentityServer.Deployment
                 }
                 if (IsServiceInstalled(session, path + @"Neos.IdentityServer.MultiFactor.NotificationHub.exe"))
                 {
+                    ProgressBarMessage(session, "Stopping MFA Service");
                     if (StopService(session, path + @"Neos.IdentityServer.MultiFactor.NotificationHub.exe"))
                     {
-                        session.Log("Service UnInstalling [mfanotifhub]");
+                        ProgressBarMessage(session, "UnInstalling MFA Service");
                         internalUninstallService(session, path + @"Neos.IdentityServer.MultiFactor.NotificationHub.exe");
-                        session.Log("Service UnInstalled [mfanotifhub]");
                     }
                 }
                 if (IsSnapinInstalled(session, path + @"Neos.IdentityServer.Console.dll"))
                 {
-                    session.Log("Snapin UnInstalling [Neos.IdentityServer.console]");
+                    ProgressBarMessage(session, "UnInstalling MFA Admin Console");
                     internalUninstallSnapin(session, path + @"Neos.IdentityServer.Console.dll");
-                    session.Log("Snapin UnInstalled [Neos.IdentityServer.console]");
                 }
                 return ActionResult.Success;
             }
             catch (Exception e)
             {
-                session.Log("Service error [mfanotifhub] : " + e.Message);
+                session.Log(e.Message);
                 return ActionResult.Failure;
             }
             finally
             {
                 try
                 {
-                    session.Log("Delete Cache config file");
+                    ProgressBarMessage(session, "Removing Backup Files");
                     File.Delete(path + @"Config\Config.db");
                 }
-                catch
+                catch (Exception e)
                 {
+                    session.Log(e.Message);
                 }
             }
         }

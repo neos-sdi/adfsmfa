@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" >
-  <Product Id="a23dd485-5365-4d82-8309-103494000001" Name="MFA Provider for ADFS 2019/2016/2012 R2" Language="1033" Version="3.0.2005.3" Manufacturer="Neos-SDI" UpgradeCode="a23dd485-5365-4d82-8309-103495000001" >
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:netfx="http://schemas.microsoft.com/wix/NetFxExtension">
+  <Product Id="a23dd485-5365-4d82-8309-103494000001" Name="MFA Provider for ADFS 2019/2016/2012 R2" Language="1033" Version="3.0.2005.4" Manufacturer="Neos-SDI" UpgradeCode="a23dd485-5365-4d82-8309-103495000001" >
 
     <Package InstallerVersion="500" Compressed="yes" InstallScope="perMachine" InstallPrivileges="elevated" Platform="x64" Description="Multi-Factor Authentication for ADFS 2019/2016/2012R2" />
 
@@ -9,6 +9,7 @@
                   Disallow="yes" AllowDowngrades="no"/>
         
     <Property Id="ARPNOREPAIR" Value="yes" Secure="yes" /> 
+    <PropertyRef Id='WIXNETFX4RELEASEINSTALLED'/>
     
     <MediaTemplate EmbedCab="yes" CabinetTemplate="MFA{0}.cab" />
     <Icon Id="mfaicon.ico" SourceFile="$(var.Neos.IdentityServer.Console.NativeResources.ProjectDir)\Microsoft_201.ico"/>
@@ -78,12 +79,10 @@
       <ComponentGroupRef Id="Neos.IdentityServer.MultiFactor.WebAuthN" />
     </Feature>
 
-    
-    
     <Binary Id='CustomAction.CA' SourceFile="$(var.Neos.IdentityServer.Deployment.TargetDir)Neos.IdentityServer.Deployment.CA.dll" />
-    <CustomAction Id="xInstallService" BinaryKey='CustomAction.CA' DllEntry="InstallService" Execute="commit" Impersonate="no" />
-    <CustomAction Id="xUninstallService" BinaryKey='CustomAction.CA' DllEntry="UnInstallService" Execute="deferred" Impersonate="no" /> 
-    
+    <CustomAction Id="xInstallService" BinaryKey='CustomAction.CA' DllEntry="InstallService" Execute="commit" Impersonate="no" /> 
+    <CustomAction Id="xUninstallService" BinaryKey='CustomAction.CA' DllEntry="UnInstallService" Execute="deferred" Impersonate="no" />    
+        
     <InstallExecuteSequence>       
       <Custom Action="xInstallService" Before="InstallFinalize" >
         NOT Installed AND NOT PATCH        
@@ -100,15 +99,19 @@
     <Condition Message="Repair not allowed, you must uninstall and reinstall" >
        <![CDATA[REINSTALL=""]]>
     </Condition>
-
+    <Condition Message="This application requires .NET Framework 4.7.2 or upper. Please install the .NET Framework then run this installer again." >
+       <![CDATA[(WIXNETFX4RELEASEINSTALLED >= "#461808")]]>
+     <!--  <![CDATA[(WIXNETFX4RELEASEINSTALLED >= "#528040")]]> 4.8 -->
+    </Condition>   
+    
     <UIRef Id="WixUI_Minimal" />
     <WixVariable Id="WixUILicenseRtf" Value="$(var.Neos.IdentityServer.MultiFactor.ProjectDir)Installer\License.rtf" />
     <WixVariable Id="WixUIBannerBmp" Value="$(var.Neos.IdentityServer.MultiFactor.ProjectDir)Installer\banner.bmp" />
-    <WixVariable Id="WixUIDialogBmp" Value="$(var.Neos.IdentityServer.MultiFactor.ProjectDir)Installer\dialog.bmp" />   
+    <WixVariable Id="WixUIDialogBmp" Value="$(var.Neos.IdentityServer.MultiFactor.ProjectDir)Installer\dialog.bmp" />
     <UI>
-       <ProgressText Action="xInstallService">Publishing Assemblies and Files</ProgressText>
-    </UI>
-  
+       <ProgressText Action="xInstallService" >Registering [ProductName]</ProgressText>
+       <ProgressText Action="xUninstallService" >Unregistering [ProductName]</ProgressText>
+    </UI>  
   </Product>
 
   <Fragment>
