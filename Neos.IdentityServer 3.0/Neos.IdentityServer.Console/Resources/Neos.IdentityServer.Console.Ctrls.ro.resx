@@ -651,4 +651,7 @@
   <data name="CTRLSECWSMANSHELLURI" xml:space="preserve">
     <value>Coajă Uri</value>
   </data>
+  <data name="CTRLWEBAUTHNROOTATTESTATION" xml:space="preserve">
+    <value>Solicitați un certificat rădăcină de atestare valabil</value>
+  </data>
 </root>

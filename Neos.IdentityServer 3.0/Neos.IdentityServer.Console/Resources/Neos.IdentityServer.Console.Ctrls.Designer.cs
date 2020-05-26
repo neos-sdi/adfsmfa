@@ -1591,6 +1591,15 @@ namespace Neos.IdentityServer.Console.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Require a valid attestation root certificate.
+        /// </summary>
+        internal static string CTRLWEBAUTHNROOTATTESTATION {
+            get {
+                return ResourceManager.GetString("CTRLWEBAUTHNROOTATTESTATION", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Server Domain.
         /// </summary>
         internal static string CTRLWEBAUTHNSERVERDOMAIN {

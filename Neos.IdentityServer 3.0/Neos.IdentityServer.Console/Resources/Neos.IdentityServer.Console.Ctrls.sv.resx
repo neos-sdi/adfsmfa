@@ -651,4 +651,7 @@
   <data name="CTRLSECWSMANSHELLURI" xml:space="preserve">
     <value>Skal Uri</value>
   </data>
+  <data name="CTRLWEBAUTHNROOTATTESTATION" xml:space="preserve">
+    <value>Kräv ett giltigt attestationsrotcertifikat</value>
+  </data>
 </root>

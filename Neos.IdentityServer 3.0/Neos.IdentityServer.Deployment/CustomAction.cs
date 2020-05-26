@@ -131,7 +131,7 @@ namespace Neos.IdentityServer.Deployment
                 actiondata.SetString(0, message);
                 session.Message(InstallMessage.ActionData, actiondata);
                 Application.DoEvents();
-                Thread.Sleep(1000);
+                Thread.Sleep(500);
             }
         }
 

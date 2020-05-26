@@ -2105,10 +2105,15 @@ namespace MFA
         /// </summary>
         public string Origin { get; set; }
 
-    /// <summary>
-    /// explicit operator from PSConfigBiometricProvider
-    /// </summary>
-    public static explicit operator PSBiometricProvider(FlatBiometricProvider otp)
+        /// <summary>
+        /// <para type="description">Require Certificate chain validation.</para>
+        /// </summary>
+        public bool RequireValidAttestationRoot { get; set; }
+
+        /// <summary>
+        /// explicit operator from PSConfigBiometricProvider
+        /// </summary>
+        public static explicit operator PSBiometricProvider(FlatBiometricProvider otp)
     {
         if (otp == null)
             return null;
@@ -2132,6 +2137,7 @@ namespace MFA
                 ServerName = otp.ServerName,
                 ServerIcon = otp.ServerIcon,
                 Origin = otp.Origin,
+                RequireValidAttestationRoot = otp.RequireValidAttestationRoot
             };
             return target;
         }
@@ -2165,14 +2171,7 @@ namespace MFA
                 ServerName = otp.ServerName,
                 ServerIcon = otp.ServerIcon,
                 Origin = otp.Origin,
-                /*  AuthenticatorAttachment = (FlatAuthenticatorAttachmentKind)otp.AuthenticatorAttachment,
-                AttestationConveyancePreference = (FlatAttestationConveyancePreferenceKind)otp.AttestationConveyancePreference,
-                UserVerificationRequirement = (FlatUserVerificationRequirementKind)otp.UserVerificationRequirement,
-                Extensions = otp.Extensions,
-                UserVerificationIndex = otp.UserVerificationIndex,
-                Location = otp.Location,
-                UserVerificationMethod = otp.UserVerificationMethod,
-                RequireResidentKey = otp.RequireResidentKey */
+                RequireValidAttestationRoot = otp.RequireValidAttestationRoot
             };
             return target;
         }

@@ -651,4 +651,7 @@
   <data name="CTRLWEBAUTHNUSERVERFICATION" xml:space="preserve">
     <value>Exigence de vérification de l’attestation de l’utilisateur</value>
   </data>
+  <data name="CTRLWEBAUTHNROOTATTESTATION" xml:space="preserve">
+    <value>Exiger un certificat racine d'attestation valide</value>
+  </data>
 </root>

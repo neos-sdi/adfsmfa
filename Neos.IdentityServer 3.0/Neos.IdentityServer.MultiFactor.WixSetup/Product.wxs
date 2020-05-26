@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:netfx="http://schemas.microsoft.com/wix/NetFxExtension">
-  <Product Id="a23dd485-5365-4d82-8309-103494000001" Name="MFA Provider for ADFS 2019/2016/2012 R2" Language="1033" Version="3.0.2005.4" Manufacturer="Neos-SDI" UpgradeCode="a23dd485-5365-4d82-8309-103495000001" >
+  <Product Id="a23dd485-5365-4d82-8309-103494000001" Name="MFA Provider for ADFS 2019/2016/2012 R2" Language="1033" Version="3.0.2005.5" Manufacturer="Neos-SDI" UpgradeCode="a23dd485-5365-4d82-8309-103495000001" >
 
     <Package InstallerVersion="500" Compressed="yes" InstallScope="perMachine" InstallPrivileges="elevated" Platform="x64" Description="Multi-Factor Authentication for ADFS 2019/2016/2012R2" />
 
@@ -93,7 +93,7 @@
         Installed AND NOT PATCH
       </Custom>
     </InstallExecuteSequence> 
-    <Condition Message="This installation requires admin privileges" >
+    <Condition Message="This installation requires administration privileges" >
        Privileged
     </Condition>
     <Condition Message="Repair not allowed, you must uninstall and reinstall" >
@@ -109,8 +109,8 @@
     <WixVariable Id="WixUIBannerBmp" Value="$(var.Neos.IdentityServer.MultiFactor.ProjectDir)Installer\banner.bmp" />
     <WixVariable Id="WixUIDialogBmp" Value="$(var.Neos.IdentityServer.MultiFactor.ProjectDir)Installer\dialog.bmp" />
     <UI>
-       <ProgressText Action="xInstallService" >Registering [ProductName]</ProgressText>
-       <ProgressText Action="xUninstallService" >Unregistering [ProductName]</ProgressText>
+       <ProgressText Action="xInstallService" >Registering Assemblies</ProgressText>
+       <ProgressText Action="xUninstallService" >Unregistering Assemblies</ProgressText>
     </UI>  
   </Product>
 

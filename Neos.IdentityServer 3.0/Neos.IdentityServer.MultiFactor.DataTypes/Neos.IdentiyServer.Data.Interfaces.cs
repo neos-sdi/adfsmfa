@@ -111,8 +111,9 @@ namespace Neos.IdentityServer.MultiFactor
         string ServerName { get; set; }
         string ServerIcon { get; set; }
         string Origin { get; set; }
-       /* string MDSAccessKey { get; set; }
-        string MDSCacheDirPath { get; set; } */
+        bool RequireValidAttestationRoot { get; set; }
+        /* string MDSAccessKey { get; set; }
+         string MDSCacheDirPath { get; set; } */
     }
 
     /// <summary>

@@ -21,13 +21,17 @@ using System.Security.Cryptography.X509Certificates;
 using Neos.IdentityServer.MultiFactor.WebAuthN.Objects;
 using Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor;
 
+
 namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
 {
     internal class Tpm : AttestationFormat
     {
-        public Tpm(CBORObject attStmt, byte[] authenticatorData, byte[] clientDataHash) 
+        private readonly bool _requireValidAttestationRoot;
+
+        public Tpm(CBORObject attStmt, byte[] authenticatorData, byte[] clientDataHash, bool requireValidAttestationRoot) 
             : base(attStmt, authenticatorData, clientDataHash)
         {
+            _requireValidAttestationRoot = requireValidAttestationRoot;
         }
 
         public static readonly Dictionary<string, X509Certificate2[]> TPMManufacturerRootMap = new Dictionary<string, X509Certificate2[]>
@@ -484,7 +488,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
                 certInfo = new CertInfo(attStmt["certInfo"].GetByteString());
             }
 
-            if (null == certInfo || null == certInfo.ExtraData || 0 == certInfo.ExtraData.Length)
+            if (null == certInfo)
                 throw new VerificationException("CertInfo invalid parsing TPM format attStmt");
 
             // Verify that magic is set to TPM_GENERATED_VALUE and type is set to TPM_ST_ATTEST_CERTIFY 
@@ -569,7 +573,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
                 {
                     var chain = new X509Chain();
                     chain.ChainPolicy.ExtraStore.Add(tpmRoots[i]);
-                    i++;
+                    
                     chain.ChainPolicy.RevocationMode = X509RevocationMode.NoCheck;
                     if (tpmManufacturer == "id:FFFFF1D0")
                     {
@@ -587,6 +591,15 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
                         }
                     }
                     valid = chain.Build(new X509Certificate2(X5c.Values.First().GetByteString()));
+
+                    if (_requireValidAttestationRoot)
+                    {
+                        // because we are using AllowUnknownCertificateAuthority we have to verify that the root matches ourselves
+                        var chainRoot = chain.ChainElements[chain.ChainElements.Count - 1].Certificate;
+                        valid = valid && chainRoot.RawData.SequenceEqual(tpmRoots[i].RawData);
+                    }
+
+                    i++;
                 }
                 if (false == valid)
                     throw new VerificationException("TPM attestation failed chain validation");
@@ -594,7 +607,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
                 // OID is 2.23.133.8.3
                 var EKU = EKUFromAttnCertExts(aikCert.Extensions, "2.23.133.8.3");
                 if (!EKU)
-                    throw new VerificationException("Invalid EKU on AIK certificate");
+                    throw new VerificationException("aikCert EKU missing tcg-kp-AIKCertificate OID");
 
                 // The Basic Constraints extension MUST have the CA component set to false.
                 if (IsAttnCertCACert(aikCert.Extensions))
@@ -604,8 +617,8 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
                 var aaguid = AaguidFromAttnCertExts(aikCert.Extensions);
                 if ((null != aaguid) &&
                     (!aaguid.SequenceEqual(Guid.Empty.ToByteArray())) &&
-                    (0 != new Guid(aaguid).CompareTo(AuthData.AttestedCredentialData.AaGuid)))
-                    throw new VerificationException("aaguid malformed");
+                    (0 != AttestedCredentialData.FromBigEndian(aaguid).CompareTo(AuthData.AttestedCredentialData.AaGuid)))
+                    throw new VerificationException(string.Format("aaguid malformed, expected {0}, got {1}", AuthData.AttestedCredentialData.AaGuid, new Guid(aaguid)));
             }
             // If ecdaaKeyId is present, then the attestation type is ECDAA
             else if (null != EcdaaKeyId)
@@ -752,9 +765,18 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
                 {
                     name = AuthDataHelper.GetSizedByteArray(ab, ref offset, tpmAlgToDigestSizeMap[tpmalg]);
                 }
+                else
+                {
+                    throw new VerificationException("TPM_ALG_ID found in TPM2B_NAME not acceptable hash algorithm");
+                }
             }
+            else
+            {
+                throw new VerificationException("Invalid TPM_ALG_ID found in TPM2B_NAME");
+            }
+
             if (totalSize != bytes.Length + name.Length)
-                throw new VerificationException("Unexpected no name found in TPM2B_NAME");
+                throw new VerificationException("Unexpected extra bytes found in TPM2B_NAME");
             return (size, name);
         }
 
@@ -766,10 +788,10 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
             var offset = 0;
             Magic = AuthDataHelper.GetSizedByteArray(certInfo, ref offset, 4);
             if (0xff544347 != BitConverter.ToUInt32(Magic.ToArray().Reverse().ToArray(), 0))
-                throw new VerificationException("Bad magic number " + Magic.ToString());
+                throw new VerificationException("Bad magic number " + BitConverter.ToString(Magic).Replace("-",""));
             Type = AuthDataHelper.GetSizedByteArray(certInfo, ref offset, 2);
             if (0x8017 != BitConverter.ToUInt16(Type.ToArray().Reverse().ToArray(), 0))
-                throw new VerificationException("Bad structure tag " + Type.ToString());
+                throw new VerificationException("Bad structure tag " + BitConverter.ToString(Type).Replace("-", ""));
             QualifiedSigner = AuthDataHelper.GetSizedByteArray(certInfo, ref offset);
             ExtraData = AuthDataHelper.GetSizedByteArray(certInfo, ref offset);
             if (null == ExtraData || 0 == ExtraData.Length)

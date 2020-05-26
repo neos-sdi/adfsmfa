@@ -651,4 +651,7 @@
   <data name="CTRLSECWSMANSHELLURI" xml:space="preserve">
     <value>Uri powłoki</value>
   </data>
+  <data name="CTRLWEBAUTHNROOTATTESTATION" xml:space="preserve">
+    <value>Wymagaj ważnego certyfikatu głównego zaświadczenia</value>
+  </data>
 </root>

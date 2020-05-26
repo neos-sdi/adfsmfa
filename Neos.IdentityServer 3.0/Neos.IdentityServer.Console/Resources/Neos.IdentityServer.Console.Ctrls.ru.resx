@@ -651,4 +651,7 @@
   <data name="CTRLSECWSMANSHELLURI" xml:space="preserve">
     <value>Шелл Ури</value>
   </data>
+  <data name="CTRLWEBAUTHNROOTATTESTATION" xml:space="preserve">
+    <value>Требуется действительный корневой сертификат аттестации</value>
+  </data>
 </root>

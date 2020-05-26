@@ -651,4 +651,7 @@
   <data name="CTRLWEBAUTHNUSERVERFICATION" xml:space="preserve">
     <value>ユーザーの構成証明の検証要件</value>
   </data>
+  <data name="CTRLWEBAUTHNROOTATTESTATION" xml:space="preserve">
+    <value>有効な認証ルート証明書が必要です</value>
+  </data>
 </root>

@@ -651,4 +651,7 @@
   <data name="CTRLSECWSMANSHELLURI" xml:space="preserve">
     <value>Shell Uri</value>
   </data>
+  <data name="CTRLWEBAUTHNROOTATTESTATION" xml:space="preserve">
+    <value>Richiedi un certificato radice di attestazione valido</value>
+  </data>
 </root>

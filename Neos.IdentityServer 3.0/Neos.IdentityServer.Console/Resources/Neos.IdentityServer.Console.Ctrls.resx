@@ -627,6 +627,9 @@
   <data name="CTRLWEBAUTHNRESIDENTKEY" xml:space="preserve">
     <value>Require resident Key</value>
   </data>
+  <data name="CTRLWEBAUTHNROOTATTESTATION" xml:space="preserve">
+    <value>Require a valid attestation root certificate</value>
+  </data>
   <data name="CTRLWEBAUTHNSERVERDOMAIN" xml:space="preserve">
     <value>Server Domain</value>
   </data>

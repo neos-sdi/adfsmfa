@@ -8208,6 +8208,8 @@ namespace Neos.IdentityServer.Console.Controls
         private Label lblChallengeSize;
         private ComboBox cbChallengeSize;
         private CheckBox chkAutologin;
+        private Label lblRequireChainRoot;
+        private CheckBox chkRequireChainRoot;
 
         /// <summary>
         /// ConfigurationControl Constructor
@@ -8304,17 +8306,17 @@ namespace Neos.IdentityServer.Console.Controls
                 _view.RefreshProviderInformation();
 
                 this.Dock = DockStyle.Top;
-                this.Height = 250;
+                this.Height = 274;
                 this.Width = 800;
                 this.Margin = new Padding(30, 5, 30, 5);
 
                 _panel.Width = 20;
-                _panel.Height = 220;
+                _panel.Height = 244;
                 this.Controls.Add(_panel);
 
                 _txtpanel.Left = 20;
                 _txtpanel.Width = this.Width - 20;
-                _txtpanel.Height = 220;
+                _txtpanel.Height = 244;
                 _txtpanel.BackColor = System.Drawing.SystemColors.Control;
                 this.Controls.Add(_txtpanel);
 
@@ -8460,13 +8462,22 @@ namespace Neos.IdentityServer.Console.Controls
                 cbChallengeSize.SelectedValue = Config.WebAuthNProvider.Configuration.ChallengeSize;
                 cbChallengeSize.SelectedIndexChanged += SelectedChallengeSizeChanged;
 
-
+                chkRequireChainRoot = new CheckBox
+                {
+                    Text = res.CTRLWEBAUTHNROOTATTESTATION,
+                    Checked = Config.WebAuthNProvider.Configuration.RequireValidAttestationRoot,
+                    Left = 190,
+                    Top = 214,
+                    Width = 300
+                };
+                chkRequireChainRoot.CheckedChanged += ChkChainRootChanged;
+                _txtpanel.Controls.Add(chkRequireChainRoot);
 
                 tblSaveConfig = new LinkLabel
                 {
                     Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPESAVE,
                     Left = 20,
-                    Top = 230,
+                    Top = 254,
                     Width = 80,
                     TabStop = true
                 };
@@ -8477,7 +8488,7 @@ namespace Neos.IdentityServer.Console.Controls
                 {
                     Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPECANCEL,
                     Left = 110,
-                    Top = 230,
+                    Top = 254,
                     Width = 80,
                     TabStop = true
                 };
@@ -8515,9 +8526,13 @@ namespace Neos.IdentityServer.Console.Controls
                 lblServerName.Text = res.CTRLWEBAUTHNSERVERNAME + " : ";
                 lblServerUri.Text = res.CTRLWEBAUTHNSERVERURL + " : ";
                 lblChallengeSize.Text = res.CTRLWEBAUTHNCHALLENGE + " : ";
+                chkAutologin.Text = res.CTRLWEBAUTHNAUTOLOGIN;
+                chkRequireChainRoot.Text = res.CTRLWEBAUTHNROOTATTESTATION;
 
                 txtTimeOut.Text = Config.WebAuthNProvider.Configuration.Timeout.ToString();
-                chkAutologin.Text = res.CTRLWEBAUTHNAUTOLOGIN;
+                chkAutologin.Checked = Config.WebAuthNProvider.DirectLogin;
+                chkRequireChainRoot.Checked = Config.WebAuthNProvider.Configuration.RequireValidAttestationRoot;
+
                 txtDriftTolerance.Text = Config.WebAuthNProvider.Configuration.TimestampDriftTolerance.ToString();
                 txtServerDomain.Text = Config.WebAuthNProvider.Configuration.ServerDomain;
                 txtServerName.Text = Config.WebAuthNProvider.Configuration.ServerName;
@@ -8525,7 +8540,6 @@ namespace Neos.IdentityServer.Console.Controls
 
                 tblSaveConfig.Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPESAVE;
                 tblCancelConfig.Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPECANCEL;
-
             }
             finally
             {
@@ -8891,6 +8905,31 @@ namespace Neos.IdentityServer.Console.Controls
             }
         }
 
+        /// <summary>
+        /// ChkchkAutologinChanged method implementation
+        /// </summary>
+        private void ChkChainRootChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                if (_view.AutoValidate != AutoValidate.Disable)
+                {
+                    Config.WebAuthNProvider.Configuration.RequireValidAttestationRoot = chkRequireChainRoot.Checked;
+                    ManagementService.ADFSManager.SetDirty(true);
+                    UpdateControlsLayouts();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
+                this._snapin.Console.ShowDialog(messageBoxParameters);
+            }
+        }
 
         /// <summary>
         /// OnResize method implmentation

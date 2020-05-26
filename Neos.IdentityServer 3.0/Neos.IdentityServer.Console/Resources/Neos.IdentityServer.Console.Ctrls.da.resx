@@ -651,4 +651,7 @@
   <data name="CTRLWEBAUTHNUSERVERFICATION" xml:space="preserve">
     <value>Krav til bekræftelse af brugerattestering</value>
   </data>
+  <data name="CTRLWEBAUTHNROOTATTESTATION" xml:space="preserve">
+    <value>Kræver et gyldigt attestationsrottecertifikat</value>
+  </data>
 </root>

@@ -39,11 +39,13 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
     internal class Packed : AttestationFormat
     {
         private readonly IMetadataService _metadataService;
+        private readonly bool _requireValidAttestationRoot;
 
-        public Packed(CBORObject attStmt, byte[] authenticatorData, byte[] clientDataHash, IMetadataService metadataService)
+        public Packed(CBORObject attStmt, byte[] authenticatorData, byte[] clientDataHash, IMetadataService metadataService, bool requireValidAttestationRoot)
             : base(attStmt, authenticatorData, clientDataHash)
         {
             _metadataService = metadataService;
+            _requireValidAttestationRoot = requireValidAttestationRoot;
         }
 
         public static bool IsValidPackedAttnCertSubject(string attnCertSubj)
@@ -51,10 +53,11 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
             var dictSubject = attnCertSubj.Split(new string[] { ", " }, StringSplitOptions.None)
                                           .Select(part => part.Split('='))
                                           .ToDictionary(split => split[0], split => split[1]);
-            return (0 != dictSubject["C"].Length ||
-                0 != dictSubject["O"].Length ||
-                0 != dictSubject["OU"].Length ||
-                0 != dictSubject["CN"].Length ||
+
+            return (0 != dictSubject["C"].Length &&
+                0 != dictSubject["O"].Length &&
+                0 != dictSubject["OU"].Length &&
+                0 != dictSubject["CN"].Length &&
                 "Authenticator Attestation" == dictSubject["OU"].ToString());
         }
 
@@ -120,7 +123,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
                 if (aaguid != null)
                 {
                     if (0 != AttestedCredentialData.FromBigEndian(aaguid).CompareTo(AuthData.AttestedCredentialData.AaGuid))
-                        throw new VerificationException("aaguid present in packed attestation but does not match aaguid from authData");
+                        throw new VerificationException("aaguid present in packed attestation cert exts but does not match aaguid from authData");
                 }
                 // 2d. The Basic Constraints extension MUST have the CA component set to false
                 if (IsAttnCertCACert(attestnCert.Extensions))
@@ -156,9 +159,13 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
                     }
                     var valid = chain.Build(trustPath[0]);
 
-                    // because we are using AllowUnknownCertificateAuthority we have to verify that the root matches ourselves
-                    var chainRoot = chain.ChainElements[chain.ChainElements.Count - 1].Certificate;
-                    valid = valid && chainRoot.RawData.SequenceEqual(root.RawData);
+                    if (_requireValidAttestationRoot)
+                    {
+                        // because we are using AllowUnknownCertificateAuthority we have to verify that the root matches ourselves
+                        var chainRoot = chain.ChainElements[chain.ChainElements.Count - 1].Certificate;
+                        valid = valid && chainRoot.RawData.SequenceEqual(root.RawData);
+                    }
+
                     if (false == valid)
                     {
                         throw new VerificationException("Invalid certificate chain in packed attestation");

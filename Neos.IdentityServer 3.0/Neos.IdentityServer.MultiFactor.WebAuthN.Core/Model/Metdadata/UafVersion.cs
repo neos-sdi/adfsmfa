@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2011 George Mamaladze                                                                                                                                                      //
+// Copyright (c) 2020 abergs (https://github.com/abergs/fido2-net-lib)                                                                                                                      //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -12,35 +12,22 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                               //
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
+using Newtonsoft.Json;
 
-using System.Reflection;
-using System.Resources;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-using System.Runtime.Versioning;
-using System.Windows;
+namespace Neos.IdentityServer.MultiFactor.WebAuthN
+{
+    /// <summary>
+    /// Represents a generic version with major and minor fields.
+    /// </summary>
+    /// <remarks>
+    /// https://fidoalliance.org/specs/fido-uaf-v1.2-rd-20171128/fido-uaf-protocol-v1.2-rd-20171128.html#version-interface
+    /// </remarks>
+    public class UafVersion
+    {
+        [JsonProperty("major")]
+        public ushort Major { get; set; }
 
-[assembly: AssemblyTitle("Neos.IdentityServer.QrCodeNet.Encoder")]
-[assembly: AssemblyDescription("")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("QrCode.Net")]
-[assembly: AssemblyProduct("Neos.IdentityServer.QrCodeNet.Encoder")]
-[assembly: AssemblyCopyright("QrCode.Net Authors")]
-[assembly: ComVisible(false)]
-[assembly: Guid("46f0d5b0-3954-4f7e-94dc-4d2757f22441")]
-
-[assembly: AssemblyVersion("3.0.0.0")]
-[assembly: AssemblyFileVersion("3.0.2005.5")]
-[assembly: AssemblyInformationalVersion("3.0.0.0")]
-[assembly: NeutralResourcesLanguageAttribute("en")]
-
-/*
-[assembly: ThemeInfo(
-    ResourceDictionaryLocation.None, //where theme specific resource dictionaries are located
-    //(used if a resource is not found in the page, 
-    // or application resource dictionaries)
-    ResourceDictionaryLocation.SourceAssembly //where the generic resource dictionary is located
-    //(used if a resource is not found in the page, 
-    // app, or any theme specific resource dictionaries)
-)]
-*/
+        [JsonProperty("minor")]
+        public ushort Minor { get; set; }
+    }
+}

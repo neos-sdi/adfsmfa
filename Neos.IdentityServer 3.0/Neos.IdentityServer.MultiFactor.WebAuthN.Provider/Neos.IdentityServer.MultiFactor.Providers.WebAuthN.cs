@@ -364,7 +364,8 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
                             Origin = param.Configuration.Origin,
                             Timeout = param.Configuration.Timeout,
                             TimestampDriftTolerance = param.Configuration.TimestampDriftTolerance,
-                            ChallengeSize = param.Configuration.ChallengeSize
+                            ChallengeSize = param.Configuration.ChallengeSize,
+                            RequireValidAttestationRoot = param.Configuration.RequireValidAttestationRoot
                         };
 
                         _webathn = new WebAuthNAdapter(fido, new SimpleMetadataService(new List<IMetadataRepository> { new StaticMetadataRepository(DateTime.Now.AddMinutes(1).ToUniversalTime()) }));
@@ -564,7 +565,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
                     AuthenticatorSelection authenticatorSelection = new AuthenticatorSelection
                     {
                         RequireResidentKey = requireResidentKey,
-                        UserVerification = userVerification.ToEnum<UserVerificationRequirement>(),
+                        UserVerification = userVerification.ToEnum<UserVerificationRequirement>(), 
                     };
                     if (!string.IsNullOrEmpty(authType))
                         authenticatorSelection.AuthenticatorAttachment = authType.ToEnum<AuthenticatorAttachment>();
@@ -575,7 +576,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
                         UserVerificationIndex = this.UserVerificationIndex,
                         Location = this.Location,
                         UserVerificationMethod = this.UserVerificationMethod,
-
+                        
                         BiometricAuthenticatorPerformanceBounds = new AuthenticatorBiometricPerfBounds
                         {
                             FAR = float.MaxValue,

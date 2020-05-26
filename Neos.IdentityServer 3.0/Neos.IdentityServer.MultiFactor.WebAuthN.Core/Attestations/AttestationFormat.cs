@@ -12,11 +12,11 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                               //
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
+using Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor;
 using System;
 using System.Security.Cryptography.X509Certificates;
 using System.Linq;
 using Neos.IdentityServer.MultiFactor.WebAuthN.Objects;
-using Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor;
 
 namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
 {

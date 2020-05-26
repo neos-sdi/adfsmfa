@@ -41,17 +41,16 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Library\ASN.cs" />
     <Compile Include="Library\Chaos.NaCL.cs" />
     <Compile Include="Library\Chaos.Nacl.Ed25519Ref10.cs" />
     <Compile Include="Library\Chaos.Nacl.Internal.cs" />
-    <Compile Include="Library\LCLib.Asn1.cs" />
     <Compile Include="Library\PeterO.Cbor.cs" />
     <Compile Include="Library\PeterO.Cbor.Interfaces.cs" />
     <Compile Include="Library\PeterO.Cbor.Internal.cs" />

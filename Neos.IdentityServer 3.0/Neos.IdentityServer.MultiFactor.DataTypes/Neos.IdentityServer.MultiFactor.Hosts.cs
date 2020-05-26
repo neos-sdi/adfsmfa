@@ -1627,6 +1627,9 @@ namespace Neos.IdentityServer.MultiFactor
                 _origin = value;
             }
         }
+
+        [XmlAttribute("RequireValidAttestationRoot")]
+        public bool RequireValidAttestationRoot { get; set; }
     }
 
     /// <summary>
