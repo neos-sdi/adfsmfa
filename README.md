@@ -1,4 +1,4 @@
-# Multi-Factor Authentication for ADFS 2019/2016/2012r2
+# Multi-Factor Authentication for Microsoft ADFS 2019/2016/2012r2
 ___
 
 This project can help you to implement multi-factor authentication without requiring any additional provider.
@@ -19,7 +19,7 @@ This extension works with Active Directory or an SQL Server Database for storing
 * <https://github.com/neos-sdi/adfsmfa/wiki/Home>
 ## Downloads
 * <https://github.com/neos-sdi/adfsmfa/releases>
-* <https://github.com/neos-sdi/adfsmfa/releases/download/3.0/adfsmfa.3.0.2005.1.msi>
+* <https://github.com/neos-sdi/adfsmfa/releases/download/3.0/adfsmfa.3.0.2005.5.msi>
 
 ___
 ![Neos Logo](logo.png)
