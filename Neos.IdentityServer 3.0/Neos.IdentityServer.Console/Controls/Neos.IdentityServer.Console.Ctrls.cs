@@ -8208,7 +8208,6 @@ namespace Neos.IdentityServer.Console.Controls
         private Label lblChallengeSize;
         private ComboBox cbChallengeSize;
         private CheckBox chkAutologin;
-        private Label lblRequireChainRoot;
         private CheckBox chkRequireChainRoot;
 
         /// <summary>

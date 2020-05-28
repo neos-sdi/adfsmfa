@@ -1462,7 +1462,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
         public static byte[] CheckSum128(byte[] value)
         {
             byte[] hash = null;
-            using (System.Security.Cryptography.MD5 md5 = System.Security.Cryptography.MD5Cng.Create())
+            using (MD5 md5 = MD5Cng.Create())
             {
                 hash = md5.ComputeHash(value);
             }
@@ -1475,7 +1475,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
         public static byte[] CheckSum128(string value)
         {
             byte[] hash = null;
-            using (System.Security.Cryptography.MD5 md5 = System.Security.Cryptography.MD5.Create())
+            using (MD5 md5 = MD5.Create())
             {
                 hash = md5.ComputeHash(Encoding.UTF8.GetBytes(value));
             }
@@ -1488,7 +1488,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
         public static byte[] CheckSum160(byte[] value)
         {
             byte[] hash = null;
-            using (System.Security.Cryptography.SHA1 sha1 = System.Security.Cryptography.SHA1Cng.Create())
+            using (SHA1 sha1 = SHA1Cng.Create())
             {
                 hash = sha1.ComputeHash(value);
             }
@@ -1501,7 +1501,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
         public static byte[] CheckSum160(string value)
         {
             byte[] hash = null;
-            using (System.Security.Cryptography.SHA1 sha1 = System.Security.Cryptography.SHA1Cng.Create())
+            using (SHA1 sha1 = SHA1Cng.Create())
             {
                 hash = sha1.ComputeHash(Encoding.UTF8.GetBytes(value));
             }
@@ -1514,7 +1514,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
         public static byte[] CheckSum256(byte[] value)
         {
             byte[] hash = null;
-            using (System.Security.Cryptography.SHA256 sha256 = System.Security.Cryptography.SHA256Cng.Create())
+            using (SHA256 sha256 = SHA256Cng.Create())
             {
                 hash = sha256.ComputeHash(value);
             }
@@ -1527,7 +1527,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
         public static byte[] CheckSum256(string value)
         {
             byte[] hash = null;
-            using (System.Security.Cryptography.SHA256 sha256 = System.Security.Cryptography.SHA256.Create())
+            using (SHA256 sha256 = SHA256.Create())
             {
                 hash = sha256.ComputeHash(Encoding.UTF8.GetBytes(value));
             }
@@ -1540,7 +1540,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
         public static byte[] CheckSum384(byte[] value)
         {
             byte[] hash = null;
-            using (System.Security.Cryptography.SHA384 sha384 = System.Security.Cryptography.SHA384Cng.Create())
+            using (SHA384 sha384 = SHA384Cng.Create())
             {
                 hash = sha384.ComputeHash(value);
             }
@@ -1553,7 +1553,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
         public static byte[] CheckSum384(string value)
         {
             byte[] hash = null;
-            using (System.Security.Cryptography.SHA384 sha384 = System.Security.Cryptography.SHA384Managed.Create())
+            using (SHA384 sha384 = SHA384Managed.Create())
             {
                 hash = sha384.ComputeHash(Encoding.UTF8.GetBytes(value));
             }
@@ -1566,7 +1566,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
         public static byte[] CheckSum512(byte[] value)
         {
             byte[] hash = null;
-            using (System.Security.Cryptography.SHA512 sha512 = System.Security.Cryptography.SHA512Cng.Create())
+            using (SHA512 sha512 = SHA512Cng.Create())
             {
                 hash = sha512.ComputeHash(value);
             }
@@ -1579,7 +1579,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
         public static byte[] CheckSum512(string value)
         {
             byte[] hash = null;
-            using (System.Security.Cryptography.SHA512 sha512 = System.Security.Cryptography.SHA512Managed.Create())
+            using (SHA512 sha512 = SHA512Managed.Create())
             {
                 hash = sha512.ComputeHash(Encoding.UTF8.GetBytes(value));
             }
@@ -1592,7 +1592,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
         public static byte[] CheckSum(string value)
         {
             byte[] hash = null;
-            using (System.Security.Cryptography.MD5 md5 = System.Security.Cryptography.MD5.Create())
+            using (MD5 md5 = MD5.Create())
             {
                 hash = md5.ComputeHash(Encoding.UTF8.GetBytes(value));
             }
@@ -1605,7 +1605,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
         public static string CheckSumAsString(string value)
         {
             string hash = null;
-            using (System.Security.Cryptography.MD5 md5 = System.Security.Cryptography.MD5.Create())
+            using (MD5 md5 = MD5.Create())
             {
                 hash = BitConverter.ToString(md5.ComputeHash(Encoding.UTF8.GetBytes(value)));
             }

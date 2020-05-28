@@ -20,7 +20,7 @@ using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using Neos.IdentityServer.MultiFactor.WebAuthN.Objects;
 using Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor;
-
+using Neos.IdentityServer.MultiFactor.WebAuthN;
 
 namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
 {
@@ -28,8 +28,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
     {
         private readonly bool _requireValidAttestationRoot;
 
-        public Tpm(CBORObject attStmt, byte[] authenticatorData, byte[] clientDataHash, bool requireValidAttestationRoot) 
-            : base(attStmt, authenticatorData, clientDataHash)
+        public Tpm(CBORObject attStmt, byte[] authenticatorData, byte[] clientDataHash, bool requireValidAttestationRoot): base(attStmt, authenticatorData, clientDataHash)
         {
             _requireValidAttestationRoot = requireValidAttestationRoot;
         }
@@ -429,8 +428,9 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
             //{"id:54584E00", "TXN"},
             //{"id:57454300", "WEC"},
             //{"id:524F4343", "ROCC"},
-            //{"id:474F4F47", "GOOG"}
-    };
+            //{"id:474F4F47", "GOOG"}                
+        };
+
         public override void Verify()
         {
             if (null == Sig || CBORType.ByteString != Sig.Type || 0 == Sig.GetByteString().Length)
@@ -445,7 +445,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
             if (null != attStmt["pubArea"] &&
                 CBORType.ByteString == attStmt["pubArea"].Type &&
                 0 != attStmt["pubArea"].GetByteString().Length)
-            { 
+            {
                 pubArea = new PubArea(attStmt["pubArea"].GetByteString());
             }
 
@@ -484,7 +484,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
             if (null != attStmt["certInfo"] &&
                 CBORType.ByteString == attStmt["certInfo"].Type &&
                 0 != attStmt["certInfo"].GetByteString().Length)
-            { 
+            {
                 certInfo = new CertInfo(attStmt["certInfo"].GetByteString());
             }
 
@@ -497,14 +497,14 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
             // Verify that extraData is set to the hash of attToBeSigned using the hash algorithm employed in "alg"
             if (null == Alg || CBORType.Number != Alg.Type || false == CryptoUtils.algMap.ContainsKey(Alg.AsInt32()))
                 throw new VerificationException("Invalid TPM attestation algorithm");
-            using(var hasher = CryptoUtils.GetHasher(CryptoUtils.algMap[Alg.AsInt32()]))
+            using (var hasher = CryptoUtils.GetHasher(CryptoUtils.algMap[Alg.AsInt32()]))
             {
-                if (!hasher.ComputeHash(Data).SequenceEqual(certInfo.ExtraData)) 
+                if (!hasher.ComputeHash(Data).SequenceEqual(certInfo.ExtraData))
                     throw new VerificationException("Hash value mismatch extraData and attToBeSigned");
             }
 
             // Verify that attested contains a TPMS_CERTIFY_INFO structure, whose name field contains a valid Name for pubArea, as computed using the algorithm in the nameAlg field of pubArea 
-            using(var hasher = CryptoUtils.GetHasher(CryptoUtils.algMap[certInfo.Alg]))
+            using (var hasher = CryptoUtils.GetHasher(CryptoUtils.algMap[certInfo.Alg]))
             {
                 if (false == hasher.ComputeHash(pubArea.Raw).SequenceEqual(certInfo.AttestedName))
                     throw new VerificationException("Hash value mismatch attested and pubArea");
@@ -573,7 +573,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
                 {
                     var chain = new X509Chain();
                     chain.ChainPolicy.ExtraStore.Add(tpmRoots[i]);
-                    
+
                     chain.ChainPolicy.RevocationMode = X509RevocationMode.NoCheck;
                     if (tpmManufacturer == "id:FFFFF1D0")
                     {
@@ -635,12 +635,14 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
                 throw new VerificationException("Neither x5c nor ECDAA were found in the TPM attestation statement");
             }
         }
+
         private static readonly Dictionary<int, TpmEccCurve> CoseCurveToTpm = new Dictionary<int, TpmEccCurve>
         {
             { 1, TpmEccCurve.TPM_ECC_NIST_P256},
             { 2, TpmEccCurve.TPM_ECC_NIST_P384},
             { 3, TpmEccCurve.TPM_ECC_NIST_P521}
         };
+
         private static string SANFromAttnCertExts(X509ExtensionCollection exts)
         {
             foreach (var ext in exts)
@@ -664,7 +666,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
                         if (expectedEnhancedKeyUsages.Equals(oid.Value))
                             return true;
                     }
-                
+
                 }
             }
             return false;
@@ -684,6 +686,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
         TPM_ECC_BN_P638,    // 0x0011 curve to support ECDAA
         TPM_ECC_SM2_P256    // 0x0020 
     }
+
     public enum TpmAlg : ushort
     {
         // TCG TPM Rev 2.0, part 2, structures, section 6.3, TPM_ALG_ID
@@ -724,6 +727,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
         TPM_ALG_ECB // 44
     };
     // TPMS_ATTEST, TPMv2-Part2, section 10.12.8
+
     public class CertInfo
     {
         private static readonly Dictionary<TpmAlg, ushort> tpmAlgToDigestSizeMap = new Dictionary<TpmAlg, ushort>
@@ -733,6 +737,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
             {TpmAlg.TPM_ALG_SHA384, (384/8) },
             {TpmAlg.TPM_ALG_SHA512, (512/8) }
         };
+
         public static (ushort size, byte[] name) NameFromTPM2BName(byte[] ab, ref int offset)
         {
             // TCG TPM Rev 2.0, part 2, structures, section 10.5.3, TPM2B_NAME
@@ -788,7 +793,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
             var offset = 0;
             Magic = AuthDataHelper.GetSizedByteArray(certInfo, ref offset, 4);
             if (0xff544347 != BitConverter.ToUInt32(Magic.ToArray().Reverse().ToArray(), 0))
-                throw new VerificationException("Bad magic number " + BitConverter.ToString(Magic).Replace("-",""));
+                throw new VerificationException("Bad magic number " + BitConverter.ToString(Magic).Replace("-", ""));
             Type = AuthDataHelper.GetSizedByteArray(certInfo, ref offset, 2);
             if (0x8017 != BitConverter.ToUInt16(Type.ToArray().Reverse().ToArray(), 0))
                 throw new VerificationException("Bad structure tag " + BitConverter.ToString(Type).Replace("-", ""));
@@ -823,6 +828,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
         public byte[] AttestedQualifiedNameBuffer { get; private set; }
     }
     // TPMT_PUBLIC, TPMv2-Part2, section 12.2.4
+
     public class PubArea
     {
         public PubArea(byte[] pubArea)
@@ -924,5 +930,5 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
                 return point;
             }
         }
-    }
+    }    
 }
