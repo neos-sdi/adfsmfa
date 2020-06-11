@@ -82,7 +82,7 @@ namespace Neos.IdentityServer.Console
             get 
             { 
                 EnsureService();
-                if (!ManagementService.Config.UseActiveDirectory)
+                if (ManagementService.Config.StoreMode == DataRepositoryKind.SQL)
                     return ManagementService.Config.Hosts.SQLServerHost.IsAlwaysEncrypted;
                 else
                     return false;

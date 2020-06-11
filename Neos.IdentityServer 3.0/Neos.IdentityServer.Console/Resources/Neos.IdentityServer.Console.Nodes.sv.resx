@@ -357,4 +357,7 @@
   <data name="ROOTLANGUAGECADESC" xml:space="preserve">
     <value>Ändra kulturen i användargränssnittet till Quebec (3084)</value>
   </data>
+  <data name="CUSTOMSTORESCOPENODEDESC" xml:space="preserve">
+    <value>Anpassad lagringskonfiguration</value>
+  </data>
 </root>

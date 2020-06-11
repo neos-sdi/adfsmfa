@@ -1740,13 +1740,15 @@ namespace Neos.IdentityServer.MultiFactor
     /// </summary>
     public enum DataRepositoryKind
     {
-        ADDS,
-        SQL
+        ADDS = 0,
+        SQL = 1,
+        Custom = 2
     }
 
     /// <summary>
     /// MFAUserCredential class
     /// </summary>
+    [Serializable]
     public class MFAUserCredential
     {
         public byte[] UserId { get; set; }
@@ -1762,6 +1764,7 @@ namespace Neos.IdentityServer.MultiFactor
     /// <summary>
     /// MFAWebAuthNUser class
     /// </summary>
+    [Serializable]
     public class MFAWebAuthNUser
     {
         public string Name { get; set; }
@@ -1772,6 +1775,7 @@ namespace Neos.IdentityServer.MultiFactor
     /// <summary>
     /// MFAPublicKeyCredentialDescriptor class implementation
     /// </summary>
+    [Serializable]
     public class MFAPublicKeyCredentialDescriptor
     {
         /// <summary>
@@ -1799,6 +1803,7 @@ namespace Neos.IdentityServer.MultiFactor
     /// <summary>
     /// MFAPublicKeyCredentialType enum
     /// </summary>
+    [Serializable]
     public enum MFAPublicKeyCredentialType
     {
         PublicKey
@@ -1807,6 +1812,7 @@ namespace Neos.IdentityServer.MultiFactor
     /// <summary>
     /// MFAAuthenticatorTransport enum
     /// </summary>
+    [Serializable]
     public enum MFAAuthenticatorTransport
     {
         Usb,

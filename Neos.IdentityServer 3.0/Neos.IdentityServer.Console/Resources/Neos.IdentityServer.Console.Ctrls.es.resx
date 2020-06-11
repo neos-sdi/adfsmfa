@@ -654,4 +654,16 @@
   <data name="CTRLWEBAUTHNROOTATTESTATION" xml:space="preserve">
     <value>¡Requiere un certificado raíz de certificación válido</value>
   </data>
+  <data name="CTRLSTUSECUSTOM" xml:space="preserve">
+    <value>Usar almacenamiento personalizado</value>
+  </data>
+  <data name="CTRLDATAREPOASSEMBLY" xml:space="preserve">
+    <value>Repositorio de datos (clase completa)</value>
+  </data>
+  <data name="CTRLKEYSREPOASSEMBLY" xml:space="preserve">
+    <value>Repositorio de claves (clase completa)</value>
+  </data>
+  <data name="CTRLCUSTOMUSING" xml:space="preserve">
+    <value>Usar repositorio personalizado</value>
+  </data>
 </root>

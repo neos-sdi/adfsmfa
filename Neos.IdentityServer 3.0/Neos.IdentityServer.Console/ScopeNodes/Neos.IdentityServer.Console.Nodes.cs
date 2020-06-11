@@ -792,6 +792,114 @@ namespace Neos.IdentityServer.Console
     }
 
     /// <summary>
+    /// ServiceSQLScopeNode class
+    /// </summary>
+    public class ServiceCustomStorageScopeNode : RefreshableScopeNode
+    {
+        internal ServiceCustomStoreFormView CustomStoreFormView;
+        private readonly Microsoft.ManagementConsole.Action SaveConfig;
+        private readonly Microsoft.ManagementConsole.Action CancelConfig;
+
+
+        /// <summary>
+        /// Constructor implementation
+        /// </summary>
+        public ServiceCustomStorageScopeNode(): base(true)
+        {
+            this.DisplayName = res.CUSTOMSTORESCOPENODEDESC;
+            this.LanguageIndependentName = "MFA Custom Storage Configuration";
+
+            SaveConfig = new Microsoft.ManagementConsole.Action(res.GENERALSCOPESAVE, res.GENERALSCOPESAVEDESC, -1, "SaveConfig");
+            CancelConfig = new Microsoft.ManagementConsole.Action(res.GENERALSCOPECANCEL, res.GENERALSCOPECANCELDESC, -1, "CancelConfig");
+
+            this.ActionsPaneHelpItems.Clear();
+            this.ActionsPaneItems.Clear();
+            this.EnabledStandardVerbs = StandardVerbs.Refresh;
+
+            this.ActionsPaneItems.Add(SaveConfig);
+            this.ActionsPaneItems.Add(new Microsoft.ManagementConsole.ActionSeparator());
+            this.ActionsPaneItems.Add(CancelConfig);
+            this.HelpTopic = string.Empty;
+        }
+
+        /// <summary>
+        /// OnExpand method implementation
+        /// </summary>
+        protected override void OnExpand(AsyncStatus status)
+        {
+            base.OnExpand(status);
+        }
+
+        /// <summary>
+        /// OnRefresh method implmentattion
+        /// </summary>
+        protected override void OnRefresh(AsyncStatus status)
+        {
+            base.OnRefresh(status);
+            if (this.CustomStoreFormView != null)
+                this.CustomStoreFormView.Refresh();
+        }
+
+        /// <summary>
+        /// OnAction method implmentation
+        /// </summary>
+        protected override void OnAction(Microsoft.ManagementConsole.Action action, AsyncStatus status)
+        {
+            switch ((string)action.Tag)
+            {
+                case "SaveConfig":
+                    if (this.CustomStoreFormView != null)
+                        this.CustomStoreFormView.DoSave();
+                    break;
+                case "CancelConfig":
+                    if (this.CustomStoreFormView != null)
+                        this.CustomStoreFormView.DoCancel();
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// RefreshDescription method
+        /// </summary>
+        public override void RefreshDescription()
+        {
+            this.DisplayName = res.CUSTOMSTORESCOPENODEDESC;
+        }
+
+        /// <summary>
+        /// RefreshActions method
+        /// </summary>
+        public override void RefreshActions()
+        {
+            foreach (ActionsPaneItem itm in this.ActionsPaneItems)
+            {
+                if (itm is Microsoft.ManagementConsole.Action)
+                {
+                    if ((string)((Microsoft.ManagementConsole.Action)itm).Tag == "SaveConfig")
+                    {
+                        ((Microsoft.ManagementConsole.Action)itm).DisplayName = res.GENERALSCOPESAVE;
+                        ((Microsoft.ManagementConsole.Action)itm).Description = res.GENERALSCOPESAVEDESC;
+                    }
+                    else if ((string)((Microsoft.ManagementConsole.Action)itm).Tag == "CancelConfig")
+                    {
+                        ((Microsoft.ManagementConsole.Action)itm).DisplayName = res.GENERALSCOPECANCEL;
+                        ((Microsoft.ManagementConsole.Action)itm).Description = res.GENERALSCOPECANCELDESC;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// RefreshForms method
+        /// </summary>
+        public override void RefreshForms()
+        {
+            if (CustomStoreFormView != null)
+                CustomStoreFormView.Refresh();
+        }
+    }
+
+    /// <summary>
     /// ServiceProvidersScopeNode class
     /// </summary>
     public class ServiceProvidersScopeNode : RefreshableScopeNode

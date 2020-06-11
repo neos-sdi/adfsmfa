@@ -123,6 +123,9 @@
   <data name="AZURESCOPENODEDESC" xml:space="preserve">
     <value>Azure configuration</value>
   </data>
+  <data name="CUSTOMSTORESCOPENODEDESC" xml:space="preserve">
+    <value>Custom Store configuration</value>
+  </data>
   <data name="GENERALSCOPECANCEL" xml:space="preserve">
     <value>Cancel</value>
   </data>

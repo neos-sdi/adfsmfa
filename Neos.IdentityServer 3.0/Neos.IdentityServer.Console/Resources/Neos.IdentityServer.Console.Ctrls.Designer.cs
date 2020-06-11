@@ -529,6 +529,24 @@ namespace Neos.IdentityServer.Console.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Use Custom Repository.
+        /// </summary>
+        internal static string CTRLCUSTOMUSING {
+            get {
+                return ResourceManager.GetString("CTRLCUSTOMUSING", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Data Repository (full class).
+        /// </summary>
+        internal static string CTRLDATAREPOASSEMBLY {
+            get {
+                return ResourceManager.GetString("CTRLDATAREPOASSEMBLY", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Max retries allowed.
         /// </summary>
         internal static string CTRLDLGMAXRETRIES {
@@ -849,6 +867,15 @@ namespace Neos.IdentityServer.Console.Resources {
         internal static string CTRLINVALIDVALUE {
             get {
                 return ResourceManager.GetString("CTRLINVALIDVALUE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Keys Repository (full class).
+        /// </summary>
+        internal static string CTRLKEYSREPOASSEMBLY {
+            get {
+                return ResourceManager.GetString("CTRLKEYSREPOASSEMBLY", resourceCulture);
             }
         }
         
@@ -1515,6 +1542,15 @@ namespace Neos.IdentityServer.Console.Resources {
         internal static string CTRLSTUSEADDS {
             get {
                 return ResourceManager.GetString("CTRLSTUSEADDS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Use Custom Storage.
+        /// </summary>
+        internal static string CTRLSTUSECUSTOM {
+            get {
+                return ResourceManager.GetString("CTRLSTUSECUSTOM", resourceCulture);
             }
         }
         

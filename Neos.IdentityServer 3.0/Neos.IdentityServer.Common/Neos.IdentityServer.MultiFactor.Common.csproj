@@ -76,7 +76,10 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Neos.IdentityServer.Mapped.cs" />
+    <Compile Include="Neos.IdentityServer.MultiFactor.CustomStorage.cs" />
     <Compile Include="Neos.IdentityServer.MultiFactor.Imports.cs" />
+    <Compile Include="Neos.IdentityServer.MultiFactor.Linq.cs" />
     <Compile Include="Neos.IdentityServer.MultiFactor.ProvidersWrapper.cs" />
     <Compile Include="Neos.IdentityServer.Multifactor.ResourcesManager.cs" />
     <Compile Include="Neos.IdentityServer.MultiFactor.RNG.cs" />

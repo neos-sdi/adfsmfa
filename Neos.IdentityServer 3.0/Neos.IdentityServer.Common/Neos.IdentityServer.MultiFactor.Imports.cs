@@ -190,8 +190,20 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 if (string.IsNullOrEmpty(Password))
                     Password = adht.Password;
 
-                // DataRepositoryService client = new ADDSDataRepositoryService(adht, Config.DeliveryWindow);
-                DataRepositoryService client = new ADDSDataRepositoryService(Config.Hosts.ActiveDirectoryHost, Config.Hosts.ActiveDirectoryHost.Account, Config.Hosts.ActiveDirectoryHost.Password, Config.DeliveryWindow);
+                DataRepositoryService client = null;
+                switch (Config.StoreMode)
+                {
+                    case DataRepositoryKind.ADDS:
+                        client = new ADDSDataRepositoryService(Config.Hosts.ActiveDirectoryHost, Config.DeliveryWindow);
+                        break;
+                    case DataRepositoryKind.SQL:
+                        client = new SQLDataRepositoryService(Config.Hosts.SQLServerHost, Config.DeliveryWindow);
+                        break;
+                    case DataRepositoryKind.Custom:
+                        client = CustomDataRepositoryCreator.CreateDataRepositoryInstance(Config.Hosts.CustomStoreHost, Config.DeliveryWindow);
+                        break;
+                }
+
                 Trace.WriteLine("");
                 Trace.WriteLine(string.Format("Importing for AD : {0}", LDAPPath));
                 Trace.Indent();
@@ -200,20 +212,27 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 Trace.WriteLine(string.Format("Querying return {0} users from AD", lst.Count.ToString()));
 
                 DataRepositoryService client2 = null;
-                if (Config.UseActiveDirectory)
+                switch (Config.StoreMode)
                 {
-                    Trace.WriteLine("");
-                    Trace.WriteLine("Importing ADDS Mode");
-                    Trace.Indent();
-                    // client2 = new ADDSDataRepositoryService(Config.Hosts.ActiveDirectoryHost, Config.DeliveryWindow);
-                    client2 = new ADDSDataRepositoryService(Config.Hosts.ActiveDirectoryHost, Config.Hosts.ActiveDirectoryHost.Account, Config.Hosts.ActiveDirectoryHost.Password, Config.DeliveryWindow);
-                }
-                else
-                {
-                    Trace.WriteLine("");
-                    Trace.WriteLine("Importing SQL Mode");
-                    Trace.Indent();
-                    client2 = new SQLDataRepositoryService(Config.Hosts.SQLServerHost, Config.DeliveryWindow);
+                    case DataRepositoryKind.ADDS:
+                        Trace.WriteLine("");
+                        Trace.WriteLine("Importing ADDS Mode");
+                        Trace.Indent();
+                        client2 = new ADDSDataRepositoryService(Config.Hosts.ActiveDirectoryHost, Config.DeliveryWindow);
+                        break;
+                    case DataRepositoryKind.SQL:
+                        Trace.WriteLine("");
+                        Trace.WriteLine("Importing SQL Mode");
+                        Trace.Indent();
+                        client2 = new SQLDataRepositoryService(Config.Hosts.SQLServerHost, Config.DeliveryWindow);
+                        break;
+                    case DataRepositoryKind.Custom:
+                        
+                        Trace.WriteLine("");
+                        Trace.WriteLine("Importing Custom Store Mode");
+                        Trace.Indent();
+                        client2 = CustomDataRepositoryCreator.CreateDataRepositoryInstance(Config.Hosts.CustomStoreHost, Config.DeliveryWindow);
+                        break;
                 }
                 client2.OnKeyDataEvent += KeyDataEvent;
                 foreach (MFAUser reg in lst)

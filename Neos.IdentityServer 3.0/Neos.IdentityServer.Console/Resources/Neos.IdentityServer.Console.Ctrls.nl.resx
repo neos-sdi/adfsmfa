@@ -654,4 +654,16 @@
   <data name="CTRLWEBAUTHNROOTATTESTATION" xml:space="preserve">
     <value>Vereist een geldig attest-rootcertificaat</value>
   </data>
+  <data name="CTRLSTUSECUSTOM" xml:space="preserve">
+    <value>Aangepaste opslag gebruiken</value>
+  </data>
+  <data name="CTRLDATAREPOASSEMBLY" xml:space="preserve">
+    <value>Gegevensopslagplaats (volledige klasse)</value>
+  </data>
+  <data name="CTRLKEYSREPOASSEMBLY" xml:space="preserve">
+    <value>Keys Repository (volledige klasse)</value>
+  </data>
+  <data name="CTRLCUSTOMUSING" xml:space="preserve">
+    <value>Aangepaste opslagplaats gebruiken</value>
+  </data>
 </root>

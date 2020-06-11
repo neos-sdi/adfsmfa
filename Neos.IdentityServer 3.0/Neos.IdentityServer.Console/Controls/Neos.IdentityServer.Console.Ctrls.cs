@@ -166,6 +166,8 @@ namespace Neos.IdentityServer.Console.Controls
                 case ConfigOperationStatus.ConfigStopped:
                     _panel.BackColor = Color.DarkGray;
                     break;
+                case ConfigOperationStatus.UISync:
+                    break;
                 default:
                     _panel.BackColor = Color.Yellow;
                     break;
@@ -493,6 +495,8 @@ namespace Neos.IdentityServer.Console.Controls
                     break;
                 case ConfigOperationStatus.ConfigStopped:
                     _panel.BackColor = Color.Red;
+                    break;
+                case ConfigOperationStatus.UISync:
                     break;
                 default:
                     _panel.BackColor = Color.Yellow;
@@ -1138,6 +1142,8 @@ namespace Neos.IdentityServer.Console.Controls
                 case ConfigOperationStatus.ConfigStopped:
                     _panel.BackColor = Color.DarkGray;
                     break;
+                case ConfigOperationStatus.UISync:
+                    break;
                 default:
                     _panel.BackColor = Color.Yellow;
                     break;
@@ -1211,10 +1217,18 @@ namespace Neos.IdentityServer.Console.Controls
                 _txtpanel.Controls.Add(lbladmincontact);
 
                 lblstorageMode = new Label();
-                if (Config.UseActiveDirectory)
-                    lblstorageMode.Text = "Mode : Active Directory";
-                else
-                    lblstorageMode.Text = "Mode : Sql Server Database";
+                switch (Config.StoreMode)
+                {
+                    case DataRepositoryKind.ADDS:
+                        lblstorageMode.Text = "Mode : Active Directory";
+                        break;
+                    case DataRepositoryKind.SQL:
+                        lblstorageMode.Text = "Mode : Sql Server Database";
+                        break;
+                    case DataRepositoryKind.Custom:
+                        lblstorageMode.Text = "Mode : Custome Data Store";
+                        break;
+                }
                 lblstorageMode.Left = 230;
                 lblstorageMode.Top = 32;
                 lblstorageMode.Width = 300;
@@ -1323,11 +1337,18 @@ namespace Neos.IdentityServer.Console.Controls
                 lblFarmActive.Text = "Active : " + ManagementService.ADFSManager.IsMFAProviderEnabled(null).ToString();
                 lblIdentifier.Text = "Identifier : " + Config.Hosts.ADFSFarm.FarmIdentifier;
                 lbladmincontact.Text = "Administrative contact : " + Config.AdminContact;
-                if (Config.UseActiveDirectory)
-                    lblstorageMode.Text = "Mode : Active Directory";
-                else
-                    lblstorageMode.Text = "Mode : Sql Server Database";
-
+                switch (Config.StoreMode)
+                {
+                    case DataRepositoryKind.ADDS:
+                        lblstorageMode.Text = "Mode : Active Directory";
+                        break;
+                    case DataRepositoryKind.SQL:
+                        lblstorageMode.Text = "Mode : Sql Server Database";
+                        break;
+                    case DataRepositoryKind.Custom:
+                        lblstorageMode.Text = "Mode : Custome Data Store";
+                        break;
+                }
                 lblFarmBehavior.Text = "Behavior : " + Config.Hosts.ADFSFarm.CurrentFarmBehavior.ToString();
 
                 // third col
@@ -1536,6 +1557,8 @@ namespace Neos.IdentityServer.Console.Controls
                     break;
                 case ConfigOperationStatus.ConfigStopped:
                     _panel.BackColor = Color.DarkGray;
+                    break;
+                case ConfigOperationStatus.UISync:
                     break;
                 default:
                     _panel.BackColor = Color.Yellow;
@@ -2977,6 +3000,7 @@ namespace Neos.IdentityServer.Console.Controls
         private LinkLabel tblCancelConfig;
         private RadioButton rdioUseADDS;
         private RadioButton rdioUseSQL;
+        private RadioButton rdioUseCustom;
 
         /// <summary>
         /// ConfigurationControl Constructor
@@ -3011,6 +3035,8 @@ namespace Neos.IdentityServer.Console.Controls
             {
                 if (status == ConfigOperationStatus.ConfigLoaded)
                     DoRefreshData();
+                if (status == ConfigOperationStatus.UISync)
+                    DoRefreshData();
             }
             else
                 _panel.Refresh();
@@ -3037,6 +3063,8 @@ namespace Neos.IdentityServer.Console.Controls
                     break;
                 case ConfigOperationStatus.ConfigStopped:
                     _panel.BackColor = Color.DarkGray;
+                    break;
+                case ConfigOperationStatus.UISync:
                     break;
                 default:
                     _panel.BackColor = Color.Yellow;
@@ -3073,19 +3101,19 @@ namespace Neos.IdentityServer.Console.Controls
                 this.Margin = new Padding(30, 5, 30, 5);
 
                 _panel.Width = 20;
-                _panel.Height = 85;
+                _panel.Height = 111;
                 this.Controls.Add(_panel);
 
                 _txtpanel.Left = 20;
                 _txtpanel.Width = this.Width - 20;
-                _txtpanel.Height = 85;
+                _txtpanel.Height = 111;
                 _txtpanel.BackColor = System.Drawing.SystemColors.Control;
                 this.Controls.Add(_txtpanel);
 
                 rdioUseADDS = new RadioButton()
                 {
                     Text = res.CTRLSTUSEADDS,                   
-                    Checked = Config.UseActiveDirectory,
+                    Checked = Config.StoreMode==DataRepositoryKind.ADDS,
                     Left = 10,
                     Top = 19,
                     Width = 450
@@ -3096,7 +3124,7 @@ namespace Neos.IdentityServer.Console.Controls
                 rdioUseSQL = new RadioButton()
                 {
                     Text = res.CTRLSTUSESQL,
-                    Checked = !Config.UseActiveDirectory,
+                    Checked = Config.StoreMode==DataRepositoryKind.SQL,
                     Left = 10,
                     Top = 45,
                     Width = 450
@@ -3104,11 +3132,22 @@ namespace Neos.IdentityServer.Console.Controls
                 rdioUseSQL.CheckedChanged += UseSQLCheckedChanged;
                 _txtpanel.Controls.Add(rdioUseSQL);
 
+                rdioUseCustom = new RadioButton()
+                {
+                    Text = res.CTRLSTUSECUSTOM,
+                    Checked = Config.StoreMode == DataRepositoryKind.Custom,
+                    Left = 10,
+                    Top = 71,
+                    Width = 450
+                };
+                rdioUseCustom.CheckedChanged += UseCustomCheckedChanged;
+                _txtpanel.Controls.Add(rdioUseCustom);
+
                 tblSaveConfig = new LinkLabel
                 {
                     Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPESAVE,
                     Left = 20,
-                    Top = 95,
+                    Top = 121,
                     Width = 80,
                     TabStop = true
                 };
@@ -3119,7 +3158,7 @@ namespace Neos.IdentityServer.Console.Controls
                 {
                     Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPECANCEL,
                     Left = 110,
-                    Top = 95,
+                    Top = 121,
                     Width = 80,
                     TabStop = true
                 };
@@ -3149,12 +3188,14 @@ namespace Neos.IdentityServer.Console.Controls
             _view.CausesValidation = false;
             try
             {
-                rdioUseADDS.Checked = Config.UseActiveDirectory;
-                rdioUseSQL.Checked = !Config.UseActiveDirectory;
+                rdioUseADDS.Checked = (Config.StoreMode==DataRepositoryKind.ADDS);
+                rdioUseSQL.Checked = (Config.StoreMode==DataRepositoryKind.SQL);
+                rdioUseCustom.Checked = (Config.StoreMode == DataRepositoryKind.Custom);
                 tblSaveConfig.Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPESAVE;
                 tblCancelConfig.Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPECANCEL;
                 rdioUseADDS.Text = res.CTRLSTUSEADDS;
                 rdioUseSQL.Text = res.CTRLSTUSESQL;
+                rdioUseCustom.Text = res.CTRLSTUSECUSTOM;
             }
             finally
             {
@@ -3214,9 +3255,9 @@ namespace Neos.IdentityServer.Console.Controls
             {
                 if (_view.AutoValidate != AutoValidate.Disable)
                 {
-                    Config.UseActiveDirectory = rdioUseADDS.Checked;
+                    Config.StoreMode = DataRepositoryKind.ADDS;
                     ManagementService.ADFSManager.SetDirty(true);
-                    DoRefreshData();
+                    ManagementService.ADFSManager.ConsoleSync();
                 }
             }
             catch (Exception ex)
@@ -3240,9 +3281,9 @@ namespace Neos.IdentityServer.Console.Controls
             {
                 if (_view.AutoValidate != AutoValidate.Disable)
                 {
-                    Config.UseActiveDirectory = !rdioUseSQL.Checked;
+                    Config.StoreMode = DataRepositoryKind.SQL;  
                     ManagementService.ADFSManager.SetDirty(true);
-                    DoRefreshData();
+                    ManagementService.ADFSManager.ConsoleSync();
                 }
             }
             catch (Exception ex)
@@ -3256,6 +3297,33 @@ namespace Neos.IdentityServer.Console.Controls
                 this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
+
+        /// <summary>
+        /// UseSQLCheckedChanged method implementation
+        /// </summary>
+        private void UseCustomCheckedChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                if (_view.AutoValidate != AutoValidate.Disable)
+                {
+                    Config.StoreMode = DataRepositoryKind.Custom;
+                    ManagementService.ADFSManager.SetDirty(true);
+                    ManagementService.ADFSManager.ConsoleSync();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
+                this._snapin.Console.ShowDialog(messageBoxParameters);
+            }
+        }
+
 
         /// <summary>
         /// SaveConfigLinkClicked event
@@ -3348,6 +3416,8 @@ namespace Neos.IdentityServer.Console.Controls
             {
                 if (status == ConfigOperationStatus.ConfigLoaded)
                     DoRefreshData();
+                if (status == ConfigOperationStatus.UISync)
+                    DoRefreshData();
             }
             else
                 _panel.Refresh();
@@ -3367,7 +3437,7 @@ namespace Neos.IdentityServer.Console.Controls
                     _panel.BackColor = Color.Orange;
                     break;
                 case ConfigOperationStatus.ConfigLoaded:
-                    if (Config.UseActiveDirectory)
+                    if (Config.StoreMode==DataRepositoryKind.ADDS)
                         _panel.BackColor = Color.Green;
                     else
                         _panel.BackColor = Color.DarkGray;
@@ -3377,6 +3447,8 @@ namespace Neos.IdentityServer.Console.Controls
                     break;
                 case ConfigOperationStatus.ConfigStopped:
                     _panel.BackColor = Color.DarkGray;
+                    break;
+                case ConfigOperationStatus.UISync:
                     break;
                 default:
                     _panel.BackColor = Color.Yellow;
@@ -3425,10 +3497,11 @@ namespace Neos.IdentityServer.Console.Controls
                 chkUseADDS = new CheckBox
                 {
                     Text = res.CTRLADUSEADDS,
-                    Checked = Config.UseActiveDirectory,
+                    Checked = (Config.StoreMode==DataRepositoryKind.ADDS),
                     Left = 10,
                     Top = 19,
-                    Width = 450
+                    Width = 450,
+                    Enabled = (Config.StoreMode != DataRepositoryKind.ADDS)
                 };
                 chkUseADDS.CheckedChanged += UseADDSCheckedChanged;
                 _txtpanel.Controls.Add(chkUseADDS);
@@ -3457,7 +3530,7 @@ namespace Neos.IdentityServer.Console.Controls
                     Left = 210,
                     Top = 76,
                     Width = 600,
-                    Enabled = Config.UseActiveDirectory
+                    Enabled = (Config.StoreMode == DataRepositoryKind.ADDS)
                 };
                 txtKeyAttribute.Validating += KeyAttributeValidating;
                 txtKeyAttribute.Validated += KeyAttributeValidated;
@@ -3478,7 +3551,7 @@ namespace Neos.IdentityServer.Console.Controls
                     Left = 210,
                     Top = 107,
                     Width = 600,
-                    Enabled = Config.UseActiveDirectory
+                    Enabled = (Config.StoreMode==DataRepositoryKind.ADDS)
                 };
                 txtMailAttribute.Validating += MailAttributeValidating;
                 txtMailAttribute.Validated += MailAttributeValidated;
@@ -3499,7 +3572,7 @@ namespace Neos.IdentityServer.Console.Controls
                     Left = 210,
                     Top = 138,
                     Width = 600,
-                    Enabled = Config.UseActiveDirectory
+                    Enabled = (Config.StoreMode == DataRepositoryKind.ADDS)
                 };
                 txtPhoneAttribute.Validating += PhoneAttributeValidating;
                 txtPhoneAttribute.Validated += PhoneAttributeValidated;
@@ -3520,7 +3593,7 @@ namespace Neos.IdentityServer.Console.Controls
                     Left = 210,
                     Top = 169,
                     Width = 600,
-                    Enabled = Config.UseActiveDirectory
+                    Enabled = (Config.StoreMode == DataRepositoryKind.ADDS)
                 };
                 txtMethodAttribute.Validating += MethodAttributeValidating;
                 txtMethodAttribute.Validated += MethodAttributeValidated;
@@ -3541,7 +3614,7 @@ namespace Neos.IdentityServer.Console.Controls
                     Left = 210,
                     Top = 200,
                     Width = 600,
-                    Enabled = Config.UseActiveDirectory
+                    Enabled = (Config.StoreMode == DataRepositoryKind.ADDS)
                 };
                 txtOverrideMethodAttribute.Validating += OverrideMethodAttributeValidating;
                 txtOverrideMethodAttribute.Validated += OverrideMethodAttributeValidated;
@@ -3562,7 +3635,7 @@ namespace Neos.IdentityServer.Console.Controls
                     Left = 210,
                     Top = 231,
                     Width = 600,
-                    Enabled = Config.UseActiveDirectory
+                    Enabled = (Config.StoreMode == DataRepositoryKind.ADDS)
                 };
                 txtPinAttribute.Validating += PinAttributeValidating;
                 txtPinAttribute.Validated += PinAttributeValidated;
@@ -3583,7 +3656,7 @@ namespace Neos.IdentityServer.Console.Controls
                     Left = 210,
                     Top = 262,
                     Width = 600,
-                    Enabled = Config.UseActiveDirectory
+                    Enabled = (Config.StoreMode == DataRepositoryKind.ADDS)
                 };
                 txtPublicKeyAttribute.Validating += CheckPublicKeyAttributeValidating;
                 txtPublicKeyAttribute.Validated += CheckPublicKeyAttributeValidated;
@@ -3604,7 +3677,7 @@ namespace Neos.IdentityServer.Console.Controls
                     Left = 210,
                     Top = 293,
                     Width = 600,
-                    Enabled = Config.UseActiveDirectory
+                    Enabled = (Config.StoreMode == DataRepositoryKind.ADDS)
                 };
                 txtRSACertAttribute.Validating += RSACertAttributeValidating;
                 txtRSACertAttribute.Validated += RSACertAttributeValidated;
@@ -3625,7 +3698,7 @@ namespace Neos.IdentityServer.Console.Controls
                     Left = 210,
                     Top = 324,
                     Width = 600,
-                    Enabled = Config.UseActiveDirectory
+                    Enabled = (Config.StoreMode == DataRepositoryKind.ADDS)
                 };
                 txtEnabledAttribute.Validating += EnabledAttributeValidating;
                 txtEnabledAttribute.Validated += EnabledAttributeValidated;
@@ -3647,7 +3720,7 @@ namespace Neos.IdentityServer.Console.Controls
                     Top = 355,
                     Width = 50,
                     TextAlign = HorizontalAlignment.Right,
-                    Enabled = Config.UseActiveDirectory
+                    Enabled = (Config.StoreMode == DataRepositoryKind.ADDS)
                 };
                 txtMaxRows.Validating += MaxRowsValidating;
                 txtMaxRows.Validated += MaxRowsValidated;
@@ -3660,7 +3733,7 @@ namespace Neos.IdentityServer.Console.Controls
                     Left = 210,
                     Top = 395,
                     Width = 150,
-                    Enabled = Config.UseActiveDirectory
+                    Enabled = (Config.StoreMode == DataRepositoryKind.ADDS)
                 };
                 btnTemplateBase.Click += BtnTemplateBaseClick;
                 _txtpanel.Controls.Add(btnTemplateBase);
@@ -3671,7 +3744,7 @@ namespace Neos.IdentityServer.Console.Controls
                     Left = 400,
                     Top = 395,
                     Width = 150,
-                    Enabled = Config.UseActiveDirectory
+                    Enabled = (Config.StoreMode == DataRepositoryKind.ADDS)
                 };
                 btnTemplate2016.Click += BtnTemplate2016Click;
                 _txtpanel.Controls.Add(btnTemplate2016);
@@ -3682,7 +3755,7 @@ namespace Neos.IdentityServer.Console.Controls
                     Left = 590,
                     Top = 395,
                     Width = 150,
-                    Enabled = Config.UseActiveDirectory
+                    Enabled = (Config.StoreMode == DataRepositoryKind.ADDS)
                 };
                 btnTemplateMFA.Click += BtnTemplateMFAClick;
                 _txtpanel.Controls.Add(btnTemplateMFA);
@@ -3750,41 +3823,42 @@ namespace Neos.IdentityServer.Console.Controls
             _view.CausesValidation = false;
             try
             {
-                chkUseADDS.Checked = Config.UseActiveDirectory;
+                chkUseADDS.Checked = (Config.StoreMode == DataRepositoryKind.ADDS);
+                chkUseADDS.Enabled = (Config.StoreMode != DataRepositoryKind.ADDS);
 
                 txtKeyAttribute.Text = Config.Hosts.ActiveDirectoryHost.KeyAttribute;
-                txtKeyAttribute.Enabled = Config.UseActiveDirectory;
+                txtKeyAttribute.Enabled = (Config.StoreMode == DataRepositoryKind.ADDS);
 
                 txtMailAttribute.Text = Config.Hosts.ActiveDirectoryHost.MailAttribute;
-                txtMailAttribute.Enabled = Config.UseActiveDirectory;
+                txtMailAttribute.Enabled = (Config.StoreMode == DataRepositoryKind.ADDS);
 
                 txtPhoneAttribute.Text = Config.Hosts.ActiveDirectoryHost.PhoneAttribute;
-                txtPhoneAttribute.Enabled = Config.UseActiveDirectory;
+                txtPhoneAttribute.Enabled = (Config.StoreMode == DataRepositoryKind.ADDS);
 
                 txtMethodAttribute.Text = Config.Hosts.ActiveDirectoryHost.MethodAttribute;
-                txtMethodAttribute.Enabled = Config.UseActiveDirectory;
+                txtMethodAttribute.Enabled = (Config.StoreMode == DataRepositoryKind.ADDS);
 
                 txtOverrideMethodAttribute.Text = Config.Hosts.ActiveDirectoryHost.OverrideMethodAttribute;
-                txtOverrideMethodAttribute.Enabled = Config.UseActiveDirectory;
+                txtOverrideMethodAttribute.Enabled = (Config.StoreMode == DataRepositoryKind.ADDS);
 
                 txtPinAttribute.Text = Config.Hosts.ActiveDirectoryHost.PinAttribute;
-                txtPinAttribute.Enabled = Config.UseActiveDirectory;
+                txtPinAttribute.Enabled = (Config.StoreMode == DataRepositoryKind.ADDS);
 
                 txtPublicKeyAttribute.Text = Config.Hosts.ActiveDirectoryHost.PublicKeyCredentialAttribute;
-                txtPublicKeyAttribute.Enabled = Config.UseActiveDirectory;
+                txtPublicKeyAttribute.Enabled = (Config.StoreMode == DataRepositoryKind.ADDS);
 
                 txtRSACertAttribute.Text = Config.Hosts.ActiveDirectoryHost.RSACertificateAttribute;
-                txtRSACertAttribute.Enabled = Config.UseActiveDirectory;
+                txtRSACertAttribute.Enabled = (Config.StoreMode == DataRepositoryKind.ADDS);
 
                 txtEnabledAttribute.Text = Config.Hosts.ActiveDirectoryHost.TotpEnabledAttribute;
-                txtEnabledAttribute.Enabled = Config.UseActiveDirectory;
+                txtEnabledAttribute.Enabled = (Config.StoreMode == DataRepositoryKind.ADDS);
 
                 txtMaxRows.Text = Config.Hosts.ActiveDirectoryHost.MaxRows.ToString();
-                txtMaxRows.Enabled = Config.UseActiveDirectory;
+                txtMaxRows.Enabled = (Config.StoreMode == DataRepositoryKind.ADDS);
 
-                btnTemplateBase.Enabled = Config.UseActiveDirectory;
-                btnTemplate2016.Enabled = Config.UseActiveDirectory;
-                btnTemplateMFA.Enabled = Config.UseActiveDirectory;
+                btnTemplateBase.Enabled = (Config.StoreMode == DataRepositoryKind.ADDS);
+                btnTemplate2016.Enabled = (Config.StoreMode == DataRepositoryKind.ADDS);
+                btnTemplateMFA.Enabled = (Config.StoreMode == DataRepositoryKind.ADDS);
 
                 tblSaveConfig.Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPESAVE;
                 tblCancelConfig.Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPECANCEL;
@@ -3937,9 +4011,10 @@ namespace Neos.IdentityServer.Console.Controls
             {
                 if (_view.AutoValidate != AutoValidate.Disable)
                 {
-                    Config.UseActiveDirectory = chkUseADDS.Checked;
+                    if (chkUseADDS.Checked)
+                        Config.StoreMode = DataRepositoryKind.ADDS;
                     ManagementService.ADFSManager.SetDirty(true);
-                    DoRefreshData();
+                    ManagementService.ADFSManager.ConsoleSync();
                 }
             }
             catch (Exception ex)
@@ -4605,6 +4680,9 @@ namespace Neos.IdentityServer.Console.Controls
         }
     }
 
+    /// <summary>
+    /// SQLConfigurationControl class implementation
+    /// </summary>
     public partial class SQLConfigurationControl : Panel, IMMCRefreshData
     {
         private NamespaceSnapInBase _snapin;
@@ -4666,6 +4744,8 @@ namespace Neos.IdentityServer.Console.Controls
             {
                 if (status == ConfigOperationStatus.ConfigLoaded)
                     DoRefreshData();
+                if (status == ConfigOperationStatus.UISync)
+                    DoRefreshData();
             }
             else
                 _panel.Refresh();
@@ -4685,7 +4765,7 @@ namespace Neos.IdentityServer.Console.Controls
                     _panel.BackColor = Color.Orange;
                     break;
                 case ConfigOperationStatus.ConfigLoaded:
-                    if (!Config.UseActiveDirectory)
+                    if (Config.StoreMode == DataRepositoryKind.SQL)
                         _panel.BackColor = Color.Green;
                     else
                         _panel.BackColor = Color.DarkGray;
@@ -4695,6 +4775,8 @@ namespace Neos.IdentityServer.Console.Controls
                     break;
                 case ConfigOperationStatus.ConfigStopped:
                     _panel.BackColor = Color.DarkGray;
+                    break;
+                case ConfigOperationStatus.UISync:
                     break;
                 default:
                     _panel.BackColor = Color.Yellow;
@@ -4743,10 +4825,11 @@ namespace Neos.IdentityServer.Console.Controls
                 chkUseSQL = new CheckBox
                 {
                     Text = res.CTRLSQLUSING,
-                    Checked = !Config.UseActiveDirectory,
+                    Checked = (Config.StoreMode==DataRepositoryKind.SQL),
                     Left = 10,
                     Top = 19,
-                    Width = 450
+                    Width = 450,
+                    Enabled = (Config.StoreMode != DataRepositoryKind.SQL)
                 };
                 chkUseSQL.CheckedChanged += UseSQLCheckedChanged;
                 _txtpanel.Controls.Add(chkUseSQL);
@@ -4766,7 +4849,7 @@ namespace Neos.IdentityServer.Console.Controls
                     Left = 210,
                     Top = 47,
                     Width = 700,
-                    Enabled = !Config.UseActiveDirectory
+                    Enabled = (Config.StoreMode == DataRepositoryKind.SQL)
                 };
                 txtConnectionString.Validating += ConnectionStringValidating;
                 txtConnectionString.Validated += ConnectionStringValidated;
@@ -4788,7 +4871,7 @@ namespace Neos.IdentityServer.Console.Controls
                     Top = 78,
                     Width = 50,
                     TextAlign = HorizontalAlignment.Right,
-                    Enabled = !Config.UseActiveDirectory
+                    Enabled = (Config.StoreMode == DataRepositoryKind.SQL)
                 };
                 txtMaxRows.Validating += MaxRowsValidating;
                 txtMaxRows.Validated += MaxRowsValidated;
@@ -4800,7 +4883,7 @@ namespace Neos.IdentityServer.Console.Controls
                     Left = 680,
                     Top = 82,
                     Width = 230,
-                    Enabled = !Config.UseActiveDirectory
+                    Enabled = (Config.StoreMode == DataRepositoryKind.SQL)
                 };
                 btnConnect.Click += BtnConnectClick;
                 _txtpanel.Controls.Add(btnConnect);
@@ -4811,7 +4894,7 @@ namespace Neos.IdentityServer.Console.Controls
                     Left = 680,
                     Top = 113,
                     Width = 230,
-                    Enabled = !Config.UseActiveDirectory
+                    Enabled = (Config.StoreMode == DataRepositoryKind.SQL)
                 };
                 btnCreateDB.Click += BtnCreateDBClick;
                 _txtpanel.Controls.Add(btnCreateDB);
@@ -4820,7 +4903,7 @@ namespace Neos.IdentityServer.Console.Controls
                 {
                     Text = res.CTRLSQLCRYPTUSING,
                     Checked = Config.Hosts.SQLServerHost.IsAlwaysEncrypted,
-                    Enabled = !Config.UseActiveDirectory,
+                    Enabled = (Config.StoreMode == DataRepositoryKind.SQL),
                     Left = 10,
                     Top = 144,
                     Width = 450
@@ -4843,7 +4926,7 @@ namespace Neos.IdentityServer.Console.Controls
                     Left = 210,
                     Top = 171,
                     Width = 100,
-                    Enabled = (!Config.UseActiveDirectory && Config.Hosts.SQLServerHost.IsAlwaysEncrypted)
+                    Enabled = ((Config.StoreMode == DataRepositoryKind.SQL) && Config.Hosts.SQLServerHost.IsAlwaysEncrypted)
                 };
                 txtEncryptKeyName.Validating += EncryptKeyNameValidating;
                 txtEncryptKeyName.Validated += EncryptKeyNameValidated;
@@ -4869,14 +4952,14 @@ namespace Neos.IdentityServer.Console.Controls
                     Maximum = new decimal(new int[] { 9999, 0, 0, 0 })
                 };
                 txtCertificateDuration.ValueChanged += CertValidityValueChanged;
-                txtCertificateDuration.Enabled = (!Config.UseActiveDirectory && Config.Hosts.SQLServerHost.IsAlwaysEncrypted);
+                txtCertificateDuration.Enabled = ((Config.StoreMode == DataRepositoryKind.SQL) && Config.Hosts.SQLServerHost.IsAlwaysEncrypted);
                 _txtpanel.Controls.Add(txtCertificateDuration);
 
                 chkReuseCertificate = new CheckBox
                 {
                     Text = res.CTRLSQLREUSECERT,
                     Checked = Config.Hosts.SQLServerHost.CertReuse,
-                    Enabled = (!Config.UseActiveDirectory && Config.Hosts.SQLServerHost.IsAlwaysEncrypted),
+                    Enabled = ((Config.StoreMode == DataRepositoryKind.SQL) && Config.Hosts.SQLServerHost.IsAlwaysEncrypted),
                     Left = 50,
                     Top = 233,
                     Width = 450
@@ -4899,7 +4982,7 @@ namespace Neos.IdentityServer.Console.Controls
                     Left = 260,
                     Top = 260,
                     Width = 300,
-                    Enabled = (!Config.UseActiveDirectory && Config.Hosts.SQLServerHost.IsAlwaysEncrypted && Config.Hosts.SQLServerHost.CertReuse)
+                    Enabled = ((Config.StoreMode == DataRepositoryKind.SQL) && Config.Hosts.SQLServerHost.IsAlwaysEncrypted && Config.Hosts.SQLServerHost.CertReuse)
                 };
                 txtCertificateThumbPrint.Validating += CertificateThumbPrintValidating;
                 txtCertificateThumbPrint.Validated += CertificateThumbPrintValidated;
@@ -4911,7 +4994,7 @@ namespace Neos.IdentityServer.Console.Controls
                     Left = 680,
                     Top = 322,
                     Width = 230,
-                    Enabled = (!Config.UseActiveDirectory && Config.Hosts.SQLServerHost.IsAlwaysEncrypted)
+                    Enabled = ((Config.StoreMode == DataRepositoryKind.SQL) && Config.Hosts.SQLServerHost.IsAlwaysEncrypted)
                 };
                 btnCreateCryptedDB.Click += BtnCreateCryptedDBClick;
                 _txtpanel.Controls.Add(btnCreateCryptedDB);
@@ -4944,7 +5027,7 @@ namespace Neos.IdentityServer.Console.Controls
             finally
             {
                 UpdateLayoutConfigStatus(ManagementService.ADFSManager.ConfigurationStatus);
-                UpdateControlsLayouts(!Config.UseActiveDirectory, Config.Hosts.SQLServerHost.IsAlwaysEncrypted, Config.Hosts.SQLServerHost.CertReuse);
+                UpdateControlsLayouts((Config.StoreMode == DataRepositoryKind.SQL), Config.Hosts.SQLServerHost.IsAlwaysEncrypted, Config.Hosts.SQLServerHost.CertReuse);
                 ValidateData();
                 _view.AutoValidate = AutoValidate.EnableAllowFocusChange;
                 _view.CausesValidation = true;
@@ -4962,36 +5045,37 @@ namespace Neos.IdentityServer.Console.Controls
             _view.CausesValidation = false;
             try
             {
-                chkUseSQL.Checked = !Config.UseActiveDirectory;
+                chkUseSQL.Checked = (Config.StoreMode == DataRepositoryKind.SQL);
+                chkUseSQL.Enabled = (Config.StoreMode != DataRepositoryKind.SQL);
 
                 txtConnectionString.Text = Config.Hosts.SQLServerHost.ConnectionString;
-                txtConnectionString.Enabled = !Config.UseActiveDirectory;
+                txtConnectionString.Enabled = (Config.StoreMode == DataRepositoryKind.SQL);
 
                 txtMaxRows.Text = Config.Hosts.SQLServerHost.MaxRows.ToString();
-                txtMaxRows.Enabled = !Config.UseActiveDirectory;
+                txtMaxRows.Enabled = (Config.StoreMode == DataRepositoryKind.SQL);
 
-                btnConnect.Enabled = !Config.UseActiveDirectory;
+                btnConnect.Enabled = (Config.StoreMode == DataRepositoryKind.SQL);
 
-                btnCreateDB.Enabled = !Config.UseActiveDirectory;
+                btnCreateDB.Enabled = (Config.StoreMode == DataRepositoryKind.SQL);
 
                 chkUseAlwaysEncryptSQL.Text = res.CTRLSQLCRYPTUSING;
                 chkUseAlwaysEncryptSQL.Checked = Config.Hosts.SQLServerHost.IsAlwaysEncrypted;
-                chkUseAlwaysEncryptSQL.Enabled = !Config.UseActiveDirectory;
+                chkUseAlwaysEncryptSQL.Enabled = (Config.StoreMode == DataRepositoryKind.SQL);
 
                 txtEncryptKeyName.Text = Config.Hosts.SQLServerHost.KeyName;
-                txtEncryptKeyName.Enabled = (!Config.UseActiveDirectory && Config.Hosts.SQLServerHost.IsAlwaysEncrypted);
+                txtEncryptKeyName.Enabled = ((Config.StoreMode == DataRepositoryKind.SQL) && Config.Hosts.SQLServerHost.IsAlwaysEncrypted);
 
                 txtCertificateDuration.Value = Config.Hosts.SQLServerHost.CertificateValidity;
-                txtCertificateDuration.Enabled = (!Config.UseActiveDirectory && Config.Hosts.SQLServerHost.IsAlwaysEncrypted);
+                txtCertificateDuration.Enabled = ((Config.StoreMode == DataRepositoryKind.SQL) && Config.Hosts.SQLServerHost.IsAlwaysEncrypted);
 
                 chkReuseCertificate.Text = res.CTRLSQLREUSECERT;
                 chkReuseCertificate.Checked = Config.Hosts.SQLServerHost.CertReuse;
-                chkReuseCertificate.Enabled = (!Config.UseActiveDirectory && Config.Hosts.SQLServerHost.IsAlwaysEncrypted);
+                chkReuseCertificate.Enabled = ((Config.StoreMode == DataRepositoryKind.SQL) && Config.Hosts.SQLServerHost.IsAlwaysEncrypted);
 
                 txtCertificateThumbPrint.Text = Config.Hosts.SQLServerHost.ThumbPrint;
-                txtCertificateThumbPrint.Enabled = (!Config.UseActiveDirectory && Config.Hosts.SQLServerHost.IsAlwaysEncrypted && Config.Hosts.SQLServerHost.CertReuse);
+                txtCertificateThumbPrint.Enabled = ((Config.StoreMode == DataRepositoryKind.SQL) && Config.Hosts.SQLServerHost.IsAlwaysEncrypted && Config.Hosts.SQLServerHost.CertReuse);
 
-                btnCreateCryptedDB.Enabled = (!Config.UseActiveDirectory && Config.Hosts.SQLServerHost.IsAlwaysEncrypted);
+                btnCreateCryptedDB.Enabled = ((Config.StoreMode == DataRepositoryKind.SQL) && Config.Hosts.SQLServerHost.IsAlwaysEncrypted);
                 btnCreateCryptedDB.Text = res.CTRLSQLCREATECRYPTEDDB;
 
                 chkUseSQL.Text = res.CTRLSQLUSING;
@@ -5007,7 +5091,7 @@ namespace Neos.IdentityServer.Console.Controls
             }
             finally
             {
-                UpdateControlsLayouts(!Config.UseActiveDirectory, chkUseAlwaysEncryptSQL.Checked, chkReuseCertificate.Checked);
+                UpdateControlsLayouts((Config.StoreMode == DataRepositoryKind.SQL), chkUseAlwaysEncryptSQL.Checked, chkReuseCertificate.Checked);
                 ValidateData();
                 _view.AutoValidate = AutoValidate.EnableAllowFocusChange;
                 _view.CausesValidation = true;
@@ -5102,6 +5186,7 @@ namespace Neos.IdentityServer.Console.Controls
             _UpdateControlsLayouts = true;
             try
             {
+                chkUseSQL.Enabled = (Config.StoreMode != DataRepositoryKind.SQL);
                 txtConnectionString.Enabled = isenabled;
                 txtMaxRows.Enabled = isenabled;
                 btnConnect.Enabled = isenabled;
@@ -5137,9 +5222,10 @@ namespace Neos.IdentityServer.Console.Controls
             {
                 if (_view.AutoValidate != AutoValidate.Disable)
                 {
-                    Config.UseActiveDirectory = !chkUseSQL.Checked;
+                    if (chkUseSQL.Checked)
+                        Config.StoreMode = DataRepositoryKind.SQL;  
                     ManagementService.ADFSManager.SetDirty(true);
-                    UpdateControlsLayouts(!Config.UseActiveDirectory, chkUseAlwaysEncryptSQL.Checked, chkReuseCertificate.Checked);
+                    ManagementService.ADFSManager.ConsoleSync();
                 }
             }
             catch (Exception ex)
@@ -5409,7 +5495,7 @@ namespace Neos.IdentityServer.Console.Controls
                     ManagementService.ADFSManager.SetDirty(true);
                     Config.Hosts.SQLServerHost.IsAlwaysEncrypted = chkUseAlwaysEncryptSQL.Checked;
                     UpdateConnectionString(chkUseAlwaysEncryptSQL.Checked);
-                    UpdateControlsLayouts(!Config.UseActiveDirectory, chkUseAlwaysEncryptSQL.Checked, chkReuseCertificate.Checked);
+                    UpdateControlsLayouts((Config.StoreMode==DataRepositoryKind.SQL), chkUseAlwaysEncryptSQL.Checked, chkReuseCertificate.Checked);
                 }
             }
             catch (Exception ex)
@@ -5433,7 +5519,7 @@ namespace Neos.IdentityServer.Console.Controls
                 {
                     this.Config.Hosts.SQLServerHost.CertReuse = chkReuseCertificate.Checked;
                     ManagementService.ADFSManager.SetDirty(true);
-                    UpdateControlsLayouts(!Config.UseActiveDirectory, Config.Hosts.SQLServerHost.IsAlwaysEncrypted, Config.Hosts.SQLServerHost.CertReuse);
+                    UpdateControlsLayouts((Config.StoreMode == DataRepositoryKind.SQL), Config.Hosts.SQLServerHost.IsAlwaysEncrypted, Config.Hosts.SQLServerHost.CertReuse);
                 }
             }
             catch (Exception ex)
@@ -5587,6 +5673,689 @@ namespace Neos.IdentityServer.Console.Controls
         }   
     }
 
+    public partial class CustomStorageConfigurationControl : Panel, IMMCRefreshData
+    {
+        private NamespaceSnapInBase _snapin;
+        private Panel _panel;
+        private Panel _txtpanel;
+        private CustomStoreViewControl _view;
+        private ErrorProvider errors;
+        private CheckBox chkUseCustom;
+        private TextBox txtConnectionString;
+        private TextBox txtMaxRows;
+        private TextBox txtDLL;
+        private TextBox txtParams;
+        private Label lblMaxRows;
+        private Label lblConnectionString;
+        private Label lblDLL;
+        private Label lblParams;
+        private LinkLabel tblSaveConfig;
+        private LinkLabel tblCancelConfig;
+        private Label lblKeys;
+        private TextBox txtKeys;
+
+
+        /// <summary>
+        /// ConfigurationControl Constructor
+        /// </summary>
+        public CustomStorageConfigurationControl(CustomStoreViewControl view, NamespaceSnapInBase snap)
+        {
+            _view = view;
+            _snapin = snap;
+            _panel = new Panel();
+            _txtpanel = new Panel();
+            BackColor = System.Drawing.SystemColors.Window;
+            AutoSize = false;
+        }
+
+        /// <summary>
+        /// OnCreateControl method override
+        /// </summary>
+        protected override void OnCreateControl()
+        {
+            base.OnCreateControl();
+            ManagementService.ADFSManager.ConfigurationStatusChanged += ConfigurationStatusChanged;
+            DoCreateControls();
+        }
+
+        /// <summary>
+        /// ConfigurationStatusChanged method implementation
+        /// </summary>
+        internal void ConfigurationStatusChanged(ADFSServiceManager mgr, ConfigOperationStatus status, Exception ex = null)
+        {
+            UpdateLayoutConfigStatus(status);
+            if (_view.IsNotifsEnabled())
+            {
+                if (status == ConfigOperationStatus.ConfigLoaded)
+                    DoRefreshData();
+                if (status == ConfigOperationStatus.UISync)
+                    DoRefreshData();
+            }
+            else
+                _panel.Refresh();
+        }
+
+        /// <summary>
+        /// UpdateLayoutConfigStatus method implementation
+        /// </summary>
+        private void UpdateLayoutConfigStatus(ConfigOperationStatus status)
+        {
+            switch (status)
+            {
+                case ConfigOperationStatus.ConfigInError:
+                    _panel.BackColor = Color.DarkRed;
+                    break;
+                case ConfigOperationStatus.ConfigSaved:
+                    _panel.BackColor = Color.Orange;
+                    break;
+                case ConfigOperationStatus.ConfigLoaded:
+                    _panel.BackColor = Color.Green;
+                    if (Config.StoreMode == DataRepositoryKind.Custom)
+                        _panel.BackColor = Color.Green;
+                    else
+                        _panel.BackColor = Color.DarkGray;
+                    break;
+                case ConfigOperationStatus.ConfigIsDirty:
+                    _panel.BackColor = Color.DarkOrange;
+                    break;
+                case ConfigOperationStatus.ConfigStopped:
+                    _panel.BackColor = Color.DarkGray;
+                    break;
+                case ConfigOperationStatus.UISync:
+                    break;
+                default:
+                    _panel.BackColor = Color.Yellow;
+                    break;
+            }
+            return;
+        }
+
+        /// <summary>
+        /// Config property
+        /// </summary>
+        public MFAConfig Config
+        {
+            get
+            {
+                ManagementService.ADFSManager.EnsureLocalConfiguration();
+                return ManagementService.ADFSManager.Config;
+            }
+        }
+
+        /// <summary>
+        /// Initialize method implementation
+        /// </summary>
+        private void DoCreateControls()
+        {
+            this.SuspendLayout();
+            _view.AutoValidate = AutoValidate.Disable;
+            _view.CausesValidation = false;
+            try
+            {
+                this.Dock = DockStyle.Top;
+                this.Height = 585;
+                this.Width = 512;
+                this.Margin = new Padding(30, 5, 30, 5);
+
+                _panel.Width = 20;
+                _panel.Height = 290;
+                this.Controls.Add(_panel);
+
+                _txtpanel.Left = 20;
+                _txtpanel.Width = this.Width - 20;
+                _txtpanel.Height = 290;
+                _txtpanel.BackColor = System.Drawing.SystemColors.Control;
+                this.Controls.Add(_txtpanel);
+
+                chkUseCustom = new CheckBox
+                {
+                    Text = res.CTRLCUSTOMUSING,
+                    Checked = (Config.StoreMode == DataRepositoryKind.Custom),
+                    Left = 10,
+                    Top = 19,
+                    Width = 450,
+                    Enabled = (Config.StoreMode != DataRepositoryKind.Custom)
+                };
+                chkUseCustom.CheckedChanged += UseCustomCheckedChanged;
+                _txtpanel.Controls.Add(chkUseCustom);
+
+                lblConnectionString = new Label
+                {
+                    Text = res.CTRLSQLCONNECTSTR + " : ",
+                    Left = 50,
+                    Top = 51,
+                    Width = 180
+                };
+                _txtpanel.Controls.Add(lblConnectionString);
+
+                txtConnectionString = new TextBox
+                {
+                    Text = Config.Hosts.CustomStoreHost.ConnectionString,
+                    Left = 240,
+                    Top = 47,
+                    Width = 780,
+                    Enabled = (Config.StoreMode == DataRepositoryKind.Custom)
+                };
+                txtConnectionString.Validating += ConnectionStringValidating;
+                txtConnectionString.Validated += ConnectionStringValidated;
+                _txtpanel.Controls.Add(txtConnectionString);
+
+                lblMaxRows = new Label
+                {
+                    Text = res.CTRLSQLMAXROWS + " : ",
+                    Left = 50,
+                    Top = 82,
+                    Width = 180
+                };
+                _txtpanel.Controls.Add(lblMaxRows);
+
+                txtMaxRows = new TextBox
+                {
+                    Text = Config.Hosts.CustomStoreHost.MaxRows.ToString(),
+                    Left = 240,
+                    Top = 78,
+                    Width = 50,
+                    TextAlign = HorizontalAlignment.Right,
+                    Enabled = (Config.StoreMode == DataRepositoryKind.Custom)
+                };
+                txtMaxRows.Validating += MaxRowsValidating;
+                txtMaxRows.Validated += MaxRowsValidated;
+                _txtpanel.Controls.Add(txtMaxRows);
+
+                lblDLL = new Label
+                {
+                    Text = res.CTRLDATAREPOASSEMBLY + " : ",
+                    Left = 50,
+                    Top = 107,
+                    Width = 180
+                };
+                _txtpanel.Controls.Add(lblDLL);
+
+                txtDLL = new TextBox
+                {
+                    Text = Config.Hosts.CustomStoreHost.DataRepositoryFullyQualifiedImplementation,
+                    Left = 240,
+                    Top = 103,
+                    Width = 780,
+                    Enabled = (Config.StoreMode == DataRepositoryKind.Custom)
+                };
+                txtDLL.Validating += DLLValidating;
+                txtDLL.Validated += DLLValidated;
+                _txtpanel.Controls.Add(txtDLL);
+
+                lblKeys = new Label
+                {
+                    Text = res.CTRLKEYSREPOASSEMBLY + " : ",
+                    Left = 50,
+                    Top = 132,
+                    Width = 180
+                };
+                _txtpanel.Controls.Add(lblKeys);
+
+                txtKeys = new TextBox
+                {
+                    Text = Config.Hosts.CustomStoreHost.KeysRepositoryFullyQualifiedImplementation,
+                    Left = 240,
+                    Top = 128,
+                    Width = 780,
+                    Enabled = (Config.StoreMode == DataRepositoryKind.Custom)
+                };
+                txtKeys.Validating += KEYSValidating;
+                txtKeys.Validated += KEYSValidated;
+                _txtpanel.Controls.Add(txtKeys);
+
+                lblParams = new Label
+                {
+                    Text = res.CTRLSMSPARAMS + " : ",
+                    Left = 50,
+                    Top = 163,
+                    Width = 180
+                };
+                _txtpanel.Controls.Add(lblParams);
+
+                txtParams = new TextBox
+                {
+                    Text = Config.Hosts.CustomStoreHost.Parameters.Data,
+                    Left = 240,
+                    Top = 163,
+                    Width = 780,
+                    Height = 100,
+                    Multiline = true,
+                    Enabled = (Config.StoreMode == DataRepositoryKind.Custom)
+                };
+                txtParams.Validating += ParamsValidating;
+                txtParams.Validated += ParamsValidated;
+                _txtpanel.Controls.Add(txtParams);
+
+                tblSaveConfig = new LinkLabel
+                {
+                    Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPESAVE,
+                    Left = 20,
+                    Top = 310,
+                    Width = 80,
+                    TabStop = true
+                };
+                tblSaveConfig.LinkClicked += SaveConfigLinkClicked;
+                this.Controls.Add(tblSaveConfig);
+
+                tblCancelConfig = new LinkLabel
+                {
+                    Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPECANCEL,
+                    Left = 110,
+                    Top = 310,
+                    Width = 80,
+                    TabStop = true
+                };
+                tblCancelConfig.LinkClicked += CancelConfigLinkClicked;               
+                this.Controls.Add(tblCancelConfig);
+
+                errors = new ErrorProvider(_view);
+                errors.BlinkStyle = ErrorBlinkStyle.NeverBlink;
+            }
+            finally
+            {
+                UpdateLayoutConfigStatus(ManagementService.ADFSManager.ConfigurationStatus);
+                ValidateData();
+                _view.AutoValidate = AutoValidate.EnableAllowFocusChange;
+                _view.CausesValidation = true;
+                this.ResumeLayout();
+            }
+        }
+
+        /// <summary>
+        /// DoRefreshData method implementation
+        /// </summary>
+        public void DoRefreshData()
+        {
+            this.SuspendLayout();
+            _view.AutoValidate = AutoValidate.Disable;
+            _view.CausesValidation = false;
+            try
+            {
+                chkUseCustom.Checked = (Config.StoreMode == DataRepositoryKind.Custom);
+                chkUseCustom.Enabled = (Config.StoreMode != DataRepositoryKind.Custom);
+
+                txtConnectionString.Text = Config.Hosts.CustomStoreHost.ConnectionString;
+                txtConnectionString.Enabled = (Config.StoreMode == DataRepositoryKind.Custom);
+
+                txtMaxRows.Text = Config.Hosts.CustomStoreHost.MaxRows.ToString();
+                txtMaxRows.Enabled = (Config.StoreMode == DataRepositoryKind.Custom);
+
+                txtDLL.Text = Config.Hosts.CustomStoreHost.DataRepositoryFullyQualifiedImplementation;
+                txtDLL.Enabled = (Config.StoreMode == DataRepositoryKind.Custom);
+
+                txtKeys.Text = Config.Hosts.CustomStoreHost.KeysRepositoryFullyQualifiedImplementation;
+                txtKeys.Enabled = (Config.StoreMode == DataRepositoryKind.Custom);
+
+                txtParams.Text = Config.Hosts.CustomStoreHost.Parameters.Data;
+                txtParams.Enabled = (Config.StoreMode == DataRepositoryKind.Custom);
+
+                chkUseCustom.Text = res.CTRLCUSTOMUSING;
+                lblMaxRows.Text = res.CTRLSQLMAXROWS + " : ";
+                lblConnectionString.Text = res.CTRLSQLCONNECTSTR + " : ";
+                lblDLL.Text = res.CTRLDATAREPOASSEMBLY + " : ";
+                lblKeys.Text = res.CTRLKEYSREPOASSEMBLY + " : ";
+                lblParams.Text = res.CTRLSMSPARAMS + " : ";
+                tblSaveConfig.Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPESAVE;
+                tblCancelConfig.Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPECANCEL;
+            }
+            finally
+            {
+                UpdateLayoutConfigStatus(ManagementService.ADFSManager.ConfigurationStatus);
+                ValidateData();
+                _view.CausesValidation = true;
+                _view.AutoValidate = AutoValidate.EnableAllowFocusChange;
+                this.ResumeLayout();
+            }
+        }
+
+        /// <summary>
+        /// ValidateData method implmentation
+        /// </summary>
+        private void ValidateData()
+        {
+            if (txtMaxRows.Enabled)
+            {
+                int maxrows = Convert.ToInt32(txtMaxRows.Text);
+                if ((maxrows < 1000) || (maxrows > 1000000))
+                    errors.SetError(txtMaxRows, String.Format(res.CTRLSQLMAXROWSERROR, maxrows));
+                else
+                    errors.SetError(txtMaxRows, "");
+            }
+            else
+                errors.SetError(txtMaxRows, "");
+
+            if (!string.IsNullOrEmpty(txtDLL.Text))
+            {
+                if (!AssemblyParser.CheckCustomStorageAssembly(Config))
+                    errors.SetError(txtDLL, res.CTRLSMSIVALIDEXTERROR);
+                else
+                    errors.SetError(txtDLL, "");
+            }
+            else
+                errors.SetError(txtDLL, "");
+            if (!string.IsNullOrEmpty(txtKeys.Text))
+            {
+                if (!AssemblyParser.CheckCustomStorageAssembly(Config))
+                    errors.SetError(txtKeys, res.CTRLSMSIVALIDEXTERROR);
+                else
+                    errors.SetError(txtKeys, "");
+            }
+            else
+                errors.SetError(txtKeys, "");
+            errors.SetError(txtParams, "");
+        }
+
+        /// <summary>
+        /// OnResize method implmentation
+        /// </summary>
+        protected override void OnResize(EventArgs eventargs)
+        {
+            if (_txtpanel != null)
+                _txtpanel.Width = this.Width - 20;
+        }
+
+        /// <summary>
+        /// UseSQLCheckedChanged method implementation
+        /// </summary>
+        private void UseCustomCheckedChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                if (_view.AutoValidate != AutoValidate.Disable)
+                {
+                    if (chkUseCustom.Checked)
+                        Config.StoreMode = DataRepositoryKind.Custom;
+                    ManagementService.ADFSManager.SetDirty(true);
+                    ManagementService.ADFSManager.ConsoleSync();                   
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
+                messageBoxParameters.Text = ex.Message;
+                messageBoxParameters.Buttons = MessageBoxButtons.OK;
+                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                this._snapin.Console.ShowDialog(messageBoxParameters);
+            }
+        }
+
+        /// <summary>
+        /// ConnectionStringValidating method
+        /// </summary>
+        private void ConnectionStringValidating(object sender, CancelEventArgs e)
+        {
+            this.Cursor = Cursors.WaitCursor;
+            try
+            {
+                if ((txtConnectionString.Modified) && (txtConnectionString.Enabled))
+                {
+                    Config.Hosts.CustomStoreHost.ConnectionString = txtConnectionString.Text;
+                    ManagementService.ADFSManager.SetDirty(true);
+                    errors.SetError(txtConnectionString, "");
+                }
+            }
+            catch (Exception ex)
+            {
+                e.Cancel = true;
+                errors.SetError(txtConnectionString, ex.Message);
+            }
+            finally
+            {
+                this.Cursor = Cursors.Default;
+            }
+        }
+
+        /// <summary>
+        /// ConnectionStringValidated method
+        /// </summary>
+        private void ConnectionStringValidated(object sender, EventArgs e)
+        {
+            try
+            {
+                Config.Hosts.CustomStoreHost.ConnectionString = txtConnectionString.Text;
+                ManagementService.ADFSManager.SetDirty(true);
+                errors.SetError(txtConnectionString, "");
+            }
+            catch (Exception ex)
+            {
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
+                messageBoxParameters.Text = ex.Message;
+                messageBoxParameters.Buttons = MessageBoxButtons.OK;
+                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                this._snapin.Console.ShowDialog(messageBoxParameters);
+            }
+        }
+
+        /// <summary>
+        /// MaxRowsValidating method
+        /// </summary>
+        private void MaxRowsValidating(object sender, CancelEventArgs e)
+        {
+            this.Cursor = Cursors.WaitCursor;
+            try
+            {
+                if ((txtMaxRows.Modified) && (txtMaxRows.Enabled))
+                {
+                    int maxrows = Convert.ToInt32(txtMaxRows.Text);
+                    ManagementService.ADFSManager.SetDirty(true);
+                    if ((maxrows < 1000) || (maxrows > 1000000))
+                        throw new Exception(String.Format(res.CTRLSQLMAXROWSERROR, maxrows));
+                    Config.Hosts.CustomStoreHost.MaxRows = maxrows;
+                    errors.SetError(txtMaxRows, "");
+                }
+            }
+            catch (Exception ex)
+            {
+                e.Cancel = true;
+                errors.SetError(txtMaxRows, ex.Message);
+            }
+            finally
+            {
+                this.Cursor = Cursors.Default;
+            }
+        }
+
+        /// <summary>
+        /// MaxRowsValidated method
+        /// </summary>
+        private void MaxRowsValidated(object sender, EventArgs e)
+        {
+            try
+            {
+                int maxrows = Convert.ToInt32(txtMaxRows.Text);
+                Config.Hosts.CustomStoreHost.MaxRows = maxrows;
+                ManagementService.ADFSManager.SetDirty(true);
+                errors.SetError(txtMaxRows, "");
+            }
+            catch (Exception ex)
+            {
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
+                messageBoxParameters.Text = ex.Message;
+                messageBoxParameters.Buttons = MessageBoxButtons.OK;
+                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                this._snapin.Console.ShowDialog(messageBoxParameters);
+            }
+        }
+
+        #region DLL
+        /// <summary>
+        /// DLLValidating event
+        /// </summary>
+        private void DLLValidating(object sender, CancelEventArgs e)
+        {
+            this.Cursor = Cursors.WaitCursor;
+            try
+            {
+                if (txtDLL.Modified)
+                {
+                    ManagementService.ADFSManager.SetDirty(true);
+                    if (!string.IsNullOrEmpty(txtDLL.Text))
+                    {
+                        Config.Hosts.CustomStoreHost.DataRepositoryFullyQualifiedImplementation = txtDLL.Text;
+                        if (!AssemblyParser.CheckCustomStorageAssembly(Config))
+                            throw new Exception(res.CTRLSMSIVALIDEXTERROR);
+                    }
+                    else
+                        Config.Hosts.CustomStoreHost.DataRepositoryFullyQualifiedImplementation = string.Empty;
+                    errors.SetError(txtDLL, "");
+                }
+            }
+            catch (Exception ex)
+            {
+                e.Cancel = true;
+                errors.SetError(txtDLL, ex.Message);
+            }
+            finally
+            {
+                this.Cursor = Cursors.Default;
+            }
+        }
+
+        /// <summary>
+        /// DLLValidated event
+        /// </summary>
+        private void DLLValidated(object sender, EventArgs e)
+        {
+            try
+            {
+                Config.Hosts.CustomStoreHost.DataRepositoryFullyQualifiedImplementation = txtDLL.Text;
+                ManagementService.ADFSManager.SetDirty(true);
+                errors.SetError(txtDLL, "");
+            }
+            catch (Exception ex)
+            {
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
+                messageBoxParameters.Text = ex.Message;
+                messageBoxParameters.Buttons = MessageBoxButtons.OK;
+                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                this._snapin.Console.ShowDialog(messageBoxParameters);
+            }
+        }
+
+        /// <summary>
+        /// KEYSValidating event
+        /// </summary>
+        private void KEYSValidating(object sender, CancelEventArgs e)
+        {
+            this.Cursor = Cursors.WaitCursor;
+            try
+            {
+                if (txtDLL.Modified)
+                {
+                    ManagementService.ADFSManager.SetDirty(true);
+                    if (!string.IsNullOrEmpty(txtKeys.Text))
+                    {
+                        Config.Hosts.CustomStoreHost.KeysRepositoryFullyQualifiedImplementation = txtKeys.Text;
+                        if (!AssemblyParser.CheckCustomKeysStorageAssembly(Config))
+                            throw new Exception(res.CTRLSMSIVALIDEXTERROR);
+                    }
+                    else
+                        Config.Hosts.CustomStoreHost.KeysRepositoryFullyQualifiedImplementation = string.Empty;
+                    errors.SetError(txtKeys, "");
+                }
+            }
+            catch (Exception ex)
+            {
+                e.Cancel = true;
+                errors.SetError(txtKeys, ex.Message);
+            }
+            finally
+            {
+                this.Cursor = Cursors.Default;
+            }
+        }
+
+        /// <summary>
+        /// KEYSValidated event
+        /// </summary>
+        private void KEYSValidated(object sender, EventArgs e)
+        {
+            try
+            {
+                Config.Hosts.CustomStoreHost.KeysRepositoryFullyQualifiedImplementation = txtKeys.Text;
+                ManagementService.ADFSManager.SetDirty(true);
+                errors.SetError(txtKeys, "");
+            }
+            catch (Exception ex)
+            {
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
+                messageBoxParameters.Text = ex.Message;
+                messageBoxParameters.Buttons = MessageBoxButtons.OK;
+                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                this._snapin.Console.ShowDialog(messageBoxParameters);
+            }
+        }
+        #endregion
+
+        #region Params
+        /// <summary>
+        /// ParamsValidating event
+        /// </summary>
+        private void ParamsValidating(object sender, CancelEventArgs e)
+        {
+            this.Cursor = Cursors.WaitCursor;
+            try
+            {
+                if (txtParams.Modified)
+                {
+                    ManagementService.ADFSManager.SetDirty(true);
+                    Config.Hosts.CustomStoreHost.Parameters.Data = txtParams.Text;
+                    errors.SetError(txtParams, "");
+                }
+            }
+            catch (Exception ex)
+            {
+                e.Cancel = true;
+                errors.SetError(txtParams, ex.Message);
+            }
+            finally
+            {
+                this.Cursor = Cursors.Default;
+            }
+        }
+
+        /// <summary>
+        /// ParamsValidated event
+        /// </summary>
+        private void ParamsValidated(object sender, EventArgs e)
+        {
+            try
+            {
+                Config.Hosts.CustomStoreHost.Parameters.Data = txtParams.Text;
+                ManagementService.ADFSManager.SetDirty(true);
+                errors.SetError(txtParams, "");
+            }
+            catch (Exception ex)
+            {
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
+                messageBoxParameters.Text = ex.Message;
+                messageBoxParameters.Buttons = MessageBoxButtons.OK;
+                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                this._snapin.Console.ShowDialog(messageBoxParameters);
+            }
+        }
+        #endregion
+
+        /// <summary>
+        /// SaveConfigLinkClicked event
+        /// </summary>
+        private void SaveConfigLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            if (_view != null)
+                _view.SaveData();
+        }
+
+        /// <summary>
+        /// CancelConfigLinkClicked event
+        /// </summary>
+        private void CancelConfigLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            if (_view != null)
+                _view.CancelData();
+        }
+    }
+
     public partial class SMTPConfigurationControl : Panel, IMMCRefreshData
     {
         private NamespaceSnapInBase _snapin;
@@ -5678,6 +6447,8 @@ namespace Neos.IdentityServer.Console.Controls
                     break;
                 case ConfigOperationStatus.ConfigStopped:
                     _panel.BackColor = Color.DarkGray;
+                    break;
+                case ConfigOperationStatus.UISync:
                     break;
                 default:
                     _panel.BackColor = Color.Yellow;
@@ -6542,6 +7313,8 @@ namespace Neos.IdentityServer.Console.Controls
                 case ConfigOperationStatus.ConfigStopped:
                     _panel.BackColor = Color.DarkGray;
                     break;
+                case ConfigOperationStatus.UISync:
+                    break;
                 default:
                     _panel.BackColor = Color.Yellow;
                     break;
@@ -7174,6 +7947,8 @@ namespace Neos.IdentityServer.Console.Controls
                 case ConfigOperationStatus.ConfigStopped:
                     _panel.BackColor = Color.DarkGray;
                     break;
+                case ConfigOperationStatus.UISync:
+                    break;
                 default:
                     _panel.BackColor = Color.Yellow;
                     break;
@@ -7570,6 +8345,8 @@ namespace Neos.IdentityServer.Console.Controls
                     break;
                 case ConfigOperationStatus.ConfigStopped:
                     _panel.BackColor = Color.DarkGray;
+                    break;
+                case ConfigOperationStatus.UISync:
                     break;
                 default:
                     _panel.BackColor = Color.Yellow;
@@ -8272,6 +9049,8 @@ namespace Neos.IdentityServer.Console.Controls
                     break;
                 case ConfigOperationStatus.ConfigStopped:
                     _panel.BackColor = Color.DarkGray;
+                    break;
+                case ConfigOperationStatus.UISync:
                     break;
                 default:
                     _panel.BackColor = Color.Yellow;
@@ -9047,6 +9826,8 @@ namespace Neos.IdentityServer.Console.Controls
                 case ConfigOperationStatus.ConfigStopped:
                     _panel.BackColor = Color.DarkGray;
                     break;
+                case ConfigOperationStatus.UISync:
+                    break;
                 default:
                     _panel.BackColor = Color.Yellow;
                     break;
@@ -9625,6 +10406,8 @@ namespace Neos.IdentityServer.Console.Controls
                     break;
                 case ConfigOperationStatus.ConfigStopped:
                     _panel.BackColor = Color.DarkGray;
+                    break;
+                case ConfigOperationStatus.UISync:
                     break;
                 default:
                     _panel.BackColor = Color.Yellow;
@@ -10531,6 +11314,8 @@ namespace Neos.IdentityServer.Console.Controls
                 case ConfigOperationStatus.ConfigStopped:
                     _panel.BackColor = Color.DarkGray;
                     break;
+                case ConfigOperationStatus.UISync:
+                    break;
                 default:
                     _panel.BackColor = Color.Yellow;
                     break;
@@ -10848,6 +11633,8 @@ namespace Neos.IdentityServer.Console.Controls
                     break;
                 case ConfigOperationStatus.ConfigStopped:
                     _panel.BackColor = Color.DarkGray;
+                    break;
+                case ConfigOperationStatus.UISync:
                     break;
                 default:
                     _panel.BackColor = Color.Yellow;
@@ -11336,6 +12123,8 @@ namespace Neos.IdentityServer.Console.Controls
                 case ConfigOperationStatus.ConfigStopped:
                     _panel.BackColor = Color.DarkGray;
                     break;
+                case ConfigOperationStatus.UISync:
+                    break;
                 default:
                     _panel.BackColor = Color.Yellow;
                     break;
@@ -11424,7 +12213,7 @@ namespace Neos.IdentityServer.Console.Controls
                 txtConnectionString.Left = 180;
                 txtConnectionString.Top = 54;
                 txtConnectionString.Width = 820;
-                txtConnectionString.Enabled = !Config.UseActiveDirectory;
+                txtConnectionString.Enabled = (Config.StoreMode == DataRepositoryKind.SQL);
                 txtConnectionString.Validating += ConnectionStringValidating;
                 txtConnectionString.Validated += ConnectionStringValidated;
                 _panelCUSTOM.Controls.Add(txtConnectionString);
@@ -11458,7 +12247,7 @@ namespace Neos.IdentityServer.Console.Controls
                 chkUseAlwaysEncryptSQL = new CheckBox();
                 chkUseAlwaysEncryptSQL.Text = res.CTRLSQLCRYPTUSING;
                 chkUseAlwaysEncryptSQL.Checked = Config.KeysConfig.ExternalKeyManager.IsAlwaysEncrypted;
-                chkUseAlwaysEncryptSQL.Enabled = !Config.UseActiveDirectory;
+                chkUseAlwaysEncryptSQL.Enabled = Config.StoreMode==DataRepositoryKind.SQL;
                 chkUseAlwaysEncryptSQL.Left = 10;
                 chkUseAlwaysEncryptSQL.Top = 161;
                 chkUseAlwaysEncryptSQL.Width = 450;
@@ -12259,6 +13048,8 @@ namespace Neos.IdentityServer.Console.Controls
                 case ConfigOperationStatus.ConfigStopped:
                     _panel.BackColor = Color.DarkGray;
                     break;
+                case ConfigOperationStatus.UISync:
+                    break;
                 default:
                     _panel.BackColor = Color.Yellow;
                     break;
@@ -12730,19 +13521,43 @@ namespace Neos.IdentityServer.Console.Controls
     internal static class AssemblyParser
     {
         /// <summary>
+        /// CheckCustomStorageAssembly method implmentation
+        /// </summary>
+        internal static bool CheckCustomStorageAssembly(MFAConfig config)
+        {
+            try
+            {
+                return Utilities.CheckExternalStoragePluggin(config.Hosts.CustomStoreHost, config.DeliveryWindow);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// CheckCustomKeysStorageAssembly method implmentation
+        /// </summary>
+        internal static bool CheckCustomKeysStorageAssembly(MFAConfig config)
+        {
+            try
+            {
+                return Utilities.CheckExternalKeysStoragePluggin(config.Hosts.CustomStoreHost, config.DeliveryWindow);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
         /// CheckSMSAssembly method implmentation
         /// </summary>
         internal static bool CheckSMSAssembly(string fqiassembly)
         {
             try
             {
-                Assembly assembly = Assembly.Load(ParseAssembly(fqiassembly));
-                Type _typetoload = assembly.GetType(ParseType(fqiassembly));
-                if (_typetoload.IsClass && !_typetoload.IsAbstract && _typetoload.GetInterface("IExternalProvider") != null)
-                    return (Activator.CreateInstance(_typetoload, true) != null); // Allow Calling internal Constructors
-                else if (_typetoload.IsClass && !_typetoload.IsAbstract && _typetoload.GetInterface("IExternalOTPProvider") != null)
-                    return (Activator.CreateInstance(_typetoload, true) != null); // Allow Calling internal Constructors
-                return false;
+                return (Utilities.LoadExternalProviderPluggin(fqiassembly)!=null);
             }
             catch (Exception)
             {
@@ -12769,24 +13584,6 @@ namespace Neos.IdentityServer.Console.Controls
             {
                 return false;
             }
-        }
-
-        /// <summary>
-        /// ParseType method implmentation
-        /// </summary>
-        private static string ParseAssembly(string AssemblyFulldescription)
-        {
-            int cnt = AssemblyFulldescription.IndexOf(',');
-            return AssemblyFulldescription.Remove(0, cnt).TrimStart(new char[] { ',', ' ' });
-        }
-
-        /// <summary>
-        /// ParseType method implmentation
-        /// </summary>
-        private static string ParseType(string AssemblyFulldescription)
-        {
-            string[] type = AssemblyFulldescription.Split(new char[] { ',' });
-            return type[0];
         }
     }
 }

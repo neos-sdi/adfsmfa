@@ -357,4 +357,7 @@
   <data name="ROOTLANGUAGECADESC" xml:space="preserve">
     <value>Измените культуру пользовательского интерфейса в Квебек (3084)</value>
   </data>
+  <data name="CUSTOMSTORESCOPENODEDESC" xml:space="preserve">
+    <value>Конфигурация пользовательского магазина</value>
+  </data>
 </root>

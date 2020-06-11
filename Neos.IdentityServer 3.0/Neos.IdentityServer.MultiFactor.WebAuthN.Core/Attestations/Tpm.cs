@@ -20,7 +20,6 @@ using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using Neos.IdentityServer.MultiFactor.WebAuthN.Objects;
 using Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor;
-using Neos.IdentityServer.MultiFactor.WebAuthN;
 
 namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
 {

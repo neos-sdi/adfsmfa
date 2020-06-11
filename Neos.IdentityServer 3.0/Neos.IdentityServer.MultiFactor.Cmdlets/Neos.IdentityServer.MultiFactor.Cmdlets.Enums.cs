@@ -61,7 +61,12 @@ namespace MFA
         /// <summary>
         /// <para type="description">SQL Server Store.</para>
         /// </summary>
-        SQL = 1
+        SQL = 1,
+
+        /// <summary>
+        /// <para type="description">Specific implementation for storage.</para>
+        /// </summary>
+        Custom = 2
     }
 
     /// <summary>

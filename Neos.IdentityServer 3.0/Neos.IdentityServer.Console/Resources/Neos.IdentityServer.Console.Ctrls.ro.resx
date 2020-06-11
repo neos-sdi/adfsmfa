@@ -654,4 +654,16 @@
   <data name="CTRLWEBAUTHNROOTATTESTATION" xml:space="preserve">
     <value>Solicitați un certificat rădăcină de atestare valabil</value>
   </data>
+  <data name="CTRLSTUSECUSTOM" xml:space="preserve">
+    <value>Utilizarea spațiului de stocare personalizat</value>
+  </data>
+  <data name="CTRLDATAREPOASSEMBLY" xml:space="preserve">
+    <value>Depozit de date (clasă completă)</value>
+  </data>
+  <data name="CTRLKEYSREPOASSEMBLY" xml:space="preserve">
+    <value>Depozitul de chei (clasa completă)</value>
+  </data>
+  <data name="CTRLCUSTOMUSING" xml:space="preserve">
+    <value>Utilizare depozit particularizat</value>
+  </data>
 </root>

@@ -654,4 +654,16 @@
   <data name="CTRLWEBAUTHNROOTATTESTATION" xml:space="preserve">
     <value>Exiger un certificat racine d'attestation valide</value>
   </data>
+  <data name="CTRLSTUSECUSTOM" xml:space="preserve">
+    <value>Utiliser un stockage personnalisé</value>
+  </data>
+  <data name="CTRLDATAREPOASSEMBLY" xml:space="preserve">
+    <value>Dépôt de données (classe complète)</value>
+  </data>
+  <data name="CTRLKEYSREPOASSEMBLY" xml:space="preserve">
+    <value>Dépôt de clés (classe complète)</value>
+  </data>
+  <data name="CTRLCUSTOMUSING" xml:space="preserve">
+    <value>Utiliser le dépôt personnalisé</value>
+  </data>
 </root>

@@ -654,4 +654,16 @@
   <data name="CTRLWEBAUTHNROOTATTESTATION" xml:space="preserve">
     <value>Kræver et gyldigt attestationsrottecertifikat</value>
   </data>
+  <data name="CTRLSTUSECUSTOM" xml:space="preserve">
+    <value>Brug brugerdefineret lagerplads</value>
+  </data>
+  <data name="CTRLDATAREPOASSEMBLY" xml:space="preserve">
+    <value>Datalager (fuld klasse)</value>
+  </data>
+  <data name="CTRLKEYSREPOASSEMBLY" xml:space="preserve">
+    <value>Nøglelager (fuld klasse)</value>
+  </data>
+  <data name="CTRLCUSTOMUSING" xml:space="preserve">
+    <value>Brug brugerdefineret lager</value>
+  </data>
 </root>

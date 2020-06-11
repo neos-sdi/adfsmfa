@@ -19,19 +19,12 @@
 using Microsoft.IdentityServer.Web.Authentication.External;
 using Neos.IdentityServer.MultiFactor.Common;
 using Neos.IdentityServer.MultiFactor.Data;
-using Neos.IdentityServer.MultiFactor.WebAuthN;
 using System;
-using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.Net;
-using System.Reflection;
 using System.Security.Claims;
 using System.Security.Cryptography;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Web;
 
 namespace Neos.IdentityServer.MultiFactor
 {

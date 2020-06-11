@@ -56,7 +56,8 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         ConfigIsDirty,
         ConfigSaved,
         ConfigStopped,
-        ConfigInError
+        ConfigInError,
+        UISync
     }
     #endregion
 
@@ -132,7 +133,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         }
 
         /// <summary>
-        /// MailSlotMessageArrived method implmentation  **** ICI *****
+        /// MailSlotMessageArrived method implmentation  
         /// </summary>
         private void MailSlotMessageArrived(MailSlotServer maislotserver, MailSlotMessage message)
         {
@@ -173,7 +174,8 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// </summary>
         private void DefaultConfigurationStatusChanged(ADFSServiceManager mgr, ConfigOperationStatus status, Exception Ex = null)
         {
-            mgr.ConfigurationStatus = status;
+            if (status != ConfigOperationStatus.UISync)
+                mgr.ConfigurationStatus = status;
         }
 
         /// <summary>
@@ -238,6 +240,15 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             if (value)
                 this.ConfigurationStatusChanged(this, ConfigOperationStatus.ConfigIsDirty);
         }
+
+        /// <summary>
+        /// ConsoleSync method implmentayion
+        /// </summary>
+        public void ConsoleSync()
+        {
+            this.ConfigurationStatusChanged(this, ConfigOperationStatus.UISync);
+        }
+
         #endregion
 
         #region Properties

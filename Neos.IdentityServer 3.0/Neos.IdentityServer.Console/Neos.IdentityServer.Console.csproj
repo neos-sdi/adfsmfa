@@ -111,6 +111,12 @@
     <Compile Include="Forms\Neos.IdentityServer.Console.SecurityWSMANViewControl.Designer.cs">
       <DependentUpon>Neos.IdentityServer.Console.SecurityWSMANViewControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\Neos.IdentityServer.Console.CustomStoreViewControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\Neos.IdentityServer.Console.CustomStoreViewControl.Designer.cs">
+      <DependentUpon>Neos.IdentityServer.Console.CustomStoreViewControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\Neos.IdentityServer.Console.StorageViewControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -276,6 +282,7 @@
     <Compile Include="Views\Neos.IdentityServer.Console.ADDSFormView.cs" />
     <Compile Include="Views\Neos.IdentityServer.Console.BiometricsFormView.cs" />
     <Compile Include="Views\Neos.IdentityServer.Console.SecurityWSMANFormView.cs" />
+    <Compile Include="Views\Neos.IdentityServer.Console.CustomStoreFormView.cs" />
     <Compile Include="Views\Neos.IdentityServer.Console.StorageFormView.cs" />
     <Compile Include="Views\Neos.IdentityServer.Console.SecurityRootFormView.cs" />
     <Compile Include="Views\Neos.IdentityServer.Console.SecurityWebAuthNFormView.cs" />
@@ -550,6 +557,45 @@
     <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.BiometricsViewControl.ja.resx">
       <DependentUpon>Neos.IdentityServer.Console.BiometricsViewControl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.CustomStoreViewControl.da.resx">
+      <DependentUpon>Neos.IdentityServer.Console.CustomStoreViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.CustomStoreViewControl.de.resx">
+      <DependentUpon>Neos.IdentityServer.Console.CustomStoreViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.CustomStoreViewControl.es.resx">
+      <DependentUpon>Neos.IdentityServer.Console.CustomStoreViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.CustomStoreViewControl.fr-CA.resx">
+      <DependentUpon>Neos.IdentityServer.Console.CustomStoreViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.CustomStoreViewControl.fr.resx">
+      <DependentUpon>Neos.IdentityServer.Console.CustomStoreViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.CustomStoreViewControl.it.resx">
+      <DependentUpon>Neos.IdentityServer.Console.CustomStoreViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.CustomStoreViewControl.ja.resx">
+      <DependentUpon>Neos.IdentityServer.Console.CustomStoreViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.CustomStoreViewControl.nl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.CustomStoreViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.CustomStoreViewControl.pl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.CustomStoreViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.CustomStoreViewControl.pt.resx">
+      <DependentUpon>Neos.IdentityServer.Console.CustomStoreViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.CustomStoreViewControl.ro.resx">
+      <DependentUpon>Neos.IdentityServer.Console.CustomStoreViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.CustomStoreViewControl.ru.resx">
+      <DependentUpon>Neos.IdentityServer.Console.CustomStoreViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.CustomStoreViewControl.sv.resx">
+      <DependentUpon>Neos.IdentityServer.Console.CustomStoreViewControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.DatabaseWizard.da.resx">
       <DependentUpon>Neos.IdentityServer.Console.DatabaseWizard.cs</DependentUpon>
     </EmbeddedResource>
@@ -744,6 +790,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SMTPViewControl.ja.resx">
       <DependentUpon>Neos.IdentityServer.Console.SMTPViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.CustomStoreViewControl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.CustomStoreViewControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SQLViewControl.da.resx">
       <DependentUpon>Neos.IdentityServer.Console.SQLViewControl.cs</DependentUpon>

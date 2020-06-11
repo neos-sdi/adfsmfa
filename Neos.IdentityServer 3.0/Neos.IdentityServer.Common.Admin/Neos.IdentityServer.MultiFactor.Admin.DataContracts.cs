@@ -199,7 +199,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             MFAConfig cfg = ManagementService.Config;
             SQLServerHost sql = cfg.Hosts.SQLServerHost;
             IsDirty = cfg.IsDirty;
-            Active = !cfg.UseActiveDirectory;
+            Active = (cfg.StoreMode == DataRepositoryKind.SQL);
             ConnectionString = sql.ConnectionString;
             IsAlwaysEncrypted = sql.IsAlwaysEncrypted;
             CertificateValidity = sql.CertificateValidity;
@@ -221,7 +221,10 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             cfg.IsDirty = IsDirty;
             if (!ManagementService.CheckSQLConnection(ConnectionString))
                 throw new ArgumentException(string.Format("Invalid ConnectionString {0} !", ConnectionString));
-            cfg.UseActiveDirectory = !Active;
+
+            if (Active)
+                cfg.StoreMode = DataRepositoryKind.SQL;
+
             sql.ConnectionString = ConnectionString;
             sql.IsAlwaysEncrypted = IsAlwaysEncrypted;
             sql.CertificateValidity = CertificateValidity;
@@ -263,7 +266,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             MFAConfig cfg = ManagementService.Config;
             ADDSHost adds = cfg.Hosts.ActiveDirectoryHost;
             IsDirty = cfg.IsDirty;
-            Active = cfg.UseActiveDirectory;
+            Active = (cfg.StoreMode== DataRepositoryKind.ADDS);
             KeyAttribute = adds.KeyAttribute;
             MailAttribute = adds.MailAttribute;
             PhoneAttribute = adds.PhoneAttribute;
@@ -285,6 +288,8 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             ManagementService.Initialize(host, true);
             MFAConfig cfg = ManagementService.Config;
             ADDSHost adds = cfg.Hosts.ActiveDirectoryHost;
+            if (Active)
+                cfg.StoreMode = DataRepositoryKind.ADDS;
             cfg.IsDirty = IsDirty;
             if (!ManagementService.CheckADDSAttribute(adds.DomainAddress, adds.Account, adds.Password, KeyAttribute, 1))
                 throw new ArgumentException(string.Format("Attribute {0} not found in forest schema !", KeyAttribute));
@@ -318,6 +323,60 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             ClientCertificateAttribute = adds.ClientCertificateAttribute;
             RSACertificateAttribute = adds.RSACertificateAttribute;
             adds.MaxRows = MaxRows;
+            ManagementService.ADFSManager.WriteConfiguration(host);
+        }
+    }
+    #endregion
+
+    #region FlatCustomStore
+    /// <summary>
+    /// FlatCustomStore class implementation
+    /// </summary>
+    public class FlatCustomStore
+    {
+        public bool IsDirty { get; set; }
+        public bool Active { get; set; }
+        public string ConnectionString { get; set; }
+        public int MaxRows { get; set; }
+        public string DataRepositoryFullyQualifiedImplementation { get; set; }
+        public string KeysRepositoryFullyQualifiedImplementation { get; set; }
+        public string Parameters { get; set; }
+
+        /// <summary>
+        /// Update method implmentation
+        /// </summary>
+        public void Load(PSHost host)
+        {
+            ManagementService.Initialize(host, true);
+            MFAConfig cfg = ManagementService.Config;
+            CustomStoreHost sql = cfg.Hosts.CustomStoreHost;
+            IsDirty = cfg.IsDirty;
+            Active = (cfg.StoreMode== DataRepositoryKind.Custom);
+            ConnectionString = sql.ConnectionString;
+            MaxRows = sql.MaxRows;
+            DataRepositoryFullyQualifiedImplementation = sql.DataRepositoryFullyQualifiedImplementation;
+            KeysRepositoryFullyQualifiedImplementation = sql.KeysRepositoryFullyQualifiedImplementation;
+            Parameters = sql.Parameters.Data;
+        }
+
+        /// <summary>
+        /// Update method implmentation
+        /// </summary>
+        public void Update(PSHost host)
+        {
+            ManagementService.Initialize(host, true);
+            MFAConfig cfg = ManagementService.Config;
+            CustomStoreHost sql = cfg.Hosts.CustomStoreHost;
+            if (Active)
+                cfg.StoreMode = DataRepositoryKind.Custom;
+            cfg.IsDirty = IsDirty;
+            
+            sql.ConnectionString = ConnectionString;
+            sql.MaxRows = MaxRows;
+            sql.DataRepositoryFullyQualifiedImplementation = DataRepositoryFullyQualifiedImplementation;
+            sql.KeysRepositoryFullyQualifiedImplementation = KeysRepositoryFullyQualifiedImplementation;
+            sql.Parameters.Data = Parameters;
+
             ManagementService.ADFSManager.WriteConfiguration(host);
         }
     }
@@ -675,7 +734,6 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     /// </summary>
     public abstract class FlatBaseProvider
     {
-        private string _cdata;
         public bool IsDirty { get; set; }
         public bool Enabled { get; set; }
         public bool IsRequired { get; set; }
@@ -683,21 +741,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         public bool PinRequired { get; set; }
         public ForceWizardMode ForceWizard { get; set; }
         public string FullyQualifiedImplementation { get; set; }
-
-        /// <summary>
-        /// Parameters property
-        /// </summary>
-        public string Parameters
-        {
-            get
-            {
-                return _cdata;
-            }
-            set
-            {
-                _cdata = value;
-            }
-        }
+        public string Parameters { get; set; }
 
         public abstract PreferredMethod Kind { get; }
         public abstract void Load(PSHost host);

@@ -32,6 +32,7 @@ using System.Drawing.Imaging;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Management.Automation;
 using System.Management.Automation.Host;
 using System.Management.Automation.Runspaces;
@@ -692,10 +693,18 @@ namespace Neos.IdentityServer.MultiFactor
         internal static MFAUser GetMFAUser(MFAConfig cfg, string upn)
         {
             DataRepositoryService client = null;
-            if (cfg.UseActiveDirectory)
-                client = new ADDSDataRepositoryService(cfg.Hosts.ActiveDirectoryHost, cfg.Hosts.ActiveDirectoryHost.Account, cfg.Hosts.ActiveDirectoryHost.Password, cfg.DeliveryWindow);
-            else
-                client = new SQLDataRepositoryService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow);
+            switch (cfg.StoreMode)
+            {
+                case DataRepositoryKind.ADDS:
+                    client = new ADDSDataRepositoryService(cfg.Hosts.ActiveDirectoryHost, cfg.DeliveryWindow);
+                    break;
+                case DataRepositoryKind.SQL:
+                    client = new SQLDataRepositoryService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow);
+                    break;
+                case DataRepositoryKind.Custom:
+                    client = CustomDataRepositoryCreator.CreateDataRepositoryInstance(cfg.Hosts.CustomStoreHost, cfg.DeliveryWindow);
+                    break;
+            }
             client.OnKeyDataEvent += KeyDataEvent;
             return client.GetMFAUser(upn);
         }
@@ -708,10 +717,18 @@ namespace Neos.IdentityServer.MultiFactor
             if (reg == null)
                 new ArgumentNullException("user information");
             DataRepositoryService client = null;
-            if (cfg.UseActiveDirectory)
-                client = new ADDSDataRepositoryService(cfg.Hosts.ActiveDirectoryHost, cfg.Hosts.ActiveDirectoryHost.Account, cfg.Hosts.ActiveDirectoryHost.Password, cfg.DeliveryWindow);
-            else
-                client = new SQLDataRepositoryService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow);
+            switch (cfg.StoreMode)
+            {
+                case DataRepositoryKind.ADDS:
+                    client = new ADDSDataRepositoryService(cfg.Hosts.ActiveDirectoryHost, cfg.DeliveryWindow);
+                    break;
+                case DataRepositoryKind.SQL:
+                    client = new SQLDataRepositoryService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow);
+                    break;
+                case DataRepositoryKind.Custom:
+                    client = CustomDataRepositoryCreator.CreateDataRepositoryInstance(cfg.Hosts.CustomStoreHost, cfg.DeliveryWindow);
+                    break;
+            }
             client.OnKeyDataEvent += KeyDataEvent;
             if (reg.PIN <= 0)
                 reg.PIN = cfg.DefaultPin;
@@ -749,10 +766,18 @@ namespace Neos.IdentityServer.MultiFactor
             if (reg == null)
                 new ArgumentNullException("user information");
             DataRepositoryService client = null;
-            if (cfg.UseActiveDirectory)
-                client = new ADDSDataRepositoryService(cfg.Hosts.ActiveDirectoryHost, cfg.Hosts.ActiveDirectoryHost.Account, cfg.Hosts.ActiveDirectoryHost.Password, cfg.DeliveryWindow);
-            else
-                client = new SQLDataRepositoryService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow);
+            switch (cfg.StoreMode)
+            {
+                case DataRepositoryKind.ADDS:
+                    client = new ADDSDataRepositoryService(cfg.Hosts.ActiveDirectoryHost, cfg.DeliveryWindow);
+                    break;
+                case DataRepositoryKind.SQL:
+                    client = new SQLDataRepositoryService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow);
+                    break;
+                case DataRepositoryKind.Custom:
+                    client = CustomDataRepositoryCreator.CreateDataRepositoryInstance(cfg.Hosts.CustomStoreHost, cfg.DeliveryWindow);
+                    break;
+            }
             if (reg.PIN <= 0)
                 reg.PIN = cfg.DefaultPin;
             if (reg.OverrideMethod == null)
@@ -790,10 +815,18 @@ namespace Neos.IdentityServer.MultiFactor
             if (reg == null)
                 new ArgumentNullException("user information");
             DataRepositoryService client = null;
-            if (cfg.UseActiveDirectory)
-                client = new ADDSDataRepositoryService(cfg.Hosts.ActiveDirectoryHost, cfg.Hosts.ActiveDirectoryHost.Account, cfg.Hosts.ActiveDirectoryHost.Password, cfg.DeliveryWindow);
-            else
-                client = new SQLDataRepositoryService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow);
+            switch (cfg.StoreMode)
+            {
+                case DataRepositoryKind.ADDS:
+                    client = new ADDSDataRepositoryService(cfg.Hosts.ActiveDirectoryHost, cfg.DeliveryWindow);
+                    break;
+                case DataRepositoryKind.SQL:
+                    client = new SQLDataRepositoryService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow);
+                    break;
+                case DataRepositoryKind.Custom:
+                    client = CustomDataRepositoryCreator.CreateDataRepositoryInstance(cfg.Hosts.CustomStoreHost, cfg.DeliveryWindow);
+                    break;
+            }
             client.OnKeyDataEvent += KeyDataEvent;
             return client.DeleteMFAUser(reg, dropkey);
         }
@@ -806,10 +839,18 @@ namespace Neos.IdentityServer.MultiFactor
             if (reg == null)
                 new ArgumentNullException("user information");
             DataRepositoryService client = null;
-            if (cfg.UseActiveDirectory)
-                client = new ADDSDataRepositoryService(cfg.Hosts.ActiveDirectoryHost, cfg.Hosts.ActiveDirectoryHost.Account, cfg.Hosts.ActiveDirectoryHost.Password, cfg.DeliveryWindow);
-            else
-                client = new SQLDataRepositoryService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow);
+            switch (cfg.StoreMode)
+            {
+                case DataRepositoryKind.ADDS:
+                    client = new ADDSDataRepositoryService(cfg.Hosts.ActiveDirectoryHost, cfg.DeliveryWindow);
+                    break;
+                case DataRepositoryKind.SQL:
+                    client = new SQLDataRepositoryService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow);
+                    break;
+                case DataRepositoryKind.Custom:
+                    client = CustomDataRepositoryCreator.CreateDataRepositoryInstance(cfg.Hosts.CustomStoreHost, cfg.DeliveryWindow);
+                    break;
+            }
             client.OnKeyDataEvent += KeyDataEvent;
             return client.EnableMFAUser(reg);
         }
@@ -822,10 +863,18 @@ namespace Neos.IdentityServer.MultiFactor
             if (reg == null)
                 new ArgumentNullException("user information");
             DataRepositoryService client = null;
-            if (cfg.UseActiveDirectory)
-                client = new ADDSDataRepositoryService(cfg.Hosts.ActiveDirectoryHost, cfg.Hosts.ActiveDirectoryHost.Account, cfg.Hosts.ActiveDirectoryHost.Password, cfg.DeliveryWindow);
-            else
-                client = new SQLDataRepositoryService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow);
+            switch (cfg.StoreMode)
+            {
+                case DataRepositoryKind.ADDS:
+                    client = new ADDSDataRepositoryService(cfg.Hosts.ActiveDirectoryHost, cfg.DeliveryWindow);
+                    break;
+                case DataRepositoryKind.SQL:
+                    client = new SQLDataRepositoryService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow);
+                    break;
+                case DataRepositoryKind.Custom:
+                    client = CustomDataRepositoryCreator.CreateDataRepositoryInstance(cfg.Hosts.CustomStoreHost, cfg.DeliveryWindow);
+                    break;
+            }
             client.OnKeyDataEvent += KeyDataEvent;
             return client.DisableMFAUser(reg);
         }
@@ -836,10 +885,18 @@ namespace Neos.IdentityServer.MultiFactor
         internal static MFAUserList GetMFAUsers(MFAConfig cfg, DataFilterObject filter, DataOrderObject order, DataPagingObject paging)
         {
             DataRepositoryService client = null;
-            if (cfg.UseActiveDirectory)
-                client = new ADDSDataRepositoryService(cfg.Hosts.ActiveDirectoryHost, cfg.Hosts.ActiveDirectoryHost.Account, cfg.Hosts.ActiveDirectoryHost.Password, cfg.DeliveryWindow);
-            else
-                client = new SQLDataRepositoryService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow);
+            switch (cfg.StoreMode)
+            {
+                case DataRepositoryKind.ADDS:
+                    client = new ADDSDataRepositoryService(cfg.Hosts.ActiveDirectoryHost, cfg.DeliveryWindow);
+                    break;
+                case DataRepositoryKind.SQL:
+                    client = new SQLDataRepositoryService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow);
+                    break;
+                case DataRepositoryKind.Custom:
+                    client = CustomDataRepositoryCreator.CreateDataRepositoryInstance(cfg.Hosts.CustomStoreHost, cfg.DeliveryWindow);
+                    break;
+            }
             client.OnKeyDataEvent += KeyDataEvent;
             return client.GetMFAUsers(filter, order, paging);
         }
@@ -850,10 +907,18 @@ namespace Neos.IdentityServer.MultiFactor
         internal static MFAUserList GetAllMFAUsers(MFAConfig cfg, DataOrderObject order, bool enabledonly = false)
         {
             DataRepositoryService client = null;
-            if (cfg.UseActiveDirectory)
-                client = new ADDSDataRepositoryService(cfg.Hosts.ActiveDirectoryHost, cfg.Hosts.ActiveDirectoryHost.Account, cfg.Hosts.ActiveDirectoryHost.Password, cfg.DeliveryWindow);
-            else
-                client = new SQLDataRepositoryService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow);
+            switch (cfg.StoreMode)
+            {
+                case DataRepositoryKind.ADDS:
+                    client = new ADDSDataRepositoryService(cfg.Hosts.ActiveDirectoryHost, cfg.DeliveryWindow);
+                    break;
+                case DataRepositoryKind.SQL:
+                    client = new SQLDataRepositoryService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow);
+                    break;
+                case DataRepositoryKind.Custom:
+                    client = CustomDataRepositoryCreator.CreateDataRepositoryInstance(cfg.Hosts.CustomStoreHost, cfg.DeliveryWindow);
+                    break;
+            }
             client.OnKeyDataEvent += KeyDataEvent;
             return client.GetMFAUsersAll(order, enabledonly);
         }
@@ -864,10 +929,18 @@ namespace Neos.IdentityServer.MultiFactor
         internal static int GetMFAUsersCount(MFAConfig cfg, DataFilterObject filter)
         {
             DataRepositoryService client = null;
-            if (cfg.UseActiveDirectory)
-                client = new ADDSDataRepositoryService(cfg.Hosts.ActiveDirectoryHost, cfg.Hosts.ActiveDirectoryHost.Account, cfg.Hosts.ActiveDirectoryHost.Password, cfg.DeliveryWindow);
-            else
-                client = new SQLDataRepositoryService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow);
+            switch (cfg.StoreMode)
+            {
+                case DataRepositoryKind.ADDS:
+                    client = new ADDSDataRepositoryService(cfg.Hosts.ActiveDirectoryHost, cfg.DeliveryWindow);
+                    break;
+                case DataRepositoryKind.SQL:
+                    client = new SQLDataRepositoryService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow);
+                    break;
+                case DataRepositoryKind.Custom:
+                    client = CustomDataRepositoryCreator.CreateDataRepositoryInstance(cfg.Hosts.CustomStoreHost, cfg.DeliveryWindow);
+                    break;
+            }
             client.OnKeyDataEvent += KeyDataEvent;
             return client.GetMFAUsersCount(filter);
         }
@@ -880,10 +953,18 @@ namespace Neos.IdentityServer.MultiFactor
         internal static MFAWebAuthNUser GetUser(MFAConfig cfg, string username)
         {
             IWebAuthNDataRepositoryService client = null;
-            if (cfg.UseActiveDirectory)
-                client = new ADDSDataRepositoryService(cfg.Hosts.ActiveDirectoryHost, cfg.Hosts.ActiveDirectoryHost.Account, cfg.Hosts.ActiveDirectoryHost.Password, cfg.DeliveryWindow) as IWebAuthNDataRepositoryService;
-            else
-                client = new SQLDataRepositoryService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow) as IWebAuthNDataRepositoryService;
+            switch (cfg.StoreMode)
+            {
+                case DataRepositoryKind.ADDS:
+                    client = new ADDSDataRepositoryService(cfg.Hosts.ActiveDirectoryHost, cfg.DeliveryWindow) as IWebAuthNDataRepositoryService;
+                    break;
+                case DataRepositoryKind.SQL:
+                    client = new SQLDataRepositoryService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow) as IWebAuthNDataRepositoryService;
+                    break;
+                case DataRepositoryKind.Custom:
+                    client = CustomDataRepositoryCreator.CreateDataRepositoryInstance(cfg.Hosts.CustomStoreHost, cfg.DeliveryWindow) as IWebAuthNDataRepositoryService;
+                    break;
+            }
             return client.GetUser(cfg.WebAuthNProvider.Configuration.ChallengeSize, username);
         }
 
@@ -893,12 +974,20 @@ namespace Neos.IdentityServer.MultiFactor
         internal static List<MFAUserCredential> GetCredentialsByUser(MFAConfig cfg, MFAWebAuthNUser user)
         {
             if (user == null)
-                new ArgumentNullException("user information");
+                throw new ArgumentNullException("user information");
             IWebAuthNDataRepositoryService client = null;
-            if (cfg.UseActiveDirectory)
-                client = new ADDSDataRepositoryService(cfg.Hosts.ActiveDirectoryHost, cfg.Hosts.ActiveDirectoryHost.Account, cfg.Hosts.ActiveDirectoryHost.Password, cfg.DeliveryWindow) as IWebAuthNDataRepositoryService;
-            else
-                client = new SQLDataRepositoryService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow) as IWebAuthNDataRepositoryService;
+            switch (cfg.StoreMode)
+            {
+                case DataRepositoryKind.ADDS:
+                    client = new ADDSDataRepositoryService(cfg.Hosts.ActiveDirectoryHost, cfg.DeliveryWindow) as IWebAuthNDataRepositoryService;
+                    break;
+                case DataRepositoryKind.SQL:
+                    client = new SQLDataRepositoryService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow) as IWebAuthNDataRepositoryService;
+                    break;
+                case DataRepositoryKind.Custom:
+                    client = CustomDataRepositoryCreator.CreateDataRepositoryInstance(cfg.Hosts.CustomStoreHost, cfg.DeliveryWindow) as IWebAuthNDataRepositoryService;
+                    break;
+            }
             return client.GetCredentialsByUser(user);
         }
 
@@ -908,12 +997,20 @@ namespace Neos.IdentityServer.MultiFactor
         internal static MFAUserCredential GetCredentialById(MFAConfig cfg, MFAWebAuthNUser user, byte[] id)
         {
             if (user == null)
-                new ArgumentNullException("user information");
+                throw new ArgumentNullException("user information");
             IWebAuthNDataRepositoryService client = null;
-            if (cfg.UseActiveDirectory)
-                client = new ADDSDataRepositoryService(cfg.Hosts.ActiveDirectoryHost, cfg.Hosts.ActiveDirectoryHost.Account, cfg.Hosts.ActiveDirectoryHost.Password, cfg.DeliveryWindow) as IWebAuthNDataRepositoryService;
-            else
-                client = new SQLDataRepositoryService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow) as IWebAuthNDataRepositoryService;
+            switch (cfg.StoreMode)
+            {
+                case DataRepositoryKind.ADDS:
+                    client = new ADDSDataRepositoryService(cfg.Hosts.ActiveDirectoryHost, cfg.DeliveryWindow) as IWebAuthNDataRepositoryService;
+                    break;
+                case DataRepositoryKind.SQL:
+                    client = new SQLDataRepositoryService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow) as IWebAuthNDataRepositoryService;
+                    break;
+                case DataRepositoryKind.Custom:
+                    client = CustomDataRepositoryCreator.CreateDataRepositoryInstance(cfg.Hosts.CustomStoreHost, cfg.DeliveryWindow) as IWebAuthNDataRepositoryService;
+                    break;
+            }
             return client.GetCredentialById(user, id);
         }
 
@@ -923,12 +1020,20 @@ namespace Neos.IdentityServer.MultiFactor
         internal static List<MFAUserCredential> GetCredentialsByUserHandle(MFAConfig cfg, MFAWebAuthNUser user, byte[] userHandle)
         {
             if (user == null)
-                new ArgumentNullException("user information");
+                throw new ArgumentNullException("user information");
             IWebAuthNDataRepositoryService client = null;
-            if (cfg.UseActiveDirectory)
-                client = new ADDSDataRepositoryService(cfg.Hosts.ActiveDirectoryHost, cfg.Hosts.ActiveDirectoryHost.Account, cfg.Hosts.ActiveDirectoryHost.Password, cfg.DeliveryWindow) as IWebAuthNDataRepositoryService;
-            else
-                client = new SQLDataRepositoryService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow) as IWebAuthNDataRepositoryService;
+            switch (cfg.StoreMode)
+            {
+                case DataRepositoryKind.ADDS:
+                    client = new ADDSDataRepositoryService(cfg.Hosts.ActiveDirectoryHost, cfg.DeliveryWindow) as IWebAuthNDataRepositoryService;
+                    break;
+                case DataRepositoryKind.SQL:
+                    client = new SQLDataRepositoryService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow) as IWebAuthNDataRepositoryService;
+                    break;
+                case DataRepositoryKind.Custom:
+                    client = CustomDataRepositoryCreator.CreateDataRepositoryInstance(cfg.Hosts.CustomStoreHost, cfg.DeliveryWindow) as IWebAuthNDataRepositoryService;
+                    break;
+            }
             return client.GetCredentialsByUserHandle(user, userHandle);
         }
 
@@ -938,12 +1043,20 @@ namespace Neos.IdentityServer.MultiFactor
         internal static void UpdateCounter(MFAConfig cfg, MFAWebAuthNUser user, byte[] credentialId, uint counter)
         {
             if (user == null)
-                new ArgumentNullException("user information");
+                throw new ArgumentNullException("user information");
             IWebAuthNDataRepositoryService client = null;
-            if (cfg.UseActiveDirectory)
-                client = new ADDSDataRepositoryService(cfg.Hosts.ActiveDirectoryHost, cfg.Hosts.ActiveDirectoryHost.Account, cfg.Hosts.ActiveDirectoryHost.Password, cfg.DeliveryWindow) as IWebAuthNDataRepositoryService;
-            else
-                client = new SQLDataRepositoryService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow) as IWebAuthNDataRepositoryService;
+            switch (cfg.StoreMode)
+            {
+                case DataRepositoryKind.ADDS:
+                    client = new ADDSDataRepositoryService(cfg.Hosts.ActiveDirectoryHost, cfg.DeliveryWindow) as IWebAuthNDataRepositoryService;
+                    break;
+                case DataRepositoryKind.SQL:
+                    client = new SQLDataRepositoryService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow) as IWebAuthNDataRepositoryService;
+                    break;
+                case DataRepositoryKind.Custom:
+                    client = CustomDataRepositoryCreator.CreateDataRepositoryInstance(cfg.Hosts.CustomStoreHost, cfg.DeliveryWindow) as IWebAuthNDataRepositoryService;
+                    break;
+            }
             client.UpdateCounter(user, credentialId, counter);
         }
 
@@ -953,12 +1066,20 @@ namespace Neos.IdentityServer.MultiFactor
         internal static void AddUserCredential(MFAConfig cfg, MFAWebAuthNUser user, MFAUserCredential credential)
         {
             if (user == null)
-                new ArgumentNullException("user information");
+                throw new ArgumentNullException("user information");
             IWebAuthNDataRepositoryService client = null;
-            if (cfg.UseActiveDirectory)
-                client = new ADDSDataRepositoryService(cfg.Hosts.ActiveDirectoryHost, cfg.Hosts.ActiveDirectoryHost.Account, cfg.Hosts.ActiveDirectoryHost.Password, cfg.DeliveryWindow) as IWebAuthNDataRepositoryService;
-            else
-                client = new SQLDataRepositoryService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow) as IWebAuthNDataRepositoryService;
+            switch (cfg.StoreMode)
+            {
+                case DataRepositoryKind.ADDS:
+                    client = new ADDSDataRepositoryService(cfg.Hosts.ActiveDirectoryHost, cfg.DeliveryWindow) as IWebAuthNDataRepositoryService;
+                    break;
+                case DataRepositoryKind.SQL:
+                    client = new SQLDataRepositoryService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow) as IWebAuthNDataRepositoryService;
+                    break;
+                case DataRepositoryKind.Custom:
+                    client = CustomDataRepositoryCreator.CreateDataRepositoryInstance(cfg.Hosts.CustomStoreHost, cfg.DeliveryWindow) as IWebAuthNDataRepositoryService;
+                    break;
+            }
             client.AddUserCredential(user, credential);
         }
 
@@ -968,12 +1089,20 @@ namespace Neos.IdentityServer.MultiFactor
         internal static void RemoveUserCredential(MFAConfig cfg, MFAWebAuthNUser user, string credentialid)
         {
             if (user == null)
-                new ArgumentNullException("user information");
+                throw new ArgumentNullException("user information");
             IWebAuthNDataRepositoryService client = null;
-            if (cfg.UseActiveDirectory)
-                client = new ADDSDataRepositoryService(cfg.Hosts.ActiveDirectoryHost, cfg.Hosts.ActiveDirectoryHost.Account, cfg.Hosts.ActiveDirectoryHost.Password, cfg.DeliveryWindow) as IWebAuthNDataRepositoryService;
-            else
-                client = new SQLDataRepositoryService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow) as IWebAuthNDataRepositoryService;
+            switch (cfg.StoreMode)
+            {
+                case DataRepositoryKind.ADDS:
+                    client = new ADDSDataRepositoryService(cfg.Hosts.ActiveDirectoryHost, cfg.DeliveryWindow) as IWebAuthNDataRepositoryService;
+                    break;
+                case DataRepositoryKind.SQL:
+                    client = new SQLDataRepositoryService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow) as IWebAuthNDataRepositoryService;
+                    break;
+                case DataRepositoryKind.Custom:
+                    client = CustomDataRepositoryCreator.CreateDataRepositoryInstance(cfg.Hosts.CustomStoreHost, cfg.DeliveryWindow) as IWebAuthNDataRepositoryService;
+                    break;
+            }
             client.RemoveUserCredential(user, credentialid);
         }
 
@@ -983,12 +1112,20 @@ namespace Neos.IdentityServer.MultiFactor
         internal static List<MFAWebAuthNUser> GetUsersByCredentialId(MFAConfig cfg, MFAWebAuthNUser user, byte[] credentialId)
         {
             if (user == null)
-                new ArgumentNullException("user information");
+                throw new ArgumentNullException("user information");
             IWebAuthNDataRepositoryService client = null;
-            if (cfg.UseActiveDirectory)
-                client = new ADDSDataRepositoryService(cfg.Hosts.ActiveDirectoryHost, cfg.Hosts.ActiveDirectoryHost.Account, cfg.Hosts.ActiveDirectoryHost.Password, cfg.DeliveryWindow) as IWebAuthNDataRepositoryService;
-            else
-                client = new SQLDataRepositoryService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow) as IWebAuthNDataRepositoryService;
+            switch (cfg.StoreMode)
+            {
+                case DataRepositoryKind.ADDS:
+                    client = new ADDSDataRepositoryService(cfg.Hosts.ActiveDirectoryHost, cfg.DeliveryWindow) as IWebAuthNDataRepositoryService;
+                    break;
+                case DataRepositoryKind.SQL:
+                    client = new SQLDataRepositoryService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow) as IWebAuthNDataRepositoryService;
+                    break;
+                case DataRepositoryKind.Custom:
+                    client = CustomDataRepositoryCreator.CreateDataRepositoryInstance(cfg.Hosts.CustomStoreHost, cfg.DeliveryWindow) as IWebAuthNDataRepositoryService;
+                    break;
+            }
             return client.GetUsersByCredentialId(user, credentialId);
         }
         #endregion
@@ -1052,17 +1189,13 @@ namespace Neos.IdentityServer.MultiFactor
         {
             switch (kind)
             {
-                case DataRepositoryKind.ADDS:
-                    return new ADDSDataRepositoryService(cfg.Hosts.ActiveDirectoryHost, cfg.Hosts.ActiveDirectoryHost.Account, cfg.Hosts.ActiveDirectoryHost.Password, cfg.DeliveryWindow);
                 case DataRepositoryKind.SQL:
                     return new SQLDataRepositoryService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow);
+                case DataRepositoryKind.Custom:
+                    return CustomDataRepositoryCreator.CreateDataRepositoryInstance(cfg.Hosts.CustomStoreHost, cfg.DeliveryWindow);
                 default:
-                    if (cfg.UseActiveDirectory)
-                        return new ADDSDataRepositoryService(cfg.Hosts.ActiveDirectoryHost, cfg.Hosts.ActiveDirectoryHost.Account, cfg.Hosts.ActiveDirectoryHost.Password, cfg.DeliveryWindow);
-                    else
-                        return new SQLDataRepositoryService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow);
+                    return new ADDSDataRepositoryService(cfg.Hosts.ActiveDirectoryHost, cfg.DeliveryWindow);
             }
-
         }
 
         /// <summary>
@@ -1070,7 +1203,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         private static DataRepositoryService GetADDSDataRepository(MFAConfig cfg, string domain, string account, string password)
         {
-            return new ADDSDataRepositoryService(cfg.Hosts.ActiveDirectoryHost, domain, account, password, cfg.DeliveryWindow);
+            return new ADDSDataRepositoryService(cfg.Hosts.ActiveDirectoryHost, cfg.DeliveryWindow, domain, account, password);
         }
 
         #endregion
@@ -3061,6 +3194,85 @@ namespace Neos.IdentityServer.MultiFactor
         }
 
         /// <summary>
+        /// LoadExternalProviderPluggin method implmentation
+        /// </summary>
+        internal static IExternalProvider LoadExternalProviderPluggin(string fqiassembly)
+        {
+            try
+            {
+                Assembly assembly = Assembly.Load(ParseAssembly(fqiassembly));
+                Type _typetoload = assembly.GetType(ParseType(fqiassembly));
+                if (_typetoload.IsClass && !_typetoload.IsAbstract && _typetoload.GetInterface("IExternalProvider") != null)
+                    return (Activator.CreateInstance(_typetoload, true) as IExternalProvider); // Allow Calling internal Constructors
+                return null;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// LoadLegacyExternalProviderPluggin method implmentation
+        /// </summary>
+        internal static IExternalOTPProvider LoadLegacyExternalProviderPluggin(string fqiassembly)
+        {
+            try
+            {
+                Assembly assembly = Assembly.Load(ParseAssembly(fqiassembly));
+                Type _typetoload = assembly.GetType(ParseType(fqiassembly));
+                if (_typetoload.IsClass && !_typetoload.IsAbstract && _typetoload.GetInterface("IExternalOTPProvider") != null)
+                    return (Activator.CreateInstance(_typetoload, true) as IExternalOTPProvider); // Allow Calling internal Constructors
+                return null;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// LoadExternalStoragePluggin method implmentation
+        /// </summary>
+        internal static bool CheckExternalStoragePluggin(CustomStoreHost host, int deliverywindow)
+        {
+            try
+            {
+                Assembly assembly = Assembly.Load(ParseAssembly(host.DataRepositoryFullyQualifiedImplementation));
+                Type _typetoload = assembly.GetType(ParseType(host.DataRepositoryFullyQualifiedImplementation));
+                Type _ancestor = _typetoload.BaseType;
+                if (_ancestor.IsClass && _ancestor.IsAbstract && (_ancestor == typeof(DataRepositoryService)))
+                   if (_typetoload.IsClass && !_typetoload.IsAbstract && _typetoload.GetInterface("IWebAuthNDataRepositoryService") != null)
+                      return ((Activator.CreateInstance(_typetoload, new object[] { host, deliverywindow }) as DataRepositoryService) != null); 
+                return false;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// LoadExternalStoragePluggin method implmentation
+        /// </summary>
+        internal static bool CheckExternalKeysStoragePluggin(CustomStoreHost host, int deliverywindow)
+        {
+            try
+            {
+                Assembly assembly = Assembly.Load(ParseAssembly(host.KeysRepositoryFullyQualifiedImplementation));
+                Type _typetoload = assembly.GetType(ParseType(host.KeysRepositoryFullyQualifiedImplementation));
+                Type _ancestor = _typetoload.BaseType;
+                if (_ancestor.IsClass && _ancestor.IsAbstract && (_ancestor == typeof(KeysRepositoryService)))
+                    return ((Activator.CreateInstance(_typetoload, new object[] { host, deliverywindow }) as KeysRepositoryService) != null); 
+                return false;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
         /// LoadExternalKeyManagerWrapper method implmentation
         /// </summary>
         internal static ISecretKeyManager LoadExternalKeyManagerWrapper(string AssemblyFulldescription)
@@ -3408,7 +3620,7 @@ namespace Neos.IdentityServer.MultiFactor
             }
             catch
             {
-                ctx.Lcid = new CultureInfo("en").LCID;
+               // Let the usercontext LCID as is
             }
         }
     }

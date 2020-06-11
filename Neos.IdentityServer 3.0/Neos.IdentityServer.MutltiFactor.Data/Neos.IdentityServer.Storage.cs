@@ -1,4 +1,21 @@
-﻿using System;
+﻿//******************************************************************************************************************************************************************************************//
+// Copyright (c) 2020 Neos-Sdi (http://www.neos-sdi.com)                                                                                                                                    //                        
+//                                                                                                                                                                                          //
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
+// to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
+// and to permit persons to whom the Software is furnished to do so, subject to the following conditions:                                                                                   //
+//                                                                                                                                                                                          //
+// The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.                                                           //
+//                                                                                                                                                                                          //
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,                                      //
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,                            //
+// WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                               //
+//                                                                                                                                                                                          //
+// https://adfsmfa.codeplex.com                                                                                                                                                             //
+// https://github.com/neos-sdi/adfsmfa                                                                                                                                                      //
+//                                                                                                                                                                                          //
+//******************************************************************************************************************************************************************************************//
+using System;
 using System.Collections.Generic;
 using System.DirectoryServices;
 using System.IO;
@@ -9,11 +26,11 @@ using System.Threading.Tasks;
 
 namespace Neos.IdentityServer.MultiFactor.Data
 {
-    internal class WebAuthNPublicKeySerialization
+    public class WebAuthNPublicKeySerialization
     {
         private ADDSHost _host;
 
-        internal WebAuthNPublicKeySerialization(ADDSHost host = null)
+        public WebAuthNPublicKeySerialization(ADDSHost host = null)
         {
             _host = host;
         }
@@ -21,7 +38,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// <summary>
         /// SerializeCredentials method implementation
         /// </summary>
-        internal string SerializeCredentials(MFAUserCredential creds, string username)
+        public string SerializeCredentials(MFAUserCredential creds, string username)
         {
             MemoryStream stream = new MemoryStream();
             BinaryWriter writer = new BinaryWriter(stream);
@@ -64,7 +81,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// <summary>
         /// DeserializeCredentials method implementation
         /// </summary>
-        internal MFAUserCredential DeserializeCredentials(string descriptor, string username)
+        public MFAUserCredential DeserializeCredentials(string descriptor, string username)
         {
             string distinguishedName = string.Empty;
             if (_host != null)

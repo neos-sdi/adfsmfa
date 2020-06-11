@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:netfx="http://schemas.microsoft.com/wix/NetFxExtension">
-  <Product Id="a23dd485-5365-4d82-8309-103494000001" Name="MFA Provider for ADFS 2019/2016/2012 R2" Language="1033" Version="3.0.2005.6" Manufacturer="Neos-SDI" UpgradeCode="a23dd485-5365-4d82-8309-103495000001" >
+  <Product Id="a23dd485-5365-4d82-8309-103494000001" Name="MFA Provider for ADFS 2019/2016/2012 R2" Language="1033" Version="3.0.2006.0" Manufacturer="Neos-SDI" UpgradeCode="a23dd485-5365-4d82-8309-103495000001" >
 
     <Package InstallerVersion="500" Compressed="yes" InstallScope="perMachine" InstallPrivileges="elevated" Platform="x64" Description="Multi-Factor Authentication for ADFS 2019/2016/2012R2" />
 
@@ -73,6 +73,7 @@
 
     <Feature Id="KeysFeature" Title="adfsmfa RSA Keys Sample" Description="Neos Identity Service RAS Keys API" InstallDefault="local" TypicalDefault="install" Level="1" >
       <ComponentGroupRef Id="Neos.IdentityServer.MultiFactor.Keys" />
+      <ComponentGroupRef Id="Neos.IdentityServer.MultiFactor.Repository.Samples" />
     </Feature>
     
     <Feature Id="WebAuthNFeature" Title="adfsmfa WebAuthN Biometric Provider" Description="adfsmfa WebAuthN Biometric API" InstallDefault="local" TypicalDefault="install" Level="1" >
@@ -788,6 +789,11 @@
     <ComponentGroup Id="Neos.IdentityServer.MultiFactor.Keys">
       <Component Id="GACDeployment94" Guid="E7173CAB-E43F-4A07-B5F1-018000006667" Win64="yes" Directory="AssemblyFolder" DiskId="1" >
         <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.Multifactor.Keys.Sample.dll"  Name="Neos.IdentityServer.Multifactor.Keys.Sample.dll" Source="$(var.Neos.IdentityServer.Multifactor.Keys.Sample.TargetPath)" Vital="yes" />
+      </Component>
+    </ComponentGroup>
+    <ComponentGroup Id="Neos.IdentityServer.MultiFactor.Repository.Samples">
+      <Component Id="GACDeployment95" Guid="E7173CAB-E43F-4A07-B5F1-018000006668" Win64="yes" Directory="AssemblyFolder" DiskId="1" >
+        <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.Repository.Samples.dll"  Name="Neos.IdentityServer.MultiFactor.Repository.Samples.dll" Source="$(var.Neos.IdentityServer.MultiFactor.Repository.Sample.TargetPath)" Vital="yes" />
       </Component>
     </ComponentGroup>
   </Fragment>

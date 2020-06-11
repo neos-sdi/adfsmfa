@@ -357,4 +357,7 @@
   <data name="ROOTLANGUAGECADESC" xml:space="preserve">
     <value>Modificare le impostazioni cultura dell'interfaccia utente in Quebec (3084)</value>
   </data>
+  <data name="CUSTOMSTORESCOPENODEDESC" xml:space="preserve">
+    <value>Configurazione dell'archivio personalizzato</value>
+  </data>
 </root>

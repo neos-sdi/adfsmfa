@@ -144,7 +144,6 @@
     <Compile Include="TypedString.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
     <None Include="Neos.IdentityServer.pfx" />
     <None Include="packages.config" />
   </ItemGroup>

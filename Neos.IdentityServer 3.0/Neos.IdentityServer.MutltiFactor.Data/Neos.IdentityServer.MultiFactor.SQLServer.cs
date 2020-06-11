@@ -28,20 +28,20 @@ namespace Neos.IdentityServer.MultiFactor.Data
     #region SQL Data Repository
     internal class SQLDataRepositoryService : DataRepositoryService, IDataRepositorySQLConnection, IWebAuthNDataRepositoryService
     {
-        private SQLServerHost _host;
-        private readonly string _connectionstring;
-        private readonly int _deliverywindow = 300;
-
         public override event KeysDataManagerEvent OnKeyDataEvent;
 
         /// <summary>
-        /// BaseSQLAdminService constructor
+        /// SQLDataRepositoryService constructor
         /// </summary>
-        public SQLDataRepositoryService(SQLServerHost host, int deliverywindow = 3000): base()
+        public SQLDataRepositoryService(BaseDataHost host, int deliverywindow = 3000): base(host, deliverywindow)
         {
-            _host = host;
-            _connectionstring = _host.ConnectionString;
-            _deliverywindow = deliverywindow;
+            if (!(host is SQLServerHost))
+                throw new ArgumentException("Invalid Host ! : value but be an SQLServerHost instance");
+        }
+
+        private SQLServerHost SQLHost
+        {
+            get { return ((SQLServerHost)Host); }
         }
 
         #region DataRepositoryService
@@ -51,12 +51,12 @@ namespace Neos.IdentityServer.MultiFactor.Data
         public override MFAUser GetMFAUser(string upn)
         {
             string request = "SELECT ID, UPN, MAILADDRESS, PHONENUMBER, PIN, ENABLED, METHOD, OVERRIDE FROM REGISTRATIONS WHERE UPN=@UPN";
-            SqlConnection con = new SqlConnection(_connectionstring);
+            SqlConnection con = new SqlConnection(SQLHost.ConnectionString);
             SqlCommand sql = new SqlCommand(request, con);
 
             SqlParameter prm = new SqlParameter("@UPN", SqlDbType.VarChar, 256);
             sql.Parameters.Add(prm);
-            prm.Value = upn;
+            prm.Value = upn.ToLower();
 
             MFAUser reg = new MFAUser();
             con.Open();
@@ -100,7 +100,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// </summary>
         public override MFAUser SetMFAUser(MFAUser reg, bool resetkey = false, bool caninsert = true, bool disableoninsert = false)
         {
-            if (!SQLUtils.IsMFAUserRegistered(_host, reg.UPN))
+            if (!SQLUtils.IsMFAUserRegistered(SQLHost, reg.UPN))
             {
                 if (caninsert)
                     return AddMFAUser(reg, resetkey, false);
@@ -113,7 +113,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
             else
                request = "UPDATE REGISTRATIONS SET MAILADDRESS = @MAILADDRESS, PHONENUMBER = @PHONENUMBER, PIN=@PIN, METHOD=@METHOD, OVERRIDE=@OVERRIDE, ENABLED=@ENABLED WHERE UPN=@UPN";
 
-            SqlConnection con = new SqlConnection(_connectionstring);
+            SqlConnection con = new SqlConnection(SQLHost.ConnectionString);
             SqlCommand sql = new SqlCommand(request, con);
 
             SqlParameter prm1 = new SqlParameter("@MAILADDRESS", SqlDbType.VarChar, 256);
@@ -154,7 +154,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
 
             SqlParameter prm7 = new SqlParameter("@UPN", SqlDbType.VarChar, 256);
             sql.Parameters.Add(prm7);
-            prm7.Value = reg.UPN;
+            prm7.Value = reg.UPN.ToLower();
             con.Open();
             try
             {
@@ -179,7 +179,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// </summary>
         public override MFAUser AddMFAUser(MFAUser reg, bool resetkey = true, bool canupdate = true, bool disableoninsert = false)
         {
-            if (SQLUtils.IsMFAUserRegistered(_host, reg.UPN))
+            if (SQLUtils.IsMFAUserRegistered(SQLHost, reg.UPN))
             {
                 if (canupdate)
                     return SetMFAUser(reg, resetkey, false);
@@ -187,12 +187,12 @@ namespace Neos.IdentityServer.MultiFactor.Data
                     return GetMFAUser(reg.UPN);
             }
             string request = "INSERT INTO REGISTRATIONS (UPN, MAILADDRESS, PHONENUMBER, PIN, ENABLED, METHOD, OVERRIDE) VALUES (@UPN, @MAILADDRESS, @PHONENUMBER, @PIN, @ENABLED, @METHOD, @OVERRIDE)";
-            SqlConnection con = new SqlConnection(_connectionstring);
+            SqlConnection con = new SqlConnection(SQLHost.ConnectionString);
             SqlCommand sql = new SqlCommand(request, con);
 
             SqlParameter prm1 = new SqlParameter("@UPN", SqlDbType.VarChar, 256);
             sql.Parameters.Add(prm1);
-            prm1.Value = reg.UPN;
+            prm1.Value = reg.UPN.ToLower();
 
             SqlParameter prm2 = new SqlParameter("@MAILADDRESS", SqlDbType.VarChar, 256);
             sql.Parameters.Add(prm2);
@@ -253,20 +253,20 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// </summary>
         public override bool DeleteMFAUser(MFAUser reg, bool dropkey = true)
         {
-            if (!SQLUtils.IsMFAUserRegistered(_host, reg.UPN))
-                throw new Exception("The user " + reg.UPN + " cannot be deleted ! \r User not found !");
+            if (!SQLUtils.IsMFAUserRegistered(SQLHost, reg.UPN))
+                throw new Exception("The user " + reg.UPN.ToLower() + " cannot be deleted ! \r User not found !");
 
             if (dropkey)
                 this.OnKeyDataEvent(reg.UPN, KeysDataManagerEventKind.Remove);
 
             string request = "DELETE FROM REGISTRATIONS WHERE UPN=@UPN";
 
-            SqlConnection con = new SqlConnection(_connectionstring);
+            SqlConnection con = new SqlConnection(SQLHost.ConnectionString);
             SqlCommand sql = new SqlCommand(request, con);
 
             SqlParameter prm = new SqlParameter("@UPN", SqlDbType.VarChar, 256);
             sql.Parameters.Add(prm);
-            prm.Value = reg.UPN;
+            prm.Value = reg.UPN.ToLower();
             con.Open();
             try
             {
@@ -289,17 +289,17 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// </summary>
         public override MFAUser EnableMFAUser(MFAUser reg)
         {
-            if (!SQLUtils.IsMFAUserRegistered(_host, reg.UPN))
+            if (!SQLUtils.IsMFAUserRegistered(SQLHost, reg.UPN))
                 throw new Exception("The user " + reg.UPN + " cannot be updated ! \r User not found !");
 
             string request = "UPDATE REGISTRATIONS SET ENABLED=1 WHERE UPN=@UPN";
 
-            SqlConnection con = new SqlConnection(_connectionstring);
+            SqlConnection con = new SqlConnection(SQLHost.ConnectionString);
             SqlCommand sql = new SqlCommand(request, con);
 
             SqlParameter prm5 = new SqlParameter("@UPN", SqlDbType.VarChar, 256);
             sql.Parameters.Add(prm5);
-            prm5.Value = reg.UPN;
+            prm5.Value = reg.UPN.ToLower();
             con.Open();
             try
             {
@@ -323,17 +323,17 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// </summary>
         public override MFAUser DisableMFAUser(MFAUser reg)
         {
-            if (!SQLUtils.IsMFAUserRegistered(_host, reg.UPN))
+            if (!SQLUtils.IsMFAUserRegistered(SQLHost, reg.UPN))
                 throw new Exception("The user " + reg.UPN + " cannot be updated ! \r User not found !");
 
             string request = "UPDATE REGISTRATIONS SET ENABLED=0 WHERE UPN=@UPN";
 
-            SqlConnection con = new SqlConnection(_connectionstring);
+            SqlConnection con = new SqlConnection(SQLHost.ConnectionString);
             SqlCommand sql = new SqlCommand(request, con);
 
             SqlParameter prm5 = new SqlParameter("@UPN", SqlDbType.VarChar, 256);
             sql.Parameters.Add(prm5);
-            prm5.Value = reg.UPN;
+            prm5.Value = reg.UPN.ToLower();
             con.Open();
             try
             {
@@ -459,12 +459,12 @@ namespace Neos.IdentityServer.MultiFactor.Data
             }
             if (paging.IsActive)
             {
-                request = "SELECT TOP " + _host.MaxRows.ToString() + " NUMBER, ID, UPN, MAILADDRESS, PHONENUMBER, PIN, ENABLED, METHOD, OVERRIDE FROM (" + request;
+                request = "SELECT TOP " + SQLHost.MaxRows.ToString() + " NUMBER, ID, UPN, MAILADDRESS, PHONENUMBER, PIN, ENABLED, METHOD, OVERRIDE FROM (" + request;
 
                 request += ") AS TBL WHERE NUMBER BETWEEN " + ((paging.CurrentPage - 1) * paging.PageSize + 1) + " AND  " + (paging.CurrentPage) * paging.PageSize;
             }
 
-            SqlConnection con = new SqlConnection(_connectionstring);
+            SqlConnection con = new SqlConnection(SQLHost.ConnectionString);
             SqlCommand sql = new SqlCommand(request, con);
             if ((hasparameter) && (filter.FilterValue != null))
             {
@@ -521,9 +521,9 @@ namespace Neos.IdentityServer.MultiFactor.Data
         {
             string request = string.Empty;
             if (enabledonly)
-                request = "SELECT TOP " + _host.MaxRows.ToString() + " ID, UPN, MAILADDRESS, PHONENUMBER, PIN, ENABLED, METHOD, OVERRIDE FROM REGISTRATIONS WHERE ENABLED=1";
+                request = "SELECT TOP " + SQLHost.MaxRows.ToString() + " ID, UPN, MAILADDRESS, PHONENUMBER, PIN, ENABLED, METHOD, OVERRIDE FROM REGISTRATIONS WHERE ENABLED=1";
             else
-                request = "SELECT TOP " + _host.MaxRows.ToString() + " ID, UPN, MAILADDRESS, PHONENUMBER, PIN, ENABLED, METHOD, OVERRIDE FROM REGISTRATIONS";
+                request = "SELECT TOP " + SQLHost.MaxRows.ToString() + " ID, UPN, MAILADDRESS, PHONENUMBER, PIN, ENABLED, METHOD, OVERRIDE FROM REGISTRATIONS";
 
             switch (order.Column)
             {
@@ -543,7 +543,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
             if (order.Direction == SortDirection.Descending)
                 request += " DESC";
 
-            SqlConnection con = new SqlConnection(_connectionstring);
+            SqlConnection con = new SqlConnection(SQLHost.ConnectionString);
             SqlCommand sql = new SqlCommand(request, con);
 
             MFAUserList regs = new MFAUserList();
@@ -664,7 +664,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                 }
             }
 
-            SqlConnection con = new SqlConnection(_connectionstring);
+            SqlConnection con = new SqlConnection(SQLHost.ConnectionString);
             SqlCommand sql = new SqlCommand(request, con);
             if ((hasparameter) && (filter.FilterValue != null))
             {
@@ -690,19 +690,11 @@ namespace Neos.IdentityServer.MultiFactor.Data
         }
 
         /// <summary>
-        /// ImportMFAUsers method implmentation
-        /// </summary>
-        public override MFAUserList ImportMFAUsers(string domain, string username, string password, string ldappath, DateTime? created, DateTime? modified, string mailattribute, string phoneattribute, PreferredMethod method, bool disableall = false)
-        {
-            throw new NotImplementedException("Not supported by SQL Provider");
-        }
-
-        /// <summary>
         /// IsMFAUserRegistered method implementation
         /// </summary>
         public override bool IsMFAUserRegistered(string upn)
         {
-            return SQLUtils.IsMFAUserRegistered(_host, upn);
+            return SQLUtils.IsMFAUserRegistered(SQLHost, upn);
         }
         #endregion
 
@@ -744,7 +736,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
             try
             {
                 string request = "SELECT ID, UPN, CREDENTIALID, PUBLICKEY FROM KEYDESCS WHERE UPN=@UPN";
-                SqlConnection con = new SqlConnection(_connectionstring);
+                SqlConnection con = new SqlConnection(SQLHost.ConnectionString);
                 SqlCommand sql = new SqlCommand(request, con);
 
                 SqlParameter prm = new SqlParameter("@UPN", SqlDbType.VarChar, 256);
@@ -807,7 +799,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
             try
             {
                 string request = "SELECT ID, UPN, CREDENTIALID, PUBLICKEY FROM KEYDESCS WHERE UPN=@UPN AND CREDENTIALID=@CREDENTIALID;";
-                SqlConnection con = new SqlConnection(_connectionstring);
+                SqlConnection con = new SqlConnection(SQLHost.ConnectionString);
                 SqlCommand sql = new SqlCommand(request, con);
 
                 SqlParameter prm1 = new SqlParameter("@UPN", SqlDbType.VarChar, 256);
@@ -878,7 +870,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
             try
             {
                 string request = "INSERT INTO KEYDESCS (UPN, CREDENTIALID, PUBLICKEY) VALUES (@UPN, @CREDENTIALID, @PUBLICKEY);";
-                SqlConnection con = new SqlConnection(_connectionstring);
+                SqlConnection con = new SqlConnection(SQLHost.ConnectionString);
                 SqlCommand sql = new SqlCommand(request, con);
 
                 SqlParameter prm1 = new SqlParameter("@UPN", SqlDbType.VarChar, 256);
@@ -927,7 +919,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
             {
 
                 string request = "UPDATE KEYDESCS SET PUBLICKEY = @PUBLICKEY WHERE UPN=@UPN AND CREDENTIALID=@CREDENTIALID;";
-                SqlConnection con = new SqlConnection(_connectionstring);
+                SqlConnection con = new SqlConnection(SQLHost.ConnectionString);
                 SqlCommand sql = new SqlCommand(request, con);
 
                 SqlParameter prm1 = new SqlParameter("@UPN", SqlDbType.VarChar, 256);
@@ -971,7 +963,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
             try
             {
                 string request = "DELETE FROM KEYDESCS WHERE UPN=@UPN AND CREDENTIALID=@CREDENTIALID;";
-                SqlConnection con = new SqlConnection(_connectionstring);
+                SqlConnection con = new SqlConnection(SQLHost.ConnectionString);
                 SqlCommand sql = new SqlCommand(request, con);
 
                 SqlParameter prm1 = new SqlParameter("@UPN", SqlDbType.VarChar, 256);
@@ -1038,16 +1030,18 @@ namespace Neos.IdentityServer.MultiFactor.Data
     #region SQL Keys Repository
     internal class SQLKeysRepositoryService : KeysRepositoryService, IDataRepositorySQLConnection
     {
-        private SQLServerHost _host;
-        private readonly string _connectionstring;
-
         /// <summary>
         /// ADDSKeysRepositoryService constructor
         /// </summary>
-        public SQLKeysRepositoryService(MFAConfig cfg)
+        public SQLKeysRepositoryService(BaseDataHost host, int deliverywindow):base(host, deliverywindow)
         {
-            _host = cfg.Hosts.SQLServerHost;
-            _connectionstring = _host.ConnectionString;
+            if (!(host is SQLServerHost))
+                throw new ArgumentException("Invalid Host ! : value but be an SQLServerHost instance");
+        }
+
+        private SQLServerHost SQLHost
+        {
+            get { return (SQLServerHost)Host; }
         }
 
         #region Key Management
@@ -1057,7 +1051,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
         public override string GetUserKey(string upn)
         {
             string request = "SELECT SECRETKEY FROM REGISTRATIONS WHERE UPN=@UPN";
-            SqlConnection con = new SqlConnection(_connectionstring);
+            SqlConnection con = new SqlConnection(SQLHost.ConnectionString);
             SqlCommand sql = new SqlCommand(request, con);
 
             SqlParameter prm = new SqlParameter("@UPN", SqlDbType.VarChar, 256);
@@ -1094,7 +1088,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// </summary>
         public override string NewUserKey(string upn, string secretkey, X509Certificate2 cert = null)
         {
-            if (SQLUtils.IsMFAUserRegistered(_host, upn.ToLower()))
+            if (SQLUtils.IsMFAUserRegistered(SQLHost, upn.ToLower()))
                 return DoUpdateUserKey(upn.ToLower(), secretkey);
             else
                 return DoInsertUserKey(upn.ToLower(), secretkey);
@@ -1109,7 +1103,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
             string request2 = "DELETE FROM KEYS WHERE UPN=@UPN AND KIND=1";
             string request3 = "DELETE FROM KEYDESCS WHERE UPN=@UPN";
 
-            SqlConnection con = new SqlConnection(_connectionstring);
+            SqlConnection con = new SqlConnection(SQLHost.ConnectionString);
             con.Open();
             SqlTransaction trans = con.BeginTransaction();
             try
@@ -1153,7 +1147,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// <summary>
         /// GetUserCertificate implementation
         /// </summary>
-        public override X509Certificate2 GetUserCertificate(string upn, bool generatepassword = false)
+        public override X509Certificate2 GetUserCertificate(string upn, string password)
         {
             return null;
         }
@@ -1161,7 +1155,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// <summary>
         /// CreateCertificate implementation
         /// </summary>
-        public override X509Certificate2 CreateCertificate(string upn, int validity, bool generatepassword = false)
+        public override X509Certificate2 CreateCertificate(string upn, string password, int validity)
         {
             return null;
         }
@@ -1191,7 +1185,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
         {
             string request = "UPDATE REGISTRATIONS SET SECRETKEY = @SECRETKEY WHERE UPN=@UPN";
 
-            SqlConnection con = new SqlConnection(_connectionstring);
+            SqlConnection con = new SqlConnection(SQLHost.ConnectionString);
             SqlCommand sql = new SqlCommand(request, con);
 
             SqlParameter prm1 = new SqlParameter("@SECRETKEY", SqlDbType.VarChar, 8000);
@@ -1228,7 +1222,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
         {
             string request = "INSERT INTO REGISTRATIONS (UPN, SECRETKEY, METHOD, OVERRIDE, PIN, ENABLED) VALUES (@UPN, @SECRETKEY, 0, null, 0, 1)";
 
-            SqlConnection con = new SqlConnection(_connectionstring);
+            SqlConnection con = new SqlConnection(SQLHost.ConnectionString);
             SqlCommand sql = new SqlCommand(request, con);
 
             SqlParameter prm1 = new SqlParameter("@SECRETKEY", SqlDbType.VarChar, 8000);
@@ -1290,16 +1284,21 @@ namespace Neos.IdentityServer.MultiFactor.Data
     #region SQL Keys2 Repository
     internal class SQLKeys2RepositoryService : KeysRepositoryService, IDataRepositorySQLConnection
     {
-        private SQLServerHost _host;
-        private readonly string _connectionstring;
-
         /// <summary>
         /// ADDSKeysRepositoryService constructor
         /// </summary>
-        public SQLKeys2RepositoryService(MFAConfig cfg)
+        public SQLKeys2RepositoryService(BaseDataHost host, int deliverywindow ): base(host, deliverywindow)
         {
-            _host = cfg.Hosts.SQLServerHost;
-            _connectionstring = _host.ConnectionString;
+            if (!(host is SQLServerHost))
+                throw new ArgumentException("Invalid Host ! : value but be an SQLServerHost instance");
+        }
+
+        /// <summary>
+        /// SQLHost property
+        /// </summary>
+        private SQLServerHost SQLHost
+        {
+            get { return (SQLServerHost)Host; }
         }
 
         #region Key Management
@@ -1309,7 +1308,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
         public override string GetUserKey(string upn)
         {
             string request = "SELECT SECRETKEY FROM REGISTRATIONS WHERE UPN=@UPN";
-            SqlConnection con = new SqlConnection(_connectionstring);
+            SqlConnection con = new SqlConnection(SQLHost.ConnectionString);
             SqlCommand sql = new SqlCommand(request, con);
 
             SqlParameter prm = new SqlParameter("@UPN", SqlDbType.VarChar, 256);
@@ -1346,10 +1345,18 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// </summary>
         public override string NewUserKey(string upn, string secretkey, X509Certificate2 cert = null)
         {
-            if (SQLUtils.IsMFAUserRegistered(_host, upn.ToLower()))
-                return DoUpdateUserKey(upn.ToLower(), secretkey, cert);
+            if (SQLUtils.IsMFAUserRegistered(SQLHost, upn.ToLower()))
+                DoUpdateUserKey(upn.ToLower(), secretkey);
             else
-                return DoInsertUserKey(upn.ToLower(), secretkey, cert);
+                DoInsertUserKey(upn.ToLower(), secretkey);
+            if (cert != null)
+            {
+                if (HasStoredCertificate(upn.ToLower()))
+                    DoUpdateUserCertificate(upn.ToLower(), cert);
+                else
+                    DoInsertUserCertificate(upn.ToLower(), cert);
+            }
+            return secretkey;
         }
 
         /// <summary>
@@ -1361,7 +1368,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
             string request2 = "DELETE FROM KEYS WHERE UPN=@UPN AND KIND=1";
             string request3 = "DELETE FROM KEYDESCS WHERE UPN=@UPN";
 
-            SqlConnection con = new SqlConnection(_connectionstring);
+            SqlConnection con = new SqlConnection(SQLHost.ConnectionString);
             con.Open();
             SqlTransaction trans = con.BeginTransaction();
             try
@@ -1405,10 +1412,10 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// <summary>
         /// GetUserCertificate implementation
         /// </summary>
-        public override X509Certificate2 GetUserCertificate(string upn, bool generatepassword = false)
+        public override X509Certificate2 GetUserCertificate(string upn, string password)
         {
             string request = "SELECT CERTIFICATE FROM KEYS WHERE UPN=@UPN AND KIND=1";
-            SqlConnection con = new SqlConnection(_connectionstring);
+            SqlConnection con = new SqlConnection(SQLHost.ConnectionString);
             SqlCommand sql = new SqlCommand(request, con);
 
             SqlParameter prm = new SqlParameter("@UPN", SqlDbType.VarChar, 256);
@@ -1423,8 +1430,8 @@ namespace Neos.IdentityServer.MultiFactor.Data
                 if (rd.Read())
                 {
                     string pass = string.Empty;
-                    if (generatepassword)
-                        pass = CheckSumEncoding.CheckSumAsString(upn);
+                    if (!string.IsNullOrEmpty(password))
+                        pass = password;
                     if (!rd.IsDBNull(0))
                     {
                         string strcert = rd.GetString(0);
@@ -1449,24 +1456,12 @@ namespace Neos.IdentityServer.MultiFactor.Data
         }
 
         /// <summary>
-        /// CreateCertificate implementation
-        /// </summary>
-        public override X509Certificate2 CreateCertificate(string upn, int validity, bool generatepassword = false)
-        {
-            string pass = string.Empty;
-            string strcert = string.Empty;
-            if (generatepassword)
-                pass = CheckSumEncoding.CheckSumAsString(upn);
-            return Certs.CreateRSAEncryptionCertificateForUser(upn.ToLower(), validity, pass);
-        }
-
-        /// <summary>
         /// HasStoredKey implementation
         /// </summary>
         public override bool HasStoredKey(string upn)
         {
-            string request = "SELECT CERTIFICATE FROM KEYS WHERE UPN=@UPN AND KIND=1";
-            SqlConnection con = new SqlConnection(_connectionstring);
+            string request = "SELECT SECRETKEY FROM REGISTRATIONS WHERE UPN=@UPN";
+            SqlConnection con = new SqlConnection(SQLHost.ConnectionString);
             SqlCommand sql = new SqlCommand(request, con);
 
             SqlParameter prm = new SqlParameter("@UPN", SqlDbType.VarChar, 256);
@@ -1501,7 +1496,35 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// </summary>
         public override bool HasStoredCertificate(string upn)
         {
-            return true;
+            string request = "SELECT CERTIFICATE FROM KEYS WHERE UPN=@UPN AND KIND=1";
+            SqlConnection con = new SqlConnection(SQLHost.ConnectionString);
+            SqlCommand sql = new SqlCommand(request, con);
+
+            SqlParameter prm = new SqlParameter("@UPN", SqlDbType.VarChar, 256);
+            sql.Parameters.Add(prm);
+            prm.Value = upn;
+
+            string ret = string.Empty;
+            con.Open();
+            try
+            {
+                SqlDataReader rd = sql.ExecuteReader();
+                if (rd.Read())
+                {
+                    return (!rd.IsDBNull(0));
+                }
+                else
+                    return false;
+            }
+            catch (Exception ex)
+            {
+                DataLog.WriteEntry(ex.Message, System.Diagnostics.EventLogEntryType.Error, 5000);
+                throw new Exception(ex.Message);
+            }
+            finally
+            {
+                con.Close();
+            }
         }
         #endregion
 
@@ -1509,18 +1532,16 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// <summary>
         /// DoUpdateUserKey method implmentation
         /// </summary>
-        private string DoUpdateUserKey(string upn, string secretkey, X509Certificate2 certificate)
+        private void DoUpdateUserKey(string upn, string secretkey)
         {
             string request1 = "UPDATE REGISTRATIONS SET SECRETKEY = @SECRETKEY WHERE UPN=@UPN";
-            string request2 = "UPDATE KEYS SET CERTIFICATE = @CERTIFICATE WHERE UPN=@UPN AND KIND=1";
 
-            SqlConnection con = new SqlConnection(_connectionstring);
+            SqlConnection con = new SqlConnection(SQLHost.ConnectionString);
             con.Open();
             SqlTransaction trans = con.BeginTransaction();
             try
             {
                 SqlCommand sql1 = new SqlCommand(request1, con, trans);
-                SqlCommand sql2 = new SqlCommand(request2, con, trans);
 
                 SqlParameter prm1 = new SqlParameter("@SECRETKEY", SqlDbType.VarChar, 8000);
                 sql1.Parameters.Add(prm1);
@@ -1530,16 +1551,8 @@ namespace Neos.IdentityServer.MultiFactor.Data
                 sql1.Parameters.Add(prm2);
                 prm2.Value = upn.ToLower();
 
-                SqlParameter prm3 = new SqlParameter("@CERTIFICATE", SqlDbType.VarChar, 8000);
-                sql2.Parameters.Add(prm3);
-                prm3.Value = Convert.ToBase64String(certificate.Export(X509ContentType.Pfx, CheckSumEncoding.CheckSumAsString(upn)));
-
-                SqlParameter prm4 = new SqlParameter("@UPN", SqlDbType.VarChar, 256);
-                sql2.Parameters.Add(prm4);
-                prm4.Value = upn.ToLower();
-
                 int res1 = sql1.ExecuteNonQuery();
-                int res2 = sql2.ExecuteNonQuery();
+                trans.Commit();
             }
             catch (Exception ex)
             {
@@ -1549,28 +1562,63 @@ namespace Neos.IdentityServer.MultiFactor.Data
             }
             finally
             {
-                certificate.Reset();
-                trans.Commit();
                 con.Close();
             }
-            return secretkey;
+            return;
+        }
+
+        /// <summary>
+        /// DoUpdateUserCertificate method implmentation
+        /// </summary>
+        private void DoUpdateUserCertificate(string upn, X509Certificate2 certificate)
+        {
+            string request2 = "UPDATE KEYS SET CERTIFICATE = @CERTIFICATE WHERE UPN=@UPN AND KIND=1";
+
+            SqlConnection con = new SqlConnection(SQLHost.ConnectionString);
+            con.Open();
+            SqlTransaction trans = con.BeginTransaction();
+            try
+            {
+                SqlCommand sql2 = new SqlCommand(request2, con, trans);
+
+                SqlParameter prm3 = new SqlParameter("@CERTIFICATE", SqlDbType.VarChar, 8000);
+                sql2.Parameters.Add(prm3);
+                prm3.Value = Convert.ToBase64String(certificate.Export(X509ContentType.Pfx, CheckSumEncoding.CheckSumAsString(upn)));
+
+                SqlParameter prm4 = new SqlParameter("@UPN", SqlDbType.VarChar, 256);
+                sql2.Parameters.Add(prm4);
+                prm4.Value = upn.ToLower();
+
+                int res2 = sql2.ExecuteNonQuery();
+                trans.Commit();
+            }
+            catch (Exception ex)
+            {
+                DataLog.WriteEntry(ex.Message, System.Diagnostics.EventLogEntryType.Error, 5000);
+                trans.Rollback();
+                throw new Exception(ex.Message);
+            }
+            finally
+            {
+                certificate.Reset();                
+                con.Close();
+            }
+            return;
         }
 
         /// <summary>
         /// DoUpdateUserKey method implmentation
         /// </summary>
-        private string DoInsertUserKey(string upn, string secretkey, X509Certificate2 certificate)
+        private void DoInsertUserKey(string upn, string secretkey)
         {
             string request1 = "INSERT INTO REGISTRATIONS (UPN, SECRETKEY, METHOD, OVERRIDE, PIN, ENABLED) VALUES (@UPN, @SECRETKEY, 0, null, 0, 1)";
-            string request2 = "INSERT INTO KEYS (UPN, CERTIFICATE, KIND) VALUES (@UPN, @CERTIFICATE, 1)";
 
-            SqlConnection con = new SqlConnection(_connectionstring);
+            SqlConnection con = new SqlConnection(SQLHost.ConnectionString);
             con.Open();
             SqlTransaction trans = con.BeginTransaction();
             try
             {
                 SqlCommand sql1 = new SqlCommand(request1, con, trans);
-                SqlCommand sql2 = new SqlCommand(request2, con, trans);
 
                 SqlParameter prm1 = new SqlParameter("@SECRETKEY", SqlDbType.VarChar, 8000);
                 sql1.Parameters.Add(prm1);
@@ -1580,6 +1628,36 @@ namespace Neos.IdentityServer.MultiFactor.Data
                 sql1.Parameters.Add(prm2);
                 prm2.Value = upn.ToLower();
 
+                int res1 = sql1.ExecuteNonQuery();
+                trans.Commit();
+            }
+            catch (Exception ex)
+            {
+                DataLog.WriteEntry(ex.Message, System.Diagnostics.EventLogEntryType.Error, 5000);
+                trans.Rollback();
+                throw new Exception(ex.Message);
+            }
+            finally
+            {
+                con.Close();
+            }
+            return;
+        }
+
+        /// <summary>
+        /// DoInsertUserCertificate method implmentation
+        /// </summary>
+        private void DoInsertUserCertificate(string upn, X509Certificate2 certificate)
+        {
+            string request2 = "INSERT INTO KEYS (UPN, CERTIFICATE, KIND) VALUES (@UPN, @CERTIFICATE, 1)";
+
+            SqlConnection con = new SqlConnection(SQLHost.ConnectionString);
+            con.Open();
+            SqlTransaction trans = con.BeginTransaction();
+            try
+            {
+                SqlCommand sql2 = new SqlCommand(request2, con, trans);
+
                 SqlParameter prm3 = new SqlParameter("@CERTIFICATE", SqlDbType.VarChar, 8000);
                 sql2.Parameters.Add(prm3);
                 prm3.Value = Convert.ToBase64String(certificate.Export(X509ContentType.Pfx, CheckSumEncoding.CheckSumAsString(upn)));
@@ -1588,8 +1666,8 @@ namespace Neos.IdentityServer.MultiFactor.Data
                 sql2.Parameters.Add(prm4);
                 prm4.Value = upn.ToLower();
 
-                int res1 = sql1.ExecuteNonQuery();
                 int res2 = sql2.ExecuteNonQuery();
+                trans.Commit();
             }
             catch (Exception ex)
             {
@@ -1600,11 +1678,11 @@ namespace Neos.IdentityServer.MultiFactor.Data
             finally
             {
                 certificate.Reset();
-                trans.Commit();
                 con.Close();
             }
-            return secretkey;
+            return;
         }
+
         #endregion
 
         /// <summary>

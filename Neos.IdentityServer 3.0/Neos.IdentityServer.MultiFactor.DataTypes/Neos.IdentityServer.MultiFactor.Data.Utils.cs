@@ -143,4 +143,408 @@ namespace Neos.IdentityServer.MultiFactor.Data
             get { return _forests; }
         }
     }
+
+    #region ADDS Utils
+    internal static class ADDSUtils
+    {
+        #region Private methods
+        /// <summary>
+        /// GetBinaryStringFromGuidString
+        /// </summary>
+        internal static string GetBinaryStringFromGuidString(string guidstring)
+        {
+            Guid guid = new Guid(guidstring);
+            byte[] bytes = guid.ToByteArray();
+            StringBuilder sb = new StringBuilder();
+            foreach (byte b in bytes)
+            {
+                sb.Append(string.Format(@"\{0}", b.ToString("X")));
+            }
+            return sb.ToString();
+        }
+
+        /// <summary>
+        /// GetDirectoryEntryForUPN() method implmentation
+        /// </summary>
+        internal static DirectoryEntry GetDirectoryEntryForUPN(ADDSHost host, string upn)
+        {
+            DirectoryEntry entry = null;
+            if (!string.IsNullOrEmpty(host.DomainName))
+                entry = new DirectoryEntry("LDAP://" + host.DomainName);
+            else
+            {
+                string dom = host.GetForestForUPN(upn);
+                entry = new DirectoryEntry("LDAP://" + dom);
+            }
+            if (!string.IsNullOrEmpty(host.Account))
+                entry.Username = host.Account;
+            if (!string.IsNullOrEmpty(host.Password))
+                entry.Password = host.Password;
+            return entry;
+        }
+
+        /// <summary>
+        /// GetDirectoryEntryForUPN() method implmentation
+        /// </summary>
+        internal static DirectoryEntry GetDirectoryEntryForUPN(ADDSHost host, string account, string password, string upn)
+        {
+            DirectoryEntry entry = null;
+            string dom = host.GetForestForUPN(upn);
+            entry = new DirectoryEntry("LDAP://" + dom);
+            if (!string.IsNullOrEmpty(account))
+                entry.Username = account;
+            if (!string.IsNullOrEmpty(password))
+                entry.Password = password;
+            return entry;
+        }
+
+        /// <summary>
+        /// GetDirectoryEntry() method implmentation
+        /// </summary>
+        internal static DirectoryEntry GetDirectoryEntry(ADDSHost host, ADDSHostForest forest)
+        {
+            DirectoryEntry entry = null;
+            if (!string.IsNullOrEmpty(host.DomainName))
+                entry = new DirectoryEntry("LDAP://" + host.DomainName);
+            else
+                entry = new DirectoryEntry("LDAP://" + forest.ForestDNS);
+            if (!string.IsNullOrEmpty(host.Account))
+                entry.Username = host.Account;
+            if (!string.IsNullOrEmpty(host.Password))
+                entry.Password = host.Password;
+            return entry;
+        }
+
+        /// <summary>
+        /// GetDirectoryEntry() method implmentation
+        /// </summary>
+        internal static DirectoryEntry GetDirectoryEntry(ADDSHost host)
+        {
+            DirectoryEntry entry = null;
+            if (!string.IsNullOrEmpty(host.DomainName))
+                entry = new DirectoryEntry("LDAP://" + host.DomainName);
+            else
+                entry = new DirectoryEntry();
+            if (!string.IsNullOrEmpty(host.Account))
+                entry.Username = host.Account;
+            if (!string.IsNullOrEmpty(host.Password))
+                entry.Password = host.Password;
+            return entry;
+        }
+
+        /// <summary>
+        /// GetDirectoryEntry method implmentation
+        /// </summary>
+        internal static DirectoryEntry GetDirectoryEntry(string domainname, string username, string password)
+        {
+            DirectoryEntry entry = null;
+            if (!string.IsNullOrEmpty(domainname))
+                entry = new DirectoryEntry("LDAP://" + domainname);
+            else
+                entry = new DirectoryEntry();
+            if (!string.IsNullOrEmpty(username))
+                entry.Username = username;
+            if (!string.IsNullOrEmpty(password))
+                entry.Password = password;
+            return entry;
+        }
+
+        /// <summary>
+        /// GetDirectoryEntry() method implmentation
+        /// </summary>
+        internal static DirectoryEntry GetDirectoryEntry(ADDSHost host, SearchResult sr)
+        {
+            DirectoryEntry entry = sr.GetDirectoryEntry();
+            entry.Path = sr.Path;
+            if (!string.IsNullOrEmpty(host.Account))
+                entry.Username = host.Account;
+            if (!string.IsNullOrEmpty(host.Password))
+                entry.Password = host.Password;
+            return entry;
+        }
+
+        /// <summary>
+        /// GetDirectoryEntry() method implmentation
+        /// </summary>
+        internal static DirectoryEntry GetDirectoryEntry(string domainname, string account, string password, SearchResult sr)
+        {
+            DirectoryEntry entry = sr.GetDirectoryEntry();
+            entry.Path = sr.Path;
+            if (!string.IsNullOrEmpty(account))
+                entry.Username = account;
+            if (!string.IsNullOrEmpty(password))
+                entry.Password = password;
+            return entry;
+        }
+
+        /// <summary>
+        /// GetDirectoryEntry() method implmentation
+        /// </summary>
+        internal static DirectoryEntry GetDirectoryEntry(ADDSHost host, string path)
+        {
+            DirectoryEntry entry = null;
+            if (!string.IsNullOrEmpty(host.DomainName))
+                entry = new DirectoryEntry("LDAP://" + host.DomainName);
+            else
+                entry = new DirectoryEntry();
+            entry.Path = path;
+            if (!string.IsNullOrEmpty(host.Account))
+                entry.Username = host.Account;
+            if (!string.IsNullOrEmpty(host.Password))
+                entry.Password = host.Password;
+            return entry;
+        }
+
+        /// <summary>
+        /// GetDirectoryEntry() method implmentation
+        /// </summary>
+        internal static DirectoryEntry GetDirectoryEntry(string domain, string username, string password, string path)
+        {
+            DirectoryEntry entry = null;
+            if (!string.IsNullOrEmpty(domain))
+                entry = new DirectoryEntry("LDAP://" + domain);
+            else
+                entry = new DirectoryEntry();
+            entry.Path = path;
+            if (!string.IsNullOrEmpty(username))
+                entry.Username = username;
+            if (!string.IsNullOrEmpty(password))
+                entry.Password = password;
+            return entry;
+        }
+        #endregion
+
+        #region MultiValued Properties
+        /// <summary>
+        /// GetMultiValued method implementation
+        /// </summary>
+        internal static string GetMultiValued(PropertyValueCollection props, bool ismultivalued)
+        {
+            if (props == null)
+                return null;
+            if (!ismultivalued)
+            {
+                if (props.Value != null)
+                    return props.Value as string;
+                else
+                    return null;
+            }
+            else
+            {
+                switch (props.Count)
+                {
+                    case 0:
+                        return null;
+                    case 1:
+                        if (props.Value == null)
+                            return null;
+                        if (props.Value is string)
+                        {
+                            string so = props.Value as string;
+                            if (HasSetMultiValued(so))
+                                return SetMultiValuedHeader(so, false);
+                            else
+                                return so; // Allow return of original value, because only one value. after update an new value wil be tagged
+                        }
+                        break;
+                    default:
+                        foreach (object o2 in props)
+                        {
+                            if (o2 == null)
+                                continue;
+                            if (o2 is string)
+                            {
+                                string so2 = o2 as string;
+                                if (HasSetMultiValued(so2))
+                                    return SetMultiValuedHeader(so2, false);
+                            }
+                        }
+                        break;
+                }
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// SetMultiValued method implementation
+        /// </summary>
+        internal static void SetMultiValued(PropertyValueCollection props, bool ismultivalued, string value)
+        {
+            if (props == null)
+                return;
+            if (!ismultivalued)
+            {
+                if (string.IsNullOrEmpty(value))
+                    props.Clear();
+                else
+                    props.Value = value;
+            }
+            else
+            {
+                switch (props.Count)
+                {
+                    case 0:
+                        if (!string.IsNullOrEmpty(value))
+                            props.Add(SetMultiValuedHeader(value));
+                        break;
+                    case 1:
+                        if (props.Value == null)
+                            return;
+                        if (props.Value is string)
+                        {
+                            string so = props.Value as string;
+                            if (string.IsNullOrEmpty(value))
+                            {
+                                props.Remove(so);  // Clean value anyway
+                                return;
+                            }
+                            if (HasSetMultiValued(so))
+                                props.Value = SetMultiValuedHeader(value);
+                            else
+                                props.Add(SetMultiValuedHeader(value));
+                        }
+                        break;
+                    default:
+                        int j = props.Count;
+                        for (int i = 0; i < j; i++)
+                        {
+                            if (props[i] != null)
+                            {
+                                if (props[i] is string)
+                                {
+                                    string so2 = props[i] as string;
+                                    if (HasSetMultiValued(so2))
+                                    {
+                                        if (string.IsNullOrEmpty(value))
+                                            props.Remove(so2);
+                                        else
+                                            props[i] = SetMultiValuedHeader(value);
+                                        return;
+                                    }
+                                }
+                            }
+                        }
+                        if (!string.IsNullOrEmpty(value))
+                            props.Add(SetMultiValuedHeader(value)); // Add tagged value if not null
+                        break;
+                }
+            }
+        }
+
+        /// <summary>
+        /// HasSetMultiValued method implementation
+        /// </summary>
+        private static bool HasSetMultiValued(string value)
+        {
+            if (value == null)
+                return false;
+            return (value.ToLower().StartsWith("mfa:"));
+        }
+
+        /// <summary>
+        /// SetMultiValuedHeader method implementation
+        /// </summary>
+        private static string SetMultiValuedHeader(string value, bool addheader = true)
+        {
+            if (string.IsNullOrEmpty(value))
+                return null;
+            if (addheader)
+            {
+                if (HasSetMultiValued(value))
+                    return value;
+                else
+                    return "mfa:" + value;
+            }
+            else
+            {
+                if (!HasSetMultiValued(value))
+                    return value;
+                else
+                    return value.Replace("mfa:", "");
+            }
+        }
+
+        /// <summary>
+        /// IsMultivaluedAttribute method implmentation
+        /// </summary>
+        internal static bool IsMultivaluedAttribute(string domainname, string username, string password, string attributename)
+        {
+            DirectoryContext ctx = null;
+            if (!string.IsNullOrEmpty(domainname))
+            {
+                if (!string.IsNullOrEmpty(username) || !string.IsNullOrEmpty(password))
+                    ctx = new DirectoryContext(DirectoryContextType.Domain, domainname, username, password);
+                else
+                    ctx = new DirectoryContext(DirectoryContextType.Domain, domainname);
+            }
+            else
+            {
+                if (!string.IsNullOrEmpty(username) || !string.IsNullOrEmpty(password))
+                    ctx = new DirectoryContext(DirectoryContextType.Domain, username, password);
+                else
+                    ctx = new DirectoryContext(DirectoryContextType.Domain);
+            }
+            if (ctx != null)
+            {
+                using (Domain dom = Domain.GetDomain(ctx))
+                {
+                    using (Forest forest = dom.Forest)
+                    {
+                        ActiveDirectorySchemaProperty property = forest.Schema.FindProperty(attributename);
+                        if (property != null)
+                        {
+                            if (property.Name.Equals(attributename))
+                            {
+                                return !property.IsSingleValued;
+                            }
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// IsBinaryAttribute method implmentation
+        /// </summary>
+        internal static bool IsBinaryAttribute(string domainname, string username, string password, string attributename)
+        {
+            DirectoryContext ctx = null;
+            if (!string.IsNullOrEmpty(domainname))
+            {
+                if (!string.IsNullOrEmpty(username) || !string.IsNullOrEmpty(password))
+                    ctx = new DirectoryContext(DirectoryContextType.Domain, domainname, username, password);
+                else
+                    ctx = new DirectoryContext(DirectoryContextType.Domain, domainname);
+            }
+            else
+            {
+                if (!string.IsNullOrEmpty(username) || !string.IsNullOrEmpty(password))
+                    ctx = new DirectoryContext(DirectoryContextType.Domain, username, password);
+                else
+                    ctx = new DirectoryContext(DirectoryContextType.Domain);
+            }
+            if (ctx != null)
+            {
+                using (Domain dom = Domain.GetDomain(ctx))
+                {
+                    using (Forest forest = dom.Forest)
+                    {
+                        ActiveDirectorySchemaProperty property = forest.Schema.FindProperty(attributename);
+                        if (property != null)
+                        {
+                            if (property.Syntax.Equals(ActiveDirectorySyntax.OctetString))
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+
+        #endregion
+    }
+    #endregion
 }

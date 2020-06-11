@@ -357,4 +357,7 @@
   <data name="ROOTLANGUAGECADESC" xml:space="preserve">
     <value>Cambiar la referencia cultural de la interfaz de usuario a Quebec (3084)</value>
   </data>
+  <data name="CUSTOMSTORESCOPENODEDESC" xml:space="preserve">
+    <value>Configuración de la tienda personalizada</value>
+  </data>
 </root>

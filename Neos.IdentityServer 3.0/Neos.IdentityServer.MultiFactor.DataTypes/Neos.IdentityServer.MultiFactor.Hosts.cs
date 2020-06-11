@@ -481,18 +481,14 @@ namespace Neos.IdentityServer.MultiFactor
         private string _country = "fr";
         private int _maxretries = 3;
         private string _issuer;
+        private DataRepositoryKind _store = DataRepositoryKind.ADDS;
 
         /// <summary>
         /// Constructor
         /// </summary>
         public MFAConfig()
         {
-            this.Hosts = new Hosts
-            {
-                ActiveDirectoryHost = new ADDSHost(),
-                SQLServerHost = new SQLServerHost(),
-                ADFSFarm = new ADFSFarmHost()
-            };
+            this.Hosts = new Hosts();
             this.KeysConfig = new KeysManagerConfig
             {
                 ExternalKeyManager = new ExternalKeyManagerConfig()
@@ -523,7 +519,7 @@ namespace Neos.IdentityServer.MultiFactor
                 ReplayLevel = ReplayLevel.Disabled;
                 UseUIPaginated = false;
 
-                UseActiveDirectory = true;
+                StoreMode = DataRepositoryKind.ADDS;
                 CustomUpdatePassword = true;
                 KeepMySelectedOptionOn = true;
                 ChangeNotificationsOn = true;
@@ -597,6 +593,9 @@ namespace Neos.IdentityServer.MultiFactor
                 Hosts.SQLServerHost.IsAlwaysEncrypted = false;
                 Hosts.SQLServerHost.ThumbPrint = Thumbprint.Demo;
                 Hosts.SQLServerHost.MaxRows = 10000;
+
+                Hosts.CustomStoreHost.DataRepositoryFullyQualifiedImplementation = "Neos.IdentityServer.MultiFactor.Data.InMemoryDataRepositoryService, Neos.IdentityServer.MultiFactor.Repository.Samples, Version=3.0.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2";
+                Hosts.CustomStoreHost.KeysRepositoryFullyQualifiedImplementation = "Neos.IdentityServer.MultiFactor.Data.InMemoryKeys2RepositoryService, Neos.IdentityServer.MultiFactor.Repository.Samples, Version=3.0.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2";
             }
         }
 
@@ -636,6 +635,11 @@ namespace Neos.IdentityServer.MultiFactor
                 Hosts.SQLServerHost.ThumbPrint = Thumbprint.Demo;
             Hosts.SQLServerHost.MaxRows = 10000;
             Hosts.SQLServerHost.IsAlwaysEncrypted = false;
+
+            if (string.IsNullOrEmpty(Hosts.CustomStoreHost.DataRepositoryFullyQualifiedImplementation))
+                Hosts.CustomStoreHost.DataRepositoryFullyQualifiedImplementation = "Neos.IdentityServer.MultiFactor.Data.InMemoryDataRepositoryService, Neos.IdentityServer.MultiFactor.Repository.Samples, Version=3.0.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2";
+            if (string.IsNullOrEmpty(Hosts.CustomStoreHost.KeysRepositoryFullyQualifiedImplementation))
+                Hosts.CustomStoreHost.KeysRepositoryFullyQualifiedImplementation = "Neos.IdentityServer.MultiFactor.Data.InMemoryKeys2RepositoryService, Neos.IdentityServer.MultiFactor.Repository.Samples, Version=3.0.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2";
 
             if (string.IsNullOrEmpty(MailProvider.From))
                 MailProvider.From = "sender.email@contoso.com";
@@ -753,8 +757,12 @@ namespace Neos.IdentityServer.MultiFactor
             }
         }
 
-        [XmlAttribute("UseActiveDirectory")]
-        public bool UseActiveDirectory { get; set; } = true;
+        [XmlAttribute("StoreMode")]
+        public DataRepositoryKind StoreMode
+        {
+            get { return _store; }
+            set { _store = value;  }
+        }
 
         [XmlAttribute("CustomUpdatePassword")]
         public bool CustomUpdatePassword { get; set; } = true;
@@ -798,7 +806,6 @@ namespace Neos.IdentityServer.MultiFactor
 
         [XmlElement("LastUpdated")]
         public DateTime LastUpdated { get; set; }
-
 
         [XmlElement("ReplayLevel")]
         public ReplayLevel ReplayLevel { get; set; } = ReplayLevel.Disabled;
@@ -914,7 +921,7 @@ namespace Neos.IdentityServer.MultiFactor
         public ExternalKeyManagerConfig ExternalKeyManager { get; set; }
     }
 
-    public class ExternalKeyManagerConfig
+    public class ExternalKeyManagerConfig : BaseDataHost
     {
         private XmlCDataSection _cdata;
 
@@ -1672,6 +1679,9 @@ namespace Neos.IdentityServer.MultiFactor
     {
         public Hosts()
         {
+            ActiveDirectoryHost = new ADDSHost();
+            SQLServerHost = new SQLServerHost();
+            CustomStoreHost = new CustomStoreHost();
             ADFSFarm = new ADFSFarmHost();
         }
 
@@ -1680,6 +1690,9 @@ namespace Neos.IdentityServer.MultiFactor
 
         [XmlElement("ActiveDirectory")]
         public ADDSHost ActiveDirectoryHost { get; set; }
+
+        [XmlElement("CustomStore")]
+        public CustomStoreHost CustomStoreHost { get; set; }
 
         [XmlElement("ADFS")]
         public ADFSFarmHost ADFSFarm { get; set; }
@@ -1768,7 +1781,7 @@ namespace Neos.IdentityServer.MultiFactor
     /// <summary>
     /// SQLServerHost class implementation
     /// </summary>
-    public class SQLServerHost
+    public class SQLServerHost: BaseDataHost
     {
         [XmlAttribute("ConnectionString")]
         public string ConnectionString {get; set; }
@@ -1803,9 +1816,17 @@ namespace Neos.IdentityServer.MultiFactor
     }
 
     /// <summary>
+    /// BaseDataHost class implementation
+    /// </summary>
+    public abstract class BaseDataHost
+    {
+
+    }
+
+    /// <summary>
     /// ADDSHost class implementation
     /// </summary>
-    public class ADDSHost
+    public class ADDSHost: BaseDataHost
     {
         private string _domainaddress = string.Empty;
         private bool _isbinded = false;
@@ -2004,6 +2025,50 @@ namespace Neos.IdentityServer.MultiFactor
     }
 
     /// <summary>
+    /// CustomStoreHost class implementation
+    /// </summary>
+    public class CustomStoreHost: BaseDataHost
+    {
+        private XmlCDataSection _cdata;
+
+        [XmlAttribute("ConnectionString")]
+        public string ConnectionString { get; set; }
+
+        [XmlAttribute("MaxRows")]
+        public int MaxRows { get; set; } = 10000;
+
+        [XmlAttribute("DataRepositoryFullyQualifiedImplementation")]
+        public string DataRepositoryFullyQualifiedImplementation { get; set; } = "Neos.IdentityServer.MultiFactor.Data.InMemoryDataRepositoryService, Neos.IdentityServer.MultiFactor.Repository.Samples, Version=3.0.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2";
+
+        [XmlAttribute("KeysRepositoryFullyQualifiedImplementation")]
+        public string KeysRepositoryFullyQualifiedImplementation { get; set; } = "Neos.IdentityServer.MultiFactor.Data.InMemoryKeys2RepositoryService, Neos.IdentityServer.MultiFactor.Repository.Samples, Version=3.0.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2";
+
+        [XmlElement("Parameters", typeof(XmlCDataSection))]
+        public XmlCDataSection Parameters
+        {
+            get
+            {
+                if (_cdata == null)
+                {
+                    XmlDocument doc = new XmlDocument();
+                    _cdata = doc.CreateCDataSection(null);
+                }
+                return _cdata;
+            }
+            set
+            {
+                if (_cdata == null)
+                {
+                    XmlDocument doc = new XmlDocument();
+                    _cdata = doc.CreateCDataSection(null);
+                }
+                _cdata.Data = value.Data;
+            }
+
+        }
+    }
+
+    /// <summary>
     /// ADFSServerHost class implementation
     /// </summary>
     public class ADFSServerHost
@@ -2125,6 +2190,9 @@ namespace Neos.IdentityServer.MultiFactor
         }
     }
 
+    /// <summary>
+    /// ADFSWSManager class implementation
+    /// </summary>
     public class ADFSWSManager
     {
         /// <summary>

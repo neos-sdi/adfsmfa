@@ -62,7 +62,7 @@ namespace Neos.IdentityServer.Multifactor.Keys
             _ksize = config.KeysConfig.KeySize;
             if (!string.IsNullOrEmpty(config.KeysConfig.XORSecret))
                 _xorsecret = config.KeysConfig.XORSecret;
-            _repos = new DBKeysRepositoryService(_config);
+            _repos = new DBKeysRepositoryService(_config.KeysConfig.ExternalKeyManager, _config.DeliveryWindow);
             switch (_ksize)
             {
                 case KeySizeMode.KeySize128:
@@ -170,7 +170,7 @@ namespace Neos.IdentityServer.Multifactor.Keys
                 byte[] crypted = null;
                 using (var prov = new Encryption(_xorsecret))
                 {
-                    prov.Certificate = KeysStorage.CreateCertificate(lupn, _validity, false);
+                    prov.Certificate = KeysStorage.CreateCertificate(lupn, string.Empty, _validity);
                     crypted = prov.Encrypt(lupn);
                     if (crypted == null)
                         return null;
@@ -215,7 +215,7 @@ namespace Neos.IdentityServer.Multifactor.Keys
                         if (crypted == null)
                             return false;
 
-                        prov.Certificate = KeysStorage.GetUserCertificate(lupn, false);
+                        prov.Certificate = KeysStorage.GetUserCertificate(lupn, string.Empty);
                         byte[] cleared = prov.Decrypt(crypted, lupn);
 
                         if (cleared == null)
@@ -308,7 +308,8 @@ namespace Neos.IdentityServer.Multifactor.Keys
                 byte[] crypted = null;
                 using (var prov = new RSAEncryption(_xorsecret))
                 {
-                    prov.Certificate = KeysStorage.CreateCertificate(lupn, _validity, true);
+                    string pass = CheckSumEncoding.CheckSumAsString(lupn);
+                    prov.Certificate = KeysStorage.CreateCertificate(lupn, pass, _validity);
                     crypted = prov.Encrypt(lupn);
                     if (crypted == null)
                         return null;
@@ -336,8 +337,8 @@ namespace Neos.IdentityServer.Multifactor.Keys
                     byte[] crypted = StripStorageInfos(key);
                     if (crypted == null)
                         return null;
-
-                    prov.Certificate = KeysStorage.GetUserCertificate(lupn, true);
+                    string pass = CheckSumEncoding.CheckSumAsString(lupn);
+                    prov.Certificate = KeysStorage.GetUserCertificate(lupn, pass);
                     cleared = prov.Decrypt(crypted, lupn);
                     if (cleared == null)
                         return null;
@@ -370,8 +371,8 @@ namespace Neos.IdentityServer.Multifactor.Keys
                         byte[] crypted = StripStorageInfos(key);
                         if (crypted == null)
                             return false;
-
-                        prov.Certificate = KeysStorage.GetUserCertificate(lupn, true);
+                        string pass = CheckSumEncoding.CheckSumAsString(lupn);
+                        prov.Certificate = KeysStorage.GetUserCertificate(lupn, pass);
                         byte[] cleared = prov.Decrypt(crypted, lupn);
 
                         if (cleared == null)
@@ -406,8 +407,8 @@ namespace Neos.IdentityServer.Multifactor.Keys
                     byte[] crypted = StripStorageInfos(key);
                     if (crypted == null)
                         return null;
-
-                    prov.Certificate = KeysStorage.GetUserCertificate(lupn, true);
+                    string pass = CheckSumEncoding.CheckSumAsString(lupn);
+                    prov.Certificate = KeysStorage.GetUserCertificate(lupn, pass);
                     probed = prov.Decrypt(crypted, lupn);
                     if (probed == null)
                         return null;

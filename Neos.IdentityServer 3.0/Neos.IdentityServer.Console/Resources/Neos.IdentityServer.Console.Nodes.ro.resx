@@ -357,4 +357,7 @@
   <data name="ROOTLANGUAGECADESC" xml:space="preserve">
     <value>Schimbarea culturii interfeței cu utilizatorul la Quebec (3084)</value>
   </data>
+  <data name="CUSTOMSTORESCOPENODEDESC" xml:space="preserve">
+    <value>Configurare magazin personalizat</value>
+  </data>
 </root>

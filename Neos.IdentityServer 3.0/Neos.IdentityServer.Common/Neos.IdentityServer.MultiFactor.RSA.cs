@@ -56,10 +56,18 @@ namespace Neos.IdentityServer.MultiFactor.Common
             _ksize = config.KeysConfig.KeySize;
             if (!string.IsNullOrEmpty(config.KeysConfig.XORSecret))
                 _xorsecret = config.KeysConfig.XORSecret;
-            if (_config.UseActiveDirectory)
-                _repos = new ADDSKeysRepositoryService(_config);
-            else
-                _repos = new SQLKeysRepositoryService(_config);
+            switch (_config.StoreMode)
+            {
+                case DataRepositoryKind.ADDS:
+                    _repos = new ADDSKeysRepositoryService(_config.Hosts.ActiveDirectoryHost, _config.DeliveryWindow);
+                    break;
+                case DataRepositoryKind.SQL:
+                    _repos = new SQLKeysRepositoryService(_config.Hosts.SQLServerHost, _config.DeliveryWindow);
+                    break;
+                case DataRepositoryKind.Custom:
+                    _repos = CustomDataRepositoryCreator.CreateKeyRepositoryInstance(_config.Hosts.CustomStoreHost, _config.DeliveryWindow);
+                    break;
+            }
             switch (_ksize)
             {
                 case KeySizeMode.KeySize128:

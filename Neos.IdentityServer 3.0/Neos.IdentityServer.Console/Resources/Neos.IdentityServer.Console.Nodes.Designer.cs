@@ -79,6 +79,15 @@ namespace Neos.IdentityServer.Console.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Custom Store configuration.
+        /// </summary>
+        public static string CUSTOMSTORESCOPENODEDESC {
+            get {
+                return ResourceManager.GetString("CUSTOMSTORESCOPENODEDESC", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Cancel.
         /// </summary>
         public static string GENERALSCOPECANCEL {

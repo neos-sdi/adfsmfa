@@ -273,6 +273,12 @@
   <data name="CTRLCANCEL" xml:space="preserve">
     <value>Cancel</value>
   </data>
+  <data name="CTRLCUSTOMUSING" xml:space="preserve">
+    <value>Use Custom Repository</value>
+  </data>
+  <data name="CTRLDATAREPOASSEMBLY" xml:space="preserve">
+    <value>Data Repository (full class)</value>
+  </data>
   <data name="CTRLDLGMAXRETRIES" xml:space="preserve">
     <value>Max retries allowed</value>
   </data>
@@ -380,6 +386,9 @@
   </data>
   <data name="CTRLINVALIDVALUE" xml:space="preserve">
     <value>Invalid value, must be between {0} and {1}.</value>
+  </data>
+  <data name="CTRLKEYSREPOASSEMBLY" xml:space="preserve">
+    <value>Keys Repository (full class)</value>
   </data>
   <data name="CTRLMULTVALUED" xml:space="preserve">
     <value>(*) Supports multi-valued string properties</value>
@@ -602,6 +611,9 @@
   </data>
   <data name="CTRLSTUSEADDS" xml:space="preserve">
     <value>Use Active Directory</value>
+  </data>
+  <data name="CTRLSTUSECUSTOM" xml:space="preserve">
+    <value>Use Custom Storage</value>
   </data>
   <data name="CTRLSTUSESQL" xml:space="preserve">
     <value>Use SQL Server</value>

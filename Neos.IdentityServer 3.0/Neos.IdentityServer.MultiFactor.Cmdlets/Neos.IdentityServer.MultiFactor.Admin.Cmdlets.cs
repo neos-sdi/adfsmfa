@@ -210,20 +210,23 @@ namespace MFA
             try
             {
                 ManagementService.Initialize(this.Host, true);
-                if (!ManagementService.Config.UseActiveDirectory)
+                switch (ManagementService.Config.StoreMode)
                 {
-                    if (ManagementService.Config.Hosts.SQLServerHost.IsAlwaysEncrypted)
-                    {
-                        if (_filter.FilterField == DataFilterField.UserName)
-                            return new PSDataFieldMixedParameters(_filter, _order, this.Host);
+                    case DataRepositoryKind.SQL:
+                        if (ManagementService.Config.Hosts.SQLServerHost.IsAlwaysEncrypted)
+                        {
+                            if (_filter.FilterField == DataFilterField.UserName)
+                                return new PSDataFieldMixedParameters(_filter, _order, this.Host);
+                            else
+                                return new PSDataFieldCryptedParameters(_filter, _order, this.Host);
+                        }
                         else
-                            return new PSDataFieldCryptedParameters(_filter, _order, this.Host);
-                    }
-                    else
+                            return new PSDataFieldParameters(_filter, _order, this.Host);
+                    case DataRepositoryKind.Custom:
+                        return new PSDataFieldParameters(_filter, _order, this.Host);
+                    default:
                         return new PSDataFieldParameters(_filter, _order, this.Host);
                 }
-                else
-                    return new PSDataFieldParameters(_filter, _order, this.Host);
             }
             catch
             {
@@ -2439,12 +2442,14 @@ namespace MFA
     {
         private PSADDSStore _config0;
         private PSSQLStore _config1;
+        private PSCustomStore _config2;
 
         /// <summary>
         /// <para type="description">Store Configuration mode, (ADDS, SQL) Required.</para>
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = "Data", ValueFromPipeline = true)]
-        [ValidateSet("ADDS", "SQL")]
+       // [ValidateSet("ADDS", "SQL", "Custom")]
+        [ValidateRange(PSStoreMode.ADDS, PSStoreMode.Custom)]
         public PSStoreMode Store { get; set; } = PSStoreMode.ADDS;
 
         /// <summary>
@@ -2466,6 +2471,11 @@ namespace MFA
                         FlatSQLStore cf1 = new FlatSQLStore();
                         cf1.Load(this.Host);
                         _config1 = (PSSQLStore)cf1;
+                        break;
+                    case PSStoreMode.Custom:
+                        FlatCustomStore cf2 = new FlatCustomStore();
+                        cf2.Load(this.Host);
+                        _config2 = (PSCustomStore)cf2;
                         break;
                 }
             }
@@ -2491,6 +2501,9 @@ namespace MFA
                             break;
                         case PSStoreMode.SQL:
                             WriteObject(_config1);
+                            break;
+                        case PSStoreMode.Custom:
+                            WriteObject(_config2);
                             break;
                     }
                 }
@@ -2554,12 +2567,14 @@ namespace MFA
     {
         private ADDSStoreDynamicParameters _config0;
         private SQLStoreDynamicParameters _config1;
+        private CustomStoreDynamicParameters _config2;
 
         private PSStoreMode _store = PSStoreMode.ADDS;
         private PSBaseStore _config;
         private bool _configchanged = false;
         private FlatADDSStore _target0;
         private FlatSQLStore _target1;
+        private FlatCustomStore _target2;
 
 
         /// <summary>
@@ -2567,7 +2582,7 @@ namespace MFA
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = "Data")]
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = "Identity")]
-        [ValidateRange(PSStoreMode.ADDS, PSStoreMode.SQL)]
+        [ValidateRange(PSStoreMode.ADDS, PSStoreMode.Custom)]
         public PSStoreMode Store
         {
             get { return _store; }
@@ -2605,6 +2620,10 @@ namespace MFA
                     case PSStoreMode.SQL:
                         _config1 = new SQLStoreDynamicParameters();
                         return _config1;
+                    case PSStoreMode.Custom:
+                        _config2 = new CustomStoreDynamicParameters();
+                        return _config2;
+
                 }
             }
             return null;
@@ -2671,6 +2690,22 @@ namespace MFA
                             if (!string.IsNullOrEmpty(_config1.AECCryptoKeyName) && _config1.AECCryptoKeyNameChanged)
                                 _target1.KeyName = _config1.AECCryptoKeyName;
                             break;
+                        case PSStoreMode.Custom:
+                            _target2 = new FlatCustomStore();
+                            _target2.Load(this.Host);
+                            if (_config2.ActiveChanged)
+                                _target2.Active = _config2.Active;
+                            if (_config2.MaxRowsChanged)
+                                _target2.MaxRows = _config2.MaxRows;
+                            if (_config2.ConnectionStringChanged)
+                                _target2.ConnectionString = _config2.ConnectionString;
+                            if (_config2.DataImplementationChanged)
+                                _target2.DataRepositoryFullyQualifiedImplementation = _config2.DataRepositoryFullyQualifiedImplementation;
+                            if (_config2.KeysImplementationChanged)
+                                _target2.KeysRepositoryFullyQualifiedImplementation = _config2.KeysRepositoryFullyQualifiedImplementation;
+                            if (_config2.ParametersChanged)
+                                _target2.Parameters = _config2.Parameters;
+                            break;
                     }
                 }
             }
@@ -2703,7 +2738,13 @@ namespace MFA
                                 if (Config is PSSQLStore)
                                     ((FlatSQLStore)((PSSQLStore)Config)).Update(this.Host);
                                 else
-                                    throw new Exception("Invalid DataStore  Type !");
+                                    throw new Exception("Invalid DataStore Type !");
+                                break;
+                            case PSStoreMode.Custom:
+                                if (Config is PSCustomStore)
+                                    ((FlatCustomStore)((PSCustomStore)Config)).Update(this.Host);
+                                else
+                                    throw new Exception("Invalid DataStore Type !");
                                 break;
                         }
                     }
@@ -2722,6 +2763,12 @@ namespace MFA
                                     _target1.Update(this.Host);
                                 else
                                     throw new Exception("Invalid SQL DataStore  Type !");
+                                break;
+                            case PSStoreMode.Custom:
+                                if (_target2 != null)
+                                    _target2.Update(this.Host);
+                                else
+                                    throw new Exception("Invalid Custom DataStore Type !");
                                 break;
                         }
                     }
@@ -3089,6 +3136,114 @@ namespace MFA
             {
                 _cryptokeyname = value;
                 AECCryptoKeyNameChanged = true;
+            }
+        }
+    }
+
+    /// <summary>
+    /// <para type="description">Set value for Custom Store.</para>
+    /// </summary>
+    public class CustomStoreDynamicParameters
+    {
+        private bool _active;
+        private int _maxrows;
+        private string _connectionstring;
+        private string _datafullqualifiedimplementation;
+        private string _keysfullqualifiedimplementation;
+        private string _parameters;
+
+        internal bool ActiveChanged { get; private set; } = false;
+        internal bool MaxRowsChanged { get; private set; } = false;
+        internal bool ConnectionStringChanged { get; private set; } = false;
+        internal bool DataImplementationChanged { get; private set; } = false;
+        internal bool KeysImplementationChanged { get; private set; } = false;
+        internal bool ParametersChanged { get; private set; } = false;
+
+
+        /// <summary>
+        /// <para type="description">If true, users metadata are stored in Custom Store.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public bool Active
+        {
+            get { return _active; }
+            set
+            {
+                _active = value;
+                ActiveChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Set the connection string used to access MFA Custom Store.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public string ConnectionString
+        {
+            get { return _connectionstring; }
+            set
+            {
+                _connectionstring = value;
+                ConnectionStringChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Set the max rows limit used to access MFA Custom Store.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateRange(-1, 1000000)]
+        public int MaxRows
+        {
+            get { return _maxrows; }
+            set
+            {
+                _maxrows = value;
+                MaxRowsChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Set the Assembly description used to access MFA Custom Store.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        public string DataRepositoryFullyQualifiedImplementation
+        {
+            get { return _datafullqualifiedimplementation; }
+            set
+            {
+                _datafullqualifiedimplementation = value;
+                DataImplementationChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Set the Assembly description used to access MFA Custom Keys Store.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        public string KeysRepositoryFullyQualifiedImplementation
+        {
+            get { return _keysfullqualifiedimplementation; }
+            set
+            {
+                _keysfullqualifiedimplementation = value;
+                KeysImplementationChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Set the Assembly Parameters used to access MFA Custom Store.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        public string Parameters
+        {
+            get { return _parameters; }
+            set
+            {
+                _parameters = value;
+                ParametersChanged = true;
             }
         }
     }
@@ -6994,7 +7149,7 @@ namespace MFA
         /// </summary>
         protected override void ProcessRecord()
         {
-            if (ShouldProcess("Import Users in MFA with XML file"))
+            if (ShouldProcess("Import Users in MFA from ADDS"))
             {
                 try
                 {

@@ -83,7 +83,7 @@
     </Compile>
     <Compile Include="Neos.IdentityServer.HubService.Cleanup.cs" />
     <Compile Include="Neos.IdentityServer.HubService.Replay.cs" />
-    <Compile Include="Neos.IdentityServer.MultiFactor.Service.cs" />
+    <Compile Include="Neos.IdentityServer.HubService.Service.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="ProjectInstaller.cs">
       <SubType>Component</SubType>

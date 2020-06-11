@@ -357,4 +357,7 @@
   <data name="ROOTLANGUAGECADESC" xml:space="preserve">
     <value>ユーザー インターフェイスのカルチャをケベック (3084) に変更する</value>
   </data>
+  <data name="CUSTOMSTORESCOPENODEDESC" xml:space="preserve">
+    <value>カスタム ストア構成</value>
+  </data>
 </root>

@@ -15,9 +15,11 @@
 // https://github.com/neos-sdi/adfsmfa                                                                                                                                                      //
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
+using Neos.IdentityServer.MultiFactor.Data;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.DirectoryServices;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel;
@@ -66,6 +68,17 @@ namespace Neos.IdentityServer.MultiFactor
     /// </summary>
     public abstract class DataRepositoryService
     {
+        private BaseDataHost _host;
+        private int _deliverywindow = 300;
+        public DataRepositoryService(BaseDataHost host, int deliverywindow)
+        {
+            _host = host;
+            _deliverywindow = deliverywindow;
+        }
+
+        public BaseDataHost Host { get { return _host; } }
+        public int DeliveryWindow { get { return _deliverywindow; } }
+
         public delegate void KeysDataManagerEvent(string user, KeysDataManagerEventKind kind);
         public abstract event KeysDataManagerEvent OnKeyDataEvent;
         public abstract MFAUser GetMFAUser(string upn);
@@ -78,7 +91,126 @@ namespace Neos.IdentityServer.MultiFactor
         public abstract MFAUserList GetMFAUsersAll(DataOrderObject order, bool enabledonly = false);
         public abstract int GetMFAUsersCount(DataFilterObject filter);
         public abstract bool IsMFAUserRegistered(string upn);
-        public abstract MFAUserList ImportMFAUsers(string domain, string username, string password, string ldappath, DateTime? created, DateTime? modified, string mailattribute, string phoneattribute, PreferredMethod method, bool disableall = false);        
+      
+        /// <summary>
+        /// ImportMFAUsers method implementation
+        /// </summary>
+        public virtual MFAUserList ImportMFAUsers(string domain, string username, string password, string ldappath, DateTime? created, DateTime? modified, string mailattribute, string phoneattribute, PreferredMethod meth, bool disableall = false)
+        {
+            if (!string.IsNullOrEmpty(ldappath))
+            {
+                ldappath = ldappath.Replace("ldap://", "LDAP://");
+                if (!ldappath.StartsWith("LDAP://"))
+                    ldappath = "LDAP://" + ldappath;
+            }
+            MFAUserList registrations = new MFAUserList();
+            try
+            {
+                using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntry(domain, username, password, ldappath))
+                {
+                    string qryldap = string.Empty;
+                    qryldap = "(&";
+                    qryldap += "(objectCategory=user)(objectClass=user)(userprincipalname=*)";
+                    if (created.HasValue)
+                        qryldap += "(whenCreated>=" + created.Value.ToString("yyyyMMddHHmmss.0Z") + ")";
+                    if (modified.HasValue)
+                        qryldap += "(whenChanged>=" + modified.Value.ToString("yyyyMMddHHmmss.0Z") + ")";
+                    qryldap += ")";
+
+                    using (DirectorySearcher dsusr = new DirectorySearcher(rootdir, qryldap))
+                    {
+                        dsusr.PropertiesToLoad.Clear();
+                        dsusr.PropertiesToLoad.Add("objectGUID");
+                        dsusr.PropertiesToLoad.Add("userPrincipalName");
+                        dsusr.PropertiesToLoad.Add("userAccountControl");
+                        dsusr.ReferralChasing = ReferralChasingOption.All;
+
+                        if (!string.IsNullOrEmpty(mailattribute))
+                            dsusr.PropertiesToLoad.Add(mailattribute);
+                        else
+                        {
+                            dsusr.PropertiesToLoad.Add("mail");
+                            dsusr.PropertiesToLoad.Add("otherMailbox");
+                        }
+                        if (!string.IsNullOrEmpty(phoneattribute))
+                            dsusr.PropertiesToLoad.Add(phoneattribute);
+                        else
+                        {
+                            dsusr.PropertiesToLoad.Add("mobile");
+                            dsusr.PropertiesToLoad.Add("otherMobile");
+                            dsusr.PropertiesToLoad.Add("telephoneNumber");
+                        }
+                        dsusr.SizeLimit = 0; // _host.MaxRows;
+
+                        SearchResultCollection src = dsusr.FindAll();
+                        if (src != null)
+                        {
+                            foreach (SearchResult sr in src)
+                            {
+                                MFAUser reg = new MFAUser();
+                                using (DirectoryEntry DirEntry = ADDSUtils.GetDirectoryEntry(domain, username, password, sr))  // ICI
+                                {
+                                    if (DirEntry.Properties["objectGUID"].Value != null)
+                                    {
+                                        reg.ID = new Guid((byte[])DirEntry.Properties["objectGUID"].Value).ToString();
+                                        if (DirEntry.Properties["userPrincipalName"].Value != null)
+                                        {
+                                            reg.UPN = DirEntry.Properties["userPrincipalName"].Value.ToString();
+
+                                            if (!string.IsNullOrEmpty(mailattribute))
+                                            {
+                                                if (DirEntry.Properties[mailattribute].Value != null)
+                                                    reg.MailAddress = DirEntry.Properties[mailattribute].Value.ToString();
+                                            }
+                                            else
+                                            {
+                                                if (DirEntry.Properties["otherMailbox"].Value != null)
+                                                    reg.MailAddress = DirEntry.Properties["otherMailbox"].Value.ToString();
+                                                else if (DirEntry.Properties["mail"].Value != null)
+                                                    reg.MailAddress = DirEntry.Properties["mail"].Value.ToString();
+                                            }
+
+                                            if (!string.IsNullOrEmpty(phoneattribute))
+                                            {
+                                                if (DirEntry.Properties[phoneattribute].Value != null)
+                                                    reg.PhoneNumber = DirEntry.Properties[phoneattribute].Value.ToString();
+                                            }
+                                            else
+                                            {
+                                                if (DirEntry.Properties["mobile"].Value != null)
+                                                    reg.PhoneNumber = DirEntry.Properties["mobile"].Value.ToString();
+                                                else if (DirEntry.Properties["otherMobile"].Value != null)
+                                                    reg.PhoneNumber = DirEntry.Properties["otherMobile"].Value.ToString();
+                                                else if (DirEntry.Properties["telephoneNumber"].Value != null)
+                                                    reg.PhoneNumber = DirEntry.Properties["telephoneNumber"].Value.ToString();
+                                            }
+                                            reg.PreferredMethod = meth;
+                                            reg.OverrideMethod = string.Empty;
+                                            if (disableall)
+                                                reg.Enabled = false;
+                                            else if (DirEntry.Properties["userAccountControl"] != null)
+                                            {
+                                                int v = Convert.ToInt32(DirEntry.Properties["userAccountControl"].Value);
+                                                reg.Enabled = ((v & 2) == 0);
+                                            }
+                                            else
+                                                reg.Enabled = true;
+                                            registrations.Add(reg);
+                                        }
+                                    }
+                                };
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                DataLog.WriteEntry(ex.Message, System.Diagnostics.EventLogEntryType.Error, 5100);
+                throw new Exception(ex.Message);
+            }
+            return registrations;
+        }
     }
     #endregion
 
@@ -88,11 +220,33 @@ namespace Neos.IdentityServer.MultiFactor
     /// </summary>
     public abstract class KeysRepositoryService
     {
+        private BaseDataHost _host;
+        private int _deliverywindow = 300;
+        public KeysRepositoryService(BaseDataHost host, int deliverywindow)
+        {
+            _host = host;
+            _deliverywindow = deliverywindow;
+        }
+
+        public BaseDataHost Host { get { return _host; } }
+        public int DeliveryWindow { get { return _deliverywindow; } }
+
         public abstract string GetUserKey(string upn);
         public abstract string NewUserKey(string upn, string secretkey, X509Certificate2 cert = null);
         public abstract bool RemoveUserKey(string upn);
-        public abstract X509Certificate2 GetUserCertificate(string upn, bool generatepassword = false);
-        public abstract X509Certificate2 CreateCertificate(string upn, int validity, bool generatepassword = false);
+        public abstract X509Certificate2 GetUserCertificate(string upn, string password);
+
+        /// <summary>
+        /// CreateCertificate implementation
+        /// </summary>
+        public virtual X509Certificate2 CreateCertificate(string upn, string password, int validity)
+        {
+            string pass = string.Empty;
+            if (!string.IsNullOrEmpty(password))
+                pass = password;
+            return Certs.CreateRSAEncryptionCertificateForUser(upn.ToLower(), validity, pass);
+        }
+
         public abstract bool HasStoredKey(string upn);
         public abstract bool HasStoredCertificate(string upn);
     }

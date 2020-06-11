@@ -696,6 +696,90 @@ namespace MFA
     }
     #endregion
 
+    #region PSCustomStore
+    /// <summary>
+    /// PSSQLStore class
+    /// <para type="synopsis">SQL configuration properties in MFA System.</para>
+    /// <para type="description">SQL configuration properties registered with MFA. You can access, update connectionString property.</para>
+    /// </summary>
+    /// <example>
+    ///   <para>Get-MFAStore -Store SQL</para>
+    /// </example>
+    public class PSCustomStore : PSBaseStore
+    {
+        /// <summary>
+        /// <para type="description">Get or Set the connection string used to access MFA SQL Database.</para>
+        /// </summary>
+        public string ConnectionString { get; set; }
+
+        /// <summary>
+        /// <para type="description">Get or Set the max rows limit used to access MFA SQL Database.</para>
+        /// </summary>
+        public int MaxRows { get; set; }
+
+               /// <summary>
+        /// <para type="description">Full qualified implementation class for replacing default storage.</para>
+        /// </summary>
+        public string DataRepositoryFullyQualifiedImplementation { get; set; }
+
+        /// <summary>
+        /// <para type="description">Full qualified implementation class for replacing default storage for keys.</para>
+        /// </summary>
+        public string KeysRepositoryFullyQualifiedImplementation { get; set; }
+
+        /// <summary>
+        /// <para type="description">Full qualified implementation parameters for replacing default storage.</para>
+        /// </summary>
+        public string Parameters { get; set; }
+
+
+        /// <summary>
+        /// implicit conversion to PSConfig
+        /// </summary>
+        public static explicit operator PSCustomStore(FlatCustomStore sqlconfig)
+        {
+            if (sqlconfig == null)
+                return null;
+            else
+            {
+                PSCustomStore psconfigsql = new PSCustomStore
+                {
+                    Active = sqlconfig.Active,
+                    ConnectionString = sqlconfig.ConnectionString,
+                    MaxRows = sqlconfig.MaxRows,
+                    DataRepositoryFullyQualifiedImplementation = sqlconfig.DataRepositoryFullyQualifiedImplementation,
+                    KeysRepositoryFullyQualifiedImplementation = sqlconfig.KeysRepositoryFullyQualifiedImplementation,
+                    Parameters = sqlconfig.Parameters
+                };
+                return psconfigsql;
+            }
+        }
+
+        /// <summary>
+        /// implicit conversion from PSConfig
+        /// </summary>
+        public static explicit operator FlatCustomStore(PSCustomStore psconfig)
+        {
+            if (psconfig == null)
+                return null;
+            else
+            {
+                FlatCustomStore config = new FlatCustomStore
+                {
+                    IsDirty = true,
+                    Active = psconfig.Active,
+                    ConnectionString = psconfig.ConnectionString,
+                    MaxRows = psconfig.MaxRows,
+                    DataRepositoryFullyQualifiedImplementation = psconfig.DataRepositoryFullyQualifiedImplementation,
+                    KeysRepositoryFullyQualifiedImplementation = psconfig.KeysRepositoryFullyQualifiedImplementation,
+                    Parameters = psconfig.Parameters
+                };
+                return config;
+            }
+        }
+    }
+    #endregion
+
     #region PSBaseSecurity
     /// <summary>
     /// PSBaseSecurity class implementation

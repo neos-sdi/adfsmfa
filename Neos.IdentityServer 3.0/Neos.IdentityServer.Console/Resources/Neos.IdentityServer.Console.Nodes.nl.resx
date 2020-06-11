@@ -357,4 +357,7 @@
   <data name="ROOTLANGUAGECADESC" xml:space="preserve">
     <value>Verander de cultuur van de gebruikersinterface naar Quebec (3084)</value>
   </data>
+  <data name="CUSTOMSTORESCOPENODEDESC" xml:space="preserve">
+    <value>Aangepaste winkelconfiguratie</value>
+  </data>
 </root>

@@ -45,6 +45,7 @@ namespace Neos.IdentityServer.Console
         private ScopeNode ServiceStorageNode;
         private ScopeNode ServiceSQLNode;
         private ScopeNode ServiceADDSNode;
+        private ScopeNode ServiceCustomStorageNode;
         private ScopeNode ServiceProvidersNode;
         private ScopeNode ServiceTOTPNode;
         private ScopeNode ServiceBiometricsNode;
@@ -267,6 +268,15 @@ namespace Neos.IdentityServer.Console
                     this.ServiceSQLNode.ViewDescriptions.Add(fsql);
                     this.ServiceSQLNode.ViewDescriptions.DefaultIndex = 0;
 
+                    // Custom Storage Scope
+                    this.ServiceCustomStorageNode = new ServiceCustomStorageScopeNode();
+                    FormViewDescription cust = new FormViewDescription();
+                    cust.DisplayName = "MFA Custom Storage Properties";
+                    cust.ControlType = typeof(CustomStoreViewControl);
+                    cust.ViewType = typeof(ServiceCustomStoreFormView);
+                    this.ServiceCustomStorageNode.ViewDescriptions.Add(cust);
+                    this.ServiceCustomStorageNode.ViewDescriptions.DefaultIndex = 0;
+
                     // Security Scope
                     this.ServiceSecurityNode = new ServiceSecurityRootScopeNode();
                     FormViewDescription fsec = new FormViewDescription();
@@ -417,6 +427,7 @@ namespace Neos.IdentityServer.Console
                     this.RootNode.Children.Add(this.ServiceStorageNode);
                     this.ServiceStorageNode.Children.Add(this.ServiceADDSNode);
                     this.ServiceStorageNode.Children.Add(this.ServiceSQLNode);
+                    this.ServiceStorageNode.Children.Add(this.ServiceCustomStorageNode);
 
                     this.RootNode.Children.Add(this.ServiceSecurityNode);
                     this.ServiceSecurityNode.Children.Add(this.ServiceRNGNode);
@@ -461,6 +472,7 @@ namespace Neos.IdentityServer.Console
                 ((RefreshableScopeNode)this.ServiceStorageNode).RefreshUI();
                 ((RefreshableScopeNode)this.ServiceADDSNode).RefreshUI();
                 ((RefreshableScopeNode)this.ServiceSQLNode).RefreshUI();
+                ((RefreshableScopeNode)this.ServiceCustomStorageNode).RefreshUI();
                 ((RefreshableScopeNode)this.ServiceSecurityNode).RefreshUI();
                 ((RefreshableScopeNode)this.ServiceRNGNode).RefreshUI();
                 ((RefreshableScopeNode)this.ServiceRSANode).RefreshUI();

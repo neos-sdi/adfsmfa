@@ -34,16 +34,16 @@ namespace Neos.IdentityServer.Multifactor.Keys
     /// </summary>
     internal class DBKeysRepositoryService : KeysRepositoryService, IDataRepositorySQLConnection
     {
-        readonly string _connectionstring;
-        readonly string _dataparameters;
-
         /// <summary>
         /// ADDSKeysRepositoryService constructor
         /// </summary>
-        public DBKeysRepositoryService(MFAConfig cfg)
+        public DBKeysRepositoryService(BaseDataHost host, int deliverywindow) : base(host, deliverywindow)
         {
-            _connectionstring = cfg.KeysConfig.ExternalKeyManager.ConnectionString;
-            _dataparameters = cfg.KeysConfig.ExternalKeyManager.Parameters.Data;
+        }
+
+        private ExternalKeyManagerConfig KeysHost
+        {
+            get { return (ExternalKeyManagerConfig)Host; }
         }
 
         #region Key Management
@@ -53,7 +53,7 @@ namespace Neos.IdentityServer.Multifactor.Keys
         public override string GetUserKey(string upn)
         {
             string request = "SELECT SECRETKEY FROM KEYS WHERE UPN=@UPN";
-            SqlConnection con = new SqlConnection(_connectionstring);
+            SqlConnection con = new SqlConnection(KeysHost.ConnectionString);
             SqlCommand sql = new SqlCommand(request, con);
 
             SqlParameter prm = new SqlParameter("@UPN", SqlDbType.VarChar);
@@ -88,9 +88,10 @@ namespace Neos.IdentityServer.Multifactor.Keys
         public override string NewUserKey(string upn, string secretkey, X509Certificate2 cert)
         {
             if (HasStoredKey(upn.ToLower()))
-                return DoUpdateUserKey(upn.ToLower(), secretkey, cert);
+                DoUpdateUserKey(upn.ToLower(), secretkey, cert);
             else
-                return DoInsertUserKey(upn.ToLower(), secretkey, cert);
+                DoInsertUserKey(upn.ToLower(), secretkey, cert);
+            return secretkey;
         }
 
         /// <summary>
@@ -100,7 +101,7 @@ namespace Neos.IdentityServer.Multifactor.Keys
         {
             string request = "DELETE FROM KEYS WHERE UPN=@UPN";
 
-            SqlConnection con = new SqlConnection(_connectionstring);
+            SqlConnection con = new SqlConnection(KeysHost.ConnectionString);
             SqlCommand sql = new SqlCommand(request, con);
 
             SqlParameter pupn = new SqlParameter("@UPN", SqlDbType.VarChar);
@@ -131,7 +132,7 @@ namespace Neos.IdentityServer.Multifactor.Keys
         {
             string request = "SELECT ID, UPN FROM KEYS WHERE UPN=@UPN";
 
-            SqlConnection con = new SqlConnection(_connectionstring);
+            SqlConnection con = new SqlConnection(KeysHost.ConnectionString);
             SqlCommand sql = new SqlCommand(request, con);
 
             SqlParameter prm = new SqlParameter("@UPN", SqlDbType.VarChar);
@@ -153,19 +154,27 @@ namespace Neos.IdentityServer.Multifactor.Keys
                 con.Close();
             }
         }
+
+        /// <summary>
+        /// HasStoredCertificate method implementation
+        /// </summary>
+        public override bool HasStoredCertificate(string upn)
+        {
+            return true;
+        } 
         #endregion
 
         #region Certs Management
         /// <summary>
         /// GetUserCertificate method implmentation
         /// </summary>
-        public override X509Certificate2 GetUserCertificate(string upn, bool generatepassword = false)
+        public override X509Certificate2 GetUserCertificate(string upn, string password)
         {
             string pass = string.Empty;
-            if (generatepassword)
-                pass = CheckSumEncoding.CheckSumAsString(upn);
+            if (!string.IsNullOrEmpty(password))
+                pass = password;
             string request = "SELECT CERTIFICATE FROM KEYS WHERE UPN=@UPN";
-            SqlConnection con = new SqlConnection(_connectionstring);
+            SqlConnection con = new SqlConnection(KeysHost.ConnectionString);
             SqlCommand sql = new SqlCommand(request, con);
 
             SqlParameter prm = new SqlParameter("@UPN", SqlDbType.VarChar);
@@ -193,26 +202,6 @@ namespace Neos.IdentityServer.Multifactor.Keys
             {
                 con.Close();
             }
-        }
-
-        /// <summary>
-        /// CreateCertificate method implmentation
-        /// </summary>
-        public override X509Certificate2 CreateCertificate(string upn, int validity, bool generatepassword = false)
-        {
-            string pass = string.Empty;
-            string strcert = string.Empty;
-            if (generatepassword)
-                pass = CheckSumEncoding.CheckSumAsString(upn);
-            return Certs.CreateRSAEncryptionCertificateForUser(upn.ToLower(), validity, pass);
-        }
-
-        /// <summary>
-        /// HasStoredCertificate method implementation
-        /// </summary>
-        public override bool HasStoredCertificate(string upn)
-        {
-            return true;
         }
         #endregion
 
@@ -252,7 +241,7 @@ namespace Neos.IdentityServer.Multifactor.Keys
         {
             string request = "INSERT INTO KEYS (UPN, SECRETKEY, CERTIFICATE) VALUES (@UPN, @SECRETKEY, @CERTIFICATE)";
 
-            SqlConnection con = new SqlConnection(_connectionstring);
+            SqlConnection con = new SqlConnection(KeysHost.ConnectionString);
             SqlCommand sql = new SqlCommand(request, con);
 
             SqlParameter pupn = new SqlParameter("@UPN", SqlDbType.VarChar);
@@ -285,6 +274,7 @@ namespace Neos.IdentityServer.Multifactor.Keys
             return secretkey;
         }
 
+        
         /// <summary>
         /// UpdateStoredKey method implementation
         /// </summary>
@@ -292,7 +282,7 @@ namespace Neos.IdentityServer.Multifactor.Keys
         {
             string request = "UPDATE KEYS SET SECRETKEY = @SECRETKEY, CERTIFICATE = @CERTIFICATE WHERE UPN=@UPN";
 
-            SqlConnection con = new SqlConnection(_connectionstring);
+            SqlConnection con = new SqlConnection(KeysHost.ConnectionString);
             SqlCommand sql = new SqlCommand(request, con);
 
             SqlParameter pupn = new SqlParameter("@UPN", SqlDbType.VarChar);
@@ -324,6 +314,7 @@ namespace Neos.IdentityServer.Multifactor.Keys
             }
             return secretkey;
         }
+        
         #endregion
     }
 }
