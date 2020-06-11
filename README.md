@@ -1,4 +1,4 @@
-# Multi-Factor Authentication for Microsoft ADFS 2019/2016/2012r2
+# Multi-Factor Authentication for Microsoft ADFS 2019/2016/2012r2 (with biometric authentication)
 ___
 
 This project can help you to implement multi-factor authentication without requiring any additional provider.
@@ -50,6 +50,7 @@ ___
 * Can work with LDAP 3.0 Providers (ADFS2016/2019) when using SQL Storage mode
 * Full sample for Azure MFA (additional configuration tasks and costs implied)
 * Developers can easily extend this component for other verification modes (Azure MFA, RSA,…) with the IExternalProvider, IExternalOTPProvider (deprecated), ISecretKeyManager interfaces
+* Developers can easily extend this component for other storages modes (AD & SQL by default)
 * Full support for ADFS 2019 themes
 
 ## Remarks
