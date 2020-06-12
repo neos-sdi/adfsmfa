@@ -38,7 +38,7 @@ ___
 * Run with ADFS 2012 R2, 2016 and 2019
 * Secret Keys length (Guid, 128, 256, 384 & 512 bytes) RNG generator
 * Secret Keys RSA encryption length (2048 bytes) RSA
-* Can use ADDS customizable attributes or Custom SQL-Server Database
+* Can use ADDS customizable attributes or SQL-Server Database, or develop a Custom Storage component
 * Can send TOTP code by email (customizable template in resources)
 * Can send TOTP code by sms (customizable and extensible with API)
 * Can send TOTP code using Authenticator Apps like MS Authenticator, Google Authentication and more
@@ -46,7 +46,7 @@ ___
 * Enable self-registration
 * Enable self-registration with QR code (using component from  George Mamaladze and his team <https://qrcodenet.codeplex.com> Great Work !)
 * Enable custom change password.
-* Can work with ADDS multi-forests with trust relationships when using ADDS Storage mode
+* Can work with ADDS multi-forests with trust relationships
 * Can work with LDAP 3.0 Providers (ADFS2016/2019) when using SQL Storage mode
 * Full sample for Azure MFA (additional configuration tasks and costs implied)
 * Developers can easily extend this component for other verification modes (Azure MFA, RSA,…) with the IExternalProvider, IExternalOTPProvider (deprecated), ISecretKeyManager interfaces
@@ -59,6 +59,6 @@ ___
 * To work with ADDS, the ADFS Service account must have read and write to users properties.
 * To work with SQL Server Database, you must deploy the database on a separate SQL Server (WID & replication is not supported)
 * To bypass MFA, specific cmdlet should be run to deal with Web Services and rich clients (like Outlook), but this is specific to ADFS not to the component.
-* Working with ADFS on W8 and W10. and Windows server 2012r2, 2016 and 2019
+* Working with ADFS Windows server 2012r2, 2016 and 2019
 * the Identity claim is by design UPN (common and recommended in federation projects (planned to be customizable))
 http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn
