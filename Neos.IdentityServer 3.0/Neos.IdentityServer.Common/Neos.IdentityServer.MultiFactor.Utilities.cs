@@ -1713,27 +1713,8 @@ namespace Neos.IdentityServer.MultiFactor
                     _manager.Initialize(cfg);
                     _isloaded = true;
                     break;
-                case SecretKeyFormat.CUSTOM:
-                    if (!string.IsNullOrEmpty(cfg.KeysConfig.ExternalKeyManager.FullQualifiedImplementation))
-                    {
-                        ISecretKeyManagerCreator _creator = Utilities.LoadExternalKeyManagerCreator(cfg.KeysConfig.ExternalKeyManager.FullQualifiedImplementation);
-                        if (_creator!=null)
-                            _manager = _creator.CreateInstance(cfg.KeysConfig.KeyVersion);
-                        else
-                            _manager = Utilities.LoadExternalKeyManagerWrapper(cfg.KeysConfig.ExternalKeyManager.FullQualifiedImplementation);
-                        if (_manager == null)
-                            IsLoaded = false;
-                        else
-                        {
-                            _manager.Initialize(cfg);
-                            _isloaded = true;
-                        }
-                    }
-                    else
-                        IsLoaded = false;
-                    break;
                 default:
-                    throw new NotImplementedException("CUSTOM SecretKeyManager not found !");
+                    throw new NotImplementedException("SecretKeyManager not found !");
             }
         }
 

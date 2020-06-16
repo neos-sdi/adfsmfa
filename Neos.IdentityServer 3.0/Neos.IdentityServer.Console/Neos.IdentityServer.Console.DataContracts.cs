@@ -431,7 +431,6 @@ namespace Neos.IdentityServer.Console
         {
             this.Add(new MMCSecurityFormatItem() { ID = SecretKeyFormat.RNG, Label = "RNG (Random Number Generator)" });
             this.Add(new MMCSecurityFormatItem() { ID = SecretKeyFormat.RSA, Label = "RSA (Certificate(s))" });
-            this.Add(new MMCSecurityFormatItem() { ID = SecretKeyFormat.CUSTOM, Label = "CUSTOM (External API PowerShell)" });
         }
     }
 

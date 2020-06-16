@@ -134,8 +134,6 @@
     <Content Include="SQL\mfa-db-Encrypted.sql" />
     <Content Include="SQL\mfa-db-upgrade.sql" />
     <Content Include="SQL\mfa-db.sql" />
-    <Content Include="SQL\mfa-secretkey-db-Encrypted.sql" />
-    <Content Include="SQL\mfa-secretkey-db.sql" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Neos.IdentityServer.Common\Neos.IdentityServer.MultiFactor.Common.csproj">

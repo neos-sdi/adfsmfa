@@ -314,15 +314,6 @@ namespace Neos.IdentityServer.Console
                     this.ServiceWsManNode.ViewDescriptions.Add(fwsman);
                     this.ServiceWsManNode.ViewDescriptions.DefaultIndex = 0;
 
-                    // RSA CUST
-                    /* this.ServiceRSAXNode = new ServiceSecurityRSAXScopeNode();
-                     FormViewDescription frsax = new FormViewDescription();
-                     frsax.DisplayName = "RSA Extended Key Generator";
-                     frsax.ControlType = typeof(ServiceSecurityRSAXViewControl);
-                     frsax.ViewType = typeof(ServiceSecurityRSAXFormView);
-                     this.ServiceRSAXNode.ViewDescriptions.Add(frsax);
-                     this.ServiceRSAXNode.ViewDescriptions.DefaultIndex = 0; */
-
                     // WebAuthN
                     this.ServiceWebAuthNNode = new ServiceSecurityWebAuthNScopeNode();
                     FormViewDescription frweb = new FormViewDescription();

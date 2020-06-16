@@ -489,10 +489,7 @@ namespace Neos.IdentityServer.MultiFactor
         public MFAConfig()
         {
             this.Hosts = new Hosts();
-            this.KeysConfig = new KeysManagerConfig
-            {
-                ExternalKeyManager = new ExternalKeyManagerConfig()
-            };
+            this.KeysConfig = new KeysManagerConfig();
             this.OTPProvider = new OTPProvider();
             this.MailProvider = new MailProvider();
             this.ExternalProvider = new ExternalOTPProvider();
@@ -533,14 +530,6 @@ namespace Neos.IdentityServer.MultiFactor
                 KeysConfig.KeySize = KeySizeMode.KeySize1024;
                 KeysConfig.CertificateThumbprint = Thumbprint.Empty;
                 KeysConfig.CertificatePerUser = false;
-                KeysConfig.ExternalKeyManager.FullQualifiedImplementation = "Neos.IdentityServer.Multifactor.Keys.DBKeyManagerCreator, Neos.IdentityServer.Multifactor.Keys.Sample, Version=3.0.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2";
-                KeysConfig.ExternalKeyManager.Parameters.Data = "your parameters here !";
-                KeysConfig.ExternalKeyManager.ConnectionString = "Persist Security Info=False;Integrated Security=SSPI;Initial Catalog=yourdatabase;Data Source=yourserverinstance";
-                KeysConfig.ExternalKeyManager.CertificateValidity = 15;
-                KeysConfig.ExternalKeyManager.CertReuse = false;
-                KeysConfig.ExternalKeyManager.IsAlwaysEncrypted = false;
-                KeysConfig.ExternalKeyManager.KeyName = "adfsmfa";
-                KeysConfig.ExternalKeyManager.ThumbPrint = Thumbprint.Empty;
 
                 OTPProvider.Enabled = true;
                 OTPProvider.IsRequired = true;
@@ -665,15 +654,6 @@ namespace Neos.IdentityServer.MultiFactor
                 KeysConfig.CertificatePerUser = false;
                 if (!Thumbprint.IsValid(this.KeysConfig.CertificateThumbprint))
                     KeysConfig.CertificateThumbprint = Thumbprint.Empty;
-                if (this.KeysConfig.ExternalKeyManager != null)
-                {
-                    if (string.IsNullOrEmpty(this.KeysConfig.ExternalKeyManager.FullQualifiedImplementation))
-                        KeysConfig.ExternalKeyManager.FullQualifiedImplementation = "Neos.IdentityServer.Multifactor.Keys.DBKeyManagerCreator, Neos.IdentityServer.Multifactor.Keys.Sample, Version=3.0.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2";
-                    if (string.IsNullOrEmpty(this.KeysConfig.ExternalKeyManager.ConnectionString))
-                        KeysConfig.ExternalKeyManager.ConnectionString = "Persist Security Info=False;Integrated Security=SSPI;Initial Catalog=yourdatabase;Data Source=yourserverinstance"; 
-                    if (string.IsNullOrEmpty(KeysConfig.ExternalKeyManager.KeyName))
-                        KeysConfig.ExternalKeyManager.KeyName = "adfsmfa";
-                }
             }
             if (this.ExternalProvider != null)
             {
@@ -916,58 +896,6 @@ namespace Neos.IdentityServer.MultiFactor
 
         [XmlAttribute("KeySize")]
         public KeySizeMode KeySize { get; set; } = KeySizeMode.KeySize1024;
-
-        [XmlElement("ExternalKeyManager")]
-        public ExternalKeyManagerConfig ExternalKeyManager { get; set; }
-    }
-
-    public class ExternalKeyManagerConfig : BaseDataHost
-    {
-        private XmlCDataSection _cdata;
-
-        [XmlAttribute("FullQualifiedImplementation")]
-        public string FullQualifiedImplementation { get; set; }
-
-        [XmlAttribute("ConnectionString")]
-        public string ConnectionString { get; set; }
-
-        [XmlAttribute("IsAlwaysEncrypted")]
-        public bool IsAlwaysEncrypted { get; set; } = false;
-
-        [XmlAttribute("ThumbPrint")]
-        public string ThumbPrint { get; set; }
-
-        [XmlAttribute("KeyName")]
-        public string KeyName { get; set; } = "adfsmfa";
-
-        [XmlAttribute("CertReuse")]
-        public bool CertReuse { get; set; } = false;
-
-        [XmlAttribute("CertificateValidity")]
-        public int CertificateValidity { get; set; } = 15;
-
-        [XmlElement("Parameters", typeof(XmlCDataSection))]
-        public XmlCDataSection Parameters
-        {
-            get
-            {
-                if (_cdata == null)
-                {
-                    XmlDocument doc = new XmlDocument();
-                    _cdata = doc.CreateCDataSection(null);
-                }
-                return _cdata;
-            }
-            set
-            {
-                if (_cdata == null)
-                {
-                    XmlDocument doc = new XmlDocument();
-                    _cdata = doc.CreateCDataSection(null);
-                }
-                _cdata.Data = value.Data;
-            }
-        }
     }
     #endregion
 

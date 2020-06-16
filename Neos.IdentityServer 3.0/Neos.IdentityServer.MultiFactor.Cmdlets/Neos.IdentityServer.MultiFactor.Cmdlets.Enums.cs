@@ -92,15 +92,9 @@ namespace MFA
         BIOMETRIC = 2,
 
         /// <summary>
-        /// <para type="description">Security parmaters for CUSTOM External Keys.</para>
-        /// </summary>
-        CUSTOM = 3,
-
-        /// <summary>
         /// <para type="description">Security parmaters for WSMAN Configuration.</para>
         /// </summary>
-        WSMAN = 4
-
+        WSMAN = 3
     }
 
     /// <summary>

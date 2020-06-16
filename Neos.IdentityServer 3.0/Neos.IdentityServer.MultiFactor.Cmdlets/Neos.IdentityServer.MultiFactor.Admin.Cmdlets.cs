@@ -4936,15 +4936,14 @@ namespace MFA
     ///  <para>$c = Get-MFASecurity -Kind BIOMETRIC</para>
     /// </example>
     [Cmdlet(VerbsCommon.Get, "MFASecurity", SupportsShouldProcess = true, SupportsPaging = false, ConfirmImpact = ConfirmImpact.Medium, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
-    [OutputType(typeof(PSSecurity), typeof(PSRngSecurity), typeof(PSRsaSecurity), typeof(PSCustomSecurity), typeof(PSBiometricSecurity))]
+    [OutputType(typeof(PSSecurity), typeof(PSRngSecurity), typeof(PSRsaSecurity), typeof(PSBiometricSecurity))]
     public sealed class GetMFASecurity : MFACmdlet
     {
         private PSBaseSecurity _config;
         private PSRngSecurity _config0;
         private PSRsaSecurity _config1;
         private PSBiometricSecurity _config2;
-        private PSCustomSecurity _config3;
-        private PSWsManSecurity _config4;
+        private PSWsManSecurity _config3;
         private PSSecurityMode _securitymode = PSSecurityMode.RNG;
         internal bool SecurityModeChanged { get; private set; } = false;
 
@@ -4999,15 +4998,10 @@ namespace MFA
                             cf2.Load(this.Host);
                             _config2 = (PSBiometricSecurity)cf2;
                             break;
-                        case PSSecurityMode.CUSTOM:
-                            FlatCustomSecurity cf3 = new FlatCustomSecurity();
-                            cf3.Load(this.Host);
-                            _config3 = (PSCustomSecurity)cf3;
-                            break;
                         case PSSecurityMode.WSMAN:
-                            FlatWsManSecurity cf4 = new FlatWsManSecurity();
-                            cf4.Load(this.Host);
-                            _config4 = (PSWsManSecurity)cf4;
+                            FlatWsManSecurity cf3 = new FlatWsManSecurity();
+                            cf3.Load(this.Host);
+                            _config3 = (PSWsManSecurity)cf3;
                             break;
 
                     }
@@ -5043,11 +5037,8 @@ namespace MFA
                             case PSSecurityMode.BIOMETRIC:
                                 WriteObject(_config2);
                                 break;
-                            case PSSecurityMode.CUSTOM:
-                                WriteObject(_config3);
-                                break;
                             case PSSecurityMode.WSMAN:
-                                WriteObject(_config4);
+                                WriteObject(_config3);
                                 break;
                         }
                     }
@@ -5065,7 +5056,6 @@ namespace MFA
         /// </summary>
         protected override void StopProcessing()
         {
-            _config4 = null;
             _config3 = null;
             _config2 = null;
             _config1 = null;
@@ -5079,7 +5069,6 @@ namespace MFA
         /// </summary>
         protected override void EndProcessing()
         {
-            _config4 = null;
             _config3 = null;
             _config2 = null;
             _config1 = null;
@@ -5113,14 +5102,12 @@ namespace MFA
         private SECRNGDynamicParameters _config1;
         private SECRSADynamicParameters _config2;
         private SECBIOMETRICDynamicParameters _config3;
-        private SECCUSTOMDynamicParameters _config4;
-        private SECWSMANDynamicParameters _config5;
+        private SECWSMANDynamicParameters _config4;
 
         private FlatRngSecurity _target1;
         private FlatRsaSecurity _target2;
         private FlatBiometricSecurity _target3;
-        private FlatCustomSecurity _target4;
-        private FlatWsManSecurity _target5;
+        private FlatWsManSecurity _target4;
 
         private PSSecurityMode _securitymode = PSSecurityMode.RNG;
         internal bool SecurityModeChanged { get; private set; } = false;
@@ -5130,7 +5117,7 @@ namespace MFA
         /// <para type="description">Provider Type parameter, (RNG, RSA, BIOMETRIC, CUSTOM, WSMAN).</para>
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ParameterSetName = "Item", ValueFromPipeline = true)]
-        [ValidateSet("RNG", "RSA", "BIOMETRIC", "CUSTOM", "WSMAN")]   
+        [ValidateSet("RNG", "RSA", "BIOMETRIC", "WSMAN")]   
         public PSSecurityMode Kind
         {
             get
@@ -5176,12 +5163,9 @@ namespace MFA
                     case PSSecurityMode.BIOMETRIC:
                         _config3 = new SECBIOMETRICDynamicParameters();
                         return _config3;
-                    case PSSecurityMode.CUSTOM:
-                        _config4 = new SECCUSTOMDynamicParameters();
-                        return _config4;
                     case PSSecurityMode.WSMAN:
-                        _config5 = new SECWSMANDynamicParameters();
-                        return _config5;
+                        _config4 = new SECWSMANDynamicParameters();
+                        return _config4;
                     default:
                         break;
                 }
@@ -5238,37 +5222,18 @@ namespace MFA
                             if (_config3.UserVerificationMethodChanged)
                                 _target3.UserVerificationMethod = _config3.UserVerificationMethod;
                             break;
-                        case PSSecurityMode.CUSTOM:
-                            _target4 = new FlatCustomSecurity();
-                            _target4.Load(this.Host);
-                            if (_config4.AECCertificateReuseChanged)
-                                _target4.CertReuse = _config4.AECCertificateReuse;
-                            if (_config4.AECCertificateValidityChanged)
-                                _target4.CertificateValidity = _config4.AECCertificateValidity;
-                            if (_config4.AECKeyNameChanged)
-                                _target4.KeyName = _config4.AECKeyName;
-                            if (_config4.AECThumbPrintChanged)
-                                _target4.ThumbPrint = _config4.AECThumbPrint;
-                            if (_config4.ConnectionStringChanged)
-                                _target4.ConnectionString = _config4.ConnectionString;
-                            if (_config4.FullQualifiedImplementationChanged)
-                                _target4.FullQualifiedImplementation = _config4.FullQualifiedImplementation;
-                            if (_config4.IsAlwaysEncryptedChanged)
-                                _target4.IsAlwaysEncrypted = _config4.IsAlwaysEncrypted;
-                            if (_config4.ParametersChanged)
-                                _target4.Parameters = _config4.Parameters;
                             break;
                         case PSSecurityMode.WSMAN:
-                            _target5 = new FlatWsManSecurity();
-                            _target5.Load(this.Host);
-                            if (_config5.PortChanged)
-                                _target5.Port = _config5.Port;
-                            if (_config5.AppNameChanged)
-                                _target5.AppName = _config5.AppName;
-                            if (_config5.ShellUriChanged)
-                                _target5.ShellUri = _config5.ShellUri;
-                            if (_config5.TimeOutChanged)
-                                _target5.TimeOut = _config5.TimeOut;
+                            _target4 = new FlatWsManSecurity();
+                            _target4.Load(this.Host);
+                            if (_config4.PortChanged)
+                                _target4.Port = _config4.Port;
+                            if (_config4.AppNameChanged)
+                                _target4.AppName = _config4.AppName;
+                            if (_config4.ShellUriChanged)
+                                _target4.ShellUri = _config4.ShellUri;
+                            if (_config4.TimeOutChanged)
+                                _target4.TimeOut = _config4.TimeOut;
                             break;
                     }
                 }
@@ -5312,12 +5277,6 @@ namespace MFA
                                 else
                                     throw new Exception(error);
 
-                                break;
-                            case PSSecurityMode.CUSTOM:
-                                if (Config is PSCustomSecurity)
-                                    ((FlatCustomSecurity)((PSCustomSecurity)Config)).Update(this.Host);
-                                else
-                                    throw new Exception(error);
                                 break;
                             case PSSecurityMode.WSMAN:
                                 if (Config is PSWsManSecurity)
@@ -5415,150 +5374,6 @@ namespace MFA
             {
                 _timeout = value;
                 TimeOutChanged = true;
-            }
-        }
-    }
-
-    /// <summary>
-    /// SECCUSTOMDynamicParameters class implementation
-    /// </summary>
-    internal class SECCUSTOMDynamicParameters
-    {
-        private string _fullqualifiedimplementation;
-        private string _parameters;
-        private string _connectionstring;
-        private bool _isalwaysencrypted;
-        private string _aecthumbprint;
-        private string _aeckeyname;
-        private int _aeccertvalidity;
-        private bool _aeccertreuse;
-
-        internal bool AECCertificateReuseChanged { get; private set; }
-        internal bool AECCertificateValidityChanged { get; private set; }
-        internal bool AECKeyNameChanged { get; private set; }
-        internal bool AECThumbPrintChanged { get; private set; }
-        internal bool IsAlwaysEncryptedChanged { get; private set; }
-        internal bool ConnectionStringChanged { get; private set; }
-        internal bool ParametersChanged { get; private set; }
-        internal bool FullQualifiedImplementationChanged { get; private set; }
-
-        /// <summary>
-        /// <para type="description">Full qualified assembly ref that implements ISecretKeyManager, see sample implementation of Neos.IdentityServer.Multifactor.Keys.CustomKeyManager</para>
-        /// </summary>
-        [Parameter(ParameterSetName = "Identity")]
-        [ValidateNotNullOrEmpty()]
-        public string FullQualifiedImplementation
-        {
-            get { return _fullqualifiedimplementation; }
-            set
-            {
-                _fullqualifiedimplementation = value;
-                FullQualifiedImplementationChanged = true;
-            }
-        }
-
-        /// <summary>
-        /// <para type="description">Specify your own parameters, values stored as CData, set it as string with Parameters = "myparameters"</para>
-        /// </summary>
-        [Parameter(ParameterSetName = "Identity")]
-        [ValidateNotNullOrEmpty()]
-        public string Parameters
-        {
-            get { return _parameters; }
-            set
-            {
-                _parameters = value;
-                ParametersChanged = true;
-            }
-        }
-
-        /// <summary>
-        /// <para type="description">Connection string to SQL Database, see sample implementation of Neos.IdentityServer.Multifactor.Keys.CustomKeyManager</para>
-        /// </summary>
-        [Parameter(ParameterSetName = "Identity")]
-        [ValidateNotNullOrEmpty()]
-        public string ConnectionString
-        {
-            get { return _connectionstring; }
-            set
-            {
-                _connectionstring = value;
-                ConnectionStringChanged = true;
-            }
-        }
-
-        /// <summary>
-        /// <para type="description">Encrypted, information for KeyManager about encrypting his data</para>
-        /// </summary>
-        [Parameter(ParameterSetName = "Identity")]
-        [ValidateNotNullOrEmpty()]
-        public bool IsAlwaysEncrypted
-        {
-            get { return _isalwaysencrypted; }
-            set
-            {
-                _isalwaysencrypted = value;
-                IsAlwaysEncryptedChanged = true;
-            }
-        }
-
-        /// <summary>
-        /// <para type="description">ThumbPrint of encryption certificate, see sample implementation of Neos.IdentityServer.Multifactor.Keys.CustomKeyManager</para>
-        /// </summary>
-        [Parameter(ParameterSetName = "Identity")]
-        [ValidateNotNullOrEmpty()]
-        public string AECThumbPrint
-        {
-            get { return _aecthumbprint; }
-            set
-            {
-                _aecthumbprint = value;
-                AECThumbPrintChanged = true;
-            }
-        }
-
-        /// <summary>
-        /// <para type="description">Name of the SQL Server encryption key (default adfsmfa)</para>
-        /// </summary>
-        [Parameter(ParameterSetName = "Identity")]
-        [ValidateNotNullOrEmpty()]
-        public string AECKeyName
-        {
-            get { return _aeckeyname; }
-            set
-            {
-                _aeckeyname = value;
-                AECKeyNameChanged = true;
-            }
-        }
-
-        /// <summary>
-        /// <para type="description">ThumbPrint of encryption certificate, see sample implementation of Neos.IdentityServer.Multifactor.Keys.CustomKeyManager</para>
-        /// </summary>
-        [Parameter(ParameterSetName = "Identity")]
-        [ValidateNotNullOrEmpty()]
-        public int AECCertificateValidity
-        {
-            get { return _aeccertvalidity; }
-            set
-            {
-                _aeccertvalidity = value;
-                AECCertificateValidityChanged = true;
-            }
-        }
-
-        /// <summary>
-        /// <para type="description">if you want to reuse the same certificate ThumbPrint of encryption certificate. </para>
-        /// </summary>
-        [Parameter(ParameterSetName = "Identity")]
-        [ValidateNotNullOrEmpty()]
-        public bool AECCertificateReuse
-        {
-            get { return _aeccertreuse; }
-            set
-            {
-                _aeccertreuse = value;
-                AECCertificateReuseChanged = true;
             }
         }
     }
@@ -6684,156 +6499,6 @@ namespace MFA
             catch (Exception ex)
             {
                 this.ThrowTerminatingError(new ErrorRecord(ex, "3020", ErrorCategory.OperationStopped, this));
-            }
-        }
-    }
-    #endregion
-
-    #region New-MFASecretKeysDatabase
-    /// <summary>
-    /// <para type="synopsis">Create a new SQL Database for storing RSA keys and certificates.</para>
-    /// <para type="description">Create a new SQL Database for storing RSA keys and certificates, can be used with ADDS and SQL configuration.</para>
-    /// </summary>
-    /// <example>
-    ///   <para>New-MFASecretKeysDatabase -ServerName SQLServer\Instance -DatabaseName MFAKeysDatabase -UserName sqlaccount -Password pass</para>
-    ///   <para>New-MFASecretKeysDatabase -ServerName SQLServer\Instance -DatabaseName MFAKeysDatabase -UserName Domain\ADFSaccount</para>
-    ///   <para>New-MFASecretKeysDatabase -ServerName SQLServer\Instance -DatabaseName MFAKeysDatabase -UserName Domain\ADFSManagedAccount$</para>
-    ///   <para></para>
-    ///   <para>When using SQL Server 2016 (and up) Always encrypted columsn</para>
-    ///   <para>New-MFASecretKeysDatabase -ServerName SQLServer\Instance -DatabaseName MFAKeysDatabase -UserName Domain\ADFSaccount -Encrypted</para>
-    ///   <para>New-MFASecretKeysDatabase -ServerName SQLServer\Instance -DatabaseName MFAKeysDatabase -UserName Domain\ADFSaccount -Encrypted -EncryptedKeyName mykey</para>
-    ///   <para>New-MFASecretKeysDatabase -ServerName SQLServer\Instance -DatabaseName MFAKeysDatabase -UserName Domain\ADFSManagedAccount$ -Encrypted -ReuseCertificate -ThumbPrint 0123456789ABCDEF...</para>
-    ///   <para>New-MFASecretKeysDatabase -ServerName SQLServer\Instance -DatabaseName MFAKeysDatabase -UserName Domain\ADFSManagedAccount$ -Encrypted -ReuseCertificate -ThumbPrint 0123456789ABCDEF... -EncryptedKeyName mykey</para>
-    ///   <para></para>
-    ///   <para>(Get-MFAConfigKeys).KeyFormat must be equal to CUSTOM to be effective</para>
-    ///   <para>Create a new database for MFA Secret Keys, grant rights to the specified account</para>
-    /// </example>
-    [Cmdlet(VerbsCommon.New, "MFASecretKeysDatabase", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
-    [PrimaryServerRequired, AdministratorsRightsRequired]
-    public sealed class NewMFASecretKeysDatabase : MFACmdlet, IDynamicParameters
-    {
-        private string _databasename;
-        private string _username;
-        private string _password;
-        private SQLEncryptedDatabaseDynamicParameters Dyn;
-        private PSSQLStore _config;
-
-        /// <summary>
-        /// <para type="description">SQL ServerName, you must include Instance if needed eg : server\instance.</para>
-        /// </summary>
-        [Parameter(Mandatory = true, ParameterSetName = "Data")]
-        [ValidateNotNullOrEmpty()]
-        public string ServerName { get; set; }
-
-        /// <summary>
-        /// <para type="description">Name of the SQL Database, if database exists an error is thrown.</para>
-        /// </summary>
-        [Parameter(Mandatory = true, ParameterSetName = "Data")]
-        [ValidateNotNullOrEmpty()]
-        public string DatabaseName
-        {
-            get { return _databasename; }
-            set { _databasename = value; }
-        }
-
-        /// <summary>
-        /// <para type="description">AccountName, can be a domain, managed account : domain\adfsaccount or domain\adfsaccount$ without password, or an SQL Account with password.</para>
-        /// </summary>
-        [Parameter(Mandatory = true, ParameterSetName = "Data")]
-        [ValidateNotNullOrEmpty()]
-        public string UserName
-        {
-            get { return _username; }
-            set { _username = value; }
-        }
-
-        /// <summary>
-        /// <para type="description">Password, only if the account is a SQL account, for ADFS domain do not specify password.</para>
-        /// </summary>
-        [Parameter(ParameterSetName = "Data")]
-        public string Password
-        {
-            get { return _password; }
-            set { _password = value; }
-        }
-
-        /// <summary>
-        /// <para type="description">Encrypted, only if Database Server is SQLServer 2016 and Up. Encrypt data columns to be compliant with RGPD. most secure option</para>
-        /// </summary>
-        [Parameter(ParameterSetName = "Data")]
-        public SwitchParameter Encrypted
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// <para type="description">Get the values of SQL Database Encryption.</para>
-        /// GetDynamicParameters implementation
-        /// </summary>
-        public object GetDynamicParameters()
-        {
-            if (Encrypted)
-            {
-                Dyn = new SQLEncryptedDatabaseDynamicParameters();
-                return Dyn;
-            }
-            return null;
-        }
-
-        /// <summary>
-        /// BeginProcessing method implementation
-        /// </summary>
-        protected override void BeginProcessing()
-        {
-            base.BeginProcessing();
-            try
-            {
-                ManagementService.Initialize(this.Host, true);
-                FlatSQLStore cf = new FlatSQLStore();
-                cf.Load(this.Host);
-                _config = (PSSQLStore)cf;
-            }
-            catch (Exception ex)
-            {
-                this.ThrowTerminatingError(new ErrorRecord(ex, "3021", ErrorCategory.OperationStopped, this));
-            }
-        }
-
-        /// <summary>
-        /// ProcessRecord method override
-        /// </summary>
-        protected override void ProcessRecord()
-        {
-            try
-            {
-                if (ShouldProcess("MFA Secret Keys Database creation (must be sysadmin or dbcreator an securityadmin)"))
-                {
-                    PSHost hh = GetHostForVerbose();
-                    ADFSServiceManager svc = ManagementService.ADFSManager;
-                    if (!Encrypted)
-                    {
-                        svc.CreateMFASecretKeysDatabase(hh, ServerName, DatabaseName, UserName, Password);
-                        this.Host.UI.WriteLine(ConsoleColor.Green, this.Host.UI.RawUI.BackgroundColor, string.Format(infos_strings.InfosDatabaseCreated, DatabaseName));
-                    }
-                    else
-                    {
-                        string thumb = string.Empty;
-                        if (string.IsNullOrEmpty(Dyn.ThumbPrint))
-                        {
-                            thumb = svc.RegisterNewSQLCertificate(hh, Dyn.CertificateDuration, Dyn.EncryptKeyName);
-                            this.Host.UI.WriteLine(ConsoleColor.Green, this.Host.UI.RawUI.BackgroundColor, String.Format(infos_strings.InfosSQLCertificateChanged, thumb));
-                        }
-                        else
-                            thumb = Dyn.ThumbPrint;
-                        svc.CreateMFAEncryptedSecretKeysDatabase(hh, ServerName, DatabaseName, UserName, Password, Dyn.EncryptKeyName, thumb);
-                        this.Host.UI.WriteLine(ConsoleColor.Green, this.Host.UI.RawUI.BackgroundColor, string.Format(infos_strings.InfosDatabaseCreated, DatabaseName));
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                this.ThrowTerminatingError(new ErrorRecord(ex, "3022", ErrorCategory.OperationStopped, this));
             }
         }
     }

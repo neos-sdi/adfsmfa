@@ -112,13 +112,13 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 catch (Exception e)
                 {
                     if (!dontthrow)
-                       throw e;
+                        throw e;
                 }
             }
             catch (Exception e)
             {
                 if (!dontthrow)
-                   throw e;
+                    throw e;
             }
         }
 
@@ -200,7 +200,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         public void EnsureLocalService()
         {
             if (!IsADFSServer())
-                throw new Exception(SErrors.ErrorADFSPlatformNotSupported); 
+                throw new Exception(SErrors.ErrorADFSPlatformNotSupported);
             if (!IsRunning())
                 StartService();
         }
@@ -259,7 +259,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         {
             get
             {
-              //  EnsureConfiguration();
+                //  EnsureConfiguration();
                 if (Config != null)
                     return Config.Hosts.ADFSFarm;
                 else
@@ -289,7 +289,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// </summary>
         public bool IsFarmConfigured()
         {
-            if (ADFSFarm==null)
+            if (ADFSFarm == null)
                 return false;
             else
                 return ADFSFarm.IsInitialized;
@@ -365,7 +365,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         public bool StopService(string servername = null)
         {
             if (servername != null)
-               return InternalStopService(servername);
+                return InternalStopService(servername);
             else
                 return InternalStopService();
         }
@@ -393,7 +393,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             }
             else
                 if (Host != null)
-                    Host.UI.WriteVerboseLine(DateTime.Now.ToLongTimeString() + " MFA System : " + "ADFS Farm Not Starte !");
+                Host.UI.WriteVerboseLine(DateTime.Now.ToLongTimeString() + " MFA System : " + "ADFS Farm Not Starte !");
 
         }
 
@@ -462,7 +462,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 return true;
             }
             catch (Exception)
-            {               
+            {
                 this.ServiceStatusChanged(this, ServiceOperationStatus.OperationInError, servername);
                 ManagementService.BroadcastNotification((byte)NotificationsKind.ServiceStatusInError, servername);
                 return false;
@@ -505,7 +505,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 return true;
             }
             catch (Exception)
-            {              
+            {
                 this.ServiceStatusChanged(this, ServiceOperationStatus.OperationInError, servername);
                 ManagementService.BroadcastNotification((byte)NotificationsKind.ServiceStatusInError, servername);
                 return false;
@@ -658,7 +658,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 if (SPPowerShell != null)
                     SPPowerShell.Dispose();
             }
-            return ;
+            return;
         }
 
         /// <summary>
@@ -690,7 +690,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 pipeline.Commands.Add(exportcmd);
                 Collection<PSObject> PSOutput = pipeline.Invoke();
                 if (Host != null)
-                    Host.UI.WriteVerboseLine(DateTime.Now.ToLongTimeString() + " MFA Configuration saved to => "+pth);
+                    Host.UI.WriteVerboseLine(DateTime.Now.ToLongTimeString() + " MFA Configuration saved to => " + pth);
             }
             finally
             {
@@ -1084,7 +1084,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         internal bool CheckCertificate(string thumbprint, StoreLocation location = StoreLocation.LocalMachine)
         {
             X509Certificate2 cert = Certs.GetCertificate(thumbprint, location);
-            if (cert!=null)
+            if (cert != null)
                 cert.Reset();
             return (cert != null);
         }
@@ -1169,7 +1169,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 return false;
             ManagementService.BroadcastNotification(Config, NotificationsKind.ConfigurationDeleted, Environment.MachineName);
             InternalDeActivateConfiguration(Host);
-            InternalUnRegisterConfiguration(Host);           
+            InternalUnRegisterConfiguration(Host);
             Config = null;
             return true;
         }
@@ -1179,11 +1179,11 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// </summary>
         public bool ImportMFAProviderConfiguration(PSHost Host, string importfile)
         {
-           /* if (Config == null)
-            {
-                EnsureLocalService();
-                Config = ReadConfiguration(Host);
-            } */
+            /* if (Config == null)
+             {
+                 EnsureLocalService();
+                 Config = ReadConfiguration(Host);
+             } */
             this.ConfigurationStatusChanged(this, ConfigOperationStatus.ConfigIsDirty);
             try
             {
@@ -1214,11 +1214,11 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// </summary>
         public void ExportMFAProviderConfiguration(PSHost Host, string exportfilepath)
         {
-           /* if (Config == null)
-            {
-                EnsureConfiguration(Host);
-                Config = ReadConfiguration(Host);
-            } */
+            /* if (Config == null)
+             {
+                 EnsureConfiguration(Host);
+                 Config = ReadConfiguration(Host);
+             } */
             InternalExportConfiguration(Host, exportfilepath);
         }
 
@@ -1458,7 +1458,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                         CurrentMinorVersionNumber = reg.CurrentMinorVersionNumber
                     };
                     int i = ADFSFarm.Servers.FindIndex(c => c.FQDN.ToLower() == props.FQDN.ToLower());
-                    if (i<0)
+                    if (i < 0)
                         ADFSFarm.Servers.Add(props);
                     else
                         ADFSFarm.Servers[i] = props;
@@ -1662,7 +1662,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             FlatSQLStore cf = new FlatSQLStore();
             cf.Load(host);
             if (!string.IsNullOrEmpty(_password))
-                cf.ConnectionString = "Persist Security Info=True;User ID="+ _username+";Password="+_password+";Initial Catalog=" + _databasename + ";Data Source=" + _servername;
+                cf.ConnectionString = "Persist Security Info=True;User ID=" + _username + ";Password=" + _password + ";Initial Catalog=" + _databasename + ";Data Source=" + _servername;
             else
                 cf.ConnectionString = "Persist Security Info=False;Integrated Security=SSPI;Initial Catalog=" + _databasename + ";Data Source=" + _servername;
             cf.IsAlwaysEncrypted = false;
@@ -1797,7 +1797,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             FlatSQLStore cf = new FlatSQLStore();
             cf.Load(host);
             if (!string.IsNullOrEmpty(_password))
-                cf.ConnectionString = "Persist Security Info=True;User ID=" + _username + ";Password=" + _password + ";Initial Catalog=" + _databasename + ";Data Source=" + _servername +";Column Encryption Setting=enabled";
+                cf.ConnectionString = "Persist Security Info=True;User ID=" + _username + ";Password=" + _password + ";Initial Catalog=" + _databasename + ";Data Source=" + _servername + ";Column Encryption Setting=enabled";
             else
                 cf.ConnectionString = "Persist Security Info=False;Integrated Security=SSPI;Initial Catalog=" + _databasename + ";Data Source=" + _servername + ";Column Encryption Setting=enabled";
             cf.IsAlwaysEncrypted = true;
@@ -1819,182 +1819,6 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             var provider = new SqlColumnEncryptionCertificateStoreProvider();
             var encryptedKey = provider.EncryptColumnEncryptionKey(masterkeypath, "RSA_OAEP", randomBytes);
             return "0x" + BitConverter.ToString(encryptedKey).Replace("-", "");
-        }
-        #endregion
-
-        #region MFA SecretKey Database
-        /// <summary>
-        /// CreateMFADatabase method implementation
-        /// </summary>
-        public string CreateMFASecretKeysDatabase(PSHost host, string _servername, string _databasename, string _username, string _password)
-        {
-            string sqlscript = File.ReadAllText(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + @"\MFA\SQLTools\mfa-secretkey-db.sql");
-            sqlscript = sqlscript.Replace("%DATABASENAME%", _databasename);
-            SqlConnection cnx = new SqlConnection("Integrated Security=SSPI;Persist Security Info=False;Initial Catalog=master;Data Source=" + _servername);
-            cnx.Open();
-            try
-            {
-                SqlCommand cmd = new SqlCommand(string.Format("CREATE DATABASE {0}", _databasename), cnx);
-                cmd.ExecuteNonQuery();
-                SqlCommand cmdl = null;
-                if (!string.IsNullOrEmpty(_password))
-                    cmdl = new SqlCommand(string.Format("IF NOT EXISTS (SELECT name FROM master.sys.server_principals WHERE name = '{0}') BEGIN CREATE LOGIN [{0}] WITH PASSWORD = '{1}', DEFAULT_DATABASE=[master] END", _username, _password), cnx);
-                else
-                    cmdl = new SqlCommand(string.Format("IF NOT EXISTS (SELECT name FROM master.sys.server_principals WHERE name = '{0}') BEGIN CREATE LOGIN [{0}] FROM WINDOWS WITH DEFAULT_DATABASE=[master] END", _username), cnx);
-                cmdl.ExecuteNonQuery();
-            }
-            finally
-            {
-                cnx.Close();
-            }
-            SqlConnection cnx2 = new SqlConnection("Integrated Security=SSPI;Persist Security Info=False;Initial Catalog=" + _databasename + ";Data Source=" + _servername);
-            cnx2.Open();
-            try
-            {
-                try
-                {
-                    SqlCommand cmd = new SqlCommand(string.Format("CREATE USER [{0}] FOR LOGIN [{0}]", _username), cnx2);
-                    cmd.ExecuteNonQuery();
-                }
-                catch (Exception)
-                {
-                    // Nothing : the indicated user is definitely the interactive user so the dbo
-                }
-                try
-                {
-                    SqlCommand cmd1 = new SqlCommand(string.Format("ALTER ROLE [db_owner] ADD MEMBER [{0}]", _username), cnx2);
-                    cmd1.ExecuteNonQuery();
-                }
-                catch (Exception)
-                {
-                    // Nothing : the indicated user is definitely the interactive user so the dbo
-                }
-                try
-                {
-                    SqlCommand cmd2 = new SqlCommand(string.Format("ALTER ROLE [db_securityadmin] ADD MEMBER [{0}]", _username), cnx2);
-                    cmd2.ExecuteNonQuery();
-                }
-                catch (Exception)
-                {
-                    // Nothing : the indicated user is definitely the interactive user so the dbo
-                }
-                SqlCommand cmdl = new SqlCommand(sqlscript, cnx2); // Create Tables and more
-                cmdl.ExecuteNonQuery();
-            }
-            finally
-            {
-                cnx2.Close();
-            }
-            FlatCustomSecurity cf = new FlatCustomSecurity();
-            cf.Load(host);
-            if (!string.IsNullOrEmpty(_password))
-                cf.ConnectionString = "Persist Security Info=True;User ID=" + _username + ";Password=" + _password + ";Initial Catalog=" + _databasename + ";Data Source=" + _servername;
-            else
-                cf.ConnectionString = "Persist Security Info=False;Integrated Security=SSPI;Initial Catalog=" + _databasename + ";Data Source=" + _servername;
-            cf.IsAlwaysEncrypted = false;
-            cf.ThumbPrint = string.Empty;
-            cf.Update(host);
-            return cf.Parameters;
-        }
-
-        /// <summary>
-        /// CreateMFAEncryptedSecretKeysDatabase method implementation
-        /// </summary>
-        public string CreateMFAEncryptedSecretKeysDatabase(PSHost host, string _servername, string _databasename, string _username, string _password, string _keyname, string _thumbprint)
-        {
-            string _encrypted = GetSQLKeyEncryptedValue("LocalMachine/my/" + _thumbprint.ToUpper());
-            string sqlscript = File.ReadAllText(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + @"\MFA\SQLTools\mfa-secretkey-db-encrypted.sql");
-            sqlscript = sqlscript.Replace("%DATABASENAME%", _databasename);
-            sqlscript = sqlscript.Replace("%SQLKEY%", _keyname);
-            SqlConnection cnx = new SqlConnection("Integrated Security=SSPI;Persist Security Info=False;Initial Catalog=master;Data Source=" + _servername);
-            cnx.Open();
-            try
-            {
-                SqlCommand cmd = new SqlCommand(string.Format("CREATE DATABASE {0}", _databasename), cnx);
-                cmd.ExecuteNonQuery();
-                SqlCommand cmdl = null;
-                if (!string.IsNullOrEmpty(_password))
-                    cmdl = new SqlCommand(string.Format("IF NOT EXISTS (SELECT name FROM master.sys.server_principals WHERE name = '{0}') BEGIN CREATE LOGIN [{0}] WITH PASSWORD = '{1}', DEFAULT_DATABASE=[master] END", _username, _password), cnx);
-                else
-                    cmdl = new SqlCommand(string.Format("IF NOT EXISTS (SELECT name FROM master.sys.server_principals WHERE name = '{0}') BEGIN CREATE LOGIN [{0}] FROM WINDOWS WITH DEFAULT_DATABASE=[master] END", _username), cnx);
-                cmdl.ExecuteNonQuery();
-            }
-            finally
-            {
-                cnx.Close();
-            }
-            SqlConnection cnx2 = new SqlConnection("Integrated Security=SSPI;Persist Security Info=False;Initial Catalog=" + _databasename + ";Data Source=" + _servername);
-            cnx2.Open();
-            try
-            {
-                try
-                {
-                    SqlCommand cmd = new SqlCommand(string.Format("CREATE USER [{0}] FOR LOGIN [{0}]", _username), cnx2);
-                    cmd.ExecuteNonQuery();
-                }
-                catch (Exception)
-                {
-                    // Nothing : the indicated user is definitely the interactive user so the dbo
-                }
-                try
-                {
-                    SqlCommand cmd1 = new SqlCommand(string.Format("ALTER ROLE [db_owner] ADD MEMBER [{0}]", _username), cnx2);
-                    cmd1.ExecuteNonQuery();
-                }
-                catch (Exception)
-                {
-                    // Nothing : the indicated user is definitely the interactive user so the dbo
-                }
-                try
-                {
-                    SqlCommand cmd2 = new SqlCommand(string.Format("ALTER ROLE [db_securityadmin] ADD MEMBER [{0}]", _username), cnx2);
-                    cmd2.ExecuteNonQuery();
-                }
-                catch (Exception)
-                {
-                    // Nothing : the indicated user is definitely the interactive user so the dbo
-                }
-                try
-                {
-                    SqlCommand cmd3 = new SqlCommand(string.Format("GRANT ALTER ANY COLUMN ENCRYPTION KEY TO [{0}]", _username), cnx2);
-                    cmd3.ExecuteNonQuery();
-                }
-                catch (Exception)
-                {
-                    // Nothing : the indicated user is definitely the interactive user so the dbo
-                }
-                SqlCommand cmd4 = new SqlCommand(string.Format("CREATE COLUMN MASTER KEY [{0}] WITH (KEY_STORE_PROVIDER_NAME = 'MSSQL_CERTIFICATE_STORE', KEY_PATH = 'LocalMachine/My/{1}')", _keyname, _thumbprint.ToUpper()), cnx2);
-                cmd4.ExecuteNonQuery();
-                SqlCommand cmd5 = new SqlCommand(string.Format("CREATE COLUMN ENCRYPTION KEY [{0}] WITH VALUES (COLUMN_MASTER_KEY = [{0}], ALGORITHM = 'RSA_OAEP', ENCRYPTED_VALUE = {1})", _keyname, _encrypted), cnx2);
-                cmd5.ExecuteNonQuery();
-            }
-            finally
-            {
-                cnx2.Close();
-            }
-
-            SqlConnection cnx3 = new SqlConnection("Integrated Security=SSPI;Persist Security Info=False;Initial Catalog=" + _databasename + ";Data Source=" + _servername);
-            cnx3.Open();
-            try
-            {
-                SqlCommand cmdl = new SqlCommand(sqlscript, cnx3);
-                cmdl.ExecuteNonQuery();
-            }
-            finally
-            {
-                cnx3.Close();
-            }
-
-            FlatCustomSecurity cf = new FlatCustomSecurity();
-            cf.Load(host);
-            if (!string.IsNullOrEmpty(_password))
-                cf.ConnectionString = "Persist Security Info=True;User ID=" + _username + ";Password=" + _password + ";Initial Catalog=" + _databasename + ";Data Source=" + _servername + ";Column Encryption Setting=enabled";
-            else
-                cf.ConnectionString = "Persist Security Info=False;Integrated Security=SSPI;Initial Catalog=" + _databasename + ";Data Source=" + _servername + ";Column Encryption Setting=enabled";
-            cf.IsAlwaysEncrypted = true;
-            cf.ThumbPrint = _thumbprint;
-            cf.Update(host);
-            return cf.Parameters;
         }
         #endregion
     }

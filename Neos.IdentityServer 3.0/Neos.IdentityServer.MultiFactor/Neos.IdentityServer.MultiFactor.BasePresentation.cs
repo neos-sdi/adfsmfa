@@ -352,7 +352,7 @@ namespace Neos.IdentityServer.MultiFactor
                     break;
                 case ProviderPageMode.SendAuthRequest:
                     result += GetFormRenderHtmlHeader(Context);
-                    if (Context.SelectedMethod==AuthenticationResponseKind.Biometrics)
+                    if (Context.SelectedMethod == AuthenticationResponseKind.Biometrics)
                         result += GetFormHtmlSendBiometricRequest(Context);
                     else
                         result += GetFormHtmlSendCodeRequest(Context);

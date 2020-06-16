@@ -159,12 +159,6 @@
     <Compile Include="Forms\Neos.IdentityServer.Console.SecurityRootViewControl.Designer.cs">
       <DependentUpon>Neos.IdentityServer.Console.SecurityRootViewControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\Neos.IdentityServer.Console.SecurityRSAXViewControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Forms\Neos.IdentityServer.Console.SecurityRSAXViewControl.Designer.cs">
-      <DependentUpon>Neos.IdentityServer.Console.SecurityRSAXViewControl.cs</DependentUpon>
-    </Compile>
     <Compile Include="Forms\Neos.IdentityServer.Console.SecurityRSAViewControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -286,7 +280,6 @@
     <Compile Include="Views\Neos.IdentityServer.Console.StorageFormView.cs" />
     <Compile Include="Views\Neos.IdentityServer.Console.SecurityRootFormView.cs" />
     <Compile Include="Views\Neos.IdentityServer.Console.SecurityWebAuthNFormView.cs" />
-    <Compile Include="Views\Neos.IdentityServer.Console.SecurityRSAXFormView.cs" />
     <Compile Include="Views\Neos.IdentityServer.Console.SecurityRSAFormView.cs" />
     <Compile Include="Views\Neos.IdentityServer.Console.SecurityRNGFormView.cs" />
     <Compile Include="Views\Neos.IdentityServer.Console.OTPFormView.cs" />
@@ -713,15 +706,6 @@
     <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRSAViewControl.ja.resx">
       <DependentUpon>Neos.IdentityServer.Console.SecurityRSAViewControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRSAXViewControl.da.resx">
-      <DependentUpon>Neos.IdentityServer.Console.SecurityRSAXViewControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRSAXViewControl.fr-CA.resx">
-      <DependentUpon>Neos.IdentityServer.Console.SecurityRSAXViewControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRSAXViewControl.ja.resx">
-      <DependentUpon>Neos.IdentityServer.Console.SecurityRSAXViewControl.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityWebAuthNViewControl.da.resx">
       <DependentUpon>Neos.IdentityServer.Console.SecurityWebAuthNViewControl.cs</DependentUpon>
     </EmbeddedResource>
@@ -1092,30 +1076,6 @@
     <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRSAViewControl.sv.resx">
       <DependentUpon>Neos.IdentityServer.Console.SecurityRSAViewControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRSAXViewControl.de.resx">
-      <DependentUpon>Neos.IdentityServer.Console.SecurityRSAXViewControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRSAXViewControl.es.resx">
-      <DependentUpon>Neos.IdentityServer.Console.SecurityRSAXViewControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRSAXViewControl.fr.resx">
-      <DependentUpon>Neos.IdentityServer.Console.SecurityRSAXViewControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRSAXViewControl.it.resx">
-      <DependentUpon>Neos.IdentityServer.Console.SecurityRSAXViewControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRSAXViewControl.nl.resx">
-      <DependentUpon>Neos.IdentityServer.Console.SecurityRSAXViewControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRSAXViewControl.pl.resx">
-      <DependentUpon>Neos.IdentityServer.Console.SecurityRSAXViewControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRSAXViewControl.pt.resx">
-      <DependentUpon>Neos.IdentityServer.Console.SecurityRSAXViewControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRSAXViewControl.resx">
-      <DependentUpon>Neos.IdentityServer.Console.SecurityRSAXViewControl.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRSAViewControl.fr.resx">
       <DependentUpon>Neos.IdentityServer.Console.SecurityRSAViewControl.cs</DependentUpon>
     </EmbeddedResource>
@@ -1127,15 +1087,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRNGViewControl.resx">
       <DependentUpon>Neos.IdentityServer.Console.SecurityRNGViewControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRSAXViewControl.ro.resx">
-      <DependentUpon>Neos.IdentityServer.Console.SecurityRSAXViewControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRSAXViewControl.ru.resx">
-      <DependentUpon>Neos.IdentityServer.Console.SecurityRSAXViewControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRSAXViewControl.sv.resx">
-      <DependentUpon>Neos.IdentityServer.Console.SecurityRSAXViewControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.OTPViewControl.de.resx">
       <DependentUpon>Neos.IdentityServer.Console.OTPViewControl.cs</DependentUpon>

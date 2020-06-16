@@ -15,7 +15,7 @@
 // https://github.com/neos-sdi/adfsmfa                                                                                                                                                      //
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
-#define azuretest
+// #define azuretest
 using Neos.IdentityServer.MultiFactor.Common;
 using System;
 using System.Collections.Generic;
