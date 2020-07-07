@@ -228,4 +228,10 @@
   <data name="InfosMailTemplateExported" xml:space="preserve">
     <value>Șabloane de corespondență exportate corect !</value>
   </data>
+  <data name="InfosSampleInstalled" xml:space="preserve">
+    <value>EXEMPLU MAE instalat !</value>
+  </data>
+  <data name="InfosSampleUnInstalled" xml:space="preserve">
+    <value>EXEMPLU MAE UnInstalled !</value>
+  </data>
 </root>

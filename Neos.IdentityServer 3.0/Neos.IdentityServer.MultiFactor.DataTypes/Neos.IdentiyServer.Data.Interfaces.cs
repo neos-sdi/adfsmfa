@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2020 Neos-Sdi (http://www.neos-sdi.com)                                                                                                                                    //                        
+// Copyright (c) 2020 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -95,18 +95,23 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// ImportMFAUsers method implementation
         /// </summary>
-        public virtual MFAUserList ImportMFAUsers(string domain, string username, string password, string ldappath, DateTime? created, DateTime? modified, string mailattribute, string phoneattribute, PreferredMethod meth, bool disableall = false)
+        public virtual MFAUserList ImportMFAUsers(string domain, string username, string password, string ldappath, DateTime? created, DateTime? modified, string mailattribute, string phoneattribute, PreferredMethod meth, bool usessl, bool disableall = false )
         {
             if (!string.IsNullOrEmpty(ldappath))
             {
                 ldappath = ldappath.Replace("ldap://", "LDAP://");
-                if (!ldappath.StartsWith("LDAP://"))
-                    ldappath = "LDAP://" + ldappath;
+                ldappath = ldappath.Replace("ldaps://", "LDAPS://");
+                string root = usessl ? "LDAPS://" : "LDAP://";
+
+                if (!ldappath.StartsWith(root) )
+                {
+                    ldappath = root + ldappath;
+                }
             }
             MFAUserList registrations = new MFAUserList();
             try
             {
-                using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntry(domain, username, password, ldappath))
+                using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntry(domain, username, password, ldappath, usessl))
                 {
                     string qryldap = string.Empty;
                     qryldap = "(&";
@@ -148,7 +153,7 @@ namespace Neos.IdentityServer.MultiFactor
                             foreach (SearchResult sr in src)
                             {
                                 MFAUser reg = new MFAUser();
-                                using (DirectoryEntry DirEntry = ADDSUtils.GetDirectoryEntry(domain, username, password, sr))  // ICI
+                                using (DirectoryEntry DirEntry = ADDSUtils.GetDirectoryEntry(domain, username, password, sr, usessl))  
                                 {
                                     if (DirEntry.Properties["objectGUID"].Value != null)
                                     {

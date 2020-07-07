@@ -155,6 +155,9 @@
     <value>Use your biometric device</value>
     <comment>Utilisez votre dispositif biométrique</comment>
   </data>
+  <data name="BIOUIWIZComment" xml:space="preserve">
+    <value>Manage your biometrics devices. Select add, replace or delete individual devices.</value>
+  </data>
   <data name="BIOUIWIZLabel" xml:space="preserve">
     <value>Enroll your biometric device</value>
     <comment>Enregistrer votre dispositif biometrique</comment>
@@ -162,5 +165,8 @@
   <data name="BIOWIZEnroll" xml:space="preserve">
     <value>Enroll my biometric device</value>
     <comment>Enregistrer mon dispositif biometrique</comment>
+  </data>
+  <data name="PROVIDERBIODESCRIPTION" xml:space="preserve">
+    <value>Biometrics Multi-Factor Provider</value>
   </data>
 </root>

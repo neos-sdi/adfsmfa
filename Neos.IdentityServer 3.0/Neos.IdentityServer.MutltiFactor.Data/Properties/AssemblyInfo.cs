@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2020 Neos-Sdi (http://www.neos-sdi.com)                                                                                                                                    //                        
+// Copyright (c) 2020 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -29,7 +29,7 @@ using System.Runtime.Versioning;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Neos-Sdi")]
 [assembly: AssemblyProduct("Microsoft.IdentityServer.MultiFactor.Data")]
-[assembly: AssemblyCopyright("Copyright Neos-Sdi © 2020")]
+[assembly: AssemblyCopyright("Copyright @redhook62 © 2020")]
 [assembly: AssemblyTrademark("Neos-Sdi")]
 [assembly: AssemblyCulture("")]
 
@@ -50,10 +50,9 @@ using System.Runtime.Versioning;
 //      Révision
 //
 [assembly: AssemblyVersion("3.0.0.0")]
-[assembly: AssemblyFileVersion("3.0.2006.1")]
+[assembly: AssemblyFileVersion("3.0.2007.0")]
 [assembly: AssemblyInformationalVersion("3.0.0.0")]
 [assembly: NeutralResourcesLanguageAttribute("en")]
-
 
 // To Generate PubliKey 
 //
@@ -70,4 +69,3 @@ using System.Runtime.Versioning;
 // 3)
 // sn -tp FriendAssemblies.publickey 
 [assembly: InternalsVisibleTo("Neos.IdentityServer.MultiFactor.Common, PublicKey=0024000004800000940000000602000000240000525341310004000001000100136c66e4526621536817a4316e736760a2c6511c4ad8944be23e694c66bf6d91632687c3d52912d1dcb33bbf8970966dc85872649dbd11d6e326f8801f5748c162a9e0a0f0e5a5ccc05d9f5e40d75330a6fb3950dd4304c77f453b9cbbc36919de99e2b88aef1ba71bc5d4dc9d81243cd9f5fc6ede161ae639fd60e20bb264c0")]
-

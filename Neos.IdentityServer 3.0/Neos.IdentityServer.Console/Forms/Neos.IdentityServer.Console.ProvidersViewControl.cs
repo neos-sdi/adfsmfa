@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2020 Neos-Sdi (http://www.neos-sdi.com)                                                                                                                                    //                        
+// Copyright (c) 2020 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -67,27 +67,24 @@ namespace Neos.IdentityServer.Console
             try
             {
                 _lst.Clear();
+                this.tableLayoutPanel.Controls.Clear();
                 int i = 2;
                 MFAProvidersControl tmp1 = new MFAProvidersControl(this, this.SnapIn, PreferredMethod.Code);
                 _lst.Add(tmp1);
                 this.tableLayoutPanel.Controls.Add(tmp1, 0, i);
                 i++;
-
                 MFAProvidersControl tmp5 = new MFAProvidersControl(this, this.SnapIn, PreferredMethod.Biometrics);
                 _lst.Add(tmp5);
                 this.tableLayoutPanel.Controls.Add(tmp5, 0, i);
                 i++;
-
                 MFAProvidersControl tmp2 = new MFAProvidersControl(this, this.SnapIn, PreferredMethod.Email);
                 _lst.Add(tmp2);
                 this.tableLayoutPanel.Controls.Add(tmp2, 0, i);
                 i++;
-
                 MFAProvidersControl tmp3 = new MFAProvidersControl(this, this.SnapIn, PreferredMethod.External);
                 _lst.Add(tmp3);
                 this.tableLayoutPanel.Controls.Add(tmp3, 0, i);
                 i++;
-
                 MFAProvidersControl tmp4 = new MFAProvidersControl(this, this.SnapIn, PreferredMethod.Azure);
                 _lst.Add(tmp4);
                 this.tableLayoutPanel.Controls.Add(tmp4, 0, i);
@@ -123,9 +120,9 @@ namespace Neos.IdentityServer.Console
         /// <summary>
         /// SnapIn method implementation
         /// </summary>
-        protected NamespaceSnapInBase SnapIn
+        protected SnapIn SnapIn
         {
-            get { return this.FormView.ScopeNode.SnapIn; }
+            get { return this.FormView.SnapIn as SnapIn; }
         }
 
         /// <summary>
@@ -181,6 +178,12 @@ namespace Neos.IdentityServer.Console
                 this.label3.Text = resources.GetString("label3.Text");
 
                 ManagementService.ADFSManager.ReadConfiguration(null);
+
+                ((RefreshableScopeNode)ScopeNode).RefreshDescription(); 
+                foreach (ScopeNode scope in this.ScopeNode.Children)
+                {
+                    ((RefreshableScopeNode)scope).RefreshDescription();
+                }
                 ((IMMCRefreshData)ControlInstance).DoRefreshData();
                 foreach (MFAProvidersControl ct in _lst)
                 {

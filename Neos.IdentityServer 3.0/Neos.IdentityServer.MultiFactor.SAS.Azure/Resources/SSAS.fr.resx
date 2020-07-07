@@ -210,4 +210,7 @@
   <data name="VOICE3Message" xml:space="preserve">
     <value>Nous appelons votre téléphone professionnel {0}. Répondez pour continuer.</value>
   </data>
+  <data name="PROVIDERAZURESDESCRIPTION" xml:space="preserve">
+    <value>Fournisseur multifacteur Microsoft Azure</value>
+  </data>
 </root>

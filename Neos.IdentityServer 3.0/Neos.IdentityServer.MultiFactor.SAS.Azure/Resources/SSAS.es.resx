@@ -240,4 +240,7 @@
     <value>Llamamos al teléfono de su oficina {0}. Responde para continuar.</value>
     <comment>Nous appelons votre téléphone professionnel {0}. Répondez pour continuer.</comment>
   </data>
+  <data name="PROVIDERAZURESDESCRIPTION" xml:space="preserve">
+    <value>Proveedor multifactor de Microsoft Azure</value>
+  </data>
 </root>

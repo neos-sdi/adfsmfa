@@ -240,4 +240,7 @@
     <value>We call your office phone {0}. Answer to continue.</value>
     <comment>Nous appelons votre téléphone professionnel {0}. Répondez pour continuer.</comment>
   </data>
+  <data name="PROVIDERAZURESDESCRIPTION" xml:space="preserve">
+    <value>Microsoft Azure Multi-Factor Provider</value>
+  </data>
 </root>

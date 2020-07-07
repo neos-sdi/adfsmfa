@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:netfx="http://schemas.microsoft.com/wix/NetFxExtension">
-  <Product Id="a23dd485-5365-4d82-8309-103494000001" Name="MFA Provider for ADFS 2019/2016/2012 R2" Language="1033" Version="3.0.2006.1" Manufacturer="Neos-SDI" UpgradeCode="a23dd485-5365-4d82-8309-103495000001" >
+  <Product Id="a23dd485-5365-4d82-8309-103494000001" Name="MFA Provider for ADFS 2019/2016/2012 R2" Language="1033" Version="3.0.2007.0" Manufacturer="Neos-sdi" UpgradeCode="a23dd485-5365-4d82-8309-103495000001" >
 
     <Package InstallerVersion="500" Compressed="yes" InstallScope="perMachine" InstallPrivileges="elevated" Platform="x64" Description="Multi-Factor Authentication for ADFS 2019/2016/2012R2" />
 
@@ -67,12 +67,8 @@
       <ComponentGroupRef Id="Neos.IdentityServer.MultiFactor.Cmdlets" />    
     </Feature>
 
-		<Feature Id="AzureFeature" Title="adfsmfa Azure Samples" Description="Neos Identity Service SMS API and Azure Samples (SMS)" InstallDefault="local" TypicalDefault="install" Level="1" >
-      <ComponentGroupRef Id="Neos.IdentityServer.MultiFactor.SMS" />
-    </Feature>
-
-    <Feature Id="StorageFeature" Title="adfsmfa Storage Samples" Description="Neos Identity Service Custom Storage Samples" InstallDefault="local" TypicalDefault="install" Level="1" >
-      <ComponentGroupRef Id="Neos.IdentityServer.MultiFactor.Repository.Samples" />
+		<Feature Id="AzureFeature" Title="adfsmfa Azure Samples" Description="Neos Identity Service Samples" InstallDefault="local" TypicalDefault="install" Level="1" >
+      <ComponentGroupRef Id="Neos.IdentityServer.MultiFactor.Samples" />
     </Feature>
 
     <Feature Id="WebAuthNFeature" Title="adfsmfa WebAuthN Biometric Provider" Description="adfsmfa WebAuthN Biometric API" InstallDefault="local" TypicalDefault="install" Level="1" >
@@ -492,57 +488,53 @@
   </Fragment>
 
   <Fragment>
-    <ComponentGroup Id="Neos.IdentityServer.MultiFactor.SMS">
+    <ComponentGroup Id="Neos.IdentityServer.MultiFactor.Samples">
       <Component Id="GACDeployment300" Guid="E7173CAB-E43F-4A07-1962-018000006300" Win64="yes" Directory="AssemblyFolder" DiskId="1" >
         <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.Samples.dll"  Name="Neos.IdentityServer.MultiFactor.Samples.dll" Source="$(var.Neos.IdentityServer.MultiFactor.Samples.TargetPath)" />
       </Component>
       
-      <Component Id="GACDeployment301" Guid="E7173CAB-E43F-4A07-1962-018000006301" Win64="yes" Directory="AssemblyFolder" DiskId="1" >
-        <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.SMS.Azure.dll"  Name="Neos.IdentityServer.MultiFactor.SMS.Azure.dll" Source="$(var.Neos.IdentityServer.MultiFactor.SMS.Azure.TargetPath)" />
+      <Component Id="GACDeployment1301" Guid="E7173CAB-E43F-4A07-1962-018000016301" Win64="yes" Directory="LOCALEES" DiskId="1" >
+        <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.Samples.es.resources.dll"  Name="Neos.IdentityServer.MultiFactor.Samples.resources.dll" Source="$(var.Neos.IdentityServer.MultiFactor.Samples.TargetDir)es\Neos.IdentityServer.MultiFactor.Samples.resources.dll" Vital="no" />
       </Component>
-      <Component Id="GACDeployment302" Guid="E7173CAB-E43F-4A07-1962-018000006302" Win64="yes" Directory="LOCALEES" DiskId="1" >
-        <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.SMS.Azure.es.resources.dll"  Name="Neos.IdentityServer.MultiFactor.SMS.Azure.resources.dll" Source="$(var.Neos.IdentityServer.MultiFactor.SMS.Azure.TargetDir)es\Neos.IdentityServer.MultiFactor.SMS.Azure.resources.dll" Vital="no" />
+      <Component Id="GACDeployment1302" Guid="E7173CAB-E43F-4A07-1962-018000016302" Win64="yes" Directory="LOCALEFR" DiskId="1" >
+        <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.Samples.fr.resources.dll"  Name="Neos.IdentityServer.MultiFactor.Samples.resources.dll" Source="$(var.Neos.IdentityServer.MultiFactor.Samples.TargetDir)fr\Neos.IdentityServer.MultiFactor.Samples.resources.dll" Vital="no" />
       </Component>
-      <Component Id="GACDeployment303" Guid="E7173CAB-E43F-4A07-1962-018000006303" Win64="yes" Directory="LOCALEFR" DiskId="1" >
-        <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.SMS.Azure.fr.resources.dll"  Name="Neos.IdentityServer.MultiFactor.SMS.Azure.resources.dll" Source="$(var.Neos.IdentityServer.MultiFactor.SMS.Azure.TargetDir)fr\Neos.IdentityServer.MultiFactor.SMS.Azure.resources.dll" Vital="no" />
+      <Component Id="GACDeployment1303" Guid="E7173CAB-E43F-4A07-1962-018000016303" Win64="yes" Directory="LOCALEIT" DiskId="1" >
+        <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.Samples.it.resources.dll"  Name="Neos.IdentityServer.MultiFactor.Samples.resources.dll" Source="$(var.Neos.IdentityServer.MultiFactor.Samples.TargetDir)it\Neos.IdentityServer.MultiFactor.Samples.resources.dll" Vital="no" />
       </Component>
-      <Component Id="GACDeployment304" Guid="E7173CAB-E43F-4A07-1962-018000006304" Win64="yes" Directory="LOCALEIT" DiskId="1" >
-        <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.SMS.Azure.it.resources.dll"  Name="Neos.IdentityServer.MultiFactor.SMS.Azure.resources.dll" Source="$(var.Neos.IdentityServer.MultiFactor.SMS.Azure.TargetDir)it\Neos.IdentityServer.MultiFactor.SMS.Azure.resources.dll" Vital="no" />
+      <Component Id="GACDeployment1304" Guid="E7173CAB-E43F-4A07-1962-018000016304" Win64="yes" Directory="LOCALEDE" DiskId="1" >
+        <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.Samples.de.resources.dll"  Name="Neos.IdentityServer.MultiFactor.Samples.resources.dll" Source="$(var.Neos.IdentityServer.MultiFactor.Samples.TargetDir)de\Neos.IdentityServer.MultiFactor.Samples.resources.dll" Vital="no" />
       </Component>
-      <Component Id="GACDeployment305" Guid="E7173CAB-E43F-4A07-1962-018000006305" Win64="yes" Directory="LOCALEDE" DiskId="1" >
-        <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.SMS.Azure.de.resources.dll"  Name="Neos.IdentityServer.MultiFactor.SMS.Azure.resources.dll" Source="$(var.Neos.IdentityServer.MultiFactor.SMS.Azure.TargetDir)de\Neos.IdentityServer.MultiFactor.SMS.Azure.resources.dll" Vital="no" />
+      <Component Id="GACDeployment1305" Guid="E7173CAB-E43F-4A07-1962-018000016305" Win64="yes" Directory="LOCALENL" DiskId="1" >
+        <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.Samples.nl.resources.dll"  Name="Neos.IdentityServer.MultiFactor.Samples.resources.dll" Source="$(var.Neos.IdentityServer.MultiFactor.Samples.TargetDir)nl\Neos.IdentityServer.MultiFactor.Samples.resources.dll" Vital="no" />
       </Component>
-      <Component Id="GACDeployment306" Guid="E7173CAB-E43F-4A07-1962-018000006306" Win64="yes" Directory="LOCALENL" DiskId="1" >
-        <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.SMS.Azure.nl.resources.dll"  Name="Neos.IdentityServer.MultiFactor.SMS.Azure.resources.dll" Source="$(var.Neos.IdentityServer.MultiFactor.SMS.Azure.TargetDir)nl\Neos.IdentityServer.MultiFactor.SMS.Azure.resources.dll" Vital="no" />
+      <Component Id="GACDeployment1306" Guid="E7173CAB-E43F-4A07-1962-018000016306" Win64="yes" Directory="LOCALEPT" DiskId="1" >
+        <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.Samples.pt.resources.dll"  Name="Neos.IdentityServer.MultiFactor.Samples.resources.dll" Source="$(var.Neos.IdentityServer.MultiFactor.Samples.TargetDir)pt\Neos.IdentityServer.MultiFactor.Samples.resources.dll" Vital="no" />
       </Component>
-      <Component Id="GACDeployment307" Guid="E7173CAB-E43F-4A07-1962-018000006307" Win64="yes" Directory="LOCALEPT" DiskId="1" >
-        <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.SMS.Azure.pt.resources.dll"  Name="Neos.IdentityServer.MultiFactor.SMS.Azure.resources.dll" Source="$(var.Neos.IdentityServer.MultiFactor.SMS.Azure.TargetDir)pt\Neos.IdentityServer.MultiFactor.SMS.Azure.resources.dll" Vital="no" />
+      <Component Id="GACDeployment1307" Guid="E7173CAB-E43F-4A07-1962-018000016307" Win64="yes" Directory="LOCALERU" DiskId="1" >
+        <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.Samples.ru.resources.dll"  Name="Neos.IdentityServer.MultiFactor.Samples.resources.dll" Source="$(var.Neos.IdentityServer.MultiFactor.Samples.TargetDir)ru\Neos.IdentityServer.MultiFactor.Samples.resources.dll" Vital="no" />
       </Component>
-      <Component Id="GACDeployment308" Guid="E7173CAB-E43F-4A07-1962-018000006308" Win64="yes" Directory="LOCALERU" DiskId="1" >
-        <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.SMS.Azure.ru.resources.dll"  Name="Neos.IdentityServer.MultiFactor.SMS.Azure.resources.dll" Source="$(var.Neos.IdentityServer.MultiFactor.SMS.Azure.TargetDir)ru\Neos.IdentityServer.MultiFactor.SMS.Azure.resources.dll" Vital="no" />
+      <Component Id="GACDeployment1308" Guid="E7173CAB-E43F-4A07-1962-018000016308" Win64="yes" Directory="LOCALERO" DiskId="1" >
+        <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.Samples.ro.resources.dll"  Name="Neos.IdentityServer.MultiFactor.Samples.resources.dll" Source="$(var.Neos.IdentityServer.MultiFactor.Samples.TargetDir)ro\Neos.IdentityServer.MultiFactor.Samples.resources.dll" Vital="no" />
       </Component>
-      <Component Id="GACDeployment309" Guid="E7173CAB-E43F-4A07-1962-018000006309" Win64="yes" Directory="LOCALERO" DiskId="1" >
-        <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.SMS.Azure.ro.resources.dll"  Name="Neos.IdentityServer.MultiFactor.SMS.Azure.resources.dll" Source="$(var.Neos.IdentityServer.MultiFactor.SMS.Azure.TargetDir)ro\Neos.IdentityServer.MultiFactor.SMS.Azure.resources.dll" Vital="no" />
+      <Component Id="GACDeployment1309" Guid="E7173CAB-E43F-4A07-1962-018000016309" Win64="yes" Directory="LOCALEPL" DiskId="1" >
+        <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.Samples.pl.resources.dll"  Name="Neos.IdentityServer.MultiFactor.Samples.resources.dll" Source="$(var.Neos.IdentityServer.MultiFactor.Samples.TargetDir)pl\Neos.IdentityServer.MultiFactor.Samples.resources.dll" Vital="no" />
       </Component>
-      <Component Id="GACDeployment310" Guid="E7173CAB-E43F-4A07-1962-01800000630A" Win64="yes" Directory="LOCALEPL" DiskId="1" >
-        <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.SMS.Azure.pl.resources.dll"  Name="Neos.IdentityServer.MultiFactor.SMS.Azure.resources.dll" Source="$(var.Neos.IdentityServer.MultiFactor.SMS.Azure.TargetDir)pl\Neos.IdentityServer.MultiFactor.SMS.Azure.resources.dll" Vital="no" />
+      <Component Id="GACDeployment130A" Guid="E7173CAB-E43F-4A07-1962-01800001630A" Win64="yes" Directory="LOCALESV" DiskId="1" >
+        <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.Samples.sv.resources.dll"  Name="Neos.IdentityServer.MultiFactor.Samples.resources.dll" Source="$(var.Neos.IdentityServer.MultiFactor.Samples.TargetDir)sv\Neos.IdentityServer.MultiFactor.Samples.resources.dll" Vital="no" />
       </Component>
-      <Component Id="GACDeployment311" Guid="E7173CAB-E43F-4A07-1962-01800000630B" Win64="yes" Directory="LOCALESV" DiskId="1" >
-        <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.SMS.Azure.sv.resources.dll"  Name="Neos.IdentityServer.MultiFactor.SMS.Azure.resources.dll" Source="$(var.Neos.IdentityServer.MultiFactor.SMS.Azure.TargetDir)sv\Neos.IdentityServer.MultiFactor.SMS.Azure.resources.dll" Vital="no" />
+      <Component Id="GACDeployment130B" Guid="E7173CAB-E43F-4A07-1962-01800001630B" Win64="yes" Directory="LOCALEDA" DiskId="1" >
+        <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.Samples.da.resources.dll"  Name="Neos.IdentityServer.MultiFactor.Samples.resources.dll" Source="$(var.Neos.IdentityServer.MultiFactor.Samples.TargetDir)da\Neos.IdentityServer.MultiFactor.Samples.resources.dll" Vital="no" />
       </Component>
-      <Component Id="GACDeployment312" Guid="E7173CAB-E43F-4A07-1962-01800000630C" Win64="yes" Directory="LOCALEDA" DiskId="1" >
-        <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.SMS.Azure.da.resources.dll"  Name="Neos.IdentityServer.MultiFactor.SMS.Azure.resources.dll" Source="$(var.Neos.IdentityServer.MultiFactor.SMS.Azure.TargetDir)da\Neos.IdentityServer.MultiFactor.SMS.Azure.resources.dll" Vital="no" />
+      <Component Id="GACDeployment130C" Guid="E7173CAB-E43F-4A07-1962-01800001630C" Win64="yes" Directory="LOCALEJA" DiskId="1" >
+        <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.Samples.ja.resources.dll"  Name="Neos.IdentityServer.MultiFactor.Samples.resources.dll" Source="$(var.Neos.IdentityServer.MultiFactor.Samples.TargetDir)ja\Neos.IdentityServer.MultiFactor.Samples.resources.dll" Vital="no" />
       </Component>
-      <Component Id="GACDeployment313" Guid="E7173CAB-E43F-4A07-1962-01800000630D" Win64="yes" Directory="LOCALEJA" DiskId="1" >
-        <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.SMS.Azure.ja.resources.dll"  Name="Neos.IdentityServer.MultiFactor.SMS.Azure.resources.dll" Source="$(var.Neos.IdentityServer.MultiFactor.SMS.Azure.TargetDir)ja\Neos.IdentityServer.MultiFactor.SMS.Azure.resources.dll" Vital="no" />
-      </Component>
-      <Component Id="GACDeployment314" Guid="E7173CAB-E43F-4A07-1962-01800000630E" Win64="yes" Directory="LOCALECA" DiskId="1" >
-        <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.SMS.Azure.frCA.resources.dll"  Name="Neos.IdentityServer.MultiFactor.SMS.Azure.resources.dll" Source="$(var.Neos.IdentityServer.MultiFactor.SMS.Azure.TargetDir)fr-CA\Neos.IdentityServer.MultiFactor.SMS.Azure.resources.dll" Vital="no" />
-      </Component>
-      
+      <Component Id="GACDeployment130D" Guid="E7173CAB-E43F-4A07-1962-01800001630D" Win64="yes" Directory="LOCALECA" DiskId="1" >
+        <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.Samples.frCA.resources.dll"  Name="Neos.IdentityServer.MultiFactor.Samples.resources.dll" Source="$(var.Neos.IdentityServer.MultiFactor.Samples.TargetDir)fr-CA\Neos.IdentityServer.MultiFactor.Samples.resources.dll" Vital="no" />
+      </Component>          
 
       <Component Id="GACDeployment350" Guid="E7173CAB-E43F-4A07-1962-018000006350" Win64="yes" Directory="AssemblyFolder" DiskId="1" Permanent="yes" >
-        <File Assembly=".net" KeyPath="yes" Id="libphonenumber_csharp_portable.dll"  Name="libphonenumber_csharp_portable.dll" Source="$(var.Neos.IdentityServer.MultiFactor.SMS.Azure.TargetDir)libphonenumber_csharp_portable.dll" />
+        <File Assembly=".net" KeyPath="yes" Id="libphonenumber_csharp_portable.dll"  Name="libphonenumber_csharp_portable.dll" Source="$(var.Neos.IdentityServer.MultiFactor.Samples.TargetDir)libphonenumber_csharp_portable.dll" />
       </Component>
 
       <Component Id="GACDeployment400" Guid="E7173CAB-E43F-4A07-1962-018000006400" Win64="yes" Directory="AssemblyFolder" DiskId="1" >
@@ -633,22 +625,16 @@
       </Component>      
       <Component Id="GACDeployment60D" Guid="E7173CAB-E43F-4A07-1962-01800000660D" Win64="yes" Directory="LOCALECA" DiskId="1" >
         <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.WebAuthN.Provider.frCA.resources.dll"  Name="Neos.IdentityServer.MultiFactor.WebAuthN.Provider.resources.dll" Source="$(var.Neos.IdentityServer.MultiFactor.WebAuthN.Provider.TargetDir)fr-CA\Neos.IdentityServer.MultiFactor.WebAuthN.Provider.resources.dll" Vital="no" />
-      </Component>      
-      
-      
+      </Component>                 
       <Component Id="GACDeployment661" Guid="E7173CAB-E43F-4A07-1962-018000006661" Win64="yes" Directory="AssemblyFolder" DiskId="1" >
         <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.WebAuthN.Core.dll"  Name="Neos.IdentityServer.MultiFactor.WebAuthN.Core.dll" Source="$(var.Neos.IdentityServer.MultiFactor.WebAuthN.Core.TargetPath)" Vital="yes"/>
       </Component>
-
       <Component Id="GACDeployment662" Guid="E7173CAB-E43F-4A07-1962-018000006662" Win64="yes" Directory="AssemblyFolder" DiskId="1" >
         <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.WebAuthN.Common.dll"  Name="Neos.IdentityServer.MultiFactor.WebAuthN.Common.dll" Source="$(var.Neos.IdentityServer.MultiFactor.WebAuthN.Common.TargetPath)" Vital="yes"/>
-      </Component>
-
-      
+      </Component>      
       <Component Id="GACDeployment670" Guid="E7173CAB-E43F-4A07-1962-018000006670" Win64="yes" Directory="AssemblyFolder" DiskId="1" Permanent="yes">
         <File Assembly=".net" KeyPath="yes" Id="Newtonsoft.Json.dll"  Name="Newtonsoft.Json.dll" Source="$(var.Neos.IdentityServer.MultiFactor.WebAuthN.Core.TargetDir)Newtonsoft.Json.dll" />
-      </Component>
-      
+      </Component>     
       <Component Id="GACDeployment671" Guid="E7173CAB-E43F-4A07-1962-018000006671" Win64="yes" Directory="AssemblyFolder" DiskId="1" >
         <File Assembly=".net" KeyPath="yes" Id="Microsoft.IdentityModel.JsonWebTokens.dll"  Name="Microsoft.IdentityModel.JsonWebTokens.dll" Source="$(var.Neos.IdentityServer.MultiFactor.WebAuthN.Core.TargetDir)Microsoft.IdentityModel.JsonWebTokens.dll" />
       </Component>
@@ -778,14 +764,6 @@
       </Component>
       <Component Id="GACDeployment85" Guid="E7173CAB-E43F-4A07-B5F1-018000006666" Win64="yes" Directory="IMPORTSFOLDER" DiskId="1" >
         <File KeyPath="no" Id="import.xml"  Name="import.xml" Source="$(var.Neos.IdentityServer.Console.ProjectDir)SnapMMC\import.xml" />
-      </Component>
-    </ComponentGroup>
-  </Fragment>
-
-  <Fragment>
-    <ComponentGroup Id="Neos.IdentityServer.MultiFactor.Repository.Samples">
-      <Component Id="GACDeployment95" Guid="E7173CAB-E43F-4A07-B5F1-018000006668" Win64="yes" Directory="AssemblyFolder" DiskId="1" >
-        <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.Repository.Samples.dll"  Name="Neos.IdentityServer.MultiFactor.Repository.Samples.dll" Source="$(var.Neos.IdentityServer.MultiFactor.Repository.Sample.TargetPath)" Vital="yes" />
       </Component>
     </ComponentGroup>
   </Fragment>

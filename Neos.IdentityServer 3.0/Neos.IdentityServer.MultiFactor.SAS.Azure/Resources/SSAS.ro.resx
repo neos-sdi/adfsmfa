@@ -210,4 +210,7 @@
   <data name="GLOBALManagement" xml:space="preserve">
     <value>Înscrierea opțiunilor Azure</value>
   </data>
+  <data name="PROVIDERAZURESDESCRIPTION" xml:space="preserve">
+    <value>Furnizor multi-factor Microsoft Azure</value>
+  </data>
 </root>

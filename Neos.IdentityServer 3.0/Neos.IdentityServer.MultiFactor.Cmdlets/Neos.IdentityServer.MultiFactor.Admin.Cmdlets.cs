@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2020 Neos-Sdi (http://www.neos-sdi.com)                                                                                                                                    //                        
+// Copyright (c) 2020 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -2669,6 +2669,8 @@ namespace MFA
                                 _target0.RSACertificateAttribute = _config0.RSACertificateAttribute;
                             if (_config0.MaxRowsChanged)
                                 _target0.MaxRows = _config0.MaxRows;
+                            if (_config0.UseSSLChanged)
+                                _target0.UseSSL = _config0.UseSSL;
                             break;
                         case PSStoreMode.SQL:
                             _target1 = new FlatSQLStore();
@@ -2799,6 +2801,7 @@ namespace MFA
         private string _clientcertificateattribute;
         private string _rsacertificateattribute;
         private int _maxrows = 10000;
+        private bool _usessl = false;
 
         internal bool ActiveChanged { get; private set; } = false;
         internal bool KeyAttributeChanged { get; private set; } = false;
@@ -2812,6 +2815,7 @@ namespace MFA
         internal bool ClientCertificateAttributeChanged { get; private set; } = false;
         internal bool RSACertificateAttributeChanged { get; private set; } = false;
         internal bool MaxRowsChanged { get; private set; } = false;
+        internal bool UseSSLChanged { get; private set; } = false;
 
         /// <summary>
         /// <para type="description">If true, users metadata are stored in ADDS attributes.</para>
@@ -2979,7 +2983,7 @@ namespace MFA
         }
 
         /// <summary>
-        /// <para type="description">ADDS attribute name used to store RSA Certificate (default msDS-cloudExtensionAttribute17).</para>
+        /// <para type="description">ADDS value indicating the max row per request.</para>
         /// </summary>
         [Parameter(ParameterSetName = "Identity")]
         [ValidateRange(-1, 1000000)]
@@ -2990,6 +2994,20 @@ namespace MFA
             {
                 _maxrows = value;
                 MaxRowsChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">ADDS value indicating if we must use ldap or ldaps for requests.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        public bool UseSSL
+        {
+            get { return _usessl; }
+            set
+            {
+                _usessl = value;
+                UseSSLChanged = true;
             }
         }
     }
@@ -4012,7 +4030,7 @@ namespace MFA
         /// <para type="description">RSA and RSA Custom are using Certificates. Custom RSA must Use Specific database to the keys and certs, one for each user, see New-MFASecretKeysDatabase cmdlet.</para>
         /// </summary>
         [Parameter(ParameterSetName = "Identity")]
-        [ValidateSet("RNG", "RSA", "CUSTOM", IgnoreCase = true)]
+        [ValidateRange(PSSecretKeyFormat.RNG, PSSecretKeyFormat.CUSTOM)]
         public PSSecretKeyFormat KeysFormat
         {
             get { return _secretformat; }
@@ -4935,15 +4953,27 @@ namespace MFA
     ///  <para>Get-MFASecurity -Kind RSA</para>
     ///  <para>$c = Get-MFASecurity -Kind BIOMETRIC</para>
     /// </example>
+    /// <example>
+    ///   <para>$c = Get-MFASecurity -Kind RNG</para>
+    ///   <para>$c.KeyGenerator = [MFA.PSKeyGeneratorMode]::ClientSecret256</para>
+    ///   <para>Set-MFASecurity -Kind RNG $c</para>
+    /// </example>
+    /// <example>
+    ///   <para>$c = Get-MFASecurity -Kind AES</para>
+    ///   <para>$c.AESKeyGenerator = [MFA.PSAESKeyGeneratorMode]::AESSecret1024</para>
+    ///   <para>Set-MFASecurity -Kind AES $c</para>
+    /// </example>
     [Cmdlet(VerbsCommon.Get, "MFASecurity", SupportsShouldProcess = true, SupportsPaging = false, ConfirmImpact = ConfirmImpact.Medium, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
-    [OutputType(typeof(PSSecurity), typeof(PSRngSecurity), typeof(PSRsaSecurity), typeof(PSBiometricSecurity))]
+    [OutputType(typeof(PSSecurity), typeof(PSRNGSecurity), typeof(PSRSASecurity), typeof(PSBiometricSecurity))]
     public sealed class GetMFASecurity : MFACmdlet
     {
         private PSBaseSecurity _config;
-        private PSRngSecurity _config0;
-        private PSRsaSecurity _config1;
+        private PSRNGSecurity _config0;
+        private PSRSASecurity _config1;
         private PSBiometricSecurity _config2;
         private PSWsManSecurity _config3;
+        private PSAESSecurity _config4;
+        private PSCustomSecurity _config5;
         private PSSecurityMode _securitymode = PSSecurityMode.RNG;
         internal bool SecurityModeChanged { get; private set; } = false;
 
@@ -4951,7 +4981,7 @@ namespace MFA
         /// <para type="description">Provider Type parameter, (RNG, RSA, CUSTOM, WSMAN).</para>
         /// </summary>
         [Parameter(Position = 0, ParameterSetName = "Data", ValueFromPipeline = true)]
-        [ValidateSet("RNG", "RSA", "BIOMETRIC", "CUSTOM", "WSMAN", IgnoreCase = true)]
+        [ValidateRange(PSSecurityMode.RNG, PSSecurityMode.WSMAN)]
         public PSSecurityMode Kind
         {
             get
@@ -4984,15 +5014,26 @@ namespace MFA
                     switch (Kind)
                     {
                         case PSSecurityMode.RNG:
-                            FlatRngSecurity cf0 = new FlatRngSecurity();
+                            FlatRNGSecurity cf0 = new FlatRNGSecurity();
                             cf0.Load(this.Host);
-                            _config0 = (PSRngSecurity)cf0;
+                            _config0 = (PSRNGSecurity)cf0;
                             break;
                         case PSSecurityMode.RSA:
-                            FlatRsaSecurity cf1 = new FlatRsaSecurity();
+                            FlatRSASecurity cf1 = new FlatRSASecurity();
                             cf1.Load(this.Host);
-                            _config1 = (PSRsaSecurity)cf1;
+                            _config1 = (PSRSASecurity)cf1;
                             break;
+                        case PSSecurityMode.AES:
+                            FlatAESSecurity cf4 = new FlatAESSecurity();
+                            cf4.Load(this.Host);
+                            _config4 = (PSAESSecurity)cf4;
+                            break;
+                        case PSSecurityMode.CUSTOM:
+                            FlatCustomSecurity cf5 = new FlatCustomSecurity();
+                            cf5.Load(this.Host);
+                            _config5 = (PSCustomSecurity)cf5;
+                            break;
+
                         case PSSecurityMode.BIOMETRIC:
                             FlatBiometricSecurity cf2 = new FlatBiometricSecurity();
                             cf2.Load(this.Host);
@@ -5034,6 +5075,12 @@ namespace MFA
                             case PSSecurityMode.RSA:
                                 WriteObject(_config1);
                                 break;
+                            case PSSecurityMode.AES:
+                                WriteObject(_config4);
+                                break;
+                            case PSSecurityMode.CUSTOM:
+                                WriteObject(_config5);
+                                break;
                             case PSSecurityMode.BIOMETRIC:
                                 WriteObject(_config2);
                                 break;
@@ -5056,6 +5103,8 @@ namespace MFA
         /// </summary>
         protected override void StopProcessing()
         {
+            _config5 = null;
+            _config4 = null;
             _config3 = null;
             _config2 = null;
             _config1 = null;
@@ -5069,6 +5118,8 @@ namespace MFA
         /// </summary>
         protected override void EndProcessing()
         {
+            _config5 = null;
+            _config4 = null;
             _config3 = null;
             _config2 = null;
             _config1 = null;
@@ -5086,12 +5137,9 @@ namespace MFA
     /// <para type="description">Set Secret Keys configuration options.</para>
     /// </summary>
     /// <example>
-    ///   <para>Set-MFAConfigKeys -Config $cfg</para>
-    /// </example>
-    /// <example>
     ///   <para>$cfg = Get-MFASecurity -Kind RSA</para>
     ///   <para>$cfg.CertificatePerUser = $true</para>
-    ///   <para>Set-MFAConfigKeys $cfg</para>
+    ///   <para>Set-MFASecurity -Kind RSA $cfg</para>
     /// </example>
     [Cmdlet(VerbsCommon.Set, "MFASecurity", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
     [PrimaryServerRequired]
@@ -5102,12 +5150,16 @@ namespace MFA
         private SECRNGDynamicParameters _config1;
         private SECRSADynamicParameters _config2;
         private SECBIOMETRICDynamicParameters _config3;
-        private SECWSMANDynamicParameters _config4;
+        private SECAESDynamicParameters _config4;
+        private SECCUSTOMDynamicParameters _config5;
+        private SECWSMANDynamicParameters _config6;
 
-        private FlatRngSecurity _target1;
-        private FlatRsaSecurity _target2;
+        private FlatRNGSecurity _target1;
+        private FlatRSASecurity _target2;
         private FlatBiometricSecurity _target3;
-        private FlatWsManSecurity _target4;
+        private FlatAESSecurity _target4;
+        private FlatCustomSecurity _target5;
+        private FlatWsManSecurity _target6;
 
         private PSSecurityMode _securitymode = PSSecurityMode.RNG;
         internal bool SecurityModeChanged { get; private set; } = false;
@@ -5117,7 +5169,7 @@ namespace MFA
         /// <para type="description">Provider Type parameter, (RNG, RSA, BIOMETRIC, CUSTOM, WSMAN).</para>
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ParameterSetName = "Item", ValueFromPipeline = true)]
-        [ValidateSet("RNG", "RSA", "BIOMETRIC", "WSMAN")]   
+        [ValidateRange(PSSecurityMode.RNG, PSSecurityMode.WSMAN)]
         public PSSecurityMode Kind
         {
             get
@@ -5163,9 +5215,15 @@ namespace MFA
                     case PSSecurityMode.BIOMETRIC:
                         _config3 = new SECBIOMETRICDynamicParameters();
                         return _config3;
-                    case PSSecurityMode.WSMAN:
-                        _config4 = new SECWSMANDynamicParameters();
+                    case PSSecurityMode.AES:
+                        _config4 = new SECAESDynamicParameters();  
                         return _config4;
+                    case PSSecurityMode.CUSTOM:
+                        _config5 = new SECCUSTOMDynamicParameters();  
+                        return _config5;
+                    case PSSecurityMode.WSMAN:
+                        _config6 = new SECWSMANDynamicParameters();
+                        return _config5;
                     default:
                         break;
                 }
@@ -5187,13 +5245,13 @@ namespace MFA
                     switch (Kind)
                     {
                         case PSSecurityMode.RNG:
-                            _target1 = new FlatRngSecurity();
+                            _target1 = new FlatRNGSecurity();
                             _target1.Load(this.Host);
                             if (_config1.KeyGeneratorChanged)
                                 _target1.KeyGenerator = (KeyGeneratorMode)_config1.KeyGenerator;
                             break;
                         case PSSecurityMode.RSA:
-                            _target2 = new FlatRsaSecurity();
+                            _target2 = new FlatRSASecurity();
                             _target2.Load(this.Host);
                             if (_config2.CertificatePerUserChanged)
                                 _target2.CertificatePerUser = _config2.CertificatePerUser;
@@ -5201,6 +5259,20 @@ namespace MFA
                                 _target2.CertificateThumbprint = _config2.CertificateThumbprint;
                             if (_config2.CertificateValidityChanged)
                                 _target2.CertificateValidity= _config2.CertificateValidity;
+                            break;
+                        case PSSecurityMode.AES:
+                            _target4 = new FlatAESSecurity();
+                            _target4.Load(this.Host);
+                            if (_config4.KeyGeneratorChanged)
+                                _target4.AESKeyGenerator = (AESKeyGeneratorMode)_config4.AESKeyGenerator;
+                            break;
+                        case PSSecurityMode.CUSTOM: 
+                            _target5 = new FlatCustomSecurity();
+                            _target5.Load(this.Host);
+                            if (_config5.ImplementationChanged)
+                                _target5.CustomFullyQualifiedImplementation = _config5.FullyQualifiedImplementation;
+                            if (_config5.ParametersChanged)
+                                _target5.CustomParameters = _config5.Parameters;
                             break;
                         case PSSecurityMode.BIOMETRIC:
                             _target3 = new FlatBiometricSecurity();
@@ -5222,18 +5294,17 @@ namespace MFA
                             if (_config3.UserVerificationMethodChanged)
                                 _target3.UserVerificationMethod = _config3.UserVerificationMethod;
                             break;
-                            break;
                         case PSSecurityMode.WSMAN:
-                            _target4 = new FlatWsManSecurity();
-                            _target4.Load(this.Host);
-                            if (_config4.PortChanged)
-                                _target4.Port = _config4.Port;
-                            if (_config4.AppNameChanged)
-                                _target4.AppName = _config4.AppName;
-                            if (_config4.ShellUriChanged)
-                                _target4.ShellUri = _config4.ShellUri;
-                            if (_config4.TimeOutChanged)
-                                _target4.TimeOut = _config4.TimeOut;
+                            _target6 = new FlatWsManSecurity();
+                            _target6.Load(this.Host);
+                            if (_config6.PortChanged)
+                                _target6.Port = _config6.Port;
+                            if (_config6.AppNameChanged)
+                                _target6.AppName = _config6.AppName;
+                            if (_config6.ShellUriChanged)
+                                _target6.ShellUri = _config6.ShellUri;
+                            if (_config6.TimeOutChanged)
+                                _target6.TimeOut = _config6.TimeOut;
                             break;
                     }
                 }
@@ -5259,17 +5330,28 @@ namespace MFA
                         switch (Kind)
                         {
                             case PSSecurityMode.RNG:
-                                if (Config is PSRngSecurity)
-                                    ((FlatRngSecurity)((PSRngSecurity)Config)).Update(this.Host);
+                                if (Config is PSRNGSecurity)
+                                    ((FlatRNGSecurity)((PSRNGSecurity)Config)).Update(this.Host);
                                 else
                                     throw new Exception(error);
                                 break;
                             case PSSecurityMode.RSA:
-                                if (Config is PSRsaSecurity)
-                                    ((FlatRsaSecurity)((PSRsaSecurity)Config)).Update(this.Host);
+                                if (Config is PSRSASecurity)
+                                    ((FlatRSASecurity)((PSRSASecurity)Config)).Update(this.Host);
                                 else
                                     throw new Exception(error);
-
+                                break;
+                            case PSSecurityMode.AES:
+                                if (Config is PSAESSecurity)
+                                    ((FlatAESSecurity)((PSAESSecurity)Config)).Update(this.Host);
+                                else
+                                    throw new Exception(error);
+                                break;
+                            case PSSecurityMode.CUSTOM:
+                                if (Config is PSCustomSecurity)
+                                    ((FlatCustomSecurity)((PSCustomSecurity)Config)).Update(this.Host);
+                                else
+                                    throw new Exception(error);
                                 break;
                             case PSSecurityMode.BIOMETRIC:
                                 if (Config is PSBiometricSecurity)
@@ -5590,7 +5672,7 @@ namespace MFA
         internal bool KeyGeneratorChanged { get; private set; }
 
         /// <summary>
-        /// <para type="description">Used when RNG is selected, for choosing the size of the generated random number (128 to 512 bytes).</para> 
+        /// <para type="description">Used when RNG is selected, for choosing the size of the generated random number (128 to 512 bits).</para> 
         /// </summary>
         [Parameter(ParameterSetName = "Identity")]
         [ValidateNotNullOrEmpty()]
@@ -5604,6 +5686,73 @@ namespace MFA
             }
         }
     }
+
+    /// <summary>
+    /// SECAESDynamicParameters class implementation
+    /// </summary>
+    internal class SECAESDynamicParameters
+    {
+        private PSAESKeyGeneratorMode _keygenerator;
+        internal bool KeyGeneratorChanged { get; private set; }
+
+        /// <summary>
+        /// <para type="description">Used when RNG is selected, for choosing the size of the generated random number (512 to 1024 bits).</para> 
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public PSAESKeyGeneratorMode AESKeyGenerator
+        {
+            get { return _keygenerator; }
+            set
+            {
+                _keygenerator = value;
+                KeyGeneratorChanged = true;
+            }
+        }
+    }
+
+    /// <summary>
+    /// SECCUSTOMDynamicParameters class implementation
+    /// </summary>
+    internal class SECCUSTOMDynamicParameters
+    {
+        private string _implementation;
+        private string _parameters;
+        internal bool ParametersChanged { get; private set; }
+
+        internal bool ImplementationChanged { get; private set; }
+
+        /// <summary>
+        /// <para type="description">Used when CUSTOM is selected.</para> 
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public string FullyQualifiedImplementation
+        {
+            get { return _implementation; }
+            set
+            {
+                _implementation = value;
+                ImplementationChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Full qualified implementation parameters for Custom Security.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateNotNullOrEmpty()]
+        public string Parameters
+        {
+            get { return _parameters; }
+            set
+            {
+                _parameters = value;
+                ParametersChanged = true;
+            }
+        }
+    }
+
     #endregion
 
     #region Set-MFAPolicyTemplate
@@ -7447,6 +7596,69 @@ namespace MFA
                 {
                     ManagementService.ExportMFAMailTemplates(Host, LCID);
                     this.Host.UI.WriteLine(ConsoleColor.Green, this.Host.UI.RawUI.BackgroundColor, infos_strings.InfosMailTemplateExported);
+                }
+                catch (Exception ex)
+                {
+                    this.ThrowTerminatingError(new ErrorRecord(ex, "4024", ErrorCategory.OperationStopped, this));
+                }
+            }
+        }
+    }
+    #endregion
+
+    #region Install-MFASamples
+    /// <summary>
+    ///     <para type="synopsis">Install & configure MFA Samples</para>
+    /// </summary>
+    /// <example>
+    ///     <para>Install-MFASamples -Kind Quiz</para>
+    /// </example>
+    [PrimaryServerRequired, AdministratorsRightsRequired]
+    [Cmdlet(VerbsLifecycle.Install, "MFASamples", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
+    public sealed class InstallMFASamples : MFACmdlet
+    {
+        /// <summary>
+        /// <para type="description">Kind.</para>
+        /// </summary>
+        [Parameter(Mandatory = true, ParameterSetName = "Data")]
+        public PSSampleKind Kind { get; set; } = PSSampleKind.QuizProviderSample;
+
+        /// <summary>
+        /// <para type="description">Kind.</para>
+        /// </summary>
+        [Parameter(Mandatory = false, ParameterSetName = "Data")]
+        public SwitchParameter Reset { get; set; } = false;
+
+        /// <summary>
+        /// BeginProcessing method implementation
+        /// </summary>
+        protected override void BeginProcessing()
+        {
+            base.BeginProcessing();
+            try
+            {
+                ManagementService.Initialize(this.Host, false);
+            }
+            catch (Exception ex)
+            {
+                this.ThrowTerminatingError(new ErrorRecord(ex, "4032", ErrorCategory.OperationStopped, this));
+            }
+        }
+
+        /// <summary>
+        /// ProcessRecord method override
+        /// </summary>
+        protected override void ProcessRecord()
+        {
+            if (ShouldProcess("Install MFA Sample " + Kind.ToString() + " ? "))
+            {
+                try
+                {
+                    ManagementService.InstallMFASample(Host, (FlatSampleKind)Kind, Reset.ToBool());
+                    if (!Reset)
+                        this.Host.UI.WriteLine(ConsoleColor.Green, this.Host.UI.RawUI.BackgroundColor, infos_strings.InfosSampleInstalled);
+                    else
+                        this.Host.UI.WriteLine(ConsoleColor.Green, this.Host.UI.RawUI.BackgroundColor, infos_strings.InfosSampleUnInstalled);
                 }
                 catch (Exception ex)
                 {

@@ -238,7 +238,7 @@
     <value>Autentificarea telefonului mobil</value>
   </data>
   <data name="SMSUIMessage" xml:space="preserve">
-    <value>Am trimis un SMS care conține un cod de verificare. {0}</value>
+    <value>Am trimis un SMS care conține un cod de verificare. </value>
   </data>
   <data name="SMSUIOTPLabel" xml:space="preserve">
     <value>Codul de acces primit prin telefon</value>
@@ -248,5 +248,26 @@
   </data>
   <data name="SMSWIZEnroll" xml:space="preserve">
     <value>Înscrierea telefonului meu</value>
+  </data>
+  <data name="PROVIDEROTPDESCRIPTION" xml:space="preserve">
+    <value>Furnizor multi-factor TOTP</value>
+  </data>
+  <data name="PROVIDERSMSDESCRIPTION" xml:space="preserve">
+    <value>Exemplu de furnizor multi-factor SMS</value>
+  </data>
+  <data name="PROVIDEREMAILDESCRIPTION" xml:space="preserve">
+    <value>Furnizor multi-factor de e-mail</value>
+  </data>
+  <data name="OTPUIWIZComment" xml:space="preserve">
+    <value>Scanați codul QR cu o aplicație TOTP precum Microsoft Authenticator, Google Authenticator pentru înregistrarea contului dvs.</value>
+  </data>
+  <data name="MAILUIWIZComment" xml:space="preserve">
+    <value>Trebuie să introduceți o adresă de e-mail pentru a confirma identitatea. Acest e-mail trebuie să fie accesibil fără a fi nevoie de verificarea întreprinderii (adresa de e-mail personală)</value>
+  </data>
+  <data name="SMSUIWIZComment" xml:space="preserve">
+    <value>Trebuie să introduceți numărul de telefon pentru a vă confirma identitatea. Acest telefon trebuie să fie accesibil.</value>
+  </data>
+  <data name="PROVIDERPLUGDESCRIPTION" xml:space="preserve">
+    <value>{0} furnizor multi-factor (Plug)</value>
   </data>
 </root>

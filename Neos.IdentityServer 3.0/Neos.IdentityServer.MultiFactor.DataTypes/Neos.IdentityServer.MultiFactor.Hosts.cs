@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2020 Neos-Sdi (http://www.neos-sdi.com)                                                                                                                                    //                        
+// Copyright (c) 2020 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -528,6 +528,7 @@ namespace Neos.IdentityServer.MultiFactor
                 KeysConfig.KeyGenerator = KeyGeneratorMode.ClientSecret512;
                 KeysConfig.KeyFormat = SecretKeyFormat.RNG;
                 KeysConfig.KeySize = KeySizeMode.KeySize1024;
+                KeysConfig.AESKeyGenerator = AESKeyGeneratorMode.AESSecret1024;
                 KeysConfig.CertificateThumbprint = Thumbprint.Empty;
                 KeysConfig.CertificatePerUser = false;
 
@@ -564,6 +565,14 @@ namespace Neos.IdentityServer.MultiFactor
                 ExternalProvider.Sha1Salt = "0x1230456789ABCDEF";
                 ExternalProvider.Parameters.Data = string.Empty;
                 ExternalProvider.FullQualifiedImplementation = string.Empty;
+                if (ExternalProvider.FullQualifiedImplementation.ToLower().StartsWith("neos.identityserver.multifactor.sms.smscall"))
+                    ExternalProvider.FullQualifiedImplementation = "Neos.IdentityServer.Multifactor.Samples.SMSCall, Neos.IdentityServer.MultiFactor.Samples, Version=3.0.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2";
+                if (ExternalProvider.FullQualifiedImplementation.ToLower().StartsWith("neos.identityserver.multifactor.samples.smscall"))
+                    ExternalProvider.FullQualifiedImplementation = "Neos.IdentityServer.MultiFactor.Samples.SMSCall, Neos.IdentityServer.MultiFactor.Samples, Version=3.0.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2";
+                if (ExternalProvider.FullQualifiedImplementation.ToLower().StartsWith("neos.identityserver.multifactor.sms.neossmsprovider"))
+                    ExternalProvider.FullQualifiedImplementation = "Neos.IdentityServer.MultiFactor.Samples.NeosSMSProvider, Neos.IdentityServer.MultiFactor.Samples, Version=3.0.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2";
+                if (ExternalProvider.FullQualifiedImplementation.ToLower().StartsWith("neos.identityserver.multifactor.samples.neossmsprovider"))
+                    ExternalProvider.FullQualifiedImplementation = "Neos.IdentityServer.MultiFactor.Samples.NeosSMSProvider, Neos.IdentityServer.MultiFactor.Samples, Version=3.0.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2";
 
                 AzureProvider.TenantId = "contoso.onmicrosoft.com";
                 AzureProvider.ThumbPrint = Thumbprint.Demo;
@@ -583,8 +592,8 @@ namespace Neos.IdentityServer.MultiFactor
                 Hosts.SQLServerHost.ThumbPrint = Thumbprint.Demo;
                 Hosts.SQLServerHost.MaxRows = 10000;
 
-                Hosts.CustomStoreHost.DataRepositoryFullyQualifiedImplementation = "Neos.IdentityServer.MultiFactor.Data.InMemoryDataRepositoryService, Neos.IdentityServer.MultiFactor.Repository.Samples, Version=3.0.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2";
-                Hosts.CustomStoreHost.KeysRepositoryFullyQualifiedImplementation = "Neos.IdentityServer.MultiFactor.Data.InMemoryKeys2RepositoryService, Neos.IdentityServer.MultiFactor.Repository.Samples, Version=3.0.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2";
+                Hosts.CustomStoreHost.DataRepositoryFullyQualifiedImplementation = "Neos.IdentityServer.MultiFactor.Samples.InMemoryDataRepositoryService, Neos.IdentityServer.MultiFactor.Samples, Version=3.0.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2";
+                Hosts.CustomStoreHost.KeysRepositoryFullyQualifiedImplementation = "Neos.IdentityServer.MultiFactor.Samples.InMemoryKeys2RepositoryService, Neos.IdentityServer.MultiFactor.Samples, Version=3.0.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2";
             }
         }
 
@@ -626,9 +635,9 @@ namespace Neos.IdentityServer.MultiFactor
             Hosts.SQLServerHost.IsAlwaysEncrypted = false;
 
             if (string.IsNullOrEmpty(Hosts.CustomStoreHost.DataRepositoryFullyQualifiedImplementation))
-                Hosts.CustomStoreHost.DataRepositoryFullyQualifiedImplementation = "Neos.IdentityServer.MultiFactor.Data.InMemoryDataRepositoryService, Neos.IdentityServer.MultiFactor.Repository.Samples, Version=3.0.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2";
+                Hosts.CustomStoreHost.DataRepositoryFullyQualifiedImplementation = "Neos.IdentityServer.MultiFactor.Samples.InMemoryDataRepositoryService, Neos.IdentityServer.MultiFactor.Samples, Version=3.0.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2";
             if (string.IsNullOrEmpty(Hosts.CustomStoreHost.KeysRepositoryFullyQualifiedImplementation))
-                Hosts.CustomStoreHost.KeysRepositoryFullyQualifiedImplementation = "Neos.IdentityServer.MultiFactor.Data.InMemoryKeys2RepositoryService, Neos.IdentityServer.MultiFactor.Repository.Samples, Version=3.0.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2";
+                Hosts.CustomStoreHost.KeysRepositoryFullyQualifiedImplementation = "Neos.IdentityServer.MultiFactor.Samples.InMemoryKeys2RepositoryService, Neos.IdentityServer.MultiFactor.Samples, Version=3.0.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2";
 
             if (string.IsNullOrEmpty(MailProvider.From))
                 MailProvider.From = "sender.email@contoso.com";
@@ -648,9 +657,10 @@ namespace Neos.IdentityServer.MultiFactor
 
             if (this.KeysConfig != null)
             {
-                KeysConfig.KeyGenerator = KeyGeneratorMode.ClientSecret512;
                 KeysConfig.KeyFormat = SecretKeyFormat.RNG;
                 KeysConfig.KeySize = KeySizeMode.KeySize1024;
+                KeysConfig.KeyGenerator = KeyGeneratorMode.ClientSecret512;
+                KeysConfig.AESKeyGenerator = AESKeyGeneratorMode.AESSecret1024;
                 KeysConfig.CertificatePerUser = false;
                 if (!Thumbprint.IsValid(this.KeysConfig.CertificateThumbprint))
                     KeysConfig.CertificateThumbprint = Thumbprint.Empty;
@@ -658,9 +668,13 @@ namespace Neos.IdentityServer.MultiFactor
             if (this.ExternalProvider != null)
             {
                 if (ExternalProvider.FullQualifiedImplementation.ToLower().StartsWith("neos.identityserver.multifactor.sms.smscall"))
-                    ExternalProvider.FullQualifiedImplementation = "Neos.IdentityServer.Multifactor.SMS.smscall, Neos.IdentityServer.Multifactor.SMS.Azure, Version=3.0.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2";
+                    ExternalProvider.FullQualifiedImplementation = "Neos.IdentityServer.Multifactor.Samples.SMSCall, Neos.IdentityServer.MultiFactor.Samples, Version=3.0.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2";
+                if (ExternalProvider.FullQualifiedImplementation.ToLower().StartsWith("neos.identityserver.multifactor.samples.smscall"))
+                    ExternalProvider.FullQualifiedImplementation = "Neos.IdentityServer.MultiFactor.Samples.SMSCall, Neos.IdentityServer.MultiFactor.Samples, Version=3.0.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2";
                 if (ExternalProvider.FullQualifiedImplementation.ToLower().StartsWith("neos.identityserver.multifactor.sms.neossmsprovider"))
-                    ExternalProvider.FullQualifiedImplementation = "Neos.IdentityServer.Multifactor.SMS.NeosSMSProvider, Neos.IdentityServer.Multifactor.SMS.Azure, Version=3.0.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2";
+                    ExternalProvider.FullQualifiedImplementation = "Neos.IdentityServer.MultiFactor.Samples.NeosSMSProvider, Neos.IdentityServer.MultiFactor.Samples, Version=3.0.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2";
+                if (ExternalProvider.FullQualifiedImplementation.ToLower().StartsWith("neos.identityserver.multifactor.samples.neossmsprovider"))
+                    ExternalProvider.FullQualifiedImplementation = "Neos.IdentityServer.MultiFactor.Samples.NeosSMSProvider, Neos.IdentityServer.MultiFactor.Samples, Version=3.0.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2";
                 if (string.IsNullOrEmpty(this.ExternalProvider.Company))
                     this.ExternalProvider.Company = "Contoso";
                 if (string.IsNullOrEmpty(this.ExternalProvider.Sha1Salt))
@@ -855,9 +869,13 @@ namespace Neos.IdentityServer.MultiFactor
     public class KeysManagerConfig
     {
         private string _thumbprint;
+        private XmlCDataSection _cdata;
 
         [XmlAttribute("KeyGenerator")]
         public KeyGeneratorMode KeyGenerator { get; set; } = KeyGeneratorMode.ClientSecret512;
+
+        [XmlAttribute("AESKeyGenerator")]
+        public AESKeyGeneratorMode AESKeyGenerator { get; set; } = AESKeyGeneratorMode.AESSecret1024;
 
         [XmlAttribute("KeyFormat")]
         public SecretKeyFormat KeyFormat { get; set; } = SecretKeyFormat.RSA;
@@ -896,6 +914,32 @@ namespace Neos.IdentityServer.MultiFactor
 
         [XmlAttribute("KeySize")]
         public KeySizeMode KeySize { get; set; } = KeySizeMode.KeySize1024;
+
+        [XmlAttribute("CustomFullyQualifiedImplementation")]
+        public string CustomFullyQualifiedImplementation { get; set; }
+
+        [XmlElement("CustomParameters", typeof(XmlCDataSection))]
+        public XmlCDataSection CustomParameters
+        {
+            get
+            {
+                if (_cdata == null)
+                {
+                    XmlDocument doc = new XmlDocument();
+                    _cdata = doc.CreateCDataSection(null);
+                }
+                return _cdata;
+            }
+            set
+            {
+                if (_cdata == null)
+                {
+                    XmlDocument doc = new XmlDocument();
+                    _cdata = doc.CreateCDataSection(null);
+                }
+                _cdata.Data = value.Data;
+            }
+        }
     }
     #endregion
 
@@ -1084,6 +1128,202 @@ namespace Neos.IdentityServer.MultiFactor
         public WebAuthNProviderConfig Configuration { get; set; } = new WebAuthNProviderConfig();
         public WebAuthNProviderOptions Options { get; set; } = new WebAuthNProviderOptions();
     }
+    #endregion
+
+    #region Keys Manager Parameters
+    /// <summary>
+    /// ExternalProvider contract
+    /// </summary>
+    public abstract class BaseKeysManagerParams
+    {
+        public BaseKeysManagerParams (string xorsecret)
+        {
+            XORSecret = xorsecret;
+        }
+
+        /// <summary>
+        /// XORSecret propertiy
+        /// </summary>
+        public string XORSecret { get; private set; }
+
+        /// <summary>
+        /// KeySizeMode property
+        /// </summary>
+        public KeySizeMode KeySizeMode { get; internal set; }
+
+        /// <summary>
+        /// KeysFormat abstract property
+        /// </summary>
+        public abstract SecretKeyFormat KeysFormat { get; }
+
+        /// <summary>
+        /// PatchFromSecurityConfig method implementation
+        /// </summary>
+        internal abstract void PatchFromSecurityConfig(KeysManagerConfig config);
+    }
+
+    /// <summary>
+    /// RNGKeysManagerParams contract
+    /// </summary>
+    internal class RNGKeysManagerParams: BaseKeysManagerParams
+    {
+        public RNGKeysManagerParams(string xorsecret):base(xorsecret)
+        {
+        }
+
+        /// <summary>
+        /// KeysFormat Override property
+        /// </summary>
+        public override SecretKeyFormat KeysFormat
+        {
+            get { return SecretKeyFormat.RNG; }
+        }
+
+        /// <summary>
+        /// KeyGenerator property
+        /// </summary>
+        public KeyGeneratorMode KeyGenerator { get; private set; }
+
+        /// <summary>
+        /// PatchFromSecurityConfig method implementation
+        /// </summary>
+        internal override void PatchFromSecurityConfig(KeysManagerConfig config)
+        {
+            KeyGenerator = config.KeyGenerator;
+            KeySizeMode = config.KeySize;
+        }
+    }
+
+    /// <summary>
+    /// AESKeysManagerParams contract
+    /// </summary>
+    internal class AESKeysManagerParams : BaseKeysManagerParams
+    {
+        public AESKeysManagerParams(string xorsecret) : base(xorsecret)
+        {
+        }
+
+        /// <summary>
+        /// KeysFormat Override property
+        /// </summary>
+        public override SecretKeyFormat KeysFormat
+        {
+            get { return SecretKeyFormat.AES; }
+        }
+
+        /// <summary>
+        /// AESKeyGenerator property
+        /// </summary>
+        public AESKeyGeneratorMode AESKeyGenerator { get; private set; }
+
+        /// <summary>
+        /// PatchFromSecurityConfig method implementation
+        /// </summary>
+        internal override void PatchFromSecurityConfig(KeysManagerConfig config)
+        {
+            AESKeyGenerator = config.AESKeyGenerator;
+        }
+    }
+
+    /// <summary>
+    /// RSAKeysManagerParams contract
+    /// </summary>
+    internal class RSAKeysManagerParams : BaseKeysManagerParams
+    {
+        public RSAKeysManagerParams(string xorsecret) : base(xorsecret)
+        {
+        }
+
+        /// <summary>
+        /// KeysFormat Override property
+        /// </summary>
+        public override SecretKeyFormat KeysFormat
+        {
+            get { return SecretKeyFormat.RSA; }
+        }
+
+
+        /// <summary>
+        /// CertificateThumbprint property
+        /// </summary>
+        public string CertificateThumbprint { get; private set; }
+
+        /// <summary>
+        /// PatchFromSecurityConfig method implementation
+        /// </summary>
+        internal override void PatchFromSecurityConfig(KeysManagerConfig config)
+        {
+            CertificateThumbprint = config.CertificateThumbprint;
+        }
+    }
+
+    /// <summary>
+    /// RSA2KeysManagerParams contract
+    /// </summary>
+    internal class RSA2KeysManagerParams : BaseKeysManagerParams
+    {
+        public RSA2KeysManagerParams(string xorsecret) : base(xorsecret)
+        {
+        }
+
+        /// <summary>
+        /// KeysFormat Override property
+        /// </summary>
+        public override SecretKeyFormat KeysFormat
+        {
+            get { return SecretKeyFormat.RSA; }
+        }
+
+        /// <summary>
+        /// CertificateThumbprint property
+        /// </summary>
+        public string CertificateThumbprint { get; private set; }
+
+        /// <summary>
+        /// CertificateValidity property
+        /// </summary>
+        public int CertificateValidity { get; private set; }
+
+        /// <summary>
+        /// PatchFromSecurityConfig method implementation
+        /// </summary>
+        internal override void PatchFromSecurityConfig(KeysManagerConfig config)
+        {
+            CertificateThumbprint = config.CertificateThumbprint;
+            CertificateValidity = config.CertificateValidity;
+        }
+    }
+    /// <summary>
+    /// CustomKeysManagerParams contract
+    /// </summary>
+    public class CustomKeysManagerParams : BaseKeysManagerParams
+    {
+        public CustomKeysManagerParams(string xorsecret) : base(xorsecret)
+        {
+        }
+
+        /// <summary>
+        /// KeysFormat Override propertiy
+        /// </summary>
+        public override SecretKeyFormat KeysFormat
+        {
+            get { return SecretKeyFormat.CUSTOM; }
+        }
+
+        /// <summary>
+        /// CustomParameters poroperty
+        /// </summary>
+        public string CustomParameters { get; set; }
+
+        /// <summary>
+        /// PatchFromSecurityConfig method implementation
+        /// </summary>
+        internal override void PatchFromSecurityConfig(KeysManagerConfig config)
+        {
+            CustomParameters = config.CustomParameters.Data;
+        }
+    }
+
     #endregion
 
     #region ExternalOTPProvider
@@ -1565,6 +1805,9 @@ namespace Neos.IdentityServer.MultiFactor
 
         [XmlAttribute("RequireValidAttestationRoot")]
         public bool RequireValidAttestationRoot { get; set; }
+
+        [XmlAttribute("ShowPII")]
+        public bool ShowPII { get; set; } = false;
     }
 
     /// <summary>
@@ -1903,6 +2146,9 @@ namespace Neos.IdentityServer.MultiFactor
 
         [XmlAttribute("MaxRows")]
         public int MaxRows { get; set; } = 10000;
+
+        [XmlAttribute("UseSSL")]
+        public bool UseSSL { get; set; } = false;
 
         /// <summary>
         /// ApplyAttributesTemplate method implementation

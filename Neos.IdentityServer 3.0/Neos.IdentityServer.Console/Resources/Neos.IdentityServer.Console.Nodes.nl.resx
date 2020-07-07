@@ -219,17 +219,8 @@
   <data name="SECURITYSCOPENODEDESC" xml:space="preserve">
     <value>Beveiliging instellen</value>
   </data>
-  <data name="SECURITYSCOPERNG" xml:space="preserve">
-    <value>RNG (Random Number Generator)</value>
-  </data>
   <data name="SECURITYSCOPEROOT" xml:space="preserve">
     <value>Beveiligingsinstellingen</value>
-  </data>
-  <data name="SECURITYSCOPERSA" xml:space="preserve">
-    <value>RSA-certificaat</value>
-  </data>
-  <data name="SECURITYSCOPERSAX" xml:space="preserve">
-    <value>RSA-certificaten per gebruiker</value>
   </data>
   <data name="SERVICESCOPENODEDESC" xml:space="preserve">
     <value>Staat van dienstverlening</value>
@@ -359,5 +350,17 @@
   </data>
   <data name="CUSTOMSTORESCOPENODEDESC" xml:space="preserve">
     <value>Aangepaste winkelconfiguratie</value>
+  </data>
+  <data name="SECURITYSCOPERNG" xml:space="preserve">
+    <value>Gecodeerde sleutels RNG</value>
+  </data>
+  <data name="SECURITYSCOPERSA" xml:space="preserve">
+    <value>Asymetrische toetsen RSA</value>
+  </data>
+  <data name="SECURITYSCOPEAES" xml:space="preserve">
+    <value>Symetrische toetsen AES</value>
+  </data>
+  <data name="SECURITYSCOPECUSTOM" xml:space="preserve">
+    <value>Aangepaste toetsen</value>
   </data>
 </root>

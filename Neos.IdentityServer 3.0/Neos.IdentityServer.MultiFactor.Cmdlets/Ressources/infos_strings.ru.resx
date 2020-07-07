@@ -228,4 +228,10 @@
   <data name="InfosMailTemplateExported" xml:space="preserve">
     <value>Шаблоны почты правильно экспортируются!</value>
   </data>
+  <data name="InfosSampleInstalled" xml:space="preserve">
+    <value>МИД пример установлен !</value>
+  </data>
+  <data name="InfosSampleUnInstalled" xml:space="preserve">
+    <value>МИД пример UnInstalled !</value>
+  </data>
 </root>

@@ -219,17 +219,8 @@
   <data name="SECURITYSCOPENODEDESC" xml:space="preserve">
     <value>Set de securitate</value>
   </data>
-  <data name="SECURITYSCOPERNG" xml:space="preserve">
-    <value>RNG (generator de numere aleatoare)</value>
-  </data>
   <data name="SECURITYSCOPEROOT" xml:space="preserve">
     <value>Configurare securitate</value>
-  </data>
-  <data name="SECURITYSCOPERSA" xml:space="preserve">
-    <value>Certificat RSA</value>
-  </data>
-  <data name="SECURITYSCOPERSAX" xml:space="preserve">
-    <value>Certificate RSA per utilizator</value>
   </data>
   <data name="SERVICESCOPENODEDESC" xml:space="preserve">
     <value>Starea serviciilor</value>
@@ -359,5 +350,17 @@
   </data>
   <data name="CUSTOMSTORESCOPENODEDESC" xml:space="preserve">
     <value>Configurare magazin personalizat</value>
+  </data>
+  <data name="SECURITYSCOPERNG" xml:space="preserve">
+    <value>Chei codificate RNG</value>
+  </data>
+  <data name="SECURITYSCOPERSA" xml:space="preserve">
+    <value>Chei asimetrice RSA</value>
+  </data>
+  <data name="SECURITYSCOPEAES" xml:space="preserve">
+    <value>Chei simetrice AES</value>
+  </data>
+  <data name="SECURITYSCOPECUSTOM" xml:space="preserve">
+    <value>Taste particularizate</value>
   </data>
 </root>

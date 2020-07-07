@@ -253,16 +253,16 @@
     <value>Security configuration</value>
   </data>
   <data name="SECURITYSCOPERNG" xml:space="preserve">
-    <value>RNG (random number generator)</value>
+    <value>Encoded Keys RNG </value>
   </data>
   <data name="SECURITYSCOPEROOT" xml:space="preserve">
     <value>Security configuration</value>
   </data>
   <data name="SECURITYSCOPERSA" xml:space="preserve">
-    <value>RSA Certificate</value>
+    <value>Asymetric Keys RSA</value>
   </data>
-  <data name="SECURITYSCOPERSAX" xml:space="preserve">
-    <value>RSA Certificates per user</value>
+  <data name="SECURITYSCOPEAES" xml:space="preserve">
+    <value>Symetric Keys AES</value>
   </data>
   <data name="SECURITYSCOPEWSMAN" xml:space="preserve">
     <value>WsMan</value>
@@ -359,5 +359,8 @@
   </data>
   <data name="WEBAUTHNSCOPEDESC" xml:space="preserve">
     <value>WebAuthN biometrics</value>
+  </data>
+  <data name="SECURITYSCOPECUSTOM" xml:space="preserve">
+    <value>Custom Keys</value>
   </data>
 </root>

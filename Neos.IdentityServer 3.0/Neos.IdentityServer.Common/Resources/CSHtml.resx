@@ -185,6 +185,9 @@
     <value>Enter Code</value>
     <comment>Code d'accès reçu par email</comment>
   </data>
+  <data name="MAILUIWIZComment" xml:space="preserve">
+    <value>You must enter an email address to confirm your identiy. This email must be reachable without needing enterprise verification (personal email address)</value>
+  </data>
   <data name="MAILUIWIZLabel" xml:space="preserve">
     <value>Enroll your email address</value>
   </data>
@@ -225,11 +228,26 @@
     <value>Enter Code</value>
     <comment>Code d'accès à usage unique</comment>
   </data>
+  <data name="OTPUIWIZComment" xml:space="preserve">
+    <value>Scan the QR Code with a TOTP application like Microsoft Authenticator, Google Authenticator for registering your account</value>
+  </data>
   <data name="OTPUIWIZLabel" xml:space="preserve">
     <value>Enroll Authenticator App</value>
   </data>
   <data name="OTPWIZEnroll" xml:space="preserve">
     <value>Enroll my authentication application</value>
+  </data>
+  <data name="PROVIDEREMAILDESCRIPTION" xml:space="preserve">
+    <value>Email Multi-Factor Provider</value>
+  </data>
+  <data name="PROVIDEROTPDESCRIPTION" xml:space="preserve">
+    <value>TOTP Multi-Factor Provider</value>
+  </data>
+  <data name="PROVIDERPLUGDESCRIPTION" xml:space="preserve">
+    <value>{0} Multi-Factor Provider (Plug)</value>
+  </data>
+  <data name="PROVIDERSMSDESCRIPTION" xml:space="preserve">
+    <value>SMS Multi-Factor Provider Sample</value>
   </data>
   <data name="SMSUICFGLabel" xml:space="preserve">
     <value>Phone number</value>
@@ -266,12 +284,15 @@
     <comment>Téléphone mobile d'authentification</comment>
   </data>
   <data name="SMSUIMessage" xml:space="preserve">
-    <value>We sent an SMS containing a verification code. {0}</value>
+    <value>We sent an SMS containing a verification code.</value>
     <comment>Nous avons envoyé un SMS contenant un code de vérification. {0}</comment>
   </data>
   <data name="SMSUIOTPLabel" xml:space="preserve">
     <value>Access code received by phone</value>
     <comment>Code d'accès reçu par téléphone</comment>
+  </data>
+  <data name="SMSUIWIZComment" xml:space="preserve">
+    <value>You must enter your phone number in order to confirm your identity. This phone must be reachable.</value>
   </data>
   <data name="SMSUIWIZLabel" xml:space="preserve">
     <value>Enroll your mobile</value>

@@ -210,4 +210,7 @@
   <data name="GLOBALManagement" xml:space="preserve">
     <value>Inscrever minhas opções do Azure</value>
   </data>
+  <data name="PROVIDERAZURESDESCRIPTION" xml:space="preserve">
+    <value>Microsoft Azure Provedor multi-fator</value>
+  </data>
 </root>

@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2020 Neos-Sdi (http://www.neos-sdi.com)                                                                                                                                    //                        
+// Copyright (c) 2020 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -463,7 +463,7 @@ namespace Neos.IdentityServer.MultiFactor
                 Array.Copy(buffer.Array, buffer.Offset, unencryptedBytes, 0, unencryptedBytes.Length);
 
                 byte[] cryptedBytes = null;
-                using (AESEncryption aes = new AESEncryption())
+                using (AESSystemEncryption aes = new AESSystemEncryption())
                 {
                     cryptedBytes = aes.Encrypt(unencryptedBytes);
                 }
@@ -488,7 +488,7 @@ namespace Neos.IdentityServer.MultiFactor
                 Array.Copy(buffer.Array, buffer.Offset, cryptedBytes, 0, cryptedBytes.Length);
 
                 byte[] unencryptedBytes = null;
-                using (AESEncryption aes = new AESEncryption())
+                using (AESSystemEncryption aes = new AESSystemEncryption())
                 {
                     unencryptedBytes = aes.Decrypt(cryptedBytes);
                 }
@@ -534,7 +534,7 @@ namespace Neos.IdentityServer.MultiFactor
                 stream.Read(unencryptedBytes, 0, (int)stream.Length);
 
                 byte[] cryptedBytes = null;
-                using (AESEncryption aes = new AESEncryption())
+                using (AESSystemEncryption aes = new AESSystemEncryption())
                 {
                     cryptedBytes = aes.Encrypt(unencryptedBytes);
                 }
@@ -551,7 +551,7 @@ namespace Neos.IdentityServer.MultiFactor
                 byte[] cryptedBytes = new byte[stream.Length];
                 stream.Read(cryptedBytes, 0, (int)stream.Length);
                 byte[] unencryptedBytes = null;
-                using (AESEncryption aes = new AESEncryption())
+                using (AESSystemEncryption aes = new AESSystemEncryption())
                 {
                     unencryptedBytes = aes.Decrypt(cryptedBytes);
                 }

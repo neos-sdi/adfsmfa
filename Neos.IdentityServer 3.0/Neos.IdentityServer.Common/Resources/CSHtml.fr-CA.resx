@@ -145,7 +145,7 @@
     <value>Adresse e-mail personnelle</value>
   </data>
   <data name="MAILUIChoiceLabel" xml:space="preserve">
-    <value>Recevez un e-mail sur mon adresse personnelle</value>
+    <value>Recevoir un e-mail sur mon adresse personnelle</value>
   </data>
   <data name="MAILUIConfigLabel" xml:space="preserve">
     <value>Envoyer un e-mail sur mon adresse personnelle</value>
@@ -172,10 +172,10 @@
     <value>Entrez le code</value>
   </data>
   <data name="MAILUIWIZLabel" xml:space="preserve">
-    <value>Inscrivez votre adresse e-mail</value>
+    <value>Enregistrer votre adresse e-mail</value>
   </data>
   <data name="MAILWIZEnroll" xml:space="preserve">
-    <value>Inscrivez mon adresse e-mail personnelle</value>
+    <value>Enregistrer mon adresse e-mail personnelle</value>
   </data>
   <data name="OTPUICFGLabel" xml:space="preserve">
     <value>Code d’accès à usage unique</value>
@@ -238,7 +238,7 @@
     <value>Authentification de téléphone mobile</value>
   </data>
   <data name="SMSUIMessage" xml:space="preserve">
-    <value>Nous avons envoyé un SMS contenant un code de vérification. {0}</value>
+    <value>Nous avons envoyé un SMS contenant un code de vérification.</value>
   </data>
   <data name="SMSUIOTPLabel" xml:space="preserve">
     <value>Code d’accès reçu par téléphone</value>
@@ -248,5 +248,26 @@
   </data>
   <data name="SMSWIZEnroll" xml:space="preserve">
     <value>Inscrivez mon téléphone</value>
+  </data>
+  <data name="PROVIDEROTPDESCRIPTION" xml:space="preserve">
+    <value>Fournisseur multifacteur TOTP</value>
+  </data>
+  <data name="PROVIDERSMSDESCRIPTION" xml:space="preserve">
+    <value>Fournisseur multifacteur SMS</value>
+  </data>
+  <data name="PROVIDEREMAILDESCRIPTION" xml:space="preserve">
+    <value>Fournisseur multifacteur par courriel</value>
+  </data>
+  <data name="PROVIDERPLUGDESCRIPTION" xml:space="preserve">
+    <value>Fournisseur multifacteur {0} (Plug)</value>
+  </data>
+  <data name="OTPUIWIZComment" xml:space="preserve">
+    <value>Numérisez le code QR avec une application TOTP comme Microsoft Authenticator, Google Authenticator pour l’enregistrement de votre compte</value>
+  </data>
+  <data name="MAILUIWIZComment" xml:space="preserve">
+    <value>Vous devez entrer une adresse e-mail pour confirmer votre identité. Cet e-mail doit être accessible sans avoir besoin de vérification de l’entreprise (adresse e-mail personnelle)</value>
+  </data>
+  <data name="SMSUIWIZComment" xml:space="preserve">
+    <value>Vous devez entrer votre numéro de téléphone afin de confirmer votre identité. Ce téléphone doit être joignable.</value>
   </data>
 </root>

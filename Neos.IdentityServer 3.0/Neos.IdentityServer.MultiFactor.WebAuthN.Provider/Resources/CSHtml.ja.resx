@@ -156,4 +156,10 @@
   <data name="BIOWIZEnroll" xml:space="preserve">
     <value>生体認証デバイスを登録する</value>
   </data>
+  <data name="PROVIDERBIODESCRIPTION" xml:space="preserve">
+    <value>バイオメトリクス多要素プロバイダ</value>
+  </data>
+  <data name="BIOUIWIZComment" xml:space="preserve">
+    <value>生体認証デバイスを管理します。個々のデバイスを追加、置換、または削除を選択します。</value>
+  </data>
 </root>

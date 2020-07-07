@@ -210,4 +210,7 @@
   <data name="GLOBALManagement" xml:space="preserve">
     <value>Зарегистрируйте параметры Azure</value>
   </data>
+  <data name="PROVIDERAZURESDESCRIPTION" xml:space="preserve">
+    <value>Мультифакторный поставщик Microsoft Azure</value>
+  </data>
 </root>

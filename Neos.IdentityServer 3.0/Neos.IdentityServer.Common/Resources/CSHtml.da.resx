@@ -238,7 +238,7 @@
     <value>Godkendelse af mobiltelefon</value>
   </data>
   <data name="SMSUIMessage" xml:space="preserve">
-    <value>Vi sendte en SMS med en bekræftelseskode. {0}</value>
+    <value>Vi sendte en SMS med en bekræftelseskode.</value>
   </data>
   <data name="SMSUIOTPLabel" xml:space="preserve">
     <value>Adgangskode modtaget via telefon</value>
@@ -248,5 +248,26 @@
   </data>
   <data name="SMSWIZEnroll" xml:space="preserve">
     <value>Tilmeld min telefon</value>
+  </data>
+  <data name="PROVIDEROTPDESCRIPTION" xml:space="preserve">
+    <value>TOTP-udbyder med flere faktorer</value>
+  </data>
+  <data name="PROVIDERSMSDESCRIPTION" xml:space="preserve">
+    <value>Eksempel på SMS-udbyder til udbydere</value>
+  </data>
+  <data name="PROVIDEREMAILDESCRIPTION" xml:space="preserve">
+    <value>E-mail-udbyder til flere faktorer</value>
+  </data>
+  <data name="OTPUIWIZComment" xml:space="preserve">
+    <value>Scan QR-koden med et TOTP-program som Microsoft Authenticator, Google Authenticator til registrering af din konto</value>
+  </data>
+  <data name="MAILUIWIZComment" xml:space="preserve">
+    <value>Du skal indtaste en e-mail-adresse for at bekræfte din identiy. Denne e-mail skal være tilgængelig uden at skulle bekræfte virksomheden (personlig e-mail-adresse)</value>
+  </data>
+  <data name="SMSUIWIZComment" xml:space="preserve">
+    <value>Du skal indtaste dit telefonnummer for at bekræfte din identitet. Denne telefon skal være tilgængelig.</value>
+  </data>
+  <data name="PROVIDERPLUGDESCRIPTION" xml:space="preserve">
+    <value>{0} leverandør med flere faktorer (plug)</value>
   </data>
 </root>

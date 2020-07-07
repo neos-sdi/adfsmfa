@@ -210,4 +210,7 @@
   <data name="GLOBALManagement" xml:space="preserve">
     <value>Rejestrowanie opcji platformy Azure</value>
   </data>
+  <data name="PROVIDERAZURESDESCRIPTION" xml:space="preserve">
+    <value>Dostawca wielu czynników platformy Microsoft Azure</value>
+  </data>
 </root>

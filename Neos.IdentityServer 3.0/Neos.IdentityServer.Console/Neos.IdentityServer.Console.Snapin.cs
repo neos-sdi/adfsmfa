@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2020 Neos-Sdi (http://www.neos-sdi.com)                                                                                                                                    //                        
+// Copyright (c) 2020 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -54,11 +54,15 @@ namespace Neos.IdentityServer.Console
         private ScopeNode ServiceAzureNode;
         private ScopeNode ServiceSecurityNode;
         private ScopeNode ServiceRNGNode;
+        private ScopeNode ServiceAESNode;
         private ScopeNode ServiceRSANode;
+        private ScopeNode ServiceCustomSecurityNode;
         private ScopeNode ServiceWebAuthNNode;
         private ScopeNode ServiceWsManNode;
         private ScopeNode UsersNode;
         private bool IsPrimary = true;
+
+
 
 
         /// <summary>
@@ -289,26 +293,43 @@ namespace Neos.IdentityServer.Console
                     // RNG
                     this.ServiceRNGNode = new ServiceSecurityRNGScopeNode();
                     FormViewDescription frng = new FormViewDescription();
-                    frng.DisplayName = "RGN Ramdom Number Generator";
+                    frng.DisplayName = "Encoded Keys RGN ";
                     frng.ControlType = typeof(ServiceSecurityRNGViewControl);
                     frng.ViewType = typeof(ServiceSecurityRNGFormView);
                     this.ServiceRNGNode.ViewDescriptions.Add(frng);
                     this.ServiceRNGNode.ViewDescriptions.DefaultIndex = 0;
 
+                    // AES
+                    this.ServiceAESNode = new ServiceSecurityAESScopeNode();
+                    FormViewDescription faes = new FormViewDescription();
+                    faes.DisplayName = "Symetric Keys AES";
+                    faes.ControlType = typeof(ServiceSecurityAESViewControl);
+                    faes.ViewType = typeof(ServiceSecurityAESFormView);
+                    this.ServiceAESNode.ViewDescriptions.Add(faes);
+                    this.ServiceAESNode.ViewDescriptions.DefaultIndex = 0;
+
                     // RSA
                     this.ServiceRSANode = new ServiceSecurityRSAScopeNode();
                     FormViewDescription frsa = new FormViewDescription();
-                    frsa.DisplayName = "RSA Key Generator";
+                    frsa.DisplayName = "Asymetric Keys RSA ";
                     frsa.ControlType = typeof(ServiceSecurityRSAViewControl);
                     frsa.ViewType = typeof(ServiceSecurityRSAFormView);
                     this.ServiceRSANode.ViewDescriptions.Add(frsa);
                     this.ServiceRSANode.ViewDescriptions.DefaultIndex = 0;
 
-                    // WSMAN
-                            
+                    // Custom
+                    this.ServiceCustomSecurityNode = new ServiceCustomSecurityScopeNode();
+                    FormViewDescription fcust = new FormViewDescription();
+                    fcust.DisplayName = "Custom Keys";
+                    fcust.ControlType = typeof(SecurityCustomViewControl);
+                    fcust.ViewType = typeof(ServiceSecurityCustomFormView);
+                    this.ServiceCustomSecurityNode.ViewDescriptions.Add(fcust);
+                    this.ServiceCustomSecurityNode.ViewDescriptions.DefaultIndex = 0;
+
+                    // WSMAN                           
                     this.ServiceWsManNode = new ServiceSecurityWSMANScopeNode();
                     FormViewDescription fwsman = new FormViewDescription();
-                    fwsman.DisplayName = "RSA Key Generator";
+                    fwsman.DisplayName = "WSMAN Configuration";
                     fwsman.ControlType = typeof(ServiceSecurityWSMANViewControl);   
                     fwsman.ViewType = typeof(ServiceSecurityWSMANFormView);
                     this.ServiceWsManNode.ViewDescriptions.Add(fwsman);
@@ -422,7 +443,9 @@ namespace Neos.IdentityServer.Console
 
                     this.RootNode.Children.Add(this.ServiceSecurityNode);
                     this.ServiceSecurityNode.Children.Add(this.ServiceRNGNode);
+                    this.ServiceSecurityNode.Children.Add(this.ServiceAESNode);
                     this.ServiceSecurityNode.Children.Add(this.ServiceRSANode);
+                    this.ServiceSecurityNode.Children.Add(this.ServiceCustomSecurityNode);
                     this.ServiceSecurityNode.Children.Add(this.ServiceWebAuthNNode);
                     this.ServiceSecurityNode.Children.Add(this.ServiceWsManNode);
 
@@ -466,15 +489,22 @@ namespace Neos.IdentityServer.Console
                 ((RefreshableScopeNode)this.ServiceCustomStorageNode).RefreshUI();
                 ((RefreshableScopeNode)this.ServiceSecurityNode).RefreshUI();
                 ((RefreshableScopeNode)this.ServiceRNGNode).RefreshUI();
+                ((RefreshableScopeNode)this.ServiceAESNode).RefreshUI();
                 ((RefreshableScopeNode)this.ServiceRSANode).RefreshUI();
+                ((RefreshableScopeNode)this.ServiceCustomSecurityNode).RefreshUI();
                 ((RefreshableScopeNode)this.ServiceWsManNode).RefreshUI();
                 ((RefreshableScopeNode)this.ServiceWebAuthNNode).RefreshUI();
                 ((RefreshableScopeNode)this.ServiceProvidersNode).RefreshUI();
-                ((RefreshableScopeNode)this.ServiceTOTPNode).RefreshUI();
-                ((RefreshableScopeNode)this.ServiceBiometricsNode).RefreshUI();
-                ((RefreshableScopeNode)this.ServiceSMTPNode).RefreshUI();
-                ((RefreshableScopeNode)this.ServiceSMSNode).RefreshUI();
-                ((RefreshableScopeNode)this.ServiceAzureNode).RefreshUI();
+                if (this.ServiceTOTPNode != null)
+                    ((RefreshableScopeNode)this.ServiceTOTPNode).RefreshUI();
+                if (this.ServiceBiometricsNode != null)
+                    ((RefreshableScopeNode)this.ServiceBiometricsNode).RefreshUI();
+                if (this.ServiceSMTPNode != null)
+                    ((RefreshableScopeNode)this.ServiceSMTPNode).RefreshUI();
+                if (this.ServiceSMSNode != null)
+                    ((RefreshableScopeNode)this.ServiceSMSNode).RefreshUI();
+                if (this.ServiceAzureNode != null)
+                    ((RefreshableScopeNode)this.ServiceAzureNode).RefreshUI();
             }
             ((RefreshableScopeNode)this.UsersNode).RefreshUI();
         }

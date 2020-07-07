@@ -156,4 +156,10 @@
   <data name="BIOUIEnrollDeleteLinkLabel" xml:space="preserve">
     <value>Verwijder dit apparaat</value>
   </data>
+  <data name="PROVIDERBIODESCRIPTION" xml:space="preserve">
+    <value>Biometrische multifactor leverancier</value>
+  </data>
+  <data name="BIOUIWIZComment" xml:space="preserve">
+    <value>Beheer uw biometrische apparaten. Selecteer afzonderlijke apparaten toevoegen, vervangen of verwijderen.</value>
+  </data>
 </root>

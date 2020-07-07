@@ -156,4 +156,10 @@
   <data name="BIOWIZEnroll" xml:space="preserve">
     <value>Tilmeld min biometriske enhed</value>
   </data>
+  <data name="PROVIDERBIODESCRIPTION" xml:space="preserve">
+    <value>Biometri Multi-Factor Provider</value>
+  </data>
+  <data name="BIOUIWIZComment" xml:space="preserve">
+    <value>Administrer dine biometriske enheder. Vælg tilføj, erstat eller slet individuelle enheder.</value>
+  </data>
 </root>

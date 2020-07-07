@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2020 Neos-Sdi (http://www.neos-sdi.com)                                                                                                                                    //                        
+// Copyright (c) 2020 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -314,7 +314,7 @@ namespace Neos.IdentityServer.MultiFactor
                              _config = (MFAConfig)xmlserializer.Deserialize(stm);
                              if ((!_config.OTPProvider.Enabled) && (!_config.MailProvider.Enabled) && (!_config.ExternalProvider.Enabled) && (!_config.AzureProvider.Enabled))
                                  _config.OTPProvider.Enabled = true;   // always let an active option eg : aplication in this case
-                            using (AESEncryption MSIS = new AESEncryption())
+                            using (AESSystemEncryption MSIS = new AESSystemEncryption())
                             {
                                 _config.KeysConfig.XORSecret = MSIS.Decrypt(_config.KeysConfig.XORSecret);
                                 _config.Hosts.ActiveDirectoryHost.Password = MSIS.Decrypt(_config.Hosts.ActiveDirectoryHost.Password);
@@ -2602,6 +2602,17 @@ namespace Neos.IdentityServer.MultiFactor
                     ValidatePhoneNumber(phone, Resources, checkempty);
                 usercontext.PhoneNumber = phone;
             }
+            if ((prov.Enabled) && (prov.IsUIElementRequired(usercontext, RequiredMethodElements.ExternalParameterRequired)))
+            {
+                if (proofData.Properties.ContainsKey("phone"))
+                {
+                    phone = proofData.Properties["phone"].ToString();
+                    if (string.IsNullOrEmpty(phone))
+                        if (prov.Enabled && prov.IsRequired)
+                            throw new ArgumentException("Invalid value !");
+                }
+                usercontext.PhoneNumber = phone;
+            }
         }
 
         /// <summary>
@@ -2685,6 +2696,24 @@ namespace Neos.IdentityServer.MultiFactor
                                 case AuthenticationResponseKind.SmsTwoWayOTP:
                                 case AuthenticationResponseKind.SmsTwoWayOTPplusPin:
                                     kind = AuthenticationResponseKind.SmsTwoWayOTP;
+                                    break;
+                                case AuthenticationResponseKind.Sample1:
+                                    kind = AuthenticationResponseKind.Sample1;
+                                    break;
+                                case AuthenticationResponseKind.Sample2:
+                                    kind = AuthenticationResponseKind.Sample2;
+                                    break;
+                                case AuthenticationResponseKind.Sample3:
+                                    kind = AuthenticationResponseKind.Sample3;
+                                    break;
+                                case AuthenticationResponseKind.Sample1Async:
+                                    kind = AuthenticationResponseKind.Sample1Async;
+                                    break;
+                                case AuthenticationResponseKind.Sample2Async:
+                                    kind = AuthenticationResponseKind.Sample2Async;
+                                    break;
+                                case AuthenticationResponseKind.Sample3Async:
+                                    kind = AuthenticationResponseKind.Sample3Async;
                                     break;
                                 default:
                                     if (RuntimeAuthProvider.GetProvider(PreferredMethod.External).IsTwoWayByDefault)

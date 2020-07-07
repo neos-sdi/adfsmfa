@@ -266,7 +266,7 @@
     <comment>Téléphone mobile d'authentification</comment>
   </data>
   <data name="SMSUIMessage" xml:space="preserve">
-    <value>Hemos enviado un SMS con un código de verificación. {0}</value>
+    <value>Hemos enviado un SMS con un código de verificación.</value>
     <comment>Nous avons envoyé un SMS contenant un code de vérification. {0}</comment>
   </data>
   <data name="SMSUIOTPLabel" xml:space="preserve">
@@ -278,5 +278,26 @@
   </data>
   <data name="SMSWIZEnroll" xml:space="preserve">
     <value>Registra mi teléfono</value>
+  </data>
+  <data name="PROVIDEROTPDESCRIPTION" xml:space="preserve">
+    <value>Proveedor multifactor TOTP</value>
+  </data>
+  <data name="PROVIDERSMSDESCRIPTION" xml:space="preserve">
+    <value>Ejemplo de proveedor multifactor SMS</value>
+  </data>
+  <data name="PROVIDEREMAILDESCRIPTION" xml:space="preserve">
+    <value>Proveedor multifactor de correo electrónico</value>
+  </data>
+  <data name="OTPUIWIZComment" xml:space="preserve">
+    <value>Escanea el código QR con una aplicación TOTP como Microsoft Authenticator, Google Authenticator para registrar tu cuenta</value>
+  </data>
+  <data name="MAILUIWIZComment" xml:space="preserve">
+    <value>Debe introducir una dirección de correo electrónico para confirmar su identidad. Este correo electrónico debe ser accesible sin necesidad de verificación empresarial (dirección de correo electrónico personal)</value>
+  </data>
+  <data name="SMSUIWIZComment" xml:space="preserve">
+    <value>Debe introducir su número de teléfono para confirmar su identidad. Este teléfono debe ser accesible.</value>
+  </data>
+  <data name="PROVIDERPLUGDESCRIPTION" xml:space="preserve">
+    <value>{0} proveedor multifactor (Plug)</value>
   </data>
 </root>

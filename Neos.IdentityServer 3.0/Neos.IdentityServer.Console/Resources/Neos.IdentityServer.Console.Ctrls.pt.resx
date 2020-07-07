@@ -666,4 +666,13 @@
   <data name="CTRLCUSTOMUSING" xml:space="preserve">
     <value>Use repositório personalizado</value>
   </data>
+  <data name="CTRLADLDAPSSL" xml:space="preserve">
+    <value>Use conexões LDAP seguras (LDAPS)</value>
+  </data>
+  <data name="CTRLCUSTOMKEYSERROR" xml:space="preserve">
+    <value>Extensão inválida! Não pode ser cobrado!</value>
+  </data>
+  <data name="CTRLWEBAUTHNSHOWPII" xml:space="preserve">
+    <value>Mostrar registros sensíveis</value>
+  </data>
 </root>

@@ -238,7 +238,7 @@
     <value>Проверка подлинности мобильного телефона</value>
   </data>
   <data name="SMSUIMessage" xml:space="preserve">
-    <value>Мы отправили SMS, содержащий код проверки. {0}</value>
+    <value>Мы отправили SMS, содержащий код проверки.</value>
   </data>
   <data name="SMSUIOTPLabel" xml:space="preserve">
     <value>Код доступа, полученный по телефону</value>
@@ -248,5 +248,26 @@
   </data>
   <data name="SMSWIZEnroll" xml:space="preserve">
     <value>Зарегистрируйте свой телефон</value>
+  </data>
+  <data name="PROVIDEROTPDESCRIPTION" xml:space="preserve">
+    <value>Поставщик многофакторов TOTP</value>
+  </data>
+  <data name="PROVIDERSMSDESCRIPTION" xml:space="preserve">
+    <value>ОБРАЗец мультифакторного поставщика SMS</value>
+  </data>
+  <data name="PROVIDEREMAILDESCRIPTION" xml:space="preserve">
+    <value>Отправить по электронной почте мультифакторный провайдер</value>
+  </data>
+  <data name="OTPUIWIZComment" xml:space="preserve">
+    <value>Сканирование кода с помощью приложения TOTP, такого как Microsoft Authenticator, Google Authenticator для регистрации учетной записи</value>
+  </data>
+  <data name="MAILUIWIZComment" xml:space="preserve">
+    <value>Вы должны ввести адрес электронной почты, чтобы подтвердить свою идентификационную информацию. Это письмо должно быть достижимо без необходимости проверки предприятия (личный адрес электронной почты)</value>
+  </data>
+  <data name="SMSUIWIZComment" xml:space="preserve">
+    <value>Вы должны ввести свой номер телефона, чтобы подтвердить свою личность. Этот телефон должен быть достижим.</value>
+  </data>
+  <data name="PROVIDERPLUGDESCRIPTION" xml:space="preserve">
+    <value>{0} многофакторный поставщик (Plug)</value>
   </data>
 </root>

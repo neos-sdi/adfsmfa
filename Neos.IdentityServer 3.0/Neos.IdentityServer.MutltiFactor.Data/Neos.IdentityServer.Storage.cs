@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2020 Neos-Sdi (http://www.neos-sdi.com)                                                                                                                                    //                        
+// Copyright (c) 2020 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -145,7 +145,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
             string ret = string.Empty;
             try
             {
-                using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUPN(_host, _host.Account, _host.Password, upn))
+                using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUPN(_host, _host.Account, _host.Password, upn, _host.UseSSL))
                 {
                     string qryldap = "(&(objectCategory=user)(objectClass=user)(userprincipalname=" + upn + ")(!(userAccountControl:1.2.840.113556.1.4.803:=2)))";
                     using (DirectorySearcher dsusr = new DirectorySearcher(rootdir, qryldap))
@@ -159,7 +159,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                         SearchResult sr = dsusr.FindOne();
                         if (sr != null)
                         {
-                            using (DirectoryEntry DirEntry = ADDSUtils.GetDirectoryEntry(_host, sr))
+                            using (DirectoryEntry DirEntry = ADDSUtils.GetDirectoryEntry(_host, sr, _host.UseSSL))
                             {
                                 ret = DirEntry.Properties["distinguishedName"].Value.ToString();
                             };

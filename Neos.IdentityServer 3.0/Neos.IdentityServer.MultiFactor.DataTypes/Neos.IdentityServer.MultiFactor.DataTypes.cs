@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2020 Neos-Sdi (http://www.neos-sdi.com)                                                                                                                                    //                        
+// Copyright (c) 2020 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -1538,7 +1538,8 @@ namespace Neos.IdentityServer.MultiFactor
     {
         RNG = 0,
         RSA = 1,
-        CUSTOM = 2
+        AES = 2,
+        CUSTOM = 3
     }
 
     /// <summary>
@@ -1576,6 +1577,16 @@ namespace Neos.IdentityServer.MultiFactor
         ClientSecret384 = 3,
         ClientSecret512 = 4,
         Custom = 5
+    }
+
+    /// <summary>
+    /// AESKeyGeneratorMode
+    /// </summary>
+    [Serializable]
+    public enum AESKeyGeneratorMode
+    {
+        AESSecret512 = 0,
+        AESSecret1024 = 1,
     }
 
     /// <summary>

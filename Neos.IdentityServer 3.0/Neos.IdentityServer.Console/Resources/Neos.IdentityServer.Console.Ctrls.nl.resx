@@ -666,4 +666,13 @@
   <data name="CTRLCUSTOMUSING" xml:space="preserve">
     <value>Aangepaste opslagplaats gebruiken</value>
   </data>
+  <data name="CTRLADLDAPSSL" xml:space="preserve">
+    <value>Veilige LDAP-verbindingen (LDAPS) gebruiken</value>
+  </data>
+  <data name="CTRLCUSTOMKEYSERROR" xml:space="preserve">
+    <value>Ongeldige extensie! Kan niet worden opgeladen!</value>
+  </data>
+  <data name="CTRLWEBAUTHNSHOWPII" xml:space="preserve">
+    <value>Gevoelige logboeken weergeven</value>
+  </data>
 </root>

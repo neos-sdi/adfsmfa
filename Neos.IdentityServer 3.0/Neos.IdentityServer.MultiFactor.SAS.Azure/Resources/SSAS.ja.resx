@@ -210,4 +210,7 @@
   <data name="VOICE3Message" xml:space="preserve">
     <value>私たちはあなたのオフィスの電話を{0}呼び出します。続行する答え。</value>
   </data>
+  <data name="PROVIDERAZURESDESCRIPTION" xml:space="preserve">
+    <value>マイクロソフト Azure 多要素プロバイダー</value>
+  </data>
 </root>

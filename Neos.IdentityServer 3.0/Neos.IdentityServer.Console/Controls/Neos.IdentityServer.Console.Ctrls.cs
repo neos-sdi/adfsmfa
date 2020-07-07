@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2020 Neos-Sdi (http://www.neos-sdi.com)                                                                                                                                    //                        
+// Copyright (c) 2020 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -490,7 +490,9 @@ namespace Neos.IdentityServer.Console.Controls
                 case ConfigOperationStatus.ConfigLoaded:
                     _panel.BackColor = Color.Green;
                     _provider = RuntimeAuthProvider.GetProviderInstance(this._kind);
-                    if (!_provider.Enabled)
+                    if (_provider == null)
+                        _panel.BackColor = Color.DarkRed;
+                    else if (!_provider.Enabled)
                         _panel.BackColor = Color.DarkGray;
                     break;
                 case ConfigOperationStatus.ConfigStopped:
@@ -549,7 +551,6 @@ namespace Neos.IdentityServer.Console.Controls
                 chkProviderEnabled = new CheckBox
                 {
                     Text = res.CTRLPROVACTIVE,
-
                     Checked = _provider.Enabled,
                     Enabled = (_provider.AllowDisable),
                     Left = 510,
@@ -573,20 +574,14 @@ namespace Neos.IdentityServer.Console.Controls
 
                 chkProviderEnroll = new CheckBox
                 {
-                    Text = res.CTRLPROVWIZARD
+                    Text = res.CTRLPROVWIZARD,
+                    Enabled = (_provider.Enabled && _provider.AllowEnrollment),
                 };
                 if (_provider.AllowEnrollment)
                     chkProviderEnroll.Checked = _provider.WizardEnabled;
                 else
                     chkProviderEnroll.Checked = false;
-                chkProviderEnroll.Enabled = (_provider.Enabled && _provider.AllowEnrollment);
-                if (_kind==PreferredMethod.Azure)
-                {
-                   // chkProviderEnroll.Checked = false;
-                   // chkProviderEnroll.Enabled = false;
-                    chkProviderRequired.Checked = false;
-                    chkProviderRequired.Enabled = false;
-                }
+
                 chkProviderEnroll.Left = 510;
                 chkProviderEnroll.Top = 50;
                 chkProviderEnroll.Width = 300;
@@ -604,6 +599,25 @@ namespace Neos.IdentityServer.Console.Controls
                 };
                 chkProviderPin.CheckedChanged += ChkProviderPinChanged;
                 _txtpanel.Controls.Add(chkProviderPin);
+
+                if (_kind == PreferredMethod.Azure)
+                {
+                    // chkProviderEnroll.Checked = false;
+                    // chkProviderEnroll.Enabled = false;
+                    chkProviderRequired.Checked = false;
+                    chkProviderRequired.Enabled = false;
+                }
+                else if (_provider is NeosPlugProvider)
+                {
+                    chkProviderEnabled.Checked = false;
+                    chkProviderEnabled.Enabled = false;
+                    chkProviderEnroll.Checked = false;
+                    chkProviderEnroll.Enabled = false;
+                    chkProviderRequired.Checked = false;
+                    chkProviderRequired.Enabled = false;
+                    chkProviderPin.Checked = false;
+                    chkProviderPin.Enabled = false;
+                }
 
                 errors = new ErrorProvider(_view)
                 {
@@ -630,13 +644,12 @@ namespace Neos.IdentityServer.Console.Controls
             try
             {
                 _provider = RuntimeAuthProvider.GetProviderInstance(this._kind);
-
-                lblProviderDesc.Text = _provider.Description;
                 chkProviderEnabled.Text = res.CTRLPROVACTIVE;
                 chkProviderRequired.Text = res.CTRLPROVREQUIRED;
                 chkProviderEnroll.Text = res.CTRLPROVWIZARD;
                 chkProviderPin.Text = res.CTRLPROVPIN;
 
+                lblProviderDesc.Text = _provider.Description;
                 chkProviderEnabled.Checked = _provider.Enabled;
                 chkProviderEnabled.Enabled = (_provider.AllowDisable);
                 chkProviderRequired.Checked = _provider.IsRequired;
@@ -653,8 +666,10 @@ namespace Neos.IdentityServer.Console.Controls
                     chkProviderRequired.Checked = false;
                     chkProviderRequired.Enabled = false;
                 }
-                else if (_provider is NeosPlugExternalProvider)
+                else if (_provider is NeosPlugProvider)
                 {
+                    chkProviderEnabled.Checked = false;
+                    chkProviderEnabled.Enabled = false;
                     chkProviderEnroll.Checked = false;
                     chkProviderEnroll.Enabled = false;
                     chkProviderRequired.Checked = false;
@@ -663,7 +678,7 @@ namespace Neos.IdentityServer.Console.Controls
                     chkProviderPin.Enabled = false;
                 }
                 else
-                { 
+                {
                     chkProviderPin.Checked = _provider.PinRequired;
                     chkProviderPin.Enabled = _provider.Enabled;
                 }
@@ -711,7 +726,6 @@ namespace Neos.IdentityServer.Console.Controls
                     case PreferredMethod.Biometrics:
                         Config.WebAuthNProvider.PinRequired = chkProviderPin.Checked;
                         break;
-
                 }
                 if (_view.AutoValidate != AutoValidate.Disable)
                     ManagementService.ADFSManager.SetDirty(true);
@@ -798,13 +812,11 @@ namespace Neos.IdentityServer.Console.Controls
                         Config.MailProvider.Enabled = chkProviderEnabled.Checked;
                         chkProviderEnroll.Enabled = Config.MailProvider.Enabled;
                         chkProviderPin.Enabled = Config.MailProvider.Enabled;
-
                         break;
                     case PreferredMethod.External:
                         Config.ExternalProvider.Enabled = chkProviderEnabled.Checked;
                         chkProviderEnroll.Enabled = Config.ExternalProvider.Enabled;
                         chkProviderPin.Enabled = Config.ExternalProvider.Enabled;
-
                         break;
                     case PreferredMethod.Azure:
                         Config.AzureProvider.Enabled = chkProviderEnabled.Checked;
@@ -816,7 +828,6 @@ namespace Neos.IdentityServer.Console.Controls
                         chkProviderEnroll.Enabled = Config.WebAuthNProvider.Enabled;
                         chkProviderPin.Enabled = Config.WebAuthNProvider.Enabled;
                         break;
-
                 }
                 if (_view.AutoValidate != AutoValidate.Disable)
                     ManagementService.ADFSManager.SetDirty(true);
@@ -6439,8 +6450,10 @@ namespace Neos.IdentityServer.Console.Controls
                 case ConfigOperationStatus.ConfigLoaded:
                     _panel.BackColor = Color.Green;
                     IExternalProvider _provider = RuntimeAuthProvider.GetProviderInstance(PreferredMethod.Email);
-                    if (!_provider.Enabled)
-                        _panel.BackColor = Color.DarkGray;                   
+                    if (_provider == null)
+                        _panel.BackColor = Color.DarkRed;
+                    else if (!_provider.Enabled)
+                        _panel.BackColor = Color.DarkGray;
                     break;
                 case ConfigOperationStatus.ConfigIsDirty:
                     _panel.BackColor = Color.DarkOrange;
@@ -7229,6 +7242,9 @@ namespace Neos.IdentityServer.Console.Controls
         }
     }
 
+    /// <summary>
+    /// SMSConfigurationControl class implementation
+    /// </summary>
     public partial class SMSConfigurationControl : Panel, IMMCRefreshData
     {
         private NamespaceSnapInBase _snapin;
@@ -7304,7 +7320,9 @@ namespace Neos.IdentityServer.Console.Controls
                 case ConfigOperationStatus.ConfigLoaded:
                     _panel.BackColor = Color.Green;
                     IExternalProvider _provider = RuntimeAuthProvider.GetProviderInstance(PreferredMethod.External);
-                    if (!_provider.Enabled)
+                    if (_provider == null) 
+                        _panel.BackColor = Color.DarkRed;
+                    else if (!_provider.Enabled)
                         _panel.BackColor = Color.DarkGray;
                     break;
                 case ConfigOperationStatus.ConfigIsDirty:
@@ -7869,6 +7887,9 @@ namespace Neos.IdentityServer.Console.Controls
         }
     }
 
+    /// <summary>
+    /// AzureConfigurationControl class implementation
+    /// </summary>
     public partial class AzureConfigurationControl : Panel, IMMCRefreshData
     {
         private NamespaceSnapInBase _snapin;
@@ -7938,7 +7959,9 @@ namespace Neos.IdentityServer.Console.Controls
                 case ConfigOperationStatus.ConfigLoaded:
                     _panel.BackColor = Color.Green;
                     IExternalProvider _provider = RuntimeAuthProvider.GetProviderInstance(PreferredMethod.Azure);
-                    if (!_provider.Enabled)
+                    if (_provider == null)
+                        _panel.BackColor = Color.DarkRed;
+                    else if (!_provider.Enabled)
                         _panel.BackColor = Color.DarkGray;
                     break;
                 case ConfigOperationStatus.ConfigIsDirty:
@@ -8337,7 +8360,9 @@ namespace Neos.IdentityServer.Console.Controls
                 case ConfigOperationStatus.ConfigLoaded:
                     _panel.BackColor = Color.Green;
                     IExternalProvider _provider = RuntimeAuthProvider.GetProviderInstance(PreferredMethod.Code);
-                    if (!_provider.Enabled)
+                    if (_provider == null)
+                        _panel.BackColor = Color.DarkRed;
+                    else if (!_provider.Enabled)
                         _panel.BackColor = Color.DarkGray;
                     break;
                 case ConfigOperationStatus.ConfigIsDirty:
@@ -8464,7 +8489,7 @@ namespace Neos.IdentityServer.Console.Controls
                 lblMaxKeyLen.Width = 150;
                 _txtpanel.Controls.Add(lblMaxKeyLen);
 
-                MMCSecurityKeySizeist lkeys = new MMCSecurityKeySizeist();
+                MMCSecurityKeySizeList lkeys = new MMCSecurityKeySizeList();
                 cbKeySize = new ComboBox()
                 {
                     DropDownStyle = ComboBoxStyle.DropDownList,
@@ -8986,6 +9011,7 @@ namespace Neos.IdentityServer.Console.Controls
         private ComboBox cbChallengeSize;
         private CheckBox chkAutologin;
         private CheckBox chkRequireChainRoot;
+        private CheckBox chkShowPII;
 
         /// <summary>
         /// ConfigurationControl Constructor
@@ -9040,8 +9066,10 @@ namespace Neos.IdentityServer.Console.Controls
                     break;
                 case ConfigOperationStatus.ConfigLoaded:
                     _panel.BackColor = Color.Green;
-                    IExternalProvider _provider = RuntimeAuthProvider.GetProviderInstance(PreferredMethod.Code);
-                    if (!_provider.Enabled)
+                    IExternalProvider _provider = RuntimeAuthProvider.GetProviderInstance(PreferredMethod.Biometrics);
+                    if (_provider == null)
+                        _panel.BackColor = Color.DarkRed;
+                    else if (!_provider.Enabled)
                         _panel.BackColor = Color.DarkGray;
                     break;
                 case ConfigOperationStatus.ConfigIsDirty:
@@ -9084,17 +9112,17 @@ namespace Neos.IdentityServer.Console.Controls
                 _view.RefreshProviderInformation();
 
                 this.Dock = DockStyle.Top;
-                this.Height = 274;
+                this.Height = 300;
                 this.Width = 800;
                 this.Margin = new Padding(30, 5, 30, 5);
 
                 _panel.Width = 20;
-                _panel.Height = 244;
+                _panel.Height = 272;
                 this.Controls.Add(_panel);
 
                 _txtpanel.Left = 20;
                 _txtpanel.Width = this.Width - 20;
-                _txtpanel.Height = 244;
+                _txtpanel.Height = 272;
                 _txtpanel.BackColor = System.Drawing.SystemColors.Control;
                 this.Controls.Add(_txtpanel);
 
@@ -9251,11 +9279,22 @@ namespace Neos.IdentityServer.Console.Controls
                 chkRequireChainRoot.CheckedChanged += ChkChainRootChanged;
                 _txtpanel.Controls.Add(chkRequireChainRoot);
 
+                chkShowPII = new CheckBox
+                {
+                    Text = res.CTRLWEBAUTHNSHOWPII,
+                    Checked = Config.WebAuthNProvider.Configuration.ShowPII,
+                    Left = 190,
+                    Top = 242,
+                    Width = 300
+                };
+                chkShowPII.CheckedChanged += chkRequireShowPIIChanged;
+                _txtpanel.Controls.Add(chkShowPII);
+
                 tblSaveConfig = new LinkLabel
                 {
                     Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPESAVE,
                     Left = 20,
-                    Top = 254,
+                    Top = 282,
                     Width = 80,
                     TabStop = true
                 };
@@ -9266,7 +9305,7 @@ namespace Neos.IdentityServer.Console.Controls
                 {
                     Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPECANCEL,
                     Left = 110,
-                    Top = 254,
+                    Top = 282,
                     Width = 80,
                     TabStop = true
                 };
@@ -9306,6 +9345,7 @@ namespace Neos.IdentityServer.Console.Controls
                 lblChallengeSize.Text = res.CTRLWEBAUTHNCHALLENGE + " : ";
                 chkAutologin.Text = res.CTRLWEBAUTHNAUTOLOGIN;
                 chkRequireChainRoot.Text = res.CTRLWEBAUTHNROOTATTESTATION;
+                chkShowPII.Text = res.CTRLWEBAUTHNSHOWPII;
 
                 txtTimeOut.Text = Config.WebAuthNProvider.Configuration.Timeout.ToString();
                 chkAutologin.Checked = Config.WebAuthNProvider.DirectLogin;
@@ -9710,6 +9750,32 @@ namespace Neos.IdentityServer.Console.Controls
         }
 
         /// <summary>
+        /// chkRequireShowPIIChanged method implementation
+        /// </summary>
+        private void chkRequireShowPIIChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                if (_view.AutoValidate != AutoValidate.Disable)
+                {
+                    Config.WebAuthNProvider.Configuration.ShowPII = chkShowPII.Checked;
+                    ManagementService.ADFSManager.SetDirty(true);
+                    UpdateControlsLayouts();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
+                this._snapin.Console.ShowDialog(messageBoxParameters);
+            }
+        }
+
+        /// <summary>
         /// OnResize method implmentation
         /// </summary>
         protected override void OnResize(EventArgs eventargs)
@@ -9816,8 +9882,10 @@ namespace Neos.IdentityServer.Console.Controls
                     break;
                 case ConfigOperationStatus.ConfigLoaded:
                     _panel.BackColor = Color.Green;
-                    IExternalProvider _provider = RuntimeAuthProvider.GetProviderInstance(PreferredMethod.Code);
-                    if (!_provider.Enabled)
+                    IExternalProvider _provider = RuntimeAuthProvider.GetProviderInstance(PreferredMethod.Biometrics);
+                    if (_provider == null)
+                        _panel.BackColor = Color.DarkRed;
+                    else if (!_provider.Enabled)
                         _panel.BackColor = Color.DarkGray;
                     break;
                 case ConfigOperationStatus.ConfigIsDirty:
@@ -10309,6 +10377,7 @@ namespace Neos.IdentityServer.Console.Controls
                 _view.CancelData();
         }
     }
+
     /// <summary>
     /// SecurityConfigurationRNGControl class imlementation
     /// </summary>
@@ -10340,6 +10409,7 @@ namespace Neos.IdentityServer.Console.Controls
         private TextBox txtUserName;
         private Label lblPassword;
         private TextBox txtPassword;
+        private CheckBox chkUseldapssl;
         private Button btnConnect;
         private Label lblADDSTitle;
         private Label lblTitleConfig;
@@ -10654,6 +10724,17 @@ namespace Neos.IdentityServer.Console.Controls
                 txtPassword.Validated += PasswordValidated;
                 _txtpanel.Controls.Add(txtPassword);
 
+                chkUseldapssl = new CheckBox()
+                {
+                    Text = res.CTRLADLDAPSSL,
+                    Checked = Config.Hosts.ActiveDirectoryHost.UseSSL,
+                    Left = 50,
+                    Top = 290,
+                    Width = 300
+                };
+                chkUseldapssl.CheckedChanged += UseLDAPSSLCheckedChanged;
+                _txtpanel.Controls.Add(chkUseldapssl);
+
                 btnConnect = new Button
                 {
                     Text = res.CTRLADTEST,
@@ -10731,6 +10812,7 @@ namespace Neos.IdentityServer.Console.Controls
                 lblXORValue.Text = res.CTRLSECXORLABEL + "(*)" + " : ";
                 lblWarning.Text = "(*) " + res.CTRLSECWARNING;
                 lblADDSTitle.Text = res.CTRLADSUPERACCOUNT;
+                chkUseldapssl.Text = res.CTRLADLDAPSSL;                
 
                 txtDomainName.Text = Config.Hosts.ActiveDirectoryHost.DomainAddress;
                 txtUserName.Text = Config.Hosts.ActiveDirectoryHost.Account;
@@ -10740,6 +10822,7 @@ namespace Neos.IdentityServer.Console.Controls
                 cbReplayLevel.SelectedValue = Config.ReplayLevel;
                 cbLibVersion.SelectedValue = Config.KeysConfig.KeyVersion;
                 txtXORValue.Text = Config.KeysConfig.XORSecret;
+                chkUseldapssl.Checked = Config.Hosts.ActiveDirectoryHost.UseSSL;
 
                 tblSaveConfig.Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPESAVE;
                 tblCancelConfig.Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPECANCEL;
@@ -10824,6 +10907,35 @@ namespace Neos.IdentityServer.Console.Controls
             if (_txtpanel != null)
                 _txtpanel.Width = this.Width - 20;
         }
+
+        #region LDAPS
+        /// <summary>
+        /// UseLDAPSSLCheckedChanged method implementation
+        /// </summary>
+        private void UseLDAPSSLCheckedChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                if (_view.AutoValidate != AutoValidate.Disable)
+                {
+                    Config.Hosts.ActiveDirectoryHost.UseSSL = chkUseldapssl.Checked;
+                    ManagementService.ADFSManager.SetDirty(true);
+                    ManagementService.ADFSManager.ConsoleSync();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
+                this._snapin.Console.ShowDialog(messageBoxParameters);
+            }
+
+        }
+        #endregion
 
         #region DomainName
         /// <summary>
@@ -11220,7 +11332,20 @@ namespace Neos.IdentityServer.Console.Controls
         private void SaveConfigLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             if (_view != null)
+            {
+                if (!ManagementService.CheckADDSConnection(txtDomainName.Text, txtUserName.Text, txtPassword.Text))
+                {
+                    MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                    {
+                        Text = res.CTRLADCONNECTIONERROR,
+                        Buttons = MessageBoxButtons.OK,
+                        Icon = MessageBoxIcon.Error
+                    };
+                    this._snapin.Console.ShowDialog(messageBoxParameters);
+                    Config.Hosts.ActiveDirectoryHost.UseSSL = false;
+                }
                 _view.SaveData();
+            }               
         }
 
         /// <summary>
@@ -11373,7 +11498,7 @@ namespace Neos.IdentityServer.Console.Controls
 
                 Label lblRNG = new Label
                 {
-                    Text = "RNG (Random Number Generator)",
+                    Text = "Encoded Keys RNG (512 bits)",
                     Left = 10,
                     Top = 0,
                     Width = 250
@@ -11690,7 +11815,7 @@ namespace Neos.IdentityServer.Console.Controls
                 _txtpanel.Controls.Add(_panelRSA);
 
                 Label lblRSA = new Label();
-                lblRSA.Text = "RSA (Rivest Shamir Adleman)";
+                lblRSA.Text = "Asymetric Keys RSA (2048 bits)";
                 lblRSA.Left = 10;
                 lblRSA.Top = 0;
                 lblRSA.Width = 250;
@@ -11996,6 +12121,320 @@ namespace Neos.IdentityServer.Console.Controls
                 finally
                 {
                     this.Cursor = curs;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
+                messageBoxParameters.Text = ex.Message;
+                messageBoxParameters.Buttons = MessageBoxButtons.OK;
+                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                this._snapin.Console.ShowDialog(messageBoxParameters);
+            }
+        }
+
+        /// <summary>
+        /// SaveConfigLinkClicked event
+        /// </summary>
+        private void SaveConfigLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            if (_view != null)
+                _view.SaveData();
+        }
+
+        /// <summary>
+        /// CancelConfigLinkClicked event
+        /// </summary>
+        private void CancelConfigLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            if (_view != null)
+                _view.CancelData();
+        }
+    }
+    
+    /// <summary>
+    /// SecurityConfigurationAESControl class imlementation
+    /// </summary>
+    public partial class SecurityConfigurationAESControl : Panel, IMMCRefreshData
+    {
+        private NamespaceSnapInBase _snapin;
+        private Panel _panel;
+        private Panel _txtpanel;
+        private ServiceSecurityAESViewControl _view;
+        private bool _UpdateControlsLayouts;
+        private ErrorProvider errors;
+
+        private LinkLabel tblSaveConfig;
+        private LinkLabel tblCancelConfig;
+        private Panel _panelAES;
+        private Label lblAESKey;
+        private ComboBox cbKeyMode;
+
+        /// <summary>
+        /// SecurityConfigurationAESControl Constructor
+        /// </summary>
+        public SecurityConfigurationAESControl(ServiceSecurityAESViewControl view, NamespaceSnapInBase snap)
+        {
+            _view = view;
+            _snapin = snap;
+            _panel = new Panel();
+            _txtpanel = new Panel();
+            BackColor = System.Drawing.SystemColors.Window;
+            AutoSize = false;
+        }
+
+        /// <summary>
+        /// OnCreateControl method override
+        /// </summary>
+        protected override void OnCreateControl()
+        {
+            base.OnCreateControl();
+            ManagementService.ADFSManager.ConfigurationStatusChanged += ConfigurationStatusChanged;
+            DoCreateControls();
+        }
+
+        /// <summary>
+        /// ConfigurationStatusChanged method implementation
+        /// </summary>
+        internal void ConfigurationStatusChanged(ADFSServiceManager mgr, ConfigOperationStatus status, Exception ex = null)
+        {
+            UpdateLayoutConfigStatus(status);
+            if (_view.IsNotifsEnabled())
+            {
+                if (status == ConfigOperationStatus.ConfigLoaded)
+                    DoRefreshData();
+            }
+            else
+                _panel.Refresh();
+        }
+
+        /// <summary>
+        /// UpdateLayoutConfigStatus method implementation
+        /// </summary>
+        private void UpdateLayoutConfigStatus(ConfigOperationStatus status)
+        {
+            switch (status)
+            {
+                case ConfigOperationStatus.ConfigInError:
+                    _panel.BackColor = Color.DarkRed;
+                    break;
+                case ConfigOperationStatus.ConfigSaved:
+                    _panel.BackColor = Color.Orange;
+                    break;
+                case ConfigOperationStatus.ConfigLoaded:
+                    _panel.BackColor = Color.Green;
+                    IExternalProvider _provider = RuntimeAuthProvider.GetProviderInstance(PreferredMethod.Code);
+                    if (!_provider.Enabled)
+                        _panel.BackColor = Color.DarkGray;
+                    break;
+                case ConfigOperationStatus.ConfigIsDirty:
+                    _panel.BackColor = Color.DarkOrange;
+                    break;
+                case ConfigOperationStatus.ConfigStopped:
+                    _panel.BackColor = Color.DarkGray;
+                    break;
+                case ConfigOperationStatus.UISync:
+                    break;
+                default:
+                    _panel.BackColor = Color.Yellow;
+                    break;
+            }
+            return;
+        }
+
+        /// <summary>
+        /// Config property
+        /// </summary>
+        public MFAConfig Config
+        {
+            get
+            {
+                ManagementService.ADFSManager.EnsureLocalConfiguration();
+                return ManagementService.ADFSManager.Config;
+            }
+        }
+
+        /// <summary>
+        /// Initialize method implementation
+        /// </summary>
+        private void DoCreateControls()
+        {
+            this.SuspendLayout();
+            _view.AutoValidate = AutoValidate.Disable;
+            _view.CausesValidation = false;
+            try
+            {
+                _view.RefreshProviderInformation();
+
+                this.Dock = DockStyle.Top;
+                this.Height = 100;
+                this.Width = 400;
+                this.Margin = new Padding(30, 5, 30, 5);
+
+                _panel.Width = 20;
+                _panel.Height = 70;
+                this.Controls.Add(_panel);
+
+                _txtpanel.Left = 20;
+                _txtpanel.Width = this.Width - 20;
+                _txtpanel.Height = 70;
+                _txtpanel.BackColor = System.Drawing.SystemColors.Control;
+                this.Controls.Add(_txtpanel);
+
+                _panelAES = new Panel
+                {
+                    Left = 0,
+                    Top = 10,
+                    Height = 60,
+                    Width = 400
+                };
+                _txtpanel.Controls.Add(_panelAES);
+
+                Label lblRNG = new Label
+                {
+                    Text = "Symetric Keys AES (512/1024 bits)",
+                    Left = 10,
+                    Top = 0,
+                    Width = 250
+                };
+                _panelAES.Controls.Add(lblRNG);
+
+                lblAESKey = new Label
+                {
+                    Text = res.CTRLSECKEYGEN + " : ",
+                    Left = 30,
+                    Top = 27,
+                    Width = 140
+                };
+                _panelAES.Controls.Add(lblAESKey);
+
+                MMCAESSecurityKeyGeneratorList lgens = new MMCAESSecurityKeyGeneratorList();
+                cbKeyMode = new ComboBox()
+                {
+                    DropDownStyle = ComboBoxStyle.DropDownList,
+                    Left = 200,
+                    Top = 25,
+                    Width = 80
+                };
+                _panelAES.Controls.Add(cbKeyMode);
+
+                cbKeyMode.DataSource = lgens;
+                cbKeyMode.ValueMember = "ID";
+                cbKeyMode.DisplayMember = "Label";
+                cbKeyMode.SelectedValue = Config.KeysConfig.AESKeyGenerator;
+                cbKeyMode.SelectedIndexChanged += SelectedKeyGenChanged;
+
+                tblSaveConfig = new LinkLabel
+                {
+                    Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPESAVE,
+                    Left = 20,
+                    Top = 80,
+                    Width = 80,
+                    TabStop = true
+                };
+                tblSaveConfig.LinkClicked += SaveConfigLinkClicked;
+                this.Controls.Add(tblSaveConfig);
+
+                tblCancelConfig = new LinkLabel
+                {
+                    Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPECANCEL,
+                    Left = 110,
+                    Top = 80,
+                    Width = 80,
+                    TabStop = true
+                };
+                tblCancelConfig.LinkClicked += CancelConfigLinkClicked;
+                this.Controls.Add(tblCancelConfig);
+
+                errors = new ErrorProvider(_view);
+                errors.BlinkStyle = ErrorBlinkStyle.NeverBlink;
+            }
+            finally
+            {
+                UpdateLayoutConfigStatus(ManagementService.ADFSManager.ConfigurationStatus);
+                UpdateControlsLayouts();
+                ValidateData();
+                _view.AutoValidate = AutoValidate.EnableAllowFocusChange;
+                _view.CausesValidation = true;
+                this.ResumeLayout();
+            }
+        }
+
+        /// <summary>
+        /// DoRefreshData method implmentation
+        /// </summary>
+        public void DoRefreshData()
+        {
+            this.SuspendLayout();
+            _view.AutoValidate = AutoValidate.Disable;
+            _view.CausesValidation = false;
+            try
+            {
+                cbKeyMode.SelectedValue = Config.KeysConfig.AESKeyGenerator;
+
+                tblSaveConfig.Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPESAVE;
+                tblCancelConfig.Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPECANCEL;
+                lblAESKey.Text = res.CTRLSECKEYLENGTH + " : ";
+
+            }
+            finally
+            {
+                UpdateLayoutConfigStatus(ManagementService.ADFSManager.ConfigurationStatus);
+                UpdateControlsLayouts();
+                ValidateData();
+                _view.AutoValidate = AutoValidate.EnableAllowFocusChange;
+                _view.CausesValidation = true;
+                this.ResumeLayout();
+            }
+        }
+
+        /// <summary>
+        /// IsValidData
+        /// </summary>
+        private void ValidateData()
+        {
+
+        }
+
+        /// <summary>
+        /// UpdateControlsLayouts method implementation
+        /// </summary>
+        private void UpdateControlsLayouts()
+        {
+            if (_UpdateControlsLayouts)
+                return;
+            _UpdateControlsLayouts = true;
+            try
+            {
+            }
+            finally
+            {
+                _UpdateControlsLayouts = false;
+            }
+        }
+
+
+        /// <summary>
+        /// OnResize method implmentation
+        /// </summary>
+        protected override void OnResize(EventArgs eventargs)
+        {
+            if (_txtpanel != null)
+                _txtpanel.Width = this.Width - 20;
+        }
+
+        /// <summary>
+        /// SelectedKeyGenChanged method
+        /// </summary>
+        private void SelectedKeyGenChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                if (_view.AutoValidate != AutoValidate.Disable)
+                {
+                    Config.KeysConfig.AESKeyGenerator = (AESKeyGeneratorMode)cbKeyMode.SelectedValue;
+                    ManagementService.ADFSManager.SetDirty(true);
+                    UpdateControlsLayouts();
                 }
             }
             catch (Exception ex)
@@ -12581,6 +13020,377 @@ namespace Neos.IdentityServer.Console.Controls
     }
 
     /// <summary>
+    /// SecurityConfigurationCustomControl class implementation
+    /// </summary>
+    public partial class SecurityConfigurationCustomControl : Panel, IMMCRefreshData
+    {
+        private NamespaceSnapInBase _snapin;
+        private Panel _panel;
+        private Panel _txtpanel;
+        private SecurityCustomViewControl _view;
+        private ErrorProvider errors;
+        private TextBox txtDLL;
+        private TextBox txtParams;
+        private LinkLabel tblSaveConfig;
+        private LinkLabel tblCancelConfig;
+        private Label lblParams;
+        private Label lblDLL;
+
+        /// <summary>
+        /// SecurityConfigurationCustomControl Constructor
+        /// </summary>
+        public SecurityConfigurationCustomControl(SecurityCustomViewControl view, NamespaceSnapInBase snap)
+        {
+            _view = view;
+            _snapin = snap;
+            _panel = new Panel();
+            _txtpanel = new Panel();
+            BackColor = System.Drawing.SystemColors.Window;
+            AutoSize = false;
+        }
+
+        /// <summary>
+        /// OnCreateControl method override
+        /// </summary>
+        protected override void OnCreateControl()
+        {
+            base.OnCreateControl();
+            ManagementService.ADFSManager.ConfigurationStatusChanged += ConfigurationStatusChanged;
+            DoCreateControls();
+        }
+
+        /// <summary>
+        /// ConfigurationStatusChanged method implementation
+        /// </summary>
+        internal void ConfigurationStatusChanged(ADFSServiceManager mgr, ConfigOperationStatus status, Exception ex = null)
+        {
+            UpdateLayoutConfigStatus(status);
+            if (_view.IsNotifsEnabled())
+            {
+                if (status == ConfigOperationStatus.ConfigLoaded)
+                    DoRefreshData();
+            }
+            else
+                _panel.Refresh();
+        }
+
+        /// <summary>
+        /// UpdateLayoutConfigStatus method implementation
+        /// </summary>
+        private void UpdateLayoutConfigStatus(ConfigOperationStatus status)
+        {
+            switch (status)
+            {
+                case ConfigOperationStatus.ConfigInError:
+                    _panel.BackColor = Color.DarkRed;
+                    break;
+                case ConfigOperationStatus.ConfigSaved:
+                    _panel.BackColor = Color.Orange;
+                    break;
+                case ConfigOperationStatus.ConfigLoaded:
+                    _panel.BackColor = Color.Green;
+                    IExternalProvider _provider = RuntimeAuthProvider.GetProviderInstance(PreferredMethod.External);
+                    if (!_provider.Enabled)
+                        _panel.BackColor = Color.DarkGray;
+                    break;
+                case ConfigOperationStatus.ConfigIsDirty:
+                    _panel.BackColor = Color.DarkOrange;
+                    break;
+                case ConfigOperationStatus.ConfigStopped:
+                    _panel.BackColor = Color.DarkGray;
+                    break;
+                case ConfigOperationStatus.UISync:
+                    break;
+                default:
+                    _panel.BackColor = Color.Yellow;
+                    break;
+            }
+            return;
+        }
+
+        /// <summary>
+        /// Config property
+        /// </summary>
+        public MFAConfig Config
+        {
+            get
+            {
+                ManagementService.ADFSManager.EnsureLocalConfiguration();
+                return ManagementService.ADFSManager.Config;
+            }
+        }
+
+        /// <summary>
+        /// Initialize method implementation
+        /// </summary>
+        private void DoCreateControls()
+        {
+            this.SuspendLayout();
+            _view.AutoValidate = AutoValidate.Disable;
+            _view.CausesValidation = false;
+            try
+            {
+                _view.RefreshProviderInformation();
+
+                this.Dock = DockStyle.Top;
+                this.Height = 300;
+                this.Width = 512;
+                this.Margin = new Padding(30, 5, 30, 5);
+
+                _panel.Width = 20;
+                _panel.Height = 198;
+                this.Controls.Add(_panel);
+
+                _txtpanel.Left = 20;
+                _txtpanel.Width = this.Width - 20;
+                _txtpanel.Height = 198;
+                _txtpanel.BackColor = System.Drawing.SystemColors.Control;
+                this.Controls.Add(_txtpanel);
+
+                lblDLL = new Label();
+                lblDLL.Text = res.CTRLSMSASSEMBLY + " : ";
+                lblDLL.Left = 10;
+                lblDLL.Top = 19;
+                lblDLL.Width = 170;
+                _txtpanel.Controls.Add(lblDLL);
+
+                txtDLL = new TextBox();
+                txtDLL.Text = Config.KeysConfig.CustomFullyQualifiedImplementation;
+                txtDLL.Left = 190;
+                txtDLL.Top = 15;
+                txtDLL.Width = 820;
+                txtDLL.Validating += DLLValidating;
+                txtDLL.Validated += DLLValidated;
+                _txtpanel.Controls.Add(txtDLL);
+
+                lblParams = new Label();
+                lblParams.Text = res.CTRLSMSPARAMS + " : ";
+                lblParams.Left = 10;
+                lblParams.Top = 51;
+                lblParams.Width = 170;
+                _txtpanel.Controls.Add(lblParams);
+
+                txtParams = new TextBox();
+                txtParams.Text = Config.KeysConfig.CustomParameters.Data;
+                txtParams.Left = 190;
+                txtParams.Top = 51;
+                txtParams.Width = 820;
+                txtParams.Height = 100;
+                txtParams.Multiline = true;
+                txtParams.Validating += ParamsValidating;
+                txtParams.Validated += ParamsValidated;
+                _txtpanel.Controls.Add(txtParams);
+
+                tblSaveConfig = new LinkLabel();
+                tblSaveConfig.Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPESAVE;
+                tblSaveConfig.Left = 20;
+                tblSaveConfig.Top = 208;
+                tblSaveConfig.Width = 80;
+                tblSaveConfig.LinkClicked += SaveConfigLinkClicked;
+                tblSaveConfig.TabStop = true;
+                this.Controls.Add(tblSaveConfig);
+
+                tblCancelConfig = new LinkLabel();
+                tblCancelConfig.Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPECANCEL;
+                tblCancelConfig.Left = 110;
+                tblCancelConfig.Top = 208;
+                tblCancelConfig.Width = 80;
+                tblCancelConfig.LinkClicked += CancelConfigLinkClicked;
+                tblCancelConfig.TabStop = true;
+                this.Controls.Add(tblCancelConfig);
+
+                errors = new ErrorProvider(_view);
+                errors.BlinkStyle = ErrorBlinkStyle.NeverBlink;
+            }
+            finally
+            {
+                UpdateLayoutConfigStatus(ManagementService.ADFSManager.ConfigurationStatus);
+                ValidateData();
+                _view.AutoValidate = AutoValidate.EnableAllowFocusChange;
+                _view.CausesValidation = true;
+                this.ResumeLayout();
+            }
+        }
+
+        /// <summary>
+        /// DoRefreshData method implementation
+        /// </summary>
+        public void DoRefreshData()
+        {
+            this.SuspendLayout();
+            _view.AutoValidate = AutoValidate.Disable;
+            _view.CausesValidation = false;
+            try
+            {
+                _view.RefreshProviderInformation();
+
+                txtDLL.Text = Config.KeysConfig.CustomFullyQualifiedImplementation;
+                txtParams.Text = Config.KeysConfig.CustomParameters.Data;
+
+                lblParams.Text = res.CTRLSMSPARAMS + " : ";
+                tblSaveConfig.Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPESAVE;
+                tblCancelConfig.Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPECANCEL;
+            }
+            finally
+            {
+                UpdateLayoutConfigStatus(ManagementService.ADFSManager.ConfigurationStatus);
+                ValidateData();
+                _view.CausesValidation = true;
+                _view.AutoValidate = AutoValidate.EnableAllowFocusChange;
+                this.ResumeLayout();
+            }
+        }
+
+        /// <summary>
+        /// ValidateData method implmentation
+        /// </summary>
+        private void ValidateData()
+        {
+            if (!string.IsNullOrEmpty(txtDLL.Text))
+            {
+                if (!AssemblyParser.CheckKeysAssembly(txtDLL.Text))
+                    errors.SetError(txtDLL, res.CTRLCUSTOMKEYSERROR);
+                else
+                    errors.SetError(txtDLL, "");
+            }
+            else
+                errors.SetError(txtDLL, "");
+            errors.SetError(txtParams, "");
+        }
+
+        /// <summary>
+        /// OnResize method implmentation
+        /// </summary>
+        protected override void OnResize(EventArgs eventargs)
+        {
+            if (_txtpanel != null)
+                _txtpanel.Width = this.Width - 20;
+        }
+
+        #region DLL
+        /// <summary>
+        /// DLLValidating event
+        /// </summary>
+        private void DLLValidating(object sender, CancelEventArgs e)
+        {
+            this.Cursor = Cursors.WaitCursor;
+            try
+            {
+                if (txtDLL.Modified)
+                {
+                    ManagementService.ADFSManager.SetDirty(true);
+                    if (!string.IsNullOrEmpty(txtDLL.Text))
+                    {
+                        if (!AssemblyParser.CheckKeysAssembly(txtDLL.Text))
+                            throw new Exception(res.CTRLCUSTOMKEYSERROR);
+                    }
+                    Config.KeysConfig.CustomFullyQualifiedImplementation = txtDLL.Text;
+                    errors.SetError(txtDLL, "");
+                }
+            }
+            catch (Exception ex)
+            {
+                e.Cancel = true;
+                errors.SetError(txtDLL, ex.Message);
+            }
+            finally
+            {
+                this.Cursor = Cursors.Default;
+            }
+        }
+
+        /// <summary>
+        /// DLLValidated event
+        /// </summary>
+        private void DLLValidated(object sender, EventArgs e)
+        {
+            try
+            {
+                Config.KeysConfig.CustomFullyQualifiedImplementation = txtDLL.Text;
+                ManagementService.ADFSManager.SetDirty(true);
+                errors.SetError(txtDLL, "");
+            }
+            catch (Exception ex)
+            {
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
+                messageBoxParameters.Text = ex.Message;
+                messageBoxParameters.Buttons = MessageBoxButtons.OK;
+                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                this._snapin.Console.ShowDialog(messageBoxParameters);
+            }
+        }
+        #endregion
+
+        #region Params
+        /// <summary>
+        /// ParamsValidating event
+        /// </summary>
+        private void ParamsValidating(object sender, CancelEventArgs e)
+        {
+            this.Cursor = Cursors.WaitCursor;
+            try
+            {
+                if (txtParams.Modified)
+                {
+                    ManagementService.ADFSManager.SetDirty(true);
+                    Config.KeysConfig.CustomParameters.Data = txtParams.Text;
+                    errors.SetError(txtParams, "");
+                }
+            }
+            catch (Exception ex)
+            {
+                e.Cancel = true;
+                errors.SetError(txtParams, ex.Message);
+            }
+            finally
+            {
+                this.Cursor = Cursors.Default;
+            }
+        }
+
+        /// <summary>
+        /// ParamsValidated event
+        /// </summary>
+        private void ParamsValidated(object sender, EventArgs e)
+        {
+            try
+            {
+                Config.KeysConfig.CustomParameters.Data = txtParams.Text;
+                ManagementService.ADFSManager.SetDirty(true);
+                errors.SetError(txtParams, "");
+            }
+            catch (Exception ex)
+            {
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
+                messageBoxParameters.Text = ex.Message;
+                messageBoxParameters.Buttons = MessageBoxButtons.OK;
+                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                this._snapin.Console.ShowDialog(messageBoxParameters);
+            }
+        }
+        #endregion
+
+        /// <summary>
+        /// SaveConfigLinkClicked event
+        /// </summary>
+        private void SaveConfigLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            if (_view != null)
+                _view.SaveData();
+        }
+
+        /// <summary>
+        /// CancelConfigLinkClicked event
+        /// </summary>
+        private void CancelConfigLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            if (_view != null)
+                _view.CancelData();
+        }
+    }
+
+
+    /// <summary>
     /// Assembly Parser
     /// </summary>
     internal static class AssemblyParser
@@ -12637,8 +13447,8 @@ namespace Neos.IdentityServer.Console.Controls
         {
             try
             {
-                if (Utilities.LoadExternalKeyManagerCreator(fqiassembly) == null)
-                    if (Utilities.LoadExternalKeyManagerWrapper(fqiassembly) == null)
+                if (Utilities.LoadExternalKeyManagerActivator(fqiassembly) == null)
+                    if (Utilities.LoadExternalKeyManager(fqiassembly) == null)
                         return false;
                     else
                         return true;

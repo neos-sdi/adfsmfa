@@ -105,6 +105,12 @@
     <Compile Include="Forms\Neos.IdentityServer.Console.DatabaseWizard.Designer.cs">
       <DependentUpon>Neos.IdentityServer.Console.DatabaseWizard.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\Neos.IdentityServer.Console.SecurityAESViewControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\Neos.IdentityServer.Console.SecurityAESViewControl.Designer.cs">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityAESViewControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\Neos.IdentityServer.Console.SecurityWSMANViewControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -116,6 +122,12 @@
     </Compile>
     <Compile Include="Forms\Neos.IdentityServer.Console.CustomStoreViewControl.Designer.cs">
       <DependentUpon>Neos.IdentityServer.Console.CustomStoreViewControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Neos.IdentityServer.Console.SecurityCustomViewControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\Neos.IdentityServer.Console.SecurityCustomViewControl.Designer.cs">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityCustomViewControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\Neos.IdentityServer.Console.StorageViewControl.cs">
       <SubType>UserControl</SubType>
@@ -275,8 +287,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Views\Neos.IdentityServer.Console.ADDSFormView.cs" />
     <Compile Include="Views\Neos.IdentityServer.Console.BiometricsFormView.cs" />
+    <Compile Include="Views\Neos.IdentityServer.Console.SecurityAESFormView.cs" />
     <Compile Include="Views\Neos.IdentityServer.Console.SecurityWSMANFormView.cs" />
     <Compile Include="Views\Neos.IdentityServer.Console.CustomStoreFormView.cs" />
+    <Compile Include="Views\Neos.IdentityServer.Console.SecurityCustomFormView.cs" />
     <Compile Include="Views\Neos.IdentityServer.Console.StorageFormView.cs" />
     <Compile Include="Views\Neos.IdentityServer.Console.SecurityRootFormView.cs" />
     <Compile Include="Views\Neos.IdentityServer.Console.SecurityWebAuthNFormView.cs" />
@@ -679,6 +693,48 @@
     <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.RootViewControl.ja.resx">
       <DependentUpon>Neos.IdentityServer.Console.RootViewControl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityAESViewControl.da.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityAESViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityAESViewControl.de.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityAESViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityAESViewControl.es.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityAESViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityAESViewControl.fr-CA.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityAESViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityAESViewControl.fr.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityAESViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityAESViewControl.it.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityAESViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityAESViewControl.ja.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityAESViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityAESViewControl.nl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityAESViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityAESViewControl.pl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityAESViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityAESViewControl.pt.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityAESViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityAESViewControl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityAESViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityAESViewControl.ro.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityAESViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityAESViewControl.ru.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityAESViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityAESViewControl.sv.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityAESViewControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRNGViewControl.da.resx">
       <DependentUpon>Neos.IdentityServer.Console.SecurityRNGViewControl.cs</DependentUpon>
     </EmbeddedResource>
@@ -756,6 +812,48 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityWSMANViewControl.sv.resx">
       <DependentUpon>Neos.IdentityServer.Console.SecurityWSMANViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityCustomViewControl.da.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityCustomViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityCustomViewControl.de.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityCustomViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityCustomViewControl.es.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityCustomViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityCustomViewControl.fr-CA.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityCustomViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityCustomViewControl.fr.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityCustomViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityCustomViewControl.it.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityCustomViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityCustomViewControl.ja.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityCustomViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityCustomViewControl.nl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityCustomViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityCustomViewControl.pl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityCustomViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityCustomViewControl.pt.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityCustomViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityCustomViewControl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityCustomViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityCustomViewControl.ro.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityCustomViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityCustomViewControl.ru.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityCustomViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityCustomViewControl.sv.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityCustomViewControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SMSViewControl.da.resx">
       <DependentUpon>Neos.IdentityServer.Console.SMSViewControl.cs</DependentUpon>
@@ -973,6 +1071,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.RootViewControl.pl.resx">
       <DependentUpon>Neos.IdentityServer.Console.RootViewControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.RootViewControl.pt.resx">
       <DependentUpon>Neos.IdentityServer.Console.RootViewControl.cs</DependentUpon>
@@ -982,6 +1081,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.RootViewControl.ro.resx">
       <DependentUpon>Neos.IdentityServer.Console.RootViewControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.RootViewControl.ru.resx">
       <DependentUpon>Neos.IdentityServer.Console.RootViewControl.cs</DependentUpon>

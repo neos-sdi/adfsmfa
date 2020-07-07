@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2020 Neos-Sdi (http://www.neos-sdi.com)                                                                                                                                    //                        
+// Copyright (c) 2020 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -228,7 +228,7 @@ namespace Neos.IdentityServer.MultiFactor
                     result += "<a class=\"actionLink\" href=\"#\" id=\"enrollemail\" name=\"enrollemail\" onclick=\"fnlinkclicked(OptionsForm, 4)\" style=\"cursor: pointer;\">" + prov2.GetWizardLinkLabel(usercontext) + "</a>";
                 }
                 IExternalProvider prov3 = RuntimeAuthProvider.GetProvider(PreferredMethod.External);
-                if ((prov3 != null) && (prov3.Enabled) && prov3.IsUIElementRequired(usercontext, RequiredMethodElements.PhoneLinkRequired))
+                if ((prov3 != null) && (prov3.Enabled) && (prov3.IsUIElementRequired(usercontext, RequiredMethodElements.PhoneLinkRequired) || prov3.IsUIElementRequired(usercontext, RequiredMethodElements.ExternalLinkRaquired)))
                 {
                     result += "<a class=\"actionLink\" href=\"#\" id=\"enrollphone\" name=\"enrollphone\" onclick=\"fnlinkclicked(OptionsForm, 5)\" style=\"cursor: pointer;\">" + prov3.GetWizardLinkLabel(usercontext) + "</a>";
                 }
@@ -431,7 +431,7 @@ namespace Neos.IdentityServer.MultiFactor
                                     value = Utilities.StripPhoneNumber(usercontext.PhoneNumber);
                                     break;
                                 case PreferredMethod.Biometrics:
-                                    if (usercontext.KeyStatus == SecretKeyStatus.Success) // ICI
+                                    if (usercontext.KeyStatus == SecretKeyStatus.Success) 
                                         value = "OK";
                                     else
                                         value = "<empty>";
@@ -617,7 +617,7 @@ namespace Neos.IdentityServer.MultiFactor
                                     value = Utilities.StripPhoneNumber(usercontext.PhoneNumber);
                                     break;
                                 case PreferredMethod.Biometrics:
-                                    if (usercontext.KeyStatus == SecretKeyStatus.Success) // ICI
+                                    if (usercontext.KeyStatus == SecretKeyStatus.Success) 
                                         value = "OK";
                                     else
                                         value = "<empty>";
@@ -788,7 +788,7 @@ namespace Neos.IdentityServer.MultiFactor
                         if (Provider.HasStrictAccessToOptions(prov))
                             result += "<a class=\"actionLink\" href=\"#\" id=\"enrollemail\" name=\"enrollemail\" onclick=\"return SetLinkTitle(selectoptionsForm, '5')\"; style=\"cursor: pointer;\">" + prov.GetWizardLinkLabel(usercontext) + "</a>";
                     }
-                    if (RuntimeAuthProvider.IsUIElementRequired(usercontext, RequiredMethodElements.PhoneLinkRequired))
+                    if (RuntimeAuthProvider.IsUIElementRequired(usercontext, RequiredMethodElements.PhoneLinkRequired) || RuntimeAuthProvider.IsUIElementRequired(usercontext, RequiredMethodElements.ExternalLinkRaquired))
                     {
                         prov = RuntimeAuthProvider.GetProvider(PreferredMethod.External);
                         if (prov.PinRequired)
@@ -860,36 +860,18 @@ namespace Neos.IdentityServer.MultiFactor
             result += "<b><div id=\"pwdTitle\" class=\"groupMargin\">" + Resources.GetString(ResourcesLocaleKind.Titles, "MustUseCodePageTitle") + "</div></b>";
             PreferredMethod method = GetMethod4FBUsers(usercontext);
             if (RuntimeAuthProvider.IsProviderAvailableForUser(usercontext, PreferredMethod.Code))
-            {
                 result += "<input id=\"opt1\" name=\"opt\" type=\"radio\" value=\"0\" " + (((method == PreferredMethod.Code) || (method == PreferredMethod.Choose)) ? "checked=\"checked\"> " : "> ") + RuntimeAuthProvider.GetProvider(PreferredMethod.Code).GetUIChoiceLabel(usercontext) + "<br/><br/>";
-            }
             if (!Provider.Config.IsPrimaryAuhentication)
             {
                 if (RuntimeAuthProvider.IsProviderAvailableForUser(usercontext, PreferredMethod.Email))
-                {
-                    result += "<input id=\"opt2\" name=\"opt\" type=\"radio\" value=\"2\" " + ((method == PreferredMethod.Email) ? "checked=\"checked\"> " : "> ") + RuntimeAuthProvider.GetProvider(PreferredMethod.Email).GetUIChoiceLabel(usercontext) + "<br/>";
-                    if (RuntimeAuthProvider.GetProvider(PreferredMethod.Email).IsBuiltIn)
-                        result += "<div style=\"text-indent: 20px;\"><i>" + Utilities.StripEmailAddress(usercontext.MailAddress) + "</i></div><br/>";
-                    else
-                        result += "<br/>";
-                }
+                    result += "<input id=\"opt2\" name=\"opt\" type=\"radio\" value=\"2\" " + ((method == PreferredMethod.Email) ? "checked=\"checked\"> " : "> ") + RuntimeAuthProvider.GetProvider(PreferredMethod.Email).GetUIChoiceLabel(usercontext) + "<br/><br/>";
                 if (RuntimeAuthProvider.IsProviderAvailableForUser(usercontext, PreferredMethod.External))
-                {
-                    result += "<input id=\"opt1\" name=\"opt\" type=\"radio\" value=\"1\" " + ((method == PreferredMethod.External) ? "checked=\"checked\"> " : "> ") + RuntimeAuthProvider.GetProvider(PreferredMethod.External).GetUIChoiceLabel(usercontext) + "<br/>";
-                    if (RuntimeAuthProvider.GetProvider(PreferredMethod.External).IsBuiltIn)
-                        result += "<div style=\"text-indent: 20px;\"><i>" + Utilities.StripPhoneNumber(usercontext.PhoneNumber) + "</i></div><br/>";
-                    else
-                        result += "<br/>";
-                }
+                    result += "<input id=\"opt1\" name=\"opt\" type=\"radio\" value=\"1\" " + ((method == PreferredMethod.External) ? "checked=\"checked\"> " : "> ") + RuntimeAuthProvider.GetProvider(PreferredMethod.External).GetUIChoiceLabel(usercontext) + "<br/><br/>";
                 if (RuntimeAuthProvider.IsProviderAvailableForUser(usercontext, PreferredMethod.Azure))
-                {
                     result += "<input id=\"opt3\" name=\"opt\" type=\"radio\" value=\"3\" " + ((method == PreferredMethod.Azure) ? "checked=\"checked\"> " : "> ") + RuntimeAuthProvider.GetProvider(PreferredMethod.Azure).GetUIChoiceLabel(usercontext) + "<br/><br/>";
-                }
             }
             if (RuntimeAuthProvider.IsProviderAvailableForUser(usercontext, PreferredMethod.Biometrics))
-            {
                 result += "<input id=\"opt4\" name=\"opt\" type=\"radio\" value=\"4\" " + ((method == PreferredMethod.Biometrics) ? "checked=\"checked\"> " : "> ") + RuntimeAuthProvider.GetProvider(PreferredMethod.Biometrics).GetUIChoiceLabel(usercontext) + "<br/><br/>";
-            }
 
             result += "<br/>";
             if (Provider.KeepMySelectedOptionOn())
@@ -1049,19 +1031,15 @@ namespace Neos.IdentityServer.MultiFactor
             result += "   {" + CR;
             result += "      title.innerHTML = \"<b>" + Resources.GetString(ResourcesLocaleKind.Titles, "TitleRedirecting") + "</b>\";" + CR;
             result += "   }" + CR;
+            if (!string.IsNullOrEmpty(usercontext.AccountManagementUrl))
+            {
+                result += "   var win = window.open('" + usercontext.AccountManagementUrl + "', 'configwindow', 'width=800, height=800');" + CR;
+                result += "   win.focus();" + CR;
+            }
             result += "   document.getElementById('bypassForm').submit();" + CR;
             result += "   return true;" + CR;
             result += "}" + CR;
             result += CR;
-            if (!string.IsNullOrEmpty(usercontext.AccountManagementUrl))
-            {
-                result += "function OnUnload(frm)" + CR;
-                result += "{" + CR;
-                result += "   window.open('" + usercontext.AccountManagementUrl + "', '_blank');" + CR;
-                result += "   return true;" + CR;
-                result += "}" + CR;
-                result += CR;
-            }
             result += "</script>" + CR;
             return result;
         }
@@ -1081,15 +1059,11 @@ namespace Neos.IdentityServer.MultiFactor
             result += "{" + CR;
             if (!needinput)
                 result += "   window.addEventListener('load', OnAutoPost, false);" + CR;
-            if (!string.IsNullOrEmpty(usercontext.AccountManagementUrl))
-                result += "   window.addEventListener('unload', OnUnload, false);" + CR;
             result += "}" + CR;
             result += "else if (window.attachEvent)" + CR;
             result += "{";
             if (!needinput)
                 result += "   window.attachEvent('onload', OnAutoPost);" + CR;
-            if (!string.IsNullOrEmpty(usercontext.AccountManagementUrl))
-                result += "   window.attachEvent('unload', OnUnload);" + CR;
             result += "}" + CR;
             result += CR;
             result += "</script>" + CR;
@@ -1582,7 +1556,7 @@ namespace Neos.IdentityServer.MultiFactor
                 case 0:
                     int pos = 0;
                     result += "<div id=\"wizardMessage\" class=\"groupMargin\">" + prov.GetWizardUILabel(usercontext) + "</div>";
-                    result += "<div class=\"fieldMargin smallText\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelWREGOTP") + "</div><br/>";
+                    result += "<div class=\"fieldMargin smallText\">" + prov.GetWizardUIComment(usercontext) + "</div><br/>";
                     result += "<table>";
                     result += "  <tr>";
                     result += "    <th width=\"60px\" />";
@@ -1896,9 +1870,9 @@ namespace Neos.IdentityServer.MultiFactor
             {
                 case 0: // Get User email
                     result += "<div id=\"wizardMessage\" class=\"groupMargin\">" + prov.GetWizardUILabel(usercontext) + "</div>";
+                    result += "<div class=\"fieldMargin smallText\">" + prov.GetWizardUIComment(usercontext) + "</div><br/>";
                     if (prov.IsUIElementRequired(usercontext, RequiredMethodElements.EmailParameterRequired))
-                    {
-                        result += "<div class=\"fieldMargin smallText\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelWREmail") + "</div><br/>";
+                    {                       
                         result += "<input id=\"email\" name=\"email\" type=\"text\" placeholder=\"" + Utilities.StripEmailAddress(usercontext.MailAddress) + "\" class=\"text fullWidth\" /><br/>";
                     }
                     List<AvailableAuthenticationMethod> lst = prov.GetAuthenticationMethods(usercontext);
@@ -2104,10 +2078,14 @@ namespace Neos.IdentityServer.MultiFactor
             {
                 case 0: // Get User Phone number
                     result += "<div id=\"wizardMessage\" class=\"groupMargin\">" + prov.GetWizardUILabel(usercontext) + "</div>";
+                    result += "<div class=\"fieldMargin smallText\">" + prov.GetWizardUIComment(usercontext) + "</div><br/>";
                     if (prov.IsUIElementRequired(usercontext, RequiredMethodElements.PhoneParameterRequired))
                     {
-                        result += "<div class=\"fieldMargin smallText\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelWRPhone") + "</div><br/>";
                         result += "<input id=\"phone\" name=\"phone\" type=\"text\" placeholder=\"" + Utilities.StripPhoneNumber(usercontext.PhoneNumber) + "\" class=\"text fullWidth\" /><br/>";
+                    }
+                    else if (prov.IsUIElementRequired(usercontext, RequiredMethodElements.ExternalParameterRequired)) 
+                    {
+                        result += "<input id=\"phone\" name=\"phone\" type=\"text\" class=\"text fullWidth\" /><br/>";
                     }
                     List<AvailableAuthenticationMethod> lst = prov.GetAuthenticationMethods(usercontext);
                     if (lst.Count > 1)
@@ -2339,10 +2317,10 @@ namespace Neos.IdentityServer.MultiFactor
             {
                 case 0: // Get User Phone number
                     result += "<div id=\"wizardMessage\" class=\"groupMargin\">" + prov.GetWizardUILabel(usercontext) + "</div>";
+                    result += "<div class=\"fieldMargin smallText\">" + prov.GetWizardUIComment(usercontext) + "</div><br/>";
                     if (prov.IsUIElementRequired(usercontext, RequiredMethodElements.BiometricParameterRequired))
                     {
                         List<WebAuthNCredentialInformation> creds = web.GetUserStoredCredentials(usercontext);
-                        result += "<div class=\"fieldMargin smallText\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelWRBiometrics") + "</div><br/>";
                         result += "<input id=\"optiongroup0\" name=\"optionitem\" type=\"radio\" value=\"" + Guid.Empty.ToString() + "\" checked=\"checked\" /> " + Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelWRAddBiometrics") + "<br/>";
                         int i = 1;
                         if (creds.Count > 0)

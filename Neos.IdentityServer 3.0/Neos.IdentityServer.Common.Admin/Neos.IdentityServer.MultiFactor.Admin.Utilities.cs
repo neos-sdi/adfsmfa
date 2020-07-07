@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2020 Neos-Sdi (http://www.neos-sdi.com)                                                                                                                                    //                        
+// Copyright (c) 2020 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -1072,7 +1072,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             switch (kind)
             {
                 case 0x00:
-                    using (AESEncryption MSIS = new AESEncryption())
+                    using (AESSystemEncryption MSIS = new AESSystemEncryption())
                     {
                         if (clearvalue)
                         {
@@ -1095,7 +1095,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                     }
                     break;
                 case 0x01:
-                    using (AESEncryption MSIS = new AESEncryption())
+                    using (AESSystemEncryption MSIS = new AESSystemEncryption())
                     {
                         if (clearvalue)
                         {
@@ -1116,7 +1116,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                     }
                     break;
                 case 0x02:
-                    using (AESEncryption MSIS = new AESEncryption())
+                    using (AESSystemEncryption MSIS = new AESSystemEncryption())
                     {
                         if (clearvalue)
                         {
@@ -1137,7 +1137,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                     }
                     break;
                 case 0x03:
-                    using (AESEncryption MSIS = new AESEncryption())
+                    using (AESSystemEncryption MSIS = new AESSystemEncryption())
                     {
                         if (clearvalue)
                         {
@@ -1167,6 +1167,63 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         {
             MFAConfig config = CFGUtilities.ReadConfiguration(host);
             MailUtilities.ExportMailTemplates(config, lcid);
+            CFGUtilities.WriteConfiguration(host, config);
+            CFGUtilities.BroadcastNotification(config, NotificationsKind.ConfigurationReload, Environment.MachineName, true);
+        }
+
+        /// <summary>
+        /// InstallMFASample method implementation
+        /// </summary>
+        internal static void InstallMFASample(PSHost host, FlatSampleKind kind, bool reset = false)
+        {
+            MFAConfig config = CFGUtilities.ReadConfiguration(host);
+            switch (kind)
+            {
+                case FlatSampleKind.QuizProvider:
+                    if (!reset)
+                        config.ExternalProvider.FullQualifiedImplementation = "Neos.IdentityServer.MultiFactor.Samples.QuizProviderSample, Neos.IdentityServer.MultiFactor.Samples, Version = 3.0.0.0, Culture = neutral, PublicKeyToken = 175aa5ee756d2aa2";
+                    else
+                        config.ExternalProvider.FullQualifiedImplementation = "";
+                    break;
+                case FlatSampleKind.CaesarEnryption:
+                    if (!reset)
+                    {
+                        config.KeysConfig.CustomFullyQualifiedImplementation = "Neos.IdentityServer.MultiFactor.Samples.CaesarKeyManagerActivator, Neos.IdentityServer.MultiFactor.Samples, Version=3.0.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2";
+                        config.KeysConfig.KeyFormat = SecretKeyFormat.CUSTOM;
+                    }
+                    else
+                    {
+                        config.KeysConfig.CustomFullyQualifiedImplementation = "";
+                        config.KeysConfig.KeyFormat = SecretKeyFormat.RNG;
+                    }
+                    break;
+                case FlatSampleKind.InMemoryStorage:
+                    if (!reset)
+                    {
+                        config.Hosts.CustomStoreHost.KeysRepositoryFullyQualifiedImplementation = "Neos.IdentityServer.MultiFactor.Samples.InMemoryKeys2RepositoryService, Neos.IdentityServer.MultiFactor.Samples, Version=3.0.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2";
+                        config.Hosts.CustomStoreHost.DataRepositoryFullyQualifiedImplementation = "Neos.IdentityServer.MultiFactor.Samples.InMemoryDataRepositoryService, Neos.IdentityServer.MultiFactor.Samples, Version=3.0.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2";
+                        config.StoreMode = DataRepositoryKind.Custom;
+                    }
+                    else
+                    {
+                        config.Hosts.CustomStoreHost.KeysRepositoryFullyQualifiedImplementation = "";
+                        config.Hosts.CustomStoreHost.DataRepositoryFullyQualifiedImplementation = "";
+                        config.StoreMode = DataRepositoryKind.ADDS;
+                    }
+                    break;
+                case FlatSampleKind.SMSProvider:
+                    if (!reset)
+                        config.ExternalProvider.FullQualifiedImplementation = "Neos.IdentityServer.MultiFactor.Samples.NeosSMSProvider, Neos.IdentityServer.MultiFactor.Samples, Version=3.0.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2";
+                    else
+                        config.ExternalProvider.FullQualifiedImplementation = "";
+                    break;
+                case FlatSampleKind.TOTPProvider:
+                    if (!reset)
+                        config.OTPProvider.FullQualifiedImplementation = "Neos.IdentityServer.MultiFactor.Samples.NeosOTPProvider430, Neos.IdentityServer.MultiFactor.Samples, Version=3.0.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2";
+                    else
+                        config.OTPProvider.FullQualifiedImplementation = "";
+                    break;
+            }
             CFGUtilities.WriteConfiguration(host, config);
             CFGUtilities.BroadcastNotification(config, NotificationsKind.ConfigurationReload, Environment.MachineName, true);
         }

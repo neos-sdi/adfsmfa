@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2020 Neos-Sdi (http://www.neos-sdi.com)                                                                                                                                    //                        
+// Copyright (c) 2020 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -41,6 +41,18 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         Strict = 5,                      // (UserFeaturesOptions.AllowProvideInformations | UserFeaturesOptions.AdministrativeMode);
         Administrative = 6,              // (UserFeaturesOptions.AdministrativeMode);
         Custom = 7                       // Empty 
+    }
+
+    /// <summary>
+    /// FlatSampleKind
+    /// </summary>   
+    public enum FlatSampleKind
+    {
+        QuizProvider = 1,
+        CaesarEnryption = 2,
+        InMemoryStorage = 3,
+        TOTPProvider = 4,
+        SMSProvider = 5
     }
 
     #region FlatConfig
@@ -256,7 +268,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         public string ClientCertificateAttribute { get; set; }
         public string RSACertificateAttribute { get; set; }
         public int MaxRows { get; set; }
-
+        public bool UseSSL { get; set; }
         /// <summary>
         /// Update method implmentation
         /// </summary>
@@ -278,6 +290,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             ClientCertificateAttribute = adds.ClientCertificateAttribute;
             RSACertificateAttribute = adds.RSACertificateAttribute;
             MaxRows = adds.MaxRows;
+            UseSSL = adds.UseSSL;
         }
 
         /// <summary>
@@ -323,6 +336,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             ClientCertificateAttribute = adds.ClientCertificateAttribute;
             RSACertificateAttribute = adds.RSACertificateAttribute;
             adds.MaxRows = MaxRows;
+            adds.UseSSL = UseSSL;
             ManagementService.ADFSManager.WriteConfiguration(host);
         }
     }
@@ -418,7 +432,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             DefaultPin = cfg.DefaultPin;
             DomainAddress = adds.DomainAddress;
             Account = adds.Account;
-            using (AESEncryption MSIS = new AESEncryption())
+            using (AESSystemEncryption MSIS = new AESSystemEncryption())
             {
                 Password = MSIS.Encrypt(adds.Password);
                 XORSecret = MSIS.Encrypt(keys.XORSecret);
@@ -443,7 +457,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             cfg.DefaultPin = this.DefaultPin;
             adds.DomainAddress = this.DomainAddress;
             adds.Account = this.Account;
-            using (AESEncryption MSIS = new AESEncryption())
+            using (AESSystemEncryption MSIS = new AESSystemEncryption())
             {
                 adds.Password = MSIS.Decrypt(Password);
                 keys.XORSecret = MSIS.Decrypt(XORSecret);
@@ -453,11 +467,11 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     }
     #endregion
 
-    #region FlatRngSecurity
+    #region FlatRNGSecurity
     /// <summary>
-    /// FlatRngSecurity class implementation
+    /// FlatRNGSecurity class implementation
     /// </summary>
-    public class FlatRngSecurity
+    public class FlatRNGSecurity
     {
         public bool IsDirty { get; set; }
         public KeyGeneratorMode KeyGenerator { get; set; }
@@ -489,11 +503,87 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     }
     #endregion
 
-    #region FlatRsaSecurity
+    #region FlatRNGSecurity
+    /// <summary>
+    /// FlatCustomSecurity class implementation
+    /// </summary>
+    public class FlatCustomSecurity
+    {
+        public bool IsDirty { get; set; }
+        public string CustomFullyQualifiedImplementation { get; set; }
+
+        public string CustomParameters { get; set; }
+
+        /// <summary>
+        /// Update method implmentation
+        /// </summary>
+        public void Load(PSHost host)
+        {
+            ManagementService.Initialize(host, true);
+            MFAConfig cfg = ManagementService.Config;
+            KeysManagerConfig keys = cfg.KeysConfig;
+            IsDirty = cfg.IsDirty;
+            CustomFullyQualifiedImplementation = keys.CustomFullyQualifiedImplementation;
+            CustomParameters = keys.CustomParameters.Data;
+        }
+
+        /// <summary>
+        /// Update method implmentation
+        /// </summary>
+        public void Update(PSHost host)
+        {
+            ManagementService.Initialize(host, true);
+            MFAConfig cfg = ManagementService.Config;
+            KeysManagerConfig keys = cfg.KeysConfig;
+            cfg.IsDirty = true;
+            keys.CustomFullyQualifiedImplementation = CustomFullyQualifiedImplementation;
+            keys.CustomParameters.Data = CustomParameters;
+            ManagementService.ADFSManager.WriteConfiguration(host);
+        }
+    }
+    #endregion
+
+    #region FlatAESSecurity
+    /// <summary>
+    /// FlatAESSecurity class implementation
+    /// </summary>
+    public class FlatAESSecurity
+    {
+        public bool IsDirty { get; set; }
+        public AESKeyGeneratorMode AESKeyGenerator { get; set; }
+
+        /// <summary>
+        /// Update method implmentation
+        /// </summary>
+        public void Load(PSHost host)
+        {
+            ManagementService.Initialize(host, true);
+            MFAConfig cfg = ManagementService.Config;
+            KeysManagerConfig keys = cfg.KeysConfig;
+            IsDirty = cfg.IsDirty;
+            AESKeyGenerator = keys.AESKeyGenerator;
+        }
+
+        /// <summary>
+        /// Update method implmentation
+        /// </summary>
+        public void Update(PSHost host)
+        {
+            ManagementService.Initialize(host, true);
+            MFAConfig cfg = ManagementService.Config;
+            KeysManagerConfig keys = cfg.KeysConfig;
+            cfg.IsDirty = true;
+            keys.AESKeyGenerator = AESKeyGenerator;
+            ManagementService.ADFSManager.WriteConfiguration(host);
+        }
+    }
+    #endregion
+
+    #region FlatRSASecurity
     /// <summary>
     /// FlatRngSecurity class implementation
     /// </summary>
-    public class FlatRsaSecurity
+    public class FlatRSASecurity
     {
         public bool IsDirty { get; set; }
         public int CertificateValidity { get; set; }
@@ -806,7 +896,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             ForceWizard = mail.ForceWizard;
             From = mail.From;
             UserName = mail.UserName;
-            using (AESEncryption MSIS = new AESEncryption())
+            using (AESSystemEncryption MSIS = new AESSystemEncryption())
             {
                 Password = MSIS.Encrypt(mail.Password);
             };
@@ -869,7 +959,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             mail.ForceWizard = ForceWizard;
             mail.From = From;
             mail.UserName = UserName;
-            using (AESEncryption MSIS = new AESEncryption())
+            using (AESSystemEncryption MSIS = new AESSystemEncryption())
             {
                 mail.Password = MSIS.Decrypt(Password);
             };
@@ -1067,6 +1157,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         public string Origin { get; set; }
         public bool DirectLogin { get; set; }
         public bool RequireValidAttestationRoot { get; set; }
+        public bool ShowPII { get; set; }
 
         /// <summary>
         /// Kind  Property
@@ -1105,6 +1196,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             this.ServerIcon = otp.Configuration.ServerIcon;
             this.Origin = otp.Configuration.Origin;
             this.RequireValidAttestationRoot = otp.Configuration.RequireValidAttestationRoot;
+            this.ShowPII = otp.Configuration.ShowPII;
         }
 
         /// <summary>
@@ -1134,6 +1226,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             otp.Configuration.ServerIcon = this.ServerIcon;
             otp.Configuration.Origin = this.Origin;
             otp.Configuration.RequireValidAttestationRoot = this.RequireValidAttestationRoot;
+            otp.Configuration.ShowPII = this.ShowPII;
             ManagementService.ADFSManager.WriteConfiguration(host);
         }
     }

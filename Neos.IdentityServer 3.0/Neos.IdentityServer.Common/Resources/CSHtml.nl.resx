@@ -238,7 +238,7 @@
     <value>Verificatie via mobiele telefoon</value>
   </data>
   <data name="SMSUIMessage" xml:space="preserve">
-    <value>We stuurden een SMS met een verificatiecode. {0}</value>
+    <value>We stuurden een SMS met een verificatiecode.</value>
   </data>
   <data name="SMSUIOTPLabel" xml:space="preserve">
     <value>Toegangscode ontvangen per telefoon</value>
@@ -248,5 +248,26 @@
   </data>
   <data name="SMSWIZEnroll" xml:space="preserve">
     <value>Mijn telefoon inschrijven</value>
+  </data>
+  <data name="PROVIDEROTPDESCRIPTION" xml:space="preserve">
+    <value>TOTP multi-factor leverancier</value>
+  </data>
+  <data name="PROVIDERSMSDESCRIPTION" xml:space="preserve">
+    <value>SMS multi-factor leverancier</value>
+  </data>
+  <data name="PROVIDEREMAILDESCRIPTION" xml:space="preserve">
+    <value>E-mail multifactor leverancier</value>
+  </data>
+  <data name="OTPUIWIZComment" xml:space="preserve">
+    <value>Scan de QR-code met een TOTP-toepassing zoals Microsoft Authenticator, Google Authenticator voor het registreren van uw account</value>
+  </data>
+  <data name="MAILUIWIZComment" xml:space="preserve">
+    <value>Je moet een e-mailadres invoeren om je identiteit te bevestigen. Deze e-mail moet bereikbaar zijn zonder bedrijfsverificatie (persoonlijk e-mailadres)</value>
+  </data>
+  <data name="SMSUIWIZComment" xml:space="preserve">
+    <value>U moet uw telefoonnummer invoeren om uw identiteit te bevestigen. Deze telefoon moet bereikbaar zijn.</value>
+  </data>
+  <data name="PROVIDERPLUGDESCRIPTION" xml:space="preserve">
+    <value>{0} multi-factor leverancier (Plug)</value>
   </data>
 </root>

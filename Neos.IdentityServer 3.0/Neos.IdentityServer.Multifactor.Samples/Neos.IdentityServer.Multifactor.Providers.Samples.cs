@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2020 Neos-Sdi (http://www.neos-sdi.com)                                                                                                                                    //                        
+// Copyright (c) 2020 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -120,12 +120,29 @@ namespace Neos.IdentityServer.MultiFactor.Samples
         /// </summary>
         public override string Description
         {
-            get { return "Quiz Multi-Factor Provider Sample"; }
+            get
+            {
+                int lcid = 0;
+                if (CultureInfo.DefaultThreadCurrentUICulture != null)
+                    lcid = CultureInfo.DefaultThreadCurrentUICulture.LCID;
+                else
+                    lcid = CultureInfo.CurrentUICulture.LCID;
+
+                switch (lcid)
+                {
+                    default:
+                        return "Quiz Multi-Factor Provider Sample";
+                    case 1036:
+                        return "Fournisseur multifacteur Quiz";
+                    case 1034:
+                    case 3082:
+                        return "Cuestionario multifactorial";
+                }
+            }
         }
 
         /// <summary>
         /// GetUILabel method implementation
-        /// 
         /// Label displayed above a control (aka : TextBox) when user is in login process
         /// </summary>
         public override string GetUILabel(AuthenticationContext ctx)
@@ -160,6 +177,23 @@ namespace Neos.IdentityServer.MultiFactor.Samples
                     }
             }
             return string.Empty;
+        }
+
+        /// <summary>
+        /// GetWizardUIComment method implementation
+        /// </summary>
+        public override string GetWizardUIComment(AuthenticationContext ctx) 
+        {
+            switch (ctx.Lcid)
+            {
+                default:
+                    return "Follow the instructions to authenticate";
+                case 1036:
+                    return "Suivez les indications pour vous authentifier";
+                case 1034:
+                case 3082:
+                    return "Sigue las instrucciones para autenticarte";
+            }
         }
 
         /// <summary>
@@ -256,7 +290,6 @@ namespace Neos.IdentityServer.MultiFactor.Samples
         /// </summary>
         public override string GetUIListChoiceLabel(AuthenticationContext ctx)
         {
-
             switch (ctx.Lcid)
             {
                 default:
@@ -386,23 +419,25 @@ namespace Neos.IdentityServer.MultiFactor.Samples
                     switch (ctx.Lcid)
                     {
                         default:
-                            return "Tonight I'm gonna have myself a real good time \r" +
-                                   "I feel alive and the world I'll turn it inside out - yeah \r" +
-                                   "And floating around in ecstasy \r" +
-                                   "So don't stop me now don't stop me \r" +
-                                   "'Cause I'm having a good time having a good time";
+                            return "Tonight I'm gonna have myself a real good time<BR>" +
+                                   "I feel alive and the world I'll turn it inside out - yeah<BR>" +
+                                   "And floating around in ecstasy<BR>" +
+                                   "So don't stop me now don't stop me<BR>" +
+                                   "'Cause I'm having a good time having a good time<BR>";
                         case 1036:
-                            return "Dès l'aérogare J'ai senti le choc \r" +
-                                   "Un souffle barbare Un remous hard rock \r" +
-                                   "Dès l'aérogare J'ai changé d'époque \r" +
-                                   "Come on ! ça démarre Sur les starting blocks \r"+
-                                   "(feat Marcus Miller on the bass)";
+                            return "Dès l'aérogare J'ai senti le choc<BR>" +
+                                   "Un souffle barbare, Un remous hard rock<BR>" +
+                                   "Dès l'aérogare J'ai changé d'époque<BR>" +
+                                   "Come on ! ça démarre sur les starting blocks<BR>" +
+                                   "Dare, Dare, Dare ! là c'est du mastoque<BR>"+
+                                   "C'est pas du Ronsard, c'est de l'amerloque...<BR>" +
+                                   "(feat Marcus Miller on the bass)<BR>";
                         case 1034:
                         case 3082:
-                            return "You're a good soldier Choosing your battles \r" +
-                                   "Pick yourself up and dust yourself off and back in the saddle \r" +
-                                   "You're on the front line Everyone's watching \r" +
-                                   "You know it's serious we're getting closer, this isn't over";
+                            return "You're a good soldier Choosing your battles<BR>" +
+                                   "Pick yourself up and dust yourself off and back in the saddle<BR>" +
+                                   "You're on the front line Everyone's watching<BR>" +
+                                   "You know it's serious we're getting closer, this isn't over<BR>";
                     }
             }
             return string.Empty;
@@ -462,7 +497,16 @@ namespace Neos.IdentityServer.MultiFactor.Samples
         /// </summary>
         public override string GetUIEnrollmentTaskLabel(AuthenticationContext ctx)
         {
-            return string.Empty;
+            switch (ctx.Lcid)
+            {
+                default:
+                    return "Register for a Quiz";
+                case 1036:
+                    return "S'enregister pour un Quiz";
+                case 1034:
+                case 3082:
+                    return "Registrarse para un cuestionario";
+            }
         }
 
         /// <summary>
@@ -517,7 +561,7 @@ namespace Neos.IdentityServer.MultiFactor.Samples
                         default:
                             return "https://en.wikipedia.org/wiki/Barack_Obama";
                         case 1036:
-                            return "https://fr.wikipedia.org/wiki/Discussion:Nicolas_Sarkozy";
+                            return "https://fr.wikipedia.org/wiki/Nicolas_Sarkozy";
                         case 1034:
                         case 3082:
                             return "https://es.wikipedia.org/wiki/Rafael_Nadal";
@@ -546,7 +590,9 @@ namespace Neos.IdentityServer.MultiFactor.Samples
             {
                 case RequiredMethodElements.CodeInputRequired:
                     return (ctx.SelectedMethod==AuthenticationResponseKind.Sample1);
-                case RequiredMethodElements.EmailLinkRequired:
+               // case RequiredMethodElements.ExternalParameterRequired:
+               //     return (ctx.SelectedMethod == AuthenticationResponseKind.Sample1);
+                case RequiredMethodElements.ExternalLinkRaquired:
                     return true;
                 case RequiredMethodElements.PinInputRequired:
                     return this.PinRequired;

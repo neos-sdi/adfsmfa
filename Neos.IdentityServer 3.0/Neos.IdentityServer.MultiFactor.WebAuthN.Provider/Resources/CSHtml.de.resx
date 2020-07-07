@@ -156,4 +156,10 @@
   <data name="BIOUIEnrollDeleteLinkLabel" xml:space="preserve">
     <value>Dieses Gerät löschen</value>
   </data>
+  <data name="PROVIDERBIODESCRIPTION" xml:space="preserve">
+    <value>Biometrischer Multi-Faktor-Anbieter</value>
+  </data>
+  <data name="BIOUIWIZComment" xml:space="preserve">
+    <value>Verwalten Sie Ihre biometrischen Geräte. Wählen Sie einzelne Geräte hinzufügen, ersetzen oder löschen.</value>
+  </data>
 </root>

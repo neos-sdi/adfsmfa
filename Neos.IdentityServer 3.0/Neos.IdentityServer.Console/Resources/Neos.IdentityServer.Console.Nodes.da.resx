@@ -231,17 +231,8 @@
   <data name="SECURITYSCOPENODEDESC" xml:space="preserve">
     <value>Sikkerhedskonfiguration</value>
   </data>
-  <data name="SECURITYSCOPERNG" xml:space="preserve">
-    <value>RNG (generator af tilfældige tal)</value>
-  </data>
   <data name="SECURITYSCOPEROOT" xml:space="preserve">
     <value>Sikkerhedskonfiguration</value>
-  </data>
-  <data name="SECURITYSCOPERSA" xml:space="preserve">
-    <value>RSA-certifikat</value>
-  </data>
-  <data name="SECURITYSCOPERSAX" xml:space="preserve">
-    <value>RSA-certifikater pr. bruger</value>
   </data>
   <data name="SECURITYSCOPEWSMAN" xml:space="preserve">
     <value>Wsman (Wsman)</value>
@@ -359,5 +350,17 @@
   </data>
   <data name="CUSTOMSTORESCOPENODEDESC" xml:space="preserve">
     <value>Konfiguration af brugerdefineret butik</value>
+  </data>
+  <data name="SECURITYSCOPERNG" xml:space="preserve">
+    <value>Kodede nøgler RNG</value>
+  </data>
+  <data name="SECURITYSCOPERSA" xml:space="preserve">
+    <value>Asymetriske nøgler RSA</value>
+  </data>
+  <data name="SECURITYSCOPEAES" xml:space="preserve">
+    <value>Symetriske taster AES</value>
+  </data>
+  <data name="SECURITYSCOPECUSTOM" xml:space="preserve">
+    <value>Brugerdefinerede taster</value>
   </data>
 </root>

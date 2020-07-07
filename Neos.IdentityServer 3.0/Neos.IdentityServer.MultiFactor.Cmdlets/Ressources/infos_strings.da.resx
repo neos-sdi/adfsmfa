@@ -228,4 +228,10 @@
   <data name="InfosMailTemplateExported" xml:space="preserve">
     <value>Mail skabeloner korrekt eksporteret !</value>
   </data>
+  <data name="InfosSampleInstalled" xml:space="preserve">
+    <value>MFA eksempel installeret!</value>
+  </data>
+  <data name="InfosSampleUnInstalled" xml:space="preserve">
+    <value>MFA eksempel uinstalleret !</value>
+  </data>
 </root>

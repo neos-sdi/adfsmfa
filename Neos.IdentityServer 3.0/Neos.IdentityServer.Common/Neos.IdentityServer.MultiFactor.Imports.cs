@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2020 Neos-Sdi (http://www.neos-sdi.com)                                                                                                                                    //                        
+// Copyright (c) 2020 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -200,7 +200,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                         client = new SQLDataRepositoryService(Config.Hosts.SQLServerHost, Config.DeliveryWindow);
                         break;
                     case DataRepositoryKind.Custom:
-                        client = CustomDataRepositoryCreator.CreateDataRepositoryInstance(Config.Hosts.CustomStoreHost, Config.DeliveryWindow);
+                        client = CustomDataRepositoryActivator.CreateInstance(Config.Hosts.CustomStoreHost, Config.DeliveryWindow);
                         break;
                 }
 
@@ -208,7 +208,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 Trace.WriteLine(string.Format("Importing for AD : {0}", LDAPPath));
                 Trace.Indent();
                 Trace.WriteLine("Querying users from AD");
-                MFAUserList lst = client.ImportMFAUsers(DomainName, UserName, Password, LDAPPath, CreatedSince, ModifiedSince, MailAttribute, PhoneAttribute, Method, DisableAll);
+                MFAUserList lst = client.ImportMFAUsers(DomainName, UserName, Password, LDAPPath, CreatedSince, ModifiedSince, MailAttribute, PhoneAttribute, Method, Config.Hosts.ActiveDirectoryHost.UseSSL, DisableAll);
                 Trace.WriteLine(string.Format("Querying return {0} users from AD", lst.Count.ToString()));
 
                 DataRepositoryService client2 = null;
@@ -231,7 +231,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                         Trace.WriteLine("");
                         Trace.WriteLine("Importing Custom Store Mode");
                         Trace.Indent();
-                        client2 = CustomDataRepositoryCreator.CreateDataRepositoryInstance(Config.Hosts.CustomStoreHost, Config.DeliveryWindow);
+                        client2 = CustomDataRepositoryActivator.CreateInstance(Config.Hosts.CustomStoreHost, Config.DeliveryWindow);
                         break;
                 }
                 client2.OnKeyDataEvent += KeyDataEvent;

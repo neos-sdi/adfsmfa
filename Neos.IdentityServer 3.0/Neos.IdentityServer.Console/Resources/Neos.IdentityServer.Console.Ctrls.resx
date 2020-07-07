@@ -231,6 +231,9 @@
   <data name="CTRLADFSDEACTIVATEMFA" xml:space="preserve">
     <value>Disable MFA</value>
   </data>
+  <data name="CTRLADLDAPSSL" xml:space="preserve">
+    <value>Use secure LDAP connections (LDAPS)</value>
+  </data>
   <data name="CTRLADPASSWORD" xml:space="preserve">
     <value>Password</value>
   </data>
@@ -665,5 +668,11 @@
   </data>
   <data name="CTRLWEBAUTHNUSERVERFICATION" xml:space="preserve">
     <value>User Attestation Verification Requirement</value>
+  </data>
+  <data name="CTRLCUSTOMKEYSERROR" xml:space="preserve">
+    <value>Invalid Extension ! cannot be loaded !</value>
+  </data>
+  <data name="CTRLWEBAUTHNSHOWPII" xml:space="preserve">
+    <value>Show sensitive logs</value>
   </data>
 </root>

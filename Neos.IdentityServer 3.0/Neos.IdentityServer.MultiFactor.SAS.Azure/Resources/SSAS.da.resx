@@ -210,4 +210,7 @@
   <data name="VOICE3Message" xml:space="preserve">
     <value>Vi ringer til din kontortelefon {0}. Svar for at fortsætte.</value>
   </data>
+  <data name="PROVIDERAZURESDESCRIPTION" xml:space="preserve">
+    <value>Microsoft Azure Multi Factor Provider</value>
+  </data>
 </root>

@@ -142,7 +142,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Touch or Scan with you biometric device.
+        ///   Recherche une chaîne localisée semblable à Touch or Scan with your biometric device.
         /// </summary>
         internal static string BIOUIMessage {
             get {
@@ -156,6 +156,15 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Resources {
         internal static string BIOUIOTPLabel {
             get {
                 return ResourceManager.GetString("BIOUIOTPLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Manage your biometrics devices. Select add, replace or delete individual devices..
+        /// </summary>
+        internal static string BIOUIWIZComment {
+            get {
+                return ResourceManager.GetString("BIOUIWIZComment", resourceCulture);
             }
         }
         
@@ -174,6 +183,15 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Resources {
         internal static string BIOWIZEnroll {
             get {
                 return ResourceManager.GetString("BIOWIZEnroll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Biometrics Multi-Factor Provider.
+        /// </summary>
+        internal static string PROVIDERBIODESCRIPTION {
+            get {
+                return ResourceManager.GetString("PROVIDERBIODESCRIPTION", resourceCulture);
             }
         }
     }

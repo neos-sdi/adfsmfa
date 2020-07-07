@@ -87,14 +87,24 @@ namespace MFA
         RSA = 1,
 
         /// <summary>
+        /// <para type="description">Security parmaters for AES Keys.</para>
+        /// </summary>
+        AES = 2,
+
+        /// <summary>
+        /// <para type="description">Security parmaters for Custom implementations.</para>
+        /// </summary>
+        CUSTOM = 3,
+
+        /// <summary>
         /// <para type="description">Security parmaters for Biometrics.</para>
         /// </summary>
-        BIOMETRIC = 2,
+        BIOMETRIC = 4,
 
         /// <summary>
         /// <para type="description">Security parmaters for WSMAN Configuration.</para>
         /// </summary>
-        WSMAN = 3
+        WSMAN = 5
     }
 
     /// <summary>
@@ -193,14 +203,19 @@ namespace MFA
         RNG = 0,
 
         /// <summary>
-        /// <para type="description">RSA (Certificate encryption with Logon Name).</para>
+        /// <para type="description">RSA encryption.</para>
         /// </summary>
         RSA = 1,
 
         /// <summary>
-        /// <para type="description">CUSTOM (a certificate encryption with Logon Name for each user, RSA).</para>
+        /// <para type="description">AES encryption .</para>
         /// </summary>
-        CUSTOM = 2
+        AES = 2,
+
+        /// <summary>
+        /// <para type="description">CUSTOM encryption.</para>
+        /// </summary>
+        CUSTOM = 3
     }
 
     /// <summary>
@@ -406,35 +421,53 @@ namespace MFA
 
     /// <summary>
     /// PSKeyGeneratorMode
-    /// <para type="synopsis">For RNG Key generation, Key Size from 128 bytes to 512 bytes.</para>
+    /// <para type="synopsis">For RNG Key generation, Key Size from 128 bits to 512 bits.</para>
     /// <para type="description">Configuration options for registering or accessing MFA. Must be combined with binary OR, in MMC you can use Templates</para>
     /// </summary>
     public enum PSKeyGeneratorMode
     {
         /// <summary>
-        /// <para type="description">Guid, 128 bytes length</para>
+        /// <para type="description">Guid, 128 bits length</para>
         /// </summary>
         Guid = 0,
 
         /// <summary>
-        /// <para type="description">ClientSecret128, 128 bytes length with RNG</para>
+        /// <para type="description">ClientSecret128, 128 bits length with RNG</para>
         /// </summary>
         ClientSecret128 = 1,
 
         /// <summary>
-        /// <para type="description">ClientSecret256, 256 bytes length with RNG</para>
+        /// <para type="description">ClientSecret256, 256 bits length with RNG</para>
         /// </summary>
         ClientSecret256 = 2,
 
         /// <summary>
-        /// <para type="description">ClientSecret384, 384 bytes length with RNG</para>
+        /// <para type="description">ClientSecret384, 384 bits length with RNG</para>
         /// </summary>
         ClientSecret384 = 3,
 
         /// <summary>
-        /// <para type="description">ClientSecret512, 512 bytes length with RNG</para>
+        /// <para type="description">ClientSecret512, 512 bits length with RNG</para>
         /// </summary>
         ClientSecret512 = 4,
+    }
+
+    /// <summary>
+    /// PSAESKeyGeneratorMode
+    /// <para type="synopsis">For AES Key encryption, Key Size from 512 bits to 1024 bits.</para>
+    /// <para type="description">Configuration options for registering or accessing MFA. Must be combined with binary OR, in MMC you can use Templates</para>
+    /// </summary>
+    public enum PSAESKeyGeneratorMode
+    {
+        /// <summary>
+        /// <para type="description">AESSecret512, 512 bits length with AES</para>
+        /// </summary>
+        AESSecret512 = 0,
+
+        /// <summary>
+        /// <para type="description">AESSecret1024, 1024 bits length with AES</para>
+        /// </summary>
+        AESSecret1024 = 1,
     }
 
     /// <summary>
@@ -541,6 +574,38 @@ namespace MFA
         /// <para type="description">NoGooglSearch, disable links for searching on internet for Authenticator Apps.</para>
         /// </summary>
         NoGooglSearch = 0x8
+    }
+
+
+    /// <summary>
+    /// PSSampleKind
+    /// </summary>   
+    public enum PSSampleKind
+    {
+        /// <summary>
+        /// <para type="description">Quiz demo for external provider.</para>
+        /// </summary>
+        QuizProviderSample = 1,
+
+        /// <summary>
+        /// <para type="description">Caesar encryption demo for custom keys.</para>
+        /// </summary>
+        CaesarEnryptionSample = 2,
+
+        /// <summary>
+        /// <para type="description">InMemory custom storage demo for custom storage.</para>
+        /// </summary>
+        InMemoryStorageSample = 3,
+
+        /// <summary>
+        /// <para type="description">TOPT Provider sample for custom TOTP provider.</para>
+        /// </summary>
+        TOTPProviderSample = 4,
+
+        /// <summary>
+        /// <para type="description">SMS/External Provider sample for external provider.</para>
+        /// </summary>
+        SMSProviderSample = 5
     }
 
     /// <summary>

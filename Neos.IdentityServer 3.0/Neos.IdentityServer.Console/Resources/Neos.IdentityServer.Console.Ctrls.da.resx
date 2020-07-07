@@ -666,4 +666,13 @@
   <data name="CTRLCUSTOMUSING" xml:space="preserve">
     <value>Brug brugerdefineret lager</value>
   </data>
+  <data name="CTRLADLDAPSSL" xml:space="preserve">
+    <value>Brug sikre LDAP-forbindelser (LDAPS)</value>
+  </data>
+  <data name="CTRLCUSTOMKEYSERROR" xml:space="preserve">
+    <value>Ugyldig udvidelse ! kan ikke indlæses !</value>
+  </data>
+  <data name="CTRLWEBAUTHNSHOWPII" xml:space="preserve">
+    <value>Vis følsomme logfiler</value>
+  </data>
 </root>

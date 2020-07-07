@@ -1,4 +1,21 @@
-﻿using System;
+﻿//******************************************************************************************************************************************************************************************//
+// Copyright (c) 2020 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
+//                                                                                                                                                                                          //
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
+// to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
+// and to permit persons to whom the Software is furnished to do so, subject to the following conditions:                                                                                   //
+//                                                                                                                                                                                          //
+// The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.                                                           //
+//                                                                                                                                                                                          //
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,                                      //
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,                            //
+// WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                               //
+//                                                                                                                                                                                          //
+// https://adfsmfa.codeplex.com                                                                                                                                                             //
+// https://github.com/neos-sdi/adfsmfa                                                                                                                                                      //
+//                                                                                                                                                                                          //
+//******************************************************************************************************************************************************************************************//
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,9 +26,9 @@ using System.Diagnostics;
 namespace Neos.IdentityServer.MultiFactor.Common
 {
     /// <summary>
-    /// RSAKeyManagerCreator class
+    /// RSAKeyManagerActivator class
     /// </summary>
-    internal class RSAKeyManagerCreator : ISecretKeyManagerCreator
+    internal class RSAKeyManagerActivator : ISecretKeyManagerActivator
     {
         /// <summary>
         /// CreateKeyManager method
@@ -30,12 +47,7 @@ namespace Neos.IdentityServer.MultiFactor.Common
     /// </summary>
     internal abstract class RSAKeyManager : ISecretKeyManager
     {
-        private string _certificatethumbprint;
-        private MFAConfig _config = null;
-        private KeySizeMode _ksize = KeySizeMode.KeySize1024;
-        private KeysRepositoryService _repos = null;
         private int MAX_PROBE_LEN = 0;
-        private string _xorsecret = XORUtilities.XORKey;
 
         /// <summary>
         /// RSAKeyManager constructor
@@ -49,26 +61,14 @@ namespace Neos.IdentityServer.MultiFactor.Common
         /// <summary>
         /// Initialize method implementation
         /// </summary>
-        public void Initialize(MFAConfig config)
+        public void Initialize(KeysRepositoryService keysstorage, BaseKeysManagerParams parameters)
         {
-            _config = config;
-            _certificatethumbprint = config.KeysConfig.CertificateThumbprint;
-            _ksize = config.KeysConfig.KeySize;
-            if (!string.IsNullOrEmpty(config.KeysConfig.XORSecret))
-                _xorsecret = config.KeysConfig.XORSecret;
-            switch (_config.StoreMode)
-            {
-                case DataRepositoryKind.ADDS:
-                    _repos = new ADDSKeysRepositoryService(_config.Hosts.ActiveDirectoryHost, _config.DeliveryWindow);
-                    break;
-                case DataRepositoryKind.SQL:
-                    _repos = new SQLKeysRepositoryService(_config.Hosts.SQLServerHost, _config.DeliveryWindow);
-                    break;
-                case DataRepositoryKind.Custom:
-                    _repos = CustomDataRepositoryCreator.CreateKeyRepositoryInstance(_config.Hosts.CustomStoreHost, _config.DeliveryWindow);
-                    break;
-            }
-            switch (_ksize)
+            RSAKeysManagerParams config = (RSAKeysManagerParams)parameters;
+            KeysStorage = keysstorage;
+            XORSecret = config.XORSecret;
+            KeySize = config.KeySizeMode;
+            CertificateThumbprint = config.CertificateThumbprint;
+            switch (KeySize)
             {
                 case KeySizeMode.KeySize128:
                     MAX_PROBE_LEN = 16;
@@ -97,10 +97,22 @@ namespace Neos.IdentityServer.MultiFactor.Common
         /// <summary>
         /// KeysStorage method implementation
         /// </summary>
-        public KeysRepositoryService KeysStorage
-        {
-            get { return _repos; }
-        }
+        public KeysRepositoryService KeysStorage { get; private set; } = null;
+
+        /// <summary>
+        /// XORSecret property
+        /// </summary>
+        public string XORSecret { get; private set; } = XORUtilities.XORKey;
+
+        /// <summary>
+        /// KeySize property
+        /// </summary>
+        private KeySizeMode KeySize { get; set; } = KeySizeMode.KeySize1024;
+
+        /// <summary>
+        /// CertificateThumbprint property
+        /// </summary>
+        private string CertificateThumbprint { get; set; }
 
         /// <summary>
         /// Prefix property
@@ -108,14 +120,6 @@ namespace Neos.IdentityServer.MultiFactor.Common
         public string Prefix
         {
             get { return "rsa://"; }
-        }
-
-        /// <summary>
-        /// Prefix property
-        /// </summary>
-        public string XORSecret
-        {
-            get { return _xorsecret; }
         }
 
         #region Storage Methods
@@ -164,9 +168,9 @@ namespace Neos.IdentityServer.MultiFactor.Common
                 string lupn = upn.ToLower();
 
                 byte[] crypted = null;
-                using (var prov = new RSAEncryption(_xorsecret, _certificatethumbprint))
+                using (var prov = new RSAEncryption(XORSecret, CertificateThumbprint))
                 {
-                    crypted = prov.Encrypt(lupn);
+                    crypted = prov.NewEncryptedKey(lupn);
                     if (crypted == null)
                         return null;
                 }
@@ -203,13 +207,13 @@ namespace Neos.IdentityServer.MultiFactor.Common
                 string key = ReadKey(lupn);
                 if (HasKeyPrefix(key))
                 {
-                    using (var prov = new Encryption(_xorsecret, _certificatethumbprint))
+                    using (var prov = new Encryption(XORSecret, CertificateThumbprint))
                     {
                         string xkey = StripKeyPrefix(key);
                         byte[] crypted = System.Convert.FromBase64CharArray(xkey.ToCharArray(), 0, xkey.Length);
                         if (crypted == null)
                             return false;
-                        byte[] cleared = prov.Decrypt(crypted, lupn);
+                        byte[] cleared = prov.GetDecryptedKey(crypted, lupn);
 
                         if (cleared == null)
                             return false; // Key corrupted
@@ -300,9 +304,9 @@ namespace Neos.IdentityServer.MultiFactor.Common
                 string lupn = upn.ToLower();
 
                 byte[] crypted = null;
-                using (var prov = new RSAEncryption(_xorsecret, _certificatethumbprint))
+                using (var prov = new RSAEncryption(XORSecret, CertificateThumbprint))
                 {
-                    crypted = prov.Encrypt(lupn);
+                    crypted = prov.NewEncryptedKey(lupn);
                     if (crypted == null)
                         return null;
                 }
@@ -324,13 +328,13 @@ namespace Neos.IdentityServer.MultiFactor.Common
                     return null;
 
                 byte[] cleared = null;
-                using (var prov = new RSAEncryption(_xorsecret, _certificatethumbprint))
+                using (var prov = new RSAEncryption(XORSecret, CertificateThumbprint))
                 {
                     byte[] crypted = StripStorageInfos(key);
                     if (crypted == null)
                         return null;
 
-                    cleared = prov.Decrypt(crypted, lupn);
+                    cleared = prov.GetDecryptedKey(crypted, lupn);
                     if (cleared == null)
                         return null;
                 }
@@ -357,12 +361,12 @@ namespace Neos.IdentityServer.MultiFactor.Common
                     return false;
                 if (HasStorageInfos(key))
                 {
-                    using (var prov = new RSAEncryption(_xorsecret, _certificatethumbprint))
+                    using (var prov = new RSAEncryption(XORSecret, CertificateThumbprint))
                     {
                         byte[] crypted = StripStorageInfos(key);
                         if (crypted == null)
                             return false;
-                        byte[] cleared = prov.Decrypt(crypted, lupn);
+                        byte[] cleared = prov.GetDecryptedKey(crypted, lupn);
 
                         if (cleared == null)
                             return false; // Key corrupted
@@ -391,12 +395,12 @@ namespace Neos.IdentityServer.MultiFactor.Common
                     return null;
 
                 byte[] probed = null;
-                using (var prov = new RSAEncryption(_xorsecret, _certificatethumbprint))
+                using (var prov = new RSAEncryption(XORSecret, CertificateThumbprint))
                 {
                     byte[] crypted = StripStorageInfos(key);
                     if (crypted == null)
                         return null;
-                    probed = prov.Decrypt(crypted, lupn);
+                    probed = prov.GetDecryptedKey(crypted, lupn);
                     if (probed == null)
                         return null;
                 }

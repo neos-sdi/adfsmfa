@@ -666,4 +666,13 @@
   <data name="CTRLCUSTOMUSING" xml:space="preserve">
     <value>カスタム リポジトリを使用する</value>
   </data>
+  <data name="CTRLADLDAPSSL" xml:space="preserve">
+    <value>セキュリティで保護された LDAP 接続を使用する (LDAPS)</value>
+  </data>
+  <data name="CTRLCUSTOMKEYSERROR" xml:space="preserve">
+    <value>無効な拡張子です!ロードできません !</value>
+  </data>
+  <data name="CTRLWEBAUTHNSHOWPII" xml:space="preserve">
+    <value>機密ログを表示する</value>
+  </data>
 </root>

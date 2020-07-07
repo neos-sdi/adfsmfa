@@ -1,6 +1,6 @@
 ﻿using Neos.IdentityServer.MultiFactor.Data;
 //******************************************************************************************************************************************************************************************//
-// Copyright (c) 2020 Neos-Sdi (http://www.neos-sdi.com)                                                                                                                                    //                        
+// Copyright (c) 2020 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -63,6 +63,7 @@ namespace Neos.IdentityServer.MultiFactor
         string Description { get; }
         string GetUILabel(AuthenticationContext ctx);
         string GetWizardUILabel(AuthenticationContext ctx);
+        string GetWizardUIComment(AuthenticationContext ctx);
         string GetWizardLinkLabel(AuthenticationContext ctx);
         string GetUICFGLabel(AuthenticationContext ctx);
         string GetUIMessage(AuthenticationContext ctx);
@@ -94,6 +95,9 @@ namespace Neos.IdentityServer.MultiFactor
         void ReleaseAuthenticationData(AuthenticationContext ctx);
     }
 
+    /// <summary>
+    /// IWebAuthNProvider interface declaration
+    /// </summary>
     public interface IWebAuthNProvider
     {
         string GetManageLinkLabel(AuthenticationContext ctx);
@@ -102,6 +106,9 @@ namespace Neos.IdentityServer.MultiFactor
         void RemoveUserStoredCredentials(AuthenticationContext ctx, string id);
     }
 
+    /// <summary>
+    /// IExternalAdminProvider interface declaration
+    /// </summary>
     public interface IExternalAdminProvider
     {
         void Initialize(MFAConfig config);
@@ -120,7 +127,7 @@ namespace Neos.IdentityServer.MultiFactor
     }
     #endregion
 
-    #region External Keys
+    #region Keys Managers
     /// <summary>
     /// ISecretKeyManager interface declaration
     /// </summary>
@@ -128,20 +135,21 @@ namespace Neos.IdentityServer.MultiFactor
     {
         string Prefix { get; }
         string XORSecret { get; }
-        void Initialize(MFAConfig config);
+        KeysRepositoryService KeysStorage { get; }
+        void Initialize(KeysRepositoryService manager, BaseKeysManagerParams parameters);
         string NewKey(string upn);
         string ReadKey(string upn);
         string EncodedKey(string upn);
         byte[] ProbeKey(string upn);
         bool RemoveKey(string upn); 
         bool ValidateKey(string upn);
-        KeysRepositoryService KeysStorage { get; }
+
     }
 
     /// <summary>
-    /// ISecretKeyManager interface declaration
+    /// ISecretKeyManagerActivator interface declaration
     /// </summary>
-    public interface ISecretKeyManagerCreator
+    public interface ISecretKeyManagerActivator
     {
         ISecretKeyManager CreateInstance(SecretKeyVersion version);
     }

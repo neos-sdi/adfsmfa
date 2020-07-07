@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2020 Neos-Sdi (http://www.neos-sdi.com)                                                                                                                                    //                        
+// Copyright (c) 2020 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -15,6 +15,7 @@
 // https://github.com/neos-sdi/adfsmfa                                                                                                                                                      //
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
+using Microsoft.IdentityModel.Logging;
 using Neos.IdentityServer.MultiFactor.Common;
 using Neos.IdentityServer.MultiFactor.Data;
 using Neos.IdentityServer.MultiFactor.WebAuthN.Metadata;
@@ -22,6 +23,7 @@ using Neos.IdentityServer.MultiFactor.WebAuthN.Objects;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 
 namespace Neos.IdentityServer.MultiFactor.WebAuthN
@@ -137,7 +139,20 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
         /// </summary>
         public override string Description
         {
-            get { return "Biometrics Multi-Factor Provider"; }
+            get
+            {
+                string independent = "Biometrics Multi-Factor Provider";
+                ResourcesLocale Resources = null;
+                if (CultureInfo.DefaultThreadCurrentUICulture != null)
+                    Resources = new ResourcesLocale(CultureInfo.DefaultThreadCurrentUICulture.LCID);
+                else
+                    Resources = new ResourcesLocale(CultureInfo.CurrentUICulture.LCID);
+                string res = Resources.GetString(ResourcesLocaleKind.Html, "PROVIDERBIODESCRIPTION");
+                if (!string.IsNullOrEmpty(res))
+                    return res;
+                else
+                    return independent;
+            }
         }
 
         /// <summary>
@@ -156,6 +171,15 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
         {
             ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
             return Resources.GetString(ResourcesLocaleKind.Html, "BIOUIWIZLabel"); 
+        }
+
+        /// <summary>
+        /// GetWizardUIComment method implementation
+        /// </summary>
+        public override string GetWizardUIComment(AuthenticationContext ctx) 
+        {
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
+            return Resources.GetString(ResourcesLocaleKind.Html, "BIOUIWIZComment");
         }
 
         /// <summary>
@@ -357,6 +381,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
                         UserVerificationRequirement = param.Options.UserVerificationRequirement;
                         RequireResidentKey = param.Options.RequireResidentKey;
                         ChallengeSize = param.Configuration.ChallengeSize;
+                        IdentityModelEventSource.ShowPII = param.Configuration.ShowPII;
                         Fido2Configuration fido = new Fido2Configuration()
                         {
                             ServerDomain = param.Configuration.ServerDomain,
@@ -509,27 +534,42 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
         public List<WebAuthNCredentialInformation> GetUserStoredCredentials(AuthenticationContext ctx)
         {
             List<WebAuthNCredentialInformation> wcreds = new List<WebAuthNCredentialInformation>();
-
-            var user = RuntimeRepository.GetUser(Config, ctx.UPN);
-
-            List<MFAUserCredential> creds = RuntimeRepository.GetCredentialsByUser(Config, user);
-            if (creds.Count == 0)
-                return wcreds;
-            foreach(MFAUserCredential st in creds)
+            MFAWebAuthNUser user = RuntimeRepository.GetUser(Config, ctx.UPN);
+            try
             {
-                WebAuthNCredentialInformation itm = new WebAuthNCredentialInformation()
+                if (user != null)
                 {
-                    CredentialID = HexaEncoding.GetHexStringFromByteArray(st.Descriptor.Id),
-                    AaGuid = st.AaGuid,
-                    CredType = st.CredType,
-                    RegDate = st.RegDate,
-                    SignatureCounter = st.SignatureCounter
-                };
-                if (st.Descriptor.Type != null)
-                    itm.Type = EnumExtensions.ToEnumMemberValue(st.Descriptor.Type.Value);
-                wcreds.Add(itm);
+
+                    List<MFAUserCredential> creds = RuntimeRepository.GetCredentialsByUser(Config, user);
+                    if (creds.Count == 0)
+                        return wcreds;
+                    foreach (MFAUserCredential st in creds)
+                    {
+                        WebAuthNCredentialInformation itm = new WebAuthNCredentialInformation()
+                        {
+                            CredentialID = HexaEncoding.GetHexStringFromByteArray(st.Descriptor.Id),
+                            AaGuid = st.AaGuid,
+                            CredType = st.CredType,
+                            RegDate = st.RegDate,
+                            SignatureCounter = st.SignatureCounter
+                        };
+                        if (st.Descriptor.Type != null)
+                            itm.Type = EnumExtensions.ToEnumMemberValue(st.Descriptor.Type.Value);
+                        wcreds.Add(itm);
+                    }
+                    return wcreds.OrderByDescending(c => c.RegDate).ToList<WebAuthNCredentialInformation>();
+                }
+                else
+                {
+                    Log.WriteEntry(string.Format("{0}\r\n{1}", ctx.UPN, "User does not exists !"), System.Diagnostics.EventLogEntryType.Error, 5000);
+                    throw new ArgumentNullException(string.Format("{0}\r\n{1}", ctx.UPN, "User does not exists !"));;
+                }
             }
-            return wcreds.OrderByDescending(c => c.RegDate).ToList<WebAuthNCredentialInformation>();
+            catch (Exception e)
+            {
+                Log.WriteEntry(string.Format("{0}\r\n{1}", ctx.UPN, e.Message), System.Diagnostics.EventLogEntryType.Error, 5000);
+                throw e;
+            }
         }
 
         /// <summary>
@@ -537,8 +577,22 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
         /// </summary>
         public void RemoveUserStoredCredentials(AuthenticationContext ctx, string credentialid)
         {
-            MFAWebAuthNUser user = RuntimeRepository.GetUser(Config, ctx.UPN);
-            RuntimeRepository.RemoveUserCredential(Config, user, credentialid);
+            try
+            {
+                MFAWebAuthNUser user = RuntimeRepository.GetUser(Config, ctx.UPN);
+                if (user!=null)
+                    RuntimeRepository.RemoveUserCredential(Config, user, credentialid);
+                else
+                {
+                    Log.WriteEntry(string.Format("{0}\r\n{1}", ctx.UPN, "User does not exists !"), System.Diagnostics.EventLogEntryType.Error, 5000);
+                    throw new ArgumentNullException(string.Format("{0}\r\n{1}", ctx.UPN, "User does not exists !")); ;
+                }
+            }
+            catch (Exception e)
+            {
+                Log.WriteEntry(string.Format("{0}\r\n{1}", ctx.UPN, e.Message), System.Diagnostics.EventLogEntryType.Error, 5000);
+                throw e;
+            }
         }
 
         /// <summary>
@@ -565,7 +619,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
                     AuthenticatorSelection authenticatorSelection = new AuthenticatorSelection
                     {
                         RequireResidentKey = requireResidentKey,
-                        UserVerification = userVerification.ToEnum<UserVerificationRequirement>(), 
+                        UserVerification = userVerification.ToEnum<UserVerificationRequirement>(),
                     };
                     if (!string.IsNullOrEmpty(authType))
                         authenticatorSelection.AuthenticatorAttachment = authType.ToEnum<AuthenticatorAttachment>();
@@ -576,7 +630,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
                         UserVerificationIndex = this.UserVerificationIndex,
                         Location = this.Location,
                         UserVerificationMethod = this.UserVerificationMethod,
-                        
+
                         BiometricAuthenticatorPerformanceBounds = new AuthenticatorBiometricPerfBounds
                         {
                             FAR = float.MaxValue,
@@ -590,10 +644,14 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
                     return result;
                 }
                 else
-                    throw new Exception(string.Format("User : {0} not exists !", ctx.UPN));
+                {
+                    Log.WriteEntry(string.Format("{0}\r\n{1}", ctx.UPN, "User does not exists !"), System.Diagnostics.EventLogEntryType.Error, 5000);
+                    return (new RegisterCredentialOptions { Status = "error", ErrorMessage = string.Format("{0}", "User does not exists !") }).ToJson();
+                }
             }
             catch (Exception e)
             {
+                Log.WriteEntry(string.Format("{0}\r\n{1}", ctx.UPN, e.Message), System.Diagnostics.EventLogEntryType.Error, 5000);
                 return (new RegisterCredentialOptions { Status = "error", ErrorMessage = string.Format("{0}{1}", e.Message, e.InnerException != null ? " (" + e.InnerException.Message + ")" : "") }).ToJson();            
             }
         }
@@ -641,7 +699,10 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
                     return (int)AuthenticationResponseKind.Biometrics;
                 }
                 else
+                {
+                    Log.WriteEntry(string.Format("{0}\r\n{1}", ctx.UPN, "User does not exists !"), System.Diagnostics.EventLogEntryType.Error, 5000);
                     return (int)AuthenticationResponseKind.Error;
+                }
             }
             catch (Exception e)
             {
@@ -686,9 +747,9 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
                 ctx.AssertionOptions = result;
                 return result;
             }
-
             catch (Exception e)
             {
+                Log.WriteEntry(string.Format("{0}\r\n{1}", ctx.UPN, e.Message), System.Diagnostics.EventLogEntryType.Error, 5000);
                 return (new AssertionOptions { Status = "error", ErrorMessage = string.Format("{0}{1}", e.Message, e.InnerException != null ? " (" + e.InnerException.Message + ")" : "") }).ToJson();
             }
         }
@@ -731,8 +792,11 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
                     RuntimeRepository.UpdateCounter(Config, user, res.CredentialId, res.Counter);
                     return (int)AuthenticationResponseKind.Biometrics;
                 }
-            else
-               return (int)AuthenticationResponseKind.Error;
+                else
+                {
+                    Log.WriteEntry(string.Format("{0}\r\n{1}", ctx.UPN, "User does not exists !"), System.Diagnostics.EventLogEntryType.Error, 5000);
+                    return (int)AuthenticationResponseKind.Error;
+                }
             }
             catch (Exception e)
             {

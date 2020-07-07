@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2020 Neos-Sdi (http://www.neos-sdi.com)                                                                                                                                    //                        
+// Copyright (c) 2020 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -25,6 +25,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.DirectoryServices;
 using System.DirectoryServices.AccountManagement;
 using System.DirectoryServices.ActiveDirectory;
 using System.Drawing;
@@ -49,6 +50,224 @@ using System.Xml.Serialization;
 
 namespace Neos.IdentityServer.MultiFactor
 {
+    #region ADDS Instance Activators
+    /// <summary>
+    /// ADDSDataRepositoryCreator class
+    /// </summary>
+    public static class ADDSDataRepositoryActivator
+    {
+        /// <summary>
+        /// CreateInstance method implementation
+        /// </summary>
+        public static DataRepositoryService CreateInstance(BaseDataHost host, int deliverywindow)
+        {
+            try
+            {
+                Assembly assembly = Assembly.Load("Neos.IdentityServer.MultiFactor.Data, Version=3.0.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2");
+                Type _typetoload = assembly.GetType("Neos.IdentityServer.MultiFactor.Data.ADDSKeysRepositoryService");
+                Type _ancestor = _typetoload.BaseType;
+                if (_ancestor.IsClass && _ancestor.IsAbstract && (_ancestor == typeof(DataRepositoryService)))
+                    if (_typetoload.IsClass && !_typetoload.IsAbstract && _typetoload.GetInterface("IWebAuthNDataRepositoryService") != null)
+                        return (Activator.CreateInstance(_typetoload, BindingFlags.CreateInstance | BindingFlags.Instance | BindingFlags.NonPublic, new object[] { host, deliverywindow }) as DataRepositoryService);
+                return null;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+    }
+
+    /// <summary>
+    /// ADDSKeysRepositoryCreator class
+    /// </summary>
+    public static class ADDSKeysRepositoryActivator
+    {
+        /// <summary>
+        /// CreateInstance method implementation
+        /// </summary>
+        public static KeysRepositoryService CreateInstance(BaseDataHost host, int deliverywindow)
+        {
+            try
+            {
+                Assembly assembly = Assembly.Load("Neos.IdentityServer.MultiFactor.Data, Version=3.0.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2");
+                Type _typetoload = assembly.GetType("Neos.IdentityServer.MultiFactor.Data.ADDSKeysRepositoryService");
+                Type _ancestor = _typetoload.BaseType;
+                if (_ancestor.IsClass && _ancestor.IsAbstract && (_ancestor == typeof(KeysRepositoryService)))
+                    return (Activator.CreateInstance(_typetoload, new object[] { host, deliverywindow }) as KeysRepositoryService);
+                return null;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+    }
+
+    /// <summary>
+    /// ADDSKeys2RepositoryCreator class
+    /// </summary>
+    public static class ADDSKeys2RepositoryActivator
+    {
+        /// <summary>
+        /// CreateInstance method implementation
+        /// </summary>
+        public static KeysRepositoryService CreateInstance(BaseDataHost host, int deliverywindow)
+        {
+            try
+            {
+                Assembly assembly = Assembly.Load("Neos.IdentityServer.MultiFactor.Data, Version=3.0.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2");
+                Type _typetoload = assembly.GetType("Neos.IdentityServer.MultiFactor.Data.ADDSKeys2RepositoryService");
+                Type _ancestor = _typetoload.BaseType;
+                if (_ancestor.IsClass && _ancestor.IsAbstract && (_ancestor == typeof(KeysRepositoryService)))
+                    return (Activator.CreateInstance(_typetoload, new object[] { host, deliverywindow }) as KeysRepositoryService);
+                return null;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+    }
+    #endregion
+
+    #region SQL Instances Activators
+    /// <summary>
+    /// SQLDataRepositoryActivator class
+    /// </summary>
+    public static class SQLDataRepositoryActivator
+    {
+        /// <summary>
+        /// CreateInstance method implementation
+        /// </summary>
+        public static DataRepositoryService CreateInstance(BaseDataHost host, int deliverywindow)
+        {
+            try
+            {
+                Assembly assembly = Assembly.Load("Neos.IdentityServer.MultiFactor.Data, Version=3.0.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2");
+                Type _typetoload = assembly.GetType("Neos.IdentityServer.MultiFactor.Data.SQLDataRepositoryService");
+                Type _ancestor = _typetoload.BaseType;
+                if (_ancestor.IsClass && _ancestor.IsAbstract && (_ancestor == typeof(DataRepositoryService)))
+                    if (_typetoload.IsClass && !_typetoload.IsAbstract && _typetoload.GetInterface("IWebAuthNDataRepositoryService") != null)
+                        return (Activator.CreateInstance(_typetoload, new object[] { host, deliverywindow }) as DataRepositoryService);
+                return null;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+    }
+
+    /// <summary>
+    /// SQLKeysRepositoryActivator class
+    /// </summary>
+    public static class SQLKeysRepositoryActivator
+    {
+        /// <summary>
+        /// CreateInstance method implementation
+        /// </summary>
+        public static KeysRepositoryService CreateInstance(BaseDataHost host, int deliverywindow)
+        {
+            try
+            {
+                Assembly assembly = Assembly.Load("Neos.IdentityServer.MultiFactor.Data, Version=3.0.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2");
+                Type _typetoload = assembly.GetType("Neos.IdentityServer.MultiFactor.Data.SQLKeysRepositoryService");
+                Type _ancestor = _typetoload.BaseType;
+                if (_ancestor.IsClass && _ancestor.IsAbstract && (_ancestor == typeof(KeysRepositoryService)))
+                    return (Activator.CreateInstance(_typetoload, new object[] { host, deliverywindow }) as KeysRepositoryService);
+                return null;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+    }
+
+    /// <summary>
+    /// SQLKeys2RepositoryActivator class
+    /// </summary>
+    public static class SQLKeys2RepositoryActivator
+    {
+        /// <summary>
+        /// CreateInstance method implementation
+        /// </summary>
+        public static KeysRepositoryService CreateInstance(BaseDataHost host, int deliverywindow)
+        {
+            try
+            {
+                Assembly assembly = Assembly.Load("Neos.IdentityServer.MultiFactor.Data, Version=3.0.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2");
+                Type _typetoload = assembly.GetType("Neos.IdentityServer.MultiFactor.Data.SQLKeys2RepositoryService");
+                Type _ancestor = _typetoload.BaseType;
+                if (_ancestor.IsClass && _ancestor.IsAbstract && (_ancestor == typeof(KeysRepositoryService)))
+                    return (Activator.CreateInstance(_typetoload, new object[] { host, deliverywindow }) as KeysRepositoryService);
+                return null;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+    }
+    #endregion
+
+    #region Custom Instances Activators
+    /// <summary>
+    /// CustomDataRepositoryActivator class
+    /// </summary>
+    public static class CustomDataRepositoryActivator
+    {
+        /// <summary>
+        /// CreateInstance method implementation
+        /// </summary>
+        public static DataRepositoryService CreateInstance(CustomStoreHost host, int deliverywindow)
+        {
+            try
+            {
+                Assembly assembly = Assembly.Load(Utilities.ParseAssembly(host.DataRepositoryFullyQualifiedImplementation));
+                Type _typetoload = assembly.GetType(Utilities.ParseType(host.DataRepositoryFullyQualifiedImplementation));
+                Type _ancestor = _typetoload.BaseType;
+                if (_ancestor.IsClass && _ancestor.IsAbstract && (_ancestor == typeof(DataRepositoryService)))
+                    if (_typetoload.IsClass && !_typetoload.IsAbstract && _typetoload.GetInterface("IWebAuthNDataRepositoryService") != null)
+                        return (Activator.CreateInstance(_typetoload, new object[] { host, deliverywindow }) as DataRepositoryService);
+                return null;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+    }
+
+    /// <summary>
+    /// CustomKeysRepositoryActivator class
+    /// </summary>
+    public static class CustomKeysRepositoryActivator
+    {
+        /// <summary>
+        /// CreateInstance method implementation
+        /// </summary>
+        public static KeysRepositoryService CreateInstance(CustomStoreHost host, int deliverywindow)
+        {
+            try
+            {
+                Assembly assembly = Assembly.Load(Utilities.ParseAssembly(host.KeysRepositoryFullyQualifiedImplementation));
+                Type _typetoload = assembly.GetType(Utilities.ParseType(host.KeysRepositoryFullyQualifiedImplementation));
+                Type _ancestor = _typetoload.BaseType;
+                if (_ancestor.IsClass && _ancestor.IsAbstract && (_ancestor == typeof(KeysRepositoryService)))
+                    return (Activator.CreateInstance(_typetoload, new object[] { host, deliverywindow }) as KeysRepositoryService);
+                return null;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+    }
+    #endregion
+
     #region RuntimeAuthProvider
     /// <summary>
     /// RuntimeAuthProvider
@@ -66,7 +285,7 @@ namespace Neos.IdentityServer.MultiFactor
             switch (ctx.PreferredMethod)
             {
                 case PreferredMethod.Code:
-                    provider = GetProviderInstance(ctx.PreferredMethod);
+                    provider = GetProviderInstance(PreferredMethod.Code);
                     if (provider == null)
                     {
                         try
@@ -76,27 +295,26 @@ namespace Neos.IdentityServer.MultiFactor
                                 provider = new NeosOTPProvider();
                             else
                                 provider = LoadExternalProvider(cfg.OTPProvider.FullQualifiedImplementation);
-                            if (provider != null)
+                            if (provider == null)
+                                provider = new NeosPlugProvider(PreferredMethod.Code);
+                            if (provider.Kind == PreferredMethod.Code)
                             {
-                                if (provider.Kind == PreferredMethod.Code)
-                                {
-                                    AddOrUpdateProvider(ctx.PreferredMethod, provider);
-                                    provider.Initialize(new OTPProviderParams(cfg.OTPProvider));
-                                }
-                                else
-                                    throw new Exception("Invalid Provider Kind !");
+                                AddOrUpdateProvider(PreferredMethod.Code, provider);
+                                provider.Initialize(new OTPProviderParams(cfg.OTPProvider));
                             }
                             else
-                                throw new Exception("Invalid Provider Kind !");
+                                throw new Exception("Invalid Provider Type !");
                         }
                         catch (Exception)
                         {
-                            provider = null;
+                            provider = new NeosPlugProvider(PreferredMethod.Code);
+                            AddOrUpdateProvider(PreferredMethod.Code, provider);
+                            provider.Initialize(new OTPProviderParams(cfg.OTPProvider));
                         }
                     }
                     break;
                 case PreferredMethod.Email:
-                    provider = GetProviderInstance(ctx.PreferredMethod);
+                    provider = GetProviderInstance(PreferredMethod.Email);
                     if (provider == null)
                     {
                         try
@@ -105,58 +323,56 @@ namespace Neos.IdentityServer.MultiFactor
                                 provider = new NeosMailProvider();
                             else
                                 provider = LoadExternalProvider(cfg.MailProvider.FullQualifiedImplementation);
-                            if (provider != null)
+                            if (provider == null)
+                                provider = new NeosPlugProvider(PreferredMethod.Email);
+                            if (provider.Kind == PreferredMethod.Email)
                             {
-                                if (provider.Kind == PreferredMethod.Email)
-                                {
-                                    AddOrUpdateProvider(ctx.PreferredMethod, provider);
-                                    provider.Initialize(new MailProviderParams(cfg.MailProvider));
-                                }
-                                else
-                                    throw new Exception("Invalid Provider Kind !");
+                                AddOrUpdateProvider(PreferredMethod.Email, provider);
+                                provider.Initialize(new MailProviderParams(cfg.MailProvider));
                             }
                             else
-                                throw new Exception("Invalid Provider Kind !");
+                                throw new Exception("Invalid Provider Type !");
                         }
                         catch (Exception)
                         {
-                            provider = null;
+                            provider = new NeosPlugProvider(PreferredMethod.Email);
+                            AddOrUpdateProvider(PreferredMethod.Email, provider);
+                            provider.Initialize(new MailProviderParams(cfg.MailProvider));
                         }
                     }
                     break;
                 case PreferredMethod.External:
-                    provider = GetProviderInstance(ctx.PreferredMethod);
+                    provider = GetProviderInstance(PreferredMethod.External);
                     if (provider == null)
                     {
                         try
                         {
                             if (string.IsNullOrEmpty(cfg.ExternalProvider.FullQualifiedImplementation))
-                                provider = new NeosPlugExternalProvider();
+                                provider = new NeosPlugProvider(PreferredMethod.External);
                             else if (IsLegacyExternalWrapper(cfg.ExternalProvider.FullQualifiedImplementation))
                                 provider = new NeosLegacySMSProvider();
                             else
                                 provider = LoadExternalProvider(cfg.ExternalProvider.FullQualifiedImplementation);
-                            if (provider != null)
+                            if (provider == null)
+                                provider = new NeosPlugProvider(PreferredMethod.External);
+                            if (provider.Kind == PreferredMethod.External)
                             {
-                                if (provider.Kind == PreferredMethod.External)
-                                {
-                                    AddOrUpdateProvider(ctx.PreferredMethod, provider);
-                                    provider.Initialize(new ExternalProviderParams(cfg.ExternalProvider));
-                                }
-                                else
-                                    throw new Exception("Invalid Provider Kind !");
+                                AddOrUpdateProvider(PreferredMethod.External, provider);
+                                provider.Initialize(new ExternalProviderParams(cfg.ExternalProvider));
                             }
                             else
-                                throw new Exception("Invalid Provider Kind !");
+                                throw new Exception("Invalid Provider Type !");
                         }
                         catch (Exception)
                         {
-                            provider = null;
+                            provider = new NeosPlugProvider(PreferredMethod.External);
+                            AddOrUpdateProvider(PreferredMethod.External, provider);
+                            provider.Initialize(new ExternalProviderParams(cfg.ExternalProvider));
                         }
                     }
                     break;
                 case PreferredMethod.Azure:
-                    provider = GetProviderInstance(ctx.PreferredMethod);
+                    provider = GetProviderInstance(PreferredMethod.Azure);
                     if (provider == null)
                     {
                         try
@@ -165,27 +381,26 @@ namespace Neos.IdentityServer.MultiFactor
                                 provider = LoadAzureProvider();
                             else
                                 provider = LoadExternalProvider(cfg.AzureProvider.FullQualifiedImplementation);
-                            if (provider != null)
+                            if (provider == null)
+                                provider = new NeosPlugProvider(PreferredMethod.Azure);
+                            if (provider.Kind == PreferredMethod.Azure)
                             {
-                                if (provider.Kind == PreferredMethod.Azure)
-                                {
-                                    AddOrUpdateProvider(ctx.PreferredMethod, provider);
-                                    provider.Initialize(new AzureProviderParams(cfg.AzureProvider, cfg.Hosts.ADFSFarm.FarmIdentifier, cfg.Issuer));
-                                }
-                                else
-                                    throw new Exception("Invalid Provider Kind !");
+                                AddOrUpdateProvider(PreferredMethod.Azure, provider);
+                                provider.Initialize(new AzureProviderParams(cfg.AzureProvider, cfg.Hosts.ADFSFarm.FarmIdentifier, cfg.Issuer));
                             }
                             else
-                                throw new Exception("Invalid Provider Kind !");
+                                throw new Exception("Invalid Provider Type !");
                         }
                         catch (Exception)
                         {
-                            provider = null;
+                            provider = new NeosPlugProvider(PreferredMethod.Azure);
+                            AddOrUpdateProvider(PreferredMethod.Azure, provider);
+                            provider.Initialize(new AzureProviderParams(cfg.AzureProvider, cfg.Hosts.ADFSFarm.FarmIdentifier, cfg.Issuer));
                         }
                     }
                     break;
                 case PreferredMethod.Biometrics:
-                    provider = GetProviderInstance(ctx.PreferredMethod);
+                    provider = GetProviderInstance(PreferredMethod.Biometrics);
                     if (provider == null)
                     {
                         try
@@ -194,22 +409,19 @@ namespace Neos.IdentityServer.MultiFactor
                                 provider = LoadWebAuthNProvider();
                             else
                                 provider = LoadExternalProvider(cfg.WebAuthNProvider.FullQualifiedImplementation);
-                            if (provider != null)
+                            if (provider == null)
+                                provider = new NeosPlugProvider(PreferredMethod.Biometrics);
+                            if (provider.Kind == PreferredMethod.Biometrics)
                             {
-                                if (provider.Kind == PreferredMethod.Biometrics)
-                                {
-                                    AddOrUpdateProvider(ctx.PreferredMethod, provider);
-                                    provider.Initialize(new WebAuthNProviderParams(cfg, cfg.WebAuthNProvider));
-                                }
-                                else
-                                    throw new Exception("Invalid Provider Kind !");
+                                AddOrUpdateProvider(PreferredMethod.Biometrics, provider);
+                                provider.Initialize(new WebAuthNProviderParams(cfg, cfg.WebAuthNProvider));
                             }
-                            else
-                                throw new Exception("Invalid Provider Kind !");
                         }
                         catch (Exception)
                         {
-                            provider = null;
+                            provider = new NeosPlugProvider(PreferredMethod.Biometrics);
+                            AddOrUpdateProvider(PreferredMethod.Biometrics, provider);
+                            provider.Initialize(new WebAuthNProviderParams(cfg, cfg.WebAuthNProvider));
                         }
                     }
                     break;
@@ -350,7 +562,7 @@ namespace Neos.IdentityServer.MultiFactor
             {
                 if (pp.Enabled)
                 {
-                    if (!(pp is NeosPlugExternalProvider))
+                    if (!(pp is NeosPlugProvider))
                         temp.Add(pp);
                 }
             }
@@ -367,7 +579,7 @@ namespace Neos.IdentityServer.MultiFactor
             {
                 if (pp.Enabled)
                 {
-                    if (!(pp is NeosPlugExternalProvider))
+                    if (!(pp is NeosPlugProvider))
                         i++;
                 }
             }
@@ -383,7 +595,7 @@ namespace Neos.IdentityServer.MultiFactor
             {
                 if (pp.Enabled)
                 {
-                    if (!(pp is NeosPlugExternalProvider))
+                    if (!(pp is NeosPlugProvider))
                         return pp;
                 }
             }
@@ -406,7 +618,7 @@ namespace Neos.IdentityServer.MultiFactor
         internal static bool IsProviderAvailable(AuthenticationContext ctx, PreferredMethod method)
         {
             IExternalProvider prov = GetProvider(method);
-            if ((prov == null) || (prov is NeosPlugExternalProvider))
+            if ((prov == null) || (prov is NeosPlugProvider))
                 return false;
             else
                 return prov.IsAvailable(ctx);
@@ -418,7 +630,7 @@ namespace Neos.IdentityServer.MultiFactor
         internal static bool IsProviderAvailableForUser(AuthenticationContext ctx, PreferredMethod method)
         {
             IExternalProvider prov = GetProvider(method);
-            if ((prov == null) || (prov is NeosPlugExternalProvider))
+            if ((prov == null) || (prov is NeosPlugProvider))
                 return false;
             else
             {
@@ -438,7 +650,7 @@ namespace Neos.IdentityServer.MultiFactor
         {
             foreach (IExternalProvider prov in Providers.Values)
             {
-                if ((prov == null) || (prov is NeosPlugExternalProvider))
+                if ((prov == null) || (prov is NeosPlugProvider))
                     return false;
                 else
                 {
@@ -469,7 +681,7 @@ namespace Neos.IdentityServer.MultiFactor
                 switch (meth)
                 {
                     case PreferredMethod.Code:
-                        provider = GetProviderInstance(meth);
+                        provider = GetProviderInstance(PreferredMethod.Code);
                         if (provider == null)
                         {
                             try
@@ -478,27 +690,26 @@ namespace Neos.IdentityServer.MultiFactor
                                     provider = new NeosOTPProvider();
                                 else
                                     provider = LoadExternalProvider(cfg.OTPProvider.FullQualifiedImplementation);
-                                if (provider != null)
+                                if (provider == null)
+                                    provider = new NeosPlugProvider(PreferredMethod.Code);
+                                if (provider.Kind == PreferredMethod.Code)
                                 {
-                                    if (provider.Kind == PreferredMethod.Code)
-                                    {
-                                        AddOrUpdateProvider(meth, provider);
-                                        provider.Initialize(new OTPProviderParams(cfg.OTPProvider));
-                                    }
-                                    else
-                                        throw new Exception("Invalid Provider Kind !");
+                                    AddOrUpdateProvider(PreferredMethod.Code, provider);
+                                    provider.Initialize(new OTPProviderParams(cfg.OTPProvider));
                                 }
                                 else
-                                    throw new Exception("Invalid Provider Kind !");
+                                    throw new Exception("Invalid Provider Type !");
                             }
                             catch (Exception)
                             {
-                                provider = null;
+                                provider = new NeosPlugProvider(PreferredMethod.Code);
+                                AddOrUpdateProvider(PreferredMethod.Code, provider);
+                                provider.Initialize(new OTPProviderParams(cfg.OTPProvider));
                             }
                         }
                         break;
                     case PreferredMethod.Email:
-                        provider = GetProviderInstance(meth);
+                        provider = GetProviderInstance(PreferredMethod.Email);
                         if (provider == null)
                         {
                             try
@@ -507,58 +718,56 @@ namespace Neos.IdentityServer.MultiFactor
                                     provider = new NeosMailProvider();
                                 else
                                     provider = LoadExternalProvider(cfg.MailProvider.FullQualifiedImplementation);
-                                if (provider != null)
+                                if (provider == null)
+                                    provider = new NeosPlugProvider(PreferredMethod.Email);
+                                if (provider.Kind == PreferredMethod.Email)
                                 {
-                                    if (provider.Kind == PreferredMethod.Email)
-                                    {
-                                        AddOrUpdateProvider(meth, provider);
-                                        provider.Initialize(new MailProviderParams(cfg.MailProvider));
-                                    }
-                                    else
-                                        throw new Exception("Invalid Provider Kind !");
+                                    AddOrUpdateProvider(PreferredMethod.Email, provider);
+                                    provider.Initialize(new MailProviderParams(cfg.MailProvider));
                                 }
                                 else
-                                    throw new Exception("Invalid Provider Kind !");
+                                    throw new Exception("Invalid Provider Type !");
                             }
                             catch (Exception)
                             {
-                                provider = null;
+                                provider = new NeosPlugProvider(PreferredMethod.Email);
+                                AddOrUpdateProvider(PreferredMethod.Email, provider);
+                                provider.Initialize(new MailProviderParams(cfg.MailProvider));
                             }
                         }
                         break;
                     case PreferredMethod.External:
-                        provider = GetProviderInstance(meth);
+                        provider = GetProviderInstance(PreferredMethod.External);
                         if (provider == null)
                         {
                             try
                             {
                                 if (string.IsNullOrEmpty(cfg.ExternalProvider.FullQualifiedImplementation))
-                                    provider = new NeosPlugExternalProvider();
+                                    provider = new NeosPlugProvider(PreferredMethod.External);
                                 else if (IsLegacyExternalWrapper(cfg.ExternalProvider.FullQualifiedImplementation))
                                     provider = new NeosLegacySMSProvider();
                                 else
                                     provider = LoadExternalProvider(cfg.ExternalProvider.FullQualifiedImplementation);
-                                if (provider != null)
-                                {
-                                    if (provider.Kind == PreferredMethod.External)
-                                    {
-                                        AddOrUpdateProvider(meth, provider);
-                                        provider.Initialize(new ExternalProviderParams(cfg.ExternalProvider));
-                                    }
-                                    else
-                                        throw new Exception("Invalid Provider Kind !");
+                                if (provider == null)
+                                    provider = new NeosPlugProvider(PreferredMethod.External);
+                                if (provider.Kind == PreferredMethod.External)
+                                { 
+                                    AddOrUpdateProvider(PreferredMethod.External, provider);
+                                    provider.Initialize(new ExternalProviderParams(cfg.ExternalProvider));
                                 }
                                 else
-                                    throw new Exception("Invalid Provider Kind !");
+                                    throw new Exception("Invalid Provider Type !");
                             }
                             catch (Exception)
                             {
-                                provider = null;
+                                provider = new NeosPlugProvider(PreferredMethod.External);
+                                AddOrUpdateProvider(PreferredMethod.External, provider);
+                                provider.Initialize(new ExternalProviderParams(cfg.ExternalProvider));
                             }
                         }
                         break;
                     case PreferredMethod.Azure:
-                        provider = GetProviderInstance(meth);
+                        provider = GetProviderInstance(PreferredMethod.Azure);
                         if (provider == null)
                         {
                             try
@@ -567,27 +776,26 @@ namespace Neos.IdentityServer.MultiFactor
                                     provider = LoadAzureProvider();
                                 else
                                     provider = LoadExternalProvider(cfg.AzureProvider.FullQualifiedImplementation);
-                                if (provider != null)
+                                if (provider == null)
+                                    provider = new NeosPlugProvider(PreferredMethod.Azure);
+                                if (provider.Kind == PreferredMethod.Azure)
                                 {
-                                    if (provider.Kind == PreferredMethod.Azure)
-                                    {
-                                        AddOrUpdateProvider(meth, provider);
-                                        provider.Initialize(new AzureProviderParams(cfg.AzureProvider, cfg.Hosts.ADFSFarm.FarmIdentifier, cfg.Issuer));
-                                    }
-                                    else
-                                        throw new Exception("Invalid Provider Kind !");
+                                    AddOrUpdateProvider(PreferredMethod.Azure, provider);
+                                    provider.Initialize(new AzureProviderParams(cfg.AzureProvider, cfg.Hosts.ADFSFarm.FarmIdentifier, cfg.Issuer));
                                 }
                                 else
-                                    throw new Exception("Invalid Provider Kind !");
+                                    throw new Exception("Invalid Provider Type !");
                             }
                             catch (Exception)
                             {
-                                provider = null;
+                                provider = new NeosPlugProvider(PreferredMethod.Azure);
+                                AddOrUpdateProvider(PreferredMethod.Azure, provider);
+                                provider.Initialize(new AzureProviderParams(cfg.AzureProvider, cfg.Hosts.ADFSFarm.FarmIdentifier, cfg.Issuer));
                             }
                         }
                         break;
                     case PreferredMethod.Biometrics:
-                        provider = GetProviderInstance(meth);
+                        provider = GetProviderInstance(PreferredMethod.Biometrics);
                         if (provider == null)
                         {
                             try
@@ -596,22 +804,21 @@ namespace Neos.IdentityServer.MultiFactor
                                     provider = LoadWebAuthNProvider();
                                 else
                                     provider = LoadExternalProvider(cfg.WebAuthNProvider.FullQualifiedImplementation);
-                                if (provider != null)
+                                if (provider == null)
+                                    provider = new NeosPlugProvider(PreferredMethod.Biometrics);
+                                if (provider.Kind == PreferredMethod.Biometrics)
                                 {
-                                    if (provider.Kind == PreferredMethod.Biometrics)
-                                    {
-                                        AddOrUpdateProvider(meth, provider);
-                                        provider.Initialize(new WebAuthNProviderParams(cfg, cfg.WebAuthNProvider));
-                                    }
-                                    else
-                                        throw new Exception("Invalid Provider Kind !");
+                                    AddOrUpdateProvider(PreferredMethod.Biometrics, provider);
+                                    provider.Initialize(new WebAuthNProviderParams(cfg, cfg.WebAuthNProvider));
                                 }
                                 else
-                                    throw new Exception("Invalid Provider Kind !");
+                                    throw new Exception("Invalid Provider Type !");
                             }
                             catch (Exception)
                             {
-                                provider = null;
+                                provider = new NeosPlugProvider(PreferredMethod.Biometrics);
+                                AddOrUpdateProvider(PreferredMethod.Biometrics, provider);
+                                provider.Initialize(new WebAuthNProviderParams(cfg, cfg.WebAuthNProvider));
                             }
                         }
                         break;
@@ -702,7 +909,7 @@ namespace Neos.IdentityServer.MultiFactor
                     client = new SQLDataRepositoryService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow);
                     break;
                 case DataRepositoryKind.Custom:
-                    client = CustomDataRepositoryCreator.CreateDataRepositoryInstance(cfg.Hosts.CustomStoreHost, cfg.DeliveryWindow);
+                    client = CustomDataRepositoryActivator.CreateInstance(cfg.Hosts.CustomStoreHost, cfg.DeliveryWindow);
                     break;
             }
             client.OnKeyDataEvent += KeyDataEvent;
@@ -726,7 +933,7 @@ namespace Neos.IdentityServer.MultiFactor
                     client = new SQLDataRepositoryService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow);
                     break;
                 case DataRepositoryKind.Custom:
-                    client = CustomDataRepositoryCreator.CreateDataRepositoryInstance(cfg.Hosts.CustomStoreHost, cfg.DeliveryWindow);
+                    client = CustomDataRepositoryActivator.CreateInstance(cfg.Hosts.CustomStoreHost, cfg.DeliveryWindow);
                     break;
             }
             client.OnKeyDataEvent += KeyDataEvent;
@@ -775,7 +982,7 @@ namespace Neos.IdentityServer.MultiFactor
                     client = new SQLDataRepositoryService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow);
                     break;
                 case DataRepositoryKind.Custom:
-                    client = CustomDataRepositoryCreator.CreateDataRepositoryInstance(cfg.Hosts.CustomStoreHost, cfg.DeliveryWindow);
+                    client = CustomDataRepositoryActivator.CreateInstance(cfg.Hosts.CustomStoreHost, cfg.DeliveryWindow);
                     break;
             }
             if (reg.PIN <= 0)
@@ -824,7 +1031,7 @@ namespace Neos.IdentityServer.MultiFactor
                     client = new SQLDataRepositoryService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow);
                     break;
                 case DataRepositoryKind.Custom:
-                    client = CustomDataRepositoryCreator.CreateDataRepositoryInstance(cfg.Hosts.CustomStoreHost, cfg.DeliveryWindow);
+                    client = CustomDataRepositoryActivator.CreateInstance(cfg.Hosts.CustomStoreHost, cfg.DeliveryWindow);
                     break;
             }
             client.OnKeyDataEvent += KeyDataEvent;
@@ -848,7 +1055,7 @@ namespace Neos.IdentityServer.MultiFactor
                     client = new SQLDataRepositoryService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow);
                     break;
                 case DataRepositoryKind.Custom:
-                    client = CustomDataRepositoryCreator.CreateDataRepositoryInstance(cfg.Hosts.CustomStoreHost, cfg.DeliveryWindow);
+                    client = CustomDataRepositoryActivator.CreateInstance(cfg.Hosts.CustomStoreHost, cfg.DeliveryWindow);
                     break;
             }
             client.OnKeyDataEvent += KeyDataEvent;
@@ -872,7 +1079,7 @@ namespace Neos.IdentityServer.MultiFactor
                     client = new SQLDataRepositoryService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow);
                     break;
                 case DataRepositoryKind.Custom:
-                    client = CustomDataRepositoryCreator.CreateDataRepositoryInstance(cfg.Hosts.CustomStoreHost, cfg.DeliveryWindow);
+                    client = CustomDataRepositoryActivator.CreateInstance(cfg.Hosts.CustomStoreHost, cfg.DeliveryWindow);
                     break;
             }
             client.OnKeyDataEvent += KeyDataEvent;
@@ -894,7 +1101,7 @@ namespace Neos.IdentityServer.MultiFactor
                     client = new SQLDataRepositoryService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow);
                     break;
                 case DataRepositoryKind.Custom:
-                    client = CustomDataRepositoryCreator.CreateDataRepositoryInstance(cfg.Hosts.CustomStoreHost, cfg.DeliveryWindow);
+                    client = CustomDataRepositoryActivator.CreateInstance(cfg.Hosts.CustomStoreHost, cfg.DeliveryWindow);
                     break;
             }
             client.OnKeyDataEvent += KeyDataEvent;
@@ -916,7 +1123,7 @@ namespace Neos.IdentityServer.MultiFactor
                     client = new SQLDataRepositoryService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow);
                     break;
                 case DataRepositoryKind.Custom:
-                    client = CustomDataRepositoryCreator.CreateDataRepositoryInstance(cfg.Hosts.CustomStoreHost, cfg.DeliveryWindow);
+                    client = CustomDataRepositoryActivator.CreateInstance(cfg.Hosts.CustomStoreHost, cfg.DeliveryWindow);
                     break;
             }
             client.OnKeyDataEvent += KeyDataEvent;
@@ -938,7 +1145,7 @@ namespace Neos.IdentityServer.MultiFactor
                     client = new SQLDataRepositoryService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow);
                     break;
                 case DataRepositoryKind.Custom:
-                    client = CustomDataRepositoryCreator.CreateDataRepositoryInstance(cfg.Hosts.CustomStoreHost, cfg.DeliveryWindow);
+                    client = CustomDataRepositoryActivator.CreateInstance(cfg.Hosts.CustomStoreHost, cfg.DeliveryWindow);
                     break;
             }
             client.OnKeyDataEvent += KeyDataEvent;
@@ -962,7 +1169,7 @@ namespace Neos.IdentityServer.MultiFactor
                     client = new SQLDataRepositoryService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow) as IWebAuthNDataRepositoryService;
                     break;
                 case DataRepositoryKind.Custom:
-                    client = CustomDataRepositoryCreator.CreateDataRepositoryInstance(cfg.Hosts.CustomStoreHost, cfg.DeliveryWindow) as IWebAuthNDataRepositoryService;
+                    client = CustomDataRepositoryActivator.CreateInstance(cfg.Hosts.CustomStoreHost, cfg.DeliveryWindow) as IWebAuthNDataRepositoryService;
                     break;
             }
             return client.GetUser(cfg.WebAuthNProvider.Configuration.ChallengeSize, username);
@@ -985,7 +1192,7 @@ namespace Neos.IdentityServer.MultiFactor
                     client = new SQLDataRepositoryService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow) as IWebAuthNDataRepositoryService;
                     break;
                 case DataRepositoryKind.Custom:
-                    client = CustomDataRepositoryCreator.CreateDataRepositoryInstance(cfg.Hosts.CustomStoreHost, cfg.DeliveryWindow) as IWebAuthNDataRepositoryService;
+                    client = CustomDataRepositoryActivator.CreateInstance(cfg.Hosts.CustomStoreHost, cfg.DeliveryWindow) as IWebAuthNDataRepositoryService;
                     break;
             }
             return client.GetCredentialsByUser(user);
@@ -1008,7 +1215,7 @@ namespace Neos.IdentityServer.MultiFactor
                     client = new SQLDataRepositoryService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow) as IWebAuthNDataRepositoryService;
                     break;
                 case DataRepositoryKind.Custom:
-                    client = CustomDataRepositoryCreator.CreateDataRepositoryInstance(cfg.Hosts.CustomStoreHost, cfg.DeliveryWindow) as IWebAuthNDataRepositoryService;
+                    client = CustomDataRepositoryActivator.CreateInstance(cfg.Hosts.CustomStoreHost, cfg.DeliveryWindow) as IWebAuthNDataRepositoryService;
                     break;
             }
             return client.GetCredentialById(user, id);
@@ -1031,7 +1238,7 @@ namespace Neos.IdentityServer.MultiFactor
                     client = new SQLDataRepositoryService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow) as IWebAuthNDataRepositoryService;
                     break;
                 case DataRepositoryKind.Custom:
-                    client = CustomDataRepositoryCreator.CreateDataRepositoryInstance(cfg.Hosts.CustomStoreHost, cfg.DeliveryWindow) as IWebAuthNDataRepositoryService;
+                    client = CustomDataRepositoryActivator.CreateInstance(cfg.Hosts.CustomStoreHost, cfg.DeliveryWindow) as IWebAuthNDataRepositoryService;
                     break;
             }
             return client.GetCredentialsByUserHandle(user, userHandle);
@@ -1054,7 +1261,7 @@ namespace Neos.IdentityServer.MultiFactor
                     client = new SQLDataRepositoryService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow) as IWebAuthNDataRepositoryService;
                     break;
                 case DataRepositoryKind.Custom:
-                    client = CustomDataRepositoryCreator.CreateDataRepositoryInstance(cfg.Hosts.CustomStoreHost, cfg.DeliveryWindow) as IWebAuthNDataRepositoryService;
+                    client = CustomDataRepositoryActivator.CreateInstance(cfg.Hosts.CustomStoreHost, cfg.DeliveryWindow) as IWebAuthNDataRepositoryService;
                     break;
             }
             client.UpdateCounter(user, credentialId, counter);
@@ -1077,7 +1284,7 @@ namespace Neos.IdentityServer.MultiFactor
                     client = new SQLDataRepositoryService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow) as IWebAuthNDataRepositoryService;
                     break;
                 case DataRepositoryKind.Custom:
-                    client = CustomDataRepositoryCreator.CreateDataRepositoryInstance(cfg.Hosts.CustomStoreHost, cfg.DeliveryWindow) as IWebAuthNDataRepositoryService;
+                    client = CustomDataRepositoryActivator.CreateInstance(cfg.Hosts.CustomStoreHost, cfg.DeliveryWindow) as IWebAuthNDataRepositoryService;
                     break;
             }
             client.AddUserCredential(user, credential);
@@ -1100,7 +1307,7 @@ namespace Neos.IdentityServer.MultiFactor
                     client = new SQLDataRepositoryService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow) as IWebAuthNDataRepositoryService;
                     break;
                 case DataRepositoryKind.Custom:
-                    client = CustomDataRepositoryCreator.CreateDataRepositoryInstance(cfg.Hosts.CustomStoreHost, cfg.DeliveryWindow) as IWebAuthNDataRepositoryService;
+                    client = CustomDataRepositoryActivator.CreateInstance(cfg.Hosts.CustomStoreHost, cfg.DeliveryWindow) as IWebAuthNDataRepositoryService;
                     break;
             }
             client.RemoveUserCredential(user, credentialid);
@@ -1123,7 +1330,7 @@ namespace Neos.IdentityServer.MultiFactor
                     client = new SQLDataRepositoryService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow) as IWebAuthNDataRepositoryService;
                     break;
                 case DataRepositoryKind.Custom:
-                    client = CustomDataRepositoryCreator.CreateDataRepositoryInstance(cfg.Hosts.CustomStoreHost, cfg.DeliveryWindow) as IWebAuthNDataRepositoryService;
+                    client = CustomDataRepositoryActivator.CreateInstance(cfg.Hosts.CustomStoreHost, cfg.DeliveryWindow) as IWebAuthNDataRepositoryService;
                     break;
             }
             return client.GetUsersByCredentialId(user, credentialId);
@@ -1192,7 +1399,7 @@ namespace Neos.IdentityServer.MultiFactor
                 case DataRepositoryKind.SQL:
                     return new SQLDataRepositoryService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow);
                 case DataRepositoryKind.Custom:
-                    return CustomDataRepositoryCreator.CreateDataRepositoryInstance(cfg.Hosts.CustomStoreHost, cfg.DeliveryWindow);
+                    return CustomDataRepositoryActivator.CreateInstance(cfg.Hosts.CustomStoreHost, cfg.DeliveryWindow);
                 default:
                     return new ADDSDataRepositoryService(cfg.Hosts.ActiveDirectoryHost, cfg.DeliveryWindow);
             }
@@ -1689,53 +1896,113 @@ namespace Neos.IdentityServer.MultiFactor
     /// </summary>
     public static class KeysManager
     {
-        private static ISecretKeyManager _manager;
-        private static bool _isloaded = true;
-
         /// <summary>
         /// Initialize method implementation
         /// </summary>
         internal static void Initialize(MFAConfig cfg)
         {
-            Trace.TraceInformation("KeysManager.Initialize()"); 
+            Trace.TraceInformation("KeysManager.Initialize()");
+            KeysRepositoryService KeysStorage = null;
+            BaseKeysManagerParams KeysManagerParams = null;
             switch (cfg.KeysConfig.KeyFormat)
             {
                 case SecretKeyFormat.RNG:
-                    _manager = new RNGKeyManagerCreator().CreateInstance(cfg.KeysConfig.KeyVersion);
-                    _manager.Initialize(cfg);
-                    _isloaded = true;
+                    Manager = new RNGKeyManagerActivator().CreateInstance(cfg.KeysConfig.KeyVersion);
+                    KeysManagerParams = new RNGKeysManagerParams(cfg.KeysConfig.XORSecret);
+                    KeysManagerParams.PatchFromSecurityConfig(cfg.KeysConfig);
+                    KeysStorage = InitializeStorage(cfg, false);
+                    Manager.Initialize(KeysStorage, KeysManagerParams);
+                    IsLoaded = true;
                     break;
                 case SecretKeyFormat.RSA:
                     if (!cfg.KeysConfig.CertificatePerUser)
-                        _manager = new RSAKeyManagerCreator().CreateInstance(cfg.KeysConfig.KeyVersion);
+                    {
+                        Manager = new RSAKeyManagerActivator().CreateInstance(cfg.KeysConfig.KeyVersion);
+                        KeysManagerParams = new RSAKeysManagerParams(cfg.KeysConfig.XORSecret);
+                        KeysManagerParams.PatchFromSecurityConfig(cfg.KeysConfig);
+                        KeysStorage = InitializeStorage(cfg, false);
+                    }
                     else
-                        _manager = new RSA2KeyManagerCreator().CreateInstance(cfg.KeysConfig.KeyVersion);
-                    _manager.Initialize(cfg);
-                    _isloaded = true;
+                    {
+                        Manager = new RSA2KeyManagerActivator().CreateInstance(cfg.KeysConfig.KeyVersion);
+                        KeysManagerParams = new RSA2KeysManagerParams(cfg.KeysConfig.XORSecret);
+                        KeysManagerParams.PatchFromSecurityConfig(cfg.KeysConfig);
+                        KeysStorage = InitializeStorage(cfg, true);
+                    }
+                    Manager.Initialize(KeysStorage, KeysManagerParams);
+                    IsLoaded = true;
                     break;
+                case SecretKeyFormat.AES:
+                    Manager = new AESKeyManagerActivator().CreateInstance(cfg.KeysConfig.KeyVersion);
+                    KeysManagerParams = new AESKeysManagerParams(cfg.KeysConfig.XORSecret);
+                    KeysManagerParams.PatchFromSecurityConfig(cfg.KeysConfig);
+                    KeysStorage = InitializeStorage(cfg, false);
+                    Manager.Initialize(KeysStorage, KeysManagerParams);
+                    IsLoaded = true;
+                    break;
+                case SecretKeyFormat.CUSTOM:
+                     if (!string.IsNullOrEmpty(cfg.KeysConfig.CustomFullyQualifiedImplementation))
+                     {
+                        ISecretKeyManagerActivator _creator = Utilities.LoadExternalKeyManagerActivator(cfg.KeysConfig.CustomFullyQualifiedImplementation);
+                        if (_creator != null)
+                            Manager = _creator.CreateInstance(cfg.KeysConfig.KeyVersion);
+                        else
+                            Manager = Utilities.LoadExternalKeyManager(cfg.KeysConfig.CustomFullyQualifiedImplementation);
+                        if (Manager == null)
+                            IsLoaded = false;
+                        else
+                        {
+                            KeysManagerParams = new CustomKeysManagerParams(cfg.KeysConfig.XORSecret);
+                            KeysManagerParams.PatchFromSecurityConfig(cfg.KeysConfig);
+                            KeysStorage = InitializeStorage(cfg, false);
+                            Manager.Initialize(KeysStorage, KeysManagerParams);
+                            IsLoaded = true;
+                        }
+                     }
+                     else
+                        IsLoaded = false; 
+                    break; 
                 default:
                     throw new NotImplementedException("SecretKeyManager not found !");
             }
         }
 
         /// <summary>
-        /// Manager manager property implementation
+        /// InitializeStorage storage implementation
         /// </summary>
-        public static ISecretKeyManager Manager
+        private static KeysRepositoryService InitializeStorage(MFAConfig cfg, bool usercert)
         {
-            get{ return _manager; }
+            switch (cfg.StoreMode)
+            {
+                case DataRepositoryKind.ADDS:
+                    if (usercert)
+                        return new ADDSKeys2RepositoryService(cfg.Hosts.ActiveDirectoryHost, cfg.DeliveryWindow);
+                    else
+                        return new ADDSKeysRepositoryService(cfg.Hosts.ActiveDirectoryHost, cfg.DeliveryWindow);
+                case DataRepositoryKind.SQL:
+                    if (usercert)
+                        return new SQLKeys2RepositoryService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow);
+                    else
+                        return new SQLKeysRepositoryService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow);
+                case DataRepositoryKind.Custom:
+                    return CustomKeysRepositoryActivator.CreateInstance(cfg.Hosts.CustomStoreHost, cfg.DeliveryWindow);
+                default:
+                    return new ADDSKeys2RepositoryService(cfg.Hosts.ActiveDirectoryHost, cfg.DeliveryWindow);
+            }
         }
 
         /// <summary>
-        /// IsLoaded property
+        /// Manager property implementation
         /// </summary>
-        public static bool IsLoaded
-        {
-            get { return _isloaded; }
-            set { _isloaded = value; }
-        }
+        public static ISecretKeyManager Manager { get; private set; }
+
         /// <summary>
-        /// EnsureKey method iplementation
+        /// IsLoaded property implementation
+        /// </summary>
+        public static bool IsLoaded { get; set; } = true;
+
+        /// <summary>
+        /// EnsureKey method implementation
         /// </summary>
         internal static void EnsureKey(string upn) 
         {
@@ -1751,7 +2018,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         internal static string NewKey(string upn)
         {
-            return _manager.NewKey(upn);
+            return Manager.NewKey(upn);
         }
 
         /// <summary>
@@ -1759,7 +2026,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         internal static string ReadKey(string upn)
         {
-            return _manager.ReadKey(upn);
+            return Manager.ReadKey(upn);
         }
 
         /// <summary>
@@ -1767,7 +2034,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public static string EncodedKey(string upn)
         {
-            return _manager.EncodedKey(upn);
+            return Manager.EncodedKey(upn);
         }
 
         /// <summary>
@@ -1775,7 +2042,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public static byte[] ProbeKey(string upn)
         {
-            return _manager.ProbeKey(upn);
+            return Manager.ProbeKey(upn);
         }
 
         /// <summary>
@@ -1783,7 +2050,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         internal static bool RemoveKey(string upn)
         {
-            return _manager.RemoveKey(upn);
+            return Manager.RemoveKey(upn);
         }
 
         /// <summary>
@@ -1791,7 +2058,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public static bool ValidateKey(string upn)
         {
-            return _manager.ValidateKey(upn);
+            return Manager.ValidateKey(upn);
         }
     }
     #endregion
@@ -1803,14 +2070,6 @@ namespace Neos.IdentityServer.MultiFactor
     public static class MailUtilities
     {
         private static readonly object lck = 0;
-
-        /// <summary>
-        /// SetCultureInfo method implementation
-        /// </summary>
-       /* internal static void SetCultureInfo(int lcid)
-        {
-            ResourcesLocale Resources = new ResourcesLocale(lcid);
-        } */
 
         /// <summary>
         /// SendMail method implementation
@@ -2388,7 +2647,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         static CFGUtilities()
         {
-            configcachekey = ReadConfigurationKey();
+           configcachekey = ReadConfigurationKey();
         }
 
         internal static byte[] Key
@@ -2466,7 +2725,7 @@ namespace Neos.IdentityServer.MultiFactor
                     config = (MFAConfig)xmlserializer.Deserialize(stm);
                     if ((!config.OTPProvider.Enabled) && (!config.MailProvider.Enabled) && (!config.ExternalProvider.Enabled) && (!config.AzureProvider.Enabled))
                         config.OTPProvider.Enabled = true;   // always let an active option eg : aplication in this case
-                    using (AESEncryption MSIS = new AESEncryption())
+                    using (AESSystemEncryption MSIS = new AESSystemEncryption())
                     {
                         config.KeysConfig.XORSecret = MSIS.Decrypt(config.KeysConfig.XORSecret);
                         config.Hosts.ActiveDirectoryHost.Password = MSIS.Decrypt(config.Hosts.ActiveDirectoryHost.Password);
@@ -2501,7 +2760,7 @@ namespace Neos.IdentityServer.MultiFactor
                 fs.Close();
 
                 byte[] byt = null;
-                using (AESEncryption aes = new AESEncryption())
+                using (AESSystemEncryption aes = new AESSystemEncryption())
                 {
                     byt = aes.Decrypt(bytes);
                 }
@@ -2513,7 +2772,7 @@ namespace Neos.IdentityServer.MultiFactor
                         config = (MFAConfig)xmlserializer.Deserialize(ms);
                         if ((!config.OTPProvider.Enabled) && (!config.MailProvider.Enabled) && (!config.ExternalProvider.Enabled) && (!config.AzureProvider.Enabled))
                             config.OTPProvider.Enabled = true;   // always let an active option eg : aplication in this case
-                        using (AESEncryption MSIS = new AESEncryption())
+                        using (AESSystemEncryption MSIS = new AESSystemEncryption())
                         {
                             config.KeysConfig.XORSecret = MSIS.Decrypt(config.KeysConfig.XORSecret);
                             config.Hosts.ActiveDirectoryHost.Password = MSIS.Decrypt(config.Hosts.ActiveDirectoryHost.Password);
@@ -2605,7 +2864,7 @@ namespace Neos.IdentityServer.MultiFactor
             {
                 if (encrypt)
                 {
-                    using (AESEncryption MSIS = new AESEncryption())
+                    using (AESSystemEncryption MSIS = new AESSystemEncryption())
                     {
                         config.KeysConfig.XORSecret = MSIS.Encrypt(config.KeysConfig.XORSecret);
                         config.Hosts.ActiveDirectoryHost.Password = MSIS.Encrypt(config.Hosts.ActiveDirectoryHost.Password);
@@ -2659,7 +2918,7 @@ namespace Neos.IdentityServer.MultiFactor
         {
             if (encrypt)
             {
-                using (AESEncryption MSIS = new AESEncryption())
+                using (AESSystemEncryption MSIS = new AESSystemEncryption())
                 {
                     config.KeysConfig.XORSecret = MSIS.Encrypt(config.KeysConfig.XORSecret);
                     config.Hosts.ActiveDirectoryHost.Password = MSIS.Encrypt(config.Hosts.ActiveDirectoryHost.Password);
@@ -2673,7 +2932,7 @@ namespace Neos.IdentityServer.MultiFactor
                 xmlserializer.Serialize(stm, config);
                 stm.Position = 0;
                 byte[] byt = null;
-                using (AESEncryption aes = new AESEncryption())
+                using (AESSystemEncryption aes = new AESSystemEncryption())
                 {
                     byt = aes.Encrypt(stm.ToArray());
                 }
@@ -2696,7 +2955,7 @@ namespace Neos.IdentityServer.MultiFactor
             if (configcachekey != null)
                 return configcachekey;
 
-            Domain dom = Domain.GetCurrentDomain();
+            Domain dom = Domain.GetComputerDomain();
             Guid gd = dom.GetDirectoryEntry().Guid;
 
             byte[] _key = new byte[32];
@@ -3254,9 +3513,9 @@ namespace Neos.IdentityServer.MultiFactor
         }
 
         /// <summary>
-        /// LoadExternalKeyManagerWrapper method implmentation
+        /// LoadExternalKeyManager method implmentation
         /// </summary>
-        internal static ISecretKeyManager LoadExternalKeyManagerWrapper(string AssemblyFulldescription)
+        internal static ISecretKeyManager LoadExternalKeyManager(string AssemblyFulldescription)
         {
             Assembly assembly = Assembly.Load(Utilities.ParseAssembly(AssemblyFulldescription));
             Type _typetoload = assembly.GetType(Utilities.ParseType(AssemblyFulldescription));
@@ -3271,20 +3530,20 @@ namespace Neos.IdentityServer.MultiFactor
         }
 
         /// <summary>
-        /// LoadExternalKeyManagerWrapper method implmentation
+        /// LoadExternalKeyManagerActivator method implmentation
         /// </summary>
-        internal static ISecretKeyManagerCreator LoadExternalKeyManagerCreator(string AssemblyFulldescription)
+        internal static ISecretKeyManagerActivator LoadExternalKeyManagerActivator(string AssemblyFulldescription)
         {
             Assembly assembly = Assembly.Load(Utilities.ParseAssembly(AssemblyFulldescription));
             Type _typetoload = assembly.GetType(Utilities.ParseType(AssemblyFulldescription));
-            ISecretKeyManagerCreator wrapper = null;
+            ISecretKeyManagerActivator wrapper = null;
             try
             {
-                if (_typetoload.IsClass && !_typetoload.IsAbstract && _typetoload.GetInterface("ISecretKeyManagerCreator") != null)
+                if (_typetoload.IsClass && !_typetoload.IsAbstract && _typetoload.GetInterface("ISecretKeyManagerActivator") != null)
                 {
                     object o = Activator.CreateInstance(_typetoload, true); // Allow Calling internal Constructors
-                    if (o is ISecretKeyManagerCreator)
-                        wrapper = o as ISecretKeyManagerCreator;
+                    if (o is ISecretKeyManagerActivator)
+                        wrapper = o as ISecretKeyManagerActivator;
                 }
             }
             catch
@@ -3309,7 +3568,7 @@ namespace Neos.IdentityServer.MultiFactor
         internal static string ParseType(string AssemblyFulldescription)
         {
             string[] type = AssemblyFulldescription.Split(new char[] { ',' });
-            return type[0];
+            return type[0].Trim();
         }
 
         /// <summary>
@@ -3541,7 +3800,7 @@ namespace Neos.IdentityServer.MultiFactor
                         goto case PreferredMethod.External;
                 case PreferredMethod.External:
                     IExternalProvider prov3 = RuntimeAuthProvider.GetProvider(PreferredMethod.External);
-                    if ((prov3 != null) && (prov3.Enabled) && (!(prov3 is NeosPlugExternalProvider)))
+                    if ((prov3 != null) && (prov3.Enabled) && (!(prov3 is NeosPlugProvider)))
                     {
                         isrequired = prov3.IsRequired;
                         usercontext.EnrollPageID = PreferredMethod.External;
@@ -3743,6 +4002,581 @@ namespace Neos.IdentityServer.MultiFactor
         public Guid AaGuid { get; set; }
         public string Type { get; set; }
         public uint SignatureCounter { get; set; }
+    }
+    #endregion
+
+    #region AES System classes
+    /// <summary>
+    /// AESSystemBaseEncryption class
+    /// </summary>
+    public abstract class AESBaseEncryption
+    {
+        public abstract string Encrypt(string data);
+        public abstract string Decrypt(string data);
+        public abstract byte[] Encrypt(byte[] data);
+        public abstract byte[] Decrypt(byte[] data);
+    }
+
+
+    /// <summary>
+    /// AESSystemBaseEncryption class
+    /// </summary>
+    public abstract class AESSystemBaseEncryption : AESBaseEncryption
+    {
+        internal abstract byte[] GetHeader(byte[] data);
+    }
+
+    /// <summary>
+    /// AESEncryption class
+    /// </summary>
+    public class AESSystemEncryption : AESSystemBaseEncryption, IDisposable
+    {
+        /// <summary>
+        /// Encrypt method implementation
+        /// </summary>
+        public override string Encrypt(string data)
+        {
+            try
+            {
+                using (AES256SystemEncryption enc = new AES256SystemEncryption())
+                {
+                    return enc.Encrypt(data);
+                }
+            }
+            catch
+            {
+                return data;
+            }
+
+        }
+
+        /// <summary>
+        /// Encrypt method implementation
+        /// </summary>
+        public override byte[] Encrypt(byte[] data)
+        {
+            try
+            {
+                using (AES256SystemEncryption enc = new AES256SystemEncryption())
+                {
+                    return enc.Encrypt(data);
+                }
+            }
+            catch
+            {
+                return data;
+            }
+        }
+
+        /// <summary>
+        /// Decrypt method implementation
+        /// </summary>
+        public override string Decrypt(string data)
+        {
+            try
+            {
+                byte[] Hdr = GetHeader(Convert.FromBase64String(data));
+                if (Hdr.SequenceEqual(new byte[] { 0x17, 0xD3, 0xF4, 0x2A }))
+                {
+                    using (AES256SystemEncryption enc = new AES256SystemEncryption())
+                    {
+                        return enc.Decrypt(data);
+                    }
+                }
+                else if (Hdr.SequenceEqual(new byte[] { 0x17, 0xD3, 0xF4, 0x29 })) // For compatibility Only
+                {
+                    using (AES128SystemEncryption enc = new AES128SystemEncryption())
+                    {
+                        return enc.Decrypt(data);
+                    }
+                }
+                else
+                    return data;
+            }
+            catch
+            {
+                return data;
+            }
+        }
+
+        /// <summary>
+        /// Decrypt method implementation
+        /// </summary>
+        public override byte[] Decrypt(byte[] data)
+        {
+            try
+            {
+                byte[] Hdr = GetHeader(data);
+                if (Hdr.SequenceEqual(new byte[] { 0x17, 0xD3, 0xF4, 0x2A }))
+                {
+                    using (AES256SystemEncryption enc = new AES256SystemEncryption())
+                    {
+                        return enc.Decrypt(data);
+                    }
+                }
+                else if (Hdr.SequenceEqual(new byte[] { 0x17, 0xD3, 0xF4, 0x29 })) // For compatibilty Only
+                {
+                    using (AES128SystemEncryption enc = new AES128SystemEncryption())
+                    {
+                        return enc.Decrypt(data);
+                    }
+                }
+                else
+                    return data;
+            }
+            catch
+            {
+                return data;
+            }
+        }
+
+        /// <summary>
+        /// GetHeader method implementation
+        /// </summary>
+        internal override byte[] GetHeader(byte[] data)
+        {
+            byte[] Header = new byte[4];
+            Buffer.BlockCopy(data, 0, Header, 0, 4);
+            return Header;
+        }
+
+        /// <summary>
+        /// Dispose method implementation
+        /// </summary>
+        public void Dispose()
+        {
+
+        }
+    }
+
+    /// <summary>
+    /// AES128SystemEncryption class
+    /// </summary>
+    internal class AES128SystemEncryption : AESSystemBaseEncryption, IDisposable
+    {
+        private readonly byte[] IV = { 113, 23, 93, 174, 155, 66, 179, 82, 90, 101, 110, 102, 213, 124, 51, 62 };
+        private readonly byte[] Hdr = { 0x17, 0xD3, 0xF4, 0x29 };
+        private readonly byte[] AESKey;
+        private readonly string UtilsKey = "ABCDEFGHIJKLMNOP";
+
+        /// <summary>
+        /// AESEncryption constructor
+        /// </summary>
+        public AES128SystemEncryption()
+        {
+            string basestr = UtilsKey;
+            AESKey = Encoding.ASCII.GetBytes(basestr.ToCharArray(), 0, 16);
+        }
+
+        /// <summary>
+        /// Encrypt method implementation
+        /// </summary>
+        public override string Encrypt(string data)
+        {
+            if (string.IsNullOrEmpty(data))
+                return data;
+            try
+            {
+                if (IsEncrypted(data))
+                    return data;
+                byte[] encrypted = EncryptStringToBytes(data, AESKey, IV);
+                return Convert.ToBase64String(AddHeader(encrypted));
+            }
+            catch
+            {
+                return data;
+            }
+        }
+
+        /// <summary>
+        /// Decrypt method implementation
+        /// </summary>
+        public override string Decrypt(string data)
+        {
+            if (string.IsNullOrEmpty(data))
+                return data;
+            try
+            {
+                if (!IsEncrypted(data))
+                    return data;
+                byte[] encrypted = Convert.FromBase64String(data);
+                return DecryptStringFromBytes(RemoveHeader(encrypted), AESKey, IV);
+            }
+            catch
+            {
+                return data;
+            }
+        }
+
+        /// <summary>
+        /// Encrypt method implementation
+        /// </summary>
+        public override byte[] Encrypt(byte[] data)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Decrypt method implementation
+        /// </summary>
+        public override byte[] Decrypt(byte[] data)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// EncryptStringToBytes method implementation
+        /// </summary>
+        private byte[] EncryptStringToBytes(string plainText, byte[] Key, byte[] IV)
+        {
+            if (plainText == null || plainText.Length <= 0)
+                throw new ArgumentNullException("plainText");
+
+            byte[] encrypted;
+            using (AesCryptoServiceProvider aesAlg = new AesCryptoServiceProvider())
+            {
+                aesAlg.Key = Key;
+                aesAlg.IV = IV;
+                ICryptoTransform encryptor = aesAlg.CreateEncryptor(aesAlg.Key, aesAlg.IV);
+                using (MemoryStream msEncrypt = new MemoryStream())
+                {
+                    using (CryptoStream csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write))
+                    {
+                        using (StreamWriter swEncrypt = new StreamWriter(csEncrypt))
+                        {
+                            swEncrypt.Write(plainText);
+                        }
+                        encrypted = msEncrypt.ToArray();
+                    }
+                }
+            }
+            return encrypted;
+        }
+
+        /// <summary>
+        /// DecryptStringFromBytes method implementation
+        /// </summary>
+        private string DecryptStringFromBytes(byte[] cipherText, byte[] Key, byte[] IV)
+        {
+            if (cipherText == null || cipherText.Length <= 0)
+                throw new ArgumentNullException("cipherText");
+
+            string plaintext = null;
+            using (AesCryptoServiceProvider aesAlg = new AesCryptoServiceProvider())
+            {
+                aesAlg.Key = Key;
+                aesAlg.IV = IV;
+                ICryptoTransform decryptor = aesAlg.CreateDecryptor(aesAlg.Key, aesAlg.IV);
+                using (MemoryStream msDecrypt = new MemoryStream(cipherText))
+                {
+                    using (CryptoStream csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read))
+                    {
+                        using (StreamReader srDecrypt = new StreamReader(csDecrypt))
+                        {
+                            plaintext = srDecrypt.ReadToEnd();
+                        }
+                    }
+                }
+            }
+            return plaintext;
+        }
+
+        /// <summary>
+        /// IsEncrypted method implementation
+        /// </summary>
+        private bool IsEncrypted(string data)
+        {
+            if (string.IsNullOrEmpty(data))
+                return false;
+            try
+            {
+                byte[] encrypted = Convert.FromBase64String(data);
+                byte[] ProofHeader = GetHeader(encrypted);
+                UInt16 l = GetHeaderLen(encrypted);
+                return ((l == encrypted.Length - 5) && (ProofHeader.SequenceEqual(Hdr)));
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// AddHeader method
+        /// </summary>
+        private byte[] AddHeader(byte[] data)
+        {
+            byte[] output = new byte[data.Length + 5];
+            Buffer.BlockCopy(Hdr, 0, output, 0, 4);
+            output[4] = Convert.ToByte(data.Length);
+            Buffer.BlockCopy(data, 0, output, 5, data.Length);
+            return output;
+        }
+
+        /// <summary>
+        /// RemoveHeader method
+        /// </summary>
+        private byte[] RemoveHeader(byte[] data)
+        {
+            byte[] output = new byte[data.Length - 5];
+            Buffer.BlockCopy(data, 5, output, 0, data.Length - 5);
+            return output;
+        }
+
+        /// <summary>
+        /// GetProofHeader method
+        /// </summary>
+        internal override byte[] GetHeader(byte[] data)
+        {
+            byte[] Header = new byte[4];
+            Buffer.BlockCopy(data, 0, Header, 0, 4);
+            return Header;
+        }
+
+        /// <summary>
+        /// GetLen method
+        /// </summary>
+        private UInt16 GetHeaderLen(byte[] data)
+        {
+            return Convert.ToUInt16(data[4]);
+        }
+
+        /// <summary>
+        /// Dispose method implementation
+        /// </summary>
+        public void Dispose()
+        {
+
+        }
+    }
+
+    /// <summary>
+    /// AES256SystemEncryption class
+    /// </summary>
+    internal class AES256SystemEncryption : AESSystemBaseEncryption, IDisposable
+    {
+        private readonly byte[] AESIV = { 113, 23, 93, 113, 53, 66, 189, 82, 90, 101, 110, 102, 213, 224, 51, 62 };
+        private readonly byte[] AESHdr = { 0x17, 0xD3, 0xF4, 0x2A };
+        private readonly byte[] AESKey;
+
+        /// <summary>
+        /// AESEncryption constructor
+        /// </summary>
+        public AES256SystemEncryption()
+        {
+            byte[] xkey = CFGUtilities.Key;
+            AESKey = new byte[32];
+            Buffer.BlockCopy(xkey, 0, AESKey, 0, 32);
+        }
+
+        /// <summary>
+        /// Encrypt method implementation
+        /// </summary>
+        public override string Encrypt(string plainText)
+        {
+            if (string.IsNullOrEmpty(plainText))
+                return plainText;
+            if (IsEncrypted(plainText))
+                return plainText;
+            try
+            {
+                byte[] encrypted;
+                byte[] unencrypted = Encoding.Unicode.GetBytes(plainText);
+                using (AesCryptoServiceProvider aesAlg = new AesCryptoServiceProvider())
+                {
+                    aesAlg.BlockSize = 128;
+                    aesAlg.KeySize = 256;
+                    aesAlg.Key = AESKey;
+                    aesAlg.IV = AESIV;
+                    aesAlg.Mode = CipherMode.CBC;
+                    aesAlg.Padding = PaddingMode.PKCS7;
+                    using (ICryptoTransform encryptor = aesAlg.CreateEncryptor(aesAlg.Key, aesAlg.IV))
+                    {
+                        encrypted = encryptor.TransformFinalBlock(unencrypted, 0, unencrypted.Length);
+                    }
+                }
+                return Convert.ToBase64String(AddHeader(encrypted));
+            }
+            catch
+            {
+                return plainText;
+            }
+        }
+
+        /// <summary>
+        /// Encrypt method implementation
+        /// </summary>
+        public override byte[] Encrypt(byte[] unencrypted)
+        {
+            if (unencrypted == null || unencrypted.Length <= 0)
+                throw new ArgumentNullException("unencrypted");
+            if (IsEncrypted(unencrypted))
+                return unencrypted;
+            try
+            {
+                byte[] encrypted;
+                using (AesCryptoServiceProvider aesAlg = new AesCryptoServiceProvider())
+                {
+                    aesAlg.BlockSize = 128;
+                    aesAlg.KeySize = 256;
+                    aesAlg.Key = AESKey;
+                    aesAlg.IV = AESIV;
+                    aesAlg.Mode = CipherMode.CBC;
+                    aesAlg.Padding = PaddingMode.PKCS7;
+                    using (ICryptoTransform encryptor = aesAlg.CreateEncryptor(aesAlg.Key, aesAlg.IV))
+                    {
+                        encrypted = encryptor.TransformFinalBlock(unencrypted, 0, unencrypted.Length);
+                    }
+                }
+                return AddHeader(encrypted);
+            }
+            catch
+            {
+                return unencrypted;
+            }
+        }
+
+        /// <summary>
+        /// Decrypt method implementation
+        /// </summary>
+        public override string Decrypt(string cipherText)
+        {
+            if (string.IsNullOrEmpty(cipherText))
+                return cipherText;
+            if (!IsEncrypted(cipherText))
+                return cipherText;
+            try
+            {
+                byte[] encrypted = RemoveHeader(Convert.FromBase64String(cipherText));
+                byte[] unencrypted = null;
+                using (AesCryptoServiceProvider aesAlg = new AesCryptoServiceProvider())
+                {
+                    aesAlg.BlockSize = 128;
+                    aesAlg.KeySize = 256;
+                    aesAlg.Key = AESKey;
+                    aesAlg.IV = AESIV;
+                    aesAlg.Mode = CipherMode.CBC;
+                    aesAlg.Padding = PaddingMode.PKCS7;
+                    using (ICryptoTransform decryptor = aesAlg.CreateDecryptor(aesAlg.Key, aesAlg.IV))
+                    {
+                        unencrypted = decryptor.TransformFinalBlock(encrypted, 0, encrypted.Length);
+                    }
+                }
+                return Encoding.Unicode.GetString(unencrypted);
+            }
+            catch
+            {
+                return cipherText;
+            }
+        }
+
+        /// <summary>
+        /// Decrypt method implementation
+        /// </summary>
+        public override byte[] Decrypt(byte[] cipherData)
+        {
+            if (cipherData == null || cipherData.Length <= 0)
+                throw new ArgumentNullException("cipherData");
+            if (!IsEncrypted(cipherData))
+                return cipherData;
+            try
+            {
+                byte[] unencrypted = null;
+                byte[] encrypted = RemoveHeader(cipherData);
+                using (AesCryptoServiceProvider aesAlg = new AesCryptoServiceProvider())
+                {
+                    aesAlg.BlockSize = 128;
+                    aesAlg.KeySize = 256;
+                    aesAlg.Key = AESKey;
+                    aesAlg.IV = AESIV;
+                    aesAlg.Mode = CipherMode.CBC;
+                    aesAlg.Padding = PaddingMode.PKCS7;
+                    using (ICryptoTransform decryptor = aesAlg.CreateDecryptor(aesAlg.Key, aesAlg.IV))
+                    {
+                        unencrypted = decryptor.TransformFinalBlock(encrypted, 0, encrypted.Length);
+                    }
+                }
+                return unencrypted;
+            }
+            catch
+            {
+                return cipherData;
+            }
+        }
+
+        /// <summary>
+        /// IsEncrypted method implementation
+        /// </summary>
+        private bool IsEncrypted(string data)
+        {
+            if (string.IsNullOrEmpty(data))
+                return false;
+            try
+            {
+                byte[] encrypted = Convert.FromBase64String(data);
+                byte[] ProofHeader = GetHeader(encrypted);
+                return ProofHeader.SequenceEqual(AESHdr);
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// IsEncrypted method implementation
+        /// </summary>
+        private bool IsEncrypted(byte[] encrypted)
+        {
+            try
+            {
+                byte[] ProofHeader = GetHeader(encrypted);
+                return ProofHeader.SequenceEqual(AESHdr);
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// AddHeader method
+        /// </summary>
+        private byte[] AddHeader(byte[] data)
+        {
+            byte[] output = new byte[data.Length + 4];
+            Buffer.BlockCopy(AESHdr, 0, output, 0, 4);
+            Buffer.BlockCopy(data, 0, output, 4, data.Length);
+            return output;
+        }
+
+        /// <summary>
+        /// RemoveHeader method
+        /// </summary>
+        private byte[] RemoveHeader(byte[] data)
+        {
+            byte[] output = new byte[data.Length - 4];
+            Buffer.BlockCopy(data, 4, output, 0, data.Length - 4);
+            return output;
+        }
+
+        /// <summary>
+        /// GetHeader method
+        /// </summary>
+        internal override byte[] GetHeader(byte[] data)
+        {
+            byte[] Header = new byte[4];
+            Buffer.BlockCopy(data, 0, Header, 0, 4);
+            return Header;
+        }
+
+        /// <summary>
+        /// Dispose method implementation
+        /// </summary>
+        public void Dispose()
+        {
+
+        }
     }
     #endregion
 }

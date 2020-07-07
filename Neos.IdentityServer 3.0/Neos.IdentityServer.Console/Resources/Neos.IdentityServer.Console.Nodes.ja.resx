@@ -231,17 +231,8 @@
   <data name="SECURITYSCOPENODEDESC" xml:space="preserve">
     <value>セキュリティ構成</value>
   </data>
-  <data name="SECURITYSCOPERNG" xml:space="preserve">
-    <value>RNG (乱数発生器)</value>
-  </data>
   <data name="SECURITYSCOPEROOT" xml:space="preserve">
     <value>セキュリティ構成</value>
-  </data>
-  <data name="SECURITYSCOPERSA" xml:space="preserve">
-    <value>RSA 証明書</value>
-  </data>
-  <data name="SECURITYSCOPERSAX" xml:space="preserve">
-    <value>ユーザーごとの RSA 証明書</value>
   </data>
   <data name="SECURITYSCOPEWSMAN" xml:space="preserve">
     <value>Wsman</value>
@@ -359,5 +350,17 @@
   </data>
   <data name="CUSTOMSTORESCOPENODEDESC" xml:space="preserve">
     <value>カスタム ストア構成</value>
+  </data>
+  <data name="SECURITYSCOPERNG" xml:space="preserve">
+    <value>エンコードされたキー RNG</value>
+  </data>
+  <data name="SECURITYSCOPERSA" xml:space="preserve">
+    <value>アメトリックキー RSA</value>
+  </data>
+  <data name="SECURITYSCOPEAES" xml:space="preserve">
+    <value>サイメトリックキーAES</value>
+  </data>
+  <data name="SECURITYSCOPECUSTOM" xml:space="preserve">
+    <value>カスタムキー</value>
   </data>
 </root>

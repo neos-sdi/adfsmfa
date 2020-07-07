@@ -122,47 +122,42 @@
 &lt;html&gt; 
     &lt;head&gt; 
         &lt;title&gt;&lt;/title&gt; 
-        &lt;base target="blank"&gt; 
+        &lt;base target="_blank"&gt; 
     &lt;/head&gt; 
     &lt;body&gt; 
         &lt;table dir="ltr"&gt;
             &lt;tr&gt;
-                &lt;td id="i1" style="padding:0;font-family:'Segoe UI Semibold', 'Segoe UI Bold', 'Segoe UI', 'Helvetica Neue Medium', Arial, sans-serif;font-size:17px;color:#707070;"&gt;{0} de compte&lt;/td&gt;
+                &lt;td id="i1" style="padding:0;font-family:'Segoe UI Semibold', 'Segoe UI Bold', 'Segoe UI', 'Helvetica Neue Medium', Arial, sans-serif;font-size:17px;color:#707070;"&gt;Compte {0}&lt;/td&gt;
             &lt;/tr&gt; 
             &lt;tr&gt;
-                &lt;td id="i2" style="padding:0;font-family:'Segoe UI Light', 'Segoe UI', 'Helvetica Neue Medium', Arial, sans-serif;font-size:41px;color:#2672ec;"&gt;Inscription des utilisateurs&lt;/td&gt;
+                &lt;td id="i2" style="padding:0;font-family:'Segoe UI Light', 'Segoe UI', 'Helvetica Neue Medium', Arial, sans-serif;font-size:41px;color:#2672ec;"&gt;Enregistrement Utilisateur&lt;/td&gt;
             &lt;/tr&gt;
             &lt;tr&gt;
-                &lt;td id="i3" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Afin d’améliorer la sécurité de votre compte, nous avons activé le
-
-Mécanisme d’authentification multifactoriste.&lt;/td&gt;
+                &lt;td id="i3" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Afin d'améliorer la sécurité de votre compte, nous avons activé la vérification en deux étapes.&lt;/td&gt;
             &lt;/tr&gt;
             &lt;tr&gt;
-                &lt;td id="i3a" style="padding:0;padding-top:0px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Cette fonction de sécurité doit être activée par nous à l’aide de
-Informations que vous venez de nous donner.&lt;/td&gt;
+                &lt;td id="i3a" style="padding:0;padding-top:0px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Cette fonction de sécurité se doit d'être activée par nos soins à l'aide des informations que vous venez de nous transmettre.&lt;/td&gt;
             &lt;/tr&gt;
             &lt;tr&gt;
-                &lt;td id="i4" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Les informations ci-dessous nous permettront de vérifier votre identité.&lt;/td&gt;
+                &lt;td id="i4" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Les informations ci-dessous nous permettrons de vérifier votre identité.&lt;/td&gt;
             &lt;/tr&gt;
             &lt;tr&gt;
-                &lt;td id="i4" style="padding:0;padding-top:15px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Nom de l’utilisateur : &lt;a dir="ltr" id="iAccount" class="link" style="color:#2672ec;text-
-
-decoration:none;"&gt;{1}&lt;/a&gt;&lt;/td&gt;
+                &lt;td id="i4" style="padding:0;padding-top:15px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Nom Utilisateur  : &lt;a dir="ltr" id="iAccount" class="link" style="color:#2672ec;text-decoration:none;" &gt; {1} &lt;/td&gt;
             &lt;/tr&gt;
             &lt;tr&gt;
-                &lt;td id="i5" style="padding:0;padding-top:10px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Adresse e-mail secondaire : &lt;a dir="ltr" id="iEmail" class="link" style="color:#2672ec;text-decoration:none;"&gt;{2}&lt;/a&gt;&lt;/td&gt;
+                &lt;td id="i5" style="padding:0;padding-top:10px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Adresse email secondaire : &lt;a dir="ltr" id="iEmail" class="link" style="color:#2672ec;text-decoration:none;" &gt; {2} &lt;/td&gt;
             &lt;/tr&gt;
             &lt;tr&gt;
-                &lt;td id="i6" style="padding:0;padding-top:10px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Numéro de téléphone mobile : &lt;a dir="ltr" id="iPhone" class="link" style="color:#2672ec;text-decoration:none;"&gt;{3}&lt;/a&gt;&lt;/td&gt;
+                &lt;td id="i6" style="padding:0;padding-top:10px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;N° de téléphone mobile : &lt;a dir="ltr" id="iPhone" class="link" style="color:#2672ec;text-decoration:none;" &gt; {3} &lt;/td&gt;
             &lt;/tr&gt;
             &lt;tr&gt;
-                &lt;td id="i7" style="padding:0;padding-top:10px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Méthode d’authentification par défaut : &lt;a dir="ltr" id="iMethod" class="link" style="color:#2672ec;text-decoration:none;"&gt;{4}&lt;/a&gt;&lt;/td&gt;
+                &lt;td id="i7" style="padding:0;padding-top:10px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Méthode d'authentification par défaut : &lt;a dir="ltr" id="iMethod" class="link" style="color:#2672ec;text-decoration:none;" &gt; {4} &lt;/td&gt;
             &lt;/tr&gt;
             &lt;tr&gt;
-                &lt;td id="i8" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;En ce qui concerne,&lt;/td&gt;
+                &lt;td id="i8" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Merci,&lt;/td&gt;
             &lt;/tr&gt;
             &lt;tr&gt;
-                &lt;td id="i9" style="padding:0;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;équipe {0} comptes&lt;/td&gt;
+                &lt;td id="i9" style="padding:0;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;L'équipe des comptes {0}&lt;/td&gt;
             &lt;/tr&gt;
         &lt;/table&gt;
          &lt;br /&gt; 
@@ -170,56 +165,46 @@ decoration:none;"&gt;{1}&lt;/a&gt;&lt;/td&gt;
 &lt;/html&gt;</value>
   </data>
   <data name="MailAdminTitle" xml:space="preserve">
-    <value>Réséquêt administratif pour {0}'enregistrement</value>
+    <value>Demande administrative pour enregistrement de {0}</value>
   </data>
   <data name="MailKeyContent" xml:space="preserve">
     <value>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"&gt; 
 &lt;html&gt; 
     &lt;head&gt; 
         &lt;title&gt;&lt;/title&gt; 
-        &lt;base target="blank"&gt; 
+        &lt;base target="_blank"&gt; 
     &lt;/head&gt; 
     &lt;body&gt; 
         &lt;table dir="ltr"&gt;
             &lt;tr&gt;
-                &lt;td id="i1" style="padding:0;font-family:'Segoe UI Semibold', 'Segoe UI Bold', 'Segoe UI', 'Helvetica Neue Medium', Arial, sans-serif;font-size:17px;color:#707070;"&gt;{0} de compte&lt;/td&gt;
+                &lt;td id="i1" style="padding:0;font-family:'Segoe UI Semibold', 'Segoe UI Bold', 'Segoe UI', 'Helvetica Neue Medium', Arial, sans-serif;font-size:17px;color:#707070;"&gt;Compte {0}&lt;/td&gt;
             &lt;/tr&gt; 
             &lt;tr&gt;
                 &lt;td id="i2" style="padding:0;font-family:'Segoe UI Light', 'Segoe UI', 'Helvetica Neue Medium', Arial, sans-serif;font-size:41px;color:#2672ec;"&gt;Clé de sécurité&lt;/td&gt;
             &lt;/tr&gt;
             &lt;tr&gt;
-                &lt;td id="i3" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Afin d’améliorer la sécurité de votre compte, nous avons activé la 
-
-en deux étapes, les informations ci-dessous nous permettront de vérifier votre identité. Vous devez saisir ces informations dans votre application d’authentification.&lt;/td&gt;
+                &lt;td id="i3" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Afin d'améliorer la sécurité de votre compte, nous avons activé la vérification en deux étapes, les informations ci-dessous nous permettrons de vérifier votre identité.&lt;br&gt;Vous devez entrer ces informations dans votre application d’authentification. &lt;/td&gt;
             &lt;/tr&gt;
             &lt;tr&gt;
-                &lt;td id="i3" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Veuillez utiliser la clé de sécurité suivante pour {0} de compte : &lt;a dir="ltr" id="iAccount" class="link" style="color:#2672ec;text-decoration:none;"&gt;{1}.&lt;/a&gt;&lt;/td&gt;
+                &lt;td id="i3" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Veuillez utiliser la clé de sécurité suivante pour le compte {0} : &lt;a dir="ltr" id="iAccount" class="link" style="color:#2672ec;text-decoration:none;" &gt; {1}. &lt;/td&gt;
             &lt;/tr&gt;
             &lt;tr&gt;
-                &lt;td id="i4" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Clé de sécurité : &lt;span style="font-family:'Segoe UI Bold', 'Segoe UI Semibold', 'Segoe 
-
-UI', 'Helvetica Neue Medium', Arial, sans-serif;font-size:18px;font-weight:bold;color:#2a2a2a;"&gt;{2}&lt;/span&gt;&lt;/td&gt;
+                &lt;td id="i4" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Clé de sécurité : &lt;span style="font-family:'Segoe UI Bold', 'Segoe UI Semibold', 'Segoe UI', 'Helvetica Neue Medium', Arial, sans-serif;font-size:18px;font-weight:bold;color:#2a2a2a;"&gt; {2}&lt;/span&gt; &lt;/td&gt;
             &lt;/tr&gt;
             &lt;tr&gt;
-                &lt;td id="i5" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Vous pouvez également numériser le code QR suivant à partir de votre application d’authentification mobile 
-
-(Google Authenticator, Microsoft Authenticator).&lt;/td&gt;
+                &lt;td id="i5" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Vous pouvez aussi scanner le QR Code suivant à partir de votre application mobile d'authentification (Google Authenticator, Microsoft Authenticator).&lt;/td&gt;
             &lt;/tr&gt;
             &lt;tr&gt;
-                &lt;td id="i6" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;&lt;span style="font-family:'Segoe UI Bold', 'Segoe UI Semibold', 'Segoe UI', 
-
-'Helvetica Neue Medium', Arial, sans-serif;font-size:18px;font-weight:bold;color:#2a2a2a;"&gt; &lt;img id="qr" src="cid:{3}" /&gt;&lt;/span&gt;&lt;/td&gt;
+                &lt;td id="i6" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;&lt;span style="font-family:'Segoe UI Bold', 'Segoe UI Semibold', 'Segoe UI', 'Helvetica Neue Medium', Arial, sans-serif;font-size:18px;font-weight:bold;color:#2a2a2a;"&gt; &lt;img id="qr" src="cid:{3}" /&gt;&lt;/span&gt; &lt;/td&gt;
             &lt;/tr&gt;
             &lt;tr&gt;
-                &lt;td id="i7" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Ce courriel est très confidentiel, alors ne le divulguez pas. En cas de doute s’il vous plaît contacter 
-
-l’équipe de compte {0}, pour vous fournir une nouvelle clé secrète.&lt;/td&gt;
+                &lt;td id="i7" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Cet email est hautement confidentiel, veillez à ne pas le divulguer. Dans le doute veuillez contacter l'équipe des comptes {0}, afin de vous fournir une nouvelle clé secréte.&lt;/td&gt;
             &lt;/tr&gt;
             &lt;tr&gt;
-                &lt;td id="i8" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Sinceres salutations&lt;/td&gt;
+                &lt;td id="i8" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;Merci,&lt;/td&gt;
             &lt;/tr&gt;
             &lt;tr&gt;
-                &lt;td id="i9" style="padding:0;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;L’équipe des comptes {0}&lt;/td&gt;
+                &lt;td id="i9" style="padding:0;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;L'équipe des comptes {0}&lt;/td&gt;
             &lt;/tr&gt;
         &lt;/table&gt;
          &lt;br /&gt; 
@@ -227,10 +212,10 @@ l’équipe de compte {0}, pour vous fournir une nouvelle clé secrète.&lt;/td&
 &lt;/html&gt;</value>
   </data>
   <data name="MailKeyTitle" xml:space="preserve">
-    <value>Informations de sécurité</value>
+    <value>Informations clé de sécurité</value>
   </data>
   <data name="MailNotificationsTitle" xml:space="preserve">
-    <value>Alerte de sécurité sur votre compte {0}</value>
+    <value>Alerte de sécurité concernant votre compte {0}</value>
   </data>
   <data name="MailOTPTitle" xml:space="preserve">
     <value>Code de sécurité</value>

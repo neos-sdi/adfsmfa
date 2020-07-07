@@ -238,7 +238,7 @@
     <value>Mobiltelefonauthentifizierung</value>
   </data>
   <data name="SMSUIMessage" xml:space="preserve">
-    <value>Wir haben eine SMS mit einem Verifizierungscode gesendet. {0}</value>
+    <value>Wir haben eine SMS mit einem Verifizierungscode gesendet.</value>
   </data>
   <data name="SMSUIOTPLabel" xml:space="preserve">
     <value>Zugangscode per Telefon empfangen</value>
@@ -248,5 +248,26 @@
   </data>
   <data name="SMSWIZEnroll" xml:space="preserve">
     <value>Mein Telefon registrieren</value>
+  </data>
+  <data name="PROVIDEROTPDESCRIPTION" xml:space="preserve">
+    <value>TOTP Multi-Factor-Anbieter</value>
+  </data>
+  <data name="PROVIDERSMSDESCRIPTION" xml:space="preserve">
+    <value>SMS Multi-Factor Provider-Beispiel</value>
+  </data>
+  <data name="PROVIDEREMAILDESCRIPTION" xml:space="preserve">
+    <value>E-Mail Multi-Factor-Anbieter</value>
+  </data>
+  <data name="OTPUIWIZComment" xml:space="preserve">
+    <value>Scannen Sie den QR-Code mit einer TOTP-Anwendung wie Microsoft Authenticator, Google Authenticator für die Registrierung Ihres Kontos</value>
+  </data>
+  <data name="MAILUIWIZComment" xml:space="preserve">
+    <value>Sie müssen eine E-Mail-Adresse eingeben, um Ihre Identität zu bestätigen. Diese E-Mail muss ohne Unternehmensüberprüfung erreichbar sein (persönliche E-Mail-Adresse)</value>
+  </data>
+  <data name="SMSUIWIZComment" xml:space="preserve">
+    <value>Sie müssen Ihre Telefonnummer eingeben, um Ihre Identität zu bestätigen. Dieses Telefon muss erreichbar sein.</value>
+  </data>
+  <data name="PROVIDERPLUGDESCRIPTION" xml:space="preserve">
+    <value>{0} Multi-Faktor-Lieferant (Stecker)</value>
   </data>
 </root>

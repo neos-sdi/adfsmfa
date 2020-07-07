@@ -666,4 +666,13 @@
   <data name="CTRLCUSTOMUSING" xml:space="preserve">
     <value>Utilizare depozit particularizat</value>
   </data>
+  <data name="CTRLADLDAPSSL" xml:space="preserve">
+    <value>Utilizarea conexiunilor LDAP securizate (LDAPS)</value>
+  </data>
+  <data name="CTRLCUSTOMKEYSERROR" xml:space="preserve">
+    <value>Extensie nevalidă! Nu se poate percepe!</value>
+  </data>
+  <data name="CTRLWEBAUTHNSHOWPII" xml:space="preserve">
+    <value>Afișare jurnale sensibile</value>
+  </data>
 </root>

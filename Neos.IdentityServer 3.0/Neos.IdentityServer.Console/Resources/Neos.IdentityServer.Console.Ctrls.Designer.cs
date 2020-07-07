@@ -403,6 +403,15 @@ namespace Neos.IdentityServer.Console.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Use secure LDAP connections (LDAPS).
+        /// </summary>
+        internal static string CTRLADLDAPSSL {
+            get {
+                return ResourceManager.GetString("CTRLADLDAPSSL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Password.
         /// </summary>
         internal static string CTRLADPASSWORD {
@@ -525,6 +534,15 @@ namespace Neos.IdentityServer.Console.Resources {
         internal static string CTRLCANCEL {
             get {
                 return ResourceManager.GetString("CTRLCANCEL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Invalid Extension ! cannot be loaded !.
+        /// </summary>
+        internal static string CTRLCUSTOMKEYSERROR {
+            get {
+                return ResourceManager.GetString("CTRLCUSTOMKEYSERROR", resourceCulture);
             }
         }
         
@@ -1659,6 +1677,15 @@ namespace Neos.IdentityServer.Console.Resources {
         internal static string CTRLWEBAUTHNSERVERURL {
             get {
                 return ResourceManager.GetString("CTRLWEBAUTHNSERVERURL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Show sensitive logs.
+        /// </summary>
+        internal static string CTRLWEBAUTHNSHOWPII {
+            get {
+                return ResourceManager.GetString("CTRLWEBAUTHNSHOWPII", resourceCulture);
             }
         }
         

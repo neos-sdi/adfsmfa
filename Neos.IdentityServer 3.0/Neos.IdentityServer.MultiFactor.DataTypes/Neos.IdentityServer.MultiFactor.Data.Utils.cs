@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2020 Neos-Sdi (http://www.neos-sdi.com)                                                                                                                                    //                        
+// Copyright (c) 2020 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -166,15 +166,24 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// <summary>
         /// GetDirectoryEntryForUPN() method implmentation
         /// </summary>
-        internal static DirectoryEntry GetDirectoryEntryForUPN(ADDSHost host, string upn)
+        internal static DirectoryEntry GetDirectoryEntryForUPN(ADDSHost host, string upn, bool usessl)
         {
+            string root = "LDAP://";
             DirectoryEntry entry = null;
             if (!string.IsNullOrEmpty(host.DomainName))
-                entry = new DirectoryEntry("LDAP://" + host.DomainName);
+            {
+                if (usessl)
+                    entry = new DirectoryEntry(root + host.DomainName+ ":636");
+                else
+                    entry = new DirectoryEntry(root + host.DomainName);
+            }
             else
             {
                 string dom = host.GetForestForUPN(upn);
-                entry = new DirectoryEntry("LDAP://" + dom);
+                if (usessl)
+                    entry = new DirectoryEntry(root + dom + ":636");
+                else
+                    entry = new DirectoryEntry(root + dom);
             }
             if (!string.IsNullOrEmpty(host.Account))
                 entry.Username = host.Account;
@@ -186,11 +195,16 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// <summary>
         /// GetDirectoryEntryForUPN() method implmentation
         /// </summary>
-        internal static DirectoryEntry GetDirectoryEntryForUPN(ADDSHost host, string account, string password, string upn)
+        internal static DirectoryEntry GetDirectoryEntryForUPN(ADDSHost host, string account, string password, string upn, bool usessl)
         {
+            string root = "LDAP://";
             DirectoryEntry entry = null;
             string dom = host.GetForestForUPN(upn);
-            entry = new DirectoryEntry("LDAP://" + dom);
+            if (usessl)
+                entry = new DirectoryEntry(root + dom + ":636");
+            else
+                entry = new DirectoryEntry(root + dom);
+
             if (!string.IsNullOrEmpty(account))
                 entry.Username = account;
             if (!string.IsNullOrEmpty(password))
@@ -201,13 +215,24 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// <summary>
         /// GetDirectoryEntry() method implmentation
         /// </summary>
-        internal static DirectoryEntry GetDirectoryEntry(ADDSHost host, ADDSHostForest forest)
+        internal static DirectoryEntry GetDirectoryEntry(ADDSHost host, ADDSHostForest forest, bool usessl)
         {
+            string root = "LDAP://";
             DirectoryEntry entry = null;
             if (!string.IsNullOrEmpty(host.DomainName))
-                entry = new DirectoryEntry("LDAP://" + host.DomainName);
+            {
+                if (usessl)
+                    entry = new DirectoryEntry(root + host.DomainName + ":636");
+                else
+                    entry = new DirectoryEntry(root + host.DomainName);
+            }
             else
-                entry = new DirectoryEntry("LDAP://" + forest.ForestDNS);
+            {
+                if (usessl)
+                    entry = new DirectoryEntry(root + forest.ForestDNS + ":636");
+                else
+                    entry = new DirectoryEntry(root + forest.ForestDNS);
+            }
             if (!string.IsNullOrEmpty(host.Account))
                 entry.Username = host.Account;
             if (!string.IsNullOrEmpty(host.Password))
@@ -218,13 +243,25 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// <summary>
         /// GetDirectoryEntry() method implmentation
         /// </summary>
-        internal static DirectoryEntry GetDirectoryEntry(ADDSHost host)
+        internal static DirectoryEntry GetDirectoryEntry(ADDSHost host, bool usessl)
         {
+            string root = "LDAP://";
             DirectoryEntry entry = null;
             if (!string.IsNullOrEmpty(host.DomainName))
-                entry = new DirectoryEntry("LDAP://" + host.DomainName);
+            {
+                if (usessl)
+                    entry = new DirectoryEntry(root + host.DomainName + ":636");
+                else
+                    entry = new DirectoryEntry(root + host.DomainName);
+            }
             else
-                entry = new DirectoryEntry();
+            {
+                Domain dom = Domain.GetComputerDomain();
+                if (usessl)
+                    entry = new DirectoryEntry(root + dom.Name + ":636");
+                else
+                    entry = new DirectoryEntry(root + dom.Name);
+            }
             if (!string.IsNullOrEmpty(host.Account))
                 entry.Username = host.Account;
             if (!string.IsNullOrEmpty(host.Password))
@@ -235,13 +272,25 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// <summary>
         /// GetDirectoryEntry method implmentation
         /// </summary>
-        internal static DirectoryEntry GetDirectoryEntry(string domainname, string username, string password)
+        internal static DirectoryEntry GetDirectoryEntry(string domainname, string username, string password, bool usessl)
         {
+            string root = "LDAP://";
             DirectoryEntry entry = null;
             if (!string.IsNullOrEmpty(domainname))
-                entry = new DirectoryEntry("LDAP://" + domainname);
+            {
+                if (usessl)
+                    entry = new DirectoryEntry(root + domainname + ":636");
+                else
+                    entry = new DirectoryEntry(root + domainname);
+            }
             else
-                entry = new DirectoryEntry();
+            {
+                Domain dom = Domain.GetComputerDomain();
+                if (usessl)
+                    entry = new DirectoryEntry(root + dom.Name + ":636");
+                else
+                    entry = new DirectoryEntry(root + dom.Name);
+            }
             if (!string.IsNullOrEmpty(username))
                 entry.Username = username;
             if (!string.IsNullOrEmpty(password))
@@ -252,10 +301,10 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// <summary>
         /// GetDirectoryEntry() method implmentation
         /// </summary>
-        internal static DirectoryEntry GetDirectoryEntry(ADDSHost host, SearchResult sr)
+        internal static DirectoryEntry GetDirectoryEntry(ADDSHost host, SearchResult sr, bool usessl)
         {
             DirectoryEntry entry = sr.GetDirectoryEntry();
-            entry.Path = sr.Path;
+            entry.Path = sr.Path; // Take SearchResult path
             if (!string.IsNullOrEmpty(host.Account))
                 entry.Username = host.Account;
             if (!string.IsNullOrEmpty(host.Password))
@@ -266,10 +315,10 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// <summary>
         /// GetDirectoryEntry() method implmentation
         /// </summary>
-        internal static DirectoryEntry GetDirectoryEntry(string domainname, string account, string password, SearchResult sr)
+        internal static DirectoryEntry GetDirectoryEntry(string domainname, string account, string password, SearchResult sr, bool usessl)
         {
             DirectoryEntry entry = sr.GetDirectoryEntry();
-            entry.Path = sr.Path;
+            entry.Path = sr.Path; // Take SearchResult path
             if (!string.IsNullOrEmpty(account))
                 entry.Username = account;
             if (!string.IsNullOrEmpty(password))
@@ -280,13 +329,26 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// <summary>
         /// GetDirectoryEntry() method implmentation
         /// </summary>
-        internal static DirectoryEntry GetDirectoryEntry(ADDSHost host, string path)
+        internal static DirectoryEntry GetDirectoryEntry(ADDSHost host, string path, bool usessl)
         {
+            string root = "LDAP://";
+
             DirectoryEntry entry = null;
             if (!string.IsNullOrEmpty(host.DomainName))
-                entry = new DirectoryEntry("LDAP://" + host.DomainName);
+            {
+                if (usessl)
+                    entry = new DirectoryEntry(root + host.DomainName+":636");
+                else
+                    entry = new DirectoryEntry(root + host.DomainName);
+            }
             else
-                entry = new DirectoryEntry();
+            {
+                Domain dom = Domain.GetComputerDomain();
+                if (usessl)
+                    entry = new DirectoryEntry(root + dom.Name + ":636");
+                else
+                    entry = new DirectoryEntry(root + dom.Name);
+            }
             entry.Path = path;
             if (!string.IsNullOrEmpty(host.Account))
                 entry.Username = host.Account;
@@ -298,13 +360,25 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// <summary>
         /// GetDirectoryEntry() method implmentation
         /// </summary>
-        internal static DirectoryEntry GetDirectoryEntry(string domain, string username, string password, string path)
+        internal static DirectoryEntry GetDirectoryEntry(string domain, string username, string password, string path, bool usessl)
         {
+            string root = "LDAP://";
             DirectoryEntry entry = null;
             if (!string.IsNullOrEmpty(domain))
-                entry = new DirectoryEntry("LDAP://" + domain);
+            {
+                if (usessl)
+                    entry = new DirectoryEntry(root + domain + ":636");
+                else
+                    entry = new DirectoryEntry(root + domain);
+            }
             else
-                entry = new DirectoryEntry();
+            {
+                Domain dom = Domain.GetComputerDomain();
+                if (usessl)
+                    entry = new DirectoryEntry(root + dom.Name + ":636");
+                else
+                    entry = new DirectoryEntry(root + dom.Name);
+            }
             entry.Path = path;
             if (!string.IsNullOrEmpty(username))
                 entry.Username = username;

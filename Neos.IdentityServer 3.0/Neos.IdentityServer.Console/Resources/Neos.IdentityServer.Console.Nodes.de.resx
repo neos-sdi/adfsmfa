@@ -219,17 +219,8 @@
   <data name="SECURITYSCOPENODEDESC" xml:space="preserve">
     <value>Sicherheitseinrichtung</value>
   </data>
-  <data name="SECURITYSCOPERNG" xml:space="preserve">
-    <value>RNG (Zufallszahlengenerator)</value>
-  </data>
   <data name="SECURITYSCOPEROOT" xml:space="preserve">
     <value>Sicherheitseinrichtung</value>
-  </data>
-  <data name="SECURITYSCOPERSA" xml:space="preserve">
-    <value>RSA-Zertifikat</value>
-  </data>
-  <data name="SECURITYSCOPERSAX" xml:space="preserve">
-    <value>RSA-Zertifikate pro Benutzer</value>
   </data>
   <data name="SERVICESCOPENODEDESC" xml:space="preserve">
     <value>Stand der Dienstleistungen</value>
@@ -359,5 +350,17 @@
   </data>
   <data name="CUSTOMSTORESCOPENODEDESC" xml:space="preserve">
     <value>Custom Store-Konfiguration</value>
+  </data>
+  <data name="SECURITYSCOPERNG" xml:space="preserve">
+    <value>Kodierte Schlüssel RNG</value>
+  </data>
+  <data name="SECURITYSCOPERSA" xml:space="preserve">
+    <value>Asymetrische Schlüssel RSA</value>
+  </data>
+  <data name="SECURITYSCOPEAES" xml:space="preserve">
+    <value>Symetrische Schlüssel AES</value>
+  </data>
+  <data name="SECURITYSCOPECUSTOM" xml:space="preserve">
+    <value>Benutzerdefinierte Schlüssel</value>
   </data>
 </root>

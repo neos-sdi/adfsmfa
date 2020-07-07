@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2020 Neos-Sdi (http://www.neos-sdi.com)                                                                                                                                    //                        
+// Copyright (c) 2020 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -33,7 +33,6 @@ namespace Neos.IdentityServer.MultiFactor
     /// </summary>
     public abstract class BaseEncryption: IDisposable
     {
-
         /// <summary>
         /// Constructor
         /// </summary>
@@ -57,8 +56,8 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public X509Certificate2 Certificate { get; set; } = null;
 
-        public abstract byte[] Encrypt(string username);
-        public abstract byte[] Decrypt(byte[] encrypted, string username);
+        public abstract byte[] NewEncryptedKey(string username);
+        public abstract byte[] GetDecryptedKey(byte[] encrypted, string username);
         protected abstract void Dispose(bool disposing);
 
         /// <summary>
@@ -95,7 +94,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// EncryptV1 method (for compatibility with old versions)
         /// </summary>
-        public override byte[] Encrypt(string username)
+        public override byte[] NewEncryptedKey(string username)
         {
             try
             {
@@ -128,7 +127,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// Decrypt method
         /// </summary>
-        public override byte[] Decrypt(byte[] encryptedBytes, string username)
+        public override byte[] GetDecryptedKey(byte[] encryptedBytes, string username)
         {
             try
             {
@@ -234,7 +233,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// Encrypt method
         /// </summary>
-        public override byte[] Encrypt(string username)
+        public override byte[] NewEncryptedKey(string username)
         {
             try
             {
@@ -268,7 +267,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// Decrypt method
         /// </summary>
-        public override byte[] Decrypt(byte[] encryptedBytes, string username)
+        public override byte[] GetDecryptedKey(byte[] encryptedBytes, string username)
         {
             try
             {
@@ -360,7 +359,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// Encrypt method
         /// </summary>
-        public override byte[] Encrypt(string username)
+        public override byte[] NewEncryptedKey(string username)
         {
             try
             {
@@ -382,9 +381,9 @@ namespace Neos.IdentityServer.MultiFactor
         }
 
         /// <summary>
-        /// Decrypt method
+        /// ExtractAndDecryptKey method
         /// </summary>
-        public override byte[] Decrypt(byte[] encryptedBytes, string username)
+        public override byte[] GetDecryptedKey(byte[] encryptedBytes, string username)
         {
             try
             {
@@ -455,378 +454,199 @@ namespace Neos.IdentityServer.MultiFactor
         protected override void Dispose(bool disposing)
         {
         }
-    }
-
-    /// <summary>
-    /// AESBaseEncryption class
-    /// </summary>
-    public abstract class AESBaseEncryption
-    {
-        public abstract string Encrypt(string data);
-        public abstract string Decrypt(string data);
-        public abstract byte[] Encrypt(byte[] data);
-        public abstract byte[] Decrypt(byte[] data);
-
-        internal abstract byte[] GetHeader(byte[] data);
-    }
-
-    /// <summary>
-    /// AESEncryption class
-    /// </summary>
-    public class AESEncryption : AESBaseEncryption, IDisposable
-    {
-        /// <summary>
-        /// Encrypt method implementation
-        /// </summary>
-        public override string Encrypt(string data)
-        {
-            try
-            { 
-                using (AES256Encryption enc = new AES256Encryption())
-                {
-                    return enc.Encrypt(data);
-                }
-            }
-            catch
-            {
-                return data;
-            }
-
-        }
-
-        /// <summary>
-        /// Encrypt method implementation
-        /// </summary>
-        public override byte[] Encrypt(byte[] data)
-        {
-            try
-            {
-                using (AES256Encryption enc = new AES256Encryption())
-                {
-                    return enc.Encrypt(data);
-                }
-            }
-            catch
-            {
-                return data;
-            }
-        }
-
-        /// <summary>
-        /// Decrypt method implementation
-        /// </summary>
-        public override string Decrypt(string data)
-        {
-            try
-            {
-                byte[] Hdr = GetHeader(Convert.FromBase64String(data));
-                if (Hdr.SequenceEqual(new byte[] { 0x17, 0xD3, 0xF4, 0x2A }))
-                {
-                    using (AES256Encryption enc = new AES256Encryption())
-                    {
-                        return enc.Decrypt(data);
-                    }
-                }
-                else if (Hdr.SequenceEqual(new byte[] { 0x17, 0xD3, 0xF4, 0x29 })) // For compatibility Only
-                {
-                    using (AES128Encryption enc = new AES128Encryption())
-                    {
-                        return enc.Decrypt(data);
-                    }
-                }
-                else
-                    return data;
-            }
-            catch
-            {
-                return data;
-            }
-        }
-
-        /// <summary>
-        /// Decrypt method implementation
-        /// </summary>
-        public override byte[] Decrypt(byte[] data)
-        {
-            try
-            {
-                byte[] Hdr = GetHeader(data);
-                if (Hdr.SequenceEqual(new byte[] { 0x17, 0xD3, 0xF4, 0x2A }))
-                {
-                    using (AES256Encryption enc = new AES256Encryption())
-                    {
-                        return enc.Decrypt(data);
-                    }
-                }
-                else if (Hdr.SequenceEqual(new byte[] { 0x17, 0xD3, 0xF4, 0x29 })) // For compatibilty Only
-                {
-                    using (AES128Encryption enc = new AES128Encryption())
-                    {
-                        return enc.Decrypt(data);
-                    }
-                }
-                else
-                    return data;
-            }
-            catch
-            {
-                return data;
-            }
-        }
-
-        /// <summary>
-        /// GetHeader method implementation
-        /// </summary>
-        internal override byte[] GetHeader(byte[] data)
-        {
-            byte[] Header = new byte[4];
-            Buffer.BlockCopy(data, 0, Header, 0, 4);
-            return Header;
-        }
-
-        /// <summary>
-        /// Dispose method implementation
-        /// </summary>
-        public void Dispose()
-        {
-
-        }
-    }
-
+    }  
 
     /// <summary>
     /// AES128Encryption class
     /// </summary>
-    internal class AES128Encryption : AESBaseEncryption, IDisposable
+    internal class AES128Encryption : BaseEncryption
     {
-        private readonly byte[] IV = { 113, 23, 93, 174, 155, 66, 179, 82, 90, 101, 110, 102, 213, 124, 51, 62 };
-        private readonly byte[] Hdr = { 0x17, 0xD3, 0xF4, 0x29 };
+        private readonly byte[] AESIV = { 193, 213, 93, 174, 155, 166, 179, 82, 90, 181, 110, 102, 213, 124, 51, 162 };
         private readonly byte[] AESKey;
-        private readonly string UtilsKey = "ABCDEFGHIJKLMNOP";
+
+        private readonly int _keylen = 128;
+        private readonly AESKeyGeneratorMode _mode = AESKeyGeneratorMode.AESSecret1024;
 
         /// <summary>
-        /// AESEncryption constructor
+        /// Constructor
         /// </summary>
-        public AES128Encryption()
+        public AES128Encryption(string xorsecret) : this(xorsecret, AESKeyGeneratorMode.AESSecret1024)
         {
-            string basestr = UtilsKey;
-            AESKey = Encoding.ASCII.GetBytes(basestr.ToCharArray(), 0, 16);
         }
 
         /// <summary>
-        /// Encrypt method implementation
+        /// AES128Encryption constructor
         /// </summary>
-        public override string Encrypt(string data)
+        public AES128Encryption(string xorsecret, AESKeyGeneratorMode mode) : base(xorsecret)
         {
-            if (string.IsNullOrEmpty(data))
-                return data;
+            _mode = mode;
+            if (_mode == AESKeyGeneratorMode.AESSecret1024)
+                _keylen = 128;
+            else
+                _keylen = 64;
+
+            byte[] xkey = CFGUtilities.Key;
+            AESKey = new byte[16];
+            Buffer.BlockCopy(xkey, 0, AESKey, 0, 16);
+            byte[] res = null;
+            using (SHA1Managed sha = new SHA1Managed())
+            {
+                res = sha.ComputeHash(AESKey);
+                Buffer.BlockCopy(res, 0, AESKey, 0, 16);
+            }
+        }
+
+        /// <summary>
+        /// NewEncryptedKey method implementation
+        /// </summary>
+        public override byte[] NewEncryptedKey(string username)
+        {
             try
             {
-                if (IsEncrypted(data))
-                   return data;
-                byte[] encrypted = EncryptStringToBytes(data, AESKey, IV);
-                return Convert.ToBase64String(AddHeader(encrypted));
-            }
-            catch
-            {
-                return data;
-            }
-        }
-
-        /// <summary>
-        /// Decrypt method implementation
-        /// </summary>
-        public override string Decrypt(string data)
-        {
-            if (string.IsNullOrEmpty(data))
-                return data;
-            try
-            {
-                if (!IsEncrypted(data))
-                    return data;
-                byte[] encrypted = Convert.FromBase64String(data);
-                return DecryptStringFromBytes(RemoveHeader(encrypted), AESKey, IV);
-            }
-            catch
-            {
-                return data;
-            }
-        }
-
-        /// <summary>
-        /// Encrypt method implementation
-        /// </summary>
-        public override byte[] Encrypt(byte[] data)
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
-        /// Decrypt method implementation
-        /// </summary>
-        public override byte[] Decrypt(byte[] data)
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
-        /// EncryptStringToBytes method implementation
-        /// </summary>
-        private byte[] EncryptStringToBytes(string plainText, byte[] Key, byte[] IV)
-        {
-            if (plainText == null || plainText.Length <= 0)
-                throw new ArgumentNullException("plainText");
-
-            byte[] encrypted;
-            using (AesCryptoServiceProvider aesAlg = new AesCryptoServiceProvider())
-            {
-                aesAlg.Key = Key;
-                aesAlg.IV = IV;
-                ICryptoTransform encryptor = aesAlg.CreateEncryptor(aesAlg.Key, aesAlg.IV);
-                using (MemoryStream msEncrypt = new MemoryStream())
+                byte[] plainBytes = GenerateKey(username);
+                byte[] encryptedBytes = null;
+                using (AesCryptoServiceProvider aesAlg = new AesCryptoServiceProvider())
                 {
-                    using (CryptoStream csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write))
+                    aesAlg.BlockSize = 128;
+                    aesAlg.KeySize = 128;
+                    aesAlg.Key = AESKey;
+                    aesAlg.IV = AESIV;
+                    aesAlg.Mode = CipherMode.CBC;
+                    aesAlg.Padding = PaddingMode.PKCS7;
+                    using (ICryptoTransform encryptor = aesAlg.CreateEncryptor(aesAlg.Key, aesAlg.IV))
                     {
-                        using (StreamWriter swEncrypt = new StreamWriter(csEncrypt))
-                        {
-                            swEncrypt.Write(plainText);
-                        }
-                        encrypted = msEncrypt.ToArray();
+                        encryptedBytes = encryptor.TransformFinalBlock(plainBytes, 0, plainBytes.Length);
                     }
                 }
+                return XORUtilities.XOREncryptOrDecrypt(encryptedBytes, this.XORSecret);
             }
-            return encrypted;
-        }
-
-        /// <summary>
-        /// DecryptStringFromBytes method implementation
-        /// </summary>
-        private string DecryptStringFromBytes(byte[] cipherText, byte[] Key, byte[] IV)
-        {
-            if (cipherText == null || cipherText.Length <= 0)
-                throw new ArgumentNullException("cipherText");
-
-            string plaintext = null;
-            using (AesCryptoServiceProvider aesAlg = new AesCryptoServiceProvider())
+            catch (CryptographicException ce)
             {
-                aesAlg.Key = Key;
-                aesAlg.IV = IV;
-                ICryptoTransform decryptor = aesAlg.CreateDecryptor(aesAlg.Key, aesAlg.IV);
-                using (MemoryStream msDecrypt = new MemoryStream(cipherText))
-                {
-                    using (CryptoStream csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read))
-                    {
-                        using (StreamReader srDecrypt = new StreamReader(csDecrypt))
-                        {
-                            plaintext = srDecrypt.ReadToEnd();
-                        }
-                    }
-                }
+                Log.WriteEntry(string.Format("(AES128Encryption Encrypt) : Crytographic error for user  {1} \r {0} \r {2}", ce.Message, username, ce.StackTrace), System.Diagnostics.EventLogEntryType.Error, 0000);
+                return null;
             }
-            return plaintext;
+            catch (Exception ex)
+            {
+                Log.WriteEntry(string.Format("(AES128Encryption Encrypt) : Encryption error for user  {1} \r {0} \r {2}", ex.Message, username, ex.StackTrace), System.Diagnostics.EventLogEntryType.Error, 0000);
+                return null;
+            }
         }
 
         /// <summary>
-        /// IsEncrypted method implementation
+        /// GetDecryptedKey method implementation
         /// </summary>
-        private bool IsEncrypted(string data)
+        public override byte[] GetDecryptedKey(byte[] encryptedBytes, string username)
         {
-            if (string.IsNullOrEmpty(data))
-                return false;
             try
             {
-                byte[] encrypted = Convert.FromBase64String(data);
-                byte[] ProofHeader = GetHeader(encrypted);
-                UInt16 l = GetHeaderLen(encrypted);
-                return ((l == encrypted.Length - 5) && (ProofHeader.SequenceEqual(Hdr)));
+                byte[] fulldecryptedBytes = null;
+                byte[] decryptedBytes = XORUtilities.XOREncryptOrDecrypt(encryptedBytes, this.XORSecret);
+                using (AesCryptoServiceProvider aesAlg = new AesCryptoServiceProvider())
+                {
+                    aesAlg.BlockSize = 128;
+                    aesAlg.KeySize = 128;
+                    aesAlg.Key = AESKey;
+                    aesAlg.IV = AESIV;
+                    aesAlg.Mode = CipherMode.CBC;
+                    aesAlg.Padding = PaddingMode.PKCS7;
+                    using (ICryptoTransform decryptor = aesAlg.CreateDecryptor(aesAlg.Key, aesAlg.IV))
+                    {
+                        fulldecryptedBytes = decryptor.TransformFinalBlock(decryptedBytes, 0, decryptedBytes.Length);
+                    }
+                }
+                byte[] userbuff = new byte[fulldecryptedBytes.Length - _keylen];
+                Buffer.BlockCopy(fulldecryptedBytes, _keylen, userbuff, 0, fulldecryptedBytes.Length - _keylen);
+                this.CheckSum = userbuff;
+
+                byte[] decryptedkey = new byte[128];
+                Buffer.BlockCopy(fulldecryptedBytes, 0, decryptedkey, 0, _keylen);
+                return decryptedkey;
             }
-            catch
+            catch (CryptographicException ce)
             {
-                return false;
+                Log.WriteEntry(string.Format("(AES128Encryption Decrypt) : Crytographic error for user  {1} \r {0} \r {2}", ce.Message, username, ce.StackTrace), System.Diagnostics.EventLogEntryType.Error, 0000);
+                return null;
+            }
+            catch (Exception ex)
+            {
+                Log.WriteEntry(string.Format("(AES128Encryption Decrypt) : Decryption error for user  {1} \r {0} \r {2}", ex.Message, username, ex.StackTrace), System.Diagnostics.EventLogEntryType.Error, 0000);
+                return null;
             }
         }
 
         /// <summary>
-        /// AddHeader method
+        /// GenerateKey method
         /// </summary>
-        private byte[] AddHeader(byte[] data)
+        private byte[] GenerateKey(string username)
         {
-            byte[] output = new byte[data.Length + 5];
-            Buffer.BlockCopy(Hdr, 0, output, 0, 4);
-            output[4] = Convert.ToByte(data.Length);
-            Buffer.BlockCopy(data, 0, output, 5, data.Length);
-            return output;
-        }
+            byte[] text = CheckSumEncoding.CheckSum(username);
 
-        /// <summary>
-        /// RemoveHeader method
-        /// </summary>
-        private byte[] RemoveHeader(byte[] data)
-        {
-            byte[] output = new byte[data.Length - 5];
-            Buffer.BlockCopy(data, 5, output, 0, data.Length - 5);
-            return output;
-        }
-
-        /// <summary>
-        /// GetProofHeader method
-        /// </summary>
-        internal override byte[] GetHeader(byte[] data)
-        {
-            byte[] Header = new byte[4];
-            Buffer.BlockCopy(data, 0, Header, 0, 4);
-            return Header;
-        }
-
-        /// <summary>
-        /// GetLen method
-        /// </summary>
-        private UInt16 GetHeaderLen(byte[] data)
-        { 
-            return Convert.ToUInt16(data[4]);
+            byte[] buffer = new byte[_keylen + text.Length];
+            RandomNumberGenerator cryptoRandomDataGenerator = new RNGCryptoServiceProvider();
+            cryptoRandomDataGenerator.GetBytes(buffer, 0, _keylen);
+            Buffer.BlockCopy(text, 0, buffer, _keylen, text.Length);
+            return buffer;
         }
 
         /// <summary>
         /// Dispose method implementation
         /// </summary>
-        public void Dispose()
+        protected override void Dispose(bool disposing)
         {
-
+            // Nothing
         }
     }
 
     /// <summary>
     /// AES256Encryption class
     /// </summary>
-    internal class AES256Encryption : AESBaseEncryption, IDisposable
+    internal class AES256Encryption : BaseEncryption
     {
-        private readonly byte[] AESIV = { 113, 23, 93, 113, 53, 66, 189, 82, 90, 101, 110, 102, 213, 224, 51, 62 };
-        private readonly byte[] AESHdr = { 0x17, 0xD3, 0xF4, 0x2A };
+        private readonly byte[] AESIV = { 123, 123, 193, 113, 253, 66, 189, 182, 90, 101, 110, 102, 213, 224, 151, 62 };
         private readonly byte[] AESKey;
 
+        private readonly int _keylen = 128;
+        private readonly AESKeyGeneratorMode _mode = AESKeyGeneratorMode.AESSecret1024;
+
         /// <summary>
-        /// AESEncryption constructor
+        /// Constructor
         /// </summary>
-        public AES256Encryption()
+        public AES256Encryption(string xorsecret) : this(xorsecret, AESKeyGeneratorMode.AESSecret1024)
         {
+        }
+
+        /// <summary>
+        /// AES256Encryption constructor
+        /// </summary>
+        public AES256Encryption(string xorsecret, AESKeyGeneratorMode mode) : base(xorsecret)
+        {
+            _mode = mode;
+            if (_mode == AESKeyGeneratorMode.AESSecret1024)
+                _keylen = 128;
+            else
+                _keylen = 64;
+
             byte[] xkey = CFGUtilities.Key;
             AESKey = new byte[32];
             Buffer.BlockCopy(xkey, 0, AESKey, 0, 32);
+            byte[] res = null;
+            using (SHA256Managed sha = new SHA256Managed())
+            {
+                res = sha.ComputeHash(AESKey);
+                Buffer.BlockCopy(res, 0, AESKey, 0, 32);
+            }
         }
 
+
         /// <summary>
-        /// Encrypt method implementation
+        /// NewEncryptedKey method implementation
         /// </summary>
-        public override string Encrypt(string plainText)
+        public override byte[] NewEncryptedKey(string username)
         {
-            if (string.IsNullOrEmpty(plainText))
-                return plainText;
-            if (IsEncrypted(plainText))
-                return plainText;
             try
             {
-                byte[] encrypted;
-                byte[] unencrypted = Encoding.Unicode.GetBytes(plainText);
+                byte[] plainBytes = GenerateKey(username);
+                byte[] encryptedBytes = null;
                 using (AesCryptoServiceProvider aesAlg = new AesCryptoServiceProvider())
                 {
                     aesAlg.BlockSize = 128;
@@ -837,63 +657,32 @@ namespace Neos.IdentityServer.MultiFactor
                     aesAlg.Padding = PaddingMode.PKCS7;
                     using (ICryptoTransform encryptor = aesAlg.CreateEncryptor(aesAlg.Key, aesAlg.IV))
                     {
-                        encrypted = encryptor.TransformFinalBlock(unencrypted, 0, unencrypted.Length);
+                        encryptedBytes = encryptor.TransformFinalBlock(plainBytes, 0, plainBytes.Length);
                     }
                 }
-                return Convert.ToBase64String(AddHeader(encrypted));
+                return XORUtilities.XOREncryptOrDecrypt(encryptedBytes, this.XORSecret);
             }
-            catch
+            catch (CryptographicException ce)
             {
-                return plainText;
+                Log.WriteEntry(string.Format("(AES256Encryption Encrypt) : Crytographic error for user  {1} \r {0} \r {2}", ce.Message, username, ce.StackTrace), System.Diagnostics.EventLogEntryType.Error, 0000);
+                return null;
+            }
+            catch (Exception ex)
+            {
+                Log.WriteEntry(string.Format("(AES256Encryption Encrypt) : Encryption error for user  {1} \r {0} \r {2}", ex.Message, username, ex.StackTrace), System.Diagnostics.EventLogEntryType.Error, 0000);
+                return null;
             }
         }
 
         /// <summary>
-        /// Encrypt method implementation
+        /// GetDecryptedKey method implementation
         /// </summary>
-        public override byte[] Encrypt(byte[] unencrypted)
+        public override byte[] GetDecryptedKey(byte[] encryptedBytes, string username)
         {
-            if (unencrypted == null || unencrypted.Length <= 0)
-                throw new ArgumentNullException("unencrypted");
-            if (IsEncrypted(unencrypted))
-                return unencrypted;
             try
             {
-                byte[] encrypted;
-                using (AesCryptoServiceProvider aesAlg = new AesCryptoServiceProvider())
-                {
-                    aesAlg.BlockSize = 128;
-                    aesAlg.KeySize = 256;
-                    aesAlg.Key = AESKey;
-                    aesAlg.IV = AESIV;
-                    aesAlg.Mode = CipherMode.CBC;
-                    aesAlg.Padding = PaddingMode.PKCS7;
-                    using (ICryptoTransform encryptor = aesAlg.CreateEncryptor(aesAlg.Key, aesAlg.IV))
-                    {
-                        encrypted = encryptor.TransformFinalBlock(unencrypted, 0, unencrypted.Length);
-                    }
-                }
-                return AddHeader(encrypted);
-            }
-            catch
-            {
-                return unencrypted;
-            }
-        }
-
-        /// <summary>
-        /// Decrypt method implementation
-        /// </summary>
-        public override string Decrypt(string cipherText)
-        {
-            if (string.IsNullOrEmpty(cipherText))
-                return cipherText;
-            if (!IsEncrypted(cipherText))
-                return cipherText;
-            try
-            {
-                byte[] encrypted = RemoveHeader(Convert.FromBase64String(cipherText));
-                byte[] unencrypted = null;
+                byte[] fulldecryptedBytes = null;
+                byte[] decryptedBytes = XORUtilities.XOREncryptOrDecrypt(encryptedBytes, this.XORSecret);
                 using (AesCryptoServiceProvider aesAlg = new AesCryptoServiceProvider())
                 {
                     aesAlg.BlockSize = 128;
@@ -904,124 +693,49 @@ namespace Neos.IdentityServer.MultiFactor
                     aesAlg.Padding = PaddingMode.PKCS7;
                     using (ICryptoTransform decryptor = aesAlg.CreateDecryptor(aesAlg.Key, aesAlg.IV))
                     {
-                        unencrypted = decryptor.TransformFinalBlock(encrypted, 0, encrypted.Length);
+                        fulldecryptedBytes = decryptor.TransformFinalBlock(decryptedBytes, 0, decryptedBytes.Length);
                     }
                 }
-                return Encoding.Unicode.GetString(unencrypted);
+                byte[] userbuff = new byte[fulldecryptedBytes.Length - _keylen];
+                Buffer.BlockCopy(fulldecryptedBytes, _keylen, userbuff, 0, fulldecryptedBytes.Length - _keylen);
+                this.CheckSum = userbuff;
+
+                byte[] decryptedkey = new byte[_keylen];
+                Buffer.BlockCopy(fulldecryptedBytes, 0, decryptedkey, 0, _keylen);
+                return decryptedkey;
             }
-            catch
+            catch (CryptographicException ce)
             {
-                return cipherText;
+                Log.WriteEntry(string.Format("(AES256Encryption Decrypt) : Crytographic error for user  {1} \r {0} \r {2}", ce.Message, username, ce.StackTrace), System.Diagnostics.EventLogEntryType.Error, 0000);
+                return null;
+            }
+            catch (Exception ex)
+            {
+                Log.WriteEntry(string.Format("(AES256Encryption Decrypt) : Decryption error for user  {1} \r {0} \r {2}", ex.Message, username, ex.StackTrace), System.Diagnostics.EventLogEntryType.Error, 0000);
+                return null;
             }
         }
 
         /// <summary>
-        /// Decrypt method implementation
+        /// GenerateKey method
         /// </summary>
-        public override byte[] Decrypt(byte[] cipherData)
+        private byte[] GenerateKey(string username)
         {
-            if (cipherData == null || cipherData.Length <= 0)
-                throw new ArgumentNullException("cipherData");
-            if (!IsEncrypted(cipherData))
-                return cipherData;
-            try
-            {
-                byte[] unencrypted = null;
-                byte[] encrypted = RemoveHeader(cipherData);
-                using (AesCryptoServiceProvider aesAlg = new AesCryptoServiceProvider())
-                {
-                    aesAlg.BlockSize = 128;
-                    aesAlg.KeySize = 256;
-                    aesAlg.Key = AESKey;
-                    aesAlg.IV = AESIV;
-                    aesAlg.Mode = CipherMode.CBC;
-                    aesAlg.Padding = PaddingMode.PKCS7;
-                    using (ICryptoTransform decryptor = aesAlg.CreateDecryptor(aesAlg.Key, aesAlg.IV))
-                    {
-                        unencrypted = decryptor.TransformFinalBlock(encrypted, 0, encrypted.Length);
-                    }
-                }
-                return unencrypted;
-            }
-            catch
-            {
-                return cipherData;
-            }
-        }
+            byte[] text = CheckSumEncoding.CheckSum(username);
 
-        /// <summary>
-        /// IsEncrypted method implementation
-        /// </summary>
-        private bool IsEncrypted(string data)
-        {
-            if (string.IsNullOrEmpty(data))
-                return false;
-            try
-            {
-                byte[] encrypted = Convert.FromBase64String(data);
-                byte[] ProofHeader = GetHeader(encrypted);
-                return ProofHeader.SequenceEqual(AESHdr);
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
-        /// <summary>
-        /// IsEncrypted method implementation
-        /// </summary>
-        private bool IsEncrypted(byte[] encrypted)
-        {
-            try
-            {
-                byte[] ProofHeader = GetHeader(encrypted);
-                return ProofHeader.SequenceEqual(AESHdr);
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
-        /// <summary>
-        /// AddHeader method
-        /// </summary>
-        private byte[] AddHeader(byte[] data)
-        {
-            byte[] output = new byte[data.Length + 4];
-            Buffer.BlockCopy(AESHdr, 0, output, 0, 4);
-            Buffer.BlockCopy(data, 0, output, 4, data.Length);
-            return output;
-        }
-
-        /// <summary>
-        /// RemoveHeader method
-        /// </summary>
-        private byte[] RemoveHeader(byte[] data)
-        {
-            byte[] output = new byte[data.Length - 4];
-            Buffer.BlockCopy(data, 4, output, 0, data.Length - 4);
-            return output;
-        }
-
-        /// <summary>
-        /// GetHeader method
-        /// </summary>
-        internal override byte[] GetHeader(byte[] data)
-        {
-            byte[] Header = new byte[4];
-            Buffer.BlockCopy(data, 0, Header, 0, 4);
-            return Header;
+            byte[] buffer = new byte[_keylen + text.Length];
+            RandomNumberGenerator cryptoRandomDataGenerator = new RNGCryptoServiceProvider();
+            cryptoRandomDataGenerator.GetBytes(buffer, 0, _keylen);
+            Buffer.BlockCopy(text, 0, buffer, _keylen, text.Length);
+            return buffer;
         }
 
         /// <summary>
         /// Dispose method implementation
         /// </summary>
-        public void Dispose()
+        protected override void Dispose(bool disposing)
         {
-
-        }
+            // Nothing
+        }        
     }
-
 }

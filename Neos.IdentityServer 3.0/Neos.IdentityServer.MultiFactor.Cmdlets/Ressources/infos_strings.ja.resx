@@ -228,4 +228,10 @@
   <data name="InfosMailTemplateExported" xml:space="preserve">
     <value>メールテンプレートは正しくエクスポート!</value>
   </data>
+  <data name="InfosSampleInstalled" xml:space="preserve">
+    <value>MFA の例がインストールされました !</value>
+  </data>
+  <data name="InfosSampleUnInstalled" xml:space="preserve">
+    <value>MFA の例 未インストール !</value>
+  </data>
 </root>

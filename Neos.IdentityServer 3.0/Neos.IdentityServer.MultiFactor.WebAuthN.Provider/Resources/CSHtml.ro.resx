@@ -156,4 +156,10 @@
   <data name="BIOUIEnrollDeleteLinkLabel" xml:space="preserve">
     <value>Ștergeți acest dispozitiv</value>
   </data>
+  <data name="PROVIDERBIODESCRIPTION" xml:space="preserve">
+    <value>Furnizor multi-factor biometric</value>
+  </data>
+  <data name="BIOUIWIZComment" xml:space="preserve">
+    <value>Gestionați-vă dispozitivele biometrice. Selectați adăugați, înlocuiți sau ștergeți dispozitive individuale.</value>
+  </data>
 </root>

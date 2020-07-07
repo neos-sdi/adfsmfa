@@ -238,7 +238,7 @@
     <value>Autentisering av mobiltelefon</value>
   </data>
   <data name="SMSUIMessage" xml:space="preserve">
-    <value>Vi skickade ett SMS med en verifieringskod. {0}</value>
+    <value>Vi skickade ett SMS med en verifieringskod. </value>
   </data>
   <data name="SMSUIOTPLabel" xml:space="preserve">
     <value>Åtkomstkod som mottagits via telefon</value>
@@ -248,5 +248,26 @@
   </data>
   <data name="SMSWIZEnroll" xml:space="preserve">
     <value>Registrera min telefon</value>
+  </data>
+  <data name="PROVIDEROTPDESCRIPTION" xml:space="preserve">
+    <value>Multifaktorleverantör via TOTP</value>
+  </data>
+  <data name="PROVIDERSMSDESCRIPTION" xml:space="preserve">
+    <value>Multifaktorleverantör via SMS</value>
+  </data>
+  <data name="PROVIDEREMAILDESCRIPTION" xml:space="preserve">
+    <value>Multifaktorleverantör via e-post</value>
+  </data>
+  <data name="OTPUIWIZComment" xml:space="preserve">
+    <value>Skanna QR-koden med ett TOTP-program som Microsoft Authenticator, Google Authenticator för att registrera ditt konto</value>
+  </data>
+  <data name="MAILUIWIZComment" xml:space="preserve">
+    <value>Du måste ange en e-postadress för att bekräfta din identiy. Detta e-postmeddelande måste kunna nås utan att behöva företagsverifiering (personlig e-postadress)</value>
+  </data>
+  <data name="SMSUIWIZComment" xml:space="preserve">
+    <value>Du måste ange ditt telefonnummer för att bekräfta din identitet. Den här telefonen måste kunna nås.</value>
+  </data>
+  <data name="PROVIDERPLUGDESCRIPTION" xml:space="preserve">
+    <value>{0} multifaktorleverantör (Plug)</value>
   </data>
 </root>

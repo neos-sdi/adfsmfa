@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2020 Neos-Sdi (http://www.neos-sdi.com)                                                                                                                                    //                        
+// Copyright (c) 2020 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -116,7 +116,20 @@ namespace Neos.IdentityServer.MultiFactor.SAS
         /// </summary>
         public override string Description
         {
-            get { return "Microsoft Azure Multi-Factor Provider"; }
+            get
+            {
+                string independent = "Microsoft Azure Multi-Factor Provider";
+                ResourcesLocale Resources = null;
+                if (CultureInfo.DefaultThreadCurrentUICulture != null)
+                    Resources = new ResourcesLocale(CultureInfo.DefaultThreadCurrentUICulture.LCID);
+                else
+                    Resources = new ResourcesLocale(CultureInfo.CurrentUICulture.LCID);
+                string res = Resources.GetString(ResourcesLocaleKind.Html, "PROVIDERAZURESDESCRIPTION");
+                if (!string.IsNullOrEmpty(res))
+                    return res;
+                else
+                    return independent;
+            }
         }
 
         /// <summary>
@@ -132,6 +145,14 @@ namespace Neos.IdentityServer.MultiFactor.SAS
         /// GetWizardUILabel method implementation
         /// </summary>
         public override string GetWizardUILabel(AuthenticationContext ctx)
+        {
+            return string.Empty;
+        }
+
+        /// <summary>
+        /// GetWizardUIComment method implementation
+        /// </summary>
+        public override string GetWizardUIComment(AuthenticationContext ctx)
         {
             return string.Empty;
         }

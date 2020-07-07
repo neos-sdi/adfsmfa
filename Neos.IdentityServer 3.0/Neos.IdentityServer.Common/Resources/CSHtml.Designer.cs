@@ -223,6 +223,15 @@ namespace Neos.IdentityServer.MultiFactor.Common.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à You must enter an email address to confirm your identiy. This email must be reachable without needing enterprise verification (personal email address).
+        /// </summary>
+        internal static string MAILUIWIZComment {
+            get {
+                return ResourceManager.GetString("MAILUIWIZComment", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Enroll your email address.
         /// </summary>
         internal static string MAILUIWIZLabel {
@@ -322,6 +331,15 @@ namespace Neos.IdentityServer.MultiFactor.Common.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Scan the QR Code with a TOTP application like Microsoft Authenticator, Google Authenticator for registering your account.
+        /// </summary>
+        internal static string OTPUIWIZComment {
+            get {
+                return ResourceManager.GetString("OTPUIWIZComment", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Enroll Authenticator App.
         /// </summary>
         internal static string OTPUIWIZLabel {
@@ -336,6 +354,42 @@ namespace Neos.IdentityServer.MultiFactor.Common.Resources {
         internal static string OTPWIZEnroll {
             get {
                 return ResourceManager.GetString("OTPWIZEnroll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Email Multi-Factor Provider.
+        /// </summary>
+        internal static string PROVIDEREMAILDESCRIPTION {
+            get {
+                return ResourceManager.GetString("PROVIDEREMAILDESCRIPTION", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à TOTP Multi-Factor Provider.
+        /// </summary>
+        internal static string PROVIDEROTPDESCRIPTION {
+            get {
+                return ResourceManager.GetString("PROVIDEROTPDESCRIPTION", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à {0} Multi-Factor Provider (Plug).
+        /// </summary>
+        internal static string PROVIDERPLUGDESCRIPTION {
+            get {
+                return ResourceManager.GetString("PROVIDERPLUGDESCRIPTION", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à SMS Multi-Factor Provider Sample.
+        /// </summary>
+        internal static string PROVIDERSMSDESCRIPTION {
+            get {
+                return ResourceManager.GetString("PROVIDERSMSDESCRIPTION", resourceCulture);
             }
         }
         
@@ -421,7 +475,7 @@ namespace Neos.IdentityServer.MultiFactor.Common.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à We sent an SMS containing a verification code. {0}.
+        ///   Recherche une chaîne localisée semblable à We sent an SMS containing a verification code..
         /// </summary>
         internal static string SMSUIMessage {
             get {
@@ -435,6 +489,15 @@ namespace Neos.IdentityServer.MultiFactor.Common.Resources {
         internal static string SMSUIOTPLabel {
             get {
                 return ResourceManager.GetString("SMSUIOTPLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à You must enter your phone number in order to confirm your identity. This phone must be reachable..
+        /// </summary>
+        internal static string SMSUIWIZComment {
+            get {
+                return ResourceManager.GetString("SMSUIWIZComment", resourceCulture);
             }
         }
         

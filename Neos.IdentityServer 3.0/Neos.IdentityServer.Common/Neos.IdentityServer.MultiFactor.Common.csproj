@@ -77,14 +77,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Neos.IdentityServer.Mapped.cs" />
-    <Compile Include="Neos.IdentityServer.MultiFactor.CustomStorage.cs" />
     <Compile Include="Neos.IdentityServer.MultiFactor.Imports.cs" />
     <Compile Include="Neos.IdentityServer.MultiFactor.Linq.cs" />
     <Compile Include="Neos.IdentityServer.MultiFactor.ProvidersWrapper.cs" />
     <Compile Include="Neos.IdentityServer.Multifactor.ResourcesManager.cs" />
     <Compile Include="Neos.IdentityServer.MultiFactor.RNG.cs" />
+    <Compile Include="Neos.IdentityServer.MultiFactor.AES.cs" />
     <Compile Include="Neos.IdentityServer.MultiFactor.RSA2.cs" />
-    <Compile Include="Neos.IdentityServer.MultiFactor.RSA.cs" />
     <Compile Include="Neos.IdentityServer.MultiFactor.ServiceUtils.cs" />
     <Compile Include="Neos.IdentityServer.MultiFactor.Utilities.cs" />
     <Compile Include="Neos.IdentityServer.Mutifactor.Interface.cs" />
@@ -104,6 +103,7 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
+    <Compile Include="Neos.IdentityServer.MultiFactor.RSA.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Neos.IdentityServer.MultiFactor.Encryption.cs" />
@@ -167,9 +167,12 @@
     <EmbeddedResource Include="Resources\CSMail.es.resx">
       <LastGenOutput>mail_strings.es.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="Resources\CSMail.fr-CA.resx" />
+    <EmbeddedResource Include="Resources\CSMail.fr-CA.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Resources\CSMail.fr.resx">
       <LastGenOutput>mail_strings.fr.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\CSMail.it.resx" />
     <EmbeddedResource Include="Resources\CSMail.ja.resx" />

@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2020 Neos-Sdi (http://www.neos-sdi.com)                                                                                                                                    //                        
+// Copyright (c) 2020 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -45,12 +45,14 @@ namespace Neos.IdentityServer.MultiFactor.Common
         PhoneParameterRequired = 12,
         BiometricParameterRequired = 13,
         PinParameterRequired = 14,
+        ExternalParameterRequired = 15,
         // Enrollment
         OTPLinkRequired = 100,
         BiometricLinkRequired = 101,
         EmailLinkRequired = 102,
         PhoneLinkRequired = 103,
-        PinLinkRequired = 104
+        PinLinkRequired = 104,
+        ExternalLinkRaquired = 105
     }
 
     /// <summary>
@@ -74,6 +76,7 @@ namespace Neos.IdentityServer.MultiFactor.Common
 
         public abstract string GetUILabel(AuthenticationContext ctx);
         public abstract string GetWizardUILabel(AuthenticationContext ctx);
+        public abstract string GetWizardUIComment(AuthenticationContext ctx);
         public abstract string GetWizardLinkLabel(AuthenticationContext ctx);
         public abstract string GetUICFGLabel(AuthenticationContext ctx);
         public abstract string GetUIMessage(AuthenticationContext ctx);
@@ -575,7 +578,20 @@ namespace Neos.IdentityServer.MultiFactor.Common
         /// </summary>
         public override string Description
         {
-            get { return "TOTP Multi-Factor Provider"; }
+            get
+            {
+                string independent = "TOTP Multi-Factor Provider";
+                ResourcesLocale Resources = null;
+                if (CultureInfo.DefaultThreadCurrentUICulture != null)
+                    Resources = new ResourcesLocale(CultureInfo.DefaultThreadCurrentUICulture.LCID);
+                else
+                    Resources = new ResourcesLocale(CultureInfo.CurrentUICulture.LCID);
+                string res = Resources.GetString(ResourcesLocaleKind.Html, "PROVIDEROTPDESCRIPTION");
+                if (!string.IsNullOrEmpty(res))
+                    return res;
+                else
+                    return independent;
+            }
         }
 
         /// <summary>
@@ -594,6 +610,15 @@ namespace Neos.IdentityServer.MultiFactor.Common
         {
             ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
             return Resources.GetString(ResourcesLocaleKind.Html, "OTPUIWIZLabel");
+        }
+
+        /// <summary>
+        /// GetWizardUIComment method implementation
+        /// </summary>
+        public override string GetWizardUIComment(AuthenticationContext ctx) 
+        {
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
+            return Resources.GetString(ResourcesLocaleKind.Html, "OTPUIWIZComment");
         }
 
         /// <summary>
@@ -999,7 +1024,20 @@ namespace Neos.IdentityServer.MultiFactor.Common
         /// </summary>
         public override string Description
         {
-            get { return "SMS Legacy Multi-Factor Provider"; }
+            get
+            {
+                string independent = "SMS Multi-Factor Provider Sample";
+                ResourcesLocale Resources = null;
+                if (CultureInfo.DefaultThreadCurrentUICulture != null)
+                    Resources = new ResourcesLocale(CultureInfo.DefaultThreadCurrentUICulture.LCID);
+                else
+                    Resources = new ResourcesLocale(CultureInfo.CurrentUICulture.LCID);
+                string res = Resources.GetString(ResourcesLocaleKind.Html, "PROVIDERSMSDESCRIPTION");
+                if (!string.IsNullOrEmpty(res))
+                    return res;
+                else
+                    return independent;
+            }
         }
 
         /// <summary>
@@ -1018,6 +1056,15 @@ namespace Neos.IdentityServer.MultiFactor.Common
         {
             ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
             return Resources.GetString(ResourcesLocaleKind.Html, "SMSUIWIZLabel");
+        }
+
+        /// <summary>
+        /// GetWizardUIComment method implementation
+        /// </summary>
+        public override string GetWizardUIComment(AuthenticationContext ctx)
+        {
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
+            return Resources.GetString(ResourcesLocaleKind.Html, "SMSUIWIZComment");
         }
 
         /// <summary>
@@ -1044,10 +1091,7 @@ namespace Neos.IdentityServer.MultiFactor.Common
         public override string GetUIMessage(AuthenticationContext ctx)
         {
             ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
-            if (string.IsNullOrEmpty(ctx.PhoneNumber))
-                return string.Format(Resources.GetString(ResourcesLocaleKind.Html, "SMSUIMessage"), string.Empty);
-            else
-                return string.Format(Resources.GetString(ResourcesLocaleKind.Html, "SMSUIMessage"), Utilities.StripPhoneNumber(ctx.PhoneNumber));
+            return Resources.GetString(ResourcesLocaleKind.Html, "SMSUIMessage");
         }
 
         /// <summary>
@@ -1455,7 +1499,20 @@ namespace Neos.IdentityServer.MultiFactor.Common
         /// </summary>
         public override string Description
         {
-            get { return "Email Multi-Factor Provider"; }
+            get
+            {
+                string independent = "Email Multi-Factor Provider";
+                ResourcesLocale Resources = null;
+                if (CultureInfo.DefaultThreadCurrentUICulture != null)
+                    Resources = new ResourcesLocale(CultureInfo.DefaultThreadCurrentUICulture.LCID);
+                else
+                    Resources = new ResourcesLocale(CultureInfo.CurrentUICulture.LCID);
+                string res = Resources.GetString(ResourcesLocaleKind.Html, "PROVIDEREMAILDESCRIPTION");
+                if (!string.IsNullOrEmpty(res))
+                    return res;
+                else
+                    return independent;
+            }
         }
 
         /// <summary>
@@ -1474,6 +1531,15 @@ namespace Neos.IdentityServer.MultiFactor.Common
         {
             ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
             return Resources.GetString(ResourcesLocaleKind.Html, "MAILUIWIZLabel");
+        }
+
+        /// <summary>
+        /// GetWizardUIComment method implementation
+        /// </summary>
+        public override string GetWizardUIComment(AuthenticationContext ctx)
+        {
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
+            return Resources.GetString(ResourcesLocaleKind.Html, "MAILUIWIZComment");
         }
 
         /// <summary>
@@ -1756,21 +1822,36 @@ namespace Neos.IdentityServer.MultiFactor.Common
     }
 
     /// <summary>
-    /// NeosLegacySMSProvider class implmentation
+    /// NeosPlugProvider class implmentation
     /// </summary>
-    public class NeosPlugExternalProvider : BaseExternalProvider
+    public class NeosPlugProvider : BaseExternalProvider
     {
         private bool _isinitialized = false;
+        private bool _enabled = false;
+        private bool _pinrequired = false;
         private ForceWizardMode _forceenrollment = ForceWizardMode.Disabled;
+        private PreferredMethod _kind = PreferredMethod.External;
 
+        /// <summary>
+        /// NeosPlugExternalProvider constructor
+        /// </summary>
+        public NeosPlugProvider(PreferredMethod kind)
+        {
+            _kind = kind;
+            Enabled = false;
+            IsRequired = false;
+            WizardEnabled = false;
+            ForceEnrollment = ForceWizardMode.Disabled;
+            PinRequired = false;
+        }
 
         /// <summary>
         /// Enabled property implmentation
         /// </summary>
         public override bool Enabled
         {
-            get { return base.Enabled; }
-            set { base.Enabled = false; }
+            get { return _enabled; }
+            set { _enabled = false; }
         }
 
         /// <summary>
@@ -1778,16 +1859,16 @@ namespace Neos.IdentityServer.MultiFactor.Common
         /// </summary>
         public override bool PinRequired
         {
-            get { return base.PinRequired; }
-            set { base.PinRequired = false; }
-        }
+            get { return _pinrequired; }
+            set { _pinrequired = false; }
+        } 
 
         /// <summary>
         /// Kind property implementation
         /// </summary>
         public override PreferredMethod Kind
         {
-            get { return PreferredMethod.External; }
+            get { return _kind; }
         }
 
         /// <summary>
@@ -1795,7 +1876,7 @@ namespace Neos.IdentityServer.MultiFactor.Common
         /// </summary>
         public override bool IsBuiltIn
         {
-            get { return false; }
+            get { return true; }
         }
 
         /// <summary>
@@ -1852,7 +1933,7 @@ namespace Neos.IdentityServer.MultiFactor.Common
         /// </summary>
         public override string Name
         {
-            get { return "Neos.Provider.Plug.External"; }
+            get { return "Neos.Provider.Plug"; }
         }
 
         /// <summary>
@@ -1860,13 +1941,34 @@ namespace Neos.IdentityServer.MultiFactor.Common
         /// </summary>
         public override string Description
         {
-            get { return "External Multi-Factor Provider (Plug)"; }
+            get
+            {
+                string independent = "External Multi-Factor Provider (Plug)";
+                ResourcesLocale Resources = null;
+                if (CultureInfo.DefaultThreadCurrentUICulture != null)
+                    Resources = new ResourcesLocale(CultureInfo.DefaultThreadCurrentUICulture.LCID);
+                else
+                    Resources = new ResourcesLocale(CultureInfo.CurrentUICulture.LCID);
+                string res = string.Format(Resources.GetString(ResourcesLocaleKind.Html, "PROVIDERPLUGDESCRIPTION"), Kind.ToString());
+                if (!string.IsNullOrEmpty(res))
+                    return res;
+                else
+                    return independent;
+            }
         }
 
         /// <summary>
         /// GetUILabel method implementation
         /// </summary>
         public override string GetUILabel(AuthenticationContext ctx)
+        {
+            return string.Empty;
+        }
+
+        /// <summary>
+        /// GetWizardUIComment method implementation
+        /// </summary>
+        public override string GetWizardUIComment(AuthenticationContext ctx)
         {
             return string.Empty;
         }
@@ -2025,19 +2127,14 @@ namespace Neos.IdentityServer.MultiFactor.Common
             {
                 if (!_isinitialized)
                 {
-                    if (externalsystem is ExternalProviderParams)
-                    {
-                        ExternalProviderParams param = externalsystem as ExternalProviderParams;
-                        Enabled = false;
-                        IsRequired = false;
-                        WizardEnabled = false;
-                        ForceEnrollment = ForceWizardMode.Disabled;
-                        PinRequired = false;
-                        _isinitialized = true;
-                        return;
-                    }
-                    else
-                        throw new InvalidCastException("Invalid External Provider !");
+                    Enabled = false;
+                    IsRequired = false;
+                    WizardEnabled = false;
+                    ForceEnrollment = ForceWizardMode.Disabled;
+                    PinRequired = false;
+                    _isinitialized = true;
+                    return;
+
                 }
             }
             catch (Exception ex)

@@ -457,6 +457,24 @@ namespace Neos.IdentityServer.Console.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Symetric Keys AES.
+        /// </summary>
+        public static string SECURITYSCOPEAES {
+            get {
+                return ResourceManager.GetString("SECURITYSCOPEAES", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Custom Keys.
+        /// </summary>
+        public static string SECURITYSCOPECUSTOM {
+            get {
+                return ResourceManager.GetString("SECURITYSCOPECUSTOM", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Security configuration.
         /// </summary>
         public static string SECURITYSCOPENODEDESC {
@@ -466,7 +484,7 @@ namespace Neos.IdentityServer.Console.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à RNG (random number generator).
+        ///   Recherche une chaîne localisée semblable à Encoded Keys RNG .
         /// </summary>
         public static string SECURITYSCOPERNG {
             get {
@@ -484,20 +502,11 @@ namespace Neos.IdentityServer.Console.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à RSA Certificate.
+        ///   Recherche une chaîne localisée semblable à Asymetric Keys RSA.
         /// </summary>
         public static string SECURITYSCOPERSA {
             get {
                 return ResourceManager.GetString("SECURITYSCOPERSA", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à RSA Certificates per user.
-        /// </summary>
-        public static string SECURITYSCOPERSAX {
-            get {
-                return ResourceManager.GetString("SECURITYSCOPERSAX", resourceCulture);
             }
         }
         

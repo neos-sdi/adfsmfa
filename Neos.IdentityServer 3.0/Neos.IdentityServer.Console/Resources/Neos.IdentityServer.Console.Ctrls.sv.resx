@@ -666,4 +666,13 @@
   <data name="CTRLCUSTOMUSING" xml:space="preserve">
     <value>Använda anpassad databas</value>
   </data>
+  <data name="CTRLADLDAPSSL" xml:space="preserve">
+    <value>Använd säkra LDAP-anslutningar (LDAPS)</value>
+  </data>
+  <data name="CTRLCUSTOMKEYSERROR" xml:space="preserve">
+    <value>Ogiltigt tillägg! Kan inte debiteras!</value>
+  </data>
+  <data name="CTRLWEBAUTHNSHOWPII" xml:space="preserve">
+    <value>Visa känsliga loggar</value>
+  </data>
 </root>

@@ -666,4 +666,13 @@
   <data name="CTRLCUSTOMUSING" xml:space="preserve">
     <value>Korzystanie z repozytorium niestandardowego</value>
   </data>
+  <data name="CTRLADLDAPSSL" xml:space="preserve">
+    <value>Korzystanie z bezpiecznych połączeń LDAP (LDAPS)</value>
+  </data>
+  <data name="CTRLCUSTOMKEYSERROR" xml:space="preserve">
+    <value>Nieprawidłowe rozszerzenie! Nie można naładować!</value>
+  </data>
+  <data name="CTRLWEBAUTHNSHOWPII" xml:space="preserve">
+    <value>Pokazywalne dzienniki</value>
+  </data>
 </root>

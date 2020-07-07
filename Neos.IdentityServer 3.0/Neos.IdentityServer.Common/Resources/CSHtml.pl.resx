@@ -238,7 +238,7 @@
     <value>Autoryzacja telefonu komórkowego</value>
   </data>
   <data name="SMSUIMessage" xml:space="preserve">
-    <value>Wysłaliśmy wiadomość SMS zawierającą kod weryfikacyjny. {0}</value>
+    <value>Wysłaliśmy wiadomość SMS zawierającą kod weryfikacyjny. </value>
   </data>
   <data name="SMSUIOTPLabel" xml:space="preserve">
     <value>Kod dostępu odebrany przez telefon</value>
@@ -248,5 +248,26 @@
   </data>
   <data name="SMSWIZEnroll" xml:space="preserve">
     <value>Rejestrowanie telefonu</value>
+  </data>
+  <data name="PROVIDEROTPDESCRIPTION" xml:space="preserve">
+    <value>Dostawca wieloskładnikowy TOTP</value>
+  </data>
+  <data name="PROVIDERSMSDESCRIPTION" xml:space="preserve">
+    <value>Przykładowa obsługa wielu czynników programu SMS</value>
+  </data>
+  <data name="PROVIDEREMAILDESCRIPTION" xml:space="preserve">
+    <value>Dostawca poczty e-mail wieloskładnikowy</value>
+  </data>
+  <data name="OTPUIWIZComment" xml:space="preserve">
+    <value>Zeskanuj kod QR za pomocą aplikacji TOTP, takiej jak Microsoft Authenticator, Google Authenticator w celu zarejestrowania konta</value>
+  </data>
+  <data name="MAILUIWIZComment" xml:space="preserve">
+    <value>Aby potwierdzić swoją tożsamość, musisz podać adres e-mail. Ten e-mail musi być osiągalny bez konieczności weryfikacji przedsiębiorstwa (osobisty adres e-mail)</value>
+  </data>
+  <data name="SMSUIWIZComment" xml:space="preserve">
+    <value>Aby potwierdzić swoją tożsamość, musisz podać swój numer telefonu. Ten telefon musi być dostępny.</value>
+  </data>
+  <data name="PROVIDERPLUGDESCRIPTION" xml:space="preserve">
+    <value>{0} dostawca wieloczynnikowy (wtyczka)</value>
   </data>
 </root>

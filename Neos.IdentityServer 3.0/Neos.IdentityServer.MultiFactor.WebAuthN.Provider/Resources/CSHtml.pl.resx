@@ -156,4 +156,10 @@
   <data name="BIOUIEnrollDeleteLinkLabel" xml:space="preserve">
     <value>Usuń to urządzenie</value>
   </data>
+  <data name="PROVIDERBIODESCRIPTION" xml:space="preserve">
+    <value>Dostawca biometrii wieloskładnikowej</value>
+  </data>
+  <data name="BIOUIWIZComment" xml:space="preserve">
+    <value>Zarządzaj urządzeniami biometrycznymi. Wybierz dodaj, zamień lub usuń poszczególne urządzenia.</value>
+  </data>
 </root>

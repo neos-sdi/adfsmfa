@@ -196,6 +196,15 @@ namespace Neos.IdentityServer.MultiFactor.SAS.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Microsoft Azure Multi-Factor Provider.
+        /// </summary>
+        internal static string PROVIDERAZURESDESCRIPTION {
+            get {
+                return ResourceManager.GetString("PROVIDERAZURESDESCRIPTION", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Send a code to my mobile (Azure).
         /// </summary>
         internal static string SMSChoiceLabel {

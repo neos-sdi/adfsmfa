@@ -1,6 +1,6 @@
 ﻿using Neos.IdentityServer.MultiFactor.Cmdlets;
 //******************************************************************************************************************************************************************************************//
-// Copyright (c) 2020 Neos-Sdi (http://www.neos-sdi.com)                                                                                                                                    //                        
+// Copyright (c) 2020 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -532,6 +532,11 @@ namespace MFA
         public int MaxRows { get; set; }
 
         /// <summary>
+        /// <para type="description">Get or Set value indicating if ldap or ldaps must be used to access MFA Active Directory.</para>
+        /// </summary>
+        public bool UseSSL { get; set; }
+
+        /// <summary>
         /// implicit conversion 
         /// </summary>
         public static explicit operator PSADDSStore(FlatADDSStore addsconfig)
@@ -553,7 +558,8 @@ namespace MFA
                     PublicKeyCredentialAttribute = addsconfig.PublicKeyCredentialAttribute,
                     ClientCertificateAttribute = addsconfig.ClientCertificateAttribute,
                     RSACertificateAttribute = addsconfig.RSACertificateAttribute,
-                    MaxRows = addsconfig.MaxRows
+                    MaxRows = addsconfig.MaxRows,
+                    UseSSL = addsconfig.UseSSL
                 };
                 return psconfigadds;
             }
@@ -582,8 +588,9 @@ namespace MFA
                     PublicKeyCredentialAttribute = psconfig.PublicKeyCredentialAttribute,
                     ClientCertificateAttribute = psconfig.ClientCertificateAttribute,
                     RSACertificateAttribute = psconfig.RSACertificateAttribute,
-                    MaxRows = psconfig.MaxRows
-                };
+                    MaxRows = psconfig.MaxRows,
+                    UseSSL = psconfig.UseSSL
+            };
                 return config;
             }
         }
@@ -935,13 +942,13 @@ namespace MFA
     }
     #endregion
 
-    #region PSRngSecurity
+    #region PSRNGSecurity
     /// <summary>
-    /// PSRngSecurity class
+    /// PSRNGSecurity class
     /// <para type="synopsis">MFA Security Management for RNG Keys.</para>
     /// <para type="description">MFA Security Management for RNG Keys.</para>
     /// </summary>
-    public class PSRngSecurity : PSBaseSecurity
+    public class PSRNGSecurity : PSBaseSecurity
     {
         /// <summary>
         /// <para type="description">Used when RNG is selected, for choosing the size of the generated random number (128 to 512 bytes).</para> 
@@ -951,13 +958,13 @@ namespace MFA
         /// <summary>
         /// explicit operator from PSRNGSecurity
         /// </summary>
-        public static explicit operator PSRngSecurity(FlatRngSecurity mgr)
+        public static explicit operator PSRNGSecurity(FlatRNGSecurity mgr)
         {
             if (mgr == null)
                 return null;
             else
             {
-                PSRngSecurity target = new PSRngSecurity
+                PSRNGSecurity target = new PSRNGSecurity
                 {
                     KeyGenerator = (PSKeyGeneratorMode)mgr.KeyGenerator
                 };
@@ -968,13 +975,13 @@ namespace MFA
         /// <summary>
         /// explicit operator from MMCKeysConfig
         /// </summary>
-        public static explicit operator FlatRngSecurity(PSRngSecurity mgr)
+        public static explicit operator FlatRNGSecurity(PSRNGSecurity mgr)
         {
             if (mgr == null)
                 return null;
             else
             {
-                FlatRngSecurity target = new FlatRngSecurity
+                FlatRNGSecurity target = new FlatRNGSecurity
                 {
                     IsDirty = true,
                     KeyGenerator = (KeyGeneratorMode)mgr.KeyGenerator
@@ -985,13 +992,120 @@ namespace MFA
     }
     #endregion
 
-    #region PSRsaSecurity
+    #region PSRNGSecurity
     /// <summary>
-    /// PSRsaSecurity class
+    /// PSCustomSecurity class
+    /// <para type="synopsis">MFA Security Management for Custom Keys.</para>
+    /// <para type="description">MFA Security Management for Custom Keys.</para>
+    /// </summary>
+    public class PSCustomSecurity : PSBaseSecurity
+    {
+        /// <summary>
+        /// <para type="description">Fully Qualified Type for custom security implementation.</para> 
+        /// </summary>
+        public string CustomFullyQualifiedImplementation { get; set; }
+
+        /// <summary>
+        /// <para type="description">Custom parameters for custom security implementation.</para> 
+        /// </summary>
+        public string CustomParameters { get; set; }
+
+        /// <summary>
+        /// explicit operator from PSRNGSecurity
+        /// </summary>
+        public static explicit operator PSCustomSecurity(FlatCustomSecurity mgr)
+        {
+            if (mgr == null)
+                return null;
+            else
+            {
+                PSCustomSecurity target = new PSCustomSecurity
+                {
+                    CustomFullyQualifiedImplementation = mgr.CustomFullyQualifiedImplementation,
+                    CustomParameters = mgr.CustomParameters
+                };
+                return target;
+            }
+        }
+
+        /// <summary>
+        /// explicit operator from MMCKeysConfig
+        /// </summary>
+        public static explicit operator FlatCustomSecurity(PSCustomSecurity mgr)
+        {
+            if (mgr == null)
+                return null;
+            else
+            {
+                FlatCustomSecurity target = new FlatCustomSecurity
+                {
+                    IsDirty = true,
+                    CustomFullyQualifiedImplementation = mgr.CustomFullyQualifiedImplementation,
+                    CustomParameters = mgr.CustomParameters
+                };
+                return target;
+            }
+        }
+    }
+    #endregion
+
+    #region PSAESSecurity
+    /// <summary>
+    /// PSAESSecurity class
+    /// <para type="synopsis">MFA Security Management for EAS Keys.</para>
+    /// <para type="description">MFA Security Management for EAS Keys.</para>
+    /// </summary>
+    public class PSAESSecurity : PSBaseSecurity
+    {
+        /// <summary>
+        /// <para type="description">Used when RNG is selected, for choosing the size of the generated random number (128 to 512 bytes).</para> 
+        /// </summary>
+        public PSAESKeyGeneratorMode AESKeyGenerator { get; set; }
+
+        /// <summary>
+        /// explicit operator from PSRNGSecurity
+        /// </summary>
+        public static explicit operator PSAESSecurity(FlatAESSecurity mgr)
+        {
+            if (mgr == null)
+                return null;
+            else
+            {
+                PSAESSecurity target = new PSAESSecurity
+                {
+                    AESKeyGenerator = (PSAESKeyGeneratorMode)mgr.AESKeyGenerator
+                };
+                return target;
+            }
+        }
+
+        /// <summary>
+        /// explicit operator from MMCKeysConfig
+        /// </summary>
+        public static explicit operator FlatAESSecurity(PSAESSecurity mgr)
+        {
+            if (mgr == null)
+                return null;
+            else
+            {
+                FlatAESSecurity target = new FlatAESSecurity
+                {
+                    IsDirty = true,
+                    AESKeyGenerator = (AESKeyGeneratorMode)mgr.AESKeyGenerator
+                };
+                return target;
+            }
+        }
+    }
+    #endregion
+
+    #region PSRSASecurity
+    /// <summary>
+    /// PSRSASecurity class
     /// <para type="synopsis">MFA Security Management.</para>
     /// <para type="description">MFA Security Management.</para>
     /// </summary>
-    public class PSRsaSecurity : PSBaseSecurity
+    public class PSRSASecurity : PSBaseSecurity
     {
         /// <summary>
         /// <para type="description">Certificate validity duration in Years (5 by default)</para> 
@@ -1011,13 +1125,13 @@ namespace MFA
         /// <summary>
         /// explicit operator from MMCKeysConfig
         /// </summary>
-        public static explicit operator PSRsaSecurity(FlatRsaSecurity mgr)
+        public static explicit operator PSRSASecurity(FlatRSASecurity mgr)
         {
             if (mgr == null)
                 return null;
             else
             {
-                PSRsaSecurity target = new PSRsaSecurity
+                PSRSASecurity target = new PSRSASecurity
                 {
                     CertificateValidity = mgr.CertificateValidity,
                     CertificatePerUser = mgr.CertificatePerUser,
@@ -1030,13 +1144,13 @@ namespace MFA
         /// <summary>
         /// explicit operator from MMCKeysConfig
         /// </summary>
-        public static explicit operator FlatRsaSecurity(PSRsaSecurity mgr)
+        public static explicit operator FlatRSASecurity(PSRSASecurity mgr)
         {
             if (mgr == null)
                 return null;
             else
             {
-                FlatRsaSecurity target = new FlatRsaSecurity
+                FlatRSASecurity target = new FlatRSASecurity
                 {
                     IsDirty = true,
                     CertificateValidity = mgr.CertificateValidity,
@@ -2096,33 +2210,39 @@ namespace MFA
         public bool RequireValidAttestationRoot { get; set; }
 
         /// <summary>
+        /// <para type="description">Show Sensitive informations for internal validation.</para>
+        /// </summary>
+        public bool ShowPII { get; set; }
+
+        /// <summary>
         /// explicit operator from PSConfigBiometricProvider
         /// </summary>
         public static explicit operator PSBiometricProvider(FlatBiometricProvider otp)
     {
-        if (otp == null)
-            return null;
-        else
-        {
-            PSBiometricProvider target = new PSBiometricProvider
+            if (otp == null)
+                return null;
+            else
             {
-                Enabled = otp.Enabled,
-                IsRequired = otp.IsRequired,
-                EnrollWizard = otp.EnrollWizard,
-                ForceWizard = (PSForceWizardMode)otp.ForceWizard,
-                PinRequired = otp.PinRequired,
-                DirectLogin = otp.DirectLogin,
-                FullQualifiedImplementation = otp.FullyQualifiedImplementation,
-                Parameters = otp.Parameters,
+                PSBiometricProvider target = new PSBiometricProvider
+                {
+                    Enabled = otp.Enabled,
+                    IsRequired = otp.IsRequired,
+                    EnrollWizard = otp.EnrollWizard,
+                    ForceWizard = (PSForceWizardMode)otp.ForceWizard,
+                    PinRequired = otp.PinRequired,
+                    DirectLogin = otp.DirectLogin,
+                    FullQualifiedImplementation = otp.FullyQualifiedImplementation,
+                    Parameters = otp.Parameters,
 
-                Timeout = otp.Timeout,
-                TimestampDriftTolerance = otp.TimestampDriftTolerance,
-                ChallengeSize = otp.ChallengeSize,
-                ServerDomain = otp.ServerDomain,
-                ServerName = otp.ServerName,
-                ServerIcon = otp.ServerIcon,
-                Origin = otp.Origin,
-                RequireValidAttestationRoot = otp.RequireValidAttestationRoot
+                    Timeout = otp.Timeout,
+                    TimestampDriftTolerance = otp.TimestampDriftTolerance,
+                    ChallengeSize = otp.ChallengeSize,
+                    ServerDomain = otp.ServerDomain,
+                    ServerName = otp.ServerName,
+                    ServerIcon = otp.ServerIcon,
+                    Origin = otp.Origin,
+                    RequireValidAttestationRoot = otp.RequireValidAttestationRoot,
+                    ShowPII = otp.ShowPII
             };
             return target;
         }
@@ -2156,7 +2276,8 @@ namespace MFA
                 ServerName = otp.ServerName,
                 ServerIcon = otp.ServerIcon,
                 Origin = otp.Origin,
-                RequireValidAttestationRoot = otp.RequireValidAttestationRoot
+                RequireValidAttestationRoot = otp.RequireValidAttestationRoot,
+                ShowPII = otp.ShowPII
             };
             return target;
         }

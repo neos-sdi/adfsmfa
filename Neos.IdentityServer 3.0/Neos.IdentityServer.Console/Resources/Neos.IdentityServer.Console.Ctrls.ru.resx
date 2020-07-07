@@ -666,4 +666,13 @@
   <data name="CTRLCUSTOMUSING" xml:space="preserve">
     <value>Используйте пользовательский репозиторий</value>
   </data>
+  <data name="CTRLADLDAPSSL" xml:space="preserve">
+    <value>Использование безопасных соединений LDAP (LDAPS)</value>
+  </data>
+  <data name="CTRLCUSTOMKEYSERROR" xml:space="preserve">
+    <value>Недействительное расширение! Не может быть предъявлено обвинение!</value>
+  </data>
+  <data name="CTRLWEBAUTHNSHOWPII" xml:space="preserve">
+    <value>Показать конфиденциальные журналы</value>
+  </data>
 </root>

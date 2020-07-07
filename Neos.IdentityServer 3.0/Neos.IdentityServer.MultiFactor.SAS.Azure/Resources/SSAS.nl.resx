@@ -210,4 +210,7 @@
   <data name="GLOBALManagement" xml:space="preserve">
     <value>Mijn Azure-opties inschrijven</value>
   </data>
+  <data name="PROVIDERAZURESDESCRIPTION" xml:space="preserve">
+    <value>Microsoft Azure multifactor leverancier</value>
+  </data>
 </root>

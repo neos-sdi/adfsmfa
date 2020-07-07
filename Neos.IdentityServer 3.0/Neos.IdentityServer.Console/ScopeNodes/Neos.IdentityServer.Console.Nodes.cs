@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2020 Neos-Sdi (http://www.neos-sdi.com)                                                                                                                                    //                        
+// Copyright (c) 2020 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -1081,7 +1081,8 @@ namespace Neos.IdentityServer.Console
         public override void RefreshDescription()
         {
             IExternalProvider prv = RuntimeAuthProvider.GetProviderInstance(PreferredMethod.Email);
-            this.DisplayName = prv.Description;
+            if (prv!=null)
+                this.DisplayName = prv.Description;
         }
 
         /// <summary>
@@ -1190,7 +1191,8 @@ namespace Neos.IdentityServer.Console
         public override void RefreshDescription()
         {
             IExternalProvider prv = RuntimeAuthProvider.GetProviderInstance(PreferredMethod.External);
-            this.DisplayName = prv.Description;
+            if (prv!=null)
+                this.DisplayName = prv.Description;
         }
 
         /// <summary>
@@ -1299,7 +1301,8 @@ namespace Neos.IdentityServer.Console
         public override void RefreshDescription()
         {
             IExternalProvider prv = RuntimeAuthProvider.GetProviderInstance(PreferredMethod.Azure);
-            this.DisplayName = prv.Description;
+            if (prv!=null)
+                this.DisplayName = prv.Description;
         }
 
         /// <summary>
@@ -1410,7 +1413,8 @@ namespace Neos.IdentityServer.Console
         public override void RefreshDescription()
         {
             IExternalProvider prv = RuntimeAuthProvider.GetProviderInstance(PreferredMethod.Code);
-            this.DisplayName = prv.Description;
+            if (prv!=null)
+                this.DisplayName = prv.Description;
         }
 
         /// <summary>
@@ -1521,7 +1525,8 @@ namespace Neos.IdentityServer.Console
         public override void RefreshDescription()
         {
             IExternalProvider prv = RuntimeAuthProvider.GetProviderInstance(PreferredMethod.Biometrics);
-            this.DisplayName = prv.Description;
+            if (prv!=null)
+                this.DisplayName = prv.Description;
         }
 
         /// <summary>
@@ -1740,6 +1745,115 @@ namespace Neos.IdentityServer.Console
         public override void RefreshDescription()
         {
             this.DisplayName = res.SECURITYSCOPERNG;
+        }
+
+        /// <summary>
+        /// RefreshActions method
+        /// </summary>
+        public override void RefreshActions()
+        {
+            foreach (ActionsPaneItem itm in this.ActionsPaneItems)
+            {
+                if (itm is Microsoft.ManagementConsole.Action)
+                {
+                    if ((string)((Microsoft.ManagementConsole.Action)itm).Tag == "SaveConfig")
+                    {
+                        ((Microsoft.ManagementConsole.Action)itm).DisplayName = res.GENERALSCOPESAVE;
+                        ((Microsoft.ManagementConsole.Action)itm).Description = res.GENERALSCOPESAVEDESC;
+                    }
+                    else if ((string)((Microsoft.ManagementConsole.Action)itm).Tag == "CancelConfig")
+                    {
+                        ((Microsoft.ManagementConsole.Action)itm).DisplayName = res.GENERALSCOPECANCEL;
+                        ((Microsoft.ManagementConsole.Action)itm).Description = res.GENERALSCOPECANCELDESC;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// RefreshForms method
+        /// </summary>
+        public override void RefreshForms()
+        {
+            if (this.SecurityFormView != null)
+                this.SecurityFormView.Refresh();
+        }
+    }
+
+    /// <summary>
+    /// ServiceSecurityRNGScopeNode class
+    /// </summary>
+    public class ServiceSecurityAESScopeNode : RefreshableScopeNode
+    {
+        internal ServiceSecurityAESFormView SecurityFormView;
+        private readonly Microsoft.ManagementConsole.Action SaveConfig;
+        private readonly Microsoft.ManagementConsole.Action CancelConfig;
+
+
+        /// <summary>
+        /// Constructor implementation
+        /// </summary>
+        public ServiceSecurityAESScopeNode() : base(true)
+        {
+            this.DisplayName = res.SECURITYSCOPEAES;
+            this.LanguageIndependentName = "Symetric Keys AES (1024 bits)";
+
+            SaveConfig = new Microsoft.ManagementConsole.Action(res.GENERALSCOPESAVE, res.GENERALSCOPESAVEDESC, -1, "SaveConfig");
+            CancelConfig = new Microsoft.ManagementConsole.Action(res.GENERALSCOPECANCEL, res.GENERALSCOPECANCELDESC, -1, "CancelConfig");
+
+            this.ActionsPaneHelpItems.Clear();
+            this.ActionsPaneItems.Clear();
+            this.EnabledStandardVerbs = StandardVerbs.Refresh;
+
+            this.ActionsPaneItems.Add(SaveConfig);
+            this.ActionsPaneItems.Add(new Microsoft.ManagementConsole.ActionSeparator());
+            this.ActionsPaneItems.Add(CancelConfig);
+            this.HelpTopic = string.Empty;
+        }
+
+        /// <summary>
+        /// OnExpand method implementation
+        /// </summary>
+        /// <param name="status"></param>
+        protected override void OnExpand(AsyncStatus status)
+        {
+            base.OnExpand(status);
+        }
+
+        /// <summary>
+        /// OnRefresh method implmentattion
+        /// </summary>
+        protected override void OnRefresh(AsyncStatus status)
+        {
+            base.OnRefresh(status);
+            if (this.SecurityFormView != null)
+                this.SecurityFormView.Refresh();
+        }
+
+        /// <summary>
+        /// OnAction method implmentation
+        /// </summary>
+        protected override void OnAction(Microsoft.ManagementConsole.Action action, AsyncStatus status)
+        {
+            switch ((string)action.Tag)
+            {
+                case "SaveConfig":
+                    if (this.SecurityFormView != null)
+                        this.SecurityFormView.DoSave();
+                    break;
+                case "CancelConfig":
+                    if (this.SecurityFormView != null)
+                        this.SecurityFormView.DoCancel();
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// RefreshDescription method
+        /// </summary>
+        public override void RefreshDescription()
+        {
+            this.DisplayName = res.SECURITYSCOPEAES;
         }
 
         /// <summary>
@@ -2101,6 +2215,114 @@ namespace Neos.IdentityServer.Console
                 this.WsmanFormView.Refresh();
         }
     }
+
+    /// <summary>
+    /// ServicePhoneScopeNode class
+    /// </summary>
+    public class ServiceCustomSecurityScopeNode : RefreshableScopeNode
+    {
+        internal ServiceSecurityCustomFormView CustomSecurityFormView;
+        private readonly Microsoft.ManagementConsole.Action SaveConfig;
+        private readonly Microsoft.ManagementConsole.Action CancelConfig;
+
+        /// <summary>
+        /// Constructor implementation
+        /// </summary>
+        public ServiceCustomSecurityScopeNode() : base(true)
+        {           
+            this.DisplayName = res.SECURITYSCOPECUSTOM;
+            this.LanguageIndependentName = "CUSTOM KEYS";
+
+            SaveConfig = new Microsoft.ManagementConsole.Action(res.GENERALSCOPESAVE, res.GENERALSCOPESAVEDESC, -1, "SaveConfig");
+            CancelConfig = new Microsoft.ManagementConsole.Action(res.GENERALSCOPECANCEL, res.GENERALSCOPECANCELDESC, -1, "CancelConfig");
+
+            this.ActionsPaneHelpItems.Clear();
+            this.ActionsPaneItems.Clear();
+            this.EnabledStandardVerbs = StandardVerbs.Refresh;
+
+            this.ActionsPaneItems.Add(SaveConfig);
+            this.ActionsPaneItems.Add(new Microsoft.ManagementConsole.ActionSeparator());
+            this.ActionsPaneItems.Add(CancelConfig);
+            this.HelpTopic = string.Empty;
+        }
+
+        /// <summary>
+        /// OnExpand method implementation
+        /// </summary>
+        protected override void OnExpand(AsyncStatus status)
+        {
+            base.OnExpand(status);
+        }
+
+        /// <summary>
+        /// OnRefresh method implmentattion
+        /// </summary>
+        protected override void OnRefresh(AsyncStatus status)
+        {
+            base.OnRefresh(status);
+            if (this.CustomSecurityFormView != null)
+                this.CustomSecurityFormView.Refresh();
+        }
+
+        /// <summary>
+        /// OnAction method implmentation
+        /// </summary>
+        protected override void OnAction(Microsoft.ManagementConsole.Action action, AsyncStatus status)
+        {
+            switch ((string)action.Tag)
+            {
+                case "SaveConfig":
+                    if (this.CustomSecurityFormView != null)
+                        this.CustomSecurityFormView.DoSave();
+                    break;
+                case "CancelConfig":
+                    if (this.CustomSecurityFormView != null)
+                        this.CustomSecurityFormView.DoCancel();
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// RefreshDescription method
+        /// </summary>
+        public override void RefreshDescription()
+        {
+            this.DisplayName = res.SECURITYSCOPECUSTOM;
+        }
+
+        /// <summary>
+        /// RefreshActions method
+        /// </summary>
+        public override void RefreshActions()
+        {
+            foreach (ActionsPaneItem itm in this.ActionsPaneItems)
+            {
+                if (itm is Microsoft.ManagementConsole.Action)
+                {
+                    if ((string)((Microsoft.ManagementConsole.Action)itm).Tag == "SaveConfig")
+                    {
+                        ((Microsoft.ManagementConsole.Action)itm).DisplayName = res.GENERALSCOPESAVE;
+                        ((Microsoft.ManagementConsole.Action)itm).Description = res.GENERALSCOPESAVEDESC;
+                    }
+                    else if ((string)((Microsoft.ManagementConsole.Action)itm).Tag == "CancelConfig")
+                    {
+                        ((Microsoft.ManagementConsole.Action)itm).DisplayName = res.GENERALSCOPECANCEL;
+                        ((Microsoft.ManagementConsole.Action)itm).Description = res.GENERALSCOPECANCELDESC;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// RefreshForms method
+        /// </summary>
+        public override void RefreshForms()
+        {
+            if (this.CustomSecurityFormView != null)
+                this.CustomSecurityFormView.Refresh();
+        }
+    }
+
     /// <summary>
     /// UsersScopeNode class
     /// </summary>

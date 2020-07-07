@@ -238,7 +238,7 @@
     <value>携帯電話認証</value>
   </data>
   <data name="SMSUIMessage" xml:space="preserve">
-    <value>確認コードを含む SMS を送信しました。{0}</value>
+    <value>確認コードを含む SMS を送信しました。</value>
   </data>
   <data name="SMSUIOTPLabel" xml:space="preserve">
     <value>電話で受信したアクセス コード</value>
@@ -248,5 +248,26 @@
   </data>
   <data name="SMSWIZEnroll" xml:space="preserve">
     <value>電話を登録する</value>
+  </data>
+  <data name="PROVIDEROTPDESCRIPTION" xml:space="preserve">
+    <value>TOTP 多要素プロバイダ</value>
+  </data>
+  <data name="PROVIDERSMSDESCRIPTION" xml:space="preserve">
+    <value>SMS 多要素プロバイダーのサンプル</value>
+  </data>
+  <data name="PROVIDEREMAILDESCRIPTION" xml:space="preserve">
+    <value>電子メール多要素プロバイダー</value>
+  </data>
+  <data name="OTPUIWIZComment" xml:space="preserve">
+    <value>アカウントを登録するためのマイクロソフト認証システム、Google認証システムなどのTOTPアプリケーションでQRコードをスキャン</value>
+  </data>
+  <data name="MAILUIWIZComment" xml:space="preserve">
+    <value>識別情報を確認するには、電子メール アドレスを入力する必要があります。このメールは、企業の確認(個人の電子メールアドレス)を必要とせずに到達可能である必要があります</value>
+  </data>
+  <data name="SMSUIWIZComment" xml:space="preserve">
+    <value>本人確認のため、電話番号を入力する必要があります。この電話は到達可能でなければなりません。</value>
+  </data>
+  <data name="PROVIDERPLUGDESCRIPTION" xml:space="preserve">
+    <value>{0}多要素サプライヤー(プラグ)</value>
   </data>
 </root>

@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2020 Neos-Sdi (http://www.neos-sdi.com)                                                                                                                                    //                        
+// Copyright (c) 2020 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -21,10 +21,11 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
-using Neos.IdentityServer.MultiFactor;
+using Neos.IdentityServer.MultiFactor.Common;
 using System.Windows.Threading;
+using System.Globalization;
 
-namespace Neos.IdentityServer.MultiFactor.Common
+namespace Neos.IdentityServer.MultiFactor.Samples
 {
     ///----------------------------------------------------------------------------------------------------------------------------------///
     /// Sample to demonstrate the implementation of an TOTP Provider for MFA                                                             ///
@@ -136,7 +137,20 @@ namespace Neos.IdentityServer.MultiFactor.Common
         /// </summary>
         public override string Description
         {
-            get { return "TOTP Multi-Factor Provider 430"; }
+            get
+            {
+                string independent = "TOTP Multi-Factor Provider 430";
+                ResourcesLocale Resources = null;
+                if (CultureInfo.DefaultThreadCurrentUICulture != null)
+                    Resources = new ResourcesLocale(CultureInfo.DefaultThreadCurrentUICulture.LCID);
+                else
+                    Resources = new ResourcesLocale(CultureInfo.CurrentUICulture.LCID);
+                string res = Resources.GetString(ResourcesLocaleKind.Html, "PROVIDEROTPDESCRIPTION");
+                if (!string.IsNullOrEmpty(res))
+                    return res;
+                else
+                    return independent;
+            }
         }
 
         /// <summary>
@@ -155,6 +169,15 @@ namespace Neos.IdentityServer.MultiFactor.Common
         {
             ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
             return Resources.GetString(ResourcesLocaleKind.Html, "OTPUIWIZLabel");
+        }
+
+        /// <summary>
+        /// GetWizardUIComment method implementation
+        /// </summary>
+        public override string GetWizardUIComment(AuthenticationContext ctx) 
+        {
+            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
+            return Resources.GetString(ResourcesLocaleKind.Html, "OTPUIWIZComment");
         }
 
         /// <summary>

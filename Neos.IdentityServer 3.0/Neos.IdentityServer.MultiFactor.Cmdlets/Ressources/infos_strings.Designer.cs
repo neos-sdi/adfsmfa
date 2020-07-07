@@ -223,6 +223,24 @@ namespace Neos.IdentityServer.MultiFactor.Cmdlets.Ressources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à MFA example installed !.
+        /// </summary>
+        internal static string InfosSampleInstalled {
+            get {
+                return ResourceManager.GetString("InfosSampleInstalled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à MFA example UnInstalled !.
+        /// </summary>
+        internal static string InfosSampleUnInstalled {
+            get {
+                return ResourceManager.GetString("InfosSampleUnInstalled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à You must restart &quot;MFA Notification Hub&quot; service and restart all open consoles and powershell sessions  !.
         /// </summary>
         internal static string InfosServerServicesRestarted {

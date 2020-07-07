@@ -238,7 +238,7 @@
     <value>Autenticação do telefone móvel</value>
   </data>
   <data name="SMSUIMessage" xml:space="preserve">
-    <value>Enviamos um SMS contendo um código de verificação. {0}</value>
+    <value>Enviamos um SMS contendo um código de verificação.</value>
   </data>
   <data name="SMSUIOTPLabel" xml:space="preserve">
     <value>Código de acesso recebido por telefone</value>
@@ -248,5 +248,26 @@
   </data>
   <data name="SMSWIZEnroll" xml:space="preserve">
     <value>Inscrever meu telefone</value>
+  </data>
+  <data name="PROVIDEROTPDESCRIPTION" xml:space="preserve">
+    <value>Provedor multifatorial TOTP</value>
+  </data>
+  <data name="PROVIDERSMSDESCRIPTION" xml:space="preserve">
+    <value>Amostra de provedor multifatorial de SMS</value>
+  </data>
+  <data name="PROVIDEREMAILDESCRIPTION" xml:space="preserve">
+    <value>Provedor multifatorial de e-mail</value>
+  </data>
+  <data name="OTPUIWIZComment" xml:space="preserve">
+    <value>Escaneie o QR Code com um aplicativo TOTP como o Microsoft Authenticator, o Google Authenticator para registrar sua conta</value>
+  </data>
+  <data name="MAILUIWIZComment" xml:space="preserve">
+    <value>Você deve inserir um endereço de e-mail para confirmar sua identificação. Este e-mail deve ser acessível sem precisar de verificação corporativa (endereço de e-mail pessoal)</value>
+  </data>
+  <data name="SMSUIWIZComment" xml:space="preserve">
+    <value>Você deve digitar seu número de telefone para confirmar sua identidade. Este telefone deve ser alcançável.</value>
+  </data>
+  <data name="PROVIDERPLUGDESCRIPTION" xml:space="preserve">
+    <value>{0} fornecedor multifatorial (Plug)</value>
   </data>
 </root>

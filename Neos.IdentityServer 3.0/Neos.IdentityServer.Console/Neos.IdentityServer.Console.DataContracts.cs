@@ -1,6 +1,6 @@
 ﻿
 //******************************************************************************************************************************************************************************************//
-// Copyright (c) 2020 Neos-Sdi (http://www.neos-sdi.com)                                                                                                                                    //                        
+// Copyright (c) 2020 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -429,8 +429,10 @@ namespace Neos.IdentityServer.Console
     {
         public MMCSecurityFormatList()
         {
-            this.Add(new MMCSecurityFormatItem() { ID = SecretKeyFormat.RNG, Label = "RNG (Random Number Generator)" });
-            this.Add(new MMCSecurityFormatItem() { ID = SecretKeyFormat.RSA, Label = "RSA (Certificate(s))" });
+            this.Add(new MMCSecurityFormatItem() { ID = SecretKeyFormat.RNG, Label = "Encoded Keys RNG" });
+            this.Add(new MMCSecurityFormatItem() { ID = SecretKeyFormat.RSA, Label = "Asymetric Keys RSA (2048 bits)" });
+            this.Add(new MMCSecurityFormatItem() { ID = SecretKeyFormat.AES, Label = "Symetric Keys AES (1024 bits)" });
+            this.Add(new MMCSecurityFormatItem() { ID = SecretKeyFormat.CUSTOM, Label = "Custom Keys" });
         }
     }
 
@@ -444,11 +446,11 @@ namespace Neos.IdentityServer.Console
     }
 
     /// <summary>
-    /// MMCPreferredMethodList class implémentation
+    /// MMCSecurityKeySizeList class implémentation
     /// </summary>
-    public class MMCSecurityKeySizeist : BindingList<MMCSecurityKeySizeItem>
+    public class MMCSecurityKeySizeList : BindingList<MMCSecurityKeySizeItem>
     {
-        public MMCSecurityKeySizeist()
+        public MMCSecurityKeySizeList()
         {
             this.Add(new MMCSecurityKeySizeItem() { ID = KeySizeMode.KeySizeDefault, Label = "DEFAULT (1024 bits length)" });
             this.Add(new MMCSecurityKeySizeItem() { ID = KeySizeMode.KeySize512,  Label = " 512 ( 512 bits length)" });
@@ -470,7 +472,7 @@ namespace Neos.IdentityServer.Console
     }
 
     /// <summary>
-    /// MMCPreferredMethodList class implémentation
+    /// MMCSecurityKeyGeneratorList class implémentation
     /// </summary>
     public class MMCSecurityKeyGeneratorList : BindingList<MMCSecurityKeyGeneratorItem>
     {
@@ -481,6 +483,27 @@ namespace Neos.IdentityServer.Console
             this.Add(new MMCSecurityKeyGeneratorItem() { ID = KeyGeneratorMode.ClientSecret256, Label = "256 bits" });
             this.Add(new MMCSecurityKeyGeneratorItem() { ID = KeyGeneratorMode.ClientSecret384, Label = "384 bits" });
             this.Add(new MMCSecurityKeyGeneratorItem() { ID = KeyGeneratorMode.ClientSecret512, Label = "512 bits" });
+        }
+    }
+
+    /// <summary>
+    /// MMCAESSecurityKeyGeneratorItem class implémentation
+    /// </summary>
+    public class MMCAESSecurityKeyGeneratorItem
+    {
+        public AESKeyGeneratorMode ID { get; set; }
+        public String Label { get; set; }
+    }
+
+    /// <summary>
+    /// MMCSecurityKeyGeneratorList class implémentation
+    /// </summary>
+    public class MMCAESSecurityKeyGeneratorList : BindingList<MMCAESSecurityKeyGeneratorItem>
+    {
+        public MMCAESSecurityKeyGeneratorList()
+        {
+            this.Add(new MMCAESSecurityKeyGeneratorItem() { ID = AESKeyGeneratorMode.AESSecret512, Label = "512 bits" });
+            this.Add(new MMCAESSecurityKeyGeneratorItem() { ID = AESKeyGeneratorMode.AESSecret1024, Label = "1024 bits" });
         }
     }
 

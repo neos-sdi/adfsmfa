@@ -219,17 +219,8 @@
   <data name="SECURITYSCOPENODEDESC" xml:space="preserve">
     <value>Настройка безопасности</value>
   </data>
-  <data name="SECURITYSCOPERNG" xml:space="preserve">
-    <value>RNG (генератор случайных чисел)</value>
-  </data>
   <data name="SECURITYSCOPEROOT" xml:space="preserve">
     <value>Настройка безопасности</value>
-  </data>
-  <data name="SECURITYSCOPERSA" xml:space="preserve">
-    <value>Сертификат RSA</value>
-  </data>
-  <data name="SECURITYSCOPERSAX" xml:space="preserve">
-    <value>Сертификаты RSA на пользователя</value>
   </data>
   <data name="SERVICESCOPENODEDESC" xml:space="preserve">
     <value>Состояние услуг</value>
@@ -359,5 +350,17 @@
   </data>
   <data name="CUSTOMSTORESCOPENODEDESC" xml:space="preserve">
     <value>Конфигурация пользовательского магазина</value>
+  </data>
+  <data name="SECURITYSCOPERNG" xml:space="preserve">
+    <value>Закодированные ключи RNG</value>
+  </data>
+  <data name="SECURITYSCOPERSA" xml:space="preserve">
+    <value>Асимические ключи RSA</value>
+  </data>
+  <data name="SECURITYSCOPEAES" xml:space="preserve">
+    <value>Symetric Ключи AES</value>
+  </data>
+  <data name="SECURITYSCOPECUSTOM" xml:space="preserve">
+    <value>Пользовательские ключи</value>
   </data>
 </root>
