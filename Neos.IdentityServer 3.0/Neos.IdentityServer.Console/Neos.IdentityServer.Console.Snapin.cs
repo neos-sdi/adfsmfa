@@ -302,7 +302,7 @@ namespace Neos.IdentityServer.Console
                     // AES
                     this.ServiceAESNode = new ServiceSecurityAESScopeNode();
                     FormViewDescription faes = new FormViewDescription();
-                    faes.DisplayName = "Symetric Keys AES";
+                    faes.DisplayName = "Symmetric Keys AES";
                     faes.ControlType = typeof(ServiceSecurityAESViewControl);
                     faes.ViewType = typeof(ServiceSecurityAESFormView);
                     this.ServiceAESNode.ViewDescriptions.Add(faes);
@@ -311,7 +311,7 @@ namespace Neos.IdentityServer.Console
                     // RSA
                     this.ServiceRSANode = new ServiceSecurityRSAScopeNode();
                     FormViewDescription frsa = new FormViewDescription();
-                    frsa.DisplayName = "Asymetric Keys RSA ";
+                    frsa.DisplayName = "Asymmetric Keys RSA ";
                     frsa.ControlType = typeof(ServiceSecurityRSAViewControl);
                     frsa.ViewType = typeof(ServiceSecurityRSAFormView);
                     this.ServiceRSANode.ViewDescriptions.Add(frsa);

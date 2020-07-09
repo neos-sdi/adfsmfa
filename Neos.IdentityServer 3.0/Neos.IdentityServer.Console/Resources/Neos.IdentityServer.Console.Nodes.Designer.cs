@@ -457,7 +457,7 @@ namespace Neos.IdentityServer.Console.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Symetric Keys AES.
+        ///   Recherche une chaîne localisée semblable à Symmetric Keys AES.
         /// </summary>
         public static string SECURITYSCOPEAES {
             get {
@@ -502,7 +502,7 @@ namespace Neos.IdentityServer.Console.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Asymetric Keys RSA.
+        ///   Recherche une chaîne localisée semblable à Asymmetric Keys RSA.
         /// </summary>
         public static string SECURITYSCOPERSA {
             get {

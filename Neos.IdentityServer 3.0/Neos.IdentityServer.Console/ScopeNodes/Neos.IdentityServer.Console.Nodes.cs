@@ -1796,7 +1796,7 @@ namespace Neos.IdentityServer.Console
         public ServiceSecurityAESScopeNode() : base(true)
         {
             this.DisplayName = res.SECURITYSCOPEAES;
-            this.LanguageIndependentName = "Symetric Keys AES (1024 bits)";
+            this.LanguageIndependentName = "Symmetric Keys AES (1024 bits)";
 
             SaveConfig = new Microsoft.ManagementConsole.Action(res.GENERALSCOPESAVE, res.GENERALSCOPESAVEDESC, -1, "SaveConfig");
             CancelConfig = new Microsoft.ManagementConsole.Action(res.GENERALSCOPECANCEL, res.GENERALSCOPECANCELDESC, -1, "CancelConfig");

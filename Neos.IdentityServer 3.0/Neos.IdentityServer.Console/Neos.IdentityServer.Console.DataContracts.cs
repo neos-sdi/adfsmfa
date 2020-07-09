@@ -430,8 +430,8 @@ namespace Neos.IdentityServer.Console
         public MMCSecurityFormatList()
         {
             this.Add(new MMCSecurityFormatItem() { ID = SecretKeyFormat.RNG, Label = "Encoded Keys RNG" });
-            this.Add(new MMCSecurityFormatItem() { ID = SecretKeyFormat.RSA, Label = "Asymetric Keys RSA (2048 bits)" });
-            this.Add(new MMCSecurityFormatItem() { ID = SecretKeyFormat.AES, Label = "Symetric Keys AES (1024 bits)" });
+            this.Add(new MMCSecurityFormatItem() { ID = SecretKeyFormat.RSA, Label = "Asymmetric Keys RSA (2048 bits)" });
+            this.Add(new MMCSecurityFormatItem() { ID = SecretKeyFormat.AES, Label = "Symmetric Keys AES (1024 bits)" });
             this.Add(new MMCSecurityFormatItem() { ID = SecretKeyFormat.CUSTOM, Label = "Custom Keys" });
         }
     }

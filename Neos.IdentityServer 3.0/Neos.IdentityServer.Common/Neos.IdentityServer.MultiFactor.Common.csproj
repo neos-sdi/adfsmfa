@@ -182,6 +182,7 @@
     <EmbeddedResource Include="Resources\CSMail.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>CSMail.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\CSMail.ro.resx" />
     <EmbeddedResource Include="Resources\CSMail.ru.resx" />

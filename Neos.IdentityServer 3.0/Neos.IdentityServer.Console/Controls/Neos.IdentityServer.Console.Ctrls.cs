@@ -11815,7 +11815,7 @@ namespace Neos.IdentityServer.Console.Controls
                 _txtpanel.Controls.Add(_panelRSA);
 
                 Label lblRSA = new Label();
-                lblRSA.Text = "Asymetric Keys RSA (2048 bits)";
+                lblRSA.Text = "Asymmetric Keys RSA (2048 bits)";
                 lblRSA.Left = 10;
                 lblRSA.Top = 0;
                 lblRSA.Width = 250;
@@ -12292,7 +12292,7 @@ namespace Neos.IdentityServer.Console.Controls
 
                 Label lblRNG = new Label
                 {
-                    Text = "Symetric Keys AES (512/1024 bits)",
+                    Text = "Symmetric Keys AES (512/1024 bits)",
                     Left = 10,
                     Top = 0,
                     Width = 250

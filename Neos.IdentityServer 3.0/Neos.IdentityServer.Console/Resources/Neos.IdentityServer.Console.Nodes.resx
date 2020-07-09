@@ -259,10 +259,10 @@
     <value>Security configuration</value>
   </data>
   <data name="SECURITYSCOPERSA" xml:space="preserve">
-    <value>Asymetric Keys RSA</value>
+    <value>Asymmetric Keys RSA</value>
   </data>
   <data name="SECURITYSCOPEAES" xml:space="preserve">
-    <value>Symetric Keys AES</value>
+    <value>Symmetric Keys AES</value>
   </data>
   <data name="SECURITYSCOPEWSMAN" xml:space="preserve">
     <value>WsMan</value>

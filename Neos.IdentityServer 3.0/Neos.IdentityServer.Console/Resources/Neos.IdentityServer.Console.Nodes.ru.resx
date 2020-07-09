@@ -358,7 +358,7 @@
     <value>Асимические ключи RSA</value>
   </data>
   <data name="SECURITYSCOPEAES" xml:space="preserve">
-    <value>Symetric Ключи AES</value>
+    <value>Symmetric Ключи AES</value>
   </data>
   <data name="SECURITYSCOPECUSTOM" xml:space="preserve">
     <value>Пользовательские ключи</value>
