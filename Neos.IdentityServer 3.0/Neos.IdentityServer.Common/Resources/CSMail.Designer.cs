@@ -70,7 +70,7 @@ namespace Neos.IdentityServer.MultiFactor.Common.Resources {
         ///    &lt;body&gt; 
         ///        &lt;table dir=&quot;ltr&quot;&gt;
         ///            &lt;tr&gt;
-        ///                &lt;td id=&quot;i1&quot; style=&quot;padding:0;font-family:&apos;Segoe UI Semibold&apos;, &apos;Segoe UI Bold&apos;, &apos;Segoe UI&apos;, &apos;Helvetica Neue Medium&apos;, Arial, sans-serif;font-size:17px;color:#707070;&quot;&gt;Account {0}&lt;/td&gt;
+        ///                &lt;td id=&quot;i1&quot; style=&quot;padding:0;font-family:&apos;Segoe UI Semibold&apos;, &apos;Segoe UI Bold&apos;, &apos;Segoe UI&apos;, &apos;Helvetica Neue Medium&apos;, Arial, sans-serif;font-size:17px;color:#707070;&quot;&gt;{0} Account&lt;/td&gt;
         ///            &lt;/tr&gt; 
         ///            &lt;tr&gt;
         ///                &lt; [le reste de la chaîne a été tronqué]&quot;;.
@@ -82,7 +82,7 @@ namespace Neos.IdentityServer.MultiFactor.Common.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Administrative resquest for {0} registration.
+        ///   Recherche une chaîne localisée semblable à Administrative request for {0} registration.
         /// </summary>
         public static string MailAdminTitle {
             get {
@@ -100,7 +100,7 @@ namespace Neos.IdentityServer.MultiFactor.Common.Resources {
         ///    &lt;body&gt; 
         ///        &lt;table dir=&quot;ltr&quot;&gt;
         ///            &lt;tr&gt;
-        ///                &lt;td id=&quot;i1&quot; style=&quot;padding:0;font-family:&apos;Segoe UI Semibold&apos;, &apos;Segoe UI Bold&apos;, &apos;Segoe UI&apos;, &apos;Helvetica Neue Medium&apos;, Arial, sans-serif;font-size:17px;color:#707070;&quot;&gt;Account {0}&lt;/td&gt;
+        ///                &lt;td id=&quot;i1&quot; style=&quot;padding:0;font-family:&apos;Segoe UI Semibold&apos;, &apos;Segoe UI Bold&apos;, &apos;Segoe UI&apos;, &apos;Helvetica Neue Medium&apos;, Arial, sans-serif;font-size:17px;color:#707070;&quot;&gt;{0} Account&lt;/td&gt;
         ///            &lt;/tr&gt; 
         ///            &lt;tr&gt;
         ///                &lt; [le reste de la chaîne a été tronqué]&quot;;.
@@ -112,7 +112,7 @@ namespace Neos.IdentityServer.MultiFactor.Common.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Security informations.
+        ///   Recherche une chaîne localisée semblable à Security information.
         /// </summary>
         public static string MailKeyTitle {
             get {

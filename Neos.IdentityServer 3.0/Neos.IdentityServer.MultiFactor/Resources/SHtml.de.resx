@@ -254,7 +254,7 @@ Klicken Sie auf "Weiter"</value>
     <value>Beenden</value>
   </data>
   <data name="HtmlUIMRecordNewKey" xml:space="preserve">
-    <value>Einen neuen Schlüssel registrieren</value>
+    <value>Einen Schlüssel registrieren</value>
   </data>
   <data name="HtmlUIMustPrepareLabel" xml:space="preserve">
     <value>Sie müssen :</value>
