@@ -121,24 +121,24 @@
     <value>Erstellt</value>
   </data>
   <data name="enabledDataGridViewCheckBoxColumn.HeaderText" xml:space="preserve">
-    <value>aktiv</value>
+    <value>Aktiviert</value>
   </data>
   <data name="mailAddressDataGridViewTextBoxColumn.HeaderText" xml:space="preserve">
-    <value>e-mail</value>
+    <value>E-Mail</value>
   </data>
   <data name="phoneNumberDataGridViewTextBoxColumn.HeaderText" xml:space="preserve">
-    <value>telefon</value>
+    <value>Telefon</value>
   </data>
   <data name="preferredMethodDataGridViewTextBoxColumn.HeaderText" xml:space="preserve">
-    <value>system</value>
+    <value>System</value>
   </data>
   <data name="uPNDataGridViewTextBoxColumn.HeaderText" xml:space="preserve">
-    <value>benutzer</value>
+    <value>Benutzer</value>
   </data>
   <data name="iDDataGridViewTextBoxColumn.HeaderText" xml:space="preserve">
     <value>Id</value>
   </data>
   <data name="secretKeyDataGridViewTextBoxColumn.HeaderText" xml:space="preserve">
-    <value>SecretKey</value>
+    <value>Geheimer Schlüssel</value>
   </data>
 </root>

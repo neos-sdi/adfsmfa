@@ -121,13 +121,13 @@
     <value>Filtern von Benutzern</value>
   </data>
   <data name="BTNCancel.Text" xml:space="preserve">
-    <value>, um abzubrechen</value>
+    <value>Abbrechen</value>
   </data>
   <data name="CBEnabledOnly.Text" xml:space="preserve">
     <value>Nur aktive Benutzer</value>
   </data>
   <data name="cbNull.Text" xml:space="preserve">
-    <value>Suchen des Nullwertes</value>
+    <value>Nullwerte einbeziehen</value>
   </data>
   <data name="GBFilters.Text" xml:space="preserve">
     <value>Filterkriterien</value>
@@ -136,15 +136,15 @@
     <value>Eigenschaften:</value>
   </data>
   <data name="label2.Text" xml:space="preserve">
-    <value>Chefkameramann:</value>
+    <value>Operator:</value>
   </data>
   <data name="label3.Text" xml:space="preserve">
-    <value>wert:</value>
+    <value>Wert:</value>
   </data>
   <data name="label4.Text" xml:space="preserve">
     <value>Identifikationsmethode:</value>
   </data>
   <data name="BTNOk.Text" xml:space="preserve">
-    <value>Okay</value>
+    <value>OK</value>
   </data>
 </root>

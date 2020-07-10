@@ -118,28 +118,28 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="$this.Text" xml:space="preserve">
-    <value>SQL-Modus: Erstellen der Datenbank</value>
+    <value>SQL Konfiguration: Erstellen der Datenbank</value>
   </data>
   <data name="CancelBtn.Text" xml:space="preserve">
-    <value>, um abzubrechen</value>
+    <value>Abbrechen</value>
   </data>
   <data name="cbWindows.Text" xml:space="preserve">
     <value>Windows-Authentifizierung</value>
   </data>
   <data name="DBWIZACCOUNTREQUIRED" xml:space="preserve">
-    <value>Kontozugriff auf die erforderliche Datenbank!</value>
+    <value>Bitte SQL Server Benutzer angeben !</value>
   </data>
   <data name="DBWIZINSTANCEREQUIRED" xml:space="preserve">
-    <value>SQL-Instanz erforderlich!</value>
+    <value>Bitte SQL Instanz angeben !</value>
   </data>
   <data name="DBWIZNAMEREQUIRED" xml:space="preserve">
-    <value>SQL-Datenbankname erforderlich!</value>
+    <value>Bitte SQL Datenbankname angeben!</value>
   </data>
   <data name="DBWIZPASSREQUIRED" xml:space="preserve">
-    <value>Passwort erforderlich!</value>
+    <value>Bitte Passwort angeben!</value>
   </data>
   <data name="groupBox1.Text" xml:space="preserve">
-    <value>Erstellungseinstellungen</value>
+    <value>Erstellungs-Parameter</value>
   </data>
   <data name="label1.Text" xml:space="preserve">
     <value>SQL Server:</value>
@@ -148,12 +148,12 @@
     <value>Datenbankname:</value>
   </data>
   <data name="label3.Text" xml:space="preserve">
-    <value>Datenbankzugriffskonto</value>
+    <value>Datenbankbenutzer</value>
   </data>
   <data name="label4.Text" xml:space="preserve">
     <value>Passwort:</value>
   </data>
   <data name="OKBtn.Text" xml:space="preserve">
-    <value>Okay</value>
+    <value>OK</value>
   </data>
 </root>

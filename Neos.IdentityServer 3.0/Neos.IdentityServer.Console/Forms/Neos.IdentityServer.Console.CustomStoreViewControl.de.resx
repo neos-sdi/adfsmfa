@@ -121,12 +121,12 @@
     <value>Konfigurationsparameter für den benutzerdefinierten Speicher</value>
   </data>
   <data name="label2.Text" xml:space="preserve">
-    <value>Verwalten von Custom Store-Konfigurationsparametern für MFA</value>
+    <value>MFA-Konfigurationseinstellungen für benutzerdefinierten Speicher verwalten</value>
   </data>
   <data name="label3.Text" xml:space="preserve">
     <value>Konfigurieren des benutzerdefinierten Speichers für MFA</value>
   </data>
   <data name="SQLVALIDSAVE" xml:space="preserve">
-    <value>Änderungen abbrechen und Daten neu laden?</value>
+    <value>Änderungen verwerfen und Daten neu laden?</value>
   </data>
 </root>

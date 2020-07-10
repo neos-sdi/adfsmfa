@@ -121,15 +121,15 @@
     <value>Verwaiste private Schlüssel löschen ?</value>
   </data>
   <data name="CERTIFICATESSECURITYMSG" xml:space="preserve">
-    <value>MFA-Zertifikate aktualisieren Zugriffssteuerungsliste ?</value>
+    <value>Zugriffssteuerungsliste für MFA-Zertifikate aktualisieren  ?</value>
   </data>
   <data name="CERTIFICATESSECURITYMSGRESULT" xml:space="preserve">
-    <value>Zugriffssteuerungsliste für alle MFA-Zertifikate aktualisiert !</value>
+    <value>Zugriffssteuerungsliste für MFA-Zertifikate aktualisiert !</value>
   </data>
   <data name="CERTIFICATESCLEANMSGCOUNT" xml:space="preserve">
     <value>Anzahl gelöschter verwaister privater Schlüssel</value>
   </data>
   <data name="RESTARTMFASERVICESMSG" xml:space="preserve">
-    <value>Starten Sie alle MFA- und ADFS-Dienste auf allen Servern der Farm neu ?</value>
+    <value>Neustart aller MFA- und ADFS-Dienste auf allen Servern der Farm ?</value>
   </data>
 </root>

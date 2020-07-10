@@ -121,27 +121,27 @@
     <value>Allgemeine Eigenschaften</value>
   </data>
   <data name="PPAGEGENERALTITLE" xml:space="preserve">
-    <value>allgemein</value>
+    <value>Allgemein</value>
   </data>
   <data name="PPAGEINVALIDMAIL" xml:space="preserve">
-    <value>Sekundäre E-Mail-Adresse ungültig!</value>
+    <value>Ungültige sekundäre E-Mail-Adresse !</value>
   </data>
   <data name="PPAGEINVALIDPHONE" xml:space="preserve">
-    <value>Für den Empfang der Codes per SMS ist eine gültige Telefonnummer erforderlich!</value>
+    <value>Für den Empfang der Codes per Textnachricht ist eine gültige Telefonnummer erforderlich !</value>
   </data>
   <data name="PPAGEKEYSTITLE" xml:space="preserve">
-    <value>schlüssel</value>
+    <value>Schlüssel</value>
   </data>
   <data name="PPAGEVALIDKEY" xml:space="preserve">
-    <value>Ein gültiger digitaler Schlüssel ist erforderlich, um TOTP-Codes zu generieren, um Ihre Identität zu validieren!</value>
+    <value>Zur Feststellung Ihrer Identität ist ein gültiger digitaler Schlüssel für die Erzeugung von TOTP-Codes erforderlich !</value>
   </data>
   <data name="PPAGEVALIDMAIL" xml:space="preserve">
-    <value>Eine sekundäre E-Mail-Adresse ist erforderlich, um die Codes per E-Mail zu erhalten!</value>
+    <value>Eine sekundäre E-Mail-Adresse ist erforderlich, um Einmalcodes per E-Mail zu erhalten ! \rFortsetzen?</value>
   </data>
   <data name="PPAGEVALIDPHONE" xml:space="preserve">
-    <value>Eine Telefonnummer ist erforderlich, um die Codes per SMS zu erhalten!</value>
+    <value>Eine Telefonnummer ist erforderlich, um die Einmalcodes per Textnachricht zu erhalten!</value>
   </data>
   <data name="PPAGEVALIDUSER" xml:space="preserve">
-    <value>Der Name des Benutzers darf nicht leer sein!</value>
+    <value>Der Benutzername darf nicht leer sein !</value>
   </data>
 </root>

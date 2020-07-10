@@ -118,16 +118,16 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="BIOUICFGLabel" xml:space="preserve">
-    <value>Aktivieren Sie Ihr biometrisches Gerät</value>
+    <value>Biometrisches Gerät aktivieren</value>
   </data>
   <data name="BIOUIListChoiceLabel" xml:space="preserve">
-    <value>Verwenden Sie mein biometrisches Gerät</value>
+    <value>Biometrisches Gerät verwenden</value>
   </data>
   <data name="BIOUIListOptionLabel" xml:space="preserve">
     <value>Biometrisches Gerät</value>
   </data>
   <data name="BIOUIMessage" xml:space="preserve">
-    <value>Berühren oder Scannen mit Dem biometrischen Gerät</value>
+    <value>Berühren oder Scannen mit dem biometrischen Gerät</value>
   </data>
   <data name="BIOUIOTPLabel" xml:space="preserve">
     <value>Verwenden Sie Ihr biometrisches Gerät</value>
@@ -136,25 +136,25 @@
     <value>Registrieren Sie Ihr biometrisches Gerät</value>
   </data>
   <data name="BIOWIZEnroll" xml:space="preserve">
-    <value>Registrieren Meines biometrischen Geräts</value>
+    <value>Registrieren eines biometrischen Geräts</value>
   </data>
   <data name="BIOUIChoiceLabel" xml:space="preserve">
-    <value>Verwenden Sie mein biometrisches Gerät</value>
+    <value>Verwenden meines biometrischen Geräts</value>
   </data>
   <data name="BIOUIConfigLabel" xml:space="preserve">
-    <value>Verwenden Sie mein biometrisches Gerät</value>
+    <value>Verwenden meines biometrischen Geräts</value>
   </data>
   <data name="BIOUIEnrollTaskLabel" xml:space="preserve">
     <value>Registrieren eines biometrischen Geräts</value>
   </data>
   <data name="BIOUIEnrollValidatedLabel" xml:space="preserve">
-    <value>Konto verifiziert &lt;br&gt;&lt;br&gt;Sie können Ihr biometrisches Gerät verwenden, um sich zu authentifizieren</value>
+    <value>Konto verifiziert &lt;br&gt;&lt;br&gt;Sie können Ihr biometrisches Gerät verwenden um sich anzumelden</value>
   </data>
   <data name="BIOUIEnrollManageLinkLabel" xml:space="preserve">
-    <value>Meine Biometriegeräte verwalten</value>
+    <value>Biometrische Geräte verwalten</value>
   </data>
   <data name="BIOUIEnrollDeleteLinkLabel" xml:space="preserve">
-    <value>Dieses Gerät löschen</value>
+    <value>Gerät löschen</value>
   </data>
   <data name="PROVIDERBIODESCRIPTION" xml:space="preserve">
     <value>Biometrischer Multi-Faktor-Anbieter</value>

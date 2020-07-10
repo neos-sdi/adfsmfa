@@ -121,7 +121,7 @@
     <value>Konfiguration für {0}</value>
   </data>
   <data name="SMSVALIDSAVE" xml:space="preserve">
-    <value>Änderungen abbrechen und Daten neu laden ?</value>
+    <value>Änderungen verwerfen und Daten neu laden ?</value>
   </data>
   <data name="ProviderTitle.Text" xml:space="preserve">
     <value>Konfiguration für {0}</value>

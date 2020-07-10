@@ -127,6 +127,6 @@
     <value>MFA-Anbieter Konfiguration</value>
   </data>
   <data name="MFAVALIDSAVE" xml:space="preserve">
-    <value>Änderungen abbrechen und Daten neu laden ?</value>
+    <value>Änderungen verwerfen und Daten neu laden ?</value>
   </data>
 </root>

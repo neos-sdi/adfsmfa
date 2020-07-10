@@ -118,13 +118,13 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="GLVALIDSAVE" xml:space="preserve">
-    <value>Änderungen abbrechen und Daten neu laden ?</value>
+    <value>Änderungen verwerfen und Daten neu laden ?</value>
   </data>
   <data name="label1.Text" xml:space="preserve">
-    <value>Allgemeine Einstellungen von Diensten</value>
+    <value>Allgemeine Dienst-Einstellungen</value>
   </data>
   <data name="label2.Text" xml:space="preserve">
-    <value>Verwalten der wichtigsten MFA-Konfigurationseinstellungen</value>
+    <value>MFA Konfigurationseinstellungen</value>
   </data>
   <data name="label3.Text" xml:space="preserve">
     <value>Allgemeine Einstellungen</value>

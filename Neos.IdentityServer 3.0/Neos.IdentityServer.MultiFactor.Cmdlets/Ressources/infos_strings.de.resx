@@ -118,13 +118,13 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="InfoAllKeyWillbeReset" xml:space="preserve">
-    <value>Alle RSA-Schlüssel werden ungültig! Weiter (Y/N)</value>
+    <value>Achtung, alle RSA-Schlüssel werden ungültig! Weiter (Y/N)</value>
   </data>
   <data name="InfosAllServicesRestarted" xml:space="preserve">
-    <value>Alle Farm Dienste neu gestartet !</value>
+    <value>Alle Farm-Dienste neu gestartet !</value>
   </data>
   <data name="InfosConfigUpdated" xml:space="preserve">
-    <value>MFA-Konfiguration aktualisiert !</value>
+    <value>Die MFA-Konfiguration wurde aktualisiert !</value>
   </data>
   <data name="InfosDatabaseCreated" xml:space="preserve">
     <value>Datenbank {0} erstellt !</value>
@@ -133,25 +133,25 @@
     <value>Anzahl der Datensätze : {0}</value>
   </data>
   <data name="InfosRSACertificateChanged" xml:space="preserve">
-    <value>MFA-Zertifikat {0} korrekt aktualisiert ! Sie müssen dieses Zertifikat auf allen anderen ADFS-Servern bereitstellen.</value>
+    <value>MFA-Zertifikat {0} erfolgreich aktualisiert ! Sie müssen dieses Zertifikat auf allen anderen ADFS-Servern bereitstellen.</value>
   </data>
   <data name="InfosSQLCertificateChanged" xml:space="preserve">
-    <value>SQL-Zertifikat {0} korrekt aktualisiert ! Sie müssen dieses Zertifikat auf allen anderen ADFS-Servern bereitstellen.</value>
+    <value>SQL-Zertifikat {0} erfolgreich aktualisiert ! Sie müssen dieses Zertifikat auf allen anderen ADFS-Servern bereitstellen.</value>
   </data>
   <data name="InfosSystemExported" xml:space="preserve">
-    <value>MFA-Konfiguration korrekt in Datei {0} exportiert !</value>
+    <value>MFA-Konfiguration erfolgreich in Datei {0} exportiert !</value>
   </data>
   <data name="InfosSystemImported" xml:space="preserve">
-    <value>MFA-Konfiguration korrekt aus Datei {0} importiert !</value>
+    <value>MFA-Konfiguration erfolgreich aus Datei {0} importiert !</value>
   </data>
   <data name="InfosSystemInInvalidState" xml:space="preserve">
     <value>MFA-Konfiguration Import mit Fehlern !</value>
   </data>
   <data name="InfosSystemRegistered" xml:space="preserve">
-    <value>MFA System korrekt registriert !</value>
+    <value>MFA System erfolgreich registriert !</value>
   </data>
   <data name="InfosSystemUnRegistered" xml:space="preserve">
-    <value>MFA-System korrekt unkonfiguriert !</value>
+    <value>MFA-System erfolgreich deregistriert !</value>
   </data>
   <data name="InfosUserAdded" xml:space="preserve">
     <value>User {0} hinzugefügt !</value>
@@ -160,19 +160,19 @@
     <value>User {0} gelöscht !</value>
   </data>
   <data name="InfosUserHasNewKey" xml:space="preserve">
-    <value>User {0} hat einen neuen Enryption-Schlüssel !</value>
+    <value>User {0} hat einen neuen Verschlüsselungskey !</value>
   </data>
   <data name="InfosUserUpdated" xml:space="preserve">
     <value>User {0} aktualisiert !</value>
   </data>
   <data name="InfosWarningAboutTheme" xml:space="preserve">
-    <value>vorsicht! Ihr Thema muss vollständig kompatibel sein (js, css, etc...) mit der benutzeroberfläche, die Sie wählen: {0}</value>
+    <value>Achtung! Das Theme muss vollständig zur gewählten Benutzeroberfläche kompatibel sein (js, css, ...): {0}</value>
   </data>
   <data name="InfosDatabaseUpgraded" xml:space="preserve">
     <value>Datenbank {0} aktualisiert !</value>
   </data>
   <data name="InfosSystemAlreadyInitialized" xml:space="preserve">
-    <value>MFA ist bereits initialisiert ! Sie müssen das PowerShell-Cmdlet "UnRegister-MFASystem ausführen, wenn Sie die gesamte MFA-Konfiguration neu initialisieren möchten !</value>
+    <value>MFA ist bereits initialisiert ! Sie müssen das PowerShell-Cmdlet "UnRegister-MFASystem" ausführen, wenn Sie die gesamte MFA-Konfiguration neu initialisieren möchten !</value>
   </data>
   <data name="InfosCertsACLUpdated" xml:space="preserve">
     <value>Zugriffssteuerungsliste für alle MFA-Zertifikate aktualisiert !</value>
@@ -181,57 +181,57 @@
     <value>Anzahl gelöschter verwaister privater Schlüssel</value>
   </data>
   <data name="InfosADFSCertificateChanged" xml:space="preserve">
-    <value>ADFS-Zertifikat korrekt erstellt ! Sie müssen dieses Zertifikat auf allen ADFS-Servern bereitstellen.</value>
+    <value>ADFS-Zertifikat erfolgreich erstellt ! Sie müssen dieses Zertifikat auf allen ADFS-Servern bereitstellen.</value>
   </data>
   <data name="InfosThreatSystemRegistered" xml:space="preserve">
-    <value>MFA Threat System korrekt registriert! !</value>
+    <value>MFA Threat System erfolgreich registriert! !</value>
   </data>
   <data name="InfosThreatSystemUnRegistered" xml:space="preserve">
-    <value>MFA Threat System korrekt nicht konfiguriert !</value>
+    <value>MFA Threat System erfolgreich deregistriert !</value>
   </data>
   <data name="InfosThreatSystemNotRegistered" xml:space="preserve">
-    <value>MFA Threat System wurde nicht korrekt registriert !</value>
+    <value>MFA Threat System wurde nicht erfolgreich registriert !</value>
   </data>
   <data name="InfosThreatSystemNotUnRegistered" xml:space="preserve">
-    <value>MFA Threat System war nicht korrekt unkonfiguriert !</value>
+    <value>MFA Threat System war nicht erfolgreich deregistriert !</value>
   </data>
   <data name="InfosThreatDataNotUpdated" xml:space="preserve">
-    <value>MFA Threat System Daten wurden nicht korrekt aktualisiert !</value>
+    <value>Aktualisierung der MFA Threat System Daten fehlgeschlagen !</value>
   </data>
   <data name="InfosThreatDataUpdated" xml:space="preserve">
-    <value>MFA Threat System Daten korrekt aktualisiert !</value>
+    <value>MFA Threat System Daten erfolgreich aktualisiert !</value>
   </data>
   <data name="InfosNotificationSend" xml:space="preserve">
     <value>Benachrichtigung versandt !</value>
   </data>
   <data name="InfoComputerNotRegistered" xml:space="preserve">
-    <value>Computer {0} NICHT zur MFA-Konfiguration hinzugefügt / aktualisiert !</value>
+    <value>Computer {0} wurde zur MFA-Konfiguration NICHT hinzugefügt / aktualisiert !</value>
   </data>
   <data name="InfoComputerNotUnRegistered" xml:space="preserve">
-    <value>Computer {0} NICHT aus der MFA-Konfiguration entfernt !</value>
+    <value>Computer {0} wurde NICHT aus der MFA-Konfiguration entfernt !</value>
   </data>
   <data name="InfoComputerRegistered" xml:space="preserve">
-    <value>Computer {0} Zur MFA-Konfiguration hinzugefügt / aktualisiert !</value>
+    <value>Computer {0} zur MFA-Konfiguration hinzugefügt / aktualisiert !</value>
   </data>
   <data name="InfoComputerUnRegistered" xml:space="preserve">
-    <value>Computer {0} Aus der MFA-Konfiguration entfernt !</value>
+    <value>Computer {0} aus der MFA-Konfiguration entfernt !</value>
   </data>
   <data name="InfosServerServicesRestarted" xml:space="preserve">
-    <value>Sie müssen den "MFA Notification Hub" Dienst neu starten und alle offenen Konsolen und Powershell-Sitzungen neu starten !</value>
+    <value>Sie müssen den Dienst "MFA Notification Hub" neu starten und alle offenen Konsolen und Powershell-Sitzungen neu starten !</value>
   </data>
   <data name="InfosADFSServicesRestarted" xml:space="preserve">
-    <value>ADFS-Dienst auf Server {0} !</value>
+    <value>ADFS-Dienst auf Server {0} neu gestartet !</value>
   </data>
   <data name="InfosCredentialsChanged" xml:space="preserve">
-    <value>Anmeldeinformationen korrekt aktualisiert !</value>
+    <value>Anmeldeinformationen erfolgreich aktualisiert !</value>
   </data>
   <data name="InfosMailTemplateExported" xml:space="preserve">
-    <value>E-Mail-Vorlagen korrekt exportiert !</value>
+    <value>E-Mail-Vorlagen erfolgreich exportiert !</value>
   </data>
   <data name="InfosSampleInstalled" xml:space="preserve">
     <value>MFA-Beispiel installiert !</value>
   </data>
   <data name="InfosSampleUnInstalled" xml:space="preserve">
-    <value>MFA-Beispiel Deinstalliert !</value>
+    <value>MFA-Beispiel deinstalliert !</value>
   </data>
 </root>

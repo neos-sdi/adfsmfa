@@ -118,24 +118,23 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="BTNReinit.Text" xml:space="preserve">
-    <value>Zurücksetzen aller Tasten</value>
+    <value>Alle Schlüssel zurücksetzen</value>
   </data>
   <data name="BTNSendByMail.Text" xml:space="preserve">
-    <value>Senden Sie die Schlüssel per E-Mail</value>
+    <value>Die Schlüssel per E-Mail versenden</value>
   </data>
   <data name="cbEnabled.Text" xml:space="preserve">
-    <value>MFA Aktive Authentifizierung</value>
+    <value>MFA Authentifizierung aktiv</value>
   </data>
   <data name="label1.Text" xml:space="preserve">
-    <value>Identifizierung
-system
-Ausgewählten:</value>
+    <value>Ausgewählte
+Identifizierungsmethode:</value>
   </data>
   <data name="UserInfo.Text" xml:space="preserve">
     <value>Benutzerinformationen</value>
   </data>
   <data name="UserName.Text" xml:space="preserve">
-    <value>name</value>
+    <value>Name</value>
   </data>
   <data name="UserNamesPrompt.Text" xml:space="preserve">
     <value>Benutzerliste:</value>

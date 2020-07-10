@@ -118,15 +118,15 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="label1.Text" xml:space="preserve">
-    <value>SQL Server-Konfigurationseinstellungen</value>
+    <value>SQL Server Konfigurationseinstellungen</value>
   </data>
   <data name="label2.Text" xml:space="preserve">
-    <value>Einrichten von SQL Server-Einstellungen für MFA</value>
+    <value>SQL Server Einstellungen für MFA</value>
   </data>
   <data name="label3.Text" xml:space="preserve">
     <value>Einrichten der Datenbank für MFA</value>
   </data>
   <data name="SQLVALIDSAVE" xml:space="preserve">
-    <value>Änderungen abbrechen und Daten neu laden ?</value>
+    <value>Änderungen verwerfen und Daten neu laden ?</value>
   </data>
 </root>

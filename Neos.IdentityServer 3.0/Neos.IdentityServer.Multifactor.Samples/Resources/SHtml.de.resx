@@ -121,28 +121,31 @@
     <value>Standardoption verwenden</value>
   </data>
   <data name="GLOBALWarnOverNetwork" xml:space="preserve">
-    <value>(Daten werden über das Internet übertragen)</value>
+    <value>(Informationen werden übertragen)</value>
   </data>
   <data name="GLOBALWarnThirdParty" xml:space="preserve">
     <value>(Die Authentifizierung wird von einem Drittanbieter durchgeführt)</value>
   </data>
   <data name="MAILUIEnrollValidatedLabel" xml:space="preserve">
-    <value>Konto verifiziert&lt;br&gt;&lt;br&gt;Jetzt können Sie Ihre E-Mail-Adresse verwenden, um sich zu authentifizieren</value>
+    <value>Konto verifiziert&lt;br&gt;&lt;br&gt;Sie können jetzt Ihre E-Mail-Adresse verwenden um sich zu anzumelden</value>
   </data>
   <data name="OTPUIEnrollValidatedLabel" xml:space="preserve">
-    <value>Konto verifiziert&lt;br&gt;&lt;br&gt;Jetzt können Sie Ihre App verwenden, um sich zu authentifizieren</value>
+    <value>Konto verifiziert&lt;br&gt;&lt;br&gt;Sie können jetzt Ihre App verwenden um sich zu anzumelden</value>
+  </data>
+  <data name="PROVIDERSMSDESCRIPTION" xml:space="preserve">
+    <value>SMS-Multifaktoranbieter</value>
   </data>
   <data name="SMSUICFGLabel" xml:space="preserve">
     <value>Telefonnummer</value>
   </data>
   <data name="SMSUIChoiceLabel" xml:space="preserve">
-    <value>Senden eines Codes an mein Handy</value>
+    <value>Code als Textnachricht senden</value>
   </data>
   <data name="SMSUIChoiceLabel2" xml:space="preserve">
-    <value>Geben Sie den auf meinem Handy empfangenen Code zurück</value>
+    <value>Den empfangenen Code eingeben</value>
   </data>
   <data name="SMSUIConfigLabel" xml:space="preserve">
-    <value>Textnachricht auf meinem Mobiltelefon</value>
+    <value>Versand von Textnachrichten auf mein Mobiltelefon</value>
   </data>
   <data name="SMSUIConfigLabel2" xml:space="preserve">
     <value>Textnachricht auf meinem Mobiltelefon {0}</value>
@@ -151,33 +154,30 @@
     <value>Geben Sie eine Mobiltelefonnummer an</value>
   </data>
   <data name="SMSUIEnrollValidatedLabel" xml:space="preserve">
-    <value>Konto verifiziert&lt;br&gt;&lt;br&gt;Jetzt können Sie Ihr Mobiltelefon verwenden, um sich zu authentifizieren</value>
+    <value>Konto verifiziert&lt;br&gt;&lt;br&gt;Sie können jetzt Ihr Mobiltelefon verwenden um sich zu anzumelden</value>
   </data>
   <data name="SMSUIListChoiceLabel" xml:space="preserve">
-    <value>Empfangen einer Nachricht auf meinem Mobiltelefon</value>
+    <value>Textnachricht an mein Mobiltelefon senden</value>
   </data>
   <data name="SMSUIListOptionLabel" xml:space="preserve">
     <value>Persönliches Mobiltelefon</value>
   </data>
   <data name="SMSUIManagement" xml:space="preserve">
-    <value>Zugriff auf meine Konfigurationsoptionen</value>
+    <value>Konfigurationseinstellungen</value>
   </data>
   <data name="SMSUIMessage" xml:space="preserve">
-    <value>Wir haben eine SMS mit einem Verifizierungscode gesendet.</value>
+    <value>Textnachricht mit Verifizierungscode versandt.</value>
   </data>
   <data name="SMSUIOTPLabel" xml:space="preserve">
     <value>Code eingeben</value>
   </data>
-  <data name="SMSUIWIZLabel" xml:space="preserve">
-    <value>Registrieren Sie Ihr Handy</value>
-  </data>
-  <data name="SMSWIZEnroll" xml:space="preserve">
-    <value>Mein Telefon registrieren</value>
-  </data>
-  <data name="PROVIDERSMSDESCRIPTION" xml:space="preserve">
-    <value>SMS-Multifaktoranbieter</value>
-  </data>
   <data name="SMSUIWIZComment" xml:space="preserve">
     <value>Sie müssen Ihre Telefonnummer eingeben, um Ihre Identität zu bestätigen. Dieses Telefon muss erreichbar sein.</value>
+  </data>
+  <data name="SMSUIWIZLabel" xml:space="preserve">
+    <value>Registrieren Sie Ihr Mobiltelefon</value>
+  </data>
+  <data name="SMSWIZEnroll" xml:space="preserve">
+    <value>Mein Mobiltelefon registrieren</value>
   </data>
 </root>
