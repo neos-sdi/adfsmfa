@@ -118,15 +118,14 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="cbEnabled.Text" xml:space="preserve">
-    <value>MFA Aktive Authentifizierung</value>
+    <value>MFA Authentifizierung aktiv</value>
   </data>
   <data name="EmailPrompt.Text" xml:space="preserve">
-    <value>E-Mail-Adresse:</value>
+    <value>E-Mail Adresse:</value>
   </data>
   <data name="label1.Text" xml:space="preserve">
-    <value>system 
-Identifizierung
-Ausgewählten:</value>
+    <value>Ausgewählte 
+Identifizierungsmethode::</value>
   </data>
   <data name="PhonePrompt.Text" xml:space="preserve">
     <value>Telefonnummer:</value>

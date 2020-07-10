@@ -118,18 +118,18 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="BTNSendByMail.Text" xml:space="preserve">
-    <value>Senden Sie den Schlüssel per E-Mail</value>
+    <value>Den Schlüssel per E-Mail versenden</value>
   </data>
   <data name="clearkeyBtn.Text" xml:space="preserve">
-    <value>Klarer Schlüssel</value>
+    <value>Schlüssel entfernen</value>
   </data>
   <data name="EmailPrompt.Text" xml:space="preserve">
     <value>E-Mail:</value>
   </data>
   <data name="groupBoxKey.Text" xml:space="preserve">
-    <value>Geheimschlüssel</value>
+    <value>Geheimer Schlüssel</value>
   </data>
   <data name="newkeyBtn.Text" xml:space="preserve">
-    <value>Neuer Schlüssel</value>
+    <value>Neuen Schlüssel erstellen</value>
   </data>
 </root>

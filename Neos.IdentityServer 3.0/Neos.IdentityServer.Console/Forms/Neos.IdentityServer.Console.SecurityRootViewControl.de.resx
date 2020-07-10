@@ -121,6 +121,6 @@
     <value>{0}</value>
   </data>
   <data name="SECVALIDSAVE" xml:space="preserve">
-    <value>Änderungen abbrechen und Daten neu laden ?</value>
+    <value>Änderungen verwerfen und Daten neu laden ?</value>
   </data>
 </root>

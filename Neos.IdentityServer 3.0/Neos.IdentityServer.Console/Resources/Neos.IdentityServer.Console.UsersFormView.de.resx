@@ -118,19 +118,19 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="USERSFRMACTIVATE" xml:space="preserve">
-    <value>auslösen</value>
+    <value>Aktivieren</value>
   </data>
   <data name="USERSFRMACTIVATEDESC" xml:space="preserve">
-    <value>Aktivieren Sie MFA für den ausgewählten Benutzer.</value>
+    <value>MFA für den ausgewählten Benutzer aktivieren.</value>
   </data>
   <data name="USERSFRMADECTIVATEDESC" xml:space="preserve">
-    <value>Deaktivieren Sie die MFA für den ausgewählten Benutzer.</value>
+    <value>MFA für den ausgewählten Benutzer deaktivieren.</value>
   </data>
   <data name="USERSFRMCONFIRMDELETE" xml:space="preserve">
-    <value>Möchten Sie dieses Element wirklich löschen?</value>
+    <value>Soll dieser Eintrag wirklich gelöscht werden?</value>
   </data>
   <data name="USERSFRMDEACTIVATE" xml:space="preserve">
-    <value>verkrüppeln</value>
+    <value>Deaktivieren</value>
   </data>
   <data name="USERSFRMPROPERTIES" xml:space="preserve">
     <value>Eigenschaften</value>
@@ -142,6 +142,6 @@
     <value>Mehrfachauswahl</value>
   </data>
   <data name="USERSFRMDEACTIVATEDESC" xml:space="preserve">
-    <value>Deaktivieren Sie DIE MFA für den ausgewählten Benutzer.</value>
+    <value>MFA für den ausgewählten Benutzer deaktivieren.</value>
   </data>
 </root>

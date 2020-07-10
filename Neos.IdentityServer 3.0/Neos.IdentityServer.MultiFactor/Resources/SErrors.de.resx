@@ -118,72 +118,72 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ErrorAccountActivate" xml:space="preserve">
-    <value>Der Zugriff auf diese Anwendung erfordert eine zusätzliche Authentifizierung. &lt;br&gt;&lt;br&gt;Klicken Sie auf "Aktivieren", um Ihr Konto zu aktivieren, oder klicken Sie auf "Weiter".</value>
+    <value>Der Zugriff auf diese Anwendung erfordert Multi-Faktor-Authentifizierung. &lt;br&gt;&lt;br&gt;Klicken Sie auf "Aktivieren" um diese einzurichten oder auf "Weiter" um diesen Schritt vorerst zu überspringen.</value>
   </data>
   <data name="ErrorAccountAdminAuthorized" xml:space="preserve">
-    <value>Autorisierter Zugriff ! zusätzliche Authentifizierung ist noch nicht aktiviert. Wenden Sie sich an Ihre Administratoren.</value>
+    <value>Zugriff verweigert, da die Multi-Faktor-Authentifizierung nicht zeitgerecht aktiviert wurde. Wenden Sie sich an die Systemadministration.</value>
   </data>
   <data name="ErrorAccountAdminNotEnabled" xml:space="preserve">
-    <value>Unbefugter Zugriff! zusätzliche Authentifizierung ist noch nicht aktiviert. &lt;br&gt;&lt;br&gt;Wenden Sie sich an Ihre Administratoren.</value>
+    <value>Zugriff verweigert, da die Multi-Faktor-Authentifizierung nicht zeitgerecht aktiviert wurde. &lt;br&gt;&lt;br&gt;Wenden Sie sich an die Systemadministration.</value>
   </data>
   <data name="ErrorAccountAuthorized" xml:space="preserve">
     <value>Der Zugriff auf diese Anwendung erfordert eine zusätzliche Authentifizierung. &lt;br&gt;&lt;br&gt;Klicken Sie auf "Registrierung", um fortzufahren.</value>
   </data>
   <data name="ErrorAccountNoAccess" xml:space="preserve">
-    <value>Unbefugter Zugriff ! Wenden Sie sich an Ihre Administratoren</value>
+    <value>Zugriff verweigert ! Wenden Sie sich an die Systemadministration</value>
   </data>
   <data name="ErrorAccountNotEnabled" xml:space="preserve">
-    <value>Der Zugriff auf diese Anwendung erfordert eine zusätzliche Authentifizierung, die derzeit nicht aktiviert ist. &lt;br&gt;&lt;br&gt; klicken Sie auf "Registrierungsanfrage".</value>
+    <value>Der Zugriff auf diese Anwendung erfordert Multi-Faktor-Authentifizierung, die noch aktiviert werden muss. &lt;br&gt;&lt;br&gt; Klicken Sie auf "Registrierungsanfrage".</value>
   </data>
   <data name="ErrorAuthenticating" xml:space="preserve">
-    <value>Fehler beim Authentifizierungsprozess ! 
+    <value>Anmeldefehler ! 
 {0}</value>
   </data>
   <data name="ErrorEmailException" xml:space="preserve">
-    <value>E-Mail ungültiges Format !</value>
+    <value>Ungültiges E-Mail Format !</value>
   </data>
   <data name="ErrorInvalidIdentificationRestart" xml:space="preserve">
-    <value>Ungültige Identifizierung, starten Sie Ihre Sitzung neu.</value>
+    <value>Ungültige Anmeldung, die Sitzung muss neu gestartet werden.</value>
   </data>
   <data name="ErrorInvalidIdentificationRetry" xml:space="preserve">
-    <value>Falsche Identifizierung, versuchen Sie es bitte erneut.</value>
+    <value>Ungültige Anmeldung, versuchen Sie es bitte erneut.</value>
   </data>
   <data name="ErrorInvalidKey" xml:space="preserve">
     <value>Ungültiger geheimer Schlüssel !</value>
   </data>
   <data name="ErrorInvalidPassword" xml:space="preserve">
-    <value>Vorgang abgebrochen, Kennwort ungültig !</value>
+    <value>Falsches Passwort, Vorgang abgebrochen !</value>
   </data>
   <data name="ErrorInvalidPhoneException" xml:space="preserve">
-    <value>Falsche Telefonnummer !</value>
+    <value>Falsche Telefonnummer hinterlegt !</value>
   </data>
   <data name="ErrorLoadingConfigurationFile" xml:space="preserve">
     <value>Fehler beim Laden der Konfigurationsdatei: 
 {0}</value>
   </data>
   <data name="ErrorLoadingConfigurationFileNotFound" xml:space="preserve">
-    <value>Fehler beim Laden der Konfigurationsdatei : Nicht gefunden !</value>
+    <value>Fehler beim Laden der Konfigurationsdatei : Datei nicht gefunden !</value>
   </data>
   <data name="ErrorLoadingUserRegistration" xml:space="preserve">
-    <value>Fehler beim Laden der Benutzerregistrierung ! 
+    <value>Fehler beim Laden der registrierten Benutzer ! 
 {0}</value>
   </data>
   <data name="ErrorPinLength" xml:space="preserve">
-    <value>Ungültige PIN-Länge, {0} Zahlen erforderlich !</value>
+    <value>Ungültige PIN-Länge, {0} Ziffern erforderlich !</value>
   </data>
   <data name="ErrorPinValue" xml:space="preserve">
-    <value>Ungültiger PIN-Wert !</value>
+    <value>PIN stimmt nicht überein !</value>
   </data>
   <data name="ErrorReplayToken" xml:space="preserve">
-    <value>Fehler beim Autehntifizierungsprozess ! One Time Password wurde bereits abgespielt</value>
+    <value>Fehler bei der Anmeldung ! Die einmalige Anmeldeinformation wurde bereits verwendet</value>
   </data>
   <data name="ErrorSendingToastInformation" xml:space="preserve">
-    <value>Fehler beim Senden der Identifikationsanforderung !</value>
+    <value>Versand der Anmelde-Anforderung fehlgeschlagen !</value>
   </data>
   <data name="ErrorSendingToastInformationRetry" xml:space="preserve">
-    <value>Fehler beim Senden der Identifikationsanforderung ! Wiederholung!</value>
+    <value>Versand der Anmelde-Anforderung fehlgeschlagen ! Der Versuch wird wiederholt !</value>
   </data>
   <data name="ErrorValidationTimeWindowElapsed" xml:space="preserve">
-    <value>Fenstervalidierungszeit verstrichen.</value>
+    <value>Validierungszeitfenster verstrichen.</value>
   </data>
 </root>

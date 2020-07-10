@@ -127,16 +127,16 @@
     <value>Fehler beim Löschen von Benutzer {0} {1}</value>
   </data>
   <data name="ErrorEmailNotProvided" xml:space="preserve">
-    <value>E-Mail-Adresse nicht für Benutzer {0} angegeben !</value>
+    <value>E-Mail-Adresse für Benutzer {0} nicht angegeben !</value>
   </data>
   <data name="ErrorInvalidServerName" xml:space="preserve">
-    <value>Ungültiger Servername : Sie müssen Server FQDN !</value>
+    <value>Ungültiger Servername : Es muss ein Server-FQDN angegeben werden !</value>
   </data>
   <data name="ErrorPhoneNotProvided" xml:space="preserve">
-    <value>Telefonnummer nicht für Benutzer {0} !</value>
+    <value>Telefonnummer für Benutzer {0} nicht angegeben !</value>
   </data>
   <data name="ErrorUpdatingUser" xml:space="preserve">
-    <value>Fehler beim Aktualisieren des Benutzers {0} {1}</value>
+    <value>Fehler beim Aktualisieren von Benutzer {0} {1}</value>
   </data>
   <data name="ErrorUserExists" xml:space="preserve">
     <value>User {0} Existiert !</value>

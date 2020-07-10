@@ -118,10 +118,10 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="label1.Text" xml:space="preserve">
-    <value>Überblick über die Dienstleistungen</value>
+    <value>Dienste-Überblick</value>
   </data>
   <data name="label2.Text" xml:space="preserve">
-    <value>Verwaltung der Verbandsorgane und Konfiguration des MFA</value>
+    <value>Verwaltung der Federation-Instanzen und Konfiguration des MFA-Systems</value>
   </data>
   <data name="label3.Text" xml:space="preserve">
     <value>Status der MFA-Konfiguration</value>

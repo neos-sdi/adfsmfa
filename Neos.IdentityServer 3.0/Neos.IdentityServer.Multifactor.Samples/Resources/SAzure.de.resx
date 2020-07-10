@@ -121,6 +121,6 @@
     <value>Verwenden Sie die Option &lt;$otp$&gt; als Sicherheitscode für das Konto {0}</value>
   </data>
   <data name="SMSTwoWayMessage" xml:space="preserve">
-    <value>Sie müssen diesen Code &lt;$otp$&gt; als Sicherheitscode für das Konto {0}</value>
+    <value>Sie müssen diesen Code &lt;$otp$&gt; als Sicherheitscode für das Konto {0} retournieren</value>
   </data>
 </root>

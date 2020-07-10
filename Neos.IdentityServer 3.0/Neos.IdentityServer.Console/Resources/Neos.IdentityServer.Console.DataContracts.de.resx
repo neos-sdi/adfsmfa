@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="MMCFILTEREMAIL" xml:space="preserve">
-    <value>E-Mail-Adresse</value>
+    <value>E-Mail Adresse</value>
   </data>
   <data name="MMCFILTERPHONE" xml:space="preserve">
     <value>Telefonnummer</value>
@@ -133,16 +133,16 @@
     <value>Microsoft Azure</value>
   </data>
   <data name="MMCMETHCHOOSE" xml:space="preserve">
-    <value>Wählen Sie die beste Methode</value>
+    <value>Gewünschte Methode auswählen</value>
   </data>
   <data name="MMCMETHEMAIL" xml:space="preserve">
-    <value>Erhalten Sie eine E-Mail</value>
+    <value>Erhalt einer E-Mail</value>
   </data>
   <data name="MMCMETHNONE" xml:space="preserve">
-    <value>(keine)</value>
+    <value>(Keine)</value>
   </data>
   <data name="MMCMETHPHONE" xml:space="preserve">
-    <value>Abrufen einer Nachricht auf meinem Telefon</value>
+    <value>Erhalt einer Textnachricht</value>
   </data>
   <data name="MMCOPCONTAINS" xml:space="preserve">
     <value>Enthält</value>
@@ -151,16 +151,16 @@
     <value>Endet mit</value>
   </data>
   <data name="MMCOPEQUAL" xml:space="preserve">
-    <value>Gleiche Sätze</value>
+    <value>Ist gleich</value>
   </data>
   <data name="MMCOPNOTCONTAINS" xml:space="preserve">
-    <value>Enthält keine</value>
+    <value>Enthält nicht</value>
   </data>
   <data name="MMCOPNOTEQUAL" xml:space="preserve">
     <value>Ist nicht gleich</value>
   </data>
   <data name="MMCOPSTARTWITH" xml:space="preserve">
-    <value>Beginnen Sie mit</value>
+    <value>Beginnt mit</value>
   </data>
   <data name="MMCMETHBIO" xml:space="preserve">
     <value>Biometrisches Gerät</value>

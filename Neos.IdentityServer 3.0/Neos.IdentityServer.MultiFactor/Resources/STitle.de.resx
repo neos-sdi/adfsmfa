@@ -124,7 +124,7 @@
     <value>Konfigurationsoptionen</value>
   </data>
   <data name="ManageOptionsPageTitle" xml:space="preserve">
-    <value>Einrichten von Optionen</value>
+    <value>Einstellungen vornehmen</value>
   </data>
   <data name="MustUseCodePageTitle" xml:space="preserve">
     <value>Sie müssen einen Sicherheitscode verwenden, um Ihre Identität zu bestätigen. Wie möchten Sie Ihren Code erhalten?</value>
@@ -139,6 +139,6 @@
     <value>Multi-Faktor-Authentifizierung</value>
   </data>
   <data name="TitleRedirecting" xml:space="preserve">
-    <value>Umleiten...</value>
+    <value>Weiterleitung...</value>
   </data>
 </root>

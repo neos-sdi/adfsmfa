@@ -118,42 +118,42 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="OTPUICFGLabel" xml:space="preserve">
-    <value>Single-Use-Zugangscode</value>
+    <value>Einmalcode</value>
   </data>
   <data name="OTPUIChoiceLabel" xml:space="preserve">
-    <value>Verwenden meiner Authentifizierungsanwendung</value>
+    <value>Verwenden meiner Authentifizierungs-App</value>
   </data>
   <data name="OTPUIConfigLabel" xml:space="preserve">
-    <value>Verwenden meiner Authentifizierungsanwendung</value>
+    <value>Verwenden meiner Authentifizierungs-App</value>
   </data>
   <data name="OTPUIEnrollTaskLabel" xml:space="preserve">
-    <value>Registrieren einer Authentifikatoranwendung</value>
+    <value>Registrieren einer Authentifizierungs-App</value>
   </data>
   <data name="OTPUIEnrollValidatedLabel" xml:space="preserve">
-    <value>Konto verifiziert&lt;br&gt;&lt;br&gt;Jetzt können Sie Ihre App verwenden, um sich zu authentifizieren</value>
+    <value>Konto verifiziert&lt;br&gt;&lt;br&gt;Sie können jetzt Ihre App verwenden um sich zu anzumelden</value>
   </data>
   <data name="OTPUIListChoiceLabel" xml:space="preserve">
-    <value>Verwenden Sie Ihre Authentifizierungsanwendung</value>
+    <value>Verwenden Sie Ihre Authentifizierungs-App</value>
   </data>
   <data name="OTPUIListOptionLabel" xml:space="preserve">
-    <value>Authentifizierungsanwendung</value>
+    <value>Authentifizierungs-App</value>
   </data>
   <data name="OTPUIMessage" xml:space="preserve">
-    <value>Geben Sie den Bestätigungscode ein, der in der Authentifikator-App auf Ihrem mobilen Gerät angezeigt wird.</value>
+    <value>Geben Sie den Bestätigungscode ein, der in der Authentifizierungs-App auf Ihrem mobilen Gerät angezeigt wird.</value>
   </data>
   <data name="OTPUIOTPLabel" xml:space="preserve">
     <value>Code eingeben</value>
   </data>
   <data name="OTPUIWIZLabel" xml:space="preserve">
-    <value>Registrieren der Authenticator-App</value>
+    <value>Registrieren der Authentifizierungs-App</value>
   </data>
   <data name="OTPWIZEnroll" xml:space="preserve">
-    <value>Meine Authentifizierungsanwendung registrieren</value>
+    <value>Eine Authentifizierungs-App registrieren</value>
   </data>
   <data name="PROVIDEROTPDESCRIPTION" xml:space="preserve">
     <value>TOTP Multi-Factor-Anbieter</value>
   </data>
   <data name="OTPUIWIZComment" xml:space="preserve">
-    <value>Scannen Sie den QR-Code mit einer TOTP-Anwendung wie Microsoft Authenticator, Google Authenticator für die Registrierung Ihres Kontos</value>
+    <value>Scannen Sie den QR-Code mit einer Authentifizierungs-App für die Registrierung Ihres Kontos</value>
   </data>
 </root>
