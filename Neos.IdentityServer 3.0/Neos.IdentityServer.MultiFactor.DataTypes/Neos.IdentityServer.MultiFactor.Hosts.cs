@@ -2136,7 +2136,7 @@ namespace Neos.IdentityServer.MultiFactor
         public string TotpEnabledAttribute { get; set; } = "msDS-cloudExtensionAttribute18";
 
         [XmlAttribute("publickeyAttribute")]
-        public string PublicKeyCredentialAttribute { get; set; } = "msDS-KeyCredentialLink";
+        public string PublicKeyCredentialAttribute { get; set; } = "otherMailBox";
 
         [XmlAttribute("ClientCertificateAttribute")]
         public string ClientCertificateAttribute { get; set; } = "msDS-cloudExtensionAttribute16";

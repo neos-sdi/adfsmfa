@@ -1382,7 +1382,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
             }
             catch (Exception ex)
             {
-                DataLog.WriteEntry(ex.Message, System.Diagnostics.EventLogEntryType.Error, 5000);
+                DataLog.WriteEntry(ex.Message, System.Diagnostics.EventLogEntryType.Error, 5100);
                 return false;
             }
             return res;
@@ -1393,47 +1393,55 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// </summary>
         public bool CheckAttribute(string domainname, string username, string password, string attributename, int multivalued)
         {
-            DirectoryContext ctx = null;
-            if (!string.IsNullOrEmpty(domainname))
+            try
             {
-                if (!string.IsNullOrEmpty(username) || !string.IsNullOrEmpty(password))
-                    ctx = new DirectoryContext(DirectoryContextType.Domain, domainname, username, password);
-                else
-                    ctx = new DirectoryContext(DirectoryContextType.Domain, domainname);
-            }
-            else
-            {
-                if (!string.IsNullOrEmpty(username) || !string.IsNullOrEmpty(password))
-                    ctx = new DirectoryContext(DirectoryContextType.Domain, username, password);
-                else
-                    ctx = new DirectoryContext(DirectoryContextType.Domain);
-            }
-            if (ctx != null)
-            {
-                using (Domain dom = Domain.GetDomain(ctx))
+                DirectoryContext ctx = null;
+                if (!string.IsNullOrEmpty(domainname))
                 {
-                    using (Forest forest = dom.Forest)
+                    if (!string.IsNullOrEmpty(username) || !string.IsNullOrEmpty(password))
+                        ctx = new DirectoryContext(DirectoryContextType.Domain, domainname, username, password);
+                    else
+                        ctx = new DirectoryContext(DirectoryContextType.Domain, domainname);
+                }
+                else
+                {
+                    if (!string.IsNullOrEmpty(username) || !string.IsNullOrEmpty(password))
+                        ctx = new DirectoryContext(DirectoryContextType.Domain, username, password);
+                    else
+                        ctx = new DirectoryContext(DirectoryContextType.Domain);
+                }
+                if (ctx != null)
+                {
+                    using (Domain dom = Domain.GetDomain(ctx))
                     {
-                        ActiveDirectorySchemaProperty property = forest.Schema.FindProperty(attributename);
-                       if (property!=null)
-                       {
-                            if (property.Name.Equals(attributename))
+                        using (Forest forest = dom.Forest)
+                        {
+                            ActiveDirectorySchemaProperty property = forest.Schema.FindProperty(attributename);
+                            if (property != null)
                             {
-                                switch (multivalued)
+                                if (property.Name.Equals(attributename))
                                 {
-                                    default:
-                                        return property.IsSingleValued;
-                                    case 1:
-                                        return true;
-                                    case 2:
-                                        return !property.IsSingleValued;
+                                    switch (multivalued)
+                                    {
+                                        default:
+                                            return property.IsSingleValued;
+                                        case 1:
+                                            return true;
+                                        case 2:
+                                            return !property.IsSingleValued;
+                                    }
                                 }
                             }
                         }
                     }
                 }
+                return false;
             }
-            return false;
+            catch (Exception ex)
+            {
+                DataLog.WriteEntry(ex.Message, System.Diagnostics.EventLogEntryType.Error, 5100);
+                return false;
+            }
         }
         #endregion
     }
