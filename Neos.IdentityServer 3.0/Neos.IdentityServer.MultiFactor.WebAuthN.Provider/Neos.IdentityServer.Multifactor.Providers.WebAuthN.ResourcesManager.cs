@@ -45,6 +45,10 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
             {
                 resourceCulture = new CultureInfo("en");
             }
+            catch (Exception)
+            {
+                resourceCulture = new CultureInfo("en");
+            }
         }
 
         /// <summary>

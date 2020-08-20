@@ -3837,9 +3837,34 @@ namespace Neos.IdentityServer.MultiFactor
         }
 
         /// <summary>
+        /// PatchLanguageIfNeeded method implementation
+        /// </summary>
+        public static void PatchLanguageIfNeeded(MFAConfig cfg, AuthenticationContext ctx, string[] userlanguages)
+        {
+            if (string.IsNullOrEmpty(cfg.ForcedLanguage))
+            {
+                if (cfg.UseOfUserLanguages)
+                    Utilities.PatchUserLcid(ctx, userlanguages);
+                else
+                    Utilities.ValidateUserLcid(ctx);
+            }
+            else
+            {
+                try
+                {
+                    ctx.Lcid = new CultureInfo(cfg.ForcedLanguage).LCID;
+                }
+                catch
+                {
+                    ctx.Lcid = new CultureInfo("en").LCID;
+                }
+            }
+        }
+
+        /// <summary>
         /// PatchUserLcid method implementation
         /// </summary>
-        public static void PatchUserLcid(AuthenticationContext ctx, string[] userlanguages)
+        private static void PatchUserLcid(AuthenticationContext ctx, string[] userlanguages)
         {
             try
             {
@@ -3860,7 +3885,22 @@ namespace Neos.IdentityServer.MultiFactor
             }
             catch
             {
-               // Let the usercontext LCID as is
+                ValidateUserLcid(ctx);
+            }
+        }
+
+        /// <summary>
+        /// ValidateUserLcid method implementation
+        /// </summary>
+        private static void ValidateUserLcid(AuthenticationContext ctx)
+        {
+            try
+            {
+                ctx.Lcid = new CultureInfo(ctx.Lcid).LCID;
+            }
+            catch
+            {
+                ctx.Lcid = new CultureInfo("en").LCID;
             }
         }
     }

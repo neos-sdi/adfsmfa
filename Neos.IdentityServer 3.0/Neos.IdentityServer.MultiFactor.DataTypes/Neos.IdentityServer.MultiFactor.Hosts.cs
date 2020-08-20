@@ -859,6 +859,9 @@ namespace Neos.IdentityServer.MultiFactor
             get;
             set;
         }
+
+        [XmlAttribute("ForcedLanguage")]
+        public string ForcedLanguage { get; set; }
     }
     #endregion
 

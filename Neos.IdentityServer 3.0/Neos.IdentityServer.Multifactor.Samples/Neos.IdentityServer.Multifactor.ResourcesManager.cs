@@ -49,6 +49,10 @@ namespace Neos.IdentityServer.MultiFactor.Samples
             {
                 resourceCulture = new CultureInfo("en");
             }
+            catch (Exception)
+            {
+                resourceCulture = new CultureInfo("en");
+            }
         }
 
         /// <summary>

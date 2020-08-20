@@ -73,8 +73,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         public bool UseOfUserLanguages { get; set; }
         public FlatAdvertising AdvertisingDays { get; set; }
         public ADFSUserInterfaceKind UiKind { get; set; }
-        public bool UseUIPaginated;    
-        
+        public bool UseUIPaginated { get; set; }
+        public string ForcedLanguage { get; set; }
+
         /// <summary>
         /// Update method implmentation
         /// </summary>
@@ -95,6 +96,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             AdvertisingDays = (FlatAdvertising)cfg.AdvertisingDays;
             UseUIPaginated = cfg.UseUIPaginated;
             UiKind = cfg.UiKind;
+            ForcedLanguage = cfg.ForcedLanguage;
         }
 
         /// <summary>
@@ -117,6 +119,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             cfg.AdvertisingDays = (ConfigAdvertising)AdvertisingDays;
             cfg.UseUIPaginated = UseUIPaginated;
             cfg.UiKind = cfg.UiKind;
+            cfg.ForcedLanguage = ForcedLanguage;
             ManagementService.ADFSManager.WriteConfiguration(host);
         }
 

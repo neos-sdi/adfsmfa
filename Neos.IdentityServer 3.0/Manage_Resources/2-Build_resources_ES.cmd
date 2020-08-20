@@ -16,7 +16,8 @@ resgen Sources\Neos.IdentityServer.Common\Resources\CSMail.es.resx resources\Neo
 resgen Sources\Neos.IdentityServer.MultiFactor.SAS.Azure\Resources\SSAS.es.resx resources\Neos.IdentityServer.MultiFactor.SAS.Resources.SSAS.es.resources
 
 @ECHO SMS
-resgen Sources\Neos.IdentityServer.MultiFactor.SMS.Azure\Resources\SAzure.es.resx resources\Neos.IdentityServer.MultiFactor.SMS.Resources.SAzure.es.resources
-resgen Sources\Neos.IdentityServer.MultiFactor.SMS.Azure\Resources\SHtml.es.resx resources\Neos.IdentityServer.MultiFactor.SMS.Resources.SHtml.es.resources
+resgen Sources\Neos.IdentityServer.MultiFactor.Samples\Resources\SAzure.es.resx resources\Neos.IdentityServer.MultiFactor.Samples.Resources.SAzure.es.resources
+resgen Sources\Neos.IdentityServer.MultiFactor.Samples\Resources\SHtml.es.resx resources\Neos.IdentityServer.MultiFactor.Samples.Resources.SHtml.es.resources
+resgen Sources\Neos.IdentityServer.MultiFactor.Samples\Resources\CSHtml.es.resx resources\Neos.IdentityServer.MultiFactor.Samples.Resources.CSHtml.es.resources
 
 @PAUSE

@@ -67,8 +67,7 @@ namespace Neos.IdentityServer.MultiFactor
         {
             DateTime st = DateTime.Now;
             AuthenticationContext usercontext = new AuthenticationContext(context);
-            if (this.Config.UseOfUserLanguages)
-                Utilities.PatchUserLcid(usercontext, request.UserLanguages);
+            Utilities.PatchLanguageIfNeeded(Config, usercontext, request.UserLanguages);
             ResourcesLocale Resources = new ResourcesLocale(usercontext.Lcid);
 
             IAdapterPresentation result = null;

@@ -256,6 +256,11 @@ namespace MFA
         public bool UseUIPaginated { get; internal set; }
 
         /// <summary>
+        /// <para type="description">Force adfsmfa to no Use localization but a specified language.</para>
+        /// </summary>
+        public string ForcedLanguage { get; set; }
+
+        /// <summary>
         /// implicit conversion to PSConfig
         /// </summary>
         public static explicit operator PSConfig(FlatConfig config)
@@ -277,7 +282,8 @@ namespace MFA
                     UserFeatures = (PSUserFeaturesOptions)config.UserFeatures,
                     AdvertisingDays = (PSAdvertisingDays)config.AdvertisingDays,
                     UseUIPaginated = config.UseUIPaginated,
-                    UiKind = (PSUIKind)config.UiKind
+                    UiKind = (PSUIKind)config.UiKind,
+                    ForcedLanguage = config.ForcedLanguage
                 };
                 return psconfig;
             }
@@ -306,7 +312,8 @@ namespace MFA
                     UserFeatures = (UserFeaturesOptions)psconfig.UserFeatures,
                     AdvertisingDays = (FlatAdvertising)psconfig.AdvertisingDays,
                     UseUIPaginated = psconfig.UseUIPaginated,
-                    UiKind = (ADFSUserInterfaceKind)psconfig.UiKind
+                    UiKind = (ADFSUserInterfaceKind)psconfig.UiKind,
+                    ForcedLanguage = psconfig.ForcedLanguage
                 };
                 return config;
             }
