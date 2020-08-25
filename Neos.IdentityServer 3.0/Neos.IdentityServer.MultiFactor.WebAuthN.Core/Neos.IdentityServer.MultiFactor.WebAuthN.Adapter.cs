@@ -22,6 +22,7 @@ using System.Threading.Tasks;
 using Neos.IdentityServer.MultiFactor.WebAuthN.Objects;
 using Neos.IdentityServer.MultiFactor;
 using Newtonsoft.Json;
+using System.Diagnostics;
 
 namespace Neos.IdentityServer.MultiFactor.WebAuthN
 {
@@ -49,6 +50,9 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
             _config = config;
             _crypto = RandomNumberGenerator.Create();
             _metadataService = metadataService;
+            Trace.WriteLine("IMetadataService initialization");
+            if (_metadataService!=null)
+                _metadataService.Initialize().Wait();
         }
 
         #region CredentialCreateOptions

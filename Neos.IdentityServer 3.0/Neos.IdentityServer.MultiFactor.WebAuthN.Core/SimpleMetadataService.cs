@@ -19,6 +19,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Neos.IdentityServer.MultiFactor.WebAuthN.Metadata;
+using System.Diagnostics;
 
 namespace Neos.IdentityServer.MultiFactor.WebAuthN
 {
@@ -84,6 +85,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
 
         protected virtual async Task InitializeClient(IMetadataRepository repository)
         {
+            Trace.WriteLine("SimpleMetadataService InitializeClient");
             var toc = await repository.GetToc();
 
             foreach (var entry in toc.Entries)
@@ -101,6 +103,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
 
         public virtual async Task Initialize()
         {
+            Trace.WriteLine("IMetadataService Initialize");
             foreach (var client in _repositories)
             {
                 await InitializeClient(client);
