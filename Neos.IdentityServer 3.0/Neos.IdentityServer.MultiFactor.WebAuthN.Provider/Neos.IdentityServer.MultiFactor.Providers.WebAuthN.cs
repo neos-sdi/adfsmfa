@@ -23,6 +23,7 @@ using Neos.IdentityServer.MultiFactor.WebAuthN.Objects;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 
@@ -394,7 +395,6 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
                         };
 
                         _webathn = new WebAuthNAdapter(fido, new SimpleMetadataService(new List<IMetadataRepository> { new StaticMetadataRepository(DateTime.Now.AddMinutes(1).ToUniversalTime()) }));
-
                         _isinitialized = true;
                         return;
                     }

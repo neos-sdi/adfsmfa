@@ -925,7 +925,7 @@ namespace Neos.IdentityServer.MultiFactor
 
             result += "<br/>";
             if (Provider.KeepMySelectedOptionOn())
-                result += "<input id=\"remember\" type=\"checkbox\" name=\"Remember\" checked=\"true\" > " + Resources.GetString(ResourcesLocaleKind.Html, "HtmlCHOOSEOptionRemember") + "<br/>";
+                result += "<input id=\"remember\" type=\"checkbox\" name=\"Remember\" > " + Resources.GetString(ResourcesLocaleKind.Html, "HtmlCHOOSEOptionRemember") + "<br/>";
             result += "<br/>";
             result += "<input id=\"context\" type=\"hidden\" name=\"Context\" value=\"%Context%\">";
             result += "<input id=\"authMethod\" type=\"hidden\" name=\"AuthMethod\" value=\"%AuthMethod%\">";

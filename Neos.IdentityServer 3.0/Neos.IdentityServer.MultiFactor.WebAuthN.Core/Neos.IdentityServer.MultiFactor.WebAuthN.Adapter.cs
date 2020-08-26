@@ -51,8 +51,11 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
             _crypto = RandomNumberGenerator.Create();
             _metadataService = metadataService;
             Trace.WriteLine("IMetadataService initialization");
-            if (_metadataService!=null)
-                _metadataService.Initialize().Wait();
+            if (_metadataService != null)
+            {
+                var result = Task.Factory.StartNew(_metadataService.Initialize);
+                result.Wait(15000);
+            }
         }
 
         #region CredentialCreateOptions
