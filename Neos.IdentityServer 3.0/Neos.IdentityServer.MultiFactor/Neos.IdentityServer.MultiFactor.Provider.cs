@@ -452,7 +452,6 @@ namespace Neos.IdentityServer.MultiFactor
             try
             {
                 string totp = proofData.Properties["totp"].ToString();
-                bool options = proofData.Properties.TryGetValue("options", out object opt);
                 bool pincode = proofData.Properties.TryGetValue("pincode", out object pin);
                 int lnk = Convert.ToInt32(proofData.Properties["lnk"].ToString());
                 if (lnk == 0)
@@ -496,10 +495,17 @@ namespace Neos.IdentityServer.MultiFactor
                             }
                             claims = new Claim[] { GetAuthMethodClaim(usercontext.SelectedMethod) };
 
+                            bool options = proofData.Properties.TryGetValue("options", out object opt);
+                            usercontext.ShowOptions = options;
                             if (options)
                             {
+#if newoptions
+                                usercontext.UIMode = ProviderPageMode.Bypass;
+                                return new AdapterPresentation(this, context);
+#else
                                 usercontext.UIMode = ProviderPageMode.SelectOptions;
                                 return new AdapterPresentation(this, context);
+#endif
                             }
                             else if ((usercontext.FirstChoiceMethod != PreferredMethod.Choose) && (usercontext.FirstChoiceMethod != PreferredMethod.None))
                             {
@@ -984,7 +990,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         private IAdapterPresentation TryActivation(AuthenticationContext usercontext, IAuthenticationContext context, IProofData proofData, HttpListenerRequest request, out Claim[] claims)
         {
-            #region Invitation
+#region Invitation
             ResourcesLocale Resources = new ResourcesLocale(usercontext.Lcid);
             claims = new Claim[] { GetAuthMethodClaim(usercontext.SelectedMethod) };
             IAdapterPresentation result = null;
@@ -1002,7 +1008,7 @@ namespace Neos.IdentityServer.MultiFactor
                 throw new ExternalAuthenticationException(usercontext.UPN + " : " + ex.Message, context);
             }
             return result;
-            #endregion
+#endregion
         }
 
         /// <summary>
@@ -1010,12 +1016,13 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         private IAdapterPresentation TrySelectOptions(AuthenticationContext usercontext, IAuthenticationContext context, IProofData proofData, HttpListenerRequest request, out Claim[] claims)
         {
-            #region Select Options
+#region Select Options
             claims = new Claim[] { GetAuthMethodClaim(usercontext.SelectedMethod) };
             IAdapterPresentation result = null;
             try
             {
                 usercontext.KeyChanged = false;
+                usercontext.ShowOptions = false;
                 if (Config.UserFeatures.CanAccessOptions())
                 {
                     int lnk = Convert.ToInt32(proofData.Properties["lnk"].ToString());
@@ -1077,7 +1084,7 @@ namespace Neos.IdentityServer.MultiFactor
                 throw new ExternalAuthenticationException(usercontext.UPN + " : " + ex.Message, context);
             }
             return result;
-            #endregion
+#endregion
         }
 
         /// <summary>
@@ -1085,7 +1092,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         private IAdapterPresentation TryChooseMethod(AuthenticationContext usercontext, IAuthenticationContext context, IProofData proofData, HttpListenerRequest request, out Claim[] claims)
         {
-            #region Choose method
+#region Choose method
             ResourcesLocale Resources = new ResourcesLocale(usercontext.Lcid);
             claims = null;
             IAdapterPresentation result = null;
@@ -1213,7 +1220,7 @@ namespace Neos.IdentityServer.MultiFactor
                 throw new ExternalAuthenticationException(usercontext.UPN + " : " + ex.Message, context);
             }
             return result;
-            #endregion
+#endregion
         }
 
         /// <summary>
@@ -1221,7 +1228,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         private IAdapterPresentation TryChangePassword(AuthenticationContext usercontext, IAuthenticationContext context, IProofData proofData, HttpListenerRequest request, out Claim[] claims)
         {
-            #region Change Password
+#region Change Password
             ResourcesLocale Resources = new ResourcesLocale(usercontext.Lcid);
             claims = new Claim[] { GetAuthMethodClaim(usercontext.SelectedMethod) };
             IAdapterPresentation result = null;
@@ -1278,7 +1285,7 @@ namespace Neos.IdentityServer.MultiFactor
                 result = new AdapterPresentation(this, context);
             }
             return result;
-            #endregion
+#endregion
         }
 
         /// <summary>
@@ -1286,7 +1293,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         private IAdapterPresentation TryBypass(AuthenticationContext usercontext, IAuthenticationContext context, IProofData proofData, HttpListenerRequest request, out Claim[] claims)
         {
-            #region TryBypass
+#region TryBypass
             ResourcesLocale Resources = new ResourcesLocale(usercontext.Lcid);
             claims = new Claim[] { GetAuthMethodClaim(usercontext.SelectedMethod) };
             CheckOptionsCookie(usercontext, request);
@@ -1306,7 +1313,7 @@ namespace Neos.IdentityServer.MultiFactor
 
                 usercontext.KeyChanged = false;
                 claims = new Claim[] { GetAuthMethodClaim(usercontext.SelectedMethod) };
-                if (usercontext.ShowOptions)
+                if (usercontext.ShowOptions)  // Launch user options
                 {
                     usercontext.ShowOptions = false;
                     usercontext.UIMode = ProviderPageMode.SelectOptions;
@@ -1348,7 +1355,7 @@ namespace Neos.IdentityServer.MultiFactor
                 throw new ExternalAuthenticationException(usercontext.UPN + " : " + ex.Message, context);
             }
             return null;
-            #endregion
+#endregion
         }
 
         /// <summary>
@@ -1356,7 +1363,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         private IAdapterPresentation TryLocking(AuthenticationContext usercontext, IAuthenticationContext context, IProofData proofData, HttpListenerRequest request, out Claim[] claims)
         {
-            #region Locking
+#region Locking
             claims = new Claim[] { GetAuthMethodClaim(usercontext.SelectedMethod) };
             IAdapterPresentation result = null;
             ResourcesLocale Resources = new ResourcesLocale(usercontext.Lcid);
@@ -1379,7 +1386,7 @@ namespace Neos.IdentityServer.MultiFactor
                 throw new ExternalAuthenticationException(usercontext.UPN + " : " + ex.Message, context);
             }
             return result;
-            #endregion
+#endregion
         }
 
         /// <summary>
@@ -1387,7 +1394,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         private IAdapterPresentation TrySendCodeRequest(AuthenticationContext usercontext, IAuthenticationContext context, IProofData proofData, HttpListenerRequest request, out Claim[] claims)
         {
-            #region Requesting Code
+#region Requesting Code
             ResourcesLocale Resources = new ResourcesLocale(usercontext.Lcid);
             claims = new Claim[] { GetAuthMethodClaim(usercontext.SelectedMethod) };
             usercontext.DirectLogin = false;
@@ -1405,7 +1412,9 @@ namespace Neos.IdentityServer.MultiFactor
                         return new AdapterPresentation(this, context);
                     }
                 }
-
+#if newoptions
+                usercontext.ShowOptions = proofData.Properties.TryGetValue("options", out object opt);
+#endif
                 if (!usercontext.IsRemote)
                 {
                     if ((int)AuthenticationResponseKind.Error == PostAuthenticationRequest(usercontext))
@@ -1539,7 +1548,7 @@ namespace Neos.IdentityServer.MultiFactor
                 throw new ExternalAuthenticationException(usercontext.UPN + " : " + ex.Message, context);
             }
             return result;
-            #endregion
+#endregion
         }
 
         /// <summary>
@@ -1547,7 +1556,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         private IAdapterPresentation TrySendAdministrativeRequest(AuthenticationContext usercontext, IAuthenticationContext context, IProofData proofData, HttpListenerRequest request, out Claim[] claims)
         {
-            #region Invitation Request
+#region Invitation Request
             ResourcesLocale Resources = new ResourcesLocale(usercontext.Lcid);
             claims = new Claim[] { GetAuthMethodClaim(usercontext.SelectedMethod) };
             IAdapterPresentation result = null;
@@ -1590,7 +1599,7 @@ namespace Neos.IdentityServer.MultiFactor
                 throw new ExternalAuthenticationException(usercontext.UPN + " : " + ex.Message, context);
             }
             return result;
-            #endregion
+#endregion
         }
 
         /// <summary>
@@ -1598,7 +1607,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         private IAdapterPresentation TrySendKeyRequest(AuthenticationContext usercontext, IAuthenticationContext context, IProofData proofData, HttpListenerRequest request, out Claim[] claims)
         {
-            #region Sendkey Request
+#region Sendkey Request
             ResourcesLocale Resources = new ResourcesLocale(usercontext.Lcid);
             claims = new Claim[] { GetAuthMethodClaim(usercontext.SelectedMethod) };
             IAdapterPresentation result = null;
@@ -1628,7 +1637,7 @@ namespace Neos.IdentityServer.MultiFactor
                 throw new ExternalAuthenticationException(usercontext.UPN + " : " + ex.Message, context);
             }
             return result;
-            #endregion
+#endregion
         }
 
         /// <summary>
@@ -1636,7 +1645,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         private IAdapterPresentation TryShowQRCode(AuthenticationContext usercontext, IAuthenticationContext context, IProofData proofData, HttpListenerRequest request, out Claim[] claims)
         {
-            #region Show QR Code
+#region Show QR Code
             claims = new Claim[] { GetAuthMethodClaim(usercontext.SelectedMethod) };
             IAdapterPresentation result = null;
             try
@@ -1657,7 +1666,7 @@ namespace Neos.IdentityServer.MultiFactor
                 throw new ExternalAuthenticationException(usercontext.UPN + " : " + ex.Message, context);
             }
             return result;
-            #endregion
+#endregion
         }
 
         /// <summary>
@@ -2528,9 +2537,9 @@ namespace Neos.IdentityServer.MultiFactor
             }
             return null;
         }
-        #endregion
+#endregion
 
-        #region private methods
+#region private methods
         /// <summary>
         /// ValidateUserOptions method implementation
         /// </summary>
@@ -2752,9 +2761,9 @@ namespace Neos.IdentityServer.MultiFactor
                 }
             }
         }
-        #endregion
+#endregion
 
-        #region Providers private methods
+#region Providers private methods
         /// <summary>
         /// GetAuthenticationContextRequest method implmentation
         /// </summary>
@@ -2857,9 +2866,9 @@ namespace Neos.IdentityServer.MultiFactor
                 provider.ReleaseAuthenticationData(ctx);
         }
 
-        #endregion
+#endregion
 
-        #region Administrative Provider methods
+#region Administrative Provider methods
         /// <summary>
         /// GetAuthenticationContextRequest method implmentation
         /// </summary>
@@ -2917,7 +2926,7 @@ namespace Neos.IdentityServer.MultiFactor
         }
 #endregion
 
-        #region Secret Key Provider
+#region Secret Key Provider
         /// <summary>
         /// GetAuthenticationContextRequest method implmentation
         /// </summary>
@@ -2975,7 +2984,7 @@ namespace Neos.IdentityServer.MultiFactor
         }
 #endregion
 
-        #region Other Private Methods
+#region Other Private Methods
         /// <summary>
         /// GetAuthMethodClaim method implementation
         /// </summary>
@@ -3174,6 +3183,8 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         private void CheckOptionsCookie(AuthenticationContext usercontext, HttpListenerRequest request)
         {
+            if (usercontext.ShowOptions)
+                return;
             var cook = request.Cookies["showoptions"];
             if (cook != null)
             {
@@ -3241,6 +3252,6 @@ namespace Neos.IdentityServer.MultiFactor
         {
             return Config.KeepMySelectedOptionOn;
         }
-        #endregion
+#endregion
     }
 }

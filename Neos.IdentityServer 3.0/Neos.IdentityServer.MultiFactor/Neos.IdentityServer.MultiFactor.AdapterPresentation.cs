@@ -817,9 +817,11 @@ namespace Neos.IdentityServer.MultiFactor
                         result += "<a class=\"actionLink\" href=\"#\" id=\"enrollpin\" name=\"enrollpin\"  onclick=\"return SetLinkTitle(selectoptionsForm, '7')\"; style=\"cursor: pointer;\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlEnrollPinCode") + "</a>";
                 }
             }
+
             result += "<script>";
             result += "   document.cookie = 'showoptions=;expires=Thu, 01 Jan 1970 00:00:01 GMT;path=/adfs/'";
             result += "</script>";
+
             result += "<br/>";
             result += "<input id=\"context\" type=\"hidden\" name=\"Context\" value=\"%Context%\"/>";
             result += "<input id=\"authMethod\" type=\"hidden\" name=\"AuthMethod\" value=\"%AuthMethod%\"/>";
@@ -1224,6 +1226,7 @@ namespace Neos.IdentityServer.MultiFactor
             result += "   return true;" + CR;
             result += "}" + CR;
             result += CR;
+
             result += "</script>" + CR;
             return result;
         }
@@ -1257,14 +1260,15 @@ namespace Neos.IdentityServer.MultiFactor
                 if (!string.IsNullOrEmpty(prov.GetUIWarningThirdPartyLabel(usercontext)) && (usercontext.IsTwoWay))
                     result += "<div class=\"error smallText\">" + prov.GetUIWarningThirdPartyLabel(usercontext) + "</div>";
                 result += "<br />";
+
                 if (usercontext.IsTwoWay && (Provider.Config.UserFeatures.CanAccessOptions()))
                 {
-                    result += "<input id=\"useroptions\" type=\"checkbox\" name=\"useroptions\" onclick=\"SetOptions(refreshForm)\"; /> " + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMAccessOptions");
-                    result += "<script>";
-                    result += "   document.cookie = 'showoptions=;expires=Thu, 01 Jan 1970 00:00:01 GMT;path=/adfs/'";
-                    result += "</script>";
+                    if (Provider.HasAccessToOptions(prov))
+                        result += "<input id=\"options\" type=\"checkbox\" name=\"options\" onclick=\"SetOptions(refreshForm)\" /> " + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMAccessOptions");
+                    result += "<script type='text/javascript'>document.cookie = 'showoptions=;expires=Thu, 01 Jan 1970 00:00:01 GMT;path=/adfs/'</script>";
                     result += "<br/><br/><br/>";
                 }
+
                 result += "<a class=\"actionLink\" href=\"#\" id=\"nocode\" name=\"nocode\" onclick=\"return SetLinkTitle(refreshForm, '3')\"; style=\"cursor: pointer;\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMNoCode") + "</a>";
                 result += "<input id=\"lnk\" type=\"hidden\" name=\"lnk\" value=\"0\"/>";
             }
@@ -1325,24 +1329,6 @@ namespace Neos.IdentityServer.MultiFactor
             result += "}" + CR;
             result += CR;
 
-            result += "function SetOptions(frm)" + CR;
-            result += "{" + CR;
-            result += "   var opt = document.getElementById('useroptions');" + CR;
-            result += "   if (opt)" + CR;
-            result += "   {" + CR;
-            result += "      if (opt.checked)" + CR;
-            result += "      {" + CR;
-            result += "         document.cookie = 'showoptions=1;expires=" + dt + ";path=/adfs/';" + CR;
-            result += "      }" + CR;
-            result += "      else" + CR;
-            result += "      {" + CR;
-            result += "         document.cookie = 'showoptions=;expires=Thu, 01 Jan 1970 00:00:01 GMT';" + CR;
-            result += "      }" + CR;
-            result += "   }";
-            result += "   return true;" + CR;
-            result += "}" + CR;
-            result += CR;
-
             result += GetWebAuthNAssertionScript(usercontext);
             result += GetFormHtmlWebAuthNSupport(usercontext);
 
@@ -1396,7 +1382,8 @@ namespace Neos.IdentityServer.MultiFactor
             {
                 if (Provider.Config.UserFeatures.CanAccessOptions())
                 {
-                    result += "<input id=\"useroptions\" type=\"checkbox\" name=\"useroptions\" onclick=\"SetOptions(refreshbiometricForm)\"; /> " + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMAccessOptions");
+                    if (Provider.HasAccessToOptions(prov))
+                        result += "<input id=\"Options\" type=\"checkbox\" name=\"Options\" /> " + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMAccessOptions");
                     result += "<script>";
                     result += "   document.cookie = 'showoptions=;expires=Thu, 01 Jan 1970 00:00:01 GMT;path=/adfs/'";
                     result += "</script>";
@@ -1416,9 +1403,9 @@ namespace Neos.IdentityServer.MultiFactor
             result += "</form>";
             return result;
         }
-        #endregion
+#endregion
 
-        #region InvitationRequest
+#region InvitationRequest
         /// <summary>
         /// GetFormPreRenderHtmlSendAdministrativeRequest implementation
         /// </summary>
@@ -1470,9 +1457,9 @@ namespace Neos.IdentityServer.MultiFactor
             result += "</form>";
             return result;
         }
-        #endregion
+#endregion
 
-        #region SendKeyRequest
+#region SendKeyRequest
         /// <summary>
         /// GetFormPreRenderHtmlSendKeyRequest method implementation
         /// </summary>
@@ -1523,9 +1510,9 @@ namespace Neos.IdentityServer.MultiFactor
             result += "</form>";
             return result;
         }
-        #endregion
+#endregion
 
-        #region EnrollOTP
+#region EnrollOTP
         /// <summary>
         /// GetFormPreRenderHtmlEnrollOTP method implementation
         /// </summary>
@@ -1779,9 +1766,9 @@ namespace Neos.IdentityServer.MultiFactor
             result += "</form>";
             return result;
         }
-        #endregion
+#endregion
 
-        #region EnrollEmail
+#region EnrollEmail
         /// <summary>
         /// GetFormPreRenderHtmlEnrollEmail method implementation
         /// </summary>
@@ -1983,9 +1970,9 @@ namespace Neos.IdentityServer.MultiFactor
             result += "</form>";
             return result;
         }
-        #endregion
+#endregion
 
-        #region EnrollPhone
+#region EnrollPhone
         /// <summary>
         /// GetFormPreRenderHtmlEnrollPhone method implementation
         /// </summary>
@@ -2195,9 +2182,9 @@ namespace Neos.IdentityServer.MultiFactor
             result += "</form>";
             return result;
         }
-        #endregion
+#endregion
 
-        #region EnrollBiometrics
+#region EnrollBiometrics
         /// <summary>
         /// GetFormPreRenderHtmlEnrollBio method implementation
         /// </summary>
@@ -2466,9 +2453,9 @@ namespace Neos.IdentityServer.MultiFactor
             result += "</form>";
             return result;
         }
-        #endregion
+#endregion
 
-        #region EnrollPINCode
+#region EnrollPINCode
         /// <summary>
         /// GetFormPreRenderHtmlEnrollPinCode method implementation
         /// </summary>
@@ -2594,9 +2581,9 @@ namespace Neos.IdentityServer.MultiFactor
             result += "</form>";
             return result;
         }
-        #endregion
+#endregion
 
-        #region Private methods
+#region Private methods
         /// <summary>
         /// GetPartHtmlSelectMethod method ipmplmentation
         /// </summary>
@@ -2862,6 +2849,6 @@ namespace Neos.IdentityServer.MultiFactor
 
             return result;
         }
-        #endregion
+#endregion
     }
 }
