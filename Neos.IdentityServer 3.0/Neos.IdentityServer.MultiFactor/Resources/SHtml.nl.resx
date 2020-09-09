@@ -141,9 +141,6 @@
   <data name="HtmlEnrollBiometrics" xml:space="preserve">
     <value>Schrijf mijn biometrische apparaat in</value>
   </data>
-  <data name="HtmlEnrollEmail" xml:space="preserve">
-    <value>Schrijf mijn persoonlijke e-mailadres in</value>
-  </data>
   <data name="HtmlEnrollOTP" xml:space="preserve">
     <value>Schrijf mijn authenticatie-aanvraag in</value>
   </data>
@@ -252,14 +249,8 @@
   <data name="HtmlUIMQuit" xml:space="preserve">
     <value>Afsluiten</value>
   </data>
-  <data name="HtmlUIMRecordNewKey" xml:space="preserve">
-    <value>Nieuwe sleutel</value>
-  </data>
   <data name="HtmlUIMustPrepareLabel" xml:space="preserve">
     <value>U moet :</value>
-  </data>
-  <data name="HtmlUINext" xml:space="preserve">
-    <value>Volgende</value>
   </data>
   <data name="HtmlUIPinOptionLabel" xml:space="preserve">
     <value>PIN-code</value>
@@ -283,5 +274,14 @@ U in de toekomst MFA-validatie gebruiken.</value>
   </data>
   <data name="HtmlLabelWRAddBiometrics" xml:space="preserve">
     <value>Voeg een biometrisch apparaat toe</value>
+  </data>
+  <data name="HtmlUIMRecordNewKey" xml:space="preserve">
+    <value>Doorgaan</value>
+  </data>
+  <data name="HtmlUINext" xml:space="preserve">
+    <value>Negeren</value>
+  </data>
+  <data name="HtmlEnrollEmail" xml:space="preserve">
+    <value>Mijn e-mailadres inschrijven</value>
   </data>
 </root>

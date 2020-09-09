@@ -862,38 +862,6 @@ namespace MFA
         /// </summary>
         public string Password { get; set; }
 
-        /*
-            /// <summary>
-            /// <para type="description">Used when RNG is selected, for choosing the size of the generated random number (128 to 512 bytes).</para> RNG
-            /// </summary>
-            public PSKeyGeneratorMode KeyGenerator { get; set; }
-
-
-
-            /// <summary>
-            /// <para type="description">Certificate Thumbprint when using KeyFormat==RSA. the certificate is deployed on all ADFS servers in Crypting Certificates store</para> RSA
-            /// </summary>
-            public string CertificateThumbprint { get; set; }
-
-            /// <summary>
-            /// <para type="description">Use a distinct certificate for each user when using KeyFormat==RSA. each certificate is deployed on ADDS or SQL Database</para> RSA
-            /// </summary>
-            public bool CertificatePerUser { get; set; }
-
-            /// <summary>
-            /// <para type="description">Certificate validity duration in Years (5 by default)</para> RSA
-            /// </summary>
-            public int CertificateValidity { get; set; }
-        */
-
-        /*           
-            /// <summary>
-            /// <para type="description">External key Manager when using CUSTOM Keyformat.</para> CUSTOM
-            /// <para type="description">You must specify an assembly reference and parameters.</para>
-            /// </summary>
-            public PSExternalKeyManager ExternalKeyManager { get; set; }
-        */
-
         /// <summary>
         /// explicit operator from MMCKeysConfig
         /// </summary>

@@ -499,13 +499,8 @@ namespace Neos.IdentityServer.MultiFactor
                             usercontext.ShowOptions = options;
                             if (options)
                             {
-#if newoptions
                                 usercontext.UIMode = ProviderPageMode.Bypass;
                                 return new AdapterPresentation(this, context);
-#else
-                                usercontext.UIMode = ProviderPageMode.SelectOptions;
-                                return new AdapterPresentation(this, context);
-#endif
                             }
                             else if ((usercontext.FirstChoiceMethod != PreferredMethod.Choose) && (usercontext.FirstChoiceMethod != PreferredMethod.None))
                             {
@@ -1412,9 +1407,7 @@ namespace Neos.IdentityServer.MultiFactor
                         return new AdapterPresentation(this, context);
                     }
                 }
-#if newoptions
                 usercontext.ShowOptions = proofData.Properties.TryGetValue("options", out object opt);
-#endif
                 if (!usercontext.IsRemote)
                 {
                     if ((int)AuthenticationResponseKind.Error == PostAuthenticationRequest(usercontext))

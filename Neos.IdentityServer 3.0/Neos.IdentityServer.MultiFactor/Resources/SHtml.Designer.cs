@@ -133,7 +133,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Enroll my personal email address.
+        ///   Recherche une chaîne localisée semblable à Enroll my email address.
         /// </summary>
         internal static string HtmlEnrollEmail {
             get {
@@ -514,7 +514,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Get a new key.
+        ///   Recherche une chaîne localisée semblable à Continue.
         /// </summary>
         internal static string HtmlUIMRecordNewKey {
             get {
@@ -532,7 +532,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Next.
+        ///   Recherche une chaîne localisée semblable à Ignore.
         /// </summary>
         internal static string HtmlUINext {
             get {

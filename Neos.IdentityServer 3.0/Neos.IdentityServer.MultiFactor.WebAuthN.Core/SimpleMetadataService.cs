@@ -85,7 +85,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
 
         protected virtual async Task InitializeClient(IMetadataRepository repository)
         {
-            Trace.WriteLine("SimpleMetadataService InitializeClient");
+            Trace.WriteLine("SimpleMetadataService InitializeClient Start");
             var toc = await repository.GetToc();
 
             foreach (var entry in toc.Entries)
@@ -99,6 +99,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
                     }
                 }
             }
+            Trace.WriteLine("SimpleMetadataService InitializeClient End");
         }
 
         public virtual async Task Initialize()
@@ -109,6 +110,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
                 await InitializeClient(client);
             }
             _initialized = true;
+            Trace.WriteLine("IMetadataService Initialized");
         }
 
         public virtual bool IsInitialized()

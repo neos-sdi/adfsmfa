@@ -1084,7 +1084,7 @@ namespace Neos.IdentityServer.MultiFactor
             }
             else
             {
-                result += "<form method=\"post\" id=\"bypassForm\" autocomplete=\"off\" title=\"Redirecting\" >";
+                result += "<form method=\"post\" id=\"bypassForm\" autocomplete=\"off\" title=\""+ Resources.GetString(ResourcesLocaleKind.Titles, "TitleRedirecting") + "\" >";
                 result += "<input id=\"context\" type=\"hidden\" name=\"Context\" value=\"%Context%\"/>";
                 result += "<input id=\"authMethod\" type=\"hidden\" name=\"AuthMethod\" value=\"%AuthMethod%\"/>";
             }

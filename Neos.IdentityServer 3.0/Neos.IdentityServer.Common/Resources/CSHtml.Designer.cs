@@ -133,7 +133,7 @@ namespace Neos.IdentityServer.MultiFactor.Common.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Personal email address.
+        ///   Recherche une chaîne localisée semblable à Email address.
         /// </summary>
         internal static string MAILUICFGLabel {
             get {
@@ -142,7 +142,7 @@ namespace Neos.IdentityServer.MultiFactor.Common.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Receive an email on my personal address.
+        ///   Recherche une chaîne localisée semblable à Receive an email.
         /// </summary>
         internal static string MAILUIChoiceLabel {
             get {
@@ -151,7 +151,7 @@ namespace Neos.IdentityServer.MultiFactor.Common.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Send an email on my personal address.
+        ///   Recherche une chaîne localisée semblable à Send an email.
         /// </summary>
         internal static string MAILUIConfigLabel {
             get {
@@ -160,7 +160,7 @@ namespace Neos.IdentityServer.MultiFactor.Common.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Send an email on my personal address {0}.
+        ///   Recherche une chaîne localisée semblable à Send an email to my {0} address.
         /// </summary>
         internal static string MAILUIConfigLabel2 {
             get {
@@ -169,7 +169,7 @@ namespace Neos.IdentityServer.MultiFactor.Common.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Provide a personal email address.
+        ///   Recherche une chaîne localisée semblable à Provide an email address.
         /// </summary>
         internal static string MAILUIEnrollTaskLabel {
             get {
@@ -187,7 +187,7 @@ namespace Neos.IdentityServer.MultiFactor.Common.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Receive an email on my personal address.
+        ///   Recherche une chaîne localisée semblable à Get an email.
         /// </summary>
         internal static string MAILUIListChoiceLabel {
             get {
@@ -196,7 +196,7 @@ namespace Neos.IdentityServer.MultiFactor.Common.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Personal email address.
+        ///   Recherche une chaîne localisée semblable à Email address.
         /// </summary>
         internal static string MAILUIListOptionLabel {
             get {
@@ -241,7 +241,7 @@ namespace Neos.IdentityServer.MultiFactor.Common.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Enroll my personal email address.
+        ///   Recherche une chaîne localisée semblable à Save my email address.
         /// </summary>
         internal static string MAILWIZEnroll {
             get {

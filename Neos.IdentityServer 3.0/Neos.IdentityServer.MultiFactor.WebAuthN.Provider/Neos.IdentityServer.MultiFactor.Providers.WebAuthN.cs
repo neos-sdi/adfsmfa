@@ -363,6 +363,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
             {
                 if (!_isinitialized)
                 {
+                    Trace.WriteLine("WebAuthNProvider Initialize");
                     if (externalsystem is WebAuthNProviderParams)
                     {
                         WebAuthNProviderParams param = externalsystem as WebAuthNProviderParams;
@@ -393,13 +394,15 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
                             ChallengeSize = param.Configuration.ChallengeSize,
                             RequireValidAttestationRoot = param.Configuration.RequireValidAttestationRoot
                         };
-
+                        Trace.WriteLine("WebAuthNAdapter Create");
                         _webathn = new WebAuthNAdapter(fido, new SimpleMetadataService(new List<IMetadataRepository> { new StaticMetadataRepository(DateTime.Now.AddMinutes(1).ToUniversalTime()) }));
                         _isinitialized = true;
+                        Trace.WriteLine("WebAuthNAdapter Created");
+                        Trace.WriteLine("WebAuthNProvider Initialized");
                         return;
                     }
                     else
-                        throw new InvalidCastException("Invalid WebAuthN Provider !");
+                        throw new InvalidCastException("Invalid WebAuthN Provider !");                   
                 }
             }
             catch (Exception ex)
