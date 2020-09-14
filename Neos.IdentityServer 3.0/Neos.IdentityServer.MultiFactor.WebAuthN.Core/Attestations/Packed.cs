@@ -33,19 +33,19 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
     internal enum MetadataAttestationType
     {
         ATTESTATION_BASIC_FULL = 0x3e07,
-        ATTESTATION_BASIC_SURROGATE = 0x3e08
+        ATTESTATION_BASIC_SURROGATE = 0x3e08,
+        ATTESTATION_ATTCA = 0x3e0a,
+        ATTESTATION_HELLO = 0x3e10
     }
 
     internal class Packed : AttestationFormat
     {
         private readonly IMetadataService _metadataService;
-        private readonly bool _requireValidAttestationRoot;
 
-        public Packed(CBORObject attStmt, byte[] authenticatorData, byte[] clientDataHash, IMetadataService metadataService, bool requireValidAttestationRoot)
-            : base(attStmt, authenticatorData, clientDataHash)
+        public Packed(CBORObject attStmt, byte[] authenticatorData, byte[] clientDataHash, IMetadataService metadataService)
+		    : base(attStmt, authenticatorData, clientDataHash)
         {
             _metadataService = metadataService;
-            _requireValidAttestationRoot = requireValidAttestationRoot;
         }
 
         public static bool IsValidPackedAttnCertSubject(string attnCertSubj)
@@ -71,7 +71,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
             if (null == Sig || CBORType.ByteString != Sig.Type || 0 == Sig.GetByteString().Length)
                 throw new VerificationException("Invalid packed attestation signature");
 
-            if (null == Alg || CBORType.Number != Alg.Type)
+            if (null == Alg || true != Alg.IsNumber)
                 throw new VerificationException("Invalid packed attestation algorithm");
 
             // If x5c is present, this indicates that the attestation type is not ECDAA
@@ -88,8 +88,9 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
                         throw new VerificationException("Malformed x5c cert found in packed attestation statement");
 
                     var x5ccert = new X509Certificate2(enumerator.Current.GetByteString());
-
-                    if (DateTime.UtcNow < x5ccert.NotBefore || DateTime.UtcNow > x5ccert.NotAfter)
+                    
+                    // it's correct to compare using DateTime.Now.
+					if (DateTime.Now < x5ccert.NotBefore || DateTime.Now > x5ccert.NotAfter)
                         throw new VerificationException("Packed signing certificate expired or not yet valid");
                 }
 
@@ -97,11 +98,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
                 var attestnCert = new X509Certificate2(X5c.Values.First().GetByteString());
 
                 // 2a. Verify that sig is a valid signature over the concatenation of authenticatorData and clientDataHash 
-                // using the attestation public key in attestnCert with the algorithm specified in alg
-                var packedPubKey = attestnCert.GetECDsaPublicKey(); // attestation public key
-                if (false == CryptoUtils.algMap.ContainsKey(Alg.AsInt32()))
-                    throw new VerificationException("Invalid attestation algorithm");
-
+                // using the attestation public key in attestnCert with the algorithm specified in alg			
                 var cpk = new CredentialPublicKey(attestnCert, Alg.AsInt32());
                 if (true != cpk.Verify(Data, Sig.GetByteString()))
                     throw new VerificationException("Invalid full packed signature");
@@ -120,15 +117,18 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
                 // the Extension OID 1.3.6.1.4.1.45724.1.1.4 (id-fido-gen-ce-aaguid) MUST be present, containing the AAGUID as a 16-byte OCTET STRING
                 // verify that the value of this extension matches the aaguid in authenticatorData
                 var aaguid = AaguidFromAttnCertExts(attestnCert.Extensions);
+				
+				// 2biiii. The Basic Constraints extension MUST have the CA component set to false
+                if (IsAttnCertCACert(attestnCert.Extensions))
+                    throw new VerificationException("Attestion certificate has CA cert flag present");
+				
+				// 2c. If attestnCert contains an extension with OID 1.3.6.1.4.1.45724.1.1.4 (id-fido-gen-ce-aaguid) verify that the value of this extension matches the aaguid in authenticatorData
                 if (aaguid != null)
                 {
                     if (0 != AttestedCredentialData.FromBigEndian(aaguid).CompareTo(AuthData.AttestedCredentialData.AaGuid))
                         throw new VerificationException("aaguid present in packed attestation cert exts but does not match aaguid from authData");
                 }
-                // 2d. The Basic Constraints extension MUST have the CA component set to false
-                if (IsAttnCertCACert(attestnCert.Extensions))
-                    throw new VerificationException("Attestion certificate has CA cert flag present");
-
+				
                 // id-fido-u2f-ce-transports 
                 var u2ftransports = U2FTransportsFromAttnCert(attestnCert.Extensions);
 
@@ -145,28 +145,10 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
                 // If the authenticator is listed as in the metadata as one that should produce a basic full attestation, build and verify the chain
                 if (entry?.MetadataStatement?.AttestationTypes.Contains((ushort)MetadataAttestationType.ATTESTATION_BASIC_FULL) ?? false)
                 {
-                    var root = new X509Certificate2(Convert.FromBase64String(entry.MetadataStatement.AttestationRootCertificates.FirstOrDefault()));
-                    var chain = new X509Chain();
-                    chain.ChainPolicy.ExtraStore.Add(root);
-                    chain.ChainPolicy.RevocationMode = X509RevocationMode.NoCheck;
-                    chain.ChainPolicy.VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority;
-                    if (trustPath.Length > 1)
-                    {
-                        foreach (var cert in trustPath.Skip(1).Reverse())
-                        {
-                            chain.ChainPolicy.ExtraStore.Add(cert);
-                        }
-                    }
-                    var valid = chain.Build(trustPath[0]);
-
-                    if (_requireValidAttestationRoot)
-                    {
-                        // because we are using AllowUnknownCertificateAuthority we have to verify that the root matches ourselves
-                        var chainRoot = chain.ChainElements[chain.ChainElements.Count - 1].Certificate;
-                        valid = valid && chainRoot.RawData.SequenceEqual(root.RawData);
-                    }
-
-                    if (false == valid)
+                	var attestationRootCertificates = entry.MetadataStatement.AttestationRootCertificates
+                        .Select(x => new X509Certificate2(Convert.FromBase64String(x)))
+                        .ToArray();
+                    if (false == ValidateTrustChain(trustPath, attestationRootCertificates))
                     {
                         throw new VerificationException("Invalid certificate chain in packed attestation");
                     }

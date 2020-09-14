@@ -7608,7 +7608,7 @@ namespace MFA
 
     #region Install-MFASamples
     /// <summary>
-    ///     <para type="synopsis">Install & configure MFA Samples</para>
+    ///     <para type="synopsis">Install and configure MFA Samples</para>
     /// </summary>
     /// <example>
     ///     <para>Install-MFASamples -Kind Quiz</para>

@@ -166,7 +166,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
 
                 case "tpm":
                     // https://www.w3.org/TR/webauthn/#tpm-attestation
-                    verifier = new Tpm(AttestationObject.AttStmt, AttestationObject.AuthData, clientDataHash, config.RequireValidAttestationRoot);
+                    verifier = new Tpm(AttestationObject.AttStmt, AttestationObject.AuthData, clientDataHash, metadataService);
                     break;
 
                 case "android-key":
@@ -181,12 +181,12 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
 
                 case "fido-u2f":
                     // https://www.w3.org/TR/webauthn/#fido-u2f-attestation
-                    verifier = new FidoU2f(AttestationObject.AttStmt, AttestationObject.AuthData, clientDataHash, metadataService, config.RequireValidAttestationRoot);
+                    verifier = new FidoU2f(AttestationObject.AttStmt, AttestationObject.AuthData, clientDataHash, metadataService);
                     break;
 
                 case "packed":
                     // https://www.w3.org/TR/webauthn/#packed-attestation
-                    verifier = new Packed(AttestationObject.AttStmt, AttestationObject.AuthData, clientDataHash, metadataService, config.RequireValidAttestationRoot);
+                    verifier = new Packed(AttestationObject.AttStmt, AttestationObject.AuthData, clientDataHash, metadataService);
                     break;
 
                 default: throw new VerificationException("Missing or unknown attestation type");

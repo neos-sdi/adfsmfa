@@ -148,7 +148,9 @@
     <EmbeddedResource Include="Resources\CSHtml.da.resx" />
     <EmbeddedResource Include="Resources\CSHtml.de.resx" />
     <EmbeddedResource Include="Resources\CSHtml.es.resx" />
-    <EmbeddedResource Include="Resources\CSHtml.fr-CA.resx" />
+    <EmbeddedResource Include="Resources\CSHtml.fr-CA.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Resources\CSHtml.fr.resx" />
     <EmbeddedResource Include="Resources\CSHtml.it.resx" />
     <EmbeddedResource Include="Resources\CSHtml.ja.resx" />

@@ -13,7 +13,6 @@
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
 using System;
-using System.Diagnostics;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
@@ -183,7 +182,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
                 throw new VerificationException("Failed to extract public key from android key: " + ex.Message, ex);
             }
 
-            if (null == Alg || CBORType.Number != Alg.Type || false == CryptoUtils.algMap.ContainsKey(Alg.AsInt32()))
+            if (null == Alg || true != Alg.IsNumber)
                 throw new VerificationException("Invalid android key attestation algorithm");
 
             byte[] ecsig;
@@ -196,7 +195,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
                 throw new VerificationException("Failed to decode android key attestation signature from ASN.1 encoded form", ex);
             }
 
-            if (true != androidKeyPubKey.VerifyData(Data, ecsig, CryptoUtils.algMap[Alg.AsInt32()]))
+            if (true != androidKeyPubKey.VerifyData(Data, ecsig, CryptoUtils.HashAlgFromCOSEAlg(Alg.AsInt32())))
                 throw new VerificationException("Invalid android key attestation signature");
 
             // Verify that the public key in the first certificate in x5c matches the credentialPublicKey in the attestedCredentialData in authenticatorData.

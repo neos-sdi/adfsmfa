@@ -38,6 +38,7 @@ using System.Security.Cryptography.X509Certificates;
 using Neos.IdentityServer.MultiFactor.WebAuthN.Library.ASN;
 using Neos.IdentityServer.MultiFactor.WebAuthN.Objects;
 
+
 namespace Neos.IdentityServer.MultiFactor.WebAuthN
 {
     public static class CryptoUtils
@@ -71,24 +72,29 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
             }
         }
 
-        public static readonly Dictionary<int, HashAlgorithmName> algMap = new Dictionary<int, HashAlgorithmName>
+		public static HashAlgorithmName HashAlgFromCOSEAlg(int alg)
         {
-            {(int) COSE.Algorithm.RS1, HashAlgorithmName.SHA1 },
-            {(int) COSE.Algorithm.ES256, HashAlgorithmName.SHA256},
-            {(int) COSE.Algorithm.ES384, HashAlgorithmName.SHA384 },
-            {(int) COSE.Algorithm.ES512, HashAlgorithmName.SHA512 },
-            {(int) COSE.Algorithm.PS256, HashAlgorithmName.SHA256 },
-            {(int) COSE.Algorithm.PS384, HashAlgorithmName.SHA384 },
-            {(int) COSE.Algorithm.PS512, HashAlgorithmName.SHA512 },
-            {(int) COSE.Algorithm.RS256, HashAlgorithmName.SHA256 },
-            {(int) COSE.Algorithm.RS384, HashAlgorithmName.SHA384 },
-            {(int) COSE.Algorithm.RS512, HashAlgorithmName.SHA512 },
-            {4, HashAlgorithmName.SHA1 },
-            {11, HashAlgorithmName.SHA256 },
-            {12, HashAlgorithmName.SHA384 },
-            {13, HashAlgorithmName.SHA512 },
-            {(int) COSE.Algorithm.EdDSA, HashAlgorithmName.SHA512 }
-        };
+            switch ((COSE.Algorithm)alg)
+            {
+                case COSE.Algorithm.RS1: return HashAlgorithmName.SHA1;
+                case COSE.Algorithm.ES256: return HashAlgorithmName.SHA256;
+                case COSE.Algorithm.ES384: return HashAlgorithmName.SHA384;
+                case COSE.Algorithm.ES512: return HashAlgorithmName.SHA512;
+                case COSE.Algorithm.PS256: return HashAlgorithmName.SHA256;
+                case COSE.Algorithm.PS384: return HashAlgorithmName.SHA384;
+                case COSE.Algorithm.PS512: return HashAlgorithmName.SHA512;
+                case COSE.Algorithm.RS256: return HashAlgorithmName.SHA256;
+                case COSE.Algorithm.RS384: return HashAlgorithmName.SHA384;
+                case COSE.Algorithm.RS512: return HashAlgorithmName.SHA512;
+                case (COSE.Algorithm)4: return HashAlgorithmName.SHA1;
+                case (COSE.Algorithm)11: return HashAlgorithmName.SHA256;
+                case (COSE.Algorithm)12: return HashAlgorithmName.SHA384;
+                case (COSE.Algorithm)13: return HashAlgorithmName.SHA512;
+                case COSE.Algorithm.EdDSA: return HashAlgorithmName.SHA512;
+                default:
+                    throw new VerificationException("Unrecognized COSE alg value");
+            };
+        }        
 
         public static byte[] SigFromEcDsaSig(byte[] ecDsaSig, int keySize)
         {

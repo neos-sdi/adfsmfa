@@ -11,12 +11,11 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
     internal class FidoU2f : AttestationFormat
     {
         private readonly IMetadataService _metadataService;
-        private readonly bool _requireValidAttestationRoot;
-        public FidoU2f(CBORObject attStmt, byte[] authenticatorData, byte[] clientDataHash, IMetadataService metadataService, bool requireValidAttestationRoot) : base(attStmt, authenticatorData, clientDataHash)
+        public FidoU2f(CBORObject attStmt, byte[] authenticatorData, byte[] clientDataHash, IMetadataService metadataService) : base(attStmt, authenticatorData, clientDataHash)
         {
             _metadataService = metadataService;
-            _requireValidAttestationRoot = requireValidAttestationRoot;
-        }
+        }        
+
         public override void Verify()
         {
             // verify that aaguid is 16 empty bytes (note: required by fido2 conformance testing, could not find this in spec?)
@@ -36,49 +35,9 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
             var cert = new X509Certificate2(X5c.Values.First().GetByteString());
 
             // TODO : Check why this variable isn't used. Remove it or use it.
+
             var u2ftransports = U2FTransportsFromAttnCert(cert.Extensions);
-
-            var aaguid = AaguidFromAttnCertExts(cert.Extensions);
-
-            if (null != _metadataService && null != aaguid)
-            {
-                var guidAaguid = AttestedCredentialData.FromBigEndian(aaguid);
-                var entry = _metadataService.GetEntry(guidAaguid);
-
-                if (null != entry && null != entry.MetadataStatement)
-                {
-                    if (entry.Hash != entry.MetadataStatement.Hash)
-                        throw new VerificationException("Authenticator metadata statement has invalid hash");
-                    var root = new X509Certificate2(Convert.FromBase64String(entry.MetadataStatement.AttestationRootCertificates.FirstOrDefault()));
-                    
-                    var chain = new X509Chain();
-                    chain.ChainPolicy.ExtraStore.Add(root);
-                    chain.ChainPolicy.RevocationMode = X509RevocationMode.NoCheck;
-
-                    var valid = chain.Build(cert);
-
-                    if (//  the root cert has exactly one status listed against it
-                        chain.ChainElements[chain.ChainElements.Count - 1].ChainElementStatus.Length == 1 &&
-                        // and that that status is a status of exactly UntrustedRoot
-                        chain.ChainElements[chain.ChainElements.Count - 1].ChainElementStatus[0].Status == X509ChainStatusFlags.UntrustedRoot)
-                    {
-                        valid = true;
-                    }
-
-                    if (_requireValidAttestationRoot)
-                    {
-                        // because we are using AllowUnknownCertificateAuthority we have to verify that the root matches ourselves
-                        var chainRoot = chain.ChainElements[chain.ChainElements.Count - 1].Certificate;
-                        valid = valid && chainRoot.RawData.SequenceEqual(root.RawData);
-                    }
-
-                    if (false == valid)
-                    {
-                        throw new VerificationException("Invalid certificate chain in U2F attestation");
-                    }
-                }
-            }
-
+			
             // 2b. If certificate public key is not an Elliptic Curve (EC) public key over the P-256 curve, terminate this algorithm and return an appropriate error
             var pubKey = cert.GetECDsaPublicKey();
             var keyParams = pubKey.ExportParameters(false);
@@ -88,7 +47,6 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
                 if (!keyParams.Curve.Oid.FriendlyName.Equals(ECCurve.NamedCurves.nistP256.Oid.FriendlyName))
                     throw new VerificationException("Attestation certificate public key is not an Elliptic Curve (EC) public key over the P-256 curve");
             }
-
             else
             {
                 if (!keyParams.Curve.Oid.Value.Equals(ECCurve.NamedCurves.nistP256.Oid.Value))
@@ -126,10 +84,35 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
             }
 
             var coseAlg = CredentialPublicKey[CBORObject.FromObject(COSE.KeyCommonParameter.Alg)].AsInt32();
-            var hashAlg = CryptoUtils.algMap[coseAlg];
-
+            var hashAlg = CryptoUtils.HashAlgFromCOSEAlg(coseAlg);
+			
             if (true != pubKey.VerifyData(verificationData, ecsig, hashAlg))
                 throw new VerificationException("Invalid fido-u2f attestation signature");
+
+			// 7. Optionally, inspect x5c and consult externally provided knowledge to determine whether attStmt conveys a Basic or AttCA attestation
+            var trustPath = X5c.Values
+                .Select(z => new X509Certificate2(z.GetByteString()))
+                .ToArray();
+
+            var aaguid = AaguidFromAttnCertExts(cert.Extensions);
+
+            if (null != _metadataService && null != aaguid)
+            {
+                var guidAaguid = AttestedCredentialData.FromBigEndian(aaguid);
+                var entry = _metadataService.GetEntry(guidAaguid);
+
+                if (null != entry && null != entry.MetadataStatement)
+                {
+                    var attestationRootCertificates = entry.MetadataStatement.AttestationRootCertificates
+                        .Select(z => new X509Certificate2(Convert.FromBase64String(z)))
+                        .ToArray();
+
+                    if (false == ValidateTrustChain(trustPath, attestationRootCertificates))
+                    {
+                        throw new VerificationException("Invalid certificate chain in U2F attestation");
+                    }
+                }
+            }
         }
     }
 }

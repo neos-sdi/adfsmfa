@@ -31,8 +31,7 @@ using System.Threading.Tasks;
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
-using Neos.IdentityServer.MultiFactor.WebAuthN.Library.Chaos;
-
+using System.Globalization;
 
 #pragma warning disable 618
 
@@ -41,39 +40,37 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
     #region Base64
     internal static class Base64
     {
-        private const string Base64URL =
-          "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
+        private const string Base64URL = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
 
-        private const string Base64Classic =
-          "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+        private const string Base64Classic = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
         public static void WriteBase64(
-      StringOutput writer,
-      byte[] data,
-      int offset,
-      int count,
-      bool padding)
+          StringOutput writer,
+          byte[] data,
+          int offset,
+          int count,
+          bool padding)
         {
             WriteBase64(writer, data, offset, count, true, padding);
         }
 
         public static void WriteBase64URL(
-      StringOutput writer,
-      byte[] data,
-      int offset,
-      int count,
-      bool padding)
+          StringOutput writer,
+          byte[] data,
+          int offset,
+          int count,
+          bool padding)
         {
             WriteBase64(writer, data, offset, count, false, padding);
         }
 
         private static void WriteBase64(
-      StringOutput writer,
-      byte[] data,
-      int offset,
-      int count,
-      bool classic,
-      bool padding)
+          StringOutput writer,
+          byte[] data,
+          int offset,
+          int count,
+          bool classic,
+          bool padding)
         {
             if (writer == null)
             {
@@ -81,112 +78,227 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
             }
             if (offset < 0)
             {
-                throw new ArgumentException("offset (" + offset + ") is less than " +
-                            "0 ");
+                throw new ArgumentException("offset(" + offset + ") is less than " +
+                  "0 ");
             }
             if (offset > data.Length)
             {
-                throw new ArgumentException("offset (" + offset + ") is more than " +
-                            data.Length);
+                throw new ArgumentException("offset(" + offset + ") is more than " +
+                  data.Length);
             }
             if (count < 0)
             {
-                throw new ArgumentException("count (" + count + ") is less than " +
-                            "0 ");
+                throw new ArgumentException("count(" + count + ") is less than " +
+                  "0 ");
             }
             if (count > data.Length)
             {
-                throw new ArgumentException("count (" + count + ") is more than " +
-                            data.Length);
+                throw new ArgumentException("count(" + count + ") is more than " +
+                  data.Length);
             }
             if (data.Length - offset < count)
             {
-                throw new ArgumentException("data's length minus " + offset + " (" +
-                        (data.Length - offset) + ") is less than " + count);
+                throw new ArgumentException("data's length minus " + offset + "(" +
+                  (data.Length - offset) + ") is less than " + count);
             }
             string alphabet = classic ? Base64Classic : Base64URL;
             int length = offset + count;
             int i = offset;
-            char[] buffer = new char[4];
+            var buffer = new byte[32];
+            var bufferOffset = 0;
             for (i = offset; i < (length - 2); i += 3)
             {
-                buffer[0] = (char)alphabet[(data[i] >> 2) & 63];
-                buffer[1] = (char)alphabet[((data[i] & 3) << 4) +
-                        ((data[i + 1] >> 4) & 15)];
-                buffer[2] = (char)alphabet[((data[i + 1] & 15) << 2) + ((data[i +
-                        2] >> 6) & 3)];
-                buffer[3] = (char)alphabet[data[i + 2] & 63];
-                writer.WriteCodePoint((int)buffer[0]);
-                writer.WriteCodePoint((int)buffer[1]);
-                writer.WriteCodePoint((int)buffer[2]);
-                writer.WriteCodePoint((int)buffer[3]);
+                if (bufferOffset >= buffer.Length)
+                {
+                    writer.WriteAscii(buffer, 0, bufferOffset);
+                    bufferOffset = 0;
+                }
+                buffer[bufferOffset++] = (byte)alphabet[(data[i] >> 2) & 63];
+                buffer[bufferOffset++] = (byte)alphabet[((data[i] & 3) << 4) +
+                    ((data[i + 1] >> 4) & 15)];
+                buffer[bufferOffset++] = (byte)alphabet[((data[i + 1] & 15) << 2) +
+        ((data[i +
+                          2] >> 6) & 3)];
+                buffer[bufferOffset++] = (byte)alphabet[data[i + 2] & 63];
             }
             int lenmod3 = count % 3;
             if (lenmod3 != 0)
             {
+                if (bufferOffset >= buffer.Length)
+                {
+                    writer.WriteAscii(buffer, 0, bufferOffset);
+                    bufferOffset = 0;
+                }
                 i = length - lenmod3;
-                buffer[0] = (char)alphabet[(data[i] >> 2) & 63];
+                buffer[bufferOffset++] = (byte)alphabet[(data[i] >> 2) & 63];
                 if (lenmod3 == 2)
                 {
-                    buffer[1] = (char)alphabet[((data[i] & 3) << 4) + ((data[i + 1] >>
-                          4) & 15)];
-                    buffer[2] = (char)alphabet[(data[i + 1] & 15) << 2];
-                    writer.WriteCodePoint((int)buffer[0]);
-                    writer.WriteCodePoint((int)buffer[1]);
-                    writer.WriteCodePoint((int)buffer[2]);
+                    buffer[bufferOffset++] = (byte)alphabet[((data[i] & 3) << 4) +
+          ((data[i + 1] >>
+                            4) & 15)];
+                    buffer[bufferOffset++] = (byte)alphabet[(data[i + 1] & 15) << 2];
                     if (padding)
                     {
-                        writer.WriteCodePoint((int)'=');
+                        buffer[bufferOffset++] = (byte)'=';
                     }
                 }
                 else
                 {
-                    buffer[1] = (char)alphabet[(data[i] & 3) << 4];
-                    writer.WriteCodePoint((int)buffer[0]);
-                    writer.WriteCodePoint((int)buffer[1]);
+                    buffer[bufferOffset++] = (byte)alphabet[(data[i] & 3) << 4];
                     if (padding)
                     {
-                        writer.WriteCodePoint((int)'=');
-                        writer.WriteCodePoint((int)'=');
+                        buffer[bufferOffset++] = (byte)'=';
+                        buffer[bufferOffset++] = (byte)'=';
                     }
                 }
             }
+            if (bufferOffset >= 0)
+            {
+                writer.WriteAscii(buffer, 0, bufferOffset);
+            }
         }
     }
+
     #endregion
 
     #region CBORCanonical
     internal static class CBORCanonical
     {
+        internal static readonly IComparer<CBORObject> Comparer =
+          new CtapComparer();
+
+        private static readonly IComparer<KeyValuePair<byte[], byte[]>>
+        ByteComparer = new CtapByteComparer();
+
+        private sealed class CtapByteComparer : IComparer<KeyValuePair<byte[],
+          byte[]>>
+        {
+            public int Compare(
+              KeyValuePair<byte[], byte[]> kva,
+              KeyValuePair<byte[], byte[]> kvb)
+            {
+                byte[] bytesA = kva.Key;
+                byte[] bytesB = kvb.Key;
+                if (bytesA == null)
+                {
+                    return bytesB == null ? 0 : -1;
+                }
+                if (bytesB == null)
+                {
+                    return 1;
+                }
+                if (bytesA.Length == 0)
+                {
+                    return bytesB.Length == 0 ? 0 : -1;
+                }
+                if (bytesB.Length == 0)
+                {
+                    return 1;
+                }
+                if (bytesA == bytesB)
+                {
+                    // NOTE: Assumes reference equality of CBORObjects
+                    return 0;
+                }
+                // check major types
+                if (((int)bytesA[0] & 0xe0) != ((int)bytesB[0] & 0xe0))
+                {
+                    return ((int)bytesA[0] & 0xe0) < ((int)bytesB[0] & 0xe0) ? -1 : 1;
+                }
+                // check lengths
+                if (bytesA.Length != bytesB.Length)
+                {
+                    return bytesA.Length < bytesB.Length ? -1 : 1;
+                }
+                // check bytes
+                for (var i = 0; i < bytesA.Length; ++i)
+                {
+                    if (bytesA[i] != bytesB[i])
+                    {
+                        int ai = ((int)bytesA[i]) & 0xff;
+                        int bi = ((int)bytesB[i]) & 0xff;
+                        return (ai < bi) ? -1 : 1;
+                    }
+                }
+                return 0;
+            }
+        }
+
         private sealed class CtapComparer : IComparer<CBORObject>
         {
+            private static int MajorType(CBORObject a)
+            {
+                if (a.IsTagged)
+                {
+                    return 6;
+                }
+                switch (a.Type)
+                {
+                    case CBORType.Integer:
+                        return a.AsNumber().IsNegative() ? 1 : 0;
+                    case CBORType.SimpleValue:
+                    case CBORType.Boolean:
+                    case CBORType.FloatingPoint:
+                        return 7;
+                    case CBORType.ByteString:
+                        return 2;
+                    case CBORType.TextString:
+                        return 3;
+                    case CBORType.Array:
+                        return 4;
+                    case CBORType.Map:
+                        return 5;
+                    default: throw new InvalidOperationException();
+                }
+            }
+
             public int Compare(CBORObject a, CBORObject b)
             {
+                if (a == null)
+                {
+                    return b == null ? 0 : -1;
+                }
+                if (b == null)
+                {
+                    return 1;
+                }
+                if (a == b)
+                {
+                    // NOTE: Assumes reference equality of CBORObjects
+                    return 0;
+                }
+                a = a.Untag();
+                b = b.Untag();
                 byte[] abs;
                 byte[] bbs;
-                bool bothBytes = false;
-                if (a.Type == CBORType.ByteString && b.Type == CBORType.ByteString)
+                int amt = MajorType(a);
+                int bmt = MajorType(b);
+                if (amt != bmt)
                 {
+                    return amt < bmt ? -1 : 1;
+                }
+                // DebugUtility.Log("a="+a);
+                // DebugUtility.Log("b="+b);
+                if (amt == 2)
+                {
+                    // Both objects are byte strings
                     abs = a.GetByteString();
                     bbs = b.GetByteString();
-                    bothBytes = true;
                 }
                 else
                 {
+                    // Might store arrays or maps, where
+                    // canonical encoding can fail due to too-deep
+                    // nesting
                     abs = CtapCanonicalEncode(a);
                     bbs = CtapCanonicalEncode(b);
-                }
-                if (!bothBytes && (abs[0] & 0xe0) != (bbs[0] & 0xe0))
-                {
-                    // different major types
-                    return (abs[0] & 0xe0) < (bbs[0] & 0xe0) ? -1 : 1;
                 }
                 if (abs.Length != bbs.Length)
                 {
                     // different lengths
                     return abs.Length < bbs.Length ? -1 : 1;
                 }
-                for (int i = 0; i < abs.Length; ++i)
+                for (var i = 0; i < abs.Length; ++i)
                 {
                     if (abs[i] != bbs[i])
                     {
@@ -199,7 +311,69 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
             }
         }
 
+        private static bool IsArrayOrMap(CBORObject a)
+        {
+            return a.Type == CBORType.Array || a.Type == CBORType.Map;
+        }
+
         public static byte[] CtapCanonicalEncode(CBORObject a)
+        {
+            return CtapCanonicalEncode(a, 0);
+        }
+
+        private static bool ByteArraysEqual(byte[] bytesA, byte[] bytesB)
+        {
+            if (bytesA == bytesB)
+            {
+                return true;
+            }
+            if (bytesA == null || bytesB == null)
+            {
+                return false;
+            }
+            if (bytesA.Length == bytesB.Length)
+            {
+                for (var j = 0; j < bytesA.Length; ++j)
+                {
+                    if (bytesA[j] != bytesB[j])
+                    {
+                        return false;
+                    }
+                }
+                return true;
+            }
+            return false;
+        }
+
+        private static void CheckDepth(CBORObject cbor, int depth)
+        {
+            if (cbor.Type == CBORType.Array)
+            {
+                for (var i = 0; i < cbor.Count; ++i)
+                {
+                    if (depth >= 3 && IsArrayOrMap(cbor[i]))
+                    {
+                        throw new CBORException("Nesting level too deep");
+                    }
+                    CheckDepth(cbor[i], depth + 1);
+                }
+            }
+            else if (cbor.Type == CBORType.Map)
+            {
+                foreach (CBORObject key in cbor.Keys)
+                {
+                    if (depth >= 3 && (IsArrayOrMap(key) ||
+                        IsArrayOrMap(cbor[key])))
+                    {
+                        throw new CBORException("Nesting level too deep");
+                    }
+                    CheckDepth(key, depth + 1);
+                    CheckDepth(cbor[key], depth + 1);
+                }
+            }
+        }
+
+        private static byte[] CtapCanonicalEncode(CBORObject a, int depth)
         {
             CBORObject cbor = a.Untag();
             CBORType valueAType = cbor.Type;
@@ -207,12 +381,16 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
             {
                 if (valueAType == CBORType.Array)
                 {
-                    using (MemoryStream ms = new MemoryStream())
+                    using (var ms = new MemoryStream())
                     {
                         CBORObject.WriteValue(ms, 4, cbor.Count);
-                        for (int i = 0; i < cbor.Count; ++i)
+                        for (var i = 0; i < cbor.Count; ++i)
                         {
-                            byte[] bytes = CtapCanonicalEncode(cbor[i]);
+                            if (depth >= 3 && IsArrayOrMap(cbor[i]))
+                            {
+                                throw new CBORException("Nesting level too deep");
+                            }
+                            byte[] bytes = CtapCanonicalEncode(cbor[i], depth + 1);
                             ms.Write(bytes, 0, bytes.Length);
                         }
                         return ms.ToArray();
@@ -220,20 +398,41 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
                 }
                 else if (valueAType == CBORType.Map)
                 {
-                    List<CBORObject> sortedKeys = new List<CBORObject>();
+                    KeyValuePair<byte[], byte[]> kv1;
+                    List<KeyValuePair<byte[], byte[]>> sortedKeys;
+                    sortedKeys = new List<KeyValuePair<byte[], byte[]>>();
                     foreach (CBORObject key in cbor.Keys)
                     {
-                        sortedKeys.Add(key);
+                        if (depth >= 3 && (IsArrayOrMap(key) ||
+                            IsArrayOrMap(cbor[key])))
+                        {
+                            throw new CBORException("Nesting level too deep");
+                        }
+                        CheckDepth(key, depth + 1);
+                        CheckDepth(cbor[key], depth + 1);
+                        // Check if key and value can be canonically encoded
+                        // (will throw an exception if they cannot)
+                        kv1 = new KeyValuePair<byte[], byte[]>(
+                          CtapCanonicalEncode(key, depth + 1),
+                          CtapCanonicalEncode(cbor[key], depth + 1));
+                        sortedKeys.Add(kv1);
                     }
-                    sortedKeys.Sort(new CtapComparer());
-                    using (MemoryStream ms = new MemoryStream())
+                    sortedKeys.Sort(ByteComparer);
+                    using (var ms = new MemoryStream())
                     {
                         CBORObject.WriteValue(ms, 5, cbor.Count);
-                        foreach (CBORObject key in sortedKeys)
+                        byte[] lastKey = null;
+                        for (var i = 0; i < sortedKeys.Count; ++i)
                         {
-                            byte[] bytes = CtapCanonicalEncode(key);
+                            kv1 = sortedKeys[i];
+                            byte[] bytes = kv1.Key;
+                            if (lastKey != null && ByteArraysEqual(bytes, lastKey))
+                            {
+                                throw new CBORException("duplicate canonical CBOR key");
+                            }
+                            lastKey = bytes;
                             ms.Write(bytes, 0, bytes.Length);
-                            bytes = CtapCanonicalEncode(cbor[key]);
+                            bytes = kv1.Value;
                             ms.Write(bytes, 0, bytes.Length);
                         }
                         return ms.ToArray();
@@ -245,22 +444,29 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
                 throw new InvalidOperationException(ex.ToString(), ex);
             }
             if (valueAType == CBORType.SimpleValue ||
-             valueAType == CBORType.Boolean || valueAType == CBORType.ByteString ||
-             valueAType == CBORType.TextString)
+              valueAType == CBORType.Boolean || valueAType == CBORType.ByteString ||
+              valueAType == CBORType.TextString)
             {
                 return cbor.EncodeToBytes(CBOREncodeOptions.Default);
             }
-            else if (valueAType == CBORType.Number)
+            else if (valueAType == CBORType.FloatingPoint)
             {
-                if (cbor.CanFitInInt64())
-                {
-                    return cbor.EncodeToBytes(CBOREncodeOptions.Default);
-                }
-                else
-                {
-                    cbor = CBORObject.FromObject(cbor.AsDouble());
-                    return cbor.EncodeToBytes(CBOREncodeOptions.Default);
-                }
+                long bits = cbor.AsDoubleBits();
+                return new byte[] {
+          (byte)0xfb,
+          (byte)((bits >> 56) & 0xffL),
+          (byte)((bits >> 48) & 0xffL),
+          (byte)((bits >> 40) & 0xffL),
+          (byte)((bits >> 32) & 0xffL),
+          (byte)((bits >> 24) & 0xffL),
+          (byte)((bits >> 16) & 0xffL),
+          (byte)((bits >> 8) & 0xffL),
+          (byte)(bits & 0xffL),
+        };
+            }
+            else if (valueAType == CBORType.Integer)
+            {
+                return cbor.EncodeToBytes(CBOREncodeOptions.Default);
             }
             else
             {
@@ -275,27 +481,321 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
     /// path='docs/doc[@name="T:CBORDataUtilities"]/*'/>
     public static class CBORDataUtilities
     {
-        private const int MaxSafeInt = 214748363;
+        private const string HexAlphabet = "0123456789ABCDEF";
 
-        /// <include file='../../docs.xml'
-        /// path='docs/doc[@name="M:CBORDataUtilities.ParseJSONNumber(System.String)"]/*'/>
-        public static CBORObject ParseJSONNumber(string str)
+        private const long DoubleNegInfinity = unchecked((long)(0xfffL << 52));
+        private const long DoublePosInfinity = unchecked((long)(0x7ffL << 52));
+
+        internal static string ToStringHelper(CBORObject obj, int depth)
         {
-            return ParseJSONNumber(str, false, false);
+            StringBuilder sb = null;
+            string simvalue = null;
+            CBORType type = obj.Type;
+            CBORObject curobject;
+            if (obj.IsTagged)
+            {
+                if (sb == null)
+                {
+                    if (type == CBORType.TextString)
+                    {
+                        // The default capacity of StringBuilder may be too small
+                        // for many strings, so set a suggested capacity
+                        // explicitly
+                        string str = obj.AsString();
+                        sb = new StringBuilder(Math.Min(str.Length, 4096) + 16);
+                    }
+                    else
+                    {
+                        sb = new StringBuilder();
+                    }
+                }
+                // Append opening tags if needed
+                curobject = obj;
+                while (curobject.IsTagged)
+                {
+                    EInteger ei = curobject.MostOuterTag;
+                    sb.Append(ei.ToString());
+                    sb.Append('(');
+                    curobject = curobject.UntagOne();
+                }
+            }
+            switch (type)
+            {
+                case CBORType.SimpleValue:
+                    sb = sb ?? new StringBuilder();
+                    if (obj.IsUndefined)
+                    {
+                        sb.Append("undefined");
+                    }
+                    else if (obj.IsNull)
+                    {
+                        sb.Append("null");
+                    }
+                    else
+                    {
+                        sb.Append("simple(");
+                        int thisItemInt = obj.SimpleValue;
+                        char c;
+                        if (thisItemInt >= 100)
+                        {
+                            // NOTE: '0'-'9' have ASCII code 0x30-0x39
+                            c = (char)(0x30 + ((thisItemInt / 100) % 10));
+                            sb.Append(c);
+                        }
+                        if (thisItemInt >= 10)
+                        {
+                            c = (char)(0x30 + ((thisItemInt / 10) % 10));
+                            sb.Append(c);
+                            c = (char)(0x30 + (thisItemInt % 10));
+                        }
+                        else
+                        {
+                            c = (char)(0x30 + thisItemInt);
+                        }
+                        sb.Append(c);
+                        sb.Append(")");
+                    }
+                    break;
+                case CBORType.Boolean:
+                case CBORType.Integer:
+                    simvalue = obj.Untag().ToJSONString();
+                    if (sb == null)
+                    {
+                        return simvalue;
+                    }
+                    sb.Append(simvalue);
+                    break;
+                case CBORType.FloatingPoint:
+                    {
+                        long bits = obj.AsDoubleBits();
+                        simvalue = bits == DoubleNegInfinity ? "-Infinity" : (
+                            bits == DoublePosInfinity ? "Infinity" : (
+                              CBORUtilities.DoubleBitsNaN(bits) ? "NaN" :
+              obj.Untag().ToJSONString()));
+                        if (sb == null)
+                        {
+                            return simvalue;
+                        }
+                        sb.Append(simvalue);
+                        break;
+                    }
+                case CBORType.ByteString:
+                    {
+                        sb = sb ?? new StringBuilder();
+                        sb.Append("h'");
+                        byte[] data = obj.GetByteString();
+                        int length = data.Length;
+                        for (var i = 0; i < length; ++i)
+                        {
+                            sb.Append(HexAlphabet[(data[i] >> 4) & 15]);
+                            sb.Append(HexAlphabet[data[i] & 15]);
+                        }
+                        sb.Append("'");
+                        break;
+                    }
+                case CBORType.TextString:
+                    {
+                        sb = sb == null ? new StringBuilder() : sb;
+                        sb.Append('\"');
+                        string ostring = obj.AsString();
+                        sb.Append(ostring);
+                        /*
+                        for (var i = 0; i < ostring.Length; ++i) {
+                          if (ostring[i] >= 0x20 && ostring[i] <= 0x7f) {
+                            sb.Append(ostring[i]);
+                          } else {
+                               sb.Append("\\u");
+                               sb.Append(HexAlphabet[(ostring[i] >> 12) & 15]);
+                               sb.Append(HexAlphabet[(ostring[i] >> 8) & 15]);
+                               sb.Append(HexAlphabet[(ostring[i] >> 4) & 15]);
+                               sb.Append(HexAlphabet[ostring[i] & 15]);
+                           }
+                        }
+                        */
+                        sb.Append('\"');
+                        break;
+                    }
+                case CBORType.Array:
+                    {
+                        sb = sb ?? new StringBuilder();
+                        var first = true;
+                        sb.Append("[");
+                        if (depth >= 50)
+                        {
+                            sb.Append("...");
+                        }
+                        else
+                        {
+                            for (var i = 0; i < obj.Count; ++i)
+                            {
+                                if (!first)
+                                {
+                                    sb.Append(", ");
+                                }
+                                sb.Append(ToStringHelper(obj[i], depth + 1));
+                                first = false;
+                            }
+                        }
+                        sb.Append("]");
+                        break;
+                    }
+                case CBORType.Map:
+                    {
+                        sb = sb ?? new StringBuilder();
+                        var first = true;
+                        sb.Append("{");
+                        if (depth >= 50)
+                        {
+                            sb.Append("...");
+                        }
+                        else
+                        {
+                            ICollection<KeyValuePair<CBORObject, CBORObject>> entries =
+                              obj.Entries;
+                            foreach (KeyValuePair<CBORObject, CBORObject> entry
+                              in entries)
+                            {
+                                CBORObject key = entry.Key;
+                                CBORObject value = entry.Value;
+                                if (!first)
+                                {
+                                    sb.Append(", ");
+                                }
+                                sb.Append(ToStringHelper(key, depth + 1));
+                                sb.Append(": ");
+                                sb.Append(ToStringHelper(value, depth + 1));
+                                first = false;
+                            }
+                        }
+                        sb.Append("}");
+                        break;
+                    }
+                default:
+                    {
+                        sb = sb ?? new StringBuilder();
+                        sb.Append("???");
+                        break;
+                    }
+            }
+            // Append closing tags if needed
+            curobject = obj;
+            while (curobject.IsTagged)
+            {
+                sb.Append(')');
+                curobject = curobject.UntagOne();
+            }
+            return sb.ToString();
         }
 
-        /// <include file='../../docs.xml'
-        /// path='docs/doc[@name="M:CBORDataUtilities.ParseJSONNumber(System.String,System.Boolean,System.Boolean)"]/*'/>
+        internal static readonly JSONOptions DefaultOptions =
+          new JSONOptions(String.Empty);
+        private static readonly JSONOptions PreserveNegZeroNo =
+          new JSONOptions("preservenegativezero=0");
+        private static readonly JSONOptions PreserveNegZeroYes =
+          new JSONOptions("preservenegativezero=1");
+
+        /// <summary>Parses a number whose format follows the JSON
+        /// specification. The method uses a JSONOptions with all default
+        /// properties except for a PreserveNegativeZero property of
+        /// false.</summary>
+        /// <param name='str'>A text string to parse as a JSON number.</param>
+        /// <returns>A CBOR object that represents the parsed number. Returns
+        /// positive zero if the number is a zero that starts with a minus sign
+        /// (such as "-0" or "-0.0"). Returns null if the parsing fails,
+        /// including if the string is null or empty.</returns>
+        public static CBORObject ParseJSONNumber(string str)
+        {
+            // TODO: Preserve negative zeros in next major version
+            return ParseJSONNumber(str, PreserveNegZeroNo);
+        }
+
+        /// <summary>Parses a number whose format follows the JSON
+        /// specification (RFC 8259). The method uses a JSONOptions with all
+        /// default properties except for a PreserveNegativeZero property of
+        /// false.</summary>
+        /// <param name='str'>A text string to parse as a JSON number.</param>
+        /// <param name='integersOnly'>If true, no decimal points or exponents
+        /// are allowed in the string. The default is false.</param>
+        /// <param name='positiveOnly'>If true, only positive numbers are
+        /// allowed (the leading minus is disallowed). The default is
+        /// false.</param>
+        /// <returns>A CBOR object that represents the parsed number. Returns
+        /// positive zero if the number is a zero that starts with a minus sign
+        /// (such as "-0" or "-0.0"). Returns null if the parsing fails,
+        /// including if the string is null or empty.</returns>
+        /// <remarks>Roughly speaking, a valid JSON number consists of an
+        /// optional minus sign, one or more basic digits (starting with 1 to 9
+        /// unless there is only one digit and that digit is 0), an optional
+        /// decimal point (".", full stop) with one or more basic digits, and
+        /// an optional letter E or e with an optional plus or minus sign and
+        /// one or more basic digits (the exponent). A text string representing
+        /// a valid JSON number is not allowed to contain white space
+        /// characters, including spaces.</remarks>
+        [Obsolete("Call the one-argument version of this method instead. If this" +
+            "\u0020method call used positiveOnly = true, check that the string" +
+            "\u0020does not" + "\u0020begin" +
+            "\u0020with '-' before calling that version. If this method call used" +
+            "\u0020integersOnly" +
+            "\u0020= true, check that the string does not contain '.', 'E', or" +
+            "\u0020'e'" + "\u0020before" + "\u0020calling that version.")]
         public static CBORObject ParseJSONNumber(
           string str,
           bool integersOnly,
           bool positiveOnly)
         {
-            return ParseJSONNumber(str, integersOnly, positiveOnly, false);
+            if (String.IsNullOrEmpty(str))
+            {
+                return null;
+            }
+            if (integersOnly)
+            {
+                for (var i = 0; i < str.Length; ++i)
+                {
+                    if (str[i] >= '0' && str[i] <= '9' && (i > 0 || str[i] != '-'))
+                    {
+                        return null;
+                    }
+                }
+            }
+            return (positiveOnly && str[0] == '-') ? null :
+              ParseJSONNumber(
+                str,
+                0,
+                str.Length,
+                PreserveNegZeroNo);
         }
 
-        /// <include file='../../docs.xml'
-        /// path='docs/doc[@name="M:CBORDataUtilities.ParseJSONNumber(System.String,System.Boolean,System.Boolean,System.Boolean)"]/*'/>
+        /// <summary>Parses a number whose format follows the JSON
+        /// specification (RFC 8259).</summary>
+        /// <param name='str'>A text string to parse as a JSON number.</param>
+        /// <param name='integersOnly'>If true, no decimal points or exponents
+        /// are allowed in the string. The default is false.</param>
+        /// <param name='positiveOnly'>If true, the leading minus is disallowed
+        /// in the string. The default is false.</param>
+        /// <param name='preserveNegativeZero'>If true, returns positive zero
+        /// if the number is a zero that starts with a minus sign (such as "-0"
+        /// or "-0.0"). Otherwise, returns negative zero in this case. The
+        /// default is false.</param>
+        /// <returns>A CBOR object that represents the parsed number. Returns
+        /// null if the parsing fails, including if the string is null or
+        /// empty.</returns>
+        /// <remarks>Roughly speaking, a valid JSON number consists of an
+        /// optional minus sign, one or more basic digits (starting with 1 to 9
+        /// unless there is only one digit and that digit is 0), an optional
+        /// decimal point (".", full stop) with one or more basic digits, and
+        /// an optional letter E or e with an optional plus or minus sign and
+        /// one or more basic digits (the exponent). A text string representing
+        /// a valid JSON number is not allowed to contain white space
+        /// characters, including spaces.</remarks>
+        [Obsolete("Instead, call ParseJSONNumber(str, jsonoptions) with" +
+            "\u0020a JSONOptions that sets preserveNegativeZero to the" +
+            "\u0020desired value, either true or false. If this" +
+            "\u0020method call used positiveOnly = true, check that the string" +
+            "\u0020does not" + "\u0020begin" +
+            "\u0020with '-' before calling that version. If this method call used" +
+            "\u0020integersOnly" +
+            "\u0020= true, check that the string does not contain '.', 'E', or" +
+            "\u0020'e'" + "\u0020before" + "\u0020calling that version.")]
         public static CBORObject ParseJSONNumber(
           string str,
           bool integersOnly,
@@ -306,307 +806,459 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
             {
                 return null;
             }
-            int offset = 0;
-            bool negative = false;
-            if (str[0] == '-' && !positiveOnly)
+            if (integersOnly)
             {
-                negative = true;
-                ++offset;
-            }
-            int mantInt = 0;
-            FastInteger2 mant = null;
-            int mantBuffer = 0;
-            int mantBufferMult = 1;
-            int expBuffer = 0;
-            int expBufferMult = 1;
-            bool haveDecimalPoint = false;
-            bool haveDigits = false;
-            bool haveDigitsAfterDecimal = false;
-            bool haveExponent = false;
-            int newScaleInt = 0;
-            FastInteger2 newScale = null;
-            int i = offset;
-            // Ordinary number
-            if (i < str.Length && str[i] == '0')
-            {
-                ++i;
-                haveDigits = true;
-                if (i == str.Length)
+                for (var i = 0; i < str.Length; ++i)
                 {
-                    if (preserveNegativeZero && negative)
-                    {
-                        return CBORObject.FromObject(
-                         EDecimal.NegativeZero);
-                    }
-                    return CBORObject.FromObject(0);
-                }
-                if (!integersOnly)
-                {
-                    if (str[i] == '.')
-                    {
-                        haveDecimalPoint = true;
-                        ++i;
-                    }
-                    else if (str[i] == 'E' || str[i] == 'e')
-                    {
-                        haveExponent = true;
-                    }
-                    else
+                    if (str[i] >= '0' && str[i] <= '9' && (i > 0 || str[i] != '-'))
                     {
                         return null;
                     }
                 }
-                else
-                {
-                    return null;
-                }
             }
-            for (; i < str.Length; ++i)
-            {
-                if (str[i] >= '0' && str[i] <= '9')
-                {
-                    int thisdigit = (int)(str[i] - '0');
-                    if (mantInt > MaxSafeInt)
-                    {
-                        if (mant == null)
-                        {
-                            mant = new FastInteger2(mantInt);
-                            mantBuffer = thisdigit;
-                            mantBufferMult = 10;
-                        }
-                        else
-                        {
-                            if (mantBufferMult >= 1000000000)
-                            {
-                                mant.Multiply(mantBufferMult).AddInt(mantBuffer);
-                                mantBuffer = thisdigit;
-                                mantBufferMult = 10;
-                            }
-                            else
-                            {
-                                mantBufferMult *= 10;
-                                mantBuffer = (mantBuffer << 3) + (mantBuffer << 1);
-                                mantBuffer += thisdigit;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        mantInt *= 10;
-                        mantInt += thisdigit;
-                    }
-                    haveDigits = true;
-                    if (haveDecimalPoint)
-                    {
-                        haveDigitsAfterDecimal = true;
-                        if (newScaleInt == Int32.MinValue)
-                        {
-                            newScale = newScale ?? (new FastInteger2(newScaleInt));
-                            newScale.AddInt(-1);
-                        }
-                        else
-                        {
-                            --newScaleInt;
-                        }
-                    }
-                }
-                else if (!integersOnly && str[i] == '.')
-                {
-                    if (!haveDigits)
-                    {
-                        // no digits before the decimal point
-                        return null;
-                    }
-                    if (haveDecimalPoint)
-                    {
-                        return null;
-                    }
-                    haveDecimalPoint = true;
-                }
-                else if (!integersOnly && (str[i] == 'E' || str[i] == 'e'))
-                {
-                    haveExponent = true;
-                    ++i;
-                    break;
-                }
-                else
-                {
-                    return null;
-                }
-            }
-            if (!haveDigits || (haveDecimalPoint && !haveDigitsAfterDecimal))
-            {
-                return null;
-            }
-            if (mant != null && (mantBufferMult != 1 || mantBuffer != 0))
-            {
-                mant.Multiply(mantBufferMult).AddInt(mantBuffer);
-            }
-            if (haveExponent)
-            {
-                FastInteger2 exp = null;
-                int expInt = 0;
-                offset = 1;
-                haveDigits = false;
-                if (i == str.Length)
-                {
-                    return null;
-                }
-                if (str[i] == '+' || str[i] == '-')
-                {
-                    if (str[i] == '-')
-                    {
-                        offset = -1;
-                    }
-                    ++i;
-                }
-                for (; i < str.Length; ++i)
-                {
-                    if (str[i] >= '0' && str[i] <= '9')
-                    {
-                        haveDigits = true;
-                        int thisdigit = (int)(str[i] - '0');
-                        if (expInt > MaxSafeInt)
-                        {
-                            if (exp == null)
-                            {
-                                exp = new FastInteger2(expInt);
-                                expBuffer = thisdigit;
-                                expBufferMult = 10;
-                            }
-                            else
-                            {
-                                if (expBufferMult >= 1000000000)
-                                {
-                                    exp.Multiply(expBufferMult).AddInt(expBuffer);
-                                    expBuffer = thisdigit;
-                                    expBufferMult = 10;
-                                }
-                                else
-                                {
-                                    // multiply expBufferMult and expBuffer each by 10
-                                    expBufferMult = (expBufferMult << 3) + (expBufferMult << 1);
-                                    expBuffer = (expBuffer << 3) + (expBuffer << 1);
-                                    expBuffer += thisdigit;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            expInt *= 10;
-                            expInt += thisdigit;
-                        }
-                    }
-                    else
-                    {
-                        return null;
-                    }
-                }
-                if (!haveDigits)
-                {
-                    return null;
-                }
-                if (exp != null && (expBufferMult != 1 || expBuffer != 0))
-                {
-                    exp.Multiply(expBufferMult).AddInt(expBuffer);
-                }
-                if (offset >= 0 && newScaleInt == 0 && newScale == null && exp == null)
-                {
-                    newScaleInt = expInt;
-                }
-                else if (exp == null)
-                {
-                    newScale = newScale ?? (new FastInteger2(newScaleInt));
-                    if (offset < 0)
-                    {
-                        newScale.SubtractInt(expInt);
-                    }
-                    else if (expInt != 0)
-                    {
-                        newScale.AddInt(expInt);
-                    }
-                }
-                else
-                {
-                    newScale = newScale ?? (new FastInteger2(newScaleInt));
-                    if (offset < 0)
-                    {
-                        newScale.Subtract(exp);
-                    }
-                    else
-                    {
-                        newScale.Add(exp);
-                    }
-                }
-            }
-            if (i != str.Length)
-            {
-                // End of the string wasn't reached, so isn't a number
-                return null;
-            }
-            if ((newScale == null && newScaleInt == 0) || (newScale != null &&
-                          newScale.Sign == 0))
-            {
-                // No fractional part
-                if (mant != null && mant.CanFitInInt32())
-                {
-                    mantInt = mant.AsInt32();
-                    mant = null;
-                }
-                if (mant == null)
-                {
-                    // NOTE: mantInt can only be 0 or greater, so overflow is impossible
+            JSONOptions jo = preserveNegativeZero ? PreserveNegZeroYes :
+              PreserveNegZeroNo;
+            return (positiveOnly && str[0] == '-') ? null :
+              ParseJSONNumber(str,
+                0,
+                str.Length,
+                jo);
+        }
+
+        /// <summary>Parses a number whose format follows the JSON
+        /// specification (RFC 8259) and converts that number to a CBOR
+        /// object.</summary>
+        /// <param name='str'>A text string to parse as a JSON number.</param>
+        /// <param name='options'>An object containing options to control how
+        /// JSON numbers are decoded to CBOR objects. Can be null, in which
+        /// case a JSONOptions object with all default properties is used
+        /// instead.</param>
+        /// <returns>A CBOR object that represents the parsed number. Returns
+        /// null if the parsing fails, including if the string is null or
+        /// empty.</returns>
+        /// <remarks>Roughly speaking, a valid JSON number consists of an
+        /// optional minus sign, one or more basic digits (starting with 1 to 9
+        /// unless there is only one digit and that digit is 0), an optional
+        /// decimal point (".", full stop) with one or more basic digits, and
+        /// an optional letter E or e with an optional plus or minus sign and
+        /// one or more basic digits (the exponent). A text string representing
+        /// a valid JSON number is not allowed to contain white space
+        /// characters, including spaces.</remarks>
+        public static CBORObject ParseJSONNumber(
+          string str,
+          JSONOptions options)
+        {
+            return String.IsNullOrEmpty(str) ? null :
+              ParseJSONNumber(str,
+                0,
+                str.Length,
+                options);
+        }
+
+        /// <summary>Parses a number whose format follows the JSON
+        /// specification (RFC 8259) from a portion of a text string, and
+        /// converts that number to a CBOR object.</summary>
+        /// <param name='str'>A text string containing the portion to parse as
+        /// a JSON number.</param>
+        /// <param name='offset'>An index, starting at 0, showing where the
+        /// desired portion of <paramref name='str'/> begins.</param>
+        /// <param name='count'>The length, in code units, of the desired
+        /// portion of <paramref name='str'/> (but not more than <paramref
+        /// name='str'/> 's length).</param>
+        /// <returns>A CBOR object that represents the parsed number. Returns
+        /// null if the parsing fails, including if the string is null or
+        /// empty.</returns>
+        /// <exception cref='ArgumentException'>Either <paramref
+        /// name='offset'/> or <paramref name='count'/> is less than 0 or
+        /// greater than <paramref name='str'/> 's length, or <paramref
+        /// name='str'/> 's length minus <paramref name='offset'/> is less than
+        /// <paramref name='count'/>.</exception>
+        /// <exception cref='ArgumentNullException'>The parameter <paramref
+        /// name='str'/> is null.</exception>
+        /// <remarks>Roughly speaking, a valid JSON number consists of an
+        /// optional minus sign, one or more basic digits (starting with 1 to 9
+        /// unless there is only one digit and that digit is 0), an optional
+        /// decimal point (".", full stop) with one or more basic digits, and
+        /// an optional letter E or e with an optional plus or minus sign and
+        /// one or more basic digits (the exponent). A text string representing
+        /// a valid JSON number is not allowed to contain white space
+        /// characters, including spaces.</remarks>
+        public static CBORObject ParseJSONNumber(
+          string str,
+          int offset,
+          int count)
+        {
+            return String.IsNullOrEmpty(str) ? null :
+              ParseJSONNumber(str,
+                offset,
+                count,
+                JSONOptions.Default);
+        }
+
+        internal static CBORObject ParseSmallNumberAsNegative(
+          int digit,
+          JSONOptions options)
+        {
 #if DEBUG
-                    if (mantInt < 0)
-                    {
-                        throw new ArgumentException("mantInt (" + mantInt +
-                          ") is less than 0");
-                    }
+            if (digit <= 0)
+            {
+                throw new ArgumentException("digit (" + digit + ") is not greater" +
+                  "\u0020than 0");
+            }
 #endif
 
-                    if (negative)
-                    {
-                        mantInt = -mantInt;
-                        if (preserveNegativeZero && mantInt == 0)
-                        {
-                            return CBORObject.FromObject(
-                              EDecimal.NegativeZero);
-                        }
-                    }
-                    return CBORObject.FromObject(mantInt);
-                }
-                else
-                {
-                    EInteger bigmant2 = mant.AsBigInteger();
-                    if (negative)
-                    {
-                        bigmant2 = -(EInteger)bigmant2;
-                    }
-                    return CBORObject.FromObject(bigmant2);
-                }
+            if (options != null && options.NumberConversion ==
+              JSONOptions.ConversionMode.Double)
+            {
+                return CBORObject.FromFloatingPointBits(
+                   CBORUtilities.IntegerToDoubleBits(-digit),
+                   8);
+            }
+            else if (options != null && options.NumberConversion ==
+            JSONOptions.ConversionMode.Decimal128)
+            {
+                return CBORObject.FromObject(EDecimal.FromInt32(-digit));
             }
             else
             {
-                EInteger bigmant = (mant == null) ? ((EInteger)mantInt) :
-                  mant.AsBigInteger();
-                EInteger bigexp = (newScale == null) ? ((EInteger)newScaleInt) :
-                  newScale.AsBigInteger();
-                if (negative)
-                {
-                    bigmant = -(EInteger)bigmant;
-                }
-                EDecimal edec;
-                edec = EDecimal.Create(
-                  bigmant,
-                  bigexp);
-                if (negative && preserveNegativeZero && bigmant.IsZero)
-                {
-                    EDecimal negzero = EDecimal.NegativeZero;
-                    negzero = negzero.Quantize(bigexp, null);
-                    edec = negzero.Subtract(edec);
-                }
-                return CBORObject.FromObject(edec);
+                // NOTE: Assumes digit is greater than zero, so PreserveNegativeZeros is
+                // irrelevant
+                return CBORObject.FromObject(-digit);
             }
+        }
+
+        internal static CBORObject ParseSmallNumber(int digit, JSONOptions
+          options)
+        {
+#if DEBUG
+            if (digit < 0)
+            {
+                throw new ArgumentException("digit (" + digit + ") is not greater" +
+                  "\u0020or equal to 0");
+            }
+#endif
+
+            if (options != null && options.NumberConversion ==
+              JSONOptions.ConversionMode.Double)
+            {
+                return CBORObject.FromFloatingPointBits(
+                   CBORUtilities.IntegerToDoubleBits(digit),
+                   8);
+            }
+            else if (options != null && options.NumberConversion ==
+            JSONOptions.ConversionMode.Decimal128)
+            {
+                return CBORObject.FromObject(EDecimal.FromInt32(digit));
+            }
+            else
+            {
+                // NOTE: Assumes digit is nonnegative, so PreserveNegativeZeros is irrelevant
+                return CBORObject.FromObject(digit);
+            }
+        }
+
+        /// <summary>Parses a number whose format follows the JSON
+        /// specification (RFC 8259) and converts that number to a CBOR
+        /// object.</summary>
+        /// <param name='str'>A text string to parse as a JSON number.</param>
+        /// <param name='offset'>An index, starting at 0, showing where the
+        /// desired portion of <paramref name='str'/> begins.</param>
+        /// <param name='count'>The length, in code units, of the desired
+        /// portion of <paramref name='str'/> (but not more than <paramref
+        /// name='str'/> 's length).</param>
+        /// <param name='options'>An object containing options to control how
+        /// JSON numbers are decoded to CBOR objects. Can be null, in which
+        /// case a JSONOptions object with all default properties is used
+        /// instead.</param>
+        /// <returns>A CBOR object that represents the parsed number. Returns
+        /// null if the parsing fails, including if the string is null or empty
+        /// or <paramref name='count'/> is 0 or less.</returns>
+        /// <exception cref='ArgumentNullException'>The parameter <paramref
+        /// name='str'/> is null.</exception>
+        /// <exception cref='ArgumentException'>Unsupported conversion
+        /// kind.</exception>
+        /// <remarks>Roughly speaking, a valid JSON number consists of an
+        /// optional minus sign, one or more basic digits (starting with 1 to 9
+        /// unless there is only one digit and that digit is 0), an optional
+        /// decimal point (".", full stop) with one or more basic digits, and
+        /// an optional letter E or e with an optional plus or minus sign and
+        /// one or more basic digits (the exponent). A text string representing
+        /// a valid JSON number is not allowed to contain white space
+        /// characters, including spaces.</remarks>
+        public static CBORObject ParseJSONNumber(
+          string str,
+          int offset,
+          int count,
+          JSONOptions options)
+        {
+            return CBORDataUtilitiesTextString.ParseJSONNumber(
+              str,
+              offset,
+              count,
+              options,
+              null);
+        }
+
+        /// <summary>Parses a number from a byte sequence whose format follows
+        /// the JSON specification (RFC 8259) and converts that number to a
+        /// CBOR object.</summary>
+        /// <param name='bytes'>A sequence of bytes to parse as a JSON
+        /// number.</param>
+        /// <param name='offset'>An index, starting at 0, showing where the
+        /// desired portion of <paramref name='bytes'/> begins.</param>
+        /// <param name='count'>The length, in code units, of the desired
+        /// portion of <paramref name='bytes'/> (but not more than <paramref
+        /// name='bytes'/> 's length).</param>
+        /// <param name='options'>An object containing options to control how
+        /// JSON numbers are decoded to CBOR objects. Can be null, in which
+        /// case a JSONOptions object with all default properties is used
+        /// instead.</param>
+        /// <returns>A CBOR object that represents the parsed number. Returns
+        /// null if the parsing fails, including if the byte sequence is null
+        /// or empty or <paramref name='count'/> is 0 or less.</returns>
+        /// <exception cref='ArgumentNullException'>The parameter <paramref
+        /// name='bytes'/> is null.</exception>
+        /// <exception cref='ArgumentException'>Unsupported conversion
+        /// kind.</exception>
+        /// <remarks>Roughly speaking, a valid JSON number consists of an
+        /// optional minus sign, one or more basic digits (starting with 1 to 9
+        /// unless there is only one digit and that digit is 0), an optional
+        /// decimal point (".", full stop) with one or more basic digits, and
+        /// an optional letter E or e with an optional plus or minus sign and
+        /// one or more basic digits (the exponent). A byte sequence
+        /// representing a valid JSON number is not allowed to contain white
+        /// space characters, including spaces.</remarks>
+        public static CBORObject ParseJSONNumber(
+          byte[] bytes,
+          int offset,
+          int count,
+          JSONOptions options)
+        {
+            return CBORDataUtilitiesByteArrayString.ParseJSONNumber(
+              bytes,
+              offset,
+              count,
+              options,
+              null);
+        }
+
+        /// <summary>Parses a number from a byte sequence whose format follows
+        /// the JSON specification (RFC 8259) and converts that number to a
+        /// CBOR object.</summary>
+        /// <param name='bytes'>A sequence of bytes to parse as a JSON
+        /// number.</param>
+        /// <param name='options'>An object containing options to control how
+        /// JSON numbers are decoded to CBOR objects. Can be null, in which
+        /// case a JSONOptions object with all default properties is used
+        /// instead.</param>
+        /// <returns>A CBOR object that represents the parsed number. Returns
+        /// null if the parsing fails, including if the byte sequence is null
+        /// or empty.</returns>
+        /// <remarks>Roughly speaking, a valid JSON number consists of an
+        /// optional minus sign, one or more basic digits (starting with 1 to 9
+        /// unless there is only one digit and that digit is 0), an optional
+        /// decimal point (".", full stop) with one or more basic digits, and
+        /// an optional letter E or e with an optional plus or minus sign and
+        /// one or more basic digits (the exponent). A byte sequence
+        /// representing a valid JSON number is not allowed to contain white
+        /// space characters, including spaces.</remarks>
+        public static CBORObject ParseJSONNumber(
+          byte[] bytes,
+          JSONOptions options)
+        {
+            return (bytes == null || bytes.Length == 0) ? null :
+              ParseJSONNumber(bytes,
+                0,
+                bytes.Length,
+                options);
+        }
+
+        /// <summary>Parses a number whose format follows the JSON
+        /// specification (RFC 8259) from a portion of a byte sequence, and
+        /// converts that number to a CBOR object.</summary>
+        /// <param name='bytes'>A sequence of bytes to parse as a JSON
+        /// number.</param>
+        /// <param name='offset'>An index, starting at 0, showing where the
+        /// desired portion of <paramref name='bytes'/> begins.</param>
+        /// <param name='count'>The length, in code units, of the desired
+        /// portion of <paramref name='bytes'/> (but not more than <paramref
+        /// name='bytes'/> 's length).</param>
+        /// <returns>A CBOR object that represents the parsed number. Returns
+        /// null if the parsing fails, including if the byte sequence is null
+        /// or empty.</returns>
+        /// <exception cref='ArgumentException'>Either <paramref
+        /// name='offset'/> or <paramref name='count'/> is less than 0 or
+        /// greater than <paramref name='bytes'/> 's length, or <paramref
+        /// name='bytes'/> 's length minus <paramref name='offset'/> is less
+        /// than <paramref name='count'/>.</exception>
+        /// <exception cref='ArgumentNullException'>The parameter <paramref
+        /// name='bytes'/> is null.</exception>
+        /// <remarks>Roughly speaking, a valid JSON number consists of an
+        /// optional minus sign, one or more basic digits (starting with 1 to 9
+        /// unless there is only one digit and that digit is 0), an optional
+        /// decimal point (".", full stop) with one or more basic digits, and
+        /// an optional letter E or e with an optional plus or minus sign and
+        /// one or more basic digits (the exponent). A byte sequence
+        /// representing a valid JSON number is not allowed to contain white
+        /// space characters, including spaces.</remarks>
+        public static CBORObject ParseJSONNumber(
+          byte[] bytes,
+          int offset,
+          int count)
+        {
+            return (bytes == null || bytes.Length == 0) ? null :
+              ParseJSONNumber(bytes,
+                offset,
+                count,
+                JSONOptions.Default);
+        }
+
+        /// <summary>Parses a number from a byte sequence whose format follows
+        /// the JSON specification. The method uses a JSONOptions with all
+        /// default properties except for a PreserveNegativeZero property of
+        /// false.</summary>
+        /// <param name='bytes'>A byte sequence to parse as a JSON
+        /// number.</param>
+        /// <returns>A CBOR object that represents the parsed number. Returns
+        /// positive zero if the number is a zero that starts with a minus sign
+        /// (such as "-0" or "-0.0"). Returns null if the parsing fails,
+        /// including if the byte sequence is null or empty.</returns>
+        public static CBORObject ParseJSONNumber(byte[] bytes)
+        {
+            // TODO: Preserve negative zeros in next major version
+            return ParseJSONNumber(bytes, PreserveNegZeroNo);
+        }
+
+        /// <summary>Parses a number from a sequence of <c>char</c> s whose
+        /// format follows the JSON specification (RFC 8259) and converts that
+        /// number to a CBOR object.</summary>
+        /// <param name='chars'>A sequence of <c>char</c> s to parse as a JSON
+        /// number.</param>
+        /// <param name='offset'>An index, starting at 0, showing where the
+        /// desired portion of <paramref name='chars'/> begins.</param>
+        /// <param name='count'>The length, in code units, of the desired
+        /// portion of <paramref name='chars'/> (but not more than <paramref
+        /// name='chars'/> 's length).</param>
+        /// <param name='options'>An object containing options to control how
+        /// JSON numbers are decoded to CBOR objects. Can be null, in which
+        /// case a JSONOptions object with all default properties is used
+        /// instead.</param>
+        /// <returns>A CBOR object that represents the parsed number. Returns
+        /// null if the parsing fails, including if the sequence of <c>char</c>
+        /// s is null or empty or <paramref name='count'/> is 0 or
+        /// less.</returns>
+        /// <exception cref='ArgumentNullException'>The parameter <paramref
+        /// name='chars'/> is null.</exception>
+        /// <exception cref='ArgumentException'>Unsupported conversion
+        /// kind.</exception>
+        /// <remarks>Roughly speaking, a valid JSON number consists of an
+        /// optional minus sign, one or more basic digits (starting with 1 to 9
+        /// unless there is only one digit and that digit is 0), an optional
+        /// decimal point (".", full stop) with one or more basic digits, and
+        /// an optional letter E or e with an optional plus or minus sign and
+        /// one or more basic digits (the exponent). A sequence of <c>char</c>
+        /// s representing a valid JSON number is not allowed to contain white
+        /// space characters, including spaces.</remarks>
+        public static CBORObject ParseJSONNumber(
+          char[] chars,
+          int offset,
+          int count,
+          JSONOptions options)
+        {
+            return CBORDataUtilitiesCharArrayString.ParseJSONNumber(
+              chars,
+              offset,
+              count,
+              options,
+              null);
+        }
+
+        /// <summary>Parses a number from a sequence of <c>char</c> s whose
+        /// format follows the JSON specification (RFC 8259) and converts that
+        /// number to a CBOR object.</summary>
+        /// <param name='chars'>A sequence of <c>char</c> s to parse as a JSON
+        /// number.</param>
+        /// <param name='options'>An object containing options to control how
+        /// JSON numbers are decoded to CBOR objects. Can be null, in which
+        /// case a JSONOptions object with all default properties is used
+        /// instead.</param>
+        /// <returns>A CBOR object that represents the parsed number. Returns
+        /// null if the parsing fails, including if the sequence of <c>char</c>
+        /// s is null or empty.</returns>
+        /// <remarks>Roughly speaking, a valid JSON number consists of an
+        /// optional minus sign, one or more basic digits (starting with 1 to 9
+        /// unless there is only one digit and that digit is 0), an optional
+        /// decimal point (".", full stop) with one or more basic digits, and
+        /// an optional letter E or e with an optional plus or minus sign and
+        /// one or more basic digits (the exponent). A sequence of <c>char</c>
+        /// s representing a valid JSON number is not allowed to contain white
+        /// space characters, including spaces.</remarks>
+        public static CBORObject ParseJSONNumber(
+          char[] chars,
+          JSONOptions options)
+        {
+            return (chars == null || chars.Length == 0) ? null :
+              ParseJSONNumber(chars,
+                0,
+                chars.Length,
+                options);
+        }
+
+        /// <summary>Parses a number whose format follows the JSON
+        /// specification (RFC 8259) from a portion of a sequence of
+        /// <c>char</c> s, and converts that number to a CBOR object.</summary>
+        /// <param name='chars'>A sequence of <c>char</c> s to parse as a JSON
+        /// number.</param>
+        /// <param name='offset'>An index, starting at 0, showing where the
+        /// desired portion of <paramref name='chars'/> begins.</param>
+        /// <param name='count'>The length, in code units, of the desired
+        /// portion of <paramref name='chars'/> (but not more than <paramref
+        /// name='chars'/> 's length).</param>
+        /// <returns>A CBOR object that represents the parsed number. Returns
+        /// null if the parsing fails, including if the sequence of <c>char</c>
+        /// s is null or empty.</returns>
+        /// <exception cref='ArgumentException'>Either <paramref
+        /// name='offset'/> or <paramref name='count'/> is less than 0 or
+        /// greater than <paramref name='chars'/> 's length, or <paramref
+        /// name='chars'/> 's length minus <paramref name='offset'/> is less
+        /// than <paramref name='count'/>.</exception>
+        /// <exception cref='ArgumentNullException'>The parameter <paramref
+        /// name='chars'/> is null.</exception>
+        /// <remarks>Roughly speaking, a valid JSON number consists of an
+        /// optional minus sign, one or more basic digits (starting with 1 to 9
+        /// unless there is only one digit and that digit is 0), an optional
+        /// decimal point (".", full stop) with one or more basic digits, and
+        /// an optional letter E or e with an optional plus or minus sign and
+        /// one or more basic digits (the exponent). A sequence of <c>char</c>
+        /// s representing a valid JSON number is not allowed to contain white
+        /// space characters, including spaces.</remarks>
+        public static CBORObject ParseJSONNumber(
+          char[] chars,
+          int offset,
+          int count)
+        {
+            return (chars == null || chars.Length == 0) ? null :
+              ParseJSONNumber(chars,
+                offset,
+                count,
+                JSONOptions.Default);
+        }
+
+        /// <summary>Parses a number from a sequence of <c>char</c> s whose
+        /// format follows the JSON specification. The method uses a
+        /// JSONOptions with all default properties except for a
+        /// PreserveNegativeZero property of false.</summary>
+        /// <param name='chars'>A sequence of <c>char</c> s to parse as a JSON
+        /// number.</param>
+        /// <returns>A CBOR object that represents the parsed number. Returns
+        /// positive zero if the number is a zero that starts with a minus sign
+        /// (such as "-0" or "-0.0"). Returns null if the parsing fails,
+        /// including if the sequence of <c>char</c> s is null or
+        /// empty.</returns>
+        public static CBORObject ParseJSONNumber(char[] chars)
+        {
+            // TODO: Preserve negative zeros in next major version
+            return ParseJSONNumber(chars, PreserveNegZeroNo);
         }
     }
     #endregion
@@ -616,40 +1268,47 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
     {
         private static string DateTimeToString(DateTime bi)
         {
-            int[] lesserFields = new int[7];
-            EInteger[] year = new EInteger[1];
+            var lesserFields = new int[7];
+            var year = new EInteger[1];
             PropertyMap.BreakDownDateTime(bi, year, lesserFields);
-            return CBORUtilities.ToAtomDateTimeString(year[0], lesserFields, true);
-        }
-
-        public CBORObject ValidateObject(CBORObject obj)
-        {
-            if (obj.Type != CBORType.TextString)
-            {
-                throw new CBORException("Not a text string");
-            }
-            return obj;
+            return CBORUtilities.ToAtomDateTimeString(year[0], lesserFields);
         }
 
         public DateTime FromCBORObject(CBORObject obj)
         {
             if (obj.HasMostOuterTag(0))
             {
-                return StringToDateTime(obj.AsString());
+                try
+                {
+                    return StringToDateTime(obj.AsString());
+                }
+                catch (OverflowException ex)
+                {
+                    throw new CBORException(ex.Message, ex);
+                }
+                catch (InvalidOperationException ex)
+                {
+                    throw new CBORException(ex.Message, ex);
+                }
+                catch (ArgumentException ex)
+                {
+                    throw new CBORException(ex.Message, ex);
+                }
             }
             else if (obj.HasMostOuterTag(1))
             {
-                if (!obj.IsFinite)
+                if (!obj.IsNumber || !obj.AsNumber().IsFinite())
                 {
                     throw new CBORException("Not a finite number");
                 }
-                EDecimal dec = obj.AsEDecimal();
-                int[] lesserFields = new int[7];
-                EInteger[] year = new EInteger[1];
+                EDecimal dec;
+                dec = (EDecimal)obj.ToObject(typeof(EDecimal));
+                var lesserFields = new int[7];
+                var year = new EInteger[1];
                 CBORUtilities.BreakDownSecondsSinceEpoch(
-                        dec,
-                        year,
-                        lesserFields);
+                  dec,
+                  year,
+                  lesserFields);
                 return PropertyMap.BuildUpDateTime(year[0], lesserFields);
             }
             throw new CBORException("Not tag 0 or 1");
@@ -657,8 +1316,8 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
 
         public static DateTime StringToDateTime(string str)
         {
-            int[] lesserFields = new int[7];
-            EInteger[] year = new EInteger[1];
+            var lesserFields = new int[7];
+            var year = new EInteger[1];
             CBORUtilities.ParseAtomDateTimeString(str, year, lesserFields);
             return PropertyMap.BuildUpDateTime(year[0], lesserFields);
         }
@@ -671,78 +1330,98 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
     #endregion
 
     #region CBORDouble
-    internal class CBORDouble : ICBORNumber
+    internal class CBORDoubleBits : ICBORNumber
     {
         public bool IsPositiveInfinity(object obj)
         {
-            return Double.IsPositiveInfinity((double)obj);
+            return ((long)obj) == (0x7ffL << 52);
         }
 
         public bool IsInfinity(object obj)
         {
-            return Double.IsInfinity((double)obj);
+            return (((long)obj) & ~(1L << 63)) == (0x7ffL << 52);
         }
 
         public bool IsNegativeInfinity(object obj)
         {
-            return Double.IsNegativeInfinity((double)obj);
+            return ((long)obj) == (0xfffL << 52);
         }
 
         public bool IsNaN(object obj)
         {
-            return Double.IsNaN((double)obj);
+            return CBORUtilities.DoubleBitsNaN((long)obj);
         }
 
         public double AsDouble(object obj)
         {
-            return (double)obj;
+            return CBORUtilities.Int64BitsToDouble((long)obj);
         }
 
-        public EDecimal AsExtendedDecimal(object obj)
+        public EDecimal AsEDecimal(object obj)
         {
-            return EDecimal.FromDouble((double)obj);
+            return EDecimal.FromDoubleBits((long)obj);
         }
 
-        public EFloat AsExtendedFloat(object obj)
+        public EFloat AsEFloat(object obj)
         {
-            return EFloat.FromDouble((double)obj);
+            return EFloat.FromDoubleBits((long)obj);
         }
 
         public float AsSingle(object obj)
         {
-            return (float)(double)obj;
+            return CBORUtilities.Int32BitsToSingle(
+              CBORUtilities.DoubleToRoundedSinglePrecision((long)obj));
         }
 
         public EInteger AsEInteger(object obj)
         {
-            return CBORUtilities.BigIntegerFromDouble((double)obj);
+            return CBORUtilities.EIntegerFromDoubleBits((long)obj);
         }
 
         public long AsInt64(object obj)
         {
-            double fltItem = (double)obj;
-            if (Double.IsNaN(fltItem))
+            if (this.IsNaN(obj) || this.IsInfinity(obj))
             {
                 throw new OverflowException("This object's value is out of range");
             }
-            fltItem = (fltItem < 0) ? Math.Ceiling(fltItem) : Math.Floor(fltItem);
-            if (fltItem >= -9223372036854775808.0 && fltItem <
-            9223372036854775808.0)
+            long b = DoubleBitsRoundDown((long)obj);
+            bool neg = (b >> 63) != 0;
+            b &= ~(1L << 63);
+            if (b == 0)
             {
-                return (long)fltItem;
+                return 0;
             }
-            throw new OverflowException("This object's value is out of range");
+            if (neg && b == (0x43eL << 52))
+            {
+                return Int64.MinValue;
+            }
+            if ((b >> 52) >= 0x43e)
+            {
+                throw new OverflowException("This object's value is out of range");
+            }
+            var exp = (int)(b >> 52);
+            long mant = b & ((1L << 52) - 1);
+            mant |= 1L << 52;
+            int shift = 52 - (exp - 0x3ff);
+            if (shift < 0)
+            {
+                mant <<= -shift;
+            }
+            else
+            {
+                mant >>= shift;
+            }
+            if (neg)
+            {
+                mant = -mant;
+            }
+            return mant;
         }
 
         public bool CanFitInSingle(object obj)
         {
-            double fltItem = (double)obj;
-            if (Double.IsNaN(fltItem))
-            {
-                return true;
-            }
-            float sing = (float)fltItem;
-            return (double)sing == (double)fltItem;
+            return this.IsNaN(obj) ||
+      CBORUtilities.DoubleRetainsSameValueInSingle((long)obj);
         }
 
         public bool CanFitInDouble(object obj)
@@ -760,95 +1439,126 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
             return this.IsIntegral(obj) && this.CanTruncatedIntFitInInt64(obj);
         }
 
+        private static long DoubleBitsRoundDown(long bits)
+        {
+            long origbits = bits;
+            bits &= ~(1L << 63);
+            if (bits == 0)
+            {
+                return origbits;
+            }
+            // Infinity and NaN
+            if (bits >= unchecked((long)(0x7ffL << 52)))
+            {
+                return origbits;
+            }
+            // Beyond non-integer range
+            if ((bits >> 52) >= 0x433)
+            {
+                return origbits;
+            }
+            // Less than 1
+            if ((bits >> 52) <= 0x3fe)
+            {
+                return (origbits >> 63) != 0 ? (1L << 63) : 0;
+            }
+            var exp = (int)(bits >> 52);
+            long mant = bits & ((1L << 52) - 1);
+            int shift = 52 - (exp - 0x3ff);
+            return ((mant >> shift) << shift) | (origbits & (0xfffL << 52));
+        }
+
         public bool CanTruncatedIntFitInInt64(object obj)
         {
-            double fltItem = (double)obj;
-            if (Double.IsNaN(fltItem) || Double.IsInfinity(fltItem))
+            if (this.IsNaN(obj) || this.IsInfinity(obj))
             {
                 return false;
             }
-            double fltItem2 = (fltItem < 0) ? Math.Ceiling(fltItem) :
-            Math.Floor(fltItem);
-            return fltItem2 >= -9223372036854775808.0 && fltItem2 <
-            9223372036854775808.0;
+            long b = DoubleBitsRoundDown((long)obj);
+            bool neg = (b >> 63) != 0;
+            b &= ~(1L << 63);
+            return (neg && b == (0x43eL << 52)) || ((b >> 52) < 0x43e);
         }
 
         public bool CanTruncatedIntFitInInt32(object obj)
         {
-            double fltItem = (double)obj;
-            if (Double.IsNaN(fltItem) || Double.IsInfinity(fltItem))
+            if (this.IsNaN(obj) || this.IsInfinity(obj))
             {
                 return false;
             }
-            double fltItem2 = (fltItem < 0) ? Math.Ceiling(fltItem) :
-            Math.Floor(fltItem);
-            return fltItem2 >= Int32.MinValue && fltItem2 <= Int32.MaxValue;
+            long b = DoubleBitsRoundDown((long)obj);
+            bool neg = (b >> 63) != 0;
+            b &= ~(1L << 63);
+            return (neg && b == (0x41eL << 52)) || ((b >> 52) < 0x41e);
         }
 
         public int AsInt32(object obj, int minValue, int maxValue)
         {
-            double fltItem = (double)obj;
-            if (Double.IsNaN(fltItem))
+            if (this.IsNaN(obj) || this.IsInfinity(obj))
             {
                 throw new OverflowException("This object's value is out of range");
             }
-            fltItem = (fltItem < 0) ? Math.Ceiling(fltItem) : Math.Floor(fltItem);
-            if (fltItem >= minValue && fltItem <= maxValue)
+            long b = DoubleBitsRoundDown((long)obj);
+            bool neg = (b >> 63) != 0;
+            b &= ~(1L << 63);
+            if (b == 0)
             {
-                int ret = (int)fltItem;
-                return ret;
+                return 0;
             }
-            throw new OverflowException("This object's value is out of range");
+            // Beyond non-integer range (thus beyond int32 range)
+            if ((b >> 52) >= 0x433)
+            {
+                throw new OverflowException("This object's value is out of range");
+            }
+            var exp = (int)(b >> 52);
+            long mant = b & ((1L << 52) - 1);
+            mant |= 1L << 52;
+            int shift = 52 - (exp - 0x3ff);
+            mant >>= shift;
+            if (neg)
+            {
+                mant = -mant;
+            }
+            if (mant < minValue || mant > maxValue)
+            {
+                throw new OverflowException("This object's value is out of range");
+            }
+            return (int)mant;
         }
 
-        public bool IsZero(object obj)
+        public bool IsNumberZero(object obj)
         {
-            return (double)obj == 0.0;
+            return (((long)obj) & ~(1L << 63)) == 0;
         }
 
         public int Sign(object obj)
         {
-            double flt = (double)obj;
-            return Double.IsNaN(flt) ? 2 : ((double)flt == 0.0 ? 0 : (flt < 0.0f ?
-            -1 : 1));
+            return this.IsNaN(obj) ? (-2) : ((((long)obj) >> 63) != 0 ? -1 : 1);
         }
 
         public bool IsIntegral(object obj)
         {
-            double fltItem = (double)obj;
-            if (Double.IsNaN(fltItem) || Double.IsInfinity(fltItem))
-            {
-                return false;
-            }
-            double fltItem2 = (fltItem < 0) ? Math.Ceiling(fltItem) :
-            Math.Floor(fltItem);
-            return fltItem == fltItem2;
+            return CBORUtilities.IsIntegerValue((long)obj);
         }
 
         public object Negate(object obj)
         {
-            double val = (double)obj;
-            return -val;
+            return ((long)obj) ^ (1L << 63);
         }
 
         public object Abs(object obj)
         {
-            double val = (double)obj;
-            return (val < 0) ? -val : obj;
+            return ((long)obj) & ~(1L << 63);
         }
 
-        public ERational AsExtendedRational(object obj)
+        public ERational AsERational(object obj)
         {
-            return ERational.FromDouble((double)obj);
+            return ERational.FromDoubleBits((long)obj);
         }
 
         public bool IsNegative(object obj)
         {
-            double dbl = (double)obj;
-            long lvalue = BitConverter.ToInt64(
-        BitConverter.GetBytes((double)dbl),
-        0);
-            return (lvalue >> 63) != 0;
+            return (((long)obj) >> 63) != 0;
         }
     }
     #endregion
@@ -881,12 +1591,12 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
             return EFloat.FromEInteger((EInteger)obj).ToDouble();
         }
 
-        public EDecimal AsExtendedDecimal(object obj)
+        public EDecimal AsEDecimal(object obj)
         {
             return EDecimal.FromEInteger((EInteger)obj);
         }
 
-        public EFloat AsExtendedFloat(object obj)
+        public EFloat AsEFloat(object obj)
         {
             return EFloat.FromEInteger((EInteger)obj);
         }
@@ -903,9 +1613,8 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
 
         public long AsInt64(object obj)
         {
-            EInteger bi = (EInteger)obj;
-            if (bi.CompareTo(CBORObject.Int64MaxValue) > 0 ||
-                bi.CompareTo(CBORObject.Int64MinValue) < 0)
+            var bi = (EInteger)obj;
+            if (!bi.CanFitInInt64())
             {
                 throw new OverflowException("This object's value is out of range");
             }
@@ -914,7 +1623,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
 
         public bool CanFitInSingle(object obj)
         {
-            EInteger bigintItem = (EInteger)obj;
+            var bigintItem = (EInteger)obj;
             EFloat ef = EFloat.FromEInteger(bigintItem);
             EFloat ef2 = EFloat.FromSingle(ef.ToSingle());
             return ef.CompareTo(ef2) == 0;
@@ -922,7 +1631,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
 
         public bool CanFitInDouble(object obj)
         {
-            EInteger bigintItem = (EInteger)obj;
+            var bigintItem = (EInteger)obj;
             EFloat ef = EFloat.FromEInteger(bigintItem);
             EFloat ef2 = EFloat.FromDouble(ef.ToDouble());
             return ef.CompareTo(ef2) == 0;
@@ -930,14 +1639,14 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
 
         public bool CanFitInInt32(object obj)
         {
-            EInteger bi = (EInteger)obj;
+            var bi = (EInteger)obj;
             return bi.CanFitInInt32();
         }
 
         public bool CanFitInInt64(object obj)
         {
-            EInteger bi = (EInteger)obj;
-            return bi.GetSignedBitLength() <= 63;
+            var bi = (EInteger)obj;
+            return bi.CanFitInInt64();
         }
 
         public bool CanTruncatedIntFitInInt64(object obj)
@@ -950,7 +1659,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
             return this.CanFitInInt32(obj);
         }
 
-        public bool IsZero(object obj)
+        public bool IsNumberZero(object obj)
         {
             return ((EInteger)obj).IsZero;
         }
@@ -967,10 +1676,10 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
 
         public int AsInt32(object obj, int minValue, int maxValue)
         {
-            EInteger bi = (EInteger)obj;
+            var bi = (EInteger)obj;
             if (bi.CanFitInInt32())
             {
-                int ret = (int)bi;
+                var ret = (int)bi;
                 if (ret >= minValue && ret <= maxValue)
                 {
                     return ret;
@@ -981,7 +1690,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
 
         public object Negate(object obj)
         {
-            EInteger bigobj = (EInteger)obj;
+            var bigobj = (EInteger)obj;
             bigobj = -(EInteger)bigobj;
             return bigobj;
         }
@@ -991,7 +1700,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
             return ((EInteger)obj).Abs();
         }
 
-        public ERational AsExtendedRational(object obj)
+        public ERational AsERational(object obj)
         {
             return ERational.FromEInteger((EInteger)obj);
         }
@@ -1009,120 +1718,253 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
     /// path='docs/doc[@name="T:CBOREncodeOptions"]/*'/>
     public sealed class CBOREncodeOptions
     {
-        /// <include file='../../docs.xml'
-        /// path='docs/doc[@name="F:CBOREncodeOptions.None"]/*'/>
-        [Obsolete("Use 'new CBOREncodeOptions(true,true)' instead. Option classes in this library will follow the form seen in JSONOptions in a later version; the approach used in this class is too complicated. 'CBOREncodeOptions.Default' contains recommended default options that may be adopted by certain CBORObject methods in the next major version.")]
-        public static readonly CBOREncodeOptions None =
-            new CBOREncodeOptions(0);
-
-        /// <include file='../../docs.xml'
-        /// path='docs/doc[@name="F:CBOREncodeOptions.Default"]/*'/>
+        /// <summary>Default options for CBOR objects. Disallow duplicate keys,
+        /// and always encode strings using definite-length encoding.</summary>
         public static readonly CBOREncodeOptions Default =
           new CBOREncodeOptions(false, false);
 
-        /// <include file='../../docs.xml'
-        /// path='docs/doc[@name="F:CBOREncodeOptions.NoIndefLengthStrings"]/*'/>
-        [Obsolete("Use 'new CBOREncodeOptions(false,true)' instead. Option classes in this library will follow the form seen in JSONOptions in a later version; the approach used in this class is too complicated.")]
-        public static readonly CBOREncodeOptions NoIndefLengthStrings =
-            new CBOREncodeOptions(1);
+        /// <summary>Default options for CBOR objects serialized using the
+        /// CTAP2 canonicalization (used in Web Authentication, among other
+        /// specifications). Disallow duplicate keys, and always encode strings
+        /// using definite-length encoding.</summary>
+        public static readonly CBOREncodeOptions DefaultCtap2Canonical =
+          new CBOREncodeOptions(false, false, true);
 
-        /// <include file='../../docs.xml'
-        /// path='docs/doc[@name="F:CBOREncodeOptions.NoDuplicateKeys"]/*'/>
-        [Obsolete("Use 'new CBOREncodeOptions(true,false)' instead. Option classes in this library will follow the form seen in JSONOptions in a later version; the approach used in this class is too complicated.")]
-        public static readonly CBOREncodeOptions NoDuplicateKeys =
-            new CBOREncodeOptions(2);
-
-        private readonly int value;
-
-        /// <include file='../../docs.xml'
-        /// path='docs/doc[@name="M:CBOREncodeOptions.#ctor"]/*'/>
+        /// <summary>Initializes a new instance of the
+        /// <see cref='PeterO.Cbor.CBOREncodeOptions'/> class.</summary>
         public CBOREncodeOptions() : this(false, false)
         {
         }
 
-        /// <include file='../../docs.xml'
-        /// path='docs/doc[@name="M:CBOREncodeOptions.#ctor(System.Boolean,System.Boolean)"]/*'/>
+        /// <summary>Initializes a new instance of the
+        /// <see cref='PeterO.Cbor.CBOREncodeOptions'/> class.</summary>
+        /// <param name='useIndefLengthStrings'>A value indicating whether to
+        /// always encode strings with a definite-length encoding.</param>
+        /// <param name='allowDuplicateKeys'>A value indicating whether to
+        /// disallow duplicate keys when reading CBOR objects from a data
+        /// stream.</param>
         public CBOREncodeOptions(
-      bool useIndefLengthStrings,
-      bool allowDuplicateKeys) :
-            this(useIndefLengthStrings, allowDuplicateKeys, false)
+          bool useIndefLengthStrings,
+          bool allowDuplicateKeys)
+          : this(useIndefLengthStrings, allowDuplicateKeys, false)
         {
         }
 
-        /// <include file='../../docs.xml'
-        /// path='docs/doc[@name="M:CBOREncodeOptions.#ctor(System.Boolean,System.Boolean,System.Boolean)"]/*'/>
+        /// <summary>Initializes a new instance of the
+        /// <see cref='PeterO.Cbor.CBOREncodeOptions'/> class.</summary>
+        /// <param name='useIndefLengthStrings'>A value indicating whether to
+        /// encode strings with a definite-length encoding in certain
+        /// cases.</param>
+        /// <param name='allowDuplicateKeys'>A value indicating whether to
+        /// allow duplicate keys when reading CBOR objects from a data
+        /// stream.</param>
+        /// <param name='ctap2Canonical'>A value indicating whether CBOR
+        /// objects are written out using the CTAP2 canonical CBOR encoding
+        /// form, which is useful for implementing Web Authentication.</param>
         public CBOREncodeOptions(
-      bool useIndefLengthStrings,
-      bool allowDuplicateKeys,
-      bool ctap2Canonical)
+          bool useIndefLengthStrings,
+          bool allowDuplicateKeys,
+          bool ctap2Canonical)
         {
-            int val = 0;
-            if (!useIndefLengthStrings)
-            {
-                val |= 1;
-            }
-            if (!allowDuplicateKeys)
-            {
-                val |= 2;
-            }
-            this.value = val;
+            this.ResolveReferences = false;
+            this.AllowEmpty = false;
+            this.UseIndefLengthStrings = useIndefLengthStrings;
+            this.AllowDuplicateKeys = allowDuplicateKeys;
             this.Ctap2Canonical = ctap2Canonical;
         }
 
-        /// <include file='../../docs.xml'
-        /// path='docs/doc[@name="P:CBOREncodeOptions.UseIndefLengthStrings"]/*'/>
+        /// <summary>Initializes a new instance of the
+        /// <see cref='PeterO.Cbor.CBOREncodeOptions'/> class.</summary>
+        /// <param name='paramString'>A string setting forth the options to
+        /// use. This is a semicolon-separated list of options, each of which
+        /// has a key and a value separated by an equal sign ("="). Whitespace
+        /// and line separators are not allowed to appear between the
+        /// semicolons or between the equal signs, nor may the string begin or
+        /// end with whitespace. The string can be empty, but cannot be null.
+        /// The following is an example of this parameter:
+        /// <c>allowduplicatekeys=true;ctap2Canonical=true</c>. The key can be
+        /// any one of the following where the letters can be any combination
+        /// of basic upper-case and/or basic lower-case letters:
+        /// <c>allowduplicatekeys</c>, <c>ctap2canonical</c>,
+        /// <c>resolvereferences</c>, <c>useindeflengthstrings</c>,
+        /// <c>allowempty</c>. Keys other than these are ignored. (Keys are
+        /// compared using a basic case-insensitive comparison, in which two
+        /// strings are equal if they match after converting the basic
+        /// upper-case letters A to Z (U+0041 to U+005A) in both strings to
+        /// basic lower-case letters.) If two or more key/value pairs have
+        /// equal keys (in a basic case-insensitive comparison), the value
+        /// given for the last such key is used. The four keys just given can
+        /// have a value of <c>1</c>, <c>true</c>, <c>yes</c>, or <c>on</c>
+        /// (where the letters can be any combination of basic upper-case
+        /// and/or basic lower-case letters), which means true, and any other
+        /// value meaning false. For example, <c>allowduplicatekeys=Yes</c> and
+        /// <c>allowduplicatekeys=1</c> both set the <c>AllowDuplicateKeys</c>
+        /// property to true. In the future, this class may allow other keys to
+        /// store other kinds of values, not just true or false.</param>
+        /// <exception cref='ArgumentNullException'>The parameter <paramref
+        /// name='paramString'/> is null.</exception>
+        public CBOREncodeOptions(string paramString)
+        {
+            if (paramString == null)
+            {
+                throw new ArgumentNullException(nameof(paramString));
+            }
+            var parser = new OptionsParser(paramString);
+            this.ResolveReferences = parser.GetBoolean("resolvereferences",
+                false);
+            this.UseIndefLengthStrings = parser.GetBoolean(
+              "useindeflengthstrings",
+              false);
+            this.AllowDuplicateKeys = parser.GetBoolean("allowduplicatekeys",
+                false);
+            this.AllowEmpty = parser.GetBoolean("allowempty", false);
+            this.Ctap2Canonical = parser.GetBoolean("ctap2canonical", false);
+        }
+
+        /// <summary>Gets the values of this options object's properties in
+        /// text form.</summary>
+        /// <returns>A text string containing the values of this options
+        /// object's properties. The format of the string is the same as the
+        /// one described in the String constructor for this class.</returns>
+        public override string ToString()
+        {
+            return new System.Text.StringBuilder()
+              .Append("allowduplicatekeys=")
+              .Append(this.AllowDuplicateKeys ? "true" : "false")
+              .Append(";useindeflengthstrings=")
+              .Append(this.UseIndefLengthStrings ? "true" : "false")
+              .Append(";ctap2canonical=")
+              .Append(this.Ctap2Canonical ? "true" : "false")
+              .Append(";resolvereferences=")
+              .Append(this.ResolveReferences ? "true" : "false")
+              .Append(";allowempty=").Append(this.AllowEmpty ? "true" : "false")
+              .ToString();
+        }
+
+        /// <summary>Gets a value indicating whether to resolve references to
+        /// sharable objects and sharable strings in the process of decoding a
+        /// CBOR object. Enabling this property, however, can cause a security
+        /// risk if a decoded CBOR object is then re-encoded.</summary>
+        /// <value>A value indicating whether to resolve references to sharable
+        /// objects and sharable strings. The default is false.</value>
+        /// <remarks>
+        /// <para><b>About sharable objects and references</b></para>
+        /// <para>Sharable objects are marked with tag 28, and references to
+        /// those objects are marked with tag 29 (where a reference of 0 means
+        /// the first sharable object in the CBOR stream, a reference of 1
+        /// means the second, and so on). Sharable strings (byte strings and
+        /// text strings) appear within an enclosing object marked with tag
+        /// 256, and references to them are marked with tag 25; in general, a
+        /// string is sharable only if storing its reference rather than the
+        /// string would save space.</para>
+        /// <para>Note that unlike most other tags, these tags generally care
+        /// about the relative order in which objects appear in a CBOR stream;
+        /// thus they are not interoperable with CBOR implementations that
+        /// follow the generic CBOR data model (since they may list map keys in
+        /// an unspecified order). Interoperability problems with these tags
+        /// can be reduced by not using them to mark keys or values of a map or
+        /// to mark objects within those keys or values.</para>
+        /// <para><b>Security Note</b></para>
+        /// <para>When this property is enabled and a decoded CBOR object
+        /// contains references to sharable CBOR objects within it, those
+        /// references will be replaced with the sharable objects they refer to
+        /// (but without making a copy of those objects). However, if shared
+        /// references are deeply nested and used multiple times, these
+        /// references can result in a CBOR object that is orders of magnitude
+        /// bigger than if shared references weren't resolved, and this can
+        /// cause a denial of service when the decoded CBOR object is then
+        /// serialized (e.g., with <c>EncodeToBytes()</c>, <c>ToString()</c>,
+        /// <c>ToJSONString()</c>, or <c>WriteTo</c> ), because object
+        /// references are expanded in the process.</para>
+        /// <para>For example, the following object in CBOR diagnostic
+        /// notation, <c>[28(["xxx", "yyy"]), 28([29(0), 29(0), 29(0)]),
+        /// 28([29(1), 29(1)]), 28([29(2), 29(2)]), 28([29(3), 29(3)]),
+        /// 28([29(4), 29(4)]), 28([29(5), 29(5)])]</c>, expands to a CBOR
+        /// object with a serialized size of about 1831 bytes when this
+        /// property is enabled, as opposed to about 69 bytes when this
+        /// property is disabled.</para>
+        /// <para>One way to mitigate security issues with this property is to
+        /// limit the maximum supported size a CBORObject can have once
+        /// serialized to CBOR or JSON. This can be done by passing a so-called
+        /// "limited memory stream" to the <c>WriteTo</c> or <c>WriteJSONTo</c>
+        /// methods when serializing the object to JSON or CBOR. A "limited
+        /// memory stream" is a <c>Stream</c> (or <c>OutputStream</c> in Java)
+        /// that throws an exception if it would write more bytes than a given
+        /// maximum size or would seek past that size. (See the documentation
+        /// for <c>CBORObject.WriteTo</c> or <c>CBORObject.WriteJSONTo</c> for
+        /// example code.) Another mitigation is to check the CBOR object's
+        /// type before serializing it, since only arrays and maps can have the
+        /// security problem described here, or to check the maximum nesting
+        /// depth of a CBOR array or map before serializing
+        /// it.</para></remarks>
+        public bool ResolveReferences
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>Gets a value indicating whether to encode strings with an
+        /// indefinite-length encoding under certain circumstances.</summary>
+        /// <value>A value indicating whether to encode strings with an
+        /// indefinite-length encoding under certain circumstances. The default
+        /// is false.</value>
         public bool UseIndefLengthStrings
         {
-            get
-            {
-                return (this.value & 1) == 0;
-            }
+            get;
+            private set;
         }
 
-        /// <include file='../../docs.xml'
-        /// path='docs/doc[@name="P:CBOREncodeOptions.AllowDuplicateKeys"]/*'/>
+        /// <summary>Gets a value indicating whether decoding a CBOR object
+        /// will return <c>null</c> instead of a CBOR object if the stream has
+        /// no content or the end of the stream is reached before decoding
+        /// begins. Used only when decoding CBOR objects.</summary>
+        /// <value>A value indicating whether decoding a CBOR object will
+        /// return <c>null</c> instead of a CBOR object if the stream has no
+        /// content or the end of the stream is reached before decoding begins.
+        /// The default is false.</value>
+        public bool AllowEmpty
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>Gets a value indicating whether to allow duplicate keys
+        /// when reading CBOR objects from a data stream. Used only when
+        /// decoding CBOR objects. If this property is <c>true</c> and a CBOR
+        /// map has two or more values with the same key, the last value of
+        /// that key set forth in the CBOR map is taken.</summary>
+        /// <value>A value indicating whether to allow duplicate keys when
+        /// reading CBOR objects from a data stream. The default is
+        /// false.</value>
         public bool AllowDuplicateKeys
         {
-            get
-            {
-                return (this.value & 2) == 0;
-            }
+            get;
+            private set;
         }
 
-        /// <include file='../../docs.xml'
-        /// path='docs/doc[@name="P:CBOREncodeOptions.Ctap2Canonical"]/*'/>
-        public bool Ctap2Canonical { get; private set; }
-
-        /// <include file='../../docs.xml'
-        /// path='docs/doc[@name="P:CBOREncodeOptions.Value"]/*'/>
-        [Obsolete("Option classes in this library will follow the form seen in JSONOptions in a later version; the approach used in this class is too complicated.")]
-        public int Value
+        /// <summary>Gets a value indicating whether CBOR objects:
+        /// <list>
+        /// <item>When encoding, are written out using the CTAP2 canonical CBOR
+        /// encoding form, which is useful for implementing Web
+        /// Authentication.</item>
+        /// <item>When decoding, are checked for compliance with the CTAP2
+        /// canonical encoding form.</item></list> In this form, CBOR tags are
+        /// not used, map keys are written out in a canonical order, a maximum
+        /// depth of four levels of arrays and/or maps is allowed, duplicate
+        /// map keys are not allowed when decoding, and floating-point numbers
+        /// are written out in their 64-bit encoding form regardless of whether
+        /// their value can be encoded without loss in a smaller form. This
+        /// implementation allows CBOR objects whose canonical form exceeds
+        /// 1024 bytes, the default maximum size for CBOR objects in that form
+        /// according to the FIDO Client-to-Authenticator Protocol 2
+        /// specification.</summary>
+        /// <value><c>true</c> if CBOR objects are written out using the CTAP2
+        /// canonical CBOR encoding form; otherwise, <c>false</c>. The default
+        /// is <c>false</c>.</value>
+        public bool Ctap2Canonical
         {
-            get
-            {
-                return this.value;
-            }
-        }
-
-        private CBOREncodeOptions(int value) :
-        this((value & 1) == 0, (value & 2) == 0)
-        {
-        }
-
-        /// <include file='../../docs.xml'
-        /// path='docs/doc[@name="M:CBOREncodeOptions.Or(CBOREncodeOptions)"]/*'/>
-        [Obsolete("May be removed in a later version. Option classes in this library will follow the form seen in JSONOptions in a later version; the approach used in this class is too complicated.")]
-        public CBOREncodeOptions Or(CBOREncodeOptions o)
-        {
-            return new CBOREncodeOptions(this.value | o.value);
-        }
-
-        /// <include file='../../docs.xml'
-        /// path='docs/doc[@name="M:CBOREncodeOptions.And(CBOREncodeOptions)"]/*'/>
-        [Obsolete("May be removed in a later version. Option classes in this library will follow the form seen in JSONOptions in a later version; the approach used in this class is too complicated.")]
-        public CBOREncodeOptions And(CBOREncodeOptions o)
-        {
-            return new CBOREncodeOptions(this.value & o.value);
+            get;
+            private set;
         }
     }
 
@@ -1131,26 +1973,44 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
     #region CBORException
     /// <include file='../../docs.xml'
     /// path='docs/doc[@name="T:CBORException"]/*'/>
-    public class CBORException : Exception
+    #if NET20 || NET40
+    [Serializable]
+    #endif
+    public sealed class CBORException : Exception
     {
-        /// <include file='../../docs.xml'
-        /// path='docs/doc[@name="M:CBORException.#ctor"]/*'/>
+        /// <summary>Initializes a new instance of the
+        /// <see cref='PeterO.Cbor.CBORException'/> class.</summary>
         public CBORException()
         {
         }
 
-        /// <include file='../../docs.xml'
-        /// path='docs/doc[@name="M:CBORException.#ctor(System.String)"]/*'/>
+        /// <summary>Initializes a new instance of the
+        /// <see cref='PeterO.Cbor.CBORException'/> class.</summary>
+        /// <param name='message'>The parameter <paramref name='message'/> is a
+        /// text string.</param>
         public CBORException(string message) : base(message)
         {
         }
 
-        /// <include file='../../docs.xml'
-        /// path='docs/doc[@name="M:CBORException.#ctor(System.String,System.Exception)"]/*'/>
-        public CBORException(string message, Exception innerException) :
-          base(message, innerException)
+        /// <summary>Initializes a new instance of the
+        /// <see cref='PeterO.Cbor.CBORException'/> class. Uses the given
+        /// message and inner exception.</summary>
+        /// <param name='message'>The parameter <paramref name='message'/> is a
+        /// text string.</param>
+        /// <param name='innerException'>The parameter <paramref
+        /// name='innerException'/> is an Exception object.</param>
+        public CBORException(string message, Exception innerException)
+          : base(message, innerException)
         {
         }
+
+#if NET20 || NET40
+    private CBORException(
+      System.Runtime.Serialization.SerializationInfo info,
+      System.Runtime.Serialization.StreamingContext context)
+      : base(info, context) {
+    }
+#endif
     }
 
     #endregion
@@ -1160,61 +2020,61 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
     {
         public bool IsPositiveInfinity(object obj)
         {
-            EDecimal ed = (EDecimal)obj;
+            var ed = (EDecimal)obj;
             return ed.IsPositiveInfinity();
         }
 
         public bool IsInfinity(object obj)
         {
-            EDecimal ed = (EDecimal)obj;
+            var ed = (EDecimal)obj;
             return ed.IsInfinity();
         }
 
         public bool IsNegativeInfinity(object obj)
         {
-            EDecimal ed = (EDecimal)obj;
+            var ed = (EDecimal)obj;
             return ed.IsNegativeInfinity();
         }
 
         public bool IsNaN(object obj)
         {
-            EDecimal ed = (EDecimal)obj;
+            var ed = (EDecimal)obj;
             return ed.IsNaN();
         }
 
         public double AsDouble(object obj)
         {
-            EDecimal ed = (EDecimal)obj;
+            var ed = (EDecimal)obj;
             return ed.ToDouble();
         }
 
-        public EDecimal AsExtendedDecimal(object obj)
+        public EDecimal AsEDecimal(object obj)
         {
-            EDecimal ed = (EDecimal)obj;
+            var ed = (EDecimal)obj;
             return ed;
         }
 
-        public EFloat AsExtendedFloat(object obj)
+        public EFloat AsEFloat(object obj)
         {
-            EDecimal ed = (EDecimal)obj;
+            var ed = (EDecimal)obj;
             return ed.ToEFloat();
         }
 
         public float AsSingle(object obj)
         {
-            EDecimal ed = (EDecimal)obj;
+            var ed = (EDecimal)obj;
             return ed.ToSingle();
         }
 
         public EInteger AsEInteger(object obj)
         {
-            EDecimal ed = (EDecimal)obj;
+            var ed = (EDecimal)obj;
             return ed.ToEInteger();
         }
 
         public long AsInt64(object obj)
         {
-            EDecimal ef = (EDecimal)obj;
+            var ef = (EDecimal)obj;
             if (this.CanTruncatedIntFitInInt64(obj))
             {
                 EInteger bi = ef.ToEInteger();
@@ -1225,16 +2085,16 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
 
         public bool CanFitInSingle(object obj)
         {
-            EDecimal ef = (EDecimal)obj;
-            return (!ef.IsFinite) ||
-            (ef.CompareTo(EDecimal.FromSingle(ef.ToSingle())) == 0);
+            var ef = (EDecimal)obj;
+            return (!ef.IsFinite) || (ef.CompareTo(EDecimal.FromSingle(
+                  ef.ToSingle())) == 0);
         }
 
         public bool CanFitInDouble(object obj)
         {
-            EDecimal ef = (EDecimal)obj;
-            return (!ef.IsFinite) ||
-            (ef.CompareTo(EDecimal.FromDouble(ef.ToDouble())) == 0);
+            var ef = (EDecimal)obj;
+            return (!ef.IsFinite) || (ef.CompareTo(EDecimal.FromDouble(
+                  ef.ToDouble())) == 0);
         }
 
         public bool CanFitInInt32(object obj)
@@ -1249,7 +2109,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
 
         public bool CanTruncatedIntFitInInt64(object obj)
         {
-            EDecimal ef = (EDecimal)obj;
+            var ef = (EDecimal)obj;
             if (!ef.IsFinite)
             {
                 return false;
@@ -1263,12 +2123,12 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
                 return false;
             }
             EInteger bi = ef.ToEInteger();
-            return bi.GetSignedBitLength() <= 63;
+            return bi.CanFitInInt64();
         }
 
         public bool CanTruncatedIntFitInInt32(object obj)
         {
-            EDecimal ef = (EDecimal)obj;
+            var ef = (EDecimal)obj;
             if (!ef.IsFinite)
             {
                 return false;
@@ -1285,33 +2145,34 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
             return bi.CanFitInInt32();
         }
 
-        public bool IsZero(object obj)
+        public bool IsNumberZero(object obj)
         {
-            EDecimal ed = (EDecimal)obj;
+            var ed = (EDecimal)obj;
             return ed.IsZero;
         }
 
         public int Sign(object obj)
         {
-            EDecimal ed = (EDecimal)obj;
+            var ed = (EDecimal)obj;
             return ed.IsNaN() ? 2 : ed.Sign;
         }
 
         public bool IsIntegral(object obj)
         {
-            EDecimal ed = (EDecimal)obj;
+            var ed = (EDecimal)obj;
             return ed.IsFinite && ((ed.Exponent.Sign >= 0) ||
-            (ed.CompareTo(EDecimal.FromEInteger(ed.ToEInteger())) ==
-            0));
+      (ed.CompareTo(EDecimal.FromEInteger(ed.ToEInteger())) ==
+
+                  0));
         }
 
         public int AsInt32(object obj, int minValue, int maxValue)
         {
-            EDecimal ef = (EDecimal)obj;
+            var ef = (EDecimal)obj;
             if (this.CanTruncatedIntFitInInt32(obj))
             {
                 EInteger bi = ef.ToEInteger();
-                int ret = (int)bi;
+                var ret = (int)bi;
                 if (ret >= minValue && ret <= maxValue)
                 {
                     return ret;
@@ -1322,17 +2183,17 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
 
         public object Negate(object obj)
         {
-            EDecimal ed = (EDecimal)obj;
+            var ed = (EDecimal)obj;
             return ed.Negate();
         }
 
         public object Abs(object obj)
         {
-            EDecimal ed = (EDecimal)obj;
+            var ed = (EDecimal)obj;
             return ed.Abs();
         }
 
-        public ERational AsExtendedRational(object obj)
+        public ERational AsERational(object obj)
         {
             return ERational.FromEDecimal((EDecimal)obj);
         }
@@ -1349,61 +2210,61 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
     {
         public bool IsPositiveInfinity(object obj)
         {
-            EFloat ef = (EFloat)obj;
+            var ef = (EFloat)obj;
             return ef.IsPositiveInfinity();
         }
 
         public bool IsInfinity(object obj)
         {
-            EFloat ef = (EFloat)obj;
+            var ef = (EFloat)obj;
             return ef.IsInfinity();
         }
 
         public bool IsNegativeInfinity(object obj)
         {
-            EFloat ef = (EFloat)obj;
+            var ef = (EFloat)obj;
             return ef.IsNegativeInfinity();
         }
 
         public bool IsNaN(object obj)
         {
-            EFloat ef = (EFloat)obj;
+            var ef = (EFloat)obj;
             return ef.IsNaN();
         }
 
         public double AsDouble(object obj)
         {
-            EFloat ef = (EFloat)obj;
+            var ef = (EFloat)obj;
             return ef.ToDouble();
         }
 
-        public EDecimal AsExtendedDecimal(object obj)
+        public EDecimal AsEDecimal(object obj)
         {
-            EFloat ef = (EFloat)obj;
+            var ef = (EFloat)obj;
             return ef.ToEDecimal();
         }
 
-        public EFloat AsExtendedFloat(object obj)
+        public EFloat AsEFloat(object obj)
         {
-            EFloat ef = (EFloat)obj;
+            var ef = (EFloat)obj;
             return ef;
         }
 
         public float AsSingle(object obj)
         {
-            EFloat ef = (EFloat)obj;
+            var ef = (EFloat)obj;
             return ef.ToSingle();
         }
 
         public EInteger AsEInteger(object obj)
         {
-            EFloat ef = (EFloat)obj;
+            var ef = (EFloat)obj;
             return ef.ToEInteger();
         }
 
         public long AsInt64(object obj)
         {
-            EFloat ef = (EFloat)obj;
+            var ef = (EFloat)obj;
             if (this.CanTruncatedIntFitInInt64(obj))
             {
                 EInteger bi = ef.ToEInteger();
@@ -1414,16 +2275,16 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
 
         public bool CanFitInSingle(object obj)
         {
-            EFloat ef = (EFloat)obj;
-            return (!ef.IsFinite) ||
-            (ef.CompareTo(EFloat.FromSingle(ef.ToSingle())) == 0);
+            var ef = (EFloat)obj;
+            return (!ef.IsFinite) || (ef.CompareTo(EFloat.FromSingle(
+                  ef.ToSingle())) == 0);
         }
 
         public bool CanFitInDouble(object obj)
         {
-            EFloat ef = (EFloat)obj;
-            return (!ef.IsFinite) ||
-            (ef.CompareTo(EFloat.FromDouble(ef.ToDouble())) == 0);
+            var ef = (EFloat)obj;
+            return (!ef.IsFinite) || (ef.CompareTo(EFloat.FromDouble(
+                  ef.ToDouble())) == 0);
         }
 
         public bool CanFitInInt32(object obj)
@@ -1438,7 +2299,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
 
         public bool CanTruncatedIntFitInInt64(object obj)
         {
-            EFloat ef = (EFloat)obj;
+            var ef = (EFloat)obj;
             if (!ef.IsFinite)
             {
                 return false;
@@ -1452,12 +2313,12 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
                 return false;
             }
             EInteger bi = ef.ToEInteger();
-            return bi.GetSignedBitLength() <= 63;
+            return bi.CanFitInInt64();
         }
 
         public bool CanTruncatedIntFitInInt32(object obj)
         {
-            EFloat ef = (EFloat)obj;
+            var ef = (EFloat)obj;
             if (!ef.IsFinite)
             {
                 return false;
@@ -1474,21 +2335,21 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
             return bi.CanFitInInt32();
         }
 
-        public bool IsZero(object obj)
+        public bool IsNumberZero(object obj)
         {
-            EFloat ef = (EFloat)obj;
+            var ef = (EFloat)obj;
             return ef.IsZero;
         }
 
         public int Sign(object obj)
         {
-            EFloat ef = (EFloat)obj;
+            var ef = (EFloat)obj;
             return ef.IsNaN() ? 2 : ef.Sign;
         }
 
         public bool IsIntegral(object obj)
         {
-            EFloat ef = (EFloat)obj;
+            var ef = (EFloat)obj;
             if (!ef.IsFinite)
             {
                 return false;
@@ -1503,11 +2364,11 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
 
         public int AsInt32(object obj, int minValue, int maxValue)
         {
-            EFloat ef = (EFloat)obj;
+            var ef = (EFloat)obj;
             if (this.CanTruncatedIntFitInInt32(obj))
             {
                 EInteger bi = ef.ToEInteger();
-                int ret = (int)bi;
+                var ret = (int)bi;
                 if (ret >= minValue && ret <= maxValue)
                 {
                     return ret;
@@ -1518,17 +2379,17 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
 
         public object Negate(object obj)
         {
-            EFloat ed = (EFloat)obj;
+            var ed = (EFloat)obj;
             return ed.Negate();
         }
 
         public object Abs(object obj)
         {
-            EFloat ed = (EFloat)obj;
+            var ed = (EFloat)obj;
             return ed.Abs();
         }
 
-        public ERational AsExtendedRational(object obj)
+        public ERational AsERational(object obj)
         {
             return ERational.FromEFloat((EFloat)obj);
         }
@@ -1565,45 +2426,47 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
 
         public double AsDouble(object obj)
         {
-            ERational er = (ERational)obj;
+            var er = (ERational)obj;
             return er.ToDouble();
         }
 
-        public EDecimal AsExtendedDecimal(object obj)
+        public EDecimal AsEDecimal(object obj)
         {
-            ERational er = (ERational)obj;
+            var er = (ERational)obj;
             return
 
-        er.ToEDecimalExactIfPossible(EContext.Decimal128.WithUnlimitedExponents());
+              er.ToEDecimalExactIfPossible(
+                EContext.Decimal128.WithUnlimitedExponents());
         }
 
-        public EFloat AsExtendedFloat(object obj)
+        public EFloat AsEFloat(object obj)
         {
-            ERational er = (ERational)obj;
+            var er = (ERational)obj;
             return
 
-        er.ToEFloatExactIfPossible(EContext.Binary128.WithUnlimitedExponents());
+              er.ToEFloatExactIfPossible(
+                EContext.Binary128.WithUnlimitedExponents());
         }
 
         public float AsSingle(object obj)
         {
-            ERational er = (ERational)obj;
+            var er = (ERational)obj;
             return er.ToSingle();
         }
 
         public EInteger AsEInteger(object obj)
         {
-            ERational er = (ERational)obj;
+            var er = (ERational)obj;
             return er.ToEInteger();
         }
 
         public long AsInt64(object obj)
         {
-            ERational ef = (ERational)obj;
+            var ef = (ERational)obj;
             if (ef.IsFinite)
             {
                 EInteger bi = ef.ToEInteger();
-                if (bi.GetSignedBitLength() <= 63)
+                if (bi.CanFitInInt64())
                 {
                     return (long)bi;
                 }
@@ -1613,16 +2476,16 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
 
         public bool CanFitInSingle(object obj)
         {
-            ERational ef = (ERational)obj;
-            return (!ef.IsFinite) ||
-            (ef.CompareTo(ERational.FromSingle(ef.ToSingle())) == 0);
+            var ef = (ERational)obj;
+            return (!ef.IsFinite) || (ef.CompareTo(ERational.FromSingle(
+                  ef.ToSingle())) == 0);
         }
 
         public bool CanFitInDouble(object obj)
         {
-            ERational ef = (ERational)obj;
-            return (!ef.IsFinite) ||
-            (ef.CompareTo(ERational.FromDouble(ef.ToDouble())) == 0);
+            var ef = (ERational)obj;
+            return (!ef.IsFinite) || (ef.CompareTo(ERational.FromDouble(
+                  ef.ToDouble())) == 0);
         }
 
         public bool CanFitInInt32(object obj)
@@ -1637,18 +2500,18 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
 
         public bool CanTruncatedIntFitInInt64(object obj)
         {
-            ERational ef = (ERational)obj;
+            var ef = (ERational)obj;
             if (!ef.IsFinite)
             {
                 return false;
             }
             EInteger bi = ef.ToEInteger();
-            return bi.GetSignedBitLength() <= 63;
+            return bi.CanFitInInt64();
         }
 
         public bool CanTruncatedIntFitInInt32(object obj)
         {
-            ERational ef = (ERational)obj;
+            var ef = (ERational)obj;
             if (!ef.IsFinite)
             {
                 return false;
@@ -1657,21 +2520,21 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
             return bi.CanFitInInt32();
         }
 
-        public bool IsZero(object obj)
+        public bool IsNumberZero(object obj)
         {
-            ERational ef = (ERational)obj;
+            var ef = (ERational)obj;
             return ef.IsZero;
         }
 
         public int Sign(object obj)
         {
-            ERational ef = (ERational)obj;
+            var ef = (ERational)obj;
             return ef.Sign;
         }
 
         public bool IsIntegral(object obj)
         {
-            ERational ef = (ERational)obj;
+            var ef = (ERational)obj;
             if (!ef.IsFinite)
             {
                 return false;
@@ -1689,13 +2552,13 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
 
         public int AsInt32(object obj, int minValue, int maxValue)
         {
-            ERational ef = (ERational)obj;
+            var ef = (ERational)obj;
             if (ef.IsFinite)
             {
                 EInteger bi = ef.ToEInteger();
                 if (bi.CanFitInInt32())
                 {
-                    int ret = (int)bi;
+                    var ret = (int)bi;
                     if (ret >= minValue && ret <= maxValue)
                     {
                         return ret;
@@ -1707,17 +2570,17 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
 
         public object Negate(object obj)
         {
-            ERational ed = (ERational)obj;
+            var ed = (ERational)obj;
             return ed.Negate();
         }
 
         public object Abs(object obj)
         {
-            ERational ed = (ERational)obj;
+            var ed = (ERational)obj;
             return ed.Abs();
         }
 
-        public ERational AsExtendedRational(object obj)
+        public ERational AsERational(object obj)
         {
             return (ERational)obj;
         }
@@ -1734,9 +2597,9 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
     {
         public object Abs(object obj)
         {
-            long val = (long)obj;
+            var val = (long)obj;
             return (val == Int32.MinValue) ? (EInteger.One << 63) : ((val < 0) ?
-            -val : obj);
+                -val : obj);
         }
 
         public EInteger AsEInteger(object obj)
@@ -1749,24 +2612,24 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
             return (double)(long)obj;
         }
 
-        public EDecimal AsExtendedDecimal(object obj)
+        public EDecimal AsEDecimal(object obj)
         {
             return EDecimal.FromInt64((long)obj);
         }
 
-        public EFloat AsExtendedFloat(object obj)
+        public EFloat AsEFloat(object obj)
         {
             return EFloat.FromInt64((long)obj);
         }
 
-        public ERational AsExtendedRational(object obj)
+        public ERational AsERational(object obj)
         {
             return ERational.FromInt64((long)obj);
         }
 
         public int AsInt32(object obj, int minValue, int maxValue)
         {
-            long val = (long)obj;
+            var val = (long)obj;
             if (val >= minValue && val <= maxValue)
             {
                 return (int)val;
@@ -1786,7 +2649,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
 
         public bool CanFitInDouble(object obj)
         {
-            long intItem = (long)obj;
+            var intItem = (long)obj;
             if (intItem == Int64.MinValue)
             {
                 return true;
@@ -1801,7 +2664,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
 
         public bool CanFitInInt32(object obj)
         {
-            long val = (long)obj;
+            var val = (long)obj;
             return val >= Int32.MinValue && val <= Int32.MaxValue;
         }
 
@@ -1812,7 +2675,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
 
         public bool CanFitInSingle(object obj)
         {
-            long intItem = (long)obj;
+            var intItem = (long)obj;
             if (intItem == Int64.MinValue)
             {
                 return true;
@@ -1827,7 +2690,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
 
         public bool CanTruncatedIntFitInInt32(object obj)
         {
-            long val = (long)obj;
+            var val = (long)obj;
             return val >= Int32.MinValue && val <= Int32.MaxValue;
         }
 
@@ -1866,7 +2729,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
             return false;
         }
 
-        public bool IsZero(object obj)
+        public bool IsNumberZero(object obj)
         {
             return ((long)obj) == 0;
         }
@@ -1874,12 +2737,12 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
         public object Negate(object obj)
         {
             return (((long)obj) == Int64.MinValue) ? (EInteger.One << 63) :
-            (-((long)obj));
+      (-((long)obj));
         }
 
         public int Sign(object obj)
         {
-            long val = (long)obj;
+            var val = (long)obj;
             return (val == 0) ? 0 : ((val < 0) ? -1 : 1);
         }
     }
@@ -1889,11 +2752,11 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
     internal sealed class CBORJson
     {
         // JSON parsing methods
-        private static int SkipWhitespaceJSON(CharacterInputWithCount reader)
+        private int SkipWhitespaceJSON()
         {
             while (true)
             {
-                int c = reader.ReadChar();
+                int c = this.ReadChar();
                 if (c == -1 || (c != 0x20 && c != 0x0a && c != 0x0d && c != 0x09))
                 {
                     return c;
@@ -1901,8 +2764,60 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
             }
         }
 
-        private readonly CharacterInputWithCount reader;
+        // JSON parsing methods
+        private int SkipWhitespaceJSON(int lastChar)
+        {
+            while (lastChar == 0x20 || lastChar == 0x0a || lastChar == 0x0d ||
+              lastChar == 0x09)
+            {
+                lastChar = this.ReadChar();
+            }
+            return lastChar;
+        }
+
+        public void SkipToEnd()
+        {
+            if (this.jsonSequenceMode)
+            {
+                while (this.ReadChar() >= 0)
+                {
+                    // Loop
+                }
+            }
+        }
+
+        public int ReadChar()
+        {
+            if (this.jsonSequenceMode)
+            {
+                if (this.recordSeparatorSeen)
+                {
+                    return -1;
+                }
+                int rc = this.reader.ReadChar();
+                if (rc == 0x1e)
+                {
+                    this.recordSeparatorSeen = true;
+                    return -1;
+                }
+                return rc;
+            }
+            else
+            {
+                return this.reader.ReadChar();
+            }
+        }
+
+        private void RaiseError(string str)
+        {
+            this.reader.RaiseError(str);
+        }
+
+        private readonly JSONOptions options;
+        private CharacterInputWithCount reader;
         private StringBuilder sb;
+        private bool jsonSequenceMode;
+        private bool recordSeparatorSeen;
 
         private string NextJSONString()
         {
@@ -1911,26 +2826,22 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
             this.sb.Remove(0, this.sb.Length);
             while (true)
             {
-                c = this.reader.ReadChar();
+                c = this.ReadChar();
                 if (c == -1 || c < 0x20)
                 {
-                    this.reader.RaiseError("Unterminated string");
+                    this.RaiseError("Unterminated string");
                 }
                 switch (c)
                 {
                     case '\\':
-                        c = this.reader.ReadChar();
+                        c = this.ReadChar();
                         switch (c)
                         {
                             case '\\':
-                                this.sb.Append('\\');
-                                break;
                             case '/':
-                                // Now allowed to be escaped under RFC 8259
-                                this.sb.Append('/');
-                                break;
                             case '\"':
-                                this.sb.Append('\"');
+                                // Slash is now allowed to be escaped under RFC 8259
+                                this.sb.Append((char)c);
                                 break;
                             case 'b':
                                 this.sb.Append('\b');
@@ -1948,12 +2859,12 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
                                 this.sb.Append('\t');
                                 break;
                             case 'u':
-                                {  // Unicode escape
+                                { // Unicode escape
                                     c = 0;
                                     // Consists of 4 hex digits
-                                    for (int i = 0; i < 4; ++i)
+                                    for (var i = 0; i < 4; ++i)
                                     {
-                                        int ch = this.reader.ReadChar();
+                                        int ch = this.ReadChar();
                                         if (ch >= '0' && ch <= '9')
                                         {
                                             c <<= 4;
@@ -1971,7 +2882,8 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
                                         }
                                         else
                                         {
-                                            this.reader.RaiseError("Invalid Unicode escaped character");
+                                            this.RaiseError(
+                                              "Invalid Unicode escaped character");
                                         }
                                     }
                                     if ((c & 0xf800) != 0xd800)
@@ -1981,15 +2893,15 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
                                     }
                                     else if ((c & 0xfc00) == 0xd800)
                                     {
-                                        int ch = this.reader.ReadChar();
-                                        if (ch != '\\' || this.reader.ReadChar() != 'u')
+                                        int ch = this.ReadChar();
+                                        if (ch != '\\' || this.ReadChar() != 'u')
                                         {
-                                            this.reader.RaiseError("Invalid escaped character");
+                                            this.RaiseError("Invalid escaped character");
                                         }
-                                        int c2 = 0;
-                                        for (int i = 0; i < 4; ++i)
+                                        var c2 = 0;
+                                        for (var i = 0; i < 4; ++i)
                                         {
-                                            ch = this.reader.ReadChar();
+                                            ch = this.ReadChar();
                                             if (ch >= '0' && ch <= '9')
                                             {
                                                 c2 <<= 4;
@@ -2007,12 +2919,13 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
                                             }
                                             else
                                             {
-                                                this.reader.RaiseError("Invalid Unicode escaped character");
+                                                this.RaiseError(
+                                                  "Invalid Unicode escaped character");
                                             }
                                         }
                                         if ((c2 & 0xfc00) != 0xdc00)
                                         {
-                                            this.reader.RaiseError("Unpaired surrogate code point");
+                                            this.RaiseError("Unpaired surrogate code point");
                                         }
                                         else
                                         {
@@ -2022,18 +2935,18 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
                                     }
                                     else
                                     {
-                                        this.reader.RaiseError("Unpaired surrogate code point");
+                                        this.RaiseError("Unpaired surrogate code point");
                                     }
                                     break;
                                 }
                             default:
                                 {
-                                    this.reader.RaiseError("Invalid escaped character");
+                                    this.RaiseError("Invalid escaped character");
                                     break;
                                 }
                         }
                         break;
-                    case 0x22:  // double quote
+                    case 0x22: // double quote
                         return this.sb.ToString();
                     default:
                         {
@@ -2047,14 +2960,83 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
                             }
                             else
                             {
-                                this.sb.Append((char)((((c - 0x10000) >> 10) & 0x3ff) +
+                                this.sb.Append((char)((((c - 0x10000) >> 10) & 0x3ff) |
                                     0xd800));
-                                this.sb.Append((char)(((c - 0x10000) & 0x3ff) + 0xdc00));
+                                this.sb.Append((char)(((c - 0x10000) & 0x3ff) | 0xdc00));
                             }
                             break;
                         }
                 }
             }
+        }
+
+        private CBORObject NextJSONNegativeNumber(
+          int[] nextChar,
+          int depth)
+        {
+            string str;
+            CBORObject obj;
+            int c = this.ReadChar();
+            if (c < '0' || c > '9')
+            {
+                this.RaiseError("JSON number can't be parsed.");
+            }
+            int cval = -(c - '0');
+            int cstart = c;
+            c = this.ReadChar();
+            this.sb = this.sb ?? new StringBuilder();
+            this.sb.Remove(0, this.sb.Length);
+            this.sb.Append('-');
+            this.sb.Append((char)cstart);
+            var charbuf = new char[32];
+            var charbufptr = 0;
+            while (c == '-' || c == '+' || c == '.' || (c >= '0' && c <= '9') ||
+              c == 'e' || c == 'E')
+            {
+                charbuf[charbufptr++] = (char)c;
+                if (charbufptr >= 32)
+                {
+                    this.sb.Append(charbuf, 0, 32);
+                    charbufptr = 0;
+                }
+                c = this.ReadChar();
+            }
+            if (charbufptr > 0)
+            {
+                this.sb.Append(charbuf, 0, charbufptr);
+            }
+            // DebugUtility.Log("--nega=" + sw.ElapsedMilliseconds + " ms");
+            // check if character can validly appear after a JSON number
+            if (c != ',' && c != ']' && c != '}' && c != -1 &&
+              c != 0x20 && c != 0x0a && c != 0x0d && c != 0x09)
+            {
+                this.RaiseError("Invalid character after JSON number");
+            }
+            str = this.sb.ToString();
+            // DebugUtility.Log("negb=" + sw.ElapsedMilliseconds + " ms");
+            obj = CBORDataUtilities.ParseJSONNumber(str, this.options);
+            // DebugUtility.Log("negc=" + sw.ElapsedMilliseconds + " ms");
+            if (obj == null)
+            {
+                string errstr = (str.Length <= 100) ? str : (str.Substring(0,
+                      100) + "...");
+                this.RaiseError("JSON number can't be parsed. " + errstr);
+            }
+            if (c == 0x20 || c == 0x0a || c == 0x0d || c == 0x09)
+            {
+                nextChar[0] = this.SkipWhitespaceJSON();
+            }
+            else if (this.jsonSequenceMode && depth == 0)
+            {
+                nextChar[0] = c;
+                this.RaiseError("JSON whitespace expected after top-level " +
+                  "number in JSON sequence");
+            }
+            else
+            {
+                nextChar[0] = c;
+            }
+            return obj;
         }
 
         private CBORObject NextJSONValue(
@@ -2067,7 +3049,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
             CBORObject obj = null;
             if (c < 0)
             {
-                this.reader.RaiseError("Unexpected end of data");
+                this.RaiseError("Unexpected end of data");
             }
             switch (c)
             {
@@ -2078,106 +3060,102 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
                         // surrogate pairs, so just call the CBORObject
                         // constructor directly
                         obj = CBORObject.FromRaw(this.NextJSONString());
-                        nextChar[0] = SkipWhitespaceJSON(this.reader);
+                        nextChar[0] = this.SkipWhitespaceJSON();
                         return obj;
                     }
                 case '{':
                     {
                         // Parse an object
                         obj = this.ParseJSONObject(depth + 1);
-                        nextChar[0] = SkipWhitespaceJSON(this.reader);
+                        nextChar[0] = this.SkipWhitespaceJSON();
                         return obj;
                     }
                 case '[':
                     {
                         // Parse an array
                         obj = this.ParseJSONArray(depth + 1);
-                        nextChar[0] = SkipWhitespaceJSON(this.reader);
+                        nextChar[0] = this.SkipWhitespaceJSON();
                         return obj;
                     }
                 case 't':
                     {
                         // Parse true
-                        if (this.reader.ReadChar() != 'r' || this.reader.ReadChar() != 'u' ||
-                            this.reader.ReadChar() != 'e')
+                        if ((c = this.ReadChar()) != 'r' || (c = this.ReadChar()) != 'u' ||
+                          (c = this.ReadChar()) != 'e')
                         {
-                            this.reader.RaiseError("Value can't be parsed.");
+                            this.RaiseError("Value can't be parsed.");
                         }
-                        nextChar[0] = SkipWhitespaceJSON(this.reader);
+                        c = this.ReadChar();
+                        if (c == 0x20 || c == 0x0a || c == 0x0d || c == 0x09)
+                        {
+                            nextChar[0] = this.SkipWhitespaceJSON();
+                        }
+                        else if (this.jsonSequenceMode && depth == 0)
+                        {
+                            nextChar[0] = c;
+                            this.RaiseError("JSON whitespace expected after top-level " +
+                              "number in JSON sequence");
+                        }
+                        else
+                        {
+                            nextChar[0] = c;
+                        }
                         return CBORObject.True;
                     }
                 case 'f':
                     {
                         // Parse false
-                        if (this.reader.ReadChar() != 'a' || this.reader.ReadChar() != 'l' ||
-                            this.reader.ReadChar() != 's' || this.reader.ReadChar() != 'e')
+                        if ((c = this.ReadChar()) != 'a' || (c = this.ReadChar()) != 'l' ||
+                          (c = this.ReadChar()) != 's' || (c = this.ReadChar()) != 'e')
                         {
-                            this.reader.RaiseError("Value can't be parsed.");
+                            this.RaiseError("Value can't be parsed.");
                         }
-                        nextChar[0] = SkipWhitespaceJSON(this.reader);
+                        c = this.ReadChar();
+                        if (c == 0x20 || c == 0x0a || c == 0x0d || c == 0x09)
+                        {
+                            nextChar[0] = this.SkipWhitespaceJSON();
+                        }
+                        else if (this.jsonSequenceMode && depth == 0)
+                        {
+                            nextChar[0] = c;
+                            this.RaiseError("JSON whitespace expected after top-level " +
+                              "number in JSON sequence");
+                        }
+                        else
+                        {
+                            nextChar[0] = c;
+                        }
                         return CBORObject.False;
                     }
                 case 'n':
                     {
                         // Parse null
-                        if (this.reader.ReadChar() != 'u' || this.reader.ReadChar() != 'l' ||
-                            this.reader.ReadChar() != 'l')
+                        if ((c = this.ReadChar()) != 'u' || (c = this.ReadChar()) != 'l' ||
+                          (c = this.ReadChar()) != 'l')
                         {
-                            this.reader.RaiseError("Value can't be parsed.");
+                            this.RaiseError("Value can't be parsed.");
                         }
-                        nextChar[0] = SkipWhitespaceJSON(this.reader);
+                        c = this.ReadChar();
+                        if (c == 0x20 || c == 0x0a || c == 0x0d || c == 0x09)
+                        {
+                            nextChar[0] = this.SkipWhitespaceJSON();
+                        }
+                        else if (this.jsonSequenceMode && depth == 0)
+                        {
+                            nextChar[0] = c;
+                            this.RaiseError("JSON whitespace expected after top-level " +
+                              "number in JSON sequence");
+                        }
+                        else
+                        {
+                            nextChar[0] = c;
+                        }
                         return CBORObject.Null;
                     }
                 case '-':
                     {
                         // Parse a negative number
-                        bool lengthTwo = true;
-                        c = this.reader.ReadChar();
-                        if (c < '0' || c > '9')
-                        {
-                            this.reader.RaiseError("JSON number can't be parsed.");
-                        }
-                        int cval = -(c - '0');
-                        int cstart = c;
-                        StringBuilder sb = null;
-                        c = this.reader.ReadChar();
-                        while (c == '-' || c == '+' || c == '.' || (c >= '0' && c <= '9') ||
-                               c == 'e' || c == 'E')
-                        {
-                            if (lengthTwo)
-                            {
-                                sb = new StringBuilder();
-                                sb.Append((char)'-');
-                                sb.Append((char)cstart);
-                                lengthTwo = false;
-                            }
-                            sb.Append((char)c);
-                            c = this.reader.ReadChar();
-                        }
-                        if (lengthTwo)
-                        {
-                            obj = cval == 0 ?
-                            CBORDataUtilities.ParseJSONNumber("-0", true, false, true) :
-                              CBORObject.FromObject(cval);
-                        }
-                        else
-                        {
-                            str = sb.ToString();
-                            obj = CBORDataUtilities.ParseJSONNumber(str);
-                            if (obj == null)
-                            {
-                                this.reader.RaiseError("JSON number can't be parsed. " + str);
-                            }
-                        }
-                        if (c == -1 || (c != 0x20 && c != 0x0a && c != 0x0d && c != 0x09))
-                        {
-                            nextChar[0] = c;
-                        }
-                        else
-                        {
-                            nextChar[0] = SkipWhitespaceJSON(this.reader);
-                        }
-                        return obj;
+                        return this.NextJSONNegativeNumber(nextChar, depth);
                     }
                 case '0':
                 case '1':
@@ -2190,95 +3168,281 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
                 case '8':
                 case '9':
                     {
-                        // Parse a number
-                        bool lengthOne = true;
+                        // Parse a nonnegative number
                         int cval = c - '0';
                         int cstart = c;
-                        StringBuilder sb = null;
-                        c = this.reader.ReadChar();
-                        while (c == '-' || c == '+' || c == '.' || (c >= '0' && c <= '9') ||
-                               c == 'e' || c == 'E')
+                        var needObj = true;
+                        c = this.ReadChar();
+                        if (!(c == '-' || c == '+' || c == '.' || (c >= '0' && c <= '9') ||
+                            c == 'e' || c == 'E'))
                         {
-                            if (lengthOne)
-                            {
-                                sb = new StringBuilder();
-                                sb.Append((char)cstart);
-                                lengthOne = false;
-                            }
-                            sb.Append((char)c);
-                            c = this.reader.ReadChar();
+                            // Optimize for common case where JSON number
+                            // is a single digit without sign or exponent
+                            obj = CBORDataUtilities.ParseSmallNumber(cval, this.options);
+                            needObj = false;
                         }
-                        if (lengthOne)
+                        else if (c >= '0' && c <= '9')
                         {
-                            obj = CBORObject.FromObject(cval);
+                            int csecond = c;
+                            if (cstart == '0')
+                            {
+                                // Leading zero followed by any digit is not allowed
+                                this.RaiseError("JSON number can't be parsed.");
+                            }
+                            cval = (cval * 10) + (int)(c - '0');
+                            c = this.ReadChar();
+                            if (c >= '0' && c <= '9')
+                            {
+                                var digits = 2;
+                                var ctmp = new int[10];
+                                ctmp[0] = cstart;
+                                ctmp[1] = csecond;
+                                while (digits < 9 && (c >= '0' && c <= '9'))
+                                {
+                                    cval = (cval * 10) + (int)(c - '0');
+                                    ctmp[digits++] = c;
+                                    c = this.ReadChar();
+                                }
+                                if (c == 'e' || c == 'E' || c == '.' || (c >= '0' && c <= '9'))
+                                {
+                                    // Not an all-digit number, or too long
+                                    this.sb = this.sb ?? new StringBuilder();
+                                    this.sb.Remove(0, this.sb.Length);
+                                    for (var vi = 0; vi < digits; ++vi)
+                                    {
+                                        this.sb.Append((char)ctmp[vi]);
+                                    }
+                                }
+                                else
+                                {
+                                    obj = CBORDataUtilities.ParseSmallNumber(cval, this.options);
+                                    needObj = false;
+                                }
+                            }
+                            else if (!(c == '-' || c == '+' || c == '.' || c == 'e' || c
+                              == 'E'))
+                            {
+                                // Optimize for common case where JSON number
+                                // is two digits without sign, decimal point, or exponent
+                                obj = CBORDataUtilities.ParseSmallNumber(cval, this.options);
+                                needObj = false;
+                            }
+                            else
+                            {
+                                this.sb = this.sb ?? new StringBuilder();
+                                this.sb.Remove(0, this.sb.Length);
+                                this.sb.Append((char)cstart);
+                                this.sb.Append((char)csecond);
+                            }
                         }
                         else
                         {
-                            str = sb.ToString();
-                            obj = CBORDataUtilities.ParseJSONNumber(str);
+                            this.sb = this.sb ?? new StringBuilder();
+                            this.sb.Remove(0, this.sb.Length);
+                            this.sb.Append((char)cstart);
+                        }
+                        if (needObj)
+                        {
+                            var charbuf = new char[32];
+                            var charbufptr = 0;
+                            while (
+                              c == '-' || c == '+' || c == '.' || (c >= '0' && c <= '9') ||
+                              c == 'e' || c == 'E')
+                            {
+                                charbuf[charbufptr++] = (char)c;
+                                if (charbufptr >= 32)
+                                {
+                                    this.sb.Append(charbuf, 0, 32);
+                                    charbufptr = 0;
+                                }
+                                c = this.ReadChar();
+                            }
+                            if (charbufptr > 0)
+                            {
+                                this.sb.Append(charbuf, 0, charbufptr);
+                            }
+                            // check if character can validly appear after a JSON number
+                            if (c != ',' && c != ']' && c != '}' && c != -1 &&
+                              c != 0x20 && c != 0x0a && c != 0x0d && c != 0x09)
+                            {
+                                this.RaiseError("Invalid character after JSON number");
+                            }
+                            str = this.sb.ToString();
+                            obj = CBORDataUtilities.ParseJSONNumber(str, this.options);
                             if (obj == null)
                             {
-                                this.reader.RaiseError("JSON number can't be parsed. " + str);
+                                string errstr = (str.Length <= 100) ? str : (str.Substring(0,
+                                      100) + "...");
+                                this.RaiseError("JSON number can't be parsed. " + errstr);
                             }
                         }
-                        if (c == -1 || (c != 0x20 && c != 0x0a && c != 0x0d && c != 0x09))
+                        if (c == 0x20 || c == 0x0a || c == 0x0d || c == 0x09)
+                        {
+                            nextChar[0] = this.SkipWhitespaceJSON();
+                        }
+                        else if (this.jsonSequenceMode && depth == 0)
                         {
                             nextChar[0] = c;
+                            this.RaiseError("JSON whitespace expected after top-level " +
+                              "number in JSON sequence");
                         }
                         else
                         {
-                            nextChar[0] = SkipWhitespaceJSON(this.reader);
+                            nextChar[0] = c;
                         }
                         return obj;
                     }
                 default:
-                    this.reader.RaiseError("Value can't be parsed.");
+                    this.RaiseError("Value can't be parsed.");
                     break;
             }
             return null;
         }
 
-        private readonly bool noDuplicates;
-
-        public CBORJson(CharacterInputWithCount reader, bool noDuplicates)
+        public CBORJson(CharacterInputWithCount reader, JSONOptions options)
         {
             this.reader = reader;
             this.sb = null;
-            this.noDuplicates = noDuplicates;
+            this.options = options;
+            this.jsonSequenceMode = false;
+            this.recordSeparatorSeen = false;
         }
 
-        public CBORObject ParseJSON(bool objectOrArrayOnly, int[] nextchar)
+        public CBORObject ParseJSON(int[] nextChar)
         {
             int c;
             CBORObject ret;
-            c = SkipWhitespaceJSON(this.reader);
+            c = this.jsonSequenceMode ? this.SkipWhitespaceJSON(nextChar[0]) :
+              this.SkipWhitespaceJSON();
             if (c == '[')
             {
                 ret = this.ParseJSONArray(0);
-                nextchar[0] = SkipWhitespaceJSON(this.reader);
+                nextChar[0] = this.SkipWhitespaceJSON();
                 return ret;
             }
             if (c == '{')
             {
                 ret = this.ParseJSONObject(0);
-                nextchar[0] = SkipWhitespaceJSON(this.reader);
+                nextChar[0] = this.SkipWhitespaceJSON();
                 return ret;
             }
-            if (objectOrArrayOnly)
-            {
-                this.reader.RaiseError("A JSON object must begin with '{' or '['");
-            }
-            return this.NextJSONValue(c, nextchar, 0);
+            return this.NextJSONValue(c, nextChar, 0);
+        }
+
+        private void SetJSONSequenceMode()
+        {
+            this.jsonSequenceMode = true;
+            this.recordSeparatorSeen = false;
+        }
+
+        private void ResetJSONSequenceMode()
+        {
+            this.jsonSequenceMode = true;
+            this.recordSeparatorSeen = false;
         }
 
         internal static CBORObject ParseJSONValue(
           CharacterInputWithCount reader,
-          bool noDuplicates,
-          bool objectOrArrayOnly,
-          int[] nextchar)
+          JSONOptions options,
+          int[] nextChar)
         {
-            CBORJson cj = new CBORJson(reader, noDuplicates);
-            return cj.ParseJSON(objectOrArrayOnly, nextchar);
+            var cj = new CBORJson(reader, options);
+            return cj.ParseJSON(nextChar);
+        }
+
+        internal bool SkipRecordSeparators(int[] nextChar, bool
+          recordSeparatorSeen)
+        {
+            if (this.jsonSequenceMode)
+            {
+                while (true)
+                {
+                    int rc = this.reader.ReadChar();
+                    nextChar[0] = rc;
+                    if (rc == 0x1e)
+                    {
+                        recordSeparatorSeen = true;
+                    }
+                    else
+                    {
+                        return recordSeparatorSeen;
+                    }
+                }
+            }
+            else
+            {
+                nextChar[0] = -1;
+                return false;
+            }
+        }
+
+        internal static CBORObject[] ParseJSONSequence(
+          CharacterInputWithCount reader,
+          JSONOptions options,
+          int[] nextChar)
+        {
+            var cj = new CBORJson(reader, options);
+            cj.SetJSONSequenceMode();
+            bool seenSeparator = cj.SkipRecordSeparators(nextChar, false);
+            if (nextChar[0] >= 0 && !seenSeparator)
+            {
+                // Stream is not empty and did not begin with
+                // record separator
+                cj.RaiseError("Not a JSON text sequence");
+            }
+            else if (nextChar[0] < 0 && !seenSeparator)
+            {
+                // Stream is empty
+                return new CBORObject[0];
+            }
+            else if (nextChar[0] < 0)
+            {
+                // Stream had only record separators, so we found
+                // a truncated JSON text
+                return new CBORObject[] { null };
+            }
+            var list = new List<CBORObject>();
+            while (true)
+            {
+                CBORObject co;
+                try
+                {
+                    co = cj.ParseJSON(nextChar);
+                }
+                catch (CBORException)
+                {
+                    cj.SkipToEnd();
+                    co = null;
+                }
+                if (co != null && nextChar[0] >= 0)
+                {
+                    // End of JSON text not reached
+                    cj.SkipToEnd();
+                    co = null;
+                }
+                list.Add(co);
+                if (!cj.recordSeparatorSeen)
+                {
+                    // End of the stream was reached
+                    nextChar[0] = -1;
+                    break;
+                }
+                else
+                {
+                    // A record separator was seen, so
+                    // another JSON text follows
+                    cj.ResetJSONSequenceMode();
+                    cj.SkipRecordSeparators(nextChar, true);
+                    if (nextChar[0] < 0)
+                    {
+                        // Rest of stream had only record separators, so we found
+                        // a truncated JSON text
+                        list.Add(null);
+                        break;
+                    }
+                }
+            }
+            return (CBORObject[])list.ToArray();
         }
 
         private CBORObject ParseJSONObject(int depth)
@@ -2286,27 +3450,27 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
             // Assumes that the last character read was '{'
             if (depth > 1000)
             {
-                this.reader.RaiseError("Too deeply nested");
+                this.RaiseError("Too deeply nested");
             }
             int c;
             CBORObject key = null;
             CBORObject obj;
-            int[] nextchar = new int[1];
-            bool seenComma = false;
-            Dictionary<CBORObject, CBORObject> myHashMap = new Dictionary<CBORObject, CBORObject>();
+            var nextChar = new int[1];
+            var seenComma = false;
+            var myHashMap = new SortedDictionary<CBORObject, CBORObject>();
             while (true)
             {
-                c = SkipWhitespaceJSON(this.reader);
+                c = this.SkipWhitespaceJSON();
                 switch (c)
                 {
                     case -1:
-                        this.reader.RaiseError("A JSONObject must end with '}'");
+                        this.RaiseError("A JSON object must end with '}'");
                         break;
                     case '}':
                         if (seenComma)
                         {
                             // Situation like '{"0"=>1,}'
-                            this.reader.RaiseError("Trailing comma");
+                            this.RaiseError("Trailing comma");
                             return null;
                         }
                         return CBORObject.FromRaw(myHashMap);
@@ -2315,38 +3479,39 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
                             // Read the next string
                             if (c < 0)
                             {
-                                this.reader.RaiseError("Unexpected end of data");
+                                this.RaiseError("Unexpected end of data");
                                 return null;
                             }
                             if (c != '"')
                             {
-                                this.reader.RaiseError("Expected a string as a key");
+                                this.RaiseError("Expected a string as a key");
                                 return null;
                             }
-                            // Parse a string that represents the object's key
+                            // Parse a string that represents the object's key.
                             // The tokenizer already checked the string for invalid
                             // surrogate pairs, so just call the CBORObject
                             // constructor directly
                             obj = CBORObject.FromRaw(this.NextJSONString());
                             key = obj;
-                            if (this.noDuplicates && myHashMap.ContainsKey(obj))
+                            if (!this.options.AllowDuplicateKeys &&
+                              myHashMap.ContainsKey(obj))
                             {
-                                this.reader.RaiseError("Key already exists: " + key);
+                                this.RaiseError("Key already exists: " + key);
                                 return null;
                             }
                             break;
                         }
                 }
-                if (SkipWhitespaceJSON(this.reader) != ':')
+                if (this.SkipWhitespaceJSON() != ':')
                 {
-                    this.reader.RaiseError("Expected a ':' after a key");
+                    this.RaiseError("Expected a ':' after a key");
                 }
                 // NOTE: Will overwrite existing value
                 myHashMap[key] = this.NextJSONValue(
-                  SkipWhitespaceJSON(this.reader),
-                  nextchar,
-                  depth);
-                switch (nextchar[0])
+                    this.SkipWhitespaceJSON(),
+                    nextChar,
+                    depth);
+                switch (nextChar[0])
                 {
                     case ',':
                         seenComma = true;
@@ -2354,7 +3519,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
                     case '}':
                         return CBORObject.FromRaw(myHashMap);
                     default:
-                        this.reader.RaiseError("Expected a ',' or '}'");
+                        this.RaiseError("Expected a ',' or '}'");
                         break;
                 }
             }
@@ -2365,27 +3530,953 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
             // Assumes that the last character read was '['
             if (depth > 1000)
             {
-                this.reader.RaiseError("Too deeply nested");
+                this.RaiseError("Too deeply nested");
             }
-            List<CBORObject> myArrayList = new List<CBORObject>();
-            bool seenComma = false;
-            int[] nextchar = new int[1];
+            var myArrayList = new List<CBORObject>();
+            var seenComma = false;
+            var nextChar = new int[1];
             while (true)
             {
-                int c = SkipWhitespaceJSON(this.reader);
+                int c = this.SkipWhitespaceJSON();
                 if (c == ']')
                 {
                     if (seenComma)
                     {
                         // Situation like '[0,1,]'
-                        this.reader.RaiseError("Trailing comma");
+                        this.RaiseError("Trailing comma");
                     }
                     return CBORObject.FromRaw(myArrayList);
                 }
                 if (c == ',')
                 {
                     // Situation like '[,0,1,2]' or '[0,,1]'
-                    this.reader.RaiseError("Empty array element");
+                    this.RaiseError("Empty array element");
+                }
+                myArrayList.Add(
+                  this.NextJSONValue(
+                    c,
+                    nextChar,
+                    depth));
+                c = nextChar[0];
+                switch (c)
+                {
+                    case ',':
+                        seenComma = true;
+                        break;
+                    case ']':
+                        return CBORObject.FromRaw(myArrayList);
+                    default:
+                        this.RaiseError("Expected a ',' or ']'");
+                        break;
+                }
+            }
+        }
+    }
+    #endregion
+
+    #region CBORJson2
+    internal sealed class CBORJson2
+    {
+        // JSON parsing method
+        private int SkipWhitespaceJSON()
+        {
+            while (this.index < this.endPos)
+            {
+                byte c = this.bytes[this.index++];
+                if (c != 0x20 && c != 0x0a && c != 0x0d && c != 0x09)
+                {
+                    return c;
+                }
+            }
+            return -1;
+        }
+
+        internal void RaiseError(string str)
+        {
+            throw new CBORException(str + " (approx. offset: " +
+              Math.Max(0, this.index - 1) + ")");
+        }
+
+        private readonly byte[] bytes;
+        private readonly JSONOptions options;
+        private int index;
+        private int endPos;
+        private static byte[] valueEmptyBytes = new byte[0];
+
+        private byte[] NextJSONString()
+        {
+            int c;
+            int startIndex = this.index;
+            int batchIndex = startIndex;
+            int batchEnd = startIndex;
+            byte[] jbytes = this.bytes;
+            while (true)
+            {
+                if (this.index >= this.endPos)
+                {
+                    this.RaiseError("Unterminated string");
+                }
+                c = ((int)jbytes[this.index++]) & 0xff;
+                if (c < 0x20)
+                {
+                    this.RaiseError("Invalid character in string literal");
+                }
+                if (c == '\\')
+                {
+                    batchEnd = this.index - 1;
+                    break;
+                }
+                else if (c == 0x22)
+                {
+                    int isize = (this.index - startIndex) - 1;
+                    if (isize == 0)
+                    {
+                        return valueEmptyBytes;
+                    }
+                    var buf = new byte[isize];
+                    Array.Copy(jbytes, startIndex, buf, 0, isize);
+                    return buf;
+                }
+                else if (c < 0x80)
+                {
+                    continue;
+                }
+                else if (c >= 0xc2 && c <= 0xdf)
+                {
+                    int c1 = this.index < this.endPos ?
+                      ((int)this.bytes[this.index++]) & 0xff : -1;
+                    if (c1 < 0x80 || c1 > 0xbf)
+                    {
+                        this.RaiseError("Invalid encoding");
+                    }
+                }
+                else if (c >= 0xe0 && c <= 0xef)
+                {
+                    int c1 = this.index < this.endPos ?
+                      ((int)this.bytes[this.index++]) & 0xff : -1;
+                    int c2 = this.index < this.endPos ?
+                      ((int)this.bytes[this.index++]) & 0xff : -1;
+                    int lower = (c == 0xe0) ? 0xa0 : 0x80;
+                    int upper = (c == 0xed) ? 0x9f : 0xbf;
+                    if (c1 < lower || c1 > upper || c2 < 0x80 || c2 > 0xbf)
+                    {
+                        this.RaiseError("Invalid encoding");
+                    }
+                }
+                else if (c >= 0xf0 && c <= 0xf4)
+                {
+                    int c1 = this.index < this.endPos ?
+                      ((int)this.bytes[this.index++]) & 0xff : -1;
+                    int c2 = this.index < this.endPos ?
+                      ((int)this.bytes[this.index++]) & 0xff : -1;
+                    int c3 = this.index < this.endPos ?
+                      ((int)this.bytes[this.index++]) & 0xff : -1;
+                    int lower = (c == 0xf0) ? 0x90 : 0x80;
+                    int upper = (c == 0xf4) ? 0x8f : 0xbf;
+                    if (c1 < lower || c1 > upper || c2 < 0x80 || c2 > 0xbf ||
+                      c3 < 0x80 || c3 > 0xbf)
+                    {
+                        this.RaiseError("Invalid encoding");
+                    }
+                }
+                else
+                {
+                    this.RaiseError("Invalid encoding");
+                }
+            }
+            using (var ms = new MemoryStream())
+            {
+                if (batchEnd > batchIndex)
+                {
+                    ms.Write(jbytes, batchIndex, batchEnd - batchIndex);
+                    this.index = batchEnd;
+                    batchIndex = batchEnd;
+                }
+                else
+                {
+                    this.index = startIndex;
+                    batchIndex = startIndex;
+                }
+                while (true)
+                {
+                    batchEnd = this.index;
+                    c = this.index < this.endPos ? ((int)jbytes[this.index++]) &
+                      0xff : -1;
+                    if (c == -1)
+                    {
+                        this.RaiseError("Unterminated string");
+                    }
+                    if (c < 0x20)
+                    {
+                        this.RaiseError("Invalid character in string literal");
+                    }
+                    switch (c)
+                    {
+                        case '\\':
+                            c = this.index < this.endPos ? ((int)jbytes[this.index++]) &
+                              0xff : -1;
+                            switch (c)
+                            {
+                                case '\\':
+                                case '/':
+                                case '\"':
+                                    // Slash is now allowed to be escaped under RFC 8259
+                                    if (batchEnd > batchIndex)
+                                    {
+                                        ms.Write(jbytes, batchIndex, batchEnd - batchIndex);
+                                    }
+                                    batchIndex = this.index;
+                                    ms.WriteByte((byte)c);
+                                    break;
+                                case 'b':
+                                    if (batchEnd > batchIndex)
+                                    {
+                                        ms.Write(jbytes, batchIndex, batchEnd - batchIndex);
+                                    }
+                                    batchIndex = this.index;
+                                    ms.WriteByte((byte)'\b');
+                                    break;
+                                case 'f':
+                                    if (batchEnd > batchIndex)
+                                    {
+                                        ms.Write(jbytes, batchIndex, batchEnd - batchIndex);
+                                    }
+                                    batchIndex = this.index;
+                                    ms.WriteByte((byte)'\f');
+                                    break;
+                                case 'n':
+                                    if (batchEnd > batchIndex)
+                                    {
+                                        ms.Write(jbytes, batchIndex, batchEnd - batchIndex);
+                                    }
+                                    batchIndex = this.index;
+                                    ms.WriteByte((byte)'\n');
+                                    break;
+                                case 'r':
+                                    if (batchEnd > batchIndex)
+                                    {
+                                        ms.Write(jbytes, batchIndex, batchEnd - batchIndex);
+                                    }
+                                    batchIndex = this.index;
+                                    ms.WriteByte((byte)'\r');
+                                    break;
+                                case 't':
+                                    if (batchEnd > batchIndex)
+                                    {
+                                        ms.Write(jbytes, batchIndex, batchEnd - batchIndex);
+                                    }
+                                    batchIndex = this.index;
+                                    ms.WriteByte((byte)'\t');
+                                    break;
+                                case 'u':
+                                    { // Unicode escape
+                                        c = 0;
+                                        // Consists of 4 hex digits
+                                        for (var i = 0; i < 4; ++i)
+                                        {
+                                            int ch = this.index < this.endPos ?
+                                              (int)jbytes[this.index++] : -1;
+                                            if (ch >= '0' && ch <= '9')
+                                            {
+                                                c <<= 4;
+                                                c |= ch - '0';
+                                            }
+                                            else if (ch >= 'A' && ch <= 'F')
+                                            {
+                                                c <<= 4;
+                                                c |= ch + 10 - 'A';
+                                            }
+                                            else if (ch >= 'a' && ch <= 'f')
+                                            {
+                                                c <<= 4;
+                                                c |= ch + 10 - 'a';
+                                            }
+                                            else
+                                            {
+                                                this.RaiseError(
+                                                  "Invalid Unicode escaped character");
+                                            }
+                                        }
+                                        if ((c & 0xf800) != 0xd800)
+                                        {
+                                            // Non-surrogate
+                                            if (batchEnd > batchIndex)
+                                            {
+                                                ms.Write(jbytes, batchIndex, batchEnd - batchIndex);
+                                            }
+                                            batchIndex = this.index;
+                                            int ic = c;
+                                            if (c >= 0x800)
+                                            {
+                                                ms.WriteByte((byte)(0xe0 | ((ic >> 12) & 0x0f)));
+                                                ms.WriteByte((byte)(0x80 | ((ic >> 6) & 0x3f)));
+                                                ms.WriteByte((byte)(0x80 | (ic & 0x3f)));
+                                            }
+                                            else if (c >= 0x80)
+                                            {
+                                                ms.WriteByte((byte)(0xc0 | ((ic >> 6) & 0x1f)));
+                                                ms.WriteByte((byte)(0x80 | (ic & 0x3f)));
+                                            }
+                                            else
+                                            {
+                                                ms.WriteByte((byte)ic);
+                                            }
+                                        }
+                                        else if ((c & 0xfc00) == 0xd800)
+                                        {
+                                            int ch;
+                                            if (this.index >= this.endPos - 1 ||
+                                              jbytes[this.index] != (byte)'\\' ||
+                                              jbytes[this.index + 1] != (byte)0x75)
+                                            {
+                                                this.RaiseError("Invalid escaped character");
+                                            }
+                                            this.index += 2;
+                                            var c2 = 0;
+                                            for (var i = 0; i < 4; ++i)
+                                            {
+                                                ch = this.index < this.endPos ?
+                                                  ((int)jbytes[this.index++]) & 0xff : -1;
+                                                if (ch >= '0' && ch <= '9')
+                                                {
+                                                    c2 <<= 4;
+                                                    c2 |= ch - '0';
+                                                }
+                                                else if (ch >= 'A' && ch <= 'F')
+                                                {
+                                                    c2 <<= 4;
+                                                    c2 |= ch + 10 - 'A';
+                                                }
+                                                else if (ch >= 'a' && ch <= 'f')
+                                                {
+                                                    c2 <<= 4;
+                                                    c2 |= ch + 10 - 'a';
+                                                }
+                                                else
+                                                {
+                                                    this.RaiseError(
+                                                      "Invalid Unicode escaped character");
+                                                }
+                                            }
+                                            if ((c2 & 0xfc00) != 0xdc00)
+                                            {
+                                                this.RaiseError("Unpaired surrogate code point");
+                                            }
+                                            else
+                                            {
+                                                if (batchEnd > batchIndex)
+                                                {
+                                                    ms.Write(jbytes, batchIndex, batchEnd - batchIndex);
+                                                }
+                                                batchIndex = this.index;
+                                                int ic = 0x10000 + (((int)c & 0x3ff) << 10) +
+                                                  ((int)c2 & 0x3ff);
+                                                ms.WriteByte((byte)(0xf0 | ((ic >> 18) & 0x07)));
+                                                ms.WriteByte((byte)(0x80 | ((ic >> 12) & 0x3f)));
+                                                ms.WriteByte((byte)(0x80 | ((ic >> 6) & 0x3f)));
+                                                ms.WriteByte((byte)(0x80 | (ic & 0x3f)));
+                                            }
+                                        }
+                                        else
+                                        {
+                                            this.RaiseError("Unpaired surrogate code point");
+                                        }
+                                        break;
+                                    }
+                                default:
+                                    {
+                                        this.RaiseError("Invalid escaped character");
+                                        break;
+                                    }
+                            }
+                            break;
+                        case 0x22: // double quote
+                            if (batchEnd > batchIndex)
+                            {
+                                ms.Write(jbytes, batchIndex, batchEnd - batchIndex);
+                            }
+                            return ms.ToArray();
+                        default:
+                            {
+                                if (c <= 0x7f)
+                                {
+                                    // Deliberately empty
+                                }
+                                else if (c >= 0xc2 && c <= 0xdf)
+                                {
+                                    int c1 = this.index < this.endPos ?
+                                      ((int)jbytes[this.index++]) & 0xff : -1;
+                                    if (c1 < 0x80 || c1 > 0xbf)
+                                    {
+                                        this.RaiseError("Invalid encoding");
+                                    }
+                                }
+                                else if (c >= 0xe0 && c <= 0xef)
+                                {
+                                    int c1 = this.index < this.endPos ?
+                                      ((int)jbytes[this.index++]) & 0xff : -1;
+                                    int c2 = this.index < this.endPos ?
+                                      ((int)jbytes[this.index++]) & 0xff : -1;
+                                    int lower = (c == 0xe0) ? 0xa0 : 0x80;
+                                    int upper = (c == 0xed) ? 0x9f : 0xbf;
+                                    if (c1 < lower || c1 > upper || c2 < 0x80 || c2 > 0xbf)
+                                    {
+                                        this.RaiseError("Invalid encoding");
+                                    }
+                                }
+                                else if (c >= 0xf0 && c <= 0xf4)
+                                {
+                                    int c1 = this.index < this.endPos ?
+                                      ((int)jbytes[this.index++]) & 0xff : -1;
+                                    int c2 = this.index < this.endPos ?
+                                      ((int)jbytes[this.index++]) & 0xff : -1;
+                                    int c3 = this.index < this.endPos ?
+                                      ((int)jbytes[this.index++]) & 0xff : -1;
+                                    int lower = (c == 0xf0) ? 0x90 : 0x80;
+                                    int upper = (c == 0xf4) ? 0x8f : 0xbf;
+                                    if (c1 < lower || c1 > upper || c2 < 0x80 || c2 > 0xbf ||
+                                      c3 < 0x80 || c3 > 0xbf)
+                                    {
+                                        this.RaiseError("Invalid encoding");
+                                    }
+                                }
+                                else
+                                {
+                                    this.RaiseError("Invalid encoding");
+                                }
+                                break;
+                            }
+                    }
+                }
+            }
+        }
+
+        private CBORObject NextJSONNegativeNumber(
+          int[] nextChar)
+        {
+            // Assumes the last character read was '-'
+            CBORObject obj;
+            int numberStartIndex = this.index - 1;
+            int c = this.index < this.endPos ? ((int)this.bytes[this.index++]) &
+              0xff : -1;
+            if (c < '0' || c > '9')
+            {
+                this.RaiseError("JSON number can't be parsed.");
+            }
+            int cstart = c;
+            while (c == '-' || c == '+' || c == '.' || (c >= '0' && c <= '9') ||
+              c == 'e' || c == 'E')
+            {
+                c = this.index < this.endPos ? ((int)this.bytes[this.index++]) &
+                  0xff : -1;
+            }
+            // check if character can validly appear after a JSON number
+            if (c != ',' && c != ']' && c != '}' && c != -1 &&
+              c != 0x20 && c != 0x0a && c != 0x0d && c != 0x09)
+            {
+                this.RaiseError("Invalid character after JSON number");
+            }
+            int numberEndIndex = c < 0 ?
+              this.endPos : this.index - 1;
+            if (numberEndIndex - numberStartIndex == 2 && cstart != '0')
+            {
+                // Negative single digit other than negative zero
+                obj = CBORDataUtilities.ParseSmallNumberAsNegative((int)(cstart
+                      - '0'),
+                    this.options);
+            }
+            else
+            {
+                obj = CBORDataUtilities.ParseJSONNumber(
+                    this.bytes,
+                    numberStartIndex,
+                    numberEndIndex - numberStartIndex,
+                    this.options);
+#if DEBUG
+                if ((
+          (EDecimal)obj.ToObject(
+          typeof(EDecimal))).CompareToValue(EDecimal.FromString(this.bytes,
+                   numberStartIndex,
+                   numberEndIndex - numberStartIndex)) != 0)
+                {
+                    this.RaiseError(String.Empty + obj);
+                }
+#endif
+                if (obj == null)
+                {
+                    string errstr = String.Empty;
+                    // errstr = (str.Length <= 100) ? str : (str.Substring(0,
+                    // 100) + "...");
+                    this.RaiseError("JSON number can't be parsed. " + errstr);
+                }
+            }
+            if (c == -1 || (c != 0x20 && c != 0x0a && c != 0x0d && c != 0x09))
+            {
+                nextChar[0] = c;
+            }
+            else
+            {
+                nextChar[0] = this.SkipWhitespaceJSON();
+            }
+            return obj;
+        }
+
+        private CBORObject NextJSONNonnegativeNumber(int c, int[] nextChar)
+        {
+            // Assumes the last character read was a digit
+            CBORObject obj = null;
+            int cval = c - '0';
+            int cstart = c;
+            int startIndex = this.index - 1;
+            var needObj = true;
+            int numberStartIndex = this.index - 1;
+            c = this.index < this.endPos ? ((int)this.bytes[this.index++]) &
+              0xff : -1;
+            if (!(c == '-' || c == '+' || c == '.' || (c >= '0' && c <= '9') ||
+                c == 'e' || c == 'E'))
+            {
+                // Optimize for common case where JSON number
+                // is a single digit without sign or exponent
+                obj = CBORDataUtilities.ParseSmallNumber(cval, this.options);
+                needObj = false;
+            }
+            else if (c >= '0' && c <= '9')
+            {
+                int csecond = c;
+                if (cstart == '0')
+                {
+                    // Leading zero followed by any digit is not allowed
+                    this.RaiseError("JSON number can't be parsed.");
+                }
+                cval = (cval * 10) + (int)(c - '0');
+                c = this.index < this.endPos ? ((int)this.bytes[this.index++]) &
+                  0xff : -1;
+                if (c >= '0' && c <= '9')
+                {
+                    var digits = 2;
+                    while (digits < 9 && (c >= '0' && c <= '9'))
+                    {
+                        cval = (cval * 10) + (int)(c - '0');
+                        c = this.index < this.endPos ?
+                          ((int)this.bytes[this.index++]) & 0xff : -1;
+                        ++digits;
+                    }
+                    if (!(c == 'e' || c == 'E' || c == '.' || (c >= '0' && c <=
+                          '9')))
+                    {
+                        // All-digit number that's short enough
+                        obj = CBORDataUtilities.ParseSmallNumber(cval, this.options);
+#if DEBUG
+                        if ((
+              (EDecimal)obj.ToObject(
+              typeof(EDecimal))).CompareToValue(EDecimal.FromInt32(cval)) !=
+            0)
+                        {
+                            this.RaiseError(String.Empty + obj);
+                        }
+#endif
+                        needObj = false;
+                    }
+                }
+                else if (!(c == '-' || c == '+' || c == '.' || c == 'e' || c
+                  == 'E'))
+                {
+                    // Optimize for common case where JSON number
+                    // is two digits without sign, decimal point, or exponent
+                    obj = CBORDataUtilities.ParseSmallNumber(cval, this.options);
+#if DEBUG
+                    if ((
+            (EDecimal)obj.ToObject(
+            typeof(EDecimal))).CompareToValue(EDecimal.FromInt32(cval)) !=
+          0)
+                    {
+                        this.RaiseError(String.Empty + obj);
+                    }
+#endif
+                    needObj = false;
+                }
+            }
+            if (needObj)
+            {
+                while (c == '-' || c == '+' || c == '.' || (c >= '0' && c <= '9') ||
+                  c == 'e' || c == 'E')
+                {
+                    c = this.index < this.endPos ? ((int)this.bytes[this.index++]) &
+                      0xff : -1;
+                }
+                // check if character can validly appear after a JSON number
+                if (c != ',' && c != ']' && c != '}' && c != -1 &&
+                  c != 0x20 && c != 0x0a && c != 0x0d && c != 0x09)
+                {
+                    this.RaiseError("Invalid character after JSON number");
+                }
+                int numberEndIndex = c < 0 ? this.endPos : this.index - 1;
+                obj = CBORDataUtilities.ParseJSONNumber(
+                   this.bytes,
+                   numberStartIndex,
+                   numberEndIndex - numberStartIndex,
+                   this.options);
+#if DEBUG
+                if ((
+          (EDecimal)obj.ToObject(
+          typeof(EDecimal))).CompareToValue(EDecimal.FromString(this.bytes,
+                   numberStartIndex,
+                   numberEndIndex - numberStartIndex)) != 0)
+                {
+                    this.RaiseError(String.Empty + obj);
+                }
+#endif
+                if (obj == null)
+                {
+                    string errstr = String.Empty;
+                    // errstr = (str.Length <= 100) ? str : (str.Substring(0,
+                    // 100) + "...");
+                    this.RaiseError("JSON number can't be parsed. " + errstr);
+                }
+            }
+            if (c == -1 || (c != 0x20 && c != 0x0a && c != 0x0d && c != 0x09))
+            {
+                nextChar[0] = c;
+            }
+            else
+            {
+                nextChar[0] = this.SkipWhitespaceJSON();
+            }
+            return obj;
+        }
+
+        private CBORObject NextJSONValue(
+          int firstChar,
+          int[] nextChar,
+          int depth)
+        {
+            int c = firstChar;
+            CBORObject obj = null;
+            if (c < 0)
+            {
+                this.RaiseError("Unexpected end of data");
+            }
+            switch (c)
+            {
+                case '"':
+                    {
+                        // Parse a string
+                        // The tokenizer already checked the string for invalid
+                        // surrogate pairs, so just call the CBORObject
+                        // constructor directly
+                        obj = CBORObject.FromRawUtf8(this.NextJSONString());
+                        nextChar[0] = this.SkipWhitespaceJSON();
+                        return obj;
+                    }
+                case '{':
+                    {
+                        // Parse an object
+                        obj = this.ParseJSONObject(depth + 1);
+                        nextChar[0] = this.SkipWhitespaceJSON();
+                        return obj;
+                    }
+                case '[':
+                    {
+                        // Parse an array
+                        obj = this.ParseJSONArray(depth + 1);
+                        nextChar[0] = this.SkipWhitespaceJSON();
+                        return obj;
+                    }
+                case 't':
+                    {
+                        // Parse true
+                        if (this.endPos - this.index <= 2 ||
+                          this.bytes[this.index] != (byte)0x72 ||
+                          this.bytes[this.index + 1] != (byte)0x75 ||
+                          this.bytes[this.index + 2] != (byte)0x65)
+                        {
+                            this.RaiseError("Value can't be parsed.");
+                        }
+                        this.index += 3;
+                        nextChar[0] = this.SkipWhitespaceJSON();
+                        return CBORObject.True;
+                    }
+                case 'f':
+                    {
+                        // Parse false
+                        if (this.endPos - this.index <= 3 ||
+                          this.bytes[this.index] != (byte)0x61 ||
+                          this.bytes[this.index + 1] != (byte)0x6c ||
+                          this.bytes[this.index + 2] != (byte)0x73 ||
+                          this.bytes[this.index + 3] != (byte)0x65)
+                        {
+                            this.RaiseError("Value can't be parsed.");
+                        }
+                        this.index += 4;
+                        nextChar[0] = this.SkipWhitespaceJSON();
+                        return CBORObject.False;
+                    }
+                case 'n':
+                    {
+                        // Parse null
+                        if (this.endPos - this.index <= 2 ||
+                          this.bytes[this.index] != (byte)0x75 ||
+                          this.bytes[this.index + 1] != (byte)0x6c ||
+                          this.bytes[this.index + 2] != (byte)0x6c)
+                        {
+                            this.RaiseError("Value can't be parsed.");
+                        }
+                        this.index += 3;
+                        nextChar[0] = this.SkipWhitespaceJSON();
+                        return CBORObject.Null;
+                    }
+                case '-':
+                    {
+                        // Parse a negative number
+                        return this.NextJSONNegativeNumber(nextChar);
+                    }
+                case '0':
+                case '1':
+                case '2':
+                case '3':
+                case '4':
+                case '5':
+                case '6':
+                case '7':
+                case '8':
+                case '9':
+                    {
+                        // Parse a nonnegative number
+                        return this.NextJSONNonnegativeNumber(c, nextChar);
+                    }
+                default:
+                    this.RaiseError("Value can't be parsed.");
+                    break;
+            }
+            return null;
+        }
+
+        public CBORJson2(byte[] bytes, int index, int endPos, JSONOptions
+          options)
+        {
+#if DEBUG
+            if (bytes == null)
+            {
+                throw new ArgumentNullException(nameof(bytes));
+            }
+            if (index < 0)
+            {
+                throw new ArgumentException("index (" + index + ") is not greater or" +
+                  "\u0020equal to 0");
+            }
+            if (index > bytes.Length)
+            {
+                throw new ArgumentException("index (" + index + ") is not less or" +
+                  "\u0020equal to " + bytes.Length);
+            }
+            if (endPos < 0)
+            {
+                throw new ArgumentException("endPos (" + endPos + ") is not greater" +
+                  "\u0020or equal to 0");
+            }
+            if (endPos > bytes.Length)
+            {
+                throw new ArgumentException("endPos (" + endPos + ") is not less or" +
+                  "\u0020equal to " + bytes.Length);
+            }
+            if (endPos < index)
+            {
+                throw new ArgumentException("endPos (" + endPos + ") is not greater" +
+                  "\u0020or equal to " + index);
+            }
+#endif
+
+            this.bytes = bytes;
+            this.index = index;
+            this.endPos = endPos;
+            this.options = options;
+        }
+
+        public CBORObject ParseJSON(int[] nextchar)
+        {
+            int c;
+            CBORObject ret;
+            c = this.SkipWhitespaceJSON();
+            if (c == '[')
+            {
+                ret = this.ParseJSONArray(0);
+                nextchar[0] = this.SkipWhitespaceJSON();
+                return ret;
+            }
+            if (c == '{')
+            {
+                ret = this.ParseJSONObject(0);
+                nextchar[0] = this.SkipWhitespaceJSON();
+                return ret;
+            }
+            return this.NextJSONValue(c, nextchar, 0);
+        }
+
+        internal static CBORObject ParseJSONValue(
+          byte[] bytes,
+          int index,
+          int endPos,
+          JSONOptions options)
+        {
+            var nextchar = new int[1];
+            var cj = new CBORJson2(bytes, index, endPos, options);
+            CBORObject obj = cj.ParseJSON(nextchar);
+            if (nextchar[0] != -1)
+            {
+                cj.RaiseError("End of bytes not reached");
+            }
+            return obj;
+        }
+
+        internal static CBORObject ParseJSONValue(
+          byte[] bytes,
+          int index,
+          int endPos,
+          JSONOptions options,
+          int[] nextchar)
+        {
+#if DEBUG
+            if (bytes == null)
+            {
+                throw new ArgumentNullException(nameof(bytes));
+            }
+            if (index < 0)
+            {
+                throw new ArgumentException("index (" + index + ") is not greater or" +
+                  "\u0020equal to 0");
+            }
+            if (index > bytes.Length)
+            {
+                throw new ArgumentException("index (" + index + ") is not less or" +
+                  "\u0020equal to " + bytes.Length);
+            }
+            if (endPos < 0)
+            {
+                throw new ArgumentException("endPos (" + endPos + ") is not greater" +
+                  "\u0020or equal to 0");
+            }
+            if (endPos > bytes.Length)
+            {
+                throw new ArgumentException("endPos (" + endPos + ") is not less or" +
+                  "\u0020equal to " + bytes.Length);
+            }
+            if (endPos < index)
+            {
+                throw new ArgumentException("endPos (" + endPos + ") is not greater" +
+                  "\u0020or equal to " + index);
+            }
+#endif
+
+            var cj = new CBORJson2(bytes, index, endPos, options);
+            return cj.ParseJSON(nextchar);
+        }
+
+        private CBORObject ParseJSONObject(int depth)
+        {
+            // Assumes that the last character read was '{'
+            if (depth > 1000)
+            {
+                this.RaiseError("Too deeply nested");
+            }
+            int c;
+            CBORObject key = null;
+            CBORObject obj;
+            var nextchar = new int[1];
+            var seenComma = false;
+            var myHashMap = new SortedDictionary<CBORObject, CBORObject>();
+            while (true)
+            {
+                c = this.SkipWhitespaceJSON();
+                switch (c)
+                {
+                    case -1:
+                        this.RaiseError("A JSON object must end with '}'");
+                        break;
+                    case '}':
+                        if (seenComma)
+                        {
+                            // Situation like '{"0"=>1,}'
+                            this.RaiseError("Trailing comma");
+                            return null;
+                        }
+                        return CBORObject.FromRaw(myHashMap);
+                    default:
+                        {
+                            // Read the next string
+                            if (c < 0)
+                            {
+                                this.RaiseError("Unexpected end of data");
+                                return null;
+                            }
+                            if (c != '"')
+                            {
+                                this.RaiseError("Expected a string as a key");
+                                return null;
+                            }
+                            // Parse a string that represents the object's key
+                            // The tokenizer already checked the string for invalid
+                            // surrogate pairs, so just call the CBORObject
+                            // constructor directly
+                            obj = CBORObject.FromRawUtf8(this.NextJSONString());
+                            key = obj;
+                            if (!this.options.AllowDuplicateKeys &&
+                              myHashMap.ContainsKey(obj))
+                            {
+                                this.RaiseError("Key already exists: " + key);
+                                return null;
+                            }
+                            break;
+                        }
+                }
+                if (this.SkipWhitespaceJSON() != ':')
+                {
+                    this.RaiseError("Expected a ':' after a key");
+                }
+                // NOTE: Will overwrite existing value
+                myHashMap[key] = this.NextJSONValue(
+                    this.SkipWhitespaceJSON(),
+                    nextchar,
+                    depth);
+                switch (nextchar[0])
+                {
+                    case ',':
+                        seenComma = true;
+                        break;
+                    case '}':
+                        return CBORObject.FromRaw(myHashMap);
+                    default:
+                        this.RaiseError("Expected a ',' or '}'");
+                        break;
+                }
+            }
+        }
+
+        internal CBORObject ParseJSONArray(int depth)
+        {
+            // Assumes that the last character read was '['
+            if (depth > 1000)
+            {
+                this.RaiseError("Too deeply nested");
+            }
+            var myArrayList = new List<CBORObject>();
+            var seenComma = false;
+            var nextchar = new int[1];
+            while (true)
+            {
+                int c = this.SkipWhitespaceJSON();
+                if (c == ']')
+                {
+                    if (seenComma)
+                    {
+                        // Situation like '[0,1,]'
+                        this.RaiseError("Trailing comma");
+                    }
+                    return CBORObject.FromRaw(myArrayList);
+                }
+                if (c == ',')
+                {
+                    // Situation like '[,0,1,2]' or '[0,,1]'
+                    this.RaiseError("Empty array element");
                 }
                 myArrayList.Add(
                   this.NextJSONValue(
@@ -2401,47 +4492,835 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
                     case ']':
                         return CBORObject.FromRaw(myArrayList);
                     default:
-                        this.reader.RaiseError("Expected a ',' or ']'");
+                        this.RaiseError("Expected a ',' or ']'");
+                        break;
+                }
+            }
+        }
+    }
+    #endregion
+
+    #region CBORJson3
+    internal sealed class CBORJson3
+    {
+        // JSON parsing method
+        private int SkipWhitespaceJSON()
+        {
+            while (this.index < this.endPos)
+            {
+                char c = this.jstring[this.index++];
+                if (c != 0x20 && c != 0x0a && c != 0x0d && c != 0x09)
+                {
+                    return c;
+                }
+            }
+            return -1;
+        }
+
+        internal void RaiseError(string str)
+        {
+            throw new CBORException(str + " (approx. offset: " +
+              Math.Max(0, this.index - 1) + ")");
+        }
+
+        // NOTE: Differs from CBORJson2
+        private readonly string jstring;
+        private readonly JSONOptions options;
+        private StringBuilder sb;
+        private int index;
+        private int endPos;
+
+        private string NextJSONString()
+        {
+            int c;
+            int startIndex = this.index;
+            var endIndex = -1;
+            int ep = this.endPos;
+            string js = this.jstring;
+            int idx = this.index;
+            while (true)
+            {
+                c = idx < ep ? ((int)js[idx++]) & 0xffff : -1;
+                if (c == -1 || c < 0x20)
+                {
+                    this.index = idx;
+                    this.RaiseError("Unterminated string");
+                }
+                else if (c == '"')
+                {
+                    int iend = idx - 1;
+                    this.index = idx;
+                    return js.Substring(
+                        startIndex,
+                        iend - startIndex);
+                }
+                else if (c == '\\' || (c & 0xf800) == 0xd800)
+                {
+                    this.index = idx - 1;
+                    endIndex = this.index;
+                    break;
+                }
+            }
+            this.sb = this.sb ?? new StringBuilder();
+            this.sb.Remove(0, this.sb.Length);
+            this.sb.Append(js, startIndex, endIndex - startIndex);
+            while (true)
+            {
+                c = this.index < ep ? ((int)js[this.index++]) &
+                  0xffff : -1;
+                if (c == -1 || c < 0x20)
+                {
+                    this.RaiseError("Unterminated string");
+                }
+                switch (c)
+                {
+                    case '\\':
+                        endIndex = this.index - 1;
+                        c = this.index < ep ? ((int)js[this.index++]) &
+                          0xffff : -1;
+                        switch (c)
+                        {
+                            case '\\':
+                            case '/':
+                            case '\"':
+                                // Slash is now allowed to be escaped under RFC 8259
+                                this.sb.Append((char)c);
+                                break;
+                            case 'b':
+                                this.sb.Append('\b');
+                                break;
+                            case 'f':
+                                this.sb.Append('\f');
+                                break;
+                            case 'n':
+                                this.sb.Append('\n');
+                                break;
+                            case 'r':
+                                this.sb.Append('\r');
+                                break;
+                            case 't':
+                                this.sb.Append('\t');
+                                break;
+                            case 'u':
+                                { // Unicode escape
+                                    c = 0;
+                                    // Consists of 4 hex digits
+                                    for (var i = 0; i < 4; ++i)
+                                    {
+                                        int ch = this.index < ep ?
+                                          ((int)js[this.index++]) : -1;
+                                        if (ch >= '0' && ch <= '9')
+                                        {
+                                            c <<= 4;
+                                            c |= ch - '0';
+                                        }
+                                        else if (ch >= 'A' && ch <= 'F')
+                                        {
+                                            c <<= 4;
+                                            c |= ch + 10 - 'A';
+                                        }
+                                        else if (ch >= 'a' && ch <= 'f')
+                                        {
+                                            c <<= 4;
+                                            c |= ch + 10 - 'a';
+                                        }
+                                        else
+                                        {
+                                            this.RaiseError(
+                                              "Invalid Unicode escaped character");
+                                        }
+                                    }
+                                    if ((c & 0xf800) != 0xd800)
+                                    {
+                                        // Non-surrogate
+                                        this.sb.Append((char)c);
+                                    }
+                                    else if ((c & 0xfc00) == 0xd800)
+                                    {
+                                        int ch = this.index < ep ? ((int)js[this.index++]) : -1;
+                                        if (ch != '\\' || (this.index < ep ?
+                                            ((int)js[this.index++]) : -1) != 'u')
+                                        {
+                                            this.RaiseError("Invalid escaped character");
+                                        }
+                                        var c2 = 0;
+                                        for (var i = 0; i < 4; ++i)
+                                        {
+                                            ch = this.index < ep ?
+                                              ((int)js[this.index++]) : -1;
+                                            if (ch >= '0' && ch <= '9')
+                                            {
+                                                c2 <<= 4;
+                                                c2 |= ch - '0';
+                                            }
+                                            else if (ch >= 'A' && ch <= 'F')
+                                            {
+                                                c2 <<= 4;
+                                                c2 |= ch + 10 - 'A';
+                                            }
+                                            else if (ch >= 'a' && ch <= 'f')
+                                            {
+                                                c2 <<= 4;
+                                                c2 |= ch + 10 - 'a';
+                                            }
+                                            else
+                                            {
+                                                this.RaiseError(
+                                                  "Invalid Unicode escaped character");
+                                            }
+                                        }
+                                        if ((c2 & 0xfc00) != 0xdc00)
+                                        {
+                                            this.RaiseError("Unpaired surrogate code point");
+                                        }
+                                        else
+                                        {
+                                            this.sb.Append((char)c);
+                                            this.sb.Append((char)c2);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        this.RaiseError("Unpaired surrogate code point");
+                                    }
+                                    break;
+                                }
+                            default:
+                                {
+                                    this.RaiseError("Invalid escaped character");
+                                    break;
+                                }
+                        }
+                        break;
+                    case 0x22: // double quote
+                        return this.sb.ToString();
+                    default:
+                        {
+                            // NOTE: Differs from CBORJson2
+                            if ((c & 0xf800) != 0xd800)
+                            {
+                                // Non-surrogate
+                                this.sb.Append((char)c);
+                            }
+                            else if ((c & 0xfc00) == 0xd800 && this.index < ep &&
+                            (js[this.index] & 0xfc00) == 0xdc00)
+                            {
+                                // Surrogate pair
+                                this.sb.Append((char)c);
+                                this.sb.Append(js[this.index]);
+                                ++this.index;
+                            }
+                            else
+                            {
+                                this.RaiseError("Unpaired surrogate code point");
+                            }
+                            break;
+                        }
+                }
+            }
+        }
+
+        private CBORObject NextJSONNegativeNumber(
+          int[] nextChar)
+        {
+            // Assumes the last character read was '-'
+            // DebugUtility.Log("js=" + (jstring));
+            CBORObject obj;
+            int numberStartIndex = this.index - 1;
+            int c = this.index < this.endPos ? ((int)this.jstring[this.index++]) &
+              0xffff : -1;
+            if (c < '0' || c > '9')
+            {
+                this.RaiseError("JSON number can't be parsed.");
+            }
+            if (this.index < this.endPos && c != '0')
+            {
+                // Check for negative single-digit
+                int c2 = ((int)this.jstring[this.index]) & 0xffff;
+                if (c2 == ',' || c2 == ']' || c2 == '}')
+                {
+                    ++this.index;
+                    obj = CBORDataUtilities.ParseSmallNumberAsNegative(
+                        c - '0',
+                        this.options);
+                    nextChar[0] = c2;
+                    return obj;
+                }
+                else if (c2 == 0x20 || c2 == 0x0a || c2 == 0x0d || c2 == 0x09)
+                {
+                    ++this.index;
+                    obj = CBORDataUtilities.ParseSmallNumberAsNegative(
+                        c - '0',
+                        this.options);
+                    nextChar[0] = this.SkipWhitespaceJSON();
+                    return obj;
+                }
+            }
+            // NOTE: Differs from CBORJson2, notably because the whole
+            // rest of the string is checked whether the beginning of the rest
+            // is a JSON number
+            var endIndex = new int[1];
+            endIndex[0] = numberStartIndex;
+            obj = CBORDataUtilitiesTextString.ParseJSONNumber(
+                this.jstring,
+                numberStartIndex,
+                this.endPos - numberStartIndex,
+                this.options,
+                endIndex);
+            int numberEndIndex = endIndex[0];
+            this.index = numberEndIndex >= this.endPos ? this.endPos :
+              (numberEndIndex + 1);
+            if (obj == null)
+            {
+                int strlen = numberEndIndex - numberStartIndex;
+                string errstr = this.jstring.Substring(numberStartIndex,
+                    Math.Min(100, strlen));
+                if (strlen > 100)
+                {
+                    errstr += "...";
+                }
+                this.RaiseError("JSON number can't be parsed. " + errstr);
+            }
+#if DEBUG
+            if (numberEndIndex < numberStartIndex)
+            {
+                throw new ArgumentException("numberEndIndex (" + numberEndIndex +
+                  ") is not greater or equal to " + numberStartIndex);
+            }
+#endif
+            c = numberEndIndex >= this.endPos ? -1 : this.jstring[numberEndIndex];
+            // check if character can validly appear after a JSON number
+            if (c != ',' && c != ']' && c != '}' && c != -1 &&
+              c != 0x20 && c != 0x0a && c != 0x0d && c != 0x09)
+            {
+                this.RaiseError("Invalid character after JSON number");
+            }
+            // DebugUtility.Log("endIndex="+endIndex[0]+", "+
+            // this.jstring.Substring(endIndex[0],
+            // Math.Min(20, this.endPos-endIndex[0])));
+            if (c == -1 || (c != 0x20 && c != 0x0a && c != 0x0d && c != 0x09))
+            {
+                nextChar[0] = c;
+            }
+            else
+            {
+                nextChar[0] = this.SkipWhitespaceJSON();
+            }
+            return obj;
+        }
+
+        private CBORObject NextJSONNonnegativeNumber(int c, int[] nextChar)
+        {
+            // Assumes the last character read was a digit
+            CBORObject obj = null;
+            int cval = c - '0';
+            int cstart = c;
+            int startIndex = this.index - 1;
+            var needObj = true;
+            int numberStartIndex = this.index - 1;
+            // DebugUtility.Log("js=" + (jstring));
+            c = this.index < this.endPos ? ((int)this.jstring[this.index++]) &
+              0xffff : -1;
+            if (!(c == '-' || c == '+' || c == '.' || (c >= '0' && c <= '9') ||
+                c == 'e' || c == 'E'))
+            {
+                // Optimize for common case where JSON number
+                // is a single digit without sign or exponent
+                obj = CBORDataUtilities.ParseSmallNumber(cval, this.options);
+                needObj = false;
+            }
+            else if (c >= '0' && c <= '9')
+            {
+                int csecond = c;
+                if (cstart == '0')
+                {
+                    // Leading zero followed by any digit is not allowed
+                    this.RaiseError("JSON number can't be parsed.");
+                }
+                cval = (cval * 10) + (int)(c - '0');
+                c = this.index < this.endPos ? ((int)this.jstring[this.index++]) : -1;
+                if (c >= '0' && c <= '9')
+                {
+                    var digits = 2;
+                    while (digits < 9 && (c >= '0' && c <= '9'))
+                    {
+                        cval = (cval * 10) + (int)(c - '0');
+                        c = this.index < this.endPos ?
+                          ((int)this.jstring[this.index++]) : -1;
+                        ++digits;
+                    }
+                    if (!(c == 'e' || c == 'E' || c == '.' || (c >= '0' && c <=
+                          '9')))
+                    {
+                        // All-digit number that's short enough
+                        obj = CBORDataUtilities.ParseSmallNumber(cval, this.options);
+                        needObj = false;
+                    }
+                }
+                else if (!(c == '-' || c == '+' || c == '.' || c == 'e' || c
+                  == 'E'))
+                {
+                    // Optimize for common case where JSON number
+                    // is two digits without sign, decimal point, or exponent
+                    obj = CBORDataUtilities.ParseSmallNumber(cval, this.options);
+                    needObj = false;
+                }
+            }
+            if (needObj)
+            {
+                // NOTE: Differs from CBORJson2, notably because the whole
+                // rest of the string is checked whether the beginning of the rest
+                // is a JSON number
+                var endIndex = new int[1];
+                endIndex[0] = numberStartIndex;
+                obj = CBORDataUtilitiesTextString.ParseJSONNumber(
+                    this.jstring,
+                    numberStartIndex,
+                    this.endPos - numberStartIndex,
+                    this.options,
+                    endIndex);
+                int numberEndIndex = endIndex[0];
+                this.index = numberEndIndex >= this.endPos ? this.endPos :
+                  (numberEndIndex + 1);
+                if (obj == null)
+                {
+                    int strlen = numberEndIndex - numberStartIndex;
+                    string errstr = this.jstring.Substring(numberStartIndex,
+                        Math.Min(100, strlen));
+                    if (strlen > 100)
+                    {
+                        errstr += "...";
+                    }
+                    this.RaiseError("JSON number can't be parsed. " + errstr);
+                }
+#if DEBUG
+                if (numberEndIndex < numberStartIndex)
+                {
+                    throw new ArgumentException("numberEndIndex (" + numberEndIndex +
+                      ") is not greater or equal to " + numberStartIndex);
+                }
+#endif
+
+                c = numberEndIndex >= this.endPos ? -1 : this.jstring[numberEndIndex];
+                // check if character can validly appear after a JSON number
+                if (c != ',' && c != ']' && c != '}' && c != -1 &&
+                  c != 0x20 && c != 0x0a && c != 0x0d && c != 0x09)
+                {
+                    this.RaiseError("Invalid character after JSON number");
+                }
+                // DebugUtility.Log("endIndex="+endIndex[0]+", "+
+                // this.jstring.Substring(endIndex[0],
+                // Math.Min(20, this.endPos-endIndex[0])));
+            }
+            if (c == -1 || (c != 0x20 && c != 0x0a && c != 0x0d && c != 0x09))
+            {
+                nextChar[0] = c;
+            }
+            else
+            {
+                nextChar[0] = this.SkipWhitespaceJSON();
+            }
+            return obj;
+        }
+
+        private CBORObject NextJSONValue(
+          int firstChar,
+          int[] nextChar,
+          int depth)
+        {
+            int c = firstChar;
+            CBORObject obj = null;
+            if (c < 0)
+            {
+                this.RaiseError("Unexpected end of data");
+            }
+            switch (c)
+            {
+                case '"':
+                    {
+                        // Parse a string
+                        // The tokenizer already checked the string for invalid
+                        // surrogate pairs, so just call the CBORObject
+                        // constructor directly
+                        obj = CBORObject.FromRaw(this.NextJSONString());
+                        nextChar[0] = this.SkipWhitespaceJSON();
+                        return obj;
+                    }
+                case '{':
+                    {
+                        // Parse an object
+                        obj = this.ParseJSONObject(depth + 1);
+                        nextChar[0] = this.SkipWhitespaceJSON();
+                        return obj;
+                    }
+                case '[':
+                    {
+                        // Parse an array
+                        obj = this.ParseJSONArray(depth + 1);
+                        nextChar[0] = this.SkipWhitespaceJSON();
+                        return obj;
+                    }
+                case 't':
+                    {
+                        // Parse true
+                        if (this.endPos - this.index <= 2 ||
+                          (((int)this.jstring[this.index]) & 0xFF) != 'r' ||
+                          (((int)this.jstring[this.index + 1]) & 0xFF) != 'u' ||
+                          (((int)this.jstring[this.index + 2]) & 0xFF) != 'e')
+                        {
+                            this.RaiseError("Value can't be parsed.");
+                        }
+                        this.index += 3;
+                        nextChar[0] = this.SkipWhitespaceJSON();
+                        return CBORObject.True;
+                    }
+                case 'f':
+                    {
+                        // Parse false
+                        if (this.endPos - this.index <= 3 ||
+                          (((int)this.jstring[this.index]) & 0xFF) != 'a' ||
+                          (((int)this.jstring[this.index + 1]) & 0xFF) != 'l' ||
+                          (((int)this.jstring[this.index + 2]) & 0xFF) != 's' ||
+                          (((int)this.jstring[this.index + 3]) & 0xFF) != 'e')
+                        {
+                            this.RaiseError("Value can't be parsed.");
+                        }
+                        this.index += 4;
+                        nextChar[0] = this.SkipWhitespaceJSON();
+                        return CBORObject.False;
+                    }
+                case 'n':
+                    {
+                        // Parse null
+                        if (this.endPos - this.index <= 2 ||
+                          (((int)this.jstring[this.index]) & 0xFF) != 'u' ||
+                          (((int)this.jstring[this.index + 1]) & 0xFF) != 'l' ||
+                          (((int)this.jstring[this.index + 2]) & 0xFF) != 'l')
+                        {
+                            this.RaiseError("Value can't be parsed.");
+                        }
+                        this.index += 3;
+                        nextChar[0] = this.SkipWhitespaceJSON();
+                        return CBORObject.Null;
+                    }
+                case '-':
+                    {
+                        // Parse a negative number
+                        return this.NextJSONNegativeNumber(nextChar);
+                    }
+                case '0':
+                case '1':
+                case '2':
+                case '3':
+                case '4':
+                case '5':
+                case '6':
+                case '7':
+                case '8':
+                case '9':
+                    {
+                        // Parse a nonnegative number
+                        return this.NextJSONNonnegativeNumber(c, nextChar);
+                    }
+                default:
+                    this.RaiseError("Value can't be parsed.");
+                    break;
+            }
+            return null;
+        }
+
+        public CBORJson3(string jstring, int index, int endPos, JSONOptions
+          options)
+        {
+#if DEBUG
+            if (jstring == null)
+            {
+                throw new ArgumentNullException(nameof(jstring));
+            }
+            if (index < 0)
+            {
+                throw new ArgumentException("index (" + index + ") is not greater or" +
+                  "\u0020equal to 0");
+            }
+            if (index > jstring.Length)
+            {
+                throw new ArgumentException("index (" + index + ") is not less or" +
+                  "\u0020equal to " + jstring.Length);
+            }
+            if (endPos < 0)
+            {
+                throw new ArgumentException("endPos (" + endPos + ") is not greater" +
+                  "\u0020or equal to 0");
+            }
+            if (endPos > jstring.Length)
+            {
+                throw new ArgumentException("endPos (" + endPos + ") is not less or" +
+                  "\u0020equal to " + jstring.Length);
+            }
+            if (endPos < index)
+            {
+                throw new ArgumentException("endPos (" + endPos + ") is not greater" +
+                  "\u0020or equal to " + index);
+            }
+#endif
+            this.sb = null;
+            this.jstring = jstring;
+            this.index = index;
+            this.endPos = endPos;
+            this.options = options;
+        }
+
+        public CBORObject ParseJSON(int[] nextchar)
+        {
+            int c;
+            CBORObject ret;
+            c = this.SkipWhitespaceJSON();
+            if (c == '[')
+            {
+                ret = this.ParseJSONArray(0);
+                nextchar[0] = this.SkipWhitespaceJSON();
+                return ret;
+            }
+            if (c == '{')
+            {
+                ret = this.ParseJSONObject(0);
+                nextchar[0] = this.SkipWhitespaceJSON();
+                return ret;
+            }
+            return this.NextJSONValue(c, nextchar, 0);
+        }
+
+        internal static CBORObject ParseJSONValue(
+          string jstring,
+          int index,
+          int endPos,
+          JSONOptions options)
+        {
+            var nextchar = new int[1];
+            var cj = new CBORJson3(jstring, index, endPos, options);
+            CBORObject obj = cj.ParseJSON(nextchar);
+            if (nextchar[0] != -1)
+            {
+                cj.RaiseError("End of string not reached");
+            }
+            return obj;
+        }
+
+        internal static CBORObject ParseJSONValue(
+          string jstring,
+          int index,
+          int endPos,
+          JSONOptions options,
+          int[] nextchar)
+        {
+#if DEBUG
+            if (jstring == null)
+            {
+                throw new ArgumentNullException(nameof(jstring));
+            }
+            if (index < 0)
+            {
+                throw new ArgumentException("index (" + index + ") is not greater or" +
+                  "\u0020equal to 0");
+            }
+            if (index > jstring.Length)
+            {
+                throw new ArgumentException("index (" + index + ") is not less or" +
+                  "\u0020equal to " + jstring.Length);
+            }
+            if (endPos < 0)
+            {
+                throw new ArgumentException("endPos (" + endPos + ") is not greater" +
+                  "\u0020or equal to 0");
+            }
+            if (endPos > jstring.Length)
+            {
+                throw new ArgumentException("endPos (" + endPos + ") is not less or" +
+                  "\u0020equal to " + jstring.Length);
+            }
+            if (endPos < index)
+            {
+                throw new ArgumentException("endPos (" + endPos + ") is not greater" +
+                  "\u0020or equal to " + index);
+            }
+#endif
+
+            var cj = new CBORJson3(jstring, index, endPos, options);
+            return cj.ParseJSON(nextchar);
+        }
+
+        private CBORObject ParseJSONObject(int depth)
+        {
+            // Assumes that the last character read was '{'
+            if (depth > 1000)
+            {
+                this.RaiseError("Too deeply nested");
+            }
+            int c;
+            CBORObject key = null;
+            CBORObject obj;
+            var nextchar = new int[1];
+            var seenComma = false;
+            var myHashMap = new SortedDictionary<CBORObject, CBORObject>();
+            while (true)
+            {
+                c = this.SkipWhitespaceJSON();
+                switch (c)
+                {
+                    case -1:
+                        this.RaiseError("A JSON object must end with '}'");
+                        break;
+                    case '}':
+                        if (seenComma)
+                        {
+                            // Situation like '{"0"=>1,}'
+                            this.RaiseError("Trailing comma");
+                            return null;
+                        }
+                        return CBORObject.FromRaw(myHashMap);
+                    default:
+                        {
+                            // Read the next string
+                            if (c < 0)
+                            {
+                                this.RaiseError("Unexpected end of data");
+                                return null;
+                            }
+                            if (c != '"')
+                            {
+                                this.RaiseError("Expected a string as a key");
+                                return null;
+                            }
+                            // Parse a string that represents the object's key
+                            // The tokenizer already checked the string for invalid
+                            // surrogate pairs, so just call the CBORObject
+                            // constructor directly
+                            obj = CBORObject.FromRaw(this.NextJSONString());
+                            key = obj;
+                            if (!this.options.AllowDuplicateKeys &&
+                              myHashMap.ContainsKey(obj))
+                            {
+                                this.RaiseError("Key already exists: " + key);
+                                return null;
+                            }
+                            break;
+                        }
+                }
+                if (this.SkipWhitespaceJSON() != ':')
+                {
+                    this.RaiseError("Expected a ':' after a key");
+                }
+                // NOTE: Will overwrite existing value
+                myHashMap[key] = this.NextJSONValue(
+                    this.SkipWhitespaceJSON(),
+                    nextchar,
+                    depth);
+                switch (nextchar[0])
+                {
+                    case ',':
+                        seenComma = true;
+                        break;
+                    case '}':
+                        return CBORObject.FromRaw(myHashMap);
+                    default:
+                        this.RaiseError("Expected a ',' or '}'");
                         break;
                 }
             }
         }
 
+        internal CBORObject ParseJSONArray(int depth)
+        {
+            // Assumes that the last character read was '['
+            if (depth > 1000)
+            {
+                this.RaiseError("Too deeply nested");
+            }
+            var myArrayList = new List<CBORObject>();
+            var seenComma = false;
+            var nextchar = new int[1];
+            while (true)
+            {
+                int c = this.SkipWhitespaceJSON();
+                if (c == ']')
+                {
+                    if (seenComma)
+                    {
+                        // Situation like '[0,1,]'
+                        this.RaiseError("Trailing comma");
+                    }
+                    return CBORObject.FromRaw(myArrayList);
+                }
+                if (c == ',')
+                {
+                    // Situation like '[,0,1,2]' or '[0,,1]'
+                    this.RaiseError("Empty array element");
+                }
+                myArrayList.Add(
+                  this.NextJSONValue(
+                    c,
+                    nextchar,
+                    depth));
+                c = nextchar[0];
+                switch (c)
+                {
+                    case ',':
+                        seenComma = true;
+                        break;
+                    case ']':
+                        return CBORObject.FromRaw(myArrayList);
+                    default:
+                        this.RaiseError("Expected a ',' or ']'");
+                        break;
+                }
+            }
+        }
+    }
+    #endregion
+
+    #region CBORJsonWriter
+    internal static class CBORJsonWriter
+    {
         private const string Hex16 = "0123456789ABCDEF";
 
         internal static void WriteJSONStringUnquoted(
           string str,
-          StringOutput sb)
+          StringOutput sb,
+          JSONOptions options)
         {
-            // Surrogates were already verified when this
-            // string was added to the CBOR object; that check
-            // is not repeated here
-            bool first = true;
-            for (int i = 0; i < str.Length; ++i)
+            var i = 0;
+            for (; i < str.Length; ++i)
+            {
+                char c = str[i];
+                if (c < 0x20 || c >= 0x7f || c == '\\' || c == '"')
+                {
+                    sb.WriteString(str, 0, i);
+                    break;
+                }
+            }
+            if (i == str.Length)
+            {
+                sb.WriteString(str, 0, i);
+                return;
+            }
+            // int bufferlen = Math.Min(Math.Max(4, str.Length), 64);
+            // byte[] buffer = new byte[bufferlen];
+            // int bufferpos = 0;
+            for (; i < str.Length; ++i)
             {
                 char c = str[i];
                 if (c == '\\' || c == '"')
                 {
-                    if (first)
-                    {
-                        first = false;
-                        sb.WriteString(str, 0, i);
-                    }
                     sb.WriteCodePoint((int)'\\');
                     sb.WriteCodePoint((int)c);
                 }
                 else if (c < 0x20 || (c >= 0x7f && (c == 0x2028 || c == 0x2029 ||
-                          (c >= 0x7f && c <= 0xa0) || c == 0xfeff || c == 0xfffe ||
-                          c == 0xffff)))
+                    (c >= 0x7f && c <= 0xa0) || c == 0xfeff || c == 0xfffe ||
+                    c == 0xffff)))
                 {
                     // Control characters, and also the line and paragraph separators
                     // which apparently can't appear in JavaScript (as opposed to
                     // JSON) strings
-                    if (first)
-                    {
-                        first = false;
-                        sb.WriteString(str, 0, i);
-                    }
                     if (c == 0x0d)
                     {
                         sb.WriteString("\\r");
@@ -2481,22 +5360,33 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
                         sb.WriteCodePoint((int)Hex16[(int)(c & 15)]);
                     }
                 }
-                else if (!first)
+                else if ((c & 0xfc00) == 0xd800)
                 {
-                    if ((c & 0xfc00) == 0xd800)
+                    if (i >= str.Length - 1 || (str[i + 1] & 0xfc00) != 0xdc00)
+                    {
+                        // NOTE: RFC 8259 doesn't prohibit any particular
+                        // error-handling behavior when a writer of JSON
+                        // receives a string with an unpaired surrogate.
+                        if (options.ReplaceSurrogates)
+                        {
+                            // Replace unpaired surrogate with U+FFFD
+                            sb.WriteCodePoint(0xfffd);
+                        }
+                        else
+                        {
+                            throw new CBORException("Unpaired surrogate in string");
+                        }
+                    }
+                    else
                     {
                         sb.WriteString(str, i, 2);
                         ++i;
                     }
-                    else
-                    {
-                        sb.WriteCodePoint((int)c);
-                    }
                 }
-            }
-            if (first)
-            {
-                sb.WriteString(str);
+                else
+                {
+                    sb.WriteCodePoint((int)c);
+                }
             }
         }
 
@@ -2505,11 +5395,77 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
           StringOutput writer,
           JSONOptions options)
         {
-            int type = obj.ItemType;
-            object thisItem = obj.ThisItem;
-            switch (type)
+            if (obj.Type == CBORType.Array || obj.Type == CBORType.Map)
             {
-                case CBORObject.CBORObjectTypeSimpleValue:
+                var stack = new List<CBORObject>();
+                WriteJSONToInternal(obj, writer, options, stack);
+            }
+            else
+            {
+                WriteJSONToInternal(obj, writer, options, null);
+            }
+        }
+
+        private static void PopRefIfNeeded(
+            IList<CBORObject> stack,
+            bool pop)
+        {
+            if (pop && stack != null)
+            {
+                stack.RemoveAt(stack.Count - 1);
+            }
+        }
+
+        private static bool CheckCircularRef(
+          IList<CBORObject> stack,
+          CBORObject parent,
+          CBORObject child)
+        {
+            if (child.Type != CBORType.Array && child.Type != CBORType.Map)
+            {
+                return false;
+            }
+            CBORObject childUntag = child.Untag();
+            if (parent.Untag() == childUntag)
+            {
+                throw new CBORException("Circular reference in CBOR object");
+            }
+            if (stack != null)
+            {
+                foreach (CBORObject o in stack)
+                {
+                    if (o.Untag() == childUntag)
+                    {
+                        throw new CBORException("Circular reference in CBOR object");
+                    }
+                }
+            }
+            stack.Add(child);
+            return true;
+        }
+
+        internal static void WriteJSONToInternal(
+          CBORObject obj,
+          StringOutput writer,
+          JSONOptions options,
+          IList<CBORObject> stack)
+        {
+            if (obj.IsNumber)
+            {
+                writer.WriteString(CBORNumber.FromCBORObject(obj).ToJSONString());
+                return;
+            }
+            switch (obj.Type)
+            {
+                case CBORType.Integer:
+                case CBORType.FloatingPoint:
+                    {
+                        CBORObject untaggedObj = obj.Untag();
+                        writer.WriteString(
+                          CBORNumber.FromCBORObject(untaggedObj).ToJSONString());
+                        break;
+                    }
+                case CBORType.Boolean:
                     {
                         if (obj.IsTrue)
                         {
@@ -2521,94 +5477,16 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
                             writer.WriteString("false");
                             return;
                         }
+                        return;
+                    }
+                case CBORType.SimpleValue:
+                    {
                         writer.WriteString("null");
                         return;
                     }
-                case CBORObject.CBORObjectTypeSingle:
+                case CBORType.ByteString:
                     {
-                        float f = (float)thisItem;
-                        if (Single.IsNegativeInfinity(f) ||
-                            Single.IsPositiveInfinity(f) || Single.IsNaN(f))
-                        {
-                            writer.WriteString("null");
-                            return;
-                        }
-                        writer.WriteString(
-                          CBORObject.TrimDotZero(
-                            CBORUtilities.SingleToString(f)));
-                        return;
-                    }
-                case CBORObject.CBORObjectTypeDouble:
-                    {
-                        double f = (double)thisItem;
-                        if (Double.IsNegativeInfinity(f) || Double.IsPositiveInfinity(f) ||
-                            Double.IsNaN(f))
-                        {
-                            writer.WriteString("null");
-                            return;
-                        }
-                        string dblString = CBORUtilities.DoubleToString(f);
-                        writer.WriteString(
-                          CBORObject.TrimDotZero(dblString));
-                        return;
-                    }
-                case CBORObject.CBORObjectTypeInteger:
-                    {
-                        long longItem = (long)thisItem;
-                        writer.WriteString(CBORUtilities.LongToString(longItem));
-                        return;
-                    }
-                case CBORObject.CBORObjectTypeBigInteger:
-                    {
-                        writer.WriteString(((EInteger)thisItem).ToString());
-                        return;
-                    }
-                case CBORObject.CBORObjectTypeExtendedDecimal:
-                    {
-                        EDecimal dec = (EDecimal)thisItem;
-                        if (dec.IsInfinity() || dec.IsNaN())
-                        {
-                            writer.WriteString("null");
-                        }
-                        else
-                        {
-                            writer.WriteString(dec.ToString());
-                        }
-                        return;
-                    }
-                case CBORObject.CBORObjectTypeExtendedFloat:
-                    {
-                        EFloat flo = (EFloat)thisItem;
-                        if (flo.IsInfinity() || flo.IsNaN())
-                        {
-                            writer.WriteString("null");
-                            return;
-                        }
-                        if (flo.IsFinite &&
-                            flo.Exponent.Abs().CompareTo((EInteger)2500) > 0)
-                        {
-                            // Too inefficient to convert to a decimal number
-                            // from a bigfloat with a very high exponent,
-                            // so convert to double instead
-                            double f = flo.ToDouble();
-                            if (Double.IsNegativeInfinity(f) ||
-                                Double.IsPositiveInfinity(f) || Double.IsNaN(f))
-                            {
-                                writer.WriteString("null");
-                                return;
-                            }
-                            string dblString =
-                                CBORUtilities.DoubleToString(f);
-                            writer.WriteString(
-                              CBORObject.TrimDotZero(dblString));
-                            return;
-                        }
-                        writer.WriteString(flo.ToString());
-                        return;
-                    }
-                case CBORObject.CBORObjectTypeByteString:
-                    {
-                        byte[] byteArray = (byte[])thisItem;
+                        byte[] byteArray = obj.GetByteString();
                         if (byteArray.Length == 0)
                         {
                             writer.WriteString("\"\"");
@@ -2617,12 +5495,13 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
                         writer.WriteCodePoint((int)'\"');
                         if (obj.HasTag(22))
                         {
+                            // Base64 with padding
                             Base64.WriteBase64(
                               writer,
                               byteArray,
                               0,
                               byteArray.Length,
-                              options.Base64Padding);
+                              true);
                         }
                         else if (obj.HasTag(23))
                         {
@@ -2635,70 +5514,60 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
                         }
                         else
                         {
+                            // Base64url no padding
                             Base64.WriteBase64URL(
                               writer,
                               byteArray,
                               0,
                               byteArray.Length,
-                              options.Base64Padding);
+                              false);
                         }
                         writer.WriteCodePoint((int)'\"');
                         break;
                     }
-                case CBORObject.CBORObjectTypeTextString:
+                case CBORType.TextString:
                     {
-                        string thisString = (string)thisItem;
+                        string thisString = obj.AsString();
                         if (thisString.Length == 0)
                         {
                             writer.WriteString("\"\"");
                             return;
                         }
                         writer.WriteCodePoint((int)'\"');
-                        WriteJSONStringUnquoted(thisString, writer);
+                        WriteJSONStringUnquoted(thisString, writer, options);
                         writer.WriteCodePoint((int)'\"');
                         break;
                     }
-                case CBORObject.CBORObjectTypeArray:
+                case CBORType.Array:
                     {
-                        bool first = true;
                         writer.WriteCodePoint((int)'[');
-                        foreach (CBORObject i in obj.AsList())
+                        for (var i = 0; i < obj.Count; ++i)
                         {
-                            if (!first)
+                            if (i > 0)
                             {
                                 writer.WriteCodePoint((int)',');
                             }
-                            WriteJSONToInternal(i, writer, options);
-                            first = false;
+                            bool pop = CheckCircularRef(stack, obj, obj[i]);
+                            WriteJSONToInternal(obj[i], writer, options, stack);
+                            PopRefIfNeeded(stack, pop);
                         }
                         writer.WriteCodePoint((int)']');
                         break;
                     }
-                case CBORObject.CBORObjectTypeExtendedRational:
+                case CBORType.Map:
                     {
-                        ERational dec = (ERational)thisItem;
-                        EDecimal f = dec.ToEDecimalExactIfPossible(
-                          EContext.Decimal128.WithUnlimitedExponents());
-                        if (!f.IsFinite)
-                        {
-                            writer.WriteString("null");
-                        }
-                        else
-                        {
-                            writer.WriteString(f.ToString());
-                        }
-                        break;
-                    }
-                case CBORObject.CBORObjectTypeMap:
-                    {
-                        bool first = true;
-                        bool hasNonStringKeys = false;
-                        IDictionary<CBORObject, CBORObject> objMap = obj.AsMap();
-                        foreach (KeyValuePair<CBORObject, CBORObject> entry in objMap)
+                        var first = true;
+                        var hasNonStringKeys = false;
+                        ICollection<KeyValuePair<CBORObject, CBORObject>> entries =
+                          obj.Entries;
+                        foreach (KeyValuePair<CBORObject, CBORObject> entry in entries)
                         {
                             CBORObject key = entry.Key;
-                            if (key.ItemType != CBORObject.CBORObjectTypeTextString)
+                            if (key.Type != CBORType.TextString ||
+                              key.IsTagged)
                             {
+                                // treat a non-text-string item or a tagged item
+                                // as having non-string keys
                                 hasNonStringKeys = true;
                                 break;
                             }
@@ -2706,7 +5575,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
                         if (!hasNonStringKeys)
                         {
                             writer.WriteCodePoint((int)'{');
-                            foreach (KeyValuePair<CBORObject, CBORObject> entry in objMap)
+                            foreach (KeyValuePair<CBORObject, CBORObject> entry in entries)
                             {
                                 CBORObject key = entry.Key;
                                 CBORObject value = entry.Value;
@@ -2715,10 +5584,12 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
                                     writer.WriteCodePoint((int)',');
                                 }
                                 writer.WriteCodePoint((int)'\"');
-                                WriteJSONStringUnquoted((string)key.ThisItem, writer);
+                                WriteJSONStringUnquoted(key.AsString(), writer, options);
                                 writer.WriteCodePoint((int)'\"');
                                 writer.WriteCodePoint((int)':');
-                                WriteJSONToInternal(value, writer, options);
+                                bool pop = CheckCircularRef(stack, obj, value);
+                                WriteJSONToInternal(value, writer, options, stack);
+                                PopRefIfNeeded(stack, pop);
                                 first = false;
                             }
                             writer.WriteCodePoint((int)'}');
@@ -2727,16 +5598,42 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
                         {
                             // This map has non-string keys
                             IDictionary<string, CBORObject> stringMap = new
-                              Dictionary<string, CBORObject>();
+                            Dictionary<string, CBORObject>();
                             // Copy to a map with String keys, since
                             // some keys could be duplicates
                             // when serialized to strings
-                            foreach (KeyValuePair<CBORObject, CBORObject> entry in objMap)
+                            foreach (KeyValuePair<CBORObject, CBORObject> entry
+                              in entries)
                             {
                                 CBORObject key = entry.Key;
                                 CBORObject value = entry.Value;
-                                string str = (key.ItemType == CBORObject.CBORObjectTypeTextString) ?
-                                       ((string)key.ThisItem) : key.ToJSONString();
+                                string str = null;
+                                switch (key.Type)
+                                {
+                                    case CBORType.TextString:
+                                        str = key.AsString();
+                                        break;
+                                    case CBORType.Array:
+                                    case CBORType.Map:
+                                        {
+                                            var sb = new StringBuilder();
+                                            var sw = new StringOutput(sb);
+                                            bool pop = CheckCircularRef(stack, obj, key);
+                                            WriteJSONToInternal(key, sw, options, stack);
+                                            PopRefIfNeeded(stack, pop);
+                                            str = sb.ToString();
+                                            break;
+                                        }
+                                    default:
+                                        str = key.ToJSONString(options);
+                                        break;
+                                }
+                                if (stringMap.ContainsKey(str))
+                                {
+                                    throw new CBORException(
+                                      "Duplicate JSON string equivalents of map" +
+                                      "\u0020keys");
+                                }
                                 stringMap[str] = value;
                             }
                             first = true;
@@ -2750,206 +5647,2297 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
                                     writer.WriteCodePoint((int)',');
                                 }
                                 writer.WriteCodePoint((int)'\"');
-                                WriteJSONStringUnquoted((string)key, writer);
+                                WriteJSONStringUnquoted((string)key, writer, options);
                                 writer.WriteCodePoint((int)'\"');
                                 writer.WriteCodePoint((int)':');
-                                WriteJSONToInternal(value, writer, options);
+                                bool pop = CheckCircularRef(stack, obj, value);
+                                WriteJSONToInternal(value, writer, options, stack);
+                                PopRefIfNeeded(stack, pop);
                                 first = false;
                             }
                             writer.WriteCodePoint((int)'}');
                         }
                         break;
                     }
-                default: throw new InvalidOperationException("Unexpected item type");
+                default:
+                    throw new InvalidOperationException("Unexpected item" +
+                      "\u0020type");
             }
         }
     }
     #endregion
 
-    #region CBORSingle
-    internal sealed class CBORSingle : ICBORNumber
+    #region CBORNumber
+    [System.Diagnostics.CodeAnalysis.SuppressMessage(
+      "Microsoft.Design",
+      "CA1036",
+      Justification = "Arbitrary size.")]
+    public sealed partial class CBORNumber : IComparable<CBORNumber>
     {
-        private const float SingleOneLsh64 = 9223372036854775808f;
-
-        public bool IsPositiveInfinity(object obj)
+        /// <summary>Specifies the underlying form of this CBOR number
+        /// object.</summary>
+        public enum NumberKind
         {
-            return Single.IsPositiveInfinity((float)obj);
+            /// <summary>A 64-bit signed integer.</summary>
+            Integer,
+
+            /// <summary>A 64-bit binary floating-point number.</summary>
+            Double,
+
+            /// <summary>An arbitrary-precision integer.</summary>
+            EInteger,
+
+            /// <summary>An arbitrary-precision decimal number.</summary>
+            EDecimal,
+
+            /// <summary>An arbitrary-precision binary number.</summary>
+            EFloat,
+
+            /// <summary>An arbitrary-precision rational number.</summary>
+            ERational,
         }
 
-        public bool IsInfinity(object obj)
+        private static readonly ICBORNumber[] NumberInterfaces = {
+      new CBORInteger(),
+      new CBORDoubleBits(),
+      new CBOREInteger(),
+      new CBORExtendedDecimal(),
+      new CBORExtendedFloat(),
+      new CBORExtendedRational(),
+    };
+
+        private readonly NumberKind kind;
+        private readonly object value;
+        internal CBORNumber(NumberKind kind, object value)
         {
-            return Single.IsInfinity((float)obj);
+            this.kind = kind;
+            this.value = value;
         }
 
-        public bool IsNegativeInfinity(object obj)
+        internal ICBORNumber GetNumberInterface()
         {
-            return Single.IsNegativeInfinity((float)obj);
+            return GetNumberInterface(this.kind);
         }
 
-        public bool IsNaN(object obj)
+        internal static ICBORNumber GetNumberInterface(CBORObject obj)
         {
-            return Single.IsNaN((float)obj);
+            CBORNumber num = CBORNumber.FromCBORObject(obj);
+            return (num == null) ? null : num.GetNumberInterface();
         }
 
-        public double AsDouble(object obj)
+        internal object GetValue()
         {
-            return (double)(float)obj;
+            return this.value;
         }
 
-        public EDecimal AsExtendedDecimal(object obj)
+        internal static ICBORNumber GetNumberInterface(NumberKind kind)
         {
-            return EDecimal.FromSingle((float)obj);
-        }
-
-        public EFloat AsExtendedFloat(object obj)
-        {
-            return EFloat.FromSingle((float)obj);
-        }
-
-        public float AsSingle(object obj)
-        {
-            return (float)obj;
-        }
-
-        public EInteger AsEInteger(object obj)
-        {
-            return CBORUtilities.BigIntegerFromSingle((float)obj);
-        }
-
-        public long AsInt64(object obj)
-        {
-            float fltItem = (float)obj;
-            if (Single.IsNaN(fltItem))
+            switch (kind)
             {
-                throw new OverflowException("This object's value is out of range");
+                case NumberKind.Integer:
+                    return NumberInterfaces[0];
+                case NumberKind.Double:
+                    return NumberInterfaces[1];
+                case NumberKind.EInteger:
+                    return NumberInterfaces[2];
+                case NumberKind.EDecimal:
+                    return NumberInterfaces[3];
+                case NumberKind.EFloat:
+                    return NumberInterfaces[4];
+                case NumberKind.ERational:
+                    return NumberInterfaces[5];
+                default:
+                    throw new InvalidOperationException();
             }
-            fltItem = (fltItem < 0) ? (float)Math.Ceiling(fltItem) :
-              (float)Math.Floor(fltItem);
-            if (fltItem >= -SingleOneLsh64 && fltItem < SingleOneLsh64)
-            {
-                return (long)fltItem;
-            }
-            throw new OverflowException("This object's value is out of range");
         }
 
-        public bool CanFitInSingle(object obj)
+        /// <summary>Converts this object's value to a CBOR object.</summary>
+        /// <returns>A CBOR object that stores this object's value.</returns>
+        public CBORObject ToCBORObject()
         {
+            return CBORObject.FromObject(this.value);
+        }
+
+        /// <summary>Gets this value's sign: -1 if nonzero and negative; 1 if
+        /// nonzero and positive; 0 if zero. Not-a-number (NaN) values are
+        /// positive or negative depending on what sign is stored in their
+        /// underlying forms.</summary>
+        /// <value>This value's sign.</value>
+        public int Sign
+        {
+            get
+            {
+                return this.IsNaN() ? (this.IsNegative() ? -1 : 1) :
+                  this.GetNumberInterface().Sign(this.value);
+            }
+        }
+
+        internal static bool IsNumber(CBORObject o)
+        {
+            if (IsUntaggedInteger(o))
+            {
+                return true;
+            }
+            else if (!o.IsTagged && o.Type == CBORType.FloatingPoint)
+            {
+                return true;
+            }
+            else if (o.HasOneTag(2) || o.HasOneTag(3))
+            {
+                return o.Type == CBORType.ByteString;
+            }
+            else if (o.HasOneTag(4) ||
+       o.HasOneTag(5) ||
+       o.HasOneTag(264) ||
+       o.HasOneTag(265) ||
+       o.HasOneTag(268) ||
+       o.HasOneTag(269))
+            {
+                return CheckBigFracToNumber(o,
+                    o.MostOuterTag.ToInt32Checked());
+            }
+            else if (o.HasOneTag(30) ||
+            o.HasOneTag(270))
+            {
+                return CheckRationalToNumber(o,
+                    o.MostOuterTag.ToInt32Checked());
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        /// <summary>Creates a CBOR number object from a CBOR object
+        /// representing a number (that is, one for which the IsNumber property
+        /// in.NET or the isNumber() method in Java returns true).</summary>
+        /// <param name='o'>The parameter is a CBOR object representing a
+        /// number.</param>
+        /// <returns>A CBOR number object, or null if the given CBOR object is
+        /// null or does not represent a number.</returns>
+        public static CBORNumber FromCBORObject(CBORObject o)
+        {
+            if (o == null)
+            {
+                return null;
+            }
+            if (IsUntaggedInteger(o))
+            {
+                if (o.CanValueFitInInt64())
+                {
+                    return new CBORNumber(NumberKind.Integer, o.AsInt64Value());
+                }
+                else
+                {
+                    return new CBORNumber(NumberKind.EInteger, o.AsEIntegerValue());
+                }
+            }
+            else if (!o.IsTagged && o.Type == CBORType.FloatingPoint)
+            {
+                return CBORNumber.FromDoubleBits(o.AsDoubleBits());
+            }
+            if (o.HasOneTag(2) || o.HasOneTag(3))
+            {
+                return BignumToNumber(o);
+            }
+            else if (o.HasOneTag(4) ||
+       o.HasOneTag(5) ||
+       o.HasOneTag(264) ||
+       o.HasOneTag(265) ||
+       o.HasOneTag(268) ||
+       o.HasOneTag(269))
+            {
+                return BigFracToNumber(o,
+                    o.MostOuterTag.ToInt32Checked());
+            }
+            else if (o.HasOneTag(30) ||
+            o.HasOneTag(270))
+            {
+                return RationalToNumber(o,
+                    o.MostOuterTag.ToInt32Checked());
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        private static bool IsUntaggedInteger(CBORObject o)
+        {
+            return !o.IsTagged && o.Type == CBORType.Integer;
+        }
+
+        private static bool IsUntaggedIntegerOrBignum(CBORObject o)
+        {
+            return IsUntaggedInteger(o) || ((o.HasOneTag(2) || o.HasOneTag(3)) &&
+                o.Type == CBORType.ByteString);
+        }
+
+        private static EInteger IntegerOrBignum(CBORObject o)
+        {
+            if (IsUntaggedInteger(o))
+            {
+                return o.AsEIntegerValue();
+            }
+            else
+            {
+                CBORNumber n = BignumToNumber(o);
+                return n.GetNumberInterface().AsEInteger(n.GetValue());
+            }
+        }
+
+        private static CBORNumber RationalToNumber(
+          CBORObject o,
+          int tagName)
+        {
+            if (o.Type != CBORType.Array)
+            {
+                return null; // "Big fraction must be an array";
+            }
+            if (tagName == 270)
+            {
+                if (o.Count != 3)
+                {
+                    return null; // "Extended big fraction requires exactly 3 items";
+                }
+                if (!IsUntaggedInteger(o[2]))
+                {
+                    return null; // "Third item must be an integer";
+                }
+            }
+            else
+            {
+                if (o.Count != 2)
+                {
+                    return null; // "Big fraction requires exactly 2 items";
+                }
+            }
+            if (!IsUntaggedIntegerOrBignum(o[0]))
+            {
+                return null; // "Numerator is not an integer or bignum";
+            }
+            if (!IsUntaggedIntegerOrBignum(o[1]))
+            {
+                return null; // "Denominator is not an integer or bignum");
+            }
+            EInteger numerator = IntegerOrBignum(o[0]);
+            EInteger denominator = IntegerOrBignum(o[1]);
+            if (denominator.Sign <= 0)
+            {
+                return null; // "Denominator may not be negative or zero");
+            }
+            ERational erat = ERational.Create(numerator, denominator);
+            if (tagName == 270)
+            {
+                if (numerator.Sign < 0)
+                {
+                    return null; // "Numerator may not be negative");
+                }
+                if (!o[2].CanValueFitInInt32())
+                {
+                    return null; // "Invalid options";
+                }
+                int options = o[2].AsInt32Value();
+                switch (options)
+                {
+                    case 0:
+                        break;
+                    case 1:
+                        erat = erat.Negate();
+                        break;
+                    case 2:
+                        if (!numerator.IsZero || denominator.CompareTo(1) != 0)
+                        {
+                            return null; // "invalid values");
+                        }
+                        erat = ERational.PositiveInfinity;
+                        break;
+                    case 3:
+                        if (!numerator.IsZero || denominator.CompareTo(1) != 0)
+                        {
+                            return null; // "invalid values");
+                        }
+                        erat = ERational.NegativeInfinity;
+                        break;
+                    case 4:
+                    case 5:
+                    case 6:
+                    case 7:
+                        if (denominator.CompareTo(1) != 0)
+                        {
+                            return null; // "invalid values");
+                        }
+                        erat = ERational.CreateNaN(
+                            numerator,
+                            options >= 6,
+                            options == 5 || options == 7);
+                        break;
+                    default: return null; // "Invalid options");
+                }
+            }
+            return CBORNumber.FromObject(erat);
+        }
+
+        private static bool CheckRationalToNumber(
+          CBORObject o,
+          int tagName)
+        {
+            if (o.Type != CBORType.Array)
+            {
+                return false;
+            }
+            if (tagName == 270)
+            {
+                if (o.Count != 3)
+                {
+                    return false;
+                }
+                if (!IsUntaggedInteger(o[2]))
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                if (o.Count != 2)
+                {
+                    return false;
+                }
+            }
+            if (!IsUntaggedIntegerOrBignum(o[0]))
+            {
+                return false;
+            }
+            if (!IsUntaggedIntegerOrBignum(o[1]))
+            {
+                return false;
+            }
+            EInteger denominator = IntegerOrBignum(o[1]);
+            if (denominator.Sign <= 0)
+            {
+                return false;
+            }
+            if (tagName == 270)
+            {
+                EInteger numerator = IntegerOrBignum(o[0]);
+                if (numerator.Sign < 0 || !o[2].CanValueFitInInt32())
+                {
+                    return false;
+                }
+                int options = o[2].AsInt32Value();
+                switch (options)
+                {
+                    case 0:
+                    case 1:
+                        return true;
+                    case 2:
+                    case 3:
+                        return numerator.IsZero && denominator.CompareTo(1) == 0;
+                    case 4:
+                    case 5:
+                    case 6:
+                    case 7:
+                        return denominator.CompareTo(1) == 0;
+                    default:
+                        return false;
+                }
+            }
             return true;
         }
 
-        public bool CanFitInDouble(object obj)
+        private static bool CheckBigFracToNumber(
+          CBORObject o,
+          int tagName)
         {
+            if (o.Type != CBORType.Array)
+            {
+                return false;
+            }
+            if (tagName == 268 || tagName == 269)
+            {
+                if (o.Count != 3)
+                {
+                    return false;
+                }
+                if (!IsUntaggedInteger(o[2]))
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                if (o.Count != 2)
+                {
+                    return false;
+                }
+            }
+            if (tagName == 4 || tagName == 5)
+            {
+                if (!IsUntaggedInteger(o[0]))
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                if (!IsUntaggedIntegerOrBignum(o[0]))
+                {
+                    return false;
+                }
+            }
+            if (!IsUntaggedIntegerOrBignum(o[1]))
+            {
+                return false;
+            }
+            if (tagName == 268 || tagName == 269)
+            {
+                EInteger exponent = IntegerOrBignum(o[0]);
+                EInteger mantissa = IntegerOrBignum(o[1]);
+                if (mantissa.Sign < 0 || !o[2].CanValueFitInInt32())
+                {
+                    return false;
+                }
+                int options = o[2].AsInt32Value();
+                switch (options)
+                {
+                    case 0:
+                    case 1:
+                        return true;
+                    case 2:
+                    case 3:
+                        return exponent.IsZero && mantissa.IsZero;
+                    case 4:
+                    case 5:
+                    case 6:
+                    case 7:
+                        return exponent.IsZero;
+                    default:
+                        return false;
+                }
+            }
             return true;
         }
 
-        public bool CanFitInInt32(object obj)
+        private static CBORNumber BigFracToNumber(
+          CBORObject o,
+          int tagName)
         {
-            return this.IsIntegral(obj) && this.CanTruncatedIntFitInInt32(obj);
+            if (o.Type != CBORType.Array)
+            {
+                return null; // "Big fraction must be an array");
+            }
+            if (tagName == 268 || tagName == 269)
+            {
+                if (o.Count != 3)
+                {
+                    return null; // "Extended big fraction requires exactly 3 items");
+                }
+                if (!IsUntaggedInteger(o[2]))
+                {
+                    return null; // "Third item must be an integer");
+                }
+            }
+            else
+            {
+                if (o.Count != 2)
+                {
+                    return null; // "Big fraction requires exactly 2 items");
+                }
+            }
+            if (tagName == 4 || tagName == 5)
+            {
+                if (!IsUntaggedInteger(o[0]))
+                {
+                    return null; // "Exponent is not an integer");
+                }
+            }
+            else
+            {
+                if (!IsUntaggedIntegerOrBignum(o[0]))
+                {
+                    return null; // "Exponent is not an integer or bignum");
+                }
+            }
+            if (!IsUntaggedIntegerOrBignum(o[1]))
+            {
+                return null; // "Mantissa is not an integer or bignum");
+            }
+            EInteger exponent = IntegerOrBignum(o[0]);
+            EInteger mantissa = IntegerOrBignum(o[1]);
+            bool isdec = tagName == 4 || tagName == 264 || tagName == 268;
+            EDecimal edec = isdec ? EDecimal.Create(mantissa, exponent) : null;
+            EFloat efloat = !isdec ? EFloat.Create(mantissa, exponent) : null;
+            if (tagName == 268 || tagName == 269)
+            {
+                if (mantissa.Sign < 0)
+                {
+                    return null; // "Mantissa may not be negative");
+                }
+                if (!o[2].CanValueFitInInt32())
+                {
+                    return null; // "Invalid options");
+                }
+                int options = o[2].AsInt32Value();
+                switch (options)
+                {
+                    case 0:
+                        break;
+                    case 1:
+                        if (isdec)
+                        {
+                            edec = edec.Negate();
+                        }
+                        else
+                        {
+                            efloat = efloat.Negate();
+                        }
+                        break;
+                    case 2:
+                        if (!exponent.IsZero || !mantissa.IsZero)
+                        {
+                            return null; // "invalid values");
+                        }
+                        if (isdec)
+                        {
+                            edec = EDecimal.PositiveInfinity;
+                        }
+                        else
+                        {
+                            efloat = EFloat.PositiveInfinity;
+                        }
+                        break;
+                    case 3:
+                        if (!exponent.IsZero || !mantissa.IsZero)
+                        {
+                            return null; // "invalid values");
+                        }
+                        if (isdec)
+                        {
+                            edec = EDecimal.NegativeInfinity;
+                        }
+                        else
+                        {
+                            efloat = EFloat.NegativeInfinity;
+                        }
+                        break;
+                    case 4:
+                    case 5:
+                    case 6:
+                    case 7:
+                        if (!exponent.IsZero)
+                        {
+                            return null; // "invalid values");
+                        }
+                        if (isdec)
+                        {
+                            edec = EDecimal.CreateNaN(
+                                mantissa,
+                                options >= 6,
+                                options == 5 || options == 7,
+                                null);
+                        }
+                        else
+                        {
+                            efloat = EFloat.CreateNaN(
+                                mantissa,
+                                options >= 6,
+                                options == 5 || options == 7,
+                                null);
+                        }
+                        break;
+                    default:
+                        return null; // "Invalid options");
+                }
+            }
+            if (isdec)
+            {
+                return CBORNumber.FromObject(edec);
+            }
+            else
+            {
+                return CBORNumber.FromObject(efloat);
+            }
         }
 
-        public bool CanFitInInt64(object obj)
+        /// <summary>Gets the underlying form of this CBOR number
+        /// object.</summary>
+        /// <value>The underlying form of this CBOR number object.</value>
+        public NumberKind Kind
         {
-            return this.IsIntegral(obj) && this.CanTruncatedIntFitInInt64(obj);
+            get
+            {
+                return this.kind;
+            }
         }
 
-        public bool CanTruncatedIntFitInInt64(object obj)
+        /// <summary>Returns whether this object's value, converted to an
+        /// integer by discarding its fractional part, would be -(2^31) or
+        /// greater, and less than 2^31.</summary>
+        /// <returns><c>true</c> if this object's value, converted to an
+        /// integer by discarding its fractional part, would be -(2^31) or
+        /// greater, and less than 2^31; otherwise, <c>false</c>.</returns>
+        public bool CanTruncatedIntFitInInt32()
         {
-            float fltItem = (float)obj;
-            if (Single.IsNaN(fltItem) || Single.IsInfinity(fltItem))
+            return
+              this.GetNumberInterface().CanTruncatedIntFitInInt32(this.GetValue());
+        }
+
+        /// <summary>Returns whether this object's value, converted to an
+        /// integer by discarding its fractional part, would be -(2^63) or
+        /// greater, and less than 2^63.</summary>
+        /// <returns><c>true</c> if this object's value, converted to an
+        /// integer by discarding its fractional part, would be -(2^63) or
+        /// greater, and less than 2^63; otherwise, <c>false</c>.</returns>
+        public bool CanTruncatedIntFitInInt64()
+        {
+            switch (this.kind)
+            {
+                case NumberKind.Integer:
+                    return true;
+                default:
+                    return
+
+                      this.GetNumberInterface()
+                      .CanTruncatedIntFitInInt64(this.GetValue());
+            }
+        }
+
+        /// <summary>Returns whether this object's value can be converted to a
+        /// 32-bit floating point number without its value being rounded to
+        /// another numerical value.</summary>
+        /// <returns><c>true</c> if this object's value can be converted to a
+        /// 32-bit floating point number without its value being rounded to
+        /// another numerical value, or if this is a not-a-number value, even
+        /// if the value's diagnostic information can' t fit in a 32-bit
+        /// floating point number; otherwise, <c>false</c>.</returns>
+        public bool CanFitInSingle()
+        {
+            return this.GetNumberInterface().CanFitInSingle(this.GetValue());
+        }
+
+        /// <summary>Returns whether this object's value can be converted to a
+        /// 64-bit floating point number without its value being rounded to
+        /// another numerical value.</summary>
+        /// <returns><c>true</c> if this object's value can be converted to a
+        /// 64-bit floating point number without its value being rounded to
+        /// another numerical value, or if this is a not-a-number value, even
+        /// if the value's diagnostic information can't fit in a 64-bit
+        /// floating point number; otherwise, <c>false</c>.</returns>
+        public bool CanFitInDouble()
+        {
+            return this.GetNumberInterface().CanFitInDouble(this.GetValue());
+        }
+
+        /// <summary>Gets a value indicating whether this CBOR object
+        /// represents a finite number.</summary>
+        /// <returns><c>true</c> if this CBOR object represents a finite
+        /// number; otherwise, <c>false</c>.</returns>
+        public bool IsFinite()
+        {
+            switch (this.kind)
+            {
+                case NumberKind.Integer:
+                case NumberKind.EInteger:
+                    return true;
+                default:
+                    return !this.IsInfinity() && !this.IsNaN();
+            }
+        }
+
+        /// <summary>Gets a value indicating whether this object represents an
+        /// integer number, that is, a number without a fractional part.
+        /// Infinity and not-a-number are not considered integers.</summary>
+        /// <returns><c>true</c> if this object represents an integer number,
+        /// that is, a number without a fractional part; otherwise,
+        /// <c>false</c>.</returns>
+        public bool IsInteger()
+        {
+            switch (this.kind)
+            {
+                case NumberKind.Integer:
+                case NumberKind.EInteger:
+                    return true;
+                default:
+                    return this.GetNumberInterface().IsIntegral(this.GetValue());
+            }
+        }
+
+        /// <summary>Gets a value indicating whether this object is a negative
+        /// number.</summary>
+        /// <returns><c>true</c> if this object is a negative number;
+        /// otherwise, <c>false</c>.</returns>
+        public bool IsNegative()
+        {
+            return this.GetNumberInterface().IsNegative(this.GetValue());
+        }
+
+        /// <summary>Gets a value indicating whether this object's value equals
+        /// 0.</summary>
+        /// <returns><c>true</c> if this object's value equals 0; otherwise,
+        /// <c>false</c>.</returns>
+        public bool IsZero()
+        {
+            switch (this.kind)
+            {
+                case NumberKind.Integer:
+                    {
+                        var thisValue = (long)this.value;
+                        return thisValue == 0;
+                    }
+                default: return this.GetNumberInterface().IsNumberZero(this.GetValue());
+            }
+        }
+
+        /// <summary>Converts this object to an arbitrary-precision integer.
+        /// See the ToObject overload taking a type for more
+        /// information.</summary>
+        /// <returns>The closest arbitrary-precision integer to this
+        /// object.</returns>
+        /// <exception cref='ArithmeticException'>This value is infinity or
+        /// not-a-number.</exception>
+        public EInteger ToEInteger()
+        {
+            return this.GetNumberInterface().AsEInteger(this.GetValue());
+        }
+
+        /// <summary>Converts this object to an arbitrary-precision integer if
+        /// its value is an integer.</summary>
+        /// <returns>The arbitrary-precision integer given by object.</returns>
+        /// <exception cref='ArithmeticException'>This value is infinity or
+        /// not-a-number or is not an exact integer.</exception>
+        public EInteger ToEIntegerIfExact()
+        {
+            if (!this.IsInteger())
+            {
+                throw new ArithmeticException("Not an integer");
+            }
+            return this.ToEInteger();
+        }
+
+        // Begin integer conversions
+
+        /// <summary>Converts this number's value to a byte (from 0 to 255) if
+        /// it can fit in a byte (from 0 to 255) after converting it to an
+        /// integer by discarding its fractional part.</summary>
+        /// <returns>This number's value, truncated to a byte (from 0 to
+        /// 255).</returns>
+        /// <exception cref='OverflowException'>This value is infinity or
+        /// not-a-number, or the number, once converted to an integer by
+        /// discarding its fractional part, is less than 0 or greater than
+        /// 255.</exception>
+        public byte ToByteChecked()
+        {
+            if (!this.IsFinite())
+            {
+                throw new OverflowException("Value is infinity or NaN");
+            }
+            return this.ToEInteger().ToByteChecked();
+        }
+
+        /// <summary>Converts this number's value to an integer by discarding
+        /// its fractional part, and returns the least-significant bits of its
+        /// two's-complement form as a byte (from 0 to 255).</summary>
+        /// <returns>This number, converted to a byte (from 0 to 255). Returns
+        /// 0 if this value is infinity or not-a-number.</returns>
+        public byte ToByteUnchecked()
+        {
+            return this.IsFinite() ? this.ToEInteger().ToByteUnchecked() : (byte)0;
+        }
+
+        /// <summary>Converts this number's value to a byte (from 0 to 255) if
+        /// it can fit in a byte (from 0 to 255) without rounding to a
+        /// different numerical value.</summary>
+        /// <returns>This number's value as a byte (from 0 to 255).</returns>
+        /// <exception cref='ArithmeticException'>This value is infinity or
+        /// not-a-number, is not an exact integer, or is less than 0 or greater
+        /// than 255.</exception>
+        public byte ToByteIfExact()
+        {
+            if (!this.IsFinite())
+            {
+                throw new OverflowException("Value is infinity or NaN");
+            }
+            if (this.IsZero())
+            {
+                return (byte)0;
+            }
+            if (this.IsNegative())
+            {
+                throw new OverflowException("Value out of range");
+            }
+            return this.ToEIntegerIfExact().ToByteChecked();
+        }
+
+        /// <summary>Converts a byte (from 0 to 255) to an arbitrary-precision
+        /// decimal number.</summary>
+        /// <param name='inputByte'>The number to convert as a byte (from 0 to
+        /// 255).</param>
+        /// <returns>This number's value as an arbitrary-precision decimal
+        /// number.</returns>
+        public static CBORNumber FromByte(byte inputByte)
+        {
+            int val = ((int)inputByte) & 0xff;
+            return FromObject((long)val);
+        }
+
+        /// <summary>Converts this number's value to a 16-bit signed integer if
+        /// it can fit in a 16-bit signed integer after converting it to an
+        /// integer by discarding its fractional part.</summary>
+        /// <returns>This number's value, truncated to a 16-bit signed
+        /// integer.</returns>
+        /// <exception cref='OverflowException'>This value is infinity or
+        /// not-a-number, or the number, once converted to an integer by
+        /// discarding its fractional part, is less than -32768 or greater than
+        /// 32767.</exception>
+        public short ToInt16Checked()
+        {
+            if (!this.IsFinite())
+            {
+                throw new OverflowException("Value is infinity or NaN");
+            }
+            return this.ToEInteger().ToInt16Checked();
+        }
+
+        /// <summary>Converts this number's value to an integer by discarding
+        /// its fractional part, and returns the least-significant bits of its
+        /// two's-complement form as a 16-bit signed integer.</summary>
+        /// <returns>This number, converted to a 16-bit signed integer. Returns
+        /// 0 if this value is infinity or not-a-number.</returns>
+        public short ToInt16Unchecked()
+        {
+            return this.IsFinite() ? this.ToEInteger().ToInt16Unchecked() : (short)0;
+        }
+
+        /// <summary>Converts this number's value to a 16-bit signed integer if
+        /// it can fit in a 16-bit signed integer without rounding to a
+        /// different numerical value.</summary>
+        /// <returns>This number's value as a 16-bit signed integer.</returns>
+        /// <exception cref='ArithmeticException'>This value is infinity or
+        /// not-a-number, is not an exact integer, or is less than -32768 or
+        /// greater than 32767.</exception>
+        public short ToInt16IfExact()
+        {
+            if (!this.IsFinite())
+            {
+                throw new OverflowException("Value is infinity or NaN");
+            }
+            return this.IsZero() ? ((short)0) :
+              this.ToEIntegerIfExact().ToInt16Checked();
+        }
+
+        /// <summary>Converts a 16-bit signed integer to an arbitrary-precision
+        /// decimal number.</summary>
+        /// <param name='inputInt16'>The number to convert as a 16-bit signed
+        /// integer.</param>
+        /// <returns>This number's value as an arbitrary-precision decimal
+        /// number.</returns>
+        public static CBORNumber FromInt16(short inputInt16)
+        {
+            var val = (int)inputInt16;
+            return FromObject((long)val);
+        }
+
+        /// <summary>Converts this number's value to a 32-bit signed integer if
+        /// it can fit in a 32-bit signed integer after converting it to an
+        /// integer by discarding its fractional part.</summary>
+        /// <returns>This number's value, truncated to a 32-bit signed
+        /// integer.</returns>
+        /// <exception cref='OverflowException'>This value is infinity or
+        /// not-a-number, or the number, once converted to an integer by
+        /// discarding its fractional part, is less than -2147483648 or greater
+        /// than 2147483647.</exception>
+        public int ToInt32Checked()
+        {
+            if (!this.IsFinite())
+            {
+                throw new OverflowException("Value is infinity or NaN");
+            }
+            return this.ToEInteger().ToInt32Checked();
+        }
+
+        /// <summary>Converts this number's value to an integer by discarding
+        /// its fractional part, and returns the least-significant bits of its
+        /// two's-complement form as a 32-bit signed integer.</summary>
+        /// <returns>This number, converted to a 32-bit signed integer. Returns
+        /// 0 if this value is infinity or not-a-number.</returns>
+        public int ToInt32Unchecked()
+        {
+            return this.IsFinite() ? this.ToEInteger().ToInt32Unchecked() : (int)0;
+        }
+
+        /// <summary>Converts this number's value to a 32-bit signed integer if
+        /// it can fit in a 32-bit signed integer without rounding to a
+        /// different numerical value.</summary>
+        /// <returns>This number's value as a 32-bit signed integer.</returns>
+        /// <exception cref='ArithmeticException'>This value is infinity or
+        /// not-a-number, is not an exact integer, or is less than -2147483648
+        /// or greater than 2147483647.</exception>
+        public int ToInt32IfExact()
+        {
+            if (!this.IsFinite())
+            {
+                throw new OverflowException("Value is infinity or NaN");
+            }
+            return this.IsZero() ? ((int)0) :
+              this.ToEIntegerIfExact().ToInt32Checked();
+        }
+
+        /// <summary>Converts this number's value to a 64-bit signed integer if
+        /// it can fit in a 64-bit signed integer after converting it to an
+        /// integer by discarding its fractional part.</summary>
+        /// <returns>This number's value, truncated to a 64-bit signed
+        /// integer.</returns>
+        /// <exception cref='OverflowException'>This value is infinity or
+        /// not-a-number, or the number, once converted to an integer by
+        /// discarding its fractional part, is less than -9223372036854775808
+        /// or greater than 9223372036854775807.</exception>
+        public long ToInt64Checked()
+        {
+            if (!this.IsFinite())
+            {
+                throw new OverflowException("Value is infinity or NaN");
+            }
+            return this.ToEInteger().ToInt64Checked();
+        }
+
+        /// <summary>Converts this number's value to an integer by discarding
+        /// its fractional part, and returns the least-significant bits of its
+        /// two's-complement form as a 64-bit signed integer.</summary>
+        /// <returns>This number, converted to a 64-bit signed integer. Returns
+        /// 0 if this value is infinity or not-a-number.</returns>
+        public long ToInt64Unchecked()
+        {
+            return this.IsFinite() ? this.ToEInteger().ToInt64Unchecked() : 0L;
+        }
+
+        /// <summary>Converts this number's value to a 64-bit signed integer if
+        /// it can fit in a 64-bit signed integer without rounding to a
+        /// different numerical value.</summary>
+        /// <returns>This number's value as a 64-bit signed integer.</returns>
+        /// <exception cref='ArithmeticException'>This value is infinity or
+        /// not-a-number, is not an exact integer, or is less than
+        /// -9223372036854775808 or greater than
+        /// 9223372036854775807.</exception>
+        public long ToInt64IfExact()
+        {
+            if (!this.IsFinite())
+            {
+                throw new OverflowException("Value is infinity or NaN");
+            }
+            return this.IsZero() ? 0L :
+              this.ToEIntegerIfExact().ToInt64Checked();
+        }
+        // End integer conversions
+        private static CBORNumber BignumToNumber(CBORObject o)
+        {
+            if (o.Type != CBORType.ByteString)
+            {
+                return null; // "Byte array expected");
+            }
+            bool negative = o.HasMostInnerTag(3);
+            byte[] data = o.GetByteString();
+            if (data.Length <= 7)
+            {
+                long x = 0;
+                for (var i = 0; i < data.Length; ++i)
+                {
+                    x <<= 8;
+                    x |= ((long)data[i]) & 0xff;
+                }
+                if (negative)
+                {
+                    x = -x;
+                    --x;
+                }
+                return new CBORNumber(NumberKind.Integer, x);
+            }
+            int neededLength = data.Length;
+            byte[] bytes;
+            EInteger bi;
+            var extended = false;
+            if (((data[0] >> 7) & 1) != 0)
+            {
+                // Increase the needed length
+                // if the highest bit is set, to
+                // distinguish negative and positive
+                // values
+                ++neededLength;
+                extended = true;
+            }
+            bytes = new byte[neededLength];
+            for (var i = 0; i < data.Length; ++i)
+            {
+                bytes[i] = data[data.Length - 1 - i];
+                if (negative)
+                {
+                    bytes[i] = (byte)((~((int)bytes[i])) & 0xff);
+                }
+            }
+            if (extended)
+            {
+                bytes[bytes.Length - 1] = negative ? (byte)0xff : (byte)0;
+            }
+            bi = EInteger.FromBytes(bytes, true);
+            if (bi.CanFitInInt64())
+            {
+                return new CBORNumber(NumberKind.Integer, bi.ToInt64Checked());
+            }
+            else
+            {
+                return new CBORNumber(NumberKind.EInteger, bi);
+            }
+        }
+
+        /// <summary>Returns the value of this object in text form.</summary>
+        /// <returns>A text string representing the value of this
+        /// object.</returns>
+        public override string ToString()
+        {
+            switch (this.kind)
+            {
+                case NumberKind.Integer:
+                    {
+                        var longItem = (long)this.value;
+                        return CBORUtilities.LongToString(longItem);
+                    }
+                case NumberKind.Double:
+                    {
+                        var longItem = (long)this.value;
+                        return CBORUtilities.DoubleBitsToString(longItem);
+                    }
+                default:
+                    return (this.value == null) ? String.Empty :
+                      this.value.ToString();
+            }
+        }
+
+        internal string ToJSONString()
+        {
+            switch (this.kind)
+            {
+                case NumberKind.Double:
+                    {
+                        var f = (long)this.value;
+                        if (!CBORUtilities.DoubleBitsFinite(f))
+                        {
+                            return "null";
+                        }
+                        string dblString = CBORUtilities.DoubleBitsToString(f);
+                        return CBORUtilities.TrimDotZero(dblString);
+                    }
+                case NumberKind.Integer:
+                    {
+                        var longItem = (long)this.value;
+                        return CBORUtilities.LongToString(longItem);
+                    }
+                case NumberKind.EInteger:
+                    {
+                        object eiobj = this.value;
+                        return ((EInteger)eiobj).ToString();
+                    }
+                case NumberKind.EDecimal:
+                    {
+                        var dec = (EDecimal)this.value;
+                        if (dec.IsInfinity() || dec.IsNaN())
+                        {
+                            return "null";
+                        }
+                        else
+                        {
+                            return dec.ToString();
+                        }
+                    }
+                case NumberKind.EFloat:
+                    {
+                        var flo = (EFloat)this.value;
+                        if (flo.IsInfinity() || flo.IsNaN())
+                        {
+                            return "null";
+                        }
+                        if (flo.IsFinite &&
+                          flo.Exponent.Abs().CompareTo((EInteger)2500) > 0)
+                        {
+                            // Too inefficient to convert to a decimal number
+                            // from a bigfloat with a very high exponent,
+                            // so convert to double instead
+                            long f = flo.ToDoubleBits();
+                            if (!CBORUtilities.DoubleBitsFinite(f))
+                            {
+                                return "null";
+                            }
+                            string dblString = CBORUtilities.DoubleBitsToString(f);
+                            return CBORUtilities.TrimDotZero(dblString);
+                        }
+                        return flo.ToString();
+                    }
+                case NumberKind.ERational:
+                    {
+                        var dec = (ERational)this.value;
+                        string nnstr = dec.Numerator.ToString();
+                        string dnstr = dec.Denominator.ToString();
+                        // DebugUtility.Log(
+                        // "numlen="+nnstr.Length +
+                        // " denlen="+dnstr.Length +
+                        // "\nstart="+DateTime.UtcNow);
+                        EDecimal f = dec.ToEDecimalExactIfPossible(
+                            EContext.Decimal128.WithUnlimitedExponents());
+                        // DebugUtility.Log(
+                        // " end="+DateTime.UtcNow);
+                        if (!f.IsFinite)
+                        {
+                            return "null";
+                        }
+                        else
+                        {
+                            return f.ToString();
+                        }
+                    }
+                default: throw new InvalidOperationException();
+            }
+        }
+
+        internal static CBORNumber FromObject(int intValue)
+        {
+            return new CBORNumber(NumberKind.Integer, (long)intValue);
+        }
+        internal static CBORNumber FromObject(long longValue)
+        {
+            return new CBORNumber(NumberKind.Integer, longValue);
+        }
+        internal static CBORNumber FromDoubleBits(long doubleBits)
+        {
+            return new CBORNumber(NumberKind.Double, doubleBits);
+        }
+        internal static CBORNumber FromObject(EInteger eivalue)
+        {
+            return new CBORNumber(NumberKind.EInteger, eivalue);
+        }
+        internal static CBORNumber FromObject(EFloat value)
+        {
+            return new CBORNumber(NumberKind.EFloat, value);
+        }
+        internal static CBORNumber FromObject(EDecimal value)
+        {
+            return new CBORNumber(NumberKind.EDecimal, value);
+        }
+        internal static CBORNumber FromObject(ERational value)
+        {
+            return new CBORNumber(NumberKind.ERational, value);
+        }
+
+        /// <summary>Returns whether this object's numerical value is an
+        /// integer, is -(2^31) or greater, and is less than 2^31.</summary>
+        /// <returns><c>true</c> if this object's numerical value is an
+        /// integer, is -(2^31) or greater, and is less than 2^31; otherwise,
+        /// <c>false</c>.</returns>
+        public bool CanFitInInt32()
+        {
+            ICBORNumber icn = this.GetNumberInterface();
+            object gv = this.GetValue();
+            if (!icn.CanFitInInt64(gv))
             {
                 return false;
             }
-            float fltItem2 = (fltItem < 0) ? (float)Math.Ceiling(fltItem) :
-              (float)Math.Floor(fltItem);
-            return fltItem2 >= -SingleOneLsh64 && fltItem2 <
-              SingleOneLsh64;
+            long v = icn.AsInt64(gv);
+            return v >= Int32.MinValue && v <= Int32.MaxValue;
         }
 
-        public bool CanTruncatedIntFitInInt32(object obj)
+        /// <summary>Returns whether this object's numerical value is an
+        /// integer, is -(2^63) or greater, and is less than 2^63.</summary>
+        /// <returns><c>true</c> if this object's numerical value is an
+        /// integer, is -(2^63) or greater, and is less than 2^63; otherwise,
+        /// <c>false</c>.</returns>
+        public bool CanFitInInt64()
         {
-            float fltItem = (float)obj;
-            if (Single.IsNaN(fltItem) || Single.IsInfinity(fltItem))
+            return this.GetNumberInterface().CanFitInInt64(this.GetValue());
+        }
+
+        /// <summary>Gets a value indicating whether this object represents
+        /// infinity.</summary>
+        /// <returns><c>true</c> if this object represents infinity; otherwise,
+        /// <c>false</c>.</returns>
+        public bool IsInfinity()
+        {
+            return this.GetNumberInterface().IsInfinity(this.GetValue());
+        }
+
+        /// <summary>Gets a value indicating whether this object represents
+        /// positive infinity.</summary>
+        /// <returns><c>true</c> if this object represents positive infinity;
+        /// otherwise, <c>false</c>.</returns>
+        public bool IsPositiveInfinity()
+        {
+            return this.GetNumberInterface().IsPositiveInfinity(this.GetValue());
+        }
+
+        /// <summary>Gets a value indicating whether this object represents
+        /// negative infinity.</summary>
+        /// <returns><c>true</c> if this object represents negative infinity;
+        /// otherwise, <c>false</c>.</returns>
+        public bool IsNegativeInfinity()
+        {
+            return this.GetNumberInterface().IsNegativeInfinity(this.GetValue());
+        }
+
+        /// <summary>Gets a value indicating whether this object represents a
+        /// not-a-number value.</summary>
+        /// <returns><c>true</c> if this object represents a not-a-number
+        /// value; otherwise, <c>false</c>.</returns>
+        public bool IsNaN()
+        {
+            return this.GetNumberInterface().IsNaN(this.GetValue());
+        }
+
+        /// <summary>Converts this object to a decimal number.</summary>
+        /// <returns>A decimal number for this object's value.</returns>
+        public EDecimal ToEDecimal()
+        {
+            return this.GetNumberInterface().AsEDecimal(this.GetValue());
+        }
+
+        /// <summary>Converts this object to an arbitrary-precision binary
+        /// floating point number. See the ToObject overload taking a type for
+        /// more information.</summary>
+        /// <returns>An arbitrary-precision binary floating-point number for
+        /// this object's value.</returns>
+        public EFloat ToEFloat()
+        {
+            return this.GetNumberInterface().AsEFloat(this.GetValue());
+        }
+
+        /// <summary>Converts this object to a rational number. See the
+        /// ToObject overload taking a type for more information.</summary>
+        /// <returns>A rational number for this object's value.</returns>
+        public ERational ToERational()
+        {
+            return this.GetNumberInterface().AsERational(this.GetValue());
+        }
+
+        /// <summary>Returns the absolute value of this CBOR number.</summary>
+        /// <returns>This object's absolute value without its negative
+        /// sign.</returns>
+        public CBORNumber Abs()
+        {
+            switch (this.kind)
             {
-                return false;
+                case NumberKind.Integer:
+                    {
+                        var longValue = (long)this.value;
+                        if (longValue == Int64.MinValue)
+                        {
+                            return FromObject(EInteger.FromInt64(longValue).Negate());
+                        }
+                        else
+                        {
+                            return longValue >= 0 ? this : new CBORNumber(
+                                this.kind,
+                                Math.Abs(longValue));
+                        }
+                    }
+                case NumberKind.EInteger:
+                    {
+                        var eivalue = (EInteger)this.value;
+                        return eivalue.Sign >= 0 ? this : FromObject(eivalue.Abs());
+                    }
+                default:
+                    return new CBORNumber(this.kind,
+                        this.GetNumberInterface().Abs(this.GetValue()));
             }
-            float fltItem2 = (fltItem < 0) ? (float)Math.Ceiling(fltItem) :
-              (float)Math.Floor(fltItem);
-            // Convert float to double to avoid precision loss when
-            // converting Int32.MinValue/MaxValue to float
-            return (double)fltItem2 >= Int32.MinValue && (double)fltItem2 <=
-              Int32.MaxValue;
         }
 
-        public int AsInt32(object obj, int minValue, int maxValue)
+        /// <summary>Returns a CBOR number with the same value as this one but
+        /// with the sign reversed.</summary>
+        /// <returns>A CBOR number with the same value as this one but with the
+        /// sign reversed.</returns>
+        public CBORNumber Negate()
         {
-            float fltItem = (float)obj;
-            if (Single.IsNaN(fltItem))
+            switch (this.kind)
             {
-                throw new OverflowException("This object's value is out of range");
+                case NumberKind.Integer:
+                    {
+                        var longValue = (long)this.value;
+                        if (longValue == 0)
+                        {
+                            return FromObject(EDecimal.NegativeZero);
+                        }
+                        else if (longValue == Int64.MinValue)
+                        {
+                            return FromObject(EInteger.FromInt64(longValue).Negate());
+                        }
+                        else
+                        {
+                            return new CBORNumber(this.kind, -longValue);
+                        }
+                    }
+                case NumberKind.EInteger:
+                    {
+                        var eiValue = (EInteger)this.value;
+                        if (eiValue.IsZero)
+                        {
+                            return FromObject(EDecimal.NegativeZero);
+                        }
+                        else
+                        {
+                            return FromObject(eiValue.Negate());
+                        }
+                    }
+                default:
+                    return new CBORNumber(this.kind,
+                 this.GetNumberInterface().Negate(this.GetValue()));
             }
-            fltItem = (fltItem < 0) ? (float)Math.Ceiling(fltItem) :
-              (float)Math.Floor(fltItem);
-            // Convert float to double to avoid precision loss when
-            // converting Int32.MinValue/MaxValue to float
-            if ((double)fltItem >= Int32.MinValue && (double)fltItem <=
-                Int32.MaxValue)
+        }
+
+        private static ERational CheckOverflow(
+          ERational e1,
+          ERational e2,
+          ERational eresult)
+        {
+            if (e1.IsFinite && e2.IsFinite && eresult.IsNaN())
             {
-                int ret = (int)fltItem;
-                return ret;
+                throw new OutOfMemoryException("Result might be too big to fit in" +
+                  "\u0020memory");
             }
-            throw new OverflowException("This object's value is out of range");
+            return eresult;
         }
 
-        public bool IsZero(object obj)
+        private static EDecimal CheckOverflow(EDecimal e1, EDecimal e2, EDecimal
+          eresult)
         {
-            return (float)obj == 0.0f;
-        }
-
-        public int Sign(object obj)
-        {
-            float flt = (float)obj;
-            return Single.IsNaN(flt) ? 2 : (flt == 0.0f ? 0 : (flt < 0.0f ? -1 : 1));
-        }
-
-        public bool IsIntegral(object obj)
-        {
-            float fltItem = (float)obj;
-            if (Single.IsNaN(fltItem) || Single.IsInfinity(fltItem))
+            // DebugUtility.Log("ED e1.Exp="+e1.Exponent);
+            // DebugUtility.Log("ED e2.Exp="+e2.Exponent);
+            if (e1.IsFinite && e2.IsFinite && eresult.IsNaN())
             {
-                return false;
+                throw new OutOfMemoryException("Result might be too big to fit in" +
+                  "\u0020memory");
             }
-            float fltItem2 = (fltItem < 0) ? (float)Math.Ceiling(fltItem) :
-              (float)Math.Floor(fltItem);
-            return fltItem == fltItem2;
+            return eresult;
         }
 
-        public object Negate(object obj)
+        private static EFloat CheckOverflow(EFloat e1, EFloat e2, EFloat eresult)
         {
-            float val = (float)obj;
-            return -val;
+            if (e1.IsFinite && e2.IsFinite && eresult.IsNaN())
+            {
+                throw new OutOfMemoryException("Result might be too big to fit in" +
+                  "\u0020memory");
+            }
+            return eresult;
         }
 
-        public object Abs(object obj)
+        private static NumberKind GetConvertKind(CBORNumber a, CBORNumber b)
         {
-            float val = (float)obj;
-            return (val < 0) ? -val : obj;
+            NumberKind typeA = a.kind;
+            NumberKind typeB = b.kind;
+            NumberKind convertKind = NumberKind.EInteger;
+            if (!a.IsFinite())
+            {
+                convertKind = (typeB == NumberKind.Integer || typeB ==
+                    NumberKind.EInteger) ? ((typeA == NumberKind.Double) ?
+        NumberKind.EFloat :
+                    typeA) : ((typeB == NumberKind.Double) ? NumberKind.EFloat : typeB);
+            }
+            else if (!b.IsFinite())
+            {
+                convertKind = (typeA == NumberKind.Integer || typeA ==
+                    NumberKind.EInteger) ? ((typeB == NumberKind.Double) ?
+        NumberKind.EFloat :
+                    typeB) : ((typeA == NumberKind.Double) ? NumberKind.EFloat : typeA);
+            }
+            else if (typeA == NumberKind.ERational || typeB ==
+    NumberKind.ERational)
+            {
+                convertKind = NumberKind.ERational;
+            }
+            else if (typeA == NumberKind.EDecimal || typeB == NumberKind.EDecimal)
+            {
+                convertKind = NumberKind.EDecimal;
+            }
+            else
+            {
+                convertKind = (typeA == NumberKind.EFloat || typeB ==
+                    NumberKind.EFloat ||
+                    typeA == NumberKind.Double || typeB == NumberKind.Double) ?
+                    NumberKind.EFloat : NumberKind.EInteger;
+            }
+            return convertKind;
         }
 
-        public ERational AsExtendedRational(object obj)
+        /// <summary>Returns the sum of this number and another
+        /// number.</summary>
+        /// <param name='b'>The number to add with this one.</param>
+        /// <returns>The sum of this number and another number.</returns>
+        /// <exception cref='ArgumentNullException'>The parameter <paramref
+        /// name='b'/> is null.</exception>
+        /// <exception cref='OutOfMemoryException'>The exact result of the
+        /// operation might be too big to fit in memory (or might require more
+        /// than 2 gigabytes of memory to store).</exception>
+        public CBORNumber Add(CBORNumber b)
         {
-            return ERational.FromSingle((float)obj);
+            if (b == null)
+            {
+                throw new ArgumentNullException(nameof(b));
+            }
+            CBORNumber a = this;
+            object objA = a.value;
+            object objB = b.value;
+            NumberKind typeA = a.kind;
+            NumberKind typeB = b.kind;
+            if (typeA == NumberKind.Integer && typeB == NumberKind.Integer)
+            {
+                var valueA = (long)objA;
+                var valueB = (long)objB;
+                if ((valueA < 0 && valueB < Int64.MinValue - valueA) ||
+                  (valueA > 0 && valueB > Int64.MaxValue - valueA))
+                {
+                    // would overflow, convert to EInteger
+                    return CBORNumber.FromObject(
+                        EInteger.FromInt64(valueA).Add(EInteger.FromInt64(valueB)));
+                }
+                return new CBORNumber(NumberKind.Integer, valueA + valueB);
+            }
+            NumberKind convertKind = GetConvertKind(a, b);
+            if (convertKind == NumberKind.ERational)
+            {
+                // DebugUtility.Log("Rational/Rational");
+                ERational e1 = GetNumberInterface(typeA).AsERational(objA);
+                ERational e2 = GetNumberInterface(typeB).AsERational(objB);
+                // DebugUtility.Log("conv Rational/Rational");
+                return new CBORNumber(NumberKind.ERational,
+                    CheckOverflow(
+                      e1,
+                      e2,
+                      e1.Add(e2)));
+            }
+            if (convertKind == NumberKind.EDecimal)
+            {
+                // DebugUtility.Log("Decimal/Decimal");
+                EDecimal e1 = GetNumberInterface(typeA).AsEDecimal(objA);
+                EDecimal e2 = GetNumberInterface(typeB).AsEDecimal(objB);
+                // DebugUtility.Log("ED e1.Exp="+e1.Exponent);
+                // DebugUtility.Log("ED e2.Exp="+e2.Exponent);
+                return new CBORNumber(NumberKind.EDecimal,
+                    CheckOverflow(
+                      e1,
+                      e2,
+                      e1.Add(e2)));
+            }
+            if (convertKind == NumberKind.EFloat)
+            {
+                // DebugUtility.Log("Float/Float");
+                EFloat e1 = GetNumberInterface(typeA).AsEFloat(objA);
+                EFloat e2 = GetNumberInterface(typeB).AsEFloat(objB);
+                // DebugUtility.Log("EF e1.Exp="+e1.Exponent);
+                // DebugUtility.Log("EF e2.Exp="+e2.Exponent);
+                return new CBORNumber(NumberKind.EFloat,
+                    CheckOverflow(
+                      e1,
+                      e2,
+                      e1.Add(e2)));
+            }
+            else
+            {
+                // DebugUtility.Log("type=" + typeA + "/" + typeB + " finite=" +
+                // (// this.IsFinite()) + "/" + (b.IsFinite()));
+                EInteger b1 = GetNumberInterface(typeA).AsEInteger(objA);
+                EInteger b2 = GetNumberInterface(typeB).AsEInteger(objB);
+                return new CBORNumber(NumberKind.EInteger, b1 + (EInteger)b2);
+            }
         }
 
-        public bool IsNegative(object obj)
+        /// <summary>Returns a number that expresses this number minus
+        /// another.</summary>
+        /// <param name='b'>The second operand to the subtraction.</param>
+        /// <returns>A CBOR number that expresses this number minus the given
+        /// number.</returns>
+        /// <exception cref='ArgumentNullException'>The parameter <paramref
+        /// name='b'/> is null.</exception>
+        /// <exception cref='OutOfMemoryException'>The exact result of the
+        /// operation might be too big to fit in memory (or might require more
+        /// than 2 gigabytes of memory to store).</exception>
+        public CBORNumber Subtract(CBORNumber b)
         {
-            float val = (float)obj;
-            int ivalue = BitConverter.ToInt32(BitConverter.GetBytes((float)val), 0);
-            return (ivalue >> 31) != 0;
+            if (b == null)
+            {
+                throw new ArgumentNullException(nameof(b));
+            }
+            CBORNumber a = this;
+            object objA = a.value;
+            object objB = b.value;
+            NumberKind typeA = a.kind;
+            NumberKind typeB = b.kind;
+            if (typeA == NumberKind.Integer && typeB == NumberKind.Integer)
+            {
+                var valueA = (long)objA;
+                var valueB = (long)objB;
+                if ((valueB < 0 && Int64.MaxValue + valueB < valueA) ||
+                  (valueB > 0 && Int64.MinValue + valueB > valueA))
+                {
+                    // would overflow, convert to EInteger
+                    return CBORNumber.FromObject(
+                        EInteger.FromInt64(valueA).Subtract(EInteger.FromInt64(
+                            valueB)));
+                }
+                return new CBORNumber(NumberKind.Integer, valueA - valueB);
+            }
+            NumberKind convertKind = GetConvertKind(a, b);
+            if (convertKind == NumberKind.ERational)
+            {
+                ERational e1 = GetNumberInterface(typeA).AsERational(objA);
+                ERational e2 = GetNumberInterface(typeB).AsERational(objB);
+                return new CBORNumber(NumberKind.ERational,
+                    CheckOverflow(
+                      e1,
+                      e2,
+                      e1.Subtract(e2)));
+            }
+            if (convertKind == NumberKind.EDecimal)
+            {
+                EDecimal e1 = GetNumberInterface(typeA).AsEDecimal(objA);
+                EDecimal e2 = GetNumberInterface(typeB).AsEDecimal(objB);
+                return new CBORNumber(NumberKind.EDecimal,
+                    CheckOverflow(
+                      e1,
+                      e2,
+                      e1.Subtract(e2)));
+            }
+            if (convertKind == NumberKind.EFloat)
+            {
+                EFloat e1 = GetNumberInterface(typeA).AsEFloat(objA);
+                EFloat e2 = GetNumberInterface(typeB).AsEFloat(objB);
+                return new CBORNumber(NumberKind.EFloat,
+                    CheckOverflow(
+                      e1,
+                      e2,
+                      e1.Subtract(e2)));
+            }
+            else
+            {
+                // DebugUtility.Log("type=" + typeA + "/" + typeB + " finite=" +
+                // (// this.IsFinite()) + "/" + (b.IsFinite()));
+                EInteger b1 = GetNumberInterface(typeA).AsEInteger(objA);
+                EInteger b2 = GetNumberInterface(typeB).AsEInteger(objB);
+                return new CBORNumber(NumberKind.EInteger, b1 - (EInteger)b2);
+            }
+        }
+
+        /// <summary>Returns a CBOR number expressing the product of this
+        /// number and the given number.</summary>
+        /// <param name='b'>The second operand to the multiplication
+        /// operation.</param>
+        /// <returns>A number expressing the product of this number and the
+        /// given number.</returns>
+        /// <exception cref='ArgumentNullException'>The parameter <paramref
+        /// name='b'/> is null.</exception>
+        /// <exception cref='OutOfMemoryException'>The exact result of the
+        /// operation might be too big to fit in memory (or might require more
+        /// than 2 gigabytes of memory to store).</exception>
+        public CBORNumber Multiply(CBORNumber b)
+        {
+            if (b == null)
+            {
+                throw new ArgumentNullException(nameof(b));
+            }
+            CBORNumber a = this;
+            object objA = a.value;
+            object objB = b.value;
+            NumberKind typeA = a.kind;
+            NumberKind typeB = b.kind;
+            if (typeA == NumberKind.Integer && typeB == NumberKind.Integer)
+            {
+                var valueA = (long)objA;
+                var valueB = (long)objB;
+                bool apos = valueA > 0L;
+                bool bpos = valueB > 0L;
+                if (
+                  (apos && ((!bpos && (Int64.MinValue / valueA) > valueB) ||
+                      (bpos && valueA > (Int64.MaxValue / valueB)))) ||
+                  (!apos && ((!bpos && valueA != 0L &&
+                        (Int64.MaxValue / valueA) > valueB) ||
+                      (bpos && valueA < (Int64.MinValue / valueB)))))
+                {
+                    // would overflow, convert to EInteger
+                    var bvalueA = (EInteger)valueA;
+                    var bvalueB = (EInteger)valueB;
+                    return CBORNumber.FromObject(bvalueA * (EInteger)bvalueB);
+                }
+                return CBORNumber.FromObject(valueA * valueB);
+            }
+            NumberKind convertKind = GetConvertKind(a, b);
+            if (convertKind == NumberKind.ERational)
+            {
+                ERational e1 = GetNumberInterface(typeA).AsERational(objA);
+                ERational e2 = GetNumberInterface(typeB).AsERational(objB);
+                return CBORNumber.FromObject(CheckOverflow(e1, e2, e1.Multiply(e2)));
+            }
+            if (convertKind == NumberKind.EDecimal)
+            {
+                EDecimal e1 = GetNumberInterface(typeA).AsEDecimal(objA);
+                EDecimal e2 = GetNumberInterface(typeB).AsEDecimal(objB);
+                return CBORNumber.FromObject(CheckOverflow(e1, e2, e1.Multiply(e2)));
+            }
+            if (convertKind == NumberKind.EFloat)
+            {
+                EFloat e1 = GetNumberInterface(typeA).AsEFloat(objA);
+                EFloat e2 = GetNumberInterface(typeB).AsEFloat(objB);
+                return new CBORNumber(NumberKind.EFloat,
+                    CheckOverflow(
+                      e1,
+                      e2,
+                      e1.Multiply(e2)));
+            }
+            else
+            {
+                // DebugUtility.Log("type=" + typeA + "/" + typeB + " finite=" +
+                // (// this.IsFinite()) + "/" + (b.IsFinite()));
+                EInteger b1 = GetNumberInterface(typeA).AsEInteger(objA);
+                EInteger b2 = GetNumberInterface(typeB).AsEInteger(objB);
+                return new CBORNumber(NumberKind.EInteger, b1 * (EInteger)b2);
+            }
+        }
+
+        /// <summary>Returns the quotient of this number and another
+        /// number.</summary>
+        /// <param name='b'>The right-hand side (divisor) to the division
+        /// operation.</param>
+        /// <returns>The quotient of this number and another one.</returns>
+        /// <exception cref='ArgumentNullException'>The parameter <paramref
+        /// name='b'/> is null.</exception>
+        /// <exception cref='OutOfMemoryException'>The exact result of the
+        /// operation might be too big to fit in memory (or might require more
+        /// than 2 gigabytes of memory to store).</exception>
+        public CBORNumber Divide(CBORNumber b)
+        {
+            if (b == null)
+            {
+                throw new ArgumentNullException(nameof(b));
+            }
+            CBORNumber a = this;
+            object objA = a.value;
+            object objB = b.value;
+            NumberKind typeA = a.kind;
+            NumberKind typeB = b.kind;
+            if (typeA == NumberKind.Integer && typeB == NumberKind.Integer)
+            {
+                var valueA = (long)objA;
+                var valueB = (long)objB;
+                if (valueB == 0)
+                {
+                    return (valueA == 0) ? CBORNumber.FromObject(EDecimal.NaN) :
+                      ((valueA < 0) ? CBORNumber.FromObject(EDecimal.NegativeInfinity) :
+
+                        CBORNumber.FromObject(EDecimal.PositiveInfinity));
+                }
+                if (valueA == Int64.MinValue && valueB == -1)
+                {
+                    return new CBORNumber(NumberKind.Integer, valueA).Negate();
+                }
+                long quo = valueA / valueB;
+                long rem = valueA - (quo * valueB);
+                return (rem == 0) ? new CBORNumber(NumberKind.Integer, quo) :
+                  new CBORNumber(NumberKind.ERational,
+                    ERational.Create(
+                      (EInteger)valueA,
+                      (EInteger)valueB));
+            }
+            NumberKind convertKind = GetConvertKind(a, b);
+            if (convertKind == NumberKind.ERational)
+            {
+                ERational e1 = GetNumberInterface(typeA).AsERational(objA);
+                ERational e2 = GetNumberInterface(typeB).AsERational(objB);
+                return new CBORNumber(NumberKind.ERational,
+                    CheckOverflow(
+                      e1,
+                      e2,
+                      e1.Divide(e2)));
+            }
+            if (convertKind == NumberKind.EDecimal)
+            {
+                EDecimal e1 = GetNumberInterface(typeA).AsEDecimal(objA);
+                EDecimal e2 = GetNumberInterface(typeB).AsEDecimal(objB);
+                if (e1.IsZero && e2.IsZero)
+                {
+                    return new CBORNumber(NumberKind.EDecimal, EDecimal.NaN);
+                }
+                EDecimal eret = e1.Divide(e2, null);
+                // If either operand is infinity or NaN, the result
+                // is already exact. Likewise if the result is a finite number.
+                if (!e1.IsFinite || !e2.IsFinite || eret.IsFinite)
+                {
+                    return new CBORNumber(NumberKind.EDecimal, eret);
+                }
+                ERational er1 = GetNumberInterface(typeA).AsERational(objA);
+                ERational er2 = GetNumberInterface(typeB).AsERational(objB);
+                return new CBORNumber(NumberKind.ERational,
+                    CheckOverflow(
+                      er1,
+                      er2,
+                      er1.Divide(er2)));
+            }
+            if (convertKind == NumberKind.EFloat)
+            {
+                EFloat e1 = GetNumberInterface(typeA).AsEFloat(objA);
+                EFloat e2 = GetNumberInterface(typeB).AsEFloat(objB);
+                if (e1.IsZero && e2.IsZero)
+                {
+                    return CBORNumber.FromObject(EDecimal.NaN);
+                }
+                EFloat eret = e1.Divide(e2, null);
+                // If either operand is infinity or NaN, the result
+                // is already exact. Likewise if the result is a finite number.
+                if (!e1.IsFinite || !e2.IsFinite || eret.IsFinite)
+                {
+                    return CBORNumber.FromObject(eret);
+                }
+                ERational er1 = GetNumberInterface(typeA).AsERational(objA);
+                ERational er2 = GetNumberInterface(typeB).AsERational(objB);
+                return new CBORNumber(NumberKind.ERational,
+                    CheckOverflow(
+                      er1,
+                      er2,
+                      er1.Divide(er2)));
+            }
+            else
+            {
+                // DebugUtility.Log("type=" + typeA + "/" + typeB + " finite=" +
+                // (// this.IsFinite()) + "/" + (b.IsFinite()));
+                EInteger b1 = GetNumberInterface(typeA).AsEInteger(objA);
+                EInteger b2 = GetNumberInterface(typeB).AsEInteger(objB);
+                if (b2.IsZero)
+                {
+                    return b1.IsZero ? CBORNumber.FromObject(EDecimal.NaN) : ((b1.Sign <
+                          0) ? CBORNumber.FromObject(EDecimal.NegativeInfinity) :
+                        CBORNumber.FromObject(EDecimal.PositiveInfinity));
+                }
+                EInteger bigrem;
+                EInteger bigquo;
+                {
+                    EInteger[] divrem = b1.DivRem(b2);
+                    bigquo = divrem[0];
+                    bigrem = divrem[1];
+                }
+                return bigrem.IsZero ? CBORNumber.FromObject(bigquo) :
+                  new CBORNumber(NumberKind.ERational, ERational.Create(b1, b2));
+            }
+        }
+
+        /// <summary>Returns the remainder when this number is divided by
+        /// another number.</summary>
+        /// <param name='b'>The right-hand side (dividend) of the remainder
+        /// operation.</param>
+        /// <returns>The remainder when this number is divided by the other
+        /// number.</returns>
+        /// <exception cref='ArgumentNullException'>The parameter <paramref
+        /// name='b'/> is null.</exception>
+        /// <exception cref='OutOfMemoryException'>The exact result of the
+        /// operation might be too big to fit in memory (or might require more
+        /// than 2 gigabytes of memory to store).</exception>
+        public CBORNumber Remainder(CBORNumber b)
+        {
+            if (b == null)
+            {
+                throw new ArgumentNullException(nameof(b));
+            }
+            object objA = this.value;
+            object objB = b.value;
+            NumberKind typeA = this.kind;
+            NumberKind typeB = b.kind;
+            if (typeA == NumberKind.Integer && typeB == NumberKind.Integer)
+            {
+                var valueA = (long)objA;
+                var valueB = (long)objB;
+                return (valueA == Int64.MinValue && valueB == -1) ?
+                  CBORNumber.FromObject(0) : CBORNumber.FromObject(valueA % valueB);
+            }
+            NumberKind convertKind = GetConvertKind(this, b);
+            if (convertKind == NumberKind.ERational)
+            {
+                ERational e1 = GetNumberInterface(typeA).AsERational(objA);
+                ERational e2 = GetNumberInterface(typeB).AsERational(objB);
+                return CBORNumber.FromObject(CheckOverflow(e1, e2, e1.Remainder(e2)));
+            }
+            if (convertKind == NumberKind.EDecimal)
+            {
+                EDecimal e1 = GetNumberInterface(typeA).AsEDecimal(objA);
+                EDecimal e2 = GetNumberInterface(typeB).AsEDecimal(objB);
+                return CBORNumber.FromObject(CheckOverflow(e1, e2, e1.Remainder(e2,
+                        null)));
+            }
+            if (convertKind == NumberKind.EFloat)
+            {
+                EFloat e1 = GetNumberInterface(typeA).AsEFloat(objA);
+                EFloat e2 = GetNumberInterface(typeB).AsEFloat(objB);
+                return CBORNumber.FromObject(CheckOverflow(e1, e2, e1.Remainder(e2,
+                        null)));
+            }
+            else
+            {
+                // DebugUtility.Log("type=" + typeA + "/" + typeB + " finite=" +
+                // (// this.IsFinite()) + "/" + (b.IsFinite()));
+                EInteger b1 = GetNumberInterface(typeA).AsEInteger(objA);
+                EInteger b2 = GetNumberInterface(typeB).AsEInteger(objB);
+                return CBORNumber.FromObject(b1 % (EInteger)b2);
+            }
+        }
+
+        /// <summary>Compares two CBOR numbers. In this implementation, the two
+        /// numbers' mathematical values are compared. Here, NaN (not-a-number)
+        /// is considered greater than any number.</summary>
+        /// <param name='other'>A value to compare with. Can be null.</param>
+        /// <returns>A negative number, if this value is less than the other
+        /// object; or 0, if both values are equal; or a positive number, if
+        /// this value is less than the other object or if the other object is
+        /// null.
+        /// <para>This implementation returns a positive number if <paramref
+        /// name='other'/> is null, to conform to the.NET definition of
+        /// CompareTo. This is the case even in the Java version of this
+        /// library, for consistency's sake, even though implementations of
+        /// <c>Comparable.compareTo()</c> in Java ought to throw an exception
+        /// if they receive a null argument rather than treating null as less
+        /// or greater than any object.</para>.</returns>
+        public int CompareTo(CBORNumber other)
+        {
+            if (other == null)
+            {
+                return 1;
+            }
+            if (this == other)
+            {
+                return 0;
+            }
+            var cmp = 0;
+            NumberKind typeA = this.kind;
+            NumberKind typeB = other.kind;
+            object objA = this.value;
+            object objB = other.value;
+            if (typeA == typeB)
+            {
+                switch (typeA)
+                {
+                    case NumberKind.Integer:
+                        {
+                            var a = (long)objA;
+                            var b = (long)objB;
+                            cmp = (a == b) ? 0 : ((a < b) ? -1 : 1);
+                            break;
+                        }
+                    case NumberKind.EInteger:
+                        {
+                            var bigintA = (EInteger)objA;
+                            var bigintB = (EInteger)objB;
+                            cmp = bigintA.CompareTo(bigintB);
+                            break;
+                        }
+                    case NumberKind.Double:
+                        {
+                            var a = (long)objA;
+                            var b = (long)objB;
+                            // Treat NaN as greater than all other numbers
+                            cmp = CBORUtilities.DoubleBitsNaN(a) ?
+                              (CBORUtilities.DoubleBitsNaN(b) ? 0 : 1) :
+                              (CBORUtilities.DoubleBitsNaN(b) ?
+                                -1 : (((a < 0) != (b < 0)) ? ((a < b) ? -1 : 1) :
+                                  ((a == b) ? 0 : (((a < b) ^ (a < 0)) ? -1 : 1))));
+                            break;
+                        }
+                    case NumberKind.EDecimal:
+                        {
+                            cmp = ((EDecimal)objA).CompareTo((EDecimal)objB);
+                            break;
+                        }
+                    case NumberKind.EFloat:
+                        {
+                            cmp = ((EFloat)objA).CompareTo(
+                                (EFloat)objB);
+                            break;
+                        }
+                    case NumberKind.ERational:
+                        {
+                            cmp = ((ERational)objA).CompareTo(
+                                (ERational)objB);
+                            break;
+                        }
+                    default:
+                        throw new InvalidOperationException(
+                   "Unexpected data type");
+                }
+            }
+            else
+            {
+                int s1 = GetNumberInterface(typeA).Sign(objA);
+                int s2 = GetNumberInterface(typeB).Sign(objB);
+                if (s1 != s2 && s1 != 2 && s2 != 2)
+                {
+                    // if both types are numbers
+                    // and their signs are different
+                    return (s1 < s2) ? -1 : 1;
+                }
+                if (s1 == 2 && s2 == 2)
+                {
+                    // both are NaN
+                    cmp = 0;
+                }
+                else if (s1 == 2)
+                {
+                    // first object is NaN
+                    return 1;
+                }
+                else if (s2 == 2)
+                {
+                    // second object is NaN
+                    return -1;
+                }
+                else
+                {
+                    // DebugUtility.Log("a=" + this + " b=" + other);
+                    if (typeA == NumberKind.ERational)
+                    {
+                        ERational e1 =
+                          GetNumberInterface(typeA).AsERational(objA);
+                        if (typeB == NumberKind.EDecimal)
+                        {
+                            EDecimal e2 =
+                              GetNumberInterface(typeB).AsEDecimal(objB);
+                            cmp = e1.CompareToDecimal(e2);
+                        }
+                        else
+                        {
+                            EFloat e2 = GetNumberInterface(typeB).AsEFloat(objB);
+                            cmp = e1.CompareToBinary(e2);
+                        }
+                    }
+                    else if (typeB == NumberKind.ERational)
+                    {
+                        ERational e2 = GetNumberInterface(typeB).AsERational(objB);
+                        if (typeA == NumberKind.EDecimal)
+                        {
+                            EDecimal e1 =
+                              GetNumberInterface(typeA).AsEDecimal(objA);
+                            cmp = e2.CompareToDecimal(e1);
+                            cmp = -cmp;
+                        }
+                        else
+                        {
+                            EFloat e1 =
+                              GetNumberInterface(typeA).AsEFloat(objA);
+                            cmp = e2.CompareToBinary(e1);
+                            cmp = -cmp;
+                        }
+                    }
+                    else if (typeA == NumberKind.EDecimal ||
+                    typeB == NumberKind.EDecimal)
+                    {
+                        EDecimal e1 = null;
+                        EDecimal e2 = null;
+                        if (typeA == NumberKind.EFloat)
+                        {
+                            var ef1 = (EFloat)objA;
+                            e2 = (EDecimal)objB;
+                            cmp = e2.CompareToBinary(ef1);
+                            cmp = -cmp;
+                        }
+                        else if (typeB == NumberKind.EFloat)
+                        {
+                            var ef1 = (EFloat)objB;
+                            e2 = (EDecimal)objA;
+                            cmp = e2.CompareToBinary(ef1);
+                        }
+                        else
+                        {
+                            e1 = GetNumberInterface(typeA).AsEDecimal(objA);
+                            e2 = GetNumberInterface(typeB).AsEDecimal(objB);
+                            cmp = e1.CompareTo(e2);
+                        }
+                    }
+                    else if (typeA == NumberKind.EFloat || typeB ==
+                    NumberKind.EFloat || typeA == NumberKind.Double || typeB ==
+                    NumberKind.Double)
+                    {
+                        EFloat e1 =
+                          GetNumberInterface(typeA).AsEFloat(objA);
+                        EFloat e2 = GetNumberInterface(typeB).AsEFloat(objB);
+                        cmp = e1.CompareTo(e2);
+                    }
+                    else
+                    {
+                        EInteger b1 = GetNumberInterface(typeA).AsEInteger(objA);
+                        EInteger b2 = GetNumberInterface(typeB).AsEInteger(objB);
+                        cmp = b1.CompareTo(b2);
+                    }
+                }
+            }
+            return cmp;
         }
     }
 
+    public sealed partial class CBORNumber
+    {
+        /* The "==" and "!=" operators are not overridden in the .NET version to be
+          consistent with Equals, for the following reason: Objects with this
+        type can have arbitrary size (e.g., they can
+          be arbitrary-precision integers), and
+        comparing
+          two of them for equality can be much more complicated and take much
+          more time than the default behavior of reference equality.
+        */
+
+        /// <summary>Returns whether one object's value is less than
+        /// another's.</summary>
+        /// <param name='a'>The left-hand side of the comparison.</param>
+        /// <param name='b'>The right-hand side of the comparison.</param>
+        /// <returns><c>true</c> if the first object's value is less than the
+        /// other's; otherwise, <c>false</c>.</returns>
+        /// <exception cref='ArgumentNullException'>The parameter <paramref
+        /// name='a'/> is null.</exception>
+        public static bool operator <(CBORNumber a, CBORNumber b)
+        {
+            return a == null ? b != null : a.CompareTo(b) < 0;
+        }
+
+        /// <summary>Returns whether one object's value is up to
+        /// another's.</summary>
+        /// <param name='a'>The left-hand side of the comparison.</param>
+        /// <param name='b'>The right-hand side of the comparison.</param>
+        /// <returns><c>true</c> if one object's value is up to another's;
+        /// otherwise, <c>false</c>.</returns>
+        /// <exception cref='ArgumentNullException'>The parameter <paramref
+        /// name='a'/> is null.</exception>
+        public static bool operator <=(CBORNumber a, CBORNumber b)
+        {
+            return a == null || a.CompareTo(b) <= 0;
+        }
+
+        /// <summary>Returns whether one object's value is greater than
+        /// another's.</summary>
+        /// <param name='a'>The left-hand side of the comparison.</param>
+        /// <param name='b'>The right-hand side of the comparison.</param>
+        /// <returns><c>true</c> if one object's value is greater than
+        /// another's; otherwise, <c>false</c>.</returns>
+        /// <exception cref='ArgumentNullException'>The parameter <paramref
+        /// name='a'/> is null.</exception>
+        public static bool operator >(CBORNumber a, CBORNumber b)
+        {
+            return a != null && a.CompareTo(b) > 0;
+        }
+
+        /// <summary>Returns whether one object's value is at least
+        /// another's.</summary>
+        /// <param name='a'>The left-hand side of the comparison.</param>
+        /// <param name='b'>The right-hand side of the comparison.</param>
+        /// <returns><c>true</c> if one object's value is at least another's;
+        /// otherwise, <c>false</c>.</returns>
+        /// <exception cref='ArgumentNullException'>The parameter <paramref
+        /// name='a'/> is null.</exception>
+        public static bool operator >=(CBORNumber a, CBORNumber b)
+        {
+            return a == null ? b == null : a.CompareTo(b) >= 0;
+        }
+
+        /// <summary>Converts this number's value to an 8-bit signed integer if
+        /// it can fit in an 8-bit signed integer after converting it to an
+        /// integer by discarding its fractional part.</summary>
+        /// <returns>This number's value, truncated to an 8-bit signed
+        /// integer.</returns>
+        /// <exception cref='OverflowException'>This value is infinity or
+        /// not-a-number, or the number, once converted to an integer by
+        /// discarding its fractional part, is less than -128 or greater than
+        /// 127.</exception>
+        public sbyte ToSByteChecked()
+        {
+            if (!this.IsFinite())
+            {
+                throw new OverflowException("Value is infinity or NaN");
+            }
+            return this.ToEInteger().ToSByteChecked();
+        }
+
+        /// <summary>Converts this number's value to an integer by discarding
+        /// its fractional part, and returns the least-significant bits of its
+        /// two's-complement form as an 8-bit signed integer.</summary>
+        /// <returns>This number, converted to an 8-bit signed integer. Returns
+        /// 0 if this value is infinity or not-a-number.</returns>
+        public sbyte ToSByteUnchecked()
+        {
+            return this.IsFinite() ? this.ToEInteger().ToSByteUnchecked() : (sbyte)0;
+        }
+
+        /// <summary>Converts this number's value to an 8-bit signed integer if
+        /// it can fit in an 8-bit signed integer without rounding to a
+        /// different numerical value.</summary>
+        /// <returns>This number's value as an 8-bit signed integer.</returns>
+        /// <exception cref='ArithmeticException'>This value is infinity or
+        /// not-a-number, is not an exact integer, or is less than -128 or
+        /// greater than 127.</exception>
+        public sbyte ToSByteIfExact()
+        {
+            if (!this.IsFinite())
+            {
+                throw new OverflowException("Value is infinity or NaN");
+            }
+            return this.IsZero() ? ((sbyte)0) :
+      this.ToEIntegerIfExact().ToSByteChecked();
+        }
+
+        /// <summary>Converts this number's value to a 16-bit unsigned integer
+        /// if it can fit in a 16-bit unsigned integer after converting it to
+        /// an integer by discarding its fractional part.</summary>
+        /// <returns>This number's value, truncated to a 16-bit unsigned
+        /// integer.</returns>
+        /// <exception cref='OverflowException'>This value is infinity or
+        /// not-a-number, or the number, once converted to an integer by
+        /// discarding its fractional part, is less than 0 or greater than
+        /// 65535.</exception>
+        public ushort ToUInt16Checked()
+        {
+            if (!this.IsFinite())
+            {
+                throw new OverflowException("Value is infinity or NaN");
+            }
+            return this.ToEInteger().ToUInt16Checked();
+        }
+
+        /// <summary>Converts this number's value to an integer by discarding
+        /// its fractional part, and returns the least-significant bits of its
+        /// two's-complement form as a 16-bit unsigned integer.</summary>
+        /// <returns>This number, converted to a 16-bit unsigned integer.
+        /// Returns 0 if this value is infinity or not-a-number.</returns>
+        public ushort ToUInt16Unchecked()
+        {
+            return this.IsFinite() ? this.ToEInteger().ToUInt16Unchecked() :
+      (ushort)0;
+        }
+
+        /// <summary>Converts this number's value to a 16-bit unsigned integer
+        /// if it can fit in a 16-bit unsigned integer without rounding to a
+        /// different numerical value.</summary>
+        /// <returns>This number's value as a 16-bit unsigned
+        /// integer.</returns>
+        /// <exception cref='ArithmeticException'>This value is infinity or
+        /// not-a-number, is not an exact integer, or is less than 0 or greater
+        /// than 65535.</exception>
+        public ushort ToUInt16IfExact()
+        {
+            if (!this.IsFinite())
+            {
+                throw new OverflowException("Value is infinity or NaN");
+            }
+            if (this.IsZero())
+            {
+                return (ushort)0;
+            }
+            if (this.IsNegative())
+            {
+                throw new OverflowException("Value out of range");
+            }
+            return this.ToEIntegerIfExact().ToUInt16Checked();
+        }
+
+        /// <summary>Converts this number's value to a 32-bit signed integer if
+        /// it can fit in a 32-bit signed integer after converting it to an
+        /// integer by discarding its fractional part.</summary>
+        /// <returns>This number's value, truncated to a 32-bit signed
+        /// integer.</returns>
+        /// <exception cref='OverflowException'>This value is infinity or
+        /// not-a-number, or the number, once converted to an integer by
+        /// discarding its fractional part, is less than 0 or greater than
+        /// 4294967295.</exception>
+        public uint ToUInt32Checked()
+        {
+            if (!this.IsFinite())
+            {
+                throw new OverflowException("Value is infinity or NaN");
+            }
+            return this.ToEInteger().ToUInt32Checked();
+        }
+
+        /// <summary>Converts this number's value to an integer by discarding
+        /// its fractional part, and returns the least-significant bits of its
+        /// two's-complement form as a 32-bit signed integer.</summary>
+        /// <returns>This number, converted to a 32-bit signed integer. Returns
+        /// 0 if this value is infinity or not-a-number.</returns>
+        public uint ToUInt32Unchecked()
+        {
+            return this.IsFinite() ? this.ToEInteger().ToUInt32Unchecked() : 0U;
+        }
+
+        /// <summary>Converts this number's value to a 32-bit signed integer if
+        /// it can fit in a 32-bit signed integer without rounding to a
+        /// different numerical value.</summary>
+        /// <returns>This number's value as a 32-bit signed integer.</returns>
+        /// <exception cref='ArithmeticException'>This value is infinity or
+        /// not-a-number, is not an exact integer, or is less than 0 or greater
+        /// than 4294967295.</exception>
+        public uint ToUInt32IfExact()
+        {
+            if (!this.IsFinite())
+            {
+                throw new OverflowException("Value is infinity or NaN");
+            }
+            if (this.IsZero())
+            {
+                return 0U;
+            }
+            if (this.IsNegative())
+            {
+                throw new OverflowException("Value out of range");
+            }
+            return this.ToEIntegerIfExact().ToUInt32Checked();
+        }
+
+        /// <summary>Converts this number's value to a 64-bit unsigned integer
+        /// if it can fit in a 64-bit unsigned integer after converting it to
+        /// an integer by discarding its fractional part.</summary>
+        /// <returns>This number's value, truncated to a 64-bit unsigned
+        /// integer.</returns>
+        /// <exception cref='OverflowException'>This value is infinity or
+        /// not-a-number, or the number, once converted to an integer by
+        /// discarding its fractional part, is less than 0 or greater than
+        /// 18446744073709551615.</exception>
+        public ulong ToUInt64Checked()
+        {
+            if (!this.IsFinite())
+            {
+                throw new OverflowException("Value is infinity or NaN");
+            }
+            return this.ToEInteger().ToUInt64Checked();
+        }
+
+        /// <summary>Converts this number's value to an integer by discarding
+        /// its fractional part, and returns the least-significant bits of its
+        /// two's-complement form as a 64-bit unsigned integer.</summary>
+        /// <returns>This number, converted to a 64-bit unsigned integer.
+        /// Returns 0 if this value is infinity or not-a-number.</returns>
+        public ulong ToUInt64Unchecked()
+        {
+            return this.IsFinite() ? this.ToEInteger().ToUInt64Unchecked() : 0UL;
+        }
+
+        /// <summary>Converts this number's value to a 64-bit unsigned integer
+        /// if it can fit in a 64-bit unsigned integer without rounding to a
+        /// different numerical value.</summary>
+        /// <returns>This number's value as a 64-bit unsigned
+        /// integer.</returns>
+        /// <exception cref='ArithmeticException'>This value is infinity or
+        /// not-a-number, is not an exact integer, or is less than 0 or greater
+        /// than 18446744073709551615.</exception>
+        public ulong ToUInt64IfExact()
+        {
+            if (!this.IsFinite())
+            {
+                throw new OverflowException("Value is infinity or NaN");
+            }
+            if (this.IsZero())
+            {
+                return 0UL;
+            }
+            if (this.IsNegative())
+            {
+                throw new OverflowException("Value out of range");
+            }
+            return this.ToEIntegerIfExact().ToUInt64Checked();
+        }
+    }
     #endregion
 
+    /*
     #region CBORTag0
     internal class CBORTag0 : ICBORTag, ICBORToFromConverter<DateTime>
     {
@@ -3502,44 +8490,59 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
         }
     }
     #endregion
+    */
 
     #region CBORType
     /// <include file='../../docs.xml'
     /// path='docs/doc[@name="T:CBORType"]/*'/>
     public enum CBORType
     {
-        /// <include file='../../docs.xml'
-        /// path='docs/doc[@name="F:CBORType.Number"]/*'/>
+        /// <summary>This property is no longer used.</summary>
+        [Obsolete("Since version 4.0, CBORObject.Type no longer returns this" +
+    "\u0020value for any CBOR object - this is a breaking change from " +
+    "earlier versions." +
+    "\u0020Instead, use the IsNumber property of CBORObject to determine" +
+    " whether a CBOR object represents a number, or use the two " +
+    "new CBORType values instead. CBORType.Integer " +
+    "covers CBOR objects representing" +
+    "\u0020integers of" +
+    "\u0020major type 0 and 1. " +
+    "CBORType.FloatingPoint covers CBOR objects representing " +
+    "16-, 32-, and 64-bit floating-point numbers. CBORType.Number " +
+    "may be removed in version 5.0 or later.")]
         Number,
 
-        /// <include file='../../docs.xml'
-        /// path='docs/doc[@name="F:CBORType.Boolean"]/*'/>
+        /// <summary>The simple values true and false.</summary>
         Boolean,
 
-        /// <include file='../../docs.xml'
-        /// path='docs/doc[@name="F:CBORType.SimpleValue"]/*'/>
+        /// <summary>A "simple value" other than floating point values, true,
+        /// and false.</summary>
         SimpleValue,
 
-        /// <include file='../../docs.xml'
-        /// path='docs/doc[@name="F:CBORType.ByteString"]/*'/>
+        /// <summary>An array of bytes.</summary>
         ByteString,
 
-        /// <include file='../../docs.xml'
-        /// path='docs/doc[@name="F:CBORType.TextString"]/*'/>
+        /// <summary>A text string.</summary>
         TextString,
 
-        /// <include file='../../docs.xml'
-        /// path='docs/doc[@name="F:CBORType.Array"]/*'/>
+        /// <summary>An array of CBOR objects.</summary>
         Array,
 
-        /// <include file='../../docs.xml'
-        /// path='docs/doc[@name="F:CBORType.Map"]/*'/>
-        Map
-    }
+        /// <summary>A map of CBOR objects.</summary>
+        Map,
 
+        /// <summary>An integer in the interval [-(2^64), 2^64 - 1], or an
+        /// integer of major type 0 and 1.</summary>
+        Integer,
+
+        /// <summary>A 16-, 32-, or 64-bit binary floating-point
+        /// number.</summary>
+        FloatingPoint,
+    }
     #endregion
 
     #region CBORTagGenericString
+    /*
     /// <include file='../../docs.xml'
     /// path='docs/doc[@name="T:CBORTagGenericString"]/*'/>
     internal class CBORTagGenericString : ICBORTag
@@ -3558,8 +8561,10 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
             return obj;
         }
     }
+    */
     #endregion
 
+    /*
     #region CBORTypeFilter
     /// <include file='../../docs.xml'
     /// path='docs/doc[@name="T:CBORTypeFilter"]/*'/>
@@ -4020,19 +9025,24 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
         }
     }
     #endregion
+    */
 
     #region CBORTypeMapper
     /// <include file='../../docs.xml'
     /// path='docs/doc[@name="T:CBORTypeMapper"]/*'/>
+    /// <summary>Holds converters to customize the serialization and
+    /// deserialization behavior of <c>CBORObject.FromObject</c> and
+    /// <c>CBORObject#ToObject</c>, as well as type filters for
+    /// <c>ToObject</c>.</summary>
     public sealed class CBORTypeMapper
     {
         private readonly IList<string> typePrefixes;
         private readonly IList<string> typeNames;
         private readonly IDictionary<Object, ConverterInfo>
-          converters;
+        converters;
 
-        /// <summary>Initializes a new instance of the CBORTypeMapper
-        /// class.</summary>
+        /// <summary>Initializes a new instance of the
+        /// <see cref='PeterO.Cbor.CBORTypeMapper'/> class.</summary>
         public CBORTypeMapper()
         {
             this.typePrefixes = new List<string>();
@@ -4049,11 +9059,10 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
         /// <typeparam name='T'>Must be the same as the "type"
         /// parameter.</typeparam>
         /// <returns>This object.</returns>
-        /// <exception cref='T:System.ArgumentNullException'>The parameter
-        /// <paramref name='type'/> or <paramref name='converter'/> is
-        /// null.</exception>
-        /// <exception cref='T:System.ArgumentException'>"Converter doesn't
-        /// contain a proper ToCBORObject method".</exception>
+        /// <exception cref='ArgumentNullException'>The parameter <paramref
+        /// name='type'/> or <paramref name='converter'/> is null.</exception>
+        /// <exception cref='ArgumentException'>Converter doesn't contain a
+        /// proper ToCBORObject method".</exception>
         public CBORTypeMapper AddConverter<T>(
           Type type,
           ICBORConverter<T> converter)
@@ -4066,30 +9075,28 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
             {
                 throw new ArgumentNullException(nameof(converter));
             }
-            ConverterInfo ci = new ConverterInfo
-            {
-                Converter = converter,
-                ToObject = PropertyMap.FindOneArgumentMethod(
+            var ci = new ConverterInfo();
+            ci.Converter = converter;
+            ci.ToObject = PropertyMap.FindOneArgumentMethod(
               converter,
               "ToCBORObject",
-              type)
-            };
+              type);
             if (ci.ToObject == null)
             {
                 throw new ArgumentException(
                   "Converter doesn't contain a proper ToCBORObject method");
             }
             ci.FromObject = PropertyMap.FindOneArgumentMethod(
-              converter,
-              "FromCBORObject",
-              typeof(CBORObject));
+                converter,
+                "FromCBORObject",
+                typeof(CBORObject));
             this.converters[type] = ci;
             return this;
         }
 
         internal object ConvertBackWithConverter(
-            CBORObject cbor,
-            Type type)
+          CBORObject cbor,
+          Type type)
         {
             ConverterInfo convinfo = null;
             if (this.converters.ContainsKey(type))
@@ -4104,14 +9111,8 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
             {
                 return null;
             }
-            if (convinfo.FromObject == null)
-            {
-                return null;
-            }
-            return PropertyMap.InvokeOneArgumentMethod(
-              convinfo.FromObject,
-              convinfo.Converter,
-              cbor);
+            return (convinfo.FromObject == null) ? null :
+              PropertyMap.CallFromObject(convinfo, cbor);
         }
 
         internal CBORObject ConvertWithConverter(object obj)
@@ -4126,18 +9127,18 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
             {
                 return null;
             }
-            if (convinfo == null)
-            {
-                return null;
-            }
-            return (CBORObject)PropertyMap.InvokeOneArgumentMethod(
-              convinfo.ToObject,
-              convinfo.Converter,
-              obj);
+            return (convinfo == null) ? null :
+              PropertyMap.CallToObject(convinfo, obj);
         }
 
-        /// <include file='../../docs.xml'
-        /// path='docs/doc[@name="M:CBORTypeMapper.FilterTypeName(System.String)"]/*'/>
+        /// <summary>Returns whether the given Java or.NET type name fits the
+        /// filters given in this mapper.</summary>
+        /// <param name='typeName'>The fully qualified name of a Java or.NET
+        /// class (e.g., <c>java.math.BigInteger</c> or
+        /// <c>System.Globalization.CultureInfo</c> ).</param>
+        /// <returns>Either <c>true</c> if the given Java or.NET type name fits
+        /// the filters given in this mapper, or <c>false</c>
+        /// otherwise.</returns>
         public bool FilterTypeName(string typeName)
         {
             if (String.IsNullOrEmpty(typeName))
@@ -4147,14 +9148,15 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
             foreach (string prefix in this.typePrefixes)
             {
                 if (typeName.Length >= prefix.Length &&
-                  typeName.Substring(0, prefix.Length).Equals(prefix))
+                  typeName.Substring(0, prefix.Length).Equals(prefix,
+                    StringComparison.Ordinal))
                 {
                     return true;
                 }
             }
             foreach (string name in this.typeNames)
             {
-                if (typeName.Equals(name))
+                if (typeName.Equals(name, StringComparison.Ordinal))
                 {
                     return true;
                 }
@@ -4162,8 +9164,17 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
             return false;
         }
 
-        /// <include file='../../docs.xml'
-        /// path='docs/doc[@name="M:CBORTypeMapper.AddTypePrefix(System.String)"]/*'/>
+        /// <summary>Adds a prefix of a Java or.NET type for use in type
+        /// matching. A type matches a prefix if its fully qualified name is or
+        /// begins with that prefix, using codepoint-by-codepoint
+        /// (case-sensitive) matching.</summary>
+        /// <param name='prefix'>The prefix of a Java or.NET type (e.g.,
+        /// `java.math.` or `System.Globalization`).</param>
+        /// <returns>This object.</returns>
+        /// <exception cref='ArgumentNullException'>The parameter <paramref
+        /// name='prefix'/> is null.</exception>
+        /// <exception cref='ArgumentException'>The parameter <paramref
+        /// name='prefix'/> is empty.</exception>
         public CBORTypeMapper AddTypePrefix(string prefix)
         {
             if (prefix == null)
@@ -4178,8 +9189,16 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
             return this;
         }
 
-        /// <include file='../../docs.xml'
-        /// path='docs/doc[@name="M:CBORTypeMapper.AddTypeName(System.String)"]/*'/>
+        /// <summary>Adds the fully qualified name of a Java or.NET type for
+        /// use in type matching.</summary>
+        /// <param name='name'>The fully qualified name of a Java or.NET class
+        /// (e.g., <c>java.math.BigInteger</c> or
+        /// <c>System.Globalization.CultureInfo</c> ).</param>
+        /// <returns>This object.</returns>
+        /// <exception cref='ArgumentNullException'>The parameter <paramref
+        /// name='name'/> is null.</exception>
+        /// <exception cref='ArgumentException'>The parameter <paramref
+        /// name='name'/> is empty.</exception>
         public CBORTypeMapper AddTypeName(string name)
         {
             if (name == null)
@@ -4196,15 +9215,23 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
 
         internal sealed class ConverterInfo
         {
-            /// <include file='../../docs.xml'
-            /// path='docs/doc[@name="P:CBORObject.ConverterInfo.ToObject"]/*'/>
-            public object ToObject { get; set; }
+            public object ToObject
+            {
+                get;
+                set;
+            }
 
-            public object FromObject { get; set; }
+            public object FromObject
+            {
+                get;
+                set;
+            }
 
-            /// <summary>Gets a value not documented yet.</summary>
-            /// <value>An internal API value.</value>
-            public object Converter { get; set; }
+            public object Converter
+            {
+                get;
+                set;
+            }
         }
     }
 
@@ -4213,24 +9240,46 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
     #region CBORUriConverter
     internal class CBORUriConverter : ICBORToFromConverter<Uri>
     {
-        private CBORObject ValidateObject(CBORObject obj)
+        private static CBORObject ValidateObject(CBORObject obj)
         {
             if (obj.Type != CBORType.TextString)
             {
-                throw new CBORException("URI must be a text string");
+                throw new CBORException("URI/IRI must be a text string");
             }
-            if (!URIUtility.IsValidIRI(obj.AsString()))
+            bool isiri = obj.HasMostOuterTag(266);
+            bool isiriref = obj.HasMostOuterTag(267);
+            if (
+              isiriref && !URIUtility.IsValidIRI(
+                obj.AsString(),
+                URIUtility.ParseMode.IRIStrict))
             {
-                throw new CBORException("String is not a valid URI/IRI");
+                throw new CBORException("String is not a valid IRI Reference");
+            }
+            if (
+              isiri && (!URIUtility.IsValidIRI(
+                  obj.AsString(),
+                  URIUtility.ParseMode.IRIStrict) ||
+                !URIUtility.HasScheme(obj.AsString())))
+            {
+                throw new CBORException("String is not a valid IRI");
+            }
+            if (!URIUtility.IsValidIRI(
+                obj.AsString(),
+                URIUtility.ParseMode.URIStrict) ||
+              !URIUtility.HasScheme(obj.AsString()))
+            {
+                throw new CBORException("String is not a valid URI");
             }
             return obj;
         }
 
         public Uri FromCBORObject(CBORObject obj)
         {
-            if (obj.HasMostOuterTag(32))
+            if (obj.HasMostOuterTag(32) ||
+                   obj.HasMostOuterTag(266) ||
+                   obj.HasMostOuterTag(267))
             {
-                this.ValidateObject(obj);
+                ValidateObject(obj);
                 try
                 {
                     return new Uri(obj.AsString());
@@ -4250,7 +9299,17 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
                 throw new ArgumentNullException(nameof(uri));
             }
             string uriString = uri.ToString();
-            return CBORObject.FromObjectAndTag(uriString, (int)32);
+            var nonascii = false;
+            for (var i = 0; i < uriString.Length; ++i)
+            {
+                nonascii |= uriString[i] >= 0x80;
+            }
+            int tag = nonascii ? 266 : 32;
+            if (!URIUtility.HasScheme(uriString))
+            {
+                tag = 267;
+            }
+            return CBORObject.FromObjectAndTag(uriString, (int)tag);
         }
     }
 
@@ -4259,72 +9318,497 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
     #region JSONOptions
     /// <include file='../../docs.xml'
     /// path='docs/doc[@name="T:JSONOptions"]/*'/>
+    /// <summary>Includes options to control how CBOR objects are converted
+    /// to JSON.</summary>
     public sealed class JSONOptions
     {
-        /// <include file='../../docs.xml'
-        /// path='docs/doc[@name="M:JSONOptions.#ctor"]/*'/>
-        public JSONOptions() : this(false)
+        /// <summary>Specifies how JSON numbers are converted to CBOR when
+        /// decoding JSON.</summary>
+        public enum ConversionMode
+        {
+            /// <summary>JSON numbers are decoded to CBOR using the full precision
+            /// given in the JSON text. The number will be converted to a CBOR
+            /// object as follows: If the number's exponent is 0 (after shifting
+            /// the decimal point to the end of the number without changing its
+            /// value), using the rules given in the
+            /// <c>CBORObject.FromObject(EInteger)</c> method; otherwise, using the
+            /// rules given in the <c>CBORObject.FromObject(EDecimal)</c> method.
+            /// An exception in version 4.x involves negative zeros; if the
+            /// negative zero's exponent is 0, it's written as a CBOR
+            /// floating-point number; otherwise the negative zero is written as an
+            /// EDecimal.</summary>
+            Full,
+
+            /// <summary>JSON numbers are decoded to CBOR as their closest-rounded
+            /// approximation as 64-bit binary floating-point numbers. (In some
+            /// cases, numbers extremely close to zero may underflow to positive or
+            /// negative zero, and numbers of extremely large magnitude may
+            /// overflow to infinity.).</summary>
+            Double,
+
+            /// <summary>A JSON number is decoded to CBOR either as a CBOR integer
+            /// (major type 0 or 1) if the JSON number represents an integer at
+            /// least -(2^53)+1 and less than 2^53, or as their closest-rounded
+            /// approximation as 64-bit binary floating-point numbers otherwise.
+            /// For example, the JSON number 0.99999999999999999999999999999999999
+            /// is not an integer, so it's converted to its closest floating-point
+            /// approximation, namely 1.0. (In some cases, numbers extremely close
+            /// to zero may underflow to positive or negative zero, and numbers of
+            /// extremely large magnitude may overflow to infinity.).</summary>
+            IntOrFloat,
+
+            /// <summary>A JSON number is decoded to CBOR either as a CBOR integer
+            /// (major type 0 or 1) if the number's closest-rounded approximation
+            /// as a 64-bit binary floating-point number represents an integer at
+            /// least -(2^53)+1 and less than 2^53, or as that approximation
+            /// otherwise. For example, the JSON number
+            /// 0.99999999999999999999999999999999999 is the integer 1 when rounded
+            /// to its closest floating-point approximation (1.0), so it's
+            /// converted to the CBOR integer 1 (major type 0). (In some cases,
+            /// numbers extremely close to zero may underflow to zero, and numbers
+            /// of extremely large magnitude may overflow to infinity.).</summary>
+            IntOrFloatFromDouble,
+
+            /// <summary>JSON numbers are decoded to CBOR as their closest-rounded
+            /// approximation to an IEEE 854 decimal128 value, using the rules for
+            /// the EDecimal form of that approximation as given in the
+            /// <c>CBORObject.FromObject(EDecimal)</c> method.</summary>
+            Decimal128,
+        }
+
+        /// <summary>Initializes a new instance of the
+        /// <see cref='PeterO.Cbor.JSONOptions'/> class with default
+        /// options.</summary>
+        public JSONOptions() : this(String.Empty)
         {
         }
 
-        /// <include file='../../docs.xml'
-        /// path='docs/doc[@name="M:JSONOptions.#ctor(System.Boolean)"]/*'/>
+        /// <summary>Initializes a new instance of the
+        /// <see cref='PeterO.Cbor.JSONOptions'/> class with the given value
+        /// for the Base64Padding option.</summary>
+        /// <param name='base64Padding'>Whether padding is included when
+        /// writing data in base64url or traditional base64 format to
+        /// JSON.</param>
+        [Obsolete("Use the string constructor instead.")]
         public JSONOptions(bool base64Padding)
+          : this("base64Padding=" + (base64Padding ? "1" : "0"))
         {
-            this.Base64Padding = base64Padding;
         }
 
-        /// <include file='../../docs.xml'
-        /// path='docs/doc[@name="F:JSONOptions.Default"]/*'/>
+        /// <summary>Initializes a new instance of the
+        /// <see cref='PeterO.Cbor.JSONOptions'/> class with the given values
+        /// for the options.</summary>
+        /// <param name='base64Padding'>Whether padding is included when
+        /// writing data in base64url or traditional base64 format to
+        /// JSON.</param>
+        /// <param name='replaceSurrogates'>Whether surrogate code points not
+        /// part of a surrogate pair (which consists of two consecutive
+        /// <c>char</c> s forming one Unicode code point) are each replaced
+        /// with a replacement character (U+FFFD). The default is false; an
+        /// exception is thrown when such code points are encountered.</param>
+#pragma warning disable CS0618
+        [Obsolete("Use the string constructor instead.")]
+        public JSONOptions(bool base64Padding, bool replaceSurrogates)
+          : this("base64Padding=" + (base64Padding ? "1" : "0") +
+               ";replacesurrogates=" + (replaceSurrogates ? "1" : "0"))
+        {
+        }
+
+        /// <summary>Initializes a new instance of the
+        /// <see cref='PeterO.Cbor.JSONOptions'/> class.</summary>
+        /// <param name='paramString'>A string setting forth the options to
+        /// use. This is a semicolon-separated list of options, each of which
+        /// has a key and a value separated by an equal sign ("="). Whitespace
+        /// and line separators are not allowed to appear between the
+        /// semicolons or between the equal signs, nor may the string begin or
+        /// end with whitespace. The string can be empty, but cannot be null.
+        /// The following is an example of this parameter:
+        /// <c>base64padding=false;replacesurrogates=true</c>. The key can be
+        /// any one of the following where the letters can be any combination
+        /// of basic upper-case and/or basic lower-case letters:
+        /// <c>base64padding</c>, <c>replacesurrogates</c>,
+        /// <c>allowduplicatekeys</c>, <c>preservenegativezero</c>,
+        /// <c>numberconversion</c>. Other keys are ignored. (Keys are
+        /// compared using a basic case-insensitive comparison, in which two
+        /// strings are equal if they match after converting the basic
+        /// upper-case letters A to Z (U+0041 to U+005A) in both strings to
+        /// basic lower-case letters.) If two or more key/value pairs have
+        /// equal keys (in a basic case-insensitive comparison), the value
+        /// given for the last such key is used. The first four keys just given
+        /// can have a value of <c>1</c>, <c>true</c>, <c>yes</c>, or
+        /// <c>on</c> (where the letters can be any combination of basic
+        /// upper-case and/or basic lower-case letters), which means true, and
+        /// any other value meaning false. The last key,
+        /// <c>numberconversion</c>, can have a value of any name given in the
+        /// <c>JSONOptions.ConversionMode</c> enumeration (where the letters
+        /// can be any combination of basic upper-case and/or basic lower-case
+        /// letters), and any other value is unrecognized. (If the
+        /// <c>numberconversion</c> key is not given, its value is treated as
+        /// <c>full</c>. If that key is given, but has an unrecognized value,
+        /// an exception is thrown.) For example, <c>base64padding=Yes</c> and
+        /// <c>base64padding=1</c> both set the <c>Base64Padding</c> property
+        /// to true, and <c>numberconversion=double</c> sets the
+        /// <c>NumberConversion</c> property to <c>ConversionMode.Double</c>
+        /// .</param>
+        /// <exception cref='ArgumentNullException'>The parameter <paramref
+        /// name='paramString'/> is null. In the future, this class may allow
+        /// other keys to store other kinds of values, not just true or
+        /// false.</exception>
+        /// <exception cref='ArgumentException'>An unrecognized value for
+        /// <c>numberconversion</c> was given.</exception>
+        public JSONOptions(string paramString)
+        {
+            if (paramString == null)
+            {
+                throw new ArgumentNullException(nameof(paramString));
+            }
+            var parser = new OptionsParser(paramString);
+            this.PreserveNegativeZero = parser.GetBoolean(
+              "preservenegativezero",
+              true);
+            this.AllowDuplicateKeys = parser.GetBoolean(
+              "allowduplicatekeys",
+              false);
+            this.Base64Padding = parser.GetBoolean("base64padding", true);
+            this.ReplaceSurrogates = parser.GetBoolean(
+              "replacesurrogates",
+              false);
+            this.NumberConversion = ToNumberConversion(parser.GetLCString(
+              "numberconversion",
+              null));
+        }
+
+        /// <summary>Gets the values of this options object's properties in
+        /// text form.</summary>
+        /// <returns>A text string containing the values of this options
+        /// object's properties. The format of the string is the same as the
+        /// one described in the String constructor for this class.</returns>
+        public override string ToString()
+        {
+            return new StringBuilder()
+              .Append("base64padding=").Append(this.Base64Padding ? "true" : "false")
+              .Append(";replacesurrogates=")
+              .Append(this.ReplaceSurrogates ? "true" : "false")
+              .Append(this.PreserveNegativeZero ? "true" : "false")
+              .Append(";numberconversion=").Append(this.FromNumberConversion())
+              .Append(";allowduplicatekeys=")
+              .Append(this.AllowDuplicateKeys ? "true" : "false")
+              .ToString();
+        }
+
+        /// <summary>The default options for converting CBOR objects to
+        /// JSON.</summary>
         public static readonly JSONOptions Default = new JSONOptions();
 
-        /// <include file='../../docs.xml'
-        /// path='docs/doc[@name="P:JSONOptions.Base64Padding"]/*'/>
-        public bool Base64Padding { get; private set; }
+        /// <summary>Gets a value indicating whether the Base64Padding property
+        /// is true. This property has no effect; in previous versions, this
+        /// property meant that padding was written out when writing base64url
+        /// or traditional base64 to JSON.</summary>
+        /// <value>A value indicating whether the Base64Padding property is
+        /// true.</value>
+        [Obsolete("This property now has no effect. This library now includes " +
+    "\u0020necessary padding when writing traditional base64 to JSON and" +
+    "\u0020includes no padding when writing base64url to JSON, in " +
+    "\u0020accordance with the revision of the CBOR specification.")]
+        public bool Base64Padding
+        {
+            get;
+            private set;
+        }
+
+        private string FromNumberConversion()
+        {
+            ConversionMode kind = this.NumberConversion;
+            if (kind == ConversionMode.Full)
+            {
+                return "full";
+            }
+            if (kind == ConversionMode.Double)
+            {
+                return "double";
+            }
+            if (kind == ConversionMode.Decimal128)
+            {
+                return "decimal128";
+            }
+            if (kind == ConversionMode.IntOrFloat)
+            {
+                return "intorfloat";
+            }
+            return (kind == ConversionMode.IntOrFloatFromDouble) ?
+      "intorfloatfromdouble" : "full";
+        }
+
+        private static ConversionMode ToNumberConversion(string str)
+        {
+            if (str != null)
+            {
+                if (str.Equals("full", StringComparison.Ordinal))
+                {
+                    return ConversionMode.Full;
+                }
+                if (str.Equals("double", StringComparison.Ordinal))
+                {
+                    return ConversionMode.Double;
+                }
+                if (str.Equals("decimal128", StringComparison.Ordinal))
+                {
+                    return ConversionMode.Decimal128;
+                }
+                if (str.Equals("intorfloat", StringComparison.Ordinal))
+                {
+                    return ConversionMode.IntOrFloat;
+                }
+                if (str.Equals("intorfloatfromdouble", StringComparison.Ordinal))
+                {
+                    return ConversionMode.IntOrFloatFromDouble;
+                }
+            }
+            else
+            {
+                return ConversionMode.Full;
+            }
+            throw new ArgumentException("Unrecognized conversion mode");
+        }
+
+        /// <summary>Gets a value indicating whether the JSON decoder should
+        /// preserve the distinction between positive zero and negative zero
+        /// when the decoder decodes JSON to a floating-point number format
+        /// that makes this distinction. For a value of <c>false</c>, if the
+        /// result of parsing a JSON string would be a floating-point negative
+        /// zero, that result is a positive zero instead. (Note that this
+        /// property has no effect for conversion kind
+        /// <c>IntOrFloatFromDouble</c>, where floating-point zeros are not
+        /// possible.).</summary>
+        /// <value>A value indicating whether to preserve the distinction
+        /// between positive zero and negative zero when decoding JSON. The
+        /// default is true.</value>
+        public bool PreserveNegativeZero
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>Gets a value indicating how JSON numbers are decoded to
+        /// CBOR.</summary>
+        /// <value>A value indicating how JSON numbers are decoded to CBOR. The
+        /// default is <c>ConversionMode.Full</c>.</value>
+        public ConversionMode NumberConversion
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>Gets a value indicating whether to allow duplicate keys
+        /// when reading JSON. Used only when decoding JSON. If this property
+        /// is <c>true</c> and a JSON object has two or more values with the
+        /// same key, the last value of that key set forth in the JSON object
+        /// is taken.</summary>
+        /// <value>A value indicating whether to allow duplicate keys when
+        /// reading JSON. The default is false.</value>
+        public bool AllowDuplicateKeys
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>Gets a value indicating whether surrogate code points not
+        /// part of a surrogate pair (which consists of two consecutive
+        /// <c>char</c> s forming one Unicode code point) are each replaced
+        /// with a replacement character (U+FFFD). If false, an exception is
+        /// thrown when such code points are encountered.</summary>
+        /// <value>True, if surrogate code points not part of a surrogate pair
+        /// are each replaced with a replacement character, or false if an
+        /// exception is thrown when such code points are encountered. The
+        /// default is false.</value>
+        public bool ReplaceSurrogates
+        {
+            get;
+            private set;
+        }
     }
     #endregion
 
     #region PODOptions
     /// <include file='../../docs.xml'
     /// path='docs/doc[@name="T:PODOptions"]/*'/>
+    /// <summary>Options for converting "plain old data" objects (better
+    /// known as POCOs in .NET or POJOs in Java) to CBOR objects.</summary>
     public class PODOptions
     {
-        /// <include file='../../docs.xml'
-        /// path='docs/doc[@name="M:PODOptions.#ctor"]/*'/>
+        /// <summary>Initializes a new instance of the
+        /// <see cref='PeterO.Cbor.PODOptions'/> class.</summary>
         public PODOptions() : this(true, true)
         {
         }
 
-        /// <include file='../../docs.xml'
-        /// path='docs/doc[@name="M:PODOptions.#ctor(System.Boolean,System.Boolean)"]/*'/>
+        /// <summary>Initializes a new instance of the
+        /// <see cref='PeterO.Cbor.PODOptions'/> class.</summary>
+        /// <param name='removeIsPrefix'>The parameter is not used.</param>
+        /// <param name='useCamelCase'>The value of the "UseCamelCase"
+        /// property.</param>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage(
+          "Microsoft.Usage",
+          "CA1801",
+          Justification = "'removeIsPrefix' is present for backward compatibility.")]
         public PODOptions(bool removeIsPrefix, bool useCamelCase)
         {
-#pragma warning disable 618
-            this.RemoveIsPrefix = removeIsPrefix;
-#pragma warning restore 618
             this.UseCamelCase = useCamelCase;
         }
 
-        /// <include file='../../docs.xml'
-        /// path='docs/doc[@name="F:PODOptions.Default"]/*'/>
+        /// <summary>Initializes a new instance of the
+        /// <see cref='PeterO.Cbor.PODOptions'/> class.</summary>
+        /// <param name='paramString'>A string setting forth the options to
+        /// use. This is a semicolon-separated list of options, each of which
+        /// has a key and a value separated by an equal sign ("="). Whitespace
+        /// and line separators are not allowed to appear between the
+        /// semicolons or between the equal signs, nor may the string begin or
+        /// end with whitespace. The string can be empty, but cannot be null.
+        /// The following is an example of this parameter:
+        /// <c>usecamelcase=true</c>. The key can be any one of the following
+        /// where the letters can be any combination of basic upper-case and/or
+        /// basic lower-case letters: <c>usecamelcase</c>. Other keys are
+        /// ignored. (Keys are compared using a basic case-insensitive
+        /// comparison, in which two strings are equal if they match after
+        /// converting the basic upper-case letters A to Z (U+0041 to U+005A)
+        /// in both strings to basic lower-case letters.) If two or more
+        /// key/value pairs have equal keys (in a basic case-insensitive
+        /// comparison), the value given for the last such key is used. The key
+        /// just given can have a value of <c>1</c>, <c>true</c>, <c>yes</c>
+        /// , or <c>on</c> (where the letters can be any combination of basic
+        /// upper-case and/or basic lower-case letters), which means true, and
+        /// any other value meaning false. For example, <c>usecamelcase=Yes</c>
+        /// and <c>usecamelcase=1</c> both set the <c>UseCamelCase</c> property
+        /// to true. In the future, this class may allow other keys to store
+        /// other kinds of values, not just true or false.</param>
+        /// <exception cref='ArgumentNullException'>The parameter <paramref
+        /// name='paramString'/> is null.</exception>
+        public PODOptions(string paramString)
+        {
+            if (paramString == null)
+            {
+                throw new ArgumentNullException(nameof(paramString));
+            }
+            var parser = new OptionsParser(paramString);
+            this.UseCamelCase = parser.GetBoolean("usecamelcase", true);
+        }
+
+        /// <summary>Gets the values of this options object's properties in
+        /// text form.</summary>
+        /// <returns>A text string containing the values of this options
+        /// object's properties. The format of the string is the same as the
+        /// one described in the String constructor for this class.</returns>
+        public override string ToString()
+        {
+            return new System.Text.StringBuilder()
+              .Append("usecamelcase=").Append(this.UseCamelCase ? "true" :
+      "false")
+              .ToString();
+        }
+
+        /// <summary>The default settings for "plain old data"
+        /// options.</summary>
         public static readonly PODOptions Default = new PODOptions();
 
-        /// <include file='../../docs.xml'
-        /// path='docs/doc[@name="P:PODOptions.RemoveIsPrefix"]/*'/>
-        [Obsolete("Property name conversion may change, making this property obsolete.")]
-        public bool RemoveIsPrefix { get; private set; }
-
-        /// <include file='../../docs.xml'
-        /// path='docs/doc[@name="P:PODOptions.UseCamelCase"]/*'/>
-        public bool UseCamelCase { get; private set; }
+        /// <summary>
+        /// <para>Gets a value indicating whether property, field, and method
+        /// names are converted to camel case before they are used as keys.
+        /// This option changes the behavior of key name serialization as
+        /// follows. If "useCamelCase" is <c>false</c> :</para>
+        /// <list>
+        /// <item>In the .NET version, all key names are capitalized, meaning
+        /// the first letter in the name is converted to a basic upper-case
+        /// letter if it's a basic lower-case letter ("a" to "z"). (For
+        /// example, "Name" and "IsName" both remain unchanged.)</item>
+        /// <item>In the Java version, all field names are capitalized, and for
+        /// each eligible method name, the word "get" or "set" is removed from
+        /// the name if the name starts with that word, then the name is
+        /// capitalized. (For example, "getName" and "setName" both become
+        /// "Name", and "isName" becomes "IsName".)</item></list>
+        /// <para>If "useCamelCase" is <c>true</c> :</para>
+        /// <list>
+        /// <item>In the .NET version, for each eligible property or field
+        /// name, the word "Is" is removed from the name if the name starts
+        /// with that word, then the name is converted to camel case, meaning
+        /// the first letter in the name is converted to a basic lower-case
+        /// letter if it's a basic upper-case letter ("A" to "Z"). (For
+        /// example, "Name" and "IsName" both become "name".)</item>
+        /// <item>In the Java version: For each eligible method name, the word
+        /// "get", "set", or "is" is removed from the name if the name starts
+        /// with that word, then the name is converted to camel case. (For
+        /// example, "getName", "setName", and "isName" all become "name".) For
+        /// each eligible field name, the word "is" is removed from the name if
+        /// the name starts with that word, then the name is converted to camel
+        /// case. (For example, "name" and "isName" both become
+        /// "name".)</item></list>
+        /// <para>In the description above, a name "starts with" a word if that
+        /// word begins the name and is followed by a character other than a
+        /// basic digit or basic lower-case letter, that is, other than "a" to
+        /// "z" or "0" to "9".</para></summary>
+        /// <value><c>true</c> If the names are converted to camel case;
+        /// otherwise, <c>false</c>. This property is <c>true</c> by
+        /// default.</value>
+        public bool UseCamelCase
+        {
+            get;
+            private set;
+        }
     }
     #endregion
 
     #region PropertyMap
     internal static class PropertyMap
     {
-        // TODO: Remove in next major version
-        internal const bool DateTimeCompatHack = true;
+        private sealed class ReadOnlyWrapper<T> : ICollection<T>
+        {
+            private readonly ICollection<T> o;
+            public ReadOnlyWrapper(ICollection<T> o)
+            {
+                this.o = o;
+            }
+            public void Add(T v)
+            {
+                throw new NotSupportedException();
+            }
+            public void Clear()
+            {
+                throw new NotSupportedException();
+            }
+            public void CopyTo(T[] a, int off)
+            {
+                this.o.CopyTo(a, off);
+            }
+            public bool Remove(T v)
+            {
+                throw new NotSupportedException();
+            }
+            public bool Contains(T v)
+            {
+                return this.o.Contains(v);
+            }
+            public int Count
+            {
+                get
+                {
+                    return this.o.Count;
+                }
+            }
+            public bool IsReadOnly
+            {
+                get
+                {
+                    return true;
+                }
+            }
+            public IEnumerator<T> GetEnumerator()
+            {
+                return this.o.GetEnumerator();
+            }
+            IEnumerator IEnumerable.GetEnumerator()
+            {
+                return ((IEnumerable)this.o).GetEnumerator();
+            }
+        }
 
         private sealed class PropertyData
         {
@@ -4343,32 +9827,113 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
                 }
             }
 
-            private PropertyInfo prop;
+            private MemberInfo prop;
 
-            public string GetAdjustedName(bool removeIsPrefix, bool useCamelCase)
+            public Type PropertyType
+            {
+                get
+                {
+                    var pr = this.prop as PropertyInfo;
+                    if (pr != null)
+                    {
+                        return pr.PropertyType;
+                    }
+                    var fi = this.prop as FieldInfo;
+                    return (fi != null) ? fi.FieldType : null;
+                }
+            }
+
+            public object GetValue(object obj)
+            {
+                var pr = this.prop as PropertyInfo;
+                if (pr != null)
+                {
+                    return pr.GetValue(obj, null);
+                }
+                var fi = this.prop as FieldInfo;
+                return (fi != null) ? fi.GetValue(obj) : null;
+            }
+
+            public void SetValue(object obj, object value)
+            {
+                var pr = this.prop as PropertyInfo;
+                if (pr != null)
+                {
+                    pr.SetValue(obj, value, null);
+                }
+                var fi = this.prop as FieldInfo;
+                if (fi != null)
+                {
+                    fi.SetValue(obj, value);
+                }
+            }
+
+#if NET20 || NET40
+      public static bool HasUsableGetter(PropertyInfo pi) {
+        return pi != null && pi.CanRead && !pi.GetGetMethod().IsStatic &&
+          pi.GetGetMethod().IsPublic;
+      }
+
+      public static bool HasUsableSetter(PropertyInfo pi) {
+        return pi != null && pi.CanWrite && !pi.GetSetMethod().IsStatic &&
+          pi.GetSetMethod().IsPublic;
+      }
+#else
+            public static bool HasUsableGetter(PropertyInfo pi)
+            {
+                return pi != null && pi.CanRead && !pi.GetMethod.IsStatic &&
+                  pi.GetMethod.IsPublic;
+            }
+
+            public static bool HasUsableSetter(PropertyInfo pi)
+            {
+                return pi != null && pi.CanWrite && !pi.SetMethod.IsStatic &&
+                  pi.SetMethod.IsPublic;
+            }
+#endif
+            public bool HasUsableGetter()
+            {
+                var pr = this.prop as PropertyInfo;
+                if (pr != null)
+                {
+                    return HasUsableGetter(pr);
+                }
+                var fi = this.prop as FieldInfo;
+                return fi != null && fi.IsPublic && !fi.IsStatic &&
+                  !fi.IsInitOnly && !fi.IsLiteral;
+            }
+
+            public bool HasUsableSetter()
+            {
+                var pr = this.prop as PropertyInfo;
+                if (pr != null)
+                {
+                    return HasUsableSetter(pr);
+                }
+                var fi = this.prop as FieldInfo;
+                return fi != null && fi.IsPublic && !fi.IsStatic &&
+                  !fi.IsInitOnly && !fi.IsLiteral;
+            }
+
+            public string GetAdjustedName(bool useCamelCase)
             {
                 string thisName = this.Name;
-                // Convert 'IsXYZ' to 'XYZ'
-                if (removeIsPrefix && thisName.Length >= 3 && thisName[0] == 'I' &&
-                  thisName[1] == 's' && thisName[2] >= 'A' && thisName[2] <= 'Z')
+                if (useCamelCase)
                 {
-                    // NOTE (Jun. 17, 2017, Peter O.): Was "== 'Z'", which was a
-                    // bug reported
-                    // by GitHub user "richardschneider". See peteroupc/CBOR#17.
-                    thisName = thisName.Substring(2);
+                    if (CBORUtilities.NameStartsWithWord(thisName, "Is"))
+                    {
+                        thisName = thisName.Substring(2);
+                    }
+                    thisName = CBORUtilities.FirstCharLower(thisName);
                 }
-                // Convert to camel case
-                if (useCamelCase && thisName[0] >= 'A' && thisName[0] <= 'Z')
+                else
                 {
-                    StringBuilder sb = new System.Text.StringBuilder();
-                    sb.Append((char)(thisName[0] + 0x20));
-                    sb.Append(thisName.Substring(1));
-                    thisName = sb.ToString();
+                    thisName = CBORUtilities.FirstCharUpper(thisName);
                 }
                 return thisName;
             }
 
-            public PropertyInfo Prop
+            public MemberInfo Prop
             {
                 get
                 {
@@ -4383,102 +9948,218 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
         }
 
 #if NET40 || NET20
+    private static bool IsGenericType(Type type) {
+      return type.IsGenericType;
+    }
+
+    private static bool IsClassOrValueType(Type type) {
+      return type.IsClass || type.IsValueType;
+    }
+
+    private static Type FirstGenericArgument(Type type) {
+      return type.GetGenericArguments()[0];
+    }
+
     private static IEnumerable<PropertyInfo> GetTypeProperties(Type t) {
       return t.GetProperties(BindingFlags.Public |
-        BindingFlags.Instance);
+          BindingFlags.Instance);
+    }
+
+    private static IEnumerable<FieldInfo> GetTypeFields(Type t) {
+      return t.GetFields(BindingFlags.Public | BindingFlags.Instance);
+    }
+
+    private static IEnumerable<Type> GetTypeInterfaces(Type t) {
+      return t.GetInterfaces();
+    }
+
+    private static bool IsAssignableFrom(Type superType, Type subType) {
+      return superType.IsAssignableFrom(subType);
     }
 
     private static MethodInfo GetTypeMethod(
-  Type t,
-  string name,
-  Type[] parameters) {
+      Type t,
+      string name,
+      Type[] parameters) {
       return t.GetMethod(name, parameters);
     }
 
     private static bool HasCustomAttribute(
-  Type t,
-  string name) {
-#if NET40 || NET20
+      Type t,
+      string name) {
       foreach (var attr in t.GetCustomAttributes(false)) {
-#else
-    foreach (var attr in t.CustomAttributes) {
-#endif
-        if (attr.GetType().FullName.Equals(name)) {
+        if (attr.GetType().FullName.Equals(name,
+            StringComparison.Ordinal)) {
           return true;
         }
       }
       return false;
     }
 #else
+        private static bool IsGenericType(Type type)
+        {
+            return type.GetTypeInfo().IsGenericType;
+        }
+
+        private static bool IsClassOrValueType(Type type)
+        {
+            return type.GetTypeInfo().IsClass || type.GetTypeInfo().IsValueType;
+        }
+
+        private static Type FirstGenericArgument(Type type)
+        {
+            return type.GenericTypeArguments[0];
+        }
+
+        private static bool IsAssignableFrom(Type superType, Type subType)
+        {
+            return superType.GetTypeInfo().IsAssignableFrom(subType.GetTypeInfo());
+        }
+
         private static IEnumerable<PropertyInfo> GetTypeProperties(Type t)
         {
             return t.GetRuntimeProperties();
         }
 
+        private static IEnumerable<FieldInfo> GetTypeFields(Type t)
+        {
+            return t.GetRuntimeFields();
+        }
+
+        private static IEnumerable<Type> GetTypeInterfaces(Type t)
+        {
+            return t.GetTypeInfo().ImplementedInterfaces;
+        }
+
         private static MethodInfo GetTypeMethod(
-      Type t,
-      string name,
-      Type[] parameters)
+          Type t,
+          string name,
+          Type[] parameters)
         {
             return t.GetRuntimeMethod(name, parameters);
         }
 
         private static bool HasCustomAttribute(
-  Type t,
-  string name)
+          Type t,
+          string name)
         {
-            foreach (Attribute attr in t.GetTypeInfo().GetCustomAttributes())
+            foreach (var attr in t.GetTypeInfo().GetCustomAttributes())
             {
-                if (attr.GetType().FullName.Equals(name))
+                if (attr.GetType().FullName.Equals(name, StringComparison.Ordinal))
                 {
                     return true;
                 }
             }
             return false;
         }
-
 #endif
 
         private static readonly IDictionary<Type, IList<PropertyData>>
-          ValuePropertyLists = new Dictionary<Type, IList<PropertyData>>();
+        ValuePropertyLists = new Dictionary<Type, IList<PropertyData>>();
+
+        private static string RemoveIsPrefix(string pn)
+        {
+            return CBORUtilities.NameStartsWithWord(pn, "Is") ? pn.Substring(2) :
+              pn;
+        }
 
         private static IList<PropertyData> GetPropertyList(Type t)
         {
             lock (ValuePropertyLists)
             {
-                if (
-         ValuePropertyLists.TryGetValue(
-         t,
-         out IList<PropertyData> ret))
+                IList<PropertyData> ret = new List<PropertyData>();
+                if (ValuePropertyLists.ContainsKey(t))
                 {
-                    return ret;
+                    return ValuePropertyLists[t];
                 }
-                ret = new List<PropertyData>();
                 bool anonymous = HasCustomAttribute(
-                  t,
-                  "System.Runtime.CompilerServices.CompilerGeneratedAttribute");
+                    t,
+                    "System.Runtime.CompilerServices.CompilerGeneratedAttribute") ||
+                  HasCustomAttribute(
+                    t,
+                    "Microsoft.FSharp.Core.CompilationMappingAttribute");
+                var names = new SortedDictionary<string, int>();
                 foreach (PropertyInfo pi in GetTypeProperties(t))
                 {
-                    if (pi.CanRead && (pi.CanWrite || anonymous) &&
-                    pi.GetIndexParameters().Length == 0)
+                    var pn = RemoveIsPrefix(pi.Name);
+                    if (names.ContainsKey(pn))
                     {
-                        PropertyData pd = new PropertyMap.PropertyData()
+                        ++names[pn];
+                    }
+                    else
+                    {
+                        names[pn] = 1;
+                    }
+                }
+                foreach (FieldInfo pi in GetTypeFields(t))
+                {
+                    var pn = RemoveIsPrefix(pi.Name);
+                    if (names.ContainsKey(pn))
+                    {
+                        ++names[pn];
+                    }
+                    else
+                    {
+                        names[pn] = 1;
+                    }
+                }
+                foreach (FieldInfo fi in GetTypeFields(t))
+                {
+                    PropertyData pd = new PropertyMap.PropertyData()
+                    {
+                        Name = fi.Name,
+                        Prop = fi,
+                    };
+                    if (pd.HasUsableGetter() || pd.HasUsableSetter())
+                    {
+                        var pn = RemoveIsPrefix(pd.Name);
+                        // Ignore ambiguous properties
+                        if (names.ContainsKey(pn) && names[pn] > 1)
                         {
-                            Name = pi.Name,
-                            Prop = pi
-                        };
+                            continue;
+                        }
                         ret.Add(pd);
                     }
                 }
-                ValuePropertyLists.Add(t, ret);
+                foreach (PropertyInfo pi in GetTypeProperties(t))
+                {
+                    if (pi.CanRead && (pi.CanWrite || anonymous) &&
+                      pi.GetIndexParameters().Length == 0)
+                    {
+                        if (PropertyData.HasUsableGetter(pi) ||
+                          PropertyData.HasUsableSetter(pi))
+                        {
+                            var pn = RemoveIsPrefix(pi.Name);
+                            // Ignore ambiguous properties
+                            if (names.ContainsKey(pn) && names[pn] > 1)
+                            {
+                                continue;
+                            }
+                            PropertyData pd = new PropertyMap.PropertyData()
+                            {
+                                Name = pi.Name,
+                                Prop = pi,
+                            };
+                            ret.Add(pd);
+                        }
+                    }
+                }
+                ValuePropertyLists.Add(
+                  t,
+                  ret);
                 return ret;
             }
+        }
+
+        public static IList<CBORObject> ListFromArray(CBORObject[] array)
+        {
+            return new List<CBORObject>(array);
         }
 
         public static bool ExceedsKnownLength(Stream inStream, long size)
         {
             return (inStream is MemoryStream) && (size > (inStream.Length -
-              inStream.Position));
+                  inStream.Position));
         }
 
         public static void SkipStreamToEnd(Stream inStream)
@@ -4489,53 +10170,9 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
             }
         }
 
-        // Inappropriate to mark these obsolete; they're
-        // just non-publicly-visible methods to convert to
-        // and from legacy arbitrary-precision classes
-#pragma warning disable 618
-        public static BigInteger ToLegacy(EInteger ei)
+        public static bool FirstElement(int[] dimensions)
         {
-            return BigInteger.ToLegacy(ei);
-        }
-
-        public static ExtendedDecimal ToLegacy(EDecimal ed)
-        {
-            return ExtendedDecimal.ToLegacy(ed);
-        }
-
-        public static ExtendedFloat ToLegacy(EFloat ef)
-        {
-            return ExtendedFloat.ToLegacy(ef);
-        }
-
-        public static ExtendedRational ToLegacy(ERational er)
-        {
-            return ExtendedRational.ToLegacy(er);
-        }
-
-        public static EInteger FromLegacy(BigInteger ei)
-        {
-            return BigInteger.FromLegacy(ei);
-        }
-
-        public static EDecimal FromLegacy(ExtendedDecimal ed)
-        {
-            return ExtendedDecimal.FromLegacy(ed);
-        }
-
-        public static EFloat FromLegacy(ExtendedFloat ef)
-        {
-            return ExtendedFloat.FromLegacy(ef);
-        }
-
-        public static ERational FromLegacy(ExtendedRational er)
-        {
-            return ExtendedRational.FromLegacy(er);
-        }
-#pragma warning restore 618
-        public static bool FirstElement(int[] index, int[] dimensions)
-        {
-            foreach (int d in dimensions)
+            foreach (var d in dimensions)
             {
                 if (d == 0)
                 {
@@ -4547,7 +10184,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
 
         public static bool NextElement(int[] index, int[] dimensions)
         {
-            for (int i = dimensions.Length - 1; i >= 0; --i)
+            for (var i = dimensions.Length - 1; i >= 0; --i)
             {
                 if (dimensions[i] > 0)
                 {
@@ -4568,7 +10205,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
         public static CBORObject BuildCBORArray(int[] dimensions)
         {
             int zeroPos = dimensions.Length;
-            for (int i = 0; i < dimensions.Length; ++i)
+            for (var i = 0; i < dimensions.Length; ++i)
             {
                 if (dimensions[i] == 0)
                 {
@@ -4583,13 +10220,13 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
             {
                 return CBORObject.NewArray();
             }
-            CBORObject[] stack = new CBORObject[zeroPos];
-            int[] index = new int[zeroPos];
-            int stackpos = 0;
+            var stack = new CBORObject[zeroPos];
+            var index = new int[zeroPos];
+            var stackpos = 0;
             CBORObject ret = CBORObject.NewArray();
             stack[0] = ret;
             index[0] = 0;
-            for (int i = 0; i < dimensions[0]; ++i)
+            for (var i = 0; i < dimensions[0]; ++i)
             {
                 ret.Add(CBORObject.NewArray());
             }
@@ -4604,7 +10241,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
                     {
                         stack[stackpos] = subobj;
                         index[stackpos] = 0;
-                        for (int i = 0; i < dimensions[stackpos]; ++i)
+                        for (var i = 0; i < dimensions[stackpos]; ++i)
                         {
                             subobj.Add(CBORObject.NewArray());
                         }
@@ -4625,10 +10262,12 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
         }
 
         public static CBORObject FromArray(
-      Object arrObj,
-      PODOptions options)
+          Object arrObj,
+          PODOptions options,
+          CBORTypeMapper mapper,
+          int depth)
         {
-            Array arr = (Array)arrObj;
+            var arr = (Array)arrObj;
             int rank = arr.Rank;
             if (rank == 0)
             {
@@ -4640,22 +10279,24 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
                 // Most common case: the array is one-dimensional
                 obj = CBORObject.NewArray();
                 int len = arr.GetLength(0);
-                for (int i = 0; i < len; ++i)
+                for (var i = 0; i < len; ++i)
                 {
                     obj.Add(
-                  CBORObject.FromObject(
-                  arr.GetValue(i),
-                  options));
+                      CBORObject.FromObject(
+                        arr.GetValue(i),
+                        options,
+                        mapper,
+                        depth + 1));
                 }
                 return obj;
             }
-            int[] index = new int[rank];
-            int[] dimensions = new int[rank];
-            for (int i = 0; i < rank; ++i)
+            var index = new int[rank];
+            var dimensions = new int[rank];
+            for (var i = 0; i < rank; ++i)
             {
                 dimensions[i] = arr.GetLength(i);
             }
-            if (!FirstElement(index, dimensions))
+            if (!FirstElement(dimensions))
             {
                 return obj;
             }
@@ -4663,8 +10304,10 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
             do
             {
                 CBORObject o = CBORObject.FromObject(
-                 arr.GetValue(index),
-                 options);
+                    arr.GetValue(index),
+                    options,
+                    mapper,
+                    depth + 1);
                 SetCBORObject(obj, index, o);
             } while (NextElement(index, dimensions));
             return obj;
@@ -4673,7 +10316,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
         private static CBORObject GetCBORObject(CBORObject cbor, int[] index)
         {
             CBORObject ret = cbor;
-            foreach (int i in index)
+            foreach (var i in index)
             {
                 ret = ret[i];
             }
@@ -4681,12 +10324,12 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
         }
 
         private static void SetCBORObject(
-      CBORObject cbor,
-      int[] index,
-      CBORObject obj)
+          CBORObject cbor,
+          int[] index,
+          CBORObject obj)
         {
             CBORObject ret = cbor;
-            for (int i = 0; i < index.Length - 1; ++i)
+            for (var i = 0; i < index.Length - 1; ++i)
             {
                 ret = ret[index[i]];
             }
@@ -4697,54 +10340,179 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
                     ret.Add(CBORObject.Null);
                 }
             }
-            // TODO: Make Set(object, object) work with arrays
-            // in next major version
             ret[ilen] = obj;
+        }
+
+        public static Array FillArray(
+          Array arr,
+          Type elementType,
+          CBORObject cbor,
+          CBORTypeMapper mapper,
+          PODOptions options,
+          int depth)
+        {
+            int rank = arr.Rank;
+            if (rank == 0)
+            {
+                return arr;
+            }
+            if (rank == 1)
+            {
+                int len = arr.GetLength(0);
+                for (var i = 0; i < len; ++i)
+                {
+                    object item = cbor[i].ToObject(
+                        elementType,
+                        mapper,
+                        options,
+                        depth + 1);
+                    arr.SetValue(
+                      item,
+                      i);
+                }
+                return arr;
+            }
+            var index = new int[rank];
+            var dimensions = new int[rank];
+            for (var i = 0; i < rank; ++i)
+            {
+                dimensions[i] = arr.GetLength(i);
+            }
+            if (!FirstElement(dimensions))
+            {
+                return arr;
+            }
+            do
+            {
+                object item = GetCBORObject(
+                    cbor,
+                    index).ToObject(
+                    elementType,
+                    mapper,
+                    options,
+                    depth + 1);
+                arr.SetValue(
+                  item,
+                  index);
+            } while (NextElement(index, dimensions));
+            return arr;
+        }
+
+        public static int[] GetDimensions(CBORObject obj)
+        {
+            if (obj.Type != CBORType.Array)
+            {
+                throw new CBORException();
+            }
+            // Common cases
+            if (obj.Count == 0)
+            {
+                return new int[] { 0 };
+            }
+            if (obj[0].Type != CBORType.Array)
+            {
+                return new int[] { obj.Count };
+            }
+            // Complex cases
+            var list = new List<int>();
+            list.Add(obj.Count);
+            while (obj.Type == CBORType.Array &&
+              obj.Count > 0 && obj[0].Type == CBORType.Array)
+            {
+                list.Add(obj[0].Count);
+                obj = obj[0];
+            }
+            return list.ToArray();
+        }
+
+        public static object ObjectToEnum(CBORObject obj, Type enumType)
+        {
+            Type utype = Enum.GetUnderlyingType(enumType);
+            object ret = null;
+            if (obj.IsNumber && obj.AsNumber().IsInteger())
+            {
+                ret = Enum.ToObject(enumType, TypeToIntegerObject(obj, utype));
+                if (!Enum.IsDefined(enumType, ret))
+                {
+                    string estr = ret.ToString();
+                    if (estr == null || estr.Length == 0 || estr[0] == '-' ||
+          (estr[0] >= '0' && estr[0] <= '9'))
+                    {
+                        throw new CBORException("Unrecognized enum value: " +
+                          obj.ToString());
+                    }
+                }
+                return ret;
+            }
+            else if (obj.Type == CBORType.TextString)
+            {
+                var nameString = obj.AsString();
+                foreach (var name in Enum.GetNames(enumType))
+                {
+                    if (nameString.Equals(name, StringComparison.Ordinal))
+                    {
+                        return Enum.Parse(enumType, name);
+                    }
+                }
+                throw new CBORException("Not found: " + obj.ToString());
+            }
+            else
+            {
+                throw new CBORException("Unrecognized enum value: " +
+                  obj.ToString());
+            }
         }
 
         public static object EnumToObject(Enum value)
         {
+            return value.ToString();
+        }
+
+        public static object EnumToObjectAsInteger(Enum value)
+        {
             Type t = Enum.GetUnderlyingType(value.GetType());
             if (t.Equals(typeof(ulong)))
             {
-                byte[] data = new byte[13];
-                ulong uvalue = Convert.ToUInt64(value);
-                data[0] = (byte)(uvalue & 0xff);
-                data[1] = (byte)((uvalue >> 8) & 0xff);
-                data[2] = (byte)((uvalue >> 16) & 0xff);
-                data[3] = (byte)((uvalue >> 24) & 0xff);
-                data[4] = (byte)((uvalue >> 32) & 0xff);
-                data[5] = (byte)((uvalue >> 40) & 0xff);
-                data[6] = (byte)((uvalue >> 48) & 0xff);
-                data[7] = (byte)((uvalue >> 56) & 0xff);
-                data[8] = (byte)0;
-                return EInteger.FromBytes(data, true);
+                ulong uvalue = Convert.ToUInt64(value,
+                    CultureInfo.InvariantCulture);
+                return EInteger.FromUInt64(uvalue);
             }
-            return t.Equals(typeof(long)) ? Convert.ToInt64(value) :
-            (t.Equals(typeof(uint)) ? Convert.ToInt64(value) :
-            Convert.ToInt32(value));
+            return t.Equals(typeof(long)) ? Convert.ToInt64(value,
+                CultureInfo.InvariantCulture) : (t.Equals(typeof(uint)) ?
+                Convert.ToInt64(value,
+                  CultureInfo.InvariantCulture) :
+                Convert.ToInt32(value, CultureInfo.InvariantCulture));
+        }
+
+        public static ICollection<KeyValuePair<TKey, TValue>>
+        GetEntries<TKey, TValue>(
+          IDictionary<TKey, TValue> dict)
+        {
+            var c = (ICollection<KeyValuePair<TKey, TValue>>)dict;
+            return new ReadOnlyWrapper<KeyValuePair<TKey, TValue>>(c);
         }
 
         public static object FindOneArgumentMethod(
-      object obj,
-      string name,
-      Type argtype)
+          object obj,
+          string name,
+          Type argtype)
         {
             return GetTypeMethod(obj.GetType(), name, new[] { argtype });
         }
 
         public static object InvokeOneArgumentMethod(
-      object methodInfo,
-      object obj,
-      object argument)
+          object methodInfo,
+          object obj,
+          object argument)
         {
-            return ((MethodInfo)methodInfo).Invoke(obj, new[] { argument });
+            var mi = (MethodInfo)methodInfo;
+            return mi.Invoke(obj, new[] { argument });
         }
 
         public static byte[] UUIDToBytes(Guid guid)
         {
-            byte[] bytes2 = new byte[16];
-            byte[] bytes = guid.ToByteArray();
+            var bytes2 = new byte[16];
+            var bytes = guid.ToByteArray();
             Array.Copy(bytes, bytes2, 16);
             // Swap the bytes to conform with the UUID RFC
             bytes2[0] = bytes[3];
@@ -4761,30 +10529,94 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
         private static bool StartsWith(string str, string pfx)
         {
             return str != null && str.Length >= pfx.Length &&
-              str.Substring(0, pfx.Length).Equals(pfx);
+              str.Substring(0, pfx.Length).Equals(pfx, StringComparison.Ordinal);
         }
 
-        public static object TypeToObject(CBORObject objThis, Type t)
+        // TODO: Replace* Legacy with AsNumber methods
+        // in next major version
+        private static object TypeToIntegerObject(CBORObject objThis, Type t)
         {
-            if (t.Equals(typeof(DateTime)))
-            {
-                return new CBORTag0().FromCBORObject(objThis);
-            }
-            if (t.Equals(typeof(Guid)))
-            {
-                return new CBORTag37().FromCBORObject(objThis);
-            }
             if (t.Equals(typeof(int)))
             {
                 return objThis.AsInt32();
             }
+            if (t.Equals(typeof(short)))
+            {
+                return objThis.AsNumber().ToInt16Checked();
+            }
+            if (t.Equals(typeof(ushort)))
+            {
+                return objThis.AsUInt16Legacy();
+            }
+            if (t.Equals(typeof(byte)))
+            {
+                return objThis.AsByteLegacy();
+            }
+            if (t.Equals(typeof(sbyte)))
+            {
+                return objThis.AsSByteLegacy();
+            }
             if (t.Equals(typeof(long)))
             {
-                return objThis.AsInt64();
+                return objThis.AsNumber().ToInt64Checked();
+            }
+            if (t.Equals(typeof(uint)))
+            {
+                return objThis.AsUInt32Legacy();
+            }
+            if (t.Equals(typeof(ulong)))
+            {
+                return objThis.AsUInt64Legacy();
+            }
+            throw new CBORException("Type not supported");
+        }
+
+        public static object TypeToObject(
+          CBORObject objThis,
+          Type t,
+          CBORTypeMapper mapper,
+          PODOptions options,
+          int depth)
+        {
+            if (t.Equals(typeof(int)))
+            {
+                return objThis.AsInt32();
+            }
+            if (t.Equals(typeof(short)))
+            {
+                return objThis.AsNumber().ToInt16Checked();
+            }
+            if (t.Equals(typeof(ushort)))
+            {
+                return objThis.AsUInt16Legacy();
+            }
+            if (t.Equals(typeof(byte)))
+            {
+                return objThis.AsByteLegacy();
+            }
+            if (t.Equals(typeof(sbyte)))
+            {
+                return objThis.AsSByteLegacy();
+            }
+            if (t.Equals(typeof(long)))
+            {
+                return objThis.AsNumber().ToInt64Checked();
+            }
+            if (t.Equals(typeof(uint)))
+            {
+                return objThis.AsUInt32Legacy();
+            }
+            if (t.Equals(typeof(ulong)))
+            {
+                return objThis.AsUInt64Legacy();
             }
             if (t.Equals(typeof(double)))
             {
                 return objThis.AsDouble();
+            }
+            if (t.Equals(typeof(decimal)))
+            {
+                return objThis.AsDecimal();
             }
             if (t.Equals(typeof(float)))
             {
@@ -4792,22 +10624,76 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
             }
             if (t.Equals(typeof(bool)))
             {
-                return objThis.IsTrue;
+                return objThis.AsBoolean();
             }
-
-            if (t.FullName != null &&
-               (StartsWith(t.FullName, "System.Win32.") ||
-               StartsWith(t.FullName, "System.IO.")))
+            if (t.Equals(typeof(char)))
             {
-                throw new NotSupportedException("Type " + t.FullName + " not supported");
+                if (objThis.Type == CBORType.TextString)
+                {
+                    string s = objThis.AsString();
+                    if (s.Length != 1)
+                    {
+                        throw new CBORException("Can't convert to char");
+                    }
+                    return s[0];
+                }
+                if (objThis.IsNumber && objThis.AsNumber().CanFitInInt32())
+                {
+                    int c = objThis.AsNumber().ToInt32IfExact();
+                    if (c < 0 || c >= 0x10000)
+                    {
+                        throw new CBORException("Can't convert to char");
+                    }
+                    return (char)c;
+                }
+                throw new CBORException("Can't convert to char");
             }
-
+            if (t.Equals(typeof(DateTime)))
+            {
+                return new CBORDateConverter().FromCBORObject(objThis);
+            }
+            if (t.Equals(typeof(Guid)))
+            {
+                return new CBORUuidConverter().FromCBORObject(objThis);
+            }
+            if (t.Equals(typeof(Uri)))
+            {
+                return new CBORUriConverter().FromCBORObject(objThis);
+            }
+            if (IsAssignableFrom(typeof(Enum), t))
+            {
+                return ObjectToEnum(objThis, t);
+            }
+            if (IsGenericType(t))
+            {
+                Type td = t.GetGenericTypeDefinition();
+                // Nullable types
+                if (td.Equals(typeof(Nullable<>)))
+                {
+                    Type nullableType = Nullable.GetUnderlyingType(t);
+                    if (objThis.IsNull)
+                    {
+                        return Activator.CreateInstance(t);
+                    }
+                    else
+                    {
+                        object wrappedObj = objThis.ToObject(
+                            nullableType,
+                            mapper,
+                            options,
+                            depth + 1);
+                        return Activator.CreateInstance(
+                            t,
+                            wrappedObj);
+                    }
+                }
+            }
             if (objThis.Type == CBORType.ByteString)
             {
                 if (t.Equals(typeof(byte[])))
                 {
                     byte[] bytes = objThis.GetByteString();
-                    byte[] byteret = new byte[bytes.Length];
+                    var byteret = new byte[bytes.Length];
                     Array.Copy(bytes, 0, byteret, 0, byteret.Length);
                     return byteret;
                 }
@@ -4815,16 +10701,28 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
             if (objThis.Type == CBORType.Array)
             {
                 Type objectType = typeof(object);
-                bool isList = false;
+                var isList = false;
                 object listObject = null;
+                object genericListObject = null;
 #if NET40 || NET20
+        if (IsAssignableFrom(typeof(Array), t)) {
+          Type elementType = t.GetElementType();
+          Array array = Array.CreateInstance(
+              elementType,
+              GetDimensions(objThis));
+          return FillArray(
+              array,
+              elementType,
+              objThis,
+              mapper,
+              options,
+              depth);
+        }
         if (t.IsGenericType) {
           Type td = t.GetGenericTypeDefinition();
           isList = td.Equals(typeof(List<>)) || td.Equals(typeof(IList<>)) ||
             td.Equals(typeof(ICollection<>)) ||
             td.Equals(typeof(IEnumerable<>));
-            } else {
-          throw new NotImplementedException();
         }
         isList = isList && t.GetGenericArguments().Length == 1;
         if (isList) {
@@ -4833,19 +10731,28 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
           listObject = Activator.CreateInstance(listType);
         }
 #else
+                if (IsAssignableFrom(typeof(Array), t))
+                {
+                    Type elementType = t.GetElementType();
+                    Array array = Array.CreateInstance(
+                        elementType,
+                        GetDimensions(objThis));
+                    return FillArray(
+                        array,
+                        elementType,
+                        objThis,
+                        mapper,
+                        options,
+                        depth);
+                }
                 if (t.GetTypeInfo().IsGenericType)
                 {
                     Type td = t.GetGenericTypeDefinition();
-                    isList = (td.Equals(typeof(List<>)) ||
-            td.Equals(typeof(IList<>)) ||
-            td.Equals(typeof(ICollection<>)) ||
-            td.Equals(typeof(IEnumerable<>)));
+                    isList = td.Equals(typeof(List<>)) || td.Equals(typeof(IList<>)) ||
+                      td.Equals(typeof(ICollection<>)) ||
+                      td.Equals(typeof(IEnumerable<>));
                 }
-                else
-                {
-                    throw new NotImplementedException();
-                }
-                isList = (isList && t.GenericTypeArguments.Length == 1);
+                isList = isList && t.GenericTypeArguments.Length == 1;
                 if (isList)
                 {
                     objectType = t.GenericTypeArguments[0];
@@ -4853,19 +10760,77 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
                     listObject = Activator.CreateInstance(listType);
                 }
 #endif
+                if (listObject == null)
+                {
+                    if (t.Equals(typeof(IList)) ||
+                      t.Equals(typeof(ICollection)) || t.Equals(typeof(IEnumerable)))
+                    {
+                        listObject = new List<object>();
+                        objectType = typeof(object);
+                    }
+                    else if (IsClassOrValueType(t))
+                    {
+                        var implementsList = false;
+                        foreach (var interf in GetTypeInterfaces(t))
+                        {
+                            if (IsGenericType(interf) &&
+                              interf.GetGenericTypeDefinition().Equals(typeof(IList<>)))
+                            {
+                                if (implementsList)
+                                {
+                                    implementsList = false;
+                                    break;
+                                }
+                                else
+                                {
+                                    implementsList = true;
+                                    objectType = FirstGenericArgument(interf);
+                                }
+                            }
+                        }
+                        if (implementsList)
+                        {
+                            // DebugUtility.Log("assignable from list<>");
+                            genericListObject = Activator.CreateInstance(t);
+                        }
+                        else
+                        {
+                            // DebugUtility.Log("not assignable from list<> " + t);
+                        }
+                    }
+                }
+                if (genericListObject != null)
+                {
+                    object addMethod = FindOneArgumentMethod(
+                        genericListObject,
+                        "Add",
+                        objectType);
+                    if (addMethod == null)
+                    {
+                        throw new CBORException();
+                    }
+                    foreach (CBORObject value in objThis.Values)
+                    {
+                        PropertyMap.InvokeOneArgumentMethod(
+                          addMethod,
+                          genericListObject,
+                          value.ToObject(objectType, mapper, options, depth + 1));
+                    }
+                    return genericListObject;
+                }
                 if (listObject != null)
                 {
                     System.Collections.IList ie = (System.Collections.IList)listObject;
                     foreach (CBORObject value in objThis.Values)
                     {
-                        ie.Add(value.ToObject(objectType));
+                        ie.Add(value.ToObject(objectType, mapper, options, depth + 1));
                     }
                     return listObject;
                 }
             }
             if (objThis.Type == CBORType.Map)
             {
-                bool isDict = false;
+                var isDict = false;
                 Type keyType = null;
                 Type valueType = null;
                 object dictObject = null;
@@ -4883,31 +10848,40 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
           keyType = t.GetGenericArguments()[0];
           valueType = t.GetGenericArguments()[1];
           Type listType = typeof(Dictionary<,>).MakeGenericType(
-            keyType,
-            valueType);
+              keyType,
+              valueType);
           dictObject = Activator.CreateInstance(listType);
         }
 #else
-                isDict = (t.GetTypeInfo().IsGenericType);
+                isDict = t.GetTypeInfo().IsGenericType;
                 if (t.GetTypeInfo().IsGenericType)
                 {
                     Type td = t.GetGenericTypeDefinition();
-                    isDict = (td.Equals(typeof(Dictionary<,>)) ||
-            td.Equals(typeof(IDictionary<,>)));
+                    isDict = td.Equals(typeof(Dictionary<,>)) ||
+                      td.Equals(typeof(IDictionary<,>));
                 }
-                //DebugUtility.Log("list=" + isDict);
-                isDict = (isDict && t.GenericTypeArguments.Length == 2);
-                //DebugUtility.Log("list=" + isDict);
+                // DebugUtility.Log("list=" + isDict);
+                isDict = isDict && t.GenericTypeArguments.Length == 2;
+                // DebugUtility.Log("list=" + isDict);
                 if (isDict)
                 {
                     keyType = t.GenericTypeArguments[0];
                     valueType = t.GenericTypeArguments[1];
                     Type listType = typeof(Dictionary<,>).MakeGenericType(
-                      keyType,
-                      valueType);
+                        keyType,
+                        valueType);
                     dictObject = Activator.CreateInstance(listType);
                 }
 #endif
+                if (dictObject == null)
+                {
+                    if (t.Equals(typeof(IDictionary)))
+                    {
+                        dictObject = new Dictionary<object, object>();
+                        keyType = typeof(object);
+                        valueType = typeof(object);
+                    }
+                }
                 if (dictObject != null)
                 {
                     System.Collections.IDictionary idic =
@@ -4916,114 +10890,164 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
                     {
                         CBORObject value = objThis[key];
                         idic.Add(
-              key.ToObject(keyType),
-              value.ToObject(valueType));
+                          key.ToObject(keyType, mapper, options, depth + 1),
+                          value.ToObject(valueType, mapper, options, depth + 1));
                     }
                     return dictObject;
                 }
-                List<KeyValuePair<string, CBORObject>> values = new List<KeyValuePair<string, CBORObject>>();
-                foreach (string key in PropertyMap.GetPropertyNames(
-                           t,
-                           true,
-                           true))
+                if (mapper != null)
+                {
+                    if (!mapper.FilterTypeName(t.FullName))
+                    {
+                        throw new CBORException("Type " + t.FullName +
+                          " not supported");
+                    }
+                }
+                else
+                {
+                    if (t.FullName != null && (
+                        StartsWith(t.FullName, "Microsoft.Win32.") ||
+                        StartsWith(t.FullName, "System.IO.")))
+                    {
+                        throw new CBORException("Type " + t.FullName +
+                          " not supported");
+                    }
+                    if (StartsWith(t.FullName, "System.") &&
+                      !HasCustomAttribute(t, "System.SerializableAttribute"))
+                    {
+                        throw new CBORException("Type " + t.FullName +
+                          " not supported");
+                    }
+                }
+                var values = new List<KeyValuePair<string, CBORObject>>();
+                var propNames = PropertyMap.GetPropertyNames(
+                    t,
+                    options != null ? options.UseCamelCase : true);
+                foreach (string key in propNames)
                 {
                     if (objThis.ContainsKey(key))
                     {
                         CBORObject cborValue = objThis[key];
-                        KeyValuePair<string, CBORObject> dict = new KeyValuePair<string, CBORObject>(
+                        var dict = new KeyValuePair<string, CBORObject>(
                           key,
                           cborValue);
                         values.Add(dict);
                     }
                 }
                 return PropertyMap.ObjectWithProperties(
-            t,
-            values,
-            true,
-            true);
+                    t,
+                    values,
+                    mapper,
+                    options,
+                    depth);
             }
             else
             {
-                throw new NotSupportedException();
+                throw new CBORException();
             }
         }
 
         public static object ObjectWithProperties(
           Type t,
-          IEnumerable<KeyValuePair<string, CBORObject>> keysValues)
+          IEnumerable<KeyValuePair<string, CBORObject>> keysValues,
+          CBORTypeMapper mapper,
+          PODOptions options,
+          int depth)
         {
-            return ObjectWithProperties(t, keysValues, true, true);
-        }
-
-        public static object ObjectWithProperties(
-             Type t,
-             IEnumerable<KeyValuePair<string, CBORObject>> keysValues,
-             bool removeIsPrefix,
-      bool useCamelCase)
-        {
-            object o = null;
-#if NET20 || NET40
-      foreach (var ci in t.GetConstructors()) {
-#else
-            foreach (ConstructorInfo ci in t.GetTypeInfo().DeclaredConstructors)
+            try
             {
-#endif
-                if (ci.IsPublic)
+                object o = Activator.CreateInstance(t);
+                var dict = new SortedDictionary<string, CBORObject>();
+                foreach (var kv in keysValues)
                 {
-                    int nump = ci.GetParameters().Length;
-                    o = ci.Invoke(new object[nump]);
-                    break;
+                    var name = kv.Key;
+                    dict[name] = kv.Value;
                 }
-            }
-            o = o ?? Activator.CreateInstance(t);
-            Dictionary<string, CBORObject> dict = new Dictionary<string, CBORObject>();
-            foreach (KeyValuePair<string, CBORObject> kv in keysValues)
-            {
-                string name = kv.Key;
-                dict[name] = kv.Value;
-            }
-            foreach (PropertyData key in GetPropertyList(o.GetType()))
-            {
-                string name = key.GetAdjustedName(removeIsPrefix, useCamelCase);
-                if (dict.ContainsKey(name))
+                foreach (PropertyData key in GetPropertyList(o.GetType()))
                 {
-                    object dobj = dict[name].ToObject(key.Prop.PropertyType);
-                    key.Prop.SetValue(o, dobj, null);
+                    if (!key.HasUsableSetter() || !key.HasUsableGetter())
+                    {
+                        // Require properties to have both a setter and
+                        // a getter to be eligible for setting
+                        continue;
+                    }
+                    var name = key.GetAdjustedName(options != null ?
+                        options.UseCamelCase : true);
+                    if (dict.ContainsKey(name))
+                    {
+                        object dobj = dict[name].ToObject(
+                            key.PropertyType,
+                            mapper,
+                            options,
+                            depth + 1);
+                        key.SetValue(
+                          o,
+                          dobj);
+                    }
                 }
+                return o;
             }
-            return o;
+            catch (Exception ex)
+            {
+                throw new CBORException(ex.Message, ex);
+            }
         }
 
-        public static IEnumerable<KeyValuePair<string, object>>
-        GetProperties(Object o)
+        public static CBORObject CallToObject(
+          CBORTypeMapper.ConverterInfo convinfo,
+          object obj)
         {
-            return GetProperties(o, true, true);
+            return (CBORObject)PropertyMap.InvokeOneArgumentMethod(
+                convinfo.ToObject,
+                convinfo.Converter,
+                obj);
         }
 
-        public static IEnumerable<string>
-        GetPropertyNames(Type t, bool removeIsPrefix, bool useCamelCase)
+        public static object CallFromObject(
+          CBORTypeMapper.ConverterInfo convinfo,
+          CBORObject obj)
+        {
+            return (object)PropertyMap.InvokeOneArgumentMethod(
+                convinfo.FromObject,
+                convinfo.Converter,
+                obj);
+        }
+
+        public static IEnumerable<KeyValuePair<string, object>> GetProperties(
+          Object o)
+        {
+            return GetProperties(o, true);
+        }
+
+        public static IEnumerable<string> GetPropertyNames(Type t, bool
+          useCamelCase)
         {
             foreach (PropertyData key in GetPropertyList(t))
             {
-                yield return key.GetAdjustedName(removeIsPrefix, useCamelCase);
+                yield return key.GetAdjustedName(useCamelCase);
             }
         }
 
-        public static IEnumerable<KeyValuePair<string, object>>
-        GetProperties(Object o, bool removeIsPrefix, bool useCamelCase)
+        public static IEnumerable<KeyValuePair<string, object>> GetProperties(
+          Object o,
+          bool useCamelCase)
         {
             foreach (PropertyData key in GetPropertyList(o.GetType()))
             {
+                if (!key.HasUsableGetter())
+                {
+                    continue;
+                }
                 yield return new KeyValuePair<string, object>(
-          key.GetAdjustedName(removeIsPrefix, useCamelCase),
-          key.Prop.GetValue(o, null));
+                    key.GetAdjustedName(useCamelCase),
+                    key.GetValue(o));
             }
         }
 
         public static void BreakDownDateTime(
-      DateTime bi,
-      EInteger[] year,
-      int[] lf)
+          DateTime bi,
+          EInteger[] year,
+          int[] lf)
         {
 #if NET20
       DateTime dt = bi.ToUniversalTime();
@@ -5043,18 +11067,20 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
         public static DateTime BuildUpDateTime(EInteger year, int[] dt)
         {
             return new DateTime(
-        year.ToInt32Checked(),
-        dt[0],
-        dt[1],
-        dt[2],
-        dt[3],
-        dt[4],
-        DateTimeKind.Utc).AddMinutes(-dt[6]).AddTicks((long)(dt[5] / 100));
+                year.ToInt32Checked(),
+                dt[0],
+                dt[1],
+                dt[2],
+                dt[3],
+                dt[4],
+                DateTimeKind.Utc)
+              .AddMinutes(-dt[6]).AddTicks((long)(dt[5] / 100));
         }
     }
     #endregion
 
     #region PropertyMap2
+    /*
     internal static class PropertyMap2
     {
         private sealed class PropertyData
@@ -6017,7 +12043,7 @@ Type elementType = t.GetElementType();
         DateTimeKind.Utc).AddMinutes(-dt[6]).AddTicks((long)(dt[5] / 100));
         }
     }
-
+    */
     #endregion
 
     #region SharedRefs
@@ -6044,9 +12070,9 @@ Type elementType = t.GetElementType();
             if (smallIndex > Int32.MaxValue)
             {
                 throw new CBORException("Index " + smallIndex +
-                            " is bigger than supported ");
+                  " is bigger than supported ");
             }
-            int index = (int)smallIndex;
+            var index = (int)smallIndex;
             if (index >= this.sharedObjects.Count)
             {
                 throw new CBORException("Index " + index + " is not valid");
@@ -6063,9 +12089,9 @@ Type elementType = t.GetElementType();
             if (!bigIndex.CanFitInInt32())
             {
                 throw new CBORException("Index " + bigIndex +
-                            " is bigger than supported ");
+                  " is bigger than supported ");
             }
-            int index = (int)bigIndex;
+            var index = (int)bigIndex;
             if (index >= this.sharedObjects.Count)
             {
                 throw new CBORException("Index " + index + " is not valid");
@@ -6122,7 +12148,11 @@ Type elementType = t.GetElementType();
 
         public void WriteString(string str, int index, int length)
         {
-            if (this.outputStream != null)
+            if (this.outputStream == null)
+            {
+                this.builder.Append(str, index, length);
+            }
+            else
             {
                 if (length == 1)
                 {
@@ -6131,34 +12161,98 @@ Type elementType = t.GetElementType();
                 else
                 {
                     if (
-            DataUtilities.WriteUtf8(
-            str,
-            index,
-            length,
-            this.outputStream,
-            false) < 0)
+                      DataUtilities.WriteUtf8(
+                        str,
+                        index,
+                        length,
+                        this.outputStream,
+                        false) < 0)
                     {
                         throw new ArgumentException("str has an unpaired surrogate");
                     }
                 }
             }
+        }
+
+        public void WriteAscii(byte[] bytes, int index, int length)
+        {
+            if (bytes == null)
+            {
+                throw new ArgumentNullException(nameof(bytes));
+            }
+            if (index < 0)
+            {
+                throw new ArgumentException("\"index\" (" + index + ") is not" +
+        "\u0020greater or equal to 0");
+            }
+            if (index > bytes.Length)
+            {
+                throw new ArgumentException("\"index\" (" + index + ") is not less" +
+        "\u0020or equal to " + bytes.Length);
+            }
+            if (length < 0)
+            {
+                throw new ArgumentException(" (" + length + ") is not greater or" +
+        "\u0020equal to 0");
+            }
+            if (length > bytes.Length)
+            {
+                throw new ArgumentException(" (" + length + ") is not less or equal" +
+        "\u0020to " + bytes.Length);
+            }
+            if (bytes.Length - index < length)
+            {
+                throw new ArgumentException("\"bytes\" + \"'s length minus \" +" +
+        "\u0020index (" + (bytes.Length - index) + ") is not greater or equal to " +
+        length);
+            }
+            if (this.outputStream == null)
+            {
+                DataUtilities.ReadUtf8FromBytes(
+                  bytes,
+                  index,
+                  length,
+                  this.builder,
+                  false);
+            }
             else
             {
-                this.builder.Append(str, index, length);
+                for (var i = 0; i < length; ++i)
+                {
+                    byte b = bytes[i + index];
+                    if ((((int)b) & 0x7f) != b)
+                    {
+                        throw new ArgumentException("str is non-ASCII");
+                    }
+                }
+                this.outputStream.Write(bytes, index, length);
             }
         }
 
         public void WriteCodePoint(int codePoint)
         {
+            if ((codePoint >> 7) == 0)
+            {
+                // Code point is in the Basic Latin range (U+0000 to U+007F)
+                if (this.outputStream == null)
+                {
+                    this.builder.Append((char)codePoint);
+                }
+                else
+                {
+                    this.outputStream.WriteByte((byte)codePoint);
+                }
+                return;
+            }
             if (codePoint < 0)
             {
-                throw new ArgumentException("codePoint (" + codePoint +
-                        ") is less than 0");
+                throw new ArgumentException("codePoint(" + codePoint +
+                  ") is less than 0");
             }
             if (codePoint > 0x10ffff)
             {
-                throw new ArgumentException("codePoint (" + codePoint +
-                        ") is more than " + 0x10ffff);
+                throw new ArgumentException("codePoint(" + codePoint +
+                  ") is more than " + 0x10ffff);
             }
             if (this.outputStream != null)
             {
@@ -6168,7 +12262,8 @@ Type elementType = t.GetElementType();
                 }
                 else if (codePoint <= 0x7ff)
                 {
-                    this.outputStream.WriteByte((byte)(0xc0 | ((codePoint >> 6) & 0x1f)));
+                    this.outputStream.WriteByte((byte)(0xc0 | ((codePoint >> 6) &
+                          0x1f)));
                     this.outputStream.WriteByte((byte)(0x80 | (codePoint & 0x3f)));
                 }
                 else if (codePoint <= 0xffff)
@@ -6178,17 +12273,19 @@ Type elementType = t.GetElementType();
                         throw new ArgumentException("ch is a surrogate");
                     }
                     this.outputStream.WriteByte((byte)(0xe0 | ((codePoint >> 12) &
-                              0x0f)));
-                    this.outputStream.WriteByte((byte)(0x80 | ((codePoint >> 6) & 0x3f)));
+                          0x0f)));
+                    this.outputStream.WriteByte((byte)(0x80 | ((codePoint >> 6) &
+                          0x3f)));
                     this.outputStream.WriteByte((byte)(0x80 | (codePoint & 0x3f)));
                 }
                 else
                 {
                     this.outputStream.WriteByte((byte)(0xf0 | ((codePoint >> 18) &
-                              0x08)));
+                          0x07)));
                     this.outputStream.WriteByte((byte)(0x80 | ((codePoint >> 12) &
-                              0x3f)));
-                    this.outputStream.WriteByte((byte)(0x80 | ((codePoint >> 6) & 0x3f)));
+                          0x3f)));
+                    this.outputStream.WriteByte((byte)(0x80 | ((codePoint >> 6) &
+                          0x3f)));
                     this.outputStream.WriteByte((byte)(0x80 | (codePoint & 0x3f)));
                 }
             }
@@ -6206,9 +12303,10 @@ Type elementType = t.GetElementType();
                 }
                 else if (codePoint <= 0x10ffff)
                 {
-                    this.builder.Append((char)((((codePoint - 0x10000) >> 10) &
-                              0x3ff) + 0xd800));
-                    this.builder.Append((char)(((codePoint - 0x10000) & 0x3ff) + 0xdc00));
+                    this.builder.Append((char)((((codePoint - 0x10000) >> 10) & 0x3ff) |
+                        0xd800));
+                    this.builder.Append((char)(((codePoint - 0x10000) & 0x3ff) |
+                        0xdc00));
                 }
             }
         }
@@ -6219,6 +12317,8 @@ Type elementType = t.GetElementType();
     #region StringRefs
     /// <include file='../../docs.xml'
     /// path='docs/doc[@name="T:StringRefs"]/*'/>
+    /// <summary>Implements CBOR string references, described at
+    /// <c>http://cbor.schmorp.de/stringref</c>.</summary>
     internal class StringRefs
     {
         private readonly List<List<CBORObject>> stack;
@@ -6226,13 +12326,13 @@ Type elementType = t.GetElementType();
         public StringRefs()
         {
             this.stack = new List<List<CBORObject>>();
-            List<CBORObject> firstItem = new List<CBORObject>();
+            var firstItem = new List<CBORObject>();
             this.stack.Add(firstItem);
         }
 
         public void Push()
         {
-            List<CBORObject> firstItem = new List<CBORObject>();
+            var firstItem = new List<CBORObject>();
             this.stack.Add(firstItem);
         }
 
@@ -6241,8 +12341,8 @@ Type elementType = t.GetElementType();
 #if DEBUG
             if (this.stack.Count <= 0)
             {
-                throw new ArgumentException("this.stack.Count (" + this.stack.Count +
-                            ") is not greater than " + "0 ");
+                throw new ArgumentException("this.stack.Count(" + this.stack.Count +
+                  ") is not greater than " + "0 ");
             }
 #endif
             this.stack.RemoveAt(this.stack.Count - 1);
@@ -6256,19 +12356,19 @@ Type elementType = t.GetElementType();
                 throw new ArgumentNullException(nameof(str));
             }
             if (!(str.Type == CBORType.ByteString || str.Type ==
-                  CBORType.TextString))
+                CBORType.TextString))
             {
                 throw new
-          ArgumentException(
-             "doesn't satisfy str.Type== ByteString or TextString");
+                ArgumentException(
+                  "doesn't satisfy str.Type== ByteString or TextString");
             }
             if (lengthHint < 0)
             {
-                throw new ArgumentException("lengthHint (" + lengthHint +
-                            ") is less than " + "0 ");
+                throw new ArgumentException("lengthHint(" + lengthHint +
+                  ") is less than " + "0 ");
             }
 #endif
-            bool addStr = false;
+            var addStr = false;
             List<CBORObject> lastList = this.stack[this.stack.Count - 1];
             if (lastList.Count < 24)
             {
@@ -6304,9 +12404,9 @@ Type elementType = t.GetElementType();
             if (smallIndex > Int32.MaxValue)
             {
                 throw new CBORException("Index " + smallIndex +
-                        " is bigger than supported ");
+                  " is bigger than supported ");
             }
-            int index = (int)smallIndex;
+            var index = (int)smallIndex;
             List<CBORObject> lastList = this.stack[this.stack.Count - 1];
             if (index >= lastList.Count)
             {
@@ -6327,9 +12427,9 @@ Type elementType = t.GetElementType();
             if (!bigIndex.CanFitInInt32())
             {
                 throw new CBORException("Index " + bigIndex +
-                      " is bigger than supported ");
+                  " is bigger than supported ");
             }
-            int index = (int)bigIndex;
+            var index = (int)bigIndex;
             List<CBORObject> lastList = this.stack[this.stack.Count - 1];
             if (index >= lastList.Count)
             {

@@ -181,17 +181,28 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
     /// path='docs/doc[@name="T:PeterO.DataUtilities"]/*'/>
     public static class DataUtilities
     {
+        // TODO: In CodePointAt/CodePointBefore, consider adding
+        // mode to return -2 or throw an exception on unpaired surrogate
         private const int StreamedStringBufferLength = 4096;
 
-        /// <include file='../docs.xml'
-        /// path='docs/doc[@name="M:PeterO.DataUtilities.GetUtf8String(System.Byte[],System.Boolean)"]/*'/>
+        /// <summary>Generates a text string from a UTF-8 byte array.</summary>
+        /// <param name='bytes'>A byte array containing text encoded in
+        /// UTF-8.</param>
+        /// <param name='replace'>If true, replaces invalid encoding with the
+        /// replacement character (U+FFFD). If false, stops processing when
+        /// invalid UTF-8 is seen.</param>
+        /// <returns>A string represented by the UTF-8 byte array.</returns>
+        /// <exception cref='ArgumentNullException'>The parameter <paramref
+        /// name='bytes'/> is null.</exception>
+        /// <exception cref='ArgumentException'>The string is not valid UTF-8
+        /// and <paramref name='replace'/> is false.</exception>
         public static string GetUtf8String(byte[] bytes, bool replace)
         {
             if (bytes == null)
             {
                 throw new ArgumentNullException(nameof(bytes));
             }
-            StringBuilder b = new StringBuilder();
+            var b = new StringBuilder();
             if (ReadUtf8FromBytes(bytes, 0, bytes.Length, b, replace) != 0)
             {
                 throw new ArgumentException("Invalid UTF-8");
@@ -199,16 +210,24 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
             return b.ToString();
         }
 
-        /// <include file='../docs.xml'
-        /// path='docs/doc[@name="M:PeterO.DataUtilities.CodePointLength(System.String)"]/*'/>
+        /// <summary>Finds the number of Unicode code points in the given text
+        /// string. Unpaired surrogate code points increase this number by 1.
+        /// This is not necessarily the length of the string in "char"
+        /// s.</summary>
+        /// <param name='str'>The parameter <paramref name='str'/> is a text
+        /// string.</param>
+        /// <returns>The number of Unicode code points in the given
+        /// string.</returns>
+        /// <exception cref='ArgumentNullException'>The parameter <paramref
+        /// name='str'/> is null.</exception>
         public static int CodePointLength(string str)
         {
             if (str == null)
             {
                 throw new ArgumentNullException(nameof(str));
             }
-            int i = 0;
-            int count = 0;
+            var i = 0;
+            var count = 0;
             while (i < str.Length)
             {
                 int c = CodePointAt(str, i);
@@ -218,13 +237,32 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
             return count;
         }
 
-        /// <include file='../docs.xml'
-        /// path='docs/doc[@name="M:PeterO.DataUtilities.GetUtf8String(System.Byte[],System.Int32,System.Int32,System.Boolean)"]/*'/>
+        /// <summary>Generates a text string from a portion of a UTF-8 byte
+        /// array.</summary>
+        /// <param name='bytes'>A byte array containing text encoded in
+        /// UTF-8.</param>
+        /// <param name='offset'>Offset into the byte array to start
+        /// reading.</param>
+        /// <param name='bytesCount'>Length, in bytes, of the UTF-8 text
+        /// string.</param>
+        /// <param name='replace'>If true, replaces invalid encoding with the
+        /// replacement character (U+FFFD). If false, stops processing when
+        /// invalid UTF-8 is seen.</param>
+        /// <returns>A string represented by the UTF-8 byte array.</returns>
+        /// <exception cref='ArgumentNullException'>The parameter <paramref
+        /// name='bytes'/> is null.</exception>
+        /// <exception cref='ArgumentException'>The portion of the byte array
+        /// is not valid UTF-8 and <paramref name='replace'/> is
+        /// false.</exception>
+        /// <exception cref='ArgumentException'>The parameter <paramref
+        /// name='offset'/> is less than 0, <paramref name='bytesCount'/> is
+        /// less than 0, or offset plus bytesCount is greater than the length
+        /// of "data" .</exception>
         public static string GetUtf8String(
-      byte[] bytes,
-      int offset,
-      int bytesCount,
-      bool replace)
+          byte[] bytes,
+          int offset,
+          int bytesCount,
+          bool replace)
         {
             if (bytes == null)
             {
@@ -232,30 +270,30 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
             }
             if (offset < 0)
             {
-                throw new ArgumentException("offset (" + offset + ") is less than " +
-                            "0");
+                throw new ArgumentException("offset(" + offset + ") is less than " +
+                  "0");
             }
             if (offset > bytes.Length)
             {
-                throw new ArgumentException("offset (" + offset + ") is more than " +
-                            bytes.Length);
+                throw new ArgumentException("offset(" + offset + ") is more than " +
+                  bytes.Length);
             }
             if (bytesCount < 0)
             {
-                throw new ArgumentException("bytesCount (" + bytesCount +
-                            ") is less than 0");
+                throw new ArgumentException("bytesCount(" + bytesCount +
+                  ") is less than 0");
             }
             if (bytesCount > bytes.Length)
             {
-                throw new ArgumentException("bytesCount (" + bytesCount +
-                            ") is more than " + bytes.Length);
+                throw new ArgumentException("bytesCount(" + bytesCount +
+                  ") is more than " + bytes.Length);
             }
             if (bytes.Length - offset < bytesCount)
             {
-                throw new ArgumentException("bytes's length minus " + offset + " (" +
-                        (bytes.Length - offset) + ") is less than " + bytesCount);
+                throw new ArgumentException("bytes's length minus " + offset + "(" +
+                  (bytes.Length - offset) + ") is less than " + bytesCount);
             }
-            StringBuilder b = new StringBuilder();
+            var b = new StringBuilder();
             if (ReadUtf8FromBytes(bytes, offset, bytesCount, b, replace) != 0)
             {
                 throw new ArgumentException("Invalid UTF-8");
@@ -263,19 +301,58 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
             return b.ToString();
         }
 
-        /// <include file='../docs.xml'
-        /// path='docs/doc[@name="M:PeterO.DataUtilities.GetUtf8Bytes(System.String,System.Boolean)"]/*'/>
+        /// <summary>
+        /// <para>Encodes a string in UTF-8 as a byte array. This method does
+        /// not insert a byte-order mark (U+FEFF) at the beginning of the
+        /// encoded byte array.</para>
+        /// <para>REMARK: It is not recommended to use
+        /// <c>Encoding.UTF8.GetBytes</c> in.NET, or the <c>getBytes()</c>
+        /// method in Java to do this. For instance, <c>getBytes()</c> encodes
+        /// text strings in a default (so not fixed) character encoding, which
+        /// can be undesirable.</para></summary>
+        /// <param name='str'>The parameter <paramref name='str'/> is a text
+        /// string.</param>
+        /// <param name='replace'>If true, replaces unpaired surrogate code
+        /// points with the replacement character (U+FFFD). If false, stops
+        /// processing when an unpaired surrogate code point is seen.</param>
+        /// <returns>The string encoded in UTF-8.</returns>
+        /// <exception cref='ArgumentNullException'>The parameter <paramref
+        /// name='str'/> is null.</exception>
+        /// <exception cref='ArgumentException'>The string contains an unpaired
+        /// surrogate code point and <paramref name='replace'/> is false, or an
+        /// internal error occurred.</exception>
         public static byte[] GetUtf8Bytes(string str, bool replace)
         {
             return GetUtf8Bytes(str, replace, false);
         }
 
-        /// <include file='../docs.xml'
-        /// path='docs/doc[@name="M:PeterO.DataUtilities.GetUtf8Bytes(System.String,System.Boolean,System.Boolean)"]/*'/>
+        /// <summary>
+        /// <para>Encodes a string in UTF-8 as a byte array. This method does
+        /// not insert a byte-order mark (U+FEFF) at the beginning of the
+        /// encoded byte array.</para>
+        /// <para>REMARK: It is not recommended to use
+        /// <c>Encoding.UTF8.GetBytes</c> in.NET, or the <c>getBytes()</c>
+        /// method in Java to do this. For instance, <c>getBytes()</c> encodes
+        /// text strings in a default (so not fixed) character encoding, which
+        /// can be undesirable.</para></summary>
+        /// <param name='str'>The parameter <paramref name='str'/> is a text
+        /// string.</param>
+        /// <param name='replace'>If true, replaces unpaired surrogate code
+        /// points with the replacement character (U+FFFD). If false, stops
+        /// processing when an unpaired surrogate code point is seen.</param>
+        /// <param name='lenientLineBreaks'>If true, replaces carriage return
+        /// (CR) not followed by line feed (LF) and LF not preceded by CR with
+        /// CR-LF pairs.</param>
+        /// <returns>The string encoded in UTF-8.</returns>
+        /// <exception cref='ArgumentNullException'>The parameter <paramref
+        /// name='str'/> is null.</exception>
+        /// <exception cref='ArgumentException'>The string contains an unpaired
+        /// surrogate code point and <paramref name='replace'/> is false, or an
+        /// internal error occurred.</exception>
         public static byte[] GetUtf8Bytes(
-      string str,
-      bool replace,
-      bool lenientLineBreaks)
+          string str,
+          bool replace,
+          bool lenientLineBreaks)
         {
             if (str == null)
             {
@@ -301,14 +378,18 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
                 }
                 else if (c <= 0x7ff)
                 {
-                    return new byte[] { (byte)(0xc0 | ((c >> 6) & 0x1f)),
-            (byte)(0x80 | (c & 0x3f)) };
+                    return new byte[] {
+            (byte)(0xc0 | ((c >> 6) & 0x1f)),
+            (byte)(0x80 | (c & 0x3f)),
+          };
                 }
                 else
                 {
-                    return new byte[] { (byte)(0xe0 | ((c >> 12) & 0x0f)),
+                    return new byte[] {
+            (byte)(0xe0 | ((c >> 12) & 0x0f)),
             (byte)(0x80 | ((c >> 6) & 0x3f)),
-            (byte)(0x80 | (c & 0x3f)) };
+            (byte)(0x80 | (c & 0x3f)),
+          };
                 }
             }
             else if (str.Length == 2)
@@ -317,11 +398,13 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
                 int c2 = str[1];
                 if ((c & 0xfc00) == 0xd800 && (c2 & 0xfc00) == 0xdc00)
                 {
-                    c = 0x10000 + ((c - 0xd800) << 10) + (c2 - 0xdc00);
-                    return new byte[] { (byte)(0xf0 | ((c >> 18) & 0x07)),
+                    c = 0x10000 + ((c & 0x3ff) << 10) + (c2 & 0x3ff);
+                    return new byte[] {
+            (byte)(0xf0 | ((c >> 18) & 0x07)),
             (byte)(0x80 | ((c >> 12) & 0x3f)),
             (byte)(0x80 | ((c >> 6) & 0x3f)),
-            (byte)(0x80 | (c & 0x3f)) };
+            (byte)(0x80 | (c & 0x3f)),
+          };
                 }
                 else if (!lenientLineBreaks && c <= 0x80 && c2 <= 0x80)
                 {
@@ -330,10 +413,10 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
             }
             try
             {
-                using (MemoryStream ms = new MemoryStream())
+                using (var ms = new MemoryStream())
                 {
                     if (WriteUtf8(str, 0, str.Length, ms, replace, lenientLineBreaks) !=
-                         0)
+                      0)
                     {
                         throw new ArgumentException("Unpaired surrogate code point");
                     }
@@ -346,8 +429,18 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
             }
         }
 
-        /// <include file='../docs.xml'
-        /// path='docs/doc[@name="M:PeterO.DataUtilities.GetUtf8Length(System.String,System.Boolean)"]/*'/>
+        /// <summary>Calculates the number of bytes needed to encode a string
+        /// in UTF-8.</summary>
+        /// <param name='str'>The parameter <paramref name='str'/> is a text
+        /// string.</param>
+        /// <param name='replace'>If true, treats unpaired surrogate code
+        /// points as having 3 UTF-8 bytes (the UTF-8 length of the replacement
+        /// character U+FFFD).</param>
+        /// <returns>The number of bytes needed to encode the given string in
+        /// UTF-8, or -1 if the string contains an unpaired surrogate code
+        /// point and <paramref name='replace'/> is false.</returns>
+        /// <exception cref='ArgumentNullException'>The parameter <paramref
+        /// name='str'/> is null.</exception>
         public static long GetUtf8Length(string str, bool replace)
         {
             if (str == null)
@@ -355,7 +448,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
                 throw new ArgumentNullException(nameof(str));
             }
             long size = 0;
-            for (int i = 0; i < str.Length; ++i)
+            for (var i = 0; i < str.Length; ++i)
             {
                 int c = str[i];
                 if (c <= 0x7f)
@@ -371,7 +464,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
                     size += 3;
                 }
                 else if (c <= 0xdbff)
-                {  // UTF-16 leading surrogate
+                { // UTF-16 leading surrogate
                     ++i;
                     if (i >= str.Length || str[i] < 0xdc00 || str[i] > 0xdfff)
                     {
@@ -405,19 +498,49 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
             return size;
         }
 
-        /// <include file='../docs.xml'
-        /// path='docs/doc[@name="M:PeterO.DataUtilities.CodePointBefore(System.String,System.Int32)"]/*'/>
+        /// <summary>Gets the Unicode code point just before the given index of
+        /// the string.</summary>
+        /// <param name='str'>The parameter <paramref name='str'/> is a text
+        /// string.</param>
+        /// <param name='index'>Index of the current position into the
+        /// string.</param>
+        /// <returns>The Unicode code point at the previous position. Returns
+        /// -1 if <paramref name='index'/> is 0 or less, or is greater than or
+        /// equal to the string's length. Returns the replacement character
+        /// (U+FFFD) if the code point at the previous position is an unpaired
+        /// surrogate code point. If the return value is 65536 (0x10000) or
+        /// greater, the code point takes up two UTF-16 code units.</returns>
+        /// <exception cref='ArgumentNullException'>The parameter <paramref
+        /// name='str'/> is null.</exception>
         public static int CodePointBefore(string str, int index)
         {
             return CodePointBefore(str, index, 0);
         }
 
-        /// <include file='../docs.xml'
-        /// path='docs/doc[@name="M:PeterO.DataUtilities.CodePointBefore(System.String,System.Int32,System.Int32)"]/*'/>
+        /// <summary>Gets the Unicode code point just before the given index of
+        /// the string.</summary>
+        /// <param name='str'>The parameter <paramref name='str'/> is a text
+        /// string.</param>
+        /// <param name='index'>Index of the current position into the
+        /// string.</param>
+        /// <param name='surrogateBehavior'>Specifies what kind of value to
+        /// return if the previous code point is an unpaired surrogate code
+        /// point: if 0, return the replacement character (U+FFFD); if 1,
+        /// return the value of the surrogate code point; if neither 0 nor 1,
+        /// return -1.</param>
+        /// <returns>The Unicode code point at the previous position. Returns
+        /// -1 if <paramref name='index'/> is 0 or less, or is greater than or
+        /// equal to the string's length. Returns a value as specified under
+        /// <paramref name='surrogateBehavior'/> if the code point at the
+        /// previous position is an unpaired surrogate code point. If the
+        /// return value is 65536 (0x10000) or greater, the code point takes up
+        /// two UTF-16 code units.</returns>
+        /// <exception cref='ArgumentNullException'>The parameter <paramref
+        /// name='str'/> is null.</exception>
         public static int CodePointBefore(
-      string str,
-      int index,
-      int surrogateBehavior)
+          string str,
+          int index,
+          int surrogateBehavior)
         {
             if (str == null)
             {
@@ -433,33 +556,73 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
             }
             int c = str[index - 1];
             if ((c & 0xfc00) == 0xdc00 && index - 2 >= 0 &&
-                (str[index - 2] & 0xfc00) == 0xd800)
+              (str[index - 2] & 0xfc00) == 0xd800)
             {
                 // Get the Unicode code point for the surrogate pair
-                return 0x10000 + ((str[index - 2] - 0xd800) << 10) + (c - 0xdc00);
+                return 0x10000 + ((str[index - 2] & 0x3ff) << 10) + (c & 0x3ff);
             }
+            // unpaired surrogate
             if ((c & 0xf800) == 0xd800)
             {
-                // unpaired surrogate
                 return (surrogateBehavior == 0) ? 0xfffd : ((surrogateBehavior == 1) ?
-                            c : (-1));
+                    c : -1);
             }
             return c;
         }
 
-        /// <include file='../docs.xml'
-        /// path='docs/doc[@name="M:PeterO.DataUtilities.CodePointAt(System.String,System.Int32)"]/*'/>
+        /// <summary>Gets the Unicode code point at the given index of the
+        /// string.</summary>
+        /// <param name='str'>The parameter <paramref name='str'/> is a text
+        /// string.</param>
+        /// <param name='index'>Index of the current position into the
+        /// string.</param>
+        /// <returns>The Unicode code point at the given position. Returns -1
+        /// if <paramref name='index'/> is 0 or less, or is greater than or
+        /// equal to the string's length. Returns the replacement character
+        /// (U+FFFD) if the code point at that position is an unpaired
+        /// surrogate code point. If the return value is 65536 (0x10000) or
+        /// greater, the code point takes up two UTF-16 code units.</returns>
+        /// <exception cref='ArgumentNullException'>The parameter <paramref
+        /// name='str'/> is null.</exception>
         public static int CodePointAt(string str, int index)
         {
             return CodePointAt(str, index, 0);
         }
 
-        /// <include file='../docs.xml'
-        /// path='docs/doc[@name="M:PeterO.DataUtilities.CodePointAt(System.String,System.Int32,System.Int32)"]/*'/>
+        /// <summary>Gets the Unicode code point at the given index of the
+        /// string.</summary>
+        /// <param name='str'>The parameter <paramref name='str'/> is a text
+        /// string.</param>
+        /// <param name='index'>Index of the current position into the
+        /// string.</param>
+        /// <param name='surrogateBehavior'>Specifies what kind of value to
+        /// return if the code point at the given index is an unpaired
+        /// surrogate code point: if 0, return the replacement character (U +
+        /// FFFD); if 1, return the value of the surrogate code point; if
+        /// neither 0 nor 1, return -1.</param>
+        /// <returns>The Unicode code point at the given position. Returns -1
+        /// if <paramref name='index'/> is 0 or less, or is greater than or
+        /// equal to the string's length. Returns a value as specified under
+        /// <paramref name='surrogateBehavior'/> if the code point at that
+        /// position is an unpaired surrogate code point. If the return value
+        /// is 65536 (0x10000) or greater, the code point takes up two UTF-16
+        /// code units.</returns>
+        /// <exception cref='ArgumentNullException'>The parameter <paramref
+        /// name='str'/> is null.</exception>
+        /// <example>
+        /// <para>The following example shows how to iterate a text string code
+        /// point by code point, terminating the loop when an unpaired
+        /// surrogate is found.</para>
+        /// <code>for (var i = 0;i&lt;str.Length; ++i) { int codePoint =
+        /// DataUtilities.CodePointAt(str, i, 2); if (codePoint &lt; 0) { break; /*
+        /// Unpaired surrogate */ } Console.WriteLine("codePoint:"+codePoint); if
+        /// (codePoint &gt;= 0x10000) { i++; /* Supplementary code point */ } }</code>
+        ///  .
+        /// </example>
         public static int CodePointAt(
-      string str,
-      int index,
-      int surrogateBehavior)
+          string str,
+          int index,
+          int surrogateBehavior)
         {
             if (str == null)
             {
@@ -475,33 +638,37 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
             }
             int c = str[index];
             if ((c & 0xfc00) == 0xd800 && index + 1 < str.Length &&
-                (str[index + 1] & 0xfc00) == 0xdc00)
+              (str[index + 1] & 0xfc00) == 0xdc00)
             {
                 // Get the Unicode code point for the surrogate pair
-                c = 0x10000 + ((c - 0xd800) << 10) + (str[index + 1] - 0xdc00);
-                ++index;
+                c = 0x10000 + ((c & 0x3ff) << 10) + (str[index + 1] & 0x3ff);
             }
             else if ((c & 0xf800) == 0xd800)
             {
                 // unpaired surrogate
                 return (surrogateBehavior == 0) ? 0xfffd : ((surrogateBehavior == 1) ?
-                            c : (-1));
+                    c : (-1));
             }
             return c;
         }
 
-        /// <include file='../docs.xml'
-        /// path='docs/doc[@name="M:PeterO.DataUtilities.ToLowerCaseAscii(System.String)"]/*'/>
+        /// <summary>Returns a string with the basic upper-case letters A to Z
+        /// (U+0041 to U+005A) converted to the corresponding basic lower-case
+        /// letters. Other characters remain unchanged.</summary>
+        /// <param name='str'>The parameter <paramref name='str'/> is a text
+        /// string.</param>
+        /// <returns>The converted string, or null if <paramref name='str'/> is
+        /// null.</returns>
         public static string ToLowerCaseAscii(string str)
         {
             if (str == null)
             {
                 return null;
             }
-            int len = str.Length;
-            char c = (char)0;
-            bool hasUpperCase = false;
-            for (int i = 0; i < len; ++i)
+            var len = str.Length;
+            var c = (char)0;
+            var hasUpperCase = false;
+            for (var i = 0; i < len; ++i)
             {
                 c = str[i];
                 if (c >= 'A' && c <= 'Z')
@@ -514,8 +681,8 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
             {
                 return str;
             }
-            StringBuilder builder = new StringBuilder();
-            for (int i = 0; i < len; ++i)
+            var builder = new StringBuilder();
+            for (var i = 0; i < len; ++i)
             {
                 c = str[i];
                 if (c >= 'A' && c <= 'Z')
@@ -530,18 +697,23 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
             return builder.ToString();
         }
 
-        /// <include file='../docs.xml'
-        /// path='docs/doc[@name="M:PeterO.DataUtilities.ToUpperCaseAscii(System.String)"]/*'/>
+        /// <summary>Returns a string with the basic lower-case letters A to Z
+        /// (U+0061 to U+007A) converted to the corresponding basic upper-case
+        /// letters. Other characters remain unchanged.</summary>
+        /// <param name='str'>The parameter <paramref name='str'/> is a text
+        /// string.</param>
+        /// <returns>The converted string, or null if <paramref name='str'/> is
+        /// null.</returns>
         public static string ToUpperCaseAscii(string str)
         {
             if (str == null)
             {
                 return null;
             }
-            int len = str.Length;
-            char c = (char)0;
-            bool hasLowerCase = false;
-            for (int i = 0; i < len; ++i)
+            var len = str.Length;
+            var c = (char)0;
+            var hasLowerCase = false;
+            for (var i = 0; i < len; ++i)
             {
                 c = str[i];
                 if (c >= 'a' && c <= 'z')
@@ -554,8 +726,8 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
             {
                 return str;
             }
-            StringBuilder builder = new StringBuilder();
-            for (int i = 0; i < len; ++i)
+            var builder = new StringBuilder();
+            for (var i = 0; i < len; ++i)
             {
                 c = str[i];
                 if (c >= 'a' && c <= 'z')
@@ -570,8 +742,18 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
             return builder.ToString();
         }
 
-        /// <include file='../docs.xml'
-        /// path='docs/doc[@name="M:PeterO.DataUtilities.CodePointCompare(System.String,System.String)"]/*'/>
+        /// <summary>Compares two strings in Unicode code point order. Unpaired
+        /// surrogate code points are treated as individual code
+        /// points.</summary>
+        /// <param name='strA'>The first string. Can be null.</param>
+        /// <param name='strB'>The second string. Can be null.</param>
+        /// <returns>A value indicating which string is " less" or " greater" .
+        /// 0: Both strings are equal or null. Less than 0: a is null and b
+        /// isn't; or the first code point that's different is less in A than
+        /// in B; or b starts with a and is longer than a. Greater than 0: b is
+        /// null and a isn't; or the first code point that's different is
+        /// greater in A than in B; or a starts with b and is longer than
+        /// b.</returns>
         public static int CodePointCompare(string strA, string strB)
         {
             if (strA == null)
@@ -584,7 +766,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
             }
             int len, ca, cb;
             len = Math.Min(strA.Length, strB.Length);
-            for (int i = 0; i < len; ++i)
+            for (var i = 0; i < len; ++i)
             {
                 ca = strA[i];
                 cb = strB[i];
@@ -596,15 +778,15 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
                     {
                         continue;
                     }
-                    bool incindex = false;
+                    var incindex = false;
                     if (i + 1 < strA.Length && (strA[i + 1] & 0xfc00) == 0xdc00)
                     {
-                        ca = 0x10000 + ((ca - 0xd800) << 10) + (strA[i + 1] - 0xdc00);
+                        ca = 0x10000 + ((ca & 0x3ff) << 10) + (strA[i + 1] & 0x3ff);
                         incindex = true;
                     }
                     if (i + 1 < strB.Length && (strB[i + 1] & 0xfc00) == 0xdc00)
                     {
-                        cb = 0x10000 + ((cb - 0xd800) << 10) + (strB[i + 1] - 0xdc00);
+                        cb = 0x10000 + ((cb & 0x3ff) << 10) + (strB[i + 1] & 0x3ff);
                         incindex = true;
                     }
                     if (ca != cb)
@@ -623,43 +805,89 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
                         return ca - cb;
                     }
                     if ((ca & 0xfc00) == 0xd800 && i + 1 < strA.Length &&
-                        (strA[i + 1] & 0xfc00) == 0xdc00)
+                      (strA[i + 1] & 0xfc00) == 0xdc00)
                     {
-                        ca = 0x10000 + ((ca - 0xd800) << 10) + (strA[i + 1] - 0xdc00);
+                        ca = 0x10000 + ((ca & 0x3ff) << 10) + (strA[i + 1] & 0x3ff);
                     }
                     if ((cb & 0xfc00) == 0xd800 && i + 1 < strB.Length &&
-                        (strB[i + 1] & 0xfc00) == 0xdc00)
+                      (strB[i + 1] & 0xfc00) == 0xdc00)
                     {
-                        cb = 0x10000 + ((cb - 0xd800) << 10) + (strB[i + 1] - 0xdc00);
+                        cb = 0x10000 + ((cb & 0x3ff) << 10) + (strB[i + 1] & 0x3ff);
                     }
                     return ca - cb;
                 }
             }
             return (strA.Length == strB.Length) ? 0 : ((strA.Length < strB.Length) ?
-                          -1 : 1);
+                -1 : 1);
         }
 
-        /// <include file='../docs.xml'
-        /// path='docs/doc[@name="M:PeterO.DataUtilities.WriteUtf8(System.String,System.Int32,System.Int32,System.IO.Stream,System.Boolean)"]/*'/>
+        /// <summary>Writes a portion of a string in UTF-8 encoding to a data
+        /// stream.</summary>
+        /// <param name='str'>A string to write.</param>
+        /// <param name='offset'>The Index starting at 0 where the string
+        /// portion to write begins.</param>
+        /// <param name='length'>The length of the string portion to
+        /// write.</param>
+        /// <param name='stream'>A writable data stream.</param>
+        /// <param name='replace'>If true, replaces unpaired surrogate code
+        /// points with the replacement character (U+FFFD). If false, stops
+        /// processing when an unpaired surrogate code point is seen.</param>
+        /// <returns>0 if the entire string portion was written; or -1 if the
+        /// string portion contains an unpaired surrogate code point and
+        /// <paramref name='replace'/> is false.</returns>
+        /// <exception cref='ArgumentNullException'>The parameter <paramref
+        /// name='str'/> is null or <paramref name='stream'/> is
+        /// null.</exception>
+        /// <exception cref='System.IO.IOException'>An I/O error
+        /// occurred.</exception>
+        /// <exception cref='ArgumentException'>Either <paramref
+        /// name='offset'/> or <paramref name='length'/> is less than 0 or
+        /// greater than <paramref name='str'/> 's length, or <paramref
+        /// name='str'/> 's length minus <paramref name='offset'/> is less than
+        /// <paramref name='length'/>.</exception>
         public static int WriteUtf8(
-      string str,
-      int offset,
-      int length,
-      Stream stream,
-      bool replace)
+          string str,
+          int offset,
+          int length,
+          Stream stream,
+          bool replace)
         {
             return WriteUtf8(str, offset, length, stream, replace, false);
         }
 
-        /// <include file='../docs.xml'
-        /// path='docs/doc[@name="M:PeterO.DataUtilities.WriteUtf8(System.String,System.Int32,System.Int32,System.IO.Stream,System.Boolean,System.Boolean)"]/*'/>
+        /// <summary>Writes a portion of a string in UTF-8 encoding to a data
+        /// stream.</summary>
+        /// <param name='str'>A string to write.</param>
+        /// <param name='offset'>The Index starting at 0 where the string
+        /// portion to write begins.</param>
+        /// <param name='length'>The length of the string portion to
+        /// write.</param>
+        /// <param name='stream'>A writable data stream.</param>
+        /// <param name='replace'>If true, replaces unpaired surrogate code
+        /// points with the replacement character (U+FFFD). If false, stops
+        /// processing when an unpaired surrogate code point is seen.</param>
+        /// <param name='lenientLineBreaks'>If true, replaces carriage return
+        /// (CR) not followed by line feed (LF) and LF not preceded by CR with
+        /// CR-LF pairs.</param>
+        /// <returns>0 if the entire string portion was written; or -1 if the
+        /// string portion contains an unpaired surrogate code point and
+        /// <paramref name='replace'/> is false.</returns>
+        /// <exception cref='ArgumentNullException'>The parameter <paramref
+        /// name='str'/> is null or <paramref name='stream'/> is
+        /// null.</exception>
+        /// <exception cref='ArgumentException'>The parameter <paramref
+        /// name='offset'/> is less than 0, <paramref name='length'/> is less
+        /// than 0, or <paramref name='offset'/> plus <paramref name='length'/>
+        /// is greater than the string's length.</exception>
+        /// <exception cref='System.IO.IOException'>An I/O error
+        /// occurred.</exception>
         public static int WriteUtf8(
-      string str,
-      int offset,
-      int length,
-      Stream stream,
-      bool replace,
-      bool lenientLineBreaks)
+          string str,
+          int offset,
+          int length,
+          Stream stream,
+          bool replace,
+          bool lenientLineBreaks)
         {
             if (stream == null)
             {
@@ -671,34 +899,48 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
             }
             if (offset < 0)
             {
-                throw new ArgumentException("offset (" + offset + ") is less than " +
-                            "0");
+                throw new ArgumentException("offset(" + offset + ") is less than " +
+                  "0");
             }
             if (offset > str.Length)
             {
-                throw new ArgumentException("offset (" + offset + ") is more than " +
-                            str.Length);
+                throw new ArgumentException("offset(" + offset + ") is more than " +
+                  str.Length);
             }
             if (length < 0)
             {
-                throw new ArgumentException("length (" + length + ") is less than " +
-                            "0");
+                throw new ArgumentException("length(" + length + ") is less than " +
+                  "0");
             }
             if (length > str.Length)
             {
-                throw new ArgumentException("length (" + length + ") is more than " +
-                            str.Length);
+                throw new ArgumentException("length(" + length + ") is more than " +
+                  str.Length);
             }
             if (str.Length - offset < length)
             {
-                throw new ArgumentException("str.Length minus offset (" +
-                        (str.Length - offset) + ") is less than " + length);
+                throw new ArgumentException("str.Length minus offset(" +
+                  (str.Length - offset) + ") is less than " + length);
+            }
+            if (length == 0)
+            {
+                return 0;
             }
             int endIndex, c;
             byte[] bytes;
-            int retval = 0;
-            bytes = new byte[StreamedStringBufferLength];
-            int byteIndex = 0;
+            var retval = 0;
+            // Take string portion's length into account when allocating
+            // stream buffer, in case it's much smaller than the usual stream
+            // string buffer length and to improve performance on small strings
+            int bufferLength = Math.Min(StreamedStringBufferLength, length);
+            if (bufferLength < StreamedStringBufferLength)
+            {
+                bufferLength = Math.Min(
+                  StreamedStringBufferLength,
+                  bufferLength * 3);
+            }
+            bytes = new byte[bufferLength];
+            var byteIndex = 0;
             endIndex = offset + length;
             for (int index = offset; index < endIndex; ++index)
             {
@@ -708,7 +950,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
                     if (lenientLineBreaks)
                     {
                         if (c == 0x0d && (index + 1 >= endIndex || str[index + 1] !=
-                                0x0a))
+                            0x0a))
                         {
                             // bare CR, convert to CRLF
                             if (byteIndex + 2 > StreamedStringBufferLength)
@@ -771,10 +1013,10 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
                 else
                 {
                     if ((c & 0xfc00) == 0xd800 && index + 1 < endIndex &&
-                        (str[index + 1] & 0xfc00) == 0xdc00)
+                      (str[index + 1] & 0xfc00) == 0xdc00)
                     {
                         // Get the Unicode code point for the surrogate pair
-                        c = 0x10000 + ((c - 0xd800) << 10) + (str[index + 1] - 0xdc00);
+                        c = 0x10000 + ((c & 0x3ff) << 10) + (str[index + 1] & 0x3ff);
                         ++index;
                     }
                     else if ((c & 0xf800) == 0xd800)
@@ -783,7 +1025,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
                         if (!replace)
                         {
                             retval = -1;
-                            break;  // write bytes read so far
+                            break; // write bytes read so far
                         }
                         c = 0xfffd;
                     }
@@ -818,8 +1060,21 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
             return retval;
         }
 
-        /// <include file='../docs.xml'
-        /// path='docs/doc[@name="M:PeterO.DataUtilities.WriteUtf8(System.String,System.IO.Stream,System.Boolean)"]/*'/>
+        /// <summary>Writes a string in UTF-8 encoding to a data
+        /// stream.</summary>
+        /// <param name='str'>A string to write.</param>
+        /// <param name='stream'>A writable data stream.</param>
+        /// <param name='replace'>If true, replaces unpaired surrogate code
+        /// points with the replacement character (U+FFFD). If false, stops
+        /// processing when an unpaired surrogate code point is seen.</param>
+        /// <returns>0 if the entire string was written; or -1 if the string
+        /// contains an unpaired surrogate code point and <paramref
+        /// name='replace'/> is false.</returns>
+        /// <exception cref='ArgumentNullException'>The parameter <paramref
+        /// name='str'/> is null or <paramref name='stream'/> is
+        /// null.</exception>
+        /// <exception cref='System.IO.IOException'>An I/O error
+        /// occurred.</exception>
         public static int WriteUtf8(string str, Stream stream, bool replace)
         {
             if (str == null)
@@ -829,14 +1084,35 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
             return WriteUtf8(str, 0, str.Length, stream, replace);
         }
 
-        /// <include file='../docs.xml'
-        /// path='docs/doc[@name="M:PeterO.DataUtilities.ReadUtf8FromBytes(System.Byte[],System.Int32,System.Int32,System.Text.StringBuilder,System.Boolean)"]/*'/>
+        /// <summary>Reads a string in UTF-8 encoding from a byte
+        /// array.</summary>
+        /// <param name='data'>A byte array containing a UTF-8 text
+        /// string.</param>
+        /// <param name='offset'>Offset into the byte array to start
+        /// reading.</param>
+        /// <param name='bytesCount'>Length, in bytes, of the UTF-8 text
+        /// string.</param>
+        /// <param name='builder'>A string builder object where the resulting
+        /// string will be stored.</param>
+        /// <param name='replace'>If true, replaces invalid encoding with the
+        /// replacement character (U+FFFD). If false, stops processing when
+        /// invalid UTF-8 is seen.</param>
+        /// <returns>0 if the entire string was read without errors, or -1 if
+        /// the string is not valid UTF-8 and <paramref name='replace'/> is
+        /// false.</returns>
+        /// <exception cref='ArgumentNullException'>The parameter <paramref
+        /// name='data'/> is null or <paramref name='builder'/> is
+        /// null.</exception>
+        /// <exception cref='ArgumentException'>The parameter <paramref
+        /// name='offset'/> is less than 0, <paramref name='bytesCount'/> is
+        /// less than 0, or offset plus bytesCount is greater than the length
+        /// of <paramref name='data'/>.</exception>
         public static int ReadUtf8FromBytes(
-      byte[] data,
-      int offset,
-      int bytesCount,
-      StringBuilder builder,
-      bool replace)
+          byte[] data,
+          int offset,
+          int bytesCount,
+          StringBuilder builder,
+          bool replace)
         {
             if (data == null)
             {
@@ -844,38 +1120,38 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
             }
             if (offset < 0)
             {
-                throw new ArgumentException("offset (" + offset + ") is less than " +
-                            "0");
+                throw new ArgumentException("offset(" + offset + ") is less than " +
+                  "0");
             }
             if (offset > data.Length)
             {
-                throw new ArgumentException("offset (" + offset + ") is more than " +
-                            data.Length);
+                throw new ArgumentException("offset(" + offset + ") is more than " +
+                  data.Length);
             }
             if (bytesCount < 0)
             {
-                throw new ArgumentException("bytesCount (" + bytesCount +
-                            ") is less than 0");
+                throw new ArgumentException("bytesCount(" + bytesCount +
+                  ") is less than 0");
             }
             if (bytesCount > data.Length)
             {
-                throw new ArgumentException("bytesCount (" + bytesCount +
-                            ") is more than " + data.Length);
+                throw new ArgumentException("bytesCount(" + bytesCount +
+                  ") is more than " + data.Length);
             }
             if (data.Length - offset < bytesCount)
             {
-                throw new ArgumentException("data.Length minus offset (" +
-                        (data.Length - offset) + ") is less than " + bytesCount);
+                throw new ArgumentException("data.Length minus offset(" +
+                  (data.Length - offset) + ") is less than " + bytesCount);
             }
             if (builder == null)
             {
                 throw new ArgumentNullException(nameof(builder));
             }
-            int cp = 0;
-            int bytesSeen = 0;
-            int bytesNeeded = 0;
-            int lower = 0x80;
-            int upper = 0xbf;
+            var cp = 0;
+            var bytesSeen = 0;
+            var bytesNeeded = 0;
+            var lower = 0x80;
+            var upper = 0xbf;
             int pointer, endpointer, b;
             pointer = offset;
             endpointer = offset + bytesCount;
@@ -977,37 +1253,76 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
             return 0;
         }
 
-        /// <include file='../docs.xml'
-        /// path='docs/doc[@name="M:PeterO.DataUtilities.ReadUtf8ToString(System.IO.Stream)"]/*'/>
+        /// <summary>Reads a string in UTF-8 encoding from a data stream in
+        /// full and returns that string. Replaces invalid encoding with the
+        /// replacement character (U+FFFD).</summary>
+        /// <param name='stream'>A readable data stream.</param>
+        /// <returns>The string read.</returns>
+        /// <exception cref='System.IO.IOException'>An I/O error
+        /// occurred.</exception>
+        /// <exception cref='ArgumentNullException'>The parameter <paramref
+        /// name='stream'/> is null.</exception>
         public static string ReadUtf8ToString(Stream stream)
         {
             return ReadUtf8ToString(stream, -1, true);
         }
 
-        /// <include file='../docs.xml'
-        /// path='docs/doc[@name="M:PeterO.DataUtilities.ReadUtf8ToString(System.IO.Stream,System.Int32,System.Boolean)"]/*'/>
+        /// <summary>Reads a string in UTF-8 encoding from a data stream and
+        /// returns that string.</summary>
+        /// <param name='stream'>A readable data stream.</param>
+        /// <param name='bytesCount'>The length, in bytes, of the string. If
+        /// this is less than 0, this function will read until the end of the
+        /// stream.</param>
+        /// <param name='replace'>If true, replaces invalid encoding with the
+        /// replacement character (U+FFFD). If false, throws an error if an
+        /// unpaired surrogate code point is seen.</param>
+        /// <returns>The string read.</returns>
+        /// <exception cref='System.IO.IOException'>An I/O error occurred; or,
+        /// the string is not valid UTF-8 and <paramref name='replace'/> is
+        /// false.</exception>
+        /// <exception cref='ArgumentNullException'>The parameter <paramref
+        /// name='stream'/> is null.</exception>
         public static string ReadUtf8ToString(
-      Stream stream,
-      int bytesCount,
-      bool replace)
+          Stream stream,
+          int bytesCount,
+          bool replace)
         {
-            StringBuilder builder = new StringBuilder();
+            var builder = new StringBuilder();
             if (DataUtilities.ReadUtf8(stream, bytesCount, builder, replace) == -1)
             {
                 throw new IOException(
-               "Unpaired surrogate code point found.",
-               new ArgumentException("Unpaired surrogate code point found."));
+                  "Unpaired surrogate code point found.",
+                  new ArgumentException("Unpaired surrogate code point found."));
             }
             return builder.ToString();
         }
 
-        /// <include file='../docs.xml'
-        /// path='docs/doc[@name="M:PeterO.DataUtilities.ReadUtf8(System.IO.Stream,System.Int32,System.Text.StringBuilder,System.Boolean)"]/*'/>
+        /// <summary>Reads a string in UTF-8 encoding from a data
+        /// stream.</summary>
+        /// <param name='stream'>A readable data stream.</param>
+        /// <param name='bytesCount'>The length, in bytes, of the string. If
+        /// this is less than 0, this function will read until the end of the
+        /// stream.</param>
+        /// <param name='builder'>A string builder object where the resulting
+        /// string will be stored.</param>
+        /// <param name='replace'>If true, replaces invalid encoding with the
+        /// replacement character (U+FFFD). If false, stops processing when an
+        /// unpaired surrogate code point is seen.</param>
+        /// <returns>0 if the entire string was read without errors, -1 if the
+        /// string is not valid UTF-8 and <paramref name='replace'/> is false,
+        /// or -2 if the end of the stream was reached before the last
+        /// character was read completely (which is only the case if <paramref
+        /// name='bytesCount'/> is 0 or greater).</returns>
+        /// <exception cref='System.IO.IOException'>An I/O error
+        /// occurred.</exception>
+        /// <exception cref='ArgumentNullException'>The parameter <paramref
+        /// name='stream'/> is null or <paramref name='builder'/> is
+        /// null.</exception>
         public static int ReadUtf8(
-      Stream stream,
-      int bytesCount,
-      StringBuilder builder,
-      bool replace)
+          Stream stream,
+          int bytesCount,
+          StringBuilder builder,
+          bool replace)
         {
             if (stream == null)
             {
@@ -1018,12 +1333,12 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
                 throw new ArgumentNullException(nameof(builder));
             }
             int b;
-            int cp = 0;
-            int bytesSeen = 0;
-            int bytesNeeded = 0;
-            int lower = 0x80;
-            int upper = 0xbf;
-            int pointer = 0;
+            var cp = 0;
+            var bytesSeen = 0;
+            var bytesNeeded = 0;
+            var lower = 0x80;
+            var upper = 0xbf;
+            var pointer = 0;
             while (pointer < bytesCount || bytesCount < 0)
             {
                 b = stream.ReadByte();
@@ -1039,7 +1354,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
                             {
                                 return -2;
                             }
-                            break;  // end of stream
+                            break; // end of stream
                         }
                         return -1;
                     }
@@ -1047,7 +1362,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
                     {
                         return -2;
                     }
-                    break;  // end of stream
+                    break; // end of stream
                 }
                 if (bytesCount > 0)
                 {
@@ -1179,13 +1494,25 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
 #if DEBUG
     internal static class DebugUtility
     {
+        private static readonly object WriterLock = new Object();
+        private static Action<string> writer = null;
+
+        [System.Diagnostics.Conditional("DEBUG")]
+        public static void SetWriter(Action<string> wr)
+        {
+            lock (WriterLock)
+            {
+                writer = wr;
+            }
+        }
+
         private static MethodInfo GetTypeMethod(
           Type t,
           string name,
           Type[] parameters)
         {
 #if NET40 || NET20
-      return t.GetMethod(name, parameters);
+        return t.GetMethod(name, parameters);
 #else
             {
                 return t?.GetRuntimeMethod(name, parameters);
@@ -1196,16 +1523,54 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
         public static void Log(string str)
         {
             Type type = Type.GetType("System.Console");
-            Type[] types = new[] { typeof(string) };
-            MethodInfo typeMethod = GetTypeMethod(type, "WriteLine", types);
-            if (typeMethod != null) typeMethod.Invoke(
-               type,
-               new object[] { str });
+            if (type == null)
+            {
+                Action<string> wr = null;
+                lock (WriterLock)
+                {
+                    wr = writer;
+                }
+                if (wr != null)
+                {
+#if !NET20 && !NET40
+                    System.Diagnostics.Debug.WriteLine(str);
+#endif
+                    wr(str);
+                    return;
+                }
+                else
+                {
+#if !NET20 && !NET40
+                    System.Diagnostics.Debug.WriteLine(str);
+                    return;
+#else
+{
+ throw new NotSupportedException("System.Console not found");
+}
+#endif
+                }
+            }
+            var types = new[] { typeof(string) };
+            var typeMethod = GetTypeMethod(type, "WriteLine", types);
+            if (typeMethod != null)
+            {
+                typeMethod.Invoke(
+                  type,
+                  new object[] { str });
+            }
+            else
+            {
+                throw new NotSupportedException("System.Console.WriteLine not found");
+            }
         }
 
+        [System.Diagnostics.Conditional("DEBUG")]
         public static void Log(string format, params object[] args)
         {
-            Log(String.Format(format, args));
+            Log(String.Format(
+              System.Globalization.CultureInfo.CurrentCulture,
+              format,
+              args));
         }
     }
 #endif
@@ -2167,58 +2532,6 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
     }
     #endregion
 
-    #region CBORUuidConverter
-    internal class CBORUuidConverter : ICBORToFromConverter<Guid>
-    {
-        private CBORObject ValidateObject(CBORObject obj)
-        {
-            if (obj.Type != CBORType.ByteString)
-            {
-                throw new CBORException("UUID must be a byte string");
-            }
-            byte[] bytes = obj.GetByteString();
-            if (bytes.Length != 16)
-            {
-                throw new CBORException("UUID must be 16 bytes long");
-            }
-            return obj;
-        }
-
-        /// <include file='../../docs.xml'
-        /// path='docs/doc[@name="M:CBORTag37.ToCBORObject(System.Guid)"]/*'/>
-        public CBORObject ToCBORObject(Guid obj)
-        {
-            byte[] bytes = PropertyMap.UUIDToBytes(obj);
-            return CBORObject.FromObjectAndTag(bytes, (int)37);
-        }
-
-        public Guid FromCBORObject(CBORObject obj)
-        {
-            if (!obj.HasMostOuterTag(37))
-            {
-                throw new CBORException("Must have outermost tag 37");
-            }
-            this.ValidateObject(obj);
-            byte[] bytes = obj.GetByteString();
-            char[] guidChars = new char[36];
-            string hex = "0123456789abcdef";
-            int index = 0;
-            for (int i = 0; i < 16; ++i)
-            {
-                if (i == 4 || i == 6 || i == 8 || i == 10)
-                {
-                    guidChars[index++] = '-';
-                }
-                guidChars[index++] = hex[(int)(bytes[i] >> 4) & 15];
-                guidChars[index++] = hex[(int)bytes[i] & 15];
-            }
-            string guidString = new String(guidChars);
-            return new Guid(guidString);
-        }
-    }
-
-    #endregion
-
     #region CharacterInputWithCount
     internal class CharacterInputWithCount : ICharacterInput
     {
@@ -2331,25 +2644,42 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
         private int offset;
         private ICharacterInput reader;
 
-        // <include file='../../docs.xml'
-        // path='docs/doc[@name="M:CharacterReader.#ctor(System.String)"]/*'/>
+        // <summary>Initializes a new instance of the
+        // <see cref='PeterO.Cbor.CharacterReader'/> class.</summary>
+        // <param name='str'>The parameter <paramref name='str'/> is a text
+        // string.</param>
         public CharacterReader(string str) : this(str, false, false)
         {
         }
 
-        // <include file='../../docs.xml'
-        // path='docs/doc[@name="M:CharacterReader.#ctor(System.String,System.Boolean)"]/*'/>
-        public CharacterReader(string str, bool skipByteOrderMark) :
-          this(str, skipByteOrderMark, false)
+        // <summary>Initializes a new instance of the
+        // <see cref='PeterO.Cbor.CharacterReader'/> class.</summary>
+        // <param name='str'>The parameter <paramref name='str'/> is a text
+        // string.</param>
+        // <param name='skipByteOrderMark'>If true and the first character in
+        // the string is U+FEFF, skip that character.</param>
+        // <exception cref='ArgumentNullException'>The parameter <paramref
+        // name='str'/> is null.</exception>
+        public CharacterReader(string str, bool skipByteOrderMark)
+          : this(str, skipByteOrderMark, false)
         {
         }
 
-        // <include file='../../docs.xml'
-        // path='docs/doc[@name="M:CharacterReader.#ctor(System.String,System.Boolean,System.Boolean)"]/*'/>
+        // <summary>Initializes a new instance of the
+        // <see cref='PeterO.Cbor.CharacterReader'/> class.</summary>
+        // <param name='str'>The parameter <paramref name='str'/> is a text
+        // string.</param>
+        // <param name='skipByteOrderMark'>If true and the first character in
+        // the string is U+FEFF, skip that character.</param>
+        // <param name='errorThrow'>When encountering invalid encoding, throw
+        // an exception if this parameter is true, or replace it with U+FFFD
+        // (replacement character) if this parameter is false.</param>
+        // <exception cref='ArgumentNullException'>The parameter <paramref
+        // name='str'/> is null.</exception>
         public CharacterReader(
-        string str,
-        bool skipByteOrderMark,
-        bool errorThrow)
+          string str,
+          bool skipByteOrderMark,
+          bool errorThrow)
         {
             if (str == null)
             {
@@ -2357,7 +2687,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
             }
             this.strLength = str.Length;
             this.offset = (skipByteOrderMark && this.strLength > 0 && str[0] ==
-              0xfeff) ? 1 : 0;
+                0xfeff) ? 1 : 0;
             this.str = str;
             this.errorThrow = errorThrow;
             this.mode = -1;
@@ -2365,21 +2695,54 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
             this.stream = null;
         }
 
-        // <include file='../../docs.xml'
-        // path='docs/doc[@name="M:CharacterReader.#ctor(System.String,System.Int32,System.Int32)"]/*'/>
-        public CharacterReader(string str, int offset, int length) :
-          this(str, offset, length, false, false)
+        // <summary>Initializes a new instance of the
+        // <see cref='PeterO.Cbor.CharacterReader'/> class.</summary>
+        // <param name='str'>The parameter <paramref name='str'/> is a text
+        // string.</param>
+        // <param name='offset'>An index, starting at 0, showing where the
+        // desired portion of <paramref name='str'/> begins.</param>
+        // <param name='length'>The length, in code units, of the desired
+        // portion of <paramref name='str'/> (but not more than <paramref
+        // name='str'/> 's length).</param>
+        // <exception cref='ArgumentException'>Either &#x22;offset&#x22; or
+        // &#x22;length&#x22; is less than 0 or greater than
+        // &#x22;str&#x22;&#x27;s length, or &#x22;str&#x22;&#x27;s length
+        // minus &#x22;offset&#x22; is less than
+        // &#x22;length&#x22;.</exception>
+        // <exception cref='ArgumentNullException'>The parameter <paramref
+        // name='str'/> is null.</exception>
+        public CharacterReader(string str, int offset, int length)
+          : this(str, offset, length, false, false)
         {
         }
 
-        // <include file='../../docs.xml'
-        // path='docs/doc[@name="M:CharacterReader.#ctor(System.String,System.Int32,System.Int32,System.Boolean,System.Boolean)"]/*'/>
+        // <summary>Initializes a new instance of the
+        // <see cref='PeterO.Cbor.CharacterReader'/> class.</summary>
+        // <param name='str'>The parameter <paramref name='str'/> is a text
+        // string.</param>
+        // <param name='offset'>An index, starting at 0, showing where the
+        // desired portion of <paramref name='str'/> begins.</param>
+        // <param name='length'>The length, in code units, of the desired
+        // portion of <paramref name='str'/> (but not more than <paramref
+        // name='str'/> 's length).</param>
+        // <param name='skipByteOrderMark'>If true and the first character in
+        // the string portion is U+FEFF, skip that character.</param>
+        // <param name='errorThrow'>When encountering invalid encoding, throw
+        // an exception if this parameter is true, or replace it with U+FFFD
+        // (replacement character) if this parameter is false.</param>
+        // <exception cref='ArgumentNullException'>The parameter <paramref
+        // name='str'/> is null.</exception>
+        // <exception cref='ArgumentException'>Either <paramref
+        // name='offset'/> or <paramref name='length'/> is less than 0 or
+        // greater than <paramref name='str'/> 's length, or <paramref
+        // name='str'/> 's length minus <paramref name='offset'/> is less than
+        // <paramref name='length'/>.</exception>
         public CharacterReader(
-      string str,
-      int offset,
-      int length,
-      bool skipByteOrderMark,
-      bool errorThrow)
+          string str,
+          int offset,
+          int length,
+          bool skipByteOrderMark,
+          bool errorThrow)
         {
             if (str == null)
             {
@@ -2387,32 +2750,32 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
             }
             if (offset < 0)
             {
-                throw new ArgumentException("offset (" + offset +
+                throw new ArgumentException("offset(" + offset +
                   ") is less than 0");
             }
             if (offset > str.Length)
             {
-                throw new ArgumentException("offset (" + offset +
+                throw new ArgumentException("offset(" + offset +
                   ") is more than " + str.Length);
             }
             if (length < 0)
             {
-                throw new ArgumentException("length (" + length +
+                throw new ArgumentException("length(" + length +
                   ") is less than 0");
             }
             if (length > str.Length)
             {
-                throw new ArgumentException("length (" + length +
+                throw new ArgumentException("length(" + length +
                   ") is more than " + str.Length);
             }
             if (str.Length - offset < length)
             {
-                throw new ArgumentException("str's length minus " + offset + " (" +
+                throw new ArgumentException("str's length minus " + offset + "(" +
                   (str.Length - offset) + ") is less than " + length);
             }
             this.strLength = length;
             this.offset = (skipByteOrderMark && length > 0 && str[offset] ==
-              0xfeff) ? offset + 1 : 0;
+                0xfeff) ? offset + 1 : 0;
             this.str = str;
             this.errorThrow = errorThrow;
             this.mode = -1;
@@ -2420,33 +2783,104 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
             this.stream = null;
         }
 
-        // <include file='../../docs.xml'
-        // path='docs/doc[@name="M:CharacterReader.#ctor(System.IO.Stream)"]/*'/>
+        // <summary>Initializes a new instance of the
+        // <see cref='PeterO.Cbor.CharacterReader'/> class; will read the
+        // stream as UTF-8, skip the byte-order mark (U+FEFF) if it appears
+        // first in the stream, and replace invalid byte sequences with
+        // replacement characters (U+FFFD).</summary>
+        // <param name='stream'>A readable data stream.</param>
+        // <exception cref='ArgumentNullException'>The parameter <paramref
+        // name='stream'/> is null.</exception>
         public CharacterReader(Stream stream) : this(stream, 0, false)
         {
         }
 
-        // <include file='../../docs.xml'
-        // path='docs/doc[@name="M:CharacterReader.#ctor(System.IO.Stream,System.Int32,System.Boolean)"]/*'/>
-        public CharacterReader(Stream stream, int mode, bool errorThrow) :
-          this(stream, mode, errorThrow, false)
+        // <summary>Initializes a new instance of the
+        // <see cref='PeterO.Cbor.CharacterReader'/> class; will skip the
+        // byte-order mark (U+FEFF) if it appears first in the stream and a
+        // UTF-8 stream is detected.</summary>
+        // <param name='stream'>A readable data stream.</param>
+        // <param name='mode'>The method to use when detecting encodings other
+        // than UTF-8 in the byte stream. This usually involves checking
+        // whether the stream begins with a byte-order mark (BOM, U+FEFF) or a
+        // non-zero basic code point (U+0001 to U+007F) before reading the
+        // rest of the stream. This value can be one of the following:
+        // <list>
+        // <item>0: UTF-8 only.</item>
+        // <item>1: Detect UTF-16 using BOM or non-zero basic code point,
+        // otherwise UTF-8.</item>
+        // <item>2: Detect UTF-16/UTF-32 using BOM or non-zero basic code
+        // point, otherwise UTF-8. (Tries to detect UTF-32 first.)</item>
+        // <item>3: Detect UTF-16 using BOM, otherwise UTF-8.</item>
+        // <item>4: Detect UTF-16/UTF-32 using BOM, otherwise UTF-8. (Tries to
+        // detect UTF-32 first.)</item></list>.</param>
+        // <param name='errorThrow'>When encountering invalid encoding, throw
+        // an exception if this parameter is true, or replace it with U+FFFD
+        // (replacement character) if this parameter is false.</param>
+        public CharacterReader(Stream stream, int mode, bool errorThrow)
+          : this(stream, mode, errorThrow, false)
         {
         }
 
-        // <include file='../../docs.xml'
-        // path='docs/doc[@name="M:CharacterReader.#ctor(System.IO.Stream,System.Int32)"]/*'/>
-        public CharacterReader(Stream stream, int mode) :
-          this(stream, mode, false, false)
+        // <summary>Initializes a new instance of the
+        // <see cref='PeterO.Cbor.CharacterReader'/> class; will skip the
+        // byte-order mark (U+FEFF) if it appears first in the stream and
+        // replace invalid byte sequences with replacement characters
+        // (U+FFFD).</summary>
+        // <param name='stream'>A readable byte stream.</param>
+        // <param name='mode'>The method to use when detecting encodings other
+        // than UTF-8 in the byte stream. This usually involves checking
+        // whether the stream begins with a byte-order mark (BOM, U+FEFF) or a
+        // non-zero basic code point (U+0001 to U+007F) before reading the
+        // rest of the stream. This value can be one of the following:
+        // <list>
+        // <item>0: UTF-8 only.</item>
+        // <item>1: Detect UTF-16 using BOM or non-zero basic code point,
+        // otherwise UTF-8.</item>
+        // <item>2: Detect UTF-16/UTF-32 using BOM or non-zero basic code
+        // point, otherwise UTF-8. (Tries to detect UTF-32 first.)</item>
+        // <item>3: Detect UTF-16 using BOM, otherwise UTF-8.</item>
+        // <item>4: Detect UTF-16/UTF-32 using BOM, otherwise UTF-8. (Tries to
+        // detect UTF-32 first.)</item></list>.</param>
+        // <exception cref='ArgumentNullException'>The parameter <paramref
+        // name='stream'/> is null.</exception>
+        public CharacterReader(Stream stream, int mode)
+          : this(stream, mode, false, false)
         {
         }
 
-        // <include file='../../docs.xml'
-        // path='docs/doc[@name="M:CharacterReader.#ctor(System.IO.Stream,System.Int32,System.Boolean,System.Boolean)"]/*'/>
+        // <summary>Initializes a new instance of the
+        // <see cref='PeterO.Cbor.CharacterReader'/> class.</summary>
+        // <param name='stream'>A readable byte stream.</param>
+        // <param name='mode'>The method to use when detecting encodings other
+        // than UTF-8 in the byte stream. This usually involves checking
+        // whether the stream begins with a byte-order mark (BOM, U+FEFF) or a
+        // non-zero basic code point (U+0001 to U+007F) before reading the
+        // rest of the stream. This value can be one of the following:
+        // <list>
+        // <item>0: UTF-8 only.</item>
+        // <item>1: Detect UTF-16 using BOM or non-zero basic code point,
+        // otherwise UTF-8.</item>
+        // <item>2: Detect UTF-16/UTF-32 using BOM or non-zero basic code
+        // point, otherwise UTF-8. (Tries to detect UTF-32 first.)</item>
+        // <item>3: Detect UTF-16 using BOM, otherwise UTF-8.</item>
+        // <item>4: Detect UTF-16/UTF-32 using BOM, otherwise UTF-8. (Tries to
+        // detect UTF-32 first.)</item></list>.</param>
+        // <param name='errorThrow'>If true, will throw an exception if
+        // invalid byte sequences (in the detected encoding) are found in the
+        // byte stream. If false, replaces those byte sequences with
+        // replacement characters (U+FFFD) as the stream is read.</param>
+        // <param name='dontSkipUtf8Bom'>If the stream is detected as UTF-8
+        // (including when "mode" is 0) and this parameter is <c>true</c>,
+        // won't skip the BOM character if it occurs at the start of the
+        // stream.</param>
+        // <exception cref='ArgumentNullException'>The parameter <paramref
+        // name='stream'/> is null.</exception>
         public CharacterReader(
-      Stream stream,
-      int mode,
-      bool errorThrow,
-      bool dontSkipUtf8Bom)
+          Stream stream,
+          int mode,
+          bool errorThrow,
+          bool dontSkipUtf8Bom)
         {
             if (stream == null)
             {
@@ -2465,8 +2899,25 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
             int ReadByte();
         }
 
-        // <include file='../../docs.xml'
-        // path='docs/doc[@name="M:CharacterReader.Read(System.Int32[],System.Int32,System.Int32)"]/*'/>
+        // <summary>Reads a series of code points from a Unicode stream or a
+        // string.</summary>
+        // <param name='chars'>An array where the code points that were read
+        // will be stored.</param>
+        // <param name='index'>An index starting at 0 showing where the
+        // desired portion of <paramref name='chars'/> begins.</param>
+        // <param name='length'>The number of elements in the desired portion
+        // of <paramref name='chars'/> (but not more than <paramref
+        // name='chars'/> 's length).</param>
+        // <returns>The number of code points read from the stream. This can
+        // be less than the <paramref name='length'/> parameter if the end of
+        // the stream is reached.</returns>
+        // <exception cref='ArgumentNullException'>The parameter <paramref
+        // name='chars'/> is null.</exception>
+        // <exception cref='ArgumentException'>Either <paramref name='index'/>
+        // or <paramref name='length'/> is less than 0 or greater than
+        // <paramref name='chars'/> 's length, or <paramref name='chars'/> 's
+        // length minus <paramref name='index'/> is less than <paramref
+        // name='length'/>.</exception>
         public int Read(int[] chars, int index, int length)
         {
             if (chars == null)
@@ -2475,30 +2926,30 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
             }
             if (index < 0)
             {
-                throw new ArgumentException("index (" + index +
+                throw new ArgumentException("index(" + index +
                   ") is less than 0");
             }
             if (index > chars.Length)
             {
-                throw new ArgumentException("index (" + index +
+                throw new ArgumentException("index(" + index +
                   ") is more than " + chars.Length);
             }
             if (length < 0)
             {
-                throw new ArgumentException("length (" + length +
+                throw new ArgumentException("length(" + length +
                   ") is less than 0");
             }
             if (length > chars.Length)
             {
-                throw new ArgumentException("length (" + length +
+                throw new ArgumentException("length(" + length +
                   ") is more than " + chars.Length);
             }
             if (chars.Length - index < length)
             {
-                throw new ArgumentException("chars's length minus " + index + " (" +
+                throw new ArgumentException("chars's length minus " + index + "(" +
                   (chars.Length - index) + ") is less than " + length);
             }
-            int count = 0;
+            var count = 0;
             for (int i = 0; i < length; ++i)
             {
                 int c = this.ReadChar();
@@ -2512,8 +2963,10 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
             return count;
         }
 
-        // <include file='../../docs.xml'
-        // path='docs/doc[@name="M:CharacterReader.ReadChar"]/*'/>
+        // <summary>Reads the next character from a Unicode stream or a
+        // string.</summary>
+        // <returns>The next character, or -1 if the end of the string or
+        // stream was reached.</returns>
         public int ReadChar()
         {
             if (this.reader != null)
@@ -2528,12 +2981,12 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
             {
                 int c = (this.offset < this.strLength) ? this.str[this.offset] : -1;
                 if ((c & 0xfc00) == 0xd800 && this.offset + 1 < this.strLength &&
-                        this.str[this.offset + 1] >= 0xdc00 && this.str[this.offset + 1]
-                        <= 0xdfff)
+                  this.str[this.offset + 1] >= 0xdc00 && this.str[this.offset + 1]
+                  <= 0xdfff)
                 {
                     // Get the Unicode code point for the surrogate pair
-                    c = 0x10000 + ((c - 0xd800) << 10) + (this.str[this.offset + 1] -
-                    0xdc00);
+                    c = 0x10000 + ((c & 0x3ff) << 10) + (this.str[this.offset + 1] &
+                        0x3ff);
                     ++this.offset;
                 }
                 else if ((c & 0xf800) == 0xd800)
@@ -2541,7 +2994,8 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
                     // unpaired surrogate
                     if (this.errorThrow)
                     {
-                        throw new InvalidOperationException("Unpaired surrogate code point");
+                        throw new InvalidOperationException("Unpaired surrogate code" +
+                          "\u0020point");
                     }
                     else
                     {
@@ -2576,10 +3030,10 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
                     }
                     else
                     {
-                        Utf16Reader newReader = new Utf16Reader(
-                    this.stream,
-                    bigEndian,
-                    this.errorThrow);
+                        var newReader = new Utf16Reader(
+                          this.stream,
+                          bigEndian,
+                          this.errorThrow);
                         newReader.Unget(c3, c4);
                         this.reader = newReader;
                         return newReader.ReadChar();
@@ -2592,7 +3046,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
                 }
                 else
                 {
-                    Utf8Reader utf8reader = new Utf8Reader(this.stream, this.errorThrow);
+                    var utf8reader = new Utf8Reader(this.stream, this.errorThrow);
                     utf8reader.Unget(c2);
                     this.reader = utf8reader;
                     return 0xfffd;
@@ -2608,7 +3062,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
                 c3 = this.stream.ReadByte();
                 c4 = this.stream.ReadByte();
                 if (c2 == 0 &&
-                   ((c3 == 0xfe && c4 == 0xff) ||
+                  ((c3 == 0xfe && c4 == 0xff) ||
                     (c3 == 0 && c4 >= 0x01 && c4 <= 0x7f)))
                 {
                     this.reader = new Utf32Reader(this.stream, true, this.errorThrow);
@@ -2616,7 +3070,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
                 }
                 else
                 {
-                    Utf8Reader utf8reader = new Utf8Reader(this.stream, this.errorThrow);
+                    var utf8reader = new Utf8Reader(this.stream, this.errorThrow);
                     utf8reader.UngetThree(c2, c3, c4);
                     this.reader = utf8reader;
                     return c1;
@@ -2636,17 +3090,17 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
                         if (c3 == 0 && c4 == 0)
                         {
                             this.reader = new Utf32Reader(
-                  this.stream,
-                  false,
-                  this.errorThrow);
+                              this.stream,
+                              false,
+                              this.errorThrow);
                             return c1;
                         }
                         else
                         {
-                            Utf16Reader newReader = new Utf16Reader(
-                    this.stream,
-                    false,
-                    this.errorThrow);
+                            var newReader = new Utf16Reader(
+                              this.stream,
+                              false,
+                              this.errorThrow);
                             newReader.Unget(c3, c4);
                             this.reader = newReader;
                             return c1;
@@ -2655,7 +3109,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
                     else
                     {
                         // NZA NZ, so UTF-8
-                        Utf8Reader utf8reader = new Utf8Reader(this.stream, this.errorThrow);
+                        var utf8reader = new Utf8Reader(this.stream, this.errorThrow);
                         utf8reader.Unget(c2);
                         this.reader = utf8reader;
                         return c1;
@@ -2668,7 +3122,10 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
                     if (c2 >= 0x01 && c2 <= 0x7f)
                     {
                         // 0 NZA, so UTF-16BE
-                        Utf16Reader newReader = new Utf16Reader(this.stream, true, this.errorThrow);
+                        var newReader = new Utf16Reader(
+                          this.stream,
+                          true,
+                          this.errorThrow);
                         this.reader = newReader;
                         return c2;
                     }
@@ -2680,19 +3137,25 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
                         if (c3 == 0 && c4 >= 0x01 && c4 <= 0x7f)
                         {
                             // 0 0 0 NZA
-                            this.reader = new Utf32Reader(this.stream, true, this.errorThrow);
+                            this.reader = new Utf32Reader(
+                              this.stream,
+                              true,
+                              this.errorThrow);
                             return c4;
                         }
                         else if (c3 == 0xfe && c4 == 0xff)
                         {
                             // 0 0 FE FF
-                            this.reader = new Utf32Reader(this.stream, true, this.errorThrow);
+                            this.reader = new Utf32Reader(
+                              this.stream,
+                              true,
+                              this.errorThrow);
                             return this.reader.ReadChar();
                         }
                         else
                         {
                             // 0 0 ...
-                            Utf8Reader newReader = new Utf8Reader(this.stream, this.errorThrow);
+                            var newReader = new Utf8Reader(this.stream, this.errorThrow);
                             newReader.UngetThree(c2, c3, c4);
                             this.reader = newReader;
                             return c1;
@@ -2701,7 +3164,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
                     else
                     {
                         // 0 NonAscii, so UTF-8
-                        Utf8Reader utf8reader = new Utf8Reader(this.stream, this.errorThrow);
+                        var utf8reader = new Utf8Reader(this.stream, this.errorThrow);
                         utf8reader.Unget(c2);
                         this.reader = utf8reader;
                         return c1;
@@ -2723,10 +3186,10 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
                 int otherbyte = bigEndian ? 0xff : 0xfe;
                 if (c2 == otherbyte)
                 {
-                    Utf16Reader newReader = new Utf16Reader(
-                this.stream,
-                bigEndian,
-                this.errorThrow);
+                    var newReader = new Utf16Reader(
+                      this.stream,
+                      bigEndian,
+                      this.errorThrow);
                     this.reader = newReader;
                     return newReader.ReadChar();
                 }
@@ -2737,7 +3200,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
                 }
                 else
                 {
-                    Utf8Reader utf8reader = new Utf8Reader(this.stream, this.errorThrow);
+                    var utf8reader = new Utf8Reader(this.stream, this.errorThrow);
                     utf8reader.Unget(c2);
                     this.reader = utf8reader;
                     return 0xfffd;
@@ -2752,16 +3215,16 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
                     if (c2 == 0)
                     {
                         // NZA 0, so UTF-16LE
-                        Utf16Reader newReader = new Utf16Reader(
-                this.stream,
-                false,
-                this.errorThrow);
+                        var newReader = new Utf16Reader(
+                          this.stream,
+                          false,
+                          this.errorThrow);
                         this.reader = newReader;
                     }
                     else
                     {
                         // NZA NZ
-                        Utf8Reader utf8reader = new Utf8Reader(this.stream, this.errorThrow);
+                        var utf8reader = new Utf8Reader(this.stream, this.errorThrow);
                         utf8reader.Unget(c2);
                         this.reader = utf8reader;
                     }
@@ -2774,13 +3237,16 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
                     if (c2 >= 0x01 && c2 <= 0x7f)
                     {
                         // 0 NZA, so UTF-16BE
-                        Utf16Reader newReader = new Utf16Reader(this.stream, true, this.errorThrow);
+                        var newReader = new Utf16Reader(
+                          this.stream,
+                          true,
+                          this.errorThrow);
                         this.reader = newReader;
                         return c2;
                     }
                     else
                     {
-                        Utf8Reader utf8reader = new Utf8Reader(this.stream, this.errorThrow);
+                        var utf8reader = new Utf8Reader(this.stream, this.errorThrow);
                         utf8reader.Unget(c2);
                         this.reader = utf8reader;
                         return c1;
@@ -2802,35 +3268,37 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
                 return -1;
             }
             Utf8Reader utf8reader;
-            if (mode == 0)
+            switch (mode)
             {
-                // UTF-8 only
-                utf8reader = new Utf8Reader(this.stream, this.errorThrow);
-                this.reader = utf8reader;
-                c1 = utf8reader.ReadChar();
-                if (c1 == 0xfeff)
-                {
-                    // Skip BOM
+                case 0:
+                    // UTF-8 only
+                    utf8reader = new Utf8Reader(this.stream, this.errorThrow);
+                    this.reader = utf8reader;
+                    utf8reader.Unget(c1);
                     c1 = utf8reader.ReadChar();
-                }
-                return c1;
-            }
-            else if (mode == 1 || mode == 3)
-            {
-                c2 = this.DetectUtf8OrUtf16(c1);
-                if (c2 >= -1)
-                {
-                    return c2;
-                }
-            }
-            else if (mode == 2 || mode == 4)
-            {
-                // UTF-8, UTF-16, or UTF-32
-                c2 = this.DetectUtf8Or16Or32(c1);
-                if (c2 >= -1)
-                {
-                    return c2;
-                }
+                    if (c1 == 0xfeff && !this.dontSkipUtf8Bom)
+                    {
+                        // Skip BOM
+                        c1 = utf8reader.ReadChar();
+                    }
+                    return c1;
+                case 1:
+                case 3:
+                    c2 = this.DetectUtf8OrUtf16(c1);
+                    if (c2 >= -1)
+                    {
+                        return c2;
+                    }
+                    break;
+                case 2:
+                case 4:
+                    // UTF-8, UTF-16, or UTF-32
+                    c2 = this.DetectUtf8Or16Or32(c1);
+                    if (c2 >= -1)
+                    {
+                        return c2;
+                    }
+                    break;
             }
             // Default case: assume UTF-8
             utf8reader = new Utf8Reader(this.stream, this.errorThrow);
@@ -2855,7 +3323,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
                 this.saved = this.saved ?? (new int[this.savedLength + size]);
                 if (this.savedLength + size < this.saved.Length)
                 {
-                    int[] newsaved = new int[this.savedLength + size + 4];
+                    var newsaved = new int[this.savedLength + size + 4];
                     Array.Copy(this.saved, 0, newsaved, 0, this.savedLength);
                     this.saved = newsaved;
                 }
@@ -2957,7 +3425,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
                     int unit2 = this.bigEndian ? ((c1 << 8) | c2) : ((c2 << 8) | c1);
                     if ((unit2 & 0xfc00) == 0xdc00)
                     {
-                        return 0x10000 + ((surr - 0xd800) << 10) + (unit2 - 0xdc00);
+                        return 0x10000 + ((surr & 0x3ff) << 10) + (unit2 & 0x3ff);
                     }
                     this.Unget(c1, c2);
                     if (this.errorThrow)
@@ -2985,7 +3453,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
 
             public int Read(int[] chars, int index, int length)
             {
-                int count = 0;
+                var count = 0;
                 for (int i = 0; i < length; ++i)
                 {
                     int c = this.ReadChar();
@@ -3055,7 +3523,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
 
             public int Read(int[] chars, int index, int length)
             {
-                int count = 0;
+                var count = 0;
                 for (int i = 0; i < length; ++i)
                 {
                     int c = this.ReadChar();
@@ -3097,11 +3565,11 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
 
             public int ReadChar()
             {
-                int cp = 0;
-                int bytesSeen = 0;
-                int bytesNeeded = 0;
-                int lower = 0;
-                int upper = 0;
+                var cp = 0;
+                var bytesSeen = 0;
+                var bytesNeeded = 0;
+                var lower = 0;
+                var upper = 0;
                 while (true)
                 {
                     int b;
@@ -3201,7 +3669,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor
 
             public int Read(int[] chars, int index, int length)
             {
-                int count = 0;
+                var count = 0;
                 for (int i = 0; i < length; ++i)
                 {
                     int c = this.ReadChar();
