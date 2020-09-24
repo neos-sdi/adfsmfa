@@ -955,7 +955,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 Command exportcmd = new Command("Register-AdfsThreatDetectionModule", false);
                 CommandParameter NParam = new CommandParameter("Name", "MFABlockPlugin");
                 exportcmd.Parameters.Add(NParam);
-                CommandParameter TParam = new CommandParameter("TypeName", "Neos.IdentityServer.MultiFactor.ThreatAnalyzer, Neos.IdentityServer.MultiFactor.ThreatDetection, Version=3.0.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2");
+                CommandParameter TParam = new CommandParameter("TypeName", "Neos.IdentityServer.MultiFactor.ThreatAnalyzer, Neos.IdentityServer.MultiFactor.ThreatDetection, Version=3.0.0.0, Culture=neutral, " + Utilities.GetAssemblyPublicKey());
                 exportcmd.Parameters.Add(TParam);
                 CommandParameter PParam = new CommandParameter("ConfigurationFilePath", db);
                 exportcmd.Parameters.Add(PParam);
@@ -1181,14 +1181,14 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             {
                 case FlatSampleKind.QuizProvider:
                     if (!reset)
-                        config.ExternalProvider.FullQualifiedImplementation = "Neos.IdentityServer.MultiFactor.Samples.QuizProviderSample, Neos.IdentityServer.MultiFactor.Samples, Version = 3.0.0.0, Culture = neutral, PublicKeyToken = 175aa5ee756d2aa2";
+                        config.ExternalProvider.FullQualifiedImplementation = "Neos.IdentityServer.MultiFactor.Samples.QuizProviderSample, Neos.IdentityServer.MultiFactor.Samples, Version = 3.0.0.0, Culture = neutral, " + Utilities.GetAssemblyPublicKey();
                     else
                         config.ExternalProvider.FullQualifiedImplementation = "";
                     break;
                 case FlatSampleKind.CaesarEnryption:
                     if (!reset)
                     {
-                        config.KeysConfig.CustomFullyQualifiedImplementation = "Neos.IdentityServer.MultiFactor.Samples.CaesarKeyManagerActivator, Neos.IdentityServer.MultiFactor.Samples, Version=3.0.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2";
+                        config.KeysConfig.CustomFullyQualifiedImplementation = "Neos.IdentityServer.MultiFactor.Samples.CaesarKeyManagerActivator, Neos.IdentityServer.MultiFactor.Samples, Version=3.0.0.0, Culture=neutral, " + Utilities.GetAssemblyPublicKey();
                         config.KeysConfig.KeyFormat = SecretKeyFormat.CUSTOM;
                     }
                     else
@@ -1200,8 +1200,8 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 case FlatSampleKind.InMemoryStorage:
                     if (!reset)
                     {
-                        config.Hosts.CustomStoreHost.KeysRepositoryFullyQualifiedImplementation = "Neos.IdentityServer.MultiFactor.Samples.InMemoryKeys2RepositoryService, Neos.IdentityServer.MultiFactor.Samples, Version=3.0.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2";
-                        config.Hosts.CustomStoreHost.DataRepositoryFullyQualifiedImplementation = "Neos.IdentityServer.MultiFactor.Samples.InMemoryDataRepositoryService, Neos.IdentityServer.MultiFactor.Samples, Version=3.0.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2";
+                        config.Hosts.CustomStoreHost.KeysRepositoryFullyQualifiedImplementation = "Neos.IdentityServer.MultiFactor.Samples.InMemoryKeys2RepositoryService, Neos.IdentityServer.MultiFactor.Samples, Version=3.0.0.0, Culture=neutral, " + Utilities.GetAssemblyPublicKey();
+                        config.Hosts.CustomStoreHost.DataRepositoryFullyQualifiedImplementation = "Neos.IdentityServer.MultiFactor.Samples.InMemoryDataRepositoryService, Neos.IdentityServer.MultiFactor.Samples, Version=3.0.0.0, Culture=neutral, " + Utilities.GetAssemblyPublicKey();
                         config.StoreMode = DataRepositoryKind.Custom;
                     }
                     else
@@ -1213,13 +1213,13 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                     break;
                 case FlatSampleKind.SMSProvider:
                     if (!reset)
-                        config.ExternalProvider.FullQualifiedImplementation = "Neos.IdentityServer.MultiFactor.Samples.NeosSMSProvider, Neos.IdentityServer.MultiFactor.Samples, Version=3.0.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2";
+                        config.ExternalProvider.FullQualifiedImplementation = "Neos.IdentityServer.MultiFactor.Samples.NeosSMSProvider, Neos.IdentityServer.MultiFactor.Samples, Version=3.0.0.0, Culture=neutral, " + Utilities.GetAssemblyPublicKey();
                     else
                         config.ExternalProvider.FullQualifiedImplementation = "";
                     break;
                 case FlatSampleKind.TOTPProvider:
                     if (!reset)
-                        config.OTPProvider.FullQualifiedImplementation = "Neos.IdentityServer.MultiFactor.Samples.NeosOTPProvider430, Neos.IdentityServer.MultiFactor.Samples, Version=3.0.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2";
+                        config.OTPProvider.FullQualifiedImplementation = "Neos.IdentityServer.MultiFactor.Samples.NeosOTPProvider430, Neos.IdentityServer.MultiFactor.Samples, Version=3.0.0.0, Culture=neutral, " + Utilities.GetAssemblyPublicKey();
                     else
                         config.OTPProvider.FullQualifiedImplementation = "";
                     break;

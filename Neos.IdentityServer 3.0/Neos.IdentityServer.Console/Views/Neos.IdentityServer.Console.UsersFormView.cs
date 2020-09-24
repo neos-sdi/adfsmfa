@@ -401,6 +401,7 @@ namespace Neos.IdentityServer.Console
             {
                 propertyPageCollection.Add(new UserPropertyPage(this, typeof(UserPropertiesControl), i));
                 propertyPageCollection.Add(new UserPropertyPage(this, typeof(UserPropertiesKeysControl), i));
+                propertyPageCollection.Add(new UserPropertyPage(this, typeof(UserAttestationsControl), i));
             }
         }
     }

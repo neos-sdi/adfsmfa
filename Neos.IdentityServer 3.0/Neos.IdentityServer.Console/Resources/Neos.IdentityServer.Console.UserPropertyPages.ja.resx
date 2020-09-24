@@ -144,4 +144,7 @@
   <data name="PPAGEVALIDUSER" xml:space="preserve">
     <value>ユーザーの名前を空にすることはできません!</value>
   </data>
+  <data name="PPAGEWEBAUTHNKEYSTITLE" xml:space="preserve">
+    <value>生体認証キー</value>
+  </data>
 </root>

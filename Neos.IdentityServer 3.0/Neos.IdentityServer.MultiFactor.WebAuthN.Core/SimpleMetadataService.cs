@@ -29,7 +29,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
         protected readonly List<IMetadataRepository> _repositories;
         protected readonly ConcurrentDictionary<Guid, MetadataStatement> _metadataStatements;
         protected readonly ConcurrentDictionary<Guid, MetadataTOCPayloadEntry> _entries;
-        protected bool _initialized;
+        protected bool _initialized = true;
 
         public SimpleMetadataService(IEnumerable<IMetadataRepository> repositories)
         {
@@ -105,11 +105,11 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
         public virtual async Task Initialize()
         {
             Trace.WriteLine("IMetadataService Initialize");
+            _initialized = true;
             foreach (var client in _repositories)
             {
                 await InitializeClient(client);
             }
-            _initialized = true;
             Trace.WriteLine("IMetadataService Initialized");
         }
 

@@ -117,34 +117,69 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="PPAGECOMMONTITILE" xml:space="preserve">
-    <value>Common properties</value>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="WebAuthN.Location" type="System.Drawing.Point, System.Drawing">
+    <value>21, 21</value>
   </data>
-  <data name="PPAGEGENERALTITLE" xml:space="preserve">
-    <value>General</value>
+  <data name="WebAuthN.Size" type="System.Drawing.Size, System.Drawing">
+    <value>439, 541</value>
   </data>
-  <data name="PPAGEINVALIDMAIL" xml:space="preserve">
-    <value>Invalid secondary email address !</value>
+  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="WebAuthN.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
   </data>
-  <data name="PPAGEINVALIDPHONE" xml:space="preserve">
-    <value>A valid phone number is required to receive the codes via SMS !</value>
+  <data name="WebAuthN.Text" xml:space="preserve">
+    <value>WebAuthN Keys Descriptors</value>
   </data>
-  <data name="PPAGEKEYSTITLE" xml:space="preserve">
-    <value>Key</value>
+  <data name="&gt;&gt;WebAuthN.Name" xml:space="preserve">
+    <value>WebAuthN</value>
   </data>
-  <data name="PPAGEVALIDKEY" xml:space="preserve">
-    <value>A valid digital key is required to generate TOTP codes to validate your identity !</value>
+  <data name="&gt;&gt;WebAuthN.Type" xml:space="preserve">
+    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="PPAGEVALIDMAIL" xml:space="preserve">
-    <value>A secondary e-mail address is required to receive e-mail codes ! \rDo you want to continue ?</value>
+  <data name="&gt;&gt;WebAuthN.Parent" xml:space="preserve">
+    <value>$this</value>
   </data>
-  <data name="PPAGEVALIDPHONE" xml:space="preserve">
-    <value>A phone number is required to receive the codes via SMS ! \r\rDo you want to continue ?</value>
+  <data name="&gt;&gt;WebAuthN.ZOrder" xml:space="preserve">
+    <value>1</value>
   </data>
-  <data name="PPAGEVALIDUSER" xml:space="preserve">
-    <value>the name of the user can not be empty !</value>
+  <data name="btnDel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>21, 585</value>
   </data>
-  <data name="PPAGEWEBAUTHNKEYSTITLE" xml:space="preserve">
-    <value>Biometric Keys</value>
+  <data name="btnDel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>133, 23</value>
+  </data>
+  <data name="btnDel.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="btnDel.Text" xml:space="preserve">
+    <value>Delete Descriptor(s)</value>
+  </data>
+  <data name="&gt;&gt;btnDel.Name" xml:space="preserve">
+    <value>btnDel</value>
+  </data>
+  <data name="&gt;&gt;btnDel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnDel.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;btnDel.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
+    <value>6, 13</value>
+  </data>
+  <data name="$this.Size" type="System.Drawing.Size, System.Drawing">
+    <value>489, 626</value>
+  </data>
+  <data name="&gt;&gt;$this.Name" xml:space="preserve">
+    <value>UserAttestationsControl</value>
+  </data>
+  <data name="&gt;&gt;$this.Type" xml:space="preserve">
+    <value>System.Windows.Forms.UserControl, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
 </root>

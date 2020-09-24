@@ -67,8 +67,14 @@ namespace Neos.IdentityServer.Console
                 userPropertiesControl = this.Control as IUserPropertiesDataObject;
                 this.Title = res.PPAGECOMMONTITILE;
             }
-
+            else if (usercontrol.Equals(typeof(UserAttestationsControl)))
+            {
+                this.Control = new UserAttestationsControl(this);
+                userPropertiesControl = this.Control as IUserPropertiesDataObject;
+                this.Title = res.PPAGEWEBAUTHNKEYSTITLE;
+            }
         }
+
         /// <summary>
         /// Initialize the notification for the page.  
         /// </summary>

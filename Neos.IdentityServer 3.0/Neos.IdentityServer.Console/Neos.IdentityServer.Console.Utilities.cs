@@ -16,6 +16,7 @@
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Management.Automation;
@@ -24,6 +25,7 @@ using System.Text.RegularExpressions;
 using Neos.IdentityServer.Console.Resources;
 using Neos.IdentityServer.MultiFactor;
 using Neos.IdentityServer.MultiFactor.Administration;
+using Neos.IdentityServer.MultiFactor.Data;
 
 namespace Neos.IdentityServer.Console
 {
@@ -200,6 +202,28 @@ namespace Neos.IdentityServer.Console
                 lst.Add(ret);
             }
             return lst;
+        }
+
+        /// <summary>
+        /// GetUserStoredCredentials method implementation
+        /// </summary>
+        internal static List<WebAuthNCredentialInformation> GetUserStoredCredentials(string upn)
+        {
+            IExternalProvider prov = RuntimeAuthProvider.GetProvider(PreferredMethod.Biometrics);
+            IWebAuthNProvider web = prov as IWebAuthNProvider;
+
+            return web.GetUserStoredCredentials(upn);           
+        }
+
+        /// <summary>
+        /// RemoveUserStoredCredentials method implementation
+        /// </summary>
+        internal static void RemoveUserStoredCredentials(string upn, string credentialid)
+        {
+            IExternalProvider prov = RuntimeAuthProvider.GetProvider(PreferredMethod.Biometrics);
+            IWebAuthNProvider web = prov as IWebAuthNProvider;
+
+            web.RemoveUserStoredCredentials(upn, credentialid);
         }
 
         /// <summary>

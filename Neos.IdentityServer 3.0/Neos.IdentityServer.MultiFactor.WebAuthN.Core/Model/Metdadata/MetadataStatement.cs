@@ -177,7 +177,58 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
         public string OperatingEnv { get; set; }
 
         /// <summary>
+        /// 
         /// Gets or sets a 32-bit number representing the bit fields defined by the ATTACHMENT_HINT constants.
+        /// 
+        /// ATTACHMENT_HINT_INTERNAL 0x0001
+        /// This flag MAY be set to indicate that the authenticator is permanently attached to the FIDO
+        /// user device.
+        /// A device such as a smartphone may have authenticator functionality that is able to be used
+        /// both locally and remotely.In such a case, the FIDO client MUST filter and exclusively report
+        /// only the relevant bit during discovery and when performing policy matching.
+        /// This flag cannot be combined with any other ATTACHMENT_HINT flags.
+        /// 
+        /// ATTACHMENT_HINT_EXTERNAL 0x0002
+        /// This flag MAY be set to indicate, for a hardware-based authenticator, that it is removable or
+        /// remote from the FIDO user device.
+        /// A device such as a smartphone may have authenticator functionality that is able to be used
+        /// both locally and remotely. In such a case, the FIDO UAF client MUST filter and exclusively
+        /// report only the relevant bit during discovery and when performing policy matching.
+        /// 
+        /// ATTACHMENT_HINT_WIRED 0x0004
+        /// This flag MAY be set to indicate that an external authenticator currently has an exclusive
+        /// wired connection, e.g., through USB, Firewire or similar, to the FIDO user device.
+        /// 
+        /// ATTACHMENT_HINT_WIRELESS 0x0008
+        /// This flag MAY be set to indicate that an external authenticator communicates with the FIDO
+        /// user device through a personal area or otherwise non-routed wireless protocol, such as
+        /// Bluetooth or NFC.
+        /// 
+        /// ATTACHMENT_HINT_NFC 0x0010
+        /// This flag MAY be set to indicate that an external authenticator is able to communicate by
+        /// NFC to the FIDO user device. As part of authenticator metadata, or when reporting
+        /// characteristics through discovery, if this flag is set, the ATTACHMENT_HINT_WIRELESS flag
+        /// SHOULD also be set as well.
+        /// 
+        /// ATTACHMENT_HINT_BLUETOOTH 0x0020
+        /// This flag MAY be set to indicate that an external authenticator is able to communicate using
+        /// Bluetooth with the FIDO user device.As part of authenticator metadata, or when reporting
+        /// characteristics through discovery, if this flag is set, the ATTACHMENT_HINT_WIRELESS flag
+        /// SHOULD also be set.
+        /// 
+        /// ATTACHMENT_HINT_NETWORK 0x0040
+        /// This flag MAY be set to indicate that the authenticator is connected to the FIDO user device
+        /// over a non-exclusive network (e.g., over a TCP/IP LAN or WAN, as opposed to a PAN or
+        /// point-to-point connection).
+        /// 
+        /// ATTACHMENT_HINT_READY 0x0080
+        /// This flag MAY be set to indicate that an external authenticator is in a "ready" state.This flag
+        /// is set by the ASM at its discretion.
+        /// 
+        /// NOTE – Generally this should indicate that the device is immediately available to perform user verification
+        /// without additional actions such as connecting the device or creating a new biometric profile enrollment, but
+        /// the exact meaning may vary for different types of devices.For example, a USB authenticator may only report
+        /// itself as ready when it is plugged in, or a Bluetooth authenticator when it is paired and connected, but an NFCbased authenticator may always report itself as ready.
         /// </summary>
         [JsonProperty("attachmentHint")]
         public ulong AttachmentHint { get; set; }

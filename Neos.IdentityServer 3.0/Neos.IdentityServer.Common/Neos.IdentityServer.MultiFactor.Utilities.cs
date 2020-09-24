@@ -2290,7 +2290,7 @@ namespace Neos.IdentityServer.MultiFactor
                     {
                         Group titlegrp = Regex.Match(html, @"\<title\b[^>]*\>\s*(?<Title>[\s\S]*?)\</title\>", RegexOptions.IgnoreCase).Groups["Title"];
                         if (titlegrp != null)
-                            Message.Subject = string.Format(titlegrp.Value, mail.Company, upn, key, inlineLogo.ContentId); 
+                            Message.Subject = string.Format(titlegrp.Value, mail.Company, upn, key, inlineLogo.ContentId, email); 
                         if (Message.Subject == string.Empty)
                         {
                             ResourcesLocale Resources = new ResourcesLocale(culture.LCID);
@@ -2299,7 +2299,7 @@ namespace Neos.IdentityServer.MultiFactor
                     }
                     Message.Priority = MailPriority.High;
 
-                    string body = string.Format(html, mail.Company, upn, key, inlineLogo.ContentId);
+                    string body = string.Format(html, mail.Company, upn, key, inlineLogo.ContentId, email);
                     var view = AlternateView.CreateAlternateViewFromString(body, null, "text/html");
                     view.LinkedResources.Add(inlineLogo);
                     Message.AlternateViews.Add(view);
@@ -3362,7 +3362,17 @@ namespace Neos.IdentityServer.MultiFactor
     /// </summary>
     public static class Utilities
     {
-        
+
+        /// <summary>
+        /// GetAssemblyPublicKey method implmentation
+        /// </summary>
+        public static string GetAssemblyPublicKey()
+        {
+            string assemblyname = Assembly.GetExecutingAssembly().FullName;
+            string[] str = assemblyname.Split(',');
+            return str[str.Length - 1];
+        }
+
         /// <summary>
         /// GetRandomOTP  method implementation
         /// </summary>

@@ -103,7 +103,9 @@ namespace Neos.IdentityServer.MultiFactor
         string GetManageLinkLabel(AuthenticationContext ctx);
         string GetDeleteLinkLabel(AuthenticationContext ctx);
         List<WebAuthNCredentialInformation> GetUserStoredCredentials(AuthenticationContext ctx);
-        void RemoveUserStoredCredentials(AuthenticationContext ctx, string id);
+        List<WebAuthNCredentialInformation> GetUserStoredCredentials(string upn);
+        void RemoveUserStoredCredentials(AuthenticationContext ctx, string credid);
+        void RemoveUserStoredCredentials(string upn, string credid);
     }
 
     /// <summary>

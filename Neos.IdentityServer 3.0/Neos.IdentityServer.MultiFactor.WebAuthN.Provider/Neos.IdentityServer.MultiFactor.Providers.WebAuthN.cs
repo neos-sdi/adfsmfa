@@ -26,6 +26,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Neos.IdentityServer.MultiFactor.WebAuthN
 {
@@ -35,6 +36,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
         private bool _isinitialized = false;
         private ForceWizardMode _forceenrollment = ForceWizardMode.Disabled;
         private IWebAuthN _webathn;
+        private SimpleMetadataService _simplemetadataservice;
         private MFAConfig _config;
 
         public MFAConfig Config
@@ -59,6 +61,10 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
         /// </summary>
         public NeosWebAuthNProvider():base()
         {
+            Trace.WriteLine("IMetadataService initialization");
+            _simplemetadataservice = new SimpleMetadataService(new List<IMetadataRepository> { new StaticMetadataRepository(DateTime.Now.AddMinutes(1).ToUniversalTime()) });
+            var result = Task.Factory.StartNew(_simplemetadataservice.Initialize);
+            result.Wait(15000);
         }
 
         /// <summary>
@@ -394,8 +400,8 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
                             ChallengeSize = param.Configuration.ChallengeSize,
                             RequireValidAttestationRoot = param.Configuration.RequireValidAttestationRoot
                         };
-                        Trace.WriteLine("WebAuthNAdapter Create");
-                        _webathn = new WebAuthNAdapter(fido, new SimpleMetadataService(new List<IMetadataRepository> { new StaticMetadataRepository(DateTime.Now.AddMinutes(1).ToUniversalTime()) }));
+                        Trace.WriteLine("WebAuthNAdapter Create");                       
+                        _webathn = new WebAuthNAdapter(fido, _simplemetadataservice);
                         _isinitialized = true;
                         Trace.WriteLine("WebAuthNAdapter Created");
                         Trace.WriteLine("WebAuthNProvider Initialized");
@@ -536,8 +542,16 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
         /// </summary>
         public List<WebAuthNCredentialInformation> GetUserStoredCredentials(AuthenticationContext ctx)
         {
+            return GetUserStoredCredentials(ctx.UPN);
+        }
+
+        /// <summary>
+        /// GetUserStoredCredentials method implementation
+        /// </summary>
+        public List<WebAuthNCredentialInformation> GetUserStoredCredentials(string upn)
+        {
             List<WebAuthNCredentialInformation> wcreds = new List<WebAuthNCredentialInformation>();
-            MFAWebAuthNUser user = RuntimeRepository.GetUser(Config, ctx.UPN);
+            MFAWebAuthNUser user = RuntimeRepository.GetUser(Config, upn);
             try
             {
                 if (user != null)
@@ -564,13 +578,13 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
                 }
                 else
                 {
-                    Log.WriteEntry(string.Format("{0}\r\n{1}", ctx.UPN, "User does not exists !"), System.Diagnostics.EventLogEntryType.Error, 5000);
-                    throw new ArgumentNullException(string.Format("{0}\r\n{1}", ctx.UPN, "User does not exists !"));;
+                    Log.WriteEntry(string.Format("{0}\r\n{1}", upn, "User does not exists !"), System.Diagnostics.EventLogEntryType.Error, 5000);
+                    throw new ArgumentNullException(string.Format("{0}\r\n{1}", upn, "User does not exists !")); ;
                 }
             }
             catch (Exception e)
             {
-                Log.WriteEntry(string.Format("{0}\r\n{1}", ctx.UPN, e.Message), System.Diagnostics.EventLogEntryType.Error, 5000);
+                Log.WriteEntry(string.Format("{0}\r\n{1}", upn, e.Message), System.Diagnostics.EventLogEntryType.Error, 5000);
                 throw e;
             }
         }
@@ -580,20 +594,28 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
         /// </summary>
         public void RemoveUserStoredCredentials(AuthenticationContext ctx, string credentialid)
         {
+            RemoveUserStoredCredentials(ctx.UPN, credentialid);
+        }
+
+        /// <summary>
+        /// RemoveUserStoredCredentials method implementation
+        /// </summary>
+        public void RemoveUserStoredCredentials(string upn, string credentialid)
+        {
             try
             {
-                MFAWebAuthNUser user = RuntimeRepository.GetUser(Config, ctx.UPN);
-                if (user!=null)
+                MFAWebAuthNUser user = RuntimeRepository.GetUser(Config, upn);
+                if (user != null)
                     RuntimeRepository.RemoveUserCredential(Config, user, credentialid);
                 else
                 {
-                    Log.WriteEntry(string.Format("{0}\r\n{1}", ctx.UPN, "User does not exists !"), System.Diagnostics.EventLogEntryType.Error, 5000);
-                    throw new ArgumentNullException(string.Format("{0}\r\n{1}", ctx.UPN, "User does not exists !")); ;
+                    Log.WriteEntry(string.Format("{0}\r\n{1}", upn, "User does not exists !"), System.Diagnostics.EventLogEntryType.Error, 5000);
+                    throw new ArgumentNullException(string.Format("{0}\r\n{1}", upn, "User does not exists !")); ;
                 }
             }
             catch (Exception e)
             {
-                Log.WriteEntry(string.Format("{0}\r\n{1}", ctx.UPN, e.Message), System.Diagnostics.EventLogEntryType.Error, 5000);
+                Log.WriteEntry(string.Format("{0}\r\n{1}", upn, e.Message), System.Diagnostics.EventLogEntryType.Error, 5000);
                 throw e;
             }
         }
@@ -676,7 +698,6 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
                 if (user != null)
                 {
                     RegisterCredentialOptions options = RegisterCredentialOptions.FromJson(jsonOptions);
-
 
                     bool callback(IsCredentialIdUniqueToUserParams args)
                     {

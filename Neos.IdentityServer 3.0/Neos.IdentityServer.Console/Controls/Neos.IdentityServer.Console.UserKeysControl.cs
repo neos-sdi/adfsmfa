@@ -36,7 +36,6 @@ namespace Neos.IdentityServer.Console
         private UserPropertyPage userPropertyPage;
         private string _secretkey = string.Empty;
         private string _upn = string.Empty;
-        private bool _syncdisabled = false;
         private bool _emailnotset = false;
         private string _email;
         
@@ -53,11 +52,7 @@ namespace Neos.IdentityServer.Console
         /// <summary>
         /// SyncDisabled property implmentation
         /// </summary>
-        public bool SyncDisabled
-        {
-            get { return _syncdisabled; }
-            set { _syncdisabled = value; }
-        }
+        public bool SyncDisabled { get; set; } = false;
 
 
         /// <summary>
@@ -79,7 +74,7 @@ namespace Neos.IdentityServer.Console
             {
                 MFAUser obj = ((MFAUserList)lst)[0];
                 _secretkey = MMCService.GetEncodedUserKey(((MFAUser)obj).UPN);
-               // _secretkey = KeysManager.EncodedKey(((Registration)obj).UPN);
+
                 _upn = ((MFAUser)obj).UPN;
                 _email = ((MFAUser)obj).MailAddress;
 

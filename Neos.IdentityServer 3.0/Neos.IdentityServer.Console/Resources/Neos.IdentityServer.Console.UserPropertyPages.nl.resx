@@ -144,4 +144,7 @@
   <data name="PPAGEVALIDUSER" xml:space="preserve">
     <value>De naam van de gebruiker mag niet leeg zijn!</value>
   </data>
+  <data name="PPAGEWEBAUTHNKEYSTITLE" xml:space="preserve">
+    <value>Biometrische sleutels</value>
+  </data>
 </root>

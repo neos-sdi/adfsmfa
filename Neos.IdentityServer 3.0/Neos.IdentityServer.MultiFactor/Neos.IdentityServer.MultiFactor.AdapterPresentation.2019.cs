@@ -21,6 +21,7 @@ using Neos.IdentityServer.MultiFactor.Resources;
 using System;
 using System.Collections.Generic;
 using System.Drawing.Imaging;
+using System.Reflection;
 
 namespace Neos.IdentityServer.MultiFactor
 {

@@ -141,5 +141,14 @@ namespace Neos.IdentityServer.Console.Resources {
                 return ResourceManager.GetString("PPAGEVALIDUSER", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Biometric Keys.
+        /// </summary>
+        internal static string PPAGEWEBAUTHNKEYSTITLE {
+            get {
+                return ResourceManager.GetString("PPAGEWEBAUTHNKEYSTITLE", resourceCulture);
+            }
+        }
     }
 }

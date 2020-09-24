@@ -69,6 +69,12 @@
     <Compile Include="Controls\Neos.IdentityServer.Console.Ctrls.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Controls\Neos.IdentityServer.Console.UserAttestationsControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\Neos.IdentityServer.Console.UserAttestationsControl.Designer.cs">
+      <DependentUpon>Neos.IdentityServer.Console.UserAttestationsControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Neos.IdentityServer.Console.UserCommonPropsControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -308,6 +314,9 @@
     <Compile Include="Views\Neos.IdentityServer.Console.UsersFormView.cs" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Controls\Neos.IdentityServer.Console.UserAttestationsControl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.UserAttestationsControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Controls\Neos.IdentityServer.Console.UserCommonPropsControl.da.resx">
       <DependentUpon>Neos.IdentityServer.Console.UserCommonPropsControl.cs</DependentUpon>
     </EmbeddedResource>

@@ -600,7 +600,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                     Command exportcmd = new Command("Register-AdfsAuthenticationProvider", false);
                     CommandParameter NParam = new CommandParameter("Name", "MultiFactorAuthenticationProvider");
                     exportcmd.Parameters.Add(NParam);
-                    CommandParameter TParam = new CommandParameter("TypeName", "Neos.IdentityServer.MultiFactor.AuthenticationProvider, Neos.IdentityServer.MultiFactor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2");
+                    CommandParameter TParam = new CommandParameter("TypeName", "Neos.IdentityServer.MultiFactor.AuthenticationProvider, Neos.IdentityServer.MultiFactor, Version=3.0.0.0, Culture=neutral, " + Utilities.GetAssemblyPublicKey());
                     exportcmd.Parameters.Add(TParam);
                     CommandParameter PParam = new CommandParameter("ConfigurationFilePath", pth);
                     exportcmd.Parameters.Add(PParam);
