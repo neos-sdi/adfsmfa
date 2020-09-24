@@ -19,7 +19,7 @@ This extension works with Active Directory or an SQL Server Database for storing
 * <https://github.com/neos-sdi/adfsmfa/wiki/Home>
 ## Downloads
 * <https://github.com/neos-sdi/adfsmfa/releases>
-* <https://github.com/neos-sdi/adfsmfa/releases/download/3.0/adfsmfa.3.0.2008.4.msi>
+* <https://github.com/neos-sdi/adfsmfa/releases/download/3.0/adfsmfa.3.0.2009.1.msi>
 
 ___
 ![Neos Logo](logo.png)
@@ -58,9 +58,9 @@ ___
 ## Remarks
 * Due to security, Developers must sign their Visual Studio Solution with a certificate .pfx
 * You must deploy the solution on each of your ADFS servers, not on Proxy Servers.
-* To work with ADDS, the ADFS Service account must have read and write to users properties.
-* To work with SQL Server Database, you must deploy the database on a separate SQL Server (WID & replication is not supported)
+* To work with ADDS, the ADFS Service account must have read and write to users properties (or use the superaccount feature).
+* To work with SQL Server Database, you must deploy the database on a separate SQL Server (WID replication is supported (cached))
 * To bypass MFA, specific cmdlet should be run to deal with Web Services and rich clients (like Outlook), but this is specific to ADFS not to the component.
 * Working with ADFS Windows server 2012r2, 2016 and 2019
-* the Identity claim is by design UPN (common and recommended in federation projects (planned to be customizable))
+* the Identity claim is by design UPN (common and recommended in federation projects)
 http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn
