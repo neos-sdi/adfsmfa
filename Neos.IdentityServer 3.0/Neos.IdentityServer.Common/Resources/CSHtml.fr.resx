@@ -166,7 +166,7 @@
     <value>Utiliser l’option par défaut</value>
   </data>
   <data name="GLOBALPINLabel" xml:space="preserve">
-    <value>Entrez PIN</value>
+    <value>Entrez votre code PIN</value>
   </data>
   <data name="GLOBALPINMessage" xml:space="preserve">
     <value>Entrez votre code PIN</value>

@@ -41,6 +41,8 @@
             this.phoneNumberDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.preferredMethodDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.enabledDataGridViewCheckBoxColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.PIN = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.OverrideMethod = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.secretKeyDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.GridView)).BeginInit();
             this.SuspendLayout();
@@ -72,6 +74,8 @@
             this.phoneNumberDataGridViewTextBoxColumn,
             this.preferredMethodDataGridViewTextBoxColumn,
             this.enabledDataGridViewCheckBoxColumn,
+            this.PIN,
+            this.OverrideMethod,
             this.secretKeyDataGridViewTextBoxColumn});
             resources.ApplyResources(this.GridView, "GridView");
             this.GridView.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
@@ -154,6 +158,18 @@
             this.enabledDataGridViewCheckBoxColumn.Name = "enabledDataGridViewCheckBoxColumn";
             this.enabledDataGridViewCheckBoxColumn.ReadOnly = true;
             // 
+            // PIN
+            // 
+            resources.ApplyResources(this.PIN, "PIN");
+            this.PIN.Name = "PIN";
+            this.PIN.ReadOnly = true;
+            // 
+            // OverrideMethod
+            // 
+            resources.ApplyResources(this.OverrideMethod, "OverrideMethod");
+            this.OverrideMethod.Name = "OverrideMethod";
+            this.OverrideMethod.ReadOnly = true;
+            // 
             // secretKeyDataGridViewTextBoxColumn
             // 
             resources.ApplyResources(this.secretKeyDataGridViewTextBoxColumn, "secretKeyDataGridViewTextBoxColumn");
@@ -182,6 +198,8 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn phoneNumberDataGridViewTextBoxColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn preferredMethodDataGridViewTextBoxColumn;
         private System.Windows.Forms.DataGridViewCheckBoxColumn enabledDataGridViewCheckBoxColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn PIN;
+        private System.Windows.Forms.DataGridViewTextBoxColumn OverrideMethod;
         private System.Windows.Forms.DataGridViewTextBoxColumn secretKeyDataGridViewTextBoxColumn;
     }
 }

@@ -306,7 +306,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à You must enter a secret code (4 digits) in order to validate your identity. Be sure not to use the codes of your bank card or telephone as well as details concerning your date of birth..
+        ///   Recherche une chaîne localisée semblable à You must enter a secret code (4 digits minimum) in order to validate your identity. Be sure not to use the codes of your bank card or telephone as well as details concerning your date of birth..
         /// </summary>
         internal static string HtmlLabelWRPinCode {
             get {

@@ -53,7 +53,7 @@ namespace Neos.IdentityServer.Console
                 MFAUser obj = ((MFAUserList)lst)[0];
                 _upn = ((MFAUser)obj).UPN;
                 BuildKeysControl();
-                userPropertyPage.Dirty = true;
+              //  userPropertyPage.Dirty = true;
                 UpdateControlsEnabled();
             }
             finally

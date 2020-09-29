@@ -126,9 +126,6 @@
   <data name="GLOBALListChoiceDefaultLabel" xml:space="preserve">
     <value>Die Standardoption verwenden</value>
   </data>
-  <data name="GLOBALPINLabel" xml:space="preserve">
-    <value>PIN eingeben</value>
-  </data>
   <data name="GLOBALPINMessage" xml:space="preserve">
     <value>Geben Sie Ihren PIN-Code ein</value>
   </data>
@@ -269,5 +266,8 @@
   </data>
   <data name="MAILWIZEnroll" xml:space="preserve">
     <value>Speichern Sie meine E-Mail-Adresse</value>
+  </data>
+  <data name="GLOBALPINLabel" xml:space="preserve">
+    <value>Geben Sie Ihren PIN-Code ein</value>
   </data>
 </root>

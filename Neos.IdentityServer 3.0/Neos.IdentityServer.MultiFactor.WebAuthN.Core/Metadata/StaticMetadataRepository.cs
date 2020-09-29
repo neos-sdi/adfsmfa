@@ -86,7 +86,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Metadata
                 Hash = "",
                 StatusReports = new StatusReport[]
                 {
-                    new StatusReport() { Status = AuthenticatorStatus.NOT_FIDO_CERTIFIED }
+                    new StatusReport() { Status = AuthenticatorStatus.FIDO_CERTIFIED }
                 },
                 MetadataStatement = new MetadataStatement
                 {
@@ -115,7 +115,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Metadata
                 {
                     new StatusReport
                     {
-                        Status = AuthenticatorStatus.NOT_FIDO_CERTIFIED
+                        Status = AuthenticatorStatus.FIDO_CERTIFIED
                     }
                 },
                 MetadataStatement = new MetadataStatement
@@ -126,7 +126,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Metadata
                     },
                     Hash = "",
                     Description = "Yubikey 5, YubiKey 5C, YubiKey 5C Nano, YubiKey 5 Nano (5.1.x)",
-                    AttachmentHint = 30,
+                    AttachmentHint = 6,
                     AttestationRootCertificates = new string[]
                     {
                         YUBICO_ROOT
@@ -144,7 +144,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Metadata
                 {
                     new StatusReport
                     {
-                        Status = AuthenticatorStatus.NOT_FIDO_CERTIFIED
+                        Status = AuthenticatorStatus.FIDO_CERTIFIED
                     }
                 },
                 MetadataStatement = new MetadataStatement
@@ -155,7 +155,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Metadata
                     },
                     Hash = "",
                     Description = "Yubikey 5, YubiKey 5C, YubiKey 5C Nano, YubiKey 5 Nano (5.2.x)",
-                    AttachmentHint = 30,
+                    AttachmentHint = 6,
                     AttestationRootCertificates = new string[]
                     {
                         YUBICO_ROOT
@@ -173,7 +173,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Metadata
                 {
                     new StatusReport
                     {
-                        Status = AuthenticatorStatus.NOT_FIDO_CERTIFIED
+                        Status = AuthenticatorStatus.FIDO_CERTIFIED
                     }
                 },
                 MetadataStatement = new MetadataStatement
@@ -202,7 +202,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Metadata
                 {
                     new StatusReport
                     {
-                        Status = AuthenticatorStatus.NOT_FIDO_CERTIFIED
+                        Status = AuthenticatorStatus.FIDO_CERTIFIED
                     }
                 },
                 MetadataStatement = new MetadataStatement
@@ -227,7 +227,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Metadata
             {
                 AaGuid = "c5ef55ff-ad9a-4b9f-b580-adebafe026d",
                 Hash = "",
-                StatusReports = new StatusReport[] { new StatusReport() { Status = AuthenticatorStatus.NOT_FIDO_CERTIFIED } },
+                StatusReports = new StatusReport[] { new StatusReport() { Status = AuthenticatorStatus.FIDO_CERTIFIED } },
                 MetadataStatement = new MetadataStatement
                 {
                     Description = "Yubikey 5Ci (5.2.x)",
@@ -247,7 +247,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Metadata
             {
                 AaGuid = "b92c3f9a-c014-4056-887f-140a2501163b",
                 Hash = "",
-                StatusReports = new StatusReport[] { new StatusReport() { Status = AuthenticatorStatus.NOT_FIDO_CERTIFIED } },
+                StatusReports = new StatusReport[] { new StatusReport() { Status = AuthenticatorStatus.FIDO_CERTIFIED } },
                 MetadataStatement = new MetadataStatement
                 {
                     Description = "Yubico Security Key (5.2.x)",
@@ -267,7 +267,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Metadata
             {
                 AaGuid = "6d44ba9b-f6ec-2e49-b930-0c8fe920cb73",
                 Hash = "",
-                StatusReports = new StatusReport[] { new StatusReport() { Status = AuthenticatorStatus.NOT_FIDO_CERTIFIED } },
+                StatusReports = new StatusReport[] { new StatusReport() { Status = AuthenticatorStatus.FIDO_CERTIFIED } },
                 MetadataStatement = new MetadataStatement
                 {
                     Description = "Yubico Security Key NFC (5.1.x)",
@@ -287,7 +287,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Metadata
             {
                 AaGuid = "149a2021-8ef6-4133-96b8-81f8d5b7f1f5",
                 Hash = "",
-                StatusReports = new StatusReport[] { new StatusReport() { Status = AuthenticatorStatus.NOT_FIDO_CERTIFIED } },
+                StatusReports = new StatusReport[] { new StatusReport() { Status = AuthenticatorStatus.FIDO_CERTIFIED } },
                 MetadataStatement = new MetadataStatement
                 {
                     Description = "Yubico Security Key NFC (5.2.x)",
@@ -397,7 +397,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Metadata
             };
             _entries.Add(new Guid(msftWhfbHardwareVbs.AaGuid), msftWhfbHardwareVbs);
             #endregion
-
+           
             #region Solo
             var solostatement = await DownloadStringAsync("https://raw.githubusercontent.com/solokeys/solo/master/metadata/Solo-FIDO2-CTAP2-Authenticator.json");
             var soloMetadataStatement = JsonConvert.DeserializeObject<MetadataStatement>(solostatement);
@@ -449,6 +449,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Metadata
                 MetadataStatement = soloSomuMetadataStatement
             };
             _entries.Add(new Guid(soloSomuMetadata.AaGuid), soloSomuMetadata);
+            
             #endregion
 
             foreach (var entry in _entries)
@@ -465,6 +466,6 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Metadata
             };
 
             return _toc;
-        }
+        } 
     }
 }

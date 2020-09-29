@@ -127,7 +127,7 @@
     <value>Usar opção padrão</value>
   </data>
   <data name="GLOBALPINLabel" xml:space="preserve">
-    <value>Inserir PIN</value>
+    <value>Introduza o seu código PIN</value>
   </data>
   <data name="GLOBALPINMessage" xml:space="preserve">
     <value>Introduza o seu código PIN</value>

@@ -314,7 +314,46 @@
     <Compile Include="Views\Neos.IdentityServer.Console.UsersFormView.cs" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Controls\Neos.IdentityServer.Console.UserAttestationsControl.da.resx">
+      <DependentUpon>Neos.IdentityServer.Console.UserAttestationsControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Neos.IdentityServer.Console.UserAttestationsControl.de.resx">
+      <DependentUpon>Neos.IdentityServer.Console.UserAttestationsControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Neos.IdentityServer.Console.UserAttestationsControl.es.resx">
+      <DependentUpon>Neos.IdentityServer.Console.UserAttestationsControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Neos.IdentityServer.Console.UserAttestationsControl.fr-CA.resx">
+      <DependentUpon>Neos.IdentityServer.Console.UserAttestationsControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Neos.IdentityServer.Console.UserAttestationsControl.fr.resx">
+      <DependentUpon>Neos.IdentityServer.Console.UserAttestationsControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Neos.IdentityServer.Console.UserAttestationsControl.it.resx">
+      <DependentUpon>Neos.IdentityServer.Console.UserAttestationsControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Neos.IdentityServer.Console.UserAttestationsControl.ja.resx">
+      <DependentUpon>Neos.IdentityServer.Console.UserAttestationsControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Neos.IdentityServer.Console.UserAttestationsControl.nl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.UserAttestationsControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Neos.IdentityServer.Console.UserAttestationsControl.pl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.UserAttestationsControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Neos.IdentityServer.Console.UserAttestationsControl.pt.resx">
+      <DependentUpon>Neos.IdentityServer.Console.UserAttestationsControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Controls\Neos.IdentityServer.Console.UserAttestationsControl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.UserAttestationsControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Neos.IdentityServer.Console.UserAttestationsControl.ro.resx">
+      <DependentUpon>Neos.IdentityServer.Console.UserAttestationsControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Neos.IdentityServer.Console.UserAttestationsControl.ru.resx">
+      <DependentUpon>Neos.IdentityServer.Console.UserAttestationsControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Neos.IdentityServer.Console.UserAttestationsControl.sv.resx">
       <DependentUpon>Neos.IdentityServer.Console.UserAttestationsControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\Neos.IdentityServer.Console.UserCommonPropsControl.da.resx">

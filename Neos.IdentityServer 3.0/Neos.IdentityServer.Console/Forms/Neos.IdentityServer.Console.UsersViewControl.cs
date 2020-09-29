@@ -237,6 +237,10 @@ namespace Neos.IdentityServer.Console
                     reg.PhoneNumber = GridView.Rows[row.Index].Cells[4].Value.ToString();
                     reg.PreferredMethod = (PreferredMethod)Enum.Parse(typeof(PreferredMethod), GridView.Rows[row.Index].Cells[5].Value.ToString());
                     reg.Enabled = (bool)bool.Parse(GridView.Rows[row.Index].Cells[6].Value.ToString());
+                    reg.PIN = Convert.ToInt32(GridView.Rows[row.Index].Cells[7].Value.ToString());
+                    reg.OverrideMethod = GridView.Rows[row.Index].Cells[8].Value.ToString();
+                    reg.IsRegistered = true;
+                    reg.IsApplied = true;
                     result.Add(reg);
                 }
             }
@@ -401,6 +405,18 @@ namespace Neos.IdentityServer.Console
                     else
                         e.Value = false;
                     break;
+                case 7:
+                    if (isfound)
+                        e.Value = _lst[idx].PIN;
+                    else
+                        e.Value = string.Empty;
+                    break;
+                case 8:
+                    if (isfound)
+                        e.Value = _lst[idx].OverrideMethod;
+                    else
+                        e.Value = string.Empty;
+                    break;
             }
         }
 
@@ -429,6 +445,13 @@ namespace Neos.IdentityServer.Console
                     break;
                 case 6:
                     _lst[idx].Enabled = bool.Parse(e.Value.ToString());
+                    break;
+                case 7:
+                    if (!string.IsNullOrEmpty(e.Value.ToString()))
+                        _lst[idx].PIN = Convert.ToInt32(e.Value);
+                    break;
+                case 8:
+                    _lst[idx].OverrideMethod = e.Value.ToString();
                     break;
             }
         }

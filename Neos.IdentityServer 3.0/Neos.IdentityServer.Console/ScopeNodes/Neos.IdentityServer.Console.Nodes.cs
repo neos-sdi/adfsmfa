@@ -2497,6 +2497,7 @@ namespace Neos.IdentityServer.Console
             int i = rand.Next();
             propertyPageCollection.Add(new UserPropertyPage(this.usersFormView, typeof(UserPropertiesControl), i, true));
             propertyPageCollection.Add(new UserPropertyPage(this.usersFormView, typeof(UserPropertiesKeysControl), i, true));
+            propertyPageCollection.Add(new UserPropertyPage(this.usersFormView, typeof(UserAttestationsControl), i, true));
         }
 
         /// <summary>

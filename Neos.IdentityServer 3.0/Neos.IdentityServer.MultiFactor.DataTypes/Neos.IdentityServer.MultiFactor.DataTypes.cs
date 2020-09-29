@@ -618,6 +618,29 @@ namespace Neos.IdentityServer.MultiFactor
         }
 
         /// <summary>
+        /// PinDone property implementation
+        /// </summary>
+        [XmlAttribute("PinDone")]
+        public bool PinDone
+        {
+            get
+            {
+                if (_context.Data.ContainsKey("_authctxpindone") && _context.Data["_authctxpindone"] != null)
+                    return (bool)_context.Data["_authctxpindone"];
+                else
+                    return false;
+            }
+            set
+            {
+                if (_context.Data.ContainsKey("_authctxpindone"))
+                    _context.Data["_authctxpindone"] = value;
+                else
+                    _context.Data.Add("_authctxpindone", value);
+            }
+        }
+
+
+        /// <summary>
         /// ExtraInfos property implementation
         /// </summary>
         [XmlAttribute("ExtraInfos")]
@@ -947,7 +970,6 @@ namespace Neos.IdentityServer.MultiFactor
                     _context.Data.Add("_authctxassertionoptions", value);
             }
         }
-
     }
     #endregion
 

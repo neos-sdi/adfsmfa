@@ -126,9 +126,6 @@
   <data name="GLOBALListChoiceDefaultLabel" xml:space="preserve">
     <value>Brug standardindstilling</value>
   </data>
-  <data name="GLOBALPINLabel" xml:space="preserve">
-    <value>Angiv pinkode</value>
-  </data>
   <data name="GLOBALPINMessage" xml:space="preserve">
     <value>Angiv din pinkode</value>
   </data>
@@ -269,5 +266,8 @@
   </data>
   <data name="MAILWIZEnroll" xml:space="preserve">
     <value>Gemme min mailadresse</value>
+  </data>
+  <data name="GLOBALPINLabel" xml:space="preserve">
+    <value>Angiv din pinkode</value>
   </data>
 </root>

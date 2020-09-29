@@ -477,7 +477,7 @@ namespace Neos.IdentityServer.MultiFactor.Common
     /// </summary>
     public class NeosOTPProvider : BaseExternalProvider, ITOTPProviderParameters
     {
-        private int TOTPShadows = 2;
+        private int TOTPShadows = 2;  // 2,147,483,647
         private HashMode Algorithm = HashMode.SHA1;
         private bool _isinitialized = false;
         private bool _isrequired = true;

@@ -130,7 +130,7 @@
     <comment>Utiliser l'option par défaut</comment>
   </data>
   <data name="GLOBALPINLabel" xml:space="preserve">
-    <value>Ingrese PIN</value>
+    <value>Ingrese su código pin</value>
     <comment>Code Pin</comment>
   </data>
   <data name="GLOBALPINMessage" xml:space="preserve">

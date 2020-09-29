@@ -482,6 +482,7 @@ namespace Neos.IdentityServer.MultiFactor
         private int _maxretries = 3;
         private string _issuer;
         private DataRepositoryKind _store = DataRepositoryKind.ADDS;
+        private int _pinlength = 4;
 
         /// <summary>
         /// Constructor
@@ -509,7 +510,7 @@ namespace Neos.IdentityServer.MultiFactor
                 DeliveryWindow = 300;
                 Issuer = "MFA";
                 PinLength = 4;
-                DefaultPin = 0;
+                DefaultPin = 1234;
                 MaxRetries = 3;
                 UiKind = ADFSUserInterfaceKind.Default;
                 DefaultProviderMethod = PreferredMethod.Choose;
@@ -605,8 +606,12 @@ namespace Neos.IdentityServer.MultiFactor
             IsDirty = false;
             if (DeliveryWindow <= 0)
                 DeliveryWindow = 300;
-            if (PinLength <= 0)
+
+            if (PinLength < 4)
                 PinLength = 4;
+            else if (PinLength > 9)
+                PinLength = 9;
+
             if (MaxRetries <= 0)
                 MaxRetries = 1;
             if (string.IsNullOrEmpty(Issuer))
@@ -700,10 +705,20 @@ namespace Neos.IdentityServer.MultiFactor
         public int DeliveryWindow { get; set; } = 300;
 
         [XmlAttribute("PinLength")]
-        public int PinLength { get; set; } = 4;
+        public int PinLength
+        {
+            get { return _pinlength; }
+            set
+            {
+                if ((value >= 4) && (value <= 9))
+                    _pinlength = value;
+                else
+                    throw new ArgumentException("Invalid PIN len (must be between 4 and 9 numbers lenght");
+            }
+        }
 
         [XmlAttribute("DefaultPin")]
-        public int DefaultPin { get; set; } = 0;
+        public int DefaultPin { get; set; } = 1234;
 
         [XmlAttribute("KMSOO")]
         public bool KeepMySelectedOptionOn { get; set; } = true;

@@ -127,7 +127,7 @@
     <value>Используйте опцию по умолчанию</value>
   </data>
   <data name="GLOBALPINLabel" xml:space="preserve">
-    <value>Введите PIN-код</value>
+    <value>Введите свой PIN-код</value>
   </data>
   <data name="GLOBALPINMessage" xml:space="preserve">
     <value>Введите свой PIN-код</value>

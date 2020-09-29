@@ -492,6 +492,7 @@ namespace Neos.IdentityServer.MultiFactor
                                         return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorInvalidIdentificationRetry"), false);
                                     }
                                 }
+                                usercontext.PinDone = true;
                             }
                             claims = new Claim[] { GetAuthMethodClaim(usercontext.SelectedMethod) };
 
@@ -1304,6 +1305,7 @@ namespace Neos.IdentityServer.MultiFactor
                         usercontext.UIMode = ProviderPageMode.Locking;
                         return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorInvalidIdentificationRestart"), ProviderPageMode.DefinitiveError);
                     }
+                    usercontext.PinDone = true;
                 }
 
                 usercontext.KeyChanged = false;
@@ -3085,8 +3087,10 @@ namespace Neos.IdentityServer.MultiFactor
                 {
                     if (string.IsNullOrEmpty(strpin))
                         throw new Exception(Resources.GetString(ResourcesLocaleKind.Errors, "ErrorPinValue"));
-                    if (strpin.Length != Config.PinLength)
+                    if (strpin.Length > Config.PinLength)
                         throw new Exception(string.Format(Resources.GetString(ResourcesLocaleKind.Errors, "ErrorPinLength"), Config.PinLength));
+                    if (strpin.Length < 4)
+                        throw new Exception(string.Format(Resources.GetString(ResourcesLocaleKind.Errors, "ErrorPinLength"), 4));
                 }
                 if (Convert.ToInt32(strpin) < 0)
                    throw new Exception(Resources.GetString(ResourcesLocaleKind.Errors, "ErrorPinValue"));

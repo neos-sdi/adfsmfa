@@ -644,7 +644,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
                     AuthenticatorSelection authenticatorSelection = new AuthenticatorSelection
                     {
                         RequireResidentKey = requireResidentKey,
-                        UserVerification = userVerification.ToEnum<UserVerificationRequirement>(),
+                        UserVerification = userVerification.ToEnum<UserVerificationRequirement>()
                     };
                     if (!string.IsNullOrEmpty(authType))
                         authenticatorSelection.AuthenticatorAttachment = authType.ToEnum<AuthenticatorAttachment>();
@@ -655,7 +655,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
                         UserVerificationIndex = this.UserVerificationIndex,
                         Location = this.Location,
                         UserVerificationMethod = this.UserVerificationMethod,
-
+                        
                         BiometricAuthenticatorPerformanceBounds = new AuthenticatorBiometricPerfBounds
                         {
                             FAR = float.MaxValue,
@@ -762,7 +762,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
                     },
                     UserVerificationIndex = this.UserVerificationIndex,
                     Location = this.Location,
-                    UserVerificationMethod = this.UserVerificationMethod
+                    UserVerificationMethod = this.UserVerificationMethod 
                 };
 
                 UserVerificationRequirement uv = this.UserVerificationRequirement.ToEnum<UserVerificationRequirement>();

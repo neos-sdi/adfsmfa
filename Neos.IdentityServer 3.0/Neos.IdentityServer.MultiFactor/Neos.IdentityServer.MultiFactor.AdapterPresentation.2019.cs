@@ -1104,7 +1104,9 @@ namespace Neos.IdentityServer.MultiFactor
         {
             IExternalProvider prov = RuntimeAuthProvider.GetProvider(usercontext.PreferredMethod);
             bool needinput = ((usercontext.IsTwoWay) && (prov != null) && (prov.IsUIElementRequired(usercontext, RequiredMethodElements.PinParameterRequired)));
-            if ((usercontext.WizContext == WizardContextMode.Registration) || (usercontext.WizContext == WizardContextMode.Invitation)) // do not ask after registration/Invitation Enrollment process
+            if ((usercontext.WizContext == WizardContextMode.Registration) || (usercontext.WizContext == WizardContextMode.Invitation) ) // do not ask after registration/Invitation Enrollment process
+                needinput = false;
+            if (usercontext.PinDone)
                 needinput = false;
             string result = string.Empty;
             result += "<script type='text/javascript'>" + CR;
@@ -1123,7 +1125,7 @@ namespace Neos.IdentityServer.MultiFactor
             if (needinput)
             {
                 result += "<form method=\"post\" id=\"bypassForm\" autocomplete=\"off\" title=\"PIN Confirmation\" >";
-                result += "<div class=\"fieldMargin smallText\">" + BaseExternalProvider.GetPINLabel(usercontext) + " : </div>";
+                result += "<div id=\"wizardMessage2\" class=\"groupMargin\">" + BaseExternalProvider.GetPINLabel(usercontext) + " : </div>";
                 result += "<input id=\"pincode\" name=\"pincode\" type=\"password\" placeholder=\"PIN\" class=\"" + (UseUIPaginated ? "text textPaginated fullWidth" : "text fullWidth") + "\" /><br/>";
                 result += "<div class=\"fieldMargin smallText\">" + BaseExternalProvider.GetPINMessage(usercontext) + "</div><br/>";
                 result += "<input id=\"continueButton\" type=\"submit\" class=\"submit\" name=\"continueButton\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMConnexion") + "\" /><br/><br/>";
@@ -2531,7 +2533,7 @@ namespace Neos.IdentityServer.MultiFactor
             string result = string.Empty;
 
             string pl = Provider.Config.PinLength.ToString();
-            string reg = @"/([0-9]{" + pl + "," + pl + "})/";
+            string reg = @"/([0-9]{4," + pl + "})/";
 
             result += "<script type=\"text/javascript\">" + CR;
 

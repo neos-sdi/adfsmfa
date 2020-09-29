@@ -127,7 +127,7 @@
     <value>既定のオプションを使用する</value>
   </data>
   <data name="GLOBALPINLabel" xml:space="preserve">
-    <value>PIN を入力してください</value>
+    <value>暗証番号を入力してください</value>
   </data>
   <data name="GLOBALPINMessage" xml:space="preserve">
     <value>暗証番号を入力してください</value>
