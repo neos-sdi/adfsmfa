@@ -1173,6 +1173,8 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             }
         }
 
+        public WebAuthNPinRequirements PinRequirements { get; set; }
+
         /// <summary>
         /// Update method implmentation
         /// </summary>
@@ -1188,6 +1190,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             this.ForceWizard = otp.ForceWizard;
             this.DirectLogin = otp.DirectLogin;
             this.PinRequired = otp.PinRequired;
+            this.PinRequirements = otp.PinRequirements;
             this.FullyQualifiedImplementation = otp.FullQualifiedImplementation;
             this.Parameters = otp.Parameters.Data;
 
@@ -1216,6 +1219,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             otp.EnrollWizard = this.EnrollWizard;
             otp.ForceWizard = this.ForceWizard;
             otp.IsRequired = this.IsRequired;
+            otp.PinRequirements = this.PinRequirements;
             otp.DirectLogin = this.DirectLogin;
             otp.PinRequired = this.PinRequired;
             otp.FullQualifiedImplementation = this.FullyQualifiedImplementation;

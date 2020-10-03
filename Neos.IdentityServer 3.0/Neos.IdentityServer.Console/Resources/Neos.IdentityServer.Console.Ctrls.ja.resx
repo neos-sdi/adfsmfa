@@ -675,4 +675,22 @@
   <data name="CTRLWEBAUTHNSHOWPII" xml:space="preserve">
     <value>機密ログを表示する</value>
   </data>
+  <data name="CTRLPROVPINNONE" xml:space="preserve">
+    <value>未確認の場合に必要</value>
+  </data>
+  <data name="CTRLPROVPINANDROID" xml:space="preserve">
+    <value>未確認の場合に必要</value>
+  </data>
+  <data name="CTRLPROVPINSAFETYNET" xml:space="preserve">
+    <value>未確認の場合に必要</value>
+  </data>
+  <data name="CTRLPROVPINFIDO" xml:space="preserve">
+    <value>未確認の場合に必要</value>
+  </data>
+  <data name="CTRLPROVPINPACKED" xml:space="preserve">
+    <value>未確認の場合に必要</value>
+  </data>
+  <data name="CTRLPROVPINTPM" xml:space="preserve">
+    <value>未確認の場合に必要</value>
+  </data>
 </root>

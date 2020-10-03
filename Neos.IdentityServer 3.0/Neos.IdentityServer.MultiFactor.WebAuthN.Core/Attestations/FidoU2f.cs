@@ -1,4 +1,34 @@
-﻿using System;
+﻿//******************************************************************************************************************************************************************************************//
+// Copyright (c) 2020 abergs (https://github.com/abergs/fido2-net-lib)                                                                                                                      //                        
+//                                                                                                                                                                                          //
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
+// to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
+// and to permit persons to whom the Software is furnished to do so, subject to the following conditions:                                                                                   //
+//                                                                                                                                                                                          //
+// The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.                                                           //
+//                                                                                                                                                                                          //
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,                                      //
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,                            //
+// WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                               //
+//                                                                                                                                                                                          //
+//******************************************************************************************************************************************************************************************//
+// Copyright (c) 2020 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
+//                                                                                                                                                                                          //
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
+// to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
+// and to permit persons to whom the Software is furnished to do so, subject to the following conditions:                                                                                   //
+//                                                                                                                                                                                          //
+// The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.                                                           //
+//                                                                                                                                                                                          //
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,                                      //
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,                            //
+// WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                               //
+//                                                                                                                                                                                          //
+// https://adfsmfa.codeplex.com                                                                                                                                                             //
+// https://github.com/neos-sdi/adfsmfa                                                                                                                                                      //
+//                                                                                                                                                                                          //
+//******************************************************************************************************************************************************************************************//
+using System;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
@@ -13,9 +43,12 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
     internal class FidoU2f : AttestationFormat
     {
         private readonly IMetadataService _metadataService;
-        public FidoU2f(CBORObject attStmt, byte[] authenticatorData, byte[] clientDataHash, IMetadataService metadataService) : base(attStmt, authenticatorData, clientDataHash)
+        private readonly bool _requireValidAttestationRoot;
+
+        public FidoU2f(CBORObject attStmt, byte[] authenticatorData, byte[] clientDataHash, IMetadataService metadataService, bool requireValidAttestationRoot) : base(attStmt, authenticatorData, clientDataHash)
         {
             _metadataService = metadataService;
+            _requireValidAttestationRoot = requireValidAttestationRoot;
         }        
 
         public override void Verify()
@@ -91,27 +124,30 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
             if (true != pubKey.VerifyData(verificationData, ecsig, hashAlg))
                 throw new VerificationException("Invalid fido-u2f attestation signature");
 
-			// 7. Optionally, inspect x5c and consult externally provided knowledge to determine whether attStmt conveys a Basic or AttCA attestation
-            var trustPath = X5c.Values
+            if (_requireValidAttestationRoot)
+            {
+                // 7. Optionally, inspect x5c and consult externally provided knowledge to determine whether attStmt conveys a Basic or AttCA attestation
+                var trustPath = X5c.Values
                 .Select(z => new X509Certificate2(z.GetByteString()))
                 .ToArray();
 
-            var aaguid = AaguidFromAttnCertExts(cert.Extensions);
+                var aaguid = AaguidFromAttnCertExts(cert.Extensions);
 
-            if (null != _metadataService && null != aaguid)
-            {
-                var guidAaguid = AttestedCredentialData.FromBigEndian(aaguid);
-                var entry = _metadataService.GetEntry(guidAaguid);
-
-                if (null != entry && null != entry.MetadataStatement)
+                if (null != _metadataService && null != aaguid)
                 {
-                    var attestationRootCertificates = entry.MetadataStatement.AttestationRootCertificates
-                        .Select(z => new X509Certificate2(Convert.FromBase64String(z)))
-                        .ToArray();
+                    var guidAaguid = AttestedCredentialData.FromBigEndian(aaguid);
+                    var entry = _metadataService.GetEntry(guidAaguid);
 
-                    if (false == ValidateTrustChain(trustPath, attestationRootCertificates))
+                    if (null != entry && null != entry.MetadataStatement)
                     {
-                        throw new VerificationException("Invalid certificate chain in U2F attestation");
+                        var attestationRootCertificates = entry.MetadataStatement.AttestationRootCertificates
+                            .Select(z => new X509Certificate2(Convert.FromBase64String(z)))
+                            .ToArray();
+
+                        if (false == ValidateTrustChain(trustPath, attestationRootCertificates))
+                        {
+                            throw new VerificationException("Invalid certificate chain in U2F attestation");
+                        }
                     }
                 }
             }

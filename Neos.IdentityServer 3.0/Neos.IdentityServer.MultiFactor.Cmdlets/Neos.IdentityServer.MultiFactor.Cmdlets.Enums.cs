@@ -364,7 +364,6 @@ namespace MFA
         /// </summary>
         BypassDisabled = 2,
 
-
         /// <summary>
         /// <para type="description">AllowUnRegistered, Allow user access if not registered in MFA. But, the user is invited to register</para>
         /// </summary>
@@ -400,6 +399,52 @@ namespace MFA
         /// </summary>
         AdministrativeMode = 256
     }
+
+
+    /// <summary>
+    /// PSWebAuthNPinRequirements
+    /// <para type="synopsis">Configuration options for Pin requirement when Biometric login, the user is not verified. Must be combined with binary OR.</para>
+    /// <para type="description">Configuration options for Pin requirement when Biometric login, the user is not verified. Must be combined with binary OR.</para>
+    /// </summary>
+    [Flags]
+    public enum PSWebAuthNPinRequirements
+    {
+        /// <summary>
+        /// <para type="description">Null, No requirement for pin.</para>
+        /// </summary>
+        Null = 0,
+
+        /// <summary>
+        /// <para type="description">None, Pin requirement for None Attestation type when user is not verified.</para>
+        /// </summary>
+        None = 1,
+
+        /// <summary>
+        /// <para type="description">AndroidKey, Pin requirement for AndroidKey Attestation type when user is not verified.</para>
+        /// </summary>
+        AndroidKey = 2,
+
+        /// <summary>
+        /// <para type="description">AndroidSafetyNet, Pin requirement for AndroidSafetyNet Attestation type when user is not verified.</para>
+        /// </summary>
+        AndroidSafetyNet = 4,
+
+        /// <summary>
+        /// <para type="description">Fido2U2f, Pin requirement for Fido2U2f Attestation type when user is not verified.</para>
+        /// </summary>
+        Fido2U2f = 8,
+
+        /// <summary>
+        /// <para type="description">Packed, Pin requirement for Packed Attestation type when user is not verified.</para>
+        /// </summary>
+        Packed = 16,
+
+        /// <summary>
+        /// <para type="description">TPM, Pin requirement for TPM Attestation type when user is not verified.</para>
+        /// </summary>
+        TPM = 32
+    }
+
 
     /// <summary>
     /// PSUIKind

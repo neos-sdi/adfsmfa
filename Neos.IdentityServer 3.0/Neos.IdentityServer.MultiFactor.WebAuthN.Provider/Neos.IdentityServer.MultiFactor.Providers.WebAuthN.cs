@@ -37,13 +37,8 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
         private ForceWizardMode _forceenrollment = ForceWizardMode.Disabled;
         private IWebAuthN _webathn;
         private SimpleMetadataService _simplemetadataservice;
-        private MFAConfig _config;
 
-        public MFAConfig Config
-        {
-            get { return _config; }
-            set { _config = value; }
-        }
+        public MFAConfig Config { get; set; }
         public bool DirectLogin { get; private set; }
         public int ChallengeSize { get; private set; }
         public string ConveyancePreference { get; private set; }
@@ -54,7 +49,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
         public bool UserVerificationMethod { get; private set; }
         public string UserVerificationRequirement { get; private set; }
         public bool RequireResidentKey { get; private set; }
-
+        public WebAuthNPinRequirements PinRequirements { get; set; } = WebAuthNPinRequirements.Null;
 
         /// <summary>
         /// Constructor
@@ -379,6 +374,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
                         WizardEnabled = param.EnrollWizard;
                         ForceEnrollment = param.ForceWizard;
                         PinRequired = param.PinRequired;
+                        PinRequirements = param.PinRequirements;
                         DirectLogin = param.DirectLogin;
                         ConveyancePreference = param.Options.AttestationConveyancePreference;
                         Attachement = param.Options.AuthenticatorAttachment;
@@ -797,6 +793,12 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
                     AssertionOptions options = AssertionOptions.FromJson(jsonOptions);
                     AuthenticatorAssertionRawResponse clientResponse = JsonConvert.DeserializeObject<AuthenticatorAssertionRawResponse>(jsonResponse);
 
+                    // AuthData Flags
+                    byte flag = clientResponse.Response.AuthenticatorData[32];
+                    var userpresent   = (flag & (1 << 0)) != 0;
+                    var userverified  = (flag & (1 << 2)) != 0;
+                    var attestedcred  = (flag & (1 << 6)) != 0;
+                    var hasextenddata = (flag & (1 << 7)) != 0;
 
                     MFAUserCredential creds = RuntimeRepository.GetCredentialById(Config, user, clientResponse.Id);
 
@@ -814,6 +816,35 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
                     }
                     AssertionVerificationResult res = _webathn.SetAssertionResult(clientResponse, options, creds.PublicKey, storedCounter, callback);
                     RuntimeRepository.UpdateCounter(Config, user, res.CredentialId, res.Counter);
+                    if (!userpresent || !userverified)
+                    {
+                        switch (creds.CredType)
+                        {
+                            case "none":
+                                ctx.PinRequirements = (this.PinRequirements.HasFlag(WebAuthNPinRequirements.None));
+                                break;
+                            case "android-key":
+                                ctx.PinRequirements = (this.PinRequirements.HasFlag(WebAuthNPinRequirements.AndroidKey));
+                                break;
+                            case "android-safetynet":
+                                ctx.PinRequirements = (this.PinRequirements.HasFlag(WebAuthNPinRequirements.AndroidSafetyNet));
+                                break;
+                            case "fido-u2f":
+                                ctx.PinRequirements = (this.PinRequirements.HasFlag(WebAuthNPinRequirements.Fido2U2f));
+                                break;
+                            case "packed":
+                                ctx.PinRequirements = (this.PinRequirements.HasFlag(WebAuthNPinRequirements.Packed));
+                                break;
+                            case "tpm":
+                                ctx.PinRequirements = (this.PinRequirements.HasFlag(WebAuthNPinRequirements.TPM));
+                                break;
+                            default:
+                                ctx.PinRequirements = false;
+                                break;
+                        }
+                    }
+                    else
+                        ctx.PinRequirements = false;
                     return (int)AuthenticationResponseKind.Biometrics;
                 }
                 else

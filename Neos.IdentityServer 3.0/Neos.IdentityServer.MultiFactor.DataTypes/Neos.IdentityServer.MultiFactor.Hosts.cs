@@ -1128,6 +1128,7 @@ namespace Neos.IdentityServer.MultiFactor
             this.Enabled = prov.Enabled;
             this.IsRequired = prov.IsRequired;
             this.PinRequired = prov.PinRequired;
+            this.PinRequirements = prov.PinRequirements;
             this.EnrollWizard = prov.EnrollWizard;
             this.ForceWizard = prov.ForceWizard;
             this.Configuration = prov.Configuration;
@@ -1140,6 +1141,7 @@ namespace Neos.IdentityServer.MultiFactor
         public override bool Enabled { get; set; }
         public override bool IsRequired { get; set; }
         public override bool PinRequired { get; set; }
+        public virtual WebAuthNPinRequirements PinRequirements { get; set; }
         public override bool EnrollWizard { get; set; }
         public bool DirectLogin { get; set; }
         public override ForceWizardMode ForceWizard { get; set; }
@@ -1642,6 +1644,9 @@ namespace Neos.IdentityServer.MultiFactor
 
         [XmlAttribute("PinRequired")]
         public bool PinRequired { get; set; } = false;
+
+        [XmlAttribute("PinRequirements")]
+        public WebAuthNPinRequirements PinRequirements { get; set; } = WebAuthNPinRequirements.Null;
 
         [XmlAttribute("IsRequired")]
         public bool IsRequired { get; set; } = false;

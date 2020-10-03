@@ -970,6 +970,28 @@ namespace Neos.IdentityServer.MultiFactor
                     _context.Data.Add("_authctxassertionoptions", value);
             }
         }
+
+        /// <summary>
+        /// PinRequirements property implementation
+        /// </summary>
+        [XmlAttribute("PinRequirements")]
+        public bool PinRequirements
+        {
+            get
+            {
+                if (_context.Data.ContainsKey("_authctxpinrequirements") && _context.Data["_authctxpinrequirements"] != null)
+                    return (bool)_context.Data["_authctxpinrequirements"];
+                else
+                    return false;
+            }
+            set
+            {
+                if (_context.Data.ContainsKey("_authctxpinrequirements"))
+                    _context.Data["_authctxpinrequirements"] = value;
+                else
+                    _context.Data.Add("_authctxpinrequirements", value);
+            }
+        }
     }
     #endregion
 
@@ -1776,6 +1798,21 @@ namespace Neos.IdentityServer.MultiFactor
         ADDS = 0,
         SQL = 1,
         Custom = 2
+    }
+
+    /// <summary>
+    /// WebAuthNPinRequirements enum
+    /// </summary>
+    [Flags]
+    public enum WebAuthNPinRequirements
+    {
+        Null = 0,
+        None = 1,
+        AndroidKey = 2,
+        AndroidSafetyNet = 4,
+        Fido2U2f = 8,
+        Packed = 16,
+        TPM = 32
     }
 
     /// <summary>

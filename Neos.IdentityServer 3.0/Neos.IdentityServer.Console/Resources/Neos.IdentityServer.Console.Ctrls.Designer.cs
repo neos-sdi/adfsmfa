@@ -952,6 +952,60 @@ namespace Neos.IdentityServer.Console.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Required when unverified.
+        /// </summary>
+        internal static string CTRLPROVPINANDROID {
+            get {
+                return ResourceManager.GetString("CTRLPROVPINANDROID", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Required when unverified.
+        /// </summary>
+        internal static string CTRLPROVPINFIDO {
+            get {
+                return ResourceManager.GetString("CTRLPROVPINFIDO", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Required when unverified .
+        /// </summary>
+        internal static string CTRLPROVPINNONE {
+            get {
+                return ResourceManager.GetString("CTRLPROVPINNONE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Required when unverified.
+        /// </summary>
+        internal static string CTRLPROVPINPACKED {
+            get {
+                return ResourceManager.GetString("CTRLPROVPINPACKED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Required when unverified.
+        /// </summary>
+        internal static string CTRLPROVPINSAFETYNET {
+            get {
+                return ResourceManager.GetString("CTRLPROVPINSAFETYNET", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Required when unverified.
+        /// </summary>
+        internal static string CTRLPROVPINTPM {
+            get {
+                return ResourceManager.GetString("CTRLPROVPINTPM", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Required.
         /// </summary>
         internal static string CTRLPROVREQUIRED {

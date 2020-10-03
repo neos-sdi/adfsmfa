@@ -100,6 +100,7 @@ namespace Neos.IdentityServer.MultiFactor
     /// </summary>
     public interface IWebAuthNProvider
     {
+        WebAuthNPinRequirements PinRequirements { get; set; }
         string GetManageLinkLabel(AuthenticationContext ctx);
         string GetDeleteLinkLabel(AuthenticationContext ctx);
         List<WebAuthNCredentialInformation> GetUserStoredCredentials(AuthenticationContext ctx);

@@ -3687,6 +3687,8 @@ namespace MFA
                                 _target4.IsRequired = _config4.IsRequired;
                             if (_config4.PinRequiredChanged)
                                 _target4.PinRequired = _config4.PinRequired;
+                            if (_config4.PinRequirementsChanged)
+                                _target4.PinRequirements = (WebAuthNPinRequirements)_config4.PinRequirements;
                             if (_config4.FullyQualifiedImplementationChanged)
                                 _target4.FullyQualifiedImplementation = _config4.FullyQualifiedImplementation;
                             if (_config4.ParametersChanged)
@@ -4703,6 +4705,7 @@ namespace MFA
         private bool _enrollwizard;
         private ForceWizardMode _forcewizard = ForceWizardMode.Disabled;
         private bool _pinrequired;
+        private PSWebAuthNPinRequirements _pinrequirements = PSWebAuthNPinRequirements.Null;
         private bool _isrequired;
         private string _fullyqualifiedimplementation;
         private string _parameters;
@@ -4725,6 +4728,7 @@ namespace MFA
         internal bool FullyQualifiedImplementationChanged { get; private set; }
         internal bool IsRequiredChanged { get; private set; }
         internal bool PinRequiredChanged { get; private set; }
+        internal bool PinRequirementsChanged { get; private set; }
         internal bool ForceWizardChanged { get; private set; }
         internal bool EnabledChanged { get; private set; }
         internal bool EnrollWizardChanged { get; private set; }
@@ -4801,6 +4805,20 @@ namespace MFA
             {
                 _pinrequired = value;
                 PinRequiredChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Set if additionnal verification with PIN when user is not verified.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        public PSWebAuthNPinRequirements PinRequirements
+        {
+            get { return _pinrequirements; }
+            set
+            {
+                _pinrequirements = value;
+                PinRequirementsChanged = true;
             }
         }
 

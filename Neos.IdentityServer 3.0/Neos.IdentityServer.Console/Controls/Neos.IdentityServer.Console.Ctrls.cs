@@ -421,6 +421,12 @@ namespace Neos.IdentityServer.Console.Controls
         private CheckBox chkProviderRequired;
         private CheckBox chkProviderPin;
         private Label lblProviderDesc;
+        private CheckBox chkProviderPinNone;
+        private CheckBox chkProviderPinAndroidKey;
+        private CheckBox chkProviderPinAndroidSafetyNet;
+        private CheckBox chkProviderPinFido2u2f;
+        private CheckBox chkProviderPinPacked;
+        private CheckBox chkProviderPinTPM;
 
         /// <summary>
         /// ADFSServerControl Constructor
@@ -521,17 +527,26 @@ namespace Neos.IdentityServer.Console.Controls
                 _provider = RuntimeAuthProvider.GetProviderInstance(this._kind);
 
                 this.Dock = DockStyle.Top;
-                this.Height = 95;
+                if (_kind == PreferredMethod.Biometrics)
+                    this.Height = 175;
+                else 
+                    this.Height = 95;
                 this.Width = 760;
                 this.Margin = new Padding(30, 5, 30, 5);
 
                 _panel.Width = 20;
-                _panel.Height = 95;
+                if (_kind == PreferredMethod.Biometrics)
+                    _panel.Height = 175;
+                else
+                    _panel.Height = 95;
                 this.Controls.Add(_panel);
 
                 _txtpanel.Left = 20;
                 _txtpanel.Width = this.Width - 100;
-                _txtpanel.Height = 105;
+                if (_kind == PreferredMethod.Biometrics)
+                    _txtpanel.Height = 185;
+                else
+                    _txtpanel.Height = 105;
                 _txtpanel.BackColor = System.Drawing.SystemColors.Control;
                 this.Controls.Add(_txtpanel);
 
@@ -602,10 +617,84 @@ namespace Neos.IdentityServer.Console.Controls
 
                 if (_kind == PreferredMethod.Azure)
                 {
-                    // chkProviderEnroll.Checked = false;
-                    // chkProviderEnroll.Enabled = false;
                     chkProviderRequired.Checked = false;
                     chkProviderRequired.Enabled = false;
+                }
+                else if (_kind == PreferredMethod.Biometrics)
+                {
+                    // "Required when unverified"
+                    IWebAuthNProvider webprov = _provider as IWebAuthNProvider;
+                    chkProviderPinNone = new CheckBox
+                    {
+                        Text = "None : "+res.CTRLPROVPINNONE,
+                        Checked = webprov.PinRequirements.HasFlag(WebAuthNPinRequirements.None),
+                        Enabled = _provider.Enabled,
+                        Left = 540,
+                        Top = 94,
+                        Width = 250
+                    };
+                    chkProviderPinNone.CheckedChanged += ChkProviderPinNoneChanged;
+                    _txtpanel.Controls.Add(chkProviderPinNone);
+
+                    chkProviderPinAndroidKey = new CheckBox
+                    {
+                        Text = "Android :" + res.CTRLPROVPINANDROID,
+                        Checked = webprov.PinRequirements.HasFlag(WebAuthNPinRequirements.AndroidKey),
+                        Enabled = _provider.Enabled,
+                        Left = 540,
+                        Top = 118,
+                        Width = 250
+                    };
+                    chkProviderPinAndroidKey.CheckedChanged += ChkProviderPinAndroidKeyChanged;
+                    _txtpanel.Controls.Add(chkProviderPinAndroidKey);
+
+                    chkProviderPinAndroidSafetyNet = new CheckBox
+                    {
+                        Text = "SafetyNet : "+res.CTRLPROVPINSAFETYNET,
+                        Checked = webprov.PinRequirements.HasFlag(WebAuthNPinRequirements.AndroidSafetyNet),
+                        Enabled = _provider.Enabled,
+                        Left = 540,
+                        Top = 142,
+                        Width = 250
+                    };
+                    chkProviderPinAndroidSafetyNet.CheckedChanged += ChkProviderPinAndroidSafetyNetChanged;
+                    _txtpanel.Controls.Add(chkProviderPinAndroidSafetyNet);
+
+                    chkProviderPinFido2u2f = new CheckBox
+                    {
+                        Text = "Fido2-u2f : "+ res.CTRLPROVPINFIDO,
+                        Checked = webprov.PinRequirements.HasFlag(WebAuthNPinRequirements.Fido2U2f),
+                        Enabled = _provider.Enabled,
+                        Left = 790,
+                        Top = 94,
+                        Width = 250
+                    };
+                    chkProviderPinFido2u2f.CheckedChanged += ChkProviderPinFido2u2fChanged;
+                    _txtpanel.Controls.Add(chkProviderPinFido2u2f);
+
+                    chkProviderPinPacked = new CheckBox
+                    {
+                        Text = "Packed : "+res.CTRLPROVPINPACKED,
+                        Checked = webprov.PinRequirements.HasFlag(WebAuthNPinRequirements.Packed),
+                        Enabled = _provider.Enabled,
+                        Left = 790,
+                        Top = 118,
+                        Width = 250
+                    };
+                    chkProviderPinPacked.CheckedChanged += ChkProviderPinPackedChanged;
+                    _txtpanel.Controls.Add(chkProviderPinPacked);
+
+                    chkProviderPinTPM = new CheckBox
+                    {
+                        Text = "TPM : "+res.CTRLPROVPINTPM,
+                        Checked = webprov.PinRequirements.HasFlag(WebAuthNPinRequirements.TPM),
+                        Enabled = _provider.Enabled,
+                        Left = 790,
+                        Top = 142,
+                        Width = 250
+                    };
+                    chkProviderPinTPM.CheckedChanged += ChkProviderPinTPMChanged;
+                    _txtpanel.Controls.Add(chkProviderPinTPM);
                 }
                 else if (_provider is NeosPlugProvider)
                 {
@@ -665,6 +754,31 @@ namespace Neos.IdentityServer.Console.Controls
                 {
                     chkProviderRequired.Checked = false;
                     chkProviderRequired.Enabled = false;
+                }
+                else if (_kind == PreferredMethod.Biometrics)
+                {
+                    IWebAuthNProvider webprov = _provider as IWebAuthNProvider;
+                    chkProviderPinNone.Text = "None : " + res.CTRLPROVPINNONE;
+                    chkProviderPinAndroidKey.Text = "Android : " + res.CTRLPROVPINANDROID;
+                    chkProviderPinAndroidSafetyNet.Text = "SafetyNet : " + res.CTRLPROVPINSAFETYNET;
+                    chkProviderPinFido2u2f.Text = "Fido2-u2f : " + res.CTRLPROVPINFIDO;
+                    chkProviderPinPacked.Text = "Packed : " + res.CTRLPROVPINPACKED;
+                    chkProviderPinTPM.Text = "TPM : " + res.CTRLPROVPINTPM;
+
+                    chkProviderPinNone.Checked = webprov.PinRequirements.HasFlag(WebAuthNPinRequirements.None);
+                    chkProviderPinNone.Enabled = _provider.Enabled;
+                    chkProviderPinAndroidKey.Checked = webprov.PinRequirements.HasFlag(WebAuthNPinRequirements.AndroidKey);
+                    chkProviderPinAndroidKey.Enabled = _provider.Enabled;
+                    chkProviderPinAndroidSafetyNet.Checked = webprov.PinRequirements.HasFlag(WebAuthNPinRequirements.AndroidSafetyNet);
+                    chkProviderPinAndroidSafetyNet.Enabled = _provider.Enabled;
+                    chkProviderPinFido2u2f.Checked = webprov.PinRequirements.HasFlag(WebAuthNPinRequirements.Fido2U2f);
+                    chkProviderPinFido2u2f.Enabled = _provider.Enabled;
+                    chkProviderPinPacked.Checked = webprov.PinRequirements.HasFlag(WebAuthNPinRequirements.Packed);
+                    chkProviderPinPacked.Enabled = _provider.Enabled;
+                    chkProviderPinTPM.Checked = webprov.PinRequirements.HasFlag(WebAuthNPinRequirements.TPM);
+                    chkProviderPinTPM.Enabled = _provider.Enabled;
+                    chkProviderPin.Checked = _provider.PinRequired;
+                    chkProviderPin.Enabled = _provider.Enabled;
                 }
                 else if (_provider is NeosPlugProvider)
                 {
@@ -733,6 +847,198 @@ namespace Neos.IdentityServer.Console.Controls
             catch (Exception ex)
             {
                 errors.SetError(chkProviderPin, ex.Message);
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
+                this._snapin.Console.ShowDialog(messageBoxParameters);
+            }
+            finally
+            {
+                this.Cursor = Cursors.Default;
+            }
+        }
+
+        /// <summary>
+        /// ChkProviderPinTPMChanged method implementation
+        /// </summary>
+        private void ChkProviderPinTPMChanged(object sender, EventArgs e)
+        {
+            this.Cursor = Cursors.WaitCursor;
+            try
+            {
+                if (chkProviderPinTPM.Checked)
+                    Config.WebAuthNProvider.PinRequirements |= WebAuthNPinRequirements.TPM;
+                else
+                    Config.WebAuthNProvider.PinRequirements &= ~WebAuthNPinRequirements.TPM;
+                if (_view.AutoValidate != AutoValidate.Disable)
+                    ManagementService.ADFSManager.SetDirty(true);
+            }
+            catch (Exception ex)
+            {
+                errors.SetError(chkProviderPinTPM, ex.Message);
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
+                this._snapin.Console.ShowDialog(messageBoxParameters);
+            }
+            finally
+            {
+                this.Cursor = Cursors.Default;
+            }
+        }
+
+        /// <summary>
+        /// ChkProviderPinPackedChanged method implementation
+        /// </summary>
+        private void ChkProviderPinPackedChanged(object sender, EventArgs e)
+        {
+            this.Cursor = Cursors.WaitCursor;
+            try
+            {
+                if (chkProviderPinPacked.Checked)
+                    Config.WebAuthNProvider.PinRequirements |= WebAuthNPinRequirements.Packed;
+                else
+                    Config.WebAuthNProvider.PinRequirements &= ~WebAuthNPinRequirements.Packed;
+                if (_view.AutoValidate != AutoValidate.Disable)
+                    ManagementService.ADFSManager.SetDirty(true);
+            }
+            catch (Exception ex)
+            {
+                errors.SetError(chkProviderPinPacked, ex.Message);
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
+                this._snapin.Console.ShowDialog(messageBoxParameters);
+            }
+            finally
+            {
+                this.Cursor = Cursors.Default;
+            }
+        }
+
+        /// <summary>
+        /// ChkProviderPinFido2u2fChanged method implementation
+        /// </summary>
+        private void ChkProviderPinFido2u2fChanged(object sender, EventArgs e)
+        {
+            this.Cursor = Cursors.WaitCursor;
+            try
+            {
+                if (chkProviderPinFido2u2f.Checked)
+                    Config.WebAuthNProvider.PinRequirements |= WebAuthNPinRequirements.Fido2U2f;
+                else
+                    Config.WebAuthNProvider.PinRequirements &= ~WebAuthNPinRequirements.Fido2U2f;
+                if (_view.AutoValidate != AutoValidate.Disable)
+                    ManagementService.ADFSManager.SetDirty(true);
+            }
+            catch (Exception ex)
+            {
+                errors.SetError(chkProviderPinFido2u2f, ex.Message);
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
+                this._snapin.Console.ShowDialog(messageBoxParameters);
+            }
+            finally
+            {
+                this.Cursor = Cursors.Default;
+            }
+        }
+
+        /// <summary>
+        /// ChkProviderPinAndroidSafetyNetChanged method implementation
+        /// </summary>
+        private void ChkProviderPinAndroidSafetyNetChanged(object sender, EventArgs e)
+        {
+            this.Cursor = Cursors.WaitCursor;
+            try
+            {
+                if (chkProviderPinAndroidSafetyNet.Checked)
+                    Config.WebAuthNProvider.PinRequirements |= WebAuthNPinRequirements.AndroidSafetyNet;
+                else
+                    Config.WebAuthNProvider.PinRequirements &= ~WebAuthNPinRequirements.AndroidSafetyNet;
+                if (_view.AutoValidate != AutoValidate.Disable)
+                    ManagementService.ADFSManager.SetDirty(true);
+            }
+            catch (Exception ex)
+            {
+                errors.SetError(chkProviderPinAndroidSafetyNet, ex.Message);
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
+                this._snapin.Console.ShowDialog(messageBoxParameters);
+            }
+            finally
+            {
+                this.Cursor = Cursors.Default;
+            }
+        }
+
+        /// <summary>
+        /// ChkProviderPinAndroidKeyChanged method implementation
+        /// </summary>
+        private void ChkProviderPinAndroidKeyChanged(object sender, EventArgs e)
+        {
+            this.Cursor = Cursors.WaitCursor;
+            try
+            {
+                if (chkProviderPinAndroidKey.Checked)
+                    Config.WebAuthNProvider.PinRequirements |= WebAuthNPinRequirements.AndroidKey;
+                else
+                    Config.WebAuthNProvider.PinRequirements &= ~WebAuthNPinRequirements.AndroidKey;
+                if (_view.AutoValidate != AutoValidate.Disable)
+                    ManagementService.ADFSManager.SetDirty(true);
+            }
+            catch (Exception ex)
+            {
+                errors.SetError(chkProviderPinAndroidKey, ex.Message);
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
+                this._snapin.Console.ShowDialog(messageBoxParameters);
+            }
+            finally
+            {
+                this.Cursor = Cursors.Default;
+            }
+        }
+
+        /// <summary>
+        /// ChkProviderPinNoneChanged method implementation
+        /// </summary>
+        private void ChkProviderPinNoneChanged(object sender, EventArgs e)
+        {
+            this.Cursor = Cursors.WaitCursor;
+            try
+            {
+                if (chkProviderPinNone.Checked)
+                    Config.WebAuthNProvider.PinRequirements |= WebAuthNPinRequirements.None;
+                else
+                    Config.WebAuthNProvider.PinRequirements &= ~WebAuthNPinRequirements.None;
+                if (_view.AutoValidate != AutoValidate.Disable)
+                    ManagementService.ADFSManager.SetDirty(true);
+            }
+            catch (Exception ex)
+            {
+                errors.SetError(chkProviderPinNone, ex.Message);
                 MessageBoxParameters messageBoxParameters = new MessageBoxParameters
                 {
                     Text = ex.Message,
@@ -907,6 +1213,9 @@ namespace Neos.IdentityServer.Console.Controls
             }
         }
     }
+
+    // Pin code required when unverified"
+
 
     public partial class MFAProvidersValidationControl : Panel, IMMCRefreshData
     {

@@ -2190,6 +2190,11 @@ namespace MFA
         public bool ShowPII { get; set; }
 
         /// <summary>
+        /// <para type="description">Pin requirements for unverified biometrics devices.</para>
+        /// </summary>
+        public WebAuthNPinRequirements PinRequirements { get; set; }
+
+        /// <summary>
         /// explicit operator from PSConfigBiometricProvider
         /// </summary>
         public static explicit operator PSBiometricProvider(FlatBiometricProvider otp)
@@ -2205,6 +2210,7 @@ namespace MFA
                     EnrollWizard = otp.EnrollWizard,
                     ForceWizard = (PSForceWizardMode)otp.ForceWizard,
                     PinRequired = otp.PinRequired,
+                    PinRequirements = otp.PinRequirements,
                     DirectLogin = otp.DirectLogin,
                     FullQualifiedImplementation = otp.FullyQualifiedImplementation,
                     Parameters = otp.Parameters,

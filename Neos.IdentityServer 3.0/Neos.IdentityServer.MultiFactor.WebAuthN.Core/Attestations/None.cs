@@ -18,9 +18,14 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
 {
     internal class None : AttestationFormat
     {
-        public None(CBORObject attStmt, byte[] authenticatorData, byte[] clientDataHash) 
+        private readonly IMetadataService _metadataService;
+        private readonly bool _requireValidAttestationRoot;
+
+        public None(CBORObject attStmt, byte[] authenticatorData, byte[] clientDataHash, IMetadataService metadataService, bool requireValidAttestationRoot) 
             : base(attStmt, authenticatorData, clientDataHash)
         {
+            _metadataService = metadataService;
+            _requireValidAttestationRoot = requireValidAttestationRoot;
         }
 
         public override void Verify()

@@ -140,12 +140,11 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
             var parsedResponse = AuthenticatorAssertionResponse.Parse(assertionResponse);
 
             var result = parsedResponse.Verify(originalOptions,
-                                                          _config.Origin,
-                                                          storedPublicKey,
-                                                          storedSignatureCounter,
-                                                          isUserHandleOwnerOfCredentialIdCallback,
-                                                          requestTokenBindingId);
-
+                                                            _config.Origin,
+                                                            storedPublicKey,
+                                                            storedSignatureCounter,
+                                                            isUserHandleOwnerOfCredentialIdCallback,
+                                                            requestTokenBindingId);
             return result;
         }
     }

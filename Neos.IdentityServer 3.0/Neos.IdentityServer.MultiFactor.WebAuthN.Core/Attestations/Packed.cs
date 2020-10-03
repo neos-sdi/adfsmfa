@@ -12,6 +12,22 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                               //
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
+// Copyright (c) 2020 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
+//                                                                                                                                                                                          //
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
+// to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
+// and to permit persons to whom the Software is furnished to do so, subject to the following conditions:                                                                                   //
+//                                                                                                                                                                                          //
+// The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.                                                           //
+//                                                                                                                                                                                          //
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,                                      //
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,                            //
+// WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                               //
+//                                                                                                                                                                                          //
+// https://adfsmfa.codeplex.com                                                                                                                                                             //
+// https://github.com/neos-sdi/adfsmfa                                                                                                                                                      //
+//                                                                                                                                                                                          //
+//******************************************************************************************************************************************************************************************//
 using System;
 using System.Linq;
 using System.Security.Cryptography;
@@ -41,11 +57,13 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
     internal class Packed : AttestationFormat
     {
         private readonly IMetadataService _metadataService;
+        private readonly bool _requireValidAttestationRoot;
 
-        public Packed(CBORObject attStmt, byte[] authenticatorData, byte[] clientDataHash, IMetadataService metadataService)
+        public Packed(CBORObject attStmt, byte[] authenticatorData, byte[] clientDataHash, IMetadataService metadataService, bool requireValidAttestationRoot)
 		    : base(attStmt, authenticatorData, clientDataHash)
         {
             _metadataService = metadataService;
+            _requireValidAttestationRoot = requireValidAttestationRoot;
         }
 
         public static bool IsValidPackedAttnCertSubject(string attnCertSubj)
@@ -141,16 +159,18 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
                 // while conformance testing, we must reject any authenticator that we cannot get metadata for
                 if (_metadataService?.ConformanceTesting() == true && null == entry)
                     throw new VerificationException("AAGUID not found in MDS test metadata");
-
-                // If the authenticator is listed as in the metadata as one that should produce a basic full attestation, build and verify the chain
-                if (entry?.MetadataStatement?.AttestationTypes.Contains((ushort)MetadataAttestationType.ATTESTATION_BASIC_FULL) ?? false)
+                if (_requireValidAttestationRoot)
                 {
-                	var attestationRootCertificates = entry.MetadataStatement.AttestationRootCertificates
-                        .Select(x => new X509Certificate2(Convert.FromBase64String(x)))
-                        .ToArray();
-                    if (false == ValidateTrustChain(trustPath, attestationRootCertificates))
+                    // If the authenticator is listed as in the metadata as one that should produce a basic full attestation, build and verify the chain
+                    if (entry?.MetadataStatement?.AttestationTypes.Contains((ushort)MetadataAttestationType.ATTESTATION_BASIC_FULL) ?? false)
                     {
-                        throw new VerificationException("Invalid certificate chain in packed attestation");
+                        var attestationRootCertificates = entry.MetadataStatement.AttestationRootCertificates
+                            .Select(x => new X509Certificate2(Convert.FromBase64String(x)))
+                            .ToArray();
+                        if (false == ValidateTrustChain(trustPath, attestationRootCertificates))
+                        {
+                            throw new VerificationException("Invalid certificate chain in packed attestation");
+                        }
                     }
                 }
 

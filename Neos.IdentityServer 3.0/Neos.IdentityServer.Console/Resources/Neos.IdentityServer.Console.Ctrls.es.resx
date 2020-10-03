@@ -675,4 +675,22 @@
   <data name="CTRLWEBAUTHNSHOWPII" xml:space="preserve">
     <value>Mostrar registros confidenciales</value>
   </data>
+  <data name="CTRLPROVPINNONE" xml:space="preserve">
+    <value>Requerido cuando no se verifica</value>
+  </data>
+  <data name="CTRLPROVPINANDROID" xml:space="preserve">
+    <value>Requerido cuando no se verifica</value>
+  </data>
+  <data name="CTRLPROVPINSAFETYNET" xml:space="preserve">
+    <value>Requerido cuando no se verifica</value>
+  </data>
+  <data name="CTRLPROVPINFIDO" xml:space="preserve">
+    <value>Requerido cuando no se verifica</value>
+  </data>
+  <data name="CTRLPROVPINPACKED" xml:space="preserve">
+    <value>Requerido cuando no se verifica</value>
+  </data>
+  <data name="CTRLPROVPINTPM" xml:space="preserve">
+    <value>Requerido cuando no se verifica</value>
+  </data>
 </root>

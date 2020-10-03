@@ -1106,6 +1106,8 @@ namespace Neos.IdentityServer.MultiFactor
             bool needinput = ((usercontext.IsTwoWay) && (prov != null) && (prov.IsUIElementRequired(usercontext, RequiredMethodElements.PinParameterRequired)));
             if ((usercontext.WizContext == WizardContextMode.Registration) || (usercontext.WizContext == WizardContextMode.Invitation) ) // do not ask after registration/Invitation Enrollment process
                 needinput = false;
+            else if (usercontext.PinRequirements)
+                needinput = true;
             if (usercontext.PinDone)
                 needinput = false;
             string result = string.Empty;
