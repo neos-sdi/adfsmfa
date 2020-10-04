@@ -810,6 +810,7 @@ namespace Neos.IdentityServer.MultiFactor
             {
                 IExternalProvider prov = null;
                 bool WantPin = false;
+                bool SuperPin = false;
                 if (RuntimeAuthProvider.IsUIElementRequired(usercontext, RequiredMethodElements.OTPLinkRequired))
                 {
                     prov = RuntimeAuthProvider.GetProvider(PreferredMethod.Code);
@@ -823,6 +824,8 @@ namespace Neos.IdentityServer.MultiFactor
                     prov = RuntimeAuthProvider.GetProvider(PreferredMethod.Biometrics);
                     if (prov.PinRequired)
                         WantPin = true;
+                    if (((IWebAuthNProvider)prov).PinRequirements!=WebAuthNPinRequirements.Null)
+                        SuperPin = true;
                     if (Provider.HasStrictAccessToOptions(prov))
                         result += "<a class=\"actionLink\" href=\"#\" id=\"enrollbio\" name=\"enrollbio\" onclick=\"return SetLinkTitle(selectoptionsForm, '4')\" style=\"cursor: pointer;\">" + prov.GetWizardLinkLabel(usercontext) + "</a>";
                 }
@@ -859,9 +862,9 @@ namespace Neos.IdentityServer.MultiFactor
                         }
                     }
                 }
-                if (RuntimeAuthProvider.IsUIElementRequired(usercontext, RequiredMethodElements.PinLinkRequired))
+                if (RuntimeAuthProvider.IsUIElementRequired(usercontext, RequiredMethodElements.PinLinkRequired) || SuperPin)
                 {
-                    if (WantPin)
+                    if ((WantPin) || (SuperPin))
                         result += "<a class=\"actionLink\" href=\"#\" id=\"enrollpin\" name=\"enrollpin\"  onclick=\"return SetLinkTitle(selectoptionsForm, '7')\" style=\"cursor: pointer;\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlEnrollPinCode") + "</a>";
                 }               
             }

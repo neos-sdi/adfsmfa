@@ -634,10 +634,19 @@ namespace Neos.IdentityServer.MultiFactor
                 return false;
             else
             {
-                if (prov.PinRequired)
+                if (prov.Enabled)
                 {
-                    if (ctx.PinCode < 0)
-                        return false;
+                    if (prov.PinRequired)
+                    {
+                        if (ctx.PinCode <= 0)
+                            return false;
+                    }
+                    IWebAuthNProvider web = prov as IWebAuthNProvider;
+                    if ((web != null) && (web.PinRequirements != WebAuthNPinRequirements.Null))
+                    {
+                        if (ctx.PinCode <= 0)
+                            return false;
+                    }
                 }
                 return prov.IsAvailableForUser(ctx);
             }
@@ -654,8 +663,13 @@ namespace Neos.IdentityServer.MultiFactor
                     return false;
                 else
                 {
+                    if (!prov.Enabled)
+                        continue;
                     if (prov.PinRequired)
                         return true;
+                    IWebAuthNProvider web = prov as IWebAuthNProvider;
+                    if (web != null)
+                        return web.PinRequirements != WebAuthNPinRequirements.Null;
                 }
             }
             return false;
