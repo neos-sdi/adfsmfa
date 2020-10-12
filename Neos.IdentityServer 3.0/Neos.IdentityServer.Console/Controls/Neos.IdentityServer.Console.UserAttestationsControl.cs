@@ -50,10 +50,9 @@ namespace Neos.IdentityServer.Console
             SyncDisabled = disablesync;
             try
             {
-                MFAUser obj = ((MFAUserList)lst)[0];
-                _upn = ((MFAUser)obj).UPN;
+                MFAUser obj = lst[0];
+                _upn = obj.UPN;
                 BuildKeysControl();
-              //  userPropertyPage.Dirty = true;
                 UpdateControlsEnabled();
             }
             finally
@@ -105,38 +104,45 @@ namespace Neos.IdentityServer.Console
         /// </summary>
         private void BuildKeysControl()
         {
-            var credlist = MMCService.GetUserStoredCredentials(_upn);
-            this.WebAuthN.Controls.Clear();
-            int i = 1;
-            foreach (WebAuthNCredentialInformation cred in credlist)
+            try
             {
-                CheckBox rdio = new CheckBox();
-                rdio.Tag = cred.CredentialID;
-                rdio.Top = (i * 25);
-                rdio.Left = 25;
-                rdio.Width = 125;
-                Font fnt = rdio.Font;
-                rdio.Font = new Font(fnt.FontFamily, fnt.Size, FontStyle.Bold, fnt.Unit, fnt.GdiCharSet);
-                rdio.Text = cred.CredType;
-                this.WebAuthN.Controls.Add(rdio);
-                rdio.CheckedChanged += Rdio_CheckedChanged;
+                List<WebAuthNCredentialInformation> credlist = MMCService.GetUserStoredCredentials(_upn);
+                this.WebAuthN.Controls.Clear();
+                int i = 1;
+                foreach (WebAuthNCredentialInformation cred in credlist)
+                {
+                    CheckBox rdio = new CheckBox();
+                    rdio.Tag = cred.CredentialID;
+                    rdio.Top = (i * 25);
+                    rdio.Left = 25;
+                    rdio.Width = 125;
+                    Font fnt = rdio.Font;
+                    rdio.Font = new Font(fnt.FontFamily, fnt.Size, FontStyle.Bold, fnt.Unit, fnt.GdiCharSet);
+                    rdio.Text = cred.CredType;
+                    this.WebAuthN.Controls.Add(rdio);
+                    rdio.CheckedChanged += Rdio_CheckedChanged;
 
-                Label lbl = new Label();
-                lbl.Top = (i * 25) + 6;
-                lbl.Left = 175;
-                lbl.Width = 150;
-                lbl.Text = cred.RegDate.ToString();
-                this.WebAuthN.Controls.Add(lbl);
+                    Label lbl = new Label();
+                    lbl.Top = (i * 25) + 6;
+                    lbl.Left = 175;
+                    lbl.Width = 150;
+                    lbl.Text = cred.RegDate.ToString();
+                    this.WebAuthN.Controls.Add(lbl);
 
-                Label cnt = new Label();
-                Font fntcnt = cnt.Font;
-                cnt.Font = new Font(fntcnt.FontFamily, fntcnt.Size, FontStyle.Bold, fntcnt.Unit, fntcnt.GdiCharSet);
-                cnt.Top = (i * 25) + 6;
-                cnt.Left = 350;
-                cnt.Width = 45;
-                cnt.Text = "(" + cred.SignatureCounter.ToString() + ")";
-                this.WebAuthN.Controls.Add(cnt);
-                i++;
+                    Label cnt = new Label();
+                    Font fntcnt = cnt.Font;
+                    cnt.Font = new Font(fntcnt.FontFamily, fntcnt.Size, FontStyle.Bold, fntcnt.Unit, fntcnt.GdiCharSet);
+                    cnt.Top = (i * 25) + 6;
+                    cnt.Left = 350;
+                    cnt.Width = 45;
+                    cnt.Text = "(" + cred.SignatureCounter.ToString() + ")";
+                    this.WebAuthN.Controls.Add(cnt);
+                    i++;
+                }
+            }
+            catch (Exception)
+            {
+                this.WebAuthN.Controls.Clear();
             }
         }
 

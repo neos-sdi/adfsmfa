@@ -190,7 +190,7 @@
     <value>Vous devez entrer votre numéro de téléphone afin de confirmer votre identité. Ce téléphone doit être accessible.</value>
   </data>
   <data name="HtmlLabelWRPinCode" xml:space="preserve">
-    <value>Vous devez entrer un code secret (4 chiffres) afin de valider votre identité. Assurez-vous de ne pas utiliser les codes de votre carte bancaire ou téléphone ainsi que les détails concernant votre date de naissance.</value>
+    <value>Vous devez entrer un code secret ({0} chiffres) afin de valider votre identité. Assurez-vous de ne pas utiliser les codes de votre carte bancaire ou téléphone ainsi que les détails concernant votre date de naissance.</value>
   </data>
   <data name="HtmlLabelWRQRCode" xml:space="preserve">
     <value>Scannez le code QR avec une application TOTP comme Microsoft Authenticator, Google Authenticator pour enregistrer votre compte</value>

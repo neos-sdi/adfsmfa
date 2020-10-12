@@ -68,6 +68,7 @@
   <ItemGroup>
     <Compile Include="Attestations\AndroidKey.cs" />
     <Compile Include="Attestations\AndroidSafetyNet.cs" />
+    <Compile Include="Attestations\Apple.cs" />
     <Compile Include="Attestations\AttestationFormat.cs" />
     <Compile Include="Attestations\FidoU2f.cs" />
     <Compile Include="Attestations\None.cs" />

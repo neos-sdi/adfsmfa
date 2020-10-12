@@ -72,11 +72,10 @@ namespace Neos.IdentityServer.Console
             SyncDisabled = disablesync;
             try
             {
-                MFAUser obj = ((MFAUserList)lst)[0];
-                _secretkey = MMCService.GetEncodedUserKey(((MFAUser)obj).UPN);
-
-                _upn = ((MFAUser)obj).UPN;
-                _email = ((MFAUser)obj).MailAddress;
+                MFAUser obj = lst[0];
+                _upn = obj.UPN;
+                _email = obj.MailAddress;
+                _secretkey = MMCService.GetEncodedUserKey(obj.UPN);
 
                 if (string.IsNullOrEmpty(_email))
                 {
@@ -99,6 +98,11 @@ namespace Neos.IdentityServer.Console
                 else
                     userPropertyPage.Dirty = true;
                 UpdateControlsEnabled();
+            }
+            catch (Exception)
+            {
+                this.DisplayKey.Text = string.Empty;
+                this.qrCodeGraphic.Text = string.Empty;
             }
             finally
             {

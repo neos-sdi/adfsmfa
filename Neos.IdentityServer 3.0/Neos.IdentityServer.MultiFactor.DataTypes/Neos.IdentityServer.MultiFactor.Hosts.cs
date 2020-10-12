@@ -29,6 +29,7 @@ using System.Web;
 using System.DirectoryServices.ActiveDirectory;
 using Neos.IdentityServer.MultiFactor.Data;
 using System.Security.Cryptography.X509Certificates;
+using System.Security.Principal;
 
 namespace Neos.IdentityServer.MultiFactor
 {
@@ -2067,27 +2068,35 @@ namespace Neos.IdentityServer.MultiFactor
         }
 
         /// <summary>
-        /// GetForestForUPN method implementation
+        /// GetForestForUser method implementation
         /// </summary>
-        public string GetForestForUPN(string upn)
+        public string GetForestForUser(string account)
         {
             string result = string.Empty;
-            string domtofind = upn.Substring(upn.IndexOf('@')+1);
-            foreach (ADDSHostForest f in Forests)
+            switch (ClaimsUtilities.IdentityClaimTag)
             {
-                if (f.IsRoot)
-                    result = f.ForestDNS;
-                else
-                {
-                    foreach (string s in f.TopLevelNames)
+                case MFASecurityClaimTag.Upn:
+                    string foresttofind = account.Substring(account.IndexOf('@') + 1);
+                    foreach (ADDSHostForest f in Forests)
                     {
-                        if (s.ToLower().Equals(domtofind.ToLower()))
+                        if (f.IsRoot)
+                            result = f.ForestDNS;
+                        else
                         {
-                            result = s;
-                            break;
+                            foreach (string s in f.TopLevelNames)
+                            {
+                                if (s.ToLower().Equals(foresttofind.ToLower()))
+                                {
+                                    result = s;
+                                    break;
+                                }
+                            }
                         }
                     }
-                }
+                    break;
+                case MFASecurityClaimTag.WindowsAccountName:                   
+                    result = account.Substring(0, account.IndexOf('\\') );
+                    break;
             }
             return result;
         }

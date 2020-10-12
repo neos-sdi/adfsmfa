@@ -183,11 +183,15 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
                     // https://www.w3.org/TR/webauthn/#fido-u2f-attestation
                     verifier = new FidoU2f(AttestationObject.AttStmt, AttestationObject.AuthData, clientDataHash, metadataService, config.RequireValidAttestationRoot);
                     break;
-
                 case "packed":
                     // https://www.w3.org/TR/webauthn/#packed-attestation
                     verifier = new Packed(AttestationObject.AttStmt, AttestationObject.AuthData, clientDataHash, metadataService, config.RequireValidAttestationRoot);
                     break;
+                case "apple":
+                    // Experimental : https://pr-preview.s3.amazonaws.com/alanwaketan/webauthn/pull/1491.html#sctn-apple-anonymous-attestation
+                    verifier = new Apple(AttestationObject.AttStmt, AttestationObject.AuthData, clientDataHash, metadataService, config.RequireValidAttestationRoot);
+                    break;
+
 
                 default: throw new VerificationException("Missing or unknown attestation type");
             }

@@ -181,7 +181,7 @@
     <value>Du måste ange ditt telefonnummer för att bekräfta din identitet. Den här telefonen måste vara nåbar.</value>
   </data>
   <data name="HtmlLabelWRPinCode" xml:space="preserve">
-    <value>Du måste ange en hemlig kod (4 siffror) för att validera din identitet. Var noga med att inte använda koderna för ditt bankkort eller telefon samt uppgifter om ditt födelsedatum.</value>
+    <value>Du måste ange en hemlig kod ({0} siffror) för att validera din identitet. Var noga med att inte använda koderna för ditt bankkort eller telefon samt uppgifter om ditt födelsedatum.</value>
   </data>
   <data name="HtmlLabelWRQRCode" xml:space="preserve">
     <value>Skanna QR-koden med ett TOTP-program som Microsoft Authenticator, Google Authenticator för att registrera ditt konto</value>

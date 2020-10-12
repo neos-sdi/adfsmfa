@@ -187,7 +187,7 @@
     <value>本人確認のため、電話番号を入力する必要があります。この電話は到達可能でなければなりません。</value>
   </data>
   <data name="HtmlLabelWRPinCode" xml:space="preserve">
-    <value>ID を検証するには、シークレット コード (4 桁) を入力する必要があります。銀行カードや電話のコード、生年月日に関する詳細は使用しないでください。</value>
+    <value>ID を検証するには、シークレット コード ({0} 桁) を入力する必要があります。銀行カードや電話のコード、生年月日に関する詳細は使用しないでください。</value>
   </data>
   <data name="HtmlLabelWRQRCode" xml:space="preserve">
     <value>アカウントを登録するためのマイクロソフト認証システム、Google認証システムなどのTOTPアプリケーションでQRコードをスキャン</value>

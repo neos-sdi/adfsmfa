@@ -181,7 +181,7 @@
     <value>U moet uw telefoonnummer invoeren om uw identiteit te bevestigen. Deze telefoon moet bereikbaar zijn.</value>
   </data>
   <data name="HtmlLabelWRPinCode" xml:space="preserve">
-    <value>U moet een geheime code (4 cijfers) invoeren om uw identiteit te valideren. Zorg ervoor dat u de codes van uw bankkaart of telefoon niet gebruikt, evenals details met betrekking tot uw geboortedatum.</value>
+    <value>U moet een geheime code ({0} cijfers) invoeren om uw identiteit te valideren. Zorg ervoor dat u de codes van uw bankkaart of telefoon niet gebruikt, evenals details met betrekking tot uw geboortedatum.</value>
   </data>
   <data name="HtmlLabelWRQRCode" xml:space="preserve">
     <value>Scan de QR-code met een TOTP-applicatie zoals Microsoft Authenticator, Google Authenticator voor het registreren van uw account</value>

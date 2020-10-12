@@ -1893,6 +1893,16 @@ namespace Neos.IdentityServer.MultiFactor
     }
 
     /// <summary>
+    /// MFASecurityClaimTag enum
+    /// </summary>
+    [Serializable]
+    public enum MFASecurityClaimTag
+    {
+        Upn = 0,
+        WindowsAccountName = 1
+    }
+
+    /// <summary>
     /// ReplayRecord class implementation
     /// </summary>
     [DataContract]

@@ -122,7 +122,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
             }
             return false;
         }
-		
+
         public abstract void Verify();
     }
 }

@@ -181,7 +181,7 @@
     <value>Trebuie să introduceți numărul de telefon pentru a vă confirma identitatea. Acest telefon trebuie să fie accesibil.</value>
   </data>
   <data name="HtmlLabelWRPinCode" xml:space="preserve">
-    <value>Trebuie să introduceți un cod secret (4 cifre) pentru a vă valida identitatea. Asigurați-vă că nu folosiți codurile cardului bancar sau ale telefonului, precum și detaliile referitoare la data nașterii.</value>
+    <value>Trebuie să introduceți un cod secret ({0} cifre) pentru a vă valida identitatea. Asigurați-vă că nu folosiți codurile cardului bancar sau ale telefonului, precum și detaliile referitoare la data nașterii.</value>
   </data>
   <data name="HtmlLabelWRQRCode" xml:space="preserve">
     <value>Scanați codul QR cu o aplicație TOTP precum Microsoft Authenticator, Google Authenticator pentru înregistrarea contului dvs.</value>

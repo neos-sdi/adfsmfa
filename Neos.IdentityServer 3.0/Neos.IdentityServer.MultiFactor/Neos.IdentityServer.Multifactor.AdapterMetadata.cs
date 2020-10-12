@@ -15,9 +15,12 @@
 // https://github.com/neos-sdi/adfsmfa                                                                                                                                                      //
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
+using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Security.Claims;
 using Microsoft.IdentityServer.Web.Authentication.External;
+using Microsoft.Win32;
 
 namespace Neos.IdentityServer.MultiFactor
 {
@@ -200,15 +203,32 @@ namespace Neos.IdentityServer.MultiFactor
 
         /// <summary>
         /// IdentityClaims property implementation
-        /// MUST BE ONE OF THE FOLLOWING
-        /// "https://schemas.microsoft.com/ws/2008/06/identity/claims/windowsaccountname"
-        /// "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn"
-        /// "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"
-        /// "https://schemas.microsoft.com/ws/2008/06/identity/claims/primarysid"
         /// </summary>
-        public string[] IdentityClaims
+        public string[] IdentityClaims  // Works with SQL Configuration
         {
-            get { return new string[] { "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn" }; }
+            get
+            {
+                try
+                {
+                    RegistryKey ek = Registry.LocalMachine.OpenSubKey("Software\\MFA", false);
+                    if (ek == null)
+                        return new string[] { ClaimTypes.Upn };
+                    int keyvalue = Convert.ToInt32(ek.GetValue("IdentityClaim", 0, RegistryValueOptions.None));
+                    switch ((MFASecurityClaimTag)keyvalue)
+                    {
+                        case MFASecurityClaimTag.Upn:
+                            return new string[] { ClaimTypes.Upn };
+                        case MFASecurityClaimTag.WindowsAccountName:
+                            return new string[] { ClaimTypes.WindowsAccountName };
+                        default:
+                            return new string[] { ClaimTypes.Upn };
+                    }
+                }
+                catch (Exception)
+                {
+                    return new string[] { ClaimTypes.Upn };
+                }
+            }
         }
 
         /// <summary>
@@ -216,8 +236,10 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public bool RequiresIdentity
         {
-            get { return true; }
+            get
+            {
+                return true;
+            }
         }
-
     }
 }

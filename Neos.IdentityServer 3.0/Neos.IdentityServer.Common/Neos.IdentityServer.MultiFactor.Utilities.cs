@@ -40,6 +40,7 @@ using System.Management.Automation.Runspaces;
 using System.Net;
 using System.Net.Mail;
 using System.Reflection;
+using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -2137,7 +2138,11 @@ namespace Neos.IdentityServer.MultiFactor
                     }
                 }
                 string html = StripEmailContent(htmlres);
-                string name = upn.Remove(2, upn.IndexOf('@') - 2).Insert(2, "*********");
+                string name = string.Empty;
+                if (upn.IndexOf('@') >= 0)
+                    name = upn.Remove(2, upn.IndexOf('@') - 2).Insert(2, "*********");
+                else
+                    name = upn;
                 MailMessage Message = new MailMessage(mail.From, to)
                 {
                     BodyEncoding = UTF8Encoding.UTF8,
@@ -2693,6 +2698,7 @@ namespace Neos.IdentityServer.MultiFactor
                 if ((haserror) && (config!=null))
                     WriteConfigurationToCache(config);
             }
+            ClaimsUtilities.LoadIdentityClaim();
             return config;
         }
 
@@ -3376,7 +3382,6 @@ namespace Neos.IdentityServer.MultiFactor
     /// </summary>
     public static class Utilities
     {
-
         /// <summary>
         /// GetAssemblyPublicKey method implmentation
         /// </summary>

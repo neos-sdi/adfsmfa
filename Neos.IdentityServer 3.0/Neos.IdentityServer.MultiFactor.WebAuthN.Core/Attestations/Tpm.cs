@@ -205,12 +205,11 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
                 // Attributes. In accordance with RFC 5280[11], this extension MUST be critical if subject is empty 
                 // and SHOULD be non-critical if subject is non-empty"
 
-                // Best I can figure to do for now?
-                if (string.Empty == tpmManufacturer ||
-                    string.Empty == tpmModel ||
-                    string.Empty == tpmVersion)
+                // Best I can figure to do for now ?  // id:49465800 'IFX' Infinion  Model and Version are empty
+                if (string.Empty == tpmManufacturer || string.Empty == tpmModel ||string.Empty == tpmVersion)
+                // if (string.Empty == tpmManufacturer)
                 {
-                    throw new VerificationException("SAN missing TPMManufacturer, TPMModel, or TPMVersion from TPM attestation certificate");
+                        throw new VerificationException("SAN missing TPMManufacturer, TPMModel, or TPMVersion from TPM attestation certificate");
                 }
 
                 if (false == TPMManufacturers.Contains(tpmManufacturer))
@@ -288,12 +287,8 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
 
         private static (string, string, string) SANFromAttnCertExts(X509ExtensionCollection exts)
         {
-            string tpmManufacturer = string.Empty,
-                tpmModel = string.Empty,
-                tpmVersion = string.Empty;
-            
+            string tpmManufacturer = string.Empty, tpmModel = string.Empty, tpmVersion = string.Empty;            
             var foundSAN = false;
-
             foreach (var ext in exts)
             {
                 if (ext.Oid.Value.Equals("2.5.29.17")) // subject alternative name
@@ -302,59 +297,69 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
                         throw new VerificationException("SAN missing from TPM attestation certificate");
 
                     foundSAN = true;
-                    var san = AsnElt.Decode(ext.RawData);
-                    san.CheckTag(AsnElt.SEQUENCE);
-                    san.CheckConstructed();
-                    foreach (AsnElt generalName in san.Sub)
-                    {
-                        if (generalName.TagClass != AsnElt.CONTEXT || generalName.TagValue != AsnElt.OCTET_STRING)
-                            continue;
 
+                    var subjectAlternativeName = AsnElt.Decode(ext.RawData);
+                    subjectAlternativeName.CheckConstructed();
+                    subjectAlternativeName.CheckTag(AsnElt.SEQUENCE);
+                    subjectAlternativeName.CheckNumSubMin(1);
+
+                    var generalName = subjectAlternativeName.Sub.FirstOrDefault(o => o.TagClass == AsnElt.CONTEXT && o.TagValue == AsnElt.OCTET_STRING);
+
+                    if (generalName != null)
+                    {
                         generalName.CheckConstructed();
                         generalName.CheckNumSub(1);
-                        
-                        var exp = generalName.GetSub(0);
-                        exp.CheckConstructed();
-                        exp.CheckNumSub(1);
-                        exp.CheckTag(AsnElt.SEQUENCE);
 
-                        var directoryName = exp.GetSub(0);
-                        directoryName.CheckConstructed();
-                        directoryName.CheckNumSub(3);
-                        directoryName.CheckTag(AsnElt.SET);
+                        var nameSequence = generalName.GetSub(0);
+                        nameSequence.CheckConstructed();
+                        nameSequence.CheckTag(AsnElt.SEQUENCE);
+                        nameSequence.CheckNumSubMin(1);
 
-                        foreach (AsnElt dn in directoryName.Sub)
+
+                        var deviceAttributes = nameSequence.Sub;
+                        if (1 != deviceAttributes.FirstOrDefault().Sub.Length)
                         {
-                            dn.CheckNumSub(2);
-                            dn.CheckTag(AsnElt.SEQUENCE);
-                            var oid = dn.GetSub(0);
-                            oid.CheckTag(AsnElt.OBJECT_IDENTIFIER);
-                            oid.CheckPrimitive();
+                            deviceAttributes = deviceAttributes.FirstOrDefault().Sub.Select(o => AsnElt.Make(AsnElt.SET, o)).ToArray();
+                        }
 
-                            var value = dn.GetSub(1);
-                            value.CheckTag(AsnElt.UTF8String);
-                            oid.CheckPrimitive();
-                            switch (oid.GetOID())
+                        foreach (AsnElt propertySet in deviceAttributes)
+                            {
+                            propertySet.CheckTag(AsnElt.SET);
+                            propertySet.CheckNumSub(1);
+
+                            var propertySequence = propertySet.GetSub(0);
+                            propertySequence.CheckTag(AsnElt.SEQUENCE);
+                            propertySequence.CheckNumSub(2);
+
+                            var properyOid = propertySequence.GetSub(0);
+                            properyOid.CheckTag(AsnElt.OBJECT_IDENTIFIER);
+                            properyOid.CheckPrimitive();
+
+                            var propertyValue = propertySequence.GetSub(1);
+                            propertyValue.CheckTag(AsnElt.UTF8String);
+                            propertyValue.CheckPrimitive();
+
+                            switch (properyOid.GetOID())
                             {
                                 case ("2.23.133.2.1"):
-                                    tpmManufacturer = value.GetString();
+                                    tpmManufacturer = propertyValue.GetString();
                                     break;
                                 case ("2.23.133.2.2"):
-                                    tpmModel = value.GetString();
+                                    tpmModel = propertyValue.GetString();
                                     break;
                                 case ("2.23.133.2.3"):
-                                    tpmVersion = value.GetString();
+                                    tpmVersion = propertyValue.GetString();
                                     break;
                                 default:
                                     continue;
                             }
                         }
                     }
+                    break;
                 }
             }
             if (false == foundSAN)
                 throw new VerificationException("SAN missing from TPM attestation certificate");
-
             return (tpmManufacturer, tpmModel, tpmVersion);
         }
 

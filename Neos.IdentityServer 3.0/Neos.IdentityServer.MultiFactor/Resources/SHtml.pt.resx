@@ -181,7 +181,7 @@
     <value>Tem de introduzir o seu número de telefone para confirmar a sua identidade. Este telefone deve ser alcançável.</value>
   </data>
   <data name="HtmlLabelWRPinCode" xml:space="preserve">
-    <value>Você deve incorporar um código secreto (4 dígitos) a fim validar sua identidade. Certifique-se de não usar os códigos do seu cartão bancário ou telefone, bem como detalhes sobre a sua data de nascimento.</value>
+    <value>Você deve incorporar um código secreto ({0} dígitos) a fim validar sua identidade. Certifique-se de não usar os códigos do seu cartão bancário ou telefone, bem como detalhes sobre a sua data de nascimento.</value>
   </data>
   <data name="HtmlLabelWRQRCode" xml:space="preserve">
     <value>Digitalize o código QR com um aplicativo TOTP como o Microsoft Authenticator, o Google Authenticator para registrar sua conta</value>

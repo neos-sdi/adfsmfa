@@ -15,6 +15,7 @@
 // https://github.com/neos-sdi/adfsmfa                                                                                                                                                      //
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -23,6 +24,7 @@ using System.DirectoryServices.ActiveDirectory;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
@@ -166,7 +168,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// <summary>
         /// GetDirectoryEntryForUPN() method implmentation
         /// </summary>
-        internal static DirectoryEntry GetDirectoryEntryForUPN(ADDSHost host, string upn, bool usessl)
+        internal static DirectoryEntry GetDirectoryEntryForUser(ADDSHost host, string upn, bool usessl)
         {
             string root = "LDAP://";
             DirectoryEntry entry = null;
@@ -179,7 +181,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
             }
             else
             {
-                string dom = host.GetForestForUPN(upn);
+                string dom = host.GetForestForUser(upn);
                 if (usessl)
                     entry = new DirectoryEntry(root + dom + ":636");
                 else
@@ -195,11 +197,12 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// <summary>
         /// GetDirectoryEntryForUPN() method implmentation
         /// </summary>
-        internal static DirectoryEntry GetDirectoryEntryForUPN(ADDSHost host, string account, string password, string upn, bool usessl)
+        internal static DirectoryEntry GetDirectoryEntryForUser(ADDSHost host, string account, string password, string upn, bool usessl)
         {
             string root = "LDAP://";
             DirectoryEntry entry = null;
-            string dom = host.GetForestForUPN(upn);
+            string dom = host.GetForestForUser(upn);
+
             if (usessl)
                 entry = new DirectoryEntry(root + dom + ":636");
             else
@@ -215,7 +218,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// <summary>
         /// GetDirectoryEntry() method implmentation
         /// </summary>
-        internal static DirectoryEntry GetDirectoryEntry(ADDSHost host, ADDSHostForest forest, bool usessl)
+      /*  internal static DirectoryEntry GetDirectoryEntry(ADDSHost host, ADDSHostForest forest, bool usessl)
         {
             string root = "LDAP://";
             DirectoryEntry entry = null;
@@ -238,12 +241,12 @@ namespace Neos.IdentityServer.MultiFactor.Data
             if (!string.IsNullOrEmpty(host.Password))
                 entry.Password = host.Password;
             return entry;
-        }
+        } */
 
         /// <summary>
         /// GetDirectoryEntry() method implmentation
         /// </summary>
-        internal static DirectoryEntry GetDirectoryEntry(ADDSHost host, bool usessl)
+      /*  internal static DirectoryEntry GetDirectoryEntry(ADDSHost host, bool usessl)
         {
             string root = "LDAP://";
             DirectoryEntry entry = null;
@@ -267,7 +270,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
             if (!string.IsNullOrEmpty(host.Password))
                 entry.Password = host.Password;
             return entry;
-        }
+        } */
 
         /// <summary>
         /// GetDirectoryEntry method implmentation
@@ -304,6 +307,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
         internal static DirectoryEntry GetDirectoryEntry(ADDSHost host, SearchResult sr, bool usessl)
         {
             DirectoryEntry entry = sr.GetDirectoryEntry();
+
             entry.Path = sr.Path; // Take SearchResult path
             if (!string.IsNullOrEmpty(host.Account))
                 entry.Username = host.Account;
@@ -329,7 +333,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// <summary>
         /// GetDirectoryEntry() method implmentation
         /// </summary>
-        internal static DirectoryEntry GetDirectoryEntry(ADDSHost host, string path, bool usessl)
+       /* internal static DirectoryEntry GetDirectoryEntry(ADDSHost host, string path, bool usessl)
         {
             string root = "LDAP://";
 
@@ -355,7 +359,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
             if (!string.IsNullOrEmpty(host.Password))
                 entry.Password = host.Password;
             return entry;
-        }
+        } */
 
         /// <summary>
         /// GetDirectoryEntry() method implmentation
@@ -619,6 +623,122 @@ namespace Neos.IdentityServer.MultiFactor.Data
         }
 
         #endregion
+    }
+    #endregion
+
+    #region ClaimUtils
+
+
+    /// <summary>
+    /// Utilities class
+    /// </summary>
+    public static class ClaimsUtilities
+    {
+        private static string _identityclaim;
+        private static MFASecurityClaimTag _identitylaimtag = MFASecurityClaimTag.Upn;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public static MFASecurityClaimTag IdentityClaimTag { get => _identitylaimtag; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public static void SetIdentityClaim(Claim value)
+        {
+            if ((string.IsNullOrEmpty(_identityclaim) || (!value.Type.Equals(_identityclaim))))
+            {
+                _identityclaim = value.Type.ToLower();
+                if (_identityclaim.Equals(ClaimTypes.Upn.ToLower()))
+                    _identitylaimtag = MFASecurityClaimTag.Upn;
+                else if (_identityclaim.Equals(ClaimTypes.WindowsAccountName.ToLower()))
+                    _identitylaimtag = MFASecurityClaimTag.WindowsAccountName;
+                else
+                    _identitylaimtag = MFASecurityClaimTag.Upn;
+            }
+        }
+
+        /// <summary>
+        /// LoadIdentityClaim method implementation
+        /// </summary>
+        public static void LoadIdentityClaim()
+        {
+            try
+            {
+                RegistryKey ek = Registry.LocalMachine.OpenSubKey("Software\\MFA", false);
+                if (ek == null)
+                    _identitylaimtag = MFASecurityClaimTag.Upn;
+                int keyvalue = Convert.ToInt32(ek.GetValue("IdentityClaim", 0, RegistryValueOptions.None));
+                switch ((MFASecurityClaimTag)keyvalue)
+                {
+                    case MFASecurityClaimTag.Upn:
+                        _identitylaimtag = MFASecurityClaimTag.Upn;
+                        break;
+                    case MFASecurityClaimTag.WindowsAccountName:
+                        _identitylaimtag = MFASecurityClaimTag.WindowsAccountName;
+                        break;
+                    default:
+                        _identitylaimtag = MFASecurityClaimTag.Upn;
+                        break;
+                }
+            }
+            catch (Exception)
+            {
+                _identitylaimtag = MFASecurityClaimTag.Upn;
+            }
+        }
+    
+
+        /// <summary>
+        /// BuildADDSUserFilter method implmentation
+        /// </summary>
+        public static string BuildADDSUserFilter(string data)
+        {
+            switch (IdentityClaimTag)
+            {
+                case MFASecurityClaimTag.Upn:
+                    return "(userPrincipalName=" + data + ")";
+                case MFASecurityClaimTag.WindowsAccountName:
+                    string name = data.Substring(data.IndexOf('\\') + 1);
+                    return "(sAMAccountName=" + name + ")";
+                default:
+                    return "(userPrincipalName=" + data + ")";
+            }
+        }
+
+        /// <summary>
+        /// GetADDSUserAttribute method implmentation
+        /// </summary>
+        public static string GetADDSUserAttribute()
+        {
+            switch (IdentityClaimTag)
+            {
+                case MFASecurityClaimTag.Upn:
+                    return "userPrincipalName";
+                case MFASecurityClaimTag.WindowsAccountName:
+                    return "msDS-PrincipalName";
+                default:
+                    return "userPrincipalName";
+            }
+        }
+
+        /// <summary>
+        /// GetADDSSearchAttribute method implmentation
+        /// </summary>
+        public static string GetADDSSearchAttribute()
+        {
+            switch (IdentityClaimTag)
+            {
+                case MFASecurityClaimTag.Upn:
+                    return "userPrincipalName";
+                case MFASecurityClaimTag.WindowsAccountName:
+                    return "sAMAccountName";
+                default:
+                    return "userPrincipalName";
+            }
+        }
+
     }
     #endregion
 }

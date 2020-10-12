@@ -181,7 +181,7 @@
     <value>Sie müssen Ihre Telefonnummer eingeben, um Ihre Identität zu bestätigen. Das Telefon muss erreichbar sein.</value>
   </data>
   <data name="HtmlLabelWRPinCode" xml:space="preserve">
-    <value>Sie müssen einen geheimen Code (4 Ziffern) eingeben, um Ihre Identität zu überprüfen. Achten Sie darauf, nicht die Codes Ihrer Bankkarte, Ihres Telefons oder Ihr Geburtsdatum zu verwenden.</value>
+    <value>Sie müssen einen geheimen Code ({0} Ziffern) eingeben, um Ihre Identität zu überprüfen. Achten Sie darauf, nicht die Codes Ihrer Bankkarte, Ihres Telefons oder Ihr Geburtsdatum zu verwenden.</value>
   </data>
   <data name="HtmlLabelWRQRCode" xml:space="preserve">
     <value>Scannen Sie den QR-Code mit einer Authentifizierungs-App für die Registrierung Ihres Kontos</value>

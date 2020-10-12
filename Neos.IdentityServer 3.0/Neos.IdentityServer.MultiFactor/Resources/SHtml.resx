@@ -192,7 +192,7 @@ You will be able to use MFA validation in the future.</value>
     <value>You must enter your phone number in order to confirm your identity. This phone must be reachable.</value>
   </data>
   <data name="HtmlLabelWRPinCode" xml:space="preserve">
-    <value>You must enter a secret code (4 digits minimum) in order to validate your identity. Be sure not to use the codes of your bank card or telephone as well as details concerning your date of birth.</value>
+    <value>You must enter a secret code ({0} digits) in order to validate your identity. Be sure not to use the codes of your bank card or telephone as well as details concerning your date of birth.</value>
   </data>
   <data name="HtmlLabelWRQRCode" xml:space="preserve">
     <value>Scan the QR Code with a TOTP application like Microsoft Authenticator, Google Authenticator for registering your account</value>

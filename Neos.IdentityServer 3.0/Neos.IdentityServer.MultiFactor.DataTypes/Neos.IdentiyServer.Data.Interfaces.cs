@@ -99,14 +99,10 @@ namespace Neos.IdentityServer.MultiFactor
         {
             if (!string.IsNullOrEmpty(ldappath))
             {
-                ldappath = ldappath.Replace("ldap://", "LDAP://");
-                ldappath = ldappath.Replace("ldaps://", "LDAPS://");
-                string root = usessl ? "LDAPS://" : "LDAP://";
-
-                if (!ldappath.StartsWith(root) )
-                {
-                    ldappath = root + ldappath;
-                }
+                ldappath = ldappath.Replace("ldap://", "");
+                ldappath = ldappath.Replace("ldaps://", "");
+                ldappath = ldappath.Replace("LDAP://", "");
+                ldappath = ldappath.Replace("LDAPS://", "");
             }
             MFAUserList registrations = new MFAUserList();
             try
@@ -115,7 +111,7 @@ namespace Neos.IdentityServer.MultiFactor
                 {
                     string qryldap = string.Empty;
                     qryldap = "(&";
-                    qryldap += "(objectCategory=user)(objectClass=user)(userprincipalname=*)";
+                    qryldap += "(objectCategory=user)(objectClass=user)"+ ClaimsUtilities.BuildADDSUserFilter("*");
                     if (created.HasValue)
                         qryldap += "(whenCreated>=" + created.Value.ToString("yyyyMMddHHmmss.0Z") + ")";
                     if (modified.HasValue)
@@ -127,6 +123,8 @@ namespace Neos.IdentityServer.MultiFactor
                         dsusr.PropertiesToLoad.Clear();
                         dsusr.PropertiesToLoad.Add("objectGUID");
                         dsusr.PropertiesToLoad.Add("userPrincipalName");
+                        dsusr.PropertiesToLoad.Add("sAMAccountName");
+                        dsusr.PropertiesToLoad.Add("msDS-PrincipalName");
                         dsusr.PropertiesToLoad.Add("userAccountControl");
                         dsusr.ReferralChasing = ReferralChasingOption.All;
 
@@ -158,9 +156,9 @@ namespace Neos.IdentityServer.MultiFactor
                                     if (DirEntry.Properties["objectGUID"].Value != null)
                                     {
                                         reg.ID = new Guid((byte[])DirEntry.Properties["objectGUID"].Value).ToString();
-                                        if (DirEntry.Properties["userPrincipalName"].Value != null)
+                                        if (sr.Properties[ClaimsUtilities.GetADDSUserAttribute()][0] != null)
                                         {
-                                            reg.UPN = DirEntry.Properties["userPrincipalName"].Value.ToString();
+                                            reg.UPN = sr.Properties[ClaimsUtilities.GetADDSUserAttribute()][0].ToString();
 
                                             if (!string.IsNullOrEmpty(mailattribute))
                                             {

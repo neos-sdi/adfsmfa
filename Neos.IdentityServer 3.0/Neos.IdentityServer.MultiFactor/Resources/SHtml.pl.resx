@@ -181,7 +181,7 @@
     <value>Aby potwierdzić swoją tożsamość, musisz podać swój numer telefonu. Ten telefon musi być osiągalny.</value>
   </data>
   <data name="HtmlLabelWRPinCode" xml:space="preserve">
-    <value>Aby zweryfikować swoją tożsamość, należy wprowadzić tajny kod (4 cyfry). Pamiętaj, aby nie używać kodów karty bankowej lub telefonu, a także szczegółów dotyczących daty urodzenia.</value>
+    <value>Aby zweryfikować swoją tożsamość, należy wprowadzić tajny kod ({0} cyfry). Pamiętaj, aby nie używać kodów karty bankowej lub telefonu, a także szczegółów dotyczących daty urodzenia.</value>
   </data>
   <data name="HtmlLabelWRQRCode" xml:space="preserve">
     <value>Zeskanuj kod QR za pomocą aplikacji TOTP, takiej jak Microsoft Authenticator, Google Authenticator do rejestracji konta</value>

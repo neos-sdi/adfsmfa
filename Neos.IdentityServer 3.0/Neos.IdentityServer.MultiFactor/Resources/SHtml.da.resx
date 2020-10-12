@@ -187,7 +187,7 @@
     <value>Du skal indtaste dit telefonnummer for at bekræfte din identitet. Denne telefon skal være tilgængelig.</value>
   </data>
   <data name="HtmlLabelWRPinCode" xml:space="preserve">
-    <value>Du skal indtaste en hemmelig kode (4 cifre) for at validere din identitet. Sørg for ikke at bruge koderne på dit bankkort eller telefon samt oplysninger om din fødselsdato.</value>
+    <value>Du skal indtaste en hemmelig kode ({0} cifre) for at validere din identitet. Sørg for ikke at bruge koderne på dit bankkort eller telefon samt oplysninger om din fødselsdato.</value>
   </data>
   <data name="HtmlLabelWRQRCode" xml:space="preserve">
     <value>Scan QR-koden med et TOTP-program som Microsoft Authenticator, Google Authenticator til registrering af din konto</value>

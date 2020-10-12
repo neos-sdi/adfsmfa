@@ -73,6 +73,7 @@ namespace Neos.IdentityServer.MultiFactor
             IAdapterPresentation result = null;
             try
             {
+                ClaimsUtilities.SetIdentityClaim(identityClaim);
                 if (Config.IsPrimaryAuhentication)
                 {
                     if ((!usercontext.Enabled) || (!usercontext.IsRegistered))
@@ -142,6 +143,7 @@ namespace Neos.IdentityServer.MultiFactor
             ResourcesLocale Resources = new ResourcesLocale(context.Lcid);
             try
             {
+                ClaimsUtilities.SetIdentityClaim(identityClaim);
                 string upn = identityClaim.Value;
                 MFAUser reg = RuntimeRepository.GetMFAUser(Config, upn);
                 if (reg != null) // User Is Registered
@@ -3087,10 +3089,12 @@ namespace Neos.IdentityServer.MultiFactor
                 {
                     if (string.IsNullOrEmpty(strpin))
                         throw new Exception(Resources.GetString(ResourcesLocaleKind.Errors, "ErrorPinValue"));
-                    if (strpin.Length > Config.PinLength)
-                        throw new Exception(string.Format(Resources.GetString(ResourcesLocaleKind.Errors, "ErrorPinLength"), Config.PinLength));
+                    if (strpin.Length > 9)
+                        throw new Exception(string.Format(Resources.GetString(ResourcesLocaleKind.Errors, "ErrorPinLength"), 9));
                     if (strpin.Length < 4)
                         throw new Exception(string.Format(Resources.GetString(ResourcesLocaleKind.Errors, "ErrorPinLength"), 4));
+                    if (strpin.Length != Config.PinLength)
+                        throw new Exception(string.Format(Resources.GetString(ResourcesLocaleKind.Errors, "ErrorPinLength"), Config.PinLength));
                 }
                 if (Convert.ToInt32(strpin) < 0)
                    throw new Exception(Resources.GetString(ResourcesLocaleKind.Errors, "ErrorPinValue"));
