@@ -69,7 +69,7 @@ namespace Neos.IdentityServer.MultiFactor
             : base(provider, context, message, suite, disableoptions)
         {
         }
-        #endregion
+        #endregion 
 
         #region CSS
         /// <summary>
@@ -143,17 +143,18 @@ namespace Neos.IdentityServer.MultiFactor
             result += "-webkit-appearance: none;"; 
             result += "-webkit-rtl-ordering: logical;"; 
             result += "-webkit-border-image: none;"; 
-            result += "}" + CR + CR;
+            result += "}" + CR + CR ;
 
             result += "#buttonquit:hover {";
             result += "background: rgb(170, 0, 0);";
             result += "border: 1px solid rgb(232, 17, 35);";
-            result += "}" + CR;
+            result += "}" + CR +CR;
 
             string baseresult = base.GetFormPreRenderHtmlCSS(usercontext, true);
             if (!removetag)
-                return "<style>" + baseresult + result + "</style>";
-            return result + CR;
+                return "<style>" + baseresult + result + "</style>"+ CR + CR;
+            else 
+                return result;
         }
         #endregion
 
@@ -176,7 +177,7 @@ namespace Neos.IdentityServer.MultiFactor
             result += "   }" + CR;
             result += "   return false;" + CR;
             result += "}" + CR;
-
+                       
             result += "</script>" + CR;
             return result;
         }
@@ -247,6 +248,7 @@ namespace Neos.IdentityServer.MultiFactor
             result += "</script>" + CR;
             return result;
         }
+
         /// <summary>
         /// GetFormHtmlManageOptions implementation
         /// </summary>
@@ -267,7 +269,7 @@ namespace Neos.IdentityServer.MultiFactor
             {
                 result += "<a class=\"actionLink\" href=\"#\" id=\"enrollbio\" name=\"enrollbio\" onclick=\"fnlinkclicked(OptionsForm, 6)\" style=\"cursor: pointer;\">" + prov4.GetWizardLinkLabel(usercontext) + "</a>";
             }
-            if (!Provider.Config.IsPrimaryAuhentication)
+            if ((!Provider.Config.IsPrimaryAuhentication) || (Provider.Config.PrimaryAuhenticationOptions.HasFlag(PrimaryAuthOptions.Externals)))
             {
                 IExternalProvider prov2 = RuntimeAuthProvider.GetProvider(PreferredMethod.Email);
                 if ((prov2 != null) && (prov2.Enabled) && prov2.IsUIElementRequired(usercontext, RequiredMethodElements.EmailLinkRequired))
@@ -297,7 +299,7 @@ namespace Neos.IdentityServer.MultiFactor
                 result += GetPartHtmlSelectMethod(usercontext);
                 result += "<br/>";
             }
-            if (!Provider.Config.IsPrimaryAuhentication)
+            if ((!Provider.Config.IsPrimaryAuhentication) || (Provider.Config.PrimaryAuhenticationOptions.HasFlag(PrimaryAuthOptions.Register)))
             {
                 if (!Provider.Config.UserFeatures.IsMFARequired() && !Provider.Config.UserFeatures.IsMFAMixed())
                 {
@@ -829,7 +831,7 @@ namespace Neos.IdentityServer.MultiFactor
                     if (Provider.HasStrictAccessToOptions(prov))
                         result += "<a class=\"actionLink\" href=\"#\" id=\"enrollbio\" name=\"enrollbio\" onclick=\"return SetLinkTitle(selectoptionsForm, '4')\" style=\"cursor: pointer;\">" + prov.GetWizardLinkLabel(usercontext) + "</a>";
                 }
-                if (!Provider.Config.IsPrimaryAuhentication)
+                if ((!Provider.Config.IsPrimaryAuhentication) || (Provider.Config.PrimaryAuhenticationOptions.HasFlag(PrimaryAuthOptions.Externals)))
                 {
                     if (RuntimeAuthProvider.IsUIElementRequired(usercontext, RequiredMethodElements.EmailLinkRequired))
                     {
@@ -917,7 +919,7 @@ namespace Neos.IdentityServer.MultiFactor
             PreferredMethod method = GetMethod4FBUsers(usercontext);
             if (RuntimeAuthProvider.IsProviderAvailableForUser(usercontext, PreferredMethod.Code))
                 result += "<input id=\"opt1\" name=\"opt\" type=\"radio\" value=\"0\" " + (((method == PreferredMethod.Code) || (method == PreferredMethod.Choose)) ? "checked=\"checked\"> " : "> ") + RuntimeAuthProvider.GetProvider(PreferredMethod.Code).GetUIChoiceLabel(usercontext) + "<br/><br/>";
-            if (!Provider.Config.IsPrimaryAuhentication)
+            if ((!Provider.Config.IsPrimaryAuhentication) || (Provider.Config.PrimaryAuhenticationOptions.HasFlag(PrimaryAuthOptions.Externals)))
             {
                 if (RuntimeAuthProvider.IsProviderAvailableForUser(usercontext, PreferredMethod.Email))
                     result += "<input id=\"opt2\" name=\"opt\" type=\"radio\" value=\"2\" " + ((method == PreferredMethod.Email) ? "checked=\"checked\"> " : "> ") + RuntimeAuthProvider.GetProvider(PreferredMethod.Email).GetUIChoiceLabel(usercontext) + "<br/><br/>";
@@ -1324,7 +1326,9 @@ namespace Neos.IdentityServer.MultiFactor
                 {
                     if (Provider.HasAccessToOptions(prov))
                         result += "<input id=\"options\" type=\"checkbox\" name=\"options\" onclick=\"SetOptions(refreshForm)\" /> " + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMAccessOptions");
-                    result += "<script type='text/javascript'>document.cookie = 'showoptions=;expires=Thu, 01 Jan 1970 00:00:01 GMT;path=/adfs/'</script>";
+                    result += "<script>";
+                    result += "   document.cookie = 'showoptions=;expires=Thu, 01 Jan 1970 00:00:01 GMT;path=/adfs/'";
+                    result += "</script>";
                     result += "<br/><br/><br/>";
                 }
 
@@ -2687,7 +2691,7 @@ namespace Neos.IdentityServer.MultiFactor
             if (RuntimeAuthProvider.IsProviderAvailableForUser(usercontext, PreferredMethod.Biometrics))
                 result += "<option value=\"5\" " + ((method == PreferredMethod.Biometrics) ? "selected=\"true\">" : ">") + RuntimeAuthProvider.GetProvider(PreferredMethod.Biometrics).GetUIListChoiceLabel(usercontext) + "</option>";
 
-            if (!Provider.Config.IsPrimaryAuhentication)
+            if ((!Provider.Config.IsPrimaryAuhentication) || (Provider.Config.PrimaryAuhenticationOptions.HasFlag(PrimaryAuthOptions.Externals)))
             {
                 if (RuntimeAuthProvider.IsProviderAvailableForUser(usercontext, PreferredMethod.Email))
                     result += "<option value=\"2\" " + ((method == PreferredMethod.Email) ? "selected=\"true\"> " : "> ") + RuntimeAuthProvider.GetProvider(PreferredMethod.Email).GetUIListChoiceLabel(usercontext) + "</option>";

@@ -17,19 +17,13 @@
 //******************************************************************************************************************************************************************************************//
 using System;
 using System.Collections.Generic;
-using System.DirectoryServices;
 using System.Globalization;
 using System.IO;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Formatters.Binary;
 using System.Xml;
 using System.Xml.Serialization;
-using Microsoft.IdentityServer.Web.Authentication.External;
 using System.Web;
 using System.DirectoryServices.ActiveDirectory;
 using Neos.IdentityServer.MultiFactor.Data;
-using System.Security.Cryptography.X509Certificates;
-using System.Security.Principal;
 
 namespace Neos.IdentityServer.MultiFactor
 {
@@ -523,6 +517,7 @@ namespace Neos.IdentityServer.MultiFactor
                 KeepMySelectedOptionOn = true;
                 ChangeNotificationsOn = true;
                 IsPrimaryAuhentication = false;
+                PrimaryAuhenticationOptions = PrimaryAuthOptions.None;
                 DefaultCountryCode = "fr";
                 AdminContact = "adminmfa@contoso.com";
                 UserFeatures = (UserFeaturesOptions.AllowDisabled | UserFeaturesOptions.AllowUnRegistered | UserFeaturesOptions.AllowManageOptions | UserFeaturesOptions.AllowChangePassword | UserFeaturesOptions.AllowEnrollment);
@@ -631,6 +626,7 @@ namespace Neos.IdentityServer.MultiFactor
             ReplayLevel = ReplayLevel.Disabled;
             UseUIPaginated = false;
             IsPrimaryAuhentication = false;
+            PrimaryAuhenticationOptions = PrimaryAuthOptions.None;
             UserFeatures = (UserFeaturesOptions.AllowDisabled | UserFeaturesOptions.AllowUnRegistered | UserFeaturesOptions.AllowManageOptions | UserFeaturesOptions.AllowChangePassword);
 
             if (string.IsNullOrEmpty(Hosts.SQLServerHost.ConnectionString))
@@ -813,6 +809,9 @@ namespace Neos.IdentityServer.MultiFactor
 
         [XmlElement("IsPrimaryAuhentication")]
         public bool IsPrimaryAuhentication { get; set; } = false;
+
+        [XmlElement("PrimaryAuhenticationOptions")]
+        public PrimaryAuthOptions PrimaryAuhenticationOptions { get; set; } = PrimaryAuthOptions.None;
 
         [XmlElement("LastUpdated")]
         public DateTime LastUpdated { get; set; }

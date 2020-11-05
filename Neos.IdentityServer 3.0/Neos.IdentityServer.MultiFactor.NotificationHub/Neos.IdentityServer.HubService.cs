@@ -27,6 +27,7 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
     {
         private MailSlotServerManager _mailslotsmgr = new MailSlotServerManager();
         private ReplayServer<ReplayService> _svchost = new ReplayServer<ReplayService>();
+        private WebThemesServer<WebThemeService> _svcthemeshost = new WebThemesServer<WebThemeService>();
         private CleanUpManager _cleanup = new CleanUpManager();
 
         #region Service override methods
@@ -70,6 +71,7 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
             {                
                 StartADFSService();
                 StartReplayService();
+                StartThemesService();
                 StartKeyCleanup();
             }
             catch (Exception e)
@@ -90,6 +92,7 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
             try
             {
                 StopKeyCleanup();
+                StopThemesService();
                 StopReplayService();
                 StopADFSService();
             }
@@ -134,6 +137,38 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
         }
         #endregion
 
+        #region Themes Service
+        /// <summary>
+        /// StartThemesService method implementation
+        /// </summary>
+        private void StartThemesService()
+        {
+            try
+            {
+                _svcthemeshost.StartService(this);
+            }
+            catch (Exception e)
+            {
+                this.EventLog.WriteEntry(string.Format("Error when starting ThemesService : {0}.", e.Message), EventLogEntryType.Error, 1002);
+            }
+        }
+
+        /// <summary>
+        /// StopThemesService method implementation
+        /// </summary>
+        private void StopThemesService()
+        {
+            try
+            {
+                _svcthemeshost.StopService();
+            }
+            catch (Exception e)
+            {
+                this.EventLog.WriteEntry(string.Format("Error when stopping Themes Service : {0}.", e.Message), EventLogEntryType.Error, 1002);
+            }
+        }
+        #endregion
+
         #region CleanUp
         /// <summary>
         /// StartKeyCleanup method implementation
@@ -146,7 +181,7 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
             }
             catch (Exception e)
             {
-                this.EventLog.WriteEntry(string.Format("Error when starting CleanUp Service : {0}.", e.Message), EventLogEntryType.Error, 1001);
+                this.EventLog.WriteEntry(string.Format("Error when starting CleanUp Service : {0}.", e.Message), EventLogEntryType.Error, 1003);
             }
         }
 
@@ -161,7 +196,7 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
             }
             catch (Exception e)
             {
-                this.EventLog.WriteEntry(string.Format("Error when stopping CleanUp Service : {0}.", e.Message), EventLogEntryType.Error, 1001);
+                this.EventLog.WriteEntry(string.Format("Error when stopping CleanUp Service : {0}.", e.Message), EventLogEntryType.Error, 1003);
             }
         }
         #endregion

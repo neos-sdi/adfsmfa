@@ -31,6 +31,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.Net;
 using static Neos.IdentityServer.MultiFactor.MailSlotServer;
+using Neos.IdentityServer.MultiFactor.Common;
 
 namespace Neos.IdentityServer.MultiFactor.Administration
 {
@@ -1226,6 +1227,12 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             }
             CFGUtilities.WriteConfiguration(host, config);
             CFGUtilities.BroadcastNotification(config, NotificationsKind.ConfigurationReload, Environment.MachineName, true);
+        }
+
+        internal static void ResetWebThemesList(PSHost host)
+        {
+            MFAConfig config = CFGUtilities.ReadConfiguration(host);
+            WebThemeManager.ResetThemesList(config);
         }
         #endregion
     }

@@ -992,6 +992,28 @@ namespace Neos.IdentityServer.MultiFactor
                     _context.Data.Add("_authctxpinrequirements", value);
             }
         }
+
+        /// <summary>
+        /// ThemeIdentifier property implementation
+        /// </summary>
+        [XmlAttribute("ThemeIdentifier")]
+        public string ThemeIdentifier
+        {
+            get
+            {
+                if (_context.Data.ContainsKey("_authctxthemeidentifier") && _context.Data["_authctxthemeidentifier"] != null)
+                    return _context.Data["_authctxthemeidentifier"].ToString();
+                else
+                    return string.Empty;
+            }
+            set
+            {
+                if (_context.Data.ContainsKey("_authctxthemeidentifier"))
+                    _context.Data["_authctxthemeidentifier"] = value;
+                else
+                    _context.Data.Add("_authctxthemeidentifier", value);
+            }
+        }
     }
     #endregion
 
@@ -1600,6 +1622,18 @@ namespace Neos.IdentityServer.MultiFactor
     /// <summary>
     /// HashMode
     /// </summary>
+    [Serializable, Flags]
+    public enum PrimaryAuthOptions
+    {
+        None = 0,
+        Externals = 1,
+        Register = 2
+    }
+
+
+    /// <summary>
+    /// HashMode
+    /// </summary>
     [Serializable]
     public enum HashMode
     {
@@ -1930,6 +1964,8 @@ namespace Neos.IdentityServer.MultiFactor
         public int DeliveryWindow;
     }
 
+   
+
     /// <summary>
     /// XORUtilities class
     /// </summary>
@@ -2038,3 +2074,4 @@ namespace Neos.IdentityServer.MultiFactor
         }
     }
 }
+

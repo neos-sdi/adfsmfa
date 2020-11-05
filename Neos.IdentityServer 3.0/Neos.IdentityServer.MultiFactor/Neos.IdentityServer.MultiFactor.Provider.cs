@@ -28,6 +28,18 @@ using System.Net;
 using System.Security.Claims;
 using System.Security.Cryptography;
 
+/*
+
+ <link rel="stylesheet" type="text/css" href="/adfs/portal/css/style.css?id=D74D4D6943F32AE6F7F11D14D601DBB0E1A58919176EE512150366B6279AAF99">
+
+<img class="logoImage" id="companyLogo" src="/adfs/portal/logo/logo.png?id=09185EF53F31371167D2550E4AFA5FB0A3B9587AE60B489A8DB93FB18BC64BE1" alt="redhook software">
+
+<style>
+.illustrationClass {background-image:url(/adfs/portal/illustration/illustration.png?id=183128A3C941EDE3D9199FA37D6AA90E0A7DFE101B37D10B4FEDA0CF35E11AFD);}
+</style>
+
+ */
+
 namespace Neos.IdentityServer.MultiFactor
 {
     /// <summary>
@@ -36,8 +48,6 @@ namespace Neos.IdentityServer.MultiFactor
     public class AuthenticationProvider : IAuthenticationAdapter
     {
         private static MFAConfig _config;
-        private static readonly object __notificationobject = 0;
-        private static readonly string _rootdir = string.Empty;
 
         /// <summary>
         /// Constructor override
@@ -70,11 +80,13 @@ namespace Neos.IdentityServer.MultiFactor
             Utilities.PatchLanguageIfNeeded(Config, usercontext, request.UserLanguages);
             ResourcesLocale Resources = new ResourcesLocale(usercontext.Lcid);
 
+
             IAdapterPresentation result = null;
             try
             {
+                WebThemeManager.Initialize(Config, usercontext, request.Url);
                 ClaimsUtilities.SetIdentityClaim(identityClaim);
-                if (Config.IsPrimaryAuhentication)
+                if ((Config.IsPrimaryAuhentication) && (!Config.PrimaryAuhenticationOptions.HasFlag(PrimaryAuthOptions.Register)))
                 {
                     if ((!usercontext.Enabled) || (!usercontext.IsRegistered))
                         usercontext.UIMode = ProviderPageMode.Locking;

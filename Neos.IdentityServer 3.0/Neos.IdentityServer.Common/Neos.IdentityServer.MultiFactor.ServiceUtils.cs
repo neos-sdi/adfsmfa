@@ -36,7 +36,7 @@ using System.Diagnostics;
 
 namespace Neos.IdentityServer.MultiFactor
 {
-    #region ServiceHost
+    #region ReplayServiceHost
     /// <summary>
     /// ReplayServiceHost Class
     /// </summary>
@@ -60,7 +60,31 @@ namespace Neos.IdentityServer.MultiFactor
     }
     #endregion
 
-    #region InstanceProvider
+    #region WebThemesServiceHost
+    /// <summary>
+    /// ReplayServiceHost Class
+    /// </summary>
+    public class WebThemesServiceHost : ServiceHost
+    {
+        /// <summary>
+        /// ReplayServiceHost Constructor
+        /// </summary>
+        public WebThemesServiceHost(IDependency dep, Type serviceType, params Uri[] baseAddresses) : base(serviceType, baseAddresses)
+        {
+            if (dep == null)
+            {
+                throw new ArgumentNullException("dep");
+            }
+
+            foreach (var cd in this.ImplementedContracts.Values)
+            {
+                cd.Behaviors.Add(new WebThemesInstanceProvider(serviceType, dep));
+            }
+        }
+    }
+    #endregion
+
+    #region ReplayInstanceProvider
     /// <summary>
     /// ReplayInstanceProvider Class
     /// </summary>
@@ -73,6 +97,87 @@ namespace Neos.IdentityServer.MultiFactor
         /// ReplayInstanceProvider Constructor
         /// </summary>
         public ReplayInstanceProvider(Type serviceType, IDependency dep)
+        {
+            this.dep = dep ?? throw new ArgumentNullException("dep");
+            this.type = serviceType ?? throw new ArgumentNullException("servicetype");
+        }
+
+        #region IInstanceProvider Members
+        /// <summary>
+        /// GetInstance method implementation
+        /// </summary>
+        public object GetInstance(InstanceContext instanceContext, Message message)
+        {
+            return this.GetInstance(instanceContext);
+        }
+
+        /// <summary>
+        /// GetInstance method implementation
+        /// </summary>
+        public object GetInstance(InstanceContext instanceContext)
+        {
+            return Activator.CreateInstance(type, this.dep);
+        }
+
+        /// <summary>
+        /// ReleaseInstance method implementation
+        /// </summary>
+        public void ReleaseInstance(InstanceContext instanceContext, object instance)
+        {
+            var disposable = instance as IDisposable;
+            if (disposable != null)
+            {
+                disposable.Dispose();
+            }
+        }
+        #endregion
+
+        #region IContractBehavior Members
+        /// <summary>
+        /// AddBindingParameters method
+        /// </summary>
+        public void AddBindingParameters(ContractDescription contractDescription, ServiceEndpoint endpoint, BindingParameterCollection bindingParameters)
+        {
+        }
+
+        /// <summary>
+        /// ApplyClientBehavior method
+        /// </summary>
+        public void ApplyClientBehavior(ContractDescription contractDescription, ServiceEndpoint endpoint, ClientRuntime clientRuntime)
+        {
+        }
+
+        /// <summary>
+        /// ApplyDispatchBehavior method
+        /// </summary>
+        public void ApplyDispatchBehavior(ContractDescription contractDescription, ServiceEndpoint endpoint, DispatchRuntime dispatchRuntime)
+        {
+            dispatchRuntime.InstanceProvider = this;
+        }
+
+        /// <summary>
+        /// Validate method 
+        /// </summary>
+        public void Validate(ContractDescription contractDescription, ServiceEndpoint endpoint)
+        {
+        }
+        #endregion
+    }
+    #endregion
+
+    #region WebThemesInstanceProvider
+    /// <summary>
+    /// WebThemesInstanceProvider Class
+    /// </summary>
+    public class WebThemesInstanceProvider : IInstanceProvider, IContractBehavior
+    {
+        private readonly IDependency dep;
+        private readonly Type type;
+
+        /// <summary>
+        /// ReplayInstanceProvider Constructor
+        /// </summary>
+        public WebThemesInstanceProvider(Type serviceType, IDependency dep)
         {
             this.dep = dep ?? throw new ArgumentNullException("dep");
             this.type = serviceType ?? throw new ArgumentNullException("servicetype");
@@ -235,20 +340,156 @@ namespace Neos.IdentityServer.MultiFactor
 
                 if (useEncryption)
                 {
-
                     CustomBinding custombinding = new CustomBinding(tcp);
                     custombinding.Name = "MFABinding";
                     var currentEncoder = custombinding.Elements.Find<MessageEncodingBindingElement>();
                     if (currentEncoder != default(MessageEncodingBindingElement))
                     {
                         custombinding.Elements.Remove(currentEncoder);
-                        custombinding.Elements.Insert(0, new ReplayMessageEncodingBindingElement());
+                        custombinding.Elements.Insert(0, new ServicesMessageEncodingBindingElement());
                     }
                     Servicehost.AddServiceEndpoint(typeof(IReplay), custombinding, "");
                 }
                 else
                     Servicehost.AddServiceEndpoint(typeof(IReplay), tcp, "");
                 Servicehost.Open();                
+                Started = true;
+            }
+            catch (Exception e)
+            {
+                Started = false;
+                throw e;
+            }
+        }
+
+        /// <summary>
+        /// StopService method implementation
+        /// </summary>
+        public void StopService()
+        {
+            try
+            {
+                if (Servicehost != null)
+                {
+                    if (Servicehost.State == CommunicationState.Opened)
+                        Servicehost.Close();
+                    Servicehost = null;
+                }
+                Started = false;
+            }
+            catch (Exception e)
+            {
+                Started = false;
+                throw e;
+            }
+        }
+
+        /// <summary>
+        /// Started property implmentation
+        /// </summary>
+        public bool Started { get; private set; } = false;
+
+        /// <summary>
+        /// Servicehost property implementation
+        /// </summary>
+        public ServiceHost Servicehost { get; private set; }
+
+        /// <summary>
+        /// Servicebase property implementation
+        /// </summary>
+        public ServiceBase Servicebase { get; private set; }
+
+    }
+    #endregion
+
+    #region WebThemesServer
+    /// <summary>
+    /// WebThemesServer class (Server Host)
+    /// </summary>
+    public class WebThemesServer<T>
+    {
+        private bool useEncryption = true;
+
+        /// <summary>
+        /// StartService method implementation
+        /// </summary>
+        public void StartService(ServiceBase svc)
+        {
+            try
+            {
+                Servicebase = svc;
+                if (Servicehost != null)
+                {
+                    if (Servicehost.State == CommunicationState.Opened)
+                        Servicehost.Close();
+                    Servicehost = null;
+                }
+
+                Servicehost = new WebThemesServiceHost(new EventLogDependency(svc.EventLog), typeof(T), new Uri(string.Format("net.tcp://{0}:5987/WebThemesService", Dns.GetHostEntry("localhost").HostName)));
+                ServiceMetadataBehavior smb = Servicehost.Description.Behaviors.Find<ServiceMetadataBehavior>();
+                ServiceDebugBehavior dbg = Servicehost.Description.Behaviors.Find<ServiceDebugBehavior>();
+                ServiceThrottlingBehavior prf = Servicehost.Description.Behaviors.Find<ServiceThrottlingBehavior>();
+                if (smb == null)
+                {
+                    smb = new ServiceMetadataBehavior();
+                    smb.HttpGetEnabled = false;
+                    smb.HttpsGetEnabled = false;
+                    smb.MetadataExporter.PolicyVersion = PolicyVersion.Default;
+                    Servicehost.Description.Behaviors.Add(smb);
+                }
+                else
+                {
+                    smb.HttpGetEnabled = false;
+                    smb.HttpsGetEnabled = false;
+                    smb.MetadataExporter.PolicyVersion = PolicyVersion.Default;
+                }
+                if (dbg == null)
+                {
+                    dbg = new ServiceDebugBehavior();
+                    dbg.HttpHelpPageEnabled = false;
+                    dbg.HttpsHelpPageEnabled = false;
+                    dbg.IncludeExceptionDetailInFaults = true;
+                    Servicehost.Description.Behaviors.Add(dbg);
+                }
+                else
+                {
+                    dbg.HttpHelpPageEnabled = false;
+                    dbg.HttpsHelpPageEnabled = false;
+                    dbg.IncludeExceptionDetailInFaults = false;
+                }
+                if (prf == null)
+                {
+                    prf = new ServiceThrottlingBehavior();
+                    prf.MaxConcurrentCalls = 256;
+                    prf.MaxConcurrentInstances = 256;
+                    prf.MaxConcurrentSessions = 256;
+                    Servicehost.Description.Behaviors.Add(prf);
+                }
+                else
+                {
+                    prf.MaxConcurrentCalls = 250;
+                    prf.MaxConcurrentInstances = 250;
+                    prf.MaxConcurrentSessions = 250;
+                }
+
+                NetTcpBinding tcp = new NetTcpBinding(SecurityMode.None);
+                tcp.MaxConnections = 256;
+
+                if (useEncryption)
+                {
+                    CustomBinding custombinding = new CustomBinding(tcp);
+                    custombinding.Name = "MFABindingThemes";
+                    var currentEncoder = custombinding.Elements.Find<MessageEncodingBindingElement>();
+                    if (currentEncoder != default(MessageEncodingBindingElement))
+                    {
+                        custombinding.Elements.Remove(currentEncoder);
+                        custombinding.Elements.Insert(0, new ServicesMessageEncodingBindingElement());
+                    }
+                    Servicehost.AddServiceEndpoint(typeof(IWebThemeManager), custombinding, "");
+                }
+                else
+                    Servicehost.AddServiceEndpoint(typeof(IWebThemeManager), tcp, "");
+                Servicehost.Open();
                 Started = true;
             }
             catch (Exception e)
@@ -329,7 +570,7 @@ namespace Neos.IdentityServer.MultiFactor
                 if (currentEncoder != default(MessageEncodingBindingElement))
                 {
                     custombinding.Elements.Remove(currentEncoder);
-                    custombinding.Elements.Insert(0, new ReplayMessageEncodingBindingElement());
+                    custombinding.Elements.Insert(0, new ServicesMessageEncodingBindingElement());
                 }
                 _factory = new ChannelFactory<IReplay>(custombinding, new EndpointAddress(string.Format("net.tcp://{0}:5987/ReplayService", servername)));                
             }
@@ -370,22 +611,94 @@ namespace Neos.IdentityServer.MultiFactor
     }
     #endregion
 
-    #region ReplayMessageEncoderFactory
+    #region WebThemesClient
     /// <summary>
-    /// ReplayMessageEncoderFactory class
+    /// WebThemesClient class (Client Proxy)
     /// </summary>
-    internal class ReplayMessageEncoderFactory : MessageEncoderFactory
+    public class WebThemesClient
+    {
+        private ChannelFactory<IWebThemeManager> _factory = null;
+        private bool useEncryption = true;
+
+        public bool IsInitialized { get; private set; }
+
+        /// <summary>
+        /// Initialize method implementation
+        /// </summary>
+        public void Initialize(string servername = "localhost")
+        {
+            if (_factory != null)
+            {
+                if (_factory.State == CommunicationState.Opened)
+                    _factory.Close();
+            }
+            NetTcpBinding tcp = new NetTcpBinding(SecurityMode.None);
+            tcp.MaxConnections = 256;
+            if (useEncryption)
+            {
+                CustomBinding custombinding = new CustomBinding(tcp);
+                custombinding.Name = "MFABindingThemes";
+                var currentEncoder = custombinding.Elements.Find<MessageEncodingBindingElement>();
+                if (currentEncoder != default(MessageEncodingBindingElement))
+                {
+                    custombinding.Elements.Remove(currentEncoder);
+                    custombinding.Elements.Insert(0, new ServicesMessageEncodingBindingElement());
+                }
+                _factory = new ChannelFactory<IWebThemeManager>(custombinding, new EndpointAddress(string.Format("net.tcp://{0}:5987/WebThemesService", servername)));
+            }
+            else
+                _factory = new ChannelFactory<IWebThemeManager>(tcp, new EndpointAddress(string.Format("net.tcp://{0}:5987/WebThemesService", servername)));
+            IsInitialized = true;
+        }
+
+        /// <summary>
+        /// UnInitialize method implementation
+        /// </summary>
+        public void UnInitialize()
+        {
+            if (_factory != null)
+            {
+                if (_factory.State == CommunicationState.Opened)
+                    _factory.Close();
+            }
+            IsInitialized = false;
+        }
+
+        /// <summary>
+        /// Open method implementation
+        /// </summary>
+        public IWebThemeManager Open()
+        {
+            return _factory.CreateChannel();
+        }
+
+        /// <summary>
+        /// Close method implementation
+        /// </summary>
+        public void Close(IWebThemeManager client)
+        {
+            if (client != null)
+                ((IClientChannel)client).Close();
+        }
+    }
+    #endregion
+
+    #region ServicesMessageEncoderFactory
+    /// <summary>
+    /// ServicesMessageEncoderFactory class
+    /// </summary>
+    internal class ServicesMessageEncoderFactory : MessageEncoderFactory
     {
         MessageEncoder encoder;
 
         /// <summary>
-        /// ReplayMessageEncoderFactory Class
+        /// ServicesMessageEncoderFactory Class
         /// </summary>
-        public ReplayMessageEncoderFactory(MessageEncoderFactory messageEncoderFactory)
+        public ServicesMessageEncoderFactory(MessageEncoderFactory messageEncoderFactory)
         {
             if (messageEncoderFactory == null)
                 throw new ArgumentNullException("messageEncoderFactory", "A valid message encoder factory must be passed to the Replay Encoder");
-            encoder = new ReplayMessageEncoder(messageEncoderFactory.Encoder);
+            encoder = new SercicesMessageEncoder(messageEncoderFactory.Encoder);
         }
 
         /// <summary>
@@ -404,11 +717,11 @@ namespace Neos.IdentityServer.MultiFactor
             get { return encoder.MessageVersion; }
         }
 
-        #region ReplayMessageEncoder
+        #region SercicesMessageEncoder
         /// <summary>
-        /// ReplayMessageEncoder Class
+        /// SercicesMessageEncoder Class
         /// </summary>
-        class ReplayMessageEncoder : MessageEncoder
+        class SercicesMessageEncoder : MessageEncoder
         {
             static string ReplayContentType = " application/soap+xml";
             static object _lck = new object();
@@ -423,7 +736,7 @@ namespace Neos.IdentityServer.MultiFactor
             /// ReplayMessageEncoder Constructor
             /// </summary>
             /// <param name="messageEncoder"></param>
-            internal ReplayMessageEncoder(MessageEncoder messageEncoder) : base()
+            internal SercicesMessageEncoder(MessageEncoder messageEncoder) : base()
             {
                 if (messageEncoder == null)
                     throw new ArgumentNullException("messageEncoder", "A valid message encoder must be passed to the Replay Encoder");
@@ -564,21 +877,21 @@ namespace Neos.IdentityServer.MultiFactor
     }
     #endregion
 
-    #region ReplayMessageEncodingBindingElement
+    #region ServicesMessageEncodingBindingElement
     /// <summary>
-    /// ReplayMessageEncodingBindingElement class
+    /// ServicesMessageEncodingBindingElement class
     /// </summary>
-    public sealed class ReplayMessageEncodingBindingElement: MessageEncodingBindingElement, IPolicyExportExtension
+    public sealed class ServicesMessageEncodingBindingElement: MessageEncodingBindingElement, IPolicyExportExtension
     {
         /// <summary>
-        /// ReplayMessageEncodingBindingElement Constructor
+        /// ServicesMessageEncodingBindingElement Constructor
         /// </summary>
-        public ReplayMessageEncodingBindingElement(): this(new TextMessageEncodingBindingElement()) { }
+        public ServicesMessageEncodingBindingElement(): this(new TextMessageEncodingBindingElement()) { }
 
         /// <summary>
-        /// ReplayMessageEncodingBindingElement Constructor
+        /// ServicesMessageEncodingBindingElement Constructor
         /// </summary>
-        public ReplayMessageEncodingBindingElement(MessageEncodingBindingElement messageEncoderBindingElement)
+        public ServicesMessageEncodingBindingElement(MessageEncodingBindingElement messageEncoderBindingElement)
         {
             this.InnerMessageEncodingBindingElement = messageEncoderBindingElement;
         }
@@ -602,7 +915,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public override MessageEncoderFactory CreateMessageEncoderFactory()
         {
-            return new ReplayMessageEncoderFactory(InnerMessageEncodingBindingElement.CreateMessageEncoderFactory());
+            return new ServicesMessageEncoderFactory(InnerMessageEncodingBindingElement.CreateMessageEncoderFactory());
         }
 
         /// <summary>
@@ -610,7 +923,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public override BindingElement Clone()
         {
-            return new ReplayMessageEncodingBindingElement(this.InnerMessageEncodingBindingElement);
+            return new ServicesMessageEncodingBindingElement(this.InnerMessageEncodingBindingElement);
         }
 
         /// <summary>
@@ -674,21 +987,21 @@ namespace Neos.IdentityServer.MultiFactor
                 throw new ArgumentNullException("policyContext");
             }
             XmlDocument document = new XmlDocument();
-            policyContext.GetBindingAssertions().Add(document.CreateElement(ReplayMessageEncodingPolicyConstants.MFAEncodingPrefix, ReplayMessageEncodingPolicyConstants.MFAEncodingName, ReplayMessageEncodingPolicyConstants.MFAEncodingNamespace));
+            policyContext.GetBindingAssertions().Add(document.CreateElement(ServicesMessageEncodingPolicyConstants.MFAEncodingPrefix, ServicesMessageEncodingPolicyConstants.MFAEncodingName, ServicesMessageEncodingPolicyConstants.MFAEncodingNamespace));
         } 
     }
     #endregion
 
-    #region ReplayMessageEncodingElement
+    #region ServicesMessageEncodingElement
     /// <summary>
-    /// ReplayMessageEncodingElement Class
+    /// ServicesMessageEncodingElement Class
     /// </summary>
-    public class ReplayMessageEncodingElement : BindingElementExtensionElement
+    public class ServicesMessageEncodingElement : BindingElementExtensionElement
     {
         /// <summary>
-        /// ReplayMessageEncodingElement constructor
+        /// ServicesMessageEncodingElement constructor
         /// </summary>
-        public ReplayMessageEncodingElement()
+        public ServicesMessageEncodingElement()
         {
         }
 
@@ -697,7 +1010,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public override Type BindingElementType
         {
-            get { return typeof(ReplayMessageEncodingBindingElement); }
+            get { return typeof(ServicesMessageEncodingBindingElement); }
         }
 
         /// <summary>
@@ -715,7 +1028,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         protected override BindingElement CreateBindingElement()
         {
-            ReplayMessageEncodingBindingElement bindingElement = new ReplayMessageEncodingBindingElement();
+            ServicesMessageEncodingBindingElement bindingElement = new ServicesMessageEncodingBindingElement();
             this.ApplyConfiguration(bindingElement);
             return bindingElement;
         }
@@ -726,7 +1039,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public override void ApplyConfiguration(BindingElement bindingElement)
         {
-            ReplayMessageEncodingBindingElement binding = (ReplayMessageEncodingBindingElement)bindingElement;
+            ServicesMessageEncodingBindingElement binding = (ServicesMessageEncodingBindingElement)bindingElement;
             PropertyInformationCollection propertyInfo = this.ElementInformation.Properties;
             if (propertyInfo["innerMessageEncoding"].ValueOrigin != PropertyValueOrigin.Default)
             {
@@ -744,11 +1057,11 @@ namespace Neos.IdentityServer.MultiFactor
     }
     #endregion
 
-    #region ReplayMessageEncodingPolicyConstants
+    #region ServicesMessageEncodingPolicyConstants
     /// <summary>
-    /// ReplayMessageEncodingPolicyConstants class
+    /// ServicesMessageEncodingPolicyConstants class
     /// </summary>
-    public static class ReplayMessageEncodingPolicyConstants
+    public static class ServicesMessageEncodingPolicyConstants
     {
         public const string MFAEncodingName = "adfsmfaEncoding";
         public const string MFAEncodingNamespace = "http://schemas.microsoft.com/ws/06/2004/mspolicy/netmfaservers";
@@ -756,13 +1069,13 @@ namespace Neos.IdentityServer.MultiFactor
     }
     #endregion
 
-    #region ReplayMessageEncodingBindingElementImporter
-    public class ReplayMessageEncodingBindingElementImporter : IPolicyImportExtension
+    #region ServicesMessageEncodingBindingElementImporter
+    public class ServicesMessageEncodingBindingElementImporter : IPolicyImportExtension
     {
         /// <summary>
-        /// ReplayMessageEncodingBindingElementImporter Constructor
+        /// ServicesMessageEncodingBindingElementImporter Constructor
         /// </summary>
-        public ReplayMessageEncodingBindingElementImporter()
+        public ServicesMessageEncodingBindingElementImporter()
         {
         }
 
@@ -784,12 +1097,12 @@ namespace Neos.IdentityServer.MultiFactor
             ICollection<XmlElement> assertions = context.GetBindingAssertions();
             foreach (XmlElement assertion in assertions)
             {
-                if ((assertion.NamespaceURI == ReplayMessageEncodingPolicyConstants.MFAEncodingNamespace) &&
-                    (assertion.LocalName == ReplayMessageEncodingPolicyConstants.MFAEncodingName)
+                if ((assertion.NamespaceURI == ServicesMessageEncodingPolicyConstants.MFAEncodingNamespace) &&
+                    (assertion.LocalName == ServicesMessageEncodingPolicyConstants.MFAEncodingName)
                     )
                 {
                     assertions.Remove(assertion);
-                    context.BindingElements.Add(new ReplayMessageEncodingBindingElement());
+                    context.BindingElements.Add(new ServicesMessageEncodingBindingElement());
                     break;
                 }
             }

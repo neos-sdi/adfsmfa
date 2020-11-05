@@ -5980,6 +5980,63 @@ namespace MFA
     }
     #endregion
 
+    #region Reset-MFAThemesList
+    /// <summary>
+    /// <para type="synopsis">Reset ADFS Relying Parties Themes for MFA (Reload).</para>
+    /// <para type="description">Force Reload for ADFS Relying Parties Themes for MFA.</para>
+    /// </summary>
+    /// <example>
+    ///   <para>Reset-MFAThemesList</para>
+    /// </example>
+    [Cmdlet(VerbsCommon.Reset, "MFAThemesList", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
+    [PrimaryServerRequired]
+    public sealed class ResetMFAThemesList : MFACmdlet
+    {
+        /// <summary>
+        /// BeginProcessing method implementation
+        /// </summary>
+        protected override void BeginProcessing()
+        {
+            base.BeginProcessing();
+            try
+            {
+                ManagementService.Initialize(this.Host, true);
+            }
+            catch (Exception ex)
+            {
+                this.ThrowTerminatingError(new ErrorRecord(ex, "3023", ErrorCategory.OperationStopped, this));
+            }
+        }
+
+        /// <summary>
+        /// ProcessRecord method override
+        /// </summary>
+        protected override void ProcessRecord()
+        {
+            if (ShouldProcess("MFA Reset/Reload Relying Parties Themes"))
+            {
+                try
+                {
+                    ManagementService.ResetWebThemesList(this.Host);
+                    this.WriteVerbose(infos_strings.InfosConfigUpdated);
+                }
+                catch (Exception ex)
+                {
+                    this.ThrowTerminatingError(new ErrorRecord(ex, "3024", ErrorCategory.OperationStopped, this));
+                }
+            }
+        }
+
+        /// <summary>
+        /// StopProcessing method implementation
+        /// </summary>
+        protected override void StopProcessing()
+        {
+            base.StopProcessing();
+        }
+    }
+    #endregion
+
     #region Set-MFAEncryptionVersion
     /// <summary>
     /// <para type="synopsis">Set ADFS Theme.</para>
@@ -6076,6 +6133,12 @@ namespace MFA
         public bool Enabled { get; set; } = false;
 
         /// <summary>
+        /// <para type="description">Set Primary Authentication Status Options.</para>
+        /// </summary>
+        [Parameter(Mandatory = false, Position = 1, ParameterSetName = "Data", ValueFromPipeline = false)]
+        public PrimaryAuthOptions Options { get; set; } = PrimaryAuthOptions.None;
+
+        /// <summary>
         /// BeginProcessing method implementation
         /// </summary>
         protected override void BeginProcessing()
@@ -6102,7 +6165,7 @@ namespace MFA
             {
                 try
                 {
-                    _config.SetPrimaryAuthenticationStatus(this.Host, Enabled);
+                    _config.SetPrimaryAuthenticationStatus(this.Host, Enabled, Options);
                     this.WriteVerbose(infos_strings.InfosConfigUpdated);
                 }
                 catch (Exception ex)

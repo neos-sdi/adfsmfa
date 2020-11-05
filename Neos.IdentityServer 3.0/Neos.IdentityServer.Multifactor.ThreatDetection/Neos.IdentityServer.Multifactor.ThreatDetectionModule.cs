@@ -83,11 +83,10 @@ namespace Neos.IdentityServer.MultiFactor
         {
             try
             {
-#if testintranet
-                if (requestContext.ClientLocation.HasValue)
-#else
+                if (requestContext.LocalEndPointAbsolutePath.ToLower().StartsWith("/adfs/proxy"))
+                   return Task.FromResult<ThrottleStatus>(ThrottleStatus.Allow);
+
                 if (requestContext.ClientLocation.HasValue && requestContext.ClientLocation.Value == NetworkLocation.Extranet)
-#endif
                 {
                     foreach (IPAddress clientIpAddress in requestContext.ClientIpAddresses)
                     {

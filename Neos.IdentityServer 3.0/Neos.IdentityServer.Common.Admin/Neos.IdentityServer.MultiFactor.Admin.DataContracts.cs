@@ -180,11 +180,12 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <summary>
         /// SetPrimaryAuthenticationStatus method implementation
         /// </summary>
-        internal void SetPrimaryAuthenticationStatus(PSHost host, bool enabled)
+        internal void SetPrimaryAuthenticationStatus(PSHost host, bool enabled, PrimaryAuthOptions options)
         {
             ManagementService.Initialize(true);
             MFAConfig cfg = ManagementService.Config;
             cfg.IsPrimaryAuhentication = enabled;
+            cfg.PrimaryAuhenticationOptions = options;
             ManagementService.ADFSManager.WriteConfiguration(host);
         }
     }
