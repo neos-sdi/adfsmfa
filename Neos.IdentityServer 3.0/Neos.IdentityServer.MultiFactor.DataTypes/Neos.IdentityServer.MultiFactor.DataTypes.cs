@@ -1620,7 +1620,7 @@ namespace Neos.IdentityServer.MultiFactor
     }
 
     /// <summary>
-    /// HashMode
+    /// PrimaryAuthOptions
     /// </summary>
     [Serializable, Flags]
     public enum PrimaryAuthOptions
@@ -1629,7 +1629,6 @@ namespace Neos.IdentityServer.MultiFactor
         Externals = 1,
         Register = 2
     }
-
 
     /// <summary>
     /// HashMode

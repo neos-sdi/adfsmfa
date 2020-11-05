@@ -256,6 +256,11 @@ namespace MFA
         public bool UseUIPaginated { get; internal set; }
 
         /// <summary>
+        /// <para type="description">Options when using MFA as primary auth.</para>
+        /// </summary>
+        public PSPrimaryAuthOptions PrimaryAuhenticationOptions { get; set; } = PSPrimaryAuthOptions.None;
+
+        /// <summary>
         /// <para type="description">Force adfsmfa to no Use localization but a specified language.</para>
         /// </summary>
         public string ForcedLanguage { get; set; }
@@ -283,6 +288,7 @@ namespace MFA
                     AdvertisingDays = (PSAdvertisingDays)config.AdvertisingDays,
                     UseUIPaginated = config.UseUIPaginated,
                     UiKind = (PSUIKind)config.UiKind,
+                    PrimaryAuhenticationOptions = (PSPrimaryAuthOptions)config.PrimaryAuhenticationOptions,
                     ForcedLanguage = config.ForcedLanguage
                 };
                 return psconfig;
@@ -313,6 +319,7 @@ namespace MFA
                     AdvertisingDays = (FlatAdvertising)psconfig.AdvertisingDays,
                     UseUIPaginated = psconfig.UseUIPaginated,
                     UiKind = (ADFSUserInterfaceKind)psconfig.UiKind,
+                    PrimaryAuhenticationOptions = (PrimaryAuthOptions)psconfig.PrimaryAuhenticationOptions,
                     ForcedLanguage = psconfig.ForcedLanguage
                 };
                 return config;

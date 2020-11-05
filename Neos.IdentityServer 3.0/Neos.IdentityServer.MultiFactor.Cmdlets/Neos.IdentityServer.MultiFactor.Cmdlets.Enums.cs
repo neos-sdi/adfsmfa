@@ -449,7 +449,7 @@ namespace MFA
     /// <summary>
     /// PSUIKind
     /// <para type="synopsis">Kind of ADFS's User Interface version</para>
-    /// <para type="description">Kind of ADFS's User Interface version (ADFS 2019 or Older with Custome Themes</para>
+    /// <para type="description">Kind of ADFS's User Interface version (ADFS 2019 or Older with Custome Themes)</para>
     /// </summary>
     public enum PSUIKind
     {
@@ -462,6 +462,30 @@ namespace MFA
         /// <para type="description">Default UI theme for ADFS 2019 only (Centered)</para>
         /// </summary>
         Default2019 = 1
+    }
+
+    /// <summary>
+    /// PSPrimaryAuthOptions
+    /// <para type="synopsis">Options when using MFA as Primary Authentication</para>
+    /// <para type="description">Options when using MFA as Primary Authentication</para>
+    /// </summary>
+    [Flags]
+    public enum PSPrimaryAuthOptions
+    {
+        /// <summary>
+        /// <para type="description">None, Nothing allowed (no external providers, no registration process.</para>
+        /// </summary>
+        None = 0,
+
+        /// <summary>
+        /// <para type="description">Externals, Externals providers like Email or Phone are allowed as Primary authentication methods.</para>
+        /// </summary>
+        Externals = 1,
+
+        /// <summary>
+        /// <para type="description">Register, Registration process is aalowed as Primary authentication methos.</para>
+        /// </summary>
+        Register = 2
     }
 
     /// <summary>
