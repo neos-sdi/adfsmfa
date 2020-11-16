@@ -675,22 +675,16 @@
   <data name="CTRLWEBAUTHNSHOWPII" xml:space="preserve">
     <value>Visa känsliga loggar</value>
   </data>
-  <data name="CTRLPROVPINNONE" xml:space="preserve">
-    <value>Krävs när det inte verifieras</value>
+  <data name="CTRLGLTOTPWARN" xml:space="preserve">
+    <value>support för RFC6238 - Din authenticator-app måste stödja den (Yubico, Authy)</value>
   </data>
-  <data name="CTRLPROVPINANDROID" xml:space="preserve">
-    <value>Krävs när det inte verifieras</value>
+  <data name="CTRLGLDURATION" xml:space="preserve">
+    <value>Varaktighet</value>
   </data>
-  <data name="CTRLPROVPINSAFETYNET" xml:space="preserve">
-    <value>Krävs när det inte verifieras</value>
+  <data name="CTRLGLMAXDIGITS" xml:space="preserve">
+    <value>Siffror</value>
   </data>
-  <data name="CTRLPROVPINFIDO" xml:space="preserve">
-    <value>Krävs när det inte verifieras</value>
-  </data>
-  <data name="CTRLPROVPINPACKED" xml:space="preserve">
-    <value>Krävs när det inte verifieras</value>
-  </data>
-  <data name="CTRLPROVPINTPM" xml:space="preserve">
-    <value>Krävs när det inte verifieras</value>
+  <data name="CTRLPROVPINREQUIRED" xml:space="preserve">
+    <value>Aktivera PIN-kod för specifik authenticator när användarnärvaro inte upptäcks</value>
   </data>
 </root>

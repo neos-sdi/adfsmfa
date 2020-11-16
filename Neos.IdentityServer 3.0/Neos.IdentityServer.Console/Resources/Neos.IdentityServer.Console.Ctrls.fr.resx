@@ -675,22 +675,16 @@
   <data name="CTRLWEBAUTHNSHOWPII" xml:space="preserve">
     <value>Afficher les journaux sensibles</value>
   </data>
-  <data name="CTRLPROVPINNONE" xml:space="preserve">
-    <value>Obligatoire en cas de non vérifié</value>
+  <data name="CTRLGLTOTPWARN" xml:space="preserve">
+    <value>support rfc6238 - Votre application d’authentification doit la prendre en charge (Yubico, Authy)</value>
   </data>
-  <data name="CTRLPROVPINANDROID" xml:space="preserve">
-    <value>Obligatoire en cas de non vérifié</value>
+  <data name="CTRLGLDURATION" xml:space="preserve">
+    <value>Durée</value>
   </data>
-  <data name="CTRLPROVPINSAFETYNET" xml:space="preserve">
-    <value>Obligatoire en cas de non vérifié</value>
+  <data name="CTRLGLMAXDIGITS" xml:space="preserve">
+    <value>Chiffres</value>
   </data>
-  <data name="CTRLPROVPINFIDO" xml:space="preserve">
-    <value>Obligatoire en cas de non vérifié</value>
-  </data>
-  <data name="CTRLPROVPINPACKED" xml:space="preserve">
-    <value>Obligatoire en cas de non vérifié</value>
-  </data>
-  <data name="CTRLPROVPINTPM" xml:space="preserve">
-    <value>Obligatoire en cas de non vérifié</value>
+  <data name="CTRLPROVPINREQUIRED" xml:space="preserve">
+    <value>Activer le code PIN pour un authentificateur spécifique si la présence de l’utilisateur n’est pas détectée</value>
   </data>
 </root>

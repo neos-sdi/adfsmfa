@@ -675,22 +675,16 @@
   <data name="CTRLWEBAUTHNSHOWPII" xml:space="preserve">
     <value>Gevoelige logboeken weergeven</value>
   </data>
-  <data name="CTRLPROVPINNONE" xml:space="preserve">
-    <value>Vereist wanneer niet geverifieerd</value>
+  <data name="CTRLGLTOTPWARN" xml:space="preserve">
+    <value>rfc6238-ondersteuning - Uw authenticator-app moet deze ondersteunen (Yubico, Authy)</value>
   </data>
-  <data name="CTRLPROVPINANDROID" xml:space="preserve">
-    <value>Vereist wanneer niet geverifieerd</value>
+  <data name="CTRLGLDURATION" xml:space="preserve">
+    <value>Duur</value>
   </data>
-  <data name="CTRLPROVPINSAFETYNET" xml:space="preserve">
-    <value>Vereist wanneer niet geverifieerd</value>
+  <data name="CTRLGLMAXDIGITS" xml:space="preserve">
+    <value>Cijfers</value>
   </data>
-  <data name="CTRLPROVPINFIDO" xml:space="preserve">
-    <value>Vereist wanneer niet geverifieerd</value>
-  </data>
-  <data name="CTRLPROVPINPACKED" xml:space="preserve">
-    <value>Vereist wanneer niet geverifieerd</value>
-  </data>
-  <data name="CTRLPROVPINTPM" xml:space="preserve">
-    <value>Vereist wanneer niet geverifieerd</value>
+  <data name="CTRLPROVPINREQUIRED" xml:space="preserve">
+    <value>Pincode inschakelen voor specifieke authenticator wanneer de aanwezigheid van de gebruiker niet wordt gedetecteerd</value>
   </data>
 </root>

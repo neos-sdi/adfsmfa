@@ -780,6 +780,8 @@ namespace Neos.IdentityServer.MultiFactor.Administration
     {
         public HashMode Algorithm { get; set; }
         public int TOTPShadows { get; set; }
+        public int Digits { get; set; }
+        public int Duration { get; set; }
         public OTPWizardOptions WizardOptions { get; set; }
         public KeySizeMode KeySize { get; set; }
         public SecretKeyFormat KeysFormat { get; set; }
@@ -809,6 +811,8 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             this.EnrollWizard = otp.EnrollWizard;
             this.ForceWizard = otp.ForceWizard;
             this.Algorithm = otp.Algorithm;
+            this.Digits = otp.TOTPDigits;
+            this.Duration = otp.TOTPDuration;
             this.TOTPShadows = otp.TOTPShadows;
             this.WizardOptions = otp.WizardOptions;
             this.KeySize = cfg.KeysConfig.KeySize;
@@ -834,6 +838,8 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             otp.ForceWizard = this.ForceWizard;
             otp.Algorithm = this.Algorithm;
             otp.TOTPShadows = this.TOTPShadows;
+            otp.TOTPDigits = this.Digits;
+            otp.TOTPDuration = this.Duration;
             otp.WizardOptions = this.WizardOptions;
             cfg.KeysConfig.KeySize = this.KeySize;
             cfg.KeysConfig.KeyFormat = this.KeysFormat;

@@ -619,6 +619,15 @@ namespace Neos.IdentityServer.Console.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Duration.
+        /// </summary>
+        internal static string CTRLGLDURATION {
+            get {
+                return ResourceManager.GetString("CTRLGLDURATION", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Registration Wizards.
         /// </summary>
         internal static string CTRLGLENROLLWIZ {
@@ -696,6 +705,15 @@ namespace Neos.IdentityServer.Console.Resources {
         internal static string CTRLGLMAXCODES {
             get {
                 return ResourceManager.GetString("CTRLGLMAXCODES", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Digits.
+        /// </summary>
+        internal static string CTRLGLMAXDIGITS {
+            get {
+                return ResourceManager.GetString("CTRLGLMAXDIGITS", resourceCulture);
             }
         }
         
@@ -844,6 +862,15 @@ namespace Neos.IdentityServer.Console.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à rfc6238 support - Your authenticator app must support it (Yubico, Authy) .
+        /// </summary>
+        internal static string CTRLGLTOTPWARN {
+            get {
+                return ResourceManager.GetString("CTRLGLTOTPWARN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Use authentication applications (Google Authenticator, Microsoft Authenticator).
         /// </summary>
         internal static string CTRLGLUSEAPPS {
@@ -952,56 +979,11 @@ namespace Neos.IdentityServer.Console.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Required when unverified.
+        ///   Recherche une chaîne localisée semblable à Enable PIN for specific authenticator when user presence not detected.
         /// </summary>
-        internal static string CTRLPROVPINANDROID {
+        internal static string CTRLPROVPINREQUIRED {
             get {
-                return ResourceManager.GetString("CTRLPROVPINANDROID", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Required when unverified.
-        /// </summary>
-        internal static string CTRLPROVPINFIDO {
-            get {
-                return ResourceManager.GetString("CTRLPROVPINFIDO", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Required when unverified .
-        /// </summary>
-        internal static string CTRLPROVPINNONE {
-            get {
-                return ResourceManager.GetString("CTRLPROVPINNONE", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Required when unverified.
-        /// </summary>
-        internal static string CTRLPROVPINPACKED {
-            get {
-                return ResourceManager.GetString("CTRLPROVPINPACKED", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Required when unverified.
-        /// </summary>
-        internal static string CTRLPROVPINSAFETYNET {
-            get {
-                return ResourceManager.GetString("CTRLPROVPINSAFETYNET", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Required when unverified.
-        /// </summary>
-        internal static string CTRLPROVPINTPM {
-            get {
-                return ResourceManager.GetString("CTRLPROVPINTPM", resourceCulture);
+                return ResourceManager.GetString("CTRLPROVPINREQUIRED", resourceCulture);
             }
         }
         

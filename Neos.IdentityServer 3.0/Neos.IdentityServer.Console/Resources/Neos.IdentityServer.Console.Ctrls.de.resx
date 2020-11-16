@@ -675,22 +675,16 @@
   <data name="CTRLWEBAUTHNSHOWPII" xml:space="preserve">
     <value>Vertrauliche Protokolle anzeigen</value>
   </data>
-  <data name="CTRLPROVPINNONE" xml:space="preserve">
-    <value>Erforderlich, wenn nicht überprüft</value>
+  <data name="CTRLGLTOTPWARN" xml:space="preserve">
+    <value>rfc6238-Unterstützung - Ihre Authentifikator-App muss sie unterstützen (Yubico, Authy)</value>
   </data>
-  <data name="CTRLPROVPINANDROID" xml:space="preserve">
-    <value>Erforderlich, wenn nicht überprüft</value>
+  <data name="CTRLGLDURATION" xml:space="preserve">
+    <value>Dauer</value>
   </data>
-  <data name="CTRLPROVPINSAFETYNET" xml:space="preserve">
-    <value>Erforderlich, wenn nicht überprüft</value>
+  <data name="CTRLGLMAXDIGITS" xml:space="preserve">
+    <value>Ziffern</value>
   </data>
-  <data name="CTRLPROVPINFIDO" xml:space="preserve">
-    <value>Erforderlich, wenn nicht überprüft</value>
-  </data>
-  <data name="CTRLPROVPINPACKED" xml:space="preserve">
-    <value>Erforderlich, wenn nicht überprüft</value>
-  </data>
-  <data name="CTRLPROVPINTPM" xml:space="preserve">
-    <value>Erforderlich, wenn nicht überprüft</value>
+  <data name="CTRLPROVPINREQUIRED" xml:space="preserve">
+    <value>Aktivieren der PIN für einen bestimmten Authentifikator, wenn die Anwesenheit des Benutzers nicht erkannt wird</value>
   </data>
 </root>

@@ -761,8 +761,19 @@ namespace Neos.IdentityServer.MultiFactor
                     case (int)PreferredMethod.Code:
                         {
                             usercontext.WizPageID = 0;
-                            usercontext.UIMode = ProviderPageMode.EnrollOTP;
-                            result = new AdapterPresentation(this, context, ProviderPageMode.Registration);
+                            if (skipwizard) // Skip
+                            {
+                                usercontext.UIMode = ProviderPageMode.Registration;
+                                usercontext.EnrollPageID = PreferredMethod.Code;
+                                result = new AdapterPresentation(this, context);
+                            }
+                            else
+                            {
+                                usercontext.UIMode = ProviderPageMode.EnrollOTP;
+                                result = new AdapterPresentation(this, context, ProviderPageMode.Registration);
+                            }
+                           // usercontext.UIMode = ProviderPageMode.EnrollOTP;
+                           // result = new AdapterPresentation(this, context, ProviderPageMode.Registration);
                             break;
                         }
                     case (int)PreferredMethod.Email:
@@ -912,8 +923,20 @@ namespace Neos.IdentityServer.MultiFactor
                     case (int)PreferredMethod.Code:
                         {
                             usercontext.WizPageID = 0;
-                            usercontext.UIMode = ProviderPageMode.EnrollOTP;
-                            result = new AdapterPresentation(this, context, ProviderPageMode.Invitation);
+                            if (skipwizard) // Skip
+                            {
+                                usercontext.UIMode = ProviderPageMode.Invitation;
+                                usercontext.EnrollPageID = PreferredMethod.Code;
+                                result = new AdapterPresentation(this, context);
+                            }
+                            else
+                            {
+                                usercontext.UIMode = ProviderPageMode.EnrollOTP;
+                                result = new AdapterPresentation(this, context, ProviderPageMode.Invitation);
+                            }
+
+                           // usercontext.UIMode = ProviderPageMode.EnrollOTP;
+                           // result = new AdapterPresentation(this, context, ProviderPageMode.Invitation);
                             break;
                         }
                     case (int)PreferredMethod.Email:

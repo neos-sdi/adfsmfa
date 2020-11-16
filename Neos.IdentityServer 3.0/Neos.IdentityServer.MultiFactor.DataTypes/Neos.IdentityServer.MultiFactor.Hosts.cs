@@ -992,6 +992,8 @@ namespace Neos.IdentityServer.MultiFactor
             this.Data = prov;
             this.TOTPShadows = prov.TOTPShadows;
             this.Algorithm = prov.Algorithm;
+            this.Digits = prov.TOTPDigits;
+            this.Duration = prov.TOTPDuration;
             this.Enabled = prov.Enabled;
             this.IsRequired = prov.IsRequired;
             this.PinRequired = prov.PinRequired;
@@ -1002,6 +1004,8 @@ namespace Neos.IdentityServer.MultiFactor
         public OTPProvider Data { get; set; }
         public int TOTPShadows { get; set; }
         public HashMode Algorithm { get; set; }
+        public int Digits { get; set; }
+        public int Duration { get; set; }
         public override bool Enabled { get; set; }
         public override bool IsRequired { get; set; }
         public override bool PinRequired { get; set; }
@@ -1576,6 +1580,8 @@ namespace Neos.IdentityServer.MultiFactor
     public class OTPProvider
     {
         private XmlCDataSection _cdata;
+        private int _digits = 6;
+        private int _duration = 30;
 
         [XmlAttribute("Enabled")]
         public bool Enabled { get; set; } = true;
@@ -1597,6 +1603,33 @@ namespace Neos.IdentityServer.MultiFactor
 
         [XmlAttribute("Algorithm")]
         public HashMode Algorithm { get; set; } = HashMode.SHA1;
+
+        [XmlAttribute("TOTPDigits")]
+        public int TOTPDigits
+        {
+            get {return _digits; }
+            set
+            {
+                if ((_digits < 4) || (_digits > 8))
+                    _digits = 6;
+                else
+                    _digits = value;
+            }
+        }
+
+        [XmlAttribute("TOTPDuration")]
+        public int TOTPDuration
+        {
+            get { return _duration; }
+            set
+            {
+                int xvalue = ((value / 30) * 30);
+                if ((xvalue < 30) || (xvalue > 180))
+                    _duration = 30;
+                else
+                    _duration = xvalue;
+            }
+        }
 
         [XmlAttribute("WizardOptions")]
         public OTPWizardOptions WizardOptions { get; set; } = OTPWizardOptions.All;

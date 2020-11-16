@@ -1601,7 +1601,8 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// </summary>
         public string CreateMFADatabase(PSHost host, string _servername, string _databasename, string _username, string _password)
         {
-            string sqlscript = File.ReadAllText(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + @"\MFA\SQLTools\mfa-db.sql");
+            char sep = Path.DirectorySeparatorChar;
+            string sqlscript = File.ReadAllText(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + sep + "MFA" + sep + "SQLTools" + sep + "mfa-db.sql");
             sqlscript = sqlscript.Replace("%DATABASENAME%", _databasename);
             SqlConnection cnx = new SqlConnection("Integrated Security=SSPI;Persist Security Info=False;Initial Catalog=master;Data Source=" + _servername);
             cnx.Open();
@@ -1676,6 +1677,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// </summary>
         public string UpgradeMFADatabase(PSHost host, string servername, string databasename)
         {
+            char sep = Path.DirectorySeparatorChar;
             FlatSQLStore cf = new FlatSQLStore();
             cf.Load(host);
             bool encrypt = cf.IsAlwaysEncrypted;
@@ -1683,13 +1685,13 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             if (encrypt)
             {
                 string keyname = cf.KeyName;
-                sqlscript = File.ReadAllText(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + @"\MFA\SQLTools\mfa-db-Encrypted-upgrade.sql");
+                sqlscript = File.ReadAllText(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + sep + "MFA" + sep + "SQLTools" + sep + "mfa-db-Encrypted-upgrade.sql");
                 sqlscript = sqlscript.Replace("%DATABASENAME%", databasename);
                 sqlscript = sqlscript.Replace("%SQLKEY%", keyname);
             }
             else
             {
-                sqlscript = File.ReadAllText(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + @"\MFA\SQLTools\mfa-db-upgrade.sql");
+                sqlscript = File.ReadAllText(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + sep + "MFA" + sep + "SQLTools" + sep + "mfa-db-upgrade.sql");
                 sqlscript = sqlscript.Replace("%DATABASENAME%", databasename);
             }
 
@@ -1712,8 +1714,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// </summary>
         public string CreateMFAEncryptedDatabase(PSHost host, string _servername, string _databasename, string _username, string _password, string _keyname, string _thumbprint)
         {
+            char sep = Path.DirectorySeparatorChar;
             string _encrypted = GetSQLKeyEncryptedValue("LocalMachine/my/" + _thumbprint.ToUpper());
-            string sqlscript = File.ReadAllText(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + @"\MFA\SQLTools\mfa-db-encrypted.sql");
+            string sqlscript = File.ReadAllText(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) +sep + "MFA" + sep + "SQLTools" + sep + "mfa-db-encrypted.sql");
             sqlscript = sqlscript.Replace("%DATABASENAME%", _databasename);
             sqlscript = sqlscript.Replace("%SQLKEY%", _keyname);
             SqlConnection cnx = new SqlConnection("Integrated Security=SSPI;Persist Security Info=False;Initial Catalog=master;Data Source=" + _servername);

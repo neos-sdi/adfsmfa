@@ -118,9 +118,9 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ErrorSendingAdministrativeRequest" xml:space="preserve">
-    <value>管理者に碑文要求を送信中にエラーが発生しました</value>
+    <value>管理リクエストの送信中にエラーが発生しました</value>
   </data>
   <data name="ErrorSendingSecretKeyRequest" xml:space="preserve">
-    <value>ユーザーに重要なキーを送信中にエラーが発生しました</value>
+    <value>秘密鍵要求の送信中にエラーが発生しました</value>
   </data>
 </root>

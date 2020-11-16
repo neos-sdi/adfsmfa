@@ -35,6 +35,7 @@ namespace Neos.IdentityServer.MultiFactor.SAS
         private ISasProvider _sasprovider = null;
 
         private bool _isinitialized = false;
+        private bool _isrequired = true;
 
         /// <summary>
         /// Kind property implementation
@@ -50,6 +51,15 @@ namespace Neos.IdentityServer.MultiFactor.SAS
         public override bool IsBuiltIn
         {
             get { return true; }
+        }
+
+        /// <summary>
+        /// IsRequired property implementation
+        /// </summary>
+        public override bool IsRequired
+        {
+            get { return _isrequired; }
+            set { _isrequired = value; }
         }
 
         /// <summary>

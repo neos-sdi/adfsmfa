@@ -675,22 +675,16 @@
   <data name="CTRLWEBAUTHNSHOWPII" xml:space="preserve">
     <value>Показать конфиденциальные журналы</value>
   </data>
-  <data name="CTRLPROVPINNONE" xml:space="preserve">
-    <value>Требуется, когда непроверенные</value>
+  <data name="CTRLGLTOTPWARN" xml:space="preserve">
+    <value>rfc6238 поддержка - Ваш аутентифицатор приложение должно поддерживать его (Yubico, Authy)</value>
   </data>
-  <data name="CTRLPROVPINANDROID" xml:space="preserve">
-    <value>Требуется, когда непроверенные</value>
+  <data name="CTRLGLDURATION" xml:space="preserve">
+    <value>Длительность</value>
   </data>
-  <data name="CTRLPROVPINSAFETYNET" xml:space="preserve">
-    <value>Требуется, когда непроверенные</value>
+  <data name="CTRLGLMAXDIGITS" xml:space="preserve">
+    <value>Цифр</value>
   </data>
-  <data name="CTRLPROVPINFIDO" xml:space="preserve">
-    <value>Требуется, когда непроверенные</value>
-  </data>
-  <data name="CTRLPROVPINPACKED" xml:space="preserve">
-    <value>Требуется, когда непроверенные</value>
-  </data>
-  <data name="CTRLPROVPINTPM" xml:space="preserve">
-    <value>Требуется, когда непроверенные</value>
+  <data name="CTRLPROVPINREQUIRED" xml:space="preserve">
+    <value>Включить PIN-код для конкретного аутентителя, когда присутствие пользователя не обнаружено</value>
   </data>
 </root>

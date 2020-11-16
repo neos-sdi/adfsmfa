@@ -50,6 +50,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
                 return data;
             }
         }
+
         internal static byte[] AaguidFromAttnCertExts(X509ExtensionCollection exts)
         {
             byte[] aaguid = null;
@@ -69,6 +70,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
             }
             return aaguid;
         }
+
         internal static bool IsAttnCertCACert(X509ExtensionCollection exts)
         {
             foreach (var ext in exts)
@@ -80,6 +82,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
             }
             return true;
         }
+
         internal static int U2FTransportsFromAttnCert(X509ExtensionCollection exts)
         {
             var u2ftransports = 0;

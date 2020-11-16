@@ -32,6 +32,7 @@ using System.Collections.Generic;
 using System.Net;
 using static Neos.IdentityServer.MultiFactor.MailSlotServer;
 using Neos.IdentityServer.MultiFactor.Common;
+using System.IO;
 
 namespace Neos.IdentityServer.MultiFactor.Administration
 {
@@ -943,7 +944,8 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         {
             Runspace SPRunSpace = null;
             PowerShell SPPowerShell = null;
-            string db = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + @"\MFA\Config\threatconfig.db";
+            char sep = Path.DirectorySeparatorChar;
+            string db = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + sep + "MFA" + sep + "Config" + sep + "threatconfig.db";
             try
             {
                 SPRunSpace = RunspaceFactory.CreateRunspace();
@@ -1026,7 +1028,8 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         {
             Runspace SPRunSpace = null;
             PowerShell SPPowerShell = null;
-            string db = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + @"\MFA\Config\threatconfig.db";
+            char sep = Path.DirectorySeparatorChar;
+            string db = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + sep + "MFA" + sep + "Config" + sep + "threatconfig.db";
             try
             {
                 SPRunSpace = RunspaceFactory.CreateRunspace();

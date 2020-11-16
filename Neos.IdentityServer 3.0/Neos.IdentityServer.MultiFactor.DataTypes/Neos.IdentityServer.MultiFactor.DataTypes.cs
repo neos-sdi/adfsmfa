@@ -1845,7 +1845,8 @@ namespace Neos.IdentityServer.MultiFactor
         AndroidSafetyNet = 4,
         Fido2U2f = 8,
         Packed = 16,
-        TPM = 32
+        TPM = 32,
+        Apple = 64
     }
 
     /// <summary>

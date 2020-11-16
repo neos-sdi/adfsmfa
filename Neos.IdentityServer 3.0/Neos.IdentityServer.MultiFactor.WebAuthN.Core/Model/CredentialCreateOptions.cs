@@ -89,7 +89,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
         /// This member specifies a time, in milliseconds, that the caller is willing to wait for the call to complete. This is treated as a hint, and MAY be overridden by the platform.
         /// </summary>
         [JsonProperty("timeout")]
-        public long Timeout { get; set; }
+        public uint Timeout { get; set; }
 
         /// <summary>
         /// This member is intended for use by Relying Parties that wish to express their preference for attestation conveyance.The default is none.

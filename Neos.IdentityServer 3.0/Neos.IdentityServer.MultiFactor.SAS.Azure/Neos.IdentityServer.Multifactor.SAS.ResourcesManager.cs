@@ -64,17 +64,19 @@ namespace Neos.IdentityServer.MultiFactor.SAS
 
         private ResourceManager GetResourceManager(string resourcename)
         {
-            if (File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + @"\MFA\ResourceSet" + @"\" + resourcename + "." + Culture.Name + ".resources"))
-                return ResourceManager.CreateFileBasedResourceManager(resourcename, Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + @"\MFA\ResourceSet", null);
-            else if (File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + @"\MFA\ResourceSet" + @"\" + resourcename + "." + Culture.TwoLetterISOLanguageName + ".resources"))
-                return ResourceManager.CreateFileBasedResourceManager(resourcename, Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + @"\MFA\ResourceSet", null);
-            else if (File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + @"\MFA\ResourceSet" + @"\" + resourcename + ".en-us.resources"))
-                return ResourceManager.CreateFileBasedResourceManager(resourcename, Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + @"\MFA\ResourceSet", null);
-            else if (File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + @"\MFA\ResourceSet" + @"\" + resourcename + ".en.resources"))
-                return ResourceManager.CreateFileBasedResourceManager(resourcename, Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + @"\MFA\ResourceSet", null);
-            else if (File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + @"\MFA\ResourceSet" + @"\" + resourcename + ".resources"))
-                return ResourceManager.CreateFileBasedResourceManager(resourcename, Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + @"\MFA\ResourceSet", null);
-            return new ResourceManager(resourcename, typeof(ResourcesLocale).Assembly);
+            char sep = Path.DirectorySeparatorChar;
+            if (File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + sep + "MFA" + sep + "ResourceSet" + sep + resourcename + "." + Culture.Name + ".resources"))
+                return ResourceManager.CreateFileBasedResourceManager(resourcename, Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + sep + "MFA" + sep + "ResourceSet", null);
+            else if (File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + sep + "MFA" + sep + "ResourceSet" + sep + resourcename + "." + Culture.TwoLetterISOLanguageName + ".resources"))
+                return ResourceManager.CreateFileBasedResourceManager(resourcename, Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + sep + "MFA" + sep + "ResourceSet", null);
+            else if (File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + sep + "MFA" + sep + "ResourceSet" + sep + resourcename + ".en-us.resources"))
+                return ResourceManager.CreateFileBasedResourceManager(resourcename, Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + sep + "MFA" + sep + "ResourceSet", null);
+            else if (File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + sep + "MFA" + sep + "ResourceSet" + sep + resourcename + ".en.resources"))
+                return ResourceManager.CreateFileBasedResourceManager(resourcename, Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + sep + "MFA" + sep + "ResourceSet", null);
+            else if (File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + sep + "MFA" + sep + "ResourceSet" + sep + resourcename + ".resources"))
+                return ResourceManager.CreateFileBasedResourceManager(resourcename, Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + sep + "MFA" + sep + "ResourceSet", null);
+            else
+                return new ResourceManager(resourcename, typeof(ResourcesLocale).Assembly);
         }
 
         /// <summary>

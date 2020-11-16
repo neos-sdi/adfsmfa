@@ -675,22 +675,16 @@
   <data name="CTRLWEBAUTHNSHOWPII" xml:space="preserve">
     <value>Afișare jurnale sensibile</value>
   </data>
-  <data name="CTRLPROVPINNONE" xml:space="preserve">
-    <value>Necesar atunci când este neverificat</value>
+  <data name="CTRLGLTOTPWARN" xml:space="preserve">
+    <value>suport rfc6238 - Aplicația dumneavoastră authenticator trebuie să o sprijine (Yubico, Authy)</value>
   </data>
-  <data name="CTRLPROVPINANDROID" xml:space="preserve">
-    <value>Necesar atunci când este neverificat</value>
+  <data name="CTRLGLDURATION" xml:space="preserve">
+    <value>Durata</value>
   </data>
-  <data name="CTRLPROVPINSAFETYNET" xml:space="preserve">
-    <value>Necesar atunci când este neverificat</value>
+  <data name="CTRLGLMAXDIGITS" xml:space="preserve">
+    <value>Cifre</value>
   </data>
-  <data name="CTRLPROVPINFIDO" xml:space="preserve">
-    <value>Necesar atunci când este neverificat</value>
-  </data>
-  <data name="CTRLPROVPINPACKED" xml:space="preserve">
-    <value>Necesar atunci când este neverificat</value>
-  </data>
-  <data name="CTRLPROVPINTPM" xml:space="preserve">
-    <value>Necesar atunci când este neverificat</value>
+  <data name="CTRLPROVPINREQUIRED" xml:space="preserve">
+    <value>Activare pin pentru un anumit authenticator atunci când prezența utilizatorului nu este detectată</value>
   </data>
 </root>

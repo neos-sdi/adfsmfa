@@ -1523,9 +1523,9 @@ namespace Neos.IdentityServer.MultiFactor
 
     #region TOTP Utils
     /// <summary>
-    /// OTPGenerator static class
+    /// TOTP static class
     /// </summary>
-    public partial class OTPGenerator
+    public partial class TOTP
     {
         private int _secondsToGo;
         private int _digits;
@@ -1542,7 +1542,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// Constructor
         /// </summary>
-        public OTPGenerator(HashMode mode = HashMode.SHA1, int duration = 30, int digits = 6)
+        public TOTP(HashMode mode = HashMode.SHA1, int duration = 30, int digits = 6)
         {
             RequestedDatetime = DateTime.UtcNow;
             _mode = mode;
@@ -1559,7 +1559,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// Constructor
         /// </summary>
-        public OTPGenerator(byte[] asecret, string aid, HashMode mode = HashMode.SHA1, int duration = 30, int digits = 6)
+        public TOTP(byte[] asecret, string aid, HashMode mode = HashMode.SHA1, int duration = 30, int digits = 6)
         {
             RequestedDatetime = DateTime.UtcNow;
             _mode = mode;
@@ -1579,7 +1579,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// Constructor
         /// </summary>
-        public OTPGenerator(string ssecret, string aid, HashMode mode = HashMode.SHA1, int duration = 30, int digits = 6)
+        public TOTP(string ssecret, string aid, HashMode mode = HashMode.SHA1, int duration = 30, int digits = 6)
         {
             RequestedDatetime = DateTime.UtcNow;
             byte[] asecret = Base32.GetBytesFromString(ssecret);
@@ -1598,9 +1598,9 @@ namespace Neos.IdentityServer.MultiFactor
         }
 
         /// <summary>
-        /// Constructor
+        /// Constructor **
         /// </summary>
-        public OTPGenerator(byte[] ssecret, string aid, DateTime datetime, HashMode mode = HashMode.SHA1, int duration = 30, int digits = 6)
+        public TOTP(byte[] ssecret, string aid, DateTime datetime, HashMode mode = HashMode.SHA1, int duration = 30, int digits = 6)
         {
             RequestedDatetime = datetime;
             _mode = mode;
@@ -1620,7 +1620,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// Constructor
         /// </summary>
-        public OTPGenerator(string ssecret, string aid, DateTime datetime, HashMode mode = HashMode.SHA1, int duration = 30, int digits = 6)
+        public TOTP(string ssecret, string aid, DateTime datetime, HashMode mode = HashMode.SHA1, int duration = 30, int digits = 6)
         {
             RequestedDatetime = datetime;
             byte[] asecret = Base32.GetBytesFromString(ssecret);
@@ -1641,14 +1641,14 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// SecondsToGo property implmentation
         /// </summary>
-        public int SecondsToGo
+        private int SecondsToGo
         {
             get { return _secondsToGo; }
-            private set 
+            set 
             { 
                 _secondsToGo = value;
                 if (SecondsToGo == _duration)
-                    ComputeOTP(RequestedDatetime); 
+                    Compute(RequestedDatetime); 
             }
         }
         
@@ -1673,34 +1673,34 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// Timestamp property implmentation
         /// </summary>
-        public Int64 Timestamp
+        private Int64 Timestamp
         {
             get { return _timestamp; }
-            private set { _timestamp = value; }
+            set { _timestamp = value; }
         }
 
         /// <summary>
         /// RequestedDatetime property implmentation
         /// </summary>
-        public DateTime RequestedDatetime
+        private DateTime RequestedDatetime
         {
             get { return _datetime; }
-            private set { _datetime = value; }
+            set { _datetime = value; }
         }
 
         /// <summary>
         /// Hmac property implementation
         /// </summary>
-        public byte[] Hmac
+        private byte[] Hmac
         {
             get { return _hmac; }
-            private set { _hmac = value; }
+            set { _hmac = value; }
         }
 
         /// <summary>
         /// Duration property implementation
         /// </summary>
-        public int Duration
+        private int Duration
         {
             get { return _duration; }
         }
@@ -1708,7 +1708,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// DigitsCount property implementation
         /// </summary>
-        public int DigitsCount
+        private int DigitsCount
         {
             get { return _digits; }
         }
@@ -1716,7 +1716,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// HmacPart1 property implementation
         /// </summary>
-        public byte[] HmacPart1
+        private byte[] HmacPart1
         {
             get { return _hmac.Take(Offset).ToArray(); }
         }
@@ -1724,7 +1724,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// HmacPart2 property implmentation 
         /// </summary>
-        public byte[] HmacPart2
+        private byte[] HmacPart2
         {
             get { return _hmac.Skip(Offset).Take(4).ToArray(); }
         }
@@ -1732,7 +1732,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// HmacPart3 property implmentation
         /// </summary>
-        public byte[] HmacPart3
+        private byte[] HmacPart3
         {
             get { return _hmac.Skip(Offset + 4).ToArray(); }
         }
@@ -1740,10 +1740,10 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// Offset property implmentation
         /// </summary>
-        public int Offset
+        private int Offset
         {
             get { return _offset; }
-            private set { _offset = value; }
+            set { _offset = value; }
         }
 
         /// <summary>
@@ -1752,21 +1752,21 @@ namespace Neos.IdentityServer.MultiFactor
         public int OTP
         {
             get { return _oneTimePassword; }
-            set { _oneTimePassword = value; }
+            private set { _oneTimePassword = value; }
         }
 
         /// <summary>
-        /// OTP property implementation
+        /// ToString property implementation
         /// </summary>
-        public string Digits
+        public override string ToString()
         {
-            get { return _oneTimePassword.ToString("D"+_digits.ToString()); }
+            return _oneTimePassword.ToString("D"+_digits.ToString()); 
         }
 
         /// <summary>
-        /// ComputeOneTimePassword method implmentation
+        /// Compute method implmentation
         /// </summary>
-        public void ComputeOTP(DateTime date)
+        public void Compute(DateTime date)
         {
             // https://tools.ietf.org/html/rfc4226
             Timestamp = Convert.ToInt64(GetUnixTimestamp(date) / _duration);
@@ -1789,15 +1789,17 @@ namespace Neos.IdentityServer.MultiFactor
             Offset = Hmac.Last() & 0x0F;
             switch (this.DigitsCount)
             {
-                case 4: OTP = (((Hmac[Offset + 0] & 0x7f) << 24) | ((Hmac[Offset + 1] & 0xff) << 16) | ((Hmac[Offset + 2] & 0xff) << 8) | (Hmac[Offset + 3] & 0xff)) % 10000;
+                case 4: OTP  = (((Hmac[Offset + 0] & 0x7f) << 24) | ((Hmac[Offset + 1] & 0xff) << 16) | ((Hmac[Offset + 2] & 0xff) << 8) | (Hmac[Offset + 3] & 0xff)) % 10000;
                     break;
-                case 5: OTP = (((Hmac[Offset + 0] & 0x7f) << 24) | ((Hmac[Offset + 1] & 0xff) << 16) | ((Hmac[Offset + 2] & 0xff) << 8) | (Hmac[Offset + 3] & 0xff)) % 100000;
+                case 5: OTP  = (((Hmac[Offset + 0] & 0x7f) << 24) | ((Hmac[Offset + 1] & 0xff) << 16) | ((Hmac[Offset + 2] & 0xff) << 8) | (Hmac[Offset + 3] & 0xff)) % 100000;
+                    break;
+                case 6: OTP  = (((Hmac[Offset + 0] & 0x7f) << 24) | ((Hmac[Offset + 1] & 0xff) << 16) | ((Hmac[Offset + 2] & 0xff) << 8) | (Hmac[Offset + 3] & 0xff)) % 1000000;
+                    break;
+                case 7: OTP  = (((Hmac[Offset + 0] & 0x7f) << 24) | ((Hmac[Offset + 1] & 0xff) << 16) | ((Hmac[Offset + 2] & 0xff) << 8) | (Hmac[Offset + 3] & 0xff)) % 10000000;
+                    break;
+                case 8: OTP  = (((Hmac[Offset + 0] & 0x7f) << 24) | ((Hmac[Offset + 1] & 0xff) << 16) | ((Hmac[Offset + 2] & 0xff) << 8) | (Hmac[Offset + 3] & 0xff)) % 100000000;
                     break;
                 default: OTP = (((Hmac[Offset + 0] & 0x7f) << 24) | ((Hmac[Offset + 1] & 0xff) << 16) | ((Hmac[Offset + 2] & 0xff) << 8) | (Hmac[Offset + 3] & 0xff)) % 1000000;
-                    break;
-                case 7: OTP =  (((Hmac[Offset + 0] & 0x7f) << 24) | ((Hmac[Offset + 1] & 0xff) << 16) | ((Hmac[Offset + 2] & 0xff) << 8) | (Hmac[Offset + 3] & 0xff)) % 10000000;
-                    break;
-                case 8: OTP =  (((Hmac[Offset + 0] & 0x7f) << 24) | ((Hmac[Offset + 1] & 0xff) << 16) | ((Hmac[Offset + 2] & 0xff) << 8) | (Hmac[Offset + 3] & 0xff)) % 100000000;
                     break;
             }
         }
@@ -2435,7 +2437,8 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         internal static void ExportMailTemplates(MFAConfig config, int lcid)
         {
-            string htmlpath = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\MFA\\MailTemplates\\" + lcid.ToString();
+            char sep = Path.DirectorySeparatorChar;
+            string htmlpath = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + sep + "MFA" + sep + "MailTemplates" +sep + lcid.ToString();
             ResourcesLocale Resources = new ResourcesLocale(lcid);
             MailProvider mailprov = config.MailProvider;
 
@@ -2445,9 +2448,9 @@ namespace Neos.IdentityServer.MultiFactor
             {
                 if (!Directory.Exists(htmlpath))
                     Directory.CreateDirectory(htmlpath);  // Voir ACL
-                File.WriteAllText(htmlpath + "\\MailOTPContent.html", htmltemp1, Encoding.UTF8);
+                File.WriteAllText(htmlpath + sep + "MailOTPContent.html", htmltemp1, Encoding.UTF8);
                 if (!mailprov.MailOTPContent.Exists(c => c.LCID.Equals(lcid)))
-                    mailprov.MailOTPContent.Add(new SendMailFileName(lcid, htmlpath + "\\MailOTPContent.html"));
+                    mailprov.MailOTPContent.Add(new SendMailFileName(lcid, htmlpath + sep + "MailOTPContent.html"));
             }
 
             string htmltemp2 = Resources.GetString(ResourcesLocaleKind.Mail, "MailKeyContent");
@@ -2455,27 +2458,27 @@ namespace Neos.IdentityServer.MultiFactor
             {
                 if (!Directory.Exists(htmlpath))
                     Directory.CreateDirectory(htmlpath);  // Voir ACL
-                File.WriteAllText(htmlpath + "\\MailKeyContent.html", htmltemp2, Encoding.UTF8);
+                File.WriteAllText(htmlpath + sep + "MailKeyContent.html", htmltemp2, Encoding.UTF8);
                 if (!mailprov.MailKeyContent.Exists(c => c.LCID.Equals(lcid)))
-                    mailprov.MailKeyContent.Add(new SendMailFileName(lcid, htmlpath + "\\MailKeyContent.html"));
+                    mailprov.MailKeyContent.Add(new SendMailFileName(lcid, htmlpath + sep + "MailKeyContent.html"));
             }            
             string htmltemp3 = Resources.GetString(ResourcesLocaleKind.Mail, "MailAdminContent");
             if (!string.IsNullOrEmpty(htmltemp3))
             {
                 if (!Directory.Exists(htmlpath))
                     Directory.CreateDirectory(htmlpath);  // Voir ACL
-                File.WriteAllText(htmlpath + "\\MailAdminContent.html", htmltemp3, Encoding.UTF8);
+                File.WriteAllText(htmlpath + sep + "MailAdminContent.html", htmltemp3, Encoding.UTF8);
                 if (!mailprov.MailAdminContent.Exists(c => c.LCID.Equals(lcid)))
-                    mailprov.MailAdminContent.Add(new SendMailFileName(lcid, htmlpath + "\\MailAdminContent.html"));
+                    mailprov.MailAdminContent.Add(new SendMailFileName(lcid, htmlpath + sep + "MailAdminContent.html"));
             }
             string htmltemp4 = Resources.GetString(ResourcesLocaleKind.Mail, "MailNotifications");
             if (!string.IsNullOrEmpty(htmltemp4))
             {
                 if (!Directory.Exists(htmlpath))
                     Directory.CreateDirectory(htmlpath);  // Voir ACL
-                File.WriteAllText(htmlpath + "\\MailNotifications.html", htmltemp4, Encoding.UTF8);
+                File.WriteAllText(htmlpath + sep + "MailNotifications.html", htmltemp4, Encoding.UTF8);
                 if (!mailprov.MailNotifications.Exists(c => c.LCID.Equals(lcid)))
-                    mailprov.MailNotifications.Add(new SendMailFileName(lcid, htmlpath + "\\MailNotifications.html"));
+                    mailprov.MailNotifications.Add(new SendMailFileName(lcid, htmlpath + sep + "MailNotifications.html"));
             }
             return;
         }
@@ -2654,7 +2657,8 @@ namespace Neos.IdentityServer.MultiFactor
     /// </summary>
     internal static class CFGUtilities
     {
-        internal static string configcachedir = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\MFA\\Config\\config.db";
+        private static char sep = Path.DirectorySeparatorChar;
+        internal static string configcachedir = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + sep + "MFA" + sep + "Config" + sep + "config.db";
         internal static byte[] configcachekey = null;
 
         /// <summary>

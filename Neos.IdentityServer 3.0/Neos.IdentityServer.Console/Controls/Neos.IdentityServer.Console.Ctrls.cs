@@ -427,6 +427,8 @@ namespace Neos.IdentityServer.Console.Controls
         private CheckBox chkProviderPinFido2u2f;
         private CheckBox chkProviderPinPacked;
         private CheckBox chkProviderPinTPM;
+        private CheckBox chkProviderPinApple;
+        private Label lblRequiredPinDesc;
 
         /// <summary>
         /// ADFSServerControl Constructor
@@ -579,7 +581,6 @@ namespace Neos.IdentityServer.Console.Controls
                 {
                     Text = res.CTRLPROVREQUIRED,
                     Checked = _provider.IsRequired,
-                    Enabled = (_provider.AllowDisable),
                     Left = 510,
                     Top = 30,
                     Width = 300
@@ -615,86 +616,106 @@ namespace Neos.IdentityServer.Console.Controls
                 chkProviderPin.CheckedChanged += ChkProviderPinChanged;
                 _txtpanel.Controls.Add(chkProviderPin);
 
-                if (_kind == PreferredMethod.Azure)
-                {
-                    chkProviderRequired.Checked = false;
-                    chkProviderRequired.Enabled = false;
-                }
-                else if (_kind == PreferredMethod.Biometrics)
+
+                if (_kind == PreferredMethod.Biometrics)
                 {
                     // "Required when unverified"
+
+                    // first col
+                    lblRequiredPinDesc = new Label
+                    {
+                        Text = res.CTRLPROVPINREQUIRED,
+                        Left = 540,
+                        Top = 94,
+                        Width = 500
+                    };                   
+                    _txtpanel.Controls.Add(lblRequiredPinDesc);
+
                     IWebAuthNProvider webprov = _provider as IWebAuthNProvider;
                     chkProviderPinNone = new CheckBox
                     {
-                        Text = "None : "+res.CTRLPROVPINNONE,
+                        Text = "None",
                         Checked = webprov.PinRequirements.HasFlag(WebAuthNPinRequirements.None),
                         Enabled = _provider.Enabled,
                         Left = 540,
-                        Top = 94,
-                        Width = 250
+                        Top = 118,
+                        Width = 135
                     };
                     chkProviderPinNone.CheckedChanged += ChkProviderPinNoneChanged;
                     _txtpanel.Controls.Add(chkProviderPinNone);
 
                     chkProviderPinAndroidKey = new CheckBox
                     {
-                        Text = "Android :" + res.CTRLPROVPINANDROID,
+                        Text = "Android",
                         Checked = webprov.PinRequirements.HasFlag(WebAuthNPinRequirements.AndroidKey),
                         Enabled = _provider.Enabled,
-                        Left = 540,
+                        Left = 680,
                         Top = 118,
-                        Width = 250
+                        Width = 135
                     };
                     chkProviderPinAndroidKey.CheckedChanged += ChkProviderPinAndroidKeyChanged;
                     _txtpanel.Controls.Add(chkProviderPinAndroidKey);
 
                     chkProviderPinAndroidSafetyNet = new CheckBox
                     {
-                        Text = "SafetyNet : "+res.CTRLPROVPINSAFETYNET,
+                        Text = "Android-SafetyNet",
                         Checked = webprov.PinRequirements.HasFlag(WebAuthNPinRequirements.AndroidSafetyNet),
                         Enabled = _provider.Enabled,
-                        Left = 540,
-                        Top = 142,
-                        Width = 250
+                        Left = 820,
+                        Top = 118,
+                        Width = 135
                     };
                     chkProviderPinAndroidSafetyNet.CheckedChanged += ChkProviderPinAndroidSafetyNetChanged;
                     _txtpanel.Controls.Add(chkProviderPinAndroidSafetyNet);
 
-                    chkProviderPinFido2u2f = new CheckBox
-                    {
-                        Text = "Fido2-u2f : "+ res.CTRLPROVPINFIDO,
-                        Checked = webprov.PinRequirements.HasFlag(WebAuthNPinRequirements.Fido2U2f),
-                        Enabled = _provider.Enabled,
-                        Left = 790,
-                        Top = 94,
-                        Width = 250
-                    };
-                    chkProviderPinFido2u2f.CheckedChanged += ChkProviderPinFido2u2fChanged;
-                    _txtpanel.Controls.Add(chkProviderPinFido2u2f);
-
                     chkProviderPinPacked = new CheckBox
                     {
-                        Text = "Packed : "+res.CTRLPROVPINPACKED,
+                        Text = "Packed",
                         Checked = webprov.PinRequirements.HasFlag(WebAuthNPinRequirements.Packed),
                         Enabled = _provider.Enabled,
-                        Left = 790,
+                        Left = 960,
                         Top = 118,
-                        Width = 250
+                        Width = 135
                     };
                     chkProviderPinPacked.CheckedChanged += ChkProviderPinPackedChanged;
                     _txtpanel.Controls.Add(chkProviderPinPacked);
 
+                    chkProviderPinFido2u2f = new CheckBox
+                    {
+                        Text = "Fido2-u2f",
+                        Checked = webprov.PinRequirements.HasFlag(WebAuthNPinRequirements.Fido2U2f),
+                        Enabled = _provider.Enabled,
+                        Left = 540,
+                        Top = 142,
+                        Width = 135
+                    };
+                    chkProviderPinFido2u2f.CheckedChanged += ChkProviderPinFido2u2fChanged;
+                    _txtpanel.Controls.Add(chkProviderPinFido2u2f);
+
                     chkProviderPinTPM = new CheckBox
                     {
-                        Text = "TPM : "+res.CTRLPROVPINTPM,
+                        Text = "TPM",
                         Checked = webprov.PinRequirements.HasFlag(WebAuthNPinRequirements.TPM),
                         Enabled = _provider.Enabled,
-                        Left = 790,
+                        Left = 680,
                         Top = 142,
-                        Width = 250
+                        Width = 135
                     };
                     chkProviderPinTPM.CheckedChanged += ChkProviderPinTPMChanged;
                     _txtpanel.Controls.Add(chkProviderPinTPM);
+
+                    chkProviderPinApple = new CheckBox
+                    {
+                        Text = "Apple",
+                        Checked = webprov.PinRequirements.HasFlag(WebAuthNPinRequirements.Apple),
+                        Enabled = _provider.Enabled,
+                        Left = 820,
+                        Top = 142,
+                        Width = 135
+                    };
+                    chkProviderPinApple.CheckedChanged += ChkProviderPinAppleChanged;
+                    _txtpanel.Controls.Add(chkProviderPinApple);
+
                 }
                 else if (_provider is NeosPlugProvider)
                 {
@@ -742,7 +763,6 @@ namespace Neos.IdentityServer.Console.Controls
                 chkProviderEnabled.Checked = _provider.Enabled;
                 chkProviderEnabled.Enabled = (_provider.AllowDisable);
                 chkProviderRequired.Checked = _provider.IsRequired;
-                chkProviderRequired.Enabled = (_provider.AllowDisable);
 
                 if (_provider.AllowEnrollment)
                     chkProviderEnroll.Checked = _provider.WizardEnabled;
@@ -750,20 +770,9 @@ namespace Neos.IdentityServer.Console.Controls
                     chkProviderEnroll.Checked = false;
                 chkProviderEnroll.Enabled = (_provider.Enabled && _provider.AllowEnrollment);
 
-                if (_kind == PreferredMethod.Azure)
-                {
-                    chkProviderRequired.Checked = false;
-                    chkProviderRequired.Enabled = false;
-                }
-                else if (_kind == PreferredMethod.Biometrics)
+                if (_kind == PreferredMethod.Biometrics)
                 {
                     IWebAuthNProvider webprov = _provider as IWebAuthNProvider;
-                    chkProviderPinNone.Text = "None : " + res.CTRLPROVPINNONE;
-                    chkProviderPinAndroidKey.Text = "Android : " + res.CTRLPROVPINANDROID;
-                    chkProviderPinAndroidSafetyNet.Text = "SafetyNet : " + res.CTRLPROVPINSAFETYNET;
-                    chkProviderPinFido2u2f.Text = "Fido2-u2f : " + res.CTRLPROVPINFIDO;
-                    chkProviderPinPacked.Text = "Packed : " + res.CTRLPROVPINPACKED;
-                    chkProviderPinTPM.Text = "TPM : " + res.CTRLPROVPINTPM;
 
                     chkProviderPinNone.Checked = webprov.PinRequirements.HasFlag(WebAuthNPinRequirements.None);
                     chkProviderPinNone.Enabled = _provider.Enabled;
@@ -777,6 +786,8 @@ namespace Neos.IdentityServer.Console.Controls
                     chkProviderPinPacked.Enabled = _provider.Enabled;
                     chkProviderPinTPM.Checked = webprov.PinRequirements.HasFlag(WebAuthNPinRequirements.TPM);
                     chkProviderPinTPM.Enabled = _provider.Enabled;
+                    chkProviderPinApple.Checked = webprov.PinRequirements.HasFlag(WebAuthNPinRequirements.Apple);
+                    chkProviderPinApple.Enabled = _provider.Enabled;
                     chkProviderPin.Checked = _provider.PinRequired;
                     chkProviderPin.Enabled = _provider.Enabled;
                 }
@@ -847,6 +858,38 @@ namespace Neos.IdentityServer.Console.Controls
             catch (Exception ex)
             {
                 errors.SetError(chkProviderPin, ex.Message);
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
+                this._snapin.Console.ShowDialog(messageBoxParameters);
+            }
+            finally
+            {
+                this.Cursor = Cursors.Default;
+            }
+        }
+
+        /// <summary>
+        /// ChkProviderPinAppleChanged method implementation
+        /// </summary>
+        private void ChkProviderPinAppleChanged(object sender, EventArgs e)
+        {
+            this.Cursor = Cursors.WaitCursor;
+            try
+            {
+                if (chkProviderPinTPM.Checked)
+                    Config.WebAuthNProvider.PinRequirements |= WebAuthNPinRequirements.Apple;
+                else
+                    Config.WebAuthNProvider.PinRequirements &= ~WebAuthNPinRequirements.Apple;
+                if (_view.AutoValidate != AutoValidate.Disable)
+                    ManagementService.ADFSManager.SetDirty(true);
+            }
+            catch (Exception ex)
+            {
+                errors.SetError(chkProviderPinApple, ex.Message);
                 MessageBoxParameters messageBoxParameters = new MessageBoxParameters
                 {
                     Text = ex.Message,
@@ -1184,7 +1227,7 @@ namespace Neos.IdentityServer.Console.Controls
                         break;
                     case PreferredMethod.Azure:
                         Config.AzureProvider.IsRequired = chkProviderRequired.Checked;
-                        chkProviderEnroll.Enabled = false;
+                        chkProviderEnroll.Enabled = Config.AzureProvider.Enabled;
                         chkProviderPin.Enabled = Config.AzureProvider.Enabled;
                         break;
                     case PreferredMethod.Biometrics:
@@ -1213,9 +1256,6 @@ namespace Neos.IdentityServer.Console.Controls
             }
         }
     }
-
-    // Pin code required when unverified"
-
 
     public partial class MFAProvidersValidationControl : Panel, IMMCRefreshData
     {
@@ -8598,7 +8638,7 @@ namespace Neos.IdentityServer.Console.Controls
         private ErrorProvider errors;
 
         private TextBox txtTOTPShadows;
-        private TextBox txtHashAlgo;
+      //  private TextBox txtHashAlgo;
         private ComboBox cbFormat;
         private ComboBox cbKeySize;
         private Panel _panelWiz;
@@ -8614,6 +8654,12 @@ namespace Neos.IdentityServer.Console.Controls
         private Label lblSecMode;
         private Label lblHashAlgo;
         private Label lblTOTPShadows;
+        private Label lblTOTPDigits;
+        private Label lblTOTPDuration;
+        private ComboBox cbDuration;
+        private ComboBox cbDigits;
+        private Label lblTOTPWarning;
+        private ComboBox cbHashAlgo;
 
         /// <summary>
         /// ConfigurationControl Constructor
@@ -8714,56 +8760,132 @@ namespace Neos.IdentityServer.Console.Controls
                 _view.RefreshProviderInformation();
 
                 this.Dock = DockStyle.Top;
-                this.Height = 250;
+                this.Height = 210;
                 this.Width = 1050;
                 this.Margin = new Padding(30, 5, 30, 5);
 
                 _panel.Width = 20;
-                _panel.Height = 220;
+                _panel.Height = 180;
                 this.Controls.Add(_panel);
 
                 _txtpanel.Left = 20;
                 _txtpanel.Width = this.Width - 20;
-                _txtpanel.Height = 220;
+                _txtpanel.Height = 180;
                 _txtpanel.BackColor = System.Drawing.SystemColors.Control;
                 this.Controls.Add(_txtpanel);
 
-                lblTOTPShadows = new Label();
-                lblTOTPShadows.Text = res.CTRLGLMAXCODES + " : ";
-                lblTOTPShadows.Left = 10;
-                lblTOTPShadows.Top = 19;
-                lblTOTPShadows.Width = 170;
+                lblTOTPShadows = new Label
+                {
+                    Text = res.CTRLGLMAXCODES + " : ",
+                    Left = 10,
+                    Top = 19,
+                    Width = 170
+                };
                 _txtpanel.Controls.Add(lblTOTPShadows);
 
-                txtTOTPShadows = new TextBox();
-                txtTOTPShadows.Text = Config.OTPProvider.TOTPShadows.ToString();
-                txtTOTPShadows.Left = 180;
-                txtTOTPShadows.Top = 15;
-                txtTOTPShadows.Width = 20;
-                txtTOTPShadows.TextAlign = HorizontalAlignment.Center;
-                txtTOTPShadows.MaxLength = 2;
+                txtTOTPShadows = new TextBox
+                {
+                    Text = Config.OTPProvider.TOTPShadows.ToString(),
+                    Left = 180,
+                    Top = 15,
+                    Width = 20,
+                    TextAlign = HorizontalAlignment.Center,
+                    MaxLength = 2
+                };
                 txtTOTPShadows.Validating += TOTPShadowsValidating;
                 txtTOTPShadows.Validated += TOTPShadowsValidated;
                 _txtpanel.Controls.Add(txtTOTPShadows);
 
-                lblHashAlgo = new Label();
-                lblHashAlgo.Text = res.CTRLGLHASH + " : ";
-                lblHashAlgo.Left = 10;
-                lblHashAlgo.Top = 51;
-                lblHashAlgo.Width = 170;
+                lblHashAlgo = new Label
+                {
+                    Text = res.CTRLGLHASH + " : ",
+                    Left = 10,
+                    Top = 51,
+                    Width = 170
+                };
                 _txtpanel.Controls.Add(lblHashAlgo);
 
-                txtHashAlgo = new TextBox();
-                txtHashAlgo.Text = Config.OTPProvider.Algorithm.ToString();
-                txtHashAlgo.Left = 180;
-                txtHashAlgo.Top = 47;
-                txtHashAlgo.Width = 60;
-                txtHashAlgo.TextAlign = HorizontalAlignment.Center;
-                txtHashAlgo.MaxLength = 6;
-                txtHashAlgo.CharacterCasing = CharacterCasing.Upper;
+                MMCTOTPHashModeList lHashAlgo = new MMCTOTPHashModeList();
+                cbHashAlgo = new ComboBox()
+                {
+                    DropDownStyle = ComboBoxStyle.DropDownList,
+                    Left = 180,
+                    Top = 47,
+                    Width = 70,
+                    MaxLength = 6
+                };
+                _txtpanel.Controls.Add(cbHashAlgo);
+
+                cbHashAlgo.DataSource = lHashAlgo;
+                cbHashAlgo.ValueMember = "ID";
+                cbHashAlgo.DisplayMember = "Label";
+                cbHashAlgo.SelectedValue = Config.OTPProvider.Algorithm;
+                cbHashAlgo.SelectedIndexChanged += SelectedTOTPHashAlgoChanged;
+
+               /* txtHashAlgo = new TextBox
+                {
+                    Text = Config.OTPProvider.Algorithm.ToString(),
+                    Left = 180,
+                    Top = 47,
+                    Width = 60,
+                    TextAlign = HorizontalAlignment.Center,
+                    MaxLength = 6,
+                    CharacterCasing = CharacterCasing.Upper
+                };
                 txtHashAlgo.Validating += HashAlgoValidating;
                 txtHashAlgo.Validated += HashAlgoValidated;
-                _txtpanel.Controls.Add(txtHashAlgo);
+                _txtpanel.Controls.Add(txtHashAlgo); */
+
+                lblTOTPDigits = new Label
+                {
+                    Text = "* "+res.CTRLGLMAXDIGITS + " : ",
+                    Left = 280,
+                    Top = 19,
+                    Width = 95
+                };
+                _txtpanel.Controls.Add(lblTOTPDigits);
+
+                MMCTOTPDigitsList ldigits = new MMCTOTPDigitsList();
+                cbDigits = new ComboBox()
+                {
+                    DropDownStyle = ComboBoxStyle.DropDownList,
+                    Left = 380,
+                    Top = 15,
+                    Width = 120,
+                };
+                _txtpanel.Controls.Add(cbDigits);
+
+                cbDigits.DataSource = ldigits;
+                cbDigits.ValueMember = "ID";
+                cbDigits.DisplayMember = "Label";
+                cbDigits.SelectedValue = Config.OTPProvider.TOTPDigits;
+                cbDigits.SelectedIndexChanged += SelectedTOTPDigitsChanged;
+
+                lblTOTPDuration = new Label
+                {
+                    Text = "* "+res.CTRLGLDURATION + " : ",
+                    Left = 280,
+                    Top = 51,
+                    Width = 95
+                };
+                _txtpanel.Controls.Add(lblTOTPDuration);
+
+                MMCTOTPDurationList lduration = new MMCTOTPDurationList();
+                cbDuration = new ComboBox()
+                {
+                    DropDownStyle = ComboBoxStyle.DropDownList,
+                    Left = 380,
+                    Top = 47,
+                    Width = 120,
+                };
+                _txtpanel.Controls.Add(cbDuration);
+
+                cbDuration.DataSource = lduration;
+                cbDuration.ValueMember = "ID";
+                cbDuration.DisplayMember = "Label";
+                cbDuration.SelectedValue = Config.OTPProvider.TOTPDuration;
+                cbDuration.SelectedIndexChanged += SelectedTOTPDurationChanged;
+
 
                 lblSecMode = new Label()
                 {
@@ -8781,7 +8903,7 @@ namespace Neos.IdentityServer.Console.Controls
                     DropDownStyle = ComboBoxStyle.DropDownList,
                     Left = 180,
                     Top = 96,
-                    Width = 200,
+                    Width = 320,
                 };
                 _txtpanel.Controls.Add(cbFormat);
 
@@ -8804,7 +8926,7 @@ namespace Neos.IdentityServer.Console.Controls
                     DropDownStyle = ComboBoxStyle.DropDownList,
                     Left = 180,
                     Top = 128,
-                    Width = 200
+                    Width = 320
                 };
                 _txtpanel.Controls.Add(cbKeySize);
 
@@ -8814,17 +8936,26 @@ namespace Neos.IdentityServer.Console.Controls
                 cbKeySize.SelectedValue = Config.KeysConfig.KeySize;
                 cbKeySize.SelectedIndexChanged += SelectedKeySizeChanged;
 
+                lblTOTPWarning = new Label
+                {
+                    Text = "(*) " + res.CTRLGLTOTPWARN,
+                    Left = 10,
+                    Top = 160,
+                    Width = 800
+                };
+                _txtpanel.Controls.Add(lblTOTPWarning);
+
                 _panelWiz = new Panel();
-                _panelWiz.Left = 500;
+                _panelWiz.Left = 520;
                 _panelWiz.Top = 10;
-                _panelWiz.Height = 200;
-                _panelWiz.Width = 400;
+                _panelWiz.Height = 160;
+                _panelWiz.Width = 350;               
                 _txtpanel.Controls.Add(_panelWiz);
 
                 lblTOTPWizard = new Label();
                 lblTOTPWizard.Text = res.CTRLSECWIZARD + " : ";
                 lblTOTPWizard.Left = 10;
-                lblTOTPWizard.Top = 41;
+                lblTOTPWizard.Top = 5;
                 lblTOTPWizard.Width = 250;
                 _panelWiz.Controls.Add(lblTOTPWizard);
 
@@ -8832,7 +8963,7 @@ namespace Neos.IdentityServer.Console.Controls
                 chkAllowMicrosoft.Text = res.CTRLGLSHOWMICROSOFT;
                 chkAllowMicrosoft.Checked = !Config.OTPProvider.WizardOptions.HasFlag(OTPWizardOptions.NoMicrosoftAuthenticator);
                 chkAllowMicrosoft.Left = 20;
-                chkAllowMicrosoft.Top = 65;
+                chkAllowMicrosoft.Top = 30;
                 chkAllowMicrosoft.Width = 300;
                 chkAllowMicrosoft.CheckedChanged += AllowMicrosoftCheckedChanged;
                 _panelWiz.Controls.Add(chkAllowMicrosoft);
@@ -8841,7 +8972,7 @@ namespace Neos.IdentityServer.Console.Controls
                 chkAllowGoogle.Text = res.CTRLGLSHOWGOOGLE;
                 chkAllowGoogle.Checked = !Config.OTPProvider.WizardOptions.HasFlag(OTPWizardOptions.NoGoogleAuthenticator);
                 chkAllowGoogle.Left = 20;
-                chkAllowGoogle.Top = 96;
+                chkAllowGoogle.Top = 61;
                 chkAllowGoogle.Width = 300;
                 chkAllowGoogle.CheckedChanged += AllowGoogleCheckedChanged;
                 _panelWiz.Controls.Add(chkAllowGoogle);
@@ -8850,7 +8981,7 @@ namespace Neos.IdentityServer.Console.Controls
                 chkAllowAuthy.Text = res.CTRLGLSHOWAUTHY;
                 chkAllowAuthy.Checked = !Config.OTPProvider.WizardOptions.HasFlag(OTPWizardOptions.NoAuthyAuthenticator);
                 chkAllowAuthy.Left = 20;
-                chkAllowAuthy.Top = 127;
+                chkAllowAuthy.Top = 92;
                 chkAllowAuthy.Width = 300;
                 chkAllowAuthy.CheckedChanged += AllowAuthyCheckedChanged;
                 _panelWiz.Controls.Add(chkAllowAuthy);
@@ -8859,7 +8990,7 @@ namespace Neos.IdentityServer.Console.Controls
                 chkAllowSearch.Text = res.CTRLGLALLOWGOOGLESEARCH;
                 chkAllowSearch.Checked = !Config.OTPProvider.WizardOptions.HasFlag(OTPWizardOptions.NoGooglSearch);
                 chkAllowSearch.Left = 20;
-                chkAllowSearch.Top = 158;
+                chkAllowSearch.Top = 123;
                 chkAllowSearch.Width = 300;
                 chkAllowSearch.CheckedChanged += AllowSearchGoogleCheckedChanged;
                 _panelWiz.Controls.Add(chkAllowSearch);
@@ -8867,7 +8998,7 @@ namespace Neos.IdentityServer.Console.Controls
                 tblSaveConfig = new LinkLabel();
                 tblSaveConfig.Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPESAVE;
                 tblSaveConfig.Left = 20;
-                tblSaveConfig.Top = 230;
+                tblSaveConfig.Top = 190;
                 tblSaveConfig.Width = 80;
                 tblSaveConfig.LinkClicked += SaveConfigLinkClicked;
                 tblSaveConfig.TabStop = true;
@@ -8876,7 +9007,7 @@ namespace Neos.IdentityServer.Console.Controls
                 tblCancelConfig = new LinkLabel();
                 tblCancelConfig.Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPECANCEL;
                 tblCancelConfig.Left = 110;
-                tblCancelConfig.Top = 230;
+                tblCancelConfig.Top = 190;
                 tblCancelConfig.Width = 80;
                 tblCancelConfig.LinkClicked += CancelConfigLinkClicked;
                 tblCancelConfig.TabStop = true;
@@ -8909,7 +9040,7 @@ namespace Neos.IdentityServer.Console.Controls
                 _view.RefreshProviderInformation();
 
                 txtTOTPShadows.Text = Config.OTPProvider.TOTPShadows.ToString();
-                txtHashAlgo.Text = Config.OTPProvider.Algorithm.ToString();
+               // txtHashAlgo.Text = Config.OTPProvider.Algorithm.ToString();
 
                 chkAllowMicrosoft.Checked = !Config.OTPProvider.WizardOptions.HasFlag(OTPWizardOptions.NoMicrosoftAuthenticator);
 
@@ -8935,7 +9066,8 @@ namespace Neos.IdentityServer.Console.Controls
                 lblSecMode.Text = res.CTRLSECKEYMODE + " : ";
                 lblHashAlgo.Text = res.CTRLGLHASH + " : ";
                 lblTOTPShadows.Text = res.CTRLGLMAXCODES + " : ";
-
+                lblTOTPDuration.Text = res.CTRLGLDURATION + " : ";
+                lblTOTPDigits.Text = res.CTRLGLMAXDIGITS + " : ";
             }
             finally
             {
@@ -8953,7 +9085,7 @@ namespace Neos.IdentityServer.Console.Controls
         /// </summary>
         private void ValidateData()
         {
-            try
+           /* try
             {
                 errors.SetError(txtHashAlgo, "");
                 HashMode hash = (HashMode)Enum.Parse(typeof(HashMode), txtHashAlgo.Text);
@@ -8961,7 +9093,7 @@ namespace Neos.IdentityServer.Console.Controls
             catch (Exception ex)
             {
                 errors.SetError(txtHashAlgo, ex.Message);
-            }
+            } */
             try
             { 
                 errors.SetError(txtTOTPShadows, "");
@@ -9007,43 +9139,18 @@ namespace Neos.IdentityServer.Console.Controls
 
         #region HashAlgo
         /// <summary>
-        /// HashAlgoValidating event
+        /// SelectedTOTPHashAlgoChanged method implmentation
         /// </summary>
-        private void HashAlgoValidating(object sender, CancelEventArgs e)
+        private void SelectedTOTPHashAlgoChanged(object sender, EventArgs e)
         {
-            this.Cursor = Cursors.WaitCursor;
             try
             {
-                if (txtHashAlgo.Modified)
+                if (_view.AutoValidate != AutoValidate.Disable)
                 {
+                    Config.OTPProvider.Algorithm = (HashMode)cbHashAlgo.SelectedValue;
                     ManagementService.ADFSManager.SetDirty(true);
-                    if (string.IsNullOrEmpty(txtHashAlgo.Text))
-                        throw new Exception(res.CTRLNULLOREMPTYERROR);
-                    HashMode hash = (HashMode)Enum.Parse(typeof(HashMode), txtHashAlgo.Text);
-                    Config.OTPProvider.Algorithm = hash;
-                    errors.SetError(txtHashAlgo, "");
+                    UpdateControlsLayouts();
                 }
-            }
-            catch (Exception ex)
-            {
-                e.Cancel = true;
-                errors.SetError(txtHashAlgo, ex.Message);
-            }
-            finally
-            {
-                this.Cursor = Cursors.Default;
-            }
-        }
-
-        /// <summary>
-        /// HashAlgoValidated method implmentation
-        /// </summary>
-        private void HashAlgoValidated(object sender, EventArgs e)
-        {
-            try
-            {
-                Config.OTPProvider.Algorithm = (HashMode)Enum.Parse(typeof(HashMode), txtHashAlgo.Text);
-                ManagementService.ADFSManager.SetDirty(true);
             }
             catch (Exception ex)
             {
@@ -9110,6 +9217,55 @@ namespace Neos.IdentityServer.Console.Controls
             }
         }
         #endregion
+
+
+        /// <summary>
+        /// SelectedTOTPDurationChanged method
+        /// </summary>
+        private void SelectedTOTPDurationChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                if (_view.AutoValidate != AutoValidate.Disable)
+                {
+                    Config.OTPProvider.TOTPDuration = (int)cbDuration.SelectedValue;
+                    ManagementService.ADFSManager.SetDirty(true);
+                    UpdateControlsLayouts();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
+                messageBoxParameters.Text = ex.Message;
+                messageBoxParameters.Buttons = MessageBoxButtons.OK;
+                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                this._snapin.Console.ShowDialog(messageBoxParameters);
+            }
+        }
+
+        /// <summary>
+        /// SelectedTOTPDigitsChanged method
+        /// </summary>
+        private void SelectedTOTPDigitsChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                if (_view.AutoValidate != AutoValidate.Disable)
+                {
+                    Config.OTPProvider.TOTPDigits = (int)cbDigits.SelectedValue;
+                    ManagementService.ADFSManager.SetDirty(true);
+                    UpdateControlsLayouts();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
+                messageBoxParameters.Text = ex.Message;
+                messageBoxParameters.Buttons = MessageBoxButtons.OK;
+                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                this._snapin.Console.ShowDialog(messageBoxParameters);
+            }
+        }
 
         /// <summary>
         /// SelectedFormatChanged method

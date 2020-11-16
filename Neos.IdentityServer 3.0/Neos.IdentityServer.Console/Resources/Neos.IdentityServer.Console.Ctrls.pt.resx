@@ -675,22 +675,16 @@
   <data name="CTRLWEBAUTHNSHOWPII" xml:space="preserve">
     <value>Mostrar registros sensíveis</value>
   </data>
-  <data name="CTRLPROVPINNONE" xml:space="preserve">
-    <value>Necessário quando não verificado</value>
+  <data name="CTRLGLTOTPWARN" xml:space="preserve">
+    <value>suporte rfc6238 - Seu aplicativo autenticador deve apoiá-lo (Yubico, Authy)</value>
   </data>
-  <data name="CTRLPROVPINANDROID" xml:space="preserve">
-    <value>Necessário quando não verificado</value>
+  <data name="CTRLGLDURATION" xml:space="preserve">
+    <value>Duração</value>
   </data>
-  <data name="CTRLPROVPINSAFETYNET" xml:space="preserve">
-    <value>Necessário quando não verificado</value>
+  <data name="CTRLGLMAXDIGITS" xml:space="preserve">
+    <value>Dígitos</value>
   </data>
-  <data name="CTRLPROVPINFIDO" xml:space="preserve">
-    <value>Necessário quando não verificado</value>
-  </data>
-  <data name="CTRLPROVPINPACKED" xml:space="preserve">
-    <value>Necessário quando não verificado</value>
-  </data>
-  <data name="CTRLPROVPINTPM" xml:space="preserve">
-    <value>Necessário quando não verificado</value>
+  <data name="CTRLPROVPINREQUIRED" xml:space="preserve">
+    <value>Habilite o PIN para autenticador específico quando a presença do usuário não for detectada</value>
   </data>
 </root>

@@ -145,7 +145,7 @@
     <value>Użyj mojego urządzenia biometrycznego</value>
   </data>
   <data name="BIOUIEnrollTaskLabel" xml:space="preserve">
-    <value>Rejestrowanie urządzenia biometrycznego</value>
+    <value>Rejestracja urządzenia biometrycznego</value>
   </data>
   <data name="BIOUIEnrollValidatedLabel" xml:space="preserve">
     <value>Konto zweryfikowane &lt;br&gt; &lt;br&gt; można użyć urządzenia biometrycznego do uwierzytelnienia</value>

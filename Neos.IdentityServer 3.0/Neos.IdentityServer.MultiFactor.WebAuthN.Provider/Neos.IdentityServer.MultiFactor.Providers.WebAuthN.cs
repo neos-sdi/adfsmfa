@@ -838,6 +838,9 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
                             case "tpm":
                                 ctx.PinRequirements = (this.PinRequirements.HasFlag(WebAuthNPinRequirements.TPM));
                                 break;
+                            case "apple":
+                                ctx.PinRequirements = (this.PinRequirements.HasFlag(WebAuthNPinRequirements.Apple));
+                                break;
                             default:
                                 ctx.PinRequirements = false;
                                 break;

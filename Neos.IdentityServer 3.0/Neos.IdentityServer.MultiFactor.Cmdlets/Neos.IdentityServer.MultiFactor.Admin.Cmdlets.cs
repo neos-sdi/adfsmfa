@@ -3586,6 +3586,10 @@ namespace MFA
                                 _target0.KeySize = (KeySizeMode)_config0.KeySize;
                             if (_config0.SecretFormatChanged)
                                 _target0.KeysFormat = (SecretKeyFormat)_config0.KeysFormat;
+                            if (_config0.DigitsChanged)
+                                _target0.Digits = _config0.Digits;
+                            if (_config0.DurationChanged)
+                                _target0.Duration = _config0.Duration;
                             break;
                         case PSProviderType.Email:
                             _target1 = new FlatMailProvider();
@@ -3856,6 +3860,8 @@ namespace MFA
         private string _fullyqualifiedimplementation;
         private string _parameters;
         private int _totpshadows = 2;
+        private int _digits = 6;
+        private int _duration = 30;
         private PSHashMode _algorithm = PSHashMode.SHA1;
         private PSOTPWizardOptions _wizardoptions = PSOTPWizardOptions.All;
         private PSSecretKeyFormat _secretformat = PSSecretKeyFormat.RNG;
@@ -3871,9 +3877,10 @@ namespace MFA
         internal bool EnabledChanged { get; private set; }
         internal bool EnrollWizardChanged { get; private set; }
         internal bool WizardOptionsChanged { get; private set; }      
-
         internal bool KeySizeModeChanged { get; private set; }
         internal bool SecretFormatChanged { get; private set; }
+        internal bool DigitsChanged { get; private set; }
+        internal bool DurationChanged { get; private set; }
 
         /// <summary>
         /// <para type="description">Provider Enabled property.</para>
@@ -4007,6 +4014,36 @@ namespace MFA
             {
                 _algorithm = value;
                 AlgorithmChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">TOTP Provider Code len between 4 and 8. 6 by default</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateRange(4, 8)]
+        public int Digits
+        {
+            get { return _digits; }
+            set
+            {
+                _digits = value;
+                DigitsChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">TOTP Provider Code renew duration in seconds. 30s by default</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        [ValidateSet("30", "60", "90", "120", "150", "180")]
+        public int Duration
+        {
+            get { return _duration; }
+            set
+            {
+                _duration = value;
+                DurationChanged = true;
             }
         }
 

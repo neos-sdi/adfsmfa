@@ -1468,7 +1468,7 @@ namespace Neos.IdentityServer.MultiFactor
         }
 #endregion
 
-#region InvitationRequest
+        #region InvitationRequest
         /// <summary>
         /// GetFormPreRenderHtmlSendAdministrativeRequest implementation
         /// </summary>
@@ -1521,9 +1521,9 @@ namespace Neos.IdentityServer.MultiFactor
             result += "</form>";
             return result;
         }
-#endregion
+        #endregion
 
-#region SendKeyRequest
+        #region SendKeyRequest
         /// <summary>
         /// GetFormPreRenderHtmlSendKeyRequest method implementation
         /// </summary>
@@ -1576,9 +1576,9 @@ namespace Neos.IdentityServer.MultiFactor
             result += "</form>";
             return result;
         }
-#endregion
+        #endregion
 
-#region EnrollOTP
+        #region EnrollOTP
         /// <summary>
         /// GetFormPreRenderHtmlEnrollOTP method implementation
         /// </summary>
@@ -1833,9 +1833,9 @@ namespace Neos.IdentityServer.MultiFactor
             result += "</form>";
             return result;
         }
-#endregion
+        #endregion
 
-#region EnrollEmail
+        #region EnrollEmail
         /// <summary>
         /// GetFormPreRenderHtmlEnrollEmail method implementation
         /// </summary>
@@ -2045,9 +2045,9 @@ namespace Neos.IdentityServer.MultiFactor
             result += "</form>";
             return result;
         }
-#endregion
+        #endregion
 
-#region EnrollPhone
+        #region EnrollPhone
         /// <summary>
         /// GetFormPreRenderHtmlEnrollPhone method implementation
         /// </summary>
@@ -2260,9 +2260,9 @@ namespace Neos.IdentityServer.MultiFactor
             result += "</form>";
             return result;
         }
-#endregion
+        #endregion
 
-#region EnrollBiometrics
+        #region EnrollBiometrics
         /// <summary>
         /// GetFormPreRenderHtmlEnrollBio method implementation
         /// </summary>
@@ -2533,7 +2533,7 @@ namespace Neos.IdentityServer.MultiFactor
         }
 #endregion
 
-#region EnrollPINCode
+        #region EnrollPINCode
         /// <summary>
         /// GetFormPreRenderHtmlEnrollPinCode method implementation
         /// </summary>
@@ -2666,9 +2666,9 @@ namespace Neos.IdentityServer.MultiFactor
             result += "</form>";
             return result;
         }
-#endregion
+        #endregion
 
-#region Private methods
+        #region Private methods
         /// <summary>
         /// GetPartHtmlSelectMethod method ipmplmentation
         /// </summary>
@@ -2935,7 +2935,7 @@ namespace Neos.IdentityServer.MultiFactor
 
             return result;
         }
-#endregion
+        #endregion
     }
 }
 

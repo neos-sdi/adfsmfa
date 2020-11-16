@@ -675,22 +675,16 @@
   <data name="CTRLWEBAUTHNSHOWPII" xml:space="preserve">
     <value>Vis følsomme logfiler</value>
   </data>
-  <data name="CTRLPROVPINNONE" xml:space="preserve">
-    <value>Påkrævet, når ubekræftet</value>
+  <data name="CTRLGLTOTPWARN" xml:space="preserve">
+    <value>rfc6238 support - Din godkender app skal støtte det (Yubico, Authy)</value>
   </data>
-  <data name="CTRLPROVPINANDROID" xml:space="preserve">
-    <value>Påkrævet, når ubekræftet</value>
+  <data name="CTRLGLDURATION" xml:space="preserve">
+    <value>Varighed</value>
   </data>
-  <data name="CTRLPROVPINSAFETYNET" xml:space="preserve">
-    <value>Påkrævet, når ubekræftet</value>
+  <data name="CTRLGLMAXDIGITS" xml:space="preserve">
+    <value>Cifre</value>
   </data>
-  <data name="CTRLPROVPINFIDO" xml:space="preserve">
-    <value>Påkrævet, når ubekræftet</value>
-  </data>
-  <data name="CTRLPROVPINPACKED" xml:space="preserve">
-    <value>Påkrævet, når ubekræftet</value>
-  </data>
-  <data name="CTRLPROVPINTPM" xml:space="preserve">
-    <value>Påkrævet, når ubekræftet</value>
+  <data name="CTRLPROVPINREQUIRED" xml:space="preserve">
+    <value>Aktiver pinkode for en bestemt godkender, når brugerens tilstedeværelse ikke registreres</value>
   </data>
 </root>

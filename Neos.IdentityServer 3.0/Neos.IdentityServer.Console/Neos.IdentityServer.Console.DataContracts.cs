@@ -507,4 +507,129 @@ namespace Neos.IdentityServer.Console
         }
     }
 
+    /// <summary>
+    /// MMCTOTPDurationItem class
+    /// </summary>
+    public class MMCTOTPDurationItem
+    {
+        public int ID { get; set; }
+        public String Label { get; set; }
+
+        public override int GetHashCode()
+        {
+            return ID.GetHashCode();
+        }
+
+        public override bool Equals(object obj)
+        {
+            int paramobj = 30;
+            if (obj is MMCTOTPDurationItem)
+                paramobj = ((MMCTOTPDurationItem)obj).ID;
+            else
+                return false;
+            if (paramobj == this.ID)
+                return true;
+            else
+                return false;
+        }
+    }
+
+    /// <summary>
+    /// MMCTOTPDurationList class implémentation
+    /// </summary>
+    public class MMCTOTPDurationList : BindingList<MMCTOTPDurationItem>
+    {
+        public MMCTOTPDurationList()
+        {
+            this.Add(new MMCTOTPDurationItem() { ID =  30, Label = "30 seconds (default)" });
+            this.Add(new MMCTOTPDurationItem() { ID =  60, Label = "1 minute" });
+            this.Add(new MMCTOTPDurationItem() { ID =  90, Label = "1 minute 30 seconds" });
+            this.Add(new MMCTOTPDurationItem() { ID = 120, Label = "2 minutes" });
+            this.Add(new MMCTOTPDurationItem() { ID = 150, Label = "2 minutes 30 seconds" });
+            this.Add(new MMCTOTPDurationItem() { ID = 180, Label = "3 minutes" });
+        }
+    }
+
+    /// <summary>
+    /// MMCTOTPDurationItem class
+    /// </summary>
+    public class MMCTOTPDigitsItem
+    {
+        public int ID { get; set; }
+        public String Label { get; set; }
+
+        public override int GetHashCode()
+        {
+            return ID.GetHashCode();
+        }
+
+        public override bool Equals(object obj)
+        {
+            int paramobj = 30;
+            if (obj is MMCTOTPDigitsItem)
+                paramobj = ((MMCTOTPDigitsItem)obj).ID;
+            else
+                return false;
+            if (paramobj == this.ID)
+                return true;
+            else
+                return false;
+        }
+    }
+
+    /// <summary>
+    /// MMCTOTPDurationList class implémentation
+    /// </summary>
+    public class MMCTOTPDigitsList : BindingList<MMCTOTPDigitsItem>
+    {
+        public MMCTOTPDigitsList()
+        {
+            this.Add(new MMCTOTPDigitsItem() { ID = 4, Label = "4 digits" });
+            this.Add(new MMCTOTPDigitsItem() { ID = 5, Label = "5 digits" });
+            this.Add(new MMCTOTPDigitsItem() { ID = 6, Label = "6 digits (default)" });
+            this.Add(new MMCTOTPDigitsItem() { ID = 7, Label = "7 digits" });
+            this.Add(new MMCTOTPDigitsItem() { ID = 8, Label = "8 digits" });
+        }
+    }
+
+    /// <summary>
+    /// MMCTOTPHashModeList class implémentation
+    /// </summary>
+    public class MMCTOTPHashModeList : BindingList<MMCTOTPHashModeItem>
+    {
+        public MMCTOTPHashModeList()
+        {
+            this.Add(new MMCTOTPHashModeItem() { ID = HashMode.SHA1,   Label = " SHA1 " });
+            this.Add(new MMCTOTPHashModeItem() { ID = HashMode.SHA256, Label = "SHA256" });
+            this.Add(new MMCTOTPHashModeItem() { ID = HashMode.SHA384, Label = "SHA384" });
+            this.Add(new MMCTOTPHashModeItem() { ID = HashMode.SHA512, Label = "SHA512" });
+        }
+    }
+
+    /// <summary>
+    /// MMCTOTPHashModeItem class
+    /// </summary>
+    public class MMCTOTPHashModeItem
+    {
+        public HashMode ID { get; set; }
+        public String Label { get; set; }
+
+        public override int GetHashCode()
+        {
+            return ID.GetHashCode();
+        }
+
+        public override bool Equals(object obj)
+        {
+            HashMode paramobj = HashMode.SHA1;
+            if (obj is MMCTOTPHashModeItem)
+                paramobj = ((MMCTOTPHashModeItem)obj).ID;
+            else
+                return false;
+            if (paramobj == this.ID)
+                return true;
+            else
+                return false;
+        }
+    }
 }

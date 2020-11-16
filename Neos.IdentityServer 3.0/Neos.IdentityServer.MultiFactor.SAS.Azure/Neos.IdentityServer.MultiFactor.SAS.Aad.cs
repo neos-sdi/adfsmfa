@@ -62,7 +62,7 @@ namespace Neos.IdentityServer.MultiFactor.SAS
 			this._clientId = clientId;
             this._thumbprint = thumbprint;
 			this.GetClientCredentials();
-			using (RegistryKey registryKey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\ADFS"))
+			using (RegistryKey registryKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\ADFS"))
 			{
 				if (registryKey != null)
 				{

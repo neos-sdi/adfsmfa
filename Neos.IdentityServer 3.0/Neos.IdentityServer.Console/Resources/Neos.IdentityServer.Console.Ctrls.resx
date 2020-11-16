@@ -675,22 +675,16 @@
   <data name="CTRLWEBAUTHNSHOWPII" xml:space="preserve">
     <value>Show sensitive logs</value>
   </data>
-  <data name="CTRLPROVPINNONE" xml:space="preserve">
-    <value>Required when unverified </value>
+  <data name="CTRLGLDURATION" xml:space="preserve">
+    <value>Duration</value>
   </data>
-  <data name="CTRLPROVPINANDROID" xml:space="preserve">
-    <value>Required when unverified</value>
+  <data name="CTRLGLMAXDIGITS" xml:space="preserve">
+    <value>Digits</value>
   </data>
-  <data name="CTRLPROVPINSAFETYNET" xml:space="preserve">
-    <value>Required when unverified</value>
+  <data name="CTRLGLTOTPWARN" xml:space="preserve">
+    <value>rfc6238 support - Your authenticator app must support it (Yubico, Authy) </value>
   </data>
-  <data name="CTRLPROVPINFIDO" xml:space="preserve">
-    <value>Required when unverified</value>
-  </data>
-  <data name="CTRLPROVPINPACKED" xml:space="preserve">
-    <value>Required when unverified</value>
-  </data>
-  <data name="CTRLPROVPINTPM" xml:space="preserve">
-    <value>Required when unverified</value>
+  <data name="CTRLPROVPINREQUIRED" xml:space="preserve">
+    <value>Enable PIN for specific authenticator when user presence not detected</value>
   </data>
 </root>

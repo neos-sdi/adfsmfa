@@ -1027,9 +1027,10 @@ namespace Neos.IdentityServer.MultiFactor.Data
         public static int CleanOrphanedPrivateKeys()
         {
             int result = 0;
+            char sep = Path.DirectorySeparatorChar;
             List<string> paths = new List<string>()
             {
-                Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\Microsoft\Crypto\RSA\MachineKeys\",
+                Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + sep + "Microsoft" + sep + "Crypto" + sep + "RSA" + sep + "MachineKeys"+ sep,
                // Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\Microsoft\Crypto\Keys\"
             };
             foreach (string pth in paths)
@@ -1129,10 +1130,8 @@ namespace Neos.IdentityServer.MultiFactor.Data
                             }
                             if (!string.IsNullOrEmpty(fileName))
                             {
-                              //  string keysfullpath = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\Microsoft\Crypto\Keys\" + fileName;
-                                string machinefullpath = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\Microsoft\Crypto\RSA\MachineKeys\" + fileName;
-                              //  if (File.Exists(keysfullpath))
-                              //      InternalUpdateACLs(keysfullpath);
+                                char sep = Path.DirectorySeparatorChar;                                
+                                string machinefullpath = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + sep + "Microsoft" + sep + "Crypto" + sep + "RSA" + sep + "MachineKeys" + sep + fileName;
                                 if (File.Exists(machinefullpath))
                                     InternalUpdateACLs(machinefullpath);
                             }

@@ -178,7 +178,8 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// </summary>
         public override bool DoImport()
         {
-            string filename = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\MFA\\adimport-" + DateTime.Now.ToFileTime().ToString() + ".log";
+            char sep = Path.DirectorySeparatorChar;
+            string filename = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + sep + "MFA" + sep + "adimport-" + DateTime.Now.ToFileTime().ToString() + ".log";
             TraceListener listen = InitializeTrace(filename);
             try
             {

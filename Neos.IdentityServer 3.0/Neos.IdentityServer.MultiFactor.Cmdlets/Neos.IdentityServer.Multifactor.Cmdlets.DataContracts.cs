@@ -1379,6 +1379,16 @@ namespace MFA
         public PSHashMode Algorithm { get; set; }
 
         /// <summary>
+        /// <para type="description">TOTP Provider Code len between 4 and 8. 6 by default</para>
+        /// </summary>
+        public int Digits { get; set; }
+
+        /// <summary>
+        /// <para type="description">TOTP Provider Code renew duration in seconds. 30s1 by default</para>
+        /// </summary>
+        public int Duration { get; set; }
+
+        /// <summary>
         /// <para type="description">Set TOP Wizard Application list enabled/ disabled.</para>
         /// </summary>
         public PSOTPWizardOptions WizardOptions { get; set; }
@@ -1412,6 +1422,8 @@ namespace MFA
                     ForceWizard = (PSForceWizardMode)otp.ForceWizard,
                     TOTPShadows = otp.TOTPShadows,
                     Algorithm = (MFA.PSHashMode)otp.Algorithm,
+                    Digits = otp.Digits,
+                    Duration = otp.Duration,
                     PinRequired = otp.PinRequired,
                     WizardOptions = (PSOTPWizardOptions)otp.WizardOptions,
                     FullQualifiedImplementation = otp.FullyQualifiedImplementation,
@@ -1441,6 +1453,8 @@ namespace MFA
                     ForceWizard = (ForceWizardMode)otp.ForceWizard,
                     TOTPShadows = otp.TOTPShadows,
                     Algorithm = (HashMode)otp.Algorithm,
+                    Digits = otp.Digits,
+                    Duration = otp.Duration,
                     PinRequired = otp.PinRequired,
                     WizardOptions = (OTPWizardOptions)otp.WizardOptions,
                     KeySize = (KeySizeMode)otp.KeySize,
