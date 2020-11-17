@@ -253,7 +253,7 @@ Click "Continue"</value>
     <value>Registration</value>
   </data>
   <data name="HtmlUIMNoCode" xml:space="preserve">
-    <value>I do not have the code</value>
+    <value>Sign in another way</value>
   </data>
   <data name="HtmlUIMOk" xml:space="preserve">
     <value>Ok</value>

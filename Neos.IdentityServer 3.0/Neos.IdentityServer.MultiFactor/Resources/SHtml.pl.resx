@@ -241,9 +241,6 @@ Kliknij "Kontynuuj"</value>
   <data name="HtmlUIMGoToRegistration" xml:space="preserve">
     <value>Rejestracji</value>
   </data>
-  <data name="HtmlUIMNoCode" xml:space="preserve">
-    <value>Nie mam kodu</value>
-  </data>
   <data name="HtmlUIMOk" xml:space="preserve">
     <value>Ok</value>
   </data>
@@ -284,5 +281,8 @@ Będzie można użyć weryfikacji MFA w przyszłości.</value>
   </data>
   <data name="HtmlEnrollEmail" xml:space="preserve">
     <value>Zarejestruj mój adres e-mail</value>
+  </data>
+  <data name="HtmlUIMNoCode" xml:space="preserve">
+    <value>Zaloguj się w inny sposób</value>
   </data>
 </root>

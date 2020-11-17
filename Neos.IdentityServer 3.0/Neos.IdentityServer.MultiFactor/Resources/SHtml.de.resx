@@ -241,9 +241,6 @@ Klicken Sie auf "Weiter"</value>
   <data name="HtmlUIMGoToRegistration" xml:space="preserve">
     <value>Registrierung</value>
   </data>
-  <data name="HtmlUIMNoCode" xml:space="preserve">
-    <value>Code nicht verfügbar</value>
-  </data>
   <data name="HtmlUIMOk" xml:space="preserve">
     <value>OK</value>
   </data>
@@ -284,5 +281,8 @@ Sie können von jetzt an Multi-Factor-Authentifizierung verwenden.</value>
   </data>
   <data name="HtmlEnrollEmail" xml:space="preserve">
     <value>Meine E-Mail-Adresse registrieren</value>
+  </data>
+  <data name="HtmlUIMNoCode" xml:space="preserve">
+    <value>Auf andere Weise anmelden</value>
   </data>
 </root>

@@ -240,9 +240,6 @@
   <data name="HtmlUIMGoToRegistration" xml:space="preserve">
     <value>registrazione</value>
   </data>
-  <data name="HtmlUIMNoCode" xml:space="preserve">
-    <value>Non ho il codice</value>
-  </data>
   <data name="HtmlUIMOk" xml:space="preserve">
     <value>Ok</value>
   </data>
@@ -283,5 +280,8 @@ In futuro sarà possibile utilizzare la convalida MFA.</value>
   </data>
   <data name="HtmlEnrollEmail" xml:space="preserve">
     <value>Registrare il mio indirizzo email</value>
+  </data>
+  <data name="HtmlUIMNoCode" xml:space="preserve">
+    <value>Accedi in un altro modo</value>
   </data>
 </root>

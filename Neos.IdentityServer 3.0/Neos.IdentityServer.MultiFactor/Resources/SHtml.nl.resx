@@ -240,9 +240,6 @@
   <data name="HtmlUIMGoToRegistration" xml:space="preserve">
     <value>registratie</value>
   </data>
-  <data name="HtmlUIMNoCode" xml:space="preserve">
-    <value>Ik heb de code niet</value>
-  </data>
   <data name="HtmlUIMOk" xml:space="preserve">
     <value>Ok</value>
   </data>
@@ -283,5 +280,8 @@ U in de toekomst MFA-validatie gebruiken.</value>
   </data>
   <data name="HtmlEnrollEmail" xml:space="preserve">
     <value>Mijn e-mailadres inschrijven</value>
+  </data>
+  <data name="HtmlUIMNoCode" xml:space="preserve">
+    <value>Op een andere manier aanmelden</value>
   </data>
 </root>

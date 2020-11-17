@@ -1502,16 +1502,22 @@ namespace Neos.IdentityServer.MultiFactor
                         }
                     }
                     string valuetopass = string.Empty;
-                    bool cancall = true;
                     if (proofData.Properties.ContainsKey("btnclicked"))
                     {
                         int lnk = Convert.ToInt32(proofData.Properties["btnclicked"].ToString());
-                        if (lnk == 1)
-                            valuetopass = proofData.Properties["assertionResponse"].ToString();
-                        else
-                            cancall = false;
+                        switch (lnk)
+                        {
+                            case 1:
+                                valuetopass = proofData.Properties["assertionResponse"].ToString();
+                                break;
+                            case 2:
+                                valuetopass = proofData.Properties["jsError"].ToString();
+                                break;
+                            default:
+                                break;
+                        }
                     }
-                    if (cancall && (int)AuthenticationResponseKind.Error != SetAuthenticationResult(usercontext, valuetopass))
+                    if ((int)AuthenticationResponseKind.Error != SetAuthenticationResult(usercontext, valuetopass))
                     {
                         switch (usercontext.SelectedMethod)
                         {
@@ -1546,8 +1552,6 @@ namespace Neos.IdentityServer.MultiFactor
                     }
                     else
                     {
-                        if (!cancall)
-                            usercontext.CurrentRetries++; // do not passed by SetAuthenticationResult
                         if (usercontext.CurrentRetries >= Config.MaxRetries)
                         {
                             usercontext.UIMode = ProviderPageMode.Locking;
@@ -1556,21 +1560,11 @@ namespace Neos.IdentityServer.MultiFactor
                         else
                         {
                             usercontext.UIMode = ProviderPageMode.SendAuthRequest;
-                            if (!cancall)
-                            {
-                                if (proofData.Properties.ContainsKey("jserror"))
-                                {
-                                   string jserror = proofData.Properties["jserror"].ToString();
-                                   return new AdapterPresentation(this, context, jserror, false);
-                                }
-                                else
-                                   return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorSendingToastInformationRetry"), false);
-
-                            }
+                            if (!string.IsNullOrEmpty(valuetopass))
+                                return new AdapterPresentation(this, context, valuetopass, false);
                             else
-                               return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorSendingToastInformationRetry"), false);
-                        }
-                        
+                                return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorSendingToastInformationRetry"), false);
+                        }                        
                     }
                 }
                 result = new AdapterPresentation(this, context);
@@ -1580,7 +1574,7 @@ namespace Neos.IdentityServer.MultiFactor
                 throw new ExternalAuthenticationException(usercontext.UPN + " : " + ex.Message, context);
             }
             return result;
-#endregion
+        #endregion
         }
 
         /// <summary>
@@ -2826,9 +2820,7 @@ namespace Neos.IdentityServer.MultiFactor
                     provider = RuntimeAuthProvider.GetProvider(method);
 
                 if ((provider != null) && (provider.Enabled))
-                {
                     return provider.PostAuthenticationRequest(usercontext);
-                }
                 else
                     return (int)AuthenticationResponseKind.Error;
             }
@@ -2854,10 +2846,7 @@ namespace Neos.IdentityServer.MultiFactor
                     provider = RuntimeAuthProvider.GetProvider(method);
 
                 if ((provider != null) && (provider.Enabled))
-                {
-                    int res = provider.SetAuthenticationResult(usercontext, totp);
-                    return res;
-                }
+                    return provider.SetAuthenticationResult(usercontext, totp);
                 else
                     return (int)AuthenticationResponseKind.Error;
             }

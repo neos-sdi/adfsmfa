@@ -246,9 +246,6 @@
   <data name="HtmlUIMGoToRegistration" xml:space="preserve">
     <value>Registrering</value>
   </data>
-  <data name="HtmlUIMNoCode" xml:space="preserve">
-    <value>Jeg har ikke koden</value>
-  </data>
   <data name="HtmlUIMOk" xml:space="preserve">
     <value>Ok</value>
   </data>
@@ -281,5 +278,8 @@
   </data>
   <data name="HtmlEnrollEmail" xml:space="preserve">
     <value>Tilmeld min e-mailadresse</value>
+  </data>
+  <data name="HtmlUIMNoCode" xml:space="preserve">
+    <value>Log på på en anden måde</value>
   </data>
 </root>

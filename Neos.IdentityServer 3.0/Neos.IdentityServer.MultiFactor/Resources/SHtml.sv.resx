@@ -241,9 +241,6 @@ Klicka på "Fortsätt"</value>
   <data name="HtmlUIMGoToRegistration" xml:space="preserve">
     <value>Registrering</value>
   </data>
-  <data name="HtmlUIMNoCode" xml:space="preserve">
-    <value>Jag har inte koden</value>
-  </data>
   <data name="HtmlUIMOk" xml:space="preserve">
     <value>Ok</value>
   </data>
@@ -284,5 +281,8 @@ Du kommer att kunna använda MFA validering i framtiden.</value>
   </data>
   <data name="HtmlEnrollEmail" xml:space="preserve">
     <value>Registrera min e-postadress</value>
+  </data>
+  <data name="HtmlUIMNoCode" xml:space="preserve">
+    <value>Logga på ett annat sätt</value>
   </data>
 </root>

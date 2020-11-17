@@ -249,9 +249,6 @@
   <data name="HtmlUIMGoToRegistration" xml:space="preserve">
     <value>Enregistrement</value>
   </data>
-  <data name="HtmlUIMNoCode" xml:space="preserve">
-    <value>Je n’ai pas le code</value>
-  </data>
   <data name="HtmlUIMOk" xml:space="preserve">
     <value>D'accord</value>
   </data>
@@ -281,5 +278,8 @@
   </data>
   <data name="HtmlUINext" xml:space="preserve">
     <value>Ignorer</value>
+  </data>
+  <data name="HtmlUIMNoCode" xml:space="preserve">
+    <value>Se connecter d’une autre manière</value>
   </data>
 </root>

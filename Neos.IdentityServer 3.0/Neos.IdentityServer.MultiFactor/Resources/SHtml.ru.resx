@@ -241,9 +241,6 @@
   <data name="HtmlUIMGoToRegistration" xml:space="preserve">
     <value>регистрация</value>
   </data>
-  <data name="HtmlUIMNoCode" xml:space="preserve">
-    <value>У меня нет кода</value>
-  </data>
   <data name="HtmlUIMOk" xml:space="preserve">
     <value>Ok</value>
   </data>
@@ -284,5 +281,8 @@
   </data>
   <data name="HtmlEnrollEmail" xml:space="preserve">
     <value>Зарегистрируйте свой адрес электронной почты</value>
+  </data>
+  <data name="HtmlUIMNoCode" xml:space="preserve">
+    <value>Подпишитесь по-другому</value>
   </data>
 </root>

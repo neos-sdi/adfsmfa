@@ -246,9 +246,6 @@
   <data name="HtmlUIMGoToRegistration" xml:space="preserve">
     <value>登録</value>
   </data>
-  <data name="HtmlUIMNoCode" xml:space="preserve">
-    <value>私はコードを持っていません</value>
-  </data>
   <data name="HtmlUIMOk" xml:space="preserve">
     <value>わかりました</value>
   </data>
@@ -281,5 +278,8 @@
   </data>
   <data name="HtmlEnrollEmail" xml:space="preserve">
     <value>自分のメールアドレスを登録する</value>
+  </data>
+  <data name="HtmlUIMNoCode" xml:space="preserve">
+    <value>別の方法で署名する</value>
   </data>
 </root>

@@ -241,9 +241,6 @@ Faceți clic pe "continuați"</value>
   <data name="HtmlUIMGoToRegistration" xml:space="preserve">
     <value>Înregistrare</value>
   </data>
-  <data name="HtmlUIMNoCode" xml:space="preserve">
-    <value>Nu am codul</value>
-  </data>
   <data name="HtmlUIMOk" xml:space="preserve">
     <value>Ok</value>
   </data>
@@ -284,5 +281,8 @@ Veți putea utiliza validarea MFA în viitor.</value>
   </data>
   <data name="HtmlEnrollEmail" xml:space="preserve">
     <value>Înscrierea adresei mele de e-mail</value>
+  </data>
+  <data name="HtmlUIMNoCode" xml:space="preserve">
+    <value>Conectați-vă în alt mod</value>
   </data>
 </root>

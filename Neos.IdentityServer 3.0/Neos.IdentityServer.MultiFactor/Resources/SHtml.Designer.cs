@@ -487,7 +487,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à I do not have the code.
+        ///   Recherche une chaîne localisée semblable à Sign in another way.
         /// </summary>
         internal static string HtmlUIMNoCode {
             get {

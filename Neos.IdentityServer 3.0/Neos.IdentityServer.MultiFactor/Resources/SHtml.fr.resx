@@ -243,9 +243,6 @@
   <data name="HtmlUIMGoToRegistration" xml:space="preserve">
     <value>Enregistrement</value>
   </data>
-  <data name="HtmlUIMNoCode" xml:space="preserve">
-    <value>Je n'ai pas de code</value>
-  </data>
   <data name="HtmlUIMOk" xml:space="preserve">
     <value>Ok</value>
   </data>
@@ -283,5 +280,8 @@ Vous pourrez utiliser la validation MFA à l'avenir.</value>
   </data>
   <data name="HtmlLabelWRAddBiometrics" xml:space="preserve">
     <value>Ajoutez un dispositif biométrique</value>
+  </data>
+  <data name="HtmlUIMNoCode" xml:space="preserve">
+    <value>Se connecter d’une autre manière</value>
   </data>
 </root>
