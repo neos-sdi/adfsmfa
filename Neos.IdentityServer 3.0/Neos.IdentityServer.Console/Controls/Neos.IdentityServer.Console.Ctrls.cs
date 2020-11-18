@@ -790,6 +790,8 @@ namespace Neos.IdentityServer.Console.Controls
                     chkProviderPinApple.Enabled = _provider.Enabled;
                     chkProviderPin.Checked = _provider.PinRequired;
                     chkProviderPin.Enabled = _provider.Enabled;
+
+                    lblRequiredPinDesc.Text = res.CTRLPROVPINREQUIRED;
                 }
                 else if (_provider is NeosPlugProvider)
                 {
