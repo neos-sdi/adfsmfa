@@ -127,9 +127,8 @@ namespace Neos.IdentityServer.MultiFactor
                         dsusr.PropertiesToLoad.Add("sAMAccountName");
                         dsusr.PropertiesToLoad.Add("msDS-PrincipalName");
                         dsusr.PropertiesToLoad.Add("userAccountControl");
-                        dsusr.ReferralChasing = ReferralChasingOption.All;
 
-                        if (!string.IsNullOrEmpty(mailattribute))
+                       if (!string.IsNullOrEmpty(mailattribute))
                             dsusr.PropertiesToLoad.Add(mailattribute);
                         else
                         {
@@ -144,7 +143,7 @@ namespace Neos.IdentityServer.MultiFactor
                             dsusr.PropertiesToLoad.Add("otherMobile");
                             dsusr.PropertiesToLoad.Add("telephoneNumber");
                         }
-                        dsusr.SizeLimit = 0; // _host.MaxRows;
+                        dsusr.SizeLimit = 0; // _host.MaxRows; 
 
                         SearchResultCollection src = dsusr.FindAll();
                         if (src != null)

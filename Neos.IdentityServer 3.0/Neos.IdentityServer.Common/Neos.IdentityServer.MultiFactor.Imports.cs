@@ -18,6 +18,7 @@
 using Neos.IdentityServer.MultiFactor.Data;
 using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
@@ -241,18 +242,37 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                     Trace.TraceInformation(string.Format("Importing user {0} from AD", reg.UPN));
                     try
                     {
-                        reg.PIN = Config.DefaultPin;
-                        client2.AddMFAUser(reg, ForceNewKey, true);
-                        Trace.TraceInformation(string.Format("User {0} Imported in MFA", reg.UPN));
+                        MFAUser ext = client2.GetMFAUser(reg.UPN);
+                        if (ext == null)
+                        {
+                            reg.PIN = Config.DefaultPin;
+                            client2.AddMFAUser(reg, ForceNewKey, false);
+                            Trace.TraceInformation(string.Format("User {0} Imported in MFA", reg.UPN));
+                            if (!string.IsNullOrEmpty(reg.MailAddress))
+                            {
+                                if (SendEmail)
+                                {
+                                    string qrcode = KeysManager.EncodedKey(reg.UPN);
+                                    CultureInfo info = null;
+                                    try
+                                    {
+                                        info = CultureInfo.CurrentUICulture;
+                                    }
+                                    catch
+                                    {
+                                        info = new CultureInfo(Config.DefaultCountryCode);
+                                    }
+                                    MailUtilities.SendKeyByEmail(reg.MailAddress, reg.UPN, qrcode, Config.MailProvider, Config, info);
+                                    Trace.TraceInformation(string.Format("Sending Sensitive mail for User {0} Imported in MFA", reg.UPN));
+                                }
+                            }
+                            RecordsCount++;
+                        }
                     }
                     catch (Exception ex)
                     {
                         ErrorsCount++;
                         Trace.TraceError("Error importing Record N° {0} \r\r {1}", (RecordsCount + 1).ToString(), ex.Message);
-                    }
-                    finally
-                    {
-                        RecordsCount++;
                     }
                 }
             }

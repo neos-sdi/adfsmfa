@@ -216,63 +216,6 @@ namespace Neos.IdentityServer.MultiFactor.Data
         }
 
         /// <summary>
-        /// GetDirectoryEntry() method implmentation
-        /// </summary>
-      /*  internal static DirectoryEntry GetDirectoryEntry(ADDSHost host, ADDSHostForest forest, bool usessl)
-        {
-            string root = "LDAP://";
-            DirectoryEntry entry = null;
-            if (!string.IsNullOrEmpty(host.DomainName))
-            {
-                if (usessl)
-                    entry = new DirectoryEntry(root + host.DomainName + ":636");
-                else
-                    entry = new DirectoryEntry(root + host.DomainName);
-            }
-            else
-            {
-                if (usessl)
-                    entry = new DirectoryEntry(root + forest.ForestDNS + ":636");
-                else
-                    entry = new DirectoryEntry(root + forest.ForestDNS);
-            }
-            if (!string.IsNullOrEmpty(host.Account))
-                entry.Username = host.Account;
-            if (!string.IsNullOrEmpty(host.Password))
-                entry.Password = host.Password;
-            return entry;
-        } */
-
-        /// <summary>
-        /// GetDirectoryEntry() method implmentation
-        /// </summary>
-      /*  internal static DirectoryEntry GetDirectoryEntry(ADDSHost host, bool usessl)
-        {
-            string root = "LDAP://";
-            DirectoryEntry entry = null;
-            if (!string.IsNullOrEmpty(host.DomainName))
-            {
-                if (usessl)
-                    entry = new DirectoryEntry(root + host.DomainName + ":636");
-                else
-                    entry = new DirectoryEntry(root + host.DomainName);
-            }
-            else
-            {
-                Domain dom = Domain.GetComputerDomain();
-                if (usessl)
-                    entry = new DirectoryEntry(root + dom.Name + ":636");
-                else
-                    entry = new DirectoryEntry(root + dom.Name);
-            }
-            if (!string.IsNullOrEmpty(host.Account))
-                entry.Username = host.Account;
-            if (!string.IsNullOrEmpty(host.Password))
-                entry.Password = host.Password;
-            return entry;
-        } */
-
-        /// <summary>
         /// GetDirectoryEntry method implmentation
         /// </summary>
         internal static DirectoryEntry GetDirectoryEntry(string domainname, string username, string password, bool usessl)
@@ -333,57 +276,33 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// <summary>
         /// GetDirectoryEntry() method implmentation
         /// </summary>
-       /* internal static DirectoryEntry GetDirectoryEntry(ADDSHost host, string path, bool usessl)
-        {
-            string root = "LDAP://";
-
-            DirectoryEntry entry = null;
-            if (!string.IsNullOrEmpty(host.DomainName))
-            {
-                if (usessl)
-                    entry = new DirectoryEntry(root + host.DomainName+":636");
-                else
-                    entry = new DirectoryEntry(root + host.DomainName);
-            }
-            else
-            {
-                Domain dom = Domain.GetComputerDomain();
-                if (usessl)
-                    entry = new DirectoryEntry(root + dom.Name + ":636");
-                else
-                    entry = new DirectoryEntry(root + dom.Name);
-            }
-            entry.Path = path;
-            if (!string.IsNullOrEmpty(host.Account))
-                entry.Username = host.Account;
-            if (!string.IsNullOrEmpty(host.Password))
-                entry.Password = host.Password;
-            return entry;
-        } */
-
-        /// <summary>
-        /// GetDirectoryEntry() method implmentation
-        /// </summary>
         internal static DirectoryEntry GetDirectoryEntry(string domain, string username, string password, string path, bool usessl)
         {
             string root = "LDAP://";
             DirectoryEntry entry = null;
-            if (!string.IsNullOrEmpty(domain))
+            if (string.IsNullOrEmpty(path))
             {
-                if (usessl)
-                    entry = new DirectoryEntry(root + domain + ":636");
-                else
-                    entry = new DirectoryEntry(root + domain);
+                  if (!string.IsNullOrEmpty(domain))
+                  {
+                      if (usessl)
+                          entry = new DirectoryEntry(root + domain + ":636");
+                      else
+                          entry = new DirectoryEntry(root + domain);
+                  }
+                  else
+                  {
+                      Domain dom = Domain.GetComputerDomain();
+                      if (usessl)
+                          entry = new DirectoryEntry(root + dom.Name + ":636");
+                      else
+                          entry = new DirectoryEntry(root + dom.Name);
+                  } 
             }
             else
             {
-                Domain dom = Domain.GetComputerDomain();
-                if (usessl)
-                    entry = new DirectoryEntry(root + dom.Name + ":636");
-                else
-                    entry = new DirectoryEntry(root + dom.Name);
+                entry = new DirectoryEntry();
+                entry.Path = root + path;
             }
-            entry.Path = path;
             if (!string.IsNullOrEmpty(username))
                 entry.Username = username;
             if (!string.IsNullOrEmpty(password))

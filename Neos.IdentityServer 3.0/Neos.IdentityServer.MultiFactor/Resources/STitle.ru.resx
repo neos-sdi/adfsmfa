@@ -130,7 +130,7 @@
     <value>Вы должны использовать защитный код для подтверждения вашей личности. Как бы вы хотели получить свой код?</value>
   </data>
   <data name="PasswordPageTitle" xml:space="preserve">
-    <value>Изменение пароля</value>
+    <value>Изменение паролей</value>
   </data>
   <data name="RegistrationPageTitle" xml:space="preserve">
     <value>Требуется регистрация</value>
@@ -139,6 +139,6 @@
     <value>Многофакторная аутентификация</value>
   </data>
   <data name="TitleRedirecting" xml:space="preserve">
-    <value>Перенаправление ...</value>
+    <value>Перенаправление ведется ...</value>
   </data>
 </root>
