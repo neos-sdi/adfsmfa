@@ -163,7 +163,7 @@
     <value>Используйте мое приложение проверки подлинности</value>
   </data>
   <data name="OTPUIEnrollTaskLabel" xml:space="preserve">
-    <value>Регистрация приложения аутентификатора</value>
+    <value>Зарегистрировать приложение проверки подлинности</value>
   </data>
   <data name="OTPUIEnrollValidatedLabel" xml:space="preserve">
     <value>Проверка учетной записи&lt;br&gt;&lt;br&gt;Теперь вы можете использовать приложение для проверки подлинности</value>
@@ -172,16 +172,16 @@
     <value>Используйте приложение проверки подлинности</value>
   </data>
   <data name="OTPUIListOptionLabel" xml:space="preserve">
-    <value>Приложение аутентификации</value>
+    <value>Приложение проверки подлинности</value>
   </data>
   <data name="OTPUIMessage" xml:space="preserve">
-    <value>Введите код проверки, отображаемый в приложении аутентификатора на мобильном устройстве.</value>
+    <value>Введите код проверки, отображаемый в приложении для проверки подлинности на мобильном устройстве.</value>
   </data>
   <data name="OTPUIOTPLabel" xml:space="preserve">
     <value>Введите код</value>
   </data>
   <data name="OTPUIWIZLabel" xml:space="preserve">
-    <value>Зарегистрируйте приложение Authenticator</value>
+    <value>Регистрация приложения для проверки подлинности</value>
   </data>
   <data name="OTPWIZEnroll" xml:space="preserve">
     <value>Зарегистрируйте мое приложение проверки подлинности</value>
@@ -229,7 +229,7 @@
     <value>Поставщик многофакторов TOTP</value>
   </data>
   <data name="PROVIDERSMSDESCRIPTION" xml:space="preserve">
-    <value>ОБРАЗец мультифакторного поставщика SMS</value>
+    <value>Образец мультифакторного поставщика SMS</value>
   </data>
   <data name="PROVIDEREMAILDESCRIPTION" xml:space="preserve">
     <value>Отправить по электронной почте мультифакторный провайдер</value>
