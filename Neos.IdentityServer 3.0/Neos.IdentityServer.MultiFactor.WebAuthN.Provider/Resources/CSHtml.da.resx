@@ -162,4 +162,7 @@
   <data name="BIOUIWIZComment" xml:space="preserve">
     <value>Administrer dine biometriske enheder. Vælg tilføj, erstat eller slet individuelle enheder.</value>
   </data>
+  <data name="BIOERRORAUTHREPLAY" xml:space="preserve">
+    <value>Fejl under godkendelsesprocessen ! Sikkerhedsbeskrivelsesdata har været brugt før !</value>
+  </data>
 </root>

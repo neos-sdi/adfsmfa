@@ -297,7 +297,9 @@ namespace Neos.IdentityServer.MultiFactor
                             if (provider.Kind == PreferredMethod.Code)
                             {
                                 AddOrUpdateProvider(PreferredMethod.Code, provider);
-                                provider.Initialize(new OTPProviderParams(cfg.OTPProvider));
+                                OTPProviderParams initdata = new OTPProviderParams(cfg.OTPProvider);
+                                initdata.Config = cfg;
+                                provider.Initialize(initdata);
                             }
                             else
                                 throw new Exception("Invalid Provider Type !");
@@ -306,7 +308,9 @@ namespace Neos.IdentityServer.MultiFactor
                         {
                             provider = new NeosPlugProvider(PreferredMethod.Code);
                             AddOrUpdateProvider(PreferredMethod.Code, provider);
-                            provider.Initialize(new OTPProviderParams(cfg.OTPProvider));
+                            OTPProviderParams initdata = new OTPProviderParams(cfg.OTPProvider);
+                            initdata.Config = cfg;
+                            provider.Initialize(initdata);
                         }
                     }
                     break;
@@ -706,7 +710,9 @@ namespace Neos.IdentityServer.MultiFactor
                                 if (provider.Kind == PreferredMethod.Code)
                                 {
                                     AddOrUpdateProvider(PreferredMethod.Code, provider);
-                                    provider.Initialize(new OTPProviderParams(cfg.OTPProvider));
+                                    OTPProviderParams initdata = new OTPProviderParams(cfg.OTPProvider);
+                                    initdata.Config = cfg;
+                                    provider.Initialize(initdata);
                                 }
                                 else
                                     throw new Exception("Invalid Provider Type !");
@@ -715,7 +721,9 @@ namespace Neos.IdentityServer.MultiFactor
                             {
                                 provider = new NeosPlugProvider(PreferredMethod.Code);
                                 AddOrUpdateProvider(PreferredMethod.Code, provider);
-                                provider.Initialize(new OTPProviderParams(cfg.OTPProvider));
+                                OTPProviderParams initdata = new OTPProviderParams(cfg.OTPProvider);
+                                initdata.Config = cfg;
+                                provider.Initialize(initdata);
                             }
                         }
                         break;
@@ -3419,7 +3427,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// CheckForReplay method implementation
         /// </summary>
-        internal static bool CheckForReplay(MFAConfig config, AuthenticationContext usercontext, HttpListenerRequest request, int totp)
+        internal static bool CheckForReplay(MFAConfig config, AuthenticationContext usercontext,int totp)
         {
             bool OK = false;
             ReplayClient replaymanager = new ReplayClient();
@@ -3434,7 +3442,7 @@ namespace Neos.IdentityServer.MultiFactor
                         MustDispatch = (config.Hosts.ADFSFarm.Servers.Count > 1),
                         ReplayLevel = config.ReplayLevel,
                         Code = totp,
-                        UserIPAdress = request.RemoteEndPoint.Address.ToString(),
+                        UserIPAdress = usercontext.IPAddress,
                         UserName = usercontext.UPN,
                         UserLogon = usercontext.LogonDate,
                         DeliveryWindow = config.DeliveryWindow
@@ -3621,7 +3629,7 @@ namespace Neos.IdentityServer.MultiFactor
             catch (Exception ex)
             {
                 Log.WriteEntry(ex.Message, EventLogEntryType.Error, 800);
-                throw ex;
+                return false;
             }
         }
 
@@ -3684,7 +3692,7 @@ namespace Neos.IdentityServer.MultiFactor
             catch (Exception ex)
             {
                 Log.WriteEntry(ex.Message, EventLogEntryType.Error, 800);
-                throw ex;
+                return false;
             }
         }   
      

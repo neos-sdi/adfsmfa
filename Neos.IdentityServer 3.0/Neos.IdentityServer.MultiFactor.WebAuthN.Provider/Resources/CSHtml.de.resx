@@ -162,4 +162,7 @@
   <data name="BIOUIWIZComment" xml:space="preserve">
     <value>Verwalten Sie Ihre biometrischen Geräte. Wählen Sie einzelne Geräte hinzufügen, ersetzen oder löschen.</value>
   </data>
+  <data name="BIOERRORAUTHREPLAY" xml:space="preserve">
+    <value>Fehler während des Authentifizierungsprozesses ! Security Descriptor Data wurde bereits verwendet!</value>
+  </data>
 </root>

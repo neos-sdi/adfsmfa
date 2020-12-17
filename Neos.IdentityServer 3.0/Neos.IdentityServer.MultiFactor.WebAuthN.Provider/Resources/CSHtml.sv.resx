@@ -162,4 +162,7 @@
   <data name="BIOUIWIZComment" xml:space="preserve">
     <value>Hantera dina biometrienheter. Välj lägg till, ersätt eller ta bort enskilda enheter.</value>
   </data>
+  <data name="BIOERRORAUTHREPLAY" xml:space="preserve">
+    <value>Fel under autentiseringsprocessen ! Säkerhets deskriptor Data har använts tidigare !</value>
+  </data>
 </root>

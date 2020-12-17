@@ -645,6 +645,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         public bool Location { get; set; }
         public bool UserVerificationMethod { get; set; }
         public bool RequireResidentKey { get; set; }
+        public bool? HmacSecret { get; set; }
+        public WebAuthNUserVerification? CredProtect { get; set; }
+        public bool? EnforceCredProtect { get; set; }
 
         /// <summary>
         /// Update method implmentation
@@ -662,7 +665,10 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             this.UserVerificationIndex = otp.Options.UserVerificationIndex;
             this.Location = otp.Options.Location;
             this.UserVerificationMethod = otp.Options.UserVerificationMethod;
-            this.RequireResidentKey = otp.Options.RequireResidentKey; 
+            this.RequireResidentKey = otp.Options.RequireResidentKey;
+            this.HmacSecret = otp.Options.HmacSecret;
+            this.CredProtect = otp.Options.CredProtect;
+            this.EnforceCredProtect = otp.Options.EnforceCredProtect;
         }
 
         /// <summary>
@@ -682,6 +688,10 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             otp.Options.Location = this.Location;
             otp.Options.UserVerificationMethod = this.UserVerificationMethod;
             otp.Options.RequireResidentKey = this.RequireResidentKey;
+            otp.Options.HmacSecret = this.HmacSecret;
+            otp.Options.CredProtect = this.CredProtect;
+            otp.Options.EnforceCredProtect = this.EnforceCredProtect;
+
             ManagementService.ADFSManager.WriteConfiguration(host);
         }
     }

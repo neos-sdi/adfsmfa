@@ -123,4 +123,7 @@
   <data name="ErrorSendingSecretKeyRequest" xml:space="preserve">
     <value>Erreur envoyant une clé sensible à l’utilisateur</value>
   </data>
+  <data name="ErrorReplayToken" xml:space="preserve">
+    <value>Erreur lors du  processus d’authentification ! Le code d'accès unique a été joué auparavant</value>
+  </data>
 </root>

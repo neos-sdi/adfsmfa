@@ -1191,7 +1191,23 @@ namespace MFA
         /// <summary>
         /// <para type="description">Require Resident Key property (boolean).</para>
         /// </summary>
-        public bool RequireResidentKey { get; set; } 
+        public bool RequireResidentKey { get; set; }
+
+        /// <summary>
+        /// <para type="description">Use HMAC encryption.</para>
+        /// </summary>
+        public bool? HmacSecret { get; set; }
+
+        /// <summary>
+        /// <para type="description">Use credential protection.</para>
+        /// </summary>
+        public WebAuthNUserVerification? CredProtect { get; set; }
+
+        /// <summary>
+        /// <para type="description">Force credential protection.</para>
+        /// </summary>
+        public bool? EnforceCredProtect { get; set; }
+
 
         /// <summary>
         /// explicit operator from MMCKeysConfig
@@ -1211,7 +1227,10 @@ namespace MFA
                     UserVerificationIndex = mgr.UserVerificationIndex,
                     Location = mgr.Location,
                     UserVerificationMethod = mgr.UserVerificationMethod,
-                    RequireResidentKey = mgr.RequireResidentKey 
+                    RequireResidentKey = mgr.RequireResidentKey,
+                    HmacSecret = mgr.HmacSecret,
+                    CredProtect = mgr.CredProtect,
+                    EnforceCredProtect = mgr.EnforceCredProtect
                 };
                 return target;
             }
@@ -1236,7 +1255,10 @@ namespace MFA
                     UserVerificationIndex = mgr.UserVerificationIndex,
                     Location = mgr.Location,
                     UserVerificationMethod = mgr.UserVerificationMethod,
-                    RequireResidentKey = mgr.RequireResidentKey
+                    RequireResidentKey = mgr.RequireResidentKey,
+                    HmacSecret = mgr.HmacSecret,
+                    CredProtect = mgr.CredProtect,
+                    EnforceCredProtect = mgr.EnforceCredProtect
                 };
                 return target;
             }

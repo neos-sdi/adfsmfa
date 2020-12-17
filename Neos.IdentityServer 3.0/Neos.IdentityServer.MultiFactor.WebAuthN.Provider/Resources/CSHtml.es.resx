@@ -162,4 +162,7 @@
   <data name="BIOUIWIZComment" xml:space="preserve">
     <value>Gestione sus dispositivos biométricos. Seleccione Agregar, reemplazar o eliminar dispositivos individuales.</value>
   </data>
+  <data name="BIOERRORAUTHREPLAY" xml:space="preserve">
+    <value>Error durante el proceso de autenticación ! Los datos del descriptor de seguridad se han utilizado antes !</value>
+  </data>
 </root>

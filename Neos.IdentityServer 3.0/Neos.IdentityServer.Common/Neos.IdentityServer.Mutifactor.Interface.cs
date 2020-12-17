@@ -79,6 +79,7 @@ namespace Neos.IdentityServer.MultiFactor
         void Initialize(BaseProviderParams externalsystem);
         int PostAuthenticationRequest(AuthenticationContext ctx);
         int SetAuthenticationResult(AuthenticationContext ctx, string result);
+        int SetAuthenticationResult(AuthenticationContext ctx, string result, out string error);
         void GetAuthenticationContext(AuthenticationContext ctx);
         AvailableAuthenticationMethod GetSelectedAuthenticationMethod(AuthenticationContext ctx);
         bool SetSelectedAuthenticationMethod(AuthenticationContext ctx, AuthenticationResponseKind method, bool updateoverride = false);

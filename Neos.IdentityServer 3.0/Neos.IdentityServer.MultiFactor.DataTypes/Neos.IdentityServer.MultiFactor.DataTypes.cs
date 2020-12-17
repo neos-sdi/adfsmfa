@@ -562,6 +562,28 @@ namespace Neos.IdentityServer.MultiFactor
         }
 
         /// <summary>
+        /// IPAddress 
+        /// </summary>
+        [XmlAttribute("IPAddress")]
+        public string IPAddress
+        {
+            get
+            {
+                if (_context.Data.ContainsKey("_authctxipaddress") && _context.Data["_authctxipaddress"] != null)
+                    return _context.Data["_authctxipaddress"].ToString();
+                else
+                    return "127.0.0.1";
+            }
+            set
+            {
+                if (_context.Data.ContainsKey("_authctxipaddress"))
+                    _context.Data["_authctxipaddress"] = value;
+                else
+                    _context.Data.Add("_authctxipaddress", value);
+            }
+        }
+
+        /// <summary>
         /// ActivityId 
         /// </summary>
         [XmlAttribute("ActivityId")]
@@ -1816,6 +1838,7 @@ namespace Neos.IdentityServer.MultiFactor
     /// <summary>
     /// KeysDataManagerEventKind enum
     /// </summary>
+    [Serializable]
     public enum KeysDataManagerEventKind
     {
         Get,
@@ -1826,6 +1849,7 @@ namespace Neos.IdentityServer.MultiFactor
     /// <summary>
     /// DataRepositoryKind enum
     /// </summary>
+    [Serializable]
     public enum DataRepositoryKind
     {
         ADDS = 0,
@@ -1836,7 +1860,7 @@ namespace Neos.IdentityServer.MultiFactor
     /// <summary>
     /// WebAuthNPinRequirements enum
     /// </summary>
-    [Flags]
+    [Flags, Serializable]
     public enum WebAuthNPinRequirements
     {
         Null = 0,
@@ -1847,6 +1871,17 @@ namespace Neos.IdentityServer.MultiFactor
         Packed = 16,
         TPM = 32,
         Apple = 64
+    }
+
+    /// <summary>
+    /// WebAuthNUserVerification enum
+    /// </summary>
+    [Serializable]
+    public enum WebAuthNUserVerification
+    {
+        Optional = 0x1,
+        OptionalWithCredentialIDList = 0x2,
+        Required = 0x3
     }
 
     /// <summary>
@@ -1964,8 +1999,6 @@ namespace Neos.IdentityServer.MultiFactor
         public int DeliveryWindow;
     }
 
-   
-
     /// <summary>
     /// XORUtilities class
     /// </summary>
@@ -2072,6 +2105,12 @@ namespace Neos.IdentityServer.MultiFactor
             }
             return result;
         }
+    }
+
+    public class PlaceHolders
+    {
+        public string TagName { get; set; }
+        public string FiledName { get; set; }
     }
 }
 

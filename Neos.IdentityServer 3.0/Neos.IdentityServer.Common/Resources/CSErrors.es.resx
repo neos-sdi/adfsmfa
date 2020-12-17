@@ -123,4 +123,7 @@
   <data name="ErrorSendingSecretKeyRequest" xml:space="preserve">
     <value>Error al enviar la clave al usuario</value>
   </data>
+  <data name="ErrorReplayToken" xml:space="preserve">
+    <value>Error durante el proceso de autenticación ! La contraseña de una sola vez se ha jugado antes</value>
+  </data>
 </root>

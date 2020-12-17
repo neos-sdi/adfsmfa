@@ -19,7 +19,7 @@ using System.Collections.Generic;
 namespace Neos.IdentityServer.MultiFactor.WebAuthN
 {
     /// <summary>
-    /// CredentialCreateOptions class implementation
+    /// RegisterCredentialOptions class implementation
     /// </summary>
     public class RegisterCredentialOptions : Fido2ResponseBase
     {

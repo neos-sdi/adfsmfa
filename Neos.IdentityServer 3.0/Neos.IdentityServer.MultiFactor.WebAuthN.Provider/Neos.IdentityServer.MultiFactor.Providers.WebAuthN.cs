@@ -26,6 +26,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace Neos.IdentityServer.MultiFactor.WebAuthN
@@ -49,6 +50,9 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
         public bool UserVerificationMethod { get; private set; }
         public string UserVerificationRequirement { get; private set; }
         public bool RequireResidentKey { get; private set; }
+        public bool? HmacSecret { get; private set; }
+        public UserVerification? CredProtect { get; private set; }
+        public bool? EnforceCredProtect { get; private set; }
         public WebAuthNPinRequirements PinRequirements { get; set; } = WebAuthNPinRequirements.Null;
 
         /// <summary>
@@ -385,6 +389,9 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
                         UserVerificationRequirement = param.Options.UserVerificationRequirement;
                         RequireResidentKey = param.Options.RequireResidentKey;
                         ChallengeSize = param.Configuration.ChallengeSize;
+                        HmacSecret = param.Options.HmacSecret;
+                        CredProtect = (UserVerification?)param.Options.CredProtect;
+                        EnforceCredProtect = param.Options.EnforceCredProtect;
                         IdentityModelEventSource.ShowPII = param.Configuration.ShowPII;
                         Fido2Configuration fido = new Fido2Configuration()
                         {
@@ -509,12 +516,21 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
         /// </summary>
         public override int SetAuthenticationResult(AuthenticationContext ctx, string result)
         {
+            string error = string.Empty;
+            return (int)SetAuthenticationResult(ctx, result, out error);
+        }
+
+        /// <summary>
+        /// SetAuthenticationResult method implementation
+        /// </summary>
+        public override int SetAuthenticationResult(AuthenticationContext ctx, string result, out string error)
+        {
             if (!IsInitialized)
                 throw new Exception("Provider not initialized !");
             if (ctx.UIMode == ProviderPageMode.EnrollBiometrics)
-                return (int)SetRegisterCredentialResult(ctx, result);
+                return (int)SetRegisterCredentialResult(ctx, result, out error);
             else
-               return (int)SetLoginAssertionResult(ctx, result);
+                return (int)SetLoginAssertionResult(ctx, result, out error);
         }
 
         #region IWebAuthNProvider
@@ -651,7 +667,9 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
                         UserVerificationIndex = this.UserVerificationIndex,
                         Location = this.Location,
                         UserVerificationMethod = this.UserVerificationMethod,
-                        
+                        EnforceCredProtect = this.EnforceCredProtect,
+                        CredProtect = this.CredProtect,
+                        HmacSecret = this.HmacSecret,
                         BiometricAuthenticatorPerformanceBounds = new AuthenticatorBiometricPerfBounds
                         {
                             FAR = float.MaxValue,
@@ -667,20 +685,24 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
                 else
                 {
                     Log.WriteEntry(string.Format("{0}\r\n{1}", ctx.UPN, "User does not exists !"), EventLogEntryType.Error, 5000);
-                    return (new RegisterCredentialOptions { Status = "error", ErrorMessage = string.Format("{0}", "User does not exists !") }).ToJson();
+                    string result = (new RegisterCredentialOptions { Status = "error", ErrorMessage = string.Format("{0}", "User does not exists !") }).ToJson();
+                    ctx.CredentialOptions = result;
+                    return result;
                 }
             }
             catch (Exception e)
             {
                 Log.WriteEntry(string.Format("{0}\r\n{1}", ctx.UPN, e.Message), System.Diagnostics.EventLogEntryType.Error, 5000);
-                return (new RegisterCredentialOptions { Status = "error", ErrorMessage = string.Format("{0}{1}", e.Message, e.InnerException != null ? " (" + e.InnerException.Message + ")" : "") }).ToJson();            
+                string result = (new RegisterCredentialOptions { Status = "error", ErrorMessage = string.Format("{0}{1}", e.Message, e.InnerException != null ? " (" + e.InnerException.Message + ")" : "") }).ToJson();
+                ctx.CredentialOptions = result;
+                return result;
             }
         }
 
         /// <summary>
         /// SetRegisterCredentialResult method implementation
         /// </summary>
-        private int SetRegisterCredentialResult(AuthenticationContext ctx, string jsonResponse)
+        private int SetRegisterCredentialResult(AuthenticationContext ctx, string jsonResponse, out string error)
         {
             bool isDeserialized = false;
             try
@@ -718,11 +740,13 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
                         RegDate = DateTime.Now,
                         AaGuid = success.Result.Aaguid
                     });
+                    error = string.Empty;
                     return (int)AuthenticationResponseKind.Biometrics;
                 }
                 else
                 {
                     Log.WriteEntry(string.Format("{0}\r\n{1}", ctx.UPN, "User does not exists !"), System.Diagnostics.EventLogEntryType.Error, 5000);
+                    error = string.Format("{0}\r\n{1}", ctx.UPN, "User does not exists !");
                     return (int)AuthenticationResponseKind.Error;
                 }
             }
@@ -732,6 +756,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
                     Log.WriteEntry(string.Format("{0}\r\n{1}", ctx.UPN, e.Message), EventLogEntryType.Error, 5000);
                 else
                     Log.WriteEntry(string.Format("{0}\r\n{1}", ctx.UPN, jsonResponse), EventLogEntryType.Error, 5000);
+                error = e.Message;
                 return (int)AuthenticationResponseKind.Error;
             }
         }
@@ -759,11 +784,14 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
                     GenericTransactionAuthorization = new TxAuthGenericArg
                     {
                         ContentType = "text/plain",
-                        Content = new byte[] { 0x46, 0x49, 0x44, 0x4F }
+                        Content = new byte[] { 0x46, 0x49, 0x44, 0x4F } 
                     },
                     UserVerificationIndex = this.UserVerificationIndex,
                     Location = this.Location,
-                    UserVerificationMethod = this.UserVerificationMethod 
+                    UserVerificationMethod = this.UserVerificationMethod,
+                    EnforceCredProtect = this.EnforceCredProtect,
+                    CredProtect = this.CredProtect,
+                    HmacSecret = this.HmacSecret
                 };
 
                 UserVerificationRequirement uv = this.UserVerificationRequirement.ToEnum<UserVerificationRequirement>();
@@ -775,14 +803,16 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
             catch (Exception e)
             {
                 Log.WriteEntry(string.Format("{0}\r\n{1}", ctx.UPN, e.Message), EventLogEntryType.Error, 5000);
-                return (new AssertionOptions { Status = "error", ErrorMessage = string.Format("{0}{1}", e.Message, e.InnerException != null ? " (" + e.InnerException.Message + ")" : "") }).ToJson();
+                string result = (new AssertionOptions { Status = "error", ErrorMessage = string.Format("{0}{1}", e.Message, e.InnerException != null ? " (" + e.InnerException.Message + ")" : "") }).ToJson();
+                ctx.AssertionOptions = result;
+                return result;                
             }
         }
 
         /// <summary>
         /// SetLoginAssertionResult method implementation
         /// </summary>
-        private int SetLoginAssertionResult(AuthenticationContext ctx, string jsonResponse)
+        private int SetLoginAssertionResult(AuthenticationContext ctx, string jsonResponse, out string error)
         {
             bool isDeserialized = false;
             try
@@ -802,19 +832,21 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
                         AuthenticatorAssertionRawResponse clientResponse = JsonConvert.DeserializeObject<AuthenticatorAssertionRawResponse>(jsonResponse);
                         isDeserialized = true;
 
-                        // AuthData Flags
-                        byte flag = clientResponse.Response.AuthenticatorData[32];
-                        var userpresent = (flag & (1 << 0)) != 0;
-                        var userverified = (flag & (1 << 2)) != 0;
-                        var attestedcred = (flag & (1 << 6)) != 0;
-                        var hasextenddata = (flag & (1 << 7)) != 0;
-
                         MFAUserCredential creds = RuntimeRepository.GetCredentialById(Config, user, clientResponse.Id);
                         if (creds == null)
                         {
                             throw new Exception("Unknown credentials");
                         }
+
+                        // Check Replay
+                        AuthenticatorData authData = new AuthenticatorData(clientResponse.Response.AuthenticatorData);
+                        uint authCounter = authData.SignCount;
                         uint storedCounter = creds.SignatureCounter;
+                        if ((authCounter <= 0) || (authCounter <= storedCounter))
+                        {
+                            ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
+                            throw new Exception(Resources.GetString(ResourcesLocaleKind.Html, "BIOERRORAUTHREPLAY"));
+                        }
 
                         bool callback(IsUserHandleOwnerOfCredentialIdParams args)
                         {
@@ -824,7 +856,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
                         AssertionVerificationResult res = _webathn.SetAssertionResult(clientResponse, options, creds.PublicKey, storedCounter, callback);
                         RuntimeRepository.UpdateCounter(Config, user, res.CredentialId, res.Counter);
 
-                        if (!userpresent || !userverified)
+                        if (!authData.UserPresent || !authData.UserVerified)
                         {
                             switch (creds.CredType)
                             {
@@ -856,6 +888,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
                         }
                         else
                             ctx.PinRequirements = false;
+                        error = string.Empty;
                         return (int)AuthenticationResponseKind.Biometrics;
                     }
                     catch (Exception ex)
@@ -864,18 +897,21 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
                             Log.WriteEntry(string.Format("{0}\r\n{1}", ctx.UPN, ex.Message), EventLogEntryType.Error, 5000);
                         else
                             Log.WriteEntry(string.Format("{0}\r\n{1}", ctx.UPN, jsonResponse), EventLogEntryType.Error, 5000);
+                        error = ex.Message;
                         return (int)AuthenticationResponseKind.Error;
                     }
                 }
                 else
                 {
                     Log.WriteEntry(string.Format("{0}\r\n{1}", ctx.UPN, "User does not exists !"), EventLogEntryType.Error, 5000);
+                    error = string.Format("{0}\r\n{1}", ctx.UPN, "User does not exists !");
                     return (int)AuthenticationResponseKind.Error;
                 }
             }
             catch (Exception e)
             {
                 Log.WriteEntry(string.Format("{0}\r\n{1}", ctx.UPN, e.Message), EventLogEntryType.Error, 5000);
+                error = e.Message;
                 return (int)AuthenticationResponseKind.Error;
             }
         }

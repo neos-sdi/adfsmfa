@@ -123,4 +123,7 @@
   <data name="ErrorSendingSecretKeyRequest" xml:space="preserve">
     <value>Błąd podczas wysyłania poufna klucz do użytkownika</value>
   </data>
+  <data name="ErrorReplayToken" xml:space="preserve">
+    <value>Błąd podczas procesu uwierzytelniania! Hasło jednorazowe zostało rozegrane wcześniej</value>
+  </data>
 </root>

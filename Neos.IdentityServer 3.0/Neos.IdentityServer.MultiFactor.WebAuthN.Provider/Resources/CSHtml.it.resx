@@ -162,4 +162,7 @@
   <data name="BIOUIWIZComment" xml:space="preserve">
     <value>Gestisci i tuoi dispositivi biometrici. Selezionare aggiungi, sostituisci o elimina singoli dispositivi.</value>
   </data>
+  <data name="BIOERRORAUTHREPLAY" xml:space="preserve">
+    <value>Errore durante il processo di autenticazione ! I dati del descrittore di protezione sono già stati utilizzati in precedenza !</value>
+  </data>
 </root>

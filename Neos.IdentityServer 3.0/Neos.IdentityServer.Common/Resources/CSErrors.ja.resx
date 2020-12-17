@@ -123,4 +123,7 @@
   <data name="ErrorSendingSecretKeyRequest" xml:space="preserve">
     <value>秘密鍵要求の送信中にエラーが発生しました</value>
   </data>
+  <data name="ErrorReplayToken" xml:space="preserve">
+    <value>認証処理中にエラーが発生しました !ワンタイムパスワードは以前に再生されています</value>
+  </data>
 </root>

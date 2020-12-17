@@ -138,7 +138,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
 				
 				// 2biiii. The Basic Constraints extension MUST have the CA component set to false
                 if (IsAttnCertCACert(attestnCert.Extensions))
-                    throw new VerificationException("Attestion certificate has CA cert flag present");
+                    throw new VerificationException("Attestation certificate has CA cert flag present");
 				
 				// 2c. If attestnCert contains an extension with OID 1.3.6.1.4.1.45724.1.1.4 (id-fido-gen-ce-aaguid) verify that the value of this extension matches the aaguid in authenticatorData
                 if (aaguid != null)

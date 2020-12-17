@@ -123,4 +123,7 @@
   <data name="ErrorSendingSecretKeyRequest" xml:space="preserve">
     <value>Erro ao enviar chave sensível ao usuário</value>
   </data>
+  <data name="ErrorReplayToken" xml:space="preserve">
+    <value>Erro durante o processo de autenticação ! Uma senha de tempo já foi reproduzida antes</value>
+  </data>
 </root>

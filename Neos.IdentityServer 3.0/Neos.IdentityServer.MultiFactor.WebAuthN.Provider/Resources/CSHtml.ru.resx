@@ -162,4 +162,7 @@
   <data name="BIOUIWIZComment" xml:space="preserve">
     <value>Управляйте биометрическими устройствами. Выберите добавление, замену или удаление отдельных устройств.</value>
   </data>
+  <data name="BIOERRORAUTHREPLAY" xml:space="preserve">
+    <value>Ошибка во время процесса проверки подлинности! Данные описателя безопасности были использованы раньше !</value>
+  </data>
 </root>

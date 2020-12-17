@@ -123,4 +123,7 @@
   <data name="ErrorSendingSecretKeyRequest" xml:space="preserve">
     <value>Fel vid skickande av känslig nyckel till användare</value>
   </data>
+  <data name="ErrorReplayToken" xml:space="preserve">
+    <value>Fel under autentiseringsprocessen ! One Time Password har spelats tidigare</value>
+  </data>
 </root>

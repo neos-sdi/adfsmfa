@@ -162,4 +162,7 @@
   <data name="BIOUIWIZComment" xml:space="preserve">
     <value>生体認証デバイスを管理します。個々のデバイスを追加、置換、または削除を選択します。</value>
   </data>
+  <data name="BIOERRORAUTHREPLAY" xml:space="preserve">
+    <value>認証処理中にエラーが発生しました !セキュリティ記述子データは以前に使用されています。</value>
+  </data>
 </root>

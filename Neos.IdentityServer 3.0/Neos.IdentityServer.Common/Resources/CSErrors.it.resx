@@ -123,4 +123,7 @@
   <data name="ErrorSendingSecretKeyRequest" xml:space="preserve">
     <value>Errore durante l'invio della chiave privata all'utente.</value>
   </data>
+  <data name="ErrorReplayToken" xml:space="preserve">
+    <value>Errore durante il processo di autenticazione ! Una volta la password è stata riprodotta prima</value>
+  </data>
 </root>

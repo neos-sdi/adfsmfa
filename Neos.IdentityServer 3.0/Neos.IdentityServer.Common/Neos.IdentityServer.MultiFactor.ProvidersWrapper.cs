@@ -22,6 +22,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
@@ -97,6 +98,21 @@ namespace Neos.IdentityServer.MultiFactor.Common
         public abstract void Initialize(BaseProviderParams externalsystem);
         public abstract int PostAuthenticationRequest(AuthenticationContext ctx);
         public abstract int SetAuthenticationResult(AuthenticationContext ctx, string result);
+
+        public virtual int SetAuthenticationResult(AuthenticationContext ctx, string result, out string error)
+        {
+            try
+            {
+                error = string.Empty;
+                return SetAuthenticationResult(ctx, result);
+            }
+            catch (Exception ex)
+            {
+                error = ex.Message;
+                return (int)AuthenticationResponseKind.Error;
+            }
+        }
+
         public abstract List<AvailableAuthenticationMethod> GetAuthenticationMethods(AuthenticationContext ctx);
         public virtual string GetAuthenticationData(AuthenticationContext ctx) { return string.Empty; }
         public virtual void ReleaseAuthenticationData(AuthenticationContext ctx) { }
@@ -516,6 +532,11 @@ namespace Neos.IdentityServer.MultiFactor.Common
         }
 
         /// <summary>
+        /// ReplayLevel property
+        /// </summary>
+        public MFAConfig Config { get; private set; }
+
+        /// <summary>
         /// Kind property implementation
         /// </summary>
         public override PreferredMethod Kind 
@@ -809,6 +830,7 @@ namespace Neos.IdentityServer.MultiFactor.Common
                     if (externalsystem is OTPProviderParams)
                     {
                         OTPProviderParams param = externalsystem as OTPProviderParams;
+                        Config = param.Config;
                         TOTPShadows = param.TOTPShadows;
                         Algorithm = param.Algorithm;
 
@@ -888,6 +910,15 @@ namespace Neos.IdentityServer.MultiFactor.Common
             if (!IsInitialized)
                 throw new Exception("Provider not initialized !");
             int value = Convert.ToInt32(pin);
+            if (Config != null)
+            {
+                if (!Utilities.CheckForReplay(Config, ctx, Convert.ToInt32(pin)))
+                {
+                    ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
+                    string error = Resources.GetString(ResourcesLocaleKind.Errors, "ErrorReplayToken");
+                    throw new Exception(error);
+                }
+            }
             if (CheckPin(ctx, value))
                 return (int)AuthenticationResponseKind.PhoneAppOTP;
             else

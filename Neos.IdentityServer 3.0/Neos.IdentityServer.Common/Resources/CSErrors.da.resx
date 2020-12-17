@@ -123,4 +123,7 @@
   <data name="ErrorSendingSecretKeyRequest" xml:space="preserve">
     <value>Der opstod en fejl under afsendelse af følsom nøgle til brugeren</value>
   </data>
+  <data name="ErrorReplayToken" xml:space="preserve">
+    <value>Fejl under godkendelsesprocessen ! One Time Password er blevet afspillet før</value>
+  </data>
 </root>

@@ -43,7 +43,7 @@ namespace Neos.IdentityServer.MultiFactor
         }
 
         /// <summary>
-        /// CheckForReplay method implementation
+        /// Check method implementation
         /// </summary>
         public bool Check(List<string> servernames, ReplayRecord record)
         {

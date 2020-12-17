@@ -33,6 +33,7 @@ namespace Neos.IdentityServer.MultiFactor
     public class AdapterPresentation : IAdapterPresentation, IAdapterPresentationForm
     {
         private BasePresentation _adapter = null;
+        private static List<PlaceHolders> _holders = new List<PlaceHolders>();
 
         #region Constructors
         /// <summary>
@@ -44,15 +45,20 @@ namespace Neos.IdentityServer.MultiFactor
                 throw new ArgumentNullException("Provider");
             if (provider.Config == null)
                 throw new ArgumentNullException("Config");
+            InitPlaceHolders();
             switch (provider.Config.UiKind)
             {
                 case ADFSUserInterfaceKind.Default2019:
-                    _adapter = new AdapterPresentation2019(provider, context);
-                    _adapter.UseUIPaginated = provider.Config.UseUIPaginated;
+                    _adapter = new AdapterPresentation2019(provider, context)
+                    {
+                        UseUIPaginated = provider.Config.UseUIPaginated
+                    };
                     break;
                 default:
-                    _adapter = new AdapterPresentationDefault(provider, context);
-                    _adapter.UseUIPaginated = false;
+                    _adapter = new AdapterPresentationDefault(provider, context)
+                    {
+                        UseUIPaginated = false
+                    };
                     break;
             }
         }
@@ -66,15 +72,20 @@ namespace Neos.IdentityServer.MultiFactor
                 throw new ArgumentNullException("Provider");
             if (provider.Config == null)
                 throw new ArgumentNullException("Config");
+            InitPlaceHolders();
             switch (provider.Config.UiKind)
             {
                 case ADFSUserInterfaceKind.Default2019:
-                    _adapter = new AdapterPresentation2019(provider, context, message);
-                    _adapter.UseUIPaginated = provider.Config.UseUIPaginated;
+                    _adapter = new AdapterPresentation2019(provider, context, message)
+                    {
+                        UseUIPaginated = provider.Config.UseUIPaginated
+                    };
                     break;
                 default:
-                    _adapter = new AdapterPresentationDefault(provider, context, message);
-                    _adapter.UseUIPaginated = false;
+                    _adapter = new AdapterPresentationDefault(provider, context, message)
+                    {
+                        UseUIPaginated = false
+                    };
                     break;
             }
         }
@@ -88,15 +99,20 @@ namespace Neos.IdentityServer.MultiFactor
                 throw new ArgumentNullException("Provider");
             if (provider.Config == null)
                 throw new ArgumentNullException("Config");
+            InitPlaceHolders();
             switch (provider.Config.UiKind)
             {
                 case ADFSUserInterfaceKind.Default2019:
-                    _adapter = new AdapterPresentation2019(provider, context, message, ismessage);
-                    _adapter.UseUIPaginated = provider.Config.UseUIPaginated;
+                    _adapter = new AdapterPresentation2019(provider, context, message, ismessage)
+                    {
+                        UseUIPaginated = provider.Config.UseUIPaginated
+                    };
                     break;
                 default:
-                    _adapter = new AdapterPresentationDefault(provider, context, message, ismessage);
-                    _adapter.UseUIPaginated = false;
+                    _adapter = new AdapterPresentationDefault(provider, context, message, ismessage)
+                    {
+                        UseUIPaginated = false
+                    };
                     break;
             }
         }
@@ -110,15 +126,20 @@ namespace Neos.IdentityServer.MultiFactor
                 throw new ArgumentNullException("Provider");
             if (provider.Config == null)
                 throw new ArgumentNullException("Config");
+            InitPlaceHolders();
             switch (provider.Config.UiKind)
             {
                 case ADFSUserInterfaceKind.Default2019:
-                    _adapter = new AdapterPresentation2019(provider, context, suite);
-                    _adapter.UseUIPaginated = provider.Config.UseUIPaginated;
+                    _adapter = new AdapterPresentation2019(provider, context, suite)
+                    {
+                        UseUIPaginated = provider.Config.UseUIPaginated
+                    };
                     break;
                 default:
-                    _adapter = new AdapterPresentationDefault(provider, context, suite);
-                    _adapter.UseUIPaginated = false;
+                    _adapter = new AdapterPresentationDefault(provider, context, suite)
+                    {
+                        UseUIPaginated = false
+                    };
                     break;
             }
         }
@@ -132,15 +153,20 @@ namespace Neos.IdentityServer.MultiFactor
                 throw new ArgumentNullException("Provider");
             if (provider.Config == null)
                 throw new ArgumentNullException("Config");
+            InitPlaceHolders();
             switch (provider.Config.UiKind)
             {
                 case ADFSUserInterfaceKind.Default2019:
-                    _adapter = new AdapterPresentation2019(provider, context, message, suite, disableoptions);
-                    _adapter.UseUIPaginated = provider.Config.UseUIPaginated;
+                    _adapter = new AdapterPresentation2019(provider, context, message, suite, disableoptions)
+                    {
+                        UseUIPaginated = provider.Config.UseUIPaginated
+                    };
                     break;
                 default:
-                    _adapter = new AdapterPresentationDefault(provider, context, message, suite, disableoptions);
-                    _adapter.UseUIPaginated = false;
+                    _adapter = new AdapterPresentationDefault(provider, context, message, suite, disableoptions)
+                    {
+                        UseUIPaginated = false
+                    };
                     break;
             }
         }
@@ -208,7 +234,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public string GetPageTitle(int lcid)
         {
-            return _adapter.GetPageTitle(lcid);
+            return ReplacePlaceHolders(_adapter.GetPageTitle(lcid));
         }
 
         /// <summary>
@@ -216,7 +242,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public string GetFormHtml(int lcid)
         {
-            return _adapter.GetFormHtml(lcid);
+            return ReplacePlaceHolders(_adapter.GetFormHtml(lcid));
         }
 
         /// <summary>
@@ -224,7 +250,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public string GetFormPreRenderHtml(int lcid)
         {
-            return _adapter.GetFormPreRenderHtml(lcid);
+            return ReplacePlaceHolders(_adapter.GetFormPreRenderHtml(lcid));
         }
         #endregion
 
@@ -234,7 +260,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public string GetFormPreRenderHtmlIdentification(AuthenticationContext usercontext)
         {
-            return _adapter.GetFormPreRenderHtmlIdentification(usercontext);
+            return ReplacePlaceHolders(_adapter.GetFormPreRenderHtmlIdentification(usercontext));
         }
 
         /// <summary>
@@ -242,7 +268,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public string GetFormHtmlIdentification(AuthenticationContext usercontext)
         {
-            return _adapter.GetFormHtmlIdentification(usercontext);
+            return ReplacePlaceHolders(_adapter.GetFormHtmlIdentification(usercontext));
         }
 
         /// <summary>
@@ -250,7 +276,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public string GetFormPreRenderHtmlManageOptions(AuthenticationContext usercontext)
         {
-            return _adapter.GetFormPreRenderHtmlManageOptions(usercontext);
+            return ReplacePlaceHolders(_adapter.GetFormPreRenderHtmlManageOptions(usercontext));
         }
 
         /// <summary>
@@ -258,7 +284,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public string GetFormHtmlManageOptions(AuthenticationContext usercontext)
         {
-            return _adapter.GetFormHtmlManageOptions(usercontext);
+            return ReplacePlaceHolders(_adapter.GetFormHtmlManageOptions(usercontext));
         }
 
         /// <summary>
@@ -266,7 +292,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public string GetFormPreRenderHtmlRegistration(AuthenticationContext usercontext)
         {
-            return _adapter.GetFormPreRenderHtmlRegistration(usercontext);
+            return ReplacePlaceHolders(_adapter.GetFormPreRenderHtmlRegistration(usercontext));
         }
 
         /// <summary>
@@ -274,7 +300,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public string GetFormHtmlRegistration(AuthenticationContext usercontext)
         {
-            return _adapter.GetFormHtmlRegistration(usercontext);
+            return ReplacePlaceHolders(_adapter.GetFormHtmlRegistration(usercontext));
         }
 
         /// <summary>
@@ -282,7 +308,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public string GetFormPreRenderHtmlInvitation(AuthenticationContext usercontext)
         {
-            return _adapter.GetFormPreRenderHtmlInvitation(usercontext);
+            return ReplacePlaceHolders(_adapter.GetFormPreRenderHtmlInvitation(usercontext));
         }
 
         /// <summary>
@@ -290,7 +316,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public string GetFormHtmlInvitation(AuthenticationContext usercontext)
         {
-            return _adapter.GetFormHtmlInvitation(usercontext);
+            return ReplacePlaceHolders(_adapter.GetFormHtmlInvitation(usercontext));
         }
 
         /// <summary>
@@ -298,7 +324,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public string GetFormPreRenderHtmlActivation(AuthenticationContext usercontext)
         {
-            return _adapter.GetFormPreRenderHtmlActivation(usercontext);
+            return ReplacePlaceHolders(_adapter.GetFormPreRenderHtmlActivation(usercontext));
         }
 
         /// <summary>
@@ -306,7 +332,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public string GetFormHtmlActivation(AuthenticationContext usercontext)
         {
-            return _adapter.GetFormHtmlActivation(usercontext);
+            return ReplacePlaceHolders(_adapter.GetFormHtmlActivation(usercontext));
         }
 
         /// <summary>
@@ -314,7 +340,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public string GetFormPreRenderHtmlSelectOptions(AuthenticationContext usercontext)
         {
-            return _adapter.GetFormPreRenderHtmlSelectOptions(usercontext);
+            return ReplacePlaceHolders(_adapter.GetFormPreRenderHtmlSelectOptions(usercontext));
         }
 
         /// <summary>
@@ -322,7 +348,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public string GetFormHtmlSelectOptions(AuthenticationContext usercontext)
         {
-            return _adapter.GetFormHtmlSelectOptions(usercontext);
+            return ReplacePlaceHolders(_adapter.GetFormHtmlSelectOptions(usercontext));
         }
 
         /// <summary>
@@ -330,7 +356,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public string GetFormPreRenderHtmlChooseMethod(AuthenticationContext usercontext)
         {
-            return _adapter.GetFormPreRenderHtmlChooseMethod(usercontext);
+            return ReplacePlaceHolders(_adapter.GetFormPreRenderHtmlChooseMethod(usercontext));
         }
 
         /// <summary>
@@ -338,7 +364,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public string GetFormHtmlChooseMethod(AuthenticationContext usercontext)
         {
-            return _adapter.GetFormHtmlChooseMethod(usercontext);
+            return ReplacePlaceHolders(_adapter.GetFormHtmlChooseMethod(usercontext));
         }
 
         /// <summary>
@@ -346,7 +372,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public string GetFormPreRenderHtmlChangePassword(AuthenticationContext usercontext)
         {
-            return _adapter.GetFormPreRenderHtmlChangePassword(usercontext);
+            return ReplacePlaceHolders(_adapter.GetFormPreRenderHtmlChangePassword(usercontext));
         }
 
         /// <summary>
@@ -354,7 +380,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public string GetFormHtmlChangePassword(AuthenticationContext usercontext)
         {
-            return _adapter.GetFormHtmlChangePassword(usercontext);
+            return ReplacePlaceHolders(_adapter.GetFormHtmlChangePassword(usercontext));
         }
 
         /// <summary>
@@ -362,7 +388,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public string GetFormPreRenderHtmlBypass(AuthenticationContext usercontext)
         {
-            return _adapter.GetFormPreRenderHtmlBypass(usercontext);
+            return ReplacePlaceHolders(_adapter.GetFormPreRenderHtmlBypass(usercontext));
         }
 
         /// <summary>
@@ -370,7 +396,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public string GetFormHtmlBypass(AuthenticationContext usercontext)
         {
-            return _adapter.GetFormHtmlBypass(usercontext);
+            return ReplacePlaceHolders(_adapter.GetFormHtmlBypass(usercontext));
         }
 
         /// <summary>
@@ -378,7 +404,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public string GetFormPreRenderHtmlLocking(AuthenticationContext usercontext)
         {
-            return _adapter.GetFormPreRenderHtmlLocking(usercontext);
+            return ReplacePlaceHolders(_adapter.GetFormPreRenderHtmlLocking(usercontext));
         }
 
         /// <summary>
@@ -386,7 +412,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public string GetFormHtmlLocking(AuthenticationContext usercontext)
         {
-            return _adapter.GetFormHtmlLocking(usercontext);
+            return ReplacePlaceHolders(_adapter.GetFormHtmlLocking(usercontext));
         }
 
         /// <summary>
@@ -394,7 +420,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public string GetFormPreRenderHtmlShowQRCode(AuthenticationContext usercontext)
         {
-            return _adapter.GetFormPreRenderHtmlShowQRCode(usercontext);
+            return ReplacePlaceHolders(_adapter.GetFormPreRenderHtmlShowQRCode(usercontext));
         }
 
         /// <summary>
@@ -402,7 +428,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public string GetFormHtmlShowQRCode(AuthenticationContext usercontext)
         {
-            return _adapter.GetFormHtmlShowQRCode(usercontext);
+            return ReplacePlaceHolders(_adapter.GetFormHtmlShowQRCode(usercontext));
         }
 
         /// <summary>
@@ -410,7 +436,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public string GetFormPreRenderHtmlSendCodeRequest(AuthenticationContext usercontext)
         {
-            return _adapter.GetFormPreRenderHtmlSendCodeRequest(usercontext);
+            return ReplacePlaceHolders(_adapter.GetFormPreRenderHtmlSendCodeRequest(usercontext));
         }
 
         /// <summary>
@@ -418,7 +444,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public string GetFormHtmlSendCodeRequest(AuthenticationContext usercontext)
         {
-            return _adapter.GetFormHtmlSendCodeRequest(usercontext);
+            return ReplacePlaceHolders(_adapter.GetFormHtmlSendCodeRequest(usercontext));
         }
 
         /// <summary>
@@ -426,7 +452,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public string GetFormPreRenderHtmlSendBiometricRequest(AuthenticationContext usercontext)
         {
-            return _adapter.GetFormPreRenderHtmlSendBiometricRequest(usercontext);
+            return ReplacePlaceHolders(_adapter.GetFormPreRenderHtmlSendBiometricRequest(usercontext));
         }
 
         /// <summary>
@@ -434,7 +460,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public string GetFormHtmlSendBiometricRequest(AuthenticationContext usercontext)
         {
-            return _adapter.GetFormHtmlSendBiometricRequest(usercontext);
+            return ReplacePlaceHolders(_adapter.GetFormHtmlSendBiometricRequest(usercontext));
         }
 
         /// <summary>
@@ -442,7 +468,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public string GetFormPreRenderHtmlSendAdministrativeRequest(AuthenticationContext usercontext)
         {
-            return _adapter.GetFormPreRenderHtmlSendAdministrativeRequest(usercontext);
+            return ReplacePlaceHolders(_adapter.GetFormPreRenderHtmlSendAdministrativeRequest(usercontext));
         }
 
         /// <summary>
@@ -450,7 +476,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public string GetFormHtmlSendAdministrativeRequest(AuthenticationContext usercontext)
         {
-            return _adapter.GetFormHtmlSendAdministrativeRequest(usercontext);
+            return ReplacePlaceHolders(_adapter.GetFormHtmlSendAdministrativeRequest(usercontext));
         }
 
         /// <summary>
@@ -458,7 +484,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public string GetFormPreRenderHtmlSendKeyRequest(AuthenticationContext usercontext)
         {
-            return _adapter.GetFormPreRenderHtmlSendKeyRequest(usercontext);
+            return ReplacePlaceHolders(_adapter.GetFormPreRenderHtmlSendKeyRequest(usercontext));
         }
 
         /// <summary>
@@ -466,7 +492,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public string GetFormHtmlSendKeyRequest(AuthenticationContext usercontext)
         {
-            return _adapter.GetFormHtmlSendKeyRequest(usercontext);
+            return ReplacePlaceHolders(_adapter.GetFormHtmlSendKeyRequest(usercontext));
         }
 
         /// <summary>
@@ -474,7 +500,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public string GetFormPreRenderHtmlEnrollOTP(AuthenticationContext usercontext)
         {
-            return _adapter.GetFormPreRenderHtmlEnrollOTP(usercontext);
+            return ReplacePlaceHolders(_adapter.GetFormPreRenderHtmlEnrollOTP(usercontext));
         }
 
         /// <summary>
@@ -482,7 +508,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public string GetFormHtmlEnrollOTP(AuthenticationContext usercontext)
         {
-            return _adapter.GetFormHtmlEnrollOTP(usercontext);
+            return ReplacePlaceHolders(_adapter.GetFormHtmlEnrollOTP(usercontext));
         }
 
         /// <summary>
@@ -490,7 +516,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public string GetFormPreRenderHtmlEnrollEmail(AuthenticationContext usercontext)
         {
-            return _adapter.GetFormPreRenderHtmlEnrollEmail(usercontext);
+            return ReplacePlaceHolders(_adapter.GetFormPreRenderHtmlEnrollEmail(usercontext));
         }
 
         /// <summary>
@@ -498,7 +524,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public string GetFormHtmlEnrollEmail(AuthenticationContext usercontext)
         {
-            return _adapter.GetFormHtmlEnrollEmail(usercontext);
+            return ReplacePlaceHolders(_adapter.GetFormHtmlEnrollEmail(usercontext));
         }
 
         /// <summary>
@@ -506,7 +532,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public string GetFormPreRenderHtmlEnrollPhone(AuthenticationContext usercontext)
         {
-            return _adapter.GetFormPreRenderHtmlEnrollPhone(usercontext);
+            return ReplacePlaceHolders(_adapter.GetFormPreRenderHtmlEnrollPhone(usercontext));
         }
 
         /// <summary>
@@ -514,7 +540,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public string GetFormHtmlEnrollPhone(AuthenticationContext usercontext)
         {
-            return _adapter.GetFormHtmlEnrollPhone(usercontext);
+            return ReplacePlaceHolders(_adapter.GetFormHtmlEnrollPhone(usercontext));
         }
 
         /// <summary>
@@ -522,7 +548,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public string GetFormPreRenderHtmlEnrollBio(AuthenticationContext usercontext)
         {
-            return _adapter.GetFormPreRenderHtmlEnrollBio(usercontext);
+            return ReplacePlaceHolders(_adapter.GetFormPreRenderHtmlEnrollBio(usercontext));
         }
 
         /// <summary>
@@ -530,7 +556,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public string GetFormHtmlEnrollBio(AuthenticationContext usercontext)
         {
-            return _adapter.GetFormHtmlEnrollBio(usercontext);
+            return ReplacePlaceHolders(_adapter.GetFormHtmlEnrollBio(usercontext));
         }
 
         /// <summary>
@@ -538,7 +564,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public string GetFormPreRenderHtmlEnrollPinCode(AuthenticationContext usercontext)
         {
-            return _adapter.GetFormPreRenderHtmlEnrollPinCode(usercontext);
+            return ReplacePlaceHolders(_adapter.GetFormPreRenderHtmlEnrollPinCode(usercontext));
         }
 
         /// <summary>
@@ -546,7 +572,45 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public string GetFormHtmlEnrollPinCode(AuthenticationContext usercontext)
         {
-            return _adapter.GetFormHtmlEnrollPinCode(usercontext);
+            return ReplacePlaceHolders(_adapter.GetFormHtmlEnrollPinCode(usercontext));
+        }
+        #endregion
+
+        #region PlaceHolders
+        /// <summary>
+        /// ReplacePlaceHolders method implmentation
+        /// </summary>
+        private string ReplacePlaceHolders(string html)
+        {
+            _holders.ForEach(C => html = html.Replace(C.TagName, C.FiledName));
+            return html;
+        }
+
+        /// <summary>
+        /// InitPlaceHolders  method implmentation
+        /// </summary>
+        private void InitPlaceHolders()
+        {
+            if (_holders.Count <= 0)
+            {
+                _holders.Add(new PlaceHolders() { TagName = "##ACCESSCODE##", FiledName = "totp" });
+                _holders.Add(new PlaceHolders() { TagName = "##PINCODE##", FiledName = "pincode" });
+                _holders.Add(new PlaceHolders() { TagName = "##SELECTED##", FiledName = "selected" });
+                _holders.Add(new PlaceHolders() { TagName = "##EMAILADDRESS##", FiledName = "email" });
+                _holders.Add(new PlaceHolders() { TagName = "##PHONENUMBER##", FiledName = "phone" });
+                _holders.Add(new PlaceHolders() { TagName = "##SELECTEDLINK##", FiledName = "selectedlink" });
+                _holders.Add(new PlaceHolders() { TagName = "##OPTIONS##", FiledName = "options" });
+                _holders.Add(new PlaceHolders() { TagName = "##DISABLEMFA##", FiledName = "disablemfa" });
+                _holders.Add(new PlaceHolders() { TagName = "##ISPROVIDER##", FiledName = "isprovider" });
+                _holders.Add(new PlaceHolders() { TagName = "##SELECTOPTIONS##", FiledName = "selectopt" });
+                _holders.Add(new PlaceHolders() { TagName = "##REMEMBER##", FiledName = "remember" });
+                _holders.Add(new PlaceHolders() { TagName = "##SELECTEDRADIO##", FiledName = "selectedradio" });
+                _holders.Add(new PlaceHolders() { TagName = "##OLDPASS##", FiledName = "oldpwdedit" });
+                _holders.Add(new PlaceHolders() { TagName = "##NEWPASS##", FiledName = "newpwdedit" });
+                _holders.Add(new PlaceHolders() { TagName = "##CNFPASS##", FiledName = "cnfpwdedit" });
+                _holders.Add(new PlaceHolders() { TagName = "##MANAGEACCOUNT##", FiledName = "manageaccount" });
+                _holders.Add(new PlaceHolders() { TagName = "##OPTIONITEM##", FiledName = "optionitem" });
+                }
         }
         #endregion
     }
@@ -574,8 +638,8 @@ namespace Neos.IdentityServer.MultiFactor
             this.Provider = provider;
             this.Context = new AuthenticationContext(context);
             this.Context.UIMessage = string.Empty;
-            this.IsPermanentFailure = false; // (this.Context.TargetUIMode == ProviderPageMode.DefinitiveError);
-            this.IsMessage = true; // (this.Context.TargetUIMode != ProviderPageMode.DefinitiveError);
+            this.IsPermanentFailure = false; 
+            this.IsMessage = true; 
             this.DisableOptions = false;
             this.Resources = new ResourcesLocale(Context.Lcid);
         }
@@ -611,7 +675,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// Constructor overload implementation
         /// </summary>
-        protected BasePresentation(AuthenticationProvider provider, IAuthenticationContext context, ProviderPageMode suite)
+        public BasePresentation(AuthenticationProvider provider, IAuthenticationContext context, ProviderPageMode suite)
         {
             this.Provider = provider;
             this.Context = new AuthenticationContext(context);
@@ -746,11 +810,6 @@ namespace Neos.IdentityServer.MultiFactor
                     else
                         result += "<div id=\"error\" class=\"fieldMargin error smallText\"><label id=\"errorText\" name=\"errorText\" for=\"\">" + usercontext.UIMessage + "</label></div>";
                 }
-              /*  else
-                {
-                    result += "<br/>";
-                    result += "<div id=\"error\" class=\"fieldMargin error smallText\"><label id=\"errorText\" name=\"errorText\" for=\"\"></label></div>";
-                } */
             }
             return result;
         }
@@ -1024,57 +1083,40 @@ namespace Neos.IdentityServer.MultiFactor
         #region Abstract methods
         public abstract string GetFormPreRenderHtmlIdentification(AuthenticationContext usercontext);
         public abstract string GetFormHtmlIdentification(AuthenticationContext usercontext);
-
         public abstract string GetFormPreRenderHtmlRegistration(AuthenticationContext usercontext);
         public abstract string GetFormHtmlRegistration(AuthenticationContext usercontext);
-
         public abstract string GetFormPreRenderHtmlInvitation(AuthenticationContext usercontext);
         public abstract string GetFormHtmlInvitation(AuthenticationContext usercontext);
-
         public abstract string GetFormPreRenderHtmlActivation(AuthenticationContext usercontext);
         public abstract string GetFormHtmlActivation(AuthenticationContext usercontext);
-
         public abstract string GetFormPreRenderHtmlManageOptions(AuthenticationContext usercontext);
         public abstract string GetFormHtmlManageOptions(AuthenticationContext usercontext);
-
         public abstract string GetFormPreRenderHtmlSelectOptions(AuthenticationContext usercontext);
         public abstract string GetFormHtmlSelectOptions(AuthenticationContext usercontext);
-
         public abstract string GetFormPreRenderHtmlChooseMethod(AuthenticationContext usercontext);
         public abstract string GetFormHtmlChooseMethod(AuthenticationContext usercontext);
-
         public abstract string GetFormPreRenderHtmlChangePassword(AuthenticationContext usercontext);
         public abstract string GetFormHtmlChangePassword(AuthenticationContext usercontext);
-
         public abstract string GetFormPreRenderHtmlBypass(AuthenticationContext usercontext);
         public abstract string GetFormHtmlBypass(AuthenticationContext usercontext);
-
         public abstract string GetFormPreRenderHtmlLocking(AuthenticationContext usercontext);
         public abstract string GetFormHtmlLocking(AuthenticationContext usercontext);
-
         public abstract string GetFormPreRenderHtmlSendCodeRequest(AuthenticationContext usercontext);
         public abstract string GetFormHtmlSendCodeRequest(AuthenticationContext usercontext);
         public abstract string GetFormPreRenderHtmlSendBiometricRequest(AuthenticationContext usercontext);
         public abstract string GetFormHtmlSendBiometricRequest(AuthenticationContext usercontext);
-
         public abstract string GetFormPreRenderHtmlSendAdministrativeRequest(AuthenticationContext usercontext);
         public abstract string GetFormHtmlSendAdministrativeRequest(AuthenticationContext usercontext);
-
         public abstract string GetFormPreRenderHtmlSendKeyRequest(AuthenticationContext usercontext);
         public abstract string GetFormHtmlSendKeyRequest(AuthenticationContext usercontext);
-
         public abstract string GetFormPreRenderHtmlEnrollOTP(AuthenticationContext usercontext);
         public abstract string GetFormHtmlEnrollOTP(AuthenticationContext usercontext);
-
         public abstract string GetFormPreRenderHtmlEnrollEmail(AuthenticationContext usercontext);
         public abstract string GetFormHtmlEnrollEmail(AuthenticationContext usercontext);
-
         public abstract string GetFormPreRenderHtmlEnrollPhone(AuthenticationContext usercontext);
         public abstract string GetFormHtmlEnrollPhone(AuthenticationContext usercontext);
-
         public abstract string GetFormPreRenderHtmlEnrollBio(AuthenticationContext Context);
         public abstract string GetFormHtmlEnrollBio(AuthenticationContext Context);
-
         public abstract string GetFormPreRenderHtmlEnrollPinCode(AuthenticationContext usercontext);
         public abstract string GetFormHtmlEnrollPinCode(AuthenticationContext usercontext);
         #endregion
@@ -1561,6 +1603,4 @@ namespace Neos.IdentityServer.MultiFactor
         }
         #endregion
     }
-
-
 }

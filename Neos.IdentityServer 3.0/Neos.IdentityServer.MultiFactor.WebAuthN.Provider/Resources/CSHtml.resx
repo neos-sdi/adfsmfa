@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="BIOERRORAUTHREPLAY" xml:space="preserve">
+    <value>Error during authentication process ! Security Descriptor Data has been been used before !</value>
+  </data>
   <data name="BIOUICFGLabel" xml:space="preserve">
     <value>Activate your biometric device</value>
     <comment>Activez votre dispositif biométrique</comment>

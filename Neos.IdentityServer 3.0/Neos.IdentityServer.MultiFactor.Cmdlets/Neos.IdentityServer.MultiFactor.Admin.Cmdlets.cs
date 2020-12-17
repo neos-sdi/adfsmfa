@@ -5348,6 +5348,12 @@ namespace MFA
                                 _target3.UserVerificationIndex = _config3.UserVerificationIndex;
                             if (_config3.UserVerificationMethodChanged)
                                 _target3.UserVerificationMethod = _config3.UserVerificationMethod;
+                            if (_config3.CredProtectChanged)
+                                _target3.CredProtect = _config3.CredProtect;
+                            if (_config3.EnforceCredProtectChanged)
+                                _target3.EnforceCredProtect = _config3.EnforceCredProtect;
+                            if (_config3.HmacSecretChanged)
+                                _target3.HmacSecret = _config3.HmacSecret;
                             break;
                         case PSSecurityMode.WSMAN:
                             _target6 = new FlatWsManSecurity();
@@ -5528,6 +5534,9 @@ namespace MFA
         private bool _location;
         private bool _userverificationmethod;
         private bool _requireresidentkey;
+        private bool? _hmacsecret;
+        private WebAuthNUserVerification? _credprotect;
+        private bool? _enforcecredprotect;
 
         internal bool RequireResidentKeyChanged { get; private set; }
         internal bool UserVerificationMethodChanged { get; private set; }
@@ -5537,6 +5546,9 @@ namespace MFA
         internal bool UserVerificationRequirementChanged { get; private set; }
         internal bool AttestationConveyancePreferenceChanged { get; private set; }
         internal bool AuthenticatorAttachmentChanged { get; private set; }
+        internal bool HmacSecretChanged { get; private set; }
+        internal bool CredProtectChanged { get; private set; }
+        internal bool EnforceCredProtectChanged { get; private set; }
 
         /// <summary>
         /// <para type="description">Authenticator Attachment property (empty, Platform, Crossplatform).</para>
@@ -5655,6 +5667,48 @@ namespace MFA
             {
                 _requireresidentkey = value;
                 RequireResidentKeyChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Use HMAC enryption (CATP2.1).</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        public bool? HmacSecret
+        {
+            get { return _hmacsecret; }
+            set
+            {
+                _hmacsecret = value;
+                HmacSecretChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Use Credential Protection (CATP2.1).</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        public WebAuthNUserVerification? CredProtect
+        {
+            get { return _credprotect; }
+            set
+            {
+                _credprotect = value;
+                CredProtectChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">Enforce Credential Protection (CATP2.1).</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        public bool? EnforceCredProtect
+        {
+            get { return _enforcecredprotect; }
+            set
+            {
+                _enforcecredprotect = value;
+                EnforceCredProtectChanged = true;
             }
         }
     }

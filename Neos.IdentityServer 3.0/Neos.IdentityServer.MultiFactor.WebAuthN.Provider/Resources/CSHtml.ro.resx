@@ -162,4 +162,7 @@
   <data name="BIOUIWIZComment" xml:space="preserve">
     <value>Gestionați-vă dispozitivele biometrice. Selectați adăugați, înlocuiți sau ștergeți dispozitive individuale.</value>
   </data>
+  <data name="BIOERRORAUTHREPLAY" xml:space="preserve">
+    <value>Eroare în timpul procesului de autentificare ! Datele descriptorului de securitate au mai fost utilizate !</value>
+  </data>
 </root>

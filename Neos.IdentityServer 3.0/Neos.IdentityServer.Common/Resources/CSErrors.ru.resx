@@ -123,4 +123,7 @@
   <data name="ErrorSendingSecretKeyRequest" xml:space="preserve">
     <value>Ошибка отправки конфиденциального ключа пользователю</value>
   </data>
+  <data name="ErrorReplayToken" xml:space="preserve">
+    <value>Ошибка во время процесса проверки подлинности! Один раз пароль был сыгран раньше</value>
+  </data>
 </root>

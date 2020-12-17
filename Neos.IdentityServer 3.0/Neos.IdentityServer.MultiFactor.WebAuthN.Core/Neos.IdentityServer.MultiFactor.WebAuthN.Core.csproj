@@ -97,6 +97,7 @@
     <Compile Include="Model\Fido2Configuration.cs" />
     <Compile Include="Model\Fido2ResponseBase.cs" />
     <Compile Include="Model\Metdadata\UafVersion.cs" />
+    <Compile Include="Model\Objects\AuthentcationExtensionUserVerifications.cs" />
     <Compile Include="Model\Objects\Version.cs" />
     <Compile Include="Model\VerificationException.cs" />
     <Compile Include="Model\Metdadata\AlternativeDescriptions.cs" />

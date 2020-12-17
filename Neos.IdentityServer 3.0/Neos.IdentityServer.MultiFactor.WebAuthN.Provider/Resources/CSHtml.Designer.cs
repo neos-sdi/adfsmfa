@@ -61,6 +61,15 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Error during authentication process ! Security Descriptor Data has been been used before !.
+        /// </summary>
+        internal static string BIOERRORAUTHREPLAY {
+            get {
+                return ResourceManager.GetString("BIOERRORAUTHREPLAY", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Activate your biometric device.
         /// </summary>
         internal static string BIOUICFGLabel {

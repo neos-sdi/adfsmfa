@@ -162,4 +162,7 @@
   <data name="BIOUIWIZComment" xml:space="preserve">
     <value>Beheer uw biometrische apparaten. Selecteer afzonderlijke apparaten toevoegen, vervangen of verwijderen.</value>
   </data>
+  <data name="BIOERRORAUTHREPLAY" xml:space="preserve">
+    <value>Fout tijdens verificatieproces ! Beveiligingsbeschrijvingsgegevens zijn al eerder gebruikt!</value>
+  </data>
 </root>

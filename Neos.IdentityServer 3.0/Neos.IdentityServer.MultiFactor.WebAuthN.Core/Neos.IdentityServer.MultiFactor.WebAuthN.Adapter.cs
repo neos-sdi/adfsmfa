@@ -113,10 +113,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
         /// Returns AssertionOptions including a challenge to the browser/authr to assert existing credentials and authenticate a user.
         /// </summary>
         /// <returns></returns>
-        public AssertionOptions GetAssertionOptions(
-            IEnumerable<PublicKeyCredentialDescriptor> allowedCredentials,
-            UserVerificationRequirement? userVerification,
-            AuthenticationExtensionsClientInputs extensions = null)
+        public AssertionOptions GetAssertionOptions(IEnumerable<PublicKeyCredentialDescriptor> allowedCredentials, UserVerificationRequirement? userVerification, AuthenticationExtensionsClientInputs extensions = null)
         {
             var challenge = new byte[_config.ChallengeSize];
             _crypto.GetBytes(challenge);
@@ -129,13 +126,8 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
         /// Verifies the assertion response from the browser/authr to assert existing credentials and authenticate a user.
         /// </summary>
         /// <returns></returns>
-        public AssertionVerificationResult SetAssertionResult(
-            AuthenticatorAssertionRawResponse assertionResponse,
-            AssertionOptions originalOptions,
-            byte[] storedPublicKey,
-            uint storedSignatureCounter,
-            IsUserHandleOwnerOfCredentialId isUserHandleOwnerOfCredentialIdCallback,
-            byte[] requestTokenBindingId = null)
+        public AssertionVerificationResult SetAssertionResult(AuthenticatorAssertionRawResponse assertionResponse, AssertionOptions originalOptions, byte[] storedPublicKey,
+                                            uint storedSignatureCounter, IsUserHandleOwnerOfCredentialId isUserHandleOwnerOfCredentialIdCallback, byte[] requestTokenBindingId = null)
         {
             var parsedResponse = AuthenticatorAssertionResponse.Parse(assertionResponse);
 

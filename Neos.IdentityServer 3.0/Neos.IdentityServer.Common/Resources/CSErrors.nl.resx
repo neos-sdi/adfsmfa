@@ -123,4 +123,7 @@
   <data name="ErrorSendingSecretKeyRequest" xml:space="preserve">
     <value>Fout bij verzenden van gevoelige sleutel naar gebruiker</value>
   </data>
+  <data name="ErrorReplayToken" xml:space="preserve">
+    <value>Fout tijdens verificatieproces ! One Time Password is al eerder afgespeeld</value>
+  </data>
 </root>

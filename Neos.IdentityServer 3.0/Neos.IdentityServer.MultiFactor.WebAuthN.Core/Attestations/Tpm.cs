@@ -207,7 +207,6 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
 
                 // Best I can figure to do for now ?  // id:49465800 'IFX' Infinion  Model and Version are empty
                 if (string.Empty == tpmManufacturer || string.Empty == tpmModel ||string.Empty == tpmVersion)
-                // if (string.Empty == tpmManufacturer)
                 {
                         throw new VerificationException("SAN missing TPMManufacturer, TPMModel, or TPMVersion from TPM attestation certificate");
                 }

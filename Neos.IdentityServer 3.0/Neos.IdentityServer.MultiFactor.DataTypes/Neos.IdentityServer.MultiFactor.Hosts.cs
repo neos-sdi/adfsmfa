@@ -105,7 +105,7 @@ namespace Neos.IdentityServer.MultiFactor
         public static bool IsMFARequired(this UserFeaturesOptions options)
         {
             return (!options.HasFlag(UserFeaturesOptions.AllowDisabled) && !options.HasFlag(UserFeaturesOptions.BypassDisabled));
-           // return (options.HasFlag(UserFeaturesOptions.AdministrativeMode));
+            // return (options.HasFlag(UserFeaturesOptions.AdministrativeMode));
         }
 
         /// <summary>
@@ -147,7 +147,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public static bool IsRegistrationRequired(this UserFeaturesOptions options)
         {
-            return (!options.HasFlag(UserFeaturesOptions.AllowUnRegistered) && !options.HasFlag(UserFeaturesOptions.BypassUnRegistered) && (options.HasFlag(UserFeaturesOptions.AllowProvideInformations)));            
+            return (!options.HasFlag(UserFeaturesOptions.AllowUnRegistered) && !options.HasFlag(UserFeaturesOptions.BypassUnRegistered) && (options.HasFlag(UserFeaturesOptions.AllowProvideInformations)));
         }
 
         /// <summary>
@@ -312,7 +312,7 @@ namespace Neos.IdentityServer.MultiFactor
         {
             options = options.Remove(UserFeaturesOptions.BypassDisabled);
             options = options.Remove(UserFeaturesOptions.AllowDisabled);
-           // options = options.Add(UserFeaturesOptions.AdministrativeMode); // Admin only
+            // options = options.Add(UserFeaturesOptions.AdministrativeMode); // Admin only
             return options;
         }
 
@@ -322,7 +322,7 @@ namespace Neos.IdentityServer.MultiFactor
         public static UserFeaturesOptions MMCSetMFAAllowed(this UserFeaturesOptions options)
         {
             options = options.Remove(UserFeaturesOptions.BypassDisabled);
-           // options = options.Remove(UserFeaturesOptions.AdministrativeMode);
+            // options = options.Remove(UserFeaturesOptions.AdministrativeMode);
             options = options.Add(UserFeaturesOptions.AllowDisabled); // Allow Disable Only
             return options;
         }
@@ -333,7 +333,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public static UserFeaturesOptions MMCSetMFANotRequired(this UserFeaturesOptions options)
         {
-           // options = options.Remove(UserFeaturesOptions.AdministrativeMode);
+            // options = options.Remove(UserFeaturesOptions.AdministrativeMode);
             options = options.Remove(UserFeaturesOptions.AllowDisabled);
             options = options.Add(UserFeaturesOptions.BypassDisabled); // Allow Bypass Only  
             return options;
@@ -384,7 +384,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public static UserFeaturesOptions MMCSetUnManagedRegistration(this UserFeaturesOptions options)
         {
-            options = options.Add(UserFeaturesOptions.BypassUnRegistered);   
+            options = options.Add(UserFeaturesOptions.BypassUnRegistered);
             options = options.Remove(UserFeaturesOptions.AdministrativeMode);
             options = options.Remove(UserFeaturesOptions.AllowProvideInformations);
             options = options.Remove(UserFeaturesOptions.AllowUnRegistered);
@@ -476,7 +476,6 @@ namespace Neos.IdentityServer.MultiFactor
         private string _country = "fr";
         private int _maxretries = 3;
         private string _issuer;
-        private DataRepositoryKind _store = DataRepositoryKind.ADDS;
         private int _pinlength = 4;
 
         /// <summary>
@@ -497,7 +496,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// Constructor
         /// </summary>
-        public MFAConfig(bool initializedefaults): this()
+        public MFAConfig(bool initializedefaults) : this()
         {
             if (initializedefaults)
             {
@@ -733,11 +732,11 @@ namespace Neos.IdentityServer.MultiFactor
         public int MaxRetries
         {
             get { return _maxretries; }
-            set 
+            set
             {
                 if (value <= 0)
                     throw new ArgumentOutOfRangeException();
-                _maxretries = value; 
+                _maxretries = value;
             }
         }
 
@@ -764,11 +763,7 @@ namespace Neos.IdentityServer.MultiFactor
         }
 
         [XmlAttribute("StoreMode")]
-        public DataRepositoryKind StoreMode
-        {
-            get { return _store; }
-            set { _store = value;  }
-        }
+        public DataRepositoryKind StoreMode { get; set; } = DataRepositoryKind.ADDS;
 
         [XmlAttribute("CustomUpdatePassword")]
         public bool CustomUpdatePassword { get; set; } = true;
@@ -977,17 +972,17 @@ namespace Neos.IdentityServer.MultiFactor
     /// <summary>
     /// OTPProvider contract
     /// </summary>
-    public class OTPProviderParams: BaseProviderParams
+    public class OTPProviderParams : BaseProviderParams
     {
         /// <summary>
         /// Constructor
         /// </summary>
-        public OTPProviderParams() {}
+        public OTPProviderParams() { }
 
         /// <summary>
         /// Constructor initialized
         /// </summary>
-        public OTPProviderParams(OTPProvider prov): base()
+        public OTPProviderParams(OTPProvider prov) : base()
         {
             this.Data = prov;
             this.TOTPShadows = prov.TOTPShadows;
@@ -1006,6 +1001,7 @@ namespace Neos.IdentityServer.MultiFactor
         public HashMode Algorithm { get; set; }
         public int Digits { get; set; }
         public int Duration { get; set; }
+        public MFAConfig Config { get; set; }
         public override bool Enabled { get; set; }
         public override bool IsRequired { get; set; }
         public override bool PinRequired { get; set; }
@@ -1021,12 +1017,12 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// Constructor
         /// </summary>
-        public MailProviderParams() {}
+        public MailProviderParams() { }
 
         /// <summary>
         /// Constructor initialized
         /// </summary>
-        public MailProviderParams(MailProvider prov): base()
+        public MailProviderParams(MailProvider prov) : base()
         {
             Data = prov;
             Enabled = prov.Enabled;
@@ -1054,12 +1050,12 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// Constructor
         /// </summary>
-        public ExternalProviderParams() {}
+        public ExternalProviderParams() { }
 
         /// <summary>
         /// Constructor initialized
         /// </summary>
-        public ExternalProviderParams(ExternalOTPProvider prov): base()
+        public ExternalProviderParams(ExternalOTPProvider prov) : base()
         {
             Data = prov;
             Enabled = prov.Enabled;
@@ -1085,12 +1081,12 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// Constructor
         /// </summary>
-        public AzureProviderParams() {}
+        public AzureProviderParams() { }
 
         /// <summary>
         /// Constructor initialized
         /// </summary>
-        public AzureProviderParams(AzureProvider prov, string adfsid, string company): base()
+        public AzureProviderParams(AzureProvider prov, string adfsid, string company) : base()
         {
             Data = prov;
             this.ADFSIdentifier = adfsid;
@@ -1160,7 +1156,7 @@ namespace Neos.IdentityServer.MultiFactor
     /// </summary>
     public abstract class BaseKeysManagerParams
     {
-        public BaseKeysManagerParams (string xorsecret)
+        public BaseKeysManagerParams(string xorsecret)
         {
             XORSecret = xorsecret;
         }
@@ -1189,9 +1185,9 @@ namespace Neos.IdentityServer.MultiFactor
     /// <summary>
     /// RNGKeysManagerParams contract
     /// </summary>
-    internal class RNGKeysManagerParams: BaseKeysManagerParams
+    internal class RNGKeysManagerParams : BaseKeysManagerParams
     {
-        public RNGKeysManagerParams(string xorsecret):base(xorsecret)
+        public RNGKeysManagerParams(string xorsecret) : base(xorsecret)
         {
         }
 
@@ -1510,10 +1506,10 @@ namespace Neos.IdentityServer.MultiFactor
         public string Host { get; set; }
 
         [XmlAttribute("port")]
-        public int Port  { get;  set; }
+        public int Port { get; set; }
 
         [XmlAttribute("useSSL")]
-        public bool UseSSL {  get; set; } = false;
+        public bool UseSSL { get; set; } = false;
 
         [XmlAttribute("Company")]
         public string Company { get; set; } = "your company description";
@@ -1535,7 +1531,7 @@ namespace Neos.IdentityServer.MultiFactor
 
         [XmlArray("MailInscription")]
         [XmlArrayItem("Template", Type = typeof(SendMailFileName))]
-        public List<SendMailFileName> MailAdminContent { get; set;}
+        public List<SendMailFileName> MailAdminContent { get; set; }
 
         [XmlArray("MailSecureKey")]
         [XmlArrayItem("Template", Type = typeof(SendMailFileName))]
@@ -1607,7 +1603,7 @@ namespace Neos.IdentityServer.MultiFactor
         [XmlAttribute("TOTPDigits")]
         public int TOTPDigits
         {
-            get {return _digits; }
+            get { return _digits; }
             set
             {
                 if ((_digits < 4) || (_digits > 8))
@@ -1695,17 +1691,17 @@ namespace Neos.IdentityServer.MultiFactor
 
         [XmlElement("Configuration", typeof(WebAuthNProviderConfig))]
         public WebAuthNProviderConfig Configuration
-        {                        
+        {
             get
             {
                 if (_cfg == null)
-                   _cfg = new WebAuthNProviderConfig();
+                    _cfg = new WebAuthNProviderConfig();
                 return _cfg;
             }
             set
             {
                 if (_cfg == null)
-                   _cfg = new WebAuthNProviderConfig();
+                    _cfg = new WebAuthNProviderConfig();
                 _cfg = value;
             }
         }
@@ -1894,6 +1890,46 @@ namespace Neos.IdentityServer.MultiFactor
 
         [XmlAttribute("RequireResidentKey")]
         public bool RequireResidentKey { get; set; } = false;
+
+
+        [XmlIgnore]
+        public bool? HmacSecret { get; set; } = null;
+
+        [XmlAttribute("HmacSecret")]
+        public string HmacSecretAsText
+        {
+            get { return (HmacSecret.HasValue) ? HmacSecret.ToString() : null; }
+            set { HmacSecret = !string.IsNullOrEmpty(value) ? bool.Parse(value) : default(bool?); }
+        }
+
+
+        [XmlIgnore]
+        public WebAuthNUserVerification? CredProtect { get; set; } = null;
+
+        [XmlAttribute("CredProtect")]
+        public string CredProtectAsText
+        {
+            get { return (CredProtect.HasValue) ? CredProtect.ToString() : null; }
+            set
+            {
+                WebAuthNUserVerification parsed;
+                if (Enum.TryParse<WebAuthNUserVerification>(value, out parsed))
+                    CredProtect = parsed;
+                else
+                    CredProtect = null;
+               // var res = Enum.TryParse<WebAuthNUserVerification>(value, out var CredProtect) ? CredProtect : (WebAuthNUserVerification?)null;
+            }
+        }
+
+        [XmlIgnore]
+        public bool? EnforceCredProtect { get; set; } = null;
+
+        [XmlAttribute("EnforceCredProtect")]
+        public string EnforceCredProtectAsText
+        {
+            get { return (EnforceCredProtect.HasValue) ? EnforceCredProtect.ToString() : null; }
+            set { EnforceCredProtect = !string.IsNullOrEmpty(value) ? bool.Parse(value) : default(bool?); }
+        }
     }
 
     #endregion

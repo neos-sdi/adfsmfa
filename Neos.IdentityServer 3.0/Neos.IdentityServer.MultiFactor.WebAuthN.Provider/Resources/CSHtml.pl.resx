@@ -162,4 +162,7 @@
   <data name="BIOUIWIZComment" xml:space="preserve">
     <value>Zarządzaj urządzeniami biometrycznymi. Wybierz dodaj, zamień lub usuń poszczególne urządzenia.</value>
   </data>
+  <data name="BIOERRORAUTHREPLAY" xml:space="preserve">
+    <value>Błąd podczas procesu uwierzytelniania! Koder bezpieczeństwa Dane zostały wykorzystane wcześniej!</value>
+  </data>
 </root>
