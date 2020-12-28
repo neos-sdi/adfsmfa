@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="MMCFILTEREMAIL" xml:space="preserve">
-    <value>E-mail adress</value>
+    <value>E-mail address</value>
   </data>
   <data name="MMCFILTERPHONE" xml:space="preserve">
     <value>Phone Number</value>

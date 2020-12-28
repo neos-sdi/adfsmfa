@@ -145,7 +145,7 @@
     <value>Invalid ADDS attribute for check date !</value>
   </data>
   <data name="CTRLADATENABLEDERROR" xml:space="preserve">
-    <value>Invalid ADDS attribute for Enbaled !</value>
+    <value>Invalid ADDS attribute for Enabled !</value>
   </data>
   <data name="CTRLADATMETHODERROR" xml:space="preserve">
     <value>Invalid ADDS attribute for method !</value>
@@ -175,7 +175,7 @@
     <value>Invalid ADDS attribute for Key !</value>
   </data>
   <data name="CTRLADATTMAIL" xml:space="preserve">
-    <value>E-mail adress</value>
+    <value>E-mail address</value>
   </data>
   <data name="CTRLADATTMETHOD" xml:space="preserve">
     <value>Default MFA method</value>
