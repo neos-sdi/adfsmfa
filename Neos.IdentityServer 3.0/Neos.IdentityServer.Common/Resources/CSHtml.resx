@@ -170,7 +170,7 @@
     <value>Account verified&lt;br&gt;&lt;br&gt;Now you can use your mail address to authenticate</value>
   </data>
   <data name="MAILUIListChoiceLabel" xml:space="preserve">
-    <value>Get an email</value>
+    <value>Receive an email</value>
     <comment>Recevoir un email sur mon adresse personnelle</comment>
   </data>
   <data name="MAILUIListOptionLabel" xml:space="preserve">
@@ -192,7 +192,7 @@
     <value>Enroll your email address</value>
   </data>
   <data name="MAILWIZEnroll" xml:space="preserve">
-    <value>Save my email address</value>
+    <value>Enroll my email address</value>
   </data>
   <data name="OTPUICFGLabel" xml:space="preserve">
     <value>Single use access code</value>

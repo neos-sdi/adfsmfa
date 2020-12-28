@@ -151,7 +151,7 @@
     <value>Enroll my phone</value>
   </data>
   <data name="HtmlEnrollPinCode" xml:space="preserve">
-    <value>Set my PIN code</value>
+    <value>Enroll my PIN code</value>
   </data>
   <data name="HtmlEnrollPinTaskLabel" xml:space="preserve">
     <value>Set up a PIN</value>

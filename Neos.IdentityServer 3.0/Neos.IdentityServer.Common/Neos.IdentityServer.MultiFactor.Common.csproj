@@ -130,7 +130,9 @@
     <EmbeddedResource Include="Resources\CSErrors.es.resx" />
     <EmbeddedResource Include="Resources\CSErrors.fr-CA.resx" />
     <EmbeddedResource Include="Resources\CSErrors.it.resx" />
-    <EmbeddedResource Include="Resources\CSErrors.ja.resx" />
+    <EmbeddedResource Include="Resources\CSErrors.ja.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Resources\CSErrors.nl.resx" />
     <EmbeddedResource Include="Resources\CSErrors.pl.resx" />
     <EmbeddedResource Include="Resources\CSErrors.pt.resx" />

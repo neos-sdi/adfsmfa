@@ -160,7 +160,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Set my PIN code.
+        ///   Recherche une chaîne localisée semblable à Enroll my PIN code.
         /// </summary>
         internal static string HtmlEnrollPinCode {
             get {
