@@ -121,10 +121,10 @@
     <value>単一使用アクセスコード</value>
   </data>
   <data name="OTPUIChoiceLabel" xml:space="preserve">
-    <value>自分の認証アプリケーションを使用する</value>
+    <value>認証アプリケーションを使用する</value>
   </data>
   <data name="OTPUIConfigLabel" xml:space="preserve">
-    <value>自分の認証アプリケーションを使用する</value>
+    <value>認証アプリケーションを使用する</value>
   </data>
   <data name="OTPUIEnrollTaskLabel" xml:space="preserve">
     <value>認証アプリケーションの登録</value>
@@ -154,6 +154,6 @@
     <value>TOTP 多要素プロバイダ</value>
   </data>
   <data name="OTPUIWIZComment" xml:space="preserve">
-    <value>アカウントを登録するためのマイクロソフト認証システム、Google認証システムなどのTOTPアプリケーションでQRコードをスキャン</value>
+    <value>アカウントを登録するためのMicrosoft Authenticator、Google AuthenticatorなどのTOTPアプリケーションでQRコードをスキャン</value>
   </data>
 </root>

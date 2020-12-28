@@ -166,7 +166,7 @@
     <value>User {0} deleted !</value>
   </data>
   <data name="InfosUserHasNewKey" xml:space="preserve">
-    <value>User {0} has a new Enryption key !</value>
+    <value>User {0} has a new Encryption key !</value>
   </data>
   <data name="InfosUserUpdated" xml:space="preserve">
     <value>User {0} updated !</value>

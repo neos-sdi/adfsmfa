@@ -133,7 +133,7 @@
     <value>MFA not initialized ! you must run "Register-MFASystem" PowerShell  Cmdlet</value>
   </data>
   <data name="ErrorMFAUnAuthorized" xml:space="preserve">
-    <value>Acces denied for current user ! must be an ADFS admin</value>
+    <value>Access denied for current user ! must be an ADFS admin</value>
   </data>
   <data name="InfoSendingMailToUser" xml:space="preserve">
     <value>Sensitive mail sent to user {0}</value>

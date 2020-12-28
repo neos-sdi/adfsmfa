@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="MMCFILTEREMAIL" xml:space="preserve">
-    <value>電子メールの服装</value>
+    <value>電子メールアドレス</value>
   </data>
   <data name="MMCFILTERPHONE" xml:space="preserve">
     <value>電話番号</value>
@@ -130,7 +130,7 @@
     <value>モバイルまたはPCでアプリケーションを使用する</value>
   </data>
   <data name="MMCMETHAZURE" xml:space="preserve">
-    <value>マイクロソフトアズール</value>
+    <value>Microsoft Azure</value>
   </data>
   <data name="MMCMETHBIO" xml:space="preserve">
     <value>生体認証デバイス</value>
@@ -157,12 +157,12 @@
     <value>次の値に等しい</value>
   </data>
   <data name="MMCOPNOTCONTAINS" xml:space="preserve">
-    <value>含まれていません</value>
+    <value>含まない</value>
   </data>
   <data name="MMCOPNOTEQUAL" xml:space="preserve">
     <value>と等しくない</value>
   </data>
   <data name="MMCOPSTARTWITH" xml:space="preserve">
-    <value>で始まります</value>
+    <value>で始まる</value>
   </data>
 </root>

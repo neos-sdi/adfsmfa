@@ -148,7 +148,7 @@
     <value>保存</value>
   </data>
   <data name="GENERALSCOPESAVEDESC" xml:space="preserve">
-    <value>更新プログラムの保存</value>
+    <value>更新の保存</value>
   </data>
   <data name="MFASCOPENODEDESC" xml:space="preserve">
     <value>MFA プロバイダー</value>
@@ -226,7 +226,7 @@
     <value>ユーザー インターフェイスのカルチャを英語で変更する (1033)</value>
   </data>
   <data name="ROOTSCOPENODEDESC" xml:space="preserve">
-    <value>Mfa</value>
+    <value>MFA</value>
   </data>
   <data name="SECURITYSCOPENODEDESC" xml:space="preserve">
     <value>セキュリティ構成</value>
@@ -235,7 +235,7 @@
     <value>セキュリティ構成</value>
   </data>
   <data name="SECURITYSCOPEWSMAN" xml:space="preserve">
-    <value>Wsman</value>
+    <value>WsMan</value>
   </data>
   <data name="SECURITYSCOPEWSMANDESC" xml:space="preserve">
     <value>WsMan の構成</value>
@@ -250,7 +250,7 @@
     <value>SMTP 構成</value>
   </data>
   <data name="SQLSCOPENODEDESC" xml:space="preserve">
-    <value>構成</value>
+    <value>SQLサーバー構成</value>
   </data>
   <data name="STORAGESCOPENODEDESC" xml:space="preserve">
     <value>ストレージ構成</value>
@@ -259,7 +259,7 @@
     <value>TOTP 構成</value>
   </data>
   <data name="USERSCOPEADDUSER" xml:space="preserve">
-    <value>ユーザーを追加する</value>
+    <value>ユーザーを追加</value>
   </data>
   <data name="USERSCOPEADDUSERDESC" xml:space="preserve">
     <value>MFA 認証システムへのユーザーの追加</value>
@@ -328,7 +328,7 @@
     <value>ユーザー管理</value>
   </data>
   <data name="WEBAUTHNSCOPEDESC" xml:space="preserve">
-    <value>ウェブ認証</value>
+    <value>WebAuthN 認証</value>
   </data>
   <data name="ROOTLANGUAGEDA" xml:space="preserve">
     <value>デンマーク語</value>
@@ -355,10 +355,10 @@
     <value>エンコードされたキー RNG</value>
   </data>
   <data name="SECURITYSCOPERSA" xml:space="preserve">
-    <value>アメトリックキー RSA</value>
+    <value>非対称鍵 RSA</value>
   </data>
   <data name="SECURITYSCOPEAES" xml:space="preserve">
-    <value>サイメトリックキーAES</value>
+    <value>対称鍵 AES</value>
   </data>
   <data name="SECURITYSCOPECUSTOM" xml:space="preserve">
     <value>カスタムキー</value>

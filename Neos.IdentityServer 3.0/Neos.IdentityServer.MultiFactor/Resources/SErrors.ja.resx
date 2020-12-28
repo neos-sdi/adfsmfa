@@ -169,13 +169,13 @@
 {0}</value>
   </data>
   <data name="ErrorPinLength" xml:space="preserve">
-    <value>無効な PIN の長さ、{0}番号が必要です!</value>
+    <value>無効な PIN の長さ、{0}桁が必要です!</value>
   </data>
   <data name="ErrorPinValue" xml:space="preserve">
     <value>無効な PIN 値です!</value>
   </data>
   <data name="ErrorReplayToken" xml:space="preserve">
-    <value>オーテフチプロセスでエラーが発生しました !ワンタイムパスワードは以前に再生されています</value>
+    <value>認証プロセスでエラーが発生しました !ワンタイムパスワードは以前に再生されています</value>
   </data>
   <data name="ErrorSendingToastInformation" xml:space="preserve">
     <value>ID リクエストの送信中にエラーが発生しました !</value>
@@ -184,6 +184,6 @@
     <value>ID リクエストの送信中にエラーが発生しました !再試行！</value>
   </data>
   <data name="ErrorValidationTimeWindowElapsed" xml:space="preserve">
-    <value>ウィンドウの検証時間が経過しました。</value>
+    <value>検証時間を超過しました。</value>
   </data>
 </root>

@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="InfoAllKeyWillbeReset" xml:space="preserve">
-    <value>すべてのRSAキーが無効になります!続行する (Y/N)</value>
+    <value>すべてのRSAキーが無効になります!続行しますか (Y/N)</value>
   </data>
   <data name="InfosAllServicesRestarted" xml:space="preserve">
     <value>すべてのファーム サービスが再起動しました!</value>
@@ -142,7 +142,7 @@
     <value>SQL 証明書{0}正しく更新されました!この証明書は、他のすべての ADFS サーバーに展開する必要があります。</value>
   </data>
   <data name="InfosSystemAlreadyInitialized" xml:space="preserve">
-    <value>MFA は既に初期化されています!すべての MFA 構成を再初期化する場合は、"登録解除-MFASystem" PowerShell コマンドレットを実行する必要があります</value>
+    <value>MFA は既に初期化されています!すべての MFA 構成を再初期化する場合は、"UnRegister-MFASystem" PowerShell コマンドレットを実行する必要があります</value>
   </data>
   <data name="InfosSystemExported" xml:space="preserve">
     <value>MFA 構成はファイル {0}に正しくエクスポートされました 。</value>
@@ -166,7 +166,7 @@
     <value>ユーザー{0}削除しました!</value>
   </data>
   <data name="InfosUserHasNewKey" xml:space="preserve">
-    <value>ユーザー{0}は新しいエンリピションキーを持っています!</value>
+    <value>ユーザー{0}は新しい暗号キーを持っています!</value>
   </data>
   <data name="InfosUserUpdated" xml:space="preserve">
     <value>ユーザー{0}更新しました !</value>
@@ -205,7 +205,7 @@
     <value>MFA 脅威システム データが正しく更新されました !</value>
   </data>
   <data name="InfosNotificationSend" xml:space="preserve">
-    <value>通知が発送されました!</value>
+    <value>通知が送信されました!</value>
   </data>
   <data name="InfoComputerNotRegistered" xml:space="preserve">
     <value>コンピューター {0} MFA 構成に追加または更新されていません</value>
@@ -226,12 +226,12 @@
     <value>資格情報が正しく更新されました !</value>
   </data>
   <data name="InfosMailTemplateExported" xml:space="preserve">
-    <value>メールテンプレートは正しくエクスポート!</value>
+    <value>メールテンプレートは正しくエクスポートされました !</value>
   </data>
   <data name="InfosSampleInstalled" xml:space="preserve">
-    <value>MFA の例がインストールされました !</value>
+    <value>MFA のサンプルがインストールされました !</value>
   </data>
   <data name="InfosSampleUnInstalled" xml:space="preserve">
-    <value>MFA の例 未インストール !</value>
+    <value>MFA のサンプルがアンインストールされました !</value>
   </data>
 </root>

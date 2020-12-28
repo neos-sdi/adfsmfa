@@ -127,13 +127,13 @@
     <value>MFA 構成の読み込み中にエラーが発生しました!\r {0}</value>
   </data>
   <data name="ErrorMFAFarmAlreadyInitialized" xml:space="preserve">
-    <value>MFA は既に初期化されています!すべての MFA 構成を再初期化する場合は、"登録解除-MFASytem" PowerShell コマンドレットを実行する必要があります</value>
+    <value>MFA は既に初期化されています!すべての MFA 構成を再初期化する場合は、"UnRegister-MFASytem" PowerShell コマンドレットを実行する必要があります</value>
   </data>
   <data name="ErrorMFAFarmNotInitialized" xml:space="preserve">
-    <value>MFA が初期化されていません!"登録-MFASystem" PowerShell コマンドレットを実行する必要があります</value>
+    <value>MFA が初期化されていません!"Register-MFASystem" PowerShell コマンドレットを実行する必要があります</value>
   </data>
   <data name="ErrorMFAUnAuthorized" xml:space="preserve">
-    <value>現在のユーザーに対してアクスは拒否されました!ADFS 管理者である必要があります</value>
+    <value>現在のユーザーに対してアクセスは拒否されました!ADFS 管理者である必要があります</value>
   </data>
   <data name="InfoSendingMailToUser" xml:space="preserve">
     <value>ユーザー {0}に送信される機密性の高いメール</value>

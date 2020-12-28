@@ -118,34 +118,34 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CRTLADFSRESTARTFARMSERVICES" xml:space="preserve">
-    <value>すべてのフェデレーション サービスを再開する</value>
+    <value>すべてのフェデレーション サービスを再起動する</value>
   </data>
   <data name="CRTLADFSRESTARTSERVICES" xml:space="preserve">
-    <value>フェデレーション サービスを再開する</value>
+    <value>フェデレーション サービスを再起動する</value>
   </data>
   <data name="CRTLADFSSTARTSERVICES" xml:space="preserve">
     <value>フェデレーション サービスを開始する</value>
   </data>
   <data name="CRTLADFSSTOPSERVICES" xml:space="preserve">
-    <value>フェデレーション サービスの停止</value>
+    <value>フェデレーション サービスを停止する</value>
   </data>
   <data name="CTRGLMANAGEREG" xml:space="preserve">
-    <value>&gt;終了</value>
+    <value>登録通知</value>
   </data>
   <data name="CTRGLMANAGEREGEND" xml:space="preserve">
-    <value>終わり</value>
+    <value>終了</value>
   </data>
   <data name="CTRGLMANAGEREGSTART" xml:space="preserve">
     <value>開始</value>
   </data>
   <data name="CTRLADACCOUNT" xml:space="preserve">
-    <value>アクセスアカウント</value>
+    <value>アクセス アカウント</value>
   </data>
   <data name="CTRLADATCHECKDATEERROR" xml:space="preserve">
     <value>チェック日付に対して無効な ADDS 属性です。</value>
   </data>
   <data name="CTRLADATENABLEDERROR" xml:space="preserve">
-    <value>エンバリードの ADDS 属性が無効です。</value>
+    <value>ADDS 属性が無効です。</value>
   </data>
   <data name="CTRLADATMETHODERROR" xml:space="preserve">
     <value>メソッドに対して無効な ADDS 属性です。</value>
@@ -154,7 +154,7 @@
     <value>特定のメソッドに対して無効な ADDS 属性です。</value>
   </data>
   <data name="CTRLADATPINERROR" xml:space="preserve">
-    <value>ピン コードに対して無効な ADDS 属性です。</value>
+    <value>PINコードに対して無効な ADDS 属性です。</value>
   </data>
   <data name="CTRLADATRSACERTERROR" xml:space="preserve">
     <value>RSA 証明書に対して無効な ADDS 属性です。</value>
@@ -175,7 +175,7 @@
     <value>キーに対して無効な ADDS 属性です。</value>
   </data>
   <data name="CTRLADATTMAIL" xml:space="preserve">
-    <value>電子メールの服装</value>
+    <value>電子メールアドレス</value>
   </data>
   <data name="CTRLADATTMETHOD" xml:space="preserve">
     <value>既定の MFA メソッド</value>
@@ -193,10 +193,10 @@
     <value>電話番号に対して無効な ADDS 属性です。</value>
   </data>
   <data name="CTRLADATTPIN" xml:space="preserve">
-    <value>ピンコード</value>
+    <value>PINコード</value>
   </data>
   <data name="CTRLADATTPUBLICKEY" xml:space="preserve">
-    <value>パブリック キー</value>
+    <value>WebAuthN パブリック キー</value>
   </data>
   <data name="CTRLADATTRIBUTES" xml:space="preserve">
     <value>アクティブ ディレクトリ属性の設定</value>
@@ -220,7 +220,7 @@
     <value>ADDS フォレスト/ドメインに接続できません。</value>
   </data>
   <data name="CTRLADCONNECTIONOK" xml:space="preserve">
-    <value>ADDS フォレスト/ドメインの操作上の接続 !</value>
+    <value>ADDS フォレスト/ドメインへの接続を確認 !</value>
   </data>
   <data name="CTRLADDOMAIN" xml:space="preserve">
     <value>ドメイン名</value>
@@ -274,7 +274,7 @@
     <value>キャンセル</value>
   </data>
   <data name="CTRLDLGMAXRETRIES" xml:space="preserve">
-    <value>最大再試行は許可されます</value>
+    <value>許可する最大リトライ</value>
   </data>
   <data name="CTRLGLALLOWGOOGLESEARCH" xml:space="preserve">
     <value>グーグル検索を表示する</value>
@@ -397,7 +397,7 @@
     <value>アクティブ</value>
   </data>
   <data name="CTRLPROVPIN" xml:space="preserve">
-    <value>ピンコードが必要です</value>
+    <value>PINコードが必要です</value>
   </data>
   <data name="CTRLPROVREQUIRED" xml:space="preserve">
     <value>必須</value>
@@ -406,7 +406,7 @@
     <value>登録ウィザード</value>
   </data>
   <data name="CTRLPROVWIZARDSTRICT" xml:space="preserve">
-    <value>ウィザードが完了していない場合はウィザードを強制する</value>
+    <value>完了していない場合はウィザードを強制する</value>
   </data>
   <data name="CTRLSAVE" xml:space="preserve">
     <value>保存</value>
@@ -427,7 +427,7 @@
     <value>証明書が見つかりません!</value>
   </data>
   <data name="CTRLSECINVALIDEXTERROR" xml:space="preserve">
-    <value>無効な拡張子です!ロードできません !</value>
+    <value>無効な拡張クラスです!ロードできません !</value>
   </data>
   <data name="CTRLSECKEYGEN" xml:space="preserve">
     <value>生成されたキーの長さ</value>
@@ -496,7 +496,7 @@
     <value>会社名</value>
   </data>
   <data name="CTRLSMSIVALIDEXTERROR" xml:space="preserve">
-    <value>無効な拡張子です!ロードできません !</value>
+    <value>無効な拡張クラスです!ロードできません !</value>
   </data>
   <data name="CTRLSMSPARAMS" xml:space="preserve">
     <value>パラメーター</value>
@@ -520,7 +520,7 @@
     <value>配信通知 (エラー)</value>
   </data>
   <data name="CTRLSMTPFROM" xml:space="preserve">
-    <value>管理上の連絡先 (送信元)</value>
+    <value>管理者の連絡先 (送信元)</value>
   </data>
   <data name="CTRLSMTPIDENTIFICATION" xml:space="preserve">
     <value>識別</value>
@@ -625,7 +625,7 @@
     <value>拡張機能 (認証)</value>
   </data>
   <data name="CTRLWEBAUTHNRESIDENTKEY" xml:space="preserve">
-    <value>常駐キーを要求する</value>
+    <value>レジデント キーを要求する</value>
   </data>
   <data name="CTRLWEBAUTHNSERVERDOMAIN" xml:space="preserve">
     <value>サーバードメイン</value>
@@ -670,7 +670,7 @@
     <value>セキュリティで保護された LDAP 接続を使用する (LDAPS)</value>
   </data>
   <data name="CTRLCUSTOMKEYSERROR" xml:space="preserve">
-    <value>無効な拡張子です!ロードできません !</value>
+    <value>無効な拡張クラスです!ロードできません !</value>
   </data>
   <data name="CTRLWEBAUTHNSHOWPII" xml:space="preserve">
     <value>機密ログを表示する</value>
