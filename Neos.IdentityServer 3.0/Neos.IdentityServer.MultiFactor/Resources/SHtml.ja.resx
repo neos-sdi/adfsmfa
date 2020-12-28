@@ -160,7 +160,7 @@
     <value>リクエストの送信</value>
   </data>
   <data name="HtmlINSWaitRequest" xml:space="preserve">
-    <value>管理者に電子メールで碑文要求を送信する</value>
+    <value>管理者に電子メールで登録要求を送信する</value>
   </data>
   <data name="HtmlLabelVERIFYOTPError" xml:space="preserve">
     <value>お客様のアカウントは有効ではありません!&lt;br&gt;「前へ」を選択して操作を再試行できます。</value>
@@ -169,13 +169,13 @@
     <value>完了</value>
   </data>
   <data name="HtmlLabelVERIFYOTPPRIOR" xml:space="preserve">
-    <value>先の</value>
+    <value>前へ</value>
   </data>
   <data name="HtmlLabelVERIFYOTPSuccess" xml:space="preserve">
     <value>アカウントが検証されました !&lt;br&gt;MFA 検証は今後使用できるようになります。</value>
   </data>
   <data name="HtmlLabelWREGOTP" xml:space="preserve">
-    <value>続行してアカウントを登録するには、デバイスに Microsoft 認証システム、Google 認証システムなどの認証アプリケーションがインストールされている必要があります。</value>
+    <value>続行してアカウントを登録するには、デバイスに Microsoft Authenticator、Google Authenticatorなどの認証アプリケーションがインストールされている必要があります。</value>
   </data>
   <data name="HtmlLabelWREGOTPWarning" xml:space="preserve">
     <value>続行すると、現在のキーが無効になり、リセットされます。</value>
@@ -187,10 +187,10 @@
     <value>本人確認のため、電話番号を入力する必要があります。この電話は到達可能でなければなりません。</value>
   </data>
   <data name="HtmlLabelWRPinCode" xml:space="preserve">
-    <value>ID を検証するには、シークレット コード ({0} 桁) を入力する必要があります。銀行カードや電話のコード、生年月日に関する詳細は使用しないでください。</value>
+    <value>ID を検証するには、シークレット コード ({0} 桁) を入力する必要があります。銀行カードや電話のコード、生年月日に関する情報は使用しないでください。</value>
   </data>
   <data name="HtmlLabelWRQRCode" xml:space="preserve">
-    <value>アカウントを登録するためのマイクロソフト認証システム、Google認証システムなどのTOTPアプリケーションでQRコードをスキャン</value>
+    <value>アカウントを登録するためのMicrosoft Authenticator、Google AuthenticatorなどのTOTPアプリケーションでQRコードをスキャン</value>
   </data>
   <data name="HtmlLabelWVERIFYOTP" xml:space="preserve">
     <value>続行</value>
@@ -223,7 +223,7 @@
     <value>既定のオプションを選択する</value>
   </data>
   <data name="HtmlUIActivate" xml:space="preserve">
-    <value>アクティブ 化</value>
+    <value>アクティベート</value>
   </data>
   <data name="HtmlUIEnrollContinue" xml:space="preserve">
     <value>&lt;br/&gt;「続行」をクリックします。</value>
@@ -241,22 +241,22 @@
     <value>多要素認証を無効にする</value>
   </data>
   <data name="HtmlUIMGotoInscription" xml:space="preserve">
-    <value>碑文要求</value>
+    <value>登録要求</value>
   </data>
   <data name="HtmlUIMGoToRegistration" xml:space="preserve">
     <value>登録</value>
   </data>
   <data name="HtmlUIMOk" xml:space="preserve">
-    <value>わかりました</value>
+    <value>了解</value>
   </data>
   <data name="HtmlUIMQuit" xml:space="preserve">
     <value>終了</value>
   </data>
   <data name="HtmlUIMustPrepareLabel" xml:space="preserve">
-    <value>しなきゃいけません：</value>
+    <value>必ず：</value>
   </data>
   <data name="HtmlUIPinOptionLabel" xml:space="preserve">
-    <value>ピンコード</value>
+    <value>PINコード</value>
   </data>
   <data name="HtmlUIResultLabel" xml:space="preserve">
     <value>提供される情報:</value>
@@ -280,6 +280,6 @@
     <value>自分のメールアドレスを登録する</value>
   </data>
   <data name="HtmlUIMNoCode" xml:space="preserve">
-    <value>別の方法で署名する</value>
+    <value>別の方法でサインインする</value>
   </data>
 </root>

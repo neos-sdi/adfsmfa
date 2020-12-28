@@ -127,13 +127,13 @@
     <value>既定のオプションを使用する</value>
   </data>
   <data name="GLOBALPINLabel" xml:space="preserve">
-    <value>暗証番号を入力してください</value>
+    <value>PINコードを入力してください</value>
   </data>
   <data name="GLOBALPINMessage" xml:space="preserve">
-    <value>暗証番号を入力してください</value>
+    <value>PINコードを入力してください</value>
   </data>
   <data name="GLOBALUIPINLabel" xml:space="preserve">
-    <value>暗証番号を登録する</value>
+    <value>PINコードを登録する</value>
   </data>
   <data name="GLOBALWarnOverNetwork" xml:space="preserve">
     <value>(データはインターネット経由で転送されます)</value>
@@ -157,10 +157,10 @@
     <value>単一使用アクセスコード</value>
   </data>
   <data name="OTPUIChoiceLabel" xml:space="preserve">
-    <value>自分の認証アプリケーションを使用する</value>
+    <value>認証アプリケーションを使用する</value>
   </data>
   <data name="OTPUIConfigLabel" xml:space="preserve">
-    <value>自分の認証アプリケーションを使用する</value>
+    <value>認証アプリケーションを使用する</value>
   </data>
   <data name="OTPUIEnrollTaskLabel" xml:space="preserve">
     <value>認証アプリケーションの登録</value>
@@ -226,7 +226,7 @@
     <value>電話を登録する</value>
   </data>
   <data name="PROVIDEROTPDESCRIPTION" xml:space="preserve">
-    <value>TOTP 多要素プロバイダ</value>
+    <value>TOTP 多要素プロバイダー</value>
   </data>
   <data name="PROVIDERSMSDESCRIPTION" xml:space="preserve">
     <value>SMS 多要素プロバイダーのサンプル</value>
@@ -235,7 +235,7 @@
     <value>電子メール多要素プロバイダー</value>
   </data>
   <data name="OTPUIWIZComment" xml:space="preserve">
-    <value>アカウントを登録するためのマイクロソフト認証システム、Google認証システムなどのTOTPアプリケーションでQRコードをスキャン</value>
+    <value>アカウントを登録するためのMicrosoft Authenticator、Google AuthenticatorなどのTOTPアプリケーションでQRコードをスキャン</value>
   </data>
   <data name="MAILUIWIZComment" xml:space="preserve">
     <value>識別情報を確認するには、電子メール アドレスを入力する必要があります。このメールは、企業の確認(個人の電子メールアドレス)を必要とせずに到達可能である必要があります</value>
@@ -244,7 +244,7 @@
     <value>本人確認のため、電話番号を入力する必要があります。この電話は到達可能でなければなりません。</value>
   </data>
   <data name="PROVIDERPLUGDESCRIPTION" xml:space="preserve">
-    <value>{0}多要素サプライヤー(プラグ)</value>
+    <value>{0}多要素プロバイダー(プラグ)</value>
   </data>
   <data name="MAILUICFGLabel" xml:space="preserve">
     <value>メールアドレス</value>
