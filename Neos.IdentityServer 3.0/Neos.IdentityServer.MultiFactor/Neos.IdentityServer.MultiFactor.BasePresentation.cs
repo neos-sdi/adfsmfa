@@ -867,9 +867,12 @@ namespace Neos.IdentityServer.MultiFactor
                 Dictionary<WebThemeAddressKind, string>  dic = WebThemeManager.GetAddresses(usercontext);
                 if (dic != null)
                 {
-                    result += "   SetIllustrationImage(\"" + dic[WebThemeAddressKind.Illustration].ToString() + "\");" + CR;
-                    result += "   document.getElementById('companyLogo').src = \"" + dic[WebThemeAddressKind.CompanyLogo].ToString() + "\";" + CR;
-                    result += "   document.getElementsByTagName('link')[0].href = \"" + dic[WebThemeAddressKind.StyleSheet].ToString() + "\";" + CR;
+                    if (!string.IsNullOrEmpty(dic[WebThemeAddressKind.Illustration].ToString()))
+                        result += "   SetIllustrationImage(\"" + dic[WebThemeAddressKind.Illustration].ToString() + "\");" + CR;
+                    if (!string.IsNullOrEmpty(dic[WebThemeAddressKind.CompanyLogo].ToString()))
+                        result += "   document.getElementById('companyLogo').src = \"" + dic[WebThemeAddressKind.CompanyLogo].ToString() + "\";" + CR;
+                    if (!string.IsNullOrEmpty(dic[WebThemeAddressKind.StyleSheet].ToString()))
+                        result += "   document.getElementsByTagName('link')[0].href = \"" + dic[WebThemeAddressKind.StyleSheet].ToString() + "\";" + CR;
                 }
             } 
             result += "   return true;" + CR;
