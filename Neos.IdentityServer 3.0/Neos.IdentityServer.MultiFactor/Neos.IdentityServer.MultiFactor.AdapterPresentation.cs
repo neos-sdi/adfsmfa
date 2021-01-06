@@ -2452,7 +2452,7 @@ namespace Neos.IdentityServer.MultiFactor
             }
             result += "<input id=\"context\" type=\"hidden\" name=\"Context\" value=\"%Context%\"/>";
             result += "<input id=\"authMethod\" type=\"hidden\" name=\"AuthMethod\" value=\"%AuthMethod%\"/>";
-            result += "<input id=\"##SELECTED##\" type=\"hidden\" name=\"btnclicked\" value=\"1\" />";
+            result += "<input id=\"##SELECTED##\" type=\"hidden\" name=\"##SELECTED##\" value=\"1\" />";
             result += "<input id=\"jserror\" type=\"hidden\" name=\"jserror\" value=\"\" />";
             if (usercontext.WizPageID == 1)
             {

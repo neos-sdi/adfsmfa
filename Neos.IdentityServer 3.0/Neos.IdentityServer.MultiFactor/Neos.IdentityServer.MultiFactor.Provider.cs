@@ -323,7 +323,7 @@ namespace Neos.IdentityServer.MultiFactor
                                 _config.Hosts.ActiveDirectoryHost.Password = MSIS.Decrypt(_config.Hosts.ActiveDirectoryHost.Password);
                                 _config.MailProvider.Password = MSIS.Decrypt(_config.MailProvider.Password);
                             };
-                            Certs.InitializeAccountsSID(_config.Hosts.ActiveDirectoryHost.DomainName, _config.Hosts.ActiveDirectoryHost.Account, _config.Hosts.ActiveDirectoryHost.Password);
+                            Certs.InitializeAccountsSID(_config);
                             KeysManager.Initialize(_config);  // Always Bind KeysManager Otherwise this is made in CFGUtilities.ReadConfiguration
                             RuntimeAuthProvider.LoadProviders(_config); // Load Available providers
                          }

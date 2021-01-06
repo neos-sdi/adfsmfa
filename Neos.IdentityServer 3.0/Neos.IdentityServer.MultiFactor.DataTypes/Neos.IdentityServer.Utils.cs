@@ -40,6 +40,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
     /// </summary>
     public static class Certs
     {
+        public static bool SIDsLoaded = false;
         public static string ADFSAccountSID = string.Empty;
         public static string ADFSServiceSID = string.Empty;
         public static string ADFSAdminGroupSID = string.Empty;
@@ -1183,17 +1184,55 @@ namespace Neos.IdentityServer.MultiFactor.Data
             }
             File.SetAccessControl(fullpath, fSecurity);
         }
+
+        /// <summary>
+        /// InternalUpdateACLs method implementation
+        /// </summary>
+        private static void InternalUpdateMFAACLs(string fullpath)
+        {
+            if (SIDsLoaded)
+                return;
+            if (!string.IsNullOrEmpty(ADFSAdminGroupSID))
+            {
+                SecurityIdentifier adfsgroup = new SecurityIdentifier(ADFSAdminGroupSID);
+                DirectorySecurity fSecurity = Directory.GetAccessControl(fullpath, AccessControlSections.Access);
+
+                AuthorizationRuleCollection lst = fSecurity.GetAccessRules(true, true, typeof(SecurityIdentifier));
+                bool found = false;
+                foreach (AuthorizationRule rule in lst)
+                {
+                    if (rule.IdentityReference.Value.ToLowerInvariant().Equals(adfsgroup.Value.ToLowerInvariant()))
+                    {
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (!found)
+                {
+                    fSecurity.AddAccessRule(new FileSystemAccessRule(adfsgroup, FileSystemRights.FullControl, InheritanceFlags.None, PropagationFlags.None, AccessControlType.Allow));
+                    fSecurity.AddAccessRule(new FileSystemAccessRule(adfsgroup, FileSystemRights.FullControl, InheritanceFlags.ObjectInherit, PropagationFlags.InheritOnly, AccessControlType.Allow));
+                    fSecurity.AddAccessRule(new FileSystemAccessRule(adfsgroup, FileSystemRights.FullControl, InheritanceFlags.ContainerInherit, PropagationFlags.InheritOnly, AccessControlType.Allow));
+                    Directory.SetAccessControl(fullpath, fSecurity);
+                }
+            }
+        }
         #endregion
 
         #region SIDs
         /// <summary>
         /// InitializeAccountsSID method implementation
         /// </summary>
-        public static void InitializeAccountsSID(string domain, string account, string password)
+        public static void InitializeAccountsSID(MFAConfig config)
         {
-            ADFSAccountSID = GetADFSAccountSID(domain, account, password);
+            if (SIDsLoaded)
+                return;
+
+            ADFSAccountSID = GetADFSAccountSID(config.Hosts.ActiveDirectoryHost.DomainName);
             ADFSServiceSID = GetADFSServiceSID();
-            ADFSAdminGroupSID = GetADFSAdminsGroupSID(domain, account, password);
+            ADFSAdminGroupSID = GetADFSAdminsGroupSID(config.Hosts.ActiveDirectoryHost.DomainName, config.Hosts.ActiveDirectoryHost.Account, config.Hosts.ActiveDirectoryHost.Password);
+            InternalUpdateMFAACLs(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + Path.DirectorySeparatorChar + "MFA");
+            SIDsLoaded = true;
         }
 
         /// <summary>
@@ -1215,7 +1254,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// <summary>
         /// GetADFSAccountSID() method implmentation
         /// </summary>
-        private static string GetADFSAccountSID(string domain, string account, string password)
+        private static string GetADFSAccountSID(string domain)
         {
             RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SYSTEM\CurrentControlSet\Services\adfssrv");
             try

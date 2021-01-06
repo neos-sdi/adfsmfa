@@ -2759,7 +2759,7 @@ namespace Neos.IdentityServer.MultiFactor
                         config.Hosts.ActiveDirectoryHost.Password = MSIS.Decrypt(config.Hosts.ActiveDirectoryHost.Password);
                         config.MailProvider.Password = MSIS.Decrypt(config.MailProvider.Password);
                     };
-                    Certs.InitializeAccountsSID(config.Hosts.ActiveDirectoryHost.DomainName, config.Hosts.ActiveDirectoryHost.Account, config.Hosts.ActiveDirectoryHost.Password);
+                    Certs.InitializeAccountsSID(config);
                     KeysManager.Initialize(config);  // Important
                     RuntimeAuthProvider.LoadProviders(config);
                 }
@@ -2806,7 +2806,7 @@ namespace Neos.IdentityServer.MultiFactor
                             config.Hosts.ActiveDirectoryHost.Password = MSIS.Decrypt(config.Hosts.ActiveDirectoryHost.Password);
                             config.MailProvider.Password = MSIS.Decrypt(config.MailProvider.Password);
                         };
-                        Certs.InitializeAccountsSID(config.Hosts.ActiveDirectoryHost.DomainName, config.Hosts.ActiveDirectoryHost.Account, config.Hosts.ActiveDirectoryHost.Password);
+                        Certs.InitializeAccountsSID(config);
                         KeysManager.Initialize(config);  // Important
                         RuntimeAuthProvider.LoadProviders(config);
                     }
