@@ -287,8 +287,6 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// IsPrimaryComputer method implementation
         /// </summary>
-        /// <param name="servers"></param>
-        /// <returns></returns>
         private bool IsPrimaryComputer(Dictionary<string, bool> servers)
         {
             string fqdn = Dns.GetHostEntry("localhost").HostName;

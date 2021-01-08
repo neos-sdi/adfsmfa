@@ -862,9 +862,9 @@ namespace Neos.IdentityServer.MultiFactor
             result += "   {" + CR;
             result += "      title.style.display = \"none\";" + CR;
             result += "   }" + CR;
-            if (WebThemeManager.HasRelyingPartyTheme(usercontext))
+            if (WebThemeManagerClient.HasRelyingPartyTheme(usercontext))
             {
-                Dictionary<WebThemeAddressKind, string>  dic = WebThemeManager.GetAddresses(usercontext);
+                Dictionary<WebThemeAddressKind, string>  dic = WebThemeManagerClient.GetAddresses(usercontext);
                 if (dic != null)
                 {
                     if (!string.IsNullOrEmpty(dic[WebThemeAddressKind.Illustration].ToString()))

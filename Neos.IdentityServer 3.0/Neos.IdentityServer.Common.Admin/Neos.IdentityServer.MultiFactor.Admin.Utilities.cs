@@ -1235,7 +1235,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         internal static void ResetWebThemesList(PSHost host)
         {
             MFAConfig config = CFGUtilities.ReadConfiguration(host);
-            WebThemeManager.ResetThemesList(config);
+            WebThemeManagerClient.ResetThemesList(config);
         }
         #endregion
     }

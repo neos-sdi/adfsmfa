@@ -1188,13 +1188,11 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// <summary>
         /// InternalUpdateACLs method implementation
         /// </summary>
-        private static void InternalUpdateMFAACLs(string fullpath)
+        private static void InternalUpdateMFAACLs(ACLParametersRecord rec, string fullpath)
         {
-            if (SIDsLoaded)
-                return;
-            if (!string.IsNullOrEmpty(ADFSAdminGroupSID))
+            if (!string.IsNullOrEmpty(rec.ADFSAdministrationGroupSID))
             {
-                SecurityIdentifier adfsgroup = new SecurityIdentifier(ADFSAdminGroupSID);
+                SecurityIdentifier adfsgroup = new SecurityIdentifier(rec.ADFSAdministrationGroupSID);
                 DirectorySecurity fSecurity = Directory.GetAccessControl(fullpath, AccessControlSections.Access);
 
                 AuthorizationRuleCollection lst = fSecurity.GetAccessRules(true, true, typeof(SecurityIdentifier));
@@ -1220,19 +1218,38 @@ namespace Neos.IdentityServer.MultiFactor.Data
         #endregion
 
         #region SIDs
+
+        /// <summary>
+        /// FetchACLs method implmentation
+        /// </summary>
+        public static ACLParametersRecord FetchACLs(string domain, string account, string password, string path)
+        {
+            ACLParametersRecord rec = new ACLParametersRecord();
+            rec.ADFSAccountSID = GetADFSAccountSID(domain);
+            rec.ADFSServiceAccountSID = GetADFSServiceSID();
+            rec.ADFSAdministrationGroupSID = GetADFSAdminsGroupSID(domain, account, password);
+            InternalUpdateMFAACLs(rec, path);
+            rec.Loaded = true;
+            return rec;
+        }
+
+        /// <summary>
+        /// ApplyACLs method implmentation
+        /// </summary>
+        public static void ApplyACLs(ACLParametersRecord rec, string path)
+        {
+            InternalUpdateMFAACLs(rec, path);
+        }
+
         /// <summary>
         /// InitializeAccountsSID method implementation
         /// </summary>
-        public static void InitializeAccountsSID(MFAConfig config)
+        public static void InitializeAccountsSID(ACLParametersRecord values)
         {
-            if (SIDsLoaded)
-                return;
-
-            ADFSAccountSID = GetADFSAccountSID(config.Hosts.ActiveDirectoryHost.DomainName);
-            ADFSServiceSID = GetADFSServiceSID();
-            ADFSAdminGroupSID = GetADFSAdminsGroupSID(config.Hosts.ActiveDirectoryHost.DomainName, config.Hosts.ActiveDirectoryHost.Account, config.Hosts.ActiveDirectoryHost.Password);
-            InternalUpdateMFAACLs(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + Path.DirectorySeparatorChar + "MFA");
-            SIDsLoaded = true;
+            ADFSAccountSID = values.ADFSAccountSID;
+            ADFSServiceSID = values.ADFSServiceAccountSID;
+            ADFSAdminGroupSID = values.ADFSAdministrationGroupSID;
+            SIDsLoaded = values.Loaded;
         }
 
         /// <summary>
@@ -1304,7 +1321,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                     if (!string.IsNullOrEmpty(account))
                        ctx = new PrincipalContext(ContextType.Domain, domain, account, password);
                     else
-                        ctx = new PrincipalContext(ContextType.Domain, domain);
+                       ctx = new PrincipalContext(ContextType.Domain, domain);
                     GroupPrincipal group = GroupPrincipal.FindByIdentity(ctx, admingroupname);
                     if (group != null)
                     {

@@ -28,6 +28,7 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
         private MailSlotServerManager _mailslotsmgr = new MailSlotServerManager();
         private ReplayServer<ReplayService> _svchost = new ReplayServer<ReplayService>();
         private WebThemesServer<WebThemeService> _svcthemeshost = new WebThemesServer<WebThemeService>();
+        private WebAdminServer<WebAdminService> _svcadminhost = new WebAdminServer<WebAdminService>();
         private CleanUpManager _cleanup = new CleanUpManager();
 
         #region Service override methods
@@ -72,6 +73,7 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
                 StartADFSService();
                 StartReplayService();
                 StartThemesService();
+                StartAdminService();
                 StartKeyCleanup();
             }
             catch (Exception e)
@@ -92,6 +94,7 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
             try
             {
                 StopKeyCleanup();
+                StopAdminService();
                 StopThemesService();
                 StopReplayService();
                 StopADFSService();
@@ -165,6 +168,38 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
             catch (Exception e)
             {
                 this.EventLog.WriteEntry(string.Format("Error when stopping Themes Service : {0}.", e.Message), EventLogEntryType.Error, 1002);
+            }
+        }
+        #endregion
+
+        #region Admin Service
+        /// <summary>
+        /// StartThemesService method implementation
+        /// </summary>
+        private void StartAdminService()
+        {
+            try
+            {
+                _svcadminhost.StartService(this);
+            }
+            catch (Exception e)
+            {
+                this.EventLog.WriteEntry(string.Format("Error when starting AdminService : {0}.", e.Message), EventLogEntryType.Error, 1002);
+            }
+        }
+
+        /// <summary>
+        /// StopThemesService method implementation
+        /// </summary>
+        private void StopAdminService()
+        {
+            try
+            {
+                _svcadminhost.StopService();
+            }
+            catch (Exception e)
+            {
+                this.EventLog.WriteEntry(string.Format("Error when stopping AdminService : {0}.", e.Message), EventLogEntryType.Error, 1002);
             }
         }
         #endregion

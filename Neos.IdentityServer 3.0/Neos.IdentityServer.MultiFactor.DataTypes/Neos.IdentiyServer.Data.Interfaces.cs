@@ -282,6 +282,9 @@ namespace Neos.IdentityServer.MultiFactor
         bool UserVerificationIndex { get; set; }
         bool Location { get; set; }
         bool UserVerificationMethod { get; set; }
+        bool? HmacSecret { get; set; }
+        WebAuthNUserVerification? CredProtect { get; set; }
+        bool? EnforceCredProtect { get; set; }
     }
 
     #endregion
@@ -393,4 +396,37 @@ namespace Neos.IdentityServer.MultiFactor
 
     }
     #endregion
+
+    #region IWebAdminServices
+    /// <summary>
+    /// WebThemeRecord class implementation
+    /// </summary>
+    [DataContract]
+    public class ACLParametersRecord
+    {
+        [DataMember]
+        public bool Loaded { get; set; }
+
+        [DataMember]
+        public string ADFSAccountSID { get; set; }
+
+        [DataMember]
+        public string ADFSServiceAccountSID { get; set; }
+
+        [DataMember]
+        public string ADFSAdministrationGroupSID { get; set; }
+
+    }
+
+    [ServiceContract(Namespace = "http://adfsmfa.org", Name = "WebAdminService")]
+    public interface IWebAdminServices
+    {
+        [OperationContract]
+        bool Initialize(Dictionary<string, bool> servers);
+
+        [OperationContract]
+        ACLParametersRecord GetAdministrativeACL(string domain, string account, string password, string path);
+    }
+    #endregion
+
 }

@@ -15,6 +15,7 @@
 // https://github.com/neos-sdi/adfsmfa                                                                                                                                                      //
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
+using Neos.IdentityServer.MultiFactor.Data;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -30,7 +31,7 @@ namespace Neos.IdentityServer.MultiFactor
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerSession, ConcurrencyMode = ConcurrencyMode.Multiple)]
     public class ReplayService : IReplay
     {
-        private static ReplayManager _manager = new ReplayManager();
+        private static ReplayManager _manager = null;
         private static readonly object _lock = new object();
         private EventLog _log;
 
@@ -40,6 +41,7 @@ namespace Neos.IdentityServer.MultiFactor
         public ReplayService(IDependency dep)
         {
             _log = dep.GetEventLog();
+            _manager = new ReplayManager(dep);
         }
 
         /// <summary>
@@ -319,6 +321,59 @@ namespace Neos.IdentityServer.MultiFactor
                 _log.WriteEntry(string.Format("Error on WebTheme Service RestThemesList method : {0}.", e.Message), EventLogEntryType.Error, 2010);
                 throw e;
             }
+        }
+    }
+
+    /// <summary>
+    /// WebThemeService class
+    /// </summary>
+    [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerSession, ConcurrencyMode = ConcurrencyMode.Multiple)]
+    public class WebAdminService : IWebAdminServices
+    {
+        private static WebAdminManager _manager = null;
+        private EventLog _log;
+
+        /// <summary>
+        /// Constructor implmentation
+        /// </summary>
+        public WebAdminService(IDependency dep)
+        {
+            _log = dep.GetEventLog();
+            _manager = new WebAdminManager(dep);
+        }
+
+        /// <summary>
+        /// Initialize Method implementation
+        /// </summary>
+        public bool Initialize(Dictionary<string, bool> servers)
+        {
+            try
+            {
+                return _manager.Initialize(servers);
+            }
+            catch (Exception e)
+            {
+                _log.WriteEntry(string.Format("Error on WebAdminService Service Initialize method : {0}.", e.Message), EventLogEntryType.Error, 2010);
+                throw e;
+            }
+        }
+
+        /// <summary>
+        /// GetAdministrativeACL method implmentation
+        /// </summary>
+        public ACLParametersRecord GetAdministrativeACL(string domain, string account, string password, string path)
+        {
+            ACLParametersRecord rec = new ACLParametersRecord();
+            try
+            {
+                return _manager.GetAdministrativeACL(domain, account, password, path);
+            }
+            catch (Exception e)
+            {
+                _log.WriteEntry(string.Format("Error on WebAdminService Service GetAdministrative ACL method : {0}.", e.Message), EventLogEntryType.Error, 2010);
+                rec.Loaded = false;
+            }
+            return rec;
         }
     }
 }

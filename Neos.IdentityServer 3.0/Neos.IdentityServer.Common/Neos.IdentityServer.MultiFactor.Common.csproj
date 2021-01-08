@@ -82,7 +82,7 @@
     <Compile Include="Neos.IdentityServer.MultiFactor.RSA2.cs" />
     <Compile Include="Neos.IdentityServer.MultiFactor.ServiceUtils.cs" />
     <Compile Include="Neos.IdentityServer.MultiFactor.Utilities.cs" />
-    <Compile Include="Neos.IdentityServer.MultiFactor.WebThemes.cs" />
+    <Compile Include="Neos.IdentityServer.MultiFactor.Clients.cs" />
     <Compile Include="Neos.IdentityServer.Mutifactor.Interface.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resources\CSErrors.Designer.cs">

@@ -84,6 +84,30 @@ namespace Neos.IdentityServer.MultiFactor
     }
     #endregion
 
+    #region WebAdminServiceHost
+    /// <summary>
+    /// ReplayServiceHost Class
+    /// </summary>
+    public class WebAdminServiceHost : ServiceHost
+    {
+        /// <summary>
+        /// ReplayServiceHost Constructor
+        /// </summary>
+        public WebAdminServiceHost(IDependency dep, Type serviceType, params Uri[] baseAddresses) : base(serviceType, baseAddresses)
+        {
+            if (dep == null)
+            {
+                throw new ArgumentNullException("dep");
+            }
+
+            foreach (var cd in this.ImplementedContracts.Values)
+            {
+                cd.Behaviors.Add(new WebAdminInstanceProvider(serviceType, dep));
+            }
+        }
+    }
+    #endregion
+
     #region ReplayInstanceProvider
     /// <summary>
     /// ReplayInstanceProvider Class
@@ -178,6 +202,87 @@ namespace Neos.IdentityServer.MultiFactor
         /// ReplayInstanceProvider Constructor
         /// </summary>
         public WebThemesInstanceProvider(Type serviceType, IDependency dep)
+        {
+            this.dep = dep ?? throw new ArgumentNullException("dep");
+            this.type = serviceType ?? throw new ArgumentNullException("servicetype");
+        }
+
+        #region IInstanceProvider Members
+        /// <summary>
+        /// GetInstance method implementation
+        /// </summary>
+        public object GetInstance(InstanceContext instanceContext, Message message)
+        {
+            return this.GetInstance(instanceContext);
+        }
+
+        /// <summary>
+        /// GetInstance method implementation
+        /// </summary>
+        public object GetInstance(InstanceContext instanceContext)
+        {
+            return Activator.CreateInstance(type, this.dep);
+        }
+
+        /// <summary>
+        /// ReleaseInstance method implementation
+        /// </summary>
+        public void ReleaseInstance(InstanceContext instanceContext, object instance)
+        {
+            var disposable = instance as IDisposable;
+            if (disposable != null)
+            {
+                disposable.Dispose();
+            }
+        }
+        #endregion
+
+        #region IContractBehavior Members
+        /// <summary>
+        /// AddBindingParameters method
+        /// </summary>
+        public void AddBindingParameters(ContractDescription contractDescription, ServiceEndpoint endpoint, BindingParameterCollection bindingParameters)
+        {
+        }
+
+        /// <summary>
+        /// ApplyClientBehavior method
+        /// </summary>
+        public void ApplyClientBehavior(ContractDescription contractDescription, ServiceEndpoint endpoint, ClientRuntime clientRuntime)
+        {
+        }
+
+        /// <summary>
+        /// ApplyDispatchBehavior method
+        /// </summary>
+        public void ApplyDispatchBehavior(ContractDescription contractDescription, ServiceEndpoint endpoint, DispatchRuntime dispatchRuntime)
+        {
+            dispatchRuntime.InstanceProvider = this;
+        }
+
+        /// <summary>
+        /// Validate method 
+        /// </summary>
+        public void Validate(ContractDescription contractDescription, ServiceEndpoint endpoint)
+        {
+        }
+        #endregion
+    }
+    #endregion
+
+    #region WebAdminInstanceProvider
+    /// <summary>
+    /// WebThemesInstanceProvider Class
+    /// </summary>
+    public class WebAdminInstanceProvider : IInstanceProvider, IContractBehavior
+    {
+        private readonly IDependency dep;
+        private readonly Type type;
+
+        /// <summary>
+        /// ReplayInstanceProvider Constructor
+        /// </summary>
+        public WebAdminInstanceProvider(Type serviceType, IDependency dep)
         {
             this.dep = dep ?? throw new ArgumentNullException("dep");
             this.type = serviceType ?? throw new ArgumentNullException("servicetype");
@@ -539,6 +644,143 @@ namespace Neos.IdentityServer.MultiFactor
     }
     #endregion
 
+    #region WebThemesServer
+    /// <summary>
+    /// WebAdminServer class (Server Host)
+    /// </summary>
+    public class WebAdminServer<T>
+    {
+        private bool useEncryption = true;
+
+        /// <summary>
+        /// StartService method implementation
+        /// </summary>
+        public void StartService(ServiceBase svc)
+        {
+            try
+            {
+                Servicebase = svc;
+                if (Servicehost != null)
+                {
+                    if (Servicehost.State == CommunicationState.Opened)
+                        Servicehost.Close();
+                    Servicehost = null;
+                }
+
+                Servicehost = new WebAdminServiceHost(new EventLogDependency(svc.EventLog), typeof(T), new Uri(string.Format("net.tcp://{0}:5987/WebAdminService", Dns.GetHostEntry("localhost").HostName)));
+                ServiceMetadataBehavior smb = Servicehost.Description.Behaviors.Find<ServiceMetadataBehavior>();
+                ServiceDebugBehavior dbg = Servicehost.Description.Behaviors.Find<ServiceDebugBehavior>();
+                ServiceThrottlingBehavior prf = Servicehost.Description.Behaviors.Find<ServiceThrottlingBehavior>();
+                if (smb == null)
+                {
+                    smb = new ServiceMetadataBehavior();
+                    smb.HttpGetEnabled = false;
+                    smb.HttpsGetEnabled = false;
+                    smb.MetadataExporter.PolicyVersion = PolicyVersion.Default;
+                    Servicehost.Description.Behaviors.Add(smb);
+                }
+                else
+                {
+                    smb.HttpGetEnabled = false;
+                    smb.HttpsGetEnabled = false;
+                    smb.MetadataExporter.PolicyVersion = PolicyVersion.Default;
+                }
+                if (dbg == null)
+                {
+                    dbg = new ServiceDebugBehavior();
+                    dbg.HttpHelpPageEnabled = false;
+                    dbg.HttpsHelpPageEnabled = false;
+                    dbg.IncludeExceptionDetailInFaults = true;
+                    Servicehost.Description.Behaviors.Add(dbg);
+                }
+                else
+                {
+                    dbg.HttpHelpPageEnabled = false;
+                    dbg.HttpsHelpPageEnabled = false;
+                    dbg.IncludeExceptionDetailInFaults = false;
+                }
+                if (prf == null)
+                {
+                    prf = new ServiceThrottlingBehavior();
+                    prf.MaxConcurrentCalls = 256;
+                    prf.MaxConcurrentInstances = 256;
+                    prf.MaxConcurrentSessions = 256;
+                    Servicehost.Description.Behaviors.Add(prf);
+                }
+                else
+                {
+                    prf.MaxConcurrentCalls = 250;
+                    prf.MaxConcurrentInstances = 250;
+                    prf.MaxConcurrentSessions = 250;
+                }
+
+                NetTcpBinding tcp = new NetTcpBinding(SecurityMode.None);
+                tcp.MaxConnections = 256;
+
+                if (useEncryption)
+                {
+                    CustomBinding custombinding = new CustomBinding(tcp);
+                    custombinding.Name = "MFABindingAdmin";
+                    var currentEncoder = custombinding.Elements.Find<MessageEncodingBindingElement>();
+                    if (currentEncoder != default(MessageEncodingBindingElement))
+                    {
+                        custombinding.Elements.Remove(currentEncoder);
+                        custombinding.Elements.Insert(0, new ServicesMessageEncodingBindingElement());
+                    }
+                    Servicehost.AddServiceEndpoint(typeof(IWebAdminServices), custombinding, "");
+                }
+                else
+                    Servicehost.AddServiceEndpoint(typeof(IWebAdminServices), tcp, "");
+                Servicehost.Open();
+                Started = true;
+            }
+            catch (Exception e)
+            {
+                Started = false;
+                throw e;
+            }
+        }
+
+        /// <summary>
+        /// StopService method implementation
+        /// </summary>
+        public void StopService()
+        {
+            try
+            {
+                if (Servicehost != null)
+                {
+                    if (Servicehost.State == CommunicationState.Opened)
+                        Servicehost.Close();
+                    Servicehost = null;
+                }
+                Started = false;
+            }
+            catch (Exception e)
+            {
+                Started = false;
+                throw e;
+            }
+        }
+
+        /// <summary>
+        /// Started property implmentation
+        /// </summary>
+        public bool Started { get; private set; } = false;
+
+        /// <summary>
+        /// Servicehost property implementation
+        /// </summary>
+        public ServiceHost Servicehost { get; private set; }
+
+        /// <summary>
+        /// Servicebase property implementation
+        /// </summary>
+        public ServiceBase Servicebase { get; private set; }
+
+    }
+    #endregion
+
     #region ReplayClient
     /// <summary>
     /// ReplayClient class (Client Proxy)
@@ -676,6 +918,78 @@ namespace Neos.IdentityServer.MultiFactor
         /// Close method implementation
         /// </summary>
         public void Close(IWebThemeManager client)
+        {
+            if (client != null)
+                ((IClientChannel)client).Close();
+        }
+    }
+    #endregion
+
+    #region WebThemesClient
+    /// <summary>
+    /// WebAdminClient class (Client Proxy)
+    /// </summary>
+    public class WebAdminClient
+    {
+        private ChannelFactory<IWebAdminServices> _factory = null;
+        private bool useEncryption = true;
+
+        public bool IsInitialized { get; private set; }
+
+        /// <summary>
+        /// Initialize method implementation
+        /// </summary>
+        public void Initialize(string servername = "localhost")
+        {
+            if (_factory != null)
+            {
+                if (_factory.State == CommunicationState.Opened)
+                    _factory.Close();
+            }
+            NetTcpBinding tcp = new NetTcpBinding(SecurityMode.None);
+            tcp.MaxConnections = 256;
+            if (useEncryption)
+            {
+                CustomBinding custombinding = new CustomBinding(tcp);
+                custombinding.Name = "MFABindingThemes";
+                var currentEncoder = custombinding.Elements.Find<MessageEncodingBindingElement>();
+                if (currentEncoder != default(MessageEncodingBindingElement))
+                {
+                    custombinding.Elements.Remove(currentEncoder);
+                    custombinding.Elements.Insert(0, new ServicesMessageEncodingBindingElement());
+                }
+                _factory = new ChannelFactory<IWebAdminServices>(custombinding, new EndpointAddress(string.Format("net.tcp://{0}:5987/WebAdminService", servername)));
+            }
+            else
+                _factory = new ChannelFactory<IWebAdminServices>(tcp, new EndpointAddress(string.Format("net.tcp://{0}:5987/WebAdminService", servername)));
+            IsInitialized = true;
+        }
+
+        /// <summary>
+        /// UnInitialize method implementation
+        /// </summary>
+        public void UnInitialize()
+        {
+            if (_factory != null)
+            {
+                if (_factory.State == CommunicationState.Opened)
+                    _factory.Close();
+            }
+            IsInitialized = false;
+        }
+
+        /// <summary>
+        /// Open method implementation
+        /// </summary>
+        public IWebAdminServices Open()
+        {
+            return _factory.CreateChannel();
+        }
+
+        /// <summary>
+        /// Close method implementation
+        /// </summary>
+        public void Close(IWebAdminServices client)
         {
             if (client != null)
                 ((IClientChannel)client).Close();

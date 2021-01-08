@@ -919,16 +919,16 @@ namespace Neos.IdentityServer.MultiFactor.Common
                     throw new Exception(error);
                 }
             }
-            if (CheckPin(ctx, value))
+            if (CheckTOTP(ctx, value))
                 return (int)AuthenticationResponseKind.PhoneAppOTP;
             else
                 return (int)AuthenticationResponseKind.Error;
         }
 
         /// <summary>
-        /// CheckPin method inplementation
+        /// CheckTOTP method inplementation
         /// </summary>
-        private bool CheckPin(AuthenticationContext usercontext, int pin)
+        private bool CheckTOTP(AuthenticationContext usercontext, int totp)
         {
             foreach (HashMode algo in Enum.GetValues(typeof(HashMode)))
             {
@@ -942,7 +942,7 @@ namespace Neos.IdentityServer.MultiFactor.Common
                         DateTime call = DateTime.UtcNow;
                         TOTP gen = new TOTP(encodedkey, usercontext.UPN, call, algo, this.Duration, this.Digits);  // eg : TOTP code
                         gen.Compute(call);
-                        return (pin == gen.OTP);
+                        return (totp == gen.OTP);
                     }
                     else
                     {   // Current TOTP
@@ -952,7 +952,7 @@ namespace Neos.IdentityServer.MultiFactor.Common
                         DateTime tcall = DateTime.UtcNow;
                         TOTP gen = new TOTP(encodedkey, usercontext.UPN, tcall, algo, this.Duration, this.Digits);  // eg : TOTP code
                         gen.Compute(tcall);
-                        if (pin == gen.OTP)
+                        if (totp == gen.OTP)
                             return true;
                         // TOTP with Shadow (current - x latest)
                         for (int i = 1; i <= TOTPShadows; i++)
@@ -960,7 +960,7 @@ namespace Neos.IdentityServer.MultiFactor.Common
                             DateTime call = tcall.AddSeconds(-(i * this.Duration));
                             TOTP gen2 = new TOTP(encodedkey, usercontext.UPN, call, algo, this.Duration, this.Digits);  // eg : TOTP code
                             gen2.Compute(call);
-                            if (pin == gen2.OTP)
+                            if (totp == gen2.OTP)
                                 return true;
                         }
                         // TOTP with Shadow (current + x latest) - not possible. but can be usefull if time sync is not adequate
@@ -969,7 +969,7 @@ namespace Neos.IdentityServer.MultiFactor.Common
                             DateTime call = tcall.AddSeconds(i * this.Duration);
                             TOTP gen3 = new TOTP(encodedkey, usercontext.UPN, call, algo, this.Duration, this.Digits);  // eg : TOTP code
                             gen3.Compute(call);
-                            if (pin == gen3.OTP)
+                            if (totp == gen3.OTP)
                                 return true;
                         }
                     }

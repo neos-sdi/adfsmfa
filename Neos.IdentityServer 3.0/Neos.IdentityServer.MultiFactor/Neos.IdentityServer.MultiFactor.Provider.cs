@@ -74,7 +74,7 @@ namespace Neos.IdentityServer.MultiFactor
             IAdapterPresentation result = null;
             try
             {
-                WebThemeManager.Initialize(Config, usercontext, request.Url);
+                WebThemeManagerClient.Initialize(Config, usercontext, request.Url);
                 ClaimsUtilities.SetIdentityClaim(identityClaim);
                 if ((Config.IsPrimaryAuhentication) && (!Config.PrimaryAuhenticationOptions.HasFlag(PrimaryAuthOptions.Register)))
                 {
@@ -323,7 +323,8 @@ namespace Neos.IdentityServer.MultiFactor
                                 _config.Hosts.ActiveDirectoryHost.Password = MSIS.Decrypt(_config.Hosts.ActiveDirectoryHost.Password);
                                 _config.MailProvider.Password = MSIS.Decrypt(_config.MailProvider.Password);
                             };
-                            Certs.InitializeAccountsSID(_config);
+                            WebAdminManagerClient.Initialize(_config);
+                            Certs.InitializeAccountsSID(WebAdminManagerClient.GetAdministrativeACL(_config));
                             KeysManager.Initialize(_config);  // Always Bind KeysManager Otherwise this is made in CFGUtilities.ReadConfiguration
                             RuntimeAuthProvider.LoadProviders(_config); // Load Available providers
                          }
@@ -470,11 +471,6 @@ namespace Neos.IdentityServer.MultiFactor
                         usercontext.UIMode = ProviderPageMode.Locking;
                         return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorValidationTimeWindowElapsed"), ProviderPageMode.DefinitiveError);
                     }
-                   /* if (!Utilities.CheckForReplay(Config, usercontext, request, Convert.ToInt32(totp)))
-                    {
-                        usercontext.UIMode = ProviderPageMode.Locking;
-                        return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorReplayToken"), ProviderPageMode.DefinitiveError);
-                    } */
                     try
                     {
                         string error = string.Empty;
@@ -545,6 +541,11 @@ namespace Neos.IdentityServer.MultiFactor
                             {
                                 usercontext.UIMode = ProviderPageMode.Locking;
                                 return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorInvalidIdentificationRestart"), ProviderPageMode.DefinitiveError);
+                            }
+                            if (DateTime.Now.ToUniversalTime() > usercontext.LogonDate.AddSeconds(Convert.ToDouble(Config.DeliveryWindow)).ToUniversalTime())
+                            {
+                                usercontext.UIMode = ProviderPageMode.Locking;
+                                return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorValidationTimeWindowElapsed"), ProviderPageMode.DefinitiveError);
                             }
                             else
                             {
@@ -1564,6 +1565,8 @@ namespace Neos.IdentityServer.MultiFactor
                     }
                     else
                     {
+                        if (!cango)
+                            usercontext.CurrentRetries++; // do not passed by SetAuthenticationResult
                         if (DateTime.Now.ToUniversalTime() > usercontext.LogonDate.AddSeconds(Convert.ToDouble(Config.DeliveryWindow)).ToUniversalTime())
                         {
                             usercontext.UIMode = ProviderPageMode.Locking;
@@ -2831,7 +2834,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         private int PostAuthenticationRequest(AuthenticationContext usercontext, PreferredMethod method = PreferredMethod.None)
         {
-            usercontext.CurrentRetries++;
+           // usercontext.CurrentRetries++;
             try
             {
                 IExternalProvider provider = null;
@@ -2857,6 +2860,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public int SetAuthenticationResult(AuthenticationContext usercontext, string credentials, PreferredMethod method = PreferredMethod.None)
         {
+            usercontext.CurrentRetries++;
             try
             {
                 IExternalProvider provider = null;
@@ -2881,6 +2885,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public int SetAuthenticationResult(AuthenticationContext usercontext, string credentials, out string error, PreferredMethod method = PreferredMethod.None)
         {
+            usercontext.CurrentRetries++;
             try
             {
                 IExternalProvider provider = null;

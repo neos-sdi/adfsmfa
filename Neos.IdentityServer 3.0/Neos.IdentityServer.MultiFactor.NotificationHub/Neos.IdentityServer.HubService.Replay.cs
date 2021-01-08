@@ -38,11 +38,9 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// Static constructor implementation
         /// </summary>
-        internal ReplayManager()
+        internal ReplayManager(IDependency dep)
         {
-            _log = new EventLog();
-            _log.Source = "ADFS MFA Notification Hub";
-            _log.Log = "Application";
+            _log = dep.GetEventLog();
             Start();
         }
 

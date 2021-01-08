@@ -48,6 +48,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>
@@ -86,6 +87,7 @@
     <Compile Include="Neos.IdentityServer.HubService.Replay.cs" />
     <Compile Include="Neos.IdentityServer.HubService.Service.cs" />
     <Compile Include="Neos.IdentityServer.HubService.WebThemes.cs" />
+    <Compile Include="Neos.IdentityServer.MultiFactor.WebAdmin.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="ProjectInstaller.cs">
       <SubType>Component</SubType>
