@@ -20,8 +20,8 @@ using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
 using System.Windows;
 
-[assembly: AssemblyTitle("Neos.IdentityServer.QrCodeNet.Encoder")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("Neos.IdentityServer.QrCodeNet")]
+[assembly: AssemblyDescription("Multi factor implementation for ADFS")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("QrCode.Net")]
 [assembly: AssemblyProduct("Neos.IdentityServer.QrCodeNet.Encoder")]
@@ -30,7 +30,7 @@ using System.Windows;
 [assembly: Guid("46f0d5b0-3954-4f7e-94dc-4d2757f22441")]
 
 [assembly: AssemblyVersion("3.0.0.0")]
-[assembly: AssemblyFileVersion("3.0.2101.2")]
+[assembly: AssemblyFileVersion("3.0.2101.3")]
 [assembly: AssemblyInformationalVersion("3.0.0.0")]
 [assembly: NeutralResourcesLanguageAttribute("en")]
 

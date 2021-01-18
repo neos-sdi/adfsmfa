@@ -25,7 +25,7 @@ using System.Runtime.Versioning;
 // l'ensemble d'attributs suivant. Changez les valeurs de ces attributs pour modifier les informations
 // associées à un assembly.
 [assembly: AssemblyTitle("Neos.IdentityServer.MultiFactor.Common.Admin")]
-[assembly: AssemblyDescription("Multi factor implementation for TOPT")]
+[assembly: AssemblyDescription("Multi factor implementation for ADFS")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Neos-Sdi")]
 [assembly: AssemblyProduct("Microsoft.IdentityServer.MultiFactor.Common.Admin")]
@@ -53,7 +53,7 @@ using System.Runtime.Versioning;
 // en utilisant '*', comme indiqué ci-dessous :
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("3.0.0.0")]
-[assembly: AssemblyFileVersion("3.0.2101.2")]
+[assembly: AssemblyFileVersion("3.0.2101.3")]
 [assembly: AssemblyInformationalVersion("3.0.0.0")]
 [assembly: NeutralResourcesLanguageAttribute("en")]
 

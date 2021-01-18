@@ -38,7 +38,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.IdentityServer">
-      <HintPath>..\..\ADFS\Microsoft.IdentityServer.dll</HintPath>
+      <HintPath>..\..\..\ADFS_2019\Microsoft.IdentityServer.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

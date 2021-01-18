@@ -41,7 +41,8 @@ namespace Neos.IdentityServer.MultiFactor
         public ReplayService(IDependency dep)
         {
             _log = dep.GetEventLog();
-            _manager = new ReplayManager(dep);
+            if (_manager==null)
+                _manager = new ReplayManager(dep);
         }
 
         /// <summary>
