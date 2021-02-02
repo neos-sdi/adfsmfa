@@ -1,0 +1,366 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ADDSSCOPENODEDESC" xml:space="preserve">
+    <value>Configuration Active Directory</value>
+  </data>
+  <data name="AZURESCOPENODEDESC" xml:space="preserve">
+    <value>Configuration Azure</value>
+  </data>
+  <data name="GENERALSCOPECANCEL" xml:space="preserve">
+    <value>Annuler</value>
+  </data>
+  <data name="GENERALSCOPECANCELDESC" xml:space="preserve">
+    <value>Annuler les modifications</value>
+  </data>
+  <data name="GENERALSCOPENODEDESC" xml:space="preserve">
+    <value>Paramètres généraux</value>
+  </data>
+  <data name="GENERALSCOPESAVE" xml:space="preserve">
+    <value>Sauvegarder</value>
+  </data>
+  <data name="GENERALSCOPESAVEDESC" xml:space="preserve">
+    <value>Sauvegarder les modifications</value>
+  </data>
+  <data name="MFASCOPENODEDESC" xml:space="preserve">
+    <value>Fournisseurs MFA</value>
+  </data>
+  <data name="ROOTCHANGELANGUAGE" xml:space="preserve">
+    <value>Changer de langue</value>
+  </data>
+  <data name="ROOTCHANGELANGUAGEDESC" xml:space="preserve">
+    <value>Changer la culture de l'interface utilisateur</value>
+  </data>
+  <data name="ROOTLANGUAGEDE" xml:space="preserve">
+    <value>Allemand</value>
+  </data>
+  <data name="ROOTLANGUAGEDEDESC" xml:space="preserve">
+    <value>Changer la culture de l'interface utilisateur en allemand (1031)</value>
+  </data>
+  <data name="ROOTLANGUAGEES" xml:space="preserve">
+    <value>Espagnol</value>
+  </data>
+  <data name="ROOTLANGUAGEESDESC" xml:space="preserve">
+    <value>Changer la culture de l'interface utilisateur en espagnol (3082)</value>
+  </data>
+  <data name="ROOTLANGUAGEFR" xml:space="preserve">
+    <value>Français</value>
+  </data>
+  <data name="ROOTLANGUAGEFRDESC" xml:space="preserve">
+    <value>Changer la culture de l'interface utilisateur en français (1036)</value>
+  </data>
+  <data name="ROOTLANGUAGEIT" xml:space="preserve">
+    <value>Italien</value>
+  </data>
+  <data name="ROOTLANGUAGEITDESC" xml:space="preserve">
+    <value>Changer la culture de l'interface utilisateur en italien (1040)</value>
+  </data>
+  <data name="ROOTLANGUAGENL" xml:space="preserve">
+    <value>Néerlandais</value>
+  </data>
+  <data name="ROOTLANGUAGENLDESC" xml:space="preserve">
+    <value>Modification de la culture de l'interface utilisateur en néerlandais (1043)</value>
+  </data>
+  <data name="ROOTLANGUAGEPL" xml:space="preserve">
+    <value>Polonais</value>
+  </data>
+  <data name="ROOTLANGUAGEPLDESC" xml:space="preserve">
+    <value>Changer la culture de l'interface utilisateur en polonais (1045)</value>
+  </data>
+  <data name="ROOTLANGUAGEPT" xml:space="preserve">
+    <value>Portugais</value>
+  </data>
+  <data name="ROOTLANGUAGEPTDESC" xml:space="preserve">
+    <value>Changer la culture de l'interface utilisateur en portugais (2070)</value>
+  </data>
+  <data name="ROOTLANGUAGERO" xml:space="preserve">
+    <value>Roumain</value>
+  </data>
+  <data name="ROOTLANGUAGERODESC" xml:space="preserve">
+    <value>Changer la culture de l'interface utilisateur en roumain (1048)</value>
+  </data>
+  <data name="ROOTLANGUAGERU" xml:space="preserve">
+    <value>Russe</value>
+  </data>
+  <data name="ROOTLANGUAGERUDESC" xml:space="preserve">
+    <value>Changer la culture de l'interface utilisateur en russe (1049)</value>
+  </data>
+  <data name="ROOTLANGUAGESV" xml:space="preserve">
+    <value>Suédois</value>
+  </data>
+  <data name="ROOTLANGUAGESVDESC" xml:space="preserve">
+    <value>Changer la culture de l'interface utilisateur en suédois (1053)</value>
+  </data>
+  <data name="ROOTLANGUAGEUS" xml:space="preserve">
+    <value>Anglais</value>
+  </data>
+  <data name="ROOTLANGUAGEUSDESC" xml:space="preserve">
+    <value>Changer la culture de l'interface utilisateur en anglais (1033)</value>
+  </data>
+  <data name="ROOTSCOPENODEDESC" xml:space="preserve">
+    <value>MFA</value>
+  </data>
+  <data name="SECURITYSCOPENODEDESC" xml:space="preserve">
+    <value>Configuration de la sécurité</value>
+  </data>
+  <data name="SECURITYSCOPEROOT" xml:space="preserve">
+    <value>Configuration de la sécurité</value>
+  </data>
+  <data name="SERVICESCOPENODEDESC" xml:space="preserve">
+    <value>Etat des services</value>
+  </data>
+  <data name="SMSSCOPENODEDESC" xml:space="preserve">
+    <value>Configuration SMS</value>
+  </data>
+  <data name="SMTPSCOPENODEDESC" xml:space="preserve">
+    <value>Configuration SMTP</value>
+  </data>
+  <data name="SQLSCOPENODEDESC" xml:space="preserve">
+    <value>Configuration SQLServer</value>
+  </data>
+  <data name="TOTPSCOPENODEDESC" xml:space="preserve">
+    <value>Configuration TOTP</value>
+  </data>
+  <data name="USERSCOPEADDUSER" xml:space="preserve">
+    <value>Ajouter un utilisateur</value>
+  </data>
+  <data name="USERSCOPEADDUSERDESC" xml:space="preserve">
+    <value>Ajouter un utilisateur au système d'authentification MFA</value>
+  </data>
+  <data name="USERSCOPEFILTERCLEAR" xml:space="preserve">
+    <value>Effacer le filtre utilisateurs</value>
+  </data>
+  <data name="USERSCOPEFILTERCLEARDESC" xml:space="preserve">
+    <value>Effacer les filtre de la liste des utilisateur</value>
+  </data>
+  <data name="USERSCOPEFILTERUSERS" xml:space="preserve">
+    <value>Filtrer les utilisateurs</value>
+  </data>
+  <data name="USERSCOPEFILTERUSERSDESC" xml:space="preserve">
+    <value>Filtrer la liste des utilisateur</value>
+  </data>
+  <data name="USERSCOPEIMPORT" xml:space="preserve">
+    <value>Importer</value>
+  </data>
+  <data name="USERSCOPEIMPORTADDS" xml:space="preserve">
+    <value>Import d'utilisateurs Active Directory</value>
+  </data>
+  <data name="USERSCOPEIMPORTADDSDESC" xml:space="preserve">
+    <value>Importer des utilisateur à partir de ADDS</value>
+  </data>
+  <data name="USERSCOPEIMPORTCSV" xml:space="preserve">
+    <value>Import d'utilisateurs CSV</value>
+  </data>
+  <data name="USERSCOPEIMPORTCSVDESC" xml:space="preserve">
+    <value>Importer des utilisateur à partir d'un fichier CSV</value>
+  </data>
+  <data name="USERSCOPEIMPORTDESC" xml:space="preserve">
+    <value>Procédures d'import d'utilisateurs</value>
+  </data>
+  <data name="USERSCOPEIMPORTXML" xml:space="preserve">
+    <value>Import d'utilisateurs XML</value>
+  </data>
+  <data name="USERSCOPEIMPORTXMLDESC" xml:space="preserve">
+    <value>Importer des utilisateur à partir d'un fichier XML</value>
+  </data>
+  <data name="USERSPROPERTYADD" xml:space="preserve">
+    <value>Propriétés : Nouvel Utilisateur</value>
+  </data>
+  <data name="USERSSCOPEIMPORTCSVCOUNT" xml:space="preserve">
+    <value>Nombre d'utilisateurs importés : {0}  Erreurs : {1}</value>
+  </data>
+  <data name="USERSSCOPEIMPORTCSVINVALID" xml:space="preserve">
+    <value>Fichier csv incorrect !</value>
+  </data>
+  <data name="USERSSCOPEIMPORTCSVRESTITLE" xml:space="preserve">
+    <value>Résultat de l'importation CSV </value>
+  </data>
+  <data name="USERSSCOPEIMPORTCSVTITLE" xml:space="preserve">
+    <value>Importer des utilisateurs dans MFA avec un ficher csv</value>
+  </data>
+  <data name="USERSSCOPEIMPORTXMLCOUNT" xml:space="preserve">
+    <value>Nombre d'utilisateurs importés : {0}  Erreurs : {1}</value>
+  </data>
+  <data name="USERSSCOPEIMPORTXMLRESTITLE" xml:space="preserve">
+    <value>Résultat de l'importation XML</value>
+  </data>
+  <data name="USERSSCOPEIMPORTXMLTITLE" xml:space="preserve">
+    <value>Importer des utilisateurs dans MFA avec un ficher xml</value>
+  </data>
+  <data name="USERSSCOPENODEDESC" xml:space="preserve">
+    <value>Gestion des utilisateurs</value>
+  </data>
+  <data name="WEBAUTHNSCOPEDESC" xml:space="preserve">
+    <value>WebAuthN biométrie</value>
+  </data>
+  <data name="GENERALSCOPECERTS" xml:space="preserve">
+    <value>Sécurité des certificats MFA</value>
+  </data>
+  <data name="GENERALSCOPECERTSDESC" xml:space="preserve">
+    <value>Gérez la liste de contrôle d'accès des clés privées du certificat sur le serveur courant</value>
+  </data>
+  <data name="STORAGESCOPENODEDESC" xml:space="preserve">
+    <value>Configuration du stockage</value>
+  </data>
+  <data name="GENERALSCOPERESTARTMFASVC" xml:space="preserve">
+    <value>Redémarrer les services MFA </value>
+  </data>
+  <data name="GENERALSCOPERESTARTMFASVCDESC" xml:space="preserve">
+    <value>Redémarrer tous les services MFA (Notification Hub et services ADFS) sur tous les serveurs de la batterie</value>
+  </data>
+  <data name="SECURITYSCOPEWSMAN" xml:space="preserve">
+    <value>Wsman</value>
+  </data>
+  <data name="SECURITYSCOPEWSMANDESC" xml:space="preserve">
+    <value>Configuration WsMan</value>
+  </data>
+  <data name="ROOTLANGUAGEDA" xml:space="preserve">
+    <value>Danois</value>
+  </data>
+  <data name="ROOTLANGUAGEDADESC" xml:space="preserve">
+    <value>Changer la culture de l’interface utilisateur en danois (1030)</value>
+  </data>
+  <data name="ROOTLANGUAGEJA" xml:space="preserve">
+    <value>Japonais</value>
+  </data>
+  <data name="ROOTLANGUAGEJADESC" xml:space="preserve">
+    <value>Changer la culture de l’interface utilisateur en japonais (1041)</value>
+  </data>
+  <data name="ROOTLANGUAGECA" xml:space="preserve">
+    <value>Québécois</value>
+  </data>
+  <data name="ROOTLANGUAGECADESC" xml:space="preserve">
+    <value>Changer la culture de l’interface utilisateur en Québécois (3084)</value>
+  </data>
+  <data name="CUSTOMSTORESCOPENODEDESC" xml:space="preserve">
+    <value>Configuration du stockage personalisée</value>
+  </data>
+  <data name="SECURITYSCOPERNG" xml:space="preserve">
+    <value>Clés encodées RNG</value>
+  </data>
+  <data name="SECURITYSCOPERSA" xml:space="preserve">
+    <value>Clés asymétriques RSA</value>
+  </data>
+  <data name="SECURITYSCOPEAES" xml:space="preserve">
+    <value>Clés symétriques AES</value>
+  </data>
+  <data name="SECURITYSCOPECUSTOM" xml:space="preserve">
+    <value>Clés personnalisées</value>
+  </data>
+</root>

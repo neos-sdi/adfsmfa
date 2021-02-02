@@ -1,0 +1,216 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="GLOBALCFGLabel" xml:space="preserve">
+    <value>Telefonnummer</value>
+  </data>
+  <data name="GLOBALListChoiceDefaultLabel" xml:space="preserve">
+    <value>Använd standardalternativet för Azure</value>
+  </data>
+  <data name="GLOBALListChoiceLabel" xml:space="preserve">
+    <value>Använd Azure-autentiseringsalternativ</value>
+  </data>
+  <data name="GLOBALListOptionLabel" xml:space="preserve">
+    <value>Alternativ för Azure-autentisering</value>
+  </data>
+  <data name="GLOBALOTPLabel" xml:space="preserve">
+    <value>Åtkomstkod för engångsbruk</value>
+  </data>
+  <data name="GLOBALWarnOverNetwork" xml:space="preserve">
+    <value>(data överförs via Internet)</value>
+  </data>
+  <data name="GLOBALWarnThirdParty" xml:space="preserve">
+    <value>(autentisering utförs av Microsoft)</value>
+  </data>
+  <data name="GLOBALWIZLabel" xml:space="preserve">
+    <value>Registrera din mobil</value>
+  </data>
+  <data name="NOTIFChoiceLabel" xml:space="preserve">
+    <value>Skicka ett meddelande till min mobil (Azure)</value>
+  </data>
+  <data name="NOTIFConfigLabel" xml:space="preserve">
+    <value>Meddelande om ditt autentiseringsprogram</value>
+  </data>
+  <data name="NOTIFMessage" xml:space="preserve">
+    <value>Vi har skickat ett meddelande till din mobila enhet. Svar för att fortsätta.</value>
+  </data>
+  <data name="OTPChoiceLabel" xml:space="preserve">
+    <value>Använd mitt autentiseringsprogram (Azure)</value>
+  </data>
+  <data name="OTPConfigLabel" xml:space="preserve">
+    <value>Använd ditt autentiseringsprogram</value>
+  </data>
+  <data name="OTPMessage" xml:space="preserve">
+    <value>Ange verifieringskoden för din mobil applikation.</value>
+  </data>
+  <data name="SMSChoiceLabel" xml:space="preserve">
+    <value>Skicka en kod till min mobil (Azure)</value>
+  </data>
+  <data name="SMSConfigLabel" xml:space="preserve">
+    <value>Textmeddelande på min mobiltelefon</value>
+  </data>
+  <data name="SMSConfigLabel2" xml:space="preserve">
+    <value>Textmeddelande på min mobiltelefon {0}</value>
+  </data>
+  <data name="SMSMessage" xml:space="preserve">
+    <value>Vi skickade ett SMS med en verifieringskod. {0}</value>
+  </data>
+  <data name="VOICE1ChoiceLabel" xml:space="preserve">
+    <value>Ring min mobiltelefon (Azure)</value>
+  </data>
+  <data name="VOICE1ConfigLabel" xml:space="preserve">
+    <value>Röstsamtal på din mobil</value>
+  </data>
+  <data name="VOICE1ConfigLabel2" xml:space="preserve">
+    <value>Röstsamtal på mobilen {0}</value>
+  </data>
+  <data name="VOICE1Message" xml:space="preserve">
+    <value>Vi anropar din telefon {0}. Svar för att fortsätta.</value>
+  </data>
+  <data name="VOICE2ChoiceLabel" xml:space="preserve">
+    <value>Ring min sekundära telefon (Azure)</value>
+  </data>
+  <data name="VOICE2ConfigLabel" xml:space="preserve">
+    <value>Röstsamtal på min sekundära mobiltelefon</value>
+  </data>
+  <data name="VOICE2ConfigLabel2" xml:space="preserve">
+    <value>Röstsamtal på min sekundära mobiltelefon {0}</value>
+  </data>
+  <data name="VOICE2Message" xml:space="preserve">
+    <value>Vi anropar din sekundära telefon {0}. Svar för att fortsätta.</value>
+  </data>
+  <data name="VOICE3ChoiceLabel" xml:space="preserve">
+    <value>Ring min kontors telefon (Azure)</value>
+  </data>
+  <data name="VOICE3ConfigLabel" xml:space="preserve">
+    <value>Röstsamtal på din kontors telefon</value>
+  </data>
+  <data name="VOICE3ConfigLabel2" xml:space="preserve">
+    <value>Röstsamtal på Office-telefonen {0}</value>
+  </data>
+  <data name="VOICE3Message" xml:space="preserve">
+    <value>Vi anropar din Office-telefon {0}. Svar för att fortsätta.</value>
+  </data>
+  <data name="GLOBALManagement" xml:space="preserve">
+    <value>Registrera mina Azure-alternativ</value>
+  </data>
+  <data name="PROVIDERAZURESDESCRIPTION" xml:space="preserve">
+    <value>Microsoft Azure multifaktorleverantör</value>
+  </data>
+</root>
