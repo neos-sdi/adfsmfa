@@ -633,18 +633,6 @@
   <data name="CTRLSTUSESQL" xml:space="preserve">
     <value>Использовать SQL Server</value>
   </data>
-  <data name="CTRLSECWSMANPORT" xml:space="preserve">
-    <value>Порт</value>
-  </data>
-  <data name="CTRLSECWSMANTIMEOUT" xml:space="preserve">
-    <value>Времени ожидания</value>
-  </data>
-  <data name="CTRLSECWSMANAPPNAME" xml:space="preserve">
-    <value>Имя приложения</value>
-  </data>
-  <data name="CTRLSECWSMANSHELLURI" xml:space="preserve">
-    <value>Шелл Ури</value>
-  </data>
   <data name="CTRLWEBAUTHNROOTATTESTATION" xml:space="preserve">
     <value>Требуется действительный корневой сертификат аттестации</value>
   </data>
@@ -686,5 +674,20 @@
   </data>
   <data name="CTRLSECRSAGENERATE" xml:space="preserve">
     <value>Подтвердить создание нового сертификата для МИД? Внимание: Все существующие ключи будут признаны недействительными!</value>
+  </data>
+  <data name="CTRLSQLATTPASSWORD" xml:space="preserve">
+    <value>Недействительный пароль S'LServer !</value>
+  </data>
+  <data name="CTRLSQLATTACCOUNT" xml:space="preserve">
+    <value>Недействительный счет S'LServer !</value>
+  </data>
+  <data name="CTRLSQLSUPERACCOUNT" xml:space="preserve">
+    <value>Учетные данные сервера «Суперпользователь»</value>
+  </data>
+  <data name="CTRLSQLCONNECTIONOK" xml:space="preserve">
+    <value>Подключение к серверу S'L работает!</value>
+  </data>
+  <data name="CTRLSQLCONNECTIONERROR" xml:space="preserve">
+    <value>Не удаемся подключиться к серверу СЗЛ!</value>
   </data>
 </root>

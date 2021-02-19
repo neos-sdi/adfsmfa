@@ -633,18 +633,6 @@
   <data name="CTRLSTUSESQL" xml:space="preserve">
     <value>SQL Server gebruiken</value>
   </data>
-  <data name="CTRLSECWSMANPORT" xml:space="preserve">
-    <value>Poort</value>
-  </data>
-  <data name="CTRLSECWSMANTIMEOUT" xml:space="preserve">
-    <value>Timeout</value>
-  </data>
-  <data name="CTRLSECWSMANAPPNAME" xml:space="preserve">
-    <value>Toepassingsnaam</value>
-  </data>
-  <data name="CTRLSECWSMANSHELLURI" xml:space="preserve">
-    <value>Shell Uri</value>
-  </data>
   <data name="CTRLWEBAUTHNROOTATTESTATION" xml:space="preserve">
     <value>Vereist een geldig attest-rootcertificaat</value>
   </data>
@@ -686,5 +674,20 @@
   </data>
   <data name="CTRLSECRSAGENERATE" xml:space="preserve">
     <value>Bevestig de creatie van een nieuw certificaat voor MFA? Let op: Alle bestaande sleutels worden ongeldig verklaard!</value>
+  </data>
+  <data name="CTRLSQLATTPASSWORD" xml:space="preserve">
+    <value>Ongeldig SQLServer-wachtwoord!</value>
+  </data>
+  <data name="CTRLSQLATTACCOUNT" xml:space="preserve">
+    <value>Ongeldig SQLServer-account !</value>
+  </data>
+  <data name="CTRLSQLSUPERACCOUNT" xml:space="preserve">
+    <value>SQL Server "SuperUser" Referenties</value>
+  </data>
+  <data name="CTRLSQLCONNECTIONOK" xml:space="preserve">
+    <value>Verbinding met SQL Server operationeel !</value>
+  </data>
+  <data name="CTRLSQLCONNECTIONERROR" xml:space="preserve">
+    <value>Kan geen verbinding maken met SQL Server !</value>
   </data>
 </root>

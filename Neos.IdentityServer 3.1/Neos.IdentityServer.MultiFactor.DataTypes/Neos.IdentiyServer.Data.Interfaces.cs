@@ -68,7 +68,8 @@ namespace Neos.IdentityServer.MultiFactor
     /// </summary>
     public interface IDataRepositorySQLConnection
     {
-        bool CheckConnection(string connectionstring);
+       // bool CheckConnection(string connectionstring);
+        bool CheckConnection(string connectionstring, string username, string password);
     }
 
     /// <summary>

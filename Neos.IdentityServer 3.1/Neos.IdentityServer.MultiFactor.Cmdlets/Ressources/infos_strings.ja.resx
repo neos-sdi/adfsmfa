@@ -234,4 +234,7 @@
   <data name="InfosADFSCertificateChanged" xml:space="preserve">
     <value>ADFS 証明書が正しく作成されました!</value>
   </data>
+  <data name="InfosSystemNotRegistered" xml:space="preserve">
+    <value>MFAシステムが登録されていません!</value>
+  </data>
 </root>

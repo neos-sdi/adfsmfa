@@ -324,12 +324,6 @@
   <data name="GENERALSCOPERESTARTMFASVCDESC" xml:space="preserve">
     <value>Redémarrer tous les services MFA (Notification Hub et services ADFS) sur tous les serveurs de la batterie</value>
   </data>
-  <data name="SECURITYSCOPEWSMAN" xml:space="preserve">
-    <value>Wsman</value>
-  </data>
-  <data name="SECURITYSCOPEWSMANDESC" xml:space="preserve">
-    <value>Configuration WsMan</value>
-  </data>
   <data name="ROOTLANGUAGEDA" xml:space="preserve">
     <value>Danois</value>
   </data>

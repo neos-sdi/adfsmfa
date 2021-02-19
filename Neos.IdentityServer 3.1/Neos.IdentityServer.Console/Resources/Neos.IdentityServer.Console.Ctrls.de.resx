@@ -633,18 +633,6 @@
   <data name="CTRLSTUSESQL" xml:space="preserve">
     <value>SQL Server verwenden</value>
   </data>
-  <data name="CTRLSECWSMANPORT" xml:space="preserve">
-    <value>Port</value>
-  </data>
-  <data name="CTRLSECWSMANTIMEOUT" xml:space="preserve">
-    <value>Timeout</value>
-  </data>
-  <data name="CTRLSECWSMANAPPNAME" xml:space="preserve">
-    <value>Anwendungsname</value>
-  </data>
-  <data name="CTRLSECWSMANSHELLURI" xml:space="preserve">
-    <value>Shell URI</value>
-  </data>
   <data name="CTRLWEBAUTHNROOTATTESTATION" xml:space="preserve">
     <value>Voraussetzung eines gültigen Attestation Root Zertifikats</value>
   </data>
@@ -686,5 +674,20 @@
   </data>
   <data name="CTRLSECRSAGENERATE" xml:space="preserve">
     <value>Bestätigen Sie die Erstellung eines neuen Zertifikats für MFA ? Achtung: Alle vorhandenen Schlüssel werden ungültig !</value>
+  </data>
+  <data name="CTRLSQLATTPASSWORD" xml:space="preserve">
+    <value>Ungültiges SQLServer-Kennwort !</value>
+  </data>
+  <data name="CTRLSQLATTACCOUNT" xml:space="preserve">
+    <value>Ungültiges SQLServer-Konto !</value>
+  </data>
+  <data name="CTRLSQLSUPERACCOUNT" xml:space="preserve">
+    <value>SQL Server "SuperUser"-Anmeldeinformationen</value>
+  </data>
+  <data name="CTRLSQLCONNECTIONOK" xml:space="preserve">
+    <value>Verbindung zu SQL Server betriebsbereit !</value>
+  </data>
+  <data name="CTRLSQLCONNECTIONERROR" xml:space="preserve">
+    <value>Es konnte keine Verbindung mit SQL Server !</value>
   </data>
 </root>

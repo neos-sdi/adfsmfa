@@ -234,4 +234,7 @@
   <data name="InfosSampleUnInstalled" xml:space="preserve">
     <value>MFA example UnInstalled !</value>
   </data>
+  <data name="InfosSystemNotRegistered" xml:space="preserve">
+    <value>MFA System Not registered ! </value>
+  </data>
 </root>

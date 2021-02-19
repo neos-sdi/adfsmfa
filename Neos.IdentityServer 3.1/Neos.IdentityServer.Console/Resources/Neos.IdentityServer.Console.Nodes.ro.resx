@@ -324,12 +324,6 @@
   <data name="GENERALSCOPERESTARTMFASVCDESC" xml:space="preserve">
     <value>Reporniți toate serviciile MFA (Notification Hub și ADFS Services) pe toate serverele de fermă</value>
   </data>
-  <data name="SECURITYSCOPEWSMAN" xml:space="preserve">
-    <value>Wsman</value>
-  </data>
-  <data name="SECURITYSCOPEWSMANDESC" xml:space="preserve">
-    <value>Configurare WsMan</value>
-  </data>
   <data name="ROOTLANGUAGEDA" xml:space="preserve">
     <value>Daneză</value>
   </data>

@@ -26,6 +26,7 @@ using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
 using System.Net;
+using System.Runtime.Serialization;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel;
@@ -40,7 +41,6 @@ namespace Neos.IdentityServer.MultiFactor
     /// </summary>
     public class WebAdminManager
     {
-        private static SIDsParametersRecord _aclrecord = new SIDsParametersRecord();
         private EventLog _log;
 
         /// <summary>
@@ -88,9 +88,10 @@ namespace Neos.IdentityServer.MultiFactor
                     foreach (var srv in servers)
                     {
                         if (srv.Key.ToLower().Equals(fqdn.ToLower()))
-                            continue;
+                           continue;
+
                         WebAdminClient manager = new WebAdminClient();
-                        manager.Initialize(srv.Key);
+                        manager.Initialize(srv.Key.ToLower());
                         try
                         {
                             IWebAdminServices client = manager.Open();
@@ -105,14 +106,14 @@ namespace Neos.IdentityServer.MultiFactor
                         }
                         catch (Exception e)
                         {
-                            _log.WriteEntry(string.Format("Error on WebAdminService Service GetLocalSIDsInformations method : {0} / {1}.", srv, e.Message), EventLogEntryType.Error, 2010);
+                            _log.WriteEntry(string.Format("Error on WebAdminService Service GetLocalSIDsInformations method : {0} / {1}.", srv.Key.ToLower(), e.Message), EventLogEntryType.Error, 2010);
                         }
                         finally
                         {
                             manager.UnInitialize();
                         }
-                    }
-                }
+                    } 
+                } 
             }
             catch (Exception e)
             {
@@ -163,7 +164,7 @@ namespace Neos.IdentityServer.MultiFactor
                             manager.UnInitialize();
                         }
                     }
-                }
+                } 
             }
             catch (Exception e)
             {
@@ -445,6 +446,7 @@ namespace Neos.IdentityServer.MultiFactor
         {
             try
             {
+                // Write Crypted Config only
                 using (FileStream fs = new FileStream(CFGUtilities.ConfigCacheFile, FileMode.Create, FileAccess.ReadWrite))
                 {
                     fs.Write(config, 0, config.Length);
@@ -452,12 +454,12 @@ namespace Neos.IdentityServer.MultiFactor
                 }
                 if (SIDs.Loaded)
                 {
-                    XmlConfigSerializer xmlserializer = new XmlConfigSerializer(typeof(SIDsParametersRecord));
+                    DataContractSerializer serializer = new DataContractSerializer(typeof(SIDsParametersRecord));
                     MemoryStream stm = new MemoryStream();
                     byte[] bytes = null;
                     using (StreamReader reader = new StreamReader(stm))
                     {
-                        xmlserializer.Serialize(stm, SIDs.GetSIDs());
+                        serializer.WriteObject(stm, SIDs.GetSIDs());
                         stm.Position = 0;
                         using (AESSystemEncryption aes = new AESSystemEncryption())
                         {
@@ -514,235 +516,207 @@ namespace Neos.IdentityServer.MultiFactor
         }
         #endregion
 
-        #region Registry Versions
+        #region Computers Information
         /// <summary>
         /// GetComputerInformations method implementation
         /// </summary>
-        internal ADFSServerHost GetComputerInformations(string servername, bool dispatch = true)
+        internal ADFSServerHost GetComputerInformations(string servername)
         {
-            string fqdn = Dns.GetHostEntry("localhost").HostName.ToLower();
-            if (fqdn.ToLower().Equals(servername.ToLower()))
-            {               
-                RegistryVersion reg = new RegistryVersion();
-                string nodetype = GetLocalNodeType();
-                ADFSNodeInformation node = GetLocalNodeInformations(reg, fqdn);
-                node.NodeType = nodetype;
-                return new ADFSServerHost()
+            
+            string nodetype = GetLocalNodeType();
+            if (nodetype.ToLower().Equals("primarycomputer"))
+            {
+                string fqdn = Dns.GetHostEntry("localhost").HostName;
+                string requested = Dns.GetHostEntry(servername).HostName;
+                bool local = fqdn.ToLower().Equals(requested.ToLower());
+                try
                 {
-                    FQDN = fqdn,
-                    BehaviorLevel = node.BehaviorLevel,
-                    HeartbeatTmeStamp = node.HeartbeatTmeStamp,
-                    NodeType = node.NodeType,
-                    CurrentVersion = reg.CurrentVersion,
-                    CurrentBuild = reg.CurrentBuild,
-                    InstallationType = reg.InstallationType,
-                    ProductName = reg.ProductName,
-                    CurrentMajorVersionNumber = reg.CurrentMajorVersionNumber,
-                    CurrentMinorVersionNumber = reg.CurrentMinorVersionNumber
-                };
+                    RegistryVersion localreg = new RegistryVersion();
+                    List<ADFSNodeInformation> nodes = GetNodesInformations(localreg);
+                    foreach (ADFSNodeInformation node in nodes)
+                    {
+                        if (node.FQDN.ToLower().Equals(fqdn.ToLower()) && local)  // Local
+                        {
+                            return new ADFSServerHost()
+                            {
+                                FQDN = node.FQDN.ToLower(),
+                                BehaviorLevel = node.BehaviorLevel,
+                                HeartbeatTmeStamp = node.HeartbeatTmeStamp,
+                                NodeType = node.NodeType,
+                                CurrentVersion = localreg.CurrentVersion,
+                                CurrentBuild = localreg.CurrentBuild,
+                                InstallationType = localreg.InstallationType,
+                                ProductName = localreg.ProductName,
+                                CurrentMajorVersionNumber = localreg.CurrentMajorVersionNumber,
+                                CurrentMinorVersionNumber = localreg.CurrentMinorVersionNumber
+                            };
+                        }
+                        else if (node.FQDN.ToLower().Equals(requested.ToLower())) // Found 2016 or 2019
+                        {
+                            RegistryVersion remotereg = GetRemoteRegistryInformations(requested);
+                            if (remotereg != null)
+                            {
+                                return new ADFSServerHost()
+                                {
+                                    FQDN = node.FQDN.ToLower(),
+                                    BehaviorLevel = node.BehaviorLevel,
+                                    HeartbeatTmeStamp = node.HeartbeatTmeStamp,
+                                    NodeType = node.NodeType,
+                                    CurrentVersion = remotereg.CurrentVersion,
+                                    CurrentBuild = remotereg.CurrentBuild,
+                                    InstallationType = remotereg.InstallationType,
+                                    ProductName = remotereg.ProductName,
+                                    CurrentMajorVersionNumber = remotereg.CurrentMajorVersionNumber,
+                                    CurrentMinorVersionNumber = remotereg.CurrentMinorVersionNumber
+                                };
+                            }
+                        }
+                    }
+                    if (localreg.IsWindows2012R2)
+                    {
+                        RegistryVersion remotereg2 = GetRemoteRegistryInformations(requested);
+                        if (remotereg2 != null)
+                        {
+                            return new ADFSServerHost()
+                            {
+                                FQDN = Dns.GetHostEntry(servername).HostName.ToLower(),
+                                NodeType = "SecondaryComputer",
+                                BehaviorLevel = 1,
+                                HeartbeatTmeStamp = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, DateTime.Now.Hour, DateTime.Now.Minute, 0, DateTimeKind.Local),
+                                CurrentVersion = remotereg2.CurrentVersion,
+                                CurrentBuild = remotereg2.CurrentBuild,
+                                InstallationType = remotereg2.InstallationType,
+                                ProductName = remotereg2.ProductName,
+                                CurrentMajorVersionNumber = remotereg2.CurrentMajorVersionNumber,
+                                CurrentMinorVersionNumber = remotereg2.CurrentMinorVersionNumber
+                            };
+                        }
+                    }
+                    return null;
+                }
+                catch (Exception e)
+                {
+                    _log.WriteEntry(string.Format("Error on WebAdminService Service GetComputerInformations method : {0} / {1}.", servername, e.Message), EventLogEntryType.Error, 2010);
+                    throw e;
+                }
             }
             else
-            {
-                if (dispatch)
-                {
-                    WebAdminClient manager = new WebAdminClient();
-                    manager.Initialize(servername);
-                    try
-                    {
-                        IWebAdminServices client = manager.Open();
-                        try
-                        {
-                            return client.GetComputerInformations(servername, false);
-                        }
-                        catch (CommunicationException nf)
-                        {
-                            _log.WriteEntry(nf.Message, EventLogEntryType.Error, 2010);
-                            return null;
-                        }
-                        finally
-                        {
-                            manager.Close(client);
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        _log.WriteEntry(string.Format("Error on WebAdminService Service GetComputerInformations method : {0} / {1}.", servername, e.Message), EventLogEntryType.Error, 2010);
-                        throw e;
-                    }
-                    finally
-                    {
-                        manager.UnInitialize();
-                    }
-                }
-                else
-                    throw new Exception();
-            }
+                return null;
         }
 
         /// <summary>
         /// GetAllComputerInformations method implementation
         /// </summary>
-        internal Dictionary<string, ADFSServerHost> GetAllComputerInformations(Dictionary<string, bool> servers)
+        internal Dictionary<string, ADFSServerHost> GetAllComputersInformations()
         {
-            string fqdn = Dns.GetHostEntry("localhost").HostName.ToLower();
-            List<string> servernames = (from server in servers
-                                        where (server.Key.ToLower() != fqdn.ToLower())
-                                        select server.Key.ToLower()).ToList<string>();
-
-            Dictionary<string, ADFSServerHost> dict = new Dictionary<string, ADFSServerHost>();
-            RegistryVersion reg = new RegistryVersion();           
+            Dictionary<string, ADFSServerHost> dict = null;
             string nodetype = GetLocalNodeType();
-            ADFSNodeInformation node = GetLocalNodeInformations(reg, fqdn);
-            node.NodeType = nodetype;
-
-            dict.Add(fqdn, new ADFSServerHost() 
+            if (nodetype.ToLower().Equals("primarycomputer"))
             {
-                FQDN = fqdn,
-                BehaviorLevel = node.BehaviorLevel,
-                HeartbeatTmeStamp = node.HeartbeatTmeStamp,
-                NodeType = node.NodeType,
-                CurrentVersion = reg.CurrentVersion,
-                CurrentBuild = reg.CurrentBuild,
-                InstallationType = reg.InstallationType,
-                ProductName = reg.ProductName,
-                CurrentMajorVersionNumber = reg.CurrentMajorVersionNumber,
-                CurrentMinorVersionNumber = reg.CurrentMinorVersionNumber
-            });
-            foreach (string srv in servernames)
-            {
-                WebAdminClient manager = new WebAdminClient();
-                manager.Initialize(srv);
                 try
                 {
-                    IWebAdminServices client = manager.Open();
-                    try
+                    string fqdn = Dns.GetHostEntry("localhost").HostName;
+                    dict = new Dictionary<string, ADFSServerHost>();
+                    RegistryVersion localreg = new RegistryVersion();
+                    List<ADFSNodeInformation> nodes = GetNodesInformations(localreg);
+                    foreach (ADFSNodeInformation node in nodes)
                     {
-                        dict.Add(srv, client.GetComputerInformations(srv, false));
+                        if (node.FQDN.ToLower().Equals(fqdn.ToLower()))
+                        { 
+                            dict.Add(node.FQDN.ToLower(), new ADFSServerHost()
+                            {
+                                FQDN = node.FQDN.ToLower(),
+                                BehaviorLevel = node.BehaviorLevel,
+                                HeartbeatTmeStamp = node.HeartbeatTmeStamp,
+                                NodeType = node.NodeType,
+                                CurrentVersion = localreg.CurrentVersion,
+                                CurrentBuild = localreg.CurrentBuild,
+                                InstallationType = localreg.InstallationType,
+                                ProductName = localreg.ProductName,
+                                CurrentMajorVersionNumber = localreg.CurrentMajorVersionNumber,
+                                CurrentMinorVersionNumber = localreg.CurrentMinorVersionNumber
+                            });
+                        }
+                        else
+                        {
+                            RegistryVersion remotereg = GetRemoteRegistryInformations(node.FQDN.ToLower());
+                            if (remotereg != null)
+                            {
+                                dict.Add(node.FQDN.ToLower(), new ADFSServerHost()
+                                {
+                                    FQDN = node.FQDN.ToLower(),
+                                    BehaviorLevel = node.BehaviorLevel,
+                                    HeartbeatTmeStamp = node.HeartbeatTmeStamp,
+                                    NodeType = node.NodeType,
+                                    CurrentVersion = remotereg.CurrentVersion,
+                                    CurrentBuild = remotereg.CurrentBuild,
+                                    InstallationType = remotereg.InstallationType,
+                                    ProductName = remotereg.ProductName,
+                                    CurrentMajorVersionNumber = remotereg.CurrentMajorVersionNumber,
+                                    CurrentMinorVersionNumber = remotereg.CurrentMinorVersionNumber
+                                });
+                            }
+                        }
                     }
-                    catch (EndpointNotFoundException nf)
-                    {
-                        _log.WriteEntry(nf.Message, EventLogEntryType.Error, 2010);
-                        continue;
-                    }
-                    finally
-                    {
-                        manager.Close(client);
-                    }
+                    if (dict.Count == 0)
+                        return null;
                 }
-                finally
+                catch (Exception e)
                 {
-                    manager.UnInitialize();
+                    _log.WriteEntry(string.Format("Error on WebAdminService Service GetAllComputersInformations method : {0}.", e.Message), EventLogEntryType.Error, 2010);
+                    throw e;
                 }
             }
             return dict; 
+        }
+
+        /// <summary>
+        /// GetRemoteRegistryInformations method implementations
+        /// </summary>
+        private RegistryVersion GetRemoteRegistryInformations(string fqdn)
+        {
+            WebAdminClient manager = new WebAdminClient();
+            manager.Initialize(fqdn);
+            try
+            {
+                IWebAdminServices client = manager.Open();
+                try
+                {
+                    return client.GetRegistryInformations();
+                }
+                finally
+                {
+                    manager.Close(client);
+                }
+            }
+            catch (Exception e)
+            {
+                Log.WriteEntry(string.Format("Error on WebAdminService Service GetRemoteRegistryInformations method : {0} / {1}.", fqdn, e.Message), EventLogEntryType.Error, 2010);
+            }
+            finally
+            {
+                manager.UnInitialize();
+            }
+            return null;
         }
         #endregion
 
         #region ADFS Node Information
         /// <summary>
-        /// GetComputerInformations method implementation
-        /// </summary>
-        internal ADFSNodeInformation GetNodeInformations(RegistryVersion reg, string servername, bool dispatch = true)
-        {
-            string fqdn = Dns.GetHostEntry("localhost").HostName.ToLower();
-            if (fqdn.ToLower().Equals(servername.ToLower()))
-            {
-                string nodetype = GetLocalNodeType();
-                ADFSNodeInformation node = GetLocalNodeInformations(reg, servername);
-                node.NodeType = nodetype;
-                return node;
-            }
-            else
-            {
-                if (dispatch)
-                {
-                    WebAdminClient manager = new WebAdminClient();
-                    manager.Initialize(servername);
-                    try
-                    {
-                        IWebAdminServices client = manager.Open();
-                        try
-                        {
-                            string nodetype = client.GetNodeType(servername, false);
-                            ADFSNodeInformation node = node = GetLocalNodeInformations(reg, servername);
-                            node.NodeType = nodetype;
-                            return node;
-                        }
-                        finally
-                        {
-                            manager.Close(client);
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        _log.WriteEntry(string.Format("Error on WebAdminService Service GetNodeInformations method : {0} / {1}.", servername, e.Message), EventLogEntryType.Error, 2010);
-                        throw e;
-                    }
-                    finally
-                    {
-                        manager.UnInitialize();
-                    }
-                }
-                else
-                    throw new Exception();
-            }
-        }
-
-        /// <summary>
-        /// GetNodeType method implmentation
-        /// </summary>
-        internal string GetNodeType(string servername, bool dispatch = true)
-        {
-            string fqdn = Dns.GetHostEntry("localhost").HostName.ToLower();
-            if (fqdn.ToLower().Equals(servername.ToLower()))
-            {
-                return GetLocalNodeType();
-            }
-            else
-            {
-                if (dispatch)
-                {
-                    WebAdminClient manager = new WebAdminClient();
-                    manager.Initialize(servername);
-                    try
-                    {                        
-                        IWebAdminServices client = manager.Open();
-                        try
-                        {
-                            return client.GetNodeType(servername, false);
-                        }
-                        finally
-                        {
-                            manager.Close(client);
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        _log.WriteEntry(string.Format("Error on WebAdminService Service GetNodeType method : {0} / {1}.", servername, e.Message), EventLogEntryType.Error, 2010);
-                        throw e;
-                    }
-                    finally
-                    {
-                        manager.UnInitialize();
-                    }
-                }
-                else
-                    throw new Exception();
-            }
-        }       
-
-        /// <summary>
         /// GetLocalNodeInformations method implementation
         /// </summary>
-        private ADFSNodeInformation GetLocalNodeInformations(RegistryVersion reg, string servername)
+        private List<ADFSNodeInformation> GetNodesInformations(RegistryVersion reg)
         {
+            List<ADFSNodeInformation> _list = new List<ADFSNodeInformation>();
             if (reg.IsWindows2012R2)
             {
-                return new ADFSNodeInformation()
+                _list.Add(new ADFSNodeInformation()
                 {
+                    FQDN = Dns.GetHostEntry("localhost").HostName,
+                    NodeType = "PrimaryComputer",
                     BehaviorLevel = 1,
                     HeartbeatTmeStamp = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, DateTime.Now.Hour, DateTime.Now.Minute, 0, DateTimeKind.Local)
-                };
+                });
             }
             else
             {
@@ -763,18 +737,15 @@ namespace Neos.IdentityServer.MultiFactor
                     Collection<PSObject> PSOutput = pipeline.Invoke();
                     foreach (var result in PSOutput)
                     {
-                        string fqdn = result.Members["FQDN"].Value.ToString();
-                        if (servername.ToLower().Equals(fqdn.ToLower()))
+                        _list.Add(new ADFSNodeInformation
                         {
-                            ADFSNodeInformation props = new ADFSNodeInformation
-                            {
-                                BehaviorLevel = Convert.ToInt32(result.Members["BehaviorLevel"].Value),
-                                HeartbeatTmeStamp = Convert.ToDateTime(result.Members["HeartbeatTimeStamp"].Value),
-                            };
-                            return props;
-                        }
+                            FQDN = result.Members["FQDN"].Value.ToString(),
+                            NodeType = result.Members["NodeType"].Value.ToString(),
+                            BehaviorLevel = Convert.ToInt32(result.Members["BehaviorLevel"].Value),
+                            HeartbeatTmeStamp = Convert.ToDateTime(result.Members["HeartbeatTimeStamp"].Value),
+                        });
                     }
-                    return new ADFSNodeInformation();
+                    
                 }
                 finally
                 {
@@ -783,7 +754,8 @@ namespace Neos.IdentityServer.MultiFactor
                     if (SPPowerShell != null)
                         SPPowerShell.Dispose();
                 }
-            }                
+            }
+            return _list;
         }
 
         /// <summary>

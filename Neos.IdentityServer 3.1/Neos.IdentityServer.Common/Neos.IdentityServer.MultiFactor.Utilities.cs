@@ -1377,20 +1377,20 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// CheckSQLConnection method implmentation
         /// </summary>
-        internal static bool CheckSQLConnection(MFAConfig config, string connectionstring)
+        internal static bool CheckSQLConnection(MFAConfig config, string connectionstring, string username, string password)
         {
             DataRepositoryService dt = GetDataRepository(config, DataRepositoryKind.SQL);
-            return (dt as IDataRepositorySQLConnection).CheckConnection(connectionstring);
+            return (dt as IDataRepositorySQLConnection).CheckConnection(connectionstring, username, password);
         }
 
         /// <summary>
         /// CheckKeysConnection method implmentation
         /// </summary>
-        internal static bool CheckKeysConnection(MFAConfig config, string connectionstring)
+        internal static bool CheckKeysConnection(MFAConfig config, string connectionstring, string username, string password)
         {
             ISecretKeyManager dt = GetKeysRepository(config);
             if (dt is IDataRepositorySQLConnection)
-                return (dt as IDataRepositorySQLConnection).CheckConnection(connectionstring);
+                return (dt as IDataRepositorySQLConnection).CheckConnection(connectionstring, username, password);
             return false;
         }
         #endregion
@@ -2660,6 +2660,7 @@ namespace Neos.IdentityServer.MultiFactor
                     {
                         config.KeysConfig.XORSecret = MSIS.Decrypt(config.KeysConfig.XORSecret);
                         config.Hosts.ActiveDirectoryHost.Password = MSIS.Decrypt(config.Hosts.ActiveDirectoryHost.Password);
+                        config.Hosts.SQLServerHost.SQLPassword = MSIS.Decrypt(config.Hosts.SQLServerHost.SQLPassword);
                         config.MailProvider.Password = MSIS.Decrypt(config.MailProvider.Password);
                     };
                     KeysManager.Initialize(config);  // Important
@@ -2706,6 +2707,7 @@ namespace Neos.IdentityServer.MultiFactor
                         {
                             config.KeysConfig.XORSecret = MSIS.Decrypt(config.KeysConfig.XORSecret);
                             config.Hosts.ActiveDirectoryHost.Password = MSIS.Decrypt(config.Hosts.ActiveDirectoryHost.Password);
+                            config.Hosts.SQLServerHost.SQLPassword = MSIS.Decrypt(config.Hosts.SQLServerHost.SQLPassword);
                             config.MailProvider.Password = MSIS.Decrypt(config.MailProvider.Password);
                         };
                         KeysManager.Initialize(config);  // Important
@@ -2797,6 +2799,7 @@ namespace Neos.IdentityServer.MultiFactor
                     {
                         config.KeysConfig.XORSecret = MSIS.Encrypt(config.KeysConfig.XORSecret);
                         config.Hosts.ActiveDirectoryHost.Password = MSIS.Encrypt(config.Hosts.ActiveDirectoryHost.Password);
+                        config.Hosts.SQLServerHost.SQLPassword = MSIS.Decrypt(config.Hosts.SQLServerHost.SQLPassword);
                         config.MailProvider.Password = MSIS.Encrypt(config.MailProvider.Password);
                     };
                 }
@@ -2851,6 +2854,7 @@ namespace Neos.IdentityServer.MultiFactor
                 {
                     config.KeysConfig.XORSecret = MSIS.Encrypt(config.KeysConfig.XORSecret);
                     config.Hosts.ActiveDirectoryHost.Password = MSIS.Encrypt(config.Hosts.ActiveDirectoryHost.Password);
+                    config.Hosts.SQLServerHost.SQLPassword = MSIS.Decrypt(config.Hosts.SQLServerHost.SQLPassword);
                     config.MailProvider.Password = MSIS.Encrypt(config.MailProvider.Password);
                 };
             }
@@ -2879,7 +2883,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// ReadConfigurationKey method implmentation
         /// </summary>
-        private static byte[] ReadConfigurationKey()
+      /*  private static byte[] ReadConfigurationKey()
         {
             if (ConfigCacheKey != null)
                 return ConfigCacheKey;
@@ -2894,7 +2898,7 @@ namespace Neos.IdentityServer.MultiFactor
             Array.Reverse(_gd);
             Buffer.BlockCopy(_gd, 0, _key, 16, 16);
             return _key;
-        }
+        } */
         #endregion
 
         #region Informations

@@ -19,8 +19,12 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
+using System.IdentityModel.Claims;
+using System.IdentityModel.Policy;
 using System.IO;
 using System.Net;
+using System.Runtime.Serialization;
+using System.Security.Principal;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Configuration;
@@ -493,7 +497,8 @@ namespace Neos.IdentityServer.MultiFactor
                     Servicehost = null;
                 }
 
-                Servicehost = new ReplayServiceHost(new EventLogDependency(svc.EventLog), typeof(T), new Uri(string.Format("net.tcp://{0}:5987/ReplayService", Dns.GetHostEntry("localhost").HostName)));
+                string uri = string.Format("net.tcp://{0}:5987/ReplayService", Dns.GetHostEntry("localhost").HostName);
+                Servicehost = new ReplayServiceHost(new EventLogDependency(svc.EventLog), typeof(T), new Uri(uri));
                 ServiceMetadataBehavior smb = Servicehost.Description.Behaviors.Find<ServiceMetadataBehavior>();
                 ServiceDebugBehavior dbg = Servicehost.Description.Behaviors.Find<ServiceDebugBehavior>();
                 ServiceThrottlingBehavior prf = Servicehost.Description.Behaviors.Find<ServiceThrottlingBehavior>();
@@ -539,24 +544,40 @@ namespace Neos.IdentityServer.MultiFactor
                     prf.MaxConcurrentInstances = 250;
                     prf.MaxConcurrentSessions = 250;
                 }
-
-                NetTcpBinding tcp = new NetTcpBinding(SecurityMode.None);
+                NetTcpBinding tcp = new NetTcpBinding(SecurityMode.Transport);
+                tcp.Security.Transport.ClientCredentialType = TcpClientCredentialType.Windows;
                 tcp.MaxConnections = 256;
 
+#if servicesecurity
+                List<IAuthorizationPolicy> policies = new List<IAuthorizationPolicy>();
+                policies.Add(new MFAAuthorizationPolicy());
+                Servicehost.Authorization.ExternalAuthorizationPolicies = policies.AsReadOnly();
+                Servicehost.Authorization.PrincipalPermissionMode = PrincipalPermissionMode.UseWindowsGroups;
+#endif
+                ServiceEndpoint svcendpoint = null;
                 if (useEncryption)
                 {
                     CustomBinding custombinding = new CustomBinding(tcp);
-                    custombinding.Name = "MFABinding";
+                    custombinding.Name = "MFAReplayBinding";
                     var currentEncoder = custombinding.Elements.Find<MessageEncodingBindingElement>();
                     if (currentEncoder != default(MessageEncodingBindingElement))
                     {
                         custombinding.Elements.Remove(currentEncoder);
                         custombinding.Elements.Insert(0, new ServicesMessageEncodingBindingElement());
                     }
-                    Servicehost.AddServiceEndpoint(typeof(IReplay), custombinding, "");
+                    svcendpoint = Servicehost.AddServiceEndpoint(typeof(IReplay), custombinding, uri);
                 }
                 else
-                    Servicehost.AddServiceEndpoint(typeof(IReplay), tcp, "");
+                {
+                    tcp.Name = "MFAReplayBinding";
+                    svcendpoint = Servicehost.AddServiceEndpoint(typeof(IReplay), tcp, uri);
+                }
+                foreach (OperationDescription operation in svcendpoint.Contract.Operations)
+                {
+                    var beh = operation.Behaviors.Find<DataContractSerializerOperationBehavior>();
+                    beh.IgnoreExtensionDataObject = true;
+                    beh.MaxItemsInObjectGraph = 131070;
+                }
                 Servicehost.Open();                
                 Started = true;
             }
@@ -605,9 +626,9 @@ namespace Neos.IdentityServer.MultiFactor
         public ServiceBase Servicebase { get; private set; }
 
     }
-    #endregion
+#endregion
 
-    #region WebThemesServer
+#region WebThemesServer
     /// <summary>
     /// WebThemesServer class (Server Host)
     /// </summary>
@@ -630,7 +651,8 @@ namespace Neos.IdentityServer.MultiFactor
                     Servicehost = null;
                 }
 
-                Servicehost = new WebThemesServiceHost(new EventLogDependency(svc.EventLog), typeof(T), new Uri(string.Format("net.tcp://{0}:5987/WebThemesService", Dns.GetHostEntry("localhost").HostName)));
+                string uri = string.Format("net.tcp://{0}:5987/WebThemesService", Dns.GetHostEntry("localhost").HostName);
+                Servicehost = new WebThemesServiceHost(new EventLogDependency(svc.EventLog), typeof(T), new Uri(uri));
                 ServiceMetadataBehavior smb = Servicehost.Description.Behaviors.Find<ServiceMetadataBehavior>();
                 ServiceDebugBehavior dbg = Servicehost.Description.Behaviors.Find<ServiceDebugBehavior>();
                 ServiceThrottlingBehavior prf = Servicehost.Description.Behaviors.Find<ServiceThrottlingBehavior>();
@@ -676,24 +698,40 @@ namespace Neos.IdentityServer.MultiFactor
                     prf.MaxConcurrentInstances = 250;
                     prf.MaxConcurrentSessions = 250;
                 }
-
-                NetTcpBinding tcp = new NetTcpBinding(SecurityMode.None);
+                NetTcpBinding tcp = new NetTcpBinding(SecurityMode.Transport);
+                tcp.Security.Transport.ClientCredentialType = TcpClientCredentialType.Windows;
                 tcp.MaxConnections = 256;
 
+#if servicesecurity
+                List<IAuthorizationPolicy> policies = new List<IAuthorizationPolicy>();
+                policies.Add(new MFAAuthorizationPolicy());
+                Servicehost.Authorization.ExternalAuthorizationPolicies = policies.AsReadOnly();
+                Servicehost.Authorization.PrincipalPermissionMode = PrincipalPermissionMode.UseWindowsGroups;
+#endif
+                ServiceEndpoint svcendpoint = null;
                 if (useEncryption)
                 {
                     CustomBinding custombinding = new CustomBinding(tcp);
-                    custombinding.Name = "MFABindingThemes";
+                    custombinding.Name = "MFAThemesBinding";
                     var currentEncoder = custombinding.Elements.Find<MessageEncodingBindingElement>();
                     if (currentEncoder != default(MessageEncodingBindingElement))
                     {
                         custombinding.Elements.Remove(currentEncoder);
                         custombinding.Elements.Insert(0, new ServicesMessageEncodingBindingElement());
                     }
-                    Servicehost.AddServiceEndpoint(typeof(IWebThemeManager), custombinding, "");
+                    svcendpoint = Servicehost.AddServiceEndpoint(typeof(IWebThemeManager), custombinding, uri);
                 }
                 else
-                    Servicehost.AddServiceEndpoint(typeof(IWebThemeManager), tcp, "");
+                {
+                    tcp.Name = "MFAThemesBinding";
+                    svcendpoint = Servicehost.AddServiceEndpoint(typeof(IWebThemeManager), tcp, uri);
+                }
+                foreach (OperationDescription operation in svcendpoint.Contract.Operations)
+                {
+                    var beh = operation.Behaviors.Find<DataContractSerializerOperationBehavior>();
+                    beh.IgnoreExtensionDataObject = true;
+                    beh.MaxItemsInObjectGraph = 131070;
+                }
                 Servicehost.Open();
                 Started = true;
             }
@@ -742,9 +780,9 @@ namespace Neos.IdentityServer.MultiFactor
         public ServiceBase Servicebase { get; private set; }
 
     }
-    #endregion
+#endregion
 
-    #region WebThemesServer
+#region WebThemesServer
     /// <summary>
     /// WebAdminServer class (Server Host)
     /// </summary>
@@ -767,7 +805,8 @@ namespace Neos.IdentityServer.MultiFactor
                     Servicehost = null;
                 }
 
-                Servicehost = new WebAdminServiceHost(new EventLogDependency(svc.EventLog), typeof(T), new Uri(string.Format("net.tcp://{0}:5987/WebAdminService", Dns.GetHostEntry("localhost").HostName)));
+                string uri = string.Format("net.tcp://{0}:5987/WebAdminService", Dns.GetHostEntry("localhost").HostName);
+                Servicehost = new WebAdminServiceHost(new EventLogDependency(svc.EventLog), typeof(T), new Uri(uri));
                 ServiceMetadataBehavior smb = Servicehost.Description.Behaviors.Find<ServiceMetadataBehavior>();
                 ServiceDebugBehavior dbg = Servicehost.Description.Behaviors.Find<ServiceDebugBehavior>();
                 ServiceThrottlingBehavior prf = Servicehost.Description.Behaviors.Find<ServiceThrottlingBehavior>();
@@ -797,7 +836,7 @@ namespace Neos.IdentityServer.MultiFactor
                 {
                     dbg.HttpHelpPageEnabled = false;
                     dbg.HttpsHelpPageEnabled = false;
-                    dbg.IncludeExceptionDetailInFaults = false;
+                    dbg.IncludeExceptionDetailInFaults = true;
                 }
                 if (prf == null)
                 {
@@ -809,28 +848,46 @@ namespace Neos.IdentityServer.MultiFactor
                 }
                 else
                 {
-                    prf.MaxConcurrentCalls = 250;
-                    prf.MaxConcurrentInstances = 250;
-                    prf.MaxConcurrentSessions = 250;
-                }
+                    prf.MaxConcurrentCalls = 256;
+                    prf.MaxConcurrentInstances = 256;
+                    prf.MaxConcurrentSessions = 256;
+                }               
 
-                NetTcpBinding tcp = new NetTcpBinding(SecurityMode.None);
+                NetTcpBinding tcp = new NetTcpBinding(SecurityMode.Transport);
                 tcp.MaxConnections = 256;
+                tcp.Security.Transport.ClientCredentialType = TcpClientCredentialType.Windows;
 
+#if servicesecurity
+                List<IAuthorizationPolicy> policies = new List<IAuthorizationPolicy>();
+                policies.Add(new MFAAuthorizationPolicy());
+                Servicehost.Authorization.ExternalAuthorizationPolicies = policies.AsReadOnly();
+                Servicehost.Authorization.PrincipalPermissionMode = PrincipalPermissionMode.UseWindowsGroups;
+#endif
+
+                ServiceEndpoint svcendpoint = null;
                 if (useEncryption)
                 {
                     CustomBinding custombinding = new CustomBinding(tcp);
-                    custombinding.Name = "MFABindingAdmin";
+                    custombinding.Name = "MFAWebAdminBinding";
                     var currentEncoder = custombinding.Elements.Find<MessageEncodingBindingElement>();
                     if (currentEncoder != default(MessageEncodingBindingElement))
                     {
                         custombinding.Elements.Remove(currentEncoder);
                         custombinding.Elements.Insert(0, new ServicesMessageEncodingBindingElement());
                     }
-                    Servicehost.AddServiceEndpoint(typeof(IWebAdminServices), custombinding, "");
+                    svcendpoint = Servicehost.AddServiceEndpoint(typeof(IWebAdminServices), custombinding, uri);
                 }
                 else
-                    Servicehost.AddServiceEndpoint(typeof(IWebAdminServices), tcp, "");
+                {
+                    tcp.Name = "MFAWebAdminBinding";
+                    svcendpoint = Servicehost.AddServiceEndpoint(typeof(IWebAdminServices), tcp, uri);
+                }
+                foreach (OperationDescription operation in svcendpoint.Contract.Operations)
+                {
+                    var beh = operation.Behaviors.Find<DataContractSerializerOperationBehavior>();
+                    beh.IgnoreExtensionDataObject = true;
+                    beh.MaxItemsInObjectGraph = 131070;
+                }
                 Servicehost.Open();
                 Started = true;
             }
@@ -879,9 +936,9 @@ namespace Neos.IdentityServer.MultiFactor
         public ServiceBase Servicebase { get; private set; }
 
     }
-    #endregion
+#endregion
 
-    #region NTServiceServer
+#region NTServiceServer
     /// <summary>
     /// NTServiceServer class (Server Host)
     /// </summary>
@@ -904,7 +961,8 @@ namespace Neos.IdentityServer.MultiFactor
                     Servicehost = null;
                 }
 
-                Servicehost = new WebAdminServiceHost(new EventLogDependency(svc.EventLog), typeof(T), new Uri(string.Format("net.tcp://{0}:5987/NTServices", Dns.GetHostEntry("localhost").HostName)));
+                string uri = string.Format("net.tcp://{0}:5987/NTServices", Dns.GetHostEntry("localhost").HostName);
+                Servicehost = new WebAdminServiceHost(new EventLogDependency(svc.EventLog), typeof(T), new Uri(uri));
                 ServiceMetadataBehavior smb = Servicehost.Description.Behaviors.Find<ServiceMetadataBehavior>();
                 ServiceDebugBehavior dbg = Servicehost.Description.Behaviors.Find<ServiceDebugBehavior>();
                 ServiceThrottlingBehavior prf = Servicehost.Description.Behaviors.Find<ServiceThrottlingBehavior>();
@@ -950,24 +1008,41 @@ namespace Neos.IdentityServer.MultiFactor
                     prf.MaxConcurrentInstances = 250;
                     prf.MaxConcurrentSessions = 250;
                 }
-
-                NetTcpBinding tcp = new NetTcpBinding(SecurityMode.None);
+                NetTcpBinding tcp = new NetTcpBinding(SecurityMode.Transport);
                 tcp.MaxConnections = 256;
+                tcp.Security.Transport.ClientCredentialType = TcpClientCredentialType.Windows;
 
+#if servicesecurity
+                List<IAuthorizationPolicy> policies = new List<IAuthorizationPolicy>();
+                policies.Add(new MFAAuthorizationPolicy());
+                Servicehost.Authorization.ExternalAuthorizationPolicies = policies.AsReadOnly();
+                Servicehost.Authorization.PrincipalPermissionMode = PrincipalPermissionMode.UseWindowsGroups;
+#endif
+
+                ServiceEndpoint svcendpoint = null;
                 if (useEncryption)
                 {
                     CustomBinding custombinding = new CustomBinding(tcp);
-                    custombinding.Name = "MFABindingAdmin";
+                    custombinding.Name = "MFAServiceNTBinding";
                     var currentEncoder = custombinding.Elements.Find<MessageEncodingBindingElement>();
                     if (currentEncoder != default(MessageEncodingBindingElement))
                     {
                         custombinding.Elements.Remove(currentEncoder);
                         custombinding.Elements.Insert(0, new ServicesMessageEncodingBindingElement());
                     }
-                    Servicehost.AddServiceEndpoint(typeof(INTService), custombinding, "");
+                    svcendpoint = Servicehost.AddServiceEndpoint(typeof(INTService), custombinding, uri);
                 }
                 else
-                    Servicehost.AddServiceEndpoint(typeof(INTService), tcp, "");
+                {
+                    tcp.Name = "MFAServiceNTBinding";
+                    svcendpoint = Servicehost.AddServiceEndpoint(typeof(INTService), tcp, uri);
+                }
+                foreach (OperationDescription operation in svcendpoint.Contract.Operations)
+                {
+                    var beh = operation.Behaviors.Find<DataContractSerializerOperationBehavior>();
+                    beh.IgnoreExtensionDataObject = true;
+                    beh.MaxItemsInObjectGraph = 131070;
+                }
                 Servicehost.Open();
                 Started = true;
             }
@@ -1016,36 +1091,39 @@ namespace Neos.IdentityServer.MultiFactor
         public ServiceBase Servicebase { get; private set; }
 
     }
-    #endregion
+#endregion
 
-    #region ReplayClient
+#region ReplayClient
     /// <summary>
     /// ReplayClient class (Client Proxy)
     /// </summary>
     public class ReplayClient
     {
         private ChannelFactory<IReplay> _factory = null;
+        private bool useEncryption = true;
 
         public bool IsInitialized { get; private set; }
 
         /// <summary>
         /// Initialize method implementation
         /// </summary>
-        public void Initialize(string servername = "localhost", bool useEncryption = true)
+        public void Initialize(string servername = "localhost")
         {
             if (_factory != null)
             {
                 if (_factory.State == CommunicationState.Opened)
                     _factory.Close();
             }
-            NetTcpBinding tcp = new NetTcpBinding(SecurityMode.None);
+            NetTcpBinding tcp = new NetTcpBinding(SecurityMode.Transport);
+            tcp.Security.Transport.ClientCredentialType = TcpClientCredentialType.Windows;
             tcp.MaxConnections = 256;
             tcp.OpenTimeout = new TimeSpan(0, 0, 5);
             tcp.SendTimeout = new TimeSpan(0, 0, 15);
+
             if (useEncryption)
             {
                 CustomBinding custombinding = new CustomBinding(tcp);
-                custombinding.Name = "MFABinding";
+                custombinding.Name = "MFAClientReplayBinding";
                 var currentEncoder = custombinding.Elements.Find<MessageEncodingBindingElement>();
                 if (currentEncoder != default(MessageEncodingBindingElement))
                 {
@@ -1055,7 +1133,16 @@ namespace Neos.IdentityServer.MultiFactor
                 _factory = new ChannelFactory<IReplay>(custombinding, new EndpointAddress(string.Format("net.tcp://{0}:5987/ReplayService", servername)));
             }
             else
+            {
+                tcp.Name = "MFAClientReplayBinding";
                 _factory = new ChannelFactory<IReplay>(tcp, new EndpointAddress(string.Format("net.tcp://{0}:5987/ReplayService", servername)));
+            }
+            foreach (OperationDescription operation in _factory.Endpoint.Contract.Operations)
+            {
+                var beh = operation.Behaviors.Find<DataContractSerializerOperationBehavior>();
+                beh.IgnoreExtensionDataObject = true;
+                beh.MaxItemsInObjectGraph = 131070;
+            }
             IsInitialized = true;
         }
 
@@ -1079,6 +1166,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public IReplay Open()
         {
+            _factory.Credentials.Windows.AllowedImpersonationLevel = System.Security.Principal.TokenImpersonationLevel.Identification;
             return _factory.CreateChannel();
         }
 
@@ -1096,34 +1184,36 @@ namespace Neos.IdentityServer.MultiFactor
             }
         }
     }
-    #endregion
+#endregion
 
-    #region WebThemesClient
+#region WebThemesClient
     /// <summary>
     /// WebThemesClient class (Client Proxy)
     /// </summary>
     public class WebThemesClient
     {
         private ChannelFactory<IWebThemeManager> _factory = null;
+        private bool useEncryption = true;
 
         public bool IsInitialized { get; private set; }
 
         /// <summary>
         /// Initialize method implementation
         /// </summary>
-        public void Initialize(string servername = "localhost", bool useEncryption = true)
+        public void Initialize(string servername = "localhost")
         {
             if (_factory != null)
             {
                 if (_factory.State == CommunicationState.Opened)
                     _factory.Close();
             }
-            NetTcpBinding tcp = new NetTcpBinding(SecurityMode.None);
+            NetTcpBinding tcp = new NetTcpBinding(SecurityMode.Transport);
+            tcp.Security.Transport.ClientCredentialType = TcpClientCredentialType.Windows;
             tcp.MaxConnections = 256;
             if (useEncryption)
             {
                 CustomBinding custombinding = new CustomBinding(tcp);
-                custombinding.Name = "MFABindingThemes";
+                custombinding.Name = "MFAClientThemesBinding";
                 var currentEncoder = custombinding.Elements.Find<MessageEncodingBindingElement>();
                 if (currentEncoder != default(MessageEncodingBindingElement))
                 {
@@ -1133,7 +1223,16 @@ namespace Neos.IdentityServer.MultiFactor
                 _factory = new ChannelFactory<IWebThemeManager>(custombinding, new EndpointAddress(string.Format("net.tcp://{0}:5987/WebThemesService", servername)));
             }
             else
+            {
+                tcp.Name = "MFAClientThemesBinding";
                 _factory = new ChannelFactory<IWebThemeManager>(tcp, new EndpointAddress(string.Format("net.tcp://{0}:5987/WebThemesService", servername)));
+            }
+            foreach (OperationDescription operation in _factory.Endpoint.Contract.Operations)
+            {
+                var beh = operation.Behaviors.Find<DataContractSerializerOperationBehavior>();
+                beh.IgnoreExtensionDataObject = true;
+                beh.MaxItemsInObjectGraph = 131070;
+            }
             IsInitialized = true;
         }
 
@@ -1157,6 +1256,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public IWebThemeManager Open()
         {
+            _factory.Credentials.Windows.AllowedImpersonationLevel = System.Security.Principal.TokenImpersonationLevel.Identification;
             return _factory.CreateChannel();
         }
 
@@ -1174,34 +1274,36 @@ namespace Neos.IdentityServer.MultiFactor
             }
         }
     }
-    #endregion
+#endregion
 
-    #region WebAdminClient
+#region WebAdminClient
     /// <summary>
     /// WebAdminClient class (Client Proxy)
     /// </summary>
     public class WebAdminClient
     {
         private ChannelFactory<IWebAdminServices> _factory = null;
+        private bool useEncryption = true;
 
         public bool IsInitialized { get; private set; }
 
         /// <summary>
         /// Initialize method implementation
         /// </summary>
-        public void Initialize(string servername = "localhost", bool useEncryption = true)
+        public void Initialize(string servername = "localhost")
         {
             if (_factory != null)
             {
                 if (_factory.State == CommunicationState.Opened)
                     _factory.Close();
             }
-            NetTcpBinding tcp = new NetTcpBinding(SecurityMode.None);
-            tcp.MaxConnections = 256;
+            NetTcpBinding tcp = new NetTcpBinding(SecurityMode.Transport);
+            tcp.Security.Transport.ClientCredentialType = TcpClientCredentialType.Windows;
+
             if (useEncryption)
             {
                 CustomBinding custombinding = new CustomBinding(tcp);
-                custombinding.Name = "MFABindingAdmin";
+                custombinding.Name = "MFAClientWebAdminBinding";
                 var currentEncoder = custombinding.Elements.Find<MessageEncodingBindingElement>();
                 if (currentEncoder != default(MessageEncodingBindingElement))
                 {
@@ -1211,7 +1313,17 @@ namespace Neos.IdentityServer.MultiFactor
                 _factory = new ChannelFactory<IWebAdminServices>(custombinding, new EndpointAddress(string.Format("net.tcp://{0}:5987/WebAdminService", servername)));
             }
             else
+            {
+                tcp.Name = "MFAClientWebAdminBinding";
                 _factory = new ChannelFactory<IWebAdminServices>(tcp, new EndpointAddress(string.Format("net.tcp://{0}:5987/WebAdminService", servername)));
+            }
+            foreach (OperationDescription operation in _factory.Endpoint.Contract.Operations)
+            {
+                var beh = operation.Behaviors.Find<DataContractSerializerOperationBehavior>();
+                beh.IgnoreExtensionDataObject = true;
+                beh.MaxItemsInObjectGraph = 131070;
+            }
+
             IsInitialized = true;
         }
 
@@ -1235,6 +1347,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public IWebAdminServices Open()
         {
+            _factory.Credentials.Windows.AllowedImpersonationLevel = System.Security.Principal.TokenImpersonationLevel.Identification;
             return _factory.CreateChannel();
         }
 
@@ -1252,34 +1365,36 @@ namespace Neos.IdentityServer.MultiFactor
             }
         }
     }
-    #endregion
+#endregion
 
-    #region NTServiceClient
+#region NTServiceClient
     /// <summary>
     /// NTServiceClient class (Client Proxy)
     /// </summary>
     public class NTServiceClient
     {
         private ChannelFactory<INTService> _factory = null;
+        private bool useEncryption = true;
 
         public bool IsInitialized { get; private set; }
 
         /// <summary>
         /// Initialize method implementation
         /// </summary>
-        public void Initialize(string servername = "localhost", bool useEncryption = true)
+        public void Initialize(string servername = "localhost")
         {
             if (_factory != null)
             {
                 if (_factory.State == CommunicationState.Opened)
                     _factory.Close();
             }
-            NetTcpBinding tcp = new NetTcpBinding(SecurityMode.None);
-            tcp.MaxConnections = 256;
+            NetTcpBinding tcp = new NetTcpBinding(SecurityMode.Transport);
+            tcp.Security.Transport.ClientCredentialType = TcpClientCredentialType.Windows;
+
             if (useEncryption)
             {
                 CustomBinding custombinding = new CustomBinding(tcp);
-                custombinding.Name = "MFANTBindingServices";
+                custombinding.Name = "MFAClientServiceNTBinding";
                 var currentEncoder = custombinding.Elements.Find<MessageEncodingBindingElement>();
                 if (currentEncoder != default(MessageEncodingBindingElement))
                 {
@@ -1289,7 +1404,16 @@ namespace Neos.IdentityServer.MultiFactor
                 _factory = new ChannelFactory<INTService>(custombinding, new EndpointAddress(string.Format("net.tcp://{0}:5987/NTServices", servername)));
             }
             else
+            {
+                tcp.Name = "MFAClientServiceNTBinding";
                 _factory = new ChannelFactory<INTService>(tcp, new EndpointAddress(string.Format("net.tcp://{0}:5987/NTServices", servername)));
+            }
+            foreach (OperationDescription operation in _factory.Endpoint.Contract.Operations)
+            {
+                var beh = operation.Behaviors.Find<DataContractSerializerOperationBehavior>();
+                beh.IgnoreExtensionDataObject = true;
+                beh.MaxItemsInObjectGraph = 131070;
+            }
             IsInitialized = true;
         }
 
@@ -1313,6 +1437,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public INTService Open()
         {
+            _factory.Credentials.Windows.AllowedImpersonationLevel = System.Security.Principal.TokenImpersonationLevel.Identification;
             return _factory.CreateChannel();
         }
 
@@ -1330,9 +1455,9 @@ namespace Neos.IdentityServer.MultiFactor
             }
         }
     }
-    #endregion
+#endregion
 
-    #region ServicesMessageEncoderFactory
+#region ServicesMessageEncoderFactory
     /// <summary>
     /// ServicesMessageEncoderFactory class
     /// </summary>
@@ -1366,7 +1491,7 @@ namespace Neos.IdentityServer.MultiFactor
             get { return encoder.MessageVersion; }
         }
 
-        #region SercicesMessageEncoder
+#region SercicesMessageEncoder
         /// <summary>
         /// SercicesMessageEncoder Class
         /// </summary>
@@ -1521,11 +1646,11 @@ namespace Neos.IdentityServer.MultiFactor
                 stream.Flush();
             }
         }
-        #endregion
+#endregion
     }
-    #endregion
+#endregion
 
-    #region ServicesMessageEncodingBindingElement
+#region ServicesMessageEncodingBindingElement
     /// <summary>
     /// ServicesMessageEncodingBindingElement class
     /// </summary>
@@ -1638,9 +1763,9 @@ namespace Neos.IdentityServer.MultiFactor
             policyContext.GetBindingAssertions().Add(document.CreateElement(ServicesMessageEncodingPolicyConstants.MFAEncodingPrefix, ServicesMessageEncodingPolicyConstants.MFAEncodingName, ServicesMessageEncodingPolicyConstants.MFAEncodingNamespace));
         } 
     }
-    #endregion
+#endregion
 
-    #region ServicesMessageEncodingElement
+#region ServicesMessageEncodingElement
     /// <summary>
     /// ServicesMessageEncodingElement Class
     /// </summary>
@@ -1703,9 +1828,9 @@ namespace Neos.IdentityServer.MultiFactor
             }
         }
     }
-    #endregion
+#endregion
 
-    #region ServicesMessageEncodingPolicyConstants
+#region ServicesMessageEncodingPolicyConstants
     /// <summary>
     /// ServicesMessageEncodingPolicyConstants class
     /// </summary>
@@ -1715,9 +1840,9 @@ namespace Neos.IdentityServer.MultiFactor
         public const string MFAEncodingNamespace = "http://schemas.microsoft.com/ws/06/2004/mspolicy/netmfaservers";
         public const string MFAEncodingPrefix = "mfa";
     }
-    #endregion
+#endregion
 
-    #region ServicesMessageEncodingBindingElementImporter
+#region ServicesMessageEncodingBindingElementImporter
     public class ServicesMessageEncodingBindingElementImporter : IPolicyImportExtension
     {
         /// <summary>
@@ -1756,5 +1881,132 @@ namespace Neos.IdentityServer.MultiFactor
             }
         }
     }
-    #endregion
+#endregion
+
+#if servicesecurity
+    public class MFAAuthorizationPolicy : IAuthorizationPolicy
+    {
+
+        /// <summary>
+        /// MFAAuthorizationPolicy constructor implementation
+        /// </summary>
+        public MFAAuthorizationPolicy()
+        {
+            Id = Guid.NewGuid().ToString();
+        }
+
+        /// <summary>
+        /// Id property implementation
+        /// </summary>
+        public string Id { get; }
+
+        /// <summary>
+        /// Issuer property implementation
+        /// </summary>
+        public ClaimSet Issuer
+        {
+            get { return ClaimSet.Windows; }
+        }
+
+        /// <summary>
+        /// Evaluate method implementation
+        /// </summary>
+        public bool Evaluate(EvaluationContext context, ref object state)
+        {
+            bool bRet = false;
+            MFAAuthState customstate = null;
+
+            if (state == null)
+            {
+                customstate = new MFAAuthState();
+                state = customstate;
+            }
+            else
+                customstate = (MFAAuthState)state;
+
+            if (!customstate.Checked)
+            {
+                if (!context.Properties.TryGetValue("Identities", out object obj))
+                    return false;
+
+                IList<IIdentity> identities = obj as IList<IIdentity>;
+                if (obj == null || identities.Count <= 0)
+                    return false;
+                customstate.Checked = true;
+                WindowsIdentity idt = (WindowsIdentity)identities[0];
+                WindowsPrincipal win = new WindowsPrincipal(idt);
+                if (ADFSManagementRolesChecker.IsAdministrator(win) || ADFSManagementRolesChecker.IsSystem(idt) || ADFSManagementRolesChecker.AllowedGroup(win, @"DOMAIN\ADFS Administrators"))
+                {
+                    context.Properties["Principal"] = win;
+                    return true;
+                }
+                bRet = true;
+            }
+            else
+                bRet = true;
+            return bRet;           
+        }        
+    }
+
+    /// <summary>
+    /// ADFSManagementRolesChecker class
+    /// </summary>
+    internal static class ADFSManagementRolesChecker
+    {
+        /// <summary>
+        /// IsAdministrator method implementation
+        /// </summary>
+        public static bool IsAdministrator(WindowsPrincipal principal)
+        {
+            try
+            {
+                return principal.IsInRole(WindowsBuiltInRole.Administrator);
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// IsSystem method implementation
+        /// </summary>
+        public static bool IsSystem(WindowsIdentity identity)
+        {
+            try
+            {
+                return identity.IsSystem;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// AllowedGroup method implementation
+        /// </summary>
+        public static bool AllowedGroup(WindowsPrincipal principal, string group)
+        {
+            if (string.IsNullOrEmpty(group))
+                return false;
+            try
+            {
+                return principal.IsInRole(group);
+            }
+            catch
+            {
+                return false;
+            }
+        }
+    }
+
+    /// <summary>
+    /// MFAAuthState class implementation
+    /// </summary>
+    public class MFAAuthState
+    {
+        public bool Checked { get; set; }
+    }
+#endif
 }

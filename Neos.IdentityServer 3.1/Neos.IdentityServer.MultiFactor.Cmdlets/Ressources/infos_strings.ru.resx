@@ -234,4 +234,7 @@
   <data name="InfosADFSCertificateChanged" xml:space="preserve">
     <value>Сертификат ADFS правильно создан !</value>
   </data>
+  <data name="InfosSystemNotRegistered" xml:space="preserve">
+    <value>МИД система не зарегистрирована !</value>
+  </data>
 </root>

@@ -483,18 +483,6 @@
   <data name="CTRLSECWIZTITLE" xml:space="preserve">
     <value>Create a new SQL database</value>
   </data>
-  <data name="CTRLSECWSMANAPPNAME" xml:space="preserve">
-    <value>Application Name</value>
-  </data>
-  <data name="CTRLSECWSMANPORT" xml:space="preserve">
-    <value>Port</value>
-  </data>
-  <data name="CTRLSECWSMANSHELLURI" xml:space="preserve">
-    <value>Shell Uri</value>
-  </data>
-  <data name="CTRLSECWSMANTIMEOUT" xml:space="preserve">
-    <value>Timeout</value>
-  </data>
   <data name="CTRLSECXORLABEL" xml:space="preserve">
     <value>Passphrase</value>
   </data>
@@ -686,5 +674,21 @@
   </data>
   <data name="CTRLPROVPINREQUIRED" xml:space="preserve">
     <value>Enable PIN for specific authenticator when user presence not detected</value>
+  </data>
+  <data name="CTRLSQLATTPASSWORD" xml:space="preserve">
+    <value>Invalid SQLServer password !</value>
+  </data>
+  <data name="CTRLSQLATTACCOUNT" xml:space="preserve">
+    <value>Invalid SQLServer account !</value>
+  </data>
+  <data name="CTRLSQLSUPERACCOUNT" xml:space="preserve">
+    <value>SQL Server "SuperUser" Credentials</value>
+  </data>
+  <data name="CTRLSQLCONNECTIONOK" xml:space="preserve">
+    <value>WSMAN
+</value>
+  </data>
+  <data name="CTRLSQLCONNECTIONERROR" xml:space="preserve">
+    <value>Unable to connect to SQL Server !</value>
   </data>
 </root>

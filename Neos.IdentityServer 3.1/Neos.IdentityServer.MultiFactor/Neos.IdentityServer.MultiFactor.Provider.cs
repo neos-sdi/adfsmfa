@@ -322,6 +322,7 @@ namespace Neos.IdentityServer.MultiFactor
                             {
                                 _config.KeysConfig.XORSecret = MSIS.Decrypt(_config.KeysConfig.XORSecret);
                                 _config.Hosts.ActiveDirectoryHost.Password = MSIS.Decrypt(_config.Hosts.ActiveDirectoryHost.Password);
+                                _config.Hosts.SQLServerHost.SQLPassword = MSIS.Decrypt(_config.Hosts.SQLServerHost.SQLPassword);
                                 _config.MailProvider.Password = MSIS.Decrypt(_config.MailProvider.Password);
                             };
                             KeysManager.Initialize(_config);  // Always Bind KeysManager Otherwise this is made in CFGUtilities.ReadConfiguration

@@ -137,37 +137,37 @@ namespace Neos.IdentityServer.MultiFactor
     /// <summary>
     /// SIDsParametersRecord class implementation
     /// </summary>
-    [DataContract, XmlRoot("SysConfig")]
+    [DataContract]
     public class SIDsParametersRecord
     {
-        [DataMember, XmlAttribute()]
+        [DataMember]
         public bool Loaded { get; set; }
 
-        [DataMember, XmlAttribute()]
+        [DataMember]
         public bool ADFSSystemServiceAdministrationAllowed { get; set; }
 
-        [DataMember, XmlAttribute()]
+        [DataMember]
         public bool ADFSLocalAdminServiceAdministrationAllowed { get; set; }
 
-        [DataMember, XmlAttribute()]
+        [DataMember]
         public bool ADFSDelegateServiceAdministrationAllowed { get; set; }
 
-        [DataMember, XmlAttribute()]
+        [DataMember]
         public string ADFSAccountSID { get; set; }
 
-        [DataMember, XmlAttribute()]
+        [DataMember]
         public string ADFSAccountName { get; set; }
 
-        [DataMember, XmlAttribute()]
+        [DataMember]
         public string ADFSServiceAccountSID { get; set; }
 
-        [DataMember, XmlAttribute()]
+        [DataMember]
         public string ADFSServiceAccountName { get; set; }
 
-        [DataMember, XmlAttribute()]
+        [DataMember]
         public string ADFSAdministrationGroupSID { get; set; }
 
-        [DataMember, XmlAttribute()]
+        [DataMember]
         public string ADFSAdministrationGroupName { get; set; }
 
     }
@@ -181,7 +181,7 @@ namespace Neos.IdentityServer.MultiFactor
         [OperationContract]
         SIDsParametersRecord RequestSIDsInformations();
 
-        [OperationContract]
+        [OperationContract(IsOneWay = true)]
         void PushSIDsInformations(SIDsParametersRecord rec);
 
         [OperationContract]
@@ -221,17 +221,13 @@ namespace Neos.IdentityServer.MultiFactor
         void BroadcastNotification(Dictionary<string, bool> servers, byte[] config, NotificationsKind kind, string message, bool local = true, bool dispatch = true, bool mustwrite = false);
 
         [OperationContract]
-        ADFSServerHost GetComputerInformations(string servername = "localhost", bool dispatch = true);
+        ADFSServerHost GetComputerInformations(string servername = "localhost");
 
         [OperationContract]
-        Dictionary<string, ADFSServerHost> GetAllComputerInformations(Dictionary<string, bool> servers);
+        Dictionary<string, ADFSServerHost> GetAllComputersInformations();
 
         [OperationContract]
-        ADFSNodeInformation GetNodeInformations(RegistryVersion reg, string servername = "localhost", bool dispatch = true);
-
-        [OperationContract]
-        string GetNodeType(string servername = "localhost", bool dispatch = true);
-
+        RegistryVersion GetRegistryInformations();
     }
 
     [ServiceContract(Namespace = "http://adfsmfa.org", Name = "NTService")]

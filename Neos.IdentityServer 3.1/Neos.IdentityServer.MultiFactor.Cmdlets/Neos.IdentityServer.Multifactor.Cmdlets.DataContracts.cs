@@ -870,6 +870,16 @@ namespace MFA
         public string Password { get; set; }
 
         /// <summary>
+        /// <para type="description">Account name used to access SQL Server Database (if ADFS account has rights you leave it blank).</para>
+        /// </summary>
+        public string SQLAccount { get; set; }
+
+        /// <summary>
+        /// <para type="description">Password used to access SQL Server Database (if ADFS account has rights you leave it blank).</para>
+        /// </summary>
+        public string SQLPassword { get; set; }
+
+        /// <summary>
         /// explicit operator from MMCKeysConfig
         /// </summary>
         public static explicit operator PSSecurity(FlatSecurity mgr)
@@ -890,6 +900,8 @@ namespace MFA
                     DomainAddress = mgr.DomainAddress,
                     Account = mgr.Account,
                     Password = mgr.Password,
+                    SQLAccount = mgr.SQLAccount,
+                    SQLPassword = mgr.SQLPassword
                 };
                 return target;
             }
@@ -916,7 +928,9 @@ namespace MFA
                     DefaultPin = mgr.DefaultPin,
                     DomainAddress = mgr.DomainAddress,
                     Account = mgr.Account,
-                    Password = mgr.Password
+                    Password = mgr.Password,
+                    SQLAccount = mgr.SQLAccount,
+                    SQLPassword = mgr.SQLPassword
                 };
                 return target;
             }

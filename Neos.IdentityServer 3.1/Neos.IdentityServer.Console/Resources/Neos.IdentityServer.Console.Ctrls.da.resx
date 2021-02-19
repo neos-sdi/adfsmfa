@@ -465,18 +465,6 @@
   <data name="CTRLSECWIZTITLE" xml:space="preserve">
     <value>Oprette en ny SQL-database</value>
   </data>
-  <data name="CTRLSECWSMANAPPNAME" xml:space="preserve">
-    <value>Programnavn</value>
-  </data>
-  <data name="CTRLSECWSMANPORT" xml:space="preserve">
-    <value>Port</value>
-  </data>
-  <data name="CTRLSECWSMANSHELLURI" xml:space="preserve">
-    <value>Shell Uri</value>
-  </data>
-  <data name="CTRLSECWSMANTIMEOUT" xml:space="preserve">
-    <value>Timeout</value>
-  </data>
   <data name="CTRLSECXORLABEL" xml:space="preserve">
     <value>Adgangsudtryk</value>
   </data>
@@ -686,5 +674,20 @@
   </data>
   <data name="CTRLSECRSAGENERATE" xml:space="preserve">
     <value>Skal du bekræfte oprettelsen af et nyt certifikat for MFA? Forsigtig: Alle eksisterende nøgler vil blive ugyldiggjort !</value>
+  </data>
+  <data name="CTRLSQLATTPASSWORD" xml:space="preserve">
+    <value>Ugyldig SQLServer-adgangskode !</value>
+  </data>
+  <data name="CTRLSQLATTACCOUNT" xml:space="preserve">
+    <value>Ugyldig SQLServer-konto !</value>
+  </data>
+  <data name="CTRLSQLSUPERACCOUNT" xml:space="preserve">
+    <value>Legitimationsoplysninger til SQL Server "SuperUser"</value>
+  </data>
+  <data name="CTRLSQLCONNECTIONOK" xml:space="preserve">
+    <value>Forbindelse til SQL Server-funktion !</value>
+  </data>
+  <data name="CTRLSQLCONNECTIONERROR" xml:space="preserve">
+    <value>Der kan ikke oprettes forbindelse til SQL Server!</value>
   </data>
 </root>

@@ -15,12 +15,13 @@
 // https://github.com/neos-sdi/adfsmfa                                                                                                                                                      //
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
-using Neos.IdentityServer.MultiFactor.Administration;
-using Neos.IdentityServer.MultiFactor.Common;
-using Neos.IdentityServer.MultiFactor.Data;
+using Microsoft.Win32;
 using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Management.Automation;
+using System.Management.Automation.Runspaces;
 using System.ServiceProcess;
 
 namespace Neos.IdentityServer.MultiFactor.NotificationHub
@@ -33,6 +34,7 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
         private WebAdminServer<WebAdminService> _svcadminhost = new WebAdminServer<WebAdminService>();
         private NTServiceServer<NTService> _svcnthost = new NTServiceServer<NTService>();
         private CleanUpManager _cleanup = new CleanUpManager();
+        private byte[] SysKey;
 
         #region Service override methods
         /// <summary>
@@ -57,6 +59,7 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
             try
             {
                 _mailslotsmgr.Start();
+                SysKey = SystemUtilities.Key;
             }
             catch (Exception e)
             {
@@ -186,6 +189,7 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
             try
             {
                 _svcadminhost.StartService(this);
+                StorePrimaryServerStatus(InitLocalNodeType());
             }
             catch (Exception e)
             {
@@ -326,6 +330,56 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
             {
                 ADFSController.Close();
             }
+        }
+        #endregion
+
+        #region private methods
+        /// <summary>
+        /// InitLocalNodeType method implementation
+        /// </summary>
+        private bool InitLocalNodeType()
+        {
+            string nodetype = string.Empty;
+            Runspace SPRunSpace = null;
+            PowerShell SPPowerShell = null;
+            try
+            {
+                SPRunSpace = RunspaceFactory.CreateRunspace();
+                SPPowerShell = PowerShell.Create();
+                SPPowerShell.Runspace = SPRunSpace;
+                SPRunSpace.Open();
+
+                Pipeline pipeline = SPRunSpace.CreatePipeline();
+                Command exportcmd = new Command("(Get-AdfsSyncProperties).Role", true);
+                pipeline.Commands.Add(exportcmd);
+
+                Collection<PSObject> PSOutput = pipeline.Invoke();
+                foreach (var result in PSOutput)
+                {
+                    if (!result.BaseObject.ToString().ToLower().Equals("primarycomputer"))
+                       return false;
+                }
+            }
+            finally
+            {
+                if (SPRunSpace != null)
+                    SPRunSpace.Close();
+                if (SPPowerShell != null)
+                    SPPowerShell.Dispose();
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// StorePrimaryServerStatus method implementation
+        /// </summary>
+        private void StorePrimaryServerStatus(bool isprimary)
+        {
+            RegistryKey rk = Registry.LocalMachine.OpenSubKey("Software\\MFA", true);
+            if (isprimary)
+                rk.SetValue("IsPrimaryServer", 1, RegistryValueKind.DWord);
+            else
+                rk.SetValue("IsPrimaryServer", 0, RegistryValueKind.DWord);
         }
         #endregion
     }

@@ -633,18 +633,6 @@
   <data name="CTRLSTUSESQL" xml:space="preserve">
     <value>Użyj programu SQL Server</value>
   </data>
-  <data name="CTRLSECWSMANPORT" xml:space="preserve">
-    <value>Portu</value>
-  </data>
-  <data name="CTRLSECWSMANTIMEOUT" xml:space="preserve">
-    <value>Limit czasu</value>
-  </data>
-  <data name="CTRLSECWSMANAPPNAME" xml:space="preserve">
-    <value>Nazwa aplikacji</value>
-  </data>
-  <data name="CTRLSECWSMANSHELLURI" xml:space="preserve">
-    <value>Uri powłoki</value>
-  </data>
   <data name="CTRLWEBAUTHNROOTATTESTATION" xml:space="preserve">
     <value>Wymagaj ważnego certyfikatu głównego zaświadczenia</value>
   </data>
@@ -686,5 +674,20 @@
   </data>
   <data name="CTRLSECRSAGENERATE" xml:space="preserve">
     <value>Potwierdź utworzenie nowego certyfikatu dla usługi MFA ? Uwaga: Wszystkie istniejące klucze zostaną unieważnione!</value>
+  </data>
+  <data name="CTRLSQLATTPASSWORD" xml:space="preserve">
+    <value>Nieprawidłowe hasło programu SQLServer !</value>
+  </data>
+  <data name="CTRLSQLATTACCOUNT" xml:space="preserve">
+    <value>Nieprawidłowe konto programu SQLServer !</value>
+  </data>
+  <data name="CTRLSQLSUPERACCOUNT" xml:space="preserve">
+    <value>Poświadczenia "Superużytnik" programu SQL Server</value>
+  </data>
+  <data name="CTRLSQLCONNECTIONOK" xml:space="preserve">
+    <value>Połączenie z programem SQL Server czynne!</value>
+  </data>
+  <data name="CTRLSQLCONNECTIONERROR" xml:space="preserve">
+    <value>Nie można połączyć się z programem SQL Server!</value>
   </data>
 </root>

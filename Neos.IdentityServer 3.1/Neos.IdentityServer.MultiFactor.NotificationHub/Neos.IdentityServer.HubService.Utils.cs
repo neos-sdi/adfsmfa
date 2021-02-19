@@ -22,11 +22,13 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.DirectoryServices.AccountManagement;
 using System.IO;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
 using System.Runtime.InteropServices;
+using System.Runtime.Serialization;
 using System.Security;
 using System.Security.AccessControl;
 using System.Security.Cryptography;
@@ -205,7 +207,7 @@ namespace Neos.IdentityServer.MultiFactor
             SIDsParametersRecord config = null;
             if (!File.Exists(SystemUtilities.SystemCacheFile))
                 return null;
-            XmlConfigSerializer xmlserializer = new XmlConfigSerializer(typeof(SIDsParametersRecord));
+            DataContractSerializer serializer = new DataContractSerializer(typeof(SIDsParametersRecord));
             using (FileStream fs = new FileStream(SystemUtilities.SystemCacheFile, FileMode.Open, FileAccess.Read))
             {
                 byte[] bytes = new byte[fs.Length];
@@ -221,7 +223,7 @@ namespace Neos.IdentityServer.MultiFactor
                 {
                     using (StreamReader reader = new StreamReader(ms))
                     {
-                        config = (SIDsParametersRecord)xmlserializer.Deserialize(ms);
+                        config = (SIDsParametersRecord)serializer.ReadObject(ms);
                     }
                 }
             }
@@ -233,11 +235,11 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         private static void WriteToCache(SIDsParametersRecord config)
         {
-            XmlConfigSerializer xmlserializer = new XmlConfigSerializer(typeof(SIDsParametersRecord));
+            DataContractSerializer serializer = new DataContractSerializer(typeof(SIDsParametersRecord));
             MemoryStream stm = new MemoryStream();
             using (StreamReader reader = new StreamReader(stm))
             {
-                xmlserializer.Serialize(stm, config);
+                serializer.WriteObject(stm, config);
                 stm.Position = 0;
                 byte[] byt = null;
                 using (AESSystemEncryption aes = new AESSystemEncryption())
@@ -436,7 +438,7 @@ namespace Neos.IdentityServer.MultiFactor
                 }
                 return true;
             }
-            catch
+            catch (Exception ex)
             {
                 return false;
             }

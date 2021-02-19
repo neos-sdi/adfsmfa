@@ -1204,42 +1204,6 @@ namespace Neos.IdentityServer.Console.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Application Name.
-        /// </summary>
-        internal static string CTRLSECWSMANAPPNAME {
-            get {
-                return ResourceManager.GetString("CTRLSECWSMANAPPNAME", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Port.
-        /// </summary>
-        internal static string CTRLSECWSMANPORT {
-            get {
-                return ResourceManager.GetString("CTRLSECWSMANPORT", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Shell Uri.
-        /// </summary>
-        internal static string CTRLSECWSMANSHELLURI {
-            get {
-                return ResourceManager.GetString("CTRLSECWSMANSHELLURI", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Timeout.
-        /// </summary>
-        internal static string CTRLSECWSMANTIMEOUT {
-            get {
-                return ResourceManager.GetString("CTRLSECWSMANTIMEOUT", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Recherche une chaîne localisée semblable à Passphrase.
         /// </summary>
         internal static string CTRLSECXORLABEL {
@@ -1438,11 +1402,48 @@ namespace Neos.IdentityServer.Console.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Invalid SQLServer account !.
+        /// </summary>
+        internal static string CTRLSQLATTACCOUNT {
+            get {
+                return ResourceManager.GetString("CTRLSQLATTACCOUNT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Invalid SQLServer password !.
+        /// </summary>
+        internal static string CTRLSQLATTPASSWORD {
+            get {
+                return ResourceManager.GetString("CTRLSQLATTPASSWORD", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Unable to connect to MFA SQL Database !.
         /// </summary>
         internal static string CTRLSQLCONNECTERROR {
             get {
                 return ResourceManager.GetString("CTRLSQLCONNECTERROR", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Unable to connect to SQL Server !.
+        /// </summary>
+        internal static string CTRLSQLCONNECTIONERROR {
+            get {
+                return ResourceManager.GetString("CTRLSQLCONNECTIONERROR", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à WSMAN
+        ///.
+        /// </summary>
+        internal static string CTRLSQLCONNECTIONOK {
+            get {
+                return ResourceManager.GetString("CTRLSQLCONNECTIONOK", resourceCulture);
             }
         }
         
@@ -1560,6 +1561,15 @@ namespace Neos.IdentityServer.Console.Resources {
         internal static string CTRLSQLREUSECERT {
             get {
                 return ResourceManager.GetString("CTRLSQLREUSECERT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à SQL Server &quot;SuperUser&quot; Credentials.
+        /// </summary>
+        internal static string CTRLSQLSUPERACCOUNT {
+            get {
+                return ResourceManager.GetString("CTRLSQLSUPERACCOUNT", resourceCulture);
             }
         }
         

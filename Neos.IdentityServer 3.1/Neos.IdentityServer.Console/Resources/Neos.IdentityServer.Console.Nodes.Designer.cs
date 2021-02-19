@@ -511,24 +511,6 @@ namespace Neos.IdentityServer.Console.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à WsMan.
-        /// </summary>
-        public static string SECURITYSCOPEWSMAN {
-            get {
-                return ResourceManager.GetString("SECURITYSCOPEWSMAN", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à WsMan Configuration.
-        /// </summary>
-        public static string SECURITYSCOPEWSMANDESC {
-            get {
-                return ResourceManager.GetString("SECURITYSCOPEWSMANDESC", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Recherche une chaîne localisée semblable à Services status.
         /// </summary>
         public static string SERVICESCOPENODEDESC {

@@ -324,12 +324,6 @@
   <data name="GENERALSCOPERESTARTMFASVCDESC" xml:space="preserve">
     <value>Uruchom ponownie wszystkie usługi MFA (Centrum powiadomień i usługi ADFS) na wszystkich serwerach farmy</value>
   </data>
-  <data name="SECURITYSCOPEWSMAN" xml:space="preserve">
-    <value>Wsman</value>
-  </data>
-  <data name="SECURITYSCOPEWSMANDESC" xml:space="preserve">
-    <value>Konfiguracja WsMana</value>
-  </data>
   <data name="ROOTLANGUAGEDA" xml:space="preserve">
     <value>Duński</value>
   </data>

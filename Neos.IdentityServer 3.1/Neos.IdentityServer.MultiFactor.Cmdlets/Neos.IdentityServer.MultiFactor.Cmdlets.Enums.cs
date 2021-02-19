@@ -71,8 +71,8 @@ namespace MFA
 
     /// <summary>
     /// PSSecurityMode
-    /// <para type="synopsis">MFA Security Kind (ROOT, RNG, RSA, CUSTOM, WSMAN).</para>
-    /// <para type="description">MFA Security Kind (ROOT, RNG, RSA, CUSTOM, WSMAN).</para>
+    /// <para type="synopsis">MFA Security Kind (ROOT, RNG, RSA, AES, CUSTOM, BIOMETRIC).</para>
+    /// <para type="description">MFA Security Kind (ROOT, RNG, RSA, AES, CUSTOM, BIOMETRIC).</para>
     /// </summary>    
     public enum PSSecurityMode
     {
@@ -99,12 +99,7 @@ namespace MFA
         /// <summary>
         /// <para type="description">Security parmaters for Biometrics.</para>
         /// </summary>
-        BIOMETRIC = 4,
-
-        /// <summary>
-        /// <para type="description">Security parmaters for WSMAN Configuration.</para>
-        /// </summary>
-        WSMAN = 5
+        BIOMETRIC = 4
     }
 
     /// <summary>
@@ -147,7 +142,7 @@ namespace MFA
         All = 0,
 
         /// <summary>
-        /// <para type="description">Change the SuperUser password.</para>
+        /// <para type="description">Change the ADDS SuperUser password.</para>
         /// </summary>
         SuperUser = 1,
 
@@ -159,7 +154,12 @@ namespace MFA
         /// <summary>
         /// <para type="description">Change Pass Phrase used for encryption.</para>
         /// </summary>
-        SystemPassPhrase = 3
+        SystemPassPhrase = 3,
+
+        /// <summary>
+        /// <para type="description">Change the SQL Server SuperUser password.</para>
+        /// </summary>
+        SQLUser = 4,
     }
 
 

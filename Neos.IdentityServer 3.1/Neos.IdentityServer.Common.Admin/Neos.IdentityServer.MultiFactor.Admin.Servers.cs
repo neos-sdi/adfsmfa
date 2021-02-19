@@ -208,7 +208,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             {
                 EnsureLocalService();
                 Config = ReadConfiguration(Host);
-                if (!IsFarmConfigured())
+                if ((Config != null) && !IsFarmConfigured())
                     throw new Exception(SErrors.ErrorMFAFarmNotInitialized);
             }
         }
@@ -220,7 +220,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         {
             EnsureConfiguration(Host);
             if (Config == null)
-                throw new Exception(SErrors.ErrorLoadingMFAConfiguration);
+                throw new Exception(string.Format(SErrors.ErrorLoadingMFAConfiguration, "Cannot read MFA configuration / acces denied"));
             return;
         }
 
@@ -814,39 +814,10 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         {
             if (!_isprimaryserverread)
             {
-                Runspace SPRunSpace = null;
-                PowerShell SPPowerShell = null;
-                try
-                {
-                    _isprimaryserverread = true;
-                    SPRunSpace = RunspaceFactory.CreateRunspace();
-
-                    SPPowerShell = PowerShell.Create();
-                    SPPowerShell.Runspace = SPRunSpace;
-                    SPRunSpace.Open();
-
-                    Pipeline pipeline = SPRunSpace.CreatePipeline();
-                    Command exportcmd = new Command("(Get-AdfsSyncProperties).Role", true);
-                    pipeline.Commands.Add(exportcmd);
-                    Collection<PSObject> PSOutput = pipeline.Invoke();
-                    foreach (var result in PSOutput)
-                    {
-                        if (!result.BaseObject.ToString().ToLower().Equals("primarycomputer"))
-                        {
-                            _isprimaryserver = false;
-                            return false;
-                        }
-                    }
-                    _isprimaryserver = true;
-                    return true;
-                }
-                finally
-                {
-                    if (SPRunSpace != null)
-                        SPRunSpace.Close();
-                    if (SPPowerShell != null)
-                        SPPowerShell.Dispose();
-                }
+                _isprimaryserverread = true;
+                RegistryKey rk = Registry.LocalMachine.OpenSubKey("Software\\MFA", false);
+                _isprimaryserver = Convert.ToBoolean(rk.GetValue("IsPrimaryServer", 0, RegistryValueOptions.None));
+                return _isprimaryserver;
             }
             else
                 return _isprimaryserver;
@@ -1021,9 +992,13 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             {
                 InternalRegisterConfiguration(host);
                 InternalActivateConfiguration(host);
-                InitFarmConfiguration(host);
-                WriteConfiguration(host);
-                return true;
+                if (InitFarmConfiguration(host))
+                {
+                    WriteConfiguration(host);
+                    return true;
+                }
+                else
+                    return false;
             }
             else
                 return false;
@@ -1053,11 +1028,6 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// </summary>
         public bool ImportMFAProviderConfiguration(PSHost Host, string importfile)
         {
-            /* if (Config == null)
-             {
-                 EnsureLocalService();
-                 Config = ReadConfiguration(Host);
-             } */
             this.ConfigurationStatusChanged(this, ConfigOperationStatus.ConfigIsDirty);
             try
             {
@@ -1088,11 +1058,6 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// </summary>
         public void ExportMFAProviderConfiguration(PSHost Host, string exportfilepath)
         {
-            /* if (Config == null)
-             {
-                 EnsureConfiguration(Host);
-                 Config = ReadConfiguration(Host);
-             } */
             InternalExportConfiguration(Host, exportfilepath);
         }
 
@@ -1147,24 +1112,15 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <summary>
         /// InitFarmConfiguration method implementation
         /// </summary>
-        private void InitFarmConfiguration(PSHost Host)
+        private bool InitFarmConfiguration(PSHost Host)
         {
+            bool bRet = false;
             Dictionary<string, ADFSServerHost> result = null;
             try
             {
                 RegistryVersion reg = new RegistryVersion();
                 InitFarmProperties(Host);
-                if (reg.IsWindows2012R2)
-                {
-                    Dictionary<string, bool> dict = new Dictionary<string, bool>();
-                    dict.Add(Dns.GetHostEntry("LocalHost").HostName.ToLower(), true);
-                    result = WebAdminManagerClient.GetAllComputerInformations(dict);
-                }
-                else
-                {
-                    Dictionary<string, bool> dict = GetFarmServers();
-                    result = WebAdminManagerClient.GetAllComputerInformations(dict);
-                }
+                result = WebAdminManagerClient.GetAllComputerInformations();
                 if (result != null)
                 {
                     ADFSFarm.Servers.Clear();
@@ -1172,7 +1128,10 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                     {
                         ADFSFarm.Servers.Add(item.Value);
                     }
+                    bRet = true;
                 }
+                else
+                    bRet = false;
                 ADFSFarm.IsInitialized = true;
                 SetDirty(true);
             }
@@ -1181,7 +1140,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 ADFSFarm.IsInitialized = false;
                 throw ex;
             }
-            return;
+            return bRet;
         }
 
         /// <summary>

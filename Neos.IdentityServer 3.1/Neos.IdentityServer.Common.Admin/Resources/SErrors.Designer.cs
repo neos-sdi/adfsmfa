@@ -61,7 +61,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à This machine is not an ADFS Server 2012R2 / 2016 !.
+        ///   Recherche une chaîne localisée semblable à This machine is not an ADFS 2012R2 / 2016 / 2019 server !.
         /// </summary>
         internal static string ErrorADFSPlatformNotSupported {
             get {
@@ -106,7 +106,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Acces denied for current user ! must be an ADFS admin.
+        ///   Recherche une chaîne localisée semblable à Access denied for current user ! must be an ADFS admin.
         /// </summary>
         internal static string ErrorMFAUnAuthorized {
             get {

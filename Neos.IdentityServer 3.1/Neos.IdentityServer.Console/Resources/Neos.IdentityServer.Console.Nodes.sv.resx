@@ -324,12 +324,6 @@
   <data name="GENERALSCOPERESTARTMFASVCDESC" xml:space="preserve">
     <value>Starta om alla MFA-tjänster (Notification Hub och ADFS Services) på alla gårdservrar</value>
   </data>
-  <data name="SECURITYSCOPEWSMAN" xml:space="preserve">
-    <value>WsMan (en)</value>
-  </data>
-  <data name="SECURITYSCOPEWSMANDESC" xml:space="preserve">
-    <value>WsMan-konfiguration</value>
-  </data>
   <data name="ROOTLANGUAGEDA" xml:space="preserve">
     <value>Danska</value>
   </data>

@@ -324,12 +324,6 @@
   <data name="GENERALSCOPERESTARTMFASVCDESC" xml:space="preserve">
     <value>¡Reinicie todos los servicios de MFA (Notification Hub y ADFS Services) en todos los servidores de la granja</value>
   </data>
-  <data name="SECURITYSCOPEWSMAN" xml:space="preserve">
-    <value>WsMan</value>
-  </data>
-  <data name="SECURITYSCOPEWSMANDESC" xml:space="preserve">
-    <value>Configuración de WsMan</value>
-  </data>
   <data name="ROOTLANGUAGEDA" xml:space="preserve">
     <value>Danés</value>
   </data>

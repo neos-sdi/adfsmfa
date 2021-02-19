@@ -5460,7 +5460,7 @@ namespace Neos.IdentityServer.Console.Controls
         {
             if (txtConnectionString.Enabled)
             {
-                if (!ManagementService.CheckSQLConnection(txtConnectionString.Text))
+                if (!ManagementService.CheckSQLConnection(txtConnectionString.Text, Config.Hosts.SQLServerHost.SQLAccount, Config.Hosts.SQLServerHost.SQLPassword))
                     errors.SetError(txtConnectionString, res.CTRLSQLCONNECTSTRERROR);
                 else
                     errors.SetError(txtConnectionString, "");
@@ -5603,7 +5603,7 @@ namespace Neos.IdentityServer.Console.Controls
                 if ((txtConnectionString.Modified) && (txtConnectionString.Enabled))
                 {
                     ManagementService.ADFSManager.SetDirty(true);
-                    if (!ManagementService.CheckSQLConnection(txtConnectionString.Text))
+                    if (!ManagementService.CheckSQLConnection(txtConnectionString.Text, Config.Hosts.SQLServerHost.SQLAccount, Config.Hosts.SQLServerHost.SQLPassword))
                         throw new Exception(res.CTRLSQLCONNECTSTRERROR);
                     Config.Hosts.SQLServerHost.ConnectionString = txtConnectionString.Text;
                     errors.SetError(txtConnectionString, "");
@@ -5700,7 +5700,7 @@ namespace Neos.IdentityServer.Console.Controls
             this.Cursor = Cursors.WaitCursor;
             try
             {
-                if (!ManagementService.CheckSQLConnection(txtConnectionString.Text))
+                if (!ManagementService.CheckSQLConnection(txtConnectionString.Text, Config.Hosts.SQLServerHost.SQLAccount, Config.Hosts.SQLServerHost.SQLPassword))
                 {
                     this.Cursor = Cursors.Default;
                     MessageBoxParameters messageBoxParameters = new MessageBoxParameters
@@ -10872,6 +10872,12 @@ namespace Neos.IdentityServer.Console.Controls
         private Button btnConnect;
         private Label lblADDSTitle;
         private Label lblTitleConfig;
+        private Label lblSQLTitle;
+        private Label lblSQLUserName;
+        private TextBox txtSQLUserName;
+        private Label lblSQLPassword;
+        private TextBox txtSQLPassword;
+        private Button btnSQLConnect;
 
         /// <summary>
         /// ConfigurationControl Constructor
@@ -10970,17 +10976,17 @@ namespace Neos.IdentityServer.Console.Controls
                 _view.RefreshProviderInformation();
 
                 this.Dock = DockStyle.Top;
-                this.Height = 390;
+                this.Height = 550;
                 this.Width = 600;
                 this.Margin = new Padding(30, 5, 30, 5);
 
                 _panel.Width = 20;
-                _panel.Height = 360;
+                _panel.Height = 480;
                 this.Controls.Add(_panel);
 
                 _txtpanel.Left = 20;
                 _txtpanel.Width = this.Width - 20;
-                _txtpanel.Height = 360;
+                _txtpanel.Height = 480;
                 _txtpanel.BackColor = System.Drawing.SystemColors.Control;
                 this.Controls.Add(_txtpanel);
 
@@ -11204,11 +11210,73 @@ namespace Neos.IdentityServer.Console.Controls
                 btnConnect.Click += BtnConnectClick;
                 _txtpanel.Controls.Add(btnConnect);
 
+                lblSQLTitle = new Label
+                {
+                    Text = res.CTRLSQLSUPERACCOUNT,
+                    Left = 10,
+                    Top = 330,
+                    Width = 450
+                };
+                _txtpanel.Controls.Add(lblSQLTitle);
+
+                lblSQLUserName = new Label
+                {
+                    Text = res.CTRLADACCOUNT + " : ",
+                    Left = 450,
+                    Top = 361,
+                    TextAlign = ContentAlignment.TopRight,
+                    Width = 150
+                };
+                _txtpanel.Controls.Add(lblSQLUserName);
+
+                txtSQLUserName = new TextBox
+                {
+                    Text = Config.Hosts.SQLServerHost.SQLAccount,
+                    Left = 600,
+                    Top = 357,
+                    Width = 250
+                };
+                txtSQLUserName.Validating += SQLUserNameValidating;
+                txtSQLUserName.Validated += SQLUserNameValidated;
+                _txtpanel.Controls.Add(txtSQLUserName);
+
+                lblSQLPassword = new Label
+                {
+                    Text = res.CTRLADPASSWORD + " : ",
+                    Left = 450,
+                    Top = 392,
+                    TextAlign = ContentAlignment.TopRight,
+                    Width = 150
+                };
+                _txtpanel.Controls.Add(lblSQLPassword);
+
+                txtSQLPassword = new TextBox
+                {
+                    Text = Config.Hosts.SQLServerHost.SQLPassword,
+                    Left = 600,
+                    Top = 388,
+                    Width = 250,
+                    PasswordChar = '*',
+                };
+                txtSQLPassword.Validating += SQLPasswordValidating;
+                txtSQLPassword.Validated += SQLPasswordValidated;
+                _txtpanel.Controls.Add(txtSQLPassword);
+
+                btnSQLConnect = new Button
+                {
+                    Text = res.CTRLADTEST,
+                    Left = 600,
+                    Top = 419,
+                    Width = 250,
+                };
+                btnSQLConnect.Click += BtnSQLConnectClick;
+                _txtpanel.Controls.Add(btnSQLConnect);
+
                 lblWarning = new Label
                 {
                     Text = "(*) " + res.CTRLSECWARNING,
                     Left = 10,
-                    Top = 325,
+                    Top = 445,
                     Width = 500
                 };
                 _txtpanel.Controls.Add(lblWarning);
@@ -11217,7 +11285,7 @@ namespace Neos.IdentityServer.Console.Controls
                 {
                     Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPESAVE,
                     Left = 20,
-                    Top = 370,
+                    Top = 490,
                     Width = 80,
                     TabStop = true
                 };
@@ -11228,7 +11296,7 @@ namespace Neos.IdentityServer.Console.Controls
                 {
                     Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPECANCEL,
                     Left = 110,
-                    Top = 370,
+                    Top = 490,
                     Width = 80,
                     TabStop = true
                 };
@@ -11260,10 +11328,15 @@ namespace Neos.IdentityServer.Console.Controls
             try
             {
                 lblTitleConfig.Text = res.CTRLADTITLECONFIG;
+                
                 lblDomainName.Text = res.CTRLADDOMAIN + " : ";
                 lblUserName.Text = res.CTRLADACCOUNT + " : ";
                 lblPassword.Text = res.CTRLADPASSWORD + " : ";
+                lblSQLUserName.Text = res.CTRLADACCOUNT + " : ";
+                lblSQLPassword.Text = res.CTRLADPASSWORD + " : ";
+
                 btnConnect.Text = res.CTRLADTEST;
+                btnSQLConnect.Text = res.CTRLADTEST;
                 lblDeliveryWindow.Text = res.CTRLGLDELVERY + " : ";
                 lblMaxRetries.Text = res.CTRLDLGMAXRETRIES + " : ";
                 lblReplayLevel.Text = res.CTRLGLREPLAY + " : ";
@@ -11271,11 +11344,15 @@ namespace Neos.IdentityServer.Console.Controls
                 lblXORValue.Text = res.CTRLSECXORLABEL + "(*)" + " : ";
                 lblWarning.Text = "(*) " + res.CTRLSECWARNING;
                 lblADDSTitle.Text = res.CTRLADSUPERACCOUNT;
+                lblSQLTitle.Text = res.CTRLSQLSUPERACCOUNT;
                 chkUseldapssl.Text = res.CTRLADLDAPSSL;                
 
                 txtDomainName.Text = Config.Hosts.ActiveDirectoryHost.DomainAddress;
                 txtUserName.Text = Config.Hosts.ActiveDirectoryHost.Account;
                 txtPassword.Text = Config.Hosts.ActiveDirectoryHost.Password;
+                txtSQLUserName.Text = Config.Hosts.SQLServerHost.SQLAccount;
+                txtSQLPassword.Text = Config.Hosts.SQLServerHost.SQLPassword;
+
                 txtDeliveryWindow.Text = Config.DeliveryWindow.ToString();
                 txtMaxRetries.Text = Config.MaxRetries.ToString();
                 cbReplayLevel.SelectedValue = Config.ReplayLevel;
@@ -11313,6 +11390,24 @@ namespace Neos.IdentityServer.Console.Controls
                 errors.SetError(txtDomainName, "");
                 errors.SetError(txtUserName, "");
                 errors.SetError(txtPassword, "");
+            }
+            if ((!string.IsNullOrEmpty(txtSQLUserName.Text)) && (!string.IsNullOrEmpty(txtSQLPassword.Text)))
+            {
+                if (!ManagementService.CheckSQLConnection(Config.Hosts.SQLServerHost.ConnectionString, txtSQLUserName.Text, txtSQLPassword.Text))
+                {
+                    errors.SetError(txtSQLUserName, res.CTRLSQLATTACCOUNT);
+                    errors.SetError(txtSQLPassword, res.CTRLSQLATTPASSWORD);
+                }
+                else
+                {
+                    errors.SetError(txtSQLUserName, "");
+                    errors.SetError(txtSQLPassword, "");
+                }
+            }
+            else
+            {
+                errors.SetError(txtSQLUserName, "");
+                errors.SetError(txtSQLPassword, "");
             }
             int refr = Convert.ToInt32(txtDeliveryWindow.Text);
             if (string.IsNullOrEmpty(txtDeliveryWindow.Text))
@@ -11496,11 +11591,63 @@ namespace Neos.IdentityServer.Console.Controls
                 this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
+
+        /// <summary>
+        /// SQLUserNameValidating method implementation
+        /// </summary>
+        private void SQLUserNameValidating(object sender, CancelEventArgs e)
+        {
+            this.Cursor = Cursors.WaitCursor;
+            try
+            {
+                if (txtSQLUserName.Modified)
+                {
+                    ManagementService.ADFSManager.SetDirty(true);
+                    if ((!string.IsNullOrEmpty(txtSQLUserName.Text)) && (!string.IsNullOrEmpty(txtSQLPassword.Text)))
+                    {
+                        if (!ManagementService.CheckSQLConnection(Config.Hosts.SQLServerHost.ConnectionString, txtSQLUserName.Text, txtSQLPassword.Text))
+                            throw new Exception(res.CTRLSQLATTACCOUNT);
+                    }
+                    Config.Hosts.SQLServerHost.SQLAccount = txtSQLUserName.Text;
+                    errors.SetError(txtSQLUserName, "");
+                }
+            }
+            catch (Exception)
+            {
+                e.Cancel = true;
+                errors.SetError(txtSQLUserName, res.CTRLSQLATTACCOUNT);
+            }
+            finally
+            {
+                this.Cursor = Cursors.Default;
+            }
+        }
+
+        /// <summary>
+        /// SQLUserNameValidated method implementation
+        /// </summary>
+        private void SQLUserNameValidated(object sender, EventArgs e)
+        {
+            try
+            {
+                Config.Hosts.SQLServerHost.SQLAccount = txtSQLUserName.Text;
+                ManagementService.ADFSManager.SetDirty(true);
+                errors.SetError(txtSQLUserName, "");
+            }
+            catch (Exception ex)
+            {
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
+                messageBoxParameters.Text = ex.Message;
+                messageBoxParameters.Buttons = MessageBoxButtons.OK;
+                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                this._snapin.Console.ShowDialog(messageBoxParameters);
+            }
+        }
         #endregion
 
         #region Password
         /// <summary>
-        /// UserNameValidating method implementation
+        /// PasswordValidating method implementation
         /// </summary>
         private void PasswordValidating(object sender, CancelEventArgs e)
         {
@@ -11537,6 +11684,58 @@ namespace Neos.IdentityServer.Console.Controls
                 Config.Hosts.ActiveDirectoryHost.Password = txtPassword.Text;
                 ManagementService.ADFSManager.SetDirty(true);
                 errors.SetError(txtPassword, "");
+            }
+            catch (Exception ex)
+            {
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
+                messageBoxParameters.Text = ex.Message;
+                messageBoxParameters.Buttons = MessageBoxButtons.OK;
+                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                this._snapin.Console.ShowDialog(messageBoxParameters);
+            }
+        }
+
+        /// <summary>
+        /// SQLPasswordValidating method implementation
+        /// </summary>
+        private void SQLPasswordValidating(object sender, CancelEventArgs e)
+        {
+            this.Cursor = Cursors.WaitCursor;
+            try
+            {
+                if (txtSQLPassword.Modified)
+                {
+                    ManagementService.ADFSManager.SetDirty(true);
+                    if ((!string.IsNullOrEmpty(txtSQLUserName.Text)) && (!string.IsNullOrEmpty(txtSQLPassword.Text)))
+                    {
+                        if (!ManagementService.CheckSQLConnection(Config.Hosts.SQLServerHost.ConnectionString, txtSQLUserName.Text, txtSQLPassword.Text))
+                            throw new Exception(res.CTRLSQLATTPASSWORD);
+                    }
+                    Config.Hosts.SQLServerHost.SQLPassword = txtSQLPassword.Text;
+                    errors.SetError(txtSQLPassword, "");
+                }
+            }
+            catch (Exception)
+            {
+                e.Cancel = true;
+                errors.SetError(txtSQLPassword, res.CTRLSQLATTPASSWORD);
+            }
+            finally
+            {
+                this.Cursor = Cursors.Default;
+            }
+        }
+
+        /// <summary>
+        /// SQLPasswordValidated method implementation
+        /// </summary>
+        private void SQLPasswordValidated(object sender, EventArgs e)
+        {
+            try
+            {
+                Config.Hosts.SQLServerHost.SQLPassword = txtSQLPassword.Text;
+                ManagementService.ADFSManager.SetDirty(true);
+                errors.SetError(txtSQLPassword, "");
             }
             catch (Exception ex)
             {
@@ -11785,6 +11984,45 @@ namespace Neos.IdentityServer.Console.Controls
             }
         }
 
+        /// <summary>
+        /// btnSQLConnectClick method implmentation
+        /// </summary>
+        private void BtnSQLConnectClick(object sender, EventArgs e)
+        {
+            try
+            {
+                if (!ManagementService.CheckSQLConnection(Config.Hosts.SQLServerHost.ConnectionString, txtSQLUserName.Text, txtSQLPassword.Text))
+                {
+                    MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                    {
+                        Text = res.CTRLSQLCONNECTIONERROR,
+                        Buttons = MessageBoxButtons.OK,
+                        Icon = MessageBoxIcon.Error
+                    };
+                    this._snapin.Console.ShowDialog(messageBoxParameters);
+                }
+                else
+                {
+                    MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                    {
+                        Text = res.CTRLSQLCONNECTIONOK,
+                        Buttons = MessageBoxButtons.OK,
+                        Icon = MessageBoxIcon.Information
+                    };
+                    this._snapin.Console.ShowDialog(messageBoxParameters);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
+                this._snapin.Console.ShowDialog(messageBoxParameters);
+            }
+        }
         /// <summary>
         /// SaveConfigLinkClicked event
         /// </summary>

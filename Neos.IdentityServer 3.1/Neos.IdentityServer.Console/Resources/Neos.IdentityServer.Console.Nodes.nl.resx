@@ -324,12 +324,6 @@
   <data name="GENERALSCOPERESTARTMFASVCDESC" xml:space="preserve">
     <value>Start alle MFA-services (Notification Hub en ADFS-services) opnieuw op alle farm-servers</value>
   </data>
-  <data name="SECURITYSCOPEWSMAN" xml:space="preserve">
-    <value>WsMan WsMan</value>
-  </data>
-  <data name="SECURITYSCOPEWSMANDESC" xml:space="preserve">
-    <value>WsMan-configuratie</value>
-  </data>
   <data name="ROOTLANGUAGEDA" xml:space="preserve">
     <value>Deens</value>
   </data>

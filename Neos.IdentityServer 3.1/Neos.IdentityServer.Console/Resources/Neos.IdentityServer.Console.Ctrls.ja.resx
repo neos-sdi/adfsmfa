@@ -465,18 +465,6 @@
   <data name="CTRLSECWIZTITLE" xml:space="preserve">
     <value>新しい SQL データベースを作成する</value>
   </data>
-  <data name="CTRLSECWSMANAPPNAME" xml:space="preserve">
-    <value>アプリケーション名</value>
-  </data>
-  <data name="CTRLSECWSMANPORT" xml:space="preserve">
-    <value>ポート</value>
-  </data>
-  <data name="CTRLSECWSMANSHELLURI" xml:space="preserve">
-    <value>シェルUri</value>
-  </data>
-  <data name="CTRLSECWSMANTIMEOUT" xml:space="preserve">
-    <value>タイムアウト</value>
-  </data>
   <data name="CTRLSECXORLABEL" xml:space="preserve">
     <value>パスフレーズ</value>
   </data>
@@ -686,5 +674,20 @@
   </data>
   <data name="CTRLSECRSAGENERATE" xml:space="preserve">
     <value>MFA の新しい証明書の作成を確認する ?注意: 既存のキーはすべて無効になります!</value>
+  </data>
+  <data name="CTRLSQLATTPASSWORD" xml:space="preserve">
+    <value>無効な SQL サーバー パスワードです。</value>
+  </data>
+  <data name="CTRLSQLATTACCOUNT" xml:space="preserve">
+    <value>無効な SQLServer アカウントです!</value>
+  </data>
+  <data name="CTRLSQLSUPERACCOUNT" xml:space="preserve">
+    <value>SQL サーバー "スーパーユーザー" 資格情報</value>
+  </data>
+  <data name="CTRLSQLCONNECTIONOK" xml:space="preserve">
+    <value>SQL サーバーへの接続が動作します。</value>
+  </data>
+  <data name="CTRLSQLCONNECTIONERROR" xml:space="preserve">
+    <value>SQL サーバーに接続できません 。</value>
   </data>
 </root>

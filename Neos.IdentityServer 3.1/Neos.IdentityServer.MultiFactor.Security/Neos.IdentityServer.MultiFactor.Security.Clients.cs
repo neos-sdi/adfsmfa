@@ -22,11 +22,13 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Permissions;
+using System.ServiceModel;
 using System.Xml.Serialization;
 
 namespace Neos.IdentityServer.MultiFactor.Data
@@ -338,8 +340,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// </summary>
         public static SIDsParametersRecord GetSIDsInformations(MFAConfig config)
         {
-           // if (ClientSIDsProxy.Loaded)
-           //     return ClientSIDsProxy.Record;
+            string fqdn = Dns.GetHostEntry("localhost").HostName;
             WebAdminClient manager = new WebAdminClient();
             manager.Initialize();
             try
@@ -349,8 +350,9 @@ namespace Neos.IdentityServer.MultiFactor.Data
                 {
                     return client.GetSIDsInformations(GetServers(config));
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+                    Log.WriteEntry(string.Format("Error on WebAdminService Service GetSIDsInformations method : {0} / {1}.", fqdn, ex.Message), EventLogEntryType.Error, 2010);
                     return new SIDsParametersRecord() { Loaded = false };
                 }
                 finally
@@ -358,10 +360,15 @@ namespace Neos.IdentityServer.MultiFactor.Data
                     manager.Close(client);
                 }
             }
+            catch (Exception e)
+            {
+                Log.WriteEntry(string.Format("Error on WebAdminService Service GetSIDsInformations method : {0} / {1}.", fqdn, e.Message), EventLogEntryType.Error, 2010);
+            }
             finally
             {
                 manager.UnInitialize();
             }
+            return null;
         }
 
         /// <summary>
@@ -603,7 +610,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                 IWebAdminServices client = manager.Open();
                 try
                 {
-                    client.BroadcastNotification(GetServers(config), GetConfig(config), kind, message, local, dispatch);
+                    client.BroadcastNotification(GetServers(config), GetCryptedConfig(config), kind, message, local, dispatch);
                 }
                 finally
                 {
@@ -631,7 +638,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                     IWebAdminServices client = manager.Open();
                     try
                     {
-                        done = client.ExportMailTemplates(GetServers(config), GetConfig(config), lcid, data);
+                        done = client.ExportMailTemplates(GetServers(config), GetCryptedConfig(config), lcid, data);
                     }
                     finally
                     {
@@ -671,7 +678,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// <summary>
         /// GetCompterInformations method informations
         /// </summary>
-        public static ADFSServerHost GetCompterInformations(string fqdn)
+        public static ADFSServerHost GetComputerInformations(string fqdn)
         {
             WebAdminClient manager = new WebAdminClient();
             manager.Initialize();
@@ -680,7 +687,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                 IWebAdminServices client = manager.Open();
                 try
                 {
-                    return client.GetComputerInformations(fqdn, true);
+                    return client.GetComputerInformations(fqdn);
                 }                
                 finally
                 {
@@ -696,7 +703,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// <summary>
         /// GetAllComputerInformations method informations
         /// </summary>
-        public static Dictionary<string, ADFSServerHost> GetAllComputerInformations(Dictionary<string, bool> servers)
+        public static Dictionary<string, ADFSServerHost> GetAllComputerInformations()
         {
             WebAdminClient manager = new WebAdminClient();
             manager.Initialize();
@@ -705,57 +712,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                 IWebAdminServices client = manager.Open();
                 try
                 {
-                    return client.GetAllComputerInformations(servers);
-                }
-                finally
-                {
-                    manager.Close(client);
-                }
-            }
-            finally
-            {
-                manager.UnInitialize();
-            }
-        }
-
-        /// <summary>
-        /// GetCompterInformations method informations
-        /// </summary>
-        public static ADFSNodeInformation GetNodeformations(RegistryVersion reg, string fqdn)
-        {
-            WebAdminClient manager = new WebAdminClient();
-            manager.Initialize();
-            try
-            {
-                IWebAdminServices client = manager.Open();
-                try
-                {
-                    return client.GetNodeInformations(reg, fqdn, true);
-                }
-                finally
-                {
-                    manager.Close(client);
-                }
-            }
-            finally
-            {
-                manager.UnInitialize();
-            }
-        }
-
-        /// <summary>
-        /// GetNodeType method informations
-        /// </summary>
-        public static string GetNodeType(string fqdn)
-        {
-            WebAdminClient manager = new WebAdminClient();
-            manager.Initialize();               
-            try
-            {
-                IWebAdminServices client = manager.Open();
-                try
-                {
-                    return client.GetNodeType(fqdn, true);
+                    return client.GetAllComputersInformations();
                 }
                 finally
                 {
@@ -782,14 +739,15 @@ namespace Neos.IdentityServer.MultiFactor.Data
         }
 
         /// <summary>
-        /// GetConfig method implementation
+        /// GetCryptedConfig method implementation
         /// </summary>
-        private static byte[] GetConfig(MFAConfig config)
+        private static byte[] GetCryptedConfig(MFAConfig config)
         {
             using (AESSystemEncryption MSIS = new AESSystemEncryption())
             {
                 config.KeysConfig.XORSecret = MSIS.Encrypt(config.KeysConfig.XORSecret);
                 config.Hosts.ActiveDirectoryHost.Password = MSIS.Encrypt(config.Hosts.ActiveDirectoryHost.Password);
+                config.Hosts.SQLServerHost.SQLPassword = MSIS.Decrypt(config.Hosts.SQLServerHost.SQLPassword);
                 config.MailProvider.Password = MSIS.Encrypt(config.MailProvider.Password);
             }; 
             XmlConfigSerializer xmlserializer = new XmlConfigSerializer(typeof(MFAConfig));
@@ -1112,28 +1070,6 @@ namespace Neos.IdentityServer.MultiFactor.Data
                 return s_aDFSAdminGroupName;
             }
             private set => s_aDFSAdminGroupName = value;
-        }
-
-        /// <summary>
-        /// Record property implementation
-        /// </summary>
-        public static SIDsParametersRecord Record
-        {
-            get
-            {
-                SIDsParametersRecord rec = new SIDsParametersRecord();
-                rec.ADFSAccountSID = ADFSAccountSID;
-                rec.ADFSAccountName = ADFSAccountName;
-                rec.ADFSServiceAccountSID = ADFSServiceSID;
-                rec.ADFSServiceAccountName = ADFSServiceName;
-                rec.ADFSAdministrationGroupSID = ADFSAdminGroupSID;
-                rec.ADFSAdministrationGroupName = ADFSAdminGroupName;
-                rec.ADFSDelegateServiceAdministrationAllowed = ADFSDelegateServiceAdministrationAllowed;
-                rec.ADFSLocalAdminServiceAdministrationAllowed = ADFSLocalAdminServiceAdministrationAllowed;
-                rec.ADFSSystemServiceAdministrationAllowed = ADFSSystemServiceAdministrationAllowed;
-                rec.Loaded = Loaded;
-                return rec;
-            }
         }
 
         /// <summary>

@@ -326,12 +326,12 @@ namespace Neos.IdentityServer.MultiFactor
     }
 
     /// <summary>
-    /// WebThemeService class
+    /// WebAdminService class
     /// </summary>
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerSession, ConcurrencyMode = ConcurrencyMode.Multiple)]
     public class WebAdminService : IWebAdminServices
     {
-        private static WebAdminManager _manager = null;
+        private WebAdminManager _manager = null;
         private EventLog _log;
 
         /// <summary>
@@ -344,8 +344,6 @@ namespace Neos.IdentityServer.MultiFactor
         }
 
         #region ACLs
-
-
         /// <summary>
         /// GetSIDsInformations method implementation
         /// </summary>
@@ -602,11 +600,11 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// GetComputerInformations method implementation
         /// </summary>
-        public ADFSServerHost GetComputerInformations(string servername, bool dispatch = true)
+        public ADFSServerHost GetComputerInformations(string servername)
         {
             try
             {
-                return _manager.GetComputerInformations(servername, dispatch);
+                return _manager.GetComputerInformations(servername);
             }
             catch (Exception e)
             {
@@ -618,11 +616,11 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// GetComputerInformations method implementation
         /// </summary>
-        public Dictionary<string, ADFSServerHost> GetAllComputerInformations(Dictionary<string, bool> servers)
+        public Dictionary<string, ADFSServerHost> GetAllComputersInformations()
         {
             try
             {
-                return _manager.GetAllComputerInformations(servers);
+                return _manager.GetAllComputersInformations();
             }
             catch (Exception e)
             {
@@ -630,37 +628,19 @@ namespace Neos.IdentityServer.MultiFactor
                 throw e;
             }            
         }
-        #endregion
 
-        #region Nodes
         /// <summary>
-        /// GetNodeInformations method implementation
+        /// GetRegistryInformations method implementation
         /// </summary>
-        public ADFSNodeInformation GetNodeInformations(RegistryVersion reg, string servername = "localhost", bool dispatch = true)
+        public RegistryVersion GetRegistryInformations()
         {
             try
             {
-                return _manager.GetNodeInformations(reg, servername, dispatch);
+                return new RegistryVersion();
             }
             catch (Exception e)
             {
-                _log.WriteEntry(string.Format("Error on WebAdminService Service GetNodeInformations method : {0}.", e.Message), EventLogEntryType.Error, 2010);
-                throw e;
-            }
-        }
-
-        /// <summary>
-        /// GetNodeType method implementation
-        /// </summary>
-        public string GetNodeType(string servername = "localhost", bool dispatch = true)
-        {
-            try
-            {
-                return _manager.GetNodeType(servername, dispatch);
-            }
-            catch (Exception e)
-            {
-                _log.WriteEntry(string.Format("Error on WebAdminService Service GetNodeType method : {0}.", e.Message), EventLogEntryType.Error, 2010);
+                _log.WriteEntry(string.Format("Error on WebAdminService Service GetAllComputerInformations method : {0}.", e.Message), EventLogEntryType.Error, 2010);
                 throw e;
             }
         }

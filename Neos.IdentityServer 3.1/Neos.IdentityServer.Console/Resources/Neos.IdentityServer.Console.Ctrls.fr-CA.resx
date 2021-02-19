@@ -465,18 +465,6 @@
   <data name="CTRLSECWIZTITLE" xml:space="preserve">
     <value>Créer une nouvelle base de données SQL</value>
   </data>
-  <data name="CTRLSECWSMANAPPNAME" xml:space="preserve">
-    <value>Nom de l’application</value>
-  </data>
-  <data name="CTRLSECWSMANPORT" xml:space="preserve">
-    <value>Port</value>
-  </data>
-  <data name="CTRLSECWSMANSHELLURI" xml:space="preserve">
-    <value>Shell Uri</value>
-  </data>
-  <data name="CTRLSECWSMANTIMEOUT" xml:space="preserve">
-    <value>Timeout</value>
-  </data>
   <data name="CTRLSECXORLABEL" xml:space="preserve">
     <value>Phrase</value>
   </data>
@@ -686,5 +674,20 @@
   </data>
   <data name="CTRLSECRSAGENERATE" xml:space="preserve">
     <value>Confirmer la création d’un nouveau certificat pour le MFA ? Attention: Toutes les clés existantes seront invalidées !</value>
+  </data>
+  <data name="CTRLSQLATTPASSWORD" xml:space="preserve">
+    <value>Mot de passe SQLServer non valide !</value>
+  </data>
+  <data name="CTRLSQLATTACCOUNT" xml:space="preserve">
+    <value>Compte SQLServer non valide !</value>
+  </data>
+  <data name="CTRLSQLSUPERACCOUNT" xml:space="preserve">
+    <value>Informations d’identification « SuperUser » SQL Server</value>
+  </data>
+  <data name="CTRLSQLCONNECTIONOK" xml:space="preserve">
+    <value>Connexion au serveur SQL opérationnelle !</value>
+  </data>
+  <data name="CTRLSQLCONNECTIONERROR" xml:space="preserve">
+    <value>Impossible de se connecter au serveur SQL !</value>
   </data>
 </root>

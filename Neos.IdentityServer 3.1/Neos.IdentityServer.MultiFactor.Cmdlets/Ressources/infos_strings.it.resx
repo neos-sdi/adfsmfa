@@ -234,4 +234,7 @@
   <data name="InfosADFSCertificateChanged" xml:space="preserve">
     <value>Certificato ADFS creato correttamente !</value>
   </data>
+  <data name="InfosSystemNotRegistered" xml:space="preserve">
+    <value>Sistema AMF non registrato !</value>
+  </data>
 </root>

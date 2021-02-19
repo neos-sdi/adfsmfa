@@ -16,20 +16,11 @@
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
 using System;
-using System.ComponentModel;
-using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Linq;
 using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.DirectoryServices;
-using System.Runtime.Serialization;
 using System.Management.Automation.Host;
-using System.Xml;
-using Neos.IdentityServer.MultiFactor.Data;
 
 namespace Neos.IdentityServer.MultiFactor.Administration
-{  
+{
 
     [Serializable]
     public enum FlatTemplateMode
@@ -239,7 +230,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             MFAConfig cfg = ManagementService.Config;
             SQLServerHost sql = cfg.Hosts.SQLServerHost;
             cfg.IsDirty = IsDirty;
-            if (!ManagementService.CheckSQLConnection(ConnectionString))
+            if (!ManagementService.CheckSQLConnection(ConnectionString, sql.SQLAccount, sql.SQLPassword))
                 throw new ArgumentException(string.Format("Invalid ConnectionString {0} !", ConnectionString));
 
             if (Active)
@@ -421,7 +412,8 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         public string DomainAddress { get; set; }
         public string Account { get; set; }
         public string Password { get; set; }
-
+        public string SQLAccount { get; set; }
+        public string SQLPassword { get; set; }
         /// <summary>
         /// Update method implmentation
         /// </summary>
@@ -431,6 +423,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             MFAConfig cfg = ManagementService.Config;
             KeysManagerConfig keys = cfg.KeysConfig;
             ADDSHost adds = cfg.Hosts.ActiveDirectoryHost;
+            SQLServerHost sql = cfg.Hosts.SQLServerHost;
             IsDirty = cfg.IsDirty;
             DeliveryWindow = cfg.DeliveryWindow;
             MaxRetries = cfg.MaxRetries;
@@ -440,9 +433,11 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             DefaultPin = cfg.DefaultPin;
             DomainAddress = adds.DomainAddress;
             Account = adds.Account;
+            SQLAccount = sql.SQLAccount;
             using (AESSystemEncryption MSIS = new AESSystemEncryption())
             {
                 Password = MSIS.Encrypt(adds.Password);
+                SQLPassword = MSIS.Encrypt(sql.SQLPassword);
                 XORSecret = MSIS.Encrypt(keys.XORSecret);
             };
         }
@@ -456,6 +451,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             MFAConfig cfg = ManagementService.Config;
             KeysManagerConfig keys = cfg.KeysConfig;
             ADDSHost adds = cfg.Hosts.ActiveDirectoryHost;
+            SQLServerHost sql = cfg.Hosts.SQLServerHost;
             cfg.IsDirty = true;
             cfg.DeliveryWindow = this.DeliveryWindow;
             cfg.MaxRetries = this.MaxRetries;
@@ -465,9 +461,11 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             cfg.DefaultPin = this.DefaultPin;
             adds.DomainAddress = this.DomainAddress;
             adds.Account = this.Account;
+            sql.SQLAccount = this.SQLAccount;
             using (AESSystemEncryption MSIS = new AESSystemEncryption())
             {
                 adds.Password = MSIS.Decrypt(Password);
+                sql.SQLPassword = MSIS.Encrypt(SQLPassword);
                 keys.XORSecret = MSIS.Decrypt(XORSecret);
             };
             ManagementService.ADFSManager.WriteConfiguration(host);

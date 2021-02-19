@@ -22,7 +22,6 @@ using System.Data;
 using System.Data.SqlClient;
 using System.DirectoryServices;
 using System.Security.Cryptography.X509Certificates;
-using System.Reflection;
 
 namespace Neos.IdentityServer.MultiFactor.Data
 {
@@ -52,7 +51,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
         public override MFAUser GetMFAUser(string upn)
         {
             string request = "SELECT ID, UPN, MAILADDRESS, PHONENUMBER, PIN, ENABLED, METHOD, OVERRIDE FROM REGISTRATIONS WHERE UPN=@UPN";
-            SqlConnection con = new SqlConnection(SQLHost.ConnectionString);
+            SqlConnection con = new SqlConnection(SQLUtils.GetFullConnectionString(SQLHost));
             SqlCommand sql = new SqlCommand(request, con);
 
             SqlParameter prm = new SqlParameter("@UPN", SqlDbType.VarChar, 256);
@@ -114,7 +113,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
             else
                request = "UPDATE REGISTRATIONS SET MAILADDRESS = @MAILADDRESS, PHONENUMBER = @PHONENUMBER, PIN=@PIN, METHOD=@METHOD, OVERRIDE=@OVERRIDE, ENABLED=@ENABLED WHERE UPN=@UPN";
 
-            SqlConnection con = new SqlConnection(SQLHost.ConnectionString);
+            SqlConnection con = new SqlConnection(SQLUtils.GetFullConnectionString(SQLHost));
             SqlCommand sql = new SqlCommand(request, con);
 
             SqlParameter prm1 = new SqlParameter("@MAILADDRESS", SqlDbType.VarChar, 256);
@@ -188,7 +187,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                     return GetMFAUser(reg.UPN);
             }
             string request = "INSERT INTO REGISTRATIONS (UPN, MAILADDRESS, PHONENUMBER, PIN, ENABLED, METHOD, OVERRIDE) VALUES (@UPN, @MAILADDRESS, @PHONENUMBER, @PIN, @ENABLED, @METHOD, @OVERRIDE)";
-            SqlConnection con = new SqlConnection(SQLHost.ConnectionString);
+            SqlConnection con = new SqlConnection(SQLUtils.GetFullConnectionString(SQLHost));
             SqlCommand sql = new SqlCommand(request, con);
 
             SqlParameter prm1 = new SqlParameter("@UPN", SqlDbType.VarChar, 256);
@@ -262,7 +261,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
 
             string request = "DELETE FROM REGISTRATIONS WHERE UPN=@UPN";
 
-            SqlConnection con = new SqlConnection(SQLHost.ConnectionString);
+            SqlConnection con = new SqlConnection(SQLUtils.GetFullConnectionString(SQLHost));
             SqlCommand sql = new SqlCommand(request, con);
 
             SqlParameter prm = new SqlParameter("@UPN", SqlDbType.VarChar, 256);
@@ -295,7 +294,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
 
             string request = "UPDATE REGISTRATIONS SET ENABLED=1 WHERE UPN=@UPN";
 
-            SqlConnection con = new SqlConnection(SQLHost.ConnectionString);
+            SqlConnection con = new SqlConnection(SQLUtils.GetFullConnectionString(SQLHost));
             SqlCommand sql = new SqlCommand(request, con);
 
             SqlParameter prm5 = new SqlParameter("@UPN", SqlDbType.VarChar, 256);
@@ -329,7 +328,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
 
             string request = "UPDATE REGISTRATIONS SET ENABLED=0 WHERE UPN=@UPN";
 
-            SqlConnection con = new SqlConnection(SQLHost.ConnectionString);
+            SqlConnection con = new SqlConnection(SQLUtils.GetFullConnectionString(SQLHost));
             SqlCommand sql = new SqlCommand(request, con);
 
             SqlParameter prm5 = new SqlParameter("@UPN", SqlDbType.VarChar, 256);
@@ -466,7 +465,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                 request += ") AS TBL WHERE NUMBER BETWEEN " + ((paging.CurrentPage - 1) * paging.PageSize + 1) + " AND  " + (paging.CurrentPage) * paging.PageSize;
             }
 
-            SqlConnection con = new SqlConnection(SQLHost.ConnectionString);
+            SqlConnection con = new SqlConnection(SQLUtils.GetFullConnectionString(SQLHost));
             SqlCommand sql = new SqlCommand(request, con);
             if ((hasparameter) && (filter.FilterValue != null))
             {
@@ -545,7 +544,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
             if (order.Direction == SortDirection.Descending)
                 request += " DESC";
 
-            SqlConnection con = new SqlConnection(SQLHost.ConnectionString);
+            SqlConnection con = new SqlConnection(SQLUtils.GetFullConnectionString(SQLHost));
             SqlCommand sql = new SqlCommand(request, con);
 
             MFAUserList regs = new MFAUserList();
@@ -667,7 +666,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                 }
             }
 
-            SqlConnection con = new SqlConnection(SQLHost.ConnectionString);
+            SqlConnection con = new SqlConnection(SQLUtils.GetFullConnectionString(SQLHost));
             SqlCommand sql = new SqlCommand(request, con);
             if ((hasparameter) && (filter.FilterValue != null))
             {
@@ -739,7 +738,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
             try
             {
                 string request = "SELECT ID, UPN, CREDENTIALID, PUBLICKEY FROM KEYDESCS WHERE UPN=@UPN";
-                SqlConnection con = new SqlConnection(SQLHost.ConnectionString);
+                SqlConnection con = new SqlConnection(SQLUtils.GetFullConnectionString(SQLHost));
                 SqlCommand sql = new SqlCommand(request, con);
 
                 SqlParameter prm = new SqlParameter("@UPN", SqlDbType.VarChar, 256);
@@ -802,7 +801,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
             try
             {
                 string request = "SELECT ID, UPN, CREDENTIALID, PUBLICKEY FROM KEYDESCS WHERE UPN=@UPN AND CREDENTIALID=@CREDENTIALID;";
-                SqlConnection con = new SqlConnection(SQLHost.ConnectionString);
+                SqlConnection con = new SqlConnection(SQLUtils.GetFullConnectionString(SQLHost));
                 SqlCommand sql = new SqlCommand(request, con);
 
                 SqlParameter prm1 = new SqlParameter("@UPN", SqlDbType.VarChar, 256);
@@ -873,7 +872,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
             try
             {
                 string request = "INSERT INTO KEYDESCS (UPN, CREDENTIALID, PUBLICKEY) VALUES (@UPN, @CREDENTIALID, @PUBLICKEY);";
-                SqlConnection con = new SqlConnection(SQLHost.ConnectionString);
+                SqlConnection con = new SqlConnection(SQLUtils.GetFullConnectionString(SQLHost));
                 SqlCommand sql = new SqlCommand(request, con);
 
                 SqlParameter prm1 = new SqlParameter("@UPN", SqlDbType.VarChar, 256);
@@ -922,7 +921,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
             {
 
                 string request = "UPDATE KEYDESCS SET PUBLICKEY = @PUBLICKEY WHERE UPN=@UPN AND CREDENTIALID=@CREDENTIALID;";
-                SqlConnection con = new SqlConnection(SQLHost.ConnectionString);
+                SqlConnection con = new SqlConnection(SQLUtils.GetFullConnectionString(SQLHost));
                 SqlCommand sql = new SqlCommand(request, con);
 
                 SqlParameter prm1 = new SqlParameter("@UPN", SqlDbType.VarChar, 256);
@@ -966,7 +965,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
             try
             {
                 string request = "DELETE FROM KEYDESCS WHERE UPN=@UPN AND CREDENTIALID=@CREDENTIALID;";
-                SqlConnection con = new SqlConnection(SQLHost.ConnectionString);
+                SqlConnection con = new SqlConnection(SQLUtils.GetFullConnectionString(SQLHost));
                 SqlCommand sql = new SqlCommand(request, con);
 
                 SqlParameter prm1 = new SqlParameter("@UPN", SqlDbType.VarChar, 256);
@@ -1003,14 +1002,15 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// <summary>
         /// CheckConnection method implementation
         /// </summary>
-        public bool CheckConnection(string connectionstring)
+        public bool CheckConnection(string connectionstring, string username, string password)
         {
             SqlConnection con;
             if (string.IsNullOrEmpty(connectionstring))
                 return false;
-            if (!connectionstring.ToLower().Contains("connection timeout="))
-                connectionstring += ";Connection Timeout=2";
-            con = new SqlConnection(connectionstring);
+            string resconnectionstring = SQLUtils.GetFullConnectionString(SQLHost, connectionstring, username, password);
+            if (!resconnectionstring.ToLower().Contains("connection timeout="))
+                resconnectionstring += "Connection Timeout=2;";
+            con = new SqlConnection(resconnectionstring);
             try
             {
                 con.Open();
@@ -1054,7 +1054,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
         public override string GetUserKey(string upn)
         {
             string request = "SELECT SECRETKEY FROM REGISTRATIONS WHERE UPN=@UPN";
-            SqlConnection con = new SqlConnection(SQLHost.ConnectionString);
+            SqlConnection con = new SqlConnection(SQLUtils.GetFullConnectionString(SQLHost));
             SqlCommand sql = new SqlCommand(request, con);
 
             SqlParameter prm = new SqlParameter("@UPN", SqlDbType.VarChar, 256);
@@ -1106,7 +1106,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
             string request2 = "DELETE FROM KEYS WHERE UPN=@UPN AND KIND=1";
             string request3 = "DELETE FROM KEYDESCS WHERE UPN=@UPN";
 
-            SqlConnection con = new SqlConnection(SQLHost.ConnectionString);
+            SqlConnection con = new SqlConnection(SQLUtils.GetFullConnectionString(SQLHost));
             con.Open();
             SqlTransaction trans = con.BeginTransaction();
             try
@@ -1188,7 +1188,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
         {
             string request = "UPDATE REGISTRATIONS SET SECRETKEY = @SECRETKEY WHERE UPN=@UPN";
 
-            SqlConnection con = new SqlConnection(SQLHost.ConnectionString);
+            SqlConnection con = new SqlConnection(SQLUtils.GetFullConnectionString(SQLHost));
             SqlCommand sql = new SqlCommand(request, con);
 
             SqlParameter prm1 = new SqlParameter("@SECRETKEY", SqlDbType.VarChar, 8000);
@@ -1225,7 +1225,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
         {
             string request = "INSERT INTO REGISTRATIONS (UPN, SECRETKEY, METHOD, OVERRIDE, PIN, ENABLED) VALUES (@UPN, @SECRETKEY, 0, null, 0, 1)";
 
-            SqlConnection con = new SqlConnection(SQLHost.ConnectionString);
+            SqlConnection con = new SqlConnection(SQLUtils.GetFullConnectionString(SQLHost));
             SqlCommand sql = new SqlCommand(request, con);
 
             SqlParameter prm1 = new SqlParameter("@SECRETKEY", SqlDbType.VarChar, 8000);
@@ -1259,14 +1259,15 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// <summary>
         /// CheckConnection method implementation
         /// </summary>
-        public bool CheckConnection(string connectionstring)
+        public bool CheckConnection(string connectionstring, string username, string password)
         {
             SqlConnection con;
             if (string.IsNullOrEmpty(connectionstring))
                 return false;
-            if (!connectionstring.ToLower().Contains("connection timeout="))
-                connectionstring += ";Connection Timeout=2";
-            con = new SqlConnection(connectionstring);
+            string resconnectionstring = SQLUtils.GetFullConnectionString(SQLHost, connectionstring, username, password);
+            if (!resconnectionstring.ToLower().Contains("connection timeout="))
+                resconnectionstring += "Connection Timeout=2;";
+            con = new SqlConnection(resconnectionstring);
             try
             {
                 con.Open();
@@ -1311,7 +1312,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
         public override string GetUserKey(string upn)
         {
             string request = "SELECT SECRETKEY FROM REGISTRATIONS WHERE UPN=@UPN";
-            SqlConnection con = new SqlConnection(SQLHost.ConnectionString);
+            SqlConnection con = new SqlConnection(SQLUtils.GetFullConnectionString(SQLHost));
             SqlCommand sql = new SqlCommand(request, con);
 
             SqlParameter prm = new SqlParameter("@UPN", SqlDbType.VarChar, 256);
@@ -1371,7 +1372,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
             string request2 = "DELETE FROM KEYS WHERE UPN=@UPN AND KIND=1";
             string request3 = "DELETE FROM KEYDESCS WHERE UPN=@UPN";
 
-            SqlConnection con = new SqlConnection(SQLHost.ConnectionString);
+            SqlConnection con = new SqlConnection(SQLUtils.GetFullConnectionString(SQLHost));
             con.Open();
             SqlTransaction trans = con.BeginTransaction();
             try
@@ -1418,7 +1419,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
         public override X509Certificate2 GetUserCertificate(string upn, string password)
         {
             string request = "SELECT CERTIFICATE FROM KEYS WHERE UPN=@UPN AND KIND=1";
-            SqlConnection con = new SqlConnection(SQLHost.ConnectionString);
+            SqlConnection con = new SqlConnection(SQLUtils.GetFullConnectionString(SQLHost));
             SqlCommand sql = new SqlCommand(request, con);
 
             SqlParameter prm = new SqlParameter("@UPN", SqlDbType.VarChar, 256);
@@ -1475,7 +1476,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
         public override bool HasStoredKey(string upn)
         {
             string request = "SELECT SECRETKEY FROM REGISTRATIONS WHERE UPN=@UPN";
-            SqlConnection con = new SqlConnection(SQLHost.ConnectionString);
+            SqlConnection con = new SqlConnection(SQLUtils.GetFullConnectionString(SQLHost));
             SqlCommand sql = new SqlCommand(request, con);
 
             SqlParameter prm = new SqlParameter("@UPN", SqlDbType.VarChar, 256);
@@ -1511,7 +1512,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
         public override bool HasStoredCertificate(string upn)
         {
             string request = "SELECT CERTIFICATE FROM KEYS WHERE UPN=@UPN AND KIND=1";
-            SqlConnection con = new SqlConnection(SQLHost.ConnectionString);
+            SqlConnection con = new SqlConnection(SQLUtils.GetFullConnectionString(SQLHost));
             SqlCommand sql = new SqlCommand(request, con);
 
             SqlParameter prm = new SqlParameter("@UPN", SqlDbType.VarChar, 256);
@@ -1550,7 +1551,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
         {
             string request1 = "UPDATE REGISTRATIONS SET SECRETKEY = @SECRETKEY WHERE UPN=@UPN";
 
-            SqlConnection con = new SqlConnection(SQLHost.ConnectionString);
+            SqlConnection con = new SqlConnection(SQLUtils.GetFullConnectionString(SQLHost));
             con.Open();
             SqlTransaction trans = con.BeginTransaction();
             try
@@ -1588,7 +1589,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
         {
             string request2 = "UPDATE KEYS SET CERTIFICATE = @CERTIFICATE WHERE UPN=@UPN AND KIND=1";
 
-            SqlConnection con = new SqlConnection(SQLHost.ConnectionString);
+            SqlConnection con = new SqlConnection(SQLUtils.GetFullConnectionString(SQLHost));
             con.Open();
             SqlTransaction trans = con.BeginTransaction();
             try
@@ -1627,7 +1628,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
         {
             string request1 = "INSERT INTO REGISTRATIONS (UPN, SECRETKEY, METHOD, OVERRIDE, PIN, ENABLED) VALUES (@UPN, @SECRETKEY, 0, null, 0, 1)";
 
-            SqlConnection con = new SqlConnection(SQLHost.ConnectionString);
+            SqlConnection con = new SqlConnection(SQLUtils.GetFullConnectionString(SQLHost));
             con.Open();
             SqlTransaction trans = con.BeginTransaction();
             try
@@ -1665,7 +1666,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
         {
             string request2 = "INSERT INTO KEYS (UPN, CERTIFICATE, KIND) VALUES (@UPN, @CERTIFICATE, 1)";
 
-            SqlConnection con = new SqlConnection(SQLHost.ConnectionString);
+            SqlConnection con = new SqlConnection(SQLUtils.GetFullConnectionString(SQLHost));
             con.Open();
             SqlTransaction trans = con.BeginTransaction();
             try
@@ -1702,14 +1703,15 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// <summary>
         /// CheckConnection method implementation
         /// </summary>
-        public bool CheckConnection(string connectionstring)
+        public bool CheckConnection(string connectionstring, string username, string password)
         {
             SqlConnection con;
             if (string.IsNullOrEmpty(connectionstring))
                 return false;
-            if (!connectionstring.ToLower().Contains("connection timeout="))
-                connectionstring += ";Connection Timeout=2";
-            con = new SqlConnection(connectionstring);
+            string resconnectionstring = SQLUtils.GetFullConnectionString(SQLHost, connectionstring, username, password);
+            if (!resconnectionstring.ToLower().Contains("connection timeout="))
+                resconnectionstring += "Connection Timeout=2;";
+            con = new SqlConnection(resconnectionstring);
             try
             {
                 con.Open();
@@ -1733,11 +1735,11 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// <summary>
         /// IsMFAUserRegistered method implementation
         /// </summary>
-        internal static bool IsMFAUserRegistered(SQLServerHost host, string upn)
+        internal static bool IsMFAUserRegistered(SQLServerHost SQLHost, string upn)
         {
             string request = "SELECT ID, UPN FROM REGISTRATIONS WHERE UPN=@UPN";
 
-            SqlConnection con = new SqlConnection(host.ConnectionString);
+            SqlConnection con = new SqlConnection(SQLUtils.GetFullConnectionString(SQLHost));
             SqlCommand sql = new SqlCommand(request, con);
 
             SqlParameter prm = new SqlParameter("@UPN", SqlDbType.VarChar);
@@ -1758,6 +1760,49 @@ namespace Neos.IdentityServer.MultiFactor.Data
             {
                 con.Close();
             }
+        }
+
+        /// <summary>
+        /// GetFullConnectionString method implementation
+        /// </summary>
+        /// <returns></returns>
+        internal static string GetFullConnectionString(SQLServerHost SQLHost, string connectstr = null, string account = null, string password = null)
+        {
+            string connectionstring = string.Empty;
+            string[] parts = null;
+            if (string.IsNullOrEmpty(connectstr))
+                parts = SQLHost.ConnectionString.Split(';');
+            else
+                parts = connectstr.Split(';');
+            for (int i = 0; i < parts.Length; i++)
+            {
+                if (parts[i].ToLower().StartsWith("user id"))
+                    parts[i] = string.Empty;
+                else if (parts[i].ToLower().StartsWith("password"))
+                    parts[i] = string.Empty;
+                else if (parts[i].ToLower().StartsWith("integrated security"))
+                    parts[i] = string.Empty;
+            }
+            for (int i = 0; i < parts.Length; i++)
+            {
+                if (!string.IsNullOrEmpty(parts[i]))
+                    connectionstring += parts[i] + ";";
+            }
+
+            if (string.IsNullOrEmpty(SQLHost.SQLAccount) || string.IsNullOrEmpty(SQLHost.SQLPassword))
+                connectionstring += "Integrated Security=SSPI;";
+            else
+            {
+                if (string.IsNullOrEmpty(account))
+                    connectionstring += "User ID=" + SQLHost.SQLAccount + ";Password=" + SQLHost.SQLPassword + ";";
+                else
+                    connectionstring += "User ID=" + account + ";";
+                if (string.IsNullOrEmpty(password))
+                    connectionstring += "Password=" + SQLHost.SQLPassword + ";";
+                else
+                    connectionstring += "Password=" + password + ";";
+            }
+            return connectionstring;
         }
     }
     #endregion

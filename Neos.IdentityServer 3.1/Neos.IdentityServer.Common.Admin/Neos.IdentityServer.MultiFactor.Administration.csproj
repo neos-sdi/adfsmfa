@@ -104,7 +104,9 @@
     <EmbeddedResource Include="Resources\SErrors.de.resx" />
     <EmbeddedResource Include="Resources\SErrors.es.resx" />
     <EmbeddedResource Include="Resources\SErrors.fr-CA.resx" />
-    <EmbeddedResource Include="Resources\SErrors.fr.resx" />
+    <EmbeddedResource Include="Resources\SErrors.fr.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Resources\SErrors.it.resx" />
     <EmbeddedResource Include="Resources\SErrors.ja.resx" />
     <EmbeddedResource Include="Resources\SErrors.nl.resx" />

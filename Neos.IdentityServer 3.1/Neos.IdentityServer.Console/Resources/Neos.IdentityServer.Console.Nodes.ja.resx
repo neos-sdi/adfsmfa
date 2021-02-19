@@ -234,12 +234,6 @@
   <data name="SECURITYSCOPEROOT" xml:space="preserve">
     <value>セキュリティ構成</value>
   </data>
-  <data name="SECURITYSCOPEWSMAN" xml:space="preserve">
-    <value>WsMan</value>
-  </data>
-  <data name="SECURITYSCOPEWSMANDESC" xml:space="preserve">
-    <value>WsMan の構成</value>
-  </data>
   <data name="SERVICESCOPENODEDESC" xml:space="preserve">
     <value>サービスの状態</value>
   </data>

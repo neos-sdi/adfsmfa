@@ -295,6 +295,15 @@ namespace Neos.IdentityServer.MultiFactor.Cmdlets.Ressources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à MFA System Not registered ! .
+        /// </summary>
+        internal static string InfosSystemNotRegistered {
+            get {
+                return ResourceManager.GetString("InfosSystemNotRegistered", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à MFA System correctly registered ! .
         /// </summary>
         internal static string InfosSystemRegistered {

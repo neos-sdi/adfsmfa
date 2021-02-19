@@ -15,6 +15,7 @@
 // https://github.com/neos-sdi/adfsmfa                                                                                                                                                      //
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
+using Microsoft.Win32;
 using Neos.IdentityServer.MultiFactor.Administration.Resources;
 using Neos.IdentityServer.MultiFactor.Common;
 using Neos.IdentityServer.MultiFactor.Data;
@@ -346,12 +347,12 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <summary>
         /// CheckSQLConnection method implmentation
         /// </summary>
-        internal static bool CheckSQLConnection(string connectionstring)
+        internal static bool CheckSQLConnection(string connectionstring, string username, string password )
         {
             try
             { 
                 EnsureService();
-                return RuntimeRepository.CheckSQLConnection(Config, connectionstring);
+                return RuntimeRepository.CheckSQLConnection(Config, connectionstring, username, password);
             }
             catch
             {
@@ -362,12 +363,12 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <summary>
         /// CheckKeysConnection method implmentation
         /// </summary>
-        internal static bool CheckKeysConnection(string connectionstring)
+        internal static bool CheckKeysConnection(string connectionstring, string username, string password)
         {
             try
             { 
                 EnsureService();
-                return RuntimeRepository.CheckKeysConnection(Config, connectionstring);
+                return RuntimeRepository.CheckKeysConnection(Config, connectionstring, username, password);
             }
             catch
             {
@@ -380,34 +381,10 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// </summary>
         internal static void VerifyPrimaryServer()
         {
-            ClientSIDsProxy.Initialize();
-            Runspace SPRunSpace = null;
-            PowerShell SPPowerShell = null;
-            try
-            {
-                SPRunSpace = RunspaceFactory.CreateRunspace();
-
-                SPPowerShell = PowerShell.Create();
-                SPPowerShell.Runspace = SPRunSpace;
-                SPRunSpace.Open();
-
-                Pipeline pipeline = SPRunSpace.CreatePipeline();
-                Command exportcmd = new Command("(Get-AdfsSyncProperties).Role", true);
-                pipeline.Commands.Add(exportcmd);
-                Collection<PSObject> PSOutput = pipeline.Invoke();
-                foreach (var result in PSOutput)
-                {
-                    if (!result.BaseObject.ToString().ToLower().Equals("primarycomputer"))
-                        throw new InvalidOperationException("PS0033: This Cmdlet cannot be executed from a secondary server !");
-                }
-            }
-            finally
-            {
-                if (SPRunSpace != null)
-                    SPRunSpace.Close();
-                if (SPPowerShell != null)
-                    SPPowerShell.Dispose();
-            }
+            RegistryKey rk = Registry.LocalMachine.OpenSubKey("Software\\MFA", false);
+            bool isprimary = Convert.ToBoolean(rk.GetValue("IsPrimaryServer", 0, RegistryValueOptions.None));
+            if (!isprimary)
+                throw new InvalidOperationException("PS0033: This Cmdlet cannot be executed from a secondary server !");
         }
 
         /// <summary>
@@ -431,6 +408,16 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                   (ClientSIDsProxy.ADFSDelegateServiceAdministrationAllowed && ADFSManagementRights.AllowedGroup(ClientSIDsProxy.ADFSAdminGroupName))))
                 throw new InvalidOperationException("PS0033: This Cmdlet must be executed with ADFS Administration rights granted for the current user !");
         }
+
+        /// <summary>
+        /// VerifyMFAConfigurationRights method implementation
+        /// </summary>
+        internal static void VerifyMFAConfigurationRights()
+        {
+            if (!(ADFSManagementRights.IsAdministrator()) ||ADFSManagementRights.IsSystem())
+                throw new InvalidOperationException("PS0033: This Cmdlet must be executed with System Administration rights granted for the current user !");
+        }
+
         #endregion
 
         #region Notifications
@@ -455,49 +442,37 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <summary>
         /// RegisterADFSComputer method implementation
         /// </summary>        
-        public static bool RegisterADFSComputer(PSHost host, string servername)
+        public static bool RegisterADFSComputer(PSHost host, string servername, out List<ADFSServerHost> servers)
         {
-            try
+            bool bRet = false;
+            string fqdn = Dns.GetHostEntry(servername).HostName.ToLower();
+            ADFSServerHost srvhost = WebAdminManagerClient.GetComputerInformations(fqdn);
+            if (srvhost != null)
             {
-                string fqdn = Dns.GetHostEntry(servername).HostName.ToLower();
-                ADFSServerHost srvhost = WebAdminManagerClient.GetCompterInformations(fqdn);
-                if (srvhost != null)
-                {
-                    int i = ADFSManager.ADFSFarm.Servers.FindIndex(c => c.FQDN.ToLower() == srvhost.FQDN.ToLower());
-                    if (i < 0)
-                        ADFSManager.ADFSFarm.Servers.Add(srvhost);
-                    else
-                        ADFSManager.ADFSFarm.Servers[i] = srvhost;
-                    ADFSManager.SetDirty(true);
-                    ADFSManager.WriteConfiguration(host);
-                }
+                int i = ADFSManager.ADFSFarm.Servers.FindIndex(c => c.FQDN.ToLower().Equals(srvhost.FQDN.ToLower()));
+                if (i < 0)
+                    ADFSManager.ADFSFarm.Servers.Add(srvhost);
                 else
-                    return false;
+                    ADFSManager.ADFSFarm.Servers[i] = srvhost;
+                ADFSManager.SetDirty(true);
+                ADFSManager.WriteConfiguration(host);
+                bRet = true;
             }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-            return true;
+            servers = ADFSManager.ADFSFarm.Servers;
+            return bRet;
         }
 
         /// <summary>
         /// UnRegisterADFSComputer method implementation
         /// </summary>
-        public static bool UnRegisterADFSComputer(PSHost Host, string servername)
+        public static bool UnRegisterADFSComputer(PSHost Host, string servername, out List<ADFSServerHost> servers)
         {
-            try
-            {
-                string fqdn = Dns.GetHostEntry(servername).HostName;
-                ADFSManager.ADFSFarm.Servers.RemoveAll(c => c.FQDN.ToLower().Equals(fqdn.ToLower()));
-                ADFSManager.SetDirty(true);
-                ADFSManager.WriteConfiguration(Host);
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-            return true;
+            string fqdn = Dns.GetHostEntry(servername).HostName;
+            ADFSManager.ADFSFarm.Servers.RemoveAll(c => c.FQDN.ToLower().Equals(fqdn.ToLower()));
+            ADFSManager.SetDirty(true);
+            ADFSManager.WriteConfiguration(Host);
+            servers = ADFSManager.ADFSFarm.Servers;
+            return true; 
         }
         #endregion
 
@@ -564,6 +539,8 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                             config.Hosts.ActiveDirectoryHost.Password = string.Empty;
                             config.Hosts.ActiveDirectoryHost.Account = string.Empty;
                             config.Hosts.ActiveDirectoryHost.DomainAddress = string.Empty;
+                            config.Hosts.SQLServerHost.SQLAccount = string.Empty;
+                            config.Hosts.SQLServerHost.SQLPassword = string.Empty;
                             config.MailProvider.Password = string.Empty;
                             config.MailProvider.UserName = string.Empty;
                             config.MailProvider.Anonymous = true;
@@ -572,6 +549,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                         else
                         {
                             config.Hosts.ActiveDirectoryHost.Password = MSIS.Encrypt(config.Hosts.ActiveDirectoryHost.Password);
+                            config.Hosts.SQLServerHost.SQLPassword = MSIS.Encrypt(config.Hosts.SQLServerHost.SQLPassword);
                             config.MailProvider.Password = MSIS.Encrypt(config.MailProvider.Password);
                             config.KeysConfig.XORSecret = MSIS.Encrypt(config.KeysConfig.XORSecret);
                             if (!string.IsNullOrEmpty(value))
@@ -640,6 +618,27 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                         }
                     }
                     break;
+                case 0x04:
+                    using (AESSystemEncryption MSIS = new AESSystemEncryption())
+                    {
+                        if (clearvalue)
+                        {
+                            config.Hosts.SQLServerHost.SQLAccount = string.Empty;
+                            config.Hosts.SQLServerHost.SQLPassword = string.Empty;
+                        }
+                        else
+                        {
+                            if (string.IsNullOrEmpty(value))
+                            {
+                                config.Hosts.SQLServerHost.SQLPassword = MSIS.Encrypt(config.Hosts.SQLServerHost.SQLPassword);
+                                host.UI.WriteWarningLine("Empty value not allowed, value was only encrypted !");
+                            }
+                            else
+                                config.Hosts.SQLServerHost.SQLPassword = MSIS.Encrypt(value);
+                        }
+                    }
+                    break;
+
             }
             CFGUtilities.WriteConfigurationToDatabase(host, config, false);
             CFGUtilities.BroadcastNotification(config, NotificationsKind.ConfigurationCreated, Environment.MachineName, true, true);
@@ -908,7 +907,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         public static bool AllowedGroup(string group)
         {
             if (string.IsNullOrEmpty(group))
-                return true;
+                return false;
             try
             {
                 WindowsIdentity identity = WindowsIdentity.GetCurrent();

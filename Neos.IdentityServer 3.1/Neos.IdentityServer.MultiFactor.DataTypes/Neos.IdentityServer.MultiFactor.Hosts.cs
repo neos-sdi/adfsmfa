@@ -2042,6 +2042,12 @@ namespace Neos.IdentityServer.MultiFactor
         [XmlAttribute("ConnectionString")]
         public string ConnectionString {get; set; }
 
+        [XmlAttribute("SQLAccount")]
+        public string SQLAccount { get; set; }
+
+        [XmlAttribute("SQLPassword")]
+        public string SQLPassword { get; set; }
+
         [XmlAttribute("KeyName")]
         public string KeyName { get; set; } = "adfsmfa";
 

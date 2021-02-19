@@ -49,7 +49,7 @@ namespace Neos.IdentityServer.MultiFactor
             }
             catch
             {
-                config = null;
+                config = ReadConfigurationFromDatabase();
             }
             return config;
         }
@@ -99,6 +99,7 @@ namespace Neos.IdentityServer.MultiFactor
                     {
                         config.KeysConfig.XORSecret = MSIS.Decrypt(config.KeysConfig.XORSecret);
                         config.Hosts.ActiveDirectoryHost.Password = MSIS.Decrypt(config.Hosts.ActiveDirectoryHost.Password);
+                        config.Hosts.SQLServerHost.SQLPassword = MSIS.Decrypt(config.Hosts.SQLServerHost.SQLPassword);
                         config.MailProvider.Password = MSIS.Decrypt(config.MailProvider.Password);
                     }; 
                 }
@@ -136,12 +137,13 @@ namespace Neos.IdentityServer.MultiFactor
                     using (StreamReader reader = new StreamReader(ms))
                     {
                         config = (MFAConfig)xmlserializer.Deserialize(ms);
-                       /* using (AESSystemEncryption MSIS = new AESSystemEncryption())
+                        using (AESSystemEncryption MSIS = new AESSystemEncryption())
                         {
                             config.KeysConfig.XORSecret = MSIS.Decrypt(config.KeysConfig.XORSecret);
                             config.Hosts.ActiveDirectoryHost.Password = MSIS.Decrypt(config.Hosts.ActiveDirectoryHost.Password);
+                            config.Hosts.SQLServerHost.SQLPassword = MSIS.Decrypt(config.Hosts.SQLServerHost.SQLPassword);
                             config.MailProvider.Password = MSIS.Decrypt(config.MailProvider.Password);
-                        }; */
+                        };
                     }
                 }
             }
@@ -170,8 +172,13 @@ namespace Neos.IdentityServer.MultiFactor
 
         internal static byte[] Key
         {
-            get { return SystemCacheKey; }
-        }      
+            get
+            {
+                if (SystemCacheKey==null)
+                    SystemCacheKey = ReadConfigurationKey();
+                return SystemCacheKey;
+            }
+        }
 
         #region Admin Key Reader
         /// <summary>
@@ -182,21 +189,64 @@ namespace Neos.IdentityServer.MultiFactor
             if (SystemCacheKey != null)
                 return SystemCacheKey;
 
-            Domain dom = Domain.GetComputerDomain();
-            Guid gd = dom.GetDirectoryEntry().Guid;
-
+            Guid gd = GetKeyFromRegistry();
+            if (gd == Guid.Empty)
+            {
+                gd = GetKeyFromADDS();
+                SetKeyToRegistry(gd);
+            }
             byte[] _key = new byte[32];
             byte[] _gd = new byte[16];
             Buffer.BlockCopy(gd.ToByteArray(), 0, _gd, 0, 16);
             Buffer.BlockCopy(_gd, 0, _key, 0, 16);
             Array.Reverse(_gd);
             Buffer.BlockCopy(_gd, 0, _key, 16, 16);
+
             return _key;
         }
+
+        /// <summary>
+        /// GetKeyFromRegistry method implementation
+        /// </summary>
+        private static Guid GetKeyFromRegistry()
+        {
+            RegistryKey rk = Registry.LocalMachine.OpenSubKey("Software\\MFA", false);
+            object v = rk.GetValue("MFAID");
+            if (v!=null)
+                return new Guid(v.ToString());
+            else
+                return Guid.Empty;
+        }
+
+        /// <summary>
+        /// SetKeyToRegistry method implementation
+        /// </summary>
+        private static void SetKeyToRegistry(Guid gd)
+        {
+            RegistryKey rk = Registry.LocalMachine.OpenSubKey("Software\\MFA", true);
+            rk.SetValue("MFAID", gd.ToString(), RegistryValueKind.String);
+        }
+
+        /// <summary>
+        /// GetKeyFromADDS method implementation
+        /// </summary>
+        private static Guid GetKeyFromADDS()
+        {
+            try
+            {
+                Domain dom = Domain.GetComputerDomain();
+                return dom.GetDirectoryEntry().Guid;
+            }
+            catch
+            {
+                return Guid.Empty;
+            }
+        }
+
         #endregion
     }
     #endregion
-
+  
     #region XmlConfigSerializer
     /// <summary>
     /// XmlConfigSerializer class
@@ -1418,6 +1468,12 @@ namespace Neos.IdentityServer.MultiFactor
     [DataContract]
     public class ADFSNodeInformation
     {
+        /// <summary>
+        /// FQDN property implementation
+        /// </summary>
+        [DataMember]
+        public string FQDN { get; set; }
+
         /// <summary>
         /// BehaviorLevel property implementation
         /// </summary>

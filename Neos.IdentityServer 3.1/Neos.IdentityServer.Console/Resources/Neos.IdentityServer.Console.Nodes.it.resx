@@ -324,12 +324,6 @@
   <data name="GENERALSCOPERESTARTMFASVCDESC" xml:space="preserve">
     <value>Riavvia tutti i servizi MFA (Hub di notifica e Servizi ADFS) su tutti i server della farm</value>
   </data>
-  <data name="SECURITYSCOPEWSMAN" xml:space="preserve">
-    <value>Uomo di Sistema di Lavoro</value>
-  </data>
-  <data name="SECURITYSCOPEWSMANDESC" xml:space="preserve">
-    <value>Configurazione WsMan</value>
-  </data>
   <data name="ROOTLANGUAGEDA" xml:space="preserve">
     <value>Danese</value>
   </data>

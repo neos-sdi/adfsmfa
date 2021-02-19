@@ -426,10 +426,6 @@ namespace Neos.IdentityServer.Console
                 {
                     this.RootNode.Children.Add(this.ServiceNode);
                     this.RootNode.Children.Add(this.ServiceGeneralNode);
-                    this.RootNode.Children.Add(this.ServiceStorageNode);
-                    this.ServiceStorageNode.Children.Add(this.ServiceADDSNode);
-                    this.ServiceStorageNode.Children.Add(this.ServiceSQLNode);
-                    this.ServiceStorageNode.Children.Add(this.ServiceCustomStorageNode);
 
                     this.RootNode.Children.Add(this.ServiceSecurityNode);
                     this.ServiceSecurityNode.Children.Add(this.ServiceRNGNode);
@@ -437,6 +433,11 @@ namespace Neos.IdentityServer.Console
                     this.ServiceSecurityNode.Children.Add(this.ServiceRSANode);
                     this.ServiceSecurityNode.Children.Add(this.ServiceCustomSecurityNode);
                     this.ServiceSecurityNode.Children.Add(this.ServiceWebAuthNNode);
+
+                    this.RootNode.Children.Add(this.ServiceStorageNode);
+                    this.ServiceStorageNode.Children.Add(this.ServiceADDSNode);
+                    this.ServiceStorageNode.Children.Add(this.ServiceSQLNode);
+                    this.ServiceStorageNode.Children.Add(this.ServiceCustomStorageNode);
 
                     this.RootNode.Children.Add(this.ServiceProvidersNode);
                     if (this.ServiceTOTPNode != null)

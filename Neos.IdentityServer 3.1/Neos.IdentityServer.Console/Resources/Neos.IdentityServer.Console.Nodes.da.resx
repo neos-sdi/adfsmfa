@@ -234,12 +234,6 @@
   <data name="SECURITYSCOPEROOT" xml:space="preserve">
     <value>Sikkerhedskonfiguration</value>
   </data>
-  <data name="SECURITYSCOPEWSMAN" xml:space="preserve">
-    <value>Wsman (Wsman)</value>
-  </data>
-  <data name="SECURITYSCOPEWSMANDESC" xml:space="preserve">
-    <value>Wsman-konfiguration</value>
-  </data>
   <data name="SERVICESCOPENODEDESC" xml:space="preserve">
     <value>Tjenestestatus</value>
   </data>

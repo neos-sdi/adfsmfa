@@ -324,12 +324,6 @@
   <data name="GENERALSCOPERESTARTMFASVCDESC" xml:space="preserve">
     <value>Alle MFA-Dienste (Notification Hub und ADFS-Dienste) auf allen Farm-Servern neu starten</value>
   </data>
-  <data name="SECURITYSCOPEWSMAN" xml:space="preserve">
-    <value>WsMan</value>
-  </data>
-  <data name="SECURITYSCOPEWSMANDESC" xml:space="preserve">
-    <value>WsMan-Konfiguration</value>
-  </data>
   <data name="ROOTLANGUAGEDA" xml:space="preserve">
     <value>Dänisch</value>
   </data>
