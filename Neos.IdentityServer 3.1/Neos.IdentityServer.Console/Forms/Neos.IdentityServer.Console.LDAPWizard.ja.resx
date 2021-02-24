@@ -132,4 +132,7 @@
   <data name="label1.Text" xml:space="preserve">
     <value>LDAP://</value>
   </data>
+  <data name="checkBoxEnabled.Text" xml:space="preserve">
+    <value>ユーザーを無効にする</value>
+  </data>
 </root>

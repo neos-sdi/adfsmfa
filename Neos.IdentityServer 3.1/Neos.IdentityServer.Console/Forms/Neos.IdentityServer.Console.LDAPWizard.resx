@@ -264,4 +264,7 @@
   <data name="&gt;&gt;LDAPQuery.ZOrder" xml:space="preserve">
     <value>4</value>
   </data>
+  <data name="checkBoxEnabled.Text" xml:space="preserve">
+    <value>Disable Users</value>
+  </data>
 </root>

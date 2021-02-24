@@ -30,6 +30,7 @@ using System.Threading;
 using System.Globalization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
+using Neos.IdentityServer.MultiFactor.Data;
 
 namespace Neos.IdentityServer.Console
 {
@@ -62,8 +63,6 @@ namespace Neos.IdentityServer.Console
         private bool IsPrimary = true;
 
 
-
-
         /// <summary>
         /// Constructor.
         /// </summary>
@@ -79,6 +78,7 @@ namespace Neos.IdentityServer.Console
         {
             try
             {
+                ManagementService.VerifyADFSAdministrationRights();
                 try
                 {
                     ManagementService.VerifyPrimaryServer();
@@ -87,6 +87,7 @@ namespace Neos.IdentityServer.Console
                 {
                     IsPrimary = false;
                 }
+                
                 ManagementService.Initialize(true);
                 BuildNodes();
             }
@@ -431,8 +432,8 @@ namespace Neos.IdentityServer.Console
                     this.ServiceSecurityNode.Children.Add(this.ServiceRNGNode);
                     this.ServiceSecurityNode.Children.Add(this.ServiceAESNode);
                     this.ServiceSecurityNode.Children.Add(this.ServiceRSANode);
-                    this.ServiceSecurityNode.Children.Add(this.ServiceCustomSecurityNode);
                     this.ServiceSecurityNode.Children.Add(this.ServiceWebAuthNNode);
+                    this.ServiceSecurityNode.Children.Add(this.ServiceCustomSecurityNode);                   
 
                     this.RootNode.Children.Add(this.ServiceStorageNode);
                     this.ServiceStorageNode.Children.Add(this.ServiceADDSNode);

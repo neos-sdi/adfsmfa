@@ -132,4 +132,7 @@
   <data name="label1.Text" xml:space="preserve">
     <value>Ścieżka LDAP</value>
   </data>
+  <data name="checkBoxEnabled.Text" xml:space="preserve">
+    <value>Wyłączanie użytkowników</value>
+  </data>
 </root>

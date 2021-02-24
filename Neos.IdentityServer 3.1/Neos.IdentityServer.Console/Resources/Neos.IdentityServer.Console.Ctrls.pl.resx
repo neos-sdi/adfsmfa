@@ -621,9 +621,6 @@
   <data name="CTRLADATRSACERTERROR" xml:space="preserve">
     <value>Nieprawidłowy atrybut dodaje dla certyfikatu RSA!</value>
   </data>
-  <data name="CTRLADSUPERACCOUNT" xml:space="preserve">
-    <value>Poświadczenia "SuperUser" usługi Active Directory</value>
-  </data>
   <data name="CTRLADTITLECONFIG" xml:space="preserve">
     <value>Ogólne właściwości bezpieczeństwa</value>
   </data>
@@ -681,13 +678,16 @@
   <data name="CTRLSQLATTACCOUNT" xml:space="preserve">
     <value>Nieprawidłowe konto programu SQLServer !</value>
   </data>
-  <data name="CTRLSQLSUPERACCOUNT" xml:space="preserve">
-    <value>Poświadczenia "Superużytnik" programu SQL Server</value>
-  </data>
   <data name="CTRLSQLCONNECTIONOK" xml:space="preserve">
     <value>Połączenie z programem SQL Server czynne!</value>
   </data>
   <data name="CTRLSQLCONNECTIONERROR" xml:space="preserve">
     <value>Nie można połączyć się z programem SQL Server!</value>
+  </data>
+  <data name="CTRLADSUPERACCOUNT" xml:space="preserve">
+    <value>Usługa Active Directory "Konto dostępu do danych"</value>
+  </data>
+  <data name="CTRLSQLSUPERACCOUNT" xml:space="preserve">
+    <value>Program SQL Server "Konto dostępu do danych"</value>
   </data>
 </root>

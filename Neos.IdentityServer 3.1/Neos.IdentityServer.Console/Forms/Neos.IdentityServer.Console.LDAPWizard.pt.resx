@@ -132,4 +132,7 @@
   <data name="label1.Text" xml:space="preserve">
     <value>Caminho do LDAP</value>
   </data>
+  <data name="checkBoxEnabled.Text" xml:space="preserve">
+    <value>Desativar usuários</value>
+  </data>
 </root>

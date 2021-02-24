@@ -179,7 +179,7 @@
     <value>True</value>
   </metadata>
   <data name="PIN.HeaderText" xml:space="preserve">
-    <value>Pin</value>
+    <value></value>
   </data>
   <data name="PIN.Visible" type="System.Boolean, mscorlib">
     <value>False</value>
@@ -188,7 +188,7 @@
     <value>True</value>
   </metadata>
   <data name="OverrideMethod.HeaderText" xml:space="preserve">
-    <value>OverrideMethod</value>
+    <value></value>
   </data>
   <data name="OverrideMethod.Visible" type="System.Boolean, mscorlib">
     <value>False</value>
@@ -302,5 +302,8 @@
   </data>
   <data name="&gt;&gt;$this.Type" xml:space="preserve">
     <value>System.Windows.Forms.UserControl, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="creationDateDataGridViewTextBoxColumn.HeaderText" xml:space="preserve">
+    <value>Created</value>
   </data>
 </root>

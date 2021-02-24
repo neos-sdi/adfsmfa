@@ -132,4 +132,7 @@
   <data name="label1.Text" xml:space="preserve">
     <value>LDAP-pad</value>
   </data>
+  <data name="checkBoxEnabled.Text" xml:space="preserve">
+    <value>Gebruikers uitschakelen</value>
+  </data>
 </root>

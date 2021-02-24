@@ -621,9 +621,6 @@
   <data name="CTRLADATRSACERTERROR" xml:space="preserve">
     <value>Atributul adaugă nevalid pentru certificatul RSA!</value>
   </data>
-  <data name="CTRLADSUPERACCOUNT" xml:space="preserve">
-    <value>Active Directory "SuperUser" Credențiale</value>
-  </data>
   <data name="CTRLADTITLECONFIG" xml:space="preserve">
     <value>Proprietăți generale de securitate</value>
   </data>
@@ -681,13 +678,16 @@
   <data name="CTRLSQLATTACCOUNT" xml:space="preserve">
     <value>Cont SQLServer nevalid !</value>
   </data>
-  <data name="CTRLSQLSUPERACCOUNT" xml:space="preserve">
-    <value>Acreditări SQL Server "SuperUser"</value>
-  </data>
   <data name="CTRLSQLCONNECTIONOK" xml:space="preserve">
     <value>Conexiune la SQL Server operațională !</value>
   </data>
   <data name="CTRLSQLCONNECTIONERROR" xml:space="preserve">
     <value>Imposibil de conectat la SQL Server !</value>
+  </data>
+  <data name="CTRLADSUPERACCOUNT" xml:space="preserve">
+    <value>Active Directory "Cont de acces la date"</value>
+  </data>
+  <data name="CTRLSQLSUPERACCOUNT" xml:space="preserve">
+    <value>Server SQL "Cont de acces la date"</value>
   </data>
 </root>

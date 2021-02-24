@@ -15,21 +15,13 @@
 // https://github.com/neos-sdi/adfsmfa                                                                                                                                                      //
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
-using Neos.IdentityServer.MultiFactor;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Runtime.ConstrainedExecution;
-using System.Runtime.InteropServices;
-using System.Security;
 using System.Security.Cryptography.X509Certificates;
-using System.Security.Permissions;
-using System.ServiceModel;
-using System.Xml.Serialization;
 
 namespace Neos.IdentityServer.MultiFactor.Data
 {

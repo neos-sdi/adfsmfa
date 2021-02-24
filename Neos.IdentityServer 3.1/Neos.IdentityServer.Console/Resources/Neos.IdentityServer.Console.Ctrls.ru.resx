@@ -621,9 +621,6 @@
   <data name="CTRLADATRSACERTERROR" xml:space="preserve">
     <value>Недействительный атрибут ADDS для сертификата RSA!</value>
   </data>
-  <data name="CTRLADSUPERACCOUNT" xml:space="preserve">
-    <value>Учетные данные Active Directory "SuperUser"</value>
-  </data>
   <data name="CTRLADTITLECONFIG" xml:space="preserve">
     <value>Общие свойства безопасности</value>
   </data>
@@ -681,13 +678,16 @@
   <data name="CTRLSQLATTACCOUNT" xml:space="preserve">
     <value>Недействительный счет S'LServer !</value>
   </data>
-  <data name="CTRLSQLSUPERACCOUNT" xml:space="preserve">
-    <value>Учетные данные сервера «Суперпользователь»</value>
-  </data>
   <data name="CTRLSQLCONNECTIONOK" xml:space="preserve">
     <value>Подключение к серверу S'L работает!</value>
   </data>
   <data name="CTRLSQLCONNECTIONERROR" xml:space="preserve">
     <value>Не удаемся подключиться к серверу СЗЛ!</value>
+  </data>
+  <data name="CTRLADSUPERACCOUNT" xml:space="preserve">
+    <value>Активный каталог "Учетная запись доступа к данным"</value>
+  </data>
+  <data name="CTRLSQLSUPERACCOUNT" xml:space="preserve">
+    <value>Сервер "Учетная запись доступа к данным" S'L</value>
   </data>
 </root>

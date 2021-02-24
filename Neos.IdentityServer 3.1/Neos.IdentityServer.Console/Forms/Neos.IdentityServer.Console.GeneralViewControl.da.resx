@@ -126,4 +126,7 @@
   <data name="label1.Text" xml:space="preserve">
     <value>Generelle indstillinger for tjenester</value>
   </data>
+  <data name="GLVALIDSAVE" xml:space="preserve">
+    <value>Annullere ændringer og genindlæse data ?</value>
+  </data>
 </root>

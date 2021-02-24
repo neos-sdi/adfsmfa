@@ -11554,8 +11554,11 @@ namespace Neos.IdentityServer.Console.Controls
                 if (txtUserName.Modified)
                 {
                     ManagementService.ADFSManager.SetDirty(true);
-                    if (!ManagementService.CheckADDSConnection(txtDomainName.Text, txtUserName.Text, txtPassword.Text))
-                        throw new Exception(res.CTRLADATTACCOUNT);
+                    if ((!string.IsNullOrEmpty(txtUserName.Text)) && (!string.IsNullOrEmpty(txtPassword.Text)))
+                    {
+                        if (!ManagementService.CheckADDSConnection(txtDomainName.Text, txtUserName.Text, txtPassword.Text))
+                            throw new Exception(res.CTRLADATTACCOUNT);
+                    }
                     Config.Hosts.ActiveDirectoryHost.Account = txtUserName.Text;
                     errors.SetError(txtUserName, "");
                 }
@@ -11657,8 +11660,11 @@ namespace Neos.IdentityServer.Console.Controls
                 if (txtPassword.Modified)
                 {
                     ManagementService.ADFSManager.SetDirty(true);
-                    if (!ManagementService.CheckADDSConnection(txtDomainName.Text, txtUserName.Text, txtPassword.Text))
-                        throw new Exception(res.CTRLADATTPASSWORD);
+                    if ((!string.IsNullOrEmpty(txtUserName.Text)) && (!string.IsNullOrEmpty(txtPassword.Text)))
+                    {
+                        if (!ManagementService.CheckADDSConnection(txtDomainName.Text, txtUserName.Text, txtPassword.Text))
+                            throw new Exception(res.CTRLADATTPASSWORD);
+                    }
                     Config.Hosts.ActiveDirectoryHost.Password = txtPassword.Text;
                     errors.SetError(txtPassword, "");
                 }

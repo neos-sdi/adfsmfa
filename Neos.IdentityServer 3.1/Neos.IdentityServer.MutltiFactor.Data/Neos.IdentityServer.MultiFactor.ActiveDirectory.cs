@@ -40,7 +40,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
             if (!(host is ADDSHost))
                 throw new ArgumentException("Invalid Host ! : value but be an ADDSHost instance");
 
-            ADHost.Bind();
+            ADHost.Bind(ADHost.DomainName, ADHost.Account, ADHost.Password);
             _mailismulti = ADDSUtils.IsMultivaluedAttribute(ADHost.DomainName, ADHost.Account, ADHost.Password, ADHost.MailAttribute);
             _phoneismulti = ADDSUtils.IsMultivaluedAttribute(ADHost.DomainName, ADHost.Account, ADHost.Password, ADHost.PhoneAttribute);
         }
@@ -53,7 +53,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
             if (!(host is ADDSHost))
                 throw new ArgumentException("Invalid Host ! : value but be an ADDSHost instance");
 
-            ADHost.Bind();
+            ADHost.Bind(domain, account, password);
             _mailismulti = ADDSUtils.IsMultivaluedAttribute(domain, account, password, ADHost.MailAttribute);
             _phoneismulti = ADDSUtils.IsMultivaluedAttribute(domain, account, password, ADHost.PhoneAttribute);
         }
@@ -533,7 +533,6 @@ namespace Neos.IdentityServer.MultiFactor.Data
             }
             qryldap += ")";
 
-
             MFAUserList registrations = new MFAUserList();
             try
             {
@@ -541,7 +540,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                 {
                     try
                     {
-                        using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntry(f.ForestDNS, ADHost.Account, ADHost.Password, ADHost.UseSSL))
+                        using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntry(f.ForestDNS, ADHost.Account, ADHost.Password, ADHost.UseSSL))                        
                         {
                             using (DirectorySearcher dsusr = new DirectorySearcher(rootdir, qryldap))
                             {
@@ -588,12 +587,12 @@ namespace Neos.IdentityServer.MultiFactor.Data
                                             reg.ID = new Guid((byte[])DirEntry.Properties["objectGUID"].Value).ToString();
                                             reg.UPN = sr.Properties[ClaimsUtilities.GetADDSUserAttribute()][0].ToString();
                                             if (ADDSUtils.GetMultiValued(DirEntry.Properties[ADHost.MailAttribute], _mailismulti) != null)
-                                            {                                               
+                                            {
                                                 reg.MailAddress = ADDSUtils.GetMultiValued(DirEntry.Properties[ADHost.MailAttribute], _mailismulti);
                                                 reg.IsRegistered = true;
                                             }
-                                            if (ADDSUtils.GetMultiValued(DirEntry.Properties[ADHost.PhoneAttribute], _phoneismulti) != null)                                            
-                                            {                                                
+                                            if (ADDSUtils.GetMultiValued(DirEntry.Properties[ADHost.PhoneAttribute], _phoneismulti) != null)
+                                            {
                                                 reg.PhoneNumber = ADDSUtils.GetMultiValued(DirEntry.Properties[ADHost.PhoneAttribute], _phoneismulti);
                                                 reg.IsRegistered = true;
                                             }
@@ -607,7 +606,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                                             {
                                                 try
                                                 {
-                                                    reg.OverrideMethod = DirEntry.Properties[ADHost.OverrideMethodAttribute].Value.ToString();                                                    
+                                                    reg.OverrideMethod = DirEntry.Properties[ADHost.OverrideMethodAttribute].Value.ToString();
                                                 }
                                                 catch
                                                 {
@@ -620,7 +619,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                                             {
                                                 try
                                                 {
-                                                    reg.PIN = Convert.ToInt32(DirEntry.Properties[ADHost.PinAttribute].Value);                                                    
+                                                    reg.PIN = Convert.ToInt32(DirEntry.Properties[ADHost.PinAttribute].Value);
                                                 }
                                                 catch
                                                 {
@@ -629,9 +628,9 @@ namespace Neos.IdentityServer.MultiFactor.Data
                                             }
                                             else reg.PIN = 0;
 
-                                            if (DirEntry.Properties[ADHost.TotpEnabledAttribute].Value != null)                                            
+                                            if (DirEntry.Properties[ADHost.TotpEnabledAttribute].Value != null)
                                             {
-                                                reg.Enabled = bool.Parse(DirEntry.Properties[ADHost.TotpEnabledAttribute].Value.ToString());                                                
+                                                reg.Enabled = bool.Parse(DirEntry.Properties[ADHost.TotpEnabledAttribute].Value.ToString());
                                                 reg.IsRegistered = true;
                                             }
                                             if (reg.IsRegistered)
@@ -645,7 +644,6 @@ namespace Neos.IdentityServer.MultiFactor.Data
                     catch (Exception ex)
                     {
                         DataLog.WriteEntry(ex.Message, System.Diagnostics.EventLogEntryType.Error, 5001);
-                        DataLog.WriteEntry("Forest ADDS : " + f.ForestDNS + " discarded !!!", System.Diagnostics.EventLogEntryType.Error, 5001);
                     }
                 }
             }
@@ -707,7 +705,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                 {
                     using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntry(f.ForestDNS, ADHost.Account, ADHost.Password, ADHost.UseSSL))
                     {
-                        string qryldap = "(&(objectCategory=user)(objectClass=user)"+ ClaimsUtilities.BuildADDSUserFilter("*");
+                        string qryldap = "(&(objectCategory=user)(objectClass=user)" + ClaimsUtilities.BuildADDSUserFilter("*");
                         if (enabledonly)
                             qryldap += "(" + ADHost.TotpEnabledAttribute + "=" + true.ToString().ToUpper() + ")";
                         qryldap += "(!(userAccountControl:1.2.840.113556.1.4.803:=2))";
@@ -921,6 +919,16 @@ namespace Neos.IdentityServer.MultiFactor.Data
                                 {
                                     dsusr.PropertiesToLoad.Clear();
                                     dsusr.PropertiesToLoad.Add("objectGUID");
+                                    dsusr.PropertiesToLoad.Add("userPrincipalName");
+                                    dsusr.PropertiesToLoad.Add("sAMAccountName");
+                                    dsusr.PropertiesToLoad.Add("msDS-PrincipalName");
+                                    dsusr.PropertiesToLoad.Add("whenCreated");
+                                    dsusr.PropertiesToLoad.Add(ADHost.MailAttribute);
+                                    dsusr.PropertiesToLoad.Add(ADHost.PhoneAttribute);
+                                    dsusr.PropertiesToLoad.Add(ADHost.MethodAttribute);
+                                    dsusr.PropertiesToLoad.Add(ADHost.OverrideMethodAttribute);
+                                    dsusr.PropertiesToLoad.Add(ADHost.PinAttribute);
+                                    dsusr.PropertiesToLoad.Add(ADHost.TotpEnabledAttribute);
                                     dsusr.SizeLimit = ADHost.MaxRows;
                                     dsusr.ReferralChasing = ReferralChasingOption.All;
 
@@ -1110,12 +1118,20 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// </summary>
         public List<MFAWebAuthNUser> GetUsersByCredentialId(MFAWebAuthNUser user, byte[] credentialId)
         {
-            List<MFAWebAuthNUser> _users = new List<MFAWebAuthNUser>();
-            string credsid = HexaEncoding.GetHexStringFromByteArray(credentialId);
-            MFAUserCredential cred = GetCredentialByCredentialId(user, credsid);
-            if (cred != null)
-                _users.Add(user);
-            return _users;
+            try
+            {
+                List<MFAWebAuthNUser> _users = new List<MFAWebAuthNUser>();
+                string credsid = HexaEncoding.GetHexStringFromByteArray(credentialId);
+                MFAUserCredential cred = GetCredentialByCredentialId(user, credsid);
+                if (cred != null)
+                    _users.Add(user);
+                return _users;
+            }
+            catch (Exception ex)
+            {
+                DataLog.WriteEntry(ex.Message, System.Diagnostics.EventLogEntryType.Error, 5000);
+                throw new Exception(ex.Message);
+            }
         }
 
         /// <summary>
@@ -1166,8 +1182,16 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// </summary>
         public List<MFAUserCredential> GetCredentialsByUserHandle(MFAWebAuthNUser user, byte[] userHandle)
         {
-            List<MFAUserCredential> _lst = GetCredentialsByUser(user);
-            return _lst.Where(c => c.UserHandle.SequenceEqual(userHandle)).ToList();
+            try
+            {
+                List<MFAUserCredential> _lst = GetCredentialsByUser(user);
+                return _lst.Where(c => c.UserHandle.SequenceEqual(userHandle)).ToList();
+            }
+            catch (Exception ex)
+            {
+                DataLog.WriteEntry(ex.Message, System.Diagnostics.EventLogEntryType.Error, 5000);
+                throw new Exception(ex.Message);
+            }
         }
 
         /// <summary>
@@ -1175,9 +1199,17 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// </summary>
         public MFAUserCredential GetCredentialById(MFAWebAuthNUser user, byte[] credentialId)
         {
-            string credsid = HexaEncoding.GetHexStringFromByteArray(credentialId);
-            MFAUserCredential cred = GetCredentialByCredentialId(user, credsid);
-            return cred;
+            try
+            {
+                string credsid = HexaEncoding.GetHexStringFromByteArray(credentialId);
+                MFAUserCredential cred = GetCredentialByCredentialId(user, credsid);
+                return cred;
+            }
+            catch (Exception ex)
+            {
+                DataLog.WriteEntry(ex.Message, System.Diagnostics.EventLogEntryType.Error, 5000);
+                throw new Exception(ex.Message);
+            }
         }
 
         /// <summary>
@@ -1231,14 +1263,23 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// </summary>
         public void UpdateCounter(MFAWebAuthNUser user, byte[] credentialId, uint counter)
         {
-            string credsid = HexaEncoding.GetHexStringFromByteArray(credentialId);
-            MFAUserCredential cred = GetCredentialByCredentialId(user, credsid);
-
-            if (cred != null)
+            try
             {
-                cred.SignatureCounter = counter;
-                SetUserCredential(user, cred);
+                string credsid = HexaEncoding.GetHexStringFromByteArray(credentialId);
+                MFAUserCredential cred = GetCredentialByCredentialId(user, credsid);
+
+                if (cred != null)
+                {
+                    cred.SignatureCounter = counter;
+                    SetUserCredential(user, cred);
+                }
             }
+            catch (Exception ex)
+            {
+                DataLog.WriteEntry(ex.Message, System.Diagnostics.EventLogEntryType.Error, 5000);
+                throw new Exception(ex.Message);
+            }
+
         }
 
         /// <summary>
@@ -1355,6 +1396,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                     {
                         dsusr.PropertiesToLoad.Add("userPrincipalName");
                         dsusr.PropertiesToLoad.Add("sAMAccountName");
+                        dsusr.PropertiesToLoad.Add("msDS-PrincipalName");
                         dsusr.PropertiesToLoad.Add(ADHost.PublicKeyCredentialAttribute);
                         dsusr.ReferralChasing = ReferralChasingOption.All;
 
@@ -1428,41 +1470,23 @@ namespace Neos.IdentityServer.MultiFactor.Data
         {
             try
             {
-                DirectoryContext ctx = null;
-                if (!string.IsNullOrEmpty(domainname))
+                using (Domain domain = ADDSUtils.GetRootDomain(domainname, username, password))
                 {
-                    if (!string.IsNullOrEmpty(username) || !string.IsNullOrEmpty(password))
-                        ctx = new DirectoryContext(DirectoryContextType.Domain, domainname, username, password);
-                    else
-                        ctx = new DirectoryContext(DirectoryContextType.Domain, domainname);
-                }
-                else
-                {
-                    if (!string.IsNullOrEmpty(username) || !string.IsNullOrEmpty(password))
-                        ctx = new DirectoryContext(DirectoryContextType.Domain, username, password);
-                    else
-                        ctx = new DirectoryContext(DirectoryContextType.Domain);
-                }
-                if (ctx != null)
-                {
-                    using (Domain dom = Domain.GetDomain(ctx))
+                    using (Forest forest = ADDSUtils.GetForest(domain.Name, username, password))
                     {
-                        using (Forest forest = dom.Forest)
+                        ActiveDirectorySchemaProperty property = forest.Schema.FindProperty(attributename);
+                        if (property != null)
                         {
-                            ActiveDirectorySchemaProperty property = forest.Schema.FindProperty(attributename);
-                            if (property != null)
+                            if (property.Name.Equals(attributename))
                             {
-                                if (property.Name.Equals(attributename))
+                                switch (multivalued)
                                 {
-                                    switch (multivalued)
-                                    {
-                                        default:
-                                            return property.IsSingleValued;
-                                        case 1:
-                                            return true;
-                                        case 2:
-                                            return !property.IsSingleValued;
-                                    }
+                                    default:
+                                        return property.IsSingleValued;
+                                    case 1:
+                                        return true;
+                                    case 2:
+                                        return !property.IsSingleValued;
                                 }
                             }
                         }
@@ -1901,12 +1925,20 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// <summary>
         /// CreateCertificate implementation 
         /// </summary>
-       public override X509Certificate2 CreateCertificate(string upn, string password, int validity)
+        public override X509Certificate2 CreateCertificate(string upn, string password, int validity)
         {
-            string pass = string.Empty;
-            if (!string.IsNullOrEmpty(password))
-                pass = password;
-            return Certs.CreateRSAEncryptionCertificateForUser(upn.ToLower(), validity, pass); 
+            try
+            { 
+                string pass = string.Empty;
+                if (!string.IsNullOrEmpty(password))
+                    pass = password;
+                return Certs.CreateRSAEncryptionCertificateForUser(upn.ToLower(), validity, pass);
+            }
+            catch (Exception ex)
+            {
+                DataLog.WriteEntry(ex.Message, System.Diagnostics.EventLogEntryType.Error, 5000);
+                throw new Exception(ex.Message);
+            }
         }
 
         /// <summary>

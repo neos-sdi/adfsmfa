@@ -181,7 +181,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
             }
             else
             {
-                string dom = host.GetForestForUser(upn);
+                string dom = host.GetForestForUser(upn, host);
                 if (usessl)
                     entry = new DirectoryEntry(root + dom + ":636");
                 else
@@ -201,7 +201,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
         {
             string root = "LDAP://";
             DirectoryEntry entry = null;
-            string dom = host.GetForestForUser(upn);
+            string dom = host.GetForestForUser(upn, host);
 
             if (usessl)
                 entry = new DirectoryEntry(root + dom + ":636");
@@ -231,11 +231,13 @@ namespace Neos.IdentityServer.MultiFactor.Data
             }
             else
             {
-                Domain dom = Domain.GetComputerDomain();
-                if (usessl)
-                    entry = new DirectoryEntry(root + dom.Name + ":636");
-                else
-                    entry = new DirectoryEntry(root + dom.Name);
+                using (Domain dom = Domain.GetComputerDomain())
+                {
+                    if (usessl)
+                        entry = new DirectoryEntry(root + dom.Name + ":636");
+                    else
+                        entry = new DirectoryEntry(root + dom.Name);
+                }
             }
             if (!string.IsNullOrEmpty(username))
                 entry.Username = username;
@@ -291,11 +293,13 @@ namespace Neos.IdentityServer.MultiFactor.Data
                   }
                   else
                   {
-                      Domain dom = Domain.GetComputerDomain();
-                      if (usessl)
-                          entry = new DirectoryEntry(root + dom.Name + ":636");
-                      else
-                          entry = new DirectoryEntry(root + dom.Name);
+                    using (Domain dom = Domain.GetComputerDomain())
+                    {
+                        if (usessl)
+                            entry = new DirectoryEntry(root + dom.Name + ":636");
+                        else
+                            entry = new DirectoryEntry(root + dom.Name);
+                    }
                   } 
             }
             else
@@ -466,26 +470,11 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// </summary>
         internal static bool IsMultivaluedAttribute(string domainname, string username, string password, string attributename)
         {
-            DirectoryContext ctx = null;
-            if (!string.IsNullOrEmpty(domainname))
+            try
             {
-                if (!string.IsNullOrEmpty(username) || !string.IsNullOrEmpty(password))
-                    ctx = new DirectoryContext(DirectoryContextType.Domain, domainname, username, password);
-                else
-                    ctx = new DirectoryContext(DirectoryContextType.Domain, domainname);
-            }
-            else
-            {
-                if (!string.IsNullOrEmpty(username) || !string.IsNullOrEmpty(password))
-                    ctx = new DirectoryContext(DirectoryContextType.Domain, username, password);
-                else
-                    ctx = new DirectoryContext(DirectoryContextType.Domain);
-            }
-            if (ctx != null)
-            {
-                using (Domain dom = Domain.GetDomain(ctx))
+                using (Domain domain = GetRootDomain(domainname, username, password))
                 {
-                    using (Forest forest = dom.Forest)
+                    using (Forest forest = GetForest(domain.Name, username, password))
                     {
                         ActiveDirectorySchemaProperty property = forest.Schema.FindProperty(attributename);
                         if (property != null)
@@ -497,14 +486,49 @@ namespace Neos.IdentityServer.MultiFactor.Data
                         }
                     }
                 }
+                return false;
             }
-            return false;
+            catch (Exception ex)
+            {
+                DataLog.WriteEntry(ex.Message, System.Diagnostics.EventLogEntryType.Error, 5100);
+                return false;
+            }
         }
 
         /// <summary>
         /// IsBinaryAttribute method implmentation
         /// </summary>
         internal static bool IsBinaryAttribute(string domainname, string username, string password, string attributename)
+        {
+            try
+            {
+                using (Domain domain = GetRootDomain(domainname, username, password))
+                {
+                    using (Forest forest = GetForest(domain.Name, username, password))
+                    {
+                        ActiveDirectorySchemaProperty property = forest.Schema.FindProperty(attributename);
+                        if (property != null)
+                        {
+                            if (property.Syntax.Equals(ActiveDirectorySyntax.OctetString))
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                }
+                return false;
+            }
+            catch (Exception ex)
+            {
+                DataLog.WriteEntry(ex.Message, System.Diagnostics.EventLogEntryType.Error, 5100);
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// GetRootDomain method implmentation
+        /// </summary>
+        internal static Domain GetRootDomain(string domainname, string username, string password)
         {
             DirectoryContext ctx = null;
             if (!string.IsNullOrEmpty(domainname))
@@ -521,33 +545,36 @@ namespace Neos.IdentityServer.MultiFactor.Data
                 else
                     ctx = new DirectoryContext(DirectoryContextType.Domain);
             }
-            if (ctx != null)
-            {
-                using (Domain dom = Domain.GetDomain(ctx))
-                {
-                    using (Forest forest = dom.Forest)
-                    {
-                        ActiveDirectorySchemaProperty property = forest.Schema.FindProperty(attributename);
-                        if (property != null)
-                        {
-                            if (property.Syntax.Equals(ActiveDirectorySyntax.OctetString))
-                            {
-                                return true;
-                            }
-                        }
-                    }
-                }
-            }
-            return false;
+            return Domain.GetDomain(ctx).Forest.RootDomain;
         }
 
+        /// <summary>
+        /// GetForest method implmentation
+        /// </summary>
+        internal static Forest GetForest(string domainname, string username, string password)
+        {
+            DirectoryContext ctx = null;
+            if (!string.IsNullOrEmpty(domainname))
+            {
+                if (!string.IsNullOrEmpty(username) || !string.IsNullOrEmpty(password))
+                    ctx = new DirectoryContext(DirectoryContextType.Forest, domainname, username, password);
+                else
+                    ctx = new DirectoryContext(DirectoryContextType.Forest, domainname);
+            }
+            else
+            {
+                if (!string.IsNullOrEmpty(username) || !string.IsNullOrEmpty(password))
+                    ctx = new DirectoryContext(DirectoryContextType.Forest, username, password);
+                else
+                    ctx = new DirectoryContext(DirectoryContextType.Forest);
+            }
+            return Forest.GetForest(ctx);
+        }
         #endregion
     }
     #endregion
 
     #region ClaimUtils
-
-
     /// <summary>
     /// Utilities class
     /// </summary>

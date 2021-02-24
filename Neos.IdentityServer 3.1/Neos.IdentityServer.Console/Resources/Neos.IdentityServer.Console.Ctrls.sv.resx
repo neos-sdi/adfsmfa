@@ -621,9 +621,6 @@
   <data name="CTRLADATRSACERTERROR" xml:space="preserve">
     <value>Ogiltigt lägger till attribut för RSA-certifikat!</value>
   </data>
-  <data name="CTRLADSUPERACCOUNT" xml:space="preserve">
-    <value>Intygsinformation för Active Directory "SuperUser"</value>
-  </data>
   <data name="CTRLADTITLECONFIG" xml:space="preserve">
     <value>Allmänna säkerhetsegenskaper</value>
   </data>
@@ -681,13 +678,16 @@
   <data name="CTRLSQLATTACCOUNT" xml:space="preserve">
     <value>Ogiltigt SQLServer-konto !</value>
   </data>
-  <data name="CTRLSQLSUPERACCOUNT" xml:space="preserve">
-    <value>Autentiseringsuppgifter för "Superanvändare" för SQL Server</value>
-  </data>
   <data name="CTRLSQLCONNECTIONOK" xml:space="preserve">
     <value>Anslutning till SQL Server-drift !</value>
   </data>
   <data name="CTRLSQLCONNECTIONERROR" xml:space="preserve">
     <value>Det gick inte att ansluta till SQL Server !</value>
+  </data>
+  <data name="CTRLADSUPERACCOUNT" xml:space="preserve">
+    <value>Active Directory för "Data Access-konto"</value>
+  </data>
+  <data name="CTRLSQLSUPERACCOUNT" xml:space="preserve">
+    <value>"Data Access-konto" SQL Server</value>
   </data>
 </root>

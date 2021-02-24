@@ -234,9 +234,6 @@
   <data name="CTRLADPASSWORD" xml:space="preserve">
     <value>パスワード</value>
   </data>
-  <data name="CTRLADSUPERACCOUNT" xml:space="preserve">
-    <value>アクティブ ディレクトリ "スーパーユーザー" 資格情報</value>
-  </data>
   <data name="CTRLADTEMPLATE2016" xml:space="preserve">
     <value>スキーマ 2016++ を追加します。</value>
   </data>
@@ -681,13 +678,16 @@
   <data name="CTRLSQLATTACCOUNT" xml:space="preserve">
     <value>無効な SQLServer アカウントです!</value>
   </data>
-  <data name="CTRLSQLSUPERACCOUNT" xml:space="preserve">
-    <value>SQL サーバー "スーパーユーザー" 資格情報</value>
-  </data>
   <data name="CTRLSQLCONNECTIONOK" xml:space="preserve">
     <value>SQL サーバーへの接続が動作します。</value>
   </data>
   <data name="CTRLSQLCONNECTIONERROR" xml:space="preserve">
     <value>SQL サーバーに接続できません 。</value>
+  </data>
+  <data name="CTRLADSUPERACCOUNT" xml:space="preserve">
+    <value>"データ アクセス アカウント" アクティブ ディレクトリ</value>
+  </data>
+  <data name="CTRLSQLSUPERACCOUNT" xml:space="preserve">
+    <value>"データ アクセス アカウント" SQL サーバー</value>
   </data>
 </root>

@@ -621,9 +621,6 @@
   <data name="CTRLADATRSACERTERROR" xml:space="preserve">
     <value>Attributo ADDS non valido per il certificato RSA !</value>
   </data>
-  <data name="CTRLADSUPERACCOUNT" xml:space="preserve">
-    <value>Credenziali "SuperUser" di Active Directory</value>
-  </data>
   <data name="CTRLADTITLECONFIG" xml:space="preserve">
     <value>Proprietà di sicurezza generali</value>
   </data>
@@ -681,13 +678,16 @@
   <data name="CTRLSQLATTACCOUNT" xml:space="preserve">
     <value>Account SQLServer non valido !</value>
   </data>
-  <data name="CTRLSQLSUPERACCOUNT" xml:space="preserve">
-    <value>Credenziali "Utente avanzato" di SQL Server</value>
-  </data>
   <data name="CTRLSQLCONNECTIONOK" xml:space="preserve">
     <value>Connessione a SQL Server operativa !</value>
   </data>
   <data name="CTRLSQLCONNECTIONERROR" xml:space="preserve">
     <value>Impossibile connettersi a SQL Server !</value>
+  </data>
+  <data name="CTRLADSUPERACCOUNT" xml:space="preserve">
+    <value>"Account di accesso ai dati" Active Directory</value>
+  </data>
+  <data name="CTRLSQLSUPERACCOUNT" xml:space="preserve">
+    <value>SQL Server "Account di accesso ai dati"</value>
   </data>
 </root>

@@ -142,7 +142,7 @@
     <value>0</value>
   </data>
   <data name="ProviderTitle" xml:space="preserve">
-    <value>Configurazione di '0'</value>
+    <value>Configurazione di {0}</value>
   </data>
   <data name="ProviderTitle.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>

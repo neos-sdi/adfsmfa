@@ -65,17 +65,17 @@ namespace MFA
             object[] att1 = type.GetCustomAttributes(typeof(AdministratorsRightsRequiredAttribute), true);
             if (att1.Length > 0)
             {
-                ManagementService.VerifyADFSAdministrationRights();
+                ManagementService.VerifyADFSAdministrationRights(Host);
             }
             object[] att1b = type.GetCustomAttributes(typeof(ConfigurationRightsRequiredAttribute), true);
             if (att1b.Length > 0)
             {
-                ManagementService.VerifyMFAConfigurationRights();
+                ManagementService.VerifyMFAConfigurationRights(Host);
             }
             object[] att2 = type.GetCustomAttributes(typeof(PrimaryServerRequiredAttribute), true);
             if (att2.Length > 0)
             {
-                ManagementService.VerifyPrimaryServer();
+                ManagementService.VerifyPrimaryServer(Host);
             }
 
             object[] att3 = type.GetCustomAttributes(typeof(NotRemotableAttribute), true);
@@ -87,7 +87,7 @@ namespace MFA
             object[] att4 = type.GetCustomAttributes(typeof(ADFS2019RequiredAttribute), true);
             if (att4.Length > 0)
             {
-                ManagementService.VerifyADFSServer2019();
+                ManagementService.VerifyADFSServer2019(Host);
             }
         }
 
@@ -114,7 +114,7 @@ namespace MFA
     ///   <para>Get-MFAUsers -FilterValue neos -FilterOperator StartWith -IncludeDisabled -ShowCount</para>
     ///   <para>Get-MFAUsers -Value neos -Operator StartWith -All -ShowCount -SortOrder UserName</para>
     /// </example>
-    [Cmdlet(VerbsCommon.Get, "MFAUsers", SupportsShouldProcess = true, SupportsPaging = false, ConfirmImpact = ConfirmImpact.Medium, RemotingCapability = RemotingCapability.PowerShell, DefaultParameterSetName = "Identity")]
+    [Cmdlet(VerbsCommon.Get, "MFAUsers", SupportsShouldProcess = true, SupportsPaging = false, ConfirmImpact = ConfirmImpact.Medium, RemotingCapability = RemotingCapability.SupportedByCommand, DefaultParameterSetName = "Identity")]
     [OutputType(typeof(PSRegistration[]))]
     [AdministratorsRightsRequired]
     public sealed class GetMFAUser : MFACmdlet, IDynamicParameters
@@ -597,7 +597,7 @@ namespace MFA
     ///   <para>Set-MFAUsers -Identity user@domain.com -ResetKey</para> 
     ///   <para>Set-MFAUsers $users -ResetKey</para> 
     /// </example>
-    [Cmdlet(VerbsCommon.Set, "MFAUsers", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.PowerShell, DefaultParameterSetName = "Identity")]
+    [Cmdlet(VerbsCommon.Set, "MFAUsers", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.SupportedByCommand, DefaultParameterSetName = "Identity")]
     [AdministratorsRightsRequired]
     public sealed class SetMFAUser : MFACmdlet
     {
@@ -819,7 +819,7 @@ namespace MFA
     ///   <para>Add-MFAUsers -Identity user@domain.com -Email user@mailbox.com -Phone 0606050403 -PIN 2451 -Method Code -NoNewKey</para> 
     ///   <para>Add-MFAUsers $users -Method Code -NNewKey</para> 
     /// </example>
-    [Cmdlet(VerbsCommon.Add, "MFAUsers", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.PowerShell, DefaultParameterSetName = "Identity")]
+    [Cmdlet(VerbsCommon.Add, "MFAUsers", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.SupportedByCommand, DefaultParameterSetName = "Identity")]
     [AdministratorsRightsRequired]
     public sealed class AddMFAUser : MFACmdlet
     {
@@ -1042,7 +1042,7 @@ namespace MFA
     ///   <para>Remove a specific user.</para>
     ///   <para>Remove-MFAUsers -Identity user@domain.com</para> 
     /// </example>
-    [Cmdlet(VerbsCommon.Remove, "MFAUsers", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.PowerShell, DefaultParameterSetName = "Identity")]
+    [Cmdlet(VerbsCommon.Remove, "MFAUsers", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.SupportedByCommand, DefaultParameterSetName = "Identity")]
     [AdministratorsRightsRequired]
     public sealed class DeleteMFAUser : MFACmdlet
     {
@@ -1154,7 +1154,7 @@ namespace MFA
     ///   <para>Enable a specific user.</para>
     ///   <para>Enable-MFAUsers -Identity user@domain.com</para> 
     /// </example>
-    [Cmdlet(VerbsLifecycle.Enable, "MFAUsers", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Medium, RemotingCapability = RemotingCapability.PowerShell, DefaultParameterSetName = "Identity")]
+    [Cmdlet(VerbsLifecycle.Enable, "MFAUsers", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Medium, RemotingCapability = RemotingCapability.SupportedByCommand, DefaultParameterSetName = "Identity")]
     [OutputType(typeof(PSRegistration[]))]
     [AdministratorsRightsRequired]
     public sealed class EnableMFAUser : MFACmdlet
@@ -1268,7 +1268,7 @@ namespace MFA
     ///   <para>Disable a specific user.</para>
     ///   <para>Disable-MFAUsers -Identity user@domain.com</para> 
     /// </example>
-    [Cmdlet(VerbsLifecycle.Disable, "MFAUsers", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Medium, RemotingCapability = RemotingCapability.PowerShell, DefaultParameterSetName = "Identity")]
+    [Cmdlet(VerbsLifecycle.Disable, "MFAUsers", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Medium, RemotingCapability = RemotingCapability.SupportedByCommand, DefaultParameterSetName = "Identity")]
     [OutputType(typeof(PSRegistration[]))]
     [AdministratorsRightsRequired]
     public sealed class DisableMFAUser : MFACmdlet
@@ -1378,7 +1378,7 @@ namespace MFA
     /// <example>
     ///   <para>Get-MFAFarmInformation</para>
     /// </example>
-    [Cmdlet(VerbsCommon.Get, "MFAFarmInformation", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Medium, RemotingCapability = RemotingCapability.PowerShell)]
+    [Cmdlet(VerbsCommon.Get, "MFAFarmInformation", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Medium, RemotingCapability = RemotingCapability.SupportedByCommand)]
     [OutputType(typeof(ADFSFarmHost))]
     [AdministratorsRightsRequired]
     public sealed class GetMFAFarmInformation : MFACmdlet
@@ -1581,7 +1581,7 @@ namespace MFA
     ///   <para>Get-MFAComputers myadfsserver.domain.com</para>
     ///   <para>Get-MFAComputers -ShowCount</para>
     /// </example>
-    [Cmdlet(VerbsCommon.Get, "MFAComputers", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Medium, RemotingCapability = RemotingCapability.PowerShell, DefaultParameterSetName = "Identity")]
+    [Cmdlet(VerbsCommon.Get, "MFAComputers", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Medium, RemotingCapability = RemotingCapability.SupportedByCommand, DefaultParameterSetName = "Identity")]
     [OutputType(typeof(ADFSServerHost))]
     [AdministratorsRightsRequired]
     public sealed class GetMFAComputers : MFACmdlet
@@ -1700,8 +1700,8 @@ namespace MFA
     ///   <para>Restart-MFAComputerServices</para>
     ///   <para>Restart-MFAComputerServices myadfsserver.domain.com</para>
     /// </example>
-    [Cmdlet(VerbsLifecycle.Restart, "MFAComputerServices", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Identity")]
-    [AdministratorsRightsRequired, NotRemotable]  
+    [Cmdlet(VerbsLifecycle.Restart, "MFAComputerServices", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.SupportedByCommand, DefaultParameterSetName = "Identity")]
+    [AdministratorsRightsRequired]  
     public sealed class RestartMFAComputerServices : MFACmdlet
     {
         string _identity = string.Empty;
@@ -2116,9 +2116,9 @@ namespace MFA
     ///   <para>$cfg = Get-MFAConfig</para>
     ///   <para>Get MFA configuration options and store it into variable.</para>
     /// </example>
-    [Cmdlet(VerbsCommon.Get, "MFAConfig", SupportsShouldProcess = true, SupportsPaging = false, ConfirmImpact = ConfirmImpact.Medium, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
+    [Cmdlet(VerbsCommon.Get, "MFAConfig", SupportsShouldProcess = true, SupportsPaging = false, ConfirmImpact = ConfirmImpact.Medium, RemotingCapability = RemotingCapability.SupportedByCommand, DefaultParameterSetName = "Data")]
     [OutputType(typeof(PSConfig))]
-    [PrimaryServerRequired, AdministratorsRightsRequired, NotRemotable]
+    [PrimaryServerRequired, AdministratorsRightsRequired]
     public sealed class GetMFAConfig : MFACmdlet
     {
         private PSConfig _config;
@@ -2464,9 +2464,9 @@ namespace MFA
     ///   <para>$c = Get-MFAStore -Store ADDS</para>
     ///   <para>$c = Get-MFAStore -Store SQL</para>
     /// </example>
-    [Cmdlet(VerbsCommon.Get, "MFAStore", SupportsShouldProcess = true, SupportsPaging = false, ConfirmImpact = ConfirmImpact.Medium, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
+    [Cmdlet(VerbsCommon.Get, "MFAStore", SupportsShouldProcess = true, SupportsPaging = false, ConfirmImpact = ConfirmImpact.Medium, RemotingCapability = RemotingCapability.SupportedByCommand, DefaultParameterSetName = "Data")]
     [OutputType(typeof(PSADDSStore), typeof(PSSQLStore))]
-    [PrimaryServerRequired, AdministratorsRightsRequired, NotRemotable]
+    [PrimaryServerRequired, AdministratorsRightsRequired]
     public sealed class GetMFAStore : MFACmdlet
     {
         private PSADDSStore _config0;
@@ -3346,9 +3346,9 @@ namespace MFA
     ///     <para>Get-MFAProvider -ProviderType External</para>
     ///     <para>Get MFA Provider configuration for (Code, Email, External, Azure, Biometrics)</para>
     /// </example>
-    [Cmdlet(VerbsCommon.Get, "MFAProvider", SupportsShouldProcess = true, SupportsPaging = false, ConfirmImpact = ConfirmImpact.Medium, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
+    [Cmdlet(VerbsCommon.Get, "MFAProvider", SupportsShouldProcess = true, SupportsPaging = false, ConfirmImpact = ConfirmImpact.Medium, RemotingCapability = RemotingCapability.SupportedByCommand, DefaultParameterSetName = "Data")]
     [OutputType(typeof(PSTOTPProvider), typeof(PSMailProvider), typeof(PSExternalProvider), typeof(PSAzureProvider), typeof(PSBiometricProvider))]
-    [PrimaryServerRequired, AdministratorsRightsRequired, NotRemotable]
+    [PrimaryServerRequired, AdministratorsRightsRequired]
     public sealed class GetMFAProvider : MFACmdlet
     {
         private PSTOTPProvider _config0;
@@ -5049,9 +5049,9 @@ namespace MFA
     ///   <para>$c.AESKeyGenerator = [MFA.PSAESKeyGeneratorMode]::AESSecret1024</para>
     ///   <para>Set-MFASecurity -Kind AES $c</para>
     /// </example>
-    [Cmdlet(VerbsCommon.Get, "MFASecurity", SupportsShouldProcess = true, SupportsPaging = false, ConfirmImpact = ConfirmImpact.Medium, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
+    [Cmdlet(VerbsCommon.Get, "MFASecurity", SupportsShouldProcess = true, SupportsPaging = false, ConfirmImpact = ConfirmImpact.Medium, RemotingCapability = RemotingCapability.SupportedByCommand, DefaultParameterSetName = "Data")]
     [OutputType(typeof(PSSecurity), typeof(PSRNGSecurity), typeof(PSRSASecurity), typeof(PSBiometricSecurity))]
-    [PrimaryServerRequired, AdministratorsRightsRequired, NotRemotable]
+    [PrimaryServerRequired, AdministratorsRightsRequired]
     public sealed class GetMFASecurity : MFACmdlet
     {
         private PSBaseSecurity _config;
@@ -6000,8 +6000,8 @@ namespace MFA
     /// <example>
     ///   <para>Reset-MFAThemesList</para>
     /// </example>
-    [Cmdlet(VerbsCommon.Reset, "MFAThemesList", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
-    [PrimaryServerRequired, AdministratorsRightsRequired, NotRemotable]
+    [Cmdlet(VerbsCommon.Reset, "MFAThemesList", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.SupportedByCommand, DefaultParameterSetName = "Data")]
+    [PrimaryServerRequired, AdministratorsRightsRequired]
     public sealed class ResetMFAThemesList : MFACmdlet
     {
         /// <summary>
@@ -6750,8 +6750,8 @@ namespace MFA
     ///   <para></para>
     ///   <para>DisableAll Status of Added users set to disabled</para>
     /// </example>
-    [Cmdlet(VerbsData.Import, "MFAUsersCSV", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Identity")]
-    [AdministratorsRightsRequired, NotRemotable]
+    [Cmdlet(VerbsData.Import, "MFAUsersCSV", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.SupportedByCommand, DefaultParameterSetName = "Identity")]
+    [AdministratorsRightsRequired]
     public sealed class ImportMFAUsersCSV : MFACmdlet
     {
         /// <summary>
@@ -6846,8 +6846,8 @@ namespace MFA
     ///   <para></para>
     ///   <para>DisableAll Status of Added users set to disabled</para>
     /// </example>
-    [Cmdlet(VerbsData.Import, "MFAUsersXML", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Identity")]
-    [AdministratorsRightsRequired, NotRemotable]
+    [Cmdlet(VerbsData.Import, "MFAUsersXML", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.SupportedByCommand, DefaultParameterSetName = "Identity")]
+    [AdministratorsRightsRequired]
     public sealed class ImportMFAUsersXML : MFACmdlet
     {
         /// <summary>
@@ -6944,8 +6944,8 @@ namespace MFA
     ///   <para></para>
     ///   <para>DisableAll Status of Added users set to disabled</para>
     /// </example>
-    [Cmdlet(VerbsData.Import, "MFAUsersADDS", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Identity")]
-    [AdministratorsRightsRequired, NotRemotable]
+    [Cmdlet(VerbsData.Import, "MFAUsersADDS", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.SupportedByCommand, DefaultParameterSetName = "Identity")]
+    [AdministratorsRightsRequired]
     public sealed class ImportMFAUsersADDS : MFACmdlet
     {
         /// <summary>
@@ -7186,10 +7186,11 @@ namespace MFA
     /// </summary>
     /// <example>
     ///   <para>Set-MFAFirewallRules</para>
-    ///   <para>Set-MFAFirewallRules -ComputersAllowed '172.16.100.1, 172.16.100.2'</para>
+    ///   <para>Set-MFAFirewallRules -ComputersAllowed '172.16.100.1,172.16.100.2,172.16.100.3'</para>
+    ///   <para>Set-MFAFirewallRules -ComputersAllowed '172.16.100.1-172.16.100.254'</para>
     /// </example>
-    [Cmdlet(VerbsCommon.Set, "MFAFirewallRules", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
-    [AdministratorsRightsRequired, NotRemotable]
+    [Cmdlet(VerbsCommon.Set, "MFAFirewallRules", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.SupportedByCommand, DefaultParameterSetName = "Data")]
+    [AdministratorsRightsRequired]
     public sealed class SetMFAFirewallRules : MFACmdlet
     {
         private string _computers;

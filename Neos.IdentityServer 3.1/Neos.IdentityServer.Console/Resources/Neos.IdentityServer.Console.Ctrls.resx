@@ -238,7 +238,7 @@
     <value>Password</value>
   </data>
   <data name="CTRLADSUPERACCOUNT" xml:space="preserve">
-    <value>Active Directory "SuperUser" Credentials</value>
+    <value>"Data Access Account" Active Directory</value>
   </data>
   <data name="CTRLADTEMPLATE2016" xml:space="preserve">
     <value>ADDS Schema 2016++</value>
@@ -682,7 +682,7 @@
     <value>Invalid SQLServer account !</value>
   </data>
   <data name="CTRLSQLSUPERACCOUNT" xml:space="preserve">
-    <value>SQL Server "SuperUser" Credentials</value>
+    <value>"Data Access Account" SQL Server</value>
   </data>
   <data name="CTRLSQLCONNECTIONOK" xml:space="preserve">
     <value>WSMAN

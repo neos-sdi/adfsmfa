@@ -235,6 +235,10 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         private static void WriteToCache(SIDsParametersRecord config)
         {
+            if (config.ADFSDelegateServiceAdministrationAllowed)
+                StoreDelegatedGroupStatus(config.ADFSAdministrationGroupName);
+            else
+                StoreDelegatedGroupStatus(null);
             DataContractSerializer serializer = new DataContractSerializer(typeof(SIDsParametersRecord));
             MemoryStream stm = new MemoryStream();
             using (StreamReader reader = new StreamReader(stm))
@@ -438,7 +442,7 @@ namespace Neos.IdentityServer.MultiFactor
                 }
                 return true;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return false;
             }
@@ -473,7 +477,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         private static string GetADFSAccountSID()
         {
-            RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SYSTEM\CurrentControlSet\Services\adfssrv");
+            RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SYSTEM\CurrentControlSet\Services\adfssrv", false);
             try
             {
                 if (key != null)
@@ -510,7 +514,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         private static string GetADFSAccountName()
         {
-            RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SYSTEM\CurrentControlSet\Services\adfssrv");
+            RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SYSTEM\CurrentControlSet\Services\adfssrv", false);
             try
             {
                 if (key != null)
@@ -662,42 +666,23 @@ namespace Neos.IdentityServer.MultiFactor
         }
 
         /// <summary>
-        /// VerifyPrimaryServer method implementation
+        /// StoreDelegatedGroupStatus method implementation
         /// </summary>
-        private static bool VerifyPrimaryServer()
+        private static void StoreDelegatedGroupStatus(string delegatedgroup)
         {
-            ClientSIDsProxy.Initialize();
-            Runspace SPRunSpace = null;
-            PowerShell SPPowerShell = null;
-            try
+            RegistryKey rk = Registry.LocalMachine.OpenSubKey("Software\\MFA", true);
+            if (string.IsNullOrEmpty(delegatedgroup))
             {
-                SPRunSpace = RunspaceFactory.CreateRunspace();
-
-                SPPowerShell = PowerShell.Create();
-                SPPowerShell.Runspace = SPRunSpace;
-                SPRunSpace.Open();
-
-                Pipeline pipeline = SPRunSpace.CreatePipeline();
-                Command exportcmd = new Command("(Get-AdfsSyncProperties).Role", true);
-                pipeline.Commands.Add(exportcmd);
-                Collection<PSObject> PSOutput = pipeline.Invoke();
-                foreach (var result in PSOutput)
-                {
-                    if (result.BaseObject.ToString().ToLower().Equals("primarycomputer"))
-                        return true;
-                    else
-                        return false;
-                }
-                return false;
+                rk.DeleteValue("DelegatedAdminGroup");
+                return;
             }
-            finally
-            {
-                if (SPRunSpace != null)
-                    SPRunSpace.Close();
-                if (SPPowerShell != null)
-                    SPPowerShell.Dispose();
-            }
+            object obj = rk.GetValue("DelegatedAdminGroup");
+            if (obj==null)
+                rk.SetValue("DelegatedAdminGroup", delegatedgroup, RegistryValueKind.String);
+            else if (obj.ToString().ToLower().Equals(delegatedgroup.ToLower()))
+                rk.SetValue("DelegatedAdminGroup", delegatedgroup, RegistryValueKind.String);
         }
+
         /// <summary>
         /// NativeMethod implementation
         /// The class exposes Windows APIs.

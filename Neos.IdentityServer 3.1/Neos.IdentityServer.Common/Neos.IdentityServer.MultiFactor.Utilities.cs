@@ -1357,12 +1357,20 @@ namespace Neos.IdentityServer.MultiFactor
 
         #region IDataRepositoryADDSConnection & IDataRepositorySQLConnection
         /// <summary>
-        /// CheckADDSConnection method implmentation
+        /// CheckADDSConnection method implmentation //ici
         /// </summary>
         internal static bool CheckADDSConnection(MFAConfig config, string domainname, string username, string password)
         {
-            DataRepositoryService dt = GetADDSDataRepository(config, domainname, username, password);
-            return (dt as IDataRepositoryADDSConnection).CheckConnection(domainname, username, password);
+            try
+            {
+                DataRepositoryService dt = GetADDSDataRepository(config, domainname, username, password);
+                return (dt as IDataRepositoryADDSConnection).CheckConnection(domainname, username, password);
+            }
+            catch (Exception ex)
+            {
+                Log.WriteEntry(string.Format("CheckADDSConnection error : {0}", ex.Message), EventLogEntryType.Error, 5000);
+                throw ex;
+            }
         }
 
         /// <summary>
@@ -1370,8 +1378,16 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         internal static bool CheckADDSAttribute(MFAConfig config,  string domainname, string username, string password, string attributename, int multivalued)
         {
-            DataRepositoryService dt = GetDataRepository(config, DataRepositoryKind.ADDS);
-            return (dt as IDataRepositoryADDSConnection).CheckAttribute(domainname, username, password, attributename, multivalued);
+            try
+            {
+                DataRepositoryService dt = GetADDSDataRepository(config, domainname, username, password);
+                return (dt as IDataRepositoryADDSConnection).CheckAttribute(domainname, username, password, attributename, multivalued);
+            }
+            catch (Exception ex)
+            {
+                Log.WriteEntry(string.Format("CheckADDSAttribute error : {0}, {1}", attributename, ex.Message), EventLogEntryType.Error, 5000);
+                throw ex;
+            }
         }
 
         /// <summary>
@@ -1379,8 +1395,16 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         internal static bool CheckSQLConnection(MFAConfig config, string connectionstring, string username, string password)
         {
-            DataRepositoryService dt = GetDataRepository(config, DataRepositoryKind.SQL);
-            return (dt as IDataRepositorySQLConnection).CheckConnection(connectionstring, username, password);
+            try
+            {
+                DataRepositoryService dt = GetDataRepository(config, DataRepositoryKind.SQL);
+                return (dt as IDataRepositorySQLConnection).CheckConnection(connectionstring, username, password);
+            }
+            catch (Exception ex)
+            {
+                Log.WriteEntry(string.Format("CheckSQLConnection error : {0}", ex.Message), EventLogEntryType.Error, 5000);
+                throw ex;
+            }
         }
 
         /// <summary>
@@ -1388,10 +1412,18 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         internal static bool CheckKeysConnection(MFAConfig config, string connectionstring, string username, string password)
         {
-            ISecretKeyManager dt = GetKeysRepository(config);
-            if (dt is IDataRepositorySQLConnection)
-                return (dt as IDataRepositorySQLConnection).CheckConnection(connectionstring, username, password);
-            return false;
+            try
+            {
+                ISecretKeyManager dt = GetKeysRepository(config);
+                if (dt is IDataRepositorySQLConnection)
+                    return (dt as IDataRepositorySQLConnection).CheckConnection(connectionstring, username, password);
+                return false;
+            }
+            catch (Exception ex)
+            {
+                Log.WriteEntry(string.Format("CheckKeysConnection error : {0}", ex.Message), EventLogEntryType.Error, 5000);
+                throw ex;
+            }
         }
         #endregion
 
@@ -1412,14 +1444,22 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         private static DataRepositoryService GetDataRepository(MFAConfig cfg, DataRepositoryKind kind)
         {
-            switch (kind)
+            try
             {
-                case DataRepositoryKind.SQL:
-                    return new SQLDataRepositoryService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow);
-                case DataRepositoryKind.Custom:
-                    return CustomDataRepositoryActivator.CreateInstance(cfg.Hosts.CustomStoreHost, cfg.DeliveryWindow);
-                default:
-                    return new ADDSDataRepositoryService(cfg.Hosts.ActiveDirectoryHost, cfg.DeliveryWindow);
+                switch (kind)
+                {
+                    case DataRepositoryKind.SQL:
+                        return new SQLDataRepositoryService(cfg.Hosts.SQLServerHost, cfg.DeliveryWindow);
+                    case DataRepositoryKind.Custom:
+                        return CustomDataRepositoryActivator.CreateInstance(cfg.Hosts.CustomStoreHost, cfg.DeliveryWindow);
+                    default:
+                        return new ADDSDataRepositoryService(cfg.Hosts.ActiveDirectoryHost, cfg.DeliveryWindow);
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.WriteEntry(string.Format("GetDataRepository error : {0} {1}", kind.ToString(), ex.Message), EventLogEntryType.Error, 5000);
+                throw ex;
             }
         }
 
@@ -1497,6 +1537,7 @@ namespace Neos.IdentityServer.MultiFactor
                 }
             }
         }
+
         /// <summary>
         /// CanChangePassword method implmentation
         /// </summary>
@@ -2668,6 +2709,11 @@ namespace Neos.IdentityServer.MultiFactor
                     ClientSIDsProxy.Initialize(config);
                 }
             }
+            catch (Exception ex)
+            {
+                Log.WriteEntry(string.Format("Error when reading configuration from ADFS Database : {0}", ex.Message), EventLogEntryType.Error, 1000);
+                throw ex;
+            }
             finally
             {
                 File.Delete(pth);
@@ -2683,39 +2729,47 @@ namespace Neos.IdentityServer.MultiFactor
             MFAConfig config = null;
             if (!File.Exists(CFGUtilities.ConfigCacheFile))
                 return null;
-            XmlConfigSerializer xmlserializer = new XmlConfigSerializer(typeof(MFAConfig));
-            using (FileStream fs = new FileStream(CFGUtilities.ConfigCacheFile, FileMode.Open, FileAccess.Read))
+            try
             {
-                byte[] bytes = new byte[fs.Length];
-                int n = fs.Read(bytes, 0, (int)fs.Length);
-                fs.Close();
-
-                byte[] byt = null;
-                using (AESSystemEncryption aes = new AESSystemEncryption())
+                XmlConfigSerializer xmlserializer = new XmlConfigSerializer(typeof(MFAConfig));
+                using (FileStream fs = new FileStream(CFGUtilities.ConfigCacheFile, FileMode.Open, FileAccess.Read))
                 {
-                    byt = aes.Decrypt(bytes);
-                }
+                    byte[] bytes = new byte[fs.Length];
+                    int n = fs.Read(bytes, 0, (int)fs.Length);
+                    fs.Close();
 
-                using (MemoryStream ms = new MemoryStream(byt))
-                {
-                    using (StreamReader reader = new StreamReader(ms))
+                    byte[] byt = null;
+                    using (AESSystemEncryption aes = new AESSystemEncryption())
                     {
-                        config = (MFAConfig)xmlserializer.Deserialize(ms);
-                        if ((!config.OTPProvider.Enabled) && (!config.MailProvider.Enabled) && (!config.ExternalProvider.Enabled) && (!config.AzureProvider.Enabled))
-                            config.OTPProvider.Enabled = true;   // always let an active option eg : aplication in this case
-                        using (AESSystemEncryption MSIS = new AESSystemEncryption())
+                        byt = aes.Decrypt(bytes);
+                    }
+
+                    using (MemoryStream ms = new MemoryStream(byt))
+                    {
+                        using (StreamReader reader = new StreamReader(ms))
                         {
-                            config.KeysConfig.XORSecret = MSIS.Decrypt(config.KeysConfig.XORSecret);
-                            config.Hosts.ActiveDirectoryHost.Password = MSIS.Decrypt(config.Hosts.ActiveDirectoryHost.Password);
-                            config.Hosts.SQLServerHost.SQLPassword = MSIS.Decrypt(config.Hosts.SQLServerHost.SQLPassword);
-                            config.MailProvider.Password = MSIS.Decrypt(config.MailProvider.Password);
-                        };
-                        KeysManager.Initialize(config);  // Important
-                        RuntimeAuthProvider.LoadProviders(config);
+                            config = (MFAConfig)xmlserializer.Deserialize(ms);
+                            if ((!config.OTPProvider.Enabled) && (!config.MailProvider.Enabled) && (!config.ExternalProvider.Enabled) && (!config.AzureProvider.Enabled))
+                                config.OTPProvider.Enabled = true;   // always let an active option eg : aplication in this case
+                            using (AESSystemEncryption MSIS = new AESSystemEncryption())
+                            {
+                                config.KeysConfig.XORSecret = MSIS.Decrypt(config.KeysConfig.XORSecret);
+                                config.Hosts.ActiveDirectoryHost.Password = MSIS.Decrypt(config.Hosts.ActiveDirectoryHost.Password);
+                                config.Hosts.SQLServerHost.SQLPassword = MSIS.Decrypt(config.Hosts.SQLServerHost.SQLPassword);
+                                config.MailProvider.Password = MSIS.Decrypt(config.MailProvider.Password);
+                            };
+                            KeysManager.Initialize(config);  // Important
+                            RuntimeAuthProvider.LoadProviders(config);
+                        }
                     }
                 }
+                return config;
             }
-            return config;
+            catch (Exception ex)
+            {
+                Log.WriteEntry(string.Format("Error when reading configuration from Cache file : {0}", ex.Message), EventLogEntryType.Error, 1000);
+                throw ex;
+            }
         }
 
         /// <summary>
@@ -2760,6 +2814,11 @@ namespace Neos.IdentityServer.MultiFactor
                 {
                     config = (MFAConfig)xmlserializer.Deserialize(stm);
                 }
+            }
+            catch (Exception ex)
+            {
+                Log.WriteEntry(string.Format("Error when reading configuration from ADFS Database : {0}", ex.Message), EventLogEntryType.Error, 1000);
+                throw ex;
             }
             finally
             {
@@ -2827,6 +2886,7 @@ namespace Neos.IdentityServer.MultiFactor
                     exportcmd.Parameters.Add(PParam);
                     pipeline.Commands.Add(exportcmd);
                     Collection<PSObject> PSOutput = pipeline.Invoke();
+                    
                 }
                 finally
                 {
@@ -2835,6 +2895,11 @@ namespace Neos.IdentityServer.MultiFactor
                     if (SPPowerShell != null)
                         SPPowerShell.Dispose();
                 }
+            }
+            catch (Exception ex)
+            {
+                Log.WriteEntry(string.Format("Error when saving configuration to ADFS Database : {0}", ex.Message), EventLogEntryType.Error, 1000);
+                throw ex;
             }
             finally
             {
@@ -2848,58 +2913,44 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         internal static MFAConfig WriteConfigurationToCache(MFAConfig config, bool encrypt = true)
         {
-            if (encrypt)
+            try
             {
-                using (AESSystemEncryption MSIS = new AESSystemEncryption())
+                if (encrypt)
                 {
-                    config.KeysConfig.XORSecret = MSIS.Encrypt(config.KeysConfig.XORSecret);
-                    config.Hosts.ActiveDirectoryHost.Password = MSIS.Encrypt(config.Hosts.ActiveDirectoryHost.Password);
-                    config.Hosts.SQLServerHost.SQLPassword = MSIS.Decrypt(config.Hosts.SQLServerHost.SQLPassword);
-                    config.MailProvider.Password = MSIS.Encrypt(config.MailProvider.Password);
-                };
+                    using (AESSystemEncryption MSIS = new AESSystemEncryption())
+                    {
+                        config.KeysConfig.XORSecret = MSIS.Encrypt(config.KeysConfig.XORSecret);
+                        config.Hosts.ActiveDirectoryHost.Password = MSIS.Encrypt(config.Hosts.ActiveDirectoryHost.Password);
+                        config.Hosts.SQLServerHost.SQLPassword = MSIS.Decrypt(config.Hosts.SQLServerHost.SQLPassword);
+                        config.MailProvider.Password = MSIS.Encrypt(config.MailProvider.Password);
+                    };
+                }
+                XmlConfigSerializer xmlserializer = new XmlConfigSerializer(typeof(MFAConfig));
+                MemoryStream stm = new MemoryStream();
+                using (StreamReader reader = new StreamReader(stm))
+                {
+                    xmlserializer.Serialize(stm, config);
+                    stm.Position = 0;
+                    byte[] byt = null;
+                    using (AESSystemEncryption aes = new AESSystemEncryption())
+                    {
+                        byt = aes.Encrypt(stm.ToArray());
+                    }
+                    using (FileStream fs = new FileStream(CFGUtilities.ConfigCacheFile, FileMode.Create, FileAccess.ReadWrite))
+                    {
+                        fs.Write(byt, 0, byt.Length);
+                        fs.Close();
+                    }
+                    return config;
+                }
             }
-            XmlConfigSerializer xmlserializer = new XmlConfigSerializer(typeof(MFAConfig));
-            MemoryStream stm = new MemoryStream();
-            using (StreamReader reader = new StreamReader(stm))
+            catch (Exception ex)
             {
-                xmlserializer.Serialize(stm, config);
-                stm.Position = 0;
-                byte[] byt = null;
-                using (AESSystemEncryption aes = new AESSystemEncryption())
-                {
-                    byt = aes.Encrypt(stm.ToArray());
-                }
-                using (FileStream fs = new FileStream(CFGUtilities.ConfigCacheFile, FileMode.Create, FileAccess.ReadWrite))
-                {
-                    fs.Write(byt, 0, byt.Length);
-                    fs.Close();
-                }
-                return config;
+                Log.WriteEntry(string.Format("Error when saving configuration to the Cache File : {0}", ex.Message), EventLogEntryType.Error, 1000);
+                throw ex;
             }
         }
-        #endregion
-
-        #region Admin Key Reader
-        /// <summary>
-        /// ReadConfigurationKey method implmentation
-        /// </summary>
-      /*  private static byte[] ReadConfigurationKey()
-        {
-            if (ConfigCacheKey != null)
-                return ConfigCacheKey;
-
-            Domain dom = Domain.GetComputerDomain();
-            Guid gd = dom.GetDirectoryEntry().Guid;
-
-            byte[] _key = new byte[32];
-            byte[] _gd = new byte[16];
-            Buffer.BlockCopy(gd.ToByteArray(), 0, _gd, 0, 16);
-            Buffer.BlockCopy(_gd, 0, _key, 0, 16);
-            Array.Reverse(_gd);
-            Buffer.BlockCopy(_gd, 0, _key, 16, 16);
-            return _key;
-        } */
-        #endregion
+        #endregion        
 
         #region Informations
         /// <summary>

@@ -421,7 +421,7 @@ namespace Neos.IdentityServer.Console.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Active Directory &quot;SuperUser&quot; Credentials.
+        ///   Recherche une chaîne localisée semblable à &quot;Data Access Account&quot; Active Directory.
         /// </summary>
         internal static string CTRLADSUPERACCOUNT {
             get {
@@ -1565,7 +1565,7 @@ namespace Neos.IdentityServer.Console.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à SQL Server &quot;SuperUser&quot; Credentials.
+        ///   Recherche une chaîne localisée semblable à &quot;Data Access Account&quot; SQL Server.
         /// </summary>
         internal static string CTRLSQLSUPERACCOUNT {
             get {

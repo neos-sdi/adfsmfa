@@ -2104,57 +2104,77 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// Bind method implementation
         /// </summary>
-        public void Bind()
+        public void Bind(string domainname, string username, string password)
         {
             if (_isbinded)
                 return;
-            _isbinded = true;
-
-            Forests.Clear();
-            Forest currentforest = Forest.GetCurrentForest();
-            ADDSHostForest root = new ADDSHostForest
+            try
             {
-                IsRoot = true,
-                ForestDNS = currentforest.Name
-            };
-            Forests.Add(root);
-            foreach (ForestTrustRelationshipInformation trusts in currentforest.GetAllTrustRelationships())
-            {
-                ADDSHostForest sub = new ADDSHostForest
+                using (Domain domain = ADDSUtils.GetRootDomain(domainname, username, password))
                 {
-                    IsRoot = false,
-                    ForestDNS = trusts.TargetName
-                };
-                foreach (TopLevelName t in trusts.TopLevelNames)
-                {
-                    if (t.Status == TopLevelNameStatus.Enabled)
-                        sub.TopLevelNames.Add(t.Name);
+                    using (Forest forest = ADDSUtils.GetForest(domain.Name, username, password))
+                    {
+                        Forests.Clear();
+                        ADDSHostForest root = new ADDSHostForest
+                        {
+                            IsRoot = true,
+                            ForestDNS = forest.Name
+                        };
+                        Forests.Add(root);
+                        foreach (ForestTrustRelationshipInformation trusts in forest.GetAllTrustRelationships())
+                        {
+                            ADDSHostForest sub = new ADDSHostForest
+                            {
+                                IsRoot = false,
+                                ForestDNS = trusts.TargetName
+                            };
+                            foreach (TopLevelName t in trusts.TopLevelNames)
+                            {
+                                if (t.Status == TopLevelNameStatus.Enabled)
+                                    sub.TopLevelNames.Add(t.Name);
+                            }
+                            Forests.Add(sub);
+                        }
+                    }
                 }
-                Forests.Add(sub);
+                _isbinded = true;
+            }
+            catch (Exception ex)
+            {
+                DataLog.WriteEntry(ex.Message, System.Diagnostics.EventLogEntryType.Error, 5100);
+                _isbinded = false;
             }
         }
 
         /// <summary>
         /// GetForestForUser method implementation
         /// </summary>
-        public string GetForestForUser(string account)
+        public string GetForestForUser(string account, ADDSHost host)
         {
             string result = string.Empty;
             switch (ClaimsUtilities.IdentityClaimTag)
             {
                 case MFASecurityClaimTag.Upn:
                     string foresttofind = account.Substring(account.IndexOf('@') + 1);
+                    result = foresttofind;
                     foreach (ADDSHostForest f in Forests)
                     {
                         if (f.IsRoot)
+                        {
                             result = f.ForestDNS;
+                        }
                         else
                         {
+                            if (f.ForestDNS.ToLower().Equals(foresttofind.ToLower()))
+                            {
+                                result = f.ForestDNS;
+                                break;
+                            }
                             foreach (string s in f.TopLevelNames)
                             {
                                 if (s.ToLower().Equals(foresttofind.ToLower()))
                                 {
-                                    result = s;
+                                    result = f.ForestDNS;
                                     break;
                                 }
                             }
@@ -2162,7 +2182,13 @@ namespace Neos.IdentityServer.MultiFactor
                     }
                     break;
                 case MFASecurityClaimTag.WindowsAccountName:                   
-                    result = account.Substring(0, account.IndexOf('\\') );
+                    string ntlmdomain = account.Substring(0, account.IndexOf('\\'));
+                    DirectoryContext ctx = null;
+                    if (string.IsNullOrEmpty(host.Account) && string.IsNullOrEmpty(host.Password))
+                        ctx = new DirectoryContext(DirectoryContextType.Domain, ntlmdomain);
+                    else
+                        ctx = new DirectoryContext(DirectoryContextType.Domain, ntlmdomain, host.Account, host.Password);
+                    result = Domain.GetDomain(ctx).Forest.RootDomain.Name;
                     break;
             }
             return result;
@@ -2190,6 +2216,9 @@ namespace Neos.IdentityServer.MultiFactor
             }
         }
 
+        /// <summary>
+        /// DomainName property implementation
+        /// </summary>
         public string DomainName
         {
             get

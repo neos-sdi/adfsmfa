@@ -1390,7 +1390,7 @@ namespace Neos.IdentityServer.MultiFactor
         {
             if (loadlocal)
             {
-                RegistryKey rk = Registry.LocalMachine.OpenSubKey("Software\\Microsoft\\Windows NT\\CurrentVersion");
+                RegistryKey rk = Registry.LocalMachine.OpenSubKey("Software\\Microsoft\\Windows NT\\CurrentVersion", false);
 
                 CurrentVersion = Convert.ToString(rk.GetValue("CurrentVersion"));
                 ProductName = Convert.ToString(rk.GetValue("ProductName"));

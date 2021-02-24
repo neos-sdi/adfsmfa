@@ -15,6 +15,7 @@
 // https://github.com/neos-sdi/adfsmfa                                                                                                                                                      //
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -548,12 +549,11 @@ namespace Neos.IdentityServer.MultiFactor
                 tcp.Security.Transport.ClientCredentialType = TcpClientCredentialType.Windows;
                 tcp.MaxConnections = 256;
 
-#if servicesecurity
                 List<IAuthorizationPolicy> policies = new List<IAuthorizationPolicy>();
                 policies.Add(new MFAAuthorizationPolicy());
                 Servicehost.Authorization.ExternalAuthorizationPolicies = policies.AsReadOnly();
                 Servicehost.Authorization.PrincipalPermissionMode = PrincipalPermissionMode.UseWindowsGroups;
-#endif
+
                 ServiceEndpoint svcendpoint = null;
                 if (useEncryption)
                 {
@@ -702,12 +702,11 @@ namespace Neos.IdentityServer.MultiFactor
                 tcp.Security.Transport.ClientCredentialType = TcpClientCredentialType.Windows;
                 tcp.MaxConnections = 256;
 
-#if servicesecurity
                 List<IAuthorizationPolicy> policies = new List<IAuthorizationPolicy>();
                 policies.Add(new MFAAuthorizationPolicy());
                 Servicehost.Authorization.ExternalAuthorizationPolicies = policies.AsReadOnly();
                 Servicehost.Authorization.PrincipalPermissionMode = PrincipalPermissionMode.UseWindowsGroups;
-#endif
+
                 ServiceEndpoint svcendpoint = null;
                 if (useEncryption)
                 {
@@ -857,12 +856,10 @@ namespace Neos.IdentityServer.MultiFactor
                 tcp.MaxConnections = 256;
                 tcp.Security.Transport.ClientCredentialType = TcpClientCredentialType.Windows;
 
-#if servicesecurity
                 List<IAuthorizationPolicy> policies = new List<IAuthorizationPolicy>();
                 policies.Add(new MFAAuthorizationPolicy());
                 Servicehost.Authorization.ExternalAuthorizationPolicies = policies.AsReadOnly();
                 Servicehost.Authorization.PrincipalPermissionMode = PrincipalPermissionMode.UseWindowsGroups;
-#endif
 
                 ServiceEndpoint svcendpoint = null;
                 if (useEncryption)
@@ -1012,12 +1009,10 @@ namespace Neos.IdentityServer.MultiFactor
                 tcp.MaxConnections = 256;
                 tcp.Security.Transport.ClientCredentialType = TcpClientCredentialType.Windows;
 
-#if servicesecurity
                 List<IAuthorizationPolicy> policies = new List<IAuthorizationPolicy>();
                 policies.Add(new MFAAuthorizationPolicy());
                 Servicehost.Authorization.ExternalAuthorizationPolicies = policies.AsReadOnly();
                 Servicehost.Authorization.PrincipalPermissionMode = PrincipalPermissionMode.UseWindowsGroups;
-#endif
 
                 ServiceEndpoint svcendpoint = null;
                 if (useEncryption)
@@ -1881,17 +1876,20 @@ namespace Neos.IdentityServer.MultiFactor
             }
         }
     }
-#endregion
+    #endregion
 
-#if servicesecurity
+    #region MFAAuthorizationPolicy
     public class MFAAuthorizationPolicy : IAuthorizationPolicy
     {
+        private static string _delegatedgroupname;
 
         /// <summary>
         /// MFAAuthorizationPolicy constructor implementation
         /// </summary>
         public MFAAuthorizationPolicy()
         {
+            if (string.IsNullOrEmpty(_delegatedgroupname))
+                _delegatedgroupname = GetDelegatedGroupValue();
             Id = Guid.NewGuid().ToString();
         }
 
@@ -1935,7 +1933,7 @@ namespace Neos.IdentityServer.MultiFactor
                 customstate.Checked = true;
                 WindowsIdentity idt = (WindowsIdentity)identities[0];
                 WindowsPrincipal win = new WindowsPrincipal(idt);
-                if (ADFSManagementRolesChecker.IsAdministrator(win) || ADFSManagementRolesChecker.IsSystem(idt) || ADFSManagementRolesChecker.AllowedGroup(win, @"DOMAIN\ADFS Administrators"))
+                if (ADFSManagementRolesChecker.IsAdministrator(win) || ADFSManagementRolesChecker.IsSystem(idt) || ADFSManagementRolesChecker.AllowedGroup(win, _delegatedgroupname))
                 {
                     context.Properties["Principal"] = win;
                     return true;
@@ -1945,7 +1943,20 @@ namespace Neos.IdentityServer.MultiFactor
             else
                 bRet = true;
             return bRet;           
-        }        
+        }
+
+        /// <summary>
+        /// GetDelegatedGroupValue method implementation
+        /// </summary>
+        private static string GetDelegatedGroupValue()
+        {
+            RegistryKey rk = Registry.LocalMachine.OpenSubKey("Software\\MFA", false);
+            object obj = rk.GetValue("DelegatedAdminGroup");
+            if (obj == null)
+                return string.Empty;
+            else 
+                return obj.ToString();
+        }
     }
 
     /// <summary>
@@ -2008,5 +2019,5 @@ namespace Neos.IdentityServer.MultiFactor
     {
         public bool Checked { get; set; }
     }
-#endif
+    #endregion
 }

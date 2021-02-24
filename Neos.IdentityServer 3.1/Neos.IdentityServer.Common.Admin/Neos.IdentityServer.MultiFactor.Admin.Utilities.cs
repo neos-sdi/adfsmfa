@@ -379,43 +379,63 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <summary>
         /// VerifyPrimaryServer method implementation
         /// </summary>
-        internal static void VerifyPrimaryServer()
+        internal static void VerifyPrimaryServer(PSHost host = null)
         {
             RegistryKey rk = Registry.LocalMachine.OpenSubKey("Software\\MFA", false);
             bool isprimary = Convert.ToBoolean(rk.GetValue("IsPrimaryServer", 0, RegistryValueOptions.None));
             if (!isprimary)
-                throw new InvalidOperationException("PS0033: This Cmdlet cannot be executed from a secondary server !");
+            {
+                if (host==null)
+                    throw new InvalidOperationException("Must be executed from a primary server !");
+                else
+                    throw new InvalidOperationException("PS0033: This Cmdlet cannot be executed from a secondary server !");
+            }
         }
 
         /// <summary>
         /// VerifyADFSServer2019 method implementation
         /// </summary>
-        internal static void VerifyADFSServer2019()
+        internal static void VerifyADFSServer2019(PSHost host = null)
         {
             RegistryVersion reg = new RegistryVersion();
             if (!reg.IsWindows2019)
-               throw new InvalidOperationException("PS0033: This Cmdlet must be executed on Windows 2019 server and up only !");
+            {
+                if (host==null)
+                    throw new InvalidOperationException("Must be executed on Windows 2019 server and up only !");
+                else
+                    throw new InvalidOperationException("PS0033: This Cmdlet must be executed on Windows 2019 server and up only !");
+            }
         }
 
         /// <summary>
         /// VerifyADFSAdministrationRights method implementation
         /// </summary>
-        internal static void VerifyADFSAdministrationRights()
+        internal static void VerifyADFSAdministrationRights(PSHost host = null)
         {
             ClientSIDsProxy.Initialize();
             if (!((ClientSIDsProxy.ADFSLocalAdminServiceAdministrationAllowed && ADFSManagementRights.IsAdministrator()) ||
                   (ClientSIDsProxy.ADFSSystemServiceAdministrationAllowed && ADFSManagementRights.IsSystem()) ||
                   (ClientSIDsProxy.ADFSDelegateServiceAdministrationAllowed && ADFSManagementRights.AllowedGroup(ClientSIDsProxy.ADFSAdminGroupName))))
-                throw new InvalidOperationException("PS0033: This Cmdlet must be executed with ADFS Administration rights granted for the current user !");
+            {
+                if (host==null)
+                    throw new InvalidOperationException("Must be executed with ADFS Administration rights granted for the current user !");
+                else
+                    throw new InvalidOperationException("PS0033: This Cmdlet must be executed with ADFS Administration rights granted for the current user !");
+            }
         }
 
         /// <summary>
         /// VerifyMFAConfigurationRights method implementation
         /// </summary>
-        internal static void VerifyMFAConfigurationRights()
+        internal static void VerifyMFAConfigurationRights(PSHost host = null)
         {
-            if (!(ADFSManagementRights.IsAdministrator()) ||ADFSManagementRights.IsSystem())
-                throw new InvalidOperationException("PS0033: This Cmdlet must be executed with System Administration rights granted for the current user !");
+            if (!(ADFSManagementRights.IsAdministrator()) || ADFSManagementRights.IsSystem())
+            {
+                if (host==null)
+                    throw new InvalidOperationException("Must be executed with System Administration rights granted for the current user !");
+                else
+                    throw new InvalidOperationException("PS0033: This Cmdlet must be executed with System Administration rights granted for the current user !");
+            }
         }
 
         #endregion

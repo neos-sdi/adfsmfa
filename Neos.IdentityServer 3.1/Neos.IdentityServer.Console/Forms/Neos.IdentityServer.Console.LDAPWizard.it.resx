@@ -198,4 +198,7 @@
   <data name="$this.Text" xml:space="preserve">
     <value>Importazione utenti ADDS</value>
   </data>
+  <data name="checkBoxEnabled.Text" xml:space="preserve">
+    <value>Disabilita utenti</value>
+  </data>
 </root>

@@ -1549,9 +1549,6 @@
     <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.ServiceFormView.ro.resx" />
     <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.ServiceFormView.ru.resx" />
     <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.ServiceFormView.sv.resx" />
-    <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.Snapin.da.resx" />
-    <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.Snapin.fr-CA.resx" />
-    <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.Snapin.ja.resx" />
     <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.Snapin.resx">
       <SubType>Designer</SubType>
       <Generator>PublicResXFileCodeGenerator</Generator>

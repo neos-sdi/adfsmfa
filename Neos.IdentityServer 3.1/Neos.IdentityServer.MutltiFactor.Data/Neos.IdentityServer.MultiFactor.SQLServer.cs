@@ -109,9 +109,9 @@ namespace Neos.IdentityServer.MultiFactor.Data
             }
             string request;
             if (disableoninsert)
-               request = "UPDATE REGISTRATIONS SET MAILADDRESS = @MAILADDRESS, PHONENUMBER = @PHONENUMBER, PIN=@PIN, METHOD=@METHOD, OVERRIDE=@OVERRIDE, WHERE UPN=@UPN";
+                request = "UPDATE REGISTRATIONS SET MAILADDRESS = @MAILADDRESS, PHONENUMBER = @PHONENUMBER, PIN=@PIN, METHOD=@METHOD, OVERRIDE=@OVERRIDE, WHERE UPN=@UPN";
             else
-               request = "UPDATE REGISTRATIONS SET MAILADDRESS = @MAILADDRESS, PHONENUMBER = @PHONENUMBER, PIN=@PIN, METHOD=@METHOD, OVERRIDE=@OVERRIDE, ENABLED=@ENABLED WHERE UPN=@UPN";
+                request = "UPDATE REGISTRATIONS SET MAILADDRESS = @MAILADDRESS, PHONENUMBER = @PHONENUMBER, PIN=@PIN, METHOD=@METHOD, OVERRIDE=@OVERRIDE, ENABLED=@ENABLED WHERE UPN=@UPN";
 
             SqlConnection con = new SqlConnection(SQLUtils.GetFullConnectionString(SQLHost));
             SqlCommand sql = new SqlCommand(request, con);
@@ -674,7 +674,6 @@ namespace Neos.IdentityServer.MultiFactor.Data
                 sql.Parameters.Add(prm);
                 prm.Value = filter.FilterValue;
             }
-
             con.Open();
             try
             {
@@ -720,13 +719,20 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// </summary>
         public List<MFAWebAuthNUser> GetUsersByCredentialId(MFAWebAuthNUser user, byte[] credentialId)
         {
-           List<MFAWebAuthNUser> _users = new List<MFAWebAuthNUser>();
-            string credsid = HexaEncoding.GetHexStringFromByteArray(credentialId);
-            MFAUserCredential cred = GetCredentialByCredentialId(user, credsid);
-
-            if (cred != null)
-                _users.Add(user);
-            return _users;
+            try
+            {
+                List<MFAWebAuthNUser> _users = new List<MFAWebAuthNUser>();
+                string credsid = HexaEncoding.GetHexStringFromByteArray(credentialId);
+                MFAUserCredential cred = GetCredentialByCredentialId(user, credsid);
+                if (cred != null)
+                    _users.Add(user);
+                return _users;
+            }
+            catch (Exception ex)
+            {
+                DataLog.WriteEntry(ex.Message, System.Diagnostics.EventLogEntryType.Error, 5000);
+                throw new Exception(ex.Message);
+            }
         }
 
         /// <summary>
@@ -778,8 +784,16 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// </summary>
         public List<MFAUserCredential> GetCredentialsByUserHandle(MFAWebAuthNUser user, byte[] userHandle)
         {
-            List<MFAUserCredential> _lst = GetCredentialsByUser(user);
-            return _lst.Where(c => c.UserHandle.SequenceEqual(userHandle)).ToList();
+            try
+            {
+                List<MFAUserCredential> _lst = GetCredentialsByUser(user);
+                return _lst.Where(c => c.UserHandle.SequenceEqual(userHandle)).ToList();
+            }
+            catch (Exception ex)
+            {
+                DataLog.WriteEntry(ex.Message, System.Diagnostics.EventLogEntryType.Error, 5000);
+                throw new Exception(ex.Message);
+            }
         }
 
         /// <summary>
@@ -787,9 +801,17 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// </summary>
         public MFAUserCredential GetCredentialById(MFAWebAuthNUser user, byte[] credentialId)
         {
-            string credsid = HexaEncoding.GetHexStringFromByteArray(credentialId);
-            MFAUserCredential cred = GetCredentialByCredentialId(user, credsid);
-            return cred;
+            try
+            {
+                string credsid = HexaEncoding.GetHexStringFromByteArray(credentialId);
+                MFAUserCredential cred = GetCredentialByCredentialId(user, credsid);
+                return cred;
+            }
+            catch (Exception ex)
+            {
+                DataLog.WriteEntry(ex.Message, System.Diagnostics.EventLogEntryType.Error, 5000);
+                throw new Exception(ex.Message);
+            }
         }
 
         /// <summary>
@@ -851,12 +873,20 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// </summary>
         public void UpdateCounter(MFAWebAuthNUser user, byte[] credentialId, uint counter)
         {
-            string credsid = HexaEncoding.GetHexStringFromByteArray(credentialId);
-            MFAUserCredential cred = GetCredentialByCredentialId(user, credsid);
-            if (cred != null)
+            try
             {
-                cred.SignatureCounter = counter;
-                SetUserCredential(user, cred);
+                string credsid = HexaEncoding.GetHexStringFromByteArray(credentialId);
+                MFAUserCredential cred = GetCredentialByCredentialId(user, credsid);
+                if (cred != null)
+                {
+                    cred.SignatureCounter = counter;
+                    SetUserCredential(user, cred);
+                }
+            }
+            catch (Exception ex)
+            {
+                DataLog.WriteEntry(ex.Message, System.Diagnostics.EventLogEntryType.Error, 5000);
+                throw new Exception(ex.Message);
             }
         }
 
@@ -1016,8 +1046,9 @@ namespace Neos.IdentityServer.MultiFactor.Data
                 con.Open();
                 return true;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                DataLog.WriteEntry(ex.Message, System.Diagnostics.EventLogEntryType.Error, 5000);
                 return false;
             }
             finally
@@ -1091,10 +1122,18 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// </summary>
         public override string NewUserKey(string upn, string secretkey, X509Certificate2 cert = null)
         {
-            if (SQLUtils.IsMFAUserRegistered(SQLHost, upn.ToLower()))
-                return DoUpdateUserKey(upn.ToLower(), secretkey);
-            else
-                return DoInsertUserKey(upn.ToLower(), secretkey);
+            try
+            {
+                if (SQLUtils.IsMFAUserRegistered(SQLHost, upn.ToLower()))
+                    return DoUpdateUserKey(upn.ToLower(), secretkey);
+                else
+                    return DoInsertUserKey(upn.ToLower(), secretkey);
+            }
+            catch (Exception ex)
+            {
+                DataLog.WriteEntry(ex.Message, System.Diagnostics.EventLogEntryType.Error, 5000);
+                throw ex;
+            }
         }
 
         /// <summary>
@@ -1349,18 +1388,26 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// </summary>
         public override string NewUserKey(string upn, string secretkey, X509Certificate2 cert = null)
         {
-            if (SQLUtils.IsMFAUserRegistered(SQLHost, upn.ToLower()))
-                DoUpdateUserKey(upn.ToLower(), secretkey);
-            else
-                DoInsertUserKey(upn.ToLower(), secretkey);
-            if (cert != null)
+            try
             {
-                if (HasStoredCertificate(upn.ToLower()))
-                    DoUpdateUserCertificate(upn.ToLower(), cert);
+                if (SQLUtils.IsMFAUserRegistered(SQLHost, upn.ToLower()))
+                    DoUpdateUserKey(upn.ToLower(), secretkey);
                 else
-                    DoInsertUserCertificate(upn.ToLower(), cert);
+                    DoInsertUserKey(upn.ToLower(), secretkey);
+                if (cert != null)
+                {
+                    if (HasStoredCertificate(upn.ToLower()))
+                        DoUpdateUserCertificate(upn.ToLower(), cert);
+                    else
+                        DoInsertUserCertificate(upn.ToLower(), cert);
+                }
+                return secretkey;
             }
-            return secretkey;
+            catch (Exception ex)
+            {
+                DataLog.WriteEntry(ex.Message, System.Diagnostics.EventLogEntryType.Error, 5000);
+                throw new Exception(ex.Message);
+            }
         }
 
         /// <summary>
@@ -1464,10 +1511,18 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// </summary>
         public override X509Certificate2 CreateCertificate(string upn, string password, int validity)
         {
-            string pass = string.Empty;
-            if (!string.IsNullOrEmpty(password))
-                pass = password;
-            return Certs.CreateRSAEncryptionCertificateForUser(upn.ToLower(), validity, pass);
+            try
+            {
+                string pass = string.Empty;
+                if (!string.IsNullOrEmpty(password))
+                    pass = password;
+                return Certs.CreateRSAEncryptionCertificateForUser(upn.ToLower(), validity, pass);
+            }
+            catch (Exception ex)
+            {
+                DataLog.WriteEntry(ex.Message, System.Diagnostics.EventLogEntryType.Error, 5000);
+                throw new Exception(ex.Message);
+            }
         }
 
         /// <summary>
@@ -1717,8 +1772,9 @@ namespace Neos.IdentityServer.MultiFactor.Data
                 con.Open();
                 return true;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                DataLog.WriteEntry(ex.Message, System.Diagnostics.EventLogEntryType.Error, 5000);
                 return false;
             }
             finally
@@ -1768,41 +1824,49 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// <returns></returns>
         internal static string GetFullConnectionString(SQLServerHost SQLHost, string connectstr = null, string account = null, string password = null)
         {
-            string connectionstring = string.Empty;
-            string[] parts = null;
-            if (string.IsNullOrEmpty(connectstr))
-                parts = SQLHost.ConnectionString.Split(';');
-            else
-                parts = connectstr.Split(';');
-            for (int i = 0; i < parts.Length; i++)
+            try
             {
-                if (parts[i].ToLower().StartsWith("user id"))
-                    parts[i] = string.Empty;
-                else if (parts[i].ToLower().StartsWith("password"))
-                    parts[i] = string.Empty;
-                else if (parts[i].ToLower().StartsWith("integrated security"))
-                    parts[i] = string.Empty;
-            }
-            for (int i = 0; i < parts.Length; i++)
-            {
-                if (!string.IsNullOrEmpty(parts[i]))
-                    connectionstring += parts[i] + ";";
-            }
+                string connectionstring = string.Empty;
+                string[] parts = null;
+                if (string.IsNullOrEmpty(connectstr))
+                    parts = SQLHost.ConnectionString.Split(';');
+                else
+                    parts = connectstr.Split(';');
+                for (int i = 0; i < parts.Length; i++)
+                {
+                    if (parts[i].ToLower().StartsWith("user id"))
+                        parts[i] = string.Empty;
+                    else if (parts[i].ToLower().StartsWith("password"))
+                        parts[i] = string.Empty;
+                    else if (parts[i].ToLower().StartsWith("integrated security"))
+                        parts[i] = string.Empty;
+                }
+                for (int i = 0; i < parts.Length; i++)
+                {
+                    if (!string.IsNullOrEmpty(parts[i]))
+                        connectionstring += parts[i] + ";";
+                }
 
-            if (string.IsNullOrEmpty(SQLHost.SQLAccount) || string.IsNullOrEmpty(SQLHost.SQLPassword))
-                connectionstring += "Integrated Security=SSPI;";
-            else
-            {
-                if (string.IsNullOrEmpty(account))
-                    connectionstring += "User ID=" + SQLHost.SQLAccount + ";Password=" + SQLHost.SQLPassword + ";";
+                if (string.IsNullOrEmpty(SQLHost.SQLAccount) || string.IsNullOrEmpty(SQLHost.SQLPassword))
+                    connectionstring += "Integrated Security=SSPI;";
                 else
-                    connectionstring += "User ID=" + account + ";";
-                if (string.IsNullOrEmpty(password))
-                    connectionstring += "Password=" + SQLHost.SQLPassword + ";";
-                else
-                    connectionstring += "Password=" + password + ";";
+                {
+                    if (string.IsNullOrEmpty(account))
+                        connectionstring += "User ID=" + SQLHost.SQLAccount + ";Password=" + SQLHost.SQLPassword + ";";
+                    else
+                        connectionstring += "User ID=" + account + ";";
+                    if (string.IsNullOrEmpty(password))
+                        connectionstring += "Password=" + SQLHost.SQLPassword + ";";
+                    else
+                        connectionstring += "Password=" + password + ";";
+                }
+                return connectionstring;
             }
-            return connectionstring;
+            catch (Exception ex)
+            {
+                DataLog.WriteEntry(ex.Message, System.Diagnostics.EventLogEntryType.Error, 5000);
+                throw new Exception(ex.Message);
+            }
         }
     }
     #endregion

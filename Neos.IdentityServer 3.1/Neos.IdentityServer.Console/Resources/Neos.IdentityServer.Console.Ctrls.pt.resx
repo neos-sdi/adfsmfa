@@ -621,9 +621,6 @@
   <data name="CTRLADATRSACERTERROR" xml:space="preserve">
     <value>Inválido adiciona atributo para certificado RSA !</value>
   </data>
-  <data name="CTRLADSUPERACCOUNT" xml:space="preserve">
-    <value>Credenciais de "Superusuário" do Active Directory</value>
-  </data>
   <data name="CTRLADTITLECONFIG" xml:space="preserve">
     <value>Propriedades gerais de segurança</value>
   </data>
@@ -681,13 +678,16 @@
   <data name="CTRLSQLATTACCOUNT" xml:space="preserve">
     <value>Conta SQLServer inválida !</value>
   </data>
-  <data name="CTRLSQLSUPERACCOUNT" xml:space="preserve">
-    <value>Credenciais "SuperUser" do SQL Server</value>
-  </data>
   <data name="CTRLSQLCONNECTIONOK" xml:space="preserve">
     <value>Conexão com o SQL Server operacional !</value>
   </data>
   <data name="CTRLSQLCONNECTIONERROR" xml:space="preserve">
     <value>Incapaz de se conectar ao SQL Server !</value>
+  </data>
+  <data name="CTRLADSUPERACCOUNT" xml:space="preserve">
+    <value>Diretório ativo "Data Access Account"</value>
+  </data>
+  <data name="CTRLSQLSUPERACCOUNT" xml:space="preserve">
+    <value>"Data Access Account" SQL Server</value>
   </data>
 </root>

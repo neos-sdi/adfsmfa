@@ -78,9 +78,11 @@
             // 
             // richTextBox1
             // 
-            resources.ApplyResources(this.richTextBox1, "richTextBox1");
+            this.richTextBox1.BackColor = System.Drawing.SystemColors.Window;
             this.richTextBox1.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            resources.ApplyResources(this.richTextBox1, "richTextBox1");
             this.richTextBox1.Name = "richTextBox1";
+            this.richTextBox1.ReadOnly = true;
             // 
             // RootViewControl
             // 

@@ -234,9 +234,6 @@
   <data name="CTRLADPASSWORD" xml:space="preserve">
     <value>Adgangskode</value>
   </data>
-  <data name="CTRLADSUPERACCOUNT" xml:space="preserve">
-    <value>Legitimationsoplysninger til Active Directory "SuperUser"</value>
-  </data>
   <data name="CTRLADTEMPLATE2016" xml:space="preserve">
     <value>TILFØJER Skema 2016++</value>
   </data>
@@ -681,13 +678,16 @@
   <data name="CTRLSQLATTACCOUNT" xml:space="preserve">
     <value>Ugyldig SQLServer-konto !</value>
   </data>
-  <data name="CTRLSQLSUPERACCOUNT" xml:space="preserve">
-    <value>Legitimationsoplysninger til SQL Server "SuperUser"</value>
-  </data>
   <data name="CTRLSQLCONNECTIONOK" xml:space="preserve">
     <value>Forbindelse til SQL Server-funktion !</value>
   </data>
   <data name="CTRLSQLCONNECTIONERROR" xml:space="preserve">
     <value>Der kan ikke oprettes forbindelse til SQL Server!</value>
+  </data>
+  <data name="CTRLADSUPERACCOUNT" xml:space="preserve">
+    <value>"Dataadgangskonto" Active Directory</value>
+  </data>
+  <data name="CTRLSQLSUPERACCOUNT" xml:space="preserve">
+    <value>SQL Server til "DataAdgangskonto"</value>
   </data>
 </root>

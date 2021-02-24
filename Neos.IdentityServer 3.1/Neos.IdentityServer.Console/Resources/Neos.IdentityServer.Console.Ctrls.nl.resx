@@ -621,9 +621,6 @@
   <data name="CTRLADATRSACERTERROR" xml:space="preserve">
     <value>Ongeldig kenmerk toegevoegd voor RSA-certificaat!</value>
   </data>
-  <data name="CTRLADSUPERACCOUNT" xml:space="preserve">
-    <value>Active Directory "SuperUser" referenties</value>
-  </data>
   <data name="CTRLADTITLECONFIG" xml:space="preserve">
     <value>Algemene beveiligingseigenschappen</value>
   </data>
@@ -681,13 +678,16 @@
   <data name="CTRLSQLATTACCOUNT" xml:space="preserve">
     <value>Ongeldig SQLServer-account !</value>
   </data>
-  <data name="CTRLSQLSUPERACCOUNT" xml:space="preserve">
-    <value>SQL Server "SuperUser" Referenties</value>
-  </data>
   <data name="CTRLSQLCONNECTIONOK" xml:space="preserve">
     <value>Verbinding met SQL Server operationeel !</value>
   </data>
   <data name="CTRLSQLCONNECTIONERROR" xml:space="preserve">
     <value>Kan geen verbinding maken met SQL Server !</value>
+  </data>
+  <data name="CTRLADSUPERACCOUNT" xml:space="preserve">
+    <value>Active Directory 'Data Access-account'</value>
+  </data>
+  <data name="CTRLSQLSUPERACCOUNT" xml:space="preserve">
+    <value>SQL-server met 'Data Access-account'</value>
   </data>
 </root>

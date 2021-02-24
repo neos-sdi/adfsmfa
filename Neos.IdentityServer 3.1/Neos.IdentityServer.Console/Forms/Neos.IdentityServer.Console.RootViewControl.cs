@@ -15,20 +15,9 @@
 // https://github.com/neos-sdi/adfsmfa                                                                                                                                                      //
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using Microsoft.ManagementConsole;
-using Neos.IdentityServer.MultiFactor.Administration;
-using System.Threading;
-using Neos.IdentityServer.MultiFactor;
-using System.DirectoryServices;
+using System;
+using System.Windows.Forms;
 
 namespace Neos.IdentityServer.Console
 {

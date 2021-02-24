@@ -234,9 +234,6 @@
   <data name="CTRLADPASSWORD" xml:space="preserve">
     <value>mot de passe</value>
   </data>
-  <data name="CTRLADSUPERACCOUNT" xml:space="preserve">
-    <value>Annuaire actif "SuperUser" Credentials</value>
-  </data>
   <data name="CTRLADTEMPLATE2016" xml:space="preserve">
     <value>ADDS Schema 2016</value>
   </data>
@@ -681,13 +678,16 @@
   <data name="CTRLSQLATTACCOUNT" xml:space="preserve">
     <value>Compte SQLServer non valide !</value>
   </data>
-  <data name="CTRLSQLSUPERACCOUNT" xml:space="preserve">
-    <value>Informations d’identification « SuperUser » SQL Server</value>
-  </data>
   <data name="CTRLSQLCONNECTIONOK" xml:space="preserve">
     <value>Connexion au serveur SQL opérationnelle !</value>
   </data>
   <data name="CTRLSQLCONNECTIONERROR" xml:space="preserve">
     <value>Impossible de se connecter au serveur SQL !</value>
+  </data>
+  <data name="CTRLADSUPERACCOUNT" xml:space="preserve">
+    <value>Compte d’accès aux données Active Directory</value>
+  </data>
+  <data name="CTRLSQLSUPERACCOUNT" xml:space="preserve">
+    <value>Serveur SQL « Compte d’accès aux données »</value>
   </data>
 </root>
