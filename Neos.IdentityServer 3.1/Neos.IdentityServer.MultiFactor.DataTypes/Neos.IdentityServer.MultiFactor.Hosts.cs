@@ -2159,18 +2159,23 @@ namespace Neos.IdentityServer.MultiFactor
                     result = foresttofind;
                     foreach (ADDSHostForest f in Forests)
                     {
-                        if (f.IsRoot)
+                        if (f.IsRoot) // By default Any root domain, subdomain, toplevelname on default forest
                         {
                             result = f.ForestDNS;
                         }
-                        else
+                        else // trusted forests
                         {
-                            if (f.ForestDNS.ToLower().Equals(foresttofind.ToLower()))
+                            if (f.ForestDNS.ToLower().Equals(foresttofind.ToLower())) // root domain
                             {
                                 result = f.ForestDNS;
                                 break;
                             }
-                            foreach (string s in f.TopLevelNames)
+                            if (foresttofind.ToLower().EndsWith("."+ f.ForestDNS.ToLower()))  // subdomain
+                            {
+                                result = f.ForestDNS;
+                                break;
+                            }
+                            foreach (string s in f.TopLevelNames) // toplevelnames
                             {
                                 if (s.ToLower().Equals(foresttofind.ToLower()))
                                 {
