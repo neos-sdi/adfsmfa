@@ -690,4 +690,22 @@
   <data name="CTRLSQLSUPERACCOUNT" xml:space="preserve">
     <value>Сервер "Учетная запись доступа к данным" S'L</value>
   </data>
+  <data name="CTRLPASSWORDPOLICY" xml:space="preserve">
+    <value>Политика паролей</value>
+  </data>
+  <data name="CTRLUSEPASSWORDPOLICY" xml:space="preserve">
+    <value>Политика активации паролей</value>
+  </data>
+  <data name="CTRLUSEGPOPASSWORDPOLICY" xml:space="preserve">
+    <value>Использование корпоративной политики паролей (GPO)</value>
+  </data>
+  <data name="CTRLLOCKUSERONPASSWORDEXPIRED" xml:space="preserve">
+    <value>Блокировка пользователя в случае истечения срока действия пароля</value>
+  </data>
+  <data name="CTRLMAXPASSWORDAGEINDAYS" xml:space="preserve">
+    <value>Максимальный срок службы пароля</value>
+  </data>
+  <data name="CTRLWARNMAXPASSWORDAGEINDAYS" xml:space="preserve">
+    <value>Сообщите пользователю до истечения срока действия пароля</value>
+  </data>
 </root>

@@ -57,6 +57,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
         }
     }
 
+    /*
     /// <summary>
     /// ADDSForest class implementation
     /// </summary>
@@ -67,13 +68,14 @@ namespace Neos.IdentityServer.MultiFactor.Data
         public List<string> TopLevelNames = new List<string>();
     }
 
+    /*
     /// <summary>
     /// ADDSForestUtils class implementation
     /// </summary>
     public class ADDSForestUtils
     {
         private bool _isbinded = false;
-        private List<ADDSForest> _forests = new List<ADDSForest>();
+        private readonly List<ADDSForest> _forests = new List<ADDSForest>();
 
         /// <summary>
         /// ADDSForestUtils constructor
@@ -82,6 +84,11 @@ namespace Neos.IdentityServer.MultiFactor.Data
         {
             _isbinded = false;
             Bind();
+        }
+
+        public List<ADDSForest> Forests
+        {
+            get { return _forests; }
         }
 
         /// <summary>
@@ -139,17 +146,212 @@ namespace Neos.IdentityServer.MultiFactor.Data
             }
             return result;
         }
+    }
+    */
 
-        public List<ADDSForest> Forests
-        {
-            get { return _forests; }
-        }
+    /// <summary>
+    /// ADDSHostForest class implementation
+    /// </summary>
+    public class ADDSHostForest
+    {
+        public bool IsRoot { get; set; }
+        public string ForestDNS { get; set; }
+        public List<string> TopLevelNames = new List<string>();
     }
 
     #region ADDS Utils
-    internal static class ADDSUtils
+    public static class ADDSUtils
     {
-        #region Private methods
+        private static bool _isbinded = false;
+        private static bool _usessl = false;
+
+        /// <summary>
+        /// ADDSHost constructor
+        /// </summary>
+        static ADDSUtils()
+        {
+            _isbinded = false;
+        }
+
+        internal static List<ADDSHostForest> Forests { get; } = new List<ADDSHostForest>();
+
+        /// <summary>
+        /// LoadForests method implementation
+        /// </summary>
+        public static void LoadForests(string domainname, string account, string password, bool usessl, bool reset = false)
+        {
+            if (reset)
+                ResetForests();
+            if (_isbinded)
+                return;
+            try
+            {
+                _usessl = usessl;
+                using (Domain domain = ADDSUtils.GetRootDomain(domainname, account, password))
+                {
+                    using (Forest forest = ADDSUtils.GetForest(domain.Name, account, password))
+                    {
+                        Forests.Clear();
+                        ADDSHostForest root = new ADDSHostForest
+                        {
+                            IsRoot = true,
+                            ForestDNS = forest.Name
+                        };
+                        Forests.Add(root);
+                        foreach (ForestTrustRelationshipInformation trusts in forest.GetAllTrustRelationships())
+                        {
+                            ADDSHostForest sub = new ADDSHostForest
+                            {
+                                IsRoot = false,
+                                ForestDNS = trusts.TargetName
+                            };
+                            foreach (TopLevelName t in trusts.TopLevelNames)
+                            {
+                                if (t.Status == TopLevelNameStatus.Enabled)
+                                    sub.TopLevelNames.Add(t.Name);
+                            }
+                            Forests.Add(sub);
+                        }
+                    }
+                }
+                _isbinded = true;
+            }
+            catch (Exception ex)
+            {
+                DataLog.WriteEntry(ex.Message, System.Diagnostics.EventLogEntryType.Error, 5100);
+                _isbinded = false;
+            }
+        }
+
+        /// <summary>
+        /// ResetForests method implementation
+        /// </summary>
+        public static void ResetForests()
+        {
+            _usessl = false;
+            _isbinded = false;
+            Forests.Clear();
+        }
+
+        /// <summary>
+        /// GetForestForUser method implementation
+        /// </summary>
+        internal static string GetForestForUser(ADDSHost host, string username)
+        {
+            string result = string.Empty;
+            switch (ClaimsUtilities.IdentityClaimTag)
+            {
+                case MFASecurityClaimTag.Upn:
+                    string foresttofind = username.Substring(username.IndexOf('@') + 1);
+                    result = foresttofind;
+                    foreach (ADDSHostForest f in Forests)
+                    {
+                        if (f.IsRoot) // By default Any root domain, subdomain, toplevelname on default forest
+                        {
+                            result = f.ForestDNS;
+                        }
+                        else // trusted forests
+                        {
+                            if (f.ForestDNS.ToLower().Equals(foresttofind.ToLower())) // root domain
+                            {
+                                result = f.ForestDNS;
+                                break;
+                            }
+                            if (foresttofind.ToLower().EndsWith("." + f.ForestDNS.ToLower()))  // subdomain
+                            {
+                                result = f.ForestDNS;
+                                break;
+                            }
+                            foreach (string s in f.TopLevelNames) // toplevelnames
+                            {
+                                if (s.ToLower().Equals(foresttofind.ToLower()))
+                                {
+                                    result = f.ForestDNS;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    break;
+                case MFASecurityClaimTag.WindowsAccountName:
+                    string ntlmdomain = username.Substring(0, username.IndexOf('\\'));
+                    DirectoryContext ctx = null;
+                    if (string.IsNullOrEmpty(host.Account) && string.IsNullOrEmpty(host.Password))
+                        ctx = new DirectoryContext(DirectoryContextType.Domain, ntlmdomain);
+                    else
+                        ctx = new DirectoryContext(DirectoryContextType.Domain, ntlmdomain, host.Account, host.Password);
+                    result = Domain.GetDomain(ctx).Forest.RootDomain.Name;
+                    break;
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// GetDomainForUser method implmentation
+        /// </summary>
+        internal static string GetSAMAccountForUser(ADDSHost host, string username)
+        {
+            string result = string.Empty;
+            switch (ClaimsUtilities.IdentityClaimTag)
+            {
+                case MFASecurityClaimTag.Upn:
+                    string foresttofind = username.Substring(username.IndexOf('@') + 1);
+                    if (!string.IsNullOrEmpty(foresttofind))
+                        return GetNetBiosName(host, username);
+                    else
+                        return null;
+                case MFASecurityClaimTag.WindowsAccountName:
+                    string ntlmdomain = username.Substring(0, username.IndexOf('\\'));
+                    if (!string.IsNullOrEmpty(ntlmdomain))
+                        return username;
+                    else
+                        return null;
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// GetNetBiosName method 
+        /// </summary>
+        private static string GetNetBiosName(ADDSHost host, string username)
+        {
+            try
+            {
+                using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUser(host, host.Account, host.Password, username))
+                {
+                    string qryldap = "(&(objectCategory=user)(objectClass=user)(userPrincipalName=" + username + ")(!(userAccountControl:1.2.840.113556.1.4.803:=2)))";
+                    using (DirectorySearcher dsusr = new DirectorySearcher(rootdir, qryldap))
+                    {
+                        dsusr.PropertiesToLoad.Clear();
+                        dsusr.PropertiesToLoad.Add("objectGUID");
+                        dsusr.PropertiesToLoad.Add("msDS-PrincipalName");
+                        dsusr.ReferralChasing = ReferralChasingOption.All;
+
+                        SearchResult sr = dsusr.FindOne();
+                        if (sr != null)
+                        {
+                            using (DirectoryEntry DirEntry = ADDSUtils.GetDirectoryEntry(host, sr))
+                            {
+                                if (DirEntry.Properties["objectGUID"].Value != null)
+                                {
+                                    return sr.Properties["msDS-PrincipalName"][0].ToString();
+                                }
+                                else
+                                    return null;
+                            };
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                DataLog.WriteEntry(ex.Message, System.Diagnostics.EventLogEntryType.Error, 5000);
+                throw new Exception(ex.Message);
+            }
+            return null;
+        }
+
+        #region methods
         /// <summary>
         /// GetBinaryStringFromGuidString
         /// </summary>
@@ -166,23 +368,69 @@ namespace Neos.IdentityServer.MultiFactor.Data
         }
 
         /// <summary>
+        /// GetRootDomain method implmentation
+        /// </summary>
+        internal static Domain GetRootDomain(string domainname, string username, string password)
+        {
+            DirectoryContext ctx = null;
+            if (!string.IsNullOrEmpty(domainname))
+            {
+                if (!string.IsNullOrEmpty(username) || !string.IsNullOrEmpty(password))
+                    ctx = new DirectoryContext(DirectoryContextType.Domain, domainname, username, password);
+                else
+                    ctx = new DirectoryContext(DirectoryContextType.Domain, domainname);
+            }
+            else
+            {
+                if (!string.IsNullOrEmpty(username) || !string.IsNullOrEmpty(password))
+                    ctx = new DirectoryContext(DirectoryContextType.Domain, username, password);
+                else
+                    ctx = new DirectoryContext(DirectoryContextType.Domain);
+            }
+            return Domain.GetDomain(ctx).Forest.RootDomain;
+        }
+
+        /// <summary>
+        /// GetForest method implmentation
+        /// </summary>
+        internal static Forest GetForest(string domainname, string username, string password)
+        {
+            DirectoryContext ctx = null;
+            if (!string.IsNullOrEmpty(domainname))
+            {
+                if (!string.IsNullOrEmpty(username) || !string.IsNullOrEmpty(password))
+                    ctx = new DirectoryContext(DirectoryContextType.Forest, domainname, username, password);
+                else
+                    ctx = new DirectoryContext(DirectoryContextType.Forest, domainname);
+            }
+            else
+            {
+                if (!string.IsNullOrEmpty(username) || !string.IsNullOrEmpty(password))
+                    ctx = new DirectoryContext(DirectoryContextType.Forest, username, password);
+                else
+                    ctx = new DirectoryContext(DirectoryContextType.Forest);
+            }
+            return Forest.GetForest(ctx);
+        }
+
+        /// <summary>
         /// GetDirectoryEntryForUPN() method implmentation
         /// </summary>
-        internal static DirectoryEntry GetDirectoryEntryForUser(ADDSHost host, string upn, bool usessl)
+        internal static DirectoryEntry GetDirectoryEntryForUser(ADDSHost host, string upn)
         {
             string root = "LDAP://";
             DirectoryEntry entry = null;
             if (!string.IsNullOrEmpty(host.DomainName))
             {
-                if (usessl)
+                if (_usessl)
                     entry = new DirectoryEntry(root + host.DomainName+ ":636");
                 else
                     entry = new DirectoryEntry(root + host.DomainName);
             }
             else
             {
-                string dom = host.GetForestForUser(upn, host);
-                if (usessl)
+                string dom = ADDSUtils.GetForestForUser(host, upn);
+                if (_usessl)
                     entry = new DirectoryEntry(root + dom + ":636");
                 else
                     entry = new DirectoryEntry(root + dom);
@@ -197,13 +445,13 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// <summary>
         /// GetDirectoryEntryForUPN() method implmentation
         /// </summary>
-        internal static DirectoryEntry GetDirectoryEntryForUser(ADDSHost host, string account, string password, string upn, bool usessl)
+        internal static DirectoryEntry GetDirectoryEntryForUser(ADDSHost host, string account, string password, string upn)
         {
             string root = "LDAP://";
             DirectoryEntry entry = null;
-            string dom = host.GetForestForUser(upn, host);
+            string dom = ADDSUtils.GetForestForUser(host, upn);
 
-            if (usessl)
+            if (_usessl)
                 entry = new DirectoryEntry(root + dom + ":636");
             else
                 entry = new DirectoryEntry(root + dom);
@@ -218,13 +466,13 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// <summary>
         /// GetDirectoryEntry method implmentation
         /// </summary>
-        internal static DirectoryEntry GetDirectoryEntry(string domainname, string username, string password, bool usessl)
+        internal static DirectoryEntry GetDirectoryEntry(string domainname, string username, string password)
         {
             string root = "LDAP://";
             DirectoryEntry entry = null;
             if (!string.IsNullOrEmpty(domainname))
             {
-                if (usessl)
+                if (_usessl)
                     entry = new DirectoryEntry(root + domainname + ":636");
                 else
                     entry = new DirectoryEntry(root + domainname);
@@ -233,7 +481,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
             {
                 using (Domain dom = Domain.GetComputerDomain())
                 {
-                    if (usessl)
+                    if (_usessl)
                         entry = new DirectoryEntry(root + dom.Name + ":636");
                     else
                         entry = new DirectoryEntry(root + dom.Name);
@@ -249,7 +497,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// <summary>
         /// GetDirectoryEntry() method implmentation
         /// </summary>
-        internal static DirectoryEntry GetDirectoryEntry(ADDSHost host, SearchResult sr, bool usessl)
+        internal static DirectoryEntry GetDirectoryEntry(ADDSHost host, SearchResult sr)
         {
             DirectoryEntry entry = sr.GetDirectoryEntry();
 
@@ -264,7 +512,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// <summary>
         /// GetDirectoryEntry() method implmentation
         /// </summary>
-        internal static DirectoryEntry GetDirectoryEntry(string domainname, string account, string password, SearchResult sr, bool usessl)
+        internal static DirectoryEntry GetDirectoryEntry(string domainname, string account, string password, SearchResult sr)
         {
             DirectoryEntry entry = sr.GetDirectoryEntry();
             entry.Path = sr.Path; // Take SearchResult path
@@ -278,7 +526,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// <summary>
         /// GetDirectoryEntry() method implmentation
         /// </summary>
-        internal static DirectoryEntry GetDirectoryEntry(string domain, string username, string password, string path, bool usessl)
+        internal static DirectoryEntry GetDirectoryEntry(string domain, string username, string password, string path)
         {
             string root = "LDAP://";
             DirectoryEntry entry = null;
@@ -286,7 +534,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
             {
                   if (!string.IsNullOrEmpty(domain))
                   {
-                      if (usessl)
+                      if (_usessl)
                           entry = new DirectoryEntry(root + domain + ":636");
                       else
                           entry = new DirectoryEntry(root + domain);
@@ -295,7 +543,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                   {
                     using (Domain dom = Domain.GetComputerDomain())
                     {
-                        if (usessl)
+                        if (_usessl)
                             entry = new DirectoryEntry(root + dom.Name + ":636");
                         else
                             entry = new DirectoryEntry(root + dom.Name);
@@ -472,9 +720,9 @@ namespace Neos.IdentityServer.MultiFactor.Data
         {
             try
             {
-                using (Domain domain = GetRootDomain(domainname, username, password))
+                using (Domain domain = ADDSUtils.GetRootDomain(domainname, username, password))
                 {
-                    using (Forest forest = GetForest(domain.Name, username, password))
+                    using (Forest forest = ADDSUtils.GetForest(domain.Name, username, password))
                     {
                         ActiveDirectorySchemaProperty property = forest.Schema.FindProperty(attributename);
                         if (property != null)
@@ -502,9 +750,9 @@ namespace Neos.IdentityServer.MultiFactor.Data
         {
             try
             {
-                using (Domain domain = GetRootDomain(domainname, username, password))
+                using (Domain domain = ADDSUtils.GetRootDomain(domainname, username, password))
                 {
-                    using (Forest forest = GetForest(domain.Name, username, password))
+                    using (Forest forest = ADDSUtils.GetForest(domain.Name, username, password))
                     {
                         ActiveDirectorySchemaProperty property = forest.Schema.FindProperty(attributename);
                         if (property != null)
@@ -523,52 +771,6 @@ namespace Neos.IdentityServer.MultiFactor.Data
                 DataLog.WriteEntry(ex.Message, System.Diagnostics.EventLogEntryType.Error, 5100);
                 return false;
             }
-        }
-
-        /// <summary>
-        /// GetRootDomain method implmentation
-        /// </summary>
-        internal static Domain GetRootDomain(string domainname, string username, string password)
-        {
-            DirectoryContext ctx = null;
-            if (!string.IsNullOrEmpty(domainname))
-            {
-                if (!string.IsNullOrEmpty(username) || !string.IsNullOrEmpty(password))
-                    ctx = new DirectoryContext(DirectoryContextType.Domain, domainname, username, password);
-                else
-                    ctx = new DirectoryContext(DirectoryContextType.Domain, domainname);
-            }
-            else
-            {
-                if (!string.IsNullOrEmpty(username) || !string.IsNullOrEmpty(password))
-                    ctx = new DirectoryContext(DirectoryContextType.Domain, username, password);
-                else
-                    ctx = new DirectoryContext(DirectoryContextType.Domain);
-            }
-            return Domain.GetDomain(ctx).Forest.RootDomain;
-        }
-
-        /// <summary>
-        /// GetForest method implmentation
-        /// </summary>
-        internal static Forest GetForest(string domainname, string username, string password)
-        {
-            DirectoryContext ctx = null;
-            if (!string.IsNullOrEmpty(domainname))
-            {
-                if (!string.IsNullOrEmpty(username) || !string.IsNullOrEmpty(password))
-                    ctx = new DirectoryContext(DirectoryContextType.Forest, domainname, username, password);
-                else
-                    ctx = new DirectoryContext(DirectoryContextType.Forest, domainname);
-            }
-            else
-            {
-                if (!string.IsNullOrEmpty(username) || !string.IsNullOrEmpty(password))
-                    ctx = new DirectoryContext(DirectoryContextType.Forest, username, password);
-                else
-                    ctx = new DirectoryContext(DirectoryContextType.Forest);
-            }
-            return Forest.GetForest(ctx);
         }
         #endregion
     }

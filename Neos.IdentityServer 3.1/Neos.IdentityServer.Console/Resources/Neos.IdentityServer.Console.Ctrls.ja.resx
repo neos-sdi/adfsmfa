@@ -690,4 +690,22 @@
   <data name="CTRLSQLSUPERACCOUNT" xml:space="preserve">
     <value>"データ アクセス アカウント" SQL サーバー</value>
   </data>
+  <data name="CTRLPASSWORDPOLICY" xml:space="preserve">
+    <value>パスワードポリシー</value>
+  </data>
+  <data name="CTRLUSEPASSWORDPOLICY" xml:space="preserve">
+    <value>パスワードポリシーのアクティブ化</value>
+  </data>
+  <data name="CTRLUSEGPOPASSWORDPOLICY" xml:space="preserve">
+    <value>エンタープライズ パスワード ポリシー (GPO) を使用する</value>
+  </data>
+  <data name="CTRLLOCKUSERONPASSWORDEXPIRED" xml:space="preserve">
+    <value>パスワードの有効期限が切れた場合にユーザーをロックアウトする</value>
+  </data>
+  <data name="CTRLMAXPASSWORDAGEINDAYS" xml:space="preserve">
+    <value>最大パスワード有効期間</value>
+  </data>
+  <data name="CTRLWARNMAXPASSWORDAGEINDAYS" xml:space="preserve">
+    <value>パスワードの有効期限が切れる前にユーザーに通知する</value>
+  </data>
 </root>

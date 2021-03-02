@@ -285,4 +285,7 @@ Veți putea utiliza validarea MFA în viitor.</value>
   <data name="HtmlUIMNoCode" xml:space="preserve">
     <value>Conectați-vă în alt mod</value>
   </data>
+  <data name="HtmlMustChangePassword" xml:space="preserve">
+    <value>Trebuie să vă schimbați parola înainte de : &lt;br/&gt; {0}</value>
+  </data>
 </root>

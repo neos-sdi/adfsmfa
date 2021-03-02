@@ -285,4 +285,7 @@
   <data name="HtmlUIMNoCode" xml:space="preserve">
     <value>Подпишитесь по-другому</value>
   </data>
+  <data name="HtmlMustChangePassword" xml:space="preserve">
+    <value>Вам нужно изменить пароль до : &lt;br/&gt; {0}</value>
+  </data>
 </root>

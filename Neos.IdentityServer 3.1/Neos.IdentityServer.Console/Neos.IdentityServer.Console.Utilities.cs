@@ -153,7 +153,14 @@ namespace Neos.IdentityServer.Console
         internal static string GetEncodedUserKey(string upn)
         {
             EnsureService();
-            return ManagementService.GetEncodedUserKey(upn);
+            try
+            {
+                return ManagementService.GetEncodedUserKey(upn);
+            }
+            catch 
+            {
+                return null;
+            }
         }
 
         /// <summary>

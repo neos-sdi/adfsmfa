@@ -285,4 +285,7 @@ Będzie można użyć weryfikacji MFA w przyszłości.</value>
   <data name="HtmlUIMNoCode" xml:space="preserve">
     <value>Zaloguj się w inny sposób</value>
   </data>
+  <data name="HtmlMustChangePassword" xml:space="preserve">
+    <value>Musisz zmienić hasło przed : &lt;br/&gt; {0}</value>
+  </data>
 </root>

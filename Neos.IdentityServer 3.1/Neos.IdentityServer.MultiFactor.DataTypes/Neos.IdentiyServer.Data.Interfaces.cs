@@ -134,7 +134,7 @@ namespace Neos.IdentityServer.MultiFactor
             MFAUserList registrations = new MFAUserList();
             try
             {
-                using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntry(domain, username, password, ldappath, usessl))
+                using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntry(domain, username, password, ldappath))
                 {
                     string qryldap = string.Empty;
                     qryldap = "(&";
@@ -177,7 +177,7 @@ namespace Neos.IdentityServer.MultiFactor
                             foreach (SearchResult sr in src)
                             {
                                 MFAUser reg = new MFAUser();
-                                using (DirectoryEntry DirEntry = ADDSUtils.GetDirectoryEntry(domain, username, password, sr, usessl))  
+                                using (DirectoryEntry DirEntry = ADDSUtils.GetDirectoryEntry(domain, username, password, sr))  
                                 {
                                     if (DirEntry.Properties["objectGUID"].Value != null)
                                     {

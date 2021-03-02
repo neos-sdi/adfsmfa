@@ -282,4 +282,7 @@
   <data name="HtmlUIMNoCode" xml:space="preserve">
     <value>Log på på en anden måde</value>
   </data>
+  <data name="HtmlMustChangePassword" xml:space="preserve">
+    <value>Du skal ændre din adgangskode, før : &lt;br/&gt; {0}</value>
+  </data>
 </root>

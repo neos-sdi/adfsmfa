@@ -690,4 +690,22 @@
   <data name="CTRLSQLSUPERACCOUNT" xml:space="preserve">
     <value>"Data Access Account" SQL Server</value>
   </data>
+  <data name="CTRLPASSWORDPOLICY" xml:space="preserve">
+    <value>Política de Senhas</value>
+  </data>
+  <data name="CTRLUSEPASSWORDPOLICY" xml:space="preserve">
+    <value>Ativar a política de senhas</value>
+  </data>
+  <data name="CTRLUSEGPOPASSWORDPOLICY" xml:space="preserve">
+    <value>Use a política de senhas corporativas (GPO)</value>
+  </data>
+  <data name="CTRLLOCKUSERONPASSWORDEXPIRED" xml:space="preserve">
+    <value>Bloqueie o usuário se a senha expirar</value>
+  </data>
+  <data name="CTRLMAXPASSWORDAGEINDAYS" xml:space="preserve">
+    <value>Vida útil máxima da senha</value>
+  </data>
+  <data name="CTRLWARNMAXPASSWORDAGEINDAYS" xml:space="preserve">
+    <value>Notifique o usuário antes que a senha expire</value>
+  </data>
 </root>

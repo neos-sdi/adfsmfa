@@ -284,4 +284,7 @@ In futuro sarà possibile utilizzare la convalida MFA.</value>
   <data name="HtmlUIMNoCode" xml:space="preserve">
     <value>Accedi in un altro modo</value>
   </data>
+  <data name="HtmlMustChangePassword" xml:space="preserve">
+    <value>È necessario modificare la password prima : &lt;br/&gt; {0}</value>
+  </data>
 </root>

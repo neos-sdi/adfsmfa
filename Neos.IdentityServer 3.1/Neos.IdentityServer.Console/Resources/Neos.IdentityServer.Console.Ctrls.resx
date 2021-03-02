@@ -691,4 +691,22 @@
   <data name="CTRLSQLCONNECTIONERROR" xml:space="preserve">
     <value>Unable to connect to SQL Server !</value>
   </data>
+  <data name="CTRLPASSWORDPOLICY" xml:space="preserve">
+    <value>Passwords Policy</value>
+  </data>
+  <data name="CTRLUSEPASSWORDPOLICY" xml:space="preserve">
+    <value>Activate passwords policy</value>
+  </data>
+  <data name="CTRLUSEGPOPASSWORDPOLICY" xml:space="preserve">
+    <value>Use enterprise passwords policy (GPO)</value>
+  </data>
+  <data name="CTRLLOCKUSERONPASSWORDEXPIRED" xml:space="preserve">
+    <value>Lock out the user if password has expired</value>
+  </data>
+  <data name="CTRLMAXPASSWORDAGEINDAYS" xml:space="preserve">
+    <value>Maximum password life</value>
+  </data>
+  <data name="CTRLWARNMAXPASSWORDAGEINDAYS" xml:space="preserve">
+    <value>Notify the user before the password expires</value>
+  </data>
 </root>

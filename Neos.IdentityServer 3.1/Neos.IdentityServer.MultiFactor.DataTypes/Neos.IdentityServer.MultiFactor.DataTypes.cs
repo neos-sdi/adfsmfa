@@ -1088,15 +1088,9 @@ namespace Neos.IdentityServer.MultiFactor
     [Serializable]
     public class MFAUser
     {
-        private string _id;
-        private string _upn;
         private string _mail;
         private string _phone;
-        private bool _enabled = false;
-        private bool _isregistered = false;
         private int _pincode = 0;
-        private PreferredMethod _method = PreferredMethod.Choose;
-        private string _overridemethod = string.Empty;
 
         /// <summary>
         /// Constructor
@@ -1119,33 +1113,13 @@ namespace Neos.IdentityServer.MultiFactor
         /// ID property implementation
         /// </summary>
         [XmlAttribute("ID")]
-        public string ID
-        {
-            get
-            {
-                return _id;
-            }
-            set
-            {
-                _id = value;
-            }
-        }
+        public string ID { get; set; }
 
         /// <summary>
         /// UPN property implementation
         /// </summary>
         [XmlAttribute("UPN")]
-        public string UPN
-        {
-            get
-            {
-                return _upn;
-            }
-            set
-            {
-                _upn = value;
-            }
-        }
+        public string UPN { get; set; }
 
         /// <summary>
         /// MailAddress property implementation
@@ -1189,17 +1163,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// Enabled property implementation
         /// </summary>
         [XmlAttribute("Enabled")]
-        public bool Enabled
-        {
-            get
-            {
-                return _enabled;
-            }
-            set
-            {
-                _enabled = value;
-            }
-        }
+        public bool Enabled { get; set; } = false;
 
         /// <summary>
         /// ID property implementation
@@ -1224,48 +1188,18 @@ namespace Neos.IdentityServer.MultiFactor
         /// PreferredMethod property implementation
         /// </summary>
         [XmlAttribute("PreferredMethod")]
-        public PreferredMethod PreferredMethod
-        {
-            get
-            {
-                return _method;
-            }
-            set
-            {
-                _method = value;
-            }
-        }
+        public PreferredMethod PreferredMethod { get; set; } = PreferredMethod.Choose;
 
         /// <summary>
         /// OverrideMethod property implementation
         /// </summary>
         [XmlAttribute("OverrideMethod")]
-        public string OverrideMethod 
-        {
-            get
-            {
-                return _overridemethod;
-            }
-            set
-            {
-                _overridemethod = value;
-            }
-        }
+        public string OverrideMethod { get; set; } = string.Empty;
         /// <summary>
         /// IsRegistered property implementation
         /// </summary>
         [XmlAttribute("IsRegistered")]
-        public  bool IsRegistered
-        {
-            get
-            {
-                return _isregistered;
-            }
-            set
-            {
-                _isregistered = value;
-            }
-        }
+        public bool IsRegistered { get; set; } = false;
     }
 
     /// <summary>

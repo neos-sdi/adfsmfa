@@ -333,6 +333,15 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à You need to change your password before : &lt;br/&gt; {0}.
+        /// </summary>
+        internal static string HtmlMustChangePassword {
+            get {
+                return ResourceManager.GetString("HtmlMustChangePassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Cancel.
         /// </summary>
         internal static string HtmlPWDCancel {

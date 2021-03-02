@@ -10878,6 +10878,14 @@ namespace Neos.IdentityServer.Console.Controls
         private Label lblSQLPassword;
         private TextBox txtSQLPassword;
         private Button btnSQLConnect;
+        private Label lblUsePasswordPolicy;
+        private CheckBox chkUsePasswordPolicy;
+        private CheckBox chkUseGPOPasswordPolicy;
+        private CheckBox chkLockUserIfPasswordExpired;
+        private Label lblMaxPasswordAge;
+        private NumericUpDown txtMaxPasswordAgeInDays;
+        private Label lblWarnPasswordExpirationBeforeInDays;
+        private NumericUpDown txtWarnPasswordExpirationBeforeInDays;
 
         /// <summary>
         /// ConfigurationControl Constructor
@@ -10976,17 +10984,17 @@ namespace Neos.IdentityServer.Console.Controls
                 _view.RefreshProviderInformation();
 
                 this.Dock = DockStyle.Top;
-                this.Height = 550;
+                this.Height = 750;
                 this.Width = 600;
                 this.Margin = new Padding(30, 5, 30, 5);
 
                 _panel.Width = 20;
-                _panel.Height = 480;
+                _panel.Height = 665;
                 this.Controls.Add(_panel);
 
                 _txtpanel.Left = 20;
                 _txtpanel.Width = this.Width - 20;
-                _txtpanel.Height = 480;
+                _txtpanel.Height = 665;
                 _txtpanel.BackColor = System.Drawing.SystemColors.Control;
                 this.Controls.Add(_txtpanel);
 
@@ -11272,11 +11280,102 @@ namespace Neos.IdentityServer.Console.Controls
                 btnSQLConnect.Click += BtnSQLConnectClick;
                 _txtpanel.Controls.Add(btnSQLConnect);
 
+                // Passwords policies
+                lblUsePasswordPolicy = new Label
+                {
+                    Text = res.CTRLPASSWORDPOLICY,
+                    Left = 10,
+                    Top = 460,
+                    Width = 150
+                };
+                _txtpanel.Controls.Add(lblUsePasswordPolicy);
+
+                chkUsePasswordPolicy = new CheckBox()
+                {
+                    Text = res.CTRLUSEPASSWORDPOLICY,
+                    Checked = Config.KeysConfig.UsePasswordPolicy,
+                    Left = 20,
+                    Top = 488,
+                    Width = 450
+                };
+                chkUsePasswordPolicy.CheckedChanged += chkUsePasswordPolicyChanged;
+                _txtpanel.Controls.Add(chkUsePasswordPolicy);
+
+                chkUseGPOPasswordPolicy = new CheckBox()
+                {
+                    Text = res.CTRLUSEGPOPASSWORDPOLICY,
+                    Checked = false, // Config.KeysConfig.UseGPOPasswordPolicy,
+                    Left = 40,
+                    Top = 516,
+                    Width = 450,
+                    Enabled = false
+                };
+                chkUseGPOPasswordPolicy.CheckedChanged += chkUseGPOPasswordPolicyChanged;
+                _txtpanel.Controls.Add(chkUseGPOPasswordPolicy);
+
+                chkLockUserIfPasswordExpired = new CheckBox()
+                {
+                    Text = res.CTRLLOCKUSERONPASSWORDEXPIRED,
+                    Checked = Config.KeysConfig.LockUserOnPasswordExpiration,
+                    Left = 40,
+                    Top = 544,
+                    Width = 450,
+                    Enabled = Config.KeysConfig.UsePasswordPolicy
+                };
+                chkLockUserIfPasswordExpired.CheckedChanged += chkLockUserIfPasswordExpiredChanged;
+                _txtpanel.Controls.Add(chkLockUserIfPasswordExpired);
+
+                lblMaxPasswordAge = new Label
+                {
+                    Text = res.CTRLMAXPASSWORDAGEINDAYS,
+                    Left = 40,
+                    Top = 572,
+                    Width = 280
+                };
+                _txtpanel.Controls.Add(lblMaxPasswordAge);
+
+                txtMaxPasswordAgeInDays = new NumericUpDown
+                {
+                    Left = 320,
+                    Top = 568,
+                    Width = 50,
+                    TextAlign = HorizontalAlignment.Center,
+                    Value = Config.KeysConfig.MaxPasswordAgeInDays,
+                    Minimum = new decimal(new int[] { 1, 0, 0, 0 }),
+                    Maximum = new decimal(new int[] { 365, 0, 0, 0 }),
+                    Enabled = Config.KeysConfig.UsePasswordPolicy
+                };
+                txtMaxPasswordAgeInDays.ValueChanged += txtMaxPasswordAgeInDaysChanged;
+                _txtpanel.Controls.Add(txtMaxPasswordAgeInDays);
+
+                lblWarnPasswordExpirationBeforeInDays = new Label
+                {
+                    Text = res.CTRLWARNMAXPASSWORDAGEINDAYS,
+                    Left = 40,
+                    Top = 600,
+                    Width = 280
+                };
+                _txtpanel.Controls.Add(lblWarnPasswordExpirationBeforeInDays);
+
+                txtWarnPasswordExpirationBeforeInDays = new NumericUpDown
+                {
+                    Left = 320,
+                    Top = 596,
+                    Width = 50,
+                    TextAlign = HorizontalAlignment.Center,
+                    Value = Config.KeysConfig.WarnPasswordExpirationBeforeInDays,
+                    Minimum = new decimal(new int[] { 1, 0, 0, 0 }),
+                    Maximum = new decimal(new int[] { 365, 0, 0, 0 }),
+                    Enabled = Config.KeysConfig.UsePasswordPolicy
+                };
+                txtWarnPasswordExpirationBeforeInDays.ValueChanged += txtWarnPasswordExpirationBeforeInDaysChanged;
+                _txtpanel.Controls.Add(txtWarnPasswordExpirationBeforeInDays);
+
                 lblWarning = new Label
                 {
                     Text = "(*) " + res.CTRLSECWARNING,
                     Left = 10,
-                    Top = 445,
+                    Top = 640,
                     Width = 500
                 };
                 _txtpanel.Controls.Add(lblWarning);
@@ -11285,7 +11384,7 @@ namespace Neos.IdentityServer.Console.Controls
                 {
                     Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPESAVE,
                     Left = 20,
-                    Top = 490,
+                    Top = 675,
                     Width = 80,
                     TabStop = true
                 };
@@ -11296,7 +11395,7 @@ namespace Neos.IdentityServer.Console.Controls
                 {
                     Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPECANCEL,
                     Left = 110,
-                    Top = 490,
+                    Top = 675,
                     Width = 80,
                     TabStop = true
                 };
@@ -11345,13 +11444,28 @@ namespace Neos.IdentityServer.Console.Controls
                 lblWarning.Text = "(*) " + res.CTRLSECWARNING;
                 lblADDSTitle.Text = res.CTRLADSUPERACCOUNT;
                 lblSQLTitle.Text = res.CTRLSQLSUPERACCOUNT;
-                chkUseldapssl.Text = res.CTRLADLDAPSSL;                
+                chkUseldapssl.Text = res.CTRLADLDAPSSL;
 
+                lblUsePasswordPolicy.Text = res.CTRLPASSWORDPOLICY;
+                lblMaxPasswordAge.Text = res.CTRLMAXPASSWORDAGEINDAYS;
+                lblWarnPasswordExpirationBeforeInDays.Text = res.CTRLWARNMAXPASSWORDAGEINDAYS;
+                lblMaxPasswordAge.Text = res.CTRLMAXPASSWORDAGEINDAYS;
+                lblWarnPasswordExpirationBeforeInDays.Text = res.CTRLWARNMAXPASSWORDAGEINDAYS;
+                
                 txtDomainName.Text = Config.Hosts.ActiveDirectoryHost.DomainAddress;
                 txtUserName.Text = Config.Hosts.ActiveDirectoryHost.Account;
                 txtPassword.Text = Config.Hosts.ActiveDirectoryHost.Password;
                 txtSQLUserName.Text = Config.Hosts.SQLServerHost.SQLAccount;
                 txtSQLPassword.Text = Config.Hosts.SQLServerHost.SQLPassword;
+
+                chkUsePasswordPolicy.Text = res.CTRLUSEPASSWORDPOLICY;
+                chkUsePasswordPolicy.Checked = Config.KeysConfig.UsePasswordPolicy;
+                chkUseGPOPasswordPolicy.Text = res.CTRLUSEGPOPASSWORDPOLICY;
+                chkUseGPOPasswordPolicy.Checked = false; // Config.KeysConfig.UseGPOPasswordPolicy;
+                chkLockUserIfPasswordExpired.Text = res.CTRLLOCKUSERONPASSWORDEXPIRED;
+                chkLockUserIfPasswordExpired.Checked = Config.KeysConfig.LockUserOnPasswordExpiration;
+                txtMaxPasswordAgeInDays.Value = Config.KeysConfig.MaxPasswordAgeInDays;
+                txtWarnPasswordExpirationBeforeInDays.Value = Config.KeysConfig.WarnPasswordExpirationBeforeInDays;
 
                 txtDeliveryWindow.Text = Config.DeliveryWindow.ToString();
                 txtMaxRetries.Text = Config.MaxRetries.ToString();
@@ -11445,13 +11559,17 @@ namespace Neos.IdentityServer.Console.Controls
                     txtXORValue.Enabled = false;
                 else
                     txtXORValue.Enabled = true;
+
+                chkUseGPOPasswordPolicy.Enabled = false; // Config.KeysConfig.UsePasswordPolicy;
+                chkLockUserIfPasswordExpired.Enabled = Config.KeysConfig.UsePasswordPolicy;
+                txtMaxPasswordAgeInDays.Enabled = Config.KeysConfig.UsePasswordPolicy && !Config.KeysConfig.UseGPOPasswordPolicy;
+                txtWarnPasswordExpirationBeforeInDays.Enabled = Config.KeysConfig.UsePasswordPolicy;
             }
             finally
             {
                 _UpdateControlsLayouts = false;
             }
         }
-
 
         /// <summary>
         /// OnResize method implmentation
@@ -11487,7 +11605,6 @@ namespace Neos.IdentityServer.Console.Controls
                 };
                 this._snapin.Console.ShowDialog(messageBoxParameters);
             }
-
         }
         #endregion
 
@@ -11947,6 +12064,126 @@ namespace Neos.IdentityServer.Console.Controls
                 e.Cancel = true;
                 errors.SetError(txtXORValue, ex.Message);
             }
+        }
+        #endregion
+
+        #region Password Policies
+        /// <summary>
+        /// chkUsePasswordPolicyChanged method implementation
+        /// </summary>
+        private void chkUsePasswordPolicyChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                if (_view.AutoValidate != AutoValidate.Disable)
+                {
+                    Config.KeysConfig.UsePasswordPolicy = chkUsePasswordPolicy.Checked;
+                    ManagementService.ADFSManager.SetDirty(true);
+                    UpdateControlsLayouts();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
+                this._snapin.Console.ShowDialog(messageBoxParameters);
+            }
+        }
+
+        /// <summary>
+        /// chkUseGPOPasswordPolicyChanged method implementation
+        /// </summary>
+        private void chkUseGPOPasswordPolicyChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                if (_view.AutoValidate != AutoValidate.Disable)
+                {
+                    Config.KeysConfig.UseGPOPasswordPolicy = false; //  chkUseGPOPasswordPolicy.Checked;
+                    ManagementService.ADFSManager.SetDirty(true);
+                    UpdateControlsLayouts();
+                    throw new NotImplementedException("Not implmented in this version");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
+                this._snapin.Console.ShowDialog(messageBoxParameters);
+            }
+        }
+
+        private void chkLockUserIfPasswordExpiredChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                if (_view.AutoValidate != AutoValidate.Disable)
+                {
+                    Config.KeysConfig.LockUserOnPasswordExpiration = chkLockUserIfPasswordExpired.Checked;
+                    ManagementService.ADFSManager.SetDirty(true);
+                    UpdateControlsLayouts();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
+                this._snapin.Console.ShowDialog(messageBoxParameters);
+            }
+        }
+
+        /// <summary>
+        /// txtMaxPasswordAgeInDaysChanged method implementation
+        /// </summary>
+        private void txtMaxPasswordAgeInDaysChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                if (_view.AutoValidate != AutoValidate.Disable)
+                {
+                    ManagementService.ADFSManager.SetDirty(true);
+                    Config.KeysConfig.MaxPasswordAgeInDays = Convert.ToUInt32(txtMaxPasswordAgeInDays.Value);
+                    errors.SetError(txtMaxPasswordAgeInDays, "");
+                }
+            }
+            catch (Exception ex)
+            {
+                errors.SetError(txtMaxPasswordAgeInDays, ex.Message);
+            }
+
+        }
+
+        /// <summary>
+        /// txtWarnPasswordExpirationBeforeInDaysChanged method implementation
+        /// </summary>
+        private void txtWarnPasswordExpirationBeforeInDaysChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                if (_view.AutoValidate != AutoValidate.Disable)
+                {
+                    ManagementService.ADFSManager.SetDirty(true);
+                    Config.KeysConfig.WarnPasswordExpirationBeforeInDays = Convert.ToUInt32(txtWarnPasswordExpirationBeforeInDays.Value);
+                    errors.SetError(txtWarnPasswordExpirationBeforeInDays, "");
+                }
+            }
+            catch (Exception ex)
+            {
+                errors.SetError(txtWarnPasswordExpirationBeforeInDays, ex.Message);
+            }
+
         }
         #endregion
 
@@ -12510,53 +12747,65 @@ namespace Neos.IdentityServer.Console.Controls
                 _txtpanel.BackColor = System.Drawing.SystemColors.Control;
                 this.Controls.Add(_txtpanel);
 
-                _panelRSA = new Panel();
-                _panelRSA.Left = 0;
-                _panelRSA.Top = 10;
-                _panelRSA.Height = 135;
-                _panelRSA.Width = 1050;
+                _panelRSA = new Panel
+                {
+                    Left = 0,
+                    Top = 10,
+                    Height = 135,
+                    Width = 1050
+                };
                 _txtpanel.Controls.Add(_panelRSA);
 
-                Label lblRSA = new Label();
-                lblRSA.Text = "Asymmetric Keys RSA (2048 bits)";
-                lblRSA.Left = 10;
-                lblRSA.Top = 0;
-                lblRSA.Width = 250;
+                Label lblRSA = new Label
+                {
+                    Text = "Asymmetric Keys RSA (2048 bits)",
+                    Left = 10,
+                    Top = 0,
+                    Width = 250
+                };
                 _panelRSA.Controls.Add(lblRSA);
 
-                lblCERTDuration = new Label();
-                lblCERTDuration.Text = res.CTRLSECCERTIFDURATION + " : ";
-                lblCERTDuration.Left = 30;
-                lblCERTDuration.Top = 27;
-                lblCERTDuration.Width = 140;
+                lblCERTDuration = new Label
+                {
+                    Text = res.CTRLSECCERTIFDURATION + " : ",
+                    Left = 30,
+                    Top = 27,
+                    Width = 140
+                };
                 _panelRSA.Controls.Add(lblCERTDuration);
 
-                txtCERTDuration = new NumericUpDown();
-                txtCERTDuration.Left = 180;
-                txtCERTDuration.Top = 24;
-                txtCERTDuration.Width = 50;
-                txtCERTDuration.TextAlign = HorizontalAlignment.Center;
-                txtCERTDuration.Value = Config.KeysConfig.CertificateValidity;
-                txtCERTDuration.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
-                txtCERTDuration.Maximum = new decimal(new int[] { 9999, 0, 0, 0 });
+                txtCERTDuration = new NumericUpDown
+                {
+                    Left = 180,
+                    Top = 24,
+                    Width = 50,
+                    TextAlign = HorizontalAlignment.Center,
+                    Value = Config.KeysConfig.CertificateValidity,
+                    Minimum = new decimal(new int[] { 1, 0, 0, 0 }),
+                    Maximum = new decimal(new int[] { 9999, 0, 0, 0 })
+                };
                 txtCERTDuration.ValueChanged += CertValidityChanged;
                 _panelRSA.Controls.Add(txtCERTDuration);
 
-                chkUseOneCertPerUser = new CheckBox();
-                chkUseOneCertPerUser.Text = res.CTRLSECCERTPERUSER;
-                chkUseOneCertPerUser.Checked = Config.KeysConfig.CertificatePerUser;
-                chkUseOneCertPerUser.Left = 30;
-                chkUseOneCertPerUser.Top = 56;
-                chkUseOneCertPerUser.Width = 450;
+                chkUseOneCertPerUser = new CheckBox
+                {
+                    Text = res.CTRLSECCERTPERUSER,
+                    Checked = Config.KeysConfig.CertificatePerUser,
+                    Left = 30,
+                    Top = 56,
+                    Width = 450
+                };
                 chkUseOneCertPerUser.CheckedChanged += UseOneCertPerUserCheckedChanged;
                 _panelRSA.Controls.Add(chkUseOneCertPerUser);
 
 
-                lblRSAKey = new Label();
-                lblRSAKey.Text = res.CTRLSECTHUMPRINT + " : ";
-                lblRSAKey.Left = 30;
-                lblRSAKey.Top = 93;
-                lblRSAKey.Width = 140;
+                lblRSAKey = new Label
+                {
+                    Text = res.CTRLSECTHUMPRINT + " : ",
+                    Left = 30,
+                    Top = 93,
+                    Width = 140
+                };
                 _panelRSA.Controls.Add(lblRSAKey);
 
                 txtRSAThumb = new TextBox();
@@ -12570,30 +12819,36 @@ namespace Neos.IdentityServer.Console.Controls
                 txtRSAThumb.Validated += RSAThumbValidated;
                 _panelRSA.Controls.Add(txtRSAThumb);
 
-                btnRSACert = new Button();
-                btnRSACert.Text = res.CTRLSECNEWCERT;
-                btnRSACert.Left = 680;
-                btnRSACert.Top = 88;
-                btnRSACert.Width = 250;
-                btnRSACert.Enabled = !Config.KeysConfig.CertificatePerUser;
+                btnRSACert = new Button
+                {
+                    Text = res.CTRLSECNEWCERT,
+                    Left = 680,
+                    Top = 88,
+                    Width = 250,
+                    Enabled = !Config.KeysConfig.CertificatePerUser
+                };
                 btnRSACert.Click += BtnRSACertClick;
                 _panelRSA.Controls.Add(btnRSACert);
 
 
-                tblSaveConfig = new LinkLabel();
-                tblSaveConfig.Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPESAVE;
-                tblSaveConfig.Left = 20;
-                tblSaveConfig.Top = 145;
-                tblSaveConfig.Width = 80;
+                tblSaveConfig = new LinkLabel
+                {
+                    Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPESAVE,
+                    Left = 20,
+                    Top = 145,
+                    Width = 80
+                };
                 tblSaveConfig.LinkClicked += SaveConfigLinkClicked;
                 tblSaveConfig.TabStop = true;
                 this.Controls.Add(tblSaveConfig);
 
-                tblCancelConfig = new LinkLabel();
-                tblCancelConfig.Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPECANCEL;
-                tblCancelConfig.Left = 110;
-                tblCancelConfig.Top = 145;
-                tblCancelConfig.Width = 80;
+                tblCancelConfig = new LinkLabel
+                {
+                    Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPECANCEL,
+                    Left = 110,
+                    Top = 145,
+                    Width = 80
+                };
                 tblCancelConfig.LinkClicked += CancelConfigLinkClicked;
                 tblCancelConfig.TabStop = true;
                 this.Controls.Add(tblCancelConfig);

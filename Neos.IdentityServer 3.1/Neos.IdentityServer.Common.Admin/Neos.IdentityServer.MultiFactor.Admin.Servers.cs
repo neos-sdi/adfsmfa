@@ -1416,14 +1416,38 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             cnx.Open();
             try
             {
-                SqlCommand cmd = new SqlCommand(string.Format("CREATE DATABASE {0}", databasename), cnx);
-                cmd.ExecuteNonQuery();
-                SqlCommand cmdl = null;
-                if (!string.IsNullOrEmpty(password))
-                    cmdl = new SqlCommand(string.Format("IF NOT EXISTS (SELECT name FROM master.sys.server_principals WHERE name = '{0}') BEGIN CREATE LOGIN [{0}] WITH PASSWORD = '{1}', DEFAULT_DATABASE=[master] END", username, password), cnx);
-                else
-                    cmdl = new SqlCommand(string.Format("IF NOT EXISTS (SELECT name FROM master.sys.server_principals WHERE name = '{0}') BEGIN CREATE LOGIN [{0}] FROM WINDOWS WITH DEFAULT_DATABASE=[master] END", username), cnx);
-                cmdl.ExecuteNonQuery();
+                try
+                {
+                    SqlCommand cmd = new SqlCommand(string.Format("CREATE DATABASE {0}", databasename), cnx);
+                    cmd.ExecuteNonQuery();
+                    SqlCommand cmdl = null;
+                    if (!string.IsNullOrEmpty(password))
+                        cmdl = new SqlCommand(string.Format("IF NOT EXISTS (SELECT name FROM master.sys.server_principals WHERE name = '{0}') BEGIN CREATE LOGIN [{0}] WITH PASSWORD = '{1}', DEFAULT_DATABASE=[master] END", username, password), cnx);
+                    else
+                        cmdl = new SqlCommand(string.Format("IF NOT EXISTS (SELECT name FROM master.sys.server_principals WHERE name = '{0}') BEGIN CREATE LOGIN [{0}] FROM WINDOWS WITH DEFAULT_DATABASE=[master] END", username), cnx);
+                    cmdl.ExecuteNonQuery();
+                }
+                catch (Exception) { }
+
+                try
+                {
+                    if (!string.IsNullOrEmpty(ClientSIDsProxy.ADFSAdminGroupName))
+                    {
+                        SqlCommand cmdl = new SqlCommand(string.Format("IF NOT EXISTS (SELECT name FROM master.sys.server_principals WHERE name = '{0}') BEGIN CREATE LOGIN [{0}] FROM WINDOWS WITH DEFAULT_DATABASE=[master] END", ClientSIDsProxy.ADFSAdminGroupName), cnx);
+                        cmdl.ExecuteNonQuery();
+                    }
+                }
+                catch (Exception) { }
+
+                try
+                {
+                    if (!string.IsNullOrEmpty(ClientSIDsProxy.ADFSAccountName))
+                    {
+                        SqlCommand cmdl = new SqlCommand(string.Format("IF NOT EXISTS (SELECT name FROM master.sys.server_principals WHERE name = '{0}') BEGIN CREATE LOGIN [{0}] FROM WINDOWS WITH DEFAULT_DATABASE=[master] END", ClientSIDsProxy.ADFSAccountName), cnx);
+                        cmdl.ExecuteNonQuery();
+                    }
+                }
+                catch (Exception) { }
             }
             finally
             {

@@ -690,4 +690,22 @@
   <data name="CTRLSQLSUPERACCOUNT" xml:space="preserve">
     <value>"Cuenta de acceso a datos" SQL Server</value>
   </data>
+  <data name="CTRLPASSWORDPOLICY" xml:space="preserve">
+    <value>Política de contraseñas</value>
+  </data>
+  <data name="CTRLUSEPASSWORDPOLICY" xml:space="preserve">
+    <value>Activar la política de contraseñas</value>
+  </data>
+  <data name="CTRLUSEGPOPASSWORDPOLICY" xml:space="preserve">
+    <value>Usar la directiva de contraseñas empresariales (GPO)</value>
+  </data>
+  <data name="CTRLLOCKUSERONPASSWORDEXPIRED" xml:space="preserve">
+    <value>Bloquee al usuario si la contraseña ha caducado</value>
+  </data>
+  <data name="CTRLMAXPASSWORDAGEINDAYS" xml:space="preserve">
+    <value>Vida máxima de la contraseña</value>
+  </data>
+  <data name="CTRLWARNMAXPASSWORDAGEINDAYS" xml:space="preserve">
+    <value>Notificar al usuario antes de que caduque la contraseña</value>
+  </data>
 </root>

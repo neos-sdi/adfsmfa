@@ -673,11 +673,11 @@ namespace Neos.IdentityServer.MultiFactor
             RegistryKey rk = Registry.LocalMachine.OpenSubKey("Software\\MFA", true);
             if (string.IsNullOrEmpty(delegatedgroup))
             {
-                rk.DeleteValue("DelegatedAdminGroup");
+                rk.DeleteValue("DelegatedAdminGroup", false);
                 return;
             }
             object obj = rk.GetValue("DelegatedAdminGroup");
-            if (obj==null)
+            if (obj == null)
                 rk.SetValue("DelegatedAdminGroup", delegatedgroup, RegistryValueKind.String);
             else if (obj.ToString().ToLower().Equals(delegatedgroup.ToLower()))
                 rk.SetValue("DelegatedAdminGroup", delegatedgroup, RegistryValueKind.String);

@@ -285,4 +285,7 @@ Click "Continue"</value>
   <data name="HtmlLabelWRAddBiometrics" xml:space="preserve">
     <value>Add a biometric device</value>
   </data>
+  <data name="HtmlMustChangePassword" xml:space="preserve">
+    <value>You need to change your password before : &lt;br/&gt; {0}</value>
+  </data>
 </root>

@@ -855,6 +855,31 @@ namespace MFA
         public int DefaultPin { get; set; }
 
         /// <summary>
+        /// <para type="description">Use MFA Password Policy.</para>
+        /// </summary>
+        public bool UsePasswordPolicy { get; set; }
+
+        /// <summary>
+        /// <para type="description">Use Domain GPO parameters for passwords policy.</para>
+        /// </summary>
+        public bool UseGPOPasswordPolicy { get; set; }
+
+        /// <summary>
+        /// <para type="description">Lock the user, if user password is expired.</para>
+        /// </summary>
+        public bool LockUserOnPasswordExpiration { get; set; }
+
+        /// <summary>
+        /// <para type="description">Max user password age.</para>
+        /// </summary>
+        public uint MaxPasswordAgeInDays { get; set; }
+
+        /// <summary>
+        /// <para type="description">Emit warning before user password expiration (in days).</para>
+        /// </summary>
+        public uint WarnPasswordExpirationBeforeInDays { get; set; }
+
+        /// <summary>
         /// <para type="description">Domain name to access (read/write) Active Directory (if ADFS account has rights you leave it blank).</para>
         /// </summary>
         public string DomainAddress { get; set; }
@@ -897,6 +922,11 @@ namespace MFA
                     XORSecret = mgr.XORSecret,
                     PinLength = mgr.PinLength,
                     DefaultPin = mgr.DefaultPin,
+                    UsePasswordPolicy = mgr.UsePasswordPolicy,
+                    UseGPOPasswordPolicy = mgr.UseGPOPasswordPolicy,
+                    LockUserOnPasswordExpiration = mgr.LockUserOnPasswordExpiration,
+                    MaxPasswordAgeInDays = mgr.MaxPasswordAgeInDays,
+                    WarnPasswordExpirationBeforeInDays = mgr.WarnPasswordExpirationBeforeInDays,
                     DomainAddress = mgr.DomainAddress,
                     Account = mgr.Account,
                     Password = mgr.Password,
@@ -926,6 +956,11 @@ namespace MFA
                     XORSecret = mgr.XORSecret,
                     PinLength = mgr.PinLength,
                     DefaultPin = mgr.DefaultPin,
+                    UsePasswordPolicy = mgr.UsePasswordPolicy,
+                    UseGPOPasswordPolicy = mgr.UseGPOPasswordPolicy,
+                    LockUserOnPasswordExpiration = mgr.LockUserOnPasswordExpiration,
+                    MaxPasswordAgeInDays = mgr.MaxPasswordAgeInDays,
+                    WarnPasswordExpirationBeforeInDays = mgr.WarnPasswordExpirationBeforeInDays,
                     DomainAddress = mgr.DomainAddress,
                     Account = mgr.Account,
                     Password = mgr.Password,

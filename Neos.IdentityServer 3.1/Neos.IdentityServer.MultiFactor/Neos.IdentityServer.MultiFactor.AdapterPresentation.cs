@@ -157,11 +157,17 @@ namespace Neos.IdentityServer.MultiFactor
                 result += "<div class=\"fieldMargin smallText\">" + BaseExternalProvider.GetPINMessage(usercontext) + "</div><br/>";
             }
 
-            if (Provider.Config.UserFeatures.CanAccessOptions())
+            bool soon = RuntimeRepository.MustChangePasswordSoon(Provider.Config, usercontext.UPN, out DateTime max);
+            if (soon)
+                result += "<div class=\"error smallText\">" + string.Format(Resources.GetString(ResourcesLocaleKind.Html, "HtmlMustChangePassword"), max.ToLocalTime().ToLongDateString()) + "</div><br/>";
+
+            if (Provider.HasAccessToOptions(prov))
             {
-                if (Provider.HasAccessToOptions(prov))
+                if ((soon) && (Provider.Config.UserFeatures.CanManagePassword()))
+                    result += "<input id=\"##OPTIONS##\" type=\"checkbox\" name=\"##OPTIONS##\" checked=\"checked\" /> " + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMAccessOptions");
+                else
                     result += "<input id=\"##OPTIONS##\" type=\"checkbox\" name=\"##OPTIONS##\" /> " + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMAccessOptions");
-                result += "<br/><br/><br/>";
+                result += "<br/><br/>";
             }
 
             result += "<input id=\"context\" type=\"hidden\" name=\"Context\" value=\"%Context%\"/>";
@@ -1251,6 +1257,7 @@ namespace Neos.IdentityServer.MultiFactor
             result += "</script>" + CR;
 
             result += "<form method=\"post\" id=\"refreshForm\" autocomplete=\"off\" >";
+            bool soon = RuntimeRepository.MustChangePasswordSoon(Provider.Config, usercontext.UPN, out DateTime max);
             if (usercontext.IsRemote)
             {
                 IExternalProvider prov = RuntimeAuthProvider.GetProvider(usercontext.PreferredMethod);
@@ -1262,14 +1269,19 @@ namespace Neos.IdentityServer.MultiFactor
                     result += "<div class=\"error smallText\">" + prov.GetUIWarningThirdPartyLabel(usercontext) + "</div>";
                 result += "<br />";
 
-                if (usercontext.IsTwoWay && (Provider.Config.UserFeatures.CanAccessOptions()))
+                if (soon)
+                    result += "<div class=\"error smallText\">" + string.Format(Resources.GetString(ResourcesLocaleKind.Html, "HtmlMustChangePassword"), max.ToLocalTime().ToLongDateString()) + "</div><br/>";
+
+                if (usercontext.IsTwoWay && (Provider.HasAccessToOptions(prov)))
                 {
-                    if (Provider.HasAccessToOptions(prov))
-                        result += "<input id=\"##OPTIONS##\" type=\"checkbox\" name=\"##OPTIONS##\" onclick=\"SetOptions(refreshForm)\" /> " + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMAccessOptions");
+                    if ((soon) && (Provider.Config.UserFeatures.CanManagePassword()))
+                        result += "<input id=\"##OPTIONS##\" type=\"checkbox\" name=\"##OPTIONS##\" checked=\"true\" /> " + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMAccessOptions");
+                    else
+                        result += "<input id=\"##OPTIONS##\" type=\"checkbox\" name=\"##OPTIONS##\" /> " + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMAccessOptions");
                     result += "<script>";
                     result += "   document.cookie = 'showoptions=;expires=Thu, 01 Jan 1970 00:00:01 GMT;path=/adfs/'";
                     result += "</script>";
-                    result += "<br/><br/><br/>";
+                    result += "<br/><br/>";
                 }
 
                 result += "<a class=\"actionLink\" href=\"#\" id=\"nocode\" name=\"nocode\" onclick=\"return SetLinkTitle(refreshForm, '3')\"; style=\"cursor: pointer;\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMNoCode") + "</a>";
@@ -1344,18 +1356,18 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public override string GetFormHtmlSendBiometricRequest(AuthenticationContext usercontext)
         {
-           // string result = string.Empty;
+            bool soon = RuntimeRepository.MustChangePasswordSoon(Provider.Config, usercontext.UPN, out DateTime max);
             string result = "<script type='text/javascript'>" + CR;
             result += "if (window.addEventListener)" + CR;
             result += "{" + CR;
-            if (usercontext.DirectLogin)
+            if ((usercontext.DirectLogin) && (!soon))
                 result += "   window.addEventListener('load', OnAutoPost, false);" + CR;
             else
                 result += "   window.addEventListener('submit', LoginWebAuthN, false);" + CR;
             result += "}" + CR;
             result += "else if (window.attachEvent)" + CR;
             result += "{" + CR;
-            if (usercontext.DirectLogin)
+            if ((usercontext.DirectLogin) && (!soon))
                 result += "   window.attachEvent('load', OnAutoPost);" + CR;
             else
                 result += "   window.attachEvent('submit', LoginWebAuthN);" + CR;
@@ -1380,16 +1392,23 @@ namespace Neos.IdentityServer.MultiFactor
             result += "<br/>";
             result += "<div class=\"fieldMargin smallText\">" + prov.GetUIMessage(usercontext) + "</div>";
             result += "<br/>";
-            if (!usercontext.DirectLogin)
+
+            if (soon)
+                result += "<div class=\"error smallText\">" + string.Format(Resources.GetString(ResourcesLocaleKind.Html, "HtmlMustChangePassword"), max.ToLocalTime().ToLongDateString()) + "</div><br/>";
+
+            if ((!usercontext.DirectLogin) || (soon))
             {
-                if (Provider.Config.UserFeatures.CanAccessOptions())
+                if (Provider.HasAccessToOptions(prov))
                 {
-                    if (Provider.HasAccessToOptions(prov))
+                    if ((soon) && (Provider.Config.UserFeatures.CanManagePassword()))
+                        result += "<input id=\"##OPTIONS##\" type=\"checkbox\" name=\"##OPTIONS##\" checked=\"true\" /> " + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMAccessOptions");
+                    else
                         result += "<input id=\"##OPTIONS##\" type=\"checkbox\" name=\"##OPTIONS##\" /> " + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMAccessOptions");
+                    result += "<br/><br/>";
                     result += "<script>";
                     result += "   document.cookie = 'showoptions=;expires=Thu, 01 Jan 1970 00:00:01 GMT;path=/adfs/'";
                     result += "</script>";
-                    result += "<br/><br/><br/>";
+                    result += "<br/><br/>";
                 }
                 result += "<input id=\"signin\" type=\"submit\" class=\"submit\" name=\"signin\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMConnexion") + "\" /><br/><br/>";
                 result += "<a class=\"actionLink\" href=\"#\" id=\"nocode\" name=\"nocode\" onclick=\"return SetLinkTitle(refreshbiometricForm, '3')\"; style=\"cursor: pointer;\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMNoCode") + "</a>";

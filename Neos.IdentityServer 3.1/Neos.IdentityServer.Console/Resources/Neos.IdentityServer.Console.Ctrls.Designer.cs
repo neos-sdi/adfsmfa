@@ -925,6 +925,24 @@ namespace Neos.IdentityServer.Console.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Lock out the user if password has expired.
+        /// </summary>
+        internal static string CTRLLOCKUSERONPASSWORDEXPIRED {
+            get {
+                return ResourceManager.GetString("CTRLLOCKUSERONPASSWORDEXPIRED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Maximum password life.
+        /// </summary>
+        internal static string CTRLMAXPASSWORDAGEINDAYS {
+            get {
+                return ResourceManager.GetString("CTRLMAXPASSWORDAGEINDAYS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à (*) Supports multi-valued string properties.
         /// </summary>
         internal static string CTRLMULTVALUED {
@@ -957,6 +975,15 @@ namespace Neos.IdentityServer.Console.Resources {
         internal static string CTRLNULLOREMPTYERROR {
             get {
                 return ResourceManager.GetString("CTRLNULLOREMPTYERROR", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Passwords Policy.
+        /// </summary>
+        internal static string CTRLPASSWORDPOLICY {
+            get {
+                return ResourceManager.GetString("CTRLPASSWORDPOLICY", resourceCulture);
             }
         }
         
@@ -1624,6 +1651,33 @@ namespace Neos.IdentityServer.Console.Resources {
         internal static string CTRLSTUSESQL {
             get {
                 return ResourceManager.GetString("CTRLSTUSESQL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Use enterprise passwords policy (GPO).
+        /// </summary>
+        internal static string CTRLUSEGPOPASSWORDPOLICY {
+            get {
+                return ResourceManager.GetString("CTRLUSEGPOPASSWORDPOLICY", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Activate passwords policy.
+        /// </summary>
+        internal static string CTRLUSEPASSWORDPOLICY {
+            get {
+                return ResourceManager.GetString("CTRLUSEPASSWORDPOLICY", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Notify the user before the password expires.
+        /// </summary>
+        internal static string CTRLWARNMAXPASSWORDAGEINDAYS {
+            get {
+                return ResourceManager.GetString("CTRLWARNMAXPASSWORDAGEINDAYS", resourceCulture);
             }
         }
         

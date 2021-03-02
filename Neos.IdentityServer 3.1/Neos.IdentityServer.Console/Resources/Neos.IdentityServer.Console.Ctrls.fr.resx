@@ -690,4 +690,22 @@
   <data name="CTRLADSUPERACCOUNT" xml:space="preserve">
     <value>"Data Access Account" Active Directory</value>
   </data>
+  <data name="CTRLPASSWORDPOLICY" xml:space="preserve">
+    <value>Politique de mots de passe</value>
+  </data>
+  <data name="CTRLUSEPASSWORDPOLICY" xml:space="preserve">
+    <value>Activer la stratégie de mots de passe</value>
+  </data>
+  <data name="CTRLUSEGPOPASSWORDPOLICY" xml:space="preserve">
+    <value>Utiliser la stratégie de mots de passe d’entreprise (GPO)</value>
+  </data>
+  <data name="CTRLLOCKUSERONPASSWORDEXPIRED" xml:space="preserve">
+    <value>Verrouiller l’utilisateur si le mot de passe a expiré</value>
+  </data>
+  <data name="CTRLMAXPASSWORDAGEINDAYS" xml:space="preserve">
+    <value>Durée de vie maximale du mot de passe</value>
+  </data>
+  <data name="CTRLWARNMAXPASSWORDAGEINDAYS" xml:space="preserve">
+    <value>Avertir l'utilisateur avant l'expiration du mot de passe</value>
+  </data>
 </root>

@@ -75,6 +75,9 @@ namespace Neos.IdentityServer.Console
                 serviceControl.RefreshData();
         }
 
+        /// <summary>
+        /// ManageCerts method implmentation
+        /// </summary>
         internal void ManageCerts()
         {
             MessageBoxParameters messageBoxParameters = new MessageBoxParameters
@@ -115,6 +118,7 @@ namespace Neos.IdentityServer.Console
                     this.SnapIn.Console.ShowDialog(messageBoxParametersError);
                 }
             }
+            /*
             MessageBoxParameters messageBoxParameters2 = new MessageBoxParameters
             {
                 Caption = "Multi-Factor Authentication",
@@ -150,7 +154,7 @@ namespace Neos.IdentityServer.Console
                     };
                     this.SnapIn.Console.ShowDialog(messageBoxParametersError);
                 }
-            }
+            }*/
         }        
     }
 }

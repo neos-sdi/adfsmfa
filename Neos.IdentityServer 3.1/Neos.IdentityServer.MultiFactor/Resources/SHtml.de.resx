@@ -285,4 +285,7 @@ Sie können von jetzt an Multi-Factor-Authentifizierung verwenden.</value>
   <data name="HtmlUIMNoCode" xml:space="preserve">
     <value>Auf andere Weise anmelden</value>
   </data>
+  <data name="HtmlMustChangePassword" xml:space="preserve">
+    <value>Sie müssen Ihr Passwort ändern, bevor sie : &lt;br/&gt; {0}</value>
+  </data>
 </root>

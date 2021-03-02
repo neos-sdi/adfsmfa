@@ -282,4 +282,7 @@
   <data name="HtmlUIMNoCode" xml:space="preserve">
     <value>別の方法でサインインする</value>
   </data>
+  <data name="HtmlMustChangePassword" xml:space="preserve">
+    <value>パスワードを変更する前に、次の手順を実行する必要があります。 &lt;br/&gt; {0}</value>
+  </data>
 </root>

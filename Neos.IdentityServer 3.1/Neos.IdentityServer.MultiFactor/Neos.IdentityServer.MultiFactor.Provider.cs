@@ -147,6 +147,8 @@ namespace Neos.IdentityServer.MultiFactor
             {
                 ClaimsUtilities.SetIdentityClaim(identityClaim);
                 string upn = identityClaim.Value;
+                if (RuntimeRepository.IsUserPasswordExpired(Config, upn))
+                    throw new Exception(string.Format("User Password for user {0} is expired ! Access denied !", upn));
                 MFAUser reg = RuntimeRepository.GetMFAUser(Config, upn);
                 if (reg != null) // User Is Registered
                 {
@@ -325,6 +327,7 @@ namespace Neos.IdentityServer.MultiFactor
                                 _config.Hosts.SQLServerHost.SQLPassword = MSIS.Decrypt(_config.Hosts.SQLServerHost.SQLPassword);
                                 _config.MailProvider.Password = MSIS.Decrypt(_config.MailProvider.Password);
                             };
+                            ADDSUtils.LoadForests(_config.Hosts.ActiveDirectoryHost.DomainName, _config.Hosts.ActiveDirectoryHost.Account, _config.Hosts.ActiveDirectoryHost.Password, _config.Hosts.ActiveDirectoryHost.UseSSL, true);
                             KeysManager.Initialize(_config);  // Always Bind KeysManager Otherwise this is made in CFGUtilities.ReadConfiguration
                             RuntimeAuthProvider.LoadProviders(_config); // Load Available providers
                          }
@@ -1289,8 +1292,8 @@ namespace Neos.IdentityServer.MultiFactor
                             }
                             catch (Exception ex)
                             {
-                                usercontext.UIMode = ProviderPageMode.Locking;
-                                result = new AdapterPresentation(this, context, ex.Message, ProviderPageMode.DefinitiveError);
+                                usercontext.UIMode = ProviderPageMode.ChangePassword;
+                                result = new AdapterPresentation(this, context, ex.Message, false);
                             }
                         }
                         else
@@ -1505,7 +1508,7 @@ namespace Neos.IdentityServer.MultiFactor
                         }
                         else
                         {
-                            usercontext.UIMode = ProviderPageMode.SendAuthRequest;
+                            usercontext.UIMode = ProviderPageMode.ChooseMethod;  // SendAuthRequest;
                             return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorSendingToastInformationRetry"), false);
                         }
                     }
@@ -1567,7 +1570,7 @@ namespace Neos.IdentityServer.MultiFactor
                     else
                     {
                         if (!cango)
-                            usercontext.CurrentRetries++; // do not passed by SetAuthenticationResult
+                            usercontext.CurrentRetries++; // do not passed by SetAuthenticationResult / jsError
                         if (DateTime.Now.ToUniversalTime() > usercontext.LogonDate.AddSeconds(Convert.ToDouble(Config.DeliveryWindow)).ToUniversalTime())
                         {
                             usercontext.UIMode = ProviderPageMode.Locking;
@@ -2835,7 +2838,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         private int PostAuthenticationRequest(AuthenticationContext usercontext, PreferredMethod method = PreferredMethod.None)
         {
-           // usercontext.CurrentRetries++;
+            // usercontext.CurrentRetries++;
             try
             {
                 IExternalProvider provider = null;

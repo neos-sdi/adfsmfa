@@ -68,6 +68,7 @@ namespace Neos.IdentityServer.MultiFactor
                     "http://schemas.microsoft.com/ws/2012/12/authmethod/windowshello",
                     "http://schemas.microsoft.com/ws/2012/12/authmethod/fido",
                     "http://schemas.microsoft.com/ws/2012/12/authmethod/webauthN"
+                   // "http://schemas.microsoft.com/ws/2012/01/passwordexpirationtime"
                 };
             } 
         }

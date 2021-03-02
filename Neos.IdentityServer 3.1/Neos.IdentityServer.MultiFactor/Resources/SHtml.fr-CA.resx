@@ -282,4 +282,7 @@
   <data name="HtmlUIMNoCode" xml:space="preserve">
     <value>Se connecter d’une autre manière</value>
   </data>
+  <data name="HtmlMustChangePassword" xml:space="preserve">
+    <value>Vous devez changer votre mot de passe avant le : &lt;br/&gt; {0}</value>
+  </data>
 </root>

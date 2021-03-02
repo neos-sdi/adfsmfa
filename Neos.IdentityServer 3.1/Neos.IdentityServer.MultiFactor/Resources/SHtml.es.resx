@@ -285,4 +285,7 @@ Podrá utilizar la validación de MFA en el futuro.</value>
   <data name="HtmlUIMNoCode" xml:space="preserve">
     <value>Firme de otra manera</value>
   </data>
+  <data name="HtmlMustChangePassword" xml:space="preserve">
+    <value>Debe cambiar su contraseña antes de : &lt;br/&gt; {0}</value>
+  </data>
 </root>

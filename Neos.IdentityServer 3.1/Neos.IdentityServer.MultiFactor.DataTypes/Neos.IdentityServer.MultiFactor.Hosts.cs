@@ -921,6 +921,21 @@ namespace Neos.IdentityServer.MultiFactor
         [XmlAttribute("KeySize")]
         public KeySizeMode KeySize { get; set; } = KeySizeMode.KeySize1024;
 
+        [XmlAttribute("UsePasswordPolicy")]
+        public bool UsePasswordPolicy { get; set; } = true;
+
+        [XmlAttribute("UseGPOPasswordPolicy")]
+        public bool UseGPOPasswordPolicy { get; set; } = false;
+
+        [XmlAttribute("LockUserOnPasswordExpiration")]
+        public bool LockUserOnPasswordExpiration { get; set; } = true;
+
+        [XmlAttribute("MaxPasswordAgeInDays")]
+        public uint MaxPasswordAgeInDays { get; set; } = 90;
+
+        [XmlAttribute("WarnPasswordExpirationBeforeInDays")]
+        public uint WarnPasswordExpirationBeforeInDays { get; set; } = 14;
+
         [XmlAttribute("CustomFullyQualifiedImplementation")]
         public string CustomFullyQualifiedImplementation { get; set; }
 
@@ -2070,12 +2085,12 @@ namespace Neos.IdentityServer.MultiFactor
     /// <summary>
     /// ADDSHostForest class implementation
     /// </summary>
-    public class ADDSHostForest
+ /*   public class ADDSHostForest
     {
         public bool IsRoot { get; set; }
         public string ForestDNS { get; set; }
         public List<string> TopLevelNames = new List<string>();
-    }
+    } */
 
     /// <summary>
     /// BaseDataHost class implementation
@@ -2091,7 +2106,7 @@ namespace Neos.IdentityServer.MultiFactor
     public class ADDSHost: BaseDataHost
     {
         private string _domainaddress = string.Empty;
-        private bool _isbinded = false;
+       /* private bool _isbinded = false;
 
         /// <summary>
         /// ADDSHost constructor
@@ -2149,7 +2164,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// GetForestForUser method implementation
         /// </summary>
-        public string GetForestForUser(string account, ADDSHost host)
+        public string GetForestForUser(ADDSHost host, string account)
         {
             string result = string.Empty;
             switch (ClaimsUtilities.IdentityClaimTag)
@@ -2197,10 +2212,11 @@ namespace Neos.IdentityServer.MultiFactor
                     break;
             }
             return result;
-        }
+        } 
 
         [XmlIgnore]
         public List<ADDSHostForest> Forests { get; } = new List<ADDSHostForest>();
+        */
 
         #region ADDS Connection attributes
         [XmlAttribute("DomainAddress")]

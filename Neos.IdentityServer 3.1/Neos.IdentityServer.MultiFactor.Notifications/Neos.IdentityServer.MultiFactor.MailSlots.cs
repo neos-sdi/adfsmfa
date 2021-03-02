@@ -1320,6 +1320,7 @@ namespace Neos.IdentityServer.MultiFactor
             return sa;
         }
     }
+
     /// <summary>
     /// SECURITY_ATTRIBUTES 
     /// </summary>

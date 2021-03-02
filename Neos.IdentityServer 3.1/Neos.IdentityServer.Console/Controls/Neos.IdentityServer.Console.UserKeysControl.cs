@@ -116,12 +116,30 @@ namespace Neos.IdentityServer.Console
         /// </summary>
         private void newkeyBtn_Click(object sender, EventArgs e)
         {
-            MMCService.NewUserKey(_upn);
-            _secretkey = MMCService.GetEncodedUserKey(_upn);
-            this.DisplayKey.Text = _secretkey;
-            this.qrCodeGraphic.Text = MMCService.GetQRCodeValue(_upn, this.DisplayKey.Text);
-            if (!SyncDisabled)
-                userPropertyPage.SyncSharedUserData(this, true);
+            Cursor crs = this.Cursor;
+            try
+            {
+
+                MMCService.NewUserKey(_upn);
+                _secretkey = MMCService.GetEncodedUserKey(_upn);
+                this.DisplayKey.Text = _secretkey;
+                this.qrCodeGraphic.Text = MMCService.GetQRCodeValue(_upn, this.DisplayKey.Text);
+                if (!SyncDisabled)
+                    userPropertyPage.SyncSharedUserData(this, true);
+            }
+            catch (Exception ex)
+            {
+                this.Cursor = crs;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
+                messageBoxParameters.Text = ex.Message;
+                messageBoxParameters.Buttons = MessageBoxButtons.OK;
+                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                userPropertyPage.ParentSheet.ShowDialog(messageBoxParameters);
+            }
+            finally
+            {
+                this.Cursor = crs;
+            }
         }
 
         /// <summary>
@@ -129,11 +147,28 @@ namespace Neos.IdentityServer.Console
         /// </summary>
         private void clearkeyBtn_Click(object sender, EventArgs e)
         {
-            _secretkey = string.Empty;
-            this.DisplayKey.Text = string.Empty;
-            this.qrCodeGraphic.Text = string.Empty;
-            if (!SyncDisabled)
-                userPropertyPage.SyncSharedUserData(this, true);
+            Cursor crs = this.Cursor;
+            try
+            {
+                _secretkey = string.Empty;
+                this.DisplayKey.Text = string.Empty;
+                this.qrCodeGraphic.Text = string.Empty;
+                if (!SyncDisabled)
+                    userPropertyPage.SyncSharedUserData(this, true);
+            }
+            catch (Exception ex)
+            {
+                this.Cursor = crs;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
+                messageBoxParameters.Text = ex.Message;
+                messageBoxParameters.Buttons = MessageBoxButtons.OK;
+                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                userPropertyPage.ParentSheet.ShowDialog(messageBoxParameters);
+            }
+            finally
+            {
+                this.Cursor = crs;
+            }
         }
 
         /// <summary>

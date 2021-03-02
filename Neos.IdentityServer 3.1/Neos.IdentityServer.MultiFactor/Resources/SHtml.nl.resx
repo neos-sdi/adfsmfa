@@ -284,4 +284,7 @@ U in de toekomst MFA-validatie gebruiken.</value>
   <data name="HtmlUIMNoCode" xml:space="preserve">
     <value>Op een andere manier aanmelden</value>
   </data>
+  <data name="HtmlMustChangePassword" xml:space="preserve">
+    <value>U moet uw wachtwoord wijzigen voordat : &lt;br/&gt; {0}</value>
+  </data>
 </root>

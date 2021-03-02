@@ -285,4 +285,7 @@ Du kommer att kunna använda MFA validering i framtiden.</value>
   <data name="HtmlUIMNoCode" xml:space="preserve">
     <value>Logga på ett annat sätt</value>
   </data>
+  <data name="HtmlMustChangePassword" xml:space="preserve">
+    <value>Du måste ändra ditt lösenord innan : &lt;br/&gt; {0}</value>
+  </data>
 </root>

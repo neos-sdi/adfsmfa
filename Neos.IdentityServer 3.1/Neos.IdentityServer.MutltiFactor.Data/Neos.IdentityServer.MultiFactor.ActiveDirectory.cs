@@ -40,7 +40,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
             if (!(host is ADDSHost))
                 throw new ArgumentException("Invalid Host ! : value but be an ADDSHost instance");
 
-            ADHost.Bind(ADHost.DomainName, ADHost.Account, ADHost.Password);
+            ADDSUtils.LoadForests(ADHost.DomainName, ADHost.Account, ADHost.Password, ADHost.UseSSL);
             _mailismulti = ADDSUtils.IsMultivaluedAttribute(ADHost.DomainName, ADHost.Account, ADHost.Password, ADHost.MailAttribute);
             _phoneismulti = ADDSUtils.IsMultivaluedAttribute(ADHost.DomainName, ADHost.Account, ADHost.Password, ADHost.PhoneAttribute);
         }
@@ -53,7 +53,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
             if (!(host is ADDSHost))
                 throw new ArgumentException("Invalid Host ! : value but be an ADDSHost instance");
 
-            ADHost.Bind(domain, account, password);
+            ADDSUtils.LoadForests(domain, account, password, ADHost.UseSSL);
             _mailismulti = ADDSUtils.IsMultivaluedAttribute(domain, account, password, ADHost.MailAttribute);
             _phoneismulti = ADDSUtils.IsMultivaluedAttribute(domain, account, password, ADHost.PhoneAttribute);
         }
@@ -75,7 +75,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
             MFAUser reg = null;
             try
             {
-                using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUser(ADHost, ADHost.Account, ADHost.Password, upn, ADHost.UseSSL))
+                using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUser(ADHost, ADHost.Account, ADHost.Password, upn))
                 {
                     string qryldap = "(&(objectCategory=user)(objectClass=user)" + ClaimsUtilities.BuildADDSUserFilter(upn) + "(!(userAccountControl:1.2.840.113556.1.4.803:=2)))";
                     using (DirectorySearcher dsusr = new DirectorySearcher(rootdir, qryldap))
@@ -97,7 +97,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                         if (sr != null)
                         {
                             reg = new MFAUser();
-                            using (DirectoryEntry DirEntry = ADDSUtils.GetDirectoryEntry(ADHost, sr, ADHost.UseSSL))
+                            using (DirectoryEntry DirEntry = ADDSUtils.GetDirectoryEntry(ADHost, sr))
                             {
                                 if (DirEntry.Properties["objectGUID"].Value != null)
                                 {
@@ -185,7 +185,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
             }
             try
             {
-                using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUser(ADHost, ADHost.Account, ADHost.Password, reg.UPN, ADHost.UseSSL))
+                using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUser(ADHost, ADHost.Account, ADHost.Password, reg.UPN))
                 {
                     string qryldap = "(&(objectCategory=user)(objectClass=user)" + ClaimsUtilities.BuildADDSUserFilter(reg.UPN) + "(!(userAccountControl:1.2.840.113556.1.4.803:=2)))";
                     using (DirectorySearcher dsusr = new DirectorySearcher(rootdir, qryldap))
@@ -205,7 +205,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                         SearchResult sr = dsusr.FindOne();
                         if (sr != null)
                         {
-                            using (DirectoryEntry DirEntry = ADDSUtils.GetDirectoryEntry(ADHost, sr, ADHost.UseSSL))
+                            using (DirectoryEntry DirEntry = ADDSUtils.GetDirectoryEntry(ADHost, sr))
                             {
                                 ADDSUtils.SetMultiValued(DirEntry.Properties[ADHost.MailAttribute], _mailismulti, reg.MailAddress);
                                 ADDSUtils.SetMultiValued(DirEntry.Properties[ADHost.PhoneAttribute], _phoneismulti, reg.PhoneNumber);
@@ -257,7 +257,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
             }
             try
             {
-                using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUser(ADHost, ADHost.Account, ADHost.Password, reg.UPN, ADHost.UseSSL))
+                using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUser(ADHost, ADHost.Account, ADHost.Password, reg.UPN))
                 {
                     string qryldap = "(&(objectCategory=user)(objectClass=user)" + ClaimsUtilities.BuildADDSUserFilter(reg.UPN) + "(!(userAccountControl:1.2.840.113556.1.4.803:=2)))";
                     using (DirectorySearcher dsusr = new DirectorySearcher(rootdir, qryldap))
@@ -277,7 +277,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                         SearchResult sr = dsusr.FindOne();
                         if (sr != null)
                         {
-                            using (DirectoryEntry DirEntry = ADDSUtils.GetDirectoryEntry(ADHost, sr, ADHost.UseSSL))
+                            using (DirectoryEntry DirEntry = ADDSUtils.GetDirectoryEntry(ADHost, sr))
                             {
                                 ADDSUtils.SetMultiValued(DirEntry.Properties[ADHost.MailAttribute], _mailismulti, reg.MailAddress);
                                 ADDSUtils.SetMultiValued(DirEntry.Properties[ADHost.PhoneAttribute], _phoneismulti, reg.PhoneNumber);
@@ -324,7 +324,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                 throw new Exception("The user " + reg.UPN + " cannot be deleted ! \r User not found !");
             try
             {
-                using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUser(ADHost, ADHost.Account, ADHost.Password, reg.UPN, ADHost.UseSSL))
+                using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUser(ADHost, ADHost.Account, ADHost.Password, reg.UPN))
                 {
                     string qryldap = "(&(objectCategory=user)(objectClass=user)" + ClaimsUtilities.BuildADDSUserFilter(reg.UPN) + "(!(userAccountControl:1.2.840.113556.1.4.803:=2)))";
                     using (DirectorySearcher dsusr = new DirectorySearcher(rootdir, qryldap))
@@ -345,7 +345,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                         SearchResult sr = dsusr.FindOne();
                         if (sr != null)
                         {
-                            using (DirectoryEntry DirEntry = ADDSUtils.GetDirectoryEntry(ADHost, sr, ADHost.UseSSL))
+                            using (DirectoryEntry DirEntry = ADDSUtils.GetDirectoryEntry(ADHost, sr))
                             {
                                 ADDSUtils.SetMultiValued(DirEntry.Properties[ADHost.MailAttribute], _mailismulti, string.Empty);
                                 ADDSUtils.SetMultiValued(DirEntry.Properties[ADHost.PhoneAttribute], _phoneismulti, string.Empty);
@@ -378,7 +378,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                 throw new Exception("The user " + reg.UPN + " cannot be updated ! \r User not found !");
             try
             {
-                using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUser(ADHost, ADHost.Account, ADHost.Password, reg.UPN, ADHost.UseSSL))
+                using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUser(ADHost, ADHost.Account, ADHost.Password, reg.UPN))
                 {
                     string qryldap = "(&(objectCategory=user)(objectClass=user)" + ClaimsUtilities.BuildADDSUserFilter(reg.UPN) + "(!(userAccountControl:1.2.840.113556.1.4.803:=2)))";
                     using (DirectorySearcher dsusr = new DirectorySearcher(rootdir, qryldap))
@@ -393,7 +393,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                         SearchResult sr = dsusr.FindOne();
                         if (sr != null)
                         {
-                            using (DirectoryEntry DirEntry = ADDSUtils.GetDirectoryEntry(ADHost, sr, ADHost.UseSSL))
+                            using (DirectoryEntry DirEntry = ADDSUtils.GetDirectoryEntry(ADHost, sr))
                             {
                                 DirEntry.Properties[ADHost.TotpEnabledAttribute].Value = true;
                                 DirEntry.CommitChanges();
@@ -419,7 +419,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                 throw new Exception("The user " + reg.UPN + " cannot be updated ! User not found !");
             try
             {
-                using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUser(ADHost, ADHost.Account, ADHost.Password, reg.UPN, ADHost.UseSSL))
+                using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUser(ADHost, ADHost.Account, ADHost.Password, reg.UPN))
                 {
                     string qryldap = "(&(objectCategory=user)(objectClass=user)" + ClaimsUtilities.BuildADDSUserFilter(reg.UPN) + "(!(userAccountControl:1.2.840.113556.1.4.803:=2)))";
                     using (DirectorySearcher dsusr = new DirectorySearcher(rootdir, qryldap))
@@ -434,7 +434,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                         SearchResult sr = dsusr.FindOne();
                         if (sr != null)
                         {
-                            using (DirectoryEntry DirEntry = ADDSUtils.GetDirectoryEntry(ADHost, sr, ADHost.UseSSL))
+                            using (DirectoryEntry DirEntry = ADDSUtils.GetDirectoryEntry(ADHost, sr))
                             {
                                 DirEntry.Properties[ADHost.TotpEnabledAttribute].Value = false;
                                 DirEntry.CommitChanges();
@@ -536,11 +536,11 @@ namespace Neos.IdentityServer.MultiFactor.Data
             MFAUserList registrations = new MFAUserList();
             try
             {
-                foreach (ADDSHostForest f in ADHost.Forests)
+                foreach (ADDSHostForest f in ADDSUtils.Forests)
                 {
                     try
                     {
-                        using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntry(f.ForestDNS, ADHost.Account, ADHost.Password, ADHost.UseSSL))                        
+                        using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntry(f.ForestDNS, ADHost.Account, ADHost.Password))                        
                         {
                             using (DirectorySearcher dsusr = new DirectorySearcher(rootdir, qryldap))
                             {
@@ -580,7 +580,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                                 foreach (SearchResult sr in src)
                                 {
                                     MFAUser reg = new MFAUser();
-                                    using (DirectoryEntry DirEntry = ADDSUtils.GetDirectoryEntry(ADHost, sr, ADHost.UseSSL))
+                                    using (DirectoryEntry DirEntry = ADDSUtils.GetDirectoryEntry(ADHost, sr))
                                     {
                                         if (DirEntry.Properties["objectGUID"].Value != null)
                                         {
@@ -701,9 +701,9 @@ namespace Neos.IdentityServer.MultiFactor.Data
             MFAUserList registrations = new MFAUserList();
             try
             {
-                foreach (ADDSHostForest f in ADHost.Forests)
+                foreach (ADDSHostForest f in ADDSUtils.Forests)
                 {
-                    using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntry(f.ForestDNS, ADHost.Account, ADHost.Password, ADHost.UseSSL))
+                    using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntry(f.ForestDNS, ADHost.Account, ADHost.Password))
                     {
                         string qryldap = "(&(objectCategory=user)(objectClass=user)" + ClaimsUtilities.BuildADDSUserFilter("*");
                         if (enabledonly)
@@ -750,7 +750,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                                 foreach (SearchResult sr in src)
                                 {
                                     MFAUser reg = new MFAUser();
-                                    using (DirectoryEntry DirEntry = ADDSUtils.GetDirectoryEntry(ADHost, sr, ADHost.UseSSL))
+                                    using (DirectoryEntry DirEntry = ADDSUtils.GetDirectoryEntry(ADHost, sr))
                                     {
                                         if (DirEntry.Properties["objectGUID"].Value != null)
                                         {
@@ -908,11 +908,11 @@ namespace Neos.IdentityServer.MultiFactor.Data
 
             try
             {
-                foreach (ADDSHostForest f in ADHost.Forests)
+                foreach (ADDSHostForest f in ADDSUtils.Forests)
                 {
                     try
                     {
-                        using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntry(f.ForestDNS, ADHost.Account, ADHost.Password, ADHost.UseSSL))
+                        using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntry(f.ForestDNS, ADHost.Account, ADHost.Password))
                         {
                             {
                                 using (DirectorySearcher dsusr = new DirectorySearcher(rootdir, qryldap))
@@ -939,7 +939,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                                         foreach (SearchResult sr in src)
                                         {
                                             MFAUser reg = new MFAUser();
-                                            using (DirectoryEntry DirEntry = ADDSUtils.GetDirectoryEntry(ADHost, sr, ADHost.UseSSL))
+                                            using (DirectoryEntry DirEntry = ADDSUtils.GetDirectoryEntry(ADHost, sr))
                                             {
                                                 bool IsRegistered = false;
                                                 if (DirEntry.Properties["objectGUID"].Value != null)
@@ -1017,7 +1017,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
         {
             try
             {
-                using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUser(ADHost, ADHost.Account, ADHost.Password, upn, ADHost.UseSSL))
+                using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUser(ADHost, ADHost.Account, ADHost.Password, upn))
                 {
                     string qryldap = "(&(objectCategory=user)(objectClass=user)" + ClaimsUtilities.BuildADDSUserFilter(upn) + "(!(userAccountControl:1.2.840.113556.1.4.803:=2)))";
                     using (DirectorySearcher dsusr = new DirectorySearcher(rootdir, qryldap))
@@ -1038,7 +1038,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                         SearchResult sr = dsusr.FindOne();
                         if (sr == null)
                             return false;
-                        using (DirectoryEntry DirEntry = ADDSUtils.GetDirectoryEntry(ADHost, sr, ADHost.UseSSL))
+                        using (DirectoryEntry DirEntry = ADDSUtils.GetDirectoryEntry(ADHost, sr))
                         {
                             if (DirEntry.Properties["objectGUID"].Value != null)
                             {
@@ -1077,7 +1077,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
             MFAWebAuthNUser result = null;
             try
             {
-                using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUser(ADHost, ADHost.Account, ADHost.Password, username, ADHost.UseSSL))
+                using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUser(ADHost, ADHost.Account, ADHost.Password, username))
                 {
                     string qryldap = "(&(objectCategory=user)(objectClass=user)" + ClaimsUtilities.BuildADDSUserFilter(username) + "(!(userAccountControl:1.2.840.113556.1.4.803:=2)))";
                     using (DirectorySearcher dsusr = new DirectorySearcher(rootdir, qryldap))
@@ -1091,7 +1091,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                         SearchResult sr = dsusr.FindOne();
                         if (sr != null)
                         {
-                            using (DirectoryEntry DirEntry = ADDSUtils.GetDirectoryEntry(ADHost, sr, ADHost.UseSSL))
+                            using (DirectoryEntry DirEntry = ADDSUtils.GetDirectoryEntry(ADHost, sr))
                             {
                                 string upn = sr.Properties[ClaimsUtilities.GetADDSUserAttribute()][0].ToString();
                                 result = new MFAWebAuthNUser()
@@ -1142,7 +1142,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
             List<MFAUserCredential> _lst = new List<MFAUserCredential>();
             try
             {
-                using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUser(ADHost, ADHost.Account, ADHost.Password, user.Name, ADHost.UseSSL))
+                using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUser(ADHost, ADHost.Account, ADHost.Password, user.Name))
                 {
                     string qryldap = "(&(objectCategory=user)(objectClass=user)" + ClaimsUtilities.BuildADDSUserFilter(user.Name) + "(!(userAccountControl:1.2.840.113556.1.4.803:=2)))";
                     using (DirectorySearcher dsusr = new DirectorySearcher(rootdir, qryldap))
@@ -1220,7 +1220,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
             MFAUserCredential result = null;
             try
             {
-                using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUser(ADHost, ADHost.Account, ADHost.Password, user.Name, ADHost.UseSSL))
+                using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUser(ADHost, ADHost.Account, ADHost.Password, user.Name))
                 {
                     string qryldap = "(&(objectCategory=user)(objectClass=user)" + ClaimsUtilities.BuildADDSUserFilter(user.Name) + "(!(userAccountControl:1.2.840.113556.1.4.803:=2)))";
                     using (DirectorySearcher dsusr = new DirectorySearcher(rootdir, qryldap))
@@ -1292,7 +1292,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
             string value = ser.SerializeCredentials(credential, user.Name);
             try
             {
-                using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUser(ADHost, ADHost.Account, ADHost.Password, user.Name, ADHost.UseSSL))
+                using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUser(ADHost, ADHost.Account, ADHost.Password, user.Name))
                 {
                     string qryldap = "(&(objectCategory=user)(objectClass=user)" + ClaimsUtilities.BuildADDSUserFilter(user.Name) + "(!(userAccountControl:1.2.840.113556.1.4.803:=2)))";
                     using (DirectorySearcher dsusr = new DirectorySearcher(rootdir, qryldap))
@@ -1306,7 +1306,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                         SearchResult sr = dsusr.FindOne();
                         if (sr != null)
                         {
-                            using (DirectoryEntry DirEntry = ADDSUtils.GetDirectoryEntry(ADHost, sr, ADHost.UseSSL))
+                            using (DirectoryEntry DirEntry = ADDSUtils.GetDirectoryEntry(ADHost, sr))
                             {
                                 DirEntry.Properties[ADHost.PublicKeyCredentialAttribute].Add(value);
                                 DirEntry.CommitChanges();
@@ -1335,7 +1335,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
             string newvalue = ser.SerializeCredentials(credential, user.Name);
             try
             {
-                using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUser(ADHost, ADHost.Account, ADHost.Password, user.Name, ADHost.UseSSL))
+                using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUser(ADHost, ADHost.Account, ADHost.Password, user.Name))
                 {
                     string qryldap = "(&(objectCategory=user)(objectClass=user)" + ClaimsUtilities.BuildADDSUserFilter(user.Name) + "(!(userAccountControl:1.2.840.113556.1.4.803:=2)))";
                     using (DirectorySearcher dsusr = new DirectorySearcher(rootdir, qryldap))
@@ -1349,7 +1349,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                         SearchResult sr = dsusr.FindOne();
                         if (sr != null)
                         {
-                            using (DirectoryEntry DirEntry = ADDSUtils.GetDirectoryEntry(ADHost, sr, ADHost.UseSSL))
+                            using (DirectoryEntry DirEntry = ADDSUtils.GetDirectoryEntry(ADHost, sr))
                             {
                                 bool updated = false;
                                 ResultPropertyValueCollection pcoll = sr.Properties[ADHost.PublicKeyCredentialAttribute];
@@ -1389,7 +1389,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
         {
             try
             {
-                using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUser(ADHost, ADHost.Account, ADHost.Password, user.Name, ADHost.UseSSL))
+                using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUser(ADHost, ADHost.Account, ADHost.Password, user.Name))
                 {
                     string qryldap = "(&(objectCategory=user)(objectClass=user)" + ClaimsUtilities.BuildADDSUserFilter(user.Name) + "(!(userAccountControl:1.2.840.113556.1.4.803:=2)))";
                     using (DirectorySearcher dsusr = new DirectorySearcher(rootdir, qryldap))
@@ -1418,7 +1418,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                             }
                             if (idtodelete != string.Empty)
                             {
-                                using (DirectoryEntry DirEntry = ADDSUtils.GetDirectoryEntry(ADHost, sr, ADHost.UseSSL))
+                                using (DirectoryEntry DirEntry = ADDSUtils.GetDirectoryEntry(ADHost, sr))
                                 {
                                     PropertyValueCollection props = DirEntry.Properties[ADHost.PublicKeyCredentialAttribute];
                                     props.Remove(idtodelete);
@@ -1449,7 +1449,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
             bool res = false;
             try
             {
-                using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntry(domainname, username, password, ADHost.UseSSL))
+                using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntry(domainname, username, password))
                 {
                     Guid gd = rootdir.Guid;
                     res = true;
@@ -1516,7 +1516,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
         {
             if (!(host is ADDSHost))
                 throw new ArgumentException("Invalid Host ! : value but be an ADDSHost instance");
-
+            ADDSUtils.LoadForests(ADHost.DomainName, ADHost.Account, ADHost.Password, ADHost.UseSSL);
             _keysismulti = ADDSUtils.IsMultivaluedAttribute(ADHost.DomainName, ADHost.Account, ADHost.Password, ADHost.KeyAttribute);
         }
 
@@ -1534,7 +1534,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
              string ret = string.Empty;
              try
              {
-                using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUser(ADHost, ADHost.Account, ADHost.Password, upn, ADHost.UseSSL))
+                using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUser(ADHost, ADHost.Account, ADHost.Password, upn))
                 {
                     string qryldap = string.Empty;
                     qryldap = "(&(objectCategory=user)(objectClass=user)" + ClaimsUtilities.BuildADDSUserFilter(upn) + "(" + ADHost.KeyAttribute + "=*)(!(userAccountControl:1.2.840.113556.1.4.803:=2)))";
@@ -1551,7 +1551,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                         SearchResult sr = dsusr.FindOne();
                         if (sr != null)
                         {
-                            using (DirectoryEntry DirEntry = ADDSUtils.GetDirectoryEntry(ADHost, sr, ADHost.UseSSL))
+                            using (DirectoryEntry DirEntry = ADDSUtils.GetDirectoryEntry(ADHost, sr))
                             {
                                 if (DirEntry.Properties["objectGUID"].Value != null)
                                 {
@@ -1580,7 +1580,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
              string ret = string.Empty;
              try
              {
-                using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUser(ADHost, ADHost.Account, ADHost.Password, upn, ADHost.UseSSL))
+                using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUser(ADHost, ADHost.Account, ADHost.Password, upn))
                 {
                     string qryldap = "(&(objectCategory=user)(objectClass=user)" + ClaimsUtilities.BuildADDSUserFilter(upn) + "(!(userAccountControl:1.2.840.113556.1.4.803:=2)))";
                     using (DirectorySearcher dsusr = new DirectorySearcher(rootdir, qryldap))
@@ -1595,7 +1595,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                         SearchResult sr = dsusr.FindOne();
                         if (sr != null)
                         { 
-                            using (DirectoryEntry DirEntry = ADDSUtils.GetDirectoryEntry(ADHost, sr, ADHost.UseSSL))
+                            using (DirectoryEntry DirEntry = ADDSUtils.GetDirectoryEntry(ADHost, sr))
                             {
                                 DirEntry.Properties[ADHost.KeyAttribute].Value = secretkey;
                                 DirEntry.CommitChanges();
@@ -1621,7 +1621,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
              bool ret = false;
              try
              {
-                using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUser(ADHost, ADHost.Account, ADHost.Password, upn, ADHost.UseSSL))
+                using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUser(ADHost, ADHost.Account, ADHost.Password, upn))
                 {
                     string qryldap = "(&(objectCategory=user)(objectClass=user)" + ClaimsUtilities.BuildADDSUserFilter(upn) + "(!(userAccountControl:1.2.840.113556.1.4.803:=2)))";
                     using (DirectorySearcher dsusr = new DirectorySearcher(rootdir, qryldap))
@@ -1637,7 +1637,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                         SearchResult sr = dsusr.FindOne();
                         if (sr != null)
                         {
-                            using (DirectoryEntry DirEntry = ADDSUtils.GetDirectoryEntry(ADHost, sr, ADHost.UseSSL))
+                            using (DirectoryEntry DirEntry = ADDSUtils.GetDirectoryEntry(ADHost, sr))
                             {
                                 if (DirEntry.Properties["objectGUID"].Value != null)
                                 {
@@ -1709,7 +1709,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
         {
             if (!(host is ADDSHost))
                 throw new ArgumentException("Invalid Host ! : value but be an ADDSHost instance");
-
+            ADDSUtils.LoadForests(ADHost.DomainName, ADHost.Account, ADHost.Password, ADHost.UseSSL);
             _keysisbinary = ADDSUtils.IsBinaryAttribute(ADHost.DomainName, ADHost.Account, ADHost.Password, ADHost.RSACertificateAttribute);
         }
 
@@ -1727,7 +1727,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
             string ret = string.Empty;
             try
             {
-                using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUser(ADHost, ADHost.Account, ADHost.Password, upn, ADHost.UseSSL))
+                using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUser(ADHost, ADHost.Account, ADHost.Password, upn))
                 {
                     string qryldap = string.Empty;
                     qryldap = "(&(objectCategory=user)(objectClass=user)" + ClaimsUtilities.BuildADDSUserFilter(upn) + "(" + ADHost.KeyAttribute + "=*)(!(userAccountControl:1.2.840.113556.1.4.803:=2)))";
@@ -1744,7 +1744,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                         SearchResult sr = dsusr.FindOne();
                         if (sr != null)
                         {
-                            using (DirectoryEntry DirEntry = ADDSUtils.GetDirectoryEntry(ADHost, sr, ADHost.UseSSL))
+                            using (DirectoryEntry DirEntry = ADDSUtils.GetDirectoryEntry(ADHost, sr))
                             {
                                 if (DirEntry.Properties["objectGUID"].Value != null)
                                 {
@@ -1772,7 +1772,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
         {
             try
             {
-                using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUser(ADHost, ADHost.Account, ADHost.Password, upn, ADHost.UseSSL))
+                using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUser(ADHost, ADHost.Account, ADHost.Password, upn))
                 {
                     string qryldap = "(&(objectCategory=user)(objectClass=user)" + ClaimsUtilities.BuildADDSUserFilter(upn) + "(!(userAccountControl:1.2.840.113556.1.4.803:=2)))";
                     using (DirectorySearcher dsusr = new DirectorySearcher(rootdir, qryldap))
@@ -1788,7 +1788,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                         SearchResult sr = dsusr.FindOne();
                         if (sr != null)
                         {
-                            using (DirectoryEntry DirEntry = ADDSUtils.GetDirectoryEntry(ADHost, sr, ADHost.UseSSL))
+                            using (DirectoryEntry DirEntry = ADDSUtils.GetDirectoryEntry(ADHost, sr))
                             {
                                 DirEntry.Properties[ADHost.KeyAttribute].Value = secretkey;
                                 byte[] data = cert.Export(X509ContentType.Pfx, CheckSumEncoding.CheckSumAsString(upn));
@@ -1826,7 +1826,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
             bool ret = false;
             try
             {
-                using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUser(ADHost, ADHost.Account, ADHost.Password, upn, ADHost.UseSSL))
+                using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUser(ADHost, ADHost.Account, ADHost.Password, upn))
                 {
                     string qryldap = "(&(objectCategory=user)(objectClass=user)" + ClaimsUtilities.BuildADDSUserFilter(upn) + "(!(userAccountControl:1.2.840.113556.1.4.803:=2)))";
                     using (DirectorySearcher dsusr = new DirectorySearcher(rootdir, qryldap))
@@ -1843,7 +1843,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                         SearchResult sr = dsusr.FindOne();
                         if (sr != null)
                         {
-                            using (DirectoryEntry DirEntry = ADDSUtils.GetDirectoryEntry(ADHost, sr, ADHost.UseSSL))
+                            using (DirectoryEntry DirEntry = ADDSUtils.GetDirectoryEntry(ADHost, sr))
                             {
                                 if (DirEntry.Properties["objectGUID"].Value != null)
                                 {
@@ -1874,7 +1874,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
         {
             try
             {
-                using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUser(ADHost, ADHost.Account, ADHost.Password, upn, ADHost.UseSSL))
+                using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUser(ADHost, ADHost.Account, ADHost.Password, upn))
                 {
                     string qryldap = "(&(objectCategory=user)(objectClass=user)" + ClaimsUtilities.BuildADDSUserFilter(upn) + "(!(userAccountControl:1.2.840.113556.1.4.803:=2)))";
                     using (DirectorySearcher dsusr = new DirectorySearcher(rootdir, qryldap))
@@ -1894,7 +1894,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                             string pass = string.Empty;
                             if (!string.IsNullOrEmpty(password))
                                 pass = password;
-                            using (DirectoryEntry DirEntry = ADDSUtils.GetDirectoryEntry(ADHost, sr, ADHost.UseSSL))
+                            using (DirectoryEntry DirEntry = ADDSUtils.GetDirectoryEntry(ADHost, sr))
                             {
                                 if (DirEntry.Properties["objectGUID"].Value != null)
                                 {
@@ -1948,7 +1948,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
         {
             try
             {
-                using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUser(ADHost, ADHost.Account, ADHost.Password, upn, ADHost.UseSSL))
+                using (DirectoryEntry rootdir = ADDSUtils.GetDirectoryEntryForUser(ADHost, ADHost.Account, ADHost.Password, upn))
                 {
                     string qryldap = "(&(objectCategory=user)(objectClass=user)" + ClaimsUtilities.BuildADDSUserFilter(upn) + "(!(userAccountControl:1.2.840.113556.1.4.803:=2)))";
                     using (DirectorySearcher dsusr = new DirectorySearcher(rootdir, qryldap))
@@ -1964,7 +1964,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                         SearchResult sr = dsusr.FindOne();
                         if (sr != null)
                         {
-                            using (DirectoryEntry DirEntry = ADDSUtils.GetDirectoryEntry(ADHost, sr, ADHost.UseSSL))
+                            using (DirectoryEntry DirEntry = ADDSUtils.GetDirectoryEntry(ADHost, sr))
                             {
                                 if (DirEntry.Properties["objectGUID"].Value != null)
                                 {

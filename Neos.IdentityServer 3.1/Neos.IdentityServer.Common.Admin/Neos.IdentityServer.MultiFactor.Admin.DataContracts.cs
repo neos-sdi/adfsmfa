@@ -409,11 +409,17 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         public string XORSecret { get; set; }
         public int PinLength { get; set; }
         public int DefaultPin { get; set; }
+        public bool UsePasswordPolicy { get; set; }
+        public bool UseGPOPasswordPolicy { get; set; }
+        public bool LockUserOnPasswordExpiration { get; set; }
+        public uint MaxPasswordAgeInDays { get; set; }
+        public uint WarnPasswordExpirationBeforeInDays { get; set; }
         public string DomainAddress { get; set; }
         public string Account { get; set; }
         public string Password { get; set; }
         public string SQLAccount { get; set; }
         public string SQLPassword { get; set; }
+
         /// <summary>
         /// Update method implmentation
         /// </summary>
@@ -431,6 +437,11 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             LibVersion = keys.KeyVersion;
             PinLength = cfg.PinLength;
             DefaultPin = cfg.DefaultPin;
+            UsePasswordPolicy = keys.UsePasswordPolicy;
+            UseGPOPasswordPolicy = keys.UseGPOPasswordPolicy;
+            LockUserOnPasswordExpiration = keys.LockUserOnPasswordExpiration;
+            MaxPasswordAgeInDays = keys.MaxPasswordAgeInDays;
+            WarnPasswordExpirationBeforeInDays = keys.WarnPasswordExpirationBeforeInDays;
             DomainAddress = adds.DomainAddress;
             Account = adds.Account;
             SQLAccount = sql.SQLAccount;
@@ -459,6 +470,11 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             keys.KeyVersion = this.LibVersion;
             cfg.PinLength = this.PinLength;
             cfg.DefaultPin = this.DefaultPin;
+            keys.UsePasswordPolicy = this.UsePasswordPolicy;
+            keys.UseGPOPasswordPolicy = this.UseGPOPasswordPolicy;
+            keys.LockUserOnPasswordExpiration = this.LockUserOnPasswordExpiration;
+            keys.MaxPasswordAgeInDays = this.MaxPasswordAgeInDays;
+            keys.WarnPasswordExpirationBeforeInDays = this.WarnPasswordExpirationBeforeInDays;
             adds.DomainAddress = this.DomainAddress;
             adds.Account = this.Account;
             sql.SQLAccount = this.SQLAccount;

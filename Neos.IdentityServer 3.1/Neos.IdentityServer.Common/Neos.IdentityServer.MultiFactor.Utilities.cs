@@ -23,6 +23,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.DirectoryServices;
 using System.DirectoryServices.AccountManagement;
 using System.DirectoryServices.ActiveDirectory;
 using System.Drawing;
@@ -37,6 +38,7 @@ using System.Net;
 using System.Net.Mail;
 using System.Reflection;
 using System.Security.Cryptography;
+using System.Security.Principal;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
@@ -1514,14 +1516,19 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         internal static void ChangePassword(MFAConfig cfg, string username, string oldpassword, string newpassword)
         {
-            ADDSForestUtils utl = new ADDSForestUtils();
-            string dns = utl.GetForestDNSForUPN(username);
+            string samusername = ADDSUtils.GetSAMAccountForUser(cfg.Hosts.ActiveDirectoryHost, username);
+            if (string.IsNullOrEmpty(samusername))
+                return;
+            string dns = samusername.Substring(0, samusername.IndexOf('\\'));
+
             if ((!string.IsNullOrEmpty(cfg.Hosts.ActiveDirectoryHost.Account)) && (!string.IsNullOrEmpty(cfg.Hosts.ActiveDirectoryHost.Password)))
             {
                 using (var ctx = new PrincipalContext(ContextType.Domain, dns, cfg.Hosts.ActiveDirectoryHost.Account, cfg.Hosts.ActiveDirectoryHost.Password))
                 {
-                    using (var user = UserPrincipal.FindByIdentity(ctx, IdentityType.UserPrincipalName, username))
+                    using (var user = UserPrincipal.FindByIdentity(ctx, IdentityType.SamAccountName, samusername))
                     {
+                        if (user == null)
+                            return;
                         user.ChangePassword(oldpassword, newpassword);
                     }
                 }
@@ -1530,9 +1537,153 @@ namespace Neos.IdentityServer.MultiFactor
             {
                 using (var ctx = new PrincipalContext(ContextType.Domain, dns))
                 {
-                    using (var user = UserPrincipal.FindByIdentity(ctx, IdentityType.UserPrincipalName, username))
+                    using (var user = UserPrincipal.FindByIdentity(ctx, IdentityType.SamAccountName, samusername))
                     {
+                        if (user == null)
+                            return;
                         user.ChangePassword(oldpassword, newpassword);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// MustChangePasswordSoon method implmentation
+        /// </summary>
+        internal static bool MustChangePasswordSoon(MFAConfig cfg, string username, out DateTime max)
+        {
+            max = DateTime.Now;
+            if (!cfg.KeysConfig.UsePasswordPolicy)
+                return false;
+            string samusername = ADDSUtils.GetSAMAccountForUser(cfg.Hosts.ActiveDirectoryHost, username);
+            if (string.IsNullOrEmpty(samusername))
+                return false;
+            string dns = samusername.Substring(0, samusername.IndexOf('\\'));
+
+            double maxage = cfg.KeysConfig.MaxPasswordAgeInDays;
+            double warnage = cfg.KeysConfig.WarnPasswordExpirationBeforeInDays;
+            if ((!string.IsNullOrEmpty(cfg.Hosts.ActiveDirectoryHost.Account)) && (!string.IsNullOrEmpty(cfg.Hosts.ActiveDirectoryHost.Password)))
+            {
+                using (var ctx = new PrincipalContext(ContextType.Domain, dns, cfg.Hosts.ActiveDirectoryHost.Account, cfg.Hosts.ActiveDirectoryHost.Password))
+                {
+                    using (var user = UserPrincipal.FindByIdentity(ctx, IdentityType.SamAccountName, samusername))
+                    {
+                        if (user == null)
+                            return false;
+                        if (user.PasswordNotRequired)
+                            return false;
+                        if (user.PasswordNeverExpires)
+                            return false;
+                        if (!user.LastPasswordSet.HasValue)
+                            return false;
+                        if (user.LastPasswordSet.Value.AddDays(maxage) < DateTime.Now)  // Locked User
+                        {
+                            max = user.LastPasswordSet.Value.AddDays(maxage);  
+                            return true;
+                        }
+                        if (user.LastPasswordSet.Value.AddDays(maxage) >= DateTime.Now)  // Warn Zone
+                        {
+                            if (user.LastPasswordSet.Value.AddDays(maxage - warnage) <= DateTime.Now)
+                            {
+                                max = user.LastPasswordSet.Value.AddDays(maxage);
+                                return true;
+                            }
+                            else
+                                return false;
+                        }
+                        else
+                            return false;
+                    }
+                }
+            }
+            else
+            {
+                using (var ctx = new PrincipalContext(ContextType.Domain, dns))
+                {
+                    using (var user = UserPrincipal.FindByIdentity(ctx, IdentityType.SamAccountName, samusername))
+                    {
+                        if (user == null)
+                            return false;
+                        if (user.PasswordNotRequired)
+                            return false;
+                        if (user.PasswordNeverExpires)
+                            return false;
+                        if (!user.LastPasswordSet.HasValue)
+                            return false;
+                        if (user.LastPasswordSet.Value.AddDays(maxage) < DateTime.Now)  // Locked user
+                        {
+                            max = user.LastPasswordSet.Value.AddDays(maxage);
+                            return true;
+                        }
+                        if (user.LastPasswordSet.Value.AddDays(maxage) >= DateTime.Now)  // Warn Zone
+                        {
+                            if (user.LastPasswordSet.Value.AddDays(maxage - warnage) <= DateTime.Now)
+                            {
+                                max = user.LastPasswordSet.Value.AddDays(maxage);
+                                return true;
+                            }
+                            else
+                                return false;
+                        }
+                        else
+                            return false;                        
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// IsUserPasswordExpired method implmentation
+        /// </summary>
+        internal static bool IsUserPasswordExpired(MFAConfig cfg, string username)
+        {
+            if (!cfg.KeysConfig.UsePasswordPolicy)
+                return false;
+            string samusername = ADDSUtils.GetSAMAccountForUser(cfg.Hosts.ActiveDirectoryHost, username);
+            if (string.IsNullOrEmpty(samusername))
+                return false;
+            string dns = samusername.Substring(0, samusername.IndexOf('\\'));
+
+            double maxage = cfg.KeysConfig.MaxPasswordAgeInDays;
+            if ((!string.IsNullOrEmpty(cfg.Hosts.ActiveDirectoryHost.Account)) && (!string.IsNullOrEmpty(cfg.Hosts.ActiveDirectoryHost.Password)))
+            {
+                using (var ctx = new PrincipalContext(ContextType.Domain, dns, cfg.Hosts.ActiveDirectoryHost.Account, cfg.Hosts.ActiveDirectoryHost.Password))
+                {
+                    using (var user = UserPrincipal.FindByIdentity(ctx, IdentityType.SamAccountName, samusername))
+                    {
+                        if (user == null)
+                            return false;
+                        if (user.PasswordNotRequired)
+                            return false;
+                        if (user.PasswordNeverExpires)
+                            return false;
+                        if (!user.LastPasswordSet.HasValue)
+                            return false;
+                        if (user.LastPasswordSet.Value.AddDays(maxage) < DateTime.Now)  // Locked User
+                            return cfg.KeysConfig.LockUserOnPasswordExpiration;
+                        else
+                            return false;
+                    }
+                }
+            }
+            else
+            {
+                using (var ctx = new PrincipalContext(ContextType.Domain, dns))
+                {
+                    using (var user = UserPrincipal.FindByIdentity(ctx, IdentityType.SamAccountName, samusername))
+                    {
+                        if (user == null)
+                            return false;
+                        if (user.PasswordNotRequired)
+                            return false;
+                        if (user.PasswordNeverExpires)
+                            return false;
+                        if (!user.LastPasswordSet.HasValue)
+                            return false;
+                        if (user.LastPasswordSet.Value.AddDays(maxage) < DateTime.Now)  // Locked user
+                            return cfg.KeysConfig.LockUserOnPasswordExpiration;
+                        else
+                            return false;
                     }
                 }
             }
@@ -1543,27 +1694,33 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         internal static bool CanChangePassword(MFAConfig cfg, string username)
         {
-            ADDSForestUtils utl = new ADDSForestUtils();
-            string dns = utl.GetForestDNSForUPN(username);
+            if (!cfg.KeysConfig.UsePasswordPolicy)
+                return true;
+            string samusername = ADDSUtils.GetSAMAccountForUser(cfg.Hosts.ActiveDirectoryHost, username);
+            if (string.IsNullOrEmpty(samusername))
+                return false;
+            string dns = samusername.Substring(0, samusername.IndexOf('\\'));
+
             if ((!string.IsNullOrEmpty(cfg.Hosts.ActiveDirectoryHost.Account)) && (!string.IsNullOrEmpty(cfg.Hosts.ActiveDirectoryHost.Password)))
             {
                 using (var ctx = new PrincipalContext(ContextType.Domain, dns, cfg.Hosts.ActiveDirectoryHost.Account, cfg.Hosts.ActiveDirectoryHost.Password))
                 {
-                    UserPrincipal user = UserPrincipal.FindByIdentity(ctx, IdentityType.UserPrincipalName, username);
+                    UserPrincipal user = UserPrincipal.FindByIdentity(ctx, IdentityType.SamAccountName, samusername);
                     if (user == null)
                         return false;
+                    return !user.UserCannotChangePassword;
                 }
             }
             else
             {
                 using (var ctx = new PrincipalContext(ContextType.Domain, dns))
                 {
-                    UserPrincipal user = UserPrincipal.FindByIdentity(ctx, IdentityType.UserPrincipalName, username);
+                    UserPrincipal user = UserPrincipal.FindByIdentity(ctx, IdentityType.SamAccountName, samusername);
                     if (user == null)
                         return false;
+                    return !user.UserCannotChangePassword;
                 }
             }
-            return true;
         }
         #endregion
     }
@@ -2704,6 +2861,7 @@ namespace Neos.IdentityServer.MultiFactor
                         config.Hosts.SQLServerHost.SQLPassword = MSIS.Decrypt(config.Hosts.SQLServerHost.SQLPassword);
                         config.MailProvider.Password = MSIS.Decrypt(config.MailProvider.Password);
                     };
+                    ADDSUtils.LoadForests(config.Hosts.ActiveDirectoryHost.DomainName, config.Hosts.ActiveDirectoryHost.Account, config.Hosts.ActiveDirectoryHost.Password, config.Hosts.ActiveDirectoryHost.UseSSL, true);
                     KeysManager.Initialize(config);  // Important
                     RuntimeAuthProvider.LoadProviders(config);
                     ClientSIDsProxy.Initialize(config);
@@ -2758,6 +2916,7 @@ namespace Neos.IdentityServer.MultiFactor
                                 config.Hosts.SQLServerHost.SQLPassword = MSIS.Decrypt(config.Hosts.SQLServerHost.SQLPassword);
                                 config.MailProvider.Password = MSIS.Decrypt(config.MailProvider.Password);
                             };
+                            ADDSUtils.LoadForests(config.Hosts.ActiveDirectoryHost.DomainName, config.Hosts.ActiveDirectoryHost.Account, config.Hosts.ActiveDirectoryHost.Password, config.Hosts.ActiveDirectoryHost.UseSSL, true);
                             KeysManager.Initialize(config);  // Important
                             RuntimeAuthProvider.LoadProviders(config);
                         }
