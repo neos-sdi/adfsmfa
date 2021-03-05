@@ -74,8 +74,8 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
             if (!Challenge.SequenceEqual(originalChallenge))
                 throw new VerificationException("Challenge not equal to original challenge");
 
-            if (Origin != expectedOrigin)
-                throw new VerificationException($"Origin {Origin} not equal to original origin {expectedOrigin}");
+            if (!string.Equals(FullyQualifiedOrigin(this.Origin), expectedOrigin, StringComparison.OrdinalIgnoreCase))
+               throw new VerificationException($"Origin {Origin} not equal to original origin {expectedOrigin}");
 
             if (Type != "webauthn.create" && Type != "webauthn.get")
                 throw new VerificationException($"Type not equal to 'webauthn.create' or 'webauthn.get'. Was: '{Type}'");
@@ -84,6 +84,12 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
             {
                 TokenBinding.Verify(requestTokenBindingId);
             }
+        }
+
+        private string FullyQualifiedOrigin(string origin)
+        {
+            Uri uri = new Uri(origin);
+            return $"{uri.Scheme}://{uri.Host}";
         }
     }
 }

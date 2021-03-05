@@ -245,7 +245,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// SetPolicyTemplate method implementation
         /// </summary>
-        public static UserFeaturesOptions SetPolicyTemplate(this UserFeaturesOptions options, UserTemplateMode template)
+        public static UserFeaturesOptions SetPolicyTemplate(this UserFeaturesOptions options, UserTemplateMode template, bool isnewcustom = true)
         {
             switch (template)
             {
@@ -271,7 +271,8 @@ namespace Neos.IdentityServer.MultiFactor
                     options = (UserFeaturesOptions.AdministrativeMode);
                     break;
                 case UserTemplateMode.Custom:
-                    options = (UserFeaturesOptions.AllowDisabled | UserFeaturesOptions.AllowUnRegistered);
+                    if (isnewcustom)
+                        options = (UserFeaturesOptions.AllowDisabled | UserFeaturesOptions.AllowUnRegistered);
                     break;
             }
             return options;

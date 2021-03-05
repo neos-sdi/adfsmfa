@@ -127,10 +127,15 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             MFAConfig cfg = ManagementService.Config;
             UserTemplateMode md = (UserTemplateMode)mode;
             cfg.UserFeatures = cfg.UserFeatures.SetPolicyTemplate(md);
-            if (md != UserTemplateMode.Administrative)
+            if ((md != UserTemplateMode.Administrative) && (md == UserTemplateMode.Custom))
                 cfg.KeepMySelectedOptionOn = true;
-            else
+            if (md == UserTemplateMode.Custom || md == UserTemplateMode.Administrative)
                 cfg.KeepMySelectedOptionOn = false;
+
+           // if (md != UserTemplateMode.Administrative)
+           //     cfg.KeepMySelectedOptionOn = true;
+           // else
+           //     cfg.KeepMySelectedOptionOn = false;
             ManagementService.ADFSManager.WriteConfiguration(host);
         }
 

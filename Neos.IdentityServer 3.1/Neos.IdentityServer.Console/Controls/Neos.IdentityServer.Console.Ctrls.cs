@@ -2450,7 +2450,10 @@ namespace Neos.IdentityServer.Console.Controls
         /// </summary>
         private void SelectedPolicyTemplateChanged(object sender, EventArgs e)
         {
-            SetPolicyTemplate();
+            if (_view.CausesValidation)
+                SetPolicyTemplate(true);
+            else
+                SetPolicyTemplate(false);
         }
 
         /// <summary>
@@ -2467,14 +2470,14 @@ namespace Neos.IdentityServer.Console.Controls
         /// <summary>
         /// SetPolicyTemplate method implmentation
         /// </summary>
-        private void SetPolicyTemplate()
+        private void SetPolicyTemplate(bool isnewcustom)
         {
             MMCTemplateModeItem itm = (MMCTemplateModeItem)cbConfigTemplate.SelectedItem;
-            Config.UserFeatures = Config.UserFeatures.SetPolicyTemplate(itm.ID);
+            Config.UserFeatures = Config.UserFeatures.SetPolicyTemplate(itm.ID, isnewcustom);
             iscustom = (itm.ID == UserTemplateMode.Custom);
-            if ((itm.ID != UserTemplateMode.Administrative) && (itm.ID != UserTemplateMode.Custom))
+            if ((itm.ID != UserTemplateMode.Administrative) && (itm.ID == UserTemplateMode.Custom))
                 Config.KeepMySelectedOptionOn = true;
-            else
+            if ((isnewcustom) && (itm.ID == UserTemplateMode.Custom) || itm.ID == UserTemplateMode.Administrative)
                 Config.KeepMySelectedOptionOn = false;
             UpdateLayoutPolicyComponents(itm.ID);
             if (_view.AutoValidate != AutoValidate.Disable)
