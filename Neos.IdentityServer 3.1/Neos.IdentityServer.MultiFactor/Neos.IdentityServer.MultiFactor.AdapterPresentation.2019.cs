@@ -204,7 +204,7 @@ namespace Neos.IdentityServer.MultiFactor
                 result += "<div class=\"fieldMargin smallText\">" + BaseExternalProvider.GetPINMessage(usercontext) + "</div><br/>";
             }
 
-            bool soon = RuntimeRepository.MustChangePasswordSoon(Provider.Config, usercontext.UPN, out DateTime max);
+            bool soon = RuntimeRepository.MustChangePasswordSoon(Provider.Config, usercontext, out DateTime max);
             if (soon)
                 result += "<div class=\"error smallText\">" + string.Format(Resources.GetString(ResourcesLocaleKind.Html, "HtmlMustChangePassword"), max.ToLocalTime().ToLongDateString()) + "</div><br/>";
 
@@ -800,7 +800,7 @@ namespace Neos.IdentityServer.MultiFactor
             {
                 result += "<a class=\"actionLink\" href=\"#\" id=\"chgopt\" name=\"chgopt\" onclick=\"return SetLinkTitle(selectoptionsForm, '1')\" style=\"cursor: pointer;\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlChangeConfiguration") + "</a>";
             }
-            if (Provider.Config.UserFeatures.CanManagePassword() && RuntimeRepository.CanChangePassword(Provider.Config, usercontext.UPN))
+            if (Provider.Config.UserFeatures.CanManagePassword() && RuntimeRepository.CanChangePassword(Provider.Config, usercontext))
             {
                 if (!Provider.Config.CustomUpdatePassword)
                     result += "<a class=\"actionLink\" href=\"/adfs/portal/updatepassword?username=" + usercontext.UPN + "\" id=\"chgpwd\" name=\"chgpwd\" style=\"cursor: pointer;\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlChangePassword") + "</a>";
@@ -1308,7 +1308,7 @@ namespace Neos.IdentityServer.MultiFactor
 
             result += "<form method=\"post\" id=\"refreshForm\" autocomplete=\"off\" >";
 
-            bool soon = RuntimeRepository.MustChangePasswordSoon(Provider.Config, usercontext.UPN, out DateTime max);
+            bool soon = RuntimeRepository.MustChangePasswordSoon(Provider.Config, usercontext, out DateTime max);
             if (usercontext.IsRemote)
             {
                 IExternalProvider prov = RuntimeAuthProvider.GetProvider(usercontext.PreferredMethod);
@@ -1408,7 +1408,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public override string GetFormHtmlSendBiometricRequest(AuthenticationContext usercontext)
         {
-            bool soon = RuntimeRepository.MustChangePasswordSoon(Provider.Config, usercontext.UPN, out DateTime max);
+            bool soon = RuntimeRepository.MustChangePasswordSoon(Provider.Config, usercontext, out DateTime max);
             string result = "<script type='text/javascript'>" + CR;
             result += "if (window.addEventListener)" + CR;
             result += "{" + CR;

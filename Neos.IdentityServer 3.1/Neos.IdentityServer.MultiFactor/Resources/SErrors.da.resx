@@ -180,10 +180,13 @@
   <data name="ErrorSendingToastInformation" xml:space="preserve">
     <value>Der opstod en fejl under afsendelse af id-anmodning !</value>
   </data>
-  <data name="ErrorSendingToastInformationRetry" xml:space="preserve">
-    <value>Der opstod en fejl under afsendelse af id-anmodning ! Prøver igen!</value>
-  </data>
   <data name="ErrorValidationTimeWindowElapsed" xml:space="preserve">
     <value>Der er forløbet vinduesvalideringstid.</value>
+  </data>
+  <data name="ErrorSendingToastInformationRetry" xml:space="preserve">
+    <value>Der opstod en fejl under afsendelse af identifikationsanmodningen! Prøv igen.</value>
+  </data>
+  <data name="ErrorPasswordExpired" xml:space="preserve">
+    <value>Adgangskoden til {0} er udløbet! Adgang nægtet!</value>
   </data>
 </root>

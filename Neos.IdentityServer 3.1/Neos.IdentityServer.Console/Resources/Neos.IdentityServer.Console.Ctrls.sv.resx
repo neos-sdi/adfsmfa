@@ -696,9 +696,6 @@
   <data name="CTRLUSEPASSWORDPOLICY" xml:space="preserve">
     <value>Aktivera lösenordsprincip</value>
   </data>
-  <data name="CTRLUSEGPOPASSWORDPOLICY" xml:space="preserve">
-    <value>Använd grupprincip för företagslösenord (GPO)</value>
-  </data>
   <data name="CTRLLOCKUSERONPASSWORDEXPIRED" xml:space="preserve">
     <value>Låsa ut användaren om lösenordet har upphört att gälla</value>
   </data>
@@ -707,5 +704,8 @@
   </data>
   <data name="CTRLWARNMAXPASSWORDAGEINDAYS" xml:space="preserve">
     <value>Meddela användaren innan lösenordet upphör att gälla</value>
+  </data>
+  <data name="CTRLUSEPSOPASSWORDPOLICY" xml:space="preserve">
+    <value>Använd PSO (Enterprise Passwords Policy)</value>
   </data>
 </root>

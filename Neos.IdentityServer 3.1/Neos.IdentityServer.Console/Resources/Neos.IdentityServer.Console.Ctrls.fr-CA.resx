@@ -696,9 +696,6 @@
   <data name="CTRLUSEPASSWORDPOLICY" xml:space="preserve">
     <value>Activer la stratégie de mots de passe</value>
   </data>
-  <data name="CTRLUSEGPOPASSWORDPOLICY" xml:space="preserve">
-    <value>Utiliser la stratégie de mots de passe d’entreprise (GPO)</value>
-  </data>
   <data name="CTRLLOCKUSERONPASSWORDEXPIRED" xml:space="preserve">
     <value>Verrouiller l’utilisateur si le mot de passe a expiré</value>
   </data>
@@ -707,5 +704,8 @@
   </data>
   <data name="CTRLWARNMAXPASSWORDAGEINDAYS" xml:space="preserve">
     <value>Aviser l’utilisateur avant l’expiration du mot de passe</value>
+  </data>
+  <data name="CTRLUSEPSOPASSWORDPOLICY" xml:space="preserve">
+    <value>Utiliser la stratégie de mots de passe d’entreprise (PSO)</value>
   </data>
 </root>

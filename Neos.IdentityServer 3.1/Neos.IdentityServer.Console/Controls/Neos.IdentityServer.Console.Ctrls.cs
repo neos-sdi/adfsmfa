@@ -11306,8 +11306,8 @@ namespace Neos.IdentityServer.Console.Controls
 
                 chkUseGPOPasswordPolicy = new CheckBox()
                 {
-                    Text = res.CTRLUSEGPOPASSWORDPOLICY,
-                    Checked = false, // Config.KeysConfig.UseGPOPasswordPolicy,
+                    Text = res.CTRLUSEPSOPASSWORDPOLICY,
+                    Checked = Config.KeysConfig.UsePSOPasswordPolicy,
                     Left = 40,
                     Top = 516,
                     Width = 450,
@@ -11405,8 +11405,10 @@ namespace Neos.IdentityServer.Console.Controls
                 tblCancelConfig.LinkClicked += CancelConfigLinkClicked;
                 this.Controls.Add(tblCancelConfig);
 
-                errors = new ErrorProvider(_view);
-                errors.BlinkStyle = ErrorBlinkStyle.NeverBlink;
+                errors = new ErrorProvider(_view)
+                {
+                    BlinkStyle = ErrorBlinkStyle.NeverBlink
+                };
             }
             finally
             {
@@ -11463,8 +11465,8 @@ namespace Neos.IdentityServer.Console.Controls
 
                 chkUsePasswordPolicy.Text = res.CTRLUSEPASSWORDPOLICY;
                 chkUsePasswordPolicy.Checked = Config.KeysConfig.UsePasswordPolicy;
-                chkUseGPOPasswordPolicy.Text = res.CTRLUSEGPOPASSWORDPOLICY;
-                chkUseGPOPasswordPolicy.Checked = false; // Config.KeysConfig.UseGPOPasswordPolicy;
+                chkUseGPOPasswordPolicy.Text = res.CTRLUSEPSOPASSWORDPOLICY;
+                chkUseGPOPasswordPolicy.Checked = Config.KeysConfig.UsePSOPasswordPolicy;
                 chkLockUserIfPasswordExpired.Text = res.CTRLLOCKUSERONPASSWORDEXPIRED;
                 chkLockUserIfPasswordExpired.Checked = Config.KeysConfig.LockUserOnPasswordExpiration;
                 txtMaxPasswordAgeInDays.Value = Config.KeysConfig.MaxPasswordAgeInDays;
@@ -11546,6 +11548,11 @@ namespace Neos.IdentityServer.Console.Controls
                 errors.SetError(txtMaxRetries, string.Format(res.CTRLINVALIDVALUE, "1", "12"));
             else
                 errors.SetError(txtMaxRetries, "");
+            errors.SetError(chkUsePasswordPolicy, "");
+            errors.SetError(chkUseGPOPasswordPolicy, "");
+            errors.SetError(chkLockUserIfPasswordExpired, "");
+            errors.SetError(txtMaxPasswordAgeInDays, "");
+            errors.SetError(txtWarnPasswordExpirationBeforeInDays, "");
         }
 
         /// <summary>
@@ -11563,9 +11570,9 @@ namespace Neos.IdentityServer.Console.Controls
                 else
                     txtXORValue.Enabled = true;
 
-                chkUseGPOPasswordPolicy.Enabled = false; // Config.KeysConfig.UsePasswordPolicy;
+                chkUseGPOPasswordPolicy.Enabled = Config.KeysConfig.UsePasswordPolicy;
                 chkLockUserIfPasswordExpired.Enabled = Config.KeysConfig.UsePasswordPolicy;
-                txtMaxPasswordAgeInDays.Enabled = Config.KeysConfig.UsePasswordPolicy && !Config.KeysConfig.UseGPOPasswordPolicy;
+                txtMaxPasswordAgeInDays.Enabled = Config.KeysConfig.UsePasswordPolicy && !Config.KeysConfig.UsePSOPasswordPolicy;
                 txtWarnPasswordExpirationBeforeInDays.Enabled = Config.KeysConfig.UsePasswordPolicy;
             }
             finally
@@ -12087,13 +12094,7 @@ namespace Neos.IdentityServer.Console.Controls
             }
             catch (Exception ex)
             {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
-                {
-                    Text = ex.Message,
-                    Buttons = MessageBoxButtons.OK,
-                    Icon = MessageBoxIcon.Error
-                };
-                this._snapin.Console.ShowDialog(messageBoxParameters);
+                errors.SetError(chkUsePasswordPolicy, ex.Message);
             }
         }
 
@@ -12106,24 +12107,20 @@ namespace Neos.IdentityServer.Console.Controls
             {
                 if (_view.AutoValidate != AutoValidate.Disable)
                 {
-                    Config.KeysConfig.UseGPOPasswordPolicy = false; //  chkUseGPOPasswordPolicy.Checked;
+                    Config.KeysConfig.UsePSOPasswordPolicy = chkUseGPOPasswordPolicy.Checked;
                     ManagementService.ADFSManager.SetDirty(true);
                     UpdateControlsLayouts();
-                    throw new NotImplementedException("Not implmented in this version");
                 }
             }
             catch (Exception ex)
             {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
-                {
-                    Text = ex.Message,
-                    Buttons = MessageBoxButtons.OK,
-                    Icon = MessageBoxIcon.Error
-                };
-                this._snapin.Console.ShowDialog(messageBoxParameters);
+                errors.SetError(chkUseGPOPasswordPolicy, ex.Message);
             }
         }
 
+        /// <summary>
+        /// chkLockUserIfPasswordExpiredChanged  method implementation
+        /// </summary>
         private void chkLockUserIfPasswordExpiredChanged(object sender, EventArgs e)
         {
             try
@@ -12137,13 +12134,7 @@ namespace Neos.IdentityServer.Console.Controls
             }
             catch (Exception ex)
             {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
-                {
-                    Text = ex.Message,
-                    Buttons = MessageBoxButtons.OK,
-                    Icon = MessageBoxIcon.Error
-                };
-                this._snapin.Console.ShowDialog(messageBoxParameters);
+                errors.SetError(chkLockUserIfPasswordExpired, ex.Message);
             }
         }
 
@@ -12186,7 +12177,6 @@ namespace Neos.IdentityServer.Console.Controls
             {
                 errors.SetError(txtWarnPasswordExpirationBeforeInDays, ex.Message);
             }
-
         }
         #endregion
 

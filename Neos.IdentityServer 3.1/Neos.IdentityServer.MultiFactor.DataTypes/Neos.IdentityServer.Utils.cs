@@ -23,8 +23,6 @@ using System.Text;
 
 namespace Neos.IdentityServer.MultiFactor.Data
 {
-
-
     /// <summary>
     /// KeyMgtOptions
     /// </summary>

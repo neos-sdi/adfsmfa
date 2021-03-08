@@ -177,10 +177,13 @@
   <data name="ErrorSendingToastInformation" xml:space="preserve">
     <value>Fout bij het verzenden van identificatieverzoek !</value>
   </data>
-  <data name="ErrorSendingToastInformationRetry" xml:space="preserve">
-    <value>Fout bij het verzenden van identificatieverzoek ! Nieuwe poging !</value>
-  </data>
   <data name="ErrorValidationTimeWindowElapsed" xml:space="preserve">
     <value>Vervaltijd venster verstreken. </value>
+  </data>
+  <data name="ErrorSendingToastInformationRetry" xml:space="preserve">
+    <value>Fout bij het verzenden van een identificatieverzoek! Probeer het opnieuw.</value>
+  </data>
+  <data name="ErrorPasswordExpired" xml:space="preserve">
+    <value>Wachtwoord voor {0} is verlopen ! Toegang geweigerd!</value>
   </data>
 </root>

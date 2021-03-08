@@ -685,8 +685,7 @@
     <value>"Data Access Account" SQL Server</value>
   </data>
   <data name="CTRLSQLCONNECTIONOK" xml:space="preserve">
-    <value>WSMAN
-</value>
+    <value>Connection to SQL server is operational !</value>
   </data>
   <data name="CTRLSQLCONNECTIONERROR" xml:space="preserve">
     <value>Unable to connect to SQL Server !</value>
@@ -697,8 +696,8 @@
   <data name="CTRLUSEPASSWORDPOLICY" xml:space="preserve">
     <value>Activate passwords policy</value>
   </data>
-  <data name="CTRLUSEGPOPASSWORDPOLICY" xml:space="preserve">
-    <value>Use enterprise passwords policy (GPO)</value>
+  <data name="CTRLUSEPSOPASSWORDPOLICY" xml:space="preserve">
+    <value>Use enterprise passwords policy (PSO)</value>
   </data>
   <data name="CTRLLOCKUSERONPASSWORDEXPIRED" xml:space="preserve">
     <value>Lock out the user if password has expired</value>

@@ -547,9 +547,9 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         internal static IExternalProvider GetProvider(PreferredMethod method)
         {
-            IExternalProvider pp =  GetProviderInstance(method);
+            IExternalProvider pp = GetProviderInstance(method);
             if ((pp != null) && (pp.Enabled))
-               return pp;
+                return pp;
             else
                 return null;
         }
@@ -771,7 +771,7 @@ namespace Neos.IdentityServer.MultiFactor
                                 if (provider == null)
                                     provider = new NeosPlugProvider(PreferredMethod.External);
                                 if (provider.Kind == PreferredMethod.External)
-                                { 
+                                {
                                     AddOrUpdateProvider(PreferredMethod.External, provider);
                                     provider.Initialize(new ExternalProviderParams(cfg.ExternalProvider));
                                 }
@@ -1378,7 +1378,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// CheckADDSAttribute method implmentation
         /// </summary>
-        internal static bool CheckADDSAttribute(MFAConfig config,  string domainname, string username, string password, string attributename, int multivalued)
+        internal static bool CheckADDSAttribute(MFAConfig config, string domainname, string username, string password, string attributename, int multivalued)
         {
             try
             {
@@ -1435,10 +1435,18 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         private static ISecretKeyManager GetKeysRepository(MFAConfig config)
         {
-            if (KeysManager.Manager != null)
-                return KeysManager.Manager;
-            else
-                return null;
+            try
+            {
+                if (KeysManager.Manager != null)
+                    return KeysManager.Manager;
+                else
+                    return null;
+            }
+            catch (Exception ex)
+            {
+                Log.WriteEntry(string.Format("GetKeysRepository error : {0}", ex.Message), EventLogEntryType.Error, 5000);
+                throw ex;
+            }
         }
 
         /// <summary>
@@ -1470,9 +1478,16 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         private static DataRepositoryService GetADDSDataRepository(MFAConfig cfg, string domain, string account, string password)
         {
-            return new ADDSDataRepositoryService(cfg.Hosts.ActiveDirectoryHost, cfg.DeliveryWindow, domain, account, password);
+            try
+            { 
+                return new ADDSDataRepositoryService(cfg.Hosts.ActiveDirectoryHost, cfg.DeliveryWindow, domain, account, password);
+            }
+            catch (Exception ex)
+            {
+                Log.WriteEntry(string.Format("GetADDSDataRepository error : {0}", ex.Message), EventLogEntryType.Error, 5000);
+                throw ex;
+            }
         }
-
         #endregion
 
         #region Keys management
@@ -1481,7 +1496,15 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         internal static string GetUserKey(MFAConfig config, string upn)
         {
-            return KeysManager.ReadKey(upn);
+            try
+            {
+                return KeysManager.ReadKey(upn);
+            }
+            catch (Exception ex)
+            {
+                Log.WriteEntry(string.Format("GetUserKey error : {0} {1}", upn, ex.Message), EventLogEntryType.Error, 5000);
+                throw ex;
+            }           
         }
 
         /// <summary>
@@ -1489,7 +1512,15 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         internal static string GetEncodedUserKey(MFAConfig config, string upn)
         {
-            return KeysManager.EncodedKey(upn);
+            try
+            { 
+                return KeysManager.EncodedKey(upn);
+            }
+            catch (Exception ex)
+            {
+                Log.WriteEntry(string.Format("GetEncodedUserKey error : {0} {1}", upn, ex.Message), EventLogEntryType.Error, 5000);
+                throw ex;
+            }
         }
 
         /// <summary>
@@ -1497,7 +1528,15 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         internal static string NewUserKey(MFAConfig config, string upn)
         {
-            return KeysManager.NewKey(upn);
+            try
+            { 
+                return KeysManager.NewKey(upn);
+            }
+            catch (Exception ex)
+            {
+                Log.WriteEntry(string.Format("NewUserKey error : {0} {1}", upn, ex.Message), EventLogEntryType.Error, 5000);
+                throw ex;
+            }
         }
 
         /// <summary>
@@ -1505,9 +1544,16 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         internal static bool RemoveUserKey(MFAConfig config, string upn)
         {
-            return KeysManager.RemoveKey(upn);
+            try
+            {
+                return KeysManager.RemoveKey(upn);
+            }
+            catch (Exception ex)
+            {
+                Log.WriteEntry(string.Format("RemoveUserKey error : {0} {1}", upn, ex.Message), EventLogEntryType.Error, 5000);
+                throw ex;
+            }
         }
-
         #endregion
 
         #region Password Management
@@ -1516,213 +1562,346 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         internal static void ChangePassword(MFAConfig cfg, string username, string oldpassword, string newpassword)
         {
-            string samusername = ADDSUtils.GetSAMAccountForUser(cfg.Hosts.ActiveDirectoryHost, username);
-            if (string.IsNullOrEmpty(samusername))
-                return;
-            string dns = samusername.Substring(0, samusername.IndexOf('\\'));
+            try
+            { 
+                string samusername = ADDSUtils.GetSAMAccountForUser(cfg.Hosts.ActiveDirectoryHost, username);
+                if (string.IsNullOrEmpty(samusername))
+                    return;
+                string dns = samusername.Substring(0, samusername.IndexOf('\\'));
 
-            if ((!string.IsNullOrEmpty(cfg.Hosts.ActiveDirectoryHost.Account)) && (!string.IsNullOrEmpty(cfg.Hosts.ActiveDirectoryHost.Password)))
-            {
-                using (var ctx = new PrincipalContext(ContextType.Domain, dns, cfg.Hosts.ActiveDirectoryHost.Account, cfg.Hosts.ActiveDirectoryHost.Password))
+                if ((!string.IsNullOrEmpty(cfg.Hosts.ActiveDirectoryHost.Account)) && (!string.IsNullOrEmpty(cfg.Hosts.ActiveDirectoryHost.Password)))
                 {
-                    using (var user = UserPrincipal.FindByIdentity(ctx, IdentityType.SamAccountName, samusername))
+                    using (var ctx = new PrincipalContext(ContextType.Domain, dns, cfg.Hosts.ActiveDirectoryHost.Account, cfg.Hosts.ActiveDirectoryHost.Password))
                     {
-                        if (user == null)
-                            return;
-                        user.ChangePassword(oldpassword, newpassword);
+                        using (var user = UserPrincipal.FindByIdentity(ctx, IdentityType.SamAccountName, samusername))
+                        {
+                            if (user == null)
+                                return;
+                            user.ChangePassword(oldpassword, newpassword);
+                        }
+                    }
+                }
+                else
+                {
+                    using (var ctx = new PrincipalContext(ContextType.Domain, dns))
+                    {
+                        using (var user = UserPrincipal.FindByIdentity(ctx, IdentityType.SamAccountName, samusername))
+                        {
+                            if (user == null)
+                                return;
+                            user.ChangePassword(oldpassword, newpassword);
+                        }
                     }
                 }
             }
-            else
+            catch (Exception ex)
             {
-                using (var ctx = new PrincipalContext(ContextType.Domain, dns))
-                {
-                    using (var user = UserPrincipal.FindByIdentity(ctx, IdentityType.SamAccountName, samusername))
-                    {
-                        if (user == null)
-                            return;
-                        user.ChangePassword(oldpassword, newpassword);
-                    }
-                }
+                Log.WriteEntry(string.Format("ChangePassword error : {0} {1}", username, ex.Message), EventLogEntryType.Error, 5000);
+                throw ex;
             }
         }
 
         /// <summary>
         /// MustChangePasswordSoon method implmentation
         /// </summary>
-        internal static bool MustChangePasswordSoon(MFAConfig cfg, string username, out DateTime max)
+        internal static bool MustChangePasswordSoon(MFAConfig cfg, AuthenticationContext usercontext, out DateTime max)
         {
             max = DateTime.Now;
-            if (!cfg.KeysConfig.UsePasswordPolicy)
-                return false;
-            string samusername = ADDSUtils.GetSAMAccountForUser(cfg.Hosts.ActiveDirectoryHost, username);
-            if (string.IsNullOrEmpty(samusername))
-                return false;
-            string dns = samusername.Substring(0, samusername.IndexOf('\\'));
+            try
+            { 
+                double warnmaxage = cfg.KeysConfig.WarnPasswordExpirationBeforeInDays;
+                if (((UserPasswordFeatures)usercontext.PasswordFeatures).Equals(UserPasswordFeatures.PasswordNone))
+                    return false;
+                if (((UserPasswordFeatures)usercontext.PasswordFeatures).HasFlag(UserPasswordFeatures.PasswordNotRequired))
+                    return false;
+                if (((UserPasswordFeatures)usercontext.PasswordFeatures).HasFlag(UserPasswordFeatures.PasswordNeverExpires))
+                    return false;
+                if (!((UserPasswordFeatures)usercontext.PasswordFeatures).HasFlag(UserPasswordFeatures.PasswordHasValue))
+                    return false;
 
-            double maxage = cfg.KeysConfig.MaxPasswordAgeInDays;
-            double warnage = cfg.KeysConfig.WarnPasswordExpirationBeforeInDays;
-            if ((!string.IsNullOrEmpty(cfg.Hosts.ActiveDirectoryHost.Account)) && (!string.IsNullOrEmpty(cfg.Hosts.ActiveDirectoryHost.Password)))
-            {
-                using (var ctx = new PrincipalContext(ContextType.Domain, dns, cfg.Hosts.ActiveDirectoryHost.Account, cfg.Hosts.ActiveDirectoryHost.Password))
+                if (usercontext.PasswordMaxAge < DateTime.Now)  // Locked User
                 {
-                    using (var user = UserPrincipal.FindByIdentity(ctx, IdentityType.SamAccountName, samusername))
-                    {
-                        if (user == null)
-                            return false;
-                        if (user.PasswordNotRequired)
-                            return false;
-                        if (user.PasswordNeverExpires)
-                            return false;
-                        if (!user.LastPasswordSet.HasValue)
-                            return false;
-                        if (user.LastPasswordSet.Value.AddDays(maxage) < DateTime.Now)  // Locked User
-                        {
-                            max = user.LastPasswordSet.Value.AddDays(maxage);  
-                            return true;
-                        }
-                        if (user.LastPasswordSet.Value.AddDays(maxage) >= DateTime.Now)  // Warn Zone
-                        {
-                            if (user.LastPasswordSet.Value.AddDays(maxage - warnage) <= DateTime.Now)
-                            {
-                                max = user.LastPasswordSet.Value.AddDays(maxage);
-                                return true;
-                            }
-                            else
-                                return false;
-                        }
-                        else
-                            return false;
-                    }
+                    max = usercontext.PasswordMaxAge;
+                    return true;
                 }
+                if (usercontext.PasswordMaxAge >= DateTime.Now)  // Warn Zone
+                {
+                    if (usercontext.PasswordMaxAge.AddDays(-warnmaxage) <= DateTime.Now)
+                    {
+                        max = usercontext.PasswordMaxAge;
+                        return true;
+                    }
+                    else
+                        return false;
+                }
+                else
+                    return false;
             }
-            else
+            catch (Exception ex)
             {
-                using (var ctx = new PrincipalContext(ContextType.Domain, dns))
-                {
-                    using (var user = UserPrincipal.FindByIdentity(ctx, IdentityType.SamAccountName, samusername))
-                    {
-                        if (user == null)
-                            return false;
-                        if (user.PasswordNotRequired)
-                            return false;
-                        if (user.PasswordNeverExpires)
-                            return false;
-                        if (!user.LastPasswordSet.HasValue)
-                            return false;
-                        if (user.LastPasswordSet.Value.AddDays(maxage) < DateTime.Now)  // Locked user
-                        {
-                            max = user.LastPasswordSet.Value.AddDays(maxage);
-                            return true;
-                        }
-                        if (user.LastPasswordSet.Value.AddDays(maxage) >= DateTime.Now)  // Warn Zone
-                        {
-                            if (user.LastPasswordSet.Value.AddDays(maxage - warnage) <= DateTime.Now)
-                            {
-                                max = user.LastPasswordSet.Value.AddDays(maxage);
-                                return true;
-                            }
-                            else
-                                return false;
-                        }
-                        else
-                            return false;                        
-                    }
-                }
+                Log.WriteEntry(string.Format("MustChangePasswordSoon error : {0} {1}", usercontext.UPN, ex.Message), EventLogEntryType.Error, 5000);
+                return false;
             }
         }
 
         /// <summary>
         /// IsUserPasswordExpired method implmentation
         /// </summary>
-        internal static bool IsUserPasswordExpired(MFAConfig cfg, string username)
+        internal static bool IsUserPasswordExpired(MFAConfig cfg, AuthenticationContext usercontext)
         {
-            if (!cfg.KeysConfig.UsePasswordPolicy)
-                return false;
-            string samusername = ADDSUtils.GetSAMAccountForUser(cfg.Hosts.ActiveDirectoryHost, username);
-            if (string.IsNullOrEmpty(samusername))
-                return false;
-            string dns = samusername.Substring(0, samusername.IndexOf('\\'));
-
-            double maxage = cfg.KeysConfig.MaxPasswordAgeInDays;
-            if ((!string.IsNullOrEmpty(cfg.Hosts.ActiveDirectoryHost.Account)) && (!string.IsNullOrEmpty(cfg.Hosts.ActiveDirectoryHost.Password)))
-            {
-                using (var ctx = new PrincipalContext(ContextType.Domain, dns, cfg.Hosts.ActiveDirectoryHost.Account, cfg.Hosts.ActiveDirectoryHost.Password))
-                {
-                    using (var user = UserPrincipal.FindByIdentity(ctx, IdentityType.SamAccountName, samusername))
-                    {
-                        if (user == null)
-                            return false;
-                        if (user.PasswordNotRequired)
-                            return false;
-                        if (user.PasswordNeverExpires)
-                            return false;
-                        if (!user.LastPasswordSet.HasValue)
-                            return false;
-                        if (user.LastPasswordSet.Value.AddDays(maxage) < DateTime.Now)  // Locked User
-                            return cfg.KeysConfig.LockUserOnPasswordExpiration;
-                        else
-                            return false;
-                    }
-                }
+            try
+            { 
+                PasswordPolicyResults result = PasswordPolicyManager.GetPasswordPolicyForUser(cfg, usercontext);
+                usercontext.PasswordFeatures = (byte)result.Features;
+                usercontext.PasswordMaxAge = result.MaxAge;
+                if (((UserPasswordFeatures)usercontext.PasswordFeatures).Equals(UserPasswordFeatures.PasswordNone))
+                    return false;
+                if (((UserPasswordFeatures)usercontext.PasswordFeatures).HasFlag(UserPasswordFeatures.PasswordNotRequired))
+                    return false;
+                if (((UserPasswordFeatures)usercontext.PasswordFeatures).HasFlag(UserPasswordFeatures.PasswordNeverExpires))
+                    return false;
+                if (!((UserPasswordFeatures)usercontext.PasswordFeatures).HasFlag(UserPasswordFeatures.PasswordHasValue))
+                    return false;
+                if (usercontext.PasswordMaxAge < DateTime.Now)  // Locked User
+                    return cfg.KeysConfig.LockUserOnPasswordExpiration;
+                else
+                    return false;
             }
-            else
+            catch (Exception ex)
             {
-                using (var ctx = new PrincipalContext(ContextType.Domain, dns))
-                {
-                    using (var user = UserPrincipal.FindByIdentity(ctx, IdentityType.SamAccountName, samusername))
-                    {
-                        if (user == null)
-                            return false;
-                        if (user.PasswordNotRequired)
-                            return false;
-                        if (user.PasswordNeverExpires)
-                            return false;
-                        if (!user.LastPasswordSet.HasValue)
-                            return false;
-                        if (user.LastPasswordSet.Value.AddDays(maxage) < DateTime.Now)  // Locked user
-                            return cfg.KeysConfig.LockUserOnPasswordExpiration;
-                        else
-                            return false;
-                    }
-                }
+                Log.WriteEntry(string.Format("IsUserPasswordExpired error : {0} {1}", usercontext.UPN, ex.Message), EventLogEntryType.Error, 5000);
+                return false;
             }
         }
 
         /// <summary>
         /// CanChangePassword method implmentation
         /// </summary>
-        internal static bool CanChangePassword(MFAConfig cfg, string username)
+        internal static bool CanChangePassword(MFAConfig cfg, AuthenticationContext usercontext)
         {
-            if (!cfg.KeysConfig.UsePasswordPolicy)
-                return true;
-            string samusername = ADDSUtils.GetSAMAccountForUser(cfg.Hosts.ActiveDirectoryHost, username);
-            if (string.IsNullOrEmpty(samusername))
-                return false;
-            string dns = samusername.Substring(0, samusername.IndexOf('\\'));
-
-            if ((!string.IsNullOrEmpty(cfg.Hosts.ActiveDirectoryHost.Account)) && (!string.IsNullOrEmpty(cfg.Hosts.ActiveDirectoryHost.Password)))
+            try
             {
-                using (var ctx = new PrincipalContext(ContextType.Domain, dns, cfg.Hosts.ActiveDirectoryHost.Account, cfg.Hosts.ActiveDirectoryHost.Password))
-                {
-                    UserPrincipal user = UserPrincipal.FindByIdentity(ctx, IdentityType.SamAccountName, samusername);
-                    if (user == null)
-                        return false;
-                    return !user.UserCannotChangePassword;
-                }
+                if (((UserPasswordFeatures)usercontext.PasswordFeatures).Equals(UserPasswordFeatures.PasswordNone))
+                    return false;
+                if (((UserPasswordFeatures)usercontext.PasswordFeatures).HasFlag(UserPasswordFeatures.PasswordCanBeChanged))
+                    return true;
+                else
+                    return false;
             }
-            else
+            catch (Exception ex)
             {
-                using (var ctx = new PrincipalContext(ContextType.Domain, dns))
-                {
-                    UserPrincipal user = UserPrincipal.FindByIdentity(ctx, IdentityType.SamAccountName, samusername);
-                    if (user == null)
-                        return false;
-                    return !user.UserCannotChangePassword;
-                }
+                Log.WriteEntry(string.Format("CanChangePassword error : {0} {1}", usercontext.UPN, ex.Message), EventLogEntryType.Error, 5000);
+                return false;
             }
         }
         #endregion
+    }
+    #endregion
+
+    #region Passwords Policies
+    /// <summary>
+    /// PasswordPolicyResults implementation
+    /// </summary>
+    internal struct PasswordPolicyResults
+    {
+        public PasswordPolicyResults(UserPasswordFeatures feat, DateTime max)
+        {
+            Features = feat;
+            MaxAge = max;
+        }
+
+        public UserPasswordFeatures Features { get; set; }
+        public DateTime MaxAge { get; set; }
+
+        public override string ToString() => $"({Features}, {MaxAge})";
+    }
+
+    /// <summary>
+    /// PasswordPolicyManager class implementation
+    /// </summary>
+    internal static class PasswordPolicyManager
+    {
+        internal static PasswordPolicyResults GetPasswordPolicyForUser(MFAConfig cfg, AuthenticationContext context)
+        {
+            PasswordPolicyResults result = new PasswordPolicyResults(UserPasswordFeatures.PasswordNone, DateTime.MaxValue);
+            try
+            {
+                if (!cfg.KeysConfig.UsePasswordPolicy)
+                    return result;
+                string samusername = ADDSUtils.GetSAMAccountForUser(cfg.Hosts.ActiveDirectoryHost, context.UPN);
+                if (string.IsNullOrEmpty(samusername))
+                    return result;
+                string dns = samusername.Substring(0, samusername.IndexOf('\\'));
+
+                if ((!string.IsNullOrEmpty(cfg.Hosts.ActiveDirectoryHost.Account)) && (!string.IsNullOrEmpty(cfg.Hosts.ActiveDirectoryHost.Password)))
+                {
+                    using (var ctx = new PrincipalContext(ContextType.Domain, dns, cfg.Hosts.ActiveDirectoryHost.Account, cfg.Hosts.ActiveDirectoryHost.Password))
+                    {
+                        using (var user = UserPrincipal.FindByIdentity(ctx, IdentityType.SamAccountName, samusername))
+                        {
+                            if (user == null)
+                                return result;
+                            if (user.PasswordNotRequired)
+                                result.Features |= UserPasswordFeatures.PasswordNotRequired;
+                            if (user.PasswordNeverExpires)
+                                result.Features |= UserPasswordFeatures.PasswordNeverExpires;
+                            if (user.LastPasswordSet.HasValue)
+                                result.Features |= UserPasswordFeatures.PasswordHasValue;
+                            if (!user.UserCannotChangePassword)
+                                result.Features |= UserPasswordFeatures.PasswordCanBeChanged;
+                            if (!cfg.KeysConfig.UsePSOPasswordPolicy)
+                            {
+                                result.Features |= UserPasswordFeatures.UseMFARules;
+                                result.MaxAge = user.LastPasswordSet.Value.AddDays(cfg.KeysConfig.MaxPasswordAgeInDays);
+                            }
+                            else
+                            {
+                                result.Features |= UserPasswordFeatures.UseGPORules;
+                                long days = GetMaxPasswordAge(cfg, dns, user);
+                                if (days == 0)
+                                    result.MaxAge = DateTime.MaxValue;
+                                else
+                                    result.MaxAge = user.LastPasswordSet.Value.AddDays(days);
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    using (var ctx = new PrincipalContext(ContextType.Domain, dns))
+                    {
+                        using (var user = UserPrincipal.FindByIdentity(ctx, IdentityType.SamAccountName, samusername))
+                        {
+                            if (user == null)
+                                return result;
+                            if (user.PasswordNotRequired)
+                                result.Features |= UserPasswordFeatures.PasswordNotRequired;
+                            if (user.PasswordNeverExpires)
+                                result.Features |= UserPasswordFeatures.PasswordNeverExpires;
+                            if (user.LastPasswordSet.HasValue)
+                                result.Features |= UserPasswordFeatures.PasswordHasValue;
+                            if (!user.UserCannotChangePassword)
+                                result.Features |= UserPasswordFeatures.PasswordCanBeChanged;
+                            if (!cfg.KeysConfig.UsePSOPasswordPolicy)
+                            {
+                                result.Features |= UserPasswordFeatures.UseMFARules;
+                                result.MaxAge = user.LastPasswordSet.Value.AddDays(cfg.KeysConfig.MaxPasswordAgeInDays);
+                            }
+                            else
+                            {
+                                result.Features |= UserPasswordFeatures.UseGPORules;
+                                long days = GetMaxPasswordAge(cfg, dns, user);
+                                if (days == 0)
+                                    result.MaxAge = DateTime.MaxValue;
+                                else
+                                    result.MaxAge = user.LastPasswordSet.Value.AddDays(days);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.WriteEntry(string.Format("GetPasswordPolicyForUser error : {0}", ex.Message), EventLogEntryType.Error, 5000);
+                return result;
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// GetMaxPasswordAge method implmentation
+        /// </summary>
+        private static long GetMaxPasswordAge(MFAConfig cfg, string dns, UserPrincipal user)
+        {
+            try
+            {
+                long result = GetPSOMaxPassordAge(cfg, dns, user);
+                if (result == 0)
+                    result = GetDDPMaxPasswordAge(cfg, dns, user);
+                return result;
+            }
+            catch (Exception)
+            {
+                return 0;
+            }
+        }
+
+        /// <summary>
+        /// GetDDPMaxPasswordAge method implmentation
+        /// </summary>
+        private static long GetDDPMaxPasswordAge(MFAConfig cfg, string dns, UserPrincipal user)
+        {
+            try
+            {
+                using (Domain dom = Domain.GetDomain(new DirectoryContext(DirectoryContextType.Domain, dns, cfg.Hosts.ActiveDirectoryHost.Account, cfg.Hosts.ActiveDirectoryHost.Password)))
+                {
+                    DirectorySearcher searcher = new DirectorySearcher(dom.GetDirectoryEntry());
+                    SearchResultCollection results;
+                    searcher.PropertiesToLoad.Add("maxPwdAge");
+                    results = searcher.FindAll();
+
+                    if (results.Count >= 1)
+                    {
+                        if (results[0].Properties.Contains("maxPwdAge"))
+                        {
+                            long longage = (long)results[0].Properties["maxPwdAge"][0];
+                            TimeSpan age = TimeSpan.FromTicks(Math.Abs(longage));
+                            return age.Days;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.WriteEntry(string.Format("GetDDPMaxPassordAge error : {0}", ex.Message), EventLogEntryType.Error, 5000);
+                return 0;
+            }
+            return 0;
+        }
+
+        /// <summary>
+        /// GetPSOMaxPassordAge method implementation
+        /// </summary>
+        private static long GetPSOMaxPassordAge(MFAConfig cfg, string dns, UserPrincipal user)
+        {
+            try
+            {
+                using (DirectoryEntry entry = user.GetUnderlyingObject() as DirectoryEntry)
+                {
+                    DirectorySearcher mySearcher = new DirectorySearcher(entry);
+                    SearchResultCollection results;
+                    mySearcher.PropertiesToLoad.Add("msDS-ResultantPSO");
+                    results = mySearcher.FindAll();
+
+                    if (results.Count >= 1)
+                    {
+                        if (results[0].Properties.Contains("msDS-ResultantPSO"))
+                        {
+                            string pso = results[0].Properties["msDS-ResultantPSO"][0].ToString();
+                            using (DirectoryEntry dir = ADDSUtils.GetDirectoryEntry(dns, cfg.Hosts.ActiveDirectoryHost.Account, cfg.Hosts.ActiveDirectoryHost.Password, pso))
+                            {
+                                var searchForPassPolicy = new DirectorySearcher(dir);
+                                searchForPassPolicy.Filter = @"(objectClass=msDS-PasswordSettings)";
+                                searchForPassPolicy.SearchScope = System.DirectoryServices.SearchScope.Subtree;
+
+                                searchForPassPolicy.PropertiesToLoad.AddRange(new string[] { "msDS-MaximumPasswordAge" });
+                                var policies = searchForPassPolicy.FindAll();
+
+                                long longage = (long)policies[0].Properties["msDS-MaximumPasswordAge"][0];
+                                TimeSpan age = TimeSpan.FromTicks(Math.Abs(longage));
+                                return age.Days;
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.WriteEntry(string.Format("GetPSOMaxPassordAge error : {0}", ex.Message), EventLogEntryType.Error, 5000);
+                return 0;
+            }
+            return 0;
+        }
     }
     #endregion
 
@@ -1849,14 +2028,14 @@ namespace Neos.IdentityServer.MultiFactor
         private int SecondsToGo
         {
             get { return _secondsToGo; }
-            set 
-            { 
+            set
+            {
                 _secondsToGo = value;
                 if (SecondsToGo == _duration)
-                    Compute(RequestedDatetime); 
+                    Compute(RequestedDatetime);
             }
         }
-        
+
         /// <summary>
         /// Identity property implementation
         /// </summary>
@@ -1865,7 +2044,7 @@ namespace Neos.IdentityServer.MultiFactor
             get { return _identity; }
             set { _identity = value; }
         }
-       
+
         /// <summary>
         /// Secret propertry implmentation
         /// </summary>
@@ -1965,7 +2144,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public override string ToString()
         {
-            return _oneTimePassword.ToString("D"+_digits.ToString()); 
+            return _oneTimePassword.ToString("D" + _digits.ToString());
         }
 
         /// <summary>
@@ -1994,17 +2173,23 @@ namespace Neos.IdentityServer.MultiFactor
             Offset = Hmac.Last() & 0x0F;
             switch (this.DigitsCount)
             {
-                case 4: OTP  = (((Hmac[Offset + 0] & 0x7f) << 24) | ((Hmac[Offset + 1] & 0xff) << 16) | ((Hmac[Offset + 2] & 0xff) << 8) | (Hmac[Offset + 3] & 0xff)) % 10000;
+                case 4:
+                    OTP = (((Hmac[Offset + 0] & 0x7f) << 24) | ((Hmac[Offset + 1] & 0xff) << 16) | ((Hmac[Offset + 2] & 0xff) << 8) | (Hmac[Offset + 3] & 0xff)) % 10000;
                     break;
-                case 5: OTP  = (((Hmac[Offset + 0] & 0x7f) << 24) | ((Hmac[Offset + 1] & 0xff) << 16) | ((Hmac[Offset + 2] & 0xff) << 8) | (Hmac[Offset + 3] & 0xff)) % 100000;
+                case 5:
+                    OTP = (((Hmac[Offset + 0] & 0x7f) << 24) | ((Hmac[Offset + 1] & 0xff) << 16) | ((Hmac[Offset + 2] & 0xff) << 8) | (Hmac[Offset + 3] & 0xff)) % 100000;
                     break;
-                case 6: OTP  = (((Hmac[Offset + 0] & 0x7f) << 24) | ((Hmac[Offset + 1] & 0xff) << 16) | ((Hmac[Offset + 2] & 0xff) << 8) | (Hmac[Offset + 3] & 0xff)) % 1000000;
+                case 6:
+                    OTP = (((Hmac[Offset + 0] & 0x7f) << 24) | ((Hmac[Offset + 1] & 0xff) << 16) | ((Hmac[Offset + 2] & 0xff) << 8) | (Hmac[Offset + 3] & 0xff)) % 1000000;
                     break;
-                case 7: OTP  = (((Hmac[Offset + 0] & 0x7f) << 24) | ((Hmac[Offset + 1] & 0xff) << 16) | ((Hmac[Offset + 2] & 0xff) << 8) | (Hmac[Offset + 3] & 0xff)) % 10000000;
+                case 7:
+                    OTP = (((Hmac[Offset + 0] & 0x7f) << 24) | ((Hmac[Offset + 1] & 0xff) << 16) | ((Hmac[Offset + 2] & 0xff) << 8) | (Hmac[Offset + 3] & 0xff)) % 10000000;
                     break;
-                case 8: OTP  = (((Hmac[Offset + 0] & 0x7f) << 24) | ((Hmac[Offset + 1] & 0xff) << 16) | ((Hmac[Offset + 2] & 0xff) << 8) | (Hmac[Offset + 3] & 0xff)) % 100000000;
+                case 8:
+                    OTP = (((Hmac[Offset + 0] & 0x7f) << 24) | ((Hmac[Offset + 1] & 0xff) << 16) | ((Hmac[Offset + 2] & 0xff) << 8) | (Hmac[Offset + 3] & 0xff)) % 100000000;
                     break;
-                default: OTP = (((Hmac[Offset + 0] & 0x7f) << 24) | ((Hmac[Offset + 1] & 0xff) << 16) | ((Hmac[Offset + 2] & 0xff) << 8) | (Hmac[Offset + 3] & 0xff)) % 1000000;
+                default:
+                    OTP = (((Hmac[Offset + 0] & 0x7f) << 24) | ((Hmac[Offset + 1] & 0xff) << 16) | ((Hmac[Offset + 2] & 0xff) << 8) | (Hmac[Offset + 3] & 0xff)) % 1000000;
                     break;
             }
         }
@@ -2071,7 +2256,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public static string Encode(string data)
         {
-            byte[] result = GetBytesFromString(data); 
+            byte[] result = GetBytesFromString(data);
             return Encode(result);
         }
 
@@ -2103,7 +2288,7 @@ namespace Neos.IdentityServer.MultiFactor
             char[] chars = new char[bytes.Length / sizeof(char)];
             System.Buffer.BlockCopy(bytes, 0, chars, 0, bytes.Length);
             string str = new string(chars);
-            return str; 
+            return str;
         }
     }
     #endregion
@@ -2159,8 +2344,8 @@ namespace Neos.IdentityServer.MultiFactor
                     IsLoaded = true;
                     break;
                 case SecretKeyFormat.CUSTOM:
-                     if (!string.IsNullOrEmpty(cfg.KeysConfig.CustomFullyQualifiedImplementation))
-                     {
+                    if (!string.IsNullOrEmpty(cfg.KeysConfig.CustomFullyQualifiedImplementation))
+                    {
                         ISecretKeyManagerActivator _creator = Utilities.LoadExternalKeyManagerActivator(cfg.KeysConfig.CustomFullyQualifiedImplementation);
                         if (_creator != null)
                             Manager = _creator.CreateInstance(cfg.KeysConfig.KeyVersion);
@@ -2176,10 +2361,10 @@ namespace Neos.IdentityServer.MultiFactor
                             Manager.Initialize(KeysStorage, KeysManagerParams);
                             IsLoaded = true;
                         }
-                     }
-                     else
-                        IsLoaded = false; 
-                    break; 
+                    }
+                    else
+                        IsLoaded = false;
+                    break;
                 default:
                     throw new NotImplementedException("SecretKeyManager not found !");
             }
@@ -2222,7 +2407,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// EnsureKey method implementation
         /// </summary>
-        internal static void EnsureKey(string upn) 
+        internal static void EnsureKey(string upn)
         {
             string key = ReadKey(upn);
             if (string.IsNullOrEmpty(key))
@@ -2314,7 +2499,7 @@ namespace Neos.IdentityServer.MultiFactor
         {
             string htmlres = string.Empty;
             try
-            { 
+            {
                 if (mail.MailOTPContent != null)
                 {
                     int ctry = culture.LCID;
@@ -2334,7 +2519,7 @@ namespace Neos.IdentityServer.MultiFactor
                 }
                 if (string.IsNullOrEmpty(htmlres))
                 {
-                    lock(lck)
+                    lock (lck)
                     {
                         ResourcesLocale Resources = new ResourcesLocale(culture.LCID);
                         htmlres = Resources.GetString(ResourcesLocaleKind.Mail, "MailOTPContent");
@@ -2362,7 +2547,7 @@ namespace Neos.IdentityServer.MultiFactor
                 {
                     Group titlegrp = Regex.Match(html, @"\<title\b[^>]*\>\s*(?<Title>[\s\S]*?)\</title\>", RegexOptions.IgnoreCase).Groups["Title"];
                     if (titlegrp != null)
-                        Message.Subject = string.Format(titlegrp.Value, mail.Company, name, code); 
+                        Message.Subject = string.Format(titlegrp.Value, mail.Company, name, code);
                     if (Message.Subject == string.Empty)
                     {
                         ResourcesLocale Resources = new ResourcesLocale(culture.LCID);
@@ -2390,7 +2575,7 @@ namespace Neos.IdentityServer.MultiFactor
         {
             string htmlres = string.Empty;
             try
-            { 
+            {
                 if (mail.MailAdminContent != null)
                 {
                     int ctry = culture.LCID;
@@ -2434,7 +2619,7 @@ namespace Neos.IdentityServer.MultiFactor
                 {
                     Group titlegrp = Regex.Match(html, @"\<title\b[^>]*\>\s*(?<Title>[\s\S]*?)\</title\>", RegexOptions.IgnoreCase).Groups["Title"];
                     if (titlegrp != null)
-                        Message.Subject = string.Format(titlegrp.Value, mail.Company, user.UPN, user.MailAddress, user.PhoneNumber, user.PreferredMethod); 
+                        Message.Subject = string.Format(titlegrp.Value, mail.Company, user.UPN, user.MailAddress, user.PhoneNumber, user.PreferredMethod);
                     if (Message.Subject == string.Empty)
                     {
                         ResourcesLocale Resources = new ResourcesLocale(culture.LCID);
@@ -2480,7 +2665,7 @@ namespace Neos.IdentityServer.MultiFactor
                 }
                 if (string.IsNullOrEmpty(htmlres))
                 {
-                    lock(lck)
+                    lock (lck)
                     {
                         ResourcesLocale Resources = new ResourcesLocale(culture.LCID);
                         htmlres = Resources.GetString(ResourcesLocaleKind.Mail, "MailKeyContent");
@@ -2512,7 +2697,7 @@ namespace Neos.IdentityServer.MultiFactor
                     {
                         Group titlegrp = Regex.Match(html, @"\<title\b[^>]*\>\s*(?<Title>[\s\S]*?)\</title\>", RegexOptions.IgnoreCase).Groups["Title"];
                         if (titlegrp != null)
-                            Message.Subject = string.Format(titlegrp.Value, mail.Company, upn, key, inlineLogo.ContentId, email); 
+                            Message.Subject = string.Format(titlegrp.Value, mail.Company, upn, key, inlineLogo.ContentId, email);
                         if (Message.Subject == string.Empty)
                         {
                             ResourcesLocale Resources = new ResourcesLocale(culture.LCID);
@@ -2558,7 +2743,7 @@ namespace Neos.IdentityServer.MultiFactor
                 if (mail.MailNotifications != null)
                 {
                     int ctry = culture.LCID;
-                    string tmp = mail.MailNotifications.Where( c => c.LCID.Equals(ctry) || c.ParentLCID.Equals(ctry) && c.Enabled ).Select(s => s.FileName).FirstOrDefault();
+                    string tmp = mail.MailNotifications.Where(c => c.LCID.Equals(ctry) || c.ParentLCID.Equals(ctry) && c.Enabled).Select(s => s.FileName).FirstOrDefault();
                     if (!string.IsNullOrEmpty(tmp))
                     {
                         if (File.Exists(tmp))
@@ -2598,7 +2783,7 @@ namespace Neos.IdentityServer.MultiFactor
                     Group titlegrp = Regex.Match(html, @"\<title\b[^>]*\>\s*(?<Title>[\s\S]*?)\</title\>", RegexOptions.IgnoreCase).Groups["Title"];
                     if (titlegrp != null)
                         Message.Subject = string.Format(titlegrp.Value, user.UPN, mail.Company);
-                    if (Message.Subject==string.Empty)
+                    if (Message.Subject == string.Empty)
                     {
                         ResourcesLocale Resources = new ResourcesLocale(culture.LCID);
                         Message.Subject = string.Format(Resources.GetString(ResourcesLocaleKind.Mail, "MailNotificationsTitle"), user.UPN);
@@ -2635,7 +2820,7 @@ namespace Neos.IdentityServer.MultiFactor
             {
                 return string.Empty;
             }
-        }        
+        }
 
         #region private methods
         /// <summary>
@@ -2756,7 +2941,7 @@ namespace Neos.IdentityServer.MultiFactor
         #endregion
     }
     #endregion
-    
+
     #region Configuration Utilities
     /// <summary>
     /// CFGUtilities class
@@ -2772,12 +2957,12 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         static CFGUtilities()
         {
-           ConfigCacheKey = SystemUtilities.Key;
+            ConfigCacheKey = SystemUtilities.Key;
         }
 
         internal static byte[] Key
         {
-            get { return ConfigCacheKey;  }
+            get { return ConfigCacheKey; }
         }
 
         #region ReadConfiguration
@@ -2797,7 +2982,7 @@ namespace Neos.IdentityServer.MultiFactor
                 config = null;
             }
             if (config == null)
-               config = ReadConfigurationFromDatabase(Host);
+                config = ReadConfigurationFromDatabase(Host);
 
             if (config != null)
             {
@@ -3045,7 +3230,7 @@ namespace Neos.IdentityServer.MultiFactor
                     exportcmd.Parameters.Add(PParam);
                     pipeline.Commands.Add(exportcmd);
                     Collection<PSObject> PSOutput = pipeline.Invoke();
-                    
+
                 }
                 finally
                 {
@@ -3160,7 +3345,7 @@ namespace Neos.IdentityServer.MultiFactor
             message = GetMachineName(message);
             WebAdminManagerClient.BroadcastNotification(cfg, kind, message, local, dispatch);
         }
-                      
+
         /// <summary>
         /// GetMachineName
         /// </summary>
@@ -3219,7 +3404,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// CheckForReplay method implementation
         /// </summary>
-        internal static bool CheckForReplay(MFAConfig config, AuthenticationContext usercontext,int totp)
+        internal static bool CheckForReplay(MFAConfig config, AuthenticationContext usercontext, int totp)
         {
             bool OK = false;
             try
@@ -3241,7 +3426,7 @@ namespace Neos.IdentityServer.MultiFactor
                 OK = ReplayManagerClient.Check(srv, message);
             }
             catch (Exception)
-            {                    
+            {
                 return true;
             }
             return OK;
@@ -3296,8 +3481,8 @@ namespace Neos.IdentityServer.MultiFactor
                 Type _typetoload = assembly.GetType(ParseType(host.DataRepositoryFullyQualifiedImplementation));
                 Type _ancestor = _typetoload.BaseType;
                 if (_ancestor.IsClass && _ancestor.IsAbstract && (_ancestor == typeof(DataRepositoryService)))
-                   if (_typetoload.IsClass && !_typetoload.IsAbstract && _typetoload.GetInterface("IWebAuthNDataRepositoryService") != null)
-                      return ((Activator.CreateInstance(_typetoload, new object[] { host, deliverywindow }) as DataRepositoryService) != null); 
+                    if (_typetoload.IsClass && !_typetoload.IsAbstract && _typetoload.GetInterface("IWebAuthNDataRepositoryService") != null)
+                        return ((Activator.CreateInstance(_typetoload, new object[] { host, deliverywindow }) as DataRepositoryService) != null);
                 return false;
             }
             catch (Exception)
@@ -3317,7 +3502,7 @@ namespace Neos.IdentityServer.MultiFactor
                 Type _typetoload = assembly.GetType(ParseType(host.KeysRepositoryFullyQualifiedImplementation));
                 Type _ancestor = _typetoload.BaseType;
                 if (_ancestor.IsClass && _ancestor.IsAbstract && (_ancestor == typeof(KeysRepositoryService)))
-                    return ((Activator.CreateInstance(_typetoload, new object[] { host, deliverywindow }) as KeysRepositoryService) != null); 
+                    return ((Activator.CreateInstance(_typetoload, new object[] { host, deliverywindow }) as KeysRepositoryService) != null);
                 return false;
             }
             catch (Exception)
@@ -3471,8 +3656,8 @@ namespace Neos.IdentityServer.MultiFactor
                 Log.WriteEntry(ex.Message, EventLogEntryType.Error, 800);
                 return false;
             }
-        }   
-     
+        }
+
         /// <summary>
         /// StripDisplayKey method implmentation
         /// </summary>
@@ -3512,7 +3697,7 @@ namespace Neos.IdentityServer.MultiFactor
                 if (string.IsNullOrEmpty(email))
                     return string.Empty;
                 else
-                    return email.Remove(0, email.IndexOf('@') +1);
+                    return email.Remove(0, email.IndexOf('@') + 1);
             }
             catch
             {
@@ -3528,10 +3713,10 @@ namespace Neos.IdentityServer.MultiFactor
             try
             {
                 return string.Format(CultureInfo.InvariantCulture, "{0}{1}", new object[]
-		        {
-			        Regex.Replace(phone.Substring(0, phone.Length - 2), "[0-9]", "x"),
+                {
+                    Regex.Replace(phone.Substring(0, phone.Length - 2), "[0-9]", "x"),
                     phone.Substring(phone.Length - 2)
-		        });
+                });
             }
             catch
             {
@@ -3575,10 +3760,10 @@ namespace Neos.IdentityServer.MultiFactor
                     else
                         return true;
                 default:
-                    return true;               
+                    return true;
             }
         }
-        
+
         /// <summary>
         /// FindNextWizardToPlay method implementation
         /// </summary>
@@ -3682,7 +3867,7 @@ namespace Neos.IdentityServer.MultiFactor
         {
             try
             {
-                foreach(string st in userlanguages)
+                foreach (string st in userlanguages)
                 {
                     try
                     {

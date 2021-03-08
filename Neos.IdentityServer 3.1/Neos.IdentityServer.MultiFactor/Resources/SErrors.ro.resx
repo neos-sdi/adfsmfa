@@ -180,10 +180,13 @@
   <data name="ErrorSendingToastInformation" xml:space="preserve">
     <value>Eroare la trimiterea cererii de identificare!</value>
   </data>
-  <data name="ErrorSendingToastInformationRetry" xml:space="preserve">
-    <value>Eroare la trimiterea cererii de identificare! Reîncerca!</value>
-  </data>
   <data name="ErrorValidationTimeWindowElapsed" xml:space="preserve">
     <value>Timpul de validare a ferestrei a trecut.</value>
+  </data>
+  <data name="ErrorSendingToastInformationRetry" xml:space="preserve">
+    <value>Eroare la trimiterea cererii de identificare ! încercați din nou.</value>
+  </data>
+  <data name="ErrorPasswordExpired" xml:space="preserve">
+    <value>Parola pentru {0} este expirată ! Acces refuzat !</value>
   </data>
 </root>

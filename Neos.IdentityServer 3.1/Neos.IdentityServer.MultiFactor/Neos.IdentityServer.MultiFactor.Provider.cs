@@ -76,6 +76,12 @@ namespace Neos.IdentityServer.MultiFactor
             {
                 WebThemeManagerClient.Initialize(Config, usercontext, request.Url);
                 ClaimsUtilities.SetIdentityClaim(identityClaim);
+                if (RuntimeRepository.IsUserPasswordExpired(Config, usercontext))
+                {
+                    usercontext.UIMode = ProviderPageMode.Locking;
+                    usercontext.TargetUIMode = ProviderPageMode.DefinitiveError;
+                    return new AdapterPresentation(this, context, string.Format(Resources.GetString(ResourcesLocaleKind.Errors, "ErrorPasswordExpired"), usercontext.UPN), ProviderPageMode.DefinitiveError);
+                }
                 if ((Config.IsPrimaryAuhentication) && (!Config.PrimaryAuhenticationOptions.HasFlag(PrimaryAuthOptions.Register)))
                 {
                     if ((!usercontext.Enabled) || (!usercontext.IsRegistered))
@@ -147,8 +153,6 @@ namespace Neos.IdentityServer.MultiFactor
             {
                 ClaimsUtilities.SetIdentityClaim(identityClaim);
                 string upn = identityClaim.Value;
-                if (RuntimeRepository.IsUserPasswordExpired(Config, upn))
-                    throw new Exception(string.Format("User Password for user {0} is expired ! Access denied !", upn));
                 MFAUser reg = RuntimeRepository.GetMFAUser(Config, upn);
                 if (reg != null) // User Is Registered
                 {
@@ -222,7 +226,6 @@ namespace Neos.IdentityServer.MultiFactor
                         Enabled = false,
                         PreferredMethod = Config.DefaultProviderMethod
                     };
-
                     if (Config.UserFeatures.IsAdministrative())                   // Error : administrative Only Registration
                     {
                         usercontext.UIMode = ProviderPageMode.Locking;
@@ -1436,6 +1439,7 @@ namespace Neos.IdentityServer.MultiFactor
             IAdapterPresentation result = null;
             try
             {
+                string error = string.Empty;
                 if (usercontext.CurrentRetries >= Config.MaxRetries)
                 {
                     usercontext.UIMode = ProviderPageMode.Locking;
@@ -1469,10 +1473,24 @@ namespace Neos.IdentityServer.MultiFactor
                 }
                 else if (!usercontext.IsTwoWay)
                 {
-                    if ((int)AuthenticationResponseKind.Error == PostAuthenticationRequest(usercontext))
+                    if ((int)AuthenticationResponseKind.Error == PostAuthenticationRequest(usercontext, out error))
                     {
-                        usercontext.UIMode = ProviderPageMode.Locking;
-                        return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorSendingToastInformation"), ProviderPageMode.DefinitiveError);
+                        usercontext.CurrentRetries++;
+                        if (usercontext.CurrentRetries >= Config.MaxRetries)
+                        {
+                            usercontext.UIMode = ProviderPageMode.Locking;
+                            return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorSendingToastInformation"), ProviderPageMode.DefinitiveError);
+                        }
+                        else
+                        {
+                            usercontext.UIMode = ProviderPageMode.ChooseMethod;  // SendAuthRequest;
+                            if (!string.IsNullOrEmpty(error))
+                                return new AdapterPresentation(this, context, error, false);
+                            else
+                                return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorSendingToastInformationRetry"), false);
+                        }
+                       // usercontext.UIMode = ProviderPageMode.Locking;
+                       // return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorSendingToastInformation"), ProviderPageMode.DefinitiveError);
                     }
                     switch (usercontext.SelectedMethod)
                     {
@@ -1499,8 +1517,9 @@ namespace Neos.IdentityServer.MultiFactor
                 }
                 else if (usercontext.IsTwoWay)
                 {
-                    if ((int)AuthenticationResponseKind.Error == PostAuthenticationRequest(usercontext))
+                    if ((int)AuthenticationResponseKind.Error == PostAuthenticationRequest(usercontext, out error))
                     {
+                        usercontext.CurrentRetries++;
                         if (usercontext.CurrentRetries >= Config.MaxRetries)
                         {
                             usercontext.UIMode = ProviderPageMode.Locking;
@@ -1509,11 +1528,13 @@ namespace Neos.IdentityServer.MultiFactor
                         else
                         {
                             usercontext.UIMode = ProviderPageMode.ChooseMethod;  // SendAuthRequest;
-                            return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorSendingToastInformationRetry"), false);
+                            if (!string.IsNullOrEmpty(error))
+                                return new AdapterPresentation(this, context, error, false);
+                            else
+                                return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorSendingToastInformationRetry"), false);
                         }
                     }
                     string valuetopass = string.Empty;
-                    string error = string.Empty;
                     bool cango = true;
                     if (usercontext.SelectedMethod == AuthenticationResponseKind.Biometrics)
                     {
@@ -2859,6 +2880,38 @@ namespace Neos.IdentityServer.MultiFactor
             }
         }
 
+        /// <summary>
+        /// PostAuthenticationRequest method implementation
+        /// </summary>
+        private int PostAuthenticationRequest(AuthenticationContext usercontext, out string error, PreferredMethod method = PreferredMethod.None)
+        {
+            // usercontext.CurrentRetries++;
+            error = string.Empty;
+            try
+            {
+                IExternalProvider provider = null;
+                if (method == PreferredMethod.None)
+                    provider = RuntimeAuthProvider.GetAuthenticationProvider(Config, usercontext);
+                else
+                    provider = RuntimeAuthProvider.GetProvider(method);
+
+                if ((provider != null) && (provider.Enabled))
+                    return provider.PostAuthenticationRequest(usercontext);
+                else
+                {
+                    error = "Provider not availlable !";
+                    return (int)AuthenticationResponseKind.Error;
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.WriteEntry(string.Format("PostAuthenticationRequest Error {0} \r\n {1} \r\n {2}", usercontext.UPN, ex.Message, ex.StackTrace), EventLogEntryType.Error, 800);
+                error = ex.Message;
+                return (int)AuthenticationResponseKind.Error;
+            }
+        }
+
+        
         /// <summary>
         /// SetAuthenticationResult method implementation
         /// </summary>

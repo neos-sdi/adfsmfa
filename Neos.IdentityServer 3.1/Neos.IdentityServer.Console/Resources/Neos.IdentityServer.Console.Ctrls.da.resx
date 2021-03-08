@@ -696,9 +696,6 @@
   <data name="CTRLUSEPASSWORDPOLICY" xml:space="preserve">
     <value>Aktiver politik for adgangskoder</value>
   </data>
-  <data name="CTRLUSEGPOPASSWORDPOLICY" xml:space="preserve">
-    <value>Brug politik for virksomhedsadgangskoder</value>
-  </data>
   <data name="CTRLLOCKUSERONPASSWORDEXPIRED" xml:space="preserve">
     <value>Lås brugeren ude, hvis adgangskoden er udløbet</value>
   </data>
@@ -707,5 +704,8 @@
   </data>
   <data name="CTRLWARNMAXPASSWORDAGEINDAYS" xml:space="preserve">
     <value>Giv brugeren besked, før adgangskoden udløber</value>
+  </data>
+  <data name="CTRLUSEPSOPASSWORDPOLICY" xml:space="preserve">
+    <value>Brug politik for virksomhedsadgangskoder (PSO)</value>
   </data>
 </root>

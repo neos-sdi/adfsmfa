@@ -696,9 +696,6 @@
   <data name="CTRLUSEPASSWORDPOLICY" xml:space="preserve">
     <value>Zasady aktywowania haseł</value>
   </data>
-  <data name="CTRLUSEGPOPASSWORDPOLICY" xml:space="preserve">
-    <value>Korzystanie z zasad haseł przedsiębiorstwa</value>
-  </data>
   <data name="CTRLLOCKUSERONPASSWORDEXPIRED" xml:space="preserve">
     <value>Zablokuj użytkownika, jeśli hasło wygasło</value>
   </data>
@@ -707,5 +704,8 @@
   </data>
   <data name="CTRLWARNMAXPASSWORDAGEINDAYS" xml:space="preserve">
     <value>Powiadamianie użytkownika przed wygaśnięciem hasła</value>
+  </data>
+  <data name="CTRLUSEPSOPASSWORDPOLICY" xml:space="preserve">
+    <value>Korzystanie z zasad haseł przedsiębiorstwa (PSO)</value>
   </data>
 </root>

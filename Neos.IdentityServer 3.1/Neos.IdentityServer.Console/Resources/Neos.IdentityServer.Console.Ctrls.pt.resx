@@ -696,9 +696,6 @@
   <data name="CTRLUSEPASSWORDPOLICY" xml:space="preserve">
     <value>Ativar a política de senhas</value>
   </data>
-  <data name="CTRLUSEGPOPASSWORDPOLICY" xml:space="preserve">
-    <value>Use a política de senhas corporativas (GPO)</value>
-  </data>
   <data name="CTRLLOCKUSERONPASSWORDEXPIRED" xml:space="preserve">
     <value>Bloqueie o usuário se a senha expirar</value>
   </data>
@@ -707,5 +704,8 @@
   </data>
   <data name="CTRLWARNMAXPASSWORDAGEINDAYS" xml:space="preserve">
     <value>Notifique o usuário antes que a senha expire</value>
+  </data>
+  <data name="CTRLUSEPSOPASSWORDPOLICY" xml:space="preserve">
+    <value>Use a política de senhas corporativas (PSO)</value>
   </data>
 </root>

@@ -208,6 +208,15 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Password for {0} is expired ! Access denied !.
+        /// </summary>
+        internal static string ErrorPasswordExpired {
+            get {
+                return ResourceManager.GetString("ErrorPasswordExpired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Invalid PIN length, {0} numbers required !.
         /// </summary>
         internal static string ErrorPinLength {
@@ -226,7 +235,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Error on autehntification process ! One Time Password has been played before .
+        ///   Recherche une chaîne localisée semblable à Error during authentication process ! One Time Password has been played before .
         /// </summary>
         internal static string ErrorReplayToken {
             get {
@@ -244,7 +253,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Error when sending identification request ! Retrying !.
+        ///   Recherche une chaîne localisée semblable à Error when sending identification request ! please try again..
         /// </summary>
         internal static string ErrorSendingToastInformationRetry {
             get {

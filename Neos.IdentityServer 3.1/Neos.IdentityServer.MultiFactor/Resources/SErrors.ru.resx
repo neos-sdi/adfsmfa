@@ -178,10 +178,13 @@
   <data name="ErrorSendingToastInformation" xml:space="preserve">
     <value>Ошибка при отправке запроса на идентификацию!</value>
   </data>
-  <data name="ErrorSendingToastInformationRetry" xml:space="preserve">
-    <value>Ошибка при отправке запроса на идентификацию! Повтор!</value>
-  </data>
   <data name="ErrorValidationTimeWindowElapsed" xml:space="preserve">
     <value>Время проверки окна прошло.</value>
+  </data>
+  <data name="ErrorSendingToastInformationRetry" xml:space="preserve">
+    <value>Ошибка при отправке запроса на идентификацию! пожалуйста, попробуйте еще раз.</value>
+  </data>
+  <data name="ErrorPasswordExpired" xml:space="preserve">
+    <value>Пароль для {0} истек ! Доступ отказано !</value>
   </data>
 </root>

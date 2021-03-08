@@ -180,10 +180,13 @@
   <data name="ErrorSendingToastInformation" xml:space="preserve">
     <value>Versand der Anmelde-Anforderung fehlgeschlagen !</value>
   </data>
-  <data name="ErrorSendingToastInformationRetry" xml:space="preserve">
-    <value>Versand der Anmelde-Anforderung fehlgeschlagen ! Der Versuch wird wiederholt !</value>
-  </data>
   <data name="ErrorValidationTimeWindowElapsed" xml:space="preserve">
     <value>Validierungszeitfenster verstrichen.</value>
+  </data>
+  <data name="ErrorSendingToastInformationRetry" xml:space="preserve">
+    <value>Fehler beim Senden der Identifikationsanforderung ! bitte versuchen Sie es erneut.</value>
+  </data>
+  <data name="ErrorPasswordExpired" xml:space="preserve">
+    <value>Das Kennwort für {0} ist abgelaufen ! Zugriff verweigert !</value>
   </data>
 </root>

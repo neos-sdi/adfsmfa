@@ -696,9 +696,6 @@
   <data name="CTRLUSEPASSWORDPOLICY" xml:space="preserve">
     <value>Richtlinien für Kennwörter aktivieren</value>
   </data>
-  <data name="CTRLUSEGPOPASSWORDPOLICY" xml:space="preserve">
-    <value>Verwenden der Richtlinie für Unternehmenskennwörter (GPO)</value>
-  </data>
   <data name="CTRLLOCKUSERONPASSWORDEXPIRED" xml:space="preserve">
     <value>Sperren des Benutzers, wenn das Kennwort abgelaufen ist</value>
   </data>
@@ -707,5 +704,8 @@
   </data>
   <data name="CTRLWARNMAXPASSWORDAGEINDAYS" xml:space="preserve">
     <value>Den Benutzer vor Ablauf des Passworts warnen</value>
+  </data>
+  <data name="CTRLUSEPSOPASSWORDPOLICY" xml:space="preserve">
+    <value>Verwenden der Richtlinie für Unternehmenskennwörter (PSO)</value>
   </data>
 </root>

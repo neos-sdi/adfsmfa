@@ -415,7 +415,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         public int PinLength { get; set; }
         public int DefaultPin { get; set; }
         public bool UsePasswordPolicy { get; set; }
-        public bool UseGPOPasswordPolicy { get; set; }
+        public bool UsePSOPasswordPolicy { get; set; }
         public bool LockUserOnPasswordExpiration { get; set; }
         public uint MaxPasswordAgeInDays { get; set; }
         public uint WarnPasswordExpirationBeforeInDays { get; set; }
@@ -443,7 +443,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             PinLength = cfg.PinLength;
             DefaultPin = cfg.DefaultPin;
             UsePasswordPolicy = keys.UsePasswordPolicy;
-            UseGPOPasswordPolicy = keys.UseGPOPasswordPolicy;
+            UsePSOPasswordPolicy = keys.UsePSOPasswordPolicy;
             LockUserOnPasswordExpiration = keys.LockUserOnPasswordExpiration;
             MaxPasswordAgeInDays = keys.MaxPasswordAgeInDays;
             WarnPasswordExpirationBeforeInDays = keys.WarnPasswordExpirationBeforeInDays;
@@ -476,7 +476,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             cfg.PinLength = this.PinLength;
             cfg.DefaultPin = this.DefaultPin;
             keys.UsePasswordPolicy = this.UsePasswordPolicy;
-            keys.UseGPOPasswordPolicy = this.UseGPOPasswordPolicy;
+            keys.UsePSOPasswordPolicy = this.UsePSOPasswordPolicy;
             keys.LockUserOnPasswordExpiration = this.LockUserOnPasswordExpiration;
             keys.MaxPasswordAgeInDays = this.MaxPasswordAgeInDays;
             keys.WarnPasswordExpirationBeforeInDays = this.WarnPasswordExpirationBeforeInDays;

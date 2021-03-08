@@ -696,9 +696,6 @@
   <data name="CTRLUSEPASSWORDPOLICY" xml:space="preserve">
     <value>Wachtwoordbeleid activeren</value>
   </data>
-  <data name="CTRLUSEGPOPASSWORDPOLICY" xml:space="preserve">
-    <value>Beleid voor ondernemingswachtwoorden gebruiken (GPO)</value>
-  </data>
   <data name="CTRLLOCKUSERONPASSWORDEXPIRED" xml:space="preserve">
     <value>De gebruiker vergrendelen als het wachtwoord is verlopen</value>
   </data>
@@ -707,5 +704,8 @@
   </data>
   <data name="CTRLWARNMAXPASSWORDAGEINDAYS" xml:space="preserve">
     <value>De gebruiker op de hoogte stellen voordat het wachtwoord verloopt</value>
+  </data>
+  <data name="CTRLUSEPSOPASSWORDPOLICY" xml:space="preserve">
+    <value>Beleid voor bedrijfswachtwoorden gebruiken (PSO)</value>
   </data>
 </root>

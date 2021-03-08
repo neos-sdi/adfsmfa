@@ -180,10 +180,13 @@
   <data name="ErrorSendingToastInformation" xml:space="preserve">
     <value>Errore di invio della richiesta di autenticazione.</value>
   </data>
-  <data name="ErrorSendingToastInformationRetry" xml:space="preserve">
-    <value>Errore di invio della richiesta di autenticazione, riprovo.</value>
-  </data>
   <data name="ErrorValidationTimeWindowElapsed" xml:space="preserve">
     <value>Finestra di validazione temporale scaduta.</value>
+  </data>
+  <data name="ErrorSendingToastInformationRetry" xml:space="preserve">
+    <value>Errore durante l'invio della richiesta di identificazione ! riprovare.</value>
+  </data>
+  <data name="ErrorPasswordExpired" xml:space="preserve">
+    <value>La password per {0} è scaduta ! Accesso negato !</value>
   </data>
 </root>

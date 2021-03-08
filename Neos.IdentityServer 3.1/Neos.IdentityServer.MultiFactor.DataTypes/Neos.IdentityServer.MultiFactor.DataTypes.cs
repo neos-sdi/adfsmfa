@@ -31,7 +31,8 @@ using System.ServiceModel;
 namespace Neos.IdentityServer.MultiFactor
 {
     #region AuthenticationContext
-    [Serializable]
+    [KnownTypeAttribute(typeof(UserPasswordFeatures))]
+    [DataContract]
     public class AuthenticationContext
     {
         private IAuthenticationContext _context = null;
@@ -102,7 +103,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// ID property implementation
         /// </summary>
-        [XmlAttribute("ID")]
+        [DataMember(Name = "ID")]
         public string ID
         {
             get
@@ -124,7 +125,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// UPN property implementation
         /// </summary>
-        [XmlAttribute("UPN")]
+        [DataMember(Name = "UPN")]
         public string UPN
         {
             get
@@ -146,7 +147,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// NotificationSent property implementation
         /// </summary>
-        [XmlAttribute("NotificationSent")]
+        [DataMember(Name = "NotificationSent")]
         public bool NotificationSent
         {
             get
@@ -168,7 +169,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// KeyChanged property implementation
         /// </summary>
-        [XmlAttribute("KeyChanged")]
+        [DataMember(Name = "KeyChanged")]
         public bool KeyChanged
         {
             get
@@ -190,7 +191,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// KeyStatus property implementation
         /// </summary>
-        [XmlAttribute("KeyStatus")]
+        [DataMember(Name = "KeyStatus")]
         public SecretKeyStatus KeyStatus
         {
             get
@@ -212,7 +213,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// MailAddress property implementation
         /// </summary>
-        [XmlAttribute("MailAddress")]
+        [DataMember(Name = "MailAddress")]
         public string MailAddress
         {
             get
@@ -234,7 +235,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// PhoneNumber property implementation
         /// </summary>
-        [XmlAttribute("PhoneNumber")]
+        [DataMember(Name = "PhoneNumber")]
         public string PhoneNumber
         {
             get
@@ -256,7 +257,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// Enabled property implementation
         /// </summary>
-        [XmlAttribute("Enabled")]
+        [DataMember(Name = "Enabled")]
         public bool Enabled
         {
             get
@@ -278,7 +279,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// IsRegistered property implementation
         /// </summary>
-        [XmlAttribute("IsRegistered")]
+        [DataMember(Name = "IsRegistered")]
         public bool IsRegistered
         {
             get
@@ -300,7 +301,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// ShowOptions property implementation
         /// </summary>
-        [XmlAttribute("ShowOptions")]
+        [DataMember(Name = "ShowOptions")]
         public bool ShowOptions
         {
             get
@@ -322,7 +323,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// UIMode property
         /// </summary>
-        [XmlAttribute("UIMode")]
+        [DataMember(Name = "UIMode")]
         public ProviderPageMode UIMode
         {
             get
@@ -344,7 +345,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// TargetUIMode property
         /// </summary>
-        [XmlAttribute("TargetUIMode")]
+        [DataMember(Name = "TargetUIMode")]
         public ProviderPageMode TargetUIMode
         {
             get
@@ -366,7 +367,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// UIMessage property
         /// </summary>
-        [XmlAttribute("UIMessage")]
+        [DataMember(Name = "UIMessage")]
         public string UIMessage
         {
             get
@@ -388,7 +389,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// Notification 
         /// </summary>
-        [XmlAttribute("Notification")]
+        [DataMember(Name = "Notification")]
         public int Notification
         {
             get
@@ -410,7 +411,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// IsRemote property implementation
         /// </summary>
-        [XmlAttribute("IsRemote")]
+        [DataMember(Name = "IsRemote")]
         public bool IsRemote
         {
             get
@@ -432,7 +433,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// IsTwoWay property implementation
         /// </summary>
-        [XmlAttribute("IsTwoWay")]
+        [DataMember(Name = "IsTwoWay")]
         public bool IsTwoWay
         {
             get
@@ -454,7 +455,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// IsSendBack property implementation
         /// </summary>
-        [XmlAttribute("IsSendBack")]
+        [DataMember(Name = "IsSendBack")]
         public bool IsSendBack
         {
             get
@@ -476,7 +477,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// UserLcid 
         /// </summary>
-        [XmlAttribute("Lcid")]
+        [DataMember(Name = "Lcid")]
         public int Lcid
         {
             get
@@ -498,7 +499,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// SessionId 
         /// </summary>
-        [XmlAttribute("SessionId")]
+        [DataMember(Name = "SessionId")]
         public string SessionId
         {
             get
@@ -520,7 +521,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// SessionDate property implementation
         /// </summary>
-        [XmlAttribute("SessionDate")]
+        [DataMember(Name = "SessionDate")]
         public DateTime SessionDate
         {
             get
@@ -542,7 +543,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// LogonDate property implementation
         /// </summary>
-        [XmlAttribute("LogonDate")]
+        [DataMember(Name = "LogonDate")]
         public DateTime LogonDate
         {
             get
@@ -564,7 +565,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// IPAddress 
         /// </summary>
-        [XmlAttribute("IPAddress")]
+        [DataMember(Name = "IPAddress")]
         public string IPAddress
         {
             get
@@ -586,7 +587,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// ActivityId 
         /// </summary>
-        [XmlAttribute("ActivityId")]
+        [DataMember(Name = "ActivityId")]
         public string ActivityId
         {
             get
@@ -598,7 +599,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// PinRequired property implementation
         /// </summary>
-        [XmlAttribute("PinRequired")]
+        [DataMember(Name = "PinRequired")]
         public bool PinRequired
         {
             get
@@ -620,7 +621,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// PinCode property implementation
         /// </summary>
-        [XmlAttribute("PinCode")]
+        [DataMember(Name = "PinCode")]
         public int PinCode
         {
             get
@@ -642,7 +643,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// PinDone property implementation
         /// </summary>
-        [XmlAttribute("PinDone")]
+        [DataMember(Name = "PinDone")]
         public bool PinDone
         {
             get
@@ -665,7 +666,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// ExtraInfos property implementation
         /// </summary>
-        [XmlAttribute("ExtraInfos")]
+        [DataMember(Name = "ExtraInfos")]
         public string ExtraInfos 
         {
             get
@@ -687,7 +688,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// PreferredMethod property implementation
         /// </summary>
-        [XmlAttribute("PreferredMethod")]
+        [DataMember(Name = "PreferredMethod")]
         public PreferredMethod PreferredMethod
         {
             get
@@ -709,7 +710,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// FirstChoiceMethod property implementation
         /// </summary>
-        [XmlAttribute("FirstChoiceMethod")]
+        [DataMember(Name = "FirstChoiceMethod")]
         public PreferredMethod FirstChoiceMethod
         {
             get
@@ -731,7 +732,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// CurrentRetries property implementation
         /// </summary>
-        [XmlAttribute("CurrentRetries")]
+        [DataMember(Name = "CurrentRetries")]
         public int CurrentRetries
         {
             get
@@ -753,7 +754,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// SelectedMethod property implementation
         /// </summary>
-        [XmlAttribute("SelectedMethod")]
+        [DataMember(Name = "SelectedMethod")]
         public AuthenticationResponseKind SelectedMethod
         {
             get
@@ -775,7 +776,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// OverrideMethod property implementation
         /// </summary>
-        [XmlAttribute("OverrideMethod")]
+        [DataMember(Name = "OverrideMethod")]
         public string OverrideMethod
         {
             get
@@ -797,7 +798,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// WizPageID property implementation
         /// </summary>
-        [XmlAttribute("WizPageID")]
+        [DataMember(Name = "WizPageID")]
         public int WizPageID
         {
             get
@@ -819,7 +820,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// EnrollPageID property implementation
         /// </summary>
-        [XmlAttribute("EnrollPageID")]
+        [DataMember(Name = "EnrollPageID")]
         public PreferredMethod EnrollPageID
         {
             get
@@ -841,7 +842,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// EnrollPageStatus property implementation
         /// </summary>
-        [XmlAttribute("EnrollPageStatus")]
+        [DataMember(Name = "EnrollPageStatus")]
         public EnrollPageStatus EnrollPageStatus
         {
             get
@@ -863,7 +864,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// WizContext property implementation
         /// </summary>
-        [XmlAttribute("WizContext")]
+        [DataMember(Name = "WizContext")]
         public WizardContextMode WizContext
         {
             get
@@ -885,7 +886,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// DirectLogin property implementation
         /// </summary>
-        [XmlAttribute("DirectLogin")]
+        [DataMember(Name = "DirectLogin")]
         public bool DirectLogin
         {
             get
@@ -908,7 +909,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// AccountManagementUrl property implementation
         /// </summary>
-        [XmlAttribute("AccountManagementUrl")]
+        [DataMember(Name = "AccountManagementUrl")]
         public string AccountManagementUrl
         {
             get
@@ -930,7 +931,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// SessionData property implementation
         /// </summary>
-        [XmlAttribute("SessionData")]
+        [DataMember(Name = "SessionData")]
         public string SessionData
         {
             get
@@ -952,7 +953,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// CredentialOptions property implementation
         /// </summary>
-        [XmlAttribute("CredentialOptions")]
+        [DataMember(Name = "CredentialOptions")]
         public string CredentialOptions
         {
             get
@@ -974,7 +975,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// CredentialOptions property implementation
         /// </summary>
-        [XmlAttribute("AssertionOptions")]
+        [DataMember(Name = "AssertionOptions")]
         public string AssertionOptions
         {
             get
@@ -996,7 +997,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// PinRequirements property implementation
         /// </summary>
-        [XmlAttribute("PinRequirements")]
+        [DataMember(Name = "PinRequirements")]
         public bool PinRequirements
         {
             get
@@ -1018,7 +1019,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// ThemeIdentifier property implementation
         /// </summary>
-        [XmlAttribute("ThemeIdentifier")]
+        [DataMember(Name = "ThemeIdentifier")]
         public string ThemeIdentifier
         {
             get
@@ -1034,6 +1035,47 @@ namespace Neos.IdentityServer.MultiFactor
                     _context.Data["_authctxthemeidentifier"] = value;
                 else
                     _context.Data.Add("_authctxthemeidentifier", value);
+            }
+        }
+
+        /// <summary>
+        /// PasswordFeatures property implementation
+        /// </summary>
+        [DataMember(Name = "PasswordFeatures")]
+        public byte PasswordFeatures
+        {
+            get
+            {
+                if (_context.Data.ContainsKey("_authctxpasswordfeatures") && _context.Data["_authctxpasswordfeatures"] != null)
+                    return (byte)_context.Data["_authctxpasswordfeatures"];
+                else
+                    return (byte)UserPasswordFeatures.PasswordNone;
+            }
+            set
+            {
+                if (_context.Data.ContainsKey("_authctxpasswordfeatures"))
+                    _context.Data["_authctxpasswordfeatures"] = value;
+                else
+                    _context.Data.Add("_authctxpasswordfeatures", value);
+            }
+        }
+
+        [DataMember(Name = "PasswordMaxAge")]
+        public DateTime PasswordMaxAge
+        {
+            get
+            {
+                if (_context.Data.ContainsKey("_authctxpasswordmaxage") && _context.Data["_authctxpasswordmaxage"] != null)
+                    return (DateTime)_context.Data["_authctxpasswordmaxage"];
+                else
+                    return DateTime.MaxValue;
+            }
+            set
+            {
+                if (_context.Data.ContainsKey("_authctxpasswordmaxage"))
+                    _context.Data["_authctxpasswordmaxage"] = value;
+                else
+                    _context.Data.Add("_authctxpasswordmaxage", value);
             }
         }
     }
@@ -1221,44 +1263,73 @@ namespace Neos.IdentityServer.MultiFactor
     /// <summary>
     /// AuthenticationMethodKind enum
     /// </summary>
+    [DataContract]
     public enum AuthenticationResponseKind
     {
+        [EnumMember]
         Error = 0,
+        [EnumMember]
         Bypass = -1,
+        [EnumMember]
         PhoneAppOTP = -2,
+        [EnumMember]
         EmailOTP = -3,
+        [EnumMember]
         SmsOTP = -4,
+        [EnumMember]
         PhoneAppConfirmation = -5,
+        [EnumMember]
         VoiceBiometric = -6,
+        [EnumMember]
         Kba = -7,
+        [EnumMember]
         FaceID = -8,
+        [EnumMember]
         WindowsHello = -9,
+        [EnumMember]
         FIDO = -10,
+        [EnumMember]
         Default = -50,
-
+        [EnumMember]
         EmailForInscription = -200,
+        [EnumMember]
         EmailForKey = -201,
-
+        [EnumMember]
         PhoneAppNotification = -1000,
+        [EnumMember]
         SmsOneWayOTP = -1001,
+        [EnumMember]
         SmsOneWayOTPplusPin = -1002,
+        [EnumMember]
         SmsTwoWayOTP = -1003,
+        [EnumMember]
         SmsTwoWayOTPplusPin = -1004,
+        [EnumMember]
         VoiceTwoWayMobile = -1005,
+        [EnumMember]
         VoiceTwoWayMobilePlusPin = -1006,
+        [EnumMember]
         VoiceTwoWayOffice = -1007,
+        [EnumMember]
         VoiceTwoWayOfficePlusPin = -1008,
+        [EnumMember]
         VoiceTwoWayAlternateMobile = -1009,
+        [EnumMember]
         VoiceTwoWayAlternateMobilePlusPin = -1010,
+        [EnumMember]
         Biometrics = -2000,
-
+        [EnumMember]
         Sample1 = -9001,
+        [EnumMember]
         Sample2 = -9002,
+        [EnumMember]
         Sample3 = -9003,
+        [EnumMember]
         Sample1Async = -9011,
+        [EnumMember]
         Sample2Async = -9012,
+        [EnumMember]
         Sample3Async = -9013,
-
     }
 
     /// <summary>
@@ -1544,11 +1615,14 @@ namespace Neos.IdentityServer.MultiFactor
     /// <summary>
     /// SecretKeyStatus
     /// </summary>
-    [Serializable]
+    [DataContract]
     public enum SecretKeyStatus
     {
+        [EnumMember]
         Success = 0,
+        [EnumMember]
         NoKey = 1,
+        [EnumMember]
         Unknown = 2
     }
 
@@ -1695,71 +1769,132 @@ namespace Neos.IdentityServer.MultiFactor
     /// <summary>
     /// WizardContextMode
     /// </summary>
-    [Serializable]
+    [DataContract]
     public enum WizardContextMode
     {
+        [EnumMember]
         ManageOptions = 0,
+        [EnumMember]
         Registration = 1,
+        [EnumMember]
         Invitation = 2,
+        [EnumMember]
         DirectWizards = 3,
+        [EnumMember]
         ForceWizard = 4
     }
 
     /// <summary>
     /// ProviderPageMode
     /// </summary>
-    [Serializable]
+    [DataContract]
     public enum ProviderPageMode
     {
+        [EnumMember]
         Locking = 0,
+        [EnumMember]
         Bypass = 1,
+        [EnumMember]
         Identification = 2,
+        [EnumMember]
         Registration = 3,
+        [EnumMember]
         Invitation = 4,
+        [EnumMember]
         Activation = 5,
+        [EnumMember]
         SelectOptions = 6,
+        [EnumMember]
         ChooseMethod = 7,
+        [EnumMember]
         ChangePassword = 8,
+        [EnumMember]
         ShowQRCode = 9,
+        [EnumMember]
         SendAuthRequest = 10,
+        [EnumMember]
         SendAdministrativeRequest = 11,
+        [EnumMember]
         SendKeyRequest = 12,
+        [EnumMember]
         PreSet = 13,
+        [EnumMember]
         EnrollOTP = 14,
+        [EnumMember]
         EnrollBiometrics = 15,
+        [EnumMember]
         EnrollEmail = 16,
+        [EnumMember]
         EnrollPhone = 17,
+        [EnumMember]
         EnrollPin = 18,
+        [EnumMember]
         ManageOptions = 63,
+        [EnumMember]
         None = 64,
+        [EnumMember]
         DefinitiveError = 128
     }
 
     /// <summary>
     /// PreferredMethod
     /// </summary>
-    [Serializable]
+    [DataContract]
     public enum PreferredMethod
     {
+        [EnumMember]
         Choose = 0,
+        [EnumMember]
         Code = 1,
+        [EnumMember]
         Email = 2,
+        [EnumMember]
         External = 3,
+        [EnumMember]
         Azure = 4,
+        [EnumMember]
         Biometrics = 5,
+        [EnumMember]
         Pin = 6,
+        [EnumMember]
         None = 7
+    }
+
+    /// <summary>
+    /// UserPasswordFeatures
+    /// </summary>
+    [DataContract, Flags]
+    public enum UserPasswordFeatures: byte
+    {
+        [EnumMember]
+        PasswordNone = 0x00,
+        [EnumMember]
+        UseMFARules = 0x01,
+        [EnumMember]
+        UseGPORules = 0x02,
+        [EnumMember]
+        PasswordNotRequired = 0x04,
+        [EnumMember]
+        PasswordNeverExpires = 0x08,
+        [EnumMember]
+        PasswordHasValue = 0x10,
+        [EnumMember]
+        PasswordCanBeChanged = 0x20
     }
 
     /// <summary>
     /// EnrollPageStatus
     /// </summary>
-    [Serializable]
+    [DataContract]
     public enum EnrollPageStatus
     {
+        [EnumMember]
         Start = 0,
+        [EnumMember]
         Run = 1,
+        [EnumMember]
         Stop = 2,
+        [EnumMember]
         NewStep = 3
     }
 

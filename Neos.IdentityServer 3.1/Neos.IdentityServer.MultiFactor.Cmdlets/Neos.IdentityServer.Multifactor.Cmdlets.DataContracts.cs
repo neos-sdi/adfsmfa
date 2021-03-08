@@ -860,9 +860,9 @@ namespace MFA
         public bool UsePasswordPolicy { get; set; }
 
         /// <summary>
-        /// <para type="description">Use Domain GPO parameters for passwords policy.</para>
+        /// <para type="description">Use Domain Password Policy or Domain Fine-Grained Password Policy.</para>
         /// </summary>
-        public bool UseGPOPasswordPolicy { get; set; }
+        public bool UsePSOPasswordPolicy { get; set; }
 
         /// <summary>
         /// <para type="description">Lock the user, if user password is expired.</para>
@@ -923,7 +923,7 @@ namespace MFA
                     PinLength = mgr.PinLength,
                     DefaultPin = mgr.DefaultPin,
                     UsePasswordPolicy = mgr.UsePasswordPolicy,
-                    UseGPOPasswordPolicy = mgr.UseGPOPasswordPolicy,
+                    UsePSOPasswordPolicy = mgr.UsePSOPasswordPolicy,
                     LockUserOnPasswordExpiration = mgr.LockUserOnPasswordExpiration,
                     MaxPasswordAgeInDays = mgr.MaxPasswordAgeInDays,
                     WarnPasswordExpirationBeforeInDays = mgr.WarnPasswordExpirationBeforeInDays,
@@ -957,7 +957,7 @@ namespace MFA
                     PinLength = mgr.PinLength,
                     DefaultPin = mgr.DefaultPin,
                     UsePasswordPolicy = mgr.UsePasswordPolicy,
-                    UseGPOPasswordPolicy = mgr.UseGPOPasswordPolicy,
+                    UsePSOPasswordPolicy = mgr.UsePSOPasswordPolicy,
                     LockUserOnPasswordExpiration = mgr.LockUserOnPasswordExpiration,
                     MaxPasswordAgeInDays = mgr.MaxPasswordAgeInDays,
                     WarnPasswordExpirationBeforeInDays = mgr.WarnPasswordExpirationBeforeInDays,

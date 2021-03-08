@@ -1465,8 +1465,7 @@ namespace Neos.IdentityServer.Console.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à WSMAN
-        ///.
+        ///   Recherche une chaîne localisée semblable à Connection to SQL server is operational !.
         /// </summary>
         internal static string CTRLSQLCONNECTIONOK {
             get {
@@ -1655,20 +1654,20 @@ namespace Neos.IdentityServer.Console.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Use enterprise passwords policy (GPO).
-        /// </summary>
-        internal static string CTRLUSEGPOPASSWORDPOLICY {
-            get {
-                return ResourceManager.GetString("CTRLUSEGPOPASSWORDPOLICY", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Recherche une chaîne localisée semblable à Activate passwords policy.
         /// </summary>
         internal static string CTRLUSEPASSWORDPOLICY {
             get {
                 return ResourceManager.GetString("CTRLUSEPASSWORDPOLICY", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Use enterprise passwords policy (PSO).
+        /// </summary>
+        internal static string CTRLUSEPSOPASSWORDPOLICY {
+            get {
+                return ResourceManager.GetString("CTRLUSEPSOPASSWORDPOLICY", resourceCulture);
             }
         }
         

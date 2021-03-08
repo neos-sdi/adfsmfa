@@ -168,6 +168,9 @@
     <value>Error loading User Registration ! 
 {0}</value>
   </data>
+  <data name="ErrorPasswordExpired" xml:space="preserve">
+    <value>Password for {0} is expired ! Access denied !</value>
+  </data>
   <data name="ErrorPinLength" xml:space="preserve">
     <value>Invalid PIN length, {0} numbers required !</value>
   </data>
@@ -181,7 +184,7 @@
     <value>Error when sending identification request !</value>
   </data>
   <data name="ErrorSendingToastInformationRetry" xml:space="preserve">
-    <value>Error when sending identification request ! Retrying !</value>
+    <value>Error when sending identification request ! please try again.</value>
   </data>
   <data name="ErrorValidationTimeWindowElapsed" xml:space="preserve">
     <value>Window validation time elapsed.</value>

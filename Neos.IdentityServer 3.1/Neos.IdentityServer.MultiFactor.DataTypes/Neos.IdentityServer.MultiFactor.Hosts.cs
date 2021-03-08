@@ -64,6 +64,8 @@ namespace Neos.IdentityServer.MultiFactor
         AdministrativeMode = 256,
     }
 
+
+
     public static class UserFeaturesOptionsExtensions
     {
         /// <summary>
@@ -925,8 +927,8 @@ namespace Neos.IdentityServer.MultiFactor
         [XmlAttribute("UsePasswordPolicy")]
         public bool UsePasswordPolicy { get; set; } = true;
 
-        [XmlAttribute("UseGPOPasswordPolicy")]
-        public bool UseGPOPasswordPolicy { get; set; } = false;
+        [XmlAttribute("UsePSOPasswordPolicy")]
+        public bool UsePSOPasswordPolicy { get; set; } = false;
 
         [XmlAttribute("LockUserOnPasswordExpiration")]
         public bool LockUserOnPasswordExpiration { get; set; } = true;

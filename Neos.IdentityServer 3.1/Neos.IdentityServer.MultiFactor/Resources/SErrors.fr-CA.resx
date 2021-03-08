@@ -180,10 +180,13 @@
   <data name="ErrorSendingToastInformation" xml:space="preserve">
     <value>Erreur lors de l’envoi d’une demande d’identification !</value>
   </data>
-  <data name="ErrorSendingToastInformationRetry" xml:space="preserve">
-    <value>Erreur lors de l’envoi d’une demande d’identification ! Réessayer!</value>
-  </data>
   <data name="ErrorValidationTimeWindowElapsed" xml:space="preserve">
     <value>Le temps de validation des fenêtres s’est écoulé.</value>
+  </data>
+  <data name="ErrorSendingToastInformationRetry" xml:space="preserve">
+    <value>Erreur lors de l’envoi d’une demande d’identification ! veuillez réessayer.</value>
+  </data>
+  <data name="ErrorPasswordExpired" xml:space="preserve">
+    <value>Le mot de passe pour {0} est expiré ! Accès refusé !</value>
   </data>
 </root>

@@ -530,31 +530,25 @@ namespace Neos.IdentityServer.MultiFactor.Data
         {
             string root = "LDAP://";
             DirectoryEntry entry = null;
-            if (string.IsNullOrEmpty(path))
+            if (!string.IsNullOrEmpty(domain))
             {
-                  if (!string.IsNullOrEmpty(domain))
-                  {
-                      if (_usessl)
-                          entry = new DirectoryEntry(root + domain + ":636");
-                      else
-                          entry = new DirectoryEntry(root + domain);
-                  }
-                  else
-                  {
-                    using (Domain dom = Domain.GetComputerDomain())
-                    {
-                        if (_usessl)
-                            entry = new DirectoryEntry(root + dom.Name + ":636");
-                        else
-                            entry = new DirectoryEntry(root + dom.Name);
-                    }
-                  } 
+                if (_usessl)
+                    entry = new DirectoryEntry(root + domain + ":636");
+                else
+                    entry = new DirectoryEntry(root + domain);
             }
             else
             {
-                entry = new DirectoryEntry();
-                entry.Path = root + path;
-            }
+                using (Domain dom = Domain.GetComputerDomain())
+                {
+                    if (_usessl)
+                        entry = new DirectoryEntry(root + dom.Name + ":636");
+                    else
+                        entry = new DirectoryEntry(root + dom.Name);
+                }
+            } 
+            if (!string.IsNullOrEmpty(path))
+               entry.Path += "/"+path;
             if (!string.IsNullOrEmpty(username))
                 entry.Username = username;
             if (!string.IsNullOrEmpty(password))

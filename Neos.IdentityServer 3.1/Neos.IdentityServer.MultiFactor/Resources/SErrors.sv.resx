@@ -180,10 +180,13 @@
   <data name="ErrorSendingToastInformation" xml:space="preserve">
     <value>Fel när du skickar identifierings förfrågan !</value>
   </data>
-  <data name="ErrorSendingToastInformationRetry" xml:space="preserve">
-    <value>Fel när du skickar identifierings förfrågan! Försöker !</value>
-  </data>
   <data name="ErrorValidationTimeWindowElapsed" xml:space="preserve">
     <value>Tid för fönster validering har förflutit.</value>
+  </data>
+  <data name="ErrorSendingToastInformationRetry" xml:space="preserve">
+    <value>Fel vid sändning av identifieringsbegäran ! Försök igen.</value>
+  </data>
+  <data name="ErrorPasswordExpired" xml:space="preserve">
+    <value>Lösenordet för {0} upphör att gälla! Åtkomst nekad!</value>
   </data>
 </root>

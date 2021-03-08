@@ -86,10 +86,16 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
             }
         }
 
+        /// <summary>
+        /// FullyQualifiedOrigin method implementation
+        /// </summary>
         private string FullyQualifiedOrigin(string origin)
         {
             Uri uri = new Uri(origin);
-            return $"{uri.Scheme}://{uri.Host}";
+            if (uri.Port==443)
+                return $"{uri.Scheme}://{uri.Host}";
+            else
+                return $"{uri.Scheme}://{uri.Host}:{uri.Port}";
         }
     }
 }
