@@ -1617,6 +1617,7 @@ namespace Neos.IdentityServer.MultiFactor
         public override string GetFormHtmlEnrollOTP(AuthenticationContext usercontext)
         {
             IExternalProvider prov = RuntimeAuthProvider.GetProvider(PreferredMethod.Code);
+            prov.GetAuthenticationContext(usercontext);
             string result = "<form method=\"post\" id=\"enrollotpForm\" autocomplete=\"off\" >";
             switch (usercontext.WizPageID)
             {

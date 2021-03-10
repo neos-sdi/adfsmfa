@@ -20,6 +20,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
 using System.ServiceProcess;
@@ -188,6 +189,8 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
         {
             try
             {
+                if (File.Exists(SystemUtilities.SystemCacheFile))
+                    File.Delete(SystemUtilities.SystemCacheFile);
                 _svcadminhost.StartService(this);
                 StorePrimaryServerStatus(InitLocalNodeType());
             }

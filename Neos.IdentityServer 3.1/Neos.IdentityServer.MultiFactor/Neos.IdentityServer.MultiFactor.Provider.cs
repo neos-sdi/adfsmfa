@@ -1756,6 +1756,9 @@ namespace Neos.IdentityServer.MultiFactor
                 bool remember = proofData.Properties.TryGetValue("remember", out object rem);
                 usercontext.KeyChanged = false;
 
+                IExternalProvider prov = RuntimeAuthProvider.GetProvider(PreferredMethod.Code);
+                prov.GetAuthenticationContext(usercontext);
+
                 switch (btnclicked)
                 {
                     case 1:  // Cancel
@@ -1890,6 +1893,8 @@ namespace Neos.IdentityServer.MultiFactor
                 bool remember = proofData.Properties.TryGetValue("remember", out object rem);
                 usercontext.KeyChanged = false;
 
+                IExternalProvider prov = RuntimeAuthProvider.GetProvider(PreferredMethod.Email);
+                prov.GetAuthenticationContext(usercontext);
                 switch (btnclicked)
                 {
                     case 0:
@@ -1937,7 +1942,6 @@ namespace Neos.IdentityServer.MultiFactor
                         try
                         {
                             ValidateUserEmail(usercontext, context, proofData, Resources, true);
-                            IExternalProvider prov = RuntimeAuthProvider.GetProvider(PreferredMethod.Email);
                             AuthenticationResponseKind kd = prov.GetOverrideMethod(usercontext);
                             
                             if (prov.SetSelectedAuthenticationMethod(usercontext, kd, true))
@@ -2085,6 +2089,8 @@ namespace Neos.IdentityServer.MultiFactor
                 int btnclicked = Convert.ToInt32(proofData.Properties["selected"].ToString());
                 bool remember = proofData.Properties.TryGetValue("remember", out object rem);
                 usercontext.KeyChanged = false;
+                IExternalProvider prov = RuntimeAuthProvider.GetProvider(PreferredMethod.External);
+                prov.GetAuthenticationContext(usercontext);
 
                 switch (btnclicked)
                 {
@@ -2133,7 +2139,7 @@ namespace Neos.IdentityServer.MultiFactor
                         try
                         {
                             ValidateUserPhone(usercontext, context, proofData, Resources, true);
-                            IExternalProvider prov = RuntimeAuthProvider.GetProvider(PreferredMethod.External);
+
                             AuthenticationResponseKind kd = prov.GetOverrideMethod(usercontext);
                             if (prov.SetSelectedAuthenticationMethod(usercontext, kd, true))
                             { 
@@ -2274,13 +2280,15 @@ namespace Neos.IdentityServer.MultiFactor
 
             usercontext.KeyChanged = false;
             usercontext.FirstChoiceMethod = PreferredMethod.Choose;
-            IExternalProvider prov = RuntimeAuthProvider.GetProvider(PreferredMethod.Biometrics);
-            IWebAuthNProvider web = prov as IWebAuthNProvider;
             try
             {
                 int btnclicked = Convert.ToInt32(proofData.Properties["selected"].ToString());
                 bool remember = proofData.Properties.TryGetValue("remember", out object rem);
                 usercontext.KeyChanged = false;
+
+                IExternalProvider prov = RuntimeAuthProvider.GetProvider(PreferredMethod.Biometrics);
+                IWebAuthNProvider web = prov as IWebAuthNProvider;
+                prov.GetAuthenticationContext(usercontext);
 
                 switch (btnclicked)
                 {

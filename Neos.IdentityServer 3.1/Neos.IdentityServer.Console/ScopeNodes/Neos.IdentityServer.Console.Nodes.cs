@@ -2435,7 +2435,7 @@ namespace Neos.IdentityServer.Console
                     ImportUsersCSV imp = new ImportUsersCSV(ManagementService.ADFSManager.Config)
                     {
                         FileName = Wizard.FileName,
-                        ForceNewKey = false,
+                        ForceNewKey = true,
                         SendEmail = false
                     };
                     imp.DoImport();
@@ -2482,7 +2482,7 @@ namespace Neos.IdentityServer.Console
                     ImportUsersXML imp = new ImportUsersXML(ManagementService.ADFSManager.Config)
                     {
                         FileName = Wizard.FileName,
-                        ForceNewKey = false,
+                        ForceNewKey = true,
                         SendEmail = false
                     };
                     imp.DoImport();
@@ -2525,7 +2525,7 @@ namespace Neos.IdentityServer.Console
                     ImportUsersADDS imp = new ImportUsersADDS(ManagementService.ADFSManager.Config)
                     {
                         LDAPPath = Wizard.LDAPQuery.Text,
-                        ForceNewKey = false,
+                        ForceNewKey = true,
                         SendEmail = false,
                         DisableAll = Wizard.checkBoxDisable.Checked
                     };

@@ -1559,6 +1559,7 @@ namespace Neos.IdentityServer.MultiFactor
         {
             string result = string.Empty;
             IExternalProvider prov = RuntimeAuthProvider.GetProvider(PreferredMethod.Code);
+            prov.GetAuthenticationContext(usercontext);
             result += "<form method=\"post\" id=\"enrollotpForm\" autocomplete=\"off\" >";
             switch (usercontext.WizPageID)
             {

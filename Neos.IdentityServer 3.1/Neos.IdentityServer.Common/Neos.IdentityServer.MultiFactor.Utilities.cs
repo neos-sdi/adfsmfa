@@ -2497,6 +2497,8 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public static void SendOTPByEmail(string to, string upn, string code, MailProvider mail, CultureInfo culture)
         {
+            if (string.IsNullOrEmpty(to))
+                return;
             string htmlres = string.Empty;
             try
             {
@@ -2535,7 +2537,7 @@ namespace Neos.IdentityServer.MultiFactor
                 {
                     BodyEncoding = UTF8Encoding.UTF8,
                     IsBodyHtml = true,
-                    Body = string.Format(html, mail.Company, name, code)
+                    Body = string.Format(html, mail.Company, name, code, to)
                 };
 
                 if (mail.DeliveryNotifications)
@@ -2547,7 +2549,7 @@ namespace Neos.IdentityServer.MultiFactor
                 {
                     Group titlegrp = Regex.Match(html, @"\<title\b[^>]*\>\s*(?<Title>[\s\S]*?)\</title\>", RegexOptions.IgnoreCase).Groups["Title"];
                     if (titlegrp != null)
-                        Message.Subject = string.Format(titlegrp.Value, mail.Company, name, code);
+                        Message.Subject = string.Format(titlegrp.Value, mail.Company, name, code, to);
                     if (Message.Subject == string.Empty)
                     {
                         ResourcesLocale Resources = new ResourcesLocale(culture.LCID);
@@ -2573,6 +2575,8 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public static void SendInscriptionMail(string to, MFAUser user, MailProvider mail, CultureInfo culture)
         {
+            if (string.IsNullOrEmpty(to))
+                return;
             string htmlres = string.Empty;
             try
             {
@@ -2641,8 +2645,14 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// SendKeyByEmail method implementation
         /// </summary>
-        public static void SendKeyByEmail(string email, string upn, string key, MailProvider mail, MFAConfig config, CultureInfo culture)
+        public static void SendKeyByEmail(string to, string upn, string key, MailProvider mail, MFAConfig config, CultureInfo culture)
         {
+            if (config == null)
+                return;
+            if (config.MailProvider == null)
+                return;
+            if (string.IsNullOrEmpty(to))
+                return;
             string htmlres = string.Empty;
             try
             {
@@ -2682,7 +2692,7 @@ namespace Neos.IdentityServer.MultiFactor
                         ContentId = Guid.NewGuid().ToString()
                     };
 
-                    MailMessage Message = new MailMessage(mail.From, email);
+                    MailMessage Message = new MailMessage(mail.From, to);
                     if (!string.IsNullOrEmpty(sendermail))
                         Message.CC.Add(sendermail);
                     Message.BodyEncoding = UTF8Encoding.UTF8;
@@ -2697,7 +2707,7 @@ namespace Neos.IdentityServer.MultiFactor
                     {
                         Group titlegrp = Regex.Match(html, @"\<title\b[^>]*\>\s*(?<Title>[\s\S]*?)\</title\>", RegexOptions.IgnoreCase).Groups["Title"];
                         if (titlegrp != null)
-                            Message.Subject = string.Format(titlegrp.Value, mail.Company, upn, key, inlineLogo.ContentId, email);
+                            Message.Subject = string.Format(titlegrp.Value, mail.Company, upn, key, inlineLogo.ContentId, to);
                         if (Message.Subject == string.Empty)
                         {
                             ResourcesLocale Resources = new ResourcesLocale(culture.LCID);
@@ -2706,7 +2716,7 @@ namespace Neos.IdentityServer.MultiFactor
                     }
                     Message.Priority = MailPriority.High;
 
-                    string body = string.Format(html, mail.Company, upn, key, inlineLogo.ContentId, email);
+                    string body = string.Format(html, mail.Company, upn, key, inlineLogo.ContentId, to);
                     var view = AlternateView.CreateAlternateViewFromString(body, null, "text/html");
                     view.LinkedResources.Add(inlineLogo);
                     Message.AlternateViews.Add(view);
@@ -2770,7 +2780,7 @@ namespace Neos.IdentityServer.MultiFactor
                 {
                     BodyEncoding = UTF8Encoding.UTF8,
                     IsBodyHtml = true,
-                    Body = string.Format(html, user.UPN, mail.Company)
+                    Body = string.Format(html, user.UPN, mail.Company, user.MailAddress)
                 };
 
                 if (mail.DeliveryNotifications)
@@ -2782,7 +2792,7 @@ namespace Neos.IdentityServer.MultiFactor
                 {
                     Group titlegrp = Regex.Match(html, @"\<title\b[^>]*\>\s*(?<Title>[\s\S]*?)\</title\>", RegexOptions.IgnoreCase).Groups["Title"];
                     if (titlegrp != null)
-                        Message.Subject = string.Format(titlegrp.Value, user.UPN, mail.Company);
+                        Message.Subject = string.Format(titlegrp.Value, user.UPN, mail.Company, user.MailAddress);
                     if (Message.Subject == string.Empty)
                     {
                         ResourcesLocale Resources = new ResourcesLocale(culture.LCID);
