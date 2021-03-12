@@ -287,4 +287,10 @@ U in de toekomst MFA-validatie gebruiken.</value>
   <data name="HtmlMustChangePassword" xml:space="preserve">
     <value>U moet uw wachtwoord wijzigen voordat : &lt;br/&gt; {0}</value>
   </data>
+  <data name="HtmlUIMNickNamesLabel" xml:space="preserve">
+    <value>De naam van het apparaat invoeren</value>
+  </data>
+  <data name="HtmlUIMNickNamesMessage" xml:space="preserve">
+    <value>Voer de naam van uw biometrische apparaat in of laat de leegte achter en selecteer vervolgens "Doorgaan"</value>
+  </data>
 </root>

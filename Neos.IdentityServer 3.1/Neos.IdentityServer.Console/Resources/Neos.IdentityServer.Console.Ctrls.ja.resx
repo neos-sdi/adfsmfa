@@ -708,4 +708,7 @@
   <data name="CTRLUSEPSOPASSWORDPOLICY" xml:space="preserve">
     <value>エンタープライズ パスワード ポリシー (PSO) を使用する</value>
   </data>
+  <data name="CTRLWEBAUTHNUSENICKNAMES" xml:space="preserve">
+    <value>生体認証デバイスの名前を尋ねる</value>
+  </data>
 </root>

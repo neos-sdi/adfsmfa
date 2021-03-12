@@ -288,4 +288,10 @@ Click "Continue"</value>
   <data name="HtmlMustChangePassword" xml:space="preserve">
     <value>You need to change your password before : &lt;br/&gt; {0}</value>
   </data>
+  <data name="HtmlUIMNickNamesLabel" xml:space="preserve">
+    <value>Enter device's name</value>
+  </data>
+  <data name="HtmlUIMNickNamesMessage" xml:space="preserve">
+    <value>Enter the name of your biometric device or leave the void, then select "Continue"</value>
+  </data>
 </root>

@@ -708,4 +708,7 @@
   <data name="CTRLUSEPSOPASSWORDPOLICY" xml:space="preserve">
     <value>Usar directiva de contraseñas empresariales (PSO)</value>
   </data>
+  <data name="CTRLWEBAUTHNUSENICKNAMES" xml:space="preserve">
+    <value>Pide un nombre para dispositivos biométricos</value>
+  </data>
 </root>

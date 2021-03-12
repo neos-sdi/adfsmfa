@@ -708,4 +708,7 @@
   <data name="CTRLUSEPSOPASSWORDPOLICY" xml:space="preserve">
     <value>Использование корпоративной политики паролей (PSO)</value>
   </data>
+  <data name="CTRLWEBAUTHNUSENICKNAMES" xml:space="preserve">
+    <value>Попросите имя для биометрических устройств</value>
+  </data>
 </root>

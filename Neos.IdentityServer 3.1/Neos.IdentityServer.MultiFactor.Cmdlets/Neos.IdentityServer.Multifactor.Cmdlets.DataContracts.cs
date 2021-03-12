@@ -2216,6 +2216,11 @@ namespace MFA
         public WebAuthNPinRequirements PinRequirements { get; set; }
 
         /// <summary>
+        /// <para type="description">Name biometric device at registration (NickName).</para>
+        /// </summary>
+        public bool UseNickNames { get; set; }
+
+        /// <summary>
         /// explicit operator from PSConfigBiometricProvider
         /// </summary>
         public static explicit operator PSBiometricProvider(FlatBiometricProvider otp)
@@ -2233,6 +2238,7 @@ namespace MFA
                     PinRequired = otp.PinRequired,
                     PinRequirements = otp.PinRequirements,
                     DirectLogin = otp.DirectLogin,
+                    UseNickNames = otp.UseNickNames,
                     FullQualifiedImplementation = otp.FullyQualifiedImplementation,
                     Parameters = otp.Parameters,
 
@@ -2268,6 +2274,7 @@ namespace MFA
                 ForceWizard = (ForceWizardMode)otp.ForceWizard,
                 PinRequired = otp.PinRequired,
                 DirectLogin = otp.DirectLogin,
+                UseNickNames = otp.UseNickNames,
                 FullyQualifiedImplementation = otp.FullQualifiedImplementation,
                 Parameters = otp.Parameters,
 

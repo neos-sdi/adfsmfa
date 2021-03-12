@@ -580,7 +580,8 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
                             AaGuid = st.AaGuid,
                             CredType = st.CredType,
                             RegDate = st.RegDate,
-                            SignatureCounter = st.SignatureCounter
+                            SignatureCounter = st.SignatureCounter,
+                            NickName = st.NickName
                         };
                         if (st.Descriptor.Type != null)
                             itm.Type = EnumExtensions.ToEnumMemberValue(st.Descriptor.Type.Value);
@@ -738,7 +739,8 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
                         SignatureCounter = success.Result.Counter,
                         CredType = success.Result.CredType,
                         RegDate = DateTime.Now,
-                        AaGuid = success.Result.Aaguid
+                        AaGuid = success.Result.Aaguid,
+                        NickName = ctx.NickName
                     });
                     error = string.Empty;
                     return (int)AuthenticationResponseKind.Biometrics;

@@ -708,4 +708,7 @@
   <data name="CTRLUSEPSOPASSWORDPOLICY" xml:space="preserve">
     <value>Korzystanie z zasad haseł przedsiębiorstwa (PSO)</value>
   </data>
+  <data name="CTRLWEBAUTHNUSENICKNAMES" xml:space="preserve">
+    <value>Poproś o nazwę urządzeń biometrycznych</value>
+  </data>
 </root>

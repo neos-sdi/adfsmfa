@@ -708,4 +708,7 @@
   <data name="CTRLUSEPSOPASSWORDPOLICY" xml:space="preserve">
     <value>Använd PSO (Enterprise Passwords Policy)</value>
   </data>
+  <data name="CTRLWEBAUTHNUSENICKNAMES" xml:space="preserve">
+    <value>Be om ett namn på biometriska enheter</value>
+  </data>
 </root>

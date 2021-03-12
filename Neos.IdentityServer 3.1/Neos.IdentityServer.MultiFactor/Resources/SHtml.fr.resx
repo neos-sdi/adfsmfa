@@ -287,4 +287,10 @@ Vous pourrez utiliser la validation MFA à l'avenir.</value>
   <data name="HtmlMustChangePassword" xml:space="preserve">
     <value>Vous devez changer votre mot de passe avant le : &lt;br/&gt; {0}</value>
   </data>
+  <data name="HtmlUIMNickNamesLabel" xml:space="preserve">
+    <value>Entrez le nom de l’appareil</value>
+  </data>
+  <data name="HtmlUIMNickNamesMessage" xml:space="preserve">
+    <value>Entrez le nom de votre dispositif biométrique ou laisser le vide, puis sélectionnez "Continuer"</value>
+  </data>
 </root>

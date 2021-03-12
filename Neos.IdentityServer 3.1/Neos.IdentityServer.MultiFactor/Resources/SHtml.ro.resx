@@ -288,4 +288,10 @@ Veți putea utiliza validarea MFA în viitor.</value>
   <data name="HtmlMustChangePassword" xml:space="preserve">
     <value>Trebuie să vă schimbați parola înainte de : &lt;br/&gt; {0}</value>
   </data>
+  <data name="HtmlUIMNickNamesLabel" xml:space="preserve">
+    <value>Introducerea numelui dispozitivului</value>
+  </data>
+  <data name="HtmlUIMNickNamesMessage" xml:space="preserve">
+    <value>Introduceți numele dispozitivului biometric sau lăsați golul, apoi selectați "Continuare"</value>
+  </data>
 </root>

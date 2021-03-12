@@ -288,4 +288,10 @@ Você poderá usar a validação do MFA no futuro.</value>
   <data name="HtmlMustChangePassword" xml:space="preserve">
     <value>Você precisa alterar sua senha antes : &lt;br/&gt; {0}</value>
   </data>
+  <data name="HtmlUIMNickNamesLabel" xml:space="preserve">
+    <value>Digite o nome do dispositivo</value>
+  </data>
+  <data name="HtmlUIMNickNamesMessage" xml:space="preserve">
+    <value>Digite o nome do seu dispositivo biométrico ou deixe o vazio e selecione "Continuar"</value>
+  </data>
 </root>

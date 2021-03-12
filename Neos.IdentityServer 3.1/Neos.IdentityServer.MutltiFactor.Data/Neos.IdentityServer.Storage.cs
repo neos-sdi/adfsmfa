@@ -16,13 +16,9 @@
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
 using System;
-using System.Collections.Generic;
 using System.DirectoryServices;
 using System.IO;
-using System.Linq;
 using System.Security;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Neos.IdentityServer.MultiFactor.Data
 {
@@ -74,8 +70,11 @@ namespace Neos.IdentityServer.MultiFactor.Data
                 distinguishedName = GetMFAdistinguishedName(username);
             else
                 distinguishedName = username;
+            distinguishedName = CheckSumEncoding.CheckSumAsString(distinguishedName);
 
-            return string.Format("B:{0}:{1}:{2}", (Descriptor.Length).ToString(), Descriptor, distinguishedName);
+            if (string.IsNullOrEmpty(creds.NickName))
+                creds.NickName = "None";
+            return string.Format("B:{0}:{1}:{2}:{3}", (Descriptor.Length).ToString(), Descriptor, distinguishedName, creds.NickName);
         }
 
         /// <summary>
@@ -89,11 +88,17 @@ namespace Neos.IdentityServer.MultiFactor.Data
             else
                 distinguishedName = username;
             string[] values = descriptor.Split(':');
-            string value = values[2];
-            if (!distinguishedName.ToLower().Equals(values[3].ToString().ToLower()))
+            string securitydescriptor = values[2];
+            if (!CheckUserName(values[3].ToString(), distinguishedName))
                 throw new SecurityException("Invalid Key for user " + username);
 
-            byte[] bytes = HexaEncoding.GetByteArrayFromHexString(value);
+            string nickName = string.Empty;
+            if (values.Length == 5)
+                nickName = values[4].ToString();
+            else
+                nickName = "None";
+
+            byte[] bytes = HexaEncoding.GetByteArrayFromHexString(securitydescriptor);
             MemoryStream stream = new MemoryStream(bytes);
             BinaryReader reader = new BinaryReader(stream);
 
@@ -128,6 +133,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                 CredType = _CredType,
                 RegDate = _RegDate,
                 AaGuid = _AaGuid,
+                NickName = nickName
             };
             creds.Descriptor = new MFAPublicKeyCredentialDescriptor(_DescId)
             {
@@ -135,6 +141,19 @@ namespace Neos.IdentityServer.MultiFactor.Data
                 Transports = _DescTransport
             };
             return creds;
+        }
+
+        /// <summary>
+        /// CheckUserName method implementation
+        /// </summary>
+        private bool CheckUserName(string value, string userName)
+        {
+            bool validated = false;
+            if (userName.ToLower().Equals(value.ToString().ToLower()))
+                validated = true;
+            else if (value.Equals(CheckSumEncoding.CheckSumAsString(userName)))
+                validated = true;
+            return validated;
         }
 
         /// <summary>

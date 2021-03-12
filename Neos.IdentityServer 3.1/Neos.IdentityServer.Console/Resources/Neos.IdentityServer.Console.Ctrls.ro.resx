@@ -708,4 +708,7 @@
   <data name="CTRLUSEPSOPASSWORDPOLICY" xml:space="preserve">
     <value>Utilizarea politicii de parole de întreprindere (PSO)</value>
   </data>
+  <data name="CTRLWEBAUTHNUSENICKNAMES" xml:space="preserve">
+    <value>Solicitați un nume pentru dispozitivebiometrice</value>
+  </data>
 </root>

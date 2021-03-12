@@ -1078,6 +1078,29 @@ namespace Neos.IdentityServer.MultiFactor
                     _context.Data.Add("_authctxpasswordmaxage", value);
             }
         }
+
+
+        /// <summary>
+        /// NickName 
+        /// </summary>
+        [DataMember(Name = "NickName")]
+        public string NickName
+        {
+            get
+            {
+                if (_context.Data.ContainsKey("_authctxnickname") && _context.Data["_authctxnickname"] != null)
+                    return _context.Data["_authctxnickname"].ToString();
+                else
+                    return string.Empty;
+            }
+            set
+            {
+                if (_context.Data.ContainsKey("_authctxnickname"))
+                    _context.Data["_authctxnickname"] = value;
+                else
+                    _context.Data.Add("_authctxnickname", value);
+            }
+        }
     }
     #endregion
 
@@ -1982,6 +2005,7 @@ namespace Neos.IdentityServer.MultiFactor
         public string CredType { get; set; }
         public DateTime RegDate { get; set; }
         public Guid AaGuid { get; set; }
+        public string NickName { get; set; }
     }
 
     /// <summary>

@@ -708,4 +708,7 @@
   <data name="CTRLUSEPSOPASSWORDPOLICY" xml:space="preserve">
     <value>Beleid voor bedrijfswachtwoorden gebruiken (PSO)</value>
   </data>
+  <data name="CTRLWEBAUTHNUSENICKNAMES" xml:space="preserve">
+    <value>Vraag om een naam voor biometrische apparaten</value>
+  </data>
 </root>

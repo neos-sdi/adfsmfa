@@ -285,4 +285,10 @@
   <data name="HtmlMustChangePassword" xml:space="preserve">
     <value>パスワードを変更する前に、次の手順を実行する必要があります。 &lt;br/&gt; {0}</value>
   </data>
+  <data name="HtmlUIMNickNamesLabel" xml:space="preserve">
+    <value>デバイス名を入力してください</value>
+  </data>
+  <data name="HtmlUIMNickNamesMessage" xml:space="preserve">
+    <value>生体認証デバイスの名前を入力するか、ボイドを残して、「続行」を選択します。</value>
+  </data>
 </root>

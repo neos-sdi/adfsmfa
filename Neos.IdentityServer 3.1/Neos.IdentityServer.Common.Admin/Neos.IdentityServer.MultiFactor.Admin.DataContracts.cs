@@ -1156,6 +1156,8 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         public bool DirectLogin { get; set; }
         public bool RequireValidAttestationRoot { get; set; }
         public bool ShowPII { get; set; }
+        public bool UseNickNames { get; set; }
+
 
         /// <summary>
         /// Kind  Property
@@ -1185,6 +1187,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             this.ForceWizard = otp.ForceWizard;
             this.DirectLogin = otp.DirectLogin;
             this.PinRequired = otp.PinRequired;
+            this.UseNickNames = otp.UseNickNames;
             this.PinRequirements = otp.PinRequirements;
             this.FullyQualifiedImplementation = otp.FullQualifiedImplementation;
             this.Parameters = otp.Parameters.Data;
@@ -1217,6 +1220,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             otp.PinRequirements = this.PinRequirements;
             otp.DirectLogin = this.DirectLogin;
             otp.PinRequired = this.PinRequired;
+            otp.UseNickNames = this.UseNickNames;
             otp.FullQualifiedImplementation = this.FullyQualifiedImplementation;
             otp.Parameters.Data = this.Parameters;
 

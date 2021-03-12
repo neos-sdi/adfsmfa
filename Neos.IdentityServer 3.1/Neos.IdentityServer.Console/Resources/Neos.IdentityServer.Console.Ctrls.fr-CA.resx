@@ -708,4 +708,7 @@
   <data name="CTRLUSEPSOPASSWORDPOLICY" xml:space="preserve">
     <value>Utiliser la stratégie de mots de passe d’entreprise (PSO)</value>
   </data>
+  <data name="CTRLWEBAUTHNUSENICKNAMES" xml:space="preserve">
+    <value>Demander un nom pour les appareils biométriques</value>
+  </data>
 </root>

@@ -9474,6 +9474,7 @@ namespace Neos.IdentityServer.Console.Controls
         private CheckBox chkAutologin;
         private CheckBox chkRequireChainRoot;
         private CheckBox chkShowPII;
+        private CheckBox chkUseNickName;
 
         /// <summary>
         /// ConfigurationControl Constructor
@@ -9616,7 +9617,7 @@ namespace Neos.IdentityServer.Console.Controls
                     Text = res.CTRLWEBAUTHNAUTOLOGIN,
                     Checked = Config.WebAuthNProvider.DirectLogin,
                     Left = 350,
-                    Top = 20,
+                    Top = 16,
                     Width = 150
                 };
                 chkAutologin.CheckedChanged += ChkchkAutologinChanged;
@@ -9630,6 +9631,17 @@ namespace Neos.IdentityServer.Console.Controls
                     Width = 180
                 };
                 _txtpanel.Controls.Add(lblDriftTolerance);
+
+                chkUseNickName = new CheckBox
+                {
+                    Text = res.CTRLWEBAUTHNUSENICKNAMES,
+                    Checked = Config.WebAuthNProvider.UseNickNames,
+                    Left = 350,
+                    Top = 50,
+                    Width = 300
+                };
+                chkUseNickName.CheckedChanged += ChkchkUseNickNameChanged;
+                _txtpanel.Controls.Add(chkUseNickName);
 
                 txtDriftTolerance = new TextBox
                 {
@@ -10169,6 +10181,32 @@ namespace Neos.IdentityServer.Console.Controls
                 if (_view.AutoValidate != AutoValidate.Disable)
                 {
                     Config.WebAuthNProvider.DirectLogin = chkAutologin.Checked;
+                    ManagementService.ADFSManager.SetDirty(true);
+                    UpdateControlsLayouts();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
+                this._snapin.Console.ShowDialog(messageBoxParameters);
+            }
+        }
+
+        /// <summary>
+        /// ChkchkUseNickNameChanged method implementation
+        /// </summary>
+        private void ChkchkUseNickNameChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                if (_view.AutoValidate != AutoValidate.Disable)
+                {
+                    Config.WebAuthNProvider.UseNickNames = chkUseNickName.Checked;
                     ManagementService.ADFSManager.SetDirty(true);
                     UpdateControlsLayouts();
                 }

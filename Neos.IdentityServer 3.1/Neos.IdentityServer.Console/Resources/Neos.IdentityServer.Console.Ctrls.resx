@@ -708,4 +708,7 @@
   <data name="CTRLWARNMAXPASSWORDAGEINDAYS" xml:space="preserve">
     <value>Notify the user before the password expires</value>
   </data>
+  <data name="CTRLWEBAUTHNUSENICKNAMES" xml:space="preserve">
+    <value>Ask for a name for biometric devices</value>
+  </data>
 </root>

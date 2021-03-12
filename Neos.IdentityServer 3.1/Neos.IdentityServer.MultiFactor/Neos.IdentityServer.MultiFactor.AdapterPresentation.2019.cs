@@ -18,6 +18,7 @@
 using Microsoft.IdentityServer.Web.Authentication.External;
 using Neos.IdentityServer.MultiFactor.Common;
 using Neos.IdentityServer.MultiFactor.Resources;
+using Neos.IdentityServer.MultiFactor.WebAuthN;
 using System;
 using System.Collections.Generic;
 using System.Drawing.Imaging;
@@ -2387,6 +2388,7 @@ namespace Neos.IdentityServer.MultiFactor
             }
 
             IExternalProvider prov = RuntimeAuthProvider.GetProvider(PreferredMethod.Biometrics);
+            WebAuthNProvider auth = Provider.Config.WebAuthNProvider;
             IWebAuthNProvider web = prov as IWebAuthNProvider;
             prov.GetAuthenticationContext(usercontext);
             result += "<form method=\"post\" id=\"enrollbiometricsForm\" autocomplete=\"off\" >";
@@ -2398,7 +2400,6 @@ namespace Neos.IdentityServer.MultiFactor
                     if (prov.IsUIElementRequired(usercontext, RequiredMethodElements.BiometricParameterRequired))
                     {
                         List<WebAuthNCredentialInformation> creds = web.GetUserStoredCredentials(usercontext);
-                        // result += "<div class=\"fieldMargin smallText\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelWRBiometrics") + "</div><br/>";                        
                         result += "<input id=\"optiongroup0\" name=\"##OPTIONITEM##\" type=\"radio\" value=\"" + Guid.Empty.ToString()+ "\" checked=\"checked\" /> " + Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelWRAddBiometrics") +"<br/>";
                         int i = 1;
                         if (creds.Count > 0)
@@ -2406,7 +2407,12 @@ namespace Neos.IdentityServer.MultiFactor
                             foreach (WebAuthNCredentialInformation cr in creds)
                             {
                                 if (i <= 2)
-                                   result += "<input id=\"optiongroup" + i.ToString() + "\" name=\"##OPTIONITEM##\" type=\"radio\" value=\"" + cr.CredentialID + "\" /> <b>" + cr.CredType + "</b> " + cr.RegDate.ToString() + " <b>(" + cr.SignatureCounter.ToString() + ")</b><br/>";
+                                {
+                                    if ((auth != null) && auth.UseNickNames)
+                                       result += "<input id=\"optiongroup" + i.ToString() + "\" name=\"##OPTIONITEM##\" type=\"radio\" value=\"" + cr.CredentialID + "\" /> <b>" + cr.CredType + " " + cr.NickName + "</b> " + cr.RegDate.ToShortDateString() + " <b>(" + cr.SignatureCounter.ToString() + ")</b><br/>";
+                                    else
+                                       result += "<input id=\"optiongroup" + i.ToString() + "\" name=\"##OPTIONITEM##\" type=\"radio\" value=\"" + cr.CredentialID + "\" /> <b>" + cr.CredType + "</b> " + cr.RegDate.ToShortDateString() + " <b>(" + cr.SignatureCounter.ToString() + ")</b><br/>";
+                                }
                                 if (i == 3)
                                     result += "<p style = \"text-indent:20px;\" >More...</p>";
                                 i++;
@@ -2436,7 +2442,10 @@ namespace Neos.IdentityServer.MultiFactor
                     result += "<br/>";
                     result += "<table><tr>";
                     result += "<td>";
-                    result += "<input id=\"nextButton\" type=\"submit\" class=\"submit\" name=\"nextButton\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelWVERIFYOTP") + "\" onclick=\"fnbtnclicked(2)\" />";
+                    if ((auth != null) && auth.UseNickNames)
+                        result += "<input id=\"nextButton\" type=\"submit\" class=\"submit\" name=\"nextButton\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelWVERIFYOTP") + "\" onclick=\"fnbtnclicked(6)\" />";
+                    else
+                        result += "<input id=\"nextButton\" type=\"submit\" class=\"submit\" name=\"nextButton\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelWVERIFYOTP") + "\" onclick=\"fnbtnclicked(2)\" />";
                     result += "</td>";
                     result += "<td style=\"width: 15px\" />";
                     result += "<td>";
@@ -2461,21 +2470,6 @@ namespace Neos.IdentityServer.MultiFactor
                     result += "<br/>";
                     result += "<div class=\"fieldMargin smallText\">" + prov.GetUIMessage(usercontext) + "</div>";
                     result += "<br/>";
-                    break;
-                case 2: // Code verification If One-Way
-                    result += "<div id=\"wizardMessage\" class=\"groupMargin\">" + prov.GetUILabel(usercontext) + "</div>";
-                    result += "<input id=\"##ACCESSCODE##\" name=\"##ACCESSCODE##\" type=\"password\" placeholder=\"Verification Code\" class=\"text fullWidth\" autofocus=\"autofocus\" /><br/>";
-                    result += "<div class=\"fieldMargin smallText\">" + prov.GetUIMessage(usercontext) + "</div><br/>";
-                    result += "<table><tr>";
-                    result += "<td>";
-                    result += "<input id=\"checkButton\" type=\"submit\" class=\"submit\" name=\"checkButton\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMCheck") + "\" onclick=\"fnbtnclicked(4)\" />";
-                    result += "</td>";
-                    result += "<td style=\"width: 15px\" />";
-                    result += "<td>";
-                    if (Utilities.CanCancelWizard(usercontext, prov, ProviderPageMode.EnrollPhone))
-                        result += "<input id=\"mfa-cancelButton\" type=\"submit\" class=\"submit\" name=\"cancel\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlPWDCancel") + "\" onclick=\"fnbtnclicked(1)\" />";
-                    result += "</td>";
-                    result += "</tr></table>";
                     break;
                 case 3: // Successfull test
                     result += "<br/>";
@@ -2513,7 +2507,12 @@ namespace Neos.IdentityServer.MultiFactor
                             foreach (WebAuthNCredentialInformation cr in creds)
                             {
                                 if (i <= 10)
-                                    result += "<input id=\"optiongroup" + i.ToString() + "\" name=\"##OPTIONITEM##\" type=\"radio\" value=\"" + cr.CredentialID + "\" onchange=\"SetLinkState(true, '" + cr.CredentialID + "')\" /> <b>" + cr.CredType + "</b> " + cr.RegDate.ToString() +" <b>(" + cr.SignatureCounter.ToString() + ")</b> <br/>";
+                                {
+                                    if ((auth != null) && auth.UseNickNames)
+                                        result += "<input id=\"optiongroup" + i.ToString() + "\" name=\"##OPTIONITEM##\" type=\"radio\" value=\"" + cr.CredentialID + "\" onchange=\"SetLinkState(true, '" + cr.CredentialID + "')\" /> <b>" + cr.CredType + " " + cr.NickName + "</b> " + cr.RegDate.ToShortDateString() + " <b>(" + cr.SignatureCounter.ToString() + ")</b> <br/>";
+                                    else
+                                        result += "<input id=\"optiongroup" + i.ToString() + "\" name=\"##OPTIONITEM##\" type=\"radio\" value=\"" + cr.CredentialID + "\" onchange=\"SetLinkState(true, '" + cr.CredentialID + "')\" /> <b>" + cr.CredType + "</b> " + cr.RegDate.ToShortDateString() + " <b>(" + cr.SignatureCounter.ToString() + ")</b> <br/>";
+                                }
                                 i++;
                             }
                             result += "<a class=\"actionLink\" href=\"#\" id=\"delbio\" name=\"delbio\"  onclick=\"fn2lnkclicked(enrollbiometricsForm, 8)\" style=\"cursor: default; color:grey;\"> " + web.GetDeleteLinkLabel(usercontext) + "</a>";
@@ -2530,6 +2529,19 @@ namespace Neos.IdentityServer.MultiFactor
                         result += "</td>";
                         result += "</tr></table>";
                     }
+                    break;
+                case 6:
+                    result += "<div id=\"wizardMessage\" class=\"groupMargin\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMNickNamesLabel") + "</div>";
+                    result += "<input id=\"AutenhticatorName\" name=\"AutenhticatorName\" type=\"input\" placeholder=\"No Name\" class=\"text fullWidth\" autofocus=\"autofocus\" /><br/>";
+                    result += "<div class=\"fieldMargin smallText\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMNickNamesMessage") + "</div><br/>";
+                    result += "<table><tr>";
+                    result += "<td>";
+                    result += "<input id=\"checkButton\" type=\"submit\" class=\"submit\" name=\"checkButton\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelWVERIFYOTP") + "\" onclick=\"fnbtnclicked(2)\" />";
+                    result += "</td>";
+                    result += "<td style=\"width: 15px\" />";
+                    result += "<td>";
+                    result += "</td>";
+                    result += "</tr></table>";
                     break;
             }
             result += "<input id=\"context\" type=\"hidden\" name=\"Context\" value=\"%Context%\"/>";
@@ -2644,7 +2656,7 @@ namespace Neos.IdentityServer.MultiFactor
                         result += "<input id=\"mfa-cancelButton\" type=\"submit\" class=\"submit\" name=\"cancel\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlPWDCancel") + "\" onclick=\"fnbtnclicked(1)\" />";
                     result += "</td>";
                     result += "</tr></table>";
-                    break;
+                    break; 
                 case 3: // Successfull test
                     result += "<br/>";
                     result += GetFormHtmlMessageZone(usercontext);

@@ -1700,6 +1700,9 @@ namespace Neos.IdentityServer.MultiFactor
         [XmlAttribute("DirectLogin")]
         public bool DirectLogin { get; set; } = true;
 
+        [XmlAttribute("UseNickNames")]
+        public bool UseNickNames { get; set; } = true;
+
         [XmlElement("Configuration", typeof(WebAuthNProviderConfig))]
         public WebAuthNProviderConfig Configuration
         {

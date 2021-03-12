@@ -1798,6 +1798,15 @@ namespace Neos.IdentityServer.Console.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Ask for a name for biometric devices.
+        /// </summary>
+        internal static string CTRLWEBAUTHNUSENICKNAMES {
+            get {
+                return ResourceManager.GetString("CTRLWEBAUTHNUSENICKNAMES", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à User verification index (uvi).
         /// </summary>
         internal static string CTRLWEBAUTHNUSERINDEX {

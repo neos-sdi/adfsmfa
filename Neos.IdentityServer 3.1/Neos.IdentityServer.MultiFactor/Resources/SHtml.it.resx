@@ -287,4 +287,10 @@ In futuro sarà possibile utilizzare la convalida MFA.</value>
   <data name="HtmlMustChangePassword" xml:space="preserve">
     <value>È necessario modificare la password prima : &lt;br/&gt; {0}</value>
   </data>
+  <data name="HtmlUIMNickNamesLabel" xml:space="preserve">
+    <value>Immettere il nome del dispositivo</value>
+  </data>
+  <data name="HtmlUIMNickNamesMessage" xml:space="preserve">
+    <value>Immettere il nome del dispositivo biometrico o lasciare il vuoto, quindi selezionare "Continua"</value>
+  </data>
 </root>

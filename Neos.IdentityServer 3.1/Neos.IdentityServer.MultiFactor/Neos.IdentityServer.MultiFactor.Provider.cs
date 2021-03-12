@@ -2293,6 +2293,7 @@ namespace Neos.IdentityServer.MultiFactor
                 switch (btnclicked)
                 {
                     case 0: // Next Button
+                        usercontext.NickName = string.Empty;
                         usercontext.WizPageID = 0;
                         return new AdapterPresentation(this, context);
                     case 1:  // Cancel
@@ -2318,7 +2319,10 @@ namespace Neos.IdentityServer.MultiFactor
                             usercontext.WizPageID = 1; // Goto Donut
                             if (remember)
                                 usercontext.PreferredMethod = PreferredMethod.Biometrics;
-
+                            if (proofData.Properties.ContainsKey("autenhticatorname"))
+                                usercontext.NickName = proofData.Properties["autenhticatorname"].ToString();
+                            else
+                                usercontext.NickName = string.Empty;
                             SetBiometricProviderKeyManagementOption(usercontext, context, proofData);
                             ValidateProviderManagementUrl(usercontext, context, proofData, PreferredMethod.Biometrics);
                             GetAuthenticationData(usercontext, PreferredMethod.Biometrics);
@@ -2390,7 +2394,7 @@ namespace Neos.IdentityServer.MultiFactor
                             usercontext.WizPageID = 4;
                             return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelVERIFYOTPError") + "<br><br><i>" + ex.Message + "</i>", false);
                         }
-                    case 4: // Code Validation
+ /*                   case 4: // Code Validation
                         try
                         {
                             if ((int)AuthenticationResponseKind.Error != SetAuthenticationResult(usercontext, string.Empty, out error, PreferredMethod.Biometrics))
@@ -2433,10 +2437,11 @@ namespace Neos.IdentityServer.MultiFactor
                         finally
                         {
                             ReleaseAuthenticationData(usercontext, PreferredMethod.Biometrics);
-                        }
+                        } */
                     case 5:
                         try
                         {
+                            usercontext.NickName = string.Empty;
                             string jserror = proofData.Properties["jserror"].ToString();
                             usercontext.WizPageID = 4;
                             usercontext.UIMode = ProviderPageMode.EnrollBiometrics;
@@ -2446,6 +2451,9 @@ namespace Neos.IdentityServer.MultiFactor
                         {
                             ReleaseAuthenticationData(usercontext, PreferredMethod.Biometrics);
                         }
+                    case 6:
+                        usercontext.WizPageID = 6;
+                        return new AdapterPresentation(this, context);
                     case 7:
                         usercontext.WizPageID = 5;
                         return new AdapterPresentation(this, context);

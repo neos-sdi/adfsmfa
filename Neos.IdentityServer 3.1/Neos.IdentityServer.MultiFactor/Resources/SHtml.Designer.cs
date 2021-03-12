@@ -496,6 +496,24 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Enter device&apos;s name.
+        /// </summary>
+        internal static string HtmlUIMNickNamesLabel {
+            get {
+                return ResourceManager.GetString("HtmlUIMNickNamesLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Enter the name of your biometric device or leave the void, then select &quot;Continue&quot;.
+        /// </summary>
+        internal static string HtmlUIMNickNamesMessage {
+            get {
+                return ResourceManager.GetString("HtmlUIMNickNamesMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Sign in another way.
         /// </summary>
         internal static string HtmlUIMNoCode {

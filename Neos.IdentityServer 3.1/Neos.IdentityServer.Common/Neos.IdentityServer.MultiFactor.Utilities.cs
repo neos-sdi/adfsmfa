@@ -3946,6 +3946,7 @@ namespace Neos.IdentityServer.MultiFactor
         public Guid AaGuid { get; set; }
         public string Type { get; set; }
         public uint SignatureCounter { get; set; }
+        public string NickName { get; set; }
     }
     #endregion
 }
