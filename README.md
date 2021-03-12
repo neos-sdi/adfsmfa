@@ -19,7 +19,7 @@ This extension works with Active Directory or an SQL Server Database for storing
 * <https://github.com/neos-sdi/adfsmfa/wiki/Home>
 ## Downloads
 * <https://github.com/neos-sdi/adfsmfa/releases>
-* <https://github.com/neos-sdi/adfsmfa/releases/download/3.1/adfsmfa.3.1.2103.2.msi>
+* <https://github.com/neos-sdi/adfsmfa/releases/download/3.1/adfsmfa.3.1.2103.3.msi>
 
 ___
 ![Neos Logo](logo.png)
