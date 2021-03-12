@@ -9819,6 +9819,7 @@ namespace Neos.IdentityServer.Console.Controls
                 lblChallengeSize.Text = res.CTRLWEBAUTHNCHALLENGE + " : ";
                 chkAutologin.Text = res.CTRLWEBAUTHNAUTOLOGIN;
                 chkRequireChainRoot.Text = res.CTRLWEBAUTHNROOTATTESTATION;
+                chkUseNickName.Text = res.CTRLWEBAUTHNUSENICKNAMES;
                 chkShowPII.Text = res.CTRLWEBAUTHNSHOWPII;
 
                 txtTimeOut.Text = Config.WebAuthNProvider.Configuration.Timeout.ToString();
