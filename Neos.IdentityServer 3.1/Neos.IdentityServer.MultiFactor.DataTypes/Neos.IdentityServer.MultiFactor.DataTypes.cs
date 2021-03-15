@@ -1079,6 +1079,24 @@ namespace Neos.IdentityServer.MultiFactor
             }
         }
 
+        [DataMember(Name = "PasswordMinAge")]
+        public DateTime PasswordMinAge
+        {
+            get
+            {
+                if (_context.Data.ContainsKey("_authctxpasswordminage") && _context.Data["_authctxpasswordminage"] != null)
+                    return (DateTime)_context.Data["_authctxpasswordminage"];
+                else
+                    return DateTime.MaxValue;
+            }
+            set
+            {
+                if (_context.Data.ContainsKey("_authctxpasswordminage"))
+                    _context.Data["_authctxpasswordminage"] = value;
+                else
+                    _context.Data.Add("_authctxpasswordminage", value);
+            }
+        }
 
         /// <summary>
         /// NickName 

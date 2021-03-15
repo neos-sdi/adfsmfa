@@ -2453,6 +2453,7 @@ namespace Neos.IdentityServer.MultiFactor
                         }
                     case 6:
                         usercontext.WizPageID = 6;
+                        SetBiometricProviderKeyManagementOption(usercontext, context, proofData);
                         return new AdapterPresentation(this, context);
                     case 7:
                         usercontext.WizPageID = 5;

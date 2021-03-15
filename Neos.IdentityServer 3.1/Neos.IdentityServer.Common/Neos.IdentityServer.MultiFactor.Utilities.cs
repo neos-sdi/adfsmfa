@@ -1608,8 +1608,7 @@ namespace Neos.IdentityServer.MultiFactor
         {
             max = DateTime.Now;
             try
-            { 
-                double warnmaxage = cfg.KeysConfig.WarnPasswordExpirationBeforeInDays;
+            {                 
                 if (((UserPasswordFeatures)usercontext.PasswordFeatures).Equals(UserPasswordFeatures.PasswordNone))
                     return false;
                 if (((UserPasswordFeatures)usercontext.PasswordFeatures).HasFlag(UserPasswordFeatures.PasswordNotRequired))
@@ -1618,12 +1617,16 @@ namespace Neos.IdentityServer.MultiFactor
                     return false;
                 if (!((UserPasswordFeatures)usercontext.PasswordFeatures).HasFlag(UserPasswordFeatures.PasswordHasValue))
                     return false;
+                if (!((UserPasswordFeatures)usercontext.PasswordFeatures).HasFlag(UserPasswordFeatures.PasswordCanBeChanged))
+                    return false;
 
-                if (usercontext.PasswordMaxAge < DateTime.Now)  // Locked User
+                double warnmaxage = cfg.KeysConfig.WarnPasswordExpirationBeforeInDays;
+
+               /* if (usercontext.PasswordMaxAge < DateTime.Now)  // Locked User
                 {
                     max = usercontext.PasswordMaxAge;
                     return true;
-                }
+                } */
                 if (usercontext.PasswordMaxAge >= DateTime.Now)  // Warn Zone
                 {
                     if (usercontext.PasswordMaxAge.AddDays(-warnmaxage) <= DateTime.Now)
@@ -1652,8 +1655,11 @@ namespace Neos.IdentityServer.MultiFactor
             try
             { 
                 PasswordPolicyResults result = PasswordPolicyManager.GetPasswordPolicyForUser(cfg, usercontext);
+                if (result == null)
+                    return false;
                 usercontext.PasswordFeatures = (byte)result.Features;
                 usercontext.PasswordMaxAge = result.MaxAge;
+                usercontext.PasswordMinAge = result.MinAge;
                 if (((UserPasswordFeatures)usercontext.PasswordFeatures).Equals(UserPasswordFeatures.PasswordNone))
                     return false;
                 if (((UserPasswordFeatures)usercontext.PasswordFeatures).HasFlag(UserPasswordFeatures.PasswordNotRequired))
@@ -1702,18 +1708,85 @@ namespace Neos.IdentityServer.MultiFactor
     /// <summary>
     /// PasswordPolicyResults implementation
     /// </summary>
-    internal struct PasswordPolicyResults
+    internal class PasswordPolicyResults
     {
-        public PasswordPolicyResults(UserPasswordFeatures feat, DateTime max)
+        private DateTime? _lastpasswordchanged = DateTime.MinValue;
+
+        public PasswordPolicyResults(UserPasswordFeatures feat = UserPasswordFeatures.PasswordNone)
         {
             Features = feat;
-            MaxAge = max;
+            MaxDays = 0;
+            MinDays = 0;
         }
 
         public UserPasswordFeatures Features { get; set; }
-        public DateTime MaxAge { get; set; }
+        public long MaxDays { get; set; }
+        public long MinDays { get; set; }
+        public override string ToString() => $"({Features}, {MinDays}, {MaxDays})";
 
-        public override string ToString() => $"({Features}, {MaxAge})";
+        /// <summary>
+        /// MaxAge method / compute max age
+        /// </summary>
+        public DateTime MaxAge
+        {
+            get
+            {
+                if (_lastpasswordchanged==null)
+                    return DateTime.MaxValue;
+                if (!_lastpasswordchanged.HasValue)
+                    return DateTime.MaxValue;
+                if (Features.HasFlag(UserPasswordFeatures.UseMFARules))
+                {
+                    if (MaxDays == 0)
+                        return DateTime.MaxValue;
+                    else
+                        return _lastpasswordchanged.Value.AddDays(MaxDays);
+                }
+                else if (Features.HasFlag(UserPasswordFeatures.UseGPORules))
+                {
+                    if (MaxDays == 0)
+                        return DateTime.MaxValue;
+                    else
+                        return _lastpasswordchanged.Value.AddDays(MaxDays);
+                }
+                else
+                    return DateTime.MaxValue;
+            }
+        }
+
+        /// <summary>
+        /// MinAge method / compute min age
+        /// </summary>
+        public DateTime MinAge
+        {
+            get
+            {
+                if (_lastpasswordchanged == null)
+                    return DateTime.MinValue;
+                if (!_lastpasswordchanged.HasValue)
+                    return DateTime.MinValue;
+                if (Features.HasFlag(UserPasswordFeatures.UseGPORules))
+                {
+                    if (MinDays == 0)
+                        return DateTime.MinValue;
+                    else
+                        return _lastpasswordchanged.Value.AddDays(MinDays);
+                }
+                else
+                    return DateTime.MinValue;
+            }
+        }
+
+        /// <summary>
+        /// SetUserLastPasswordChange method implmentation
+        /// </summary>
+        public void SetUserLastPasswordChange(DateTime? last)
+        {
+            if (last.HasValue)
+                _lastpasswordchanged = last;
+            else
+                _lastpasswordchanged = DateTime.MinValue;
+        }
     }
 
     /// <summary>
@@ -1723,7 +1796,13 @@ namespace Neos.IdentityServer.MultiFactor
     {
         internal static PasswordPolicyResults GetPasswordPolicyForUser(MFAConfig cfg, AuthenticationContext context)
         {
-            PasswordPolicyResults result = new PasswordPolicyResults(UserPasswordFeatures.PasswordNone, DateTime.MaxValue);
+            PasswordPolicyResults result = null;
+            if (!cfg.KeysConfig.UsePasswordPolicy)
+                return null;
+            if (cfg.KeysConfig.UsePSOPasswordPolicy)
+                result = new PasswordPolicyResults(UserPasswordFeatures.UseGPORules);
+            else
+                result = new PasswordPolicyResults(UserPasswordFeatures.UseMFARules);
             try
             {
                 if (!cfg.KeysConfig.UsePasswordPolicy)
@@ -1741,6 +1820,7 @@ namespace Neos.IdentityServer.MultiFactor
                         {
                             if (user == null)
                                 return result;
+                            object obj = user.GetUnderlyingObject();
                             if (user.PasswordNotRequired)
                                 result.Features |= UserPasswordFeatures.PasswordNotRequired;
                             if (user.PasswordNeverExpires)
@@ -1748,20 +1828,22 @@ namespace Neos.IdentityServer.MultiFactor
                             if (user.LastPasswordSet.HasValue)
                                 result.Features |= UserPasswordFeatures.PasswordHasValue;
                             if (!user.UserCannotChangePassword)
-                                result.Features |= UserPasswordFeatures.PasswordCanBeChanged;
-                            if (!cfg.KeysConfig.UsePSOPasswordPolicy)
                             {
-                                result.Features |= UserPasswordFeatures.UseMFARules;
-                                result.MaxAge = user.LastPasswordSet.Value.AddDays(cfg.KeysConfig.MaxPasswordAgeInDays);
-                            }
-                            else
-                            {
-                                result.Features |= UserPasswordFeatures.UseGPORules;
-                                long days = GetMaxPasswordAge(cfg, dns, user);
-                                if (days == 0)
-                                    result.MaxAge = DateTime.MaxValue;
+                                if (!cfg.KeysConfig.UsePSOPasswordPolicy)
+                                {
+                                    result.MaxDays = cfg.KeysConfig.MaxPasswordAgeInDays;
+                                    result.MinDays = 0;
+                                    result.SetUserLastPasswordChange(user.LastPasswordSet);
+                                }
                                 else
-                                    result.MaxAge = user.LastPasswordSet.Value.AddDays(days);
+                                {
+                                    PasswordPolicyResults tmpresult = GetMaxPasswordAge(cfg, dns, user);
+                                    result.MaxDays = tmpresult.MaxDays;
+                                    result.MinDays = tmpresult.MinDays;
+                                    result.SetUserLastPasswordChange(user.LastPasswordSet);
+                                }
+                                if ((result.MinAge < DateTime.Now) && (result.MaxAge >= DateTime.Now))
+                                    result.Features |= UserPasswordFeatures.PasswordCanBeChanged;
                             }
                         }
                     }
@@ -1774,6 +1856,7 @@ namespace Neos.IdentityServer.MultiFactor
                         {
                             if (user == null)
                                 return result;
+                            object obj = user.GetUnderlyingObject();
                             if (user.PasswordNotRequired)
                                 result.Features |= UserPasswordFeatures.PasswordNotRequired;
                             if (user.PasswordNeverExpires)
@@ -1781,20 +1864,24 @@ namespace Neos.IdentityServer.MultiFactor
                             if (user.LastPasswordSet.HasValue)
                                 result.Features |= UserPasswordFeatures.PasswordHasValue;
                             if (!user.UserCannotChangePassword)
+                            {
                                 result.Features |= UserPasswordFeatures.PasswordCanBeChanged;
-                            if (!cfg.KeysConfig.UsePSOPasswordPolicy)
-                            {
-                                result.Features |= UserPasswordFeatures.UseMFARules;
-                                result.MaxAge = user.LastPasswordSet.Value.AddDays(cfg.KeysConfig.MaxPasswordAgeInDays);
-                            }
-                            else
-                            {
-                                result.Features |= UserPasswordFeatures.UseGPORules;
-                                long days = GetMaxPasswordAge(cfg, dns, user);
-                                if (days == 0)
-                                    result.MaxAge = DateTime.MaxValue;
+
+                                if (!cfg.KeysConfig.UsePSOPasswordPolicy)
+                                {
+                                    result.MaxDays = cfg.KeysConfig.MaxPasswordAgeInDays;
+                                    result.MinDays = 0;
+                                    result.SetUserLastPasswordChange(user.LastPasswordSet);
+                                }
                                 else
-                                    result.MaxAge = user.LastPasswordSet.Value.AddDays(days);
+                                {
+                                    PasswordPolicyResults tmpresult = GetMaxPasswordAge(cfg, dns, user);
+                                    result.MaxDays = tmpresult.MaxDays;
+                                    result.MinDays = tmpresult.MinDays;
+                                    result.SetUserLastPasswordChange(user.LastPasswordSet);
+                                }
+                                if ((result.MinAge < DateTime.Now) && (result.MaxAge >= DateTime.Now))
+                                    result.Features |= UserPasswordFeatures.PasswordCanBeChanged;
                             }
                         }
                     }
@@ -1811,26 +1898,27 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// GetMaxPasswordAge method implmentation
         /// </summary>
-        private static long GetMaxPasswordAge(MFAConfig cfg, string dns, UserPrincipal user)
+        private static PasswordPolicyResults GetMaxPasswordAge(MFAConfig cfg, string dns, UserPrincipal user)
         {
             try
             {
-                long result = GetPSOMaxPassordAge(cfg, dns, user);
-                if (result == 0)
+                PasswordPolicyResults result = GetPSOMaxPassordAge(cfg, dns, user);
+                if (result == null)
                     result = GetDDPMaxPasswordAge(cfg, dns, user);
                 return result;
             }
             catch (Exception)
             {
-                return 0;
+                return null;
             }
         }
 
         /// <summary>
         /// GetDDPMaxPasswordAge method implmentation
         /// </summary>
-        private static long GetDDPMaxPasswordAge(MFAConfig cfg, string dns, UserPrincipal user)
+        private static PasswordPolicyResults GetDDPMaxPasswordAge(MFAConfig cfg, string dns, UserPrincipal user)
         {
+            PasswordPolicyResults result = new PasswordPolicyResults();
             try
             {
                 using (Domain dom = Domain.GetDomain(new DirectoryContext(DirectoryContextType.Domain, dns, cfg.Hosts.ActiveDirectoryHost.Account, cfg.Hosts.ActiveDirectoryHost.Password)))
@@ -1838,6 +1926,7 @@ namespace Neos.IdentityServer.MultiFactor
                     DirectorySearcher searcher = new DirectorySearcher(dom.GetDirectoryEntry());
                     SearchResultCollection results;
                     searcher.PropertiesToLoad.Add("maxPwdAge");
+                    searcher.PropertiesToLoad.Add("minPwdAge");
                     results = searcher.FindAll();
 
                     if (results.Count >= 1)
@@ -1846,7 +1935,13 @@ namespace Neos.IdentityServer.MultiFactor
                         {
                             long longage = (long)results[0].Properties["maxPwdAge"][0];
                             TimeSpan age = TimeSpan.FromTicks(Math.Abs(longage));
-                            return age.Days;
+                            result.MaxDays = age.Days;
+                        }
+                        if (results[0].Properties.Contains("minPwdAge"))
+                        {
+                            long longage = (long)results[0].Properties["minPwdAge"][0];
+                            TimeSpan age = TimeSpan.FromTicks(Math.Abs(longage));
+                            result.MinDays = age.Days;
                         }
                     }
                 }
@@ -1854,16 +1949,17 @@ namespace Neos.IdentityServer.MultiFactor
             catch (Exception ex)
             {
                 Log.WriteEntry(string.Format("GetDDPMaxPassordAge error : {0}", ex.Message), EventLogEntryType.Error, 5000);
-                return 0;
+                return null;
             }
-            return 0;
+            return result;
         }
 
         /// <summary>
         /// GetPSOMaxPassordAge method implementation
         /// </summary>
-        private static long GetPSOMaxPassordAge(MFAConfig cfg, string dns, UserPrincipal user)
+        private static PasswordPolicyResults GetPSOMaxPassordAge(MFAConfig cfg, string dns, UserPrincipal user)
         {
+            PasswordPolicyResults result = new PasswordPolicyResults();
             try
             {
                 using (DirectoryEntry entry = user.GetUnderlyingObject() as DirectoryEntry)
@@ -1885,11 +1981,17 @@ namespace Neos.IdentityServer.MultiFactor
                                 searchForPassPolicy.SearchScope = System.DirectoryServices.SearchScope.Subtree;
 
                                 searchForPassPolicy.PropertiesToLoad.AddRange(new string[] { "msDS-MaximumPasswordAge" });
+                                searchForPassPolicy.PropertiesToLoad.AddRange(new string[] { "msDS-MinimumPasswordAge" });
                                 var policies = searchForPassPolicy.FindAll();
 
-                                long longage = (long)policies[0].Properties["msDS-MaximumPasswordAge"][0];
-                                TimeSpan age = TimeSpan.FromTicks(Math.Abs(longage));
-                                return age.Days;
+                                long maxage =  (long)policies[0].Properties["msDS-MaximumPasswordAge"][0];
+                                TimeSpan xage = TimeSpan.FromTicks(Math.Abs(maxage));
+                                result.MaxDays = xage.Days;
+
+                                long minage = (long)policies[0].Properties["msDS-MinimumPasswordAge"][0];
+                                TimeSpan mage = TimeSpan.FromTicks(Math.Abs(minage));
+                                result.MinDays = mage.Days;
+
                             }
                         }
                     }
@@ -1898,9 +2000,9 @@ namespace Neos.IdentityServer.MultiFactor
             catch (Exception ex)
             {
                 Log.WriteEntry(string.Format("GetPSOMaxPassordAge error : {0}", ex.Message), EventLogEntryType.Error, 5000);
-                return 0;
+                return null;
             }
-            return 0;
+            return result;
         }
     }
     #endregion
