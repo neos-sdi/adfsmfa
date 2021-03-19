@@ -3314,7 +3314,7 @@ namespace Neos.IdentityServer.MultiFactor
                     {
                         config.KeysConfig.XORSecret = MSIS.Encrypt(config.KeysConfig.XORSecret);
                         config.Hosts.ActiveDirectoryHost.Password = MSIS.Encrypt(config.Hosts.ActiveDirectoryHost.Password);
-                        config.Hosts.SQLServerHost.SQLPassword = MSIS.Decrypt(config.Hosts.SQLServerHost.SQLPassword);
+                        config.Hosts.SQLServerHost.SQLPassword = MSIS.Encrypt(config.Hosts.SQLServerHost.SQLPassword);
                         config.MailProvider.Password = MSIS.Encrypt(config.MailProvider.Password);
                     };
                 }
@@ -3377,7 +3377,7 @@ namespace Neos.IdentityServer.MultiFactor
                     {
                         config.KeysConfig.XORSecret = MSIS.Encrypt(config.KeysConfig.XORSecret);
                         config.Hosts.ActiveDirectoryHost.Password = MSIS.Encrypt(config.Hosts.ActiveDirectoryHost.Password);
-                        config.Hosts.SQLServerHost.SQLPassword = MSIS.Decrypt(config.Hosts.SQLServerHost.SQLPassword);
+                        config.Hosts.SQLServerHost.SQLPassword = MSIS.Encrypt(config.Hosts.SQLServerHost.SQLPassword);
                         config.MailProvider.Password = MSIS.Encrypt(config.MailProvider.Password);
                     };
                 }

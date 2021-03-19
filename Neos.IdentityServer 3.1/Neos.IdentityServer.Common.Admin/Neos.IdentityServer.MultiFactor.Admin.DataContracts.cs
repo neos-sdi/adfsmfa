@@ -486,7 +486,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             using (AESSystemEncryption MSIS = new AESSystemEncryption())
             {
                 adds.Password = MSIS.Decrypt(Password);
-                sql.SQLPassword = MSIS.Encrypt(SQLPassword);
+                sql.SQLPassword = MSIS.Decrypt(SQLPassword);
                 keys.XORSecret = MSIS.Decrypt(XORSecret);
             };
             ManagementService.ADFSManager.WriteConfiguration(host);
