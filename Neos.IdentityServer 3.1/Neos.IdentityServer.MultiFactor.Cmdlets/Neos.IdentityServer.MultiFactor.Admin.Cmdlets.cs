@@ -332,6 +332,7 @@ namespace MFA
         }
     }
 
+    #region Fields Parameters
     /// <summary>
     /// <para type="description">Standard Dynamic Parameter.</para>
     /// </summary>
@@ -577,6 +578,8 @@ namespace MFA
     }
     #endregion
 
+    #endregion
+
     #region Set-MFAUsers
     /// <summary>
     /// <para type="synopsis">Update MFA Users.</para>
@@ -766,8 +769,7 @@ namespace MFA
                             reg.MailAddress = this.MailAddress;
                         if (PhoneNumber != string.Empty)
                             reg.PhoneNumber = this.PhoneNumber;
-                        if (this.Method != PSPreferredMethod.Choose)
-                            reg.PreferredMethod = this.Method;
+                        reg.PreferredMethod = this.Method;
                         if (this.Pin > -1)
                             reg.PIN = this.Pin;
                         reg.Enabled = this.Enabled;
@@ -792,7 +794,10 @@ namespace MFA
                     }
                     catch (Exception Ex)
                     {
-                        this.Host.UI.WriteErrorLine(string.Format(errors_strings.ErrorUpdatingUser, reg.UPN, Ex.Message));
+                        if (!string.IsNullOrEmpty(_identity))
+                            this.ThrowTerminatingError(new ErrorRecord(new Exception(string.Format(errors_strings.ErrorUpdatingUser, reg.UPN, Ex.Message)), "1003", ErrorCategory.OperationStopped, this));
+                        else
+                            this.WriteError(new ErrorRecord(new Exception(string.Format(errors_strings.ErrorUpdatingUser, reg.UPN, Ex.Message)), "1003", ErrorCategory.OperationStopped, this));
                     }
                 }
                 i++;
@@ -992,8 +997,7 @@ namespace MFA
                             reg.MailAddress = this.MailAddress;
                         if (PhoneNumber != string.Empty)
                             reg.PhoneNumber = this.PhoneNumber;
-                        if (this.Method != PSPreferredMethod.Choose)
-                            reg.PreferredMethod = this.Method;
+                        reg.PreferredMethod = this.Method;
                         if (this.Pin > -1)
                             reg.PIN = this.Pin;
                         reg.Enabled = this.Enabled;
@@ -1017,7 +1021,10 @@ namespace MFA
                     }
                     catch (Exception Ex)
                     {
-                        this.Host.UI.WriteErrorLine(string.Format(errors_strings.ErrorAddingUser, reg.UPN, Ex.Message));
+                        if (!string.IsNullOrEmpty(_identity))
+                            this.ThrowTerminatingError(new ErrorRecord(new Exception(string.Format(errors_strings.ErrorAddingUser, reg.UPN, Ex.Message)), "1004", ErrorCategory.OperationStopped, this));
+                        else
+                            this.WriteError(new ErrorRecord(new Exception(string.Format(errors_strings.ErrorAddingUser, reg.UPN, Ex.Message)), "1004", ErrorCategory.OperationStopped, this));
                     }
                 }
                 i++;
@@ -1129,7 +1136,10 @@ namespace MFA
                     }
                     catch (Exception Ex)
                     {
-                        this.Host.UI.WriteErrorLine(string.Format(errors_strings.ErrorDeletingUser, reg.UPN, Ex.Message));
+                        if (!string.IsNullOrEmpty(_identity))
+                            this.ThrowTerminatingError(new ErrorRecord(new Exception(string.Format(errors_strings.ErrorDeletingUser, reg.UPN, Ex.Message)), "1005", ErrorCategory.OperationStopped, this));
+                        else
+                            this.WriteError(new ErrorRecord(new Exception(string.Format(errors_strings.ErrorDeletingUser, reg.UPN, Ex.Message)), "1005", ErrorCategory.OperationStopped, this));
                     }
                 }
                 i++;
@@ -1243,7 +1253,10 @@ namespace MFA
                     }
                     catch (Exception Ex)
                     {
-                        this.Host.UI.WriteErrorLine(string.Format(errors_strings.ErrorUpdatingUser, reg.UPN, Ex.Message));
+                        if (!string.IsNullOrEmpty(_identity))
+                            this.ThrowTerminatingError(new ErrorRecord(new Exception(string.Format(errors_strings.ErrorUpdatingUser, reg.UPN, Ex.Message)), "1006", ErrorCategory.OperationStopped, this));
+                        else
+                            this.WriteError(new ErrorRecord(new Exception(string.Format(errors_strings.ErrorUpdatingUser, reg.UPN, Ex.Message)), "1006", ErrorCategory.OperationStopped, this));
                     }
                 }
                 i++;
@@ -1357,7 +1370,10 @@ namespace MFA
                     }
                     catch (Exception Ex)
                     {
-                        this.Host.UI.WriteErrorLine(string.Format(errors_strings.ErrorUpdatingUser, reg.UPN, Ex.Message));
+                        if (!string.IsNullOrEmpty(_identity))
+                            this.ThrowTerminatingError(new ErrorRecord(new Exception(string.Format(errors_strings.ErrorUpdatingUser, reg.UPN, Ex.Message)), "1007", ErrorCategory.OperationStopped, this));
+                        else
+                            this.WriteError(new ErrorRecord(new Exception(string.Format(errors_strings.ErrorUpdatingUser, reg.UPN, Ex.Message)), "1007", ErrorCategory.OperationStopped, this));
                     }
                 }
                 i++;
