@@ -24,13 +24,6 @@ This extension works with Active Directory or an SQL Server Database for storing
 ___
 ![Neos Logo](logo.png)
 
-Neos-SDI is a global business and technology consulting firm that leads organizations toward innovative growth faster through the identification, application and support of inspired technology solutions. By leveraging our unique methodologies, we are able to help our clients envision the unique ways technology can be successfully applied to their business. Our envisioning sessions are intended to inspire the use of technology in differentiated ways in order to optimize our client's potential for growth. Founded in Paris in 2001, the source of Neos-SDI’s success is attributed to over 150 certified consultants, and 14 gold and two silver Microsoft Partner competencies; making Neos-SDI one of the top 10 Microsoft Partners worldwide.
-
-Feel free to follow our projects on github
-
-Multi-Factor Authentication for ADFS (this one) : <https://github.com/neos-sdi/adfsmfa>
-
-SharePoint Identity Service Application (Claim Provider for SharePoint 2013/2016) : <https://github.com/neos-sdi/spidentityservice>
 ___
 ## Features
 * Localized UI French/English/Spanish/Italian/German/Dutch/Portuguese/Polish/Swedish/Romanian/Russian/Danish/Japanese, Quebec
@@ -40,18 +33,20 @@ ___
 * Secret Keys RSA asymmetric encryption length (2048 bytes) RSA
 * Secret Keys AES symmetric encryption length (512/1024) AES128, AES256
 * Secret Keys custom encryption (when implementing ISecretKeyManager and ISecretKeyManagerActivator)
+* PowerShell cmdlets for managing MFA properies and MFA Users
+* MMC Console for managing MFA properies and MFA Users
 * Can use ADDS customizable attributes or SQL-Server Database, or develop a Custom Storage component
 * Can send TOTP code by email (customizable template in resources)
-* Can send TOTP code by sms (customizable and extensible with API)
-* Can send TOTP code using Authenticator Apps like MS Authenticator, Google Authentication and more
-* Biometric authentication (WebAuthN/FIDO2) (using component from Anders Åberg, Alex Seigler and others <https://github.com/abergs/fido2-net-lib> Great Work !)
+* Can send TOTP code by sms (customizable and extensible with API (IExternalProvider interface))
+* Can use TOTP code using Authenticator Apps like MS Authenticator, Google Authentication and more
+* Biometric authentication (WebAuthN/FIDO2) (Anders Åberg, Alex Seigler and others <https://github.com/abergs/fido2-net-lib>)
 * Enable self-registration
-* Enable self-registration with QR code (using component from  George Mamaladze and his team <https://qrcodenet.codeplex.com> Great Work !)
+* Enable self-registration with QR code (George Mamaladze and his team <https://qrcodenet.codeplex.com>)
 * Enable custom change password.
 * Can work with ADDS multi-forests with trust relationships
 * Can work with LDAP 3.0 Providers (ADFS2016/2019) when using SQL Storage mode
 * Full sample for Azure MFA (additional configuration tasks and costs implied)
-* Developers can easily extend this component for other verification modes (Azure MFA, RSA,…) with the IExternalProvider, IExternalOTPProvider (deprecated), ISecretKeyManager interfaces
+* Developers can easily extend this component for other verification modes (Azure MFA, RSA,…) with the IExternalProvider, ISecretKeyManager interfaces
 * Developers can easily extend this component for other storages modes (AD & SQL by default)
 * Full support for ADFS 2019 themes
 
@@ -59,5 +54,5 @@ ___
 * Due to security, Developers must sign their Visual Studio Solution with a certificate .pfx
 * You must deploy the solution on each of your ADFS servers, not on Proxy Servers.
 * To work with ADDS, the ADFS Service account must have read and write to users properties (or use the superaccount feature).
-* To work with SQL Server Database, you must deploy the database on a separate SQL Server (WID replication is supported (cached))
+* To work with SQL Server Database, you must deploy the database on a separate SQL Server
 * Working with ADFS Windows server 2012r2, 2016 and 2019
