@@ -39,7 +39,7 @@ ___
 * Can send TOTP code by email (customizable template in resources)
 * Can send TOTP code by sms (customizable and extensible with API (IExternalProvider interface))
 * Can use TOTP code using Authenticator Apps like MS Authenticator, Google Authentication and more
-* Biometric authentication (WebAuthN/FIDO2) (Anders Åberg, Alex Seigler and others <https://github.com/abergs/fido2-net-lib>)
+* Biometric authentication (Anders Åberg, Alex Seigler and others <https://github.com/abergs/fido2-net-lib>)
 * Enable self-registration
 * Enable self-registration with QR code (George Mamaladze and his team <https://qrcodenet.codeplex.com>)
 * Enable custom change password.
