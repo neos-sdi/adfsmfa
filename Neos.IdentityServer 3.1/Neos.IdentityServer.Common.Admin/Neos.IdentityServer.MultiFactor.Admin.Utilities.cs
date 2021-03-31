@@ -552,7 +552,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             switch (kind)
             {
                 case 0x00:
-                    using (AESSystemEncryption MSIS = new AESSystemEncryption())
+                    using (SystemEncryption MSIS = new SystemEncryption())
                     {
                         if (clearvalue)
                         {
@@ -568,17 +568,18 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                         }
                         else
                         {
-                            config.Hosts.ActiveDirectoryHost.Password = MSIS.Encrypt(config.Hosts.ActiveDirectoryHost.Password);
-                            config.Hosts.SQLServerHost.SQLPassword = MSIS.Encrypt(config.Hosts.SQLServerHost.SQLPassword);
-                            config.MailProvider.Password = MSIS.Encrypt(config.MailProvider.Password);
-                            config.KeysConfig.XORSecret = MSIS.Encrypt(config.KeysConfig.XORSecret);
+                            config.KeysConfig.XORSecret = MSIS.Encrypt(config.KeysConfig.XORSecret, "Pass Phrase Encryption");
+                            config.Hosts.ActiveDirectoryHost.Password = MSIS.Encrypt(config.Hosts.ActiveDirectoryHost.Password, "ADDS Super Account Password");
+                            config.Hosts.SQLServerHost.SQLPassword = MSIS.Encrypt(config.Hosts.SQLServerHost.SQLPassword, "SQL Super Account Password");
+                            config.MailProvider.Password = MSIS.Encrypt(config.MailProvider.Password, "Mail Provider Account Password");
+
                             if (!string.IsNullOrEmpty(value))
                                 host.UI.WriteWarningLine("Block Updates not allowed, values where only encrypted !");
                         }
                     }
                     break;
                 case 0x01:
-                    using (AESSystemEncryption MSIS = new AESSystemEncryption())
+                    using (SystemEncryption MSIS = new SystemEncryption())
                     {
                         if (clearvalue)
                         {
@@ -590,16 +591,16 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                         {
                             if (string.IsNullOrEmpty(value))
                             {
-                                config.Hosts.ActiveDirectoryHost.Password = MSIS.Encrypt(config.Hosts.ActiveDirectoryHost.Password);
+                                config.Hosts.ActiveDirectoryHost.Password = MSIS.Encrypt(config.Hosts.ActiveDirectoryHost.Password, "ADDS Super Account Password");
                                 host.UI.WriteWarningLine("Empty value not allowed, value was only encrypted !");
                             }
                             else
-                                config.Hosts.ActiveDirectoryHost.Password = MSIS.Encrypt(value);
+                                config.Hosts.ActiveDirectoryHost.Password = MSIS.Encrypt(value, "ADDS Super Account Password");
                         }
                     }
                     break;
                 case 0x02:
-                    using (AESSystemEncryption MSIS = new AESSystemEncryption())
+                    using (SystemEncryption MSIS = new SystemEncryption())
                     {
                         if (clearvalue)
                         {
@@ -611,16 +612,16 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                         {
                             if (string.IsNullOrEmpty(value))
                             {
-                                config.MailProvider.Password = MSIS.Encrypt(config.MailProvider.Password);
+                                config.MailProvider.Password = MSIS.Encrypt(config.MailProvider.Password, "Mail Provider Account Password");
                                 host.UI.WriteWarningLine("Empty value not allowed, value was only encrypted !");
                             }
                             else
-                                config.MailProvider.Password = MSIS.Encrypt(value);
+                                config.MailProvider.Password = MSIS.Encrypt(value, "Mail Provider Account Password");
                         }
                     }
                     break;
                 case 0x03:
-                    using (AESSystemEncryption MSIS = new AESSystemEncryption())
+                    using (SystemEncryption MSIS = new SystemEncryption())
                     {
                         if (clearvalue)
                         {
@@ -630,16 +631,16 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                         {
                             if (string.IsNullOrEmpty(value))
                             {
-                                config.KeysConfig.XORSecret = MSIS.Encrypt(config.KeysConfig.XORSecret);
+                                config.KeysConfig.XORSecret = MSIS.Encrypt(config.KeysConfig.XORSecret, "Pass Phrase Encryption");
                                 host.UI.WriteWarningLine("Empty value not allowed, value was only encrypted !");
                             }
                             else
-                                config.KeysConfig.XORSecret = MSIS.Encrypt(value);
+                                config.KeysConfig.XORSecret = MSIS.Encrypt(value, "Pass Phrase Encryption");
                         }
                     }
                     break;
                 case 0x04:
-                    using (AESSystemEncryption MSIS = new AESSystemEncryption())
+                    using (SystemEncryption MSIS = new SystemEncryption())
                     {
                         if (clearvalue)
                         {
@@ -650,11 +651,11 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                         {
                             if (string.IsNullOrEmpty(value))
                             {
-                                config.Hosts.SQLServerHost.SQLPassword = MSIS.Encrypt(config.Hosts.SQLServerHost.SQLPassword);
+                                config.Hosts.SQLServerHost.SQLPassword = MSIS.Encrypt(config.Hosts.SQLServerHost.SQLPassword, "SQL Super Account Password");
                                 host.UI.WriteWarningLine("Empty value not allowed, value was only encrypted !");
                             }
                             else
-                                config.Hosts.SQLServerHost.SQLPassword = MSIS.Encrypt(value);
+                                config.Hosts.SQLServerHost.SQLPassword = MSIS.Encrypt(value, "SQL Super Account Password");
                         }
                     }
                     break;

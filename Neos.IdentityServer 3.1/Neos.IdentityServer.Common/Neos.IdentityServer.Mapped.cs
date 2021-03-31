@@ -42,7 +42,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public MemoryMap(string memoryMapName)
         {
-            
+           
             MemoryMapName = @"Global\" + memoryMapName;
             MutexName = MemoryMapName + "-Mutex";
         }

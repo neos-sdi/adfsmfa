@@ -35,7 +35,6 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
         private WebAdminServer<WebAdminService> _svcadminhost = new WebAdminServer<WebAdminService>();
         private NTServiceServer<NTService> _svcnthost = new NTServiceServer<NTService>();
         private CleanUpManager _cleanup = new CleanUpManager();
-        private byte[] SysKey;
 
         #region Service override methods
         /// <summary>
@@ -60,7 +59,6 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
             try
             {
                 _mailslotsmgr.Start();
-                SysKey = SystemUtilities.Key;
             }
             catch (Exception e)
             {

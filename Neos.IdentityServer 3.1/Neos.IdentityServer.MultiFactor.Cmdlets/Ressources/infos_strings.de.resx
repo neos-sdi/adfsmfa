@@ -117,9 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="InfoAllKeyWillbeReset" xml:space="preserve">
-    <value>Achtung, alle RSA-Schlüssel werden ungültig! Weiter (Y/N)</value>
-  </data>
   <data name="InfosAllServicesRestarted" xml:space="preserve">
     <value>Alle Farm-Dienste neu gestartet !</value>
   </data>
@@ -225,9 +222,6 @@
   <data name="InfosSampleUnInstalled" xml:space="preserve">
     <value>MFA-Beispiel deinstalliert !</value>
   </data>
-  <data name="InfosRSACertificateChanged" xml:space="preserve">
-    <value>MFA-Zertifikat {0} korrekt aktualisiert !</value>
-  </data>
   <data name="InfosSQLCertificateChanged" xml:space="preserve">
     <value>SQL-Zertifikat {0} korrekt aktualisiert !</value>
   </data>
@@ -236,5 +230,23 @@
   </data>
   <data name="InfosSystemNotRegistered" xml:space="preserve">
     <value>MFA-System Nicht registriert !</value>
+  </data>
+  <data name="InfosRSACertificateChanged" xml:space="preserve">
+    <value>MFA RSA Verschlüsselungsschlüssel korrekt aktualisiert !</value>
+  </data>
+  <data name="InfosRSACertificateError" xml:space="preserve">
+    <value>MFA RSA Verschlüsselungsschlüssel nicht korrekt aktualisiert !</value>
+  </data>
+  <data name="InfosYes" xml:space="preserve">
+    <value>&amp;Ja</value>
+  </data>
+  <data name="InfosNo" xml:space="preserve">
+    <value>&amp;Nein</value>
+  </data>
+  <data name="InfoRSAKeyWillbeReset" xml:space="preserve">
+    <value>MFA RSA-Schlüssel wird erneuert ! Weiter ?</value>
+  </data>
+  <data name="InfoAllKeyWillbeReset" xml:space="preserve">
+    <value>Alle aktuellen Schlüssel der Benutzer werden ungültig ! Weiter ?</value>
   </data>
 </root>

@@ -462,6 +462,32 @@ namespace Neos.IdentityServer.MultiFactor.Data
                 manager.UnInitialize();
             }
         }
+
+        /// <summary>
+        /// InitMFASystemMasterKey method implementation
+        /// </summary>
+        public static bool NewMFASystemMasterKey(MFAConfig config, bool deleteonly = false)
+        {
+            WebAdminClient manager = new WebAdminClient();
+            manager.Initialize();
+            try
+            {
+                IWebAdminServices client = manager.Open();
+                try
+                {
+                    return client.NewMFASystemMasterKey(GetServers(config), deleteonly);
+                }
+                finally
+                {
+                    manager.Close(client);
+                }
+            }
+            finally
+            {
+                manager.UnInitialize();
+            }
+        }       
+
         /// <summary>
         /// CreateRSACertificate method implementation
         /// </summary>
@@ -602,7 +628,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                 IWebAdminServices client = manager.Open();
                 try
                 {
-                    client.BroadcastNotification(GetServers(config), GetCryptedConfig(config), kind, message, local, dispatch);
+                    client.BroadcastNotification(GetServers(config), CFGReaderUtilities.GetCryptedConfig(config), kind, message, local, dispatch);
                 }
                 finally
                 {
@@ -630,7 +656,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                     IWebAdminServices client = manager.Open();
                     try
                     {
-                        done = client.ExportMailTemplates(GetServers(config), GetCryptedConfig(config), lcid, data);
+                        done = client.ExportMailTemplates(GetServers(config), CFGReaderUtilities.GetCryptedConfig(config), lcid, data);
                     }
                     finally
                     {
@@ -728,33 +754,6 @@ namespace Neos.IdentityServer.MultiFactor.Data
                                select (server.FQDN.ToLower(), server.NodeType.ToLower().Equals("primarycomputer")));
             Dictionary<string, bool> servers = servernames.ToDictionary(s => s.Item1, s => s.Item2);
             return servers;
-        }
-
-        /// <summary>
-        /// GetCryptedConfig method implementation
-        /// </summary>
-        private static byte[] GetCryptedConfig(MFAConfig config)
-        {
-            using (AESSystemEncryption MSIS = new AESSystemEncryption())
-            {
-                config.KeysConfig.XORSecret = MSIS.Encrypt(config.KeysConfig.XORSecret);
-                config.Hosts.ActiveDirectoryHost.Password = MSIS.Encrypt(config.Hosts.ActiveDirectoryHost.Password);
-                config.Hosts.SQLServerHost.SQLPassword = MSIS.Encrypt(config.Hosts.SQLServerHost.SQLPassword);
-                config.MailProvider.Password = MSIS.Encrypt(config.MailProvider.Password);
-            }; 
-            XmlConfigSerializer xmlserializer = new XmlConfigSerializer(typeof(MFAConfig));
-            MemoryStream stm = new MemoryStream();
-            using (StreamReader reader = new StreamReader(stm))
-            {
-                xmlserializer.Serialize(stm, config);
-                stm.Position = 0;
-                byte[] bytes = null;
-                using (AESSystemEncryption aes = new AESSystemEncryption())
-                {
-                    bytes = aes.Encrypt(stm.ToArray());
-                }
-                return bytes;
-            }
         }
         #endregion
     }

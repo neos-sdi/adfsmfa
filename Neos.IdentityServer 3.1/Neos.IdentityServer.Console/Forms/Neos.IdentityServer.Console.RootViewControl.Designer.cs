@@ -33,7 +33,6 @@
             this.GlobalViewLabelText = new System.Windows.Forms.Label();
             this.pictureNeosSdi = new System.Windows.Forms.PictureBox();
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
-            this.linkLabel2 = new System.Windows.Forms.LinkLabel();
             this.linkLabel3 = new System.Windows.Forms.LinkLabel();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureNeosSdi)).BeginInit();
@@ -62,13 +61,6 @@
             this.linkLabel1.TabStop = true;
             this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
             // 
-            // linkLabel2
-            // 
-            resources.ApplyResources(this.linkLabel2, "linkLabel2");
-            this.linkLabel2.Name = "linkLabel2";
-            this.linkLabel2.TabStop = true;
-            this.linkLabel2.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel2_LinkClicked);
-            // 
             // linkLabel3
             // 
             resources.ApplyResources(this.linkLabel3, "linkLabel3");
@@ -91,7 +83,6 @@
             this.BackColor = System.Drawing.SystemColors.Window;
             this.Controls.Add(this.richTextBox1);
             this.Controls.Add(this.linkLabel3);
-            this.Controls.Add(this.linkLabel2);
             this.Controls.Add(this.linkLabel1);
             this.Controls.Add(this.pictureNeosSdi);
             this.Controls.Add(this.GlobalViewLabelText);
@@ -109,7 +100,6 @@
         private System.Windows.Forms.Label GlobalViewLabelText;
         private System.Windows.Forms.PictureBox pictureNeosSdi;
         private System.Windows.Forms.LinkLabel linkLabel1;
-        private System.Windows.Forms.LinkLabel linkLabel2;
         private System.Windows.Forms.LinkLabel linkLabel3;
         private System.Windows.Forms.RichTextBox richTextBox1;
     }

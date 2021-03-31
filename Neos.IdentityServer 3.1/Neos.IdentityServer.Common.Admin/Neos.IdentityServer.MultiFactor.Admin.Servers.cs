@@ -121,6 +121,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             this.ServiceStatusChanged(this, status, servername, Ex);
         }
 
+
         public void OnConfigurationStatusChanged(ConfigOperationStatus status, Exception Ex = null)
         {
             this.ConfigurationStatusChanged(this, status, Ex);
@@ -900,6 +901,48 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         internal bool CheckCertificate(string thumbprint, StoreLocation location = StoreLocation.LocalMachine)
         {
             return WebAdminManagerClient.CertificateExists(thumbprint, location);
+        }
+
+        /// <summary>
+        /// RegisterMFASystemMasterKey method implmentation
+        /// </summary>
+        public bool RegisterMFASystemMasterKey(PSHost Host = null, bool deleteonly = false)
+        {
+            using (SystemEncryption MSIS = new SystemEncryption())
+            {
+                Config.KeysConfig.XORSecret = MSIS.Decrypt(Config.KeysConfig.XORSecret, "Pass Phrase Encryption");
+                Config.Hosts.ActiveDirectoryHost.Password = MSIS.Decrypt(Config.Hosts.ActiveDirectoryHost.Password, "ADDS Super Account Password");
+                Config.Hosts.SQLServerHost.SQLPassword = MSIS.Decrypt(Config.Hosts.SQLServerHost.SQLPassword, "SQL Super Account Password");
+                Config.MailProvider.Password = MSIS.Decrypt(Config.MailProvider.Password, "Mail Provider Account Password");
+            };
+            string xorsecret = Config.KeysConfig.XORSecret;
+            string addspwd = Config.Hosts.ActiveDirectoryHost.Password;
+            string sqlpwd = Config.Hosts.SQLServerHost.SQLPassword;
+            string mailpwd = Config.MailProvider.Password;
+
+            if (WebAdminManagerClient.NewMFASystemMasterKey(Config, deleteonly))
+            {
+                Config = CFGUtilities.WriteConfiguration(Host, Config); // Save configuration with new key
+
+                Config.KeysConfig.XORSecret = xorsecret;
+                Config.Hosts.ActiveDirectoryHost.Password = addspwd;
+                Config.Hosts.SQLServerHost.SQLPassword = sqlpwd;
+                Config.MailProvider.Password = mailpwd;
+                ManagementService.BroadcastNotification(Config, NotificationsKind.ConfigurationReload, Environment.MachineName);
+
+                return true;
+            }
+            else
+            {
+                if (Host != null)
+                {
+                    if (deleteonly)
+                        Host.UI.WriteWarningLine(DateTime.Now.ToLongTimeString() + " MFA System Master Key Deleted ! ");
+                    else
+                        Host.UI.WriteWarningLine(DateTime.Now.ToLongTimeString() + " MFA System Master Key Not Generated ! ");
+                }
+                return false;
+            }
         }
 
         /// <summary>

@@ -63,8 +63,8 @@
     <Compile Include="Neos.IdentityServer.MultiFactor.Security.Encryptions.cs" />
     <Compile Include="Neos.IdentityServer.MultiFactor.Security.Clients.cs" />
     <Compile Include="Neos.IdentityServer.MultiFactor.Security.Services.cs" />
-    <Compile Include="Neos.IdentiyServer.MultiFactor.Security.Utilities.cs" />
-    <Compile Include="Neos.IdentiyServer.MultiFactor.Security.Interfaces.cs" />
+    <Compile Include="Neos.IdentityServer.MultiFactor.Security.Utilities.cs" />
+    <Compile Include="Neos.IdentityServer.MultiFactor.Security.Interfaces.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

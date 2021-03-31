@@ -117,47 +117,4 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="GlobalViewlabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>182, 26</value>
-  </data>
-  <data name="GlobalViewlabel.Text" xml:space="preserve">
-    <value>Vue d'ensemble</value>
-  </data>
-  <data name="GlobalViewLabelText.Size" type="System.Drawing.Size, System.Drawing">
-    <value>647, 13</value>
-  </data>
-  <data name="GlobalViewLabelText.Text" xml:space="preserve">
-    <value>L'extension MFA pour ADFS 2012R2 / 2016 / 2019  permettent d'utiliser l'authentifiaction multi-facteur (2FA) sans côuts supplémentaires</value>
-  </data>
-  <data name="linkLabel1.Text" xml:space="preserve">
-    <value>https://www.neos-sdi.com</value>
-  </data>
-  <data name="linkLabel2.Text" xml:space="preserve">
-    <value>https://adfsmfa.codeplex.com</value>
-  </data>
-  <data name="linkLabel3.Text" xml:space="preserve">
-    <value>https://github.com/neos-sdi/adfsmfa/releases</value>
-  </data>
-  <data name="richTextBox1.Text" xml:space="preserve">
-    <value>Copyright (c) 2021 Neos-Sdi
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.</value>
-  </data>
 </root>

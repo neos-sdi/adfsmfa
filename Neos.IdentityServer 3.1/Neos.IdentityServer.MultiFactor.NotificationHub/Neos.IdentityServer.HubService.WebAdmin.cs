@@ -15,6 +15,7 @@
 // https://github.com/neos-sdi/adfsmfa                                                                                                                                                      //
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
+using Microsoft.Win32;
 using Neos.IdentityServer.MultiFactor.Common;
 using Neos.IdentityServer.MultiFactor.Data;
 using System;
@@ -223,7 +224,7 @@ namespace Neos.IdentityServer.MultiFactor
         {
             try
             {
-                return SIDs.internalUpdateCertificatesACLs(options);
+                return SIDs.InternalUpdateCertificatesACLs(options);
             }
             catch (Exception e)
             {
@@ -438,7 +439,7 @@ namespace Neos.IdentityServer.MultiFactor
         }
         #endregion
 
-        #region Private methods
+        #region "System" Cache configuration  methods
         /// <summary>
         /// WriteConfigurationToCache method implementation
         /// </summary>
@@ -737,7 +738,7 @@ namespace Neos.IdentityServer.MultiFactor
                     Collection<PSObject> PSOutput = pipeline.Invoke();
                     foreach (var result in PSOutput)
                     {
-                        _list.Add(new ADFSNodeInformation
+                        _list.Add(new ADFSNodeInformation()
                         {
                             FQDN = result.Members["FQDN"].Value.ToString(),
                             NodeType = result.Members["NodeType"].Value.ToString(),
@@ -795,7 +796,7 @@ namespace Neos.IdentityServer.MultiFactor
         }
         #endregion
 
-        #region Certs / ACLs       
+        #region Certificates / ACLs       
         /// <summary>
         /// CertificateExists method implementation
         /// </summary>
@@ -836,7 +837,7 @@ namespace Neos.IdentityServer.MultiFactor
                     cert.Reset();
                 }
 
-                SIDs.internalUpdateCertificatesACLs(KeyMgtOptions.MFACerts);
+                SIDs.InternalUpdateCertificatesACLs(KeyMgtOptions.MFACerts);
 
                 string fqdn = Dns.GetHostEntry("localhost").HostName;
                 List<string> servernames = (from server in servers
@@ -901,8 +902,7 @@ namespace Neos.IdentityServer.MultiFactor
                 {
                     cert.Reset();
                 }
-
-                SIDs.internalUpdateCertificatesACLs(KeyMgtOptions.MFACerts);
+                SIDs.InternalUpdateCertificatesACLs(KeyMgtOptions.MFACerts);
 
                 string fqdn = Dns.GetHostEntry("localhost").HostName;
                 List<string> servernames = (from server in servers
@@ -967,7 +967,7 @@ namespace Neos.IdentityServer.MultiFactor
                     cert.Reset();
                 }
 
-                SIDs.internalUpdateCertificatesACLs(KeyMgtOptions.ADFSCerts);
+                SIDs.InternalUpdateCertificatesACLs(KeyMgtOptions.ADFSCerts);
 
                 string fqdn = Dns.GetHostEntry("localhost").HostName;
                 List<string> servernames = (from server in servers
@@ -1012,24 +1012,124 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         internal void PushCertificate(string cert)
         {
-            X509Certificate2 x509 = new X509Certificate2(Convert.FromBase64String(cert), "", X509KeyStorageFlags.Exportable | X509KeyStorageFlags.PersistKeySet);
+            X509Certificate2 x509  = null;
             try
             {
+                x509 = new X509Certificate2(Convert.FromBase64String(cert), "", X509KeyStorageFlags.Exportable | X509KeyStorageFlags.PersistKeySet);
                 if (x509 == null)
                     return;
                 X509Store store = new X509Store(StoreName.My, StoreLocation.LocalMachine);
                 store.Open(OpenFlags.MaxAllowed);
                 store.Add(x509);
-                store.Close();
+                store.Close();                
             }
             finally
             {
                 Certs.CleanSelfSignedCertificate(x509, StoreLocation.LocalMachine);
-                x509.Reset();
-                SIDs.internalUpdateCertificatesACLs(KeyMgtOptions.AllCerts);
+                SIDs.InternalUpdateCertificatesACLs(KeyMgtOptions.MFACerts | KeyMgtOptions.ADFSCerts);
+                if (x509 != null)
+                    x509.Reset();
             }
         }
-        #endregion   
+        #endregion
+
+        #region MasterKey management
+        /// <summary>
+        /// NewtMFASystemMasterKey method implementation
+        /// </summary>
+        internal bool NewMFASystemMasterKey(Dictionary<string, bool> servers, bool deleteonly = false)
+        {
+            byte[] result = null;
+            try
+            {
+                SIDs.Initialize();
+                if (!deleteonly)
+                {
+                    result = Certs.CreateMFARSACngKey(out string uniquekeyname);
+                    if (result != null)
+                    {
+                        char sep = Path.DirectorySeparatorChar;
+                        SIDs.InternalUpdateSystemFilesACLs(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + sep + "Microsoft" + sep + "Crypto" + sep + "Keys" + sep + uniquekeyname, true);
+                        DeleteConfigurationFromCache();
+                    }
+                }
+                else
+                {
+                    if (Certs.DeleteMFARSACngKey())
+                        DeleteConfigurationFromCache();
+                }
+
+                string fqdn = Dns.GetHostEntry("localhost").HostName;
+                List<string> servernames = (from server in servers
+                                            where (server.Key.ToLower() != fqdn.ToLower())
+                                            select server.Key.ToLower()).ToList<string>();
+
+                foreach (string srv in servernames)
+                {
+                    WebAdminClient manager = new WebAdminClient();
+                    manager.Initialize(srv);
+                    try
+                    {
+                        IWebAdminServices client = manager.Open();
+                        try
+                        {
+                            client.PushMFASystemMasterkey(result, deleteonly);
+                        }
+                        finally
+                        {
+                            manager.Close(client);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        _log.WriteEntry(string.Format("Error on WebAdminService Service NewMFASystemMasterKey method : {0} / {1}.", srv, e.Message), EventLogEntryType.Error, 2010);
+                    }
+                    finally
+                    {
+                        manager.UnInitialize();
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                _log.WriteEntry(string.Format("Error on WebAdminService Service NewMFASystemMasterKey method : {0}.", e.Message), EventLogEntryType.Error, 2010);
+                throw e;
+            }
+            return true;
+        }
+      
+        /// <summary>
+        /// PushMFASystemMasterKey method implmentation
+        /// </summary>
+        internal void PushMFASystemMasterKey(byte[] data, bool deleteonly = false)
+        {
+            try
+            {
+                SIDs.Initialize();
+                if (!deleteonly)
+                {
+                    if (Certs.ImportMFARSACngKey(data, out string uniquekeyname))
+                    {
+                        char sep = Path.DirectorySeparatorChar;
+                        SIDs.InternalUpdateSystemFilesACLs(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + sep + "Microsoft" + sep + "Crypto" + sep + "Keys" + sep + uniquekeyname, true);
+                        DeleteConfigurationFromCache();
+                    }
+                }
+                else
+                {
+                    if (Certs.DeleteMFARSACngKey())
+                       DeleteConfigurationFromCache();
+            
+                }
+            }
+            catch (Exception e)
+            {
+                _log.WriteEntry(string.Format("Error on WebAdminService Service PushMFASystemMasterKey method : {0}.", e.Message), EventLogEntryType.Error, 2010);
+                throw e;
+            }
+
+        }
+        #endregion
     }
     #endregion
 }

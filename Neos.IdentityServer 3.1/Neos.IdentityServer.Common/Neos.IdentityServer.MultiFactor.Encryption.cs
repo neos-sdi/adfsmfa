@@ -482,7 +482,7 @@ namespace Neos.IdentityServer.MultiFactor
             else
                 _keylen = 64;
 
-            byte[] xkey = CFGUtilities.Key;
+            byte[] xkey = SystemUtilities.SystemKey;
             AESKey = new byte[16];
             Buffer.BlockCopy(xkey, 0, AESKey, 0, 16);
             byte[] res = null;
@@ -623,7 +623,7 @@ namespace Neos.IdentityServer.MultiFactor
             else
                 _keylen = 64;
 
-            byte[] xkey = CFGUtilities.Key;
+            byte[] xkey = SystemUtilities.SystemKey;
             AESKey = new byte[32];
             Buffer.BlockCopy(xkey, 0, AESKey, 0, 32);
             byte[] res = null;

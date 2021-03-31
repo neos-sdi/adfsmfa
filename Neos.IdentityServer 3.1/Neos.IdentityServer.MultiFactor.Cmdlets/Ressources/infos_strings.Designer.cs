@@ -61,7 +61,7 @@ namespace Neos.IdentityServer.MultiFactor.Cmdlets.Ressources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à All RSA keys will be invalidated ! Continue (Y/N).
+        ///   Recherche une chaîne localisée semblable à All the users&apos;s current keys will be invalidated ! Continue ?.
         /// </summary>
         internal static string InfoAllKeyWillbeReset {
             get {
@@ -102,6 +102,15 @@ namespace Neos.IdentityServer.MultiFactor.Cmdlets.Ressources {
         internal static string InfoComputerUnRegistered {
             get {
                 return ResourceManager.GetString("InfoComputerUnRegistered", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à MFA RSA key will be renewed ! Continue ?.
+        /// </summary>
+        internal static string InfoRSAKeyWillbeReset {
+            get {
+                return ResourceManager.GetString("InfoRSAKeyWillbeReset", resourceCulture);
             }
         }
         
@@ -187,6 +196,15 @@ namespace Neos.IdentityServer.MultiFactor.Cmdlets.Ressources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à &amp;No.
+        /// </summary>
+        internal static string InfosNo {
+            get {
+                return ResourceManager.GetString("InfosNo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Notification dispatched !.
         /// </summary>
         internal static string InfosNotificationSend {
@@ -214,11 +232,20 @@ namespace Neos.IdentityServer.MultiFactor.Cmdlets.Ressources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à MFA certificate {0} correctly updated ! .
+        ///   Recherche une chaîne localisée semblable à MFA RSA Encryption Key correctly updated ! .
         /// </summary>
         internal static string InfosRSACertificateChanged {
             get {
                 return ResourceManager.GetString("InfosRSACertificateChanged", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à MFA RSA Encryption key not correctly updated !.
+        /// </summary>
+        internal static string InfosRSACertificateError {
+            get {
+                return ResourceManager.GetString("InfosRSACertificateError", resourceCulture);
             }
         }
         
@@ -417,6 +444,15 @@ namespace Neos.IdentityServer.MultiFactor.Cmdlets.Ressources {
         internal static string InfosWarningAboutTheme {
             get {
                 return ResourceManager.GetString("InfosWarningAboutTheme", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à &amp;Yes.
+        /// </summary>
+        internal static string InfosYes {
+            get {
+                return ResourceManager.GetString("InfosYes", resourceCulture);
             }
         }
     }

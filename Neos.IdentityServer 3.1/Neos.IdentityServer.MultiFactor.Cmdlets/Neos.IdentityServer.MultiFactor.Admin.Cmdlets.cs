@@ -797,7 +797,7 @@ namespace MFA
                         if (!string.IsNullOrEmpty(_identity))
                             this.ThrowTerminatingError(new ErrorRecord(new Exception(string.Format(errors_strings.ErrorUpdatingUser, reg.UPN, Ex.Message)), "1003", ErrorCategory.OperationStopped, this));
                         else
-                            this.WriteError(new ErrorRecord(new Exception(string.Format(errors_strings.ErrorUpdatingUser, reg.UPN, Ex.Message)), "1003", ErrorCategory.OperationStopped, this));
+                           this.WriteError(new ErrorRecord(new Exception(string.Format(errors_strings.ErrorUpdatingUser, reg.UPN, Ex.Message)), "1003", ErrorCategory.OperationStopped, this));
                     }
                 }
                 i++;
@@ -1466,6 +1466,7 @@ namespace MFA
     public sealed class RegisterMFAComputer : MFACmdlet
     {
         private string _servername;
+        private bool _nomfareset = false;
 
         /// <summary>
         /// <para type="description">Server Name to add in MFA farm.</para>
@@ -1475,6 +1476,17 @@ namespace MFA
         {
             get { return _servername; }
             set { _servername = value; }
+        }
+
+        /// <summary>
+        /// <para type="description">Disable RSA key Reset for MFA Passwords.</para>
+        /// NoRSAKeyReset property
+        /// </summary>
+        [Parameter(Mandatory = false, Position = 1, ParameterSetName = "Data")]
+        public SwitchParameter NoRSAKeyReset
+        {
+            get { return _nomfareset; }
+            set { _nomfareset = value; }
         }
 
         /// <summary>
@@ -1504,9 +1516,19 @@ namespace MFA
                 {
                     PSHost hh = GetHostForVerbose();
                     if (ManagementService.RegisterADFSComputer(hh, ServerName, out List<ADFSServerHost> servers))
+                    {
                         this.Host.UI.WriteLine(ConsoleColor.Green, this.Host.UI.RawUI.BackgroundColor, String.Format(infos_strings.InfoComputerRegistered, ServerName));
+                        if (!_nomfareset)
+                        {
+                            ADFSServiceManager svc = ManagementService.ADFSManager;
+                            if (svc.RegisterMFASystemMasterKey(hh, false))
+                                this.Host.UI.WriteLine(ConsoleColor.Green, this.Host.UI.RawUI.BackgroundColor, infos_strings.InfosRSACertificateChanged);
+                            else
+                                this.Host.UI.WriteLine(ConsoleColor.Red, this.Host.UI.RawUI.BackgroundColor, infos_strings.InfosRSACertificateError);
+                        }
+                    }
                     else
-                        this.Host.UI.WriteLine(ConsoleColor.Yellow, this.Host.UI.RawUI.BackgroundColor, String.Format(infos_strings.InfoComputerNotRegistered, ServerName));
+                        this.Host.UI.WriteLine(ConsoleColor.Red, this.Host.UI.RawUI.BackgroundColor, String.Format(infos_strings.InfoComputerNotRegistered, ServerName));
                     WriteObject(servers);
                 }
             }
@@ -1796,6 +1818,19 @@ namespace MFA
     [PrimaryServerRequired, ConfigurationRightsRequired, NotRemotable]
     public sealed class RegisterMFASystem : MFACmdlet
     {
+        private bool _nomfareset = false;
+
+        /// <summary>
+        /// <para type="description">Disable RSA key Reset for MFA Passwords.</para>
+        /// NoRSAKeyReset property
+        /// </summary>
+        [Parameter(Mandatory = false, Position = 0, ParameterSetName = "Data")]
+        public SwitchParameter NoRSAKeyReset
+        {
+            get { return _nomfareset; }
+            set { _nomfareset = value; }
+        }
+
         /// <summary>
         /// BeginProcessing method implementation
         /// </summary>
@@ -1824,9 +1859,18 @@ namespace MFA
                     PSHost hh = GetHostForVerbose();
                     ADFSServiceManager svc = ManagementService.ADFSManager;
                     if (svc.RegisterMFASystem(hh))
+                    {
                         this.Host.UI.WriteLine(ConsoleColor.Green, this.Host.UI.RawUI.BackgroundColor, String.Format(infos_strings.InfosSystemRegistered));
+                        if (!_nomfareset)
+                        {
+                            if (svc.RegisterMFASystemMasterKey(hh, false))
+                                this.Host.UI.WriteLine(ConsoleColor.Green, this.Host.UI.RawUI.BackgroundColor, infos_strings.InfosRSACertificateChanged);
+                            else
+                                this.Host.UI.WriteLine(ConsoleColor.Red, this.Host.UI.RawUI.BackgroundColor, infos_strings.InfosRSACertificateError);
+                        }
+                    }
                     else
-                        this.Host.UI.WriteLine(ConsoleColor.Yellow, this.Host.UI.RawUI.BackgroundColor, String.Format(infos_strings.InfosSystemNotRegistered));
+                        this.Host.UI.WriteLine(ConsoleColor.Red, this.Host.UI.RawUI.BackgroundColor, String.Format(infos_strings.InfosSystemNotRegistered));
                 }
             }
             catch (Exception ex)
@@ -1887,7 +1931,7 @@ namespace MFA
                     if (svc.ImportMFAProviderConfiguration(hh, ImportFilePath))
                         this.Host.UI.WriteLine(ConsoleColor.Green, this.Host.UI.RawUI.BackgroundColor, String.Format(infos_strings.InfosSystemImported, ImportFilePath));
                     else
-                        this.Host.UI.WriteLine(ConsoleColor.Yellow, this.Host.UI.RawUI.BackgroundColor, String.Format(infos_strings.InfosSystemInInvalidState));
+                        this.Host.UI.WriteLine(ConsoleColor.Red, this.Host.UI.RawUI.BackgroundColor, String.Format(infos_strings.InfosSystemInInvalidState));
                 }
             }
             catch (Exception ex)
@@ -5798,7 +5842,6 @@ namespace MFA
             }
         }
     }
-
     #endregion
 
     #region Set-MFAPolicyTemplate
@@ -6596,36 +6639,108 @@ namespace MFA
     }
     #endregion
 
+    #region Register-MFASystemMasterKey
+    /// <summary>
+    /// <para type="synopsis">Register a new sytem master key.</para>
+    /// <para type="description">Register a new sytem master key for MFA.</para>
+    /// </summary>
+    /// <example>
+    ///   <para>Register-MFASystemMasterKey</para>
+    ///   <para>Register a new sytem master key for MFA System Enryption.</para>
+    /// </example>
+    /// <example>
+    ///   <para>Register-MFASystemMasterKey -Delete</para>
+    ///   <para>Reset encryption for MFA passwords an PassPhrase to default AES encryption.</para>
+    /// </example>
+    [Cmdlet(VerbsLifecycle.Register, "MFASystemMasterKey", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
+    [PrimaryServerRequired, ConfigurationRightsRequired, NotRemotable]
+    public sealed class RegisterMFASystemMasterKey : MFACmdlet
+    {
+        private bool _deletekey = false;
+
+        /// <summary>
+        /// <para type="description">Delete current RSA key for MFA Passwords and reset all passwords and Passphrase to default AES encryption.</para>
+        /// NoRSAKeyReset property
+        /// </summary>
+        [Parameter(Mandatory = false, Position = 0, ParameterSetName = "Data")]
+        public SwitchParameter Delete
+        {
+            get { return _deletekey; }
+            set { _deletekey = value; }
+        }
+
+        /// <summary>
+        /// BeginProcessing method implementation
+        /// </summary>
+        protected override void BeginProcessing()
+        {
+            base.BeginProcessing();
+            try
+            {
+                ManagementService.Initialize(this.Host, true);
+            }
+            catch (Exception ex)
+            {
+                this.ThrowTerminatingError(new ErrorRecord(ex, "3019", ErrorCategory.OperationStopped, this));
+            }
+        }
+
+        /// <summary>
+        /// ProcessRecord method override
+        /// </summary>
+        protected override void ProcessRecord()
+        {
+            try
+            {
+                if (ShouldProcess("Register-MFASystemMasterKey"))
+                {
+                    Collection<ChoiceDescription> col = new Collection<ChoiceDescription>();
+                    ChoiceDescription c1 = new ChoiceDescription(infos_strings.InfosYes);
+                    ChoiceDescription c2 = new ChoiceDescription(infos_strings.InfosNo);
+                    col.Add(c1);
+                    col.Add(c2);
+                    if (this.Host.UI.PromptForChoice("Register-MFASystemMasterKey", infos_strings.InfoRSAKeyWillbeReset, col, 1) == 0)
+                    {
+                        PSHost hh = GetHostForVerbose();
+                        ADFSServiceManager svc = ManagementService.ADFSManager;
+                        if (svc.RegisterMFASystemMasterKey(hh, this.Delete))
+                            this.Host.UI.WriteLine(ConsoleColor.Green, this.Host.UI.RawUI.BackgroundColor, infos_strings.InfosRSACertificateChanged);
+                        else
+                            this.Host.UI.WriteLine(ConsoleColor.Red, this.Host.UI.RawUI.BackgroundColor, infos_strings.InfosRSACertificateError);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                this.ThrowTerminatingError(new ErrorRecord(ex, "3020", ErrorCategory.OperationStopped, this));
+            }
+        }
+    }
+    #endregion
+
     #region Install-MFACertificate
     /// <summary>
     /// <para type="synopsis">Install RSA Certificate.</para>
-    /// <para type="description">Install a new RSA Certificate for MFA.</para>
+    /// <para type="description">Install a new RSA Certificate for Users.</para>
     /// </summary>
     /// <example>
     ///   <para>Install-MFACertificate</para>
-    ///   <para>Create a new certificate for RSA User keys.</para>
+    ///   <para>Create a new certificate for Users.</para>
     /// </example>
     /// <example>
-    ///   <para>Install-MFACertificate -RSACertificateDuration 10</para>
-    ///   <para>Create a new certificate for RSA User keys with specific duration.</para>
+    ///   <para>Install-MFACertificate -Duration 10</para>
+    ///   <para>Create a new certificate for Users with specific duration.</para>
     /// </example>
     [Cmdlet(VerbsLifecycle.Install, "MFACertificate", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
     [PrimaryServerRequired, AdministratorsRightsRequired, NotRemotable]
     public sealed class InstallMFACertificate : MFACmdlet
     {
-        private int _duration = 5;
-        private SwitchParameter _restart = true;
-
         /// <summary>
-        /// RSACertificateDuration property
+        /// Duration property
         /// <para type="description">Duration for the new certificate (Years)</para>
         /// </summary>
         [Parameter(ParameterSetName = "Data")]
-        public int RSACertificateDuration
-        {
-            get { return _duration; }
-            set { _duration = value; }
-        }
+        public int Duration { get; set; } = 10;
 
         /// <summary>
         /// BeginProcessing method implementation
@@ -6653,16 +6768,19 @@ namespace MFA
                 if (ShouldProcess("Install-MFACertificate"))
                 {
                     Collection<ChoiceDescription> col = new Collection<ChoiceDescription>();
-                    ChoiceDescription c1 = new ChoiceDescription("&Yes");
-                    ChoiceDescription c2 = new ChoiceDescription("&No");
+                    ChoiceDescription c1 = new ChoiceDescription(infos_strings.InfosYes);
+                    ChoiceDescription c2 = new ChoiceDescription(infos_strings.InfosNo);
                     col.Add(c1);
                     col.Add(c2);
                     if (this.Host.UI.PromptForChoice("Install-MFACertificate", infos_strings.InfoAllKeyWillbeReset, col, 1) == 0)
                     {
                         PSHost hh = GetHostForVerbose();
                         ADFSServiceManager svc = ManagementService.ADFSManager;
-                        string thumb = svc.RegisterNewRSACertificate(hh, this.RSACertificateDuration);
-                        this.Host.UI.WriteLine(ConsoleColor.Green, this.Host.UI.RawUI.BackgroundColor, String.Format(infos_strings.InfosRSACertificateChanged, thumb));
+                        string thumb = svc.RegisterNewRSACertificate(hh, this.Duration);
+                        if (!string.IsNullOrEmpty(thumb))
+                            this.Host.UI.WriteLine(ConsoleColor.Green, this.Host.UI.RawUI.BackgroundColor, String.Format(infos_strings.InfosRSACertificateChanged, thumb));
+                        else
+                            this.Host.UI.WriteLine(ConsoleColor.Red, this.Host.UI.RawUI.BackgroundColor, String.Format(infos_strings.InfosRSACertificateChanged, "NULL"));
                     }
                 }
             }
@@ -6680,12 +6798,12 @@ namespace MFA
     /// <para type="description">Install a new RSA Certificate for MFA.</para>
     /// </summary>
     /// <example>
-    ///   <para>Install-MFACertificate</para>
-    ///   <para>Create a new certificate for RSA User keys.</para>
+    ///   <para>Install-MFACertificateForADFS</para>
+    ///   <para>Create a new certificate for ADFS Encrypt/Sign.</para>
     /// </example>
     /// <example>
-    ///   <para>Install-MFACertificate -RSACertificateDuration 10 -RestartFarm</para>
-    ///   <para>Create a new certificate for RSA User keys with specific duration.</para>
+    ///   <para>Install-MFACertificateForADFS -Duration 10 -RestartFarm</para>
+    ///   <para>Create a new certificate for ADFS Encrypt/Sign with specific duration.</para>
     /// </example>
     [Cmdlet(VerbsLifecycle.Install, "MFACertificateForADFS", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
     [PrimaryServerRequired, AdministratorsRightsRequired, NotRemotable]
@@ -6706,11 +6824,11 @@ namespace MFA
         public PSADFSCertificateKind Kind { get; set; } = PSADFSCertificateKind.Signing;
 
         /// <summary>
-        /// CertificateDuration property
+        /// Duration property
         /// <para type="description">Duration for the new certificate (Years)</para>
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "Data")]
-        public int CertificateDuration { get; set; } = 5;
+        public int Duration { get; set; } = 5;
 
         /// <summary>
         /// BeginProcessing method implementation
@@ -6739,7 +6857,7 @@ namespace MFA
                 {
                     PSHost hh = GetHostForVerbose();
                     ADFSServiceManager svc = ManagementService.ADFSManager;
-                    if (svc.RegisterNewADFSCertificate(hh, this.Subject, (this.Kind==PSADFSCertificateKind.Signing), this.CertificateDuration))
+                    if (svc.RegisterNewADFSCertificate(hh, this.Subject, (this.Kind==PSADFSCertificateKind.Signing), this.Duration))
                         this.Host.UI.WriteLine(ConsoleColor.Green, this.Host.UI.RawUI.BackgroundColor, infos_strings.InfosADFSCertificateChanged);
                 }
             }

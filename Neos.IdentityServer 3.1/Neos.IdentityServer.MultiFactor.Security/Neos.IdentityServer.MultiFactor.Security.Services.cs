@@ -45,7 +45,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// ReplayServiceHost Constructor
         /// </summary>
-        public ReplayServiceHost(IDependency dep, Type serviceType, params Uri[] baseAddresses): base(serviceType, baseAddresses)
+        public ReplayServiceHost(IDependency dep, Type serviceType, params Uri[] baseAddresses) : base(serviceType, baseAddresses)
         {
             if (dep == null)
             {
@@ -460,7 +460,7 @@ namespace Neos.IdentityServer.MultiFactor
     /// <summary>
     /// EventLogEventLogDependency class 
     /// </summary>
-    public class EventLogDependency: IDependency
+    public class EventLogDependency : IDependency
     {
         private EventLog _eventlog;
         public EventLogDependency(EventLog eventLog)
@@ -578,7 +578,7 @@ namespace Neos.IdentityServer.MultiFactor
                     beh.IgnoreExtensionDataObject = true;
                     beh.MaxItemsInObjectGraph = 131070;
                 }
-                Servicehost.Open();                
+                Servicehost.Open();
                 Started = true;
             }
             catch (Exception e)
@@ -626,9 +626,9 @@ namespace Neos.IdentityServer.MultiFactor
         public ServiceBase Servicebase { get; private set; }
 
     }
-#endregion
+    #endregion
 
-#region WebThemesServer
+    #region WebThemesServer
     /// <summary>
     /// WebThemesServer class (Server Host)
     /// </summary>
@@ -779,9 +779,9 @@ namespace Neos.IdentityServer.MultiFactor
         public ServiceBase Servicebase { get; private set; }
 
     }
-#endregion
+    #endregion
 
-#region WebThemesServer
+    #region WebAdminServer
     /// <summary>
     /// WebAdminServer class (Server Host)
     /// </summary>
@@ -850,7 +850,7 @@ namespace Neos.IdentityServer.MultiFactor
                     prf.MaxConcurrentCalls = 256;
                     prf.MaxConcurrentInstances = 256;
                     prf.MaxConcurrentSessions = 256;
-                }               
+                }
 
                 NetTcpBinding tcp = new NetTcpBinding(SecurityMode.Transport);
                 tcp.MaxConnections = 256;
@@ -933,9 +933,9 @@ namespace Neos.IdentityServer.MultiFactor
         public ServiceBase Servicebase { get; private set; }
 
     }
-#endregion
+    #endregion
 
-#region NTServiceServer
+    #region NTServiceServer
     /// <summary>
     /// NTServiceServer class (Server Host)
     /// </summary>
@@ -1086,9 +1086,9 @@ namespace Neos.IdentityServer.MultiFactor
         public ServiceBase Servicebase { get; private set; }
 
     }
-#endregion
+    #endregion
 
-#region ReplayClient
+    #region ReplayClient
     /// <summary>
     /// ReplayClient class (Client Proxy)
     /// </summary>
@@ -1179,9 +1179,9 @@ namespace Neos.IdentityServer.MultiFactor
             }
         }
     }
-#endregion
+    #endregion
 
-#region WebThemesClient
+    #region WebThemesClient
     /// <summary>
     /// WebThemesClient class (Client Proxy)
     /// </summary>
@@ -1269,9 +1269,9 @@ namespace Neos.IdentityServer.MultiFactor
             }
         }
     }
-#endregion
+    #endregion
 
-#region WebAdminClient
+    #region WebAdminClient
     /// <summary>
     /// WebAdminClient class (Client Proxy)
     /// </summary>
@@ -1360,9 +1360,9 @@ namespace Neos.IdentityServer.MultiFactor
             }
         }
     }
-#endregion
+    #endregion
 
-#region NTServiceClient
+    #region NTServiceClient
     /// <summary>
     /// NTServiceClient class (Client Proxy)
     /// </summary>
@@ -1450,9 +1450,9 @@ namespace Neos.IdentityServer.MultiFactor
             }
         }
     }
-#endregion
+    #endregion
 
-#region ServicesMessageEncoderFactory
+    #region ServicesMessageEncoderFactory
     /// <summary>
     /// ServicesMessageEncoderFactory class
     /// </summary>
@@ -1486,7 +1486,7 @@ namespace Neos.IdentityServer.MultiFactor
             get { return encoder.MessageVersion; }
         }
 
-#region SercicesMessageEncoder
+        #region SercicesMessageEncoder
         /// <summary>
         /// SercicesMessageEncoder Class
         /// </summary>
@@ -1556,7 +1556,7 @@ namespace Neos.IdentityServer.MultiFactor
                 Array.Copy(cryptedBytes, 0, bufferManagerBuffer, messageOffset, cryptedBytes.Length);
 
                 bufferManager.ReturnBuffer(buffer.Array);
-                ArraySegment<byte> byteArray = new ArraySegment<byte>(bufferManagerBuffer, messageOffset, cryptedBytes.Length);               
+                ArraySegment<byte> byteArray = new ArraySegment<byte>(bufferManagerBuffer, messageOffset, cryptedBytes.Length);
 
                 return byteArray;
             }
@@ -1641,20 +1641,20 @@ namespace Neos.IdentityServer.MultiFactor
                 stream.Flush();
             }
         }
-#endregion
+        #endregion
     }
-#endregion
+    #endregion
 
-#region ServicesMessageEncodingBindingElement
+    #region ServicesMessageEncodingBindingElement
     /// <summary>
     /// ServicesMessageEncodingBindingElement class
     /// </summary>
-    public sealed class ServicesMessageEncodingBindingElement: MessageEncodingBindingElement, IPolicyExportExtension
+    public sealed class ServicesMessageEncodingBindingElement : MessageEncodingBindingElement, IPolicyExportExtension
     {
         /// <summary>
         /// ServicesMessageEncodingBindingElement Constructor
         /// </summary>
-        public ServicesMessageEncodingBindingElement(): this(new TextMessageEncodingBindingElement()) { }
+        public ServicesMessageEncodingBindingElement() : this(new TextMessageEncodingBindingElement()) { }
 
         /// <summary>
         /// ServicesMessageEncodingBindingElement Constructor
@@ -1756,11 +1756,11 @@ namespace Neos.IdentityServer.MultiFactor
             }
             XmlDocument document = new XmlDocument();
             policyContext.GetBindingAssertions().Add(document.CreateElement(ServicesMessageEncodingPolicyConstants.MFAEncodingPrefix, ServicesMessageEncodingPolicyConstants.MFAEncodingName, ServicesMessageEncodingPolicyConstants.MFAEncodingNamespace));
-        } 
+        }
     }
-#endregion
+    #endregion
 
-#region ServicesMessageEncodingElement
+    #region ServicesMessageEncodingElement
     /// <summary>
     /// ServicesMessageEncodingElement Class
     /// </summary>
@@ -1823,9 +1823,9 @@ namespace Neos.IdentityServer.MultiFactor
             }
         }
     }
-#endregion
+    #endregion
 
-#region ServicesMessageEncodingPolicyConstants
+    #region ServicesMessageEncodingPolicyConstants
     /// <summary>
     /// ServicesMessageEncodingPolicyConstants class
     /// </summary>
@@ -1835,9 +1835,9 @@ namespace Neos.IdentityServer.MultiFactor
         public const string MFAEncodingNamespace = "http://schemas.microsoft.com/ws/06/2004/mspolicy/netmfaservers";
         public const string MFAEncodingPrefix = "mfa";
     }
-#endregion
+    #endregion
 
-#region ServicesMessageEncodingBindingElementImporter
+    #region ServicesMessageEncodingBindingElementImporter
     public class ServicesMessageEncodingBindingElementImporter : IPolicyImportExtension
     {
         /// <summary>
@@ -1942,7 +1942,7 @@ namespace Neos.IdentityServer.MultiFactor
             }
             else
                 bRet = true;
-            return bRet;           
+            return bRet;
         }
 
         /// <summary>
@@ -1954,7 +1954,7 @@ namespace Neos.IdentityServer.MultiFactor
             object obj = rk.GetValue("DelegatedAdminGroup");
             if (obj == null)
                 return string.Empty;
-            else 
+            else
                 return obj.ToString();
         }
     }

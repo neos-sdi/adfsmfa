@@ -818,7 +818,8 @@ namespace Neos.IdentityServer.MultiFactor.Samples
                 MFAUserKeys _itm = _lst.FirstOrDefault(s => s.UserName.ToLower().Equals(upn.ToLower()) && (!string.IsNullOrEmpty(s.UserCertificate)));
                 if (_itm != null)
                 {
-                    X509Certificate2 cert = new X509Certificate2(Convert.FromBase64String(_itm.UserCertificate), password, X509KeyStorageFlags.Exportable | X509KeyStorageFlags.EphemeralKeySet); 
+                    X509Certificate2 cert = new X509Certificate2(Convert.FromBase64String(_itm.UserCertificate), password, X509KeyStorageFlags.EphemeralKeySet);
+                   // X509Certificate2 cert = new X509Certificate2(Convert.FromBase64String(_itm.UserCertificate), password, X509KeyStorageFlags.Exportable | X509KeyStorageFlags.EphemeralKeySet);
                     result = cert;
                 }
             }

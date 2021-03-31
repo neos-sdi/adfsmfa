@@ -27,6 +27,7 @@ using System.ServiceModel.Description;
 
 namespace Neos.IdentityServer.MultiFactor
 {
+    #region ReplayService
     /// <summary>
     /// ReplayService class
     /// </summary>
@@ -145,7 +146,9 @@ namespace Neos.IdentityServer.MultiFactor
             }
         }
     }
+    #endregion
 
+    #region WebThemeService
     /// <summary>
     /// WebThemeService class
     /// </summary>
@@ -324,7 +327,9 @@ namespace Neos.IdentityServer.MultiFactor
             }
         }
     }
+    #endregion
 
+    #region WebAdminService
     /// <summary>
     /// WebAdminService class
     /// </summary>
@@ -526,6 +531,40 @@ namespace Neos.IdentityServer.MultiFactor
         }
         #endregion
 
+        #region Master Keys
+        /// <summary>
+        /// NewMFASystemMasterKey method implementation
+        /// </summary>
+        public bool NewMFASystemMasterKey(Dictionary<string, bool> servers, bool deleteonly = false)
+        {
+            try
+            {
+                return _manager.NewMFASystemMasterKey(servers, deleteonly);
+            }
+            catch (Exception e)
+            {
+                _log.WriteEntry(string.Format("Error on WebAdminService Service NewMFASystemMasterKey method : {0}.", e.Message), EventLogEntryType.Error, 2010);
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// PushMFASystemMasterKey method implementation
+        /// </summary>
+        public void PushMFASystemMasterkey(byte[] data, bool deleteonly = false)
+        {
+            try
+            {
+                _manager.PushMFASystemMasterKey(data, deleteonly);
+            }
+            catch (Exception e)
+            {
+                _log.WriteEntry(string.Format("Error on WebAdminService Service PushMFASystemMasterKey method : {0}.", e.Message), EventLogEntryType.Error, 2010);
+                return;
+            }
+        }
+        #endregion
+
         #region Firewall
         /// <summary>
         /// AddFirewallRules method implmentation
@@ -646,7 +685,9 @@ namespace Neos.IdentityServer.MultiFactor
         }
         #endregion
     }
+    #endregion
 
+    #region NTService
     /// <summary>
     /// NTService class
     /// </summary>
@@ -829,4 +870,5 @@ namespace Neos.IdentityServer.MultiFactor
             return (Dns.GetHostEntry("LocalHost").HostName.ToLower().Equals(machinename.ToLower()));
         }
     }
+    #endregion
 }

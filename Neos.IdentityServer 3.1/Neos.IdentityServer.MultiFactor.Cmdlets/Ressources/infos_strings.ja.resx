@@ -117,9 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="InfoAllKeyWillbeReset" xml:space="preserve">
-    <value>すべてのRSAキーが無効になります!続行しますか (Y/N)</value>
-  </data>
   <data name="InfosAllServicesRestarted" xml:space="preserve">
     <value>すべてのファーム サービスが再起動しました!</value>
   </data>
@@ -225,9 +222,6 @@
   <data name="InfosSampleUnInstalled" xml:space="preserve">
     <value>MFA のサンプルがアンインストールされました !</value>
   </data>
-  <data name="InfosRSACertificateChanged" xml:space="preserve">
-    <value>MFA 証明書{0}正しく更新されます。</value>
-  </data>
   <data name="InfosSQLCertificateChanged" xml:space="preserve">
     <value>SQL 証明書{0}正しく更新されました!</value>
   </data>
@@ -236,5 +230,23 @@
   </data>
   <data name="InfosSystemNotRegistered" xml:space="preserve">
     <value>MFAシステムが登録されていません!</value>
+  </data>
+  <data name="InfosRSACertificateChanged" xml:space="preserve">
+    <value>MFA RSA 暗号化キーが正しく更新されました !</value>
+  </data>
+  <data name="InfosRSACertificateError" xml:space="preserve">
+    <value>MFA RSA 暗号化キーが正しく更新されていません!</value>
+  </data>
+  <data name="InfosYes" xml:space="preserve">
+    <value>&amp;Yes</value>
+  </data>
+  <data name="InfosNo" xml:space="preserve">
+    <value>&amp;No</value>
+  </data>
+  <data name="InfoRSAKeyWillbeReset" xml:space="preserve">
+    <value>MFA RSA キーが更新されます!続行。</value>
+  </data>
+  <data name="InfoAllKeyWillbeReset" xml:space="preserve">
+    <value>すべてのユーザーの現在のキーが無効になります!続行。</value>
   </data>
 </root>

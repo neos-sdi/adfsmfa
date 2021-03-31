@@ -117,9 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="InfoAllKeyWillbeReset" xml:space="preserve">
-    <value>Wszystkie klucze RSA zostaną unieważnione! Kontynuuj (t/N)</value>
-  </data>
   <data name="InfosAllServicesRestarted" xml:space="preserve">
     <value>Wszystkie usługi rolnicze ponownie !</value>
   </data>
@@ -225,9 +222,6 @@
   <data name="InfosSampleUnInstalled" xml:space="preserve">
     <value>Mfa przykład UnInstalled!</value>
   </data>
-  <data name="InfosRSACertificateChanged" xml:space="preserve">
-    <value>Certyfikat usługi MFA {0} poprawnie zaktualizowany!</value>
-  </data>
   <data name="InfosSQLCertificateChanged" xml:space="preserve">
     <value>Certyfikat SQL {0} poprawnie zaktualizowany!</value>
   </data>
@@ -236,5 +230,23 @@
   </data>
   <data name="InfosSystemNotRegistered" xml:space="preserve">
     <value>Mfa System Nie zarejestrowany !</value>
+  </data>
+  <data name="InfosRSACertificateChanged" xml:space="preserve">
+    <value>Klucz szyfrowania MFA RSA poprawnie zaktualizowany!</value>
+  </data>
+  <data name="InfosRSACertificateError" xml:space="preserve">
+    <value>Klucz szyfrowania RSA MFA nie został poprawnie zaktualizowany!</value>
+  </data>
+  <data name="InfosYes" xml:space="preserve">
+    <value>&amp;Tak</value>
+  </data>
+  <data name="InfosNo" xml:space="preserve">
+    <value>&amp;Nie</value>
+  </data>
+  <data name="InfoRSAKeyWillbeReset" xml:space="preserve">
+    <value>Klucz RSA MFA zostanie odnowiony! Kontynuować ?</value>
+  </data>
+  <data name="InfoAllKeyWillbeReset" xml:space="preserve">
+    <value>Wszystkie bieżące klucze użytkowników zostaną unieważnione ! Kontynuować ?</value>
   </data>
 </root>

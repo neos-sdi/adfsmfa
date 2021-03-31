@@ -260,6 +260,49 @@ namespace Neos.IdentityServer.MultiFactor
         }
 
         /// <summary>
+        /// InternalUpdateSystemFilesACLs method implementation
+        /// </summary>
+        internal static void InternalUpdateSystemFilesACLs(string fullpath, bool fulltosystemonly = false)
+        {
+            if (!Loaded)
+                Initialize();
+
+            FileSecurity fSecurity = File.GetAccessControl(fullpath, AccessControlSections.Access);
+            fSecurity.SetAccessRuleProtection(true, false);
+
+            SecurityIdentifier localsys = new SecurityIdentifier(WellKnownSidType.LocalSystemSid, null);
+            fSecurity.PurgeAccessRules(localsys);
+            fSecurity.AddAccessRule(new FileSystemAccessRule(localsys, FileSystemRights.FullControl, AccessControlType.Allow));
+
+            SecurityIdentifier localacc = new SecurityIdentifier(WellKnownSidType.BuiltinAdministratorsSid, null);
+            fSecurity.PurgeAccessRules(localacc);
+            if (!fulltosystemonly)
+                fSecurity.AddAccessRule(new FileSystemAccessRule(localacc, FileSystemRights.FullControl, AccessControlType.Allow));
+            else
+                fSecurity.AddAccessRule(new FileSystemAccessRule(localacc, FileSystemRights.ReadAndExecute, AccessControlType.Allow));
+
+            if (!string.IsNullOrEmpty(ADFSAccountSID))
+            {
+                SecurityIdentifier adfsacc = new SecurityIdentifier(ADFSAccountSID);
+                fSecurity.PurgeAccessRules(adfsacc);
+                fSecurity.AddAccessRule(new FileSystemAccessRule(adfsacc, FileSystemRights.ReadAndExecute, AccessControlType.Allow));
+            }
+            if (!string.IsNullOrEmpty(ADFSServiceSID))
+            {
+                SecurityIdentifier adfsserv = new SecurityIdentifier(ADFSServiceSID);
+                fSecurity.PurgeAccessRules(adfsserv);
+                fSecurity.AddAccessRule(new FileSystemAccessRule(adfsserv, FileSystemRights.ReadAndExecute, AccessControlType.Allow));
+            }
+            if (!string.IsNullOrEmpty(ADFSAdminGroupSID))
+            {
+                SecurityIdentifier adfsgroup = new SecurityIdentifier(ADFSAdminGroupSID);
+                fSecurity.PurgeAccessRules(adfsgroup);
+                fSecurity.AddAccessRule(new FileSystemAccessRule(adfsgroup, FileSystemRights.ReadAndExecute, AccessControlType.Allow));
+            }
+            File.SetAccessControl(fullpath, fSecurity);
+        }
+
+        /// <summary>
         /// InternalUpdateACLs method implementation
         /// </summary>
         internal static void InternalUpdateFilesACLs(string fullpath)
@@ -268,6 +311,7 @@ namespace Neos.IdentityServer.MultiFactor
                 Initialize();
 
             FileSecurity fSecurity = File.GetAccessControl(fullpath, AccessControlSections.Access);
+            fSecurity.SetAccessRuleProtection(true, false);
 
             SecurityIdentifier localsys = new SecurityIdentifier(WellKnownSidType.LocalSystemSid, null);
             fSecurity.PurgeAccessRules(localsys);
@@ -299,7 +343,7 @@ namespace Neos.IdentityServer.MultiFactor
         }
 
         /// <summary>
-        /// InternalUpdateACLs method implementation
+        /// InternalUpdateDirectoryACLs method implementation
         /// </summary>
         internal static void InternalUpdateDirectoryACLs(string fulldir)
         {
@@ -338,9 +382,9 @@ namespace Neos.IdentityServer.MultiFactor
         }
 
         /// <summary>
-        /// UpdateCertificatesACL method implementation
+        /// InternalUpdateCertificatesACLs method implementation
         /// </summary>
-        internal static bool internalUpdateCertificatesACLs(KeyMgtOptions options = KeyMgtOptions.AllCerts)
+        internal static bool InternalUpdateCertificatesACLs(KeyMgtOptions options = KeyMgtOptions.AllCerts)
         {
             X509Store store = new X509Store(StoreName.My, StoreLocation.LocalMachine);
             store.Open(OpenFlags.MaxAllowed);
@@ -383,15 +427,16 @@ namespace Neos.IdentityServer.MultiFactor
                             {
                                 char sep = Path.DirectorySeparatorChar;
                                 string rsamachinefullpath = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + sep + "Microsoft" + sep + "Crypto" + sep + "RSA" + sep + "MachineKeys" + sep + fileName;
-                                string rngmachinefullpath = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + sep + "Microsoft" + sep + "Crypto" + sep + "Keys" + sep + fileName;
+                               // string rngmachinefullpath = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + sep + "Microsoft" + sep + "Crypto" + sep + "Keys" + sep + fileName;
+
                                 if (File.Exists(rsamachinefullpath))
                                 {
                                     InternalUpdateFilesACLs(rsamachinefullpath);
                                 }
-                                if (File.Exists(rngmachinefullpath))
+                               /* if (File.Exists(rngmachinefullpath))
                                 {
                                     InternalUpdateFilesACLs(rngmachinefullpath);
-                                }
+                                } */
                             }
                         }
                     }
@@ -639,7 +684,7 @@ namespace Neos.IdentityServer.MultiFactor
                 Pipeline pipeline = SPRunSpace.CreatePipeline();
                 Command exportcmd = new Command("Get-AdfsProperties | Select-Object -Property DelegateServiceAdministration, AllowSystemServiceAdministration, AllowLocalAdminsServiceAdministration", true);
                 pipeline.Commands.Add(exportcmd);
-                Collection<PSObject> PSOutput = pipeline.Invoke();                
+                Collection<PSObject> PSOutput = pipeline.Invoke();
                 foreach (var result in PSOutput)
                 {
                     grpname = result.Properties["DelegateServiceAdministration"].Value.ToString();
@@ -738,7 +783,7 @@ namespace Neos.IdentityServer.MultiFactor
             public bool SystemServiceAdministrationAllowed = false;
             public bool LocalAdminsServiceAdministrationAllowed = false;
         }
-#endregion
+        #endregion
     }
-#endregion
+    #endregion
 }

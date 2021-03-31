@@ -3061,21 +3061,7 @@ namespace Neos.IdentityServer.MultiFactor
     internal static class CFGUtilities
     {
         private static char sep = Path.DirectorySeparatorChar;
-        internal static string ConfigCacheFile = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + sep + "MFA" + sep + "Config" + sep + "config.db";
-        internal static byte[] ConfigCacheKey = null;
-
-        /// <summary>
-        /// CFGUtilities static constructor
-        /// </summary>
-        static CFGUtilities()
-        {
-            ConfigCacheKey = SystemUtilities.Key;
-        }
-
-        internal static byte[] Key
-        {
-            get { return ConfigCacheKey; }
-        }
+        internal static string ConfigCacheFile = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + sep + "MFA" + sep + "Config" + sep + "config.db";        
 
         #region ReadConfiguration
         /// <summary>
@@ -3090,7 +3076,7 @@ namespace Neos.IdentityServer.MultiFactor
             }
             catch
             {
-                File.Delete(CFGUtilities.ConfigCacheFile);
+                File.Delete(ConfigCacheFile);
                 config = null;
             }
             if (config == null)
@@ -3098,7 +3084,7 @@ namespace Neos.IdentityServer.MultiFactor
 
             if (config != null)
             {
-                if (!File.Exists(CFGUtilities.ConfigCacheFile))
+                if (!File.Exists(ConfigCacheFile))
                 {
                     WriteConfigurationToCache(config);
                     BroadcastNotification(config, NotificationsKind.ConfigurationCreated, Environment.MachineName, true, true);
@@ -3151,12 +3137,12 @@ namespace Neos.IdentityServer.MultiFactor
                     config = (MFAConfig)xmlserializer.Deserialize(stm);
                     if ((!config.OTPProvider.Enabled) && (!config.MailProvider.Enabled) && (!config.ExternalProvider.Enabled) && (!config.AzureProvider.Enabled))
                         config.OTPProvider.Enabled = true;   // always let an active option eg : aplication in this case
-                    using (AESSystemEncryption MSIS = new AESSystemEncryption())
+                    using (SystemEncryption MSIS = new SystemEncryption())
                     {
-                        config.KeysConfig.XORSecret = MSIS.Decrypt(config.KeysConfig.XORSecret);
-                        config.Hosts.ActiveDirectoryHost.Password = MSIS.Decrypt(config.Hosts.ActiveDirectoryHost.Password);
-                        config.Hosts.SQLServerHost.SQLPassword = MSIS.Decrypt(config.Hosts.SQLServerHost.SQLPassword);
-                        config.MailProvider.Password = MSIS.Decrypt(config.MailProvider.Password);
+                        config.KeysConfig.XORSecret = MSIS.Decrypt(config.KeysConfig.XORSecret, "Pass Phrase Encryption");
+                        config.Hosts.ActiveDirectoryHost.Password = MSIS.Decrypt(config.Hosts.ActiveDirectoryHost.Password, "ADDS Super Account Password");
+                        config.Hosts.SQLServerHost.SQLPassword = MSIS.Decrypt(config.Hosts.SQLServerHost.SQLPassword, "SQL Super Account Password");
+                        config.MailProvider.Password = MSIS.Decrypt(config.MailProvider.Password, "Mail Provider Account Password");
                     };
                     ADDSUtils.LoadForests(config.Hosts.ActiveDirectoryHost.DomainName, config.Hosts.ActiveDirectoryHost.Account, config.Hosts.ActiveDirectoryHost.Password, config.Hosts.ActiveDirectoryHost.UseSSL, true);
                     KeysManager.Initialize(config);  // Important
@@ -3206,12 +3192,12 @@ namespace Neos.IdentityServer.MultiFactor
                             config = (MFAConfig)xmlserializer.Deserialize(ms);
                             if ((!config.OTPProvider.Enabled) && (!config.MailProvider.Enabled) && (!config.ExternalProvider.Enabled) && (!config.AzureProvider.Enabled))
                                 config.OTPProvider.Enabled = true;   // always let an active option eg : aplication in this case
-                            using (AESSystemEncryption MSIS = new AESSystemEncryption())
+                            using (SystemEncryption MSIS = new SystemEncryption())
                             {
-                                config.KeysConfig.XORSecret = MSIS.Decrypt(config.KeysConfig.XORSecret);
-                                config.Hosts.ActiveDirectoryHost.Password = MSIS.Decrypt(config.Hosts.ActiveDirectoryHost.Password);
-                                config.Hosts.SQLServerHost.SQLPassword = MSIS.Decrypt(config.Hosts.SQLServerHost.SQLPassword);
-                                config.MailProvider.Password = MSIS.Decrypt(config.MailProvider.Password);
+                                config.KeysConfig.XORSecret = MSIS.Decrypt(config.KeysConfig.XORSecret, "Pass Phrase Encryption");
+                                config.Hosts.ActiveDirectoryHost.Password = MSIS.Decrypt(config.Hosts.ActiveDirectoryHost.Password, "ADDS Super Account Password");
+                                config.Hosts.SQLServerHost.SQLPassword = MSIS.Decrypt(config.Hosts.SQLServerHost.SQLPassword, "SQL Super Account Password");
+                                config.MailProvider.Password = MSIS.Decrypt(config.MailProvider.Password, "Mail Provider Account Password");
                             };
                             ADDSUtils.LoadForests(config.Hosts.ActiveDirectoryHost.DomainName, config.Hosts.ActiveDirectoryHost.Account, config.Hosts.ActiveDirectoryHost.Password, config.Hosts.ActiveDirectoryHost.UseSSL, true);
                             KeysManager.Initialize(config);  // Important
@@ -3229,7 +3215,7 @@ namespace Neos.IdentityServer.MultiFactor
         }
 
         /// <summary>
-        /// ReadConfigurationFromDatabase method implementation
+        /// ReadConfigurationFromADFSStore method implementation
         /// </summary>
         internal static MFAConfig ReadConfigurationFromADFSStore(PSHost Host = null)
         {
@@ -3310,12 +3296,12 @@ namespace Neos.IdentityServer.MultiFactor
             {
                 if (encrypt)
                 {
-                    using (AESSystemEncryption MSIS = new AESSystemEncryption())
+                    using (SystemEncryption MSIS = new SystemEncryption())
                     {
-                        config.KeysConfig.XORSecret = MSIS.Encrypt(config.KeysConfig.XORSecret);
-                        config.Hosts.ActiveDirectoryHost.Password = MSIS.Encrypt(config.Hosts.ActiveDirectoryHost.Password);
-                        config.Hosts.SQLServerHost.SQLPassword = MSIS.Encrypt(config.Hosts.SQLServerHost.SQLPassword);
-                        config.MailProvider.Password = MSIS.Encrypt(config.MailProvider.Password);
+                        config.KeysConfig.XORSecret = MSIS.Encrypt(config.KeysConfig.XORSecret, "Pass Phrase Encryption");
+                        config.Hosts.ActiveDirectoryHost.Password = MSIS.Encrypt(config.Hosts.ActiveDirectoryHost.Password, "ADDS Super Account Password");
+                        config.Hosts.SQLServerHost.SQLPassword = MSIS.Encrypt(config.Hosts.SQLServerHost.SQLPassword, "SQL Super Account Password");
+                        config.MailProvider.Password = MSIS.Encrypt(config.MailProvider.Password, "Mail Provider Account Password");
                     };
                 }
                 config.LastUpdated = DateTime.UtcNow;
@@ -3373,12 +3359,12 @@ namespace Neos.IdentityServer.MultiFactor
             {
                 if (encrypt)
                 {
-                    using (AESSystemEncryption MSIS = new AESSystemEncryption())
+                    using (SystemEncryption MSIS = new SystemEncryption())
                     {
-                        config.KeysConfig.XORSecret = MSIS.Encrypt(config.KeysConfig.XORSecret);
-                        config.Hosts.ActiveDirectoryHost.Password = MSIS.Encrypt(config.Hosts.ActiveDirectoryHost.Password);
-                        config.Hosts.SQLServerHost.SQLPassword = MSIS.Encrypt(config.Hosts.SQLServerHost.SQLPassword);
-                        config.MailProvider.Password = MSIS.Encrypt(config.MailProvider.Password);
+                        config.KeysConfig.XORSecret = MSIS.Encrypt(config.KeysConfig.XORSecret, "Pass Phrase Encryption");
+                        config.Hosts.ActiveDirectoryHost.Password = MSIS.Encrypt(config.Hosts.ActiveDirectoryHost.Password, "ADDS Super Account Password");
+                        config.Hosts.SQLServerHost.SQLPassword = MSIS.Encrypt(config.Hosts.SQLServerHost.SQLPassword, "SQL Super Account Password");
+                        config.MailProvider.Password = MSIS.Encrypt(config.MailProvider.Password, "Mail Provider Account Password");
                     };
                 }
                 XmlConfigSerializer xmlserializer = new XmlConfigSerializer(typeof(MFAConfig));

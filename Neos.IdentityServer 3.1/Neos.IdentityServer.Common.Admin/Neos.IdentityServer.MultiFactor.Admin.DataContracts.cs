@@ -450,11 +450,11 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             DomainAddress = adds.DomainAddress;
             Account = adds.Account;
             SQLAccount = sql.SQLAccount;
-            using (AESSystemEncryption MSIS = new AESSystemEncryption())
+            using (SystemEncryption MSIS = new SystemEncryption())
             {
-                Password = MSIS.Encrypt(adds.Password);
-                SQLPassword = MSIS.Encrypt(sql.SQLPassword);
-                XORSecret = MSIS.Encrypt(keys.XORSecret);
+                Password = MSIS.Encrypt(adds.Password, "ADDS Super Account Password");
+                SQLPassword = MSIS.Encrypt(sql.SQLPassword, "SQL Super Account Password");
+                XORSecret = MSIS.Encrypt(keys.XORSecret, "Pass Phrase Encryption");
             };
         }
 
@@ -483,11 +483,12 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             adds.DomainAddress = this.DomainAddress;
             adds.Account = this.Account;
             sql.SQLAccount = this.SQLAccount;
-            using (AESSystemEncryption MSIS = new AESSystemEncryption())
+            using (SystemEncryption MSIS = new SystemEncryption())
             {
-                adds.Password = MSIS.Decrypt(Password);
-                sql.SQLPassword = MSIS.Decrypt(SQLPassword);
-                keys.XORSecret = MSIS.Decrypt(XORSecret);
+                adds.Password = MSIS.Decrypt(Password, "ADDS Super Account Password");
+                sql.SQLPassword = MSIS.Decrypt(SQLPassword, "SQL Super Account Password");
+                keys.XORSecret = MSIS.Decrypt(XORSecret, "Pass Phrase Encryption");
+
             };
             ManagementService.ADFSManager.WriteConfiguration(host);
         }
@@ -894,9 +895,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             ForceWizard = mail.ForceWizard;
             From = mail.From;
             UserName = mail.UserName;
-            using (AESSystemEncryption MSIS = new AESSystemEncryption())
+            using (SystemEncryption MSIS = new SystemEncryption())
             {
-                Password = MSIS.Encrypt(mail.Password);
+                Password = MSIS.Encrypt(mail.Password, "Mail Provider Account Password");
             };
             Host = mail.Host;
             Port = mail.Port;
@@ -957,9 +958,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             mail.ForceWizard = ForceWizard;
             mail.From = From;
             mail.UserName = UserName;
-            using (AESSystemEncryption MSIS = new AESSystemEncryption())
+            using (SystemEncryption MSIS = new SystemEncryption())
             {
-                mail.Password = MSIS.Decrypt(Password);
+                mail.Password = MSIS.Decrypt(Password, "Mail Provider Account Password");
             };
             mail.Host = Host;
             mail.Port = Port;

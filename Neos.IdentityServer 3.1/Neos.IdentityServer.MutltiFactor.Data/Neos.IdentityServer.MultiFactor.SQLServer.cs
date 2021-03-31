@@ -1486,7 +1486,8 @@ namespace Neos.IdentityServer.MultiFactor.Data
                     if (!rd.IsDBNull(0))
                     {
                         string strcert = rd.GetString(0);
-                        X509Certificate2 cert = new X509Certificate2(Convert.FromBase64String(strcert), pass, X509KeyStorageFlags.Exportable | X509KeyStorageFlags.EphemeralKeySet); // | X509KeyStorageFlags.PersistKeySet);
+                        X509Certificate2 cert = new X509Certificate2(Convert.FromBase64String(strcert), pass, X509KeyStorageFlags.EphemeralKeySet);
+                       // X509Certificate2 cert = new X509Certificate2(Convert.FromBase64String(strcert), pass, X509KeyStorageFlags.Exportable | X509KeyStorageFlags.EphemeralKeySet); 
                         return cert;
                     }
                     else

@@ -117,8 +117,8 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="InfoAllKeyWillbeReset" xml:space="preserve">
-    <value>All RSA keys will be invalidated ! Continue (Y/N)</value>
+  <data name="InfoRSAKeyWillbeReset" xml:space="preserve">
+    <value>MFA RSA key will be renewed ! Continue ?</value>
   </data>
   <data name="InfosAllServicesRestarted" xml:space="preserve">
     <value>All Farm Services Restarted !</value>
@@ -133,7 +133,7 @@
     <value>Records count : {0}</value>
   </data>
   <data name="InfosRSACertificateChanged" xml:space="preserve">
-    <value>MFA certificate {0} correctly updated ! </value>
+    <value>MFA RSA Encryption Key correctly updated ! </value>
   </data>
   <data name="InfosServerServicesRestarted" xml:space="preserve">
     <value>You must restart "MFA Notification Hub" service and restart all open consoles and powershell sessions  !</value>
@@ -236,5 +236,17 @@
   </data>
   <data name="InfosSystemNotRegistered" xml:space="preserve">
     <value>MFA System Not registered ! </value>
+  </data>
+  <data name="InfosRSACertificateError" xml:space="preserve">
+    <value>MFA RSA Encryption key not correctly updated !</value>
+  </data>
+  <data name="InfosYes" xml:space="preserve">
+    <value>&amp;Yes</value>
+  </data>
+  <data name="InfosNo" xml:space="preserve">
+    <value>&amp;No</value>
+  </data>
+  <data name="InfoAllKeyWillbeReset" xml:space="preserve">
+    <value>All the users's current keys will be invalidated ! Continue ?</value>
   </data>
 </root>
