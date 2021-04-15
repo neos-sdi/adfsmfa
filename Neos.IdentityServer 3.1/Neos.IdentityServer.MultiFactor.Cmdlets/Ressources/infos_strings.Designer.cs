@@ -232,7 +232,7 @@ namespace Neos.IdentityServer.MultiFactor.Cmdlets.Ressources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à MFA RSA Encryption Key correctly updated ! .
+        ///   Recherche une chaîne localisée semblable à MFA RSA Certificate correctly installed ! .
         /// </summary>
         internal static string InfosRSACertificateChanged {
             get {
@@ -241,11 +241,83 @@ namespace Neos.IdentityServer.MultiFactor.Cmdlets.Ressources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à MFA RSA Encryption key not correctly updated !.
+        ///   Recherche une chaîne localisée semblable à MFA RSA Certificate not correctly installed !.
         /// </summary>
         internal static string InfosRSACertificateError {
             get {
                 return ResourceManager.GetString("InfosRSACertificateError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à MFA AES CNG Encryption Key correctly updated !.
+        /// </summary>
+        internal static string InfosRSASystemAESCngChanged {
+            get {
+                return ResourceManager.GetString("InfosRSASystemAESCngChanged", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à MFA AES CNG Encryption Key correctly deleted ! .
+        /// </summary>
+        internal static string InfosRSASystemAESCngDeleted {
+            get {
+                return ResourceManager.GetString("InfosRSASystemAESCngDeleted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à MFA AES CNG Encryption Key correctly deployed !.
+        /// </summary>
+        internal static string InfosRSASystemAESCngDeployed {
+            get {
+                return ResourceManager.GetString("InfosRSASystemAESCngDeployed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à MFA AES CNG Encryption key not correctly updated !.
+        /// </summary>
+        internal static string InfosRSASystemAESCngError {
+            get {
+                return ResourceManager.GetString("InfosRSASystemAESCngError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à MFA RSA Encryption Key correctly updated ! .
+        /// </summary>
+        internal static string InfosRSASystemKeyChanged {
+            get {
+                return ResourceManager.GetString("InfosRSASystemKeyChanged", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à MFA RSA Encryption Key correctly deleted ! .
+        /// </summary>
+        internal static string InfosRSASystemKeyDeleted {
+            get {
+                return ResourceManager.GetString("InfosRSASystemKeyDeleted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à MFA RSA Encryption Key correctly deployed over the farm !.
+        /// </summary>
+        internal static string InfosRSASystemKeyDeployed {
+            get {
+                return ResourceManager.GetString("InfosRSASystemKeyDeployed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à MFA RSA Encryption key not correctly updated !.
+        /// </summary>
+        internal static string InfosRSASystemKeyError {
+            get {
+                return ResourceManager.GetString("InfosRSASystemKeyError", resourceCulture);
             }
         }
         

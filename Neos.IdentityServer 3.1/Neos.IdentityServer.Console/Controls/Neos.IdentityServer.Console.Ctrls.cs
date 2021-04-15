@@ -4429,10 +4429,12 @@ namespace Neos.IdentityServer.Console.Controls
             }
             catch (Exception ex)
             {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
                 this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
@@ -4481,10 +4483,12 @@ namespace Neos.IdentityServer.Console.Controls
             }
             catch (Exception ex)
             {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
                 this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
@@ -4586,10 +4590,12 @@ namespace Neos.IdentityServer.Console.Controls
             }
             catch (Exception ex)
             {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
                 this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
@@ -4637,10 +4643,12 @@ namespace Neos.IdentityServer.Console.Controls
             }
             catch (Exception ex)
             {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
                 this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
@@ -4688,10 +4696,12 @@ namespace Neos.IdentityServer.Console.Controls
             }
             catch (Exception ex)
             {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
                 this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
@@ -4744,10 +4754,12 @@ namespace Neos.IdentityServer.Console.Controls
             }
             catch (Exception ex)
             {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
                 this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
@@ -4797,10 +4809,12 @@ namespace Neos.IdentityServer.Console.Controls
             }
             catch (Exception ex)
             {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
                 this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
@@ -4849,10 +4863,12 @@ namespace Neos.IdentityServer.Console.Controls
             }
             catch (Exception ex)
             {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
                 this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
@@ -4902,10 +4918,12 @@ namespace Neos.IdentityServer.Console.Controls
             }
             catch (Exception ex)
             {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
                 this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
@@ -5587,10 +5605,12 @@ namespace Neos.IdentityServer.Console.Controls
             }
             catch (Exception ex)
             {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
                 this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
@@ -5636,10 +5656,12 @@ namespace Neos.IdentityServer.Console.Controls
             }
             catch (Exception ex)
             {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
                 this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
@@ -5687,10 +5709,12 @@ namespace Neos.IdentityServer.Console.Controls
             }
             catch (Exception ex)
             {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
                 this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
@@ -5760,10 +5784,12 @@ namespace Neos.IdentityServer.Console.Controls
                     if (result)
                     {
                         this.txtConnectionString.Text = ManagementService.ADFSManager.CreateMFADatabase(null, Wizard.txtInstance.Text, Wizard.txtDBName.Text, Wizard.txtAccount.Text, Wizard.txtPwd.Text);
-                        MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                        messageBoxParameters.Text = string.Format(res.CTRLSQLNEWDBCREATED, Wizard.txtDBName.Text);
-                        messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                        messageBoxParameters.Icon = MessageBoxIcon.Information;
+                        MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                        {
+                            Text = string.Format(res.CTRLSQLNEWDBCREATED, Wizard.txtDBName.Text),
+                            Buttons = MessageBoxButtons.OK,
+                            Icon = MessageBoxIcon.Information
+                        };
                         this._snapin.Console.ShowDialog(messageBoxParameters);
                     }
                 }
@@ -5831,11 +5857,13 @@ namespace Neos.IdentityServer.Console.Controls
             }
             catch (Exception ex)
             {
-                this.Cursor = Cursors.Default; 
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                this.Cursor = Cursors.Default;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
                 this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
@@ -5857,10 +5885,12 @@ namespace Neos.IdentityServer.Console.Controls
             }
             catch (Exception ex)
             {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
                 this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
@@ -5881,10 +5911,12 @@ namespace Neos.IdentityServer.Console.Controls
             }
             catch (Exception ex)
             {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
                 this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
@@ -5951,10 +5983,12 @@ namespace Neos.IdentityServer.Console.Controls
             }
             catch (Exception ex)
             {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
                 this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
@@ -6003,10 +6037,12 @@ namespace Neos.IdentityServer.Console.Controls
             }
             catch (Exception ex)
             {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
                 this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
@@ -6429,10 +6465,12 @@ namespace Neos.IdentityServer.Console.Controls
             }
             catch (Exception ex)
             {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
                 this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
@@ -6476,10 +6514,12 @@ namespace Neos.IdentityServer.Console.Controls
             }
             catch (Exception ex)
             {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
                 this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
@@ -6527,10 +6567,12 @@ namespace Neos.IdentityServer.Console.Controls
             }
             catch (Exception ex)
             {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
                 this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
@@ -6582,10 +6624,12 @@ namespace Neos.IdentityServer.Console.Controls
             }
             catch (Exception ex)
             {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
                 this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
@@ -6636,10 +6680,12 @@ namespace Neos.IdentityServer.Console.Controls
             }
             catch (Exception ex)
             {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
                 this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
@@ -6685,10 +6731,12 @@ namespace Neos.IdentityServer.Console.Controls
             }
             catch (Exception ex)
             {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
                 this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
@@ -7182,10 +7230,12 @@ namespace Neos.IdentityServer.Console.Controls
             }
             catch (Exception ex)
             {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
                 this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
@@ -7233,10 +7283,12 @@ namespace Neos.IdentityServer.Console.Controls
             }
             catch (Exception ex)
             {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
                 this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
@@ -7284,10 +7336,12 @@ namespace Neos.IdentityServer.Console.Controls
             }
             catch (Exception ex)
             {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
                 this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
@@ -7336,10 +7390,12 @@ namespace Neos.IdentityServer.Console.Controls
             }
             catch (Exception ex)
             {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
                 this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
@@ -7409,10 +7465,12 @@ namespace Neos.IdentityServer.Console.Controls
             }
             catch (Exception ex)
             {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
                 this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
@@ -7460,10 +7518,12 @@ namespace Neos.IdentityServer.Console.Controls
             }
             catch (Exception ex)
             {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
                 this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
@@ -7999,10 +8059,12 @@ namespace Neos.IdentityServer.Console.Controls
             }
             catch (Exception ex)
             {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
                 this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
@@ -8051,10 +8113,12 @@ namespace Neos.IdentityServer.Console.Controls
             }
             catch (Exception ex)
             {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
                 this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
@@ -8102,10 +8166,12 @@ namespace Neos.IdentityServer.Console.Controls
             }
             catch (Exception ex)
             {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
                 this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
@@ -8156,10 +8222,12 @@ namespace Neos.IdentityServer.Console.Controls
             }
             catch (Exception ex)
             {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
                 this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
@@ -8205,10 +8273,12 @@ namespace Neos.IdentityServer.Console.Controls
             }
             catch (Exception ex)
             {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
                 this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
@@ -8543,10 +8613,12 @@ namespace Neos.IdentityServer.Console.Controls
             }
             catch (Exception ex)
             {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
                 this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
@@ -8594,10 +8666,12 @@ namespace Neos.IdentityServer.Console.Controls
             }
             catch (Exception ex)
             {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
                 this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
@@ -8818,20 +8892,6 @@ namespace Neos.IdentityServer.Console.Controls
                 cbHashAlgo.DisplayMember = "Label";
                 cbHashAlgo.SelectedValue = Config.OTPProvider.Algorithm;
                 cbHashAlgo.SelectedIndexChanged += SelectedTOTPHashAlgoChanged;
-
-               /* txtHashAlgo = new TextBox
-                {
-                    Text = Config.OTPProvider.Algorithm.ToString(),
-                    Left = 180,
-                    Top = 47,
-                    Width = 60,
-                    TextAlign = HorizontalAlignment.Center,
-                    MaxLength = 6,
-                    CharacterCasing = CharacterCasing.Upper
-                };
-                txtHashAlgo.Validating += HashAlgoValidating;
-                txtHashAlgo.Validated += HashAlgoValidated;
-                _txtpanel.Controls.Add(txtHashAlgo); */
 
                 lblTOTPDigits = new Label
                 {
@@ -9151,10 +9211,12 @@ namespace Neos.IdentityServer.Console.Controls
             }
             catch (Exception ex)
             {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
                 this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
@@ -9206,10 +9268,12 @@ namespace Neos.IdentityServer.Console.Controls
             }
             catch (Exception ex)
             {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
                 this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
@@ -9232,10 +9296,12 @@ namespace Neos.IdentityServer.Console.Controls
             }
             catch (Exception ex)
             {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
                 this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
@@ -9256,10 +9322,12 @@ namespace Neos.IdentityServer.Console.Controls
             }
             catch (Exception ex)
             {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
                 this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
@@ -9280,10 +9348,12 @@ namespace Neos.IdentityServer.Console.Controls
             }
             catch (Exception ex)
             {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
                 this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
@@ -9304,10 +9374,12 @@ namespace Neos.IdentityServer.Console.Controls
             }
             catch (Exception ex)
             {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
                 this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
@@ -10690,10 +10762,12 @@ namespace Neos.IdentityServer.Console.Controls
             }
             catch (Exception ex)
             {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
                 this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
@@ -10714,10 +10788,12 @@ namespace Neos.IdentityServer.Console.Controls
             }
             catch (Exception ex)
             {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
                 this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
@@ -10738,10 +10814,12 @@ namespace Neos.IdentityServer.Console.Controls
             }
             catch (Exception ex)
             {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
                 this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
@@ -10928,6 +11006,7 @@ namespace Neos.IdentityServer.Console.Controls
         private NumericUpDown txtMaxPasswordAgeInDays;
         private Label lblWarnPasswordExpirationBeforeInDays;
         private NumericUpDown txtWarnPasswordExpirationBeforeInDays;
+        private Button btnGenerateKeys;
 
         /// <summary>
         /// ConfigurationControl Constructor
@@ -11166,6 +11245,16 @@ namespace Neos.IdentityServer.Console.Controls
                 txtXORValue.Validating += XORValueValidating;
                 txtXORValue.Validated += XORValueValidated;
                 _txtpanel.Controls.Add(txtXORValue);
+
+                btnGenerateKeys = new Button
+                {
+                    Text = res.CTRLSECGENRSAKEY,
+                    Left = 600,
+                    Top = 166,
+                    Width = 250
+                };
+                btnGenerateKeys.Click += BtnGenerateKeysClick;
+                _txtpanel.Controls.Add(btnGenerateKeys);
 
                 lblADDSTitle = new Label
                 {
@@ -11501,6 +11590,7 @@ namespace Neos.IdentityServer.Console.Controls
                 txtPassword.Text = Config.Hosts.ActiveDirectoryHost.Password;
                 txtSQLUserName.Text = Config.Hosts.SQLServerHost.SQLAccount;
                 txtSQLPassword.Text = Config.Hosts.SQLServerHost.SQLPassword;
+                btnGenerateKeys.Text = res.CTRLSECGENRSAKEY;
 
                 chkUsePasswordPolicy.Text = res.CTRLUSEPASSWORDPOLICY;
                 chkUsePasswordPolicy.Checked = Config.KeysConfig.UsePasswordPolicy;
@@ -11699,10 +11789,12 @@ namespace Neos.IdentityServer.Console.Controls
             }
             catch (Exception ex)
             {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
                 this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
@@ -11753,10 +11845,12 @@ namespace Neos.IdentityServer.Console.Controls
             }
             catch (Exception ex)
             {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
                 this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
@@ -11805,10 +11899,12 @@ namespace Neos.IdentityServer.Console.Controls
             }
             catch (Exception ex)
             {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
                 this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
@@ -11859,10 +11955,12 @@ namespace Neos.IdentityServer.Console.Controls
             }
             catch (Exception ex)
             {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
                 this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
@@ -11911,10 +12009,12 @@ namespace Neos.IdentityServer.Console.Controls
             }
             catch (Exception ex)
             {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
                 this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
@@ -11960,10 +12060,12 @@ namespace Neos.IdentityServer.Console.Controls
             }
             catch (Exception ex)
             {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
                 this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
@@ -12009,10 +12111,12 @@ namespace Neos.IdentityServer.Console.Controls
             }
             catch (Exception ex)
             {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
                 this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
@@ -12035,10 +12139,12 @@ namespace Neos.IdentityServer.Console.Controls
             }
             catch (Exception ex)
             {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
                 this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
@@ -12061,10 +12167,12 @@ namespace Neos.IdentityServer.Console.Controls
             }
             catch (Exception ex)
             {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
                 this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
@@ -12084,10 +12192,12 @@ namespace Neos.IdentityServer.Console.Controls
             }
             catch (Exception ex)
             {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
                 this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
@@ -12112,6 +12222,73 @@ namespace Neos.IdentityServer.Console.Controls
             {
                 e.Cancel = true;
                 errors.SetError(txtXORValue, ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// BtnGenerateKeysClick method implmentation
+        /// </summary>
+        private void BtnGenerateKeysClick(object sender, EventArgs e)
+        {
+            RSAWizard Wizard = new RSAWizard();
+            try
+            {
+                Wizard.KeyExists = ManagementService.ADFSManager.CheckMFASystemMasterKey();
+                if ((this._snapin.Console.ShowDialog(Wizard) == DialogResult.OK))
+                {
+                    Cursor crs = this.Cursor;
+                    try
+                    {
+                        bool ismade = false;
+                        string lbl = string.Empty;
+                        MessageBoxIcon ico = MessageBoxIcon.Information;
+                        this.Cursor = Cursors.WaitCursor;
+                        switch (Wizard.Choice)
+                        {
+                            default:
+                                ismade = ManagementService.ADFSManager.RegisterMFASystemMasterKey(null, false, false);
+                                lbl = res.CTRLSECAESOK;
+                                ico = MessageBoxIcon.Information;
+                                break;
+                            case 2:
+                                ismade = ManagementService.ADFSManager.RegisterMFASystemMasterKey(null, true, false);
+                                lbl = res.CTRLSECAESDEPLOYED;
+                                ico = MessageBoxIcon.Warning;
+                                break;
+                            case 3:
+                                ismade = ManagementService.ADFSManager.RegisterMFASystemMasterKey(null, false, true);
+                                lbl = res.CTRLSECAESDELETED;
+                                ico = MessageBoxIcon.Hand;
+                                break;
+                        }
+                        this.Cursor = Cursors.Default;
+                        if (ismade)
+                        {
+                            MessageBoxParameters messageBoxParameters2 = new MessageBoxParameters
+                            {
+                                Text = lbl,
+                                Buttons = MessageBoxButtons.OK,
+                                Icon = ico
+                            };
+                            this._snapin.Console.ShowDialog(messageBoxParameters2);
+                        }
+                    }
+                    finally
+                    {
+                        this.Cursor = Cursors.Default;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                this.Cursor = Cursors.Default;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
+                this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
         #endregion
@@ -12617,10 +12794,12 @@ namespace Neos.IdentityServer.Console.Controls
             }
             catch (Exception ex)
             {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
                 this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
@@ -13000,10 +13179,12 @@ namespace Neos.IdentityServer.Console.Controls
             }
             catch (Exception ex)
             {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
                 this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
@@ -13072,10 +13253,12 @@ namespace Neos.IdentityServer.Console.Controls
             }
             catch (Exception ex)
             {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
                 this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
@@ -13087,10 +13270,12 @@ namespace Neos.IdentityServer.Console.Controls
         {
             try
             {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = res.CTRLSECRSAGENERATE;
-                messageBoxParameters.Buttons = MessageBoxButtons.OKCancel;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = res.CTRLSECRSAGENERATE,
+                    Buttons = MessageBoxButtons.OKCancel,
+                    Icon = MessageBoxIcon.Error
+                };
                 bool result = (this._snapin.Console.ShowDialog(messageBoxParameters) == DialogResult.OK);
                 Cursor curs = this.Cursor;
                 try
@@ -13100,10 +13285,12 @@ namespace Neos.IdentityServer.Console.Controls
                     {
                         this.txtRSAThumb.Text = ManagementService.ADFSManager.RegisterNewRSACertificate(null, Config.KeysConfig.CertificateValidity);
 
-                        MessageBoxParameters messageBoxParameters2 = new MessageBoxParameters();
-                        messageBoxParameters2.Text = string.Format(res.CTRLSECNEWCERTCREATED, this.txtRSAThumb.Text);
-                        messageBoxParameters2.Buttons = MessageBoxButtons.OK;
-                        messageBoxParameters2.Icon = MessageBoxIcon.Information;
+                        MessageBoxParameters messageBoxParameters2 = new MessageBoxParameters
+                        {
+                            Text = string.Format(res.CTRLSECNEWCERTCREATED, this.txtRSAThumb.Text),
+                            Buttons = MessageBoxButtons.OK,
+                            Icon = MessageBoxIcon.Information
+                        };
                         this._snapin.Console.ShowDialog(messageBoxParameters2);
 
                     }
@@ -13115,10 +13302,12 @@ namespace Neos.IdentityServer.Console.Controls
             }
             catch (Exception ex)
             {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
                 this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
@@ -13159,6 +13348,7 @@ namespace Neos.IdentityServer.Console.Controls
         private Panel _panelAES;
         private Label lblAESKey;
         private ComboBox cbKeyMode;
+        private Button btnGenerateKeys;
 
         /// <summary>
         /// SecurityConfigurationAESControl Constructor
@@ -13258,7 +13448,7 @@ namespace Neos.IdentityServer.Console.Controls
 
                 this.Dock = DockStyle.Top;
                 this.Height = 100;
-                this.Width = 400;
+                this.Width = 800;
                 this.Margin = new Padding(30, 5, 30, 5);
 
                 _panel.Width = 20;
@@ -13276,13 +13466,13 @@ namespace Neos.IdentityServer.Console.Controls
                     Left = 0,
                     Top = 10,
                     Height = 60,
-                    Width = 400
+                    Width = 775
                 };
                 _txtpanel.Controls.Add(_panelAES);
 
                 Label lblRNG = new Label
                 {
-                    Text = "Symmetric Keys AES (512/1024 bits)",
+                    Text = "Symmetric Keys AES256 / ECDH_P256",
                     Left = 10,
                     Top = 0,
                     Width = 250
@@ -13302,9 +13492,9 @@ namespace Neos.IdentityServer.Console.Controls
                 cbKeyMode = new ComboBox()
                 {
                     DropDownStyle = ComboBoxStyle.DropDownList,
-                    Left = 200,
+                    Left = 170,
                     Top = 25,
-                    Width = 80
+                    Width = 120
                 };
                 _panelAES.Controls.Add(cbKeyMode);
 
@@ -13313,6 +13503,17 @@ namespace Neos.IdentityServer.Console.Controls
                 cbKeyMode.DisplayMember = "Label";
                 cbKeyMode.SelectedValue = Config.KeysConfig.AESKeyGenerator;
                 cbKeyMode.SelectedIndexChanged += SelectedKeyGenChanged;
+
+                btnGenerateKeys = new Button
+                {
+                    Text = res.CTRLSECGENKEYS,
+                    Left = 320,
+                    Top = 23,
+                    Width = 150,
+                    Enabled = (Config.KeysConfig.AESKeyGenerator == AESKeyGeneratorMode.ECDH_P256)
+                };
+                btnGenerateKeys.Click += BtnGenerateKeysClick;
+                _panelAES.Controls.Add(btnGenerateKeys);
 
                 tblSaveConfig = new LinkLabel
                 {
@@ -13365,7 +13566,8 @@ namespace Neos.IdentityServer.Console.Controls
                 tblSaveConfig.Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPESAVE;
                 tblCancelConfig.Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPECANCEL;
                 lblAESKey.Text = res.CTRLSECKEYLENGTH + " : ";
-
+                btnGenerateKeys.Text = res.CTRLSECGENKEYS;
+                btnGenerateKeys.Enabled = (Config.KeysConfig.AESKeyGenerator == AESKeyGeneratorMode.ECDH_P256);
             }
             finally
             {
@@ -13396,6 +13598,7 @@ namespace Neos.IdentityServer.Console.Controls
             _UpdateControlsLayouts = true;
             try
             {
+                btnGenerateKeys.Enabled = (Config.KeysConfig.AESKeyGenerator == AESKeyGeneratorMode.ECDH_P256);
             }
             finally
             {
@@ -13429,13 +13632,95 @@ namespace Neos.IdentityServer.Console.Controls
             }
             catch (Exception ex)
             {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
                 this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
+
+        /// <summary>
+        /// BtnGenerateKeysClick method implementation
+        /// </summary>
+        private void BtnGenerateKeysClick(object sender, EventArgs e)
+        {
+            ECHDWizard Wizard = new ECHDWizard();
+            try
+            {
+                Wizard.KeyExists = ManagementService.ADFSManager.CheckMFASystemAESCngKey();
+                if (Wizard.KeyExists)
+                {
+                    MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                    {
+
+                        Text = res.CTRLSECAESWARNING,
+                        Buttons = MessageBoxButtons.YesNo,
+                        Icon = MessageBoxIcon.Warning
+                    };
+                    if (this._snapin.Console.ShowDialog(messageBoxParameters) != DialogResult.Yes)
+                        return;
+                }
+                if ((this._snapin.Console.ShowDialog(Wizard) == DialogResult.OK))
+                {
+                    Cursor crs = this.Cursor;
+                    try
+                    {
+                        bool ismade = false;
+                        string lbl = string.Empty;
+                        MessageBoxIcon ico = MessageBoxIcon.Information;
+                        this.Cursor = Cursors.WaitCursor;
+                        switch (Wizard.Choice)
+                        {
+                            default:
+                                ismade = ManagementService.ADFSManager.RegisterMFASystemAESCngKey(null, false, false);
+                                lbl = res.CTRLSECAESOK;
+                                ico = MessageBoxIcon.Information;
+                                break;
+                            case 2:
+                                ismade = ManagementService.ADFSManager.RegisterMFASystemAESCngKey(null, true, false);
+                                lbl = res.CTRLSECAESDEPLOYED;
+                                ico = MessageBoxIcon.Warning;
+                                break;
+                            case 3:
+                                ismade = ManagementService.ADFSManager.RegisterMFASystemAESCngKey(null, false, true);
+                                lbl = res.CTRLSECAESDELETED;
+                                ico = MessageBoxIcon.Stop;
+                                break;
+                        }
+                        this.Cursor = Cursors.Default;
+                        if (ismade)
+                        {                            
+                            MessageBoxParameters messageBoxParameters2 = new MessageBoxParameters
+                            {
+                                Text = lbl,
+                                Buttons = MessageBoxButtons.OK,
+                                Icon = ico
+                            };
+                            this._snapin.Console.ShowDialog(messageBoxParameters2);
+                        }
+                    }
+                    finally
+                    {
+                        this.Cursor = Cursors.Default;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                this.Cursor = Cursors.Default;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
+                this._snapin.Console.ShowDialog(messageBoxParameters);
+            }
+        }
+
 
         /// <summary>
         /// SaveConfigLinkClicked event
@@ -13749,10 +14034,12 @@ namespace Neos.IdentityServer.Console.Controls
             }
             catch (Exception ex)
             {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
                 this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
@@ -13798,10 +14085,12 @@ namespace Neos.IdentityServer.Console.Controls
             }
             catch (Exception ex)
             {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
                 this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }

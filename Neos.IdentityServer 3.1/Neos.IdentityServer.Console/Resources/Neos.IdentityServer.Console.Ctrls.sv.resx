@@ -390,12 +390,6 @@
   <data name="CTRLSECINVALIDEXTERROR" xml:space="preserve">
     <value>Ogiltigt tillägg! Kan inte debiteras!</value>
   </data>
-  <data name="CTRLSECKEYGEN" xml:space="preserve">
-    <value>Längden på nyckeln som genereras</value>
-  </data>
-  <data name="CTRLSECKEYLENGTH" xml:space="preserve">
-    <value>Maximal nyckellängd</value>
-  </data>
   <data name="CTRLSECKEYMODE" xml:space="preserve">
     <value>Säkerhetsnyckel läge</value>
   </data>
@@ -710,5 +704,29 @@
   </data>
   <data name="CTRLWEBAUTHNUSENICKNAMES" xml:space="preserve">
     <value>Be om ett namn på biometriska enheter</value>
+  </data>
+  <data name="CTRLSECKEYGEN" xml:space="preserve">
+    <value>Genererad nyckeltyp</value>
+  </data>
+  <data name="CTRLSECGENKEYS" xml:space="preserve">
+    <value>Generera nycklar</value>
+  </data>
+  <data name="CTRLSECAESWARNING" xml:space="preserve">
+    <value>Varning! om du skapar nya nycklar blir alla användares aktuella nycklar ogiltiga</value>
+  </data>
+  <data name="CTRLSECAESOK" xml:space="preserve">
+    <value>Nya nycklar har skapats!</value>
+  </data>
+  <data name="CTRLSECKEYLENGTH" xml:space="preserve">
+    <value>Storlek på nyckelvisning</value>
+  </data>
+  <data name="CTRLSECAESDEPLOYED" xml:space="preserve">
+    <value>Aktuella nycklar har distribuerats!</value>
+  </data>
+  <data name="CTRLSECAESDELETED" xml:space="preserve">
+    <value>Aktuella nycklar har tagits bort!</value>
+  </data>
+  <data name="CTRLSECGENRSAKEY" xml:space="preserve">
+    <value>RSA-huvudnyckel</value>
   </data>
 </root>

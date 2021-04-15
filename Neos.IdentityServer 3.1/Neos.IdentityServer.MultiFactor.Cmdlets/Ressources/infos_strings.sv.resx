@@ -231,12 +231,6 @@
   <data name="InfosSystemNotRegistered" xml:space="preserve">
     <value>MFA-systemet är inte registrerat!</value>
   </data>
-  <data name="InfosRSACertificateChanged" xml:space="preserve">
-    <value>MFA RSA Krypteringsnyckel korrekt uppdaterad !</value>
-  </data>
-  <data name="InfosRSACertificateError" xml:space="preserve">
-    <value>MFA RSA Krypteringsnyckel inte korrekt uppdaterad !</value>
-  </data>
   <data name="InfosYes" xml:space="preserve">
     <value>&amp;Ja</value>
   </data>
@@ -248,5 +242,35 @@
   </data>
   <data name="InfoAllKeyWillbeReset" xml:space="preserve">
     <value>Alla användares aktuella nycklar kommer att ogiltigförklaras ! Fortsätta ?</value>
+  </data>
+  <data name="InfosRSACertificateChanged" xml:space="preserve">
+    <value>MFA RSA-certifikat korrekt installerat !</value>
+  </data>
+  <data name="InfosRSACertificateError" xml:space="preserve">
+    <value>MFA RSA-certifikat inte korrekt installerat !</value>
+  </data>
+  <data name="InfosRSASystemKeyChanged" xml:space="preserve">
+    <value>MFA RSA Krypteringsnyckel korrekt uppdaterad !</value>
+  </data>
+  <data name="InfosRSASystemKeyError" xml:space="preserve">
+    <value>MFA RSA Krypteringsnyckel inte korrekt uppdaterad !</value>
+  </data>
+  <data name="InfosRSASystemKeyDeployed" xml:space="preserve">
+    <value>MFA RSA-krypteringsnyckel korrekt distribuerad över servergruppen !</value>
+  </data>
+  <data name="InfosRSASystemKeyDeleted" xml:space="preserve">
+    <value>MFA RSA-krypteringsnyckel korrekt borttagen !</value>
+  </data>
+  <data name="InfosRSASystemAESCngDeleted" xml:space="preserve">
+    <value>MFA AES CNG-krypteringsnyckel korrekt borttagen !</value>
+  </data>
+  <data name="InfosRSASystemAESCngChanged" xml:space="preserve">
+    <value>MFA AES CNG-krypteringsnyckel korrekt uppdaterad !</value>
+  </data>
+  <data name="InfosRSASystemAESCngDeployed" xml:space="preserve">
+    <value>MFA AES CNG-krypteringsnyckel korrekt distribuerad !</value>
+  </data>
+  <data name="InfosRSASystemAESCngError" xml:space="preserve">
+    <value>MFA AES CNG Krypteringsnyckel inte korrekt uppdaterad !</value>
   </data>
 </root>

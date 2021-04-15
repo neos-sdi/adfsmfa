@@ -390,12 +390,6 @@
   <data name="CTRLSECINVALIDEXTERROR" xml:space="preserve">
     <value>Ongeldige extensie! Kan niet worden opgeladen!</value>
   </data>
-  <data name="CTRLSECKEYGEN" xml:space="preserve">
-    <value>Lengte van gegenereerde sleutel</value>
-  </data>
-  <data name="CTRLSECKEYLENGTH" xml:space="preserve">
-    <value>Maximale sleutellengte</value>
-  </data>
   <data name="CTRLSECKEYMODE" xml:space="preserve">
     <value>Beveiligingssleutel modus</value>
   </data>
@@ -710,5 +704,29 @@
   </data>
   <data name="CTRLWEBAUTHNUSENICKNAMES" xml:space="preserve">
     <value>Vraag om een naam voor biometrische apparaten</value>
+  </data>
+  <data name="CTRLSECKEYGEN" xml:space="preserve">
+    <value>Gegenereerd sleuteltype</value>
+  </data>
+  <data name="CTRLSECGENKEYS" xml:space="preserve">
+    <value>Sleutels genereren</value>
+  </data>
+  <data name="CTRLSECAESWARNING" xml:space="preserve">
+    <value>Waarschuwing! het genereren van nieuwe sleutels maakt de huidige sleutels van alle gebruikers ongeldig</value>
+  </data>
+  <data name="CTRLSECAESOK" xml:space="preserve">
+    <value>Nieuwe sleutels met succes gemaakt !</value>
+  </data>
+  <data name="CTRLSECKEYLENGTH" xml:space="preserve">
+    <value>Grootte van het toetsdisplay</value>
+  </data>
+  <data name="CTRLSECAESDEPLOYED" xml:space="preserve">
+    <value>Huidige sleutels met succes geïmplementeerd!</value>
+  </data>
+  <data name="CTRLSECAESDELETED" xml:space="preserve">
+    <value>Huidige sleutels met succes verwijderd !</value>
+  </data>
+  <data name="CTRLSECGENRSAKEY" xml:space="preserve">
+    <value>RSA-hoofdsleutel</value>
   </data>
 </root>

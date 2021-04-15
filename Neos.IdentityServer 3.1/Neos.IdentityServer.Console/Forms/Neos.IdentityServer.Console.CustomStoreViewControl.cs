@@ -161,20 +161,24 @@ namespace Neos.IdentityServer.Console
         {
             try
             {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
                 ComponentResourceManager resources = new ComponentResourceManager(typeof(CustomStoreViewControl));
-                messageBoxParameters.Text = resources.GetString("SQLVALIDSAVE");
-                messageBoxParameters.Buttons = MessageBoxButtons.YesNo;
-                messageBoxParameters.Icon = MessageBoxIcon.Question;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = resources.GetString("SQLVALIDSAVE"),
+                    Buttons = MessageBoxButtons.YesNo,
+                    Icon = MessageBoxIcon.Question
+                };
                 if (this.SnapIn.Console.ShowDialog(messageBoxParameters) == DialogResult.Yes)
                    RefreshData();
             }
             catch (Exception ex)
             {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
                 this.SnapIn.Console.ShowDialog(messageBoxParameters);
             }
         }
@@ -195,10 +199,12 @@ namespace Neos.IdentityServer.Console
                 catch (Exception ex)
                 {
                     this.Cursor = Cursors.Default;
-                    MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                    messageBoxParameters.Text = ex.Message;
-                    messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                    messageBoxParameters.Icon = MessageBoxIcon.Error;
+                    MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                    {
+                        Text = ex.Message,
+                        Buttons = MessageBoxButtons.OK,
+                        Icon = MessageBoxIcon.Error
+                    };
                     this.SnapIn.Console.ShowDialog(messageBoxParameters);
                 }
                 finally

@@ -430,8 +430,8 @@ namespace Neos.IdentityServer.Console
         public MMCSecurityFormatList()
         {
             this.Add(new MMCSecurityFormatItem() { ID = SecretKeyFormat.RNG, Label = "Encoded Keys RNG" });
-            this.Add(new MMCSecurityFormatItem() { ID = SecretKeyFormat.RSA, Label = "Asymmetric Keys RSA (2048 bits)" });
-            this.Add(new MMCSecurityFormatItem() { ID = SecretKeyFormat.AES, Label = "Symmetric Keys AES (1024 bits)" });
+            this.Add(new MMCSecurityFormatItem() { ID = SecretKeyFormat.RSA, Label = "Asymmetric Keys RSA" });
+            this.Add(new MMCSecurityFormatItem() { ID = SecretKeyFormat.AES, Label = "Symmetric Keys AES/ECDH" });
             this.Add(new MMCSecurityFormatItem() { ID = SecretKeyFormat.CUSTOM, Label = "Custom Keys" });
         }
     }
@@ -452,13 +452,14 @@ namespace Neos.IdentityServer.Console
     {
         public MMCSecurityKeySizeList()
         {
-            this.Add(new MMCSecurityKeySizeItem() { ID = KeySizeMode.KeySizeDefault, Label = "DEFAULT (1024 bits length)" });
-            this.Add(new MMCSecurityKeySizeItem() { ID = KeySizeMode.KeySize512,  Label = " 512 ( 512 bits length)" });
-            this.Add(new MMCSecurityKeySizeItem() { ID = KeySizeMode.KeySize1024, Label = "1024 (1024 bits length)" });
-            this.Add(new MMCSecurityKeySizeItem() { ID = KeySizeMode.KeySize2048, Label = "2048 (2048 bits length)" });
-            this.Add(new MMCSecurityKeySizeItem() { ID = KeySizeMode.KeySize128,  Label = " 128 ( 128 bits length)" });
-            this.Add(new MMCSecurityKeySizeItem() { ID = KeySizeMode.KeySize256,  Label = " 256 ( 256 bits length)" });
-            this.Add(new MMCSecurityKeySizeItem() { ID = KeySizeMode.KeySize384,  Label = " 384 ( 384 bits length)" });
+            this.Add(new MMCSecurityKeySizeItem() { ID = KeySizeMode.KeySizeDefault, Label = "DEFAULT (128 bytes length)" });
+
+            this.Add(new MMCSecurityKeySizeItem() { ID = KeySizeMode.KeySize2048, Label = "2048 (256 bytes length)" });
+            this.Add(new MMCSecurityKeySizeItem() { ID = KeySizeMode.KeySize1024, Label = "1024 (128 bytes length)" });
+            this.Add(new MMCSecurityKeySizeItem() { ID = KeySizeMode.KeySize512, Label =  " 512 ( 64 bytes length)" });
+            this.Add(new MMCSecurityKeySizeItem() { ID = KeySizeMode.KeySize384, Label =  " 384 ( 48 bytes length)" });
+            this.Add(new MMCSecurityKeySizeItem() { ID = KeySizeMode.KeySize256, Label =  " 256 ( 32 bytes length)" });
+            this.Add(new MMCSecurityKeySizeItem() { ID = KeySizeMode.KeySize128, Label =  " 128 ( 16 bytes length)" });
         }
     }
 
@@ -502,8 +503,8 @@ namespace Neos.IdentityServer.Console
     {
         public MMCAESSecurityKeyGeneratorList()
         {
-            this.Add(new MMCAESSecurityKeyGeneratorItem() { ID = AESKeyGeneratorMode.AESSecret512, Label = "512 bits" });
-            this.Add(new MMCAESSecurityKeyGeneratorItem() { ID = AESKeyGeneratorMode.AESSecret1024, Label = "1024 bits" });
+            this.Add(new MMCAESSecurityKeyGeneratorItem() { ID = AESKeyGeneratorMode.ECDH_P256, Label = "ECDH_P256" });
+            this.Add(new MMCAESSecurityKeyGeneratorItem() { ID = AESKeyGeneratorMode.AES256, Label = "AES256" });
         }
     }
 

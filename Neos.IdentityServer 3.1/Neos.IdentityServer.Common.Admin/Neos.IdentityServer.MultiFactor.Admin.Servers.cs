@@ -906,7 +906,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// <summary>
         /// RegisterMFASystemMasterKey method implmentation
         /// </summary>
-        public bool RegisterMFASystemMasterKey(PSHost Host = null, bool deleteonly = false)
+        public bool RegisterMFASystemMasterKey(PSHost Host = null, bool deployonly = false, bool deleteonly = false)
         {
             using (SystemEncryption MSIS = new SystemEncryption())
             {
@@ -920,16 +920,24 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             string sqlpwd = Config.Hosts.SQLServerHost.SQLPassword;
             string mailpwd = Config.MailProvider.Password;
 
-            if (WebAdminManagerClient.NewMFASystemMasterKey(Config, deleteonly))
+            if (WebAdminManagerClient.NewMFASystemMasterKey(Config, deployonly, deleteonly))
             {
                 Config = CFGUtilities.WriteConfiguration(Host, Config); // Save configuration with new key
-
                 Config.KeysConfig.XORSecret = xorsecret;
                 Config.Hosts.ActiveDirectoryHost.Password = addspwd;
                 Config.Hosts.SQLServerHost.SQLPassword = sqlpwd;
                 Config.MailProvider.Password = mailpwd;
                 ManagementService.BroadcastNotification(Config, NotificationsKind.ConfigurationReload, Environment.MachineName);
 
+                if (Host != null)
+                {
+                    if (deleteonly)
+                        Host.UI.WriteWarningLine(DateTime.Now.ToLongTimeString() + " MFA System Master Key  Deleted ! ");
+                    else if (deployonly)
+                        Host.UI.WriteWarningLine(DateTime.Now.ToLongTimeString() + " MFA System Master Key  Deployed ! ");
+                    else
+                        Host.UI.WriteWarningLine(DateTime.Now.ToLongTimeString() + " MFA System Master Key  Generated ! ");
+                }
                 return true;
             }
             else
@@ -937,12 +945,63 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 if (Host != null)
                 {
                     if (deleteonly)
-                        Host.UI.WriteWarningLine(DateTime.Now.ToLongTimeString() + " MFA System Master Key Deleted ! ");
+                        Host.UI.WriteWarningLine(DateTime.Now.ToLongTimeString() + " MFA System Master Key  Key NOT Deleted ! ");
+                    else if (deployonly)
+                        Host.UI.WriteWarningLine(DateTime.Now.ToLongTimeString() + " MFA System Master Key  NOT Deployed ! ");
                     else
-                        Host.UI.WriteWarningLine(DateTime.Now.ToLongTimeString() + " MFA System Master Key Not Generated ! ");
+                        Host.UI.WriteWarningLine(DateTime.Now.ToLongTimeString() + " MFA System Master Key  NOT Generated ! ");
                 }
                 return false;
             }
+        }
+
+        /// <summary>
+        /// CheckMFASystemMasterKey
+        /// </summary>
+        public bool CheckMFASystemMasterKey()
+        {
+            return WebAdminManagerClient.ExistsMFASystemMasterKey();
+        }
+
+        /// <summary>
+        /// RegisterMFASystemAESCngKey method implmentation
+        /// </summary>
+        public bool RegisterMFASystemAESCngKey(PSHost Host = null, bool deployonly = false, bool deleteonly = false)
+        {
+            if (WebAdminManagerClient.NewMFASystemAESCngKey(Config, deployonly, deleteonly))
+            {
+                if (Host != null)
+                {
+                    if (deleteonly)
+                        Host.UI.WriteWarningLine(DateTime.Now.ToLongTimeString() + " MFA System AESCng Key Deleted ! ");
+                    else if (deployonly)
+                        Host.UI.WriteWarningLine(DateTime.Now.ToLongTimeString() + " MFA System AESCng Key Deployed ! ");
+                    else
+                        Host.UI.WriteWarningLine(DateTime.Now.ToLongTimeString() + " MFA System AESCng Key Generated ! ");
+                }
+                return true;
+            }
+            else
+            {
+                if (Host != null)
+                {
+                    if (deleteonly)
+                        Host.UI.WriteWarningLine(DateTime.Now.ToLongTimeString() + " MFA System AESCng Key NOT Deleted ! ");
+                    else if (deployonly)
+                        Host.UI.WriteWarningLine(DateTime.Now.ToLongTimeString() + " MFA System AESCng Key NOT Deployed ! ");
+                    else
+                        Host.UI.WriteWarningLine(DateTime.Now.ToLongTimeString() + " MFA System AESCng Key NOT Generated ! ");
+                }
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// CheckMFASystemAESCngKey
+        /// </summary>
+        public bool CheckMFASystemAESCngKey()
+        {
+            return WebAdminManagerClient.ExistsMFASystemAESCngKeys();
         }
 
         /// <summary>

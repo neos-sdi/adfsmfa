@@ -169,10 +169,12 @@ namespace Neos.IdentityServer.Console
             }
             catch (Exception ex)
             {
-                MessageBoxParameters msgp = new MessageBoxParameters();
-                msgp.Text = ex.Message;
-                msgp.Buttons = MessageBoxButtons.OK;
-                msgp.Icon = MessageBoxIcon.Error;
+                MessageBoxParameters msgp = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
                 this.Console.ShowDialog(msgp);
             }
         }
@@ -201,10 +203,12 @@ namespace Neos.IdentityServer.Console
             }
             catch (Exception ex)
             {
-                MessageBoxParameters msgp = new MessageBoxParameters();
-                msgp.Text = ex.Message;
-                msgp.Buttons = MessageBoxButtons.OK;
-                msgp.Icon = MessageBoxIcon.Error;
+                MessageBoxParameters msgp = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
                 this.Console.ShowDialog(msgp);
                 return null;
             }

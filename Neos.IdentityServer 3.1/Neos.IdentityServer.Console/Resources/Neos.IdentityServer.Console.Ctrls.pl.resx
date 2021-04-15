@@ -387,12 +387,6 @@
   <data name="CTRLSECINVALIDEXTERROR" xml:space="preserve">
     <value>Nieprawidłowe rozszerzenie! Nie można naładować!</value>
   </data>
-  <data name="CTRLSECKEYGEN" xml:space="preserve">
-    <value>Długość wygenerowanego klucza</value>
-  </data>
-  <data name="CTRLSECKEYLENGTH" xml:space="preserve">
-    <value>Maksymalna długość klucza</value>
-  </data>
   <data name="CTRLSECKEYMODE" xml:space="preserve">
     <value>Tryb klucza zabezpieczeń</value>
   </data>
@@ -710,5 +704,29 @@
   </data>
   <data name="CTRLWEBAUTHNUSENICKNAMES" xml:space="preserve">
     <value>Poproś o nazwę urządzeń biometrycznych</value>
+  </data>
+  <data name="CTRLSECKEYGEN" xml:space="preserve">
+    <value>Wygenerowany typ klucza</value>
+  </data>
+  <data name="CTRLSECGENKEYS" xml:space="preserve">
+    <value>Generowanie kluczy</value>
+  </data>
+  <data name="CTRLSECAESWARNING" xml:space="preserve">
+    <value>Ostrzeżenie! generowanie nowych kluczy spowoduje unieważnienie wszystkich bieżących kluczy wszystkich użytkowników</value>
+  </data>
+  <data name="CTRLSECAESOK" xml:space="preserve">
+    <value>Nowe klucze pomyślnie utworzone!</value>
+  </data>
+  <data name="CTRLSECKEYLENGTH" xml:space="preserve">
+    <value>Rozmiar ekranu kluczowego</value>
+  </data>
+  <data name="CTRLSECAESDEPLOYED" xml:space="preserve">
+    <value>Bieżące klucze pomyślnie wdrożone!</value>
+  </data>
+  <data name="CTRLSECAESDELETED" xml:space="preserve">
+    <value>Bieżące klawisze zostały pomyślnie usunięte!</value>
+  </data>
+  <data name="CTRLSECGENRSAKEY" xml:space="preserve">
+    <value>Klucz główny RSA</value>
   </data>
 </root>

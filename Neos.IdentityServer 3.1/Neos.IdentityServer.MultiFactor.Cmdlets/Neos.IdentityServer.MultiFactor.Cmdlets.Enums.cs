@@ -523,20 +523,20 @@ namespace MFA
 
     /// <summary>
     /// PSAESKeyGeneratorMode
-    /// <para type="synopsis">For AES Key encryption, Key Size from 512 bits to 1024 bits.</para>
-    /// <para type="description">Configuration options for registering or accessing MFA. Must be combined with binary OR, in MMC you can use Templates</para>
+    /// <para type="synopsis">For AES Key encryption, Key Size 1024 bits.</para>
+    /// <para type="description">Configuration options for AES256 Keys encryption.</para>
     /// </summary>
     public enum PSAESKeyGeneratorMode
     {
         /// <summary>
-        /// <para type="description">AESSecret512, 512 bits length with AES</para>
+        /// <para type="description">Elliptic Curve Diffie Hellman With AES256 encryption mode, 1024 bits length </para>
         /// </summary>
-        AESSecret512 = 0,
+        ECDH_P256 = 0,
 
         /// <summary>
-        /// <para type="description">AESSecret1024, 1024 bits length with AES</para>
+        /// <para type="description">AES256 Encryption mode, 1024 bits length</para>
         /// </summary>
-        AESSecret1024 = 1,
+        AES256 = 1
     }
 
     /// <summary>

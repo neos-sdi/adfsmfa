@@ -359,12 +359,14 @@ namespace Neos.IdentityServer.Console
         protected override void OnDelete(SyncStatus status)
         {
 
-            MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-            messageBoxParameters.Caption = "Multi-Factor Authentication"; 
-            messageBoxParameters.Buttons = MessageBoxButtons.YesNo;
-            messageBoxParameters.DefaultButton = MessageBoxDefaultButton.Button1;
-            messageBoxParameters.Icon = MessageBoxIcon.Question;
-            messageBoxParameters.Text = res.USERSFRMCONFIRMDELETE; 
+            MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+            {
+                Caption = "Multi-Factor Authentication",
+                Buttons = MessageBoxButtons.YesNo,
+                DefaultButton = MessageBoxDefaultButton.Button1,
+                Icon = MessageBoxIcon.Question,
+                Text = res.USERSFRMCONFIRMDELETE
+            };
 
             if (this.SnapIn.Console.ShowDialog(messageBoxParameters) == DialogResult.Yes) 
             {

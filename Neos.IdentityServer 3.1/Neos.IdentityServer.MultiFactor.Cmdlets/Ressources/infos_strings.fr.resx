@@ -231,12 +231,6 @@
   <data name="InfosSystemNotRegistered" xml:space="preserve">
     <value>Système MFA Non enregistré !</value>
   </data>
-  <data name="InfosRSACertificateChanged" xml:space="preserve">
-    <value>MFA RSA clé de chiffrement correctement mise à jour !</value>
-  </data>
-  <data name="InfosRSACertificateError" xml:space="preserve">
-    <value>MFA RSA clé de chiffrement pas correctement mise à jour !</value>
-  </data>
   <data name="InfosYes" xml:space="preserve">
     <value>&amp;Oui</value>
   </data>
@@ -248,5 +242,35 @@
   </data>
   <data name="InfoAllKeyWillbeReset" xml:space="preserve">
     <value>Toutes les clés actuelles des utilisateurs seront invalidées ! Continuer ?</value>
+  </data>
+  <data name="InfosRSACertificateChanged" xml:space="preserve">
+    <value>Certificat RSA correctement installé !</value>
+  </data>
+  <data name="InfosRSACertificateError" xml:space="preserve">
+    <value>Certificat RSA n’est pas correctement installé !</value>
+  </data>
+  <data name="InfosRSASystemKeyChanged" xml:space="preserve">
+    <value>MFA RSA clé de chiffrement correctement mis à jour !</value>
+  </data>
+  <data name="InfosRSASystemKeyError" xml:space="preserve">
+    <value>MFA RSA clé de chiffrement pas correctement mis à jour !</value>
+  </data>
+  <data name="InfosRSASystemKeyDeployed" xml:space="preserve">
+    <value>MFA RSA clé de chiffrement correctement déployée sur la ferme !</value>
+  </data>
+  <data name="InfosRSASystemKeyDeleted" xml:space="preserve">
+    <value>MFA RSA clé de chiffrement correctement supprimée !</value>
+  </data>
+  <data name="InfosRSASystemAESCngDeleted" xml:space="preserve">
+    <value>MFA AES CNG clé de chiffrement correctement supprimée !</value>
+  </data>
+  <data name="InfosRSASystemAESCngChanged" xml:space="preserve">
+    <value>MFA AES CNG clé de chiffrement correctement mise à jour !</value>
+  </data>
+  <data name="InfosRSASystemAESCngDeployed" xml:space="preserve">
+    <value>MFA AES CNG clé de cryptage correctement déployée !</value>
+  </data>
+  <data name="InfosRSASystemAESCngError" xml:space="preserve">
+    <value>MFA AES CNG clé de chiffrement pas correctement mis à jour !</value>
   </data>
 </root>

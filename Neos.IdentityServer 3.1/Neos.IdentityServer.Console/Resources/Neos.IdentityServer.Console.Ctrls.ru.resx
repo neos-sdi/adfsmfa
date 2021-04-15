@@ -390,12 +390,6 @@
   <data name="CTRLSECINVALIDEXTERROR" xml:space="preserve">
     <value>Недействительное расширение! Не может быть предъявлено обвинение!</value>
   </data>
-  <data name="CTRLSECKEYGEN" xml:space="preserve">
-    <value>Длина ключа, генерируемого</value>
-  </data>
-  <data name="CTRLSECKEYLENGTH" xml:space="preserve">
-    <value>Максимальная длина ключа</value>
-  </data>
   <data name="CTRLSECKEYMODE" xml:space="preserve">
     <value>Режим ключа безопасности</value>
   </data>
@@ -710,5 +704,29 @@
   </data>
   <data name="CTRLWEBAUTHNUSENICKNAMES" xml:space="preserve">
     <value>Попросите имя для биометрических устройств</value>
+  </data>
+  <data name="CTRLSECKEYGEN" xml:space="preserve">
+    <value>Сгенерированный тип ключа</value>
+  </data>
+  <data name="CTRLSECGENKEYS" xml:space="preserve">
+    <value>Создание ключей</value>
+  </data>
+  <data name="CTRLSECAESWARNING" xml:space="preserve">
+    <value>предупреждение! генерация новых ключей аннулирует всех пользователей текущих ключей</value>
+  </data>
+  <data name="CTRLSECAESOK" xml:space="preserve">
+    <value>Новые клавиши успешно созданы !</value>
+  </data>
+  <data name="CTRLSECKEYLENGTH" xml:space="preserve">
+    <value>Размер ключевого дисплея</value>
+  </data>
+  <data name="CTRLSECAESDEPLOYED" xml:space="preserve">
+    <value>Текущие ключи успешно развернуты !</value>
+  </data>
+  <data name="CTRLSECAESDELETED" xml:space="preserve">
+    <value>Текущие ключи успешно удалены !</value>
+  </data>
+  <data name="CTRLSECGENRSAKEY" xml:space="preserve">
+    <value>Мастер-ключ RSA</value>
   </data>
 </root>

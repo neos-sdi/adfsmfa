@@ -133,7 +133,7 @@
     <value>Records count : {0}</value>
   </data>
   <data name="InfosRSACertificateChanged" xml:space="preserve">
-    <value>MFA RSA Encryption Key correctly updated ! </value>
+    <value>MFA RSA Certificate correctly installed ! </value>
   </data>
   <data name="InfosServerServicesRestarted" xml:space="preserve">
     <value>You must restart "MFA Notification Hub" service and restart all open consoles and powershell sessions  !</value>
@@ -238,7 +238,7 @@
     <value>MFA System Not registered ! </value>
   </data>
   <data name="InfosRSACertificateError" xml:space="preserve">
-    <value>MFA RSA Encryption key not correctly updated !</value>
+    <value>MFA RSA Certificate not correctly installed !</value>
   </data>
   <data name="InfosYes" xml:space="preserve">
     <value>&amp;Yes</value>
@@ -248,5 +248,29 @@
   </data>
   <data name="InfoAllKeyWillbeReset" xml:space="preserve">
     <value>All the users's current keys will be invalidated ! Continue ?</value>
+  </data>
+  <data name="InfosRSASystemKeyChanged" xml:space="preserve">
+    <value>MFA RSA Encryption Key correctly updated ! </value>
+  </data>
+  <data name="InfosRSASystemKeyError" xml:space="preserve">
+    <value>MFA RSA Encryption key not correctly updated !</value>
+  </data>
+  <data name="InfosRSASystemKeyDeployed" xml:space="preserve">
+    <value>MFA RSA Encryption Key correctly deployed over the farm !</value>
+  </data>
+  <data name="InfosRSASystemKeyDeleted" xml:space="preserve">
+    <value>MFA RSA Encryption Key correctly deleted ! </value>
+  </data>
+  <data name="InfosRSASystemAESCngDeleted" xml:space="preserve">
+    <value>MFA AES CNG Encryption Key correctly deleted ! </value>
+  </data>
+  <data name="InfosRSASystemAESCngChanged" xml:space="preserve">
+    <value>MFA AES CNG Encryption Key correctly updated !</value>
+  </data>
+  <data name="InfosRSASystemAESCngDeployed" xml:space="preserve">
+    <value>MFA AES CNG Encryption Key correctly deployed !</value>
+  </data>
+  <data name="InfosRSASystemAESCngError" xml:space="preserve">
+    <value>MFA AES CNG Encryption key not correctly updated !</value>
   </data>
 </root>

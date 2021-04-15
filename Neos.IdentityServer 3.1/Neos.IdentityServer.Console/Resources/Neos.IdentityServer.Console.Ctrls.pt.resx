@@ -390,12 +390,6 @@
   <data name="CTRLSECINVALIDEXTERROR" xml:space="preserve">
     <value>Extensão inválida! Não pode ser cobrado!</value>
   </data>
-  <data name="CTRLSECKEYGEN" xml:space="preserve">
-    <value>Comprimento da chave gerada</value>
-  </data>
-  <data name="CTRLSECKEYLENGTH" xml:space="preserve">
-    <value>Comprimento máximo da chave</value>
-  </data>
   <data name="CTRLSECKEYMODE" xml:space="preserve">
     <value>Modo chave de segurança</value>
   </data>
@@ -710,5 +704,29 @@
   </data>
   <data name="CTRLWEBAUTHNUSENICKNAMES" xml:space="preserve">
     <value>Peça um nome para dispositivos biométricos</value>
+  </data>
+  <data name="CTRLSECKEYGEN" xml:space="preserve">
+    <value>Tipo de tecla gerado</value>
+  </data>
+  <data name="CTRLSECGENKEYS" xml:space="preserve">
+    <value>Gerar chaves</value>
+  </data>
+  <data name="CTRLSECAESWARNING" xml:space="preserve">
+    <value>aviso! gerar novas chaves invalidará todas as chaves atuais dos usuários</value>
+  </data>
+  <data name="CTRLSECAESOK" xml:space="preserve">
+    <value>Novas chaves criadas com sucesso!</value>
+  </data>
+  <data name="CTRLSECKEYLENGTH" xml:space="preserve">
+    <value>Tamanho da tela da tecla</value>
+  </data>
+  <data name="CTRLSECAESDEPLOYED" xml:space="preserve">
+    <value>Teclas atuais implantadas com sucesso!</value>
+  </data>
+  <data name="CTRLSECAESDELETED" xml:space="preserve">
+    <value>Teclas atuais excluídas com sucesso !</value>
+  </data>
+  <data name="CTRLSECGENRSAKEY" xml:space="preserve">
+    <value>Chave Master RSA</value>
   </data>
 </root>

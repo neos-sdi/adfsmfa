@@ -181,7 +181,7 @@ namespace Neos.IdentityServer.MultiFactor
         [OperationContract]
         SIDsParametersRecord RequestSIDsInformations();
 
-        [OperationContract(IsOneWay = true)]
+        [OperationContract(IsOneWay = true)] // ??? 
         void PushSIDsInformations(SIDsParametersRecord rec);
 
         [OperationContract]
@@ -221,10 +221,22 @@ namespace Neos.IdentityServer.MultiFactor
         void BroadcastNotification(Dictionary<string, bool> servers, byte[] config, NotificationsKind kind, string message, bool local = true, bool dispatch = true, bool mustwrite = false);
 
         [OperationContract]
-        bool NewMFASystemMasterKey(Dictionary<string, bool> servers, bool deleteonly = false);
+        bool NewMFASystemMasterKey(Dictionary<string, bool> servers, bool deployonly = false, bool deleteonly = false);
 
-        [OperationContract(IsOneWay = true)]
+        [OperationContract]
         void PushMFASystemMasterkey(byte[] data, bool deleteonly = false);
+
+        [OperationContract]
+        bool ExistsMFASystemMasterkey();
+
+        [OperationContract]
+        bool NewMFASystemAESCngKey(Dictionary<string, bool> servers, bool deployonly = false, bool deleteonly = false);
+
+        [OperationContract]
+        void PushMFASystemAESCngKey(byte[] bobdata, byte[] alicedata, bool deleteonly = false);
+
+        [OperationContract]
+        bool ExistsMFASystemAESCngKeys();
 
         [OperationContract]
         ADFSServerHost GetComputerInformations(string servername = "localhost");

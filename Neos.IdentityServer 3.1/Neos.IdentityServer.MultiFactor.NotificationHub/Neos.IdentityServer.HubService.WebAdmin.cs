@@ -1035,28 +1035,41 @@ namespace Neos.IdentityServer.MultiFactor
 
         #region MasterKey management
         /// <summary>
-        /// NewtMFASystemMasterKey method implementation
+        /// NewMFASystemMasterKey method implementation
         /// </summary>
-        internal bool NewMFASystemMasterKey(Dictionary<string, bool> servers, bool deleteonly = false)
+        internal bool NewMFASystemMasterKey(Dictionary<string, bool> servers, bool deployonly = false, bool deleteonly = false)
         {
+            bool keychanged = false;
             byte[] result = null;
             try
             {
                 SIDs.Initialize();
                 if (!deleteonly)
                 {
-                    result = Certs.CreateMFARSACngKey(out string uniquekeyname);
-                    if (result != null)
+                    if (!deployonly)
                     {
-                        char sep = Path.DirectorySeparatorChar;
-                        SIDs.InternalUpdateSystemFilesACLs(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + sep + "Microsoft" + sep + "Crypto" + sep + "Keys" + sep + uniquekeyname, true);
-                        DeleteConfigurationFromCache();
+                        result = Certs.CreateMFARSACngKey(out string uniquekeyname);
+                        if (result != null)
+                        {
+                            char sep = Path.DirectorySeparatorChar;
+                            SIDs.InternalUpdateSystemFilesACLs(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + sep + "Microsoft" + sep + "Crypto" + sep + "Keys" + sep + uniquekeyname, true);
+                            DeleteConfigurationFromCache();
+                            keychanged = true;
+                        }
+                    }
+                    else
+                    {
+                        result = Certs.ExportMFARSACngKey(out string uniquekeyname);
+                        keychanged = true;
                     }
                 }
                 else
                 {
                     if (Certs.DeleteMFARSACngKey())
+                    {
                         DeleteConfigurationFromCache();
+                        keychanged = true;
+                    }
                 }
 
                 string fqdn = Dns.GetHostEntry("localhost").HostName;
@@ -1095,7 +1108,7 @@ namespace Neos.IdentityServer.MultiFactor
                 _log.WriteEntry(string.Format("Error on WebAdminService Service NewMFASystemMasterKey method : {0}.", e.Message), EventLogEntryType.Error, 2010);
                 throw e;
             }
-            return true;
+            return keychanged;
         }
       
         /// <summary>
@@ -1129,6 +1142,153 @@ namespace Neos.IdentityServer.MultiFactor
             }
 
         }
+
+        /// <summary>
+        /// ExistsMFASystemMasterkey method implementation
+        /// </summary>
+        internal bool ExistsMFASystemMasterkey()
+        {
+            try
+            {
+                return Certs.ExistsMFARSACngKey();
+            }
+            catch (Exception e)
+            {
+                _log.WriteEntry(string.Format("Error on WebAdminService Service ExistsMFASystemMasterkey method : {0}.", e.Message), EventLogEntryType.Error, 2010);
+                return false;
+            }
+        }
+        #endregion
+
+        #region AES256 Cng Key management
+        /// <summary>
+        /// NewMFASystemAESCngKey method implementation
+        /// </summary>
+        internal bool NewMFASystemAESCngKey(Dictionary<string, bool> servers, bool deployonly = false, bool deleteonly = false)
+        {
+            bool keychanged = false;
+            byte[] bobdata = null;
+            byte[] alicedata = null;
+            try
+            {
+                SIDs.Initialize();
+                if (!deleteonly)
+                {
+                    if (!deployonly)
+                    {
+                        char sep = Path.DirectorySeparatorChar;
+                        bobdata = Certs.CreateMFAAESCngKey(SystemUtilities.BobKeyName, out string uniquekeyname1);
+                        alicedata = Certs.CreateMFAAESCngKey(SystemUtilities.AlicKeyName, out string uniquekeyname2);
+                        if ((bobdata!=null) &&(alicedata!=null))
+                        {
+                            SIDs.InternalUpdateSystemFilesACLs(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + sep + "Microsoft" + sep + "Crypto" + sep + "Keys" + sep + uniquekeyname1, true);
+                            SIDs.InternalUpdateSystemFilesACLs(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + sep + "Microsoft" + sep + "Crypto" + sep + "Keys" + sep + uniquekeyname2, true);
+                            DeleteConfigurationFromCache();
+                            keychanged = true;
+                        }
+                    }
+                    else
+                    {
+                        bobdata = Certs.ExportMFAAESCngKey(SystemUtilities.BobKeyName, out string uniquekeyname1);
+                        alicedata = Certs.ExportMFAAESCngKey(SystemUtilities.AlicKeyName, out string uniquekeyname2);
+                        keychanged = true;
+                    }
+                }
+                else
+                {
+                    if (Certs.DeleteMFAAESCngKey(SystemUtilities.BobKeyName) && Certs.DeleteMFAAESCngKey(SystemUtilities.AlicKeyName))
+                    {
+                        keychanged = true;
+                        DeleteConfigurationFromCache();
+                    }
+                }
+
+                string fqdn = Dns.GetHostEntry("localhost").HostName;
+                List<string> servernames = (from server in servers
+                                            where (server.Key.ToLower() != fqdn.ToLower())
+                                            select server.Key.ToLower()).ToList<string>();
+
+                foreach (string srv in servernames)
+                {
+                    WebAdminClient manager = new WebAdminClient();
+                    manager.Initialize(srv);
+                    try
+                    {
+                        IWebAdminServices client = manager.Open();
+                        try
+                        {
+                            client.PushMFASystemAESCngKey(bobdata, alicedata, deleteonly);
+                        }
+                        finally
+                        {
+                            manager.Close(client);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        _log.WriteEntry(string.Format("Error on WebAdminService Service NewMFASystemAESCngKey method : {0} / {1}.", srv, e.Message), EventLogEntryType.Error, 2010);
+                    }
+                    finally
+                    {
+                        manager.UnInitialize();
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                _log.WriteEntry(string.Format("Error on WebAdminService Service NewMFASystemAESCngKey method : {0}.", e.Message), EventLogEntryType.Error, 2010);
+                throw e;
+            }
+            return keychanged;
+        }
+
+        /// <summary>
+        /// PushMFASystemAESCngKey method implmentation
+        /// </summary>
+        internal void PushMFASystemAESCngKey(byte[] bobdata, byte[] alicedata, bool deleteonly = false)
+        {
+            try
+            {
+                SIDs.Initialize();
+                if (!deleteonly)
+                {
+                    char sep = Path.DirectorySeparatorChar;
+                    if (Certs.ImportMFAAESCngKey(bobdata, SystemUtilities.BobKeyName, out string uniquekeyname1) && (Certs.ImportMFAAESCngKey(alicedata, SystemUtilities.AlicKeyName, out string uniquekeyname2)))
+                    {
+                        SIDs.InternalUpdateSystemFilesACLs(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + sep + "Microsoft" + sep + "Crypto" + sep + "Keys" + sep + uniquekeyname1, true);
+                        SIDs.InternalUpdateSystemFilesACLs(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + sep + "Microsoft" + sep + "Crypto" + sep + "Keys" + sep + uniquekeyname2, true);
+                        DeleteConfigurationFromCache();
+                    }
+                }
+                else
+                {
+                    if (Certs.DeleteMFAAESCngKey(SystemUtilities.BobKeyName) && Certs.DeleteMFAAESCngKey(SystemUtilities.AlicKeyName))
+                        DeleteConfigurationFromCache();
+                }
+            }
+            catch (Exception e)
+            {
+                _log.WriteEntry(string.Format("Error on WebAdminService Service PushMFASystemAESCngKey method : {0}.", e.Message), EventLogEntryType.Error, 2010);
+                throw e;
+            }
+        }
+
+        /// <summary>
+        /// ExistsMFASystemAESCngKeys method implementation
+        /// </summary>
+        internal bool ExistsMFASystemAESCngKeys()
+        {
+            try
+            {
+                return Certs.ExistsMFAAESCngKey();
+            }
+            catch (Exception e)
+            {
+                _log.WriteEntry(string.Format("Error on WebAdminService Service ExistsMFASystemAESCngKeys method : {0}.", e.Message), EventLogEntryType.Error, 2010);
+                return false;
+            }
+        }
+
         #endregion
     }
     #endregion

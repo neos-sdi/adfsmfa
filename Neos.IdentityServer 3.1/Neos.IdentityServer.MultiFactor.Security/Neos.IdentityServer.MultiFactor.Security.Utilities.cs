@@ -253,6 +253,21 @@ namespace Neos.IdentityServer.MultiFactor
             }
         }
 
+        /// <summary>
+        /// Property BobKeyName implementation
+        /// </summary>
+        internal static string BobKeyName
+        {
+            get { return "BOB" + SystemKeyName; }
+        }
+
+        /// Property AlicKeyName implementation
+        /// </summary>
+        internal static string AlicKeyName
+        {
+            get { return "ALICE" + SystemKeyName; }
+        }
+
         #region Admin Key Reader
         /// <summary>
         /// ReadConfigurationKey method implmentation
@@ -1365,7 +1380,7 @@ namespace Neos.IdentityServer.MultiFactor
                 {
                     try
                     {
-                        if (fi.Name.ToLower().StartsWith("f686aace6942fb7f7ceb231212eef4a4_"))  // RDP Key do not drop anyway
+                        if (fi.Name.ToLower().StartsWith("f686aace6942fb7f7ceb231212eef4a4_"))  // RDP Key do not drop anyway (TSSecKeySet1)
                             continue;
                         if (!HasAssociatedCertificate(fi.Name))
                         {
@@ -1440,6 +1455,26 @@ namespace Neos.IdentityServer.MultiFactor
         }
 
         /// <summary>
+        /// ExportMFARSACngKey method implmentation
+        /// </summary>
+        internal static byte[] ExportMFARSACngKey(out string uniquekeyname)
+        {
+            byte[] result = null;
+            uniquekeyname = string.Empty;
+            try
+            {
+                CngKey key = CngKey.Open(SystemUtilities.SystemKeyName, CngProvider.MicrosoftSoftwareKeyStorageProvider, CngKeyOpenOptions.MachineKey);
+                result = key.Export(CngKeyBlobFormat.GenericPrivateBlob);
+                uniquekeyname = key.UniqueName;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+            return result;
+        }
+
+        /// <summary>
         /// ImportMFARSACngKey method implmentation
         /// </summary>
         internal static bool ImportMFARSACngKey(byte[] blob, out string uniquekeyname)
@@ -1472,10 +1507,9 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         internal static bool DeleteMFARSACngKey()
         {
-            CngProvider keyStorageProvider = CngProvider.MicrosoftSoftwareKeyStorageProvider;
             try
             {
-                CngKey cngkey = CngKey.Open(SystemUtilities.SystemKeyName, keyStorageProvider, CngKeyOpenOptions.MachineKey);
+                CngKey cngkey = CngKey.Open(SystemUtilities.SystemKeyName, CngProvider.MicrosoftSoftwareKeyStorageProvider, CngKeyOpenOptions.MachineKey);
                 if (cngkey != null)
                 {
                     cngkey.Delete();
@@ -1490,6 +1524,137 @@ namespace Neos.IdentityServer.MultiFactor
             }
         }
 
+        /// <summary>
+        /// ExistsMFARSACngKey method implementation
+        /// </summary>
+        internal static bool ExistsMFARSACngKey()
+        {
+            try
+            {
+                return CngKey.Exists(SystemUtilities.SystemKeyName, CngProvider.MicrosoftSoftwareKeyStorageProvider, CngKeyOpenOptions.MachineKey);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+        #endregion
+
+        #region MFA AES Key
+        /// <summary>
+        /// CreateMFAAESCngKey method implmentation (ECDH)
+        /// </summary>
+        internal static byte[] CreateMFAAESCngKey(string keyname, out string uniquekeyname)
+        {
+            byte[] result = null;
+            uniquekeyname = string.Empty;
+            CngProvider keyStorageProvider = CngProvider.MicrosoftSoftwareKeyStorageProvider;
+            try
+            {
+                CngKeyCreationParameters keyCreationParameters = new CngKeyCreationParameters()
+                {
+                    ExportPolicy = CngExportPolicies.AllowPlaintextExport,
+                    KeyCreationOptions = CngKeyCreationOptions.MachineKey | CngKeyCreationOptions.OverwriteExistingKey,
+                    Provider = keyStorageProvider
+                };
+                CngProperty cngProperty = new CngProperty("Length", System.BitConverter.GetBytes(256), CngPropertyOptions.None);
+                keyCreationParameters.Parameters.Add(cngProperty);
+                CngKey key = CngKey.Create(CngAlgorithm.ECDiffieHellmanP256, keyname, keyCreationParameters);
+                result = key.Export(CngKeyBlobFormat.GenericPrivateBlob);
+                uniquekeyname = key.UniqueName;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// ExportMFAAESCngKey method implmentation
+        /// </summary>
+        internal static byte[] ExportMFAAESCngKey(string keyname, out string uniquekeyname)
+        {
+            byte[] result = null;
+            uniquekeyname = string.Empty;
+            try
+            {
+                CngKey key = CngKey.Open(keyname, CngProvider.MicrosoftSoftwareKeyStorageProvider, CngKeyOpenOptions.MachineKey);
+                result = key.Export(CngKeyBlobFormat.GenericPrivateBlob);
+                uniquekeyname = key.UniqueName;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// ImportMFAAESCngKey method implmentation
+        /// </summary>
+        internal static bool ImportMFAAESCngKey(byte[] blob, string keyname, out string uniquekeyname)
+        {
+            uniquekeyname = string.Empty;
+            CngProvider keyStorageProvider = CngProvider.MicrosoftSoftwareKeyStorageProvider;
+            try
+            {
+                CngKeyCreationParameters cngKeyParameter = new CngKeyCreationParameters()
+                {
+                    Provider = keyStorageProvider,
+                    KeyCreationOptions = CngKeyCreationOptions.MachineKey | CngKeyCreationOptions.OverwriteExistingKey
+                };
+                CngProperty cngProperty = new CngProperty("Length", System.BitConverter.GetBytes(256), CngPropertyOptions.None);
+                cngKeyParameter.Parameters.Add(cngProperty);
+                CngProperty keyBlobProperty = new CngProperty(CngKeyBlobFormat.GenericPrivateBlob.ToString(), blob, CngPropertyOptions.None);
+                cngKeyParameter.Parameters.Add(keyBlobProperty);
+                CngKey key = CngKey.Create(CngAlgorithm.ECDiffieHellmanP256, keyname, cngKeyParameter);
+                uniquekeyname = key.UniqueName;
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// DeleteMFARSACngKey method implementation
+        /// </summary>
+        internal static bool DeleteMFAAESCngKey(string keyname)
+        {
+            try
+            {
+                CngKey cngkey = CngKey.Open(keyname, CngProvider.MicrosoftSoftwareKeyStorageProvider, CngKeyOpenOptions.MachineKey);
+                if (cngkey != null)
+                {
+                    cngkey.Delete();
+                    return true;
+                }
+                else
+                    return false;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// ExistsMFAAESCngKey method implementation
+        /// </summary>
+        internal static bool ExistsMFAAESCngKey()
+        {
+            try
+            {
+                return (CngKey.Exists(SystemUtilities.BobKeyName, CngProvider.MicrosoftSoftwareKeyStorageProvider, CngKeyOpenOptions.MachineKey) &&
+                        CngKey.Exists(SystemUtilities.AlicKeyName, CngProvider.MicrosoftSoftwareKeyStorageProvider, CngKeyOpenOptions.MachineKey));
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
         #endregion
     }
     #endregion

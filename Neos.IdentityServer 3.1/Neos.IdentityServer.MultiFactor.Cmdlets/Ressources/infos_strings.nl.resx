@@ -231,12 +231,6 @@
   <data name="InfosSystemNotRegistered" xml:space="preserve">
     <value>MFA-systeem niet geregistreerd!</value>
   </data>
-  <data name="InfosRSACertificateChanged" xml:space="preserve">
-    <value>MFA RSA encryptie sleutel correct bijgewerkt!</value>
-  </data>
-  <data name="InfosRSACertificateError" xml:space="preserve">
-    <value>MFA RSA Encryptie sleutel niet correct bijgewerkt!</value>
-  </data>
   <data name="InfosYes" xml:space="preserve">
     <value>&amp;Ja</value>
   </data>
@@ -248,5 +242,35 @@
   </data>
   <data name="InfoAllKeyWillbeReset" xml:space="preserve">
     <value>Alle huidige sleutels van de gebruikers worden ongeldig gemaakt ! Blijven ?</value>
+  </data>
+  <data name="InfosRSACertificateChanged" xml:space="preserve">
+    <value>MFA RSA Certificaat correct geïnstalleerd !</value>
+  </data>
+  <data name="InfosRSACertificateError" xml:space="preserve">
+    <value>MFA RSA-certificaat niet correct geïnstalleerd !</value>
+  </data>
+  <data name="InfosRSASystemKeyChanged" xml:space="preserve">
+    <value>MFA RSA encryptie sleutel correct bijgewerkt!</value>
+  </data>
+  <data name="InfosRSASystemKeyError" xml:space="preserve">
+    <value>MFA RSA Encryptie sleutel niet correct bijgewerkt!</value>
+  </data>
+  <data name="InfosRSASystemKeyDeployed" xml:space="preserve">
+    <value>MFA RSA encryptie sleutel correct geïmplementeerd over de boerderij!</value>
+  </data>
+  <data name="InfosRSASystemKeyDeleted" xml:space="preserve">
+    <value>MFA RSA Encryptie Sleutel correct verwijderd !</value>
+  </data>
+  <data name="InfosRSASystemAESCngDeleted" xml:space="preserve">
+    <value>MFA AES CNG Encryptie Sleutel correct verwijderd !</value>
+  </data>
+  <data name="InfosRSASystemAESCngChanged" xml:space="preserve">
+    <value>MFA AES CNG encryptie sleutel correct bijgewerkt!</value>
+  </data>
+  <data name="InfosRSASystemAESCngDeployed" xml:space="preserve">
+    <value>MFA AES CNG Encryptie Sleutel correct geïmplementeerd !</value>
+  </data>
+  <data name="InfosRSASystemAESCngError" xml:space="preserve">
+    <value>MFA AES CNG Encryptie sleutel niet correct bijgewerkt!</value>
   </data>
 </root>

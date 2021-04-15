@@ -527,7 +527,7 @@ namespace Neos.IdentityServer.MultiFactor
                 KeysConfig.KeyGenerator = KeyGeneratorMode.ClientSecret512;
                 KeysConfig.KeyFormat = SecretKeyFormat.RNG;
                 KeysConfig.KeySize = KeySizeMode.KeySize1024;
-                KeysConfig.AESKeyGenerator = AESKeyGeneratorMode.AESSecret1024;
+                KeysConfig.AESKeyGenerator = AESKeyGeneratorMode.AES256;
                 KeysConfig.CertificateThumbprint = Thumbprint.Empty;
                 KeysConfig.CertificatePerUser = false;
 
@@ -664,7 +664,7 @@ namespace Neos.IdentityServer.MultiFactor
                 KeysConfig.KeyFormat = SecretKeyFormat.RNG;
                 KeysConfig.KeySize = KeySizeMode.KeySize1024;
                 KeysConfig.KeyGenerator = KeyGeneratorMode.ClientSecret512;
-                KeysConfig.AESKeyGenerator = AESKeyGeneratorMode.AESSecret1024;
+                KeysConfig.AESKeyGenerator = AESKeyGeneratorMode.AES256;
                 KeysConfig.CertificatePerUser = false;
                 if (!Thumbprint.IsValid(this.KeysConfig.CertificateThumbprint))
                     KeysConfig.CertificateThumbprint = Thumbprint.Empty;
@@ -879,12 +879,25 @@ namespace Neos.IdentityServer.MultiFactor
     {
         private string _thumbprint;
         private XmlCDataSection _cdata;
+        private AESKeyGeneratorMode _aeskeygenerator = AESKeyGeneratorMode.AES256;
 
         [XmlAttribute("KeyGenerator")]
         public KeyGeneratorMode KeyGenerator { get; set; } = KeyGeneratorMode.ClientSecret512;
 
         [XmlAttribute("AESKeyGenerator")]
-        public AESKeyGeneratorMode AESKeyGenerator { get; set; } = AESKeyGeneratorMode.AESSecret1024;
+        public AESKeyGeneratorMode AESKeyGenerator
+        {
+            get
+            {
+                if (_aeskeygenerator != AESKeyGeneratorMode.ECDH_P256)
+                    _aeskeygenerator = AESKeyGeneratorMode.AES256;
+                return _aeskeygenerator;
+            }
+            set
+            {
+                _aeskeygenerator = value;
+            }
+        }
 
         [XmlAttribute("KeyFormat")]
         public SecretKeyFormat KeyFormat { get; set; } = SecretKeyFormat.RSA;
@@ -896,10 +909,7 @@ namespace Neos.IdentityServer.MultiFactor
         public string XORSecret
         {
             get { return XORUtilities.XORKey; }
-            set
-            {
-                XORUtilities.XORKey = value;
-            }
+            set { XORUtilities.XORKey = value; }            
         }
 
         [XmlAttribute("CertificatePerUser")]
@@ -1253,6 +1263,7 @@ namespace Neos.IdentityServer.MultiFactor
         internal override void PatchFromSecurityConfig(KeysManagerConfig config)
         {
             AESKeyGenerator = config.AESKeyGenerator;
+            KeySizeMode = config.KeySize;
         }
     }
 
@@ -1273,7 +1284,6 @@ namespace Neos.IdentityServer.MultiFactor
             get { return SecretKeyFormat.RSA; }
         }
 
-
         /// <summary>
         /// CertificateThumbprint property
         /// </summary>
@@ -1285,6 +1295,7 @@ namespace Neos.IdentityServer.MultiFactor
         internal override void PatchFromSecurityConfig(KeysManagerConfig config)
         {
             CertificateThumbprint = config.CertificateThumbprint;
+            KeySizeMode = config.KeySize;
         }
     }
 
@@ -1322,6 +1333,7 @@ namespace Neos.IdentityServer.MultiFactor
         {
             CertificateThumbprint = config.CertificateThumbprint;
             CertificateValidity = config.CertificateValidity;
+            KeySizeMode = config.KeySize;
         }
     }
     /// <summary>
@@ -1352,9 +1364,9 @@ namespace Neos.IdentityServer.MultiFactor
         internal override void PatchFromSecurityConfig(KeysManagerConfig config)
         {
             CustomParameters = config.CustomParameters.Data;
+            KeySizeMode = config.KeySize;
         }
     }
-
     #endregion
 
     #region ExternalOTPProvider

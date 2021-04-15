@@ -123,11 +123,23 @@
     <Compile Include="Forms\Neos.IdentityServer.Console.CustomStoreViewControl.Designer.cs">
       <DependentUpon>Neos.IdentityServer.Console.CustomStoreViewControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\Neos.IdentityServer.Console.SecurityAESWizard.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Neos.IdentityServer.Console.SecurityAESWizard.Designer.cs">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityAESWizard.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\Neos.IdentityServer.Console.SecurityCustomViewControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Forms\Neos.IdentityServer.Console.SecurityCustomViewControl.Designer.cs">
       <DependentUpon>Neos.IdentityServer.Console.SecurityCustomViewControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Neos.IdentityServer.Console.SecurityRootRSAWizard.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Neos.IdentityServer.Console.SecurityRootRSAWizard.Designer.cs">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityRootRSAWizard.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\Neos.IdentityServer.Console.StorageViewControl.cs">
       <SubType>UserControl</SubType>
@@ -227,11 +239,6 @@
     </Compile>
     <Compile Include="Neos.IdentityServer.Console.DataContracts.cs" />
     <Compile Include="Neos.IdentityServer.Console.Utilities.cs" />
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
     <Compile Include="PropertyPages\Neos.IdentityServer.Console.UserPropertyPages.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -745,6 +752,9 @@
     <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityAESViewControl.de.resx">
       <DependentUpon>Neos.IdentityServer.Console.SecurityAESViewControl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityAESViewControl.en-US.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityAESViewControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityAESViewControl.es.resx">
       <DependentUpon>Neos.IdentityServer.Console.SecurityAESViewControl.cs</DependentUpon>
     </EmbeddedResource>
@@ -781,6 +791,51 @@
     <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityAESViewControl.sv.resx">
       <DependentUpon>Neos.IdentityServer.Console.SecurityAESViewControl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityAESWizard.da.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityAESWizard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityAESWizard.de.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityAESWizard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityAESWizard.en-US.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityAESWizard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityAESWizard.es.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityAESWizard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityAESWizard.fr-CA.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityAESWizard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityAESWizard.fr.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityAESWizard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityAESWizard.it.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityAESWizard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityAESWizard.ja.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityAESWizard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityAESWizard.nl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityAESWizard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityAESWizard.pl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityAESWizard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityAESWizard.pt.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityAESWizard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityAESWizard.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityAESWizard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityAESWizard.ro.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityAESWizard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityAESWizard.ru.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityAESWizard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityAESWizard.sv.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityAESWizard.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRNGViewControl.da.resx">
       <DependentUpon>Neos.IdentityServer.Console.SecurityRNGViewControl.cs</DependentUpon>
     </EmbeddedResource>
@@ -790,7 +845,55 @@
     <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRNGViewControl.ja.resx">
       <DependentUpon>Neos.IdentityServer.Console.SecurityRNGViewControl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRootRSAWizard.da.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityRootRSAWizard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRootRSAWizard.de.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityRootRSAWizard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRootRSAWizard.en-US.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityRootRSAWizard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRootRSAWizard.es.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityRootRSAWizard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRootRSAWizard.fr-CA.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityRootRSAWizard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRootRSAWizard.fr.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityRootRSAWizard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRootRSAWizard.it.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityRootRSAWizard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRootRSAWizard.ja.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityRootRSAWizard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRootRSAWizard.nl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityRootRSAWizard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRootRSAWizard.pl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityRootRSAWizard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRootRSAWizard.pt.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityRootRSAWizard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRootRSAWizard.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityRootRSAWizard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRootRSAWizard.ro.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityRootRSAWizard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRootRSAWizard.ru.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityRootRSAWizard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRootRSAWizard.sv.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityRootRSAWizard.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRootViewControl.da.resx">
+      <DependentUpon>Neos.IdentityServer.Console.SecurityRootViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRootViewControl.en-US.resx">
       <DependentUpon>Neos.IdentityServer.Console.SecurityRootViewControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRootViewControl.fr-CA.resx">
@@ -1456,10 +1559,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.UsersViewControl.sv.resx">
       <DependentUpon>Neos.IdentityServer.Console.UsersViewControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\errors_strings.da.resx" />
     <EmbeddedResource Include="Resources\errors_strings.de.resx" />

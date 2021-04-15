@@ -231,12 +231,6 @@
   <data name="InfosSystemNotRegistered" xml:space="preserve">
     <value>Sistemul MAE Nu este înregistrat !</value>
   </data>
-  <data name="InfosRSACertificateChanged" xml:space="preserve">
-    <value>MAE RSA Encryption Key corect actualizat!</value>
-  </data>
-  <data name="InfosRSACertificateError" xml:space="preserve">
-    <value>MAE RSA Cheie de criptare nu a fost actualizat corect!</value>
-  </data>
   <data name="InfosYes" xml:space="preserve">
     <value>&amp;Da</value>
   </data>
@@ -248,5 +242,35 @@
   </data>
   <data name="InfoAllKeyWillbeReset" xml:space="preserve">
     <value>Toate cheile curente ale utilizatorilor vor fi invalidate ! Continua ?</value>
+  </data>
+  <data name="InfosRSACertificateChanged" xml:space="preserve">
+    <value>Certificat MAE RSA instalat corect !</value>
+  </data>
+  <data name="InfosRSACertificateError" xml:space="preserve">
+    <value>Certificat MAE RSA nu este instalat corect !</value>
+  </data>
+  <data name="InfosRSASystemKeyChanged" xml:space="preserve">
+    <value>MAE RSA Encryption Key corect actualizat!</value>
+  </data>
+  <data name="InfosRSASystemKeyError" xml:space="preserve">
+    <value>MAE RSA Cheie de criptare nu a fost actualizat corect!</value>
+  </data>
+  <data name="InfosRSASystemKeyDeployed" xml:space="preserve">
+    <value>MAE RSA Encryption Key corect implementate peste fermă!</value>
+  </data>
+  <data name="InfosRSASystemKeyDeleted" xml:space="preserve">
+    <value>MAE RSA Encryption Key corect șters!</value>
+  </data>
+  <data name="InfosRSASystemAESCngDeleted" xml:space="preserve">
+    <value>MAE AES CNG Encryption Key corect șters!</value>
+  </data>
+  <data name="InfosRSASystemAESCngChanged" xml:space="preserve">
+    <value>MAE AES CNG Encryption Key corect actualizat!</value>
+  </data>
+  <data name="InfosRSASystemAESCngDeployed" xml:space="preserve">
+    <value>MAE AES CNG Encryption Key corect implementat!</value>
+  </data>
+  <data name="InfosRSASystemAESCngError" xml:space="preserve">
+    <value>MAE AES CNG Cheie de criptare nu a fost actualizat corect!</value>
   </data>
 </root>

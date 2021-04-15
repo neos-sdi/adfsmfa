@@ -231,12 +231,6 @@
   <data name="InfosSystemNotRegistered" xml:space="preserve">
     <value>Mfa System Nie zarejestrowany !</value>
   </data>
-  <data name="InfosRSACertificateChanged" xml:space="preserve">
-    <value>Klucz szyfrowania MFA RSA poprawnie zaktualizowany!</value>
-  </data>
-  <data name="InfosRSACertificateError" xml:space="preserve">
-    <value>Klucz szyfrowania RSA MFA nie został poprawnie zaktualizowany!</value>
-  </data>
   <data name="InfosYes" xml:space="preserve">
     <value>&amp;Tak</value>
   </data>
@@ -248,5 +242,35 @@
   </data>
   <data name="InfoAllKeyWillbeReset" xml:space="preserve">
     <value>Wszystkie bieżące klucze użytkowników zostaną unieważnione ! Kontynuować ?</value>
+  </data>
+  <data name="InfosRSACertificateChanged" xml:space="preserve">
+    <value>Certyfikat RSA MFA poprawnie zainstalowany!</value>
+  </data>
+  <data name="InfosRSACertificateError" xml:space="preserve">
+    <value>Certyfikat RSA mfa nie jest poprawnie zainstalowany!</value>
+  </data>
+  <data name="InfosRSASystemKeyChanged" xml:space="preserve">
+    <value>Klucz szyfrowania MFA RSA poprawnie zaktualizowany!</value>
+  </data>
+  <data name="InfosRSASystemKeyError" xml:space="preserve">
+    <value>Klucz szyfrowania RSA MFA nie został poprawnie zaktualizowany!</value>
+  </data>
+  <data name="InfosRSASystemKeyDeployed" xml:space="preserve">
+    <value>Klucz szyfrowania RSA MFA poprawnie wdrożony w gospodarstwie!</value>
+  </data>
+  <data name="InfosRSASystemKeyDeleted" xml:space="preserve">
+    <value>Klucz szyfrowania RSA MFA został poprawnie usunięty!</value>
+  </data>
+  <data name="InfosRSASystemAESCngDeleted" xml:space="preserve">
+    <value>Klucz szyfrowania CNG MFA AES poprawnie usunięty!</value>
+  </data>
+  <data name="InfosRSASystemAESCngChanged" xml:space="preserve">
+    <value>Klucz szyfrowania CNG MFA AES poprawnie zaktualizowany!</value>
+  </data>
+  <data name="InfosRSASystemAESCngDeployed" xml:space="preserve">
+    <value>Klucz szyfrowania CNG MFA AES poprawnie wdrożony!</value>
+  </data>
+  <data name="InfosRSASystemAESCngError" xml:space="preserve">
+    <value>Klucz szyfrowania CNG CNG MFA AES nie został poprawnie zaktualizowany!</value>
   </data>
 </root>

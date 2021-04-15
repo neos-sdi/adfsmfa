@@ -231,12 +231,6 @@
   <data name="InfosSystemNotRegistered" xml:space="preserve">
     <value>MFA-System Nicht registriert !</value>
   </data>
-  <data name="InfosRSACertificateChanged" xml:space="preserve">
-    <value>MFA RSA Verschlüsselungsschlüssel korrekt aktualisiert !</value>
-  </data>
-  <data name="InfosRSACertificateError" xml:space="preserve">
-    <value>MFA RSA Verschlüsselungsschlüssel nicht korrekt aktualisiert !</value>
-  </data>
   <data name="InfosYes" xml:space="preserve">
     <value>&amp;Ja</value>
   </data>
@@ -248,5 +242,35 @@
   </data>
   <data name="InfoAllKeyWillbeReset" xml:space="preserve">
     <value>Alle aktuellen Schlüssel der Benutzer werden ungültig ! Weiter ?</value>
+  </data>
+  <data name="InfosRSACertificateChanged" xml:space="preserve">
+    <value>MFA RSA Zertifikat richtig installiert !</value>
+  </data>
+  <data name="InfosRSACertificateError" xml:space="preserve">
+    <value>MFA RSA Zertifikat nicht korrekt installiert !</value>
+  </data>
+  <data name="InfosRSASystemKeyChanged" xml:space="preserve">
+    <value>MFA RSA Verschlüsselungsschlüssel korrekt aktualisiert !</value>
+  </data>
+  <data name="InfosRSASystemKeyError" xml:space="preserve">
+    <value>MFA RSA Verschlüsselungsschlüssel nicht korrekt aktualisiert !</value>
+  </data>
+  <data name="InfosRSASystemKeyDeployed" xml:space="preserve">
+    <value>MFA RSA Encryption Key korrekt über die Farm bereitgestellt !</value>
+  </data>
+  <data name="InfosRSASystemKeyDeleted" xml:space="preserve">
+    <value>MFA RSA Verschlüsselungsschlüssel korrekt gelöscht !</value>
+  </data>
+  <data name="InfosRSASystemAESCngDeleted" xml:space="preserve">
+    <value>MFA AES CNG Verschlüsselungsschlüssel korrekt gelöscht !</value>
+  </data>
+  <data name="InfosRSASystemAESCngChanged" xml:space="preserve">
+    <value>MFA AES CNG Verschlüsselungsschlüssel korrekt aktualisiert !</value>
+  </data>
+  <data name="InfosRSASystemAESCngDeployed" xml:space="preserve">
+    <value>MFA AES CNG Verschlüsselungsschlüssel korrekt bereitgestellt !</value>
+  </data>
+  <data name="InfosRSASystemAESCngError" xml:space="preserve">
+    <value>MFA AES CNG Verschlüsselungsschlüssel nicht korrekt aktualisiert !</value>
   </data>
 </root>

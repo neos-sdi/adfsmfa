@@ -464,9 +464,9 @@ namespace Neos.IdentityServer.MultiFactor.Data
         }
 
         /// <summary>
-        /// InitMFASystemMasterKey method implementation
+        /// NewMFASystemMasterKey method implementation
         /// </summary>
-        public static bool NewMFASystemMasterKey(MFAConfig config, bool deleteonly = false)
+        public static bool NewMFASystemMasterKey(MFAConfig config, bool deployonly = false, bool deleteonly = false)
         {
             WebAdminClient manager = new WebAdminClient();
             manager.Initialize();
@@ -475,7 +475,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
                 IWebAdminServices client = manager.Open();
                 try
                 {
-                    return client.NewMFASystemMasterKey(GetServers(config), deleteonly);
+                    return client.NewMFASystemMasterKey(GetServers(config), deployonly, deleteonly);
                 }
                 finally
                 {
@@ -486,7 +486,82 @@ namespace Neos.IdentityServer.MultiFactor.Data
             {
                 manager.UnInitialize();
             }
-        }       
+        }
+
+        /// <summary>
+        /// NewMFASystemMasterKey method implementation
+        /// </summary>
+        public static bool ExistsMFASystemMasterKey()
+        {
+            WebAdminClient manager = new WebAdminClient();
+            manager.Initialize();
+            try
+            {
+                IWebAdminServices client = manager.Open();
+                try
+                {
+                    return client.ExistsMFASystemMasterkey();
+                }
+                finally
+                {
+                    manager.Close(client);
+                }
+            }
+            finally
+            {
+                manager.UnInitialize();
+            }
+        }
+
+        /// <summary>
+        /// NewMFASystemAESCngKey method implementation
+        /// </summary>
+        public static bool NewMFASystemAESCngKey(MFAConfig config, bool deployonly = false, bool deleteonly = false)
+        {
+            WebAdminClient manager = new WebAdminClient();
+            manager.Initialize();
+            try
+            {
+                IWebAdminServices client = manager.Open();
+                try
+                {
+                    return client.NewMFASystemAESCngKey(GetServers(config), deployonly, deleteonly);
+                }
+                finally
+                {
+                    manager.Close(client);
+                }
+            }
+            finally
+            {
+                manager.UnInitialize();
+            }
+        }
+
+        /// <summary>
+        /// ExistsMFASystemAESCngKeys method implementation
+        /// </summary>
+        public static bool ExistsMFASystemAESCngKeys()
+        {
+            WebAdminClient manager = new WebAdminClient();
+            manager.Initialize();
+            try
+            {
+                IWebAdminServices client = manager.Open();
+                try
+                {
+                    return client.ExistsMFASystemAESCngKeys();
+                }
+                finally
+                {
+                    manager.Close(client);
+                }
+            }
+            finally
+            {
+                manager.UnInitialize();
+            }
+        }
 
         /// <summary>
         /// CreateRSACertificate method implementation

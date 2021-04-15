@@ -426,12 +426,6 @@
   <data name="CTRLSECINVALIDEXTERROR" xml:space="preserve">
     <value>Ugyldig udvidelse ! kan ikke indlæses !</value>
   </data>
-  <data name="CTRLSECKEYGEN" xml:space="preserve">
-    <value>Genereret nøglelængde</value>
-  </data>
-  <data name="CTRLSECKEYLENGTH" xml:space="preserve">
-    <value>Maksimal nøglelængde</value>
-  </data>
   <data name="CTRLSECKEYMODE" xml:space="preserve">
     <value>Sikkerhedsnøgletilstand</value>
   </data>
@@ -710,5 +704,29 @@
   </data>
   <data name="CTRLWEBAUTHNUSENICKNAMES" xml:space="preserve">
     <value>Bed om et navn til biometriske enheder</value>
+  </data>
+  <data name="CTRLSECKEYGEN" xml:space="preserve">
+    <value>Genereret nøgletype</value>
+  </data>
+  <data name="CTRLSECGENKEYS" xml:space="preserve">
+    <value>Opret nøgler</value>
+  </data>
+  <data name="CTRLSECAESWARNING" xml:space="preserve">
+    <value>Advarsel! hvis du opretter nye nøgler, bliver alle brugeres aktuelle nøgler ugyldige</value>
+  </data>
+  <data name="CTRLSECAESOK" xml:space="preserve">
+    <value>Nye nøgler blev oprettet!</value>
+  </data>
+  <data name="CTRLSECKEYLENGTH" xml:space="preserve">
+    <value>Visningsstørrelse for nøgle</value>
+  </data>
+  <data name="CTRLSECAESDEPLOYED" xml:space="preserve">
+    <value>De aktuelle nøgler blev installeret!</value>
+  </data>
+  <data name="CTRLSECAESDELETED" xml:space="preserve">
+    <value>De aktuelle nøgler blev slettet !</value>
+  </data>
+  <data name="CTRLSECGENRSAKEY" xml:space="preserve">
+    <value>RSA-hovednøgle</value>
   </data>
 </root>

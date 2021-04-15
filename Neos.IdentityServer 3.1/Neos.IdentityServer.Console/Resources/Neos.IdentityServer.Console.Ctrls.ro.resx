@@ -390,12 +390,6 @@
   <data name="CTRLSECINVALIDEXTERROR" xml:space="preserve">
     <value>Extensie nevalidă! Nu se poate percepe!</value>
   </data>
-  <data name="CTRLSECKEYGEN" xml:space="preserve">
-    <value>Lungimea cheii generate</value>
-  </data>
-  <data name="CTRLSECKEYLENGTH" xml:space="preserve">
-    <value>Lungimea maximă a cheii</value>
-  </data>
   <data name="CTRLSECKEYMODE" xml:space="preserve">
     <value>Mod cheie de securitate</value>
   </data>
@@ -710,5 +704,29 @@
   </data>
   <data name="CTRLWEBAUTHNUSENICKNAMES" xml:space="preserve">
     <value>Solicitați un nume pentru dispozitivebiometrice</value>
+  </data>
+  <data name="CTRLSECKEYGEN" xml:space="preserve">
+    <value>Tip de cheie generat</value>
+  </data>
+  <data name="CTRLSECGENKEYS" xml:space="preserve">
+    <value>Generare taste</value>
+  </data>
+  <data name="CTRLSECAESWARNING" xml:space="preserve">
+    <value>Avertizare! generarea de chei noi va invalida toate cheile curente ale utilizatorilor</value>
+  </data>
+  <data name="CTRLSECAESOK" xml:space="preserve">
+    <value>Chei noi create cu succes !</value>
+  </data>
+  <data name="CTRLSECKEYLENGTH" xml:space="preserve">
+    <value>Dimensiune a ecranului tastei</value>
+  </data>
+  <data name="CTRLSECAESDEPLOYED" xml:space="preserve">
+    <value>Cheile curente s-au implementat cu succes !</value>
+  </data>
+  <data name="CTRLSECAESDELETED" xml:space="preserve">
+    <value>Cheile curente au fost șterse cu succes !</value>
+  </data>
+  <data name="CTRLSECGENRSAKEY" xml:space="preserve">
+    <value>Cheie principală RSA</value>
   </data>
 </root>

@@ -66,8 +66,8 @@ namespace Neos.IdentityServer.MultiFactor.Common
             RSAKeysManagerParams config = (RSAKeysManagerParams)parameters;
             KeysStorage = keysstorage;
             XORSecret = config.XORSecret;
-            KeySize = config.KeySizeMode;
             CertificateThumbprint = config.CertificateThumbprint;
+            KeySize = config.KeySizeMode;
             switch (KeySize)
             {
                 case KeySizeMode.KeySize128:

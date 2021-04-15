@@ -336,12 +336,6 @@
   <data name="CTRLSECCERTIFICATES" xml:space="preserve">
     <value>Certificati</value>
   </data>
-  <data name="CTRLSECKEYGEN" xml:space="preserve">
-    <value>Lunghezza chiave generata</value>
-  </data>
-  <data name="CTRLSECKEYLENGTH" xml:space="preserve">
-    <value>Lunghezza chiave massima</value>
-  </data>
   <data name="CTRLSECKEYMODE" xml:space="preserve">
     <value>Modalità sicurezza chiave</value>
   </data>
@@ -710,5 +704,29 @@
   </data>
   <data name="CTRLWEBAUTHNUSENICKNAMES" xml:space="preserve">
     <value>Chiedi un nome per i dispositivi biometrici</value>
+  </data>
+  <data name="CTRLSECKEYGEN" xml:space="preserve">
+    <value>Tipo di chiave generata</value>
+  </data>
+  <data name="CTRLSECGENKEYS" xml:space="preserve">
+    <value>Genera chiavi</value>
+  </data>
+  <data name="CTRLSECAESWARNING" xml:space="preserve">
+    <value>avvertimento! La generazione di nuove chiavi invaliderà tutte le chiavi correnti degli utenti</value>
+  </data>
+  <data name="CTRLSECAESOK" xml:space="preserve">
+    <value>Nuove chiavi create correttamente !</value>
+  </data>
+  <data name="CTRLSECKEYLENGTH" xml:space="preserve">
+    <value>Dimensioni del display dei tasti</value>
+  </data>
+  <data name="CTRLSECAESDEPLOYED" xml:space="preserve">
+    <value>Chiavi correnti distribuite correttamente !</value>
+  </data>
+  <data name="CTRLSECAESDELETED" xml:space="preserve">
+    <value>Chiavi correnti eliminate correttamente !</value>
+  </data>
+  <data name="CTRLSECGENRSAKEY" xml:space="preserve">
+    <value>Chiave master RSA</value>
   </data>
 </root>

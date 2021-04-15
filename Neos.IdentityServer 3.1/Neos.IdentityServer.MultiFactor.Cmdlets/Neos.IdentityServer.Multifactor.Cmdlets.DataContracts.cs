@@ -1089,12 +1089,12 @@ namespace MFA
     public class PSAESSecurity : PSBaseSecurity
     {
         /// <summary>
-        /// <para type="description">Used when RNG is selected, for choosing the size of the generated random number (128 to 512 bytes).</para> 
+        /// <para type="description">Used when AES is selected, choosing between ECDH 256 Key ou custom 256 key (1024 bits).</para> 
         /// </summary>
         public PSAESKeyGeneratorMode AESKeyGenerator { get; set; }
 
         /// <summary>
-        /// explicit operator from PSRNGSecurity
+        /// explicit operator from PSAESSecurity
         /// </summary>
         public static explicit operator PSAESSecurity(FlatAESSecurity mgr)
         {

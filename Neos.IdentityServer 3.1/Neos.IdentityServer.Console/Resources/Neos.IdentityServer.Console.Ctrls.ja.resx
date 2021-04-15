@@ -426,12 +426,6 @@
   <data name="CTRLSECINVALIDEXTERROR" xml:space="preserve">
     <value>無効な拡張クラスです!ロードできません !</value>
   </data>
-  <data name="CTRLSECKEYGEN" xml:space="preserve">
-    <value>生成されたキーの長さ</value>
-  </data>
-  <data name="CTRLSECKEYLENGTH" xml:space="preserve">
-    <value>最大キー長</value>
-  </data>
   <data name="CTRLSECKEYMODE" xml:space="preserve">
     <value>セキュリティ キー モード</value>
   </data>
@@ -710,5 +704,29 @@
   </data>
   <data name="CTRLWEBAUTHNUSENICKNAMES" xml:space="preserve">
     <value>生体認証デバイスの名前を尋ねる</value>
+  </data>
+  <data name="CTRLSECKEYGEN" xml:space="preserve">
+    <value>生成されたキータイプ</value>
+  </data>
+  <data name="CTRLSECGENKEYS" xml:space="preserve">
+    <value>キーの生成</value>
+  </data>
+  <data name="CTRLSECAESWARNING" xml:space="preserve">
+    <value>警告！新しいキーを生成すると、すべてのユーザーの現在のキーが無効になります</value>
+  </data>
+  <data name="CTRLSECAESOK" xml:space="preserve">
+    <value>新しいキーが正常に作成されました !</value>
+  </data>
+  <data name="CTRLSECKEYLENGTH" xml:space="preserve">
+    <value>キーの表示サイズ</value>
+  </data>
+  <data name="CTRLSECAESDEPLOYED" xml:space="preserve">
+    <value>現在のキーが正常に展開されました !</value>
+  </data>
+  <data name="CTRLSECAESDELETED" xml:space="preserve">
+    <value>現在のキーは正常に削除されました !</value>
+  </data>
+  <data name="CTRLSECGENRSAKEY" xml:space="preserve">
+    <value>RSA マスター キー</value>
   </data>
 </root>

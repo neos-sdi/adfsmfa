@@ -342,12 +342,6 @@
   <data name="CTRLSECCERTIFICATES" xml:space="preserve">
     <value>Certificados</value>
   </data>
-  <data name="CTRLSECKEYGEN" xml:space="preserve">
-    <value>Longitud de la clave generada</value>
-  </data>
-  <data name="CTRLSECKEYLENGTH" xml:space="preserve">
-    <value>Longitud máxima de la clave</value>
-  </data>
   <data name="CTRLSECKEYMODE" xml:space="preserve">
     <value>Modo de clave de seguridad</value>
   </data>
@@ -710,5 +704,29 @@
   </data>
   <data name="CTRLWEBAUTHNUSENICKNAMES" xml:space="preserve">
     <value>Pide un nombre para dispositivos biométricos</value>
+  </data>
+  <data name="CTRLSECKEYGEN" xml:space="preserve">
+    <value>Tipo de clave generado</value>
+  </data>
+  <data name="CTRLSECGENKEYS" xml:space="preserve">
+    <value>Generar claves</value>
+  </data>
+  <data name="CTRLSECAESWARNING" xml:space="preserve">
+    <value>¡advertencia! la generación de nuevas claves invalidará todas las claves actuales de los usuarios</value>
+  </data>
+  <data name="CTRLSECAESOK" xml:space="preserve">
+    <value>¡Nuevas claves creadas correctamente!</value>
+  </data>
+  <data name="CTRLSECKEYLENGTH" xml:space="preserve">
+    <value>Tamaño de la pantalla clave</value>
+  </data>
+  <data name="CTRLSECAESDEPLOYED" xml:space="preserve">
+    <value>¡Claves actuales implementadas correctamente!</value>
+  </data>
+  <data name="CTRLSECAESDELETED" xml:space="preserve">
+    <value>Claves actuales eliminadas correctamente !</value>
+  </data>
+  <data name="CTRLSECGENRSAKEY" xml:space="preserve">
+    <value>Clave maestra RSA</value>
   </data>
 </root>

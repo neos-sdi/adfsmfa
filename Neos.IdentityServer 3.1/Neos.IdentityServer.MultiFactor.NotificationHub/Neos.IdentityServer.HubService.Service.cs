@@ -535,11 +535,11 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// NewMFASystemMasterKey method implementation
         /// </summary>
-        public bool NewMFASystemMasterKey(Dictionary<string, bool> servers, bool deleteonly = false)
+        public bool NewMFASystemMasterKey(Dictionary<string, bool> servers, bool deployonly = false, bool deleteonly = false)
         {
             try
             {
-                return _manager.NewMFASystemMasterKey(servers, deleteonly);
+                return _manager.NewMFASystemMasterKey(servers, deployonly, deleteonly);
             }
             catch (Exception e)
             {
@@ -561,6 +561,73 @@ namespace Neos.IdentityServer.MultiFactor
             {
                 _log.WriteEntry(string.Format("Error on WebAdminService Service PushMFASystemMasterKey method : {0}.", e.Message), EventLogEntryType.Error, 2010);
                 return;
+            }
+        }
+
+        /// <summary>
+        /// ExistsMFASystemMasterkey method implementation
+        /// </summary>
+        public bool ExistsMFASystemMasterkey()
+        {
+            try
+            {
+                return _manager.ExistsMFASystemMasterkey();
+            }
+            catch (Exception e)
+            {
+                _log.WriteEntry(string.Format("Error on WebAdminService Service ExistsMFASystemMasterkey method : {0}.", e.Message), EventLogEntryType.Error, 2010);
+                return false;
+            }
+        }
+
+        #endregion
+
+        #region AES256 Keys
+        /// <summary>
+        /// NewMFASystemAESCngKey method implementation
+        /// </summary>
+        public bool NewMFASystemAESCngKey(Dictionary<string, bool> servers, bool deployonly = false, bool deleteonly = false)
+        {
+            try
+            {
+                return _manager.NewMFASystemAESCngKey(servers, deployonly, deleteonly);
+            }
+            catch (Exception e)
+            {
+                _log.WriteEntry(string.Format("Error on WebAdminService Service NewMFASystemAESCngKey method : {0}.", e.Message), EventLogEntryType.Error, 2010);
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// PushMFASystemAESCngKey method implementation
+        /// </summary>
+        public void PushMFASystemAESCngKey(byte[] bobdata, byte[] alicedata, bool deleteonly = false)
+        {
+            try
+            {
+                _manager.PushMFASystemAESCngKey(bobdata, alicedata, deleteonly);
+            }
+            catch (Exception e)
+            {
+                _log.WriteEntry(string.Format("Error on WebAdminService Service PushMFASystemAESCngKey method : {0}.", e.Message), EventLogEntryType.Error, 2010);
+                return;
+            }
+        }
+
+        /// <summary>
+        /// ExistsMFASystemAESCngKeys method implementation
+        /// </summary>
+        public bool ExistsMFASystemAESCngKeys()
+        {
+            try
+            {
+                return _manager.ExistsMFASystemAESCngKeys();
+            }
+            catch (Exception e)
+            {
+                _log.WriteEntry(string.Format("Error on WebAdminService Service ExistsMFASystemAESCngKeys method : {0}.", e.Message), EventLogEntryType.Error, 2010);
+                return false;
             }
         }
         #endregion

@@ -1733,8 +1733,8 @@ namespace Neos.IdentityServer.MultiFactor
     [Serializable]
     public enum AESKeyGeneratorMode
     {
-        AESSecret512 = 0,
-        AESSecret1024 = 1,
+        ECDH_P256 = 0,
+        AES256, AESSecret1024, AESSecret512 = 1
     }
 
     /// <summary>

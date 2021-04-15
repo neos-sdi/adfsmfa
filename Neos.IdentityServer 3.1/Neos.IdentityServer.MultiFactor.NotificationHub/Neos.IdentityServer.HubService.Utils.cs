@@ -279,25 +279,25 @@ namespace Neos.IdentityServer.MultiFactor
             if (!fulltosystemonly)
                 fSecurity.AddAccessRule(new FileSystemAccessRule(localacc, FileSystemRights.FullControl, AccessControlType.Allow));
             else
-                fSecurity.AddAccessRule(new FileSystemAccessRule(localacc, FileSystemRights.ReadAndExecute, AccessControlType.Allow));
+                fSecurity.AddAccessRule(new FileSystemAccessRule(localacc, FileSystemRights.Read, AccessControlType.Allow));
 
             if (!string.IsNullOrEmpty(ADFSAccountSID))
             {
                 SecurityIdentifier adfsacc = new SecurityIdentifier(ADFSAccountSID);
                 fSecurity.PurgeAccessRules(adfsacc);
-                fSecurity.AddAccessRule(new FileSystemAccessRule(adfsacc, FileSystemRights.ReadAndExecute, AccessControlType.Allow));
+                fSecurity.AddAccessRule(new FileSystemAccessRule(adfsacc, FileSystemRights.Read, AccessControlType.Allow));
             }
             if (!string.IsNullOrEmpty(ADFSServiceSID))
             {
                 SecurityIdentifier adfsserv = new SecurityIdentifier(ADFSServiceSID);
                 fSecurity.PurgeAccessRules(adfsserv);
-                fSecurity.AddAccessRule(new FileSystemAccessRule(adfsserv, FileSystemRights.ReadAndExecute, AccessControlType.Allow));
+                fSecurity.AddAccessRule(new FileSystemAccessRule(adfsserv, FileSystemRights.Read, AccessControlType.Allow));
             }
             if (!string.IsNullOrEmpty(ADFSAdminGroupSID))
             {
                 SecurityIdentifier adfsgroup = new SecurityIdentifier(ADFSAdminGroupSID);
                 fSecurity.PurgeAccessRules(adfsgroup);
-                fSecurity.AddAccessRule(new FileSystemAccessRule(adfsgroup, FileSystemRights.ReadAndExecute, AccessControlType.Allow));
+                fSecurity.AddAccessRule(new FileSystemAccessRule(adfsgroup, FileSystemRights.Read, AccessControlType.Allow));
             }
             File.SetAccessControl(fullpath, fSecurity);
         }

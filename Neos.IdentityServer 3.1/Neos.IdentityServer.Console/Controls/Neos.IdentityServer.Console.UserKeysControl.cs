@@ -130,10 +130,12 @@ namespace Neos.IdentityServer.Console
             catch (Exception ex)
             {
                 this.Cursor = crs;
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
                 userPropertyPage.ParentSheet.ShowDialog(messageBoxParameters);
             }
             finally
@@ -159,10 +161,12 @@ namespace Neos.IdentityServer.Console
             catch (Exception ex)
             {
                 this.Cursor = crs;
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
                 userPropertyPage.ParentSheet.ShowDialog(messageBoxParameters);
             }
             finally
@@ -185,19 +189,23 @@ namespace Neos.IdentityServer.Console
             catch (Exception ex)
             {
                 this.Cursor = crs;
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = ex.Message;
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Error;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
                 userPropertyPage.ParentSheet.ShowDialog(messageBoxParameters);
             }
             finally
             {
                 this.Cursor = crs;
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                messageBoxParameters.Text = string.Format(errors_strings.InfoSendingMailToUser, _email);
-                messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                messageBoxParameters.Icon = MessageBoxIcon.Information;
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = string.Format(errors_strings.InfoSendingMailToUser, _email),
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Information
+                };
                 userPropertyPage.ParentSheet.ShowDialog(messageBoxParameters);
             }
         }

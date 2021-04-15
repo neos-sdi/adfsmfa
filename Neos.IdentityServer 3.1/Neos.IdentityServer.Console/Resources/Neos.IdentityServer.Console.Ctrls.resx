@@ -442,10 +442,10 @@
     <value>Invalid Extension ! cannot be loaded !</value>
   </data>
   <data name="CTRLSECKEYGEN" xml:space="preserve">
-    <value>Generated key length</value>
+    <value>Generated key type</value>
   </data>
   <data name="CTRLSECKEYLENGTH" xml:space="preserve">
-    <value>Maximum key length</value>
+    <value>Key display size</value>
   </data>
   <data name="CTRLSECKEYMODE" xml:space="preserve">
     <value>Security Key Mode</value>
@@ -710,5 +710,23 @@
   </data>
   <data name="CTRLWEBAUTHNUSENICKNAMES" xml:space="preserve">
     <value>Ask for a name for biometric devices</value>
+  </data>
+  <data name="CTRLSECGENKEYS" xml:space="preserve">
+    <value>Generate Keys</value>
+  </data>
+  <data name="CTRLSECAESWARNING" xml:space="preserve">
+    <value>Warning ! generating new keys will invalidate all users current keys</value>
+  </data>
+  <data name="CTRLSECAESOK" xml:space="preserve">
+    <value>New keys successfully created !</value>
+  </data>
+  <data name="CTRLSECAESDEPLOYED" xml:space="preserve">
+    <value>Current Keys successfully deployed !</value>
+  </data>
+  <data name="CTRLSECAESDELETED" xml:space="preserve">
+    <value>Current Keys successfully deleted !</value>
+  </data>
+  <data name="CTRLSECGENRSAKEY" xml:space="preserve">
+    <value>RSA Master Key</value>
   </data>
 </root>

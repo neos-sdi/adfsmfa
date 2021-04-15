@@ -387,12 +387,6 @@
   <data name="CTRLSECINVALIDEXTERROR" xml:space="preserve">
     <value>Ungültige Erweiterung! Kann nicht geladen werden !</value>
   </data>
-  <data name="CTRLSECKEYGEN" xml:space="preserve">
-    <value>Länge des generierten Schlüssels</value>
-  </data>
-  <data name="CTRLSECKEYLENGTH" xml:space="preserve">
-    <value>Maximale Schlüssellänge</value>
-  </data>
   <data name="CTRLSECKEYMODE" xml:space="preserve">
     <value>Sicherheitsschlüsselmodus</value>
   </data>
@@ -710,5 +704,29 @@
   </data>
   <data name="CTRLWEBAUTHNUSENICKNAMES" xml:space="preserve">
     <value>Namen für biometrische Geräte anfordern</value>
+  </data>
+  <data name="CTRLSECKEYGEN" xml:space="preserve">
+    <value>Generierter Schlüsseltyp</value>
+  </data>
+  <data name="CTRLSECGENKEYS" xml:space="preserve">
+    <value>Generieren von Schlüsseln</value>
+  </data>
+  <data name="CTRLSECAESWARNING" xml:space="preserve">
+    <value>Warnung! Durch das Generieren neuer Schlüssel werden alle aktuellen Schlüssel aller Benutzer ungültig</value>
+  </data>
+  <data name="CTRLSECAESOK" xml:space="preserve">
+    <value>Neue Schlüssel erfolgreich erstellt !</value>
+  </data>
+  <data name="CTRLSECKEYLENGTH" xml:space="preserve">
+    <value>Ansichtsgröße des Schlüssels</value>
+  </data>
+  <data name="CTRLSECAESDEPLOYED" xml:space="preserve">
+    <value>Aktuelle Schlüssel erfolgreich bereitgestellt !</value>
+  </data>
+  <data name="CTRLSECAESDELETED" xml:space="preserve">
+    <value>Aktuelle Schlüssel wurden erfolgreich gelöscht !</value>
+  </data>
+  <data name="CTRLSECGENRSAKEY" xml:space="preserve">
+    <value>RSA-Masterschlüssel</value>
   </data>
 </root>

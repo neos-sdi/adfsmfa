@@ -231,12 +231,6 @@
   <data name="InfosSystemNotRegistered" xml:space="preserve">
     <value>MFAシステムが登録されていません!</value>
   </data>
-  <data name="InfosRSACertificateChanged" xml:space="preserve">
-    <value>MFA RSA 暗号化キーが正しく更新されました !</value>
-  </data>
-  <data name="InfosRSACertificateError" xml:space="preserve">
-    <value>MFA RSA 暗号化キーが正しく更新されていません!</value>
-  </data>
   <data name="InfosYes" xml:space="preserve">
     <value>&amp;Yes</value>
   </data>
@@ -248,5 +242,35 @@
   </data>
   <data name="InfoAllKeyWillbeReset" xml:space="preserve">
     <value>すべてのユーザーの現在のキーが無効になります!続行。</value>
+  </data>
+  <data name="InfosRSACertificateChanged" xml:space="preserve">
+    <value>MFA RSA 証明書が正しくインストールされました !</value>
+  </data>
+  <data name="InfosRSACertificateError" xml:space="preserve">
+    <value>MFA RSA 証明書が正しくインストールされていません!</value>
+  </data>
+  <data name="InfosRSASystemKeyChanged" xml:space="preserve">
+    <value>MFA RSA 暗号化キーが正しく更新されました !</value>
+  </data>
+  <data name="InfosRSASystemKeyError" xml:space="preserve">
+    <value>MFA RSA 暗号化キーが正しく更新されていません!</value>
+  </data>
+  <data name="InfosRSASystemKeyDeployed" xml:space="preserve">
+    <value>ファーム上で MFA RSA 暗号化キーが正しく展開されました!</value>
+  </data>
+  <data name="InfosRSASystemKeyDeleted" xml:space="preserve">
+    <value>MFA RSA 暗号化キーが正しく削除されました !</value>
+  </data>
+  <data name="InfosRSASystemAESCngDeleted" xml:space="preserve">
+    <value>MFA AES CNG 暗号化キーが正しく削除されました!</value>
+  </data>
+  <data name="InfosRSASystemAESCngChanged" xml:space="preserve">
+    <value>MFA AES CNG 暗号化キーが正しく更新されました!</value>
+  </data>
+  <data name="InfosRSASystemAESCngDeployed" xml:space="preserve">
+    <value>MFA AES CNG 暗号化キーが正しく展開されました!</value>
+  </data>
+  <data name="InfosRSASystemAESCngError" xml:space="preserve">
+    <value>MFA AES CNG 暗号化キーが正しく更新されていません!</value>
   </data>
 </root>

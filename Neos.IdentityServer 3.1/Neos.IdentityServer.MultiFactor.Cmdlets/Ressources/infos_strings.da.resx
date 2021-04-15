@@ -231,12 +231,6 @@
   <data name="InfosSystemNotRegistered" xml:space="preserve">
     <value>MFA-systemet er ikke registreret !</value>
   </data>
-  <data name="InfosRSACertificateChanged" xml:space="preserve">
-    <value>MFA RSA-krypteringsnøglen er opdateret korrekt !</value>
-  </data>
-  <data name="InfosRSACertificateError" xml:space="preserve">
-    <value>MFA RSA-krypteringsnøglen er ikke opdateret korrekt !</value>
-  </data>
   <data name="InfosYes" xml:space="preserve">
     <value>&amp;Ja</value>
   </data>
@@ -248,5 +242,35 @@
   </data>
   <data name="InfoAllKeyWillbeReset" xml:space="preserve">
     <value>Alle brugernes aktuelle nøgler vil blive ugyldiggjort ! Fortsætte ?</value>
+  </data>
+  <data name="InfosRSACertificateChanged" xml:space="preserve">
+    <value>MFA RSA-certifikatet er installeret korrekt !</value>
+  </data>
+  <data name="InfosRSACertificateError" xml:space="preserve">
+    <value>MFA RSA-certifikatet er ikke installeret korrekt !</value>
+  </data>
+  <data name="InfosRSASystemKeyChanged" xml:space="preserve">
+    <value>MFA RSA-krypteringsnøglen er opdateret korrekt !</value>
+  </data>
+  <data name="InfosRSASystemKeyError" xml:space="preserve">
+    <value>MFA RSA-krypteringsnøglen er ikke opdateret korrekt !</value>
+  </data>
+  <data name="InfosRSASystemKeyDeployed" xml:space="preserve">
+    <value>MFA RSA-krypteringsnøglen er installeret korrekt via farmen !</value>
+  </data>
+  <data name="InfosRSASystemKeyDeleted" xml:space="preserve">
+    <value>MFA RSA-krypteringsnøglen er slettet korrekt !</value>
+  </data>
+  <data name="InfosRSASystemAESCngDeleted" xml:space="preserve">
+    <value>MFA AES CNG-krypteringsnøglen er slettet korrekt !</value>
+  </data>
+  <data name="InfosRSASystemAESCngChanged" xml:space="preserve">
+    <value>MFA AES CNG-krypteringsnøgle er opdateret korrekt !</value>
+  </data>
+  <data name="InfosRSASystemAESCngDeployed" xml:space="preserve">
+    <value>MFA AES CNG-krypteringsnøglen er installeret korrekt !</value>
+  </data>
+  <data name="InfosRSASystemAESCngError" xml:space="preserve">
+    <value>MFA AES CNG-krypteringsnøglen er ikke opdateret korrekt !</value>
   </data>
 </root>

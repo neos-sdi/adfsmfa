@@ -2438,10 +2438,13 @@ namespace Neos.IdentityServer.MultiFactor
                     IsLoaded = true;
                     break;
                 case SecretKeyFormat.AES:
-                    Manager = new AESKeyManagerActivator().CreateInstance(cfg.KeysConfig.KeyVersion);
                     KeysManagerParams = new AESKeysManagerParams(cfg.KeysConfig.XORSecret);
                     KeysManagerParams.PatchFromSecurityConfig(cfg.KeysConfig);
                     KeysStorage = InitializeStorage(cfg, false);
+                    if (((AESKeysManagerParams)KeysManagerParams).AESKeyGenerator==AESKeyGeneratorMode.ECDH_P256)
+                        Manager = new ECDHP256KeyManagerActivator().CreateInstance(cfg.KeysConfig.KeyVersion);
+                    else
+                        Manager = new AESKeyManagerActivator().CreateInstance(cfg.KeysConfig.KeyVersion);
                     Manager.Initialize(KeysStorage, KeysManagerParams);
                     IsLoaded = true;
                     break;
@@ -2993,6 +2996,17 @@ namespace Neos.IdentityServer.MultiFactor
         }
 
         /// <summary>
+        /// GetQRSize method implmentation
+        /// </summary>
+        private static GraphicsRenderer GetQRRenderer(MFAConfig config, BitMatrix matrix)
+        {
+            GraphicsRenderer renderer = new GraphicsRenderer(new FixedModuleSize(4, QuietZoneModules.Four));
+            DrawingSize drwsize = renderer.SizeCalculator.GetSize(matrix.Width);
+            renderer.SizeCalculator = new FixedCodeSize(drwsize.CodeWidth, drwsize.QuietZoneModules);           
+            return renderer;
+        }
+
+        /// <summary>
         /// GetQRCodeString method implmentation
         /// </summary>
         public static string GetQRCodeString(string UPN, string QRString, MFAConfig config)
@@ -3009,7 +3023,7 @@ namespace Neos.IdentityServer.MultiFactor
             BitMatrix matrix = qr.Matrix;
             using (MemoryStream ms = new MemoryStream())
             {
-                var render = new GraphicsRenderer(new FixedModuleSize(3, QuietZoneModules.Zero));
+                var render = GetQRRenderer(config, matrix);
                 render.WriteToStream(matrix, ImageFormat.Png, ms);
                 ms.Position = 0;
                 return ConvertToBase64(ms);
@@ -3042,7 +3056,7 @@ namespace Neos.IdentityServer.MultiFactor
             if (!encoder.TryEncode(Content, out QrCode qr))
                 return null;
             BitMatrix matrix = qr.Matrix;
-            var render = new GraphicsRenderer(new FixedModuleSize(3, QuietZoneModules.Zero));
+            var render = GetQRRenderer(config, matrix); 
             using (MemoryStream ms = new MemoryStream())
             {
                 render.WriteToStream(matrix, ImageFormat.Png, ms);

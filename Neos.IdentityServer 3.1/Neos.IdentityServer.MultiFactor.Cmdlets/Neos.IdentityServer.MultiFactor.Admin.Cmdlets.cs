@@ -1521,10 +1521,10 @@ namespace MFA
                         if (!_nomfareset)
                         {
                             ADFSServiceManager svc = ManagementService.ADFSManager;
-                            if (svc.RegisterMFASystemMasterKey(hh, false))
-                                this.Host.UI.WriteLine(ConsoleColor.Green, this.Host.UI.RawUI.BackgroundColor, infos_strings.InfosRSACertificateChanged);
+                            if (!svc.RegisterMFASystemMasterKey(hh, true, false))
+                                this.Host.UI.WriteLine(ConsoleColor.Green, this.Host.UI.RawUI.BackgroundColor, infos_strings.InfosRSASystemKeyChanged);
                             else
-                                this.Host.UI.WriteLine(ConsoleColor.Red, this.Host.UI.RawUI.BackgroundColor, infos_strings.InfosRSACertificateError);
+                                this.Host.UI.WriteLine(ConsoleColor.Red, this.Host.UI.RawUI.BackgroundColor, infos_strings.InfosRSASystemKeyError);
                         }
                     }
                     else
@@ -1863,10 +1863,10 @@ namespace MFA
                         this.Host.UI.WriteLine(ConsoleColor.Green, this.Host.UI.RawUI.BackgroundColor, String.Format(infos_strings.InfosSystemRegistered));
                         if (!_nomfareset)
                         {
-                            if (svc.RegisterMFASystemMasterKey(hh, false))
-                                this.Host.UI.WriteLine(ConsoleColor.Green, this.Host.UI.RawUI.BackgroundColor, infos_strings.InfosRSACertificateChanged);
+                            if (svc.RegisterMFASystemMasterKey(hh, false, false))
+                               this.Host.UI.WriteLine(ConsoleColor.Green, this.Host.UI.RawUI.BackgroundColor, infos_strings.InfosRSASystemKeyChanged);
                             else
-                                this.Host.UI.WriteLine(ConsoleColor.Red, this.Host.UI.RawUI.BackgroundColor, infos_strings.InfosRSACertificateError);
+                               this.Host.UI.WriteLine(ConsoleColor.Red, this.Host.UI.RawUI.BackgroundColor, infos_strings.InfosRSASystemKeyError);
                         }
                     }
                     else
@@ -6649,14 +6649,30 @@ namespace MFA
     ///   <para>Register a new sytem master key for MFA System Enryption.</para>
     /// </example>
     /// <example>
-    ///   <para>Register-MFASystemMasterKey -Delete</para>
-    ///   <para>Reset encryption for MFA passwords an PassPhrase to default AES encryption.</para>
+    ///   <para>Register-MFASystemAESCngKey -Deploy</para>
+    ///   <para>Deploy current encryption RSA key on the farm.</para>
+    /// </example>
+    /// <example>
+    ///   <para>Register-MFASystemAESCngKey -Delete</para>
+    ///   <para>Delete encryption RSA Key from the farm.</para>
     /// </example>
     [Cmdlet(VerbsLifecycle.Register, "MFASystemMasterKey", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
     [PrimaryServerRequired, ConfigurationRightsRequired, NotRemotable]
     public sealed class RegisterMFASystemMasterKey : MFACmdlet
     {
         private bool _deletekey = false;
+        private bool _deploykey = false;
+
+        /// <summary>
+        /// <para type="description">Deploy current AES256 key on the farm.</para>
+        /// Deploy switch
+        /// </summary>
+        [Parameter(Mandatory = false, Position = 0, ParameterSetName = "Data")]
+        public SwitchParameter Deploy
+        {
+            get { return _deploykey; }
+            set { _deploykey = value; }
+        }
 
         /// <summary>
         /// <para type="description">Delete current RSA key for MFA Passwords and reset all passwords and Passphrase to default AES encryption.</para>
@@ -6703,10 +6719,119 @@ namespace MFA
                     {
                         PSHost hh = GetHostForVerbose();
                         ADFSServiceManager svc = ManagementService.ADFSManager;
-                        if (svc.RegisterMFASystemMasterKey(hh, this.Delete))
-                            this.Host.UI.WriteLine(ConsoleColor.Green, this.Host.UI.RawUI.BackgroundColor, infos_strings.InfosRSACertificateChanged);
+                        if (svc.RegisterMFASystemMasterKey(hh, this.Deploy, this.Delete))
+                        {
+                            if (this.Delete)
+                                this.Host.UI.WriteLine(ConsoleColor.Red, this.Host.UI.RawUI.BackgroundColor, infos_strings.InfosRSASystemKeyDeleted);
+                            else if (this.Deploy)
+                                this.Host.UI.WriteLine(ConsoleColor.Yellow, this.Host.UI.RawUI.BackgroundColor, infos_strings.InfosRSASystemKeyDeployed);
+                            else
+                                this.Host.UI.WriteLine(ConsoleColor.Green, this.Host.UI.RawUI.BackgroundColor, infos_strings.InfosRSASystemKeyChanged);
+                        }
                         else
-                            this.Host.UI.WriteLine(ConsoleColor.Red, this.Host.UI.RawUI.BackgroundColor, infos_strings.InfosRSACertificateError);
+                            this.Host.UI.WriteLine(ConsoleColor.Red, this.Host.UI.RawUI.BackgroundColor, infos_strings.InfosRSASystemKeyError);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                this.ThrowTerminatingError(new ErrorRecord(ex, "3020", ErrorCategory.OperationStopped, this));
+            }
+        }
+    }
+    #endregion
+
+    #region Register-MFASystemAESCngKey
+    /// <summary>
+    /// <para type="synopsis">Register a new sytem AES256 Cng key.</para>
+    /// <para type="description">Register a new sytem AES256 Cng for MFA.</para>
+    /// </summary>
+    /// <example>
+    ///   <para>Register-MFASystemAESCngKey</para>
+    ///   <para>Register a new sytem AES256 Cng for MFA System Enryption.</para>
+    /// </example>
+    /// <example>
+    ///   <para>Register-MFASystemAESCngKey -Deploy</para>
+    ///   <para>Deploy current encryption key for AES Cng on the farm.</para>
+    /// </example>
+    /// <example>
+    ///   <para>Register-MFASystemAESCngKey -Delete</para>
+    ///   <para>Delete encryption Key for AES Cng from the farm.</para>
+    /// </example>
+    [Cmdlet(VerbsLifecycle.Register, "MFASystemAESCngKey", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
+    [PrimaryServerRequired, ConfigurationRightsRequired, NotRemotable]
+    public sealed class RegisterMFASystemAESCngKey : MFACmdlet
+    {
+        private bool _deletekey = false;
+        private bool _deploykey = false;
+
+        /// <summary>
+        /// <para type="description">Deploy current AES256 key on the farm.</para>
+        /// Deploy switch
+        /// </summary>
+        [Parameter(Mandatory = false, Position = 0, ParameterSetName = "Data")]
+        public SwitchParameter Deploy
+        {
+            get { return _deploykey; }
+            set { _deploykey = value; }
+        }
+
+        /// <summary>
+        /// <para type="description">Delete current AES256 key.</para>
+        /// Delete switch
+        /// </summary>
+        [Parameter(Mandatory = false, Position = 0, ParameterSetName = "Data")]
+        public SwitchParameter Delete
+        {
+            get { return _deletekey; }
+            set { _deletekey = value; }
+        }
+
+        /// <summary>
+        /// BeginProcessing method implementation
+        /// </summary>
+        protected override void BeginProcessing()
+        {
+            base.BeginProcessing();
+            try
+            {
+                ManagementService.Initialize(this.Host, true);
+            }
+            catch (Exception ex)
+            {
+                this.ThrowTerminatingError(new ErrorRecord(ex, "3019", ErrorCategory.OperationStopped, this));
+            }
+        }
+
+        /// <summary>
+        /// ProcessRecord method override
+        /// </summary>
+        protected override void ProcessRecord()
+        {
+            try
+            {
+                if (ShouldProcess("Register-MFASystemAESCngKey"))
+                {
+                    Collection<ChoiceDescription> col = new Collection<ChoiceDescription>();
+                    ChoiceDescription c1 = new ChoiceDescription(infos_strings.InfosYes);
+                    ChoiceDescription c2 = new ChoiceDescription(infos_strings.InfosNo);
+                    col.Add(c1);
+                    col.Add(c2);
+                    if (this.Host.UI.PromptForChoice("Register-MFASystemAESCngKey", infos_strings.InfoRSAKeyWillbeReset, col, 1) == 0)
+                    {
+                        PSHost hh = GetHostForVerbose();
+                        ADFSServiceManager svc = ManagementService.ADFSManager;
+                        if (svc.RegisterMFASystemAESCngKey(hh, this.Deploy, this.Delete))
+                        {
+                            if (this.Delete)
+                                this.Host.UI.WriteLine(ConsoleColor.Red, this.Host.UI.RawUI.BackgroundColor, infos_strings.InfosRSASystemAESCngDeleted);
+                            else if (this.Deploy)
+                                this.Host.UI.WriteLine(ConsoleColor.Yellow, this.Host.UI.RawUI.BackgroundColor, infos_strings.InfosRSASystemAESCngDeployed);
+                            else
+                                this.Host.UI.WriteLine(ConsoleColor.Green, this.Host.UI.RawUI.BackgroundColor, infos_strings.InfosRSASystemAESCngChanged);
+                        }
+                        else
+                           this.Host.UI.WriteLine(ConsoleColor.Red, this.Host.UI.RawUI.BackgroundColor, infos_strings.InfosRSASystemAESCngError);
                     }
                 }
             }
@@ -6778,9 +6903,9 @@ namespace MFA
                         ADFSServiceManager svc = ManagementService.ADFSManager;
                         string thumb = svc.RegisterNewRSACertificate(hh, this.Duration);
                         if (!string.IsNullOrEmpty(thumb))
-                            this.Host.UI.WriteLine(ConsoleColor.Green, this.Host.UI.RawUI.BackgroundColor, String.Format(infos_strings.InfosRSACertificateChanged, thumb));
+                            this.Host.UI.WriteLine(ConsoleColor.Green, this.Host.UI.RawUI.BackgroundColor, infos_strings.InfosRSACertificateChanged);
                         else
-                            this.Host.UI.WriteLine(ConsoleColor.Red, this.Host.UI.RawUI.BackgroundColor, String.Format(infos_strings.InfosRSACertificateChanged, "NULL"));
+                            this.Host.UI.WriteLine(ConsoleColor.Red, this.Host.UI.RawUI.BackgroundColor, infos_strings.InfosRSACertificateChanged);
                     }
                 }
             }

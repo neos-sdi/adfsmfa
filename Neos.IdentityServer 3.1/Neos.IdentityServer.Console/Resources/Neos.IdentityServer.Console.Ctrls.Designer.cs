@@ -1051,6 +1051,42 @@ namespace Neos.IdentityServer.Console.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Current Keys successfully deleted !.
+        /// </summary>
+        internal static string CTRLSECAESDELETED {
+            get {
+                return ResourceManager.GetString("CTRLSECAESDELETED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Current Keys successfully deployed !.
+        /// </summary>
+        internal static string CTRLSECAESDEPLOYED {
+            get {
+                return ResourceManager.GetString("CTRLSECAESDEPLOYED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à New keys successfully created !.
+        /// </summary>
+        internal static string CTRLSECAESOK {
+            get {
+                return ResourceManager.GetString("CTRLSECAESOK", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Warning ! generating new keys will invalidate all users current keys.
+        /// </summary>
+        internal static string CTRLSECAESWARNING {
+            get {
+                return ResourceManager.GetString("CTRLSECAESWARNING", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Implementation (full class).
         /// </summary>
         internal static string CTRLSECASSEMBLY {
@@ -1087,6 +1123,24 @@ namespace Neos.IdentityServer.Console.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Generate Keys.
+        /// </summary>
+        internal static string CTRLSECGENKEYS {
+            get {
+                return ResourceManager.GetString("CTRLSECGENKEYS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à RSA Master Key.
+        /// </summary>
+        internal static string CTRLSECGENRSAKEY {
+            get {
+                return ResourceManager.GetString("CTRLSECGENRSAKEY", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Certificate not found !.
         /// </summary>
         internal static string CTRLSECINVALIDCERT {
@@ -1105,7 +1159,7 @@ namespace Neos.IdentityServer.Console.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Generated key length.
+        ///   Recherche une chaîne localisée semblable à Generated key type.
         /// </summary>
         internal static string CTRLSECKEYGEN {
             get {
@@ -1114,7 +1168,7 @@ namespace Neos.IdentityServer.Console.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Maximum key length.
+        ///   Recherche une chaîne localisée semblable à Key display size.
         /// </summary>
         internal static string CTRLSECKEYLENGTH {
             get {
