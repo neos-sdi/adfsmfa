@@ -273,4 +273,7 @@
   <data name="InfosRSASystemAESCngError" xml:space="preserve">
     <value>MFA AES CNG ключ шифрования не правильно обновляется !</value>
   </data>
+  <data name="InfosConfigNotUpdated" xml:space="preserve">
+    <value>МИД Конфигурация НЕ обновляется !</value>
+  </data>
 </root>

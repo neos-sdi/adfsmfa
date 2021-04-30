@@ -133,7 +133,7 @@
     <value>Удалите текущие клавиши ECDH из фермы ADFS</value>
   </data>
   <data name="btnOK.Text" xml:space="preserve">
-    <value>Ok</value>
+    <value>&amp;Ok</value>
   </data>
   <data name="btnCancel.Text" xml:space="preserve">
     <value>Отмена</value>

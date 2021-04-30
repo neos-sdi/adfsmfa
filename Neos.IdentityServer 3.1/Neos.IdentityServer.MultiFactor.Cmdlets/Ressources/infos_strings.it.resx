@@ -273,4 +273,7 @@
   <data name="InfosRSASystemAESCngError" xml:space="preserve">
     <value>Chiave di crittografia CNG AES dell'autenticazione a più fattori non aggiornata correttamente !</value>
   </data>
+  <data name="InfosConfigNotUpdated" xml:space="preserve">
+    <value>Configurazione autenticazione a più fattori NON aggiornata !</value>
+  </data>
 </root>

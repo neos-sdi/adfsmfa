@@ -133,7 +133,7 @@
     <value>Usuwanie bieżącego zestawu kluczy ECDH z farmy usługi ADFS</value>
   </data>
   <data name="btnOK.Text" xml:space="preserve">
-    <value>Ok</value>
+    <value>&amp;Ok</value>
   </data>
   <data name="btnCancel.Text" xml:space="preserve">
     <value>Anuluj</value>

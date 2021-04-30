@@ -133,7 +133,7 @@
     <value>Supprimer les clés ECDH actuelles définies de la batterie de serveurs ADFS</value>
   </data>
   <data name="btnOK.Text" xml:space="preserve">
-    <value>Ok</value>
+    <value>&amp;Ok</value>
   </data>
   <data name="btnCancel.Text" xml:space="preserve">
     <value>Annuler</value>

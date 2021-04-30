@@ -11,7 +11,7 @@
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,                            //
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                               //
 //                                                                                                                                                                                          //
-// https://adfsmfa.codeplex.com                                                                                                                                                             //
+//                                                                                                                                                             //
 // https://github.com/neos-sdi/adfsmfa                                                                                                                                                      //
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
@@ -298,8 +298,10 @@ namespace Neos.IdentityServer.MultiFactor
                             if (provider.Kind == PreferredMethod.Code)
                             {
                                 AddOrUpdateProvider(PreferredMethod.Code, provider);
-                                OTPProviderParams initdata = new OTPProviderParams(cfg.OTPProvider);
-                                initdata.Config = cfg;
+                                OTPProviderParams initdata = new OTPProviderParams(cfg.OTPProvider)
+                                {
+                                    Config = cfg
+                                };
                                 provider.Initialize(initdata);
                             }
                             else
@@ -309,8 +311,10 @@ namespace Neos.IdentityServer.MultiFactor
                         {
                             provider = new NeosPlugProvider(PreferredMethod.Code);
                             AddOrUpdateProvider(PreferredMethod.Code, provider);
-                            OTPProviderParams initdata = new OTPProviderParams(cfg.OTPProvider);
-                            initdata.Config = cfg;
+                            OTPProviderParams initdata = new OTPProviderParams(cfg.OTPProvider)
+                            {
+                                Config = cfg
+                            };
                             provider.Initialize(initdata);
                         }
                     }
@@ -643,8 +647,7 @@ namespace Neos.IdentityServer.MultiFactor
                         if (ctx.PinCode <= 0)
                             return false;
                     }
-                    IWebAuthNProvider web = prov as IWebAuthNProvider;
-                    if ((web != null) && (web.PinRequirements != WebAuthNPinRequirements.Null))
+                    if ((prov is IWebAuthNProvider web) && (web.PinRequirements != WebAuthNPinRequirements.Null))
                     {
                         if (ctx.PinCode <= 0)
                             return false;
@@ -669,8 +672,7 @@ namespace Neos.IdentityServer.MultiFactor
                         continue;
                     if (prov.PinRequired)
                         return true;
-                    IWebAuthNProvider web = prov as IWebAuthNProvider;
-                    if (web != null)
+                    if (prov is IWebAuthNProvider web)
                         return web.PinRequirements != WebAuthNPinRequirements.Null;
                 }
             }
@@ -711,8 +713,10 @@ namespace Neos.IdentityServer.MultiFactor
                                 if (provider.Kind == PreferredMethod.Code)
                                 {
                                     AddOrUpdateProvider(PreferredMethod.Code, provider);
-                                    OTPProviderParams initdata = new OTPProviderParams(cfg.OTPProvider);
-                                    initdata.Config = cfg;
+                                    OTPProviderParams initdata = new OTPProviderParams(cfg.OTPProvider)
+                                    {
+                                        Config = cfg
+                                    };
                                     provider.Initialize(initdata);
                                 }
                                 else
@@ -722,8 +726,10 @@ namespace Neos.IdentityServer.MultiFactor
                             {
                                 provider = new NeosPlugProvider(PreferredMethod.Code);
                                 AddOrUpdateProvider(PreferredMethod.Code, provider);
-                                OTPProviderParams initdata = new OTPProviderParams(cfg.OTPProvider);
-                                initdata.Config = cfg;
+                                OTPProviderParams initdata = new OTPProviderParams(cfg.OTPProvider)
+                                {
+                                    Config = cfg
+                                };
                                 provider.Initialize(initdata);
                             }
                         }
@@ -1976,9 +1982,11 @@ namespace Neos.IdentityServer.MultiFactor
                             string pso = results[0].Properties["msDS-ResultantPSO"][0].ToString();
                             using (DirectoryEntry dir = ADDSUtils.GetDirectoryEntry(dns, cfg.Hosts.ActiveDirectoryHost.Account, cfg.Hosts.ActiveDirectoryHost.Password, pso))
                             {
-                                var searchForPassPolicy = new DirectorySearcher(dir);
-                                searchForPassPolicy.Filter = @"(objectClass=msDS-PasswordSettings)";
-                                searchForPassPolicy.SearchScope = System.DirectoryServices.SearchScope.Subtree;
+                                var searchForPassPolicy = new DirectorySearcher(dir)
+                                {
+                                    Filter = @"(objectClass=msDS-PasswordSettings)",
+                                    SearchScope = System.DirectoryServices.SearchScope.Subtree
+                                };
 
                                 searchForPassPolicy.PropertiesToLoad.AddRange(new string[] { "msDS-MaximumPasswordAge" });
                                 searchForPassPolicy.PropertiesToLoad.AddRange(new string[] { "msDS-MinimumPasswordAge" });
@@ -3074,7 +3082,7 @@ namespace Neos.IdentityServer.MultiFactor
     /// </summary>
     internal static class CFGUtilities
     {
-        private static char sep = Path.DirectorySeparatorChar;
+        private static readonly char sep = Path.DirectorySeparatorChar;
         internal static string ConfigCacheFile = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + sep + "MFA" + sep + "Config" + sep + "config.db";        
 
         #region ReadConfiguration

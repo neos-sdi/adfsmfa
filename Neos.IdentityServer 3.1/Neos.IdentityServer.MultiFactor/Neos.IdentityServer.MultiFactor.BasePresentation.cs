@@ -11,17 +11,14 @@
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,                            //
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                               //
 //                                                                                                                                                                                          //
-// https://adfsmfa.codeplex.com                                                                                                                                                             //
+//                                                                                                                                                             //
 // https://github.com/neos-sdi/adfsmfa                                                                                                                                                      //
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Reflection;
 using Microsoft.IdentityServer.Web.Authentication.External;
-using Neos.IdentityServer.MultiFactor.Common;
 using Neos.IdentityServer.MultiFactor.Data;
 
 namespace Neos.IdentityServer.MultiFactor
@@ -31,7 +28,7 @@ namespace Neos.IdentityServer.MultiFactor
     /// </summary>
     public class AdapterPresentation : IAdapterPresentation, IAdapterPresentationForm
     {
-        private BasePresentation _adapter = null;
+        private BaseMFAPresentation _adapter = null;
         private static List<PlaceHolders> _holders = new List<PlaceHolders>();
 
         #region Constructors
@@ -53,11 +50,15 @@ namespace Neos.IdentityServer.MultiFactor
                         UseUIPaginated = provider.Config.UseUIPaginated
                     };
                     break;
-                default:
+                case ADFSUserInterfaceKind.Default:
                     _adapter = new AdapterPresentationDefault(provider, context)
                     {
                         UseUIPaginated = false
                     };
+                    break;
+                case ADFSUserInterfaceKind.Custom:
+                    _adapter = LoadCustomAdapterPresentation(provider, context);
+                    _adapter.UseUIPaginated = provider.Config.UseUIPaginated;
                     break;
             }
         }
@@ -80,11 +81,15 @@ namespace Neos.IdentityServer.MultiFactor
                         UseUIPaginated = provider.Config.UseUIPaginated
                     };
                     break;
-                default:
-                    _adapter = new AdapterPresentationDefault(provider, context, message)
+                case ADFSUserInterfaceKind.Default:
+                    _adapter = new AdapterPresentationDefault(provider, context)
                     {
                         UseUIPaginated = false
                     };
+                    break;
+                case ADFSUserInterfaceKind.Custom:
+                    _adapter = LoadCustomAdapterPresentation(provider, context);
+                    _adapter.UseUIPaginated = provider.Config.UseUIPaginated;
                     break;
             }
         }
@@ -107,11 +112,15 @@ namespace Neos.IdentityServer.MultiFactor
                         UseUIPaginated = provider.Config.UseUIPaginated
                     };
                     break;
-                default:
-                    _adapter = new AdapterPresentationDefault(provider, context, message, ismessage)
+                case ADFSUserInterfaceKind.Default:
+                    _adapter = new AdapterPresentationDefault(provider, context)
                     {
                         UseUIPaginated = false
                     };
+                    break;
+                case ADFSUserInterfaceKind.Custom:
+                    _adapter = LoadCustomAdapterPresentation(provider, context);
+                    _adapter.UseUIPaginated = provider.Config.UseUIPaginated;
                     break;
             }
         }
@@ -134,11 +143,15 @@ namespace Neos.IdentityServer.MultiFactor
                         UseUIPaginated = provider.Config.UseUIPaginated
                     };
                     break;
-                default:
-                    _adapter = new AdapterPresentationDefault(provider, context, suite)
+                case ADFSUserInterfaceKind.Default:
+                    _adapter = new AdapterPresentationDefault(provider, context)
                     {
                         UseUIPaginated = false
                     };
+                    break;
+                case ADFSUserInterfaceKind.Custom:
+                    _adapter = LoadCustomAdapterPresentation(provider, context);
+                    _adapter.UseUIPaginated = provider.Config.UseUIPaginated;
                     break;
             }
         }
@@ -161,11 +174,15 @@ namespace Neos.IdentityServer.MultiFactor
                         UseUIPaginated = provider.Config.UseUIPaginated
                     };
                     break;
-                default:
-                    _adapter = new AdapterPresentationDefault(provider, context, message, suite, disableoptions)
+                case ADFSUserInterfaceKind.Default:
+                    _adapter = new AdapterPresentationDefault(provider, context)
                     {
                         UseUIPaginated = false
                     };
+                    break;
+                case ADFSUserInterfaceKind.Custom:
+                    _adapter = LoadCustomAdapterPresentation(provider, context);
+                    _adapter.UseUIPaginated = provider.Config.UseUIPaginated;
                     break;
             }
         }
@@ -612,6 +629,31 @@ namespace Neos.IdentityServer.MultiFactor
                 }
         }
         #endregion
+
+        #region Custom AdapterPresentation
+        /// <summary>
+        /// LoadCustomAdapterPresentation method implmentation
+        /// </summary>
+        private static BaseMFAPresentation LoadCustomAdapterPresentation(AuthenticationProvider provider, IAuthenticationContext context)
+        {
+            // provider.Config;
+            string AssemblyFulldescription = provider.Config.CustomAdapterPresentation;
+            if (string.IsNullOrEmpty(AssemblyFulldescription))
+                return null;
+            Assembly assembly = Assembly.Load(Utilities.ParseAssembly(AssemblyFulldescription));
+            if (assembly == null)
+                return null;
+
+            Type _typetoload = assembly.GetType(Utilities.ParseType(AssemblyFulldescription));
+            if (_typetoload == null)
+                return null;
+
+            if (_typetoload.IsClass && !_typetoload.IsAbstract && _typetoload.IsAssignableFrom(typeof(BaseMFAPresentation)))
+                return (BaseMFAPresentation)Activator.CreateInstance(_typetoload, true); // Allow Calling internal Constructors
+            else
+                return null;
+        }
+        #endregion
     }
 
     /// <summary>
@@ -627,7 +669,7 @@ namespace Neos.IdentityServer.MultiFactor
         protected BasePresentation()
         {
 
-        } 
+        }
 
         /// <summary>
         /// Constructor implementation
@@ -635,12 +677,13 @@ namespace Neos.IdentityServer.MultiFactor
         protected BasePresentation(AuthenticationProvider provider, IAuthenticationContext context)
         {
             this.Provider = provider;
-            this.Context = new AuthenticationContext(context);
-            this.Context.UIMessage = string.Empty;
-            this.IsPermanentFailure = false; 
-            this.IsMessage = true; 
+            this.Context = new AuthenticationContext(context)
+            {
+                UIMessage = string.Empty
+            };
+            this.IsPermanentFailure = false;
+            this.IsMessage = true;
             this.DisableOptions = false;
-            this.Resources = new ResourcesLocale(Context.Lcid);
         }
 
         /// <summary>
@@ -649,26 +692,28 @@ namespace Neos.IdentityServer.MultiFactor
         protected BasePresentation(AuthenticationProvider provider, IAuthenticationContext context, string message)
         {
             this.Provider = provider;
-            this.Context = new AuthenticationContext(context);
-            this.Context.UIMessage = message;
+            this.Context = new AuthenticationContext(context)
+            {
+                UIMessage = message
+            };
             this.IsPermanentFailure = (this.Context.TargetUIMode == ProviderPageMode.DefinitiveError);
             this.IsMessage = (this.Context.TargetUIMode != ProviderPageMode.DefinitiveError);
             this.DisableOptions = false;
-            this.Resources = new ResourcesLocale(Context.Lcid);
         }
 
         /// <summary>
         /// Constructor overload implementation
         /// </summary>
-        protected BasePresentation(AuthenticationProvider provider, IAuthenticationContext context, string message, bool ismessage)        
+        protected BasePresentation(AuthenticationProvider provider, IAuthenticationContext context, string message, bool ismessage)
         {
             this.Provider = provider;
-            this.Context = new AuthenticationContext(context);
-            this.Context.UIMessage = message;
+            this.Context = new AuthenticationContext(context)
+            {
+                UIMessage = message
+            };
             this.IsPermanentFailure = (this.Context.TargetUIMode == ProviderPageMode.DefinitiveError);
             this.IsMessage = ismessage;
             this.DisableOptions = false;
-            this.Resources = new ResourcesLocale(Context.Lcid);
         }
 
         /// <summary>
@@ -677,13 +722,14 @@ namespace Neos.IdentityServer.MultiFactor
         public BasePresentation(AuthenticationProvider provider, IAuthenticationContext context, ProviderPageMode suite)
         {
             this.Provider = provider;
-            this.Context = new AuthenticationContext(context);
-            this.Context.UIMessage = string.Empty;
-            this.Context.TargetUIMode = suite;
+            this.Context = new AuthenticationContext(context)
+            {
+                UIMessage = string.Empty,
+                TargetUIMode = suite
+            };
             this.IsPermanentFailure = (this.Context.TargetUIMode == ProviderPageMode.DefinitiveError);
             this.IsMessage = (this.Context.TargetUIMode != ProviderPageMode.DefinitiveError);
             this.DisableOptions = false;
-            this.Resources = new ResourcesLocale(Context.Lcid);
         }
 
         /// <summary>
@@ -692,13 +738,14 @@ namespace Neos.IdentityServer.MultiFactor
         protected BasePresentation(AuthenticationProvider provider, IAuthenticationContext context, string message, ProviderPageMode suite, bool disableoptions = false)
         {
             this.Provider = provider;
-            this.Context = new AuthenticationContext(context);
-            this.Context.TargetUIMode = suite;
-            this.Context.UIMessage = message;
+            this.Context = new AuthenticationContext(context)
+            {
+                TargetUIMode = suite,
+                UIMessage = message
+            };
             this.IsPermanentFailure = (this.Context.TargetUIMode == ProviderPageMode.DefinitiveError);
             this.IsMessage = (this.Context.TargetUIMode != ProviderPageMode.DefinitiveError);
             this.DisableOptions = disableoptions;
-            this.Resources = new ResourcesLocale(Context.Lcid);
         }
 
         #region Properties
@@ -757,15 +804,6 @@ namespace Neos.IdentityServer.MultiFactor
         }
 
         /// <summary>
-        /// Resources property
-        /// </summary>
-        public virtual ResourcesLocale Resources
-        {
-            get;
-            internal set;
-        }
-
-        /// <summary>
         /// UseUIPaginated property
         /// </summary>
         public virtual bool UseUIPaginated
@@ -777,130 +815,14 @@ namespace Neos.IdentityServer.MultiFactor
         #endregion
 
         #region ADFS Interfaces
-        /// <summary>
-        /// IAdapterPresentation GetPageTitle implementation
-        /// </summary>
-        public virtual string GetPageTitle(int lcid)
-        {
-            return Resources.GetString(ResourcesLocaleKind.Titles, "TitlePageTitle");
-        } 
+        public abstract string GetPageTitle(int lcid);
+        public abstract string GetFormHtmlMessageZone(AuthenticationContext usercontext);
+        protected abstract string GetFormPreRenderHtmlCSS(AuthenticationContext usercontext, bool removetag = false);
+        protected abstract string GetFormPreRenderHtmlHeader(AuthenticationContext usercontext);
+        protected abstract string GetFormRenderHtmlHeader(AuthenticationContext usercontext);
 
         /// <summary>
-        /// GetFormHtmlMessageZone method implementation
-        /// </summary>
-        public virtual string GetFormHtmlMessageZone(AuthenticationContext usercontext)
-        {
-            string result = string.Empty;
-            if (IsPermanentFailure)
-            {
-                result += "<br/>";
-                if (!String.IsNullOrEmpty(usercontext.UIMessage))
-                    result += "<div id=\"error\" class=\"fieldMargin error smallText\"><label id=\"errorText\" name=\"errorText\" for=\"\">" + usercontext.UIMessage + "</label></div>";
-                else
-                    result += "<div id=\"error\" class=\"fieldMargin error smallText\"><label id=\"errorText\" name=\"errorText\" for=\"\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlErrorRestartSession") + "</label></div>";
-            }
-            else
-            {
-                if (!String.IsNullOrEmpty(usercontext.UIMessage))
-                {
-                    result += "<br/>";
-                    if (IsMessage)
-                        result += "<div id=\"error\" class=\"fieldMargin smallText\" style=\"color: #6FA400\"><label id=\"errorText\" name=\"errorText\" for=\"\">" + usercontext.UIMessage + "</label></div>";
-                    else
-                        result += "<div id=\"error\" class=\"fieldMargin error smallText\"><label id=\"errorText\" name=\"errorText\" for=\"\">" + usercontext.UIMessage + "</label></div>";
-                }
-            }
-            return result;
-        }
-
-        /// <summary>
-        /// GetFormPreRenderHtmlCSS implementation
-        /// </summary>
-        protected virtual string GetFormPreRenderHtmlCSS(AuthenticationContext usercontext, bool removetag = false)
-        {
-            string result = string.Empty;
-            result += "#wizardMessage, #wizardMessage2, #wizardMessage3 {";
-            result += "box-sizing: border-box;";
-            result += "color: rgb(38, 38, 38);";
-            result += "direction: ltr;";
-            result += "display: block;";
-            result += "font-family: \"Segoe UI Webfont\", -apple-system, \"Helvetica Neue\", \"Lucida Grande\", Roboto, Ebrima, \"Nirmala UI\", Gadugi, \"Segoe Xbox Symbol\", \"Segoe UI Symbol\", \"Meiryo UI\", \"Khmer UI\", Tunga, \"Lao UI\", Raavi, \"Iskoola Pota\", Latha, Leelawadee, \"Microsoft YaHei UI\", \"Microsoft JhengHei UI\", \"Malgun Gothic\", \"Estrangelo Edessa\", \"Microsoft Himalaya\", \"Microsoft New Tai Lue\", \"Microsoft PhagsPa\", \"Microsoft Tai Le\", \"Microsoft Yi Baiti\", \"Mongolian Baiti\", \"MV Boli\", \"Myanmar Text\", \"Cambria Math\";";
-            result += "font-weight: 300;";
-            result += "font-size: 1.7em;";
-            result += "height: auto;";
-            result += "line-height: 28px;";
-            result += "margin-bottom: 16px;";
-            result += "margin-left: -2px;";
-            result += "margin-right: -2px;";
-            result += "margin-top: 16px;";
-            result += "padding-bottom: 0px;";
-            result += "padding-left: 0px;";
-            result += "padding-right: 0px;";
-            result += "padding-top: 0px;";
-            result += "text-align: left;";
-            result += "text-size-adjust: 100%;";
-            result += "width: 342px;";
-            result += "background-color: transparent;";
-            result += "}" + CR;
-            if (!removetag)
-                return "<style>" + result + "</style>"+ CR + CR;
-            else
-                return result + CR;
-        }
-
-        /// <summary>
-        /// GetFormPreRenderHtmlHeader method implementation
-        /// </summary>
-        protected virtual string GetFormPreRenderHtmlHeader(AuthenticationContext usercontext)
-        {
-            string result = "<script type='text/javascript'>" + CR;
-            result += "function RemoveADFSHtmlHeader()" + CR;
-            result += "{" + CR;
-            result += "   var title = document.getElementById('mfaGreetingDescription');" + CR;
-            result += "   if (title)" + CR;
-            result += "   {" + CR;
-            result += "      title.style.display = \"none\";" + CR;
-            result += "   }" + CR;
-            if (WebThemeManagerClient.HasRelyingPartyTheme(usercontext))
-            {
-                Dictionary<WebThemeAddressKind, string>  dic = WebThemeManagerClient.GetAddresses(usercontext);
-                if (dic != null)
-                {
-                    if (!string.IsNullOrEmpty(dic[WebThemeAddressKind.Illustration].ToString()))
-                        result += "   SetIllustrationImage(\"" + dic[WebThemeAddressKind.Illustration].ToString() + "\");" + CR;
-                    if (!string.IsNullOrEmpty(dic[WebThemeAddressKind.CompanyLogo].ToString()))
-                        result += "   document.getElementById('companyLogo').src = \"" + dic[WebThemeAddressKind.CompanyLogo].ToString() + "\";" + CR;
-                    if (!string.IsNullOrEmpty(dic[WebThemeAddressKind.StyleSheet].ToString()))
-                        result += "   document.getElementsByTagName('link')[0].href = \"" + dic[WebThemeAddressKind.StyleSheet].ToString() + "\";" + CR;
-                }
-            } 
-            result += "   return true;" + CR;
-            result += "}" + CR;         
-            result += "</script>" + CR + CR;
-            return result;
-        }   
-
-        /// <summary>
-        /// GetFormPreRenderHtmlHeader method implementation
-        /// </summary>
-        protected virtual string GetFormRenderHtmlHeader(AuthenticationContext usercontext)
-        {
-            string result = "<script type=\"text/javascript\">" + CR;
-            result += "if (window.addEventListener)" + CR;
-            result += "{" + CR;
-            result += "   window.addEventListener('load', RemoveADFSHtmlHeader, false);" + CR;
-            result += "}" + CR;
-            result += "else if (window.attachEvent)" + CR;
-            result += "{" + CR;
-            result += "   window.attachEvent('onload', RemoveADFSHtmlHeader);" + CR;
-            result += "}" + CR;
-            result += "</script>" + CR;
-
-            return result;
-        }
-
-        /// <summary>
-        /// IAdapterPresentationForm GetFormHtml implementation
+        /// GetFormHtml method implementation
         /// </summary>
         public virtual string GetFormHtml(int lcid)
         {
@@ -991,7 +913,7 @@ namespace Neos.IdentityServer.MultiFactor
         }
 
         /// <summary>
-        /// IAdapterPresentationForm GetFormPreRenderHtml implementation
+        /// GetFormPreRenderHtml method implementation
         /// </summary>
         public virtual string GetFormPreRenderHtml(int lcid)
         {
@@ -1124,10 +1046,234 @@ namespace Neos.IdentityServer.MultiFactor
         #endregion
 
         #region QRCode
+        public abstract string GetFormPreRenderHtmlShowQRCode(AuthenticationContext usercontext);
+        public abstract string GetFormHtmlShowQRCode(AuthenticationContext usercontext);
+
+        #endregion
+
+        #region Donut
+        protected abstract string GetPartHtmlDonut(bool visible = true);
+        #endregion
+
+        #region WebAuthN Support
+        /// <summary>
+        /// GetFormHtmlWebAuthNSupport method implementation
+        /// </summary>
+        public abstract string GetFormHtmlWebAuthNSupport(AuthenticationContext usercontext);
+        public abstract string GetWebAuthNSharedScript(AuthenticationContext usercontext);
+        public abstract string GetWebAuthNAttestationScript(AuthenticationContext usercontext);
+        public abstract string GetWebAuthNAssertionScript(AuthenticationContext usercontext);
+        #endregion
+    }
+
+    /// <summary>
+    /// BaseMFAPresentation implementation
+    /// </summary>
+    public abstract class BaseMFAPresentation: BasePresentation
+    {
+        private const string CR = "\r\n";
+
+        /// <summary>
+        /// Constructor implementation
+        /// </summary>
+        protected BaseMFAPresentation():base()
+        {
+
+        }
+
+        /// <summary>
+        /// Constructor implementation
+        /// </summary>
+        protected BaseMFAPresentation(AuthenticationProvider provider, IAuthenticationContext context):base(provider, context)
+        {
+            this.Resources = new ResourcesLocale(Context.Lcid);
+        }
+
+        /// <summary>
+        /// Constructor overload implementation
+        /// </summary>       
+        protected BaseMFAPresentation(AuthenticationProvider provider, IAuthenticationContext context, string message): base(provider, context, message)
+        {
+            this.Resources = new ResourcesLocale(Context.Lcid);
+        }
+
+        /// <summary>
+        /// Constructor overload implementation
+        /// </summary>
+        protected BaseMFAPresentation(AuthenticationProvider provider, IAuthenticationContext context, string message, bool ismessage): base(provider, context, message, ismessage)
+        {
+            this.Resources = new ResourcesLocale(Context.Lcid);
+        }
+
+        /// <summary>
+        /// Constructor overload implementation
+        /// </summary>
+        public BaseMFAPresentation(AuthenticationProvider provider, IAuthenticationContext context, ProviderPageMode suite): base(provider, context, suite)
+        {
+            this.Resources = new ResourcesLocale(Context.Lcid);
+        }
+
+        /// <summary>
+        /// Constructor overload implementation
+        /// </summary>
+        protected BaseMFAPresentation(AuthenticationProvider provider, IAuthenticationContext context, string message, ProviderPageMode suite, bool disableoptions = false): base(provider, context, message, suite, disableoptions)
+        {
+            this.Resources = new ResourcesLocale(Context.Lcid);
+        }
+
+        #region Properties
+        /// <summary>
+        /// Resources property
+        /// </summary>
+        public virtual ResourcesLocale Resources
+        {
+            get;
+            internal set;
+        }
+        #endregion
+
+        #region ADFS Interfaces
+        /// <summary>
+        /// IAdapterPresentation GetPageTitle implementation
+        /// </summary>
+        public override string GetPageTitle(int lcid)
+        {
+            return Resources.GetString(ResourcesLocaleKind.Titles, "TitlePageTitle");
+        }
+
+        /// <summary>
+        /// GetFormHtmlMessageZone method implementation
+        /// </summary>
+        public override string GetFormHtmlMessageZone(AuthenticationContext usercontext)
+        {
+            string result = string.Empty;
+            if (IsPermanentFailure)
+            {
+                result += "<br/>";
+                if (!String.IsNullOrEmpty(usercontext.UIMessage))
+                    result += "<div id=\"error\" class=\"fieldMargin error smallText\"><label id=\"errorText\" name=\"errorText\" for=\"\">" + usercontext.UIMessage + "</label></div>";
+                else
+                    result += "<div id=\"error\" class=\"fieldMargin error smallText\"><label id=\"errorText\" name=\"errorText\" for=\"\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlErrorRestartSession") + "</label></div>";
+            }
+            else
+            {
+                if (!String.IsNullOrEmpty(usercontext.UIMessage))
+                {
+                    result += "<br/>";
+                    if (IsMessage)
+                        result += "<div id=\"error\" class=\"fieldMargin smallText\" style=\"color: #6FA400\"><label id=\"errorText\" name=\"errorText\" for=\"\">" + usercontext.UIMessage + "</label></div>";
+                    else
+                        result += "<div id=\"error\" class=\"fieldMargin error smallText\"><label id=\"errorText\" name=\"errorText\" for=\"\">" + usercontext.UIMessage + "</label></div>";
+                }
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// GetFormPreRenderHtmlCSS implementation
+        /// </summary>
+        protected override string GetFormPreRenderHtmlCSS(AuthenticationContext usercontext, bool removetag = false)
+        {
+            string result = string.Empty;
+            result += "#wizardMessage, #wizardMessage2, #wizardMessage3 {";
+            result += "box-sizing: border-box;";
+            result += "color: rgb(38, 38, 38);";
+            result += "direction: ltr;";
+            result += "display: block;";
+            result += "font-family: \"Segoe UI Webfont\", -apple-system, \"Helvetica Neue\", \"Lucida Grande\", Roboto, Ebrima, \"Nirmala UI\", Gadugi, \"Segoe Xbox Symbol\", \"Segoe UI Symbol\", \"Meiryo UI\", \"Khmer UI\", Tunga, \"Lao UI\", Raavi, \"Iskoola Pota\", Latha, Leelawadee, \"Microsoft YaHei UI\", \"Microsoft JhengHei UI\", \"Malgun Gothic\", \"Estrangelo Edessa\", \"Microsoft Himalaya\", \"Microsoft New Tai Lue\", \"Microsoft PhagsPa\", \"Microsoft Tai Le\", \"Microsoft Yi Baiti\", \"Mongolian Baiti\", \"MV Boli\", \"Myanmar Text\", \"Cambria Math\";";
+            result += "font-weight: 300;";
+            result += "font-size: 1.7em;";
+            result += "height: auto;";
+            result += "line-height: 28px;";
+            result += "margin-bottom: 16px;";
+            result += "margin-left: -2px;";
+            result += "margin-right: -2px;";
+            result += "margin-top: 16px;";
+            result += "padding-bottom: 0px;";
+            result += "padding-left: 0px;";
+            result += "padding-right: 0px;";
+            result += "padding-top: 0px;";
+            result += "text-align: left;";
+            result += "text-size-adjust: 100%;";
+            result += "width: 342px;";
+            result += "background-color: transparent;";
+            result += "}" + CR;
+            if (!removetag)
+                return "<style>" + result + "</style>" + CR + CR;
+            else
+                return result + CR;
+        }
+
+        /// <summary>
+        /// GetFormPreRenderHtmlHeader method implementation
+        /// </summary>
+        protected override string GetFormPreRenderHtmlHeader(AuthenticationContext usercontext)
+        {
+            string result = "<script type='text/javascript'>" + CR;
+            result += "function RemoveADFSHtmlHeader()" + CR;
+            result += "{" + CR;
+            RegistryVersion reg = new RegistryVersion();
+            if (reg.IsWindows2012R2)
+            {
+                result += "   var title = document.getElementById('authArea');" + CR;
+                result += "   if (title)" + CR;
+                result += "   {" + CR;
+                result += "      title.children[0].style.display = \"none\";" + CR;
+                result += "      title.children[1].style.display = \"none\";" + CR;
+                result += "   }" + CR;
+            }
+            else
+            {
+                result += "   var title = document.getElementById('mfaGreetingDescription');" + CR;
+                result += "   if (title)" + CR;
+                result += "   {" + CR;
+                result += "      title.style.display = \"none\";" + CR;
+                result += "   }" + CR;
+            }
+            if (WebThemeManagerClient.HasRelyingPartyTheme(usercontext))
+            {
+                Dictionary<WebThemeAddressKind, string> dic = WebThemeManagerClient.GetAddresses(usercontext);
+                if (dic != null)
+                {
+                    if (!string.IsNullOrEmpty(dic[WebThemeAddressKind.Illustration].ToString()))
+                        result += "   SetIllustrationImage(\"" + dic[WebThemeAddressKind.Illustration].ToString() + "\");" + CR;
+                    if (!string.IsNullOrEmpty(dic[WebThemeAddressKind.CompanyLogo].ToString()))
+                        result += "   document.getElementById('companyLogo').src = \"" + dic[WebThemeAddressKind.CompanyLogo].ToString() + "\";" + CR;
+                    if (!string.IsNullOrEmpty(dic[WebThemeAddressKind.StyleSheet].ToString()))
+                        result += "   document.getElementsByTagName('link')[0].href = \"" + dic[WebThemeAddressKind.StyleSheet].ToString() + "\";" + CR;
+                }
+            }
+            result += "   return true;" + CR;
+            result += "}" + CR;
+            result += "</script>" + CR + CR;
+            return result;
+        }
+
+        /// <summary>
+        /// GetFormPreRenderHtmlHeader method implementation
+        /// </summary>
+        protected override string GetFormRenderHtmlHeader(AuthenticationContext usercontext)
+        {
+            string result = "<script type=\"text/javascript\">" + CR;
+            result += "if (window.addEventListener)" + CR;
+            result += "{" + CR;
+            result += "   window.addEventListener('load', RemoveADFSHtmlHeader, false);" + CR;
+            result += "}" + CR;
+            result += "else if (window.attachEvent)" + CR;
+            result += "{" + CR;
+            result += "   window.attachEvent('onload', RemoveADFSHtmlHeader);" + CR;
+            result += "}" + CR;
+            result += "</script>" + CR;
+
+            return result;
+        }
+        #endregion
+
+        #region QRCode
         /// <summary>
         /// GetFormPreRenderHtmlShowQRCode implementation
         /// </summary>
-        public virtual string GetFormPreRenderHtmlShowQRCode(AuthenticationContext usercontext)
+        public override string GetFormPreRenderHtmlShowQRCode(AuthenticationContext usercontext)
         {
             return string.Empty;
         }
@@ -1135,7 +1281,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// GetFormHtmlShowQRCode implementation
         /// </summary>
-        public virtual string GetFormHtmlShowQRCode(AuthenticationContext usercontext)
+        public override string GetFormHtmlShowQRCode(AuthenticationContext usercontext)
         {
             string result = "<form method=\"post\" id=\"loginForm\" autocomplete=\"off\" >";
             result += "<div class=\"fieldMargin smallText\"><label for=\"\"></label>" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelWRQRCode") + "</div><br/>";
@@ -1152,7 +1298,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// GetPartHtmlDonut method implementation
         /// </summary>
-        protected virtual string GetPartHtmlDonut(bool visible = true)
+        protected override string GetPartHtmlDonut(bool visible = true)
         {
             string result = string.Empty;
             if (visible)
@@ -1354,7 +1500,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// GetFormHtmlWebAuthNSupport method implementation
         /// </summary>
-        public virtual string GetFormHtmlWebAuthNSupport(AuthenticationContext usercontext)
+        public override string GetFormHtmlWebAuthNSupport(AuthenticationContext usercontext)
         {
             string result = string.Empty;
             result += "function detectWebAuthNSupport()" + CR;
@@ -1378,7 +1524,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// GetWebAuthNSharedScript method implementation
         /// </summary>
-        public virtual string GetWebAuthNSharedScript(AuthenticationContext usercontext)
+        public override string GetWebAuthNSharedScript(AuthenticationContext usercontext)
         {
             string result = string.Empty;
             result += "function coerceToArrayBuffer(thing, name)" + CR;
@@ -1445,7 +1591,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// GetWebAuthNAttestationScript method implementation
         /// </summary>
-        public virtual string GetWebAuthNAttestationScript(AuthenticationContext usercontext)
+        public override string GetWebAuthNAttestationScript(AuthenticationContext usercontext)
         {
             string result = GetWebAuthNSharedScript(usercontext);
             result += "async function RegisterWebAuthN(frm)" + CR;
@@ -1522,7 +1668,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// GetWebAuthNAssertionScript method implementation
         /// </summary>
-        public virtual string GetWebAuthNAssertionScript(AuthenticationContext usercontext)
+        public override string GetWebAuthNAssertionScript(AuthenticationContext usercontext)
         {
             string result = GetWebAuthNSharedScript(usercontext);
             result += "async function LoginWebAuthN(frm)" + CR;

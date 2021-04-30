@@ -11,7 +11,7 @@
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,                            //
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                               //
 //                                                                                                                                                                                          //
-// https://adfsmfa.codeplex.com                                                                                                                                                             //
+//                                                                                                                                                             //
 // https://github.com/neos-sdi/adfsmfa                                                                                                                                                      //
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
@@ -65,8 +65,10 @@ namespace Neos.IdentityServer.MultiFactor
         public IAdapterPresentation BeginAuthentication(Claim identityClaim, HttpListenerRequest request, IAuthenticationContext context)
         {
             DateTime st = DateTime.Now;
-            AuthenticationContext usercontext = new AuthenticationContext(context);
-            usercontext.IPAddress = request.RemoteEndPoint.Address.ToString();
+            AuthenticationContext usercontext = new AuthenticationContext(context)
+            {
+                IPAddress = request.RemoteEndPoint.Address.ToString()
+            };
             Utilities.PatchLanguageIfNeeded(Config, usercontext, request.UserLanguages);
             ResourcesLocale Resources = new ResourcesLocale(usercontext.Lcid);
             ClientSIDsProxy.Initialize(Config);

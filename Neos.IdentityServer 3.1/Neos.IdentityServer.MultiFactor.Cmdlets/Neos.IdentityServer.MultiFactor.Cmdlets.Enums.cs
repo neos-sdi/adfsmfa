@@ -461,7 +461,12 @@ namespace MFA
         /// <summary>
         /// <para type="description">Default UI theme for ADFS 2019 only (Centered)</para>
         /// </summary>
-        Default2019 = 1
+        Default2019 = 1,
+
+        /// <summary>
+        /// <para type="description">Custom implementation for UI ADFS's theme</para>
+        /// </summary>
+        Custom = 2
     }
 
     /// <summary>

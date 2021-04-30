@@ -12,7 +12,7 @@
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,                            //
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                               //
 //                                                                                                                                                                                          //
-// https://adfsmfa.codeplex.com                                                                                                                                                             //
+//                                                                                                                                                             //
 // https://github.com/neos-sdi/adfsmfa                                                                                                                                                      //
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
@@ -261,6 +261,11 @@ namespace MFA
         public PSPrimaryAuthOptions PrimaryAuhenticationOptions { get; set; } = PSPrimaryAuthOptions.None;
 
         /// <summary>
+        /// <para type="description">Class Library for custom UI implementation (FullyQualifiedImplementation).</para>
+        /// </summary>
+        public string AdapterPresentationImplementation { get; set; }
+
+        /// <summary>
         /// <para type="description">Force adfsmfa to no Use localization but a specified language.</para>
         /// </summary>
         public string ForcedLanguage { get; set; }
@@ -289,6 +294,7 @@ namespace MFA
                     UseUIPaginated = config.UseUIPaginated,
                     UiKind = (PSUIKind)config.UiKind,
                     PrimaryAuhenticationOptions = (PSPrimaryAuthOptions)config.PrimaryAuhenticationOptions,
+                    AdapterPresentationImplementation = config.AdapterPresentationImplementation,
                     ForcedLanguage = config.ForcedLanguage
                 };
                 return psconfig;
@@ -320,6 +326,7 @@ namespace MFA
                     UseUIPaginated = psconfig.UseUIPaginated,
                     UiKind = (ADFSUserInterfaceKind)psconfig.UiKind,
                     PrimaryAuhenticationOptions = (PrimaryAuthOptions)psconfig.PrimaryAuhenticationOptions,
+                    AdapterPresentationImplementation = psconfig.AdapterPresentationImplementation,
                     ForcedLanguage = psconfig.ForcedLanguage
                 };
                 return config;
