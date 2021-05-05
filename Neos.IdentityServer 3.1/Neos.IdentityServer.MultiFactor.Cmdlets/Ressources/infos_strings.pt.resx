@@ -1,0 +1,279 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="InfosAllServicesRestarted" xml:space="preserve">
+    <value>Todos os serviços de farm reiniciado!</value>
+  </data>
+  <data name="InfosConfigUpdated" xml:space="preserve">
+    <value>Configuração de MFA atualizada!</value>
+  </data>
+  <data name="InfosDatabaseCreated" xml:space="preserve">
+    <value>Banco de dados {0} criado!</value>
+  </data>
+  <data name="InfosRecordsCount" xml:space="preserve">
+    <value>Contagem de registros: {0}</value>
+  </data>
+  <data name="InfosSystemExported" xml:space="preserve">
+    <value>Configuração de MFA exportada corretamente para o arquivo {0}!</value>
+  </data>
+  <data name="InfosSystemImported" xml:space="preserve">
+    <value>Configuração de MFA importada corretamente do arquivo {0}!</value>
+  </data>
+  <data name="InfosSystemInInvalidState" xml:space="preserve">
+    <value>Importação de configuração de MFA com erros!</value>
+  </data>
+  <data name="InfosSystemRegistered" xml:space="preserve">
+    <value>Sistema MFA corretamente registrado !</value>
+  </data>
+  <data name="InfosSystemUnRegistered" xml:space="preserve">
+    <value>Sistema MFA corretamente desconfigurado!</value>
+  </data>
+  <data name="InfosUserAdded" xml:space="preserve">
+    <value>Usuário {0} adicionado!</value>
+  </data>
+  <data name="InfosUserDeleted" xml:space="preserve">
+    <value>Usuário {0} excluído!</value>
+  </data>
+  <data name="InfosUserHasNewKey" xml:space="preserve">
+    <value>Usuário {0} tem uma nova chave Enryption!</value>
+  </data>
+  <data name="InfosUserUpdated" xml:space="preserve">
+    <value>Usuário {0} atualizado!</value>
+  </data>
+  <data name="InfosWarningAboutTheme" xml:space="preserve">
+    <value>Cuidado! seu tema deve ser totalmente compatível (JS, CSS, etc...) com a interface do usuário que você escolher: {0}</value>
+  </data>
+  <data name="InfosDatabaseUpgraded" xml:space="preserve">
+    <value>Banco de dados {0} atualizado !</value>
+  </data>
+  <data name="InfosSystemAlreadyInitialized" xml:space="preserve">
+    <value>O MFA já está inicializado! você deve executar o cmdlet do PowerShell "UnRegister-MFASystem" se desejar reinicializar TODA a configuração do MFA !</value>
+  </data>
+  <data name="InfosCertsACLUpdated" xml:space="preserve">
+    <value>Lista de controle de acesso atualizada para todos os certificados MFA !</value>
+  </data>
+  <data name="InfosOrphanedDeleted" xml:space="preserve">
+    <value>Número de chaves privadas órfãs excluídas</value>
+  </data>
+  <data name="InfosThreatSystemRegistered" xml:space="preserve">
+    <value>Sistema MFA de ameaça registrado corretamente !</value>
+  </data>
+  <data name="InfosThreatSystemUnRegistered" xml:space="preserve">
+    <value>Sistema de Ameaças MFA corretamente desconfigurado !</value>
+  </data>
+  <data name="InfosThreatSystemNotRegistered" xml:space="preserve">
+    <value>O Sistema de Ameaças MFA não foi registrado corretamente !</value>
+  </data>
+  <data name="InfosThreatSystemNotUnRegistered" xml:space="preserve">
+    <value>O Sistema de Ameaças MFA não foi corretamente desconfigurado !</value>
+  </data>
+  <data name="InfosThreatDataNotUpdated" xml:space="preserve">
+    <value>Os dados do sistema de ameaças do MFA não foram atualizados corretamente !</value>
+  </data>
+  <data name="InfosThreatDataUpdated" xml:space="preserve">
+    <value>Dados do sistema de ameaças do MFA atualizados corretamente !</value>
+  </data>
+  <data name="InfosNotificationSend" xml:space="preserve">
+    <value>Notificação expedida !</value>
+  </data>
+  <data name="InfoComputerNotRegistered" xml:space="preserve">
+    <value>Computador {0} NÃO adicionado / atualizado para a configuração do MFA !</value>
+  </data>
+  <data name="InfoComputerNotUnRegistered" xml:space="preserve">
+    <value>Computador {0} NÃO removido da configuração do MFA !</value>
+  </data>
+  <data name="InfoComputerRegistered" xml:space="preserve">
+    <value>Computador {0} adicionado / atualizado para a configuração do MFA !</value>
+  </data>
+  <data name="InfoComputerUnRegistered" xml:space="preserve">
+    <value>Computador {0} removido da configuração do MFA !</value>
+  </data>
+  <data name="InfosServerServicesRestarted" xml:space="preserve">
+    <value>Você deve reiniciar o serviço "MFA Notification Hub" e reiniciar todos os consoles abertos e sessões do PowerShell !</value>
+  </data>
+  <data name="InfosADFSServicesRestarted" xml:space="preserve">
+    <value>O Serviço ADFS foi reiniciado corretamente no {0} do servidor !</value>
+  </data>
+  <data name="InfosCredentialsChanged" xml:space="preserve">
+    <value>Credenciais corretamente atualizadas!</value>
+  </data>
+  <data name="InfosMailTemplateExported" xml:space="preserve">
+    <value>Modelos de e-mail corretamente exportados !</value>
+  </data>
+  <data name="InfosSampleInstalled" xml:space="preserve">
+    <value>Exemplo MFA instalado !</value>
+  </data>
+  <data name="InfosSampleUnInstalled" xml:space="preserve">
+    <value>Exemplo MFA Desinstalado !</value>
+  </data>
+  <data name="InfosSQLCertificateChanged" xml:space="preserve">
+    <value>Certificado SQL {0} atualizado corretamente !</value>
+  </data>
+  <data name="InfosADFSCertificateChanged" xml:space="preserve">
+    <value>Certificado ADFS criado corretamente !</value>
+  </data>
+  <data name="InfosSystemNotRegistered" xml:space="preserve">
+    <value>Sistema MFA Não registrado !</value>
+  </data>
+  <data name="InfosYes" xml:space="preserve">
+    <value>&amp;Sim</value>
+  </data>
+  <data name="InfosNo" xml:space="preserve">
+    <value>&amp;Não</value>
+  </data>
+  <data name="InfoRSAKeyWillbeReset" xml:space="preserve">
+    <value>Chave MFA RSA será renovada ! Continuar ?</value>
+  </data>
+  <data name="InfoAllKeyWillbeReset" xml:space="preserve">
+    <value>Todas as chaves atuais dos usuários serão invalidadas ! Continuar ?</value>
+  </data>
+  <data name="InfosRSACertificateChanged" xml:space="preserve">
+    <value>Certificado MFA RSA instalado corretamente !</value>
+  </data>
+  <data name="InfosRSACertificateError" xml:space="preserve">
+    <value>Certificado MFA RSA não instalado corretamente !</value>
+  </data>
+  <data name="InfosRSASystemKeyChanged" xml:space="preserve">
+    <value>Chave de criptografia MFA RSA atualizada corretamente !</value>
+  </data>
+  <data name="InfosRSASystemKeyError" xml:space="preserve">
+    <value>Chave de criptografia MFA RSA não atualizada corretamente !</value>
+  </data>
+  <data name="InfosRSASystemKeyDeployed" xml:space="preserve">
+    <value>Chave de criptografia MFA RSA corretamente implantada sobre a fazenda !</value>
+  </data>
+  <data name="InfosRSASystemKeyDeleted" xml:space="preserve">
+    <value>Chave de criptografia MFA RSA corretamente excluída !</value>
+  </data>
+  <data name="InfosRSASystemAESCngDeleted" xml:space="preserve">
+    <value>Chave de criptografia MFA AES CNG corretamente excluída !</value>
+  </data>
+  <data name="InfosRSASystemAESCngChanged" xml:space="preserve">
+    <value>Chave de criptografia MFA AES CNG atualizada corretamente !</value>
+  </data>
+  <data name="InfosRSASystemAESCngDeployed" xml:space="preserve">
+    <value>Chave de criptografia MFA AES CNG corretamente implantada !</value>
+  </data>
+  <data name="InfosRSASystemAESCngError" xml:space="preserve">
+    <value>MFA AES CNG Encryption key não atualizada corretamente !</value>
+  </data>
+  <data name="InfosConfigNotUpdated" xml:space="preserve">
+    <value>Configuração MFA NÃO atualizada !</value>
+  </data>
+</root>
