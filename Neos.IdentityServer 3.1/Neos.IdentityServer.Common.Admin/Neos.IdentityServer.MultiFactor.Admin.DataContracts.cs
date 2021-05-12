@@ -11,7 +11,7 @@
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,                            //
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                               //
 //                                                                                                                                                                                          //
-// https://adfsmfa.codeplex.com                                                                                                                                                             //
+//                                                                                                                                                             //
 // https://github.com/neos-sdi/adfsmfa                                                                                                                                                      //
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
@@ -67,6 +67,8 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         public ADFSUserInterfaceKind UiKind { get; set; }
         public bool UseUIPaginated { get; set; }
         public PrimaryAuthOptions PrimaryAuhenticationOptions { get; set; }
+        public string AdapterPresentationImplementation { get; set; }
+
         public string ForcedLanguage { get; set; }
 
         /// <summary>
@@ -90,6 +92,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             UseUIPaginated = cfg.UseUIPaginated;
             UiKind = cfg.UiKind;
             PrimaryAuhenticationOptions = cfg.PrimaryAuhenticationOptions;
+            AdapterPresentationImplementation = cfg.CustomAdapterPresentation;
             ForcedLanguage = cfg.ForcedLanguage;
         }
 
@@ -114,6 +117,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             cfg.UseUIPaginated = UseUIPaginated;
             cfg.UiKind = cfg.UiKind;
             cfg.PrimaryAuhenticationOptions = PrimaryAuhenticationOptions;
+            cfg.CustomAdapterPresentation = AdapterPresentationImplementation;
             cfg.ForcedLanguage = ForcedLanguage;
             ManagementService.ADFSManager.WriteConfiguration(host);
         }
@@ -131,11 +135,6 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 cfg.KeepMySelectedOptionOn = true;
             if (md == UserTemplateMode.Custom || md == UserTemplateMode.Administrative)
                 cfg.KeepMySelectedOptionOn = false;
-
-           // if (md != UserTemplateMode.Administrative)
-           //     cfg.KeepMySelectedOptionOn = true;
-           // else
-           //     cfg.KeepMySelectedOptionOn = false;
             ManagementService.ADFSManager.WriteConfiguration(host);
         }
 
@@ -159,7 +158,10 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             }
             else
             {
-                cfg.UiKind = ADFSUserInterfaceKind.Default;
+                if ((ADFSUserInterfaceKind)_kind==ADFSUserInterfaceKind.Default2019)
+                    cfg.UiKind = ADFSUserInterfaceKind.Default;
+                else
+                    cfg.UiKind = (ADFSUserInterfaceKind)_kind;
                 cfg.UseUIPaginated = false;
                 ManagementService.ADFSManager.SetADFSTheme(host, _theme, false, false);
                 ManagementService.ADFSManager.WriteConfiguration(host);

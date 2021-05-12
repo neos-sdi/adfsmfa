@@ -11,7 +11,7 @@
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,                            //
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                               //
 //                                                                                                                                                                                          //
-// https://adfsmfa.codeplex.com                                                                                                                                                             //
+//                                                                                                                                                             //
 // https://github.com/neos-sdi/adfsmfa                                                                                                                                                      //
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
@@ -1946,7 +1946,8 @@ namespace Neos.IdentityServer.MultiFactor
     public enum ADFSUserInterfaceKind
     {
         Default = 0,
-        Default2019 = 1
+        Default2019 = 1,
+        Custom = 2
     }
 
     /// <summary>

@@ -11,7 +11,7 @@
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,                            //
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                               //
 //                                                                                                                                                                                          //
-// https://adfsmfa.codeplex.com                                                                                                                                                             //
+//                                                                                                                                                             //
 // https://github.com/neos-sdi/adfsmfa                                                                                                                                                      //
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
@@ -3358,8 +3358,8 @@ namespace MFA
 
     #region Set-MFAActiveDirectoryTemplate
     /// <summary>
-    /// <para type="synopsis">Set basic Firewall rules for MFA inter servers communication.</para>
-    /// <para type="description">Set basic Firewall rules for MFA inter servers communication.</para>
+    /// <para type="synopsis">Choose between set of attributes when choosing to use ADDS as repository for MFA.</para>
+    /// <para type="description">Choose between set of attributes when choosing to use ADDS as repository for MFA.</para>
     /// </summary>
     /// <example>
     ///   <para>Set-MFAActiveDirectoryTemplate -Kind SchemaAll | Schema2016 | SchemaMFA </para>
@@ -3393,7 +3393,6 @@ namespace MFA
             }
         }
     }
-
     #endregion
 
     #region Get-MFAProvider
@@ -5969,7 +5968,7 @@ namespace MFA
         /// </summary>
         public object GetDynamicParameters()
         {
-            if (_kind == PSUIKind.Default2019)
+            if (_kind != PSUIKind.Default)
             {
                 _dynparam = new MFAThemeModeDynamicParameters();
                 return _dynparam;
@@ -6000,8 +5999,13 @@ namespace MFA
         /// </summary>
         protected override void ProcessRecord()
         {
-            if (UIKind==PSUIKind.Default2019)
-                this.WriteWarning(string.Format(infos_strings.InfosWarningAboutTheme, "ADFS 2019"));
+            if (_dynparam != null)
+            {
+                if (UIKind != PSUIKind.Default)
+                    this.WriteWarning(string.Format(infos_strings.InfosWarningAboutTheme, "ADFS 2019"));
+                else
+                    this.WriteWarning(string.Format(infos_strings.InfosWarningAboutTheme, "ADFS 2019/2016/2012r2"));
+            }
             else
                 this.WriteWarning(string.Format(infos_strings.InfosWarningAboutTheme, "ADFS 2019/2016/2012r2"));
             if (ShouldProcess("Set MFA Theme Configuration"))

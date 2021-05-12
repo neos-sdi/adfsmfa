@@ -151,6 +151,15 @@ namespace Neos.IdentityServer.MultiFactor.Cmdlets.Ressources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à MFA Configuration NOT updated !.
+        /// </summary>
+        internal static string InfosConfigNotUpdated {
+            get {
+                return ResourceManager.GetString("InfosConfigNotUpdated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à MFA Configuration updated !.
         /// </summary>
         internal static string InfosConfigUpdated {

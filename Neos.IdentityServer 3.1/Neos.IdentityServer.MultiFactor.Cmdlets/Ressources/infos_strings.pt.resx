@@ -273,4 +273,7 @@
   <data name="InfosRSASystemAESCngError" xml:space="preserve">
     <value>MFA AES CNG Encryption key não atualizada corretamente !</value>
   </data>
+  <data name="InfosConfigNotUpdated" xml:space="preserve">
+    <value>Configuração MFA NÃO atualizada !</value>
+  </data>
 </root>

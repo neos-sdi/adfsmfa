@@ -273,4 +273,7 @@
   <data name="InfosRSASystemAESCngError" xml:space="preserve">
     <value>MAE AES CNG Cheie de criptare nu a fost actualizat corect!</value>
   </data>
+  <data name="InfosConfigNotUpdated" xml:space="preserve">
+    <value>Configurația MAE NU a fost actualizată !</value>
+  </data>
 </root>

@@ -156,10 +156,6 @@
       <Project>{9ec6d40a-4366-4066-bdfc-8af65bce7ead}</Project>
       <Name>Neos.IdentityServer.MultiFactor.Security</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Neos.IdentityServer.MultiFactor.WebAuthN.Provider\Neos.IdentityServer.MultiFactor.WebAuthN.Provider.csproj">
-      <Project>{4d0c01bf-2fd7-43c0-8650-99edecf4c939}</Project>
-      <Name>Neos.IdentityServer.MultiFactor.WebAuthN.Provider</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Neos.IdentityServer.MutltiFactor.Data\Neos.IdentityServer.MultiFactor.Data.csproj">
       <Project>{5bc496b8-5b91-4d5f-99ad-66f958bf2de9}</Project>
       <Name>Neos.IdentityServer.MultiFactor.Data</Name>

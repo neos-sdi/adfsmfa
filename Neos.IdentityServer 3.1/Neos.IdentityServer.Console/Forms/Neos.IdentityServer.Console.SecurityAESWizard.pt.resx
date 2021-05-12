@@ -136,6 +136,6 @@
     <value>Cancelar</value>
   </data>
   <data name="btnOK.Text" xml:space="preserve">
-    <value>Okey</value>
+    <value>&amp;Ok</value>
   </data>
 </root>

@@ -11,7 +11,7 @@
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,                            //
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                               //
 //                                                                                                                                                                                          //
-// https://adfsmfa.codeplex.com                                                                                                                                                             //
+//                                                                                                                                                             //
 // https://github.com/neos-sdi/adfsmfa                                                                                                                                                      //
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
@@ -817,54 +817,29 @@ namespace Neos.IdentityServer.MultiFactor
         [XmlElement("ReplayLevel")]
         public ReplayLevel ReplayLevel { get; set; } = ReplayLevel.Disabled;
 
+        [XmlElement("CustomAdapterPresentation")]
+        public string CustomAdapterPresentation { get; set; }
+
         [XmlElement("Hosts")]
-        public Hosts Hosts
-        {
-            get;
-            set;
-        }
+        public Hosts Hosts { get; set; }
 
         [XmlElement("KeysConfig")]
-        public KeysManagerConfig KeysConfig
-        {
-            get;
-            set;
-        }
+        public KeysManagerConfig KeysConfig { get; set; }
 
         [XmlElement("OTPProvider")]
-        public OTPProvider OTPProvider
-        {
-            get;
-            set;
-        }
+        public OTPProvider OTPProvider { get; set; }
 
         [XmlElement("SendMail")]
-        public MailProvider MailProvider
-        {
-            get;
-            set;
-        }
+        public MailProvider MailProvider { get; set; }
 
         [XmlElement("ExternalOTPProvider")]
-        public ExternalOTPProvider ExternalProvider
-        {
-            get;
-            set;
-        }
+        public ExternalOTPProvider ExternalProvider { get; set; }
 
         [XmlElement("AzureProvider")]
-        public AzureProvider AzureProvider
-        {
-            get;
-            set;
-        }
+        public AzureProvider AzureProvider { get; set; }
 
         [XmlElement("WebAuthNProvider")]
-        public WebAuthNProvider WebAuthNProvider
-        {
-            get;
-            set;
-        }
+        public WebAuthNProvider WebAuthNProvider { get; set; }
 
         [XmlAttribute("ForcedLanguage")]
         public string ForcedLanguage { get; set; }
@@ -1938,12 +1913,11 @@ namespace Neos.IdentityServer.MultiFactor
             get { return (CredProtect.HasValue) ? CredProtect.ToString() : null; }
             set
             {
-                WebAuthNUserVerification parsed;
-                if (Enum.TryParse<WebAuthNUserVerification>(value, out parsed))
+                if (Enum.TryParse<WebAuthNUserVerification>(value, out WebAuthNUserVerification parsed))
                     CredProtect = parsed;
                 else
                     CredProtect = null;
-               // var res = Enum.TryParse<WebAuthNUserVerification>(value, out var CredProtect) ? CredProtect : (WebAuthNUserVerification?)null;
+                // var res = Enum.TryParse<WebAuthNUserVerification>(value, out var CredProtect) ? CredProtect : (WebAuthNUserVerification?)null;
             }
         }
 
@@ -2124,117 +2098,6 @@ namespace Neos.IdentityServer.MultiFactor
     public class ADDSHost: BaseDataHost
     {
         private string _domainaddress = string.Empty;
-       /* private bool _isbinded = false;
-
-        /// <summary>
-        /// ADDSHost constructor
-        /// </summary>
-        public ADDSHost()
-        {
-            _isbinded = false;
-        }
-
-        /// <summary>
-        /// Bind method implementation
-        /// </summary>
-        public void Bind(string domainname, string username, string password)
-        {
-            if (_isbinded)
-                return;
-            try
-            {
-                using (Domain domain = ADDSUtils.GetRootDomain(domainname, username, password))
-                {
-                    using (Forest forest = ADDSUtils.GetForest(domain.Name, username, password))
-                    {
-                        Forests.Clear();
-                        ADDSHostForest root = new ADDSHostForest
-                        {
-                            IsRoot = true,
-                            ForestDNS = forest.Name
-                        };
-                        Forests.Add(root);
-                        foreach (ForestTrustRelationshipInformation trusts in forest.GetAllTrustRelationships())
-                        {
-                            ADDSHostForest sub = new ADDSHostForest
-                            {
-                                IsRoot = false,
-                                ForestDNS = trusts.TargetName
-                            };
-                            foreach (TopLevelName t in trusts.TopLevelNames)
-                            {
-                                if (t.Status == TopLevelNameStatus.Enabled)
-                                    sub.TopLevelNames.Add(t.Name);
-                            }
-                            Forests.Add(sub);
-                        }
-                    }
-                }
-                _isbinded = true;
-            }
-            catch (Exception ex)
-            {
-                DataLog.WriteEntry(ex.Message, System.Diagnostics.EventLogEntryType.Error, 5100);
-                _isbinded = false;
-            }
-        }
-
-        /// <summary>
-        /// GetForestForUser method implementation
-        /// </summary>
-        public string GetForestForUser(ADDSHost host, string account)
-        {
-            string result = string.Empty;
-            switch (ClaimsUtilities.IdentityClaimTag)
-            {
-                case MFASecurityClaimTag.Upn:
-                    string foresttofind = account.Substring(account.IndexOf('@') + 1);
-                    result = foresttofind;
-                    foreach (ADDSHostForest f in Forests)
-                    {
-                        if (f.IsRoot) // By default Any root domain, subdomain, toplevelname on default forest
-                        {
-                            result = f.ForestDNS;
-                        }
-                        else // trusted forests
-                        {
-                            if (f.ForestDNS.ToLower().Equals(foresttofind.ToLower())) // root domain
-                            {
-                                result = f.ForestDNS;
-                                break;
-                            }
-                            if (foresttofind.ToLower().EndsWith("."+ f.ForestDNS.ToLower()))  // subdomain
-                            {
-                                result = f.ForestDNS;
-                                break;
-                            }
-                            foreach (string s in f.TopLevelNames) // toplevelnames
-                            {
-                                if (s.ToLower().Equals(foresttofind.ToLower()))
-                                {
-                                    result = f.ForestDNS;
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                    break;
-                case MFASecurityClaimTag.WindowsAccountName:                   
-                    string ntlmdomain = account.Substring(0, account.IndexOf('\\'));
-                    DirectoryContext ctx = null;
-                    if (string.IsNullOrEmpty(host.Account) && string.IsNullOrEmpty(host.Password))
-                        ctx = new DirectoryContext(DirectoryContextType.Domain, ntlmdomain);
-                    else
-                        ctx = new DirectoryContext(DirectoryContextType.Domain, ntlmdomain, host.Account, host.Password);
-                    result = Domain.GetDomain(ctx).Forest.RootDomain.Name;
-                    break;
-            }
-            return result;
-        } 
-
-        [XmlIgnore]
-        public List<ADDSHostForest> Forests { get; } = new List<ADDSHostForest>();
-        */
 
         #region ADDS Connection attributes
         [XmlAttribute("DomainAddress")]
@@ -2407,6 +2270,15 @@ namespace Neos.IdentityServer.MultiFactor
             }
 
         }
+    }
+
+    /// <summary>
+    /// CustomAdapterPresentationHost class implementation
+    /// </summary>
+    public class CustomAdapterPresentationHost
+    {
+        [XmlAttribute("FullyQualifiedImplementation")]
+        public string FullyQualifiedImplementation { get; set; }
     }
 
     /// <summary>

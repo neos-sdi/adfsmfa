@@ -11,21 +11,20 @@
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,                            //
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                               //
 //                                                                                                                                                                                          //
-// https://adfsmfa.codeplex.com                                                                                                                                                             //
+//                                                                                                                                                             //
 // https://github.com/neos-sdi/adfsmfa                                                                                                                                                      //
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
 using Microsoft.IdentityServer.Web.Authentication.External;
 using Neos.IdentityServer.MultiFactor.Common;
 using Neos.IdentityServer.MultiFactor.Resources;
-using Neos.IdentityServer.MultiFactor.WebAuthN;
 using System;
 using System.Collections.Generic;
 using System.Drawing.Imaging;
 
 namespace Neos.IdentityServer.MultiFactor
 {
-    public class AdapterPresentationDefault : BasePresentation
+    public class AdapterPresentationDefault : BaseMFAPresentation
     {
         private const string CR = "\r\n";
 

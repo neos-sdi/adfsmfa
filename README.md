@@ -19,7 +19,7 @@ This extension works with Active Directory or an SQL Server Database for storing
 * <https://github.com/neos-sdi/adfsmfa/wiki/Home>
 ## Downloads
 * <https://github.com/neos-sdi/adfsmfa/releases>
-* <https://github.com/neos-sdi/adfsmfa/releases/download/3.1/adfsmfa.3.1.2104.1.msi>
+* <https://github.com/neos-sdi/adfsmfa/releases/download/3.1/adfsmfa.3.1.2105.0.msi>
 
 ___
 ![Neos Logo](logo.png)
@@ -48,6 +48,7 @@ ___
 * Full sample for Azure MFA (additional configuration tasks and costs implied)
 * Developers can easily extend this component for other verification modes (Azure MFA, RSA,…) with the IExternalProvider, ISecretKeyManager interfaces
 * Developers can easily extend this component for other storages modes (AD & SQL by default)
+* Developers can easily replace the default UI, subclassing BasePresentation or BaseMFAPresentation classes
 * Full support for ADFS 2019 themes
 
 ## Remarks
