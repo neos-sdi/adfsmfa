@@ -124,6 +124,6 @@
     <value>Error sending inscription request to administrators</value>
   </data>
   <data name="ErrorSendingSecretKeyRequest" xml:space="preserve">
-    <value>Error sending sensitive key to user</value>
+    <value>Error sending secret key to user</value>
   </data>
 </root>
