@@ -118,29 +118,29 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ErrorAccountActivate" xml:space="preserve">
-    <value>Dostęp do tej aplikacji wymaga dodatkowego uwierzytelnienia.&lt;br&gt;&lt;br&gt;kliknij "Aktywuj", aby aktywować konto lub kliknij "Kontynuuj".</value>
+    <value>Dostęp do tej aplikacji wymaga dodatkowego uwierzytelniania.&lt;br&gt;&lt;br&gt;Kliknij "Aktywuj", aby aktywować konto lub kliknij "Kontynuuj".</value>
   </data>
   <data name="ErrorAccountAdminAuthorized" xml:space="preserve">
-    <value>Autoryzowany dostęp! dodatkowe uwierzytelnianie nie jest jeszcze aktywowane. Skontaktuj się z administratorem.</value>
+    <value>Autoryzowany dostęp! Dodatkowe uwierzytelnianie nie jest jeszcze aktywowane. Skontaktuj się z administratorem.</value>
   </data>
   <data name="ErrorAccountAdminNotEnabled" xml:space="preserve">
-    <value>Nieautoryzowany dostęp! dodatkowe uwierzytelnianie nie jest jeszcze aktywowany. &lt;br&gt; &lt;br&gt; prosimy o kontakt z administratorami.</value>
+    <value>Nieautoryzowany dostęp! Dodatkowe uwierzytelnianie nie jest jeszcze aktywowane.&lt;br&gt;&lt;br&gt;Prosimy o kontakt z administratorami.</value>
   </data>
   <data name="ErrorAccountAuthorized" xml:space="preserve">
-    <value>Dostęp do tej aplikacji wymaga dodatkowego uwierzytelnienia. &lt;br&gt;&lt;br&gt;kliknij przycisk "Zapisz" aby kontynuować.</value>
+    <value>Dostęp do tej aplikacji wymaga dodatkowego uwierzytelniania.&lt;br&gt;&lt;br&gt;Kliknij przycisk "Przejdź do rejestracji" aby kontynuować.</value>
   </data>
   <data name="ErrorAccountNoAccess" xml:space="preserve">
     <value>Nieautoryzowany dostęp! Skontaktuj się z administratorem</value>
   </data>
   <data name="ErrorAccountNotEnabled" xml:space="preserve">
-    <value>Dostęp do tej aplikacji wymaga dodatkowego uwierzytelnienia, który nie jest aktywowany w tej chwili.&lt;br&gt;&lt;br&gt;kliknij "prośba o rejestrację".</value>
+    <value>Dostęp do tej aplikacji wymaga dodatkowego uwierzytelnienia, które nie jest aktywowane w tej chwili.&lt;br&gt;&lt;br&gt;Kliknij "Przejdź do rejestracji".</value>
   </data>
   <data name="ErrorAuthenticating" xml:space="preserve">
     <value>Błąd procesu uwierzytelniania! 
 {0}</value>
   </data>
   <data name="ErrorEmailException" xml:space="preserve">
-    <value>Email nieprawidłowy format!</value>
+    <value>Nieprawidłowy format email!</value>
   </data>
   <data name="ErrorInvalidIdentificationRestart" xml:space="preserve">
     <value>Nieprawidłowa identyfikacja, należy ponownie uruchomić sesję.</value>
@@ -149,7 +149,7 @@
     <value>Nieprawidłowa identyfikacja, spróbuj ponownie.</value>
   </data>
   <data name="ErrorInvalidKey" xml:space="preserve">
-    <value>Nieprawidłowy klucz tajny!</value>
+    <value>Nieprawidłowy tajny klucz!</value>
   </data>
   <data name="ErrorInvalidPassword" xml:space="preserve">
     <value>Operacja anulowana, hasło nieważne!</value>
@@ -162,29 +162,29 @@
 {0}</value>
   </data>
   <data name="ErrorLoadingConfigurationFileNotFound" xml:space="preserve">
-    <value>Błąd podczas ładowania pliku konfiguracyjnego: nie znaleziono!</value>
+    <value>Błąd podczas ładowania pliku konfiguracyjnego: nie znaleziono pliku!</value>
   </data>
   <data name="ErrorLoadingUserRegistration" xml:space="preserve">
     <value>Błąd podczas ładowania rejestracji użytkownika! 
 {0}</value>
   </data>
   <data name="ErrorPinLength" xml:space="preserve">
-    <value>Nieprawidłowa długość numeru PIN, wymagane numery {0}!</value>
+    <value>Nieprawidłowa długość numeru PIN, wymagana ilość cyfr {0}!</value>
   </data>
   <data name="ErrorPinValue" xml:space="preserve">
     <value>Nieprawidłowa wartość PIN!</value>
   </data>
   <data name="ErrorReplayToken" xml:space="preserve">
-    <value>Błąd procesu autehntyfikacji! Jedno hasło czasu zostało rozegrane przed</value>
+    <value>Błąd procesu autentykacji! Hasło jednorazowe było już użyte!</value>
   </data>
   <data name="ErrorSendingToastInformation" xml:space="preserve">
     <value>Błąd podczas wysyłania żądania identyfikacji!</value>
   </data>
   <data name="ErrorValidationTimeWindowElapsed" xml:space="preserve">
-    <value>Upłynął czas sprawdzania poprawności okna.</value>
+    <value>Twoja sesja wygasła, zaloguj się ponownie przy użyciu innych opcji</value>
   </data>
   <data name="ErrorSendingToastInformationRetry" xml:space="preserve">
-    <value>Błąd podczas wysyłania żądania identyfikacji! spróbuj ponownie.</value>
+    <value>Błąd podczas wysyłania żądania identyfikacji! Spróbuj ponownie.</value>
   </data>
   <data name="ErrorPasswordExpired" xml:space="preserve">
     <value>Hasło do {0} wygasło! Odmowa dostępu!</value>

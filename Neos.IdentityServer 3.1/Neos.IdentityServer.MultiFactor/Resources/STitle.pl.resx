@@ -127,7 +127,7 @@
     <value>Konfigurowanie opcji</value>
   </data>
   <data name="MustUseCodePageTitle" xml:space="preserve">
-    <value>Aby potwierdzić swoją tożsamość, należy użyć kodu zabezpieczającego. Jak chcesz otrzymać kod ?</value>
+    <value>Aby potwierdzić swoją tożsamość za pomocą kodu weryfikacyjnego, wybierz jedną z dostępnych metod uwierzytelniania</value>
   </data>
   <data name="PasswordPageTitle" xml:space="preserve">
     <value>Aktualizacja hasła</value>
