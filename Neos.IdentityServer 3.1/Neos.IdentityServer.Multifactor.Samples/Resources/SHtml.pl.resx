@@ -127,31 +127,31 @@
     <value>(uwierzytelnianie jest wykonywane przez stronę trzecią)</value>
   </data>
   <data name="MAILUIEnrollValidatedLabel" xml:space="preserve">
-    <value>Konto zweryfikowane &lt;br&gt; &lt;br&gt; teraz można użyć adresu e-mail do uwierzytelnienia</value>
+    <value>Konto zweryfikowane.&lt;br&gt;&lt;br&gt;Teraz można używać adresu e-mail do uwierzytelniania.</value>
   </data>
   <data name="OTPUIEnrollValidatedLabel" xml:space="preserve">
-    <value>Konto zweryfikowane &lt;br&gt; &lt;br&gt; teraz można używać aplikacji do uwierzytelniania</value>
+    <value>Konto zweryfikowane.&lt;br&gt;&lt;br&gt;Teraz można używać aplikacji do uwierzytelniania.</value>
   </data>
   <data name="SMSUICFGLabel" xml:space="preserve">
     <value>Numer telefonu</value>
   </data>
   <data name="SMSUIChoiceLabel" xml:space="preserve">
-    <value>Wysyłanie kodu do telefonu komórkowego</value>
+    <value>Wysyłanie kodu na telefon komórkowy</value>
   </data>
   <data name="SMSUIChoiceLabel2" xml:space="preserve">
-    <value>Zwróć kod otrzymany na moim telefonie komórkowym</value>
+    <value>Zwróć kod otrzymany na mój telefon komórkowy</value>
   </data>
   <data name="SMSUIConfigLabel" xml:space="preserve">
-    <value>Wiadomość tekstowa na moim telefonie komórkowym</value>
+    <value>Wiadomość tekstowa na mój telefon komórkowy</value>
   </data>
   <data name="SMSUIConfigLabel2" xml:space="preserve">
-    <value>Wiadomość tekstowa na moim telefonie komórkowym {0}</value>
+    <value>Wiadomość tekstowa na mój telefon komórkowy {0}</value>
   </data>
   <data name="SMSUIEnrollTaskLabel" xml:space="preserve">
     <value>Podaj numer telefonu komórkowego</value>
   </data>
   <data name="SMSUIEnrollValidatedLabel" xml:space="preserve">
-    <value>Konto zweryfikowane &lt;br&gt; &lt;br&gt; teraz można używać telefonu komórkowego do uwierzytelniania</value>
+    <value>Konto zweryfikowane.&lt;br&gt;&lt;br&gt;Teraz można używać telefonu komórkowego do uwierzytelniania</value>
   </data>
   <data name="SMSUIListChoiceLabel" xml:space="preserve">
     <value>Odbieranie wiadomości na moim telefonie komórkowym</value>
@@ -169,13 +169,13 @@
     <value>Wprowadź kod</value>
   </data>
   <data name="SMSUIWIZLabel" xml:space="preserve">
-    <value>Rejestrowanie telefonu komórkowego</value>
+    <value>Zarejestruj telefon komórkowy</value>
   </data>
   <data name="SMSWIZEnroll" xml:space="preserve">
-    <value>Rejestrowanie telefonu</value>
+    <value>Zarejestruj telefon</value>
   </data>
   <data name="PROVIDERSMSDESCRIPTION" xml:space="preserve">
-    <value>Dostawca wielu czynników SMS</value>
+    <value>Dostawca MFA SMS</value>
   </data>
   <data name="SMSUIWIZComment" xml:space="preserve">
     <value>Aby potwierdzić swoją tożsamość, musisz podać swój numer telefonu. Ten telefon musi być dostępny.</value>

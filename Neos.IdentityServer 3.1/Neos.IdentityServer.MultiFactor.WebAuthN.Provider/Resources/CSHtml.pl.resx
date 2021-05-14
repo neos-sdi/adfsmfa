@@ -136,7 +136,7 @@
     <value>Zarejestruj swoje urządzenie biometryczne</value>
   </data>
   <data name="BIOWIZEnroll" xml:space="preserve">
-    <value>Zarejestruj moje urządzenie biometryczne</value>
+    <value>Zarządzaj moimi urządzeniami biometrycznymi</value>
   </data>
   <data name="BIOUIChoiceLabel" xml:space="preserve">
     <value>Użyj mojego urządzenia biometrycznego</value>
@@ -145,10 +145,10 @@
     <value>Użyj mojego urządzenia biometrycznego</value>
   </data>
   <data name="BIOUIEnrollTaskLabel" xml:space="preserve">
-    <value>Rejestracja urządzenia biometrycznego</value>
+    <value>Zarejestruj urządzenie biometryczne</value>
   </data>
   <data name="BIOUIEnrollValidatedLabel" xml:space="preserve">
-    <value>Konto zweryfikowane &lt;br&gt; &lt;br&gt; można użyć urządzenia biometrycznego do uwierzytelnienia</value>
+    <value>Konto zweryfikowane&lt;br&gt;&lt;br&gt;Można użyć urządzenia biometrycznego do uwierzytelniania</value>
   </data>
   <data name="BIOUIEnrollManageLinkLabel" xml:space="preserve">
     <value>Zarządzaj moimi urządzeniami biometrycznymi</value>
@@ -160,9 +160,9 @@
     <value>Dostawca biometrii wieloskładnikowej</value>
   </data>
   <data name="BIOUIWIZComment" xml:space="preserve">
-    <value>Zarządzaj urządzeniami biometrycznymi. Wybierz dodaj, zamień lub usuń poszczególne urządzenia.</value>
+    <value>Zarządzaj urządzeniami biometrycznymi. Wybierz opcję 'Dodaj', 'Zamień' lub 'Usuń' dla poszczególnych urządzeń.</value>
   </data>
   <data name="BIOERRORAUTHREPLAY" xml:space="preserve">
-    <value>Błąd podczas procesu uwierzytelniania! Koder bezpieczeństwa Dane zostały wykorzystane wcześniej!</value>
+    <value>Błąd podczas procesu uwierzytelniania! Dane deskryptora bezpieczeństwa zostały już wcześniej wykorzystane!</value>
   </data>
 </root>

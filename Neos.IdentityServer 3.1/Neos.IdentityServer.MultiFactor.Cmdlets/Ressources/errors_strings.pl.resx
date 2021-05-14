@@ -130,10 +130,10 @@
     <value>Adres e-mail nie jest podany dla użytkownika {0}!</value>
   </data>
   <data name="ErrorInvalidServerName" xml:space="preserve">
-    <value>Nieprawidłowa nazwa serwera: należy określić nazwę FQDN serwera !</value>
+    <value>Nieprawidłowa nazwa serwera: należy określić nazwę FQDN serwera!</value>
   </data>
   <data name="ErrorPhoneNotProvided" xml:space="preserve">
-    <value>Numer telefonu niepodany dla użytkownika {0} !</value>
+    <value>Brak numeru telefonu dla użytkownika {0}!</value>
   </data>
   <data name="ErrorUpdatingUser" xml:space="preserve">
     <value>Błąd podczas aktualizowania użytkownika {0} {1}</value>

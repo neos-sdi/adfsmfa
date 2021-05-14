@@ -127,7 +127,7 @@
     <value>Numer telefonu nie jest poprawnie sformatowany</value>
   </data>
   <data name="ValidIncorrectPinCode" xml:space="preserve">
-    <value>Nieprawidłowy kod PIN !</value>
+    <value>Nieprawidłowy kod PIN!</value>
   </data>
   <data name="ValidNewPassError" xml:space="preserve">
     <value>Nowe hasło jest niepoprawne</value>

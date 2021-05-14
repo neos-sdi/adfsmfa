@@ -133,43 +133,43 @@
     <value>Powiadomienia o rejestracji</value>
   </data>
   <data name="CTRGLMANAGEREGEND" xml:space="preserve">
-    <value>Końcu</value>
+    <value>Koniec</value>
   </data>
   <data name="CTRGLMANAGEREGSTART" xml:space="preserve">
-    <value>Uruchomić</value>
+    <value>Start</value>
   </data>
   <data name="CTRLADACCOUNT" xml:space="preserve">
     <value>Konto dostępu</value>
   </data>
   <data name="CTRLADATCHECKDATEERROR" xml:space="preserve">
-    <value>Atrybut dodaje nie jest prawidłowy dla daty weryfikacji!</value>
+    <value>Atrybut ADDS nie jest prawidłowy dla daty weryfikacji!</value>
   </data>
   <data name="CTRLADATENABLEDERROR" xml:space="preserve">
-    <value>Atrybut dodaje nie jest prawidłowy dla włączone!</value>
+    <value>Atrybut ADDS nie jest prawidłowy dla włączone!</value>
   </data>
   <data name="CTRLADATMETHODERROR" xml:space="preserve">
-    <value>DODAJE atrybut nie jest prawidłowy dla metody!</value>
+    <value>Atrybut ADDS nie jest prawidłowy dla metody!</value>
   </data>
   <data name="CTRLADATOVERRIDEERROR" xml:space="preserve">
-    <value>Atrybut dodaje nie jest prawidłowy dla konkretnej metody!</value>
+    <value>Atrybut ADDS nie jest prawidłowy dla konkretnej metody!</value>
   </data>
   <data name="CTRLADATPINERROR" xml:space="preserve">
-    <value>Atrybut dodaje nie jest prawidłowy dla kodu PIN!</value>
+    <value>Atrybut ADDS nie jest prawidłowy dla kodu PIN!</value>
   </data>
   <data name="CTRLADATTACCOUNT" xml:space="preserve">
-    <value>Nieprawidłowe konto dodane!</value>
+    <value>Nieprawidłowe konto ADDS!</value>
   </data>
   <data name="CTRLADATTDOMAIN" xml:space="preserve">
-    <value>Nieprawidłowy dodaje adres domeny!</value>
+    <value>Nieprawidłowy adres domeny ADDS!</value>
   </data>
   <data name="CTRLADATTEMAILERROR" xml:space="preserve">
-    <value>DODAJE atrybut nie jest prawidłowy dla adresu e-mail!</value>
+    <value>Atrybut ADDS nie jest prawidłowy dla adresu e-mail!</value>
   </data>
   <data name="CTRLADATTKEY" xml:space="preserve">
     <value>Klucz tajny</value>
   </data>
   <data name="CTRLADATTKEYERROR" xml:space="preserve">
-    <value>Atrybut dodaje nie jest prawidłowy dla klucza tajnego!</value>
+    <value>Atrybut ADDS nie jest prawidłowy dla klucza tajnego!</value>
   </data>
   <data name="CTRLADATTMAIL" xml:space="preserve">
     <value>Adres email</value>
@@ -178,22 +178,22 @@
     <value>Domyślna metoda MFA</value>
   </data>
   <data name="CTRLADATTOVERRIDE" xml:space="preserve">
-    <value>Metoda sciciific MFA</value>
+    <value>Metoda override MFA</value>
   </data>
   <data name="CTRLADATTPASSWORD" xml:space="preserve">
-    <value>INvalid dodaje hasło!</value>
+    <value>Nieprawidłowe hasło ADDS!</value>
   </data>
   <data name="CTRLADATTPHONE" xml:space="preserve">
     <value>Telefon komórkowy</value>
   </data>
   <data name="CTRLADATTPHONEERROR" xml:space="preserve">
-    <value>DODAJE atrybut nie jest prawidłowy dla numeru telefonu!</value>
+    <value>Atrybut ADDS nie jest prawidłowy dla numeru telefonu!</value>
   </data>
   <data name="CTRLADATTPIN" xml:space="preserve">
     <value>Pin</value>
   </data>
   <data name="CTRLADATTRIBUTES" xml:space="preserve">
-    <value>Tłumaczenie atrybutów usługi Active Directory</value>
+    <value>Ustawienia atrybutów usługi Active Directory</value>
   </data>
   <data name="CTRLADATTSTATUS" xml:space="preserve">
     <value>Stan aktywacji użytkownika</value>
@@ -202,22 +202,22 @@
     <value>Data audytu TOTP</value>
   </data>
   <data name="CTRLADATTVALIDITY" xml:space="preserve">
-    <value>Data ważności ToTP</value>
+    <value>Data ważności TOTP</value>
   </data>
   <data name="CTRLADATVALIDITYDATEERROR" xml:space="preserve">
-    <value>Atrybut dodaje nie jest prawidłowy dla daty ważności!</value>
+    <value>Atrybut ADDS nie jest prawidłowy dla daty ważności!</value>
   </data>
   <data name="CTRLADCONNECTIONERROR" xml:space="preserve">
-    <value>Nie można połączyć się w lesie/dodaje domenę!</value>
+    <value>Nie można połączyć się do lasu/domeny ADDS!</value>
   </data>
   <data name="CTRLADCONNECTIONOK" xml:space="preserve">
-    <value>Połączenie na dodaje lasu/obszar operacyjny!</value>
+    <value>Połączenie do lasu/domeny działa poprawnie!</value>
   </data>
   <data name="CTRLADDOMAIN" xml:space="preserve">
     <value>Nazwa domeny</value>
   </data>
   <data name="CTRLADFSACTIVATEMFA" xml:space="preserve">
-    <value>Aktywacja uwierzytelniania wieloskładnikowego</value>
+    <value>Aktywacja usługi MFA</value>
   </data>
   <data name="CTRLADFSDEACTIVATEMFA" xml:space="preserve">
     <value>Wyłączanie usługi MFA</value>
@@ -226,16 +226,16 @@
     <value>Hasło</value>
   </data>
   <data name="CTRLADTEST" xml:space="preserve">
-    <value>Aby przetestować</value>
+    <value>Test</value>
   </data>
   <data name="CTRLADUSEADDS" xml:space="preserve">
     <value>Korzystanie z konfiguracji usługi Active Directory</value>
   </data>
   <data name="CTRLAZURETENANTID" xml:space="preserve">
-    <value>Trzymanie platformy Azure</value>
+    <value>Tenant platformy Azure</value>
   </data>
   <data name="CTRLAZURETHUMPRINT" xml:space="preserve">
-    <value>Drukowanie certyfikatu platformy Azure</value>
+    <value>ThumbPrint certyfikatu platformy Azure</value>
   </data>
   <data name="CTRLDLGMAXRETRIES" xml:space="preserve">
     <value>Liczba dozwolonych prób</value>
@@ -250,13 +250,13 @@
     <value>Kontakt administracyjny (e-mail)</value>
   </data>
   <data name="CTRLGLCONTRYCODE" xml:space="preserve">
-    <value>Kod kraju domyślnie</value>
+    <value>Domyślny kod kraju</value>
   </data>
   <data name="CTRLGLDELVERY" xml:space="preserve">
     <value>Czas walidacji (w sekundach)</value>
   </data>
   <data name="CTRLGLENROLLWIZ" xml:space="preserve">
-    <value>Asystenci nagrywania</value>
+    <value>Asystenci rejestracji</value>
   </data>
   <data name="CTRLGLHASH" xml:space="preserve">
     <value>Algorytm wyznaczania wartości skrótu</value>
@@ -268,7 +268,7 @@
     <value>Użytkownik może wybrać domyślnego dostawcę</value>
   </data>
   <data name="CTRLGLMANAGENOTIFS" xml:space="preserve">
-    <value>Powiadamianie użytkowników po zmianach</value>
+    <value>Powiadamianie użytkowników po zmianach konfiguracji</value>
   </data>
   <data name="CTRLGLMANAGEOPTIONS" xml:space="preserve">
     <value>Zarządzanie opcjami użytkownika</value>
@@ -286,79 +286,79 @@
     <value>Rejestracja użytkownika</value>
   </data>
   <data name="CTRLGLMFAREGISTER1" xml:space="preserve">
-    <value>Rejestracja administracyjna potwierdzona przez wsparcie</value>
+    <value>Administracyjna - rejestracja potwierdzona przez Pomoc techniczną</value>
   </data>
   <data name="CTRLGLMFAREGISTER2" xml:space="preserve">
-    <value>Rejestracja dokonana przez użytkownika</value>
+    <value>Użytkownika - rejestracja dokonana przez użytkownika</value>
   </data>
   <data name="CTRLGLMFAREGISTER3" xml:space="preserve">
-    <value>Niezarządzany — skontaktuj się z pomocą techniczną</value>
+    <value>Niezarządzana - skontaktuj się z Pomocą techniczną</value>
   </data>
   <data name="CTRLGLMFAREGISTER4" xml:space="preserve">
-    <value>Obowiązkowa Rejestracja prowadzona przez Media</value>
+    <value>Wymagana - rejestracja dokonana przez Pomoc techniczną</value>
   </data>
   <data name="CTRLGLMFASTATUS" xml:space="preserve">
     <value>Stan usługi MFA</value>
   </data>
   <data name="CTRLGLMFASTATUS1" xml:space="preserve">
-    <value>Obowiązkowe-MFA nie można wyłączyć</value>
+    <value>Obowiązkowe - MFA nie można wyłączyć</value>
   </data>
   <data name="CTRLGLMFASTATUS2" xml:space="preserve">
-    <value>Opcjonalne-MFA można wyłączyć w opcjach</value>
+    <value>Opcjonalne - MFA można wyłączyć w opcjach</value>
   </data>
   <data name="CTRLGLMFASTATUS3" xml:space="preserve">
     <value>Nie wymagane</value>
   </data>
   <data name="CTRLGLPOLICY" xml:space="preserve">
-    <value>Polityka bezpieczeństwa (umiarkowana)</value>
+    <value>Polityka bezpieczeństwa (model)</value>
   </data>
   <data name="CTRLGLPROVIDER" xml:space="preserve">
-    <value>Domyślny dostawca</value>
+    <value>Domyślny dostawca użytkownika</value>
   </data>
   <data name="CTRLGLREFRESH" xml:space="preserve">
-    <value>Częstotliwość chłodzenia (w milisekundach)</value>
+    <value>Częstotliwość odświeżania (w milisekundach)</value>
   </data>
   <data name="CTRLGLREPLAY" xml:space="preserve">
     <value>Poziom ochrony powtórki</value>
   </data>
   <data name="CTRLGLSHOWAUTHY" xml:space="preserve">
-    <value>Pokaż wystawca uwierzytelnienia Authy</value>
+    <value>Pokaż aplikację uwierzytelniania Authy</value>
   </data>
   <data name="CTRLGLSHOWGOOGLE" xml:space="preserve">
-    <value>Zobacz Google Authenticator</value>
+    <value>Pokaż aplikację uwierzytelniania Google </value>
   </data>
   <data name="CTRLGLSHOWMICROSOFT" xml:space="preserve">
-    <value>Pokaż program Microsoft Authenticator</value>
+    <value>Pokaż aplikację uwierzytelniania Microsoft</value>
   </data>
   <data name="CTRLGLUSEAPPS" xml:space="preserve">
-    <value>Korzystanie z aplikacji uwierzytelniania (Google Authenticator, Microsoft Authenticator)</value>
+    <value>Użyj aplikacji uwierzytelniania (Google Authenticator, Microsoft Authenticator)</value>
   </data>
   <data name="CTRLGLUSEMAILS" xml:space="preserve">
-    <value>Korzystanie z powiadomień e-mail</value>
+    <value>Użyj powiadomień e-mail</value>
   </data>
   <data name="CTRLGLUSESMS" xml:space="preserve">
-    <value>Korzystanie z powiadomień SMS</value>
+    <value>Użyj powiadomień SMS</value>
   </data>
   <data name="CTRLGLUSEUSERLANGS" xml:space="preserve">
-    <value>Korzystanie z języków przeglądarki</value>
+    <value>Użyj języków przeglądarki</value>
   </data>
   <data name="CTRLINVALIDVALUE" xml:space="preserve">
-    <value>Wartość jest nieprawidłowa. Musi być między {0} i {1}.</value>
+    <value>Wartość jest nieprawidłowa, musi być między {0} i {1}.</value>
   </data>
   <data name="CTRLMULTVALUED" xml:space="preserve">
     <value>(*) Obsługuje właściwości wielowartościowe</value>
   </data>
   <data name="CTRLMUSTACTIVATESVC" xml:space="preserve">
-    <value>Operacja została anulowana! Aby to zrobić, musisz aktywować lokalną usługę ADFS!</value>
+    <value>Operacja została anulowana! Musisz aktywować lokalną usługę ADFS!</value>
   </data>
   <data name="CTRLNULLOREMPTYERROR" xml:space="preserve">
-    <value>Zero lub puste wartości nie są dozwolone.</value>
+    <value>Null lub puste wartości nie są dozwolone.</value>
   </data>
   <data name="CTRLPROVACTIVE" xml:space="preserve">
     <value>Aktywne</value>
   </data>
   <data name="CTRLPROVPIN" xml:space="preserve">
-    <value>Wymagany kod sosny</value>
+    <value>Wymagany kod PIN</value>
   </data>
   <data name="CTRLPROVREQUIRED" xml:space="preserve">
     <value>Wymagane</value>
@@ -370,13 +370,13 @@
     <value>Wymuszenie asystenta, jeśli nie został ukończony</value>
   </data>
   <data name="CTRLSAVE" xml:space="preserve">
-    <value>Nagrać</value>
+    <value>Zapisz</value>
   </data>
   <data name="CTRLSECASSEMBLY" xml:space="preserve">
-    <value>Pełna Klasa</value>
+    <value>Implementacja (pełna klasa)</value>
   </data>
   <data name="CTRLSECCERTIFDURATION" xml:space="preserve">
-    <value>Ważności</value>
+    <value>Okres ważności</value>
   </data>
   <data name="CTRLSECCERTIFICATES" xml:space="preserve">
     <value>Certyfikaty</value>
@@ -385,7 +385,7 @@
     <value>Certyfikat nie został znaleziony!</value>
   </data>
   <data name="CTRLSECINVALIDEXTERROR" xml:space="preserve">
-    <value>Nieprawidłowe rozszerzenie! Nie można naładować!</value>
+    <value>Nieprawidłowe rozszerzenie! Nie można załadować!</value>
   </data>
   <data name="CTRLSECKEYMODE" xml:space="preserve">
     <value>Tryb klucza zabezpieczeń</value>
@@ -403,25 +403,25 @@
     <value>Tworzenie bazy danych</value>
   </data>
   <data name="CTRLSECPARAMS" xml:space="preserve">
-    <value>Ustawienia</value>
+    <value>Parametry</value>
   </data>
   <data name="CTRLSECTHUMPRINT" xml:space="preserve">
-    <value>Pieczęć świadectwa</value>
+    <value>Thumbprint certyfikatu</value>
   </data>
   <data name="CTRLSECWARNING" xml:space="preserve">
     <value>Uwagę! Zmiana tych wartości spowoduje unieważnienie wszystkich bieżących kluczy</value>
   </data>
   <data name="CTRLSECWIZARD" xml:space="preserve">
-    <value>Opcje asystenta zameldowania</value>
+    <value>Opcje asystenta rejestracji</value>
   </data>
   <data name="CTRLSECWIZTITLE" xml:space="preserve">
-    <value>Tworzenie nowej bazy danych</value>
+    <value>Tworzenie nowej bazy danych SQL</value>
   </data>
   <data name="CTRLSECXORLABEL" xml:space="preserve">
-    <value>Sekretne zdanie</value>
+    <value>Hasło (passphrase)</value>
   </data>
   <data name="CTRLSMSASSEMBLY" xml:space="preserve">
-    <value>Pełna Klasa</value>
+    <value>Implementacja (pełna klasa)</value>
   </data>
   <data name="CTRLSMSASYNCCALL" xml:space="preserve">
     <value>Wywołania asynchroniczne</value>
@@ -430,13 +430,13 @@
     <value>Nazwa firmy</value>
   </data>
   <data name="CTRLSMSIVALIDEXTERROR" xml:space="preserve">
-    <value>Nieprawidłowe rozszerzenie! Nie można naładować!</value>
+    <value>Nieprawidłowe rozszerzenie! Nie można załadować!</value>
   </data>
   <data name="CTRLSMSPARAMS" xml:space="preserve">
-    <value>Ustawienia</value>
+    <value>Parametry</value>
   </data>
   <data name="CTRLSMSSHA1" xml:space="preserve">
-    <value>Suplement SHA1</value>
+    <value>Ciąg zaburzający SHA1 (salt)</value>
   </data>
   <data name="CTRLSMSTIMEOUT" xml:space="preserve">
     <value>Limit czasu</value>
@@ -457,7 +457,7 @@
     <value>Kontakt administracyjny (od)</value>
   </data>
   <data name="CTRLSMTPIDENTIFICATION" xml:space="preserve">
-    <value>Identyfikacji</value>
+    <value>Identyfikacja</value>
   </data>
   <data name="CTRLSMTPMAILERROR" xml:space="preserve">
     <value>Nieprawidłowy format wiadomości e-mail!</value>
@@ -469,7 +469,7 @@
     <value>Hasło</value>
   </data>
   <data name="CTRLSMTPPORT" xml:space="preserve">
-    <value>Portu</value>
+    <value>Port</value>
   </data>
   <data name="CTRLSMTPPORTERROR" xml:space="preserve">
     <value>Nieprawidłowy port!</value>
@@ -481,19 +481,19 @@
     <value>Adres serwera</value>
   </data>
   <data name="CTRLSMTPTEST" xml:space="preserve">
-    <value>Aby przetestować</value>
+    <value>Test</value>
   </data>
   <data name="CTRLSQLCONNECTERROR" xml:space="preserve">
     <value>Nie można nawiązać połączenia z bazą danych SQL MFA!</value>
   </data>
   <data name="CTRLSQLCONNECTOK" xml:space="preserve">
-    <value>Połącz się z operacyjną bazą danych SQL!</value>
+    <value>Połączenie z operacyjną bazą danych MFA nawiązane!</value>
   </data>
   <data name="CTRLSQLCONNECTSTR" xml:space="preserve">
-    <value>Łańcuch połączeniowy</value>
+    <value>Parametry połączenia SQL</value>
   </data>
   <data name="CTRLSQLCONNECTSTRERROR" xml:space="preserve">
-    <value>Nieprawidłowy łańcuch połączeń SQL!</value>
+    <value>Nieprawidłowe parametry połączenia SQL!</value>
   </data>
   <data name="CTRLSQLCREATECRYPTEDDB" xml:space="preserve">
     <value>Tworzenie zaszyfrowanej bazy danych MFA</value>
@@ -502,37 +502,37 @@
     <value>Tworzenie bazy danych MFA</value>
   </data>
   <data name="CTRLSQLCRYPTUSING" xml:space="preserve">
-    <value>Użyj funkcji "zawsze zaszyfrowane" (SQL Server 2016)</value>
+    <value>Użyj funkcji "zawsze zaszyfrowane" (SQL Server 2016+)</value>
   </data>
   <data name="CTRLSQLENCRYPTNAME" xml:space="preserve">
-    <value>Nazwa klucza SQL</value>
+    <value>Nazwa klucza szyfrowania SQL</value>
   </data>
   <data name="CTRLSQLINVALIDCERTERROR" xml:space="preserve">
     <value>Nieprawidłowy certyfikat {0}</value>
   </data>
   <data name="CTRLSQLMAXROWSERROR" xml:space="preserve">
-    <value>{0} To nie jest ważne! wartość musi wynosić od 1000 do 1 000 000</value>
+    <value>{0} nie jest ważne! Wartość musi zawierać się pomiedzy 1000 i 1000000</value>
   </data>
   <data name="CTRLSQLREUSECERT" xml:space="preserve">
     <value>Ponowne użycie certyfikatu</value>
   </data>
   <data name="CTRLSQLTEST" xml:space="preserve">
-    <value>Aby przetestować</value>
+    <value>Test</value>
   </data>
   <data name="CTRLSQLTHUMBPRINT" xml:space="preserve">
-    <value>Wydruk certyfikatu</value>
+    <value>Podpis certyfikatu</value>
   </data>
   <data name="CTRLSQLUSING" xml:space="preserve">
-    <value>Użyj konfiguracji programu SQL Server</value>
+    <value>Użyj konfiguracji SQL Server</value>
   </data>
   <data name="CTRLWEBAUTHNTIMEOUT" xml:space="preserve">
     <value>Limit czasu (ms)</value>
   </data>
   <data name="CTRLWEBAUTHNDRIFTTOLERANCE" xml:space="preserve">
-    <value>Tolerancja dryfu znacznika czasowego</value>
+    <value>Tolerancja przesunięcia znacznika czasowego</value>
   </data>
   <data name="CTRLWEBAUTHNSERVERDOMAIN" xml:space="preserve">
-    <value>Domena serweryserver Domain</value>
+    <value>Domena serwera</value>
   </data>
   <data name="CTRLWEBAUTHNSERVERNAME" xml:space="preserve">
     <value>Nazwa serwera</value>
@@ -553,10 +553,10 @@
     <value>Baza danych MFA {0} utworzona pomyślnie! Należy wdrożyć nowy certyfikat {1} na wszystkich innych serwerach usług AD FS</value>
   </data>
   <data name="CTRLWEBAUTHNATTACHEMENT" xml:space="preserve">
-    <value>Attachement wystawcy uwierzytelnienia</value>
+    <value>Załącznik dostawcy uwierzytelniania</value>
   </data>
   <data name="CTRLWEBAUTHNCONVEYANCE" xml:space="preserve">
-    <value>Preferencje dotyczące przekazywania atestacji</value>
+    <value>Preferencje dotyczące przekazywania poświadczenia</value>
   </data>
   <data name="CTRLWEBAUTHNUSERVERFICATION" xml:space="preserve">
     <value>Wymóg weryfikacji poświadczenia użytkownika</value>
@@ -568,7 +568,7 @@
     <value>Rozszerzenia (authnSe)</value>
   </data>
   <data name="CTRLWEBAUTHNRESIDENTKEY" xml:space="preserve">
-    <value>Wymagaj klucza rezydenta</value>
+    <value>Wymagaj rezydentnego klucza</value>
   </data>
   <data name="CTRLWEBAUTHNUSERINDEX" xml:space="preserve">
     <value>Indeks weryfikacji użytkownika (UVI)</value>
@@ -583,10 +583,10 @@
     <value>Klucz publiczny WebAuthN</value>
   </data>
   <data name="CTRLMUSTMULTVALUED" xml:space="preserve">
-    <value>(**) Wymagaj właściwości łańcucha o wielu wartościach</value>
+    <value>(**) Wymagana właściwość wielowartościowa</value>
   </data>
   <data name="CTRLWEBAUTHNAUTOLOGIN" xml:space="preserve">
-    <value>Szybkie połączenie</value>
+    <value>Szybkie logowanie</value>
   </data>
   <data name="CTRLADTEMPLATE2016" xml:space="preserve">
     <value>ADDS schematu 2016++</value>
@@ -598,13 +598,13 @@
     <value>ADDS Schema MFA</value>
   </data>
   <data name="CTRLADTEMPLATE2016ERROR" xml:space="preserve">
-    <value>Błąd podczas ładowania "2016" szablon, należy zaktualizować ręcznie swoje atrybuty !</value>
+    <value>Błąd podczas ładowania szablonu "2016", należy zaktualizować ręcznie swoje atrybuty!</value>
   </data>
   <data name="CTRLADTEMPLATEBASEERROR" xml:space="preserve">
-    <value>Błąd podczas ładowania "default" szablon, należy zaktualizować ręcznie swoje atrybuty !</value>
+    <value>Błąd podczas ładowania szablonu "default", należy zaktualizować ręcznie swoje atrybuty!</value>
   </data>
   <data name="CTRLADTEMPLATEMFAERROR" xml:space="preserve">
-    <value>Błąd podczas ładowania "MFA" szablon, należy zaktualizować ręcznie swoje atrybuty!</value>
+    <value>Błąd podczas ładowania szablonu "MFA", należy zaktualizować ręcznie swoje atrybuty!</value>
   </data>
   <data name="CTRLSECCERTPERUSER" xml:space="preserve">
     <value>Użyj jednego certyfikatu na użytkownika</value>
@@ -613,7 +613,7 @@
     <value>Certyfikat użytkownika RSA</value>
   </data>
   <data name="CTRLADATRSACERTERROR" xml:space="preserve">
-    <value>Nieprawidłowy atrybut dodaje dla certyfikatu RSA!</value>
+    <value>Nieprawidłowy atrybut ADDS dla certyfikatu RSA!</value>
   </data>
   <data name="CTRLADTITLECONFIG" xml:space="preserve">
     <value>Ogólne właściwości bezpieczeństwa</value>
@@ -625,10 +625,10 @@
     <value>Użyj programu SQL Server</value>
   </data>
   <data name="CTRLWEBAUTHNROOTATTESTATION" xml:space="preserve">
-    <value>Wymagaj ważnego certyfikatu głównego zaświadczenia</value>
+    <value>Wymagaj ważnego poświadczenia głównego certyfikatu</value>
   </data>
   <data name="CTRLSTUSECUSTOM" xml:space="preserve">
-    <value>Korzystanie z magazynu niestandardowego</value>
+    <value>Użyj magazynu niestandardowego</value>
   </data>
   <data name="CTRLDATAREPOASSEMBLY" xml:space="preserve">
     <value>Repozytorium danych (pełna klasa)</value>
@@ -643,16 +643,16 @@
     <value>Korzystanie z bezpiecznych połączeń LDAP (LDAPS)</value>
   </data>
   <data name="CTRLCUSTOMKEYSERROR" xml:space="preserve">
-    <value>Nieprawidłowe rozszerzenie! Nie można naładować!</value>
+    <value>Nieprawidłowe rozszerzenie! Nie można załadować!</value>
   </data>
   <data name="CTRLWEBAUTHNSHOWPII" xml:space="preserve">
-    <value>Pokazywalne dzienniki</value>
+    <value>Pokaż logi z danymi wrażliwymi</value>
   </data>
   <data name="CTRLGLTOTPWARN" xml:space="preserve">
-    <value>Rfc6238 wsparcie - Twoja aplikacja authenticator musi go wspierać (Yubico, Authy)</value>
+    <value>Wsparcie Rfc6238  - Twoja aplikacja uwierzytelniania musi wspierać Rfc6238(Yubico, Authy)</value>
   </data>
   <data name="CTRLGLDURATION" xml:space="preserve">
-    <value>Długość</value>
+    <value>Czas trwania</value>
   </data>
   <data name="CTRLGLMAXDIGITS" xml:space="preserve">
     <value>Cyfr</value>
@@ -667,28 +667,28 @@
     <value>Potwierdź utworzenie nowego certyfikatu dla usługi MFA ? Uwaga: Wszystkie istniejące klucze zostaną unieważnione!</value>
   </data>
   <data name="CTRLSQLATTPASSWORD" xml:space="preserve">
-    <value>Nieprawidłowe hasło programu SQLServer !</value>
+    <value>Nieprawidłowe hasło serwera SQL!</value>
   </data>
   <data name="CTRLSQLATTACCOUNT" xml:space="preserve">
-    <value>Nieprawidłowe konto programu SQLServer !</value>
+    <value>Nieprawidłowe konto serwera SQL!</value>
   </data>
   <data name="CTRLSQLCONNECTIONOK" xml:space="preserve">
-    <value>Połączenie z programem SQL Server czynne!</value>
+    <value>Połączenie z serwerem SQL nawiązane!</value>
   </data>
   <data name="CTRLSQLCONNECTIONERROR" xml:space="preserve">
-    <value>Nie można połączyć się z programem SQL Server!</value>
+    <value>Nie można połączyć się z serwerem SQL!</value>
   </data>
   <data name="CTRLADSUPERACCOUNT" xml:space="preserve">
     <value>Usługa Active Directory "Konto dostępu do danych"</value>
   </data>
   <data name="CTRLSQLSUPERACCOUNT" xml:space="preserve">
-    <value>Program SQL Server "Konto dostępu do danych"</value>
+    <value>"Konto dostępu do danych" SQL Server</value>
   </data>
   <data name="CTRLPASSWORDPOLICY" xml:space="preserve">
-    <value>Zasady dotyczące haseł</value>
+    <value>Polityka haseł</value>
   </data>
   <data name="CTRLUSEPASSWORDPOLICY" xml:space="preserve">
-    <value>Zasady aktywowania haseł</value>
+    <value>Aktywacja polityki haseł</value>
   </data>
   <data name="CTRLLOCKUSERONPASSWORDEXPIRED" xml:space="preserve">
     <value>Zablokuj użytkownika, jeśli hasło wygasło</value>
@@ -700,7 +700,7 @@
     <value>Powiadamianie użytkownika przed wygaśnięciem hasła</value>
   </data>
   <data name="CTRLUSEPSOPASSWORDPOLICY" xml:space="preserve">
-    <value>Korzystanie z zasad haseł przedsiębiorstwa (PSO)</value>
+    <value>Korzystanie z polityki haseł przedsiębiorstwa (PSO)</value>
   </data>
   <data name="CTRLWEBAUTHNUSENICKNAMES" xml:space="preserve">
     <value>Poproś o nazwę urządzeń biometrycznych</value>
@@ -712,19 +712,19 @@
     <value>Generowanie kluczy</value>
   </data>
   <data name="CTRLSECAESWARNING" xml:space="preserve">
-    <value>Ostrzeżenie! generowanie nowych kluczy spowoduje unieważnienie wszystkich bieżących kluczy wszystkich użytkowników</value>
+    <value>Ostrzeżenie! Generowanie nowych kluczy spowoduje unieważnienie wszystkich bieżących kluczy wszystkich użytkowników</value>
   </data>
   <data name="CTRLSECAESOK" xml:space="preserve">
     <value>Nowe klucze pomyślnie utworzone!</value>
   </data>
   <data name="CTRLSECKEYLENGTH" xml:space="preserve">
-    <value>Rozmiar ekranu kluczowego</value>
+    <value>Pokazywany rozmiar klucza</value>
   </data>
   <data name="CTRLSECAESDEPLOYED" xml:space="preserve">
     <value>Bieżące klucze pomyślnie wdrożone!</value>
   </data>
   <data name="CTRLSECAESDELETED" xml:space="preserve">
-    <value>Bieżące klawisze zostały pomyślnie usunięte!</value>
+    <value>Bieżące klucze zostały pomyślnie usunięte!</value>
   </data>
   <data name="CTRLSECGENRSAKEY" xml:space="preserve">
     <value>Klucz główny RSA</value>
