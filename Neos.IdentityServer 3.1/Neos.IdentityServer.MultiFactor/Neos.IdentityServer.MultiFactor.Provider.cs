@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2020 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
+// Copyright (c) 2021 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -475,7 +475,7 @@ namespace Neos.IdentityServer.MultiFactor
                         usercontext.UIMode = ProviderPageMode.Locking;
                         return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorInvalidIdentificationRestart"), ProviderPageMode.DefinitiveError);
                     }
-                    if(DateTime.Now.ToUniversalTime() > usercontext.LogonDate.AddSeconds(Convert.ToDouble(Config.DeliveryWindow)).ToUniversalTime())
+                    if (DateTime.Now.ToUniversalTime() > usercontext.LogonDate.AddSeconds(Convert.ToDouble(Config.DeliveryWindow)).ToUniversalTime())
                     {
                         usercontext.UIMode = ProviderPageMode.Locking;
                         return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorValidationTimeWindowElapsed"), ProviderPageMode.DefinitiveError);
@@ -506,7 +506,7 @@ namespace Neos.IdentityServer.MultiFactor
                             }
                             claims = new Claim[] { GetAuthMethodClaim(usercontext.SelectedMethod) };
 
-                            bool options = proofData.Properties.TryGetValue("options", out object opt);
+                            bool options = proofData.Properties.TryGetValue("mfaoptions", out object opt);
                             usercontext.ShowOptions = options;
                             if (options)
                             {
@@ -546,6 +546,7 @@ namespace Neos.IdentityServer.MultiFactor
                         }
                         else
                         {
+
                             if (usercontext.CurrentRetries >= Config.MaxRetries)
                             {
                                 usercontext.UIMode = ProviderPageMode.Locking;
@@ -1463,7 +1464,7 @@ namespace Neos.IdentityServer.MultiFactor
                         return new AdapterPresentation(this, context);
                     }
                 }
-                usercontext.ShowOptions = proofData.Properties.TryGetValue("options", out object opt);
+                usercontext.ShowOptions = proofData.Properties.TryGetValue("mfaoptions", out object opt);
                 if (!usercontext.IsRemote)
                 {
                     if ((int)AuthenticationResponseKind.Error == PostAuthenticationRequest(usercontext))

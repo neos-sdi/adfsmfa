@@ -121,7 +121,7 @@
     <value>Ustawienia usługi Active Directory</value>
   </data>
   <data name="AZURESCOPENODEDESC" xml:space="preserve">
-    <value>Ustawienia platformy azureazure Setup</value>
+    <value>Ustawienia platformy Azure</value>
   </data>
   <data name="GENERALSCOPECANCEL" xml:space="preserve">
     <value>Anulować</value>
@@ -133,7 +133,7 @@
     <value>Ustawienia ogólne</value>
   </data>
   <data name="GENERALSCOPESAVE" xml:space="preserve">
-    <value>Uratować</value>
+    <value>Zapisz</value>
   </data>
   <data name="GENERALSCOPESAVEDESC" xml:space="preserve">
     <value>Zapisz zmiany</value>
@@ -145,73 +145,73 @@
     <value>Zmiana języka</value>
   </data>
   <data name="ROOTCHANGELANGUAGEDESC" xml:space="preserve">
-    <value>Zmienianie kultury interfejsu użytkownika</value>
+    <value>Zmiana kultury interfejsu użytkownika</value>
   </data>
   <data name="ROOTLANGUAGEDE" xml:space="preserve">
     <value>Niemiecki</value>
   </data>
   <data name="ROOTLANGUAGEDEDESC" xml:space="preserve">
-    <value>Zmiana kultury interfejsu użytkownika w języku niemieckim (1031)</value>
+    <value>Zmień kulturę interfejsu użytkownika na język niemiecki (1031)</value>
   </data>
   <data name="ROOTLANGUAGEES" xml:space="preserve">
     <value>Hiszpański</value>
   </data>
   <data name="ROOTLANGUAGEESDESC" xml:space="preserve">
-    <value>Zmiana kultury interfejsu użytkownika w języku hiszpańskim (3082)</value>
+    <value>Zmień kulturę interfejsu użytkownika na język hiszpański (3082)</value>
   </data>
   <data name="ROOTLANGUAGEFR" xml:space="preserve">
     <value>Francuski</value>
   </data>
   <data name="ROOTLANGUAGEFRDESC" xml:space="preserve">
-    <value>Zmiana kultury interfejsu użytkownika w języku francuskim (1036)</value>
+    <value>Zmień kulturę interfejsu użytkownika na język francuski (1036)</value>
   </data>
   <data name="ROOTLANGUAGEIT" xml:space="preserve">
     <value>Włoski</value>
   </data>
   <data name="ROOTLANGUAGEITDESC" xml:space="preserve">
-    <value>Zmiana kultury interfejsu użytkownika w języku włoskim (1040)</value>
+    <value>Zmień kulturę interfejsu użytkownika na język włoski (1040)</value>
   </data>
   <data name="ROOTLANGUAGENL" xml:space="preserve">
     <value>Holenderski</value>
   </data>
   <data name="ROOTLANGUAGENLDESC" xml:space="preserve">
-    <value>Zmiana kultury interfejsu użytkownika w języku niderlandzkim (1043)</value>
+    <value>Zmień kulturę interfejsu użytkownika na język niderlandzkim (1043)</value>
   </data>
   <data name="ROOTLANGUAGEPL" xml:space="preserve">
     <value>Polski</value>
   </data>
   <data name="ROOTLANGUAGEPLDESC" xml:space="preserve">
-    <value>Zmiana kultury interfejsu użytkownika w języku polskim (1045)</value>
+    <value>Zmień kulturę interfejsu użytkownika na język polski (1045)</value>
   </data>
   <data name="ROOTLANGUAGEPT" xml:space="preserve">
     <value>Portugalski</value>
   </data>
   <data name="ROOTLANGUAGEPTDESC" xml:space="preserve">
-    <value>Zmiana kultury interfejsu użytkownika w języku portugalskim (2070)</value>
+    <value>Zmień kulturę interfejsu użytkownika na język portugalski (2070)</value>
   </data>
   <data name="ROOTLANGUAGERO" xml:space="preserve">
     <value>Rumuński</value>
   </data>
   <data name="ROOTLANGUAGERODESC" xml:space="preserve">
-    <value>Zmiana kultury interfejsu użytkownika w języku rumuńskim (1048)</value>
+    <value>Zmień kulturę interfejsu użytkownika na język rumuński (1048)</value>
   </data>
   <data name="ROOTLANGUAGERU" xml:space="preserve">
     <value>Rosyjski</value>
   </data>
   <data name="ROOTLANGUAGERUDESC" xml:space="preserve">
-    <value>Zmień kulturę interfejsu użytkownika w języku rosyjskim (1049)</value>
+    <value>Zmień kulturę interfejsu użytkownika na język rosyjski (1049)</value>
   </data>
   <data name="ROOTLANGUAGESV" xml:space="preserve">
     <value>Szwedzki</value>
   </data>
   <data name="ROOTLANGUAGESVDESC" xml:space="preserve">
-    <value>Zmiana kultury interfejsu użytkownika w języku szwedzkim (1053)</value>
+    <value>Zmień kulturę interfejsu użytkownika na język szwedzki (1053)</value>
   </data>
   <data name="ROOTLANGUAGEUS" xml:space="preserve">
     <value>Angielski</value>
   </data>
   <data name="ROOTLANGUAGEUSDESC" xml:space="preserve">
-    <value>Zmiana kultury interfejsu użytkownika w języku angielskim (1033)</value>
+    <value>Zmień kulturę interfejsu użytkownika na język angielski (1033)</value>
   </data>
   <data name="ROOTSCOPENODEDESC" xml:space="preserve">
     <value>MFA</value>
@@ -220,7 +220,7 @@
     <value>Konfiguracja zabezpieczeń</value>
   </data>
   <data name="SECURITYSCOPEROOT" xml:space="preserve">
-    <value>Ustawienia zabezpieczeńsecurity Setup</value>
+    <value>Ustawienia zabezpieczeń</value>
   </data>
   <data name="SERVICESCOPENODEDESC" xml:space="preserve">
     <value>Stan usług</value>
@@ -262,7 +262,7 @@
     <value>Importowanie użytkowników usługi Active Directory</value>
   </data>
   <data name="USERSCOPEIMPORTADDSDESC" xml:space="preserve">
-    <value>Import ingeuse z dodaje</value>
+    <value>Import użytkowników z ADDS</value>
   </data>
   <data name="USERSCOPEIMPORTCSV" xml:space="preserve">
     <value>Importowanie użytkowników CSV</value>
@@ -301,7 +301,7 @@
     <value>Wynik importu XML</value>
   </data>
   <data name="USERSSCOPEIMPORTXMLTITLE" xml:space="preserve">
-    <value>Importowanie użytkowników do usługi MFA za pomocą wtyczki XML</value>
+    <value>Importowanie użytkowników do usługi MFA za pomocą pliku XML</value>
   </data>
   <data name="USERSSCOPENODEDESC" xml:space="preserve">
     <value>Konfiguracja użytkownika</value>
@@ -328,13 +328,13 @@
     <value>Duński</value>
   </data>
   <data name="ROOTLANGUAGEDADESC" xml:space="preserve">
-    <value>Zmienianie kultury interfejsu użytkownika w języku duńskim (1030)</value>
+    <value>Zmień kulturę interfejsu użytkownika na język duński (1030)</value>
   </data>
   <data name="ROOTLANGUAGEJA" xml:space="preserve">
     <value>Japoński</value>
   </data>
   <data name="ROOTLANGUAGEJADESC" xml:space="preserve">
-    <value>Zmienianie kultury interfejsu użytkownika na japoński (1041)</value>
+    <value>Zmień kulturę interfejsu użytkownika na język japoński (1041)</value>
   </data>
   <data name="ROOTLANGUAGECA" xml:space="preserve">
     <value>Quebecu</value>
@@ -343,16 +343,16 @@
     <value>Zmień kulturę interfejsu użytkownika na Quebec (3084)</value>
   </data>
   <data name="CUSTOMSTORESCOPENODEDESC" xml:space="preserve">
-    <value>Konfiguracja sklepu niestandardowego</value>
+    <value>Konfiguracja magazynu niestandardowego</value>
   </data>
   <data name="SECURITYSCOPERNG" xml:space="preserve">
-    <value>Klawisze klucze RNG</value>
+    <value>Zakodowane klucze RNG</value>
   </data>
   <data name="SECURITYSCOPERSA" xml:space="preserve">
-    <value>Klawisze asymetryczne RSA</value>
+    <value>Klucze asymetryczne RSA</value>
   </data>
   <data name="SECURITYSCOPEAES" xml:space="preserve">
-    <value>Klawisze symetryczne AES</value>
+    <value>Klucze symetryczne AES</value>
   </data>
   <data name="SECURITYSCOPECUSTOM" xml:space="preserve">
     <value>Klucze niestandardowe</value>

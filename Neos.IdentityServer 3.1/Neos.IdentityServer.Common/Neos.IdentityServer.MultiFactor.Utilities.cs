@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2020 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
+// Copyright (c) 2021 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -38,12 +38,10 @@ using System.Net;
 using System.Net.Mail;
 using System.Reflection;
 using System.Security.Cryptography;
-using System.Security.Principal;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.Windows.Threading;
-using System.Xml.Serialization;
 
 
 namespace Neos.IdentityServer.MultiFactor
@@ -272,7 +270,21 @@ namespace Neos.IdentityServer.MultiFactor
     /// </summary>
     internal static class RuntimeAuthProvider
     {
-        private static Dictionary<PreferredMethod, IExternalProvider> _lst = new Dictionary<PreferredMethod, IExternalProvider>();
+        private static Dictionary<PreferredMethod, IExternalProvider> _providers = new Dictionary<PreferredMethod, IExternalProvider>();
+
+        /// <summary>
+        /// Providers property implementation
+        /// </summary>
+        private static Dictionary<PreferredMethod, IExternalProvider> Providers
+        {
+            get
+            {
+                if (_providers == null)
+                    _providers = new Dictionary<PreferredMethod, IExternalProvider>();
+
+                return _providers;
+            }
+        } 
 
         /// <summary>
         /// GetAuthenticationProvider method implementation
@@ -532,9 +544,9 @@ namespace Neos.IdentityServer.MultiFactor
             if (prov == null)
                 return;
             if (GetProviderInstance(method) == null)
-                _lst.Add(method, prov);
+                Providers.Add(method, prov);
             else
-                _lst[method] = prov;
+                Providers[method] = prov;
         }
 
         /// <summary>
@@ -543,7 +555,7 @@ namespace Neos.IdentityServer.MultiFactor
         private static void RemoveProvider(PreferredMethod method)
         {
             if (GetProviderInstance(method) != null)
-                _lst.Remove(method);
+                Providers.Remove(method);
         }
 
         /// <summary>
@@ -564,7 +576,7 @@ namespace Neos.IdentityServer.MultiFactor
         internal static List<IExternalProvider> GeActiveProvidersList()
         {
             List<IExternalProvider> temp = new List<IExternalProvider>();
-            foreach (IExternalProvider pp in _lst.Values)
+            foreach (IExternalProvider pp in Providers.Values)
             {
                 if (pp.Enabled)
                 {
@@ -581,7 +593,7 @@ namespace Neos.IdentityServer.MultiFactor
         internal static int GetActiveProvidersCount()
         {
             int i = 0;
-            foreach (IExternalProvider pp in _lst.Values)
+            foreach (IExternalProvider pp in Providers.Values)
             {
                 if (pp.Enabled)
                 {
@@ -597,7 +609,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         internal static IExternalProvider GetFirstActiveProvider()
         {
-            foreach (IExternalProvider pp in _lst.Values)
+            foreach (IExternalProvider pp in Providers.Values)
             {
                 if (pp.Enabled)
                 {
@@ -613,8 +625,8 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         internal static IExternalProvider GetProviderInstance(PreferredMethod method)
         {
-            if (_lst.ContainsKey(method))
-                return _lst.First(x => x.Key == method).Value;
+            if (Providers.ContainsKey(method))
+                return Providers.First(x => x.Key == method).Value;
             return null;
         }
 
@@ -680,19 +692,11 @@ namespace Neos.IdentityServer.MultiFactor
         }
 
         /// <summary>
-        /// Providers property implementation
-        /// </summary>
-        private static Dictionary<PreferredMethod, IExternalProvider> Providers
-        {
-            get { return _lst; }
-        }
-
-        /// <summary>
         /// LoadProviders() method implementation
         /// </summary>
         internal static void LoadProviders(MFAConfig cfg)
         {
-            _lst.Clear();
+            Providers.Clear();
             foreach (PreferredMethod meth in Enum.GetValues(typeof(PreferredMethod)))
             {
                 IExternalProvider provider = null;
@@ -859,7 +863,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         internal static void ResetProviders()
         {
-            _lst.Clear();
+            Providers.Clear();
         }
 
         /// <summary>
@@ -867,7 +871,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         internal static bool IsUIElementRequired(AuthenticationContext ctx, RequiredMethodElements element)
         {
-            foreach (KeyValuePair<PreferredMethod, IExternalProvider> prov in _lst)
+            foreach (KeyValuePair<PreferredMethod, IExternalProvider> prov in Providers)
             {
                 if ((prov.Value.Enabled) && (prov.Value.IsUIElementRequired(ctx, element)))
                     return true;

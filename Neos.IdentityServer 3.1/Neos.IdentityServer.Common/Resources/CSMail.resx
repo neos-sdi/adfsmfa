@@ -53,6 +53,7 @@
     value   : The object must be serialized with 
             : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
             : and then encoded with base64 encoding.
+
     mimetype: application/x-microsoft.net.object.bytearray.base64
     value   : The object must be serialized into a byte array 
             : using a System.ComponentModel.TypeConverter
@@ -132,9 +133,7 @@
                 &lt;td id="i2" style="padding:0;font-family:'Segoe UI Light', 'Segoe UI', 'Helvetica Neue Medium', Arial, sans-serif;font-size:41px;color:#2672ec;"&gt;User Registration&lt;/td&gt;
             &lt;/tr&gt;
             &lt;tr&gt;
-                &lt;td id="i3" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;In order to improve the security of your account, we have activated the
-
-Multi-Factor authentication mechanism.&lt;/td&gt;
+                &lt;td id="i3" style="padding:0;padding-top:25px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;In order to improve the security of your account, we have activated the Multi-Factor authentication mechanism.&lt;/td&gt;
             &lt;/tr&gt;
             &lt;tr&gt;
                 &lt;td id="i3a" style="padding:0;padding-top:0px;font-family:'Segoe UI', Tahoma, Verdana, Arial, sans-serif;font-size:14px;color:#2a2a2a;"&gt;This safety function must be activated by us with the help of

@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2020 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
+// Copyright (c) 2021 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -615,7 +615,7 @@ namespace Neos.IdentityServer.MultiFactor
                 _holders.Add(new PlaceHolders() { TagName = "##EMAILADDRESS##", FiledName = "email" });
                 _holders.Add(new PlaceHolders() { TagName = "##PHONENUMBER##", FiledName = "phone" });
                 _holders.Add(new PlaceHolders() { TagName = "##SELECTEDLINK##", FiledName = "selectedlink" });
-                _holders.Add(new PlaceHolders() { TagName = "##OPTIONS##", FiledName = "options" });
+                _holders.Add(new PlaceHolders() { TagName = "##OPTIONS##", FiledName = "mfaoptions" });
                 _holders.Add(new PlaceHolders() { TagName = "##DISABLEMFA##", FiledName = "disablemfa" });
                 _holders.Add(new PlaceHolders() { TagName = "##ISPROVIDER##", FiledName = "isprovider" });
                 _holders.Add(new PlaceHolders() { TagName = "##SELECTOPTIONS##", FiledName = "selectopt" });
@@ -1283,7 +1283,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public override string GetFormHtmlShowQRCode(AuthenticationContext usercontext)
         {
-            string result = "<form method=\"post\" id=\"loginForm\" autocomplete=\"off\" >";
+            string result = "<form method=\"post\" id=\"loginForm\" >";
             result += "<div class=\"fieldMargin smallText\"><label for=\"\"></label>" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelWRQRCode") + "</div><br/>";
             result += "<p style=\"text-align:center\"><img id=\"qr\" src=\"data:image/png;base64," + Provider.GetQRCodeString(usercontext) + "\"/></p><br/>";
             result += "<input id=\"context\" type=\"hidden\" name=\"Context\" value=\"%Context%\"/>";

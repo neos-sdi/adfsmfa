@@ -121,22 +121,22 @@
     <value>Kod dostępu jednorazowego użytku</value>
   </data>
   <data name="OTPUIChoiceLabel" xml:space="preserve">
-    <value>Korzystanie z aplikacji do uwierzytelniania</value>
+    <value>Użyj aplikacji uwierzytelniającej</value>
   </data>
   <data name="OTPUIConfigLabel" xml:space="preserve">
-    <value>Korzystanie z aplikacji do uwierzytelniania</value>
+    <value>Użyj aplikacji uwierzytelniającej</value>
   </data>
   <data name="OTPUIEnrollTaskLabel" xml:space="preserve">
-    <value>Rejestrowanie aplikacji uwierzytelniającej</value>
+    <value>Zarejestruj aplikację uwierzytelniającą</value>
   </data>
   <data name="OTPUIEnrollValidatedLabel" xml:space="preserve">
-    <value>Konto zweryfikowane&lt;br&gt;&lt;br&gt;teraz można używać aplikacji do uwierzytelniania</value>
+    <value>Konto zweryfikowane.&lt;br&gt;&lt;br&gt;Teraz można używać aplikacji uwierzytelniającej</value>
   </data>
   <data name="OTPUIListChoiceLabel" xml:space="preserve">
-    <value>Korzystanie z aplikacji uwierzytelniania</value>
+    <value>Użyj aplikacji uwierzytelniającej</value>
   </data>
   <data name="OTPUIListOptionLabel" xml:space="preserve">
-    <value>Aplikacja uwierzytelniania</value>
+    <value>Aplikacja uwierzytelniająca</value>
   </data>
   <data name="OTPUIMessage" xml:space="preserve">
     <value>Wprowadź kod weryfikacyjny wyświetlany w aplikacji uwierzytelniającej na urządzeniu mobilnym.</value>
@@ -145,15 +145,16 @@
     <value>Wprowadź kod</value>
   </data>
   <data name="OTPUIWIZLabel" xml:space="preserve">
-    <value>Aplikacja do rejestracji aplikacji Authenticator</value>
+    <value>Rejestracja aplikacji uwierzytelniającej</value>
   </data>
   <data name="OTPWIZEnroll" xml:space="preserve">
-    <value>Rejestrowanie aplikacji uwierzytelniania</value>
+    <value>Zarejestruj moją aplikacjię uwierzytelniającą</value>
   </data>
   <data name="PROVIDEROTPDESCRIPTION" xml:space="preserve">
     <value>Dostawca wieloskładnikowy TOTP</value>
   </data>
   <data name="OTPUIWIZComment" xml:space="preserve">
-    <value>Zeskanuj kod QR za pomocą aplikacji TOTP, takiej jak Microsoft Authenticator, Google Authenticator w celu zarejestrowania konta</value>
+    <value>Zainstaluj na swoim urządzeniu mobilnym jedną z aplikacji TOTP, taką jak Microsoft Authenticator, Google Authenticator. 
+Następnie użyj wybranej aplikacji w dalszych krokach do zeskanowania kodu QR w celu zarejestrowania konta.</value>
   </data>
 </root>
