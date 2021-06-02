@@ -71,10 +71,10 @@ ___
 * Sign projects with pfx certificate:
 - in DataTypes project generate new pfx file in VS with name Neos.IdentityServer (just make sure strong name is checked and password is set)
 - copy the same file to all projects which have it added in solution and missing (or browse and reselect the same file from DataTypes project)
+(in case of problems with signing see thread there: https://stackoverflow.com/questions/2815366/cannot-import-the-keyfile-blah-pfx-error-the-keyfile-may-be-password-protec )
 
 * Incorrect friend assemblies - value in "InternalsVisibleTo": 
 https://docs.microsoft.com/en-us/dotnet/standard/assembly/create-signed-friend
-https://stackoverflow.com/questions/2815366/cannot-import-the-keyfile-blah-pfx-error-the-keyfile-may-be-password-protec
 Steps:
 - in VS developer command line go to folder with pfx file (in DataTypes project) and execute two commands:
  `sn -p Neos.IdentityServer.pfx Neos.IdentityServer.publickey`
@@ -86,9 +86,9 @@ Steps:
  to PublicKey generated from pfx certificate
 - change in all projects and all files every hardcoded `PublicKeyToken=175aa5ee756d2aa2` to PublicKeyToken generated from pfx certificate
 
-* Remove (exclude) missing app.config files from Multifactor and Notificationub projects
+* (optional) Remove (exclude) missing app.config files from Multifactor and NotificationHub projects
 
-* Add CustomAction.config in Deployment project:
+* (optional) Add CustomAction.config in Deployment project:
 ```<?xml version="1.0" encoding="utf-8" ?>
 <configuration>
   <startup useLegacyV2RuntimeActivationPolicy="true">
@@ -97,7 +97,7 @@ Steps:
   </startup>
 </configuration>```
 
-* AcquireToken function not found in Microsoft.IdentityServer.Aad.Sas.dll (probably only in ADFS 2019)
+* (optional) AcquireToken function not found in Microsoft.IdentityServer.Aad.Sas.dll (probably only in ADFS 2019)
 https://social.msdn.microsoft.com/Forums/vstudio/en-US/5a6534e3-a9eb-4565-b831-f78c7087d2e5/microsoftidentitymodelclientsactivedirectoryauthenticationcontex-does-not-contain-a-method?forum=WindowsAzureAD
 In SAS.Azure project replace line: 
 `authenticationResult = this.authContext.AcquireToken(this._resourceUri, this._clientAssertion);`
