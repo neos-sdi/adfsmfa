@@ -18,8 +18,13 @@ This extension works with Active Directory or an SQL Server Database for storing
 ## Installation & Documentation
 * <https://github.com/neos-sdi/adfsmfa/wiki/Home>
 ## Downloads
-* <https://github.com/neos-sdi/adfsmfa/releases>
-* <https://github.com/neos-sdi/adfsmfa/releases/download/3.1/adfsmfa.3.1.2106.0.msi>
+- <https://github.com/neos-sdi/adfsmfa/releases>
+
+- <https://github.com/neos-sdi/adfsmfa/releases/download/3.1/adfsmfa.3.1.2106.0.msi>
+
+## Building Solution
+
+- <https://github.com/neos-sdi/adfsmfa/wiki/Build>
 
 ___
 ![Neos Logo](logo.png)
@@ -33,18 +38,18 @@ ___
 * Secret Keys RSA asymmetric encryption length (2048 bytes) RSA
 * Secret Keys AES symmetric encryption length (512/1024) AES128, AES256
 * Secret Keys custom encryption (when implementing ISecretKeyManager and ISecretKeyManagerActivator)
-* PowerShell cmdlets for managing MFA properies and MFA Users
-* MMC Console for managing MFA properies and MFA Users
+* PowerShell Cmdlets for managing MFA properties and MFA Users
+* MMC Console for managing MFA properties and MFA Users
 * Can use ADDS customizable attributes or SQL-Server Database, or develop a Custom Storage component
 * Can send TOTP code by email (customizable template in resources)
-* Can send TOTP code by sms (customizable and extensible with API (IExternalProvider interface))
+* Can send TOTP code by SMS (customizable and extensible with API (IExternalProvider interface))
 * Can use TOTP code using Authenticator Apps like MS Authenticator, Google Authentication and more
 * Biometric authentication (Anders Åberg, Alex Seigler and others <https://github.com/abergs/fido2-net-lib>)
 * Enable self-registration
 * Enable self-registration with QR code (George Mamaladze and his team <https://qrcodenet.codeplex.com>)
 * Enable custom change password.
 * Can work with ADDS multi-forests with trust relationships
-* Can work with LDAP 3.0 Providers (ADFS2016/2019) when using SQL Storage mode
+* Can work with LDAP 3.0 Providers (ADFS 2016/2019) when using SQL Storage mode
 * Full sample for Azure MFA (additional configuration tasks and costs implied)
 * Developers can easily extend this component for other verification modes (Azure MFA, RSA,…) with the IExternalProvider, ISecretKeyManager interfaces
 * Developers can easily extend this component for other storages modes (AD & SQL by default)
@@ -59,7 +64,8 @@ ___
 * Working with ADFS Windows server 2012r2, 2016 and 2019
 
 ## Custom development
-* Required software:
+###### Required software 
+
  - Visual Studio 2015+
  - Windows Common Platform 
  - Tools for windows C++ version 140 
@@ -67,7 +73,7 @@ ___
  - WixToolset: https://wixtoolset.org/?utm_source=getvssdk&utm_medium=referral
  - WixToolset VS extension: https://marketplace.visualstudio.com/items?itemName=WixToolset.WixToolsetVisualStudio2019Extension
 
-## Building solution:
+## Building solution
 * Sign projects with pfx certificate:
 - in DataTypes project generate new pfx file in VS with name Neos.IdentityServer (just make sure strong name is checked and password is set)
 - copy the same file to all projects which have it added in solution and missing (or browse and reselect the same file from DataTypes project)
@@ -78,12 +84,12 @@ https://docs.microsoft.com/en-us/dotnet/standard/assembly/create-signed-friend
 Steps:
 - in VS developer command line go to folder with pfx file (in DataTypes project) and execute two commands:
  `sn -p Neos.IdentityServer.pfx Neos.IdentityServer.publickey`
- then
- `sn -tp Neos.IdentityServer.publickey`
+  then
+  `sn -tp Neos.IdentityServer.publickey`
 - copy both PublicKey and PublicKeyToken to notepad (these are for generated pfx certificate, important: PublicKey should be in one line!)
 - change in all projects in properties\AssemblyInfo.cs value in PublicKey:
  `InternalsVisibleTo("name, PublicKey=0024000...");`
- to PublicKey generated from pfx certificate
+  to PublicKey generated from pfx certificate
 - change in all projects and all files every hardcoded `PublicKeyToken=175aa5ee756d2aa2` to PublicKeyToken generated from pfx certificate
 
 * (optional) Remove (exclude) missing app.config files from Multifactor and NotificationHub projects
@@ -102,5 +108,5 @@ https://social.msdn.microsoft.com/Forums/vstudio/en-US/5a6534e3-a9eb-4565-b831-f
 In SAS.Azure project replace line: 
 `authenticationResult = this.authContext.AcquireToken(this._resourceUri, this._clientAssertion);`
  with this code
-```var taskResult = this.authContext.AcquireTokenAsync(this._resourceUri, this._clientAssertion); 
+​```var taskResult = this.authContext.AcquireTokenAsync(this._resourceUri, this._clientAssertion); 
 authenticationResult = taskResult.Result;```
