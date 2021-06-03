@@ -24,7 +24,7 @@ This extension works with Active Directory or an SQL Server Database for storing
 
 ## Building Solution
 
-- <https://github.com/neos-sdi/adfsmfa/wiki/Build>
+- <https://github.com/neos-sdi/adfsmfa/wiki/13-Build>
 
 ___
 ![Neos Logo](logo.png)
