@@ -1,4 +1,4 @@
-# Multi-Factor Authentication for Microsoft ADFS 2019/2016/2012r2 (with biometric authentication)
+﻿# Multi-Factor Authentication for Microsoft ADFS 2019/2016/2012r2 (with biometric authentication)
 ___
 
 This project can help you to implement multi-factor authentication without requiring any additional provider.
@@ -62,51 +62,3 @@ ___
 * To work with ADDS, the ADFS Service account must have read and write to users properties (or use the superaccount feature).
 * To work with SQL Server Database, you must deploy the database on a separate SQL Server
 * Working with ADFS Windows server 2012r2, 2016 and 2019
-
-## Custom development
-###### Required software 
-
- - Visual Studio 2015+
- - Windows Common Platform 
- - Tools for windows C++ version 140 
- - .NET framework 3.5 installed for Wix
- - WixToolset: https://wixtoolset.org/?utm_source=getvssdk&utm_medium=referral
- - WixToolset VS extension: https://marketplace.visualstudio.com/items?itemName=WixToolset.WixToolsetVisualStudio2019Extension
-
-## Building solution
-* Sign projects with pfx certificate:
-- in DataTypes project generate new pfx file in VS with name Neos.IdentityServer (just make sure strong name is checked and password is set)
-- copy the same file to all projects which have it added in solution and missing (or browse and reselect the same file from DataTypes project)
-(in case of problems with signing see thread there: https://stackoverflow.com/questions/2815366/cannot-import-the-keyfile-blah-pfx-error-the-keyfile-may-be-password-protec )
-
-* Incorrect friend assemblies - value in "InternalsVisibleTo": 
-https://docs.microsoft.com/en-us/dotnet/standard/assembly/create-signed-friend
-Steps:
-- in VS developer command line go to folder with pfx file (in DataTypes project) and execute two commands:
- `sn -p Neos.IdentityServer.pfx Neos.IdentityServer.publickey`
-  then
-  `sn -tp Neos.IdentityServer.publickey`
-- copy both PublicKey and PublicKeyToken to notepad (these are for generated pfx certificate, important: PublicKey should be in one line!)
-- change in all projects in properties\AssemblyInfo.cs value in PublicKey:
- `InternalsVisibleTo("name, PublicKey=0024000...");`
-  to PublicKey generated from pfx certificate
-- change in all projects and all files every hardcoded `PublicKeyToken=175aa5ee756d2aa2` to PublicKeyToken generated from pfx certificate
-
-* (optional) Remove (exclude) missing app.config files from Multifactor and NotificationHub projects
-
-* (optional) Add CustomAction.config in Deployment project:
-```<?xml version="1.0" encoding="utf-8" ?>
-<configuration>
-  <startup useLegacyV2RuntimeActivationPolicy="true">
-    <supportedRuntime version="v4.0" />
-    <supportedRuntime version="v2.0.50727"/>
-  </startup>
-</configuration>```
-
-* (optional) AcquireToken function not found in Microsoft.IdentityServer.Aad.Sas.dll (probably only in ADFS 2019)
-https://social.msdn.microsoft.com/Forums/vstudio/en-US/5a6534e3-a9eb-4565-b831-f78c7087d2e5/microsoftidentitymodelclientsactivedirectoryauthenticationcontex-does-not-contain-a-method?forum=WindowsAzureAD
-In SAS.Azure project replace line: 
-`authenticationResult = this.authContext.AcquireToken(this._resourceUri, this._clientAssertion);`
- with this code
-​```var taskResult = this.authContext.AcquireTokenAsync(this._resourceUri, this._clientAssertion); 
-authenticationResult = taskResult.Result;```
