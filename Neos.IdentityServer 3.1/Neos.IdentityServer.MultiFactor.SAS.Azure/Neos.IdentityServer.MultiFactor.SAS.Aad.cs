@@ -17,7 +17,6 @@
 //******************************************************************************************************************************************************************************************//
 
 using Microsoft.Win32;
-using Neos.IdentityServer.MultiFactor.Common;
 using System;
 using System.Globalization;
 using System.IO;
@@ -125,7 +124,9 @@ namespace Neos.IdentityServer.MultiFactor.SAS
                 ADAL.AuthenticationResult authenticationResult = null;
                 try
                 {
-                    authenticationResult = this.authContext.AcquireToken(this._resourceUri, this._clientAssertion);
+                    // authenticationResult = this.authContext.AcquireToken(this._resourceUri, this._clientAssertion);
+                    var taskResult = this.authContext.AcquireTokenAsync(this._resourceUri, this._clientAssertion);
+                    authenticationResult = taskResult.Result;
                     request.Headers.Add(HttpRequestHeader.Authorization.ToString(), new AuthenticationHeaderValue("Bearer", authenticationResult.AccessToken).ToString());
                 }
                 catch (ADAL.AdalException ex)

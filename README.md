@@ -1,4 +1,4 @@
-# Multi-Factor Authentication for Microsoft ADFS 2019/2016/2012r2 (with biometric authentication)
+﻿# Multi-Factor Authentication for Microsoft ADFS 2019/2016/2012r2 (with biometric authentication)
 ___
 
 This project can help you to implement multi-factor authentication without requiring any additional provider.
@@ -18,8 +18,13 @@ This extension works with Active Directory or an SQL Server Database for storing
 ## Installation & Documentation
 * <https://github.com/neos-sdi/adfsmfa/wiki/Home>
 ## Downloads
-* <https://github.com/neos-sdi/adfsmfa/releases>
-* <https://github.com/neos-sdi/adfsmfa/releases/download/3.1/adfsmfa.3.1.2106.0.msi>
+- <https://github.com/neos-sdi/adfsmfa/releases>
+
+- <https://github.com/neos-sdi/adfsmfa/releases/download/3.1/adfsmfa.3.1.2106.0.msi>
+
+## Building Solution
+
+- <https://github.com/neos-sdi/adfsmfa/wiki/13-Build>
 
 ___
 ![Neos Logo](logo.png)
@@ -33,18 +38,18 @@ ___
 * Secret Keys RSA asymmetric encryption length (2048 bytes) RSA
 * Secret Keys AES symmetric encryption length (512/1024) AES128, AES256
 * Secret Keys custom encryption (when implementing ISecretKeyManager and ISecretKeyManagerActivator)
-* PowerShell cmdlets for managing MFA properies and MFA Users
-* MMC Console for managing MFA properies and MFA Users
+* PowerShell Cmdlets for managing MFA properties and MFA Users
+* MMC Console for managing MFA properties and MFA Users
 * Can use ADDS customizable attributes or SQL-Server Database, or develop a Custom Storage component
 * Can send TOTP code by email (customizable template in resources)
-* Can send TOTP code by sms (customizable and extensible with API (IExternalProvider interface))
+* Can send TOTP code by SMS (customizable and extensible with API (IExternalProvider interface))
 * Can use TOTP code using Authenticator Apps like MS Authenticator, Google Authentication and more
 * Biometric authentication (Anders Åberg, Alex Seigler and others <https://github.com/abergs/fido2-net-lib>)
 * Enable self-registration
 * Enable self-registration with QR code (George Mamaladze and his team <https://qrcodenet.codeplex.com>)
 * Enable custom change password.
 * Can work with ADDS multi-forests with trust relationships
-* Can work with LDAP 3.0 Providers (ADFS2016/2019) when using SQL Storage mode
+* Can work with LDAP 3.0 Providers (ADFS 2016/2019) when using SQL Storage mode
 * Full sample for Azure MFA (additional configuration tasks and costs implied)
 * Developers can easily extend this component for other verification modes (Azure MFA, RSA,…) with the IExternalProvider, ISecretKeyManager interfaces
 * Developers can easily extend this component for other storages modes (AD & SQL by default)
@@ -52,7 +57,7 @@ ___
 * Full support for ADFS 2019 themes
 
 ## Remarks
-* Due to security, Developers must sign their Visual Studio Solution with a certificate .pfx
+* Due to security, Developers must sign their Visual Studio solution with their own generated .pfx certificate (see custom development)
 * You must deploy the solution on each of your ADFS servers, not on Proxy Servers.
 * To work with ADDS, the ADFS Service account must have read and write to users properties (or use the superaccount feature).
 * To work with SQL Server Database, you must deploy the database on a separate SQL Server
