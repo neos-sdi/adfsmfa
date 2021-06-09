@@ -60,7 +60,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// Initialize method implmentation
         /// </summary>
         internal static SIDsParametersRecord Initialize()
-        {
+        {            
             SIDsParametersRecord rec = new SIDsParametersRecord();
             if (!Loaded)
             {
@@ -487,8 +487,9 @@ namespace Neos.IdentityServer.MultiFactor
                 }
                 return true;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Log.WriteEntry("Error loading SIDs informations : \r" + ex.Message, EventLogEntryType.Error, 666);
                 return false;
             }
         }
@@ -625,7 +626,7 @@ namespace Neos.IdentityServer.MultiFactor
         {
             try
             {
-                return GetADFSDelegateServiceAdministration(ref tuple);
+                return GetADFSServiceAdministrationProperties(ref tuple);
             }
             catch (Exception)
             {
@@ -665,9 +666,9 @@ namespace Neos.IdentityServer.MultiFactor
         }
 
         /// <summary>
-        /// GetADFSDelegateServiceAdministration method implmentation
+        /// GetADFSServiceAdministrationProperties method implmentation
         /// </summary>
-        private static string GetADFSDelegateServiceAdministration(ref ADFSAdminPolicies tuple)
+        private static string GetADFSServiceAdministrationProperties(ref ADFSAdminPolicies tuple)
         {
             Runspace SPRunSpace = null;
             PowerShell SPPowerShell = null;
@@ -687,12 +688,16 @@ namespace Neos.IdentityServer.MultiFactor
                 Collection<PSObject> PSOutput = pipeline.Invoke();
                 foreach (var result in PSOutput)
                 {
-                    grpname = result.Properties["DelegateServiceAdministration"].Value.ToString();
+                    object objgrpname = result.Properties["DelegateServiceAdministration"].Value;
                     bool sysok = Convert.ToBoolean(result.Properties["AllowSystemServiceAdministration"].Value);
                     bool admok = Convert.ToBoolean(result.Properties["AllowLocalAdminsServiceAdministration"].Value);
                     tuple.DelegateServiceAdministrationAllowed = (!string.IsNullOrEmpty(grpname));
                     tuple.SystemServiceAdministrationAllowed = sysok;
                     tuple.LocalAdminsServiceAdministrationAllowed = admok;
+                    if (objgrpname != null)
+                        grpname = objgrpname.ToString();
+                    else
+                        grpname = string.Empty;
                     return grpname.ToLower();
                 }
             }
