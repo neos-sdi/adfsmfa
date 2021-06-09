@@ -689,15 +689,15 @@ namespace Neos.IdentityServer.MultiFactor
                 foreach (var result in PSOutput)
                 {
                     object objgrpname = result.Properties["DelegateServiceAdministration"].Value;
+                    if (objgrpname != null)
+                        grpname = objgrpname.ToString();
+                    else
+                        grpname = string.Empty;
                     bool sysok = Convert.ToBoolean(result.Properties["AllowSystemServiceAdministration"].Value);
                     bool admok = Convert.ToBoolean(result.Properties["AllowLocalAdminsServiceAdministration"].Value);
                     tuple.DelegateServiceAdministrationAllowed = (!string.IsNullOrEmpty(grpname));
                     tuple.SystemServiceAdministrationAllowed = sysok;
                     tuple.LocalAdminsServiceAdministrationAllowed = admok;
-                    if (objgrpname != null)
-                        grpname = objgrpname.ToString();
-                    else
-                        grpname = string.Empty;
                     return grpname.ToLower();
                 }
             }
