@@ -36,7 +36,7 @@ ___
 * Run with ADFS 2012 R2, 2016 and 2019
 * Secret Keys length (Guid, 128, 256, 384 & 512 bytes) RNG generator
 * Secret Keys RSA asymmetric encryption length (2048 bytes) RSA
-* Secret Keys AES symmetric encryption length (512/1024) AES128, AES256
+* Secret Keys AES symmetric encryption length (256 bytes) AES256, ECDH_P256
 * Secret Keys custom encryption (when implementing ISecretKeyManager and ISecretKeyManagerActivator)
 * PowerShell Cmdlets for managing MFA properties and MFA Users
 * MMC Console for managing MFA properties and MFA Users
