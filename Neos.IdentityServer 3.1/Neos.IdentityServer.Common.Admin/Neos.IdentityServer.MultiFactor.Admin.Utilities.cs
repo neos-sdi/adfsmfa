@@ -28,6 +28,7 @@ using System.Management.Automation;
 using System.Management.Automation.Host;
 using System.Management.Automation.Runspaces;
 using System.Net;
+using System.Security;
 using System.Security.Principal;
 
 namespace Neos.IdentityServer.MultiFactor.Administration
@@ -412,12 +413,19 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// </summary>
         internal static void VerifyADFSAdministrationRights(PSHost host = null)
         {
-            ClientSIDsProxy.Initialize();
-            if (!((ClientSIDsProxy.ADFSLocalAdminServiceAdministrationAllowed && ADFSManagementRights.IsAdministrator()) ||
+            try
+            {
+                ClientSIDsProxy.Initialize();
+                if (!((ClientSIDsProxy.ADFSLocalAdminServiceAdministrationAllowed && ADFSManagementRights.IsAdministrator()) ||
                   (ClientSIDsProxy.ADFSSystemServiceAdministrationAllowed && ADFSManagementRights.IsSystem()) ||
                   (ClientSIDsProxy.ADFSDelegateServiceAdministrationAllowed && ADFSManagementRights.AllowedGroup(ClientSIDsProxy.ADFSAdminGroupName))))
+                {
+                    throw new SecurityException("Access Denied !");
+                }
+            }
+            catch (Exception)
             {
-                if (host==null)
+                if (host == null)
                     throw new InvalidOperationException("Must be executed with ADFS Administration rights granted for the current user !");
                 else
                     throw new InvalidOperationException("PS0033: This Cmdlet must be executed with ADFS Administration rights granted for the current user !");
