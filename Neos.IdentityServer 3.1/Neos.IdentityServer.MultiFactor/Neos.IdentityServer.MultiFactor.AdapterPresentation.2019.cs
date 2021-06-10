@@ -869,7 +869,7 @@ namespace Neos.IdentityServer.MultiFactor
             }
 
             result += "<script>";
-            result += "   document.cookie = 'showoptions=;expires=Thu, 01 Jan 1970 00:00:01 GMT;path=/adfs/'";
+            result += "   document.cookie = 'showoptions=;expires=Thu, 01 Jan 1970 00:00:01 GMT;path=/adfs/;SameSite=Strict;';";
             result += "</script>";
 
             result += "<br/>";
@@ -1271,11 +1271,11 @@ namespace Neos.IdentityServer.MultiFactor
             result += "   {" + CR;
             result += "      if (opt.checked)" + CR;
             result += "      {" + CR;
-            result += "         document.cookie = 'showoptions=1;expires=" + dt + ";path=/adfs/';SameSite=Strict;" + CR;
+            result += "         document.cookie = 'showoptions=1;expires=" + dt + ";path=/adfs/;SameSite=Strict;';" + CR;
             result += "      }" + CR;
             result += "      else" + CR;
             result += "      {" + CR;
-            result += "         document.cookie = 'showoptions=;expires=Thu, 01 Jan 1970 00:00:01 GMT';SameSite=Strict;" + CR;
+            result += "         document.cookie = 'showoptions=;expires=Thu, 01 Jan 1970 00:00:01 GMT;SameSite=Strict;';" + CR;
             result += "      }" + CR;
             result += "   }" + CR;
             result += "   return true;" + CR;
@@ -1327,7 +1327,7 @@ namespace Neos.IdentityServer.MultiFactor
                     else
                         result += "<input id=\"##OPTIONS##\" type=\"checkbox\" name=\"##OPTIONS##\" /> " + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMAccessOptions");
                     result += "<script>";
-                    result += "   document.cookie = 'showoptions=;expires=Thu, 01 Jan 1970 00:00:01 GMT;path=/adfs/';SameSite=Strict;";
+                    result += "   document.cookie = 'showoptions=;expires=Thu, 01 Jan 1970 00:00:01 GMT;path=/adfs/;SameSite=Strict;';";
                     result += "</script>";
                     result += "<br/><br/>";
                 }
@@ -1456,7 +1456,7 @@ namespace Neos.IdentityServer.MultiFactor
                         result += "<input id=\"##OPTIONS##\" type=\"checkbox\" name=\"##OPTIONS##\" /> " + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMAccessOptions");
                     result += "<br/><br/>";
                     result += "<script>";
-                    result += "   document.cookie = 'showoptions=;expires=Thu, 01 Jan 1970 00:00:01 GMT;path=/adfs/';SameSite=Strict;";
+                    result += "   document.cookie = 'showoptions=;expires=Thu, 01 Jan 1970 00:00:01 GMT;path=/adfs/;SameSite=Strict;';";
                     result += "</script>";
                     result += "<br/><br/>";
                 }
