@@ -24,8 +24,8 @@ namespace Neos.IdentityServer.MultiFactor
     /// </summary>
     internal static class CFGReaderUtilities
     {
-        private static char sep = Path.DirectorySeparatorChar;
-        private static string ConfigReaderCacheFile = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + sep + "MFA" + sep + "Config" + sep + "config.db";
+        private static readonly char sep = Path.DirectorySeparatorChar;
+        private static readonly string ConfigReaderCacheFile = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + sep + "MFA" + sep + "Config" + sep + "config.db";
 
         /// <summary>
         /// ReadConfiguration method implementation
@@ -211,8 +211,10 @@ namespace Neos.IdentityServer.MultiFactor
     {
         private static readonly char sep = Path.DirectorySeparatorChar;
         internal static string SystemCacheFile = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + sep + "MFA" + sep + "Config" + sep + "system.db";
+#pragma warning disable IDE0044 // Ajouter un modificateur readonly
         private static object obj = new object();
-        private static byte[] _systemkey =null;
+        private static byte[] _systemkey = null;
+#pragma warning restore IDE0044 // Ajouter un modificateur readonly
 
         /// <summary>
         /// CFGUtilities static constructor

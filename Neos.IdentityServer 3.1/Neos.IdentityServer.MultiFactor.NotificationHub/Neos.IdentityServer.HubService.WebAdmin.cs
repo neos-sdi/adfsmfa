@@ -1288,7 +1288,6 @@ namespace Neos.IdentityServer.MultiFactor
                 return false;
             }
         }
-
         #endregion
     }
     #endregion

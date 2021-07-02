@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ErrorAccountActivate" xml:space="preserve">
-    <value>Доступ к этому приложению требует дополнительной аутентификации. &lt;br&gt;&lt;br&gt; Нажмите «Активировать», чтобы активировать свою учетную запись, или «ПродолжИть».!</value>
+    <value>Доступ к этому приложению требует дополнительной аутентификации. &lt;br&gt;&lt;br&gt; Нажмите «Активировать», чтобы активировать свою учетную запись, или «Продолжить».!</value>
   </data>
   <data name="ErrorAccountAdminAuthorized" xml:space="preserve">
     <value>Авторизованный доступ! дополнительная аутентификация еще не активирована. Пожалуйста, свяжитесь с вашими администраторами.</value>

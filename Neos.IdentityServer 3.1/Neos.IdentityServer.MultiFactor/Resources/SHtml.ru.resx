@@ -130,7 +130,7 @@
     <value>Запомнить мой выбор</value>
   </data>
   <data name="HtmlCHOOSEOptionRemember2" xml:space="preserve">
-    <value>Выберите режим аутентификации по умолчанию для всех устройств.</value>
+    <value>Режим аутентификации по умолчанию</value>
   </data>
   <data name="HtmlCHOOSEOptionSendCode" xml:space="preserve">
     <value>Отправить код</value>
@@ -187,7 +187,7 @@
     <value>Сканирование кода с помощью приложения TOTP, такого как Microsoft Authenticator, Google Authenticator для регистрации вашей учетной записи</value>
   </data>
   <data name="HtmlLabelWVERIFYOTP" xml:space="preserve">
-    <value>ПродолжИть</value>
+    <value>продолжать</value>
   </data>
   <data name="HtmlPWDCancel" xml:space="preserve">
     <value>Отмена</value>
@@ -221,7 +221,7 @@
   </data>
   <data name="HtmlUIEnrollContinue" xml:space="preserve">
     <value>&lt;br/&gt;
-Нажмите кнопку "ПродолжИть"</value>
+Нажмите кнопку "Продолжить"</value>
   </data>
   <data name="HtmlUIMAccessOptions" xml:space="preserve">
     <value>Доступ к моим опциям после проверки подлинности</value>
@@ -254,7 +254,7 @@
     <value>PIN-код</value>
   </data>
   <data name="HtmlUIResultLabel" xml:space="preserve">
-    <value>Доступные методы верификации профиля:</value>
+    <value>Информация предоставлена :</value>
   </data>
   <data name="HtmlLabelWRBiometrics" xml:space="preserve">
     <value>Для подтверждения личности необходимо активировать биометрическое устройство (отпечаток пальца, распознавание лиц, NFC и т.д.).</value>
@@ -264,7 +264,8 @@
 Вы можете попробовать операцию еще раз, выбрав "Предыдущий".</value>
   </data>
   <data name="HtmlLabelVERIFYOTPSuccess" xml:space="preserve">
-    <value>Процесс регистрации профиля в системе MFA завершился корректно.</value>
+    <value>Ваша учетная запись проверена! &lt;br&gt;
+Вы сможете использовать проверку МИД в будущем.</value>
   </data>
   <data name="HtmlLabelWRManageBiometrics" xml:space="preserve">
     <value>Управляйте своими биометрическими устройствами. Выберите добавить, заменить или удалить отдельные устройства.!</value>
@@ -273,7 +274,7 @@
     <value>Добавьте биометрическое устройство</value>
   </data>
   <data name="HtmlUIMRecordNewKey" xml:space="preserve">
-    <value>ПродолжИть</value>
+    <value>продолжать</value>
   </data>
   <data name="HtmlUINext" xml:space="preserve">
     <value>Игнорировать</value>
@@ -291,6 +292,6 @@
     <value>Введите имя устройства</value>
   </data>
   <data name="HtmlUIMNickNamesMessage" xml:space="preserve">
-    <value>Введите имя биометрического устройства или оставьте пустоту, а затем выберите "ПродолжИть"</value>
+    <value>Введите имя биометрического устройства или оставьте пустоту, а затем выберите "Продолжить"</value>
   </data>
 </root>

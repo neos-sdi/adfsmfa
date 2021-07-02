@@ -150,6 +150,9 @@ namespace Neos.IdentityServer.MultiFactor
         public bool ADFSLocalAdminServiceAdministrationAllowed { get; set; }
 
         [DataMember]
+        public bool ADFSDomainAdminServiceAdministrationAllowed { get; set; }
+
+        [DataMember]
         public bool ADFSDelegateServiceAdministrationAllowed { get; set; }
 
         [DataMember]
@@ -169,7 +172,6 @@ namespace Neos.IdentityServer.MultiFactor
 
         [DataMember]
         public string ADFSAdministrationGroupName { get; set; }
-
     }
 
     [ServiceContract(Namespace = "http://adfsmfa.org", Name = "WebAdminService")]

@@ -414,11 +414,12 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         internal static void VerifyADFSAdministrationRights(PSHost host = null)
         {
             try
-            {
+            {  
                 ClientSIDsProxy.Initialize();
-                if (!((ClientSIDsProxy.ADFSLocalAdminServiceAdministrationAllowed && ADFSManagementRights.IsAdministrator()) ||
-                  (ClientSIDsProxy.ADFSSystemServiceAdministrationAllowed && ADFSManagementRights.IsSystem()) ||
-                  (ClientSIDsProxy.ADFSDelegateServiceAdministrationAllowed && ADFSManagementRights.AllowedGroup(ClientSIDsProxy.ADFSAdminGroupName))))
+                if (!( (ClientSIDsProxy.ADFSLocalAdminServiceAdministrationAllowed && ADFSManagementRights.IsAdministrator()) ||
+                       (ClientSIDsProxy.ADFSSystemServiceAdministrationAllowed && ADFSManagementRights.IsSystem()) ||
+                       (ClientSIDsProxy.ADFSDelegateServiceAdministrationAllowed && ADFSManagementRights.AllowedGroup(ClientSIDsProxy.ADFSAdminGroupName)) 
+                   ))
                 {
                     throw new SecurityException("Access Denied !");
                 }
@@ -437,7 +438,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// </summary>
         internal static void VerifyMFAConfigurationRights(PSHost host = null)
         {
-            if (!(ADFSManagementRights.IsAdministrator()) || ADFSManagementRights.IsSystem())
+            if (! (ADFSManagementRights.IsAdministrator() || 
+                   ADFSManagementRights.IsSystem()
+               ))
             {
                 if (host==null)
                     throw new InvalidOperationException("Must be executed with System Administration rights granted for the current user !");
@@ -906,6 +909,25 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             {
                 WindowsPrincipal principal = new WindowsPrincipal(identity);
                 return principal.IsInRole(WindowsBuiltInRole.Administrator);
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// IsDomainAdministrator method implementation
+        /// </summary>
+        public static bool IsDomainAdministrator(bool allow)
+        {
+            if (!allow)
+                return false;
+            WindowsIdentity identity = WindowsIdentity.GetCurrent();
+            try
+            {
+                WindowsPrincipal principal = new WindowsPrincipal(identity);
+                return principal.IsInRole("Domain Admins");
             }
             catch
             {
