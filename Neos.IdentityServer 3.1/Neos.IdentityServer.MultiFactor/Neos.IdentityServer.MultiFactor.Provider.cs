@@ -96,7 +96,7 @@ namespace Neos.IdentityServer.MultiFactor
                         GetAuthenticationData(usercontext);
                         result = new AdapterPresentation(this, context);
                         break;
-                    case ProviderPageMode.Locking:  
+                    case ProviderPageMode.Locking:
                         result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorAccountNoAccess"), ProviderPageMode.DefinitiveError);
                         break;
                     default:
@@ -133,12 +133,10 @@ namespace Neos.IdentityServer.MultiFactor
                         result = new AdapterPresentation(this, context);
                         break;
                 }
-                Trace.TraceInformation(String.Format("AuthenticationProvider:BeginAuthentication Duration : {0}", (DateTime.Now - st).ToString()));
                 return result;
             }
             catch (Exception ex)
             {
-                Trace.TraceError(String.Format("AuthenticationProvider:BeginAuthentication Duration : {0}", (DateTime.Now - st).ToString()));
                 Log. WriteEntry(string.Format(Resources.GetString(ResourcesLocaleKind.Errors, "ErrorAuthenticating"), ex.Message), EventLogEntryType.Error, 802);
                 throw new ExternalAuthenticationException(ex.Message, context);
             }
@@ -173,7 +171,6 @@ namespace Neos.IdentityServer.MultiFactor
                             usercontext.UIMode = ProviderPageMode.ChooseMethod;
                         else
                             usercontext.UIMode = ProviderPageMode.PreSet;
-                        Trace.TraceInformation(String.Format("AuthenticationProvider:IsAvailableForUser (Standard) Duration : {0}", (DateTime.Now - st).ToString()));
                         return true;
                     }
                     else // Not enabled
@@ -213,7 +210,6 @@ namespace Neos.IdentityServer.MultiFactor
                             usercontext.TargetUIMode = ProviderPageMode.DefinitiveError;
                             usercontext.UIMode = ProviderPageMode.Locking;
                         }
-                        Trace.TraceInformation(String.Format("AuthenticationProvider:IsAvailableForUser (Not Enabled) Duration : {0}", (DateTime.Now - st).ToString()));
                         return true;
                     }
                 }
@@ -284,13 +280,11 @@ namespace Neos.IdentityServer.MultiFactor
                         usercontext.UIMode = ProviderPageMode.Locking;
                         usercontext.TargetUIMode = ProviderPageMode.DefinitiveError;
                     }
-                    Trace.TraceInformation(String.Format("AuthenticationProvider:IsAvailableForUser (Not Registered) Duration : {0}", (DateTime.Now - st).ToString()));
                     return true;
                 }
             }
             catch (Exception ex)
             {
-                Trace.TraceError(String.Format("AuthenticationProvider:IsAvailableForUser Error : {0}", ex.Message));
                 Log.WriteEntry(string.Format(Resources.GetString(ResourcesLocaleKind.Errors, "ErrorLoadingUserRegistration"), ex.Message), EventLogEntryType.Error, 801);
                 throw new ExternalAuthenticationException(ex.Message, context);
             }
@@ -309,7 +303,7 @@ namespace Neos.IdentityServer.MultiFactor
 		/// </summary>
         public void OnAuthenticationPipelineLoad(IAuthenticationMethodConfigData configData)
         {
-             DateTime st = DateTime.Now;
+            DateTime st = DateTime.Now;
             ResourcesLocale Resources = new ResourcesLocale(CultureInfo.InstalledUICulture.LCID);
             if (configData.Data != null)
              {
@@ -339,11 +333,9 @@ namespace Neos.IdentityServer.MultiFactor
                          RuntimeRepository.MailslotServer.MailSlotMessageArrived += this.OnMessageArrived;
                          RuntimeRepository.MailslotServer.Start();                         
                         // CFGUtilities.WriteConfigurationToCache(_config);
-                         Trace.TraceInformation(String.Format("AuthenticationProvider:OnAuthenticationPipelineLoad Duration : {0}", (DateTime.Now - st).ToString()));
                      }
                      catch (Exception ex)
                      {
-                         Trace.TraceError(String.Format("AuthenticationProvider:OnAuthenticationPipelineLoad Error : {0}", ex.Message));
                          Log.WriteEntry(string.Format(Resources.GetString(ResourcesLocaleKind.Errors, "ErrorLoadingConfigurationFile"), ex.Message), EventLogEntryType.Error, 900);
                          throw new ExternalAuthenticationException();
                      }
@@ -351,7 +343,6 @@ namespace Neos.IdentityServer.MultiFactor
              }
              else
              {
-                 Trace.TraceError(String.Format("AuthenticationProvider:OnAuthenticationPipelineLoad Error : 900"));
                  Log. WriteEntry(Resources.GetString(ResourcesLocaleKind.Errors, "ErrorLoadingConfigurationFileNotFound"), EventLogEntryType.Error, 900);
                  throw new ExternalAuthenticationException();
              }
@@ -385,69 +376,77 @@ namespace Neos.IdentityServer.MultiFactor
                 UIMessage = string.Empty
             };
 
-            ProviderPageMode ui = usercontext.UIMode;        
-            switch (ui)
+            ProviderPageMode ui = usercontext.UIMode;
+            try
             {
-                case ProviderPageMode.Identification:
-                    result = TryIdentification(usercontext, context, proofData, request, out claims);
-                    break;
-                case ProviderPageMode.Registration: // User self registration and enable
-                    usercontext.WizContext = WizardContextMode.Registration;
-                    result = TryRegistration(usercontext, context, proofData, request, out claims);
-                    break;
-                case ProviderPageMode.Invitation: // admministrative user registration and let disabled
-                    usercontext.WizContext = WizardContextMode.Invitation;
-                    result = TryInvitation(usercontext, context, proofData, request, out claims);
-                    break;
-                case ProviderPageMode.Activation: // Ask to enable
-                    result = TryActivation(usercontext, context, proofData, request, out claims);
-                    break;
-                case ProviderPageMode.ManageOptions: // Manage Options
-                    usercontext.WizContext = WizardContextMode.ManageOptions;
-                    result = TryManageOptions(usercontext, context, proofData, request, out claims);
-                    break;
-                case ProviderPageMode.SelectOptions:
-                    result = TrySelectOptions(usercontext, context, proofData, request, out claims);
-                    break;
-                case ProviderPageMode.ChooseMethod:
-                    result = TryChooseMethod(usercontext, context, proofData, request, out claims);
-                    break;
-                case ProviderPageMode.ChangePassword:
-                    result = TryChangePassword(usercontext, context, proofData, request, out claims);
-                    break;
-                case ProviderPageMode.Bypass:
-                    result = TryBypass(usercontext, context, proofData, request, out claims);
-                    break;
-                case ProviderPageMode.Locking:
-                    result = TryLocking(usercontext, context, proofData, request, out claims);
-                    break;
-                case ProviderPageMode.ShowQRCode:
-                    result = TryShowQRCode(usercontext, context, proofData, request, out claims);
-                    break;
-                case ProviderPageMode.SendAuthRequest:
-                    result = TrySendCodeRequest(usercontext, context, proofData, request, out claims);
-                    break;
-                case ProviderPageMode.SendAdministrativeRequest:
-                    result = TrySendAdministrativeRequest(usercontext, context, proofData, request, out claims);
-                    break;
-                case ProviderPageMode.SendKeyRequest:
-                    result = TrySendKeyRequest(usercontext, context, proofData, request, out claims);
-                    break;
-                case ProviderPageMode.EnrollOTP:
-                    result = TryEnrollOTP(usercontext, context, proofData, request, out claims);
-                    break;
-                case ProviderPageMode.EnrollEmail:
-                    result = TryEnrollEmail(usercontext, context, proofData, request, out claims);
-                    break;
-                case ProviderPageMode.EnrollPhone:
-                    result = TryEnrollPhone(usercontext, context, proofData, request, out claims);
-                    break;
-                case ProviderPageMode.EnrollBiometrics:
-                    result = TryEnrollBio(usercontext, context, proofData, request, out claims);
-                    break;
-                case ProviderPageMode.EnrollPin:
-                    result = TryEnrollPinCode(usercontext, context, proofData, request, out claims);
-                    break;
+                switch (ui)
+                {
+                    case ProviderPageMode.Identification:
+                        result = TryIdentification(usercontext, context, proofData, request, out claims);
+                        break;
+                    case ProviderPageMode.Registration: // User self registration and enable
+                        usercontext.WizContext = WizardContextMode.Registration;
+                        result = TryRegistration(usercontext, context, proofData, request, out claims);
+                        break;
+                    case ProviderPageMode.Invitation: // admministrative user registration and let disabled
+                        usercontext.WizContext = WizardContextMode.Invitation;
+                        result = TryInvitation(usercontext, context, proofData, request, out claims);
+                        break;
+                    case ProviderPageMode.Activation: // Ask to enable
+                        result = TryActivation(usercontext, context, proofData, request, out claims);
+                        break;
+                    case ProviderPageMode.ManageOptions: // Manage Options
+                        usercontext.WizContext = WizardContextMode.ManageOptions;
+                        result = TryManageOptions(usercontext, context, proofData, request, out claims);
+                        break;
+                    case ProviderPageMode.SelectOptions:
+                        result = TrySelectOptions(usercontext, context, proofData, request, out claims);
+                        break;
+                    case ProviderPageMode.ChooseMethod:
+                        result = TryChooseMethod(usercontext, context, proofData, request, out claims);
+                        break;
+                    case ProviderPageMode.ChangePassword:
+                        result = TryChangePassword(usercontext, context, proofData, request, out claims);
+                        break;
+                    case ProviderPageMode.Bypass:
+                        result = TryBypass(usercontext, context, proofData, request, out claims);
+                        break;
+                    case ProviderPageMode.Locking:
+                        result = TryLocking(usercontext, context, proofData, request, out claims);
+                        break;
+                    case ProviderPageMode.ShowQRCode:
+                        result = TryShowQRCode(usercontext, context, proofData, request, out claims);
+                        break;
+                    case ProviderPageMode.SendAuthRequest:
+                        result = TrySendCodeRequest(usercontext, context, proofData, request, out claims);
+                        break;
+                    case ProviderPageMode.SendAdministrativeRequest:
+                        result = TrySendAdministrativeRequest(usercontext, context, proofData, request, out claims);
+                        break;
+                    case ProviderPageMode.SendKeyRequest:
+                        result = TrySendKeyRequest(usercontext, context, proofData, request, out claims);
+                        break;
+                    case ProviderPageMode.EnrollOTP:
+                        result = TryEnrollOTP(usercontext, context, proofData, request, out claims);
+                        break;
+                    case ProviderPageMode.EnrollEmail:
+                        result = TryEnrollEmail(usercontext, context, proofData, request, out claims);
+                        break;
+                    case ProviderPageMode.EnrollPhone:
+                        result = TryEnrollPhone(usercontext, context, proofData, request, out claims);
+                        break;
+                    case ProviderPageMode.EnrollBiometrics:
+                        result = TryEnrollBio(usercontext, context, proofData, request, out claims);
+                        break;
+                    case ProviderPageMode.EnrollPin:
+                        result = TryEnrollPinCode(usercontext, context, proofData, request, out claims);
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.WriteEntry(string.Format("AuthenticationProvider:TryEndAuthentication Error : {0} ", ex.Message), EventLogEntryType.Error, 900);
+                throw new ExternalAuthenticationException(usercontext.UPN + " : " + ex.Message, context);
             }
             return result;
         }
@@ -546,7 +545,6 @@ namespace Neos.IdentityServer.MultiFactor
                         }
                         else
                         {
-
                             if (usercontext.CurrentRetries >= Config.MaxRetries)
                             {
                                 usercontext.UIMode = ProviderPageMode.Locking;
@@ -561,9 +559,11 @@ namespace Neos.IdentityServer.MultiFactor
                             {
                                 usercontext.UIMode = ProviderPageMode.Identification;
                                 if (!string.IsNullOrEmpty(error))
+                                {
                                     return new AdapterPresentation(this, context, error, false);
                                     // usercontext.UIMode = ProviderPageMode.Locking;
                                     // return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorReplayToken"), ProviderPageMode.DefinitiveError);
+                                }
                                 else
                                     return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorInvalidIdentificationRetry"), false);
                             }
@@ -3275,14 +3275,12 @@ namespace Neos.IdentityServer.MultiFactor
         {
             if ((message.Operation == (byte)NotificationsKind.ConfigurationReload) || (message.Operation == (byte)NotificationsKind.ConfigurationCreated) || (message.Operation == (byte)NotificationsKind.ConfigurationDeleted))
             {
-                Trace.TraceInformation("AuthenticationProvider:Configuration changed !");
                 _config = CFGUtilities.ReadConfiguration();
                 string computer = message.Text;
                 if (string.IsNullOrEmpty(computer))
                     computer = Environment.MachineName;
                 else
                     computer = computer.Replace("$", "");
-                Trace.TraceInformation("AuthenticationProvider:Configuration loaded !");
                 ResourcesLocale Resources = new ResourcesLocale(CultureInfo.InstalledUICulture.LCID);
                 switch (message.Operation)
                 {

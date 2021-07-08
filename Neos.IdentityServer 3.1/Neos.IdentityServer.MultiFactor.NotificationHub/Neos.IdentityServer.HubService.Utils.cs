@@ -47,6 +47,7 @@ namespace Neos.IdentityServer.MultiFactor
         internal static bool ADFSSystemServiceAdministrationAllowed { get; set; }
         internal static bool ADFSLocalAdminServiceAdministrationAllowed { get; set; }
         internal static bool ADFSDelegateServiceAdministrationAllowed { get; set; }
+        internal static bool ADFSDomainAdminServiceAdministrationAllowed { get; set; }
         internal static string ADFSAccountSID { get; private set; } = string.Empty;
         internal static string ADFSServiceSID { get; private set; } = string.Empty;
         internal static string ADFSAdminGroupSID { get; private set; } = string.Empty;
@@ -176,6 +177,7 @@ namespace Neos.IdentityServer.MultiFactor
             rec.ADFSDelegateServiceAdministrationAllowed = ADFSDelegateServiceAdministrationAllowed;
             rec.ADFSLocalAdminServiceAdministrationAllowed = ADFSLocalAdminServiceAdministrationAllowed;
             rec.ADFSSystemServiceAdministrationAllowed = ADFSSystemServiceAdministrationAllowed;
+            rec.ADFSDomainAdminServiceAdministrationAllowed = ADFSDomainAdminServiceAdministrationAllowed;
             rec.Loaded = true;
             return rec;
         }
@@ -195,6 +197,7 @@ namespace Neos.IdentityServer.MultiFactor
             ADFSDelegateServiceAdministrationAllowed = rec.ADFSDelegateServiceAdministrationAllowed;
             ADFSLocalAdminServiceAdministrationAllowed = rec.ADFSLocalAdminServiceAdministrationAllowed;
             ADFSSystemServiceAdministrationAllowed = rec.ADFSSystemServiceAdministrationAllowed;
+            ADFSDomainAdminServiceAdministrationAllowed = rec.ADFSDomainAdminServiceAdministrationAllowed;
             WriteToCache(rec);
             Loaded = rec.Loaded;
         }
@@ -280,7 +283,12 @@ namespace Neos.IdentityServer.MultiFactor
                 fSecurity.AddAccessRule(new FileSystemAccessRule(localacc, FileSystemRights.FullControl, AccessControlType.Allow));
             else
                 fSecurity.AddAccessRule(new FileSystemAccessRule(localacc, FileSystemRights.Read, AccessControlType.Allow));
-
+            if (ADFSDomainAdminServiceAdministrationAllowed)
+            {
+                SecurityIdentifier adfsacc = new SecurityIdentifier(WellKnownSidType.AccountDomainAdminsSid, null);
+                fSecurity.PurgeAccessRules(adfsacc);
+                fSecurity.AddAccessRule(new FileSystemAccessRule(adfsacc, FileSystemRights.FullControl, AccessControlType.Allow));
+            }
             if (!string.IsNullOrEmpty(ADFSAccountSID))
             {
                 SecurityIdentifier adfsacc = new SecurityIdentifier(ADFSAccountSID);
@@ -320,7 +328,12 @@ namespace Neos.IdentityServer.MultiFactor
             SecurityIdentifier localacc = new SecurityIdentifier(WellKnownSidType.BuiltinAdministratorsSid, null);
             fSecurity.PurgeAccessRules(localacc);
             fSecurity.AddAccessRule(new FileSystemAccessRule(localacc, FileSystemRights.FullControl, AccessControlType.Allow));
-
+            if (ADFSDomainAdminServiceAdministrationAllowed)
+            {
+                SecurityIdentifier adfsacc = new SecurityIdentifier(WellKnownSidType.AccountDomainAdminsSid, null);
+                fSecurity.PurgeAccessRules(adfsacc);
+                fSecurity.AddAccessRule(new FileSystemAccessRule(adfsacc, FileSystemRights.FullControl, AccessControlType.Allow));
+            }
             if (!string.IsNullOrEmpty(ADFSAccountSID))
             {
                 SecurityIdentifier adfsacc = new SecurityIdentifier(ADFSAccountSID);
@@ -359,6 +372,14 @@ namespace Neos.IdentityServer.MultiFactor
             fSecurity.AddAccessRule(new FileSystemAccessRule(localacc, FileSystemRights.FullControl, InheritanceFlags.ObjectInherit, PropagationFlags.InheritOnly, AccessControlType.Allow));
             fSecurity.AddAccessRule(new FileSystemAccessRule(localacc, FileSystemRights.FullControl, InheritanceFlags.ContainerInherit, PropagationFlags.InheritOnly, AccessControlType.Allow));
 
+            if (ADFSDomainAdminServiceAdministrationAllowed)
+            {
+                SecurityIdentifier domainacc = new SecurityIdentifier(WellKnownSidType.AccountDomainAdminsSid, null);
+                fSecurity.PurgeAccessRules(domainacc);
+                fSecurity.AddAccessRule(new FileSystemAccessRule(domainacc, FileSystemRights.FullControl, InheritanceFlags.None, PropagationFlags.None, AccessControlType.Allow));
+                fSecurity.AddAccessRule(new FileSystemAccessRule(domainacc, FileSystemRights.FullControl, InheritanceFlags.ObjectInherit, PropagationFlags.InheritOnly, AccessControlType.Allow));
+                fSecurity.AddAccessRule(new FileSystemAccessRule(domainacc, FileSystemRights.FullControl, InheritanceFlags.ContainerInherit, PropagationFlags.InheritOnly, AccessControlType.Allow));
+            }
             if (!string.IsNullOrEmpty(ADFSAdminGroupSID))
             {
                 SecurityIdentifier adfsgroup = new SecurityIdentifier(ADFSAdminGroupSID);
@@ -475,7 +496,7 @@ namespace Neos.IdentityServer.MultiFactor
                     rec.ADFSAdministrationGroupSID = GetADFSAdminsGroupSID(rec.ADFSAdministrationGroupName);
                     rec.ADFSDelegateServiceAdministrationAllowed = pol.DelegateServiceAdministrationAllowed;
                     rec.ADFSLocalAdminServiceAdministrationAllowed = pol.LocalAdminsServiceAdministrationAllowed;
-                    rec.ADFSSystemServiceAdministrationAllowed = pol.SystemServiceAdministrationAllowed;
+                    rec.ADFSSystemServiceAdministrationAllowed = pol.SystemServiceAdministrationAllowed;                    
                 }
                 else
                 {
@@ -492,7 +513,7 @@ namespace Neos.IdentityServer.MultiFactor
                 Log.WriteEntry("Error loading SIDs informations : \r" + ex.Message, EventLogEntryType.Error, 666);
                 return false;
             }
-        }
+        }       
 
         /// <summary>
         /// GetADFSServiceSID method implmentation

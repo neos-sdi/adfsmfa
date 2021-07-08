@@ -58,6 +58,13 @@ namespace Neos.IdentityServer.MultiFactor
                     break;
                 case ADFSUserInterfaceKind.Custom:
                     _adapter = LoadCustomAdapterPresentation(provider, context);
+                    _adapter.Context = new AuthenticationContext(context)
+                    {
+                        UIMessage = string.Empty
+                    };
+                    _adapter.IsPermanentFailure = false;
+                    _adapter.IsMessage = true;
+                    _adapter.DisableOptions = false;
                     _adapter.UseUIPaginated = provider.Config.UseUIPaginated;
                     break;
             }
@@ -82,13 +89,20 @@ namespace Neos.IdentityServer.MultiFactor
                     };
                     break;
                 case ADFSUserInterfaceKind.Default:
-                    _adapter = new AdapterPresentationDefault(provider, context)
+                    _adapter = new AdapterPresentationDefault(provider, context, message)
                     {
                         UseUIPaginated = false
                     };
                     break;
                 case ADFSUserInterfaceKind.Custom:
                     _adapter = LoadCustomAdapterPresentation(provider, context);
+                    _adapter.Context = new AuthenticationContext(context)
+                    {
+                        UIMessage = message
+                    };
+                    _adapter.IsPermanentFailure = (_adapter.Context.TargetUIMode == ProviderPageMode.DefinitiveError);
+                    _adapter.IsMessage = (_adapter.Context.TargetUIMode != ProviderPageMode.DefinitiveError);
+                    _adapter.DisableOptions = false;
                     _adapter.UseUIPaginated = provider.Config.UseUIPaginated;
                     break;
             }
@@ -113,13 +127,20 @@ namespace Neos.IdentityServer.MultiFactor
                     };
                     break;
                 case ADFSUserInterfaceKind.Default:
-                    _adapter = new AdapterPresentationDefault(provider, context)
+                    _adapter = new AdapterPresentationDefault(provider, context, message, ismessage)
                     {
                         UseUIPaginated = false
                     };
                     break;
                 case ADFSUserInterfaceKind.Custom:
                     _adapter = LoadCustomAdapterPresentation(provider, context);
+                    _adapter.Context = new AuthenticationContext(context)
+                    {
+                        UIMessage = message
+                    };
+                    _adapter.IsPermanentFailure = (_adapter.Context.TargetUIMode == ProviderPageMode.DefinitiveError);
+                    _adapter.IsMessage = ismessage;
+                    _adapter.DisableOptions = false;
                     _adapter.UseUIPaginated = provider.Config.UseUIPaginated;
                     break;
             }
@@ -144,13 +165,21 @@ namespace Neos.IdentityServer.MultiFactor
                     };
                     break;
                 case ADFSUserInterfaceKind.Default:
-                    _adapter = new AdapterPresentationDefault(provider, context)
+                    _adapter = new AdapterPresentationDefault(provider, context, suite)
                     {
                         UseUIPaginated = false
                     };
                     break;
                 case ADFSUserInterfaceKind.Custom:
                     _adapter = LoadCustomAdapterPresentation(provider, context);
+                    _adapter.Context = new AuthenticationContext(context)
+                    {
+                        UIMessage = string.Empty,
+                        TargetUIMode = suite
+                    };
+                    _adapter.IsPermanentFailure = (_adapter.Context.TargetUIMode == ProviderPageMode.DefinitiveError);
+                    _adapter.IsMessage = (_adapter.Context.TargetUIMode != ProviderPageMode.DefinitiveError);
+                    _adapter.DisableOptions = false;
                     _adapter.UseUIPaginated = provider.Config.UseUIPaginated;
                     break;
             }
@@ -175,13 +204,21 @@ namespace Neos.IdentityServer.MultiFactor
                     };
                     break;
                 case ADFSUserInterfaceKind.Default:
-                    _adapter = new AdapterPresentationDefault(provider, context)
+                    _adapter = new AdapterPresentationDefault(provider, context, message, suite, disableoptions)
                     {
                         UseUIPaginated = false
                     };
                     break;
                 case ADFSUserInterfaceKind.Custom:
                     _adapter = LoadCustomAdapterPresentation(provider, context);
+                    _adapter.Context = new AuthenticationContext(context)
+                    {
+                        UIMessage = message,
+                        TargetUIMode = suite
+                    };
+                    _adapter.IsPermanentFailure = (_adapter.Context.TargetUIMode == ProviderPageMode.DefinitiveError);
+                    _adapter.IsMessage = (_adapter.Context.TargetUIMode != ProviderPageMode.DefinitiveError);
+                    _adapter.DisableOptions = disableoptions;
                     _adapter.UseUIPaginated = provider.Config.UseUIPaginated;
                     break;
             }
@@ -1165,6 +1202,14 @@ namespace Neos.IdentityServer.MultiFactor
                     else
                         result += "<div id=\"error\" class=\"fieldMargin error smallText\"><label id=\"errorText\" name=\"errorText\" for=\"\">" + usercontext.UIMessage + "</label></div>";
                 }
+              /*  else
+                {
+                    result += "<br/>";
+                    if (IsMessage)
+                        result += "<div id=\"error\" class=\"fieldMargin smallText\" style=\"color: #6FA400\"><label id=\"errorText\" name=\"errorText\" for=\"\">" + usercontext.UIMessage + "</label></div>";
+                    else
+                        result += "<div id=\"error\" class=\"fieldMargin error smallText\"><label id=\"errorText\" name=\"errorText\" for=\"\">" + usercontext.UIMessage + "</label></div>";
+                } */
             }
             return result;
         }

@@ -25,6 +25,7 @@ using System.Web;
 using System.DirectoryServices.ActiveDirectory;
 using Neos.IdentityServer.MultiFactor.Data;
 using System.Runtime.Serialization;
+using Microsoft.Win32;
 
 namespace Neos.IdentityServer.MultiFactor
 {
@@ -855,6 +856,7 @@ namespace Neos.IdentityServer.MultiFactor
         private string _thumbprint;
         private XmlCDataSection _cdata;
         private AESKeyGeneratorMode _aeskeygenerator = AESKeyGeneratorMode.AES256;
+        private bool _domainadminrights = false;
 
         [XmlAttribute("KeyGenerator")]
         public KeyGeneratorMode KeyGenerator { get; set; } = KeyGeneratorMode.ClientSecret512;

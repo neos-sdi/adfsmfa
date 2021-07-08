@@ -384,6 +384,7 @@ namespace Neos.IdentityServer.MultiFactor
                 return rec;
             }
         }
+
         /// <summary>
         /// PushSIDsInformations method implmentation
         /// </summary>
