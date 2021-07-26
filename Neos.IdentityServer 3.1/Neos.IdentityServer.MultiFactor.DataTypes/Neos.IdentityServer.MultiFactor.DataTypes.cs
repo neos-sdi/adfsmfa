@@ -1119,6 +1119,25 @@ namespace Neos.IdentityServer.MultiFactor
                     _context.Data.Add("_authctxnickname", value);
             }
         }
+
+        [DataMember(Name = "BioNotSupported")]
+        public bool BioNotSupported
+        {
+            get
+            {
+                if (_context.Data.ContainsKey("_authctxbionotsupported") && _context.Data["_authctxbionotsupported"] != null)
+                    return (bool)_context.Data["_authctxbionotsupported"];
+                else
+                    return false;
+            }
+            set
+            {
+                if (_context.Data.ContainsKey("_authctxbionotsupported"))
+                    _context.Data["_authctxbionotsupported"] = value;
+                else
+                    _context.Data.Add("_authctxbionotsupported", value);
+            }
+        }
     }
     #endregion
 

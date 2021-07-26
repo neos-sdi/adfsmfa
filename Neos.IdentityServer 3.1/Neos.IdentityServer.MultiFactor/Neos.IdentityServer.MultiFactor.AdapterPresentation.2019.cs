@@ -269,7 +269,8 @@ namespace Neos.IdentityServer.MultiFactor
             IExternalProvider prov4 = RuntimeAuthProvider.GetProvider(PreferredMethod.Biometrics);
             if ((prov4 != null) && (prov4.Enabled) && prov4.IsUIElementRequired(usercontext, RequiredMethodElements.BiometricParameterRequired))
             {
-                result += "<a class=\"actionLink\" href=\"#\" id=\"enrollbio\" name=\"enrollbio\" onclick=\"fnlinkclicked(OptionsForm, 6)\" style=\"cursor: pointer;\">" + prov4.GetWizardLinkLabel(usercontext) + "</a>";
+                if (!usercontext.BioNotSupported)
+                    result += "<a class=\"actionLink\" href=\"#\" id=\"enrollbio\" name=\"enrollbio\" onclick=\"fnlinkclicked(OptionsForm, 6)\" style=\"cursor: pointer;\">" + prov4.GetWizardLinkLabel(usercontext) + "</a>";
             }
             if ((!Provider.Config.IsPrimaryAuhentication) || (Provider.Config.PrimaryAuhenticationOptions.HasFlag(PrimaryAuthOptions.Externals)))
             {
@@ -397,6 +398,8 @@ namespace Neos.IdentityServer.MultiFactor
                         result += "<div id=\"xMessage\" class=\"groupMargin\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMustPrepareLabel") + "</div>";
                         foreach (IExternalProvider itm in lst)
                         {
+                            if ((itm.Kind == PreferredMethod.Biometrics) && usercontext.BioNotSupported)
+                                continue;
                             if (itm.Kind != PreferredMethod.Azure)
                             {
                                 if (itm.IsRequired)
@@ -463,6 +466,8 @@ namespace Neos.IdentityServer.MultiFactor
                         result += "<div id=\"xMessage\" class=\"groupMargin\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIResultLabel") + "</div>";
                         foreach (IExternalProvider itm in lst2)
                         {
+                            if ((itm.Kind == PreferredMethod.Biometrics) && usercontext.BioNotSupported)
+                                continue;
                             string value = string.Empty;
                             switch (itm.Kind)
                             {
@@ -576,6 +581,8 @@ namespace Neos.IdentityServer.MultiFactor
                         result += "<div id=\"xMessage\" class=\"groupMargin\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMustPrepareLabel") + "</div>";
                         foreach (IExternalProvider itm in lst)
                         {
+                            if ((itm.Kind == PreferredMethod.Biometrics) && usercontext.BioNotSupported)
+                                continue;
                             if (itm.Kind != PreferredMethod.Azure)
                             {
                                 if (itm.IsRequired)
@@ -647,6 +654,8 @@ namespace Neos.IdentityServer.MultiFactor
                         result += "<div id=\"xMessage\" class=\"groupMargin\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIResultLabel") + "</div>";
                         foreach (IExternalProvider itm in lst2)
                         {
+                            if ((itm.Kind == PreferredMethod.Biometrics) && usercontext.BioNotSupported)
+                                continue;
                             string value = string.Empty;
                             switch (itm.Kind)
                             {
@@ -821,13 +830,16 @@ namespace Neos.IdentityServer.MultiFactor
                 }
                 if (RuntimeAuthProvider.IsUIElementRequired(usercontext, RequiredMethodElements.BiometricLinkRequired))
                 {
-                    prov = RuntimeAuthProvider.GetProvider(PreferredMethod.Biometrics);
-                    if (prov.PinRequired)
-                        WantPin = true;
-                    if (((IWebAuthNProvider)prov).PinRequirements!=WebAuthNPinRequirements.Null)
-                        SuperPin = true;
-                    if (Provider.HasStrictAccessToOptions(prov))
-                        result += "<a class=\"actionLink\" href=\"#\" id=\"enrollbio\" name=\"enrollbio\" onclick=\"return SetLinkTitle(selectoptionsForm, '4')\" style=\"cursor: pointer;\">" + prov.GetWizardLinkLabel(usercontext) + "</a>";
+                    if (!usercontext.BioNotSupported)
+                    {
+                        prov = RuntimeAuthProvider.GetProvider(PreferredMethod.Biometrics);
+                        if (prov.PinRequired)
+                            WantPin = true;
+                        if (((IWebAuthNProvider)prov).PinRequirements != WebAuthNPinRequirements.Null)
+                            SuperPin = true;
+                        if (Provider.HasStrictAccessToOptions(prov))
+                            result += "<a class=\"actionLink\" href=\"#\" id=\"enrollbio\" name=\"enrollbio\" onclick=\"return SetLinkTitle(selectoptionsForm, '4')\" style=\"cursor: pointer;\">" + prov.GetWizardLinkLabel(usercontext) + "</a>";
+                    }
                 }
                 if ((!Provider.Config.IsPrimaryAuhentication) || (Provider.Config.PrimaryAuhenticationOptions.HasFlag(PrimaryAuthOptions.Externals)))
                 {
@@ -1397,6 +1409,16 @@ namespace Neos.IdentityServer.MultiFactor
             result += "}";
             result += CR;
 
+            result += "function SetWebAuthNDetectionError(message)" + CR;
+            result += "{" + CR;
+            result += "   var lnk = document.getElementById('##SELECTED##');" + CR;
+            result += "   lnk.value = 3;" + CR;
+            result += "   var err = document.getElementById('jserror');" + CR;
+            result += "   err.value = message;" + CR;
+            result += "   document.getElementById('refreshbiometricForm').submit();" + CR;
+            result += "   return true;" + CR;
+            result += "}";
+            result += CR;
 
             result += "function SetLinkTitle(frm, data)" + CR;
             result += "{" + CR;
