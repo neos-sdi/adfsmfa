@@ -70,6 +70,7 @@ namespace Neos.IdentityServer.MultiFactor
                 IPAddress = request.RemoteEndPoint.Address.ToString()
             };
             Utilities.PatchLanguageIfNeeded(Config, usercontext, request.UserLanguages);
+            Utilities.CheckForUserAgent(Config, usercontext, request.UserAgent);
             ResourcesLocale Resources = new ResourcesLocale(usercontext.Lcid);
             ClientSIDsProxy.Initialize(Config);
 
@@ -1440,6 +1441,7 @@ namespace Neos.IdentityServer.MultiFactor
             claims = new Claim[] { GetAuthMethodClaim(usercontext.SelectedMethod) };
             usercontext.DirectLogin = false;
             IAdapterPresentation result = null;
+            int WebAuthNSelect = 0;
             try
             {
                 string error = string.Empty;
@@ -1492,8 +1494,6 @@ namespace Neos.IdentityServer.MultiFactor
                             else
                                 return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorSendingToastInformationRetry"), false);
                         }
-                       // usercontext.UIMode = ProviderPageMode.Locking;
-                       // return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorSendingToastInformation"), ProviderPageMode.DefinitiveError);
                     }
                     switch (usercontext.SelectedMethod)
                     {
@@ -1543,13 +1543,17 @@ namespace Neos.IdentityServer.MultiFactor
                     {
                         if (proofData.Properties.ContainsKey("selected"))
                         {
-                            int lnk = Convert.ToInt32(proofData.Properties["selected"].ToString());
-                            switch (lnk)
+                            WebAuthNSelect = Convert.ToInt32(proofData.Properties["selected"].ToString());
+                            switch (WebAuthNSelect)
                             {
                                 case 1:
                                     valuetopass = proofData.Properties["assertionResponse"].ToString();
                                     break;
                                 case 2:
+                                    error = proofData.Properties["jsError"].ToString();
+                                    cango = false;
+                                    break;
+                                case 3:
                                     error = proofData.Properties["jsError"].ToString();
                                     cango = false;
                                     break;
@@ -1607,11 +1611,22 @@ namespace Neos.IdentityServer.MultiFactor
                         }
                         else
                         {
-                            usercontext.UIMode = ProviderPageMode.SendAuthRequest;
-                            if (!string.IsNullOrEmpty(error))
-                                return new AdapterPresentation(this, context, error, false);
+                            if (WebAuthNSelect == 3) // WebauthN Not supported
+                            {
+                                usercontext.UIMode = ProviderPageMode.ChooseMethod;
+                                if (!string.IsNullOrEmpty(error))
+                                    return new AdapterPresentation(this, context, error, false);
+                                else
+                                    return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorSendingToastInformationRetry"), false);
+                            }
                             else
-                                return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorSendingToastInformationRetry"), false);
+                            {
+                                usercontext.UIMode = ProviderPageMode.SendAuthRequest;
+                                if (!string.IsNullOrEmpty(error))
+                                    return new AdapterPresentation(this, context, error, false);
+                                else
+                                    return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorSendingToastInformationRetry"), false);
+                            }
                         }                        
                     }
                 }
@@ -2328,6 +2343,7 @@ namespace Neos.IdentityServer.MultiFactor
                                 usercontext.NickName = string.Empty;
                             SetBiometricProviderKeyManagementOption(usercontext, context, proofData);
                             ValidateProviderManagementUrl(usercontext, context, proofData, PreferredMethod.Biometrics);
+                            SetProviderOverrideOption(usercontext, context, proofData, PreferredMethod.Biometrics);
                             GetAuthenticationData(usercontext, PreferredMethod.Biometrics);
                             if ((int)AuthenticationResponseKind.Error != PostAuthenticationRequest(usercontext, PreferredMethod.Biometrics))
                             {
@@ -2784,6 +2800,9 @@ namespace Neos.IdentityServer.MultiFactor
                         case PreferredMethod.Code: // Otp
                             RuntimeAuthProvider.GetProvider(PreferredMethod.Code).SetOverrideMethod(usercontext, kind);
                             break;
+                        case PreferredMethod.Biometrics: // Biometrics
+                            RuntimeAuthProvider.GetProvider(PreferredMethod.Biometrics).SetOverrideMethod(usercontext, kind);
+                            break;
                         case PreferredMethod.Email: // Email 
                             RuntimeAuthProvider.GetProvider(PreferredMethod.Email).SetOverrideMethod(usercontext, kind);
                             break;
@@ -2866,8 +2885,23 @@ namespace Neos.IdentityServer.MultiFactor
             IExternalProvider provider = RuntimeAuthProvider.GetAuthenticationProvider(Config, usercontext);
             if ((provider != null) && (provider.Enabled))
             {
-                provider.GetAuthenticationContext(usercontext);                
-                usercontext.UIMode = ProviderPageMode.SendAuthRequest;              
+                if (provider.Kind == PreferredMethod.Biometrics)
+                {
+                    if (usercontext.BioNotSupported)
+                    {
+                        usercontext.UIMode = ProviderPageMode.ChooseMethod;
+                    }
+                    else
+                    {
+                        provider.GetAuthenticationContext(usercontext);
+                        usercontext.UIMode = ProviderPageMode.SendAuthRequest;
+                    }
+                }
+                else
+                {
+                    provider.GetAuthenticationContext(usercontext);
+                    usercontext.UIMode = ProviderPageMode.SendAuthRequest;
+                }
             }
             else
                 usercontext.UIMode = ProviderPageMode.ChooseMethod;
@@ -2930,7 +2964,6 @@ namespace Neos.IdentityServer.MultiFactor
                 return (int)AuthenticationResponseKind.Error;
             }
         }
-
         
         /// <summary>
         /// SetAuthenticationResult method implementation

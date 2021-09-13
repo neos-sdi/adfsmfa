@@ -1553,9 +1553,22 @@ namespace Neos.IdentityServer.MultiFactor
             result += "      try" + CR;
             result += "      {" + CR;
             result += "         if (window.PublicKeyCredential === undefined || typeof window.PublicKeyCredential !== \"function\")" + CR;
+            result += "         {" + CR;
+            result += "             SetWebAuthNDetectionError(\"Biometric authentication not supported\");" + CR;
             result += "             return false;" + CR;
+            result += "         }" + CR;
             result += "         else" + CR;
-            result += "             return true;" + CR;
+            result += "         {" + CR;
+            result += "             if (window.PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable())" + CR;
+            result += "             {" + CR;
+            result += "                 return true;" + CR;
+            result += "             }" + CR;
+            result += "             else" + CR;
+            result += "             {" + CR;
+            result += "                 SetWebAuthNDetectionError(\"Biometric authentication not supported\");" + CR;
+            result += "                 return false;" + CR;
+            result += "             }" + CR;
+            result += "         }" + CR;
             result += "      }" + CR;
             result += "      catch (e)" + CR;
             result += "      {" + CR;
@@ -1641,7 +1654,8 @@ namespace Neos.IdentityServer.MultiFactor
             string result = GetWebAuthNSharedScript(usercontext);
             result += "async function RegisterWebAuthN(frm)" + CR;
             result += "{" + CR;
-            result += "   frm.preventDefault();" + CR;
+            result += "   if (frm !== null)" + CR;
+            result += "      frm.preventDefault();" + CR;
             result += "   if (detectWebAuthNSupport() === true)" + CR;
             result += "   {" + CR;
             result += "      let makeCredentialOptions;" + CR;
@@ -1679,7 +1693,7 @@ namespace Neos.IdentityServer.MultiFactor
             result += "   }" + CR;
             result += "   else" + CR;
             result += "   {" + CR;
-            result += "      SetJsError(\"Biometric authentication not supported\");" + CR;
+            result += "      SetWebAuthNDetectionError(\"Biometric authentication not supported\");" + CR;
             result += "      return false;" + CR;
             result += "   }" + CR;
             result += "}" + CR;
@@ -1718,7 +1732,8 @@ namespace Neos.IdentityServer.MultiFactor
             string result = GetWebAuthNSharedScript(usercontext);
             result += "async function LoginWebAuthN(frm)" + CR;
             result += "{" + CR;
-            result += "   frm.preventDefault();" + CR;
+            result += "   if (frm !== null)" + CR;
+            result += "      frm.preventDefault();" + CR;
             result += "   if (detectWebAuthNSupport() === true)" + CR;
             result += "   {" + CR;
             result += "      let makeAssertionOptions;" + CR;
@@ -1758,11 +1773,12 @@ namespace Neos.IdentityServer.MultiFactor
             result += "   }" + CR;
             result += "   else" + CR;
             result += "   {" + CR;
-            result += "      SetJsError(\"Biometric authentication not supported\");" + CR;
+            result += "      SetWebAuthNDetectionError(\"Biometric authentication not supported\");" + CR;
             result += "      return false;" + CR;
             result += "   }" + CR;
             result += "}" + CR;
             result += CR;
+
             result += "async function LoginAssertionCredentials(assertedCredential)" + CR;
             result += "{" + CR;
             result += "   try" + CR;

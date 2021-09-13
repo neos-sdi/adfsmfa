@@ -664,6 +664,8 @@ namespace Neos.IdentityServer.MultiFactor
                         if (ctx.PinCode <= 0)
                             return false;
                     }
+                    if ((prov.Kind==PreferredMethod.Biometrics) && (ctx.BioNotSupported))
+                        return false;
                 }
                 return prov.IsAvailableForUser(ctx);
             }
@@ -3935,6 +3937,8 @@ namespace Neos.IdentityServer.MultiFactor
                     goto case PreferredMethod.Biometrics;
                 case PreferredMethod.Biometrics:
                     IExternalProvider prov4 = RuntimeAuthProvider.GetProvider(PreferredMethod.Biometrics);
+                    if (usercontext.BioNotSupported)
+                        goto case PreferredMethod.Pin;
                     if ((prov4 != null) && (prov4.Enabled))
                     {
                         isrequired = prov4.IsRequired;
@@ -3982,6 +3986,16 @@ namespace Neos.IdentityServer.MultiFactor
                     ctx.Lcid = new CultureInfo("en").LCID;
                 }
             }
+        }
+
+        /// <summary>
+        /// CheckForUserAgent method implementation
+        /// </summary>
+        internal static void CheckForUserAgent(MFAConfig config, AuthenticationContext usercontext, string userAgent)
+        {
+            string usragt = userAgent;
+            if (usragt.ToLower().Contains("trident/7.0") || usragt.ToLower().Contains("msie"))
+                usercontext.BioNotSupported = true;
         }
 
         /// <summary>
