@@ -169,7 +169,7 @@ namespace Neos.IdentityServer.MultiFactor
             }
             catch (Exception e)
             {
-                _log.WriteEntry(string.Format("Error on WebAdminService Service GetLocalSIDsInformations method : {0}.", e.Message), EventLogEntryType.Error, 2010);
+                _log.WriteEntry(string.Format("Error on WebAdminService Service GetRemoteSIDsInformations method : {0}.", e.Message), EventLogEntryType.Error, 2010);
                 throw e;
             }
             return retvalue;

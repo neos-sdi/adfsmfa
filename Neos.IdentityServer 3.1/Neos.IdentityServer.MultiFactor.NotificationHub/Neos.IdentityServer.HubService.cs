@@ -16,13 +16,17 @@
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
 using Microsoft.Win32;
+using Neos.IdentityServer.MultiFactor.Data;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
+using System.Net;
 using System.ServiceProcess;
 
 namespace Neos.IdentityServer.MultiFactor.NotificationHub
@@ -75,12 +79,14 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
             LogForSlots.LogEnabled = false;
             try
             {
+                CleanupStartupFiles();
                 StartADFSService();
                 StartNTService();
                 StartReplayService();
                 StartThemesService();
                 StartAdminService();
                 StartKeyCleanup();
+                InitSecurityFile();
             }
             catch (Exception e)
             {
@@ -187,8 +193,6 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
         {
             try
             {
-                if (File.Exists(SystemUtilities.SystemCacheFile))
-                    File.Delete(SystemUtilities.SystemCacheFile);
                 _svcadminhost.StartService(this);
                 StorePrimaryServerStatus(InitLocalNodeType());
             }
@@ -381,6 +385,67 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
                 rk.SetValue("IsPrimaryServer", 1, RegistryValueKind.DWord);
             else
                 rk.SetValue("IsPrimaryServer", 0, RegistryValueKind.DWord);
+        }
+
+        /// <summary>
+        /// CleanupStartupFiles method implementation
+        /// </summary>
+        private void CleanupStartupFiles()
+        {
+            if (File.Exists(CFGUtilities.ConfigCacheFile))
+                File.Delete(CFGUtilities.ConfigCacheFile);
+            if (File.Exists(SystemUtilities.SystemCacheFile))
+                File.Delete(SystemUtilities.SystemCacheFile);
+        }
+
+        /// <summary>
+        /// InitSecurityFile method implementation
+        /// </summary>
+        protected void InitSecurityFile()
+        {
+            string fqdn = Dns.GetHostEntry("localhost").HostName;
+            WebAdminClient manager = new WebAdminClient();
+            manager.Initialize();
+            try
+            {
+                MFAConfig config = CFGReaderUtilities.ReadConfiguration();
+                IWebAdminServices client = manager.Open();
+                try
+                {
+                    SIDs.Clear();
+                    SIDs.Assign(client.GetSIDsInformations(GetServers(config)));
+                    SIDs.InternalUpdateDirectoryACLs(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + Path.DirectorySeparatorChar + "MFA");
+                }
+                catch (Exception ex)
+                {
+                    Log.WriteEntry(string.Format("Error on WebAdminService Service GetSIDsInformations method : {0} / {1}.", fqdn, ex.Message), EventLogEntryType.Error, 2010);
+                    SIDs.Assign(new SIDsParametersRecord() { Loaded = false });
+                }
+                finally
+                {
+                    manager.Close(client);
+                }
+            }
+            catch (Exception e)
+            {
+                Log.WriteEntry(string.Format("Error on WebAdminService Service GetSIDsInformations method : {0} / {1}.", fqdn, e.Message), EventLogEntryType.Error, 2010);
+            }
+            finally
+            {
+                manager.UnInitialize();
+            }
+            return;
+        }
+
+        /// <summary>
+        /// GetServers method implementation
+        /// </summary>
+        private Dictionary<string, bool> GetServers(MFAConfig config)
+        {
+            var servernames = (from server in config.Hosts.ADFSFarm.Servers
+                               select (server.FQDN.ToLower(), server.NodeType.ToLower().Equals("primarycomputer")));
+            Dictionary<string, bool> servers = servernames.ToDictionary(s => s.Item1, s => s.Item2);
+            return servers;
         }
         #endregion
     }

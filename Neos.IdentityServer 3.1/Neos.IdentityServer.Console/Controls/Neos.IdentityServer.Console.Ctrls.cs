@@ -1665,7 +1665,8 @@ namespace Neos.IdentityServer.Console.Controls
                     tblconfigure.Text = res.CTRLADFSDEACTIVATEMFA;
                 else
                     tblconfigure.Text = res.CTRLADFSACTIVATEMFA;
-                tblconfigure.Enabled = ManagementService.ADFSManager.IsPrimaryServer();
+                tblconfigure.Enabled = ManagementService.ADFSManager.IsPrimaryServer() && (ADFSManagementRights.IsAdministrator() || ADFSManagementRights.IsSystem());
+;
                 this.Controls.Add(tblconfigure);
             }
             finally
@@ -11240,7 +11241,8 @@ namespace Neos.IdentityServer.Console.Controls
                     Left = 280,
                     Top = 167,
                     Width = 300,
-                    PasswordChar = '*'
+                    PasswordChar = '*',
+                    Enabled = (ADFSManagementRights.IsAdministrator() || ADFSManagementRights.IsSystem())
                 };
                 txtXORValue.Validating += XORValueValidating;
                 txtXORValue.Validated += XORValueValidated;
@@ -11251,7 +11253,8 @@ namespace Neos.IdentityServer.Console.Controls
                     Text = res.CTRLSECGENRSAKEY,
                     Left = 600,
                     Top = 166,
-                    Width = 250
+                    Width = 250,
+                    Enabled = (ADFSManagementRights.IsAdministrator() || ADFSManagementRights.IsSystem())
                 };
                 btnGenerateKeys.Click += BtnGenerateKeysClick;
                 _txtpanel.Controls.Add(btnGenerateKeys);
@@ -11697,7 +11700,7 @@ namespace Neos.IdentityServer.Console.Controls
                 if (Config.KeysConfig.KeyVersion != SecretKeyVersion.V2)
                     txtXORValue.Enabled = false;
                 else
-                    txtXORValue.Enabled = true;
+                    txtXORValue.Enabled = (ADFSManagementRights.IsAdministrator() || ADFSManagementRights.IsSystem());
 
                 chkUseGPOPasswordPolicy.Enabled = Config.KeysConfig.UsePasswordPolicy;
                 chkLockUserIfPasswordExpired.Enabled = Config.KeysConfig.UsePasswordPolicy;
@@ -13510,7 +13513,7 @@ namespace Neos.IdentityServer.Console.Controls
                     Left = 320,
                     Top = 23,
                     Width = 150,
-                    Enabled = (Config.KeysConfig.AESKeyGenerator == AESKeyGeneratorMode.ECDH_P256)
+                    Enabled = (Config.KeysConfig.AESKeyGenerator == AESKeyGeneratorMode.ECDH_P256) && (ADFSManagementRights.IsAdministrator() || ADFSManagementRights.IsSystem())
                 };
                 btnGenerateKeys.Click += BtnGenerateKeysClick;
                 _panelAES.Controls.Add(btnGenerateKeys);
@@ -13567,7 +13570,7 @@ namespace Neos.IdentityServer.Console.Controls
                 tblCancelConfig.Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPECANCEL;
                 lblAESKey.Text = res.CTRLSECKEYLENGTH + " : ";
                 btnGenerateKeys.Text = res.CTRLSECGENKEYS;
-                btnGenerateKeys.Enabled = (Config.KeysConfig.AESKeyGenerator == AESKeyGeneratorMode.ECDH_P256);
+                btnGenerateKeys.Enabled = (Config.KeysConfig.AESKeyGenerator == AESKeyGeneratorMode.ECDH_P256) && (ADFSManagementRights.IsAdministrator() || ADFSManagementRights.IsSystem());
             }
             finally
             {
@@ -13598,7 +13601,7 @@ namespace Neos.IdentityServer.Console.Controls
             _UpdateControlsLayouts = true;
             try
             {
-                btnGenerateKeys.Enabled = (Config.KeysConfig.AESKeyGenerator == AESKeyGeneratorMode.ECDH_P256);
+                btnGenerateKeys.Enabled = (Config.KeysConfig.AESKeyGenerator == AESKeyGeneratorMode.ECDH_P256) && (ADFSManagementRights.IsAdministrator() || ADFSManagementRights.IsSystem());
             }
             finally
             {

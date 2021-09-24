@@ -2150,7 +2150,7 @@ namespace Neos.IdentityServer.MultiFactor
     /// </summary>
     public static class XORUtilities
     {
-        static readonly string _defaultxor = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+        private static readonly string _defaultxor = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
         static string _xorkey = _defaultxor;
 
         /// <summary>
