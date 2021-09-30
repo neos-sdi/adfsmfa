@@ -3994,6 +3994,8 @@ namespace Neos.IdentityServer.MultiFactor
         internal static void CheckForUserAgent(MFAConfig config, AuthenticationContext usercontext, string userAgent)
         {
             string usragt = userAgent;
+            if (string.IsNullOrEmpty(usragt))
+                return;
             if (usragt.ToLower().Contains("trident/7.0") || usragt.ToLower().Contains("msie"))
                 usercontext.BioNotSupported = true;
         }
