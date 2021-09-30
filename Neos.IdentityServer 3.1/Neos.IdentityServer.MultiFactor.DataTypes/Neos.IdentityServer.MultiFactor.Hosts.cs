@@ -566,13 +566,13 @@ namespace Neos.IdentityServer.MultiFactor
                 ExternalProvider.Parameters.Data = string.Empty;
                 ExternalProvider.FullQualifiedImplementation = string.Empty;
                 if (ExternalProvider.FullQualifiedImplementation.ToLower().StartsWith("neos.identityserver.multifactor.sms.smscall"))
-                    ExternalProvider.FullQualifiedImplementation = "Neos.IdentityServer.Multifactor.Samples.SMSCall, Neos.IdentityServer.MultiFactor.Samples, Version=3.0.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2";
+                    ExternalProvider.FullQualifiedImplementation = "Neos.IdentityServer.Multifactor.Samples.SMSCall, Neos.IdentityServer.MultiFactor.Samples, Version=3.0.0.0, Culture=neutral, " + Utilities.GetAssemblyPublicKey();
                 if (ExternalProvider.FullQualifiedImplementation.ToLower().StartsWith("neos.identityserver.multifactor.samples.smscall"))
-                    ExternalProvider.FullQualifiedImplementation = "Neos.IdentityServer.MultiFactor.Samples.SMSCall, Neos.IdentityServer.MultiFactor.Samples, Version=3.0.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2";
+                    ExternalProvider.FullQualifiedImplementation = "Neos.IdentityServer.MultiFactor.Samples.SMSCall, Neos.IdentityServer.MultiFactor.Samples, Version=3.0.0.0, Culture=neutral, " + Utilities.GetAssemblyPublicKey();
                 if (ExternalProvider.FullQualifiedImplementation.ToLower().StartsWith("neos.identityserver.multifactor.sms.neossmsprovider"))
-                    ExternalProvider.FullQualifiedImplementation = "Neos.IdentityServer.MultiFactor.Samples.NeosSMSProvider, Neos.IdentityServer.MultiFactor.Samples, Version=3.0.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2";
+                    ExternalProvider.FullQualifiedImplementation = "Neos.IdentityServer.MultiFactor.Samples.NeosSMSProvider, Neos.IdentityServer.MultiFactor.Samples, Version=3.0.0.0, Culture=neutral, " + Utilities.GetAssemblyPublicKey();
                 if (ExternalProvider.FullQualifiedImplementation.ToLower().StartsWith("neos.identityserver.multifactor.samples.neossmsprovider"))
-                    ExternalProvider.FullQualifiedImplementation = "Neos.IdentityServer.MultiFactor.Samples.NeosSMSProvider, Neos.IdentityServer.MultiFactor.Samples, Version=3.0.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2";
+                    ExternalProvider.FullQualifiedImplementation = "Neos.IdentityServer.MultiFactor.Samples.NeosSMSProvider, Neos.IdentityServer.MultiFactor.Samples, Version=3.0.0.0, Culture=neutral, " + Utilities.GetAssemblyPublicKey();
 
                 AzureProvider.TenantId = "contoso.onmicrosoft.com";
                 AzureProvider.ThumbPrint = Thumbprint.Demo;
@@ -592,8 +592,8 @@ namespace Neos.IdentityServer.MultiFactor
                 Hosts.SQLServerHost.ThumbPrint = Thumbprint.Demo;
                 Hosts.SQLServerHost.MaxRows = 10000;
 
-                Hosts.CustomStoreHost.DataRepositoryFullyQualifiedImplementation = "Neos.IdentityServer.MultiFactor.Samples.InMemoryDataRepositoryService, Neos.IdentityServer.MultiFactor.Samples, Version=3.0.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2";
-                Hosts.CustomStoreHost.KeysRepositoryFullyQualifiedImplementation = "Neos.IdentityServer.MultiFactor.Samples.InMemoryKeys2RepositoryService, Neos.IdentityServer.MultiFactor.Samples, Version=3.0.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2";
+                Hosts.CustomStoreHost.DataRepositoryFullyQualifiedImplementation = "Neos.IdentityServer.MultiFactor.Samples.InMemoryDataRepositoryService, Neos.IdentityServer.MultiFactor.Samples, Version=3.0.0.0, Culture=neutral, " + Utilities.GetAssemblyPublicKey();
+                Hosts.CustomStoreHost.KeysRepositoryFullyQualifiedImplementation = "Neos.IdentityServer.MultiFactor.Samples.InMemoryKeys2RepositoryService, Neos.IdentityServer.MultiFactor.Samples, Version=3.0.0.0, Culture=neutral, " + Utilities.GetAssemblyPublicKey();
             }
         }
 
@@ -640,9 +640,9 @@ namespace Neos.IdentityServer.MultiFactor
             Hosts.SQLServerHost.IsAlwaysEncrypted = false;
 
             if (string.IsNullOrEmpty(Hosts.CustomStoreHost.DataRepositoryFullyQualifiedImplementation))
-                Hosts.CustomStoreHost.DataRepositoryFullyQualifiedImplementation = "Neos.IdentityServer.MultiFactor.Samples.InMemoryDataRepositoryService, Neos.IdentityServer.MultiFactor.Samples, Version=3.0.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2";
+                Hosts.CustomStoreHost.DataRepositoryFullyQualifiedImplementation = "Neos.IdentityServer.MultiFactor.Samples.InMemoryDataRepositoryService, Neos.IdentityServer.MultiFactor.Samples, Version=3.0.0.0, Culture=neutral, " + Utilities.GetAssemblyPublicKey();
             if (string.IsNullOrEmpty(Hosts.CustomStoreHost.KeysRepositoryFullyQualifiedImplementation))
-                Hosts.CustomStoreHost.KeysRepositoryFullyQualifiedImplementation = "Neos.IdentityServer.MultiFactor.Samples.InMemoryKeys2RepositoryService, Neos.IdentityServer.MultiFactor.Samples, Version=3.0.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2";
+                Hosts.CustomStoreHost.KeysRepositoryFullyQualifiedImplementation = "Neos.IdentityServer.MultiFactor.Samples.InMemoryKeys2RepositoryService, Neos.IdentityServer.MultiFactor.Samples, Version=3.0.0.0, Culture=neutral, " + Utilities.GetAssemblyPublicKey();
 
             if (string.IsNullOrEmpty(MailProvider.From))
                 MailProvider.From = "sender.email@contoso.com";
@@ -673,13 +673,13 @@ namespace Neos.IdentityServer.MultiFactor
             if (this.ExternalProvider != null)
             {
                 if (ExternalProvider.FullQualifiedImplementation.ToLower().StartsWith("neos.identityserver.multifactor.sms.smscall"))
-                    ExternalProvider.FullQualifiedImplementation = "Neos.IdentityServer.Multifactor.Samples.SMSCall, Neos.IdentityServer.MultiFactor.Samples, Version=3.0.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2";
+                    ExternalProvider.FullQualifiedImplementation = "Neos.IdentityServer.Multifactor.Samples.SMSCall, Neos.IdentityServer.MultiFactor.Samples, Version=3.0.0.0, Culture=neutral, " + Utilities.GetAssemblyPublicKey();
                 if (ExternalProvider.FullQualifiedImplementation.ToLower().StartsWith("neos.identityserver.multifactor.samples.smscall"))
-                    ExternalProvider.FullQualifiedImplementation = "Neos.IdentityServer.MultiFactor.Samples.SMSCall, Neos.IdentityServer.MultiFactor.Samples, Version=3.0.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2";
+                    ExternalProvider.FullQualifiedImplementation = "Neos.IdentityServer.MultiFactor.Samples.SMSCall, Neos.IdentityServer.MultiFactor.Samples, Version=3.0.0.0, Culture=neutral, " + Utilities.GetAssemblyPublicKey();
                 if (ExternalProvider.FullQualifiedImplementation.ToLower().StartsWith("neos.identityserver.multifactor.sms.neossmsprovider"))
-                    ExternalProvider.FullQualifiedImplementation = "Neos.IdentityServer.MultiFactor.Samples.NeosSMSProvider, Neos.IdentityServer.MultiFactor.Samples, Version=3.0.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2";
+                    ExternalProvider.FullQualifiedImplementation = "Neos.IdentityServer.MultiFactor.Samples.NeosSMSProvider, Neos.IdentityServer.MultiFactor.Samples, Version=3.0.0.0, Culture=neutral, " + Utilities.GetAssemblyPublicKey();
                 if (ExternalProvider.FullQualifiedImplementation.ToLower().StartsWith("neos.identityserver.multifactor.samples.neossmsprovider"))
-                    ExternalProvider.FullQualifiedImplementation = "Neos.IdentityServer.MultiFactor.Samples.NeosSMSProvider, Neos.IdentityServer.MultiFactor.Samples, Version=3.0.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2";
+                    ExternalProvider.FullQualifiedImplementation = "Neos.IdentityServer.MultiFactor.Samples.NeosSMSProvider, Neos.IdentityServer.MultiFactor.Samples, Version=3.0.0.0, Culture=neutral, " + Utilities.GetAssemblyPublicKey();
                 if (string.IsNullOrEmpty(this.ExternalProvider.Company))
                     this.ExternalProvider.Company = "Contoso";
                 if (string.IsNullOrEmpty(this.ExternalProvider.Sha1Salt))
@@ -2244,10 +2244,10 @@ namespace Neos.IdentityServer.MultiFactor
         public int MaxRows { get; set; } = 10000;
 
         [XmlAttribute("DataRepositoryFullyQualifiedImplementation")]
-        public string DataRepositoryFullyQualifiedImplementation { get; set; } = "Neos.IdentityServer.MultiFactor.Data.InMemoryDataRepositoryService, Neos.IdentityServer.MultiFactor.Repository.Samples, Version=3.0.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2";
+        public string DataRepositoryFullyQualifiedImplementation { get; set; } = "Neos.IdentityServer.MultiFactor.Data.InMemoryDataRepositoryService, Neos.IdentityServer.MultiFactor.Repository.Samples, Version=3.0.0.0, Culture=neutral, " + Utilities.GetAssemblyPublicKey();
 
         [XmlAttribute("KeysRepositoryFullyQualifiedImplementation")]
-        public string KeysRepositoryFullyQualifiedImplementation { get; set; } = "Neos.IdentityServer.MultiFactor.Data.InMemoryKeys2RepositoryService, Neos.IdentityServer.MultiFactor.Repository.Samples, Version=3.0.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2";
+        public string KeysRepositoryFullyQualifiedImplementation { get; set; } = "Neos.IdentityServer.MultiFactor.Data.InMemoryKeys2RepositoryService, Neos.IdentityServer.MultiFactor.Repository.Samples, Version=3.0.0.0, Culture=neutral, " + Utilities.GetAssemblyPublicKey();
 
         [XmlElement("Parameters", typeof(XmlCDataSection))]
         public XmlCDataSection Parameters

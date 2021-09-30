@@ -28,7 +28,7 @@ namespace Neos.IdentityServer.MultiFactor
     /// </summary>
     public class AdapterPresentation : IAdapterPresentation, IAdapterPresentationForm
     {
-        private BaseMFAPresentation _adapter = null;
+        private BasePresentation _adapter = null;
         private static List<PlaceHolders> _holders = new List<PlaceHolders>();
 
         #region Constructors
@@ -58,6 +58,7 @@ namespace Neos.IdentityServer.MultiFactor
                     break;
                 case ADFSUserInterfaceKind.Custom:
                     _adapter = LoadCustomAdapterPresentation(provider, context);
+                    _adapter.Resources = new ResourcesLocale(context.Lcid);
                     _adapter.Context = new AuthenticationContext(context)
                     {
                         UIMessage = string.Empty
@@ -96,6 +97,7 @@ namespace Neos.IdentityServer.MultiFactor
                     break;
                 case ADFSUserInterfaceKind.Custom:
                     _adapter = LoadCustomAdapterPresentation(provider, context);
+                    _adapter.Resources = new ResourcesLocale(context.Lcid);
                     _adapter.Context = new AuthenticationContext(context)
                     {
                         UIMessage = message
@@ -134,6 +136,7 @@ namespace Neos.IdentityServer.MultiFactor
                     break;
                 case ADFSUserInterfaceKind.Custom:
                     _adapter = LoadCustomAdapterPresentation(provider, context);
+                    _adapter.Resources = new ResourcesLocale(context.Lcid);
                     _adapter.Context = new AuthenticationContext(context)
                     {
                         UIMessage = message
@@ -172,6 +175,7 @@ namespace Neos.IdentityServer.MultiFactor
                     break;
                 case ADFSUserInterfaceKind.Custom:
                     _adapter = LoadCustomAdapterPresentation(provider, context);
+                    _adapter.Resources = new ResourcesLocale(context.Lcid);
                     _adapter.Context = new AuthenticationContext(context)
                     {
                         UIMessage = string.Empty,
@@ -211,6 +215,7 @@ namespace Neos.IdentityServer.MultiFactor
                     break;
                 case ADFSUserInterfaceKind.Custom:
                     _adapter = LoadCustomAdapterPresentation(provider, context);
+                    _adapter.Resources = new ResourcesLocale(context.Lcid);
                     _adapter.Context = new AuthenticationContext(context)
                     {
                         UIMessage = message,
@@ -671,7 +676,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// LoadCustomAdapterPresentation method implmentation
         /// </summary>
-        private static BaseMFAPresentation LoadCustomAdapterPresentation(AuthenticationProvider provider, IAuthenticationContext context)
+        private static BasePresentation LoadCustomAdapterPresentation(AuthenticationProvider provider, IAuthenticationContext context)
         {
             // provider.Config;
             string AssemblyFulldescription = provider.Config.CustomAdapterPresentation;
@@ -685,8 +690,12 @@ namespace Neos.IdentityServer.MultiFactor
             if (_typetoload == null)
                 return null;
 
-            if (_typetoload.IsClass && !_typetoload.IsAbstract && _typetoload.IsAssignableFrom(typeof(BaseMFAPresentation)))
-                return (BaseMFAPresentation)Activator.CreateInstance(_typetoload, true); // Allow Calling internal Constructors
+            if (_typetoload.IsClass && !_typetoload.IsAbstract && (_typetoload.BaseType.IsAssignableFrom(typeof(BasePresentation)) || _typetoload.BaseType.IsAssignableFrom(typeof(BaseMFAPresentation))))
+            {
+                BasePresentation pres = (BasePresentation)Activator.CreateInstance(_typetoload, true); // Allow Calling internal Constructors
+                pres.Provider = provider;
+                return pres;
+            }
             else
                 return null;
         }
@@ -703,7 +712,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// Constructor implementation
         /// </summary>
-        protected BasePresentation()
+        public BasePresentation()
         {
 
         }
@@ -711,7 +720,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// Constructor implementation
         /// </summary>
-        protected BasePresentation(AuthenticationProvider provider, IAuthenticationContext context)
+        public BasePresentation(AuthenticationProvider provider, IAuthenticationContext context)
         {
             this.Provider = provider;
             this.Context = new AuthenticationContext(context)
@@ -726,7 +735,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// Constructor overload implementation
         /// </summary>       
-        protected BasePresentation(AuthenticationProvider provider, IAuthenticationContext context, string message)
+        public BasePresentation(AuthenticationProvider provider, IAuthenticationContext context, string message)
         {
             this.Provider = provider;
             this.Context = new AuthenticationContext(context)
@@ -741,7 +750,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// Constructor overload implementation
         /// </summary>
-        protected BasePresentation(AuthenticationProvider provider, IAuthenticationContext context, string message, bool ismessage)
+        public BasePresentation(AuthenticationProvider provider, IAuthenticationContext context, string message, bool ismessage)
         {
             this.Provider = provider;
             this.Context = new AuthenticationContext(context)
@@ -786,6 +795,15 @@ namespace Neos.IdentityServer.MultiFactor
         }
 
         #region Properties
+        /// <summary>
+        /// Resources property
+        /// </summary>
+        public virtual ResourcesLocale Resources
+        {
+            get;
+            internal set;
+        }
+
         /// <summary>
         /// UiKind property 
         /// </summary>
@@ -1113,7 +1131,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// Constructor implementation
         /// </summary>
-        protected BaseMFAPresentation():base()
+        public BaseMFAPresentation():base()
         {
 
         }
@@ -1121,7 +1139,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// Constructor implementation
         /// </summary>
-        protected BaseMFAPresentation(AuthenticationProvider provider, IAuthenticationContext context):base(provider, context)
+        public BaseMFAPresentation(AuthenticationProvider provider, IAuthenticationContext context):base(provider, context)
         {
             this.Resources = new ResourcesLocale(Context.Lcid);
         }
@@ -1129,7 +1147,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// Constructor overload implementation
         /// </summary>       
-        protected BaseMFAPresentation(AuthenticationProvider provider, IAuthenticationContext context, string message): base(provider, context, message)
+        public BaseMFAPresentation(AuthenticationProvider provider, IAuthenticationContext context, string message): base(provider, context, message)
         {
             this.Resources = new ResourcesLocale(Context.Lcid);
         }
@@ -1137,7 +1155,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// Constructor overload implementation
         /// </summary>
-        protected BaseMFAPresentation(AuthenticationProvider provider, IAuthenticationContext context, string message, bool ismessage): base(provider, context, message, ismessage)
+        public BaseMFAPresentation(AuthenticationProvider provider, IAuthenticationContext context, string message, bool ismessage): base(provider, context, message, ismessage)
         {
             this.Resources = new ResourcesLocale(Context.Lcid);
         }
@@ -1157,17 +1175,6 @@ namespace Neos.IdentityServer.MultiFactor
         {
             this.Resources = new ResourcesLocale(Context.Lcid);
         }
-
-        #region Properties
-        /// <summary>
-        /// Resources property
-        /// </summary>
-        public virtual ResourcesLocale Resources
-        {
-            get;
-            internal set;
-        }
-        #endregion
 
         #region ADFS Interfaces
         /// <summary>

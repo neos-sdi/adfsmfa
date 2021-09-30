@@ -3384,7 +3384,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// HasAccessToOptions method
         /// </summary>
-        internal bool HasAccessToOptions(IExternalProvider prov)
+        public bool HasAccessToOptions(IExternalProvider prov)
         {
             if (prov == null)
                 return false;
@@ -3402,7 +3402,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// HasStrictAccessToOptions method
         /// </summary>
-        internal bool HasStrictAccessToOptions(IExternalProvider prov)
+        public bool HasStrictAccessToOptions(IExternalProvider prov)
         {
             if (prov == null)
                 return false;
@@ -3418,7 +3418,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// HasAccessToPinCode method
         /// </summary>
-        internal bool HasAccessToPinCode(IExternalProvider prov)
+        public bool HasAccessToPinCode(IExternalProvider prov)
         {
             if (prov == null)
                 return false;
@@ -3432,7 +3432,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// KeepMySelectedOptionOn method
         /// </summary>
-        internal bool KeepMySelectedOptionOn()
+        public bool KeepMySelectedOptionOn()
         {
             return Config.KeepMySelectedOptionOn;
         }

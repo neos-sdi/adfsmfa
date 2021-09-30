@@ -44,7 +44,8 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         CaesarEnryption = 2,
         InMemoryStorage = 3,
         TOTPProvider = 4,
-        SMSProvider = 5
+        SMSProvider = 5,
+        CustomPresentation = 6
     }
 
     #region FlatConfig

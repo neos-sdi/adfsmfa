@@ -186,9 +186,9 @@ namespace Neos.IdentityServer.MultiFactor
         /// GetFormHtmlIdentification implementation
         /// </summary>
         public override string GetFormHtmlIdentification(AuthenticationContext usercontext)
-        {
+        {          
             string result = "<form method=\"post\" id=\"IdentificationForm\" >";
-            IExternalProvider prov = RuntimeAuthProvider.GetProvider(usercontext.PreferredMethod);
+            IExternalProvider prov = RuntimePresentation.GetProvider(usercontext.PreferredMethod);
             if ((prov != null) && (prov.IsUIElementRequired(usercontext, RequiredMethodElements.CodeInputRequired)))
             {
                 result += "<div id=\"wizardMessage\" class=\"groupMargin\">" + prov.GetUILabel(usercontext) + "</div>";
@@ -203,7 +203,7 @@ namespace Neos.IdentityServer.MultiFactor
                 result += "<input id=\"##PINCODE##\" name=\"##PINCODE##\" type=\"password\" placeholder=\"PIN\" autocomplete=\"one-time-code\" class=\"" + (UseUIPaginated ? "text textPaginated fullWidth" : "text fullWidth") + "\" /><br/>";
                 result += "<div class=\"fieldMargin smallText\">" + BaseExternalProvider.GetPINMessage(usercontext) + "</div><br/>";
             }
-            bool soon = RuntimeRepository.MustChangePasswordSoon(Provider.Config, usercontext, out DateTime max);
+            bool soon = RuntimePresentation.MustChangePasswordSoon(Provider.Config, usercontext, out DateTime max);
             if (soon)
                 result += "<div class=\"error smallText\">" + string.Format(Resources.GetString(ResourcesLocaleKind.Html, "HtmlMustChangePassword"), max.ToLocalTime().ToLongDateString()) + "</div><br/>";
 
@@ -219,7 +219,7 @@ namespace Neos.IdentityServer.MultiFactor
             result += "<input id=\"authMethod\" type=\"hidden\" name=\"AuthMethod\" value=\"%AuthMethod%\"/>";
             result += "<input id=\"##SELECTED##\" type=\"hidden\" name=\"##SELECTED##\" value=\"0\"/>";
             result += "<input id=\"continueButton\" type=\"submit\" class=\"submit\" name=\"continueButton\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMConnexion") + "\" /><br/><br/>";
-            if (RuntimeAuthProvider.GetActiveProvidersCount()>1)
+            if (RuntimePresentation.GetActiveProvidersCount()>1)
                 result += "<a class=\"actionLink\" href=\"#\" id=\"nocode\" name=\"nocode\" onclick=\"return SetLinkData(IdentificationForm, '3')\" style=\"cursor: pointer;\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMNoCode") + "</a>";
             result += GetFormHtmlMessageZone(usercontext);
             result += "</form>";
@@ -261,12 +261,12 @@ namespace Neos.IdentityServer.MultiFactor
             string result = "<form method=\"post\" id=\"OptionsForm\" >";
             result += "<div id=\"wizardMessage\" class=\"groupMargin\">" + Resources.GetString(ResourcesLocaleKind.Titles, "ManageOptionsPageTitle") + "</div>";
 
-            IExternalProvider prov1 = RuntimeAuthProvider.GetProvider(PreferredMethod.Code);
+            IExternalProvider prov1 = RuntimePresentation.GetProvider(PreferredMethod.Code);
             if ((prov1 != null) && (prov1.Enabled) && prov1.IsUIElementRequired(usercontext, RequiredMethodElements.OTPLinkRequired))
             {
                 result += "<a class=\"actionLink\" href=\"#\" id=\"enrollopt\" name=\"enrollopt\" onclick=\"fnlinkclicked(OptionsForm, 3)\" style=\"cursor: pointer;\">" + prov1.GetWizardLinkLabel(usercontext) + "</a>";
             }
-            IExternalProvider prov4 = RuntimeAuthProvider.GetProvider(PreferredMethod.Biometrics);
+            IExternalProvider prov4 = RuntimePresentation.GetProvider(PreferredMethod.Biometrics);
             if ((prov4 != null) && (prov4.Enabled) && prov4.IsUIElementRequired(usercontext, RequiredMethodElements.BiometricParameterRequired))
             {
                 if (!usercontext.BioNotSupported)
@@ -274,24 +274,24 @@ namespace Neos.IdentityServer.MultiFactor
             }
             if ((!Provider.Config.IsPrimaryAuhentication) || (Provider.Config.PrimaryAuhenticationOptions.HasFlag(PrimaryAuthOptions.Externals)))
             {
-                IExternalProvider prov2 = RuntimeAuthProvider.GetProvider(PreferredMethod.Email);
+                IExternalProvider prov2 = RuntimePresentation.GetProvider(PreferredMethod.Email);
                 if ((prov2 != null) && (prov2.Enabled) && prov2.IsUIElementRequired(usercontext, RequiredMethodElements.EmailLinkRequired))
                 {
                     result += "<a class=\"actionLink\" href=\"#\" id=\"enrollemail\" name=\"enrollemail\" onclick=\"fnlinkclicked(OptionsForm, 4)\" style=\"cursor: pointer;\">" + prov2.GetWizardLinkLabel(usercontext) + "</a>";
                 }
-                IExternalProvider prov3 = RuntimeAuthProvider.GetProvider(PreferredMethod.External);
+                IExternalProvider prov3 = RuntimePresentation.GetProvider(PreferredMethod.External);
                 if ((prov3 != null) && (prov3.Enabled) && (prov3.IsUIElementRequired(usercontext, RequiredMethodElements.PhoneLinkRequired) || prov3.IsUIElementRequired(usercontext, RequiredMethodElements.ExternalLinkRaquired) ))
                 {
                     result += "<a class=\"actionLink\" href=\"#\" id=\"enrollphone\" name=\"enrollphone\" onclick=\"fnlinkclicked(OptionsForm, 5)\" style=\"cursor: pointer;\">" + prov3.GetWizardLinkLabel(usercontext) + "</a>";
                 }
-                IExternalProvider prov5 = RuntimeAuthProvider.GetProvider(PreferredMethod.Azure);
+                IExternalProvider prov5 = RuntimePresentation.GetProvider(PreferredMethod.Azure);
                 if (prov5 != null)
                 {
                     if (!string.IsNullOrEmpty(prov5.GetAccountManagementUrl(usercontext)))
                         result += "<a class=\"actionLink\" href=\"" + prov5.GetAccountManagementUrl(usercontext) + "\" id=\"enrollazure\" name=\"enrollazure\" target=\"_blank\" style=\"cursor: pointer;\">" + prov5.GetUIAccountManagementLabel(usercontext) + "</a>";
                 }
             }
-            if (RuntimeAuthProvider.IsPinCodeRequired(usercontext))
+            if (RuntimePresentation.IsPinCodeRequired(usercontext))
             {
                 result += "<a class=\"actionLink\" href=\"#\" id=\"enrollpin\" name=\"enrollpin\" onclick=\"fnlinkclicked(OptionsForm, 7)\" style=\"cursor: pointer;\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlEnrollPinCode") + "</a>";
             }
@@ -392,7 +392,7 @@ namespace Neos.IdentityServer.MultiFactor
                 case EnrollPageStatus.Start:
                     result += "<div id=\"wizardMessage\" class=\"groupMargin\">" + Resources.GetString(ResourcesLocaleKind.Titles, "RegistrationPageTitle") + "</div>";
                     result += "<div id=\"pwdMessage\" class=\"groupMargin\">" + Resources.GetString(ResourcesLocaleKind.Errors, "ErrorAccountAuthorized") + "</div><br/>";
-                    List<IExternalProvider> lst = RuntimeAuthProvider.GeActiveProvidersList();
+                    List<IExternalProvider> lst = RuntimePresentation.GeActiveProvidersList();
                     if (lst.Count > 0)
                     {
                         result += "<div id=\"xMessage\" class=\"groupMargin\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMustPrepareLabel") + "</div>";
@@ -408,7 +408,7 @@ namespace Neos.IdentityServer.MultiFactor
                                     result += "<div id=\"reqvalue\" class=\"groupMargin\">- " + itm.GetUIEnrollmentTaskLabel(usercontext) + " (*)" + "</div>";
                             }
                         }
-                        if (RuntimeAuthProvider.IsPinCodeRequired(usercontext))
+                        if (RuntimePresentation.IsPinCodeRequired(usercontext))
                             result += "<div id=\"reqvalue\" class=\"groupMargin\">- " + Resources.GetString(ResourcesLocaleKind.Html, "HtmlEnrollPinTaskLabel") + "</div>";
                         result += "<br/>";
                     }
@@ -429,7 +429,7 @@ namespace Neos.IdentityServer.MultiFactor
                 case EnrollPageStatus.NewStep:
                     if (m != PreferredMethod.Pin)
                     {
-                        IExternalProvider prov = RuntimeAuthProvider.GetProviderInstance(m);
+                        IExternalProvider prov = RuntimePresentation.GetProviderInstance(m);
                         result += "<div id=\"wizardMessage\" class=\"groupMargin\">" + prov.GetWizardUILabel(usercontext) + "</div>";
                         result += "<div id=\"pwdMessage\" class=\"groupMargin\">" + prov.GetUIEnrollmentTaskLabel(usercontext) + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIEnrollContinue") + "</div><br/>";
                         result += "<table><tr>";
@@ -460,7 +460,7 @@ namespace Neos.IdentityServer.MultiFactor
                     result += "<br/>";
                     result += "<p style=\"text-align:center\"><img id=\"msgreen\" src=\"data:image/png;base64," + Convert.ToBase64String(images.cvert.ToByteArray(ImageFormat.Png)) + "\"/></p><br/><br/>";
                     result += "<div id=\"lbl\" class=\"groupMargin\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelVERIFYOTPSuccess") + "</div><br/>";
-                    List<IExternalProvider> lst2 = RuntimeAuthProvider.GeActiveProvidersList();
+                    List<IExternalProvider> lst2 = RuntimePresentation.GeActiveProvidersList();
                     if (lst2.Count > 0)
                     {
                         result += "<div id=\"xMessage\" class=\"groupMargin\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIResultLabel") + "</div>";
@@ -499,7 +499,7 @@ namespace Neos.IdentityServer.MultiFactor
                                     result += "<div id=\"reqvalue\" class=\"groupMargin\">- " + itm.GetUIListOptionLabel(usercontext) + " (*) : " + value + "</div>";
                             }
                         }
-                        if (RuntimeAuthProvider.IsPinCodeRequired(usercontext))
+                        if (RuntimePresentation.IsPinCodeRequired(usercontext))
                             result += "<div id=\"reqvalue\" class=\"groupMargin\">- " + Resources.GetString(ResourcesLocaleKind.Html, "HtmlEnrollPinTaskLabel") + " : " + Utilities.StripPinCode(usercontext.PinCode) + "</div>";
                         result += "<br/>";
                     }
@@ -575,7 +575,7 @@ namespace Neos.IdentityServer.MultiFactor
                 case EnrollPageStatus.Start:
                     result += "<div id=\"wizardMessage\" class=\"groupMargin\">" + Resources.GetString(ResourcesLocaleKind.Titles, "InvitationPageTitle") + "</div>";
                     result += "<div id=\"pwdMessage\" class=\"groupMargin\">" + Resources.GetString(ResourcesLocaleKind.Errors, "ErrorAccountNotEnabled") + "</div><br/>";
-                    List<IExternalProvider> lst = RuntimeAuthProvider.GeActiveProvidersList();
+                    List<IExternalProvider> lst = RuntimePresentation.GeActiveProvidersList();
                     if (lst.Count > 0)
                     {
                         result += "<div id=\"xMessage\" class=\"groupMargin\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMustPrepareLabel") + "</div>";
@@ -591,7 +591,7 @@ namespace Neos.IdentityServer.MultiFactor
                                     result += "<div id=\"reqvalue\" class=\"groupMargin\">- " + itm.GetUIEnrollmentTaskLabel(usercontext) + " (*)" + "</div>";
                             }
                         }
-                        if (RuntimeAuthProvider.IsPinCodeRequired(usercontext))
+                        if (RuntimePresentation.IsPinCodeRequired(usercontext))
                             result += "<div id=\"reqvalue\" class=\"groupMargin\">- " + Resources.GetString(ResourcesLocaleKind.Html, "HtmlEnrollPinTaskLabel") + "</div>";
                         result += "<br/>";
                     }
@@ -617,7 +617,7 @@ namespace Neos.IdentityServer.MultiFactor
                 case EnrollPageStatus.NewStep:
                     if (m != PreferredMethod.Pin)
                     {
-                        IExternalProvider prov = RuntimeAuthProvider.GetProviderInstance(m);
+                        IExternalProvider prov = RuntimePresentation.GetProviderInstance(m);
                         result += "<div id=\"wizardMessage\" class=\"groupMargin\">" + prov.GetWizardUILabel(usercontext) + "</div>";
                         result += "<div id=\"pwdMessage\" class=\"groupMargin\">" + prov.GetUIEnrollmentTaskLabel(usercontext) + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIEnrollContinue") + "</div><br/>";
                         result += "<table><tr>";
@@ -648,7 +648,7 @@ namespace Neos.IdentityServer.MultiFactor
                     result += "<br/>";
                     result += "<p style=\"text-align:center\"><img id=\"msgreen\" src=\"data:image/png;base64," + Convert.ToBase64String(images.cvert.ToByteArray(ImageFormat.Png)) + "\"/></p><br/><br/>";
                     result += "<div id=\"lbl\" class=\"groupMargin\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlINSWaitRequest") + "</div><br/>";
-                    List<IExternalProvider> lst2 = RuntimeAuthProvider.GeActiveProvidersList();
+                    List<IExternalProvider> lst2 = RuntimePresentation.GeActiveProvidersList();
                     if (lst2.Count > 0)
                     {
                         result += "<div id=\"xMessage\" class=\"groupMargin\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIResultLabel") + "</div>";
@@ -687,7 +687,7 @@ namespace Neos.IdentityServer.MultiFactor
                                     result += "<div id=\"reqvalue\" class=\"groupMargin\">- " + itm.GetUIListOptionLabel(usercontext) + " (*) : " + value + "</div>";
                             }
                         }
-                        if (RuntimeAuthProvider.IsPinCodeRequired(usercontext))
+                        if (RuntimePresentation.IsPinCodeRequired(usercontext))
                             result += "<div id=\"reqvalue\" class=\"groupMargin\">- " + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIPinOptionLabel") + " : " + Utilities.StripPinCode(usercontext.PinCode) + "</div>";
                         result += "<br/>";
                     }
@@ -807,7 +807,7 @@ namespace Neos.IdentityServer.MultiFactor
             {
                 result += "<a class=\"actionLink\" href=\"#\" id=\"chgopt\" name=\"chgopt\" onclick=\"return SetLinkTitle(selectoptionsForm, '1')\" style=\"cursor: pointer;\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlChangeConfiguration") + "</a>";
             }
-            if (Provider.Config.UserFeatures.CanManagePassword() && RuntimeRepository.CanChangePassword(Provider.Config, usercontext))
+            if (Provider.Config.UserFeatures.CanManagePassword() && RuntimePresentation.CanChangePassword(Provider.Config, usercontext))
             {
                 if (!Provider.Config.CustomUpdatePassword)
                     result += "<a class=\"actionLink\" href=\"/adfs/portal/updatepassword?username=" + usercontext.UPN + "\" id=\"chgpwd\" name=\"chgpwd\" style=\"cursor: pointer;\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlChangePassword") + "</a>";
@@ -820,19 +820,19 @@ namespace Neos.IdentityServer.MultiFactor
                 IExternalProvider prov = null;
                 bool WantPin = false;
                 bool SuperPin = false;
-                if (RuntimeAuthProvider.IsUIElementRequired(usercontext, RequiredMethodElements.OTPLinkRequired))
+                if (RuntimePresentation.IsUIElementRequired(usercontext, RequiredMethodElements.OTPLinkRequired))
                 {
-                    prov = RuntimeAuthProvider.GetProvider(PreferredMethod.Code);
+                    prov = RuntimePresentation.GetProvider(PreferredMethod.Code);
                     if (prov.PinRequired)
                         WantPin = true;
                     if (Provider.HasStrictAccessToOptions(prov))
                         result += "<a class=\"actionLink\" href=\"#\" id=\"enrollopt\" name=\"enrollopt\" onclick=\"return SetLinkTitle(selectoptionsForm, '3')\" style=\"cursor: pointer;\">" + prov.GetWizardLinkLabel(usercontext) + "</a>";
                 }
-                if (RuntimeAuthProvider.IsUIElementRequired(usercontext, RequiredMethodElements.BiometricLinkRequired))
+                if (RuntimePresentation.IsUIElementRequired(usercontext, RequiredMethodElements.BiometricLinkRequired))
                 {
                     if (!usercontext.BioNotSupported)
                     {
-                        prov = RuntimeAuthProvider.GetProvider(PreferredMethod.Biometrics);
+                        prov = RuntimePresentation.GetProvider(PreferredMethod.Biometrics);
                         if (prov.PinRequired)
                             WantPin = true;
                         if (((IWebAuthNProvider)prov).PinRequirements != WebAuthNPinRequirements.Null)
@@ -843,25 +843,25 @@ namespace Neos.IdentityServer.MultiFactor
                 }
                 if ((!Provider.Config.IsPrimaryAuhentication) || (Provider.Config.PrimaryAuhenticationOptions.HasFlag(PrimaryAuthOptions.Externals)))
                 {
-                    if (RuntimeAuthProvider.IsUIElementRequired(usercontext, RequiredMethodElements.EmailLinkRequired))
+                    if (RuntimePresentation.IsUIElementRequired(usercontext, RequiredMethodElements.EmailLinkRequired))
                     {
-                        prov = RuntimeAuthProvider.GetProvider(PreferredMethod.Email);
+                        prov = RuntimePresentation.GetProvider(PreferredMethod.Email);
                         if (prov.PinRequired)
                             WantPin = true;
                         if (Provider.HasStrictAccessToOptions(prov))
                             result += "<a class=\"actionLink\" href=\"#\" id=\"enrollemail\" name=\"enrollemail\" onclick=\"return SetLinkTitle(selectoptionsForm, '5')\" style=\"cursor: pointer;\">" + prov.GetWizardLinkLabel(usercontext) + "</a>";
                     }
-                    if (RuntimeAuthProvider.IsUIElementRequired(usercontext, RequiredMethodElements.PhoneLinkRequired) || RuntimeAuthProvider.IsUIElementRequired(usercontext, RequiredMethodElements.ExternalLinkRaquired))
+                    if (RuntimePresentation.IsUIElementRequired(usercontext, RequiredMethodElements.PhoneLinkRequired) || RuntimePresentation.IsUIElementRequired(usercontext, RequiredMethodElements.ExternalLinkRaquired))
                     {
-                        prov = RuntimeAuthProvider.GetProvider(PreferredMethod.External);
+                        prov = RuntimePresentation.GetProvider(PreferredMethod.External);
                         if (prov.PinRequired)
                             WantPin = true;
                         if (Provider.HasStrictAccessToOptions(prov))
                             result += "<a class=\"actionLink\" href=\"#\" id=\"enrollphone\" name=\"enrollphone\" onclick=\"return SetLinkTitle(selectoptionsForm, '6')\" style=\"cursor: pointer;\">" + prov.GetWizardLinkLabel(usercontext) + "</a>";
                     }
-                    if (RuntimeAuthProvider.IsUIElementRequired(usercontext, RequiredMethodElements.AzureInputRequired))
+                    if (RuntimePresentation.IsUIElementRequired(usercontext, RequiredMethodElements.AzureInputRequired))
                     {
-                        prov = RuntimeAuthProvider.GetProvider(PreferredMethod.Azure);
+                        prov = RuntimePresentation.GetProvider(PreferredMethod.Azure);
                         if (prov != null)
                         {
                             if (prov.PinRequired)
@@ -874,7 +874,7 @@ namespace Neos.IdentityServer.MultiFactor
                         }
                     }
                 }
-                if (RuntimeAuthProvider.IsUIElementRequired(usercontext, RequiredMethodElements.PinLinkRequired) || SuperPin)
+                if (RuntimePresentation.IsUIElementRequired(usercontext, RequiredMethodElements.PinLinkRequired) || SuperPin)
                 {
                     if ((WantPin) || (SuperPin))
                         result += "<a class=\"actionLink\" href=\"#\" id=\"enrollpin\" name=\"enrollpin\"  onclick=\"return SetLinkTitle(selectoptionsForm, '7')\" style=\"cursor: pointer;\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlEnrollPinCode") + "</a>";
@@ -929,19 +929,19 @@ namespace Neos.IdentityServer.MultiFactor
             result += "<b><div id=\"chooseTitle\" class=\"groupMargin\">" + Resources.GetString(ResourcesLocaleKind.Titles, "MustUseCodePageTitle") + "</div></b><br/>";
             result += "<br/>";
             PreferredMethod method = GetMethod4FBUsers(usercontext);
-            if (RuntimeAuthProvider.IsProviderAvailableForUser(usercontext, PreferredMethod.Code))
-                result += "<input id=\"opt1\" name=\"##SELECTEDRADIO##\" type=\"radio\" value=\"0\" " + (((method == PreferredMethod.Code) || (method == PreferredMethod.Choose)) ? "checked=\"checked\"> " : "> ") + RuntimeAuthProvider.GetProvider(PreferredMethod.Code).GetUIChoiceLabel(usercontext) + "<br/><br/>";
+            if (RuntimePresentation.IsProviderAvailableForUser(usercontext, PreferredMethod.Code))
+                result += "<input id=\"opt1\" name=\"##SELECTEDRADIO##\" type=\"radio\" value=\"0\" " + (((method == PreferredMethod.Code) || (method == PreferredMethod.Choose)) ? "checked=\"checked\"> " : "> ") + RuntimePresentation.GetProvider(PreferredMethod.Code).GetUIChoiceLabel(usercontext) + "<br/><br/>";
             if ((!Provider.Config.IsPrimaryAuhentication) || (Provider.Config.PrimaryAuhenticationOptions.HasFlag(PrimaryAuthOptions.Externals)))
             {
-                if (RuntimeAuthProvider.IsProviderAvailableForUser(usercontext, PreferredMethod.Email))
-                    result += "<input id=\"opt2\" name=\"##SELECTEDRADIO##\" type=\"radio\" value=\"2\" " + ((method == PreferredMethod.Email) ? "checked=\"checked\"> " : "> ") + RuntimeAuthProvider.GetProvider(PreferredMethod.Email).GetUIChoiceLabel(usercontext) + "<br/><br/>";
-                if (RuntimeAuthProvider.IsProviderAvailableForUser(usercontext, PreferredMethod.External))
-                    result += "<input id=\"opt1\" name=\"##SELECTEDRADIO##\" type=\"radio\" value=\"1\" " + ((method == PreferredMethod.External) ? "checked=\"checked\"> " : "> ") + RuntimeAuthProvider.GetProvider(PreferredMethod.External).GetUIChoiceLabel(usercontext) + "<br/><br/>";
-                if (RuntimeAuthProvider.IsProviderAvailableForUser(usercontext, PreferredMethod.Azure))
-                    result += "<input id=\"opt3\" name=\"##SELECTEDRADIO##\" type=\"radio\" value=\"3\" " + ((method == PreferredMethod.Azure) ? "checked=\"checked\"> " : "> ") + RuntimeAuthProvider.GetProvider(PreferredMethod.Azure).GetUIChoiceLabel(usercontext) + "<br/><br/>";
+                if (RuntimePresentation.IsProviderAvailableForUser(usercontext, PreferredMethod.Email))
+                    result += "<input id=\"opt2\" name=\"##SELECTEDRADIO##\" type=\"radio\" value=\"2\" " + ((method == PreferredMethod.Email) ? "checked=\"checked\"> " : "> ") + RuntimePresentation.GetProvider(PreferredMethod.Email).GetUIChoiceLabel(usercontext) + "<br/><br/>";
+                if (RuntimePresentation.IsProviderAvailableForUser(usercontext, PreferredMethod.External))
+                    result += "<input id=\"opt1\" name=\"##SELECTEDRADIO##\" type=\"radio\" value=\"1\" " + ((method == PreferredMethod.External) ? "checked=\"checked\"> " : "> ") + RuntimePresentation.GetProvider(PreferredMethod.External).GetUIChoiceLabel(usercontext) + "<br/><br/>";
+                if (RuntimePresentation.IsProviderAvailableForUser(usercontext, PreferredMethod.Azure))
+                    result += "<input id=\"opt3\" name=\"##SELECTEDRADIO##\" type=\"radio\" value=\"3\" " + ((method == PreferredMethod.Azure) ? "checked=\"checked\"> " : "> ") + RuntimePresentation.GetProvider(PreferredMethod.Azure).GetUIChoiceLabel(usercontext) + "<br/><br/>";
             }
-            if (RuntimeAuthProvider.IsProviderAvailableForUser(usercontext, PreferredMethod.Biometrics))
-                result += "<input id=\"opt4\" name=\"##SELECTEDRADIO##\" type=\"radio\" value=\"4\" " + ((method == PreferredMethod.Biometrics) ? "checked=\"checked\"> " : "> ") + RuntimeAuthProvider.GetProvider(PreferredMethod.Biometrics).GetUIChoiceLabel(usercontext) + "<br/><br/>";
+            if (RuntimePresentation.IsProviderAvailableForUser(usercontext, PreferredMethod.Biometrics))
+                result += "<input id=\"opt4\" name=\"##SELECTEDRADIO##\" type=\"radio\" value=\"4\" " + ((method == PreferredMethod.Biometrics) ? "checked=\"checked\"> " : "> ") + RuntimePresentation.GetProvider(PreferredMethod.Biometrics).GetUIChoiceLabel(usercontext) + "<br/><br/>";
 
             result += "<br/>";
             if (Provider.KeepMySelectedOptionOn())
@@ -979,7 +979,7 @@ namespace Neos.IdentityServer.MultiFactor
                     idMethod = PreferredMethod.Code;
                 else if (idMethod == method)
                     return method;
-            } while (!RuntimeAuthProvider.IsProviderAvailableForUser(usercontext, idMethod));
+            } while (!RuntimePresentation.IsProviderAvailableForUser(usercontext, idMethod));
             return idMethod;
 
         }
@@ -1119,7 +1119,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public override string GetFormHtmlBypass(AuthenticationContext usercontext)
         {
-            IExternalProvider prov = RuntimeAuthProvider.GetProvider(usercontext.PreferredMethod);
+            IExternalProvider prov = RuntimePresentation.GetProvider(usercontext.PreferredMethod);
             bool needinput = ((usercontext.IsTwoWay) && (prov != null) && (prov.IsUIElementRequired(usercontext, RequiredMethodElements.PinParameterRequired)));
             if ((usercontext.WizContext == WizardContextMode.Registration) || (usercontext.WizContext == WizardContextMode.Invitation) ) // do not ask after registration/Invitation Enrollment process
                 needinput = false;
@@ -1330,10 +1330,10 @@ namespace Neos.IdentityServer.MultiFactor
 
             result += "<form method=\"post\" id=\"refreshForm\" >";
 
-            bool soon = RuntimeRepository.MustChangePasswordSoon(Provider.Config, usercontext, out DateTime max);
+            bool soon = RuntimePresentation.MustChangePasswordSoon(Provider.Config, usercontext, out DateTime max);
             if (usercontext.IsRemote)
             {
-                IExternalProvider prov = RuntimeAuthProvider.GetProvider(usercontext.PreferredMethod);
+                IExternalProvider prov = RuntimePresentation.GetProvider(usercontext.PreferredMethod);
                 result += GetPartHtmlDonut();
                 result += "<div class=\"fieldMargin smallText\">" + prov.GetUIMessage(usercontext) + "</div><br/>";
                 if (!string.IsNullOrEmpty(prov.GetUIWarningInternetLabel(usercontext)) && (usercontext.IsRemote))
@@ -1444,7 +1444,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public override string GetFormHtmlSendBiometricRequest(AuthenticationContext usercontext)
         {
-            bool soon = RuntimeRepository.MustChangePasswordSoon(Provider.Config, usercontext, out DateTime max);
+            bool soon = RuntimePresentation.MustChangePasswordSoon(Provider.Config, usercontext, out DateTime max);
             string result = "<script type='text/javascript'>" + CR;
             result += "if (window.addEventListener)" + CR;
             result += "{" + CR;
@@ -1465,7 +1465,7 @@ namespace Neos.IdentityServer.MultiFactor
 
             result += "<form method=\"post\" id=\"refreshbiometricForm\" >";
 
-            IExternalProvider prov = RuntimeAuthProvider.GetProvider(PreferredMethod.Biometrics);
+            IExternalProvider prov = RuntimePresentation.GetProvider(PreferredMethod.Biometrics);
             result += "<br/>";
             result += "<table>";
             result += "  <tr>";
@@ -1560,7 +1560,7 @@ namespace Neos.IdentityServer.MultiFactor
             result += "<form method=\"post\" id=\"invitationReqForm\" >";
             result += "<div class=\"fieldMargin smallText\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlINSWaitRequest") + "</div>";
 
-            IExternalAdminProvider admprov = RuntimeAuthProvider.GetAdministrativeProvider(Provider.Config);
+            IExternalAdminProvider admprov = RuntimePresentation.GetAdministrativeProvider(Provider.Config);
             result += GetPartHtmlDonut();
             if (admprov != null)
             {
@@ -1614,7 +1614,7 @@ namespace Neos.IdentityServer.MultiFactor
             result += "<form method=\"post\" id=\"sendkeyReqForm\" >";
             result += "<div class=\"fieldMargin smallText\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlINSWaitRequest") + "</div>";
 
-            IExternalAdminProvider admprov = RuntimeAuthProvider.GetAdministrativeProvider(Provider.Config);
+            IExternalAdminProvider admprov = RuntimePresentation.GetAdministrativeProvider(Provider.Config);
 
             result += GetPartHtmlDonut();
             if (admprov != null)
@@ -1656,7 +1656,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public override string GetFormHtmlEnrollOTP(AuthenticationContext usercontext)
         {
-            IExternalProvider prov = RuntimeAuthProvider.GetProvider(PreferredMethod.Code);
+            IExternalProvider prov = RuntimePresentation.GetProvider(PreferredMethod.Code);
             prov.GetAuthenticationContext(usercontext);
             string result = "<form method=\"post\" id=\"enrollotpForm\" >";
             switch (usercontext.WizPageID)
@@ -1803,7 +1803,7 @@ namespace Neos.IdentityServer.MultiFactor
 
                     if (Provider.KeepMySelectedOptionOn())
                     {
-                        MFAUser reg = RuntimeRepository.GetMFAUser(Provider.Config, usercontext.UPN);
+                        MFAUser reg = RuntimePresentation.GetUserProperties(Provider.Config, usercontext.UPN);
                         result += "<br/>";
                         if (reg!=null)
                             result += "<input id=\"##REMEMBER##\" type=\"checkbox\" name=\"##REMEMBER##\" " + ((reg.PreferredMethod == PreferredMethod.Code) ? "checked=\"checked\"> " : "> ") + Resources.GetString(ResourcesLocaleKind.Html, "HtmlCHOOSEOptionRemember2") + "<br/>";
@@ -1829,8 +1829,7 @@ namespace Neos.IdentityServer.MultiFactor
                     result += "</tr></table>";
                     break;
                 case 1: // Always Reset the Key
-                    KeysManager.NewKey(usercontext.UPN);
-                    string displaykey = KeysManager.EncodedKey(usercontext.UPN);
+                    string displaykey = RuntimePresentation.GetNewUserKey(usercontext.UPN);
                     result += "<div id=\"wizardMessage\" class=\"groupMargin\">" + prov.GetWizardUILabel(usercontext) + "</div>";
                     result += "<div class=\"fieldMargin smallText\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelWRQRCode") + "</div><br/>";
                     if (prov.IsUIElementRequired(usercontext, RequiredMethodElements.KeyParameterRequired))
@@ -1975,7 +1974,7 @@ namespace Neos.IdentityServer.MultiFactor
                 result += "</script>" + CR;
             }
 
-            IExternalProvider prov = RuntimeAuthProvider.GetProvider(PreferredMethod.Email);
+            IExternalProvider prov = RuntimePresentation.GetProvider(PreferredMethod.Email);
             prov.GetAuthenticationContext(usercontext);
             result += "<form method=\"post\" id=\"enrollemailForm\" onsubmit=\"return ValidateRegistration(this)\"  >";
             switch (usercontext.WizPageID)
@@ -2014,7 +2013,7 @@ namespace Neos.IdentityServer.MultiFactor
 
                     if (Provider.KeepMySelectedOptionOn())
                     {
-                        MFAUser reg = RuntimeRepository.GetMFAUser(Provider.Config, usercontext.UPN);
+                        MFAUser reg = RuntimePresentation.GetUserProperties(Provider.Config, usercontext.UPN);
                         result += "<br/>";
                         if (reg!=null)
                             result += "<input id=\"##REMEMBER##\" type=\"checkbox\" name=\"##REMEMBER##\" " + ((reg.PreferredMethod == PreferredMethod.Email) ? "checked=\"checked\"> " : "> ") + Resources.GetString(ResourcesLocaleKind.Html, "HtmlCHOOSEOptionRemember2") + "<br/>";
@@ -2186,7 +2185,7 @@ namespace Neos.IdentityServer.MultiFactor
                 result += "</script>" + CR;
             }            
 
-            IExternalProvider prov = RuntimeAuthProvider.GetProvider(PreferredMethod.External);
+            IExternalProvider prov = RuntimePresentation.GetProvider(PreferredMethod.External);
             prov.GetAuthenticationContext(usercontext);
             result += "<form method=\"post\" id=\"enrollphoneForm\" onsubmit=\"return ValidateRegistration(this)\" >";
             switch (usercontext.WizPageID)
@@ -2230,7 +2229,7 @@ namespace Neos.IdentityServer.MultiFactor
 
                     if (Provider.KeepMySelectedOptionOn())
                     {
-                        MFAUser reg = RuntimeRepository.GetMFAUser(Provider.Config, usercontext.UPN);
+                        MFAUser reg = RuntimePresentation.GetUserProperties(Provider.Config, usercontext.UPN);
                         result += "<br/>";
                         if (reg!=null)
                             result += "<input id=\"##REMEMBER##\" type=\"checkbox\" name=\"##REMEMBER##\" " + ((reg.PreferredMethod == PreferredMethod.External) ? "checked=\"checked\"> " : "> ") + Resources.GetString(ResourcesLocaleKind.Html, "HtmlCHOOSEOptionRemember2") + "<br/>";
@@ -2426,7 +2425,7 @@ namespace Neos.IdentityServer.MultiFactor
                 result += "</script>" + CR;
             }
 
-            IExternalProvider prov = RuntimeAuthProvider.GetProvider(PreferredMethod.Biometrics);
+            IExternalProvider prov = RuntimePresentation.GetProvider(PreferredMethod.Biometrics);
             WebAuthNProvider auth = Provider.Config.WebAuthNProvider;
             IWebAuthNProvider web = prov as IWebAuthNProvider;
             prov.GetAuthenticationContext(usercontext);
@@ -2465,7 +2464,7 @@ namespace Neos.IdentityServer.MultiFactor
 
                     if (Provider.KeepMySelectedOptionOn())
                     {
-                        MFAUser reg = RuntimeRepository.GetMFAUser(Provider.Config, usercontext.UPN);
+                        MFAUser reg = RuntimePresentation.GetUserProperties(Provider.Config, usercontext.UPN);
                         result += "<br/>";
                         if (reg != null)
                             result += "<input id=\"##REMEMBER##\" type=\"checkbox\" name=\"##REMEMBER##\"" + (reg.PreferredMethod == PreferredMethod.Biometrics ? " checked=\"checked\"" : "\"\"") + "\" > " + Resources.GetString(ResourcesLocaleKind.Html, "HtmlCHOOSEOptionRemember2") + "<br/>";
@@ -2739,7 +2738,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         private string GetPartHtmlSelectMethod(AuthenticationContext usercontext)
         {
-            MFAUser reg = RuntimeRepository.GetMFAUser(Provider.Config, usercontext.UPN);
+            MFAUser reg = RuntimePresentation.GetUserProperties(Provider.Config, usercontext.UPN);
             PreferredMethod method = PreferredMethod.None;
             if (reg == null)
                 method = usercontext.PreferredMethod;
@@ -2751,21 +2750,21 @@ namespace Neos.IdentityServer.MultiFactor
 
             result += "<option value=\"0\" " + ((method == PreferredMethod.Choose) ? "selected=\"true\"> " : "> ") + Resources.GetString(ResourcesLocaleKind.Html, "HtmlREGOptionChooseBest") + "</option>";
 
-            if (RuntimeAuthProvider.IsProviderAvailableForUser(usercontext, PreferredMethod.Code))
-                result += "<option value=\"1\" " + ((method == PreferredMethod.Code) ? "selected=\"true\"> " : "> ") + RuntimeAuthProvider.GetProvider(PreferredMethod.Code).GetUIListChoiceLabel(usercontext) + "</option>";
-            if (RuntimeAuthProvider.IsProviderAvailableForUser(usercontext, PreferredMethod.Biometrics))
-                result += "<option value=\"5\" " + ((method == PreferredMethod.Biometrics) ? "selected=\"true\">" : ">") + RuntimeAuthProvider.GetProvider(PreferredMethod.Biometrics).GetUIListChoiceLabel(usercontext) + "</option>";
+            if (RuntimePresentation.IsProviderAvailableForUser(usercontext, PreferredMethod.Code))
+                result += "<option value=\"1\" " + ((method == PreferredMethod.Code) ? "selected=\"true\"> " : "> ") + RuntimePresentation.GetProvider(PreferredMethod.Code).GetUIListChoiceLabel(usercontext) + "</option>";
+            if (RuntimePresentation.IsProviderAvailableForUser(usercontext, PreferredMethod.Biometrics))
+                result += "<option value=\"5\" " + ((method == PreferredMethod.Biometrics) ? "selected=\"true\">" : ">") + RuntimePresentation.GetProvider(PreferredMethod.Biometrics).GetUIListChoiceLabel(usercontext) + "</option>";
 
             if ((!Provider.Config.IsPrimaryAuhentication) || (Provider.Config.PrimaryAuhenticationOptions.HasFlag(PrimaryAuthOptions.Externals)))
             {
-                if (RuntimeAuthProvider.IsProviderAvailableForUser(usercontext, PreferredMethod.Email))
-                    result += "<option value=\"2\" " + ((method == PreferredMethod.Email) ? "selected=\"true\"> " : "> ") + RuntimeAuthProvider.GetProvider(PreferredMethod.Email).GetUIListChoiceLabel(usercontext) + "</option>";
+                if (RuntimePresentation.IsProviderAvailableForUser(usercontext, PreferredMethod.Email))
+                    result += "<option value=\"2\" " + ((method == PreferredMethod.Email) ? "selected=\"true\"> " : "> ") + RuntimePresentation.GetProvider(PreferredMethod.Email).GetUIListChoiceLabel(usercontext) + "</option>";
 
-                if (RuntimeAuthProvider.IsProviderAvailableForUser(usercontext, PreferredMethod.External))
-                    result += "<option value=\"3\" " + ((method == PreferredMethod.External) ? "selected=\"true\"> " : "> ") + RuntimeAuthProvider.GetProvider(PreferredMethod.External).GetUIListChoiceLabel(usercontext) + "</option>";
+                if (RuntimePresentation.IsProviderAvailableForUser(usercontext, PreferredMethod.External))
+                    result += "<option value=\"3\" " + ((method == PreferredMethod.External) ? "selected=\"true\"> " : "> ") + RuntimePresentation.GetProvider(PreferredMethod.External).GetUIListChoiceLabel(usercontext) + "</option>";
 
-                if (RuntimeAuthProvider.IsProviderAvailableForUser(usercontext, PreferredMethod.Azure))
-                    result += "<option value=\"4\" " + ((method == PreferredMethod.Azure) ? "selected=\"true\">" : ">") + RuntimeAuthProvider.GetProvider(PreferredMethod.Azure).GetUIListChoiceLabel(usercontext) + "</option>";
+                if (RuntimePresentation.IsProviderAvailableForUser(usercontext, PreferredMethod.Azure))
+                    result += "<option value=\"4\" " + ((method == PreferredMethod.Azure) ? "selected=\"true\">" : ">") + RuntimePresentation.GetProvider(PreferredMethod.Azure).GetUIListChoiceLabel(usercontext) + "</option>";
             }
             result += "</select><br/>";
             return result;

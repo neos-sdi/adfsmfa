@@ -679,7 +679,12 @@ namespace MFA
         /// <summary>
         /// <para type="description">SMS/External Provider sample for external provider.</para>
         /// </summary>
-        SMSProviderSample = 5
+        SMSProviderSample = 5,
+
+        /// <summary>
+        /// <para type="description">Cumstom UI Presentation.</para>
+        /// </summary>
+        CustomPresentation = 6,
     }
 
     /// <summary>

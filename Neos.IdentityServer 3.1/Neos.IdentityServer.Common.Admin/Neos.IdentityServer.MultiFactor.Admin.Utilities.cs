@@ -748,6 +748,12 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                     else
                         config.OTPProvider.FullQualifiedImplementation = "";
                     break;
+                case FlatSampleKind.CustomPresentation:
+                    if (!reset)
+                        config.CustomAdapterPresentation = "Neos.IdentityServer.MultiFactor.Samples.AdapterPresentationCustom, Neos.IdentityServer.MultiFactor.PresentationSample, Version=1.0.0.0, Culture=neutral, PublicKeyToken = 80d07446b0f6ee31";
+                    else
+                        config.CustomAdapterPresentation = "";
+                    break;
             }
             CFGUtilities.WriteConfiguration(host, config);
             CFGUtilities.BroadcastNotification(config, NotificationsKind.ConfigurationReload, Environment.MachineName, true, true);

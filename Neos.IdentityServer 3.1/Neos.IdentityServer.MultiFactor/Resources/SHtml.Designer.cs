@@ -22,7 +22,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class SHtml {
+    public class SHtml {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,7 +36,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         ///   Retourne l'instance ResourceManager mise en cache utilisée par cette classe.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Neos.IdentityServer.MultiFactor.Resources.SHtml", typeof(SHtml).Assembly);
@@ -51,7 +51,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         ///   les recherches de ressources à l'aide de cette classe de ressource fortement typée.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -63,7 +63,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Use default option.
         /// </summary>
-        internal static string GLOBALListChoiceDefaultLabel {
+        public static string GLOBALListChoiceDefaultLabel {
             get {
                 return ResourceManager.GetString("GLOBALListChoiceDefaultLabel", resourceCulture);
             }
@@ -72,7 +72,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Change my configuration options.
         /// </summary>
-        internal static string HtmlChangeConfiguration {
+        public static string HtmlChangeConfiguration {
             get {
                 return ResourceManager.GetString("HtmlChangeConfiguration", resourceCulture);
             }
@@ -81,7 +81,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Change my password.
         /// </summary>
-        internal static string HtmlChangePassword {
+        public static string HtmlChangePassword {
             get {
                 return ResourceManager.GetString("HtmlChangePassword", resourceCulture);
             }
@@ -90,7 +90,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Remember my selection.
         /// </summary>
-        internal static string HtmlCHOOSEOptionRemember {
+        public static string HtmlCHOOSEOptionRemember {
             get {
                 return ResourceManager.GetString("HtmlCHOOSEOptionRemember", resourceCulture);
             }
@@ -99,7 +99,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Default authentication mode.
         /// </summary>
-        internal static string HtmlCHOOSEOptionRemember2 {
+        public static string HtmlCHOOSEOptionRemember2 {
             get {
                 return ResourceManager.GetString("HtmlCHOOSEOptionRemember2", resourceCulture);
             }
@@ -108,7 +108,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Send Code.
         /// </summary>
-        internal static string HtmlCHOOSEOptionSendCode {
+        public static string HtmlCHOOSEOptionSendCode {
             get {
                 return ResourceManager.GetString("HtmlCHOOSEOptionSendCode", resourceCulture);
             }
@@ -117,7 +117,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Enroll my biometric device.
         /// </summary>
-        internal static string HtmlEnrollBiometric {
+        public static string HtmlEnrollBiometric {
             get {
                 return ResourceManager.GetString("HtmlEnrollBiometric", resourceCulture);
             }
@@ -126,7 +126,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Enroll my biometric device.
         /// </summary>
-        internal static string HtmlEnrollBiometrics {
+        public static string HtmlEnrollBiometrics {
             get {
                 return ResourceManager.GetString("HtmlEnrollBiometrics", resourceCulture);
             }
@@ -135,7 +135,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Enroll my email address.
         /// </summary>
-        internal static string HtmlEnrollEmail {
+        public static string HtmlEnrollEmail {
             get {
                 return ResourceManager.GetString("HtmlEnrollEmail", resourceCulture);
             }
@@ -144,7 +144,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Enroll my authentication application .
         /// </summary>
-        internal static string HtmlEnrollOTP {
+        public static string HtmlEnrollOTP {
             get {
                 return ResourceManager.GetString("HtmlEnrollOTP", resourceCulture);
             }
@@ -153,7 +153,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Enroll my phone.
         /// </summary>
-        internal static string HtmlEnrollPhone {
+        public static string HtmlEnrollPhone {
             get {
                 return ResourceManager.GetString("HtmlEnrollPhone", resourceCulture);
             }
@@ -162,7 +162,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Enroll my PIN code.
         /// </summary>
-        internal static string HtmlEnrollPinCode {
+        public static string HtmlEnrollPinCode {
             get {
                 return ResourceManager.GetString("HtmlEnrollPinCode", resourceCulture);
             }
@@ -171,7 +171,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Set up a PIN.
         /// </summary>
-        internal static string HtmlEnrollPinTaskLabel {
+        public static string HtmlEnrollPinTaskLabel {
             get {
                 return ResourceManager.GetString("HtmlEnrollPinTaskLabel", resourceCulture);
             }
@@ -180,7 +180,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à wrong Identification, please restart your session.
         /// </summary>
-        internal static string HtmlErrorRestartSession {
+        public static string HtmlErrorRestartSession {
             get {
                 return ResourceManager.GetString("HtmlErrorRestartSession", resourceCulture);
             }
@@ -189,7 +189,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Send request.
         /// </summary>
-        internal static string HtmlINSRequest {
+        public static string HtmlINSRequest {
             get {
                 return ResourceManager.GetString("HtmlINSRequest", resourceCulture);
             }
@@ -198,7 +198,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Sending your inscription request via email to administrators.
         /// </summary>
-        internal static string HtmlINSWaitRequest {
+        public static string HtmlINSWaitRequest {
             get {
                 return ResourceManager.GetString("HtmlINSWaitRequest", resourceCulture);
             }
@@ -208,7 +208,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         ///   Recherche une chaîne localisée semblable à Your account is not validated !&lt;br&gt;
         ///You can try the operation again by selecting &quot;Previous&quot;..
         /// </summary>
-        internal static string HtmlLabelVERIFYOTPError {
+        public static string HtmlLabelVERIFYOTPError {
             get {
                 return ResourceManager.GetString("HtmlLabelVERIFYOTPError", resourceCulture);
             }
@@ -217,7 +217,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Finish.
         /// </summary>
-        internal static string HtmlLabelVERIFYOTPOK {
+        public static string HtmlLabelVERIFYOTPOK {
             get {
                 return ResourceManager.GetString("HtmlLabelVERIFYOTPOK", resourceCulture);
             }
@@ -226,7 +226,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Previous.
         /// </summary>
-        internal static string HtmlLabelVERIFYOTPPRIOR {
+        public static string HtmlLabelVERIFYOTPPRIOR {
             get {
                 return ResourceManager.GetString("HtmlLabelVERIFYOTPPRIOR", resourceCulture);
             }
@@ -236,7 +236,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         ///   Recherche une chaîne localisée semblable à Your account is validated !&lt;br&gt;
         ///You will be able to use MFA validation in the future..
         /// </summary>
-        internal static string HtmlLabelVERIFYOTPSuccess {
+        public static string HtmlLabelVERIFYOTPSuccess {
             get {
                 return ResourceManager.GetString("HtmlLabelVERIFYOTPSuccess", resourceCulture);
             }
@@ -245,7 +245,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Add a biometric device.
         /// </summary>
-        internal static string HtmlLabelWRAddBiometrics {
+        public static string HtmlLabelWRAddBiometrics {
             get {
                 return ResourceManager.GetString("HtmlLabelWRAddBiometrics", resourceCulture);
             }
@@ -254,7 +254,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à You must activate your biometric device (fingerprint, facial recognition, NFC, etc.) to confirm your identity..
         /// </summary>
-        internal static string HtmlLabelWRBiometrics {
+        public static string HtmlLabelWRBiometrics {
             get {
                 return ResourceManager.GetString("HtmlLabelWRBiometrics", resourceCulture);
             }
@@ -263,7 +263,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à You must have an authentication application such as Microsoft Authenticator, Google Authenticator installed on your device before you can continue and register your account.
         /// </summary>
-        internal static string HtmlLabelWREGOTP {
+        public static string HtmlLabelWREGOTP {
             get {
                 return ResourceManager.GetString("HtmlLabelWREGOTP", resourceCulture);
             }
@@ -272,7 +272,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à By continuing, your current key will be invalidated and reset.
         /// </summary>
-        internal static string HtmlLabelWREGOTPWarning {
+        public static string HtmlLabelWREGOTPWarning {
             get {
                 return ResourceManager.GetString("HtmlLabelWREGOTPWarning", resourceCulture);
             }
@@ -281,7 +281,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à You must enter an email address to confirm your identiy. This email must be reachable without needing enterprise verification (personal email address).
         /// </summary>
-        internal static string HtmlLabelWREmail {
+        public static string HtmlLabelWREmail {
             get {
                 return ResourceManager.GetString("HtmlLabelWREmail", resourceCulture);
             }
@@ -290,7 +290,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Manage your biometrics devices. Select add, replace or delete individual devices..
         /// </summary>
-        internal static string HtmlLabelWRManageBiometrics {
+        public static string HtmlLabelWRManageBiometrics {
             get {
                 return ResourceManager.GetString("HtmlLabelWRManageBiometrics", resourceCulture);
             }
@@ -299,7 +299,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à You must enter your phone number in order to confirm your identity. This phone must be reachable..
         /// </summary>
-        internal static string HtmlLabelWRPhone {
+        public static string HtmlLabelWRPhone {
             get {
                 return ResourceManager.GetString("HtmlLabelWRPhone", resourceCulture);
             }
@@ -308,7 +308,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à You must enter a secret code ({0} digits) in order to validate your identity. Be sure not to use the codes of your bank card or telephone as well as details concerning your date of birth..
         /// </summary>
-        internal static string HtmlLabelWRPinCode {
+        public static string HtmlLabelWRPinCode {
             get {
                 return ResourceManager.GetString("HtmlLabelWRPinCode", resourceCulture);
             }
@@ -317,7 +317,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Scan the QR Code with a TOTP application like Microsoft Authenticator, Google Authenticator for registering your account.
         /// </summary>
-        internal static string HtmlLabelWRQRCode {
+        public static string HtmlLabelWRQRCode {
             get {
                 return ResourceManager.GetString("HtmlLabelWRQRCode", resourceCulture);
             }
@@ -326,7 +326,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Continue.
         /// </summary>
-        internal static string HtmlLabelWVERIFYOTP {
+        public static string HtmlLabelWVERIFYOTP {
             get {
                 return ResourceManager.GetString("HtmlLabelWVERIFYOTP", resourceCulture);
             }
@@ -335,7 +335,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à You need to change your password before : &lt;br/&gt; {0}.
         /// </summary>
-        internal static string HtmlMustChangePassword {
+        public static string HtmlMustChangePassword {
             get {
                 return ResourceManager.GetString("HtmlMustChangePassword", resourceCulture);
             }
@@ -344,7 +344,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Cancel.
         /// </summary>
-        internal static string HtmlPWDCancel {
+        public static string HtmlPWDCancel {
             get {
                 return ResourceManager.GetString("HtmlPWDCancel", resourceCulture);
             }
@@ -353,7 +353,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Current password.
         /// </summary>
-        internal static string HtmlPWDLabelActual {
+        public static string HtmlPWDLabelActual {
             get {
                 return ResourceManager.GetString("HtmlPWDLabelActual", resourceCulture);
             }
@@ -362,7 +362,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à New password.
         /// </summary>
-        internal static string HtmlPWDLabelNew {
+        public static string HtmlPWDLabelNew {
             get {
                 return ResourceManager.GetString("HtmlPWDLabelNew", resourceCulture);
             }
@@ -371,7 +371,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Password confirmation.
         /// </summary>
-        internal static string HtmlPWDLabelNewConfirmation {
+        public static string HtmlPWDLabelNewConfirmation {
             get {
                 return ResourceManager.GetString("HtmlPWDLabelNewConfirmation", resourceCulture);
             }
@@ -380,7 +380,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Save.
         /// </summary>
-        internal static string HtmlPWDSave {
+        public static string HtmlPWDSave {
             get {
                 return ResourceManager.GetString("HtmlPWDSave", resourceCulture);
             }
@@ -389,7 +389,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Default access method.
         /// </summary>
-        internal static string HtmlREGAccessMethod {
+        public static string HtmlREGAccessMethod {
             get {
                 return ResourceManager.GetString("HtmlREGAccessMethod", resourceCulture);
             }
@@ -398,7 +398,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Configuration options.
         /// </summary>
-        internal static string HtmlREGAccessPageMethods {
+        public static string HtmlREGAccessPageMethods {
             get {
                 return ResourceManager.GetString("HtmlREGAccessPageMethods", resourceCulture);
             }
@@ -407,7 +407,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Secret Key.
         /// </summary>
-        internal static string HtmlREGLabelAppKey {
+        public static string HtmlREGLabelAppKey {
             get {
                 return ResourceManager.GetString("HtmlREGLabelAppKey", resourceCulture);
             }
@@ -416,7 +416,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Choose the default option.
         /// </summary>
-        internal static string HtmlREGOptionChooseBest {
+        public static string HtmlREGOptionChooseBest {
             get {
                 return ResourceManager.GetString("HtmlREGOptionChooseBest", resourceCulture);
             }
@@ -425,7 +425,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Activate.
         /// </summary>
-        internal static string HtmlUIActivate {
+        public static string HtmlUIActivate {
             get {
                 return ResourceManager.GetString("HtmlUIActivate", resourceCulture);
             }
@@ -435,7 +435,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         ///   Recherche une chaîne localisée semblable à &lt;br/&gt;
         ///Click &quot;Continue&quot;.
         /// </summary>
-        internal static string HtmlUIEnrollContinue {
+        public static string HtmlUIEnrollContinue {
             get {
                 return ResourceManager.GetString("HtmlUIEnrollContinue", resourceCulture);
             }
@@ -444,7 +444,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Access my options after authentication.
         /// </summary>
-        internal static string HtmlUIMAccessOptions {
+        public static string HtmlUIMAccessOptions {
             get {
                 return ResourceManager.GetString("HtmlUIMAccessOptions", resourceCulture);
             }
@@ -453,7 +453,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Verify.
         /// </summary>
-        internal static string HtmlUIMCheck {
+        public static string HtmlUIMCheck {
             get {
                 return ResourceManager.GetString("HtmlUIMCheck", resourceCulture);
             }
@@ -462,7 +462,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Sign In.
         /// </summary>
-        internal static string HtmlUIMConnexion {
+        public static string HtmlUIMConnexion {
             get {
                 return ResourceManager.GetString("HtmlUIMConnexion", resourceCulture);
             }
@@ -471,7 +471,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Disable Multi-Factor authentication.
         /// </summary>
-        internal static string HtmlUIMDisableMFA {
+        public static string HtmlUIMDisableMFA {
             get {
                 return ResourceManager.GetString("HtmlUIMDisableMFA", resourceCulture);
             }
@@ -480,7 +480,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Inscription request.
         /// </summary>
-        internal static string HtmlUIMGotoInscription {
+        public static string HtmlUIMGotoInscription {
             get {
                 return ResourceManager.GetString("HtmlUIMGotoInscription", resourceCulture);
             }
@@ -489,7 +489,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Registration.
         /// </summary>
-        internal static string HtmlUIMGoToRegistration {
+        public static string HtmlUIMGoToRegistration {
             get {
                 return ResourceManager.GetString("HtmlUIMGoToRegistration", resourceCulture);
             }
@@ -498,7 +498,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Enter device&apos;s name.
         /// </summary>
-        internal static string HtmlUIMNickNamesLabel {
+        public static string HtmlUIMNickNamesLabel {
             get {
                 return ResourceManager.GetString("HtmlUIMNickNamesLabel", resourceCulture);
             }
@@ -507,7 +507,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Enter the name of your biometric device or leave the void, then select &quot;Continue&quot;.
         /// </summary>
-        internal static string HtmlUIMNickNamesMessage {
+        public static string HtmlUIMNickNamesMessage {
             get {
                 return ResourceManager.GetString("HtmlUIMNickNamesMessage", resourceCulture);
             }
@@ -516,7 +516,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Sign in another way.
         /// </summary>
-        internal static string HtmlUIMNoCode {
+        public static string HtmlUIMNoCode {
             get {
                 return ResourceManager.GetString("HtmlUIMNoCode", resourceCulture);
             }
@@ -525,7 +525,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Ok.
         /// </summary>
-        internal static string HtmlUIMOk {
+        public static string HtmlUIMOk {
             get {
                 return ResourceManager.GetString("HtmlUIMOk", resourceCulture);
             }
@@ -534,7 +534,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Quit.
         /// </summary>
-        internal static string HtmlUIMQuit {
+        public static string HtmlUIMQuit {
             get {
                 return ResourceManager.GetString("HtmlUIMQuit", resourceCulture);
             }
@@ -543,7 +543,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Continue.
         /// </summary>
-        internal static string HtmlUIMRecordNewKey {
+        public static string HtmlUIMRecordNewKey {
             get {
                 return ResourceManager.GetString("HtmlUIMRecordNewKey", resourceCulture);
             }
@@ -552,7 +552,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à You must :.
         /// </summary>
-        internal static string HtmlUIMustPrepareLabel {
+        public static string HtmlUIMustPrepareLabel {
             get {
                 return ResourceManager.GetString("HtmlUIMustPrepareLabel", resourceCulture);
             }
@@ -561,7 +561,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Ignore.
         /// </summary>
-        internal static string HtmlUINext {
+        public static string HtmlUINext {
             get {
                 return ResourceManager.GetString("HtmlUINext", resourceCulture);
             }
@@ -570,7 +570,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Pin code.
         /// </summary>
-        internal static string HtmlUIPinOptionLabel {
+        public static string HtmlUIPinOptionLabel {
             get {
                 return ResourceManager.GetString("HtmlUIPinOptionLabel", resourceCulture);
             }
@@ -579,7 +579,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Informations provided :.
         /// </summary>
-        internal static string HtmlUIResultLabel {
+        public static string HtmlUIResultLabel {
             get {
                 return ResourceManager.GetString("HtmlUIResultLabel", resourceCulture);
             }

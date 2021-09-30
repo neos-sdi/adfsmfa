@@ -1,19 +1,17 @@
 ﻿using System.Reflection;
-using System.Resources;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Runtime.Versioning;
 
 // Les informations générales relatives à un assembly dépendent de
 // l'ensemble d'attributs suivant. Changez les valeurs de ces attributs pour modifier les informations
 // associées à un assembly.
-[assembly: AssemblyTitle("Neos.IdentityServer.Multifactor.ThreatDetection")]
-[assembly: AssemblyDescription("Threat Detection for Adfs 2019")]
+[assembly: AssemblyTitle("Neos.IdentityServer.MultiFactor.PresenationSample")]
+[assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Neos-Sdi")]
-[assembly: AssemblyProduct("Neos.IdentityServer.Multifactor.ThreatDetection")]
-[assembly: AssemblyCopyright("Copyright @redhook62 © 2021")]
-[assembly: AssemblyTrademark("Neos-Sdi")]
+[assembly: AssemblyCompany("")]
+[assembly: AssemblyProduct("Neos.IdentityServer.MultiFactor.PresenationSample")]
+[assembly: AssemblyCopyright("Copyright ©  2021")]
+[assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
 // L'affectation de la valeur false à ComVisible rend les types invisibles dans cet assembly
@@ -22,7 +20,7 @@ using System.Runtime.Versioning;
 [assembly: ComVisible(false)]
 
 // Le GUID suivant est pour l'ID de la typelib si ce projet est exposé à COM
-[assembly: Guid("f8269f12-ac2b-4bdb-bec8-6036817376f4")]
+[assembly: Guid("1500b83a-39cd-420c-a617-daeba3fd0c96")]
 
 // Les informations de version pour un assembly se composent des quatre valeurs suivantes :
 //
@@ -34,7 +32,5 @@ using System.Runtime.Versioning;
 // Vous pouvez spécifier toutes les valeurs ou indiquer les numéros de build et de révision par défaut
 // en utilisant '*', comme indiqué ci-dessous :
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("3.0.0.0")]
-[assembly: AssemblyFileVersion("3.1.2109.1")]
-[assembly: AssemblyInformationalVersion("3.0.0.0")]
-[assembly: NeutralResourcesLanguageAttribute("en")]
+[assembly: AssemblyVersion("1.0.0.0")]
+[assembly: AssemblyFileVersion("1.0.0.0")]

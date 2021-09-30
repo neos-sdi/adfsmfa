@@ -23,6 +23,7 @@ using System.DirectoryServices;
 using System.DirectoryServices.ActiveDirectory;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Security.Claims;
 using System.Text;
@@ -31,6 +32,19 @@ using System.Xml.Serialization;
 
 namespace Neos.IdentityServer.MultiFactor.Data
 {
+    public class Utilities
+    {
+        /// <summary>
+        /// GetAssemblyPublicKey method implmentation
+        /// </summary>
+        public static string GetAssemblyPublicKey()
+        {
+            string assemblyname = Assembly.GetExecutingAssembly().FullName;
+            string[] str = assemblyname.Split(',');
+            return str[str.Length - 1];
+        }
+    }
+
     /// <summary>
     /// Log class
     /// </summary>

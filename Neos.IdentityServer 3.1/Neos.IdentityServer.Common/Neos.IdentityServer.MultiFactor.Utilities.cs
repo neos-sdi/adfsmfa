@@ -59,7 +59,7 @@ namespace Neos.IdentityServer.MultiFactor
         {
             try
             {
-                Assembly assembly = Assembly.Load("Neos.IdentityServer.MultiFactor.Data, Version=3.0.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2");
+                Assembly assembly = Assembly.Load("Neos.IdentityServer.MultiFactor.Data, Version=3.0.0.0, Culture=neutral, "+ Utilities.GetAssemblyPublicKey());
                 Type _typetoload = assembly.GetType("Neos.IdentityServer.MultiFactor.Data.ADDSKeysRepositoryService");
                 Type _ancestor = _typetoload.BaseType;
                 if (_ancestor.IsClass && _ancestor.IsAbstract && (_ancestor == typeof(DataRepositoryService)))
@@ -86,7 +86,7 @@ namespace Neos.IdentityServer.MultiFactor
         {
             try
             {
-                Assembly assembly = Assembly.Load("Neos.IdentityServer.MultiFactor.Data, Version=3.0.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2");
+                Assembly assembly = Assembly.Load("Neos.IdentityServer.MultiFactor.Data, Version=3.0.0.0, Culture=neutral, " + Utilities.GetAssemblyPublicKey());
                 Type _typetoload = assembly.GetType("Neos.IdentityServer.MultiFactor.Data.ADDSKeysRepositoryService");
                 Type _ancestor = _typetoload.BaseType;
                 if (_ancestor.IsClass && _ancestor.IsAbstract && (_ancestor == typeof(KeysRepositoryService)))
@@ -112,7 +112,7 @@ namespace Neos.IdentityServer.MultiFactor
         {
             try
             {
-                Assembly assembly = Assembly.Load("Neos.IdentityServer.MultiFactor.Data, Version=3.0.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2");
+                Assembly assembly = Assembly.Load("Neos.IdentityServer.MultiFactor.Data, Version=3.0.0.0, Culture=neutral, " + Utilities.GetAssemblyPublicKey());
                 Type _typetoload = assembly.GetType("Neos.IdentityServer.MultiFactor.Data.ADDSKeys2RepositoryService");
                 Type _ancestor = _typetoload.BaseType;
                 if (_ancestor.IsClass && _ancestor.IsAbstract && (_ancestor == typeof(KeysRepositoryService)))
@@ -140,7 +140,7 @@ namespace Neos.IdentityServer.MultiFactor
         {
             try
             {
-                Assembly assembly = Assembly.Load("Neos.IdentityServer.MultiFactor.Data, Version=3.0.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2");
+                Assembly assembly = Assembly.Load("Neos.IdentityServer.MultiFactor.Data, Version=3.0.0.0, Culture=neutral, " + Utilities.GetAssemblyPublicKey());
                 Type _typetoload = assembly.GetType("Neos.IdentityServer.MultiFactor.Data.SQLDataRepositoryService");
                 Type _ancestor = _typetoload.BaseType;
                 if (_ancestor.IsClass && _ancestor.IsAbstract && (_ancestor == typeof(DataRepositoryService)))
@@ -167,7 +167,7 @@ namespace Neos.IdentityServer.MultiFactor
         {
             try
             {
-                Assembly assembly = Assembly.Load("Neos.IdentityServer.MultiFactor.Data, Version=3.0.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2");
+                Assembly assembly = Assembly.Load("Neos.IdentityServer.MultiFactor.Data, Version=3.0.0.0, Culture=neutral, " + Utilities.GetAssemblyPublicKey());
                 Type _typetoload = assembly.GetType("Neos.IdentityServer.MultiFactor.Data.SQLKeysRepositoryService");
                 Type _ancestor = _typetoload.BaseType;
                 if (_ancestor.IsClass && _ancestor.IsAbstract && (_ancestor == typeof(KeysRepositoryService)))
@@ -193,7 +193,7 @@ namespace Neos.IdentityServer.MultiFactor
         {
             try
             {
-                Assembly assembly = Assembly.Load("Neos.IdentityServer.MultiFactor.Data, Version=3.0.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2");
+                Assembly assembly = Assembly.Load("Neos.IdentityServer.MultiFactor.Data, Version=3.0.0.0, Culture=neutral, " + Utilities.GetAssemblyPublicKey());
                 Type _typetoload = assembly.GetType("Neos.IdentityServer.MultiFactor.Data.SQLKeys2RepositoryService");
                 Type _ancestor = _typetoload.BaseType;
                 if (_ancestor.IsClass && _ancestor.IsAbstract && (_ancestor == typeof(KeysRepositoryService)))
@@ -471,7 +471,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         private static IExternalProvider LoadAzureProvider()
         {
-            Assembly assembly = Assembly.Load(@"Neos.IdentityServer.MultiFactor.SAS.Azure, Version=3.0.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2");
+            Assembly assembly = Assembly.Load(@"Neos.IdentityServer.MultiFactor.SAS.Azure, Version=3.0.0.0, Culture=neutral, " + Utilities.GetAssemblyPublicKey());
             Type _typetoload = assembly.GetType(@"Neos.IdentityServer.MultiFactor.SAS.NeosAzureProvider");
             if (_typetoload.IsClass && !_typetoload.IsAbstract && _typetoload.GetInterface("IExternalProvider") != null)
                 return (IExternalProvider)Activator.CreateInstance(_typetoload, true); // Allow Calling internal Constructors
@@ -484,7 +484,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         private static IExternalProvider LoadWebAuthNProvider()
         {
-            Assembly assembly = Assembly.Load(@"Neos.IdentityServer.MultiFactor.WebAuthN.Provider, Version=3.0.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2");
+            Assembly assembly = Assembly.Load(@"Neos.IdentityServer.MultiFactor.WebAuthN.Provider, Version=3.0.0.0, Culture=neutral, " + Utilities.GetAssemblyPublicKey());
             Type _typetoload = assembly.GetType(@"Neos.IdentityServer.MultiFactor.WebAuthN.NeosWebAuthNProvider");
             if (_typetoload.IsClass && !_typetoload.IsAbstract && _typetoload.GetInterface("IExternalProvider") != null)
                 return (IExternalProvider)Activator.CreateInstance(_typetoload, true); // Allow Calling internal Constructors
@@ -871,7 +871,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// IsUIElementRequired method implementation
         /// </summary>
-        internal static bool IsUIElementRequired(AuthenticationContext ctx, RequiredMethodElements element)
+        public static bool IsUIElementRequired(AuthenticationContext ctx, RequiredMethodElements element)
         {
             foreach (KeyValuePair<PreferredMethod, IExternalProvider> prov in Providers)
             {

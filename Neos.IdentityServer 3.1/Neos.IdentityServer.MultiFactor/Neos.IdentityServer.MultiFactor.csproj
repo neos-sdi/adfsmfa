@@ -74,6 +74,7 @@
     <Compile Include="Neos.IdentityServer.MultiFactor.AdapterPresentation.cs" />
     <Compile Include="Neos.IdentityServer.MultiFactor.BasePresentation.cs" />
     <Compile Include="Neos.IdentityServer.Multifactor.ResourcesManager.cs" />
+    <Compile Include="Neos.IdentityServer.MultiFactor.RuntimePresentation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resources\SErrors.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -213,12 +214,12 @@
     <EmbeddedResource Include="Resources\SHtml.pl.resx" />
     <EmbeddedResource Include="Resources\SHtml.pt.resx" />
     <EmbeddedResource Include="Resources\SHtml.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
+      <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>SHtml.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\images.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
+      <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>images.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -233,7 +234,7 @@
     <EmbeddedResource Include="Resources\SInfos.fr-CA.resx" />
     <EmbeddedResource Include="Resources\SInfos.fr.resx" />
     <EmbeddedResource Include="Resources\SErrors.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
+      <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>SErrors.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\SInfos.it.resx" />
@@ -242,7 +243,7 @@
     <EmbeddedResource Include="Resources\SInfos.pl.resx" />
     <EmbeddedResource Include="Resources\SInfos.pt.resx" />
     <EmbeddedResource Include="Resources\SInfos.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
+      <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>SInfos.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\SInfos.ro.resx" />
@@ -263,13 +264,13 @@
     <EmbeddedResource Include="Resources\STitle.pl.resx" />
     <EmbeddedResource Include="Resources\STitle.pt.resx" />
     <EmbeddedResource Include="Resources\STitle.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
+      <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>STitle.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\SCheck.es.resx" />
     <EmbeddedResource Include="Resources\SCheck.fr.resx" />
     <EmbeddedResource Include="Resources\SCheck.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
+      <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>SCheck.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\STitle.ro.resx" />
