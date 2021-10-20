@@ -854,6 +854,7 @@ namespace Neos.IdentityServer.MultiFactor
 
                 NetTcpBinding tcp = new NetTcpBinding(SecurityMode.Transport);
                 tcp.MaxConnections = 256;
+                tcp.MaxReceivedMessageSize = 2147483647;
                 tcp.Security.Transport.ClientCredentialType = TcpClientCredentialType.Windows;
 
                 List<IAuthorizationPolicy> policies = new List<IAuthorizationPolicy>();
@@ -1294,6 +1295,7 @@ namespace Neos.IdentityServer.MultiFactor
             }
             NetTcpBinding tcp = new NetTcpBinding(SecurityMode.Transport);
             tcp.Security.Transport.ClientCredentialType = TcpClientCredentialType.Windows;
+            tcp.MaxReceivedMessageSize = 2147483647;
 
             if (useEncryption)
             {

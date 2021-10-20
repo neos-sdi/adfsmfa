@@ -550,6 +550,15 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Register Device.
+        /// </summary>
+        public static string HtmlUIMRegisterDevice {
+            get {
+                return ResourceManager.GetString("HtmlUIMRegisterDevice", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à You must :.
         /// </summary>
         public static string HtmlUIMustPrepareLabel {

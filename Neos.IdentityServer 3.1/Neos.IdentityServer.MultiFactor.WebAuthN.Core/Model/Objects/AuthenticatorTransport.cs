@@ -49,21 +49,5 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Objects
         /// </summary>
         [EnumMember(Value = "internal")]
         Internal,
-
-        /// <summary>
-        /// Indicates the respective authenticator can be contacted over removable Lightning.
-        /// </summary>
-        [EnumMember(Value = "lightning")]
-        Lightning
-    }
-
-    [Flags]
-    public enum FIDOU2FTransports
-    {
-        bluetoothRadio = 128,
-        bluetoothLowEnergyRadio = 64,
-        uSB = 32,
-        nFC = 16,
-        uSBInternal = 8
     }
 }

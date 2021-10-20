@@ -625,7 +625,7 @@
     <value>Timestamp Drift Tolerance</value>
   </data>
   <data name="CTRLWEBAUTHNEXTENSIONS" xml:space="preserve">
-    <value>Extensions (authnSe)</value>
+    <value>Extensions (exts)</value>
   </data>
   <data name="CTRLWEBAUTHNRESIDENTKEY" xml:space="preserve">
     <value>Require resident Key</value>
@@ -728,5 +728,8 @@
   </data>
   <data name="CTRLSECGENRSAKEY" xml:space="preserve">
     <value>RSA Master Key</value>
+  </data>
+  <data name="CTRLWEBAUTHNCONTRAINEDMETADATA" xml:space="preserve">
+    <value>Use Constrained Metadata Service (for ADFS farm that has no internet access)</value>
   </data>
 </root>

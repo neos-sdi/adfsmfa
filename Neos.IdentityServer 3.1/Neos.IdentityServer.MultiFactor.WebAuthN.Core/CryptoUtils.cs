@@ -29,15 +29,12 @@
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
 
+using Neos.IdentityServer.MultiFactor.WebAuthN.Library.ASN;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
-using Neos.IdentityServer.MultiFactor.WebAuthN.Library.ASN;
-using Neos.IdentityServer.MultiFactor.WebAuthN.Objects;
-
 
 namespace Neos.IdentityServer.MultiFactor.WebAuthN
 {
@@ -72,29 +69,73 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
             }
         }
 
-		public static HashAlgorithmName HashAlgFromCOSEAlg(int alg)
+        public static HashAlgorithmName HashAlgFromCOSEAlg(int alg)
         {
-            switch ((COSE.Algorithm)alg)
+            switch ((COSE.Algorithm)alg           )
             {
-                case COSE.Algorithm.RS1: return HashAlgorithmName.SHA1;
-                case COSE.Algorithm.ES256: return HashAlgorithmName.SHA256;
-                case COSE.Algorithm.ES384: return HashAlgorithmName.SHA384;
-                case COSE.Algorithm.ES512: return HashAlgorithmName.SHA512;
-                case COSE.Algorithm.PS256: return HashAlgorithmName.SHA256;
-                case COSE.Algorithm.PS384: return HashAlgorithmName.SHA384;
-                case COSE.Algorithm.PS512: return HashAlgorithmName.SHA512;
-                case COSE.Algorithm.RS256: return HashAlgorithmName.SHA256;
-                case COSE.Algorithm.RS384: return HashAlgorithmName.SHA384;
-                case COSE.Algorithm.RS512: return HashAlgorithmName.SHA512;
-                case (COSE.Algorithm)4: return HashAlgorithmName.SHA1;
-                case (COSE.Algorithm)11: return HashAlgorithmName.SHA256;
-                case (COSE.Algorithm)12: return HashAlgorithmName.SHA384;
-                case (COSE.Algorithm)13: return HashAlgorithmName.SHA512;
-                case COSE.Algorithm.EdDSA: return HashAlgorithmName.SHA512;
+                case COSE.Algorithm.RS1:
+                    return HashAlgorithmName.SHA1;
+                case COSE.Algorithm.ES256:
+                    return HashAlgorithmName.SHA256;
+                case COSE.Algorithm.ES384:
+                    return HashAlgorithmName.SHA384;
+                case COSE.Algorithm.ES512:
+                    return HashAlgorithmName.SHA512;
+                case COSE.Algorithm.PS256:
+                    return HashAlgorithmName.SHA256;
+                case COSE.Algorithm.PS384:
+                    return HashAlgorithmName.SHA384;
+                case COSE.Algorithm.PS512:
+                    return HashAlgorithmName.SHA512;
+                case COSE.Algorithm.RS256:
+                    return HashAlgorithmName.SHA256;
+                case COSE.Algorithm.RS384:
+                    return HashAlgorithmName.SHA384;
+                case COSE.Algorithm.RS512:
+                    return HashAlgorithmName.SHA512;
+                case COSE.Algorithm.ES256K:
+                    return HashAlgorithmName.SHA256;
+                case (COSE.Algorithm)4:
+                    return HashAlgorithmName.SHA1;
+                case (COSE.Algorithm)11:
+                    return HashAlgorithmName.SHA256;
+                case (COSE.Algorithm)12:
+                    return HashAlgorithmName.SHA384;
+                case (COSE.Algorithm)13:
+                    return HashAlgorithmName.SHA512;
+                case COSE.Algorithm.EdDSA:
+                    return HashAlgorithmName.SHA512;
                 default:
                     throw new VerificationException("Unrecognized COSE alg value");
             };
-        }        
+        }
+
+        public static bool ValidateTrustChain(X509Certificate2[] trustPath, X509Certificate2[] attestationRootCertificates)
+        {
+            foreach (var attestationRootCert in attestationRootCertificates)
+            {
+                var chain = new X509Chain();
+                chain.ChainPolicy.ExtraStore.Add(attestationRootCert);
+                chain.ChainPolicy.RevocationMode = X509RevocationMode.NoCheck;
+                chain.ChainPolicy.VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority;
+                if (trustPath.Length > 1)
+                {
+                    foreach (var cert in trustPath.Skip(1).Reverse())
+                    {
+                        chain.ChainPolicy.ExtraStore.Add(cert);
+                    }
+                }
+                var valid = chain.Build(trustPath[0]);
+
+                // because we are using AllowUnknownCertificateAuthority we have to verify that the root matches ourselves
+                var chainRoot = chain.ChainElements[chain.ChainElements.Count - 1].Certificate;
+                valid = valid && chainRoot.RawData.SequenceEqual(attestationRootCert.RawData);
+
+                if (true == valid)
+                    return true;
+            }
+            return false;
+        }
 
         public static byte[] SigFromEcDsaSig(byte[] ecDsaSig, int keySize)
         {
@@ -200,11 +241,10 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
             }
             return cdp;
         }
+
         public static bool IsCertInCRL(byte[] crl, X509Certificate2 cert)
         {
-            var pemCRL = System.Text.Encoding.ASCII.GetString(crl);
-            var crlBytes = PemToBytes(pemCRL);
-            var asnData = AsnElt.Decode(crlBytes);
+            var asnData = AsnElt.Decode(crl);
             if (7 > asnData.Sub[0].Sub.Length)
                 return false; // empty CRL
 

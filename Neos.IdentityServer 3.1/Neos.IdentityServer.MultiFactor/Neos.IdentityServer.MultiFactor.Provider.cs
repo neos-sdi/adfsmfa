@@ -399,9 +399,11 @@ namespace Neos.IdentityServer.MultiFactor
                     case ProviderPageMode.ManageOptions: // Manage Options
                         usercontext.WizContext = WizardContextMode.ManageOptions;
                         result = TryManageOptions(usercontext, context, proofData, request, out claims);
+                        Utilities.CheckForUserAgent(Config, usercontext, request.UserAgent);
                         break;
                     case ProviderPageMode.SelectOptions:
                         result = TrySelectOptions(usercontext, context, proofData, request, out claims);
+                        Utilities.CheckForUserAgent(Config, usercontext, request.UserAgent);
                         break;
                     case ProviderPageMode.ChooseMethod:
                         result = TryChooseMethod(usercontext, context, proofData, request, out claims);

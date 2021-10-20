@@ -424,9 +424,9 @@ namespace Neos.IdentityServer.MultiFactor
                         try
                         {
                             if (string.IsNullOrEmpty(cfg.WebAuthNProvider.FullQualifiedImplementation))
-                                provider = LoadWebAuthNProvider();
+                                provider = LoadWebAuthNProvider(cfg.WebAuthNProvider.Options.ConstrainedMetadataRepository);
                             else
-                                provider = LoadExternalProvider(cfg.WebAuthNProvider.FullQualifiedImplementation);
+                                provider = LoadWebAuthNProvider(cfg.WebAuthNProvider.Options.ConstrainedMetadataRepository, cfg.WebAuthNProvider.FullQualifiedImplementation);
                             if (provider == null)
                                 provider = new NeosPlugProvider(PreferredMethod.Biometrics);
                             if (provider.Kind == PreferredMethod.Biometrics)
@@ -482,12 +482,33 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// LoadWebAuthNProvider method implmentation
         /// </summary>
-        private static IExternalProvider LoadWebAuthNProvider()
+        private static IExternalProvider LoadWebAuthNProvider(bool constrained)
         {
             Assembly assembly = Assembly.Load(@"Neos.IdentityServer.MultiFactor.WebAuthN.Provider, Version=3.0.0.0, Culture=neutral, " + Utilities.GetAssemblyPublicKey());
             Type _typetoload = assembly.GetType(@"Neos.IdentityServer.MultiFactor.WebAuthN.NeosWebAuthNProvider");
             if (_typetoload.IsClass && !_typetoload.IsAbstract && _typetoload.GetInterface("IExternalProvider") != null)
-                return (IExternalProvider)Activator.CreateInstance(_typetoload, true); // Allow Calling internal Constructors
+                return (IExternalProvider)Activator.CreateInstance(_typetoload, new object[] { constrained }); // Allow Calling internal Constructors
+            else
+                return null;
+        }
+
+        /// <summary>
+        /// LoadWebAuthNProvider method implmentation
+        /// </summary>
+        private static IExternalProvider LoadWebAuthNProvider(bool constrained, string AssemblyFulldescription)
+        {
+            if (string.IsNullOrEmpty(AssemblyFulldescription))
+                return null;
+            Assembly assembly = Assembly.Load(Utilities.ParseAssembly(AssemblyFulldescription));
+            if (assembly == null)
+                return null;
+
+            Type _typetoload = assembly.GetType(Utilities.ParseType(AssemblyFulldescription));
+            if (_typetoload == null)
+                return null;
+
+            if (_typetoload.IsClass && !_typetoload.IsAbstract && _typetoload.GetInterface("IExternalProvider") != null)
+                return (IExternalProvider)Activator.CreateInstance(_typetoload, new object[] { constrained }); // Allow Calling internal Constructors
             else
                 return null;
         }
@@ -833,9 +854,9 @@ namespace Neos.IdentityServer.MultiFactor
                             try
                             {
                                 if (string.IsNullOrEmpty(cfg.WebAuthNProvider.FullQualifiedImplementation))
-                                    provider = LoadWebAuthNProvider();
+                                    provider = LoadWebAuthNProvider(cfg.WebAuthNProvider.Options.ConstrainedMetadataRepository);
                                 else
-                                    provider = LoadExternalProvider(cfg.WebAuthNProvider.FullQualifiedImplementation);
+                                    provider = LoadWebAuthNProvider(cfg.WebAuthNProvider.Options.ConstrainedMetadataRepository, cfg.WebAuthNProvider.FullQualifiedImplementation);
                                 if (provider == null)
                                     provider = new NeosPlugProvider(PreferredMethod.Biometrics);
                                 if (provider.Kind == PreferredMethod.Biometrics)
@@ -3994,10 +4015,23 @@ namespace Neos.IdentityServer.MultiFactor
         internal static void CheckForUserAgent(MFAConfig config, AuthenticationContext usercontext, string userAgent)
         {
             string usragt = userAgent;
-            if (string.IsNullOrEmpty(usragt))
+            if (string.IsNullOrEmpty(usragt))  // Device Authentication Or Certificate Authentication : TODO
+            {
+                usercontext.DirectLogin = false;
                 return;
+            }
             if (usragt.ToLower().Contains("trident/7.0") || usragt.ToLower().Contains("msie"))
+            {
                 usercontext.BioNotSupported = true;
+                return;
+            }
+            if (usragt.ToLower().Contains("macintosh") || usragt.ToLower().Contains("iphone") || usragt.ToLower().Contains("ipad") || usragt.ToLower().Contains("ipod"))
+            {
+                usercontext.DirectLogin = false;
+                return;
+            }
+            usercontext.BioNotSupported = false;
+            usercontext.DirectLogin = config.WebAuthNProvider.DirectLogin;
         }
 
         /// <summary>

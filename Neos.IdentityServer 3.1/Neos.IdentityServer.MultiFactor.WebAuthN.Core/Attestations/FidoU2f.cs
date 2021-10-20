@@ -28,53 +28,43 @@
 // https://github.com/neos-sdi/adfsmfa                                                                                                                                                      //
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
+using Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor;
+using Neos.IdentityServer.MultiFactor.WebAuthN.Objects;
 using System;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
-using Neos.IdentityServer.MultiFactor.WebAuthN.Objects;
-using Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor;
-using System.Diagnostics;
-using System.Threading.Tasks;
 
 namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
 {
-    internal class FidoU2f : AttestationFormat
+    internal sealed class FidoU2f : AttestationVerifier
     {
-        private readonly IMetadataService _metadataService;
-        private readonly bool _requireValidAttestationRoot;
-
-        public FidoU2f(CBORObject attStmt, byte[] authenticatorData, byte[] clientDataHash, IMetadataService metadataService, bool requireValidAttestationRoot) : base(attStmt, authenticatorData, clientDataHash)
-        {
-            _metadataService = metadataService;
-            _requireValidAttestationRoot = requireValidAttestationRoot;
-        }        
-
-        public override void Verify()
+        public override (AttestationType, X509Certificate2[]) Verify()
         {
             // verify that aaguid is 16 empty bytes (note: required by fido2 conformance testing, could not find this in spec?)
             if (0 != AuthData.AttestedCredentialData.AaGuid.CompareTo(Guid.Empty))
                 throw new VerificationException("Aaguid was not empty parsing fido-u2f atttestation statement");
 
+            // https://www.w3.org/TR/webauthn/#fido-u2f-attestation
             // 1. Verify that attStmt is valid CBOR conforming to the syntax defined above and perform CBOR decoding on it to extract the contained fields.
+            // (handled in base class)
             if (null == X5c || CBORType.Array != X5c.Type || X5c.Count != 1)
                 throw new VerificationException("Malformed x5c in fido - u2f attestation");
 
-            // 2a. the attestation certificate attestnCert MUST be the first element in the array
+            // 2a. Check that x5c has exactly one element and let attCert be that element.
             if (null == X5c.Values || 0 == X5c.Values.Count ||
                 CBORType.ByteString != X5c.Values.First().Type ||
                 0 == X5c.Values.First().GetByteString().Length)
                 throw new VerificationException("Malformed x5c in fido-u2f attestation");
 
-            var cert = new X509Certificate2(X5c.Values.First().GetByteString());
+            var attCert = new X509Certificate2(X5c.Values.First().GetByteString());
 
             // TODO : Check why this variable isn't used. Remove it or use it.
+            var u2ftransports = U2FTransportsFromAttnCert(attCert.Extensions);
 
-            var u2ftransports = U2FTransportsFromAttnCert(cert.Extensions);
-			
             // 2b. If certificate public key is not an Elliptic Curve (EC) public key over the P-256 curve, terminate this algorithm and return an appropriate error
-            var pubKey = cert.GetECDsaPublicKey();
+            var pubKey = attCert.GetECDsaPublicKey();
             var keyParams = pubKey.ExportParameters(false);
 
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
@@ -87,12 +77,18 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
                 if (!keyParams.Curve.Oid.Value.Equals(ECCurve.NamedCurves.nistP256.Oid.Value))
                     throw new VerificationException("Attestation certificate public key is not an Elliptic Curve (EC) public key over the P-256 curve");
             }
-            // 3. Extract the claimed rpIdHash from authenticatorData, and the claimed credentialId and credentialPublicKey from authenticatorData
-            // see rpIdHash, credentialId, and credentialPublicKey variables
 
-            // 4. Convert the COSE_KEY formatted credentialPublicKey (see Section 7 of [RFC8152]) to CTAP1/U2F public Key format
+            // 3. Extract the claimed rpIdHash from authenticatorData, and the claimed credentialId and credentialPublicKey from authenticatorData
+            // see rpIdHash, credentialId, and credentialPublicKey members of base class AuthenticatorData (AuthData)
+
+            // 4. Convert the COSE_KEY formatted credentialPublicKey (see Section 7 of [RFC8152]) to CTAP1/U2F public Key format (Raw ANSI X9.62 public key format)
+            // 4a. Let x be the value corresponding to the "-2" key (representing x coordinate) in credentialPublicKey, and confirm its size to be of 32 bytes. If size differs or "-2" key is not found, terminate this algorithm and return an appropriate error
             var x = CredentialPublicKey[CBORObject.FromObject(COSE.KeyTypeParameter.X)].GetByteString();
+
+            // 4b. Let y be the value corresponding to the "-3" key (representing y coordinate) in credentialPublicKey, and confirm its size to be of 32 bytes. If size differs or "-3" key is not found, terminate this algorithm and return an appropriate error
             var y = CredentialPublicKey[CBORObject.FromObject(COSE.KeyTypeParameter.Y)].GetByteString();
+
+            // 4c.Let publicKeyU2F be the concatenation 0x04 || x || y
             var publicKeyU2F = new byte[1] { 0x4 }.Concat(x).Concat(y).ToArray();
 
             // 5. Let verificationData be the concatenation of (0x00 || rpIdHash || clientDataHash || credentialId || publicKeyU2F)
@@ -120,37 +116,16 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
 
             var coseAlg = CredentialPublicKey[CBORObject.FromObject(COSE.KeyCommonParameter.Alg)].AsInt32();
             var hashAlg = CryptoUtils.HashAlgFromCOSEAlg(coseAlg);
-			
+
             if (true != pubKey.VerifyData(verificationData, ecsig, hashAlg))
                 throw new VerificationException("Invalid fido-u2f attestation signature");
 
-            if (_requireValidAttestationRoot)
-            {
-                // 7. Optionally, inspect x5c and consult externally provided knowledge to determine whether attStmt conveys a Basic or AttCA attestation
-                var trustPath = X5c.Values
-                .Select(z => new X509Certificate2(z.GetByteString()))
+            // 7. Optionally, inspect x5c and consult externally provided knowledge to determine whether attStmt conveys a Basic or AttCA attestation
+            var trustPath = X5c.Values
+                .Select(xx => new X509Certificate2(xx.GetByteString()))
                 .ToArray();
 
-                var aaguid = AaguidFromAttnCertExts(cert.Extensions);
-
-                if (null != _metadataService && null != aaguid)
-                {
-                    var guidAaguid = AttestedCredentialData.FromBigEndian(aaguid);
-                    var entry = _metadataService.GetEntry(guidAaguid);
-
-                    if (null != entry && null != entry.MetadataStatement)
-                    {
-                        var attestationRootCertificates = entry.MetadataStatement.AttestationRootCertificates
-                            .Select(z => new X509Certificate2(Convert.FromBase64String(z)))
-                            .ToArray();
-
-                        if (false == ValidateTrustChain(trustPath, attestationRootCertificates))
-                        {
-                            throw new VerificationException("Invalid certificate chain in U2F attestation");
-                        }
-                    }
-                }
-            }
+            return (AttestationType.AttCa, trustPath);
         }
     }
 }

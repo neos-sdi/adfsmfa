@@ -211,6 +211,8 @@ namespace Neos.IdentityServer.MultiFactor
     {
         private static readonly char sep = Path.DirectorySeparatorChar;
         internal static string SystemCacheFile = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + sep + "MFA" + sep + "Config" + sep + "system.db";
+        internal static string PayloadCacheFile = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + sep + "MFA" + sep + "Config" + sep + "blob.db";
+        internal static string PayloadUrlDownloadFileBlob = "https://mds.fidoalliance.org/";
 #pragma warning disable IDE0044 // Ajouter un modificateur readonly
         private static object obj = new object();
         private static byte[] _systemkey = null;

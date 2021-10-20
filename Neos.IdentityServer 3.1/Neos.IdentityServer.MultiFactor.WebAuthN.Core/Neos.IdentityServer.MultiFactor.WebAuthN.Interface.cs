@@ -18,15 +18,16 @@
 
 using Neos.IdentityServer.MultiFactor.WebAuthN.Objects;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Neos.IdentityServer.MultiFactor.WebAuthN
 {
     public interface IWebAuthN
     {
         AssertionOptions GetAssertionOptions(IEnumerable<PublicKeyCredentialDescriptor> allowedCredentials, UserVerificationRequirement? userVerification, AuthenticationExtensionsClientInputs extensions = null);
-        AssertionVerificationResult SetAssertionResult(AuthenticatorAssertionRawResponse assertionResponse, AssertionOptions originalOptions, byte[] storedPublicKey, uint storedSignatureCounter, IsUserHandleOwnerOfCredentialId isUserHandleOwnerOfCredentialIdCallback, byte[] requestTokenBindingId = null);
-        RegisterCredentialResult SetRegisterCredentialResult(AuthenticatorAttestationRawResponse attestationResponse, RegisterCredentialOptions origChallenge, IsCredentialIdUniqueToUserDelegate isCredentialIdUniqueToUser, byte[] requestTokenBindingId = null);
-        RegisterCredentialOptions GetRegisterCredentialOptions(Fido2User user, List<PublicKeyCredentialDescriptor> excludeCredentials, AuthenticationExtensionsClientInputs extensions = null);
-        RegisterCredentialOptions GetRegisterCredentialOptions(Fido2User user, List<PublicKeyCredentialDescriptor> excludeCredentials, AuthenticatorSelection authenticatorSelection, AttestationConveyancePreference attestationPreference, AuthenticationExtensionsClientInputs extensions = null);
+        Task<AssertionVerificationResult> SetAssertionResult(AuthenticatorAssertionRawResponse assertionResponse, AssertionOptions originalOptions, byte[] storedPublicKey, uint storedSignatureCounter, IsUserHandleOwnerOfCredentialIdAsync isUserHandleOwnerOfCredentialIdCallback, byte[] requestTokenBindingId = null);
+        Task<CredentialMakeResult> SetRegisterCredentialResult(AuthenticatorAttestationRawResponse attestationResponse, CredentialCreateOptions origChallenge, IsCredentialIdUniqueToUserAsyncDelegate isCredentialIdUniqueToUser, byte[] requestTokenBindingId = null);
+        CredentialCreateOptions GetRegisterCredentialOptions(Fido2User user, List<PublicKeyCredentialDescriptor> excludeCredentials, AuthenticationExtensionsClientInputs extensions = null);
+        CredentialCreateOptions GetRegisterCredentialOptions(Fido2User user, List<PublicKeyCredentialDescriptor> excludeCredentials, AuthenticatorSelection authenticatorSelection, AttestationConveyancePreference attestationPreference, AuthenticationExtensionsClientInputs extensions = null);
     }
 }

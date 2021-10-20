@@ -12,27 +12,20 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                               //
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
-using Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor;
 using System;
 using System.Security.Cryptography.X509Certificates;
 using System.Linq;
 using Neos.IdentityServer.MultiFactor.WebAuthN.Objects;
 using Neos.IdentityServer.MultiFactor.WebAuthN.Library.ASN;
+using Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor;
 
 namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
 {
-    public abstract class AttestationFormat
+    public abstract class AttestationVerifier
     {
         public CBORObject attStmt;
         public byte[] authenticatorData;
         public byte[] clientDataHash;
-
-        public AttestationFormat(CBORObject attStmt, byte[] authenticatorData, byte[] clientDataHash)
-        {
-            this.attStmt = attStmt;
-            this.authenticatorData = authenticatorData;
-            this.clientDataHash = clientDataHash;
-        }
 
         internal CBORObject Sig => attStmt["sig"];
         internal CBORObject X5c => attStmt["x5c"];
@@ -50,82 +43,64 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
                 return data;
             }
         }
-
         internal static byte[] AaguidFromAttnCertExts(X509ExtensionCollection exts)
         {
             byte[] aaguid = null;
-            foreach (var ext in exts)
+            var ext = exts.Cast<X509Extension>().FirstOrDefault(e => e.Oid.Value == "1.3.6.1.4.1.45724.1.1.4"); // id-fido-gen-ce-aaguid
+            if (null != ext)
             {
-                if (ext.Oid.Value.Equals("1.3.6.1.4.1.45724.1.1.4")) // id-fido-gen-ce-aaguid
-                {
-                	var decodedAaguid = AsnElt.Decode(ext.RawData);
-                    decodedAaguid.CheckTag(AsnElt.OCTET_STRING);
-                    decodedAaguid.CheckPrimitive();
-                    aaguid = decodedAaguid.GetOctetString(); 
-                    
-                    //The extension MUST NOT be marked as critical
-                    if (true == ext.Critical)
-                        throw new VerificationException("extension MUST NOT be marked as critical");
-                }
+                var decodedAaguid = AsnElt.Decode(ext.RawData);
+                decodedAaguid.CheckTag(AsnElt.OCTET_STRING);
+                decodedAaguid.CheckPrimitive();
+                aaguid = decodedAaguid.GetOctetString();
+
+                //The extension MUST NOT be marked as critical
+                if (true == ext.Critical)
+                    throw new VerificationException("extension MUST NOT be marked as critical");
             }
+
             return aaguid;
         }
-
         internal static bool IsAttnCertCACert(X509ExtensionCollection exts)
         {
-            foreach (var ext in exts)
+            var ext = exts.Cast<X509Extension>().FirstOrDefault(e => e.Oid.Value == "2.5.29.19");
+            if (null != ext && ext is X509BasicConstraintsExtension baseExt)
             {
-                if (ext.Oid.Value.Equals("2.5.29.19") && ext is X509BasicConstraintsExtension baseExt)
-                {
-                    return baseExt.CertificateAuthority;
-                }
+                return baseExt.CertificateAuthority;
             }
+
             return true;
         }
-
-        internal static int U2FTransportsFromAttnCert(X509ExtensionCollection exts)
+        internal static byte U2FTransportsFromAttnCert(X509ExtensionCollection exts)
         {
-            var u2ftransports = 0;
-            foreach (var ext in exts)
+            var u2ftransports = new byte();
+            var ext = exts.Cast<X509Extension>().FirstOrDefault(e => e.Oid.Value == "1.3.6.1.4.1.45724.2.1.1");
+            if (null != ext)
             {
-                if (ext.Oid.Value.Equals("1.3.6.1.4.1.45724.2.1.1"))
+                var decodedU2Ftransports = AsnElt.Decode(ext.RawData);
+                decodedU2Ftransports.CheckPrimitive();
+
+                // some certificates seem to have this encoded as an octet string
+                // instead of a bit string, attempt to correct
+                if (AsnElt.OCTET_STRING == decodedU2Ftransports.TagValue)
                 {
-                	var decodedU2Ftransports = AsnElt.Decode(ext.RawData);
-                    decodedU2Ftransports.CheckTag(AsnElt.BIT_STRING);
-                    decodedU2Ftransports.CheckPrimitive();
-                    u2ftransports = decodedU2Ftransports.GetBitString()[0];
+                    ext.RawData[0] = AsnElt.BIT_STRING;
+                    decodedU2Ftransports = AsnElt.Decode(ext.RawData);
                 }
+                decodedU2Ftransports.CheckTag(AsnElt.BIT_STRING);
+                u2ftransports = decodedU2Ftransports.GetBitString()[0];
             }
+
             return u2ftransports;
         }
-
-		internal bool ValidateTrustChain(X509Certificate2[] trustPath, X509Certificate2[] attestationRootCertificates)
+        public virtual (AttestationType, X509Certificate2[]) Verify(CBORObject attStmt, byte[] authenticatorData, byte[] clientDataHash)
         {
-            foreach (var attestationRootCert in attestationRootCertificates)
-            {
-                var chain = new X509Chain();
-                chain.ChainPolicy.ExtraStore.Add(attestationRootCert);
-                chain.ChainPolicy.RevocationMode = X509RevocationMode.NoCheck;
-                chain.ChainPolicy.VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority;
-                if (trustPath.Length > 1)
-                {
-                    foreach (var cert in trustPath.Skip(1).Reverse())
-                    {
-                        chain.ChainPolicy.ExtraStore.Add(cert);
-                    }
-                }
-                var valid = chain.Build(trustPath[0]);
-
-                // because we are using AllowUnknownCertificateAuthority we have to verify that the root matches ourselves
-                var chainRoot = chain.ChainElements[chain.ChainElements.Count - 1].Certificate;
-                valid = valid && chainRoot.RawData.SequenceEqual(attestationRootCert.RawData);
-
-                if (true == valid)
-                    return true;
-            }
-            return false;
+            this.attStmt = attStmt;
+            this.authenticatorData = authenticatorData;
+            this.clientDataHash = clientDataHash;
+            return Verify();
         }
 
-        public abstract void Verify();
+        public abstract (AttestationType, X509Certificate2[]) Verify();
     }
 }

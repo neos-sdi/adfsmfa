@@ -291,4 +291,7 @@
   <data name="HtmlUIMNickNamesMessage" xml:space="preserve">
     <value>Indtast navnet på din biometriske enhed, eller lad tomrummet være, og vælg derefter "Fortsæt"</value>
   </data>
+  <data name="HtmlUIMRegisterDevice" xml:space="preserve">
+    <value>Registrer enhed</value>
+  </data>
 </root>

@@ -18,7 +18,7 @@ using Newtonsoft.Json.Converters;
 
 namespace Neos.IdentityServer.MultiFactor.WebAuthN.Objects
 {
-    /// <summary>
+    //// <summary>
     /// PublicKeyCredentialType.
     /// https://w3c.github.io/webauthn/#enumdef-publickeycredentialtype
     /// </summary>

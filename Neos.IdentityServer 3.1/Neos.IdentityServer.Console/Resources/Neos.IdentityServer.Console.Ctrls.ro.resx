@@ -565,7 +565,7 @@
     <value>Rânduri maxime</value>
   </data>
   <data name="CTRLWEBAUTHNEXTENSIONS" xml:space="preserve">
-    <value>Extensii (authnSe)</value>
+    <value>Extensii (exts)</value>
   </data>
   <data name="CTRLWEBAUTHNRESIDENTKEY" xml:space="preserve">
     <value>Necesită rezident cheie</value>
@@ -728,5 +728,8 @@
   </data>
   <data name="CTRLSECGENRSAKEY" xml:space="preserve">
     <value>Cheie principală RSA</value>
+  </data>
+  <data name="CTRLWEBAUTHNCONTRAINEDMETADATA" xml:space="preserve">
+    <value>Utilizarea serviciului de metadate constrâns (pentru ferma ADFS care nu are acces la internet)</value>
   </data>
 </root>

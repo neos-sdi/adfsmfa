@@ -294,4 +294,7 @@ Sie können von jetzt an Multi-Factor-Authentifizierung verwenden.</value>
   <data name="HtmlUIMNickNamesMessage" xml:space="preserve">
     <value>Geben Sie den Namen Ihres biometrischen Geräts ein oder lassen Sie das Vakuum und wählen Sie "Weiter"</value>
   </data>
+  <data name="HtmlUIMRegisterDevice" xml:space="preserve">
+    <value>Gerät registrieren</value>
+  </data>
 </root>

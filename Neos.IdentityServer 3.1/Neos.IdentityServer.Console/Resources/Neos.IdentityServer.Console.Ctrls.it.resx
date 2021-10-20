@@ -565,7 +565,7 @@
     <value>Numero massimo di righe</value>
   </data>
   <data name="CTRLWEBAUTHNEXTENSIONS" xml:space="preserve">
-    <value>Estensioni (authnSe)</value>
+    <value>Estensioni (exts)</value>
   </data>
   <data name="CTRLWEBAUTHNRESIDENTKEY" xml:space="preserve">
     <value>Richiedi chiave residente</value>
@@ -728,5 +728,8 @@
   </data>
   <data name="CTRLSECGENRSAKEY" xml:space="preserve">
     <value>Chiave master RSA</value>
+  </data>
+  <data name="CTRLWEBAUTHNCONTRAINEDMETADATA" xml:space="preserve">
+    <value>Utilizzare il servizio metadati vincolati (per la farm ADFS che non dispone di accesso a Internet)</value>
   </data>
 </root>

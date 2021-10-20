@@ -1394,7 +1394,7 @@ namespace Neos.IdentityServer.MultiFactor
             result += "function OnAutoPost(frm)" + CR;
             result += "{" + CR;
             result += "   LoginWebAuthN(frm);" + CR;
-            result += "   return true;" + CR;
+            result += "   return false;" + CR;
             result += "}" + CR;
             result += CR;
 
@@ -2398,6 +2398,13 @@ namespace Neos.IdentityServer.MultiFactor
 
             if (usercontext.WizPageID == 1)
             {
+                result += "function OnAutoPost(frm)" + CR;
+                result += "{" + CR;
+                result += "   RegisterWebAuthN(frm);" + CR;
+                result += "   return true;" + CR;
+                result += "}" + CR;
+                result += CR;
+
                 result += GetWebAuthNAttestationScript(usercontext);
                 result += GetFormHtmlWebAuthNSupport(usercontext);
             }
@@ -2413,15 +2420,22 @@ namespace Neos.IdentityServer.MultiFactor
             string result = string.Empty;
             if (usercontext.WizPageID == 1)
             {
-                result += "<script type=\"text/javascript\">" + CR;
+                result += "<script type='text/javascript'>" + CR;
                 result += "if (window.addEventListener)" + CR;
                 result += "{" + CR;
-                result += "   window.addEventListener('load', RegisterWebAuthN, false);" + CR;
+                if (usercontext.DirectLogin)
+                    result += "   window.addEventListener('load', OnAutoPost, false);" + CR;
+                else
+                    result += "   window.addEventListener('submit', RegisterWebAuthN, false);" + CR;
                 result += "}" + CR;
                 result += "else if (window.attachEvent)" + CR;
                 result += "{" + CR;
-                result += "   window.attachEvent('onload', RegisterWebAuthN);" + CR;
+                if (usercontext.DirectLogin)
+                    result += "   window.attachEvent('load', OnAutoPost);" + CR;
+                else
+                    result += "   window.attachEvent('submit', RegisterWebAuthN);" + CR;
                 result += "}" + CR;
+                result += CR + CR;
                 result += "</script>" + CR;
             }
 
@@ -2508,6 +2522,11 @@ namespace Neos.IdentityServer.MultiFactor
                     result += "<br/>";
                     result += "<div class=\"fieldMargin smallText\">" + prov.GetUIMessage(usercontext) + "</div>";
                     result += "<br/>";
+                    if (!usercontext.DirectLogin)
+                    {
+                        result += "<input id=\"signin\" type=\"submit\" class=\"submit\" name=\"signin\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlUIMRegisterDevice") + "\" />";
+                        result += "<br/>";
+                    }
                     break;
                 case 3: // Successfull test
                     result += "<br/>";

@@ -50,48 +50,51 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
             _config = config;
             _crypto = RandomNumberGenerator.Create();
             _metadataService = metadataService;
+            _metadataService.Timeout = config.Timeout;
+            _metadataService.TimestampDriftTolerance = config.TimestampDriftTolerance;
         }
 
         #region CredentialCreateOptions
         /// <summary>
-        /// GetCredentialCreateOptions method implementation
+        /// GetCredentialCreateOptions method implementation (RequestNewCredential)
         /// </summary>
         /// <returns>CredentialCreateOptions including a challenge to be sent to the browser/authr to create new credentials</returns>
         /// <param name="excludeCredentials">Recommended. This member is intended for use by Relying Parties that wish to limit the creation of multiple credentials for the same account on a single authenticator.The client is requested to return an error if the new credential would be created on an authenticator that also contains one of the credentials enumerated in this parameter.</param>
-        public RegisterCredentialOptions GetRegisterCredentialOptions(Fido2User user, List<PublicKeyCredentialDescriptor> excludeCredentials, AuthenticationExtensionsClientInputs extensions = null)
+        public CredentialCreateOptions GetRegisterCredentialOptions(Fido2User user, List<PublicKeyCredentialDescriptor> excludeCredentials, AuthenticationExtensionsClientInputs extensions = null)
         {
             return GetRegisterCredentialOptions(user, excludeCredentials, AuthenticatorSelection.Default, AttestationConveyancePreference.None, extensions);
         }
 
         /// <summary>
-        /// GetCredentialCreateOptions method implementation
+        /// GetCredentialCreateOptions method implementation (RequestNewCredential)
         /// </summary>
         /// <returns>CredentialCreateOptions including a challenge to be sent to the browser/authr to create new credentials</returns>
         /// <param name="attestationPreference">This member is intended for use by Relying Parties that wish to express their preference for attestation conveyance. The default is none.</param>
         /// <param name="excludeCredentials">Recommended. This member is intended for use by Relying Parties that wish to limit the creation of multiple credentials for the same account on a single authenticator.The client is requested to return an error if the new credential would be created on an authenticator that also contains one of the credentials enumerated in this parameter.</param>
-        public RegisterCredentialOptions GetRegisterCredentialOptions(Fido2User user, List<PublicKeyCredentialDescriptor> excludeCredentials, AuthenticatorSelection authenticatorSelection, AttestationConveyancePreference attestationPreference, AuthenticationExtensionsClientInputs extensions = null)
+        public CredentialCreateOptions GetRegisterCredentialOptions(Fido2User user, List<PublicKeyCredentialDescriptor> excludeCredentials, AuthenticatorSelection authenticatorSelection, AttestationConveyancePreference attestationPreference, AuthenticationExtensionsClientInputs extensions = null)
         {
             var challenge = new byte[_config.ChallengeSize];
             _crypto.GetBytes(challenge);
 
-            var options = RegisterCredentialOptions.Create(_config, challenge, user, authenticatorSelection, attestationPreference, excludeCredentials, extensions);
+            var options = CredentialCreateOptions.Create(_config, challenge, user, authenticatorSelection, attestationPreference, excludeCredentials, extensions);
             return options;
         }
         #endregion
 
         /// <summary>
-        /// Verifies the response from the browser/authr after creating new credentials
+        /// Verifies the response from the browser/authr after creating new credentials (MakeNewCredentialAsync)
         /// </summary>
         /// <param name="attestationResponse"></param>
         /// <param name="origChallenge"></param>
         /// <returns></returns>
-        public RegisterCredentialResult SetRegisterCredentialResult(AuthenticatorAttestationRawResponse attestationResponse, RegisterCredentialOptions origChallenge, IsCredentialIdUniqueToUserDelegate isCredentialIdUniqueToUser, byte[] requestTokenBindingId = null)
+        public async Task<CredentialMakeResult> SetRegisterCredentialResult(AuthenticatorAttestationRawResponse attestationResponse, CredentialCreateOptions origChallenge, IsCredentialIdUniqueToUserAsyncDelegate isCredentialIdUniqueToUser, byte[] requestTokenBindingId = null)
         {
             var parsedResponse = AuthenticatorAttestationResponse.Parse(attestationResponse);
-            var success = parsedResponse.VerifyCredentialCreateOptions(origChallenge, _config, isCredentialIdUniqueToUser, _metadataService, requestTokenBindingId);
+            var success = await parsedResponse.VerifyAsync(origChallenge, _config, isCredentialIdUniqueToUser, _metadataService, requestTokenBindingId);
+
             try
             {
-                return new RegisterCredentialResult
+                return new CredentialMakeResult
                 {
                     Status = "ok",
                     ErrorMessage = string.Empty,
@@ -100,7 +103,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
             }
             catch (Exception e)
             {
-                return new RegisterCredentialResult
+                return new CredentialMakeResult
                 {
                     Status = "error",
                     ErrorMessage = e.Message,
@@ -110,7 +113,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
         }
 
         /// <summary>
-        /// Returns AssertionOptions including a challenge to the browser/authr to assert existing credentials and authenticate a user.
+        /// Returns AssertionOptions including a challenge to the browser/authr to assert existing credentials and authenticate a user. (GetAssertionOptions)
         /// </summary>
         /// <returns></returns>
         public AssertionOptions GetAssertionOptions(IEnumerable<PublicKeyCredentialDescriptor> allowedCredentials, UserVerificationRequirement? userVerification, AuthenticationExtensionsClientInputs extensions = null)
@@ -123,28 +126,22 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
         }
 
         /// <summary>
-        /// Verifies the assertion response from the browser/authr to assert existing credentials and authenticate a user.
+        /// Verifies the assertion response from the browser/authr to assert existing credentials and authenticate a user. (MakeAssertionAsync)
         /// </summary>
         /// <returns></returns>
-        public AssertionVerificationResult SetAssertionResult(AuthenticatorAssertionRawResponse assertionResponse, AssertionOptions originalOptions, byte[] storedPublicKey,
-                                            uint storedSignatureCounter, IsUserHandleOwnerOfCredentialId isUserHandleOwnerOfCredentialIdCallback, byte[] requestTokenBindingId = null)
+        public Task<AssertionVerificationResult> SetAssertionResult(AuthenticatorAssertionRawResponse assertionResponse, AssertionOptions originalOptions, 
+                                                            byte[] storedPublicKey, uint storedSignatureCounter, IsUserHandleOwnerOfCredentialIdAsync isUserHandleOwnerOfCredentialIdCallback, byte[] requestTokenBindingId = null)
         {
             var parsedResponse = AuthenticatorAssertionResponse.Parse(assertionResponse);
-
-            var result = parsedResponse.Verify(originalOptions,
-                                                            _config.Origin,
-                                                            storedPublicKey,
-                                                            storedSignatureCounter,
-                                                            isUserHandleOwnerOfCredentialIdCallback,
-                                                            requestTokenBindingId);
-            return result;
+            var result = parsedResponse.VerifyAsync(originalOptions, _config.Origin, storedPublicKey, storedSignatureCounter, isUserHandleOwnerOfCredentialIdCallback, requestTokenBindingId);
+            return result; 
         }
     }
 
     /// <summary>
     /// Result of parsing and verifying attestation. Used to transport Public Key back to RP
     /// </summary>
-    public class RegisterCredentialResult : Fido2ResponseBase
+    public class CredentialMakeResult : Fido2ResponseBase
     {
         public AttestationVerificationSuccess Result { get; internal set; }
 
@@ -160,12 +157,25 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
         /// <summary>
         /// FromJson method implementation
         /// </summary>
-        public static RegisterCredentialResult FromJson(string json)
+        public static CredentialMakeResult FromJson(string json)
         {
-            return JsonConvert.DeserializeObject<RegisterCredentialResult>(json);
+            return JsonConvert.DeserializeObject<CredentialMakeResult>(json);
         }
         #endregion
     }
+
+    /// <summary>
+    /// Callback function used to validate that the CredentialID is unique to this User
+    /// </summary>
+    /// <param name="credentialIdUserParams"></param>
+    /// <returns></returns>
+    public delegate Task<bool> IsCredentialIdUniqueToUserAsyncDelegate(IsCredentialIdUniqueToUserParams credentialIdUserParams);
+    /// <summary>
+    /// Callback function used to validate that the Userhandle is indeed owned of the CrendetialId
+    /// </summary>
+    /// <param name="credentialIdUserHandleParams"></param>
+    /// <returns></returns>
+    public delegate Task<bool> IsUserHandleOwnerOfCredentialIdAsync(IsUserHandleOwnerOfCredentialIdParams credentialIdUserHandleParams);
 
     /// <summary>
     /// Callback function used to validate that the CredentialID is unique to this User

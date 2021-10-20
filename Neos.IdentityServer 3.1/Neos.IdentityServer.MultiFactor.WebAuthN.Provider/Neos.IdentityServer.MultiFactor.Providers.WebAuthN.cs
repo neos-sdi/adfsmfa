@@ -15,7 +15,6 @@
 // https://github.com/neos-sdi/adfsmfa                                                                                                                                                      //
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
-using Microsoft.IdentityModel.Logging;
 using Neos.IdentityServer.MultiFactor.Common;
 using Neos.IdentityServer.MultiFactor.Data;
 using Neos.IdentityServer.MultiFactor.WebAuthN.Metadata;
@@ -25,8 +24,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
 
 namespace Neos.IdentityServer.MultiFactor.WebAuthN
@@ -37,7 +36,8 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
         private bool _isinitialized = false;
         private ForceWizardMode _forceenrollment = ForceWizardMode.Disabled;
         private IWebAuthN _webathn;
-        private SimpleMetadataService _simplemetadataservice;
+
+        private MFAMetadataService _metadataservice;
 
         public MFAConfig Config { get; set; }
         public bool DirectLogin { get; private set; }
@@ -45,24 +45,32 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
         public string ConveyancePreference { get; private set; }
         public string Attachement { get; private set; }
         public bool Extentions { get; private set; }
-        public bool Location { get; private set; }
-        public bool UserVerificationIndex { get; private set; }
         public bool UserVerificationMethod { get; private set; }
-        public string UserVerificationRequirement { get; private set; }
+        public UserVerificationRequirement UserVerificationRequirement { get; private set; }
         public bool RequireResidentKey { get; private set; }
-        public bool? HmacSecret { get; private set; }
-        public UserVerification? CredProtect { get; private set; }
-        public bool? EnforceCredProtect { get; private set; }
         public WebAuthNPinRequirements PinRequirements { get; set; } = WebAuthNPinRequirements.Null;
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public NeosWebAuthNProvider():base()
+        public NeosWebAuthNProvider(bool constrained):base()
         {
             Trace.WriteLine("IMetadataService initialization");
-            _simplemetadataservice = new SimpleMetadataService(new List<IMetadataRepository> { new StaticMetadataRepository(DateTime.Now.AddMinutes(1).ToUniversalTime()) });
-            var result = Task.Factory.StartNew(_simplemetadataservice.Initialize);
+            if (constrained)
+            {
+                _metadataservice = new MFAMetadataService(new List<IMetadataRepository>
+                {
+                    new MDSConstrainedMetadataRepository()
+                });
+            }
+            else
+            {
+                _metadataservice = new MFAMetadataService(new List<IMetadataRepository>
+                {
+                    new MDSMetadataRepository()
+                });
+            }
+            var result = Task.Factory.StartNew(_metadataservice.Initialize);
             result.Wait(15000);
         }
 
@@ -383,16 +391,10 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
                         ConveyancePreference = param.Options.AttestationConveyancePreference;
                         Attachement = param.Options.AuthenticatorAttachment;
                         Extentions = param.Options.Extensions;
-                        Location = param.Options.Location;
-                        UserVerificationIndex = param.Options.UserVerificationIndex;
                         UserVerificationMethod = param.Options.UserVerificationMethod;
-                        UserVerificationRequirement = param.Options.UserVerificationRequirement;
+                        UserVerificationRequirement = param.Options.UserVerificationRequirement.ToEnum<UserVerificationRequirement>();
                         RequireResidentKey = param.Options.RequireResidentKey;
                         ChallengeSize = param.Configuration.ChallengeSize;
-                        HmacSecret = param.Options.HmacSecret;
-                        CredProtect = (UserVerification?)param.Options.CredProtect;
-                        EnforceCredProtect = param.Options.EnforceCredProtect;
-                        IdentityModelEventSource.ShowPII = param.Configuration.ShowPII;
                         Fido2Configuration fido = new Fido2Configuration()
                         {
                             ServerDomain = param.Configuration.ServerDomain,
@@ -400,13 +402,12 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
                             Origin = param.Configuration.Origin,
                             Timeout = param.Configuration.Timeout,
                             TimestampDriftTolerance = param.Configuration.TimestampDriftTolerance,
-                            ChallengeSize = param.Configuration.ChallengeSize,
-                            RequireValidAttestationRoot = param.Configuration.RequireValidAttestationRoot
+                            ChallengeSize = param.Configuration.ChallengeSize
                         };
                         Trace.WriteLine("WebAuthNAdapter Create");                       
-                        _webathn = new WebAuthNAdapter(fido, _simplemetadataservice);
-                        _isinitialized = true;
+                        _webathn = new WebAuthNAdapter(fido, _metadataservice);
                         Trace.WriteLine("WebAuthNAdapter Created");
+                        _isinitialized = true;
                         Trace.WriteLine("WebAuthNProvider Initialized");
                         return;
                     }
@@ -471,7 +472,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
             ctx.PreferredMethod = ctx.PreferredMethod;
             ctx.SelectedMethod = result.Method;
             ctx.ExtraInfos = result.ExtraInfos;
-            ctx.DirectLogin = this.DirectLogin;
+           // ctx.DirectLogin = this.DirectLogin;
         }
 
         /// <summary>
@@ -568,7 +569,6 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
             {
                 if (user != null)
                 {
-
                     List<MFAUserCredential> creds = RuntimeRepository.GetCredentialsByUser(Config, user);
                     if (creds.Count == 0)
                         return wcreds;
@@ -643,10 +643,10 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
                 if (string.IsNullOrEmpty(ctx.UPN))
                     throw new ArgumentNullException(ctx.UPN);
 
-                string attType = this.ConveyancePreference;                  // none, direct, indirect
-                string authType = this.Attachement;                          // <empty>, platform, cross-platform
-                string userVerification = this.UserVerificationRequirement;  // preferred, required, discouraged
-                bool requireResidentKey = this.RequireResidentKey;           // true,false
+                string attType = this.ConveyancePreference;                                       // none, direct, indirect
+                string authType = this.Attachement;                                               // <empty>, platform, cross-platform
+                UserVerificationRequirement userVerification = this.UserVerificationRequirement;  // preferred, required, discouraged
+                bool requireResidentKey = this.RequireResidentKey;                                // true,false
 
                 MFAWebAuthNUser user = RuntimeRepository.GetUser(Config, ctx.UPN);
                 if (user != null)
@@ -657,28 +657,18 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
                     AuthenticatorSelection authenticatorSelection = new AuthenticatorSelection
                     {
                         RequireResidentKey = requireResidentKey,
-                        UserVerification = userVerification.ToEnum<UserVerificationRequirement>()
+                        UserVerification = userVerification
                     };
                     if (!string.IsNullOrEmpty(authType))
                         authenticatorSelection.AuthenticatorAttachment = authType.ToEnum<AuthenticatorAttachment>();
 
                     AuthenticationExtensionsClientInputs exts = new AuthenticationExtensionsClientInputs()
                     {
-                        Extensions = this.Extentions,
-                        UserVerificationIndex = this.UserVerificationIndex,
-                        Location = this.Location,
-                        UserVerificationMethod = this.UserVerificationMethod,
-                        EnforceCredProtect = this.EnforceCredProtect,
-                        CredProtect = this.CredProtect,
-                        HmacSecret = this.HmacSecret,
-                        BiometricAuthenticatorPerformanceBounds = new AuthenticatorBiometricPerfBounds
-                        {
-                            FAR = float.MaxValue,
-                            FRR = float.MaxValue
-                        }
+                        Extensions = this.Extentions,                       
+                        UserVerificationMethod = this.UserVerificationMethod                       
                     };
 
-                    RegisterCredentialOptions options = _webathn.GetRegisterCredentialOptions(user.ToCore(), existingKeys.ToCore(), authenticatorSelection, attType.ToEnum<AttestationConveyancePreference>(), exts);
+                    CredentialCreateOptions options = _webathn.GetRegisterCredentialOptions(user.ToCore(), existingKeys.ToCore(), authenticatorSelection, attType.ToEnum<AttestationConveyancePreference>(), exts);
                     string result = options.ToJson();
                     ctx.CredentialOptions = result;
                     return result;
@@ -686,7 +676,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
                 else
                 {
                     Log.WriteEntry(string.Format("{0}\r\n{1}", ctx.UPN, "User does not exists !"), EventLogEntryType.Error, 5000);
-                    string result = (new RegisterCredentialOptions { Status = "error", ErrorMessage = string.Format("{0}", "User does not exists !") }).ToJson();
+                    string result = (new CredentialMakeResult { Status = "error", ErrorMessage = string.Format("{0}", "User does not exists !") }).ToJson();
                     ctx.CredentialOptions = result;
                     return result;
                 }
@@ -694,7 +684,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
             catch (Exception e)
             {
                 Log.WriteEntry(string.Format("{0}\r\n{1}", ctx.UPN, e.Message), System.Diagnostics.EventLogEntryType.Error, 5000);
-                string result = (new RegisterCredentialOptions { Status = "error", ErrorMessage = string.Format("{0}{1}", e.Message, e.InnerException != null ? " (" + e.InnerException.Message + ")" : "") }).ToJson();
+                string result = (new CredentialMakeResult { Status = "error", ErrorMessage = string.Format("{0}{1}", e.Message, e.InnerException != null ? " (" + e.InnerException.Message + ")" : "") }).ToJson();
                 ctx.CredentialOptions = result;
                 return result;
             }
@@ -717,21 +707,23 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
                 MFAWebAuthNUser user = RuntimeRepository.GetUser(Config, ctx.UPN);
                 if (user != null)
                 {
-                    RegisterCredentialOptions options = RegisterCredentialOptions.FromJson(jsonOptions);
+                    CredentialCreateOptions options = CredentialCreateOptions.FromJson(jsonOptions);
 
-                    bool callback(IsCredentialIdUniqueToUserParams args)
+#pragma warning disable CS1998 // Cette méthode async n'a pas d'opérateur 'await' et elle s'exécutera de façon synchrone
+                    IsCredentialIdUniqueToUserAsyncDelegate callback = async (args) =>
+#pragma warning restore CS1998 // Cette méthode async n'a pas d'opérateur 'await' et elle s'exécutera de façon synchrone
                     {
                         var users = RuntimeRepository.GetUsersByCredentialId(Config, user, args.CredentialId);
                         if (users.Count > 0)
                             return false;
                         return true;
-                    }
+                    };
 
                     AuthenticatorAttestationRawResponse attestationResponse = JsonConvert.DeserializeObject<AuthenticatorAttestationRawResponse>(jsonResponse);
                     isDeserialized = true;
-                    RegisterCredentialResult success = _webathn.SetRegisterCredentialResult(attestationResponse, options, callback);
+                    CredentialMakeResult success = _webathn.SetRegisterCredentialResult(attestationResponse, options, callback).Result;
 
-                    RuntimeRepository.AddUserCredential(Config, options.User.FromCore(), new MFAUserCredential
+                    RuntimeRepository.AddUserCredential(Config, user, new MFAUserCredential
                     {
                         Descriptor = new MFAPublicKeyCredentialDescriptor(success.Result.CredentialId),
                         PublicKey = success.Result.PublicKey,
@@ -782,21 +774,11 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
 
                 AuthenticationExtensionsClientInputs exts = new AuthenticationExtensionsClientInputs()
                 {
-                    SimpleTransactionAuthorization = "FIDO",
-                    GenericTransactionAuthorization = new TxAuthGenericArg
-                    {
-                        ContentType = "text/plain",
-                        Content = new byte[] { 0x46, 0x49, 0x44, 0x4F } 
-                    },
-                    UserVerificationIndex = this.UserVerificationIndex,
-                    Location = this.Location,
+                    Extensions = this.Extentions,
                     UserVerificationMethod = this.UserVerificationMethod,
-                    EnforceCredProtect = this.EnforceCredProtect,
-                    CredProtect = this.CredProtect,
-                    HmacSecret = this.HmacSecret
                 };
-
-                UserVerificationRequirement uv = this.UserVerificationRequirement.ToEnum<UserVerificationRequirement>();
+               
+                UserVerificationRequirement uv = this.UserVerificationRequirement;
                 AssertionOptions options = _webathn.GetAssertionOptions(existingCredentials.ToCore(), uv, exts);
                 string result = options.ToJson();
                 ctx.AssertionOptions = result;
@@ -844,18 +826,21 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
                         AuthenticatorData authData = new AuthenticatorData(clientResponse.Response.AuthenticatorData);
                         uint authCounter = authData.SignCount;
                         uint storedCounter = creds.SignatureCounter;
-                        if ((authCounter <= 0) || (authCounter <= storedCounter))
+                        if ((authCounter > 0) && (authCounter <= storedCounter))
                         {
                             ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
                             throw new Exception(Resources.GetString(ResourcesLocaleKind.Html, "BIOERRORAUTHREPLAY"));
                         }
 
-                        bool callback(IsUserHandleOwnerOfCredentialIdParams args)
+#pragma warning disable CS1998 // Cette méthode async n'a pas d'opérateur 'await' et elle s'exécutera de façon synchrone
+                        IsUserHandleOwnerOfCredentialIdAsync callback = async (args) =>
+#pragma warning restore CS1998 // Cette méthode async n'a pas d'opérateur 'await' et elle s'exécutera de façon synchrone
                         {
                             var storedCreds = RuntimeRepository.GetCredentialsByUserHandle(Config, user, args.UserHandle);
                             return storedCreds.Exists(c => c.Descriptor.Id.SequenceEqual(args.CredentialId));
-                        }
-                        AssertionVerificationResult res = _webathn.SetAssertionResult(clientResponse, options, creds.PublicKey, storedCounter, callback);
+                        };
+
+                        AssertionVerificationResult res = _webathn.SetAssertionResult(clientResponse, options, creds.PublicKey, storedCounter, callback).Result;
                         RuntimeRepository.UpdateCounter(Config, user, res.CredentialId, res.Counter);
 
                         if (!authData.UserPresent || !authData.UserVerified)
@@ -917,7 +902,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
                 return (int)AuthenticationResponseKind.Error;
             }
         }
-        #endregion
+#endregion
     }
 
 

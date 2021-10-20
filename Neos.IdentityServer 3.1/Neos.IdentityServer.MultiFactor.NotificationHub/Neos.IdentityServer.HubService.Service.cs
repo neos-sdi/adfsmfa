@@ -44,8 +44,10 @@ namespace Neos.IdentityServer.MultiFactor
         public ReplayService(IDependency dep)
         {
             _log = dep.GetEventLog();
-            if (_manager==null)
-                _manager = new ReplayManager(dep); 
+            if (_manager == null)
+            {
+                _manager = new ReplayManager(dep);
+            }
         }
 
         /// <summary>
@@ -143,6 +145,17 @@ namespace Neos.IdentityServer.MultiFactor
             catch (Exception e)
             {
                 _log.WriteEntry(string.Format("Error on Reset Service method : {0}.", e.Message), EventLogEntryType.Error, 1011);
+            }
+        }
+
+        /// <summary>
+        /// Warmup method implementation
+        /// </summary>
+        public void WarmUp()
+        {
+            if (_manager != null)
+            {
+                _manager.Start();
             }
         }
     }
@@ -749,6 +762,55 @@ namespace Neos.IdentityServer.MultiFactor
             {
                 _log.WriteEntry(string.Format("Error on WebAdminService Service GetAllComputerInformations method : {0}.", e.Message), EventLogEntryType.Error, 2010);
                 throw e;
+            }
+        }
+        #endregion
+
+        #region WebAuthN Payloads
+        /// <summary>
+        /// HasBLOBPayload method implementation
+        /// </summary>
+        public bool HasBLOBPayloadCache()
+        {
+            try
+            {
+                return _manager.HasBLOBPayloadCache();
+            }
+            catch (Exception e)
+            {
+                _log.WriteEntry(string.Format("Error on WebAdminService Service HasBLOBPayload method : {0}.", e.Message), EventLogEntryType.Error, 2010);
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// GetBLOBPayload method implementation
+        /// </summary>
+        public BLOBPayloadInformations GetBLOBPayloadCache()
+        {
+            try
+            {
+                return _manager.GetBLOBPayloadCache();
+            }
+            catch (Exception e)
+            {
+                _log.WriteEntry(string.Format("Error on WebAdminService Service GetBLOBPayload method : {0}.", e.Message), EventLogEntryType.Error, 2010);
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// SetBLOBPayload method implmentation
+        /// </summary>
+        public void SetBLOBPayloadCache(BLOBPayloadInformations infos)
+        {
+            try
+            {
+                _manager.SetBLOBPayloadCache(infos);
+            }
+            catch (Exception e)
+            {
+                _log.WriteEntry(string.Format("Error on WebAdminService Service SetBLOBPayload method : {0}.", e.Message), EventLogEntryType.Error, 2010);
             }
         }
         #endregion

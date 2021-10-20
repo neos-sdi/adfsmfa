@@ -50,13 +50,13 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
             _requirement = required;
         }
 
-//        public override void WriteJson(JsonWriter writer, byte[] value, JsonSerializer serializer)
+        // public override void WriteJson(JsonWriter writer, byte[] value, JsonSerializer serializer)
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
             writer.WriteValue(Base64Url.Encode(value as byte[]));
         }
 
-//        public override byte[] ReadJson(JsonReader reader, Type objectType, byte[] existingValue, bool hasExistingValue, JsonSerializer serializer)
+        // public override byte[] ReadJson(JsonReader reader, Type objectType, byte[] existingValue, bool hasExistingValue, JsonSerializer serializer)
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
             byte[] ret = null;

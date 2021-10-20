@@ -18,8 +18,10 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
 {
     public interface IMetadataRepository
     {
-        Task<MetadataTOCPayload> GetToc();
+        bool IsInitialized { get; set; }
 
-        Task<MetadataStatement> GetMetadataStatement(MetadataTOCPayloadEntry entry);
+        Task<MetadataBLOBPayload> GetBLOB();
+
+        Task<MetadataStatement> GetMetadataStatement(MetadataBLOBPayload blob, MetadataBLOBPayloadEntry entry);
     }
 }

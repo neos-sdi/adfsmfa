@@ -665,13 +665,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         public FlatAttestationConveyancePreferenceKind AttestationConveyancePreference { get; set; }
         public FlatUserVerificationRequirementKind UserVerificationRequirement { get; set; }
         public bool Extensions { get; set; }
-        public bool UserVerificationIndex { get; set; }
-        public bool Location { get; set; }
         public bool UserVerificationMethod { get; set; }
         public bool RequireResidentKey { get; set; }
-        public bool? HmacSecret { get; set; }
-        public WebAuthNUserVerification? CredProtect { get; set; }
-        public bool? EnforceCredProtect { get; set; }
+        public bool ConstrainedMetadataRepository { get; set; }
 
         /// <summary>
         /// Update method implmentation
@@ -686,13 +682,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             this.AttestationConveyancePreference = otp.Options.AttestationConveyancePreference.FromAttestationConveyancePreferenceValue();
             this.UserVerificationRequirement = otp.Options.UserVerificationRequirement.FromUserVerificationRequirementValue();
             this.Extensions = otp.Options.Extensions;
-            this.UserVerificationIndex = otp.Options.UserVerificationIndex;
-            this.Location = otp.Options.Location;
             this.UserVerificationMethod = otp.Options.UserVerificationMethod;
             this.RequireResidentKey = otp.Options.RequireResidentKey;
-            this.HmacSecret = otp.Options.HmacSecret;
-            this.CredProtect = otp.Options.CredProtect;
-            this.EnforceCredProtect = otp.Options.EnforceCredProtect;
+            this.ConstrainedMetadataRepository = otp.Options.ConstrainedMetadataRepository;
         }
 
         /// <summary>
@@ -708,14 +700,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             otp.Options.AttestationConveyancePreference = this.AttestationConveyancePreference.ToAttestationConveyancePreferenceValue();
             otp.Options.UserVerificationRequirement = this.UserVerificationRequirement.ToUserVerificationRequirementValue();
             otp.Options.Extensions = this.Extensions;
-            otp.Options.UserVerificationIndex = this.UserVerificationIndex;
-            otp.Options.Location = this.Location;
             otp.Options.UserVerificationMethod = this.UserVerificationMethod;
             otp.Options.RequireResidentKey = this.RequireResidentKey;
-            otp.Options.HmacSecret = this.HmacSecret;
-            otp.Options.CredProtect = this.CredProtect;
-            otp.Options.EnforceCredProtect = this.EnforceCredProtect;
-
+            otp.Options.ConstrainedMetadataRepository = this.ConstrainedMetadataRepository;
             ManagementService.ADFSManager.WriteConfiguration(host);
         }
     }
@@ -1158,8 +1145,6 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         public string ServerIcon { get; set; }
         public string Origin { get; set; }
         public bool DirectLogin { get; set; }
-        public bool RequireValidAttestationRoot { get; set; }
-        public bool ShowPII { get; set; }
         public bool UseNickNames { get; set; }
 
 
@@ -1203,9 +1188,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             this.ServerName = otp.Configuration.ServerName;
             this.ServerIcon = otp.Configuration.ServerIcon;
             this.Origin = otp.Configuration.Origin;
-            this.RequireValidAttestationRoot = otp.Configuration.RequireValidAttestationRoot;
-            this.ShowPII = otp.Configuration.ShowPII;
-        }
+    }
 
         /// <summary>
         /// Update method implmentation
@@ -1235,8 +1218,6 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             otp.Configuration.ServerName = this.ServerName;
             otp.Configuration.ServerIcon = this.ServerIcon;
             otp.Configuration.Origin = this.Origin;
-            otp.Configuration.RequireValidAttestationRoot = this.RequireValidAttestationRoot;
-            otp.Configuration.ShowPII = this.ShowPII;
             ManagementService.ADFSManager.WriteConfiguration(host);
         }
     }

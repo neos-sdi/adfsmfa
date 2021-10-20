@@ -79,10 +79,11 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
             LogForSlots.LogEnabled = false;
             try
             {
+                StopADFSService();
                 CleanupStartupFiles();
-                StartADFSService();
                 StartNTService();
                 StartReplayService();
+                StartADFSService();
                 StartThemesService();
                 StartAdminService();
                 StartKeyCleanup();
@@ -108,9 +109,9 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
                 StopKeyCleanup();
                 StopAdminService();
                 StopThemesService();
+                StopADFSService();
                 StopReplayService();
                 StopNTService();
-                StopADFSService();
             }
             catch (Exception e)
             {
@@ -130,6 +131,28 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
             try
             {
                 _svchost.StartService(this);
+                ReplayClient replaymanager = new ReplayClient();
+                replaymanager.Initialize();
+                try
+                {
+                    IReplay client = replaymanager.Open();
+                    try
+                    {
+                        client.WarmUp();
+                    }
+                    catch (Exception e)
+                    {
+                        this.EventLog.WriteEntry(string.Format("Error on WarmUp ReplayService : {0}.", e.Message), EventLogEntryType.Error, 1001);
+                    }
+                    finally
+                    {
+                        replaymanager.Close(client);
+                    }
+                }
+                finally
+                {
+                    replaymanager.UnInitialize();
+                }
             }
             catch (Exception e)
             {

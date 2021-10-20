@@ -28,30 +28,19 @@
 // https://github.com/neos-sdi/adfsmfa                                                                                                                                                      //
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
+using Neos.IdentityServer.MultiFactor.WebAuthN.Library.ASN;
+using Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor;
+using Neos.IdentityServer.MultiFactor.WebAuthN.Objects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
-using Neos.IdentityServer.MultiFactor.WebAuthN.Objects;
-using Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor;
-using Neos.IdentityServer.MultiFactor.WebAuthN.Library.ASN;
 
 namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
 {
-    internal class Tpm : AttestationFormat
+    internal sealed class Tpm : AttestationVerifier
     {
-    	private readonly IMetadataService _metadataService;
-        private readonly bool _requireValidAttestationRoot;
-
-        public Tpm(CBORObject attStmt, byte[] authenticatorData, byte[] clientDataHash, IMetadataService metadataService, bool requireValidAttestationRoot) 
-            : base(attStmt, authenticatorData, clientDataHash)
-        {
-            _metadataService = metadataService;
-            _requireValidAttestationRoot = requireValidAttestationRoot;
-        }
-        
         public static readonly List<string> TPMManufacturers = new List<string>
         {
             "id:FFFFF1D0", // FIDO testing TPM
@@ -79,9 +68,9 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
             "id:57454300", // 'WEC' Winbond
             "id:524F4343", // 'ROCC' Fuzhou Rockchip
             "id:474F4F47", // 'GOOG' Google
-    };
-		
-        public override void Verify()
+        };
+
+        public override (AttestationType, X509Certificate2[]) Verify()
         {
             // 1. Verify that attStmt is valid CBOR conforming to the syntax defined above and perform CBOR decoding on it to extract the contained fields.
             // (handled in base class)
@@ -91,7 +80,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
             if ("2.0" != attStmt["ver"].AsString())
                 throw new VerificationException("FIDO2 only supports TPM 2.0");
 
-            // Verify that the public key specified by the parameters and unique fields of pubArea
+            // 2. Verify that the public key specified by the parameters and unique fields of pubArea
             // is identical to the credentialPublicKey in the attestedCredentialData in authenticatorData
             PubArea pubArea = null;
             if (null != attStmt["pubArea"] &&
@@ -128,10 +117,10 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
                 if (!pubArea.ECPoint.Y.SequenceEqual(Y))
                     throw new VerificationException("Y-coordinate mismatch between pubArea and credentialPublicKey");
             }
-            // Concatenate authenticatorData and clientDataHash to form attToBeSigned.
-            // see data variable
+            // 3. Concatenate authenticatorData and clientDataHash to form attToBeSigned
+            // See Data field of base class
 
-            // Validate that certInfo is valid
+            // 4. Validate that certInfo is valid
             CertInfo certInfo = null;
             if (null != attStmt["certInfo"] &&
                 CBORType.ByteString == attStmt["certInfo"].Type &&
@@ -205,10 +194,12 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
                 // Attributes. In accordance with RFC 5280[11], this extension MUST be critical if subject is empty 
                 // and SHOULD be non-critical if subject is non-empty"
 
-                // Best I can figure to do for now ?  // id:49465800 'IFX' Infinion  Model and Version are empty
-                if (string.Empty == tpmManufacturer || string.Empty == tpmModel ||string.Empty == tpmVersion)
+                // Best I can figure to do for now?
+                if (string.Empty == tpmManufacturer ||
+                    string.Empty == tpmModel ||
+                    string.Empty == tpmVersion)
                 {
-                        throw new VerificationException("SAN missing TPMManufacturer, TPMModel, or TPMVersion from TPM attestation certificate");
+                    throw new VerificationException("SAN missing TPMManufacturer, TPMModel, or TPMVersion from TPM attestation certificate");
                 }
 
                 if (false == TPMManufacturers.Contains(tpmManufacturer))
@@ -223,36 +214,12 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
                 // 5biiiii. The Basic Constraints extension MUST have the CA component set to false.
                 if (IsAttnCertCACert(aikCert.Extensions))
                     throw new VerificationException("aikCert Basic Constraints extension CA component must be false");
-                    
-				// 5biiiiii. An Authority Information Access (AIA) extension with entry id-ad-ocsp and a CRL Distribution Point extension [RFC5280] 
+
+                // 5biiiiii. An Authority Information Access (AIA) extension with entry id-ad-ocsp and a CRL Distribution Point extension [RFC5280] 
                 // are both OPTIONAL as the status of many attestation certificates is available through metadata services. See, for example, the FIDO Metadata Service [FIDOMetadataService].
                 var trustPath = X5c.Values
                     .Select(x => new X509Certificate2(x.GetByteString()))
                     .ToArray();
-
-                var entry = _metadataService?.GetEntry(AuthData.AttestedCredentialData.AaGuid);
-
-                // while conformance testing, we must reject any authenticator that we cannot get metadata for
-                if (_metadataService?.ConformanceTesting() == true && null == entry)
-                    throw new VerificationException("AAGUID not found in MDS test metadata");
-
-                if (_requireValidAttestationRoot)
-                {
-                    // If the authenticator is listed as in the metadata as one that should produce a basic full attestation, build and verify the chain
-                    if ((entry?.MetadataStatement?.AttestationTypes.Contains((ushort)MetadataAttestationType.ATTESTATION_BASIC_FULL) ?? false) ||
-                        (entry?.MetadataStatement?.AttestationTypes.Contains((ushort)MetadataAttestationType.ATTESTATION_ATTCA) ?? false) ||
-                        (entry?.MetadataStatement?.AttestationTypes.Contains((ushort)MetadataAttestationType.ATTESTATION_HELLO) ?? false))
-                    {
-                        var attestationRootCertificates = entry.MetadataStatement.AttestationRootCertificates
-                            .Select(x => new X509Certificate2(Convert.FromBase64String(x)))
-                            .ToArray();
-
-                        if (false == ValidateTrustChain(trustPath, attestationRootCertificates))
-                        {
-                            throw new VerificationException("TPM attestation failed chain validation");
-                        }
-                    }
-                }
 
                 // 5c. If aikCert contains an extension with OID 1.3.6.1.4.1.45724.1.1.4 (id-fido-gen-ce-aaguid) verify that the value of this extension matches the aaguid in authenticatorData
                 var aaguid = AaguidFromAttnCertExts(aikCert.Extensions);
@@ -260,6 +227,8 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
                     (!aaguid.SequenceEqual(Guid.Empty.ToByteArray())) &&
                     (0 != AttestedCredentialData.FromBigEndian(aaguid).CompareTo(AuthData.AttestedCredentialData.AaGuid)))
                     throw new VerificationException(string.Format("aaguid malformed, expected {0}, got {1}", AuthData.AttestedCredentialData.AaGuid, new Guid(aaguid)));
+
+                return (AttestationType.AttCa, trustPath);
             }
             // If ecdaaKeyId is present, then the attestation type is ECDAA
             else if (null != EcdaaKeyId)
@@ -276,28 +245,30 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
                 throw new VerificationException("Neither x5c nor ECDAA were found in the TPM attestation statement");
             }
         }
-
         private static readonly Dictionary<int, TpmEccCurve> CoseCurveToTpm = new Dictionary<int, TpmEccCurve>
         {
             { 1, TpmEccCurve.TPM_ECC_NIST_P256},
             { 2, TpmEccCurve.TPM_ECC_NIST_P384},
             { 3, TpmEccCurve.TPM_ECC_NIST_P521}
         };
-
-        private static (string, string, string) SANFromAttnCertExts(X509ExtensionCollection exts)
+        private static (string, string, string) SANFromAttnCertExts(X509ExtensionCollection extensions)
         {
-            string tpmManufacturer = string.Empty, tpmModel = string.Empty, tpmVersion = string.Empty;            
+            string tpmManufacturer = string.Empty,
+                tpmModel = string.Empty,
+                tpmVersion = string.Empty;
+
             var foundSAN = false;
-            foreach (var ext in exts)
+
+            foreach (var extension in extensions)
             {
-                if (ext.Oid.Value.Equals("2.5.29.17")) // subject alternative name
+                if (extension.Oid.Value.Equals("2.5.29.17")) // subject alternative name
                 {
-                    if (0 == ext.RawData.Length)
+                    if (0 == extension.RawData.Length)
                         throw new VerificationException("SAN missing from TPM attestation certificate");
 
                     foundSAN = true;
 
-                    var subjectAlternativeName = AsnElt.Decode(ext.RawData);
+                    var subjectAlternativeName = AsnElt.Decode(extension.RawData);
                     subjectAlternativeName.CheckConstructed();
                     subjectAlternativeName.CheckTag(AsnElt.SEQUENCE);
                     subjectAlternativeName.CheckNumSubMin(1);
@@ -314,6 +285,46 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
                         nameSequence.CheckTag(AsnElt.SEQUENCE);
                         nameSequence.CheckNumSubMin(1);
 
+                        /*
+                         
+                        Per Trusted Computing Group Endorsement Key Credential Profile section 3.2.9:
+
+                        "The issuer MUST include TPM manufacturer, TPM part number and TPM firmware version, using the directoryName-form within the GeneralName structure. The ASN.1 encoding is specified in section 3.1.2 TPM Device Attributes."
+
+                        An example is provided in document section A.1 Example 1:
+
+                                    // SEQUENCE
+                                    30 49
+                                         // SET
+                                         31 16
+                                             // SEQUENCE
+                                             30 14
+                                                 // OBJECT IDENTIFER tcg-at-tpmManufacturer (2.23.133.2.1)
+                                                 06 05 67 81 05 02 01
+                                                 // UTF8 STRING id:54434700 (TCG)
+                                                 0C 0B 69 64 3A 35 34 34 33 34 37 30 30
+                                        // SET
+                                        31 17
+                                            // SEQUENCE
+                                            30 15
+                                                // OBJECT IDENTIFER tcg-at-tpmModel (2.23.133.2.2)
+                                                06 05 67 81 05 02 02
+                                                // UTF8 STRING ABCDEF123456
+                                                0C 0C 41 42 43 44 45 46 31 32 33 34 35 36
+                                        // SET
+                                        31 16
+                                            // SEQUENCE
+                                            30 14
+                                                // OBJECT IDENTIFER tcg-at-tpmVersion (2.23.133.2.3)
+                                                06 05 67 81 05 02 03
+                                                // UTF8 STRING id:00010023
+                                                0C 0B 69 64 3A 30 30 30 31 30 30 32 33
+
+                        Some TPM implementations place each device attributes SEQUENCE within a single SET instead of each in its own SET.
+
+                        This detects this condition and repacks each devices attributes SEQUENCE into its own SET to conform with TCG spec.
+
+                         */
 
                         var deviceAttributes = nameSequence.Sub;
                         if (1 != deviceAttributes.FirstOrDefault().Sub.Length)
@@ -322,7 +333,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
                         }
 
                         foreach (AsnElt propertySet in deviceAttributes)
-                            {
+                        {
                             propertySet.CheckTag(AsnElt.SET);
                             propertySet.CheckNumSub(1);
 
@@ -330,15 +341,15 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
                             propertySequence.CheckTag(AsnElt.SEQUENCE);
                             propertySequence.CheckNumSub(2);
 
-                            var properyOid = propertySequence.GetSub(0);
-                            properyOid.CheckTag(AsnElt.OBJECT_IDENTIFIER);
-                            properyOid.CheckPrimitive();
+                            var propertyOid = propertySequence.GetSub(0);
+                            propertyOid.CheckTag(AsnElt.OBJECT_IDENTIFIER);
+                            propertyOid.CheckPrimitive();
 
                             var propertyValue = propertySequence.GetSub(1);
                             propertyValue.CheckTag(AsnElt.UTF8String);
                             propertyValue.CheckPrimitive();
 
-                            switch (properyOid.GetOID())
+                            switch (propertyOid.GetOID())
                             {
                                 case ("2.23.133.2.1"):
                                     tpmManufacturer = propertyValue.GetString();
@@ -354,11 +365,14 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
                             }
                         }
                     }
+
                     break;
                 }
             }
-            if (false == foundSAN)
+
+            if (!foundSAN)
                 throw new VerificationException("SAN missing from TPM attestation certificate");
+
             return (tpmManufacturer, tpmModel, tpmVersion);
         }
 
@@ -393,7 +407,6 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
         TPM_ECC_BN_P638,    // 0x0011 curve to support ECDAA
         TPM_ECC_SM2_P256    // 0x0020 
     }
-
     public enum TpmAlg : ushort
     {
         // TCG TPM Rev 2.0, part 2, structures, section 6.3, TPM_ALG_ID
@@ -434,7 +447,6 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
         TPM_ALG_ECB // 44
     };
     // TPMS_ATTEST, TPMv2-Part2, section 10.12.8
-
     public class CertInfo
     {
         private static readonly Dictionary<TpmAlg, ushort> tpmAlgToDigestSizeMap = new Dictionary<TpmAlg, ushort>
@@ -535,7 +547,6 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
         public byte[] AttestedQualifiedNameBuffer { get; private set; }
     }
     // TPMT_PUBLIC, TPMv2-Part2, section 12.2.4
-
     public class PubArea
     {
         public PubArea(byte[] pubArea)
@@ -637,5 +648,5 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
                 return point;
             }
         }
-    }    
+    }
 }

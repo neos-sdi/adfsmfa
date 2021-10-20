@@ -856,7 +856,6 @@ namespace Neos.IdentityServer.MultiFactor
         private string _thumbprint;
         private XmlCDataSection _cdata;
         private AESKeyGeneratorMode _aeskeygenerator = AESKeyGeneratorMode.AES256;
-        private bool _domainadminrights = false;
 
         [XmlAttribute("KeyGenerator")]
         public KeyGeneratorMode KeyGenerator { get; set; } = KeyGeneratorMode.ClientSecret512;
@@ -1857,12 +1856,6 @@ namespace Neos.IdentityServer.MultiFactor
                 _origin = value;
             }
         }
-
-        [XmlAttribute("RequireValidAttestationRoot")]
-        public bool RequireValidAttestationRoot { get; set; }
-
-        [XmlAttribute("ShowPII")]
-        public bool ShowPII { get; set; } = false;
     }
 
     /// <summary>
@@ -1882,56 +1875,15 @@ namespace Neos.IdentityServer.MultiFactor
         [XmlAttribute("Extensions")]
         public bool Extensions { get; set; } = true;
 
-        [XmlAttribute("UserVerificationIndex")]
-        public bool UserVerificationIndex { get; set; } = true;
-
-        [XmlAttribute("Location")]
-        public bool Location { get; set; } = false;
-
         [XmlAttribute("UserVerificationMethod")]
         public bool UserVerificationMethod { get; set; } = true;
 
         [XmlAttribute("RequireResidentKey")]
         public bool RequireResidentKey { get; set; } = false;
 
+        [XmlAttribute("ConstrainedMetadataRepository")]
+        public bool ConstrainedMetadataRepository { get; set; } = false;
 
-        [XmlIgnore]
-        public bool? HmacSecret { get; set; } = null;
-
-        [XmlAttribute("HmacSecret")]
-        public string HmacSecretAsText
-        {
-            get { return (HmacSecret.HasValue) ? HmacSecret.ToString() : null; }
-            set { HmacSecret = !string.IsNullOrEmpty(value) ? bool.Parse(value) : default(bool?); }
-        }
-
-
-        [XmlIgnore]
-        public WebAuthNUserVerification? CredProtect { get; set; } = null;
-
-        [XmlAttribute("CredProtect")]
-        public string CredProtectAsText
-        {
-            get { return (CredProtect.HasValue) ? CredProtect.ToString() : null; }
-            set
-            {
-                if (Enum.TryParse<WebAuthNUserVerification>(value, out WebAuthNUserVerification parsed))
-                    CredProtect = parsed;
-                else
-                    CredProtect = null;
-                // var res = Enum.TryParse<WebAuthNUserVerification>(value, out var CredProtect) ? CredProtect : (WebAuthNUserVerification?)null;
-            }
-        }
-
-        [XmlIgnore]
-        public bool? EnforceCredProtect { get; set; } = null;
-
-        [XmlAttribute("EnforceCredProtect")]
-        public string EnforceCredProtectAsText
-        {
-            get { return (EnforceCredProtect.HasValue) ? EnforceCredProtect.ToString() : null; }
-            set { EnforceCredProtect = !string.IsNullOrEmpty(value) ? bool.Parse(value) : default(bool?); }
-        }
     }
 
     #endregion

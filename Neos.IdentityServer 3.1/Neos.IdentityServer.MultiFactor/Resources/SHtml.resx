@@ -294,4 +294,7 @@ Click "Continue"</value>
   <data name="HtmlUIMNickNamesMessage" xml:space="preserve">
     <value>Enter the name of your biometric device or leave the void, then select "Continue"</value>
   </data>
+  <data name="HtmlUIMRegisterDevice" xml:space="preserve">
+    <value>Register Device</value>
+  </data>
 </root>

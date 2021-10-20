@@ -23,7 +23,6 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Objects
     {
         [JsonConverter(typeof(Base64UrlConverter))]
         public byte[] PublicKey { get; set; }
-
         public Fido2User User { get; set; }
         public string CredType { get; set; }
         public System.Guid Aaguid { get; set; }

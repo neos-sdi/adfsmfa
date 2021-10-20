@@ -5414,20 +5414,12 @@ namespace MFA
                                 _target3.UserVerificationRequirement = (FlatUserVerificationRequirementKind)_config3.UserVerificationRequirement;
                             if (_config3.ExtensionsChanged)
                                 _target3.Extensions = _config3.Extensions;
-                            if (_config3.LocationChanged)
-                                _target3.Location = _config3.Location;
                             if (_config3.RequireResidentKeyChanged)
                                 _target3.RequireResidentKey = _config3.RequireResidentKey;
-                            if (_config3.UserVerificationIndexChanged)
-                                _target3.UserVerificationIndex = _config3.UserVerificationIndex;
                             if (_config3.UserVerificationMethodChanged)
                                 _target3.UserVerificationMethod = _config3.UserVerificationMethod;
-                            if (_config3.CredProtectChanged)
-                                _target3.CredProtect = _config3.CredProtect;
-                            if (_config3.EnforceCredProtectChanged)
-                                _target3.EnforceCredProtect = _config3.EnforceCredProtect;
-                            if (_config3.HmacSecretChanged)
-                                _target3.HmacSecret = _config3.HmacSecret;
+                            if (_config3.ConstrainedMetadataRepositoryChanged)
+                                _target3.ConstrainedMetadataRepository = _config3.ConstrainedMetadataRepository;
                             break;
                     }
                 }
@@ -5510,25 +5502,17 @@ namespace MFA
         private PSAttestationConveyancePreferenceKind _attestationconveyancepreference;
         private PSUserVerificationRequirementKind _userverificationrequirement;
         private bool _extensions;
-        private bool _userverificationindex;
-        private bool _location;
+        private bool _constrainedmetadatarepository;
         private bool _userverificationmethod;
         private bool _requireresidentkey;
-        private bool? _hmacsecret;
-        private WebAuthNUserVerification? _credprotect;
-        private bool? _enforcecredprotect;
 
         internal bool RequireResidentKeyChanged { get; private set; }
         internal bool UserVerificationMethodChanged { get; private set; }
-        internal bool LocationChanged { get; private set; }
-        internal bool UserVerificationIndexChanged { get; private set; }
         internal bool ExtensionsChanged { get; private set; }
         internal bool UserVerificationRequirementChanged { get; private set; }
         internal bool AttestationConveyancePreferenceChanged { get; private set; }
         internal bool AuthenticatorAttachmentChanged { get; private set; }
-        internal bool HmacSecretChanged { get; private set; }
-        internal bool CredProtectChanged { get; private set; }
-        internal bool EnforceCredProtectChanged { get; private set; }
+        internal bool ConstrainedMetadataRepositoryChanged { get; private set; }
 
         /// <summary>
         /// <para type="description">Authenticator Attachment property (empty, Platform, Crossplatform).</para>
@@ -5591,32 +5575,17 @@ namespace MFA
         }
 
         /// <summary>
-        /// <para type="description">User Verification Index property (boolean).</para>
+        /// <para type="description">ConstrainedMetadataRepository property (boolean).</para>
         /// </summary>
         [Parameter(ParameterSetName = "Identity")]
         [ValidateNotNullOrEmpty()]
-        public bool UserVerificationIndex
+        public bool ConstrainedMetadataRepository
         {
-            get { return _userverificationindex; }
+            get { return _constrainedmetadatarepository; }
             set
             {
-                _userverificationindex = value;
-                UserVerificationIndexChanged = true;
-            }
-        }
-
-        /// <summary>
-        /// <para type="description">Location property (boolean).</para>
-        /// </summary>
-        [Parameter(ParameterSetName = "Identity")]
-        [ValidateNotNullOrEmpty()]
-        public bool Location 
-        {
-            get { return _location; }
-            set
-            {
-                _location = value;
-                LocationChanged = true;
+                _constrainedmetadatarepository = value;
+                ConstrainedMetadataRepositoryChanged = true;
             }
         }
 
@@ -5647,48 +5616,6 @@ namespace MFA
             {
                 _requireresidentkey = value;
                 RequireResidentKeyChanged = true;
-            }
-        }
-
-        /// <summary>
-        /// <para type="description">Use HMAC enryption (CATP2.1).</para>
-        /// </summary>
-        [Parameter(ParameterSetName = "Identity")]
-        public bool? HmacSecret
-        {
-            get { return _hmacsecret; }
-            set
-            {
-                _hmacsecret = value;
-                HmacSecretChanged = true;
-            }
-        }
-
-        /// <summary>
-        /// <para type="description">Use Credential Protection (CATP2.1).</para>
-        /// </summary>
-        [Parameter(ParameterSetName = "Identity")]
-        public WebAuthNUserVerification? CredProtect
-        {
-            get { return _credprotect; }
-            set
-            {
-                _credprotect = value;
-                CredProtectChanged = true;
-            }
-        }
-
-        /// <summary>
-        /// <para type="description">Enforce Credential Protection (CATP2.1).</para>
-        /// </summary>
-        [Parameter(ParameterSetName = "Identity")]
-        public bool? EnforceCredProtect
-        {
-            get { return _enforcecredprotect; }
-            set
-            {
-                _enforcecredprotect = value;
-                EnforceCredProtectChanged = true;
             }
         }
     }

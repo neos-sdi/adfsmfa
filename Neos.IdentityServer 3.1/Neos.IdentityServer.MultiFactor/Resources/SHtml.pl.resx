@@ -294,4 +294,7 @@ Możesz spróbować operacji ponownie, wybierając "Powrót".</value>
   <data name="HtmlUIMNickNamesMessage" xml:space="preserve">
     <value>Wprowadź nazwę urządzenia biometrycznego lub pozostaw puste pole, a następnie wybierz "Kontynuuj"</value>
   </data>
+  <data name="HtmlUIMRegisterDevice" xml:space="preserve">
+    <value>Zarejestruj urządzenie</value>
+  </data>
 </root>

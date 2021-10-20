@@ -12,26 +12,19 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                               //
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
-using Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor;
+using Neos.IdentityServer.MultiFactor.WebAuthN.Objects;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
 {
-    internal class None : AttestationFormat
+    public sealed class None : AttestationVerifier
     {
-        private readonly IMetadataService _metadataService;
-        private readonly bool _requireValidAttestationRoot;
-
-        public None(CBORObject attStmt, byte[] authenticatorData, byte[] clientDataHash, IMetadataService metadataService, bool requireValidAttestationRoot) 
-            : base(attStmt, authenticatorData, clientDataHash)
-        {
-            _metadataService = metadataService;
-            _requireValidAttestationRoot = requireValidAttestationRoot;
-        }
-
-        public override void Verify()
+        public override (AttestationType, X509Certificate2[]) Verify()
         {
             if (0 != attStmt.Keys.Count && 0 != attStmt.Values.Count)
                 throw new VerificationException("Attestation format none should have no attestation statement");
+
+            return (AttestationType.None, null);
         }
     }
 }

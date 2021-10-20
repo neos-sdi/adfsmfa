@@ -565,7 +565,7 @@
     <value>Linhas máximas</value>
   </data>
   <data name="CTRLWEBAUTHNEXTENSIONS" xml:space="preserve">
-    <value>Extensões (authnSe)</value>
+    <value>Extensões (exts)</value>
   </data>
   <data name="CTRLWEBAUTHNRESIDENTKEY" xml:space="preserve">
     <value>Exigir a chave residente</value>
@@ -728,5 +728,8 @@
   </data>
   <data name="CTRLSECGENRSAKEY" xml:space="preserve">
     <value>Chave Master RSA</value>
+  </data>
+  <data name="CTRLWEBAUTHNCONTRAINEDMETADATA" xml:space="preserve">
+    <value>Use o Serviço de Metadados Restritos (para a fazenda ADFS que não tem acesso à internet)</value>
   </data>
 </root>

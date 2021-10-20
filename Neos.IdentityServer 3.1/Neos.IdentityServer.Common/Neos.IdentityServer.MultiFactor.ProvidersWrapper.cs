@@ -937,7 +937,7 @@ namespace Neos.IdentityServer.MultiFactor.Common
                     if (TOTPShadows <= 0)
                     {
                         if (!KeysManager.ValidateKey(usercontext.UPN))
-                            throw new CryptographicException(string.Format("SECURTY ERROR : Invalid Key for User {0}", usercontext.UPN));
+                            throw new CryptographicException(string.Format("SECURITY ERROR : Invalid Key for User {0}", usercontext.UPN));
                         byte[] encodedkey = KeysManager.ProbeKey(usercontext.UPN);
                         DateTime call = DateTime.UtcNow;
                         TOTP gen = new TOTP(encodedkey, usercontext.UPN, call, algo, this.Duration, this.Digits);  // eg : TOTP code
@@ -947,7 +947,7 @@ namespace Neos.IdentityServer.MultiFactor.Common
                     else
                     {   // Current TOTP
                         if (!KeysManager.ValidateKey(usercontext.UPN))
-                            throw new CryptographicException(string.Format("SECURTY ERROR : Invalid Key for User {0}", usercontext.UPN));
+                            throw new CryptographicException(string.Format("SECURITY ERROR : Invalid Key for User {0}", usercontext.UPN));
                         byte[] encodedkey = KeysManager.ProbeKey(usercontext.UPN);
                         DateTime tcall = DateTime.UtcNow;
                         TOTP gen = new TOTP(encodedkey, usercontext.UPN, tcall, algo, this.Duration, this.Digits);  // eg : TOTP code
@@ -2413,10 +2413,10 @@ namespace Neos.IdentityServer.MultiFactor.Common
         private void CheckUser(AuthenticationContext ctx)
         {
             if (!KeysManager.ValidateKey(ctx.UPN))
-                throw new CryptographicException(string.Format("SECURTY ERROR : Invalid Key for User {0}", ctx.UPN));
+                throw new CryptographicException(string.Format("SECURITY ERROR : Invalid Key for User {0}", ctx.UPN));
             MFAUser reg = (MFAUser)ctx;
             if (reg == null)
-                throw new Exception(string.Format("SECURTY ERROR : Invalid user {0}", ctx.UPN));
+                throw new Exception(string.Format("SECURITY ERROR : Invalid user {0}", ctx.UPN));
         }
     }
 }

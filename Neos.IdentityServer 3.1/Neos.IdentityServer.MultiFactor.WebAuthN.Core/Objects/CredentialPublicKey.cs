@@ -12,14 +12,31 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                               //
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
+// Copyright (c) 2021 @redhook62 (adfsmfa@gmail.com)                                                                                                                                        //                        
+//                                                                                                                                                                                          //
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
+// to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
+// and to permit persons to whom the Software is furnished to do so, subject to the following conditions:                                                                                   //
+//                                                                                                                                                                                          //
+// The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.                                                           //
+//                                                                                                                                                                                          //
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,                                      //
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,                            //
+// WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                               //
+//                                                                                                                                                                                          //
+//                                                                                                                                                                                          //
+// https://github.com/neos-sdi/adfsmfa                                                                                                                                                      //
+//                                                                                                                                                                                          //
+//******************************************************************************************************************************************************************************************//
+
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
-using Neos.IdentityServer.MultiFactor.WebAuthN.Library.Chaos;
 using Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor;
+using Neos.IdentityServer.MultiFactor.WebAuthN.Library.Nacl;
 
 namespace Neos.IdentityServer.MultiFactor.WebAuthN.Objects
 {
@@ -80,7 +97,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Objects
 
                     if (keyParams.Curve.Oid.Value.Equals(ECCurve.NamedCurves.nistP384.Oid.Value))
                         _cpk.Add(COSE.KeyTypeParameter.Crv, COSE.EllipticCurve.P384);
-                    
+
                     if (keyParams.Curve.Oid.Value.Equals(ECCurve.NamedCurves.nistP521.Oid.Value))
                         _cpk.Add(COSE.KeyTypeParameter.Crv, COSE.EllipticCurve.P521);
                 }
@@ -95,7 +112,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Objects
             switch (_type)
             {
                 case COSE.KeyType.EC2:
-                    using(ECDsa ecdsa = CreateECDsa())
+                    using (ECDsa ecdsa = CreateECDsa())
                     {
                         var ecsig = CryptoUtils.SigFromEcDsaSig(sig, ecdsa.KeySize);
                         return ecdsa.VerifyData(data, ecsig, CryptoUtils.HashAlgFromCOSEAlg((int)_alg));
@@ -109,6 +126,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Objects
 
                 case COSE.KeyType.OKP:
                     return Ed25519.Verify(sig, data, EdDSAPublicKey);
+                   // return NSec.Cryptography.SignatureAlgorithm.Ed25519.Verify(EdDSAPublicKey, data, sig);
             }
             throw new InvalidOperationException($"Missing or unknown kty {_type}");
         }
@@ -143,13 +161,28 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Objects
                 var crv = (COSE.EllipticCurve)_cpk[CBORObject.FromObject(COSE.KeyTypeParameter.Crv)].AsInt32();
                 switch (_alg)
                 {
+                    case COSE.Algorithm.ES256K:
+                        switch (crv)
+                        {
+                            case COSE.EllipticCurve.P256K:
+                                if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                                {
+                                    // see https://github.com/dotnet/runtime/issues/47770
+                                    throw new PlatformNotSupportedException($"No support currently for secP256k1 on MacOS");
+                                }
+                                curve = ECCurve.CreateFromFriendlyName("secP256k1");
+                                break;
+                            default:
+                                throw new InvalidOperationException($"Missing or unknown crv {crv}");
+                        }
+                        break;
                     case COSE.Algorithm.ES256:
                         switch (crv)
                         {
                             case COSE.EllipticCurve.P256:
-                            case COSE.EllipticCurve.P256K:
                                 curve = ECCurve.NamedCurves.nistP256;
                                 break;
+
                             default:
                                 throw new InvalidOperationException($"Missing or unknown crv {crv}");
                         }
@@ -237,6 +270,34 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Objects
                 return null;
             }
         }
+
+        /*
+        internal NSec.Cryptography.PublicKey EdDSAPublicKey
+        {
+            get
+            {
+                if (_type == COSE.KeyType.OKP)
+                {
+                    switch (_alg) // https://www.iana.org/assignments/cose/cose.xhtml#algorithms
+                    {
+                        case COSE.Algorithm.EdDSA:
+                            var crv = (COSE.EllipticCurve)_cpk[CBORObject.FromObject(COSE.KeyTypeParameter.Crv)].AsInt32();
+                            switch (crv) // https://www.iana.org/assignments/cose/cose.xhtml#elliptic-curves
+                            {
+                                case COSE.EllipticCurve.Ed25519:
+                                    return NSec.Cryptography.PublicKey.Import(NSec.Cryptography.SignatureAlgorithm.Ed25519, _cpk[CBORObject.FromObject(COSE.KeyTypeParameter.X)].GetByteString(), NSec.Cryptography.KeyBlobFormat.RawPublicKey);
+
+                                default:
+                                    throw new InvalidOperationException($"Missing or unknown crv {crv}");
+                            }
+                        default:
+                            throw new InvalidOperationException($"Missing or unknown alg {_alg}");
+                    }
+                }
+                return null;
+            }
+        }
+        */
 
         internal readonly COSE.KeyType _type;
 

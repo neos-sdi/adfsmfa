@@ -877,6 +877,20 @@ namespace Neos.IdentityServer.MultiFactor
         protected abstract string GetFormRenderHtmlHeader(AuthenticationContext usercontext);
 
         /// <summary>
+        /// GetFormPreRenderHtmlNavigator method implmentation
+        /// </summary>
+        protected virtual string GetFormPreRenderHtmlNavigator(AuthenticationContext usercontext)
+        {
+            return string.Empty; // TODO : Ceck Platform using userAgentData
+            /*string result = string.Empty;
+            result += "<script>";
+            result += "   window.alert(navigator.userAgentData.platform);";  // "Android", "Chrome OS", "iOS", "Linux", "macOS", "Windows", or "Unknown".
+            result += "   console.log(navigator.userAgentData.platform);";
+            result += "</script>";
+            return result;*/
+        }
+
+        /// <summary>
         /// GetFormHtml method implementation
         /// </summary>
         public virtual string GetFormHtml(int lcid)
@@ -973,6 +987,7 @@ namespace Neos.IdentityServer.MultiFactor
         public virtual string GetFormPreRenderHtml(int lcid)
         {
             string result = GetFormPreRenderHtmlCSS(Context);
+            result += GetFormPreRenderHtmlNavigator(Context);
             switch (Context.UIMode)
             {
                 case ProviderPageMode.Identification:
@@ -1250,6 +1265,7 @@ namespace Neos.IdentityServer.MultiFactor
             result += "width: 342px;";
             result += "background-color: transparent;";
             result += "}" + CR;
+
             if (!removetag)
                 return "<style>" + result + "</style>" + CR + CR;
             else
@@ -1295,6 +1311,7 @@ namespace Neos.IdentityServer.MultiFactor
                         result += "   document.getElementsByTagName('link')[0].href = \"" + dic[WebThemeAddressKind.StyleSheet].ToString() + "\";" + CR;
                 }
             }
+
             result += "   return true;" + CR;
             result += "}" + CR;
             result += "</script>" + CR + CR;
@@ -1661,8 +1678,10 @@ namespace Neos.IdentityServer.MultiFactor
             string result = GetWebAuthNSharedScript(usercontext);
             result += "async function RegisterWebAuthN(frm)" + CR;
             result += "{" + CR;
+#if !prevent
             result += "   if (frm !== null)" + CR;
             result += "      frm.preventDefault();" + CR;
+#endif
             result += "   if (detectWebAuthNSupport() === true)" + CR;
             result += "   {" + CR;
             result += "      let makeCredentialOptions;" + CR;
@@ -1739,8 +1758,10 @@ namespace Neos.IdentityServer.MultiFactor
             string result = GetWebAuthNSharedScript(usercontext);
             result += "async function LoginWebAuthN(frm)" + CR;
             result += "{" + CR;
+#if !prevent
             result += "   if (frm !== null)" + CR;
             result += "      frm.preventDefault();" + CR;
+#endif
             result += "   if (detectWebAuthNSupport() === true)" + CR;
             result += "   {" + CR;
             result += "      let makeAssertionOptions;" + CR;

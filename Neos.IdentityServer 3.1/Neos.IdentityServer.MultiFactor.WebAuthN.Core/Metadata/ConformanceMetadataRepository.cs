@@ -27,130 +27,131 @@ using Newtonsoft.Json.Linq;
 
 namespace Neos.IdentityServer.MultiFactor.WebAuthN.Metadata
 {
-    internal class MDSGetEndpointResponse
-    {
-        [JsonProperty("status", Required = Required.Always)]
-        public string Status { get; set; }
-        [JsonProperty("result", Required = Required.Always)]
-        public string[] Result { get; set; }
-    }
-
     public class ConformanceMetadataRepository : IMetadataRepository
     {
-        protected const string ROOT_CERT = "MIICYjCCAeigAwIBAgIPBIdvCXPXJiuD7VW0mgRQMAoGCCqGSM49BAMDMGcxCzAJ" +
+        protected const string ROOT_CERT = "MIICaDCCAe6gAwIBAgIPBCqih0DiJLW7+UHXx/o1MAoGCCqGSM49BAMDMGcxCzAJ" +
                                         "BgNVBAYTAlVTMRYwFAYDVQQKDA1GSURPIEFsbGlhbmNlMScwJQYDVQQLDB5GQUtF" +
-                                        "IE1ldGFkYXRhIFRPQyBTaWduaW5nIEZBS0UxFzAVBgNVBAMMDkZBS0UgUm9vdCBG" +
+                                        "IE1ldGFkYXRhIDMgQkxPQiBST09UIEZBS0UxFzAVBgNVBAMMDkZBS0UgUm9vdCBG" +
                                         "QUtFMB4XDTE3MDIwMTAwMDAwMFoXDTQ1MDEzMTIzNTk1OVowZzELMAkGA1UEBhMC" +
                                         "VVMxFjAUBgNVBAoMDUZJRE8gQWxsaWFuY2UxJzAlBgNVBAsMHkZBS0UgTWV0YWRh" +
-                                        "dGEgVE9DIFNpZ25pbmcgRkFLRTEXMBUGA1UEAwwORkFLRSBSb290IEZBS0UwdjAQ" +
-                                        "BgcqhkjOPQIBBgUrgQQAIgNiAARcVLd6r4fnNHzs5K2zfbg//4X9/oBqmsdRVtZ9" +
-                                        "iXhlgM9vFYaKviYtqmwkq0D3Lihg3qefeZgXXYi4dFgvzU7ZLBapSNM3CT8RDBe/" +
-                                        "MBJqsPwaRQbIsGmmItmt/ESNQD6jWjBYMAsGA1UdDwQEAwIBBjAPBgNVHRMBAf8E" +
-                                        "BTADAQH/MBsGA1UdDgQU3feayBzv4V/ToevbM18w9GoZmVkwGwYDVR0jBBTd95rI" +
-                                        "HO/hX9Oh69szXzD0ahmZWTAKBggqhkjOPQQDAwNoADBlAjAfT9m8LabIuGS6tXiJ" +
-                                        "mRB91SjJ49dk+sPsn+AKx1/PS3wbHEGnGxDIIcQplYDFcXICMQDi33M/oUlb7RDA" +
-                                        "mapRBjJxKK+oh7hlSZv4djmZV3YV0JnF1Ed5E4I0f3C04eP0bjw=";
+                                        "dGEgMyBCTE9CIFJPT1QgRkFLRTEXMBUGA1UEAwwORkFLRSBSb290IEZBS0UwdjAQ" +
+                                        "BgcqhkjOPQIBBgUrgQQAIgNiAASKYiz3YltC6+lmxhPKwA1WFZlIqnX8yL5RybSL" +
+                                        "TKFAPEQeTD9O6mOz+tg8wcSdnVxHzwnXiQKJwhrav70rKc2ierQi/4QUrdsPes8T" +
+                                        "EirZOkCVJurpDFbXZOgs++pa4XmjYDBeMAsGA1UdDwQEAwIBBjAPBgNVHRMBAf8E" +
+                                        "BTADAQH/MB0GA1UdDgQWBBQGcfeCs0Y8D+lh6U5B2xSrR74eHTAfBgNVHSMEGDAW" +
+                                        "gBQGcfeCs0Y8D+lh6U5B2xSrR74eHTAKBggqhkjOPQQDAwNoADBlAjEA/xFsgri0" +
+                                        "xubSa3y3v5ormpPqCwfqn9s0MLBAtzCIgxQ/zkzPKctkiwoPtDzI51KnAjAmeMyg" +
+                                        "X2S5Ht8+e+EQnezLJBJXtnkRWY+Zt491wgt/AwSs5PHHMv5QgjELOuMxQBc=";
 
-        protected readonly string _tocUrl;
+        protected readonly string _blobUrl;
         protected readonly HttpClient _httpClient;
-
-        protected string _tocAlg;
 
         private readonly string _origin = "http://localhost";
 
-        private readonly string _getEndpointsUrl = "https://fidoalliance.co.nz/mds/getEndpoints";
+        private readonly string _getEndpointsUrl = "https://mds3.certinfra.fidoalliance.org/getEndpoints";
 
-        public ConformanceMetadataRepository(string origin)
+        /// <summary>
+        /// ConformanceMetadataRepository constructor
+        /// </summary>
+        public ConformanceMetadataRepository(HttpClient client, string origin)
         {
-            _httpClient = new HttpClient();
+            _httpClient = client ?? new HttpClient();
             _origin = origin;
         }
 
-        private Task<string> GetTocAlg()
+        /// <summary>
+        /// IsInitialized property implementation
+        /// </summary>
+        public bool IsInitialized
         {
-            if (!string.IsNullOrEmpty(_tocAlg))
-            {
-                return Task.FromResult(_tocAlg);
-            }
-            throw new InvalidOperationException("Could not determine TOC algorith.");
+            get;
+            set;
         }
 
-        public async Task<MetadataStatement> GetMetadataStatement(MetadataTOCPayloadEntry entry)
+        /// <summary>
+        /// GetMetadataStatement method implementation
+        /// </summary>
+        public Task<MetadataStatement> GetMetadataStatement(MetadataBLOBPayload blob, MetadataBLOBPayloadEntry entry)
         {
-            var statementBase64Url = await DownloadStringAsync(entry.Url);
-            var tocAlg = await GetTocAlg();
-
-            var statementBytes = Base64Url.Decode(statementBase64Url);
-            var statementString = Encoding.UTF8.GetString(statementBytes, 0, statementBytes.Length);
-            var statement = JsonConvert.DeserializeObject<MetadataStatement>(statementString);
-            using(HashAlgorithm hasher = CryptoUtils.GetHasher(new HashAlgorithmName(tocAlg)))
-            {
-                statement.Hash = Base64Url.Encode(hasher.ComputeHash(Encoding.UTF8.GetBytes(statementBase64Url)));
-            }
-
-            return statement;
+            return Task.FromResult<MetadataStatement>(entry.MetadataStatement);
         }
 
-        public async Task<MetadataTOCPayload> GetToc()
+        /// <summary>
+        /// GetBLOB method implementation
+        /// </summary>
+        public async Task<MetadataBLOBPayload> GetBLOB()
         {
             var req = new
             {
                 endpoint = _origin
             };
 
-            var content = new StringContent(JsonConvert.SerializeObject(req), Encoding.UTF8, "application/json");
+            var content = new StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(req), Encoding.UTF8, "application/json");
             var response = await _httpClient.PostAsync(_getEndpointsUrl, content);
-            var result = JsonConvert.DeserializeObject<MDSGetEndpointResponse>(await response.Content.ReadAsStringAsync());
+            var result = Newtonsoft.Json.JsonConvert.DeserializeObject<MDSGetEndpointResponse>(await response.Content.ReadAsStringAsync());
             var conformanceEndpoints = new List<string>(result.Result);
 
-            var combinedToc = new MetadataTOCPayload
+            var combinedBlob = new MetadataBLOBPayload
             {
                 Number = -1,
                 NextUpdate = "2099-08-07"
             };
 
-            var entries = new List<MetadataTOCPayloadEntry>();
+            var entries = new List<MetadataBLOBPayloadEntry>();
 
-            foreach(var tocUrl in conformanceEndpoints)
+            foreach (var BLOBUrl in conformanceEndpoints)
             {
-                var rawToc = await DownloadStringAsync(tocUrl);
+                var rawBlob = await DownloadStringAsync(BLOBUrl);
 
-                MetadataTOCPayload toc = null;
+                MetadataBLOBPayload blob = null;
 
                 try
                 {
-                    toc = await DeserializeAndValidateToc(rawToc);
+                    blob = await DeserializeAndValidateBlob(rawBlob);
                 }
                 catch
                 {
                     continue;
                 }
-                
-                if(string.Compare(toc.NextUpdate, combinedToc.NextUpdate) < 0)
-                    combinedToc.NextUpdate = toc.NextUpdate;
-                if (combinedToc.Number < toc.Number)
-                    combinedToc.Number = toc.Number;
 
-                foreach (var entry in toc.Entries)
+                if (string.Compare(blob.NextUpdate, combinedBlob.NextUpdate) < 0)
+                    combinedBlob.NextUpdate = blob.NextUpdate;
+                if (combinedBlob.Number < blob.Number)
+                    combinedBlob.Number = blob.Number;
+
+                foreach (var entry in blob.Entries)
                 {
                     entries.Add(entry);
                 }
+                combinedBlob.JwtAlg = blob.JwtAlg;
             }
 
-            combinedToc.Entries = entries.ToArray();
-            return combinedToc;
+            combinedBlob.Entries = entries.ToArray();
+            return combinedBlob;
         }
 
+        #region downloads
+        /// <summary>
+        /// DownloadStringAsync method implementation
+        /// </summary>
         protected async Task<string> DownloadStringAsync(string url)
         {
             return await _httpClient.GetStringAsync(url);
         }
 
+        /// <summary>
+        /// DownloadDataAsync method implementation
+        /// </summary>
         protected async Task<byte[]> DownloadDataAsync(string url)
         {
             return await _httpClient.GetByteArrayAsync(url);
         }
+        #endregion
 
+        #region Keys
+        /// <summary>
+        /// GetX509Certificate method implementation
+        /// </summary>
         private X509Certificate2 GetX509Certificate(string key)
         {
             try
@@ -164,46 +165,49 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Metadata
             }
         }
 
-        public async Task<MetadataTOCPayload> DeserializeAndValidateToc(string toc)
+        /// <summary>
+        /// DeserializeAndValidateBlob method implementation 
+        /// </summary>
+        protected async Task<MetadataBLOBPayload> DeserializeAndValidateBlob(string rawBLOBJwt)
         {
-            if (string.IsNullOrWhiteSpace(toc))
-                throw new ArgumentNullException(nameof(toc));
+            if (string.IsNullOrWhiteSpace(rawBLOBJwt))
+                throw new ArgumentNullException(nameof(rawBLOBJwt));
 
-            var jwtParts = toc.Split('.');
+            var jwtParts = rawBLOBJwt.Split('.');
 
             if (jwtParts.Length != 3)
                 throw new ArgumentException("The JWT does not have the 3 expected components");
 
-            var tocHeader = jwtParts.First();
-            var tokenHeader = JObject.Parse(System.Text.Encoding.UTF8.GetString(Base64Url.Decode(tocHeader)));
+            var blobHeader = jwtParts.First();
+            var tokenHeader = JObject.Parse(System.Text.Encoding.UTF8.GetString(Base64Url.Decode(blobHeader)));
 
-            _tocAlg = tokenHeader["alg"]?.Value<string>();
+            var blobAlg = tokenHeader["alg"]?.Value<string>();
 
-            if (_tocAlg == null)
-                throw new ArgumentNullException("No alg value was present in the TOC header.");
+            if (blobAlg == null)
+                throw new ArgumentNullException("No alg value was present in the BLOB header.");
 
             var x5cArray = tokenHeader["x5c"] as JArray;
 
             if (x5cArray == null)
-                throw new ArgumentException("No x5c array was present in the TOC header.");
+                throw new ArgumentException("No x5c array was present in the BLOB header.");
 
             var rootCert = GetX509Certificate(ROOT_CERT);
-            var tocCertStrings = x5cArray.Values<string>().ToList();
-            var tocCertificates = new List<X509Certificate2>();
-            var tocPublicKeys = new List<SecurityKey>();
+            var blobCertStrings = x5cArray.Values<string>().ToList();
+            var blobCertificates = new List<X509Certificate2>();
+            var blobPublicKeys = new List<SecurityKey>();
 
-            foreach (var certString in tocCertStrings)
+            foreach (var certString in blobCertStrings)
             {
                 var cert = GetX509Certificate(certString);
-                tocCertificates.Add(cert);
+                blobCertificates.Add(cert);
 
                 var ecdsaPublicKey = cert.GetECDsaPublicKey();
                 if (ecdsaPublicKey != null)
-                    tocPublicKeys.Add(new ECDsaSecurityKey(ecdsaPublicKey));
+                    blobPublicKeys.Add(new ECDsaSecurityKey(ecdsaPublicKey));
 
                 var rsa = cert.GetRSAPublicKey();
                 if (rsa != null)
-                    tocPublicKeys.Add(new RsaSecurityKey(rsa));
+                    blobPublicKeys.Add(new RsaSecurityKey(rsa));
             }
 
             var certChain = new X509Chain();
@@ -216,22 +220,27 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Metadata
                 ValidateAudience = false,
                 ValidateLifetime = false,
                 ValidateIssuerSigningKey = true,
-                IssuerSigningKeys = tocPublicKeys,
+                IssuerSigningKeys = blobPublicKeys,
             };
 
-            var tokenHandler = new JwtSecurityTokenHandler();
+            var tokenHandler = new JwtSecurityTokenHandler()
+            {
+                // 250k isn't enough bytes for conformance test tool
+                // https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/issues/1097
+                MaximumTokenSizeInBytes = rawBLOBJwt.Length
+            };
 
             tokenHandler.ValidateToken(
-                toc,
+                rawBLOBJwt,
                 validationParameters,
                 out var validatedToken);
 
-            if (tocCertificates.Count > 1)
+            if (blobCertificates.Count > 1)
             {
-                certChain.ChainPolicy.ExtraStore.AddRange(tocCertificates.Skip(1).ToArray());
+                certChain.ChainPolicy.ExtraStore.AddRange(blobCertificates.Skip(1).ToArray());
             }
 
-            var certChainIsValid = certChain.Build(tocCertificates.First());
+            var certChainIsValid = certChain.Build(blobCertificates.First());
 
             // if the root is trusted in the context we are running in, valid should be true here
             if (!certChainIsValid)
@@ -250,7 +259,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Metadata
                 // otherwise we have to manually validate that the root in the chain we are testing is the root we downloaded
                 if (rootCert.Thumbprint == certChain.ChainElements[certChain.ChainElements.Count - 1].Certificate.Thumbprint &&
                     // and that the number of elements in the chain accounts for what was in x5c plus the root we added
-                    certChain.ChainElements.Count == (tocCertStrings.Count + 1) &&
+                    certChain.ChainElements.Count == (blobCertStrings.Count + 1) &&
                     // and that the root cert has exactly one status listed against it
                     certChain.ChainElements[certChain.ChainElements.Count - 1].ChainElementStatus.Length == 1 &&
                     // and that that status is a status of exactly UntrustedRoot
@@ -268,10 +277,14 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Metadata
             }
 
             if (!certChainIsValid)
-                throw new VerificationException("Failed to validate cert chain while parsing TOC");
+                throw new VerificationException("Failed to validate cert chain while parsing BLOB");
 
-            var tocPayload = ((JwtSecurityToken)validatedToken).Payload.SerializeToJson();
-            return Newtonsoft.Json.JsonConvert.DeserializeObject<MetadataTOCPayload>(tocPayload);
+            var blobPayload = ((JwtSecurityToken)validatedToken).Payload.SerializeToJson();
+
+            var blob = Newtonsoft.Json.JsonConvert.DeserializeObject<MetadataBLOBPayload>(blobPayload);
+            blob.JwtAlg = blobAlg;
+            return blob;
         }
+        #endregion
     }
 }

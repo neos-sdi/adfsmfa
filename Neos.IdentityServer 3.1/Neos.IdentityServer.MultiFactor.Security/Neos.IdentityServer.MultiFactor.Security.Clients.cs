@@ -638,6 +638,85 @@ namespace Neos.IdentityServer.MultiFactor.Data
             }
         }
 
+        #region WebAuthN Payloads
+        /// <summary>
+        /// HasBLOBPayloadCache method implementation
+        /// </summary>
+        public static bool HasBLOBPayloadCache()
+        {
+            WebAdminClient manager = new WebAdminClient();
+            manager.Initialize();
+            try
+            {
+                IWebAdminServices client = manager.Open();
+                try
+                {
+                    return client.HasBLOBPayloadCache();
+                }
+                finally
+                {
+                    manager.Close(client);
+                }
+            }
+            finally
+            {
+                manager.UnInitialize();
+            }
+
+        }
+
+        /// <summary>
+        /// GetBLOBPayloadCache method implementation
+        /// </summary>
+        public static BLOBPayloadInformations GetBLOBPayloadCache()
+        {
+            WebAdminClient manager = new WebAdminClient();
+            manager.Initialize();
+            try
+            {
+                IWebAdminServices client = manager.Open();
+                try
+                {
+                    return client.GetBLOBPayloadCache();
+                }
+                finally
+                {
+                    manager.Close(client);
+                }
+            }
+            finally
+            {
+                manager.UnInitialize();
+            }
+        }
+
+        /// <summary>
+        /// SetBLOBPayloadCache method implmentation
+        /// </summary>
+        public static void SetBLOBPayloadCache(BLOBPayloadInformations infos)
+        {
+            WebAdminClient manager = new WebAdminClient();
+            manager.Initialize();
+            try
+            {
+                IWebAdminServices client = manager.Open();
+                try
+                {
+                    client.SetBLOBPayloadCache(infos);
+                }
+                finally
+                {
+                    manager.Close(client);
+                }
+            }
+            finally
+            {
+                manager.UnInitialize();
+            }
+
+        }
+        #endregion
+
         #region Firewall
         /// <summary>
         /// AddFirewallRules method implmentation

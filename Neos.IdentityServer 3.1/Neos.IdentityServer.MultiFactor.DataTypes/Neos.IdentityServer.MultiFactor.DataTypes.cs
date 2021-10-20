@@ -2193,6 +2193,17 @@ namespace Neos.IdentityServer.MultiFactor
     }
 
     /// <summary>
+    /// BLOBPayloadInformations class
+    /// </summary>
+    public class BLOBPayloadInformations
+    {
+        public int Number = 0;
+        public DateTime NextUpdate = new DateTime(1970, 1, 1);
+        public bool CanDownload = true;
+        public string BLOB = string.Empty;
+    }
+
+    /// <summary>
     /// Thumbprint Class
     /// </summary>
     public static class Thumbprint
@@ -2253,6 +2264,9 @@ namespace Neos.IdentityServer.MultiFactor
         }
     }
 
+    /// <summary>
+    /// PlaceHolders class implementation
+    /// </summary>
     public class PlaceHolders
     {
         public string TagName { get; set; }

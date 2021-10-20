@@ -565,7 +565,7 @@
     <value>Maksymalna liczba wierszy</value>
   </data>
   <data name="CTRLWEBAUTHNEXTENSIONS" xml:space="preserve">
-    <value>Rozszerzenia (authnSe)</value>
+    <value>Rozszerzenia (exts)</value>
   </data>
   <data name="CTRLWEBAUTHNRESIDENTKEY" xml:space="preserve">
     <value>Wymagaj rezydentnego klucza</value>
@@ -728,5 +728,8 @@
   </data>
   <data name="CTRLSECGENRSAKEY" xml:space="preserve">
     <value>Klucz główny RSA</value>
+  </data>
+  <data name="CTRLWEBAUTHNCONTRAINEDMETADATA" xml:space="preserve">
+    <value>Korzystanie z usługi ograniczonych metadanych (dla farmy programu ADFS, która nie ma dostępu do Internetu)</value>
   </data>
 </root>

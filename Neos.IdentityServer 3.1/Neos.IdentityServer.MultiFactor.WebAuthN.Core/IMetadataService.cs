@@ -22,12 +22,16 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
     /// </summary>
     public interface IMetadataService
     {
+        uint Timeout { get; set; }
+        int TimestampDriftTolerance { get; set; }
+
         /// <summary>
         /// Gets the metadata TOC (table-of-content) payload entry by a guid.
         /// </summary>
         /// <param name="aaguid">The Authenticator Attestation GUID.</param>
         /// <returns>Returns the entry; Otherwise <c>null</c>.</returns>
-        MetadataTOCPayloadEntry GetEntry(Guid aaguid);
+        MetadataBLOBPayloadEntry GetEntry(Guid aaguid);
+
         /// <summary>
         /// Gets a value indicating whether the internal access token is valid.
         /// </summary>
@@ -35,6 +39,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
         /// Returns <c>true</c> if access token is valid, or <c>false</c> if the access token is equal to an invalid token value.
         /// </returns>
         bool ConformanceTesting();
+
         /// <summary>
         /// Gets a value indicating whether the metadata service is initialized.
         /// </summary>

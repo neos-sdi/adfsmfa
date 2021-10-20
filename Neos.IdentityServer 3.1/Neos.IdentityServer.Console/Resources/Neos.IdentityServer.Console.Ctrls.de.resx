@@ -565,7 +565,7 @@
     <value>Maximal-Anzahl an Zeilen</value>
   </data>
   <data name="CTRLWEBAUTHNEXTENSIONS" xml:space="preserve">
-    <value>Erweiterungen (authnSe)</value>
+    <value>Erweiterungen (exts)</value>
   </data>
   <data name="CTRLWEBAUTHNRESIDENTKEY" xml:space="preserve">
     <value>Einen Resident Key verlangen</value>
@@ -728,5 +728,8 @@
   </data>
   <data name="CTRLSECGENRSAKEY" xml:space="preserve">
     <value>RSA-Masterschlüssel</value>
+  </data>
+  <data name="CTRLWEBAUTHNCONTRAINEDMETADATA" xml:space="preserve">
+    <value>Verwenden des eingeschränkten Metadatendiensts (für ADFS-Farmen ohne Internetzugang)</value>
   </data>
 </root>

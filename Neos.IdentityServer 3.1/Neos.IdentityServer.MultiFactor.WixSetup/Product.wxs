@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:netfx="http://schemas.microsoft.com/wix/NetFxExtension">
-  <Product Id="a23dd485-5365-4d82-8309-103494000001" Name="MFA Provider for ADFS 2019/2016/2012 R2" Language="1033" Version="3.1.2109.1" Manufacturer="Neos-sdi" UpgradeCode="a23dd485-5365-4d82-8309-103495000001" >
+  <Product Id="a23dd485-5365-4d82-8309-103494000001" Name="MFA Provider for ADFS 2019/2016/2012 R2" Language="1033" Version="3.1.2110.0" Manufacturer="Neos-sdi" UpgradeCode="a23dd485-5365-4d82-8309-103495000001" >
 
     <Package InstallerVersion="500" Compressed="yes" InstallScope="perMachine" InstallPrivileges="elevated" Platform="x64" Description="Multi-Factor Authentication for ADFS 2019/2016/2012R2" />
 
@@ -438,6 +438,9 @@
       <Component Id="GACDeployment126" Guid="E7173CAB-E43F-4A07-1962-01800000801A" Win64="yes"  Directory="CONFIGFOLDER" DiskId="1" Permanent="yes">
         <File KeyPath="yes" Id="threatconfig.db"  Name="threatconfig.db" Source="$(var.Neos.IdentityServer.MultiFactor.ProjectDir)ThreatDB\threatconfig.db" Vital="yes" />
       </Component>
+      <Component Id="GACDeployment127" Guid="E7173CAB-E43F-4A07-1962-01800000801B" Win64="yes"  Directory="CONFIGFOLDER" DiskId="1" NeverOverwrite="yes" Permanent="yes">
+        <File KeyPath="yes" Id="blob.db"  Name="blob.db" Source="$(var.Neos.IdentityServer.MultiFactor.ProjectDir)Blob\blob.db" Vital="yes" />
+      </Component>
     </ComponentGroup>
   </Fragment>
 
@@ -643,7 +646,7 @@
       </Component>     
       <Component Id="GACDeployment671" Guid="E7173CAB-E43F-4A07-1962-018000006671" Win64="yes" Directory="AssemblyFolder" DiskId="1" >
         <File Assembly=".net" KeyPath="yes" Id="Microsoft.IdentityModel.JsonWebTokens.dll"  Name="Microsoft.IdentityModel.JsonWebTokens.dll" Source="$(var.Neos.IdentityServer.MultiFactor.WebAuthN.Core.TargetDir)Microsoft.IdentityModel.JsonWebTokens.dll" />
-      </Component>
+      </Component> 
       <Component Id="GACDeployment672" Guid="E7173CAB-E43F-4A07-1962-018000006672" Win64="yes" Directory="AssemblyFolder" DiskId="1" >
         <File Assembly=".net" KeyPath="yes" Id="Microsoft.IdentityModel.Logging.dll"  Name="Microsoft.IdentityModel.Logging.dll" Source="$(var.Neos.IdentityServer.MultiFactor.WebAuthN.Core.TargetDir)Microsoft.IdentityModel.Logging.dll" />
       </Component>

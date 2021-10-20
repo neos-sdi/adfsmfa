@@ -12,6 +12,7 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                               //
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
+using Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor;
 using System;
 using System.IO;
 using System.Linq;
@@ -128,7 +129,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Objects
                         // of the CBOR object is reached or an error occurs, whichever happens first."
                         //
                         // Read the CBOR object from the stream
-                        var ext = Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor.CBORObject.Read(reader.BaseStream);
+                        var ext = CBORObject.Read(reader.BaseStream);
 
                         // Encode the CBOR object back to a byte array.
                         Extensions = new Extensions(ext.EncodeToBytes());

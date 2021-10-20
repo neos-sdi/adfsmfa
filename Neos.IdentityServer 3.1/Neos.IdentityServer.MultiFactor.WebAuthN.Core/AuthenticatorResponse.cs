@@ -91,11 +91,10 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
         /// </summary>
         private string FullyQualifiedOrigin(string origin)
         {
-            Uri uri = new Uri(origin);
-            if (uri.Port==443)
-                return $"{uri.Scheme}://{uri.Host}";
-            else
-                return $"{uri.Scheme}://{uri.Host}:{uri.Port}";
+            var uri = new Uri(origin);
+            if (UriHostNameType.Unknown != uri.HostNameType)
+                return uri.IsDefaultPort ? $"{uri.Scheme}://{uri.Host}" : $"{uri.Scheme}://{uri.Host}:{uri.Port}";
+            return origin;
         }
     }
 }
