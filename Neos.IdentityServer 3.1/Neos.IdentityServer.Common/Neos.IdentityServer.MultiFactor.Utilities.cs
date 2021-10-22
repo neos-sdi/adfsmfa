@@ -4012,20 +4012,30 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// CheckForUserAgent method implementation
         /// </summary>
-        internal static void CheckForUserAgent(MFAConfig config, AuthenticationContext usercontext, string userAgent)
+        internal static void CheckForUserAgent(MFAConfig config, AuthenticationContext usercontext, string userplatform)
         {
-            string usragt = userAgent;
-            if (string.IsNullOrEmpty(usragt))  // Device Authentication Or Certificate Authentication : TODO
+            string platform = userplatform;
+            usercontext.Platform = userplatform;
+            if (!string.IsNullOrEmpty(platform))
             {
-                usercontext.DirectLogin = false;
-                return;
+                if (platform.ToLower().Equals("ios") || platform.ToLower().Equals("macos"))
+                {
+                    usercontext.DirectLogin = false;
+                    return;
+                }
+                if (platform.ToLower().Contains("trident/7.0") || platform.ToLower().Contains("msie"))
+                {
+                    usercontext.BioNotSupported = true;
+                    return;
+                }
+                if (platform.ToLower().Contains("macintosh") || platform.ToLower().Contains("iphone") || platform.ToLower().Contains("ipad") || platform.ToLower().Contains("ipod"))
+                {
+                    usercontext.DirectLogin = false;
+                    return;
+                }
+                // else "Android", "Chrome OS", "Linux", "Windows", or "Unknown"
             }
-            if (usragt.ToLower().Contains("trident/7.0") || usragt.ToLower().Contains("msie"))
-            {
-                usercontext.BioNotSupported = true;
-                return;
-            }
-            if (usragt.ToLower().Contains("macintosh") || usragt.ToLower().Contains("iphone") || usragt.ToLower().Contains("ipad") || usragt.ToLower().Contains("ipod"))
+            else
             {
                 usercontext.DirectLogin = false;
                 return;

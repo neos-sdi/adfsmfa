@@ -668,7 +668,9 @@ namespace Neos.IdentityServer.MultiFactor
                 _holders.Add(new PlaceHolders() { TagName = "##CNFPASS##", FiledName = "cnfpwdedit" });
                 _holders.Add(new PlaceHolders() { TagName = "##MANAGEACCOUNT##", FiledName = "manageaccount" });
                 _holders.Add(new PlaceHolders() { TagName = "##OPTIONITEM##", FiledName = "optionitem" });
-                }
+                _holders.Add(new PlaceHolders() { TagName = "##PLATFORM##", FiledName = "userplatform" });
+                _holders.Add(new PlaceHolders() { TagName = "##LANGUAGE##", FiledName = "userlanguage" });
+            }
         }
         #endregion
 
@@ -866,7 +868,6 @@ namespace Neos.IdentityServer.MultiFactor
             get;
             internal set;
         }
-
         #endregion
 
         #region ADFS Interfaces
@@ -877,20 +878,6 @@ namespace Neos.IdentityServer.MultiFactor
         protected abstract string GetFormRenderHtmlHeader(AuthenticationContext usercontext);
 
         /// <summary>
-        /// GetFormPreRenderHtmlNavigator method implmentation
-        /// </summary>
-        protected virtual string GetFormPreRenderHtmlNavigator(AuthenticationContext usercontext)
-        {
-            return string.Empty; // TODO : Ceck Platform using userAgentData
-            /*string result = string.Empty;
-            result += "<script>";
-            result += "   window.alert(navigator.userAgentData.platform);";  // "Android", "Chrome OS", "iOS", "Linux", "macOS", "Windows", or "Unknown".
-            result += "   console.log(navigator.userAgentData.platform);";
-            result += "</script>";
-            return result;*/
-        }
-
-        /// <summary>
         /// GetFormHtml method implementation
         /// </summary>
         public virtual string GetFormHtml(int lcid)
@@ -898,6 +885,10 @@ namespace Neos.IdentityServer.MultiFactor
             string result = string.Empty;
             switch (Context.UIMode)
             {
+                case ProviderPageMode.PreSet:
+                    result += GetFormRenderHtmlHeader(Context);
+                    result += GetFormHtmlPreset(Context);
+                    break;
                 case ProviderPageMode.Identification:
                     result += GetFormRenderHtmlHeader(Context);
                     result += GetFormHtmlIdentification(Context);
@@ -987,9 +978,12 @@ namespace Neos.IdentityServer.MultiFactor
         public virtual string GetFormPreRenderHtml(int lcid)
         {
             string result = GetFormPreRenderHtmlCSS(Context);
-            result += GetFormPreRenderHtmlNavigator(Context);
             switch (Context.UIMode)
             {
+                case ProviderPageMode.PreSet:
+                    result += GetFormPreRenderHtmlHeader(Context);
+                    result += GetFormPreRenderHtmlPreset(Context);
+                    break;
                 case ProviderPageMode.Identification:
                     result += GetFormPreRenderHtmlHeader(Context);
                     result += GetFormPreRenderHtmlIdentification(Context);
@@ -1075,6 +1069,8 @@ namespace Neos.IdentityServer.MultiFactor
         #endregion
 
         #region Abstract methods
+        public abstract string GetFormHtmlPreset(AuthenticationContext usercontext);
+        public abstract string GetFormPreRenderHtmlPreset(AuthenticationContext usercontext);
         public abstract string GetFormPreRenderHtmlIdentification(AuthenticationContext usercontext);
         public abstract string GetFormHtmlIdentification(AuthenticationContext usercontext);
         public abstract string GetFormPreRenderHtmlRegistration(AuthenticationContext usercontext);
@@ -1275,11 +1271,31 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// GetFormPreRenderHtmlHeader method implementation
         /// </summary>
+        protected override string GetFormRenderHtmlHeader(AuthenticationContext usercontext)
+        {
+            string result = "<script type=\"text/javascript\">" + CR;
+            result += "if (window.addEventListener)" + CR;
+            result += "{" + CR;
+            result += "   window.addEventListener('load', RemoveADFSHtmlHeader, false);" + CR;
+            result += "}" + CR;
+            result += "else if (window.attachEvent)" + CR;
+            result += "{" + CR;
+            result += "   window.attachEvent('onload', RemoveADFSHtmlHeader);" + CR;
+            result += "}" + CR;
+            result += "</script>" + CR;
+            return result;
+        }
+
+        /// <summary>
+        /// GetFormPreRenderHtmlHeader method implementation
+        /// </summary>
         protected override string GetFormPreRenderHtmlHeader(AuthenticationContext usercontext)
         {
+            // string result = "<meta http-equiv = \"Accept-CH\" content = \"Sec-CH-UA, Sec-CH-UA-Platform, Sec-CH-UA-Mobile, Sec-CH-UA-Full-Version, Sec-CH-UA-Platform-Version\" >" + CR;
             string result = "<script type='text/javascript'>" + CR;
             result += "function RemoveADFSHtmlHeader()" + CR;
             result += "{" + CR;
+
             RegistryVersion reg = new RegistryVersion();
             if (reg.IsWindows2012R2)
             {
@@ -1298,6 +1314,7 @@ namespace Neos.IdentityServer.MultiFactor
                 result += "      title.style.display = \"none\";" + CR;
                 result += "   }" + CR;
             }
+
             if (WebThemeManagerClient.HasRelyingPartyTheme(usercontext))
             {
                 Dictionary<WebThemeAddressKind, string> dic = WebThemeManagerClient.GetAddresses(usercontext);
@@ -1317,26 +1334,75 @@ namespace Neos.IdentityServer.MultiFactor
             result += "</script>" + CR + CR;
             return result;
         }
+        #endregion
 
+        #region Preset
         /// <summary>
-        /// GetFormPreRenderHtmlHeader method implementation
+        /// GetFormHtmlPreset method implementation
         /// </summary>
-        protected override string GetFormRenderHtmlHeader(AuthenticationContext usercontext)
+        public override string GetFormHtmlPreset(AuthenticationContext usercontext)
         {
             string result = "<script type=\"text/javascript\">" + CR;
             result += "if (window.addEventListener)" + CR;
             result += "{" + CR;
-            result += "   window.addEventListener('load', RemoveADFSHtmlHeader, false);" + CR;
+            result += "   window.addEventListener('load', QueryUserSessionProperties, false);" + CR;
             result += "}" + CR;
             result += "else if (window.attachEvent)" + CR;
             result += "{" + CR;
-            result += "   window.attachEvent('onload', RemoveADFSHtmlHeader);" + CR;
+            result += "   window.attachEvent('onload', QueryUserSessionProperties);" + CR;
             result += "}" + CR;
-            result += "</script>" + CR;
+            result += "</script>" + CR + CR;
 
+            result += "<form method=\"post\" id=\"presetForm\" >" + CR;
+            result += GetPartHtmlDonut();
+
+            result += "<input id=\"context\" type=\"hidden\" name=\"Context\" value=\"%Context%\"/>" + CR;
+            result += "<input id=\"authMethod\" type=\"hidden\" name=\"AuthMethod\" value=\"%AuthMethod%\"/>" + CR;
+            result += "<input id=\"##PLATFORM##\" type=\"hidden\" name=\"##PLATFORM##\" />" + CR;
+            result += "<input id=\"##LANGUAGE##\" type=\"hidden\" name=\"##LANGUAGE##\" />" + CR;
+            result += "</form>" + CR;
+            return result;
+
+        }
+
+        public override string GetFormPreRenderHtmlPreset(AuthenticationContext usercontext)
+        {
+            string result = "<script type='text/javascript'>" + CR;
+            result += "function QueryUserSessionProperties(frm)" + CR;
+            result += "{" + CR;
+            result += "   try" + CR;
+            result += "   {" + CR;
+            result += "      var xplatform = document.getElementById('userplatform');" + CR;
+            result += "      if (xplatform)" + CR;
+            result += "      {" + CR;
+            result += "         xplatform.value = navigator.userAgentData.platform;" + CR;
+            result += "      }" + CR;
+            result += "   }" + CR;
+            result += "   catch(e)" + CR;
+            result += "   {" + CR;
+            result += "         xplatform.value = null;" + CR;
+            result += "   }" + CR;
+
+            result += "   try" + CR;
+            result += "   {" + CR;
+            result += "      var xlanguage = document.getElementById('userlanguage');" + CR;
+            result += "      if (xlanguage)" + CR;
+            result += "      {" + CR;
+            result += "         xlanguage.value = navigator.language;" + CR;
+            result += "      }" + CR;
+            result += "   }" + CR;
+            result += "   catch(e)" + CR;
+            result += "   {" + CR;
+            result += "         xlanguage.value = null;" + CR;
+            result += "   }" + CR;
+            result += "   document.getElementById('presetForm').submit();" + CR;
+            result += "   return true;" + CR;
+            result += "}" + CR;
+            result += "</script>" + CR + CR;
             return result;
         }
         #endregion
+
 
         #region QRCode
         /// <summary>

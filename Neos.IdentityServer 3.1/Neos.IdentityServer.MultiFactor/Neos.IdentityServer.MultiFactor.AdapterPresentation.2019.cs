@@ -313,7 +313,6 @@ namespace Neos.IdentityServer.MultiFactor
             result += "<br/>";
             result += "<input id=\"context\" type=\"hidden\" name=\"Context\" value=\"%Context%\"/>";
             result += "<input id=\"authMethod\" type=\"hidden\" name=\"AuthMethod\" value=\"%AuthMethod%\"/>";
-
             result += "<input id=\"##SELECTED##\" type=\"hidden\" name=\"##SELECTED##\" value=\"0\" />";
 
             result += "<table><tr>";
@@ -511,8 +510,7 @@ namespace Neos.IdentityServer.MultiFactor
             result += "<input id=\"##ISPROVIDER##\" type=\"hidden\" name=\"##ISPROVIDER##\" value=\"" + (int)m + "\" />";
             result += "<input id=\"##SELECTED##\" type=\"hidden\" name=\"##SELECTED##\" value=\"0\" />";
             result += "<input id=\"context\" type=\"hidden\" name=\"Context\" value=\"%Context%\"/>";
-            result += "<input id=\"authMethod\" type=\"hidden\" name=\"AuthMethod\" value=\"%AuthMethod%\"/>";
-
+            result += "<input id=\"authMethod\" type=\"hidden\" name=\"AuthMethod\" value=\"%AuthMethod%\"/>";            
             result += "</form>"; 
             return result;
         }
@@ -700,8 +698,7 @@ namespace Neos.IdentityServer.MultiFactor
             result += "<input id=\"##ISPROVIDER##\" type=\"hidden\" name=\"##ISPROVIDER##\" value=\"" + (int)m + "\" />";
             result += "<input id=\"##SELECTED##\" type=\"hidden\" name=\"##SELECTED##\" value=\"0\" />";
             result += "<input id=\"context\" type=\"hidden\" name=\"Context\" value=\"%Context%\"/>";
-            result += "<input id=\"authMethod\" type=\"hidden\" name=\"AuthMethod\" value=\"%AuthMethod%\"/>";
-
+            result += "<input id=\"authMethod\" type=\"hidden\" name=\"AuthMethod\" value=\"%AuthMethod%\"/>";            
             result += "</form>";
             return result;
         }
@@ -755,7 +752,6 @@ namespace Neos.IdentityServer.MultiFactor
             result += "<input id=\"##SELECTED##\" type=\"hidden\" name=\"##SELECTED##\" value=\"0\" />";
             result += "<input id=\"context\" type=\"hidden\" name=\"Context\" value=\"%Context%\"/>";
             result += "<input id=\"authMethod\" type=\"hidden\" name=\"AuthMethod\" value=\"%AuthMethod%\"/>";
-
             result += "</form>";
             return result;
 
@@ -1071,6 +1067,7 @@ namespace Neos.IdentityServer.MultiFactor
                 result += "<input id=\"context\" type=\"hidden\" name=\"Context\" value=\"%Context%\"/>";
                 result += "<input id=\"authMethod\" type=\"hidden\" name=\"AuthMethod\" value=\"%AuthMethod%\"/>";
                 result += "<input id=\"##SELECTED##\" type=\"hidden\" name=\"##SELECTED##\" value=\"1\" />";
+
                 result += "<table><tr>";
                 result += "<td>";
                 result += "<input id=\"saveButton\" type=\"submit\" class=\"submit\" name=\"continue\" value=\"" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlPWDSave") + "\" onClick=\"fnbtnclicked(1)\" />";
@@ -1880,7 +1877,6 @@ namespace Neos.IdentityServer.MultiFactor
             result += "<input id=\"context\" type=\"hidden\" name=\"Context\" value=\"%Context%\"/>";
             result += "<input id=\"authMethod\" type=\"hidden\" name=\"AuthMethod\" value=\"%AuthMethod%\"/>";
             result += "<input id=\"##SELECTED##\" type=\"hidden\" name=\"##SELECTED##\" value=\"1\" />";
-
             result += "</form>";
             return result;
         }
@@ -2091,7 +2087,6 @@ namespace Neos.IdentityServer.MultiFactor
             result += "<input id=\"context\" type=\"hidden\" name=\"Context\" value=\"%Context%\"/>";
             result += "<input id=\"authMethod\" type=\"hidden\" name=\"AuthMethod\" value=\"%AuthMethod%\"/>";
             result += "<input id=\"##SELECTED##\" type=\"hidden\" name=\"##SELECTED##\" value=\"1\" />";
-
             result += "</form>";
             return result;
         }
@@ -2307,7 +2302,6 @@ namespace Neos.IdentityServer.MultiFactor
             result += "<input id=\"context\" type=\"hidden\" name=\"Context\" value=\"%Context%\"/>";
             result += "<input id=\"authMethod\" type=\"hidden\" name=\"AuthMethod\" value=\"%AuthMethod%\"/>";
             result += "<input id=\"##SELECTED##\" type=\"hidden\" name=\"##SELECTED##\" value=\"1\" />";
-
             result += "</form>";
             return result;
         }
@@ -2745,7 +2739,6 @@ namespace Neos.IdentityServer.MultiFactor
             result += "<input id=\"context\" type=\"hidden\" name=\"Context\" value=\"%Context%\"/>";
             result += "<input id=\"authMethod\" type=\"hidden\" name=\"AuthMethod\" value=\"%AuthMethod%\"/>";
             result += "<input id=\"##SELECTED##\" type=\"hidden\" name=\"##SELECTED##\" value=\"1\" />";
-
             result += "</form>";
             return result;
         }
@@ -2788,7 +2781,7 @@ namespace Neos.IdentityServer.MultiFactor
             result += "</select><br/>";
             return result;
         }
-#endregion
+        #endregion
     }
 }
 

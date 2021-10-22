@@ -70,7 +70,7 @@ namespace Neos.IdentityServer.MultiFactor
                 IPAddress = request.RemoteEndPoint.Address.ToString()
             };
             Utilities.PatchLanguageIfNeeded(Config, usercontext, request.UserLanguages);
-            Utilities.CheckForUserAgent(Config, usercontext, request.UserAgent);
+           // Utilities.CheckForUserAgent(Config, usercontext, null);
             ResourcesLocale Resources = new ResourcesLocale(usercontext.Lcid);
             ClientSIDsProxy.Initialize(Config);
 
@@ -93,8 +93,11 @@ namespace Neos.IdentityServer.MultiFactor
                 switch (usercontext.UIMode)
                 {
                     case ProviderPageMode.PreSet:
-                        usercontext.UIMode = GetAuthenticationContextRequest(usercontext);
-                        GetAuthenticationData(usercontext);
+                        //  usercontext.UIMode = GetAuthenticationContextRequest(usercontext);
+                       // ProviderPageMode ppvm = GetAuthenticationContextRequest(usercontext);
+                       // usercontext.UIMode = ppvm;
+                       // GetAuthenticationData(usercontext);
+                        usercontext.UIMode = ProviderPageMode.PreSet;
                         result = new AdapterPresentation(this, context);
                         break;
                     case ProviderPageMode.Locking:
@@ -382,6 +385,9 @@ namespace Neos.IdentityServer.MultiFactor
             {
                 switch (ui)
                 {
+                    case ProviderPageMode.PreSet:
+                        result = TryPreset(usercontext, context, proofData, request, out claims);
+                        break;
                     case ProviderPageMode.Identification:
                         result = TryIdentification(usercontext, context, proofData, request, out claims);
                         break;
@@ -399,11 +405,11 @@ namespace Neos.IdentityServer.MultiFactor
                     case ProviderPageMode.ManageOptions: // Manage Options
                         usercontext.WizContext = WizardContextMode.ManageOptions;
                         result = TryManageOptions(usercontext, context, proofData, request, out claims);
-                        Utilities.CheckForUserAgent(Config, usercontext, request.UserAgent);
+                        Utilities.CheckForUserAgent(Config, usercontext, usercontext.Platform);
                         break;
                     case ProviderPageMode.SelectOptions:
                         result = TrySelectOptions(usercontext, context, proofData, request, out claims);
-                        Utilities.CheckForUserAgent(Config, usercontext, request.UserAgent);
+                        Utilities.CheckForUserAgent(Config, usercontext, usercontext.Platform);
                         break;
                     case ProviderPageMode.ChooseMethod:
                         result = TryChooseMethod(usercontext, context, proofData, request, out claims);
@@ -456,6 +462,32 @@ namespace Neos.IdentityServer.MultiFactor
         #endregion
 
         #region IAuthenticationAdapter custom implementation
+        /// <summary>
+        /// TryPreset method implementation
+        /// </summary>
+        private IAdapterPresentation TryPreset(AuthenticationContext usercontext, IAuthenticationContext context, IProofData proofData, HttpListenerRequest request, out Claim[] claims)
+        {
+            ResourcesLocale Resources = new ResourcesLocale(usercontext.Lcid);
+            claims = null;
+            IAdapterPresentation result = null;
+
+            string userplatfrom = proofData.Properties["userplatform"]?.ToString();
+            if (string.IsNullOrEmpty(userplatfrom))
+                userplatfrom = request.UserAgent;
+            string userlanguage = proofData.Properties["userlanguage"]?.ToString();
+            string[] userlanguages = null;
+            if (string.IsNullOrEmpty(userlanguage))
+                userlanguages = request.UserLanguages;
+            else
+                userlanguages = new string[] { userlanguage };
+            Utilities.PatchLanguageIfNeeded(Config, usercontext, userlanguages);
+            Utilities.CheckForUserAgent(Config, usercontext, userplatfrom);
+            usercontext.UIMode = GetAuthenticationContextRequest(usercontext);
+            GetAuthenticationData(usercontext);
+            result = new AdapterPresentation(this, context);
+            return result;
+        }
+
         /// <summary>
         /// TryIdentification method implementation
         /// </summary>
