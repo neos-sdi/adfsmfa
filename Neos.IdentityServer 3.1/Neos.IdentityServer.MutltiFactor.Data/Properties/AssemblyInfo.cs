@@ -50,7 +50,7 @@ using System.Runtime.Versioning;
 //      Révision
 //
 [assembly: AssemblyVersion("3.0.0.0")]
-[assembly: AssemblyFileVersion("3.1.2110.1")]
+[assembly: AssemblyFileVersion("3.1.2111.0")]
 [assembly: AssemblyInformationalVersion("3.0.0.0")]
 [assembly: NeutralResourcesLanguageAttribute("en")]
 

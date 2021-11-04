@@ -19,6 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using Microsoft.IdentityServer.Web.Authentication.External;
+using Neos.IdentityServer.MultiFactor.Common;
 using Neos.IdentityServer.MultiFactor.Data;
 
 namespace Neos.IdentityServer.MultiFactor
@@ -45,30 +46,30 @@ namespace Neos.IdentityServer.MultiFactor
             switch (provider.Config.UiKind)
             {
                 case ADFSUserInterfaceKind.Default2019:
-                    _adapter = new AdapterPresentation2019(provider, context)
+                    _adapter = new AdapterPresentation2019(context.Lcid)
                     {
                         UseUIPaginated = provider.Config.UseUIPaginated
                     };
                     break;
                 case ADFSUserInterfaceKind.Default:
-                    _adapter = new AdapterPresentationDefault(provider, context)
+                    _adapter = new AdapterPresentationDefault(context.Lcid)
                     {
                         UseUIPaginated = false
                     };
                     break;
                 case ADFSUserInterfaceKind.Custom:
-                    _adapter = LoadCustomAdapterPresentation(provider, context);
-                    _adapter.Resources = new ResourcesLocale(context.Lcid);
-                    _adapter.Context = new AuthenticationContext(context)
-                    {
-                        UIMessage = string.Empty
-                    };
-                    _adapter.IsPermanentFailure = false;
-                    _adapter.IsMessage = true;
-                    _adapter.DisableOptions = false;
+                    _adapter = LoadCustomAdapterPresentation(in provider, context.Lcid);
                     _adapter.UseUIPaginated = provider.Config.UseUIPaginated;
                     break;
             }
+            _adapter.Provider = provider;
+            _adapter.Context = new AuthenticationContext(context)
+            {
+                UIMessage = string.Empty
+            };
+            _adapter.IsPermanentFailure = false;
+            _adapter.IsMessage = true;
+            _adapter.DisableOptions = false;
         }
 
         /// <summary>
@@ -84,30 +85,30 @@ namespace Neos.IdentityServer.MultiFactor
             switch (provider.Config.UiKind)
             {
                 case ADFSUserInterfaceKind.Default2019:
-                    _adapter = new AdapterPresentation2019(provider, context, message)
+                    _adapter = new AdapterPresentation2019(context.Lcid)
                     {
                         UseUIPaginated = provider.Config.UseUIPaginated
                     };
                     break;
                 case ADFSUserInterfaceKind.Default:
-                    _adapter = new AdapterPresentationDefault(provider, context, message)
+                    _adapter = new AdapterPresentationDefault(context.Lcid)
                     {
                         UseUIPaginated = false
                     };
                     break;
                 case ADFSUserInterfaceKind.Custom:
-                    _adapter = LoadCustomAdapterPresentation(provider, context);
-                    _adapter.Resources = new ResourcesLocale(context.Lcid);
-                    _adapter.Context = new AuthenticationContext(context)
-                    {
-                        UIMessage = message
-                    };
-                    _adapter.IsPermanentFailure = (_adapter.Context.TargetUIMode == ProviderPageMode.DefinitiveError);
-                    _adapter.IsMessage = (_adapter.Context.TargetUIMode != ProviderPageMode.DefinitiveError);
-                    _adapter.DisableOptions = false;
+                    _adapter = LoadCustomAdapterPresentation(in provider, context.Lcid);
                     _adapter.UseUIPaginated = provider.Config.UseUIPaginated;
                     break;
             }
+            _adapter.Provider = provider;
+            _adapter.Context = new AuthenticationContext(context)
+            {
+                UIMessage = message
+            };
+            _adapter.IsPermanentFailure = (_adapter.Context.TargetUIMode == ProviderPageMode.DefinitiveError);
+            _adapter.IsMessage = (_adapter.Context.TargetUIMode != ProviderPageMode.DefinitiveError);
+            _adapter.DisableOptions = false;
         }
 
         /// <summary>
@@ -123,30 +124,30 @@ namespace Neos.IdentityServer.MultiFactor
             switch (provider.Config.UiKind)
             {
                 case ADFSUserInterfaceKind.Default2019:
-                    _adapter = new AdapterPresentation2019(provider, context, message, ismessage)
+                    _adapter = new AdapterPresentation2019(context.Lcid)
                     {
                         UseUIPaginated = provider.Config.UseUIPaginated
                     };
                     break;
                 case ADFSUserInterfaceKind.Default:
-                    _adapter = new AdapterPresentationDefault(provider, context, message, ismessage)
+                    _adapter = new AdapterPresentationDefault(context.Lcid)
                     {
                         UseUIPaginated = false
                     };
                     break;
                 case ADFSUserInterfaceKind.Custom:
-                    _adapter = LoadCustomAdapterPresentation(provider, context);
-                    _adapter.Resources = new ResourcesLocale(context.Lcid);
-                    _adapter.Context = new AuthenticationContext(context)
-                    {
-                        UIMessage = message
-                    };
-                    _adapter.IsPermanentFailure = (_adapter.Context.TargetUIMode == ProviderPageMode.DefinitiveError);
-                    _adapter.IsMessage = ismessage;
-                    _adapter.DisableOptions = false;
+                    _adapter = LoadCustomAdapterPresentation(in provider, context.Lcid);
                     _adapter.UseUIPaginated = provider.Config.UseUIPaginated;
                     break;
             }
+            _adapter.Provider = provider;
+            _adapter.Context = new AuthenticationContext(context)
+            {
+                UIMessage = message
+            };
+            _adapter.IsPermanentFailure = (_adapter.Context.TargetUIMode == ProviderPageMode.DefinitiveError);
+            _adapter.IsMessage = ismessage;
+            _adapter.DisableOptions = false;
         }
 
         /// <summary>
@@ -162,31 +163,31 @@ namespace Neos.IdentityServer.MultiFactor
             switch (provider.Config.UiKind)
             {
                 case ADFSUserInterfaceKind.Default2019:
-                    _adapter = new AdapterPresentation2019(provider, context, suite)
+                    _adapter = new AdapterPresentation2019(context.Lcid)
                     {
                         UseUIPaginated = provider.Config.UseUIPaginated
                     };
                     break;
                 case ADFSUserInterfaceKind.Default:
-                    _adapter = new AdapterPresentationDefault(provider, context, suite)
+                    _adapter = new AdapterPresentationDefault(context.Lcid)
                     {
                         UseUIPaginated = false
                     };
                     break;
                 case ADFSUserInterfaceKind.Custom:
-                    _adapter = LoadCustomAdapterPresentation(provider, context);
-                    _adapter.Resources = new ResourcesLocale(context.Lcid);
-                    _adapter.Context = new AuthenticationContext(context)
-                    {
-                        UIMessage = string.Empty,
-                        TargetUIMode = suite
-                    };
-                    _adapter.IsPermanentFailure = (_adapter.Context.TargetUIMode == ProviderPageMode.DefinitiveError);
-                    _adapter.IsMessage = (_adapter.Context.TargetUIMode != ProviderPageMode.DefinitiveError);
-                    _adapter.DisableOptions = false;
+                    _adapter = LoadCustomAdapterPresentation(in provider, context.Lcid);
                     _adapter.UseUIPaginated = provider.Config.UseUIPaginated;
                     break;
             }
+            _adapter.Provider = provider;
+            _adapter.Context = new AuthenticationContext(context)
+            {
+                UIMessage = string.Empty,
+                TargetUIMode = suite
+            };
+            _adapter.IsPermanentFailure = (_adapter.Context.TargetUIMode == ProviderPageMode.DefinitiveError);
+            _adapter.IsMessage = (_adapter.Context.TargetUIMode != ProviderPageMode.DefinitiveError);
+            _adapter.DisableOptions = false;
         }
 
         /// <summary>
@@ -202,31 +203,31 @@ namespace Neos.IdentityServer.MultiFactor
             switch (provider.Config.UiKind)
             {
                 case ADFSUserInterfaceKind.Default2019:
-                    _adapter = new AdapterPresentation2019(provider, context, message, suite, disableoptions)
+                    _adapter = new AdapterPresentation2019(context.Lcid)
                     {
                         UseUIPaginated = provider.Config.UseUIPaginated
                     };
                     break;
                 case ADFSUserInterfaceKind.Default:
-                    _adapter = new AdapterPresentationDefault(provider, context, message, suite, disableoptions)
+                    _adapter = new AdapterPresentationDefault(context.Lcid)
                     {
                         UseUIPaginated = false
                     };
                     break;
                 case ADFSUserInterfaceKind.Custom:
-                    _adapter = LoadCustomAdapterPresentation(provider, context);
-                    _adapter.Resources = new ResourcesLocale(context.Lcid);
-                    _adapter.Context = new AuthenticationContext(context)
-                    {
-                        UIMessage = message,
-                        TargetUIMode = suite
-                    };
-                    _adapter.IsPermanentFailure = (_adapter.Context.TargetUIMode == ProviderPageMode.DefinitiveError);
-                    _adapter.IsMessage = (_adapter.Context.TargetUIMode != ProviderPageMode.DefinitiveError);
-                    _adapter.DisableOptions = disableoptions;
+                    _adapter = LoadCustomAdapterPresentation(in provider, context.Lcid);
                     _adapter.UseUIPaginated = provider.Config.UseUIPaginated;
                     break;
             }
+            _adapter.Provider = provider;
+            _adapter.Context = new AuthenticationContext(context)
+            {
+                TargetUIMode = suite,
+                UIMessage = message
+            };
+            _adapter.IsPermanentFailure = (_adapter.Context.TargetUIMode == ProviderPageMode.DefinitiveError);
+            _adapter.IsMessage = (_adapter.Context.TargetUIMode != ProviderPageMode.DefinitiveError);
+            _adapter.DisableOptions = disableoptions;
         }
         #endregion
 
@@ -279,7 +280,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// Resources property
         /// </summary>
-        public ResourcesLocale Resources
+        public ResourceLocaleBase Resources
         {
             get { return _adapter.Resources; }
             internal set { _adapter.Resources = value; }
@@ -675,29 +676,32 @@ namespace Neos.IdentityServer.MultiFactor
         #endregion
 
         #region Custom AdapterPresentation
-        /// <summary>
-        /// LoadCustomAdapterPresentation method implmentation
-        /// </summary>
-        private static BasePresentation LoadCustomAdapterPresentation(AuthenticationProvider provider, IAuthenticationContext context)
+        private static Type GetCustomAdapterPresentationType(in AuthenticationProvider provider)
         {
-            // provider.Config;
             string AssemblyFulldescription = provider.Config.CustomAdapterPresentation;
             if (string.IsNullOrEmpty(AssemblyFulldescription))
                 return null;
             Assembly assembly = Assembly.Load(Utilities.ParseAssembly(AssemblyFulldescription));
             if (assembly == null)
                 return null;
-
-            Type _typetoload = assembly.GetType(Utilities.ParseType(AssemblyFulldescription));
-            if (_typetoload == null)
+            Type typetoload = assembly.GetType(Utilities.ParseType(AssemblyFulldescription));
+            if (typetoload == null)
                 return null;
 
-            if (_typetoload.IsClass && !_typetoload.IsAbstract && (_typetoload.BaseType.IsAssignableFrom(typeof(BasePresentation)) || _typetoload.BaseType.IsAssignableFrom(typeof(BaseMFAPresentation))))
-            {
-                BasePresentation pres = (BasePresentation)Activator.CreateInstance(_typetoload, true); // Allow Calling internal Constructors
-                pres.Provider = provider;
-                return pres;
-            }
+            if (typetoload.IsClass && !typetoload.IsAbstract && (typetoload.BaseType.IsAssignableFrom(typeof(BasePresentation)) || typetoload.BaseType.IsAssignableFrom(typeof(BaseMFAPresentation))))
+               return typetoload;
+            else
+                return null;
+        }
+
+        /// <summary>
+        /// LoadCustomAdapterPresentation method implmentation
+        /// </summary>
+        private static BasePresentation LoadCustomAdapterPresentation(in AuthenticationProvider provider, int lcid)
+        {
+            Type typetoload = GetCustomAdapterPresentationType(provider);
+            if (typetoload != null)
+                return (BasePresentation)Activator.CreateInstance(typetoload, lcid); 
             else
                 return null;
         }
@@ -722,88 +726,19 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// Constructor implementation
         /// </summary>
-        public BasePresentation(AuthenticationProvider provider, IAuthenticationContext context)
+        public BasePresentation(int lcid)
         {
-            this.Provider = provider;
-            this.Context = new AuthenticationContext(context)
-            {
-                UIMessage = string.Empty
-            };
-            this.IsPermanentFailure = false;
-            this.IsMessage = true;
-            this.DisableOptions = false;
-        }
-
-        /// <summary>
-        /// Constructor overload implementation
-        /// </summary>       
-        public BasePresentation(AuthenticationProvider provider, IAuthenticationContext context, string message)
-        {
-            this.Provider = provider;
-            this.Context = new AuthenticationContext(context)
-            {
-                UIMessage = message
-            };
-            this.IsPermanentFailure = (this.Context.TargetUIMode == ProviderPageMode.DefinitiveError);
-            this.IsMessage = (this.Context.TargetUIMode != ProviderPageMode.DefinitiveError);
-            this.DisableOptions = false;
-        }
-
-        /// <summary>
-        /// Constructor overload implementation
-        /// </summary>
-        public BasePresentation(AuthenticationProvider provider, IAuthenticationContext context, string message, bool ismessage)
-        {
-            this.Provider = provider;
-            this.Context = new AuthenticationContext(context)
-            {
-                UIMessage = message
-            };
-            this.IsPermanentFailure = (this.Context.TargetUIMode == ProviderPageMode.DefinitiveError);
-            this.IsMessage = ismessage;
-            this.DisableOptions = false;
-        }
-
-        /// <summary>
-        /// Constructor overload implementation
-        /// </summary>
-        public BasePresentation(AuthenticationProvider provider, IAuthenticationContext context, ProviderPageMode suite)
-        {
-            this.Provider = provider;
-            this.Context = new AuthenticationContext(context)
-            {
-                UIMessage = string.Empty,
-                TargetUIMode = suite
-            };
-            this.IsPermanentFailure = (this.Context.TargetUIMode == ProviderPageMode.DefinitiveError);
-            this.IsMessage = (this.Context.TargetUIMode != ProviderPageMode.DefinitiveError);
-            this.DisableOptions = false;
-        }
-
-        /// <summary>
-        /// Constructor overload implementation
-        /// </summary>
-        protected BasePresentation(AuthenticationProvider provider, IAuthenticationContext context, string message, ProviderPageMode suite, bool disableoptions = false)
-        {
-            this.Provider = provider;
-            this.Context = new AuthenticationContext(context)
-            {
-                TargetUIMode = suite,
-                UIMessage = message
-            };
-            this.IsPermanentFailure = (this.Context.TargetUIMode == ProviderPageMode.DefinitiveError);
-            this.IsMessage = (this.Context.TargetUIMode != ProviderPageMode.DefinitiveError);
-            this.DisableOptions = disableoptions;
+            this.Resources = new ResourcesLocale(lcid);
         }
 
         #region Properties
         /// <summary>
         /// Resources property
         /// </summary>
-        public virtual ResourcesLocale Resources
+        public virtual ResourceLocaleBase Resources
         {
             get;
-            internal set;
+            set;
         }
 
         /// <summary>
@@ -812,7 +747,7 @@ namespace Neos.IdentityServer.MultiFactor
         public virtual ADFSUserInterfaceKind UiKind
         {
             get;
-            set;
+            internal set;
         }
 
         /// <summary>
@@ -1142,7 +1077,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// Constructor implementation
         /// </summary>
-        public BaseMFAPresentation():base()
+        public BaseMFAPresentation()
         {
 
         }
@@ -1150,41 +1085,9 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// Constructor implementation
         /// </summary>
-        public BaseMFAPresentation(AuthenticationProvider provider, IAuthenticationContext context):base(provider, context)
+        public BaseMFAPresentation(int lcid):base(lcid)
         {
-            this.Resources = new ResourcesLocale(Context.Lcid);
-        }
 
-        /// <summary>
-        /// Constructor overload implementation
-        /// </summary>       
-        public BaseMFAPresentation(AuthenticationProvider provider, IAuthenticationContext context, string message): base(provider, context, message)
-        {
-            this.Resources = new ResourcesLocale(Context.Lcid);
-        }
-
-        /// <summary>
-        /// Constructor overload implementation
-        /// </summary>
-        public BaseMFAPresentation(AuthenticationProvider provider, IAuthenticationContext context, string message, bool ismessage): base(provider, context, message, ismessage)
-        {
-            this.Resources = new ResourcesLocale(Context.Lcid);
-        }
-
-        /// <summary>
-        /// Constructor overload implementation
-        /// </summary>
-        public BaseMFAPresentation(AuthenticationProvider provider, IAuthenticationContext context, ProviderPageMode suite): base(provider, context, suite)
-        {
-            this.Resources = new ResourcesLocale(Context.Lcid);
-        }
-
-        /// <summary>
-        /// Constructor overload implementation
-        /// </summary>
-        protected BaseMFAPresentation(AuthenticationProvider provider, IAuthenticationContext context, string message, ProviderPageMode suite, bool disableoptions = false): base(provider, context, message, suite, disableoptions)
-        {
-            this.Resources = new ResourcesLocale(Context.Lcid);
         }
 
         #region ADFS Interfaces
@@ -1193,7 +1096,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public override string GetPageTitle(int lcid)
         {
-            return Resources.GetString(ResourcesLocaleKind.Titles, "TitlePageTitle");
+            return Resources.GetString(ResourcesLocaleKind.UITitles, "TitlePageTitle");
         }
 
         /// <summary>
@@ -1208,7 +1111,7 @@ namespace Neos.IdentityServer.MultiFactor
                 if (!String.IsNullOrEmpty(usercontext.UIMessage))
                     result += "<div id=\"error\" class=\"fieldMargin error smallText\"><label id=\"errorText\" name=\"errorText\" for=\"\">" + usercontext.UIMessage + "</label></div>";
                 else
-                    result += "<div id=\"error\" class=\"fieldMargin error smallText\"><label id=\"errorText\" name=\"errorText\" for=\"\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlErrorRestartSession") + "</label></div>";
+                    result += "<div id=\"error\" class=\"fieldMargin error smallText\"><label id=\"errorText\" name=\"errorText\" for=\"\">" + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlErrorRestartSession") + "</label></div>";
             }
             else
             {
@@ -1419,7 +1322,7 @@ namespace Neos.IdentityServer.MultiFactor
         public override string GetFormHtmlShowQRCode(AuthenticationContext usercontext)
         {
             string result = "<form method=\"post\" id=\"loginForm\" >";
-            result += "<div class=\"fieldMargin smallText\"><label for=\"\"></label>" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelWRQRCode") + "</div><br/>";
+            result += "<div class=\"fieldMargin smallText\"><label for=\"\"></label>" + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlLabelWRQRCode") + "</div><br/>";
             result += "<p style=\"text-align:center\"><img id=\"qr\" src=\"data:image/png;base64," + Provider.GetQRCodeString(usercontext) + "\"/></p><br/>";
             result += "<input id=\"context\" type=\"hidden\" name=\"Context\" value=\"%Context%\"/>";
             result += "<input id=\"authMethod\" type=\"hidden\" name=\"AuthMethod\" value=\"%AuthMethod%\"/>";

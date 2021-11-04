@@ -2664,7 +2664,7 @@ namespace Neos.IdentityServer.MultiFactor
                     lock (lck)
                     {
                         ResourcesLocale Resources = new ResourcesLocale(culture.LCID);
-                        htmlres = Resources.GetString(ResourcesLocaleKind.Mail, "MailOTPContent");
+                        htmlres = Resources.GetString(ResourcesLocaleKind.CommonMail, "MailOTPContent");
                     }
                 }
                 string html = StripEmailContent(htmlres);
@@ -2693,7 +2693,7 @@ namespace Neos.IdentityServer.MultiFactor
                     if (Message.Subject == string.Empty)
                     {
                         ResourcesLocale Resources = new ResourcesLocale(culture.LCID);
-                        Message.Subject = Resources.GetString(ResourcesLocaleKind.Mail, "MailOTPTitle");
+                        Message.Subject = Resources.GetString(ResourcesLocaleKind.CommonMail, "MailOTPTitle");
                     }
                 }
                 SendMail(Message, mail);
@@ -2742,7 +2742,7 @@ namespace Neos.IdentityServer.MultiFactor
                     lock (lck)
                     {
                         ResourcesLocale Resources = new ResourcesLocale(culture.LCID);
-                        htmlres = Resources.GetString(ResourcesLocaleKind.Mail, "MailAdminContent");
+                        htmlres = Resources.GetString(ResourcesLocaleKind.CommonMail, "MailAdminContent");
                     }
                 }
                 string sendermail = GetUserBusinessEmail(user.UPN);
@@ -2767,7 +2767,7 @@ namespace Neos.IdentityServer.MultiFactor
                     if (Message.Subject == string.Empty)
                     {
                         ResourcesLocale Resources = new ResourcesLocale(culture.LCID);
-                        Message.Subject = string.Format(Resources.GetString(ResourcesLocaleKind.Mail, "MailAdminTitle"), user.UPN);
+                        Message.Subject = string.Format(Resources.GetString(ResourcesLocaleKind.CommonMail, "MailAdminTitle"), user.UPN);
                     }
                 }
                 SendMail(Message, mail);
@@ -2818,7 +2818,7 @@ namespace Neos.IdentityServer.MultiFactor
                     lock (lck)
                     {
                         ResourcesLocale Resources = new ResourcesLocale(culture.LCID);
-                        htmlres = Resources.GetString(ResourcesLocaleKind.Mail, "MailKeyContent");
+                        htmlres = Resources.GetString(ResourcesLocaleKind.CommonMail, "MailKeyContent");
                     }
                 }
 
@@ -2851,7 +2851,7 @@ namespace Neos.IdentityServer.MultiFactor
                         if (Message.Subject == string.Empty)
                         {
                             ResourcesLocale Resources = new ResourcesLocale(culture.LCID);
-                            Message.Subject = Resources.GetString(ResourcesLocaleKind.Mail, "MailKeyTitle");
+                            Message.Subject = Resources.GetString(ResourcesLocaleKind.CommonMail, "MailKeyTitle");
                         }
                     }
                     Message.Priority = MailPriority.High;
@@ -2912,7 +2912,7 @@ namespace Neos.IdentityServer.MultiFactor
                     lock (lck)
                     {
                         ResourcesLocale Resources = new ResourcesLocale(culture.LCID);
-                        htmlres = Resources.GetString(ResourcesLocaleKind.Mail, "MailNotifications");
+                        htmlres = Resources.GetString(ResourcesLocaleKind.CommonMail, "MailNotifications");
                     }
                 }
                 string html = StripEmailContent(htmlres);
@@ -2936,7 +2936,7 @@ namespace Neos.IdentityServer.MultiFactor
                     if (Message.Subject == string.Empty)
                     {
                         ResourcesLocale Resources = new ResourcesLocale(culture.LCID);
-                        Message.Subject = string.Format(Resources.GetString(ResourcesLocaleKind.Mail, "MailNotificationsTitle"), user.UPN);
+                        Message.Subject = string.Format(Resources.GetString(ResourcesLocaleKind.CommonMail, "MailNotificationsTitle"), user.UPN);
                     }
                 }
                 SendMail(Message, mail);

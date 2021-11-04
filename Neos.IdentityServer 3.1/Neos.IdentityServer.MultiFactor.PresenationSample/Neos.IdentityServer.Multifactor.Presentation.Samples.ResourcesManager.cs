@@ -15,45 +15,48 @@
 // https://github.com/neos-sdi/adfsmfa                                                                                                                                                      //
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
+using Microsoft.IdentityServer.Web.Authentication.External;
+using Neos.IdentityServer.MultiFactor.Common;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Resources;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-using System.Runtime.Versioning;
+using System.Text;
+using System.Threading.Tasks;
 
-// Les informations générales relatives à un assembly dépendent de 
-// l'ensemble d'attributs suivant. Changez les valeurs de ces attributs pour modifier les informations
-// associées à un assembly.
-[assembly: AssemblyTitle("Neos.IdentityServer.Console")]
-[assembly: AssemblyDescription("ADFS MFA Provider (Console)")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Neos-Sdi")]
-[assembly: AssemblyProduct("Neos.IdentityServer.Console")]
-[assembly: AssemblyCopyright("Copyright @redhook62 © 2021")]
-[assembly: AssemblyTrademark("Neos-Sdi")]
-[assembly: AssemblyCulture("")]
+namespace Neos.IdentityServer.MultiFactor.Samples
+{
+    public class CustomResourcesLocale : ResourcesLocale
+    {
+        /// <summary>
+        /// ResourceManager constructor
+        /// </summary>
+        public CustomResourcesLocale(int lcid) : base(lcid)
+        {
+        }
 
-// L'affectation de la valeur false à ComVisible rend les types invisibles dans cet assembly 
-// aux composants COM.  Si vous devez accéder à un type dans cet assembly à partir de 
-// COM, affectez la valeur true à l'attribut ComVisible sur ce type.
-[assembly: ComVisible(false)]
+        /// <summary>
+        /// LoadResources method override
+        /// </summary>
+        public override void LoadResources()
+        {
+            base.LoadResources();
+            /* if yo want to reuse existing resources
+             * you must call the ancestor method and add your custom resources
+             * ResourcesList.Add(ResourcesLocaleKind.CustomUIHtml, GetResourceManager(typeof(CustomResourcesLocale).Assembly, "Neos.IdentityServer.MultiFactor.Samples.Resources.CustHtml"));
+             */
 
-// Le GUID suivant est pour l'ID de la typelib si ce projet est exposé à COM
-[assembly: Guid("9db36380-88e0-4219-ac5f-3ed632814363")]
-
-// Les informations de version pour un assembly se composent des quatre valeurs suivantes :
-//
-//      Version principale
-//      Version secondaire 
-//      Numéro de build
-//      Révision
-//
-// Vous pouvez spécifier toutes les valeurs ou indiquer les numéros de build et de révision par défaut 
-// en utilisant '*', comme indiqué ci-dessous :
-// [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("3.0.0.0")]
-[assembly: AssemblyFileVersion("3.1.2111.0")]
-[assembly: AssemblyInformationalVersion("3.0.0.0")]
-[assembly: NeutralResourcesLanguageAttribute("en")]
-
-
+            /* if you want to replace ALL existing ressources
+             * Add your ressources like that
+             * ResourcesList.Add(ResourcesLocaleKind.UIHtml, GetResourceManager(typeof(CustomResourcesLocale).Assembly, "Neos.IdentityServer.MultiFactor.Samples.Resources.SHtml"));
+             * ResourcesList.Add(ResourcesLocaleKind.UIErrors, GetResourceManager(typeof(CustomResourcesLocale).Assembly, "Neos.IdentityServer.MultiFactor.Samples.Resources.SErrors"));
+             * ResourcesList.Add(ResourcesLocaleKind.UIInformations, GetResourceManager(typeof(CustomResourcesLocale).Assembly, "Neos.IdentityServer.MultiFactor.Samples.Resources.SInfos"));
+             * ResourcesList.Add(ResourcesLocaleKind.UITitles, GetResourceManager(typeof(CustomResourcesLocale).Assembly, "Neos.IdentityServer.MultiFactor.Samples.Resources.STitle"));
+             * ResourcesList.Add(ResourcesLocaleKind.UIValidation, GetResourceManager(typeof(CustomResourcesLocale).Assembly, "Neos.IdentityServer.MultiFactor.Samples.Resources.SCheck"));
+             */
+        }
+    }
+}

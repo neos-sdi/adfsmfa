@@ -15,6 +15,7 @@
 // https://github.com/neos-sdi/adfsmfa                                                                                                                                                      //
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
+using Neos.IdentityServer.MultiFactor.Common;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -27,166 +28,25 @@ using System.Threading.Tasks;
 
 namespace Neos.IdentityServer.MultiFactor.Samples
 {
-    public class ResourcesLocale
+    public class ResourcesLocale : ResourceLocaleBase
     {
-        private CultureInfo resourceCulture;
-        private ResourceManager _CSHtml;
-        private ResourceManager _CSErrors;
-        private ResourceManager _CSMail;
-        private ResourceManager _SHtml;
-        private ResourceManager _SAzure;
-
         /// <summary>
         /// ResourceManager constructor
         /// </summary>
-        public ResourcesLocale(int lcid)
+        public ResourcesLocale(int lcid) : base(lcid)
         {
-            try
-            {
-                resourceCulture = new CultureInfo(lcid);
-            }
-            catch (CultureNotFoundException)
-            {
-                resourceCulture = new CultureInfo("en");
-            }
-            catch (Exception)
-            {
-                resourceCulture = new CultureInfo("en");
-            }
         }
 
         /// <summary>
-        /// Culture property implmentation
+        /// LoadResources method override
         /// </summary>
-        public CultureInfo Culture
+        public override void LoadResources()
         {
-            get
-            {
-                return resourceCulture;
-            }
+            ResourcesList.Add(ResourcesLocaleKind.SamplesHtml, GetResourceManager(typeof(ResourcesLocale).Assembly, "Neos.IdentityServer.MultiFactor.Samples.Resources.CSHtml"));
+            ResourcesList.Add(ResourcesLocaleKind.SamplesErrors, GetResourceManager(typeof(ResourcesLocale).Assembly, "Neos.IdentityServer.MultiFactor.Samples.Resources.CSErrors"));
+            ResourcesList.Add(ResourcesLocaleKind.SamplesMail, GetResourceManager(typeof(ResourcesLocale).Assembly, "Neos.IdentityServer.MultiFactor.Samples.Resources.CSMail"));
+            ResourcesList.Add(ResourcesLocaleKind.SMSHtml, GetResourceManager(typeof(ResourcesLocale).Assembly, "Neos.IdentityServer.Multifactor.Samples.Resources.SHtml"));
+            ResourcesList.Add(ResourcesLocaleKind.SMSAzure, GetResourceManager(typeof(ResourcesLocale).Assembly, "Neos.IdentityServer.Multifactor.Samples.Resources.SAzure"));
         }
-
-        private ResourceManager GetResourceManager(string resourcename)
-        {
-            char sep = Path.DirectorySeparatorChar;
-            if (File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + sep + "MFA" + sep + "ResourceSet" + sep + resourcename + "." + Culture.Name + ".resources"))
-                return ResourceManager.CreateFileBasedResourceManager(resourcename, Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + sep + "MFA" + sep + "ResourceSet", null);
-            else if (File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + sep + "MFA" + sep + "ResourceSet" + sep + resourcename + "." + Culture.TwoLetterISOLanguageName + ".resources"))
-                return ResourceManager.CreateFileBasedResourceManager(resourcename, Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + sep + "MFA" + sep + "ResourceSet", null);
-            else if (File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + sep + "MFA" + sep + "ResourceSet" + sep + resourcename + ".en-us.resources"))
-                return ResourceManager.CreateFileBasedResourceManager(resourcename, Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + sep + "MFA" + sep + "ResourceSet", null);
-            else if (File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + sep + "MFA" + sep + "ResourceSet" + sep + resourcename + ".en.resources"))
-                return ResourceManager.CreateFileBasedResourceManager(resourcename, Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + sep + "MFA" + sep + "ResourceSet", null);
-            else if (File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + sep + "MFA" + sep + "ResourceSet" + sep + resourcename + ".resources"))
-                return ResourceManager.CreateFileBasedResourceManager(resourcename, Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + sep + "MFA" + sep + "ResourceSet", null);
-            else
-                return new ResourceManager(resourcename, typeof(ResourcesLocale).Assembly);
-        }
-
-        /// <summary>
-        /// CSHhtml property
-        /// </summary>
-        private ResourceManager CSHhtml
-        {
-            get
-            {
-                if (_CSHtml == null)
-                {
-                    _CSHtml = GetResourceManager("Neos.IdentityServer.MultiFactor.Samples.Resources.CSHtml");
-                }
-                return _CSHtml;
-            }
-        }
-
-        /// <summary>
-        /// CSErrors property 
-        /// </summary>
-        private ResourceManager CSErrors
-        {
-            get
-            {
-                if (_CSErrors == null)
-                {
-                    _CSErrors = GetResourceManager("Neos.IdentityServer.MultiFactor.Samples.Resources.CSErrors");
-                }
-                return _CSErrors;
-            }
-        }
-
-        /// <summary>
-        /// CSMail property
-        /// </summary>
-        private ResourceManager CSMail
-        {
-            get
-            {
-                if (_CSMail == null)
-                {
-                    _CSMail = GetResourceManager("Neos.IdentityServer.MultiFactor.Samples.Resources.CSMail");
-                }
-                return _CSMail;
-            }
-        }
-
-        /// <summary>
-        /// SHhtml property
-        /// </summary>
-        private ResourceManager SHtml
-        {
-            get
-            {
-                if (_SHtml == null)
-                {
-                    _SHtml = GetResourceManager("Neos.IdentityServer.Multifactor.Samples.Resources.SHtml");
-                }
-                return _SHtml;
-            }
-        }
-
-        /// <summary>
-        /// SAzure property 
-        /// </summary>
-        private ResourceManager SAzure
-        {
-            get
-            {
-                if (_SAzure == null)
-                {
-                    _SAzure = GetResourceManager("Neos.IdentityServer.Multifactor.Samples.Resources.SAzure");
-                }
-                return _SAzure;
-            }
-        }
-
-        /// <summary>
-        /// GetString method implementation
-        /// </summary>
-        public virtual string GetString(ResourcesLocaleKind kind, string name)
-        {
-            switch (kind)
-            {
-                case ResourcesLocaleKind.Errors:
-                    return CSErrors.GetString(name, this.Culture);
-                case ResourcesLocaleKind.Html:
-                    return CSHhtml.GetString(name, this.Culture);
-                case ResourcesLocaleKind.Mail:
-                    return CSMail.GetString(name, this.Culture);
-                case ResourcesLocaleKind.SMSHtml:
-                    return SHtml.GetString(name, this.Culture);
-                case ResourcesLocaleKind.SMSAzure:
-                    return SAzure.GetString(name, this.Culture);
-                default:
-                    return string.Empty;
-            }
-        }
-    }
-
-    public enum ResourcesLocaleKind
-    {
-        Html = 1,
-        Errors = 2,
-        Mail = 3,
-        SMSHtml = 4,
-        SMSAzure = 5
     }
 }

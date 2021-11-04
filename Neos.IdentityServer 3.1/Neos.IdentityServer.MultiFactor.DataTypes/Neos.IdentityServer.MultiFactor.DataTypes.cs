@@ -1150,17 +1150,17 @@ namespace Neos.IdentityServer.MultiFactor
         {
             get
             {
-                if (_context.Data.ContainsKey("_authctxnickname") && _context.Data["_authctxnickname"] != null)
-                    return _context.Data["_authctxnickname"].ToString();
+                if (_context.Data.ContainsKey("_authctxplatform") && _context.Data["_authctxplatform"] != null)
+                    return _context.Data["_authctxplatform"].ToString();
                 else
                     return string.Empty;
             }
             set
             {
-                if (_context.Data.ContainsKey("_authctxnickname"))
-                    _context.Data["_authctxnickname"] = value;
+                if (_context.Data.ContainsKey("_authctxplatform"))
+                    _context.Data["_authctxplatform"] = value;
                 else
-                    _context.Data.Add("_authctxnickname", value);
+                    _context.Data.Add("_authctxplatform", value);
             }
         }
     }

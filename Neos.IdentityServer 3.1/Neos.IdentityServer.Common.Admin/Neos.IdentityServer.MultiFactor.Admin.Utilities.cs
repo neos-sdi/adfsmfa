@@ -684,10 +684,10 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             MFAConfig config = CFGUtilities.ReadConfiguration(host);
             Dictionary<string, string> data = new Dictionary<string, string>();
             ResourcesLocale Resources = new ResourcesLocale(lcid);
-            data.Add("MailOTPContent.html", Resources.GetString(ResourcesLocaleKind.Mail, "MailOTPContent"));
-            data.Add("MailKeyContent.html", Resources.GetString(ResourcesLocaleKind.Mail, "MailKeyContent"));
-            data.Add("MailAdminContent.html", Resources.GetString(ResourcesLocaleKind.Mail, "MailAdminContent"));
-            data.Add("MailNotifications.html", Resources.GetString(ResourcesLocaleKind.Mail, "MailNotifications"));
+            data.Add("MailOTPContent.html", Resources.GetString(ResourcesLocaleKind.CommonMail, "MailOTPContent"));
+            data.Add("MailKeyContent.html", Resources.GetString(ResourcesLocaleKind.CommonMail, "MailKeyContent"));
+            data.Add("MailAdminContent.html", Resources.GetString(ResourcesLocaleKind.CommonMail, "MailAdminContent"));
+            data.Add("MailNotifications.html", Resources.GetString(ResourcesLocaleKind.CommonMail, "MailNotifications"));
 
             if (WebAdminManagerClient.ExportMailTemplates(config, lcid, data))
             { 
@@ -750,7 +750,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                     break;
                 case FlatSampleKind.CustomPresentation:
                     if (!reset)
-                        config.CustomAdapterPresentation = "Neos.IdentityServer.MultiFactor.Samples.AdapterPresentationCustom, Neos.IdentityServer.MultiFactor.PresentationSample, Version=1.0.0.0, Culture=neutral, PublicKeyToken = 80d07446b0f6ee31";
+                        config.CustomAdapterPresentation = "Neos.IdentityServer.MultiFactor.Samples.AdapterPresentationCustom, Neos.IdentityServer.MultiFactor.PresentationSample, Version=1.0.0.0, Culture=neutral, PublicKeyToken = 711047a08ea8edb3";
                     else
                         config.CustomAdapterPresentation = "";
                     break;

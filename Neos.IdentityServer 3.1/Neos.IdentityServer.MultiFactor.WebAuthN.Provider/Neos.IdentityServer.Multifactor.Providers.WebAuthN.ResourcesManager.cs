@@ -15,6 +15,7 @@
 // https://github.com/neos-sdi/adfsmfa                                                                                                                                                      //
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
+using Neos.IdentityServer.MultiFactor.Common;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -27,92 +28,21 @@ using System.Threading.Tasks;
 
 namespace Neos.IdentityServer.MultiFactor.WebAuthN
 {
-    public class ResourcesLocale
+    public class ResourcesLocale : ResourceLocaleBase
     {
-        private CultureInfo resourceCulture;
-        private ResourceManager _CSHtml;
-
         /// <summary>
         /// ResourceManager constructor
         /// </summary>
-        public ResourcesLocale(int lcid)
+        public ResourcesLocale(int lcid) : base(lcid)
         {
-            try
-            {
-                resourceCulture = new CultureInfo(lcid);
-            }
-            catch (CultureNotFoundException)
-            {
-                resourceCulture = new CultureInfo("en");
-            }
-            catch (Exception)
-            {
-                resourceCulture = new CultureInfo("en");
-            }
         }
 
         /// <summary>
-        /// Culture property implmentation
+        /// LoadResources method override
         /// </summary>
-        public CultureInfo Culture
+        public override void LoadResources()
         {
-            get
-            {
-                return resourceCulture;
-            }
+            ResourcesList.Add(ResourcesLocaleKind.FIDOHtml, GetResourceManager(typeof(ResourcesLocale).Assembly, "Neos.IdentityServer.MultiFactor.WebAuthN.Resources.CSHtml"));
         }
-
-        private ResourceManager GetResourceManager(string resourcename)
-        {
-            char sep = Path.DirectorySeparatorChar;
-            if (File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + sep + "MFA" + sep + "ResourceSet" + sep + resourcename + "." + Culture.Name + ".resources"))
-                return ResourceManager.CreateFileBasedResourceManager(resourcename, Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + sep + "MFA" + sep + "ResourceSet", null);
-            else if (File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + sep + "MFA" + sep + "ResourceSet" + sep + resourcename + "." + Culture.TwoLetterISOLanguageName + ".resources"))
-                return ResourceManager.CreateFileBasedResourceManager(resourcename, Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + sep + "MFA" + sep + "ResourceSet", null);
-            else if (File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + sep + "MFA" + sep + "ResourceSet" + sep + resourcename + ".en-us.resources"))
-                return ResourceManager.CreateFileBasedResourceManager(resourcename, Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + sep + "MFA" + sep + "ResourceSet", null);
-            else if (File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + sep + "MFA" + sep + "ResourceSet" + sep + resourcename + ".en.resources"))
-                return ResourceManager.CreateFileBasedResourceManager(resourcename, Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + sep + "MFA" + sep + "ResourceSet", null);
-            else if (File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + sep + "MFA" + sep + "ResourceSet" + sep + resourcename + ".resources"))
-                return ResourceManager.CreateFileBasedResourceManager(resourcename, Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + sep + "MFA" + sep + "ResourceSet", null);
-            else
-                return new ResourceManager(resourcename, typeof(ResourcesLocale).Assembly);
-        }
-
-        /// <summary>
-        /// CSHhtml property
-        /// </summary>
-        private ResourceManager CSHhtml
-        {
-            get
-            {
-                if (_CSHtml == null)
-                {
-                    _CSHtml = GetResourceManager("Neos.IdentityServer.MultiFactor.WebAuthN.Resources.CSHtml");
-                }
-                return _CSHtml;
-            }
-        }
-
-
-        /// <summary>
-        /// GetString method implementation
-        /// </summary>
-        public virtual string GetString(ResourcesLocaleKind kind, string name)
-        {
-            switch (kind)
-            {
-                case ResourcesLocaleKind.Html:
-                    return CSHhtml.GetString(name, this.Culture);
-                default:
-                    return string.Empty;
-            }
-        }
-    }
-
-    public enum ResourcesLocaleKind
-    {
-        Html = 1,
-        Errors = 2
     }
 }

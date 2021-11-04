@@ -161,7 +161,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
                     Resources = new ResourcesLocale(CultureInfo.DefaultThreadCurrentUICulture.LCID);
                 else
                     Resources = new ResourcesLocale(CultureInfo.CurrentUICulture.LCID);
-                string res = Resources.GetString(ResourcesLocaleKind.Html, "PROVIDERBIODESCRIPTION");
+                string res = Resources.GetString(ResourcesLocaleKind.FIDOHtml, "PROVIDERBIODESCRIPTION");
                 if (!string.IsNullOrEmpty(res))
                     return res;
                 else
@@ -175,7 +175,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
         public override string GetUILabel(AuthenticationContext ctx)
         {
             ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
-            return Resources.GetString(ResourcesLocaleKind.Html, "BIOUIOTPLabel");  
+            return Resources.GetString(ResourcesLocaleKind.FIDOHtml, "BIOUIOTPLabel");  
         }
 
         /// <summary>
@@ -184,7 +184,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
         public override string GetWizardUILabel(AuthenticationContext ctx)
         {
             ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
-            return Resources.GetString(ResourcesLocaleKind.Html, "BIOUIWIZLabel"); 
+            return Resources.GetString(ResourcesLocaleKind.FIDOHtml, "BIOUIWIZLabel"); 
         }
 
         /// <summary>
@@ -193,7 +193,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
         public override string GetWizardUIComment(AuthenticationContext ctx) 
         {
             ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
-            return Resources.GetString(ResourcesLocaleKind.Html, "BIOUIWIZComment");
+            return Resources.GetString(ResourcesLocaleKind.FIDOHtml, "BIOUIWIZComment");
         }
 
         /// <summary>
@@ -202,7 +202,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
         public override string GetWizardLinkLabel(AuthenticationContext ctx)
         {
             ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
-            return Resources.GetString(ResourcesLocaleKind.Html, "BIOWIZEnroll"); 
+            return Resources.GetString(ResourcesLocaleKind.FIDOHtml, "BIOWIZEnroll"); 
         }
 
         /// <summary>
@@ -211,7 +211,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
         public override string GetUICFGLabel(AuthenticationContext ctx)
         {
             ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
-            return Resources.GetString(ResourcesLocaleKind.Html, "BIOUICFGLabel");  
+            return Resources.GetString(ResourcesLocaleKind.FIDOHtml, "BIOUICFGLabel");  
         }
 
         /// <summary>
@@ -220,7 +220,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
         public override string GetUIMessage(AuthenticationContext ctx)
         {
             ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
-            return Resources.GetString(ResourcesLocaleKind.Html, "BIOUIMessage"); 
+            return Resources.GetString(ResourcesLocaleKind.FIDOHtml, "BIOUIMessage"); 
         }
 
         /// <summary>
@@ -229,7 +229,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
         public override string GetUIListOptionLabel(AuthenticationContext ctx)
         {
             ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
-            return Resources.GetString(ResourcesLocaleKind.Html, "BIOUIListOptionLabel");  
+            return Resources.GetString(ResourcesLocaleKind.FIDOHtml, "BIOUIListOptionLabel");  
         }
 
         /// <summary>
@@ -238,7 +238,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
         public override string GetUIListChoiceLabel(AuthenticationContext ctx)
         {
             ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
-            return Resources.GetString(ResourcesLocaleKind.Html, "BIOUIListChoiceLabel");  
+            return Resources.GetString(ResourcesLocaleKind.FIDOHtml, "BIOUIListChoiceLabel");  
         }
 
         /// <summary>
@@ -247,7 +247,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
         public override string GetUIConfigLabel(AuthenticationContext ctx)
         {
             ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
-            return Resources.GetString(ResourcesLocaleKind.Html, "BIOUIConfigLabel");  
+            return Resources.GetString(ResourcesLocaleKind.FIDOHtml, "BIOUIConfigLabel");  
         }
 
         /// <summary>
@@ -256,7 +256,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
         public override string GetUIChoiceLabel(AuthenticationContext ctx, AvailableAuthenticationMethod method = null)
         {
             ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
-            return Resources.GetString(ResourcesLocaleKind.Html, "BIOUIChoiceLabel");  
+            return Resources.GetString(ResourcesLocaleKind.FIDOHtml, "BIOUIChoiceLabel");  
         }
 
         /// <summary>
@@ -265,7 +265,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
         public override string GetUIWarningInternetLabel(AuthenticationContext ctx)
         {
             ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
-            return Resources.GetString(ResourcesLocaleKind.Html, "GLOBALWarnOverNetwork");
+            return Resources.GetString(ResourcesLocaleKind.FIDOHtml, "GLOBALWarnOverNetwork");
         }
 
         /// <summary>
@@ -274,7 +274,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
         public override string GetUIWarningThirdPartyLabel(AuthenticationContext ctx)
         {
             ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
-            return Resources.GetString(ResourcesLocaleKind.Html, "GLOBALWarnThirdParty");
+            return Resources.GetString(ResourcesLocaleKind.FIDOHtml, "GLOBALWarnThirdParty");
         }
 
         /// <summary>
@@ -283,7 +283,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
         public override string GetUIDefaultChoiceLabel(AuthenticationContext ctx)
         {
             ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
-            return Resources.GetString(ResourcesLocaleKind.Html, "GLOBALListChoiceDefaultLabel");
+            return Resources.GetString(ResourcesLocaleKind.FIDOHtml, "GLOBALListChoiceDefaultLabel");
         }
 
         /// <summary>
@@ -292,7 +292,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
         public override string GetUIEnrollmentTaskLabel(AuthenticationContext ctx)
         {
             ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
-            return Resources.GetString(ResourcesLocaleKind.Html, "BIOUIEnrollTaskLabel");  
+            return Resources.GetString(ResourcesLocaleKind.FIDOHtml, "BIOUIEnrollTaskLabel");  
         }
 
         /// <summary>
@@ -301,7 +301,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
         public override string GetUIEnrollValidatedLabel(AuthenticationContext ctx)
         {
             ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
-            return Resources.GetString(ResourcesLocaleKind.Html, "BIOUIEnrollValidatedLabel");  
+            return Resources.GetString(ResourcesLocaleKind.FIDOHtml, "BIOUIEnrollValidatedLabel");  
         }
 
         /// <summary>
@@ -541,13 +541,13 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
         public string GetManageLinkLabel(AuthenticationContext ctx)
         {
             ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
-            return Resources.GetString(ResourcesLocaleKind.Html, "BIOUIEnrollManageLinkLabel");
+            return Resources.GetString(ResourcesLocaleKind.FIDOHtml, "BIOUIEnrollManageLinkLabel");
         }
 
         public string GetDeleteLinkLabel(AuthenticationContext ctx)
         {
             ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
-            return Resources.GetString(ResourcesLocaleKind.Html, "BIOUIEnrollDeleteLinkLabel");
+            return Resources.GetString(ResourcesLocaleKind.FIDOHtml, "BIOUIEnrollDeleteLinkLabel");
         }
 
         /// <summary>
@@ -829,7 +829,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
                         if ((authCounter > 0) && (authCounter <= storedCounter))
                         {
                             ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
-                            throw new Exception(Resources.GetString(ResourcesLocaleKind.Html, "BIOERRORAUTHREPLAY"));
+                            throw new Exception(Resources.GetString(ResourcesLocaleKind.FIDOHtml, "BIOERRORAUTHREPLAY"));
                         }
 
 #pragma warning disable CS1998 // Cette méthode async n'a pas d'opérateur 'await' et elle s'exécutera de façon synchrone

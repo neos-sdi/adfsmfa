@@ -144,7 +144,7 @@ namespace Neos.IdentityServer.MultiFactor.Samples
                     Resources = new ResourcesLocale(CultureInfo.DefaultThreadCurrentUICulture.LCID);
                 else
                     Resources = new ResourcesLocale(CultureInfo.CurrentUICulture.LCID);
-                string res = Resources.GetString(ResourcesLocaleKind.Html, "PROVIDEROTPDESCRIPTION");
+                string res = Resources.GetString(ResourcesLocaleKind.UIHtml, "PROVIDEROTPDESCRIPTION");
                 if (!string.IsNullOrEmpty(res))
                     return res;
                 else
@@ -158,7 +158,7 @@ namespace Neos.IdentityServer.MultiFactor.Samples
         public override string GetUILabel(AuthenticationContext ctx)
         {
             ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
-            return Resources.GetString(ResourcesLocaleKind.Html, "OTPUIOTPLabel");
+            return Resources.GetString(ResourcesLocaleKind.UIHtml, "OTPUIOTPLabel");
         }
 
         /// <summary>
@@ -167,7 +167,7 @@ namespace Neos.IdentityServer.MultiFactor.Samples
         public override string GetWizardUILabel(AuthenticationContext ctx)
         {
             ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
-            return Resources.GetString(ResourcesLocaleKind.Html, "OTPUIWIZLabel");
+            return Resources.GetString(ResourcesLocaleKind.UIHtml, "OTPUIWIZLabel");
         }
 
         /// <summary>
@@ -176,7 +176,7 @@ namespace Neos.IdentityServer.MultiFactor.Samples
         public override string GetWizardUIComment(AuthenticationContext ctx) 
         {
             ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
-            return Resources.GetString(ResourcesLocaleKind.Html, "OTPUIWIZComment");
+            return Resources.GetString(ResourcesLocaleKind.UIHtml, "OTPUIWIZComment");
         }
 
         /// <summary>
@@ -185,7 +185,7 @@ namespace Neos.IdentityServer.MultiFactor.Samples
         public override string GetWizardLinkLabel(AuthenticationContext ctx)
         {
             ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
-            return Resources.GetString(ResourcesLocaleKind.Html, "OTPUIWIZLabel");
+            return Resources.GetString(ResourcesLocaleKind.UIHtml, "OTPUIWIZLabel");
         }
 
         /// <summary>
@@ -194,7 +194,7 @@ namespace Neos.IdentityServer.MultiFactor.Samples
         public override string GetUICFGLabel(AuthenticationContext ctx)
         {
             ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
-            return Resources.GetString(ResourcesLocaleKind.Html, "OTPUICFGLabel");
+            return Resources.GetString(ResourcesLocaleKind.UIHtml, "OTPUICFGLabel");
         }
 
         /// <summary>
@@ -203,7 +203,7 @@ namespace Neos.IdentityServer.MultiFactor.Samples
         public override string GetUIMessage(AuthenticationContext ctx)
         {
             ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
-            return Resources.GetString(ResourcesLocaleKind.Html, "OTPUIMessage");
+            return Resources.GetString(ResourcesLocaleKind.UIHtml, "OTPUIMessage");
         }
 
         /// <summary>
@@ -212,7 +212,7 @@ namespace Neos.IdentityServer.MultiFactor.Samples
         public override string GetUIListOptionLabel(AuthenticationContext ctx)
         {
             ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
-            return Resources.GetString(ResourcesLocaleKind.Html, "OTPUIListOptionLabel");
+            return Resources.GetString(ResourcesLocaleKind.UIHtml, "OTPUIListOptionLabel");
         }
 
         /// <summary>
@@ -221,7 +221,7 @@ namespace Neos.IdentityServer.MultiFactor.Samples
         public override string GetUIListChoiceLabel(AuthenticationContext ctx)
         {
             ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
-            return Resources.GetString(ResourcesLocaleKind.Html, "OTPUIListChoiceLabel");
+            return Resources.GetString(ResourcesLocaleKind.UIHtml, "OTPUIListChoiceLabel");
         }
 
         /// <summary>
@@ -230,7 +230,7 @@ namespace Neos.IdentityServer.MultiFactor.Samples
         public override string GetUIConfigLabel(AuthenticationContext ctx)
         {
             ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
-            return Resources.GetString(ResourcesLocaleKind.Html, "OTPUIConfigLabel");
+            return Resources.GetString(ResourcesLocaleKind.UIHtml, "OTPUIConfigLabel");
         }
 
         /// <summary>
@@ -239,7 +239,7 @@ namespace Neos.IdentityServer.MultiFactor.Samples
         public override string GetUIChoiceLabel(AuthenticationContext ctx, AvailableAuthenticationMethod method = null)
         {
             ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
-            return Resources.GetString(ResourcesLocaleKind.Html, "OTPUIChoiceLabel");
+            return Resources.GetString(ResourcesLocaleKind.UIHtml, "OTPUIChoiceLabel");
         }
 
         /// <summary>
@@ -280,7 +280,7 @@ namespace Neos.IdentityServer.MultiFactor.Samples
         public override string GetUIEnrollmentTaskLabel(AuthenticationContext ctx)
         {
             ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
-            return Resources.GetString(ResourcesLocaleKind.Html, "OTPUIEnrollTaskLabel");
+            return Resources.GetString(ResourcesLocaleKind.UIHtml, "OTPUIEnrollTaskLabel");
         }
 
         /// <summary>
@@ -289,7 +289,7 @@ namespace Neos.IdentityServer.MultiFactor.Samples
         public override string GetUIEnrollValidatedLabel(AuthenticationContext ctx)
         {
             ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
-            return Resources.GetString(ResourcesLocaleKind.Html, "OTPUIEnrollValidatedLabel");
+            return Resources.GetString(ResourcesLocaleKind.UIHtml, "OTPUIEnrollValidatedLabel");
         }
 
         /// <summary>

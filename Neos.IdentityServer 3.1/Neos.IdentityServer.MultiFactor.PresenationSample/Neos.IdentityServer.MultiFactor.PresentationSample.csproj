@@ -21,6 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>7.2</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -35,7 +36,7 @@
     <SignAssembly>true</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>adfsmfasample.pfx</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>Presentation Sample.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.IdentityServer">
@@ -56,10 +57,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Neos.IdentityServer.Multifactor.Presentation.Samples.cs" />
+    <Compile Include="Neos.IdentityServer.Multifactor.Presentation.Samples.ResourcesManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="adfsmfasample.pfx" />
+    <None Include="Presentation Sample.snk" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Neos.IdentityServer.Common\Neos.IdentityServer.MultiFactor.Common.csproj">
