@@ -1,4 +1,4 @@
-# Multi-Factor Authentication for Microsoft ADFS 2019/2016/2012r2 (with biometric authentication)
+# Multi-Factor Authentication for Microsoft ADFS 2022/2019/2016/2012r2 (with biometric authentication)
 ___
 
 This project can help you to implement multi-factor authentication without requiring any additional provider.
@@ -20,7 +20,7 @@ This extension works with Active Directory or an SQL Server Database for storing
 ## Downloads
 - <https://github.com/neos-sdi/adfsmfa/releases>
 
-- <https://github.com/neos-sdi/adfsmfa/releases/download/3.1/adfsmfa.3.1.2110.1.msi>
+- <https://github.com/neos-sdi/adfsmfa/releases/download/3.1/adfsmfa.3.1.2111.0.msi>
 
 ## Building Solution
 
@@ -54,11 +54,11 @@ ___
 * Developers can easily extend this component for other verification modes (Azure MFA, RSA,…) with the IExternalProvider, ISecretKeyManager interfaces
 * Developers can easily extend this component for other storages modes (AD & SQL by default)
 * Developers can easily replace the default UI, subclassing BasePresentation or BaseMFAPresentation classes
-* Full support for ADFS 2019 themes
+* Full support for ADFS 2019/2022 themes
 
 ## Remarks
 * Due to security, Developers must sign their Visual Studio solution with their own generated .pfx certificate (see custom development)
 * You must deploy the solution on each of your ADFS servers, not on Proxy Servers.
 * To work with ADDS, the ADFS Service account must have read and write to users properties (or use the superaccount feature).
 * To work with SQL Server Database, you must deploy the database on a separate SQL Server
-* Working with ADFS Windows server 2012r2, 2016 and 2019
+* Working with ADFS Windows server 2012r2, 2016, 2019 and 2022
