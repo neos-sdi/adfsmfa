@@ -1583,7 +1583,6 @@
     <EmbeddedResource Include="Resources\errors_strings.sv.resx" />
     <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.Ctrls.da.resx" />
     <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.Ctrls.de.resx" />
-    <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.Ctrls.en-US.resx" />
     <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.Ctrls.es.resx" />
     <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.Ctrls.fr-CA.resx" />
     <EmbeddedResource Include="Resources\Neos.IdentityServer.Console.Ctrls.fr.resx" />

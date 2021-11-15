@@ -822,9 +822,10 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
                             throw new Exception("Unknown credentials");
                         }
 
-                        // Check Replay
+                        // Check Replay // ICI test Apple counter always 0
                         AuthenticatorData authData = new AuthenticatorData(clientResponse.Response.AuthenticatorData);
-                        uint authCounter = authData.SignCount;
+
+                        uint authCounter = authData.SignCount;   
                         uint storedCounter = creds.SignatureCounter;
                         if ((authCounter > 0) && (authCounter <= storedCounter))
                         {
@@ -839,7 +840,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
                             var storedCreds = RuntimeRepository.GetCredentialsByUserHandle(Config, user, args.UserHandle);
                             return storedCreds.Exists(c => c.Descriptor.Id.SequenceEqual(args.CredentialId));
                         };
-
+                        // ICI test Apple counter always 0
                         AssertionVerificationResult res = _webathn.SetAssertionResult(clientResponse, options, creds.PublicKey, storedCounter, callback).Result;
                         RuntimeRepository.UpdateCounter(Config, user, res.CredentialId, res.Counter);
 

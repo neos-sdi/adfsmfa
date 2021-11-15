@@ -38,7 +38,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Metadata
         /// </summary>
         public MDSMetadataRepository()
         {
-            _blobUrl = SystemUtilities.PayloadUrlDownloadFileBlob;
+            _blobUrl = SystemUtilities.PayloadDownloadBlobUrl;
             _httpClient = new HttpClient();
         }
 

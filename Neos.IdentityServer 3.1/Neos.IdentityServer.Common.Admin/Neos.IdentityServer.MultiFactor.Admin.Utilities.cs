@@ -399,7 +399,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         internal static void VerifyADFSServer2019(PSHost host = null)
         {
             RegistryVersion reg = new RegistryVersion();
-            if (!reg.IsWindows2019)
+            if (!reg.IsADFSBehavior4)
             {
                 if (host==null)
                     throw new InvalidOperationException("Must be executed on Windows 2019 server and up only !");
@@ -777,8 +777,6 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         {
             Runspace SPRunSpace = null;
             PowerShell SPPowerShell = null;
-            char sep = Path.DirectorySeparatorChar;
-            string db = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + sep + "MFA" + sep + "Config" + sep + "threatconfig.db";
             try
             {
                 SPRunSpace = RunspaceFactory.CreateRunspace();
@@ -793,7 +791,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 exportcmd.Parameters.Add(NParam);
                 CommandParameter TParam = new CommandParameter("TypeName", "Neos.IdentityServer.MultiFactor.ThreatAnalyzer, Neos.IdentityServer.MultiFactor.ThreatDetection, Version=3.0.0.0, Culture=neutral, " + Utilities.GetAssemblyPublicKey());
                 exportcmd.Parameters.Add(TParam);
-                CommandParameter PParam = new CommandParameter("ConfigurationFilePath", db);
+                CommandParameter PParam = new CommandParameter("ConfigurationFilePath", SystemUtilities.ThreatCacheFile);
                 exportcmd.Parameters.Add(PParam);
                 pipeline.Commands.Add(exportcmd);
                 Collection<PSObject> PSOutput = pipeline.Invoke();
@@ -861,12 +859,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         {
             Runspace SPRunSpace = null;
             PowerShell SPPowerShell = null;
-            char sep = Path.DirectorySeparatorChar;
-            string db = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + sep + "MFA" + sep + "Config" + sep + "threatconfig.db";
             try
             {
                 SPRunSpace = RunspaceFactory.CreateRunspace();
-
                 SPPowerShell = PowerShell.Create();
                 SPPowerShell.Runspace = SPRunSpace;
                 SPRunSpace.Open();
@@ -875,7 +870,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 Command exportcmd = new Command("Import-AdfsThreatDetectionModuleConfiguration", false);
                 CommandParameter NParam = new CommandParameter("Name", "MFABlockPlugin");
                 exportcmd.Parameters.Add(NParam);
-                CommandParameter PParam = new CommandParameter("ConfigurationFilePath", db);
+                CommandParameter PParam = new CommandParameter("ConfigurationFilePath", SystemUtilities.ThreatCacheFile);
                 exportcmd.Parameters.Add(PParam);
                 pipeline.Commands.Add(exportcmd);
                 Collection<PSObject> PSOutput = pipeline.Invoke();

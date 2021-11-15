@@ -4026,6 +4026,7 @@ namespace Neos.IdentityServer.MultiFactor
                 if (platform.ToLower().Contains("trident/7.0") || platform.ToLower().Contains("msie"))
                 {
                     usercontext.BioNotSupported = true;
+                    usercontext.DirectLogin = false;
                     return;
                 }
                 if (platform.ToLower().Contains("macintosh") || platform.ToLower().Contains("iphone") || platform.ToLower().Contains("ipad") || platform.ToLower().Contains("ipod"))

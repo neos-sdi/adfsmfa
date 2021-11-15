@@ -1456,7 +1456,7 @@ namespace Neos.IdentityServer.MultiFactor.Common
     public class NeosMailProvider: BaseExternalProvider
     {
         private bool _isinitialized = false;
-        private bool _isrequired = true;
+        private bool _isrequired = false;
         private MailProvider Data;
         private ForceWizardMode _forceenrollment = ForceWizardMode.Disabled;
 

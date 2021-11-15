@@ -212,7 +212,9 @@ namespace Neos.IdentityServer.MultiFactor
         private static readonly char sep = Path.DirectorySeparatorChar;
         internal static string SystemCacheFile = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + sep + "MFA" + sep + "Config" + sep + "system.db";
         internal static string PayloadCacheFile = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + sep + "MFA" + sep + "Config" + sep + "blob.db";
-        internal static string PayloadUrlDownloadFileBlob = "https://mds.fidoalliance.org/";
+        internal static string ThreatCacheFile = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + sep + "MFA" + sep + "Config" + sep + "threatconfig.db";
+        internal static string PayloadDownloadBlobUrl = "https://mds.fidoalliance.org/";
+        internal static string ThreatDownloadBlobUrl = "https://www.spamhaus.org/drop/drop.txt";
 #pragma warning disable IDE0044 // Ajouter un modificateur readonly
         private static object obj = new object();
         private static byte[] _systemkey = null;
@@ -633,7 +635,7 @@ namespace Neos.IdentityServer.MultiFactor
         }
         #endregion
 
-        #region Windows 2016 & 2019        
+        #region Windows 2016 & 2019 && 2022       
         /// <summary>
         /// InternalCreateRSACertificate method implementation
         /// </summary>
@@ -1725,12 +1727,21 @@ namespace Neos.IdentityServer.MultiFactor
         public int CurrentMinorVersionNumber { get; set; }
 
         /// <summary>
+        /// IsWindows2022 property implementation
+        /// </summary>
+        [IgnoreDataMember]
+        public bool IsWindows2022
+        {
+            get { return ((this.CurrentMajorVersionNumber == 10) && (this.CurrentBuild >= 20348)); }
+        }
+
+        /// <summary>
         /// IsWindows2019 property implementation
         /// </summary>
         [IgnoreDataMember]
         public bool IsWindows2019
         {
-            get { return ((this.CurrentMajorVersionNumber == 10) && (this.CurrentBuild >= 17763)); }
+            get { return ((this.CurrentMajorVersionNumber == 10) && ((this.CurrentBuild >= 17763) && (this.CurrentBuild < 20348))); }
         }
 
         /// <summary>
@@ -1749,6 +1760,15 @@ namespace Neos.IdentityServer.MultiFactor
         public bool IsWindows2012R2
         {
             get { return ((this.CurrentMajorVersionNumber == 0) && ((this.CurrentBuild >= 9600) && (this.CurrentBuild < 14393))); }
+        }
+
+        /// <summary>
+        /// IsADFSBehavior4 property implementation
+        /// </summary>
+        [IgnoreDataMember]
+        public bool IsADFSBehavior4
+        {
+            get { return IsWindows2019 || IsWindows2022; }
         }
     }
 

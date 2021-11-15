@@ -29,6 +29,7 @@ using Newtonsoft.Json.Linq;
 using Microsoft.Win32;
 using System.IO;
 using Microsoft.IdentityModel.Tokens;
+using Neos.IdentityServer.MultiFactor.Administration;
 
 namespace Neos.IdentityServer.MultiFactor
 {
@@ -37,16 +38,22 @@ namespace Neos.IdentityServer.MultiFactor
         private List<ReplayRecord> _lst = new List<ReplayRecord>();
         private readonly object _lock = new object();
         private readonly object _bloblock = new object();
+        private readonly object _threatlock = new object();
         private Task _cleanup = null;
         private Task _blobrefresh = null;
+        private Task _threatrefresh = null;
         private CancellationTokenSource _canceller = null;
         private CancellationTokenSource _blobcanceller = null;
+        private CancellationTokenSource _threatcanceller = null;
         private bool _mustexit = false;
         private bool _blobmustexit = false;
+        private bool _threatmustexit = false;
         private EventLog _log;
         private bool _started = false;
         private readonly HttpClient _httpClient;
         protected readonly string _blobUrl;
+        protected readonly string _threatUrl;
+        private bool isbehavior4 = false;
 
         /// <summary>
         /// Static constructor implementation
@@ -54,8 +61,11 @@ namespace Neos.IdentityServer.MultiFactor
         internal ReplayManager(IDependency dep)
         {
             _log = dep.GetEventLog();
-            _blobUrl = SystemUtilities.PayloadUrlDownloadFileBlob;
+            _blobUrl = SystemUtilities.PayloadDownloadBlobUrl;
+            _threatUrl = SystemUtilities.ThreatDownloadBlobUrl;
             _httpClient = new HttpClient();
+            RegistryVersion reg = new RegistryVersion();
+            isbehavior4 = reg.IsADFSBehavior4;
         }
 
         /// <summary>
@@ -166,7 +176,7 @@ namespace Neos.IdentityServer.MultiFactor
                                 }
                             }
                         }
-                        Thread.Sleep(new TimeSpan(0, 1, 0, 0)); // every hour
+                        Thread.Sleep(new TimeSpan(0, 12, 0, 0)); // every 12 hours
                     }
                     catch (ThreadAbortException ex)
                     {
@@ -176,6 +186,59 @@ namespace Neos.IdentityServer.MultiFactor
                     catch (Exception ex)
                     {
                         _log.WriteEntry(string.Format("error on refresh BLOB method : {0}.", ex.Message), EventLogEntryType.Error, 1014);
+                        Thread.Sleep(new TimeSpan(0, 12, 0, 0)); // every 12 hours
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Backgroud RefreshThreatMethod  method
+        /// </summary>
+        private void RefreshThreatMethod()
+        {
+            using (_threatcanceller.Token.Register(Thread.CurrentThread.Abort))
+            {
+                while (!_threatmustexit)
+                {
+                    try
+                    {
+                        lock (_threatlock)
+                        {
+                            ThreatInformations infos = GetThreatCache();
+                            if (infos.CanDownload && ((DateTime.Now > Convert.ToDateTime(infos.NextUpdate)) || (!File.Exists(SystemUtilities.ThreatCacheFile))))
+                            {
+                                try
+                                {
+                                    infos.BLOB = GetThreatBlob().Result;
+                                }
+                                catch
+                                {
+                                    infos.BLOB = null;
+                                }
+                                if (!string.IsNullOrEmpty(infos.BLOB))
+                                {
+                                    DateTime oldnextupdate = infos.NextUpdate;
+
+                                    RetreiveThreatProperties(infos);
+                                    if ((infos.NextUpdate > oldnextupdate) || (!File.Exists(SystemUtilities.ThreatCacheFile)))
+                                    {
+                                        SetThreatCache(infos);
+                                    }
+                                }
+                            }
+                        }
+                        Thread.Sleep(new TimeSpan(0, 12, 0, 0)); // every 12 hours
+                    }
+                    catch (ThreadAbortException ex)
+                    {
+                        _threatmustexit = true;
+                        _log.WriteEntry(string.Format("error on refresh Threat method : {0}.", ex.Message), EventLogEntryType.Error, 1014);
+                    }
+                    catch (Exception ex)
+                    {
+                        _log.WriteEntry(string.Format("error on refresh Threat method : {0}.", ex.Message), EventLogEntryType.Error, 1014);
+                        Thread.Sleep(new TimeSpan(0, 12, 0, 0)); // every 12 hours
                     }
                 }
             }
@@ -191,7 +254,7 @@ namespace Neos.IdentityServer.MultiFactor
                 _lst.Clear();
                 Trace.WriteLine("All Replay entries removed from checklist.");
             }
-         }
+        }
 
         /// <summary>
         /// Start method implementation
@@ -201,11 +264,19 @@ namespace Neos.IdentityServer.MultiFactor
             if (!_started)
             {
                 _mustexit = false;
-                _blobmustexit = false;
                 _canceller = new CancellationTokenSource();
-                _blobcanceller = new CancellationTokenSource();
                 _cleanup = Task.Factory.StartNew(new Action(CleanUpMethod), _canceller.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
+
+                _blobmustexit = false;               
+                _blobcanceller = new CancellationTokenSource();
                 _blobrefresh = Task.Factory.StartNew(new Action(RefreshBLOBMethod), _blobcanceller.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
+
+                if (isbehavior4)
+                {
+                    _threatmustexit = false;
+                    _threatcanceller = new CancellationTokenSource();
+                    _threatrefresh = Task.Factory.StartNew(new Action(RefreshThreatMethod), _threatcanceller.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
+                }
                 _started = true;
             }
         }
@@ -216,9 +287,15 @@ namespace Neos.IdentityServer.MultiFactor
         internal void Close()
         {
             _mustexit = true;
-            _blobmustexit = true;
             _canceller.Cancel();
+
+            _blobmustexit = true;            
             _blobcanceller.Cancel();
+            if (isbehavior4)
+            {
+                _threatmustexit = true;
+                _threatcanceller.Cancel();
+            }
             _started = false;
         }
 
@@ -309,5 +386,93 @@ namespace Neos.IdentityServer.MultiFactor
             return parameters;
         }
         #endregion
+
+        #region Threat
+        /// <summary>
+        /// GetRawBlob method implementation
+        /// </summary>
+        protected async Task<string> GetThreatBlob()
+        {
+            var url = _threatUrl;
+            return await DownloadStringAsync(url);
+        }
+
+        /// <summary>
+        /// GetBLOBPayloadCache method implementation
+        /// </summary>
+        protected virtual ThreatInformations GetThreatCache()
+        {
+            ThreatInformations infos = new ThreatInformations();
+            if (File.Exists(SystemUtilities.ThreatCacheFile))
+            {
+                infos.BLOB = File.ReadAllText(SystemUtilities.ThreatCacheFile);
+                return RetreiveThreatProperties(infos);
+            }
+            else
+            {
+                infos.CanDownload = true;
+                infos.BLOB = null;
+            }
+            return infos;
+        }
+
+        /// <summary>
+        /// SetBLOBPayloadCache method implmentation
+        /// </summary>
+        public void SetThreatCache(ThreatInformations infos)
+        {
+            File.WriteAllText(SystemUtilities.ThreatCacheFile, infos.BLOB);
+            ManagementService.UpdateMFAThreatDetectionData(null);
+        }
+
+        /// <summary>
+        /// RetreiveThreatProperties method implementation 
+        /// </summary>
+        protected virtual ThreatInformations RetreiveThreatProperties(ThreatInformations infos)
+        {
+            Dictionary<string, DateTime> dic = DecodeThreatData(infos.BLOB);
+            var xnextupdate = dic["NextUpdate"];
+            infos.NextUpdate = xnextupdate;
+            return infos;
+        }
+
+        /// <summary>
+        /// DecodeThreatData method implementation
+        /// </summary>
+        public Dictionary<string, DateTime> DecodeThreatData(string rawtxt)
+        {
+            if (string.IsNullOrWhiteSpace(rawtxt))
+            {
+                var xparameters = new Dictionary<string, DateTime>();
+                var xdt = DateTime.Parse("1970-01-01");
+                xparameters.Add("NextUpdate", xdt);
+            }
+            StringReader rd = new StringReader(rawtxt);
+            string data = string.Empty;
+            for (int i = 0; i< 4; i++)
+            {
+                data = rd.ReadLine();
+            }
+            string[] dateparts = data.Split(new[] { ':' }, 2, StringSplitOptions.None);
+
+            var parameters = new Dictionary<string, DateTime>();
+            var nextupdate = (dateparts[1] ?? "1970-01-01");
+            if (DateTime.TryParse(nextupdate, out DateTime dt ))
+                parameters.Add("NextUpdate", dt);
+            else
+                parameters.Add("NextUpdate", new DateTime(1970, 1, 1, 0, 0, 0));
+            return parameters;
+        }
+        #endregion
+    }
+
+    /// <summary>
+    /// ThreatInformations class
+    /// </summary>
+    public class ThreatInformations
+    {
+        public DateTime NextUpdate = new DateTime(1970, 1, 1);
+        public bool CanDownload = true;
+        public string BLOB = string.Empty;
     }
 }

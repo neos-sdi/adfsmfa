@@ -147,7 +147,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             RegistryVersion reg = new RegistryVersion();
             ManagementService.Initialize(true);
             MFAConfig cfg = ManagementService.Config;
-            if (reg.IsWindows2019)
+            if (reg.IsADFSBehavior4)
             {
                 cfg.UiKind = (ADFSUserInterfaceKind)_kind;
                 if ((ADFSUserInterfaceKind)_kind == ADFSUserInterfaceKind.Default)
