@@ -544,6 +544,9 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
             return Resources.GetString(ResourcesLocaleKind.FIDOHtml, "BIOUIEnrollManageLinkLabel");
         }
 
+        /// <summary>
+        /// GetDeleteLinkLabel method implementation
+        /// </summary>
         public string GetDeleteLinkLabel(AuthenticationContext ctx)
         {
             ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
@@ -642,7 +645,6 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
             {
                 if (string.IsNullOrEmpty(ctx.UPN))
                     throw new ArgumentNullException(ctx.UPN);
-
                 string attType = this.ConveyancePreference;                                       // none, direct, indirect
                 string authType = this.Attachement;                                               // <empty>, platform, cross-platform
                 UserVerificationRequirement userVerification = this.UserVerificationRequirement;  // preferred, required, discouraged
@@ -718,7 +720,6 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
                             return false;
                         return true;
                     };
-
                     AuthenticatorAttestationRawResponse attestationResponse = JsonConvert.DeserializeObject<AuthenticatorAttestationRawResponse>(jsonResponse);
                     isDeserialized = true;
                     CredentialMakeResult success = _webathn.SetRegisterCredentialResult(attestationResponse, options, callback).Result;
@@ -787,7 +788,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
             catch (Exception e)
             {
                 Log.WriteEntry(string.Format("{0}\r\n{1}", ctx.UPN, e.Message), EventLogEntryType.Error, 5000);
-                string result = (new AssertionOptions { Status = "error", ErrorMessage = string.Format("{0}{1}", e.Message, e.InnerException != null ? " (" + e.InnerException.Message + ")" : "") }).ToJson();
+                string result = (new AssertionOptions { Status = "error", ErrorMessage = string.Format("{0} / {1}", e.Message, e.InnerException != null ? " (" + e.InnerException.Message + ")" : "") }).ToJson();
                 ctx.AssertionOptions = result;
                 return result;                
             }
@@ -822,11 +823,18 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
                             throw new Exception("Unknown credentials");
                         }
 
-                        // Check Replay // ICI test Apple counter always 0
+                        // Check Replay 
                         AuthenticatorData authData = new AuthenticatorData(clientResponse.Response.AuthenticatorData);
 
-                        uint authCounter = authData.SignCount;   
-                        uint storedCounter = creds.SignatureCounter;
+                        bool isapple = Utilities.IsAppleDevice(ctx);
+                        uint authCounter = 0;
+                        uint storedCounter = 0;
+
+                        if (!isapple)
+                        {
+                            authCounter = authData.SignCount;
+                            storedCounter = creds.SignatureCounter;
+                        }
                         if ((authCounter > 0) && (authCounter <= storedCounter))
                         {
                             ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
@@ -840,9 +848,15 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
                             var storedCreds = RuntimeRepository.GetCredentialsByUserHandle(Config, user, args.UserHandle);
                             return storedCreds.Exists(c => c.Descriptor.Id.SequenceEqual(args.CredentialId));
                         };
-                        // ICI test Apple counter always 0
+
+                        // Apple counter always 0
                         AssertionVerificationResult res = _webathn.SetAssertionResult(clientResponse, options, creds.PublicKey, storedCounter, callback).Result;
-                        RuntimeRepository.UpdateCounter(Config, user, res.CredentialId, res.Counter);
+                        if (!isapple)
+                            RuntimeRepository.UpdateCounter(Config, user, res.CredentialId, res.Counter);
+                        else
+                        {
+                            RuntimeRepository.UpdateCounter(Config, user, res.CredentialId, 0);
+                        }
 
                         if (!authData.UserPresent || !authData.UserVerified)
                         {

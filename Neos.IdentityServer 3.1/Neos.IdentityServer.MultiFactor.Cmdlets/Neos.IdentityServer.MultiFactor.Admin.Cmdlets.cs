@@ -5929,12 +5929,12 @@ namespace MFA
             if (_dynparam != null)
             {
                 if (UIKind != PSUIKind.Default)
-                    this.WriteWarning(string.Format(infos_strings.InfosWarningAboutTheme, "ADFS 2019"));
+                    this.WriteWarning(string.Format(infos_strings.InfosWarningAboutTheme, "ADFS 2022/2019"));
                 else
-                    this.WriteWarning(string.Format(infos_strings.InfosWarningAboutTheme, "ADFS 2019/2016/2012r2"));
+                    this.WriteWarning(string.Format(infos_strings.InfosWarningAboutTheme, "ADFS 2022/2019/2016/2012r2"));
             }
             else
-                this.WriteWarning(string.Format(infos_strings.InfosWarningAboutTheme, "ADFS 2019/2016/2012r2"));
+                this.WriteWarning(string.Format(infos_strings.InfosWarningAboutTheme, "ADFS 2022/2019/2016/2012r2"));
             if (ShouldProcess("Set MFA Theme Configuration"))
             {
                 try

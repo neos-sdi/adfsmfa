@@ -1273,9 +1273,9 @@ namespace Neos.IdentityServer.MultiFactor
             string result = "<script type='text/javascript'>" + CR;
             result += "function QueryUserSessionProperties(frm)" + CR;
             result += "{" + CR;
+            result += "   var xplatform = document.getElementById('userplatform');" + CR;
             result += "   try" + CR;
             result += "   {" + CR;
-            result += "      var xplatform = document.getElementById('userplatform');" + CR;
             result += "      if (xplatform)" + CR;
             result += "      {" + CR;
             result += "         xplatform.value = navigator.userAgentData.platform;" + CR;
@@ -1283,7 +1283,17 @@ namespace Neos.IdentityServer.MultiFactor
             result += "   }" + CR;
             result += "   catch(e)" + CR;
             result += "   {" + CR;
+            result += "      try" + CR;
+            result += "      {" + CR;
+            result += "         if (xplatform)" + CR;
+            result += "         {" + CR;
+            result += "            xplatform.value = navigator.userAgent;" + CR;
+            result += "         }" + CR;
+            result += "      }" + CR;
+            result += "      catch(e)" + CR;
+            result += "      {" + CR;
             result += "         xplatform.value = null;" + CR;
+            result += "      }" + CR;
             result += "   }" + CR;
 
             result += "   try" + CR;
@@ -1304,10 +1314,10 @@ namespace Neos.IdentityServer.MultiFactor
             result += "</script>" + CR + CR;
             return result;
         }
-        #endregion
+#endregion
 
 
-        #region QRCode
+#region QRCode
         /// <summary>
         /// GetFormPreRenderHtmlShowQRCode implementation
         /// </summary>
@@ -1330,9 +1340,9 @@ namespace Neos.IdentityServer.MultiFactor
             result += "</form>";
             return result;
         }
-        #endregion
+#endregion
 
-        #region Donut
+#region Donut
         /// <summary>
         /// GetPartHtmlDonut method implementation
         /// </summary>
@@ -1532,9 +1542,9 @@ namespace Neos.IdentityServer.MultiFactor
 
             return result;
         }
-        #endregion
+#endregion
 
-        #region WebAuthN Support
+#region WebAuthN Support
         /// <summary>
         /// GetFormHtmlWebAuthNSupport method implementation
         /// </summary>
@@ -1807,6 +1817,6 @@ namespace Neos.IdentityServer.MultiFactor
 
             return result;
         }
-        #endregion
+#endregion
     }
 }

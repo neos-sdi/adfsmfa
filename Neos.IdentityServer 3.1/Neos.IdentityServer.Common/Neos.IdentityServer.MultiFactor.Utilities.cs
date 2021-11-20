@@ -4018,7 +4018,7 @@ namespace Neos.IdentityServer.MultiFactor
             usercontext.Platform = userplatform;
             if (!string.IsNullOrEmpty(platform))
             {
-                if (platform.ToLower().Equals("ios") || platform.ToLower().Equals("macos"))
+                if (platform.ToLower().Contains("safari"))
                 {
                     usercontext.DirectLogin = false;
                     return;
@@ -4029,7 +4029,7 @@ namespace Neos.IdentityServer.MultiFactor
                     usercontext.DirectLogin = false;
                     return;
                 }
-                if (platform.ToLower().Contains("macintosh") || platform.ToLower().Contains("iphone") || platform.ToLower().Contains("ipad") || platform.ToLower().Contains("ipod"))
+                if (IsApplePlatForm(usercontext))
                 {
                     usercontext.DirectLogin = false;
                     return;
@@ -4045,6 +4045,45 @@ namespace Neos.IdentityServer.MultiFactor
             usercontext.DirectLogin = config.WebAuthNProvider.DirectLogin;
         }
 
+        /// <summary>
+        /// IsAppleDevice method implmentation
+        /// </summary>
+        internal static bool IsAppleDevice(AuthenticationContext usercontext)
+        {
+            if (usercontext.Platform.ToLower().Contains("safari"))
+            {
+#if psysuck
+                Log.WriteEntry("Detected Safari", EventLogEntryType.Warning, 101);
+#endif
+                return true;
+            }
+            if (IsApplePlatForm(usercontext))
+            {
+#if psysuck
+                Log.WriteEntry("Detected Apple Platform", EventLogEntryType.Warning, 101);
+#endif
+                return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// IsApplePlatForm method implmentation
+        /// </summary>
+        private static bool IsApplePlatForm(AuthenticationContext usercontext)
+        {
+            if (!string.IsNullOrEmpty(usercontext.Platform))
+            {
+                if (usercontext.Platform.ToLower().Equals("ios") || usercontext.Platform.ToLower().Equals("macos") || usercontext.Platform.ToLower().Equals("osx"))
+                    return true;
+                if (usercontext.Platform.ToLower().Contains("macintosh") || usercontext.Platform.ToLower().Contains("iphone") || usercontext.Platform.ToLower().Contains("ipad") || usercontext.Platform.ToLower().Contains("ipod"))
+                    return true;
+                if (usercontext.Platform.ToLower().Equals("mac os x") || usercontext.Platform.ToLower().Equals("macintel") || usercontext.Platform.ToLower().Equals("mac_powerpc") || usercontext.Platform.ToLower().Equals("mac_68k"))
+                    return true; 
+            }
+            return false;
+        }
+    
         /// <summary>
         /// PatchUserLcid method implementation
         /// </summary>
@@ -4103,9 +4142,9 @@ namespace Neos.IdentityServer.MultiFactor
             }
         }
     }
-    #endregion
+#endregion
 
-    #region WebAuthNCredentialInformation
+#region WebAuthNCredentialInformation
     /// <summary>
     /// WebAuthNCredentialInformation class
     /// </summary>
@@ -4123,5 +4162,5 @@ namespace Neos.IdentityServer.MultiFactor
         public uint SignatureCounter { get; set; }
         public string NickName { get; set; }
     }
-    #endregion
+#endregion
 }
