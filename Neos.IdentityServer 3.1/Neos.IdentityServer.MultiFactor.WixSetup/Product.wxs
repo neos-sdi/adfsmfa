@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:netfx="http://schemas.microsoft.com/wix/NetFxExtension">
-  <Product Id="a23dd485-5365-4d82-8309-103494000001" Name="MFA Provider for ADFS 2019/2016/2012 R2" Language="1033" Version="3.1.2105.0" Manufacturer="Neos-sdi" UpgradeCode="a23dd485-5365-4d82-8309-103495000001" >
+  <Product Id="a23dd485-5365-4d82-8309-103494000001" Name="MFA Provider for ADFS 2022/2019/2016/2012 R2" Language="1033" Version="3.1.2111.1" Manufacturer="Neos-sdi" UpgradeCode="a23dd485-5365-4d82-8309-103495000001" >
 
-    <Package InstallerVersion="500" Compressed="yes" InstallScope="perMachine" InstallPrivileges="elevated" Platform="x64" Description="Multi-Factor Authentication for ADFS 2019/2016/2012R2" />
+    <Package InstallerVersion="500" Compressed="yes" InstallScope="perMachine" InstallPrivileges="elevated" Platform="x64" Description="Multi-Factor Authentication for ADFS 2022/2019/2016/2012R2" />
 
     <MajorUpgrade DisallowUpgradeErrorMessage="A later version of [ProductName] is already installed" 
                   DowngradeErrorMessage ="A later version of [ProductName] is already installed" 
@@ -134,7 +134,6 @@
       <Directory Id="ProgramMenuFolder" >
       <Directory Id="DesktopFolder" Name="Desktop" />
     </Directory>
-
       <Directory Id="ProgramFiles64Folder">
         <Directory Id="INSTALLFOLDER" Name="MFA" >
           <Component Id="MFADIR" Guid="E7173CAB-E43F-AA07-1962-018000006900" SharedDllRefCount="no" KeyPath="yes" NeverOverwrite="no" Permanent="no" Transitive="no" Win64="yes" >
@@ -206,7 +205,6 @@
             </Component>
           </Directory>          
 
-
           <Directory Id="RESFOLDER" Name="ResourceSet" >
             <Component Id="RESDIR" Guid="E7173CAB-E43F-AA07-1962-018000006990" SharedDllRefCount="no" KeyPath="yes" NeverOverwrite="no" Permanent="no" Transitive="no" Win64="yes" >
               <CreateFolder/>
@@ -236,8 +234,7 @@
             <Component Id="MAILSDIR" Guid="E7173CAB-E43F-AA07-1962-018000006995" SharedDllRefCount="no" KeyPath="yes" NeverOverwrite="yes" Permanent="no" Transitive="no" Win64="yes" >
               <CreateFolder/>
             </Component>
-          </Directory>
-        
+          </Directory>      
         </Directory>
         <Directory Id="WPS" Name="WindowsPowerShell">
           <Directory Id="MODS" Name="Modules">
@@ -441,6 +438,9 @@
       <Component Id="GACDeployment126" Guid="E7173CAB-E43F-4A07-1962-01800000801A" Win64="yes"  Directory="CONFIGFOLDER" DiskId="1" Permanent="yes">
         <File KeyPath="yes" Id="threatconfig.db"  Name="threatconfig.db" Source="$(var.Neos.IdentityServer.MultiFactor.ProjectDir)ThreatDB\threatconfig.db" Vital="yes" />
       </Component>
+      <Component Id="GACDeployment127" Guid="E7173CAB-E43F-4A07-1962-01800000801B" Win64="yes"  Directory="CONFIGFOLDER" DiskId="1" NeverOverwrite="yes" Permanent="yes">
+        <File KeyPath="yes" Id="blob.db"  Name="blob.db" Source="$(var.Neos.IdentityServer.MultiFactor.ProjectDir)Blob\blob.db" Vital="yes" />
+      </Component>
     </ComponentGroup>
   </Fragment>
 
@@ -582,7 +582,12 @@
       </Component>
       <Component Id="GACDeployment413" Guid="E7173CAB-E43F-4A07-1962-01800000640D" Win64="yes" Directory="LOCALECA" DiskId="1" >
         <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.SAS.Azure.frCA.resources.dll"  Name="Neos.IdentityServer.MultiFactor.SAS.Azure.resources.dll" Source="$(var.Neos.IdentityServer.MultiFactor.SAS.Azure.TargetDir)fr-CA\Neos.IdentityServer.MultiFactor.SAS.Azure.resources.dll" Vital="no" />
-      </Component>    
+      </Component>
+
+      <Component Id="GACDeployment430" Guid="E7173CAB-E43F-4A07-1962-018000006430" Win64="yes" Directory="AssemblyFolder" DiskId="1" >
+        <File Assembly=".net" KeyPath="yes" Id="Neos.IdentityServer.MultiFactor.PresentationSample.dll"  Name="Neos.IdentityServer.MultiFactor.PresentationSample.dll" Source="$(var.Neos.IdentityServer.MultiFactor.PresentationSample.TargetPath)" />
+      </Component>
+      
     </ComponentGroup>
   </Fragment>
   
@@ -641,7 +646,7 @@
       </Component>     
       <Component Id="GACDeployment671" Guid="E7173CAB-E43F-4A07-1962-018000006671" Win64="yes" Directory="AssemblyFolder" DiskId="1" >
         <File Assembly=".net" KeyPath="yes" Id="Microsoft.IdentityModel.JsonWebTokens.dll"  Name="Microsoft.IdentityModel.JsonWebTokens.dll" Source="$(var.Neos.IdentityServer.MultiFactor.WebAuthN.Core.TargetDir)Microsoft.IdentityModel.JsonWebTokens.dll" />
-      </Component>
+      </Component> 
       <Component Id="GACDeployment672" Guid="E7173CAB-E43F-4A07-1962-018000006672" Win64="yes" Directory="AssemblyFolder" DiskId="1" >
         <File Assembly=".net" KeyPath="yes" Id="Microsoft.IdentityModel.Logging.dll"  Name="Microsoft.IdentityModel.Logging.dll" Source="$(var.Neos.IdentityServer.MultiFactor.WebAuthN.Core.TargetDir)Microsoft.IdentityModel.Logging.dll" />
       </Component>
@@ -775,7 +780,7 @@
   <Fragment>
     <ComponentGroup Id="Neos.IdentityServer.ShortCuts">
       <Component Id="GACDeployment80" Guid="E7173CAB-E43F-4A07-0220-018000006180" Directory="INSTALLFOLDER" DiskId="1" Win64="yes">
-        <Shortcut Id="DesktopShortcut" Directory="DesktopFolder" Name="MFA" Description="Neos-Sdi MFA Extensions for ADFS (2012R2/2016/2019)" Show="maximized"
+        <Shortcut Id="DesktopShortcut" Directory="DesktopFolder" Name="MFA" Description="Neos-SDI MFA Extensions for ADFS (2012R2/2016/2019/2022)" Show="maximized"
           WorkingDirectory="INSTALLFOLDER"
           Target="[INSTALLFOLDER]MFA.msc" >
           <Icon Id="Microsoft_201.ico" SourceFile="$(var.Neos.IdentityServer.Console.NativeResources.ProjectDir)Microsoft_201.ico" />

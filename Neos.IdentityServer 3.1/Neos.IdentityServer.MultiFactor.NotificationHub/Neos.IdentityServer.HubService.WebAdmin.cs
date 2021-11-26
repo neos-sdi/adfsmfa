@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2020 @redhook62 (adfsmfa@gmail.com)                                                                                                                                        //                        
+// Copyright (c) 2021 @redhook62 (adfsmfa@gmail.com)                                                                                                                                        //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -169,7 +169,7 @@ namespace Neos.IdentityServer.MultiFactor
             }
             catch (Exception e)
             {
-                _log.WriteEntry(string.Format("Error on WebAdminService Service GetLocalSIDsInformations method : {0}.", e.Message), EventLogEntryType.Error, 2010);
+                _log.WriteEntry(string.Format("Error on WebAdminService Service GetRemoteSIDsInformations method : {0}.", e.Message), EventLogEntryType.Error, 2010);
                 throw e;
             }
             return retvalue;
@@ -437,6 +437,48 @@ namespace Neos.IdentityServer.MultiFactor
                 throw e;
             }
         }
+        #endregion
+
+        #region WebAuthN Payloads
+        /// <summary>
+        /// HasBLOBPayloadCache method implementation
+        /// </summary>
+        public bool HasBLOBPayloadCache()
+        {
+            return File.Exists(SystemUtilities.PayloadCacheFile);
+        }
+
+        /// <summary>
+        /// GetBLOBPayloadCache method implementation
+        /// </summary>
+        public BLOBPayloadInformations GetBLOBPayloadCache()
+        {
+            BLOBPayloadInformations infos = new BLOBPayloadInformations();
+            RegistryKey ek = Registry.LocalMachine.OpenSubKey("Software\\MFA", false);
+            infos.Number = Convert.ToInt32(ek.GetValue("BlobNumber", 0, RegistryValueOptions.None));
+            infos.NextUpdate = Convert.ToDateTime(ek.GetValue("BlobNextUpdate", "1970-01-01", RegistryValueOptions.None));
+            infos.CanDownload = Convert.ToBoolean(ek.GetValue("BlobDownload", 1, RegistryValueOptions.None));
+            infos.BLOB = File.ReadAllText(SystemUtilities.PayloadCacheFile);
+            return infos;
+        }
+
+        /// <summary>
+        /// SetBLOBPayloadCache method implmentation
+        /// </summary>
+        public void SetBLOBPayloadCache(BLOBPayloadInformations infos)
+        {
+            RegistryKey ek = Registry.LocalMachine.OpenSubKey("Software\\MFA", true);
+            ek.SetValue("BlobNumber", Convert.ToString(infos.Number), RegistryValueKind.String);
+            ek.SetValue("BlobNextUpdate", infos.NextUpdate.ToString("yyyy-MM-dd"), RegistryValueKind.String);
+            ek.SetValue("BlobDownload", Convert.ToInt32(infos.CanDownload), RegistryValueKind.DWord);
+            File.WriteAllText(SystemUtilities.PayloadCacheFile, infos.BLOB);
+            using (MailSlotClient mailslot = new MailSlotClient("BDC"))
+            {
+                mailslot.Text = Environment.MachineName;
+                mailslot.SendNotification(NotificationsKind.ConfigurationReload);
+            }
+        }
+
         #endregion
 
         #region "System" Cache configuration  methods
@@ -1288,7 +1330,6 @@ namespace Neos.IdentityServer.MultiFactor
                 return false;
             }
         }
-
         #endregion
     }
     #endregion

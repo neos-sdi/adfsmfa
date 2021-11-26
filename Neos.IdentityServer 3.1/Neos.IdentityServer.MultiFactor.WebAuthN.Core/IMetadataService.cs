@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2020 abergs (https://github.com/abergs/fido2-net-lib)                                                                                                                      //                        
+// Copyright (c) 2021 abergs (https://github.com/abergs/fido2-net-lib)                                                                                                                      //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -22,12 +22,16 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
     /// </summary>
     public interface IMetadataService
     {
+        uint Timeout { get; set; }
+        int TimestampDriftTolerance { get; set; }
+
         /// <summary>
         /// Gets the metadata TOC (table-of-content) payload entry by a guid.
         /// </summary>
         /// <param name="aaguid">The Authenticator Attestation GUID.</param>
         /// <returns>Returns the entry; Otherwise <c>null</c>.</returns>
-        MetadataTOCPayloadEntry GetEntry(Guid aaguid);
+        MetadataBLOBPayloadEntry GetEntry(Guid aaguid);
+
         /// <summary>
         /// Gets a value indicating whether the internal access token is valid.
         /// </summary>
@@ -35,6 +39,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
         /// Returns <c>true</c> if access token is valid, or <c>false</c> if the access token is equal to an invalid token value.
         /// </returns>
         bool ConformanceTesting();
+
         /// <summary>
         /// Gets a value indicating whether the metadata service is initialized.
         /// </summary>

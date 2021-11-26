@@ -565,7 +565,7 @@
     <value>Максимальные ряды</value>
   </data>
   <data name="CTRLWEBAUTHNEXTENSIONS" xml:space="preserve">
-    <value>Расширения (authnSe)</value>
+    <value>Расширения (exts)</value>
   </data>
   <data name="CTRLWEBAUTHNRESIDENTKEY" xml:space="preserve">
     <value>Требуется ключ резидента</value>
@@ -728,5 +728,8 @@
   </data>
   <data name="CTRLSECGENRSAKEY" xml:space="preserve">
     <value>Мастер-ключ RSA</value>
+  </data>
+  <data name="CTRLWEBAUTHNCONTRAINEDMETADATA" xml:space="preserve">
+    <value>Использование службы ограниченных метаданных (для фермы ADFS, не имея доступа к Интернету)</value>
   </data>
 </root>

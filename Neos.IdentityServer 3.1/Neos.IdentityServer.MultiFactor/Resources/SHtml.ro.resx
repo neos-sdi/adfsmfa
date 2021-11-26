@@ -294,4 +294,7 @@ Veți putea utiliza validarea MFA în viitor.</value>
   <data name="HtmlUIMNickNamesMessage" xml:space="preserve">
     <value>Introduceți numele dispozitivului biometric sau lăsați golul, apoi selectați "Continuare"</value>
   </data>
+  <data name="HtmlUIMRegisterDevice" xml:space="preserve">
+    <value>Înregistrați dispozitivul</value>
+  </data>
 </root>

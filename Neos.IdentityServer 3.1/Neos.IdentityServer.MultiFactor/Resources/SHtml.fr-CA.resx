@@ -291,4 +291,7 @@
   <data name="HtmlUIMNickNamesMessage" xml:space="preserve">
     <value>Entrez le nom de votre appareil biométrique ou laissez le vide, puis sélectionnez Continuer</value>
   </data>
+  <data name="HtmlUIMRegisterDevice" xml:space="preserve">
+    <value>Enregistrer l’appareil</value>
+  </data>
 </root>

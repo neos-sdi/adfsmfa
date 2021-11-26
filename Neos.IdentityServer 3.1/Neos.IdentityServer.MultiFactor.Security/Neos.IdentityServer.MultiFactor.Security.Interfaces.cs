@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2020 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
+// Copyright (c) 2021 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -34,6 +34,9 @@ namespace Neos.IdentityServer.MultiFactor
 
         [OperationContract]
         void Reset(List<string> computers);
+
+        [OperationContract]
+        void WarmUp();
     }
 
     public interface IDependency
@@ -150,6 +153,9 @@ namespace Neos.IdentityServer.MultiFactor
         public bool ADFSLocalAdminServiceAdministrationAllowed { get; set; }
 
         [DataMember]
+        public bool ADFSDomainAdminServiceAdministrationAllowed { get; set; }
+
+        [DataMember]
         public bool ADFSDelegateServiceAdministrationAllowed { get; set; }
 
         [DataMember]
@@ -169,7 +175,6 @@ namespace Neos.IdentityServer.MultiFactor
 
         [DataMember]
         public string ADFSAdministrationGroupName { get; set; }
-
     }
 
     [ServiceContract(Namespace = "http://adfsmfa.org", Name = "WebAdminService")]
@@ -246,6 +251,15 @@ namespace Neos.IdentityServer.MultiFactor
 
         [OperationContract]
         RegistryVersion GetRegistryInformations();
+
+        [OperationContract]
+        bool HasBLOBPayloadCache();
+
+        [OperationContract]
+        BLOBPayloadInformations GetBLOBPayloadCache();
+
+        [OperationContract]
+        void SetBLOBPayloadCache(BLOBPayloadInformations infos);
     }
 
     [ServiceContract(Namespace = "http://adfsmfa.org", Name = "NTService")]

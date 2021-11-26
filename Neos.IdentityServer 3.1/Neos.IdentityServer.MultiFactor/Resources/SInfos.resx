@@ -118,18 +118,18 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="InfosConfigurationCacheCreated" xml:space="preserve">
-    <value>Configuration Cache Created ! invoqued by : {0}</value>
+    <value>Configuration Cache Created! Invoked by : {0}</value>
   </data>
   <data name="InfosConfigurationCacheDeleted" xml:space="preserve">
-    <value>Configuration Cache Deleted ! invoqued by : {0}</value>
+    <value>Configuration Cache Deleted! Invoked by : {0}</value>
   </data>
   <data name="InfosConfigurationModified" xml:space="preserve">
-    <value>Configuration was correctly updated !</value>
+    <value>Configuration was correctly updated!</value>
   </data>
   <data name="InfosConfigurationReloaded" xml:space="preserve">
-    <value>Configuration loaded ! invoqued by : {0}</value>
+    <value>Configuration loaded! Invoked by: {0}</value>
   </data>
   <data name="InfosPasswordModified" xml:space="preserve">
-    <value>Password modified !</value>
+    <value>Password modified!</value>
   </data>
 </root>

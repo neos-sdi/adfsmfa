@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2020 abergs (https://github.com/abergs/fido2-net-lib)                                                                                                                      //                        
+// Copyright (c) 2021 abergs (https://github.com/abergs/fido2-net-lib)                                                                                                                      //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -12,6 +12,7 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                               //
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
+using Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor;
 using System;
 using System.IO;
 using System.Linq;
@@ -128,7 +129,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Objects
                         // of the CBOR object is reached or an error occurs, whichever happens first."
                         //
                         // Read the CBOR object from the stream
-                        var ext = Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor.CBORObject.Read(reader.BaseStream);
+                        var ext = CBORObject.Read(reader.BaseStream);
 
                         // Encode the CBOR object back to a byte array.
                         Extensions = new Extensions(ext.EncodeToBytes());

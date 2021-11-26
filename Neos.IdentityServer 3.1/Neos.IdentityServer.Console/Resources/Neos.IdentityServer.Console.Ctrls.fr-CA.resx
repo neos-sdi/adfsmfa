@@ -595,7 +595,7 @@
     <value>Tolérance à la dérive De Timestamp</value>
   </data>
   <data name="CTRLWEBAUTHNEXTENSIONS" xml:space="preserve">
-    <value>Extensions (authnSe)</value>
+    <value>Extensions (exts)</value>
   </data>
   <data name="CTRLWEBAUTHNRESIDENTKEY" xml:space="preserve">
     <value>Exiger la clé résidente</value>
@@ -728,5 +728,8 @@
   </data>
   <data name="CTRLSECGENRSAKEY" xml:space="preserve">
     <value>Clé maître RSA</value>
+  </data>
+  <data name="CTRLWEBAUTHNCONTRAINEDMETADATA" xml:space="preserve">
+    <value>Utiliser le service de métadonnées contrainte (pour la batterie de serveurs ADFS qui n’a pas d’accès à Internet)</value>
   </data>
 </root>

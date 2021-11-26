@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2020 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
+// Copyright (c) 2021 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -15,8 +15,7 @@
 // https://github.com/neos-sdi/adfsmfa                                                                                                                                                      //
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
-//#define testintranet
-using Microsoft.IdentityServer.Public;
+//#define extranetonly
 using Microsoft.IdentityServer.Public.ThreatDetectionFramework;
 using System;
 using System.Collections;
@@ -42,7 +41,7 @@ namespace Neos.IdentityServer.MultiFactor
         }
 
         public override string VendorName => "adfsmfa";
-        public override string ModuleIdentifier => "ThreatkAnalyzer";
+        public override string ModuleIdentifier => "MFABlockPlugin";
 
         /// <summary>
         /// OnAuthenticationPipelineLoad method override
@@ -85,8 +84,9 @@ namespace Neos.IdentityServer.MultiFactor
             {
                 if (requestContext.LocalEndPointAbsolutePath.ToLower().StartsWith("/adfs/proxy"))
                    return Task.FromResult<ThrottleStatus>(ThrottleStatus.Allow);
-
+#if extranetonly
                 if (requestContext.ClientLocation.HasValue && requestContext.ClientLocation.Value == NetworkLocation.Extranet)
+#endif
                 {
                     foreach (IPAddress clientIpAddress in requestContext.ClientIpAddresses)
                     {
@@ -157,19 +157,16 @@ namespace Neos.IdentityServer.MultiFactor
                         line = sr.ReadLine();
                         if (string.IsNullOrEmpty(line))
                             continue;
-                        if (line.StartsWith("#"))
+                        if (line.StartsWith(";"))
                             continue;
                         string[] values = line.Split(';');
-                        foreach (string s in values)
-                        {
-                            string ipAddress = s;
-                            if (string.IsNullOrEmpty(ipAddress.Trim()))
-                                continue;
-                            if (!ipAddress.Contains('/'))
-                                ipAddress += "/32";
-                            logger?.WriteDebugMessage($"Loaded IP {ipAddress}");
-                            ipAddressSet.Add(ipAddress);
-                        }
+                        string ipAddress = values[0];
+                        if (string.IsNullOrEmpty(ipAddress.Trim()))
+                           continue;
+                        if (!ipAddress.Contains('/'))
+                            ipAddress += "/32";
+                        logger?.WriteDebugMessage($"Loaded IP {ipAddress}");
+                        ipAddressSet.Add(values[0].Trim());
                     }
                     catch (Exception ex)
                     {

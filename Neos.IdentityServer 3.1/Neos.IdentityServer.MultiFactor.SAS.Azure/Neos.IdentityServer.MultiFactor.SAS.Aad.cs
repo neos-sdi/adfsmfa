@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2020 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
+// Copyright (c) 2021 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -17,7 +17,6 @@
 //******************************************************************************************************************************************************************************************//
 
 using Microsoft.Win32;
-using Neos.IdentityServer.MultiFactor.Common;
 using System;
 using System.Globalization;
 using System.IO;
@@ -125,7 +124,9 @@ namespace Neos.IdentityServer.MultiFactor.SAS
                 ADAL.AuthenticationResult authenticationResult = null;
                 try
                 {
-                    authenticationResult = this.authContext.AcquireToken(this._resourceUri, this._clientAssertion);
+                    // authenticationResult = this.authContext.AcquireToken(this._resourceUri, this._clientAssertion);
+                    var taskResult = this.authContext.AcquireTokenAsync(this._resourceUri, this._clientAssertion);
+                    authenticationResult = taskResult.Result;
                     request.Headers.Add(HttpRequestHeader.Authorization.ToString(), new AuthenticationHeaderValue("Bearer", authenticationResult.AccessToken).ToString());
                 }
                 catch (ADAL.AdalException ex)

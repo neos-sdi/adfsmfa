@@ -17,11 +17,13 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
+    <Optimize>true</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>TRACE;DEBUG;fido</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>7.2</LangVersion>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -47,20 +49,94 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Library\ASN.cs" />
-    <Compile Include="Library\Chaos.NaCL.cs" />
-    <Compile Include="Library\Chaos.Nacl.Ed25519Ref10.cs" />
-    <Compile Include="Library\Chaos.Nacl.Internal.cs" />
-    <Compile Include="Library\PeterO.Cbor.cs" />
-    <Compile Include="Library\PeterO.Cbor.Interfaces.cs" />
-    <Compile Include="Library\PeterO.Cbor.Internal.cs" />
-    <Compile Include="Library\PeterO.Cbor.Numbers.cs" />
-    <Compile Include="Library\PeterO.Cbor.Objects.cs" />
+    <Compile Include="Library\AsnElt\ASN.cs" />
+    <Compile Include="Library\CBor\Base64.cs" />
+    <Compile Include="Library\CBor\CBORCanonical.cs" />
+    <Compile Include="Library\CBor\CBORDataUtilities.cs" />
+    <Compile Include="Library\CBor\CBORDateConverter.cs" />
+    <Compile Include="Library\CBor\CBORDouble.cs" />
+    <Compile Include="Library\CBor\CBOREInteger.cs" />
+    <Compile Include="Library\CBor\CBOREncodeOptions.cs" />
+    <Compile Include="Library\CBor\CBORException.cs" />
+    <Compile Include="Library\CBor\CBORExtendedDecimal.cs" />
+    <Compile Include="Library\CBor\CBORExtendedFloat.cs" />
+    <Compile Include="Library\CBor\CBORExtendedRational.cs" />
+    <Compile Include="Library\CBor\CBORInteger.cs" />
+    <Compile Include="Library\CBor\CBORJson.cs" />
+    <Compile Include="Library\CBor\CBORJson2.cs" />
+    <Compile Include="Library\CBor\CBORJson3.cs" />
+    <Compile Include="Library\CBor\CBORJsonWriter.cs" />
+    <Compile Include="Library\CBor\CBORNumber.cs" />
+    <Compile Include="Library\CBor\CBORNumberExtra.cs" />
+    <Compile Include="Library\CBor\CBORObject.cs" />
+    <Compile Include="Library\CBor\CBORObjectExtra.cs" />
+    <Compile Include="Library\CBor\CBORReader.cs" />
+    <Compile Include="Library\CBor\CBORType.cs" />
+    <Compile Include="Library\CBor\CBORTypeMapper.cs" />
+    <Compile Include="Library\CBor\CBORUriConverter.cs" />
+    <Compile Include="Library\CBor\CBORUtilities.cs" />
+    <Compile Include="Library\CBor\CBORUuidConverter.cs" />
+    <Compile Include="Library\CBor\CharacterInputWithCount.cs" />
+    <Compile Include="Library\CBor\CharacterReader.cs" />
+    <Compile Include="Library\CBor\DataUtilities.cs" />
+    <Compile Include="Library\CBor\ICBORConverter.cs" />
+    <Compile Include="Library\CBor\ICBORNumber.cs" />
+    <Compile Include="Library\CBor\ICBORToFromConverter.cs" />
+    <Compile Include="Library\CBor\ICharacterInput.cs" />
+    <Compile Include="Library\CBor\JSONOptions.cs" />
+    <Compile Include="Library\CBor\Numbers\BigNumberFlags.cs" />
+    <Compile Include="Library\CBor\Numbers\BitShiftAccumulator.cs" />
+    <Compile Include="Library\CBor\Numbers\DigitShiftAccumulator.cs" />
+    <Compile Include="Library\CBor\Numbers\EContext.cs" />
+    <Compile Include="Library\CBor\Numbers\EDecimal.cs" />
+    <Compile Include="Library\CBor\Numbers\EDecimalByteArrayString.cs" />
+    <Compile Include="Library\CBor\Numbers\EDecimalCharArrayString.cs" />
+    <Compile Include="Library\CBor\Numbers\EDecimalExtra.cs" />
+    <Compile Include="Library\CBor\Numbers\EDecimals.cs" />
+    <Compile Include="Library\CBor\Numbers\EDecimalTextString.cs" />
+    <Compile Include="Library\CBor\Numbers\EFloat.cs" />
+    <Compile Include="Library\CBor\Numbers\EFloatByteArrayString.cs" />
+    <Compile Include="Library\CBor\Numbers\EFloatCharArrayString.cs" />
+    <Compile Include="Library\CBor\Numbers\EFloatExtra.cs" />
+    <Compile Include="Library\CBor\Numbers\EFloats.cs" />
+    <Compile Include="Library\CBor\Numbers\EFloatTextString.cs" />
+    <Compile Include="Library\CBor\Numbers\EInteger.cs" />
+    <Compile Include="Library\CBor\Numbers\EIntegerByteArrayString.cs" />
+    <Compile Include="Library\CBor\Numbers\EIntegerCharArrayString.cs" />
+    <Compile Include="Library\CBor\Numbers\EIntegerExtra.cs" />
+    <Compile Include="Library\CBor\Numbers\EIntegerTextString.cs" />
+    <Compile Include="Library\CBor\Numbers\ERational.cs" />
+    <Compile Include="Library\CBor\Numbers\ERationalByteArrayString.cs" />
+    <Compile Include="Library\CBor\Numbers\ERationalCharArrayString.cs" />
+    <Compile Include="Library\CBor\Numbers\ERationalExtra.cs" />
+    <Compile Include="Library\CBor\Numbers\ERationalTextString.cs" />
+    <Compile Include="Library\CBor\Numbers\ERounding.cs" />
+    <Compile Include="Library\CBor\Numbers\ETrapException.cs" />
+    <Compile Include="Library\CBor\Numbers\ExtendedOrSimpleRadixMath.cs" />
+    <Compile Include="Library\CBor\Numbers\Extras.cs" />
+    <Compile Include="Library\CBor\Numbers\FastInteger.cs" />
+    <Compile Include="Library\CBor\Numbers\FastIntegerFixed.cs" />
+    <Compile Include="Library\CBor\Numbers\IRadixMath.cs" />
+    <Compile Include="Library\CBor\Numbers\IRadixMathHelper.cs" />
+    <Compile Include="Library\CBor\Numbers\IShiftAccumulator.cs" />
+    <Compile Include="Library\CBor\Numbers\NumberUtility.cs" />
+    <Compile Include="Library\CBor\Numbers\RadixMath.cs" />
+    <Compile Include="Library\CBor\Numbers\SimpleRadixMath.cs" />
+    <Compile Include="Library\CBor\Numbers\TrappableRadixMath.cs" />
+    <Compile Include="Library\CBor\OptionsParser.cs" />
+    <Compile Include="Library\CBor\PODOptions.cs" />
+    <Compile Include="Library\CBor\PropertyMap.cs" />
+    <Compile Include="Library\CBor\SharedRefs.cs" />
+    <Compile Include="Library\CBor\StringOutput.cs" />
+    <Compile Include="Library\CBor\StringRefs.cs" />
+    <Compile Include="Library\CBor\URIUtility.cs" />
+    <Compile Include="Library\Nacl\Chaos.NaCL.cs" />
+    <Compile Include="Library\Nacl\Chaos.Nacl.Ed25519Ref10.cs" />
+    <Compile Include="Library\Nacl\Chaos.Nacl.Internal.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Neos.IdentityServer.pfx" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

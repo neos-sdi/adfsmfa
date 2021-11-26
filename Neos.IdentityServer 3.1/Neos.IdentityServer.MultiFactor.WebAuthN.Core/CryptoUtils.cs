@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2020 abergs (https://github.com/abergs/fido2-net-lib)                                                                                                                      //                        
+// Copyright (c) 2021 abergs (https://github.com/abergs/fido2-net-lib)                                                                                                                      //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -12,7 +12,7 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                               //
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
-// Copyright (c) 2020 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
+// Copyright (c) 2021 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -29,15 +29,12 @@
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
 
+using Neos.IdentityServer.MultiFactor.WebAuthN.Library.ASN;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
-using Neos.IdentityServer.MultiFactor.WebAuthN.Library.ASN;
-using Neos.IdentityServer.MultiFactor.WebAuthN.Objects;
-
 
 namespace Neos.IdentityServer.MultiFactor.WebAuthN
 {
@@ -72,29 +69,202 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
             }
         }
 
-		public static HashAlgorithmName HashAlgFromCOSEAlg(int alg)
+        public static HashAlgorithmName HashAlgFromCOSEAlg(int alg)
         {
-            switch ((COSE.Algorithm)alg)
+            switch ((COSE.Algorithm)alg           )
             {
-                case COSE.Algorithm.RS1: return HashAlgorithmName.SHA1;
-                case COSE.Algorithm.ES256: return HashAlgorithmName.SHA256;
-                case COSE.Algorithm.ES384: return HashAlgorithmName.SHA384;
-                case COSE.Algorithm.ES512: return HashAlgorithmName.SHA512;
-                case COSE.Algorithm.PS256: return HashAlgorithmName.SHA256;
-                case COSE.Algorithm.PS384: return HashAlgorithmName.SHA384;
-                case COSE.Algorithm.PS512: return HashAlgorithmName.SHA512;
-                case COSE.Algorithm.RS256: return HashAlgorithmName.SHA256;
-                case COSE.Algorithm.RS384: return HashAlgorithmName.SHA384;
-                case COSE.Algorithm.RS512: return HashAlgorithmName.SHA512;
-                case (COSE.Algorithm)4: return HashAlgorithmName.SHA1;
-                case (COSE.Algorithm)11: return HashAlgorithmName.SHA256;
-                case (COSE.Algorithm)12: return HashAlgorithmName.SHA384;
-                case (COSE.Algorithm)13: return HashAlgorithmName.SHA512;
-                case COSE.Algorithm.EdDSA: return HashAlgorithmName.SHA512;
+                case COSE.Algorithm.RS1:
+                    return HashAlgorithmName.SHA1;
+                case COSE.Algorithm.ES256:
+                    return HashAlgorithmName.SHA256;
+                case COSE.Algorithm.ES384:
+                    return HashAlgorithmName.SHA384;
+                case COSE.Algorithm.ES512:
+                    return HashAlgorithmName.SHA512;
+                case COSE.Algorithm.PS256:
+                    return HashAlgorithmName.SHA256;
+                case COSE.Algorithm.PS384:
+                    return HashAlgorithmName.SHA384;
+                case COSE.Algorithm.PS512:
+                    return HashAlgorithmName.SHA512;
+                case COSE.Algorithm.RS256:
+                    return HashAlgorithmName.SHA256;
+                case COSE.Algorithm.RS384:
+                    return HashAlgorithmName.SHA384;
+                case COSE.Algorithm.RS512:
+                    return HashAlgorithmName.SHA512;
+                case COSE.Algorithm.ES256K:
+                    return HashAlgorithmName.SHA256;
+                case (COSE.Algorithm)4:
+                    return HashAlgorithmName.SHA1;
+                case (COSE.Algorithm)11:
+                    return HashAlgorithmName.SHA256;
+                case (COSE.Algorithm)12:
+                    return HashAlgorithmName.SHA384;
+                case (COSE.Algorithm)13:
+                    return HashAlgorithmName.SHA512;
+                case COSE.Algorithm.EdDSA:
+                    return HashAlgorithmName.SHA512;
                 default:
                     throw new VerificationException("Unrecognized COSE alg value");
             };
-        }        
+        }
+
+        public static bool ValidateTrustChain(X509Certificate2[] trustPath, X509Certificate2[] attestationRootCertificates)
+        {
+            // Each element of this array represents a PKIX [RFC5280] X.509 certificate that is a valid trust anchor for this authenticator model.
+            // Multiple certificates might be used for different batches of the same model.
+            // The array does not represent a certificate chain, but only the trust anchor of that chain.
+            // A trust anchor can be a root certificate, an intermediate CA certificate or even the attestation certificate itself.
+
+            // Let's check the simplest case first.  If subject and issuer are the same, and the attestation cert is in the list, that's all the validation we need
+            if (trustPath.Length == 1 && trustPath[0].Subject.CompareTo(trustPath[0].Issuer) == 0)
+            {
+                foreach (X509Certificate2 cert in attestationRootCertificates)
+                {
+                    if (cert.Thumbprint.CompareTo(trustPath[0].Thumbprint) == 0)
+                        return true;
+                }
+                return false;
+            }
+
+            // If the attestation cert is not self signed, we will need to build a chain
+            var chain = new X509Chain();
+
+            // Put all potential trust anchors into extra store
+            chain.ChainPolicy.ExtraStore.AddRange(attestationRootCertificates);
+
+            // We don't know the root here, so allow unknown root, and turn off revocation checking
+            chain.ChainPolicy.RevocationMode = X509RevocationMode.NoCheck;
+            chain.ChainPolicy.VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority;
+
+            // trustPath[0] is the attestation cert, if there are more in the array than just that, add those to the extra store as well, but skip attestation cert
+            if (trustPath.Length > 1)
+            {
+                foreach (X509Certificate2 cert in trustPath.Skip(1)) // skip attestation cert
+                {
+                    chain.ChainPolicy.ExtraStore.Add(cert);
+                }
+            }
+
+            // try to build a chain with what we've got
+            if (chain.Build(trustPath[0]))
+            {
+                // if the chain validates, make sure one of the attestation root certificates is one of the chain elements
+                foreach (X509Certificate2 attestationRootCertificate in attestationRootCertificates)
+                {
+                    // skip the first element, as that is the attestation cert
+                    if (chain.ChainElements
+                        .Cast<X509ChainElement>()
+                        .Skip(1)
+                        .Any(x => x.Certificate.Thumbprint == attestationRootCertificate.Thumbprint))
+                        return true;
+                }
+            }
+            return false;
+          }
+
+       /* public static bool ValidateTrustChain(X509Certificate2[] trustPath, X509Certificate2[] attestationRootCertificates)
+        {
+            foreach (var attestationRootCert in attestationRootCertificates)
+            {
+                var chain = new X509Chain();
+                chain.ChainPolicy.ExtraStore.Add(attestationRootCert);
+                chain.ChainPolicy.RevocationMode = X509RevocationMode.NoCheck;
+                chain.ChainPolicy.VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority;
+                if (trustPath.Length > 1)
+                {
+                    foreach (var cert in trustPath.Skip(1).Reverse())
+                    {
+                        chain.ChainPolicy.ExtraStore.Add(cert);
+                    }
+                }
+                var valid = chain.Build(trustPath[0]);
+
+                // because we are using AllowUnknownCertificateAuthority we have to verify that the root matches ourselves
+                var chainRoot = chain.ChainElements[chain.ChainElements.Count - 1].Certificate;
+                valid = valid && chainRoot.RawData.SequenceEqual(attestationRootCert.RawData);
+
+                if (true == valid)
+                    return true;
+            }
+            return false;
+        }*/
+
+        /*
+        public static bool ValidateTrustChain(X509Certificate2[] trustPath, X509Certificate2[] attestationRootCertificates)
+        {
+            // https://fidoalliance.org/specs/fido-v2.0-id-20180227/fido-metadata-statement-v2.0-id-20180227.html#widl-MetadataStatement-attestationRootCertificates
+
+            // Each element of this array represents a PKIX [RFC5280] X.509 certificate that is a valid trust anchor for this authenticator model.
+            // Multiple certificates might be used for different batches of the same model.
+            // The array does not represent a certificate chain, but only the trust anchor of that chain.
+            // A trust anchor can be a root certificate, an intermediate CA certificate or even the attestation certificate itself.
+
+            // Let's check the simplest case first.  If subject and issuer are the same, and the attestation cert is in the list, that's all the validation we need
+            if (trustPath.Length == 1 && trustPath[0].Subject.CompareTo(trustPath[0].Issuer) == 0)
+            {
+                foreach (X509Certificate2 cert in attestationRootCertificates)
+                {
+                    if (cert.Thumbprint.CompareTo(trustPath[0].Thumbprint) == 0)
+                        return true;
+                }
+                return false;
+            }
+
+            // If the attestation cert is not self signed, we will need to build a chain
+            var chain = new X509Chain();
+
+            // Put all potential trust anchors into extra store
+            chain.ChainPolicy.ExtraStore.AddRange(attestationRootCertificates);
+
+            // We don't know the root here, so allow unknown root, and turn off revocation checking
+            chain.ChainPolicy.RevocationMode = X509RevocationMode.NoCheck;
+            chain.ChainPolicy.VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority;
+
+            // trustPath[0] is the attestation cert, if there are more in the array than just that, add those to the extra store as well, but skip attestation cert
+            if (trustPath.Length > 1)
+            {
+                foreach (X509Certificate2 cert in trustPath.Skip(1)) // skip attestation cert
+                {
+                    chain.ChainPolicy.ExtraStore.Add(cert);
+                }
+            }
+
+            // try to build a chain with what we've got
+            if (chain.Build(trustPath[0]))
+            {
+                // if that validated, we should have a root for this chain now, add it to the custom trust store
+                chain.ChainPolicy.CustomStore.Clear();
+                chain.ChainPolicy.CustomStore.Add(chain.ChainElements[chain.ChainElements.Count-1].Certificate);
+
+                // explicitly trust the custom root we just added
+                // chain.ChainPolicy.TrustMode = X509ChainTrustMode.CustomRootTrust;
+
+                // if the attestation cert has a CDP extension, go ahead and turn on online revocation checking
+                if (!string.IsNullOrEmpty(CDPFromCertificateExts(trustPath[0].Extensions)))
+                    chain.ChainPolicy.RevocationMode = X509RevocationMode.Online;
+
+                // don't allow unknown root now that we have a custom root
+                chain.ChainPolicy.VerificationFlags = X509VerificationFlags.NoFlag;
+
+                // now, verify chain again with all checks turned on
+                if (chain.Build(trustPath[0]))
+                {
+                    // if the chain validates, make sure one of the attestation root certificates is one of the chain elements
+                    foreach (X509Certificate2 attestationRootCertificate in attestationRootCertificates)
+                    {
+                        // skip the first element, as that is the attestation cert
+                        if (chain.ChainElements
+                            .Cast<X509ChainElement>()
+                            .Skip(1)
+                            .Any(x => x.Certificate.Thumbprint == attestationRootCertificate.Thumbprint))
+                            return true;
+                    }
+                }
+            }
+            return false;
+        } */
 
         public static byte[] SigFromEcDsaSig(byte[] ecDsaSig, int keySize)
         {
@@ -200,11 +370,10 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
             }
             return cdp;
         }
+
         public static bool IsCertInCRL(byte[] crl, X509Certificate2 cert)
         {
-            var pemCRL = System.Text.Encoding.ASCII.GetString(crl);
-            var crlBytes = PemToBytes(pemCRL);
-            var asnData = AsnElt.Decode(crlBytes);
+            var asnData = AsnElt.Decode(crl);
             if (7 > asnData.Sub[0].Sub.Length)
                 return false; // empty CRL
 

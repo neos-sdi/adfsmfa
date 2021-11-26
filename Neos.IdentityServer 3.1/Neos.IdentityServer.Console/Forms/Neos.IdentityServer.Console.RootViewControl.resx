@@ -162,7 +162,7 @@
     <value>1</value>
   </data>
   <data name="GlobalViewLabelText.Text" xml:space="preserve">
-    <value>The MFA extension for ADFS 2012R2 / 2016 / 2019 allows multi-factor authentication (2FA) to be used without additional cost</value>
+    <value>The MFA extension for ADFS 2012R2 / 2016 / 2019 / 2022 allows multi-factor authentication (2FA) to be used without additional cost</value>
   </data>
   <data name="&gt;&gt;GlobalViewLabelText.Name" xml:space="preserve">
     <value>GlobalViewLabelText</value>
@@ -493,5 +493,8 @@ SOFTWARE.</value>
   </data>
   <data name="&gt;&gt;$this.Type" xml:space="preserve">
     <value>System.Windows.Forms.UserControl, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="linkLabel2.Text" xml:space="preserve">
+    <value>https://adfsmfa.codeplex.com</value>
   </data>
 </root>

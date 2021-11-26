@@ -32,7 +32,7 @@
 //******************************************************************************************************************************************************************************************//
 using System;
 
-namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Chaos
+namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Nacl
 {
     #region LookupTables
     internal static partial class LookupTables

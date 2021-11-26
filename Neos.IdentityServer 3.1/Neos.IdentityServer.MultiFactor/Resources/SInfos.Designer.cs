@@ -22,7 +22,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class SInfos {
+    public class SInfos {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,7 +36,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         ///   Retourne l'instance ResourceManager mise en cache utilisée par cette classe.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Neos.IdentityServer.MultiFactor.Resources.SInfos", typeof(SInfos).Assembly);
@@ -51,7 +51,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         ///   les recherches de ressources à l'aide de cette classe de ressource fortement typée.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -61,45 +61,45 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Configuration Cache Created ! invoqued by : {0}.
+        ///   Recherche une chaîne localisée semblable à Configuration Cache Created! Invoked by : {0}.
         /// </summary>
-        internal static string InfosConfigurationCacheCreated {
+        public static string InfosConfigurationCacheCreated {
             get {
                 return ResourceManager.GetString("InfosConfigurationCacheCreated", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Configuration Cache Deleted ! invoqued by : {0}.
+        ///   Recherche une chaîne localisée semblable à Configuration Cache Deleted! Invoked by : {0}.
         /// </summary>
-        internal static string InfosConfigurationCacheDeleted {
+        public static string InfosConfigurationCacheDeleted {
             get {
                 return ResourceManager.GetString("InfosConfigurationCacheDeleted", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Configuration was correctly updated !.
+        ///   Recherche une chaîne localisée semblable à Configuration was correctly updated!.
         /// </summary>
-        internal static string InfosConfigurationModified {
+        public static string InfosConfigurationModified {
             get {
                 return ResourceManager.GetString("InfosConfigurationModified", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Configuration loaded ! invoqued by : {0}.
+        ///   Recherche une chaîne localisée semblable à Configuration loaded! Invoked by: {0}.
         /// </summary>
-        internal static string InfosConfigurationReloaded {
+        public static string InfosConfigurationReloaded {
             get {
                 return ResourceManager.GetString("InfosConfigurationReloaded", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Password modified !.
+        ///   Recherche une chaîne localisée semblable à Password modified!.
         /// </summary>
-        internal static string InfosPasswordModified {
+        public static string InfosPasswordModified {
             get {
                 return ResourceManager.GetString("InfosPasswordModified", resourceCulture);
             }

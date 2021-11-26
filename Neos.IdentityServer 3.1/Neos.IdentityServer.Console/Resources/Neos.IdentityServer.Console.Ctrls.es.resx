@@ -565,7 +565,7 @@
     <value>Filas máximas</value>
   </data>
   <data name="CTRLWEBAUTHNEXTENSIONS" xml:space="preserve">
-    <value>Extensiones (authnSe)</value>
+    <value>Extensiones (exts)</value>
   </data>
   <data name="CTRLWEBAUTHNRESIDENTKEY" xml:space="preserve">
     <value>Requerir llave residente</value>
@@ -728,5 +728,8 @@
   </data>
   <data name="CTRLSECGENRSAKEY" xml:space="preserve">
     <value>Clave maestra RSA</value>
+  </data>
+  <data name="CTRLWEBAUTHNCONTRAINEDMETADATA" xml:space="preserve">
+    <value>Usar el servicio de metadatos restringidos (para la granja de servidores ADFS que no tiene acceso a Internet)</value>
   </data>
 </root>

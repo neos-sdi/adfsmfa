@@ -1,5 +1,5 @@
 //******************************************************************************************************************************************************************************************//
-// Copyright (c) 2020 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
+// Copyright (c) 2021 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -417,7 +417,7 @@ namespace Neos.IdentityServer.Deployment
         /// </summary>
         private static bool IsSnapinInstalled(Session session, string dllFilename)
         {
-            string xx = @"Neos.IdentityServer.Console.ADFSSnapIn, Neos.IdentityServer.Console, Version=3.0.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2";
+            string xx = @"Neos.IdentityServer.Console.ADFSSnapIn, Neos.IdentityServer.Console, Version=3.0.0.0, Culture=neutral, " + GetAssemblyPublicKey();
             if (!File.Exists(dllFilename))
                 return false;
             else
@@ -464,6 +464,16 @@ namespace Neos.IdentityServer.Deployment
                 }
             }
             return false;
+        }
+
+        /// <summary>
+        /// GetAssemblyPublicKey method implmentation
+        /// </summary>
+        public static string GetAssemblyPublicKey()
+        {
+            string assemblyname = Assembly.GetExecutingAssembly().FullName;
+            string[] str = assemblyname.Split(',');
+            return str[str.Length - 1];
         }
 
         private static string EventLogSource = "ADFS MFA DataServices";

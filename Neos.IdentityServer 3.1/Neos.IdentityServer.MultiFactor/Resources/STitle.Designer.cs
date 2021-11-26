@@ -22,7 +22,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class STitle {
+    public class STitle {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,7 +36,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         ///   Retourne l'instance ResourceManager mise en cache utilisée par cette classe.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Neos.IdentityServer.MultiFactor.Resources.STitle", typeof(STitle).Assembly);
@@ -51,7 +51,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         ///   les recherches de ressources à l'aide de cette classe de ressource fortement typée.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -63,7 +63,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Activation required.
         /// </summary>
-        internal static string ActivationPageTitle {
+        public static string ActivationPageTitle {
             get {
                 return ResourceManager.GetString("ActivationPageTitle", resourceCulture);
             }
@@ -72,7 +72,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Configuration Options.
         /// </summary>
-        internal static string InvitationPageTitle {
+        public static string InvitationPageTitle {
             get {
                 return ResourceManager.GetString("InvitationPageTitle", resourceCulture);
             }
@@ -81,7 +81,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Setting up options.
         /// </summary>
-        internal static string ManageOptionsPageTitle {
+        public static string ManageOptionsPageTitle {
             get {
                 return ResourceManager.GetString("ManageOptionsPageTitle", resourceCulture);
             }
@@ -90,7 +90,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à You must use a security code to confirm your identity. How do you want to receive your code ? .
         /// </summary>
-        internal static string MustUseCodePageTitle {
+        public static string MustUseCodePageTitle {
             get {
                 return ResourceManager.GetString("MustUseCodePageTitle", resourceCulture);
             }
@@ -99,7 +99,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Password update.
         /// </summary>
-        internal static string PasswordPageTitle {
+        public static string PasswordPageTitle {
             get {
                 return ResourceManager.GetString("PasswordPageTitle", resourceCulture);
             }
@@ -108,7 +108,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Configuration Options.
         /// </summary>
-        internal static string RegistrationPageTitle {
+        public static string RegistrationPageTitle {
             get {
                 return ResourceManager.GetString("RegistrationPageTitle", resourceCulture);
             }
@@ -117,7 +117,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Multi Factor Authentication.
         /// </summary>
-        internal static string TitlePageTitle {
+        public static string TitlePageTitle {
             get {
                 return ResourceManager.GetString("TitlePageTitle", resourceCulture);
             }
@@ -126,7 +126,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Redirecting ....
         /// </summary>
-        internal static string TitleRedirecting {
+        public static string TitleRedirecting {
             get {
                 return ResourceManager.GetString("TitleRedirecting", resourceCulture);
             }

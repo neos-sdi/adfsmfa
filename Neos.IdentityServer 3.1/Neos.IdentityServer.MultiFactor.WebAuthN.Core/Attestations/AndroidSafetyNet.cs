@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2020 abergs (https://github.com/abergs/fido2-net-lib)                                                                                                                      //                        
+// Copyright (c) 2021 abergs (https://github.com/abergs/fido2-net-lib)                                                                                                                      //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -12,7 +12,7 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                               //
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
-// Copyright (c) 2020 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
+// Copyright (c) 2021 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -28,33 +28,27 @@
 // https://github.com/neos-sdi/adfsmfa                                                                                                                                                      //
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
+using Microsoft.IdentityModel.Tokens;
+using Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor;
+using Neos.IdentityServer.MultiFactor.WebAuthN.Objects;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
-using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
-using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json.Linq;
-using Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor;
 
 namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
 {
-    internal class AndroidSafetyNet : AttestationFormat
+    internal sealed class AndroidSafetyNet : AttestationVerifier
     {
-        private readonly int _driftTolerance;
-        private readonly IMetadataService _metadataService;
-        private readonly bool _requireValidAttestationRoot;
+        private double _driftTolerance = 0;
 
-
-        public AndroidSafetyNet(CBORObject attStmt, byte[] authenticatorData, byte[] clientDataHash, int driftTolerance, IMetadataService metadataService, bool requireValidAttestationRoot) 
-            : base(attStmt, authenticatorData, clientDataHash)
+        public AndroidSafetyNet(int driftTolerance = 30000)
         {
             _driftTolerance = driftTolerance;
-            _metadataService = metadataService;
-            _requireValidAttestationRoot = requireValidAttestationRoot;
         }
 
         private X509Certificate2 GetX509Certificate(string certString)
@@ -70,15 +64,16 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
             }
         }
 
-        public override void Verify()
+        public override (AttestationType, X509Certificate2[]) Verify()
         {
-            // Verify that attStmt is valid CBOR conforming to the syntax defined above and perform 
+            // 1. Verify that attStmt is valid CBOR conforming to the syntax defined above and perform 
             // CBOR decoding on it to extract the contained fields
+            // (handled in base class)
             if ((CBORType.TextString != attStmt["ver"].Type) ||
                 (0 == attStmt["ver"].AsString().Length))
                 throw new VerificationException("Invalid version in SafetyNet data");
 
-            // Verify that response is a valid SafetyNet response of version ver
+            // 2. Verify that response is a valid SafetyNet response of version ver
             var ver = attStmt["ver"].AsString();
 
             if ((CBORType.ByteString != attStmt["response"].Type) ||
@@ -99,7 +94,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
             var jwtHeaderString = jwtParts.First();
             var jwtHeaderJSON = JObject.Parse(Encoding.UTF8.GetString(Base64Url.Decode(jwtHeaderString)));
 
-            var x5cArray = jwtHeaderJSON["x5c"] as JArray;
+            JArray x5cArray = jwtHeaderJSON["x5c"] as JArray;
 
             if (x5cArray == null)
                 throw new VerificationException("SafetyNet response JWT header missing x5c");
@@ -123,7 +118,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
                 var rsaPublicKey = cert.GetRSAPublicKey();
                 if (rsaPublicKey != null)
                     keys.Add(new RsaSecurityKey(rsaPublicKey));
-            } 
+            }
 
             var validationParameters = new TokenValidationParameters
             {
@@ -137,7 +132,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
             var tokenHandler = new JwtSecurityTokenHandler();
             SecurityToken validatedToken = null;
             try
-            { 
+            {
                 tokenHandler.ValidateToken(
                     responseJWT,
                     validationParameters,
@@ -175,7 +170,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
                 throw new VerificationException(string.Format("SafetyNet timestampMs must be present and between one minute ago and now, got: {0}", timestampMs.ToString()));
             }
 
-            // Verify that the nonce in the response is identical to the SHA-256 hash of the concatenation of authenticatorData and clientDataHash
+            // 3. Verify that the nonce in the response is identical to the SHA-256 hash of the concatenation of authenticatorData and clientDataHash
             if ("" == nonce)
                 throw new VerificationException("Nonce value not found in SafetyNet attestation");
 
@@ -195,24 +190,29 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
                 if (false == dataHash.SequenceEqual(nonceHash))
                     throw new VerificationException(
                         string.Format(
-                            "SafetyNet response nonce / hash value mismatch, nonce {0}, hash {1}", 
-                            BitConverter.ToString(nonceHash).Replace("-", ""), 
+                            "SafetyNet response nonce / hash value mismatch, nonce {0}, hash {1}",
+                            BitConverter.ToString(nonceHash).Replace("-", ""),
                             BitConverter.ToString(dataHash).Replace("-", "")
                             )
                         );
             }
 
-            // Verify that the attestation certificate is issued to the hostname "attest.android.com"
-            var subject = certs[0].GetNameInfo(X509NameType.DnsName, false);
+            // 4. Let attestationCert be the attestation certificate
+            var attestationCert = certs[0];
+            var subject = attestationCert.GetNameInfo(X509NameType.DnsName, false);
+
+            // 5. Verify that the attestation certificate is issued to the hostname "attest.android.com"
             if (false == ("attest.android.com").Equals(subject))
                 throw new VerificationException(string.Format("SafetyNet attestation cert DnsName invalid, want {0}, got {1}", "attest.android.com", subject));
 
+            // 6. Verify that the ctsProfileMatch attribute in the payload of response is true
             if (null == ctsProfileMatch)
                 throw new VerificationException("SafetyNet response ctsProfileMatch missing");
 
-            // Verify that the ctsProfileMatch attribute in the payload of response is true
             if (true != ctsProfileMatch)
                 throw new VerificationException("SafetyNet response ctsProfileMatch false");
+
+            return (AttestationType.Basic, new X509Certificate2[] { attestationCert });
         }
     }
 }

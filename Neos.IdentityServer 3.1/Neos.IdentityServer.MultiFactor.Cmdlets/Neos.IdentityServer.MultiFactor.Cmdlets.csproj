@@ -26,6 +26,7 @@
     <DocumentationFile>bin\Debug\Neos.IdentityServer.MultiFactor.Cmdlets.XML</DocumentationFile>
     <NoWarn>
     </NoWarn>
+    <LangVersion>7.2</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>

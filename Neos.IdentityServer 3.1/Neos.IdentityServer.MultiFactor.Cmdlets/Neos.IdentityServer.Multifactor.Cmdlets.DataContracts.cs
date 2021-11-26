@@ -1,6 +1,5 @@
-﻿using Neos.IdentityServer.MultiFactor.Cmdlets;
-//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2020 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
+﻿//******************************************************************************************************************************************************************************************//
+// Copyright (c) 2021 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -18,15 +17,12 @@
 //******************************************************************************************************************************************************************************************//
 namespace MFA
 {
-    using System;
-    using System.Linq;
-    using System.Collections.Generic;
-    using System.Xml;
     using Neos.IdentityServer.MultiFactor;
     using Neos.IdentityServer.MultiFactor.Administration;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
     using System.Management.Automation;
-    using System.Collections;
-    using System.Management.Automation.Language;
     using System.Text;
 
     #region PSRegistration class
@@ -1230,16 +1226,6 @@ namespace MFA
         public bool Extensions { get; set; }
 
         /// <summary>
-        /// <para type="description">User Verification Index property (boolean).</para>
-        /// </summary>
-        public bool UserVerificationIndex { get; set; }
-
-        /// <summary>
-        /// <para type="description">Location property (boolean).</para>
-        /// </summary>
-        public bool Location { get; set; }
-
-        /// <summary>
         /// <para type="description">User Verification Method property (boolean).</para>
         /// </summary>
         public bool UserVerificationMethod { get; set; }
@@ -1250,20 +1236,11 @@ namespace MFA
         public bool RequireResidentKey { get; set; }
 
         /// <summary>
-        /// <para type="description">Use HMAC encryption.</para>
+        /// <para type="description">False = Use Default MDS3 MetadataRepository, True = Use Contrained MDS3 MetadataRepository, When your ADFS servers doesn't have an Internet access.</para>
+        /// <para type="description">True = Use Contrained MDS3 MetadataRepository, When your ADFS servers doesn't have an Internet access.</para>
+        /// <para type="description">You must download the latest MDS3 metadata at "https://mds.fidoalliance.org/".</para>
         /// </summary>
-        public bool? HmacSecret { get; set; }
-
-        /// <summary>
-        /// <para type="description">Use credential protection.</para>
-        /// </summary>
-        public WebAuthNUserVerification? CredProtect { get; set; }
-
-        /// <summary>
-        /// <para type="description">Force credential protection.</para>
-        /// </summary>
-        public bool? EnforceCredProtect { get; set; }
-
+        public bool ConstrainedMetadataRepository { get; set; }
 
         /// <summary>
         /// explicit operator from MMCKeysConfig
@@ -1280,13 +1257,9 @@ namespace MFA
                     AttestationConveyancePreference = (PSAttestationConveyancePreferenceKind)mgr.AttestationConveyancePreference,
                     UserVerificationRequirement = (PSUserVerificationRequirementKind)mgr.UserVerificationRequirement,
                     Extensions = mgr.Extensions,
-                    UserVerificationIndex = mgr.UserVerificationIndex,
-                    Location = mgr.Location,
                     UserVerificationMethod = mgr.UserVerificationMethod,
                     RequireResidentKey = mgr.RequireResidentKey,
-                    HmacSecret = mgr.HmacSecret,
-                    CredProtect = mgr.CredProtect,
-                    EnforceCredProtect = mgr.EnforceCredProtect
+                    ConstrainedMetadataRepository = mgr.ConstrainedMetadataRepository
                 };
                 return target;
             }
@@ -1308,13 +1281,9 @@ namespace MFA
                     AttestationConveyancePreference = (FlatAttestationConveyancePreferenceKind)mgr.AttestationConveyancePreference,
                     UserVerificationRequirement = (FlatUserVerificationRequirementKind)mgr.UserVerificationRequirement,
                     Extensions = mgr.Extensions,
-                    UserVerificationIndex = mgr.UserVerificationIndex,
-                    Location = mgr.Location,
                     UserVerificationMethod = mgr.UserVerificationMethod,
                     RequireResidentKey = mgr.RequireResidentKey,
-                    HmacSecret = mgr.HmacSecret,
-                    CredProtect = mgr.CredProtect,
-                    EnforceCredProtect = mgr.EnforceCredProtect
+                    ConstrainedMetadataRepository = mgr.ConstrainedMetadataRepository
                 };
                 return target;
             }
@@ -2208,16 +2177,6 @@ namespace MFA
         public string Origin { get; set; }
 
         /// <summary>
-        /// <para type="description">Require Certificate chain validation.</para>
-        /// </summary>
-        public bool RequireValidAttestationRoot { get; set; }
-
-        /// <summary>
-        /// <para type="description">Show Sensitive informations for internal validation.</para>
-        /// </summary>
-        public bool ShowPII { get; set; }
-
-        /// <summary>
         /// <para type="description">Pin requirements for unverified biometrics devices.</para>
         /// </summary>
         public WebAuthNPinRequirements PinRequirements { get; set; }
@@ -2248,6 +2207,39 @@ namespace MFA
                     UseNickNames = otp.UseNickNames,
                     FullQualifiedImplementation = otp.FullyQualifiedImplementation,
                     Parameters = otp.Parameters,
+                    Timeout = otp.Timeout,
+                    TimestampDriftTolerance = otp.TimestampDriftTolerance,
+                    ChallengeSize = otp.ChallengeSize,
+                    ServerDomain = otp.ServerDomain,
+                    ServerName = otp.ServerName,
+                    ServerIcon = otp.ServerIcon,
+                    Origin = otp.Origin
+                };
+            return target;
+        }
+    }
+
+        /// <summary>
+        /// explicit operator for FlatBiometricProvider
+        /// </summary>
+        public static explicit operator FlatBiometricProvider(PSBiometricProvider otp)
+        {
+            if (otp == null)
+                return null;
+            else
+            {
+                FlatBiometricProvider target = new FlatBiometricProvider
+                {
+                    IsDirty = true,
+                    Enabled = otp.Enabled,
+                    IsRequired = otp.IsRequired,
+                    EnrollWizard = otp.EnrollWizard,
+                    ForceWizard = (ForceWizardMode)otp.ForceWizard,
+                    PinRequired = otp.PinRequired,
+                    DirectLogin = otp.DirectLogin,
+                    UseNickNames = otp.UseNickNames,
+                    FullyQualifiedImplementation = otp.FullQualifiedImplementation,
+                    Parameters = otp.Parameters,
 
                     Timeout = otp.Timeout,
                     TimestampDriftTolerance = otp.TimestampDriftTolerance,
@@ -2255,49 +2247,11 @@ namespace MFA
                     ServerDomain = otp.ServerDomain,
                     ServerName = otp.ServerName,
                     ServerIcon = otp.ServerIcon,
-                    Origin = otp.Origin,
-                    RequireValidAttestationRoot = otp.RequireValidAttestationRoot,
-                    ShowPII = otp.ShowPII
-            };
-            return target;
+                    Origin = otp.Origin
+                };
+                return target;
+            }
         }
-    }
-
-    /// <summary>
-    /// explicit operator for FlatBiometricProvider
-    /// </summary>
-    public static explicit operator FlatBiometricProvider(PSBiometricProvider otp)
-    {
-        if (otp == null)
-            return null;
-        else
-        {
-            FlatBiometricProvider target = new FlatBiometricProvider
-            {
-                IsDirty = true,
-                Enabled = otp.Enabled,
-                IsRequired = otp.IsRequired,
-                EnrollWizard = otp.EnrollWizard,
-                ForceWizard = (ForceWizardMode)otp.ForceWizard,
-                PinRequired = otp.PinRequired,
-                DirectLogin = otp.DirectLogin,
-                UseNickNames = otp.UseNickNames,
-                FullyQualifiedImplementation = otp.FullQualifiedImplementation,
-                Parameters = otp.Parameters,
-
-                Timeout = otp.Timeout,
-                TimestampDriftTolerance = otp.TimestampDriftTolerance,
-                ChallengeSize = otp.ChallengeSize,
-                ServerDomain = otp.ServerDomain,
-                ServerName = otp.ServerName,
-                ServerIcon = otp.ServerIcon,
-                Origin = otp.Origin,
-                RequireValidAttestationRoot = otp.RequireValidAttestationRoot,
-                ShowPII = otp.ShowPII
-            };
-            return target;
-        }
-    }
 }
 #endregion
 }

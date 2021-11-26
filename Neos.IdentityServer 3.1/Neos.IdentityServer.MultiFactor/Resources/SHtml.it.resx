@@ -293,4 +293,7 @@ In futuro sarà possibile utilizzare la convalida MFA.</value>
   <data name="HtmlUIMNickNamesMessage" xml:space="preserve">
     <value>Immettere il nome del dispositivo biometrico o lasciare il vuoto, quindi selezionare "Continua"</value>
   </data>
+  <data name="HtmlUIMRegisterDevice" xml:space="preserve">
+    <value>Registra dispositivo</value>
+  </data>
 </root>

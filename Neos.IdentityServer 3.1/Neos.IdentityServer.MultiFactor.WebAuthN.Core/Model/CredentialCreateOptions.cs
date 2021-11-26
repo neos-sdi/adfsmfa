@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2020 abergs (https://github.com/abergs/fido2-net-lib)                                                                                                                      //                        
+// Copyright (c) 2021 abergs (https://github.com/abergs/fido2-net-lib)                                                                                                                      //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -18,46 +18,10 @@ using System.Collections.Generic;
 
 namespace Neos.IdentityServer.MultiFactor.WebAuthN
 {
-    /// <summary>
-    /// RegisterCredentialOptions class implementation
-    /// </summary>
-    public class RegisterCredentialOptions : Fido2ResponseBase
+    public class CredentialCreateOptions : Fido2ResponseBase
     {
         /// <summary>
-        /// Create static method implementation
-        /// </summary>
-        public static RegisterCredentialOptions Create(Fido2Configuration config, byte[] challenge, Fido2User user, AuthenticatorSelection authenticatorSelection, AttestationConveyancePreference attestationConveyancePreference, List<PublicKeyCredentialDescriptor> excludeCredentials, AuthenticationExtensionsClientInputs extensions)
-        {
-            return new RegisterCredentialOptions
-            {
-                Status = "ok",
-                ErrorMessage = string.Empty,
-                Challenge = challenge,
-                Rp = new PublicKeyCredentialRpEntity(config.ServerDomain, config.ServerName, config.ServerIcon),
-                Timeout = config.Timeout,
-                User = user,
-                PubKeyCredParams = new List<PubKeyCredParam>()
-                {
-                    // Add additional as appropriate
-                    ES256,
-                    RS256,
-                    PS256,
-                    ES384,
-                    RS384,
-                    PS384,
-                    ES512,
-                    RS512,
-                    PS512,
-                },
-                AuthenticatorSelection = authenticatorSelection,
-                Attestation = attestationConveyancePreference,
-                ExcludeCredentials = excludeCredentials ?? new List<PublicKeyCredentialDescriptor>(),
-                Extensions = extensions
-            };
-        }
-
-        #region Json Properties
-        /// <summary>
+        /// 
         /// This member contains data about the Relying Party responsible for the request.
         /// Its value’s name member is required.
         /// Its value’s id member specifies the relying party identifier with which the credential should be associated.If omitted, its value will be the CredentialsContainer object’s relevant settings object's origin's effective domain.
@@ -89,14 +53,14 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
         /// This member specifies a time, in milliseconds, that the caller is willing to wait for the call to complete. This is treated as a hint, and MAY be overridden by the platform.
         /// </summary>
         [JsonProperty("timeout")]
-        public uint Timeout { get; set; }
+        public long Timeout { get; set; }
 
         /// <summary>
         /// This member is intended for use by Relying Parties that wish to express their preference for attestation conveyance.The default is none.
         /// </summary>
         [JsonProperty("attestation")]
         public AttestationConveyancePreference Attestation { get; set; } = AttestationConveyancePreference.None;
-        
+
         /// <summary>
         /// This member is intended for use by Relying Parties that wish to select the appropriate authenticators to participate in the create() operation.
         /// </summary>
@@ -114,115 +78,102 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
         /// </summary>
         [JsonProperty("extensions", NullValueHandling = NullValueHandling.Ignore)]
         public AuthenticationExtensionsClientInputs Extensions { get; set; }
-        #endregion       
 
-        #region Serialization methods
-        /// <summary>
-        /// ToJson method implementation
-        /// </summary>
+        public static CredentialCreateOptions Create(Fido2Configuration config, byte[] challenge, Fido2User user, AuthenticatorSelection authenticatorSelection, AttestationConveyancePreference attestationConveyancePreference, List<PublicKeyCredentialDescriptor> excludeCredentials, AuthenticationExtensionsClientInputs extensions)
+        {
+            return new CredentialCreateOptions
+            {
+                Status = "ok",
+                ErrorMessage = string.Empty,
+                Challenge = challenge,
+                Rp = new PublicKeyCredentialRpEntity(config.ServerDomain, config.ServerName, config.ServerIcon),
+                Timeout = config.Timeout,
+                User = user,
+                PubKeyCredParams = new List<PubKeyCredParam>()
+                {
+                    // Add additional as appropriate
+                    ES256,
+                    RS256,
+                    PS256,
+                    ES384,
+                    RS384,
+                    PS384,
+                    ES512,
+                    RS512,
+                    PS512,
+                    Ed25519,
+                },
+                AuthenticatorSelection = authenticatorSelection,
+                Attestation = attestationConveyancePreference,
+                ExcludeCredentials = excludeCredentials ?? new List<PublicKeyCredentialDescriptor>(),
+                Extensions = extensions
+            };
+        }
+
         public string ToJson()
         {
             return JsonConvert.SerializeObject(this);
         }
 
-        /// <summary>
-        /// FromJson method implementation
-        /// </summary>
-        public static RegisterCredentialOptions FromJson(string json)
+        public static CredentialCreateOptions FromJson(string json)
         {
-            return JsonConvert.DeserializeObject<RegisterCredentialOptions>(json);
+            return JsonConvert.DeserializeObject<CredentialCreateOptions>(json);
         }
-        #endregion
 
-        #region PublicKeys Credential Params
-        /// <summary>
-        /// ES256
-        /// </summary>
-        private static readonly PubKeyCredParam ES256 = new PubKeyCredParam()
+        private static PubKeyCredParam ES256 = new PubKeyCredParam()
         {
             // External authenticators support the ES256 algorithm
             Type = PublicKeyCredentialType.PublicKey,
-            Alg = -7
+            Alg = COSE.Algorithm.ES256,
         };
-
-        /// <summary>
-        /// ES384
-        /// </summary>
-        private static readonly PubKeyCredParam ES384 = new PubKeyCredParam()
+        private static PubKeyCredParam ES384 = new PubKeyCredParam()
         {
             Type = PublicKeyCredentialType.PublicKey,
-            Alg = -35
+            Alg = COSE.Algorithm.ES384,
         };
-
-        /// <summary>
-        /// ES512
-        /// </summary>
-        private static readonly PubKeyCredParam ES512 = new PubKeyCredParam()
+        private static PubKeyCredParam ES512 = new PubKeyCredParam()
         {
             Type = PublicKeyCredentialType.PublicKey,
-            Alg = -36
+            Alg = COSE.Algorithm.ES512,
         };
-
-        /// <summary>
-        /// RS256
-        /// </summary>
-        private static readonly PubKeyCredParam RS256 = new PubKeyCredParam()
+        private static PubKeyCredParam RS256 = new PubKeyCredParam()
         {
             // Windows Hello supports the RS256 algorithm
             Type = PublicKeyCredentialType.PublicKey,
-            Alg = -257
+            Alg = COSE.Algorithm.RS256,
         };
-
-        /// <summary>
-        /// RS384
-        /// </summary>
-        private static readonly PubKeyCredParam RS384 = new PubKeyCredParam()
+        private static PubKeyCredParam RS384 = new PubKeyCredParam()
         {
             Type = PublicKeyCredentialType.PublicKey,
-            Alg = -258
+            Alg = COSE.Algorithm.RS384,
         };
-
-        /// <summary>
-        /// RS512
-        /// </summary>
-        private static readonly PubKeyCredParam RS512 = new PubKeyCredParam()
+        private static PubKeyCredParam RS512 = new PubKeyCredParam()
         {
             Type = PublicKeyCredentialType.PublicKey,
-            Alg = -259
+            Alg = COSE.Algorithm.RS512,
         };
-
-        /// <summary>
-        /// PS256
-        /// </summary>
-        private static readonly PubKeyCredParam PS256 = new PubKeyCredParam()
+        private static PubKeyCredParam PS256 = new PubKeyCredParam()
         {
             Type = PublicKeyCredentialType.PublicKey,
-            Alg = -37
+            Alg = COSE.Algorithm.PS256,
         };
-
-        /// <summary>
-        /// PS384
-        /// </summary>
-        private static readonly PubKeyCredParam PS384 = new PubKeyCredParam()
+        private static PubKeyCredParam PS384 = new PubKeyCredParam()
         {
             Type = PublicKeyCredentialType.PublicKey,
-            Alg = -38
+            Alg = COSE.Algorithm.PS384,
         };
-
-        /// <summary>
-        /// PS512
-        /// </summary>
-        private static readonly PubKeyCredParam PS512 = new PubKeyCredParam()
+        private static PubKeyCredParam PS512 = new PubKeyCredParam()
         {
             Type = PublicKeyCredentialType.PublicKey,
-            Alg = -39
+            Alg = COSE.Algorithm.PS512,
         };
-        #endregion
+        private static PubKeyCredParam Ed25519 = new PubKeyCredParam()
+        {
+            Type = PublicKeyCredentialType.PublicKey,
+            Alg = COSE.Algorithm.EdDSA,
+        };
     }
 
-    /// <summary>
-    /// PubKeyCredParam class implementation
-    /// </summary>
     public class PubKeyCredParam
     {
         /// <summary>
@@ -235,17 +186,14 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
         /// The alg member specifies the cryptographic signature algorithm with which the newly generated credential will be used, and thus also the type of asymmetric key pair to be generated, e.g., RSA or Elliptic Curve.
         /// </summary>
         [JsonProperty("alg")]
-        public long Alg { get; set; }
+        public COSE.Algorithm Alg { get; set; }
     }
 
     /// <summary>
-    /// PublicKeyCredentialRpEntity class implementation
+    /// PublicKeyCredentialRpEntity 
     /// </summary>
     public class PublicKeyCredentialRpEntity
     {
-        /// <summary>
-        /// PublicKeyCredentialRpEntity constructor
-        /// </summary>
         public PublicKeyCredentialRpEntity(string id, string name, string icon)
         {
             Name = name;
@@ -270,21 +218,10 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
     }
 
     /// <summary>
-    /// AuthenticatorSelection class implementation
+    /// WebAuthn Relying Parties may use the AuthenticatorSelectionCriteria dictionary to specify their requirements regarding authenticator attributes.
     /// </summary>
-    /// <Param>WebAuthn Relying Parties may use the AuthenticatorSelectionCriteria dictionary to specify their requirements regarding authenticator attributes.</Param>
     public class AuthenticatorSelection
     {
-        /// <summary>
-        /// AuthenticatorSelection Default property
-        /// </summary>
-        public static AuthenticatorSelection Default => new AuthenticatorSelection
-        {
-            AuthenticatorAttachment = null,
-            RequireResidentKey = false,
-            UserVerification = UserVerificationRequirement.Preferred
-        };
-
         /// <summary>
         /// If this member is present, eligible authenticators are filtered to only authenticators attached with the specified §5.4.5 Authenticator Attachment enumeration (enum AuthenticatorAttachment).
         /// </summary>
@@ -302,6 +239,13 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
         /// </summary>
         [JsonProperty("userVerification")]
         public UserVerificationRequirement UserVerification { get; set; }
+
+        public static AuthenticatorSelection Default => new AuthenticatorSelection
+        {
+            AuthenticatorAttachment = null,
+            RequireResidentKey = false,
+            UserVerification = UserVerificationRequirement.Preferred
+        };
     }
 
     public class Fido2User

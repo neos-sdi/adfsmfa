@@ -22,7 +22,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class SErrors {
+    public class SErrors {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,7 +36,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         ///   Retourne l'instance ResourceManager mise en cache utilisée par cette classe.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Neos.IdentityServer.MultiFactor.Resources.SErrors", typeof(SErrors).Assembly);
@@ -51,7 +51,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         ///   les recherches de ressources à l'aide de cette classe de ressource fortement typée.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -63,7 +63,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Access to this application requires additional authentication. &lt;br&gt; &lt;br&gt; Click &quot;Activate&quot; to activate your account or Click &quot;Continue&quot;..
         /// </summary>
-        internal static string ErrorAccountActivate {
+        public static string ErrorAccountActivate {
             get {
                 return ResourceManager.GetString("ErrorAccountActivate", resourceCulture);
             }
@@ -72,7 +72,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Authorized access ! additional authentication is not activated yet. Please contact your administrators..
         /// </summary>
-        internal static string ErrorAccountAdminAuthorized {
+        public static string ErrorAccountAdminAuthorized {
             get {
                 return ResourceManager.GetString("ErrorAccountAdminAuthorized", resourceCulture);
             }
@@ -81,7 +81,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Unauthorized access! additional authentication is not yet activated. &lt;br&gt;&lt;br&gt;Please contact your administrators..
         /// </summary>
-        internal static string ErrorAccountAdminNotEnabled {
+        public static string ErrorAccountAdminNotEnabled {
             get {
                 return ResourceManager.GetString("ErrorAccountAdminNotEnabled", resourceCulture);
             }
@@ -90,7 +90,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Access to this application requires additional authentication. &lt;br&gt; &lt;br&gt; Click on &quot;Registration&quot; to continue..
         /// </summary>
-        internal static string ErrorAccountAuthorized {
+        public static string ErrorAccountAuthorized {
             get {
                 return ResourceManager.GetString("ErrorAccountAuthorized", resourceCulture);
             }
@@ -99,7 +99,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Unauthorized access ! Please contact your administrators.
         /// </summary>
-        internal static string ErrorAccountNoAccess {
+        public static string ErrorAccountNoAccess {
             get {
                 return ResourceManager.GetString("ErrorAccountNoAccess", resourceCulture);
             }
@@ -108,7 +108,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Access to this application requires additional authentication that is not activated at this time. &lt;br&gt; &lt;br&gt; click on &quot;Registration Request&quot;..
         /// </summary>
-        internal static string ErrorAccountNotEnabled {
+        public static string ErrorAccountNotEnabled {
             get {
                 return ResourceManager.GetString("ErrorAccountNotEnabled", resourceCulture);
             }
@@ -118,7 +118,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         ///   Recherche une chaîne localisée semblable à Error on authentication process ! 
         ///{0}.
         /// </summary>
-        internal static string ErrorAuthenticating {
+        public static string ErrorAuthenticating {
             get {
                 return ResourceManager.GetString("ErrorAuthenticating", resourceCulture);
             }
@@ -127,7 +127,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Email invalid format !.
         /// </summary>
-        internal static string ErrorEmailException {
+        public static string ErrorEmailException {
             get {
                 return ResourceManager.GetString("ErrorEmailException", resourceCulture);
             }
@@ -136,7 +136,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Invalid identification, please restart your session..
         /// </summary>
-        internal static string ErrorInvalidIdentificationRestart {
+        public static string ErrorInvalidIdentificationRestart {
             get {
                 return ResourceManager.GetString("ErrorInvalidIdentificationRestart", resourceCulture);
             }
@@ -145,7 +145,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Incorrect identification, please try again..
         /// </summary>
-        internal static string ErrorInvalidIdentificationRetry {
+        public static string ErrorInvalidIdentificationRetry {
             get {
                 return ResourceManager.GetString("ErrorInvalidIdentificationRetry", resourceCulture);
             }
@@ -154,7 +154,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Invalid Secret Key !.
         /// </summary>
-        internal static string ErrorInvalidKey {
+        public static string ErrorInvalidKey {
             get {
                 return ResourceManager.GetString("ErrorInvalidKey", resourceCulture);
             }
@@ -163,7 +163,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Operation canceled, password invalid !.
         /// </summary>
-        internal static string ErrorInvalidPassword {
+        public static string ErrorInvalidPassword {
             get {
                 return ResourceManager.GetString("ErrorInvalidPassword", resourceCulture);
             }
@@ -172,7 +172,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Incorrect phone number !.
         /// </summary>
-        internal static string ErrorInvalidPhoneException {
+        public static string ErrorInvalidPhoneException {
             get {
                 return ResourceManager.GetString("ErrorInvalidPhoneException", resourceCulture);
             }
@@ -182,7 +182,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         ///   Recherche une chaîne localisée semblable à Error loading Configuration File : 
         ///{0}.
         /// </summary>
-        internal static string ErrorLoadingConfigurationFile {
+        public static string ErrorLoadingConfigurationFile {
             get {
                 return ResourceManager.GetString("ErrorLoadingConfigurationFile", resourceCulture);
             }
@@ -191,7 +191,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Error loading Configuration File : Not Found !.
         /// </summary>
-        internal static string ErrorLoadingConfigurationFileNotFound {
+        public static string ErrorLoadingConfigurationFileNotFound {
             get {
                 return ResourceManager.GetString("ErrorLoadingConfigurationFileNotFound", resourceCulture);
             }
@@ -201,7 +201,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         ///   Recherche une chaîne localisée semblable à Error loading User Registration ! 
         ///{0}.
         /// </summary>
-        internal static string ErrorLoadingUserRegistration {
+        public static string ErrorLoadingUserRegistration {
             get {
                 return ResourceManager.GetString("ErrorLoadingUserRegistration", resourceCulture);
             }
@@ -210,7 +210,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Password for {0} is expired ! Access denied !.
         /// </summary>
-        internal static string ErrorPasswordExpired {
+        public static string ErrorPasswordExpired {
             get {
                 return ResourceManager.GetString("ErrorPasswordExpired", resourceCulture);
             }
@@ -219,7 +219,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Invalid PIN length, {0} numbers required !.
         /// </summary>
-        internal static string ErrorPinLength {
+        public static string ErrorPinLength {
             get {
                 return ResourceManager.GetString("ErrorPinLength", resourceCulture);
             }
@@ -228,7 +228,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Invalid PIN value !.
         /// </summary>
-        internal static string ErrorPinValue {
+        public static string ErrorPinValue {
             get {
                 return ResourceManager.GetString("ErrorPinValue", resourceCulture);
             }
@@ -237,7 +237,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Error during authentication process ! One Time Password has been played before .
         /// </summary>
-        internal static string ErrorReplayToken {
+        public static string ErrorReplayToken {
             get {
                 return ResourceManager.GetString("ErrorReplayToken", resourceCulture);
             }
@@ -246,7 +246,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Error when sending identification request !.
         /// </summary>
-        internal static string ErrorSendingToastInformation {
+        public static string ErrorSendingToastInformation {
             get {
                 return ResourceManager.GetString("ErrorSendingToastInformation", resourceCulture);
             }
@@ -255,7 +255,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Error when sending identification request ! please try again..
         /// </summary>
-        internal static string ErrorSendingToastInformationRetry {
+        public static string ErrorSendingToastInformationRetry {
             get {
                 return ResourceManager.GetString("ErrorSendingToastInformationRetry", resourceCulture);
             }
@@ -264,7 +264,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Window validation time elapsed..
         /// </summary>
-        internal static string ErrorValidationTimeWindowElapsed {
+        public static string ErrorValidationTimeWindowElapsed {
             get {
                 return ResourceManager.GetString("ErrorValidationTimeWindowElapsed", resourceCulture);
             }

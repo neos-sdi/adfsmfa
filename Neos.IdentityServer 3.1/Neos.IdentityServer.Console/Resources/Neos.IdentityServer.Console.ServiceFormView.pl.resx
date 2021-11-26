@@ -118,18 +118,18 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CERTIFICATESCLEANMSG" xml:space="preserve">
-    <value>Usunąć osierocone klucze prywatne ?</value>
+    <value>Usunąć osierocone klucze prywatne?</value>
   </data>
   <data name="CERTIFICATESSECURITYMSG" xml:space="preserve">
-    <value>Zaktualizować certyfikaty MFA Lista kontroli dostępu ?</value>
+    <value>Zaktualizować certyfikaty MFA Lista kontroli dostępu?</value>
   </data>
   <data name="CERTIFICATESSECURITYMSGRESULT" xml:space="preserve">
-    <value>Zaktualizowano listę kontroli dostępu dla wszystkich certyfikatów MFA !</value>
+    <value>Zaktualizowano listę kontroli dostępu dla wszystkich certyfikatów MFA!</value>
   </data>
   <data name="CERTIFICATESCLEANMSGCOUNT" xml:space="preserve">
     <value>Liczba usuniętych osieroconych kluczy prywatnych</value>
   </data>
   <data name="RESTARTMFASERVICESMSG" xml:space="preserve">
-    <value>Zrestartować wszystkie usługi MFA i ADFS na wszystkich serwerach farmy ?</value>
+    <value>Zrestartować wszystkie usługi MFA i ADFS na wszystkich serwerach farmy?</value>
   </data>
 </root>

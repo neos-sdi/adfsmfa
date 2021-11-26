@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2020 abergs (https://github.com/abergs/fido2-net-lib)                                                                                                                      //                        
+// Copyright (c) 2021 abergs (https://github.com/abergs/fido2-net-lib)                                                                                                                      //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -12,7 +12,7 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                               //
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
-// Copyright (c) 2020 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
+// Copyright (c) 2021 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -33,21 +33,13 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using Neos.IdentityServer.MultiFactor.WebAuthN.Library.ASN;
+using Neos.IdentityServer.MultiFactor.WebAuthN.Objects;
 using Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor;
 
 namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
 {
-    internal class AndroidKey : AttestationFormat
+    internal sealed class AndroidKey : AttestationVerifier
     {
-        private readonly IMetadataService _metadataService;
-        private readonly bool _requireValidAttestationRoot;
-
-        public AndroidKey(CBORObject attStmt, byte[] authenticatorData, byte[] clientDataHash, IMetadataService metadataService, bool requireValidAttestationRoot) : base(attStmt, authenticatorData, clientDataHash)
-        {
-            _metadataService = metadataService;
-            _requireValidAttestationRoot = requireValidAttestationRoot;
-        }
-
         public static byte[] AttestationExtensionBytes(X509ExtensionCollection exts)
         {
             foreach (var ext in exts)
@@ -120,7 +112,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
                         break;
                 }
             }
-            
+
             var teeEnforced = keyDescription.GetSub(7).Sub;
             foreach (AsnElt s in teeEnforced)
             {
@@ -133,7 +125,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
                         break;
                 }
             }
-            
+
             return (0 == softwareEnforcedOriginValue && 0 == teeEnforcedOriginValue);
         }
 
@@ -173,15 +165,16 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
             return (2 == softwareEnforcedPurposeValue && 2 == teeEnforcedPurposeValue);
         }
 
-        public override void Verify()
+        public override (AttestationType, X509Certificate2[]) Verify()
         {
-            // Verify that attStmt is valid CBOR conforming to the syntax defined above and perform CBOR decoding on it to extract the contained fields
+            // 1. Verify that attStmt is valid CBOR conforming to the syntax defined above and perform CBOR decoding on it to extract the contained fields
+            // (handled in base class)
             if (0 == attStmt.Keys.Count || 0 == attStmt.Values.Count)
                 throw new VerificationException("Attestation format android-key must have attestation statement");
 
             if (null == Sig || CBORType.ByteString != Sig.Type || 0 == Sig.GetByteString().Length)
                 throw new VerificationException("Invalid android-key attestation signature");
-            // 2a. Verify that sig is a valid signature over the concatenation of authenticatorData and clientDataHash 
+            // 2. Verify that sig is a valid signature over the concatenation of authenticatorData and clientDataHash 
             // using the attestation public key in attestnCert with the algorithm specified in alg
             if (null == X5c || CBORType.Array != X5c.Type || 0 == X5c.Count)
                 throw new VerificationException("Malformed x5c in android-key attestation");
@@ -219,16 +212,15 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
             if (true != androidKeyPubKey.VerifyData(Data, ecsig, CryptoUtils.HashAlgFromCOSEAlg(Alg.AsInt32())))
                 throw new VerificationException("Invalid android key attestation signature");
 
-            // Verify that the public key in the first certificate in x5c matches the credentialPublicKey in the attestedCredentialData in authenticatorData.
+            // 3. Verify that the public key in the first certificate in x5c matches the credentialPublicKey in the attestedCredentialData in authenticatorData.
             if (true != AuthData.AttestedCredentialData.CredentialPublicKey.Verify(Data, Sig.GetByteString()))
                 throw new VerificationException("Incorrect credentialPublicKey in android key attestation");
 
-            // Verify that in the attestation certificate extension data:
+            // 4. Verify that the attestationChallenge field in the attestation certificate extension data is identical to clientDataHash
             var attExtBytes = AttestationExtensionBytes(androidKeyCert.Extensions);
             if (null == attExtBytes)
                 throw new VerificationException("Android key attestation certificate contains no AttestationRecord extension");
 
-            // 1. The value of the attestationChallenge field is identical to clientDataHash.
             try
             {
                 var attestationChallenge = GetAttestationChallenge(attExtBytes);
@@ -239,17 +231,26 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
             {
                 throw new VerificationException("Malformed android key AttestationRecord extension verifying android key attestation certificate extension");
             }
-            // 2. The AuthorizationList.allApplications field is not present, since PublicKeyCredential MUST be bound to the RP ID.
+
+            // 5. Verify the following using the appropriate authorization list from the attestation certificate extension data
+
+            // 5a. The AuthorizationList.allApplications field is not present, since PublicKeyCredential MUST be bound to the RP ID
             if (true == FindAllApplicationsField(attExtBytes))
                 throw new VerificationException("Found all applications field in android key attestation certificate extension");
 
-            // 3. The value in the AuthorizationList.origin field is equal to KM_ORIGIN_GENERATED ( which == 0).
+            // 5bi. The value in the AuthorizationList.origin field is equal to KM_ORIGIN_GENERATED ( which == 0).
             if (false == IsOriginGenerated(attExtBytes))
                 throw new VerificationException("Found origin field not set to KM_ORIGIN_GENERATED in android key attestation certificate extension");
 
-            // 4. The value in the AuthorizationList.purpose field is equal to KM_PURPOSE_SIGN (which == 2).
+            // 5bii. The value in the AuthorizationList.purpose field is equal to KM_PURPOSE_SIGN (which == 2).
             if (false == IsPurposeSign(attExtBytes))
                 throw new VerificationException("Found purpose field not set to KM_PURPOSE_SIGN in android key attestation certificate extension");
+
+            var trustPath = X5c.Values
+                .Select(x => new X509Certificate2(x.GetByteString()))
+                .ToArray();
+
+            return (AttestationType.Basic, trustPath);
         }
     }
 }

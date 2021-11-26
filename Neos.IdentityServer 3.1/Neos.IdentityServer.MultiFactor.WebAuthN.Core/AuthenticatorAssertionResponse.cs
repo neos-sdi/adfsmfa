@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2020 abergs (https://github.com/abergs/fido2-net-lib)                                                                                                                      //                        
+// Copyright (c) 2021 abergs (https://github.com/abergs/fido2-net-lib)                                                                                                                      //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -12,7 +12,7 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                               //
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
-// Copyright (c) 2020 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
+// Copyright (c) 2021 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -48,7 +48,6 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
         }
 
         public AuthenticatorAssertionRawResponse Raw { get; set; }
-
         public byte[] AuthenticatorData { get; set; }
         public byte[] Signature { get; set; }
         public byte[] UserHandle { get; set; }
@@ -79,12 +78,12 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
         /// <param name="storedSignatureCounter">The stored counter value for this CredentialId</param>
         /// <param name="isUserHandleOwnerOfCredId">A function that returns <see langword="true"/> if user handle is owned by the credential ID</param>
         /// <param name="requestTokenBindingId"></param>
-        public AssertionVerificationResult Verify(
+        public async Task<AssertionVerificationResult> VerifyAsync(
             AssertionOptions options,
             string expectedOrigin,
             byte[] storedPublicKey,
             uint storedSignatureCounter,
-            IsUserHandleOwnerOfCredentialId isUserHandleOwnerOfCredId,
+            IsUserHandleOwnerOfCredentialIdAsync isUserHandleOwnerOfCredId,
             byte[] requestTokenBindingId)
         {
             BaseVerify(expectedOrigin, options.Challenge, requestTokenBindingId);
@@ -105,24 +104,24 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
                     throw new VerificationException("Invalid");
             }
 
-            // 2. If credential.response.userHandle is present, verify that the user identified by this value is the owner of the public key credential identified by credential.id.
+            // 2. Identify the user being authenticated and verify that this user is the owner of the public key credential source credentialSource identified by credential.id
             if (UserHandle != null)
             {
                 if (UserHandle.Length == 0)
                     throw new VerificationException("Userhandle was empty DOMString. It should either be null or have a value.");
 
-                if (false == isUserHandleOwnerOfCredId(new IsUserHandleOwnerOfCredentialIdParams(Raw.Id, UserHandle)))
+                if (false == await isUserHandleOwnerOfCredId(new IsUserHandleOwnerOfCredentialIdParams(Raw.Id, UserHandle)))
                 {
                     throw new VerificationException("User is not owner of the public key identitief by the credential id");
                 }
             }
 
             // 3. Using credential’s id attribute(or the corresponding rawId, if base64url encoding is inappropriate for your use case), look up the corresponding credential public key.
-            // public key inserted via parameter.
+            // Credential public key passed in via storePublicKey parameter
 
             // 4. Let cData, authData and sig denote the value of credential’s response's clientDataJSON, authenticatorData, and signature respectively.
             //var cData = Raw.Response.ClientDataJson;
-            var authData = new AuthenticatorData(Raw.Response.AuthenticatorData);
+            var authData = new AuthenticatorData(AuthenticatorData);
             //var sig = Raw.Response.Signature;
 
             // 5. Let JSONtext be the result of running UTF-8 decode on the value of cData.
@@ -131,7 +130,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
 
             // 7. Verify that the value of C.type is the string webauthn.get.
             if (Type != "webauthn.get")
-                throw new VerificationException();
+                throw new VerificationException("AssertionResponse is not type webauthn.get");
 
             // 8. Verify that the value of C.challenge matches the challenge that was sent to the authenticator in the PublicKeyCredentialRequestOptions passed to the get() call.
             // 9. Verify that the value of C.origin matches the Relying Party's origin.
@@ -170,14 +169,14 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
             // UNLESS...userPresent is true?
             // see ee Server-ServerAuthenticatorAssertionResponse-Resp3 Test server processing authenticatorData
             // P-8 Send a valid ServerAuthenticatorAssertionResponse both authenticatorData.flags.UV and authenticatorData.flags.UP are not set, for userVerification set to "discouraged", and check that server succeeds
-            if (UserVerificationRequirement.Required == options.UserVerification && false == authData.UserVerified) 
+            if (UserVerificationRequirement.Required == options.UserVerification && false == authData.UserVerified)
                 throw new VerificationException("User verification is required");
 
             // 14. Verify that the values of the client extension outputs in clientExtensionResults and the authenticator extension outputs in the extensions in authData are as expected, considering the client extension input values that were given as the extensions option in the get() call.In particular, any extension identifier values in the clientExtensionResults and the extensions in authData MUST be also be present as extension identifier values in the extensions member of options, i.e., no extensions are present that were not requested. In the general case, the meaning of "are as expected" is specific to the Relying Party and which extensions are in use.
             // todo: Verify this (and implement extensions on options)
-            if (true == authData.HasExtensionsData && ((null == authData.Extensions) || (0 == authData.Extensions.Length))) 
+            if (true == authData.HasExtensionsData && ((null == authData.Extensions) || (0 == authData.Extensions.Length)))
                 throw new VerificationException("Extensions flag present, malformed extensions detected");
-            if (false == authData.HasExtensionsData && (null != authData.Extensions)) 
+            if (false == authData.HasExtensionsData && (null != authData.Extensions))
                 throw new VerificationException("Extensions flag not present, but extensions detected");
 
             // 15.
@@ -188,10 +187,10 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
             Buffer.BlockCopy(Raw.Response.AuthenticatorData, 0, data, 0, Raw.Response.AuthenticatorData.Length);
             Buffer.BlockCopy(hashedClientDataJson, 0, data, Raw.Response.AuthenticatorData.Length, hashedClientDataJson.Length);
 
-            if (null == storedPublicKey || 0 == storedPublicKey.Length) 
+            if (null == storedPublicKey || 0 == storedPublicKey.Length)
                 throw new VerificationException("Stored public key is null or empty");
             var cpk = new CredentialPublicKey(storedPublicKey);
-            if (true != cpk.Verify(data, Signature)) 
+            if (true != cpk.Verify(data, Signature))
                 throw new VerificationException("Signature did not match");
 
             // 17.

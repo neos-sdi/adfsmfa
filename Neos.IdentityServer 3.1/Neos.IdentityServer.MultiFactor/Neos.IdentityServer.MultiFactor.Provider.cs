@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2020 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
+// Copyright (c) 2021 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -70,6 +70,7 @@ namespace Neos.IdentityServer.MultiFactor
                 IPAddress = request.RemoteEndPoint.Address.ToString()
             };
             Utilities.PatchLanguageIfNeeded(Config, usercontext, request.UserLanguages);
+           // Utilities.CheckForUserAgent(Config, usercontext, null);
             ResourcesLocale Resources = new ResourcesLocale(usercontext.Lcid);
             ClientSIDsProxy.Initialize(Config);
 
@@ -82,7 +83,7 @@ namespace Neos.IdentityServer.MultiFactor
                 {
                     usercontext.UIMode = ProviderPageMode.Locking;
                     usercontext.TargetUIMode = ProviderPageMode.DefinitiveError;
-                    return new AdapterPresentation(this, context, string.Format(Resources.GetString(ResourcesLocaleKind.Errors, "ErrorPasswordExpired"), usercontext.UPN), ProviderPageMode.DefinitiveError);
+                    return new AdapterPresentation(this, context, string.Format(Resources.GetString(ResourcesLocaleKind.UIErrors, "ErrorPasswordExpired"), usercontext.UPN), ProviderPageMode.DefinitiveError);
                 }
                 if ((Config.IsPrimaryAuhentication) && (!Config.PrimaryAuhenticationOptions.HasFlag(PrimaryAuthOptions.Register)))
                 {
@@ -92,12 +93,15 @@ namespace Neos.IdentityServer.MultiFactor
                 switch (usercontext.UIMode)
                 {
                     case ProviderPageMode.PreSet:
-                        usercontext.UIMode = GetAuthenticationContextRequest(usercontext);
-                        GetAuthenticationData(usercontext);
+                        //  usercontext.UIMode = GetAuthenticationContextRequest(usercontext);
+                       // ProviderPageMode ppvm = GetAuthenticationContextRequest(usercontext);
+                       // usercontext.UIMode = ppvm;
+                       // GetAuthenticationData(usercontext);
+                        usercontext.UIMode = ProviderPageMode.PreSet;
                         result = new AdapterPresentation(this, context);
                         break;
-                    case ProviderPageMode.Locking:  
-                        result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorAccountNoAccess"), ProviderPageMode.DefinitiveError);
+                    case ProviderPageMode.Locking:
+                        result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.UIErrors, "ErrorAccountNoAccess"), ProviderPageMode.DefinitiveError);
                         break;
                     default:
                         // Do not Select method if only one provider
@@ -133,13 +137,11 @@ namespace Neos.IdentityServer.MultiFactor
                         result = new AdapterPresentation(this, context);
                         break;
                 }
-                Trace.TraceInformation(String.Format("AuthenticationProvider:BeginAuthentication Duration : {0}", (DateTime.Now - st).ToString()));
                 return result;
             }
             catch (Exception ex)
             {
-                Trace.TraceError(String.Format("AuthenticationProvider:BeginAuthentication Duration : {0}", (DateTime.Now - st).ToString()));
-                Log. WriteEntry(string.Format(Resources.GetString(ResourcesLocaleKind.Errors, "ErrorAuthenticating"), ex.Message), EventLogEntryType.Error, 802);
+                Log. WriteEntry(string.Format(Resources.GetString(ResourcesLocaleKind.UIErrors, "ErrorAuthenticating"), ex.Message), EventLogEntryType.Error, 802);
                 throw new ExternalAuthenticationException(ex.Message, context);
             }
         }
@@ -173,7 +175,6 @@ namespace Neos.IdentityServer.MultiFactor
                             usercontext.UIMode = ProviderPageMode.ChooseMethod;
                         else
                             usercontext.UIMode = ProviderPageMode.PreSet;
-                        Trace.TraceInformation(String.Format("AuthenticationProvider:IsAvailableForUser (Standard) Duration : {0}", (DateTime.Now - st).ToString()));
                         return true;
                     }
                     else // Not enabled
@@ -213,7 +214,6 @@ namespace Neos.IdentityServer.MultiFactor
                             usercontext.TargetUIMode = ProviderPageMode.DefinitiveError;
                             usercontext.UIMode = ProviderPageMode.Locking;
                         }
-                        Trace.TraceInformation(String.Format("AuthenticationProvider:IsAvailableForUser (Not Enabled) Duration : {0}", (DateTime.Now - st).ToString()));
                         return true;
                     }
                 }
@@ -284,14 +284,12 @@ namespace Neos.IdentityServer.MultiFactor
                         usercontext.UIMode = ProviderPageMode.Locking;
                         usercontext.TargetUIMode = ProviderPageMode.DefinitiveError;
                     }
-                    Trace.TraceInformation(String.Format("AuthenticationProvider:IsAvailableForUser (Not Registered) Duration : {0}", (DateTime.Now - st).ToString()));
                     return true;
                 }
             }
             catch (Exception ex)
             {
-                Trace.TraceError(String.Format("AuthenticationProvider:IsAvailableForUser Error : {0}", ex.Message));
-                Log.WriteEntry(string.Format(Resources.GetString(ResourcesLocaleKind.Errors, "ErrorLoadingUserRegistration"), ex.Message), EventLogEntryType.Error, 801);
+                Log.WriteEntry(string.Format(Resources.GetString(ResourcesLocaleKind.UIErrors, "ErrorLoadingUserRegistration"), ex.Message), EventLogEntryType.Error, 801);
                 throw new ExternalAuthenticationException(ex.Message, context);
             }
         }
@@ -309,7 +307,7 @@ namespace Neos.IdentityServer.MultiFactor
 		/// </summary>
         public void OnAuthenticationPipelineLoad(IAuthenticationMethodConfigData configData)
         {
-             DateTime st = DateTime.Now;
+            DateTime st = DateTime.Now;
             ResourcesLocale Resources = new ResourcesLocale(CultureInfo.InstalledUICulture.LCID);
             if (configData.Data != null)
              {
@@ -339,20 +337,17 @@ namespace Neos.IdentityServer.MultiFactor
                          RuntimeRepository.MailslotServer.MailSlotMessageArrived += this.OnMessageArrived;
                          RuntimeRepository.MailslotServer.Start();                         
                         // CFGUtilities.WriteConfigurationToCache(_config);
-                         Trace.TraceInformation(String.Format("AuthenticationProvider:OnAuthenticationPipelineLoad Duration : {0}", (DateTime.Now - st).ToString()));
                      }
                      catch (Exception ex)
                      {
-                         Trace.TraceError(String.Format("AuthenticationProvider:OnAuthenticationPipelineLoad Error : {0}", ex.Message));
-                         Log.WriteEntry(string.Format(Resources.GetString(ResourcesLocaleKind.Errors, "ErrorLoadingConfigurationFile"), ex.Message), EventLogEntryType.Error, 900);
+                         Log.WriteEntry(string.Format(Resources.GetString(ResourcesLocaleKind.UIErrors, "ErrorLoadingConfigurationFile"), ex.Message), EventLogEntryType.Error, 900);
                          throw new ExternalAuthenticationException();
                      }
                  }
              }
              else
              {
-                 Trace.TraceError(String.Format("AuthenticationProvider:OnAuthenticationPipelineLoad Error : 900"));
-                 Log. WriteEntry(Resources.GetString(ResourcesLocaleKind.Errors, "ErrorLoadingConfigurationFileNotFound"), EventLogEntryType.Error, 900);
+                 Log. WriteEntry(Resources.GetString(ResourcesLocaleKind.UIErrors, "ErrorLoadingConfigurationFileNotFound"), EventLogEntryType.Error, 900);
                  throw new ExternalAuthenticationException();
              }
         }
@@ -385,75 +380,114 @@ namespace Neos.IdentityServer.MultiFactor
                 UIMessage = string.Empty
             };
 
-            ProviderPageMode ui = usercontext.UIMode;        
-            switch (ui)
+            ProviderPageMode ui = usercontext.UIMode;
+            try
             {
-                case ProviderPageMode.Identification:
-                    result = TryIdentification(usercontext, context, proofData, request, out claims);
-                    break;
-                case ProviderPageMode.Registration: // User self registration and enable
-                    usercontext.WizContext = WizardContextMode.Registration;
-                    result = TryRegistration(usercontext, context, proofData, request, out claims);
-                    break;
-                case ProviderPageMode.Invitation: // admministrative user registration and let disabled
-                    usercontext.WizContext = WizardContextMode.Invitation;
-                    result = TryInvitation(usercontext, context, proofData, request, out claims);
-                    break;
-                case ProviderPageMode.Activation: // Ask to enable
-                    result = TryActivation(usercontext, context, proofData, request, out claims);
-                    break;
-                case ProviderPageMode.ManageOptions: // Manage Options
-                    usercontext.WizContext = WizardContextMode.ManageOptions;
-                    result = TryManageOptions(usercontext, context, proofData, request, out claims);
-                    break;
-                case ProviderPageMode.SelectOptions:
-                    result = TrySelectOptions(usercontext, context, proofData, request, out claims);
-                    break;
-                case ProviderPageMode.ChooseMethod:
-                    result = TryChooseMethod(usercontext, context, proofData, request, out claims);
-                    break;
-                case ProviderPageMode.ChangePassword:
-                    result = TryChangePassword(usercontext, context, proofData, request, out claims);
-                    break;
-                case ProviderPageMode.Bypass:
-                    result = TryBypass(usercontext, context, proofData, request, out claims);
-                    break;
-                case ProviderPageMode.Locking:
-                    result = TryLocking(usercontext, context, proofData, request, out claims);
-                    break;
-                case ProviderPageMode.ShowQRCode:
-                    result = TryShowQRCode(usercontext, context, proofData, request, out claims);
-                    break;
-                case ProviderPageMode.SendAuthRequest:
-                    result = TrySendCodeRequest(usercontext, context, proofData, request, out claims);
-                    break;
-                case ProviderPageMode.SendAdministrativeRequest:
-                    result = TrySendAdministrativeRequest(usercontext, context, proofData, request, out claims);
-                    break;
-                case ProviderPageMode.SendKeyRequest:
-                    result = TrySendKeyRequest(usercontext, context, proofData, request, out claims);
-                    break;
-                case ProviderPageMode.EnrollOTP:
-                    result = TryEnrollOTP(usercontext, context, proofData, request, out claims);
-                    break;
-                case ProviderPageMode.EnrollEmail:
-                    result = TryEnrollEmail(usercontext, context, proofData, request, out claims);
-                    break;
-                case ProviderPageMode.EnrollPhone:
-                    result = TryEnrollPhone(usercontext, context, proofData, request, out claims);
-                    break;
-                case ProviderPageMode.EnrollBiometrics:
-                    result = TryEnrollBio(usercontext, context, proofData, request, out claims);
-                    break;
-                case ProviderPageMode.EnrollPin:
-                    result = TryEnrollPinCode(usercontext, context, proofData, request, out claims);
-                    break;
+                switch (ui)
+                {
+                    case ProviderPageMode.PreSet:
+                        result = TryPreset(usercontext, context, proofData, request, out claims);
+                        break;
+                    case ProviderPageMode.Identification:
+                        result = TryIdentification(usercontext, context, proofData, request, out claims);
+                        break;
+                    case ProviderPageMode.Registration: // User self registration and enable
+                        usercontext.WizContext = WizardContextMode.Registration;
+                        result = TryRegistration(usercontext, context, proofData, request, out claims);
+                        break;
+                    case ProviderPageMode.Invitation: // admministrative user registration and let disabled
+                        usercontext.WizContext = WizardContextMode.Invitation;
+                        result = TryInvitation(usercontext, context, proofData, request, out claims);
+                        break;
+                    case ProviderPageMode.Activation: // Ask to enable
+                        result = TryActivation(usercontext, context, proofData, request, out claims);
+                        break;
+                    case ProviderPageMode.ManageOptions: // Manage Options
+                        usercontext.WizContext = WizardContextMode.ManageOptions;
+                        result = TryManageOptions(usercontext, context, proofData, request, out claims);
+                        Utilities.CheckForUserAgent(Config, usercontext, usercontext.Platform);
+                        break;
+                    case ProviderPageMode.SelectOptions:
+                        result = TrySelectOptions(usercontext, context, proofData, request, out claims);
+                        Utilities.CheckForUserAgent(Config, usercontext, usercontext.Platform);
+                        break;
+                    case ProviderPageMode.ChooseMethod:
+                        result = TryChooseMethod(usercontext, context, proofData, request, out claims);
+                        break;
+                    case ProviderPageMode.ChangePassword:
+                        result = TryChangePassword(usercontext, context, proofData, request, out claims);
+                        break;
+                    case ProviderPageMode.Bypass:
+                        result = TryBypass(usercontext, context, proofData, request, out claims);
+                        break;
+                    case ProviderPageMode.Locking:
+                        result = TryLocking(usercontext, context, proofData, request, out claims);
+                        break;
+                    case ProviderPageMode.ShowQRCode:
+                        result = TryShowQRCode(usercontext, context, proofData, request, out claims);
+                        break;
+                    case ProviderPageMode.SendAuthRequest:
+                        result = TrySendCodeRequest(usercontext, context, proofData, request, out claims);
+                        break;
+                    case ProviderPageMode.SendAdministrativeRequest:
+                        result = TrySendAdministrativeRequest(usercontext, context, proofData, request, out claims);
+                        break;
+                    case ProviderPageMode.SendKeyRequest:
+                        result = TrySendKeyRequest(usercontext, context, proofData, request, out claims);
+                        break;
+                    case ProviderPageMode.EnrollOTP:
+                        result = TryEnrollOTP(usercontext, context, proofData, request, out claims);
+                        break;
+                    case ProviderPageMode.EnrollEmail:
+                        result = TryEnrollEmail(usercontext, context, proofData, request, out claims);
+                        break;
+                    case ProviderPageMode.EnrollPhone:
+                        result = TryEnrollPhone(usercontext, context, proofData, request, out claims);
+                        break;
+                    case ProviderPageMode.EnrollBiometrics:
+                        result = TryEnrollBio(usercontext, context, proofData, request, out claims);
+                        break;
+                    case ProviderPageMode.EnrollPin:
+                        result = TryEnrollPinCode(usercontext, context, proofData, request, out claims);
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.WriteEntry(string.Format("AuthenticationProvider:TryEndAuthentication Error : {0} ", ex.Message), EventLogEntryType.Error, 900);
+                throw new ExternalAuthenticationException(usercontext.UPN + " : " + ex.Message, context);
             }
             return result;
         }
         #endregion
 
         #region IAuthenticationAdapter custom implementation
+        /// <summary>
+        /// TryPreset method implementation
+        /// </summary>
+        private IAdapterPresentation TryPreset(AuthenticationContext usercontext, IAuthenticationContext context, IProofData proofData, HttpListenerRequest request, out Claim[] claims)
+        {
+            ResourcesLocale Resources = new ResourcesLocale(usercontext.Lcid);
+            claims = null;
+            IAdapterPresentation result = null;
+
+            string userplatfrom = proofData.Properties["userplatform"]?.ToString();
+            if (string.IsNullOrEmpty(userplatfrom))
+                userplatfrom = request.UserAgent;
+            string userlanguage = proofData.Properties["userlanguage"]?.ToString();
+            string[] userlanguages = null;
+            if (string.IsNullOrEmpty(userlanguage))
+                userlanguages = request.UserLanguages;
+            else
+                userlanguages = new string[] { userlanguage };
+            Utilities.PatchLanguageIfNeeded(Config, usercontext, userlanguages);
+            Utilities.CheckForUserAgent(Config, usercontext, userplatfrom);
+            usercontext.UIMode = GetAuthenticationContextRequest(usercontext);
+            GetAuthenticationData(usercontext);
+            result = new AdapterPresentation(this, context);
+            return result;
+        }
+
         /// <summary>
         /// TryIdentification method implementation
         /// </summary>
@@ -473,12 +507,12 @@ namespace Neos.IdentityServer.MultiFactor
                     if (usercontext.CurrentRetries >= Config.MaxRetries)
                     {
                         usercontext.UIMode = ProviderPageMode.Locking;
-                        return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorInvalidIdentificationRestart"), ProviderPageMode.DefinitiveError);
+                        return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.UIErrors, "ErrorInvalidIdentificationRestart"), ProviderPageMode.DefinitiveError);
                     }
-                    if(DateTime.Now.ToUniversalTime() > usercontext.LogonDate.AddSeconds(Convert.ToDouble(Config.DeliveryWindow)).ToUniversalTime())
+                    if (DateTime.Now.ToUniversalTime() > usercontext.LogonDate.AddSeconds(Convert.ToDouble(Config.DeliveryWindow)).ToUniversalTime())
                     {
                         usercontext.UIMode = ProviderPageMode.Locking;
-                        return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorValidationTimeWindowElapsed"), ProviderPageMode.DefinitiveError);
+                        return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.UIErrors, "ErrorValidationTimeWindowElapsed"), ProviderPageMode.DefinitiveError);
                     }
                     try
                     {
@@ -494,19 +528,19 @@ namespace Neos.IdentityServer.MultiFactor
                                     if (usercontext.CurrentRetries >= Config.MaxRetries)
                                     {
                                         usercontext.UIMode = ProviderPageMode.Locking;
-                                        return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorInvalidIdentificationRestart"), ProviderPageMode.DefinitiveError);
+                                        return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.UIErrors, "ErrorInvalidIdentificationRestart"), ProviderPageMode.DefinitiveError);
                                     }
                                     else
                                     {
                                         usercontext.UIMode = ProviderPageMode.Identification;
-                                        return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorInvalidIdentificationRetry"), false);
+                                        return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.UIErrors, "ErrorInvalidIdentificationRetry"), false);
                                     }
                                 }
                                 usercontext.PinDone = true;
                             }
                             claims = new Claim[] { GetAuthMethodClaim(usercontext.SelectedMethod) };
 
-                            bool options = proofData.Properties.TryGetValue("options", out object opt);
+                            bool options = proofData.Properties.TryGetValue("mfaoptions", out object opt);
                             usercontext.ShowOptions = options;
                             if (options)
                             {
@@ -549,30 +583,32 @@ namespace Neos.IdentityServer.MultiFactor
                             if (usercontext.CurrentRetries >= Config.MaxRetries)
                             {
                                 usercontext.UIMode = ProviderPageMode.Locking;
-                                return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorInvalidIdentificationRestart"), ProviderPageMode.DefinitiveError);
+                                return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.UIErrors, "ErrorInvalidIdentificationRestart"), ProviderPageMode.DefinitiveError);
                             }
                             if (DateTime.Now.ToUniversalTime() > usercontext.LogonDate.AddSeconds(Convert.ToDouble(Config.DeliveryWindow)).ToUniversalTime())
                             {
                                 usercontext.UIMode = ProviderPageMode.Locking;
-                                return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorValidationTimeWindowElapsed"), ProviderPageMode.DefinitiveError);
+                                return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.UIErrors, "ErrorValidationTimeWindowElapsed"), ProviderPageMode.DefinitiveError);
                             }
                             else
                             {
                                 usercontext.UIMode = ProviderPageMode.Identification;
                                 if (!string.IsNullOrEmpty(error))
+                                {
                                     return new AdapterPresentation(this, context, error, false);
                                     // usercontext.UIMode = ProviderPageMode.Locking;
                                     // return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorReplayToken"), ProviderPageMode.DefinitiveError);
+                                }
                                 else
-                                    return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorInvalidIdentificationRetry"), false);
+                                    return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.UIErrors, "ErrorInvalidIdentificationRetry"), false);
                             }
                         }
                     }
                     catch (CryptographicException cex)
                     {
                         usercontext.UIMode = ProviderPageMode.Locking;
-                        Log.WriteEntry(string.Format(Resources.GetString(ResourcesLocaleKind.Errors, "ErrorAuthenticating"), cex.Message), EventLogEntryType.Error, 10000);
-                        return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorInvalidIdentificationRestart"), ProviderPageMode.DefinitiveError);
+                        Log.WriteEntry(string.Format(Resources.GetString(ResourcesLocaleKind.UIErrors, "ErrorAuthenticating"), cex.Message), EventLogEntryType.Error, 10000);
+                        return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.UIErrors, "ErrorInvalidIdentificationRestart"), ProviderPageMode.DefinitiveError);
                     }
                 }
                 else
@@ -627,7 +663,7 @@ namespace Neos.IdentityServer.MultiFactor
                             }
                             RuntimeRepository.SetMFAUser(Config, (MFAUser)usercontext, usercontext.KeyStatus != SecretKeyStatus.Success);
                             usercontext.UIMode = ProviderPageMode.SelectOptions;
-                            result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Informations, "InfosConfigurationModified"));
+                            result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.UIInformations, "InfosConfigurationModified"));
                             break;
                         }
                     case 2:  // Cancel   
@@ -749,7 +785,7 @@ namespace Neos.IdentityServer.MultiFactor
                                 usercontext.UIMode = ProviderPageMode.Bypass;
                                 usercontext.Enabled = true;
                                 RuntimeRepository.SetMFAUser(Config, (MFAUser)usercontext, usercontext.KeyStatus != SecretKeyStatus.Success);
-                                result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Informations, "InfosConfigurationModified"));
+                                result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.UIInformations, "InfosConfigurationModified"));
                             }
                             else if (btnclicked == 6)
                             {
@@ -910,7 +946,7 @@ namespace Neos.IdentityServer.MultiFactor
                                 else
                                 {
                                     usercontext.UIMode = ProviderPageMode.Locking;
-                                    result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorAccountNotEnabled"), ProviderPageMode.DefinitiveError);
+                                    result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.UIErrors, "ErrorAccountNotEnabled"), ProviderPageMode.DefinitiveError);
                                 }
                             }
                             else if (btnclicked == 6)
@@ -1159,7 +1195,7 @@ namespace Neos.IdentityServer.MultiFactor
                             {
                                 usercontext.PreferredMethod = PreferredMethod.Choose;
                                 usercontext.UIMode = ProviderPageMode.Locking;
-                                result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorInvalidIdentificationRestart"), ProviderPageMode.DefinitiveError);
+                                result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.UIErrors, "ErrorInvalidIdentificationRestart"), ProviderPageMode.DefinitiveError);
                             }
                             break;
                         case 1:
@@ -1176,7 +1212,7 @@ namespace Neos.IdentityServer.MultiFactor
                             {
                                 usercontext.PreferredMethod = PreferredMethod.Choose;
                                 usercontext.UIMode = ProviderPageMode.Locking;
-                                result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorInvalidIdentificationRestart"), ProviderPageMode.DefinitiveError);
+                                result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.UIErrors, "ErrorInvalidIdentificationRestart"), ProviderPageMode.DefinitiveError);
                             }
                             break;
                         case 2:
@@ -1195,14 +1231,14 @@ namespace Neos.IdentityServer.MultiFactor
                                 {
                                     usercontext.PreferredMethod = PreferredMethod.Choose;
                                     usercontext.UIMode = ProviderPageMode.Locking;
-                                    result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorInvalidIdentificationRestart"), ProviderPageMode.DefinitiveError);
+                                    result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.UIErrors, "ErrorInvalidIdentificationRestart"), ProviderPageMode.DefinitiveError);
                                 }
                             }
                             else
                             {
                                 usercontext.PreferredMethod = PreferredMethod.Choose;
                                 usercontext.UIMode = ProviderPageMode.Locking;
-                                result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorInvalidIdentificationRestart"), ProviderPageMode.DefinitiveError);
+                                result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.UIErrors, "ErrorInvalidIdentificationRestart"), ProviderPageMode.DefinitiveError);
                             }
                             break;
                         case 3:
@@ -1219,7 +1255,7 @@ namespace Neos.IdentityServer.MultiFactor
                             {
                                 usercontext.PreferredMethod = PreferredMethod.Choose;
                                 usercontext.UIMode = ProviderPageMode.Locking;
-                                result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorInvalidIdentificationRestart"), ProviderPageMode.DefinitiveError);
+                                result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.UIErrors, "ErrorInvalidIdentificationRestart"), ProviderPageMode.DefinitiveError);
                             }
                             break;
                         case 4:
@@ -1236,14 +1272,14 @@ namespace Neos.IdentityServer.MultiFactor
                             {
                                 usercontext.PreferredMethod = PreferredMethod.Choose;
                                 usercontext.UIMode = ProviderPageMode.Locking;
-                                result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorInvalidIdentificationRestart"), ProviderPageMode.DefinitiveError);
+                                result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.UIErrors, "ErrorInvalidIdentificationRestart"), ProviderPageMode.DefinitiveError);
                             }
                             break;
 
                         default:
                             usercontext.PreferredMethod = PreferredMethod.Choose;
                             usercontext.UIMode = ProviderPageMode.Locking;
-                            result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorInvalidIdentificationRestart"), ProviderPageMode.DefinitiveError);
+                            result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.UIErrors, "ErrorInvalidIdentificationRestart"), ProviderPageMode.DefinitiveError);
                             break;
                     }
                 }
@@ -1251,7 +1287,7 @@ namespace Neos.IdentityServer.MultiFactor
                 {
                     usercontext.PreferredMethod = PreferredMethod.Choose;
                     usercontext.UIMode = ProviderPageMode.Locking;
-                    result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorInvalidIdentificationRestart"), ProviderPageMode.DefinitiveError);
+                    result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.UIErrors, "ErrorInvalidIdentificationRestart"), ProviderPageMode.DefinitiveError);
                 }
             }
             catch (Exception ex)
@@ -1293,7 +1329,7 @@ namespace Neos.IdentityServer.MultiFactor
                             {
                                 usercontext.UIMode = ProviderPageMode.SelectOptions;
                                 RuntimeRepository.ChangePassword(this.Config, usercontext.UPN, oldpass, newpass);
-                                result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Informations, "InfosPasswordModified"));
+                                result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.UIInformations, "InfosPasswordModified"));
                             }
                             catch (Exception ex)
                             {
@@ -1304,7 +1340,7 @@ namespace Neos.IdentityServer.MultiFactor
                         else
                         {
                             usercontext.UIMode = ProviderPageMode.ChangePassword;
-                            result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorInvalidPassword"), ProviderPageMode.DefinitiveError);
+                            result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.UIErrors, "ErrorInvalidPassword"), ProviderPageMode.DefinitiveError);
                         }
                     }
                     else if (btnclick == "2")
@@ -1346,7 +1382,7 @@ namespace Neos.IdentityServer.MultiFactor
                     if (Convert.ToInt32(pin) != usercontext.PinCode)
                     {
                         usercontext.UIMode = ProviderPageMode.Locking;
-                        return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorInvalidIdentificationRestart"), ProviderPageMode.DefinitiveError);
+                        return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.UIErrors, "ErrorInvalidIdentificationRestart"), ProviderPageMode.DefinitiveError);
                     }
                     usercontext.PinDone = true;
                 }
@@ -1439,18 +1475,19 @@ namespace Neos.IdentityServer.MultiFactor
             claims = new Claim[] { GetAuthMethodClaim(usercontext.SelectedMethod) };
             usercontext.DirectLogin = false;
             IAdapterPresentation result = null;
+            int WebAuthNSelect = 0;
             try
             {
                 string error = string.Empty;
                 if (usercontext.CurrentRetries >= Config.MaxRetries)
                 {
                     usercontext.UIMode = ProviderPageMode.Locking;
-                    return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorInvalidIdentificationRestart"), ProviderPageMode.DefinitiveError);
+                    return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.UIErrors, "ErrorInvalidIdentificationRestart"), ProviderPageMode.DefinitiveError);
                 }
                 if (DateTime.Now.ToUniversalTime() > usercontext.LogonDate.AddSeconds(Convert.ToDouble(Config.DeliveryWindow)).ToUniversalTime())
                 {
                     usercontext.UIMode = ProviderPageMode.Locking;
-                    return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorValidationTimeWindowElapsed"), ProviderPageMode.DefinitiveError);
+                    return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.UIErrors, "ErrorValidationTimeWindowElapsed"), ProviderPageMode.DefinitiveError);
                 }
                 if (proofData.Properties.ContainsKey("selectedlink"))
                 {
@@ -1463,13 +1500,13 @@ namespace Neos.IdentityServer.MultiFactor
                         return new AdapterPresentation(this, context);
                     }
                 }
-                usercontext.ShowOptions = proofData.Properties.TryGetValue("options", out object opt);
+                usercontext.ShowOptions = proofData.Properties.TryGetValue("mfaoptions", out object opt);
                 if (!usercontext.IsRemote)
                 {
                     if ((int)AuthenticationResponseKind.Error == PostAuthenticationRequest(usercontext))
                     {
                         usercontext.UIMode = ProviderPageMode.Locking;
-                        return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorSendingToastInformation"), ProviderPageMode.DefinitiveError);
+                        return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.UIErrors, "ErrorSendingToastInformation"), ProviderPageMode.DefinitiveError);
                     }
                     usercontext.UIMode = ProviderPageMode.Identification;
                 }
@@ -1481,7 +1518,7 @@ namespace Neos.IdentityServer.MultiFactor
                         if (usercontext.CurrentRetries >= Config.MaxRetries)
                         {
                             usercontext.UIMode = ProviderPageMode.Locking;
-                            return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorSendingToastInformation"), ProviderPageMode.DefinitiveError);
+                            return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.UIErrors, "ErrorSendingToastInformation"), ProviderPageMode.DefinitiveError);
                         }
                         else
                         {
@@ -1489,10 +1526,8 @@ namespace Neos.IdentityServer.MultiFactor
                             if (!string.IsNullOrEmpty(error))
                                 return new AdapterPresentation(this, context, error, false);
                             else
-                                return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorSendingToastInformationRetry"), false);
+                                return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.UIErrors, "ErrorSendingToastInformationRetry"), false);
                         }
-                       // usercontext.UIMode = ProviderPageMode.Locking;
-                       // return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorSendingToastInformation"), ProviderPageMode.DefinitiveError);
                     }
                     switch (usercontext.SelectedMethod)
                     {
@@ -1514,7 +1549,7 @@ namespace Neos.IdentityServer.MultiFactor
                             break;
                         default:
                             usercontext.UIMode = ProviderPageMode.Locking;
-                            return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorSendingToastInformation"), ProviderPageMode.DefinitiveError);
+                            return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.UIErrors, "ErrorSendingToastInformation"), ProviderPageMode.DefinitiveError);
                     }
                 }
                 else if (usercontext.IsTwoWay)
@@ -1525,7 +1560,7 @@ namespace Neos.IdentityServer.MultiFactor
                         if (usercontext.CurrentRetries >= Config.MaxRetries)
                         {
                             usercontext.UIMode = ProviderPageMode.Locking;
-                            return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorSendingToastInformation"), ProviderPageMode.DefinitiveError);
+                            return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.UIErrors, "ErrorSendingToastInformation"), ProviderPageMode.DefinitiveError);
                         }
                         else
                         {
@@ -1533,7 +1568,7 @@ namespace Neos.IdentityServer.MultiFactor
                             if (!string.IsNullOrEmpty(error))
                                 return new AdapterPresentation(this, context, error, false);
                             else
-                                return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorSendingToastInformationRetry"), false);
+                                return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.UIErrors, "ErrorSendingToastInformationRetry"), false);
                         }
                     }
                     string valuetopass = string.Empty;
@@ -1542,13 +1577,17 @@ namespace Neos.IdentityServer.MultiFactor
                     {
                         if (proofData.Properties.ContainsKey("selected"))
                         {
-                            int lnk = Convert.ToInt32(proofData.Properties["selected"].ToString());
-                            switch (lnk)
+                            WebAuthNSelect = Convert.ToInt32(proofData.Properties["selected"].ToString());
+                            switch (WebAuthNSelect)
                             {
                                 case 1:
                                     valuetopass = proofData.Properties["assertionResponse"].ToString();
                                     break;
                                 case 2:
+                                    error = proofData.Properties["jsError"].ToString();
+                                    cango = false;
+                                    break;
+                                case 3:
                                     error = proofData.Properties["jsError"].ToString();
                                     cango = false;
                                     break;
@@ -1587,7 +1626,7 @@ namespace Neos.IdentityServer.MultiFactor
                                 break;
                             default:
                                 usercontext.UIMode = ProviderPageMode.Locking;
-                                return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorSendingToastInformation"), ProviderPageMode.DefinitiveError);
+                                return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.UIErrors, "ErrorSendingToastInformation"), ProviderPageMode.DefinitiveError);
                         }
                     }
                     else
@@ -1597,20 +1636,31 @@ namespace Neos.IdentityServer.MultiFactor
                         if (DateTime.Now.ToUniversalTime() > usercontext.LogonDate.AddSeconds(Convert.ToDouble(Config.DeliveryWindow)).ToUniversalTime())
                         {
                             usercontext.UIMode = ProviderPageMode.Locking;
-                            return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorValidationTimeWindowElapsed"), ProviderPageMode.DefinitiveError);
+                            return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.UIErrors, "ErrorValidationTimeWindowElapsed"), ProviderPageMode.DefinitiveError);
                         }
                         if (usercontext.CurrentRetries >= Config.MaxRetries)
                         {
                             usercontext.UIMode = ProviderPageMode.Locking;
-                            return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorSendingToastInformation"), ProviderPageMode.DefinitiveError);
+                            return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.UIErrors, "ErrorSendingToastInformation"), ProviderPageMode.DefinitiveError);
                         }
                         else
                         {
-                            usercontext.UIMode = ProviderPageMode.SendAuthRequest;
-                            if (!string.IsNullOrEmpty(error))
-                                return new AdapterPresentation(this, context, error, false);
+                            if (WebAuthNSelect == 3) // WebauthN Not supported
+                            {
+                                usercontext.UIMode = ProviderPageMode.ChooseMethod;
+                                if (!string.IsNullOrEmpty(error))
+                                    return new AdapterPresentation(this, context, error, false);
+                                else
+                                    return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.UIErrors, "ErrorSendingToastInformationRetry"), false);
+                            }
                             else
-                                return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorSendingToastInformationRetry"), false);
+                            {
+                                usercontext.UIMode = ProviderPageMode.SendAuthRequest;
+                                if (!string.IsNullOrEmpty(error))
+                                    return new AdapterPresentation(this, context, error, false);
+                                else
+                                    return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.UIErrors, "ErrorSendingToastInformationRetry"), false);
+                            }
                         }                        
                     }
                 }
@@ -1639,7 +1689,7 @@ namespace Neos.IdentityServer.MultiFactor
                 if (usercontext.Notification == (int)AuthenticationResponseKind.Error)
                 {
                     usercontext.UIMode = ProviderPageMode.Locking;
-                    return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorSendingToastInformation"), ProviderPageMode.DefinitiveError);
+                    return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.UIErrors, "ErrorSendingToastInformation"), ProviderPageMode.DefinitiveError);
                 }
 
                 usercontext.Notification = (int)this.SetInscriptionResult(usercontext, (MFAUser)usercontext);
@@ -1653,18 +1703,18 @@ namespace Neos.IdentityServer.MultiFactor
                     if (Config.UserFeatures.IsMFANotRequired() || Config.UserFeatures.IsMFAAllowed()) // Bypass
                     {
                         usercontext.UIMode = ProviderPageMode.Bypass;
-                        result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorAccountAuthorized"), ProviderPageMode.Bypass);
+                        result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.UIErrors, "ErrorAccountAuthorized"), ProviderPageMode.Bypass);
                     }
                     else  // Error Not Enabled
                     {
                         usercontext.UIMode = ProviderPageMode.Locking; 
-                        result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Html, "ErrorAccountNotEnabled"), ProviderPageMode.DefinitiveError);
+                        result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.UIHtml, "ErrorAccountNotEnabled"), ProviderPageMode.DefinitiveError);
                     }
                 }
                 else // Error
                 {
                     usercontext.UIMode = ProviderPageMode.Locking;
-                    return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorSendingToastInformation"), ProviderPageMode.DefinitiveError);
+                    return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.UIErrors, "ErrorSendingToastInformation"), ProviderPageMode.DefinitiveError);
                 }
             }
             catch (Exception ex)
@@ -1690,7 +1740,7 @@ namespace Neos.IdentityServer.MultiFactor
                 if (usercontext.Notification == (int)AuthenticationResponseKind.Error)
                 {
                     usercontext.UIMode = ProviderPageMode.Locking;
-                    result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorSendingToastInformation"), ProviderPageMode.DefinitiveError);
+                    result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.UIErrors, "ErrorSendingToastInformation"), ProviderPageMode.DefinitiveError);
                 }
 
                 usercontext.Notification = (int)this.SetSecretKeyResult(usercontext);
@@ -1702,7 +1752,7 @@ namespace Neos.IdentityServer.MultiFactor
                 else
                 {
                     usercontext.UIMode = ProviderPageMode.Locking;
-                    return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Errors, "ErrorSendingToastInformation"), ProviderPageMode.DefinitiveError);
+                    return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.UIErrors, "ErrorSendingToastInformation"), ProviderPageMode.DefinitiveError);
                 }
             }
             catch (Exception ex)
@@ -1800,7 +1850,7 @@ namespace Neos.IdentityServer.MultiFactor
                             {
                                 usercontext.WizPageID = 4;
                                 usercontext.UIMode = ProviderPageMode.EnrollOTP;
-                                return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelVERIFYOTPError"), false);
+                                return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlLabelVERIFYOTPError"), false);
                             }
                             else
                             {
@@ -1843,14 +1893,14 @@ namespace Neos.IdentityServer.MultiFactor
                             {
                                 usercontext.UIMode = ProviderPageMode.EnrollOTP;
                                 usercontext.WizPageID = 4;
-                                return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelVERIFYOTPError"), false);
+                                return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlLabelVERIFYOTPError"), false);
                             }
                         }
                         else
                         {
                             usercontext.WizPageID = 4;
                             usercontext.UIMode = ProviderPageMode.EnrollOTP;
-                            return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelVERIFYOTPError"), false);
+                            return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlLabelVERIFYOTPError"), false);
                         }
                 }
             }
@@ -1952,7 +2002,7 @@ namespace Neos.IdentityServer.MultiFactor
                                 {
                                     usercontext.WizPageID = 4;
                                     usercontext.UIMode = ProviderPageMode.EnrollEmail;
-                                    return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelVERIFYOTPError"), false);
+                                    return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlLabelVERIFYOTPError"), false);
                                 }
                                 else
                                 {
@@ -1998,7 +2048,7 @@ namespace Neos.IdentityServer.MultiFactor
                             {
                                 usercontext.WizPageID = 4;
                                 usercontext.UIMode = ProviderPageMode.EnrollEmail;
-                                return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelVERIFYOTPError"), false);
+                                return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlLabelVERIFYOTPError"), false);
                             }
                         }
                         catch (Exception ex)
@@ -2037,7 +2087,7 @@ namespace Neos.IdentityServer.MultiFactor
                                 usercontext.WizPageID = 4;
                                 MFAUser reg = RuntimeRepository.GetMFAUser(Config, usercontext.UPN); // Rollback
                                 usercontext.MailAddress = reg.MailAddress;
-                                return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelVERIFYOTPError"), false);
+                                return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlLabelVERIFYOTPError"), false);
                             }
                         }
                         else
@@ -2046,7 +2096,7 @@ namespace Neos.IdentityServer.MultiFactor
                             usercontext.UIMode = ProviderPageMode.EnrollEmail;
                             MFAUser reg = RuntimeRepository.GetMFAUser(Config, usercontext.UPN); // Rollback
                             usercontext.MailAddress = reg.MailAddress;
-                            return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelVERIFYOTPError"), false);
+                            return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlLabelVERIFYOTPError"), false);
                         }
                 }
             }
@@ -2149,7 +2199,7 @@ namespace Neos.IdentityServer.MultiFactor
                                 {
                                     usercontext.WizPageID = 4;
                                     usercontext.UIMode = ProviderPageMode.EnrollPhone;
-                                    return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelVERIFYOTPError"), false);
+                                    return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlLabelVERIFYOTPError"), false);
                                 }
                                 else
                                 {
@@ -2194,7 +2244,7 @@ namespace Neos.IdentityServer.MultiFactor
                             {
                                 usercontext.WizPageID = 4;
                                 usercontext.UIMode = ProviderPageMode.EnrollPhone;
-                                return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelVERIFYOTPError"), false);
+                                return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlLabelVERIFYOTPError"), false);
                             }
                         }
                         catch (Exception ex)
@@ -2233,7 +2283,7 @@ namespace Neos.IdentityServer.MultiFactor
                                 usercontext.WizPageID = 4;
                                 MFAUser reg = RuntimeRepository.GetMFAUser(Config, usercontext.UPN); // Rollback
                                 usercontext.PhoneNumber = reg.PhoneNumber;
-                                return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelVERIFYOTPError"), false);
+                                return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlLabelVERIFYOTPError"), false);
                             }
                         }
                         else
@@ -2242,7 +2292,7 @@ namespace Neos.IdentityServer.MultiFactor
                             usercontext.UIMode = ProviderPageMode.EnrollPhone;
                             MFAUser reg = RuntimeRepository.GetMFAUser(Config, usercontext.UPN); // Rollback
                             usercontext.PhoneNumber = reg.PhoneNumber;
-                            return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelVERIFYOTPError"), false);
+                            return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlLabelVERIFYOTPError"), false);
                         }
                 }
             }
@@ -2327,6 +2377,7 @@ namespace Neos.IdentityServer.MultiFactor
                                 usercontext.NickName = string.Empty;
                             SetBiometricProviderKeyManagementOption(usercontext, context, proofData);
                             ValidateProviderManagementUrl(usercontext, context, proofData, PreferredMethod.Biometrics);
+                            SetProviderOverrideOption(usercontext, context, proofData, PreferredMethod.Biometrics);
                             GetAuthenticationData(usercontext, PreferredMethod.Biometrics);
                             if ((int)AuthenticationResponseKind.Error != PostAuthenticationRequest(usercontext, PreferredMethod.Biometrics))
                             {
@@ -2341,7 +2392,7 @@ namespace Neos.IdentityServer.MultiFactor
                             {
                                 usercontext.UIMode = ProviderPageMode.EnrollBiometrics;
                                 usercontext.WizPageID = 4;
-                                return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelVERIFYOTPError"), false);
+                                return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlLabelVERIFYOTPError"), false);
                             }
                         }
                         catch (Exception ex)
@@ -2361,7 +2412,7 @@ namespace Neos.IdentityServer.MultiFactor
                                 {
                                     usercontext.WizPageID = 4;
                                     usercontext.UIMode = ProviderPageMode.EnrollBiometrics;
-                                    return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelVERIFYOTPError"), false);
+                                    return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlLabelVERIFYOTPError"), false);
                                 }
                                 else
                                 {
@@ -2387,14 +2438,14 @@ namespace Neos.IdentityServer.MultiFactor
                             {
                                 usercontext.WizPageID = 4;
                                 usercontext.UIMode = ProviderPageMode.EnrollBiometrics;
-                                return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelVERIFYOTPError"), false);
+                                return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlLabelVERIFYOTPError"), false);
                             }
                         }
                         catch (Exception ex)
                         {
                             usercontext.UIMode = ProviderPageMode.EnrollBiometrics;
                             usercontext.WizPageID = 4;
-                            return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelVERIFYOTPError") + "<br><br><i>" + ex.Message + "</i>", false);
+                            return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlLabelVERIFYOTPError") + "<br><br><i>" + ex.Message + "</i>", false);
                         }
  /*                   case 4: // Code Validation
                         try
@@ -2447,7 +2498,7 @@ namespace Neos.IdentityServer.MultiFactor
                             string jserror = proofData.Properties["jserror"].ToString();
                             usercontext.WizPageID = 4;
                             usercontext.UIMode = ProviderPageMode.EnrollBiometrics;
-                            return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelVERIFYOTPError") + "<br><br><i>" + jserror + "</i>", false);
+                            return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlLabelVERIFYOTPError") + "<br><br><i>" + jserror + "</i>", false);
                         }
                         finally
                         {
@@ -2550,13 +2601,13 @@ namespace Neos.IdentityServer.MultiFactor
                             {
                                 usercontext.WizPageID = 4;
                                 usercontext.UIMode = ProviderPageMode.EnrollPin;
-                                return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelVERIFYOTPError"), false);
+                                return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlLabelVERIFYOTPError"), false);
                             }
                             else
                             {
                                 usercontext.WizPageID = 3;
                                 usercontext.UIMode = ProviderPageMode.EnrollPin;
-                                return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelVERIFYOTPSuccess"), true);
+                                return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlLabelVERIFYOTPSuccess"), true);
                             }
                         }
                         catch (Exception ex)
@@ -2586,14 +2637,14 @@ namespace Neos.IdentityServer.MultiFactor
                                 else
                                     usercontext.UIMode = ProviderPageMode.EnrollPin;
                                 usercontext.WizPageID = 3;
-                                return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelVERIFYOTPSuccess"), true);
+                                return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlLabelVERIFYOTPSuccess"), true);
                             }
                             catch (Exception)
                             {
                                 usercontext.UIMode = ProviderPageMode.EnrollPin;
                                 MFAUser reg = RuntimeRepository.GetMFAUser(Config, usercontext.UPN); // Rollback
                                 usercontext.PinCode = reg.PIN;
-                                return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelVERIFYOTPError"), false);
+                                return new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlLabelVERIFYOTPError"), false);
                             }
                         }
                         else
@@ -2602,7 +2653,7 @@ namespace Neos.IdentityServer.MultiFactor
                             usercontext.UIMode = ProviderPageMode.EnrollPin;
                             MFAUser reg = RuntimeRepository.GetMFAUser(Config, usercontext.UPN); // Rollback
                             usercontext.PinCode = reg.PIN;
-                            return new  AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelVERIFYOTPError"), false);
+                            return new  AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlLabelVERIFYOTPError"), false);
                         }
                 }
             }
@@ -2655,7 +2706,7 @@ namespace Neos.IdentityServer.MultiFactor
                 string displaykey = string.Empty;
 
                 if (usercontext.KeyStatus != SecretKeyStatus.Success)
-                    throw new Exception(Resources.GetString(ResourcesLocaleKind.Errors, "ErrorInvalidKey"));
+                    throw new Exception(Resources.GetString(ResourcesLocaleKind.UIErrors, "ErrorInvalidKey"));
             }
         }
 
@@ -2783,6 +2834,9 @@ namespace Neos.IdentityServer.MultiFactor
                         case PreferredMethod.Code: // Otp
                             RuntimeAuthProvider.GetProvider(PreferredMethod.Code).SetOverrideMethod(usercontext, kind);
                             break;
+                        case PreferredMethod.Biometrics: // Biometrics
+                            RuntimeAuthProvider.GetProvider(PreferredMethod.Biometrics).SetOverrideMethod(usercontext, kind);
+                            break;
                         case PreferredMethod.Email: // Email 
                             RuntimeAuthProvider.GetProvider(PreferredMethod.Email).SetOverrideMethod(usercontext, kind);
                             break;
@@ -2865,8 +2919,23 @@ namespace Neos.IdentityServer.MultiFactor
             IExternalProvider provider = RuntimeAuthProvider.GetAuthenticationProvider(Config, usercontext);
             if ((provider != null) && (provider.Enabled))
             {
-                provider.GetAuthenticationContext(usercontext);                
-                usercontext.UIMode = ProviderPageMode.SendAuthRequest;              
+                if (provider.Kind == PreferredMethod.Biometrics)
+                {
+                    if (usercontext.BioNotSupported)
+                    {
+                        usercontext.UIMode = ProviderPageMode.ChooseMethod;
+                    }
+                    else
+                    {
+                        provider.GetAuthenticationContext(usercontext);
+                        usercontext.UIMode = ProviderPageMode.SendAuthRequest;
+                    }
+                }
+                else
+                {
+                    provider.GetAuthenticationContext(usercontext);
+                    usercontext.UIMode = ProviderPageMode.SendAuthRequest;
+                }
             }
             else
                 usercontext.UIMode = ProviderPageMode.ChooseMethod;
@@ -2929,7 +2998,6 @@ namespace Neos.IdentityServer.MultiFactor
                 return (int)AuthenticationResponseKind.Error;
             }
         }
-
         
         /// <summary>
         /// SetAuthenticationResult method implementation
@@ -3199,7 +3267,7 @@ namespace Neos.IdentityServer.MultiFactor
             try
             {
                 if (!Utilities.ChedkEmailValidity(email, Config.MailProvider.AllowedDomains, Config.MailProvider.BlockedDomains, checkempty))
-                    throw new Exception(Resources.GetString(ResourcesLocaleKind.Errors, "ErrorEmailException"));
+                    throw new Exception(Resources.GetString(ResourcesLocaleKind.UIErrors, "ErrorEmailException"));
                 else
                     return;
             }
@@ -3218,7 +3286,7 @@ namespace Neos.IdentityServer.MultiFactor
             try
             {
                 if (!Utilities.ValidatePhoneNumber(phone, checkempty))
-                   throw new Exception(Resources.GetString(ResourcesLocaleKind.Errors, "ErrorInvalidPhoneException"));
+                   throw new Exception(Resources.GetString(ResourcesLocaleKind.UIErrors, "ErrorInvalidPhoneException"));
                 else
                    return;
             }
@@ -3239,16 +3307,16 @@ namespace Neos.IdentityServer.MultiFactor
                 if (checkempty)
                 {
                     if (string.IsNullOrEmpty(strpin))
-                        throw new Exception(Resources.GetString(ResourcesLocaleKind.Errors, "ErrorPinValue"));
+                        throw new Exception(Resources.GetString(ResourcesLocaleKind.UIErrors, "ErrorPinValue"));
                     if (strpin.Length > 9)
-                        throw new Exception(string.Format(Resources.GetString(ResourcesLocaleKind.Errors, "ErrorPinLength"), 9));
+                        throw new Exception(string.Format(Resources.GetString(ResourcesLocaleKind.UIErrors, "ErrorPinLength"), 9));
                     if (strpin.Length < 4)
-                        throw new Exception(string.Format(Resources.GetString(ResourcesLocaleKind.Errors, "ErrorPinLength"), 4));
+                        throw new Exception(string.Format(Resources.GetString(ResourcesLocaleKind.UIErrors, "ErrorPinLength"), 4));
                     if (strpin.Length != Config.PinLength)
-                        throw new Exception(string.Format(Resources.GetString(ResourcesLocaleKind.Errors, "ErrorPinLength"), Config.PinLength));
+                        throw new Exception(string.Format(Resources.GetString(ResourcesLocaleKind.UIErrors, "ErrorPinLength"), Config.PinLength));
                 }
                 if (Convert.ToInt32(strpin) < 0)
-                   throw new Exception(Resources.GetString(ResourcesLocaleKind.Errors, "ErrorPinValue"));
+                   throw new Exception(Resources.GetString(ResourcesLocaleKind.UIErrors, "ErrorPinValue"));
             }
             catch (Exception ex)
             {
@@ -3274,26 +3342,24 @@ namespace Neos.IdentityServer.MultiFactor
         {
             if ((message.Operation == (byte)NotificationsKind.ConfigurationReload) || (message.Operation == (byte)NotificationsKind.ConfigurationCreated) || (message.Operation == (byte)NotificationsKind.ConfigurationDeleted))
             {
-                Trace.TraceInformation("AuthenticationProvider:Configuration changed !");
                 _config = CFGUtilities.ReadConfiguration();
                 string computer = message.Text;
                 if (string.IsNullOrEmpty(computer))
                     computer = Environment.MachineName;
                 else
                     computer = computer.Replace("$", "");
-                Trace.TraceInformation("AuthenticationProvider:Configuration loaded !");
                 ResourcesLocale Resources = new ResourcesLocale(CultureInfo.InstalledUICulture.LCID);
                 switch (message.Operation)
                 {
                     case (byte)NotificationsKind.ConfigurationReload:
                     default:
-                        Log.WriteEntry(string.Format(Resources.GetString(ResourcesLocaleKind.Informations, "InfosConfigurationReloaded"), computer), EventLogEntryType.Warning, 9999);
+                        Log.WriteEntry(string.Format(Resources.GetString(ResourcesLocaleKind.UIInformations, "InfosConfigurationReloaded"), computer), EventLogEntryType.Warning, 9999);
                         break;
                     case (byte)NotificationsKind.ConfigurationCreated:
-                        Log.WriteEntry(string.Format(Resources.GetString(ResourcesLocaleKind.Informations, "InfosConfigurationCacheCreated"), computer), EventLogEntryType.Warning, 9999);
+                        Log.WriteEntry(string.Format(Resources.GetString(ResourcesLocaleKind.UIInformations, "InfosConfigurationCacheCreated"), computer), EventLogEntryType.Warning, 9999);
                         break;
                     case (byte)NotificationsKind.ConfigurationDeleted:
-                        Log.WriteEntry(string.Format(Resources.GetString(ResourcesLocaleKind.Informations, "InfosConfigurationCacheDeleted"), computer), EventLogEntryType.Warning, 9999);
+                        Log.WriteEntry(string.Format(Resources.GetString(ResourcesLocaleKind.UIInformations, "InfosConfigurationCacheDeleted"), computer), EventLogEntryType.Warning, 9999);
                         break;
                 }
             }
@@ -3352,7 +3418,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// HasAccessToOptions method
         /// </summary>
-        internal bool HasAccessToOptions(IExternalProvider prov)
+        public bool HasAccessToOptions(IExternalProvider prov)
         {
             if (prov == null)
                 return false;
@@ -3362,15 +3428,15 @@ namespace Neos.IdentityServer.MultiFactor
                 return false;
             if (Config.UserFeatures.CanManageOptions() || Config.UserFeatures.CanManagePassword())
                 return true;
-            if (Config.UserFeatures.CanEnrollDevices() && (prov.WizardEnabled))
-               return true;
+            if (Config.UserFeatures.CanEnrollDevices() && HasWizardAvailable(prov))
+                return true;
             return false;
         }
 
         /// <summary>
         /// HasStrictAccessToOptions method
         /// </summary>
-        internal bool HasStrictAccessToOptions(IExternalProvider prov)
+        public bool HasStrictAccessToOptions(IExternalProvider prov)
         {
             if (prov == null)
                 return false;
@@ -3378,15 +3444,29 @@ namespace Neos.IdentityServer.MultiFactor
                 return false;
             if (!Config.UserFeatures.CanAccessOptions())
                 return false;
-            if (Config.UserFeatures.CanEnrollDevices() && (prov.WizardEnabled))
+            if (Config.UserFeatures.CanEnrollDevices() && prov.WizardEnabled)
                return true;
+            return false;
+        }
+
+        /// <summary>
+        /// HasWizardAvailable method implementation
+        /// </summary>
+        private bool HasWizardAvailable(IExternalProvider prov)
+        {
+            List<IExternalProvider> lst = RuntimeAuthProvider.GeActiveProvidersList();
+            foreach (IExternalProvider itm in lst)
+            {
+                if (itm.WizardEnabled)
+                    return true;
+            }
             return false;
         }
 
         /// <summary>
         /// HasAccessToPinCode method
         /// </summary>
-        internal bool HasAccessToPinCode(IExternalProvider prov)
+        public bool HasAccessToPinCode(IExternalProvider prov)
         {
             if (prov == null)
                 return false;
@@ -3400,7 +3480,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// KeepMySelectedOptionOn method
         /// </summary>
-        internal bool KeepMySelectedOptionOn()
+        public bool KeepMySelectedOptionOn()
         {
             return Config.KeepMySelectedOptionOn;
         }

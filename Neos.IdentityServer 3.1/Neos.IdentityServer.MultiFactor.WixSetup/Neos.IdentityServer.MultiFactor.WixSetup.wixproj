@@ -113,6 +113,14 @@
       <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
       <RefTargetDir>INSTALLFOLDER</RefTargetDir>
     </ProjectReference>
+    <ProjectReference Include="..\Neos.IdentityServer.MultiFactor.PresenationSample\Neos.IdentityServer.MultiFactor.PresentationSample.csproj">
+      <Name>Neos.IdentityServer.MultiFactor.PresentationSample</Name>
+      <Project>{1500b83a-39cd-420c-a617-daeba3fd0c96}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLFOLDER</RefTargetDir>
+    </ProjectReference>
     <ProjectReference Include="..\Neos.IdentityServer.Multifactor.Samples\Neos.IdentityServer.MultiFactor.Samples.csproj">
       <Name>Neos.IdentityServer.MultiFactor.Samples</Name>
       <Project>{c773c4c7-4b95-4836-b770-66e9dd3f42f3}</Project>

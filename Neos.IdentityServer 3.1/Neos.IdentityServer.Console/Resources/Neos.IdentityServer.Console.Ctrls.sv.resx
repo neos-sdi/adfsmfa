@@ -565,7 +565,7 @@
     <value>Maximalt antal rader</value>
   </data>
   <data name="CTRLWEBAUTHNEXTENSIONS" xml:space="preserve">
-    <value>Extensions (authnSe)</value>
+    <value>Extensions (exts)</value>
   </data>
   <data name="CTRLWEBAUTHNRESIDENTKEY" xml:space="preserve">
     <value>Kräv Resident Key</value>
@@ -728,5 +728,8 @@
   </data>
   <data name="CTRLSECGENRSAKEY" xml:space="preserve">
     <value>RSA-huvudnyckel</value>
+  </data>
+  <data name="CTRLWEBAUTHNCONTRAINEDMETADATA" xml:space="preserve">
+    <value>Använd tjänsten Begränsade metadata (för ADFS-servergrupp som inte har tillgång till Internet)</value>
   </data>
 </root>

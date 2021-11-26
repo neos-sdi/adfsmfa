@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2020 abergs (https://github.com/abergs/fido2-net-lib)                                                                                                                      //                        
+// Copyright (c) 2021 abergs (https://github.com/abergs/fido2-net-lib)                                                                                                                      //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -17,6 +17,13 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
     public class Fido2Configuration
     {
         /// <summary>
+        /// Create the configuration for Fido2
+        /// </summary>
+        public Fido2Configuration()
+        {
+        }
+
+        /// <summary>
         /// This member specifies a time, in milliseconds, that the caller is willing to wait for the call to complete. 
         /// This is treated as a hint, and MAY be overridden by the client.
         /// </summary>
@@ -25,12 +32,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
         /// <summary>
         /// TimestampDriftTolerance specifies a time in milliseconds that will be allowed for clock drift on a timestamped attestation.
         /// </summary>
-        public int TimestampDriftTolerance { get; set; } = 30000; //Pretty sure 0 will never work - need a better default?
-
-        /// <summary>
-        /// When checking attestation, require the attestation to chain to a known root
-        /// </summary>
-        public bool RequireValidAttestationRoot { get; set; } = false;
+        public int TimestampDriftTolerance { get; set; } = 0; //Pretty sure 0 will never work - need a better default?
 
         /// <summary>
         /// The size of the challenges sent to the client
@@ -56,22 +58,5 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
         /// Server origin, including protocol host and port.
         /// </summary>
         public string Origin { get; set; }
-
-        /// <summary>
-        /// MDSAccessKey
-        /// </summary>
-        public string MDSAccessKey { get; set; }
-
-        /// <summary>
-        /// MDSCacheDirPath
-        /// </summary>
-        public string MDSCacheDirPath { get; set; } 
-
-        /// <summary>
-        /// Create the configuration for Fido2
-        /// </summary>
-        public Fido2Configuration()
-        {
-        }
     }
 }

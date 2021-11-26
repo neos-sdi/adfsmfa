@@ -294,4 +294,7 @@ Podrá utilizar la validación de MFA en el futuro.</value>
   <data name="HtmlUIMNickNamesMessage" xml:space="preserve">
     <value>Introduzca el nombre de su dispositivo biométrico o deje el vacío y, a continuación, seleccione "Continuar"</value>
   </data>
+  <data name="HtmlUIMRegisterDevice" xml:space="preserve">
+    <value>Registrar dispositivo</value>
+  </data>
 </root>

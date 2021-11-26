@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2020 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
+// Copyright (c) 2021 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -19,6 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using Microsoft.IdentityServer.Web.Authentication.External;
+using Neos.IdentityServer.MultiFactor.Common;
 using Neos.IdentityServer.MultiFactor.Data;
 
 namespace Neos.IdentityServer.MultiFactor
@@ -28,7 +29,7 @@ namespace Neos.IdentityServer.MultiFactor
     /// </summary>
     public class AdapterPresentation : IAdapterPresentation, IAdapterPresentationForm
     {
-        private BaseMFAPresentation _adapter = null;
+        private BasePresentation _adapter = null;
         private static List<PlaceHolders> _holders = new List<PlaceHolders>();
 
         #region Constructors
@@ -45,22 +46,30 @@ namespace Neos.IdentityServer.MultiFactor
             switch (provider.Config.UiKind)
             {
                 case ADFSUserInterfaceKind.Default2019:
-                    _adapter = new AdapterPresentation2019(provider, context)
+                    _adapter = new AdapterPresentation2019(context.Lcid)
                     {
                         UseUIPaginated = provider.Config.UseUIPaginated
                     };
                     break;
                 case ADFSUserInterfaceKind.Default:
-                    _adapter = new AdapterPresentationDefault(provider, context)
+                    _adapter = new AdapterPresentationDefault(context.Lcid)
                     {
                         UseUIPaginated = false
                     };
                     break;
                 case ADFSUserInterfaceKind.Custom:
-                    _adapter = LoadCustomAdapterPresentation(provider, context);
+                    _adapter = LoadCustomAdapterPresentation(in provider, context.Lcid);
                     _adapter.UseUIPaginated = provider.Config.UseUIPaginated;
                     break;
             }
+            _adapter.Provider = provider;
+            _adapter.Context = new AuthenticationContext(context)
+            {
+                UIMessage = string.Empty
+            };
+            _adapter.IsPermanentFailure = false;
+            _adapter.IsMessage = true;
+            _adapter.DisableOptions = false;
         }
 
         /// <summary>
@@ -76,22 +85,30 @@ namespace Neos.IdentityServer.MultiFactor
             switch (provider.Config.UiKind)
             {
                 case ADFSUserInterfaceKind.Default2019:
-                    _adapter = new AdapterPresentation2019(provider, context, message)
+                    _adapter = new AdapterPresentation2019(context.Lcid)
                     {
                         UseUIPaginated = provider.Config.UseUIPaginated
                     };
                     break;
                 case ADFSUserInterfaceKind.Default:
-                    _adapter = new AdapterPresentationDefault(provider, context)
+                    _adapter = new AdapterPresentationDefault(context.Lcid)
                     {
                         UseUIPaginated = false
                     };
                     break;
                 case ADFSUserInterfaceKind.Custom:
-                    _adapter = LoadCustomAdapterPresentation(provider, context);
+                    _adapter = LoadCustomAdapterPresentation(in provider, context.Lcid);
                     _adapter.UseUIPaginated = provider.Config.UseUIPaginated;
                     break;
             }
+            _adapter.Provider = provider;
+            _adapter.Context = new AuthenticationContext(context)
+            {
+                UIMessage = message
+            };
+            _adapter.IsPermanentFailure = (_adapter.Context.TargetUIMode == ProviderPageMode.DefinitiveError);
+            _adapter.IsMessage = (_adapter.Context.TargetUIMode != ProviderPageMode.DefinitiveError);
+            _adapter.DisableOptions = false;
         }
 
         /// <summary>
@@ -107,22 +124,30 @@ namespace Neos.IdentityServer.MultiFactor
             switch (provider.Config.UiKind)
             {
                 case ADFSUserInterfaceKind.Default2019:
-                    _adapter = new AdapterPresentation2019(provider, context, message, ismessage)
+                    _adapter = new AdapterPresentation2019(context.Lcid)
                     {
                         UseUIPaginated = provider.Config.UseUIPaginated
                     };
                     break;
                 case ADFSUserInterfaceKind.Default:
-                    _adapter = new AdapterPresentationDefault(provider, context)
+                    _adapter = new AdapterPresentationDefault(context.Lcid)
                     {
                         UseUIPaginated = false
                     };
                     break;
                 case ADFSUserInterfaceKind.Custom:
-                    _adapter = LoadCustomAdapterPresentation(provider, context);
+                    _adapter = LoadCustomAdapterPresentation(in provider, context.Lcid);
                     _adapter.UseUIPaginated = provider.Config.UseUIPaginated;
                     break;
             }
+            _adapter.Provider = provider;
+            _adapter.Context = new AuthenticationContext(context)
+            {
+                UIMessage = message
+            };
+            _adapter.IsPermanentFailure = (_adapter.Context.TargetUIMode == ProviderPageMode.DefinitiveError);
+            _adapter.IsMessage = ismessage;
+            _adapter.DisableOptions = false;
         }
 
         /// <summary>
@@ -138,22 +163,31 @@ namespace Neos.IdentityServer.MultiFactor
             switch (provider.Config.UiKind)
             {
                 case ADFSUserInterfaceKind.Default2019:
-                    _adapter = new AdapterPresentation2019(provider, context, suite)
+                    _adapter = new AdapterPresentation2019(context.Lcid)
                     {
                         UseUIPaginated = provider.Config.UseUIPaginated
                     };
                     break;
                 case ADFSUserInterfaceKind.Default:
-                    _adapter = new AdapterPresentationDefault(provider, context)
+                    _adapter = new AdapterPresentationDefault(context.Lcid)
                     {
                         UseUIPaginated = false
                     };
                     break;
                 case ADFSUserInterfaceKind.Custom:
-                    _adapter = LoadCustomAdapterPresentation(provider, context);
+                    _adapter = LoadCustomAdapterPresentation(in provider, context.Lcid);
                     _adapter.UseUIPaginated = provider.Config.UseUIPaginated;
                     break;
             }
+            _adapter.Provider = provider;
+            _adapter.Context = new AuthenticationContext(context)
+            {
+                UIMessage = string.Empty,
+                TargetUIMode = suite
+            };
+            _adapter.IsPermanentFailure = (_adapter.Context.TargetUIMode == ProviderPageMode.DefinitiveError);
+            _adapter.IsMessage = (_adapter.Context.TargetUIMode != ProviderPageMode.DefinitiveError);
+            _adapter.DisableOptions = false;
         }
 
         /// <summary>
@@ -169,22 +203,31 @@ namespace Neos.IdentityServer.MultiFactor
             switch (provider.Config.UiKind)
             {
                 case ADFSUserInterfaceKind.Default2019:
-                    _adapter = new AdapterPresentation2019(provider, context, message, suite, disableoptions)
+                    _adapter = new AdapterPresentation2019(context.Lcid)
                     {
                         UseUIPaginated = provider.Config.UseUIPaginated
                     };
                     break;
                 case ADFSUserInterfaceKind.Default:
-                    _adapter = new AdapterPresentationDefault(provider, context)
+                    _adapter = new AdapterPresentationDefault(context.Lcid)
                     {
                         UseUIPaginated = false
                     };
                     break;
                 case ADFSUserInterfaceKind.Custom:
-                    _adapter = LoadCustomAdapterPresentation(provider, context);
+                    _adapter = LoadCustomAdapterPresentation(in provider, context.Lcid);
                     _adapter.UseUIPaginated = provider.Config.UseUIPaginated;
                     break;
             }
+            _adapter.Provider = provider;
+            _adapter.Context = new AuthenticationContext(context)
+            {
+                TargetUIMode = suite,
+                UIMessage = message
+            };
+            _adapter.IsPermanentFailure = (_adapter.Context.TargetUIMode == ProviderPageMode.DefinitiveError);
+            _adapter.IsMessage = (_adapter.Context.TargetUIMode != ProviderPageMode.DefinitiveError);
+            _adapter.DisableOptions = disableoptions;
         }
         #endregion
 
@@ -237,7 +280,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// Resources property
         /// </summary>
-        public ResourcesLocale Resources
+        public ResourceLocaleBase Resources
         {
             get { return _adapter.Resources; }
             internal set { _adapter.Resources = value; }
@@ -615,7 +658,7 @@ namespace Neos.IdentityServer.MultiFactor
                 _holders.Add(new PlaceHolders() { TagName = "##EMAILADDRESS##", FiledName = "email" });
                 _holders.Add(new PlaceHolders() { TagName = "##PHONENUMBER##", FiledName = "phone" });
                 _holders.Add(new PlaceHolders() { TagName = "##SELECTEDLINK##", FiledName = "selectedlink" });
-                _holders.Add(new PlaceHolders() { TagName = "##OPTIONS##", FiledName = "options" });
+                _holders.Add(new PlaceHolders() { TagName = "##OPTIONS##", FiledName = "mfaoptions" });
                 _holders.Add(new PlaceHolders() { TagName = "##DISABLEMFA##", FiledName = "disablemfa" });
                 _holders.Add(new PlaceHolders() { TagName = "##ISPROVIDER##", FiledName = "isprovider" });
                 _holders.Add(new PlaceHolders() { TagName = "##SELECTOPTIONS##", FiledName = "selectopt" });
@@ -626,30 +669,39 @@ namespace Neos.IdentityServer.MultiFactor
                 _holders.Add(new PlaceHolders() { TagName = "##CNFPASS##", FiledName = "cnfpwdedit" });
                 _holders.Add(new PlaceHolders() { TagName = "##MANAGEACCOUNT##", FiledName = "manageaccount" });
                 _holders.Add(new PlaceHolders() { TagName = "##OPTIONITEM##", FiledName = "optionitem" });
-                }
+                _holders.Add(new PlaceHolders() { TagName = "##PLATFORM##", FiledName = "userplatform" });
+                _holders.Add(new PlaceHolders() { TagName = "##LANGUAGE##", FiledName = "userlanguage" });
+            }
         }
         #endregion
 
         #region Custom AdapterPresentation
-        /// <summary>
-        /// LoadCustomAdapterPresentation method implmentation
-        /// </summary>
-        private static BaseMFAPresentation LoadCustomAdapterPresentation(AuthenticationProvider provider, IAuthenticationContext context)
+        private static Type GetCustomAdapterPresentationType(in AuthenticationProvider provider)
         {
-            // provider.Config;
             string AssemblyFulldescription = provider.Config.CustomAdapterPresentation;
             if (string.IsNullOrEmpty(AssemblyFulldescription))
                 return null;
             Assembly assembly = Assembly.Load(Utilities.ParseAssembly(AssemblyFulldescription));
             if (assembly == null)
                 return null;
-
-            Type _typetoload = assembly.GetType(Utilities.ParseType(AssemblyFulldescription));
-            if (_typetoload == null)
+            Type typetoload = assembly.GetType(Utilities.ParseType(AssemblyFulldescription));
+            if (typetoload == null)
                 return null;
 
-            if (_typetoload.IsClass && !_typetoload.IsAbstract && _typetoload.IsAssignableFrom(typeof(BaseMFAPresentation)))
-                return (BaseMFAPresentation)Activator.CreateInstance(_typetoload, true); // Allow Calling internal Constructors
+            if (typetoload.IsClass && !typetoload.IsAbstract && (typetoload.BaseType.IsAssignableFrom(typeof(BasePresentation)) || typetoload.BaseType.IsAssignableFrom(typeof(BaseMFAPresentation))))
+               return typetoload;
+            else
+                return null;
+        }
+
+        /// <summary>
+        /// LoadCustomAdapterPresentation method implmentation
+        /// </summary>
+        private static BasePresentation LoadCustomAdapterPresentation(in AuthenticationProvider provider, int lcid)
+        {
+            Type typetoload = GetCustomAdapterPresentationType(provider);
+            if (typetoload != null)
+                return (BasePresentation)Activator.CreateInstance(typetoload, lcid); 
             else
                 return null;
         }
@@ -666,7 +718,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// Constructor implementation
         /// </summary>
-        protected BasePresentation()
+        public BasePresentation()
         {
 
         }
@@ -674,88 +726,28 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// Constructor implementation
         /// </summary>
-        protected BasePresentation(AuthenticationProvider provider, IAuthenticationContext context)
+        public BasePresentation(int lcid)
         {
-            this.Provider = provider;
-            this.Context = new AuthenticationContext(context)
-            {
-                UIMessage = string.Empty
-            };
-            this.IsPermanentFailure = false;
-            this.IsMessage = true;
-            this.DisableOptions = false;
-        }
-
-        /// <summary>
-        /// Constructor overload implementation
-        /// </summary>       
-        protected BasePresentation(AuthenticationProvider provider, IAuthenticationContext context, string message)
-        {
-            this.Provider = provider;
-            this.Context = new AuthenticationContext(context)
-            {
-                UIMessage = message
-            };
-            this.IsPermanentFailure = (this.Context.TargetUIMode == ProviderPageMode.DefinitiveError);
-            this.IsMessage = (this.Context.TargetUIMode != ProviderPageMode.DefinitiveError);
-            this.DisableOptions = false;
-        }
-
-        /// <summary>
-        /// Constructor overload implementation
-        /// </summary>
-        protected BasePresentation(AuthenticationProvider provider, IAuthenticationContext context, string message, bool ismessage)
-        {
-            this.Provider = provider;
-            this.Context = new AuthenticationContext(context)
-            {
-                UIMessage = message
-            };
-            this.IsPermanentFailure = (this.Context.TargetUIMode == ProviderPageMode.DefinitiveError);
-            this.IsMessage = ismessage;
-            this.DisableOptions = false;
-        }
-
-        /// <summary>
-        /// Constructor overload implementation
-        /// </summary>
-        public BasePresentation(AuthenticationProvider provider, IAuthenticationContext context, ProviderPageMode suite)
-        {
-            this.Provider = provider;
-            this.Context = new AuthenticationContext(context)
-            {
-                UIMessage = string.Empty,
-                TargetUIMode = suite
-            };
-            this.IsPermanentFailure = (this.Context.TargetUIMode == ProviderPageMode.DefinitiveError);
-            this.IsMessage = (this.Context.TargetUIMode != ProviderPageMode.DefinitiveError);
-            this.DisableOptions = false;
-        }
-
-        /// <summary>
-        /// Constructor overload implementation
-        /// </summary>
-        protected BasePresentation(AuthenticationProvider provider, IAuthenticationContext context, string message, ProviderPageMode suite, bool disableoptions = false)
-        {
-            this.Provider = provider;
-            this.Context = new AuthenticationContext(context)
-            {
-                TargetUIMode = suite,
-                UIMessage = message
-            };
-            this.IsPermanentFailure = (this.Context.TargetUIMode == ProviderPageMode.DefinitiveError);
-            this.IsMessage = (this.Context.TargetUIMode != ProviderPageMode.DefinitiveError);
-            this.DisableOptions = disableoptions;
+            this.Resources = new ResourcesLocale(lcid);
         }
 
         #region Properties
+        /// <summary>
+        /// Resources property
+        /// </summary>
+        public virtual ResourceLocaleBase Resources
+        {
+            get;
+            set;
+        }
+
         /// <summary>
         /// UiKind property 
         /// </summary>
         public virtual ADFSUserInterfaceKind UiKind
         {
             get;
-            set;
+            internal set;
         }
 
         /// <summary>
@@ -811,7 +803,6 @@ namespace Neos.IdentityServer.MultiFactor
             get;
             internal set;
         }
-
         #endregion
 
         #region ADFS Interfaces
@@ -829,6 +820,10 @@ namespace Neos.IdentityServer.MultiFactor
             string result = string.Empty;
             switch (Context.UIMode)
             {
+                case ProviderPageMode.PreSet:
+                    result += GetFormRenderHtmlHeader(Context);
+                    result += GetFormHtmlPreset(Context);
+                    break;
                 case ProviderPageMode.Identification:
                     result += GetFormRenderHtmlHeader(Context);
                     result += GetFormHtmlIdentification(Context);
@@ -920,6 +915,10 @@ namespace Neos.IdentityServer.MultiFactor
             string result = GetFormPreRenderHtmlCSS(Context);
             switch (Context.UIMode)
             {
+                case ProviderPageMode.PreSet:
+                    result += GetFormPreRenderHtmlHeader(Context);
+                    result += GetFormPreRenderHtmlPreset(Context);
+                    break;
                 case ProviderPageMode.Identification:
                     result += GetFormPreRenderHtmlHeader(Context);
                     result += GetFormPreRenderHtmlIdentification(Context);
@@ -1005,6 +1004,8 @@ namespace Neos.IdentityServer.MultiFactor
         #endregion
 
         #region Abstract methods
+        public abstract string GetFormHtmlPreset(AuthenticationContext usercontext);
+        public abstract string GetFormPreRenderHtmlPreset(AuthenticationContext usercontext);
         public abstract string GetFormPreRenderHtmlIdentification(AuthenticationContext usercontext);
         public abstract string GetFormHtmlIdentification(AuthenticationContext usercontext);
         public abstract string GetFormPreRenderHtmlRegistration(AuthenticationContext usercontext);
@@ -1076,7 +1077,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// Constructor implementation
         /// </summary>
-        protected BaseMFAPresentation():base()
+        public BaseMFAPresentation()
         {
 
         }
@@ -1084,53 +1085,10 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// Constructor implementation
         /// </summary>
-        protected BaseMFAPresentation(AuthenticationProvider provider, IAuthenticationContext context):base(provider, context)
+        public BaseMFAPresentation(int lcid):base(lcid)
         {
-            this.Resources = new ResourcesLocale(Context.Lcid);
-        }
 
-        /// <summary>
-        /// Constructor overload implementation
-        /// </summary>       
-        protected BaseMFAPresentation(AuthenticationProvider provider, IAuthenticationContext context, string message): base(provider, context, message)
-        {
-            this.Resources = new ResourcesLocale(Context.Lcid);
         }
-
-        /// <summary>
-        /// Constructor overload implementation
-        /// </summary>
-        protected BaseMFAPresentation(AuthenticationProvider provider, IAuthenticationContext context, string message, bool ismessage): base(provider, context, message, ismessage)
-        {
-            this.Resources = new ResourcesLocale(Context.Lcid);
-        }
-
-        /// <summary>
-        /// Constructor overload implementation
-        /// </summary>
-        public BaseMFAPresentation(AuthenticationProvider provider, IAuthenticationContext context, ProviderPageMode suite): base(provider, context, suite)
-        {
-            this.Resources = new ResourcesLocale(Context.Lcid);
-        }
-
-        /// <summary>
-        /// Constructor overload implementation
-        /// </summary>
-        protected BaseMFAPresentation(AuthenticationProvider provider, IAuthenticationContext context, string message, ProviderPageMode suite, bool disableoptions = false): base(provider, context, message, suite, disableoptions)
-        {
-            this.Resources = new ResourcesLocale(Context.Lcid);
-        }
-
-        #region Properties
-        /// <summary>
-        /// Resources property
-        /// </summary>
-        public virtual ResourcesLocale Resources
-        {
-            get;
-            internal set;
-        }
-        #endregion
 
         #region ADFS Interfaces
         /// <summary>
@@ -1138,7 +1096,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public override string GetPageTitle(int lcid)
         {
-            return Resources.GetString(ResourcesLocaleKind.Titles, "TitlePageTitle");
+            return Resources.GetString(ResourcesLocaleKind.UITitles, "TitlePageTitle");
         }
 
         /// <summary>
@@ -1153,7 +1111,7 @@ namespace Neos.IdentityServer.MultiFactor
                 if (!String.IsNullOrEmpty(usercontext.UIMessage))
                     result += "<div id=\"error\" class=\"fieldMargin error smallText\"><label id=\"errorText\" name=\"errorText\" for=\"\">" + usercontext.UIMessage + "</label></div>";
                 else
-                    result += "<div id=\"error\" class=\"fieldMargin error smallText\"><label id=\"errorText\" name=\"errorText\" for=\"\">" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlErrorRestartSession") + "</label></div>";
+                    result += "<div id=\"error\" class=\"fieldMargin error smallText\"><label id=\"errorText\" name=\"errorText\" for=\"\">" + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlErrorRestartSession") + "</label></div>";
             }
             else
             {
@@ -1165,6 +1123,14 @@ namespace Neos.IdentityServer.MultiFactor
                     else
                         result += "<div id=\"error\" class=\"fieldMargin error smallText\"><label id=\"errorText\" name=\"errorText\" for=\"\">" + usercontext.UIMessage + "</label></div>";
                 }
+              /*  else
+                {
+                    result += "<br/>";
+                    if (IsMessage)
+                        result += "<div id=\"error\" class=\"fieldMargin smallText\" style=\"color: #6FA400\"><label id=\"errorText\" name=\"errorText\" for=\"\">" + usercontext.UIMessage + "</label></div>";
+                    else
+                        result += "<div id=\"error\" class=\"fieldMargin error smallText\"><label id=\"errorText\" name=\"errorText\" for=\"\">" + usercontext.UIMessage + "</label></div>";
+                } */
             }
             return result;
         }
@@ -1198,6 +1164,7 @@ namespace Neos.IdentityServer.MultiFactor
             result += "width: 342px;";
             result += "background-color: transparent;";
             result += "}" + CR;
+
             if (!removetag)
                 return "<style>" + result + "</style>" + CR + CR;
             else
@@ -1207,11 +1174,31 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// GetFormPreRenderHtmlHeader method implementation
         /// </summary>
+        protected override string GetFormRenderHtmlHeader(AuthenticationContext usercontext)
+        {
+            string result = "<script type=\"text/javascript\">" + CR;
+            result += "if (window.addEventListener)" + CR;
+            result += "{" + CR;
+            result += "   window.addEventListener('load', RemoveADFSHtmlHeader, false);" + CR;
+            result += "}" + CR;
+            result += "else if (window.attachEvent)" + CR;
+            result += "{" + CR;
+            result += "   window.attachEvent('onload', RemoveADFSHtmlHeader);" + CR;
+            result += "}" + CR;
+            result += "</script>" + CR;
+            return result;
+        }
+
+        /// <summary>
+        /// GetFormPreRenderHtmlHeader method implementation
+        /// </summary>
         protected override string GetFormPreRenderHtmlHeader(AuthenticationContext usercontext)
         {
+            // string result = "<meta http-equiv = \"Accept-CH\" content = \"Sec-CH-UA, Sec-CH-UA-Platform, Sec-CH-UA-Mobile, Sec-CH-UA-Full-Version, Sec-CH-UA-Platform-Version\" >" + CR;
             string result = "<script type='text/javascript'>" + CR;
             result += "function RemoveADFSHtmlHeader()" + CR;
             result += "{" + CR;
+
             RegistryVersion reg = new RegistryVersion();
             if (reg.IsWindows2012R2)
             {
@@ -1230,6 +1217,7 @@ namespace Neos.IdentityServer.MultiFactor
                 result += "      title.style.display = \"none\";" + CR;
                 result += "   }" + CR;
             }
+
             if (WebThemeManagerClient.HasRelyingPartyTheme(usercontext))
             {
                 Dictionary<WebThemeAddressKind, string> dic = WebThemeManagerClient.GetAddresses(usercontext);
@@ -1243,33 +1231,93 @@ namespace Neos.IdentityServer.MultiFactor
                         result += "   document.getElementsByTagName('link')[0].href = \"" + dic[WebThemeAddressKind.StyleSheet].ToString() + "\";" + CR;
                 }
             }
+
             result += "   return true;" + CR;
             result += "}" + CR;
             result += "</script>" + CR + CR;
             return result;
         }
+        #endregion
 
+        #region Preset
         /// <summary>
-        /// GetFormPreRenderHtmlHeader method implementation
+        /// GetFormHtmlPreset method implementation
         /// </summary>
-        protected override string GetFormRenderHtmlHeader(AuthenticationContext usercontext)
+        public override string GetFormHtmlPreset(AuthenticationContext usercontext)
         {
             string result = "<script type=\"text/javascript\">" + CR;
             result += "if (window.addEventListener)" + CR;
             result += "{" + CR;
-            result += "   window.addEventListener('load', RemoveADFSHtmlHeader, false);" + CR;
+            result += "   window.addEventListener('load', QueryUserSessionProperties, false);" + CR;
             result += "}" + CR;
             result += "else if (window.attachEvent)" + CR;
             result += "{" + CR;
-            result += "   window.attachEvent('onload', RemoveADFSHtmlHeader);" + CR;
+            result += "   window.attachEvent('onload', QueryUserSessionProperties);" + CR;
             result += "}" + CR;
-            result += "</script>" + CR;
+            result += "</script>" + CR + CR;
 
+            result += "<form method=\"post\" id=\"presetForm\" >" + CR;
+            result += GetPartHtmlDonut();
+
+            result += "<input id=\"context\" type=\"hidden\" name=\"Context\" value=\"%Context%\"/>" + CR;
+            result += "<input id=\"authMethod\" type=\"hidden\" name=\"AuthMethod\" value=\"%AuthMethod%\"/>" + CR;
+            result += "<input id=\"##PLATFORM##\" type=\"hidden\" name=\"##PLATFORM##\" />" + CR;
+            result += "<input id=\"##LANGUAGE##\" type=\"hidden\" name=\"##LANGUAGE##\" />" + CR;
+            result += "</form>" + CR;
+            return result;
+
+        }
+
+        public override string GetFormPreRenderHtmlPreset(AuthenticationContext usercontext)
+        {
+            string result = "<script type='text/javascript'>" + CR;
+            result += "function QueryUserSessionProperties(frm)" + CR;
+            result += "{" + CR;
+            result += "   var xplatform = document.getElementById('userplatform');" + CR;
+            result += "   try" + CR;
+            result += "   {" + CR;
+            result += "      if (xplatform)" + CR;
+            result += "      {" + CR;
+            result += "         xplatform.value = navigator.userAgentData.platform;" + CR;
+            result += "      }" + CR;
+            result += "   }" + CR;
+            result += "   catch(e)" + CR;
+            result += "   {" + CR;
+            result += "      try" + CR;
+            result += "      {" + CR;
+            result += "         if (xplatform)" + CR;
+            result += "         {" + CR;
+            result += "            xplatform.value = navigator.userAgent;" + CR;
+            result += "         }" + CR;
+            result += "      }" + CR;
+            result += "      catch(e)" + CR;
+            result += "      {" + CR;
+            result += "         xplatform.value = null;" + CR;
+            result += "      }" + CR;
+            result += "   }" + CR;
+
+            result += "   try" + CR;
+            result += "   {" + CR;
+            result += "      var xlanguage = document.getElementById('userlanguage');" + CR;
+            result += "      if (xlanguage)" + CR;
+            result += "      {" + CR;
+            result += "         xlanguage.value = navigator.language;" + CR;
+            result += "      }" + CR;
+            result += "   }" + CR;
+            result += "   catch(e)" + CR;
+            result += "   {" + CR;
+            result += "         xlanguage.value = null;" + CR;
+            result += "   }" + CR;
+            result += "   document.getElementById('presetForm').submit();" + CR;
+            result += "   return true;" + CR;
+            result += "}" + CR;
+            result += "</script>" + CR + CR;
             return result;
         }
-        #endregion
+#endregion
 
-        #region QRCode
+
+#region QRCode
         /// <summary>
         /// GetFormPreRenderHtmlShowQRCode implementation
         /// </summary>
@@ -1283,8 +1331,8 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public override string GetFormHtmlShowQRCode(AuthenticationContext usercontext)
         {
-            string result = "<form method=\"post\" id=\"loginForm\" autocomplete=\"off\" >";
-            result += "<div class=\"fieldMargin smallText\"><label for=\"\"></label>" + Resources.GetString(ResourcesLocaleKind.Html, "HtmlLabelWRQRCode") + "</div><br/>";
+            string result = "<form method=\"post\" id=\"loginForm\" >";
+            result += "<div class=\"fieldMargin smallText\"><label for=\"\"></label>" + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlLabelWRQRCode") + "</div><br/>";
             result += "<p style=\"text-align:center\"><img id=\"qr\" src=\"data:image/png;base64," + Provider.GetQRCodeString(usercontext) + "\"/></p><br/>";
             result += "<input id=\"context\" type=\"hidden\" name=\"Context\" value=\"%Context%\"/>";
             result += "<input id=\"authMethod\" type=\"hidden\" name=\"AuthMethod\" value=\"%AuthMethod%\"/>";
@@ -1292,9 +1340,9 @@ namespace Neos.IdentityServer.MultiFactor
             result += "</form>";
             return result;
         }
-        #endregion
+#endregion
 
-        #region Donut
+#region Donut
         /// <summary>
         /// GetPartHtmlDonut method implementation
         /// </summary>
@@ -1494,9 +1542,9 @@ namespace Neos.IdentityServer.MultiFactor
 
             return result;
         }
-        #endregion
+#endregion
 
-        #region WebAuthN Support
+#region WebAuthN Support
         /// <summary>
         /// GetFormHtmlWebAuthNSupport method implementation
         /// </summary>
@@ -1508,9 +1556,22 @@ namespace Neos.IdentityServer.MultiFactor
             result += "      try" + CR;
             result += "      {" + CR;
             result += "         if (window.PublicKeyCredential === undefined || typeof window.PublicKeyCredential !== \"function\")" + CR;
+            result += "         {" + CR;
+            result += "             SetWebAuthNDetectionError(\"Biometric authentication not supported\");" + CR;
             result += "             return false;" + CR;
+            result += "         }" + CR;
             result += "         else" + CR;
-            result += "             return true;" + CR;
+            result += "         {" + CR;
+            result += "             if (window.PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable())" + CR;
+            result += "             {" + CR;
+            result += "                 return true;" + CR;
+            result += "             }" + CR;
+            result += "             else" + CR;
+            result += "             {" + CR;
+            result += "                 SetWebAuthNDetectionError(\"Biometric authentication not supported\");" + CR;
+            result += "                 return false;" + CR;
+            result += "             }" + CR;
+            result += "         }" + CR;
             result += "      }" + CR;
             result += "      catch (e)" + CR;
             result += "      {" + CR;
@@ -1596,7 +1657,10 @@ namespace Neos.IdentityServer.MultiFactor
             string result = GetWebAuthNSharedScript(usercontext);
             result += "async function RegisterWebAuthN(frm)" + CR;
             result += "{" + CR;
-            result += "   frm.preventDefault();" + CR;
+#if !prevent
+            result += "   if (frm !== null)" + CR;
+            result += "      frm.preventDefault();" + CR;
+#endif
             result += "   if (detectWebAuthNSupport() === true)" + CR;
             result += "   {" + CR;
             result += "      let makeCredentialOptions;" + CR;
@@ -1634,7 +1698,7 @@ namespace Neos.IdentityServer.MultiFactor
             result += "   }" + CR;
             result += "   else" + CR;
             result += "   {" + CR;
-            result += "      SetJsError(\"Biometric authentication not supported\");" + CR;
+            result += "      SetWebAuthNDetectionError(\"Biometric authentication not supported\");" + CR;
             result += "      return false;" + CR;
             result += "   }" + CR;
             result += "}" + CR;
@@ -1673,7 +1737,10 @@ namespace Neos.IdentityServer.MultiFactor
             string result = GetWebAuthNSharedScript(usercontext);
             result += "async function LoginWebAuthN(frm)" + CR;
             result += "{" + CR;
-            result += "   frm.preventDefault();" + CR;
+#if !prevent
+            result += "   if (frm !== null)" + CR;
+            result += "      frm.preventDefault();" + CR;
+#endif
             result += "   if (detectWebAuthNSupport() === true)" + CR;
             result += "   {" + CR;
             result += "      let makeAssertionOptions;" + CR;
@@ -1713,11 +1780,12 @@ namespace Neos.IdentityServer.MultiFactor
             result += "   }" + CR;
             result += "   else" + CR;
             result += "   {" + CR;
-            result += "      SetJsError(\"Biometric authentication not supported\");" + CR;
+            result += "      SetWebAuthNDetectionError(\"Biometric authentication not supported\");" + CR;
             result += "      return false;" + CR;
             result += "   }" + CR;
             result += "}" + CR;
             result += CR;
+
             result += "async function LoginAssertionCredentials(assertedCredential)" + CR;
             result += "{" + CR;
             result += "   try" + CR;
@@ -1749,6 +1817,6 @@ namespace Neos.IdentityServer.MultiFactor
 
             return result;
         }
-        #endregion
+#endregion
     }
 }

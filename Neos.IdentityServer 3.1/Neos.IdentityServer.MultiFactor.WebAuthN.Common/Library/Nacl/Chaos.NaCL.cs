@@ -35,7 +35,7 @@ using System.Runtime.CompilerServices;
 
 #pragma warning disable 618
 
-namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Chaos
+namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.Nacl
 {
 
     public static class CryptoBytes

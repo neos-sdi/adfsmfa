@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2020 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
+// Copyright (c) 2021 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -1119,6 +1119,50 @@ namespace Neos.IdentityServer.MultiFactor
                     _context.Data.Add("_authctxnickname", value);
             }
         }
+
+        /// <summary>
+        /// BioNotSupported
+        /// </summary>
+        [DataMember(Name = "BioNotSupported")]
+        public bool BioNotSupported
+        {
+            get
+            {
+                if (_context.Data.ContainsKey("_authctxbionotsupported") && _context.Data["_authctxbionotsupported"] != null)
+                    return (bool)_context.Data["_authctxbionotsupported"];
+                else
+                    return false;
+            }
+            set
+            {
+                if (_context.Data.ContainsKey("_authctxbionotsupported"))
+                    _context.Data["_authctxbionotsupported"] = value;
+                else
+                    _context.Data.Add("_authctxbionotsupported", value);
+            }
+        }
+
+        /// <summary>
+        /// Platform
+        /// </summary>
+        [DataMember(Name = "Platform")]
+        public string Platform
+        {
+            get
+            {
+                if (_context.Data.ContainsKey("_authctxplatform") && _context.Data["_authctxplatform"] != null)
+                    return _context.Data["_authctxplatform"].ToString();
+                else
+                    return string.Empty;
+            }
+            set
+            {
+                if (_context.Data.ContainsKey("_authctxplatform"))
+                    _context.Data["_authctxplatform"] = value;
+                else
+                    _context.Data.Add("_authctxplatform", value);
+            }
+        }
     }
     #endregion
 
@@ -2131,7 +2175,7 @@ namespace Neos.IdentityServer.MultiFactor
     /// </summary>
     public static class XORUtilities
     {
-        static readonly string _defaultxor = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+        private static readonly string _defaultxor = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
         static string _xorkey = _defaultxor;
 
         /// <summary>
@@ -2171,6 +2215,17 @@ namespace Neos.IdentityServer.MultiFactor
             }
             return xor;
         }
+    }
+
+    /// <summary>
+    /// BLOBPayloadInformations class
+    /// </summary>
+    public class BLOBPayloadInformations
+    {
+        public int Number = 0;
+        public DateTime NextUpdate = new DateTime(1970, 1, 1);
+        public bool CanDownload = true;
+        public string BLOB = string.Empty;
     }
 
     /// <summary>
@@ -2234,6 +2289,9 @@ namespace Neos.IdentityServer.MultiFactor
         }
     }
 
+    /// <summary>
+    /// PlaceHolders class implementation
+    /// </summary>
     public class PlaceHolders
     {
         public string TagName { get; set; }

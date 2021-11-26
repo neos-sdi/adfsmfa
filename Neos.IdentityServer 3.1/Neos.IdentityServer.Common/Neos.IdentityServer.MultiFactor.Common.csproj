@@ -27,10 +27,11 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <LangVersion>7.2</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -39,6 +40,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>7.2</LangVersion>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>
@@ -73,6 +75,7 @@
     <Compile Include="Neos.IdentityServer.MultiFactor.Imports.cs" />
     <Compile Include="Neos.IdentityServer.MultiFactor.Linq.cs" />
     <Compile Include="Neos.IdentityServer.MultiFactor.ProvidersWrapper.cs" />
+    <Compile Include="Neos.IdentityServer.MultiFactor.ResourceLocaleBase.cs" />
     <Compile Include="Neos.IdentityServer.Multifactor.ResourcesManager.cs" />
     <Compile Include="Neos.IdentityServer.MultiFactor.RNG.cs" />
     <Compile Include="Neos.IdentityServer.MultiFactor.AES.cs" />

@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2020 abergs (https://github.com/abergs/fido2-net-lib)                                                                                                                      //                        
+// Copyright (c) 2021 abergs (https://github.com/abergs/fido2-net-lib)                                                                                                                      //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -68,7 +68,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Objects
         /// <summary>
         /// AAGUID is sent as big endian byte array, this converter is for little endian systems.
         /// </summary>
-        private byte[] AaGuidToBigEndian()
+        public static byte[] AaGuidToBigEndian(Guid AaGuid)
         {
             var aaguid = AaGuid.ToByteArray();
 
@@ -154,7 +154,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Objects
                     // Write the aaguid bytes out, reverse if we're on a little endian system
                     if (BitConverter.IsLittleEndian)
                     {
-                        writer.Write(AaGuidToBigEndian());
+                        writer.Write(AaGuidToBigEndian(AaGuid));
                     }
                     else
                     {

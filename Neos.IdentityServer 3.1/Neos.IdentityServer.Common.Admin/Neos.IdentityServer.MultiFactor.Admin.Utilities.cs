@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2020 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
+// Copyright (c) 2021 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -28,6 +28,7 @@ using System.Management.Automation;
 using System.Management.Automation.Host;
 using System.Management.Automation.Runspaces;
 using System.Net;
+using System.Security;
 using System.Security.Principal;
 
 namespace Neos.IdentityServer.MultiFactor.Administration
@@ -398,7 +399,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         internal static void VerifyADFSServer2019(PSHost host = null)
         {
             RegistryVersion reg = new RegistryVersion();
-            if (!reg.IsWindows2019)
+            if (!reg.IsADFSBehavior4)
             {
                 if (host==null)
                     throw new InvalidOperationException("Must be executed on Windows 2019 server and up only !");
@@ -412,12 +413,20 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// </summary>
         internal static void VerifyADFSAdministrationRights(PSHost host = null)
         {
-            ClientSIDsProxy.Initialize();
-            if (!((ClientSIDsProxy.ADFSLocalAdminServiceAdministrationAllowed && ADFSManagementRights.IsAdministrator()) ||
-                  (ClientSIDsProxy.ADFSSystemServiceAdministrationAllowed && ADFSManagementRights.IsSystem()) ||
-                  (ClientSIDsProxy.ADFSDelegateServiceAdministrationAllowed && ADFSManagementRights.AllowedGroup(ClientSIDsProxy.ADFSAdminGroupName))))
+            try
+            {  
+                ClientSIDsProxy.Initialize();
+                if (!( (ClientSIDsProxy.ADFSLocalAdminServiceAdministrationAllowed && ADFSManagementRights.IsAdministrator()) ||
+                       (ClientSIDsProxy.ADFSSystemServiceAdministrationAllowed && ADFSManagementRights.IsSystem()) ||
+                       (ClientSIDsProxy.ADFSDelegateServiceAdministrationAllowed && ADFSManagementRights.AllowedGroup(ClientSIDsProxy.ADFSAdminGroupName)) 
+                   ))
+                {
+                    throw new SecurityException("Access Denied !");
+                }
+            }
+            catch (Exception)
             {
-                if (host==null)
+                if (host == null)
                     throw new InvalidOperationException("Must be executed with ADFS Administration rights granted for the current user !");
                 else
                     throw new InvalidOperationException("PS0033: This Cmdlet must be executed with ADFS Administration rights granted for the current user !");
@@ -429,7 +438,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// </summary>
         internal static void VerifyMFAConfigurationRights(PSHost host = null)
         {
-            if (!(ADFSManagementRights.IsAdministrator()) || ADFSManagementRights.IsSystem())
+            if (! (ADFSManagementRights.IsAdministrator() || 
+                   ADFSManagementRights.IsSystem()
+               ))
             {
                 if (host==null)
                     throw new InvalidOperationException("Must be executed with System Administration rights granted for the current user !");
@@ -673,10 +684,10 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             MFAConfig config = CFGUtilities.ReadConfiguration(host);
             Dictionary<string, string> data = new Dictionary<string, string>();
             ResourcesLocale Resources = new ResourcesLocale(lcid);
-            data.Add("MailOTPContent.html", Resources.GetString(ResourcesLocaleKind.Mail, "MailOTPContent"));
-            data.Add("MailKeyContent.html", Resources.GetString(ResourcesLocaleKind.Mail, "MailKeyContent"));
-            data.Add("MailAdminContent.html", Resources.GetString(ResourcesLocaleKind.Mail, "MailAdminContent"));
-            data.Add("MailNotifications.html", Resources.GetString(ResourcesLocaleKind.Mail, "MailNotifications"));
+            data.Add("MailOTPContent.html", Resources.GetString(ResourcesLocaleKind.CommonMail, "MailOTPContent"));
+            data.Add("MailKeyContent.html", Resources.GetString(ResourcesLocaleKind.CommonMail, "MailKeyContent"));
+            data.Add("MailAdminContent.html", Resources.GetString(ResourcesLocaleKind.CommonMail, "MailAdminContent"));
+            data.Add("MailNotifications.html", Resources.GetString(ResourcesLocaleKind.CommonMail, "MailNotifications"));
 
             if (WebAdminManagerClient.ExportMailTemplates(config, lcid, data))
             { 
@@ -737,6 +748,12 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                     else
                         config.OTPProvider.FullQualifiedImplementation = "";
                     break;
+                case FlatSampleKind.CustomPresentation:
+                    if (!reset)
+                        config.CustomAdapterPresentation = "Neos.IdentityServer.MultiFactor.Samples.AdapterPresentationCustom, Neos.IdentityServer.MultiFactor.PresentationSample, Version=1.0.0.0, Culture=neutral, PublicKeyToken = 711047a08ea8edb3";
+                    else
+                        config.CustomAdapterPresentation = "";
+                    break;
             }
             CFGUtilities.WriteConfiguration(host, config);
             CFGUtilities.BroadcastNotification(config, NotificationsKind.ConfigurationReload, Environment.MachineName, true, true);
@@ -760,8 +777,6 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         {
             Runspace SPRunSpace = null;
             PowerShell SPPowerShell = null;
-            char sep = Path.DirectorySeparatorChar;
-            string db = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + sep + "MFA" + sep + "Config" + sep + "threatconfig.db";
             try
             {
                 SPRunSpace = RunspaceFactory.CreateRunspace();
@@ -776,7 +791,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 exportcmd.Parameters.Add(NParam);
                 CommandParameter TParam = new CommandParameter("TypeName", "Neos.IdentityServer.MultiFactor.ThreatAnalyzer, Neos.IdentityServer.MultiFactor.ThreatDetection, Version=3.0.0.0, Culture=neutral, " + Utilities.GetAssemblyPublicKey());
                 exportcmd.Parameters.Add(TParam);
-                CommandParameter PParam = new CommandParameter("ConfigurationFilePath", db);
+                CommandParameter PParam = new CommandParameter("ConfigurationFilePath", SystemUtilities.ThreatCacheFile);
                 exportcmd.Parameters.Add(PParam);
                 pipeline.Commands.Add(exportcmd);
                 Collection<PSObject> PSOutput = pipeline.Invoke();
@@ -844,12 +859,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         {
             Runspace SPRunSpace = null;
             PowerShell SPPowerShell = null;
-            char sep = Path.DirectorySeparatorChar;
-            string db = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + sep + "MFA" + sep + "Config" + sep + "threatconfig.db";
             try
             {
                 SPRunSpace = RunspaceFactory.CreateRunspace();
-
                 SPPowerShell = PowerShell.Create();
                 SPPowerShell.Runspace = SPRunSpace;
                 SPRunSpace.Open();
@@ -858,7 +870,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 Command exportcmd = new Command("Import-AdfsThreatDetectionModuleConfiguration", false);
                 CommandParameter NParam = new CommandParameter("Name", "MFABlockPlugin");
                 exportcmd.Parameters.Add(NParam);
-                CommandParameter PParam = new CommandParameter("ConfigurationFilePath", db);
+                CommandParameter PParam = new CommandParameter("ConfigurationFilePath", SystemUtilities.ThreatCacheFile);
                 exportcmd.Parameters.Add(PParam);
                 pipeline.Commands.Add(exportcmd);
                 Collection<PSObject> PSOutput = pipeline.Invoke();
@@ -898,6 +910,25 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             {
                 WindowsPrincipal principal = new WindowsPrincipal(identity);
                 return principal.IsInRole(WindowsBuiltInRole.Administrator);
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// IsDomainAdministrator method implementation
+        /// </summary>
+        public static bool IsDomainAdministrator(bool allow)
+        {
+            if (!allow)
+                return false;
+            WindowsIdentity identity = WindowsIdentity.GetCurrent();
+            try
+            {
+                WindowsPrincipal principal = new WindowsPrincipal(identity);
+                return principal.IsInRole("Domain Admins");
             }
             catch
             {

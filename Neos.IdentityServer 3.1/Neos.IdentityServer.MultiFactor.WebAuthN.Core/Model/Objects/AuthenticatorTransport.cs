@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2020 abergs (https://github.com/abergs/fido2-net-lib)                                                                                                                      //                        
+// Copyright (c) 2021 abergs (https://github.com/abergs/fido2-net-lib)                                                                                                                      //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -49,21 +49,5 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Objects
         /// </summary>
         [EnumMember(Value = "internal")]
         Internal,
-
-        /// <summary>
-        /// Indicates the respective authenticator can be contacted over removable Lightning.
-        /// </summary>
-        [EnumMember(Value = "lightning")]
-        Lightning
-    }
-
-    [Flags]
-    public enum FIDOU2FTransports
-    {
-        bluetoothRadio = 128,
-        bluetoothLowEnergyRadio = 64,
-        uSB = 32,
-        nFC = 16,
-        uSBInternal = 8
     }
 }

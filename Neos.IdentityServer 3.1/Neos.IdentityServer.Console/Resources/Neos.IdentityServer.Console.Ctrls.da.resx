@@ -595,7 +595,7 @@
     <value>Tidsstempeldrifttolerance</value>
   </data>
   <data name="CTRLWEBAUTHNEXTENSIONS" xml:space="preserve">
-    <value>Udvidelser (authnSe)</value>
+    <value>Udvidelser (exts)</value>
   </data>
   <data name="CTRLWEBAUTHNRESIDENTKEY" xml:space="preserve">
     <value>Kræv resident nøgle</value>
@@ -728,5 +728,8 @@
   </data>
   <data name="CTRLSECGENRSAKEY" xml:space="preserve">
     <value>RSA-hovednøgle</value>
+  </data>
+  <data name="CTRLWEBAUTHNCONTRAINEDMETADATA" xml:space="preserve">
+    <value>Brug begrænset metadatatjeneste (til ADFS-farm, der ikke har internetadgang)</value>
   </data>
 </root>

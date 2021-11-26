@@ -118,12 +118,12 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ErrorSendingAdministrativeRequest" xml:space="preserve">
-    <value>Błąd podczas wysyłania prośby o napisanie do administratorów</value>
+    <value>Błąd podczas wysyłania prośby o rejestrację do administratorów</value>
   </data>
   <data name="ErrorSendingSecretKeyRequest" xml:space="preserve">
-    <value>Błąd podczas wysyłania poufna klucz do użytkownika</value>
+    <value>Błąd podczas wysyłania poufnego klucza do użytkownika</value>
   </data>
   <data name="ErrorReplayToken" xml:space="preserve">
-    <value>Błąd podczas procesu uwierzytelniania! Hasło jednorazowe zostało rozegrane wcześniej</value>
+    <value>Błąd podczas procesu uwierzytelniania! Hasło jednorazowe zostało już wcześniej użyte </value>
   </data>
 </root>

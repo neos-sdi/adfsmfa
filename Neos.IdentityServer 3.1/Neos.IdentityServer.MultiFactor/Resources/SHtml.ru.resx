@@ -294,4 +294,7 @@
   <data name="HtmlUIMNickNamesMessage" xml:space="preserve">
     <value>Введите имя биометрического устройства или оставьте пустоту, а затем выберите "Продолжить"</value>
   </data>
+  <data name="HtmlUIMRegisterDevice" xml:space="preserve">
+    <value>Регистрация устройства</value>
+  </data>
 </root>

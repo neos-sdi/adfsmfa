@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2020 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
+// Copyright (c) 2021 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -637,6 +637,85 @@ namespace Neos.IdentityServer.MultiFactor.Data
                 manager.UnInitialize();
             }
         }
+
+        #region WebAuthN Payloads
+        /// <summary>
+        /// HasBLOBPayloadCache method implementation
+        /// </summary>
+        public static bool HasBLOBPayloadCache()
+        {
+            WebAdminClient manager = new WebAdminClient();
+            manager.Initialize();
+            try
+            {
+                IWebAdminServices client = manager.Open();
+                try
+                {
+                    return client.HasBLOBPayloadCache();
+                }
+                finally
+                {
+                    manager.Close(client);
+                }
+            }
+            finally
+            {
+                manager.UnInitialize();
+            }
+
+        }
+
+        /// <summary>
+        /// GetBLOBPayloadCache method implementation
+        /// </summary>
+        public static BLOBPayloadInformations GetBLOBPayloadCache()
+        {
+            WebAdminClient manager = new WebAdminClient();
+            manager.Initialize();
+            try
+            {
+                IWebAdminServices client = manager.Open();
+                try
+                {
+                    return client.GetBLOBPayloadCache();
+                }
+                finally
+                {
+                    manager.Close(client);
+                }
+            }
+            finally
+            {
+                manager.UnInitialize();
+            }
+        }
+
+        /// <summary>
+        /// SetBLOBPayloadCache method implmentation
+        /// </summary>
+        public static void SetBLOBPayloadCache(BLOBPayloadInformations infos)
+        {
+            WebAdminClient manager = new WebAdminClient();
+            manager.Initialize();
+            try
+            {
+                IWebAdminServices client = manager.Open();
+                try
+                {
+                    client.SetBLOBPayloadCache(infos);
+                }
+                finally
+                {
+                    manager.Close(client);
+                }
+            }
+            finally
+            {
+                manager.UnInitialize();
+            }
+
+        }
+        #endregion
 
         #region Firewall
         /// <summary>

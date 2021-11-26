@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2020 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
+// Copyright (c) 2021 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -1665,7 +1665,8 @@ namespace Neos.IdentityServer.Console.Controls
                     tblconfigure.Text = res.CTRLADFSDEACTIVATEMFA;
                 else
                     tblconfigure.Text = res.CTRLADFSACTIVATEMFA;
-                tblconfigure.Enabled = ManagementService.ADFSManager.IsPrimaryServer();
+                tblconfigure.Enabled = ManagementService.ADFSManager.IsPrimaryServer() && (ADFSManagementRights.IsAdministrator() || ADFSManagementRights.IsSystem());
+;
                 this.Controls.Add(tblconfigure);
             }
             finally
@@ -3522,8 +3523,10 @@ namespace Neos.IdentityServer.Console.Controls
                 tblCancelConfig.LinkClicked += CancelConfigLinkClicked;
                 this.Controls.Add(tblCancelConfig);
 
-                errors = new ErrorProvider(_view);
-                errors.BlinkStyle = ErrorBlinkStyle.NeverBlink;
+                errors = new ErrorProvider(_view)
+                {
+                    BlinkStyle = ErrorBlinkStyle.NeverBlink
+                };
             }
             finally
             {
@@ -4155,10 +4158,12 @@ namespace Neos.IdentityServer.Console.Controls
                     TabStop = true
                 };
                 tblCancelConfig.LinkClicked += CancelConfigLinkClicked;
-                this.Controls.Add(tblCancelConfig);
+                Controls.Add(tblCancelConfig);
 
-                errors = new ErrorProvider(_view);
-                errors.BlinkStyle = ErrorBlinkStyle.NeverBlink;
+                errors = new ErrorProvider(_view)
+                {
+                    BlinkStyle = ErrorBlinkStyle.NeverBlink
+                };
             }
             finally
             {
@@ -5396,8 +5401,10 @@ namespace Neos.IdentityServer.Console.Controls
                 tblCancelConfig.TabStop = true;
                 this.Controls.Add(tblCancelConfig);
 
-                errors = new ErrorProvider(_view);
-                errors.BlinkStyle = ErrorBlinkStyle.NeverBlink;
+                errors = new ErrorProvider(_view)
+                {
+                    BlinkStyle = ErrorBlinkStyle.NeverBlink
+                };
             }
             finally
             {
@@ -6342,8 +6349,10 @@ namespace Neos.IdentityServer.Console.Controls
                 tblCancelConfig.LinkClicked += CancelConfigLinkClicked;               
                 this.Controls.Add(tblCancelConfig);
 
-                errors = new ErrorProvider(_view);
-                errors.BlinkStyle = ErrorBlinkStyle.NeverBlink;
+                errors = new ErrorProvider(_view)
+                {
+                    BlinkStyle = ErrorBlinkStyle.NeverBlink
+                };
             }
             finally
             {
@@ -6903,50 +6912,62 @@ namespace Neos.IdentityServer.Console.Controls
                 _txtpanel.BackColor = System.Drawing.SystemColors.Control;
                 this.Controls.Add(_txtpanel);
 
-                lblCompany = new Label();
-                lblCompany.Text = res.CTRLSMTPCOMPANY + " : ";
-                lblCompany.Left = 10;
-                lblCompany.Top = 19;
-                lblCompany.Width = 200;
+                lblCompany = new Label
+                {
+                    Text = res.CTRLSMTPCOMPANY + " : ",
+                    Left = 10,
+                    Top = 19,
+                    Width = 200
+                };
                 _txtpanel.Controls.Add(lblCompany);
 
-                txtCompany = new TextBox();
-                txtCompany.Text = Config.MailProvider.Company;
-                txtCompany.Left = 210;
-                txtCompany.Top = 15;
-                txtCompany.Width = 250;
+                txtCompany = new TextBox
+                {
+                    Text = Config.MailProvider.Company,
+                    Left = 210,
+                    Top = 15,
+                    Width = 250
+                };
                 txtCompany.Validating += CompanyValidating;
                 txtCompany.Validated += CompanyValidated;
                 _txtpanel.Controls.Add(txtCompany);
 
-                lblFrom = new Label();
-                lblFrom.Text = res.CTRLSMTPFROM + " : ";
-                lblFrom.Left = 10;
-                lblFrom.Top = 51;
-                lblFrom.Width = 200;
+                lblFrom = new Label
+                {
+                    Text = res.CTRLSMTPFROM + " : ",
+                    Left = 10,
+                    Top = 51,
+                    Width = 200
+                };
                 _txtpanel.Controls.Add(lblFrom);
 
-                txtFrom = new TextBox();
-                txtFrom.Text = Config.MailProvider.From;
-                txtFrom.Left = 210;
-                txtFrom.Top = 47;
-                txtFrom.Width = 250;
+                txtFrom = new TextBox
+                {
+                    Text = Config.MailProvider.From,
+                    Left = 210,
+                    Top = 47,
+                    Width = 250
+                };
                 txtFrom.Validating += FromValidating;
                 txtFrom.Validated += FromValidated;
                 _txtpanel.Controls.Add(txtFrom);
 
-                lblServer = new Label();
-                lblServer.Text = res.CTRLSMTPSERVER;
-                lblServer.Left = 10;
-                lblServer.Top = 95;
-                lblServer.Width = 180;
+                lblServer = new Label
+                {
+                    Text = res.CTRLSMTPSERVER,
+                    Left = 10,
+                    Top = 95,
+                    Width = 180
+                };
                 _txtpanel.Controls.Add(lblServer);
 
-                lblHost = new Label();
-                lblHost.Text = res.CTRLSMTPSERVERADDRESS + " : ";
-                lblHost.Left = 30;
-                lblHost.Top = 127;
-                lblHost.Width = 180;
+                lblHost = new Label
+                {
+                    Text = res.CTRLSMTPSERVERADDRESS + " : ",
+                    Left = 30,
+                    Top = 127,
+                    Width = 180
+                };
                 _txtpanel.Controls.Add(lblHost);
 
                 txtHost = new TextBox();
@@ -9544,8 +9565,6 @@ namespace Neos.IdentityServer.Console.Controls
         private Label lblChallengeSize;
         private ComboBox cbChallengeSize;
         private CheckBox chkAutologin;
-        private CheckBox chkRequireChainRoot;
-        private CheckBox chkShowPII;
         private CheckBox chkUseNickName;
 
         /// <summary>
@@ -9652,12 +9671,12 @@ namespace Neos.IdentityServer.Console.Controls
                 this.Margin = new Padding(30, 5, 30, 5);
 
                 _panel.Width = 20;
-                _panel.Height = 272;
+                _panel.Height = 226;
                 this.Controls.Add(_panel);
 
                 _txtpanel.Left = 20;
                 _txtpanel.Width = this.Width - 20;
-                _txtpanel.Height = 272;
+                _txtpanel.Height = 226;
                 _txtpanel.BackColor = System.Drawing.SystemColors.Control;
                 this.Controls.Add(_txtpanel);
 
@@ -9814,33 +9833,11 @@ namespace Neos.IdentityServer.Console.Controls
                 cbChallengeSize.SelectedValue = Config.WebAuthNProvider.Configuration.ChallengeSize;
                 cbChallengeSize.SelectedIndexChanged += SelectedChallengeSizeChanged;
 
-                chkRequireChainRoot = new CheckBox
-                {
-                    Text = res.CTRLWEBAUTHNROOTATTESTATION,
-                    Checked = Config.WebAuthNProvider.Configuration.RequireValidAttestationRoot,
-                    Left = 190,
-                    Top = 214,
-                    Width = 300
-                };
-                chkRequireChainRoot.CheckedChanged += ChkChainRootChanged;
-                _txtpanel.Controls.Add(chkRequireChainRoot);
-
-                chkShowPII = new CheckBox
-                {
-                    Text = res.CTRLWEBAUTHNSHOWPII,
-                    Checked = Config.WebAuthNProvider.Configuration.ShowPII,
-                    Left = 190,
-                    Top = 242,
-                    Width = 300
-                };
-                chkShowPII.CheckedChanged += chkRequireShowPIIChanged;
-                _txtpanel.Controls.Add(chkShowPII);
-
                 tblSaveConfig = new LinkLabel
                 {
                     Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPESAVE,
                     Left = 20,
-                    Top = 282,
+                    Top = 236,
                     Width = 80,
                     TabStop = true
                 };
@@ -9851,7 +9848,7 @@ namespace Neos.IdentityServer.Console.Controls
                 {
                     Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPECANCEL,
                     Left = 110,
-                    Top = 282,
+                    Top = 236,
                     Width = 80,
                     TabStop = true
                 };
@@ -9890,13 +9887,10 @@ namespace Neos.IdentityServer.Console.Controls
                 lblServerUri.Text = res.CTRLWEBAUTHNSERVERURL + " : ";
                 lblChallengeSize.Text = res.CTRLWEBAUTHNCHALLENGE + " : ";
                 chkAutologin.Text = res.CTRLWEBAUTHNAUTOLOGIN;
-                chkRequireChainRoot.Text = res.CTRLWEBAUTHNROOTATTESTATION;
                 chkUseNickName.Text = res.CTRLWEBAUTHNUSENICKNAMES;
-                chkShowPII.Text = res.CTRLWEBAUTHNSHOWPII;
 
                 txtTimeOut.Text = Config.WebAuthNProvider.Configuration.Timeout.ToString();
                 chkAutologin.Checked = Config.WebAuthNProvider.DirectLogin;
-                chkRequireChainRoot.Checked = Config.WebAuthNProvider.Configuration.RequireValidAttestationRoot;
 
                 txtDriftTolerance.Text = Config.WebAuthNProvider.Configuration.TimestampDriftTolerance.ToString();
                 txtServerDomain.Text = Config.WebAuthNProvider.Configuration.ServerDomain;
@@ -10297,58 +10291,6 @@ namespace Neos.IdentityServer.Console.Controls
         }
 
         /// <summary>
-        /// ChkchkAutologinChanged method implementation
-        /// </summary>
-        private void ChkChainRootChanged(object sender, EventArgs e)
-        {
-            try
-            {
-                if (_view.AutoValidate != AutoValidate.Disable)
-                {
-                    Config.WebAuthNProvider.Configuration.RequireValidAttestationRoot = chkRequireChainRoot.Checked;
-                    ManagementService.ADFSManager.SetDirty(true);
-                    UpdateControlsLayouts();
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
-                {
-                    Text = ex.Message,
-                    Buttons = MessageBoxButtons.OK,
-                    Icon = MessageBoxIcon.Error
-                };
-                this._snapin.Console.ShowDialog(messageBoxParameters);
-            }
-        }
-
-        /// <summary>
-        /// chkRequireShowPIIChanged method implementation
-        /// </summary>
-        private void chkRequireShowPIIChanged(object sender, EventArgs e)
-        {
-            try
-            {
-                if (_view.AutoValidate != AutoValidate.Disable)
-                {
-                    Config.WebAuthNProvider.Configuration.ShowPII = chkShowPII.Checked;
-                    ManagementService.ADFSManager.SetDirty(true);
-                    UpdateControlsLayouts();
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
-                {
-                    Text = ex.Message,
-                    Buttons = MessageBoxButtons.OK,
-                    Icon = MessageBoxIcon.Error
-                };
-                this._snapin.Console.ShowDialog(messageBoxParameters);
-            }
-        }
-
-        /// <summary>
         /// OnResize method implmentation
         /// </summary>
         protected override void OnResize(EventArgs eventargs)
@@ -10398,9 +10340,8 @@ namespace Neos.IdentityServer.Console.Controls
         private ComboBox cbUserVerification;
         private CheckBox chkExtensions;
         private CheckBox chkUserVerificationMethod;
-        private CheckBox chkUserVerificationIndex;
-        private CheckBox chkLocation;
         private CheckBox chkRequireResidentKey;
+        private CheckBox chkConstrainedMetadataRepository;
 
         /// <summary>
         /// ConfigurationControl Constructor
@@ -10506,12 +10447,12 @@ namespace Neos.IdentityServer.Console.Controls
                 this.Margin = new Padding(30, 5, 30, 5);
 
                 _panel.Width = 20;
-                _panel.Height = 290;
+                _panel.Height = 250;
                 this.Controls.Add(_panel);
 
                 _txtpanel.Left = 20;
                 _txtpanel.Width = this.Width - 20;
-                _txtpanel.Height = 290;
+                _txtpanel.Height = 250;
                 _txtpanel.BackColor = System.Drawing.SystemColors.Control;
                 this.Controls.Add(_txtpanel);
 
@@ -10613,43 +10554,32 @@ namespace Neos.IdentityServer.Console.Controls
                 chkUserVerificationMethod.CheckedChanged += chkUserVerificationMethodChanged;
                 _txtpanel.Controls.Add(chkUserVerificationMethod);
 
-                chkUserVerificationIndex = new CheckBox
-                {
-                    Text = res.CTRLWEBAUTHNUSERINDEX,
-                    Checked = Config.WebAuthNProvider.Options.UserVerificationIndex,
-                    Left = 15,
-                    Top = 188,
-                    Width = 300
-                };
-                chkUserVerificationIndex.CheckedChanged += chkUserVerificationIndexChanged;
-                _txtpanel.Controls.Add(chkUserVerificationIndex);
-
-                chkLocation = new CheckBox
-                {
-                    Text = res.CTRLWEBAUTHNUSERLOCATION,
-                    Checked = Config.WebAuthNProvider.Options.Location,
-                    Left = 15,
-                    Top = 222,
-                    Width = 300
-                };
-                chkLocation.CheckedChanged += chkLocationChanged;
-                _txtpanel.Controls.Add(chkLocation);
-
                 chkRequireResidentKey = new CheckBox
                 {
                     Text = res.CTRLWEBAUTHNRESIDENTKEY,
                     Checked = Config.WebAuthNProvider.Options.RequireResidentKey,
                     Left = 15,
-                    Top = 256,
+                    Top = 188,
                     Width = 300
                 };
                 chkRequireResidentKey.CheckedChanged += chkRequireResidentKeyChanged;
                 _txtpanel.Controls.Add(chkRequireResidentKey);
 
+                chkConstrainedMetadataRepository = new CheckBox
+                {
+                    Text = res.CTRLWEBAUTHNCONTRAINEDMETADATA,
+                    Checked = Config.WebAuthNProvider.Options.ConstrainedMetadataRepository,
+                    Left = 15,
+                    Top = 222,
+                    Width = 600
+                };
+                chkConstrainedMetadataRepository.CheckedChanged += chkConstrainedMetadataRepositoryChanged;
+                _txtpanel.Controls.Add(chkConstrainedMetadataRepository);
+
                 tblSaveConfig = new LinkLabel();
                 tblSaveConfig.Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPESAVE;
                 tblSaveConfig.Left = 20;
-                tblSaveConfig.Top = 305;
+                tblSaveConfig.Top = 260;
                 tblSaveConfig.Width = 80;
                 tblSaveConfig.LinkClicked += SaveConfigLinkClicked;
                 tblSaveConfig.TabStop = true;
@@ -10658,7 +10588,7 @@ namespace Neos.IdentityServer.Console.Controls
                 tblCancelConfig = new LinkLabel();
                 tblCancelConfig.Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPECANCEL;
                 tblCancelConfig.Left = 110;
-                tblCancelConfig.Top = 305;
+                tblCancelConfig.Top = 260;
                 tblCancelConfig.Width = 80;
                 tblCancelConfig.LinkClicked += CancelConfigLinkClicked;
                 tblCancelConfig.TabStop = true;
@@ -10695,17 +10625,15 @@ namespace Neos.IdentityServer.Console.Controls
 
                 chkExtensions.Text = res.CTRLWEBAUTHNEXTENSIONS; 
                 chkUserVerificationMethod.Text = res.CTRLWEBAUTHNUSERMETHOD;
-                chkUserVerificationIndex.Text = res.CTRLWEBAUTHNUSERINDEX;
-                chkLocation.Text = res.CTRLWEBAUTHNUSERLOCATION;
                 chkRequireResidentKey.Text = res.CTRLWEBAUTHNRESIDENTKEY;
+                chkConstrainedMetadataRepository.Text = res.CTRLWEBAUTHNCONTRAINEDMETADATA;
 
                 cbAttachement.SelectedValue = Config.WebAuthNProvider.Options.AuthenticatorAttachment;
                 cbConveyance.SelectedValue = Config.WebAuthNProvider.Options.AttestationConveyancePreference;
                 cbUserVerification.SelectedValue = Config.WebAuthNProvider.Options.UserVerificationRequirement;
                 chkUserVerificationMethod.Checked = Config.WebAuthNProvider.Options.UserVerificationMethod;
-                chkUserVerificationIndex.Checked = Config.WebAuthNProvider.Options.UserVerificationIndex;
-                chkLocation.Checked = Config.WebAuthNProvider.Options.Location;
                 chkRequireResidentKey.Checked = Config.WebAuthNProvider.Options.RequireResidentKey;
+                chkConstrainedMetadataRepository.Checked = Config.WebAuthNProvider.Options.ConstrainedMetadataRepository;
 
                 tblSaveConfig.Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPESAVE;
                 tblCancelConfig.Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPECANCEL;
@@ -10864,49 +10792,7 @@ namespace Neos.IdentityServer.Console.Controls
             {
                 errors.SetError(chkUserVerificationMethod, ex.Message);
             }
-        }
-
-        /// <summary>
-        /// chkUserVerificationIndexChanged method implementation
-        /// </summary>
-        private void chkUserVerificationIndexChanged(object sender, EventArgs e)
-        {
-            try
-            {
-                if (_view.AutoValidate != AutoValidate.Disable)
-                {
-                    ManagementService.ADFSManager.SetDirty(true);
-                    Config.WebAuthNProvider.Options.UserVerificationIndex = chkUserVerificationIndex.Checked;
-                    UpdateControlsLayouts();
-                    errors.SetError(chkUserVerificationIndex, "");
-                }
-            }
-            catch (Exception ex)
-            {
-                errors.SetError(chkUserVerificationIndex, ex.Message);
-            }
-        }
-
-        /// <summary>
-        /// chkLocationChanged method implementation
-        /// </summary>
-        private void chkLocationChanged(object sender, EventArgs e)
-        {
-            try
-            {
-                if (_view.AutoValidate != AutoValidate.Disable)
-                {
-                    ManagementService.ADFSManager.SetDirty(true);
-                    Config.WebAuthNProvider.Options.Location = chkLocation.Checked;
-                    UpdateControlsLayouts();
-                    errors.SetError(chkLocation, "");
-                }
-            }
-            catch (Exception ex)
-            {
-                errors.SetError(chkLocation, ex.Message);
-            }
-        }
+        }      
 
         /// <summary>
         /// chkRequireResidentKeyChanged method implementation
@@ -10926,6 +10812,27 @@ namespace Neos.IdentityServer.Console.Controls
             catch (Exception ex)
             {
                 errors.SetError(chkRequireResidentKey, ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// chkConstrainedMetadataRepositoryChanged method implementation
+        /// </summary>
+        private void chkConstrainedMetadataRepositoryChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                if (_view.AutoValidate != AutoValidate.Disable)
+                {
+                    ManagementService.ADFSManager.SetDirty(true);
+                    Config.WebAuthNProvider.Options.ConstrainedMetadataRepository = chkConstrainedMetadataRepository.Checked;
+                    UpdateControlsLayouts();
+                    errors.SetError(chkConstrainedMetadataRepository, "");
+                }
+            }
+            catch (Exception ex)
+            {
+                errors.SetError(chkConstrainedMetadataRepository, ex.Message);
             }
         }
 
@@ -11240,7 +11147,8 @@ namespace Neos.IdentityServer.Console.Controls
                     Left = 280,
                     Top = 167,
                     Width = 300,
-                    PasswordChar = '*'
+                    PasswordChar = '*',
+                    Enabled = (ADFSManagementRights.IsAdministrator() || ADFSManagementRights.IsSystem())
                 };
                 txtXORValue.Validating += XORValueValidating;
                 txtXORValue.Validated += XORValueValidated;
@@ -11251,7 +11159,8 @@ namespace Neos.IdentityServer.Console.Controls
                     Text = res.CTRLSECGENRSAKEY,
                     Left = 600,
                     Top = 166,
-                    Width = 250
+                    Width = 250,
+                    Enabled = (ADFSManagementRights.IsAdministrator() || ADFSManagementRights.IsSystem())
                 };
                 btnGenerateKeys.Click += BtnGenerateKeysClick;
                 _txtpanel.Controls.Add(btnGenerateKeys);
@@ -11697,7 +11606,7 @@ namespace Neos.IdentityServer.Console.Controls
                 if (Config.KeysConfig.KeyVersion != SecretKeyVersion.V2)
                     txtXORValue.Enabled = false;
                 else
-                    txtXORValue.Enabled = true;
+                    txtXORValue.Enabled = (ADFSManagementRights.IsAdministrator() || ADFSManagementRights.IsSystem());
 
                 chkUseGPOPasswordPolicy.Enabled = Config.KeysConfig.UsePasswordPolicy;
                 chkLockUserIfPasswordExpired.Enabled = Config.KeysConfig.UsePasswordPolicy;
@@ -13510,7 +13419,7 @@ namespace Neos.IdentityServer.Console.Controls
                     Left = 320,
                     Top = 23,
                     Width = 150,
-                    Enabled = (Config.KeysConfig.AESKeyGenerator == AESKeyGeneratorMode.ECDH_P256)
+                    Enabled = (Config.KeysConfig.AESKeyGenerator == AESKeyGeneratorMode.ECDH_P256) && (ADFSManagementRights.IsAdministrator() || ADFSManagementRights.IsSystem())
                 };
                 btnGenerateKeys.Click += BtnGenerateKeysClick;
                 _panelAES.Controls.Add(btnGenerateKeys);
@@ -13567,7 +13476,7 @@ namespace Neos.IdentityServer.Console.Controls
                 tblCancelConfig.Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPECANCEL;
                 lblAESKey.Text = res.CTRLSECKEYLENGTH + " : ";
                 btnGenerateKeys.Text = res.CTRLSECGENKEYS;
-                btnGenerateKeys.Enabled = (Config.KeysConfig.AESKeyGenerator == AESKeyGeneratorMode.ECDH_P256);
+                btnGenerateKeys.Enabled = (Config.KeysConfig.AESKeyGenerator == AESKeyGeneratorMode.ECDH_P256) && (ADFSManagementRights.IsAdministrator() || ADFSManagementRights.IsSystem());
             }
             finally
             {
@@ -13598,7 +13507,7 @@ namespace Neos.IdentityServer.Console.Controls
             _UpdateControlsLayouts = true;
             try
             {
-                btnGenerateKeys.Enabled = (Config.KeysConfig.AESKeyGenerator == AESKeyGeneratorMode.ECDH_P256);
+                btnGenerateKeys.Enabled = (Config.KeysConfig.AESKeyGenerator == AESKeyGeneratorMode.ECDH_P256) && (ADFSManagementRights.IsAdministrator() || ADFSManagementRights.IsSystem());
             }
             finally
             {

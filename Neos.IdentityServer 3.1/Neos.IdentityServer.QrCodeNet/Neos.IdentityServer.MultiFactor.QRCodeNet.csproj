@@ -46,6 +46,7 @@
     <DocumentationFile>..\nuget\lib\net40\Neos.IdentityServer.MultiFactor.QrCodeNet.xml</DocumentationFile>
     <NoWarn>1591,1592,1573,1571,1570,1572</NoWarn>
     <Prefer32Bit>false</Prefer32Bit>
+    <LangVersion>7.2</LangVersion>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject />

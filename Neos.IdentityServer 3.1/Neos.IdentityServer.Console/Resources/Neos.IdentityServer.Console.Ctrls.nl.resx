@@ -565,7 +565,7 @@
     <value>Maximum aantal rijen</value>
   </data>
   <data name="CTRLWEBAUTHNEXTENSIONS" xml:space="preserve">
-    <value>Extensies (authnSe)</value>
+    <value>Extensies (exts)</value>
   </data>
   <data name="CTRLWEBAUTHNRESIDENTKEY" xml:space="preserve">
     <value>Bewoner sleutel vereisen</value>
@@ -728,5 +728,8 @@
   </data>
   <data name="CTRLSECGENRSAKEY" xml:space="preserve">
     <value>RSA-hoofdsleutel</value>
+  </data>
+  <data name="CTRLWEBAUTHNCONTRAINEDMETADATA" xml:space="preserve">
+    <value>Beperkte metagegevensservice gebruiken (voor ADFS-farm die geen internettoegang heeft)</value>
   </data>
 </root>

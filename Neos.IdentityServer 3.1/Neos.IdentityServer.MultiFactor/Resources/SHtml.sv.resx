@@ -294,4 +294,7 @@ Du kommer att kunna använda MFA validering i framtiden.</value>
   <data name="HtmlUIMNickNamesMessage" xml:space="preserve">
     <value>Ange namnet på din biometriska enhet eller lämna tomrummet och välj sedan "Fortsätt"</value>
   </data>
+  <data name="HtmlUIMRegisterDevice" xml:space="preserve">
+    <value>Registrera enhet</value>
+  </data>
 </root>

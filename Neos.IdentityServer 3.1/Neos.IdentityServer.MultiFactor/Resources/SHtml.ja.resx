@@ -291,4 +291,7 @@
   <data name="HtmlUIMNickNamesMessage" xml:space="preserve">
     <value>生体認証デバイスの名前を入力するか、ボイドを残して、「続行」を選択します。</value>
   </data>
+  <data name="HtmlUIMRegisterDevice" xml:space="preserve">
+    <value>デバイスの登録</value>
+  </data>
 </root>

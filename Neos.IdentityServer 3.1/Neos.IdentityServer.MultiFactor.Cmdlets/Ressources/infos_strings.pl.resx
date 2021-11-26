@@ -118,13 +118,13 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="InfosAllServicesRestarted" xml:space="preserve">
-    <value>Wszystkie usługi rolnicze ponownie !</value>
+    <value>Wszystkie usługi farmy uruchomione ponownie!</value>
   </data>
   <data name="InfosConfigUpdated" xml:space="preserve">
-    <value>Zaktualizowano konfigurację usługi MFA !</value>
+    <value>Zaktualizowano konfigurację usługi MFA!</value>
   </data>
   <data name="InfosDatabaseCreated" xml:space="preserve">
-    <value>Utworzono bazę danych {0} !</value>
+    <value>Utworzono bazę danych {0}!</value>
   </data>
   <data name="InfosRecordsCount" xml:space="preserve">
     <value>Liczba rekordów: {0}</value>
@@ -133,82 +133,82 @@
     <value>Konfiguracja usługi MFA została poprawnie wyeksportowana do pliku {0} !</value>
   </data>
   <data name="InfosSystemImported" xml:space="preserve">
-    <value>Konfiguracja usługi MFA poprawnie zaimportowana z pliku {0} !</value>
+    <value>Konfiguracja usługi MFA została poprawnie zaimportowana z pliku {0} !</value>
   </data>
   <data name="InfosSystemInInvalidState" xml:space="preserve">
-    <value>Import konfiguracji MFA z błędami !</value>
+    <value>Import konfiguracji MFA z błędami!</value>
   </data>
   <data name="InfosSystemRegistered" xml:space="preserve">
-    <value>System MFA poprawnie zarejestrowany !</value>
+    <value>System MFA poprawnie zarejestrowany!</value>
   </data>
   <data name="InfosSystemUnRegistered" xml:space="preserve">
-    <value>System MFA poprawnie nieskonfigurowane !</value>
+    <value>System MFA poprawnie odrejestrowany!</value>
   </data>
   <data name="InfosUserAdded" xml:space="preserve">
-    <value>Dodano użytkownika {0} !</value>
+    <value>Dodano użytkownika {0}!</value>
   </data>
   <data name="InfosUserDeleted" xml:space="preserve">
-    <value>Usunięto użytkownika {0} !</value>
+    <value>Usunięto użytkownika {0}!</value>
   </data>
   <data name="InfosUserHasNewKey" xml:space="preserve">
-    <value>Użytkownik {0} ma nowy klucz Enryption !</value>
+    <value>Użytkownik {0} ma nowy klucz szyfrowania!</value>
   </data>
   <data name="InfosUserUpdated" xml:space="preserve">
-    <value>Użytkownik {0} zaktualizował !</value>
+    <value>Użytkownik {0} zaktualizowany!</value>
   </data>
   <data name="InfosWarningAboutTheme" xml:space="preserve">
-    <value>Ostrożność! Twój temat musi być w pełni kompatybilny (js, CSS, etc...) z UI wybrać: {0}</value>
+    <value>Uwaga! Twój motyw musi być w pełni kompatybilny (js, CSS, etc...) z UI które wybrano: {0}</value>
   </data>
   <data name="InfosDatabaseUpgraded" xml:space="preserve">
-    <value>Baza danych {0} została zaktualizowana !</value>
+    <value>Baza danych {0} została zaktualizowana!</value>
   </data>
   <data name="InfosSystemAlreadyInitialized" xml:space="preserve">
-    <value>MFA zostało już zainicjowane! musisz uruchomić Cmdlet PowerShell "UnRegister-MFASystem", jeśli chcesz ponownie zainicjować WSZYSTKĄ konfigurację MFA !</value>
+    <value>MFA zostało już zainicjowane! Musisz uruchomić Cmdlet PowerShell "UnRegister-MFASystem", jeśli chcesz ponownie zainicjować CAŁĄ konfigurację MFA!</value>
   </data>
   <data name="InfosCertsACLUpdated" xml:space="preserve">
-    <value>Zaktualizowano listę kontroli dostępu dla wszystkich certyfikatów MFA !</value>
+    <value>Zaktualizowano listę kontroli dostępu dla wszystkich certyfikatów MFA!</value>
   </data>
   <data name="InfosOrphanedDeleted" xml:space="preserve">
     <value>Liczba usuniętych osieroconych kluczy prywatnych</value>
   </data>
   <data name="InfosThreatSystemRegistered" xml:space="preserve">
-    <value>System zagrożeń MFA poprawnie zarejestrowany !</value>
+    <value>System zagrożeń MFA został poprawnie zarejestrowany!</value>
   </data>
   <data name="InfosThreatSystemUnRegistered" xml:space="preserve">
-    <value>System zagrożeń MFA poprawnie nieskonfigurowany !</value>
+    <value>System zagrożeń MFA poprawnie odrejestrowany!</value>
   </data>
   <data name="InfosThreatSystemNotRegistered" xml:space="preserve">
-    <value>System zagrożeń mfa nie został poprawnie zarejestrowany !</value>
+    <value>System zagrożeń MFA nie został poprawnie zarejestrowany!</value>
   </data>
   <data name="InfosThreatSystemNotUnRegistered" xml:space="preserve">
-    <value>System zagrożeń usługi MFA nie został poprawnie skonfigurowany !</value>
+    <value>System zagrożeń MFA nie został poprawnie skonfigurowany!</value>
   </data>
   <data name="InfosThreatDataNotUpdated" xml:space="preserve">
-    <value>Dane systemu zagrożeń usługi MFA nie zostały poprawnie zaktualizowane !</value>
+    <value>Dane systemu zagrożeń MFA nie zostały poprawnie zaktualizowane!</value>
   </data>
   <data name="InfosThreatDataUpdated" xml:space="preserve">
-    <value>Dane systemu zagrożeń mfa poprawnie zaktualizowane !</value>
+    <value>Dane systemu zagrożeń MFA zostały poprawnie zaktualizowane!</value>
   </data>
   <data name="InfosNotificationSend" xml:space="preserve">
-    <value>Powiadomienie wysłane !</value>
+    <value>Powiadomienie wysłane!</value>
   </data>
   <data name="InfoComputerNotRegistered" xml:space="preserve">
-    <value>Komputer {0} NIE został dodany / zaktualizowany do konfiguracji MFA !</value>
+    <value>Komputer {0} NIE został dodany / zaktualizowany do konfiguracji MFA!</value>
   </data>
   <data name="InfoComputerNotUnRegistered" xml:space="preserve">
-    <value>Komputer {0} NIE został usunięty z konfiguracji MFA !</value>
+    <value>Komputer {0} NIE został usunięty z konfiguracji MFA!</value>
   </data>
   <data name="InfoComputerRegistered" xml:space="preserve">
-    <value>Komputer {0} Dodano / zaktualizowano do konfiguracji MFA !</value>
+    <value>Komputer {0} dodano / zaktualizowano do konfiguracji MFA!</value>
   </data>
   <data name="InfoComputerUnRegistered" xml:space="preserve">
-    <value>Komputer {0} Usunięto z konfiguracji MFA !</value>
+    <value>Komputer {0} usunięto z konfiguracji MFA!</value>
   </data>
   <data name="InfosServerServicesRestarted" xml:space="preserve">
-    <value>Musisz ponownie uruchomić usługę "MFA Notification Hub” i ponownie uruchomić wszystkie otwarte konsole i sesje PowerShell !</value>
+    <value>Musisz ponownie uruchomić usługę "MFA Notification Hub” i ponownie uruchomić wszystkie otwarte konsole i sesje PowerShell!</value>
   </data>
   <data name="InfosADFSServicesRestarted" xml:space="preserve">
-    <value>Usługa ADFS poprawnie ponownie uruchomiona na serwerze {0} !</value>
+    <value>Usługa ADFS poprawnie uruchomiona ponownie na serwerze {0}!</value>
   </data>
   <data name="InfosCredentialsChanged" xml:space="preserve">
     <value>Poświadczenia poprawnie zaktualizowane!</value>
@@ -217,10 +217,10 @@
     <value>Szablony poczty poprawnie wyeksportowane!</value>
   </data>
   <data name="InfosSampleInstalled" xml:space="preserve">
-    <value>Mfa przykład zainstalowany!</value>
+    <value>Przykład MFA zainstalowany!</value>
   </data>
   <data name="InfosSampleUnInstalled" xml:space="preserve">
-    <value>Mfa przykład UnInstalled!</value>
+    <value>Przykład MFA odinstalowany!</value>
   </data>
   <data name="InfosSQLCertificateChanged" xml:space="preserve">
     <value>Certyfikat SQL {0} poprawnie zaktualizowany!</value>
@@ -229,7 +229,7 @@
     <value>Certyfikat usługi ADFS został poprawnie utworzony!</value>
   </data>
   <data name="InfosSystemNotRegistered" xml:space="preserve">
-    <value>Mfa System Nie zarejestrowany !</value>
+    <value>System MFA nie jest zarejestrowany !</value>
   </data>
   <data name="InfosYes" xml:space="preserve">
     <value>&amp;Tak</value>
@@ -238,16 +238,16 @@
     <value>&amp;Nie</value>
   </data>
   <data name="InfoRSAKeyWillbeReset" xml:space="preserve">
-    <value>Klucz RSA MFA zostanie odnowiony! Kontynuować ?</value>
+    <value>Klucz RSA MFA zostanie odnowiony! Kontynuować?</value>
   </data>
   <data name="InfoAllKeyWillbeReset" xml:space="preserve">
-    <value>Wszystkie bieżące klucze użytkowników zostaną unieważnione ! Kontynuować ?</value>
+    <value>Wszystkie bieżące klucze użytkowników zostaną unieważnione! Kontynuować?</value>
   </data>
   <data name="InfosRSACertificateChanged" xml:space="preserve">
     <value>Certyfikat RSA MFA poprawnie zainstalowany!</value>
   </data>
   <data name="InfosRSACertificateError" xml:space="preserve">
-    <value>Certyfikat RSA mfa nie jest poprawnie zainstalowany!</value>
+    <value>Certyfikat RSA MFA nie jest poprawnie zainstalowany!</value>
   </data>
   <data name="InfosRSASystemKeyChanged" xml:space="preserve">
     <value>Klucz szyfrowania MFA RSA poprawnie zaktualizowany!</value>

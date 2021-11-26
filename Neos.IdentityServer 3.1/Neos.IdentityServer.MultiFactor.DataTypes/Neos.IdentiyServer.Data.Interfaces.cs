@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2020 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
+// Copyright (c) 2021 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -256,9 +256,6 @@ namespace Neos.IdentityServer.MultiFactor
         string ServerName { get; set; }
         string ServerIcon { get; set; }
         string Origin { get; set; }
-        bool RequireValidAttestationRoot { get; set; }
-        /* string MDSAccessKey { get; set; }
-         string MDSCacheDirPath { get; set; } */
     }
 
     /// <summary>
@@ -270,12 +267,9 @@ namespace Neos.IdentityServer.MultiFactor
         string AttestationConveyancePreference { get; set; }
         string UserVerificationRequirement { get; set; }
         bool Extensions { get; set; }
-        bool UserVerificationIndex { get; set; }
-        bool Location { get; set; }
         bool UserVerificationMethod { get; set; }
-        bool? HmacSecret { get; set; }
-        WebAuthNUserVerification? CredProtect { get; set; }
-        bool? EnforceCredProtect { get; set; }
+        bool ConstrainedMetadataRepository { get; set; }
+
     }
 
     #endregion

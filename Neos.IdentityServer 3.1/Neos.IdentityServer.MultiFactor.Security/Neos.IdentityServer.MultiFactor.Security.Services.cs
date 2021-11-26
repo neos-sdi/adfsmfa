@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2020 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
+// Copyright (c) 2021 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -854,6 +854,7 @@ namespace Neos.IdentityServer.MultiFactor
 
                 NetTcpBinding tcp = new NetTcpBinding(SecurityMode.Transport);
                 tcp.MaxConnections = 256;
+                tcp.MaxReceivedMessageSize = 2147483647;
                 tcp.Security.Transport.ClientCredentialType = TcpClientCredentialType.Windows;
 
                 List<IAuthorizationPolicy> policies = new List<IAuthorizationPolicy>();
@@ -1294,6 +1295,7 @@ namespace Neos.IdentityServer.MultiFactor
             }
             NetTcpBinding tcp = new NetTcpBinding(SecurityMode.Transport);
             tcp.Security.Transport.ClientCredentialType = TcpClientCredentialType.Windows;
+            tcp.MaxReceivedMessageSize = 2147483647;
 
             if (useEncryption)
             {

@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2020 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
+// Copyright (c) 2021 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -16,13 +16,17 @@
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
 using Microsoft.Win32;
+using Neos.IdentityServer.MultiFactor.Data;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
+using System.Net;
 using System.ServiceProcess;
 
 namespace Neos.IdentityServer.MultiFactor.NotificationHub
@@ -75,12 +79,15 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
             LogForSlots.LogEnabled = false;
             try
             {
-                StartADFSService();
+                StopADFSService();
+                CleanupStartupFiles();
                 StartNTService();
                 StartReplayService();
+                StartADFSService();
                 StartThemesService();
                 StartAdminService();
                 StartKeyCleanup();
+                InitSecurityFile();
             }
             catch (Exception e)
             {
@@ -102,9 +109,9 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
                 StopKeyCleanup();
                 StopAdminService();
                 StopThemesService();
+                StopADFSService();
                 StopReplayService();
                 StopNTService();
-                StopADFSService();
             }
             catch (Exception e)
             {
@@ -124,6 +131,28 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
             try
             {
                 _svchost.StartService(this);
+                ReplayClient replaymanager = new ReplayClient();
+                replaymanager.Initialize();
+                try
+                {
+                    IReplay client = replaymanager.Open();
+                    try
+                    {
+                        client.WarmUp();
+                    }
+                    catch (Exception e)
+                    {
+                        this.EventLog.WriteEntry(string.Format("Error on WarmUp ReplayService : {0}.", e.Message), EventLogEntryType.Error, 1001);
+                    }
+                    finally
+                    {
+                        replaymanager.Close(client);
+                    }
+                }
+                finally
+                {
+                    replaymanager.UnInitialize();
+                }
             }
             catch (Exception e)
             {
@@ -187,8 +216,6 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
         {
             try
             {
-                if (File.Exists(SystemUtilities.SystemCacheFile))
-                    File.Delete(SystemUtilities.SystemCacheFile);
                 _svcadminhost.StartService(this);
                 StorePrimaryServerStatus(InitLocalNodeType());
             }
@@ -381,6 +408,67 @@ namespace Neos.IdentityServer.MultiFactor.NotificationHub
                 rk.SetValue("IsPrimaryServer", 1, RegistryValueKind.DWord);
             else
                 rk.SetValue("IsPrimaryServer", 0, RegistryValueKind.DWord);
+        }
+
+        /// <summary>
+        /// CleanupStartupFiles method implementation
+        /// </summary>
+        private void CleanupStartupFiles()
+        {
+            if (File.Exists(CFGUtilities.ConfigCacheFile))
+                File.Delete(CFGUtilities.ConfigCacheFile);
+            if (File.Exists(SystemUtilities.SystemCacheFile))
+                File.Delete(SystemUtilities.SystemCacheFile);
+        }
+
+        /// <summary>
+        /// InitSecurityFile method implementation
+        /// </summary>
+        protected void InitSecurityFile()
+        {
+            string fqdn = Dns.GetHostEntry("localhost").HostName;
+            WebAdminClient manager = new WebAdminClient();
+            manager.Initialize();
+            try
+            {
+                MFAConfig config = CFGReaderUtilities.ReadConfiguration();
+                IWebAdminServices client = manager.Open();
+                try
+                {
+                    SIDs.Clear();
+                    SIDs.Assign(client.GetSIDsInformations(GetServers(config)));
+                    SIDs.InternalUpdateDirectoryACLs(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + Path.DirectorySeparatorChar + "MFA");
+                }
+                catch (Exception ex)
+                {
+                    Log.WriteEntry(string.Format("Error on WebAdminService Service GetSIDsInformations method : {0} / {1}.", fqdn, ex.Message), EventLogEntryType.Error, 2010);
+                    SIDs.Assign(new SIDsParametersRecord() { Loaded = false });
+                }
+                finally
+                {
+                    manager.Close(client);
+                }
+            }
+            catch (Exception e)
+            {
+                Log.WriteEntry(string.Format("Error on WebAdminService Service GetSIDsInformations method : {0} / {1}.", fqdn, e.Message), EventLogEntryType.Error, 2010);
+            }
+            finally
+            {
+                manager.UnInitialize();
+            }
+            return;
+        }
+
+        /// <summary>
+        /// GetServers method implementation
+        /// </summary>
+        private Dictionary<string, bool> GetServers(MFAConfig config)
+        {
+            var servernames = (from server in config.Hosts.ADFSFarm.Servers
+                               select (server.FQDN.ToLower(), server.NodeType.ToLower().Equals("primarycomputer")));
+            Dictionary<string, bool> servers = servernames.ToDictionary(s => s.Item1, s => s.Item2);
+            return servers;
         }
         #endregion
     }

@@ -595,7 +595,7 @@
     <value>タイムスタンプドリフト許容値</value>
   </data>
   <data name="CTRLWEBAUTHNEXTENSIONS" xml:space="preserve">
-    <value>拡張機能 (認証)</value>
+    <value>拡張機能 (exts)</value>
   </data>
   <data name="CTRLWEBAUTHNRESIDENTKEY" xml:space="preserve">
     <value>レジデント キーを要求する</value>
@@ -728,5 +728,8 @@
   </data>
   <data name="CTRLSECGENRSAKEY" xml:space="preserve">
     <value>RSA マスター キー</value>
+  </data>
+  <data name="CTRLWEBAUTHNCONTRAINEDMETADATA" xml:space="preserve">
+    <value>制約付きメタデータ サービスを使用する (インターネットアクセスがない ADFS ファームの場合)</value>
   </data>
 </root>

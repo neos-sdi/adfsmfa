@@ -483,15 +483,17 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.ASN
             objLen = Decode(buf, off, len,
                 out tc, out tv, out cons,
                 out valOff, out valLen);
-            AsnElt a = new AsnElt();
-            a.TagClass = tc;
-            a.TagValue = tv;
-            a.objBuf = buf;
-            a.objOff = off;
-            a.objLen = objLen;
-            a.valOff = valOff;
-            a.valLen = valLen;
-            a.hasEncodedHeader = true;
+            AsnElt a = new AsnElt
+            {
+                TagClass = tc,
+                TagValue = tv,
+                objBuf = buf,
+                objOff = off,
+                objLen = objLen,
+                valOff = valOff,
+                valLen = valLen,
+                hasEncodedHeader = true
+            };
             if (cons)
             {
                 List<AsnElt> subs = new List<AsnElt>();
@@ -1984,8 +1986,10 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.ASN
         static AsnElt MakePrimitiveInner(int tagClass, int tagValue,
             byte[] val, int off, int len)
         {
-            AsnElt a = new AsnElt();
-            a.objBuf = new byte[len];
+            AsnElt a = new AsnElt
+            {
+                objBuf = new byte[len]
+            };
             Array.Copy(val, off, a.objBuf, 0, len);
             a.objOff = 0;
             a.objLen = -1;
@@ -2188,13 +2192,15 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.ASN
         public static AsnElt Make(int tagClass, int tagValue,
             params AsnElt[] subs)
         {
-            AsnElt a = new AsnElt();
-            a.objBuf = null;
-            a.objOff = 0;
-            a.objLen = -1;
-            a.valOff = 0;
-            a.valLen = -1;
-            a.hasEncodedHeader = false;
+            AsnElt a = new AsnElt
+            {
+                objBuf = null,
+                objOff = 0,
+                objLen = -1,
+                valOff = 0,
+                valLen = -1,
+                hasEncodedHeader = false
+            };
             if (tagClass < 0 || tagClass > 3)
             {
                 throw new AsnException(
@@ -2226,15 +2232,17 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.ASN
          */
         public static AsnElt MakeSetOf(params AsnElt[] subs)
         {
-            AsnElt a = new AsnElt();
-            a.objBuf = null;
-            a.objOff = 0;
-            a.objLen = -1;
-            a.valOff = 0;
-            a.valLen = -1;
-            a.hasEncodedHeader = false;
-            a.TagClass = UNIVERSAL;
-            a.TagValue = SET;
+            AsnElt a = new AsnElt
+            {
+                objBuf = null,
+                objOff = 0,
+                objLen = -1,
+                valOff = 0,
+                valLen = -1,
+                hasEncodedHeader = false,
+                TagClass = UNIVERSAL,
+                TagValue = SET
+            };
             if (subs == null)
             {
                 a.Sub = new AsnElt[0];
@@ -2769,7 +2777,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.ASN
                 int px = str.IndexOf('-', p);
                 if (px > 0 && px < r && r > 0 && r <= q)
                 {
-                    pemType = string.Copy(str.Substring(p, px - p));
+                    pemType = new StringBuilder(str.Substring(p, px - p)).ToString();
                     str = str.Substring(r, q - r);
                 }
             }
@@ -2989,8 +2997,11 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Library.ASN
     /// </summary>
     public class AsnOID
     {
-        static Dictionary<string, string> OIDToName = new Dictionary<string, string>();
-        static Dictionary<string, string> NameToOID = new Dictionary<string, string>();
+
+        static Dictionary<string, string> OIDToName =
+            new Dictionary<string, string>();
+        static Dictionary<string, string> NameToOID =
+            new Dictionary<string, string>();
 
         static AsnOID()
         {

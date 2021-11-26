@@ -1762,6 +1762,15 @@ namespace Neos.IdentityServer.Console.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Use Constrained Metadata Service (for ADFS farm that has no internet access).
+        /// </summary>
+        internal static string CTRLWEBAUTHNCONTRAINEDMETADATA {
+            get {
+                return ResourceManager.GetString("CTRLWEBAUTHNCONTRAINEDMETADATA", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Attestation Conveyance Preference.
         /// </summary>
         internal static string CTRLWEBAUTHNCONVEYANCE {
@@ -1780,7 +1789,7 @@ namespace Neos.IdentityServer.Console.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Extensions (authnSe).
+        ///   Recherche une chaîne localisée semblable à Extensions (exts).
         /// </summary>
         internal static string CTRLWEBAUTHNEXTENSIONS {
             get {

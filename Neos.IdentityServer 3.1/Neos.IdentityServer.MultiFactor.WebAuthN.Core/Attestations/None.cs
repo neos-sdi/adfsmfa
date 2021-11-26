@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2020 abergs (https://github.com/abergs/fido2-net-lib)                                                                                                                      //                        
+// Copyright (c) 2021 abergs (https://github.com/abergs/fido2-net-lib)                                                                                                                      //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -12,26 +12,19 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                               //
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
-using Neos.IdentityServer.MultiFactor.WebAuthN.Library.Cbor;
+using Neos.IdentityServer.MultiFactor.WebAuthN.Objects;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Neos.IdentityServer.MultiFactor.WebAuthN.AttestationFormat
 {
-    internal class None : AttestationFormat
+    public sealed class None : AttestationVerifier
     {
-        private readonly IMetadataService _metadataService;
-        private readonly bool _requireValidAttestationRoot;
-
-        public None(CBORObject attStmt, byte[] authenticatorData, byte[] clientDataHash, IMetadataService metadataService, bool requireValidAttestationRoot) 
-            : base(attStmt, authenticatorData, clientDataHash)
-        {
-            _metadataService = metadataService;
-            _requireValidAttestationRoot = requireValidAttestationRoot;
-        }
-
-        public override void Verify()
+        public override (AttestationType, X509Certificate2[]) Verify()
         {
             if (0 != attStmt.Keys.Count && 0 != attStmt.Values.Count)
                 throw new VerificationException("Attestation format none should have no attestation statement");
+
+            return (AttestationType.None, null);
         }
     }
 }

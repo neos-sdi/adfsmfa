@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="SMSMessage" xml:space="preserve">
-    <value>Użyj &lt;$otp$&gt; jako kodu zabezpieczającego fr konta {0}</value>
+    <value>Użyj &lt;$otp$&gt; jako kodu zabezpieczającego dla konta {0}</value>
   </data>
   <data name="SMSTwoWayMessage" xml:space="preserve">
     <value>Musisz odesłać ten kod &lt;$otp$&gt; jako kod zabezpieczający dla konta {0}</value>

@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2020 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
+// Copyright (c) 2021 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -38,12 +38,10 @@ using System.Net;
 using System.Net.Mail;
 using System.Reflection;
 using System.Security.Cryptography;
-using System.Security.Principal;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.Windows.Threading;
-using System.Xml.Serialization;
 
 
 namespace Neos.IdentityServer.MultiFactor
@@ -61,7 +59,7 @@ namespace Neos.IdentityServer.MultiFactor
         {
             try
             {
-                Assembly assembly = Assembly.Load("Neos.IdentityServer.MultiFactor.Data, Version=3.0.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2");
+                Assembly assembly = Assembly.Load("Neos.IdentityServer.MultiFactor.Data, Version=3.0.0.0, Culture=neutral, "+ Utilities.GetAssemblyPublicKey());
                 Type _typetoload = assembly.GetType("Neos.IdentityServer.MultiFactor.Data.ADDSKeysRepositoryService");
                 Type _ancestor = _typetoload.BaseType;
                 if (_ancestor.IsClass && _ancestor.IsAbstract && (_ancestor == typeof(DataRepositoryService)))
@@ -88,7 +86,7 @@ namespace Neos.IdentityServer.MultiFactor
         {
             try
             {
-                Assembly assembly = Assembly.Load("Neos.IdentityServer.MultiFactor.Data, Version=3.0.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2");
+                Assembly assembly = Assembly.Load("Neos.IdentityServer.MultiFactor.Data, Version=3.0.0.0, Culture=neutral, " + Utilities.GetAssemblyPublicKey());
                 Type _typetoload = assembly.GetType("Neos.IdentityServer.MultiFactor.Data.ADDSKeysRepositoryService");
                 Type _ancestor = _typetoload.BaseType;
                 if (_ancestor.IsClass && _ancestor.IsAbstract && (_ancestor == typeof(KeysRepositoryService)))
@@ -114,7 +112,7 @@ namespace Neos.IdentityServer.MultiFactor
         {
             try
             {
-                Assembly assembly = Assembly.Load("Neos.IdentityServer.MultiFactor.Data, Version=3.0.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2");
+                Assembly assembly = Assembly.Load("Neos.IdentityServer.MultiFactor.Data, Version=3.0.0.0, Culture=neutral, " + Utilities.GetAssemblyPublicKey());
                 Type _typetoload = assembly.GetType("Neos.IdentityServer.MultiFactor.Data.ADDSKeys2RepositoryService");
                 Type _ancestor = _typetoload.BaseType;
                 if (_ancestor.IsClass && _ancestor.IsAbstract && (_ancestor == typeof(KeysRepositoryService)))
@@ -142,7 +140,7 @@ namespace Neos.IdentityServer.MultiFactor
         {
             try
             {
-                Assembly assembly = Assembly.Load("Neos.IdentityServer.MultiFactor.Data, Version=3.0.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2");
+                Assembly assembly = Assembly.Load("Neos.IdentityServer.MultiFactor.Data, Version=3.0.0.0, Culture=neutral, " + Utilities.GetAssemblyPublicKey());
                 Type _typetoload = assembly.GetType("Neos.IdentityServer.MultiFactor.Data.SQLDataRepositoryService");
                 Type _ancestor = _typetoload.BaseType;
                 if (_ancestor.IsClass && _ancestor.IsAbstract && (_ancestor == typeof(DataRepositoryService)))
@@ -169,7 +167,7 @@ namespace Neos.IdentityServer.MultiFactor
         {
             try
             {
-                Assembly assembly = Assembly.Load("Neos.IdentityServer.MultiFactor.Data, Version=3.0.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2");
+                Assembly assembly = Assembly.Load("Neos.IdentityServer.MultiFactor.Data, Version=3.0.0.0, Culture=neutral, " + Utilities.GetAssemblyPublicKey());
                 Type _typetoload = assembly.GetType("Neos.IdentityServer.MultiFactor.Data.SQLKeysRepositoryService");
                 Type _ancestor = _typetoload.BaseType;
                 if (_ancestor.IsClass && _ancestor.IsAbstract && (_ancestor == typeof(KeysRepositoryService)))
@@ -195,7 +193,7 @@ namespace Neos.IdentityServer.MultiFactor
         {
             try
             {
-                Assembly assembly = Assembly.Load("Neos.IdentityServer.MultiFactor.Data, Version=3.0.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2");
+                Assembly assembly = Assembly.Load("Neos.IdentityServer.MultiFactor.Data, Version=3.0.0.0, Culture=neutral, " + Utilities.GetAssemblyPublicKey());
                 Type _typetoload = assembly.GetType("Neos.IdentityServer.MultiFactor.Data.SQLKeys2RepositoryService");
                 Type _ancestor = _typetoload.BaseType;
                 if (_ancestor.IsClass && _ancestor.IsAbstract && (_ancestor == typeof(KeysRepositoryService)))
@@ -272,7 +270,21 @@ namespace Neos.IdentityServer.MultiFactor
     /// </summary>
     internal static class RuntimeAuthProvider
     {
-        private static Dictionary<PreferredMethod, IExternalProvider> _lst = new Dictionary<PreferredMethod, IExternalProvider>();
+        private static Dictionary<PreferredMethod, IExternalProvider> _providers = new Dictionary<PreferredMethod, IExternalProvider>();
+
+        /// <summary>
+        /// Providers property implementation
+        /// </summary>
+        private static Dictionary<PreferredMethod, IExternalProvider> Providers
+        {
+            get
+            {
+                if (_providers == null)
+                    _providers = new Dictionary<PreferredMethod, IExternalProvider>();
+
+                return _providers;
+            }
+        } 
 
         /// <summary>
         /// GetAuthenticationProvider method implementation
@@ -412,9 +424,9 @@ namespace Neos.IdentityServer.MultiFactor
                         try
                         {
                             if (string.IsNullOrEmpty(cfg.WebAuthNProvider.FullQualifiedImplementation))
-                                provider = LoadWebAuthNProvider();
+                                provider = LoadWebAuthNProvider(cfg.WebAuthNProvider.Options.ConstrainedMetadataRepository);
                             else
-                                provider = LoadExternalProvider(cfg.WebAuthNProvider.FullQualifiedImplementation);
+                                provider = LoadWebAuthNProvider(cfg.WebAuthNProvider.Options.ConstrainedMetadataRepository, cfg.WebAuthNProvider.FullQualifiedImplementation);
                             if (provider == null)
                                 provider = new NeosPlugProvider(PreferredMethod.Biometrics);
                             if (provider.Kind == PreferredMethod.Biometrics)
@@ -459,7 +471,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         private static IExternalProvider LoadAzureProvider()
         {
-            Assembly assembly = Assembly.Load(@"Neos.IdentityServer.MultiFactor.SAS.Azure, Version=3.0.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2");
+            Assembly assembly = Assembly.Load(@"Neos.IdentityServer.MultiFactor.SAS.Azure, Version=3.0.0.0, Culture=neutral, " + Utilities.GetAssemblyPublicKey());
             Type _typetoload = assembly.GetType(@"Neos.IdentityServer.MultiFactor.SAS.NeosAzureProvider");
             if (_typetoload.IsClass && !_typetoload.IsAbstract && _typetoload.GetInterface("IExternalProvider") != null)
                 return (IExternalProvider)Activator.CreateInstance(_typetoload, true); // Allow Calling internal Constructors
@@ -470,12 +482,33 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// LoadWebAuthNProvider method implmentation
         /// </summary>
-        private static IExternalProvider LoadWebAuthNProvider()
+        private static IExternalProvider LoadWebAuthNProvider(bool constrained)
         {
-            Assembly assembly = Assembly.Load(@"Neos.IdentityServer.MultiFactor.WebAuthN.Provider, Version=3.0.0.0, Culture=neutral, PublicKeyToken=175aa5ee756d2aa2");
+            Assembly assembly = Assembly.Load(@"Neos.IdentityServer.MultiFactor.WebAuthN.Provider, Version=3.0.0.0, Culture=neutral, " + Utilities.GetAssemblyPublicKey());
             Type _typetoload = assembly.GetType(@"Neos.IdentityServer.MultiFactor.WebAuthN.NeosWebAuthNProvider");
             if (_typetoload.IsClass && !_typetoload.IsAbstract && _typetoload.GetInterface("IExternalProvider") != null)
-                return (IExternalProvider)Activator.CreateInstance(_typetoload, true); // Allow Calling internal Constructors
+                return (IExternalProvider)Activator.CreateInstance(_typetoload, new object[] { constrained }); // Allow Calling internal Constructors
+            else
+                return null;
+        }
+
+        /// <summary>
+        /// LoadWebAuthNProvider method implmentation
+        /// </summary>
+        private static IExternalProvider LoadWebAuthNProvider(bool constrained, string AssemblyFulldescription)
+        {
+            if (string.IsNullOrEmpty(AssemblyFulldescription))
+                return null;
+            Assembly assembly = Assembly.Load(Utilities.ParseAssembly(AssemblyFulldescription));
+            if (assembly == null)
+                return null;
+
+            Type _typetoload = assembly.GetType(Utilities.ParseType(AssemblyFulldescription));
+            if (_typetoload == null)
+                return null;
+
+            if (_typetoload.IsClass && !_typetoload.IsAbstract && _typetoload.GetInterface("IExternalProvider") != null)
+                return (IExternalProvider)Activator.CreateInstance(_typetoload, new object[] { constrained }); // Allow Calling internal Constructors
             else
                 return null;
         }
@@ -532,9 +565,9 @@ namespace Neos.IdentityServer.MultiFactor
             if (prov == null)
                 return;
             if (GetProviderInstance(method) == null)
-                _lst.Add(method, prov);
+                Providers.Add(method, prov);
             else
-                _lst[method] = prov;
+                Providers[method] = prov;
         }
 
         /// <summary>
@@ -543,7 +576,7 @@ namespace Neos.IdentityServer.MultiFactor
         private static void RemoveProvider(PreferredMethod method)
         {
             if (GetProviderInstance(method) != null)
-                _lst.Remove(method);
+                Providers.Remove(method);
         }
 
         /// <summary>
@@ -564,7 +597,7 @@ namespace Neos.IdentityServer.MultiFactor
         internal static List<IExternalProvider> GeActiveProvidersList()
         {
             List<IExternalProvider> temp = new List<IExternalProvider>();
-            foreach (IExternalProvider pp in _lst.Values)
+            foreach (IExternalProvider pp in Providers.Values)
             {
                 if (pp.Enabled)
                 {
@@ -581,7 +614,7 @@ namespace Neos.IdentityServer.MultiFactor
         internal static int GetActiveProvidersCount()
         {
             int i = 0;
-            foreach (IExternalProvider pp in _lst.Values)
+            foreach (IExternalProvider pp in Providers.Values)
             {
                 if (pp.Enabled)
                 {
@@ -597,7 +630,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         internal static IExternalProvider GetFirstActiveProvider()
         {
-            foreach (IExternalProvider pp in _lst.Values)
+            foreach (IExternalProvider pp in Providers.Values)
             {
                 if (pp.Enabled)
                 {
@@ -613,8 +646,8 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         internal static IExternalProvider GetProviderInstance(PreferredMethod method)
         {
-            if (_lst.ContainsKey(method))
-                return _lst.First(x => x.Key == method).Value;
+            if (Providers.ContainsKey(method))
+                return Providers.First(x => x.Key == method).Value;
             return null;
         }
 
@@ -652,6 +685,8 @@ namespace Neos.IdentityServer.MultiFactor
                         if (ctx.PinCode <= 0)
                             return false;
                     }
+                    if ((prov.Kind==PreferredMethod.Biometrics) && (ctx.BioNotSupported))
+                        return false;
                 }
                 return prov.IsAvailableForUser(ctx);
             }
@@ -680,19 +715,11 @@ namespace Neos.IdentityServer.MultiFactor
         }
 
         /// <summary>
-        /// Providers property implementation
-        /// </summary>
-        private static Dictionary<PreferredMethod, IExternalProvider> Providers
-        {
-            get { return _lst; }
-        }
-
-        /// <summary>
         /// LoadProviders() method implementation
         /// </summary>
         internal static void LoadProviders(MFAConfig cfg)
         {
-            _lst.Clear();
+            Providers.Clear();
             foreach (PreferredMethod meth in Enum.GetValues(typeof(PreferredMethod)))
             {
                 IExternalProvider provider = null;
@@ -827,9 +854,9 @@ namespace Neos.IdentityServer.MultiFactor
                             try
                             {
                                 if (string.IsNullOrEmpty(cfg.WebAuthNProvider.FullQualifiedImplementation))
-                                    provider = LoadWebAuthNProvider();
+                                    provider = LoadWebAuthNProvider(cfg.WebAuthNProvider.Options.ConstrainedMetadataRepository);
                                 else
-                                    provider = LoadExternalProvider(cfg.WebAuthNProvider.FullQualifiedImplementation);
+                                    provider = LoadWebAuthNProvider(cfg.WebAuthNProvider.Options.ConstrainedMetadataRepository, cfg.WebAuthNProvider.FullQualifiedImplementation);
                                 if (provider == null)
                                     provider = new NeosPlugProvider(PreferredMethod.Biometrics);
                                 if (provider.Kind == PreferredMethod.Biometrics)
@@ -859,15 +886,15 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         internal static void ResetProviders()
         {
-            _lst.Clear();
+            Providers.Clear();
         }
 
         /// <summary>
         /// IsUIElementRequired method implementation
         /// </summary>
-        internal static bool IsUIElementRequired(AuthenticationContext ctx, RequiredMethodElements element)
+        public static bool IsUIElementRequired(AuthenticationContext ctx, RequiredMethodElements element)
         {
-            foreach (KeyValuePair<PreferredMethod, IExternalProvider> prov in _lst)
+            foreach (KeyValuePair<PreferredMethod, IExternalProvider> prov in Providers)
             {
                 if ((prov.Value.Enabled) && (prov.Value.IsUIElementRequired(ctx, element)))
                     return true;
@@ -2637,7 +2664,7 @@ namespace Neos.IdentityServer.MultiFactor
                     lock (lck)
                     {
                         ResourcesLocale Resources = new ResourcesLocale(culture.LCID);
-                        htmlres = Resources.GetString(ResourcesLocaleKind.Mail, "MailOTPContent");
+                        htmlres = Resources.GetString(ResourcesLocaleKind.CommonMail, "MailOTPContent");
                     }
                 }
                 string html = StripEmailContent(htmlres);
@@ -2666,7 +2693,7 @@ namespace Neos.IdentityServer.MultiFactor
                     if (Message.Subject == string.Empty)
                     {
                         ResourcesLocale Resources = new ResourcesLocale(culture.LCID);
-                        Message.Subject = Resources.GetString(ResourcesLocaleKind.Mail, "MailOTPTitle");
+                        Message.Subject = Resources.GetString(ResourcesLocaleKind.CommonMail, "MailOTPTitle");
                     }
                 }
                 SendMail(Message, mail);
@@ -2715,7 +2742,7 @@ namespace Neos.IdentityServer.MultiFactor
                     lock (lck)
                     {
                         ResourcesLocale Resources = new ResourcesLocale(culture.LCID);
-                        htmlres = Resources.GetString(ResourcesLocaleKind.Mail, "MailAdminContent");
+                        htmlres = Resources.GetString(ResourcesLocaleKind.CommonMail, "MailAdminContent");
                     }
                 }
                 string sendermail = GetUserBusinessEmail(user.UPN);
@@ -2740,7 +2767,7 @@ namespace Neos.IdentityServer.MultiFactor
                     if (Message.Subject == string.Empty)
                     {
                         ResourcesLocale Resources = new ResourcesLocale(culture.LCID);
-                        Message.Subject = string.Format(Resources.GetString(ResourcesLocaleKind.Mail, "MailAdminTitle"), user.UPN);
+                        Message.Subject = string.Format(Resources.GetString(ResourcesLocaleKind.CommonMail, "MailAdminTitle"), user.UPN);
                     }
                 }
                 SendMail(Message, mail);
@@ -2791,7 +2818,7 @@ namespace Neos.IdentityServer.MultiFactor
                     lock (lck)
                     {
                         ResourcesLocale Resources = new ResourcesLocale(culture.LCID);
-                        htmlres = Resources.GetString(ResourcesLocaleKind.Mail, "MailKeyContent");
+                        htmlres = Resources.GetString(ResourcesLocaleKind.CommonMail, "MailKeyContent");
                     }
                 }
 
@@ -2824,7 +2851,7 @@ namespace Neos.IdentityServer.MultiFactor
                         if (Message.Subject == string.Empty)
                         {
                             ResourcesLocale Resources = new ResourcesLocale(culture.LCID);
-                            Message.Subject = Resources.GetString(ResourcesLocaleKind.Mail, "MailKeyTitle");
+                            Message.Subject = Resources.GetString(ResourcesLocaleKind.CommonMail, "MailKeyTitle");
                         }
                     }
                     Message.Priority = MailPriority.High;
@@ -2885,7 +2912,7 @@ namespace Neos.IdentityServer.MultiFactor
                     lock (lck)
                     {
                         ResourcesLocale Resources = new ResourcesLocale(culture.LCID);
-                        htmlres = Resources.GetString(ResourcesLocaleKind.Mail, "MailNotifications");
+                        htmlres = Resources.GetString(ResourcesLocaleKind.CommonMail, "MailNotifications");
                     }
                 }
                 string html = StripEmailContent(htmlres);
@@ -2909,7 +2936,7 @@ namespace Neos.IdentityServer.MultiFactor
                     if (Message.Subject == string.Empty)
                     {
                         ResourcesLocale Resources = new ResourcesLocale(culture.LCID);
-                        Message.Subject = string.Format(Resources.GetString(ResourcesLocaleKind.Mail, "MailNotificationsTitle"), user.UPN);
+                        Message.Subject = string.Format(Resources.GetString(ResourcesLocaleKind.CommonMail, "MailNotificationsTitle"), user.UPN);
                     }
                 }
                 SendMail(Message, mail);
@@ -3931,6 +3958,8 @@ namespace Neos.IdentityServer.MultiFactor
                     goto case PreferredMethod.Biometrics;
                 case PreferredMethod.Biometrics:
                     IExternalProvider prov4 = RuntimeAuthProvider.GetProvider(PreferredMethod.Biometrics);
+                    if (usercontext.BioNotSupported)
+                        goto case PreferredMethod.Pin;
                     if ((prov4 != null) && (prov4.Enabled))
                     {
                         isrequired = prov4.IsRequired;
@@ -3980,6 +4009,81 @@ namespace Neos.IdentityServer.MultiFactor
             }
         }
 
+        /// <summary>
+        /// CheckForUserAgent method implementation
+        /// </summary>
+        internal static void CheckForUserAgent(MFAConfig config, AuthenticationContext usercontext, string userplatform)
+        {
+            string platform = userplatform;
+            usercontext.Platform = userplatform;
+            if (!string.IsNullOrEmpty(platform))
+            {
+                if (platform.ToLower().Contains("safari"))
+                {
+                    usercontext.DirectLogin = false;
+                    return;
+                }
+                if (platform.ToLower().Contains("trident/7.0") || platform.ToLower().Contains("msie"))
+                {
+                    usercontext.BioNotSupported = true;
+                    usercontext.DirectLogin = false;
+                    return;
+                }
+                if (IsApplePlatForm(usercontext))
+                {
+                    usercontext.DirectLogin = false;
+                    return;
+                }
+                // else "Android", "Chrome OS", "Linux", "Windows", or "Unknown"
+            }
+            else
+            {
+                usercontext.DirectLogin = false;
+                return;
+            }
+            usercontext.BioNotSupported = false;
+            usercontext.DirectLogin = config.WebAuthNProvider.DirectLogin;
+        }
+
+        /// <summary>
+        /// IsAppleDevice method implmentation
+        /// </summary>
+        internal static bool IsAppleDevice(AuthenticationContext usercontext)
+        {
+            if (usercontext.Platform.ToLower().Contains("safari"))
+            {
+#if psysuck
+                Log.WriteEntry("Detected Safari", EventLogEntryType.Warning, 101);
+#endif
+                return true;
+            }
+            if (IsApplePlatForm(usercontext))
+            {
+#if psysuck
+                Log.WriteEntry("Detected Apple Platform", EventLogEntryType.Warning, 101);
+#endif
+                return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// IsApplePlatForm method implmentation
+        /// </summary>
+        private static bool IsApplePlatForm(AuthenticationContext usercontext)
+        {
+            if (!string.IsNullOrEmpty(usercontext.Platform))
+            {
+                if (usercontext.Platform.ToLower().Equals("ios") || usercontext.Platform.ToLower().Equals("macos") || usercontext.Platform.ToLower().Equals("osx"))
+                    return true;
+                if (usercontext.Platform.ToLower().Contains("macintosh") || usercontext.Platform.ToLower().Contains("iphone") || usercontext.Platform.ToLower().Contains("ipad") || usercontext.Platform.ToLower().Contains("ipod"))
+                    return true;
+                if (usercontext.Platform.ToLower().Equals("mac os x") || usercontext.Platform.ToLower().Equals("macintel") || usercontext.Platform.ToLower().Equals("mac_powerpc") || usercontext.Platform.ToLower().Equals("mac_68k"))
+                    return true; 
+            }
+            return false;
+        }
+    
         /// <summary>
         /// PatchUserLcid method implementation
         /// </summary>
@@ -4038,9 +4142,9 @@ namespace Neos.IdentityServer.MultiFactor
             }
         }
     }
-    #endregion
+#endregion
 
-    #region WebAuthNCredentialInformation
+#region WebAuthNCredentialInformation
     /// <summary>
     /// WebAuthNCredentialInformation class
     /// </summary>
@@ -4058,5 +4162,5 @@ namespace Neos.IdentityServer.MultiFactor
         public uint SignatureCounter { get; set; }
         public string NickName { get; set; }
     }
-    #endregion
+#endregion
 }

@@ -24,6 +24,7 @@
     <RegisterForComInterop>false</RegisterForComInterop>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <Prefer32Bit>false</Prefer32Bit>
+    <LangVersion>7.2</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -33,6 +34,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
+    <LangVersion>7.2</LangVersion>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>
@@ -752,9 +754,6 @@
     <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityAESViewControl.de.resx">
       <DependentUpon>Neos.IdentityServer.Console.SecurityAESViewControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityAESViewControl.en-US.resx">
-      <DependentUpon>Neos.IdentityServer.Console.SecurityAESViewControl.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityAESViewControl.es.resx">
       <DependentUpon>Neos.IdentityServer.Console.SecurityAESViewControl.cs</DependentUpon>
     </EmbeddedResource>
@@ -795,9 +794,6 @@
       <DependentUpon>Neos.IdentityServer.Console.SecurityAESWizard.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityAESWizard.de.resx">
-      <DependentUpon>Neos.IdentityServer.Console.SecurityAESWizard.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityAESWizard.en-US.resx">
       <DependentUpon>Neos.IdentityServer.Console.SecurityAESWizard.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityAESWizard.es.resx">
@@ -851,9 +847,6 @@
     <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRootRSAWizard.de.resx">
       <DependentUpon>Neos.IdentityServer.Console.SecurityRootRSAWizard.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRootRSAWizard.en-US.resx">
-      <DependentUpon>Neos.IdentityServer.Console.SecurityRootRSAWizard.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRootRSAWizard.es.resx">
       <DependentUpon>Neos.IdentityServer.Console.SecurityRootRSAWizard.cs</DependentUpon>
     </EmbeddedResource>
@@ -891,9 +884,6 @@
       <DependentUpon>Neos.IdentityServer.Console.SecurityRootRSAWizard.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRootViewControl.da.resx">
-      <DependentUpon>Neos.IdentityServer.Console.SecurityRootViewControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRootViewControl.en-US.resx">
       <DependentUpon>Neos.IdentityServer.Console.SecurityRootViewControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.SecurityRootViewControl.fr-CA.resx">

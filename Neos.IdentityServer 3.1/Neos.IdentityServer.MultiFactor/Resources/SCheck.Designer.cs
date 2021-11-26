@@ -22,7 +22,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class SCheck {
+    public class SCheck {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,7 +36,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         ///   Retourne l'instance ResourceManager mise en cache utilisée par cette classe.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Neos.IdentityServer.MultiFactor.Resources.SCheck", typeof(SCheck).Assembly);
@@ -51,7 +51,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         ///   les recherches de ressources à l'aide de cette classe de ressource fortement typée.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -63,7 +63,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Confirm your new password.
         /// </summary>
-        internal static string ValidConfirmNewPassError {
+        public static string ValidConfirmNewPassError {
             get {
                 return ResourceManager.GetString("ValidConfirmNewPassError", resourceCulture);
             }
@@ -72,7 +72,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Email not correctly formatted.
         /// </summary>
-        internal static string ValidIncorrectEmail {
+        public static string ValidIncorrectEmail {
             get {
                 return ResourceManager.GetString("ValidIncorrectEmail", resourceCulture);
             }
@@ -81,7 +81,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Phone number not correctly formatted.
         /// </summary>
-        internal static string ValidIncorrectPhoneNumber {
+        public static string ValidIncorrectPhoneNumber {
             get {
                 return ResourceManager.GetString("ValidIncorrectPhoneNumber", resourceCulture);
             }
@@ -90,7 +90,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à PIN code incorrect !.
         /// </summary>
-        internal static string ValidIncorrectPinCode {
+        public static string ValidIncorrectPinCode {
             get {
                 return ResourceManager.GetString("ValidIncorrectPinCode", resourceCulture);
             }
@@ -99,7 +99,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à New password is incorrect.
         /// </summary>
-        internal static string ValidNewPassError {
+        public static string ValidNewPassError {
             get {
                 return ResourceManager.GetString("ValidNewPassError", resourceCulture);
             }
@@ -108,7 +108,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Type your current password.
         /// </summary>
-        internal static string ValidPassActualError {
+        public static string ValidPassActualError {
             get {
                 return ResourceManager.GetString("ValidPassActualError", resourceCulture);
             }
@@ -117,7 +117,7 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Type your new password.
         /// </summary>
-        internal static string ValidPassNewError {
+        public static string ValidPassNewError {
             get {
                 return ResourceManager.GetString("ValidPassNewError", resourceCulture);
             }

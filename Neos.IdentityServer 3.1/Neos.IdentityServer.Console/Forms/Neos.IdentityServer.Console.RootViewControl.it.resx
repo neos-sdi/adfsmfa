@@ -186,7 +186,7 @@ SOFTWARE.</value>
     <value>8</value>
   </data>
   <data name="GlobalViewLabelText.Text" xml:space="preserve">
-    <value>L'estensione MFA per ADFS 2012R2 / 2016 / 2019 consente l'utilizzo dell'autenticazione a più fattori (2FA) senza costi aggiuntivi</value>
+    <value>L'estensione MFA per ADFS 2012R2 / 2016 / 2019 /2022 consente l'utilizzo dell'autenticazione a più fattori (2FA) senza costi aggiuntivi</value>
   </data>
   <data name="linkLabel3.Text" xml:space="preserve">
     <value>https://github.com/neos-sdi/adfsmfa/releases</value>
