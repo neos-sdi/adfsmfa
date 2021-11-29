@@ -670,6 +670,7 @@ namespace Neos.IdentityServer.MultiFactor
                 _holders.Add(new PlaceHolders() { TagName = "##MANAGEACCOUNT##", FiledName = "manageaccount" });
                 _holders.Add(new PlaceHolders() { TagName = "##OPTIONITEM##", FiledName = "optionitem" });
                 _holders.Add(new PlaceHolders() { TagName = "##PLATFORM##", FiledName = "userplatform" });
+                _holders.Add(new PlaceHolders() { TagName = "##AGENT##", FiledName = "useragent" });
                 _holders.Add(new PlaceHolders() { TagName = "##LANGUAGE##", FiledName = "userlanguage" });
             }
         }
@@ -1261,7 +1262,7 @@ namespace Neos.IdentityServer.MultiFactor
 
             result += "<input id=\"context\" type=\"hidden\" name=\"Context\" value=\"%Context%\"/>" + CR;
             result += "<input id=\"authMethod\" type=\"hidden\" name=\"AuthMethod\" value=\"%AuthMethod%\"/>" + CR;
-            result += "<input id=\"##PLATFORM##\" type=\"hidden\" name=\"##PLATFORM##\" />" + CR;
+            result += "<input id=\"##AGENT##\" type=\"hidden\" name=\"##AGENT##\" />" + CR;
             result += "<input id=\"##LANGUAGE##\" type=\"hidden\" name=\"##LANGUAGE##\" />" + CR;
             result += "</form>" + CR;
             return result;
@@ -1273,27 +1274,17 @@ namespace Neos.IdentityServer.MultiFactor
             string result = "<script type='text/javascript'>" + CR;
             result += "function QueryUserSessionProperties(frm)" + CR;
             result += "{" + CR;
-            result += "   var xplatform = document.getElementById('userplatform');" + CR;
             result += "   try" + CR;
             result += "   {" + CR;
-            result += "      if (xplatform)" + CR;
+            result += "      var xagent = document.getElementById('useragent');" + CR;
+            result += "      if (xagent)" + CR;
             result += "      {" + CR;
-            result += "         xplatform.value = navigator.userAgentData.platform;" + CR;
+            result += "         xagent.value = navigator.userAgent;" + CR;
             result += "      }" + CR;
             result += "   }" + CR;
             result += "   catch(e)" + CR;
             result += "   {" + CR;
-            result += "      try" + CR;
-            result += "      {" + CR;
-            result += "         if (xplatform)" + CR;
-            result += "         {" + CR;
-            result += "            xplatform.value = navigator.userAgent;" + CR;
-            result += "         }" + CR;
-            result += "      }" + CR;
-            result += "      catch(e)" + CR;
-            result += "      {" + CR;
-            result += "         xplatform.value = null;" + CR;
-            result += "      }" + CR;
+            result += "         xagent.value = null;" + CR;
             result += "   }" + CR;
 
             result += "   try" + CR;

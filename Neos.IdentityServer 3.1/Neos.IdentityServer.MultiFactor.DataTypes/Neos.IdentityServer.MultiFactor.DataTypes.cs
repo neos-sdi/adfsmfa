@@ -1143,24 +1143,24 @@ namespace Neos.IdentityServer.MultiFactor
         }
 
         /// <summary>
-        /// Platform
+        /// BrowserDetected
         /// </summary>
-        [DataMember(Name = "Platform")]
-        public string Platform
+        [DataMember(Name = "BrowserDetected")]
+        public string BrowserDetected
         {
             get
             {
-                if (_context.Data.ContainsKey("_authctxplatform") && _context.Data["_authctxplatform"] != null)
-                    return _context.Data["_authctxplatform"].ToString();
+                if (_context.Data.ContainsKey("_authctxbrowser") && _context.Data["_authctxbrowser"] != null)
+                    return _context.Data["_authctxbrowser"].ToString();
                 else
                     return string.Empty;
             }
             set
             {
-                if (_context.Data.ContainsKey("_authctxplatform"))
-                    _context.Data["_authctxplatform"] = value;
+                if (_context.Data.ContainsKey("_authctxbrowser"))
+                    _context.Data["_authctxbrowser"] = value;
                 else
-                    _context.Data.Add("_authctxplatform", value);
+                    _context.Data.Add("_authctxbrowser", value);
             }
         }
     }

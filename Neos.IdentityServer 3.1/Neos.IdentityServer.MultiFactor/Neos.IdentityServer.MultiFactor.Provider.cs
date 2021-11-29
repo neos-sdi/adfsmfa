@@ -405,11 +405,11 @@ namespace Neos.IdentityServer.MultiFactor
                     case ProviderPageMode.ManageOptions: // Manage Options
                         usercontext.WizContext = WizardContextMode.ManageOptions;
                         result = TryManageOptions(usercontext, context, proofData, request, out claims);
-                        Utilities.CheckForUserAgent(Config, usercontext, usercontext.Platform);
+                        Utilities.CheckForUserAgent(Config, usercontext, usercontext.BrowserDetected);
                         break;
                     case ProviderPageMode.SelectOptions:
                         result = TrySelectOptions(usercontext, context, proofData, request, out claims);
-                        Utilities.CheckForUserAgent(Config, usercontext, usercontext.Platform);
+                        Utilities.CheckForUserAgent(Config, usercontext, usercontext.BrowserDetected);
                         break;
                     case ProviderPageMode.ChooseMethod:
                         result = TryChooseMethod(usercontext, context, proofData, request, out claims);
@@ -471,9 +471,6 @@ namespace Neos.IdentityServer.MultiFactor
             claims = null;
             IAdapterPresentation result = null;
 
-            string userplatfrom = proofData.Properties["userplatform"]?.ToString();
-            if (string.IsNullOrEmpty(userplatfrom))
-                userplatfrom = request.UserAgent;
             string userlanguage = proofData.Properties["userlanguage"]?.ToString();
             string[] userlanguages = null;
             if (string.IsNullOrEmpty(userlanguage))
@@ -481,7 +478,10 @@ namespace Neos.IdentityServer.MultiFactor
             else
                 userlanguages = new string[] { userlanguage };
             Utilities.PatchLanguageIfNeeded(Config, usercontext, userlanguages);
-            Utilities.CheckForUserAgent(Config, usercontext, userplatfrom);
+
+            string useragent = proofData.Properties["useragent"]?.ToString();           
+            Utilities.CheckForUserAgent(Config, usercontext, Utilities.BrowserDetection(useragent));
+
             usercontext.UIMode = GetAuthenticationContextRequest(usercontext);
             GetAuthenticationData(usercontext);
             result = new AdapterPresentation(this, context);

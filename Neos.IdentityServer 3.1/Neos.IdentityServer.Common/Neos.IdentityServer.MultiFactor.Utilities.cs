@@ -4012,32 +4012,27 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// CheckForUserAgent method implementation
         /// </summary>
-        internal static void CheckForUserAgent(MFAConfig config, AuthenticationContext usercontext, string userplatform)
+        internal static void CheckForUserAgent(MFAConfig config, AuthenticationContext usercontext, string useragent)
         {
-            string platform = userplatform;
-            usercontext.Platform = userplatform;
-            if (!string.IsNullOrEmpty(platform))
+            usercontext.BrowserDetected = useragent;
+            if (!string.IsNullOrEmpty(useragent))
             {
-                if (platform.ToLower().Contains("safari"))
-                {
-                    usercontext.DirectLogin = false;
-                    return;
-                }
-                if (platform.ToLower().Contains("trident/7.0") || platform.ToLower().Contains("msie"))
+                if (CheckForbiddenBrowsers(config.WebAuthNProvider.Configuration, usercontext))
                 {
                     usercontext.BioNotSupported = true;
                     usercontext.DirectLogin = false;
                     return;
                 }
-                if (IsApplePlatForm(usercontext))
+                if (CheckInitiatedBrowsers(config.WebAuthNProvider.Configuration, usercontext))
                 {
+                    usercontext.BioNotSupported = false;
                     usercontext.DirectLogin = false;
                     return;
                 }
-                // else "Android", "Chrome OS", "Linux", "Windows", or "Unknown"
             }
             else
             {
+                usercontext.BioNotSupported = false;
                 usercontext.DirectLogin = false;
                 return;
             }
@@ -4046,40 +4041,85 @@ namespace Neos.IdentityServer.MultiFactor
         }
 
         /// <summary>
-        /// IsAppleDevice method implmentation
+        /// BrowserDetection method implmentation
+        /// Checking userAgent browser's value. userAgentData is not supported by many browsers
         /// </summary>
-        internal static bool IsAppleDevice(AuthenticationContext usercontext)
+        internal static string BrowserDetection(string useragent)
         {
-            if (usercontext.Platform.ToLower().Contains("safari"))
+            if (useragent.ToLower().IndexOf("firefox") > -1)
+                return "Firefox";
+            if (useragent.ToLower().IndexOf("samsungbrowser") > -1)
+                return "Samsung";
+            if (useragent.ToLower().IndexOf("cldc") > -1)
+                return "Nokia";
+            if ((useragent.ToLower().IndexOf("opera") > -1) || (useragent.ToUpper().IndexOf("OPR") > -1))
+                return "Opera";
+            if ((useragent.ToLower().IndexOf("trident") > -1) || (useragent.ToLower().IndexOf("msie") > -1) || (useragent.ToLower().IndexOf("windows phone") > -1))
+                return "IE";
+            if (useragent.ToLower().IndexOf("edge") > -1)
+                return "EdgeLegacy";
+            if (useragent.ToLower().IndexOf("edg") > -1)
+                return "Edge";
+            if (useragent.ToLower().IndexOf("chrome") > -1)
+                return "Chrome";
+            if (useragent.ToLower().IndexOf("safari") > -1)
+                return "Safari";
+            return "Unknown";
+        }
+
+        /// <summary>
+        /// CheckForbiddenBrowsers method implmentation
+        /// </summary>
+        private static bool CheckForbiddenBrowsers(WebAuthNProviderConfig config, AuthenticationContext usercontext)
+        {
+            string[] data = config.ForbiddenBrowsers.Split(';');
+            foreach (string s in data)
             {
-#if psysuck
-                Log.WriteEntry("Detected Safari", EventLogEntryType.Warning, 101);
-#endif
-                return true;
-            }
-            if (IsApplePlatForm(usercontext))
-            {
-#if psysuck
-                Log.WriteEntry("Detected Apple Platform", EventLogEntryType.Warning, 101);
-#endif
-                return true;
+                string x = s.Trim();
+                if (string.IsNullOrEmpty(x))
+                    continue;
+                if (x.StartsWith("#"))
+                    continue;
+                if (usercontext.BrowserDetected.ToLower().Equals(x.ToLower()))
+                    return true;
             }
             return false;
         }
 
         /// <summary>
-        /// IsApplePlatForm method implmentation
+        /// CheckInitiatedBrowsers method implementation
         /// </summary>
-        private static bool IsApplePlatForm(AuthenticationContext usercontext)
+        private static bool CheckInitiatedBrowsers(WebAuthNProviderConfig config, AuthenticationContext usercontext)
         {
-            if (!string.IsNullOrEmpty(usercontext.Platform))
+            string[] data = config.InitiatedBrowsers.Split(';');
+            foreach (string s in data)
             {
-                if (usercontext.Platform.ToLower().Equals("ios") || usercontext.Platform.ToLower().Equals("macos") || usercontext.Platform.ToLower().Equals("osx"))
+                string x = s.Trim();
+                if (string.IsNullOrEmpty(x))
+                    continue;
+                if (x.StartsWith("#"))
+                    continue;
+                if (usercontext.BrowserDetected.ToLower().Equals(x.ToLower()))
                     return true;
-                if (usercontext.Platform.ToLower().Contains("macintosh") || usercontext.Platform.ToLower().Contains("iphone") || usercontext.Platform.ToLower().Contains("ipad") || usercontext.Platform.ToLower().Contains("ipod"))
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// IsNoCounterDevice method implmentation
+        /// </summary>
+        internal static bool IsNoCounterDevice(WebAuthNProviderConfig config, AuthenticationContext usercontext)
+        {
+            string[] data = config.NoCounterBrowsers.Split(';');
+            foreach (string s in data)
+            {
+                string x = s.Trim();
+                if (string.IsNullOrEmpty(x))
+                    continue;
+                if (x.StartsWith("#"))
+                    continue;
+                if (usercontext.BrowserDetected.ToLower().Equals(x.ToLower()))
                     return true;
-                if (usercontext.Platform.ToLower().Equals("mac os x") || usercontext.Platform.ToLower().Equals("macintel") || usercontext.Platform.ToLower().Equals("mac_powerpc") || usercontext.Platform.ToLower().Equals("mac_68k"))
-                    return true; 
             }
             return false;
         }

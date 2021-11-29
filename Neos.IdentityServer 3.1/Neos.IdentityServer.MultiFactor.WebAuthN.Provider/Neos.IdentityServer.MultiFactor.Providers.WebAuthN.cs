@@ -42,6 +42,11 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
         public MFAConfig Config { get; set; }
         public bool DirectLogin { get; private set; }
         public int ChallengeSize { get; private set; }
+        public string ForbiddenBrowsers { get; private set; }
+        public string ForbiddenOperatingSystems { get; private set; }
+        public string InitiatedBrowsers { get; private set; }
+        public string InitiatedOperatingSystems { get; private set; }
+        public string NoCounterBrowsers { get; private set; }
         public string ConveyancePreference { get; private set; }
         public string Attachement { get; private set; }
         public bool Extentions { get; private set; }
@@ -395,6 +400,9 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
                         UserVerificationRequirement = param.Options.UserVerificationRequirement.ToEnum<UserVerificationRequirement>();
                         RequireResidentKey = param.Options.RequireResidentKey;
                         ChallengeSize = param.Configuration.ChallengeSize;
+                        ForbiddenBrowsers = param.Configuration.ForbiddenBrowsers;
+                        InitiatedBrowsers = param.Configuration.InitiatedBrowsers;
+                        NoCounterBrowsers = param.Configuration.NoCounterBrowsers;
                         Fido2Configuration fido = new Fido2Configuration()
                         {
                             ServerDomain = param.Configuration.ServerDomain,
@@ -823,14 +831,13 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
                             throw new Exception("Unknown credentials");
                         }
 
-                        // Check Replay 
                         AuthenticatorData authData = new AuthenticatorData(clientResponse.Response.AuthenticatorData);
 
-                        bool isapple = Utilities.IsAppleDevice(ctx);
+                        bool isnocount = Utilities.IsNoCounterDevice(this.Config.WebAuthNProvider.Configuration, ctx);
                         uint authCounter = 0;
                         uint storedCounter = 0;
 
-                        if (!isapple)
+                        if (!isnocount)
                         {
                             authCounter = authData.SignCount;
                             storedCounter = creds.SignatureCounter;
@@ -851,12 +858,10 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
 
                         // Apple counter always 0
                         AssertionVerificationResult res = _webathn.SetAssertionResult(clientResponse, options, creds.PublicKey, storedCounter, callback).Result;
-                        if (!isapple)
+                        if (!isnocount)
                             RuntimeRepository.UpdateCounter(Config, user, res.CredentialId, res.Counter);
                         else
-                        {
                             RuntimeRepository.UpdateCounter(Config, user, res.CredentialId, 0);
-                        }
 
                         if (!authData.UserPresent || !authData.UserVerified)
                         {
@@ -917,7 +922,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
                 return (int)AuthenticationResponseKind.Error;
             }
         }
-#endregion
+        #endregion
     }
 
 

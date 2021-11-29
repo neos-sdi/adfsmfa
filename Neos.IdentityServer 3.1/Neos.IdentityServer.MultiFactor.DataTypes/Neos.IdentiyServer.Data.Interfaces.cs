@@ -256,6 +256,8 @@ namespace Neos.IdentityServer.MultiFactor
         string ServerName { get; set; }
         string ServerIcon { get; set; }
         string Origin { get; set; }
+        string ForbiddenBrowsers { get; set; }
+        string InitiatedBrowsers { get; set; }
     }
 
     /// <summary>

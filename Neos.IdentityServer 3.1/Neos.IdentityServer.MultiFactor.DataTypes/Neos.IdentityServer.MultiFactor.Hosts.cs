@@ -1856,6 +1856,16 @@ namespace Neos.IdentityServer.MultiFactor
                 _origin = value;
             }
         }
+
+        [XmlAttribute("ForbiddenBrowsers")]
+        public string ForbiddenBrowsers { get; set; } = "ie;samsung;nokia";
+
+        [XmlAttribute("InitiatedBrowsers")]
+        public string InitiatedBrowsers { get; set; } = "safari;unknown";
+
+        [XmlAttribute("NoCounterBrowsers")]
+        public string NoCounterBrowsers { get; set; } = "safari;unknown";
+
     }
 
     /// <summary>

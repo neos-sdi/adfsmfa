@@ -2187,6 +2187,21 @@ namespace MFA
         public bool UseNickNames { get; set; }
 
         /// <summary>
+        /// <para type = "description" > Browsers can't use biometric authentication (eg: IE).</para>
+        /// </summary>
+        public string ForbiddenBrowsers { get; set; }
+
+        /// <summary>
+        /// <para type = "description" > Operating Systems that can use biometric authentication with user initiated action (eg: Safari for TouchID and FaceID).</para>
+        /// </summary>
+        public string InitiatedBrowsers { get; set; }
+
+        /// <summary>
+        /// <para type = "description" > Browsers that require that the counter is always 0 (eg: Safari for TouchID and FaceID).</para>
+        /// </summary>
+        public string NoCounterBrowsers { get; set; }
+
+        /// <summary>
         /// explicit operator from PSConfigBiometricProvider
         /// </summary>
         public static explicit operator PSBiometricProvider(FlatBiometricProvider otp)
@@ -2207,6 +2222,10 @@ namespace MFA
                     UseNickNames = otp.UseNickNames,
                     FullQualifiedImplementation = otp.FullyQualifiedImplementation,
                     Parameters = otp.Parameters,
+                    ForbiddenBrowsers = otp.ForbiddenBrowsers,
+                    InitiatedBrowsers = otp.InitiatedBrowsers,
+                    NoCounterBrowsers = otp.NoCounterBrowsers,
+
                     Timeout = otp.Timeout,
                     TimestampDriftTolerance = otp.TimestampDriftTolerance,
                     ChallengeSize = otp.ChallengeSize,
@@ -2240,6 +2259,9 @@ namespace MFA
                     UseNickNames = otp.UseNickNames,
                     FullyQualifiedImplementation = otp.FullQualifiedImplementation,
                     Parameters = otp.Parameters,
+                    ForbiddenBrowsers = otp.ForbiddenBrowsers,
+                    InitiatedBrowsers = otp.InitiatedBrowsers,
+                    NoCounterBrowsers = otp.NoCounterBrowsers,
 
                     Timeout = otp.Timeout,
                     TimestampDriftTolerance = otp.TimestampDriftTolerance,

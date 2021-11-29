@@ -1146,7 +1146,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         public string Origin { get; set; }
         public bool DirectLogin { get; set; }
         public bool UseNickNames { get; set; }
-
+        public string ForbiddenBrowsers { get; set; }
+        public string InitiatedBrowsers { get; set; }
+        public string NoCounterBrowsers { get; set; }
 
         /// <summary>
         /// Kind  Property
@@ -1180,6 +1182,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             this.PinRequirements = otp.PinRequirements;
             this.FullyQualifiedImplementation = otp.FullQualifiedImplementation;
             this.Parameters = otp.Parameters.Data;
+            this.ForbiddenBrowsers = otp.Configuration.ForbiddenBrowsers;
+            this.InitiatedBrowsers = otp.Configuration.InitiatedBrowsers;
+            this.NoCounterBrowsers = otp.Configuration.NoCounterBrowsers;
 
             this.Timeout = otp.Configuration.Timeout;
             this.TimestampDriftTolerance = otp.Configuration.TimestampDriftTolerance;
@@ -1210,6 +1215,9 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             otp.UseNickNames = this.UseNickNames;
             otp.FullQualifiedImplementation = this.FullyQualifiedImplementation;
             otp.Parameters.Data = this.Parameters;
+            otp.Configuration.ForbiddenBrowsers = ForbiddenBrowsers;
+            otp.Configuration.InitiatedBrowsers = InitiatedBrowsers;
+            otp.Configuration.NoCounterBrowsers = NoCounterBrowsers;
 
             otp.Configuration.Timeout = this.Timeout;
             otp.Configuration.TimestampDriftTolerance = this.TimestampDriftTolerance;
