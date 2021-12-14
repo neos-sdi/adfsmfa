@@ -1269,6 +1269,9 @@ namespace Neos.IdentityServer.MultiFactor
 
         }
 
+        /// <summary>
+        /// GetFormPreRenderHtmlPreset method implementation
+        /// </summary>
         public override string GetFormPreRenderHtmlPreset(AuthenticationContext usercontext)
         {
             string result = "<script type='text/javascript'>" + CR;
@@ -1305,10 +1308,9 @@ namespace Neos.IdentityServer.MultiFactor
             result += "</script>" + CR + CR;
             return result;
         }
-#endregion
+        #endregion
 
-
-#region QRCode
+        #region QRCode
         /// <summary>
         /// GetFormPreRenderHtmlShowQRCode implementation
         /// </summary>
@@ -1331,9 +1333,9 @@ namespace Neos.IdentityServer.MultiFactor
             result += "</form>";
             return result;
         }
-#endregion
+        #endregion
 
-#region Donut
+        #region Donut
         /// <summary>
         /// GetPartHtmlDonut method implementation
         /// </summary>
@@ -1533,9 +1535,9 @@ namespace Neos.IdentityServer.MultiFactor
 
             return result;
         }
-#endregion
+        #endregion
 
-#region WebAuthN Support
+        #region WebAuthN Support
         /// <summary>
         /// GetFormHtmlWebAuthNSupport method implementation
         /// </summary>
@@ -1660,8 +1662,9 @@ namespace Neos.IdentityServer.MultiFactor
             result += "         makeCredentialOptions = " + usercontext.CredentialOptions + ";" + CR;
             result += "         makeCredentialOptions.challenge = coerceToArrayBuffer(makeCredentialOptions.challenge);" + CR;
             result += "         makeCredentialOptions.user.id = coerceToArrayBuffer(makeCredentialOptions.user.id);" + CR;
-            result += "         makeCredentialOptions.excludeCredentials = makeCredentialOptions.excludeCredentials.map((c) => {c.id = coerceToArrayBuffer(c.id); return c;});" + CR;
-            result += "        if (makeCredentialOptions.authenticatorSelection.authenticatorAttachment === null)" + CR;
+            result += "         if (makeCredentialOptions.excludeCredentials !== null) " + CR;
+            result += "             makeCredentialOptions.excludeCredentials = makeCredentialOptions.excludeCredentials.map((c) => {c.id = coerceToArrayBuffer(c.id); return c;});" + CR;
+            result += "         if (makeCredentialOptions.authenticatorSelection.authenticatorAttachment === null)" + CR;
             result += "           makeCredentialOptions.authenticatorSelection.authenticatorAttachment = undefined;" + CR;
             result += "      }" + CR;
             result += "      catch (e)" + CR;

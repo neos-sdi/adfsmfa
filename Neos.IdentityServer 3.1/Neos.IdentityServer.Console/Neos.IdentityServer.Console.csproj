@@ -113,6 +113,12 @@
     <Compile Include="Forms\Neos.IdentityServer.Console.DatabaseWizard.Designer.cs">
       <DependentUpon>Neos.IdentityServer.Console.DatabaseWizard.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\Neos.IdentityServer.Console.PinWizard.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Neos.IdentityServer.Console.PinWizard.Designer.cs">
+      <DependentUpon>Neos.IdentityServer.Console.PinWizard.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\Neos.IdentityServer.Console.SecurityAESViewControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -729,6 +735,48 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.OTPViewControl.ja.resx">
       <DependentUpon>Neos.IdentityServer.Console.OTPViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.PinWizard.da.resx">
+      <DependentUpon>Neos.IdentityServer.Console.PinWizard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.PinWizard.de.resx">
+      <DependentUpon>Neos.IdentityServer.Console.PinWizard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.PinWizard.es.resx">
+      <DependentUpon>Neos.IdentityServer.Console.PinWizard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.PinWizard.fr-CA.resx">
+      <DependentUpon>Neos.IdentityServer.Console.PinWizard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.PinWizard.fr.resx">
+      <DependentUpon>Neos.IdentityServer.Console.PinWizard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.PinWizard.it.resx">
+      <DependentUpon>Neos.IdentityServer.Console.PinWizard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.PinWizard.ja.resx">
+      <DependentUpon>Neos.IdentityServer.Console.PinWizard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.PinWizard.nl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.PinWizard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.PinWizard.pl.resx">
+      <DependentUpon>Neos.IdentityServer.Console.PinWizard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.PinWizard.pt.resx">
+      <DependentUpon>Neos.IdentityServer.Console.PinWizard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.PinWizard.resx">
+      <DependentUpon>Neos.IdentityServer.Console.PinWizard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.PinWizard.ro.resx">
+      <DependentUpon>Neos.IdentityServer.Console.PinWizard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.PinWizard.ru.resx">
+      <DependentUpon>Neos.IdentityServer.Console.PinWizard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.PinWizard.sv.resx">
+      <DependentUpon>Neos.IdentityServer.Console.PinWizard.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.ProvidersViewControl.da.resx">
       <DependentUpon>Neos.IdentityServer.Console.ProvidersViewControl.cs</DependentUpon>

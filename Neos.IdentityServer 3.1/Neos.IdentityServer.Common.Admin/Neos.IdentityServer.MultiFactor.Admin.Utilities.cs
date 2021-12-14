@@ -85,6 +85,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         /// MailslotServer property implementation
         /// </summary>
         internal static MailSlotServer MailslotServer { get; private set; } = null;
+        public static bool PinValidated { get; internal set; } = false;
         #endregion
 
         #region Initialization methods
@@ -583,6 +584,8 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                             config.Hosts.ActiveDirectoryHost.Password = MSIS.Encrypt(config.Hosts.ActiveDirectoryHost.Password, "ADDS Super Account Password");
                             config.Hosts.SQLServerHost.SQLPassword = MSIS.Encrypt(config.Hosts.SQLServerHost.SQLPassword, "SQL Super Account Password");
                             config.MailProvider.Password = MSIS.Encrypt(config.MailProvider.Password, "Mail Provider Account Password");
+                            config.DefaultPin = MSIS.Encrypt(config.DefaultPin, "Default Users Pin");
+                            config.AdministrationPin = MSIS.Encrypt(config.AdministrationPin, "Administration Pin");
 
                             if (!string.IsNullOrEmpty(value))
                                 host.UI.WriteWarningLine("Block Updates not allowed, values where only encrypted !");
@@ -643,6 +646,8 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                             if (string.IsNullOrEmpty(value))
                             {
                                 config.KeysConfig.XORSecret = MSIS.Encrypt(config.KeysConfig.XORSecret, "Pass Phrase Encryption");
+                                config.DefaultPin = MSIS.Encrypt(config.DefaultPin, "Default Users Pin");
+                                config.AdministrationPin = MSIS.Encrypt(config.AdministrationPin, "Administration Pin");
                                 host.UI.WriteWarningLine("Empty value not allowed, value was only encrypted !");
                             }
                             else

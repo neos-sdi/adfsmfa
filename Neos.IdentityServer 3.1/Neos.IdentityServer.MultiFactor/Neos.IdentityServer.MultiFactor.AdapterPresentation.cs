@@ -1037,6 +1037,7 @@ namespace Neos.IdentityServer.MultiFactor
             result += "</script>" + CR;
             return result;
         }
+
         /// <summary>
         /// GetFormHtmlBypass implementation
         /// </summary>
@@ -2360,7 +2361,8 @@ namespace Neos.IdentityServer.MultiFactor
                         List<WebAuthNCredentialInformation> creds = web.GetUserStoredCredentials(usercontext);
                         result += "<input id=\"optiongroup0\" name=\"##OPTIONITEM##\" type=\"radio\" value=\"" + Guid.Empty.ToString() + "\" checked=\"checked\" /> " + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlLabelWRAddBiometrics") + "<br/>";
                         int i = 1;
-                        if (creds.Count > 0)
+                        // if (creds.Count > 0)
+                        if (creds != null)
                         {
                             foreach (WebAuthNCredentialInformation cr in creds)
                             {
@@ -2592,7 +2594,7 @@ namespace Neos.IdentityServer.MultiFactor
                     result += "<div id=\"wizardMessage\" class=\"groupMargin\">" + BaseExternalProvider.GetPINWizardUILabel(usercontext) + "</div>";
                     result += "<div class=\"fieldMargin smallText\">" + string.Format(Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlLabelWRPinCode"), Provider.Config.PinLength.ToString()) + "</div><br/>";
                     if (usercontext.PinCode <= 0)
-                        result += "<input id=\"##PINCODE##\" name=\"##PINCODE##\" type=\"text\" placeholder=\"" + Utilities.StripPinCode(Provider.Config.DefaultPin) + "\" autocomplete=\"one-time-code\" class=\"text fullWidth\" /><br/>";
+                        result += "<input id=\"##PINCODE##\" name=\"##PINCODE##\" type=\"text\" placeholder=\"" + Utilities.StripPinCode(Convert.ToInt32(Provider.Config.DefaultPin)) + "\" autocomplete=\"one-time-code\" class=\"text fullWidth\" /><br/>";
                     else
                         result += "<input id=\"##PINCODE##\" name=\"##PINCODE##\" type=\"text\" placeholder=\"" + Utilities.StripPinCode(usercontext.PinCode) + "\" autocomplete=\"one-time-code\" class=\"text fullWidth\" /><br/>";
                     result += "<br/>";

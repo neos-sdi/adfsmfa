@@ -17,6 +17,7 @@
 //******************************************************************************************************************************************************************************************//
 using Microsoft.ManagementConsole;
 using Microsoft.ManagementConsole.Advanced;
+using Neos.IdentityServer.Console.Forms;
 using Neos.IdentityServer.Console.Resources;
 using Neos.IdentityServer.MultiFactor;
 using Neos.IdentityServer.MultiFactor.Administration;
@@ -874,7 +875,7 @@ namespace Neos.IdentityServer.Console.Controls
             this.Cursor = Cursors.WaitCursor;
             try
             {
-                if (chkProviderPinTPM.Checked)
+                if (chkProviderPinApple.Checked)
                     Config.WebAuthNProvider.PinRequirements |= WebAuthNPinRequirements.Apple;
                 else
                     Config.WebAuthNProvider.PinRequirements &= ~WebAuthNPinRequirements.Apple;
@@ -5776,83 +5777,57 @@ namespace Neos.IdentityServer.Console.Controls
         }
 
         /// <summary>
+        /// BeforeCertValidating method implementation
+        /// </summary>
+        private bool BeforeDBValidating()
+        {
+            bool result = true;
+            if ((ManagementService.Config.AdministrationPinEnabled) && (!ManagementService.PinValidated))
+            {
+                AdminPinWizard Wizard = new AdminPinWizard();
+                Wizard.AdminPin = ManagementService.ADFSManager.Config.AdministrationPin;
+                DialogResult dresult = this._snapin.Console.ShowDialog(Wizard);
+                if (dresult == DialogResult.Abort)
+                {
+                    this.Cursor = Cursors.Default;
+                    MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                    {
+                        Text = Wizard.ErrorMessage,
+                        Buttons = MessageBoxButtons.OK,
+                        Icon = MessageBoxIcon.Error
+                    };
+                    this._snapin.Console.ShowDialog(messageBoxParameters);
+                }
+                result = (dresult == DialogResult.OK);
+                ManagementService.PinValidated = result;
+            }
+            return result;
+        }
+
+        /// <summary>
         /// btnConnectClick method implmentation
         /// </summary>
         private void BtnCreateDBClick(object sender, EventArgs e)
         {
-            DatabaseWizard Wizard = new DatabaseWizard();
-            try
+            if (BeforeDBValidating())
             {
-                bool result = (this._snapin.Console.ShowDialog(Wizard) == DialogResult.OK);
-                Cursor crs = this.Cursor;
+                DatabaseWizard Wizard = new DatabaseWizard();
                 try
-                {
-                    this.Cursor = Cursors.WaitCursor; 
-                    if (result)
-                    {
-                        this.txtConnectionString.Text = ManagementService.ADFSManager.CreateMFADatabase(null, Wizard.txtInstance.Text, Wizard.txtDBName.Text, Wizard.txtAccount.Text, Wizard.txtPwd.Text);
-                        MessageBoxParameters messageBoxParameters = new MessageBoxParameters
-                        {
-                            Text = string.Format(res.CTRLSQLNEWDBCREATED, Wizard.txtDBName.Text),
-                            Buttons = MessageBoxButtons.OK,
-                            Icon = MessageBoxIcon.Information
-                        };
-                        this._snapin.Console.ShowDialog(messageBoxParameters);
-                    }
-                }
-                finally
-                {
-                    this.Cursor = crs;
-                }
-            }
-            catch (Exception ex)
-            {
-                this.Cursor = Cursors.Default;
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
-                {
-                    Text = ex.Message,
-                    Buttons = MessageBoxButtons.OK,
-                    Icon = MessageBoxIcon.Error
-                };
-                this._snapin.Console.ShowDialog(messageBoxParameters);
-            }
-        }
-
-        /// <summary>
-        /// btnCreateCryptedDBClick method implmentation
-        /// </summary>
-        private void BtnCreateCryptedDBClick(object sender, EventArgs e)
-        {
-            DatabaseWizard Wizard = new DatabaseWizard();
-            try
-            {
-                if (Config.Hosts.SQLServerHost.IsAlwaysEncrypted)
                 {
                     bool result = (this._snapin.Console.ShowDialog(Wizard) == DialogResult.OK);
                     Cursor crs = this.Cursor;
                     try
                     {
-                        this.Cursor = Cursors.WaitCursor; 
+                        this.Cursor = Cursors.WaitCursor;
                         if (result)
                         {
-                            bool isnew = false;
-                            string thumb = string.Empty;
-                            if ((Config.Hosts.SQLServerHost.CertReuse) && (ManagementService.ADFSManager.CheckCertificate(Config.Hosts.SQLServerHost.ThumbPrint.ToUpper(), StoreLocation.LocalMachine)))
-                                thumb = Config.Hosts.SQLServerHost.ThumbPrint.ToUpper();
-                            else
-                            { 
-                                thumb = ManagementService.ADFSManager.RegisterNewSQLCertificate(null, Config.Hosts.SQLServerHost.CertificateValidity, Config.Hosts.SQLServerHost.KeyName);
-                                isnew = true;
-                            }
-                            this.txtConnectionString.Text = ManagementService.ADFSManager.CreateMFAEncryptedDatabase(null, Wizard.txtInstance.Text, Wizard.txtDBName.Text, Wizard.txtAccount.Text, Wizard.txtPwd.Text, Config.Hosts.SQLServerHost.KeyName, thumb);
-                            this.Cursor = Cursors.Default; 
-                            MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
-                            if (isnew)
-                                messageBoxParameters.Text = string.Format(res.CTRLSQLNEWDBCREATED2, Wizard.txtDBName.Text, thumb);
-                            else
-                                messageBoxParameters.Text = string.Format(res.CTRLSQLNEWDBCREATED, Wizard.txtDBName.Text);
-                            messageBoxParameters.Buttons = MessageBoxButtons.OK;
-                            messageBoxParameters.Icon = MessageBoxIcon.Information;
+                            this.txtConnectionString.Text = ManagementService.ADFSManager.CreateMFADatabase(null, Wizard.txtInstance.Text, Wizard.txtDBName.Text, Wizard.txtAccount.Text, Wizard.txtPwd.Text);
+                            MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                            {
+                                Text = string.Format(res.CTRLSQLNEWDBCREATED, Wizard.txtDBName.Text),
+                                Buttons = MessageBoxButtons.OK,
+                                Icon = MessageBoxIcon.Information
+                            };
                             this._snapin.Console.ShowDialog(messageBoxParameters);
                         }
                     }
@@ -5861,17 +5836,77 @@ namespace Neos.IdentityServer.Console.Controls
                         this.Cursor = crs;
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                this.Cursor = Cursors.Default;
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                catch (Exception ex)
                 {
-                    Text = ex.Message,
-                    Buttons = MessageBoxButtons.OK,
-                    Icon = MessageBoxIcon.Error
-                };
-                this._snapin.Console.ShowDialog(messageBoxParameters);
+                    this.Cursor = Cursors.Default;
+                    MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                    {
+                        Text = ex.Message,
+                        Buttons = MessageBoxButtons.OK,
+                        Icon = MessageBoxIcon.Error
+                    };
+                    this._snapin.Console.ShowDialog(messageBoxParameters);
+                }
+            }
+        }
+
+        /// <summary>
+        /// btnCreateCryptedDBClick method implmentation
+        /// </summary>
+        private void BtnCreateCryptedDBClick(object sender, EventArgs e)
+        {
+            if (BeforeDBValidating())
+            {
+                DatabaseWizard Wizard = new DatabaseWizard();
+                try
+                {
+                    if (Config.Hosts.SQLServerHost.IsAlwaysEncrypted)
+                    {
+                        bool result = (this._snapin.Console.ShowDialog(Wizard) == DialogResult.OK);
+                        Cursor crs = this.Cursor;
+                        try
+                        {
+                            this.Cursor = Cursors.WaitCursor;
+                            if (result)
+                            {
+                                bool isnew = false;
+                                string thumb = string.Empty;
+                                if ((Config.Hosts.SQLServerHost.CertReuse) && (ManagementService.ADFSManager.CheckCertificate(Config.Hosts.SQLServerHost.ThumbPrint.ToUpper(), StoreLocation.LocalMachine)))
+                                    thumb = Config.Hosts.SQLServerHost.ThumbPrint.ToUpper();
+                                else
+                                {
+                                    thumb = ManagementService.ADFSManager.RegisterNewSQLCertificate(null, Config.Hosts.SQLServerHost.CertificateValidity, Config.Hosts.SQLServerHost.KeyName);
+                                    isnew = true;
+                                }
+                                this.txtConnectionString.Text = ManagementService.ADFSManager.CreateMFAEncryptedDatabase(null, Wizard.txtInstance.Text, Wizard.txtDBName.Text, Wizard.txtAccount.Text, Wizard.txtPwd.Text, Config.Hosts.SQLServerHost.KeyName, thumb);
+                                this.Cursor = Cursors.Default;
+                                MessageBoxParameters messageBoxParameters = new MessageBoxParameters();
+                                if (isnew)
+                                    messageBoxParameters.Text = string.Format(res.CTRLSQLNEWDBCREATED2, Wizard.txtDBName.Text, thumb);
+                                else
+                                    messageBoxParameters.Text = string.Format(res.CTRLSQLNEWDBCREATED, Wizard.txtDBName.Text);
+                                messageBoxParameters.Buttons = MessageBoxButtons.OK;
+                                messageBoxParameters.Icon = MessageBoxIcon.Information;
+                                this._snapin.Console.ShowDialog(messageBoxParameters);
+                            }
+                        }
+                        finally
+                        {
+                            this.Cursor = crs;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    this.Cursor = Cursors.Default;
+                    MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                    {
+                        Text = ex.Message,
+                        Buttons = MessageBoxButtons.OK,
+                        Icon = MessageBoxIcon.Error
+                    };
+                    this._snapin.Console.ShowDialog(messageBoxParameters);
+                }
             }
         }
 
@@ -12135,69 +12170,100 @@ namespace Neos.IdentityServer.Console.Controls
         }
 
         /// <summary>
+        /// BeforeKeyGenValidating method implementation
+        /// </summary>
+        private bool BeforeKeyGenValidating()
+        {
+            bool result = true;
+            if ((ManagementService.Config.AdministrationPinEnabled) && (!ManagementService.PinValidated))
+            {
+                AdminPinWizard Wizard = new AdminPinWizard();
+                Wizard.AdminPin = ManagementService.ADFSManager.Config.AdministrationPin;
+                DialogResult dresult = this._snapin.Console.ShowDialog(Wizard);
+                if (dresult == DialogResult.Abort)
+                {
+                    this.Cursor = Cursors.Default;
+                    MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                    {
+                        Text = Wizard.ErrorMessage,
+                        Buttons = MessageBoxButtons.OK,
+                        Icon = MessageBoxIcon.Error
+                    };
+                    this._snapin.Console.ShowDialog(messageBoxParameters);
+                }
+                result = (dresult == DialogResult.OK);
+                ManagementService.PinValidated = result;
+            }
+            return result;
+        }
+
+        /// <summary>
         /// BtnGenerateKeysClick method implmentation
         /// </summary>
         private void BtnGenerateKeysClick(object sender, EventArgs e)
         {
-            RSAWizard Wizard = new RSAWizard();
-            try
+            if (BeforeKeyGenValidating())
             {
-                Wizard.KeyExists = ManagementService.ADFSManager.CheckMFASystemMasterKey();
-                if ((this._snapin.Console.ShowDialog(Wizard) == DialogResult.OK))
+                RSAWizard Wizard = new RSAWizard();
+                try
                 {
-                    Cursor crs = this.Cursor;
-                    try
+                    Wizard.KeyExists = ManagementService.ADFSManager.CheckMFASystemMasterKey();
+                    if ((this._snapin.Console.ShowDialog(Wizard) == DialogResult.OK))
                     {
-                        bool ismade = false;
-                        string lbl = string.Empty;
-                        MessageBoxIcon ico = MessageBoxIcon.Information;
-                        this.Cursor = Cursors.WaitCursor;
-                        switch (Wizard.Choice)
+                        Cursor crs = this.Cursor;
+                        try
                         {
-                            default:
-                                ismade = ManagementService.ADFSManager.RegisterMFASystemMasterKey(null, false, false);
-                                lbl = res.CTRLSECAESOK;
-                                ico = MessageBoxIcon.Information;
-                                break;
-                            case 2:
-                                ismade = ManagementService.ADFSManager.RegisterMFASystemMasterKey(null, true, false);
-                                lbl = res.CTRLSECAESDEPLOYED;
-                                ico = MessageBoxIcon.Warning;
-                                break;
-                            case 3:
-                                ismade = ManagementService.ADFSManager.RegisterMFASystemMasterKey(null, false, true);
-                                lbl = res.CTRLSECAESDELETED;
-                                ico = MessageBoxIcon.Hand;
-                                break;
-                        }
-                        this.Cursor = Cursors.Default;
-                        if (ismade)
-                        {
-                            MessageBoxParameters messageBoxParameters2 = new MessageBoxParameters
+                            bool ismade = false;
+                            string lbl = string.Empty;
+                            MessageBoxIcon ico = MessageBoxIcon.Information;
+                            this.Cursor = Cursors.WaitCursor;
+                            switch (Wizard.Choice)
                             {
-                                Text = lbl,
-                                Buttons = MessageBoxButtons.OK,
-                                Icon = ico
-                            };
-                            this._snapin.Console.ShowDialog(messageBoxParameters2);
+                                default:
+                                    ismade = ManagementService.ADFSManager.RegisterMFASystemMasterKey(null, false, false);
+                                    lbl = res.CTRLSECAESOK;
+                                    ico = MessageBoxIcon.Information;
+                                    break;
+                                case 2:
+                                    ismade = ManagementService.ADFSManager.RegisterMFASystemMasterKey(null, true, false);
+                                    lbl = res.CTRLSECAESDEPLOYED;
+                                    ico = MessageBoxIcon.Warning;
+                                    break;
+                                case 3:
+                                    ismade = ManagementService.ADFSManager.RegisterMFASystemMasterKey(null, false, true);
+                                    lbl = res.CTRLSECAESDELETED;
+                                    ico = MessageBoxIcon.Hand;
+                                    break;
+                            }
+                            this.Cursor = Cursors.Default;
+                            if (ismade)
+                            {
+                                MessageBoxParameters messageBoxParameters2 = new MessageBoxParameters
+                                {
+                                    Text = lbl,
+                                    Buttons = MessageBoxButtons.OK,
+                                    Icon = ico
+                                };
+                                this._snapin.Console.ShowDialog(messageBoxParameters2);
+                            }
                         }
-                    }
-                    finally
-                    {
-                        this.Cursor = Cursors.Default;
+                        finally
+                        {
+                            this.Cursor = Cursors.Default;
+                        }
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                this.Cursor = Cursors.Default;
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                catch (Exception ex)
                 {
-                    Text = ex.Message,
-                    Buttons = MessageBoxButtons.OK,
-                    Icon = MessageBoxIcon.Error
-                };
-                this._snapin.Console.ShowDialog(messageBoxParameters);
+                    this.Cursor = Cursors.Default;
+                    MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                    {
+                        Text = ex.Message,
+                        Buttons = MessageBoxButtons.OK,
+                        Icon = MessageBoxIcon.Error
+                    };
+                    this._snapin.Console.ShowDialog(messageBoxParameters);
+                }
             }
         }
         #endregion
@@ -12384,6 +12450,7 @@ namespace Neos.IdentityServer.Console.Controls
                 this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
+
         /// <summary>
         /// SaveConfigLinkClicked event
         /// </summary>
@@ -13173,51 +13240,82 @@ namespace Neos.IdentityServer.Console.Controls
         }
 
         /// <summary>
+        /// BeforeCertValidating method implementation
+        /// </summary>
+        private bool BeforeCertValidating()
+        {
+            bool result = true;
+            if ((ManagementService.Config.AdministrationPinEnabled) && (!ManagementService.PinValidated))
+            {
+                AdminPinWizard Wizard = new AdminPinWizard();
+                Wizard.AdminPin = ManagementService.ADFSManager.Config.AdministrationPin;
+                DialogResult dresult = this._snapin.Console.ShowDialog(Wizard);
+                if (dresult == DialogResult.Abort)
+                {
+                    this.Cursor = Cursors.Default;
+                    MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                    {
+                        Text = Wizard.ErrorMessage,
+                        Buttons = MessageBoxButtons.OK,
+                        Icon = MessageBoxIcon.Error
+                    };
+                    this._snapin.Console.ShowDialog(messageBoxParameters);
+                }
+                result = (dresult == DialogResult.OK);
+                ManagementService.PinValidated = result;
+            }
+            return result;
+        }
+
+        /// <summary>
         /// btnRSACertClick method implmentation
         /// </summary>
         private void BtnRSACertClick(object sender, EventArgs e)
         {
-            try
+            if (BeforeCertValidating())
             {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
-                {
-                    Text = res.CTRLSECRSAGENERATE,
-                    Buttons = MessageBoxButtons.OKCancel,
-                    Icon = MessageBoxIcon.Error
-                };
-                bool result = (this._snapin.Console.ShowDialog(messageBoxParameters) == DialogResult.OK);
-                Cursor curs = this.Cursor;
                 try
                 {
-                    this.Cursor = Cursors.WaitCursor;
-                    if (result)
+                    MessageBoxParameters messageBoxParameters = new MessageBoxParameters
                     {
-                        this.txtRSAThumb.Text = ManagementService.ADFSManager.RegisterNewRSACertificate(null, Config.KeysConfig.CertificateValidity);
-
-                        MessageBoxParameters messageBoxParameters2 = new MessageBoxParameters
+                        Text = res.CTRLSECRSAGENERATE,
+                        Buttons = MessageBoxButtons.OKCancel,
+                        Icon = MessageBoxIcon.Error
+                    };
+                    bool result = (this._snapin.Console.ShowDialog(messageBoxParameters) == DialogResult.OK);
+                    Cursor curs = this.Cursor;
+                    try
+                    {
+                        this.Cursor = Cursors.WaitCursor;
+                        if (result)
                         {
-                            Text = string.Format(res.CTRLSECNEWCERTCREATED, this.txtRSAThumb.Text),
-                            Buttons = MessageBoxButtons.OK,
-                            Icon = MessageBoxIcon.Information
-                        };
-                        this._snapin.Console.ShowDialog(messageBoxParameters2);
+                            this.txtRSAThumb.Text = ManagementService.ADFSManager.RegisterNewRSACertificate(null, Config.KeysConfig.CertificateValidity);
 
+                            MessageBoxParameters messageBoxParameters2 = new MessageBoxParameters
+                            {
+                                Text = string.Format(res.CTRLSECNEWCERTCREATED, this.txtRSAThumb.Text),
+                                Buttons = MessageBoxButtons.OK,
+                                Icon = MessageBoxIcon.Information
+                            };
+                            this._snapin.Console.ShowDialog(messageBoxParameters2);
+
+                        }
+                    }
+                    finally
+                    {
+                        this.Cursor = curs;
                     }
                 }
-                finally
+                catch (Exception ex)
                 {
-                    this.Cursor = curs;
+                    MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                    {
+                        Text = ex.Message,
+                        Buttons = MessageBoxButtons.OK,
+                        Icon = MessageBoxIcon.Error
+                    };
+                    this._snapin.Console.ShowDialog(messageBoxParameters);
                 }
-            }
-            catch (Exception ex)
-            {
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
-                {
-                    Text = ex.Message,
-                    Buttons = MessageBoxButtons.OK,
-                    Icon = MessageBoxIcon.Error
-                };
-                this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
 
@@ -13552,84 +13650,114 @@ namespace Neos.IdentityServer.Console.Controls
         }
 
         /// <summary>
+        /// BeforeKeyGenValidating method implementation
+        /// </summary>
+        private bool BeforeKeyGenValidating()
+        {
+            bool result = true;
+            if ((ManagementService.Config.AdministrationPinEnabled) && (!ManagementService.PinValidated))
+            {
+                AdminPinWizard Wizard = new AdminPinWizard();
+                Wizard.AdminPin = ManagementService.ADFSManager.Config.AdministrationPin;
+                DialogResult dresult = this._snapin.Console.ShowDialog(Wizard);
+                if (dresult == DialogResult.Abort)
+                {
+                    this.Cursor = Cursors.Default;
+                    MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                    {
+                        Text = Wizard.ErrorMessage,
+                        Buttons = MessageBoxButtons.OK,
+                        Icon = MessageBoxIcon.Error
+                    };
+                    this._snapin.Console.ShowDialog(messageBoxParameters);
+                }
+                result = (dresult == DialogResult.OK);
+                ManagementService.PinValidated = result;
+            }
+            return result;
+        }
+
+        /// <summary>
         /// BtnGenerateKeysClick method implementation
         /// </summary>
         private void BtnGenerateKeysClick(object sender, EventArgs e)
         {
-            ECHDWizard Wizard = new ECHDWizard();
-            try
+            if (BeforeKeyGenValidating())
             {
-                Wizard.KeyExists = ManagementService.ADFSManager.CheckMFASystemAESCngKey();
-                if (Wizard.KeyExists)
+                ECHDWizard Wizard = new ECHDWizard();
+                try
                 {
+                    Wizard.KeyExists = ManagementService.ADFSManager.CheckMFASystemAESCngKey();
+                    if (Wizard.KeyExists)
+                    {
+                        MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                        {
+
+                            Text = res.CTRLSECAESWARNING,
+                            Buttons = MessageBoxButtons.YesNo,
+                            Icon = MessageBoxIcon.Warning
+                        };
+                        if (this._snapin.Console.ShowDialog(messageBoxParameters) != DialogResult.Yes)
+                            return;
+                    }
+                    if ((this._snapin.Console.ShowDialog(Wizard) == DialogResult.OK))
+                    {
+                        Cursor crs = this.Cursor;
+                        try
+                        {
+                            bool ismade = false;
+                            string lbl = string.Empty;
+                            MessageBoxIcon ico = MessageBoxIcon.Information;
+                            this.Cursor = Cursors.WaitCursor;
+                            switch (Wizard.Choice)
+                            {
+                                default:
+                                    ismade = ManagementService.ADFSManager.RegisterMFASystemAESCngKey(null, false, false);
+                                    lbl = res.CTRLSECAESOK;
+                                    ico = MessageBoxIcon.Information;
+                                    break;
+                                case 2:
+                                    ismade = ManagementService.ADFSManager.RegisterMFASystemAESCngKey(null, true, false);
+                                    lbl = res.CTRLSECAESDEPLOYED;
+                                    ico = MessageBoxIcon.Warning;
+                                    break;
+                                case 3:
+                                    ismade = ManagementService.ADFSManager.RegisterMFASystemAESCngKey(null, false, true);
+                                    lbl = res.CTRLSECAESDELETED;
+                                    ico = MessageBoxIcon.Stop;
+                                    break;
+                            }
+                            this.Cursor = Cursors.Default;
+                            if (ismade)
+                            {
+                                MessageBoxParameters messageBoxParameters2 = new MessageBoxParameters
+                                {
+                                    Text = lbl,
+                                    Buttons = MessageBoxButtons.OK,
+                                    Icon = ico
+                                };
+                                this._snapin.Console.ShowDialog(messageBoxParameters2);
+                            }
+                        }
+                        finally
+                        {
+                            this.Cursor = Cursors.Default;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    this.Cursor = Cursors.Default;
                     MessageBoxParameters messageBoxParameters = new MessageBoxParameters
                     {
-
-                        Text = res.CTRLSECAESWARNING,
-                        Buttons = MessageBoxButtons.YesNo,
-                        Icon = MessageBoxIcon.Warning
+                        Text = ex.Message,
+                        Buttons = MessageBoxButtons.OK,
+                        Icon = MessageBoxIcon.Error
                     };
-                    if (this._snapin.Console.ShowDialog(messageBoxParameters) != DialogResult.Yes)
-                        return;
+                    this._snapin.Console.ShowDialog(messageBoxParameters);
                 }
-                if ((this._snapin.Console.ShowDialog(Wizard) == DialogResult.OK))
-                {
-                    Cursor crs = this.Cursor;
-                    try
-                    {
-                        bool ismade = false;
-                        string lbl = string.Empty;
-                        MessageBoxIcon ico = MessageBoxIcon.Information;
-                        this.Cursor = Cursors.WaitCursor;
-                        switch (Wizard.Choice)
-                        {
-                            default:
-                                ismade = ManagementService.ADFSManager.RegisterMFASystemAESCngKey(null, false, false);
-                                lbl = res.CTRLSECAESOK;
-                                ico = MessageBoxIcon.Information;
-                                break;
-                            case 2:
-                                ismade = ManagementService.ADFSManager.RegisterMFASystemAESCngKey(null, true, false);
-                                lbl = res.CTRLSECAESDEPLOYED;
-                                ico = MessageBoxIcon.Warning;
-                                break;
-                            case 3:
-                                ismade = ManagementService.ADFSManager.RegisterMFASystemAESCngKey(null, false, true);
-                                lbl = res.CTRLSECAESDELETED;
-                                ico = MessageBoxIcon.Stop;
-                                break;
-                        }
-                        this.Cursor = Cursors.Default;
-                        if (ismade)
-                        {                            
-                            MessageBoxParameters messageBoxParameters2 = new MessageBoxParameters
-                            {
-                                Text = lbl,
-                                Buttons = MessageBoxButtons.OK,
-                                Icon = ico
-                            };
-                            this._snapin.Console.ShowDialog(messageBoxParameters2);
-                        }
-                    }
-                    finally
-                    {
-                        this.Cursor = Cursors.Default;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                this.Cursor = Cursors.Default;
-                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
-                {
-                    Text = ex.Message,
-                    Buttons = MessageBoxButtons.OK,
-                    Icon = MessageBoxIcon.Error
-                };
-                this._snapin.Console.ShowDialog(messageBoxParameters);
             }
         }
-
 
         /// <summary>
         /// SaveConfigLinkClicked event

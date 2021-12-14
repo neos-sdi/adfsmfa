@@ -914,11 +914,15 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 Config.Hosts.ActiveDirectoryHost.Password = MSIS.Decrypt(Config.Hosts.ActiveDirectoryHost.Password, "ADDS Super Account Password");
                 Config.Hosts.SQLServerHost.SQLPassword = MSIS.Decrypt(Config.Hosts.SQLServerHost.SQLPassword, "SQL Super Account Password");
                 Config.MailProvider.Password = MSIS.Decrypt(Config.MailProvider.Password, "Mail Provider Account Password");
+                Config.DefaultPin = MSIS.Decrypt(Config.DefaultPin, "Default Users Pin");
+                Config.AdministrationPin = MSIS.Decrypt(Config.AdministrationPin, "Administration Pin");
             };
             string xorsecret = Config.KeysConfig.XORSecret;
             string addspwd = Config.Hosts.ActiveDirectoryHost.Password;
             string sqlpwd = Config.Hosts.SQLServerHost.SQLPassword;
             string mailpwd = Config.MailProvider.Password;
+            string defpin = Config.DefaultPin;
+            string admpin = Config.AdministrationPin;
 
             if (WebAdminManagerClient.NewMFASystemMasterKey(Config, deployonly, deleteonly))
             {
@@ -927,6 +931,8 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 Config.Hosts.ActiveDirectoryHost.Password = addspwd;
                 Config.Hosts.SQLServerHost.SQLPassword = sqlpwd;
                 Config.MailProvider.Password = mailpwd;
+                Config.DefaultPin = defpin;
+                Config.AdministrationPin = admpin;
                 ManagementService.BroadcastNotification(Config, NotificationsKind.ConfigurationReload, Environment.MachineName);
 
                 if (Host != null)

@@ -508,7 +508,9 @@ namespace Neos.IdentityServer.MultiFactor
                 DeliveryWindow = 300;
                 Issuer = "MFA";
                 PinLength = 4;
-                DefaultPin = 1234;
+                DefaultPin = "1234";
+                AdministrationPin = "1230";
+                AdministrationPinEnabled = false;
                 MaxRetries = 3;
                 UiKind = ADFSUserInterfaceKind.Default;
                 DefaultProviderMethod = PreferredMethod.Choose;
@@ -717,8 +719,14 @@ namespace Neos.IdentityServer.MultiFactor
             }
         }
 
+        [XmlAttribute("AdministrationPinEnabled")]
+        public bool AdministrationPinEnabled { get; set; } = false;
+
+        [XmlAttribute("AdministrationPin")]
+        public string AdministrationPin { get; set; } = "1230";
+
         [XmlAttribute("DefaultPin")]
-        public int DefaultPin { get; set; } = 1234;
+        public string DefaultPin { get; set; } = "1234";
 
         [XmlAttribute("KMSOO")]
         public bool KeepMySelectedOptionOn { get; set; } = true;
@@ -1861,10 +1869,10 @@ namespace Neos.IdentityServer.MultiFactor
         public string ForbiddenBrowsers { get; set; } = "ie;samsung;nokia";
 
         [XmlAttribute("InitiatedBrowsers")]
-        public string InitiatedBrowsers { get; set; } = "safari;unknown";
+        public string InitiatedBrowsers { get; set; } = "safari";
 
         [XmlAttribute("NoCounterBrowsers")]
-        public string NoCounterBrowsers { get; set; } = "safari;unknown";
+        public string NoCounterBrowsers { get; set; } = "safari";
 
     }
 

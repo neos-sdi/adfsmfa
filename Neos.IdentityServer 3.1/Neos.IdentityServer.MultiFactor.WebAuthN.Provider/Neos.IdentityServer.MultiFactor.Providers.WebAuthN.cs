@@ -574,15 +574,16 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
         /// </summary>
         public List<WebAuthNCredentialInformation> GetUserStoredCredentials(string upn)
         {
-            List<WebAuthNCredentialInformation> wcreds = new List<WebAuthNCredentialInformation>();
-            MFAWebAuthNUser user = RuntimeRepository.GetUser(Config, upn);
+            List<WebAuthNCredentialInformation> wcreds = new List<WebAuthNCredentialInformation>();            
             try
             {
+                MFAWebAuthNUser user = RuntimeRepository.GetUser(Config, upn);
                 if (user != null)
                 {
                     List<MFAUserCredential> creds = RuntimeRepository.GetCredentialsByUser(Config, user);
                     if (creds.Count == 0)
-                        return wcreds;
+                        return null;
+                       // return wcreds;
                     foreach (MFAUserCredential st in creds)
                     {
                         WebAuthNCredentialInformation itm = new WebAuthNCredentialInformation()
@@ -677,8 +678,12 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
                         Extensions = this.Extentions,                       
                         UserVerificationMethod = this.UserVerificationMethod                       
                     };
+                    CredentialCreateOptions options = null;
 
-                    CredentialCreateOptions options = _webathn.GetRegisterCredentialOptions(user.ToCore(), existingKeys.ToCore(), authenticatorSelection, attType.ToEnum<AttestationConveyancePreference>(), exts);
+                    if (existingKeys.Count > 0)
+                        options = _webathn.GetRegisterCredentialOptions(user.ToCore(), existingKeys.ToCore(), authenticatorSelection, attType.ToEnum<AttestationConveyancePreference>(), exts);
+                    else
+                        options = _webathn.GetRegisterCredentialOptions(user.ToCore(), null, authenticatorSelection, attType.ToEnum<AttestationConveyancePreference>(), exts);
                     string result = options.ToJson();
                     ctx.CredentialOptions = result;
                     return result;
@@ -772,7 +777,6 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
             try
             {
                 List<MFAPublicKeyCredentialDescriptor> existingCredentials = new List<MFAPublicKeyCredentialDescriptor>();
-
                 if (!string.IsNullOrEmpty(ctx.UPN))
                 {
                     var user = RuntimeRepository.GetUser(Config, ctx.UPN);
@@ -788,7 +792,12 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
                 };
                
                 UserVerificationRequirement uv = this.UserVerificationRequirement;
-                AssertionOptions options = _webathn.GetAssertionOptions(existingCredentials.ToCore(), uv, exts);
+                AssertionOptions options = null;
+                if (existingCredentials.Count > 0)
+                    options = _webathn.GetAssertionOptions(existingCredentials.ToCore(), uv, exts);
+                else
+                    options = _webathn.GetAssertionOptions(null, uv, exts);
+
                 string result = options.ToJson();
                 ctx.AssertionOptions = result;
                 return result;
@@ -832,7 +841,6 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
                         }
 
                         AuthenticatorData authData = new AuthenticatorData(clientResponse.Response.AuthenticatorData);
-
                         bool isnocount = Utilities.IsNoCounterDevice(this.Config.WebAuthNProvider.Configuration, ctx);
                         uint authCounter = 0;
                         uint storedCounter = 0;
@@ -842,6 +850,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
                             authCounter = authData.SignCount;
                             storedCounter = creds.SignatureCounter;
                         }
+                        else
                         if ((authCounter > 0) && (authCounter <= storedCounter))
                         {
                             ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
@@ -859,9 +868,13 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
                         // Apple counter always 0
                         AssertionVerificationResult res = _webathn.SetAssertionResult(clientResponse, options, creds.PublicKey, storedCounter, callback).Result;
                         if (!isnocount)
+                        {
                             RuntimeRepository.UpdateCounter(Config, user, res.CredentialId, res.Counter);
+                        }
                         else
+                        {
                             RuntimeRepository.UpdateCounter(Config, user, res.CredentialId, 0);
+                        }
 
                         if (!authData.UserPresent || !authData.UserVerified)
                         {

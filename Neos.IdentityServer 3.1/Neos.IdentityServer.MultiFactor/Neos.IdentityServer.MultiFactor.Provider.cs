@@ -15,7 +15,6 @@
 // https://github.com/neos-sdi/adfsmfa                                                                                                                                                      //
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
-// #define softemail
 using Microsoft.IdentityServer.Web.Authentication.External;
 using Neos.IdentityServer.MultiFactor.Common;
 using Neos.IdentityServer.MultiFactor.Data;
@@ -70,7 +69,7 @@ namespace Neos.IdentityServer.MultiFactor
                 IPAddress = request.RemoteEndPoint.Address.ToString()
             };
             Utilities.PatchLanguageIfNeeded(Config, usercontext, request.UserLanguages);
-           // Utilities.CheckForUserAgent(Config, usercontext, null);
+            Utilities.CheckForUserAgent(Config, usercontext, Utilities.BrowserDetection(request.UserAgent));
             ResourcesLocale Resources = new ResourcesLocale(usercontext.Lcid);
             ClientSIDsProxy.Initialize(Config);
 
@@ -329,6 +328,8 @@ namespace Neos.IdentityServer.MultiFactor
                                 _config.Hosts.ActiveDirectoryHost.Password = MSIS.Decrypt(_config.Hosts.ActiveDirectoryHost.Password, "ADDS Super Account Password");
                                 _config.Hosts.SQLServerHost.SQLPassword = MSIS.Decrypt(_config.Hosts.SQLServerHost.SQLPassword, "SQL Super Account Password");
                                 _config.MailProvider.Password = MSIS.Decrypt(_config.MailProvider.Password, "Mail Provider Account Password");
+                                _config.DefaultPin = MSIS.Decrypt(_config.DefaultPin.ToString(), "Default Users Pin");
+                                _config.AdministrationPin = MSIS.Decrypt(_config.AdministrationPin, "Administration Pin");
                             };
                             ADDSUtils.LoadForests(_config.Hosts.ActiveDirectoryHost.DomainName, _config.Hosts.ActiveDirectoryHost.Account, _config.Hosts.ActiveDirectoryHost.Password, _config.Hosts.ActiveDirectoryHost.UseSSL, true);
                             KeysManager.Initialize(_config);  // Always Bind KeysManager Otherwise this is made in CFGUtilities.ReadConfiguration
@@ -474,12 +475,14 @@ namespace Neos.IdentityServer.MultiFactor
             string userlanguage = proofData.Properties["userlanguage"]?.ToString();
             string[] userlanguages = null;
             if (string.IsNullOrEmpty(userlanguage))
+            {
                 userlanguages = request.UserLanguages;
+            }
             else
                 userlanguages = new string[] { userlanguage };
             Utilities.PatchLanguageIfNeeded(Config, usercontext, userlanguages);
 
-            string useragent = proofData.Properties["useragent"]?.ToString();           
+            string useragent = proofData.Properties["useragent"]?.ToString();
             Utilities.CheckForUserAgent(Config, usercontext, Utilities.BrowserDetection(useragent));
 
             usercontext.UIMode = GetAuthenticationContextRequest(usercontext);
@@ -2583,7 +2586,7 @@ namespace Neos.IdentityServer.MultiFactor
                             }
                             usercontext.WizPageID = 2;
                             if (usercontext.PinCode <= 0)
-                                usercontext.PinCode = Config.DefaultPin;
+                                usercontext.PinCode = Convert.ToInt32(Config.DefaultPin);
                             ValidateUserPin(usercontext, context, proofData, Resources, true);
                             return new AdapterPresentation(this, context);
                         }

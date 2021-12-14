@@ -848,6 +848,16 @@ namespace MFA
         public string XORSecret { get; set; }
 
         /// <summary>
+        /// <para type="description">If true, updates of configuration requires Administration PIN.</para>
+        /// </summary>
+        public bool AdministrationPinEnabled { get; set; }
+
+        /// <summary>
+        /// <para type="description">Administration PIN value (Default = 1230).</para>
+        /// </summary>
+        public string AdministrationPin { get; set; }
+
+        /// <summary>
         /// <para type="description">Required PIN length wehen using aditionnal control with personal PIN.</para>
         /// </summary>
         public int PinLength { get; set; }
@@ -855,7 +865,7 @@ namespace MFA
         /// <summary>
         /// <para type="description">Default value for user's PIN.</para>
         /// </summary>
-        public int DefaultPin { get; set; }
+        public string DefaultPin { get; set; }
 
         /// <summary>
         /// <para type="description">Use MFA Password Policy.</para>
@@ -923,6 +933,8 @@ namespace MFA
                     ReplayLevel = (PSReplayLevel)mgr.ReplayLevel,
                     LibVersion = (PSSecretKeyVersion)mgr.LibVersion,
                     XORSecret = mgr.XORSecret,
+                    AdministrationPinEnabled = mgr.AdministrationPinEnabled,
+                    AdministrationPin = mgr.AdministrationPin,
                     PinLength = mgr.PinLength,
                     DefaultPin = mgr.DefaultPin,
                     UsePasswordPolicy = mgr.UsePasswordPolicy,
@@ -957,6 +969,8 @@ namespace MFA
                     ReplayLevel = (ReplayLevel)mgr.ReplayLevel,
                     LibVersion = (SecretKeyVersion)mgr.LibVersion,
                     XORSecret = mgr.XORSecret,
+                    AdministrationPinEnabled = mgr.AdministrationPinEnabled,
+                    AdministrationPin = mgr.AdministrationPin,
                     PinLength = mgr.PinLength,
                     DefaultPin = mgr.DefaultPin,
                     UsePasswordPolicy = mgr.UsePasswordPolicy,

@@ -415,8 +415,10 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         public ReplayLevel ReplayLevel { get; set; }
         public SecretKeyVersion LibVersion { get; set; }
         public string XORSecret { get; set; }
+        public bool AdministrationPinEnabled { get; set; }
+        public string AdministrationPin { get; set; }
         public int PinLength { get; set; }
-        public int DefaultPin { get; set; }
+        public string DefaultPin { get; set; }
         public bool UsePasswordPolicy { get; set; }
         public bool UsePSOPasswordPolicy { get; set; }
         public bool LockUserOnPasswordExpiration { get; set; }
@@ -443,8 +445,8 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             MaxRetries = cfg.MaxRetries;
             ReplayLevel = cfg.ReplayLevel;
             LibVersion = keys.KeyVersion;
+            AdministrationPinEnabled = cfg.AdministrationPinEnabled;
             PinLength = cfg.PinLength;
-            DefaultPin = cfg.DefaultPin;
             UsePasswordPolicy = keys.UsePasswordPolicy;
             UsePSOPasswordPolicy = keys.UsePSOPasswordPolicy;
             LockUserOnPasswordExpiration = keys.LockUserOnPasswordExpiration;
@@ -458,6 +460,8 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 Password = MSIS.Encrypt(adds.Password, "ADDS Super Account Password");
                 SQLPassword = MSIS.Encrypt(sql.SQLPassword, "SQL Super Account Password");
                 XORSecret = MSIS.Encrypt(keys.XORSecret, "Pass Phrase Encryption");
+                DefaultPin = MSIS.Encrypt(cfg.DefaultPin, "Default Users Pin");
+                AdministrationPin = MSIS.Encrypt(cfg.AdministrationPin, "Administration Pin");
             };
         }
 
@@ -476,8 +480,8 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             cfg.MaxRetries = this.MaxRetries;
             cfg.ReplayLevel = this.ReplayLevel;
             keys.KeyVersion = this.LibVersion;
+            cfg.AdministrationPinEnabled = this.AdministrationPinEnabled;
             cfg.PinLength = this.PinLength;
-            cfg.DefaultPin = this.DefaultPin;
             keys.UsePasswordPolicy = this.UsePasswordPolicy;
             keys.UsePSOPasswordPolicy = this.UsePSOPasswordPolicy;
             keys.LockUserOnPasswordExpiration = this.LockUserOnPasswordExpiration;
@@ -491,7 +495,8 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                 adds.Password = MSIS.Decrypt(Password, "ADDS Super Account Password");
                 sql.SQLPassword = MSIS.Decrypt(SQLPassword, "SQL Super Account Password");
                 keys.XORSecret = MSIS.Decrypt(XORSecret, "Pass Phrase Encryption");
-
+                cfg.DefaultPin = MSIS.Decrypt(DefaultPin, "Default Users Pin");
+                cfg.AdministrationPin = MSIS.Decrypt(AdministrationPin, "Administration Pin");
             };
             ManagementService.ADFSManager.WriteConfiguration(host);
         }

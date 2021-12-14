@@ -31,6 +31,7 @@ using Neos.IdentityServer.MultiFactor;
 using System.DirectoryServices;
 using Neos.IdentityServer.Console.Controls;
 using Microsoft.ManagementConsole.Advanced;
+using Neos.IdentityServer.Console.Forms;
 
 namespace Neos.IdentityServer.Console
 {
@@ -201,7 +202,28 @@ namespace Neos.IdentityServer.Console
                 _notifenabled = false;
                 try
                 {
-                    ManagementService.ADFSManager.WriteConfiguration(null);
+                    bool result = true;
+                    if ((ManagementService.Config.AdministrationPinEnabled) && (!ManagementService.PinValidated))
+                    {
+                        AdminPinWizard Wizard = new AdminPinWizard();
+                        Wizard.AdminPin = ManagementService.ADFSManager.Config.AdministrationPin;
+                        DialogResult dresult = this.SnapIn.Console.ShowDialog(Wizard);
+                        if (dresult == DialogResult.Abort)
+                        {
+                            this.Cursor = Cursors.Default;
+                            MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                            {
+                                Text = Wizard.ErrorMessage,
+                                Buttons = MessageBoxButtons.OK,
+                                Icon = MessageBoxIcon.Error
+                            };
+                            this.SnapIn.Console.ShowDialog(messageBoxParameters);
+                        }
+                        result = (dresult == DialogResult.OK);
+                        ManagementService.PinValidated = result;
+                    }
+                    if (result)
+                        ManagementService.ADFSManager.WriteConfiguration(null);
                 }
                 catch (Exception ex)
                 {

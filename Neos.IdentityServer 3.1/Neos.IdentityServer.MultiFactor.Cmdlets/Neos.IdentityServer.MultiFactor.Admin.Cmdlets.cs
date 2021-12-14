@@ -28,6 +28,7 @@ namespace MFA
     using System.Management.Automation;
     using System.Management.Automation.Host;
     using System.Net;
+    
 
     #region Cmdlet Base
     /// <summary>
@@ -89,8 +90,38 @@ namespace MFA
             {
                 ManagementService.VerifyADFSServer2019(Host);
             }
+            object[] att0 = type.GetCustomAttributes(typeof(AdministrationPinAttribute), true);
+            if (att0.Length > 0)
+            {
+                if (ManagementService.Config == null)
+                    ManagementService.Initialize(this.Host, true);
+                if ((ManagementService.Config.AdministrationPinEnabled) && (!ManagementService.PinValidated))
+                {
+                    this.Host.UI.WriteWarningLine("Administration Pin Required : ");
+                    var password = string.Empty;
+                    ConsoleKey key;
+                    do
+                    {
+                        var keyInfo = Console.ReadKey(intercept: true);
+                        key = keyInfo.Key;
+                        if (key == ConsoleKey.Backspace && password.Length > 0)
+                        {
+                            Console.Write("\b \b");
+                            password = password.Substring(0, (password.Length - 1));
+                        }
+                                     else if (!char.IsControl(keyInfo.KeyChar))
+                        {
+                            Console.Write("*");
+                            password += keyInfo.KeyChar;
+                        }
+                    } while (key != ConsoleKey.Enter);
+                    if (!password.ToLowerInvariant().Equals(ManagementService.Config.AdministrationPin.ToLowerInvariant()))
+                        this.ThrowTerminatingError(new ErrorRecord(new Exception("Pin invalid !"), "Invalid code pin ! ", ErrorCategory.SecurityError, null));
+                    this.Host.UI.WriteLine();
+                    ManagementService.PinValidated = true;
+                }
+            }
         }
-
     }
     #endregion
 
@@ -1462,7 +1493,7 @@ namespace MFA
     ///   <para>Register-MFAComputer -ServerName otheradfs.domain.com</para>
     /// </example>
     [Cmdlet(VerbsLifecycle.Register, "MFAComputer", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
-    [PrimaryServerRequired, ConfigurationRightsRequired, NotRemotable]
+    [PrimaryServerRequired, ConfigurationRightsRequired, NotRemotable, AdministrationPin]
     public sealed class RegisterMFAComputer : MFACmdlet
     {
         private string _servername;
@@ -1552,7 +1583,7 @@ namespace MFA
     ///   <para>UnRegister-MFAComputer</para>
     /// </example>
     [Cmdlet(VerbsLifecycle.Unregister, "MFAComputer", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
-    [PrimaryServerRequired, ConfigurationRightsRequired, NotRemotable]
+    [PrimaryServerRequired, ConfigurationRightsRequired, NotRemotable, AdministrationPin]
     public sealed class UnRegisterMFAComputer : MFACmdlet
     {
         private string _servername;
@@ -1952,7 +1983,7 @@ namespace MFA
     ///   <para>Export current MFA configuration to the specified file.</para>
     /// </example>
     [Cmdlet(VerbsData.Export, "MFASystemConfiguration", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
-    [PrimaryServerRequired, ConfigurationRightsRequired, NotRemotable]
+    [PrimaryServerRequired, ConfigurationRightsRequired, NotRemotable, AdministrationPin]
     public sealed class ExportMFASystemConfiguration : MFACmdlet
     {
         /// <summary>
@@ -2015,7 +2046,7 @@ namespace MFA
     ///   <para>Remove MFA configuration from ADFS. </para>
     /// </example>
     [Cmdlet(VerbsLifecycle.Unregister, "MFASystem", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
-    [PrimaryServerRequired, ConfigurationRightsRequired, NotRemotable]
+    [PrimaryServerRequired, ConfigurationRightsRequired, NotRemotable, AdministrationPin]
     public sealed class UnRegisterMFASystem : MFACmdlet
     {
         /// <summary>
@@ -2069,7 +2100,7 @@ namespace MFA
     ///   <para>Enable MFA configuration from ADFS. </para>
     /// </example>
     [Cmdlet(VerbsLifecycle.Enable, "MFASystem", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Medium, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
-    [PrimaryServerRequired, ConfigurationRightsRequired, NotRemotable]
+    [PrimaryServerRequired, ConfigurationRightsRequired, NotRemotable, AdministrationPin]
     public sealed class EnableMFASystem : MFACmdlet
     {
         /// <summary>
@@ -2121,7 +2152,7 @@ namespace MFA
     ///   <para>Disable MFA configuration from ADFS. </para>
     /// </example>
     [Cmdlet(VerbsLifecycle.Disable, "MFASystem", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Medium, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
-    [PrimaryServerRequired, ConfigurationRightsRequired, NotRemotable]
+    [PrimaryServerRequired, ConfigurationRightsRequired, NotRemotable, AdministrationPin]
     public sealed class DisableMFASystem : MFACmdlet
     {
         /// <summary>
@@ -2255,7 +2286,7 @@ namespace MFA
     ///   <para>Set-MFAConfig -AdminContact username@domainname -UserFeatures AdministrativeMode, AllowEnrollment, AllowProvideInformations</para>
     /// </example>
     [Cmdlet(VerbsCommon.Set, "MFAConfig", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
-    [PrimaryServerRequired, AdministratorsRightsRequired, NotRemotable]   
+    [PrimaryServerRequired, AdministratorsRightsRequired, NotRemotable, AdministrationPin]   
     public sealed class SetMFAConfig : MFACmdlet
     {
         private PSConfig _config;
@@ -2651,7 +2682,7 @@ namespace MFA
     ///   <para>Set-MFAStore -Store SQL -Active $false -MaxRows 10000 -ConnectionString = "your connect string"</para>
     /// </example>
     [Cmdlet(VerbsCommon.Set, "MFAStore", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
-    [PrimaryServerRequired, AdministratorsRightsRequired, NotRemotable]
+    [PrimaryServerRequired, AdministratorsRightsRequired, NotRemotable, AdministrationPin]
     public sealed class SetMFAStore : MFACmdlet, IDynamicParameters
     {
         private ADDSStoreDynamicParameters _config0;
@@ -3365,7 +3396,7 @@ namespace MFA
     ///   <para>Set-MFAActiveDirectoryTemplate -Kind SchemaAll | Schema2016 | SchemaMFA </para>
     /// </example>
     [Cmdlet(VerbsCommon.Set, "MFAActiveDirectoryTemplate", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
-    [PrimaryServerRequired, AdministratorsRightsRequired, NotRemotable]
+    [PrimaryServerRequired, AdministratorsRightsRequired, NotRemotable, AdministrationPin]
     public sealed class SetMFAActiveDirectoryTemplate : MFACmdlet
     {
         /// <summary>
@@ -3560,7 +3591,7 @@ namespace MFA
     ///   <para>Set-MFAProvider -ProviderType email -UserName user@domain.com -Password p@ssw0rd</para>
     /// </example>
     [Cmdlet(VerbsCommon.Set, "MFAProvider", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
-    [PrimaryServerRequired, AdministratorsRightsRequired, NotRemotable]
+    [PrimaryServerRequired, AdministratorsRightsRequired, NotRemotable, AdministrationPin]
     public sealed class SetMFAProvider : MFACmdlet, IDynamicParameters
     {
         private TOTPDynamicParameters _config0;
@@ -5276,7 +5307,7 @@ namespace MFA
     ///   <para>Set-MFASecurity -Kind RSA $cfg</para>
     /// </example>
     [Cmdlet(VerbsCommon.Set, "MFASecurity", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
-    [PrimaryServerRequired, AdministratorsRightsRequired, NotRemotable]
+    [PrimaryServerRequired, AdministratorsRightsRequired, NotRemotable, AdministrationPin]
     public sealed class SetMFASecurity : MFACmdlet, IDynamicParameters
     {
         private PSBaseSecurity _config;
@@ -5780,7 +5811,7 @@ namespace MFA
     ///   <para>Change policy template for MFA configuration</para>
     /// </example>
     [Cmdlet(VerbsCommon.Set, "MFAPolicyTemplate", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
-    [PrimaryServerRequired, AdministratorsRightsRequired, NotRemotable]
+    [PrimaryServerRequired, AdministratorsRightsRequired, NotRemotable, AdministrationPin]
     public sealed class SetMFATemplateMode : MFACmdlet
     {
         private PSTemplateMode _template;
@@ -6049,7 +6080,7 @@ namespace MFA
     ///   <para>Change encryption Librairy Version for MFA configuration</para>
     /// </example>
     [Cmdlet(VerbsCommon.Set, "MFAEncryptionVersion", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
-    [PrimaryServerRequired, AdministratorsRightsRequired, NotRemotable]
+    [PrimaryServerRequired, AdministratorsRightsRequired, NotRemotable, AdministrationPin]
     public sealed class SetMFAEncryptionVersion : MFACmdlet
     {
         private PSSecretKeyVersion _version = PSSecretKeyVersion.V2;
@@ -6123,7 +6154,7 @@ namespace MFA
     ///   <para>MFAPrimaryAuthenticationStatus $true</para>
     /// </example>
     [Cmdlet(VerbsCommon.Set, "MFAPrimaryAuthenticationStatus", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
-    [PrimaryServerRequired, ADFS2019Required, AdministratorsRightsRequired, NotRemotable]
+    [PrimaryServerRequired, ADFS2019Required, AdministratorsRightsRequired, NotRemotable, AdministrationPin]
     public sealed class SetMFAPrimaryAuthenticationStatus : MFACmdlet
     {
         private FlatConfig _config;
@@ -6188,7 +6219,7 @@ namespace MFA
     }
     #endregion
 
-    #region Register-MFAPrimaryAuthentication
+    #region Register-MFAThreatDetectionSystem
     /// <summary>
     /// <para type="synopsis">Register MFA threat detection system.</para>
     /// <para type="description">Register MFA threat detection system. Activate it</para>
@@ -6198,7 +6229,7 @@ namespace MFA
     ///   <para>Only available for ADFS 2019 and Up.</para>
     /// </example>
     [Cmdlet(VerbsLifecycle.Register, "MFAThreatDetectionSystem", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
-    [PrimaryServerRequired, ADFS2019Required, AdministratorsRightsRequired, NotRemotable]
+    [PrimaryServerRequired, ADFS2019Required, AdministratorsRightsRequired, NotRemotable, AdministrationPin]
     public sealed class RegisterMFAThreatDetectionSystem : MFACmdlet
     {
         /// <summary>
@@ -6250,7 +6281,7 @@ namespace MFA
     ///   <para>UnRegister-MFAThreatDetectionSystem</para>
     ///   <para>Only available for ADFS 2019 and Up.</para>    /// </example>
     [Cmdlet(VerbsLifecycle.Unregister, "MFAThreatDetectionSystem", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
-    [PrimaryServerRequired, ADFS2019Required, AdministratorsRightsRequired, NotRemotable]
+    [PrimaryServerRequired, ADFS2019Required, AdministratorsRightsRequired, NotRemotable, AdministrationPin]
     public sealed class UnRegisterMFAThreatDetectionSystem : MFACmdlet
     {
         /// <summary>
@@ -6302,7 +6333,7 @@ namespace MFA
     ///   <para>Update-MFAThreatDetectionData</para>
     ///   <para>Only available for ADFS 2019 and Up.</para>    /// </example>
     [Cmdlet(VerbsData.Update, "MFAThreatDetectionData", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
-    [PrimaryServerRequired, ADFS2019Required, AdministratorsRightsRequired, NotRemotable]
+    [PrimaryServerRequired, ADFS2019Required, AdministratorsRightsRequired, NotRemotable, AdministrationPin]
     public sealed class UpdateMFAThreatDetectionData : MFACmdlet
     {
         /// <summary>
@@ -6363,7 +6394,7 @@ namespace MFA
     ///   <para>Create a new database for MFA, grant rights to the specified account</para>
     /// </example>
     [Cmdlet(VerbsCommon.New, "MFADatabase", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
-    [PrimaryServerRequired, AdministratorsRightsRequired, NotRemotable]
+    [PrimaryServerRequired, AdministratorsRightsRequired, NotRemotable, AdministrationPin]
     public sealed class NewMFADatabase : MFACmdlet, IDynamicParameters
     {
         private string _servername;
@@ -6509,7 +6540,7 @@ namespace MFA
     ///   <para>Upgrade an existing database for MFA with encryted columns or not, using rights to the specified account</para>
     /// </example>
     [Cmdlet("Upgrade", "MFADatabase", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
-    [PrimaryServerRequired, AdministratorsRightsRequired, NotRemotable]
+    [PrimaryServerRequired, AdministratorsRightsRequired, NotRemotable, AdministrationPin]
     public sealed class UpgradeMFADatabase : MFACmdlet
     {
         private PSSQLStore _config;
@@ -6588,7 +6619,7 @@ namespace MFA
     ///   <para>Delete encryption RSA Key from the farm.</para>
     /// </example>
     [Cmdlet(VerbsLifecycle.Register, "MFASystemMasterKey", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
-    [PrimaryServerRequired, ConfigurationRightsRequired, NotRemotable]
+    [PrimaryServerRequired, ConfigurationRightsRequired, NotRemotable, AdministrationPin]
     public sealed class RegisterMFASystemMasterKey : MFACmdlet
     {
         private bool _deletekey = false;
@@ -6690,7 +6721,7 @@ namespace MFA
     ///   <para>Delete encryption Key for AES Cng from the farm.</para>
     /// </example>
     [Cmdlet(VerbsLifecycle.Register, "MFASystemAESCngKey", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
-    [PrimaryServerRequired, ConfigurationRightsRequired, NotRemotable]
+    [PrimaryServerRequired, ConfigurationRightsRequired, NotRemotable, AdministrationPin]
     public sealed class RegisterMFASystemAESCngKey : MFACmdlet
     {
         private bool _deletekey = false;
@@ -7583,7 +7614,7 @@ namespace MFA
     ///     <para>Refresh-MFAConfigurationCache</para>
     /// </example>    
     [Cmdlet("Refresh", "MFAConfigurationCache", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
-    [PrimaryServerRequired, AdministratorsRightsRequired, NotRemotable]
+    [PrimaryServerRequired, AdministratorsRightsRequired, NotRemotable, AdministrationPin]
     public sealed class RefreshMFAConfigurationCache : MFACmdlet
     {
         /// <summary>
@@ -7729,7 +7760,7 @@ namespace MFA
     ///     <para>Update-MFACredentials -Kind SuperUser -Value mypassord</para>
     /// </example>    
     [Cmdlet(VerbsData.Update, "MFACredentials", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Identity")]
-    [PrimaryServerRequired, AdministratorsRightsRequired, NotRemotable]
+    [PrimaryServerRequired, AdministratorsRightsRequired, NotRemotable, AdministrationPin]
     public sealed class UpdateMFACredentials : MFACmdlet
     {
 
@@ -7805,7 +7836,7 @@ namespace MFA
     ///     <para>Export-MFAMailTemplates -LCID 1036</para>
     /// </example>
     [Cmdlet(VerbsData.Export, "MFAMailTemplates", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
-    [PrimaryServerRequired, AdministratorsRightsRequired, NotRemotable]
+    [PrimaryServerRequired, AdministratorsRightsRequired, NotRemotable, AdministrationPin]
     public sealed class ExportMFAMailTemplates : MFACmdlet
     {
         /// <summary>
@@ -7859,7 +7890,7 @@ namespace MFA
     ///     <para>Install-MFASamples -Kind Quiz</para>
     /// </example>
     [Cmdlet(VerbsLifecycle.Install, "MFASamples", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "Data")]
-    [PrimaryServerRequired, AdministratorsRightsRequired, NotRemotable]
+    [PrimaryServerRequired, AdministratorsRightsRequired, NotRemotable, AdministrationPin]
     public sealed class InstallMFASamples : MFACmdlet
     {
         /// <summary>
@@ -7975,13 +8006,13 @@ namespace MFA
     }
 
     /// <summary>
-    /// <para type="synopsis">Attribute for checking for ADFS Administration rights for Cmdlets in MFA System.</para>
+    /// <para type="synopsis">Attribute for checking for ADFS Remotable Administration rights for Cmdlets in MFA System.</para>
     /// </summary>
     [AttributeUsage(AttributeTargets.Class)]
     public class NotRemotableAttribute : Attribute
     {
         /// <summary>
-        /// AdministratorsRightsRequiredAttribute constructor
+        /// NotRemotableAttribute constructor
         /// </summary>
         public NotRemotableAttribute()
         {
@@ -7989,5 +8020,19 @@ namespace MFA
         }
     }
 
+    /// <summary>
+    /// <para type="synopsis">Attribute for checking for ADFS Administration Pin for Cmdlets in MFA System.</para>
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Class)]
+    public class AdministrationPinAttribute : Attribute
+    {
+        /// <summary>
+        /// AdministrationPinAttribute constructor
+        /// </summary>
+        public AdministrationPinAttribute()
+        {
+
+        }
+    }
     #endregion
 }

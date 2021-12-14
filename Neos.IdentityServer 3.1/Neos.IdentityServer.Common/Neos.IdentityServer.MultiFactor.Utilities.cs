@@ -991,7 +991,7 @@ namespace Neos.IdentityServer.MultiFactor
             }
             client.OnKeyDataEvent += KeyDataEvent;
             if (reg.PIN <= 0)
-                reg.PIN = cfg.DefaultPin;
+                reg.PIN = Convert.ToInt32(cfg.DefaultPin);
             if (reg.OverrideMethod == null)
                 reg.OverrideMethod = string.Empty;
             MFAUser newreg = client.SetMFAUser(reg, resetkey, caninsert);
@@ -1039,7 +1039,7 @@ namespace Neos.IdentityServer.MultiFactor
                     break;
             }
             if (reg.PIN <= 0)
-                reg.PIN = cfg.DefaultPin;
+                reg.PIN = Convert.ToInt32(cfg.DefaultPin);
             if (reg.OverrideMethod == null)
                 reg.OverrideMethod = string.Empty;
             client.OnKeyDataEvent += KeyDataEvent;
@@ -3192,6 +3192,8 @@ namespace Neos.IdentityServer.MultiFactor
                         config.Hosts.ActiveDirectoryHost.Password = MSIS.Decrypt(config.Hosts.ActiveDirectoryHost.Password, "ADDS Super Account Password");
                         config.Hosts.SQLServerHost.SQLPassword = MSIS.Decrypt(config.Hosts.SQLServerHost.SQLPassword, "SQL Super Account Password");
                         config.MailProvider.Password = MSIS.Decrypt(config.MailProvider.Password, "Mail Provider Account Password");
+                        config.DefaultPin = MSIS.Decrypt(config.DefaultPin.ToString(), "Default Users Pin");
+                        config.AdministrationPin = MSIS.Decrypt(config.AdministrationPin.ToString(), "Administration Pin");
                     };
                     ADDSUtils.LoadForests(config.Hosts.ActiveDirectoryHost.DomainName, config.Hosts.ActiveDirectoryHost.Account, config.Hosts.ActiveDirectoryHost.Password, config.Hosts.ActiveDirectoryHost.UseSSL, true);
                     KeysManager.Initialize(config);  // Important
@@ -3247,6 +3249,8 @@ namespace Neos.IdentityServer.MultiFactor
                                 config.Hosts.ActiveDirectoryHost.Password = MSIS.Decrypt(config.Hosts.ActiveDirectoryHost.Password, "ADDS Super Account Password");
                                 config.Hosts.SQLServerHost.SQLPassword = MSIS.Decrypt(config.Hosts.SQLServerHost.SQLPassword, "SQL Super Account Password");
                                 config.MailProvider.Password = MSIS.Decrypt(config.MailProvider.Password, "Mail Provider Account Password");
+                                config.DefaultPin = MSIS.Decrypt(config.DefaultPin, "Default Users Pin");
+                                config.AdministrationPin = MSIS.Decrypt(config.AdministrationPin, "Administration Pin");
                             };
                             ADDSUtils.LoadForests(config.Hosts.ActiveDirectoryHost.DomainName, config.Hosts.ActiveDirectoryHost.Account, config.Hosts.ActiveDirectoryHost.Password, config.Hosts.ActiveDirectoryHost.UseSSL, true);
                             KeysManager.Initialize(config);  // Important
@@ -3351,6 +3355,8 @@ namespace Neos.IdentityServer.MultiFactor
                         config.Hosts.ActiveDirectoryHost.Password = MSIS.Encrypt(config.Hosts.ActiveDirectoryHost.Password, "ADDS Super Account Password");
                         config.Hosts.SQLServerHost.SQLPassword = MSIS.Encrypt(config.Hosts.SQLServerHost.SQLPassword, "SQL Super Account Password");
                         config.MailProvider.Password = MSIS.Encrypt(config.MailProvider.Password, "Mail Provider Account Password");
+                        config.DefaultPin = MSIS.Encrypt(config.DefaultPin, "Default Users Pin");
+                        config.AdministrationPin = MSIS.Encrypt(config.AdministrationPin, "Administration Pin");
                     };
                 }
                 config.LastUpdated = DateTime.UtcNow;
@@ -3414,6 +3420,8 @@ namespace Neos.IdentityServer.MultiFactor
                         config.Hosts.ActiveDirectoryHost.Password = MSIS.Encrypt(config.Hosts.ActiveDirectoryHost.Password, "ADDS Super Account Password");
                         config.Hosts.SQLServerHost.SQLPassword = MSIS.Encrypt(config.Hosts.SQLServerHost.SQLPassword, "SQL Super Account Password");
                         config.MailProvider.Password = MSIS.Encrypt(config.MailProvider.Password, "Mail Provider Account Password");
+                        config.DefaultPin = MSIS.Encrypt(config.DefaultPin, "Default Users Pin");
+                        config.AdministrationPin = MSIS.Encrypt(config.AdministrationPin, "Administration Pin");
                     };
                 }
                 XmlConfigSerializer xmlserializer = new XmlConfigSerializer(typeof(MFAConfig));
@@ -4015,7 +4023,7 @@ namespace Neos.IdentityServer.MultiFactor
         internal static void CheckForUserAgent(MFAConfig config, AuthenticationContext usercontext, string useragent)
         {
             usercontext.BrowserDetected = useragent;
-            if (!string.IsNullOrEmpty(useragent))
+            if (!string.IsNullOrEmpty(usercontext.BrowserDetected))
             {
                 if (CheckForbiddenBrowsers(config.WebAuthNProvider.Configuration, usercontext))
                 {
@@ -4046,24 +4054,46 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         internal static string BrowserDetection(string useragent)
         {
+            if (string.IsNullOrEmpty(useragent))
+            {
+                return "Unknown";
+            }
             if (useragent.ToLower().IndexOf("firefox") > -1)
+            {
                 return "Firefox";
+            }
             if (useragent.ToLower().IndexOf("samsungbrowser") > -1)
+            {
                 return "Samsung";
+            }
             if (useragent.ToLower().IndexOf("cldc") > -1)
+            {
                 return "Nokia";
+            }
             if ((useragent.ToLower().IndexOf("opera") > -1) || (useragent.ToUpper().IndexOf("OPR") > -1))
+            {
                 return "Opera";
+            }
             if ((useragent.ToLower().IndexOf("trident") > -1) || (useragent.ToLower().IndexOf("msie") > -1) || (useragent.ToLower().IndexOf("windows phone") > -1))
+            {
                 return "IE";
+            }
             if (useragent.ToLower().IndexOf("edge") > -1)
+            {
                 return "EdgeLegacy";
+            }
             if (useragent.ToLower().IndexOf("edg") > -1)
+            {
                 return "Edge";
+            }
             if (useragent.ToLower().IndexOf("chrome") > -1)
+            {
                 return "Chrome";
+            }
             if (useragent.ToLower().IndexOf("safari") > -1)
+            {
                 return "Safari";
+            }
             return "Unknown";
         }
 
@@ -4081,7 +4111,9 @@ namespace Neos.IdentityServer.MultiFactor
                 if (x.StartsWith("#"))
                     continue;
                 if (usercontext.BrowserDetected.ToLower().Equals(x.ToLower()))
+                {
                     return true;
+                }
             }
             return false;
         }
@@ -4100,7 +4132,9 @@ namespace Neos.IdentityServer.MultiFactor
                 if (x.StartsWith("#"))
                     continue;
                 if (usercontext.BrowserDetected.ToLower().Equals(x.ToLower()))
+                {
                     return true;
+                }
             }
             return false;
         }
@@ -4119,7 +4153,9 @@ namespace Neos.IdentityServer.MultiFactor
                 if (x.StartsWith("#"))
                     continue;
                 if (usercontext.BrowserDetected.ToLower().Equals(x.ToLower()))
+                {
                     return true;
+                }
             }
             return false;
         }
@@ -4182,9 +4218,9 @@ namespace Neos.IdentityServer.MultiFactor
             }
         }
     }
-#endregion
+    #endregion
 
-#region WebAuthNCredentialInformation
+    #region WebAuthNCredentialInformation
     /// <summary>
     /// WebAuthNCredentialInformation class
     /// </summary>
@@ -4202,5 +4238,5 @@ namespace Neos.IdentityServer.MultiFactor
         public uint SignatureCounter { get; set; }
         public string NickName { get; set; }
     }
-#endregion
+    #endregion
 }

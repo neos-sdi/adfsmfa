@@ -245,7 +245,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                         MFAUser ext = client2.GetMFAUser(reg.UPN);
                         if (ext == null)
                         {
-                            reg.PIN = Config.DefaultPin;
+                            reg.PIN = Convert.ToInt32(Config.DefaultPin);
                             reg.PreferredMethod = Config.DefaultProviderMethod;
                             client2.AddMFAUser(reg, ForceNewKey, false);
                             Trace.TraceInformation(string.Format("User {0} Imported in MFA", reg.UPN));
@@ -351,7 +351,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                     try
                     {
                         MFAUser reg = new MFAUser();
-                        reg.PIN = Config.DefaultPin;
+                        reg.PIN = Convert.ToInt32(Config.DefaultPin);
                         if ((ids[0].HasValue) && (!string.IsNullOrEmpty(row[ids[0].Value])))
                             reg.UPN = row[ids[0].Value];
                         else
@@ -471,7 +471,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                     try
                     {
                         MFAUser reg = new MFAUser();
-                        reg.PIN = Config.DefaultPin;
+                        reg.PIN = Convert.ToInt32(Config.DefaultPin);
                         if (row.Attribute("upn") != null)
                             reg.UPN = row.Attribute("upn").Value;
                         else
