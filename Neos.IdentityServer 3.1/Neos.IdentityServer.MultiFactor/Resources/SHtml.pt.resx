@@ -297,4 +297,22 @@ Você poderá usar a validação do MFA no futuro.</value>
   <data name="HtmlUIMRegisterDevice" xml:space="preserve">
     <value>Dispositivo de registro</value>
   </data>
+  <data name="HtmlUIMPauseForToday" xml:space="preserve">
+    <value>Não mostre esta mensagem novamente</value>
+  </data>
+  <data name="HtmlUIMYes" xml:space="preserve">
+    <value>Sim</value>
+  </data>
+  <data name="HtmlUIMNo" xml:space="preserve">
+    <value>Não</value>
+  </data>
+  <data name="HtmlUIMPauseLabel" xml:space="preserve">
+    <value>Ficar conectado ?</value>
+  </data>
+  <data name="HtmlUIMPauseDescriptionToday" xml:space="preserve">
+    <value>Isso permite que você pare de se candidatar ao MFA hoje.</value>
+  </data>
+  <data name="HtmlUIMPauseDescription" xml:space="preserve">
+    <value>Isso permite que você pare de pedir o MFA por {0} dias.</value>
+  </data>
 </root>

@@ -3908,8 +3908,15 @@ namespace Neos.IdentityServer.MultiFactor
             {
                 case WizardContextMode.Invitation:
                 case WizardContextMode.Registration:
-                    return false;
+                    if (prov == null)
+                        return false;
+                    if (prov.IsRequired)
+                        return false;
+                    else
+                        return true;
                 case WizardContextMode.ForceWizard:
+                    if (prov == null)
+                        return false;
                     if ((usercontext.UIMode == mode) && (prov.ForceEnrollment == ForceWizardMode.Strict))
                         return false;
                     else

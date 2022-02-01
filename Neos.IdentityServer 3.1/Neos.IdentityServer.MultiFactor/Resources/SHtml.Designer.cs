@@ -514,6 +514,15 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à No.
+        /// </summary>
+        public static string HtmlUIMNo {
+            get {
+                return ResourceManager.GetString("HtmlUIMNo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Sign in another way.
         /// </summary>
         public static string HtmlUIMNoCode {
@@ -528,6 +537,42 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         public static string HtmlUIMOk {
             get {
                 return ResourceManager.GetString("HtmlUIMOk", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à This allows you to stop asking for the MFA for {0} days..
+        /// </summary>
+        public static string HtmlUIMPauseDescription {
+            get {
+                return ResourceManager.GetString("HtmlUIMPauseDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à This allows you to stop asking for the MFA today..
+        /// </summary>
+        public static string HtmlUIMPauseDescriptionToday {
+            get {
+                return ResourceManager.GetString("HtmlUIMPauseDescriptionToday", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Do not show this message again.
+        /// </summary>
+        public static string HtmlUIMPauseForToday {
+            get {
+                return ResourceManager.GetString("HtmlUIMPauseForToday", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Stay connected ?.
+        /// </summary>
+        public static string HtmlUIMPauseLabel {
+            get {
+                return ResourceManager.GetString("HtmlUIMPauseLabel", resourceCulture);
             }
         }
         
@@ -564,6 +609,15 @@ namespace Neos.IdentityServer.MultiFactor.Resources {
         public static string HtmlUIMustPrepareLabel {
             get {
                 return ResourceManager.GetString("HtmlUIMustPrepareLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Yes.
+        /// </summary>
+        public static string HtmlUIMYes {
+            get {
+                return ResourceManager.GetString("HtmlUIMYes", resourceCulture);
             }
         }
         

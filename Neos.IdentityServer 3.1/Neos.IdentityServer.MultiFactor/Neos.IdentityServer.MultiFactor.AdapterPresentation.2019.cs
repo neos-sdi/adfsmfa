@@ -844,14 +844,6 @@ namespace Neos.IdentityServer.MultiFactor
                 }               
             }
 
-            result += "<script>";
-#if samesite
-            result += "   document.cookie = 'showoptions=;expires=Thu, 01 Jan 1970 00:00:01 GMT;path=/adfs/;SameSite=Strict;';";
-#else
-            result += "   document.cookie = 'showoptions=;expires=Thu, 01 Jan 1970 00:00:01 GMT;path=/adfs/;';";
-#endif
-            result += "</script>";
-
             result += "<br/>";
             result += "<input id=\"context\" type=\"hidden\" name=\"Context\" value=\"%Context%\"/>";
             result += "<input id=\"authMethod\" type=\"hidden\" name=\"AuthMethod\" value=\"%AuthMethod%\"/>";
@@ -1049,9 +1041,92 @@ namespace Neos.IdentityServer.MultiFactor
             }
             return result;
         }
-#endregion
+        #endregion
 
-#region Bypass
+        #region Pause For Days
+        /// <summary>
+        /// GetFormPreRenderHtmlPauseForDays implementation
+        /// </summary>
+        public override string GetFormPreRenderHtmlPauseForDays(AuthenticationContext usercontext)
+        {
+            string result = "<script type='text/javascript'>" + CR;
+            DateTime nw = DateTime.Now;
+            DateTime dt = new DateTime(1970, 01, 01);
+            if (Provider.Config.AllowPauseForDays > 0)
+                dt = nw.AddDays(Provider.Config.AllowPauseForDays).Subtract(new TimeSpan(nw.Hour, nw.Minute, nw.Second));
+
+            result += "function fnbtnclicked(id)" + CR;
+            result += "{" + CR;
+            result += "   var lnk = document.getElementById('##SELECTED##');" + CR;
+            result += "   var opt = document.getElementById('##PAUSEDELAY##');" + CR;
+            result += "   lnk.value = id;" + CR;
+            result += "   if (lnk.value == 1)" + CR;
+            result += "   {" + CR;
+            result += "      if (opt.checked)" + CR;
+            result += "      {" + CR;
+            result += "         document.cookie = 'MFAPersistent=" + Provider.MakeCookieDelay(usercontext, true, true) + ";expires=" + dt.ToString("r") + ";path=/adfs;SameSite=Strict;';";
+            result += "      }" + CR;
+            result += "      else" + CR;
+            result += "      {" + CR;
+            result += "         document.cookie = 'MFAPersistent=" + Provider.MakeCookieDelay(usercontext, true, false) + ";expires=" + dt.ToString("r") + ";path=/adfs;SameSite=Strict;';";
+            result += "      }" + CR;
+            result += "   }" + CR;
+            result += "   else" + CR;
+            result += "   {" + CR;
+            result += "      if (opt.checked)" + CR;
+            result += "      {" + CR;
+            result += "         document.cookie = 'MFAPersistent=" + Provider.MakeCookieDelay(usercontext, false, true) + ";expires=" + dt.ToString("r") + ";path=/adfs;SameSite=Strict;';";
+            result += "      }" + CR;
+            result += "      else" + CR;
+            result += "      {" + CR;
+            result += "         document.cookie = 'MFAPersistent=" + Provider.MakeCookieDelay(usercontext, false, false) + ";expires=" + dt.ToString("r") + ";path=/adfs;SameSite=Strict;';";
+            result += "      }" + CR;
+            result += "   }" + CR;
+            result += "   return true;" + CR;
+            result += "}" + CR;
+            result += CR;
+
+            result += "</script>" + CR; 
+            return result;
+        }
+
+        /// <summary>
+        /// GetFormHtmlPauseForDays implementation
+        /// </summary>
+        public override string GetFormHtmlPauseForDays(AuthenticationContext usercontext)
+        {
+            string result = string.Empty;
+            result += "<form method=\"post\" id=\"pauseForm\" title=\"" + Resources.GetString(ResourcesLocaleKind.UITitles, "TitleRedirecting") + "\" >";
+            result += "<div id=\"wizardMessage\" class=\"groupMargin\">" + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlUIMPauseLabel") + "</div>";
+            result += "<br/>";
+            if (Provider.Config.AllowPauseForDays == 1)
+                result += "<div class=\"fieldMargin smallText\">" + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlUIMPauseDescriptionToday") + "</div><br/>";
+            else
+                result += "<div class=\"fieldMargin smallText\">" + string.Format(Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlUIMPauseDescription"), Provider.Config.AllowPauseForDays) + "</div><br/>";
+            result += "<input id=\"##PAUSEDELAY##\" type=\"checkbox\" name=\"##PAUSEDELAY##\" checked=\"on\" /> " + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlUIMPauseForToday");
+            result += "<br/><br/>";
+
+            result += "<table>";
+            result += "<tr>";
+            result += "<td>";
+            result += "<input id=\"YesButton\" type=\"submit\" class=\"submit\" name=\"YesButton\" value=\"" + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlUIMYes") + "\" onclick=\"fnbtnclicked(1)\"/>";
+            result += "</td>";
+            result += "<td style=\"width: 15px\" />";
+            result += "<td>";
+            result += "<input id=\"NoButton\" type=\"submit\" class=\"submit\" name=\"NoButton\" value=\"" + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlUIMNo") + "\" onclick=\"fnbtnclicked(2)\" />";
+            result += "</td>";
+            result += "</tr>";
+            result += "</table>";
+
+            result += "<input id=\"##SELECTED##\" type=\"hidden\" name=\"##SELECTED##\" value=\"1\"/>";
+            result += "<input id=\"context\" type=\"hidden\" name=\"Context\" value=\"%Context%\"/>";
+            result += "<input id=\"authMethod\" type=\"hidden\" name=\"AuthMethod\" value=\"%AuthMethod%\"/>";
+            result += "</form>";
+            return result;
+        }
+        #endregion
+
+        #region Bypass
         /// <summary>
         /// GetFormPreRenderHtmlBypass implementation
         /// </summary>
@@ -1111,7 +1186,7 @@ namespace Neos.IdentityServer.MultiFactor
                 result += "<div id=\"wizardMessage2\" class=\"groupMargin\">" + BaseExternalProvider.GetPINLabel(usercontext) + " : </div>";
                 result += "<input id=\"##PINCODE##\" name=\"##PINCODE##\" type=\"password\" placeholder=\"PIN\" autocomplete=\"one-time-code\" class=\"" + (UseUIPaginated ? "text textPaginated fullWidth" : "text fullWidth") + "\" /><br/>";
                 result += "<div class=\"fieldMargin smallText\">" + BaseExternalProvider.GetPINMessage(usercontext) + "</div><br/>";
-                result += "<input id=\"continueButton\" type=\"submit\" class=\"submit\" name=\"continueButton\" value=\"" + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlUIMConnexion") + "\" /><br/><br/>";
+                result += "<input id=\"continueButton\" type=\"submit\" class=\"submit\" name=\"continueButton\" value=\"" + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlUIMConnexion") + "\" /><br/>";
 
                 result += "<input id=\"context\" type=\"hidden\" name=\"Context\" value=\"%Context%\"/>";
                 result += "<input id=\"authMethod\" type=\"hidden\" name=\"AuthMethod\" value=\"%AuthMethod%\"/>";
@@ -1245,32 +1320,6 @@ namespace Neos.IdentityServer.MultiFactor
             result += "}" + CR;
             result += CR;
 
-            result += "function SetOptions(frm)" + CR;
-            result += "{" + CR;
-            result += "   var opt = document.getElementById('##OPTIONS##');" + CR;
-            result += "   if (opt)" + CR;
-            result += "   {" + CR;
-            result += "      if (opt.checked)" + CR;
-            result += "      {" + CR;
-#if samesite
-            result += "         document.cookie = 'showoptions=1;expires=" + dt + ";path=/adfs/;SameSite=Strict;';";
-#else
-            result += "         document.cookie = 'showoptions=1;expires=" + dt + ";path=/adfs/;';";
-#endif
-            result += "      }" + CR;
-            result += "      else" + CR;
-            result += "      {" + CR;
-#if samesite
-            result += "         document.cookie = 'showoptions=;expires=Thu, 01 Jan 1970 00:00:01 GMT;SameSite=Strict;';";
-#else
-            result += "         document.cookie = 'showoptions=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';";
-#endif
-            result += "      }" + CR;
-            result += "   }" + CR;
-            result += "   return true;" + CR;
-            result += "}" + CR;
-            result += CR;
-
             result += "</script>" + CR;
             return result;
         }
@@ -1315,13 +1364,6 @@ namespace Neos.IdentityServer.MultiFactor
                         result += "<input id=\"##OPTIONS##\" type=\"checkbox\" name=\"##OPTIONS##\" checked=\"true\" /> " + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlUIMAccessOptions");
                     else
                         result += "<input id=\"##OPTIONS##\" type=\"checkbox\" name=\"##OPTIONS##\" /> " + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlUIMAccessOptions");
-                    result += "<script>";
-#if samesite
-                    result += "   document.cookie = 'showoptions=;expires=Thu, 01 Jan 1970 00:00:01 GMT;path=/adfs/;SameSite=Strict;';";
-#else
-                    result += "   document.cookie = 'showoptions=;expires=Thu, 01 Jan 1970 00:00:01 GMT;path=/adfs/;';";
-#endif
-                    result += "</script>";
                     result += "<br/><br/>";
                 }
 
@@ -1457,14 +1499,6 @@ namespace Neos.IdentityServer.MultiFactor
                         result += "<input id=\"##OPTIONS##\" type=\"checkbox\" name=\"##OPTIONS##\" checked=\"true\" /> " + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlUIMAccessOptions");
                     else
                         result += "<input id=\"##OPTIONS##\" type=\"checkbox\" name=\"##OPTIONS##\" /> " + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlUIMAccessOptions");
-                    result += "<br/><br/>";
-                    result += "<script>";
-#if samesite
-                    result += "   document.cookie = 'showoptions=;expires=Thu, 01 Jan 1970 00:00:01 GMT;path=/adfs/;SameSite=Strict;';";
-#else
-                    result += "   document.cookie = 'showoptions=;expires=Thu, 01 Jan 1970 00:00:01 GMT;path=/adfs/;';";
-#endif
-                    result += "</script>";
                     result += "<br/><br/>";
                 }
                 result += "<input id=\"signin\" type=\"submit\" class=\"submit\" name=\"signin\" value=\"" + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlUIMConnexion") + "\" /><br/><br/>";
@@ -2344,6 +2378,17 @@ namespace Neos.IdentityServer.MultiFactor
             result += "   }" + CR;
             result += "   return true;" + CR;
             result += "}" + CR;
+            result += CR;
+
+            result += "function SetWebAuthNDetectionError(message)" + CR;
+            result += "{" + CR;
+            result += "   var lnk = document.getElementById('##SELECTED##');" + CR;
+            result += "   lnk.value = 5;" + CR;
+            result += "   var err = document.getElementById('jserror');" + CR;
+            result += "   err.value = message;" + CR;
+            result += "   document.getElementById('enrollbiometricsForm').submit();" + CR;
+            result += "   return true;" + CR;
+            result += "}";
             result += CR;
 
             result += "function SetJsError(message)" + CR;

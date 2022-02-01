@@ -296,4 +296,22 @@ In futuro sarà possibile utilizzare la convalida MFA.</value>
   <data name="HtmlUIMRegisterDevice" xml:space="preserve">
     <value>Registra dispositivo</value>
   </data>
+  <data name="HtmlUIMPauseForToday" xml:space="preserve">
+    <value>Non mostrare più questo messaggio</value>
+  </data>
+  <data name="HtmlUIMYes" xml:space="preserve">
+    <value>Sì</value>
+  </data>
+  <data name="HtmlUIMNo" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="HtmlUIMPauseLabel" xml:space="preserve">
+    <value>Resta connesso</value>
+  </data>
+  <data name="HtmlUIMPauseDescriptionToday" xml:space="preserve">
+    <value>Ciò ti consente di smettere di richiedere l'AMF oggi.</value>
+  </data>
+  <data name="HtmlUIMPauseDescription" xml:space="preserve">
+    <value>Ciò consente di smettere di chiedere l'AMF per {0} giorni.</value>
+  </data>
 </root>

@@ -237,6 +237,11 @@ namespace MFA
         public bool UseOfUserLanguages { get; set; }
 
         /// <summary>
+        /// <para type="description">Allows or not to suspend MFA for the same User on the same Machine for the same STS for the Day (0 = Disabled).</para>
+        /// </summary>
+        public int AllowPauseForDays { get; set; }
+
+        /// <summary>
         /// <para type="description">Policy attributes for warnings to users.</para>
         /// </summary>
         public PSAdvertisingDays AdvertisingDays { get; set; }
@@ -265,7 +270,7 @@ namespace MFA
         /// <para type="description">Force adfsmfa to no Use localization but a specified language.</para>
         /// </summary>
         public string ForcedLanguage { get; set; }
-
+       
         /// <summary>
         /// implicit conversion to PSConfig
         /// </summary>
@@ -284,6 +289,7 @@ namespace MFA
                     KeepMySelectedOptionOn = config.KeepMySelectedOptionOn,
                     ChangeNotificationsOn = config.ChangeNotificationsOn,
                     UseOfUserLanguages = config.UseOfUserLanguages,
+                    AllowPauseForDays = config.AllowPauseForDays,
                     DefaultProviderMethod = (PSPreferredMethod)config.DefaultProviderMethod,
                     UserFeatures = (PSUserFeaturesOptions)config.UserFeatures,
                     AdvertisingDays = (PSAdvertisingDays)config.AdvertisingDays,
@@ -316,6 +322,7 @@ namespace MFA
                     KeepMySelectedOptionOn = psconfig.KeepMySelectedOptionOn,
                     ChangeNotificationsOn = psconfig.ChangeNotificationsOn,
                     UseOfUserLanguages = psconfig.UseOfUserLanguages,
+                    AllowPauseForDays = psconfig.AllowPauseForDays,
                     DefaultProviderMethod = (PreferredMethod)psconfig.DefaultProviderMethod,
                     UserFeatures = (UserFeaturesOptions)psconfig.UserFeatures,
                     AdvertisingDays = (FlatAdvertising)psconfig.AdvertisingDays,

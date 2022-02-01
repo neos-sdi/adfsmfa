@@ -64,6 +64,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         public bool KeepMySelectedOptionOn { get; set; }
         public bool ChangeNotificationsOn { get; set; }
         public bool UseOfUserLanguages { get; set; }
+        public int AllowPauseForDays { get; set; }
         public FlatAdvertising AdvertisingDays { get; set; }
         public ADFSUserInterfaceKind UiKind { get; set; }
         public bool UseUIPaginated { get; set; }
@@ -88,7 +89,8 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             CustomUpdatePassword = cfg.CustomUpdatePassword;
             KeepMySelectedOptionOn = cfg.KeepMySelectedOptionOn;
             ChangeNotificationsOn = cfg.ChangeNotificationsOn;
-            UseOfUserLanguages = cfg.UseOfUserLanguages;           
+            UseOfUserLanguages = cfg.UseOfUserLanguages;
+            AllowPauseForDays = cfg.AllowPauseForDays;
             AdvertisingDays = (FlatAdvertising)cfg.AdvertisingDays;
             UseUIPaginated = cfg.UseUIPaginated;
             UiKind = cfg.UiKind;
@@ -114,6 +116,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             cfg.KeepMySelectedOptionOn = KeepMySelectedOptionOn;
             cfg.ChangeNotificationsOn = ChangeNotificationsOn;
             cfg.UseOfUserLanguages = UseOfUserLanguages;
+            cfg.AllowPauseForDays = AllowPauseForDays;
             cfg.AdvertisingDays = (ConfigAdvertising)AdvertisingDays;
             cfg.UseUIPaginated = UseUIPaginated;
             cfg.UiKind = cfg.UiKind;

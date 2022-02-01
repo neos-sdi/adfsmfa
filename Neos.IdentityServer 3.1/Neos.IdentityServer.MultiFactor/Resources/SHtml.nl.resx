@@ -296,4 +296,22 @@ U in de toekomst MFA-validatie gebruiken.</value>
   <data name="HtmlUIMRegisterDevice" xml:space="preserve">
     <value>Apparaat registreren</value>
   </data>
+  <data name="HtmlUIMPauseForToday" xml:space="preserve">
+    <value>Dit bericht niet opnieuw weergeven</value>
+  </data>
+  <data name="HtmlUIMYes" xml:space="preserve">
+    <value>Ja</value>
+  </data>
+  <data name="HtmlUIMNo" xml:space="preserve">
+    <value>Nee</value>
+  </data>
+  <data name="HtmlUIMPauseLabel" xml:space="preserve">
+    <value>Verbonden blijven ?</value>
+  </data>
+  <data name="HtmlUIMPauseDescriptionToday" xml:space="preserve">
+    <value>Hierdoor kunt u vandaag stoppen met het aanvragen van de MFA.</value>
+  </data>
+  <data name="HtmlUIMPauseDescription" xml:space="preserve">
+    <value>Hierdoor kunt u {0} dagen stoppen met het vragen om de MFA.</value>
+  </data>
 </root>

@@ -62,7 +62,7 @@ namespace Neos.IdentityServer.MultiFactor
         /// BeginAuthentication method implmentation
 		/// </summary>
         public IAdapterPresentation BeginAuthentication(Claim identityClaim, HttpListenerRequest request, IAuthenticationContext context)
-        {
+        {      
             DateTime st = DateTime.Now;
             AuthenticationContext usercontext = new AuthenticationContext(context)
             {
@@ -74,6 +74,17 @@ namespace Neos.IdentityServer.MultiFactor
             ClientSIDsProxy.Initialize(Config);
 
             IAdapterPresentation result = null;
+            if (this.Config.AllowPauseForDays > 0)
+            {
+                GetCookieDelay(usercontext, request, out bool setcookie, out bool forget);
+                usercontext.DelayForget = forget;
+                if (setcookie)
+                {
+                    usercontext.UIMode = ProviderPageMode.Bypass;
+                    result = new AdapterPresentation(this, context);
+                    return result;
+                }
+            }
             try
             {
                 WebThemeManagerClient.Initialize(Config, usercontext, request.Url);
@@ -92,10 +103,6 @@ namespace Neos.IdentityServer.MultiFactor
                 switch (usercontext.UIMode)
                 {
                     case ProviderPageMode.PreSet:
-                        //  usercontext.UIMode = GetAuthenticationContextRequest(usercontext);
-                       // ProviderPageMode ppvm = GetAuthenticationContextRequest(usercontext);
-                       // usercontext.UIMode = ppvm;
-                       // GetAuthenticationData(usercontext);
                         usercontext.UIMode = ProviderPageMode.PreSet;
                         result = new AdapterPresentation(this, context);
                         break;
@@ -418,6 +425,9 @@ namespace Neos.IdentityServer.MultiFactor
                     case ProviderPageMode.ChangePassword:
                         result = TryChangePassword(usercontext, context, proofData, request, out claims);
                         break;
+                    case ProviderPageMode.PauseDelay:
+                        result = TryPause(usercontext, context, proofData, request, out claims);
+                        break;
                     case ProviderPageMode.Bypass:
                         result = TryBypass(usercontext, context, proofData, request, out claims);
                         break;
@@ -484,6 +494,8 @@ namespace Neos.IdentityServer.MultiFactor
 
             string useragent = proofData.Properties["useragent"]?.ToString();
             Utilities.CheckForUserAgent(Config, usercontext, Utilities.BrowserDetection(useragent));
+
+            // ICI : VALIDER CHECK BIOMETRIQUE
 
             usercontext.UIMode = GetAuthenticationContextRequest(usercontext);
             GetAuthenticationData(usercontext);
@@ -1369,12 +1381,93 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// TryBypass method implementation
         /// </summary>
+        private IAdapterPresentation TryPause(AuthenticationContext usercontext, IAuthenticationContext context, IProofData proofData, HttpListenerRequest request, out Claim[] claims)
+        {
+            ResourcesLocale Resources = new ResourcesLocale(usercontext.Lcid);
+            try
+            {
+                claims = new Claim[] { GetAuthMethodClaim(usercontext.SelectedMethod) };
+                proofData.Properties.TryGetValue("selected", out object btn);
+                proofData.Properties.TryGetValue("pausefordays", out object chk);
+            }
+            catch (Exception ex)
+            {
+                throw new ExternalAuthenticationException(usercontext.UPN + " : " + ex.Message, context);
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// MakeCookieDelay method.
+        /// </summary>
+        public string MakeCookieDelay(AuthenticationContext usercontext, bool setcookie, bool forget)
+        {
+            string result = string.Empty;
+            string value = usercontext.UPN;
+            if (setcookie)
+                value += ";Delay=1";
+            else
+                value += ";Delay=0";
+            if (forget)
+                value += ";Remember=1";
+            else
+                value += ";Remember=0";
+
+            using (var encryptor = new AESSystemEncryption())
+            {
+                result = encryptor.Encrypt(value);
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// GetCookieDelay method.
+        /// </summary>
+        public string GetCookieDelay(AuthenticationContext usercontext, HttpListenerRequest request, out bool setcookie, out bool forget)
+        {
+            string result = string.Empty;
+            string cookievalue = string.Empty;
+            foreach (Cookie ck in request.Cookies)
+            {
+                if (ck.Name.ToLower().Equals("mfapersistent"))
+                {
+                    cookievalue = ck.Value;
+                    break;
+                }
+            }
+            if (!string.IsNullOrEmpty(cookievalue))
+            {
+                using (var encryptor = new AESSystemEncryption())
+                {
+                    result = encryptor.Decrypt(cookievalue);
+                }
+                string[] spl = result.Split(';');
+                if (spl[0].ToLower().Equals(usercontext.UPN.ToLower()))
+                {
+                    setcookie = spl[1].Equals("Delay=1");
+                    forget = spl[2].Equals("Remember=1");
+                }
+                else
+                {
+                    setcookie = false;
+                    forget = false;
+                }
+            }
+            else
+            {
+                setcookie = false;
+                forget = false;
+            }
+            return result;
+        }
+        /// <summary>
+        /// TryBypass method implementation
+        /// </summary>
         private IAdapterPresentation TryBypass(AuthenticationContext usercontext, IAuthenticationContext context, IProofData proofData, HttpListenerRequest request, out Claim[] claims)
         {
-#region TryBypass
+            #region TryBypass
             ResourcesLocale Resources = new ResourcesLocale(usercontext.Lcid);
             claims = new Claim[] { GetAuthMethodClaim(usercontext.SelectedMethod) };
-            CheckOptionsCookie(usercontext, request);
             try
             {
                 bool pincode = proofData.Properties.TryGetValue("pincode", out object pin);
@@ -1428,13 +1521,19 @@ namespace Neos.IdentityServer.MultiFactor
                         }
                     }
                 }
+                else if ((this.Config.AllowPauseForDays > 0) && (!usercontext.DelayForget))
+                {
+                    usercontext.ShowOptions = false;
+                    usercontext.UIMode = ProviderPageMode.PauseDelay;
+                    return new AdapterPresentation(this, context);
+                }
             }
             catch (Exception ex)
             {
                 throw new ExternalAuthenticationException(usercontext.UPN + " : " + ex.Message, context);
             }
             return null;
-#endregion
+            #endregion
         }
 
         /// <summary>
@@ -3397,25 +3496,6 @@ namespace Neos.IdentityServer.MultiFactor
         {
             Uri uri = new Uri(request.Url.AbsoluteUri);
             return uri.AbsoluteUri.Contains("mfaopts");
-        }
-
-        /// <summary>
-        /// CheckOptionsCookie method implmentation
-        /// </summary>
-        private void CheckOptionsCookie(AuthenticationContext usercontext, HttpListenerRequest request)
-        {
-            if (usercontext.ShowOptions)
-                return;
-            var cook = request.Cookies["showoptions"];
-            if (cook != null)
-            {
-                if (cook.Value == "1")
-                    usercontext.ShowOptions = true;
-                else
-                    usercontext.ShowOptions = false;
-            }
-            else
-                usercontext.ShowOptions = false;
         }
 
         /// <summary>

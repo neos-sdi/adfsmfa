@@ -294,4 +294,22 @@
   <data name="HtmlUIMRegisterDevice" xml:space="preserve">
     <value>デバイスの登録</value>
   </data>
+  <data name="HtmlUIMPauseForToday" xml:space="preserve">
+    <value>このメッセージを再度表示しない</value>
+  </data>
+  <data name="HtmlUIMYes" xml:space="preserve">
+    <value>はい</value>
+  </data>
+  <data name="HtmlUIMNo" xml:space="preserve">
+    <value>いいえ</value>
+  </data>
+  <data name="HtmlUIMPauseLabel" xml:space="preserve">
+    <value>接続を維持しますか ?</value>
+  </data>
+  <data name="HtmlUIMPauseDescriptionToday" xml:space="preserve">
+    <value>これにより、MFA の申請を本日停止できます。</value>
+  </data>
+  <data name="HtmlUIMPauseDescription" xml:space="preserve">
+    <value>これにより、{0}日間 MFA の要求を停止できます。</value>
+  </data>
 </root>

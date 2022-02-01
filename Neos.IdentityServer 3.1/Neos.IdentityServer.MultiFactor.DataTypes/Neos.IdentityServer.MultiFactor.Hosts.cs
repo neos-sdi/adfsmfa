@@ -482,6 +482,7 @@ namespace Neos.IdentityServer.MultiFactor
         private int _maxretries = 3;
         private string _issuer;
         private int _pinlength = 4;
+        private int _allowpause = 0;
 
         /// <summary>
         /// Constructor
@@ -749,6 +750,24 @@ namespace Neos.IdentityServer.MultiFactor
                 if (value <= 0)
                     throw new ArgumentOutOfRangeException();
                 _maxretries = value;
+            }
+        }
+
+        [XmlAttribute("AllowPauseForDays")]
+        public int AllowPauseForDays
+        {
+            get
+            {
+                return _allowpause;
+            }
+            set
+            {
+                if (value < 0)
+                    _allowpause = 0;
+                else if (value > 90)
+                    _allowpause = 90;
+                else
+                    _allowpause = value;
             }
         }
 

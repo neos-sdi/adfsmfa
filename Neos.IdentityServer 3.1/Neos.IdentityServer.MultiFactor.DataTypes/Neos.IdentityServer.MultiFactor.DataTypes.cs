@@ -1163,6 +1163,28 @@ namespace Neos.IdentityServer.MultiFactor
                     _context.Data.Add("_authctxbrowser", value);
             }
         }
+
+        /// <summary>
+        /// DelayForget
+        /// </summary>
+        [DataMember(Name = "DelayForget")]
+        public bool DelayForget
+        {
+            get
+            {
+                if (_context.Data.ContainsKey("_authctxdelayforget") && _context.Data["_authctxdelayforget"] != null)
+                    return (bool)_context.Data["_authctxdelayforget"];
+                else
+                    return false;
+            }
+            set
+            {
+                if (_context.Data.ContainsKey("_authctxdelayforget"))
+                    _context.Data["_authctxdelayforget"] = value;
+                else
+                    _context.Data.Add("_authctxdelayforget", value);
+            }
+        }
     }
     #endregion
 
@@ -1913,6 +1935,8 @@ namespace Neos.IdentityServer.MultiFactor
         EnrollPhone = 17,
         [EnumMember]
         EnrollPin = 18,
+        [EnumMember]
+        PauseDelay = 19,
         [EnumMember]
         ManageOptions = 63,
         [EnumMember]

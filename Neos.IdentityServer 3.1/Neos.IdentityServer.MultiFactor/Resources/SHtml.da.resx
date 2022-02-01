@@ -294,4 +294,22 @@
   <data name="HtmlUIMRegisterDevice" xml:space="preserve">
     <value>Registrer enhed</value>
   </data>
+  <data name="HtmlUIMPauseForToday" xml:space="preserve">
+    <value>Vis ikke denne meddelelse igen</value>
+  </data>
+  <data name="HtmlUIMYes" xml:space="preserve">
+    <value>Ja</value>
+  </data>
+  <data name="HtmlUIMNo" xml:space="preserve">
+    <value>Nej</value>
+  </data>
+  <data name="HtmlUIMPauseDescriptionToday" xml:space="preserve">
+    <value>Dette giver dig mulighed for ikke længere at anmode om MFA i dag.</value>
+  </data>
+  <data name="HtmlUIMPauseDescription" xml:space="preserve">
+    <value>Dette giver dig mulighed for ikke længere at anmode om MFA i {0} dage.</value>
+  </data>
+  <data name="HtmlUIMPauseLabel" xml:space="preserve">
+    <value>Holde forbindelsen ?</value>
+  </data>
 </root>

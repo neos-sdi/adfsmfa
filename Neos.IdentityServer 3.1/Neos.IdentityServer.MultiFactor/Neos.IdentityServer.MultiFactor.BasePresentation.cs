@@ -459,6 +459,27 @@ namespace Neos.IdentityServer.MultiFactor
         }
 
         /// <summary>
+        /// GetFormPreRenderHtmlPauseForDays implementation
+        /// </summary>
+        public string GetFormPreRenderHtmlPauseForDays(AuthenticationContext usercontext)
+        {
+            if (Provider.Config.AllowPauseForDays == 0)
+                return ReplacePlaceHolders(_adapter.GetFormPreRenderHtmlPauseForDays(usercontext));
+            else
+                return string.Empty;
+        }
+
+        /// <summary>
+        /// GetFormHtmlPauseForDays implementation
+        /// </summary>
+        public string GetFormHtmlPauseForDays(AuthenticationContext usercontext)
+        {
+            if (Provider.Config.AllowPauseForDays == 0)
+                return ReplacePlaceHolders(_adapter.GetFormHtmlPauseForDays(usercontext));
+            else
+                return string.Empty;
+        }
+        /// <summary>
         /// GetFormPreRenderHtmlLocking implementation
         /// </summary>
         public string GetFormPreRenderHtmlLocking(AuthenticationContext usercontext)
@@ -672,6 +693,7 @@ namespace Neos.IdentityServer.MultiFactor
                 _holders.Add(new PlaceHolders() { TagName = "##PLATFORM##", FiledName = "userplatform" });
                 _holders.Add(new PlaceHolders() { TagName = "##AGENT##", FiledName = "useragent" });
                 _holders.Add(new PlaceHolders() { TagName = "##LANGUAGE##", FiledName = "userlanguage" });
+                _holders.Add(new PlaceHolders() { TagName = "##PAUSEDELAY##", FiledName = "pausefordays" });
             }
         }
         #endregion
@@ -861,6 +883,10 @@ namespace Neos.IdentityServer.MultiFactor
                     result += GetFormRenderHtmlHeader(Context);
                     result += GetFormHtmlBypass(Context);
                     break;
+                case ProviderPageMode.PauseDelay:
+                    result += GetFormRenderHtmlHeader(Context);
+                    result += GetFormHtmlPauseForDays(Context);
+                    break;
                 case ProviderPageMode.Locking:
                     result += GetFormRenderHtmlHeader(Context);
                     result += GetFormHtmlLocking(Context);
@@ -956,6 +982,10 @@ namespace Neos.IdentityServer.MultiFactor
                     result += GetFormPreRenderHtmlHeader(Context);
                     result += GetFormPreRenderHtmlBypass(Context);
                     break;
+                case ProviderPageMode.PauseDelay:
+                    result += GetFormPreRenderHtmlHeader(Context);
+                    result += GetFormPreRenderHtmlPauseForDays(Context);
+                    break;
                 case ProviderPageMode.Locking:
                     result += GetFormPreRenderHtmlHeader(Context);
                     result += GetFormPreRenderHtmlLocking(Context);
@@ -1025,6 +1055,8 @@ namespace Neos.IdentityServer.MultiFactor
         public abstract string GetFormHtmlChangePassword(AuthenticationContext usercontext);
         public abstract string GetFormPreRenderHtmlBypass(AuthenticationContext usercontext);
         public abstract string GetFormHtmlBypass(AuthenticationContext usercontext);
+        public abstract string GetFormPreRenderHtmlPauseForDays(AuthenticationContext usercontext);
+        public abstract string GetFormHtmlPauseForDays(AuthenticationContext usercontext);
         public abstract string GetFormPreRenderHtmlLocking(AuthenticationContext usercontext);
         public abstract string GetFormHtmlLocking(AuthenticationContext usercontext);
         public abstract string GetFormPreRenderHtmlSendCodeRequest(AuthenticationContext usercontext);
@@ -1302,6 +1334,7 @@ namespace Neos.IdentityServer.MultiFactor
             result += "   {" + CR;
             result += "         xlanguage.value = null;" + CR;
             result += "   }" + CR;
+            // ICI : DETECTION BIOMETRIQUE : Browser, Présence Device etc..
             result += "   document.getElementById('presetForm').submit();" + CR;
             result += "   return true;" + CR;
             result += "}" + CR;
@@ -1548,22 +1581,10 @@ namespace Neos.IdentityServer.MultiFactor
             result += "{" + CR;
             result += "      try" + CR;
             result += "      {" + CR;
-            result += "         if (window.PublicKeyCredential === undefined || typeof window.PublicKeyCredential !== \"function\")" + CR;
+            result += "         if (window.PublicKeyCredential === undefined)" + CR;
             result += "         {" + CR;
-            result += "             SetWebAuthNDetectionError(\"Biometric authentication not supported\");" + CR;
+            result += "             SetWebAuthNDetectionError(\"Biometric device NOT available or NOT CONFIGURED in your operating system. Please close this browser, configure the device first and try again or use another method !\");" + CR;
             result += "             return false;" + CR;
-            result += "         }" + CR;
-            result += "         else" + CR;
-            result += "         {" + CR;
-            result += "             if (window.PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable())" + CR;
-            result += "             {" + CR;
-            result += "                 return true;" + CR;
-            result += "             }" + CR;
-            result += "             else" + CR;
-            result += "             {" + CR;
-            result += "                 SetWebAuthNDetectionError(\"Biometric authentication not supported\");" + CR;
-            result += "                 return false;" + CR;
-            result += "             }" + CR;
             result += "         }" + CR;
             result += "      }" + CR;
             result += "      catch (e)" + CR;
@@ -1571,6 +1592,7 @@ namespace Neos.IdentityServer.MultiFactor
             result += "         SetJsError(e.message);" + CR;
             result += "         return false;" + CR;
             result += "      }" + CR;
+            result += "      return true;" + CR;
             result += "}" + CR;
             return result;
         }
@@ -1654,7 +1676,7 @@ namespace Neos.IdentityServer.MultiFactor
             result += "   if (frm !== null)" + CR;
             result += "      frm.preventDefault();" + CR;
 #endif
-            result += "   if (detectWebAuthNSupport() === true)" + CR;
+            result += "   if (detectWebAuthNSupport() == true)" + CR;
             result += "   {" + CR;
             result += "      let makeCredentialOptions;" + CR;
             result += "      try" + CR;
@@ -1692,7 +1714,7 @@ namespace Neos.IdentityServer.MultiFactor
             result += "   }" + CR;
             result += "   else" + CR;
             result += "   {" + CR;
-            result += "      SetWebAuthNDetectionError(\"Biometric authentication not supported\");" + CR;
+            result += "      SetWebAuthNDetectionError(\"Biometric authentication not supported\");" + CR;           
             result += "      return false;" + CR;
             result += "   }" + CR;
             result += "}" + CR;
@@ -1735,7 +1757,7 @@ namespace Neos.IdentityServer.MultiFactor
             result += "   if (frm !== null)" + CR;
             result += "      frm.preventDefault();" + CR;
 #endif
-            result += "   if (detectWebAuthNSupport() === true)" + CR;
+            result += "   if (detectWebAuthNSupport() == true)" + CR;
             result += "   {" + CR;
             result += "      let makeAssertionOptions;" + CR;
             result += "      try" + CR;

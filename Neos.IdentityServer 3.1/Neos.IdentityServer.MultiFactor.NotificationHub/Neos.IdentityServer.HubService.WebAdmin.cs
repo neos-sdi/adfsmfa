@@ -1047,7 +1047,7 @@ namespace Neos.IdentityServer.MultiFactor
                 throw e;
             }
             return thumbprint;
-        }
+        }    
 
         /// <summary>
         /// PushCertificate method implmentation
