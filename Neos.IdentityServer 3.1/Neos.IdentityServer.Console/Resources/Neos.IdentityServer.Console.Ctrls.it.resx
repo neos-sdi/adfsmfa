@@ -732,4 +732,7 @@
   <data name="CTRLWEBAUTHNCONTRAINEDMETADATA" xml:space="preserve">
     <value>Utilizzare il servizio metadati vincolati (per la farm ADFS che non dispone di accesso a Internet)</value>
   </data>
+  <data name="CTRLGLSHOWCUSTOM" xml:space="preserve">
+    <value>Mostra autenticatore personalizzato</value>
+  </data>
 </root>

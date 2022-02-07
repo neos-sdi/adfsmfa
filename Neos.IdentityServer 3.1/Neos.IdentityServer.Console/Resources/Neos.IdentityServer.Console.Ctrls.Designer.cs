@@ -844,6 +844,15 @@ namespace Neos.IdentityServer.Console.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Show Custom Authenticator.
+        /// </summary>
+        internal static string CTRLGLSHOWCUSTOM {
+            get {
+                return ResourceManager.GetString("CTRLGLSHOWCUSTOM", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Show Google Authenticator.
         /// </summary>
         internal static string CTRLGLSHOWGOOGLE {

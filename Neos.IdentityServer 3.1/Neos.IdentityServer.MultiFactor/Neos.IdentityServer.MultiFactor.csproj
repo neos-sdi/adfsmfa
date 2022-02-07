@@ -127,11 +127,13 @@
     <Content Include="ADDS\MFA.SCHEMA.LDF">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Installer\aegis.png" />
     <Content Include="Installer\Banner.bmp" />
     <Content Include="Installer\Dialog.bmp" />
     <Content Include="Resources\crouge.jpg" />
     <Content Include="Resources\cvert.jpg" />
     <None Include="Resources\google.png" />
+    <Content Include="Resources\p_aegis.png" />
     <Content Include="Resources\p_authy2.png" />
     <Content Include="Resources\p_googleauthenticator.png" />
     <Content Include="Resources\p_msAuthenticator.png" />

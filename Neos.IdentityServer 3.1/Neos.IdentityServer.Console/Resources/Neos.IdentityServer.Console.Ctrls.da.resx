@@ -732,4 +732,7 @@
   <data name="CTRLWEBAUTHNCONTRAINEDMETADATA" xml:space="preserve">
     <value>Brug begrænset metadatatjeneste (til ADFS-farm, der ikke har internetadgang)</value>
   </data>
+  <data name="CTRLGLSHOWCUSTOM" xml:space="preserve">
+    <value>Vis brugerdefineret godkender</value>
+  </data>
 </root>

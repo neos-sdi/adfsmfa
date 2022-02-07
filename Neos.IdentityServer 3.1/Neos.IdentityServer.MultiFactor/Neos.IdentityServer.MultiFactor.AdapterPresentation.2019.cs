@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2021 @redhook62 (adfsmfa@gmail.com)                                                                                                                                        //                        
+// Copyright (c) 2022 @redhook62 (adfsmfa@gmail.com)                                                                                                                                        //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -22,6 +22,7 @@ using Neos.IdentityServer.MultiFactor.Resources;
 using System;
 using System.Collections.Generic;
 using System.Drawing.Imaging;
+using System.IO;
 
 namespace Neos.IdentityServer.MultiFactor
 {
@@ -1672,7 +1673,7 @@ namespace Neos.IdentityServer.MultiFactor
                     result += "    <th width=\"34px\" />";
                     result += "    <th width=\"82px\" />";
                     result += "  </tr>";
-                    if (!Provider.Config.OTPProvider.WizardOptions.HasFlag(OTPWizardOptions.NoMicrosoftAuthenticator))
+                    if ((Provider.Config.OTPProvider.WizardOptions.HasFlag(OTPWizardOptions.MicrosoftAuthenticator)) || (Provider.Config.OTPProvider.WizardOptions == OTPWizardOptions.All))
                     {
                         pos++;
                         if (pos % 2==1)
@@ -1697,7 +1698,7 @@ namespace Neos.IdentityServer.MultiFactor
                         result += "      <tr>";
                         result += "        <td>&nbsp</td>";
                         result += "        <td>";
-                        result += "          <a href=\"https://itunes.apple.com/app/microsoft-authenticator/id983156458\" target=\"blank\">iTunes</a>";
+                        result += "          <a href=\"https://itunes.apple.com/app/microsoft-authenticator/id983156458\" target=\"blank\">Apple Store</a>";
                         result += "        </td>";
                         result += "      </tr>";
                         result += "    </table";
@@ -1705,7 +1706,7 @@ namespace Neos.IdentityServer.MultiFactor
                         if (pos % 2 == 0)
                             result += " </tr>";
                     }
-                    if (!Provider.Config.OTPProvider.WizardOptions.HasFlag(OTPWizardOptions.NoGoogleAuthenticator))
+                    if ((Provider.Config.OTPProvider.WizardOptions.HasFlag(OTPWizardOptions.GoogleAuthenticator))  || (Provider.Config.OTPProvider.WizardOptions == OTPWizardOptions.All))
                     {
                         pos++;
                         if (pos % 2 == 1)
@@ -1728,7 +1729,7 @@ namespace Neos.IdentityServer.MultiFactor
                         result += "      <tr>";
                         result += "        <td>&nbsp</td>";
                         result += "        <td>";
-                        result += "          <a href=\"https://itunes.apple.com/app/google-authenticator/id388497605\" target=\"blank\">iTunes</a>";
+                        result += "          <a href=\"https://itunes.apple.com/app/google-authenticator/id388497605\" target=\"blank\">Apple Store</a>";
                         result += "        </td>";
                         result += "      </tr>";
                         result += "    </table";
@@ -1736,7 +1737,7 @@ namespace Neos.IdentityServer.MultiFactor
                         if (pos % 2 == 0)
                             result += " </tr>";
                     }
-                    if (!Provider.Config.OTPProvider.WizardOptions.HasFlag(OTPWizardOptions.NoAuthyAuthenticator))
+                    if ((Provider.Config.OTPProvider.WizardOptions.HasFlag(OTPWizardOptions.AuthyAuthenticator))  || (Provider.Config.OTPProvider.WizardOptions == OTPWizardOptions.All))
                     {
                         pos++;
                         if (pos % 2 == 1)
@@ -1759,7 +1760,7 @@ namespace Neos.IdentityServer.MultiFactor
                         result += "      <tr>";
                         result += "        <td>&nbsp</td>";
                         result += "        <td>";
-                        result += "          <a href=\"https://itunes.apple.com/app/authy/id494168017\" target=\"blank\">iTunes</a>";
+                        result += "          <a href=\"https://itunes.apple.com/app/authy/id494168017\" target=\"blank\">Apple Store</a>";
                         result += "        </td>";
                         result += "      </tr>";
                         result += "    </table";
@@ -1767,7 +1768,63 @@ namespace Neos.IdentityServer.MultiFactor
                         if (pos % 2 == 0)
                             result += " </tr>";
                     }
-                    if (!Provider.Config.OTPProvider.WizardOptions.HasFlag(OTPWizardOptions.NoGooglSearch))
+                    if ((Provider.Config.OTPProvider.WizardOptions.HasFlag(OTPWizardOptions.CustomAuthenticator))  || (Provider.Config.OTPProvider.WizardOptions == OTPWizardOptions.All))
+                    {
+                        string logoname = Provider.Config.OTPProvider.CustomAuthenticatorLogo;
+                        if (!string.IsNullOrEmpty(logoname) && 
+                             (!string.IsNullOrEmpty(Provider.Config.OTPProvider.CustomAuthenticatorMSStoreLink) || 
+                              !string.IsNullOrEmpty(Provider.Config.OTPProvider.CustomAuthenticatorGooglePlayLink) || 
+                              !string.IsNullOrEmpty(Provider.Config.OTPProvider.CustomAuthenticatorAppStoreLink)
+                             )
+                           )
+                        {
+                            byte[] img = Provider.GetCustomAuthenticatorImage(logoname);
+                            if (img != null)
+                            {
+                                pos++;
+                                if (pos % 2 == 1)
+                                    result += " <tr>";
+                                result += "  <td>";
+                                result += "    <img id=\"at\" src=\"data:image/png;base64," + Convert.ToBase64String(img) + "\"/>";
+                                result += "  </td>";
+                                result += "  <td colspan=\"2\">";
+                                result += "    <table>";
+                                result += "      <tr>";
+                                result += "        <td>&nbsp</td>";
+                                result += "        <td> ";
+                                if (!string.IsNullOrEmpty(Provider.Config.OTPProvider.CustomAuthenticatorMSStoreLink))
+                                    result += "          <a href=\"" + Provider.Config.OTPProvider.CustomAuthenticatorMSStoreLink + "\" target=\"blank\">Microsoft Store</a>";
+                                else
+                                    result += "          &nbsp";
+                                result += "        </td>";
+                                result += "      </tr>";
+                                result += "      <tr>";
+                                result += "        <td>&nbsp</td>";
+                                result += "        <td>";
+                                if (!string.IsNullOrEmpty(Provider.Config.OTPProvider.CustomAuthenticatorGooglePlayLink))
+                                    result += "          <a href=\"" + Provider.Config.OTPProvider.CustomAuthenticatorGooglePlayLink + "\" target=\"blank\">Google Play</a>";
+                                else
+                                    result += "          &nbsp";
+                                result += "        </td>";
+                                result += "      </tr>";
+                                result += "      <tr>";
+                                result += "        <td>&nbsp</td>";
+                                result += "        <td>";
+                                if (!string.IsNullOrEmpty(Provider.Config.OTPProvider.CustomAuthenticatorAppStoreLink))
+                                    result += "          <a href=\"" + Provider.Config.OTPProvider.CustomAuthenticatorAppStoreLink + "\" target=\"blank\">Apple Store</a>";
+                                else
+                                    result += "          &nbsp";
+                                result += "        </td>";
+                                result += "      </tr>";
+                                result += "    </table";
+
+                                result += "  </td>";
+                                if (pos % 2 == 0)
+                                    result += " </tr>";
+                            }
+                        }
+                    }
+                    if ((Provider.Config.OTPProvider.WizardOptions.HasFlag(OTPWizardOptions.GoogleSearch))  || (Provider.Config.OTPProvider.WizardOptions == OTPWizardOptions.All))
                     {
                         pos++;
                         if (pos % 2 == 1)

@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2021 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
+// Copyright (c) 2022 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -1381,9 +1381,33 @@ namespace MFA
         public int Digits { get; set; }
 
         /// <summary>
-        /// <para type="description">TOTP Provider Code renew duration in seconds. 30s1 by default</para>
+        /// <para type="description">TOTP Provider Code renew duration in seconds. 30s by default</para>
         /// </summary>
         public int Duration { get; set; }
+
+        /// <summary>
+        /// CustomAuthenticatorLogo
+        /// <para type = "description" >File name of the image (60x60 px) of the Custom Authenticator Application</para>
+        /// </summary>
+        public string CustomAuthenticatorLogo { get; set; }
+
+        /// <summary>
+        /// CustomAuthenticatorMSStoreLink
+        /// <para type = "description" >Public store link to download Custom Authenticator Application from Microsoft Store</para>
+        /// </summary>
+        public string CustomAuthenticatorMSStoreLink { get; set; }
+
+        /// <summary>
+        /// CustomAuthenticatorGooglePlayLink
+        /// <para type = "description" >Public store link to download Custom Authenticator Application from Google Play</para>
+        /// </summary>
+        public string CustomAuthenticatorGooglePlayLink { get; set; }
+
+        /// <summary>
+        /// CustomAuthenticatorAppStoreLink
+        /// <para type = "description" >Public store link to download Custom Authenticator Application from App Store</para>
+        /// </summary>
+        public string CustomAuthenticatorAppStoreLink { get; set; }
 
         /// <summary>
         /// <para type="description">Set TOP Wizard Application list enabled/ disabled.</para>
@@ -1422,6 +1446,10 @@ namespace MFA
                     Digits = otp.Digits,
                     Duration = otp.Duration,
                     PinRequired = otp.PinRequired,
+                    CustomAuthenticatorLogo = otp.CustomAuthenticatorLogo,
+                    CustomAuthenticatorMSStoreLink = otp.CustomAuthenticatorMSStoreLink,
+                    CustomAuthenticatorGooglePlayLink = otp.CustomAuthenticatorGooglePlayLink,
+                    CustomAuthenticatorAppStoreLink = otp.CustomAuthenticatorAppStoreLink,
                     WizardOptions = (PSOTPWizardOptions)otp.WizardOptions,
                     FullQualifiedImplementation = otp.FullyQualifiedImplementation,
                     KeySize = (PSKeySizeMode)otp.KeySize,
@@ -1453,6 +1481,10 @@ namespace MFA
                     Digits = otp.Digits,
                     Duration = otp.Duration,
                     PinRequired = otp.PinRequired,
+                    CustomAuthenticatorLogo = otp.CustomAuthenticatorLogo,
+                    CustomAuthenticatorMSStoreLink = otp.CustomAuthenticatorMSStoreLink,
+                    CustomAuthenticatorGooglePlayLink = otp.CustomAuthenticatorGooglePlayLink,
+                    CustomAuthenticatorAppStoreLink = otp.CustomAuthenticatorAppStoreLink,
                     WizardOptions = (OTPWizardOptions)otp.WizardOptions,
                     KeySize = (KeySizeMode)otp.KeySize,
                     KeysFormat = (SecretKeyFormat)otp.KeysFormat,

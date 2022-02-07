@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2021 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
+// Copyright (c) 2022 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -21,6 +21,8 @@ using Neos.IdentityServer.MultiFactor.Data;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.Globalization;
 using System.IO;
 using System.Net;
@@ -1460,6 +1462,26 @@ namespace Neos.IdentityServer.MultiFactor
             }
             return result;
         }
+
+
+        /// <summary>
+        /// GetCustomAuthenticatorImage method.
+        /// </summary>
+        public byte[] GetCustomAuthenticatorImage(string filename)
+        {
+            char sep = Path.DirectorySeparatorChar;
+            string fullname = SystemUtilities.SystemRootDir + sep + filename;
+            if (File.Exists(fullname))
+            {
+                Bitmap bmp = new Bitmap(fullname);
+                if ((bmp.Height != 60) || (bmp.Width != 60))
+                    Log.WriteEntry("Invalid Custome Authenticator Image ! required size is 60x60 px", EventLogEntryType.Warning, 1000);
+                return bmp.ToByteArray(ImageFormat.Png);
+            }
+            else
+               return null;
+        }
+
         /// <summary>
         /// TryBypass method implementation
         /// </summary>

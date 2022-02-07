@@ -630,24 +630,29 @@ namespace MFA
         All = 0x0,
 
         /// <summary>
-        /// <para type="description">NoMicrosoftAuthenticator, disable links for Microsoft Authenticator.</para>
+        /// <para type="description">MicrosoftAuthenticator, enable link for Microsoft Authenticator.</para>
         /// </summary>
-        NoMicrosoftAuthenticator = 0x1,
+        MicrosoftAuthenticator = 0x1,
 
         /// <summary>
-        /// <para type="description">NoGoogleAuthenticator, disable links for Google Authenticator.</para>
+        /// <para type="description">GoogleAuthenticator, enable link for Google Authenticator.</para>
         /// </summary>
-        NoGoogleAuthenticator = 0x2,
+        GoogleAuthenticator = 0x2,
 
         /// <summary>
-        /// <para type="description">NoAuthyAuthenticator, disable links for Authy Authenticator.</para>
+        /// <para type="description">AuthyAuthenticator, enable link for Authy Authenticator.</para>
         /// </summary>
-        NoAuthyAuthenticator = 0x4,
+        AuthyAuthenticator = 0x4,
 
         /// <summary>
-        /// <para type="description">NoGooglSearch, disable links for searching on internet for Authenticator Apps.</para>
+        /// <para type="description">GoogleSearch, enable link for searching on internet for Authenticator Apps.</para>
         /// </summary>
-        NoGooglSearch = 0x8
+        GoogleSearch = 0x8,
+
+        /// <summary>
+        /// <para type="description">CustomAuthenticator, enable link for Custom Authenticator.</para>
+        /// </summary>
+        CustomAuthenticator = 0x10
     }
 
 

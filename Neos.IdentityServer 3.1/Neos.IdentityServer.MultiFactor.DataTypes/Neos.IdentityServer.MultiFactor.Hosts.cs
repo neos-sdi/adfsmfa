@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2021 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
+// Copyright (c) 2022 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -541,6 +541,9 @@ namespace Neos.IdentityServer.MultiFactor
                 OTPProvider.Algorithm = HashMode.SHA1;
                 OTPProvider.EnrollWizard = true;
                 OTPProvider.PinRequired = false;
+                OTPProvider.CustomAuthenticatorLogo = "Aegis.png";
+                OTPProvider.CustomAuthenticatorGooglePlayLink = "https://play.google.com/store/apps/details?id=com.beemdevelopment.aegis&hl=en&gl=US";
+                OTPProvider.WizardOptions = OTPWizardOptions.MicrosoftAuthenticator | OTPWizardOptions.GoogleAuthenticator | OTPWizardOptions.AuthyAuthenticator | OTPWizardOptions.GoogleSearch;
                 OTPProvider.Parameters.Data = string.Empty;
                 OTPProvider.FullQualifiedImplementation = string.Empty;
 
@@ -647,6 +650,11 @@ namespace Neos.IdentityServer.MultiFactor
             if (string.IsNullOrEmpty(Hosts.CustomStoreHost.KeysRepositoryFullyQualifiedImplementation))
                 Hosts.CustomStoreHost.KeysRepositoryFullyQualifiedImplementation = "Neos.IdentityServer.MultiFactor.Samples.InMemoryKeys2RepositoryService, Neos.IdentityServer.MultiFactor.Samples, Version=3.0.0.0, Culture=neutral, " + Utilities.GetAssemblyPublicKey();
 
+            if (string.IsNullOrEmpty(OTPProvider.CustomAuthenticatorLogo))
+            {
+                OTPProvider.CustomAuthenticatorLogo = "Aegis.png";
+                OTPProvider.CustomAuthenticatorGooglePlayLink = "https://play.google.com/store/apps/details?id=com.beemdevelopment.aegis&hl=en&gl=US";
+            }
             if (string.IsNullOrEmpty(MailProvider.From))
                 MailProvider.From = "sender.email@contoso.com";
             if (string.IsNullOrEmpty(MailProvider.UserName))
@@ -1655,6 +1663,18 @@ namespace Neos.IdentityServer.MultiFactor
 
         [XmlAttribute("WizardOptions")]
         public OTPWizardOptions WizardOptions { get; set; } = OTPWizardOptions.All;
+
+        [XmlAttribute("CustomAuthenticatorLogo")]
+        public string CustomAuthenticatorLogo { get; set; } = "Aegis.png";
+
+        [XmlAttribute("CustomAuthenticatorMSStoreLink")]
+        public string CustomAuthenticatorMSStoreLink { get; set; }
+
+        [XmlAttribute("CustomAuthenticatorGooglePlayLink")]
+        public string CustomAuthenticatorGooglePlayLink { get; set; } = "https://play.google.com/store/apps/details?id=com.beemdevelopment.aegis&hl=en&gl=US";
+
+        [XmlAttribute("CustomAuthenticatorAppStoreLink")]
+        public string CustomAuthenticatorAppStoreLink { get; set; }
 
         [XmlAttribute("FullQualifiedImplementation")]
         public string FullQualifiedImplementation { get; set; }

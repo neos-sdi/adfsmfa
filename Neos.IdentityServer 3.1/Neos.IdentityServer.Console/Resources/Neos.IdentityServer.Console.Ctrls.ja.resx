@@ -732,4 +732,7 @@
   <data name="CTRLWEBAUTHNCONTRAINEDMETADATA" xml:space="preserve">
     <value>制約付きメタデータ サービスを使用する (インターネットアクセスがない ADFS ファームの場合)</value>
   </data>
+  <data name="CTRLGLSHOWCUSTOM" xml:space="preserve">
+    <value>カスタム認証システムを表示する</value>
+  </data>
 </root>

@@ -218,6 +218,7 @@ namespace Neos.IdentityServer.MultiFactor
     internal static class SystemUtilities
     {
         private static readonly char sep = Path.DirectorySeparatorChar;
+        internal static string SystemRootDir = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + sep + "MFA" + sep + "Config";
         internal static string SystemCacheFile = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + sep + "MFA" + sep + "Config" + sep + "system.db";
         internal static string PayloadCacheFile = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + sep + "MFA" + sep + "Config" + sep + "blob.db";
         internal static string ThreatCacheFile = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + sep + "MFA" + sep + "Config" + sep + "threatconfig.db";

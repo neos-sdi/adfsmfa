@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2021 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
+// Copyright (c) 2022 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -3711,6 +3711,14 @@ namespace MFA
                                 _target0.Digits = _config0.Digits;
                             if (_config0.DurationChanged)
                                 _target0.Duration = _config0.Duration;
+                            if (_config0.CustomAuthenticatorLogoChanged)
+                                _target0.CustomAuthenticatorLogo = _config0.CustomAuthenticatorLogo;
+                            if (_config0.CustomAuthenticatorMSStoreLinkChanged)
+                                _target0.CustomAuthenticatorMSStoreLink = _config0.CustomAuthenticatorMSStoreLink;
+                            if (_config0.CustomAuthenticatorGooglePlayLinkChanged)
+                                _target0.CustomAuthenticatorGooglePlayLink = _config0.CustomAuthenticatorGooglePlayLink;
+                            if (_config0.CustomAuthenticatorAppStoreLinkChanged)
+                                _target0.CustomAuthenticatorAppStoreLink = _config0.CustomAuthenticatorAppStoreLink;
                             break;
                         case PSProviderType.Email:
                             _target1 = new FlatMailProvider();
@@ -3987,6 +3995,10 @@ namespace MFA
         private PSOTPWizardOptions _wizardoptions = PSOTPWizardOptions.All;
         private PSSecretKeyFormat _secretformat = PSSecretKeyFormat.RNG;
         private PSKeySizeMode _keysizemode = PSKeySizeMode.KeySizeDefault;
+        private string _authenticatorlogo = string.Empty;
+        private string _authenticatormsstorelink = string.Empty;
+        private string _authenticatorgoogleplaylink = string.Empty;
+        private string _authenticatorappstorelink = string.Empty;
 
         internal bool AlgorithmChanged { get; private set; }
         internal bool TOTPShadowsChanged { get; private set; }
@@ -4002,6 +4014,10 @@ namespace MFA
         internal bool SecretFormatChanged { get; private set; }
         internal bool DigitsChanged { get; private set; }
         internal bool DurationChanged { get; private set; }
+        internal bool CustomAuthenticatorLogoChanged { get; private set; }
+        internal bool CustomAuthenticatorMSStoreLinkChanged { get; private set; }
+        internal bool CustomAuthenticatorGooglePlayLinkChanged { get; private set; }
+        internal bool CustomAuthenticatorAppStoreLinkChanged { get; private set; }
 
         /// <summary>
         /// <para type="description">Provider Enabled property.</para>
@@ -4173,7 +4189,7 @@ namespace MFA
         /// <para type="description">All, all links are displayed.</para>
         /// </summary>
         [Parameter(ParameterSetName = "Identity")]
-        [ValidateSet("All", "NoMicrosoftAuthenticator", "NoGoogleAuthenticator", "NoAuthyAuthenticator", "NoGooglSearch", IgnoreCase = true)]
+        [ValidateSet("All", "NoMicrosoftAuthenticator", "NoGoogleAuthenticator", "NoAuthyAuthenticator", "NoGoogleSearch", "NoCustomAuthenticator", IgnoreCase = true)]
         public PSOTPWizardOptions WizardOptions
         {
             get { return _wizardoptions; }
@@ -4213,6 +4229,62 @@ namespace MFA
             {
                 _keysizemode = value;
                 KeySizeModeChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">File name for image (60x60 px) Used for custom Authenticator.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        public string CustomAuthenticatorLogo
+        {
+            get { return _authenticatorlogo; }
+            set
+            {
+                _authenticatorlogo = value;
+                CustomAuthenticatorLogoChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">URL link to download from Microsoft Store.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        public string CustomAuthenticatorMSStoreLink
+        {
+            get { return _authenticatormsstorelink; }
+            set
+            {
+                _authenticatormsstorelink = value;
+                CustomAuthenticatorMSStoreLinkChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">URL link to download from Google Play.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        public string CustomAuthenticatorGooglePlayLink
+        {
+            get { return _authenticatorgoogleplaylink; }
+            set
+            {
+                _authenticatorgoogleplaylink = value;
+                CustomAuthenticatorGooglePlayLinkChanged = true;
+            }
+        }
+
+        /// <summary>
+        /// <para type="description">URL link to download from App Store.</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        public string CustomAuthenticatorAppStoreLink
+        {
+            get { return _authenticatorappstorelink; }
+            set
+            {
+                _authenticatorappstorelink = value;
+                CustomAuthenticatorAppStoreLinkChanged = true;
             }
         }
     }

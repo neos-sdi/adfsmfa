@@ -732,4 +732,7 @@
   <data name="CTRLWEBAUTHNCONTRAINEDMETADATA" xml:space="preserve">
     <value>Utiliser le service de métadonnées contraintes (pour la batterie de serveurs ADFS qui n’a pas accès à Internet)</value>
   </data>
+  <data name="CTRLGLSHOWCUSTOM" xml:space="preserve">
+    <value>Afficher l’authentificateur personnalisé</value>
+  </data>
 </root>

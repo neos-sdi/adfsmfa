@@ -732,4 +732,7 @@
   <data name="CTRLWEBAUTHNCONTRAINEDMETADATA" xml:space="preserve">
     <value>Verwenden des eingeschränkten Metadatendiensts (für ADFS-Farmen ohne Internetzugang)</value>
   </data>
+  <data name="CTRLGLSHOWCUSTOM" xml:space="preserve">
+    <value>Benutzerdefinierten Authentifikator anzeigen</value>
+  </data>
 </root>

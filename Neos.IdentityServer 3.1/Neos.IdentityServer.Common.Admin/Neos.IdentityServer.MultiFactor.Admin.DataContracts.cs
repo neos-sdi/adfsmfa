@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2021 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
+// Copyright (c) 2022 @redhook62 (adfsmfa@gmail.com)                                                                                                                                        //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -11,7 +11,7 @@
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,                            //
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                               //
 //                                                                                                                                                                                          //
-//                                                                                                                                                             //
+//                                                                                                                                                                                          //
 // https://github.com/neos-sdi/adfsmfa                                                                                                                                                      //
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
@@ -769,6 +769,10 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         public OTPWizardOptions WizardOptions { get; set; }
         public KeySizeMode KeySize { get; set; }
         public SecretKeyFormat KeysFormat { get; set; }
+        public string CustomAuthenticatorLogo { get; set; }
+        public string CustomAuthenticatorMSStoreLink { get; set; }
+        public string CustomAuthenticatorGooglePlayLink { get; set; }
+        public string CustomAuthenticatorAppStoreLink { get; set; }
 
         /// <summary>
         /// Kind  Property
@@ -799,6 +803,10 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             this.Duration = otp.TOTPDuration;
             this.TOTPShadows = otp.TOTPShadows;
             this.WizardOptions = otp.WizardOptions;
+            this.CustomAuthenticatorLogo = otp.CustomAuthenticatorLogo;
+            this.CustomAuthenticatorMSStoreLink = otp.CustomAuthenticatorMSStoreLink;
+            this.CustomAuthenticatorGooglePlayLink = otp.CustomAuthenticatorGooglePlayLink;
+            this.CustomAuthenticatorAppStoreLink = otp.CustomAuthenticatorAppStoreLink;
             this.KeySize = cfg.KeysConfig.KeySize;
             this.KeysFormat = cfg.KeysConfig.KeyFormat;
             this.PinRequired = otp.PinRequired;
@@ -825,6 +833,10 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             otp.TOTPDigits = this.Digits;
             otp.TOTPDuration = this.Duration;
             otp.WizardOptions = this.WizardOptions;
+            otp.CustomAuthenticatorLogo = this.CustomAuthenticatorLogo;
+            otp.CustomAuthenticatorMSStoreLink = this.CustomAuthenticatorMSStoreLink;
+            otp.CustomAuthenticatorGooglePlayLink = this.CustomAuthenticatorGooglePlayLink;
+            otp.CustomAuthenticatorAppStoreLink = this.CustomAuthenticatorAppStoreLink;
             cfg.KeysConfig.KeySize = this.KeySize;
             cfg.KeysConfig.KeyFormat = this.KeysFormat;
             otp.PinRequired = this.PinRequired;

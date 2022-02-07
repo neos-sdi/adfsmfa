@@ -732,4 +732,7 @@
   <data name="CTRLWEBAUTHNCONTRAINEDMETADATA" xml:space="preserve">
     <value>Use Constrained Metadata Service (for ADFS farm that has no internet access)</value>
   </data>
+  <data name="CTRLGLSHOWCUSTOM" xml:space="preserve">
+    <value>Show Custom Authenticator</value>
+  </data>
 </root>

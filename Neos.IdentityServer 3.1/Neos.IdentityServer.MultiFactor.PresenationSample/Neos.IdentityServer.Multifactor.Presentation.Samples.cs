@@ -1671,7 +1671,7 @@ namespace Neos.IdentityServer.MultiFactor.Samples
                     result += "    <th width=\"34px\" />";
                     result += "    <th width=\"82px\" />";
                     result += "  </tr>";
-                    if (!Provider.Config.OTPProvider.WizardOptions.HasFlag(OTPWizardOptions.NoMicrosoftAuthenticator))
+                    if ((Provider.Config.OTPProvider.WizardOptions.HasFlag(OTPWizardOptions.MicrosoftAuthenticator)) || (Provider.Config.OTPProvider.WizardOptions == OTPWizardOptions.All))
                     {
                         pos++;
                         if (pos % 2 == 1)
@@ -1704,7 +1704,7 @@ namespace Neos.IdentityServer.MultiFactor.Samples
                         if (pos % 2 == 0)
                             result += " </tr>";
                     }
-                    if (!Provider.Config.OTPProvider.WizardOptions.HasFlag(OTPWizardOptions.NoGoogleAuthenticator))
+                    if ((Provider.Config.OTPProvider.WizardOptions.HasFlag(OTPWizardOptions.GoogleAuthenticator)) || (Provider.Config.OTPProvider.WizardOptions == OTPWizardOptions.All))
                     {
                         pos++;
                         if (pos % 2 == 1)
@@ -1735,7 +1735,7 @@ namespace Neos.IdentityServer.MultiFactor.Samples
                         if (pos % 2 == 0)
                             result += " </tr>";
                     }
-                    if (!Provider.Config.OTPProvider.WizardOptions.HasFlag(OTPWizardOptions.NoAuthyAuthenticator))
+                    if ((Provider.Config.OTPProvider.WizardOptions.HasFlag(OTPWizardOptions.AuthyAuthenticator)) || (Provider.Config.OTPProvider.WizardOptions == OTPWizardOptions.All))
                     {
                         pos++;
                         if (pos % 2 == 1)
@@ -1766,7 +1766,63 @@ namespace Neos.IdentityServer.MultiFactor.Samples
                         if (pos % 2 == 0)
                             result += " </tr>";
                     }
-                    if (!Provider.Config.OTPProvider.WizardOptions.HasFlag(OTPWizardOptions.NoGooglSearch))
+                    if ((Provider.Config.OTPProvider.WizardOptions.HasFlag(OTPWizardOptions.CustomAuthenticator)) || (Provider.Config.OTPProvider.WizardOptions == OTPWizardOptions.All))
+                    {
+                        string logoname = Provider.Config.OTPProvider.CustomAuthenticatorLogo;
+                        if (!string.IsNullOrEmpty(logoname) &&
+                             (!string.IsNullOrEmpty(Provider.Config.OTPProvider.CustomAuthenticatorMSStoreLink) ||
+                              !string.IsNullOrEmpty(Provider.Config.OTPProvider.CustomAuthenticatorGooglePlayLink) ||
+                              !string.IsNullOrEmpty(Provider.Config.OTPProvider.CustomAuthenticatorAppStoreLink)
+                             )
+                           )
+                        {
+                            byte[] img = Provider.GetCustomAuthenticatorImage(logoname);
+                            if (img != null)
+                            {
+                                pos++;
+                                if (pos % 2 == 1)
+                                    result += " <tr>";
+                                result += "  <td>";
+                                result += "    <img id=\"at\" src=\"data:image/png;base64," + Convert.ToBase64String(img) + "\"/>";
+                                result += "  </td>";
+                                result += "  <td colspan=\"2\">";
+                                result += "    <table>";
+                                result += "      <tr>";
+                                result += "        <td>&nbsp</td>";
+                                result += "        <td> ";
+                                if (!string.IsNullOrEmpty(Provider.Config.OTPProvider.CustomAuthenticatorMSStoreLink))
+                                    result += "          <a href=\"" + Provider.Config.OTPProvider.CustomAuthenticatorMSStoreLink + "\" target=\"blank\">Microsoft Store</a>";
+                                else
+                                    result += "          &nbsp";
+                                result += "        </td>";
+                                result += "      </tr>";
+                                result += "      <tr>";
+                                result += "        <td>&nbsp</td>";
+                                result += "        <td>";
+                                if (!string.IsNullOrEmpty(Provider.Config.OTPProvider.CustomAuthenticatorGooglePlayLink))
+                                    result += "          <a href=\"" + Provider.Config.OTPProvider.CustomAuthenticatorGooglePlayLink + "\" target=\"blank\">Google Play</a>";
+                                else
+                                    result += "          &nbsp";
+                                result += "        </td>";
+                                result += "      </tr>";
+                                result += "      <tr>";
+                                result += "        <td>&nbsp</td>";
+                                result += "        <td>";
+                                if (!string.IsNullOrEmpty(Provider.Config.OTPProvider.CustomAuthenticatorAppStoreLink))
+                                    result += "          <a href=\"" + Provider.Config.OTPProvider.CustomAuthenticatorAppStoreLink + "\" target=\"blank\">Apple Store</a>";
+                                else
+                                    result += "          &nbsp";
+                                result += "        </td>";
+                                result += "      </tr>";
+                                result += "    </table";
+
+                                result += "  </td>";
+                                if (pos % 2 == 0)
+                                    result += " </tr>";
+                            }
+                        }
+                    }
+                    if ((Provider.Config.OTPProvider.WizardOptions.HasFlag(OTPWizardOptions.GoogleSearch)) || (Provider.Config.OTPProvider.WizardOptions == OTPWizardOptions.All))
                     {
                         pos++;
                         if (pos % 2 == 1)

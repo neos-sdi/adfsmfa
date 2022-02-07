@@ -732,4 +732,7 @@
   <data name="CTRLWEBAUTHNCONTRAINEDMETADATA" xml:space="preserve">
     <value>Usar el servicio de metadatos restringidos (para la granja de servidores ADFS que no tiene acceso a Internet)</value>
   </data>
+  <data name="CTRLGLSHOWCUSTOM" xml:space="preserve">
+    <value>Mostrar autenticador personalizado</value>
+  </data>
 </root>

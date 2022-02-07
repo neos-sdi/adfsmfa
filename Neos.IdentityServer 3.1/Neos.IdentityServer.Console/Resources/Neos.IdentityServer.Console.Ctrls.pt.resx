@@ -732,4 +732,7 @@
   <data name="CTRLWEBAUTHNCONTRAINEDMETADATA" xml:space="preserve">
     <value>Use o Serviço de Metadados Restritos (para a fazenda ADFS que não tem acesso à internet)</value>
   </data>
+  <data name="CTRLGLSHOWCUSTOM" xml:space="preserve">
+    <value>Mostrar autenticador personalizado</value>
+  </data>
 </root>

@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2021 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
+// Copyright (c) 2022 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -8772,6 +8772,7 @@ namespace Neos.IdentityServer.Console.Controls
         private CheckBox chkAllowMicrosoft;
         private CheckBox chkAllowGoogle;
         private CheckBox chkAllowAuthy;
+        private CheckBox chkAllowCustom;
         private CheckBox chkAllowSearch;
         private LinkLabel tblSaveConfig;
         private LinkLabel tblCancelConfig;
@@ -8887,17 +8888,17 @@ namespace Neos.IdentityServer.Console.Controls
                 _view.RefreshProviderInformation();
 
                 this.Dock = DockStyle.Top;
-                this.Height = 210;
+                this.Height = 241;
                 this.Width = 1050;
                 this.Margin = new Padding(30, 5, 30, 5);
 
                 _panel.Width = 20;
-                _panel.Height = 180;
+                _panel.Height = 211;
                 this.Controls.Add(_panel);
 
                 _txtpanel.Left = 20;
                 _txtpanel.Width = this.Width - 20;
-                _txtpanel.Height = 180;
+                _txtpanel.Height = 211;
                 _txtpanel.BackColor = System.Drawing.SystemColors.Control;
                 this.Controls.Add(_txtpanel);
 
@@ -9053,7 +9054,7 @@ namespace Neos.IdentityServer.Console.Controls
                 {
                     Text = "(*) " + res.CTRLGLTOTPWARN,
                     Left = 10,
-                    Top = 160,
+                    Top = 191,
                     Width = 800
                 };
                 _txtpanel.Controls.Add(lblTOTPWarning);
@@ -9061,7 +9062,7 @@ namespace Neos.IdentityServer.Console.Controls
                 _panelWiz = new Panel();
                 _panelWiz.Left = 520;
                 _panelWiz.Top = 10;
-                _panelWiz.Height = 160;
+                _panelWiz.Height = 191;
                 _panelWiz.Width = 350;               
                 _txtpanel.Controls.Add(_panelWiz);
 
@@ -9074,7 +9075,7 @@ namespace Neos.IdentityServer.Console.Controls
 
                 chkAllowMicrosoft = new CheckBox();
                 chkAllowMicrosoft.Text = res.CTRLGLSHOWMICROSOFT;
-                chkAllowMicrosoft.Checked = !Config.OTPProvider.WizardOptions.HasFlag(OTPWizardOptions.NoMicrosoftAuthenticator);
+                chkAllowMicrosoft.Checked = Config.OTPProvider.WizardOptions.HasFlag(OTPWizardOptions.MicrosoftAuthenticator) || Config.OTPProvider.WizardOptions == OTPWizardOptions.All;
                 chkAllowMicrosoft.Left = 20;
                 chkAllowMicrosoft.Top = 30;
                 chkAllowMicrosoft.Width = 300;
@@ -9083,7 +9084,7 @@ namespace Neos.IdentityServer.Console.Controls
 
                 chkAllowGoogle = new CheckBox();
                 chkAllowGoogle.Text = res.CTRLGLSHOWGOOGLE;
-                chkAllowGoogle.Checked = !Config.OTPProvider.WizardOptions.HasFlag(OTPWizardOptions.NoGoogleAuthenticator);
+                chkAllowGoogle.Checked = Config.OTPProvider.WizardOptions.HasFlag(OTPWizardOptions.GoogleAuthenticator) || Config.OTPProvider.WizardOptions == OTPWizardOptions.All;
                 chkAllowGoogle.Left = 20;
                 chkAllowGoogle.Top = 61;
                 chkAllowGoogle.Width = 300;
@@ -9092,18 +9093,27 @@ namespace Neos.IdentityServer.Console.Controls
 
                 chkAllowAuthy = new CheckBox();
                 chkAllowAuthy.Text = res.CTRLGLSHOWAUTHY;
-                chkAllowAuthy.Checked = !Config.OTPProvider.WizardOptions.HasFlag(OTPWizardOptions.NoAuthyAuthenticator);
+                chkAllowAuthy.Checked = Config.OTPProvider.WizardOptions.HasFlag(OTPWizardOptions.AuthyAuthenticator) || Config.OTPProvider.WizardOptions == OTPWizardOptions.All;
                 chkAllowAuthy.Left = 20;
                 chkAllowAuthy.Top = 92;
                 chkAllowAuthy.Width = 300;
                 chkAllowAuthy.CheckedChanged += AllowAuthyCheckedChanged;
                 _panelWiz.Controls.Add(chkAllowAuthy);
 
+                chkAllowCustom = new CheckBox();
+                chkAllowCustom.Text = res.CTRLGLSHOWCUSTOM;
+                chkAllowCustom.Checked = Config.OTPProvider.WizardOptions.HasFlag(OTPWizardOptions.CustomAuthenticator) || Config.OTPProvider.WizardOptions == OTPWizardOptions.All;
+                chkAllowCustom.Left = 20;
+                chkAllowCustom.Top = 123;
+                chkAllowCustom.Width = 300;
+                chkAllowCustom.CheckedChanged += AllowCustomCheckedChanged;
+                _panelWiz.Controls.Add(chkAllowCustom);
+
                 chkAllowSearch = new CheckBox();
                 chkAllowSearch.Text = res.CTRLGLALLOWGOOGLESEARCH;
-                chkAllowSearch.Checked = !Config.OTPProvider.WizardOptions.HasFlag(OTPWizardOptions.NoGooglSearch);
+                chkAllowSearch.Checked = Config.OTPProvider.WizardOptions.HasFlag(OTPWizardOptions.GoogleSearch) || Config.OTPProvider.WizardOptions == OTPWizardOptions.All;
                 chkAllowSearch.Left = 20;
-                chkAllowSearch.Top = 123;
+                chkAllowSearch.Top = 153;
                 chkAllowSearch.Width = 300;
                 chkAllowSearch.CheckedChanged += AllowSearchGoogleCheckedChanged;
                 _panelWiz.Controls.Add(chkAllowSearch);
@@ -9111,7 +9121,7 @@ namespace Neos.IdentityServer.Console.Controls
                 tblSaveConfig = new LinkLabel();
                 tblSaveConfig.Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPESAVE;
                 tblSaveConfig.Left = 20;
-                tblSaveConfig.Top = 190;
+                tblSaveConfig.Top = 221;
                 tblSaveConfig.Width = 80;
                 tblSaveConfig.LinkClicked += SaveConfigLinkClicked;
                 tblSaveConfig.TabStop = true;
@@ -9120,7 +9130,7 @@ namespace Neos.IdentityServer.Console.Controls
                 tblCancelConfig = new LinkLabel();
                 tblCancelConfig.Text = Neos_IdentityServer_Console_Nodes.GENERALSCOPECANCEL;
                 tblCancelConfig.Left = 110;
-                tblCancelConfig.Top = 190;
+                tblCancelConfig.Top = 221;
                 tblCancelConfig.Width = 80;
                 tblCancelConfig.LinkClicked += CancelConfigLinkClicked;
                 tblCancelConfig.TabStop = true;
@@ -9155,13 +9165,15 @@ namespace Neos.IdentityServer.Console.Controls
                 txtTOTPShadows.Text = Config.OTPProvider.TOTPShadows.ToString();
                // txtHashAlgo.Text = Config.OTPProvider.Algorithm.ToString();
 
-                chkAllowMicrosoft.Checked = !Config.OTPProvider.WizardOptions.HasFlag(OTPWizardOptions.NoMicrosoftAuthenticator);
+                chkAllowMicrosoft.Checked = Config.OTPProvider.WizardOptions.HasFlag(OTPWizardOptions.MicrosoftAuthenticator) || Config.OTPProvider.WizardOptions == OTPWizardOptions.All;
 
-                chkAllowGoogle.Checked = !Config.OTPProvider.WizardOptions.HasFlag(OTPWizardOptions.NoGoogleAuthenticator);
+                chkAllowGoogle.Checked = Config.OTPProvider.WizardOptions.HasFlag(OTPWizardOptions.GoogleAuthenticator) || Config.OTPProvider.WizardOptions == OTPWizardOptions.All;
 
-                chkAllowAuthy.Checked = !Config.OTPProvider.WizardOptions.HasFlag(OTPWizardOptions.NoAuthyAuthenticator);
+                chkAllowAuthy.Checked = Config.OTPProvider.WizardOptions.HasFlag(OTPWizardOptions.AuthyAuthenticator) || Config.OTPProvider.WizardOptions == OTPWizardOptions.All;
 
-                chkAllowSearch.Checked = !Config.OTPProvider.WizardOptions.HasFlag(OTPWizardOptions.NoGooglSearch);
+                chkAllowCustom.Checked = Config.OTPProvider.WizardOptions.HasFlag(OTPWizardOptions.CustomAuthenticator) || Config.OTPProvider.WizardOptions == OTPWizardOptions.All;
+
+                chkAllowSearch.Checked = Config.OTPProvider.WizardOptions.HasFlag(OTPWizardOptions.GoogleSearch) || Config.OTPProvider.WizardOptions == OTPWizardOptions.All;
 
                 cbFormat.SelectedValue = Config.KeysConfig.KeyFormat;
 
@@ -9174,6 +9186,8 @@ namespace Neos.IdentityServer.Console.Controls
                 chkAllowAuthy.Text = res.CTRLGLSHOWAUTHY;
                 chkAllowGoogle.Text = res.CTRLGLSHOWGOOGLE;
                 chkAllowMicrosoft.Text = res.CTRLGLSHOWMICROSOFT;
+                chkAllowCustom.Text = res.CTRLGLSHOWCUSTOM;
+
                 lblTOTPWizard.Text = res.CTRLSECWIZARD + " : ";
                 lblMaxKeyLen.Text = res.CTRLSECKEYLENGTH + " : ";
                 lblSecMode.Text = res.CTRLSECKEYMODE + " : ";
@@ -9335,7 +9349,6 @@ namespace Neos.IdentityServer.Console.Controls
         }
         #endregion
 
-
         /// <summary>
         /// SelectedTOTPDurationChanged method
         /// </summary>
@@ -9452,10 +9465,10 @@ namespace Neos.IdentityServer.Console.Controls
                 if (_view.AutoValidate != AutoValidate.Disable)
                 {
                     ManagementService.ADFSManager.SetDirty(true);
-                    if (!chkAllowSearch.Checked)
-                        Config.OTPProvider.WizardOptions |= OTPWizardOptions.NoGooglSearch;
+                    if (chkAllowSearch.Checked)
+                        Config.OTPProvider.WizardOptions |= OTPWizardOptions.GoogleSearch;
                     else
-                        Config.OTPProvider.WizardOptions &= ~OTPWizardOptions.NoGooglSearch;
+                        Config.OTPProvider.WizardOptions ^= OTPWizardOptions.GoogleSearch;
                     errors.SetError(chkAllowSearch, "");
                 }
             }
@@ -9480,10 +9493,10 @@ namespace Neos.IdentityServer.Console.Controls
                 if (_view.AutoValidate != AutoValidate.Disable)
                 {
                     ManagementService.ADFSManager.SetDirty(true);
-                    if (!chkAllowAuthy.Checked)
-                        Config.OTPProvider.WizardOptions |= OTPWizardOptions.NoAuthyAuthenticator;
+                    if (chkAllowAuthy.Checked)
+                        Config.OTPProvider.WizardOptions |= OTPWizardOptions.AuthyAuthenticator;
                     else
-                        Config.OTPProvider.WizardOptions &= ~OTPWizardOptions.NoAuthyAuthenticator;
+                        Config.OTPProvider.WizardOptions ^= OTPWizardOptions.AuthyAuthenticator;
                     errors.SetError(chkAllowAuthy, "");
                 }
             }
@@ -9498,6 +9511,33 @@ namespace Neos.IdentityServer.Console.Controls
         }
 
         /// <summary>
+        /// AllowCustomCheckedChanged method implementation
+        /// </summary>
+        private void AllowCustomCheckedChanged(object sender, EventArgs e)
+        {
+            this.Cursor = Cursors.WaitCursor;
+            try
+            {
+                if (_view.AutoValidate != AutoValidate.Disable)
+                {
+                    ManagementService.ADFSManager.SetDirty(true);
+                    if (chkAllowCustom.Checked)
+                        Config.OTPProvider.WizardOptions |= OTPWizardOptions.CustomAuthenticator;
+                    else
+                        Config.OTPProvider.WizardOptions ^= OTPWizardOptions.CustomAuthenticator;
+                    errors.SetError(chkAllowCustom, "");
+                }
+            }
+            catch (Exception ex)
+            {
+                errors.SetError(chkAllowCustom, ex.Message);
+            }
+            finally
+            {
+                this.Cursor = Cursors.Default;
+            }
+        }
+        /// <summary>
         /// AllowGoogleCheckedChanged method implementation
         /// </summary>
         private void AllowGoogleCheckedChanged(object sender, EventArgs e)
@@ -9508,10 +9548,10 @@ namespace Neos.IdentityServer.Console.Controls
                 if (_view.AutoValidate != AutoValidate.Disable)
                 {
                     ManagementService.ADFSManager.SetDirty(true);
-                    if (!chkAllowGoogle.Checked)
-                        Config.OTPProvider.WizardOptions |= OTPWizardOptions.NoGoogleAuthenticator;
+                    if (chkAllowGoogle.Checked)
+                        Config.OTPProvider.WizardOptions |= OTPWizardOptions.GoogleAuthenticator;
                     else
-                        Config.OTPProvider.WizardOptions &= ~OTPWizardOptions.NoGoogleAuthenticator;
+                        Config.OTPProvider.WizardOptions ^= OTPWizardOptions.GoogleAuthenticator;
                     errors.SetError(chkAllowGoogle, "");
                 }
             }
@@ -9536,10 +9576,10 @@ namespace Neos.IdentityServer.Console.Controls
                 if (_view.AutoValidate != AutoValidate.Disable)
                 {
                     ManagementService.ADFSManager.SetDirty(true);
-                    if (!chkAllowMicrosoft.Checked)
-                        Config.OTPProvider.WizardOptions |= OTPWizardOptions.NoMicrosoftAuthenticator;
+                    if (chkAllowMicrosoft.Checked)
+                        Config.OTPProvider.WizardOptions |= OTPWizardOptions.MicrosoftAuthenticator;
                     else
-                        Config.OTPProvider.WizardOptions &= ~OTPWizardOptions.NoMicrosoftAuthenticator;
+                        Config.OTPProvider.WizardOptions ^= OTPWizardOptions.MicrosoftAuthenticator;
                     errors.SetError(chkAllowMicrosoft, "");
                 }
             }
