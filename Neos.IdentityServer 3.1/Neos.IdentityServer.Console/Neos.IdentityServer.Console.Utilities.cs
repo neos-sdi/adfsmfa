@@ -83,15 +83,7 @@ namespace Neos.IdentityServer.Console
         /// </summary>
         public static bool IsValidEmail(string email)
         {
-            try
-            {
-                var addr = new System.Net.Mail.MailAddress(email);
-                return addr.Address == email;
-            }
-            catch
-            {
-                return false;
-            }
+            return MultiFactor.Utilities.ValidateEmail(email, true);
         }
 
         /// <summary>

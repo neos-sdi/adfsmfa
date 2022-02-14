@@ -43,6 +43,8 @@ namespace Neos.IdentityServer.MultiFactor
     /// </summary>
     internal static class SIDs
     {
+        internal static uint STATUS_SUCCESS = 0;
+        internal static uint STATUS_BUFFER_TOO_SMALL = 3221225507;
         internal static bool Loaded { get; private set; } = false;
         internal static bool ADFSSystemServiceAdministrationAllowed { get; set; }
         internal static bool ADFSLocalAdminServiceAdministrationAllowed { get; set; }
@@ -534,15 +536,33 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         private static string GetADFSServiceSID()
         {
+            NativeMethods.LSA_UNICODE_STRING lSA_UNICODE_STRING = default(NativeMethods.LSA_UNICODE_STRING);
+            lSA_UNICODE_STRING.SetTo("adfssrv");
+            int cb = 0;
             try
             {
-                IntPtr ptr = GetServiceSidPtr("adfssrv");
-                return new SecurityIdentifier(ptr).Value;
+                uint num = NativeMethods.RtlCreateServiceSid(ref lSA_UNICODE_STRING, IntPtr.Zero, ref cb);
+                if (num == STATUS_BUFFER_TOO_SMALL)
+                {
+                    IntPtr intPtr = Marshal.AllocHGlobal(cb);
+                    try
+                    {
+                        if (NativeMethods.RtlCreateServiceSid(ref lSA_UNICODE_STRING, intPtr, ref cb) != STATUS_SUCCESS)
+                           throw new Win32Exception(Marshal.GetLastWin32Error());
+                           // throw new Win32Exception(Convert.ToInt32(num));
+                        return new SecurityIdentifier(intPtr).Value;
+                    }
+                    finally
+                    {
+                        Marshal.FreeHGlobal(intPtr);
+                    }
+                }
             }
-            catch (Exception)
+            finally
             {
-                return string.Empty;
+                lSA_UNICODE_STRING.Dispose();
             }
+            return string.Empty;
         }
 
         /// <summary>
@@ -670,37 +690,6 @@ namespace Neos.IdentityServer.MultiFactor
         }
 
         /// <summary>
-        /// GetServiceSidPtr method implementation
-        /// </summary>
-        private static IntPtr GetServiceSidPtr(string service)
-        {
-            NativeMethods.LSA_UNICODE_STRING lSA_UNICODE_STRING = default(NativeMethods.LSA_UNICODE_STRING);
-            lSA_UNICODE_STRING.SetTo(service);
-            int cb = 0;
-            IntPtr intPtr = IntPtr.Zero;
-            IntPtr result;
-            try
-            {
-                uint num = NativeMethods.RtlCreateServiceSid(ref lSA_UNICODE_STRING, IntPtr.Zero, ref cb);
-                if (num == 3221225507u)
-                {
-                    intPtr = Marshal.AllocHGlobal(cb);
-                    num = NativeMethods.RtlCreateServiceSid(ref lSA_UNICODE_STRING, intPtr, ref cb);
-                }
-                if (num != 0u)
-                {
-                    throw new Win32Exception(Convert.ToInt32(num));
-                }
-                result = intPtr;
-            }
-            finally
-            {
-                lSA_UNICODE_STRING.Dispose();
-            }
-            return result;
-        }
-
-        /// <summary>
         /// GetADFSServiceAdministrationProperties method implmentation
         /// </summary>
         private static string GetADFSServiceAdministrationProperties(ref ADFSAdminPolicies tuple)
@@ -775,7 +764,7 @@ namespace Neos.IdentityServer.MultiFactor
         [SuppressUnmanagedCodeSecurity]
         internal class NativeMethods
         {
-            [DllImport("ntdll.dll")]
+            [DllImport("ntdll.dll", SetLastError = true)]
             internal static extern uint RtlCreateServiceSid(ref NativeMethods.LSA_UNICODE_STRING serviceName, IntPtr serviceSid, ref int serviceSidLength);
 
             internal struct LSA_UNICODE_STRING : IDisposable

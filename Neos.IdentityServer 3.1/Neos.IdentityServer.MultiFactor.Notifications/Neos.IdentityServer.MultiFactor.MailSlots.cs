@@ -1311,7 +1311,7 @@ namespace Neos.IdentityServer.MultiFactor
 
             if (!NativeMethod.ConvertStringSecurityDescriptorToSecurityDescriptor(sddl, 1, out SafeLocalMemHandle pSecurityDescriptor, IntPtr.Zero))
             {
-                throw new Win32Exception();
+                throw new Win32Exception(Marshal.GetLastWin32Error());
             }
             SECURITY_ATTRIBUTES sa = new SECURITY_ATTRIBUTES();
             sa.nLength = Marshal.SizeOf(sa);

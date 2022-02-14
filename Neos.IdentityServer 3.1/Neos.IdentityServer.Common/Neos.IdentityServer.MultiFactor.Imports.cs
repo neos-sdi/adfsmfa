@@ -247,6 +247,12 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                         {
                             reg.PIN = Convert.ToInt32(Config.DefaultPin);
                             reg.PreferredMethod = Config.DefaultProviderMethod;
+
+                            if (!Utilities.ValidateEmail(reg.MailAddress, (Config.MailProvider.Enabled && Config.MailProvider.IsRequired)))
+                                throw new Exception(string.Format("invalid mail address for user : {0}", reg.UPN));
+                            if (!Utilities.ValidatePhoneNumber(reg.PhoneNumber, (Config.ExternalProvider.Enabled && Config.ExternalProvider.IsRequired)))
+                                throw new Exception(string.Format("invalid phone number for user : {0}", reg.UPN));
+
                             client2.AddMFAUser(reg, ForceNewKey, false);
                             Trace.TraceInformation(string.Format("User {0} Imported in MFA", reg.UPN));
                             if (!string.IsNullOrEmpty(reg.MailAddress))
@@ -352,6 +358,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                     {
                         MFAUser reg = new MFAUser();
                         reg.PIN = Convert.ToInt32(Config.DefaultPin);
+
                         if ((ids[0].HasValue) && (!string.IsNullOrEmpty(row[ids[0].Value])))
                             reg.UPN = row[ids[0].Value];
                         else
@@ -359,13 +366,14 @@ namespace Neos.IdentityServer.MultiFactor.Administration
 
                         if ((ids[1].HasValue) && (!string.IsNullOrEmpty(row[ids[1].Value])))
                             reg.MailAddress = row[ids[1].Value];
-                        else if (Config.MailProvider.Enabled)
-                            throw new InvalidDataException("email must be provided !");
 
                         if ((ids[2].HasValue) && (!string.IsNullOrEmpty(row[ids[2].Value])))
                             reg.PhoneNumber = row[ids[2].Value];
-                        else if (Config.ExternalProvider.Enabled)
-                            throw new InvalidDataException("mobile must be provided !");
+
+                        if (!Utilities.ValidateEmail(reg.MailAddress, (Config.MailProvider.Enabled && Config.MailProvider.IsRequired)))
+                            throw new Exception(string.Format("invalid mail address for user : {0}", reg.UPN));
+                        if (!Utilities.ValidatePhoneNumber(reg.PhoneNumber, (Config.ExternalProvider.Enabled && Config.ExternalProvider.IsRequired)))
+                            throw new Exception(string.Format("invalid phone number for user : {0}", reg.UPN));
 
                         if ((ids[3].HasValue) && (!string.IsNullOrEmpty(row[ids[3].Value])))
                             reg.PreferredMethod = (PreferredMethod)Enum.Parse(typeof(PreferredMethod), row[ids[3].Value]);
@@ -479,13 +487,14 @@ namespace Neos.IdentityServer.MultiFactor.Administration
 
                         if (row.Attribute("email") != null)
                             reg.MailAddress = row.Attribute("email").Value;
-                        else if (Config.MailProvider.Enabled)
-                            throw new InvalidDataException("email must be provided !");
 
                         if (row.Attribute("mobile") != null)
                             reg.PhoneNumber = row.Attribute("mobile").Value;
-                        else if (Config.ExternalProvider.Enabled)
-                            throw new InvalidDataException("mobile must be provided !");
+
+                        if (!Utilities.ValidateEmail(reg.MailAddress, (Config.MailProvider.Enabled && Config.MailProvider.IsRequired)))
+                            throw new Exception(string.Format("invalid mail address for user : {0}", reg.UPN));
+                        if (!Utilities.ValidatePhoneNumber(reg.PhoneNumber, (Config.ExternalProvider.Enabled && Config.ExternalProvider.IsRequired)))
+                            throw new Exception(string.Format("invalid phone number for user : {0}", reg.UPN));
 
                         if (row.Attribute("method") != null)
                             reg.PreferredMethod = (PreferredMethod)Enum.Parse(typeof(PreferredMethod), row.Attribute("method").Value);

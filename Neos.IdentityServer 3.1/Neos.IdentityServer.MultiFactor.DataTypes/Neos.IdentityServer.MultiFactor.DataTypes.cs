@@ -1284,7 +1284,7 @@ namespace Neos.IdentityServer.MultiFactor
                     return _mail;
             }
             set
-            {
+            {                
                 _mail = value;
             }
         }

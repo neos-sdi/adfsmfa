@@ -994,6 +994,10 @@ namespace Neos.IdentityServer.MultiFactor
                 reg.PIN = Convert.ToInt32(cfg.DefaultPin);
             if (reg.OverrideMethod == null)
                 reg.OverrideMethod = string.Empty;
+            if (!Utilities.ValidateEmail(reg.MailAddress, (cfg.MailProvider.Enabled && cfg.MailProvider.IsRequired)))
+                throw new Exception(string.Format("invalid mail address for user : {0}", reg.UPN));
+            if (!Utilities.ValidatePhoneNumber(reg.PhoneNumber, (cfg.ExternalProvider.Enabled && cfg.ExternalProvider.IsRequired)))
+                throw new Exception(string.Format("invalid phone number for user : {0}", reg.UPN));
             MFAUser newreg = client.SetMFAUser(reg, resetkey, caninsert);
             if (newreg != null)
             {
@@ -1042,6 +1046,10 @@ namespace Neos.IdentityServer.MultiFactor
                 reg.PIN = Convert.ToInt32(cfg.DefaultPin);
             if (reg.OverrideMethod == null)
                 reg.OverrideMethod = string.Empty;
+            if (!Utilities.ValidateEmail(reg.MailAddress, (cfg.MailProvider.Enabled && cfg.MailProvider.IsRequired)))
+                throw new Exception(string.Format("invalid mail address for user : {0}", reg.UPN));
+            if (!Utilities.ValidatePhoneNumber(reg.PhoneNumber, (cfg.ExternalProvider.Enabled && cfg.ExternalProvider.IsRequired)))
+                throw new Exception(string.Format("invalid phone number for user : {0}", reg.UPN));
             client.OnKeyDataEvent += KeyDataEvent;
             MFAUser newreg = client.AddMFAUser(reg, resetkey, canupdate);
             if (newreg != null)
@@ -2625,7 +2633,7 @@ namespace Neos.IdentityServer.MultiFactor
                 Port = mail.Port,
                 UseDefaultCredentials = false,
                 DeliveryMethod = SmtpDeliveryMethod.Network,
-                EnableSsl = mail.UseSSL
+                EnableSsl = mail.UseSSL 
             };
             if (!mail.Anonymous)
                 client.Credentials = new NetworkCredential(mail.UserName, mail.Password);
@@ -2673,11 +2681,13 @@ namespace Neos.IdentityServer.MultiFactor
                     name = upn.Remove(2, upn.IndexOf('@') - 2).Insert(2, "*********");
                 else
                     name = upn;
-                MailMessage Message = new MailMessage(mail.From, to)
+                MailAddress mailfrom = Utilities.MakeMailAddress(mail.From);
+                MailAddress mailto = Utilities.MakeMailAddress(to);
+                MailMessage Message = new MailMessage(mailfrom, mailto)
                 {
                     BodyEncoding = UTF8Encoding.UTF8,
                     IsBodyHtml = true,
-                    Body = string.Format(html, mail.Company, name, code, to)
+                    Body = string.Format(html, mail.Company, name, code, mailto.Address)
                 };
 
                 if (mail.DeliveryNotifications)
@@ -2689,7 +2699,7 @@ namespace Neos.IdentityServer.MultiFactor
                 {
                     Group titlegrp = Regex.Match(html, @"\<title\b[^>]*\>\s*(?<Title>[\s\S]*?)\</title\>", RegexOptions.IgnoreCase).Groups["Title"];
                     if (titlegrp != null)
-                        Message.Subject = string.Format(titlegrp.Value, mail.Company, name, code, to);
+                        Message.Subject = string.Format(titlegrp.Value, mail.Company, name, code, mailto.Address);
                     if (Message.Subject == string.Empty)
                     {
                         ResourcesLocale Resources = new ResourcesLocale(culture.LCID);
@@ -2747,9 +2757,16 @@ namespace Neos.IdentityServer.MultiFactor
                 }
                 string sendermail = GetUserBusinessEmail(user.UPN);
                 string html = StripEmailContent(htmlres);
-                MailMessage Message = new MailMessage(mail.From, to);
+                MailAddress mailfrom = Utilities.MakeMailAddress(mail.From);
+                MailAddress mailto = Utilities.MakeMailAddress(to);
+                MailAddress mailuser = Utilities.MakeMailAddress(user.MailAddress);
+
+                MailMessage Message = new MailMessage(mailfrom, mailto);
                 if (!string.IsNullOrEmpty(sendermail))
-                    Message.CC.Add(sendermail);
+                { 
+                    MailAddress mailcc = Utilities.MakeMailAddress(sendermail);
+                    Message.CC.Add(mailcc);
+                }
                 Message.BodyEncoding = UTF8Encoding.UTF8;
                 Message.IsBodyHtml = true;
                 Message.Body = string.Format(htmlres, mail.Company, user.UPN, user.MailAddress, user.PhoneNumber, user.PreferredMethod);
@@ -2763,7 +2780,7 @@ namespace Neos.IdentityServer.MultiFactor
                 {
                     Group titlegrp = Regex.Match(html, @"\<title\b[^>]*\>\s*(?<Title>[\s\S]*?)\</title\>", RegexOptions.IgnoreCase).Groups["Title"];
                     if (titlegrp != null)
-                        Message.Subject = string.Format(titlegrp.Value, mail.Company, user.UPN, user.MailAddress, user.PhoneNumber, user.PreferredMethod);
+                        Message.Subject = string.Format(titlegrp.Value, mail.Company, user.UPN, mailuser.Address, user.PhoneNumber, user.PreferredMethod);
                     if (Message.Subject == string.Empty)
                     {
                         ResourcesLocale Resources = new ResourcesLocale(culture.LCID);
@@ -2832,9 +2849,14 @@ namespace Neos.IdentityServer.MultiFactor
                         ContentId = Guid.NewGuid().ToString()
                     };
 
-                    MailMessage Message = new MailMessage(mail.From, to);
+                    MailAddress mailfrom = Utilities.MakeMailAddress(mail.From);
+                    MailAddress mailto = Utilities.MakeMailAddress(to);
+                    MailMessage Message = new MailMessage(mailfrom, mailto);
                     if (!string.IsNullOrEmpty(sendermail))
-                        Message.CC.Add(sendermail);
+                    {
+                        MailAddress mailcc = Utilities.MakeMailAddress(sendermail);
+                        Message.CC.Add(mailcc);
+                    }
                     Message.BodyEncoding = UTF8Encoding.UTF8;
                     Message.IsBodyHtml = true;
 
@@ -2916,11 +2938,14 @@ namespace Neos.IdentityServer.MultiFactor
                     }
                 }
                 string html = StripEmailContent(htmlres);
-                MailMessage Message = new MailMessage(mail.From, user.MailAddress)
+                MailAddress mailfrom = Utilities.MakeMailAddress(mail.From);
+                MailAddress mailuser = Utilities.MakeMailAddress(user.MailAddress);
+
+                MailMessage Message = new MailMessage(mailfrom, mailuser)
                 {
                     BodyEncoding = UTF8Encoding.UTF8,
                     IsBodyHtml = true,
-                    Body = string.Format(html, user.UPN, mail.Company, user.MailAddress)
+                    Body = string.Format(html, user.UPN, mail.Company, mailuser.Address)
                 };
 
                 if (mail.DeliveryNotifications)
@@ -2932,7 +2957,7 @@ namespace Neos.IdentityServer.MultiFactor
                 {
                     Group titlegrp = Regex.Match(html, @"\<title\b[^>]*\>\s*(?<Title>[\s\S]*?)\</title\>", RegexOptions.IgnoreCase).Groups["Title"];
                     if (titlegrp != null)
-                        Message.Subject = string.Format(titlegrp.Value, user.UPN, mail.Company, user.MailAddress);
+                        Message.Subject = string.Format(titlegrp.Value, user.UPN, mail.Company, mailuser.Address);
                     if (Message.Subject == string.Empty)
                     {
                         ResourcesLocale Resources = new ResourcesLocale(culture.LCID);
@@ -2983,8 +3008,8 @@ namespace Neos.IdentityServer.MultiFactor
 
                 if (string.IsNullOrEmpty(email))
                     return string.Empty;
-                else
-                    return email.Substring(email.IndexOf("@", 0));
+                var addr = Utilities.MakeMailAddress(email);
+                return addr.Address.Substring(addr.Address.IndexOf("@", 0));
             }
             catch
             {
@@ -3725,6 +3750,41 @@ namespace Neos.IdentityServer.MultiFactor
             return type[0].Trim();
         }
 
+
+        /// <summary>
+        /// ValidateEmail method implementation
+        /// </summary>
+        public static MailAddress MakeMailAddress(string email)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(email))
+                    throw new ArgumentNullException("MailAddress", "Email address not provided !") ;
+                int f = email.IndexOf('<');
+                int l = email.IndexOf('>');
+                int f2 = email.IndexOf('[');
+                int l2 = email.IndexOf(']');
+                string trueemail = email;
+                string displayname = string.Empty;
+                if ((f >= 0) && (l > f))
+                {
+                    trueemail = email.Substring(f + 1, (l - f) - 1);
+                    displayname = email.Substring(0, f - 1).Trim();
+                }
+                else if ((f2 >= 0) && (l2 > f2))
+                {
+                    trueemail = email.Substring(f2 + 1, (l2 - f2) - 1);
+                    displayname = email.Substring(0, f2 - 1).Trim();
+                }
+                return new System.Net.Mail.MailAddress(trueemail, displayname);
+            }
+            catch (Exception ex)
+            {
+                Log.WriteEntry(ex.Message, EventLogEntryType.Error, 800);
+                return null;
+            }
+        }
+
         /// <summary>
         /// ValidateEmail method implementation
         /// </summary>
@@ -3737,11 +3797,8 @@ namespace Neos.IdentityServer.MultiFactor
                         return false;
                     else
                         return true;
-                var addr = new System.Net.Mail.MailAddress(email);
-                if (addr.Address != email)
-                    return false;
-                else
-                    return true;
+                var addr = MakeMailAddress(email);
+                return true;
             }
             catch (Exception ex)
             {
@@ -3852,7 +3909,10 @@ namespace Neos.IdentityServer.MultiFactor
                 if (string.IsNullOrEmpty(email))
                     return string.Empty;
                 else
-                    return email.Remove(0, email.IndexOf('@') + 1);
+                {
+                    var addr = MakeMailAddress(email);
+                    return addr.Host;
+                }
             }
             catch
             {
