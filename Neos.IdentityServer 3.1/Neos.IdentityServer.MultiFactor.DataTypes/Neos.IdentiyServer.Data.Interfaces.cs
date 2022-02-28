@@ -138,7 +138,7 @@ namespace Neos.IdentityServer.MultiFactor
                 {
                     string qryldap = string.Empty;
                     qryldap = "(&";
-                    qryldap += "(objectCategory=user)(objectClass=user)"+ ClaimsUtilities.BuildADDSUserFilter("*");
+                    qryldap += "(objectCategory=user)(objectClass=user)"+ ADDSClaimsUtilities.BuildADDSUserFilter("*");
                     if (created.HasValue)
                         qryldap += "(whenCreated>=" + created.Value.ToString("yyyyMMddHHmmss.0Z") + ")";
                     if (modified.HasValue)
@@ -182,9 +182,9 @@ namespace Neos.IdentityServer.MultiFactor
                                     if (DirEntry.Properties["objectGUID"].Value != null)
                                     {
                                         reg.ID = new Guid((byte[])DirEntry.Properties["objectGUID"].Value).ToString();
-                                        if (sr.Properties[ClaimsUtilities.GetADDSUserAttribute()][0] != null)
+                                        if (sr.Properties[ADDSClaimsUtilities.GetADDSUserAttribute()][0] != null)
                                         {
-                                            reg.UPN = sr.Properties[ClaimsUtilities.GetADDSUserAttribute()][0].ToString();
+                                            reg.UPN = sr.Properties[ADDSClaimsUtilities.GetADDSUserAttribute()][0].ToString();
 
                                             if (!string.IsNullOrEmpty(mailattribute))
                                             {

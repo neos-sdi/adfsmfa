@@ -32,7 +32,7 @@ using System.Xml.Serialization;
 
 namespace Neos.IdentityServer.MultiFactor.Data
 {
-    public class Utilities
+    public class AssemblyPublicKeyUtilities
     {
         /// <summary>
         /// GetAssemblyPublicKey method implmentation
@@ -70,98 +70,6 @@ namespace Neos.IdentityServer.MultiFactor.Data
             EventLog.WriteEntry(EventLogSource, message, type, eventID);
         }
     }
-
-    /*
-    /// <summary>
-    /// ADDSForest class implementation
-    /// </summary>
-    public class ADDSForest
-    {
-        public bool IsRoot { get; set; }
-        public string ForestDNS { get; set; }
-        public List<string> TopLevelNames = new List<string>();
-    }
-
-    /*
-    /// <summary>
-    /// ADDSForestUtils class implementation
-    /// </summary>
-    public class ADDSForestUtils
-    {
-        private bool _isbinded = false;
-        private readonly List<ADDSForest> _forests = new List<ADDSForest>();
-
-        /// <summary>
-        /// ADDSForestUtils constructor
-        /// </summary>
-        public ADDSForestUtils()
-        {
-            _isbinded = false;
-            Bind();
-        }
-
-        public List<ADDSForest> Forests
-        {
-            get { return _forests; }
-        }
-
-        /// <summary>
-        /// Bind method implementation
-        /// </summary>
-        public void Bind()
-        {
-            if (_isbinded)
-                return;
-            _isbinded = true;
-
-            Forests.Clear();
-            Forest currentforest = Forest.GetCurrentForest();
-
-            ADDSForest root = new ADDSForest();
-            root.IsRoot = true;
-            root.ForestDNS = currentforest.Name;
-            Forests.Add(root);
-            foreach (ForestTrustRelationshipInformation trusts in currentforest.GetAllTrustRelationships())
-            {
-                ADDSForest sub = new ADDSForest();
-                sub.IsRoot = false;
-                sub.ForestDNS = trusts.TargetName;
-                foreach (TopLevelName t in trusts.TopLevelNames)
-                {
-                    if (t.Status == TopLevelNameStatus.Enabled)
-                        sub.TopLevelNames.Add(t.Name);
-                }
-                Forests.Add(sub);
-            }
-        }
-
-        /// <summary>
-        /// GetForestDNSForUPN method implementation
-        /// </summary>
-        public string GetForestDNSForUPN(string upn)
-        {
-            string result = string.Empty;
-            string domtofind = upn.Substring(upn.IndexOf('@') + 1);
-            foreach (ADDSForest f in Forests)
-            {
-                if (f.IsRoot) // Fallback/default Forest
-                    result = f.ForestDNS;
-                else
-                {
-                    foreach (string s in f.TopLevelNames)
-                    {
-                        if (s.ToLower().Equals(domtofind.ToLower()))
-                        {
-                            result = f.ForestDNS;
-                            break;
-                        }
-                    }
-                }
-            }
-            return result;
-        }
-    }
-    */
 
     /// <summary>
     /// ADDSHostForest class implementation
@@ -253,7 +161,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
         internal static string GetForestForUser(ADDSHost host, string username)
         {
             string result = string.Empty;
-            switch (ClaimsUtilities.IdentityClaimTag)
+            switch (ADDSClaimsUtilities.IdentityClaimTag)
             {
                 case MFASecurityClaimTag.Upn:
                     string foresttofind = username.Substring(username.IndexOf('@') + 1);
@@ -306,7 +214,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
         internal static string GetSAMAccountForUser(ADDSHost host, string username)
         {
             string result = string.Empty;
-            switch (ClaimsUtilities.IdentityClaimTag)
+            switch (ADDSClaimsUtilities.IdentityClaimTag)
             {
                 case MFASecurityClaimTag.Upn:
                     string foresttofind = username.Substring(username.IndexOf('@') + 1);
@@ -784,11 +692,11 @@ namespace Neos.IdentityServer.MultiFactor.Data
     }
     #endregion
 
-    #region ClaimUtils
+    #region ADDSClaimsUtilities
     /// <summary>
-    /// Utilities class
+    /// ADDSClaimsUtilities class
     /// </summary>
-    public static class ClaimsUtilities
+    public static class ADDSClaimsUtilities
     {
         private static string _identityclaim;
         private static MFASecurityClaimTag _identitylaimtag = MFASecurityClaimTag.Upn;

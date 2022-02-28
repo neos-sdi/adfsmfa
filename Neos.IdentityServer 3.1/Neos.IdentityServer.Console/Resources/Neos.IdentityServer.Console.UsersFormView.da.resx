@@ -144,4 +144,7 @@
   <data name="USERSFRMSLECTMULTIPLE" xml:space="preserve">
     <value>Flere markeringer</value>
   </data>
+  <data name="USERSFRMDELETE" xml:space="preserve">
+    <value>Slette</value>
+  </data>
 </root>

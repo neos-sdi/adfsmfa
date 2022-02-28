@@ -735,4 +735,7 @@
   <data name="CTRLGLSHOWCUSTOM" xml:space="preserve">
     <value>Показать пользовательский аутентификатор</value>
   </data>
+  <data name="CTRGLPAUSEFORDAYS" xml:space="preserve">
+    <value>Разрешить приостановку MFA на (x) дней</value>
+  </data>
 </root>

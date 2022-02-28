@@ -1,6 +1,5 @@
-﻿#define test
-//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2022 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
+﻿//******************************************************************************************************************************************************************************************//
+// Copyright (c) 2022 @redhook62 (adfsmfa@gmail.com)                                                                                                                                        //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -12,7 +11,7 @@
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,                            //
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                               //
 //                                                                                                                                                                                          //
-//                                                                                                                                                             //
+//                                                                                                                                                                                          //
 // https://github.com/neos-sdi/adfsmfa                                                                                                                                                      //
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
@@ -526,10 +525,18 @@ namespace Neos.IdentityServer.MultiFactor
             }
             catch (Exception ex)
             {
-                Log.WriteEntry("Error loading SIDs informations : \r" + ex.Message, EventLogEntryType.Error, 666);
+                Log.WriteEntry("Error loading Security informations : \r" + ex.Message, EventLogEntryType.Error, 666);
                 return false;
             }
-        }       
+        }
+
+        /// <summary>
+        /// GetADFSServiceName method implmentation
+        /// </summary>
+        private static string GetADFSServiceName()
+        {
+            return "adfssrv";
+        }
 
         /// <summary>
         /// GetADFSServiceSID method implmentation
@@ -549,7 +556,6 @@ namespace Neos.IdentityServer.MultiFactor
                     {
                         if (NativeMethods.RtlCreateServiceSid(ref lSA_UNICODE_STRING, intPtr, ref cb) != STATUS_SUCCESS)
                            throw new Win32Exception(Marshal.GetLastWin32Error());
-                           // throw new Win32Exception(Convert.ToInt32(num));
                         return new SecurityIdentifier(intPtr).Value;
                     }
                     finally
@@ -558,19 +564,16 @@ namespace Neos.IdentityServer.MultiFactor
                     }
                 }
             }
+            catch (Exception ex)
+            {
+                Log.WriteEntry("Error loading ADFS Service SID information : \r" + ex.Message, EventLogEntryType.Error, 666);
+                return string.Empty;
+            }
             finally
             {
                 lSA_UNICODE_STRING.Dispose();
             }
             return string.Empty;
-        }
-
-        /// <summary>
-        /// GetADFSServiceName method implmentation
-        /// </summary>
-        private static string GetADFSServiceName()
-        {
-            return "adfssrv";
         }
 
         /// <summary>
@@ -600,8 +603,9 @@ namespace Neos.IdentityServer.MultiFactor
                 else
                     return string.Empty;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Log.WriteEntry("Error loading ADFS Account SID information : \r" + ex.Message, EventLogEntryType.Error, 666);
                 return string.Empty;
             }
             finally
@@ -635,8 +639,9 @@ namespace Neos.IdentityServer.MultiFactor
                 else
                     return string.Empty;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Log.WriteEntry("Error loading ADFS Account Name : \r" + ex.Message, EventLogEntryType.Error, 666);
                 return string.Empty;
             }
             finally
@@ -668,8 +673,9 @@ namespace Neos.IdentityServer.MultiFactor
                 else
                     return string.Empty;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Log.WriteEntry("Error loading ADFS Administration Group SID : \r" + ex.Message, EventLogEntryType.Error, 666);
                 return string.Empty;
             }
         }
@@ -683,8 +689,9 @@ namespace Neos.IdentityServer.MultiFactor
             {
                 return GetADFSServiceAdministrationProperties(ref tuple);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Log.WriteEntry("Error loading ADFS Administration Group Name : \r" + ex.Message, EventLogEntryType.Error, 666);
                 return string.Empty;
             }
         }

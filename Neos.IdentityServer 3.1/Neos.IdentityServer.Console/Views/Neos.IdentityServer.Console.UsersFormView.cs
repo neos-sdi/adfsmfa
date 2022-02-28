@@ -28,6 +28,7 @@ using Microsoft.ManagementConsole.Advanced;
 using System.Windows.Forms;
 using System.Threading;
 using res = Neos.IdentityServer.Console.Resources.Neos_IdentityServer_Console_UsersFormView;
+using System.Drawing;
 
 namespace Neos.IdentityServer.Console
 {
@@ -36,6 +37,12 @@ namespace Neos.IdentityServer.Console
     /// </summary>
     public class UsersFormView : FormView
     {
+        private static Bitmap _deletemmc = new Bitmap(Resources.Neos_IdentityServer_Console_Snapin.delete);
+        private static ToolStripMenuItem _activate = new ToolStripMenuItem(res.USERSFRMACTIVATE);
+        private static ToolStripMenuItem _deactivate = new ToolStripMenuItem(res.USERSFRMDEACTIVATE);
+        private static ToolStripMenuItem _properties = new ToolStripMenuItem(res.USERSFRMPROPERTIES);
+        private static ToolStripMenuItem _delete = new ToolStripMenuItem(res.USERSFRMDELETE, _deletemmc);
+
         private UsersListView usersControl = null;
         private UsersScopeNode usersScopeNode = null;
         private WritableSharedData _sharedUserData = null;
@@ -46,6 +53,7 @@ namespace Neos.IdentityServer.Console
         public UsersFormView()
         {
             _sharedUserData = new WritableSharedData();
+            _deletemmc.MakeTransparent();
         }
 
         /// <summary>
@@ -72,14 +80,29 @@ namespace Neos.IdentityServer.Console
         /// </summary>
         internal void PlugEvents(UsersListView lst)
         {
-            lst.DataSelectionChanged += OnDataSelectionChanged;
-            lst.DataEditionActivated += OnDataEditionActivated;
+            usersControl = lst;
             ActionsPaneItems.Clear();
             SelectionData.ActionsPaneItems.Clear();
             SelectionData.ActionsPaneHelpItems.Clear();
             SelectionData.EnabledStandardVerbs = (StandardVerbs.Delete);
             SelectionData.ActionsPaneItems.Add(new Microsoft.ManagementConsole.Action(res.USERSFRMPROPERTIES, res.USERSFRMPROPERTIESDESC, -1, "PropertyUser"));
+            UsersListControl.contextMenuStripGrid.Items.Clear();
+            UsersListControl.contextMenuStripGrid.Items.Add(res.USERSFRMPROPERTIES);
             ModeActionsPaneItems.Clear();
+            UsersListControl.DataSelectionChanged += OnDataSelectionChanged;
+            UsersListControl.DataEditionActivated += OnDataEditionActivated;
+            _activate.Text = res.USERSFRMACTIVATE;
+            _activate.ToolTipText = res.USERSFRMACTIVATEDESC;
+            _activate.Click += _activate_Click;
+            _deactivate.Text = res.USERSFRMDEACTIVATE;
+            _deactivate.ToolTipText = res.USERSFRMDEACTIVATEDESC;
+            _deactivate.Click += _deactivate_Click;
+            _properties.Text = res.USERSFRMPROPERTIES;
+            _properties.ToolTipText = res.USERSFRMPROPERTIESDESC;
+            _properties.Click += _properties_Click;
+            _delete.Text = res.USERSFRMDELETE;
+            _delete.ToolTipText = res.USERSFRMDELETE;
+            _delete.Click += _delete_Click;
         }
 
         /// <summary>
@@ -144,6 +167,7 @@ namespace Neos.IdentityServer.Console
         {
             Nullable<bool> enb = null;
             SelectionData.ActionsPaneItems.Clear();
+            UsersListControl.contextMenuStripGrid.Items.Clear();
             foreach (MFAUser reg in lst)
             {
                 if (!enb.HasValue)
@@ -154,12 +178,20 @@ namespace Neos.IdentityServer.Console
             if (enb.HasValue)
             {
                 if (!enb.Value)
+                {
                     SelectionData.ActionsPaneItems.Add(new Microsoft.ManagementConsole.Action(res.USERSFRMACTIVATE, res.USERSFRMACTIVATEDESC, -1, "EnableUser"));
+                    UsersListControl.contextMenuStripGrid.Items.Add(_activate);
+                }
                 else
+                {
                     SelectionData.ActionsPaneItems.Add(new Microsoft.ManagementConsole.Action(res.USERSFRMDEACTIVATE, res.USERSFRMDEACTIVATEDESC, -1, "DisableUser"));
-                SelectionData.ActionsPaneItems.Add(new Microsoft.ManagementConsole.ActionSeparator());
+                    UsersListControl.contextMenuStripGrid.Items.Add(_deactivate);
+                }
             }
             SelectionData.ActionsPaneItems.Add(new Microsoft.ManagementConsole.Action(res.USERSFRMPROPERTIES, res.USERSFRMPROPERTIESDESC, -1, "PropertyUser"));
+            UsersListControl.contextMenuStripGrid.Items.Add(_properties);
+            UsersListControl.contextMenuStripGrid.Items.Add(new ToolStripSeparator());
+            UsersListControl.contextMenuStripGrid.Items.Add(_delete);
         }
 
         /// <summary>
@@ -168,12 +200,21 @@ namespace Neos.IdentityServer.Console
         internal void EnableDisableAction(bool value)
         {
             SelectionData.ActionsPaneItems.Clear();
+            UsersListControl.contextMenuStripGrid.Items.Clear();
             if (!value)
+            {
                 SelectionData.ActionsPaneItems.Add(new Microsoft.ManagementConsole.Action(res.USERSFRMACTIVATE, res.USERSFRMACTIVATEDESC, -1, "EnableUser"));
+                UsersListControl.contextMenuStripGrid.Items.Add(_activate);
+            }
             else
+            {
                 SelectionData.ActionsPaneItems.Add(new Microsoft.ManagementConsole.Action(res.USERSFRMDEACTIVATE, res.USERSFRMDEACTIVATEDESC, -1, "DisableUser"));
-            SelectionData.ActionsPaneItems.Add(new Microsoft.ManagementConsole.ActionSeparator());
+                UsersListControl.contextMenuStripGrid.Items.Add(_deactivate);
+            }
             SelectionData.ActionsPaneItems.Add(new Microsoft.ManagementConsole.Action(res.USERSFRMPROPERTIES, res.USERSFRMPROPERTIESDESC, -1, "PropertyUser"));
+            UsersListControl.contextMenuStripGrid.Items.Add(_properties);
+            UsersListControl.contextMenuStripGrid.Items.Add(new ToolStripSeparator());
+            UsersListControl.contextMenuStripGrid.Items.Add(_delete);
         }
 
 
@@ -209,6 +250,14 @@ namespace Neos.IdentityServer.Console
                             }
                         }
                     }
+                    _activate.Text = res.USERSFRMACTIVATE;
+                    _activate.ToolTipText = res.USERSFRMACTIVATEDESC;
+                    _deactivate.Text = res.USERSFRMDEACTIVATE;
+                    _deactivate.ToolTipText = res.USERSFRMDEACTIVATEDESC;
+                    _properties.Text = res.USERSFRMPROPERTIES;
+                    _properties.ToolTipText = res.USERSFRMPROPERTIESDESC;
+                    _delete.Text = res.USERSFRMDELETE;
+                    _delete.ToolTipText = res.USERSFRMDELETE;
                 }
                 finally
                 {
@@ -358,7 +407,6 @@ namespace Neos.IdentityServer.Console
         /// </summary>
         protected override void OnDelete(SyncStatus status)
         {
-
             MessageBoxParameters messageBoxParameters = new MessageBoxParameters
             {
                 Caption = "Multi-Factor Authentication",
@@ -389,6 +437,56 @@ namespace Neos.IdentityServer.Console
             }
         }
 
+        #region ContextMenu Click events
+        /// <summary>
+        /// _delete_Click event
+        /// </summary>
+        private void _delete_Click(object sender, EventArgs e)
+        {
+            MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+            {
+                Caption = "Multi-Factor Authentication",
+                Buttons = MessageBoxButtons.YesNo,
+                DefaultButton = MessageBoxDefaultButton.Button1,
+                Icon = MessageBoxIcon.Question,
+                Text = res.USERSFRMCONFIRMDELETE
+            };
+
+            if (this.SnapIn.Console.ShowDialog(messageBoxParameters) == DialogResult.Yes)
+            {
+                MFAUserList reg = (MFAUserList)SelectionData.SelectionObject;
+                bool xres = DeleteUserStoreData(reg);
+
+            }
+        }
+
+        /// <summary>
+        /// _properties_Click event
+        /// </summary>
+        private void _properties_Click(object sender, EventArgs e)
+        {
+            this.SelectionData.ShowPropertySheet(res.USERSFRMPROPERTIES + " : " + SelectionData.DisplayName);
+        }
+
+        /// <summary>
+        /// _deactivate_Click event
+        /// </summary>
+        private void _deactivate_Click(object sender, EventArgs e)
+        {
+            MFAUserList reg = (MFAUserList)SelectionData.SelectionObject;
+            EnableUserStoreData(reg, false);
+        }
+
+        /// <summary>
+        /// _activate_Click event
+        /// </summary>
+        private void _activate_Click(object sender, EventArgs e)
+        {
+            MFAUserList reg = (MFAUserList)SelectionData.SelectionObject;
+            EnableUserStoreData(reg, true);
+        }
+
+        #endregion
         /// <summary>
         /// OnAddPropertyPages method implementation
         /// </summary>

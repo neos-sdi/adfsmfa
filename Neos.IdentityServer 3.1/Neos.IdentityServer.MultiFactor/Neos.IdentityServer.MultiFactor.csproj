@@ -238,6 +238,7 @@
     <EmbeddedResource Include="Resources\SErrors.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>SErrors.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\SInfos.it.resx" />
     <EmbeddedResource Include="Resources\SInfos.ja.resx" />

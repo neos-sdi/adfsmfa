@@ -735,4 +735,7 @@
   <data name="CTRLGLSHOWCUSTOM" xml:space="preserve">
     <value>Afficher l’authentificateur personnalisé</value>
   </data>
+  <data name="CTRGLPAUSEFORDAYS" xml:space="preserve">
+    <value>Autoriser la suspension du MFA pendant (x) jours</value>
+  </data>
 </root>

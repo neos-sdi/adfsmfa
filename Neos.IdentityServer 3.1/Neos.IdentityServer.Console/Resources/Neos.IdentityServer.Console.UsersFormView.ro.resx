@@ -144,4 +144,7 @@
   <data name="USERSFRMDEACTIVATEDESC" xml:space="preserve">
     <value>Dezactivați MFA pentru utilizatorul selectat.</value>
   </data>
+  <data name="USERSFRMDELETE" xml:space="preserve">
+    <value>Șterge</value>
+  </data>
 </root>

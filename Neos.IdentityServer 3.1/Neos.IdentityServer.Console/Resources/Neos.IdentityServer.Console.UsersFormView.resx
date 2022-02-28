@@ -144,4 +144,7 @@
   <data name="USERSFRMSLECTMULTIPLE" xml:space="preserve">
     <value>Multiple selection</value>
   </data>
+  <data name="USERSFRMDELETE" xml:space="preserve">
+    <value>Delete</value>
+  </data>
 </root>

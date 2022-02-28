@@ -124,6 +124,15 @@ namespace Neos.IdentityServer.Console.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Allow MFA to be paused for (x) days.
+        /// </summary>
+        internal static string CTRGLPAUSEFORDAYS {
+            get {
+                return ResourceManager.GetString("CTRGLPAUSEFORDAYS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Access account.
         /// </summary>
         internal static string CTRLADACCOUNT {

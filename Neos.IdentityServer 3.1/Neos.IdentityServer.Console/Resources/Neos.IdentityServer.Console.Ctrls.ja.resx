@@ -735,4 +735,7 @@
   <data name="CTRLGLSHOWCUSTOM" xml:space="preserve">
     <value>カスタム認証システムを表示する</value>
   </data>
+  <data name="CTRGLPAUSEFORDAYS" xml:space="preserve">
+    <value>MFA を (x) 日間一時停止できるようにする</value>
+  </data>
 </root>

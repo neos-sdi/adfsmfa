@@ -735,4 +735,7 @@
   <data name="CTRLGLSHOWCUSTOM" xml:space="preserve">
     <value>Vis brugerdefineret godkender</value>
   </data>
+  <data name="CTRGLPAUSEFORDAYS" xml:space="preserve">
+    <value>Tillad, at MFA sættes på pause i (x) dage</value>
+  </data>
 </root>

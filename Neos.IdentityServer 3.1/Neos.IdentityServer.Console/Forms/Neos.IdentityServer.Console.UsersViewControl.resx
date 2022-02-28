@@ -179,7 +179,7 @@
     <value>True</value>
   </metadata>
   <data name="PIN.HeaderText" xml:space="preserve">
-    <value></value>
+    <value />
   </data>
   <data name="PIN.Visible" type="System.Boolean, mscorlib">
     <value>False</value>
@@ -188,7 +188,7 @@
     <value>True</value>
   </metadata>
   <data name="OverrideMethod.HeaderText" xml:space="preserve">
-    <value></value>
+    <value />
   </data>
   <data name="OverrideMethod.Visible" type="System.Boolean, mscorlib">
     <value>False</value>
@@ -199,16 +199,28 @@
   <data name="secretKeyDataGridViewTextBoxColumn.Visible" type="System.Boolean, mscorlib">
     <value>False</value>
   </data>
+  <metadata name="contextMenuStripGrid.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="contextMenuStripGrid.Size" type="System.Drawing.Size, System.Drawing">
+    <value>181, 26</value>
+  </data>
+  <data name="&gt;&gt;contextMenuStripGrid.Name" xml:space="preserve">
+    <value>contextMenuStripGrid</value>
+  </data>
+  <data name="&gt;&gt;contextMenuStripGrid.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ContextMenuStrip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="GridView.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
   </data>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="GridView.Location" type="System.Drawing.Point, System.Drawing">
     <value>0, 0</value>
   </data>
   <data name="GridView.Size" type="System.Drawing.Size, System.Drawing">
-    <value>50, 50</value>
+    <value>500, 500</value>
   </data>
   <data name="GridView.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -223,7 +235,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;GridView.ZOrder" xml:space="preserve">
-    <value>0</value>
+    <value>1</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
@@ -235,7 +247,7 @@
     <value>True</value>
   </data>
   <data name="$this.Size" type="System.Drawing.Size, System.Drawing">
-    <value>50, 50</value>
+    <value>500, 500</value>
   </data>
   <data name="&gt;&gt;IMG.Name" xml:space="preserve">
     <value>IMG</value>
@@ -302,8 +314,5 @@
   </data>
   <data name="&gt;&gt;$this.Type" xml:space="preserve">
     <value>System.Windows.Forms.UserControl, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="creationDateDataGridViewTextBoxColumn.HeaderText" xml:space="preserve">
-    <value>Created</value>
   </data>
 </root>

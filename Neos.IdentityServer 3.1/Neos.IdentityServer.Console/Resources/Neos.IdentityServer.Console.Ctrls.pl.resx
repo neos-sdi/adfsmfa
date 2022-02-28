@@ -735,4 +735,7 @@
   <data name="CTRLGLSHOWCUSTOM" xml:space="preserve">
     <value>Pokaż niestandardowy token uwierzytelniający</value>
   </data>
+  <data name="CTRGLPAUSEFORDAYS" xml:space="preserve">
+    <value>Zezwalanie na wstrzymywanie usługi MFA na (x) dni</value>
+  </data>
 </root>

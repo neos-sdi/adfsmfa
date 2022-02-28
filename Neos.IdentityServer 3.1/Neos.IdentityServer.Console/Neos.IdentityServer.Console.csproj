@@ -1585,6 +1585,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.UsersViewControl.resx">
       <DependentUpon>Neos.IdentityServer.Console.UsersViewControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Neos.IdentityServer.Console.OTPViewControl.resx">
       <DependentUpon>Neos.IdentityServer.Console.OTPViewControl.cs</DependentUpon>
@@ -1778,11 +1779,13 @@
     <None Include="ResFiles\folder32.bmp" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="ResFiles\mmcdelete.png" />
     <Content Include="ResFiles\user_off16.bmp" />
     <Content Include="ResFiles\user_off32.bmp" />
     <Content Include="ResFiles\user_on16.bmp" />
     <Content Include="ResFiles\user_on32.bmp" />
     <None Include="Resources\pictureNeosSdi.Image.png" />
+    <None Include="Resources\delete.png" />
     <Content Include="SnapMMC\HowToLocalize.txt" />
     <Content Include="SnapMMC\import.xml" />
   </ItemGroup>

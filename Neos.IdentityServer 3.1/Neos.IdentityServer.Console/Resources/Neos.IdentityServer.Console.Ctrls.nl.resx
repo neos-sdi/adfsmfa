@@ -735,4 +735,7 @@
   <data name="CTRLGLSHOWCUSTOM" xml:space="preserve">
     <value>Aangepaste authenticator weergeven</value>
   </data>
+  <data name="CTRGLPAUSEFORDAYS" xml:space="preserve">
+    <value>Toestaan dat MFA gedurende (x) dagen wordt gepauzeerd</value>
+  </data>
 </root>

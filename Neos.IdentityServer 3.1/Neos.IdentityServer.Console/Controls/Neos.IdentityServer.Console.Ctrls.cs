@@ -1,5 +1,5 @@
 ﻿//******************************************************************************************************************************************************************************************//
-// Copyright (c) 2022 @redhook62 (adfsmfa@gmail.com)                                                                                                                                    //                        
+// Copyright (c) 2022 @redhook62 (adfsmfa@gmail.com)                                                                                                                                        //                        
 //                                                                                                                                                                                          //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),                                       //
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,   //
@@ -11,7 +11,7 @@
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,                            //
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                               //
 //                                                                                                                                                                                          //
-//                                                                                                                                                             //
+//                                                                                                                                                                                          //
 // https://github.com/neos-sdi/adfsmfa                                                                                                                                                      //
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
@@ -1827,6 +1827,7 @@ namespace Neos.IdentityServer.Console.Controls
         private CheckBox chkAllowNotifications;
         private NumericUpDown txtADVStart;
         private NumericUpDown txtADVEnd;
+        private NumericUpDown txtPauseforDays;
 
         private Panel _paneloptmfa;
         private Panel _panelstmfa;
@@ -1851,6 +1852,7 @@ namespace Neos.IdentityServer.Console.Controls
         private Label lblConfigProvider;
         private bool lockevents;
         private CheckBox chkUseUserLanguages;
+        private Label PauseforDaysLabel;
 
 
 
@@ -2052,7 +2054,7 @@ namespace Neos.IdentityServer.Console.Controls
                 {
                     Text = res.CTRLGLPOLICY + " : ",
                     Left = 10,
-                    Top = 168,
+                    Top = 129,
                     Width = 180
                 };
                 _txtpanel.Controls.Add(lblConfigTemplate);
@@ -2062,7 +2064,7 @@ namespace Neos.IdentityServer.Console.Controls
                 {
                     DropDownStyle = ComboBoxStyle.DropDownList,
                     Left = 210,
-                    Top = 164,
+                    Top = 125,
                     Width = 250
                 };
                 _txtpanel.Controls.Add(cbConfigTemplate);
@@ -2075,8 +2077,8 @@ namespace Neos.IdentityServer.Console.Controls
                 _panelstmfa = new Panel
                 {
                     Left = 0,
-                    Top = 198,
-                    Height = 125,
+                    Top = 158,
+                    Height = 120,
                     Width = 300
                 };
                 _txtpanel.Controls.Add(_panelstmfa);
@@ -2123,9 +2125,9 @@ namespace Neos.IdentityServer.Console.Controls
                 _panelregmfa = new Panel
                 {
                     Left = 0,
-                    Top = 300,
-                    Height = 135,
-                    Width = 320
+                    Top = 252,
+                    Height = 165,
+                    Width = 470
                 };
                 _txtpanel.Controls.Add(_panelregmfa);
 
@@ -2178,10 +2180,34 @@ namespace Neos.IdentityServer.Console.Controls
                 rdioREGREquired.CheckedChanged += REGUAdministrativeCheckedChanged;
                 _panelregmfa.Controls.Add(rdioREGREquired);
 
+                PauseforDaysLabel = new Label
+                {
+                    Text = res.CTRGLPAUSEFORDAYS + " :",
+                    Left = 30,
+                    Top = 142,
+                    Width = 320,
+                    TextAlign = ContentAlignment.MiddleLeft
+                };
+                _panelregmfa.Controls.Add(PauseforDaysLabel);
+
+                txtPauseforDays = new NumericUpDown
+                {
+                    Left = 410,
+                    Top = 142,
+                    Width = 50,
+                    TextAlign = HorizontalAlignment.Center,
+                    Value = Config.AllowPauseForDays,
+                    Minimum = new decimal(new int[] { 0, 0, 0, 0 }),
+                    Maximum = new decimal(new int[] { 7, 0, 0, 0 })
+                };
+                txtPauseforDays.ValueChanged += PauseForDaysValueChanged;
+                _panelregmfa.Controls.Add(txtPauseforDays);
+
+
                 _paneloptmfa = new Panel
                 {
                     Left = 530,
-                    Top = 198,
+                    Top = 158,
                     Height = 190,
                     Width = 400
                 };
@@ -2260,7 +2286,7 @@ namespace Neos.IdentityServer.Console.Controls
                 _paneladvmfa = new Panel
                 {
                     Left = 530,
-                    Top = 385,
+                    Top = 335,
                     Height = 100,
                     Width = 325
                 };
@@ -2320,7 +2346,6 @@ namespace Neos.IdentityServer.Console.Controls
                 };
                 txtADVEnd.ValueChanged += ADVEndValueChanged;
                 _paneladvmfa.Controls.Add(txtADVEnd);
-
 
                 tblSaveConfig = new LinkLabel
                 {
@@ -2553,6 +2578,7 @@ namespace Neos.IdentityServer.Console.Controls
 
                         txtADVStart.Enabled = false;
                         txtADVEnd.Enabled = false;
+                        txtPauseforDays.Enabled = true;
 
                         break;
                     case UserTemplateMode.Open:
@@ -2579,6 +2605,7 @@ namespace Neos.IdentityServer.Console.Controls
 
                         txtADVStart.Enabled = true;
                         txtADVEnd.Enabled = true;
+                        txtPauseforDays.Enabled = true;
 
                         break;
                     case UserTemplateMode.Default:
@@ -2605,6 +2632,7 @@ namespace Neos.IdentityServer.Console.Controls
 
                         txtADVStart.Enabled = true;
                         txtADVEnd.Enabled = true;
+                        txtPauseforDays.Enabled = true;
 
                         break;
                     case UserTemplateMode.Mixed:
@@ -2631,6 +2659,8 @@ namespace Neos.IdentityServer.Console.Controls
 
                         txtADVStart.Enabled = false;
                         txtADVEnd.Enabled = false;
+                        txtPauseforDays.Enabled = true;
+
                         break;
                     case UserTemplateMode.Managed:
                         rdioMFAAllowed.Checked = false;
@@ -2656,6 +2686,7 @@ namespace Neos.IdentityServer.Console.Controls
 
                         txtADVStart.Enabled = false;
                         txtADVEnd.Enabled = false;
+                        txtPauseforDays.Enabled = true;
 
                         break;
                     case UserTemplateMode.Strict:
@@ -2682,6 +2713,7 @@ namespace Neos.IdentityServer.Console.Controls
 
                         txtADVStart.Enabled = false;
                         txtADVEnd.Enabled = false;
+                        txtPauseforDays.Enabled = false;
 
                         break;
                     case UserTemplateMode.Administrative:
@@ -2708,6 +2740,7 @@ namespace Neos.IdentityServer.Console.Controls
 
                         txtADVStart.Enabled = false;
                         txtADVEnd.Enabled = false;
+                        txtPauseforDays.Enabled = false;
 
                         break;
                     default:
@@ -2744,6 +2777,7 @@ namespace Neos.IdentityServer.Console.Controls
 
                         txtADVStart.Enabled = true;
                         txtADVEnd.Enabled = true;
+                        txtPauseforDays.Enabled = true;
                         break;
                 }
             }
@@ -3178,6 +3212,30 @@ namespace Neos.IdentityServer.Console.Controls
             catch (Exception ex)
             {
                 errors.SetError(txtADVStart, ex.Message);
+            }
+        }
+        #endregion
+
+        #region PauseForDays
+        /// <summary>
+        /// PauseForDaysValueChanged method implementation
+        /// </summary>
+        private void PauseForDaysValueChanged(object sender, EventArgs e)
+        {
+            if (lockevents)
+                return;
+            try
+            {
+                if (_view.AutoValidate != AutoValidate.Disable)
+                {
+                    ManagementService.ADFSManager.SetDirty(true);
+                    Config.AllowPauseForDays = Convert.ToInt32(txtPauseforDays.Value);
+                    errors.SetError(txtPauseforDays, "");
+                }
+            }
+            catch (Exception ex)
+            {
+                errors.SetError(txtPauseforDays, ex.Message);
             }
         }
         #endregion

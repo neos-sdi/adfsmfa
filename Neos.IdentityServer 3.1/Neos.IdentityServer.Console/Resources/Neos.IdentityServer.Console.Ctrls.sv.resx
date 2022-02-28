@@ -735,4 +735,7 @@
   <data name="CTRLGLSHOWCUSTOM" xml:space="preserve">
     <value>Visa anpassad autentiserare</value>
   </data>
+  <data name="CTRGLPAUSEFORDAYS" xml:space="preserve">
+    <value>Tillåt att MFA pausas i (x) dagar</value>
+  </data>
 </root>

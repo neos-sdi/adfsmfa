@@ -60,6 +60,7 @@ namespace Neos.IdentityServer.Console
             FormView = (UsersFormView)view;
             FormView.PlugEvents(this);
             OnInitialize();
+
         }
 
         /// <summary>
@@ -423,7 +424,6 @@ namespace Neos.IdentityServer.Console
             {
                 e.Handled = true;
                 DataEditionActivated?.Invoke(this, new SelectionDataEventArgs(GetSelectedUsers(), MMCListAction.EditionActivated));
-
             }
         }
 

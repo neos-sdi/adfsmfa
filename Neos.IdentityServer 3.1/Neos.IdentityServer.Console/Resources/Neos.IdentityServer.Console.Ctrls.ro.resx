@@ -735,4 +735,7 @@
   <data name="CTRLGLSHOWCUSTOM" xml:space="preserve">
     <value>Afișare autentificare personalizată</value>
   </data>
+  <data name="CTRGLPAUSEFORDAYS" xml:space="preserve">
+    <value>Permite MFA să fie întreruptă pentru (x) zile</value>
+  </data>
 </root>
