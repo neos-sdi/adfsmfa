@@ -1,5 +1,9 @@
 # Security Policy
 
+Binary builds are always signed !
+
+Verify that the thumprint signature is : 86d7e03b3fb10a062f39bd98119856165b64c827
+
 ## Supported Versions
 
 For security flows that need a quickly update.

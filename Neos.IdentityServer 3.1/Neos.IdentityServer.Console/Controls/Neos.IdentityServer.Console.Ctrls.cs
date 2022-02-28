@@ -2286,8 +2286,8 @@ namespace Neos.IdentityServer.Console.Controls
                 _paneladvmfa = new Panel
                 {
                     Left = 530,
-                    Top = 335,
-                    Height = 100,
+                    Top = 360,
+                    Height = 800,
                     Width = 325
                 };
                 _txtpanel.Controls.Add(_paneladvmfa);
@@ -2415,7 +2415,8 @@ namespace Neos.IdentityServer.Console.Controls
                 rdioREGAdmin.Text = res.CTRLGLMFAREGISTER1;
                 rdioREGUser.Text = res.CTRLGLMFAREGISTER2;
                 rdioREGUnManaged.Text = res.CTRLGLMFAREGISTER3;
-                rdioREGREquired.Text = res.CTRLGLMFAREGISTER4;  
+                rdioREGREquired.Text = res.CTRLGLMFAREGISTER4;
+                PauseforDaysLabel.Text = res.CTRGLPAUSEFORDAYS;
                 optCFGLabel.Text = res.CTRLGLMANAGEOPTS;
                 chkAllowManageOptions.Text = res.CTRLGLMANAGEOPTIONS;
                 chkAllowEnrollment.Text = res.CTRLGLENROLLWIZ;
