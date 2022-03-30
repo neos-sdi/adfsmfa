@@ -738,4 +738,7 @@
   <data name="CTRGLPAUSEFORDAYS" xml:space="preserve">
     <value>Tillad, at MFA sættes på pause i (x) dage</value>
   </data>
+  <data name="CTRLPROVWIZARDDISABLED" xml:space="preserve">
+    <value>Guide deaktiveret ved tilmelding</value>
+  </data>
 </root>

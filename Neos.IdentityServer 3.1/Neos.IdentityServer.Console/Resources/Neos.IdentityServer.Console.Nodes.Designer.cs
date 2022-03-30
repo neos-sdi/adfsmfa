@@ -430,6 +430,24 @@ namespace Neos.IdentityServer.Console.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Ukrainian.
+        /// </summary>
+        public static string ROOTLANGUAGEUK {
+            get {
+                return ResourceManager.GetString("ROOTLANGUAGEUK", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Change the culture of the user interface in Ukrainian (1058).
+        /// </summary>
+        public static string ROOTLANGUAGEUKDESC {
+            get {
+                return ResourceManager.GetString("ROOTLANGUAGEUKDESC", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à English.
         /// </summary>
         public static string ROOTLANGUAGEUS {

@@ -726,6 +726,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         public bool Enabled { get; set; }
         public bool IsRequired { get; set; }
         public bool EnrollWizard { get; set; }
+        public bool EnrollWizardDisabled { get; set; }
         public bool PinRequired { get; set; }
         public ForceWizardMode ForceWizard { get; set; }
         public string FullyQualifiedImplementation { get; set; }
@@ -797,6 +798,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             this.Enabled = otp.Enabled;
             this.IsRequired = otp.IsRequired;
             this.EnrollWizard = otp.EnrollWizard;
+            this.EnrollWizardDisabled = otp.EnrollWizardDisabled;
             this.ForceWizard = otp.ForceWizard;
             this.Algorithm = otp.Algorithm;
             this.Digits = otp.TOTPDigits;
@@ -827,6 +829,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             otp.Enabled = this.Enabled;
             otp.IsRequired = this.IsRequired;
             otp.EnrollWizard = this.EnrollWizard;
+            otp.EnrollWizardDisabled = this.EnrollWizardDisabled;
             otp.ForceWizard = this.ForceWizard;
             otp.Algorithm = this.Algorithm;
             otp.TOTPShadows = this.TOTPShadows;
@@ -902,6 +905,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             IsDirty = cfg.IsDirty;
             Enabled = mail.Enabled;
             EnrollWizard = mail.EnrollWizard;
+            EnrollWizardDisabled = mail.EnrollWizardDisabled;
             ForceWizard = mail.ForceWizard;
             From = mail.From;
             UserName = mail.UserName;
@@ -965,6 +969,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             CheckUpdates(host);
             mail.Enabled = Enabled;
             mail.EnrollWizard = EnrollWizard;
+            mail.EnrollWizardDisabled = EnrollWizardDisabled;
             mail.ForceWizard = ForceWizard;
             mail.From = From;
             mail.UserName = UserName;
@@ -1055,6 +1060,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             this.Enabled = otp.Enabled;
             this.IsRequired = otp.IsRequired;
             this.EnrollWizard = otp.EnrollWizard;
+            this.EnrollWizardDisabled = otp.EnrollWizardDisabled;
             this.ForceWizard = otp.ForceWizard;
             this.Company = otp.Company;
             this.FullyQualifiedImplementation = otp.FullQualifiedImplementation;
@@ -1078,6 +1084,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             otp.Enabled = this.Enabled;
             otp.IsRequired = this.IsRequired;
             otp.EnrollWizard = this.EnrollWizard;
+            otp.EnrollWizardDisabled = EnrollWizardDisabled;
             otp.ForceWizard = this.ForceWizard;
             otp.Company = this.Company;
             otp.FullQualifiedImplementation = this.FullyQualifiedImplementation;
@@ -1123,6 +1130,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             this.Enabled = otp.Enabled;
             IsRequired = otp.IsRequired;
             this.EnrollWizard = false;
+            this.EnrollWizardDisabled = true;
             this.ForceWizard = ForceWizardMode.Disabled;
             this.TenantId = otp.TenantId;
             this.ThumbPrint = otp.ThumbPrint;
@@ -1141,6 +1149,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             CheckUpdates(host);
             otp.Enabled = Enabled;
             otp.EnrollWizard = false;
+            otp.EnrollWizardDisabled = true;
             otp.IsRequired = IsRequired;
             otp.ForceWizard = ForceWizardMode.Disabled;
             otp.TenantId = this.TenantId;
@@ -1195,6 +1204,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             this.Enabled = otp.Enabled;
             this.IsRequired = otp.IsRequired;
             this.EnrollWizard = otp.EnrollWizard;
+            this.EnrollWizardDisabled = otp.EnrollWizardDisabled;
             this.ForceWizard = otp.ForceWizard;
             this.DirectLogin = otp.DirectLogin;
             this.PinRequired = otp.PinRequired;
@@ -1227,6 +1237,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
             CheckUpdates(host);
             otp.Enabled = this.Enabled;
             otp.EnrollWizard = this.EnrollWizard;
+            otp.EnrollWizardDisabled = this.EnrollWizardDisabled;
             otp.ForceWizard = this.ForceWizard;
             otp.IsRequired = this.IsRequired;
             otp.PinRequirements = this.PinRequirements;

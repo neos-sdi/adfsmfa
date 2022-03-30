@@ -40,9 +40,19 @@ namespace MFA
         Azure = 4,
 
         /// <summary>
-        /// <para type="description">Biometrics, default mode for users is biometric authentication, based on WebAuthN specification (Not available, but coming soon).</para>
+        /// <para type="description">Biometrics, default mode for users is biometric authentication, based on WebAuthN specification.</para>
         /// </summary>
         Biometrics = 5,
+
+        /// <summary>
+        /// <para type="description">Pin, Not Used .</para>
+        /// </summary>
+        Pin = 6,
+
+        /// <summary>
+        /// <para type="description">None, do not change anything.</para>
+        /// </summary>
+        None = 7,
     }
 
     /// <summary>

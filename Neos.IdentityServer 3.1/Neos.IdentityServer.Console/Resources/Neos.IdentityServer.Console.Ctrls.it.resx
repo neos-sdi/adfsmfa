@@ -738,4 +738,7 @@
   <data name="CTRGLPAUSEFORDAYS" xml:space="preserve">
     <value>Consenti la sospensione dell'MFA per (x) giorni</value>
   </data>
+  <data name="CTRLPROVWIZARDDISABLED" xml:space="preserve">
+    <value>Procedura guidata disabilitata al momento dell'iscrizione</value>
+  </data>
 </root>

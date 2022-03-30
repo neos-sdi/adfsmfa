@@ -323,6 +323,8 @@ namespace Neos.IdentityServer.MultiFactor
                         result += "<div id=\"xMessage\" class=\"fieldMargin smallText\">" + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlUIMustPrepareLabel") + "</div>";
                         foreach (IExternalProvider itm in lst)
                         {
+                            if ((itm.WizardDisabled) && (!itm.IsRequired))
+                                continue;
                             if ((itm.Kind == PreferredMethod.Biometrics) && usercontext.BioNotSupported)
                                 continue;
                             if (itm.Kind != PreferredMethod.Azure)
@@ -356,7 +358,7 @@ namespace Neos.IdentityServer.MultiFactor
                     {
                         IExternalProvider prov = RuntimePresentation.GetProviderInstance(m);
                         result += "<div id=\"wizardMessage\" class=\"groupMargin\">" + prov.GetWizardUILabel(usercontext) + "</div>";
-                        result += "<div id=\"pwdMessage\" class=\"fieldMargin smallText\">" + prov.GetUIEnrollmentTaskLabel(usercontext) + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlUIEnrollContinue") + "</div><br/>";
+                        result += "<div id=\"pwdMessage\" class=\"fieldMargin smallText\">" + prov.GetUIEnrollmentTaskLabel(usercontext) + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlUIEnrollContinue") + "</div><br/><br/>";
                         result += "<table><tr>";
                         result += "<td>";
                         result += "<input id=\"continueButton\" type=\"submit\" class=\"submit\" name=\"continueButton\" value=\"" + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlLabelWVERIFYOTP") + "\" onclick=\"fnbtnclicked(2)\" />";
@@ -373,7 +375,7 @@ namespace Neos.IdentityServer.MultiFactor
                     else
                     {   // Pin Code not provider
                         result += "<div id=\"wizardMessage\" class=\"groupMargin\">" + BaseExternalProvider.GetPINWizardUILabel(usercontext) + "</div>";
-                        result += "<div id=\"pwdMessage\" class=\"fieldMargin smallText\">" + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlEnrollPinTaskLabel") + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlUIEnrollContinue") + "</div><br/>";
+                        result += "<div id=\"pwdMessage\" class=\"fieldMargin smallText\">" + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlEnrollPinTaskLabel") + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlUIEnrollContinue") + "</div><br/><br/>";
                         result += "<table><tr>";
                         result += "<td>";
                         result += "<input id=\"continueButton\" type=\"submit\" class=\"submit\" name=\"continueButton\" value=\"" + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlLabelWVERIFYOTP") + "\" onclick=\"fnbtnclicked(2)\" />";
@@ -391,6 +393,8 @@ namespace Neos.IdentityServer.MultiFactor
                         result += "<div id=\"xMessage\" class=\"fieldMargin smallText\">" + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlUIResultLabel") + "</div>";
                         foreach (IExternalProvider itm in lst2)
                         {
+                            if ((itm.WizardDisabled) && (!itm.IsRequired))
+                                continue;
                             if ((itm.Kind == PreferredMethod.Biometrics) && usercontext.BioNotSupported)
                                 continue;
                             string value = string.Empty;
@@ -508,6 +512,8 @@ namespace Neos.IdentityServer.MultiFactor
                         result += "<div id=\"xMessage\" class=\"fieldMargin smallText\">" + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlUIMustPrepareLabel") + "</div>";
                         foreach (IExternalProvider itm in lst)
                         {
+                            if ((itm.WizardDisabled) && (!itm.IsRequired))
+                                continue;
                             if (itm.Kind != PreferredMethod.Azure)
                             {
                                 if ((itm.Kind == PreferredMethod.Biometrics) && usercontext.BioNotSupported)
@@ -546,7 +552,7 @@ namespace Neos.IdentityServer.MultiFactor
                     {
                         IExternalProvider prov = RuntimePresentation.GetProviderInstance(m);
                         result += "<div id=\"wizardMessage\" class=\"groupMargin\">" + prov.GetWizardUILabel(usercontext) + "</div>";
-                        result += "<div id=\"pwdMessage\" class=\"fieldMargin smallText\">" + prov.GetUIEnrollmentTaskLabel(usercontext) + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlUIEnrollContinue") + "</div><br/>";
+                        result += "<div id=\"pwdMessage\" class=\"fieldMargin smallText\">" + prov.GetUIEnrollmentTaskLabel(usercontext) + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlUIEnrollContinue") + "</div><br/><br/>";
                         result += "<table><tr>";
                         result += "<td>";
                         result += "<input id=\"continueButton\" type=\"submit\" class=\"submit\" name=\"Continue\" value=\"" + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlLabelWVERIFYOTP") + "\" onclick=\"fnbtnclicked(2)\" />";
@@ -563,7 +569,7 @@ namespace Neos.IdentityServer.MultiFactor
                     else
                     {   // Pin Code not provider
                         result += "<div id=\"wizardMessage\" class=\"groupMargin\">" + BaseExternalProvider.GetPINWizardUILabel(usercontext) + "</div>";
-                        result += "<div id=\"pwdMessage\" class=\"fieldMargin smallText\">" + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlEnrollPinTaskLabel") + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlUIEnrollContinue") + "</div><br/>";
+                        result += "<div id=\"pwdMessage\" class=\"fieldMargin smallText\">" + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlEnrollPinTaskLabel") + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlUIEnrollContinue") + "</div><br/><br/>";
                         result += "<table><tr>";
                         result += "<td>";
                         result += "<input id=\"continueButton\" type=\"submit\" class=\"submit\" name=\"Continue\" value=\"" + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlLabelWVERIFYOTP") + "\" onclick=\"fnbtnclicked(2)\" />";
@@ -581,6 +587,8 @@ namespace Neos.IdentityServer.MultiFactor
                         result += "<div id=\"xMessage\" class=\"fieldMargin smallText\">" + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlUIResultLabel") + "</div>";
                         foreach (IExternalProvider itm in lst2)
                         {
+                            if ((itm.WizardDisabled) && (!itm.IsRequired))
+                                continue;
                             if ((itm.Kind == PreferredMethod.Biometrics) && usercontext.BioNotSupported)
                                 continue;
                             string value = string.Empty;
@@ -1449,15 +1457,15 @@ namespace Neos.IdentityServer.MultiFactor
 
             if ((!usercontext.DirectLogin) || (soon))
             {
+                result += "<input id=\"signin\" type=\"submit\" class=\"submit\" name=\"signin\" value=\"" + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlUIMConnexion") + "\" /><br/><br/>";
                 if (Provider.HasAccessToOptions(prov))
                 {
                     if ((soon) && (Provider.Config.UserFeatures.CanManagePassword()))
                         result += "<input id=\"##OPTIONS##\" type=\"checkbox\" name=\"##OPTIONS##\" checked=\"true\" /> " + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlUIMAccessOptions");
                     else
                         result += "<input id=\"##OPTIONS##\" type=\"checkbox\" name=\"##OPTIONS##\" /> " + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlUIMAccessOptions");
-                    result += "<br/><br/>";
+                    result += "<br/>";
                 }
-                result += "<input id=\"signin\" type=\"submit\" class=\"submit\" name=\"signin\" value=\"" + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlUIMConnexion") + "\" /><br/><br/>";
                 result += "<a class=\"actionLink\" href=\"#\" id=\"nocode\" name=\"nocode\" onclick=\"return SetLinkTitle(refreshbiometricForm, '3')\"; style=\"cursor: pointer;\">" + Resources.GetString(ResourcesLocaleKind.UIHtml, "HtmlUIMNoCode") + "</a>";
                 result += "<input id=\"##SELECTEDLINK##\" type=\"hidden\" name=\"##SELECTEDLINK##\" value=\"0\"/>";
             }

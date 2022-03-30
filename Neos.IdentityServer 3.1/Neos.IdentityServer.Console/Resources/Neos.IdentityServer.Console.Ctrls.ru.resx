@@ -738,4 +738,7 @@
   <data name="CTRGLPAUSEFORDAYS" xml:space="preserve">
     <value>Разрешить приостановку MFA на (x) дней</value>
   </data>
+  <data name="CTRLPROVWIZARDDISABLED" xml:space="preserve">
+    <value>Мастер отключен при регистрации</value>
+  </data>
 </root>

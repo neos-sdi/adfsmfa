@@ -738,4 +738,7 @@
   <data name="CTRGLPAUSEFORDAYS" xml:space="preserve">
     <value>Permite MFA să fie întreruptă pentru (x) zile</value>
   </data>
+  <data name="CTRLPROVWIZARDDISABLED" xml:space="preserve">
+    <value>Expert dezactivat la înscriere</value>
+  </data>
 </root>

@@ -635,49 +635,26 @@ namespace MFA
     [AdministratorsRightsRequired]
     public sealed class SetMFAUser : MFACmdlet
     {
-        private string _identity = string.Empty;
-        private string _mailaddress = string.Empty;
-        private string _phonenumber = string.Empty;
-        private PSPreferredMethod _method = PSPreferredMethod.Choose;
-        private bool _enabled = true;
-        private bool _emailfornewkey = false;
-        private int _pincode = -1;
-        private bool _resetkey = false;
-
-        PSRegistration[] _data = null;
-
         /// <summary>
         /// <para type="description">identity of the updated user (upn).</para>
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = "Identity")]
         [ValidateNotNullOrEmpty()]
-        public string Identity
-        {
-            get { return _identity; }
-            set { _identity = value; }
-        }
+        public string Identity { get; set; } = string.Empty;
 
         /// <summary>
         /// <para type="description">email address of the updated users.</para>
         /// </summary>
         [Parameter(Mandatory = false, ParameterSetName = "Identity")]
         [Alias("Email")]
-        public string MailAddress
-        {
-            get { return _mailaddress; }
-            set { _mailaddress = value; }
-        }
+        public string MailAddress { get; set; } = string.Empty;
 
         /// <summary>
         /// <para type="description">phone number of the updated users.</para>
         /// </summary>
         [Parameter(Mandatory = false, ParameterSetName = "Identity")]
         [Alias("Phone")]
-        public string PhoneNumber
-        {
-            get { return _phonenumber; }
-            set { _phonenumber = value; }
-        }
+        public string PhoneNumber { get; set; } = string.Empty;
 
         /// <summary>
         /// <para type="description">MFA Method for the updated users.</para>
@@ -685,65 +662,41 @@ namespace MFA
         [Parameter(ParameterSetName = "Identity")]
         [Parameter(ParameterSetName = "Data")]
         [ValidateSet("Choose", "Code", "Email", "External", "Azure", "Biometrics")]
-        public PSPreferredMethod Method
-        {
-            get { return _method; }
-            set { _method = value; }
-        }
+        public PSPreferredMethod Method { get; set; } = PSPreferredMethod.None;
 
         /// <summary>
         /// <para type="description">Pin code of selected users.</para>
         /// </summary>
         [Parameter(ParameterSetName = "Identity")]
-        public int Pin
-        {
-            get { return _pincode; }
-            set { _pincode = value; }
-        }
+        public int Pin { get; set; } = -1;
 
         /// <summary>
         /// <para type="description">Enabled status for the selected users.</para>
         /// </summary>
         [Parameter(ParameterSetName = "Identity")]
         [Parameter(ParameterSetName = "Data")]
-        public SwitchParameter Enabled
-        {
-            get { return _enabled; }
-            set { _enabled = value; }
-        }
+        public SwitchParameter Enabled { get; set; } 
 
         /// <summary>
         /// <para type="description">EmailForNewKey allow email when updating Key for MFA.</para>
         /// </summary>
         [Parameter(ParameterSetName = "Identity")]
         [Parameter(ParameterSetName = "Data")]
-        public SwitchParameter EmailForNewKey
-        {
-            get { return _emailfornewkey; }
-            set { _emailfornewkey = value; }
-        }
+        public SwitchParameter EmailForNewKey { get; set; }
 
         /// <summary>
         /// <para type="description">Regenerate a new secret key for the selected users.</para>
         /// </summary>
         [Parameter(ParameterSetName = "Identity")]
         [Parameter(ParameterSetName = "Data")]
-        public SwitchParameter ResetKey
-        {
-            get { return _resetkey; }
-            set { _resetkey = value; }
-        }
+        public SwitchParameter ResetKey { get; set; }
 
         /// <summary>
         /// <para type="description">Collection of users to update.</para>
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = "Data", ValueFromPipeline = true, DontShow = true)]
         [ValidateNotNullOrEmpty()]
-        public PSRegistration[] Data
-        {
-            get { return _data; }
-            set { _data = value; }
-        }
+        public PSRegistration[] Data { get; set; } = null;
 
         /// <summary>
         /// BeginProcessing method implementation
@@ -751,14 +704,14 @@ namespace MFA
         protected override void BeginProcessing()
         {
             base.BeginProcessing();
-            if (!string.IsNullOrEmpty(_identity))
+            if (!string.IsNullOrEmpty(Identity))
             {
                 try
                 {
                     ManagementService.Initialize(this.Host, true);
                     PSRegistration res = (PSRegistration)ManagementService.GetUserRegistration(Identity);
                     if (res == null)
-                        throw new Exception(string.Format(errors_strings.ErrorUserNotFound, this.Identity));
+                        throw new Exception(string.Format(errors_strings.ErrorUserNotFound, Identity));
                     Data = new PSRegistration[] { res };
                 }
                 catch (Exception ex)
@@ -775,7 +728,7 @@ namespace MFA
         {
             int i = 0;
             ProgressRecord prog = null;
-            if (_data.Length >= 10)
+            if (Data.Length >= 10)
             {
                 prog = new ProgressRecord(this.GetHashCode(), "Set-MFAUsers", "Operation running")
                 {
@@ -783,13 +736,13 @@ namespace MFA
                     RecordType = ProgressRecordType.Processing
                 };
             }
-            foreach (PSRegistration reg in _data)
+            foreach (PSRegistration reg in Data)
             {
                 if (ShouldProcess(string.Format("\"{0}\"", reg.UPN)))
                 {
-                    if (_data.Length >= 10)
+                    if (Data.Length >= 10)
                     {
-                        prog.PercentComplete = ((i / _data.Length) * 100);
+                        prog.PercentComplete = ((i / Data.Length) * 100);
                         prog.CurrentOperation = string.Format("\"{0}\" ", reg.UPN);
                         this.WriteProgress(prog);
                     }
@@ -811,7 +764,7 @@ namespace MFA
                             this.Host.UI.WriteWarningLine(string.Format(errors_strings.ErrorPhoneNotProvided, reg.UPN));
 
                         ManagementService.Initialize(this.Host, true);
-                        PSRegistration ret = (PSRegistration)ManagementService.SetUserRegistration((MFAUser)reg, this.ResetKey, false, this.EmailForNewKey);
+                        PSRegistration ret = (PSRegistration)ManagementService.SetUserRegistration((MFAUser)reg, ResetKey, false, EmailForNewKey);
 
                         if (ret != null)
                         {
@@ -825,7 +778,7 @@ namespace MFA
                     }
                     catch (Exception Ex)
                     {
-                        if (!string.IsNullOrEmpty(_identity))
+                        if (!string.IsNullOrEmpty(Identity))
                             this.ThrowTerminatingError(new ErrorRecord(new Exception(string.Format(errors_strings.ErrorUpdatingUser, reg.UPN, Ex.Message)), "1003", ErrorCategory.OperationStopped, this));
                         else
                            this.WriteError(new ErrorRecord(new Exception(string.Format(errors_strings.ErrorUpdatingUser, reg.UPN, Ex.Message)), "1003", ErrorCategory.OperationStopped, this));
@@ -833,7 +786,7 @@ namespace MFA
                 }
                 i++;
             }
-            if (_data.Length >= 10)
+            if (Data.Length >= 10)
                 prog.RecordType = ProgressRecordType.Completed;
         }
     }
@@ -859,49 +812,26 @@ namespace MFA
     [AdministratorsRightsRequired]
     public sealed class AddMFAUser : MFACmdlet
     {
-        private string _identity = string.Empty;
-        private string _mailaddress = string.Empty;
-        private string _phonenumber = string.Empty;
-        private PSPreferredMethod _method = PSPreferredMethod.Choose;
-        private int _pincode = -1;
-        private bool _enabled = true;
-        private bool _emailfornewkey = false;
-        private bool _nonewkey = false;
-
-        PSRegistration[] _data = null;
-
         /// <summary>
         /// <para type="description">identity of the new user (upn).</para>
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = "Identity")]
         [ValidateNotNullOrEmpty()]
-        public string Identity
-        {
-            get { return _identity; }
-            set { _identity = value; }
-        }
+        public string Identity { get; set; } = string.Empty;
 
         /// <summary>
         /// <para type="description">email address of the new user.</para>
         /// </summary>
         [Parameter(Mandatory = false, ParameterSetName = "Identity")]
         [Alias("Email")]
-        public string MailAddress
-        {
-            get { return _mailaddress; }
-            set { _mailaddress = value; }
-        }
+        public string MailAddress { get; set; } = string.Empty;
 
         /// <summary>
         /// <para type="description">phone number of the new user.</para>
         /// </summary>
         [Parameter(Mandatory = false, ParameterSetName = "Identity")]
         [Alias("Phone")]
-        public string PhoneNumber
-        {
-            get { return _phonenumber; }
-            set { _phonenumber = value; }
-        }
+        public string PhoneNumber { get; set; } = string.Empty;
 
         /// <summary>
         /// <para type="description">MFA Method for the new users.</para>
@@ -909,65 +839,41 @@ namespace MFA
         [Parameter(ParameterSetName = "Identity")]
         [Parameter(ParameterSetName = "Data")]
         [ValidateSet("Choose", "Code", "Email", "External", "Azure", "Biometrics")]
-        public PSPreferredMethod Method
-        {
-            get { return _method; }
-            set { _method = value; }
-        }
+        public PSPreferredMethod Method { get; set; } = PSPreferredMethod.None;
 
         /// <summary>
         /// <para type="description">Pin code of selected users.</para>
         /// </summary>
         [Parameter(ParameterSetName = "Identity")]
-        public int Pin
-        {
-            get { return _pincode; }
-            set { _pincode = value; }
-        }
+        public int Pin { get; set; } = -1;
 
         /// <summary>
         /// <para type="description">Enabled status for the new users.</para>
         /// </summary>
         [Parameter(ParameterSetName = "Identity")]
         [Parameter(ParameterSetName = "Data")]
-        public SwitchParameter Enabled
-        {
-            get { return _enabled; }
-            set { _enabled = value; }
-        }
+        public SwitchParameter Enabled { get; set; } = true;
 
         /// <summary>
         /// <para type="description">Regenerate a new secret key for the selected users.</para>
         /// </summary>
         [Parameter(ParameterSetName = "Identity")]
         [Parameter(ParameterSetName = "Data")]
-        public SwitchParameter NoNewKey
-        {
-            get { return _nonewkey; }
-            set { _nonewkey = value; }
-        }
+        public SwitchParameter NoNewKey { get; set; } = false;
 
         /// <summary>
         /// <para type="description">EmailForNewKey allow Key email when create a new Key for MFA.</para>
         /// </summary>
         [Parameter(ParameterSetName = "Identity")]
         [Parameter(ParameterSetName = "Data")]
-        public SwitchParameter EmailForNewKey
-        {
-            get { return _emailfornewkey; }
-            set { _emailfornewkey = value; }
-        }
+        public SwitchParameter EmailForNewKey { get; set; } = false;
 
         /// <summary>
         /// <para type="description">Collection of users to add.</para>
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = "Data", ValueFromPipeline = true, DontShow = true)]
         [ValidateNotNullOrEmpty()]
-        public PSRegistration[] Data
-        {
-            get { return _data; }
-            set { _data = value; }
-        }
+        public PSRegistration[] Data { get; set; } = null;
 
         /// <summary>
         /// BeginProcessing method implementation
@@ -975,7 +881,7 @@ namespace MFA
         protected override void BeginProcessing()
         {
             base.BeginProcessing();
-            if (!string.IsNullOrEmpty(_identity))
+            if (!string.IsNullOrEmpty(Identity))
             {
                 try
                 {
@@ -1004,7 +910,7 @@ namespace MFA
         {
             int i = 0;
             ProgressRecord prog = null;
-            if (_data.Length >= 10)
+            if (Data.Length >= 10)
             {
                 prog = new ProgressRecord(this.GetHashCode(), "Add-MFAUsers", "Operation running")
                 {
@@ -1012,13 +918,13 @@ namespace MFA
                     RecordType = ProgressRecordType.Processing
                 };
             }
-            foreach (PSRegistration reg in _data)
+            foreach (PSRegistration reg in Data)
             {
                 if (ShouldProcess(string.Format("\"{0}\"", reg.UPN)))
                 {
-                    if (_data.Length >= 10)
+                    if (Data.Length >= 10)
                     {
-                        prog.PercentComplete = ((i / _data.Length) * 100);
+                        prog.PercentComplete = ((i / Data.Length) * 100);
                         prog.CurrentOperation = string.Format("\"{0}\" ", reg.UPN);
                         this.WriteProgress(prog);
                     }
@@ -1052,7 +958,7 @@ namespace MFA
                     }
                     catch (Exception Ex)
                     {
-                        if (!string.IsNullOrEmpty(_identity))
+                        if (!string.IsNullOrEmpty(Identity))
                             this.ThrowTerminatingError(new ErrorRecord(new Exception(string.Format(errors_strings.ErrorAddingUser, reg.UPN, Ex.Message)), "1004", ErrorCategory.OperationStopped, this));
                         else
                             this.WriteError(new ErrorRecord(new Exception(string.Format(errors_strings.ErrorAddingUser, reg.UPN, Ex.Message)), "1004", ErrorCategory.OperationStopped, this));
@@ -1060,7 +966,7 @@ namespace MFA
                 }
                 i++;
             }
-            if (_data.Length >= 10)
+            if (Data.Length >= 10)
                 prog.RecordType = ProgressRecordType.Completed;
         }
     }
@@ -1084,30 +990,19 @@ namespace MFA
     [AdministratorsRightsRequired]
     public sealed class DeleteMFAUser : MFACmdlet
     {
-        string _identity = string.Empty;
-        PSRegistration[] _data = null;
-
         /// <summary>
         /// <para type="description">identity of the user to be removed (upn).</para>
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = "Identity")]
         [ValidateNotNullOrEmpty()]
-        public string Identity
-        {
-            get { return _identity; }
-            set { _identity = value; }
-        }
+        public string Identity { get; set; } = string.Empty;
 
         /// <summary>
         /// <para type="description">Collection of users to be removed from MFA.</para>
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = "Data", ValueFromPipeline = true, DontShow = true)]
         [ValidateNotNullOrEmpty()]
-        public PSRegistration[] Data
-        {
-            get { return _data; }
-            set { _data = value; }
-        }
+        public PSRegistration[] Data { get; set; } = null;
 
         /// <summary>
         /// BeginProcessing method implementation
@@ -1115,7 +1010,7 @@ namespace MFA
         protected override void BeginProcessing()
         {
             base.BeginProcessing();
-            if (!string.IsNullOrEmpty(_identity))
+            if (!string.IsNullOrEmpty(Identity))
             {
                 try
                 {
@@ -1140,7 +1035,7 @@ namespace MFA
         {
             int i = 0;
             ProgressRecord prog = null;
-            if (_data.Length >= 10)
+            if (Data.Length >= 10)
             {
                 prog = new ProgressRecord(this.GetHashCode(), "Remove-MFAUsers", "Operation running")
                 {
@@ -1148,15 +1043,15 @@ namespace MFA
                     RecordType = ProgressRecordType.Processing
                 };
             }
-            foreach (PSRegistration reg in _data)
+            foreach (PSRegistration reg in Data)
             {
                 if (ShouldProcess(string.Format("\"{0}\"", reg.UPN)))
                 {
                     try
                     {
-                        if (_data.Length >= 10)
+                        if (Data.Length >= 10)
                         {
-                            prog.PercentComplete = ((i / _data.Length) * 100);
+                            prog.PercentComplete = ((i / Data.Length) * 100);
                             prog.CurrentOperation = string.Format("\"{0}\" ", reg.UPN);
                             this.WriteProgress(prog);
                         }
@@ -1167,7 +1062,7 @@ namespace MFA
                     }
                     catch (Exception Ex)
                     {
-                        if (!string.IsNullOrEmpty(_identity))
+                        if (!string.IsNullOrEmpty(Identity))
                             this.ThrowTerminatingError(new ErrorRecord(new Exception(string.Format(errors_strings.ErrorDeletingUser, reg.UPN, Ex.Message)), "1005", ErrorCategory.OperationStopped, this));
                         else
                             this.WriteError(new ErrorRecord(new Exception(string.Format(errors_strings.ErrorDeletingUser, reg.UPN, Ex.Message)), "1005", ErrorCategory.OperationStopped, this));
@@ -1175,7 +1070,7 @@ namespace MFA
                 }
                 i++;
             }
-            if (_data.Length >= 10)
+            if (Data.Length >= 10)
                 prog.RecordType = ProgressRecordType.Completed;
         }
     }
@@ -1200,30 +1095,19 @@ namespace MFA
     [AdministratorsRightsRequired]
     public sealed class EnableMFAUser : MFACmdlet
     {
-        string _identity = string.Empty;
-        PSRegistration[] _data = null;
-
         /// <summary>
         /// <para type="description">identity of the user to be enabled (upn).</para>
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = "Identity")]
         [ValidateNotNullOrEmpty()]
-        public string Identity
-        {
-            get { return _identity; }
-            set { _identity = value; }
-        }
+        public string Identity { get; set; } = string.Empty;
 
         /// <summary>
         /// <para type="description">Collection of users to be enabled for MFA (must be registered before with Add-MFAUsers.</para>
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = "Data", ValueFromPipeline = true, DontShow = true)]
         [ValidateNotNullOrEmpty()]
-        public PSRegistration[] Data
-        {
-            get { return _data; }
-            set { _data = value; }
-        }
+        public PSRegistration[] Data { get; set; } = null;
 
         /// <summary>
         /// BeginProcessing method implementation
@@ -1231,7 +1115,7 @@ namespace MFA
         protected override void BeginProcessing()
         {
             base.BeginProcessing();
-            if (!string.IsNullOrEmpty(_identity))
+            if (!string.IsNullOrEmpty(Identity))
             {
                 try
                 {
@@ -1256,7 +1140,7 @@ namespace MFA
         {
             int i = 0;
             ProgressRecord prog = null;
-            if (_data.Length >= 10)
+            if (Data.Length >= 10)
             {
                 prog = new ProgressRecord(this.GetHashCode(), "Enable-MFAUsers", "Operation running")
                 {
@@ -1264,15 +1148,15 @@ namespace MFA
                     RecordType = ProgressRecordType.Processing
                 };
             }
-            foreach (PSRegistration reg in _data)
+            foreach (PSRegistration reg in Data)
             {
                 if (ShouldProcess(string.Format("\"{0}\"", reg.UPN)))
                 {
                     try
                     {
-                        if (_data.Length >= 10)
+                        if (Data.Length >= 10)
                         {
-                            prog.PercentComplete = ((i / _data.Length) * 100);
+                            prog.PercentComplete = ((i / Data.Length) * 100);
                             prog.CurrentOperation = string.Format("\"{0}\" ", reg.UPN);
                             this.WriteProgress(prog);
                         }
@@ -1284,7 +1168,7 @@ namespace MFA
                     }
                     catch (Exception Ex)
                     {
-                        if (!string.IsNullOrEmpty(_identity))
+                        if (!string.IsNullOrEmpty(Identity))
                             this.ThrowTerminatingError(new ErrorRecord(new Exception(string.Format(errors_strings.ErrorUpdatingUser, reg.UPN, Ex.Message)), "1006", ErrorCategory.OperationStopped, this));
                         else
                             this.WriteError(new ErrorRecord(new Exception(string.Format(errors_strings.ErrorUpdatingUser, reg.UPN, Ex.Message)), "1006", ErrorCategory.OperationStopped, this));
@@ -1292,7 +1176,7 @@ namespace MFA
                 }
                 i++;
             }
-            if (_data.Length >= 10)
+            if (Data.Length >= 10)
                 prog.RecordType = ProgressRecordType.Completed;
         }
     }
@@ -1317,30 +1201,19 @@ namespace MFA
     [AdministratorsRightsRequired]
     public sealed class DisableMFAUser : MFACmdlet
     {
-        string _identity = string.Empty;
-        PSRegistration[] _data = null;
-
         /// <summary>
         /// <para type="description">identity of the user to be disabled (upn).</para>
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = "Identity")]
         [ValidateNotNullOrEmpty()]
-        public string Identity
-        {
-            get { return _identity; }
-            set { _identity = value; }
-        }
+        public string Identity { get; set; } = string.Empty;
 
         /// <summary>
         /// <para type="description">Collection of users to be disabled for MFA (must be registered before with Add-MFAUsers.</para>
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = "Data", ValueFromPipeline = true, DontShow = true)]
         [ValidateNotNullOrEmpty()]
-        public PSRegistration[] Data
-        {
-            get { return _data; }
-            set { _data = value; }
-        }
+        public PSRegistration[] Data { get; set; } = null;
 
         /// <summary>
         /// BeginProcessing method implementation
@@ -1348,7 +1221,7 @@ namespace MFA
         protected override void BeginProcessing()
         {
             base.BeginProcessing();
-            if (!string.IsNullOrEmpty(_identity))
+            if (!string.IsNullOrEmpty(Identity))
             {
                 try
                 {
@@ -1370,11 +1243,11 @@ namespace MFA
         /// </summary>
         protected override void ProcessRecord()
         {
-            if (_data == null)
+            if (Data == null)
                 return;
             int i = 0;
             ProgressRecord prog = null;
-            if (_data.Length >= 10)
+            if (Data.Length >= 10)
             {
                 prog = new ProgressRecord(this.GetHashCode(), "Disable-MFAUsers", "Operation running")
                 {
@@ -1382,15 +1255,15 @@ namespace MFA
                     RecordType = ProgressRecordType.Processing
                 };
             }
-            foreach (PSRegistration reg in _data)
+            foreach (PSRegistration reg in Data)
             {
                 if (ShouldProcess(string.Format("\"{0}\"", reg.UPN)))
                 {
                     try
                     {
-                        if (_data.Length >= 10)
+                        if (Data.Length >= 10)
                         {
-                            prog.PercentComplete = ((i / _data.Length) * 100);
+                            prog.PercentComplete = ((i / Data.Length) * 100);
                             prog.CurrentOperation = string.Format("\"{0}\" ", reg.UPN);
                             this.WriteProgress(prog);
                         }
@@ -1401,7 +1274,7 @@ namespace MFA
                     }
                     catch (Exception Ex)
                     {
-                        if (!string.IsNullOrEmpty(_identity))
+                        if (!string.IsNullOrEmpty(Identity))
                             this.ThrowTerminatingError(new ErrorRecord(new Exception(string.Format(errors_strings.ErrorUpdatingUser, reg.UPN, Ex.Message)), "1007", ErrorCategory.OperationStopped, this));
                         else
                             this.WriteError(new ErrorRecord(new Exception(string.Format(errors_strings.ErrorUpdatingUser, reg.UPN, Ex.Message)), "1007", ErrorCategory.OperationStopped, this));
@@ -1409,7 +1282,7 @@ namespace MFA
                 }
                 i++;
             }
-            if (_data.Length >= 10)
+            if (Data.Length >= 10)
                 prog.RecordType = ProgressRecordType.Completed;
         }
     }
@@ -7231,8 +7104,6 @@ namespace MFA
     ///   <para>Import-MFAUsersADDS -LDAPPath "dc=domain,dc=com" -Method Code -ModifiedSince ([DateTime]::UtcNow.AddHours(-4))</para>
     ///   <para>Import-MFAUsersADDS -LDAPPath "dc=domain,dc=com" -Method Code -ModifiedSince ([DateTime]::UtcNow.AddMinutes(-30))</para>
     ///   <para></para>
-    ///   <para>LitteralPath is required, full file name path</para>
-    ///   <para></para>
     ///   <para>NewKey generation of a new Key only if an update occurs, when adding a user, a key is always generated</para>
     ///   <para></para>
     ///   <para>DisableAll Status of Added users set to disabled</para>
@@ -7246,79 +7117,86 @@ namespace MFA
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "Identity")]
         [ValidateNotNullOrEmpty()]
-        public string LDAPPath { get; set; }
+        public string LDAPPath { get; set; } = string.Empty;
 
         /// <summary>
         /// <para type="description">ADDS DNS domain or forest</para>
         /// </summary>
         [Parameter(ParameterSetName = "Identity")]
-        public string DomainName { get; set; }
+        public string DomainName { get; set; } = string.Empty;
 
         /// <summary>
         /// <para type="description">optionnal UserName used to connect</para>
         /// </summary>
         [Parameter(ParameterSetName = "Identity")]
-        public string UserName { get; set; }
+        public string UserName { get; set; } = string.Empty;
 
         /// <summary>
         /// <para type="description">optionnal Password used to connect</para>
         /// </summary>
         [Parameter(ParameterSetName = "Identity")]
-        public string Password { get; set; }
+        public string Password { get; set; } = string.Empty;
 
         /// <summary>
         /// <para type="description">Imports only users created since CreatedSince property</para>
         /// </summary>
         [Parameter(ParameterSetName = "Identity")]
-        public DateTime? CreatedSince { get; set; }
+        public DateTime? CreatedSince { get; set; } = null;
 
         /// <summary>
         /// <para type="description">Imports only users modified since ModifiedSince property</para>
         /// </summary>
         [Parameter(ParameterSetName = "Identity")]
-        public DateTime? ModifiedSince { get; set; }
+        public DateTime? ModifiedSince { get; set; } = null;
 
         /// <summary>
         /// <para type="description">Mail Attribute for Email or $null</para>
         /// </summary>
         [Parameter(ParameterSetName = "Identity")]
-        public string MailAttributes { get; set; }
+        public string MailAttributes { get; set; } = string.Empty;
 
         /// <summary>
         /// <para type="description">Phone Attribute for Phone or $null</para>
         /// </summary>
         [Parameter(ParameterSetName = "Identity")]
-        public string PhoneAttribute { get; set; }
+        public string PhoneAttribute { get; set; } = string.Empty;
 
         /// <summary>
         /// <para type="description">Default value for method</para>
         /// </summary>
         [Parameter(ParameterSetName = "Identity")]
-        public PSPreferredMethod Method { get; set; }
+        [ValidateSet("Code", "Email", "External", "Azure", "Biometrics", IgnoreCase = true)]
+        public PSPreferredMethod Method { get; set; } = PSPreferredMethod.None;
 
         /// <summary>
         /// <para type="description">allow send email when a new Key is generated for MFA.</para>
         /// </summary>
         [Parameter(ParameterSetName = "Identity")]
-        public SwitchParameter SendEmail { get; set; }
+        public SwitchParameter SendEmail { get; set; } = false;
 
         /// <summary>
         /// <para type="description">Regenerate a new secret key for updated users.</para>
         /// </summary>
         [Parameter(ParameterSetName = "Identity")]
-        public SwitchParameter NewKey { get; set; }
+        public SwitchParameter NewKey { get; set; } = false;
 
         /// <summary>
         /// <para type="description">Imported users are not enabled by default. an extra administrative task required !</para>
         /// </summary>
         [Parameter(ParameterSetName = "Identity")]
-        public SwitchParameter DisableAll { get; set; }
+        public SwitchParameter DisableAll { get; set; } = false;
 
         /// <summary>
         /// <para type="description">Imported users are not enabled by default. an extra administrative task required !</para>
         /// </summary>
         [Parameter(ParameterSetName = "Identity")]
-        public SwitchParameter NoLogFile { get; set; }
+        public SwitchParameter NoLogFile { get; set; } = false;
+
+        /// <summary>
+        /// <para type="description">Do not recurse, only users in LDAPPath !</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        public SwitchParameter NoRecurse { get; set; } = false;
 
         /// <summary>
         /// BeginProcessing method implementation
@@ -7350,17 +7228,18 @@ namespace MFA
                         ForceNewKey = this.NewKey,
                         SendEmail = this.SendEmail,
                         DisableAll = this.DisableAll,
-                        NoLogFile = this.NoLogFile,
-                        CreatedSince = this.CreatedSince,
-                        ModifiedSince = this.ModifiedSince,
-                        DomainName = this.DomainName,
-                        LDAPPath = this.LDAPPath,
-                        MailAttribute = this.MailAttributes,
-                        PhoneAttribute = this.PhoneAttribute,
-                        Method = (PreferredMethod)this.Method,
-                        UserName = this.UserName,
-                        Password = this.Password
+                        NoLogFile = this.NoLogFile
                     };
+                    imp.Parameters.CreatedSince = this.CreatedSince;
+                    imp.Parameters.ModifiedSince = this.ModifiedSince;
+                    imp.Parameters.DomainName = this.DomainName;
+                    imp.Parameters.LDAPPath = this.LDAPPath;
+                    imp.Parameters.MailAttribute = this.MailAttributes;
+                    imp.Parameters.PhoneAttribute = this.PhoneAttribute;
+                    imp.Parameters.Method = (PreferredMethod)this.Method;
+                    imp.Parameters.UserName = this.UserName;
+                    imp.Parameters.Password = this.Password;
+                    imp.Parameters.NoRecurse = this.NoRecurse;
 
                     this.Host.UI.WriteLine(string.Format("Import Users Starting {0}", DateTime.Now.ToString()));
                     imp.DoImport();
@@ -7373,6 +7252,89 @@ namespace MFA
             }
         }
     }
+    #endregion
+
+    #region Clean-MFAUsersADDS
+    /// <summary>
+    /// <para type="synopsis">Remove disabled ADDS users from MFA System.</para>
+    /// <para type="description">Remove disabled ADDS users from MFA System.</para>
+    /// </summary>
+    /// <example>
+    ///   <para>CleanUp-MFAUsersADDS</para>   
+    /// </example>
+    [Cmdlet("CleanUp", "MFAUsersADDS", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High, RemotingCapability = RemotingCapability.SupportedByCommand, DefaultParameterSetName = "Identity")]
+    [AdministratorsRightsRequired]
+    public sealed class CleanMFAUsersADDS : MFACmdlet
+    {
+        /// <summary>
+        /// <para type="description">ADDS DNS domain or forest</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        public string DomainName { get; set; } = string.Empty;
+
+        /// <summary>
+        /// <para type="description">optionnal UserName used to connect</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        public string UserName { get; set; } = string.Empty;
+
+        /// <summary>
+        /// <para type="description">optionnal Password used to connect</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        public string Password { get; set; } = string.Empty;
+
+        /// <summary>
+        /// <para type="description">Imported users are not enabled by default. an extra administrative task required !</para>
+        /// </summary>
+        [Parameter(ParameterSetName = "Identity")]
+        public SwitchParameter NoLogFile { get; set; } = false;
+
+        /// <summary>
+        /// BeginProcessing method implementation
+        /// </summary>
+        protected override void BeginProcessing()
+        {
+            base.BeginProcessing();
+            try
+            {
+                ManagementService.Initialize(this.Host, true);
+            }
+            catch (Exception ex)
+            {
+                this.ThrowTerminatingError(new ErrorRecord(ex, "1013", ErrorCategory.OperationStopped, this));
+            }
+        }
+
+        /// <summary>
+        /// ProcessRecord method override
+        /// </summary>
+        protected override void ProcessRecord()
+        {
+            if (ShouldProcess("Clean ADDS Users from MFA"))
+            {
+                try
+                {
+                    ImportUsersADDS imp = new ImportUsersADDS(ManagementService.ADFSManager.Config)
+                    {
+                        NoLogFile = this.NoLogFile
+                    };
+                    imp.Parameters.DomainName = this.DomainName;
+                    imp.Parameters.UserName = this.UserName;
+                    imp.Parameters.Password = this.Password;                  
+
+                    this.Host.UI.WriteLine(string.Format("Cleaning Users Starting {0}", DateTime.Now.ToString()));
+                    imp.DoCleanUp();
+                    this.Host.UI.WriteLine(string.Format("Cleaning Users Finished {0} Users Cleaned : {1} Errors {2}", DateTime.Now.ToString(), imp.RecordsImported.ToString(), imp.ErrorsCount.ToString()));
+                }
+                catch (Exception Ex)
+                {
+                    this.Host.UI.WriteErrorLine(Ex.Message);
+                }
+            }
+        }
+    }
+    #endregion
 
     /// <summary>
     /// <para type="description">Set TOTP Provider configuration data.</para>
@@ -7400,7 +7362,7 @@ namespace MFA
         /// <para type="description">EncryptKeyName, SQLServer crypting key, required if encrypted switch is used.</para>
         /// </summary>
         [Parameter(ParameterSetName = "Data")]
-        public string EncryptKeyName 
+        public string EncryptKeyName
         {
             get
             {
@@ -7419,12 +7381,12 @@ namespace MFA
         /// <para type="description">CertificateDuration, SQLServer crypting certificate duration, in years, default = 5. Required if new certificate is requested.</para>
         /// </summary>
         [Parameter(ParameterSetName = "Data")]
-        public int CertificateDuration 
-        { 
-            get { return _duration; } 
-            set 
-            { 
-                if (value<1)
+        public int CertificateDuration
+        {
+            get { return _duration; }
+            set
+            {
+                if (value < 1)
                     _duration = 5;
                 else
                     _duration = value;
@@ -7468,8 +7430,6 @@ namespace MFA
             }
         }
     }
-
-    #endregion
 
     #region Firewall Rules
     /// <summary>

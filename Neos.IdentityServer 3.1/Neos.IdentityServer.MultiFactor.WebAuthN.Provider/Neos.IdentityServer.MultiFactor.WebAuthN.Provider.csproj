@@ -113,6 +113,7 @@
     <EmbeddedResource Include="Resources\CSHtml.ro.resx" />
     <EmbeddedResource Include="Resources\CSHtml.ru.resx" />
     <EmbeddedResource Include="Resources\CSHtml.sv.resx" />
+    <EmbeddedResource Include="Resources\CSHtml.uk.resx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

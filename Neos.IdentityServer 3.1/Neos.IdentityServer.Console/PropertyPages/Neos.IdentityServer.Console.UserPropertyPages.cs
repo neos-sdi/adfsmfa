@@ -293,7 +293,7 @@ namespace Neos.IdentityServer.Console
                             Icon = MessageBoxIcon.Error
                         };
                         ParentSheet.ShowDialog(messageBoxParameters);
-                        ParentSheet.SetActivePage(1);
+                        ParentSheet.SetActivePage(0);
                         result = false;
                     }
                 }

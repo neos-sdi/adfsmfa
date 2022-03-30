@@ -54,6 +54,7 @@ namespace Neos.IdentityServer.MultiFactor
         bool Enabled { get; set; }
         bool PinRequired { get; set; }
         bool WizardEnabled { get; set; }
+        bool WizardDisabled { get; set; }
         bool IsInitialized { get; }
         ForceWizardMode ForceEnrollment { get; set; }
         bool IsTwoWayByDefault  { get; }

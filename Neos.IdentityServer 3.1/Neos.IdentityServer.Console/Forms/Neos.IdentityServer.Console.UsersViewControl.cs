@@ -159,14 +159,12 @@ namespace Neos.IdentityServer.Console
                 _lst = MMCService.GetUsers();
                 if (clearselection)
                    GridView.RowCount = 0;
-                GridView.RowCount = _lst.Count; // MMCService.GetUsersCount(); ICI
+               // GridView.RowCount = _lst.Count;
+                GridView.RowCount = MMCService.GetUsersCount(); 
                 if (refreshgrid)
                     GridView.Refresh();
                 if (clearselection)
-                {
-                   // this.GridView.ClearSelection(); 
-                }
-
+                   GridView.ClearSelection(); 
             }
             catch (Exception ex)
             {

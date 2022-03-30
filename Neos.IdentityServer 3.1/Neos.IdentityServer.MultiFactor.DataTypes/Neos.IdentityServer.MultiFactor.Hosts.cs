@@ -997,6 +997,7 @@ namespace Neos.IdentityServer.MultiFactor
         public abstract bool Enabled { get; set; }
         public abstract bool PinRequired { get; set; }
         public abstract bool EnrollWizard { get; set; }
+        public abstract bool EnrollWizardDisabled { get; set; }
         public abstract bool IsRequired { get; set; }
         public abstract ForceWizardMode ForceWizard { get; set; }
     }
@@ -1016,16 +1017,17 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public OTPProviderParams(OTPProvider prov) : base()
         {
-            this.Data = prov;
-            this.TOTPShadows = prov.TOTPShadows;
-            this.Algorithm = prov.Algorithm;
-            this.Digits = prov.TOTPDigits;
-            this.Duration = prov.TOTPDuration;
-            this.Enabled = prov.Enabled;
-            this.IsRequired = prov.IsRequired;
-            this.PinRequired = prov.PinRequired;
-            this.EnrollWizard = prov.EnrollWizard;
-            this.ForceWizard = prov.ForceWizard;
+            Data = prov;
+            TOTPShadows = prov.TOTPShadows;
+            Algorithm = prov.Algorithm;
+            Digits = prov.TOTPDigits;
+            Duration = prov.TOTPDuration;
+            Enabled = prov.Enabled;
+            IsRequired = prov.IsRequired;
+            PinRequired = prov.PinRequired;
+            EnrollWizard = prov.EnrollWizard;
+            EnrollWizardDisabled = prov.EnrollWizardDisabled;
+            ForceWizard = prov.ForceWizard;
         }
 
         public OTPProvider Data { get; set; }
@@ -1038,6 +1040,7 @@ namespace Neos.IdentityServer.MultiFactor
         public override bool IsRequired { get; set; }
         public override bool PinRequired { get; set; }
         public override bool EnrollWizard { get; set; }
+        public override bool EnrollWizardDisabled { get; set; }
         public override ForceWizardMode ForceWizard { get; set; }
     }
 
@@ -1061,6 +1064,7 @@ namespace Neos.IdentityServer.MultiFactor
             IsRequired = prov.IsRequired;
             PinRequired = prov.PinRequired;
             EnrollWizard = prov.EnrollWizard;
+            EnrollWizardDisabled = prov.EnrollWizardDisabled;
             ForceWizard = prov.ForceWizard;
             SendDeliveryNotifications = prov.DeliveryNotifications;
         }
@@ -1070,6 +1074,7 @@ namespace Neos.IdentityServer.MultiFactor
         public override bool IsRequired { get; set; }
         public override bool PinRequired { get; set; }
         public override bool EnrollWizard { get; set; }
+        public override bool EnrollWizardDisabled { get; set; }
         public override ForceWizardMode ForceWizard { get; set; }
         public bool SendDeliveryNotifications { get; set; }
     }
@@ -1094,6 +1099,7 @@ namespace Neos.IdentityServer.MultiFactor
             IsRequired = prov.IsRequired;
             PinRequired = prov.PinRequired;
             EnrollWizard = prov.EnrollWizard;
+            EnrollWizardDisabled = prov.EnrollWizardDisabled;
             ForceWizard = prov.ForceWizard;
         }
 
@@ -1102,6 +1108,7 @@ namespace Neos.IdentityServer.MultiFactor
         public override bool IsRequired { get; set; }
         public override bool PinRequired { get; set; }
         public override bool EnrollWizard { get; set; }
+        public override bool EnrollWizardDisabled { get; set; }
         public override ForceWizardMode ForceWizard { get; set; }
     }
 
@@ -1121,13 +1128,14 @@ namespace Neos.IdentityServer.MultiFactor
         public AzureProviderParams(AzureProvider prov, string adfsid, string company) : base()
         {
             Data = prov;
-            this.ADFSIdentifier = adfsid;
-            this.CompanyName = company;
-            this.Enabled = prov.Enabled;
-            this.IsRequired = prov.IsRequired;
-            this.PinRequired = prov.PinRequired;
-            this.EnrollWizard = prov.EnrollWizard;
-            this.ForceWizard = ForceWizardMode.Disabled;
+            ADFSIdentifier = adfsid;
+            CompanyName = company;
+            Enabled = prov.Enabled;
+            IsRequired = prov.IsRequired;
+            PinRequired = prov.PinRequired;
+            EnrollWizard = prov.EnrollWizard;
+            EnrollWizardDisabled = prov.EnrollWizardDisabled;
+            ForceWizard = ForceWizardMode.Disabled;
         }
 
         public AzureProvider Data { get; set; }
@@ -1137,6 +1145,7 @@ namespace Neos.IdentityServer.MultiFactor
         public override bool IsRequired { get; set; }
         public override bool PinRequired { get; set; }
         public override bool EnrollWizard { get; set; }
+        public override bool EnrollWizardDisabled { get; set; }
         public override ForceWizardMode ForceWizard { get; set; }
     }
 
@@ -1155,17 +1164,18 @@ namespace Neos.IdentityServer.MultiFactor
         /// </summary>
         public WebAuthNProviderParams(MFAConfig Cfg, WebAuthNProvider prov) : base()
         {
-            this.Config = Cfg;
-            this.Data = prov;
-            this.Enabled = prov.Enabled;
-            this.IsRequired = prov.IsRequired;
-            this.PinRequired = prov.PinRequired;
-            this.PinRequirements = prov.PinRequirements;
-            this.EnrollWizard = prov.EnrollWizard;
-            this.ForceWizard = prov.ForceWizard;
-            this.Configuration = prov.Configuration;
-            this.Options = prov.Options;
-            this.DirectLogin = prov.DirectLogin;
+            Config = Cfg;
+            Data = prov;
+            Enabled = prov.Enabled;
+            IsRequired = prov.IsRequired;
+            PinRequired = prov.PinRequired;
+            PinRequirements = prov.PinRequirements;
+            EnrollWizard = prov.EnrollWizard;
+            EnrollWizardDisabled = prov.EnrollWizardDisabled;
+            ForceWizard = prov.ForceWizard;
+            Configuration = prov.Configuration;
+            Options = prov.Options;
+            DirectLogin = prov.DirectLogin;
         }
 
         public MFAConfig Config { get; set; }
@@ -1175,6 +1185,7 @@ namespace Neos.IdentityServer.MultiFactor
         public override bool PinRequired { get; set; }
         public virtual WebAuthNPinRequirements PinRequirements { get; set; }
         public override bool EnrollWizard { get; set; }
+        public override bool EnrollWizardDisabled { get; set; }
         public bool DirectLogin { get; set; }
         public override ForceWizardMode ForceWizard { get; set; }
         public WebAuthNProviderConfig Configuration { get; set; } = new WebAuthNProviderConfig();
@@ -1387,6 +1398,8 @@ namespace Neos.IdentityServer.MultiFactor
     public class ExternalOTPProvider
     {
         private XmlCDataSection _cdata;
+        private bool _wizenabled = true;
+        private bool _wizdisabled = false;
 
         [XmlAttribute("Enabled")]
         public bool Enabled { get; set; } = true;
@@ -1399,6 +1412,25 @@ namespace Neos.IdentityServer.MultiFactor
 
         [XmlAttribute("EnrollWizard")]
         public bool EnrollWizard { get; set; } = true;
+
+        [XmlAttribute("EnrollWizardDisabled")]
+        public bool EnrollWizardDisabled
+        {
+            get
+            {
+                if (IsRequired)
+                    return false;
+                else
+                    return _wizdisabled;
+            }
+            set
+            {
+                if (IsRequired)
+                    _wizdisabled = false;
+                else
+                    _wizdisabled = value;
+            }
+        }
 
         [XmlAttribute("ForceWizard")]
         public ForceWizardMode ForceWizard { get; set; } = ForceWizardMode.Disabled;
@@ -1450,6 +1482,7 @@ namespace Neos.IdentityServer.MultiFactor
     public class AzureProvider
     {
         private XmlCDataSection _cdata;
+        private bool _wizdisabled = false;
 
         [XmlAttribute("Enabled")]
         public bool Enabled { get; set; } = false;
@@ -1462,6 +1495,25 @@ namespace Neos.IdentityServer.MultiFactor
 
         [XmlAttribute("EnrollWizard")]
         public bool EnrollWizard { get; set; } = false;
+
+        [XmlAttribute("EnrollWizardDisabled")]
+        public bool EnrollWizardDisabled
+        {
+            get
+            {
+                if (IsRequired)
+                    return false;
+                else
+                    return _wizdisabled;
+            }
+            set
+            {
+                if (IsRequired)
+                    _wizdisabled = false;
+                else
+                    _wizdisabled = value;
+            }
+        }
 
         [XmlAttribute("ForceWizard")]
         public ForceWizardMode ForceWizard { get; set; } = ForceWizardMode.Disabled;
@@ -1508,6 +1560,8 @@ namespace Neos.IdentityServer.MultiFactor
     {
         private XmlCDataSection _cdata;
         private readonly List<string> _blocked = new List<string>();
+        private bool _wizenabled = true;
+        private bool _wizdisabled = false;
 
         [XmlAttribute("Enabled")]
         public bool Enabled { get; set; } = true;
@@ -1520,6 +1574,25 @@ namespace Neos.IdentityServer.MultiFactor
 
         [XmlAttribute("EnrollWizard")]
         public bool EnrollWizard { get; set; } = true;
+
+        [XmlAttribute("EnrollWizardDisabled")]
+        public bool EnrollWizardDisabled
+        {
+            get
+            {
+                if (IsRequired)
+                    return false;
+                else
+                    return _wizdisabled;
+            }
+            set
+            {
+                if (IsRequired)
+                    _wizdisabled = false;
+                else
+                    _wizdisabled = value;
+            }
+        }
 
         [XmlAttribute("ForceWizard")]
         public ForceWizardMode ForceWizard { get; set; } = ForceWizardMode.Disabled;
@@ -1612,6 +1685,8 @@ namespace Neos.IdentityServer.MultiFactor
         private XmlCDataSection _cdata;
         private int _digits = 6;
         private int _duration = 30;
+        private bool _wizenabled = true;
+        private bool _wizdisabled = false;
 
         [XmlAttribute("Enabled")]
         public bool Enabled { get; set; } = true;
@@ -1624,6 +1699,25 @@ namespace Neos.IdentityServer.MultiFactor
 
         [XmlAttribute("EnrollWizard")]
         public bool EnrollWizard { get; set; } = true;
+
+        [XmlAttribute("EnrollWizardDisabled")]
+        public bool EnrollWizardDisabled
+        {
+            get
+            {
+                if (IsRequired)
+                    return false;
+                else
+                    return _wizdisabled;
+            }
+            set
+            {
+                if (IsRequired)
+                    _wizdisabled = false;
+                else
+                    _wizdisabled = value;
+            }
+        }
 
         [XmlAttribute("ForceWizard")]
         public ForceWizardMode ForceWizard { get; set; } = ForceWizardMode.Disabled;
@@ -1713,6 +1807,7 @@ namespace Neos.IdentityServer.MultiFactor
         private XmlCDataSection _cdata;
         private WebAuthNProviderConfig _cfg;
         private WebAuthNProviderOptions _opt;
+        private bool _wizdisabled = false;
 
         [XmlAttribute("Enabled")]
         public bool Enabled { get; set; } = true;
@@ -1728,6 +1823,25 @@ namespace Neos.IdentityServer.MultiFactor
 
         [XmlAttribute("EnrollWizard")]
         public bool EnrollWizard { get; set; } = true;
+
+        [XmlAttribute("EnrollWizardDisabled")]
+        public bool EnrollWizardDisabled
+        {
+            get
+            {
+                if (IsRequired)
+                    return false;
+                else
+                    return _wizdisabled;
+            }
+            set
+            {
+                if (IsRequired)
+                    _wizdisabled = false;
+                else
+                    _wizdisabled = value;
+            }
+        }
 
         [XmlAttribute("ForceWizard")]
         public ForceWizardMode ForceWizard { get; set; } = ForceWizardMode.Disabled;

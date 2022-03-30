@@ -738,4 +738,7 @@
   <data name="CTRGLPAUSEFORDAYS" xml:space="preserve">
     <value>Permitir que MFA se detenga durante (x) días</value>
   </data>
+  <data name="CTRLPROVWIZARDDISABLED" xml:space="preserve">
+    <value>Asistente deshabilitado en la inscripción</value>
+  </data>
 </root>

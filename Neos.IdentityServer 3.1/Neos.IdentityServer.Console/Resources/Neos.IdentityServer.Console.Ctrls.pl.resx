@@ -738,4 +738,7 @@
   <data name="CTRGLPAUSEFORDAYS" xml:space="preserve">
     <value>Zezwalanie na wstrzymywanie usługi MFA na (x) dni</value>
   </data>
+  <data name="CTRLPROVWIZARDDISABLED" xml:space="preserve">
+    <value>Kreator wyłączony podczas rejestracji</value>
+  </data>
 </root>

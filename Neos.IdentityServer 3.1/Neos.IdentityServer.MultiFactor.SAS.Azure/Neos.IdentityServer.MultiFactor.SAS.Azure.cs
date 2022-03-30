@@ -489,6 +489,7 @@ namespace Neos.IdentityServer.MultiFactor.SAS
                         IsRequired = az.IsRequired;
                         PinRequired = az.PinRequired;
                         WizardEnabled = az.EnrollWizard;
+                        WizardDisabled = az.EnrollWizardDisabled;
                         ForceEnrollment = az.ForceWizard;
                         _isinitialized = true;
                         return;

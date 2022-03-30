@@ -146,6 +146,7 @@
     <EmbeddedResource Include="Resources\CSErrors.ro.resx" />
     <EmbeddedResource Include="Resources\CSErrors.ru.resx" />
     <EmbeddedResource Include="Resources\CSErrors.sv.resx" />
+    <EmbeddedResource Include="Resources\CSErrors.uk.resx" />
     <EmbeddedResource Include="Resources\CSHtml.da.resx" />
     <EmbeddedResource Include="Resources\CSHtml.de.resx" />
     <EmbeddedResource Include="Resources\CSHtml.es.resx" />
@@ -165,6 +166,7 @@
     <EmbeddedResource Include="Resources\CSHtml.ro.resx" />
     <EmbeddedResource Include="Resources\CSHtml.ru.resx" />
     <EmbeddedResource Include="Resources\CSHtml.sv.resx" />
+    <EmbeddedResource Include="Resources\CSHtml.uk.resx" />
     <EmbeddedResource Include="Resources\CSMail.da.resx" />
     <EmbeddedResource Include="Resources\CSMail.de.resx" />
     <EmbeddedResource Include="Resources\CSMail.es.resx">
@@ -190,6 +192,7 @@
     <EmbeddedResource Include="Resources\CSMail.ro.resx" />
     <EmbeddedResource Include="Resources\CSMail.ru.resx" />
     <EmbeddedResource Include="Resources\CSMail.sv.resx" />
+    <EmbeddedResource Include="Resources\CSMail.uk.resx" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

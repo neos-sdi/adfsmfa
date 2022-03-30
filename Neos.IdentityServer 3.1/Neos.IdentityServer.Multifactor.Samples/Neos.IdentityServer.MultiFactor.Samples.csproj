@@ -116,6 +116,7 @@
     <EmbeddedResource Include="Resources\CSHtml.ro.resx" />
     <EmbeddedResource Include="Resources\CSHtml.ru.resx" />
     <EmbeddedResource Include="Resources\CSHtml.sv.resx" />
+    <EmbeddedResource Include="Resources\CSHtml.uk.resx" />
     <EmbeddedResource Include="Resources\SAzure.da.resx" />
     <EmbeddedResource Include="Resources\SAzure.de.resx" />
     <EmbeddedResource Include="Resources\SAzure.es.resx">
@@ -138,6 +139,7 @@
     <EmbeddedResource Include="Resources\SAzure.ro.resx" />
     <EmbeddedResource Include="Resources\SAzure.ru.resx" />
     <EmbeddedResource Include="Resources\SAzure.sv.resx" />
+    <EmbeddedResource Include="Resources\SAzure.uk.resx" />
     <EmbeddedResource Include="Resources\SHtml.da.resx" />
     <EmbeddedResource Include="Resources\SHtml.de.resx" />
     <EmbeddedResource Include="Resources\SHtml.es.resx" />
@@ -155,6 +157,7 @@
     <EmbeddedResource Include="Resources\SHtml.ro.resx" />
     <EmbeddedResource Include="Resources\SHtml.ru.resx" />
     <EmbeddedResource Include="Resources\SHtml.sv.resx" />
+    <EmbeddedResource Include="Resources\SHtml.uk.resx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

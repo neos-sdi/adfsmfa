@@ -355,6 +355,7 @@ namespace Neos.IdentityServer.MultiFactor.Samples
                         Algorithm = param.Algorithm;
                         Enabled = param.Enabled;
                         WizardEnabled = param.EnrollWizard;
+                        WizardDisabled = param.EnrollWizardDisabled;
                         ForceEnrollment = param.ForceWizard;
                         PinRequired = param.PinRequired;
                         _isinitialized = true;

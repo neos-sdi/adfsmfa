@@ -1051,6 +1051,15 @@ namespace Neos.IdentityServer.Console.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Wizard Disabled at Enrollement.
+        /// </summary>
+        internal static string CTRLPROVWIZARDDISABLED {
+            get {
+                return ResourceManager.GetString("CTRLPROVWIZARDDISABLED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Force wizard if not completed.
         /// </summary>
         internal static string CTRLPROVWIZARDSTRICT {

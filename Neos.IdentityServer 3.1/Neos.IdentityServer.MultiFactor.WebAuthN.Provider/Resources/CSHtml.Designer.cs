@@ -160,6 +160,24 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à To login with your biometric device, click &quot;Connection&quot;.
+        /// </summary>
+        internal static string BIOUIMessage2 {
+            get {
+                return ResourceManager.GetString("BIOUIMessage2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à To register your biometric device, click &quot;Register Device&quot;.
+        /// </summary>
+        internal static string BIOUIMessage3 {
+            get {
+                return ResourceManager.GetString("BIOUIMessage3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Use your biometric device.
         /// </summary>
         internal static string BIOUIOTPLabel {

@@ -411,6 +411,7 @@ namespace Neos.IdentityServer.Console.Controls
         private ErrorProvider errors;
         private CheckBox chkProviderEnabled;
         private CheckBox chkProviderEnroll;
+        private CheckBox chkProviderEnrollDisabled;
         private CheckBox chkProviderRequired;
         private CheckBox chkProviderPin;
         private Label lblProviderDesc;
@@ -523,25 +524,25 @@ namespace Neos.IdentityServer.Console.Controls
 
                 this.Dock = DockStyle.Top;
                 if (_kind == PreferredMethod.Biometrics)
-                    this.Height = 175;
+                    this.Height = 195;
                 else 
-                    this.Height = 95;
+                    this.Height = 115;
                 this.Width = 760;
                 this.Margin = new Padding(30, 5, 30, 5);
 
                 _panel.Width = 20;
                 if (_kind == PreferredMethod.Biometrics)
-                    _panel.Height = 175;
+                    _panel.Height = 195;
                 else
-                    _panel.Height = 95;
+                    _panel.Height = 115;
                 this.Controls.Add(_panel);
 
                 _txtpanel.Left = 20;
                 _txtpanel.Width = this.Width - 100;
                 if (_kind == PreferredMethod.Biometrics)
-                    _txtpanel.Height = 185;
+                    _txtpanel.Height = 195;
                 else
-                    _txtpanel.Height = 105;
+                    _txtpanel.Height = 115;
                 _txtpanel.BackColor = System.Drawing.SystemColors.Control;
                 this.Controls.Add(_txtpanel);
 
@@ -597,13 +598,29 @@ namespace Neos.IdentityServer.Console.Controls
                 chkProviderEnroll.CheckedChanged += ChkProviderEnrollChanged;
                 _txtpanel.Controls.Add(chkProviderEnroll);
 
+                chkProviderEnrollDisabled = new CheckBox
+                {
+                    Text = res.CTRLPROVWIZARDDISABLED,
+                    Enabled = (_provider.Enabled && !_provider.IsRequired),
+                };
+                if ((_provider.AllowEnrollment) && (!_provider.IsRequired))
+                    chkProviderEnrollDisabled.Checked = _provider.WizardDisabled;
+                else
+                    chkProviderEnrollDisabled.Checked = false;
+
+                chkProviderEnrollDisabled.Left = 510;
+                chkProviderEnrollDisabled.Top = 70;
+                chkProviderEnrollDisabled.Width = 300;
+                chkProviderEnrollDisabled.CheckedChanged += ChkProviderEnrollDisabledChanged;
+                _txtpanel.Controls.Add(chkProviderEnrollDisabled);
+
                 chkProviderPin = new CheckBox
                 {
                     Text = res.CTRLPROVPIN,
                     Checked = _provider.PinRequired,
                     Enabled = _provider.Enabled,
                     Left = 510,
-                    Top = 70,
+                    Top = 90,
                     Width = 300
                 };
                 chkProviderPin.CheckedChanged += ChkProviderPinChanged;
@@ -619,7 +636,7 @@ namespace Neos.IdentityServer.Console.Controls
                     {
                         Text = res.CTRLPROVPINREQUIRED,
                         Left = 540,
-                        Top = 94,
+                        Top = 114,
                         Width = 500
                     };                   
                     _txtpanel.Controls.Add(lblRequiredPinDesc);
@@ -631,7 +648,7 @@ namespace Neos.IdentityServer.Console.Controls
                         Checked = webprov.PinRequirements.HasFlag(WebAuthNPinRequirements.None),
                         Enabled = _provider.Enabled,
                         Left = 540,
-                        Top = 118,
+                        Top = 138,
                         Width = 135
                     };
                     chkProviderPinNone.CheckedChanged += ChkProviderPinNoneChanged;
@@ -643,7 +660,7 @@ namespace Neos.IdentityServer.Console.Controls
                         Checked = webprov.PinRequirements.HasFlag(WebAuthNPinRequirements.AndroidKey),
                         Enabled = _provider.Enabled,
                         Left = 680,
-                        Top = 118,
+                        Top = 138,
                         Width = 135
                     };
                     chkProviderPinAndroidKey.CheckedChanged += ChkProviderPinAndroidKeyChanged;
@@ -655,7 +672,7 @@ namespace Neos.IdentityServer.Console.Controls
                         Checked = webprov.PinRequirements.HasFlag(WebAuthNPinRequirements.AndroidSafetyNet),
                         Enabled = _provider.Enabled,
                         Left = 820,
-                        Top = 118,
+                        Top = 138,
                         Width = 135
                     };
                     chkProviderPinAndroidSafetyNet.CheckedChanged += ChkProviderPinAndroidSafetyNetChanged;
@@ -667,7 +684,7 @@ namespace Neos.IdentityServer.Console.Controls
                         Checked = webprov.PinRequirements.HasFlag(WebAuthNPinRequirements.Packed),
                         Enabled = _provider.Enabled,
                         Left = 960,
-                        Top = 118,
+                        Top = 138,
                         Width = 135
                     };
                     chkProviderPinPacked.CheckedChanged += ChkProviderPinPackedChanged;
@@ -679,7 +696,7 @@ namespace Neos.IdentityServer.Console.Controls
                         Checked = webprov.PinRequirements.HasFlag(WebAuthNPinRequirements.Fido2U2f),
                         Enabled = _provider.Enabled,
                         Left = 540,
-                        Top = 142,
+                        Top = 162,
                         Width = 135
                     };
                     chkProviderPinFido2u2f.CheckedChanged += ChkProviderPinFido2u2fChanged;
@@ -691,7 +708,7 @@ namespace Neos.IdentityServer.Console.Controls
                         Checked = webprov.PinRequirements.HasFlag(WebAuthNPinRequirements.TPM),
                         Enabled = _provider.Enabled,
                         Left = 680,
-                        Top = 142,
+                        Top = 162,
                         Width = 135
                     };
                     chkProviderPinTPM.CheckedChanged += ChkProviderPinTPMChanged;
@@ -703,7 +720,7 @@ namespace Neos.IdentityServer.Console.Controls
                         Checked = webprov.PinRequirements.HasFlag(WebAuthNPinRequirements.Apple),
                         Enabled = _provider.Enabled,
                         Left = 820,
-                        Top = 142,
+                        Top = 162,
                         Width = 135
                     };
                     chkProviderPinApple.CheckedChanged += ChkProviderPinAppleChanged;
@@ -716,6 +733,8 @@ namespace Neos.IdentityServer.Console.Controls
                     chkProviderEnabled.Enabled = false;
                     chkProviderEnroll.Checked = false;
                     chkProviderEnroll.Enabled = false;
+                    chkProviderEnrollDisabled.Checked = false;
+                    chkProviderEnrollDisabled.Enabled = false;
                     chkProviderRequired.Checked = false;
                     chkProviderRequired.Enabled = false;
                     chkProviderPin.Checked = false;
@@ -750,6 +769,7 @@ namespace Neos.IdentityServer.Console.Controls
                 chkProviderEnabled.Text = res.CTRLPROVACTIVE;
                 chkProviderRequired.Text = res.CTRLPROVREQUIRED;
                 chkProviderEnroll.Text = res.CTRLPROVWIZARD;
+                chkProviderEnrollDisabled.Text = res.CTRLPROVWIZARDDISABLED;
                 chkProviderPin.Text = res.CTRLPROVPIN;
 
                 lblProviderDesc.Text = _provider.Description;
@@ -762,6 +782,12 @@ namespace Neos.IdentityServer.Console.Controls
                 else
                     chkProviderEnroll.Checked = false;
                 chkProviderEnroll.Enabled = (_provider.Enabled && _provider.AllowEnrollment);
+
+                if ((_provider.AllowEnrollment) && (!_provider.IsRequired))
+                    chkProviderEnrollDisabled.Checked = _provider.WizardDisabled;
+                else
+                    chkProviderEnrollDisabled.Checked = false;
+                chkProviderEnrollDisabled.Enabled = (_provider.Enabled && !_provider.IsRequired);
 
                 if (_kind == PreferredMethod.Biometrics)
                 {
@@ -1138,6 +1164,52 @@ namespace Neos.IdentityServer.Console.Controls
         }
 
         /// <summary>
+        /// ChkProviderEnrollDisabledChanged method implementation
+        /// </summary>
+        private void ChkProviderEnrollDisabledChanged(object sender, EventArgs e)
+        {
+            this.Cursor = Cursors.WaitCursor;
+            try
+            {
+                switch (_kind)
+                {
+                    case PreferredMethod.Code:
+                        Config.OTPProvider.EnrollWizardDisabled= chkProviderEnrollDisabled.Checked;
+                        break;
+                    case PreferredMethod.Email:
+                        Config.MailProvider.EnrollWizardDisabled = chkProviderEnrollDisabled.Checked;
+                        break;
+                    case PreferredMethod.External:
+                        Config.ExternalProvider.EnrollWizardDisabled = chkProviderEnrollDisabled.Checked;
+                        break;
+                    case PreferredMethod.Azure:
+                        Config.AzureProvider.EnrollWizardDisabled = chkProviderEnrollDisabled.Checked;
+                        break;
+                    case PreferredMethod.Biometrics:
+                        Config.WebAuthNProvider.EnrollWizardDisabled = chkProviderEnrollDisabled.Checked;
+                        break;
+                }
+                if (_view.AutoValidate != AutoValidate.Disable)
+                    ManagementService.ADFSManager.SetDirty(true);
+            }
+            catch (Exception ex)
+            {
+                errors.SetError(chkProviderEnrollDisabled, ex.Message);
+                MessageBoxParameters messageBoxParameters = new MessageBoxParameters
+                {
+                    Text = ex.Message,
+                    Buttons = MessageBoxButtons.OK,
+                    Icon = MessageBoxIcon.Error
+                };
+                this._snapin.Console.ShowDialog(messageBoxParameters);
+            }
+            finally
+            {
+                this.Cursor = Cursors.Default;
+            }
+        }
+
+        /// <summary>
         /// chkProviderChanged method implementation
         /// </summary>
         private void ChkProviderChanged(object sender, EventArgs e)
@@ -1150,29 +1222,36 @@ namespace Neos.IdentityServer.Console.Controls
                     case PreferredMethod.Code:
                         Config.OTPProvider.Enabled = chkProviderEnabled.Checked;
                         chkProviderEnroll.Enabled = Config.OTPProvider.Enabled;
+                        chkProviderEnrollDisabled.Enabled = (Config.OTPProvider.Enabled && !Config.OTPProvider.IsRequired);
                         chkProviderPin.Enabled = Config.OTPProvider.Enabled;
                         break;
                     case PreferredMethod.Email:
                         Config.MailProvider.Enabled = chkProviderEnabled.Checked;
                         chkProviderEnroll.Enabled = Config.MailProvider.Enabled;
+                        chkProviderEnrollDisabled.Enabled = (Config.MailProvider.Enabled && !Config.MailProvider.IsRequired);
                         chkProviderPin.Enabled = Config.MailProvider.Enabled;
                         break;
                     case PreferredMethod.External:
                         Config.ExternalProvider.Enabled = chkProviderEnabled.Checked;
                         chkProviderEnroll.Enabled = Config.ExternalProvider.Enabled;
+                        chkProviderEnrollDisabled.Enabled = (Config.ExternalProvider.Enabled && !Config.ExternalProvider.IsRequired);
                         chkProviderPin.Enabled = Config.ExternalProvider.Enabled;
                         break;
                     case PreferredMethod.Azure:
                         Config.AzureProvider.Enabled = chkProviderEnabled.Checked;
                         chkProviderEnroll.Enabled = Config.AzureProvider.Enabled;
+                        chkProviderEnrollDisabled.Enabled = (Config.AzureProvider.Enabled && !Config.AzureProvider.IsRequired);
                         chkProviderPin.Enabled = Config.AzureProvider.Enabled;
                         break;
                     case PreferredMethod.Biometrics:
                         Config.WebAuthNProvider.Enabled = chkProviderEnabled.Checked;
                         chkProviderEnroll.Enabled = Config.WebAuthNProvider.Enabled;
+                        chkProviderEnrollDisabled.Enabled = (Config.WebAuthNProvider.Enabled && !Config.WebAuthNProvider.IsRequired);
                         chkProviderPin.Enabled = Config.WebAuthNProvider.Enabled;
                         break;
                 }
+                if (!chkProviderEnrollDisabled.Enabled)
+                    chkProviderEnrollDisabled.Checked = false;
                 if (_view.AutoValidate != AutoValidate.Disable)
                     ManagementService.ADFSManager.SetDirty(true);
             }
@@ -1206,31 +1285,36 @@ namespace Neos.IdentityServer.Console.Controls
                     case PreferredMethod.Code:
                         Config.OTPProvider.IsRequired = chkProviderRequired.Checked;
                         chkProviderEnroll.Enabled = Config.OTPProvider.Enabled;
+                        chkProviderEnrollDisabled.Enabled = (Config.OTPProvider.Enabled && !Config.OTPProvider.IsRequired);
                         chkProviderPin.Enabled = Config.OTPProvider.Enabled;
                         break;
                     case PreferredMethod.Email:
                         Config.MailProvider.IsRequired = chkProviderRequired.Checked;
                         chkProviderEnroll.Enabled = Config.MailProvider.Enabled;
+                        chkProviderEnrollDisabled.Enabled = (Config.MailProvider.Enabled && !Config.MailProvider.IsRequired);
                         chkProviderPin.Enabled = Config.MailProvider.Enabled;
-
                         break;
                     case PreferredMethod.External:
                         Config.ExternalProvider.IsRequired = chkProviderRequired.Checked;
                         chkProviderEnroll.Enabled = Config.ExternalProvider.Enabled;
+                        chkProviderEnrollDisabled.Enabled = (Config.ExternalProvider.Enabled && !Config.ExternalProvider.IsRequired);
                         chkProviderPin.Enabled = Config.ExternalProvider.Enabled;
-
                         break;
                     case PreferredMethod.Azure:
                         Config.AzureProvider.IsRequired = chkProviderRequired.Checked;
                         chkProviderEnroll.Enabled = Config.AzureProvider.Enabled;
+                        chkProviderEnrollDisabled.Enabled = (Config.AzureProvider.Enabled && !Config.AzureProvider.IsRequired);
                         chkProviderPin.Enabled = Config.AzureProvider.Enabled;
                         break;
                     case PreferredMethod.Biometrics:
                         Config.WebAuthNProvider.IsRequired = chkProviderRequired.Checked;
                         chkProviderEnroll.Enabled = Config.WebAuthNProvider.Enabled;
+                        chkProviderEnrollDisabled.Enabled = (Config.WebAuthNProvider.Enabled && !Config.WebAuthNProvider.IsRequired);
                         chkProviderPin.Enabled = Config.WebAuthNProvider.Enabled;
                         break;
                 }
+                if (!chkProviderEnrollDisabled.Enabled)
+                    chkProviderEnrollDisabled.Checked = false;
                 if (_view.AutoValidate != AutoValidate.Disable)
                     ManagementService.ADFSManager.SetDirty(true);
             }

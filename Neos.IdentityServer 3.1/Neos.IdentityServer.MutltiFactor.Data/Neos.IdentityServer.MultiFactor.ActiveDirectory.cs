@@ -174,7 +174,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// <summary>
         /// SetMFAUser method implementation
         /// </summary>
-        public override MFAUser SetMFAUser(MFAUser reg, bool resetkey = true, bool caninsert = true, bool disableoninsert = false)
+        public override MFAUser SetMFAUser(MFAUser reg, bool resetkey = false, bool caninsert = true, bool disableoninsert = false)
         {
             if (!IsMFAUserRegistered(reg.UPN))
             {
@@ -211,22 +211,19 @@ namespace Neos.IdentityServer.MultiFactor.Data
                                 ADDSUtils.SetMultiValued(DirEntry.Properties[ADHost.PhoneAttribute], _phoneismulti, reg.PhoneNumber);
 
                                 if (!disableoninsert) // disable change if not explicitely done
-                                {
-                                    if (reg.Enabled)
-                                        DirEntry.Properties[ADHost.TotpEnabledAttribute].Value = true;
-                                    else
-                                        DirEntry.Properties[ADHost.TotpEnabledAttribute].Value = false;
-                                }
+                                    DirEntry.Properties[ADHost.TotpEnabledAttribute].Value = reg.Enabled;
                                 else
                                     DirEntry.Properties[ADHost.TotpEnabledAttribute].Value = false;
 
-                                DirEntry.Properties[ADHost.MethodAttribute].Value = ((int)reg.PreferredMethod).ToString();
                                 DirEntry.Properties[ADHost.PinAttribute].Value = reg.PIN;
-                                if (string.IsNullOrEmpty(reg.OverrideMethod))
-                                    DirEntry.Properties[ADHost.OverrideMethodAttribute].Clear();
-                                else
-                                    DirEntry.Properties[ADHost.OverrideMethodAttribute].Value = reg.OverrideMethod.ToString();
-
+                                if (reg.PreferredMethod != PreferredMethod.None)
+                                { 
+                                    DirEntry.Properties[ADHost.MethodAttribute].Value = ((int)reg.PreferredMethod).ToString();
+                                    if (string.IsNullOrEmpty(reg.OverrideMethod))
+                                        DirEntry.Properties[ADHost.OverrideMethodAttribute].Clear();
+                                    else
+                                        DirEntry.Properties[ADHost.OverrideMethodAttribute].Value = reg.OverrideMethod.ToString();
+                                }
                                 DirEntry.CommitChanges();
                             };
                         }
@@ -283,17 +280,14 @@ namespace Neos.IdentityServer.MultiFactor.Data
                                 ADDSUtils.SetMultiValued(DirEntry.Properties[ADHost.PhoneAttribute], _phoneismulti, reg.PhoneNumber);
 
                                 if (!disableoninsert) // disable change if not explicitely done
-                                {
-                                    if (reg.Enabled)
-                                        DirEntry.Properties[ADHost.TotpEnabledAttribute].Value = true;
-                                    else
-                                        DirEntry.Properties[ADHost.TotpEnabledAttribute].Value = false;
-                                }
+                                    DirEntry.Properties[ADHost.TotpEnabledAttribute].Value = reg.Enabled;
                                 else
                                     DirEntry.Properties[ADHost.TotpEnabledAttribute].Value = false;
 
-                                DirEntry.Properties[ADHost.MethodAttribute].Value = ((int)reg.PreferredMethod).ToString();
                                 DirEntry.Properties[ADHost.PinAttribute].Value = reg.PIN;
+                                if (reg.PreferredMethod == PreferredMethod.None)
+                                    reg.PreferredMethod = PreferredMethod.Choose;
+                                DirEntry.Properties[ADHost.MethodAttribute].Value = ((int)reg.PreferredMethod).ToString();
                                 if (string.IsNullOrEmpty(reg.OverrideMethod))
                                     DirEntry.Properties[ADHost.OverrideMethodAttribute].Clear();
                                 else
@@ -301,8 +295,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
 
                                 DirEntry.CommitChanges();
                             };
-                            if (resetkey)
-                                this.OnKeyDataEvent(reg.UPN, KeysDataManagerEventKind.add);
+                            this.OnKeyDataEvent(reg.UPN, KeysDataManagerEventKind.add);
                         }
                     }
                 }

@@ -165,4 +165,10 @@
   <data name="BIOERRORAUTHREPLAY" xml:space="preserve">
     <value>Ошибка во время процесса проверки подлинности! Данные описателя безопасности были использованы раньше !</value>
   </data>
+  <data name="BIOUIMessage2" xml:space="preserve">
+    <value>Чтобы войти в систему с помощью биометрического устройства, нажмите «Подключение»</value>
+  </data>
+  <data name="BIOUIMessage3" xml:space="preserve">
+    <value>Чтобы зарегистрировать биометрическое устройство, нажмите «Зарегистрировать устройство»</value>
+  </data>
 </root>

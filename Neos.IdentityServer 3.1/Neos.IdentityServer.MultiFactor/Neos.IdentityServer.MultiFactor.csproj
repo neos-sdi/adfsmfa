@@ -167,6 +167,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Resources\images.uk-UA.resx" />
+    <EmbeddedResource Include="Resources\images.uk.resx" />
     <EmbeddedResource Include="Resources\SCheck.da.resx" />
     <EmbeddedResource Include="Resources\SCheck.de.resx" />
     <EmbeddedResource Include="Resources\SCheck.fr-CA.resx" />
@@ -178,6 +180,7 @@
     <EmbeddedResource Include="Resources\SCheck.ro.resx" />
     <EmbeddedResource Include="Resources\SCheck.ru.resx" />
     <EmbeddedResource Include="Resources\SCheck.sv.resx" />
+    <EmbeddedResource Include="Resources\SCheck.uk.resx" />
     <EmbeddedResource Include="Resources\SErrors.da.resx" />
     <EmbeddedResource Include="Resources\SErrors.de.resx" />
     <EmbeddedResource Include="Resources\SErrors.es.resx">
@@ -197,6 +200,7 @@
     <EmbeddedResource Include="Resources\SErrors.ro.resx" />
     <EmbeddedResource Include="Resources\SErrors.ru.resx" />
     <EmbeddedResource Include="Resources\SErrors.sv.resx" />
+    <EmbeddedResource Include="Resources\SErrors.uk.resx" />
     <EmbeddedResource Include="Resources\SHtml.da.resx" />
     <EmbeddedResource Include="Resources\SHtml.de.resx">
       <SubType>Designer</SubType>
@@ -230,6 +234,7 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\SHtml.sv.resx" />
+    <EmbeddedResource Include="Resources\SHtml.uk.resx" />
     <EmbeddedResource Include="Resources\SInfos.da.resx" />
     <EmbeddedResource Include="Resources\SInfos.de.resx" />
     <EmbeddedResource Include="Resources\SInfos.es.resx" />
@@ -252,6 +257,7 @@
     <EmbeddedResource Include="Resources\SInfos.ro.resx" />
     <EmbeddedResource Include="Resources\SInfos.ru.resx" />
     <EmbeddedResource Include="Resources\SInfos.sv.resx" />
+    <EmbeddedResource Include="Resources\SInfos.uk.resx" />
     <EmbeddedResource Include="Resources\STitle.da.resx" />
     <EmbeddedResource Include="Resources\STitle.de.resx" />
     <EmbeddedResource Include="Resources\STitle.es.resx">
@@ -279,6 +285,7 @@
     <EmbeddedResource Include="Resources\STitle.ro.resx" />
     <EmbeddedResource Include="Resources\STitle.ru.resx" />
     <EmbeddedResource Include="Resources\STitle.sv.resx" />
+    <EmbeddedResource Include="Resources\STitle.uk.resx" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -1046,6 +1046,8 @@ namespace Neos.IdentityServer.MultiFactor
                 reg.PIN = Convert.ToInt32(cfg.DefaultPin);
             if (reg.OverrideMethod == null)
                 reg.OverrideMethod = string.Empty;
+            if (reg.PreferredMethod == PreferredMethod.None)
+                reg.PreferredMethod = cfg.DefaultProviderMethod;
             if (!Utilities.ValidateEmail(reg.MailAddress, (cfg.MailProvider.Enabled && cfg.MailProvider.IsRequired)))
                 throw new Exception(string.Format("invalid mail address for user : {0}", reg.UPN));
             if (!Utilities.ValidatePhoneNumber(reg.PhoneNumber, (cfg.ExternalProvider.Enabled && cfg.ExternalProvider.IsRequired)))
@@ -2681,32 +2683,49 @@ namespace Neos.IdentityServer.MultiFactor
                     name = upn.Remove(2, upn.IndexOf('@') - 2).Insert(2, "*********");
                 else
                     name = upn;
-                MailAddress mailfrom = Utilities.MakeMailAddress(mail.From);
-                MailAddress mailto = Utilities.MakeMailAddress(to);
-                MailMessage Message = new MailMessage(mailfrom, mailto)
+                if (!File.Exists(SystemUtilities.SystemRootDir + Path.DirectorySeparatorChar + "Logo.png"))
                 {
-                    BodyEncoding = UTF8Encoding.UTF8,
-                    IsBodyHtml = true,
-                    Body = string.Format(html, mail.Company, name, code, mailto.Address)
-                };
-
-                if (mail.DeliveryNotifications)
-                    Message.DeliveryNotificationOptions = DeliveryNotificationOptions.OnFailure | DeliveryNotificationOptions.Delay;
-                else
-                    Message.DeliveryNotificationOptions = DeliveryNotificationOptions.Never;
-
-                lock (lck)
-                {
-                    Group titlegrp = Regex.Match(html, @"\<title\b[^>]*\>\s*(?<Title>[\s\S]*?)\</title\>", RegexOptions.IgnoreCase).Groups["Title"];
-                    if (titlegrp != null)
-                        Message.Subject = string.Format(titlegrp.Value, mail.Company, name, code, mailto.Address);
-                    if (Message.Subject == string.Empty)
-                    {
-                        ResourcesLocale Resources = new ResourcesLocale(culture.LCID);
-                        Message.Subject = Resources.GetString(ResourcesLocaleKind.CommonMail, "MailOTPTitle");
-                    }
+                    var bmp = new Bitmap(1, 1);
+                    bmp.Save(SystemUtilities.SystemRootDir + Path.DirectorySeparatorChar + "Logo.png");
                 }
-                SendMail(Message, mail);
+                using (Stream logo = new FileStream(SystemUtilities.SystemRootDir + Path.DirectorySeparatorChar + "Logo.png", FileMode.Open, FileAccess.Read))
+                {
+                    logo.Position = 0;
+                    var inlineLogo = new LinkedResource(logo, "image/png")
+                    {
+                        ContentId = Guid.NewGuid().ToString()
+                    };
+
+                    MailAddress mailfrom = Utilities.MakeMailAddress(mail.From);
+                    MailAddress mailto = Utilities.MakeMailAddress(to);
+                    MailMessage Message = new MailMessage(mailfrom, mailto)
+                    {
+                        BodyEncoding = UTF8Encoding.UTF8,
+                        IsBodyHtml = true,
+                        Body = string.Format(html, mail.Company, name, code, mailto.Address, inlineLogo.ContentId)
+                    };
+
+                    if (mail.DeliveryNotifications)
+                        Message.DeliveryNotificationOptions = DeliveryNotificationOptions.OnFailure | DeliveryNotificationOptions.Delay;
+                    else
+                        Message.DeliveryNotificationOptions = DeliveryNotificationOptions.Never;
+
+                    lock (lck)
+                    {
+                        Group titlegrp = Regex.Match(html, @"\<title\b[^>]*\>\s*(?<Title>[\s\S]*?)\</title\>", RegexOptions.IgnoreCase).Groups["Title"];
+                        if (titlegrp != null)
+                            Message.Subject = string.Format(titlegrp.Value, mail.Company, name, code, mailto.Address, inlineLogo.ContentId);
+                        if (Message.Subject == string.Empty)
+                        {
+                            ResourcesLocale Resources = new ResourcesLocale(culture.LCID);
+                            Message.Subject = Resources.GetString(ResourcesLocaleKind.CommonMail, "MailOTPTitle");
+                        }
+                    }
+                    var view = AlternateView.CreateAlternateViewFromString(Message.Body, null, "text/html");
+                    view.LinkedResources.Add(inlineLogo);
+                    Message.AlternateViews.Add(view);
+                    SendMail(Message, mail);
+                }
             }
             catch (SmtpException sm)
             {
@@ -2757,37 +2776,54 @@ namespace Neos.IdentityServer.MultiFactor
                 }
                 string sendermail = GetUserBusinessEmail(user.UPN);
                 string html = StripEmailContent(htmlres);
-                MailAddress mailfrom = Utilities.MakeMailAddress(mail.From);
-                MailAddress mailto = Utilities.MakeMailAddress(to);
-                MailAddress mailuser = Utilities.MakeMailAddress(user.MailAddress);
-
-                MailMessage Message = new MailMessage(mailfrom, mailto);
-                if (!string.IsNullOrEmpty(sendermail))
-                { 
-                    MailAddress mailcc = Utilities.MakeMailAddress(sendermail);
-                    Message.CC.Add(mailcc);
-                }
-                Message.BodyEncoding = UTF8Encoding.UTF8;
-                Message.IsBodyHtml = true;
-                Message.Body = string.Format(htmlres, mail.Company, user.UPN, user.MailAddress, user.PhoneNumber, user.PreferredMethod);
-
-                if (mail.DeliveryNotifications)
-                    Message.DeliveryNotificationOptions = DeliveryNotificationOptions.OnFailure | DeliveryNotificationOptions.Delay;
-                else
-                    Message.DeliveryNotificationOptions = DeliveryNotificationOptions.Never;
-
-                lock (lck)
+                if (!File.Exists(SystemUtilities.SystemRootDir + Path.DirectorySeparatorChar + "Logo.png"))
                 {
-                    Group titlegrp = Regex.Match(html, @"\<title\b[^>]*\>\s*(?<Title>[\s\S]*?)\</title\>", RegexOptions.IgnoreCase).Groups["Title"];
-                    if (titlegrp != null)
-                        Message.Subject = string.Format(titlegrp.Value, mail.Company, user.UPN, mailuser.Address, user.PhoneNumber, user.PreferredMethod);
-                    if (Message.Subject == string.Empty)
-                    {
-                        ResourcesLocale Resources = new ResourcesLocale(culture.LCID);
-                        Message.Subject = string.Format(Resources.GetString(ResourcesLocaleKind.CommonMail, "MailAdminTitle"), user.UPN);
-                    }
+                    var bmp = new Bitmap(1, 1);
+                    bmp.Save(SystemUtilities.SystemRootDir + Path.DirectorySeparatorChar + "Logo.png");
                 }
-                SendMail(Message, mail);
+                using (Stream logo = new FileStream(SystemUtilities.SystemRootDir + Path.DirectorySeparatorChar + "Logo.png", FileMode.Open, FileAccess.Read))
+                {
+                    logo.Position = 0;
+                    var inlineLogo = new LinkedResource(logo, "image/png")
+                    {
+                        ContentId = Guid.NewGuid().ToString()
+                    };
+
+                    MailAddress mailfrom = Utilities.MakeMailAddress(mail.From);
+                    MailAddress mailto = Utilities.MakeMailAddress(to);
+                    MailAddress mailuser = Utilities.MakeMailAddress(user.MailAddress);
+
+                    MailMessage Message = new MailMessage(mailfrom, mailto);
+                    if (!string.IsNullOrEmpty(sendermail))
+                    {
+                        MailAddress mailcc = Utilities.MakeMailAddress(sendermail);
+                        Message.CC.Add(mailcc);
+                    }
+                    Message.BodyEncoding = UTF8Encoding.UTF8;
+                    Message.IsBodyHtml = true;
+                    Message.Body = string.Format(htmlres, mail.Company, user.UPN, user.MailAddress, user.PhoneNumber, user.PreferredMethod, inlineLogo.ContentId);
+
+                    if (mail.DeliveryNotifications)
+                        Message.DeliveryNotificationOptions = DeliveryNotificationOptions.OnFailure | DeliveryNotificationOptions.Delay;
+                    else
+                        Message.DeliveryNotificationOptions = DeliveryNotificationOptions.Never;
+
+                    lock (lck)
+                    {
+                        Group titlegrp = Regex.Match(html, @"\<title\b[^>]*\>\s*(?<Title>[\s\S]*?)\</title\>", RegexOptions.IgnoreCase).Groups["Title"];
+                        if (titlegrp != null)
+                            Message.Subject = string.Format(titlegrp.Value, mail.Company, user.UPN, mailuser.Address, user.PhoneNumber, user.PreferredMethod, inlineLogo.ContentId);
+                        if (Message.Subject == string.Empty)
+                        {
+                            ResourcesLocale Resources = new ResourcesLocale(culture.LCID);
+                            Message.Subject = string.Format(Resources.GetString(ResourcesLocaleKind.CommonMail, "MailAdminTitle"), user.UPN);
+                        }
+                    }
+                    var view = AlternateView.CreateAlternateViewFromString(Message.Body, null, "text/html");
+                    view.LinkedResources.Add(inlineLogo);
+                    Message.AlternateViews.Add(view);
+                    SendMail(Message, mail);
+                }
             }
             catch (SmtpException sm)
             {
@@ -2841,48 +2877,62 @@ namespace Neos.IdentityServer.MultiFactor
 
                 string sendermail = GetUserBusinessEmail(upn);
                 string html = StripEmailContent(htmlres);
-                using (Stream qrcode = QRUtilities.GetQRCodeStream(upn, key, config))
+                if (!File.Exists(SystemUtilities.SystemRootDir + Path.DirectorySeparatorChar + "Logo.png"))
                 {
-                    qrcode.Position = 0;
-                    var inlineLogo = new LinkedResource(qrcode, "image/png")
+                    var bmp = new Bitmap(1, 1);
+                    bmp.Save(SystemUtilities.SystemRootDir + Path.DirectorySeparatorChar + "Logo.png");
+                }
+                using (Stream logo = new FileStream(SystemUtilities.SystemRootDir + Path.DirectorySeparatorChar + "Logo.png", FileMode.Open, FileAccess.Read))
+                {
+                    logo.Position = 0;
+                    var inlineLogo = new LinkedResource(logo, "image/png")
                     {
                         ContentId = Guid.NewGuid().ToString()
                     };
-
-                    MailAddress mailfrom = Utilities.MakeMailAddress(mail.From);
-                    MailAddress mailto = Utilities.MakeMailAddress(to);
-                    MailMessage Message = new MailMessage(mailfrom, mailto);
-                    if (!string.IsNullOrEmpty(sendermail))
+                    using (Stream qrcode = QRUtilities.GetQRCodeStream(upn, key, config))
                     {
-                        MailAddress mailcc = Utilities.MakeMailAddress(sendermail);
-                        Message.CC.Add(mailcc);
-                    }
-                    Message.BodyEncoding = UTF8Encoding.UTF8;
-                    Message.IsBodyHtml = true;
-
-                    if (mail.DeliveryNotifications)
-                        Message.DeliveryNotificationOptions = DeliveryNotificationOptions.OnFailure | DeliveryNotificationOptions.Delay;
-                    else
-                        Message.DeliveryNotificationOptions = DeliveryNotificationOptions.Never;
-
-                    lock (lck)
-                    {
-                        Group titlegrp = Regex.Match(html, @"\<title\b[^>]*\>\s*(?<Title>[\s\S]*?)\</title\>", RegexOptions.IgnoreCase).Groups["Title"];
-                        if (titlegrp != null)
-                            Message.Subject = string.Format(titlegrp.Value, mail.Company, upn, key, inlineLogo.ContentId, to);
-                        if (Message.Subject == string.Empty)
+                        qrcode.Position = 0;
+                        var inlineKey = new LinkedResource(qrcode, "image/png")
                         {
-                            ResourcesLocale Resources = new ResourcesLocale(culture.LCID);
-                            Message.Subject = Resources.GetString(ResourcesLocaleKind.CommonMail, "MailKeyTitle");
+                            ContentId = Guid.NewGuid().ToString()
+                        };
+                        MailAddress mailfrom = Utilities.MakeMailAddress(mail.From);
+                        MailAddress mailto = Utilities.MakeMailAddress(to);
+                        MailMessage Message = new MailMessage(mailfrom, mailto);
+                        if (!string.IsNullOrEmpty(sendermail))
+                        {
+                            MailAddress mailcc = Utilities.MakeMailAddress(sendermail);
+                            Message.CC.Add(mailcc);
                         }
-                    }
-                    Message.Priority = MailPriority.High;
+                        Message.BodyEncoding = UTF8Encoding.UTF8;
+                        Message.IsBodyHtml = true;
 
-                    string body = string.Format(html, mail.Company, upn, key, inlineLogo.ContentId, to);
-                    var view = AlternateView.CreateAlternateViewFromString(body, null, "text/html");
-                    view.LinkedResources.Add(inlineLogo);
-                    Message.AlternateViews.Add(view);
-                    SendMail(Message, mail);
+                        if (mail.DeliveryNotifications)
+                            Message.DeliveryNotificationOptions = DeliveryNotificationOptions.OnFailure | DeliveryNotificationOptions.Delay;
+                        else
+                            Message.DeliveryNotificationOptions = DeliveryNotificationOptions.Never;
+
+                        lock (lck)
+                        {
+                            Group titlegrp = Regex.Match(html, @"\<title\b[^>]*\>\s*(?<Title>[\s\S]*?)\</title\>", RegexOptions.IgnoreCase).Groups["Title"];
+                            if (titlegrp != null)
+                                Message.Subject = string.Format(titlegrp.Value, mail.Company, upn, key, inlineKey.ContentId, to, inlineLogo.ContentId);
+                            if (Message.Subject == string.Empty)
+                            {
+                                ResourcesLocale Resources = new ResourcesLocale(culture.LCID);
+                                Message.Subject = Resources.GetString(ResourcesLocaleKind.CommonMail, "MailKeyTitle");
+                            }
+                        }
+                        Message.Priority = MailPriority.High;
+                        IEnumerable<string> xkey = key.Split(40);
+                        string skey = "<br>"+string.Join("<br>", xkey);
+                        string body = string.Format(html, mail.Company, upn, skey, inlineKey.ContentId, to, inlineLogo.ContentId);
+                        var view = AlternateView.CreateAlternateViewFromString(body, null, "text/html");
+                        view.LinkedResources.Add(inlineKey);
+                        view.LinkedResources.Add(inlineLogo);
+                        Message.AlternateViews.Add(view);
+                        SendMail(Message, mail);
+                    }
                 }
             }
             catch (SmtpException sm)
@@ -2937,34 +2987,50 @@ namespace Neos.IdentityServer.MultiFactor
                         htmlres = Resources.GetString(ResourcesLocaleKind.CommonMail, "MailNotifications");
                     }
                 }
-                string html = StripEmailContent(htmlres);
-                MailAddress mailfrom = Utilities.MakeMailAddress(mail.From);
-                MailAddress mailuser = Utilities.MakeMailAddress(user.MailAddress);
-
-                MailMessage Message = new MailMessage(mailfrom, mailuser)
+                if (!File.Exists(SystemUtilities.SystemRootDir + Path.DirectorySeparatorChar + "Logo.png"))
                 {
-                    BodyEncoding = UTF8Encoding.UTF8,
-                    IsBodyHtml = true,
-                    Body = string.Format(html, user.UPN, mail.Company, mailuser.Address)
-                };
-
-                if (mail.DeliveryNotifications)
-                    Message.DeliveryNotificationOptions = DeliveryNotificationOptions.OnFailure | DeliveryNotificationOptions.Delay;
-                else
-                    Message.DeliveryNotificationOptions = DeliveryNotificationOptions.Never;
-
-                lock (lck)
-                {
-                    Group titlegrp = Regex.Match(html, @"\<title\b[^>]*\>\s*(?<Title>[\s\S]*?)\</title\>", RegexOptions.IgnoreCase).Groups["Title"];
-                    if (titlegrp != null)
-                        Message.Subject = string.Format(titlegrp.Value, user.UPN, mail.Company, mailuser.Address);
-                    if (Message.Subject == string.Empty)
-                    {
-                        ResourcesLocale Resources = new ResourcesLocale(culture.LCID);
-                        Message.Subject = string.Format(Resources.GetString(ResourcesLocaleKind.CommonMail, "MailNotificationsTitle"), user.UPN);
-                    }
+                    var bmp = new Bitmap(1, 1);
+                    bmp.Save(SystemUtilities.SystemRootDir + Path.DirectorySeparatorChar + "Logo.png");
                 }
-                SendMail(Message, mail);
+                using (Stream logo = new FileStream(SystemUtilities.SystemRootDir + Path.DirectorySeparatorChar + "Logo.png", FileMode.Open, FileAccess.Read))
+                {
+                    logo.Position = 0;
+                    var inlineLogo = new LinkedResource(logo, "image/png")
+                    {
+                        ContentId = Guid.NewGuid().ToString()
+                    };
+                    string html = StripEmailContent(htmlres);
+                    MailAddress mailfrom = Utilities.MakeMailAddress(mail.From);
+                    MailAddress mailuser = Utilities.MakeMailAddress(user.MailAddress);
+
+                    MailMessage Message = new MailMessage(mailfrom, mailuser)
+                    {
+                        BodyEncoding = UTF8Encoding.UTF8,
+                        IsBodyHtml = true,
+                        Body = string.Format(html, user.UPN, mail.Company, mailuser.Address, inlineLogo.ContentId)
+                    };
+
+                    if (mail.DeliveryNotifications)
+                        Message.DeliveryNotificationOptions = DeliveryNotificationOptions.OnFailure | DeliveryNotificationOptions.Delay;
+                    else
+                        Message.DeliveryNotificationOptions = DeliveryNotificationOptions.Never;
+
+                    lock (lck)
+                    {
+                        Group titlegrp = Regex.Match(html, @"\<title\b[^>]*\>\s*(?<Title>[\s\S]*?)\</title\>", RegexOptions.IgnoreCase).Groups["Title"];
+                        if (titlegrp != null)
+                            Message.Subject = string.Format(titlegrp.Value, user.UPN, mail.Company, mailuser.Address, inlineLogo.ContentId);
+                        if (Message.Subject == string.Empty)
+                        {
+                            ResourcesLocale Resources = new ResourcesLocale(culture.LCID);
+                            Message.Subject = string.Format(Resources.GetString(ResourcesLocaleKind.CommonMail, "MailNotificationsTitle"), user.UPN);
+                        }
+                    }
+                    var view = AlternateView.CreateAlternateViewFromString(Message.Body, null, "text/html");
+                    view.LinkedResources.Add(inlineLogo);
+                    Message.AlternateViews.Add(view);
+                    SendMail(Message, mail);
+                }
             }
             catch (SmtpException sm)
             {
@@ -4001,48 +4067,54 @@ namespace Neos.IdentityServer.MultiFactor
                     goto case PreferredMethod.Code;
                 case PreferredMethod.Code:
                     IExternalProvider prov1 = RuntimeAuthProvider.GetProvider(PreferredMethod.Code);
-                    if ((prov1 != null) && (prov1.Enabled))
-                    {
-                        isrequired = prov1.IsRequired;
-                        usercontext.EnrollPageID = PreferredMethod.Code;
-                        return PreferredMethod.Code;
-                    }
-                    else
+                    if (prov1 == null)
                         goto case PreferredMethod.Email;
+                    if (!prov1.Enabled)
+                        goto case PreferredMethod.Email;
+                    if ((!prov1.IsRequired) && (prov1.WizardDisabled))
+                        goto case PreferredMethod.Email;
+                    isrequired = prov1.IsRequired;
+                    usercontext.EnrollPageID = PreferredMethod.Code;
+                    return PreferredMethod.Code;
                 case PreferredMethod.Email:
                     IExternalProvider prov2 = RuntimeAuthProvider.GetProvider(PreferredMethod.Email);
-                    if ((prov2 != null) && (prov2.Enabled))
-                    {
-                        isrequired = prov2.IsRequired;
-                        usercontext.EnrollPageID = PreferredMethod.Email;
-                        return PreferredMethod.Email;
-                    }
-                    else
+                    if (prov2 == null)
                         goto case PreferredMethod.External;
+                    if (!prov2.Enabled)
+                        goto case PreferredMethod.External;
+                    if ((!prov2.IsRequired) && (prov2.WizardDisabled))
+                        goto case PreferredMethod.External;
+                    isrequired = prov2.IsRequired;
+                    usercontext.EnrollPageID = PreferredMethod.Email;
+                    return PreferredMethod.Email;
                 case PreferredMethod.External:
                     IExternalProvider prov3 = RuntimeAuthProvider.GetProvider(PreferredMethod.External);
-                    if ((prov3 != null) && (prov3.Enabled) && (!(prov3 is NeosPlugProvider)))
-                    {
-                        isrequired = prov3.IsRequired;
-                        usercontext.EnrollPageID = PreferredMethod.External;
-                        return PreferredMethod.External;
-                    }
-                    else
+                    if (prov3 == null)
                         goto case PreferredMethod.Azure;
+                    if (!prov3.Enabled)
+                        goto case PreferredMethod.Azure;
+                    if ((!prov3.IsRequired) && (prov3.WizardDisabled))
+                        goto case PreferredMethod.Azure;
+                    if (prov3 is NeosPlugProvider)
+                        goto case PreferredMethod.Azure;
+                    isrequired = prov3.IsRequired;
+                    usercontext.EnrollPageID = PreferredMethod.External;
+                    return PreferredMethod.External;
                 case PreferredMethod.Azure:
                     goto case PreferredMethod.Biometrics;
                 case PreferredMethod.Biometrics:
                     IExternalProvider prov4 = RuntimeAuthProvider.GetProvider(PreferredMethod.Biometrics);
                     if (usercontext.BioNotSupported)
                         goto case PreferredMethod.Pin;
-                    if ((prov4 != null) && (prov4.Enabled))
-                    {
-                        isrequired = prov4.IsRequired;
-                        usercontext.EnrollPageID = PreferredMethod.Biometrics;
-                        return PreferredMethod.Biometrics;
-                    }
-                    else
+                    if (prov4 == null)
                         goto case PreferredMethod.Pin;
+                    if (!prov4.Enabled)
+                        goto case PreferredMethod.Pin;
+                    if ((!prov4.IsRequired) && (prov4.WizardDisabled))
+                        goto case PreferredMethod.Pin;
+                    isrequired = prov4.IsRequired;
+                    usercontext.EnrollPageID = PreferredMethod.Biometrics;
+                    return PreferredMethod.Biometrics;
                 case PreferredMethod.Pin:
                     if (RuntimeAuthProvider.IsPinCodeRequired(usercontext))
                     {
@@ -4283,6 +4355,18 @@ namespace Neos.IdentityServer.MultiFactor
                 image.Save(ms, format);
                 return ms.ToArray();
             }
+        }
+    }
+
+    public static class StringExtensions
+    {
+        public static IEnumerable<string> Split(this string str, int n)
+        {
+            if (String.IsNullOrEmpty(str) || n < 1)
+            {
+                throw new ArgumentException();
+            }
+            return Enumerable.Range(0, str.Length / n).Select(i => str.Substring(i * n, n));
         }
     }
     #endregion

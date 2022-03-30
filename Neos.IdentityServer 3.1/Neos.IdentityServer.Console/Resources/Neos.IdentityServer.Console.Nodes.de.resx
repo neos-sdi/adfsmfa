@@ -357,4 +357,10 @@
   <data name="SECURITYSCOPECUSTOM" xml:space="preserve">
     <value>Benutzerdefinierte Schlüssel</value>
   </data>
+  <data name="ROOTLANGUAGEUK" xml:space="preserve">
+    <value>Ukrainisch</value>
+  </data>
+  <data name="ROOTLANGUAGEUKDESC" xml:space="preserve">
+    <value>Ändern der Kultur der Benutzeroberfläche auf Ukrainisch (1058)</value>
+  </data>
 </root>

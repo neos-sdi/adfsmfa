@@ -79,7 +79,7 @@ namespace Neos.IdentityServer.MultiFactor.Common.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Error sending sensitive key to user.
+        ///   Recherche une chaîne localisée semblable à Error sending secret key to user.
         /// </summary>
         internal static string ErrorSendingSecretKeyRequest {
             get {

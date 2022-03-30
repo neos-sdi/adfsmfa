@@ -15,23 +15,14 @@
 // https://github.com/neos-sdi/adfsmfa                                                                                                                                                      //
 //                                                                                                                                                                                          //
 //******************************************************************************************************************************************************************************************//
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Microsoft.ManagementConsole;
 using Microsoft.ManagementConsole.Advanced;
-using Neos.IdentityServer.MultiFactor.Administration;
-using System.Windows.Forms;
-using System.Resources;
-using res = Neos.IdentityServer.Console.Resources.Neos_IdentityServer_Console_Nodes;
-using System.Threading;
-using System.Globalization;
-using System.IO;
 using Neos.IdentityServer.MultiFactor;
-using System.Xml;
-using System.Xml.Linq;
-using System.Diagnostics;
+using Neos.IdentityServer.MultiFactor.Administration;
+using System;
+using System.Globalization;
+using System.Windows.Forms;
+using res = Neos.IdentityServer.Console.Resources.Neos_IdentityServer_Console_Nodes;
 
 namespace Neos.IdentityServer.Console
 {
@@ -92,6 +83,7 @@ namespace Neos.IdentityServer.Console
             importgrp.Items.Add(new Microsoft.ManagementConsole.Action(res.ROOTLANGUAGEDA, res.ROOTLANGUAGEDADESC, -1, "LCID_DA"));
             importgrp.Items.Add(new Microsoft.ManagementConsole.Action(res.ROOTLANGUAGEJA, res.ROOTLANGUAGEJADESC, -1, "LCID_JA"));
             importgrp.Items.Add(new Microsoft.ManagementConsole.Action(res.ROOTLANGUAGECA, res.ROOTLANGUAGECADESC, -1, "LCID_CA"));
+            importgrp.Items.Add(new Microsoft.ManagementConsole.Action(res.ROOTLANGUAGEUK, res.ROOTLANGUAGEUKDESC, -1, "LCID_UK"));
             this.ActionsPaneItems.Add(importgrp);
             this.HelpTopic = string.Empty;
         }
@@ -152,6 +144,9 @@ namespace Neos.IdentityServer.Console
                     break;
                 case "LCID_CA":
                     CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo(3084);
+                    break;
+                case "LCID_UK":
+                    CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo(1058);
                     break;
             }
             ((ADFSSnapIn)this.SnapIn).RefreshUI();
@@ -252,6 +247,11 @@ namespace Neos.IdentityServer.Console
                             {
                                 ((Microsoft.ManagementConsole.Action)itms).DisplayName = res.ROOTLANGUAGECA;
                                 ((Microsoft.ManagementConsole.Action)itms).Description = res.ROOTLANGUAGECADESC;
+                            }
+                            else if ((string)((Microsoft.ManagementConsole.Action)itms).Tag == "LCID_UK")
+                            {
+                                ((Microsoft.ManagementConsole.Action)itms).DisplayName = res.ROOTLANGUAGEUK;
+                                ((Microsoft.ManagementConsole.Action)itms).Description = res.ROOTLANGUAGEUKDESC;
                             }
                         }
                     }
@@ -2245,7 +2245,7 @@ namespace Neos.IdentityServer.Console
             this.ActionsPaneItems.Add(AddUser);
             this.ActionsPaneItems.Add(new Microsoft.ManagementConsole.ActionSeparator());
             this.ActionsPaneItems.Add(FilterUser);
-            ClearFilterUser.Enabled = MMCService.Filter.FilterisActive;
+            ClearFilterUser.Enabled = false; // MMCService.Filter.FilterisActive;
             this.ActionsPaneItems.Add(ClearFilterUser);
 
             this.ActionsPaneItems.Add(new Microsoft.ManagementConsole.ActionSeparator());
@@ -2523,13 +2523,12 @@ namespace Neos.IdentityServer.Console
                 if (result)
                 {
                     ImportUsersADDS imp = new ImportUsersADDS(ManagementService.ADFSManager.Config)
-                    {
-                        LDAPPath = Wizard.LDAPQuery.Text,
+                    {                        
                         ForceNewKey = true,
                         SendEmail = false,
                         DisableAll = Wizard.checkBoxDisable.Checked
                     };
-
+                    imp.Parameters.LDAPPath = Wizard.LDAPQuery.Text;
                     imp.DoImport();
 
                     if (this.usersFormView != null)

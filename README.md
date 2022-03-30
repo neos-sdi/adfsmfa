@@ -31,7 +31,7 @@ ___
 
 ___
 ## Features
-* Localized UI French/English/Spanish/Italian/German/Dutch/Portuguese/Polish/Swedish/Romanian/Russian/Danish/Japanese, Quebec
+* Localized UI French/English/Spanish/Italian/German/Dutch/Portuguese/Polish/Swedish/Romanian/Russian/Danish/Japanese/Quebec/Ukrainian
 * TOTP, Email, Phone, Biometric, Azure Providers for MFA
 * Run with ADFS 2012 R2, 2016 and 2019
 * Secret Keys length (Guid, 128, 256, 384 & 512 bytes) RNG generator

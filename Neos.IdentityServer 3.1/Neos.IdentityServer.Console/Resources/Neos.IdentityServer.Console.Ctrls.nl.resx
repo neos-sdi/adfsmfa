@@ -738,4 +738,7 @@
   <data name="CTRGLPAUSEFORDAYS" xml:space="preserve">
     <value>Toestaan dat MFA gedurende (x) dagen wordt gepauzeerd</value>
   </data>
+  <data name="CTRLPROVWIZARDDISABLED" xml:space="preserve">
+    <value>Wizard Uitgeschakeld bij inschrijving</value>
+  </data>
 </root>

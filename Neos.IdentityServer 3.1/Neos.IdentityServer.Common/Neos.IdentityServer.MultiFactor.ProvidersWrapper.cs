@@ -58,6 +58,7 @@ namespace Neos.IdentityServer.MultiFactor.Common
         private bool _enabled;
         private bool _pinenabled = false;
         private bool _wizenabled = true;
+        private bool _wizdisabled = false;
 
         public abstract PreferredMethod Kind { get; }
         public abstract bool IsBuiltIn { get; }
@@ -159,6 +160,31 @@ namespace Neos.IdentityServer.MultiFactor.Common
                     _wizenabled = false;
                 else
                     _wizenabled = value; 
+            }
+        }
+
+        /// <summary>
+        /// WizardDisabled property implmentation
+        /// </summary>
+        public virtual bool WizardDisabled
+        {
+            get
+            {
+                if (IsRequired)
+                    return false;
+                if (!_wizenabled)
+                    return false;
+                else
+                    return _wizdisabled;
+            }
+            set
+            {
+                if (IsRequired)
+                    _wizdisabled = false;
+                if (!_wizenabled)
+                    _wizdisabled = false;
+                else
+                    _wizdisabled = value;
             }
         }
 
@@ -831,6 +857,7 @@ namespace Neos.IdentityServer.MultiFactor.Common
                         Enabled = param.Enabled;
                         IsRequired = param.IsRequired;
                         WizardEnabled = param.EnrollWizard;
+                        WizardDisabled = param.EnrollWizardDisabled;
                         ForceEnrollment = param.ForceWizard;
                         PinRequired = param.PinRequired;
                         Duration = param.Duration;
@@ -1309,6 +1336,7 @@ namespace Neos.IdentityServer.MultiFactor.Common
                         Enabled = param.Enabled;
                         IsRequired = param.IsRequired;
                         WizardEnabled = param.EnrollWizard;
+                        WizardDisabled = param.EnrollWizardDisabled;
                         ForceEnrollment = param.ForceWizard;
                         PinRequired = param.PinRequired;
                         _isinitialized = true;
@@ -1765,6 +1793,7 @@ namespace Neos.IdentityServer.MultiFactor.Common
                         Enabled = param.Enabled;
                         IsRequired = param.IsRequired;
                         WizardEnabled = param.EnrollWizard;
+                        WizardDisabled = param.EnrollWizardDisabled;
                         ForceEnrollment = param.ForceWizard;
                         PinRequired = param.PinRequired;
                         DeliveryNotifications = param.SendDeliveryNotifications;
@@ -2173,6 +2202,7 @@ namespace Neos.IdentityServer.MultiFactor.Common
                     Enabled = false;
                     IsRequired = false;
                     WizardEnabled = false;
+                    WizardDisabled = true;
                     ForceEnrollment = ForceWizardMode.Disabled;
                     PinRequired = false;
                     _isinitialized = true;

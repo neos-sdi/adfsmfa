@@ -373,6 +373,7 @@ namespace Neos.IdentityServer.MultiFactor.Samples
                         Enabled = param.Enabled;
                         IsRequired = param.IsRequired;
                         WizardEnabled = param.EnrollWizard;
+                        WizardDisabled = param.EnrollWizardDisabled;
                         ForceEnrollment = param.ForceWizard;
                         PinRequired = param.PinRequired;
                         _isinitialized = true;

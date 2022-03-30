@@ -738,4 +738,7 @@
   <data name="CTRGLPAUSEFORDAYS" xml:space="preserve">
     <value>Zulassen, dass MFA für (x) Tage angehalten wird</value>
   </data>
+  <data name="CTRLPROVWIZARDDISABLED" xml:space="preserve">
+    <value>Assistent bei Der Registrierung deaktiviert</value>
+  </data>
 </root>

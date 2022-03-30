@@ -225,7 +225,18 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
         public override string GetUIMessage(AuthenticationContext ctx)
         {
             ResourcesLocale Resources = new ResourcesLocale(ctx.Lcid);
-            return Resources.GetString(ResourcesLocaleKind.FIDOHtml, "BIOUIMessage"); 
+            switch (ctx.UIMode)
+            {
+                case ProviderPageMode.EnrollBiometrics:
+                    return Resources.GetString(ResourcesLocaleKind.FIDOHtml, "BIOUIMessage3");
+                case ProviderPageMode.SendAuthRequest:
+                    if (ctx.DirectLogin)
+                        return Resources.GetString(ResourcesLocaleKind.FIDOHtml, "BIOUIMessage");
+                    else
+                        return Resources.GetString(ResourcesLocaleKind.FIDOHtml, "BIOUIMessage2");
+                default:
+                    return Resources.GetString(ResourcesLocaleKind.FIDOHtml, "BIOUIMessage");
+            }           
         }
 
         /// <summary>
@@ -389,6 +400,7 @@ namespace Neos.IdentityServer.MultiFactor.WebAuthN
                         Enabled = param.Enabled;
                         IsRequired = param.IsRequired;
                         WizardEnabled = param.EnrollWizard;
+                        WizardDisabled = param.EnrollWizardDisabled;
                         ForceEnrollment = param.ForceWizard;
                         PinRequired = param.PinRequired;
                         PinRequirements = param.PinRequirements;

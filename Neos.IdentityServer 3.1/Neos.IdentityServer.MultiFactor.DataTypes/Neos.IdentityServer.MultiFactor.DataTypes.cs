@@ -1232,6 +1232,74 @@ namespace Neos.IdentityServer.MultiFactor
     }
 
     /// <summary>
+    /// MFAUniqueUserList class implementation
+    /// </summary>
+    [Serializable]
+    public class MFAUniqueUserList : MFAUserList
+    {
+        /// <summary>
+        /// MFAUniqueUserList constructor
+        /// </summary>
+        public MFAUniqueUserList():base() { }
+
+
+        /// <summary>
+        /// AddOrUpdate method implementation
+        /// </summary>
+        public bool AddOrUpdate(MFAUser user)
+        {
+            try
+            {
+                var found = this.FindIndex(s => s.UPN.ToLower().Equals(user.UPN.ToLower()));
+                if (found < 0)
+                    Add(user);
+                else
+                    this[found] = user;
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+    }
+
+    /// <summary>
+    /// MFAUniqueUserList class implementation
+    /// </summary>
+    [Serializable]
+    public class MFAUniqueDeletedUserList : List<string>
+    {
+        /// <summary>
+        /// MFAUniqueUserList constructor
+        /// </summary>
+        public MFAUniqueDeletedUserList() : base() { }
+
+
+        /// <summary>
+        /// AddOrUpdate method implementation
+        /// </summary>
+        public bool AddOrUpdate(string user)
+        {
+            try
+            {
+                var found = this.FindIndex(s => s.ToLower().Equals(user.ToLower()));
+                if (found < 0)
+                    Add(user);
+                else
+                    this[found] = user;
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+    }
+  
+    /// <summary>
     /// MFAUser Class implementation
     /// </summary>
     [Serializable]
@@ -1469,7 +1537,7 @@ namespace Neos.IdentityServer.MultiFactor
         private DataFilterOperator filteroperator = DataFilterOperator.Contains;
         private PreferredMethod filtermethod = PreferredMethod.None;
         private string filtervalue = string.Empty;
-        private bool enabledonly = true;
+        private bool enabledonly = false;
         private bool filterisactive = true;
 
 
