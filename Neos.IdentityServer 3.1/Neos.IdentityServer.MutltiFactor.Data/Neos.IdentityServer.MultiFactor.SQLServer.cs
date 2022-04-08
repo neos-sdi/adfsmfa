@@ -241,7 +241,8 @@ namespace Neos.IdentityServer.MultiFactor.Data
             try
             {
                 int res = sql.ExecuteNonQuery();
-                this.OnKeyDataEvent(reg.UPN, KeysDataManagerEventKind.add);
+                if (resetkey)
+                    this.OnKeyDataEvent(reg.UPN, KeysDataManagerEventKind.add);
             }
             catch (Exception ex)
             {
@@ -1146,7 +1147,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// <summary>
         /// RemoveUserKey method implmentation
         /// </summary>
-        public override bool RemoveUserKey(string upn)
+        public override bool RemoveUserKey(string upn, bool fullclear)
         {
             string request1 = "UPDATE REGISTRATIONS SET SECRETKEY = NULL WHERE UPN=@UPN";
             string request2 = "DELETE FROM KEYS WHERE UPN=@UPN AND KIND=1";
@@ -1177,7 +1178,9 @@ namespace Neos.IdentityServer.MultiFactor.Data
 
                 int res1 = sql1.ExecuteNonQuery();
                 int res2 = sql2.ExecuteNonQuery();
-                int res3 = sql3.ExecuteNonQuery();
+                int res3 = 0;
+                if (fullclear)
+                    res3 = sql3.ExecuteNonQuery();
                 return (res1 == 1);
             }
             catch (Exception ex)
@@ -1420,7 +1423,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// <summary>
         /// RemoveUserKey method implmentation
         /// </summary>
-        public override bool RemoveUserKey(string upn)
+        public override bool RemoveUserKey(string upn, bool fullclear)
         {
             string request1 = "UPDATE REGISTRATIONS SET SECRETKEY = NULL WHERE UPN=@UPN";
             string request2 = "DELETE FROM KEYS WHERE UPN=@UPN AND KIND=1";
@@ -1451,7 +1454,9 @@ namespace Neos.IdentityServer.MultiFactor.Data
 
                 int res1 = sql1.ExecuteNonQuery();
                 int res2 = sql2.ExecuteNonQuery();
-                int res3 = sql3.ExecuteNonQuery();
+                int res3 = 0;
+                if (fullclear)
+                    res3 = sql3.ExecuteNonQuery();
                 return ((res1 == 1) && (res2 == 1));
             }
             catch (Exception ex)

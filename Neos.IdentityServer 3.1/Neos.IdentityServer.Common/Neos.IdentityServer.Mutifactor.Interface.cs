@@ -144,7 +144,7 @@ namespace Neos.IdentityServer.MultiFactor
         string ReadKey(string upn);
         string EncodedKey(string upn);
         byte[] ProbeKey(string upn);
-        bool RemoveKey(string upn); 
+        bool RemoveKey(string upn, bool fullclear); 
         bool ValidateKey(string upn);
 
     }

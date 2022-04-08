@@ -66,90 +66,106 @@ namespace Neos.IdentityServer.MultiFactor
         public IAdapterPresentation BeginAuthentication(Claim identityClaim, HttpListenerRequest request, IAuthenticationContext context)
         {      
             DateTime st = DateTime.Now;
-            AuthenticationContext usercontext = new AuthenticationContext(context)
-            {
-                IPAddress = request.RemoteEndPoint.Address.ToString()
-            };
-            Utilities.PatchLanguageIfNeeded(Config, usercontext, request.UserLanguages);
-            Utilities.CheckForUserAgent(Config, usercontext, Utilities.BrowserDetection(request.UserAgent));
-            ResourcesLocale Resources = new ResourcesLocale(usercontext.Lcid);
-            ClientSIDsProxy.Initialize(Config);
-
-            IAdapterPresentation result = null;
-            if (this.Config.AllowPauseForDays > 0)
-            {
-                GetCookieDelay(usercontext, request, out bool setcookie, out bool forget);
-                usercontext.DelayForget = forget;
-                if (setcookie)
-                {
-                    usercontext.UIMode = ProviderPageMode.Bypass;
-                    result = new AdapterPresentation(this, context);
-                    return result;
-                }
-            }
             try
             {
-                WebThemeManagerClient.Initialize(Config, usercontext, request.Url);
-                ADDSClaimsUtilities.SetIdentityClaim(identityClaim);
-                if (RuntimeRepository.IsUserPasswordExpired(Config, usercontext))
+                AuthenticationContext usercontext = new AuthenticationContext(context)
                 {
-                    usercontext.UIMode = ProviderPageMode.Locking;
-                    usercontext.TargetUIMode = ProviderPageMode.DefinitiveError;
-                    return new AdapterPresentation(this, context, string.Format(Resources.GetString(ResourcesLocaleKind.UIErrors, "ErrorPasswordExpired"), usercontext.UPN), ProviderPageMode.DefinitiveError);
-                }
-                if ((Config.IsPrimaryAuhentication) && (!Config.PrimaryAuhenticationOptions.HasFlag(PrimaryAuthOptions.Register)))
+                    IPAddress = request.RemoteEndPoint.Address.ToString()
+                };
+                Utilities.PatchLanguageIfNeeded(Config, usercontext, request.UserLanguages);
+                Utilities.CheckForUserAgent(Config, usercontext, Utilities.BrowserDetection(request.UserAgent));
+                ResourcesLocale Resources = new ResourcesLocale(usercontext.Lcid);
+                ClientSIDsProxy.Initialize(Config);
+
+                IAdapterPresentation result = null;
+                try
                 {
-                    if ((!usercontext.Enabled) || (!usercontext.IsRegistered))
-                        usercontext.UIMode = ProviderPageMode.Locking;
-                }
-                switch (usercontext.UIMode)
-                {
-                    case ProviderPageMode.PreSet:
-                        usercontext.UIMode = ProviderPageMode.PreSet;
-                        result = new AdapterPresentation(this, context);
-                        break;
-                    case ProviderPageMode.Locking:
-                        result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.UIErrors, "ErrorAccountNoAccess"), ProviderPageMode.DefinitiveError);
-                        break;
-                    default:
-                        // Do not Select method if only one provider
-                        if ((usercontext.UIMode == ProviderPageMode.ChooseMethod) && (usercontext.PreferredMethod==PreferredMethod.Choose)) 
+                    if (this.Config.AllowPauseForDays > 0)
+                    {
+                        GetCookieDelay(usercontext, request, out bool setcookie, out bool forget);
+                        usercontext.DelayForget = forget;
+                        if (setcookie)
                         {
-                            if (RuntimeAuthProvider.GetActiveProvidersCount()<=1)
+                            usercontext.UIMode = ProviderPageMode.Bypass;
+                            result = new AdapterPresentation(this, context);
+                            return result;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    usercontext.DelayForget = false;
+                    Log.WriteEntry(string.Format("Error on Pause for Days (cookie) for user {0} : {1}", usercontext.UPN, ex.Message), EventLogEntryType.Error, 802);
+                }
+                try
+                {
+                    WebThemeManagerClient.Initialize(Config, usercontext, request.Url);
+                    ADDSClaimsUtilities.SetIdentityClaim(identityClaim);
+                    if (RuntimeRepository.IsUserPasswordExpired(Config, usercontext))
+                    {
+                        usercontext.UIMode = ProviderPageMode.Locking;
+                        usercontext.TargetUIMode = ProviderPageMode.DefinitiveError;
+                        return new AdapterPresentation(this, context, string.Format(Resources.GetString(ResourcesLocaleKind.UIErrors, "ErrorPasswordExpired"), usercontext.UPN), ProviderPageMode.DefinitiveError);
+                    }
+                    if ((Config.IsPrimaryAuhentication) && (!Config.PrimaryAuhenticationOptions.HasFlag(PrimaryAuthOptions.Register)))
+                    {
+                        if ((!usercontext.Enabled) || (!usercontext.IsRegistered))
+                            usercontext.UIMode = ProviderPageMode.Locking;
+                    }
+                    switch (usercontext.UIMode)
+                    {
+                        case ProviderPageMode.PreSet:
+                            usercontext.UIMode = ProviderPageMode.PreSet;
+                            result = new AdapterPresentation(this, context);
+                            break;
+                        case ProviderPageMode.Locking:
+                            result = new AdapterPresentation(this, context, Resources.GetString(ResourcesLocaleKind.UIErrors, "ErrorAccountNoAccess"), ProviderPageMode.DefinitiveError);
+                            break;
+                        default:
+                            // Do not Select method if only one provider
+                            if ((usercontext.UIMode == ProviderPageMode.ChooseMethod) && (usercontext.PreferredMethod == PreferredMethod.Choose))
                             {
-                                IExternalProvider pp = RuntimeAuthProvider.GetFirstActiveProvider();
-                                usercontext.UIMode = ProviderPageMode.SendAuthRequest;
-                                if (pp == null)
+                                if (RuntimeAuthProvider.GetActiveProvidersCount() <= 1)
                                 {
-                                    if (Config.DefaultProviderMethod != PreferredMethod.Choose)
-                                        usercontext.PreferredMethod = Config.DefaultProviderMethod;
+                                    IExternalProvider pp = RuntimeAuthProvider.GetFirstActiveProvider();
+                                    usercontext.UIMode = ProviderPageMode.SendAuthRequest;
+                                    if (pp == null)
+                                    {
+                                        if (Config.DefaultProviderMethod != PreferredMethod.Choose)
+                                            usercontext.PreferredMethod = Config.DefaultProviderMethod;
+                                        else
+                                            usercontext.PreferredMethod = PreferredMethod.Code;
+                                    }
                                     else
-                                        usercontext.PreferredMethod = PreferredMethod.Code;
+                                        usercontext.PreferredMethod = pp.Kind;
                                 }
                                 else
-                                    usercontext.PreferredMethod = pp.Kind;
-                            }
-                            else
-                            {
-                                if (Config.DefaultProviderMethod != PreferredMethod.Choose)
                                 {
-                                    usercontext.UIMode = ProviderPageMode.SendAuthRequest;
-                                    usercontext.PreferredMethod = Config.DefaultProviderMethod;
+                                    if (Config.DefaultProviderMethod != PreferredMethod.Choose)
+                                    {
+                                        usercontext.UIMode = ProviderPageMode.SendAuthRequest;
+                                        usercontext.PreferredMethod = Config.DefaultProviderMethod;
+                                    }
                                 }
+                                PatchUserContextWithSelectedMethod(usercontext);
+                                GetAuthenticationData(usercontext);
                             }
-                            PatchUserContextWithSelectedMethod(usercontext);
-                            GetAuthenticationData(usercontext);
-                        }
-                        else if ((HookOptionParameter(request)) && (Config.UserFeatures.CanAccessOptions()))
-                            usercontext.UIMode = ProviderPageMode.SelectOptions;
-                        result = new AdapterPresentation(this, context);
-                        break;
+                            else if ((HookOptionParameter(request)) && (Config.UserFeatures.CanAccessOptions()))
+                                usercontext.UIMode = ProviderPageMode.SelectOptions;
+                            result = new AdapterPresentation(this, context);
+                            break;
+                    }
+                    return result;
                 }
-                return result;
+                catch (Exception ex)
+                {
+                    Log.WriteEntry(string.Format(Resources.GetString(ResourcesLocaleKind.UIErrors, "ErrorAuthenticating"), ex.ToString()), EventLogEntryType.Error, 802);
+                    throw ex;
+                }
             }
             catch (Exception ex)
             {
-                Log. WriteEntry(string.Format(Resources.GetString(ResourcesLocaleKind.UIErrors, "ErrorAuthenticating"), ex.Message), EventLogEntryType.Error, 802);
+                Log.WriteEntry(string.Format("ErrorAuthenticating : {0}", ex.ToString()), EventLogEntryType.Error, 802);
                 throw new ExternalAuthenticationException(ex.Message, context);
             }
         }
@@ -297,7 +313,7 @@ namespace Neos.IdentityServer.MultiFactor
             }
             catch (Exception ex)
             {
-                Log.WriteEntry(string.Format(Resources.GetString(ResourcesLocaleKind.UIErrors, "ErrorLoadingUserRegistration"), ex.Message), EventLogEntryType.Error, 801);
+                Log.WriteEntry(string.Format(Resources.GetString(ResourcesLocaleKind.UIErrors, "ErrorLoadingUserRegistration"), ex.ToString()), EventLogEntryType.Error, 801);
                 throw new ExternalAuthenticationException(ex.Message, context);
             }
         }
@@ -350,7 +366,7 @@ namespace Neos.IdentityServer.MultiFactor
                      }
                      catch (Exception ex)
                      {
-                         Log.WriteEntry(string.Format(Resources.GetString(ResourcesLocaleKind.UIErrors, "ErrorLoadingConfigurationFile"), ex.Message), EventLogEntryType.Error, 900);
+                         Log.WriteEntry(string.Format(Resources.GetString(ResourcesLocaleKind.UIErrors, "ErrorLoadingConfigurationFile"), ex.ToString()), EventLogEntryType.Error, 900);
                          throw new ExternalAuthenticationException();
                      }
                  }
@@ -467,7 +483,7 @@ namespace Neos.IdentityServer.MultiFactor
             }
             catch (Exception ex)
             {
-                Log.WriteEntry(string.Format("AuthenticationProvider:TryEndAuthentication Error : {0} ", ex.Message), EventLogEntryType.Error, 900);
+                Log.WriteEntry(string.Format("AuthenticationProvider:TryEndAuthentication Error : {0} ", ex.ToString()), EventLogEntryType.Error, 900);
                 throw new ExternalAuthenticationException(usercontext.UPN + " : " + ex.Message, context);
             }
             return result;

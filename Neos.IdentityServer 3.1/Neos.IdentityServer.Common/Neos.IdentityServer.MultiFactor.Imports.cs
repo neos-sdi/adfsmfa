@@ -393,7 +393,7 @@ namespace Neos.IdentityServer.MultiFactor.Administration
                     KeysManager.ReadKey(user);
                     break;
                 case KeysDataManagerEventKind.Remove:
-                    KeysManager.RemoveKey(user);
+                    KeysManager.RemoveKey(user, true);
                     break;
             }
         }

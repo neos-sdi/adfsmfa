@@ -163,6 +163,15 @@ namespace Neos.IdentityServer.Console
             EnsureService();
             ManagementService.NewUserKey(upn);
         }
+
+        /// <summary>
+        /// RemoveUserKey method implementation
+        /// </summary>
+        internal static void RemoveUserKey(string upn)
+        {
+            EnsureService();
+            ManagementService.RemoveUserKey(upn, false); // Do not delete WebAuthN Keys
+        }
         #endregion
 
         #region Data Operations

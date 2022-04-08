@@ -137,12 +137,12 @@ namespace Neos.IdentityServer.MultiFactor.Common
         /// <summary>
         /// RemoveKey method implementation
         /// </summary>
-        public bool RemoveKey(string upn)
+        public bool RemoveKey(string upn, bool fullclear)
         {
             if (string.IsNullOrEmpty(upn))
                 return false;
             string lupn = upn.ToLower();
-            return KeysStorage.RemoveUserKey(lupn);
+            return KeysStorage.RemoveUserKey(lupn, fullclear);
         }
         #endregion
 

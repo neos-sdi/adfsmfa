@@ -184,7 +184,7 @@ namespace Neos.IdentityServer.Console
             if (usersFormView == null)
                 return;
             MFAUserList registrations = GetSharedUserData();
-            userPropertiesControl.GetUserControlData(registrations);
+            control.GetUserControlData(registrations);
             foreach (MFAUser reg in registrations)
             {
                 reg.IsApplied = false;
@@ -202,7 +202,7 @@ namespace Neos.IdentityServer.Console
             if (usersFormView == null)
                 return;
             MFAUserList registrations = GetSharedUserData();
-            userPropertiesControl.SetUserControlData(registrations, disablesync);
+            control.SetUserControlData(registrations, disablesync);
         }
 
         /// <summary>

@@ -44,7 +44,7 @@ namespace Neos.IdentityServer.MultiFactor
 
         public abstract string GetUserKey(string upn);
         public abstract string NewUserKey(string upn, string secretkey, X509Certificate2 cert = null);
-        public abstract bool RemoveUserKey(string upn);
+        public abstract bool RemoveUserKey(string upn, bool fullclear);
         public abstract X509Certificate2 GetUserCertificate(string upn, string password);
         public abstract X509Certificate2 CreateCertificate(string upn, string password, int validity);
 

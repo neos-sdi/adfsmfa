@@ -668,7 +668,7 @@ namespace Neos.IdentityServer.MultiFactor.Samples
         /// <summary>
         /// RemoveUserKey method implementation
         /// </summary>
-        public override bool RemoveUserKey(string upn)
+        public override bool RemoveUserKey(string upn, bool fullclear)
         {
             try
             {
@@ -887,7 +887,7 @@ namespace Neos.IdentityServer.MultiFactor.Samples
         /// <summary>
         /// RemoveUserKey method implementation
         /// </summary>
-        public override bool RemoveUserKey(string upn)
+        public override bool RemoveUserKey(string upn, bool fullclear)
         {
             try
             {

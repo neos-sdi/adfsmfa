@@ -282,12 +282,21 @@ namespace Neos.IdentityServer.MultiFactor.Administration
         }
 
         /// <summary>
-        /// GetEncodedUserKey method implmentation
+        /// NewUserKey method implmentation
         /// </summary>
         internal static string NewUserKey(string upn)
         {
             EnsureService();
             return RuntimeRepository.NewUserKey(Config, upn);
+        }
+
+        /// <summary>
+        /// RemoveUserKey method implmentation
+        /// </summary>
+        internal static bool RemoveUserKey(string upn, bool fullclear = true)
+        {
+            EnsureService();
+            return RuntimeRepository.RemoveUserKey(Config, upn, fullclear);
         }
 
         /// <summary>

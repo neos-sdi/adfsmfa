@@ -155,6 +155,7 @@ namespace Neos.IdentityServer.Console
                 _secretkey = string.Empty;
                 this.DisplayKey.Text = string.Empty;
                 this.qrCodeGraphic.Text = string.Empty;
+                MMCService.RemoveUserKey(_upn);
                 if (!SyncDisabled)
                     userPropertyPage.SyncSharedUserData(this, true);
             }

@@ -941,7 +941,7 @@ namespace Neos.IdentityServer.MultiFactor
                     KeysManager.ReadKey(user);
                     break;
                 case KeysDataManagerEventKind.Remove:
-                    KeysManager.RemoveKey(user);
+                    KeysManager.RemoveKey(user, true);
                     break;
             }
         }
@@ -1585,11 +1585,11 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// RemoveUserKey method implmentation
         /// </summary>
-        internal static bool RemoveUserKey(MFAConfig config, string upn)
+        internal static bool RemoveUserKey(MFAConfig config, string upn, bool fullclear = true)
         {
             try
             {
-                return KeysManager.RemoveKey(upn);
+                return KeysManager.RemoveKey(upn, fullclear);
             }
             catch (Exception ex)
             {
@@ -2601,9 +2601,9 @@ namespace Neos.IdentityServer.MultiFactor
         /// <summary>
         /// RemoveKey method implementation
         /// </summary>
-        internal static bool RemoveKey(string upn)
+        internal static bool RemoveKey(string upn, bool fullclear)
         {
-            return Manager.RemoveKey(upn);
+            return Manager.RemoveKey(upn, fullclear);
         }
 
         /// <summary>

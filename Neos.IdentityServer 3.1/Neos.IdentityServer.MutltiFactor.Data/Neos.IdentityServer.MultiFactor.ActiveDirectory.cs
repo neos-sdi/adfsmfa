@@ -295,7 +295,8 @@ namespace Neos.IdentityServer.MultiFactor.Data
 
                                 DirEntry.CommitChanges();
                             };
-                            this.OnKeyDataEvent(reg.UPN, KeysDataManagerEventKind.add);
+                            if (resetkey)
+                                this.OnKeyDataEvent(reg.UPN, KeysDataManagerEventKind.add);
                         }
                     }
                 }
@@ -1609,7 +1610,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
          /// <summary>
          /// RemoveUserKey method implmentation
          /// </summary>
-         public override bool RemoveUserKey(string upn)
+         public override bool RemoveUserKey(string upn, bool fullclear)
          {
              bool ret = false;
              try
@@ -1636,8 +1637,11 @@ namespace Neos.IdentityServer.MultiFactor.Data
                                 {
                                     DirEntry.Properties[ADHost.KeyAttribute].Clear();
                                     DirEntry.Properties[ADHost.RSACertificateAttribute].Clear();
-                                    PropertyValueCollection props = DirEntry.Properties[ADHost.PublicKeyCredentialAttribute];
-                                    props.Clear();
+                                    if (fullclear)
+                                    {
+                                        PropertyValueCollection props = DirEntry.Properties[ADHost.PublicKeyCredentialAttribute];
+                                        props.Clear();
+                                    }
                                     DirEntry.CommitChanges();
                                     ret = true;
                                 }
@@ -1814,7 +1818,7 @@ namespace Neos.IdentityServer.MultiFactor.Data
         /// <summary>
         /// RemoveUserKey method implmentation
         /// </summary>
-        public override bool RemoveUserKey(string upn)
+        public override bool RemoveUserKey(string upn, bool fullclear)
         {
             bool ret = false;
             try
@@ -1842,8 +1846,11 @@ namespace Neos.IdentityServer.MultiFactor.Data
                                 {
                                     DirEntry.Properties[ADHost.KeyAttribute].Clear();
                                     DirEntry.Properties[ADHost.RSACertificateAttribute].Clear();
-                                    PropertyValueCollection props = DirEntry.Properties[ADHost.PublicKeyCredentialAttribute];
-                                    props.Clear();
+                                    if (fullclear)
+                                    {
+                                        PropertyValueCollection props = DirEntry.Properties[ADHost.PublicKeyCredentialAttribute];
+                                        props.Clear();
+                                    }
                                     DirEntry.CommitChanges();
                                     ret = true;
                                 }

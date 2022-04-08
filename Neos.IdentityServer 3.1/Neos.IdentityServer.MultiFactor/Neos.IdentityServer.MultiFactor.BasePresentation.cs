@@ -17,6 +17,7 @@
 //******************************************************************************************************************************************************************************************//
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Reflection;
 using Microsoft.IdentityServer.Web.Authentication.External;
 using Neos.IdentityServer.MultiFactor.Common;
@@ -58,8 +59,16 @@ namespace Neos.IdentityServer.MultiFactor
                     };
                     break;
                 case ADFSUserInterfaceKind.Custom:
-                    _adapter = LoadCustomAdapterPresentation(in provider, context.Lcid);
-                    _adapter.UseUIPaginated = provider.Config.UseUIPaginated;
+                    try
+                    {
+                        _adapter = LoadCustomAdapterPresentation(in provider, context.Lcid);
+                        _adapter.UseUIPaginated = provider.Config.UseUIPaginated;
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.WriteEntry("Error during loading custom adapter presentation: " + ex.ToString(), EventLogEntryType.Error, 80002);
+                        throw new Exception("Error during loading custom adapter presentation: " + ex.Message);
+                    }
                     break;
             }
             _adapter.Provider = provider;
@@ -97,8 +106,16 @@ namespace Neos.IdentityServer.MultiFactor
                     };
                     break;
                 case ADFSUserInterfaceKind.Custom:
-                    _adapter = LoadCustomAdapterPresentation(in provider, context.Lcid);
-                    _adapter.UseUIPaginated = provider.Config.UseUIPaginated;
+                    try
+                    { 
+                        _adapter = LoadCustomAdapterPresentation(in provider, context.Lcid);
+                        _adapter.UseUIPaginated = provider.Config.UseUIPaginated;
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.WriteEntry("Error during loading custom adapter presentation: " + ex.ToString(), EventLogEntryType.Error, 80002);
+                        throw new Exception("Error during loading custom adapter presentation: " + ex.Message);
+                    }
                     break;
             }
             _adapter.Provider = provider;
@@ -136,8 +153,16 @@ namespace Neos.IdentityServer.MultiFactor
                     };
                     break;
                 case ADFSUserInterfaceKind.Custom:
-                    _adapter = LoadCustomAdapterPresentation(in provider, context.Lcid);
-                    _adapter.UseUIPaginated = provider.Config.UseUIPaginated;
+                    try
+                    {
+                        _adapter = LoadCustomAdapterPresentation(in provider, context.Lcid);
+                        _adapter.UseUIPaginated = provider.Config.UseUIPaginated;
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.WriteEntry("Error during loading custom adapter presentation: " + ex.ToString(), EventLogEntryType.Error, 80002);
+                        throw new Exception("Error during loading custom adapter presentation: " + ex.Message);
+                    }
                     break;
             }
             _adapter.Provider = provider;
@@ -175,8 +200,16 @@ namespace Neos.IdentityServer.MultiFactor
                     };
                     break;
                 case ADFSUserInterfaceKind.Custom:
-                    _adapter = LoadCustomAdapterPresentation(in provider, context.Lcid);
-                    _adapter.UseUIPaginated = provider.Config.UseUIPaginated;
+                    try
+                    {
+                        _adapter = LoadCustomAdapterPresentation(in provider, context.Lcid);
+                        _adapter.UseUIPaginated = provider.Config.UseUIPaginated;
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.WriteEntry("Error during loading custom adapter presentation: " + ex.ToString(), EventLogEntryType.Error, 80002);
+                        throw new Exception("Error during loading custom adapter presentation: " + ex.Message);
+                    }
                     break;
             }
             _adapter.Provider = provider;
@@ -215,8 +248,16 @@ namespace Neos.IdentityServer.MultiFactor
                     };
                     break;
                 case ADFSUserInterfaceKind.Custom:
-                    _adapter = LoadCustomAdapterPresentation(in provider, context.Lcid);
-                    _adapter.UseUIPaginated = provider.Config.UseUIPaginated;
+                    try
+                    {
+                        _adapter = LoadCustomAdapterPresentation(in provider, context.Lcid);
+                        _adapter.UseUIPaginated = provider.Config.UseUIPaginated;
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.WriteEntry("Error during loading custom adapter presentation: " + ex.ToString(), EventLogEntryType.Error, 80002);
+                        throw new Exception("Error during loading custom adapter presentation: " + ex.Message);
+                    }
                     break;
             }
             _adapter.Provider = provider;
